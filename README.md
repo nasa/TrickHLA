@@ -18,11 +18,6 @@ Software, Robotics & Simulation Division
 NASA, Johnson Space Center  
 2101 NASA Parkway, Houston, TX  77058  
 
-## Contact:
-Edwin Z. Crues  
-281-483-2902  
-edwin.z.crues@nasa.gov  
-
 ---
 
 TrickHLA is released under the [NASA Open Source Agreement Version 1.3](https://github.com/nasa/TrickHLA/blob/master/LICENSE.txt).
