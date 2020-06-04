@@ -1,0 +1,79 @@
+# Build products
+*.[oa]
+*.gcno
+*.gcda
+*.gch
+*.pyc
+object_*
+S_library_list_ext
+.S_library_list_ext
+build/
+
+# Doxygen generated documentation
+docs/combined
+docs/models
+docs/scripts
+docs/sims
+docs/doxygen/*Err.txt
+
+# Editor temporary files
+*.swp
+*~
+
+# ctags tags files
+tags
+
+# Trick-generated files and folders
+# found in model and sim directories
+xml
+io_src
+swig
+# found only in sim directories
+.auto_checksums
+CP_out
+log_*.header
+log_*.trk
+log_*.csv
+_init_log*.csv
+chkpnt_*_init
+makefile
+Makefile_deps
+Makefile_temp_depends
+Makefile_swig
+Makefile_sim
+MAKE_out
+send_hs
+swig_src
+S_default.dat
+S_define_expnd*
+S_document.xml
+S_*.exe
+S_job_execution
+S_library_list
+S_sie.resource
+S_sie.json
+S_source.cpp
+S_source.hh
+S_run_summary
+trick
+.S_library_swig*
+.icg_no_found
+varserver_log
+DP_Product
+SIM_*.xml
+
+# Ignore trick-generated makefiles for unit tests
+Makefile.trick
+
+# Eclipse specific files
+Debug
+.cproject
+.project
+.settings
+.pydevproject
+
+# Other script related files
+.clang-format
+
+# Cppcheck output directory
+/cppcheck/
