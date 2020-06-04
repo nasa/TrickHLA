@@ -36,7 +36,7 @@ log_*.trk
 log_*.csv
 _init_log*.csv
 chkpnt_*_init
-makefile
+/sims/**/makefile
 Makefile_deps
 Makefile_temp_depends
 Makefile_swig
