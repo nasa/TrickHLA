@@ -1,0 +1,251 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% File: MODEL.tex
+%
+% Purpose: Top level document for MODEL
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand\documentHistory{
+{\bf Author} & {\bf Date} & {\bf Description} \\ \hline \hline
+YOUR NAME & DATE & Initial Version \\ \hline
+}
+
+\newcommand\DocumentChangeHistory{
+{\bf Revised by} & {\bf Date} & {\bf Description} \\ \hline \hline
+
+% This documentation file's change history includes:
+% "REVISED BY name(s)" & "revision DATE" & "revision DESCRIPTION"
+%  ------------------     -------------     --------------------
+                       &                 &                    \\ \hline
+}
+
+\documentclass[twoside,11pt,titlepage]{report}
+
+%
+% Bring in the common page setup
+%
+\usepackage{trickhlaenv}
+
+%
+% Bring in the model-specific commands
+%
+\usepackage{MODEL}
+
+%
+% Bring in the graphics environment
+%
+\usepackage{graphicx}
+
+%
+% Bring in the hyper ref environment
+%
+\usepackage[colorlinks]{hyperref}
+%  keywords for pdfkeywords are separated by commas
+\hypersetup{
+   pdftitle={\MODEL},
+   pdfauthor={YOUR NAME},
+   pdfkeywords={\MODEL},
+   pdfsubject={\MODEL}}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Front matter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{roman}
+
+\docid{DD.mm.01}
+\docrev{1.0}
+\date{DATE}
+\modelname{\MODEL}
+\doctype{}
+\author{YOUR NAME}
+\managers{
+  Edwin Z. Crues \\ Project Manager \\
+  Michael T. Red \\ Simulation and Graphics Branch Chief (ER7) \\
+  Robert O. Ambrose \\ Software, Robotics, and Simulation Division Chief}
+\pdfbookmark{Title Page}{titlepage}
+\makeTrickhlaenvTitlepage
+
+\pdfbookmark{Abstract}{abstract}
+\include{MODELAbstract}
+
+\pdfbookmark{Contents}{contents}
+\tableofcontents
+\vfill
+
+\pagebreak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Main Document Body
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{arabic}
+
+%----------------------------------
+\chapter{Introduction}
+%----------------------------------
+\input{MODELIntro}
+
+\section{Identification of Document}
+This document describes the \MODEL\ developed
+for use in the Trick Simulation Environment.
+This document adheres to the documentation standards
+defined in NASA Software Engineering Requirements Standard \cite{NASA:SWE}.
+
+\section{Scope of Document}
+This document provides information on the
+\begin{itemize}
+\item the requirements for,
+\item the algorithms used in and design of,
+\item verification and validation of, and
+\item the use of
+\end{itemize}
+the \MODEL.  This included references to associated texts and the
+presentation of various equations for COMPLETE THIS SENTENCE.
+
+\section{Purpose and Objectives of Document}
+The purpose of this document is to provide a thorough understanding of the
+methods by which the \MODEL\ were defined, programmed, and verified.
+
+\section{Documentation Status and Schedule}
+The information in this document is current with the \TrickHLAid\ implementation
+of the \MODEL\ modules.  Updates will be kept current with module changes.
+
+\begin{tabular}{||l|l|l|} \hline
+\documentHistory
+\end{tabular}
+
+\begin{tabular}{||l|l|l|} \hline
+\DocumentChangeHistory
+\end{tabular}
+
+\section{Documentation Organization}
+This document is formatted in accordance with the
+NASA Software Engineering Requirements Standard \cite{NASA:SWE}
+and is organized into the following chapters:
+
+\begin{description}
+
+\item[Chapter 1: Introduction] -
+Identifies this document, defines the scope and purpose, present status,
+and provides a description of each major section.
+
+\item[Chapter 2: Related Documentation] -
+Lists the related documentation that is applicable to this project.
+
+\item[Chapter 3: Product Requirements] -
+Describes requirements for the \MODEL.
+
+\item[Chapter 4: Product Specification] -
+Describes the underlying theory, architecture, and design of
+the \MODEL\ in detail.
+
+\item[Chapter 5: User Guide] -
+Describes how to use the \MODEL\ in a Trick simulation.
+
+\item[Chapter 6: Inspection, Verification, and Validation] -
+Contains \MODEL\ inspection, verification, and validation
+procedures and results.
+
+\end{description}
+
+\chapter{Related Documentation}
+
+\section{Parent Documents}
+
+The following document is parent to this document:
+\begin{itemize}
+\item{\href{file:\TRICKHLAHOME/docs/TrickHLA.pdf}
+           {\em Trick High Level Architecture (\TrickHLA)}}
+\cite{trickhlaenv:TrickHLA}
+\end{itemize}
+
+\section{Applicable Documents}
+The following documents are referenced herein and are directly
+applicable to this document:
+
+\begin{itemize}
+\item{\href{file:MODELReqt.pdf}
+           {\em \MODEL\ Product Requirements}}
+\cite{trickhlaenv:MODELReqt}
+
+\item{\href{file:MODELSpec.pdf}
+           {\em \MODEL\ Product Specification}}
+\cite{trickhlaenv:MODELSpec}
+
+\item{\href{file:MODELUser.pdf}
+           {\em \MODEL\ User Guide}}
+\cite{trickhlaenv:MODELUser}
+
+\item{\href{file:MODELIVV.pdf}
+           {\em \MODEL\ Inspection, Verification, and Validation}}
+\cite{trickhlaenv:MODELIVV}
+
+\item{\em The Trick User's Guide: Trick 2005.0 Release}
+\cite{Vetter:TrickUser}
+
+\item{\em Trick Simulation Environment: User Training Materials:
+          Trick 2005.0 Release}
+\cite{Vetter:TrickUTM}
+
+\item{\em Trick Simulation Environment: Version Description:
+          Trick 2005.0 Release}
+\cite{Vetter:TrickVD}
+
+\item{\em The Trick Design Document: Trick 2005.0 Release}
+\cite{Vetter:TrickDD}
+
+\item{\em NASA Software Engineering Requirements}
+\cite{NASA:SWE}
+
+\item{\em OTHER REFERENCE} \\cite{OTHERREFERENCE}HERE
+\end{itemize}
+
+\section{Information Documents}
+The following documents provide supporting material for understanding the
+concepts in this document:
+
+\begin{itemize}
+\item{\em SUPPORTING REFERENCE} \\cite{SUPPORTINGREFERENCE}HERE
+\end{itemize}
+
+See the bibliography for the details associated with these references.
+
+
+\chapter{Product Requirements}
+
+This section of the documentation has been rolled out into a
+\href{file:MODELReqt.pdf}{separate document}
+\cite{trickhlaenv:MODELReqt}.
+
+\chapter{Product Specification}
+
+This section of the documentation has been rolled out into a
+\href{file:MODELSpec.pdf}{separate document}
+\cite{trickhlaenv:MODELSpec}.
+
+\chapter{User Guide}
+
+This section of the documentation has been rolled out into a
+\href{file:MODELUser.pdf}{separate document}
+\cite{trickhlaenv:MODELUser}.
+
+\chapter{Inspection, Verification, and Validation}
+
+This section of the documentation has been rolled out into a
+\href{file:MODELIVV.pdf}{separate document}
+\cite{trickhlaenv:MODELIVV}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Bibliography
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\pdfbookmark{Bibliography}{bibliography}
+\bibliography{trickhlaenv,MODEL}
+\bibliographystyle{plain}
+
+%\pagebreak
+%\appendix
+
+\end{document}

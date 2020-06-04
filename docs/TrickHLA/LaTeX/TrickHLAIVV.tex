@@ -1,0 +1,72 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% File: TrickHLAIVV.tex
+%
+% Purpose: TrickHLA Verification and Validation
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand\documentHistory{
+{\bf Author} & {\bf Date} & {\bf Description} \\ \hline \hline
+Edwin Z. Crues & June 2020 & TrickHLA Version 3 \\ \hline
+}
+
+\newcommand\DocumentChangeHistory{
+{\bf Revised by} & {\bf Date} & {\bf Description} \\ \hline \hline
+
+% This documentation file's change history includes:
+% "REVISED BY name(s)" & "revision DATE" & "revision DESCRIPTION"
+%  ------------------     -------------     --------------------
+
+}
+
+\documentclass[twoside,11pt,titlepage]{report}
+
+%
+% Bring in the AMS math environment
+%
+\usepackage{amsmath}
+
+%
+% Bring in the common page setup
+%
+\usepackage{trickhlaenv}
+
+%
+% Bring in the common math nomenclature
+%
+\usepackage{trickhlamath}
+
+%
+% Bring in the model-specific commands
+%
+\usepackage{TrickHLA}
+
+%
+% Bring in the graphics environment
+%
+\usepackage{graphicx}
+
+%
+% Bring in the hyper ref environment
+%
+\usepackage[colorlinks]{hyperref}
+%  keywords for pdfkeywords are separated by commas
+\hypersetup{
+   pdftitle={\TrickHLA\ Verification and Validation},
+   pdfauthor={Edwin Z. Crues \\ and \\ Daniel E. Dexter},
+   pdfkeywords={\TrickHLA, Verification and Validation},
+   pdfsubject={\TrickHLA\ Verification and Validation}}
+
+%
+% Some settings...
+%
+\renewcommand{\TrickHLA}{{\tt TrickHLA}}
+
+\begin{document}
+
+\input{TrickHLAIVV-frontmatter}
+\input{TrickHLAIVV-body}
+\input{TrickHLAIVV-backmatter}
+
+\end{document}

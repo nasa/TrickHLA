@@ -1,0 +1,102 @@
+%----------------------------------
+\chapter{Introduction}\label{sec:intro}
+%----------------------------------
+
+\input{TrickHLAIntro}
+
+\section{Identification of Document}
+This document describes the use of the
+\TrickHLA\ developed for use in the Trick Simulation Environment.
+This document adheres to the documentation standards defined in
+NASA Software Engineering Requirements Standard \cite{NASA:SWE}.
+
+\section{Scope of Document}
+This document provides information on the use of the \TrickHLA.
+
+\section{Purpose and Objectives of Document}
+The purpose of this document is to describe how to incorporate the
+\TrickHLA\ into a dynamic Trick simulation and used by other simulation models.
+
+\section{Documentation Status and Schedule}
+The information in this document is current with the \TrickHLAid\
+implementation of the \TrickHLA. Updates will be kept current with
+module changes.
+
+\begin{tabular}{||l|l|l|} \hline
+\documentHistory
+\end{tabular}
+
+\begin{tabular}{||l|l|l|} \hline
+\DocumentChangeHistory
+\end{tabular}
+
+\section{Document Organization}
+This document is organized into the following sections:
+
+\begin{description}
+
+\item[Chapter \ref{sec:intro}: Introduction] --
+Identifies this document, defines the scope and purpose, present status,
+and provides a description of each major section.
+
+\item[Chapter \ref{sec:docs}: Related Documentation] --
+Lists the related documentation that is applicable to this project.
+
+\item[Chapter \ref{sec:preliminaries}: Preliminaries] --
+Discusses some Trick, HLA and \TrickHLA\ concepts that are used
+in the subsequent chapters.
+
+\item[Chapter \ref{sec:simplesine-sim}: An Example \simplesine Simulation] --
+Introduces the \simplesine model in the context of a non-HLA simulation.
+
+\item[Chapter \ref{sec:hla-join}: Joining a Federation] --
+Illustrates how to make a Trick simulation become an HLA federate
+and join an HLA federation.
+
+\item[Chapter \ref{sec:hla-pubsub}: Publishing and Subscribing] --
+Shows how Trick simulations may publish and subscribe data.
+
+\item[Chapter \ref{sec:hla-lag}: Lag Compensation] --
+Demonstrates how HLA-induced lags due to time management may be removed
+either by publihsers of the data or by subscribers.
+
+\item[Chapter \ref{sec:hla-inter}: Sending and Receiving Interactions] --
+Illustrates how to send and receive HLA interactions.
+
+\item[Chapter \ref{sec:hla-own}: Ownership Transfer] --
+Shows how to use the \TrickHLA\ mechanisms for {\em pushing} and {\em pulling}
+ownership of HLA data.
+
+\item[Chapter \ref{sec:hla-pack}: Data Encoding and Packing] --
+Shows how simulation developers may pack and unpack HLA data.
+
+\item[Chapter \ref{sec:hla-init}: Initialization] --
+Explains how to use \TrickHLA\ to implement multiphase
+federation initialization.
+
+\item[Chapter \ref{sec:hla-objDel}: Object Deleted Notification] --
+Explains how to use \TrickHLA\ to implement callbacks when an object was deleted
+from the federation.
+
+\item[Chapter \ref{sec:hla_fed_save_setup}: How to setup your trick federate to
+initiate a federation save] --
+Explains how to upgrade your trick model to utilize \TrickHLA\ routines to save
+the federate.
+
+\item[Chapter \ref{sec:hla_trick_fed_save}: Federate Save] --
+Explains how to initiate a federation save from the trick model.
+
+\item[Chapter \ref{sec:hla_trick_fed_restore}: Federate Restore] --
+Explains how to initiate a federation restore from the trick model.
+
+\item[Bibliography] --
+Informational references associated with this document.
+
+\item[Appendix \ref{sec:simplesine-files}: \simplesine Files] --
+Provides listings of some of the \simplesine source files.
+
+\item[Appendix \ref{sec:send-receive-inputs}: Interaction send/receive input files] --
+Provides listings of the input files for the simulations that
+send and receive HLA interactions.
+
+\end{description}

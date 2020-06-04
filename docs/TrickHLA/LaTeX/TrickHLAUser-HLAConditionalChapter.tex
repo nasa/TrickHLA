@@ -1,0 +1,716 @@
+\chapter{Conditional sending of cyclic data}
+\label{sec:hla-conditional}
+
+This section illustrates how to use \TrickHLA\ to
+conditionally send the simulation's cyclic attributes.
+The example {\tt SIM\_sine\_conditional\_data} shows how the user can write a simulation
+to determine when to send the attributes, for example: when an attribute changes.
+
+% -----------------------------------------------------------------------
+\section{How do you send cyclic data conditionally?}
+% -------------------------------
+\subsection{The {\tt TrickHLAConditional} class}
+
+\TrickHLA\ defines a C++ class must be subclassed by simulation developers
+in order to identify the conditions when to send cyclic data. Unless this class
+is subclassed, the default return is true so that the data is always sent across
+the wire on each cycle.
+
+The class header is shown below.
+There is only a lone virtual method in this class, called {\tt should\_send()},
+which is tied to its supplied {\tt TrickHLAAttribute}. The user must subclass the
+{\tt TrickHLAConditional} class in order to override this method, supplying code to
+the overridden {\tt should\_send()} method to determine when to send the attribute
+across the wire. The user is free to determine when the correct condition has
+(or conditions have) been met so that the attribute is sent across the wire.
+
+The user is responible for updating the simulation's {\tt S\_define} file
+to declare a {\tt TrickHLAConditional} class for each attribute which they wish to
+send conditionally as well as tieing each attribute and its corresponding
+conditional object in the input file.
+
+\begin{lstlisting}[caption={The {\tt TrickHLAConditional} class},label={list:trickhla-conditional}]
+class TrickHLAAttribute;
+#include "TrickHLA/include/TrickHLAAttribute.hh"
+
+class TrickHLAConditional
+{
+      friend class InputProcessor;
+      friend void init_attrTrickHLAConditional();
+
+  public:
+      TrickHLAConditional(); // default constructor
+      virtual ~TrickHLAConditional(); // destructor
+
+      virtual bool should_send( TrickHLAAttribute * attr );
+};
+\end{lstlisting}
+
+% -------------------------------
+\subsection{Subclassing TrickHLAConditional in the {\tt SIM\_sine\_conditional\_cyclic} example}
+
+The class header for the {\tt SineConditional} class is shown below.
+
+\begin{lstlisting}[caption={{\tt SineConditional} header file},label={list:sine-conditional-header}]
+#include "TrickHLA/include/TrickHLAConditional.hh"
+
+#include "SineData.hh"
+
+class SineConditional : public TrickHLAConditional
+{
+      friend class InputProcessor;
+      friend void init_attrSineConditional();
+
+  public:
+      SineConditional(); // default constructor
+      virtual ~SineConditional(); // destructor
+
+      void initialize( SineData *, const char * );
+
+      virtual bool should_send( TrickHLAAttribute * attr );
+
+  private:
+      int        convert_FOM_name_to_pos( const char * );
+
+      SineData * sim_data;      // -- pointer to the data to reflect in this cycle
+      SineData   prev_sim_data; // -- copy of the data we previously reflected
+
+      int        attr_pos;      // -- attribute position in SineData
+};
+\end{lstlisting}
+
+And the code is shown below.
+The {\tt initialize()} method specifies the simulation data collection and the
+attribute name whose value is checked before it is sent over the wire.
+
+And the {\tt should\_send()} method compares the value of the attribute from the
+previous and the current calls of the routine, returning true if the value has
+changed (see the code below).
+
+\begin{lstlisting}[caption={{\tt SineConditional} code},label={list:sine-conditional-code}]
+/********************************* TRICK HEADER *******************************
+PURPOSE: (Define the conditions when to send cyclic data to other federates.)
+*******************************************************************************/
+#include <stdlib.h>
+#include <iostream>
+#include <string>
+
+#include "sim_services/include/exec_proto.h"
+
+#include "../include/SineConditional.hh"
+
+using namespace std;
+
+/********************************* TRICK HEADER *******************************
+PURPOSE: (SineConditional::SineHLAConditional : Default constructor.)
+*******************************************************************************/
+SineConditional::SineConditional() // RETURN: -- None.
+   : TrickHLAConditional(),
+     sim_data(NULL),
+     attr_pos(-1)
+{ }
+
+/********************************* TRICK HEADER *******************************
+PURPOSE: (SineConditional::~SineConditional : Frees memory allocated for the
+          class.)
+*******************************************************************************/
+SineConditional::~SineConditional() // RETURN: -- None.
+{ }
+
+/********************************* TRICK HEADER *******************************
+PURPOSE: (SineConditional::initialize : Initializes the sim_data to the
+          supplied.)
+*******************************************************************************/
+void SineConditional::initialize(  // RETURN: -- None.
+   SineData * data,                // IN: -- external simulation data.
+   const char * attr_FOM_name )    // IN: -- FOM name of the attribute to track when changed
+{
+   sim_data = data;
+
+   attr_pos = convert_FOM_name_to_pos( attr_FOM_name );
+   
+   // make a copy of the incoming data so that we have something to compare to
+   // when it comes time to compare (especially SineData's 'name', which is a 
+   // char *).
+   prev_sim_data = *data;
+}
+
+/********************************* TRICK HEADER *******************************
+PURPOSE: (SineConditional::should_send() : Determines if the attribute has
+          changed and returns the truth of that determination.)
+*******************************************************************************/
+bool SineConditional::should_send( // RETURN: -- None.
+   TrickHLAAttribute* attr )       // IN: ** Attribute to send
+{
+   bool rc = false; // if there is no data or wrong attribute, send nothing!
+
+   // if there is simulation data to compare to, if the attribute FOM name has
+   // been specified and if the specified attribute position matches the
+   // supplied attribute's position, check the value of the current simulation
+   // variable versus the previous value. return true if there was a change.
+   if ( ( sim_data != NULL ) && ( attr_pos != -1 ) && 
+        ( convert_FOM_name_to_pos( attr->get_FOM_name() ) == attr_pos ) ) {
+
+      switch ( attr_pos ) {
+         case 0: // "Time"
+            if ( sim_data->get_time() != prev_sim_data.get_time() ) {
+               rc = true;
+            }
+         break;
+         case 1: // "Value"
+            if ( sim_data->get_value() != prev_sim_data.get_value() ) {
+               rc = true;
+            }
+         break;
+         case 2: // "dvdt"
+            if ( sim_data->get_derivative() != prev_sim_data.get_derivative() ) {
+               rc = true;
+            }
+         break;
+         case 3: // "Phase"
+            if ( sim_data->get_phase() != prev_sim_data.get_phase() ) {
+               rc = true;
+            }
+         break;
+         case 4: // "Frequency"
+            if ( sim_data->get_frequency() != prev_sim_data.get_frequency() ) {
+               rc = true;
+            }
+         break;
+         case 5: // "Amplitude"
+            if ( sim_data->get_amplitude() != prev_sim_data.get_amplitude() ) {
+               rc = true;
+            }
+         break;
+         case 6: // "Tolerance"
+            if ( sim_data->get_tolerance() != prev_sim_data.get_tolerance() ) {
+               rc = true;
+            }
+         break;
+         case 7: // "Name"
+            if ( strcmp( sim_data->get_name(), prev_sim_data.get_name() ) != 0 ) {
+               rc = true;
+            }
+         break;
+      };
+
+      prev_sim_data = *sim_data; // make a copy of the current data
+   } else {
+      send_hs( stderr, "SineConditional::should_send() => ERROR: either you \
+forgot to call the initialize() routine to specify the attribute FOM name from \
+the sim_data you wish to track or you provided the wrong TrickHLAAttribute to \
+an already-initialized SineConditional!" );
+   }
+   return rc;
+}
+
+/********************************* TRICK HEADER *******************************
+PURPOSE: (SineConditional::convert_FOM_name_to_pos() : Determines the supplied
+    name's position in the SineData structure. If a match does not exist or an
+    empty string was supplied, -1 is returned.)
+*******************************************************************************/
+int SineConditional::convert_FOM_name_to_pos( // RETURN: -- position in SineData
+   const char * attr_FOM_name )               // IN: -- FOM name of the attribute
+{
+   string attr_name = attr_FOM_name;
+   
+   if ( ! attr_name.empty() ) {
+      // speed up the code by NOT using string compares, which are very costly!
+      // instead, compare the first character of the attribute. since there is
+      // only one overlapping first character, this should be a very fast
+      // algorithm...
+      char first = attr_name[0];
+      char second = attr_name[1];
+
+      switch ( first ) {
+         case 'A':
+            return 5; // "Amplitude"
+         break;
+         case 'F':
+            return 4; // "Frequency"
+         break;
+         case 'N':
+            return 7; // "Name"
+         break;
+         case 'P':
+            return 3; // "Phase"
+         break;
+         case 'T':
+           if ( second == 'i' ) {
+              return 0; // "Time"
+           } else {
+              return 6; // "Tolerance"
+           }
+         break;
+         case 'V':
+            return 1; // "Value"
+         break;
+         case 'd':
+            return 2; // "dvdt"
+         break;
+      }
+   }
+   
+   return -1;
+}
+\end{lstlisting}
+
+% -----------------------------------------------------------------------
+\section{\tt SIM\_sine\_conditional\_cyclic}
+
+This simulation is based on the {\tt SIM\_sine} simulation, upgraded to send each
+one of the SineData's variables conditionally.
+
+To accomplish this, you must do these two things to the \sdefine file for each
+of the two {\tt sim\_objects} in the {\tt SIM\_sine\_conditional\_cyclic} simulation.
+
+\begin{itemize}
+\item{
+  Define an instance of {\tt SineConditional} for each attribute you wish to make
+  conditional, and
+}
+\item{
+  Specify a initialization class job to wire a data element of the SineData
+  structure to the corresponding instance of SineConditional.
+}
+\end{itemize}
+
+\begin{lstlisting}[numbers=none,caption={Conditional \sdefine changes},label={list:sine-conditional-sdefine-changes}]
+  sim_object {
+    ...
+   sine: SineConditional        conditional_time;
+   sine: SineConditional        conditional_value;
+   sine: SineConditional        conditional_derivative;
+   sine: SineConditional        conditional_phase;
+   sine: SineConditional        conditional_frequency;
+   sine: SineConditional        conditional_amplitude;
+   sine: SineConditional        conditional_tolerance;
+   sine: SineConditional        conditional_name;
+    ...
+   /* ------------------------- */
+   /* -- INITIALIZATION JOBS -- */
+   /* ------------------------- */
+    ...
+   P50 (initialization) sine: A.conditional_time.initialize(
+      In SineData   * sim_data    = &A.sim_data,
+      In const char * name        = "Time" );
+   P50 (initialization) sine: A.conditional_value.initialize(
+      In SineData   * sim_data    = &A.sim_data,
+      In const char * name        = "Value" );
+   P50 (initialization) sine: A.conditional_derivative.initialize(
+      In SineData   * sim_data    = &A.sim_data,
+      In const char * name        = "dvdt" );
+   P50 (initialization) sine: A.conditional_phase.initialize(
+      In SineData   * sim_data    = &A.sim_data,
+      In const char * name        = "Phase" );
+   P50 (initialization) sine: A.conditional_frequency.initialize(
+      In SineData   * sim_data    = &A.sim_data,
+      In const char * name        = "Frequency" );
+   P50 (initialization) sine: A.conditional_amplitude.initialize(
+      In SineData   * sim_data    = &A.sim_data,
+      In const char * name        = "Amplitude" );
+   P50 (initialization) sine: A.conditional_tolerance.initialize(
+      In SineData   * sim_data    = &A.sim_data,
+      In const char * name        = "Tolerance" );
+   P50 (initialization) sine: A.conditional_name.initialize(
+      In SineData   * sim_data    = &A.sim_data,
+      In const char * name        = "Name" );
+    ...
+} A; // don't forget to update sim_object 'P'
+\end{lstlisting}
+
+% -----------------------------------------------------------------------
+\section{Input}
+
+The input file is based on the original {\tt SIM\_sine}'s input file. It differs in that
+each {\tt sim\_object}'s attribute's {\tt conditional} object is filled in for each
+attribute which is to be sent conditionally with the corresponding {\tt sim\_object}'s
+conditional object updated in listing~\ref{list:sine-conditional-sdefine-changes},
+as detailed in the {\tt THLA.manager.objects[0].attributes[{\em x}].conditional}
+lines in the listing below.
+
+\begin{lstlisting}[numbers=none,caption={Conditional {\tt input} file changes},label={list:sine-conditional-input-changes}]
+    ...
+// Show or hide the TrickHLA debug messages.
+THLA.manager.debug_handler.debug_level = THLA_LEVEL7_TRACE; // prints attribute names that are sent across the wire...
+    ...
+// The Federate has two objects, it publishes one and subscribes to another.
+THLA.manager.obj_count = 2;
+THLA.manager.objects   = alloc(THLA.manager.obj_count);
+
+// Configure the object this federate owns and will publish.
+THLA.manager.objects[0].FOM_name            = "Test";
+THLA.manager.objects[0].name                = "A-side-Federate.Test";
+THLA.manager.objects[0].create_HLA_instance = true;
+THLA.manager.objects[0].packing             = &A.packing;
+THLA.manager.objects[0].ownership           = &A.ownership_handler;
+THLA.manager.objects[0].deleted             = &A.obj_deleted_callback;
+THLA.manager.objects[0].attr_count          = 8;
+THLA.manager.objects[0].attributes          = alloc(THLA.manager.objects[0].attr_count);
+
+THLA.manager.objects[0].attributes[0].FOM_name        = "Time";
+THLA.manager.objects[0].attributes[0].trick_name      = "A.sim_data.time";
+THLA.manager.objects[0].attributes[0].config          = THLA_CYCLIC;
+THLA.manager.objects[0].attributes[0].publish         = true;
+THLA.manager.objects[0].attributes[0].locally_owned   = true;
+THLA.manager.objects[0].attributes[0].preferred_order = THLA_PREFERRED_ORDER;
+THLA.manager.objects[0].attributes[0].rti_encoding    = THLA_LITTLE_ENDIAN;
+THLA.manager.objects[0].attributes[0].conditional     = &A.conditional_time;
+
+THLA.manager.objects[0].attributes[1].FOM_name        = "Value";
+THLA.manager.objects[0].attributes[1].trick_name      = "A.sim_data.value";
+THLA.manager.objects[0].attributes[1].config          = THLA_INITIALIZE + THLA_CYCLIC;
+THLA.manager.objects[0].attributes[1].publish         = true;
+THLA.manager.objects[0].attributes[1].locally_owned   = true;
+THLA.manager.objects[0].attributes[1].preferred_order = THLA_PREFERRED_ORDER;
+THLA.manager.objects[0].attributes[1].rti_encoding    = THLA_LITTLE_ENDIAN;
+THLA.manager.objects[0].attributes[1].conditional     = &A.conditional_value;
+
+THLA.manager.objects[0].attributes[2].FOM_name        = "dvdt";
+THLA.manager.objects[0].attributes[2].trick_name      = "A.sim_data.dvdt";
+THLA.manager.objects[0].attributes[2].config          = THLA_CYCLIC;
+THLA.manager.objects[0].attributes[2].publish         = true;
+THLA.manager.objects[0].attributes[2].locally_owned   = true;
+THLA.manager.objects[0].attributes[2].preferred_order = THLA_PREFERRED_ORDER;
+THLA.manager.objects[0].attributes[2].rti_encoding    = THLA_LITTLE_ENDIAN;
+THLA.manager.objects[0].attributes[2].conditional     = &A.conditional_derivative;
+
+THLA.manager.objects[0].attributes[3].FOM_name        = "Phase";
+THLA.manager.objects[0].attributes[3].trick_name      = "A.packing.phase_deg"; // using packed data instead of "A.sim_data.phase";
+THLA.manager.objects[0].attributes[3].config          = THLA_CYCLIC;
+THLA.manager.objects[0].attributes[3].publish         = true;
+THLA.manager.objects[0].attributes[3].locally_owned   = true;
+THLA.manager.objects[0].attributes[3].preferred_order = THLA_PREFERRED_ORDER;
+THLA.manager.objects[0].attributes[3].rti_encoding    = THLA_LITTLE_ENDIAN;
+THLA.manager.objects[0].attributes[3].conditional     = &A.conditional_phase;
+
+THLA.manager.objects[0].attributes[4].FOM_name        = "Frequency";
+THLA.manager.objects[0].attributes[4].trick_name      = "A.sim_data.freq";
+THLA.manager.objects[0].attributes[4].config          = THLA_CYCLIC;
+THLA.manager.objects[0].attributes[4].publish         = true;
+THLA.manager.objects[0].attributes[4].locally_owned   = true;
+THLA.manager.objects[0].attributes[4].preferred_order = THLA_PREFERRED_ORDER;
+THLA.manager.objects[0].attributes[4].rti_encoding    = THLA_LITTLE_ENDIAN;
+THLA.manager.objects[0].attributes[4].conditional     = &A.conditional_frequency;
+
+THLA.manager.objects[0].attributes[5].FOM_name        = "Amplitude";
+THLA.manager.objects[0].attributes[5].trick_name      = "A.sim_data.amp";
+THLA.manager.objects[0].attributes[5].config          = THLA_CYCLIC;
+THLA.manager.objects[0].attributes[5].publish         = true;
+THLA.manager.objects[0].attributes[5].locally_owned   = true;
+THLA.manager.objects[0].attributes[5].preferred_order = THLA_PREFERRED_ORDER;
+THLA.manager.objects[0].attributes[5].rti_encoding    = THLA_LITTLE_ENDIAN;
+THLA.manager.objects[0].attributes[5].conditional     = &A.conditional_amplitude;
+
+THLA.manager.objects[0].attributes[6].FOM_name        = "Tolerance";
+THLA.manager.objects[0].attributes[6].trick_name      = "A.sim_data.tol";
+THLA.manager.objects[0].attributes[6].config          = THLA_CYCLIC;
+THLA.manager.objects[0].attributes[6].publish         = true;
+THLA.manager.objects[0].attributes[6].locally_owned   = true;
+THLA.manager.objects[0].attributes[6].preferred_order = THLA_PREFERRED_ORDER;
+THLA.manager.objects[0].attributes[6].rti_encoding    = THLA_LITTLE_ENDIAN;
+THLA.manager.objects[0].attributes[6].conditional     = &A.conditional_tolerance;
+
+THLA.manager.objects[0].attributes[7].FOM_name        = "Name";
+THLA.manager.objects[0].attributes[7].trick_name      = "A.sim_data.name";
+THLA.manager.objects[0].attributes[7].config          = THLA_INITIALIZE + THLA_CYCLIC;
+THLA.manager.objects[0].attributes[7].publish         = true;
+THLA.manager.objects[0].attributes[7].locally_owned   = true;
+THLA.manager.objects[0].attributes[7].preferred_order = THLA_PREFERRED_ORDER;
+THLA.manager.objects[0].attributes[7].rti_encoding    = THLA_UNICODE_STRING;
+THLA.manager.objects[0].attributes[7].conditional     = &A.conditional_name;
+    ...
+\end{lstlisting}
+
+% -----------------------------------------------------------------------
+\section{Output}
+
+Output from the simulation shown below reveals which attributes are sent only
+because they changed, rather than all of the eight attributes.
+
+\begin{lstlisting}[numbers=none,caption={output showing conditionally sent cyclic data}]
+    ...
+| |wormhole|1|0.00|2010/02/03,17:44:44| TrickHLAManager::initialization_complete()
+        Simulation has started and is now running...
+| |wormhole|1|0.00|2010/02/03,17:44:44| TrickHLAFederate::wait_for_time_advance_grant() waiting for time advance grant (TAG)
+| |wormhole|1|0.00|2010/02/03,17:44:44| TrickHLAFederate::wait_for_time_advance_grant() Time granted to 0 seconds.
+| |wormhole|1|0.00|2010/02/03,17:44:44| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|0.00|2010/02/03,17:44:44| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|0.00|2010/02/03,17:44:44| TrickHLAManager::send_requested_data()
+| |wormhole|1|0.00|2010/02/03,17:44:44| TrickHLAFederate::time_advance_request()   
+requesting time advance grant (TAG) to 0.250000
+| |wormhole|1|0.25|2010/02/03,17:44:45| TrickHLAFederate::wait_for_time_advance_grant() waiting for time advance grant (TAG)
+| |wormhole|1|0.25|2010/02/03,17:44:45| TrickHLAFederate::wait_for_time_advance_grant() Time granted to 0.25 seconds.
+| |wormhole|1|0.25|2010/02/03,17:44:45| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|0.25|2010/02/03,17:44:45| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|0.25|2010/02/03,17:44:45| TrickHLAObject::create_attribute_set() -- adding 'Time' to attribute map
+| |wormhole|1|0.25|2010/02/03,17:44:45| TrickHLAObject::create_attribute_set() -- adding 'Value' to attribute map
+| |wormhole|1|0.25|2010/02/03,17:44:45| TrickHLAObject::create_attribute_set() -- adding 'dvdt' to attribute map
+| |wormhole|1|0.25|2010/02/03,17:44:45| TrickHLAManager::send_requested_data()
+| |wormhole|1|0.25|2010/02/03,17:44:45| TrickHLAFederate::time_advance_request()   
+requesting time advance grant (TAG) to 0.500000
+| |wormhole|-1|0.30|2010/02/03,17:44:45| TrickHLAAttribute::extract_data() -- decoding 'Time' from attribute map
+| |wormhole|-1|0.30|2010/02/03,17:44:45| TrickHLAAttribute::extract_data() -- decoding 'Value' from attribute map
+| |wormhole|-1|0.30|2010/02/03,17:44:45| TrickHLAAttribute::extract_data() -- decoding 'dvdt' from attribute map
+| |wormhole|1|0.50|2010/02/03,17:44:45| TrickHLAFederate::wait_for_time_advance_grant() waiting for time advance grant (TAG)
+| |wormhole|1|0.50|2010/02/03,17:44:45| TrickHLAFederate::wait_for_time_advance_grant() Time granted to 0.5 seconds.
+| |wormhole|1|0.50|2010/02/03,17:44:45| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|0.50|2010/02/03,17:44:45| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|0.50|2010/02/03,17:44:45| TrickHLAObject::create_attribute_set() -- adding 'Time' to attribute map
+| |wormhole|1|0.50|2010/02/03,17:44:45| TrickHLAObject::create_attribute_set() -- adding 'Value' to attribute map
+| |wormhole|1|0.50|2010/02/03,17:44:45| TrickHLAObject::create_attribute_set() -- adding 'dvdt' to attribute map
+| |wormhole|1|0.50|2010/02/03,17:44:45| TrickHLAManager::send_requested_data()
+| |wormhole|1|0.50|2010/02/03,17:44:45| TrickHLAFederate::time_advance_request()   
+requesting time advance grant (TAG) to 0.750000
+| |wormhole|-1|0.55|2010/02/03,17:44:45| TrickHLAAttribute::extract_data() -- decoding 'Time' from attribute map
+| |wormhole|-1|0.55|2010/02/03,17:44:45| TrickHLAAttribute::extract_data() -- decoding 'Value' from attribute map
+| |wormhole|-1|0.55|2010/02/03,17:44:45| TrickHLAAttribute::extract_data() -- decoding 'dvdt' from attribute map
+| |wormhole|1|0.75|2010/02/03,17:44:45| TrickHLAFederate::wait_for_time_advance_grant() waiting for time advance grant (TAG)
+| |wormhole|1|0.75|2010/02/03,17:44:45| TrickHLAFederate::wait_for_time_advance_grant() Time granted to 0.75 seconds.
+| |wormhole|1|0.75|2010/02/03,17:44:45| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|0.75|2010/02/03,17:44:45| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|0.75|2010/02/03,17:44:45| TrickHLAObject::create_attribute_set() -- adding 'Time' to attribute map
+| |wormhole|1|0.75|2010/02/03,17:44:45| TrickHLAObject::create_attribute_set() -- adding 'Value' to attribute map
+| |wormhole|1|0.75|2010/02/03,17:44:45| TrickHLAObject::create_attribute_set() -- adding 'dvdt' to attribute map
+| |wormhole|1|0.75|2010/02/03,17:44:45| TrickHLAManager::send_requested_data()
+| |wormhole|1|0.75|2010/02/03,17:44:45| TrickHLAFederate::time_advance_request()   
+requesting time advance grant (TAG) to 1.000000
+| |wormhole|-1|0.80|2010/02/03,17:44:45| TrickHLAAttribute::extract_data() -- decoding 'Time' from attribute map
+| |wormhole|-1|0.80|2010/02/03,17:44:45| TrickHLAAttribute::extract_data() -- decoding 'Value' from attribute map
+| |wormhole|-1|0.80|2010/02/03,17:44:45| TrickHLAAttribute::extract_data() -- decoding 'dvdt' from attribute map
+| |wormhole|1|1.00|2010/02/03,17:44:45| TrickHLAFederate::wait_for_time_advance_grant() waiting for time advance grant (TAG)
+| |wormhole|1|1.00|2010/02/03,17:44:45| TrickHLAFederate::wait_for_time_advance_grant() Time granted to 1 seconds.
+| |wormhole|1|1.00|2010/02/03,17:44:45| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|1.00|2010/02/03,17:44:45| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|1.00|2010/02/03,17:44:45| TrickHLAObject::create_attribute_set() -- adding 'Time' to attribute map
+| |wormhole|1|1.00|2010/02/03,17:44:45| TrickHLAObject::create_attribute_set() -- adding 'Value' to attribute map
+| |wormhole|1|1.00|2010/02/03,17:44:45| TrickHLAObject::create_attribute_set() -- adding 'dvdt' to attribute map
+| |wormhole|1|1.00|2010/02/03,17:44:45| TrickHLAManager::send_requested_data()
+| |wormhole|1|1.00|2010/02/03,17:44:45| TrickHLAFederate::time_advance_request()   
+requesting time advance grant (TAG) to 1.250000
+| |wormhole|-1|1.05|2010/02/03,17:44:45| TrickHLAAttribute::extract_data() -- decoding 'Time' from attribute map
+| |wormhole|-1|1.05|2010/02/03,17:44:45| TrickHLAAttribute::extract_data() -- decoding 'Value' from attribute map
+| |wormhole|-1|1.05|2010/02/03,17:44:45| TrickHLAAttribute::extract_data() -- decoding 'dvdt' from attribute map
+| |wormhole|1|1.25|2010/02/03,17:44:46| TrickHLAFederate::wait_for_time_advance_grant() waiting for time advance grant (TAG)
+| |wormhole|1|1.25|2010/02/03,17:44:46| TrickHLAFederate::wait_for_time_advance_grant() Time granted to 1.25 seconds.
+| |wormhole|1|1.25|2010/02/03,17:44:46| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|1.25|2010/02/03,17:44:46| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|1.25|2010/02/03,17:44:46| TrickHLAObject::create_attribute_set() -- adding 'Time' to attribute map
+| |wormhole|1|1.25|2010/02/03,17:44:46| TrickHLAObject::create_attribute_set() -- adding 'Value' to attribute map
+| |wormhole|1|1.25|2010/02/03,17:44:46| TrickHLAObject::create_attribute_set() -- adding 'dvdt' to attribute map
+| |wormhole|1|1.25|2010/02/03,17:44:46| TrickHLAManager::send_requested_data()
+| |wormhole|1|1.25|2010/02/03,17:44:46| TrickHLAFederate::time_advance_request()   
+requesting time advance grant (TAG) to 1.500000
+| |wormhole|-1|1.30|2010/02/03,17:44:46| TrickHLAAttribute::extract_data() -- decoding 'Time' from attribute map
+| |wormhole|-1|1.30|2010/02/03,17:44:46| TrickHLAAttribute::extract_data() -- decoding 'Value' from attribute map
+| |wormhole|-1|1.30|2010/02/03,17:44:46| TrickHLAAttribute::extract_data() -- decoding 'dvdt' from attribute map
+| |wormhole|1|1.50|2010/02/03,17:44:46| TrickHLAFederate::wait_for_time_advance_grant() waiting for time advance grant (TAG)
+| |wormhole|1|1.50|2010/02/03,17:44:46| TrickHLAFederate::wait_for_time_advance_grant() Time granted to 1.5 seconds.
+| |wormhole|1|1.50|2010/02/03,17:44:46| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|1.50|2010/02/03,17:44:46| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|1.50|2010/02/03,17:44:46| TrickHLAObject::create_attribute_set() -- adding 'Time' to attribute map
+| |wormhole|1|1.50|2010/02/03,17:44:46| TrickHLAObject::create_attribute_set() -- adding 'Value' to attribute map
+| |wormhole|1|1.50|2010/02/03,17:44:46| TrickHLAObject::create_attribute_set() -- adding 'dvdt' to attribute map
+| |wormhole|1|1.50|2010/02/03,17:44:46| TrickHLAManager::send_requested_data()
+| |wormhole|1|1.50|2010/02/03,17:44:46| TrickHLAFederate::time_advance_request()   
+requesting time advance grant (TAG) to 1.750000
+| |wormhole|-1|1.55|2010/02/03,17:44:46| TrickHLAAttribute::extract_data() -- decoding 'Time' from attribute map
+| |wormhole|-1|1.55|2010/02/03,17:44:46| TrickHLAAttribute::extract_data() -- decoding 'Value' from attribute map
+| |wormhole|-1|1.55|2010/02/03,17:44:46| TrickHLAAttribute::extract_data() -- decoding 'dvdt' from attribute map
+| |wormhole|1|1.75|2010/02/03,17:44:46| TrickHLAFederate::wait_for_time_advance_grant() waiting for time advance grant (TAG)
+| |wormhole|1|1.75|2010/02/03,17:44:46| TrickHLAFederate::wait_for_time_advance_grant() Time granted to 1.75 seconds.
+| |wormhole|1|1.75|2010/02/03,17:44:46| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|1.75|2010/02/03,17:44:46| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|1.75|2010/02/03,17:44:46| TrickHLAObject::create_attribute_set() -- adding 'Time' to attribute map
+| |wormhole|1|1.75|2010/02/03,17:44:46| TrickHLAObject::create_attribute_set() -- adding 'Value' to attribute map
+| |wormhole|1|1.75|2010/02/03,17:44:46| TrickHLAObject::create_attribute_set() -- adding 'dvdt' to attribute map
+| |wormhole|1|1.75|2010/02/03,17:44:46| TrickHLAManager::send_requested_data()
+| |wormhole|1|1.75|2010/02/03,17:44:46| TrickHLAFederate::time_advance_request()   
+requesting time advance grant (TAG) to 2.000000
+| |wormhole|-1|1.80|2010/02/03,17:44:46| TrickHLAAttribute::extract_data() -- decoding 'Time' from attribute map
+| |wormhole|-1|1.80|2010/02/03,17:44:46| TrickHLAAttribute::extract_data() -- decoding 'Value' from attribute map
+| |wormhole|-1|1.80|2010/02/03,17:44:46| TrickHLAAttribute::extract_data() -- decoding 'dvdt' from attribute map
+| |wormhole|1|2.00|2010/02/03,17:44:46| TrickHLAFederate::wait_for_time_advance_grant() waiting for time advance grant (TAG)
+| |wormhole|1|2.00|2010/02/03,17:44:46| TrickHLAFederate::wait_for_time_advance_grant() Time granted to 2 seconds.
+| |wormhole|1|2.00|2010/02/03,17:44:46| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|2.00|2010/02/03,17:44:46| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|2.00|2010/02/03,17:44:46| TrickHLAObject::create_attribute_set() -- adding 'Time' to attribute map
+| |wormhole|1|2.00|2010/02/03,17:44:46| TrickHLAObject::create_attribute_set() -- adding 'Value' to attribute map
+| |wormhole|1|2.00|2010/02/03,17:44:46| TrickHLAObject::create_attribute_set() -- adding 'dvdt' to attribute map
+| |wormhole|1|2.00|2010/02/03,17:44:46| TrickHLAManager::send_requested_data()
+| |wormhole|1|2.00|2010/02/03,17:44:46| TrickHLAFederate::time_advance_request()   
+requesting time advance grant (TAG) to 2.250000
+| |wormhole|-1|2.05|2010/02/03,17:44:46| TrickHLAAttribute::extract_data() -- decoding 'Time' from attribute map
+| |wormhole|-1|2.05|2010/02/03,17:44:46| TrickHLAAttribute::extract_data() -- decoding 'Value' from attribute map
+| |wormhole|-1|2.05|2010/02/03,17:44:46| TrickHLAAttribute::extract_data() -- decoding 'dvdt' from attribute map
+| |wormhole|1|2.25|2010/02/03,17:44:47| TrickHLAFederate::wait_for_time_advance_grant() waiting for time advance grant (TAG)
+| |wormhole|1|2.25|2010/02/03,17:44:47| TrickHLAFederate::wait_for_time_advance_grant() Time granted to 2.25 seconds.
+| |wormhole|1|2.25|2010/02/03,17:44:47| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|2.25|2010/02/03,17:44:47| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|2.25|2010/02/03,17:44:47| TrickHLAObject::create_attribute_set() -- adding 'Time' to attribute map
+| |wormhole|1|2.25|2010/02/03,17:44:47| TrickHLAObject::create_attribute_set() -- adding 'Value' to attribute map
+| |wormhole|1|2.25|2010/02/03,17:44:47| TrickHLAObject::create_attribute_set() -- adding 'dvdt' to attribute map
+| |wormhole|1|2.25|2010/02/03,17:44:47| TrickHLAManager::send_requested_data()
+| |wormhole|1|2.25|2010/02/03,17:44:47| TrickHLAFederate::time_advance_request()   
+requesting time advance grant (TAG) to 2.500000
+| |wormhole|-1|2.30|2010/02/03,17:44:47| TrickHLAAttribute::extract_data() -- decoding 'Time' from attribute map
+| |wormhole|-1|2.30|2010/02/03,17:44:47| TrickHLAAttribute::extract_data() -- decoding 'Value' from attribute map
+| |wormhole|-1|2.30|2010/02/03,17:44:47| TrickHLAAttribute::extract_data() -- decoding 'dvdt' from attribute map
+| |wormhole|1|2.50|2010/02/03,17:44:47| TrickHLAFederate::wait_for_time_advance_grant() waiting for time advance grant (TAG)
+| |wormhole|1|2.50|2010/02/03,17:44:47| TrickHLAFederate::wait_for_time_advance_grant() Time granted to 2.5 seconds.
+| |wormhole|1|2.50|2010/02/03,17:44:47| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|2.50|2010/02/03,17:44:47| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|2.50|2010/02/03,17:44:47| TrickHLAObject::create_attribute_set() -- adding 'Time' to attribute map
+| |wormhole|1|2.50|2010/02/03,17:44:47| TrickHLAObject::create_attribute_set() -- adding 'Value' to attribute map
+| |wormhole|1|2.50|2010/02/03,17:44:47| TrickHLAObject::create_attribute_set() -- adding 'dvdt' to attribute map
+| |wormhole|1|2.50|2010/02/03,17:44:47| TrickHLAManager::send_requested_data()
+| |wormhole|1|2.50|2010/02/03,17:44:47| TrickHLAFederate::time_advance_request()   
+requesting time advance grant (TAG) to 2.750000
+| |wormhole|-1|2.55|2010/02/03,17:44:47| TrickHLAAttribute::extract_data() -- decoding 'Time' from attribute map
+| |wormhole|-1|2.55|2010/02/03,17:44:47| TrickHLAAttribute::extract_data() -- decoding 'Value' from attribute map
+| |wormhole|-1|2.55|2010/02/03,17:44:47| TrickHLAAttribute::extract_data() -- decoding 'dvdt' from attribute map
+| |wormhole|1|2.75|2010/02/03,17:44:47| TrickHLAFederate::wait_for_time_advance_grant() waiting for time advance grant (TAG)
+| |wormhole|1|2.75|2010/02/03,17:44:47| TrickHLAFederate::wait_for_time_advance_grant() Time granted to 2.75 seconds.
+| |wormhole|1|2.75|2010/02/03,17:44:47| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|2.75|2010/02/03,17:44:47| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|2.75|2010/02/03,17:44:47| TrickHLAObject::create_attribute_set() -- adding 'Time' to attribute map
+| |wormhole|1|2.75|2010/02/03,17:44:47| TrickHLAObject::create_attribute_set() -- adding 'Value' to attribute map
+| |wormhole|1|2.75|2010/02/03,17:44:47| TrickHLAObject::create_attribute_set() -- adding 'dvdt' to attribute map
+| |wormhole|1|2.75|2010/02/03,17:44:47| TrickHLAManager::send_requested_data()
+| |wormhole|1|2.75|2010/02/03,17:44:47| TrickHLAFederate::time_advance_request()   
+requesting time advance grant (TAG) to 3.000000
+| |wormhole|-1|2.80|2010/02/03,17:44:47| TrickHLAAttribute::extract_data() -- decoding 'Time' from attribute map
+| |wormhole|-1|2.80|2010/02/03,17:44:47| TrickHLAAttribute::extract_data() -- decoding 'Value' from attribute map
+| |wormhole|-1|2.80|2010/02/03,17:44:47| TrickHLAAttribute::extract_data() -- decoding 'dvdt' from attribute map
+| |wormhole|1|3.00|2010/02/03,17:44:47| TrickHLAFederate::wait_for_time_advance_grant() waiting for time advance grant (TAG)
+| |wormhole|1|3.00|2010/02/03,17:44:47| TrickHLAFederate::wait_for_time_advance_grant() Time granted to 3 seconds.
+| |wormhole|1|3.00|2010/02/03,17:44:47| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|3.00|2010/02/03,17:44:47| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|3.00|2010/02/03,17:44:47| TrickHLAObject::create_attribute_set() -- adding 'Time' to attribute map
+| |wormhole|1|3.00|2010/02/03,17:44:47| TrickHLAObject::create_attribute_set() -- adding 'Value' to attribute map
+| |wormhole|1|3.00|2010/02/03,17:44:47| TrickHLAObject::create_attribute_set() -- adding 'dvdt' to attribute map
+| |wormhole|1|3.00|2010/02/03,17:44:47| TrickHLAManager::send_requested_data()
+...
+| |wormhole|1|13.75|2010/02/03,17:44:58| TrickHLAFederate::time_advance_request()   
+requesting time advance grant (TAG) to 14.000000
+| |wormhole|1|14.00|2010/02/03,17:44:58| TrickHLAFederate::wait_for_time_advance_grant() waiting for time advance grant (TAG)
+| |wormhole|1|14.00|2010/02/03,17:44:58| TrickHLAFederate::wait_for_time_advance_grant() Time granted to 14 seconds.
+| |wormhole|1|14.00|2010/02/03,17:44:58| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|14.00|2010/02/03,17:44:58| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|14.00|2010/02/03,17:44:58| TrickHLAObject::create_attribute_set() -- adding 'Time' to attribute map
+| |wormhole|1|14.00|2010/02/03,17:44:58| TrickHLAObject::create_attribute_set() -- adding 'Value' to attribute map
+| |wormhole|1|14.00|2010/02/03,17:44:58| TrickHLAObject::create_attribute_set() -- adding 'dvdt' to attribute map
+| |wormhole|1|14.00|2010/02/03,17:44:58| TrickHLAManager::send_requested_data()
+| |wormhole|1|14.00|2010/02/03,17:44:58| TrickHLAFederate::time_advance_request()   
+requesting time advance grant (TAG) to 14.250000
+| |wormhole|-1|14.05|2010/02/03,17:44:58| TrickHLAAttribute::extract_data() -- decoding 'Time' from attribute map
+| |wormhole|-1|14.05|2010/02/03,17:44:58| TrickHLAAttribute::extract_data() -- decoding 'Value' from attribute map
+| |wormhole|-1|14.05|2010/02/03,17:44:58| TrickHLAAttribute::extract_data() -- decoding 'dvdt' from attribute map
+| |wormhole|1|14.25|2010/02/03,17:44:59| TrickHLAFederate::wait_for_time_advance_grant() waiting for time advance grant (TAG)
+| |wormhole|1|14.25|2010/02/03,17:44:59| TrickHLAFederate::wait_for_time_advance_grant() Time granted to 14.25 seconds.
+| |wormhole|1|14.25|2010/02/03,17:44:59| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|14.25|2010/02/03,17:44:59| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|14.25|2010/02/03,17:44:59| TrickHLAObject::create_attribute_set() -- adding 'Time' to attribute map
+| |wormhole|1|14.25|2010/02/03,17:44:59| TrickHLAObject::create_attribute_set() -- adding 'Value' to attribute map
+| |wormhole|1|14.25|2010/02/03,17:44:59| TrickHLAObject::create_attribute_set() -- adding 'dvdt' to attribute map
+| |wormhole|1|14.25|2010/02/03,17:44:59| TrickHLAManager::send_requested_data()
+| |wormhole|1|14.25|2010/02/03,17:44:59| TrickHLAFederate::time_advance_request()   
+requesting time advance grant (TAG) to 14.500000
+| |wormhole|-1|14.30|2010/02/03,17:44:59| TrickHLAAttribute::extract_data() -- decoding 'Time' from attribute map
+| |wormhole|-1|14.30|2010/02/03,17:44:59| TrickHLAAttribute::extract_data() -- decoding 'Value' from attribute map
+| |wormhole|-1|14.30|2010/02/03,17:44:59| TrickHLAAttribute::extract_data() -- decoding 'dvdt' from attribute map
+| |wormhole|1|14.50|2010/02/03,17:44:59| TrickHLAFederate::wait_for_time_advance_grant() waiting for time advance grant (TAG)
+| |wormhole|1|14.50|2010/02/03,17:44:59| TrickHLAFederate::wait_for_time_advance_grant() Time granted to 14.5 seconds.
+| |wormhole|1|14.50|2010/02/03,17:44:59| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|14.50|2010/02/03,17:44:59| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|14.50|2010/02/03,17:44:59| TrickHLAObject::create_attribute_set() -- adding 'Time' to attribute map
+| |wormhole|1|14.50|2010/02/03,17:44:59| TrickHLAObject::create_attribute_set() -- adding 'Value' to attribute map
+| |wormhole|1|14.50|2010/02/03,17:44:59| TrickHLAObject::create_attribute_set() -- adding 'dvdt' to attribute map
+| |wormhole|1|14.50|2010/02/03,17:44:59| TrickHLAManager::send_requested_data()
+| |wormhole|1|14.50|2010/02/03,17:44:59| TrickHLAFederate::time_advance_request()   
+requesting time advance grant (TAG) to 14.750000
+| |wormhole|-1|14.55|2010/02/03,17:44:59| TrickHLAAttribute::extract_data() -- decoding 'Time' from attribute map
+| |wormhole|-1|14.55|2010/02/03,17:44:59| TrickHLAAttribute::extract_data() -- decoding 'Value' from attribute map
+| |wormhole|-1|14.55|2010/02/03,17:44:59| TrickHLAAttribute::extract_data() -- decoding 'dvdt' from attribute map
+| |wormhole|1|14.75|2010/02/03,17:44:59| TrickHLAFederate::wait_for_time_advance_grant() waiting for time advance grant (TAG)
+| |wormhole|1|14.75|2010/02/03,17:44:59| TrickHLAFederate::wait_for_time_advance_grant() Time granted to 14.75 seconds.
+| |wormhole|1|14.75|2010/02/03,17:44:59| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|14.75|2010/02/03,17:44:59| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|14.75|2010/02/03,17:44:59| TrickHLAObject::create_attribute_set() -- adding 'Time' to attribute map
+| |wormhole|1|14.75|2010/02/03,17:44:59| TrickHLAObject::create_attribute_set() -- adding 'Value' to attribute map
+| |wormhole|1|14.75|2010/02/03,17:44:59| TrickHLAObject::create_attribute_set() -- adding 'dvdt' to attribute map
+| |wormhole|1|14.75|2010/02/03,17:44:59| TrickHLAManager::send_requested_data()
+| |wormhole|1|14.75|2010/02/03,17:44:59| TrickHLAFederate::time_advance_request()   
+requesting time advance grant (TAG) to 15.000000
+| |wormhole|-1|14.80|2010/02/03,17:44:59| TrickHLAAttribute::extract_data() -- decoding 'Time' from attribute map
+| |wormhole|-1|14.80|2010/02/03,17:44:59| TrickHLAAttribute::extract_data() -- decoding 'Value' from attribute map
+| |wormhole|-1|14.80|2010/02/03,17:44:59| TrickHLAAttribute::extract_data() -- decoding 'dvdt' from attribute map
+| |wormhole|-1|14.80|2010/02/03,17:44:59| TrickHLAFedAmb::removeObjectInstance() Instance ID:104
+| |wormhole|-1|14.80|2010/02/03,17:44:59| TrickHLAManager::mark_object_as_deleted_from_federation()
+Object 'P-side-Federate.Test' Instance-ID:104
+| |wormhole|-1|14.80|2010/02/03,17:44:59| TrickHLAObject::mark_all_attributes_as_nonlocal()
+  Object:'P-side-Federate.Test' FOM-Name:'Test' Instance-ID:104
+   1/8 FOM-Attribute:'Time' Trick-Name:'P.sim_data.time' locally_owned: No
+   2/8 FOM-Attribute:'Value' Trick-Name:'P.sim_data.value' locally_owned: No
+   3/8 FOM-Attribute:'dvdt' Trick-Name:'P.sim_data.dvdt' locally_owned: No
+   4/8 FOM-Attribute:'Phase' Trick-Name:'P.packing.phase_deg' locally_owned: No
+   5/8 FOM-Attribute:'Frequency' Trick-Name:'P.sim_data.freq' locally_owned: No
+   6/8 FOM-Attribute:'Amplitude' Trick-Name:'P.sim_data.amp' locally_owned: No
+   7/8 FOM-Attribute:'Tolerance' Trick-Name:'P.sim_data.tol' locally_owned: No
+   8/8 FOM-Attribute:'Name' Trick-Name:'P.sim_data.name' locally_owned: No
+| |wormhole|-1|14.80|2010/02/03,17:44:59| TrickHLAFedAmb::removeObjectInstance() Instance ID:103
+| |wormhole|-1|14.80|2010/02/03,17:44:59| TrickHLAManager::mark_object_as_deleted_from_federation() 
+Instance-ID:103 is not for a data object.
+| |wormhole|1|15.00|2010/02/03,17:44:59| TrickHLAFederate::wait_for_time_advance_grant() waiting for time advance grant (TAG)
+| |wormhole|1|15.00|2010/02/03,17:44:59| TrickHLAFederate::wait_for_time_advance_grant() Time granted to 15 seconds.
+| |wormhole|1|15.00|2010/02/03,17:44:59| TrickHLAObject::process_deleted_object() 
+Object 'P-side-Federate.Test' Instance-ID:104.
+| |wormhole|1|15.00|2010/02/03,17:44:59| SineObjectDeleted::deleted() 
+Object 'P-side-Federate.Test' deleted from the federation.
+| |wormhole|1|15.00|2010/02/03,17:44:59| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|15.00|2010/02/03,17:44:59| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|15.00|2010/02/03,17:44:59| TrickHLAObject::create_attribute_set() -- adding 'Time' to attribute map
+| |wormhole|1|15.00|2010/02/03,17:44:59| TrickHLAObject::create_attribute_set() -- adding 'Value' to attribute map
+| |wormhole|1|15.00|2010/02/03,17:44:59| TrickHLAObject::create_attribute_set() -- adding 'dvdt' to attribute map
+| |wormhole|1|15.00|2010/02/03,17:44:59| TrickHLAManager::send_requested_data()
+| |wormhole|1|15.00|2010/02/03,17:44:59| TrickHLAFederate::shutdown()
+| |wormhole|1|15.00|2010/02/03,17:44:59| TrickHLAFederate::shutdown_time_constrained() Disabling HLA Time Constrained.
+| |wormhole|1|15.00|2010/02/03,17:44:59| TrickHLAFederate::shutdown_time_regulating() Disabling HLA Time Regulation.
+| |wormhole|1|15.00|2010/02/03,17:44:59| 
+ TRIVIAL: Trick Federation "SineWaveSim": RESIGNING FROM FEDERATION
+| |wormhole|1|15.00|2010/02/03,17:44:59| 
+ ADVISORY: Trick Federation "SineWaveSim": RESIGNED FROM FEDERATION
+| |wormhole|1|15.00|2010/02/03,17:44:59| 
+ TRIVIAL: TrickHLAFederate::destroy() Federation 'SineWaveSim': ATTEMPTING TO DESTROY FEDERATION
+Federation destroyed
+| |wormhole|1|15.00|2010/02/03,17:44:59| 
+ ADVISORY: TrickHLAFederate::destroy() Federation 'SineWaveSim': DESTROYED FEDERATION
+| |wormhole|1|15.00|2010/02/03,17:44:59| 
+SIMULATION TERMINATED IN
+  PROCESS: 1
+  JOB/ROUTINE: 23/sim_services/mains/master.c
+DIAGNOSTIC:
+Simulation reached input termination time.
+
+LAST JOB CALLED: THLA.THLA.federate.check_freeze_time()
+              TOTAL OVERRUNS:            0
+PERCENTAGE REALTIME OVERRUNS:        0.000%
+
+
+       SIMULATION START TIME:        0.000
+        SIMULATION STOP TIME:       15.000
+     SIMULATION ELAPSED TIME:       15.000
+         ACTUAL ELAPSED TIME:       15.000
+        ACTUAL CPU TIME USED:        5.632
+    SIMULATION / ACTUAL TIME:        1.000
+       SIMULATION / CPU TIME:        2.663
+  ACTUAL INITIALIZATION TIME:        0.000
+     INITIALIZATION CPU TIME:        0.486
+*** DYNAMIC MEMORY USAGE ***
+     CURRENT ALLOCATION SIZE:  1437886
+       NUM OF CURRENT ALLOCS:      972
+         MAX ALLOCATION SIZE:  1437886
+           MAX NUM OF ALLOCS:      972
+       TOTAL ALLOCATION SIZE:  1765261
+         TOTAL NUM OF ALLOCS:     7106
+\end{lstlisting}

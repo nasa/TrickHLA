@@ -1,0 +1,77 @@
+/*****************************************************************************
+ * General TrickHLA Space Reference Federation Object Model (SpaceFOM)
+ * Simulation Definition Object
+ *---------------------------------------------------------------------------*
+ * This is a Simulation Definition (S_define) module that defines a general
+ * HLA interface using TrickHLA for Trick based simulations.
+ ****************************************************************************/
+/*****************************************************************************
+ *       Author: Edwin Z. Crues
+ *         Date: April 2020
+ *       E-Mail: Edwin.Z.Crues@nasa.gov
+ *        Phone: 281-483-2902
+ * Organization: Mail Code ER7
+ *               Simulation & Graphics Branch
+ *               Software, Robotics & Simulation Division
+ *               2101 NASA Parkway
+ *               Houston, Texas 77058
+ *---------------------------------------------------------------------------*
+ * Modified By: Edwin Z. Crues
+ *        Date: April 2020
+ * Description: Extended THLABase.sm to support SpaceFOM.
+ ****************************************************************************/
+
+// TrickHLA SimObject base class.
+#include "THLABase.sm"
+
+// SpaceFOM Execution Control class definition.
+##include "SpaceFOM/ExecutionControl.hh"
+
+// SpaceFOM Execution Configuration (ExCO) class definition.
+##include "SpaceFOM/ExecutionConfiguration.hh"
+
+// SpaceFOM Mode Transition Request Interaction Handler.
+##include "SpaceFOM/MTRInteractionHandler.hh"
+
+// Used for SpaceFOM Root Reference Frame discovery.
+##include "SpaceFOM/RefFrameBase.hh"
+
+//=========================================================================
+// SIM_OBJECT: SpaceFOM - Extend the TrickHLA Base SimObject.
+//=========================================================================
+
+class SpaceFOMSimObject : public THLABaseSimObject {
+
+ public:
+   
+   // The Space Reference FOM (SpaceFOM) Execution Configuration Object (ExCO).
+   SpaceFOM::ExecutionConfiguration ExCO;
+   
+   // The Space Reference FOM (SpaceFOM) Execution Control object.
+   SpaceFOM::ExecutionControl execution_control;
+
+   SpaceFOMSimObject( double data_cycle,
+                  double interaction_cycle,
+                  unsigned short _1ST  = 1,
+                  unsigned short _INIT = 60,
+                  unsigned short _LAST = 65534 )
+     : THLABaseSimObject( data_cycle, interaction_cycle, _1ST, _INIT, _LAST ),
+       ExCO( "THLA.ExCO" ),
+       execution_control( ExCO )
+   {
+      //-----------------------
+      //-- DEFAULT DATA JOBS --
+      //-----------------------
+      ("default_data") federate.setup( federate_amb,
+                                       manager,
+                                       execution_control );
+   }
+
+ private:
+   // Do not allow the implicit copy constructor or assignment operator.
+   SpaceFOMSimObject(const SpaceFOMSimObject & rhs);
+   SpaceFOMSimObject & operator=(const SpaceFOMSimObject & rhs);
+
+   // Do not allow the default constructor.
+   SpaceFOMSimObject();
+};

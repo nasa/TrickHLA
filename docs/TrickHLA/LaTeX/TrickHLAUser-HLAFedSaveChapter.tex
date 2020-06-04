@@ -1,0 +1,134 @@
+\chapter{Federation Save}
+\label{sec:hla_trick_fed_save}
+
+A federation save must occur in {\tt freeze} mode, initiated via a freeze interaction (see
+{\em \href{file:IMSim_Multiphase_Init_Design_Document.pdf}
+          {IMSim Multiphase Initialization Design with Late Joiners, Rejoiners and Federation Save \& Restore}}
+\cite{trickhlaenv:IMSim-multiphase-init-design}
+chapter 14, for details.)
+Once a federate receives this interaction, or reaches the
+interaction frame if this is the federate that sent the freeze interaction,
+it will go into {\tt freeze} mode at the bottom of the next execution frame.
+
+If this is the federate that sent the interaction, {\tt TrickHLA} registers a {\tt FEDSAVE\_v2}
+synchronization point which all federates must acknowledge, and the federation must
+synchronize on, before proceeding with the federation save process. This is to avoid a
+race condition in which the federate that sent the interaction would request the
+federation save and any federate not in the same state (i.e. still executing the
+frame and not in {\tt freeze} mode) will emit an exception when going into the time
+advance state (via calling {\tt wait\_for\_time\_advance\_grant()} routine) because
+the {\tt RTI} is already in federation save mode. This would be a fatal error since
+the non-frozen federate's execution would timeout waiting for a time
+advance grant.
+
+Each federate, once in {\tt freeze} mode, shall achieve the {\tt FEDSAVE\_v2}
+synchronization point with the {\tt RTI} and wait until signaled by the {\tt RTI} to
+begin its save.
+
+% ------------------------------------
+\section{Interactive Save }
+\label{sec:interactive_save}
+
+Perhaps the most straightforward way to perform a federation save is via the Trick Simulation Control Panel.
+Simply click the {\tt Freeze} button on a federate's simulation control panel, and a freeze interaction is sent
+so that all federates will freeze at the same time (usually one or two lookahead\_time frames after the freeze
+click). Then click the {\tt Dump Chkpnt} button to trigger the federation save. A window will pop up where you 
+can enter the user file name for the checkpoint file to be dumped. Each federate will dump a file of the form:
+
+\begin{verbatim}
+<federation_name>_<user_file_name>
+\end{verbatim}
+
+in the directory specified by {\tt THLA.federate.HLA\_save\_directory}, which defaults to the {\tt RUN}
+directory. Note that {\tt TrickHLA} automatically prepends the federation name to the given user file name.
+There is also another file created named {\tt <federation\_name>\_<user\_file\_name>.running\_feds} which
+is for {\tt TrickHLA}'s internal use. All federates will dump these two files in their respective directories.
+
+The {\tt RTI} itself will also save its own relevant data in a separate directory, which should be transparent to the user, 
+but is configurable (see the {\tt RTI} documentation for more information).
+
+Simply click the {\tt Start} button on the simulation control panel when you are ready to continue execution.
+
+IMPORTANT: Use the same federate's Trick simulation control panel when clicking {\tt Freeze} and {\tt Start}.
+Each federate may have its own control panel, but you must use the same control panel that you clicked {\tt Freeze}
+on to then click {\tt Start} on. If you use a different control panel to click the {\tt Start} button, the simulation will most
+likely not be able to continue.
+
+% ------------------------------------
+\section{Programmatic Save }
+\label{sec:prog_save}
+
+The {\tt TrickHLAManager::start\_federation\_save()}
+routine can be used to initiate the federation
+save from any Trick federate.  There are three flavors of this routine.
+The first version of the routine will send a freeze interaction to pause the
+simulation at the bottom of the next frame, which is the earliest time a
+coordinated federation save can occur:
+
+\begin{verbatim}
+void start_federation_save( const char * file_name ) ;
+\end{verbatim}
+
+The second version of the routine will send a freeze interaction to pause the
+simulation at the bottom of the frame at the user-supplied simulation time,
+which could be a time later than the next frame:
+
+\begin{verbatim}
+void start_federation_save_at_sim_time( double freeze_sim_time,
+                                        const char * file_name ) ;
+\end{verbatim}
+
+The third version of the routine will send a freeze interaction to pause the
+simulation at the bottom of the frame at the user-supplied scenario time,
+which could be a time later than the next frame:
+
+\begin{verbatim}
+void start_federation_save_at_scenario_time( double freeze_scenario_time,
+                                             const char * file_name ) ;
+\end{verbatim}
+
+The following are examples of triggering the federation
+save at simulation time 8.0 via the Trick input file. Note that the freeze (and therefore
+the save) will occur a couple of lookahead\_time frames after 8.0:
+
+\begin{verbatim}
+read=8.0
+THLA.checkpoint_label = "checkpoint.8.000";
+CALL THLA.THLA.manager.start_federation_save( THLA.checkpoint_label );
+
+   -- or --
+
+THLA.checkpoint_label = "checkpoint.8.000";
+THLA.checkpoint_time = 8.0;
+CALL THLA.THLA.manager.start_federation_save_at_sim_time( 
+                                  THLA.checkpoint_time, THLA.checkpoint_label );
+
+   -- or --
+
+BEGIN_EVENT checkpoint_1 {
+  CONDITION: sys.exec.out.time == 8.0 ;
+ACTION {
+   THLA.checkpoint_label = "checkpoint.8.000";
+   CALL THLA.THLA.manager.start_federation_save( THLA.checkpoint_label );
+   }
+};
+\end{verbatim}
+
+The location and name of the files created are the same as described in the above section~\ref{sec:interactive_save}
+ {\tt Interactive Save}.
+
+NOTE: You do not have to specify the federation name prepended to the checkpoint file name.
+{\tt TrickHLA} will automatically prepend the federation name to the file name you supply if need be.
+So in the above example, if the federation 
+name is {\tt MyFederation}, then the file that will be saved is {\tt MyFederation\_checkpoint.8.000} in the {\tt RUN} directory.
+
+By default, after the save has taken place each federate simulation will remain in {\tt freeze} mode until commanded
+by the user to go to run (e.g. via the Trick simulation control panel). If this is not the desired behavior, then set the federate {\tt unfreeze\_after\_save} flag in 
+each federate's Trick input file:
+
+\begin{verbatim}
+THLA.federate.unfreeze_after_save = 1 ;
+\end{verbatim}
+
+Setting this flag for all federates will cause the federation to resume execution immediately after the save has completed.
+

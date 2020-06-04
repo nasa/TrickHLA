@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<objectModel xsi:schemaLocation="http://standards.ieee.org/IEEE1516-2010 http://standards.ieee.org/downloads/1516/1516.2-2010/IEEE1516-DIF-2010.xsd" xmlns="http://standards.ieee.org/IEEE1516-2010" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelIdentification>
+        <name>SISO-STD-018-2020 - SISO Space Reference FOM Management</name>
+        <type>FOM</type>
+        <version>1.0</version>
+        <modificationDate>2019-10-25</modificationDate>
+        <securityClassification>unclassified</securityClassification>
+        <purpose>Define Space FOM compliant federation execution configuration.</purpose>
+        <applicationDomain></applicationDomain>
+        <description>Contains the base set of parameters parameters that define a Space Reference FOM compliant federation execution.</description>
+        <useLimitation></useLimitation>
+        <keyword>
+            <keywordValue>Space</keywordValue>
+        </keyword>
+        <keyword>
+            <keywordValue>FOM</keywordValue>
+        </keyword>
+        <keyword>
+            <keywordValue>Configuration</keywordValue>
+        </keyword>
+        <keyword>
+            <keywordValue>Execution</keywordValue>
+        </keyword>
+        <keyword>
+            <keywordValue>Federation</keywordValue>
+        </keyword>
+        <poc>
+            <pocType>Primary author</pocType>
+            <pocName>Edwin Z. Crues</pocName>
+            <pocOrg>NASA Johnson Space Center, Houston, TX</pocOrg>
+            <pocTelephone>+1-281-483-2902</pocTelephone>
+            <pocEmail>edwin.z.crues@nasa.gov</pocEmail>
+        </poc>
+        <poc>
+            <pocType>Contributor</pocType>
+            <pocName>Daniel E. Dexter</pocName>
+            <pocOrg>NASA Johnson Space Center, Houston, TX</pocOrg>
+            <pocTelephone>+1-281-483-1142</pocTelephone>
+            <pocEmail>daniel.e.dexter@nasa.gov</pocEmail>
+        </poc>
+        <poc>
+            <pocType>Contributor</pocType>
+            <pocName>Björn Möller</pocName>
+            <pocOrg>Pitch Technologies, Sweden</pocOrg>
+            <pocTelephone></pocTelephone>
+            <pocEmail>bjorn.moller@pitch.se</pocEmail>
+        </poc>
+        <poc>
+            <pocType>Contributor</pocType>
+            <pocName>Alfredo Garro</pocName>
+            <pocOrg>DIMES Department, University of Calabria, Italy</pocOrg>
+            <pocTelephone>+39-0984-49-4795</pocTelephone>
+            <pocEmail>alfredo.garro@unical.it</pocEmail>
+        </poc>
+        <other>Copyright © 2020 by the Simulation Interoperability Standards Organization, Inc.
+P.O. Box 781238
+Orlando, FL 32878-1238, USA
+All rights reserved.
+
+Schema and API: SISO hereby grants a general, royalty-free license to copy, distribute, display, and make derivative works from this material, for all purposes, provided that any use of the material contains the following attribution: “Reprinted with permission from SISO Inc.” Should a reader require additional information, contact the SISO Inc. Board of Directors.
+
+Documentation: SISO hereby grants a general, royalty-free license to copy, distribute, display, and make derivative works from this material, for noncommercial purposes, provided that any use of the material contains the following attribution: “Reprinted with permission from SISO Inc.” The material may not be used for a commercial purpose without express written permission from the SISO Inc. Board of Directors.
+
+SISO Inc. Board of Directors
+P.O. Box 781238
+Orlando, FL 32878-1238, USA
+</other>
+    </modelIdentification>
+    <objects>
+        <objectClass>
+            <name>HLAobjectRoot</name>
+            <objectClass>
+                <name>ExecutionConfiguration</name>
+                <sharing>PublishSubscribe</sharing>
+                <semantics>This is the federation Execution Configuration Object (ExCO).  This object defines the base set of parameters necessary to coordinate federation and federate execution time lines and execution mode transitions in a SISO Space Reference FOM compliant federation execution.</semantics>
+                <attribute>
+                    <name>root_frame_name</name>
+                    <dataType>HLAunicodeString</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition>At initialization</updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>Specifies the name of the root coordinate frame in the federation execution's reference frame tree.  This frame shall remain fixed throughout the federation execution.</semantics>
+                </attribute>
+                <attribute>
+                    <name>scenario_time_epoch</name>
+                    <dataType>Time</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition>At initialization</updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>Federation execution scenario time epoch.  This is the beginning epoch expressed in Terrestrial Time (TT), using as starting epoch that of the Truncated Julian Date (TJD)- 1968-05-24 00:00:00 UTC, that corresponds to HLA logical time 0.  All joining federates shall use this time to coordinate the offset between their local simulation scenario times, their local simulation execution times and the HLA logical time.</semantics>
+                </attribute>
+                <attribute>
+                    <name>current_execution_mode</name>
+                    <dataType>ExecutionMode</dataType>
+                    <updateType>Conditional</updateType>
+                    <updateCondition>On change</updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>Receive</order>
+                    <semantics>Defines the current running state of the federation execution in terms of a finite set of states expressed in the ExecutionMode enumeration.</semantics>
+                </attribute>
+                <attribute>
+                    <name>next_execution_mode</name>
+                    <dataType>ExecutionMode</dataType>
+                    <updateType>Conditional</updateType>
+                    <updateCondition>On change</updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>Receive</order>
+                    <semantics>Defines the next running state of the federation execution in terms of a finite set of states expressed in the ExecutionMode enumeration.  This is used in conjunction with the cte_mode_time, sim_mode_time and associated sync point mechanisms to coordinate federation execution mode transitions.</semantics>
+                </attribute>
+                <attribute>
+                    <name>next_mode_scenario_time</name>
+                    <dataType>Time</dataType>
+                    <updateType>Conditional</updateType>
+                    <updateCondition>On change</updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>Receive</order>
+                    <semantics>The time for the next federation execution mode change expressed as a federation scenario time reference.  Note: this value is only meaningful for going into freeze; exiting freeze is coordinated through a sync point mechanism.</semantics>
+                </attribute>
+                <attribute>
+                    <name>next_mode_cte_time</name>
+                    <dataType>Time</dataType>
+                    <updateType>Conditional</updateType>
+                    <updateCondition>On change</updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>Receive</order>
+                    <semantics>The time for the next federation execution mode change expressed as a Central Timing Equipment (CTE) time reference.  The standard for this reference shall be defined in the federation agreement when CTE is used.</semantics>
+                </attribute>
+                <attribute>
+                    <name>least_common_time_step</name>
+                    <dataType>HLAinteger64Time</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition>At initialization</updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>A 64 bit integer time that represents microseconds for the least common value of all the time step values in the federation execution (LCTS).  This value is set by the Master Federate and does not change during the federation execution. This is used in the computation to find the next HLA Logical Time Boundary (HLTB) available to all federates in the federation execution.  The basic equation is HLTB = ( floor(GALT/LCTS) + 1 ) * LCTS, where GALT is the greatest available logical time.  This is used to synchronize the federates in a federation execution to be on a common logical time boundary.</semantics>
+                </attribute>
+            </objectClass>
+        </objectClass>
+    </objects>
+    <interactions>
+        <interactionClass>
+            <name>HLAinteractionRoot</name>
+            <interactionClass>
+                <name>ModeTransitionRequest</name>
+                <sharing>PublishSubscribe</sharing>
+                <transportation>HLAreliable</transportation>
+                <order>Receive</order>
+                <semantics>The ModeTransitionRequest (MTR) interaction is used by participating federates, that are not the Master Federate, to request a federation execution mode transition.  An MTR can be sent at anytime during initialization or execution but only certain MTR requests are valid at certain times.</semantics>
+                <parameter>
+                    <name>execution_mode</name>
+                    <dataType>MTRMode</dataType>
+                    <semantics>The run mode requested.  There are only 3 valid Mode Transition Request (MTR) mode values: MTR_GOTO_RUN, MTR_GOTO_FREEZE, MTR_GOTO_SHUTDOWN.  Of these three valid mode requests, only 7 combinations of current execution mode and requested mode are valid: 
+1. EXEC_MODE_UNINITIALIZED -&gt; EXEC_MODE_SHUTDOWN 
+2. EXEC_MODE_INITIALIZED -&gt; EXEC_MODE_FREEZE 
+3. EXEC_MODE_INITIALIZED -&gt; EXEC_MODE_SHUTDOWN 
+4. EXEC_MODE_RUNNING -&gt; EXEC_MODE_FREEZE 
+5. EXEC_MODE_RUNNING -&gt; EXEC_MODE_SHUTDOWN 
+6. EXEC_MODE_FREEZE -&gt; EXEC_MODE_RUNNING 
+7. EXEC_MODE_FREEZE -&gt; EXEC_MODE_SHUTDOWN</semantics>
+                </parameter>
+            </interactionClass>
+        </interactionClass>
+    </interactions>
+    <synchronizations>
+        <synchronizationPoint>
+            <label>initialization_started</label>
+            <dataType>NA</dataType>
+            <capability>RegisterAchieve</capability>
+            <semantics>Used to indicate that the initialization phase of a Space FOM compliant federation execution has been started.  This synchronization point (sync-point) is not created until all federates required by the Master Federate have joined the federation execution.  Once this occurs, the Master Federate announces this sync-point along with the "startup" sync-point for any federates that have already joined the federation execution.  All federates in the sync-point group must achieve this sync-point prior to proceeding with federate and federation execution initialization.</semantics>
+        </synchronizationPoint>
+        <synchronizationPoint>
+            <label>initialization_completed</label>
+            <dataType>NA</dataType>
+            <capability>Register</capability>
+            <semantics>This synchronization point (sync-point) is registered by the federation execution Master Federate after all the early joining federates have achieved the "initialization_started" sync-point.  This signals to any late joining federates that they can now proceed to the current run mode of the federation execution.  This sync-point will never be achieved.</semantics>
+        </synchronizationPoint>
+        <synchronizationPoint>
+            <label>objects_discovered</label>
+            <dataType>NA</dataType>
+            <capability>RegisterAchieve</capability>
+            <semantics>This synchronization point (sync-point) is used to mark the point at which all required objects have been discovered by all the federates taking part in the initialization process. This sync-point is used to insure that all the necessary objects have been discovered prior to proceeding with the root reference frame discovery process and then multi-phase initialization.</semantics>
+        </synchronizationPoint>
+        <synchronizationPoint>
+            <label>mtr_run</label>
+            <dataType>NA</dataType>
+            <capability>RegisterAchieve</capability>
+            <semantics>This is used to synchronize the mode transition to EXEC_MODE_RUNNING. This synchronization point (sync-point) is registered by the federation execution Master Federate upon receipt of a valid MTR interaction after sending out the associated ExCO update.  Upon receiving the ExCO for the mode transition and at the associated transition time, all federates must achieve this sync-point prior to going into mode EXEC_MODE_RUNNING.</semantics>
+        </synchronizationPoint>
+        <synchronizationPoint>
+            <label>mtr_freeze</label>
+            <dataType>NA</dataType>
+            <capability>RegisterAchieve</capability>
+            <semantics>This is used to synchronize the mode transition to EXEC_MODE_FREEZE. This synchronization point (sync-point) is registered by the federation execution Master Federate upon receipt of a valid MTR interaction after sending out the associated ExCO update.  Upon receiving the ExCO for the mode transition and at the associated transition time, all federates must achieve this sync-point prior to going into mode EXEC_MODE_FREEZE.</semantics>
+        </synchronizationPoint>
+        <synchronizationPoint>
+            <label>mtr_shutdown</label>
+            <dataType>NA</dataType>
+            <capability>Register</capability>
+            <semantics>This synchronization point (sync-point) is used as a marker for the mode transition to EXEC_MODE_SHUTDOWN. This sync-point is registered by the federation execution’s Master Federate to “mark” the federation execution as shutting down. This marker sync-point is used in addition to the ExCO. This sync-point is never achieved and will remain for the life of the federation execution to inform any late joining federates of shutdown and that the federates should proceed directly to their shutdown processes.</semantics>
+        </synchronizationPoint>
+        <synchronizationPoint>
+            <label>root_frame_discovered</label>
+            <dataType>NA</dataType>
+            <capability>RegisterAchieve</capability>
+            <semantics>This synchronization point (sync-point) is used to mark the point at which the root reference frame for this federation execution has been discovered by the Master Federate and all other federates participating in the initialization process. This is necessary prior to moving into the multi-phase initialization process.</semantics>
+        </synchronizationPoint>
+    </synchronizations>
+    <dataTypes>
+        <enumeratedDataTypes>
+            <enumeratedData>
+                <name>ExecutionMode</name>
+                <representation>HLAinteger16LE</representation>
+                <semantics>Defines the mode for the running federation execution.  This enumeration type is used for coordinating transitions between federation execution run states.</semantics>
+                <enumerator>
+                    <name>EXEC_MODE_UNINITIALIZED</name>
+                    <value>0</value>
+                </enumerator>
+                <enumerator>
+                    <name>EXEC_MODE_INITIALIZING</name>
+                    <value>1</value>
+                </enumerator>
+                <enumerator>
+                    <name>EXEC_MODE_RUNNING</name>
+                    <value>2</value>
+                </enumerator>
+                <enumerator>
+                    <name>EXEC_MODE_FREEZE</name>
+                    <value>3</value>
+                </enumerator>
+                <enumerator>
+                    <name>EXEC_MODE_SHUTDOWN</name>
+                    <value>4</value>
+                </enumerator>
+            </enumeratedData>
+            <enumeratedData>
+                <name>MTRMode</name>
+                <representation>HLAinteger16LE</representation>
+                <semantics>Mode Transition Request (MTR) transition values.  This enumeration is used to request a specific mode transition.  However, not all mode transition requests are accepted for any given Run Mode.  See mode transition validation table in the Space Reference FOM documentation.</semantics>
+                <enumerator>
+                    <name>MTR_GOTO_RUN</name>
+                    <value>2</value>
+                </enumerator>
+                <enumerator>
+                    <name>MTR_GOTO_FREEZE</name>
+                    <value>3</value>
+                </enumerator>
+                <enumerator>
+                    <name>MTR_GOTO_SHUTDOWN</name>
+                    <value>4</value>
+                </enumerator>
+            </enumeratedData>
+        </enumeratedDataTypes>
+    </dataTypes>
+    <notes/>
+</objectModel>

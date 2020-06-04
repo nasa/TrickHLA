@@ -1,0 +1,93 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% File: TrickHLAUser.tex
+%
+% Purpose: TrickHLA User Guide
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand\documentHistory{
+{\bf Author} & {\bf Date} & {\bf Description} \\ \hline \hline
+Edwin Z. Crues & June 2020 & Initial Version \\ \hline
+}
+
+\newcommand\DocumentChangeHistory{
+{\bf Revised by} & {\bf Date} & {\bf Description} \\ \hline \hline
+
+% This documentation file's change history includes:
+% "REVISED BY name(s)" & "revision DATE" & "revision DESCRIPTION"
+%  ------------------     -------------     --------------------
+
+}
+
+\documentclass[twoside,11pt,titlepage]{report}
+
+%
+% Bring in the AMS math environment
+%
+\usepackage{amsmath}
+
+%
+% Bring in the common page setup
+%
+\usepackage{trickhlaenv}
+
+%
+% Bring in the common math nomenclature
+%
+\usepackage{trickhlamath}
+
+%
+% Bring in the model-specific commands
+%
+\usepackage{TrickHLA}
+
+%
+% Bring in the graphics environment
+%
+\usepackage{graphicx}
+
+%
+% Bring in the hyper ref environment
+%
+\usepackage[colorlinks]{hyperref}
+%  keywords for pdfkeywords are separated by commas
+\hypersetup{
+   pdftitle={\TrickHLA\ User Guide},
+   pdfauthor={Edwin Z. Crues \\ and \\ Daniel E. Dexter},
+   pdfkeywords={\TrickHLA, User Guide},
+   pdfsubject={\TrickHLA\ User Guide}}
+
+%
+% Bring in the lstset environment and set some initial values.
+%
+\usepackage{listings}
+\lstset{
+  language=C,
+  floatplacement=h,
+  aboveskip=\bigskipamount,
+  captionpos=b,
+  frame=single,
+  basicstyle=\ttfamily\scriptsize,
+  commentstyle=\ttfamily\scriptsize\color{blue}\slshape,
+  columns=flexible,
+  numbers=left,stepnumber=1,
+  numberblanklines=false,
+  numberstyle=\ttfamily\scriptsize\color{red}}
+
+%
+% Some settings...
+%
+\newcommand{\sdefine}{{\tt S\_define}\ }
+\newcommand{\simplesine}{{\tt simplesine}\ }
+\renewcommand{\TrickHLA}{{\tt TrickHLA}}
+\setcounter{secnumdepth}{3}
+\hyphenation{ simple-sine }
+
+\begin{document}
+
+\input{TrickHLAUser-frontmatter}
+\input{TrickHLAUser-body}
+\input{TrickHLAUser-backmatter}
+
+\end{document}

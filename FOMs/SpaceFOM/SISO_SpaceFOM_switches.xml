@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<objectModel xsi:schemaLocation="http://standards.ieee.org/IEEE1516-2010 http://standards.ieee.org/downloads/1516/1516.2-2010/IEEE1516-DIF-2010.xsd" xmlns="http://standards.ieee.org/IEEE1516-2010" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelIdentification>
+        <name>SISO-STD-018-2020 - SISO Space Reference FOM Switches</name>
+        <type>FOM</type>
+        <version>1.0</version>
+        <modificationDate>2019-10-25</modificationDate>
+        <securityClassification>Unclassified</securityClassification>
+        <purpose>SISO Space FOM Switches Table</purpose>
+        <applicationDomain></applicationDomain>
+        <description>Required HLA Switches table definitions.</description>
+        <useLimitation></useLimitation>
+        <poc>
+            <pocType>Primary author</pocType>
+            <pocName>Edwin Z. Crues</pocName>
+            <pocOrg>NASA Johnson Space Center</pocOrg>
+            <pocTelephone>1-281-483-2902</pocTelephone>
+            <pocEmail>edwin.z.crues@nasa.gov</pocEmail>
+        </poc>
+        <poc>
+            <pocType>Primary author</pocType>
+            <pocName>Dan Dexter</pocName>
+            <pocOrg>NASA Johnson Space Center</pocOrg>
+            <pocTelephone>1-281-483-1142</pocTelephone>
+            <pocEmail>dan.e.dexter@nasa.gov</pocEmail>
+        </poc>
+        <poc>
+            <pocType>Contributor</pocType>
+            <pocName>Björn Möller</pocName>
+            <pocOrg>Pitch Technologies, Sweden</pocOrg>
+            <pocEmail>bjorn.moller@pitch.se</pocEmail>
+        </poc>
+        <poc>
+            <pocType>Contributor</pocType>
+            <pocName>Alfredo Garro</pocName>
+            <pocOrg>DIMES Department, University of Calabria, Italy</pocOrg>
+            <pocTelephone>+39-0984-49-4795</pocTelephone>
+            <pocEmail>alfredo.garro@unical.it</pocEmail>
+        </poc>
+        <other>Copyright © 2020 by the Simulation Interoperability Standards Organization, Inc.
+P.O. Box 781238
+Orlando, FL 32878-1238, USA
+All rights reserved.
+
+Schema and API: SISO hereby grants a general, royalty-free license to copy, distribute, display, and make derivative works from this material, for all purposes, provided that any use of the material contains the following attribution: “Reprinted with permission from SISO Inc.” Should a reader require additional information, contact the SISO Inc. Board of Directors.
+
+Documentation: SISO hereby grants a general, royalty-free license to copy, distribute, display, and make derivative works from this material, for noncommercial purposes, provided that any use of the material contains the following attribution: “Reprinted with permission from SISO Inc.” The material may not be used for a commercial purpose without express written permission from the SISO Inc. Board of Directors.
+
+SISO Inc. Board of Directors
+P.O. Box 781238
+Orlando, FL 32878-1238, USA
+</other>
+    </modelIdentification>
+    <switches>
+        <autoProvide isEnabled="false"/>
+        <conveyRegionDesignatorSets isEnabled="false"/>
+        <conveyProducingFederate isEnabled="false"/>
+        <attributeScopeAdvisory isEnabled="false"/>
+        <attributeRelevanceAdvisory isEnabled="false"/>
+        <objectClassRelevanceAdvisory isEnabled="false"/>
+        <interactionRelevanceAdvisory isEnabled="false"/>
+        <serviceReporting isEnabled="false"/>
+        <exceptionReporting isEnabled="false"/>
+        <delaySubscriptionEvaluation isEnabled="false"/>
+        <automaticResignAction resignAction="CancelThenDeleteThenDivest"/>
+    </switches>
+</objectModel>

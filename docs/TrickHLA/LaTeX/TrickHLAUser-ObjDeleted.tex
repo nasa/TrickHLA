@@ -1,0 +1,198 @@
+\chapter{Object Deleted Notification}
+\label{sec:hla-objDel}
+
+\TrickHLA\ provides a mechanism to run user specified code when an object is 
+deleted from the federation.  This capability allows for user specified 
+operation to be performed when an object is deleted.
+
+% ---------------------------------------------------------------------------
+\section{What is an {\em ObjectDeleted} class?}
+
+\TrickHLA\ provides a {\tt TrickHLAObjectDeleted} class with a {\tt deleted()} 
+method that is used for notification of a deleted object.  This is a virtual 
+method and must be overridden by a derived class in order to add 
+application-specific functionality to the simulation.
+
+% ------------------------------------
+\subsection{{\tt TrickHLAObjectDeleted}}
+
+The header file for the {\tt TrickHLAObjectDeleted} class is shown below.
+
+\begin{lstlisting}[caption={{\tt TrickHLAObjectDeleted} class header}]
+class TrickHLAObject;
+#include "TrickHLA/include/TrickHLAObject.hh"
+
+class TrickHLAObjectDeleted
+{
+   friend class InputProcessor;
+   friend void init_attrTrickHLAObjectDeleted();
+
+  public:
+   TrickHLAObjectDeleted() {};
+   virtual ~TrickHLAObjectDeleted() {};
+
+   virtual void deleted (     // RETURN: -- None.
+      TrickHLAObject * ) {};  // IN: -- Deleted object data.
+};
+\end{lstlisting}
+
+% ------------------------------------
+\subsection{{\tt simplesine\_objectDeleted}}
+
+In order to illustrate the use of the {\tt TrickHLAObjectDeleted} class, we 
+subclass it, as shown below.
+
+\begin{lstlisting}[caption={{\tt simplesine\_objectDeleted} class header}]
+#include "TrickHLA/include/TrickHLAObjectDeleted.hh"
+
+class simplesine_objectDeleted : public TrickHLAObjectDeleted
+{
+   friend class InputProcessor;
+   friend void init_attrsimplesine_objectDeleted();
+
+  public:
+   simplesine_objectDeleted();          // default constructor
+   virtual ~simplesine_objectDeleted(); // destructor
+
+   void deleted(            // RETURN: -- None.
+        TrickHLAObject * ); // IN:     -- Deleted object.
+};
+\end{lstlisting}
+
+We give the {\tt deleted()} method something to do, as shown below.
+
+\begin{lstlisting}[caption={ {\tt simplesine\_objectDeleted} code}]
+/********************************* TRICK HEADER *******************************
+PURPOSE: (simplesine_objectDeleted : Callback class the user writes to do
+          something once the object has been deleted from the RTI.)
+LIBRARY DEPENDENCY: ((simplesine_objectDeleted.o))
+*******************************************************************************/
+// System include files.
+#include <sstream>
+
+// Trick include files.
+#include "sim_services/include/exec_proto.h"
+
+// TrickHLA model include files.
+
+// Model include files.
+#include "../include/simplesine_objectDeleted.hh"
+
+using namespace std;
+
+/********************************* TRICK HEADER *******************************
+PURPOSE: (simplesine_objectDeleted::simplesine_objectDeleted : Default 
+          constructor.)
+*******************************************************************************/
+simplesine_objectDeleted::simplesine_objectDeleted() // RETURN: -- None.
+   : TrickHLAObjectDeleted()
+{ }
+
+/********************************* TRICK HEADER *******************************
+PURPOSE: (simplesine_objectDeleted::~simplesine_objectDeleted : Destructor.)
+*******************************************************************************/
+simplesine_objectDeleted::~simplesine_objectDeleted() // RETURN: -- None.
+{ }
+
+/********************************* TRICK HEADER *******************************
+PURPOSE: (simplesine_objectDeleted::deleted : Callback routine implementation
+          to report that this object has been deleted from the federation.)
+LIBRARY DEPENDENCY: ((TrickHLAObject.o))
+*******************************************************************************/
+void simplesine_objectDeleted::deleted( // RETURN: -- None.
+   TrickHLAObject * obj)                // IN: -- Deleted object.
+{
+   ostringstream msg;
+   msg << "object '" << obj->get_name()
+       << "' resigned from the federation." << endl;
+   send_hs( stdout, (char *) msg.str().c_str() );
+}
+\end{lstlisting}
+
+As you can see, all the {\tt deleted()} method does is just echoes a message 
+to the simulation window.
+
+% ---------------------------------------------------------------------------
+\section{{\tt S\_define} file}
+
+The {\tt simplesine\_objectDeleted} class is introduced into the simulation via 
+the {\tt S\_define} file. There, you would need to add a 
+new {\tt simplesine\_objectDeleted} object into each {\tt sim\_object} to which 
+you wish to add a callback, like the following:
+
+\begin{verbatim}
+simplesine: simplesine_objectDeleted      obj_deleted_callback;
+\end{verbatim}
+
+Additionally, you need to add a scheduled job into \TrickHLA\ simulation 
+object, like the following:
+
+\begin{verbatim}
+(PROPAGATE_TIMESTEP, scheduled) TrickHLA: THLA.manager.process_deleted_objects();
+\end{verbatim}
+
+thereby scheduling the \TrickHLA's manager to identify any newly deleted 
+objects every data cycle. When an object has been deleted from the federation, 
+the manager will trigger, only once, all registered callback 
+methods {\tt [deleted()]} (see the next section).
+
+
+% ---------------------------------------------------------------------------
+\section{{\tt input} file}
+
+You need to register the {\tt simplesine\_objectDeleted} object to the THLA 
+manager by adding the following lines.
+
+\begin{verbatim}
+THLA.manager.objects[0].deleted = &subscriber.obj_deleted_callback;
+. . .
+THLA.manager.objects[1].deleted = &publisher.obj_deleted_callback;
+\end{verbatim}
+
+These lines associate obj\_deleted\_callback as the callback code for the 
+subscriber and publisher {\tt sim\_object}s, respectively.
+
+% ---------------------------------------------------------------------------
+\section{Output}
+
+The following output sample shows the callback code in action.
+
+\begin{lstlisting}[caption={output displayed on the console}]
+...
+| |rat|1|0.00|2008/06/06,12:27:10| TrickHLAFedAmb::initialize()
+| |rat|1|0.00|2008/06/06,12:27:10| TrickHLAFederate::initialize()
+| |rat|1|0.00|2008/06/06,12:27:10| TrickHLAFederate::restart_initialization()
+| |rat|1|0.00|2008/06/06,12:27:10| TrickHLAManager::IMSim_initialization_version_1()
+| |rat|1|0.00|2008/06/06,12:27:10| TrickHLAManager::setup_all_ref_attributes()
+| |rat|1|0.00|2008/06/06,12:27:10| TrickHLAManager::setup_object_ref_attributes()
+...
+| |rat|1|15.00|2008/06/06,12:27:26| object 'P-side-Federate.Test' resigned from the federation.
+...
+SIMULATION TERMINATED IN
+  PROCESS: 1
+  JOB/ROUTINE: 21/sim_services/mains/master.c
+DIAGNOSTIC:
+Simulation reached input termination time.
+
+LAST JOB CALLED: THLA.THLA.federate.time_advance_request()
+              TOTAL OVERRUNS:            0
+PERCENTAGE REALTIME OVERRUNS:        0.000%
+
+
+       SIMULATION START TIME:        0.000
+        SIMULATION STOP TIME:       15.000
+     SIMULATION ELAPSED TIME:       15.000
+         ACTUAL ELAPSED TIME:       15.000
+        ACTUAL CPU TIME USED:        4.847
+    SIMULATION / ACTUAL TIME:        1.000
+       SIMULATION / CPU TIME:        3.095
+  ACTUAL INITIALIZATION TIME:        0.000
+     INITIALIZATION CPU TIME:        0.674
+*** DYNAMIC MEMORY USAGE ***
+     CURRENT ALLOCATION SIZE:  1411651
+       NUM OF CURRENT ALLOCS:      888
+         MAX ALLOCATION SIZE:  1413600
+           MAX NUM OF ALLOCS:      894
+       TOTAL ALLOCATION SIZE:  1726197
+         TOTAL NUM OF ALLOCS:     5991
+\end{lstlisting}

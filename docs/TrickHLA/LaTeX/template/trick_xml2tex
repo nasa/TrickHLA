@@ -1,0 +1,525 @@
+#!/usr/bin/perl
+
+#
+# converts Trick's xml to tex.  Use trick_xml2tex --help for details
+#
+
+# $Log: trick_xml2tex,v $
+# Revision 8.1  2009-08-20 14:19:56-05  dmidura
+# Bump version number for new group TrickHLA_2.2
+#
+# Revision 7.1  2009-08-05 10:32:19-05  dmidura
+# Bump version number for new group TrickHLA_2.1
+#
+# Revision 6.1  2009-06-29 13:28:33-05  dmidura
+# Bump version number for new group TrickHLA_2.0
+#
+# Revision 5.1  2009-02-27 10:16:20-06  dmidura
+# Bump version number for new group TrickHLA_1.6
+#
+# Revision 4.1  2009-01-30 16:33:51-06  dmidura
+# Bump version number for new group TrickHLA_1.5
+#
+# Revision 3.1  2008-08-25 12:11:18-05  razor
+# Bump version number for new group TrickHLA_1.4
+#
+# Revision 2.1  2008-08-14 11:21:12-05  dmidura
+# Bump version number for new group TrickHLA_1.3
+#
+# Revision 1.3  2008-04-04 19:03:44-05  ddexter
+# Files from v1.1
+#
+# Revision 1.2  2008-04-04 18:43:11-05  ddexter
+# bumping the version
+#
+# Revision 1.1  2007-05-23 15:45:04-05  ddexter
+# Initial revision
+#
+# Revision 1.3  2006-08-28 13:02:50-05  slim
+# trick_xml2tex updated to skip empty structures
+#
+# Revision 7.5  2006-08-28 06:42:20-05  hammen
+# Empty and single element structures
+#
+# Revision 7.4  2006-07-26 13:24:34-05  hammen
+# Use longtable in lieu of tabular environment
+#
+# Revision 7.3  2006-06-29 17:40:34-05  lin
+# more xml2tex problems
+#
+# Revision 7.2  2006-06-28 16:19:54-05  lin
+# trick_xml2tex does not handle blank references
+#
+# Revision 1.2  2006-05-05 10:21:41-05  lin
+# Tex translators do not format References and other things quite right.
+#
+#
+
+use strict ;
+use lib $ENV{"TRICK_HOME"} . "/bin/pm" ;
+
+use XML::Parser ;
+use XML::Simple ;
+use Data::Dumper ;
+use File::Basename ;
+use Getopt::Long ;
+use Pod::Usage;
+use Pod::Text;
+
+
+#--------------------------------------------------------------
+# converts all of the special characters for LaTex
+#--------------------------------------------------------------
+sub transform($) {
+
+   my ($in) = @_ ;
+   $in =~ s/^\s+// ;
+   $in =~ s/\s+$// ;
+   $in =~ s/([\\\#\$\%\&\{\}_])/\\$1/g ;
+   $in =~ s/([\^\~])/\\$1\{\}/g ;
+   $in =~ s/([<>])/\$$1\$/g ;
+
+   return($in) ;
+}
+
+#--------------------------------------------------------------
+# Make single items in the parsed xml into lists
+#--------------------------------------------------------------
+sub fix_xml($$@) {
+    my ($ref, $allow, @keys) = @_ ;
+    my ($key, $rref) ;
+
+     # All keys must be defined (programmer error if not).
+    die if scalar (grep {! defined} @keys) ;
+
+     # Find the penultimate key entry.
+    while ($key = shift @keys, scalar @keys > 0) {
+       $ref->{$key} = {} unless exists $ref->{$key} ;
+       $ref = $ref->{$key} ;
+    }
+
+     # Make an empty list if the ultimate key doesn't exist.
+    if ( ! exists $ref->{$key} ) {
+       $ref->{$key} = [] ;
+    }
+
+     # The ultimate key entry should either be an array of $allow types or
+     # a single $allow type. Make the latter into a one element list.
+    elsif ( ( $rref = ref $ref->{$key} ) ne "ARRAY" ) {
+       if ($rref eq $allow) {
+          $ref->{$key} = [ $ref->{$key} ] ;
+       }
+       else {
+          warn "Unexpected ref $rref for $key" ;
+          $ref->{$key} = [] ; 
+       }
+    }
+}
+
+#--------------------------------------------------------------
+# prints out the references from the trick header
+#--------------------------------------------------------------
+sub print_ref($$) {
+    my ($fh , $ref) = @_ ;
+    print $fh "\\item " ;
+    print $fh transform($$ref{author}) if  ( exists $$ref{author} and (ref $$ref{author} ne "HASH") and $$ref{author} !~ /^\s*--\s*$/ ) ;
+    print $fh "," , transform($$ref{source}) if  ( exists $$ref{source} and (ref $$ref{source} ne "HASH") and $$ref{source} !~ /^\s*--\s*$/ ) ;
+    print $fh "," , transform($$ref{ident}) if  ( exists $$ref{ident} and (ref $$ref{ident} ne "HASH") and $$ref{ident} !~ /^\s*--\s*$/ ) ;
+    print $fh "," , transform($$ref{location}) if  ( exists $$ref{location} and (ref $$ref{location} ne "HASH") and $$ref{location} !~ /^\s*--\s*$/ ) ;
+    print $fh "," , transform($$ref{date}) if  ( exists $$ref{date} and (ref $$ref{date} ne "HASH") and $$ref{date} !~ /^\s*--\s*$/ ) ;
+    print $fh "," , transform($$ref{notes}) if  ( exists $$ref{notes} and (ref $$ref{notes} ne "HASH") and $$ref{notes} !~ /^\s*--\s*$/ ) ;
+    print $fh "\n" ;
+}
+
+#--------------------------------------------------------------
+# prints out the authors from the trick header
+#--------------------------------------------------------------
+sub print_author($$) {
+    my ($fh , $ref) = @_ ;
+    print $fh "\\item " ;
+    print $fh transform($$ref{programmer}) if  ( exists $$ref{programmer} and (ref $$ref{programmer} ne "HASH") and $$ref{programmer} !~ /^\s*--\s*$/ ) ;
+    print $fh "," , transform($$ref{employer}) if  ( exists $$ref{employer} and (ref $$ref{employer} ne "HASH") and $$ref{employer} !~ /^\s*--\s*$/ ) ;
+    print $fh "," , transform($$ref{date}) if  ( exists $$ref{date} and (ref $$ref{date} ne "HASH") and $$ref{date} !~ /^\s*--\s*$/ ) ;
+    print $fh "," , transform($$ref{ident}) if  ( exists $$ref{ident} and (ref $$ref{ident} ne "HASH") and $$ref{ident} !~ /^\s*--\s*$/ ) ;
+    print $fh "," , transform($$ref{notes}) if  ( exists $$ref{notes} and (ref $$ref{notes} ne "HASH") and $$ref{notes} !~ /^\s*--\s*$/ ) ;
+    print $fh "\n" ;
+}
+
+#--------------------------------------------------------------
+# prints out a general list from the trick header
+#--------------------------------------------------------------
+sub print_list($$) {
+    my ($fh , $ref) = @_ ;
+
+    print $fh "\\begin{itemize}\n" ;
+    die unless ( ref $$ref eq "ARRAY" ) ;
+    foreach my $a (@{$$ref}) {
+        print $fh "\\item " , transform($a) , "\n" if ( ref $a ne "HASH" ) ;
+    }
+    print $fh "\\end{itemize}\n" ;
+
+}
+
+#--------------------------------------------------------------
+# prints out arguments to function calls
+#--------------------------------------------------------------
+sub print_arg($$) {
+    my ($fh , $arg) = @_ ;
+    print $fh "{\\tt " , transform($$arg{arg_name}) , "} &\n" ;
+    print $fh "{\\tt " , transform($$arg{type}) , "} &\n" ;
+    if ( ref $$arg{dims} ne "HASH" ) {
+        print $fh transform($$arg{dims}) ;
+    }
+    print $fh " &\n" ;
+    print $fh transform($$arg{inout}) , " &\n" ;
+    print $fh transform($$arg{units}) , " &\n" ;
+    print $fh "\\raggedright ",
+              transform($$arg{comment}) ,
+              " \\tabularnewline \\hline\n\n" ;
+}
+
+#--------------------------------------------------------------
+# prints out jobs
+#--------------------------------------------------------------
+sub print_job($$) {
+    my ($fh , $ref) = @_ ;
+    print $fh "{\\tt " , transform($$ref{job_name}) , ":}
+
+\\hspace{0.25in} Return:
+
+\\hspace{0.5in}
+\\begin{tabular}{rl}
+Return Type: \& {\\tt " , transform($$ref{return_type}) , " } \\\\
+Units: \& " , transform($$ref{units}) , "\\\\
+Description: \& " , transform($$ref{comment}) , "\\\\
+\\end{tabular}
+
+\\hspace{0.25in} Parameter List: ",
+   "See table~\\ref{tbl:" . $$ref{job_name} . "}.\n\n" ;
+
+
+    print $fh "
+\\begin{longtable}[c]{|l|l|l|l|l|p{2.5in}|}
+\\caption{" , transform($$ref{job_name}) , " parameters}
+\\label{tbl:" , $$ref{job_name} , "} \\\\[6pt]
+\\hline
+{\\em Name} \& {\\em Type} \& {\\em Dim} \& {\\em Usage} \& {\\em Units} \& {\\em Description} \\\\
+\\hline \\hline
+\\endfirsthead
+\\caption[]{(continued)} \\\\[6pt]
+\\hline
+{\\em Name} \& {\\em Type} \& {\\em Dim} \& {\\em Usage} \& {\\em Units} \& {\\em Description} \\\\
+\\hline \\hline
+\\endhead\n" ;
+
+    fix_xml $ref, 'HASH', qw(argument_list arg) ;
+    foreach my $arg ( @{$$ref{argument_list}{arg}} ) {
+        print_arg( $fh , $arg ) ;
+    }
+    print $fh "\\end{longtable}\n\n" ;
+
+}
+
+#--------------------------------------------------------------
+# prints out enumerations
+#--------------------------------------------------------------
+sub print_enum($$) {
+    my ($fh , $ref) = @_ ;
+
+    print $fh "\\begin{longtable}[c]{|l|l|p{3.0in}|}
+\\caption{" , transform($$ref{enum_name}) , " enumeration tag values}
+\\label{tbl:" , $$ref{enum_name} , "} \\\\[6pt]
+\\hline
+\\multicolumn{3}{|c|}{\\bf " , transform($$ref{enum_name}) , "} \\\\
+\\hline \\hline
+{\\em Tag Name} \& {\\em Value} \& {\\em Description} \\\\
+\\hline
+\\endfirsthead
+\\caption[]{(continued)} \\\\[6pt]
+\\hline
+\\multicolumn{3}{|c|}{\\bf " , transform($$ref{enum_name}) , "} \\\\
+\\hline \\hline
+{\\em Tag Name} \& {\\em Value} \& {\\em Description} \\\\
+\\hline
+\\endhead\n\n" ;
+
+    foreach my $member ( @{$$ref{member}} ) {
+        print $fh "{\\tt " , transform($$member{mname}) , "} &\n" ;
+        print $fh transform($$member{value}) , " &\n" ;
+        print $fh "\\raggedright ",
+                  transform($$member{comment}) ,
+                  " \\tabularnewline \\hline\n\n" ;
+    }
+
+    print $fh "\\end{longtable}\n\n" ;
+}
+
+#--------------------------------------------------------------
+# prints out structures
+#--------------------------------------------------------------
+sub print_struct($$) {
+    my ($fh , $ref) = @_ ;
+
+    print $fh "\\begin{longtable}[c]{|l|l|l|l|p{2.75in}|}
+\\caption{" , transform($$ref{struct_name}) , " field members}
+\\label{tbl:" , $$ref{struct_name} , "} \\\\[6pt]
+\\hline
+\\multicolumn{5}{|c|}{\\bf " , transform($$ref{struct_name}) , "} \\\\
+\\hline \\hline
+{\\em Field Name} \& {\\em Type} \& {\\em Dim} \& {\\em Units} \& {\\em Description} \\\\
+\\hline
+\\endfirsthead
+\\caption[]{(continued)} \\\\[6pt]
+\\hline
+\\multicolumn{5}{|c|}{\\bf " , transform($$ref{struct_name}) , "} \\\\
+\\hline \\hline
+{\\em Field Name} \& {\\em Type} \& {\\em Dim} \& {\\em Units} \& {\\em Description} \\\\
+\\hline
+\\endhead\n\n" ;
+
+    foreach my $member ( @{$$ref{member}} ) {
+        print $fh "{\\tt " , transform($$member{pname}) , "} &\n" ;
+        print $fh "{\\tt " , transform($$member{type}) , "} &\n" ;
+        print $fh transform($$member{dims}) , " &\n" ;
+        print $fh transform($$member{units}) , " &\n" ;
+        print $fh "\\raggedright ",
+                  transform($$member{comment}) ,
+                  " \\tabularnewline \\hline\n\n" ;
+    }
+
+    print $fh "\\end{longtable}\n\n" ;
+}
+
+
+#--------------------------------------------------------------
+# main
+#--------------------------------------------------------------
+
+my $file_name ;
+my %args ;
+my $xml ;
+
+$args{h} = "" ;
+$args{o} = "" ;
+$args{v} = 0 ;
+
+# override the print format for help message
+*Pod::Text::seq_i = sub { return "[04m" . $_[1] . "[00m" } ;
+# Process command line arguments
+Getopt::Long::Configure ("bundling") ;
+GetOptions ( "help|h|?" => \$args{h} ,
+             "outfile|o=s" => \$args{o} ,
+             "verbose|v" => \$args{v}
+           ) or pod2usage(1) ;
+
+pod2usage(1) if ($args{h} or scalar @ARGV == 0 ) ;
+
+if ( $args{o} ne "" and scalar @ARGV > 1 ) {
+    die "Cannot use -o <output_file> with more than 1 input file" ;
+}
+
+foreach my $file ( @ARGV ) {
+
+    undef $xml ;
+
+    print "Processing $file\n" ;
+
+    my $tex = $args{o} ;
+    if ( $tex eq "" ) {
+        ( $tex = $file ) =~ s/\.xml$/.tex/ ;
+    }
+    open FILE, ">$tex" or die "Could not open output file $tex for writing" ;
+    
+    $xml = XMLin($file) ;
+    if ( $args{v} > 0 ) {
+        print Dumper($xml) ;
+    }
+    
+    $file_name = transform($$xml{file_name}) ;
+    print FILE "{\\bf File:} {\\tt $file_name}
+    \\vspace{0.125in}\n\n" ;
+    
+    #--------------------------------------------------------------
+    # Common trick header processing
+    #--------------------------------------------------------------
+    my $trick_header = $$xml{trick_header};
+    print FILE "{\\bf Purpose:}\n" ,
+               transform($$trick_header{purpose}) ,
+               "\n\\vspace{0.125in}\n" ;
+
+    if ( defined ( my $modifications = $$trick_header{modifications} ) ) {
+        fix_xml $modifications, 'HASH', 'modification';
+        if ( exists $$modifications{modification} &&
+             scalar @{$$modifications{modification}} > 0) {
+            print FILE "\n{\\bf Authors:}\n" ;
+            print FILE "\\begin{itemize}\n" ;
+            foreach my $ref (@{$$modifications{modification}}) {
+                print_author( *FILE , $ref) ;
+            }
+            print FILE "\\end{itemize}\n" ;
+        }
+    }
+
+    if ( defined ( my $references = $$trick_header{references} ) ) {
+        fix_xml $references, 'HASH', 'reference';
+        if ( exists $$references{reference} &&
+             scalar @{$$references{reference}} > 0) {
+            print FILE "\n{\\bf References:}\n" ;
+            print FILE "\\begin{itemize}\n" ;
+            foreach my $ref (@{$$references{reference}}) {
+                print_ref( *FILE , $ref) ;
+            }
+            print FILE "\\end{itemize}\n" ;
+        }
+    }
+
+    if ( defined ( my $assumptions = $$trick_header{assumptions} ) ) {
+        fix_xml $assumptions, '', 'assumption';
+        if ( exists $$assumptions{assumption} &&
+             scalar @{$$assumptions{assumption}} > 0) {
+            print FILE "\n{\\bf Assumptions and Limitations:}\n" ;
+            print_list( *FILE , \$$assumptions{assumption}) ;
+        }
+    }
+
+    if ( defined ( my $dependencies = $$trick_header{library_dependencies} ) ) {
+        fix_xml $dependencies, '', 'library_dependency';
+        if ( exists $$dependencies{library_dependency} &&
+             scalar @{$$dependencies{library_dependency}} > 0) {
+            print FILE "\n{\\bf Library Dependencies:}\n" ;
+            print_list( *FILE , \$$dependencies{library_dependency}) ;
+        }
+    }
+    
+    
+    #--------------------------------------------------------------
+    # Header specific enums and structs
+    #--------------------------------------------------------------
+    # list out enumerations
+    if ( exists $$xml{enumerations} ) {
+        my $enums = $$xml{enumerations} ;
+        fix_xml $enums, 'HASH', 'enum';
+        if ( scalar @{$$enums{enum}} > 0 ) {
+            print FILE "\n{\\bf Enumerations:}\n" ;
+            print FILE "\\begin{itemize}\n" ;
+            foreach my $ref (@{$$enums{enum}}) {
+                fix_xml $ref, 'HASH', 'member' ;
+                if (scalar @{$$ref{member}} > 0 ) {
+                    print FILE "\\item " ,
+                               transform($$ref{enum_name}) ,
+                               ": see table~\\ref{tbl:",
+                               $$ref{enum_name} , "}.\n" ;
+                }
+            }
+            print FILE "\\end{itemize}\n\n" ;
+        }
+    }
+    
+    # list out structures
+    if ( exists $$xml{structures} ) {
+        my $structs = $$xml{structures} ;
+        fix_xml $structs, 'HASH', 'struct';
+        if ( scalar @{$$structs{struct}} > 0 ) {
+            print FILE "\n{\\bf Structures:}\n" ;
+            print FILE "\\begin{itemize}\n" ;
+            foreach my $ref (@{$$structs{struct}}) {
+                fix_xml $ref, 'HASH', 'member' ;
+                if (scalar @{$$ref{member}} > 0 ) {
+                    print FILE "\\item " ,
+                               transform($$ref{struct_name}) ,
+                               ": see table~\\ref{tbl:",
+                               $$ref{struct_name} , "}.\n" ;
+                }
+            }
+            print FILE "\\end{itemize}\n\n" ;
+        }
+    }
+    
+    # write out details of enums
+    if ( exists $$xml{enumerations} ) {
+        my $enums = $$xml{enumerations} ;
+        foreach my $ref (@{$$enums{enum}}) {
+            if (scalar @{$$ref{member}} > 0 ) {
+                print_enum( *FILE , $ref) ;
+            }
+        }
+    }
+    
+    # write out details of structs
+    if ( exists $$xml{structures} ) {
+        my $structs = $$xml{structures} ;
+        foreach my $ref (@{$$structs{struct}}) {
+            if (scalar @{$$ref{member}} > 0 ) {
+                print_struct( *FILE , $ref) ;
+            }
+        }
+    }
+    
+    #--------------------------------------------------------------
+    # Module specific includes and jobs
+    #--------------------------------------------------------------
+    
+    if ( exists $$xml{includes} ) {
+        my $includes = $$xml{includes} ;
+        print FILE "\n{\\bf Include Files:}\n" ;
+        fix_xml $includes, '', 'file';
+        print_list( *FILE , \$$includes{file}) ;
+    }
+    
+    if ( exists $$xml{jobs} ) {
+        my $jobs = $$xml{jobs} ;
+        print FILE "\n{\\bf Functions:}
+        The following functions are defined in {\\tt $file_name }\n" ;
+        fix_xml $jobs, 'HASH', 'job';
+        if ( scalar $$jobs{job} > 0 ) {
+            print FILE "\\begin{itemize}\n" ;
+            foreach my $ref (@{$$jobs{job}}) {
+                print FILE "\\item " , transform($$ref{job_name}) , "\n" ;
+            }
+            print FILE "\\end{itemize}\n\\vspace{0.125in}\n\n" ;
+            foreach my $ref (@{$$xml{jobs}{job}}) {
+                print_job( *FILE , $ref) ;
+            }
+        }
+    }
+
+    close FILE ;
+}
+
+__END__
+
+=head1 NAME
+
+trick_xml2tex - Trick's xml to tex translator
+
+=head1 SYNOPSIS
+
+trick_xml2tex [-h] [--help]
+[-o I<outfile>] [--outfile=I<outfile>]
+[-v I<level>] [--verbose=I<level>]
+xml_file
+
+=head1 DESCRIPTION
+
+See the Trick User's guide for B<trick_xml2tex>.
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<-h> | B<-?> | B<--help>
+
+This help screen
+
+=item B<-o> I<outfile> | B<--outfile>=I<outfile>
+
+Direct output of trick_xml2tex to outfile.
+
+=item B<-v> | B<--verbose>
+
+Set verbose output.
+
+=back
+
+=cut
+

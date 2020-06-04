@@ -1,0 +1,777 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% File: TrickHLAReqt.tex
+%
+% Purpose: TrickHLA Product Requirements
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand\documentHistory{
+{\bf Author} & {\bf Date} & {\bf Description} \\ \hline \hline
+Edwin Z. Crues & June 2020 & TrickHLA Version 3 \\ \hline
+}
+
+% This documentation file's change history includes:
+% "REVISED BY name(s)" & "revision DATE" & "revision DESCRIPTION"
+%  ------------------     -------------     --------------------
+
+\newcommand\DocumentChangeHistory{
+{\bf Revised by} & {\bf Date} & {\bf Description} \\ \hline \hline
+}
+
+\documentclass[twoside,11pt,titlepage]{report}
+
+%
+% Bring in the AMS math environment
+%
+\usepackage{amsmath}
+
+%
+% Bring in the common page setup
+%
+\usepackage{trickhlaenv}
+
+%
+% Bring in the common math nomenclature
+%
+\usepackage{trickhlamath}
+
+%
+% Bring in the model-specific commands
+%
+\usepackage{TrickHLA}
+
+%
+% Bring in the graphics environment
+%
+\usepackage{graphicx}
+
+%
+% Bring in the hyper ref environment
+%
+\usepackage[colorlinks]{hyperref}
+%  keywords for pdfkeywords are separated by commas
+\hypersetup{
+   pdftitle={TrickHLA Product Requirements},
+   pdfauthor={Edwin Z. Crues \\ and \\ Daniel E. Dexter},
+   pdfkeywords={Trick, HLA, TrickHLA, Product Requirements},
+   pdfsubject={TrickHLA Product Requirements}}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Front matter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{roman}
+
+\docid{DD.mm.20}
+\docrev{1.0}
+\date{June 2020}
+\modelname{\TrickHLA}
+\doctype{Product Requirements}
+\author{Edwin Z. Crues \\ and \\ Daniel E. Dexter}
+\managers{
+  Edwin Z. Crues \\ Project Manager \\
+  Michael T. Red \\ Simulation and Graphics Branch Chief (ER7) \\
+  Robert O. Ambrose \\ Software, Robotics, and Simulation Division Chief}
+\pdfbookmark{Title Page}{titlepage}
+\makeTrickhlaenvTitlepage
+
+\pdfbookmark{Abstract}{abstract}
+\include{TrickHLAAbstract}
+
+\pdfbookmark{Contents}{contents}
+\tableofcontents
+\vfill
+
+\pagebreak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Main Document Body
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{arabic}
+
+%----------------------------------
+\chapter{Introduction}\label{sec:intro}
+%----------------------------------
+
+\input{TrickHLAIntro}
+
+\section{Identification of Document}
+This document describes the \TrickHLA\
+model developed for use in the Trick Simulation Environment.
+This document adheres to the documentation standards defined in
+NASA Software Engineering Requirements Standard \cite{NASA:SWE}.
+
+\section{Scope of Document}
+This document provides information on the requirements for \TrickHLA.
+
+\section{Purpose and Objectives of Document}
+The purpose of this document is to define the set of requirements that
+the \TrickHLA\ must achieve to be compatible with Federate Inferface
+Specification of the IEEE Standard for Modeling and Smulation (M\&S)
+High Level Architecture (HLA) \cite{IEEE1516:API}.
+
+\section{Documentation Status and Schedule}
+The information in this document is current with the \TrickHLAid\
+implementation of the \TrickHLA. Updates will be kept current with
+module changes.
+
+\begin{tabular}{||l|l|l|} \hline
+\documentHistory
+\end{tabular}
+
+\begin{tabular}{||l|l|l|} \hline
+\DocumentChangeHistory
+\end{tabular}
+
+\section{Document Organization}
+This document is organized into the following sections:
+
+\begin{description}
+
+\item[Chapter \ref{sec:intro}: Introduction] -
+Identifies this document, defines the scope and purpose, present status,
+and provides a description of each major section.
+
+\item[Chapter \ref{sec:docs}: Related Documentation] -
+Lists the related documentation that is applicable to this project.
+
+\item[Chapter \ref{sec:reqts}: Requirements] -
+Presents the requirements for the \TrickHLA.
+
+\item[Bibliography] -
+Informational references associated with this document.
+
+\end{description}
+
+\chapter{Related Documentation}\label{sec:docs}
+
+\section{Parent Documents}
+The following documents are parent to this document:
+
+\begin{itemize}
+\item{\href{file:TrickHLA.pdf}
+           {\em Trick High Level Architecture (\TrickHLA)}}
+\cite{trickhlaenv:TrickHLA}
+\end{itemize}
+
+\section{Applicable Documents}
+The following top level documents are applicable to this document:
+
+\begin{itemize}
+\item{\href{file:TrickHLASpec.pdf}
+           {\em \TrickHLA\ Product Specification}}
+\cite{trickhlaenv:TrickHLASpec}
+
+\item{\href{file:TrickHLAUser.pdf}
+           {\em \TrickHLA\ User Guide}}
+\cite{trickhlaenv:TrickHLAUser}
+
+\item{\href{file:TrickHLAIVV.pdf}
+           {\em \TrickHLA\ Inspection, Verification, and Validation}}
+\cite{trickhlaenv:TrickHLAIVV}
+
+\end{itemize}
+
+The following specific documents are applicable to this document:
+
+\begin{itemize}
+\item{\em IEEE Standard for Modeling and Simulation (M\&S) High Level
+          Architecture (HLA) - Federate Inferface Specification}
+\cite{IEEE1516:API}
+
+\item{\em IEEE Standard for Modeling and Simulation (M\&S) High Level
+              Architecture (HLA) - Object Model Template (OMT) Specification}
+\cite{IEEE1516:OMT}
+
+\end{itemize}
+
+The following additional documents are applicable to this document:
+
+\begin{itemize}
+\item{\em Trick Simulation Environment: Installation Guide}
+\cite{Trick:Install}
+
+\item{\em Trick Simulation Environment: Tutorial}
+\cite{Trick:Tutorial}
+
+\item{\em Trick Simulation Environment: Documentation}
+\cite{Trick:Documentation}
+
+\item{\em NASA Software Engineering Requirements}
+\cite{NASA:SWE}
+
+\end{itemize}
+
+
+\chapter{Requirements}\label{sec:reqts}
+
+\section{General Requirements}\label{sec:general_reqts}
+
+This section identifies general requirements for the \TrickHLA.
+
+
+\requirement{Documentation}
+\label{reqt:documentation}
+\begin{description}
+  \item[Requirement:]\ \newline
+    The documentation for the model shall include
+
+    \subrequirement{}
+    \label{reqt:reqts_doc}
+      Software requirements specification.
+
+    \subrequirement{}
+    \label{reqt:design_doc}
+      Software, interface, and software version descriptions.
+
+    \subrequirement{}
+    \label{reqt:test_doc}
+      Software test procedures and results.
+
+    \subrequirement{}
+    \label{reqt:user_doc}
+      User Guide.
+
+  \item[Rationale:]\ \newline
+    The listed items are needed to comply with NASA NPR 7150.2
+    as a Class C product.
+
+  \item[Verification:]\ \newline
+    Inspection
+\end{description}
+
+
+\requirement{Header File Trick Header}
+\label{reqt:h_trick_header}
+\begin{description}
+  \item[Requirement:]\ \newline
+    All header files associated with the model shall have an appropriate
+    Trick header.  The Trick header for a header file shall include
+
+    \subrequirement{Purpose}\label{reqt:h_trick_header_purpose}
+      A brief description of the file.
+
+    \subrequirement{References}\label{reqt:h_trick_header_refs}
+      A list of applicable references that describe the model.
+
+    \subrequirement{Assumptions and limitations}
+    \label{reqt:h_trick_header_assum}
+      A list of the assumptions made in developing the model and
+      any limitations on the use of the model.
+
+    \subrequirement{Programmer}\label{reqt:h_trick_header_prog}
+      A list of the developers who created or modified the file.
+
+  \item[Rationale:]\ \\[-20pt]
+    \begin{itemize}
+      \item The presence of a Trick header in a header file
+        indicates that Trick should process the file.
+      \item Properly documenting the TrickHLA package models
+        is a key goal of the TrickHLA verification,
+        validation, and documentation task.
+      \item Maintaining a version history is good programming
+        technique and is mandatory per NPR 7150.2.
+    \end{itemize}
+
+  \item[Verification:]\ \newline
+    Inspection
+\end{description}
+
+\requirement{Trick Comments for Enumerated Types}
+\label{reqt:enum_trick_comments}
+\begin{description}
+  \item[Requirement:]\ \newline
+    Each tag defined in a enumeration type in a model header
+    file {\em should} have a comment describing the tag that follows
+    the tag declaration.
+
+  \item[Rationale:]\ \newline
+    Short tag names may not suffice in establishing
+    the meaning of the tag.
+
+  \item[Verification:]\ \newline
+    Inspection \newline
+    Enumerated types that fail to meet this optional requirement
+    shall be noted as such in the model verification document.
+\end{description}
+
+
+\requirement{Trick Comments for Data Structures}
+\label{reqt:struct_trick_comments}
+\begin{description}
+  \item[Requirement:]\ \newline
+    Each element of a data structure defined in a model header
+    file shall have a Trick-compliant comment describing the
+    element that follows the element declaration.
+
+  \item[Rationale:]\ \newline
+    The element comment is required by Trick.
+
+  \item[Verification:]\ \newline
+    Inspection
+\end{description}
+
+
+\requirement{Source File Trick Headers}
+\label{reqt:c_trick_header}
+\begin{description}
+  \item[Requirement:]\ \newline
+    Each externally visible function defined in the source files
+    associated with the model shall have an appropriate Trick header.
+    The Trick header for a function shall include
+
+    \subrequirement{Purpose}\label{reqt:c_trick_header_purpose}
+      A brief description of the function.
+
+    \subrequirement{References}\label{reqt:c_trick_header_refs}
+      A list of applicable references that describe the function.
+
+    \subrequirement{Assumptions and limitations}
+    \label{reqt:c_trick_header_assum}
+      A list of the assumptions made in developing the function and
+      any limitations on the use of the function.
+
+    \subrequirement{Class}
+    \label{reqt:c_trick_header_class}
+      The default Trick job classification of the function.
+
+    \subrequirement{Library dependency}
+    \label{reqt:c_trick_header_depend}
+      A list of the object files upon which the function depends,
+      starting with the current file.
+
+    \subrequirement{Programmer}\label{reqt:c_trick_header_prog}
+      A list of the developers who created or modified the file.
+
+  \item[Rationale:]\ \\[-20pt]
+    \begin{itemize}
+      \item The Trick header that precedes a function
+        indicates that the function is available for
+        use in a simulation {\em S\_define} file.
+      \item Properly documenting the TrickHLA package models
+        is a key goal of the TrickHLA verification,
+        validation, and documentation task.
+      \item Maintaining a version history is good programming
+        technique and is mandatory per NPR 7150.2.
+    \end{itemize}
+
+  \item[Verification:]\ \newline
+    Inspection
+\end{description}
+
+
+\requirement{Trick Comments for Function Definitions}
+\label{reqt:func_trick_comments}
+\begin{description}
+  \item[Requirement:]\ \newline
+    Each function shall be commented with a Trick-compliant
+    set of comments that describe the return value from the
+    function and that describe the nature of the arguments
+    passed to the function.
+
+  \item[Rationale:]\ \newline
+    The function definition comments are required by Trick.
+
+  \item[Verification:]\ \newline
+    Inspection
+\end{description}
+
+
+\requirement{HLA Federate Interface}
+\label{reqt:hla_federate_interface}
+\begin{description}
+  \item[Requirement:]\ \newline
+    The \TrickHLA\ model shall use the HLA federate interface
+    specification defined by IEEE standard 1516.1-2010 \cite{IEEE1516:API}.
+
+  \item[Rationale:]\ \newline
+    The \TrickHLA\ model is being designed to use the HLA interfaces
+    specified in the IEEE 1516.1-2010 standard \cite{IEEE1516:API}.
+
+  \item[Verification:]\ \newline
+    Inspection
+\end{description}
+
+
+
+\section{Data Requirements}\label{sec:data_reqts}
+
+This section identifies requirements on the data
+represented by the \TrickHLA.  These as-built requirements are
+based on the \TrickHLA\ data definition header files.
+
+
+\requirement{Primitive Data Types}
+\label{reqt:primitive_data_types}
+\begin{description}
+  \item[Requirement:]\ \newline
+    The \TrickHLA\ model shall support the C and C++ primitive
+    data types supported by the Trick simulation environment.
+
+    \subrequirement{bool}\label{reqt:primitive_data_types_bool}
+      \ \newline
+      The {\em bool} Boolean data type for C++ shall be supported.
+
+    \subrequirement{char}\label{reqt:primitive_data_types_char}
+      \ \newline
+      The {\em char} integer data type for both C and C++
+      shall be supported.
+
+    \subrequirement{unsigned char}\label{reqt:primitive_data_types_uchar}
+      \ \newline
+      The {\em unsigned char} integer data type for both C and C++
+      shall be supported.
+
+    \subrequirement{short}\label{reqt:primitive_data_types_short}
+      \ \newline
+      The {\em short} integer data type for both C and C++
+      shall be supported.
+
+    \subrequirement{unsigned short}\label{reqt:primitive_data_types_ushort}
+      \ \newline
+      The {\em unsigned short} integer data type for both C and C++
+      shall be supported.
+
+    \subrequirement{int}\label{reqt:primitive_data_types_int}
+      \ \newline
+      The {\em int} integer data type for both C and C++
+      shall be supported.
+
+    \subrequirement{unsigned int}\label{reqt:primitive_data_types_uint}
+      \ \newline
+      The {\em unsigned int} integer data type for both C and C++
+      shall be supported.
+
+    \subrequirement{long}\label{reqt:primitive_data_types_long}
+      \ \newline
+      The {\em long} integer data type for both C and C++
+      shall be supported.
+
+    \subrequirement{unsigned long}\label{reqt:primitive_data_types_ulong}
+      \ \newline
+      The {\em unsigned long} integer data type for both C and C++
+      shall be supported.
+
+    \subrequirement{long long}\label{reqt:primitive_data_types_llong}
+      \ \newline
+      The {\em long long} integer data type for both C and C++
+      shall be supported.
+
+    \subrequirement{unsigned long long}\label{reqt:primitive_data_types_ullong}
+      \ \newline
+      The {\em unsigned long long} integer data type for both C and C++
+      shall be supported.
+
+    \subrequirement{float}\label{reqt:primitive_data_types_float}
+      \ \newline
+      The {\em float} floating-point data type for both C and C++
+      shall be supported.
+
+    \subrequirement{double}\label{reqt:primitive_data_types_double}
+      \ \newline
+      The {\em double} floating-point data type for both C and C++
+      shall be supported.
+
+  \item[Rationale:]\ \newline
+    The C and C++ primitive data types are expected to be
+    needed by the various simulation developers.
+
+  \item[Verification:]\ \newline
+    Inspection or Test
+\end{description}
+
+
+\requirement{Static Arrays of Primitive Data Types}
+\label{reqt:static_arrays_of_primitive_data_types}
+\begin{description}
+  \item[Requirement:]\ \newline
+    The \TrickHLA\ model shall support static arrays of C and C++
+    primitive data types.
+
+  \item[Rationale:]\ \newline
+    Static arrays of C and C++ primitive data types are expected to be
+    needed by the various simulation developers.
+
+  \item[Verification:]\ \newline
+    Inspection or Test
+\end{description}
+
+
+\section{Functional Requirements}\label{sec:func_reqts}
+
+This section identifies requirements on the functional capabilities
+provided by the \TrickHLA. These as-built requirements are based
+on the \TrickHLA\ source files.
+
+
+\requirement{Data Driven}
+\label{reqt:data_driven}
+\begin{description}
+  \item[Requirement:]\ \newline
+    The \TrickHLA\ model shall be data driven so that it can be configured
+    in the Trick Simulation Input file.
+
+  \item[Rationale:]\ \newline
+    A data driven design will allow the \TrickHLA\ model configuration
+    to be modified without needing to recompile the simulation.
+
+  \item[Verification:]\ \newline
+    Inspection
+\end{description}
+
+\requirement{HLA Big and Little Endian}
+\label{reqt:hla_endianess}
+\begin{description}
+  \item[Requirement:]\ \newline
+    The \TrickHLA\ model shall be able to automatically translate
+    primitive data types to either Big or Little Endian based on the
+    specified Endianess of the corresponding HLA attribute or parameter.
+
+  \item[Rationale:]\ \newline
+    The Federation Object Model (FOM) used by HLA defines what data,
+    type, Endianess, and encoding to be used to exchanged data
+    between federates. The \TrickHLA\ model must be able to translate to
+    and from the data types specified in the FOM used for exchanging data
+    using HLA.
+
+  \item[Verification:]\ \newline
+    Inspection or Test
+\end{description}
+
+
+\requirement{HLA Encoding}
+\label{reqt:hla_encoding}
+\begin{description}
+  \item[Requirement:]\ \newline
+    The \TrickHLA\ model shall support the HLAunicodeString,
+    HLAASCIIstring, and HLAopaqueData encodings as specified in the
+    HLA Object Model Template Specification \cite{IEEE1516:OMT}.
+
+  \item[Rationale:]\ \newline
+    Strings may be encoded at the HLA interface using either
+    HLAunicodeString, HLAASCIIstring, or HLAopaqueData. The \TrickHLA\
+    model uses the HLAunicodeString and HLAASCIIstring for encoding
+    strings that need to pass through the HLA interface. The \TrickHLA\
+    model uses the HLAopaqueData encoding for encoding a generic array
+    of bytes.
+
+  \item[Verification:]\ \newline
+    Inspection or Test
+\end{description}
+
+
+\requirement{Time Advancement}
+\label{reqt:hla_time_advancement}
+\begin{description}
+  \item[Requirement:]\ \newline
+    The \TrickHLA\ model shall automatically handle time advancement.
+
+  \item[Rationale:]\ \newline
+    The HLA standard provides an interface for managing time advancement
+    among the federates in the federation and should be coordinated
+    with the simulation.
+
+  \item[Verification:]\ \newline
+    Inspection or Test
+\end{description}
+
+
+\requirement{Lag Compensation}
+\label{reqt:lag_compensation}
+\begin{description}
+  \item[Requirement:]\ \newline
+    The \TrickHLA\ model shall provide an interface to the simulation
+    to allow for none, send-side, or receive-side lag compensation.
+
+  \item[Rationale:]\ \newline
+    Lag compensation is a technique where the latency between the time
+    data is sent a one federate and received at another can be compensated
+    for by the simulation builder.
+
+  \item[Verification:]\ \newline
+    Inspection or Test
+\end{description}
+
+
+\requirement{Interactions}
+\label{reqt:hla_interactions}
+\begin{description}
+  \item[Requirement:]\ \newline
+    The \TrickHLA\ model shall provide an interface to the simulation
+    to allow for sending and receiving of interactions as either
+    Receive Order or Timestamp Order.
+
+  \item[Rationale:]\ \newline
+    Interactions can be either an asynchronous or synchronous
+    communication of data between federates. Interactions are expected
+    to be needed by the various simulation developers.
+
+  \item[Verification:]\ \newline
+    Inspection or Test
+\end{description}
+
+
+\requirement{Ownership Transfer}
+\label{reqt:hla_ownership_transfer}
+\begin{description}
+  \item[Requirement:]\ \newline
+    The \TrickHLA\ model shall provide an interface for transfering
+    ownership of data attributes between federates.
+
+  \item[Rationale:]\ \newline
+    Ownership transfer of data attributes is expected to be
+    needed by the various simulation developers.
+
+  \item[Verification:]\ \newline
+    Inspection or Test
+\end{description}
+
+
+\requirement{Dynamic Initialization}
+\label{reqt:dynamic_initialization}
+\begin{description}
+  \item[Requirement:]\ \newline
+    The \TrickHLA\ model shall provide an interface for dynamically
+    initializing the data of a simulation.
+
+  \item[Rationale:]\ \newline
+    It is expected that the federates will need to exchange initialization
+    data before the simulation starts.
+
+  \item[Verification:]\ \newline
+    Inspection or Test
+\end{description}
+
+
+\requirement{Automatic Simulation Startup}
+\label{reqt:automatic_sim_startup}
+\begin{description}
+  \item[Requirement:]\ \newline
+    The \TrickHLA\ model shall automatically synchronize the startup
+    of a distributed simulation given a list of federates required to
+    run the simulation.
+
+  \item[Rationale:]\ \newline
+    Ensuring that all the required federates have joined the federation
+    and start executing the simulation at the same time is expected to be
+    needed by the various simulation developers.
+
+  \item[Verification:]\ \newline
+    Inspection or Test
+\end{description}
+
+
+\requirement{Pack / Unpack of Simulation Data}
+\label{reqt:pack_unpack}
+\begin{description}
+  \item[Requirement:]\ \newline
+    The \TrickHLA\ model shall provide an interface to allow preprocessing
+    (pack) of data before it is sent through HLA interface and post-processing 
+    (unpack) the data received from the HLA interface.
+
+  \item[Rationale:]\ \newline
+    A simulation developer may need to perform calculations or other work 
+    before data is sent to and/or received from the HLA interface.
+
+  \item[Verification:]\ \newline
+    Inspection or Test
+\end{description}
+
+
+\requirement{Object Deleted Notification}
+\label{reqt:object_deletion}
+\begin{description}
+  \item[Requirement:]\ \newline
+    The \TrickHLA\ model shall provide an interface to allow notification of 
+    an object being deleted from the federation.
+
+  \item[Rationale:]\ \newline
+    A simulation developer may need to carry out specific actions when a data 
+    object is deleted from the federation.
+
+  \item[Verification:]\ \newline
+    Inspection or Test
+\end{description}
+
+
+\requirement{Federation Restore}
+\label{reqt:federation_restore}
+\begin{description}
+  \item[Requirement:]\ \newline
+    The \TrickHLA\ model shall provide an interface to allow the user to
+    programmatically request a federation restore from their trick model.
+
+  \item[Rationale:]\ \newline
+    A simulation developer may need to request a federation restore from their
+    trick model at any time.
+    \newline
+    {\tt NOTE}: In the current implementation, the programmatic call to
+    restore a federation cannot happen during federation execution; it can only
+    occur when the federation is starting up. 
+
+  \item[Verification:]\ \newline
+    Inspection or Test
+\end{description}
+
+
+\requirement{Federation Save}
+\label{reqt:federation_save}
+\begin{description}
+  \item[Requirement:]\ \newline
+    The \TrickHLA\ model shall provide an interface to allow the user to
+    programmatically request a federation save from their trick model.
+
+  \item[Rationale:]\ \newline
+    A simulation developer may need to request a federation save from their
+    trick model at any time.
+
+  \item[Verification:]\ \newline
+    Inspection or Test
+\end{description}
+
+
+\requirement{Conditional sending of attributes}
+\label{reqt:conditional_attribute_send}
+\begin{description}
+  \item[Requirement:]\ \newline
+    The \TrickHLA\ model shall provide an interface to allow the user to
+    programmatically identify when to send attributes from their trick model.
+
+  \item[Rationale:]\ \newline
+    A simulation developer may need send only changed attributes to other
+    federates rather then burning up bandwitdh to send the full complement of
+    attributes when only a few may have actually changed.
+
+  \item[Verification:]\ \newline
+    Inspection or Test
+\end{description}
+
+
+\requirement{Multiple verbosity levels}
+\label{reqt:multiple_verbosity_levels}
+\begin{description}
+  \item[Requirement:]\ \newline
+    The \TrickHLA\ model shall provide an interface to allow the user to
+    specify multiple levels of verbosity from TrickHLA.
+
+  \item[Rationale:]\ \newline
+    A simulation developer may wish to see different levels of information from
+    the inner workings of \TrickHLA\ software to aid in debugging simulation
+    problems.
+
+  \item[Verification:]\ \newline
+    Inspection or Test
+\end{description}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Bibliography
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\pdfbookmark{Bibliography}{bibliography}
+\bibliography{trickhlaenv,TrickHLA,IEEE1516}
+\bibliographystyle{plain}
+
+\end{document}

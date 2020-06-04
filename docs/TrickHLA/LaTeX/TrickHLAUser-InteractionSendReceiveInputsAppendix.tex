@@ -1,0 +1,293 @@
+\chapter{Interaction send/receive input files}\label{sec:send-receive-inputs}
+
+This appendix contains the input files for the interaction
+sending and receiving simulations,
+{\tt SIM\_\-simple\-sine\_\-hla\_sendInt} and
+{\tt SIM\_simplesine\_hla\_receiveInt}.
+
+% ----------------------------------------------------------------------
+\section{Complete sender input file}\label{sec:complete-sender-input}
+
+\begin{lstlisting}[caption={{\tt SIM\_simplesine\_hla\_sendInt} input file},label={list:complete-sender-input}]
+#include "S_properties"
+#include "S_default.dat"
+#include "Log_data/states.d"
+#include "Modified_data/realtime.d"
+#include "Modified_data/publisher.d"
+
+stop =32.5; 
+
+//
+// Basic RTI/federation connection info
+//
+
+// Configure the CRC for the Pitch RTI.
+THLA.federate.local_settings = "crcHost = localhost\n crcPort = 8989";
+
+THLA.federate.name            = "sender"; 
+THLA.federate.FOM_modules     = "FOM.xml"; 
+THLA.federate.federation_name = "simplesine"; 
+
+THLA.federate.lookahead_time   = THLA_DATA_CYCLE_TIME;
+THLA.federate.time_regulating  = true; 
+THLA.federate.time_constrained = true; 
+THLA.federate.multiphase_init_sync_points = "Phase1, Phase2";
+
+THLA.federate.enable_known_feds      = true; 
+THLA.federate.known_feds_count       = 2; 
+THLA.federate.known_feds             = alloc(THLA.federate.known_feds_count); 
+THLA.federate.known_feds[0].name     = "sender"; 
+THLA.federate.known_feds[0].required = true; 
+THLA.federate.known_feds[1].name     = "receiver"; 
+THLA.federate.known_feds[1].required = true; 
+
+// TrickHLA debug messages.
+THLA.manager.debug_handler.debug_level = THLA_LEVEL2_TRACE;
+
+
+// DSES simulation configuration.
+THLA_INIT.dses_config.owner              = "sender";
+THLA_INIT.dses_config.run_duration       = 15.0;
+THLA_INIT.dses_config.num_federates      = 1;
+THLA_INIT.dses_config.required_federates = "sender";
+THLA_INIT.dses_config.start_year         = 2007;
+THLA_INIT.dses_config.start_seconds      = 0;
+THLA_INIT.dses_config.scenario           = "Nominal";
+THLA_INIT.dses_config.mode               = "Unknown";
+
+// Simulation Configuration for DSES Multi-phase Initialization.
+THLA.manager.sim_config.FOM_name         = "SimulationConfiguration";
+THLA.manager.sim_config.name             = "SimConfig";
+THLA.manager.sim_config.packing          = &THLA_INIT.dses_config;
+THLA.manager.sim_config.attr_count       = 8;
+THLA.manager.sim_config.attributes       = alloc(THLA.manager.sim_config.attr_count);
+
+THLA.manager.sim_config.attributes[0].FOM_name     = "owner";
+THLA.manager.sim_config.attributes[0].trick_name   = "THLA_INIT.dses_config.owner";
+THLA.manager.sim_config.attributes[0].publish      = true;
+THLA.manager.sim_config.attributes[0].subscribe    = true;
+THLA.manager.sim_config.attributes[0].rti_encoding = THLA_UNICODE_STRING;
+
+THLA.manager.sim_config.attributes[1].FOM_name     = "run_duration";
+THLA.manager.sim_config.attributes[1].trick_name   = "THLA_INIT.dses_config.run_duration_microsec";
+THLA.manager.sim_config.attributes[1].publish      = true;
+THLA.manager.sim_config.attributes[1].subscribe    = true;
+THLA.manager.sim_config.attributes[1].rti_encoding = THLA_LITTLE_ENDIAN;
+
+THLA.manager.sim_config.attributes[2].FOM_name     = "number_of_federates";
+THLA.manager.sim_config.attributes[2].trick_name   = "THLA_INIT.dses_config.num_federates";
+THLA.manager.sim_config.attributes[2].publish      = true;
+THLA.manager.sim_config.attributes[2].subscribe    = true;
+THLA.manager.sim_config.attributes[2].rti_encoding = THLA_LITTLE_ENDIAN;
+
+THLA.manager.sim_config.attributes[3].FOM_name     = "required_federates";
+THLA.manager.sim_config.attributes[3].trick_name   = "THLA_INIT.dses_config.required_federates";
+THLA.manager.sim_config.attributes[3].publish      = true;
+THLA.manager.sim_config.attributes[3].subscribe    = true;
+THLA.manager.sim_config.attributes[3].rti_encoding = THLA_UNICODE_STRING;
+
+THLA.manager.sim_config.attributes[4].FOM_name     = "start_year";
+THLA.manager.sim_config.attributes[4].trick_name   = "THLA_INIT.dses_config.start_year";
+THLA.manager.sim_config.attributes[4].publish      = true;
+THLA.manager.sim_config.attributes[4].subscribe    = true;
+THLA.manager.sim_config.attributes[4].rti_encoding = THLA_LITTLE_ENDIAN;
+
+THLA.manager.sim_config.attributes[5].FOM_name     = "start_seconds";
+THLA.manager.sim_config.attributes[5].trick_name   = "THLA_INIT.dses_config.start_seconds";
+THLA.manager.sim_config.attributes[5].publish      = true;
+THLA.manager.sim_config.attributes[5].subscribe    = true;
+THLA.manager.sim_config.attributes[5].rti_encoding = THLA_LITTLE_ENDIAN;
+
+THLA.manager.sim_config.attributes[6].FOM_name     = "scenario";
+THLA.manager.sim_config.attributes[6].trick_name   = "THLA_INIT.dses_config.scenario";
+THLA.manager.sim_config.attributes[6].publish      = true;
+THLA.manager.sim_config.attributes[6].subscribe    = true;
+THLA.manager.sim_config.attributes[6].rti_encoding = THLA_UNICODE_STRING;
+
+THLA.manager.sim_config.attributes[7].FOM_name     = "mode";
+THLA.manager.sim_config.attributes[7].trick_name   = "THLA_INIT.dses_config.mode";
+THLA.manager.sim_config.attributes[7].publish      = true;
+THLA.manager.sim_config.attributes[7].subscribe    = true;
+THLA.manager.sim_config.attributes[7].rti_encoding = THLA_UNICODE_STRING;
+
+//
+// Object class/attribute info.
+//
+THLA.manager.obj_count = 0;
+
+ 
+//
+// Interaction info
+//
+
+// Set the lookahead_time of the simplesine interaction handler to be equal to
+// the already-specifed HLA federate lookahead_time.
+//
+publisher.interaction_handler.lookahead_time = THLA.federate.lookahead_time;
+
+THLA.manager.inter_count  = 1;
+THLA.manager.interactions = alloc(THLA.manager.inter_count);
+
+THLA.manager.interactions[0].FOM_name    = "SimplesineParameters";
+THLA.manager.interactions[0].publish     = true;
+THLA.manager.interactions[0].subscribe   = false;
+THLA.manager.interactions[0].handler     = &publisher.interaction_handler;
+THLA.manager.interactions[0].param_count = 3;
+THLA.manager.interactions[0].parameters  = alloc(THLA.manager.interactions[0].param_count);
+
+THLA.manager.interactions[0].parameters[0].FOM_name   = "A";
+THLA.manager.interactions[0].parameters[0].trick_name = "publisher.simplesine.params.A";
+THLA.manager.interactions[0].parameters[0].rti_encoding = THLA_LITTLE_ENDIAN;
+
+THLA.manager.interactions[0].parameters[1].FOM_name   = "w";
+THLA.manager.interactions[0].parameters[1].trick_name = "publisher.simplesine.params.w";
+THLA.manager.interactions[0].parameters[1].rti_encoding = THLA_LITTLE_ENDIAN;
+
+THLA.manager.interactions[0].parameters[2].FOM_name   = "phi";
+THLA.manager.interactions[0].parameters[2].trick_name = "publisher.simplesine.params.phi";
+THLA.manager.interactions[0].parameters[2].rti_encoding = THLA_LITTLE_ENDIAN;
+
+
+
+read = 4.0;
+CALL publisher.publisher.interaction_handler.send_sine_interaction(sys.exec);
+\end{lstlisting}
+
+\clearpage
+
+% ----------------------------------------------------------------------
+\section{Complete receiver input file}\label{sec:complete-receiver-input}
+
+\begin{lstlisting}[caption={{\tt SIM\_simplesine\_hla\_receiveInt} input file},label={list:complete-receiver-input}]
+#include "S_properties"
+#include "S_default.dat"
+#include "Log_data/states.d"
+#include "Modified_data/realtime.d"
+#include "Modified_data/subscriber.d"
+
+stop =32.5; 
+
+//
+// Basic RTI/federation connection info
+//
+
+// Configure the CRC for the Pitch RTI.
+THLA.federate.local_settings = "crcHost = localhost\n crcPort = 8989";
+
+THLA.federate.name            = "receiver"; 
+THLA.federate.FOM_modules     = "FOM.xml"; 
+THLA.federate.federation_name = "simplesine"; 
+
+THLA.federate.lookahead_time   = THLA_DATA_CYCLE_TIME;
+THLA.federate.time_regulating  = true; 
+THLA.federate.time_constrained = true; 
+THLA.federate.multiphase_init_sync_points = "Phase1, Phase2";
+
+THLA.federate.enable_known_feds      = true; 
+THLA.federate.known_feds_count       = 2; 
+THLA.federate.known_feds             = alloc(2); 
+THLA.federate.known_feds[0].name     = "receiver"; 
+THLA.federate.known_feds[0].required = true; 
+THLA.federate.known_feds[1].name     = "sender"; 
+THLA.federate.known_feds[1].required = true; 
+
+// TrickHLA debug messages.
+THLA.manager.debug_handler.debug_level = THLA_LEVEL2_TRACE;
+
+
+// DSES simulation configuration.
+THLA_INIT.dses_config.owner              = "receiver";
+THLA_INIT.dses_config.run_duration       = 15.0;
+THLA_INIT.dses_config.num_federates      = 1;
+THLA_INIT.dses_config.required_federates = "receiver";
+THLA_INIT.dses_config.start_year         = 2007;
+THLA_INIT.dses_config.start_seconds      = 0;
+THLA_INIT.dses_config.scenario           = "Nominal";
+THLA_INIT.dses_config.mode               = "Unknown";
+
+// Simulation Configuration for DSES Multi-phase Initialization.
+THLA.manager.sim_config.FOM_name         = "SimulationConfiguration";
+THLA.manager.sim_config.name             = "SimConfig";
+THLA.manager.sim_config.packing          = &THLA_INIT.dses_config;
+THLA.manager.sim_config.attr_count       = 8;
+THLA.manager.sim_config.attributes       = alloc(8);
+
+THLA.manager.sim_config.attributes[0].FOM_name     = "owner";
+THLA.manager.sim_config.attributes[0].trick_name   = "THLA_INIT.dses_config.owner";
+THLA.manager.sim_config.attributes[0].publish      = true;
+THLA.manager.sim_config.attributes[0].subscribe    = true;
+THLA.manager.sim_config.attributes[0].rti_encoding = THLA_UNICODE_STRING;
+
+THLA.manager.sim_config.attributes[1].FOM_name     = "run_duration";
+THLA.manager.sim_config.attributes[1].trick_name   = "THLA_INIT.dses_config.run_duration_microsec";
+THLA.manager.sim_config.attributes[1].publish      = true;
+THLA.manager.sim_config.attributes[1].subscribe    = true;
+THLA.manager.sim_config.attributes[1].rti_encoding = THLA_LITTLE_ENDIAN;
+
+THLA.manager.sim_config.attributes[2].FOM_name     = "number_of_federates";
+THLA.manager.sim_config.attributes[2].trick_name   = "THLA_INIT.dses_config.num_federates";
+THLA.manager.sim_config.attributes[2].publish      = true;
+THLA.manager.sim_config.attributes[2].subscribe    = true;
+THLA.manager.sim_config.attributes[2].rti_encoding = THLA_LITTLE_ENDIAN;
+
+THLA.manager.sim_config.attributes[3].FOM_name     = "required_federates";
+THLA.manager.sim_config.attributes[3].trick_name   = "THLA_INIT.dses_config.required_federates";
+THLA.manager.sim_config.attributes[3].publish      = true;
+THLA.manager.sim_config.attributes[3].subscribe    = true;
+THLA.manager.sim_config.attributes[3].rti_encoding = THLA_UNICODE_STRING;
+
+THLA.manager.sim_config.attributes[4].FOM_name     = "start_year";
+THLA.manager.sim_config.attributes[4].trick_name   = "THLA_INIT.dses_config.start_year";
+THLA.manager.sim_config.attributes[4].publish      = true;
+THLA.manager.sim_config.attributes[4].subscribe    = true;
+THLA.manager.sim_config.attributes[4].rti_encoding = THLA_LITTLE_ENDIAN;
+
+THLA.manager.sim_config.attributes[5].FOM_name     = "start_seconds";
+THLA.manager.sim_config.attributes[5].trick_name   = "THLA_INIT.dses_config.start_seconds";
+THLA.manager.sim_config.attributes[5].publish      = true;
+THLA.manager.sim_config.attributes[5].subscribe    = true;
+THLA.manager.sim_config.attributes[5].rti_encoding = THLA_LITTLE_ENDIAN;
+
+THLA.manager.sim_config.attributes[6].FOM_name     = "scenario";
+THLA.manager.sim_config.attributes[6].trick_name   = "THLA_INIT.dses_config.scenario";
+THLA.manager.sim_config.attributes[6].publish      = true;
+THLA.manager.sim_config.attributes[6].subscribe    = true;
+THLA.manager.sim_config.attributes[6].rti_encoding = THLA_UNICODE_STRING;
+
+THLA.manager.sim_config.attributes[7].FOM_name     = "mode";
+THLA.manager.sim_config.attributes[7].trick_name   = "THLA_INIT.dses_config.mode";
+THLA.manager.sim_config.attributes[7].publish      = true;
+THLA.manager.sim_config.attributes[7].subscribe    = true;
+THLA.manager.sim_config.attributes[7].rti_encoding = THLA_UNICODE_STRING;
+
+//
+// Object class/attribute info.
+//
+THLA.manager.obj_count = 0;
+
+ 
+//
+// Interaction info
+//
+THLA.manager.inter_count  = 1;
+THLA.manager.interactions = alloc(1);
+
+THLA.manager.interactions[0].FOM_name    = "SimplesineParameters";
+THLA.manager.interactions[0].publish     = false;
+THLA.manager.interactions[0].subscribe   = true;
+THLA.manager.interactions[0].handler     = &subscriber.interaction_handler;
+THLA.manager.interactions[0].param_count = 3;
+THLA.manager.interactions[0].parameters  = alloc(3);
+
+THLA.manager.interactions[0].parameters[0].FOM_name   = "A";
+THLA.manager.interactions[0].parameters[0].trick_name = "subscriber.simplesine.params.A";
+THLA.manager.interactions[0].parameters[0].rti_encoding = THLA_LITTLE_ENDIAN;
+
+THLA.manager.interactions[0].parameters[1].FOM_name   = "w";
+THLA.manager.interactions[0].parameters[1].trick_name = "subscriber.simplesine.params.w";
+THLA.manager.interactions[0].parameters[1].rti_encoding = THLA_LITTLE_ENDIAN;
+
+THLA.manager.interactions[0].parameters[2].FOM_name   = "phi";
+THLA.manager.interactions[0].parameters[2].trick_name = "subscriber.simplesine.params.phi";
+THLA.manager.interactions[0].parameters[2].rti_encoding = THLA_LITTLE_ENDIAN;
+\end{lstlisting}

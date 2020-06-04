@@ -1,0 +1,374 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File: trickhlacover.sty - Cover page
+%
+% Author: David Hammen - Odyssey Space Research - May 2006
+% Author: Dan Dexter - April 2007 - Updated for use in TrickHLA.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\NeedsTeXFormat{LaTeX2e}% LaTeX 2.09 can't be used (nor non-LaTeX)
+[1994/12/01]% LaTeX date must be December 1994 or later
+\ProvidesPackage{trickhlacover}[2006/04/12 v1.0 TrickHLA package cover page macros]
+
+\newif\ifdc@nosigpage
+\DeclareOption{sigpage}{\dc@nosigpagefalse}
+\DeclareOption{nosigpage}{\dc@nosigpagetrue}
+\ExecuteOptions{nosigpage,sigpage}
+\ProcessOptions\par
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Externally-callable cover page macros
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% \makeTrickhlaenvTitlepage     (Note: macro has no arguments)
+%   Make the cover pages -- outer cover, inner cover, and signature page.
+\newcommand{\makeTrickhlaenvTitlepage}{
+  \ifx\@metatitle\@empty
+    \gdef\DE@doctitle{
+      \ifx\@doctype\@empty
+        {\@modelname}
+      \else
+        {\@modelname \\ \@doctype}
+      \fi}
+  \else
+    \gdef\DE@doctitle{
+      \ifx\@doctype\@empty
+        {\@metatitle \\ \@modelname}
+      \else
+        {\@metatitle \\ \@modelname \\ \@doctype}
+      \fi}
+  \fi
+  \DE@makeoutercover
+  \DE@makeinnercover\relax
+  \ifdc@nosigpage \else \DE@makesignaturepage \fi
+  \DE@cleancover
+}
+
+\def\DE@cleancover{
+  \setbox\DE@boxa\box\voidb@x
+  \setbox\DE@boxb\box\voidb@x
+  \setbox\DE@boxc\box\voidb@x
+  \setbox\DE@boxd\box\voidb@x
+}
+
+%%% The remaining externally-callable macros (plus the existing macros
+%%% \author and \date) establish the contents of the cover pages.
+
+% \JSCnum{JSC document number}
+%   Defines the JSC document number.
+%   There should be only one JSC number for all our documents.
+\def \JSCnum#1{\gdef\@JSCnum{#1}}
+
+% \ metatitle{meta-title}
+%   Identifies the overarching title (e.g. \metatitle{JSC ...})
+\def \metatitle#1{\gdef\@metatitle{#1}}
+
+% \modelname{model name}
+%   Identifies the model (e.g. \modelname{Gravity Model})
+\def \modelname#1{\gdef\@modelname{#1}}
+
+% \doctype{document type}
+%   Identifies the document type. Use
+%     \doctype{}                      for the top-level document,
+%     \doctype{Product Specification} for the product specification, etc.
+\def \doctype#1{\gdef\@doctype{#1}}
+
+% \docid{document Id}
+%   Identifies the document numerically; Id is of the form DD.mm.dd .
+%     DD  is  01 for TrickHLA, 02 for environment, 03 for tools
+%     mm  is  the model identifier number
+%     dd  is  the document identifier number
+\def \docid#1{\gdef\@docid{#1}}
+
+% \docrev{revision}
+%   Identifies the document revision number.
+\def \docrev#1{\gdef\@docrev{#1}}
+
+% \pkgrel{release}
+%   Identifies the package release (e.g., \pkgrel{TrickHLA_v_1.4}).
+\def \pkgrel#1{\gdef\@pkgrel{#1}}
+
+%   Identifies the document revision number.
+\def \docrev#1{\gdef\@docrev{#1}}
+
+% \nasaorg{organization}
+%   Identifies the responsible NASA organization
+%   e.g., \nasaorg{Simulation and Graphics Branch (ER7) ...}
+\def \nasaorg#1{\gdef\@nasaorg{#1}}
+
+% \managers{manager name and title list}
+%   Identifies the managers who will sign the document.
+%   The managers *MUST* be specified as name1\\title1\\name2\\title2 ...
+\def \managers#1{\gdef\@managers{#1}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Internal cover page macros
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Defaults for the JSC number, document identifiers (identifiers are mandatory).
+
+\def\@JSCnum    {\@latex@error{No \noexpand \JSCnum given}    \@ehc}
+\def\@metatitle {\@latex@error{No \noexpand \metatitle given} \@ehc}
+\def\@modelname {\@latex@error{No \noexpand \modelname given} \@ehc}
+\def\@doctype   {\@latex@error{No \noexpand \doctype given}   \@ehc}
+\def\@docrev    {\@latex@error{No \noexpand \docrev given}    \@ehc}
+\def\@docid     {\@latex@error{No \noexpand \docid given}     \@ehc}
+\def\@pkgrel    {\@latex@error{No \noexpand \pkgrel given}    \@ehc}
+\def\@nasaorg   {\@latex@error{No \noexpand \nasaorg given}   \@ehc}
+\def\@managers  {\@latex@error{No \noexpand \managers given}  \@ehc}
+
+\def\@sigheight {0.75in}
+
+
+% \DE@makeoutercover     (Note: macro has no arguments)
+%   Make the outer cover page
+\newcommand{\DE@makeoutercover}{
+   %
+   % Start page numbering at the first cover page.
+  \setcounter{page}\@ne
+   %
+   %% Make boxes for the outer cover page
+   %
+   % Box 'a': Document title (with TrickHLA IV&V)
+  \DE@makebox a {\huge \bfseries} {
+    \hfill{\rm\normalsize {\@JSCnum-\@docid}} \\
+    \DE@doctitle}
+   %
+   % Box 'b': Organization
+  \DE@makebox b {\large \bfseries} {
+    \rule[2pt]{\textwidth}{2pt}
+    \@nasaorg}
+   %
+   % Box 'c': Revision and date
+  \DE@makebox c {\huge \bfseries} {
+    Package Release \@pkgrel \\[10pt]
+    Document Revision \@docrev \\
+    \@date}
+   %
+   % Box 'd': Meatball and NASA
+  \DE@makebox d {\large \bfseries} {
+    \ifx\pdfoutput\undefined\else\includegraphics[height=1.0in,width=1.325in]{Meatball}\\[4pt]\fi
+    National Aeronautics and Space Administration\\[2pt]
+    Lyndon B. Johnson Space Center\\[2pt]
+    Houston, Texas}
+   %
+   % Make the outer cover page with a sidebar on the right
+  \DE@makepage{
+    \linethickness{2pt}
+    \put(\strip@pt\textwidth,\strip@pt\DE@posb)
+      {\line(0,-1){\strip@pt\DE@posb}}
+  }
+}
+
+% \DE@makeinnercover     (Note: macro has no arguments)
+%   Make the inner cover page
+\newcommand{\DE@makeinnercover}{
+   %
+   %% Make boxes for the inner cover page
+   %
+   % Box 'a': Document title (with TrickHLA IV&V)
+  \DE@makebox a {\centering \Large \bfseries} {
+    \hfill{\rm\normalsize {\@JSCnum-\@docid}} \\[20pt]
+    \DE@doctitle}
+   %
+   % Box 'b': Revision, date, author
+  \DE@makebox b {\centering \Large \bfseries} {
+    \ \\[24pt] Document Revision \@docrev \\
+    \@date\\[30pt]
+    \@author}
+   %
+   % Box 'c': Organization
+  \DE@makebox c {\centering \large \bfseries} {
+    \@nasaorg}
+   %
+   % Box 'd': NASA
+  \DE@makebox d {\centering  \large \bfseries} {
+    {National Aeronautics and Space Administration\\[2pt]
+    Lyndon B. Johnson Space Center\\[2pt]
+    Houston, Texas}}
+   %
+   % Make the inner cover page
+  \DE@makepage{}
+}
+
+% \DE@makesignaturepage     (Note: macro has no arguments)
+%   Make the signature page
+\newcommand{\DE@makesignaturepage}{
+   %
+   %% Make boxes for the signature page
+   %
+   % Box 'a': Document title (with TrickHLA IV&V)
+  \DE@makebox a {\centering \Large \bfseries} {
+    \hfill{\rm\normalsize {\@JSCnum-\@docid}} \\[20pt]
+    \DE@doctitle}
+   %
+   % Box 'b': Approval signatures
+  \DE@makebox b {\centering \large \bfseries} {
+    \ \\[14pt] Approval signatures}
+   %
+   % Box 'c': The signatures
+  \DE@makesigbox c {\centering \mdseries \scshape}
+   %
+   % Box 'd': Date
+  \DE@makebox d {\centering \large \bfseries} {
+    \@date}
+   %
+   % Make the inner cover page
+  \DE@makepage{}
+}
+
+% Define boxes, their heights, and their positions
+\newbox{\DE@boxa}  \newlength{\DE@hgta}  \newlength{\DE@posa}
+\newbox{\DE@boxb}  \newlength{\DE@hgtb}  \newlength{\DE@posb}
+\newbox{\DE@boxc}  \newlength{\DE@hgtc}  \newlength{\DE@posc}
+\newbox{\DE@boxd}  \newlength{\DE@hgtd}  \newlength{\DE@posd}
+
+
+% \DE@makebox{boxId}{fontspec}{text}
+%   Make a box and measure its height (includes depth)
+\def\DE@makebox#1#2#3{
+  \sbox\@tempboxa{\parbox[t]{\textwidth}{#2 {#3}}}
+  \@tempdima\ht\@tempboxa
+  \advance\@tempdima\dp\@tempboxa\relax
+  \expandafter\sbox{\csname DE@box#1\endcsname}{\usebox\@tempboxa}
+  \expandafter\setlength{\csname DE@hgt#1\endcsname}\@tempdima
+}
+
+% \DE@ makepage
+%   Put boxes a to d plus argument on the page in a page-encompassing picture.
+\def\DE@makepage#1{
+   %
+   % Place box 'a' at the top of the page,
+   %           'd' at the bottom of the page,
+   %           'b' just below box 'a',
+   %           'c' centered between 'b' and 'd'.
+  \setlength   \DE@posa \textheight
+  \setlength   \DE@posd \DE@hgtd
+  \setlength   \DE@posb \DE@posa
+  \addtolength \DE@posb {-\DE@hgta}
+  \addtolength \DE@posb {-6pt}
+  \setlength   \DE@posc \DE@posb
+  \addtolength \DE@posc {-\DE@hgtb}
+  \addtolength \DE@posc {\DE@hgtc}
+  \addtolength \DE@posc {\DE@posd}
+  \setlength   \DE@posc {0.5 \DE@posc}
+   %
+   % Put everything on the page in a picture.
+  \newpage
+  \thispagestyle{empty}
+  \picture(\strip@pt\textwidth,\strip@pt\textheight)
+    \DE@putbox a
+    \DE@putbox b
+    \DE@putbox c
+    \DE@putbox d
+    \ifx #1\@empty\else#1\fi
+  \endpicture
+  \newpage
+}
+
+% \DE@putbox{boxId}
+%   Put a box in the picture (always top left).
+\def\DE@putbox#1{
+  \put(0,\expandafter\strip@pt\csname DE@pos#1\endcsname)
+  {\makebox(0,0)[tl]{\expandafter\usebox \csname DE@box#1\endcsname}}
+}
+
+
+% \DE@sigblk{name}{title}
+%   Draw a signature line.
+\def\DE@sigblk#1#2{
+  \rule[-\@sigheight]{4in}{1pt} \\ #1 \\ #2 \\
+}
+
+% \DE@makesigbox
+%   Generate a box containing signature blocks (authors and managers).
+\newtoks\DE@signators
+\def\DE@makesigbox#1#2{
+  \DE@signators = {}
+  \DE@authorsignators
+  \DE@managementsignators
+  \DE@makebox #1 {#2} {\the\DE@signators}
+  \global\DE@signators{\the\DE@signators#1}
+}
+
+% \DE@addtosignators{signature spec}
+%   Add a signature specification to the list of such.
+\def\DE@addtosignators#1{
+  \global\DE@signators\expandafter{\the\DE@signators#1}
+}
+
+% \DE@addsignator{name}{title}
+%   Add a signator to the list of such. This is starting to get ugly.
+\@definecounter{DE@sn}
+\def\DE@addsignator#1#2{
+  \stepcounter{DE@sn}
+  \expandafter\xdef\csname DE@sig\@alph\c@DE@sn\endcsname{
+   \noexpand\DE@sigblk{#1}{#2}
+   \noexpand\global\noexpand
+     \let\csname DE@sig\@alph\c@DE@sn\endcsname \noexpand\@empty}
+  \expandafter\DE@addtosignators\csname DE@sig\@alph\c@DE@sn\endcsname
+}
+
+% \DE@authorsignators     (Note: macro has no arguments)
+%   Generate a signature line for each of the authors.
+%   Notes:
+%     - The user specifies the authors via the \authors macro.
+%       Authors should be separated by a \\ (newline). NO FANCY NEWLINES!
+%     - This macro is one ugly POS.
+\def\DE@oldcr{}
+\def\DE@authorsignators{
+   % The \authors macro generates protected newlines that halign can't see.
+   % Change the \protect\\ newlines into \cr newlines by ...
+   %   Saving the protected newline definition so \\ can be safely redefined
+   %   Redefining \\ to \cr
+   %   Substituting the \\ newlines in \@authors with \cr via edef
+   %   Restoring the definition of \\
+  \let\DE@oldcr\\
+  \def\\{\cr}
+  \edef\DE@exp{\@author}
+  \let\\\DE@oldcr
+   % Split the author list on each \cr, adding each author as a signator.
+   % The first part (\sbox ... just captures the null output of the halign.
+   % This macro generates a blank page without this hack.
+  \sbox\@tempboxa{\parbox{\textwidth}{
+     % Capture each authors by pretending the authors are going to be presented
+     % in a horizontally-aligned table.
+    \everycr{}\halign{
+      \DE@addsignator{##}{Author}\cr
+      \DE@exp
+      \crcr}}}
+   % Discard the box.
+  \setbox\@tempboxa\box\voidb@x
+}
+
+% \DE@managementsignators     (Note: macro has no arguments)
+%   Generate a signature line for each of the management signators.
+%   Notes:
+%     - The user specifies the managers via the \managers macro.
+%       Managers must be specified as name/title pairs, separated by \\
+%     - This macro is even uglier than the above.
+\def\DE@mgr{}
+\def\DE@pos{}
+\def\DE@managementsignators{
+   % Replace \\ newlines in \@managers with \cr newlines.
+  \let\DE@oldcr\\
+  \def\\{\cr}
+  \edef\DE@exp{\@managers}
+  \let\\\DE@oldcr
+  \def\DE@mgr{}
+   % Split the managers list into name/title pairs.
+  \sbox\@tempboxa{\parbox{\textwidth}{
+    \everycr{}\halign{
+      \gdef\DE@pos{##}
+      \ifx\DE@mgr\@empty
+        \xdef\DE@mgr{\DE@pos}
+      \else
+        \DE@addsignator{\DE@mgr}{\DE@pos}
+        \gdef\DE@mgr{}
+      \fi
+      \cr
+      \DE@exp\crcr}}}
+  \setbox\@tempboxa\box\voidb@x
+}

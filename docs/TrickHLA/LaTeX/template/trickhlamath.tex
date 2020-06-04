@@ -1,0 +1,432 @@
+%&latex
+
+\documentclass[10pt,landscape]{article}
+%\documentclass[10pt]{article}
+
+%
+% Bring in the AMS math environment
+%
+\usepackage{amsmath}
+
+%
+% Bring in the common page setup
+%
+\usepackage{trickhlaenv}
+
+%
+% Define vector and quaternion macros
+%
+\usepackage{trickhlamath}
+
+
+%
+% Bring in the hyper ref environment
+%
+\usepackage[colorlinks,bookmarks]{hyperref}
+\hypersetup{
+   pdftitle={TrickHLA Package Mathematical Nomenclature},
+   pdfauthor={David Hammen}}
+
+\newcommand{\trickhlamath}{\texorpdfstring{\tt trickhlamath}{trickhlamath}}
+
+\newcommand{\symhdr}[1]{%
+\multicolumn{4}{l}{\rule{0pt}{3ex}\parbox[c]{0.6\textwidth}{#1}} \\
+\cline{2-4} \rule{3em}{0pt} & {\bf Symbol} & {\bf Represents} & {\bf Units (MKS)}\\ \cline{2-4} \cline{2-4}}
+
+\newcommand{\acchdr}[1]{%
+\multicolumn{4}{l}{\rule{0pt}{3ex}\parbox[c]{0.6\textwidth}{#1}} \\
+\cline{2-4} \rule{3em}{0pt} & {\bf Description} & {\bf Remark} & {\bf Example}\\ \cline{2-4} \cline{2-4}}
+
+\def\purpwidth{0.35\textwidth}
+\def\argswidth{0.15\textwidth}
+
+\newcommand{\mlentry}[2]{%
+  \minipage[t]{#1}{\flushleft{#2}\endflushleft}\endminipage}
+
+
+\newcommand{\slinethree}{\rule{0pt}{0.2ex}&\rule{0pt}{0.2ex}&\rule{0pt}{0.2ex}&\rule{0pt}{0.2ex}}
+\newcommand{\slinefour}{\rule{0pt}{1.2ex}&&&&}
+
+
+\begin{document}
+
+\title{TrickHLA Package Mathematical Nomenclature}
+\author{David Hammen}
+\date{12/21/05}
+
+\pdfbookmark{Title Page}{titlepage}
+\maketitle
+
+\tableofcontents
+
+\section*{Introduction}
+This note describes the preferred nomenclature for the TrickHLA package
+documentation and describes a set of \LaTeX\ macros that implement
+the nomenclature.
+
+
+\pagebreak
+\section{Nomenclature}
+This section describes the preferred nomenclature for the TrickHLA package
+documentation. The preferred nomenclature
+\begin{itemize}
+\item Uses International System (SI) units with standard SI abbreviations.
+\item Represents scalars in plain math font, vectors and matrices in bold math font,
+and quaternions in caligraphy font.
+\item Represents vectors, matrices, and quaternions in a standard, intuitive style
+with an obvious translation to variable names. For example,
+$\framerelvect A x a b$ is the vector from point $a$ to point $b$ as expressed in
+reference frame $A$. This is denoted as the ``arrow-separated'' format.
+Alternative respresentations such as
+\trickhlamathcommamode $\relvect x a b$ \trickhlamatharrowmode (``comma-separated'')
+and
+\trickhlamathstackedmode $\relvect x a b$ \trickhlamatharrowmode (``stacked'')
+were
+discussed but discarded for various reasons.
+\item Quaternions that represent a transformation from one frame to another
+are represented as unit left transformation quaternions,
+consistent with the quaternion functions defined in the Trick core.
+\end{itemize}
+
+The following tables depict the preferred nomenclature.
+In cases where alternative representation schemes exist,
+the preferred form is listed first followed by alternatives
+
+ \pagebreak
+\subsection{Basics}\label{sec:nomen_basics}
+
+\begin{tabular}{l||l|l|l|}
+\acchdr{{\bf{Display style for vectors, matrices, and quaternions}}}
+\rule{0pt}{3ex} & Scalar &
+  in plain math font & $s$ \\
+\rule{0pt}{1.5ex} & Vector &
+  in bold math font& $\vect x$ \\
+\rule{0pt}{1.5ex} & Matrix &
+  in bold math font& $\mat T$ \\
+\rule{0pt}{1.5ex} & Quaternion&
+  in caligraphy font, uppercase & $\quat Q$ \\
+\cline{2-4}
+\symhdr{{\bf{Scalar Symbols}}}
+\rule{0pt}{3ex} & $\alpha$ & Angular acceleration & $r/s^2$ \\
+\rule{0pt}{1.5ex} & $\alpha, \beta, \theta, \phi, \psi$ & Angle & $r$ \\
+\rule{0pt}{1.5ex} & $\omega$ & Angular rate & $r/s$ \\
+\rule{0pt}{1.5ex} & $d, l, s$ & Distance or length & $m$ \\
+\rule{0pt}{1.5ex} & $m$ & Mass & $kg$ \\
+\rule{0pt}{1.5ex} & $v, s$ & Speed & $m/s$ \\
+\cline{2-4}
+\symhdr{{\bf{Vector Symbols}}}
+\rule{0pt}{3ex} & $\vect \alpha$ & Angular acceleration & $r/s^2$ \\
+\rule{0pt}{1.5ex} & $\vect \tau$ & Torque & $Nm$ \\
+\rule{0pt}{1.5ex} & $\vect \omega$ & Angular velocity & $r/s$ \\
+\rule{0pt}{1.5ex} & $\vect a$ & Acceleration & $m/s^2$ \\
+\rule{0pt}{1.5ex} & $\vect L$ & Angular momentum & $Nms \; (kg \, m^2/s)$ \\
+\rule{0pt}{1.5ex} & $\vect v$ & Velocity & $m/s$ \\
+\rule{0pt}{1.5ex} & $\vect x$ & Position & $m$ \\
+\cline{2-4}
+\symhdr{{\bf{Matrix Symbols}}}
+\rule{0pt}{3ex} & $\mat I$ & Inertia tensor & $kg \, m^2$ \\
+\rule{0pt}{1.5ex} & $\mat T$ & Transformation matrix & $--$ \\
+\cline{2-4}
+\symhdr{{\bf{Quaternion Symbols}}}
+\rule{0pt}{3ex} & $\quat Q$ & Left transformation quaternion & $--$ \\
+\cline{2-4}
+\end{tabular}
+
+\pagebreak
+
+\subsection{Adornments}\label{sec:nomen_addorn}
+
+\begin{tabular}{l||l|l|l|}
+\acchdr{{\bf{Vectors}}}
+\rule{0pt}{3ex} & Vector from origin to $b$ &Subscripted $b$& $\absvect x b$ \\
+%\cline{2-4}
+\rule{0pt}{3ex} & Vector from $a$ to $b$ &
+ Arrow, comma, stacked formats &
+\makebox[1.5cm]{$\relvect x a b$}
+\makebox[1.5cm]{\trickhlamathcommamode $\relvect x a b$ \trickhlamatharrowmode}
+\makebox[1.5cm]{\trickhlamathstackedmode $\relvect x a b$ \trickhlamatharrowmode} \\
+%\cline{2-4}
+\rule{0pt}{3ex} & Vector expressed in frame $A$ &&
+\makebox[1.5cm]{$\framevect A x$}
+\makebox[1.5cm]{\trickhlamathcommamode $\framevect A x$ \trickhlamatharrowmode}
+\makebox[1.5cm]{\trickhlamathstackedmode $\framevect A x$ \trickhlamatharrowmode} \\
+%\cline{2-4}
+\rule{0pt}{3ex} & Vector from $a$ to $b$ expressed in frame $A$ &&
+\makebox[1.5cm]{$\framerelvect A x a b$}
+\makebox[1.5cm]{\trickhlamathcommamode $\framerelvect A x a b$ \trickhlamatharrowmode}
+\makebox[1.5cm]{\trickhlamathstackedmode $\framerelvect A x a b$ \trickhlamatharrowmode} \\
+%\cline{2-4}
+\rule{0pt}{3ex} & Time derivative of above, observer in frame $A$&&
+\makebox[1.5cm]{$\framerelvdot A x a b$}
+\makebox[1.5cm]{\trickhlamathcommamode $\framerelvdot A x a b$ \trickhlamatharrowmode}
+\makebox[1.5cm]{\trickhlamathstackedmode $\framerelvdot A x a b$ \trickhlamatharrowmode} \\
+\rule{0pt}{3ex} & Vector time derivative, observer in frame $A$&
+  Dot format & $\framedot A {\vect x}$ \\
+\rule{0pt}{3ex} & &
+  $or$ d/dt format & $\frac{d}{dt_A}{\vect x}$ \\
+\cline{2-4}
+\acchdr{{\bf{Matrices}}}
+\rule{0pt}{3ex} & Transformation from $A$ to $B$ &
+ Arrow, comma, stacked formats &
+\makebox[1.5cm]{$\tmat A B$}
+\makebox[1.5cm]{\trickhlamathcommamode $\tmat A B$ \trickhlamatharrowmode}
+\makebox[1.5cm]{\trickhlamathstackedmode $\tmat A B$ \trickhlamatharrowmode} \\
+%\cline{2-4}
+\rule{0pt}{3ex} & Matrix product &
+  No operator & $\MxM{\tmat B C}{\tmat A B}$ \\
+%\cline{2-4}
+\rule{0pt}{3ex} & Single matrix transpose &
+  Superscript $\top$ & $\matT T$ \\
+%\cline{2-4}
+\rule{0pt}{3ex} & Matrix product transpose &
+  Superscript $\top$ & $\left(\MxM{\tmat B C}{\tmat A B}\right){^\top}$ \\
+\cline{2-4}
+\acchdr{{\bf{Quaternions}}}
+\rule{0pt}{3ex} & Quaternion from $A$ to $B$ &
+ Arrow, comma, stacked formats &
+\makebox[1.5cm]{$\tquat A B$}
+\makebox[1.5cm]{\trickhlamathcommamode $\tquat A B$ \trickhlamatharrowmode}
+\makebox[1.5cm]{\trickhlamathstackedmode $\tquat A B$ \trickhlamatharrowmode} \\
+%\cline{2-4}
+\rule{0pt}{3ex} & Quaternion product &
+  No operator & $\QxQ{\tquat B C}{\tquat A B}$ \\
+%\cline{2-4}
+\rule{0pt}{3ex} & Single quaternion conjugate &
+  Superscript $\star$ & $\quatconj Q$ \\
+%\cline{2-4}
+\rule{0pt}{3ex} & Quaternion product conjugate &
+  Superscript $\star $ & $\quatconjlr{\QxQ{\tquat B C}{\tquat A B}}$ \\
+%\cline{2-4}
+\rule{0pt}{3ex} & Quaternion components &
+  Scalar $+$ vector $or$ four-vector&
+  $\quatsv{q_s}{\vect{q_v}} \;or\; \bmatrix q_s \\ q_x \\ q_y \\ q_z\endbmatrix$ \\
+\cline{2-4}
+\end{tabular}
+
+\pagebreak
+\section{{\trickhlamath}\ Macros}
+
+This section provides a brief description of the macros defined in
+\verb|trickhlamath.sty| in the form of tables that describe the macros,
+their arguments, sample usage of the macros, and the displayed math that results.
+
+Note: All of the macros defined in \verb|trickhlamath.sty| assume {\LaTeX} is in math mode.
+
+\pagebreak
+\subsection{Vector Macros}
+
+\begin{tabular}{||l|l|l|l|l|} \hline
+{\bf Command} & {\bf Purpose} & {\bf Arguments} & {\bf Example} & {\bf Display} \\ \hline \hline
+\slinefour \\
+\verb|\vect| &
+  \mlentry{\purpwidth}{Display a symbol that represents a vector (typically a lowercase letter)} &
+  \mlentry{\argswidth}{Symbol} &
+  \verb|\vect{x}| & $\vect{x}$ \\ \slinefour \\
+\verb|\vhat| &
+  \mlentry{\purpwidth}{Display a symbol that represents a unit vector} &
+  \mlentry{\argswidth}{Symbol} &
+  \verb|\vhat{x}| & $\vhat{x}$ \\ \slinefour \\
+\verb|\vdot| &
+  \mlentry{\purpwidth}{Time derivative of a vector} &
+  \mlentry{\argswidth}{Symbol} &
+  \verb|\vdot{x}| & $\vdot{x}$ \\ \slinefour \\
+\verb|\framevect| &
+  \mlentry{\purpwidth}{Vector represented in a specific frame} &
+  \mlentry{\argswidth}{1. Frame\\ 2. Vector} &
+  \verb|\framevect B x| & $\framevect B x$  \\ \slinefour \\
+  \verb|\framevdot| &
+  \mlentry{\purpwidth}{Time derivative of a vector represented in a specific frame} &
+  \mlentry{\argswidth}{1. Frame\\ 2. Vector} &
+  \verb|\framevdot B x| & $\framevdot B x$  \\ \slinefour \\
+\verb|\relvect| &
+  \mlentry{\purpwidth}{Vector between two items} &
+  \mlentry{\argswidth}{1. Vector\\ 2. Source\\ 3. Destination} &
+  \verb|\relvect x a b| & $\relvect x a b$  \\ \slinefour \\
+\verb|\relvdot| &
+  \mlentry{\purpwidth}{Time derivative of a vector between two items} &
+  \mlentry{\argswidth}{1. Vector\\ 2. Source\\ 3. Destination} &
+  \verb|\relvdot x a b| & $\relvdot x a b$  \\ \slinefour \\
+\verb|\framerelvect| &
+  \mlentry{\purpwidth}{Vector between two items} &
+  \mlentry{\argswidth}{1. Frame\\ 2. Vector\\ 3. Source\\ 4. Destination} &
+  \verb|\framerelvect B x a b| & $\framerelvect B x a b$  \\ \slinefour \\
+\verb|\framerelvdot| &
+  \mlentry{\purpwidth}{Time derivative of a vector between two items} &
+  \mlentry{\argswidth}{1. Frame\\ 2. Vector\\ 3. Source\\ 4. Destination} &
+  \verb|\framerelvdot B x a b| & $\framerelvdot B x a b$  \\ \slinefour \\
+\verb|\vectxyz| &
+  \mlentry{\purpwidth}{Construct a vector from its components} &
+  \mlentry{\argswidth}{Three components} &
+  \verb|\vectxyz x y z| & $\vectxyz x y z$  \\ \slinefour \\
+\hline
+\end{tabular}
+
+\pagebreak
+
+\subsection{Quaternion Macros}
+\
+\begin{tabular}{||l|l|l|l|l|} \hline
+{\bf Command} & {\bf Purpose} & {\bf Arguments} & {\bf Example} & {\bf Display} \\ \hline \hline
+\slinefour \\
+\verb|\quat| &
+  \mlentry{\purpwidth}{Display a symbol that represents a quaternion (typically Q)} &
+  \mlentry{\argswidth}{Symbol} &
+  \verb|\quat{Q}| & $\quat{Q}$ \\ \slinefour \\
+\verb|\qdot| &
+  \mlentry{\purpwidth}{Time derivative of a quaternion} &
+  \mlentry{\argswidth}{Symbol} &
+  \verb|\qdot{Q}| & $\qdot{Q}$ \\ \slinefour \\
+\verb|\quatconj| &
+  \mlentry{\purpwidth}{Conjugate of a quaternion} &
+  \mlentry{\argswidth}{Symbol} &
+  \verb|\quatconj{Q}| & $\quatconj{Q}$ \\ \slinefour \\
+\verb|\quatconjdot| &
+  \mlentry{\purpwidth}{Time derivative of the conjugate of a quaternion} &
+  \mlentry{\argswidth}{Symbol} &
+  \verb|\quatconjdot{Q}| & $\quatconjdot{Q}$ \\ \slinefour \\
+\verb|\quatsv| &
+  \mlentry{\purpwidth}{Construct a quaternion from a scalar and $3$-vector} &
+  \mlentry{\argswidth}{1. Scalar\\ 2. Vector} &
+  \minipage[t]{0pt}{\verb|\quatsv| \\ \verb|  {q_s}| \\ \verb|  {\vect{q_v}}|}\endminipage &
+  \raisebox{-1.5ex}{$\quatsv{q_s}{\vect{q_v}}$} \\ \slinefour \\
+\verb|\quattrot| &
+  \mlentry{\purpwidth}{Construct a transformation quaternion from an angle and unit vector} &
+  \mlentry{\argswidth}{1. Angle\\ 2. Unit vector} &
+  \minipage[t]{0pt}{\verb|\quattrot| \\ \verb|  \theta| \\ \verb|  {\vhat u}|}\endminipage &
+  \raisebox{-2.5ex}{$\quattrot{\theta}{\vhat u}$} \\ \slinefour \\
+\verb|\conjop| &
+  \mlentry{\purpwidth}{Conjugate operator} &
+  \mlentry{\argswidth}{None} &
+  \verb|\conjop \quat Q| & $\conjop \quat Q$ \\ \slinefour \\
+\verb|\scalarpart| &
+  \mlentry{\purpwidth}{Scalar part operator} &
+  \mlentry{\argswidth}{None} &
+  \verb|\scalarpart \quat Q| & $\scalarpart \quat Q$ \\ \slinefour \\
+\verb|\vectorpart| &
+  \mlentry{\purpwidth}{Vector part operator} &
+  \mlentry{\argswidth}{None} &
+  \verb|\vectorpart \quat Q| & $\vectorpart \quat Q$ \\ \slinefour \\
+\verb|\QBI| &
+  \mlentry{\purpwidth}{Inertial-to-body quaternion} &
+  \mlentry{\argswidth}{None} &
+  \verb|\QBI| & $\QBI$ \\ \slinefour \\
+\hline
+\end{tabular}
+
+
+\pagebreak
+
+\subsection{Matrix Macros}
+
+\begin{tabular}{||l|l|l|l|l|} \hline
+{\bf Command} & {\bf Purpose} & {\bf Arguments} & {\bf Example} & {\bf Display} \\ \hline \hline
+\slinefour \\
+\verb|\mat| &
+  \mlentry{\purpwidth}{Display a symbol that represents a matrix (typically an uppercase letter)} &
+  \mlentry{\argswidth}{Symbol} &
+  \verb|\mat{T}| & $\mat{T}$ \\ \slinefour \\
+\verb|\framemat| &
+  \mlentry{\purpwidth}{Matrix represented in some reference frame} &
+  \mlentry{\argswidth}{1. Frame\\ 2. Matrix} &
+  \verb|\framemat B \inertia| & $\framemat B \inertia$ \\ \slinefour \\
+\verb|\diagmatrix| &
+  \mlentry{\purpwidth}{$3\times3$ diagonal matrix} &
+  \mlentry{\argswidth}{Three diagonal elements} &
+  \verb|\diagmatrix 1 2 3| & $\diagmatrix 1 2 3$ \\ \slinefour \\
+\verb|\identmatrix| &
+  \mlentry{\purpwidth}{$3\times3$ identity matrix} &
+  \mlentry{\argswidth}{None} &
+  \verb|\identmatrix| & $\identmatrix$ \\ \slinefour \\
+\verb|\inertia| &
+  \mlentry{\purpwidth}{Inertia matrix} &
+  \mlentry{\argswidth}{None} &
+  \verb|\inertia| & $\inertia$ \\ \slinefour \\
+\hline
+\end{tabular}
+
+\pagebreak
+
+\subsection{Multiplication Macros}
+
+The preferred nomenclature for depicting the product of two (or more) composite objects
+is ``implicit multiplication'':  The operands are written with no intervening operator.
+However,
+a small amount of white space between the operands helps to distinguish the operands.
+The multiplication macros provide a default amount of white space between operands.
+
+\begin{tabular}{||l|l|l|l|l|} \hline
+{\bf Command} & {\bf Purpose} & {\bf Arguments} & {\bf Example} & {\bf Display} \\ \hline \hline
+\slinefour \\
+\verb|\MxM| &
+  \mlentry{\purpwidth}{Product of two matrices} &
+  \mlentry{\argswidth}{Matrix 1\\ Matrix 2} &
+  \minipage[t]{2.5cm}{\verb|\MxM| \\ %
+    \verb| {\tmat B C}| \\ %
+    \verb| {\tmat A B}|}\endminipage &
+  $\MxM{\tmat B C}{\tmat A B}$ \\[8ex]
+\verb|\QxVxQ | &
+  \mlentry{\purpwidth}{Product of a quaternion, a vector, and a quaternion} &
+  \mlentry{\argswidth}{Quaternion 1\\ Vector\\ Quaternion 2} &
+  \minipage[t]{2.5cm}{\verb|\QxVxQ| \\ %
+    \verb| {\quat Q}| \\ %
+    \verb| {\vect x}| \\ %
+    \verb| {\quatconj Q}|}\endminipage &
+    \raisebox{-1.5ex}{$\QxVxQ{\quat Q}{\vect x}{\quatconj Q}$} \\ \slinefour \\
+\hline
+\end{tabular}
+
+Similar macros are defined for
+\begin{itemize}
+\item the product of three matrices (\verb|MxMxM|)
+\item the product of a matrix and vector (\verb|MxV|)
+\item the product of two or three quaternions (\verb|QxQ|, \verb|QxQxQ|)
+\item the product of a quaternion and a vector (\verb|QxV|, \verb|VxQ|)
+\end{itemize}
+
+The multiplication macros take an optional argument via which an explicit multiplication operator can be specified. For example,
+
+\begin{tabular}{||l|l|l|l|l|} \hline
+{\bf Command} & {\bf Purpose} & {\bf Option} & {\bf Example} & {\bf Display} \\ \hline \hline
+\slinefour \\
+\verb|\QxQ| &
+  \mlentry{\purpwidth}{Implicit product of two quaternions} &
+  \mlentry{\argswidth}{None} &
+  \minipage[t]{2.5cm}{\verb|\QxQ| \\ %
+    \verb| {\quat{Q}_1}| \\ %
+    \verb| {\quat{Q}_2}|}\endminipage &
+  $\QxQ{{\quat Q}_1}{{\quat Q}_2}$ \\[8ex]
+\verb|\QxQ| &
+  \mlentry{\purpwidth}{Explicit product of two quaternions} &
+  \mlentry{\argswidth}{\ttfamily \textbackslash circ} &
+ \minipage[t]{2.5cm}{\verb|\QxQ[\circ]| \\ %
+    \verb| {{\quat Q}_1}| \\ %
+    \verb| {{\quat Q}_2}|}\endminipage &
+  $\QxQ[\circ]{{\quat Q}_1}{{\quat Q}_2}$ \\[8ex]
+\hline
+\end{tabular}
+
+
+\pagebreak
+
+\subsection{Miscellaneous Macros}
+
+\begin{tabular}{||l|l|l|l|l|} \hline
+{\bf Command} & {\bf Purpose} & {\bf Arguments} & {\bf Example} & {\bf Display} \\ \hline \hline
+\slinefour \\
+\verb|\abs| &
+  \mlentry{\purpwidth}{Absolute value} &
+  \mlentry{\argswidth}{Scalar expression} &
+  \verb|\abs{x}| & $\abs{x}$ \\ \slinefour \\
+\verb|\norm| &
+  \mlentry{\purpwidth}{Euclidian norm} &
+  \mlentry{\argswidth}{Vector or quaternion expression} &
+  \verb|\norm{\vect x}| & $\norm{\vect x}$ \\ \slinefour \\
+\verb|\framedot| &
+  \mlentry{\purpwidth}{Frame-dependent time derivative} &
+  \mlentry{\argswidth}{1. Frame\\ 2. Expression} &
+  \verb|\framedot B {\vect x}| & $\framedot B {\vect x}$ \\ \slinefour \\
+\hline
+\end{tabular}
+
+
+\end{document}

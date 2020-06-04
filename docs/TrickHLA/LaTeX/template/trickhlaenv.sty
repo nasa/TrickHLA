@@ -1,0 +1,268 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File: trickhlaenv.sty
+%
+% Author: David Hammen - Odyssey Space Research - Dec 2005
+% Version 1.1
+%--------------------------------------------------------------------
+% Modified:
+%   David Hammen & S. Lim - April 2006 - Added cover page and cleanups
+% Modified:
+%   David Hammen - May 2006 - Added standard LaTeX style sheet header
+%                             Removed cover page macros (moved to trickhlacover.sty)
+%                             Added package dependency to trickhlacover.sty
+%                             Added defaults for cover page contents
+%                             Added ability to place requirements, inspections,
+%                             and tests to table of contents
+%   David Hammen - Jul 2006 - Added en space to \trickhlaenvaddtotoc
+%                             Added \RequirePackage{longtable}
+%   Author: Dan Dexter - April 2007 - Updated for use in TrickHLA.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\NeedsTeXFormat{LaTeX2e}% LaTeX 2.09 can't be used (nor non-LaTeX)
+[1994/12/01]% LaTeX date must be December 1994 or later
+\ProvidesPackage{trickhlaenv}[2007/08/30 v1.0.0 TrickHLA package macros]
+
+%
+% Long tables
+%
+\RequirePackage{longtable}
+
+%
+% Settings for page width and margins
+%
+\oddsidemargin=0in
+\evensidemargin=0in
+\textwidth=6.5in
+
+%
+% Settings for page height and margins
+%
+\textheight=8.75in
+\topmargin=0in
+\headheight=0in
+\headsep=0in
+%\footheight=0in
+%\footsep=0in
+
+%
+% Settings for paragraphs
+%
+\parindent=0in
+\parskip=6pt
+
+%
+% Settings for cover pages
+%
+\RequirePackage[nosigpage]{trickhlacover}
+
+\pkgrel{TrickHLA v3.0.0 - Beta}
+\newcommand\TrickHLAid{\@pkgrel}
+
+\JSCnum{JSC XXXXX}
+
+\metatitle{Trick High Level Architecture}
+
+\nasaorg{
+  Simulation and Graphics Branch (ER7)\\[2pt]
+  Software, Robotics and Simulation Division\\[2pt]
+  Engineering Directorate}
+
+\managers{
+  Dan E. Dexter \\ Project Manager \\
+  Robert O. Ambrose \\ Software, Robotics, and Simulation Division Chief}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Requirements
+% Example:
+% \requirement{Header File Trick Header}
+% \label{reqt:h_trick_header}
+% \begin{description}
+% \item[Requirement:] All header files associated
+%   with the model shall have an appropriate Trick header.
+%   The Trick header for a header file shall include
+% \subrequirement{Purpose}\label{reqt:h_trick_header_purpose}
+%   A brief description of the file.
+% \subrequirement{References}\label{reqt:h_trick_header_refs}
+%   A list of applicable references used by the model.
+% \subrequirement{Assumptions and limitations}
+% \label{reqt:h_trick_header_assum}
+%   A list of the assumptions made in developing the model and
+%  any limitations on the use of the model.
+% \subrequirement{Programmer}\label{reqt:h_trick_header_prog}
+%   A list of the developers who created or modified the file.
+% \item[Rationale:] \hfill
+% \begin{itemize}
+% \item The Trick header in a header file
+% indicates that Trick should process the file.
+% \item Properly documenting the TrickHLA package models
+% is a key goal of the TrickHLA verification,
+% validation, and documentation task.
+% \item Maintaining a version history is good programming
+% technique and is mandatory per NPR 7150.2.
+% \end{itemize}
+% \end{description}
+
+\newcounter{requirement}
+\def\reqt@tocprefix{Requirement\ }
+\renewcommand\therequirement {\modelprefix\_\@arabic\c@requirement}
+\newcommand\theHrequirement {\@arabic\c@requirement}
+
+\newcounter{subrequirement}[requirement]
+\renewcommand\thesubrequirement {%
+  \@arabic\c@requirement.\@arabic\c@subrequirement}
+\newcommand\theHsubrequirement {%
+  \@arabic\c@requirement.\@arabic\c@subrequirement}
+
+\def\requirementlabel#1{%
+   {\normalfont\itshape {Requirement \therequirement:\ \ #1}}}
+
+\def\@startrequirement#1#2#3{%
+   \par
+   \@tempskipa #1\relax
+   \@afterindentfalse
+   \addpenalty\@secpenalty\addvspace\@tempskipa
+   \refstepcounter{requirement}%
+   \requirementlabel{#3}%
+   \@tempskipa #2\relax
+   \par \nobreak
+   \vskip \@tempskipa
+   \@afterheading}
+
+\newif\ifaddtotoc@reqt \addtotoc@reqtfalse
+\def\toclevel@reqt{2}
+\def\tocindent@reqt{1.5em}
+\def\tocsize@reqt{6.6em}
+\newcommand*\l@reqt{%
+  \@dottedtocline{\toclevel@reqt}{\tocindent@reqt}{\tocsize@reqt}}
+\def\addreqttotoc#1{%
+\addcontentsline{toc}{reqt}%
+  {\protect\numberline{\reqt@tocprefix\therequirement}%
+  #1}}
+
+\def\requirement#1{%
+   \@startrequirement %
+      {3.25ex \@plus1ex \@minus.2ex}%
+      {1.5ex \@plus .2ex}%
+      {#1}%
+      \ifaddtotoc@reqt \addreqttotoc{#1}\fi}
+
+
+\def\subrequirementlabel#1{%
+   {\normalfont\itshape {\thesubrequirement\ #1}}}
+
+\def\@startsubrequirement#1#2#3{%
+   \par
+   \@tempskipa #1\relax
+   \@afterindentfalse
+   \addpenalty\@secpenalty\addvspace\@tempskipa
+   \refstepcounter{subrequirement}%
+   \subrequirementlabel{#3}%
+   %% \@tempskipa #2\relax
+   %% \par \nobreak
+   %% \vskip \@tempskipa
+   \@afterheading}
+
+\def\subrequirement#1{%
+   \@startsubrequirement %
+      {1.25ex \@plus1ex \@minus.2ex}%
+      {.5ex \@plus .2ex}%
+      {#1}}
+
+
+
+\newcounter{inspection}
+\def\insp@tocprefix{Inspection\ }
+\renewcommand\theinspection {\modelprefix\_\@arabic\c@inspection}
+\newcommand\theHinspection {\@arabic\c@inspection}
+
+\def\inspectionlabel#1{%
+   {\normalfont\itshape {Inspection \theinspection:\ \ #1}}}
+
+\def\@startinspection#1#2#3{%
+   \par
+   \@tempskipa #1\relax
+   \@afterindentfalse
+   \addpenalty\@secpenalty\addvspace\@tempskipa
+   \refstepcounter{inspection}%
+   \inspectionlabel{#3}%
+   \@tempskipa #2\relax
+   \par \nobreak
+   \vskip \@tempskipa
+   \@afterheading}
+
+\newif\ifaddtotoc@insp \addtotoc@inspfalse
+\def\toclevel@insp{2}
+\def\tocindent@insp{1.5em}
+\def\tocsize@insp{8.4em}
+\newcommand*\l@insp{%
+  \@dottedtocline{\toclevel@insp}{\tocindent@insp}{\tocsize@insp}}
+\def\addinsptotoc#1{%
+\addcontentsline{toc}{insp}
+  {\protect\numberline{\insp@tocprefix\theinspection}
+  #1}}
+
+\def\inspection#1{%
+   \@startinspection %
+      {3.25ex \@plus1ex \@minus.2ex}%
+      {1.5ex \@plus .2ex}%
+      {#1}%
+      \ifaddtotoc@insp \addinsptotoc{#1}\fi}
+
+
+\newcounter{test}
+\def\test@tocprefix{Test\ }
+\renewcommand\thetest {\modelprefix\_\@arabic\c@test}
+\newcommand\theHtest {\@arabic\c@test}
+
+\def\testlabel#1{%
+   {\normalfont\itshape {Test \thetest:\ \ #1}}}
+
+\def\@starttest#1#2#3{%
+   \par
+   \@tempskipa #1\relax
+   \@afterindentfalse
+   \addpenalty\@secpenalty\addvspace\@tempskipa
+   \refstepcounter{test}%
+   \testlabel{#3}%
+   \@tempskipa #2\relax
+   \par \nobreak
+   \vskip \@tempskipa
+   \@afterheading}
+
+\newif\ifaddtotoc@test \addtotoc@testfalse
+\def\toclevel@test{2}
+\def\tocindent@test{1.5em}
+\def\tocsize@test{8.4em}
+\newcommand*\l@test{%
+  \@dottedtocline{\toclevel@test}{\tocindent@test}{\tocsize@test}}
+\def\addtesttotoc#1{%
+\addcontentsline{toc}{test}
+  {\protect\numberline{\test@tocprefix\thetest}
+  #1}}
+
+\def\test#1{%
+   \@starttest %
+      {3.25ex \@plus1ex \@minus.2ex}%
+      {1.5ex \@plus .2ex}%
+      {#1}%
+      \ifaddtotoc@test \addtesttotoc{#1}\fi}
+
+\newcommand{\trickhlaenvaddtotoc}[2]{
+  \expandafter\global\expandafter\let\csname ifaddtotoc@#1\endcsname\iftrue
+  \expandafter\gdef\csname toclevel@#1\endcsname{#2}
+  \ifcase #2
+    \expandafter\gdef\csname tocindent@#1\endcsname{0pt}
+  \or
+    \expandafter\gdef\csname tocindent@#1\endcsname{1.5em}
+  \or
+    \expandafter\gdef\csname tocindent@#1\endcsname{3.8em}
+  \or
+    \expandafter\gdef\csname tocindent@#1\endcsname{7.0em}
+  \fi
+  \edef\@temptag{%
+    \csname #1@tocprefix\endcsname\noexpand\modelprefix\noexpand\_99\enskip}
+  \sbox\@tempboxa{\mbox{\@temptag}}
+  \@tempdima\wd\@tempboxa\relax
+  \expandafter\xdef \csname tocsize@#1\endcsname{\the\@tempdima}
+}

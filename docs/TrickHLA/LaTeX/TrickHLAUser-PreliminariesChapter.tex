@@ -1,0 +1,227 @@
+%----------------------------------
+\chapter{Preliminaries}\label{sec:preliminaries}
+%----------------------------------
+
+\section{Background}
+
+\TrickHLA\ is a {\em glue layer} between Trick and HLA.
+As such, using it to develop distributed simulations requires
+that you have an understanding of Trick itself and to a lesser extent
+be familiar with HLA terminology.
+This section reviews the concepts that the \TrickHLA\ model is based on.
+
+\section{Important Trick Concepts}
+
+\paragraph{{\sdefine} Files.}
+Trick is a simulation development environment that is used to build (compile, link, etc...)
+executable images for your simulations.
+The details of what your simulation consists of (which things are being simulated)
+and what dynamic scenario is simulated (what happens during the simulation)
+are specified by you in the so-called \sdefine file.
+
+This file contains declarations of {\em sim objects} (the things)
+and {\em jobs} (what happens).
+The sim objects correspond to C/C++ data structures defined in models written by you,
+and the jobs are C/C++ functions (or methods) which are also part of the models.
+
+\TrickHLA\ is a Trick model and hence consists of sim objects and jobs that you assemble
+into your \sdefine file alongside the objects and jobs that make up your particular
+simulation.
+Indeed, integrating \TrickHLA\ with your simulation consists mostly
+(but not completely)
+of pasting in an \sdefine snippet which provides much of the logic
+(objects and jobs)
+necessary for your simulation to participate in an HLA federation.
+
+\paragraph{Input Files.}
+
+Trick is based on a philosophy of {\em data driven} simulation.
+Trick models are aggressively parameterized,
+and the parameters are intended to be driven from initial data resident
+in input files.
+This permits significant variations of a particular simulation
+to be run without actually rebuilding (recompiling and relinking)
+the simulation itself.
+
+A Trick input file is a text file consisting of name/value pairs of data:
+the names specify specific model parameters,
+and the values specify the initial data to be assigned to those paramters.
+Trick has an input processor which parses the input file and makes sure that
+the various variables in the simulation are initialized accordingly.
+
+\TrickHLA\ is a Trick model, and so configuring it involves setting certain
+\TrickHLA\ parameters in your sim input files.
+
+\paragraph{Enabling/disabling jobs.}
+In some of the simulations in this document,
+we will want to enable/disable certain Trick jobs without
+actually removing them from the \sdefine file,
+since changing the \sdefine file requires that the simulation be recompiled.
+This can be done from the input file by using the {\tt JOB} directive:
+
+\begin{verbatim}
+JOB job-name = [On|Off];
+\end{verbatim}
+
+where {\tt job-name} can be found in the list of all job-related
+parameters in the Trick-generated file, {\tt S\_default.dat}.\footnote{
+  This file is one of the files created by {\tt CP} when you build
+  your simulation.
+  It is located in the same directory as the \sdefine file.
+}
+Thus, to enable/disable a particular job, you just change the input value
+in the directive between {\tt On} and {\tt Off}.
+You need one such directive for each job you wish to disable.
+Of course, all jobs without a corresponding {\tt JOB} directive are enabled.
+
+\paragraph{Calling jobs at select times.}
+In some of the simulations in this document,
+rather than invoking Trick jobs periodically from the \sdefine file,
+we want to invoke them at select times during the run.
+This is handled by the {\tt READ} and {\tt CALL} directives:
+
+\begin{verbatim}
+READ = T;
+CALL job-name;
+\end{verbatim}
+
+{\tt job-name} can be found in the list of all job-related
+parameters in {\tt S\_default.dat}.
+This syntax tells Trick to call the specified job at time {\tt T}.
+If such a line occurs once in the input file (for only one value of {\tt T}),
+then Trick will only invoke the specified job once at time, $t = {\tt T}$.
+
+One subtle point must be made about the {\tt CALL} directive.
+If your input file uses {\tt CALL} to invoke a job that is otherwise
+{\em not} part of the Trick job schedule (as defined in the \sdefine file),
+then you {\bf must} declare the job in the \sdefine with a frequency of zero.
+This ensures that Trick generates the necessary code for the job
+in spite of the fact that it is not in fact called by the Trick scheduler.
+If you do not do this, you will get a runtime error during the execution
+of your simulation.
+
+\section{Important HLA Concepts}
+
+\paragraph{Federations and Federates.}
+An association of possibly distributed processes cooperating using HLA
+is called a {\em federation}.
+Processes may {\em join} a federation to participate,
+and they may also {\em resign}.
+The first federate to join a federation generally {\em creates} it,
+and the last one to resign usually {\em destroys} it.
+
+\paragraph{Objects and Interactions.}
+There are two kinds of data in HLA: {\em objects} and {\em interactions.}
+
+{\em Objects} are used to model data that are persistent over time,
+entities which will evolve as the federation executes.
+Objects are composed of {\em attributes,} and are as such very similar to
+the classes of traditional object oriented languages.
+Objects provide the abstract framework for how persistent data are structured.
+Specific occurences of the data in a federation are refered to as
+{\em instances}, and have federation-wide unique names.
+It is these instances that persist during the execution of the federation.
+
+{\em Interactions} are used to model events which contain data but are
+not persistent; they are notifications.
+Interactions are composed of {\em parameters}.\footnote{
+  Parameters are to interactions as attributes are to objects.
+}
+Specific occurences of interactions are delivered to federates by the
+HLA API as they are sent and/or received, and there is no concept of
+an ``instance'' of an interaction.
+
+\paragraph{Publish/subscribe.}
+Federates that can generate values for particular instance attributes
+are said to {\em publish} them.\footnote{
+  Note that the use of the term publish in HLA only indicates a
+  federate's {\em ability} to generate values and not the actual act of
+  generating them.
+}
+Publishing is on a per-attribute basis.
+Thus several federates may be involved in generating the values for
+the attributes of a particular instance.
+Furthermore, many federates may declare that they are publishers of a
+particular attribute (i.e., that they have the ability to generate new
+values for it); however, only one may actually generate new values:
+this one federate is referred to as the {\em owner}.
+When an owner generates new values for an attribute, it is said to
+{\em update} them.
+When a non-owner receives new values for an attribute from the owner,
+the receiver is said to {\em reflect} the values.
+During the execution of a federation,
+ownership of a particular attribute may move from one federate to another.
+This is called {\em ownership transfer}.
+The act of giving up ownership of an attribute is called {\em divestiture}.
+The act of assuming ownership of an attribute {\em acquisition}.
+
+\paragraph{Send/receive.}
+A federate may {\em send} a interaction to any other interested federates.
+When the interaction arrives at the interested federates, they are said
+to {\em receive} it.
+These are on a per-interaction basis (not per-parameter).
+When an interaction is sent, values for each of its parameters are
+specified by the sender, and the entire interaction with each of its
+parameters is delivered to any receivers.
+
+\paragraph{Federation Object Model.}
+HLA federations each have a specific {\em federation object model (FOM)}
+that defines the structure of the types of objects and interactions
+that may be exchanged by participating federates.
+The information included in the FOM specifies the names and data types
+of the shared object classes and attributes and interactions and parameters.
+(It does not document specific object instances, however.)
+The format of the FOM is not specified by the HLA standard, but the
+Pitch implementation of HLA
+(currently used for NASA/DSES HLA simulations)
+uses an XML format.
+
+\paragraph{Runtime Infrastructure.}
+Most distributed computing envronments require some additional
+processes in order to help coordinate communication between federates.
+For HLA, this component is called the
+{\em runtime infrastructure (RTI)}.
+The Pitch RTI
+(currently used for NASA/DSES HLA simulations)
+is a single process which runs at a well-known TCP port number
+on a well-known host on the network.
+Each federate much be configured with this RTI host/port information
+in order to join the federation.
+
+\paragraph{Time Management.}
+One of the unique capabilities HLA provides is a mechanism for keeping
+all the federates in a federation synchronized.
+In the HLA context, this means making sure that all federates see the
+same sequence of data (instance attributes and interaction parameters)
+at the same federation-time.
+The HLA services behind this are collectively
+referred to as {\em time management}.
+
+The HLA concept of {\em lookahead} makes this possible:
+each federate declares a lookahead (measured in units of time),
+and any message sent by that federate (attribute update or interaction send)
+must have a time stamp greater than or equal to the current time
+plus the lookahead, i.e., the federate must be able to extrapolate the
+value slightly into the future in order to update its value.
+When data is delivered in this synchronized manner, it is said to be
+{\em time stamp ordered}.
+(If this synchronization is disabled, data delivery is said to be
+{\em receive ordered}).
+
+Federates participate in the HLA time management services by specifying
+whether or not they are {\em time regulating} and {\em time constrained}.
+Time regulating federates may generate TSO data, and the advance of
+federation time proceeds only with the explicit agreement of such federates.
+Time contrained federates may receive TSO data, but they do not have a voice
+in whether or not time in the federation may advance.
+Federates that are only time regulating are data sources.
+Federates that are only time constrained are passive listeners to the data.
+The most common case of for a federate to be both, in which case it may
+generate and receive data.
+HLA only increments federation time due to explicit requests from
+federates -- {\em time advance requests}.
+When the HLA runtime infrastructure acknowledges such requests, it is said
+to provide {\em time advance grants}.
+
+\input{TrickHLAUser-prelim-simplesine}
+\input{TrickHLAUser-prelim-FOM}

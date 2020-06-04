@@ -1,0 +1,488 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% File: MODELReqt.tex
+%
+% Purpose: MODEL Product Requirements
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand\documentHistory{
+{\bf Author} & {\bf Date} & {\bf Description} \\ \hline \hline
+YOUR NAME & DATE & Initial Version \\ \hline
+}
+
+\newcommand\DocumentChangeHistory{
+{\bf Revised by} & {\bf Date} & {\bf Description} \\ \hline \hline
+
+% This documentation file's change history includes:
+% "REVISED BY name(s)" & "revision DATE" & "revision DESCRIPTION"
+%  ------------------     -------------     --------------------
+                       &                 &                    \\ \hline
+}
+
+\documentclass[twoside,11pt,titlepage]{report}
+
+%
+% Bring in the AMS math environment
+%
+\usepackage{amsmath}
+
+%
+% Bring in the common page setup
+%
+\usepackage{trickhlaenv}
+
+%
+% Bring in the common math nomenclature
+%
+\usepackage{trickhlamath}
+
+%
+% Bring in the model-specific commands
+%
+\usepackage{MODEL}
+
+%
+% Bring in the graphics environment
+%
+\usepackage{graphicx}
+
+%
+% Bring in the hyper ref environment
+%
+\usepackage[colorlinks]{hyperref}
+%  keywords for pdfkeywords are separated by commas
+\hypersetup{
+   pdftitle={\MODEL\ Product Requirements},
+   pdfauthor={YOUR NAME},
+   pdfkeywords={\MODEL, Product Requirements},
+   pdfsubject={\MODEL\ Product Requirements}}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Front matter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{roman}
+
+\docid{DD.mm.02}
+\docrev{1.0}
+\date{DATE}
+\modelname{\MODEL}
+\doctype{Product Requirements}
+\author{YOUR NAME}
+\managers{
+  Dan E. Dexter \\ Project Manager \\
+  Leslie J. Quiocho \\ Common Model Lead \\
+  Rodney M. Ondler \\ Software, Robotics, and Simulation Division Chief}
+\pdfbookmark{Title Page}{titlepage}
+\makeTrickhlaenvTitlepage
+
+\pdfbookmark{Abstract}{abstract}
+\include{MODELAbstract}
+
+\pdfbookmark{Contents}{contents}
+\tableofcontents
+\vfill
+
+\pagebreak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Main Document Body
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{arabic}
+
+%----------------------------------
+\chapter{Introduction}\label{sec:intro}
+%----------------------------------
+
+\input{MODELIntro}
+
+\section{Identification of Document}
+This document describes the as-written requirements on the \MODEL\
+developed for use in the Trick Simulation Environment.
+This document adheres to the documentation standards defined in
+NASA Software Engineering Requirements Standard \cite{NASA:SWE}.
+
+\section{Scope of Document}
+This document provides information on the requirements for
+the \MODEL.
+
+\section{Purpose and Objectives of Document}
+The TrickHLA package, which includes the \MODEL,
+is classified as a Class C (Mission Support Software)
+product per NASA NPR 7150.2\cite{NASA:SWE}
+to enable the use of the package in a critical
+application such as a dynamic simulation
+used to certify the flight readiness of a space vehicle.
+
+The purpose of this document is to define the set
+of requirements that the \MODEL\ must achieve to enable
+its use in Class C products.
+
+\section{Documentation Status and Schedule}
+The information in this document is current with the \TrickHLAid\
+implementation of the \MODEL. Updates will be kept current with
+module changes.
+
+\begin{tabular}{||l|l|l|} \hline
+\documentHistory
+\end{tabular}
+
+\begin{tabular}{||l|l|l|} \hline
+\DocumentChangeHistory
+\end{tabular}
+
+\section{Document Contents}
+This document is organized into the following sections:
+
+\begin{description}
+
+\item[Chapter \ref{sec:intro}: Introduction] -
+Identifies this document, defines the scope and purpose, present status,
+and provides a description of each major section.
+
+\item[Chapter \ref{sec:docs}: Related Documentation] -
+Lists the related documentation that is applicable to this project.
+
+\item[Chapter \ref{sec:reqts}: Requirements] -
+Presents the requirements for the \MODEL.
+
+\item[Bibliography] -
+Informational references associated with this document.
+
+\end{description}
+
+\chapter{Related Documentation}\label{sec:docs}
+
+\section{Parent Documents}
+The following documents are parent to this document:
+
+\begin{itemize}
+\item{\href{file:\TRICKHLAHOME/docs/TrickHLA.pdf}
+           {\em Trick High Level Architecture (\TrickHLA)}}
+\cite{trickhlaenv:TrickHLA}
+
+\item{\href{file:MODEL.pdf}
+           {\em \MODEL}}
+\cite{trickhlaenv:MODEL}
+\end{itemize}
+
+\section{Applicable Documents}
+The following documents are referenced herein and are directly
+applicable to this document:
+
+\begin{itemize}
+\item{\href{file:MODELSpec.pdf}
+           {\em \MODEL\ Product Specification}}
+\cite{trickhlaenv:MODELSpec}
+
+\item{\href{file:MODELUser.pdf}
+           {\em \MODEL\ User Guide}}
+\cite{trickhlaenv:MODELUser}
+
+\item{\href{file:MODELIVV.pdf}
+           {\em \MODEL\ Inspection, Verification, and Validation}}
+\cite{trickhlaenv:MODELIVV}
+
+\item{\em The Trick User's Guide: Trick 2005.0 Release}
+\cite{Vetter:TrickUser}
+
+\item{\em Trick Simulation Environment: User Training Materials:
+          Trick 2005.0 Release}
+\cite{Vetter:TrickUTM}
+
+\item{\em Trick Simulation Environment: Version Description:
+          Trick 2005.0 Release}
+\cite{Vetter:TrickVD}
+
+\item{\em The Trick Design Document: Trick 2005.0 Release}
+\cite{Vetter:TrickDD}
+
+\item{\em NASA Software Engineering Requirements}
+\cite{NASA:SWE}
+
+\end{itemize}
+
+
+\chapter{Requirements}\label{sec:reqts}
+
+\section{General Requirements}\label{sec:general_reqts}
+
+This section identifies general requirements for the \MODEL.
+
+
+\requirement{Documentation}
+\label{reqt:documentation}
+\begin{description}
+  \item[Requirement:]\ \newline
+    The documentation for the model shall include
+
+    \subrequirement{}
+    \label{reqt:reqts_doc}
+      Software requirements specification.
+
+    \subrequirement{}
+    \label{reqt:design_doc}
+      Software, interface, and software version descriptions.
+
+    \subrequirement{}
+    \label{reqt:test_doc}
+      Software test procedures and results.
+
+    \subrequirement{}
+    \label{reqt:user_doc}
+      User Guide.
+
+  \item[Rationale:]\ \newline
+    The listed items are needed to comply with NASA NPR 7150.2
+    as a Class C product.
+
+  \item[Verification:]\ \newline
+    Inspection
+\end{description}
+
+
+\requirement{Header File Trick Header}
+\label{reqt:h_trick_header}
+\begin{description}
+  \item[Requirement:]\ \newline
+    All header files associated with the model shall have an appropriate
+    Trick header.  The Trick header for a header file shall include
+
+    \subrequirement{Purpose}\label{reqt:h_trick_header_purpose}
+      A brief description of the file.
+
+    \subrequirement{References}\label{reqt:h_trick_header_refs}
+      A list of applicable references that describe the model.
+
+    \subrequirement{Assumptions and limitations}
+    \label{reqt:h_trick_header_assum}
+      A list of the assumptions made in developing the model and
+      any limitations on the use of the model.
+
+    \subrequirement{Programmer}\label{reqt:h_trick_header_prog}
+      A list of the developers who created or modified the file.
+
+  \item[Rationale:]\ \\[-20pt]
+    \begin{itemize}
+      \item The Trick header in a header file
+        indicates that Trick should process the file.
+      \item Properly documenting the TrickHLA package models
+        is a key goal of the TrickHLA verification,
+        validation, and documentation task.
+      \item Maintaining a version history is good programming
+        technique and is mandatory per NPR 7150.2.
+    \end{itemize}
+
+  \item[Verification:]\ \newline
+    Inspection
+\end{description}
+
+\requirement{Trick Comments for Enumerated Types}
+\label{reqt:enum_trick_comments}
+\begin{description}
+  \item[Requirement:]\ \newline
+    Each tag defined in a enumeration type in a model header
+    file {\em should} have a comment describing the tag that follows
+    the tag declaration.
+
+  \item[Rationale:]\ \newline
+    Short tag names may not suffice in establishing
+    the meaning of the tag.
+
+  \item[Verification:]\ \newline
+    Inspection \newline
+    Enumerated types that fail to meet this optional requirement
+    shall be noted as such in the model verification document.
+\end{description}
+
+
+\requirement{Trick Comments for Data Structures}
+\label{reqt:struct_trick_comments}
+\begin{description}
+  \item[Requirement:]\ \newline
+    Each element of a data structure defined in a model header
+    file shall have a Trick-compliant comment describing the
+    element that follows the element declaration.
+
+  \item[Rationale:]\ \newline
+    The element comment is required by Trick.
+
+  \item[Verification:]\ \newline
+    Inspection
+\end{description}
+
+
+\requirement{Source File Trick Headers}
+\label{reqt:c_trick_header}
+\begin{description}
+  \item[Requirement:]\ \newline
+    Each externally visible function defined in the source files
+    associated with the model shall have an appropriate Trick header.
+    The Trick header for a function shall include
+
+    \subrequirement{Purpose}\label{reqt:c_trick_header_purpose}
+      A brief description of the function.
+
+    \subrequirement{References}\label{reqt:c_trick_header_refs}
+      A list of applicable references that describe the function.
+
+    \subrequirement{Assumptions and limitations}
+    \label{reqt:c_trick_header_assum}
+      A list of the assumptions made in developing the function and
+      any limitations on the use of the function.
+
+    \subrequirement{Class}
+    \label{reqt:c_trick_header_class}
+      The default Trick job classification of the function.
+
+    \subrequirement{Library dependency}
+    \label{reqt:c_trick_header_depend}
+      A list of the object files upon which the function depends,
+      starting with the current file.
+
+    \subrequirement{Programmer}\label{reqt:c_trick_header_prog}
+      A list of the developers who created or modified the file.
+
+  \item[Rationale:]\ \\[-20pt]
+    \begin{itemize}
+      \item The Trick header that precedes a function
+        indicates that the function is available for
+        use in a simulation {\em S\_define} file.
+      \item Properly documenting the TrickHLA package models
+        is a key goal of the TrickHLA verification,
+        validation, and documentation task.
+      \item Maintaining a version history is good programming
+        technique and is mandatory per NPR 7150.2.
+    \end{itemize}
+
+  \item[Verification:]\ \newline
+    Inspection
+\end{description}
+
+
+\requirement{Trick Comments for Function Definitions}
+\label{reqt:func_trick_comments}
+\begin{description}
+  \item[Requirement:]\ \newline
+    Each function shall be commented with a Trick-compliant
+    set of comments that describe the return value from the
+    function and that describe the nature of the arguments
+    passed to the function.
+
+  \item[Rationale:]\ \newline
+    The function definition comments are required by Trick.
+
+  \item[Verification:]\ \newline
+    Inspection
+\end{description}
+
+
+ADD ANY OTHER GENERAL REQUIREMENTS THAT APPLY TO THE
+MODEL AS A WHOLE.
+
+
+\section{Data Requirements}\label{sec:data_reqts}
+
+This section identifies requirements on the data
+represented by the \MODEL.  These as-built requirements are
+based on the \MODEL\ data definition header files.
+
+EXAMPLE, universal time, not complete:
+
+\requirement{Time Representation}
+\label{reqt:data_time_representation}
+\begin{description}
+  \item[Requirement:]\ \newline
+    The universal time model shall represent time in the
+    each of the following time systems:
+
+    \subrequirement{TAI}\label{reqt:data_time_rep_TAI}
+      \ \newline
+      International Atomic Time,
+      a very accurate and stable time scale calculated as a weighted
+      average of the time kept by about 200 cesium atomic clocks in
+      over 50 national laboratories worldwide.
+
+    \subrequirement{UT1}\label{reqt:data_time_rep_UT1}
+      \ \newline
+      Universal Time, a measure of the rotation angle of the Earth
+      as observed astronomically.
+
+    \subrequirement{UTC}\label{reqt:data_time_rep_UTC}
+      \ \newline
+      Coordinated Universal Time, the basis for the worldwide system
+      of civil time.
+
+    \subrequirement{and others}
+      \ \newline
+      THIS IS AN INCOMPLETE EXAMPLE.
+
+  \item[Rationale:]\ \newline
+    The purpose of the universal time module is to represent
+    time in the multiplicity of time scales that are expected to be
+    need by various simulation developers.
+
+  \item[Verification:]\ \newline
+    Inspection, Test
+\end{description}
+
+
+\section{Functional Requirements}\label{sec:func_reqts}
+
+This section identifies requirements on the functional
+capabilities provided by the \MODEL. These as-built requirements are
+based on the \MODEL\ source files.
+
+EXAMPLE, universal time, not complete:
+
+\requirement{Time Initialization}
+\label{reqt:func_time_initialization}
+\begin{description}
+  \item[Requirement:]\ \newline
+    The universal time model shall be capable of initializing
+    time using any one of the following mechanisms:
+
+    \subrequirement{incomplete}
+      THIS IS AN INCOMPLETE EXAMPLE.
+
+  \item[Rationale:]\ \newline
+    The purpose of the universal time module is to represent
+    time in the multiplicity of time scales that are expected to be
+    need by various simulation developers.
+
+  \item[Verification:]\ \newline
+    Test
+\end{description}
+
+\requirement{Time Update}
+\label{reqt:func_time_update}
+\begin{description}
+  \item[Requirement:]\ \newline
+    \subrequirement{}
+    The universal time model shall correctly update all represented
+    time values as the simulation clock advances.
+
+    \subrequirement{}
+    The passage of one second of simulation time shall correspond
+    to the passage of one second of International Atomic Time.
+
+  \item[Rationale:]\ \newline
+    The purpose of the universal time module is to represent
+    time in the multiplicity of time scales that are expected to be
+    need by various simulation developers.
+
+  \item[Verification:]\ \newline
+    Test
+\end{description}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Bibliography
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\pdfbookmark{Bibliography}{bibliography}
+\bibliography{trickhlaenv,MODEL}
+\bibliographystyle{plain}
+
+\end{document}

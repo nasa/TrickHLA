@@ -1,0 +1,1045 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% File: TrickHLASpec-InterfaceDesign.tex
+%
+% Purpose: TrickHLA Product Specification - Interface Design chapter
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Interface Design}\label{sec:interface_design}
+
+This chapter introduces the main interfaces to the \TrickHLA\ model.
+Since the model is intended to be used in a Trick simulation,
+these interfaces are all Trick-related.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Summary}
+
+The main interface between the \TrickHLA\ model and Trick is the
+default {\ttfamily sim\_object}.
+Inclusion of this {\ttfamily sim\_object} in an {\ttfamily S\_define} file
+results in the simulation automatically joining a distributed HLA federation,
+sending certain specified simulation data to the federation as they change,
+and receiving certain changing data from other simulations in the federation.
+The details of this process
+(i.e., which federation to join, which data to send, and which data to
+subscribe to) are configured through standard Trick input files.
+
+Interfaces to other HLA capabilities
+(e.g., interactions and ownership management)
+are through \TrickHLA\ classes and their methods, which may be invoked as
+Trick jobs or directly from simulation-specific code.
+
+This section summarizes these interfaces.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Main \TrickHLA\ Interface}
+
+The main \TrickHLA\ interface is the default {\ttfamily sim\_object} that
+is distributed with the model.
+This {\ttfamily sim\_object} contains data and jobs that handle
+\begin{itemize}
+  \item{initialization of the HLA infrastructure},
+  \item{joining the specified federation and waiting for all expected federates to join},
+  \item{sending simulation data to other federates},
+  \item{receiving simulation data from other federates},
+  \item{handling the HLA time advancement logic} and
+  \item{saving the federation}.
+\end{itemize}
+
+Using this default {\ttfamily sim\_object} involves two steps:
+(a) inserting the object in the simulation's {\ttfamily S\_define} file, and
+(b) specifying the relevant configuration data in Trick input files.
+These steps are discussed below.
+
+% -----------------------------------------------------------------------
+\subsection{The \TrickHLA\ {\ttfamily sim\_object}}
+
+In most cases a Trick simulation may be integrated with HLA by simply
+inserting the default \TrickHLA\ {\ttfamily sim\_object} to the simulation's
+{\ttfamily S\_define} file and then configuring the object appropriately
+using Trick input files.
+An abbreviated version of the {\ttfamily sim\_object} is shown in
+Figure~\ref{fig:default-sim-object}.
+
+\begin{figure}[th]
+  \begin{center}
+    \scriptsize
+    \begin{verbatim}
+sim_object {
+   TrickHLA: TrickHLAFreezeInteractionHandler freeze_ih;
+   TrickHLA: TrickHLAFedAmb   federate_amb;
+   TrickHLA: TrickHLAFederate federate;
+   TrickHLA: TrickHLAManager  manager;
+   double checkpoint_time;
+   char   checkpoint_label[256];
+
+   P1 (initialization) TrickHLA: THLA.manager.print_version();
+
+   P1 (initialization) TrickHLA: THLA.federate.fix_FPU_control_word();
+
+   P60 (initialization) TrickHLA: THLA.federate_amb.initialize(
+      In TrickHLAFederate * federate = &THLA.federate,
+      In TrickHLAManager  * manager  = &THLA.manager );
+
+   P60 (initialization) TrickHLA: THLA.federate.initialize(
+      Inout TrickHLAFedAmb * federate_amb = &THLA.federate_amb );
+   P60 (initialization) TrickHLA: THLA.manager.initialize(
+      In TrickHLAFederate * federate = &THLA.federate );
+
+   P65534 (initialization) TrickHLA: THLA.manager.initialization_complete();
+
+   P65534 (initialization) TrickHLA: THLA.federate.check_pause_at_init( 
+      In const double check_pause_delta = THLA_CHECK_PAUSE_DELTA );
+
+   P1 (checkpoint)          TrickHLA: THLA.federate.setup_checkpoint();
+   (freeze)                 TrickHLA: THLA.federate.perform_checkpoint();
+   P1 (pre_load_checkpoint) TrickHLA: THLA.federate.setup_restore();
+   (freeze)                 TrickHLA: THLA.federate.perform_restore();
+
+   (freeze)   TrickHLA: THLA.federate.check_freeze();
+   (unfreeze) TrickHLA: THLA.federate.exit_freeze();
+
+   P1 (THLA_DATA_CYCLE_TIME, environment) TrickHLA: THLA.federate.wait_for_time_advance_grant();
+
+   P1 (THLA_INTERACTION_CYCLE_TIME, environment) TrickHLA: THLA.manager.process_interactions();
+
+   P1 (THLA_DATA_CYCLE_TIME, environment) TrickHLA: THLA.manager.process_deleted_objects();
+
+   P1 (0.0, environment) TrickHLA: THLA.manager.start_federation_save(
+      In const char * file_name = THLA.checkpoint_label );
+
+   P1 (0.0, environment) TrickHLA: THLA.manager.start_federation_save_at_sim_time(
+      In double freeze_sim_time = THLA.checkpoint_time,
+      In const char * file_name = THLA.checkpoint_label );
+
+   P1 (0.0, environment) TrickHLA: THLA.manager.start_federation_save_at_scenario_time(
+      In double freeze_sim_time = THLA.checkpoint_time,
+      In const char * file_name = THLA.checkpoint_label );
+
+   P1 (THLA_DATA_CYCLE_TIME, environment) TrickHLA: THLA.manager.receive_cyclic_data(
+      In double current_time = sys.exec.out.time );
+
+   P65534 (THLA_DATA_CYCLE_TIME, logging) TrickHLA: THLA.manager.send_cyclic_data(
+      In double current_time = sys.exec.out.time );
+
+   P65534 (THLA_DATA_CYCLE_TIME, logging) TrickHLA: THLA.manager.send_requested_data(
+      In double current_time = sys.exec.out.time );
+
+   P65534 (THLA_DATA_CYCLE_TIME, logging) TrickHLA: THLA.manager.process_ownership();
+
+   P65534 (THLA_DATA_CYCLE_TIME, logging) TrickHLA: THLA.federate.time_advance_request();
+
+   P65534 (THLA_DATA_CYCLE_TIME, logging) TrickHLA: THLA.federate.check_freeze_time();
+
+   P65534 (THLA_DATA_CYCLE_TIME, THLA_CHECK_PAUSE_JOB_OFFSET, logging) TrickHLA: THLA.federate.check_pause( 
+      In const double check_pause_delta = THLA_CHECK_PAUSE_DELTA );
+
+   P65534 (THLA_DATA_CYCLE_TIME, THLA_CHECK_PAUSE_JOB_OFFSET, logging) TrickHLA: THLA.federate.enter_freeze();
+
+   P65534 (shutdown) TrickHLA: THLA.manager.shutdown();
+} THLA;
+    \end{verbatim}
+  \end{center}
+\caption{The Default \TrickHLA\ {\ttfamily sim\_object}}
+\label{fig:default-sim-object}
+\end{figure}
+
+The contents of this {\ttfamily sim\_object} include:
+\begin{itemize}
+  \item{data declarations,}
+  \item{scheduled jobs,}
+  \item{initialization jobs,}
+  \item{freeze related jobs, and}
+  \item{shutdown jobs.}
+\end{itemize}
+
+The data declarations are partially explained in the discussion of
+input files, below.\footnote{
+Other than knowing how to initialize the significant components of these data,
+there is no need to understand their internal structure in detail.
+}
+The initialization jobs handle the initialization of the internal \TrickHLA\
+classes and need not concern most simulation developers.
+The freeze related jobs are included so that freezing a Trick job does not
+completely disable underlying HLA-related threads.
+And the shutdown jobs handle resignation from the HLA federation when the
+Trick simulation completes.
+
+Other than the requirement that certain data be initialized consistently with
+the needs of the simulation, this {\ttfamily sim\_object} may be treated as
+a black box -- i.e., there is usually no need to modify it after copying it
+verbatim into the simulation's {\ttfamily S\_define} file.
+The following section elaborates on how to appropriately set the input data.
+
+% -----------------------------------------------------------------------
+\subsection{Input Data Files}
+
+The various data structures declared in the \TrickHLA\ default
+{\ttfamily sim\_object} must be initialized through the Trick
+simulation input file.
+The following sections discuss the various initialization parameters.
+
+% --------------------------------------
+\subsubsection{HLA Runtime and Federation-Related Parameters}
+
+This section describes the input parameters necessary to connect the
+simulation to the HLA runtime infrastructure and other data used to set up
+the federate.
+The parameters are discussed in Table~\ref{tab:runtime-and-federation-parameters}.
+
+\begin{table}[t]
+  \scriptsize
+  \begin{center}
+    \begin{tabular}{|l|l|p{3.25in}|}
+    \hline
+    parameter name & type & description \\
+    \hline \hline
+      {\ttfamily THLA.federate.local\_settings} & string
+      & RTI vendor specific string that specifies the CRC hostname or IP address with port number where the HLA runtime executive is running
+      \\
+      \hline
+      {\ttfamily THLA.federate.name} & string
+      & federate name to be assigned to the simulation
+      \\
+      \hline
+      {\ttfamily THLA.federate.enable\_FOM\_validation} & true or false
+      & true to enable FOM validation or false to disable it (default: true)
+      \\
+      \hline
+      {\ttfamily THLA.federate.FOM\_modules} & string
+      & name of the FOM file when using the IEEE 1516-2000 and SISO-STD-004-2004 standards, or a comma separated list of FOM-module filenames when using the HLA Evolved IEEE 1516-2010 standard
+      \\
+      \hline
+      {\ttfamily THLA.federate.MIM\_module} & string
+      & name of the MOM and Initialization Module (MIM) file for the HLA Evolved IEEE 1516-2010 standard
+      \\
+      \hline
+      {\ttfamily THLA.federate.federation\_name} & string
+      & name of the federation to join
+      \\
+      \hline
+      {\ttfamily THLA.federate.enable\_known\_feds} & true or false
+      & should the simulation wait for all the other (known) federates
+        in the federation before it begins?
+      \\
+      \hline
+      {\ttfamily THLA.federate.known\_feds\_count} & integer
+      & how many known federations are there?
+      \\
+      \hline
+      {\ttfamily THLA.federate.known\_feds} & alloc($N_{feds}$)
+      & allocate an array with $N_{feds}$ elements, where $N_{feds}$ is the value of
+        {\ttfamily THLA.federate.known\_feds\_count}
+      \\
+      \hline
+      {\ttfamily THLA.federate.known\_feds[$i$].name} & string
+      & the name of known federate $i \in 0...N_{feds}-1$ where $N_{feds}$ is the value of
+        {\ttfamily THLA.federate.known\_feds\_count}
+      \\
+      \hline
+      {\ttfamily THLA.federate.known\_feds[$i$].\-required} & true or false
+      & is federate $i \in 0...N_{feds}-1$ required to be present before
+        this federate begins, where $N_{feds}$ is the value of
+        {\ttfamily THLA.\-trick\_fed.\-known\_feds\_count}
+      \\
+      \hline
+      {\ttfamily THLA.federate.use\_preset\_master} & true or false
+      & true to force the use of the preset THLA.federate.master federate flag
+        value or false to automatically determine the master federate during
+        the multiphase initialization process (default: false)
+      \\
+      \hline
+      {\ttfamily THLA.federate.master} & true or false
+      & true when this federate is the master federate for the multiphase
+        initialization process. When THLA.federate.use\_preset\_master is set to
+        true then the THLA.federate.master flag is used to preset the master
+        federate, otherwise the THLA.federate.master flag is ignored
+        (default: false)
+      \\
+      \hline
+      {\ttfamily THLA.federate.can\_rejoin\_federation} & true or false
+      & true to signal this federate to resign from the federation in a manner
+        which makes rejoining the running federation possible. See Section 16
+        of the \href{file:\TRICKHLAHOME/docs/IMSim_Multiphase_Init_Design_Document.pdf}
+        {IMSim\_Multiphase\_Init\_Design\_Document.pdf} for more details.
+        (default: false)
+      \\
+      \hline
+      {\ttfamily THLA.federate.scenario\_timeline} & TrickHLA::Timeline
+      & A pointer to a TrickHLA::Timeline implementation for a scenario timeline.
+        If nothing is specified \TrickHLA\ will use the TrickHLA::SimTimeline
+        implementation, which uses the Trick simulation time as the default
+        scenario timeline and is only valid if all federates are Trick based
+        simulations.
+        (default: TrickHLA::SimTimeline)
+      \\
+      \hline
+      {\ttfamily THLA.federate.multiphase\_init\_sync\_points} & string
+      & A comma-separated list of the simulation specific multiphase initialization
+        synchronization-point labels as specified in the Federation Agreement.
+      \\
+      \hline
+    \end{tabular}
+  \end{center}
+  \caption{HLA Runtime and Federation-Related Parameters}
+  \label{tab:runtime-and-federation-parameters}
+\end{table}
+
+% --------------------------------------
+\subsubsection{Time-Related Parameters}
+
+This section describes the time-related input parameters.
+This includes parameter that govern HLA time management
+as well as parameters related to whether or not
+the simulation attempts to keep HLA simulation time synchronized with
+the ``wallclock.''
+The parameters are discussed in Table~\ref{tab:time-parameters}.
+
+\begin{table}[h]
+  \scriptsize
+  \begin{center}
+    \begin{tabular}{|l|l|p{3.25in}|}
+    \hline
+    parameter name & type & description \\
+    \hline \hline
+      {\ttfamily THLA.federate.lookahead\_time} & float
+      & lookahead time for HLA time management
+      \\
+      \hline
+      {\ttfamily THLA.federate.time\_regulating} & true or false
+      & is this a {\em time regulating} federate?
+      \\
+      \hline
+      {\ttfamily THLA.federate.time\_constrained} & true or false
+      & is this a {\em time constrained} federate?
+      \\
+      \hline
+      {\ttfamily THLA.federate.time\_management} & true or false
+      & enables / disables HLA time management
+      \\
+      \hline
+      {\ttfamily sys.exec.in.rt\_software\_frame} & float
+      & realtime frame (in seconds).
+        The Trick timing loop will synchronize HLA simulation time
+        with the wallclock at the end of this interval.
+        Usually that means suspending the simulation until the
+        specified interval has elapsed on the wallclock.
+        Set this to a very large number to disable realtime execution.
+      \\
+      \hline
+      {\ttfamily sys.exec.in.rt\_itimer\_frame} & float
+      & itimer frame (in seconds).
+        If realtime is enabled, set this value to the same value as
+        sys.exec.in.rt\_software\_frame.
+      \\
+      \hline
+      {\ttfamily sys.exec.in.rt\_timer} & Yes or No
+      & should Trick use itimers when synchronizing HLA simulation time
+        with the ``wallclock''?
+        To avoid a spin lock (which consumes CPU cycles) while the
+        simulation waits for simulation/wallclock time synchronization,
+        this value should be set to Yes.
+      \\
+      \hline
+    \end{tabular}
+  \end{center}
+  \caption{Time-Related Parameters}
+  \label{tab:time-parameters}
+\end{table}
+
+% --------------------------------------
+\subsubsection{Object and Attribute-Related Parameters}
+
+This section describes the input parameters that govern HLA
+object instances and their constituent attributes.
+The parameters are discussed in Table~\ref{tab:obj-parameters}.
+
+\begin{table}[h]
+  \scriptsize
+  \begin{center}
+    \begin{tabular}{|p{2in}|l|p{3.25in}|}
+    \hline
+    parameter name & type & description \\
+    \hline \hline
+    {\ttfamily THLA.manager.obj\_count}
+    ($N_{objs}$)
+    & integer
+    & the number of object instances to be handled by this federate
+    \\
+    \hline
+    {\ttfamily THLA.manager.objects} & alloc($N_{objs}$)
+    & allocate an array with $N_{objs}$ elements
+    \\
+    \hline
+    \hline
+    \multicolumn{3}{|c|}{
+      \rule[-3mm]{0mm}{7mm}
+      let $i \in 0...N_{objs}-1$
+    }
+    \\
+    \hline
+    {\ttfamily THLA.manager.objects[$i$].\-FOM\_name}
+    & string
+    & the HLA class name for object[$i$] as specified in the FOM file
+    \\
+    \hline
+    {\ttfamily THLA.manager.objects[$i$].\-name}
+    & string
+    & the HLA object instance name for object[$i$]
+    \\
+    \hline
+    {\ttfamily THLA.manager.objects[$i$].\-name\_required}
+    & true or false
+    & specifies whether the object instance name is required.
+    The default is true, which requires an object instance name.
+    \\
+    \hline
+    {\ttfamily THLA.manager.objects[$i$].\-create\_HLA\_instance}
+    & true or false
+    & specifies whether an HLA object instance is created 
+    \\
+    \hline
+    {\ttfamily THLA.manager.objects[$i$].\-required}
+    & true or false
+    & specifies whether the object is required for startup of the federation.
+    The default is true, which requires the object intance to exist for startup
+    of the federation.
+    \\
+    \hline
+    {\ttfamily THLA.manager.objects[$i$].\-blocking\_cyclic\_read}
+    & true or false
+    & should a cyclic read for this object block waiting for data.
+    The default is to not block on cyclic reads.
+    \\
+    \hline
+    {\ttfamily THLA.manager.objects[$i$].\-packing}
+    & string
+    & the Trick name of a C++ packing object for attributes of object[$i$].
+      If no packing is associated with attributes of this object,
+      this parameter may be omitted.
+    \\
+    \hline
+    {\ttfamily THLA.manager.objects[$i$].\-ownership}
+    & string
+    & the Trick name of a C++ ownership handler object for attributes of object[$i$].
+      If no ownership transfer is associated with attributes of this object,
+      this parameter may be omitted.
+    \\
+    \hline
+    {\ttfamily THLA.manager.objects[$i$].\-deleted}
+    & string
+    & the Trick name of a C++ object deleted callback object for object [$i$].
+      If no object deleted callback is associated with attributes of this object,
+      this parameter may be omitted.
+    \\
+    \hline
+    {\ttfamily THLA.manager.objects[$i$].\-attr\_count}
+    ($N_{attrs}$)
+    & integer
+    & the number of attributes associated with object[$i$]
+    \\
+    \hline
+    {\ttfamily THLA.manager.objects[$i$].\-attributes}
+    & alloc($N_{attrs}$),
+    & allocate an array with $N_{attrs}$ elements
+    \\
+    \hline
+    \hline
+    \multicolumn{3}{|c|}{
+      \rule[-3mm]{0mm}{7mm}
+      let $j \in 0...N_{attrs}-1$
+    }
+    \\
+    \hline
+    {\ttfamily THLA.manager.objects[$i$].\-attributes[$j$].FOM\_name}
+    & string
+    & the HLA name of attribute[$j$] according to the FOM file
+    \\
+    \hline
+    {\ttfamily THLA.manager.objects[$i$].\-attributes[$j$].trick\_name}
+    & string
+    & the name of the Trick variable with which this attribute is associated.
+      When Trick publishes values for this attribute, the values sent out
+      are those of the associated Trick variable.
+      Similarly,
+      when Trick subscribes to this attribute, incoming data are assigned to
+      the associated Trick variable.
+    \\
+    \hline
+    {\ttfamily THLA.manager.objects[$i$].\-attributes[$j$].config}
+    & {\ttfamily TrickHLA::DataUpdateEnum}
+    & Use the enum value {\ttfamily CONFIG\_CYCLIC} to allow this attribte
+      to be cyclically sent or received.
+    \\
+    \hline
+    {\ttfamily THLA.manager.objects[$i$].\-attributes[$j$].locally\_owned}
+    & true or false
+    & is attribute[$j$] initially owned by this federate?
+    \\
+    \hline
+    {\ttfamily THLA.manager.objects[$i$].\-attributes[$j$].publish}
+    & true or false
+    & is this federate publishing values for attribute[$j$]?
+      Federates may only publish values for attributes that are locally owned.
+      If this is set to true, \TrickHLA\ will automatically publish values
+      for this attribute as specified in the {\ttfamily sim\_object}.
+    \\
+    \hline
+    {\ttfamily THLA.manager.objects[$i$].\-attributes[$j$].subscribe}
+    & true or false
+    & is this federate subscribing values for attribute[$j$]?
+      If this is set to true, \TrickHLA\ will automatically subscribe to values
+      for this attribute as specified in the {\ttfamily sim\_object}.
+    \\
+    \hline
+    {\ttfamily THLA.manager.objects[$i$].\-attributes[$j$].preferred\_order}
+    & {\ttfamily TrickHLA::TransportationEnum}\footnotemark
+    & override the preferred send order of this attribute.
+       Use the default enum value {\ttfamily TRANSPORT\_SPECIFIED\_IN\_FOM}
+       to use the order specified in FOM.
+       Use the enum value  {\ttfamily TRANSPORT\_TIMESTAMP\_ORDER} to override
+       the FOM and use a timestamp order.
+       Use the enum value  {\ttfamily TRANSPORT\_RECEIVE\_ORDER} to override
+       the FOM and use a receive order.
+    \\
+    \hline
+    {\ttfamily THLA.manager.objects[$i$].\-attributes[$j$].rti\_encoding}
+    & {\ttfamily TrickHLA::EncodingEnum}\footnotemark
+    & the wire format of the values of this attribute.
+      This specifies how the values are converted to/from Trick variables.
+      Big and little endian formats specify numerical data with the
+      associated byte order.
+      C strings are null-terminated strings of bytes.
+      The Unicode and ASCII string formats are documented in the IEEE Standard
+      1516.2-2010, section 4.13.4.
+      Opaque data is for non-numeric, non-string data and is also
+      documented in 1516.2-2010, section 4.13.6.
+    \\
+    \hline
+    {\ttfamily THLA.manager.objects[$i$].\-attributes[$j$].cycle\_time}
+    & integer
+    & {\tt default: 1}. Sends cyclic attributes at the specified cycle-time
+    provided that the time is an integer multiple of the core job cycle
+    time of the send\_cyclic\_data job.
+    Ex: A cycle-time of 4 * THLA\_DATA\_CYCLE\_TIME would send this attribute
+    every fourth time the send\_cyclic\_data job was called.
+    \\
+    \hline
+    {\ttfamily THLA.manager.objects[$i$].\-attributes[$j$].conditional}
+    & {\ttfamily TrickHLAConditional *}
+    & {\tt default: NULL}. If overridden, must point to subclass which makes the
+      decision if this attribute is to be sent over the wire in each frame.
+      Otherwise, this attribute is sent over the wire for each simulation frame.
+    \\
+    \hline
+    \end{tabular}
+  \end{center}
+  \caption{Object and Attribute-Related Parameters}
+  \label{tab:obj-parameters}
+\end{table}
+
+\footnotetext{
+      The {\ttfamily typedef}, {\ttfamily TrickHLA::TransportationEnum},
+      is an enum with the following values:
+      {\ttfamily TRANSPORT\_SPECIFIED\_IN\_FOM},
+      {\ttfamily TRANSPORT\_TIMESTAMP\_ORDER},
+      and {\ttfamily TRANSPORT\_RECEIVE\_ORDER}.
+}
+
+\footnotetext{
+      The {\ttfamily typedef}, {\ttfamily TrickHLA::EncodingEnum},
+      is an enum with the following values:
+      {\ttfamily ENCODING\_UNKNOWN}, {\ttfamily ENCODING\_BIG\_ENDIAN}, 
+      {\ttfamily ENCODING\_LITTLE\_ENDIAN}, {\ttfamily ENCODING\_LOGICAL\_TIME}, 
+      {\ttfamily ENCODING\_C\_STRING}, {\ttfamily ENCODING\_UNICODE\_STRING}, 
+      {\ttfamily ENCODING\_ASCII\_STRING}, {\ttfamily ENCODING\_OPAQUE\_DATA}, 
+      {\ttfamily ENCODING\_BOOLEAN}, and {\ttfamily ENCODING\_NO\_ENCODING}.
+}
+
+\clearpage % force all the tables to be printed before moving on
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Other HLA Interfaces}
+
+% -----------------------------------------------------------------------
+\subsection{Interactions}
+
+% --------------------------------------
+\subsubsection{Input Data}
+
+This section describes the input parameters that govern HLA
+interactions and their parameters.
+The parameters are discussed in Table~\ref{tab:interaction-parameters}.
+
+\begin{table}[hb]
+  \scriptsize
+  \begin{center}
+    \begin{tabular}{|p{2in}|l|p{3.25in}|}
+    \hline
+    parameter name & type & description \\
+    \hline \hline
+      {\ttfamily THLA.manager.\-inter\_count}
+      ($N_{ints}$)
+      & integer
+      & the number of interactions to be handled by this federate
+      \\
+      \hline
+      {\ttfamily THLA.manager.\-interactions}
+      & alloc($N_{ints}$),
+      & allocate an array with $N_{ints}$ elements
+      \\
+      \hline
+      \hline
+      \multicolumn{3}{|c|}{
+        \rule[-3mm]{0mm}{7mm}
+        let $i \in 0...N_{ints}-1$
+      }
+      \\
+      \hline
+      {\ttfamily THLA.manager.\-interactions[$i$].FOM\_name}
+      & string
+      & the HLA name for interaction[$i$] as specified in the FOM file
+      \\
+      \hline
+      {\ttfamily THLA.manager.\-interactions[$i$].publish}
+      & true or false
+      & can this federate send interaction[$i$] to other federates?
+      \\
+      \hline
+      {\ttfamily THLA.manager.\-interactions[$i$].subscribe}
+      & true or false
+      & can this federate receive interaction[$i$] from other federates?
+      \\
+    \hline
+    {\ttfamily THLA.manager.\-interactions[$i$].preferred\_order}
+    & {\ttfamily TrickHLA::TransportationEnum}
+    & override the preferred send order of this interaction.
+       Use the default enum value {\ttfamily TRANSPORT\_SPECIFIED\_IN\_FOM}
+       to use the order specified in FOM.
+       Use the enum value  {\ttfamily TRANSPORT\_TIMESTAMP\_ORDER} to override
+       the FOM and use a timestamp order.
+       Use the enum value  {\ttfamily TRANSPORT\_RECEIVE\_ORDER} to override
+       the FOM and use a receive order.
+      \\
+      \hline
+      {\ttfamily THLA.manager.\-interactions[$i$].handler}
+      & string
+      & the Trick name of a C++ interaction handler object for
+        interaction[$i$].
+      \\
+      \hline
+      {\ttfamily THLA.manager.\-interactions[$i$].param\_count}
+      ($N_{params}$)
+      & integer
+      & the number of parameters associated with interaction[$i$]
+      \\
+      \hline
+      {\ttfamily THLA.manager.\-interactions[$i$].parameters}
+      & alloc($N_{params}$)
+      & allocate an array with $N_{params}$ elements
+      \\
+      \hline
+      \hline
+      \multicolumn{3}{|c|}{
+        \rule[-3mm]{0mm}{7mm}
+        let $j \in 0...N_{params}-1$
+      }
+      \\
+      \hline
+      {\ttfamily
+         THLA.manager.\-interactions[$i$].parameters[$j$].\-FOM\_name
+      }
+      & string
+      & the name of parameter[$j$] as specified in the FOM file
+      \\
+      \hline
+      {\ttfamily
+         THLA.manager.\-interactions[$i$].parameters[$j$].\-trick\_name
+      }
+      & string
+      & the name of the Trick variable with which this parameter is associated.
+      \\
+      \hline
+      {\ttfamily
+         THLA.manager.\-interactions[$i$].parameters[$j$].\-rti\_encoding
+      }
+      & {\ttfamily TrickHLA::EncodingEnum}
+      & the wire format of the values of parameter[$j$].
+        The encoding values have the same meaning as the attribute
+        encodings discussed in Table~\ref{tab:obj-parameters}.
+      \\
+      \hline
+    \end{tabular}
+  \end{center}
+  \caption{Interaction-Related Parameters}
+  \label{tab:interaction-parameters}
+\end{table}
+
+% --------------------------------------
+\subsubsection{C++ Handler Classes}
+
+The \TrickHLA\ model includes a base class,
+{\ttfamily TrickHLA::InteractionHandler},
+which forms the foundation of how developers handle
+HLA interactions.
+The class implements two {\ttfamily send\_interaction()} methods
+(one for receive order and the other for timestamp order transmission
+of the interaction),
+and it defines a virutal method, {\ttfamily receive\_interaction()},
+which must be implemented in subclasses.
+(The default implementation of the method does nothing.)
+
+The base class {\ttfamily send\_interaction()} methods may be used
+directly to send interactions to remote federates.
+You may invoke these methods directly in the simulation
+{\ttfamily S\_define} file as scheduled jobs or from internal
+simulation code.
+
+In order to receive interactions generated remotely,
+you must subclass the base class, overriding the
+{\ttfamily receive\_interaction()} method with application-specific logic.
+Assuming that the handler(s) have been associated with the appropriate
+interactions as discussed in Table~\ref{tab:interaction-parameters},
+the \TrickHLA\ infrastructure will invoke the appropriate
+{\ttfamily receive\_interaction()} method for each arriving interaction.
+
+In both cases (sending and receiving) the HLA interaction parameter values
+are associated with Trick variables as discussed in
+Table~\ref{tab:interaction-parameters}.
+
+% -----------------------------------------------------------------------
+\subsection{Ownership Transfer}
+
+The \TrickHLA\ model includes an ownership handler class,
+{\ttfamily TrickHLA::OwnershipHandler},
+which may be used to transfer ownership of specific HLA attributes
+of a particular object from one federate to another.
+There are two sets of methods that do this.
+
+The {\ttfamily push\_ownership()} methods may be used by a developer to
+divest ownership of the specified attributes.
+The {\ttfamily pull\_ownership()} methods may be used by a developer to
+take over ownership of the specified attributes.
+The methods enqueue push/pull requests which are processed by the
+jobs in the default \TrickHLA\  {\ttfamily sim\_object}.
+
+Ownership handlers are associated with particular objects through the
+input files, as discussed in
+Table~\ref{tab:obj-parameters}.
+
+% -----------------------------------------------------------------------
+\subsection{Packing and Unpacking}
+
+The \TrickHLA\ model includes a base class,
+{\ttfamily TrickHLA::Packing},
+which is used for packing HLA data before it is sent to remote federates
+and unpacking data just after it has been received.
+The class consists of two virtual functions,
+{\ttfamily pack()} and {\ttfamily unpack()}, the default implementations
+will terminate the simulation,
+therefore you must subclass the base class in order to use it,
+overriding the two methods.
+
+Packing objects are associated with particular objects through the
+input files, as discussed in
+Table~\ref{tab:obj-parameters}.
+
+% -----------------------------------------------------------------------
+\subsection{Object Deleted}
+
+The \TrickHLA\ model includes a base class,
+{\ttfamily TrickHLA::ObjectDeleted},
+which is triggered when the object is deleted from the federation.
+The class consists of one virtual function,
+{\ttfamily deleted()}, the default implementation of which does nothing,
+therefore you must subclass the base class in order to use it,
+overriding the method.
+
+Object Deleted are associated with particular objects through the
+input files, as discussed in
+Table~\ref{tab:obj-parameters}.
+
+% -----------------------------------------------------------------------
+\subsection{Sending Data Conditionally}
+
+The \TrickHLA\ model includes a class,
+{\ttfamily TrickHLA::Conditional},
+which must be subclassed by the user's simulation for each attribute that they
+wish to send across the wire based upon user-determinted criteria.
+
+The class consists of a method, {\ttfamily should\_send()}, which must be filled
+in by the user to provide the aforementioned criteria and return true if it has
+been met.
+
+% -----------------------------------------------------------------------
+\subsection{Lag Compensation}
+
+\subsubsection{C++ Classes}
+The \TrickHLA\ model includes a base class,
+{\ttfamily TrickHLA::LagCompensation},
+which provides methods that allow federates to compensate for
+HLA-induced lags.
+The virtual methods,
+{\ttfamily send\_lag\_compensation()} and
+{\ttfamily receive\_lag\_compensation()}
+allow this compensation to be executed by the sender of data or by
+the receivers.
+The default methods do nothing,
+therefore you must subclass the base class in order to use it,
+overriding the two methods.
+
+\subsubsection{Input Data}
+
+To associate a lag compensation class with specific HLA objects,
+the input data described in Table~\ref{tab:obj-parameters} must be
+expanded to include an additional parameter as shown in Table~\ref{tab:lag-parameters}.
+
+\begin{table}[ht]
+  \scriptsize
+  \begin{center}
+    \begin{tabular}{|p{2in}|l|p{3.25in}|}
+    \hline
+    parameter name & type & description \\
+    \hline \hline
+      {\ttfamily THLA.manager.\-objects[$i$].\-lag\_comp}
+      & string
+      & the Trick name of an application-specific lag compensation object.
+        This is an instance of a subclass of {\ttfamily TrickHLA::LagCompensation}
+        which has been declared in the {\ttfamily S\_define} file.
+      \\
+      \hline
+      {\ttfamily THLA.manager.\-objects[$i$].\-lag\_comp\_type}
+      & {\ttfamily TrickHLA::LagCompensation}
+      & an enumerated type the specified whether the federate uses
+        send-side lag compensation, receive-side lag compensation, or none at all.
+        This flag tells the \TrickHLA\ infrastructure whether to invoke
+        the {\ttfamily send\_lag\_compensation()} method of the
+        specified lag compensation class,
+        the {\ttfamily receive\_lag\_compensation()} method, or neither.
+      \\
+      \hline
+    \end{tabular}
+  \end{center}
+  \caption{Lag Compensation Parameters}
+  \label{tab:lag-parameters}
+\end{table}
+
+% -----------------------------------------------------------------------
+\subsection{Requesting Data Updates}
+
+The \TrickHLA\ model includes a class,
+{\ttfamily TrickHLA::Manager},
+which manages the HLA data transfers in and out of the user's simulation.
+
+The {\ttfamily TrickHLA::Manager} class includes a method,
+{\ttfamily request\_data\_update()},
+which may be called by the user's simulation to request a data update for a
+specific named object instance.
+
+% -----------------------------------------------------------------------
+\subsection{Multiple Verbosity Levels}
+
+The \TrickHLA\ model includes a class, {\ttfamily TrickHLA::DebugHandler},
+which is to be used to specify the verbosity level of the \TrickHLA\ software.
+It also allows the user the ability to narrow down the specific code modules
+that are to emit debug messages.
+
+The settings made to this class need to be done once in the input file, as
+described below, and the values are automatically propagated to all subsystems
+of the \TrickHLA\ software.
+
+Table~\ref{tab:debug_levels} lists the verbosity levels available to the user,
+found in the {\ttfamily TrickHLA::DebugSourceEnum} enumeration, while
+table~\ref{tab:code_sections} discusses the code
+section control available to the user, found in the {\ttfamily TrickHLA::DebugSourceEnum}
+enumeration. Both enumerations are defined in the {\ttfamily TrickHLA/Types.hh}
+file.
+
+Setting of the verbosity level is accomplished by setting the class' 
+{\ttfamily debug\_level} value, found inside
+{\ttfamily THLA.manager.debug\_handler} object, within the simulation's input
+file. Note: It is recommended that the user utilize the enumerated values to
+specify the desired verbosity level. If the user specifies the
+{\ttfamily debug\_level} value via an integer, the value will be range-checked
+and any integer value outside of the enumerated values range will recieve a
+warning message on the console.
+
+For example, the following command will enable debug level 3 messages to get
+emitted on the console:
+
+\begin{verbatim}
+// Show or hide the TrickHLA debug messages.
+THLA.manager.debug_handler.debug_level = DEBUG_LEVEL_3_TRACE;
+\end{verbatim}
+
+
+Specifying which code sections are to emit debug messages is accomplished by
+setting the class' {\ttfamily code\_section} value, found inside
+{\ttfamily THLA.manager.debug\_handler} object, within the simulation's input
+file. Note: These values are binarily unique so it is recommended that the user
+add all desired code sections' enumarated value when specifying them in the
+simulation's input file.
+
+For example, the following command will enable debug messages to be emitted only
+from {\ttfamily TrickHLA::Manager}, {\ttfamily TrickHLA::Federate} and
+{\ttfamily TrickHLA::FedAmb} source code modules:
+
+\begin{verbatim}
+THLA.manager.debug_handler.code_section = DEBUG_SOURCE_MANAGER +
+                                          DEBUG_SOURCE_FEDERATE +
+                                          DEBUG_SOURCE_FED_AMB;
+\end{verbatim}
+
+
+\begin{table}[ht]
+  \scriptsize
+  \begin{center}
+    \begin{tabular}{|p{2in}|l|p{3.25in}|}
+    \hline
+    enumeration name & value & description \\
+    \hline \hline
+      {\ttfamily DEBUG\_LEVEL\_NO\_TRACE}
+      & 0
+      & {\ttfamily default}: Disables all \TrickHLA\ messages and no \TrickHLA\ 
+        messages will be displayed on the user's console. Any messages emitted
+        by the user's simulation will still be emitted.
+      \\
+      \hline
+      {\ttfamily DEBUG\_LEVEL\_0\_TRACE}
+      & 0
+      & {\ttfamily default}: Disables all \TrickHLA\ messages and no \TrickHLA\ 
+        messages will be displayed on the user's console. Any messages emitted
+        by the user's simulation will still be emitted.
+      \\
+      \hline
+      {\ttfamily DEBUG\_LEVEL\_1\_TRACE}
+      & 1
+      & Adds initialization complete and Time Advance Grant messages.
+      \\
+      \hline
+      {\ttfamily DEBUG\_LEVEL\_2\_TRACE}
+      & 2
+      & Adds initialization messages as well as the standard complement of execution messages.
+      \\
+      \hline
+      {\ttfamily DEBUG\_LEVEL\_3\_TRACE}
+      & 3
+      & Adds Ownership Transfer messages.
+      \\
+      \hline
+      {\ttfamily DEBUG\_LEVEL\_4\_TRACE}
+      & 4
+      & Adds HLA Time Advancement and Freeze job messages.
+      \\
+      \hline
+      {\ttfamily DEBUG\_LEVEL\_5\_TRACE}
+      & 5
+      & Adds Interaction, InitSyncPts and SyncPts messages.
+      \\
+      \hline
+      {\ttfamily DEBUG\_LEVEL\_6\_TRACE}
+      & 6
+      & Adds Packing / LagCompensation subclass messages.
+      \\
+      \hline
+      {\ttfamily DEBUG\_LEVEL\_7\_TRACE}
+      & 7
+      & Adds the names of all Attributes / Parameters sent to other federates.
+      \\
+      \hline
+      {\ttfamily DEBUG\_LEVEL\_8\_TRACE}
+      & 8
+      & Adds FederateAmbassador and RTI callback messages.
+      \\
+      \hline
+      {\ttfamily DEBUG\_LEVEL\_9\_TRACE}
+      & 9
+      & Adds Trick Ref-Attributes and RTI Handles (both during initialization).
+      \\
+      \hline
+      {\ttfamily DEBUG\_LEVEL\_10\_TRACE}
+      & 10
+      & Adds internal state of all Attributes and Parameters.
+      \\
+      \hline
+      {\ttfamily DEBUG\_LEVEL\_11\_TRACE}
+      & 11
+      & Adds buffer contents of all Attributes and Parameters.
+      \\
+      \hline
+      {\ttfamily DEBUG\_LEVEL\_FULL\_TRACE}
+      & 11
+      & Adds "all of the above".
+      \\
+      \hline
+    \end{tabular}
+  \end{center}
+  \caption{TrickHLA::DebugLevelEnum values}
+  \label{tab:debug_levels}
+\end{table}
+
+\begin{table}[ht]
+  \scriptsize
+  \begin{center}
+    \begin{tabular}{|p{2in}|l|p{3.25in}|}
+    \hline
+    enumeration name & description \\
+    \hline \hline
+      {\ttfamily DEBUG\_SOURCE\_FED\_AMB}
+      & Adds {\ttfamily TrickHLA::FedAmb} debug messages to the console.
+      \\
+      \hline
+      {\ttfamily DEBUG\_SOURCE\_FEDERATE}
+      & Adds {\ttfamily TrickHLA::Federate} debug messages to the console.
+      \\
+      \hline
+      {\ttfamily DEBUG\_SOURCE\_MANAGER}
+      & Adds {\ttfamily TrickHLA::Manager} debug messages to the console.
+      \\
+      \hline
+      {\ttfamily DEBUG\_SOURCE\_OBJECT}
+      & Adds {\ttfamily TrickHLA::Object} (and subclass) debug messages to the
+        console.
+      \\
+      \hline
+      {\ttfamily DEBUG\_SOURCE\_INTERACTION}
+      & Adds {\ttfamily TrickHLA::Interaction} (and subclass) debug messages to
+        the console.
+      \\
+      \hline
+      {\ttfamily DEBUG\_SOURCE\_ATTRIBUTE}
+      & Adds {\ttfamily TrickHLA::Attribute} debug messages to the console.
+      \\
+      \hline
+      {\ttfamily DEBUG\_SOURCE\_PARAMETER}
+      & Adds {\ttfamily TrickHLA::Parameter} debug messages to the console.
+      \\
+      \hline
+      {\ttfamily DEBUG\_SOURCE\_SYNCPOINT}
+      & Adds {\ttfamily TrickHLA::SyncPnt} debug messages to the console.
+      \\
+      \hline
+      {\ttfamily DEBUG\_SOURCE\_OWNERSHIP}
+      & Adds {\ttfamily TrickHLA::OwnershipHandler} debug messages to the console.
+      \\
+      \hline
+      {\ttfamily DEBUG\_SOURCE\_PACKING}
+      & Adds {\ttfamily TrickHLAPacking} (and subclass) debug messages to the
+        console.
+      \\
+      \hline
+      {\ttfamily DEBUG\_SOURCE\_LAG\_COMPENSATION}
+      & Adds {\ttfamily TrickHLA::LagCompensation} (and subclass) debug messages
+        to the console.
+      \\
+      \hline
+      {\ttfamily DEBUG\_SOURCE\_ALL\_MODULES}
+      & {\ttfamily default}: Adds debug messages from all code modules to the console.
+      \\
+      \hline
+    \end{tabular}
+  \end{center}
+  \caption{TrickHLA::DebugSourceEnum values}
+  \label{tab:code_sections}
+\end{table}

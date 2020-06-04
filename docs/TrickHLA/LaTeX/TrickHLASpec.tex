@@ -1,0 +1,124 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% File: TrickHLASpec.tex
+%
+% Purpose: TrickHLA Product Specification
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand\documentHistory{
+{\bf Author} & {\bf Date} & {\bf Description} \\ \hline \hline
+Edwin Z. Crues & June 2020 & TrickHLA Version 3 \\ \hline
+}
+
+
+% This documentation file's change history includes:
+% "REVISED BY name(s)" & "revision DATE" & "revision DESCRIPTION"
+%  ------------------     -------------     --------------------
+
+\newcommand\DocumentChangeHistory{
+{\bf Revised by} & {\bf Date} & {\bf Description} \\ \hline \hline
+}
+
+\documentclass[twoside,11pt,titlepage]{report}
+
+%
+% Bring in the amsmath environment
+%
+\usepackage{amsmath}
+
+%
+% Bring in the common page setup
+%
+\usepackage{trickhlaenv}
+
+%
+% Bring in the common math nomenclature
+%
+\usepackage{trickhlamath}
+
+%
+% Bring in the model-specific commands with requirement labels
+%
+\usepackage[Reqt]{TrickHLA}
+
+%
+% Bring in the graphics environment
+%
+\usepackage{graphicx}
+
+%
+% Bring in listing environment
+%
+\usepackage{paralist}
+
+%
+% Bring in the hyper ref environment
+%
+\usepackage[colorlinks]{hyperref}
+%  keywords for pdfkeywords are separated by commas
+\hypersetup{
+   pdftitle={\TrickHLA\ Product Specification},
+   pdfauthor={Edwin Z. Crues \\ and \\ Daniel E. Dexter},
+   pdfkeywords={\TrickHLA, Product Specification},
+   pdfsubject={\TrickHLA\ Product Specification}}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Front matter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{roman}
+
+\docid{DD.mm.20}
+\docrev{1.0}
+\date{June 2020}
+\modelname{\TrickHLA}
+\doctype{Product Specification}
+\author{Edwin Z. Crues \\ and \\ Daniel E. Dexter}
+\managers{
+  Edwin Z. Crues \\ Project Manager \\
+  Michael T. Red \\ Simulation and Graphics Branch Chief (ER7) \\
+  Robert O. Ambrose \\ Software, Robotics, and Simulation Division Chief}
+\pdfbookmark{Title Page}{titlepage}
+\makeTrickhlaenvTitlepage
+
+\include{TrickHLASpec-Abstract}
+
+\pdfbookmark{Contents}{contents}
+\tableofcontents
+\vfill
+
+\pagebreak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Main Document Body
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{arabic}
+
+\include{TrickHLASpec-Intro}
+\include{TrickHLASpec-RelatedDocs}
+\include{TrickHLASpec-ArchDesign}
+\include{TrickHLASpec-MathFoundations}
+\include{TrickHLASpec-InterfaceDesign}
+\include{TrickHLASpec-FunctionalDesign}
+\include{TrickHLASpec-VersionDescription}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Bibliography
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\pdfbookmark{Bibliography}{bibliography}
+\bibliography{trickhlaenv,TrickHLA,IEEE1516}
+\bibliographystyle{plain}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Appendices
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\newpage
+%\pdfbookmark{Appendix}{appendix}
+%\appendix
+%
+%\include{TrickHLASpec-SourceCode}
+
+\end{document}

@@ -1,0 +1,361 @@
+\chapter{Data Encoding and Packing}
+\label{sec:hla-pack}
+
+\TrickHLA\ provides a mechanism for simulation developers to
+modify updated class attribute data before sending it out to other federates
+or upon receiving new data from publishers.
+This capability might be necessary, for example, if the agreed-upon units
+for an attribute are different from those used internally by the simulation,
+in which case a developer could write {\em pack} and {\em unpack} logic
+to change units as data come into and leaves the simulation.
+This chapter illustrates how to do that.
+
+% ---------------------------------------------------------------------------
+\section{What is a {\em packing} class?}
+
+\TrickHLA\ provides two {\em hooks} that allow simulation developers
+to modify\footnote{
+  What {\em modify} means is application specific.
+  It might be encoding/decoding.
+  It might be packing/unpacking.
+  Or it might be changing units back and forth from FOM-agreed units
+  (e.g., degrees) and application-specific units (e.g., radians).
+}
+data as it is sent out via HLA
+and as it arrives from HLA.
+This is implemented in the {\tt pack()} and {\tt unpack()}
+methods of the {\tt TrickHLAPacking} class.
+The {\tt pack()} method is automatically invoked by
+\TrickHLA\ before data are sent via HLA.
+The {\tt unpack()} method is automatically invoked by
+\TrickHLA\ after data are received from HLA.
+These are virtual methods and must be overriden in a subclass
+in order to add application-specific packing and unpacking to the simulation.
+
+% ------------------------------------
+\subsection{{\tt TrickHLAPacking}}
+
+The header file for the {\tt TrickHLAPacking} class is shown below.
+
+\begin{lstlisting}[caption={{\tt TrickHLAPacking} class header}]
+class TrickHLAObject;
+#include "TrickHLA/include/TrickHLAObject.hh"
+
+class TrickHLAPacking
+{
+   friend class InputProcessor;
+   friend void init_attrTrickHLAPacking();
+
+  public:
+   TrickHLAPacking() {};
+   virtual ~TrickHLAPacking() {};
+
+   TrickHLADebugHandler debug_handler; // -- Prints out multiple debug levels
+
+   TrickHLAAttribute * get_attribute( const char * attr_FOM_name );
+
+   virtual void initialize_callback( TrickHLAObject * obj );
+
+   //-----------------------------------------------------------------
+   // These are virtual functions and must be defined by a full class.
+   //-----------------------------------------------------------------
+
+   virtual void pack();
+
+   virtual void unpack();
+
+  protected:
+   TrickHLAObject * object;   // ** Reference to the TrickHLA Object.
+};
+\end{lstlisting}
+
+% ------------------------------------
+\subsection{{\tt simplesine\_Packing}}
+
+In order to illustrate the use of the {\tt TrickHLAPacking} class,
+the \simplesine model has a packing class.
+The class header is shown below.
+
+\begin{lstlisting}[caption={{\tt simplesine\_Packing} class header}]
+#include "TrickHLA/include/TrickHLAPacking.hh"
+#include "simplesine/include/simplesine.h"
+
+class simplesine_Packing : public TrickHLAPacking
+{
+  friend class InputProcessor;
+  friend void init_attrsimplesine_Packing();
+
+  public:
+    simplesine_Packing();
+    virtual ~simplesine_Packing();
+
+    virtual void init(
+      simplesine_T* originalP,
+      simplesine_T* packedP,
+      simplesine_T* unpackedP );
+
+    virtual void pack();
+    virtual void unpack();
+
+  private:
+    bool is_initialized;
+    simplesine_T* originalP;
+    simplesine_T* packedP;
+    simplesine_T* unpackedP;
+};
+\end{lstlisting}
+
+This class is designed to work as follows.
+the {\tt init()} method {\em must} be called in order to initialize the class
+(i.e., invoked as a Trick initialization job).
+The initialization method specifies three \simplesine objects:
+\begin{itemize}
+\item{{\tt originalP} --
+  The \simplesine data used as input to the {\tt pack()} and {\tt unpack()}
+  methods.
+}
+\item{{\tt packedP} --
+  The \simplesine data used as output from the {\tt pack()} method.
+}
+\item{{\tt unpackedP} --
+  The \simplesine data used as output from the {\tt unpack()} method.
+}
+\end{itemize}
+
+The implementation of the methods is shown below.
+In this case, both methods just copy the data without doing any
+modification at all, which of course has no value other than
+illustrating (in the following simulations) how to use the
+{\tt TrickHLAPacking} class.
+
+\begin{lstlisting}[caption={{\tt simplesine\_Packing} class methods}]
+/********************************* TRICK HEADER *******************************
+PURPOSE: (implementation of packing/unpacking methods)
+LIBRARY DEPENDENCY: ((simplesine_copy.o))
+*******************************************************************************/
+// System include files.
+#include <math.h>
+#include <stdlib.h>
+#include <iostream>
+#include <string>
+
+// Trick include files.
+#include "sim_services/include/exec_proto.h"
+
+// TrickHLA model include files.
+#include "TrickHLA/include/TrickHLAAttribute.hh"
+
+// Model include files.
+#include "../include/simplesine_Packing.hh"
+#include "../include/simplesine_proto.h"
+
+using namespace std;
+
+/*----------------------------------------------------------------------------
+PURPOSE: (default constructor for the simplesine packing/unpacking class.)
+-----------------------------------------------------------------------------*/
+simplesine_Packing::simplesine_Packing() // RETURN: -- None.
+  : is_initialized(false),
+    originalP(NULL),
+    packedP(NULL),
+    unpackedP(NULL)
+{ }
+
+/*----------------------------------------------------------------------------
+PURPOSE: (destructor for the simplesine packing/unpacking class.)
+-----------------------------------------------------------------------------*/
+simplesine_Packing::~simplesine_Packing() // RETURN: -- None.
+{ }
+
+/*----------------------------------------------------------------------------
+PURPOSE: (initialization method)
+-----------------------------------------------------------------------------*/
+void simplesine_Packing::init( // RETURN: -- None.
+  simplesine_T* originalP,     // INOUT:  -- where the data is coming from
+  simplesine_T* packedP,       // INOUT:  -- where to pack it into
+  simplesine_T* unpackedP)     // INOUT:  -- where to unpack it into
+{
+  this->originalP = originalP;
+  this->packedP = packedP;
+  this->unpackedP = unpackedP;
+  this->is_initialized = true;
+}
+
+/*----------------------------------------------------------------------------
+PURPOSE: (data packing method.  This is called before data is sent to the RTI.)
+-----------------------------------------------------------------------------*/
+void simplesine_Packing::pack()  // RETURN: -- None.
+{
+  if( ! this->is_initialized ) {
+    exec_terminate(
+      "simplesine_Packing.cpp",
+      "simplesine_Packing::pack() called on non-initialized object" );
+  }
+
+  send_hs( stdout, "pack(): packing data from %p into %p", originalP, packedP );
+  simplesine_copy( originalP, packedP );
+}
+
+/*----------------------------------------------------------------------------
+PURPOSE: (data unpacking method.  This is called after data is received
+  from the RTI.)
+-----------------------------------------------------------------------------*/
+void simplesine_Packing::unpack() // RETURN: -- None.
+{
+  if( ! this->is_initialized ) {
+    exec_terminate(
+      "simplesine_Packing.cpp",
+      "simplesine_Packing::unpack() called on non-initialized object" );
+  }
+
+  send_hs( stdout, "unpack(): unpacking data from %p into %p", originalP, unpackedP );
+  simplesine_copy( originalP, unpackedP );
+}
+\end{lstlisting}
+
+% ---------------------------------------------------------------------------
+\section{\tt SIM\_simplesine\_hla\_pack}
+
+This {\tt SIM\_simplesine\_hla\_pack} simulation illustrates how to
+{\em pack} data from a publishing simulation.
+The simulation is based on the plain publisher,
+{\tt SIM\_simplesine\_hla\_pub}, from
+Chapter~\ref{sec:hla-pubsub}.
+
+% -----------------------
+\subsection{\sdefine file}
+This differences between the \sdefine for this simulation and that
+of the plain publisher are as follows.
+
+\begin{itemize}
+\item{
+  A new \simplesine variable, {\tt simplesine\_packed},
+  is defined in the {\tt publisher} sim object.
+}
+\item{
+  The definition of an instance, {\tt packer},
+  of the {\tt simplesine\_Packing} class.
+}
+\item{
+  The invocation of {\tt simplesine\_Packing::init()} as a Trick
+  initialization job,
+  specifying {\tt publisher.simplesine} as the input to the {\tt pack()}
+  method and {\tt publisher.simple\-sine\_\-packed} as the output.
+}
+\end{itemize}
+
+% -----------------------
+\subsection{Input file}
+
+The only difference between the input file for this simulation and
+that of the plain publisher is the following new line
+
+\begin{verbatim}
+THLA.manager.objects[0].packing = &publisher.packer; \end{verbatim}
+
+which associates {\tt publisher.packer} as the packing class for
+the object being published.
+
+% ---------------------------------------------------------------------------
+\section{\tt SIM\_simplesine\_hla\_unpack}
+
+This {\tt SIM\_simplesine\_hla\_unpack} simulation illustrates how to
+{\em unpack} data from a subscribing simulation.
+The simulation is based on the plain subscriber,
+{\tt SIM\_simplesine\_hla\_sub}, from
+Chapter~\ref{sec:hla-pubsub}.
+
+% -----------------------
+\subsection{\sdefine file}
+This differences between the \sdefine for this simulation and that
+of the plain subscriber are as follows.
+
+\begin{itemize}
+\item{
+  A new \simplesine variable, {\tt simplesine\_unpacked},
+  is defined in the {\tt subscriber} sim object.
+}
+\item{
+  The definition of an instance, {\tt unpacker},
+  of the {\tt simplesine\_Packing} class.
+}
+\item{
+  The invocation of {\tt simplesine\_Packing::init()} as a Trick
+  initialization job,
+  specifying {\tt subscriber.simplesine} as the input to the {\tt unpack()}
+  method and {\tt subscriber.simple\-sine\_\-un\-packed} as the output.
+}
+\end{itemize}
+
+% -----------------------
+\subsection{Input file}
+
+The only difference between the input file for this simulation and
+that of the plain subscriber is the following new line
+
+\begin{verbatim}
+THLA.manager.objects[0].packing = &subscriber.unpacker; \end{verbatim}
+
+which associates {\tt subscriber.unpacker} as the packing class for
+the object to which the simulation subscribes.
+
+% ---------------------------------------------------------------------------
+\section{Output}
+
+The output of running the pack and unpack simulations
+shows issued by the \simplesine {\tt pack()} and
+{\tt unpack()} methods.
+
+\begin{lstlisting}[numbers=none,caption={Output from the packer simulation}]
+...
+| |wormhole|1|0.00|2007/08/05,23:39:14| TrickHLAManager::initialization_complete()
+        Simulation has started and is now running...
+| |wormhole|1|0.00|2007/08/05,23:39:14| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|0.00|2007/08/05,23:39:14| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|0.00|2007/08/05,23:39:14| pack(): packing data from 0x99aaee4 into 0x99aaf1c
+| |wormhole|-1|0.25|2007/08/05,23:39:14| TrickHLAFedAmb::timeAdvanceGrant()
+Federate "publisher" Time granted to: 1
+| |wormhole|1|1.00|2007/08/05,23:39:15| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|1.00|2007/08/05,23:39:15| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|1.00|2007/08/05,23:39:15| pack(): packing data from 0x99aaee4 into 0x99aaf1c
+| |wormhole|-1|1.25|2007/08/05,23:39:15| TrickHLAFedAmb::timeAdvanceGrant()
+Federate "publisher" Time granted to: 2
+| |wormhole|1|2.00|2007/08/05,23:39:16| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|2.00|2007/08/05,23:39:16| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|2.00|2007/08/05,23:39:16| pack(): packing data from 0x99aaee4 into 0x99aaf1c
+| |wormhole|-1|2.25|2007/08/05,23:39:16| TrickHLAFedAmb::timeAdvanceGrant()
+Federate "publisher" Time granted to: 3
+| |wormhole|1|3.00|2007/08/05,23:39:17| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|3.00|2007/08/05,23:39:17| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|3.00|2007/08/05,23:39:17| pack(): packing data from 0x99aaee4 into 0x99aaf1c
+| |wormhole|-1|3.25|2007/08/05,23:39:17| TrickHLAFedAmb::timeAdvanceGrant()
+Federate "publisher" Time granted to: 4
+...
+\end{lstlisting}
+
+\begin{lstlisting}[numbers=none,caption={Output from the unpacker simulation}]
+...
+| |wormhole|1|0.00|2007/08/05,23:39:14| TrickHLAManager::initialization_complete()
+        Simulation has started and is now running...
+| |wormhole|1|0.00|2007/08/05,23:39:14| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|0.00|2007/08/05,23:39:14| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|0.00|2007/08/05,23:39:14| pack(): packing data from 0x99aaee4 into 0x99aaf1c
+| |wormhole|-1|0.25|2007/08/05,23:39:14| TrickHLAFedAmb::timeAdvanceGrant()
+Federate "publisher" Time granted to: 1
+| |wormhole|1|1.00|2007/08/05,23:39:15| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|1.00|2007/08/05,23:39:15| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|1.00|2007/08/05,23:39:15| pack(): packing data from 0x99aaee4 into 0x99aaf1c
+| |wormhole|-1|1.25|2007/08/05,23:39:15| TrickHLAFedAmb::timeAdvanceGrant()
+Federate "publisher" Time granted to: 2
+| |wormhole|1|2.00|2007/08/05,23:39:16| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|2.00|2007/08/05,23:39:16| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|2.00|2007/08/05,23:39:16| pack(): packing data from 0x99aaee4 into 0x99aaf1c
+| |wormhole|-1|2.25|2007/08/05,23:39:16| TrickHLAFedAmb::timeAdvanceGrant()
+Federate "publisher" Time granted to: 3
+| |wormhole|1|3.00|2007/08/05,23:39:17| TrickHLAManager::receive_cyclic_data()
+| |wormhole|1|3.00|2007/08/05,23:39:17| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|3.00|2007/08/05,23:39:17| pack(): packing data from 0x99aaee4 into 0x99aaf1c
+| |wormhole|-1|3.25|2007/08/05,23:39:17| TrickHLAFedAmb::timeAdvanceGrant()
+Federate "publisher" Time granted to: 4
+...
+\end{lstlisting}

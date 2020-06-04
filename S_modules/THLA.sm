@@ -1,0 +1,70 @@
+/*****************************************************************************
+ * General Basin TrickHLA Simulation Definition Object
+ *---------------------------------------------------------------------------*
+ * This is a Simulation Definition (S_define) module that defines a general
+ * HLA interface using TrickHLA for Trick based simulations.
+ ****************************************************************************/
+/*****************************************************************************
+ *       Author: Edwin Z. Crues
+ *         Date: April 2020
+ *       E-Mail: Edwin.Z.Crues@nasa.gov
+ *        Phone: 281-483-2902
+ * Organization: Mail Code ER7
+ *               Simulation & Graphics Branch
+ *               Software, Robotics & Simulation Division
+ *               2101 NASA Parkway
+ *               Houston, Texas 77058
+ *---------------------------------------------------------------------------*
+ * Modified By: Edwin Z. Crues
+ *        Date: April 2020
+ * Description: Extended THLABase.sm to support SRFOM.
+ ****************************************************************************/
+
+// TrickHLA SimObject base class.
+#include "THLABase.sm"
+
+// SRFOM Execution Control class definition.
+##include "TrickHLA/ExecutionControl.hh"
+
+// SRFOM Execution Configuration (ExCO) class definition.
+##include "TrickHLA/ExecutionConfiguration.hh"
+
+//=========================================================================
+// SIM_OBJECT: THLA - Extend the TrickHLA Base SimObject.
+//=========================================================================
+
+class THLASimObject : public THLABaseSimObject {
+
+ public:
+   
+   // The Simple TrickHLA example Execution Configuration Object (ExCO).
+   TrickHLA::ExecutionConfiguration simple_sim_config;
+   
+   // The simple TrickHLA Execution Control object.
+   TrickHLA::ExecutionControl execution_control;
+
+   THLASimObject( double data_cycle,
+                  double interaction_cycle,
+                  unsigned short _1ST  = 1,
+                  unsigned short _INIT = 60,
+                  unsigned short _LAST = 65534 )
+     : THLABaseSimObject( data_cycle, interaction_cycle, _1ST, _INIT, _LAST ),
+       simple_sim_config( "THLA.simple_sim_config" ),
+       execution_control( simple_sim_config )
+   {
+      //-----------------------
+      //-- DEFAULT DATA JOBS --
+      //-----------------------
+      ("default_data") federate.setup( federate_amb,
+                                       manager,
+                                       execution_control );
+   }
+
+ private:
+   // Do not allow the implicit copy constructor or assignment operator.
+   THLASimObject(const THLASimObject & rhs);
+   THLASimObject & operator=(const THLASimObject & rhs);
+
+   // Do not allow the default constructor.
+   THLASimObject();
+};

@@ -1,0 +1,289 @@
+\section{The {\tt simplesine} Model}
+\label{sec:simplesine-model}
+
+In the following chapters,
+we use a simple sine wave model, {\tt simplesine}, to illustrate \TrickHLA\ in action.
+Understanding the model and how it is used in a Trick \sdefine file
+is important for those chapters.
+This section introduces \simplesine with that in mind.
+
+% -----------------------------------------------------------------------
+\subsection{Description}
+
+The system modeled by \simplesine is an undamped harmonic oscillator,
+the dynamics of which are governed by the differential equation
+\begin{equation}
+\ddot{x} + w^2 x = 0,
+\label{eq:EOM}
+\end{equation}
+which has an analytic solution of the form
+\begin{subequations}
+\label{eq:analytic-equations}
+\begin{align}
+x(t)       &= A        \sin {(\omega t + \phi)}, \\
+\dot{x}(t) &= A \omega \cos {(\omega t + \phi)}.
+\end{align}
+\end{subequations}
+
+The relevant model data are
+the dynamic {\em state}, $(x, \dot{x})$ and
+the constant system {\em parameters}, $(A, \phi, \omega)$,
+where the parameters are specified as inputs
+and the state is calculated dynamically as simulation outputs.\footnote{
+In this model, the initial state cannot be specified as inputs explicitly
+but rather through the parameters $A$ and $\phi$.
+}
+
+The \simplesine model has functions that may be used to calculate the state
+analytically based on equations~\ref{eq:analytic-equations}.
+It can also propagate the state approximately
+based on numerical integration of the differential equations.
+The integration involves the calculation of the derivative of
+the 2-vector $\boldsymbol{z}$ defined as
+
+\begin{equation}
+\label{eq:differential-equations}
+  \boldsymbol{z}(t)
+  \equiv \left\{
+            \begin{array}{c}
+              x(t)\\ \dot{x}(t)
+            \end{array}
+     \right\} \\
+  = \left\{
+            \begin{array}{r}
+              A \sin{(\omega t + \phi)} \\ A \omega \cos{(\omega t + \phi)}
+            \end{array}
+     \right\}
+\end{equation}
+
+So that
+
+\begin{equation}
+\label{eq:derivative-equations}
+  \dot{\boldsymbol{z}}(t)
+  = \left\{
+            \begin{array}{c}
+              \dot{x}(t)\\ \ddot{x}(t)
+            \end{array}
+     \right\} \\
+  = \left\{
+            \begin{array}{r}
+              \dot{x}(t)\\ - \omega^2 x(t)
+            \end{array}
+     \right\} \\
+  = \left\{
+            \begin{array}{r}
+                    A w \cos{(\omega t + \phi)} \\
+                    - A w^2 \omega \sin{(\omega t + \phi)}
+            \end{array}
+     \right\}
+\end{equation}
+
+% -------------------------------------
+\subsection{Model}
+
+The source code for the \simplesine model is organized into three directories:
+{\tt data}, {\tt include} and {\tt src}.
+The files in these directories are discussed below.
+
+% ----------
+\subsubsection{Include Files}
+
+The \simplesine C/C++ include files are in directory {\tt simplesine/include}.
+A list of the files is shown below.
+
+{
+\begin{center}
+\scriptsize
+\begin{tabular}{|l|l|}
+\hline
+{\em filename} \\
+\hline
+\hline
+{\tt simplesine.h} \\
+\hline
+{\tt simplesine\_InteractionHandler.h} \\
+\hline
+{\tt simplesine\_LagCompensator.h} \\
+\hline
+{\tt simplesine\_Packing.h} \\
+\hline
+{\tt simplesine\_proto.h} \\
+\hline
+\end{tabular}
+\end{center}
+}
+
+\paragraph{\tt simplesine.h}
+This file declares the fundamental \simplesine data structures.
+There is a single data structure that in turn holds state- and parameter-related
+data structures.
+In the simulations that follow, the {\tt simplesine\_T} structure will be
+frequently declared as a {\tt sim\_object} in the \sdefine files
+when the simulations need to model a sine wave.
+
+The {\tt simplesine\_T} structure consists of a {\em state} substructure,
+which holds $x$ and $\dot{x}$
+and a parameters substructure which holds the constant {\em parameters,}
+$A$, $\phi$ and $\omega$.
+In this model, only the parameters
+may be set from the input processor.
+The state may only be calculated by a Trick job.
+The purpose of this is to ensure that the state and parameters are never
+initialized to inconsistent values.\footnote{
+  Of course, this requires that developers remember to explicitly
+  call {\tt simplesine\_calc()} as an initialization job for every
+  \simplesine sim variable.
+}
+
+The complete file is shown in Appendix~\ref{sec:simplesine-h}.
+
+\paragraph{\tt simplesine\_proto.h}
+This file declares the C functions exported by the \simplesine model.
+These functions may be used in an \sdefine file as Trick jobs.
+Functions of particular interest are
+\begin{itemize}
+  \item{\tt simplesine\_calc()}, which calculates the state, $(x, \dot{x})$
+    according to equations~\ref{eq:analytic-equations},\footnote{
+      Since only the \simplesine parameters have default values,
+      this job may be used as an initialization job to initialize
+      the state from the parameters.
+    }
+  \item{\tt simplesine\_deriv()} and {\tt simplesine\_integ()}, which
+    are used to numerically integrate equations~\ref{eq:differential-equations}
+    using the standard Trick integration scheme,
+  \item{\tt simplesine\_copyXXX()}, several routines which copy \simplesine
+    data from one data structure to another, and
+  \item{\tt simplesine\_calcError()}, which calculates the error between
+one \simplesine state and the true values based on equations~\ref{eq:analytic-equations}.
+\end{itemize}
+
+
+The complete file is shown in Appendix~\ref{sec:simplesine-proto-h}.
+
+\paragraph{\tt simplesine\_InteractionHandler.hh}
+This file declares the \simplesine C++ class which acts as a
+\TrickHLA\ {\em interaction handler}.
+It is a subclass of {\tt TrickHLAInteractionHandler},
+which is the \TrickHLA\ class which defines how interactions
+are sent and received.
+
+The complete file is shown in Appendix~\ref{sec:simplesine-InteractionHandler-hh}.
+
+\paragraph{\tt simplesine\_LagCompensator.hh}
+This file declares the \simplesine C++ class which acts as a
+\TrickHLA\ {\em lag compensator}.
+It is a subclass of {\tt TrickHLALagCompensator},
+which is the \TrickHLA\ class which defines how federates may compensate
+for HLA-time lags created as a result of sending data to remote federates
+and transfering ownership between federates.
+
+The complete file is shown in Appendix~\ref{sec:simplesine-LagCompensator-hh}.
+
+\paragraph{\tt simplesine\_Packing.hh}
+This file declares the \simplesine C++ class which may be optionally
+used by developers to {\em pack} outbound data prior to sending via HLA
+and {\em upack} is upon receipt from HLA.
+It is a subclass of {\tt TrickHLAPacking},
+which has {\tt pack()} and {\tt unpack()} virtual methods that implement
+the application-specific packing and unpacking logic.
+
+The complete file is shown in Appendix~\ref{sec:simplesine-Packing-hh}.
+
+
+% ----------
+\subsubsection{Source Files}
+
+The \simplesine C/C++ source files are in the directory {\tt simplesine/src}.
+
+The implementation of the \simplesine functions and classes is in
+{\tt .c} and {\tt .cpp} files located in the {\tt simplesine/src} directory.
+The C functions are mainly implemented one function per file\footnote{
+  The copy functions
+  ({\tt simplesine\_copyParams()},
+  {\tt simplesine\_copyParams()}, and
+  {\tt simplesine\_copyParams()})
+  are located in a single file, {\tt simplesine\_copy.c}.
+},
+and the C++ classes are implemented one class per file.
+The file names are shown in the table below:
+
+{
+\begin{center}
+\scriptsize
+\begin{tabular}{|l|l|}
+\hline
+{\em filename} & {\em implements what?} \\
+\hline
+\hline
+{\tt simplesine\_calc.c} & {\tt simplesine\_copy()} \\
+\hline
+{\tt simplesine\_calcError.c} & {\tt simplesine\_calcError()} \\
+\hline
+{\tt simplesine\_compensate.c} & {\tt simplesine\_compensate()} \\
+\hline
+{\tt simplesine\_copy.c} & the {\tt simplesine\_copyXXX()} functions \\
+\hline
+{\tt simplesine\_deriv.c} & {\tt simplesine\_deriv()} \\
+\hline
+{\tt simplesine\_integ.c} & {\tt simplesine\_integ()} \\
+\hline
+{\tt simplesine\_propagate.c} & {\tt simplesine\_propagate()} \\
+\hline
+\hline
+{\tt simplesine\_InteractionHandler.cpp} & the \TrickHLA\ interaction handler class \\
+\hline
+{\tt simplesine\_LagCompensator.cpp} & the \TrickHLA\ lag compensator class \\
+\hline
+{\tt simplesine\_Packing.cpp} & the \TrickHLA\ packing/unpacking class \\
+\hline
+\end{tabular}
+\end{center}
+}
+
+
+% ----------
+\subsubsection{Data Files}
+
+This {\tt simplesine/data} directory
+consists Trick input files for default \simplesine data.
+
+Depending on how you build your \sdefine file, these files may be used
+as ``fallback'' initializations for your data.
+In the simulations that follow, the actual initial values
+will often override the defaults in these files.\footnote{
+  Sine the \simplesine state data are output-only,
+  they cannot be set directly from the Trick input processor.
+  Consequently, there is no default data file for
+  {\tt simplesine\_state\_T}.
+}
+
+The files are shown below.
+
+{
+\begin{center}
+\scriptsize
+\begin{tabular}{|l|l|}
+\hline
+{\em filename} & {\em description} \\
+\hline
+\hline
+{\tt integ.d}
+  &
+  Default numerical integration parameters.
+  \\
+\hline
+{\tt simplesine.d}
+  &
+  Default \simplesine parameters with uninitialized state.
+  \\
+\hline
+\hline
+{\tt simplesine\_params.d}
+  &
+  Default \simplesine parameters.
+  \\
+\hline
+\end{tabular}
+\end{center}
+}

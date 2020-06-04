@@ -1,0 +1,171 @@
+//==========================================================================
+// Space Reference FOM: Simulation to test the SpaceFOM roles implementation.
+//==========================================================================
+// Description:
+// This is a simulation definition file (S_define) that provides an example
+// of an SpaceFOM compliant federate that services all SpaceFOM roles.
+//==========================================================================
+
+//==========================================================================
+// Define the Trick executive and services simulation object instances:
+// Use the "standard" Trick executive simulation object.  This simulation
+// object provides the traditional Trick executive capabilities but can be
+// tailored to provide facility or project unique executive behavior.  See
+// the Trick documentation for more on usage and available options.
+//==========================================================================
+#include "sim_objects/default_trick_sys.sm"
+
+//==========================================================================
+// Define the Trick HLA job cycle times.
+//==========================================================================
+#define THLA_DATA_CYCLE_TIME        0.250 // HLA data communication cycle time.
+#define THLA_INTERACTION_CYCLE_TIME 0.050 // HLA Interaction cycle time.
+
+//==========================================================================
+// Define the HLA phase initialization priorities.
+//==========================================================================
+#define P_HLA_INIT   60    // HLA initialization phase.
+#define P_HLA_EARLY  1     // HLA early job phase.
+#define P_HLA_LATE   65534 // HLA late job phase.
+
+
+//==========================================================================
+// Trick HLA and SpaceFOM include files used in SimObject definitions or
+// for inputfile instantiations.
+//==========================================================================
+// This is needed for CTE timeline instantiation in the input file.
+##include "TrickHLA/CTETimelineBase.hh"
+
+
+//==========================================================================
+// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+//==========================================================================
+#include "SpaceFOM.sm"
+
+%header{
+ using namespace TrickHLA;
+ using namespace SpaceFOM;
+%}
+
+//==========================================================================
+// SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
+// initialization SimObject.
+//==========================================================================
+class THLAInitSimObject : public Trick::SimObject {
+
+ public:
+
+   THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
+                      TrickHLA::Federate & thla_fed   ) 
+      : thla_manager( thla_mngr ),
+        thla_federate( thla_fed )
+   {
+
+      //--------------------------------------------------------------------
+      // NOTE: Initialization phase numbers must be greater than P60 
+      // (i.e. P_HLA_INIT) so that the initialization jobs run after the
+      // P60 THLA.manager->initialize() job.
+      //--------------------------------------------------------------------
+
+      // Alternative method: Send and receive all the initialization data.
+
+      // Send all the initialization data.
+      P100 ("initialization") thla_manager.send_init_data();
+      
+      // Wait to receive all the initialization data.
+      P100 ("initialization") thla_manager.receive_init_data();
+      
+      // Do some processing here if needed...
+      
+      // Clear remaining initialization sync-points.
+      P100 ("initialization") thla_manager.clear_init_sync_points();
+   }
+
+ private:
+   TrickHLA::Manager  & thla_manager;
+   TrickHLA::Federate & thla_federate;
+ 
+   // Do not allow the implicit copy constructor or assignment operator.
+   THLAInitSimObject(const THLAInitSimObject & rhs);
+   THLAInitSimObject & operator=(const THLAInitSimObject & rhs);
+   
+   // Do not allow the default constructor.
+   THLAInitSimObject();
+
+};
+
+
+//==========================================================================
+// SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An example reference frame tree
+// simulation object definition.
+//==========================================================================
+class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
+
+  public:
+   /* Reference frame data. */
+   RefFrameData root_frame_data;
+   RefFrameData frame_A_data;
+
+   SpaceFOMRefFrameTreeSimObject( )
+   {
+   }
+
+  private:
+
+   // This object is not copyable
+   SpaceFOMRefFrameTreeSimObject( const SpaceFOMRefFrameTreeSimObject & );
+   SpaceFOMRefFrameTreeSimObject & operator=( const SpaceFOMRefFrameTreeSimObject & );
+
+
+};
+
+
+//==========================================================================
+// SIM_OBJECT: SpaceFOMRefFrameSimObject - An example reference frame
+// simulation object definition.  This can be used for SpaceFOM ReferenceFrame
+// object discovery and data exchange.
+//==========================================================================
+class SpaceFOMRefFrameSimObject : public Trick::SimObject {
+
+  public:
+   
+   /* HLA associated reference frames packing object. */
+   SpaceFOM::RefFrameBase frame_packing;
+
+   SpaceFOMRefFrameSimObject( /*SpaceFOM::*/RefFrameData & frame_data_ptr,
+                           unsigned short        _INIT = 59  )
+   {
+      // Set the reference to the reference frame.
+      this->ref_frame_data_ptr = &frame_data_ptr;
+      
+      //
+      // Initialization jobs
+      //
+      P_INIT ("initialization") frame_packing.initialize( ref_frame_data_ptr );
+
+   }
+
+  private:
+   RefFrameData * ref_frame_data_ptr;
+
+   // This object is not copyable
+   SpaceFOMRefFrameSimObject( const SpaceFOMRefFrameSimObject & );
+   SpaceFOMRefFrameSimObject & operator=( const SpaceFOMRefFrameSimObject & );
+
+};
+
+
+//==========================================================================
+// SimObject instantiations.
+//==========================================================================
+// Main TrickHLA SimObject.
+SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME, THLA_INTERACTION_CYCLE_TIME,
+                     P_HLA_EARLY, P_HLA_INIT, P_HLA_LATE );
+
+// SimObject used capture simulation specific initialization.
+THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
+
+// SimObject used for root reference frame discovery.
+SpaceFOMRefFrameTreeSimObject ref_frame_tree;
+SpaceFOMRefFrameSimObject root_ref_frame( ref_frame_tree.root_frame_data );
+SpaceFOMRefFrameSimObject ref_frame_A( ref_frame_tree.frame_A_data );

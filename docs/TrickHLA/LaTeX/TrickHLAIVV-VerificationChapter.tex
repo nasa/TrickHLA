@@ -1,0 +1,393 @@
+\chapter{Verification}\label{sec:verification}
+
+This chapter summarizes the verification activities carried out
+for each of the \TrickHLA\ requirements.
+
+
+% ----------------------------------------------------------------
+\section{General Requirements}
+
+% -----------------------------
+\subsection{TrickHLA\_1: Documentation}
+\paragraph{Summary.}
+The model must include requirements specifications,
+soft\-ware/\-inter\-face/\-version information,
+a users guide, and
+documentation of test procedures and results.
+\paragraph{Method.}Inspection.
+\paragraph{Results.}
+\TrickHLA\ requirements are documented in
+the \href{file:TrickHLAReqt.pdf} {\em \TrickHLA\ Product Requirements}.
+The software, interfaces and current version information is documented in
+the \href{file:TrickHLASpec.pdf} {\em \TrickHLA\ Product Specification}.
+An introduction for users is available in
+the \href{file:TrickHLAUser.pdf} {\em \TrickHLA\ User Guide}.
+Test procedures and results are documented in this document.
+
+
+% -----------------------------
+\subsection{TrickHLA\_2: Header File Trick Header}
+\paragraph{Summary.}
+\TrickHLA\ header files must include a Trick header that specifies
+the purpose of the file, references, assumptions/limitations and the author.
+\paragraph{Method.} Inspection
+\paragraph{Results.}
+The \TrickHLA\ header files ({\tt .hh} files) are in the
+{\tt include/TrickHLA/} directory.
+All of them include a Trick file header with the necessary information.
+
+% -----------------------------
+\subsection{TrickHLA\_3: Trick Comments for Enumerated Types}
+\paragraph{Summary.}
+The enumerated values of {\tt enum} types must be accompanied by a comment
+explaining each one.
+\paragraph{Method.} Inspection.
+\paragraph{Results.}
+The \TrickHLA\ enumerated types are defined in {\tt include/TrickHLA/Types.hh}.
+They are all commented with explanation of what each one means.
+
+% -----------------------------
+\subsection{TrickHLA\_4: Trick Comments for Data Structures}
+\paragraph{Summary.}
+Each data structure must have a Trick-compliant explaining its purpose.
+\paragraph{Method.} Inspection.
+\paragraph{Results.}
+The \TrickHLA\ data structures are C++ classes.
+The fields of these classes are defined in the header files
+({\tt .hh} files) in the {\tt include/TrickHLA/} directory.
+They all have Trick comments.
+
+% -----------------------------
+\subsection{TrickHLA\_5: Source File Trick Headers}
+\paragraph{Summary.}
+\TrickHLA\ source code files ({\tt .c and .cpp} files)
+must include a Trick header that specifies
+the purpose of the file, references, assumptions/limitations,
+Trick job class, library dependencies and the author.
+\paragraph{Method.} Inspection.
+\paragraph{Results.}
+The \TrickHLA\ source code is C++ in {\tt .cpp} files in the
+{\tt source/TrickHLA/} directory.
+All of the files inlcude a Trick file header with the necessary information.
+
+% -----------------------------
+\subsection{TrickHLA\_6: Trick Comments for Function Definitions}
+\paragraph{Summary.} Each function must be documented with Trick-compliant
+comments that explain the arguments and return value.
+\paragraph{Method.} Inspection
+\paragraph{Results.}
+All the functions defined in the C++ source files ({\tt .cpp} files)
+in the {\tt source/TrickHLA/} directory have Trick-compliant comments describing
+the arguments and return values.
+
+% -----------------------------
+\subsection{TrickHLA\_7: HLA Federate Interface}
+\paragraph{Summary.}
+\TrickHLA\ must be based on the IEEE 1516.1-2010 service definitions.
+\paragraph{Method.} Inspection
+\paragraph{Results.}
+\TrickHLA\ is built on top of the Pitch HLA system,
+which is compliant with IEEE 1516.
+
+
+
+% ----------------------------------------------------------------
+\section{Data Requirements}
+
+% -----------------------------
+\subsection{TrickHLA\_8: Primitive Data Types}
+\paragraph{Summary.}
+\TrickHLA\ must support a wide variety of C/C++ primitive data types
+(e.g, int, long int, float, double, etc...).
+\paragraph{Method.} Inspection.
+\paragraph{Results.}
+HLA saves data in so-called {\em object attributes} and
+{\em interaction parameters}.
+Inspection of the \TrickHLA\ source files,
+{\tt source/TrickHLA/Attribute.cpp}
+and
+{\tt source/TrickHLA/Parameter.cpp}
+reveals support for all the required primitive types.
+
+% -----------------------------
+\subsection{TrickHLA\_9: Static Arrays of Primitive Data Types}
+\paragraph{Summary.}
+\TrickHLA\ must support arrays of the supported primitive types.
+\paragraph{Method.} Inspection
+\paragraph{Results.}
+The {\tt TrickHLA::Attribute} and {\tt TrickHLA::Parameter} classes
+both have a method, {\tt get\_\-number\_\-of\_\-items()} which returns
+the number of items in an attribute and/or parameters array.
+The only type no supported by the code is an HLA logical time.
+All the other supported primitive types may occur in attribute or
+parameter arrays.
+
+% ----------------------------------------------------------------
+\section{Functional Requirements}
+
+% -----------------------------
+\subsection{TrickHLA\_10: Data Driven}
+\paragraph{Summary.}
+\TrickHLA\ must be data driven (i.e., parameterized by values
+specified in input files).
+\paragraph{Method.} Inspection
+\paragraph{Results.}
+Like most Trick models, using \TrickHLA\ requires a balance of
+jobs defined in {\tt S\_define} files and initialization data
+specified in input files.
+\TrickHLA\ is aggressively parameterized, allowing many parameters
+to be specified in the input files.
+The \href{file:TrickHLAUser.pdf} {\em \TrickHLA\ User Guide}
+includes a detailed description of these input files
+for each of the various \TrickHLA\ capabilities
+(e.g., ownership transfer, interactions, publish/subscribe, etc...).
+
+% -----------------------------
+\subsection{TrickHLA\_11: HLA Big and Little Endian}
+\paragraph{Summary.}
+\TrickHLA\ must support big- and little-endian byte ordering.
+\paragraph{Method.} Inspection.
+\paragraph{Results.}
+\TrickHLA\ attribute and parameter primitive type {\em encoding} may be
+specified by the developer as
+{\tt ENCODING\_BIG\_ENDIAN} or {\tt ENCODING\_LITTLE\_ENDIAN}.
+This specification is done by setting a {\tt .rti\_encoding} input
+parameter to one of these two values for primitive types.
+This can be seen in the source code for the functions,
+{\tt TrickHLA::Attri\-bute.\-init\-ial\-ize()}
+and
+{\tt TrickHLA::Para\-meter.\-init\-ial\-ize()}.
+
+% -----------------------------
+\subsection{TrickHLA\_12: HLA Encoding}
+\paragraph{Summary.}
+\TrickHLA\ must allow strings and/or byte arrays to be encoded as
+unicode strings, ASCII strings or opaque data (as defined in the HLA standard).
+\paragraph{Method.} Inspection
+\paragraph{Results.}
+For non-primitive attributes and parameters,
+the {\tt .rti\_encoding} input parameter may be specified as
+{\tt ENCODING\_C\_STRING}, 
+{\tt ENCODING\_UNICODE\_STRING}, 
+{\tt ENCODING\_ASCII\_STRING} or
+{\tt ENCODING\_OPAQUE\_DATA}.
+This can be seen in the source code for the functions,
+{\tt TrickHLA::Attribute.initialize()}
+and
+{\tt TrickHLA::Parameter.initialize()}.
+
+
+% -----------------------------
+\subsection{TrickHLA\_13: Time Advancement}
+\paragraph{Summary.}
+\TrickHLA\ must support time stamped order HLA services.
+\paragraph{Method.} Inspection.
+\paragraph{Results.}
+Inspection of the {\tt TrickHLA::Federate} class reveals that a federate
+built using \TrickHLA\ may be
+\begin{itemize}
+\item{time regulating (as indicated by the value of the boolean input flag,
+  {\tt .time\_regulating}),
+}
+\item{time constrained (as indicated by the value of the boolean input flag,
+  {\tt .time\_constrained}),
+}
+\item{both, or }
+\item{neither.}
+\end{itemize}
+The HLA time advancement services invoked by \TrickHLA\ are based on the values
+of these two flags.
+
+% -----------------------------
+\subsection{TrickHLA\_14: Lag Compensation}
+\paragraph{Summary.}
+\TrickHLA\ must provide optional support for sender- and receiver-side
+lag compensation.
+\paragraph{Method.} Inspection
+\paragraph{Results.}
+The class, {\tt TrickHLA::LagCompensation}, provides this capability.
+It is not required, but may be used for sender- or receiver-side
+compensation.
+The \href{file:TrickHLAUser.pdf} {\em \TrickHLA\ User Guide}
+discusses this class in more detail.
+
+% -----------------------------
+\subsection{TrickHLA\_15: Interactions}
+\paragraph{Summary.}
+\TrickHLA\ must support sending and receiving of interactions in
+receive order (RO) or time stamp order (TSO).
+\paragraph{Method.} Inspection
+\paragraph{Results.}
+The class, {\tt TrickHLA::InteractionHandler}, provides this capability.
+It defines two {\tt send\_interaction()} methods, one of which is used to send receive
+order interactions and the other of which is used to send time stamp order
+interactions with some specified timetag.
+The class also defines a virtual method (which may be overridden in
+subclasses) which is invoked automatically whenever interactions
+(RO or TSO) arrive.
+The \href{file:TrickHLAUser.pdf} {\em \TrickHLA\ User Guide}
+discusses this class in more detail.
+
+% -----------------------------
+\subsection{TrickHLA\_16: Ownership Transfer}
+\paragraph{Summary.}
+\TrickHLA\ must provide support for HLA ownership transfer.
+\paragraph{Method.} Inspection
+\paragraph{Results.}
+The class, {\tt TrickHLA::OwnershipHandler}, provides this capability.
+it provides several {\tt push\_ownership()} methods
+that result in the federate {\em divesting} itself of ownership
+for the relevant attribute (only if the federate is the attribte's owner).
+The class also provides several {\tt pull\_ownership()} methods
+that result in the federate {\em acquiring} ownership of the relevant
+attribute if it has been divested by its owner.
+The \href{file:TrickHLAUser.pdf} {\em \TrickHLA\ User Guide}
+discusses this class in more detail.
+
+% -----------------------------
+\subsection{TrickHLA\_17: Dynamic Initialization}
+\paragraph{Summary.}
+\TrickHLA\ must support dynamic initialization of an HLA federation
+in which the federates may exchange data before the simulation begins.
+\paragraph{Method.} Inspection
+\paragraph{Results.}
+NOTE: This section needs to be rewriten to not reference the DSES code.
+
+\TrickHLA\ supports this via the {\em multiphase initialization process}.
+This process is defined in
+{
+  \href{file:DSES\_Multiphase\_Init\_Design\_Document.pdf}
+  {\em
+    Distributed Space Exploration Simulation Multiphase Initialization Design
+  }
+}
+\cite{trickhlaenv:DSES-multiphase-init-design}.
+The machinery supporting this capability is exposed in the
+{\tt TrickHLA::ExecutionControlBase} class, which has an input parameter consisting
+of a comma-separated list of synchronization point names, each of which
+corresponds to a different phase in the initialization process.
+The \href{file:TrickHLAUser.pdf} {\em \TrickHLA\ User Guide}
+discusses how to construct a Trick {\tt S\_define} file
+that schedules initialization jobs for execution during each phase of this
+processes.
+
+% -----------------------------
+\subsection{TrickHLA\_18: Automatic Simulation Startup}
+\paragraph{Summary.}
+\TrickHLA\ must provide a mechanism for the various federates to
+synchronize with each other (i.e., for all of them to arrive)
+before the simulation begins in earnest.
+\paragraph{Method.} Inspection
+\paragraph{Results.}
+NOTE: This section needs to be rewriten to reference the
+TrickHLA::ExecutionControlBase class and associated implementations.
+
+The {\tt TrickHLA::Federate} class has several input parameters that
+may be used to specify a list of federates which must join the federation
+before the execution begins:
+\begin{itemize}
+\item{
+  {\tt .enable\_known\_feds}, which enables/disables this feature,
+}
+\item{
+  {\tt .known\_feds\_count}, which specifies how many federations are
+  to be governed by this mechanism,
+}
+\item{
+  {\tt .known\_feds}, which is an array of size
+  {\tt .known\_feds\_count} of structures, each of which specifies
+  the name of the federation and whether or not is must be present
+  before the federation execution may begin.
+}
+\end{itemize}
+The \href{file:TrickHLAUser.pdf} {\em \TrickHLA\ User Guide}
+presents several examples in which this capability
+is used.
+
+In addition to this capability, the {\tt TrickHLA::ExecutionCoontorlBase}
+class provides a similar capability.
+The class has a parameter, {\tt .required\_federates}, which is a
+comma-separated list of the names of the federates that must be
+present in order for the federation execution to begin.
+
+% -----------------------------
+\subsection{TrickHLA\_19: Pack / Unpack of Simulation Data}
+\paragraph{Summary.}
+\TrickHLA\ must provide a mechanism for user specified code to be called to
+perform processing of data sent to or received from the HLA interface.
+\paragraph{Method.} Inspection
+\paragraph{Results.}
+The class, {\tt TrickHLA::Packing}, provides the capability. It provides a
+pack() method that is called before data is sent through the HLA interface.  
+It also provides an unpack() method that is called when data is received 
+through the HLA interface.
+The \href{file:TrickHLAUser.pdf} {\em \TrickHLA\ User Guide}
+discusses this class in detail.
+
+% -----------------------------
+\subsection{TrickHLA\_20: ObjectDeleted Callback}
+\paragraph{Summary.}
+\TrickHLA\ must provide a mechanism for notification of an object being 
+deleted from the federation.
+\paragraph{Method.} Inspection
+\paragraph{Results.}
+The class, {\tt TrickHLA::ObjectDeleted}, provides the capability. It 
+provides a deleted() method that is called when an object is deleted from 
+the federation.
+The \href{file:TrickHLAUser.pdf} {\em \TrickHLA\ User Guide}
+discusses this class in detail.
+
+% -----------------------------
+\subsection{TrickHLA\_21: Federation Restore Callback}
+\paragraph{Summary.}
+\TrickHLA\ must provide a mechanism for a trick model to request a federation
+restore from the {\tt RTI}.
+\paragraph{Method.} Inspection
+\paragraph{Results.}
+The class, {\tt TrickHLA::Federate}, provides the capability. It
+provides a perform\_restore() method that sends a completed federation
+restore request to the {\tt TrickHLA::Manager} which, in turn, sends the
+request to the {\tt RTI}.
+The \href{file:TrickHLAUser.pdf} {\em \TrickHLA\ User Guide}
+discusses this class in detail.
+
+% -----------------------------
+\subsection{TrickHLA\_22: Federation Save Callback}
+\paragraph{Summary.}
+\TrickHLA\ must provide a mechanism for a trick model to request a federation
+save from the {\tt RTI}.
+\paragraph{Method.} Inspection
+\paragraph{Results.}
+The class, {\tt TrickHLA::Manager}, provides the capability. It
+provides a start\_federation\_save(), start\_federation\_save\_at\_sim\_time() and
+start\_federation\_save\_at\_scenario\_time() methods that starts the federation
+wide save process.
+The \href{file:TrickHLAUser.pdf} {\em \TrickHLA\ User Guide}
+discusses this class in detail.
+
+% -----------------------------
+\subsection{TrickHLA\_23: Conditional sending of attributes}
+\paragraph{Summary.}
+\TrickHLA\ must provide a mechanism for a trick model to conditionally send
+attributes over the wire.
+\paragraph{Method.} Inspection
+\paragraph{Results.}
+The class, {\tt TrickHLA::Conditional}, provides the capability. It provides a
+should\_send() method that is called on each send cycle to identify if an
+attribute should be sent over the wire.
+The \href{file:TrickHLAUser.pdf} {\em \TrickHLA\ User Guide}
+discusses this class in detail.
+
+% -----------------------------
+\subsection{TrickHLA\_24: Multiple verbose levels}
+\paragraph{Summary.}
+\TrickHLA\ must provide a mechanism to print multiple levels of information from
+the \TrickHLA\ software. It also must provide a mechanism to allow the user to
+specify which \TrickHLA\ module(s) shall print messages.
+\paragraph{Method.} Inspection
+\paragraph{Results.}
+The class, {\tt TrickHLA::DebugHandler}, provides this capability. It provides a
+should\_print() method, accepting a debug level and code section, returns true
+or false after determining if the message should be printed.
+The \href{file:TrickHLASpec.pdf} {\em \TrickHLA\ Product Specification}
+discusses this class in detail.

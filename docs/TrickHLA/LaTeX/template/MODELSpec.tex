@@ -1,0 +1,424 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% File: MODELSpec.tex
+%
+% Purpose: MODEL Product Specification
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand\documentHistory{
+{\bf Author} & {\bf Date} & {\bf Description} \\ \hline \hline
+YOUR NAME & DATE & Initial Version \\ \hline
+}
+
+\newcommand\DocumentChangeHistory{
+{\bf Revised by} & {\bf Date} & {\bf Description} \\ \hline \hline
+
+% This documentation file's change history includes:
+% "REVISED BY name(s)" & "revision DATE" & "revision DESCRIPTION"
+%  ------------------     -------------     --------------------
+                       &                 &                    \\ \hline
+}
+
+\documentclass[twoside,11pt,titlepage]{report}
+
+%
+% Bring in the amsmath environment
+%
+\usepackage{amsmath}
+
+%
+% Bring in the common page setup
+%
+\usepackage{trickhlaenv}
+
+%
+% Bring in the common math nomenclature
+%
+\usepackage{trickhlamath}
+
+%
+% Bring in the model-specific commands with requirement labels
+%
+\usepackage[Reqt]{MODEL}
+
+%
+% Bring in the graphics environment
+%
+\usepackage{graphicx}
+
+%
+% Bring in listing environment
+%
+\usepackage{paralist}
+
+%
+% Bring in the hyper ref environment
+%
+\usepackage[colorlinks]{hyperref}
+%  keywords for pdfkeywords are separated by commas
+\hypersetup{
+   pdftitle={\MODEL\ Product Specification},
+   pdfauthor={YOUR NAME},
+   pdfkeywords={\MODEL, Product Specification},
+   pdfsubject={\MODEL\ Product Specification}}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Front matter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{roman}
+
+\docid{DD.mm.03}
+\docrev{1.0}
+\date{DATE}
+\modelname{\MODEL}
+\doctype{Product Specification}
+\author{YOUR NAME}
+\managers{
+  Dan E. Dexter \\ Project Manager \\
+  Leslie J. Quiocho \\ Common Model Lead \\
+  Rodney M. Ondler \\ Software, Robotics, and Simulation Division Chief}
+\pdfbookmark{Title Page}{titlepage}
+\makeTrickhlaenvTitlepage
+
+\pdfbookmark{Abstract}{abstract}
+\include{MODELAbstract}
+
+\pdfbookmark{Contents}{contents}
+\tableofcontents
+\vfill
+
+\pagebreak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Main Document Body
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{arabic}
+
+%----------------------------------
+\chapter{Introduction}\label{sec:intro}
+%----------------------------------
+
+\input{MODELIntro}
+
+\section{Identification of Document}
+This document describes the design of the \MODEL\ developed
+for use in the Trick Simulation Environment.
+This document adheres to the documentation standards
+defined in NASA Software Engineering Requirements Standard \cite{NASA:SWE}.
+
+\section{Scope of Document}
+This document provides information on the algorithms used in and
+the design of the source code associated with the \MODEL.
+This include references to associated texts and the presentation
+of various equations for COMPLETE THIS SENTENCE.
+
+\section{Purpose and Objectives of Document}
+The purpose of this document is to provide a thorough understanding of the
+methods by which the \MODEL\ were defined, programmed, and verified.
+
+\section{Documentation Status and Schedule}
+The information in this document is current with the \TrickHLAid\
+implementation of the \MODEL. Updates will be kept current with
+module changes.
+
+\begin{tabular}{||l|l|l|} \hline
+\documentHistory
+\end{tabular}
+
+\begin{tabular}{||l|l|l|} \hline
+\DocumentChangeHistory
+\end{tabular}
+
+\section{Document Contents}
+This document is organized into the following sections:
+
+\begin{description}
+
+\item[Chapter \ref{sec:intro}: Introduction] -
+Identifies this document, defines the scope and purpose, present status,
+and provides a description of each major section.
+
+\item[Chapter \ref{sec:docs}: Related Documentation] -
+Lists the related documentation that is applicable to this project.
+
+\item[Chapter \ref{sec:architectural_design}: Architectural Design] -
+Presents the top-level concepts behind the \MODEL.
+
+\item[Chapter \ref{sec:math_formulations}: Mathematical Formulations] -
+Presents the mathematical formulations implemented by the \MODEL.
+
+\item[Chapter \ref{sec:interface_design}: Interface Design] -
+Describes the \MODEL\ data interfaces.
+
+\item[Chapter \ref{sec:functional_design}: Functional Design] -
+Presents the detailed design of the model.
+
+\item[Chapter \ref{sec:versions}: Version Description] -
+Identifies the configuration-managed items that comprise the \MODEL.
+
+\item[Bibliography] -
+Informational references associated with this document.
+
+\item[Appendix \ref{sec:source_code}: Source Code] -
+Lists the source code files that comprise the \MODEL.
+
+\item[ADD OTHER APPENDICES IF ANY].
+
+\end{description}
+
+\chapter{Related Documentation}\label{sec:docs}
+
+\section{Parent Documents}
+The following documents are parent to this document:
+
+\begin{itemize}
+\item{\href{file:\TRICKHLAHOME/docs/TrickHLA.pdf}
+           {\em Trick High Level Architecture (\TrickHLA)}}
+\cite{trickhlaenv:TrickHLA}
+
+\item{\href{file:MODEL.pdf}
+           {\em \MODEL}}
+\cite{trickhlaenv:MODEL}
+\end{itemize}
+
+\section{Applicable Documents}
+The following documents are referenced herein and are directly
+applicable to this document:
+
+\begin{itemize}
+\item{\href{file:MODELReqt.pdf}
+           {\em \MODEL\ Product Requirements}}
+\cite{trickhlaenv:MODELReqt}
+
+\item{\href{file:MODELUser.pdf}
+           {\em \MODEL\ User Guide}}
+\cite{trickhlaenv:MODELUser}
+
+\item{\href{file:MODELIVV.pdf}
+           {\em \MODEL\ Inspection, Verification, and Validation}}
+\cite{trickhlaenv:MODELIVV}
+
+\item{\em The Trick User's Guide: Trick 2005.0 Release}
+\cite{Vetter:TrickUser}
+
+\item{\em Trick Simulation Environment: User Training Materials:
+          Trick 2005.0 Release}
+\cite{Vetter:TrickUTM}
+
+\item{\em Trick Simulation Environment: Version Description:
+          Trick 2005.0 Release}
+\cite{Vetter:TrickVD}
+
+\item{\em The Trick Design Document: Trick 2005.0 Release}
+\cite{Vetter:TrickDD}
+
+\item{\em NASA Software Engineering Requirements}
+\cite{NASA:SWE}
+\end{itemize}
+
+\section{Information Documents}
+The following documents provide supporting material for understanding the
+concepts in this document:
+
+\begin{itemize}
+\item{\em SUPPORTING REFERENCE} \cite{SUPPORTINGREFERENCE}
+\end{itemize}
+
+\chapter{Architectural Design}\label{sec:architectural_design}
+The architectural model for this software is as defined in, and
+required by, the Trick Simulation Environment.  The reader is urged
+to examine references \cite{Vetter:TrickUTM} and \cite{Vetter:TrickVD}
+for a thorough understanding of this programming environment.
+
+\section{Definition of the \MODEL}
+
+\subsection{Purpose and Scope}
+The \MODEL\ is a collection of functions that COMPLETE THIS SENTENCE.
+
+This module is not a stand-alone program;
+rather, it is designed to be incorporated into the Trick
+Simulation Environment, and applies to space vehicles or objects that are
+either docked to or undocked from one another.
+Primary user(s) of this software are simulation and model developers
+who wish to simulate spacecraft operations, including docking and
+undocking procedures under nominal and emergency scenarios.
+
+\subsection{Goals and Objectives}
+The goal of the \MODEL\ is to COMPLETE THIS PARAGRAPH.
+
+
+\chapter{Mathematical Formulations}\label{sec:math_formulations}
+FILL IN THIS SECTION.
+REFERENCE DOCUMENTS AS NEEDED.
+REPRODUCE KEY EQUATIONS USED IN THE SOURCE CODE.
+DO NOT DESCRIBE THE SOURCE CODE ITSELF YET, THAT COMES LATER.
+
+\chapter{Interface Design}\label{sec:interface_design}
+
+Trick simulations use enumerated types and data structures as the
+primary inter-job interface mechanism and for input and output processing.
+
+\section{Data Structure Design}
+
+This section describes the \MODEL\ enumerated types and data structures.
+
+CASE 1: MODEL HAS ONE HEADER FILE
+The {\em MODEL.h} file contains COMPLETE THIS SENTENCE.
+It contains the following enumerations and data structures:
+\begin{description}
+
+\item [ENUM1:] An enumeration of the COMPLETE THIS FRAGMENT.
+ADD NECESSARY DETAILS.
+
+\item [ENUMn:] An enumeration of the COMPLETE THIS FRAGMENT.
+ADD NECESSARY DETAILS.
+
+\item [STRUCT1:] A data structure containing COMPLETE THIS FRAGMENT.
+ADD NECESSARY DETAILS.
+
+\item [STRUCTn:] A data structure containing COMPLETE THIS FRAGMENT.
+ADD NECESSARY DETAILS.
+
+\end{description}
+
+% \input{xml/MODEL.h.tex}
+% \clearpage
+
+CASE 2: MODEL HAS MULTIPLE HEADER FILE
+
+This section describes the design of the data structures
+defined in that file.
+
+The data structures used in conjunction with the
+\MODEL\ are defined in the following files:
+\begin{description}
+\item[MODEL1.h] - BRIEF SYNOPSIS OF MODEL1.h
+\item[MODELn.h] - BRIEF SYNOPSIS OF MODELn.h
+\end{description}
+
+\subsection{MODEL1.h}
+
+The {\em MODEL1.h} file contains COMPLETE THIS SENTENCE.
+It contains the following enumerations and data structures:
+\begin{description}
+
+\item [ENUM1:] An enumeration of the COMPLETE THIS FRAGMENT.
+ADD NECESSARY DETAILS.
+
+\item [ENUMn:] An enumeration of the COMPLETE THIS FRAGMENT.
+ADD NECESSARY DETAILS.
+
+\item [STRUCT1:] A data structure containing COMPLETE THIS FRAGMENT.
+ADD NECESSARY DETAILS.
+
+\item [STRUCTn:] A data structure containing COMPLETE THIS FRAGMENT.
+ADD NECESSARY DETAILS.
+
+\end{description}
+
+% \input{xml/MODEL1.h.tex}
+% \clearpage
+
+\subsection{MODELn.h}
+
+REPEAT ABOVE.
+
+
+\section{Input Files}
+
+This section describes the default data files used to
+initialize the \MODEL\ data structures.
+
+FILL IN THIS SECTION.
+
+
+\chapter{Functional Design}\label{sec:functional_design}
+
+SAMPLE ONLY - ASSUMES MODEL\_init.c and MODEL.c
+
+This section describes the functions that implement the \MODEL.
+
+These functions are defined in
+\begin{description}
+\item[\texorpdfstring{\tt MODEL\_init.c}{MODEL\_init.c}] - Initializes model.
+\item[\texorpdfstring{\tt MODEL.c}{MODEL.c}] - Updates model.
+\end{description}
+
+\section{\texorpdfstring{\tt MODEL\_init.c}{MODEL\_init.c}}
+
+\subsection{Design}
+
+DESCRIBE THE DESIGN OF THIS FILE. REFERENCE ANY MATH MODELS
+DESCRIBED IN chapter \ref{sec:architectural_design} THAT
+ARE USED IN THIS FUNCTION.
+CAPTURE HIGH-LEVEL CONCEPTS THAT ARE NOT IN THE TRICK HEADER.
+
+\subsection{Trick header}
+
+% \input{xml/MODEL_init.tex}
+
+\subsection{Requirements Traceability}
+
+ENUMERATE THE REQUIREMENTS SPECIFIED IN THE REQUIREMENTS
+DOCUMENT THAT THIS FUNCTION SATISFIES.
+
+
+\chapter{Version Description}\label{sec:versions}
+This section identifies the versions of the
+\MODEL\ described in the current release of the \MODEL\ documentation.
+
+\section{Inventory}
+The following items comprise the complete configuration-managed
+inventory of the \MODEL:
+
+LIST ALL FILES ASSOCIATED WITH THE MODEL THAT ARE IN THE RAZOR DATABASE.
+
+\section{Change Status}
+This is the basic implementation of the software suite.  A change
+status is not provided.
+
+\section{Adaptation Data}
+This is the first release (basic version) of the \MODEL\ software suite.
+No adaptation data is appropriate or is provided, as the user will
+define the ab initio data structures at initialization time.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Bibliography
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\pdfbookmark{Bibliography}{bibliography}
+\bibliography{trickhlaenv,MODEL}
+\bibliographystyle{plain}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Appendices
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\pdfbookmark{Appendix}{appendix}
+\appendix
+
+
+\chapter{Source Code}\label{sec:source_code}
+INCLUDE ALL .H, .D, and .C files ASSOCIATED WITH THE MODEL.
+PRECEDE EACH UNDERSCORE IN A SUBSECTION LINE WITH A BACKSLASH.
+
+\section{C Header Files}
+
+\subsection{\texorpdfstring{\tt MODEL.h}{MODEL.h}}
+% \input{include/MODEL.h.tex}
+\pagebreak
+
+\section{Data Files}
+\subsection{\texorpdfstring{\tt MODEL.d}{MODEL.d}}
+% \input{data/MODEL.d.tex}
+\pagebreak
+
+\section{C Source Files}
+\subsection{\texorpdfstring{\tt MODEL.c}{MODEL.c}}
+% \input{src/MODEL.tex}
+\pagebreak
+
+\end{document}

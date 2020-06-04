@@ -1,0 +1,308 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% File: MODELIVV.tex
+%
+% Purpose: MODEL
+%          Inspection, Verification, and Validation
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand\documentHistory{
+{\bf Author} & {\bf Date} & {\bf Description} \\ \hline \hline
+YOUR NAME & DATE & Initial Version \\ \hline
+}
+
+\newcommand\DocumentChangeHistory{
+{\bf Revised by} & {\bf Date} & {\bf Description} \\ \hline \hline
+
+% This documentation file's change history includes:
+% "REVISED BY name(s)" & "revision DATE" & "revision DESCRIPTION"
+%  ------------------     -------------     --------------------
+                       &                 &                    \\ \hline
+}
+
+\documentclass[twoside,11pt,titlepage]{report}
+
+%
+% Bring in the amsmath package
+%
+\usepackage{amsmath}
+
+%
+% Bring in the common page setup
+%
+\usepackage{trickhlaenv}
+
+%
+% Bring in the common math nomenclature
+%
+\usepackage{trickhlamath}
+
+%
+% Bring in the model-specific commands with requirement labels
+%
+\usepackage[Reqt]{MODEL}
+
+%
+% Bring in the graphics environment
+%
+\usepackage{graphicx}
+
+%
+% Use the float and array packages
+%
+\usepackage{float, array}
+
+%
+% Bring in the hyper ref environment
+%
+\usepackage[colorlinks]{hyperref}
+%  keywords for pdfkeywords are separated by commas
+\hypersetup{
+   pdftitle={\MODEL\ Inspection, Verification, and Validation},
+   pdfauthor={YOUR NAME},
+   pdfkeywords={\MODEL, Inspection, Verification, Validation},
+   pdfsubject={\MODEL\ Inspection, Verification, and Validation}}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Front matter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{roman}
+
+\docid{DD.mm.05}
+\docrev{1.0}
+\date{DATE}
+\modelname{\MODEL}
+\doctype{Inspection, Verification, and Validation}
+\author{YOUR NAME}
+\managers{
+  Dan E. Dexter \\ Project Manager \\
+  Leslie J. Quiocho \\ Common Model Lead \\
+  Rodney M. Ondler \\ Software, Robotics, and Simulation Division Chief}
+\pdfbookmark{Title Page}{titlepage}
+\makeTrickhlaenvTitlepage
+
+\pdfbookmark{Abstract}{abstract}
+\include{MODELAbstract}
+
+\pdfbookmark{Contents}{contents}
+\tableofcontents
+\vfill
+
+\pagebreak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Main Document Body
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{arabic}
+
+%----------------------------------
+\chapter{Introduction}\label{sec:intro}
+%----------------------------------
+
+\input{MODELIntro}
+
+\section{Identification of Document}
+This document describes the inspection, verification, and validation of
+the \MODEL\ developed for use in the Trick Simulation Environment.
+This document adheres to the documentation standards defined in
+NASA Software Engineering Requirements Standard \cite{NASA:SWE}.
+
+\section{Scope of Document}
+This document provides information on
+the inspection, verification, and validation of the \MODEL.
+This document provides information on the use of the \MODEL.
+
+\section{Purpose and Objectives of Document}
+The purpose of this document is to demonstrate that
+the \MODEL\ adheres to the requirements levied upon it,
+thus enabling the use of the \MODEL\ in a dynamic simulation.
+
+\section{Documentation Status and Schedule}
+The information in this document is current with the \TrickHLAid\
+implementation of the \MODEL. Updates will be kept current with
+module changes.
+
+\begin{tabular}{||l|l|l|} \hline
+\documentHistory
+\end{tabular}
+
+\begin{tabular}{||l|l|l|} \hline
+\DocumentChangeHistory
+\end{tabular}
+
+\section{Document Contents}
+This document is organized into the following sections:
+
+\begin{description}
+
+\item[Chapter \ref{sec:intro}: Introduction] -
+Identifies this document, defines the scope and purpose, present status,
+and provides a description of each major section.
+
+\item[Chapter \ref{sec:docs}: Related Documentation] -
+Lists the related documentation that is applicable to this project.
+
+\item[Chapter \ref{sec:inspect}: Inspection and Verification] -
+Presents the inspection results on the \MODEL.
+
+\item[Chapter \ref{sec:test}: Validation] -
+Presents the \MODEL\ test plans and results.
+
+\item[Chapter \ref{sec:traceability}: Requirements Traceability] -
+Presents mapping of requirements to inspections and tests.
+
+\item[Bibliography] -
+Informational references associated with this document.
+
+\end{description}
+
+\chapter{Related Documentation}\label{sec:docs}
+
+\section{Parent Documents}
+The following documents are parent to this document:
+
+\begin{itemize}
+\item{\href{file:\TRICKHLAHOME/docs/TrickHLA.pdf}
+           {\em Trick High Level Architecture (\TrickHLA)}}
+\cite{trickhlaenv:TrickHLA}
+
+\item{\href{file:MODEL.pdf}
+           {\em \MODEL}}
+\cite{trickhlaenv:MODEL}
+\end{itemize}
+
+\section{Applicable Documents}
+The following documents are referenced herein and are directly
+applicable to this document:
+
+\begin{itemize}
+\item{\href{file:MODELReqt.pdf}
+           {\em \MODEL\ Product Requirements}}
+\cite{trickhlaenv:MODELReqt}
+
+\item{\href{file:MODELSpec.pdf}
+           {\em \MODEL\ Product Specification}}
+\cite{trickhlaenv:MODELSpec}
+
+\item{\href{file:MODELUser.pdf}
+           {\em \MODEL\ User Guide}}
+\cite{trickhlaenv:MODELUser}
+
+\item{\em The Trick User's Guide: Trick 2005.0 Release}
+\cite{Vetter:TrickUser}
+
+\item{\em Trick Simulation Environment: User Training Materials:
+          Trick 2005.0 Release}
+\cite{Vetter:TrickUTM}
+
+\item{\em Trick Simulation Environment: Version Description:
+          Trick 2005.0 Release}
+\cite{Vetter:TrickVD}
+
+\item{\em The Trick Design Document: Trick 2005.0 Release}
+\cite{Vetter:TrickDD}
+
+\item{\em NASA Software Engineering Requirements}
+\cite{NASA:SWE}
+
+\end{itemize}
+
+
+\chapter{Inspection and Verification}\label{sec:inspect}
+
+\inspection{Documentation}\label{inspect:documentation}
+
+The \MODEL\ documentation set listed in chapter~\ref{sec:docs}
+satisfy requirement~\ref{reqt:documentation}.
+
+\inspection{Trick Coding Standards}\label{inspect:code}
+The \MODEL\ source code satisfies the coding requirements
+\ref{reqt:h_trick_header},
+\ref{reqt:enum_trick_comments},
+\ref{reqt:struct_trick_comments},
+\ref{reqt:c_trick_header}, and
+\ref{reqt:func_trick_comments}.
+
+
+THIS IS AN EXAMPLE FOR UNIVERSAL TIME.
+
+\inspection{Time Representation}\label{inspect:data_time_representation}
+The universal time model contains the data items needed to satisfy
+requirement \ref{reqt:data_time_representation}.
+
+\chapter{Validation}\label{sec:test}
+
+\test{Time Initialization}\label{test:func_time_initialization}
+\begin{description}
+\item[Purpose:] \ \newline
+The purpose of this test is to verify that time is properly initialized.
+\item[Requirements:] \ \newline
+By passing this test, the universal time module partially satisfies
+requirement~\ref{reqt:data_time_representation} and completely satisfies
+requirement~\ref{reqt:func_time_initialization}.
+\item[Procedure:]\ \newline
+FILL THIS IN.
+\item[Results:]\ \newline
+FILL THIS IN.
+\end{description}
+
+
+\chapter{Requirements Traceability}\label{sec:traceability}
+
+\begin{table}[ht]\label{tab:reqt_ivv_xref}
+\begin{tabular}{||l|l|l|} \hline
+{\bf Requirement} & {\bf Inspection or test} \\ \hline \hline
+\ref{reqt:documentation} - Documentation &
+  Insp. \ref{inspect:documentation} - Documentation \\
+\hline
+\ref{reqt:h_trick_header} - Header File Trick Header &
+  Insp. \ref{inspect:code} - Trick Coding Standards \\ \hline
+\ref{reqt:enum_trick_comments} - Enumeration Comments &
+  Insp. \ref{inspect:code} - Trick Coding Standards \\ \hline
+\ref{reqt:struct_trick_comments} - Structure Comments &
+  Insp. \ref{inspect:code} - Trick Coding Standards \\ \hline
+\ref{reqt:c_trick_header} - Source File Trick Headers &
+  Insp. \ref{inspect:code} - Trick Coding Standards \\ \hline
+\ref{reqt:func_trick_comments} - Function Comments &
+  Insp. \ref{inspect:code} - Trick Coding Standards \\ \hline
+\ref{reqt:data_time_representation} - Time Representation &
+  Insp. \ref{inspect:data_time_representation} - Time Representation, \\
+ & Test \ref{test:func_time_initialization} - Time Initialization\\
+\hline
+\end{tabular}
+\caption{Requirements Traceability}
+\end{table}
+
+
+\chapter{Version Description}\label{sec:versions}
+This section identifies the versions of the \MODEL\ test items
+as described in the current release of the \MODEL\ documentation.
+
+\section{Inventory}
+The following items comprise the complete configuration-managed
+inventory of the \MODEL:
+
+LIST ALL TEST FILES ASSOCIATED WITH THE MODEL
+THAT ARE IN THE RAZOR DATABASE.
+
+\section{Change Status}
+This is the basic implementation of the software suite.  A change
+status is not provided.
+
+\section{Adaptation Data}
+This is the first release (basic version) of the \MODEL\ software suite.
+No adaptation data is appropriate or is provided, as the user will
+define the ab initio data structures at initialization time.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Bibliography
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\pdfbookmark{Bibliography}{bibliography}
+\bibliography{trickhlaenv,MODEL}
+\bibliographystyle{plain}
+
+\end{document}

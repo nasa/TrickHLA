@@ -1,0 +1,142 @@
+\chapter{Timeline}
+\label{sec:timeline}
+
+\TrickHLA\ provides a mechanism for the user to specify the scenario timeline
+for the simulation.  \TrickHLA\ needs access to the scenario timeline in order
+to coordinate freezing (pausing) the federation.  The scenario timeline is the
+only timeline that can be counted on to be synchronized between all the federates.
+
+% ---------------------------------------------------------------------------
+\section{What is the {\em TrickHLATimeline} class?}
+
+\TrickHLA\ provides a {\tt TrickHLATimeline} class with a {\tt get\_time()} 
+method that is used for getting the current simulation scenario time.  This is
+a virtual method and must be overridden by a derived class in order to add 
+application-specific functionality to the simulation.  If a secnario timeline
+is not specified by the user then \TrickHLA\ will use the Trick simulation time
+as the default scenario timeline, which is only valid if all Federates are using
+Trick and start with the same simulation time.
+
+% ---------------------------------------------------------------------------
+\subsection{{\tt TrickHLATimeline}}
+
+The header file for the {\tt TrickHLATimeline} class is shown below.
+
+\begin{lstlisting}[caption={{\tt TrickHLATimeline} class header}]
+class TrickHLATimeline
+{
+   friend class InputProcessor;
+   friend void init_attrTrickHLATimeline();
+
+  public:
+   TrickHLATimeline();
+   virtual ~TrickHLATimeline();
+  private:
+   TrickHLATimeline(const TrickHLATimeline & rhs);
+   TrickHLATimeline & operator=(const TrickHLATimeline & rhs);
+
+  public:
+   virtual double get_time(); // Returns a time in seconds, typically
+                              // Terrestrial Time (TT) for the Scenario Timeline.
+};
+\end{lstlisting}
+
+% ---------------------------------------------------------------------------
+\subsection{{\tt TrickHLASimTimeline}}
+
+In order to illustrate the use of the {\tt TrickHLATimeline} class, we  subclass
+it, as shown below.
+
+\begin{lstlisting}[caption={{\tt TrickHLASimTimeline} class header}]
+#include "TrickHLA/include/TrickHLATimeline.hh"
+
+class TrickHLASimTimeline : public TrickHLATimeline
+{
+   friend class InputProcessor;
+   friend void init_attrTrickHLASimTimeline();
+
+  public:
+   TrickHLASimTimeline();          // default constructor
+   virtual ~TrickHLASimTimeline(); // destructor
+
+   virtual double get_time(); // RETURN: s Current simulation time in seconds to represent the scenario time.
+};
+\end{lstlisting}
+
+We give the {\tt get\_time()} method something to do, as shown below.
+
+\begin{lstlisting}[caption={ {\tt TrickHLASimTimeline} code}]
+/********************************* TRICK HEADER *******************************
+PURPOSE: (TrickHLASimTimeline : This class represents the simulation timeline.)
+LIBRARY DEPENDENCY: ((TrickHLASimTimeline.o))
+*******************************************************************************/
+// Trick include files.
+#if TRICK_VER >= 10
+#  include "sim_services/Executive/include/Executive.hh"
+#  include "sim_services/Executive/include/exec_proto.h"
+#else
+   // Trick 07
+#  include "sim_services/include/executive.h"
+#  include "sim_services/include/exec_proto.h"
+#endif
+
+// TrickHLA include files.
+#include "TrickHLA/include/TrickHLASimTimeline.hh"
+
+/********************************* TRICK HEADER *******************************
+PURPOSE: (TrickHLASimTimeline::TrickHLASimTimeline : Default constructor.)
+*******************************************************************************/
+TrickHLASimTimeline::TrickHLASimTimeline() // RETURN: -- None.
+{ }
+
+/********************************* TRICK HEADER *******************************
+PURPOSE: (TrickHLASimTimeline::~TrickHLASimTimeline : Destructor.)
+*******************************************************************************/
+TrickHLASimTimeline::~TrickHLASimTimeline() // RETURN: -- None.
+{ }
+
+/********************************* TRICK HEADER *******************************
+PURPOSE: (TrickHLASimTimeline::get_time() : Get the current simulation time.)
+LIBRARY DEPENDENCY: ((TrickHLATimeline.o)(TrickHLASimTimeline.o))
+*******************************************************************************/
+double TrickHLASimTimeline::get_time() // RETURN: -- Current simulation time in seconds to represent the scenario time.
+{
+#if TRICK_VER >= 10
+   return exec_get_sim_time();
+#else
+   return exec_get_exec()->out.time;
+#endif
+}
+\end{lstlisting}
+
+In this example, all the {\tt get\_time()} method does is just return the
+Trick simulation time.
+
+% ---------------------------------------------------------------------------
+\section{{\tt S\_define} file}
+
+The {\tt TrickHLASimTimeline} class is introduced into the simulation via 
+the {\tt S\_define} file. There, you would need to add a 
+new {\tt TrickHLASimTimeline} object into one simulation object and in this
+example we add it to the THLA\_INIT simulation object like the following:
+
+\begin{verbatim}
+TrickHLA: TrickHLASimTimeline  sim_timeline;
+\end{verbatim}
+
+\TrickHLA\ will call the get\_time() function when it needs to get the current
+scenario time.
+
+% ---------------------------------------------------------------------------
+\section{{\tt input} file}
+
+You need to register the {\tt TrickHLATimeline} object with the THLA 
+federate by adding the following lines.
+
+\begin{verbatim}
+THLA.federate.scenario_timeline = &THLA_INIT.sim_timeline
+\end{verbatim}
+
+The simulation scenario timeline is specified by the THLA\_INIT.sim\_timeline
+implementation.
+

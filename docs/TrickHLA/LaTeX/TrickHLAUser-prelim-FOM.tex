@@ -1,0 +1,137 @@
+\section{Federation Object Model}
+\label{sec:FOM}
+
+In the chapters that follow, various object instances and interactions are used.
+Some of the simulations exchange data by putting \simplesine state and parameters
+in a class instance.
+Others exchange data by putting the parameters into an interaction.
+
+
+This section shows the FOM snippets that define the relevant HLA class
+and interaction.
+
+\subsection{FOM structure}
+
+The Pitch FOM is an XML file that has a structure shown in
+Listing~\ref{list:FOM-structure}.
+For each object class used by the simulation,
+there must be a corresponding $\langle${\tt objectClass}$\rangle$ element
+containing as many $\langle${\tt attribute}$\rangle$
+subelements as it has attributes.
+Similarly for each interaction class used by the simulation,
+there must be a corresponding $\langle${\tt interactionClass}$\rangle$
+element containing as many $\langle${\tt parameter}$\rangle$
+subelements as it has parameters.\footnote{
+  A full FOM includes other elements not shown in the listing
+  and also declares object and interaction classes used by the underlying
+  HLA infrastructure and not by the federates themselves.
+  This document does not address how to build a FOM file from scratch.
+}
+
+\begin{lstlisting}[language=xml,caption={FOM structure},label={list:FOM-structure}]
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE objectModel SYSTEM "hla.dtd">
+<objectModel ...>
+
+  <!-- Declaration of all object classes known to the federation -->
+  <objects>
+    <objectClass name="..." ...>
+      <attribute name="..." ... />
+      ...
+    </objectClass>
+    ...
+  </objects>
+
+  <!-- Declaration of all interactions classes known to the federation -->
+  <interactions>
+    <interactionClass name="..." ...>
+      <parameter dataType="..." name="..." />
+      ...
+    </interactionClass>
+  </interactions>
+
+  ...
+\end{lstlisting}
+
+\subsection{Object class declaration}
+
+The XML definition of a class consists of a single XML element,
+$\langle$~{\tt objectClass}~$\rangle$
+containing one child element
+$\langle$~{\tt attribute}~$\rangle$
+for each attribute.
+
+The class used in some of the following simulations is named
+{\tt SimplesineStateAndParameters} and is defined by the following XML snippet.
+Lines 2-7 declare one attribute for each of
+the current time, the state and parameter values
+($t$, $x$, $\dot{x}$, $A$, $\phi$ and $\omega$).
+
+\begin{lstlisting}[caption={FOM snippet defining a class},label={list:FOM-snippet-class}]
+<objectClass name="SimplesineStateAndParameters" sharing="Neither">
+  <attribute dimensions="NA" name="Time" order="TimeStamp" transportation="HLAreliable"/>
+  <attribute dimensions="NA" name="Value" order="TimeStamp" transportation="HLAreliable"/>
+  <attribute dimensions="NA" name="dvdt" order="TimeStamp" transportation="HLAreliable"/>
+  <attribute dimensions="NA" name="Phase" order="TimeStamp" transportation="HLAreliable"/>
+  <attribute dimensions="NA" name="Frequency" order="TimeStamp" transportation="HLAreliable"/>
+  <attribute dimensions="NA" name="Amplitude" order="TimeStamp" transportation="HLAreliable"/>
+</objectClass>
+\end{lstlisting}
+
+\subsection{Interaction class declaration}
+
+Similarly, the interactions used in some of the following simulations
+is named {\tt SimplesineParameters} and is defined in the following XML
+snippet.
+Lines 3-5 declare one parameter for each of the state and parameter values
+($A$, $\phi$ and $\omega$).
+
+\begin{lstlisting}[caption={FOM snippet defining a interaction},label={list:FOM-snippet-interaction}]
+<interactionClass dimensions="NA" name="SimplesineParameters"
+                  order="TimeStamp" sharing="Neither" transportation="HLAreliable">
+  <parameter dataType="HLAfloat64LE" name="A"/>
+  <parameter dataType="HLAfloat64LE" name="w"/>
+  <parameter dataType="HLAfloat64LE" name="phi"/>
+</interactionClass>
+\end{lstlisting}
+
+
+\subsection{Simulation Configuration declaration}
+
+The following XML snippet defines the HLA class used to capture
+\TrickHLA\ simulation configuration information.
+\TrickHLA\ requires that a simulation configuration class be defined in
+the FOM, and the snippet below shows the class definition used by
+DSES simulations.
+(This document does not address how to design simulations which use a
+different simulation configuration class.)
+
+\begin{lstlisting}[caption={FOM snippet defining a interaction},label={list:FOM-snippet-config}]
+<objectClass name="SimulationConfiguration" sharing="PublishSubscribe">
+  <attribute dataType="HLAlogicalTime" dimensions="NA" name="run_duration" order="Receive"
+             semantics="Duration of run" sharing="PublishSubscribe"
+             transportation="HLAreliable" updateType="Static"/>
+  <attribute dataType="HLAinteger32LE" dimensions="NA" name="number_of_federates" order="Receive"
+             semantics="Number of required federates for run" sharing="PublishSubscribe"
+             transportation="HLAreliable" updateType="Static"/>
+  <attribute dataType="HLAinteger32LE" dimensions="NA" name="start_year" order="Receive"
+             semantics="Year at start of run" sharing="PublishSubscribe"
+             transportation="HLAreliable" updateType="Static"/>
+  <attribute dataType="HLAinteger32LE" dimensions="NA" name="start_seconds" order="Receive"
+             semantics="Starting time of run in seconds-of-year" sharing="PublishSubscribe"
+             transportation="HLAreliable" updateType="Static"/>
+  <attribute dataType="HLAunicodeString" dimensions="NA" name="owner" order="Receive"
+             semantics="Federation publishing object" sharing="PublishSubscribe"
+             transportation="HLAreliable"/>
+  <attribute dataType="HLAunicodeString" dimensions="NA" name="scenario" order="Receive"
+             semantics="Scenario being simulated." sharing="PublishSubscribe"
+             transportation="HLAreliable"/>
+  <attribute dataType="HLAunicodeString" dimensions="NA" name="mode" order="Receive"
+             semantics="Mode of simulation run." sharing="PublishSubscribe"
+             transportation="HLAreliable"/>
+  <attribute dataType="HLAunicodeString" dimensions="NA" name="required_federates" order="Receive"
+             semantics="Comma-separated list of required federates." sharing="PublishSubscribe"
+             transportation="HLAreliable"/>
+</objectClass>
+\end{lstlisting}
+

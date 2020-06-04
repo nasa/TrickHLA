@@ -1,0 +1,391 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File: trickhlamath.sty - Mathemetics style sheet for the TrickHLA package
+%
+% David Hammen - Odyssey Space Research - Dec 2005
+% Version 1.1
+%--------------------------------------------------------------------
+% Modified:
+%    Author: David Hammen - May 2006 - Fixed bug in macro framedot
+%    Author: Dan Dexter - April 2007 - Updated for use in TrickHLA.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\NeedsTeXFormat{LaTeX2e}% LaTeX 2.09 can't be used (nor non-LaTeX)
+[1994/12/01]% LaTeX date must be December 1994 or later
+\ProvidesPackage{trickhlamath}[2006/04/12 v1.1 TrickHLA package math style macros]
+
+% Several of the macros defined in this file depend on the AMS math package
+\RequirePackage{amsmath}
+% Use the St Mary's Road symbol package shortrightarrow
+\DeclareSymbolFont{stmry}{U}{stmry}{m}{n}
+\DeclareMathSymbol\shortrightarrow\mathrel{stmry}{"01}
+
+% Create package options for generating adornments in various formats:
+%   Format            Vector from a to b represented via
+%   ---------------   ----------------------------------------------------------
+%   Arrow-separated   Subscripted a->b (arrow generated via \to macro)
+%   Comma-separated   Subscripted a,b
+%   Stacked           Superscripted a, subscripted b
+% The package options arrow, comma, and stacked specify which format is
+% to be used:
+% - UsePackage{trickhlamath}          (no option specified) and
+%   UsePackage[arrow]{trickhlamath}     generate arrow-separated adornments
+% - UsePackage[comma]{trickhlamath}   generates comma-separated adornments
+% - UsePackage[stacked]{trickhlamath} generates stacked adornments.
+\newif\iftrickhlamathcomma@
+\newif\iftrickhlamatharrow@
+\newif\iftrickhlamathstacked@
+\DeclareOption{comma}{\trickhlamathcomma@true}
+\DeclareOption{arrow}{\trickhlamatharrow@true}
+\DeclareOption{stacked}{\trickhlamathstacked@true}
+
+\ProcessOptions\par
+\iftrickhlamathstacked@
+  \trickhlamatharrow@false
+  \trickhlamathcomma@false
+\else
+  \iftrickhlamathcomma@
+    \trickhlamatharrow@false
+  \else
+    \trickhlamatharrow@true
+  \fi
+\fi
+
+\iftrickhlamatharrow@
+   \newcommand{\trickhlamathsep}{\shortrightarrow}
+\else
+   \newcommand{\trickhlamathsep}{,}
+\fi
+
+%%%%%
+% Commands for switching style in the middle of a document
+% It is not recommended to use these macros; these macros exist for demonstrating
+% the different formats in the trickhlamath style sheet users guide.
+\newcommand{\trickhlamatharrowmode}{%
+  \trickhlamatharrow@true%
+  \trickhlamathcomma@false%
+  \trickhlamathstacked@false%
+  \renewcommand{\trickhlamathsep}{\rightarrow} %
+}
+\newcommand{\trickhlamathcommamode}{%
+  \trickhlamatharrow@false%
+  \trickhlamathcomma@true%
+  \trickhlamathstacked@false%
+  \renewcommand{\trickhlamathsep}{,} %
+}
+\newcommand{\trickhlamathstackedmode}{%
+  \trickhlamatharrow@false%
+  \trickhlamathcomma@false%
+  \trickhlamathstacked@true%
+}
+
+%%%%%
+% Conjugate symbol (\conj) is a star (not asterisk, which is {symbols}{"03} )
+\DeclareMathSymbol{\conj}{\mathord}{letters}{"3F}
+
+
+%%%%%
+% Define standard nomenclature for symbols that represent various entities
+% Usage: \quat{symbol} etc
+
+% Quaternion.
+\newcommand{\quat}[1]{\mathcal{#1}}
+
+% Matrix.
+\newcommand{\mat}[1]{\boldsymbol{#1}}
+
+% Vector.
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+
+% Unit vector.
+\newcommand{\vhat}[1]{\hat{\vect{#1}}}
+
+
+%%%%%
+% Define absolute value (abs) and norm macros
+% Encloses expression between single (abs) or double (norm) vertical bars.
+% Usage: \abs{expression} etc.
+\newcommand{\abs}[1]{\lvert#1\rvert}
+\newcommand{\norm}[1]{\lVert#1\rVert}
+
+
+%%%%%
+% Define frame-dependent time derivative macro
+% Places \cdot frame above expression
+% Usage: \framedot{frame}{expression}
+%% This macro STILL needs improvement.
+\newcommand{\framedot}[2]{%
+  \sbox\@tempboxa{\mbox{$\mathop{#2}$}}
+  \@tempdima\wd\@tempboxa
+ \mathop{#2}\limits^{{\hspace{\@tempdima}}{\vbox to 5.5\ex@{\kern\tw@\ex@\hbox{\normalfont.}\vss}}#1}}
+
+%% This is one attempt at improvement.
+\newcommand{\framedota}[2]{\binrel@{#2}%
+  \binrel@@{\mathop{\kern\z@#2}\limits^{(#1)\vbox to0.4\ex@{\kern-\tw@\ex@
+   \hbox{\normalfont .}\vss}}}}
+
+%% This is another attempt at improvement.
+\newcommand{\framedotb}[2]{{\overset{{\scriptscriptstyle{(#1)}}{\displaystyle{\cdot}}}{#2}}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Matrix operators
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% Matrix in a specific frame
+% Usage: \framemat{frame}{matrix}
+\newcommand{\framemat}[2]{%
+  \iftrickhlamathstacked@{{_{#1}\mat{#2}}}\else{{\mat{#2}_{#1}}}\fi}
+
+% Diagonal matrix (3x3).
+% Usage: \diagmatrix{a_xx}{a_yy}{a_zz}
+\newcommand{\diagmatrix}[3]{%
+   {\left[\env@matrix #1 & 0 & 0 \\ 0 & #2 & 0 \\ 0 & 0 & #3 \endmatrix\right]}}
+
+% Identity matrix (3x3) as a 3x3 matrix.
+% Usage: \identmatrix
+\newcommand{\identmatrix}{{\diagmatrix 1 1 1}}
+
+% Matrix transpose (symbolic).
+% Usage: \matT{symbol}
+\newcommand{\matT}[1]{{\mat{#1}{^\top}}}
+
+% Matrix transpose (composite; inserts left-right parens).
+% Usage: \matTlr{expression}
+\newcommand{\matTlr}[1]{{\left(#1\right)^{\top}}}
+
+
+% Transformation matrix from A to B and its transpose
+% Usage: \tmat{from}{to}, \tmatT{from}{to}
+\newcommand{\tmat}[2]{%
+  \iftrickhlamathstacked@{{{^{#1}_{#2}}\mat{T}}}\else{{\mat{T}_{#1{\trickhlamathsep}#2}}}\fi}
+\newcommand{\tmatT}[2]{%
+  \iftrickhlamathstacked@{{{^{#1}_{#2}}\mat{T}{^\top}}}\else{{\mat{T}{^{^\top}_{{#1}{\trickhlamathsep}{#2}}}}}\fi}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Vector operators
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Vector time derivative (symbolic).
+% Usage: \vdot{symbol}
+\newcommand{\vdot}[1]{\dot{\boldsymbol{#1}}}
+
+% Vector in a specific frame, from A to B, and from A to B in a specific frame
+% Usage:
+%   \absvect{symbol}{item} - Vector representing some {item}
+%      Example - vehicle 1 position vector: \absvect{x}{v1}
+\newcommand{\absvect}[2]{{\vect{#1}_{#2}}}
+%   \absvdot{symbol}{item} - Time derivative of \absvect{frame}{item}
+\newcommand{\absvdot}[2]{{\vdot{#1}_{#2}}}
+%   \framevect{frame}{symbol} - Vector expressed in some {frame}
+%      Example - frame A position vector: \framevect{A}{x}
+\newcommand{\framevect}[2]{%
+  \iftrickhlamathstacked@{{_{#1}\vect{#2}}}\else{{\vect{#2}_{#1}}}\fi}
+%   \framevdot{frame}{symbol} - Time derivative of framevect{frame}{symbol}
+\newcommand{\framevdot}[2]{%
+  \iftrickhlamathstacked@{{_{#1}\vdot{#2}}}\else{{\vdot{#2}_{#1}}}\fi}
+%   \frameabsvect{frame}{symbol}{item} - Combines \framevec and \absvect
+%      Example - frame A vehicle 1 position vector: \frameabsvect{A}{x}{v1}
+\newcommand{\frameabsvect}[3]{%
+  \iftrickhlamathstacked@{{_{#1}\vect{#2}_{#3}}}\else{{\vect{#2}_{{#1}:{#3}}}}\fi}
+%   \frameabsvdot{frame}{symbol}{item} - Time derivative of \frameabsvect
+\newcommand{\frameabsvdot}[3]{%
+  \iftrickhlamathstacked@{{_{#1}\vdot{#2}_{#3}}}\else{{\vdot{#2}_{{#1}:{#3}}}}\fi}
+%   \relvect{symbol}{from}{to} - Vector from {from} to {to}
+%      Example - vehicle 1 to vehicle 2 position vector: \relvect{x}{v1}{v2}
+\newcommand{\relvect}[3]{%
+  \iftrickhlamathstacked@{{\vect{#1}^{#2}_{#3}}}\else{{\vect{#1}_{{#2}{\trickhlamathsep}{#3}}}}\fi}
+%   \relvdot{symbol}{from}{to} - Time derivative of \relvdot
+\newcommand{\relvdot}[3]{%
+  \iftrickhlamathstacked@{{\vdot{#1}^{#2}_{#3}}}\else{{\vdot{#1}_{{#2}{\trickhlamathsep}{#3}}}}\fi}
+%   \framerelvect{frame}{symbol}{from}{to} - Combines \framevec and \relvect
+%      Example - frame A vehicle 1 to vehicle 2 position vector: \framerelvect{A}{x}{v1}{v2}
+\newcommand{\framerelvect}[4]{%
+  \iftrickhlamathstacked@{{_{#1}\vect{#2}^{#3}_{#4}}}\else{{\vect{#2}_{{#1}:{#3}{\trickhlamathsep}{#4}}}}\fi}
+%   \framerelvdot{frame}{symbol}{item} - Time derivative of \framerelvect
+\newcommand{\framerelvdot}[4]{%
+  \iftrickhlamathstacked@{{_{#1}\vdot{#2}^{#3}_{#4}}}\else{{\vdot{#2}_{{#1}:{#3}{\trickhlamathsep}{#4}}}}\fi}
+
+% Three vector formed from three elements.
+% Usage: \vectxyz{r_x}{r_y}{r_z}
+ \newcommand\vectxyz[3]{%
+   {\left[\env@matrix #1 \\ #2 \\ #3 \endmatrix\right]}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Quaternion operators
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Conjugate and vector operators
+\DeclareMathOperator{\conjop}{conj}
+\DeclareMathOperator{\vectorpart}{vect}
+\DeclareMathOperator{\scalarpart}{scalar}
+
+% Quaternion time derivative.
+\newcommand{\qdot}[1]{\dot{\quat{#1}}}
+
+% Quaternion conjugate (symbolic).
+\newcommand{\quatconj}[1]{{\quat{#1}^{\conj}}}
+
+% Quaternion conjugate (composite; inserts left-right parens).
+\newcommand{\quatconjlr}[1]{{\left(#1\right)^{\conj}}}
+
+% Quaternion conjugate time derivative.
+\newcommand{\quatconjdot}[1]{{\dot{\quat{#1}}^{\conj}}}
+
+
+% Quaternion in scalar, vector form
+% Usage: \quatsv[space]{real part}{vector part}
+% Examples: \quatsv{q_s}{\vect{q_v}} \quatsv[5pt]{cos\frac\theta2}{-\sin\frac\theta2\vhat u}
+\long\def\quatsv@@[#1]#2#3{{\left[\env@matrix #2 \\[#1] #3 \endmatrix\right]}}
+\long\def\quatsv@#1#2{\quatsv@@[0pt]{#1}{#2}}
+\long\def\quatsv{\@ifnextchar[% ] bracket matching
+   \quatsv@@ \quatsv@}
+
+
+% Three vector expressed as a quaternion
+% This doesn't work. Don't know why.
+\newcommand{\quatvec[1]}{{\quatsv{0}{#1}}}
+
+% Left transformation quaternion based on a rotation and unit vector
+% Usage: \quattrot{angle}{unit vector}
+\newcommand{\quattrot}[2]{{\quatsv[5pt]{\cos\frac{#1}2}{-\sin\frac{#1}2 #2}}}
+
+% Right rotation quaternion based on a rotation and unit vector
+% Usage: \quatrrot{angle}{unit vector}
+\newcommand{\quatrrot}[2]{{\quatsv[5pt]{\cos\frac{#1}2}{\sin\frac{#1}2 #2}}}
+
+% Quaternion as scalar, scalar times vector
+% Usage: \quatcsuhat{scalar}{vector magnitude}{unit vector}
+\newcommand{\quatcsuhat}[3]{{\quatsv{#1}{#2 #3}}}
+
+% Quaternion as scalar, scalar times vector components
+% Usage: \quatqcsuelem{scalar}{vector magnitude}{uhat_x}{uhat_y}{uhat_z}
+\newcommand{\quatqcsuelem}[5]{{\quatsv{#1}{#2 \vectxyz{#3}{#4}{#5}}}}
+
+% Quaternion as scalar vector components
+% Usage: \quatfour{q_s}{q_x}{w_y}{q_z}
+\newcommand{\quatfour}[4]{{\quatsv{#1}{\vectxyz{#2}{#3}{#4}}}}
+
+% Transformation quaternion from A to B, conjugate, derivative, ...
+% Usage: \tquat{from}{to}, similar for \tquatdot, \tquatdotdot, \tquatconj, \tquatconjdot
+\newcommand{\tquat}[2]{%
+  \iftrickhlamathstacked@{{{^{#1}_{#2}}\quat{Q}}}\else{{\quat{Q}_{{#1}{\trickhlamathsep}{#2}}}}\fi}
+\newcommand{\tquatdot}[2]{%
+  \iftrickhlamathstacked@{{{^{#1}_{#2}}\dot{\quat{Q}}}}\else{{\dot{\quat{Q}}_{{#1}{\trickhlamathsep}{#2}}}}\fi}
+
+\iftrickhlamathstacked@
+\newcommand{\tquatdotdot}[2]{{{^{#1}_{#2}}\ddot{\quat{Q}}}}
+\newcommand{\tquatconj}[2]{{{^{#1}_{#2}}\quat{Q}{^\conj}}}
+\newcommand{\tquatconjdot}[2]{{{^{#1}_{#2}}\dot{\quat{Q}}{^\conj}}}
+\else
+\newcommand{\tquatdotdot}[2]{{\ddot{\quat{Q}}_{{#1}{\trickhlamathsep}{#2}}}}
+\newcommand{\tquatconj}[2]{{\quat{Q}{^\conj_{{#1}{\trickhlamathsep}{#2}}}}}
+\newcommand{\tquatconjdot}[2]{{\dot{\quat{Q}}{^\conj_{{#1}{\trickhlamathsep}{#2}}}}}
+\fi
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Multiplication
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The following commands define the default multiplication operator for various kinds of products.
+% The preferred nomenclature for the product of (say) a matrix and a vector is to
+% represent the product with no visible operator between the two -- T x rather than T*x.
+% This can get a bit ugly and confusing (the operands can be jammed too close to each other).
+% By default then, the operands are separated by a small amount of white space --
+% in other words, the default multiplication operator is a small amount of white space.
+\iftrickhlamathstacked@
+\newcommand{\MxMmulop}{\;}
+\newcommand{\MxVmulop}{\;}
+\newcommand{\QxQmulop}{\;}
+\newcommand{\QxVmulop}{\;}
+\newcommand{\VxQmulop}{\;}
+\else
+\newcommand{\MxMmulop}{\,}
+\newcommand{\MxVmulop}{\,}
+\newcommand{\QxQmulop}{\,}
+\newcommand{\QxVmulop}{\,}
+\newcommand{\VxQmulop}{\,}
+\fi
+
+% Define the multiplication operators.
+% Each macro takes an optional argument, which is the 'operator' to place between the operands.
+% Macros are
+%   MxM - Matrix times matrix (two required arguments)
+%   MxV - Matrix times vector
+%   QxQ - Quaternion times quaternion
+%   QxV - Quaternion times vector
+%   VxQ - Vector times quaternion
+%   MxMxM - Matrix times matrix times matrix  (three required arguments)
+%   QxQxQ - Quaternion times quaternion times quaternion
+%   QxVxQ - Quaternion times vector times quaternion
+% Examples of use of the optional argument:
+%   MxV[\ast]{\matT A B}{\framevec A x}
+%      Transform vector x from frame A to frame B using asterisk for multiplication.
+%   MxV[0pt]{\mat T}{\vect x}
+%      Matrix T times vector x with no intervening white space.
+\long\def\MxM@@[#1]#2#3{{{#2}{#1}{#3}}}
+\long\def\MxM@#1#2{\MxM@@[{\MxMmulop}]{#1}{#2}}
+\long\def\MxM{\@ifnextchar[% ] bracket matching
+   \MxM@@ \MxM@}
+
+\long\def\MxV@@[#1]#2#3{{{#2}{#1}{#3}}}
+\long\def\MxV@#1#2{\MxV@@[{\MxVmulop}]{#1}{#2}}
+\long\def\MxV{\@ifnextchar[% ] bracket matching
+   \MxV@@ \MxV@}
+
+\long\def\QxQ@@[#1]#2#3{{{#2}{#1}{#3}}}
+\long\def\QxQ@#1#2{\QxQ@@[{\QxQmulop}]{#1}{#2}}
+\long\def\QxQ{\@ifnextchar[% ] bracket matching
+   \QxQ@@ \QxQ@}
+
+\long\def\QxV@@[#1]#2#3{{{#2}{#1}{\quatsv 0 {#3}}}}
+\long\def\QxV@#1#2{\QxV@@[{\QxVmulop}]{#1}{#2}}
+\long\def\QxV{\@ifnextchar[% ] bracket matching
+   \QxV@@ \QxV@}
+
+\long\def\VxQ@@[#1]#2#3{{{\quatsv 0 {#2}}{#1}{#3}}}
+\long\def \VxQ@#1#2{\VxQ@@[{\VxQmulop}]{#1}{#2}}
+\long\def \VxQ{\@ifnextchar[% ] bracket matching
+   \VxQ@@ \VxQ@}
+
+\long\def\MxMxM@@[#1]#2#3#4{{{#2}{#1}{#3}{#1}{#4}}}
+\long\def\MxMxM@#1#2#3{\MxMxM@@[{\MxMmulop}]{#1}{#2}{#3}}
+\long\def\MxMxM{\@ifnextchar[% ] bracket matching
+   \MxMxM@@ \MxMxM@}
+
+\long\def\QxQxQ@@[#1]#2#3#4{{{#2}{#1}{#3}{#1}{#4}}}
+\long\def\QxQxQ@#1#2#3{\QxQxQ@@[{\QxQmulop}]{#1}{#2}{#3}}
+\long\def\QxQxQ{\@ifnextchar[% ] bracket matching
+   \QxQxQ@@ \QxQxQ@}
+
+\long\def\QxVxQ@@[#1]#2#3#4{{{#2}{#1}{\quatsv 0 {#3}}{#1}{#4}}}
+\long\def\QxVxQ@#1#2#3{\QxVxQ@@[{\QxVmulop}]{#1}{#2}{#3}}
+\long\def\QxVxQ{\@ifnextchar[% ] bracket matching
+   \QxVxQ@@ \QxVxQ@}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Standard names
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Inertial to body quaternion, widely known as QBI
+\iftrickhlamathstacked@
+\newcommand{\QBI}{{\tquat {\:I} B}}
+\newcommand{\QBIdot}{{\tquatdot {\:I} B}}
+\newcommand{\QBIdotdot}{{\tquatdotdot {\:I} B}}
+\newcommand{\QBIconj}{{\tquatconj {\:I} B}}
+\newcommand{\QBIconjdot}{{\tquatconjdot {\:I} B}}
+\else
+\newcommand{\QBI}{{\tquat I B}}
+\newcommand{\QBIdot}{{\tquatdot I B}}
+\newcommand{\QBIdotdot}{{\tquatdotdot I B}}
+\newcommand{\QBIconj}{{\tquatconj I B}}
+\newcommand{\QBIconjdot}{{\tquatconjdot I B}}
+\fi
+
+% Inertia matrix
+\newcommand{\inertia}{\mat{I}}
+

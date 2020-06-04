@@ -1,0 +1,283 @@
+% File ps4pdf.sty
+%
+% Introduced:
+%    David Hammen - May 2006
+%    Description: Part of the standard TeX release that is not
+%                 included in the outdated, non-standard Linux TeX
+%--------------------------------------------------------------------
+
+% Copyright 2003 by Rolf Niepraschk (Rolf.Niepraschk@ptb.de).
+% This software is released under the terms of the LaTeX Project Public 
+% License  (ftp://dante.ctan.org/tex-archive/macros/latex/base/lppl.txt).
+% (Essentially: Free to use, copy, distribute (sell) and change, but, if
+% changed, the name must be changed.)
+
+\NeedsTeXFormat{LaTeX2e}[1995/12/01]
+\ProvidesPackage{ps4pdf}[2004/07/15 v0.6h PS code for pdfTeX (RN/HO)]
+  
+\newcommand*\PfP@mode{0} \newcommand*\PfP@draft@global{false}
+\newcommand*\PfP@llx{-0.50001bp}
+\newcommand*\PfP@lly{-0.50001bp}
+\newcommand*\PfP@urx{0.50001bp}
+\newcommand*\PfP@ury{0.50001bp}% Prevents rounding errors.
+\newcommand*\PfP@tempa{} \newcommand*\PfP@tempb{}
+
+\newif\ifPfP@draft \newif\ifPfPinside \PfPinsidefalse
+\newif\ifPfP@graphics 
+   
+\DeclareOption{active}{\def\PfP@mode{0}}
+\DeclareOption{inactive}{\def\PfP@mode{9}} 
+\DeclareOption{draft}{\def\PfP@draft@global{true}}
+\DeclareOption{final}{\def\PfP@draft@global{false}}
+\DeclareOption{graphics}{\PfP@graphicstrue}
+\DeclareOption{nographics}{\PfP@graphicsfalse}
+
+\ExecuteOptions{graphics}
+\ProcessOptions\relax
+  
+\RequirePackage{keyval,ifpdf,ifvtex}
+
+\newcounter{PSforPDF}
+
+\newcommand*\PfP@container{\jobname-pics.pdf}
+\newcommand*\containerName[1]{\def\PfP@container{#1}}
+    
+\ifnum\PfP@mode>0\relax\else
+  \ifvtex
+    \def\PfP@mode{9}
+  \else
+    \ifpdf
+      \def\PfP@mode{1}
+    \fi  
+  \fi
+\fi
+
+\ifnum\PfP@mode=0\relax\else
+
+  \RequirePackage{calc}
+  
+  \define@key{PfP}{trim}{%
+    \begingroup
+      \Gread@parse@vp#1 \\%
+      \edef\x{\endgroup%
+        \def\noexpand\PfP@llx{\Gin@vllx bp}%
+        \def\noexpand\PfP@lly{\Gin@vlly bp}%
+        \def\noexpand\PfP@urx{\Gin@vurx bp}%
+        \def\noexpand\PfP@ury{\Gin@vury bp}}\x%
+%     Like "\xdef\PfP@llx{\Gin@vllx bp}..." but only for one group level.     
+  }
+  
+  \define@key{PfP}{draft}[true]{\csname PfP@draft#1\endcsname}  
+  
+  \newcommand\PfP@adjustBox[3]{%
+%   #1=width of the main box, #2=height of the main box, 
+%   #3=raw material
+    \begingroup
+      \edef\PfP@tempa{#1}\edef\PfP@tempb{#2}%
+      \setbox\@tempboxa=\hbox{#3}%
+      \ifdim\wd\@tempboxa>\ht\@tempboxa\relax%         
+        \setbox\@tempboxa=\hbox{\resizebox{\PfP@tempa}{!}{#3}}%
+      \else%
+        \setbox\@tempboxa=\hbox{\resizebox{!}{\PfP@tempb}{#3}}% 
+      \fi  
+      \box\@tempboxa%  
+    \endgroup
+  }  
+  
+  \newcommand\PfP@framedInfoBox[3]{%
+%   #1=width, #2=height, #3=info text   
+    \begingroup
+      \fboxsep=3pt\fboxrule=.4pt%
+      \edef\PfP@tempa{#1-2\fboxsep-2\fboxrule}%
+      \ifx#2\height%
+        \fbox{\parbox[b]{\PfP@tempa}{\vfill\mbox{}#3\vfill}}%
+      \else%
+        \edef\PfP@tempb{#2-2\fboxsep-2\fboxrule}%
+        \fbox{\parbox[b][\PfP@tempb]{\PfP@tempa}{\vfill\mbox{}#3\vfill}}%
+      \fi
+    \endgroup
+  }
+  
+\fi
+
+\ifcase\PfP@mode%      == dvi (extraction mode) == 
+%% "AtBeginDocument" is necessary because `preview' called `\nofiles'.
+%% After this call `\makeindex' is `\relax' and can't be redefined with
+%% `\renewcommand'.
+  \AtBeginDocument{%
+    \RequirePackage[active,dvips,tightpage]{preview}[2003/01/20]}
+  
+  \define@key{PfP}{trim}{\xdef\PreviewBbAdjust{#1}}%     
+  \define@key{PfP}{draft}[true]{}% Not used in this mode.
+  
+  \newcommand\PSforPDF[2][]{#2}  
+  
+  \newcommand\PfP@relax@commands{%
+%% To prevent tabularx from execute each \cmd{\PSforPDF} more than once.  
+    \@ifundefined{tabularx}{}{%
+      \def\tabularx##1##2{\tabular{##2}}%
+      \newcolumntype{X}{c}%
+      \let\endtabularx=\endtabular}%
+  }
+   
+  \AtBeginDocument{%
+    \@ifpackageloaded{graphicx}{}{\RequirePackage{graphicx}}%
+    \let\PfP@includegraphics=\includegraphics%
+    \renewcommand\includegraphics[2][]{%
+      \ifPfPinside\PfP@includegraphics[#1]{#2}\else~\fi}%
+    % Outside of `\PSforPDF' `\includegraphics' must do nothing
+    % because we can't handle pdfTeX graphics (.pdf, .jpg,...)
+    % in this mode. `~' is a non-zero size dummy.
+    \renewcommand\PSforPDF[2][]%
+    {%        
+      \setkeys{PfP}{trim=\PfP@llx\space\PfP@lly\space%
+        \PfP@urx\space\PfP@ury,#1}\stepcounter{PSforPDF}%
+      \PfPinsidetrue#2\PfPinsidefalse%
+    }            
+    \PreviewMacro[{[]{}}]{\PSforPDF}%
+    \PfP@relax@commands%
+  }
+  
+  \AtEndDocument{%
+    \ifnum\value{PSforPDF}=0\relax                 
+      \PSforPDF{\mbox{}}%
+      % Prevents not writing a dvi file if the document contains    
+      % no \PSforPDF commands (e.g. suppressed by \includeonly)      
+    \fi}    
+    
+\or%                   == pdfTeX == 
+  
+  \newcommand*\PfP@lastpage{\maxdimen} 
+
+  \newcommand\PSforPDF[2][]{}% Do nothing before `\begin{document}' 
+  % The definition for the "page" key can only be executed 
+  % at `\begin{document}' if `keyval' is present!
+  \AtBeginDocument{%
+    \ifPfP@graphics\else
+      \let\PfP@Ginclude@graphics\Ginclude@graphics
+      \def\Ginclude@graphics#1{\phantom{\PfP@Ginclude@graphics{#1}}}%
+    \fi    
+    \IfFileExists{\PfP@container}%
+    {%
+      \@ifpackageloaded{graphicx}{}{\RequirePackage[pdftex]{graphicx}}%
+      \renewcommand\PSforPDF[2][]{%
+        \setkeys{PfP}{trim=\PfP@llx{} \PfP@lly{} \PfP@urx{} \PfP@ury}%
+        \setkeys{PfP}{draft=\PfP@draft@global,##1}%  
+        \stepcounter{PSforPDF}%
+        \ifnum\PfP@lastpage<\value{PSforPDF}\relax 
+          \PfP@framedInfoBox{\linewidth}{\height}{%
+             \centering Can't show picture~\#\thePSforPDF\ because it
+             does not exist in \texttt{\PfP@container}. Recreate 
+             \texttt{\PfP@container}!}%         
+        \else%
+          \setbox\@tempboxa=\hbox{%
+            \includegraphics[page=\the\value{PSforPDF},draft=false]%
+              {\PfP@container}}%
+          \setlength\@tempdima{\wd\@tempboxa-\PfP@urx+\PfP@llx}% 
+          \setlength\@tempdimb{\ht\@tempboxa-\PfP@ury+\PfP@lly}%
+          % recalculate the original size.
+          \setbox\@tempboxa=\hbox{%
+            \PfP@adjustBox{\the\@tempdima}{\the\@tempdimb}{\box\@tempboxa}}%
+          \ifPfP@draft% 
+            \PfP@framedInfoBox{\the\wd\@tempboxa}{\the\ht\@tempboxa}% 
+              {\rlap{~\texttt{\PfP@container~(\#\the\value{PSforPDF})}}}%           
+          \else%  
+            \mbox{\box\@tempboxa}%
+          \fi    
+          \xdef\PfP@lastpage{\the\pdflastximagepages}%        
+        \fi
+      }         
+    }         
+    {%
+      \PackageWarningNoLine{ps4pdf}{%
+        Graphic container `\PfP@container' not found}%
+      \renewcommand\PSforPDF[2][]{%
+        \stepcounter{PSforPDF}%
+        \noindent\PfP@framedInfoBox{\linewidth}{\height}{%
+          \centering Can't show picture~\#\thePSforPDF\ because 
+           \texttt{\PfP@container} not found. Create it from 
+           \texttt{\jobname.dvi} using \texttt{dvips} and \texttt{ps2pdf}!}}
+    }%
+  }%
+  
+  \AtEndDocument{%
+    \ifnum\PfP@lastpage=\value{PSforPDF}\relax\else                   
+      \PackageWarningNoLine{ps4pdf}{`\PfP@container' is no more valid}%    
+    \fi}  
+  
+\else%                == inactive (latex/dvips, VTeX) == 
+
+  \RequirePackage{graphicx}
+  
+  \newcommand\PfP@trimmBox[7]{%
+%   #1=width of the main box, #2=height of the main box,  
+%   #3=trim left, #4=trim right, #5=trim top, #6=trim bottom
+%   #7=raw material
+    \begingroup
+      \edef\PfP@tempa{#1}\edef\PfP@tempb{#2}%
+      \setbox\@tempboxa=\hbox{%
+        \makebox[\width-#3][r]{% extends at left
+          \makebox[\width+#4][l]{% extends at right
+            \raisebox{\dp\@tempboxa-#6}% extends at top and bottom
+              [\ht\@tempboxa+\dp\@tempboxa+#5-#6][0pt]{#7}}}}%  
+      \PfP@adjustBox{\PfP@tempa}{\PfP@tempb}{\box\@tempboxa}%
+    \endgroup
+  }  
+   
+  \newcommand\PSforPDF[2][]{#2}%
+  
+  \AtBeginDocument{% 
+    \renewcommand\PSforPDF[2][]{%
+      \begingroup
+        \setkeys{PfP}{draft=\PfP@draft@global,#1}%
+        \setbox\@tempboxa=\hbox{#2}%
+        \@tempdima=\ht\@tempboxa\advance\@tempdima\dp\@tempboxa%
+        \edef\PfP@tempb{\the\@tempdima}\edef\PfP@tempa{\the\wd\@tempboxa}%
+        \setbox\@tempboxa=\hbox{%
+          \PfP@trimmBox{\PfP@tempa}{\PfP@tempb}%
+            {\PfP@llx}{\PfP@urx}{\PfP@ury}{\PfP@lly}{\box\@tempboxa}}%
+        \ifPfP@draft% 
+          \PfP@framedInfoBox{\the\wd\@tempboxa}{\the\ht\@tempboxa}{}%            
+        \else%  
+          \mbox{\box\@tempboxa}%
+        \fi 
+      \endgroup
+    }%
+  }
+  
+\fi
+
+\InputIfFileExists{ps4pdf.cfg}{%
+    \PackageInfo{ps4pdf}{Local config file ps4pdf.cfg used}
+}{}
+
+\endinput
+
+\changes{v0.3g (RN)}{2003/02/12}{First public version.}
+\changes{v0.3h (RN)}{2003/02/11}{Optional parameter for Trimming.}
+\changes{v0.4a (RN)}{2003/02/13}{key-value syntax.}
+\changes{v0.5  (RN)}{2003/05/17}{trim parameter: Scaling was wrong, corrected.
+  New options draft/final. Code cleanup. Improved test file.} 
+\changes{v0.5a (RN)}{2003/05/19}{Option "inactive" works now.}
+\changes{v0.5b (RN)}{2003/05/21}{Mode detection changed. Code cleanup.}
+\changes{v0.5c (RN)}{2003/05/26}{New Parameters "hpos" and "vpos".}
+\changes{v0.6  (RN)}{2003/05/30}{trim parameter and draft option can be used 
+  with the "inactive" option}
+\changes{v0.6a (RN)}{2003/06/03}{Size and alignment after trimming changed.
+  Parameter "hpos" and "vpos" removed.} 
+\changes{v0.6b (RN)}{2003/06/09}{Simplified definition for trim key.}
+\changes{v0.6c (RN)}{2003/06/19}{The name of the graphics container can now be
+  changed with \cmd{\containerName}. A document without any \cmd{\PSforPDF} 
+  commands creates now an empty container file.}
+\changes{v0.6d (RN)}{2003/08/17}{Inputting a config file added.}
+\changes{v0.6e (RN)}{2003/09/03}{Works now with `tabularx'. Thanks to 
+  Herbert Voss.}
+\changes{v0.6f (RN)}{2003/09/05}{bug in extraction mode corrected (`graphicx'
+  is required). Thanks to Jose Carlos Santos.}
+\changes{v0.6g (RN)}{2003/11/22}{New package options `graphics/nographics'
+  similar to package `crop' (suppresses the graphics output; 
+  suggested by Markus Kohm).}
+\changes{v0.6h (RN)}{2004/07/15}{In dvi extraction mode the `preview' package
+  should be loaded ``AtBeginDocument'' to prevent probelems with `natbib'; bug
+  reported from ???.}
+   

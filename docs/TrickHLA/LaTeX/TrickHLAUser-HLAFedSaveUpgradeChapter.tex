@@ -1,0 +1,155 @@
+\chapter{Upgrading Your Federate To Initiate a Federation Save}
+\label{sec:hla_fed_save_setup}
+
+Before a Trick federate can save itself, some upgrades to the Trick model
+have to occur.
+
+% ---------------------------------------------------------------------------
+\section{Trick {\tt input} file update}
+\label{sec:hla_fed_save_upg_input}
+
+The {\tt input} file must specify a simulation initialization scheme 
+of {\tt THLA\_MULTIPHASE\_INIT\_V2}, which represents the
+{\em \href{file:IMSim_Multiphase_Init_Design_Document.pdf}
+          {IMSim Multiphase Initialization Design with Late Joiners, Rejoiners and Federation Save \& Restore}}
+\cite{trickhlaenv:IMSim-multiphase-init-design} scheme.
+
+\begin{verbatim}
+/* Use a simulation initialization scheme that supports save and restore. */
+THLA.manager.sim_initialization_scheme = THLA_MULTIPHASE_INIT_V2;
+\end{verbatim}
+
+The user can specify where each checkpoint-ing and restore-ing Trick federate
+is to store and reload the checkpoint files in {\tt TrickHLAFederate}'s
+{\tt HLA\_save\_directory} variable in each input file. If the directory is not
+specified in the {\tt input} file, it will be assigned by \TrickHLA\ to the
+simulation's {\tt RUN} directory.
+
+This is done because the checkpoint file name will be the same for all Trick
+federates with no uniqueness identifiers added, i.e. something to distinguish
+one file from another in the same directory, so it is recommended that the
+{\tt HLA\_save\_directory} specify the Trick simulation's RUN directory.
+
+If the user wishes to have the checkpoint files saved in another location, all
+they have to do is specify the absolute path to the new location in 
+the {\tt THLA.federate.HLA\_save\_directory} variable in the input file.
+
+% ------------------------------------
+\section{{\tt S\_define} file updates}
+
+The updates needed in the {\tt S\_define} file necessary for {\tt TrickHLA}'s save and restore capability are provided in the
+\TrickHLA\ {\tt sim\_object} in the {\tt THLA.sm} file, located in the
+{\tt S\_modules} subdirectory. The specific lines of code are described in this section.
+
+% ---------------------------------------------------------------------------
+\subsection{Data Declarations}
+
+All federates must be in {\tt freeze} mode at the same logical time in order to perform a federation save.
+The same is true for a federation restore (although you can also perform a federation restore at startup).
+This is accomplished by sending a special "freeze" interaction to all federates. A freeze interaction handler
+is declared in the {\tt DATA STRUCTURE DECLARATIONS} section:
+
+\begin{verbatim}
+   TrickHLA: TrickHLAFreezeInteractionHandler freeze_ih;
+\end{verbatim}
+
+When performing a federation save via the {\tt start\_federation\_save()} call 
+(see section~\ref{sec:prog_save_and_restore} {\tt Programmatic Save and Restore} below),
+the time (optionally) and filename used for the save must be specified, either in a trick model or in the input file.
+So a checkpoint\_time and checkpoint\_label variable are also declared:
+
+\begin{verbatim}
+   double checkpoint_time;
+   char   checkpoint_label[256];
+\end{verbatim}
+
+% ------------------------------------
+\subsection{Interactive Save and Restore}
+
+The user may choose to freeze the federation by issuing a Trick freeze command, usually by clicking
+the {\tt Freeze} button on the Trick Simulation Control Panel, or by an input file freeze command. The following
+job will send a freeze interaction when a Trick freeze is commanded:
+
+\begin{verbatim}
+   /*
+    * -- Coordinate federates going to freeze mode
+    */
+   P65534 (THLA_DATA_CYCLE_TIME, THLA_CHECK_PAUSE_JOB_OFFSET, logging) TrickHLA: THLA.federate.enter_freeze();
+\end{verbatim}
+
+Another job will assure that each federate freezes at the same logical time when the freeze interaction
+is received:
+
+\begin{verbatim}
+   /*
+    * -- Check to see if an interaction informed us that we are to
+    *    FREEZE the sim before entering the next logical frame.
+    */
+   P65534 (THLA_DATA_CYCLE_TIME, logging) TrickHLA: THLA.federate.check_freeze_time();
+\end{verbatim}
+
+Once the federation is frozen by this means, the user can issue a Trick {\tt Dump Chkpnt} or {\tt Load Chkpnt} command
+via the Trick Simulation Control Panel to initiate the federation save or restore, respectively.
+
+The following two jobs get the federation running again when the Trick Simulation Control Panel {\tt Start} button is clicked:
+
+\begin{verbatim}
+   /*
+    * -- Coordinate federates going to run mode
+    */
+   (freeze)   TrickHLA: THLA.federate.check_freeze();
+   (unfreeze) TrickHLA: THLA.federate.exit_freeze();
+\end{verbatim}
+
+% ------------------------------------
+\subsection{Programmatic Save and Restore}
+\label{sec:prog_save_and_restore}
+
+If the user wishes to trigger a federation save via a trick model or the input file, calling the {\tt start\_federation\_save()}
+routine will send the freeze interaction and initiate the federation save when the freeze occurs 
+(see section~\ref{sec:hla_trick_fed_save} {\tt Federation Save} below).
+
+\begin{verbatim}
+   /*
+    * -- Initiate a federation save announcement if told to do so...
+    */
+   P1 (0.0, environment) TrickHLA: THLA.manager.start_federation_save(
+      In const char * file_name = THLA.checkpoint_label );
+
+   P1 (0.0, environment) TrickHLA: THLA.manager.start_federation_save_at_sim_time(
+      In double freeze_sim_time = THLA.checkpoint_time,
+      In const char * file_name = THLA.checkpoint_label );
+
+   P1 (0.0, environment) TrickHLA: THLA.manager.start_federation_save_at_scenario_time(
+      In double freeze_scenario_time = THLA.checkpoint_time,
+      In const char * file_name = THLA.checkpoint_label );
+\end{verbatim}
+
+If a time value is not specified, or if the time specified has already past,
+the current federation time will be used to determine when the next opportunity is to perform the
+federation save.
+
+The only {\tt TrickHLA} provided means of performing a restore programmatically is by setting the manager's {\tt restore\_federation} flag
+(see section~\ref{sec:hla_trick_fed_restore} {\tt Federation Restore} below), in which case the restore occurs at startup.
+A time cannot be specified for performing a restore.
+
+% ------------------------------------
+\subsection{Save and Restore Jobs}
+
+When a federation save or restore has been initiated, the current {\tt TrickHLA} implementation depends
+on asynchronous callbacks from the {\tt RTI} to guide the federation from one stage to another until the federation
+save or restore is complete. {\tt TrickHLA} accomplishes this using a checkpoint class job and freeze class job (for save),
+and a pre\_load\_checkpoint class job and freeze job (for restore).
+
+\begin{verbatim}
+   /*
+    * -- Perform the federate save (checkpoint) or restore in FREEZE mode...
+    */
+   P1 (checkpoint)          TrickHLA: THLA.federate.setup_checkpoint();
+   (freeze)                 TrickHLA: THLA.federate.perform_checkpoint();
+   P1 (pre_load_checkpoint) TrickHLA: THLA.federate.setup_restore();
+   (freeze)                 TrickHLA: THLA.federate.perform_restore();
+\end{verbatim}
+
+
+

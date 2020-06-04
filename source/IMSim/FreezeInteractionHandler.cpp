@@ -1,0 +1,295 @@
+/*!
+@file IMSim/FreezeInteractionHandler.cpp
+@ingroup IMSim
+@brief This class handles the HLA Freeze interactions.
+
+@copyright Copyright 2019 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+No copyright is claimed in the United States under Title 17, U.S. Code.
+All Other Rights Reserved.
+
+\par<b>Responsible Organization</b>
+Simulation and Graphics Branch, Mail Code ER7\n
+Software, Robotics & Simulation Division\n
+NASA, Johnson Space Center\n
+2101 NASA Parkway, Houston, TX  77058
+
+@tldh
+@trick_link_dependency{../TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../TrickHLA/Interaction.cpp}
+@trick_link_dependency{FreezeInteractionHandler.cpp}
+
+@revs_title
+@revs_begin
+@rev_entry{Tony Varesic, L3, DSES, July 2009, --, Initial implementation.}
+@rev_entry{Dan Dexter, NASA ER7, TrickHLA, March 2019, --, Version 2 origin.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@revs_end
+
+*/
+
+// System include files.
+#include <cmath>
+#include <sstream>
+#include <string>
+
+// Trick include files.
+#include "trick/message_proto.h"
+
+// TrickHLA include files.
+#include "TrickHLA/Federate.hh"
+#include "TrickHLA/Interaction.hh"
+#include "TrickHLA/StringUtilities.hh"
+
+// IMSim include files.
+#include "IMSim/FreezeInteractionHandler.hh"
+
+using namespace std;
+using namespace TrickHLA;
+using namespace IMSim;
+
+#define THLA_FREEZE_INTERACTION_DEBUG 0
+
+/*!
+ * @job_class{initialization}
+ */
+FreezeInteractionHandler::FreezeInteractionHandler() // RETURN: -- None.
+   : time( 0.0 )
+{
+}
+
+/*!
+* @job_class{shutdown}
+*/
+FreezeInteractionHandler::~FreezeInteractionHandler() // RETURN: -- None.
+{
+}
+
+/*!
+ *  @details The interaction time is computed to be the current granted time
+ *  plus lookahead. If the supplied time does not fall on the HLA and lookahead
+ *  time boundaries, the time is rounded up to the next highest integer
+ *  multiple of the lookahead time. If the time is less than the granted time
+ *  plus one lookahead, this means that the freeze time is invalid so it is
+ *  updated to be 'granted time plus one lookahead'. If the federate is a
+ *  late-joining federate, the freeze time is slipped one frame because it
+ *  would occur in a previous frame when the other non-late-joiner federates
+ *  receive the freeze interaction time.
+ */
+void FreezeInteractionHandler::send_scenario_freeze_interaction(
+   double &freeze_time,
+   bool    late_joining_federate )
+{
+   // if the interaction was not initialized in the parent class, get out of here...
+   if ( interaction == NULL ) {
+      ostringstream errmsg;
+      errmsg << "FreezeInteractionHandler::send_scenario_freeze_interaction("
+             << freeze_time << ", " << (int)late_joining_federate << "):" << __LINE__
+             << " ERROR: 'interaction' was not initialized to callback an"
+             << " Interaction class. Cannot send out an interaction in"
+             << " order for the rest of the federates to participate in a"
+             << " federation freeze." << THLA_ENDL;
+      send_hs( stderr, (char *)errmsg.str().c_str() );
+      return;
+   }
+
+#if THLA_FREEZE_INTERACTION_DEBUG
+   ostringstream msg;
+   msg << " FreezeInteractionHandler::send_scenario_freeze_interaction():" << __LINE__
+       << " ===> debug <===" << endl
+       << " granted-time:" << interaction->get_granted_fed_time().getDoubleTime() << endl
+       << " lookahead-time:" << interaction->get_fed_lookahead().getDoubleTime() << endl;
+   send_hs( stdout, (char *)msg.str().c_str() );
+#endif
+
+   /// We will calculate two important times related to the freeze scenario time:
+   /// -# The HLA logical timestamp the freeze interaction is sent for (TSO),
+   ///    which is the interaction_hla_time variable.
+   /// -# The Freeze scenario time that is an integer multiple of the lookahead
+   ///    and is >= the equivalent freeze interaction scenario time from step 1,
+   ///    which is the freeze_scenario_time variable.
+   ///
+   /// We need to find the equivalent simulation-time and HLA-time for a
+   /// given freeze scenario-time so that we can do the correct time
+   /// comparisons. Also, if we are a late joining federate the sim-time
+   /// and HLA-time will not be aligned as shown in this example.
+   ///\verbatim
+   ///      HLA-time |-------------------------|-------------------------|
+   ///               101.0                     102.0                     103.0
+   ///
+   /// Scenario-time |-------------------------|-------------------------|
+   ///               March 2, 2032 @ 19:20:07  March 2, 2032 @ 19:20:08  March 2, 2032 @ 19:20:09
+   ///
+   ///      Sim-time |-------------------------|-------------------------|
+   ///               0.0                       1.0                       2.0
+   ///\endverbatim
+   /// Scenario-time and Sim-time change at the same rate but they have
+   /// different starting epochs.\n
+   /// freeze-sim-time = current-sim-time + (freeze-scenario-time - current-scenario-time)\n
+   /// freeze-hla-time = granted-hla-time + (freeze-scenario-time - current-scenario-time)
+
+   /// We must wait for a valid Time Advance Grant (TAG) so the HLA granted time
+   /// will be valid and with proper alignment with the scenario and simulation
+   /// timelines. NOTE: We can only do the blocking wait for the time advance
+   /// grant here because this is an end_of_frame job and if we don't have a
+   /// granted time then we are at the end of the frame that made the TAR call.
+   /// The wait for Time Advance Grant will be at the top of the next frame.
+   if ( !interaction->get_federate()->is_time_advance_granted() ) {
+      if ( should_print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+         send_hs( stdout, "FreezeInteractionHandler::send_scenario_freeze_interaction():%d Waiting for HLA Time Advance Grant (TAG).%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      interaction->get_federate()->wait_for_time_advance_grant();
+   }
+
+   Int64Interval lookahead              = interaction->get_fed_lookahead();
+   Int64Time     granted                = interaction->get_granted_fed_time();
+   Int64Time     granted_plus_lookahead = granted + lookahead;
+
+   double curr_scenario_time   = interaction->get_federate()->get_scenario_time();
+   double freeze_scenario_time = freeze_time;
+   double freeze_hla_time      = granted.getDoubleTime() + ( freeze_scenario_time - curr_scenario_time );
+
+   // The freeze interaction will go out as soon as possible even if the
+   // federation freeze time is further out in the future. This is the HLA
+   // timestamp the interaction is sent for.
+   Int64Time interaction_hla_time = granted_plus_lookahead;
+
+   // If we are late joining federate, adjust the HLA time the freeze
+   // interaction will go out by one more lookahead time.
+   if ( late_joining_federate ) {
+      interaction_hla_time += lookahead;
+
+      if ( should_print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+         send_hs( stdout, "FreezeInteractionHandler::send_scenario_freeze_interaction():%d \
+Late joining federate, Freeze Interaction will now be sent for HLA time:%lf %c",
+                  __LINE__, interaction_hla_time.getDoubleTime(), THLA_NEWLINE );
+      }
+   }
+
+   // To avoid possible round off errors, do the math using the native 64-bit
+   // integer type.
+   Int64Time interation_time_plus_lookahead = interaction_hla_time + lookahead;
+
+   // Make sure the time we freeze the federation (on the HLA timeline) is
+   // greater than the HLA time the interaction will go out on (TSO).
+   if ( freeze_hla_time < interation_time_plus_lookahead.getDoubleTime() ) {
+
+      // Update the time to the earliest time that we can freeze the federation,
+      // which is one lookahead frame after the freeze interaction goes out.
+      freeze_hla_time = interation_time_plus_lookahead.getDoubleTime();
+
+      if ( should_print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+         // Recalculate the freeze scenario time from the updated freeze HLA time.
+         freeze_scenario_time = curr_scenario_time + ( freeze_hla_time - granted.getDoubleTime() );
+
+         ostringstream infomsg;
+         infomsg << "FreezeInteractionHandler::send_scenario_freeze_interaction():" << __LINE__ << endl
+                 << "  Invalid freeze scenario time:" << freeze_time << endl
+                 << "  Current scenario time:" << curr_scenario_time << endl
+                 << "  Updated Freeze scenario time:" << freeze_scenario_time << endl
+                 << "  Freeze federation at HLA time:" << freeze_hla_time << endl
+                 << "  Freeze Interaction sent for HLA time:" << interaction_hla_time.getDoubleTime() << endl
+                 << "  Current granted HLA time:" << granted.getDoubleTime() << THLA_ENDL;
+         send_hs( stdout, (char *)infomsg.str().c_str() );
+      }
+   }
+
+   // Make sure the freeze HLA time is an integer multiple of the lookahead.
+   if ( lookahead > 0.0 ) {
+      double freeze_t = trunc( freeze_hla_time / lookahead.getDoubleTime() ) * lookahead.getDoubleTime();
+      if ( freeze_hla_time > freeze_t ) {
+         freeze_hla_time = freeze_t + lookahead.getDoubleTime();
+
+         if ( should_print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+            send_hs( stdout, "FreezeInteractionHandler::send_scenario_freeze_interaction():%d \
+Freeze HLA time is not an integer multiple of the lookahead time:%lf, using \
+new freeze HLA time:%lf %c",
+                     __LINE__, lookahead.getDoubleTime(),
+                     freeze_hla_time, THLA_NEWLINE );
+         }
+      }
+   }
+
+   // Recalculate the freeze scenario time from the updated freeze HLA time.
+   freeze_scenario_time = curr_scenario_time + ( freeze_hla_time - granted.getDoubleTime() );
+
+   // Make sure we update the passed in time so we pass back the right value.
+   freeze_time = freeze_scenario_time;
+
+   // Capture the current federation save time attribute value for the interaction.
+   this->time = freeze_time;
+
+   // Notify the parent interaction handler to send the interaction using
+   // Timestamp Order at the earliest convenience, even if the federation is to
+   // freeze in the future...
+   if ( this->InteractionHandler::send_interaction( interaction_hla_time.getDoubleTime() ) ) {
+      ostringstream infomsg;
+      infomsg << "FreezeInteractionHandler::send_scenario_freeze_interaction(Timestamp Order):"
+              << __LINE__ << endl
+              << "  Freeze Interaction sent TSO at HLA time:" << interaction_hla_time.getDoubleTime() << " ("
+              << interaction_hla_time.getTimeInMicros() << " microseconds)" << endl
+              << "  Federation Freeze scenario time:" << time << " ("
+              << Int64Interval::toMicroseconds( time ) << " microseconds)" << endl
+              << "  Federation Freeze HLA time:" << freeze_hla_time << " ("
+              << freeze_hla_time << " microseconds)" << THLA_ENDL;
+      send_hs( stdout, (char *)infomsg.str().c_str() );
+
+      // Inform the Federate the scenario time to freeze the simulation on.
+      interaction->get_federate()->add_freeze_scenario_time( time );
+
+      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+         send_hs( stdout, "FreezeInteractionHandler::send_scenario_freeze_interaction()%d: Federation freeze scenario time:%lf %c",
+                  __LINE__, time, THLA_NEWLINE );
+      }
+   } else {
+      // The interaction was Not sent.
+      ostringstream infomsg;
+      infomsg << "FreezeInteractionHandler::send_scenario_freeze_interaction(Timestamp Order):"
+              << __LINE__ << " ERROR: Freeze Interaction Not Sent" << endl
+              << "  Freeze Interaction sent TSO at HLA time:" << interaction_hla_time.getDoubleTime() << " ("
+              << interaction_hla_time.getTimeInMicros() << " microseconds)" << endl
+              << "  Federation Freeze scenario time:" << time << " ("
+              << Int64Interval::toMicroseconds( time ) << " microseconds)" << endl
+              << "  Federation Freeze HLA time:" << freeze_hla_time << " ("
+              << freeze_hla_time << " microseconds)" << THLA_ENDL;
+      send_hs( stdout, (char *)infomsg.str().c_str() );
+   }
+}
+
+void FreezeInteractionHandler::receive_interaction(
+   RTI1516_USERDATA const &theUserSuppliedTag )
+{
+   ostringstream msg;
+   msg << "FreezeInteractionHandler::receive_interaction():"
+       << __LINE__ << endl
+       << "  Freeze scenario-time:" << time << " ("
+       << Int64Interval::toMicroseconds( time ) << " microseconds)"
+       << THLA_ENDL;
+   send_hs( stdout, (char *)msg.str().c_str() );
+
+   // if the interaction was not initialized into the parent class, get out of here...
+   if ( interaction == NULL ) {
+      ostringstream errmsg;
+      errmsg << "FreezeInteractionHandler::recieve_interaction():"
+             << __LINE__ << " ERROR:"
+             << " 'interaction' was not initialized to callback an Interaction"
+             << " class. Cannot send the time to the Interaction in order for it to"
+             << " participate in a federation freeze." << THLA_ENDL;
+      send_hs( stdout, (char *)errmsg.str().c_str() );
+   } else {
+      // Inform the Federate the scenario time to freeze the simulation on.
+      interaction->get_federate()->add_freeze_scenario_time( time );
+
+#if THLA_FREEZE_INTERACTION_DEBUG
+      ostringstream infomsg;
+      infomsg << " FreezeInteractionHandler::receive_interaction():"
+              << __LINE__
+              << " ===> debug <===" << endl
+              << " granted-time:" << interaction->get_granted_fed_time().getDoubleTime() << endl
+              << " lookahead-time:" << interaction->get_fed_lookahead().getDoubleTime()
+              << THLA_ENDL;
+      send_hs( stdout, (char *)infomsg.str().c_str() );
+#endif
+   }
+}

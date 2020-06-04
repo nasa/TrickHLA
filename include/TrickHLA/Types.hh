@@ -1,0 +1,306 @@
+/*!
+@file TrickHLA/Types.hh
+@ingroup TrickHLA
+@brief Definition of the TrickHLA enumeration types and utilities.
+
+@copyright Copyright 2019 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+No copyright is claimed in the United States under Title 17, U.S. Code.
+All Other Rights Reserved.
+
+\par<b>Responsible Organization</b>
+Simulation and Graphics Branch, Mail Code ER7\n
+Software, Robotics & Simulation Division\n
+NASA, Johnson Space Center\n
+2101 NASA Parkway, Houston, TX  77058
+
+@trick_parse{everything}
+
+@python_module{TrickHLA}
+
+@tldh
+@trick_link_dependency{../source/TrickHLA/Types.cpp}
+
+@revs_title
+@revs_begin
+@rev_entry{Dan Dexter, NASA ER7, TrickHLA, March 2019, --, Version 2 origin.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@revs_end
+
+*/
+
+#ifndef _TRICKHLA_TYPES_HH_
+#define _TRICKHLA_TYPES_HH_
+
+// System include files.
+#include <limits.h>
+#include <map>
+#include <queue>
+#include <stdint.h>
+#include <string>
+#include <vector>
+
+// HLA include files.
+#include "TrickHLA/StandardsSupport.hh"
+#include RTI1516_HEADER
+
+namespace TrickHLA
+{
+
+/*!
+@enum DataUpdateEnum
+@brief Define the TrickHLA attribute update reflection type.
+*/
+typedef enum {
+
+   CONFIG_NONE         = 0x0001, ///< No configuration.
+   CONFIG_INITIALIZE   = 0x0002, ///< Dynamic simulation initialization.
+   CONFIG_INTERMITTENT = 0x0004, ///< Intermittent updates.
+   CONFIG_CYCLIC       = 0x0008, ///< Cyclic updates.
+   CONFIG_MAX_VALUE    = ( CONFIG_NONE
+                        + CONFIG_INITIALIZE
+                        + CONFIG_INTERMITTENT
+                        + CONFIG_CYCLIC ) ///< Maximum configuration value.
+
+} DataUpdateEnum;
+
+/*!
+@enum EncodingEnum
+@brief Define the TrickHLA data encoding type.
+*/
+typedef enum {
+
+   ENCODING_FIRST_VALUE    = 0, ///< Set to the First value in the enumeration.
+   ENCODING_UNKNOWN        = 0, ///< Default encoding. The software automatically determines it for you. Otherwise, specify to one of the below values.
+   ENCODING_BIG_ENDIAN     = 1, ///< Big Endian.
+   ENCODING_LITTLE_ENDIAN  = 2, ///< Little Endian.
+   ENCODING_LOGICAL_TIME   = 3, ///< 64-bit Big Endian encoded integer representing microseconds.
+   ENCODING_C_STRING       = 4, ///< Null terminated C string (i.e. char *).
+   ENCODING_UNICODE_STRING = 5, ///< Variable length HLA Unicode string encoding.
+   ENCODING_ASCII_STRING   = 6, ///< Variable length HLA ASCII string encoding.
+   ENCODING_OPAQUE_DATA    = 7, ///< Variable length HLA Opaque data for a "char *" type.
+   ENCODING_BOOLEAN        = 8, ///< Boolean c++ type configured in the FOM to use HLAboolean HLA data type encoded as an HLAinteger32BE.
+   ENCODING_NO_ENCODING    = 9, ///< Fixed length array of data for "char *" type sent as is.
+   ENCODING_LAST_VALUE     = 9  ///< Set to the Last value in the enumeration.
+
+} EncodingEnum;
+
+/*!
+@enum TransportationEnum
+@brief Define the TrickHLA data transportation type.
+*/
+typedef enum {
+
+   TRANSPORT_FIRST_VALUE      = 0, ///< Set to the First value in the enumeration.
+   TRANSPORT_SPECIFIED_IN_FOM = 0, ///< Indicates which attributes or interactions use the order specified in the FOM.
+   TRANSPORT_TIMESTAMP_ORDER  = 1, ///< Indicates which attributes or interactions are Timestamp Order
+   TRANSPORT_RECEIVE_ORDER    = 2, ///< Indicates which attributes or interactions are Receive Order
+   TRANSPORT_LAST_VALUE       = 3  ///< Set to the Last value in the enumeration.
+
+} TransportationEnum;
+
+/*!
+@enum LagCompensationEnum
+@brief Define the TrickHLA latency (lag) compensation type.
+*/
+typedef enum {
+
+   LAG_COMPENSATION_FIRST_VALUE  = 0, ///< Set to the First value in the enumeration.
+   LAG_COMPENSATION_NONE         = 0, ///< No lag compensation.
+   LAG_COMPENSATION_SEND_SIDE    = 1, ///< Send-side lag compensation.
+   LAG_COMPENSATION_RECEIVE_SIDE = 2, ///< Receive-side lag compensation.
+   LAG_COMPENSATION_LAST_VALUE   = 2  ///< Set to the Last value in the enumeration.
+
+} LagCompensationEnum;
+
+/*!
+@enum DebugLevelEnum
+@brief Define the TrickHLA level for debug messages.
+*/
+typedef enum {
+
+   // NOTE: As the debug levels increase in numeric value, so does the amount of
+   // output printed to send_hs...
+   DEBUG_LEVEL_NO_TRACE   = 0,  ///< Default: No TrickHLA output is displayed; user messages will still be printed.
+   DEBUG_LEVEL_0_TRACE    = 0,  ///< Default: No TrickHLA output is displayed; user messages will still be printed.
+   DEBUG_LEVEL_1_TRACE    = 1,  ///< Adds initialization complete and Time Advance Grant messages.
+   DEBUG_LEVEL_2_TRACE    = 2,  ///< Adds initialization messages as well as the standard complement of execution messages.
+   DEBUG_LEVEL_3_TRACE    = 3,  ///< Adds Ownership Transfer messages.
+   DEBUG_LEVEL_4_TRACE    = 4,  ///< Adds HLA Time Advancement, Freeze job, and additional Shutdown job messages.
+   DEBUG_LEVEL_5_TRACE    = 5,  ///< Adds additional HLA Time Advancement, Interaction, InitSyncPts and SyncPts messages.
+   DEBUG_LEVEL_6_TRACE    = 6,  ///< Adds Packing/LagCompensation subclass messages.
+   DEBUG_LEVEL_7_TRACE    = 7,  ///< Adds the names of all Attributes/Parameters sent to other federates.
+   DEBUG_LEVEL_8_TRACE    = 8,  ///< Adds FederateAmbassador and RTI callback messages.
+   DEBUG_LEVEL_9_TRACE    = 9,  ///< Adds Trick Ref-Attributes and RTI Handles (both during initialization).
+   DEBUG_LEVEL_10_TRACE   = 10, ///< Adds internal state of all Attributes and Parameters.
+   DEBUG_LEVEL_11_TRACE   = 11, ///< Adds buffer contents of all Attributes and Parameters.
+   DEBUG_LEVEL_FULL_TRACE = 11  ///< Outputs All debug messages.
+
+} DebugLevelEnum;
+
+/*!
+@enum DebugSourceEnum
+@brief Define the TrickHLA source for debug messages.
+*/
+typedef enum {
+
+   DEBUG_SOURCE_FED_AMB          = 0x00000001, ///< Adds TrickHLA::FedAmb debug messages
+   DEBUG_SOURCE_FEDERATE         = 0x00000002, ///< Adds TrickHLA::Federate debug messages
+   DEBUG_SOURCE_MANAGER          = 0x00000004, ///< Adds TrickHLA::Manager debug messages
+   DEBUG_SOURCE_OBJECT           = 0x00000008, ///< Adds TrickHLA::Object (and subclass) debug messages
+   DEBUG_SOURCE_INTERACTION      = 0x00000010, ///< Adds TrickHLA::Interaction (and subclass) debug messages
+   DEBUG_SOURCE_ATTRIBUTE        = 0x00000020, ///< Adds TrickHLA::Attribute debug messages
+   DEBUG_SOURCE_PARAMETER        = 0x00000040, ///< Adds TrickHLA::Parameter debug messages
+   DEBUG_SOURCE_SYNCPOINT        = 0x00000080, ///< Adds TrickHLA::SyncPoint debug messages
+   DEBUG_SOURCE_OWNERSHIP        = 0x00000100, ///< Adds TrickHLA::OwnershipHandler debug messages
+   DEBUG_SOURCE_PACKING          = 0x00000200, ///< Adds TrickHLA::Packing (and subclass) debug messages
+   DEBUG_SOURCE_LAG_COMPENSATION = 0x00000400, ///< Adds TrickHLA::LagCompensation (and subclass) debug messages
+   DEBUG_SOURCE_ALL_MODULES      = 0x7FFFFFFF  ///< Default: Add debug messages from all code modules
+
+} DebugSourceEnum;
+
+/*!
+@enum FederateJoinEnum
+@brief Define the TrickHLA federate join enumeration values.
+*/
+typedef enum {
+
+   FEDERATE_JOIN_FIRST_VALUE = 0, ///< Set to the First value in the enumeration.
+   FEDERATE_JOIN_NOMINAL     = 0, ///< Normal Federate Execution (neither late joiner nor federate restore).
+   FEDERATE_JOIN_EARLY       = 0, ///< Early joining Federate.
+   FEDERATE_JOIN_LATE        = 1, ///< Late Joining Federate
+   FEDERATE_JOIN_RESTORING   = 2, ///< Federate Restore
+   FEDERATE_JOIN_UNKNOWN     = 3, ///< Unknown Federate state
+   FEDERATE_JOIN_LAST_VALUE  = 3  ///< Set to the Last value in the enumeration.
+
+} FederateJoinEnum;
+
+/*!
+@enum ExecutionControlEnum
+@brief Define the TrickHLA execution control enumeration values.
+*/
+typedef enum {
+
+   EXECUTION_CONTROL_FIRST_VALUE   = 0, ///< Set to the First value in the enumeration.
+   EXECUTION_CONTROL_UNINITIALIZED = 0, ///< Execution control state is uninitialized.
+   EXECUTION_CONTROL_INITIALIZING  = 1, ///< Execution control state is initializing.
+   EXECUTION_CONTROL_RUNNING       = 2, ///< Execution control state is running.
+   EXECUTION_CONTROL_FREEZE        = 3, ///< Execution control state is freeze.
+   EXECUTION_CONTROL_RESTART       = 4, ///< Execution control state is restart.
+   EXECUTION_CONTROL_RECONFIG      = 5, ///< Execution control state is reconfigure.
+   EXECUTION_CONTROL_SHUTDOWN      = 6, ///< Execution control state is shutdown.
+   EXECUTION_CONTROL_LAST_VALUE    = 6  ///< Set to the Last value in the enumeration.
+
+} ExecutionControlEnum;
+
+/*!
+@enum ModeTransitionEnum
+@brief Define the TrickHLA Mode Transition state enumeration values.
+
+The TrickHLA::ModeTransitionEnum enumeration defines the possible mode
+transition for the TrickHLA::ExecutionControl executive.  These mode requests
+are important in the execution control process involving mode requests from
+any federate participating in a controlled federation execution and usually
+processed by the Master federate.
+*/
+// Define the Mode Transition enumeration values.
+typedef enum {
+
+   MODE_TRANSITION_FIRST_VALUE   = 0, ///< Not a valid mode transition.
+   MODE_TRANSITION_UNINITIALIZED = 0, ///< Not a valid mode transition.
+   MODE_TRANSITION_INITIALIZING  = 1, ///< Not a valid mode transition.
+   MODE_TRANSITION_GOTO_RUN      = 2, ///< Mode transition to RUN mode.
+   MODE_TRANSITION_GOTO_FREEZE   = 3, ///< Mode transition to FREEZE mode.
+   MODE_TRANSITION_GOTO_RESTART  = 4, ///< Mode transition to RESTART mode.
+   MODE_TRANSITION_GOTO_RECONFIG = 5, ///< Mode transition to RECONFIG mode.
+   MODE_TRANSITION_GOTO_SHUTDOWN = 6, ///< Mode transition to SHUTDOWN mode.
+   MODE_TRANSITION_LAST_VALUE    = 6  ///< Same as shutdown.
+
+} ModeTransitionEnum;
+
+/*!
+@enum SyncPntStateEnum
+@brief Define the TrickHLA synchronization point state enumeration values.
+
+The SyncPntStateEnum enumeration defines the possible synchronization
+point (sync-point) synchronization states for a TrickHLA based federate.
+These sync-point states correspond directly to the sync-point states in HLA.
+*/
+typedef enum {
+
+   SYNC_PNT_STATE_FIRST_VALUE  = 0,      ///< Set to the First value in the enumeration.
+   SYNC_PNT_STATE_ERROR        = 0,      ///< Sync-point error.
+   SYNC_PNT_STATE_EXISTS       = 1,      ///< Sync-point exists.
+   SYNC_PNT_STATE_REGISTERED   = 2,      ///< Sync-point registered.
+   SYNC_PNT_STATE_ANNOUNCED    = 3,      ///< Sync-point announced.
+   SYNC_PNT_STATE_ACHIEVED     = 4,      ///< Sync-point achieved.
+   SYNC_PNT_STATE_SYNCHRONIZED = 5,      ///< Sync-point synchronized.
+   SYNC_PNT_STATE_LAST_VALUE   = 5,      ///< Set to the Last value in the enumeration.
+   SYNC_PNT_STATE_UNKNOWN      = INT_MAX ///< Unknown state.
+
+} SyncPntStateEnum;
+
+typedef std::auto_ptr< RTI1516_NAMESPACE::RTIambassador > TrickRTIAmbPtr;
+
+typedef std::queue< RTI1516_NAMESPACE::AttributeHandleValueMap > HLAAttributeMapQueue;
+
+typedef std::map< RTI1516_NAMESPACE::ObjectInstanceHandle, std::wstring > TrickHLAObjInstanceNameMap;
+
+typedef std::vector< std::string > VectorOfStrings;
+
+typedef std::vector< std::wstring > VectorOfWstrings;
+
+//
+// Helper methods for these enumerations.
+//
+// TrickHLA::ExecutionModeEnum methods.
+/*! @brief Convert an ExecutionModeEnum value into a printable string.
+ *  @return Execution control mode as a printable string.
+ *  @param mode Execution configuration run mode enumeration value. */
+std::string execution_control_enum_to_string( ExecutionControlEnum mode );
+
+/*! @brief Convert an ExecutionModeEnum value into a 16 bit integer.
+ *  @return Execution control mode as a 16 bit integer representation.
+ *  @param mode Execution control mode enumeration value. */
+int16_t execution_control_enum_to_int16( ExecutionControlEnum mode );
+
+/*! @brief Convert a 16 bit integer to an ExecutionModeEnum value.
+ *  @return Execution control mode as enumeration value.
+ *  @param int_mode Execution control mode as integer. */
+ExecutionControlEnum execution_control_int16_to_enum( int16_t int_mode );
+
+// TrickHLA::ModeTransitionEnum methods.
+/*! @brief Convert an ModeTransitionEnum value into a printable string.
+ *  @return Mode transition as a printable string.
+ *  @param mode Mode transition enumeration value. */
+std::string mode_transition_enum_to_string( ModeTransitionEnum mode );
+
+/*! @brief Convert an ModeTransitionEnum value into a 16 bit integer.
+ *  @return Mode transition as a 16 bit integer representation.
+ *  @param mode Mode transition enumeration value. */
+int16_t mode_transition_enum_to_int16( ModeTransitionEnum mode );
+
+/*! @brief Convert a 16 bit integer to an ModeTransitionEnum value.
+ *  @return Mode transition as enumeration value.
+ *  @param int_mode Mode transition as integer. */
+ModeTransitionEnum mode_transition_int16_to_enum( int16_t int_mode );
+
+// TrickHLA::SyncPntStateEnum methods
+/*! @brief Convert a Synchronization Point State enum value into a printable string.
+ *  @return TrickHLA sync point state as a printable string.
+ *  @param state Sync point state enumeration value to convert. */
+std::string sync_pnt_state_enum_to_string( SyncPntStateEnum state );
+
+/*! @brief Convert a Synchronization Point State enum value into a 16 bit integer.
+ *  @return TrickHLA sync point state as a 16 bit integer.
+ *  @param state Sync point state enumeration value to convert. */
+int16_t sync_pnt_state_enum_to_int16( SyncPntStateEnum state );
+
+/*! @brief Convert an integer value to a Synchronization Point State enumeration value.
+ *  @return TrickHLA Synchronization Point State enum value.
+ *  @param int_state Sync point state value as a 16 bit integer. */
+SyncPntStateEnum sync_pnt_state_int16_to_enum( int16_t int_state );
+
+} // namespace TrickHLA
+
+#endif // _TRICKHLA_TYPES_HH_

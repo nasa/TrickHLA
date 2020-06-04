@@ -1,0 +1,90 @@
+/*!
+@file models/sine/include/SineObjectDeleted.hh
+@ingroup TrickHLAModel
+@brief Callback class the user writes to do something once the object has been
+deleted from the RTI.
+
+@copyright Copyright 2020 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+No copyright is claimed in the United States under Title 17, U.S. Code.
+All Other Rights Reserved.
+
+\par<b>Responsible Organization</b>
+Simulation and Graphics Branch, Mail Code ER7\n
+Software, Robotics & Simulation Division\n
+NASA, Johnson Space Center\n
+2101 NASA Parkway, Houston, TX  77058
+
+@trick_parse{everything}
+
+@python_module{TrickHLAModel}
+
+@tldh
+@trick_link_dependency{sine/src/SineObjectDeleted.o}
+
+@revs_title
+@revs_begin
+@rev_entry{Dan Dexter, NASA ER7, TrickHLA, June 2008, --, Version 2 origin.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2020, --, Version 3 rewrite.}
+@revs_end
+
+*/
+
+#ifndef _TRICKHLA_MODLE_SINE_OBJECT_DELETED_HH_
+#define _TRICKHLA_MODLE_SINE_OBJECT_DELETED_HH_
+
+// Forward declarations.
+namespace TrickHLA {
+class Object;
+}
+
+// Trick include files.
+#include "TrickHLA/ObjectDeleted.hh"
+
+namespace TrickHLAModel
+{
+
+class SineObjectDeleted : public TrickHLA::ObjectDeleted
+{
+   // Let the Trick input processor access protected and private data.
+   // InputProcessor is really just a marker class (does not really
+   // exists - at least yet).  This friend statement just tells Trick
+   // to go ahead and process the protected and private data as well
+   // as the usual public data.
+   friend class InputProcessor;
+   // IMPORTANT Note: you must have the following line too.
+   // Syntax: friend void init_attr<namespace>__<class name>();
+   friend void init_attrTrickHLAModel__SineObjectDeleted();
+
+ public:
+   //
+   // Public constructors and destructor.
+   //
+   /*! @brief Default constructor for the TrickHLAModel SineObjectDeleted class. */
+   SineObjectDeleted();
+   /*! @brief Destructor for the TrickHLAModel SineObjectDeleted class. */
+   virtual ~SineObjectDeleted();
+
+   //-----------------------------------------------------------------
+   // These functions must be defined to make this a concrete class.
+   //-----------------------------------------------------------------
+
+   /*! @brief Callback routine implementation to report that this object has
+    *  been deleted from the RTI.
+    *  @param obj Object which was deleted. */
+   void deleted(TrickHLA::Object *obj);
+
+ private:
+   // Do not allow the copy constructor or assignment operator.
+   /*! @brief Copy constructor for SineObjectDeleted class.
+    *  @details This constructor is private to prevent inadvertent copies. */
+   SineObjectDeleted(const SineObjectDeleted &rhs);
+   /*! @brief Assignment operator for SineObjectDeleted class.
+    *  @details This assignment operator is private to prevent inadvertent copies. */
+   SineObjectDeleted &operator=(const SineObjectDeleted &rhs);
+
+};
+
+} // namespace TrickHLAModel
+
+#endif // _TRICKHLA_MODLE_SINE_OBJECT_DELETED_HH_: Do NOT put anything after this line!

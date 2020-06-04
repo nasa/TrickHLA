@@ -1,0 +1,59 @@
+\chapter{Federation Restore}
+\label{sec:hla_trick_fed_restore}
+
+A federation restore must occur in {\tt freeze} mode (see section~\ref{sec:interactive_restore} {\tt Interactive Restore} below)
+or it must occur at simulation startup (see section~\ref{sec:prog_restore} {\tt Programmatic Restore}  below).
+
+% ------------------------------------
+\section{Interactive Restore }
+\label{sec:interactive_restore}
+
+Perhaps the most straightforward way to perform a federation restore is via the Trick Simulation Control Panel.
+Simply click the {\tt Freeze} button on a federate's simulation control panel, and a freeze interaction is sent
+so that all federates will freeze at the same time (usually one or two lookahead\_time frames after the freeze
+click). Then click the {\tt Load Chkpnt} button to trigger the federation restore. A window will pop up where you 
+can select an existing checkpoint file to be loaded.
+
+See section~\ref{sec:hla_trick_fed_save} {\tt Federaton Save} above for how to dump a checkpoint file. 
+Valid checkpoint file names to load will be of the form:
+
+\begin{verbatim}
+<federation_name>_<user_file_name>
+\end{verbatim}
+
+Each federate will load its own checkpoint file using the chosen file name.
+Simply click the {\tt Start} button on the simulation control panel when you are ready to continue execution.
+
+IMPORTANT: Use the same federate's Trick simulation control panel when clicking {\tt Freeze} and {\tt Start}.
+Each federate may have its own control panel, but you must use the same control panel that you clicked {\tt Freeze}
+on to then click {\tt Start} on. If you use a different control panel to click the {\tt Start} button, the simulation will most
+likely not be able to continue.
+
+% ------------------------------------
+\section{Programmatic Restore }
+\label{sec:prog_restore}
+
+In the current {\tt TrickHLA} implementation, a programmatic federation restore can be initiated
+ONLY from the first federate which creates the federation (the {\tt master}), and the restore will occur at simulation startup.
+Since the only way to trigger a federation restore in this manner is via
+the input file at the startup of the federation, you must provide
+the name of the file to restore from in each input file and set the
+{\tt restore\_federation} flag to true.
+
+Note that only the {\tt master} federate needs to have the {\tt restore\_federation} flag
+set in the input file, but setting it in every federate's input file is a way to ensure that the federation is restored at startup no matter
+which federate is the {\tt master}.
+
+The only other thing to set is the {\tt THLA.federate.HLA\_save\_directory}, 
+which defaults to the {\tt RUN} directory if left unset.
+
+The following is an example of triggering the federation restore at startup time via the Trick input file:
+
+\begin{verbatim}
+THLA.manager.restore_federation = 1;
+THLA.manager.restore_file_name = "checkpoint.15.000";
+\end{verbatim}
+
+NOTE: You do not have to specify the federation name (prepended to the checkpoint file name) in the {\tt restore\_file\_name}.
+{\tt TrickHLA} will automatically prepend the federation name to the file name you supply if need be. So in the above example, if the federation 
+name is {\tt MyFederation}, then the file that will be loaded is {\tt MyFederation\_checkpoint.15.000} from the {\tt RUN} directory.

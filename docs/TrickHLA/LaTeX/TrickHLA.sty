@@ -1,0 +1,44 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Model-specific style sheet.
+% NOTE: This file contains both human- and machine-generated LaTeX commands.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\NeedsTeXFormat{LaTeX2e}% LaTeX 2.09 can't be used (nor non-LaTeX)
+[1994/12/01]% LaTeX date must be December 1994 or later
+
+% Package definition.
+% Change TrickHLA to package name. Change date and version to reflect updates.
+\ProvidesPackage{TrickHLA}[2007/07/27 b1.0.3 TrickHLA module macros]
+
+
+% Package options. Change TrickHLA to the value of \modelprefix (see below).
+\newif\ifTrickHLAReqt@
+\newif\ifTrickHLAIVV@
+\DeclareOption{Reqt}{\TrickHLAReqt@true}
+\DeclareOption{IVV}{\TrickHLAIVV@true}
+\ProcessOptions\par
+
+% \modelprefix - a short, unique, upper-case prefix used to tag requirements.
+% THE TrickHLA PREFIX MUST CONTAIN ONLY LETTERS.
+% Examples: TIME for the universal time package, MASS for the mass tree.
+\newcommand\modelprefix{TrickHLA}
+
+
+% Include requirement labels if requested
+\ifTrickHLAReqt@
+\input{TrickHLAReqt.def}
+\fi
+
+% Include IV&V labels if requested
+\ifTrickHLAIVV@
+\input{TrickHLAIVV.def}
+\fi
+
+% Include the makefile-generated paths definitions file
+\input{paths.def}
+
+% Define any other model-specific LaTeX commands here.
+
+% \TrickHLA should be changed to a short acronym for the model
+% {TrickHLA} should be changed to the full name of the model
+\newcommand{\TrickHLA}{TrickHLA}

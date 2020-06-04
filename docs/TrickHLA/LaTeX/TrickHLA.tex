@@ -1,0 +1,268 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% File: TrickHLA.tex
+%
+% Purpose: Top level document for TrickHLA
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand\documentHistory{
+{\bf Author} & {\bf Date} & {\bf Description} \\ \hline \hline
+Edwin Z. Crues & June 2020 & TrickHLA Version 3 \\ \hline
+}
+
+\newcommand\DocumentChangeHistory{
+{\bf Revised by} & {\bf Date} & {\bf Description} \\ \hline \hline
+
+% This documentation file's change history includes:
+% "REVISED BY name(s)" & "revision DATE" & "revision DESCRIPTION"
+%  ------------------     -------------     --------------------
+                       &                 &             \\ \hline
+}
+
+\documentclass[twoside,11pt,titlepage]{report}
+
+%
+% Bring in the common page setup
+%
+\usepackage{trickhlaenv}
+
+%
+% Bring in the model-specific commands
+%
+\usepackage{TrickHLA}
+
+%
+% Bring in the graphics environment
+%
+\usepackage{graphicx}
+
+%
+% Bring in the hyper ref environment
+%
+\usepackage[colorlinks]{hyperref}
+%  keywords for pdfkeywords are separated by commas
+\hypersetup{
+   pdftitle={TrickHLA},
+   pdfauthor={Edwin Z. Crues \\ and \\ Daniel E. Dexter},
+   pdfkeywords={Trick, HLA, TrickHLA},
+   pdfsubject={TrickHLA}}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Front matter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{roman}
+
+\docid{DD.mm.20}
+\docrev{1.0}
+\date{June 2020}
+\modelname{\TrickHLA}
+\doctype{}
+\author{Edwin Z. Crues \\ and \\ Daniel E. Dexter}
+\managers{
+  Edwin Z. Crues \\ Project Manager \\
+  Michael T. Red \\ Simulation and Graphics Branch Chief (ER7) \\
+  Robert O. Ambrose \\ Software, Robotics, and Simulation Division Chief}
+\pdfbookmark{Title Page}{titlepage}
+\makeTrickhlaenvTitlepage
+
+\pdfbookmark{Abstract}{abstract}
+\include{TrickHLAAbstract}
+
+\pdfbookmark{Contents}{contents}
+\tableofcontents
+\vfill
+
+\pagebreak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Main Document Body
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{arabic}
+
+%----------------------------------
+\chapter{Introduction}
+%----------------------------------
+\input{TrickHLAIntro}
+
+\section{Identification of Document}
+This document provides a description of and an entry into the \TrickHLA
+middleware model package.  As described above, \TrickHLA provides an interface
+framework between Trick-based simulations and HLA-based distributed simulation
+executions.  This document adheres to the documentation standards defined in
+NASA Software Engineering Requirements Standard \cite{NASA:SWE}.
+
+\section{Scope of Document}
+This document is the top level document in a collection of documents that
+provide information on the following aspects of \TrickHLA :
+\begin{itemize}
+\item requirements,
+\item algorithms and design,
+\item verification and validation, and
+\item use
+\end{itemize}
+This includes references to associated texts and standards.
+
+\section{Purpose and Objectives of Document}
+The purpose of this document is to provide a thorough understanding of the
+methods by which the \TrickHLA\ was defined, programmed, and verified.
+
+\section{Documentation Status and Schedule}
+The information in this document is current with the \TrickHLAid\ implementation
+of the \TrickHLA\ modules.  Updates will be kept current with module changes.
+
+\begin{tabular}{||l|l|l|} \hline
+\documentHistory
+\end{tabular}
+
+\begin{tabular}{||l|l|l|} \hline
+\DocumentChangeHistory
+\end{tabular}
+
+\section{Documentation Organization}
+This document is formatted in accordance with the
+NASA Software Engineering Requirements Standard \cite{NASA:SWE}
+and is organized into the following chapters:
+
+\begin{description}
+
+\item[Chapter 1: Introduction] -
+Identifies this document, defines the scope and purpose, present status,
+and provides a description of each major section.
+
+\item[Chapter 2: Related Documentation] -
+Lists the related documentation that is applicable to this project.
+
+\item[Chapter 3: Product Requirements] -
+Describes requirements for the \TrickHLA.
+
+\item[Chapter 4: Product Specification] -
+Describes the underlying theory, architecture, and design of
+the \TrickHLA\ in detail.
+
+\item[Chapter 5: User Guide] -
+Describes how to use the \TrickHLA\ in a Trick simulation.
+
+\item[Chapter 6: Inspection, Verification, and Validation] -
+Contains \TrickHLA\ inspection, verification, and validation
+procedures and results.
+
+\end{description}
+
+\chapter{Related Documentation}
+
+\section{Parent Documents}
+
+The following document is parent to this document:
+\begin{itemize}
+\item{None}
+\end{itemize}
+
+\section{Applicable Documents}
+The following documents are referenced herein and are directly
+applicable to this document:
+
+\begin{itemize}
+\item{\href{file:TrickHLAReqt.pdf}
+           {\em \TrickHLA\ Product Requirements}}
+\cite{trickhlaenv:TrickHLAReqt}
+
+\item{\href{file:TrickHLASpec.pdf}
+           {\em \TrickHLA\ Product Specification}}
+\cite{trickhlaenv:TrickHLASpec}
+
+\item{\href{file:TrickHLAUser.pdf}
+           {\em \TrickHLA\ User Guide}}
+\cite{trickhlaenv:TrickHLAUser}
+
+\item{\href{file:TrickHLAIVV.pdf}
+           {\em \TrickHLA\ Inspection, Verification, and Validation}}
+\cite{trickhlaenv:TrickHLAIVV}
+
+\end{itemize}
+
+The following specific documents are applicable to this document:
+
+\begin{itemize}
+\item{\em IEEE Standard for Modeling and Simulation (M\&S) High Level
+          Architecture (HLS) - Federate Inferface Specification}
+\cite{IEEE1516:API}
+
+\item{\em IEEE Standard for Modeling and Simulation (M\&S) High Level
+              Architecture (HLS) - Object Model Template (OMT) Specification}
+\cite{IEEE1516:OMT}
+
+\end{itemize}
+
+The following additional documents are applicable to this document:
+\begin{itemize}
+\item{\em Trick Simulation Environment: Installation Guide}
+\cite{Trick:Install}
+
+\item{\em Trick Simulation Environment: Tutorial}
+\cite{Trick:Tutorial}
+
+\item{\em Trick Simulation Environment: Documentation}
+\cite{Trick:Documentation}
+
+\item{\em NASA Software Engineering Requirements}
+\cite{NASA:SWE}
+
+\end{itemize}
+
+\section{Information Documents}
+The following documents provide supporting material for understanding the
+concepts in this document:
+
+\begin{itemize}
+\item{\em IEEE Standard for Modeling and Simulation (M\&S) High Level
+          Architecture (HLA) - Framework and Rules}
+\cite{IEEE1516:FRAMEWORK}
+
+\item{\em IEEE Recommended Practice for Distributed Simulation Engineering
+          and Execution Process (DSEEP)}
+\cite{IEEE1730:DSEEP}
+
+\end{itemize}
+
+See the bibliography for the details associated with these references.
+
+
+\chapter{Product Requirements}
+
+This section of the documentation has been rolled out into a
+\href{file:TrickHLAReqt.pdf}{separate document}
+\cite{trickhlaenv:TrickHLAReqt}.
+
+\chapter{Product Specification}
+
+This section of the documentation has been rolled out into a
+\href{file:TrickHLASpec.pdf}{separate document}
+\cite{trickhlaenv:TrickHLASpec}.
+
+\chapter{User Guide}
+
+This section of the documentation has been rolled out into a
+\href{file:TrickHLAUser.pdf}{separate document}
+\cite{trickhlaenv:TrickHLAUser}.
+
+\chapter{Inspection, Verification, and Validation}
+
+This section of the documentation has been rolled out into a
+\href{file:TrickHLAIVV.pdf}{separate document}
+\cite{trickhlaenv:TrickHLAIVV}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Bibliography
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\pdfbookmark{Bibliography}{bibliography}
+\bibliography{trickhlaenv,TrickHLA,IEEE1516}
+\bibliographystyle{plain}
+
+%\pagebreak
+%\appendix
+
+\end{document}

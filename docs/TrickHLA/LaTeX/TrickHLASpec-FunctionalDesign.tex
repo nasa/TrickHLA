@@ -1,0 +1,716 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% File: TrickHLASpec-FunctionalDesign.tex
+%
+% Purpose: TrickHLA Product Specification -- Functional Design chapter
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Functional Design}\label{sec:functional_design}
+
+This chapter presents the detailed design of the \TrickHLA\ model.
+We present the model in terms of its C++ classes,
+grouping them into low, middle, and high-level classes.
+We proceed from the bottom up.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Low Level Classes and Types}
+
+These low level classes are not particularly interesting.
+The are mainly miscellaneous utilities and low level data types
+used in other parts of the system.
+
+% -----------------------------------------------------------------------
+\subsection{{\tt TrickHLA::Utilities}}
+
+\paragraph{Description.}
+This class contains miscellaneous utility methods.
+In the current version, these are all static byteswapping routines.
+
+\paragraph{Files.}
+The class files are shown below.
+   
+{
+  \scriptsize
+  \begin{tabular}{|l|l|} 
+    \hline
+    file name & description \\
+    \hline \hline
+    {\tt TrickHLA/Utilities.hh} 
+    & standard C++ header file
+    \\ \hline
+    {\tt TrickHLA/Utilities.cpp} 
+    & implementation of the byteswap methods
+    \\ \hline
+  \end{tabular}
+}
+
+% -----------------------------------------------------------------------
+\subsection{{\tt TrickHLA::StringUtilities}}
+
+\paragraph{Description.}
+A set of static string utilities.
+In the current version, these convert between C, C++ and wide
+string representations.
+
+\paragraph{Files.}
+The class files are shown below.
+   
+{
+  \scriptsize
+  \begin{tabular}{|l|l|} 
+    \hline
+    file name & description \\
+    \hline \hline
+    {\tt TrickHLA/StringUtilities.hh} 
+    & standard C++ header file
+      (all the utilities are defined inline)
+    \\ \hline
+  \end{tabular}
+}
+
+% -----------------------------------------------------------------------
+\subsection{{\tt TrickHLA::KnownFederate}}
+
+\paragraph{Description.}
+A class that holds information about the known federates in a federation.
+This class is used by the \TrickHLA\ model to wait for all known federates
+before starting the simulation.
+The class is really meant as a structure.  Its data fields are public.
+The fields specify the known federate's {\em name} and whether or not
+the federate is required before the simulation starts.
+
+\paragraph{Files.}
+The class files are shown below.
+   
+{
+  \scriptsize
+  \begin{tabular}{|l|l|} 
+    \hline
+    file name & description \\
+    \hline \hline
+    {\tt TrickHLA/KnownFederate.hh} 
+    & standard C++ header file
+    \\ \hline
+  \end{tabular}
+}
+
+% -----------------------------------------------------------------------
+\subsection{{\tt TrickHLA::Int64Interval}}
+
+\paragraph{Description.}
+An implementation of HLA time intervals based on a 64 bit integer that stores
+microseconds.
+It is a subclass of the HLA class, {\tt LogicalTimeInterval}.
+It implements all the methods required by that class.
+
+\paragraph{Files.}
+The class files are shown below.
+   
+{
+  \scriptsize
+  \begin{tabular}{|l|l|} 
+    \hline
+    file name & description \\
+    \hline \hline
+    {\tt TrickHLA/Int64Interval.hh} 
+    & standard C++ header file
+    \\ \hline
+    {\tt TrickHLA/Int64Interval.cpp} 
+    & method implementation file
+    \\ \hline
+  \end{tabular}
+}
+
+% -----------------------------------------------------------------------
+\subsection{{\tt TrickHLA::Int64Time}}
+\paragraph{Description.}
+An implementation of HLA time based on a 64 bit integer that stores
+microseconds.
+It is a subclass of the HLA class, {\tt LogicalTime}.
+It implements all the methods required by that class.
+
+\paragraph{Files.}
+The class files are shown below.
+   
+{
+  \scriptsize
+  \begin{tabular}{|l|l|} 
+    \hline
+    file name & description \\
+    \hline \hline
+    {\tt TrickHLA/Int64Time.hh} 
+    & standard C++ header file
+    \\ \hline
+    {\tt TrickHLA/Int64Time.cpp} 
+    & method imlemenation file
+    \\ \hline
+  \end{tabular}
+}
+
+% -----------------------------------------------------------------------
+\subsection{{\tt TrickHLA::Types}}
+
+\paragraph{Description.}
+enums and typedefs used by various parts of the system
+
+\paragraph{Files.}
+The class files are shown below.
+   
+{
+  \scriptsize
+  \begin{tabular}{|l|l|} 
+    \hline
+    file name & description \\
+    \hline \hline
+    {\tt TrickHLA/Types.hh} 
+    & enum definitions
+    \\ \hline
+  \end{tabular}
+}
+
+% -----------------------------------------------------------------------
+\subsection{{\tt TrickHLA::DebugHandler}}
+
+\paragraph{Description.}
+A class which defines the verbosity level and the code sections which are to emit
+messages. Unless overridden in the input file, no messsages are emitted by the
+\TrickHLA\ software -- only the simulation messages, if any, will get emitted.
+
+\paragraph{Files.}
+The class files are shown below.
+   
+{
+  \scriptsize
+  \begin{tabular}{|l|l|} 
+    \hline
+    file name & description \\
+    \hline \hline
+    {\tt TrickHLA/DebugHandler.hh} 
+    & standard C++ header file
+    \\ \hline
+  \end{tabular}
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Middle Level Classes}
+
+The middle level classes represent core HLA abstractions:
+synchronization points,
+objects, attributes, interactions, and parameters.
+
+% -----------------------------------------------------------------------
+\subsection{{\tt TrickHLA::SyncPntListBase}}
+
+\paragraph{Description.}
+This class provides a mechanism for storing and managing HLA
+synchronization points.
+A set of public methods is exported that enable synchronization points
+to be added to the system, achieved, acknowledged, and queried.
+
+\paragraph{Files.}
+The class files are shown below.
+   
+{
+  \scriptsize
+  \begin{tabular}{|l|l|} 
+    \hline
+    file name & description \\
+    \hline \hline
+    {\tt TrickHLA/SyncPntListBase.hh} 
+    & standard C++ header file
+    \\ \hline
+    {\tt TrickHLA/SyncPntListBase.cpp} 
+    & method implementation file
+    \\ \hline
+  \end{tabular}
+}
+
+% -----------------------------------------------------------------------
+\subsection{{\tt TrickHLA::Object}}
+
+\paragraph{Description.}
+This class represents HLA objects.
+It is large class with many methods.  
+The higher level classes delegate many tasks to this class.
+The public methods associate the object with the high-level
+{\tt TrickHLA::Manager} class, handle name reservation, publishing,
+subscribing, object registration, instance removal,
+publishing and subscribing of Trick variables,
+ownership transfer, object deletion, and lag compensation.
+Lag compensation and ownership transfer are delegated to associated
+helper classes.
+It also exports method related to its constituent attributes which are
+referenced through a private array of {\tt TrichHLA::Attribute} instances.
+
+\paragraph{Files.}
+The class files are shown below.
+   
+{
+  \scriptsize
+  \begin{tabular}{|l|l|} 
+    \hline
+    file name & description \\
+    \hline \hline
+    {\tt TrickHLA/Object.hh} 
+    & standard C++ header file
+    \\ \hline
+    {\tt TrickHLA/Object.cpp} 
+    & method implemetation file
+    \\ \hline
+  \end{tabular}
+}
+
+% -----------------------------------------------------------------------
+\subsection{{\tt TrickHLA::Attribute}}
+
+\paragraph{Description.}
+This class represents an HLA attribute.
+
+\paragraph{Files.}
+The class files are shown below.
+   
+{
+  \scriptsize
+  \begin{tabular}{|l|l|} 
+    \hline
+    file name & description \\
+    \hline \hline
+    {\tt TrickHLA/Attribute.hh} 
+    & standard C++ header file
+    \\ \hline
+    {\tt TrickHLA/AttributeNoICG.hh} 
+    & C++ header file that is not preprocessed by Trick
+    \\ \hline
+    {\tt TrickHLA/Attribute.cpp} 
+    & method implementation file
+    \\ \hline
+  \end{tabular}
+}
+
+% -----------------------------------------------------------------------
+\subsection{{\tt TrickHLA::Interaction}}
+
+\paragraph{Description.}
+This class represents an HLA interaction.
+Its methods are responsible for sending interactions to remote federates
+and receiving remotely generated interations.  
+The logic for handling incoming interactions is delegated to a
+helper class.
+
+\paragraph{Files.}
+The class files are shown below.
+
+{
+  \scriptsize
+  \begin{tabular}{|l|l|} 
+    \hline
+    file name & description \\
+    \hline \hline
+    {\tt TrickHLA/Interaction.hh} 
+    & standard C++ header file
+    \\ \hline
+    {\tt TrickHLA/Interaction.cpp} 
+    & method implemetation file
+    \\ \hline
+  \end{tabular}
+}
+
+% -----------------------------------------------------------------------
+\subsection{{\tt TrickHLA::Parameter}}
+
+\paragraph{Description.}
+This class represents HLA parameters of an interaction.
+The public methods support manipulation of the parameter's
+FOM name, HLA handle, and encoded and decoded values.
+
+\paragraph{Files.}
+The class files are shown below.
+   
+{
+  \scriptsize
+  \begin{tabular}{|l|l|} 
+    \hline
+    file name & description \\
+    \hline \hline
+    {\tt TrickHLA/Parameter.hh} 
+    & standard C++ header file
+    \\ \hline
+    {\tt TrickHLA/Parameter.cpp} 
+    & method imlementation file
+    \\ \hline
+  \end{tabular}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Upper Level Classes}
+
+The high level classes represent \TrickHLA\ functionality.
+Some of these classes must be subclasses by simulation developers
+and others are not intended for direct use by developers at all but are
+rather invoked as Trick jobs from the default \TrickHLA\ 
+{\ttfamily sim\_object}.
+
+% -----------------------------------------------------------------------
+\subsection{{\tt TrickHLA::Packing}}
+
+\paragraph{Description.}
+This class is a base class from which simulation developers may
+incorporate their own pack/unpack functionality into the \TrickHLA\ model.
+The virtual methods {\tt pack()} and {\tt unpack()} have default implementations
+that will terminate the simulation, therefore you must subclass the base class
+in order to use it, overriding the two methods
+
+The \TrickHLA\ infrastructure invokes the {\tt pack()} method prior to
+sending data to remote federates, and it invokes {\tt unpack()} upon receiving
+data from remote federates.
+
+\paragraph{Files.}
+The class files are shown below.
+   
+{
+  \scriptsize
+  \begin{tabular}{|l|l|} 
+    \hline
+    file name & description \\
+    \hline \hline
+    {\tt TrickHLA/Packing.hh} 
+    & standard C++ header file
+    \\ \hline
+    {\tt TrickHLA/Packing.cpp} 
+    & method imlementation file
+    \\ \hline
+  \end{tabular}
+}
+
+% -----------------------------------------------------------------------
+\subsection{{\tt TrickHLA::OwnershipHandler}}
+
+\paragraph{Description.}
+This class handles HLA attribute ownerhip transfer.
+It does so by queueing up transfer requests.  
+The queued requests are processed by a job scheduled in the
+default \TrickHLA\ {\tt sim\_object}.
+Ownership may be divested using the {\tt push\_ownership()} method.
+It may be acquired by useing the {\tt pull\_ownership()} method.
+The actual work of pushing/pulling ownership is delegated to
+ownership-related methods in the associated {\tt TrickHLA::Object} instance.
+
+\paragraph{Files.}
+The class files are shown below.
+   
+{
+  \scriptsize
+  \begin{tabular}{|l|l|} 
+    \hline
+    file name & description \\
+    \hline \hline
+    {\tt TrickHLA/OwnershipHandler.hh} 
+    & standard C++ header file
+    \\ \hline
+    {\tt TrickHLA/OwnershipHandler.cpp} 
+    & method implementation file
+    \\ \hline
+  \end{tabular}
+}
+
+% -----------------------------------------------------------------------
+\subsection{{\tt TrickHLA::LagCompensation}}
+
+\paragraph{Description.}
+This is a base class that allows simulation developers to insert logic
+that compensates for HLA-induced lags when attribute ownership is transfered
+from one federate to another.
+The two methods,
+{\tt send\_lag\_compensation()} and {\tt receive\_lag\_compensation()}
+are mutually exclusive.
+An object is configured to have send-side, receive-side, or no lag compensation.
+A simulation developer must subclass this base class, create an instance
+of it in the simulation {\tt S\_define} file, associate that instance
+with a particular object, and indicate whether the compensation is send-side
+or receiving-side compensation for the \TrickHLA\ compensation logic to work.
+This compensation logic is invoked jobs in the default \TrickHLA\ 
+{\tt sim\_object}.  These jobs defer to the {\tt TrickHLA::Object} class 
+which in turn invokes application-specific lag compensation methods (if any).
+
+\paragraph{Files.}
+The class files are shown below.
+   
+{
+  \scriptsize
+  \begin{tabular}{|l|l|} 
+    \hline
+    file name & description \\
+    \hline \hline
+    {\tt TrickHLA/LagCompensation.hh} 
+    & standard C++ header file
+    \\ \hline
+    {\tt TrickHLA/LagCompensation.cpp} 
+    & method implementation file
+    \\ \hline
+  \end{tabular}
+}
+
+% -----------------------------------------------------------------------
+\subsection{{\tt TrickHLA::InteractionHandler}}
+
+\paragraph{Description.}
+This class handles the sending and receiving of HLA insteractions.
+
+Incoming interactions are dispatched from the federate ambassador
+to the manager class (see below) which in turn delegates responsibility
+to a corresponding instance of the {\tt TrickHLA::Interaction} class
+which finally delegates to the associted application-specific
+interaction handler.
+Application-specific handlers must subclass this class.
+
+This class implements several methods for sending interactions.  
+These may be called from simulation code, or they may be scheduled as
+Trick jobs in the {\tt S\_define} file.
+
+\paragraph{Files.}
+The class files are shown below.
+   
+{
+  \scriptsize
+  \begin{tabular}{|l|l|} 
+    \hline
+    file name & description \\
+    \hline \hline
+    {\tt TrickHLA/InteractionHandler.hh} 
+    & standard C++ header file
+    \\ \hline
+    {\tt TrickHLA/InteractionHandler.cpp} 
+    & method implementation file
+    \\ \hline
+  \end{tabular}
+}
+
+% -----------------------------------------------------------------------
+\subsection{{\tt IMSim::FreezeInteractionHandler}}
+
+\paragraph{Description.}
+NOTE: This section needs to be removed.  This is now part of the DSES and
+IMSim {\ttfamily ExecutionControl} classes.
+
+This class handles the sending and receiving of Freeze Interactions in
+TimeStamp Order. It is available only when using version 2 of the multiphase
+initialization (by specifiying "{\tt THLA.manager.sim\_initialization\_scheme = THLA\_MULTIPHASE\_INIT\_V2;}"
+in the input file).
+
+It is a subclass of {\tt TrickHLAInteractionHandler}, specialized to 
+send and receive an interaction that will suspend the federation execution. It 
+requires that the {\tt THLA.federate.check\_freeze\_time()} routine is present 
+in the {\tt S\_define} file (see Figure~\ref{fig:default-sim-object}).
+
+When the user wishes to send a {\tt Freeze Interaction}, this class will check 
+if the supplied time is valid. If the supplied time is a valid future time, 
+this class sends out an interaction for this future time.
+
+If no time was supplied, the next available cooridinated {\tt freeze} time is 
+computed and sent out as the {\tt interaction time}. Note: This time 
+computation takes into account interaction times sent by late-joining federates.
+
+All federates will go into {\tt freeze} mode at the bottom of the 
+frame specified by the interaction time.
+
+The user is responsible for {\tt un-freezing} the sim after the {\tt freeze} 
+mode work has completed.
+
+This class implements methods for sending and receiving of these specialized 
+interactions. These may be called from simulation code, or they may be 
+scheduled as Trick jobs in the {\tt S\_define} file.
+
+\paragraph{Files.}
+The class files are shown below.
+
+{
+  \scriptsize
+  \begin{tabular}{|l|l|}
+    \hline
+    file name & description \\
+    \hline \hline
+    {\tt IMSim/FreezeInteractionHandler.hh}
+    & standard C++ header file
+    \\ \hline
+    {\tt IMSim/FreezeInteractionHandler.cpp}
+    & method implementation file
+    \\ \hline
+  \end{tabular}
+}
+
+% -----------------------------------------------------------------------
+\subsection{{\tt TrickHLA::Federate}}
+
+\paragraph{Description.}
+This class acts as a bridge between the manager and federate ambassador
+classes.
+It provides basic services for connecting a Trick simulation to an
+HLA federation.
+It also verifies the simulation data against the FOM and may terminate the
+simulation when discrepancies are found.
+
+\paragraph{Files.}
+The class files are shown below.
+   
+{
+  \scriptsize
+  \begin{tabular}{|l|l|} 
+    \hline
+    file name & description \\
+    \hline \hline
+    {\tt TrickHLA/Federate.hh} 
+    & standard C++ header file
+    \\ \hline
+    {\tt TrickHLA/Federate.cpp} 
+    & method implementation file
+    \\ \hline
+  \end{tabular}
+}
+
+% -----------------------------------------------------------------------
+\subsection{{\tt TrickHLA::FedAmb}}
+
+\paragraph{Description.}
+This class implements the HLA {\tt FederateAmbassador} interface.
+The methods is implements are callbacks invoked by the HLA runtime
+infrastucture.
+
+\paragraph{Files.}
+The class files are shown below.
+   
+{
+  \scriptsize
+  \begin{tabular}{|l|l|} 
+    \hline
+    file name & description \\
+    \hline \hline
+    {\tt TrickHLA/FedAmb.hh} 
+    & standard C++ header file
+    \\ \hline
+    {\tt TrickHLA/FedAmb.cpp} 
+    & method implementation file
+    \\ \hline
+  \end{tabular}
+}
+
+% -----------------------------------------------------------------------
+\subsection{{\tt TrickHLA::Manager}}
+
+\paragraph{Description.}
+This class connects the \TrickHLA\ model to Trick variables.
+It handles the sending and receiving of HLA objects, associating them
+with the Trick variables specified in the input file.
+And it also handles the processing of received interactions.
+Much of this logic is delegated to the relevant {\tt TrickHLA::Object}
+and {\tt TrickHLA::Interaction} objects.
+
+\paragraph{Files.}
+The class files are shown below.
+   
+{
+  \scriptsize
+  \begin{tabular}{|l|l|} 
+    \hline
+    file name & description \\
+    \hline \hline
+    {\tt TrickHLA/Manager.hh} 
+    & standard C++ header file
+    \\ \hline
+    {\tt TrickHLA/Manager.cpp} 
+    & method implementation file
+    \\ \hline
+  \end{tabular}
+}
+
+% -----------------------------------------------------------------------
+\subsection{{\tt TrickHLA::ObjectDeleted}}
+
+\paragraph{Description.}
+This class is a base class from which simulation developers may
+incorporate their own actions to take when an object is deleted from the
+federation into the \TrickHLA\ model.
+The virtual {\tt delete()} method is a do-nothing implemenation 
+in this base class.
+The \TrickHLA\ infrastructure invokes the {\tt delete()} method when an object 
+is deleted from the federation.
+
+
+\paragraph{Files.}
+The class files are shown below.
+   
+{
+  \scriptsize
+  \begin{tabular}{|l|l|} 
+    \hline
+    file name & description \\
+    \hline \hline
+    {\tt TrickHLA/ObjectDeleted.hh} 
+    & standard C++ header file
+    \\ \hline
+  \end{tabular}
+}
+
+% -----------------------------------------------------------------------
+\subsection{{\tt TrickHLA::Conditional}}
+
+\paragraph{Description.}
+This class is a base class from which simulation developers may
+incorporate the decisions when to send an attribute.
+\newline
+The virtual {\tt should\_send()} method is a do-nothing implemenation 
+in this base class, returning true.
+\newline
+The \TrickHLA\ infrastructure, on each data cycle, checks for if user wired a
+subclass to this attribute. If found, the should\_send() method is called; when
+it returns true, this attribute is sent. If not found, the attribute is
+always sent.
+
+\paragraph{Files.}
+The class files are shown below.
+
+{
+  \scriptsize
+  \begin{tabular}{|l|l|}
+    \hline
+    file name & description \\
+    \hline \hline
+    {\tt TrickHLA/Conditional.hh}
+    & standard C++ header file
+    \\ \hline
+    {\tt TrickHLA/Conditional.cpp}
+    & method implementation file
+    \\ \hline
+  \end{tabular}
+}
+
+% -----------------------------------------------------------------------
+\subsection{{\tt TrickHLA::Timeline}}
+
+\paragraph{Description.}
+This class is a base class from which simulation developers may
+provide access to the Scenario Timeline for their simulation.
+\newline
+The virtual {\tt get\_time()} method is abstract and the user must provide an
+implementation when they extend this class.
+\newline
+The \TrickHLA\ infrastructure will call get\_time() as needed to coordinate
+a federation freeze (pause) on the scenario timeline.
+
+\paragraph{Files.}
+The class files are shown below.
+
+{
+  \scriptsize
+  \begin{tabular}{|l|l|}
+    \hline
+    file name & description \\
+    \hline \hline
+    {\tt TrickHLA/Timeline.hh}
+    & standard C++ header file
+    \\ \hline
+    {\tt TrickHLA/Timeline.cpp}
+    & method implementation file
+    \\ \hline
+  \end{tabular}
+}

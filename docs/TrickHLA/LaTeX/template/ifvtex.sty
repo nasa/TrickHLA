@@ -1,0 +1,202 @@
+%
+% Introduced:
+%    David Hammen - May 2006
+%    Description: Part of the standard TeX release that is not
+%                 included in the outdated, non-standard Linux TeX
+%--------------------------------------------------------------------
+
+% File:      ifvtex.sty
+% Version:   2001/09/26 v1.0
+% Author:    Heiko Oberdiek
+% Email:     <oberdiek@uni-freiburg.de>
+%
+% Copyright: Copyright (C) 2001 Heiko Oberdiek.
+%
+%            This program may be distributed and/or modified under
+%            the conditions of the LaTeX Project Public License,
+%            either version 1.2 of this license or (at your option)
+%            any later version. The latest version of this license
+%            is in
+%              http://www.latex-project.org/lppl.txt
+%            and version 1.2 or later is part of all distributions
+%            of LaTeX version 1999/12/01 or later.
+%
+% Function:  This package looks for VTeX and implements
+%            and sets the switches \ifvtex, \ifvtex<mode>,
+%            and \ifvtexgex.
+%            It works with plain or LaTeX formats.
+%
+% Use:       LaTeX: \usepackage{ifvtex}
+%            plain: \input ifvtex.sty
+%            The package provides the switch \ifvtex:
+%              \ifvtex
+%                ... do things, if VTeX is running ...
+%              \else
+%                ... other TeX ...
+%              \fi
+%            The package can also be used to set global
+%            documentclass options:
+%              \RequirePackage{ifvtex}
+%              \ifvtex
+%                \documentclass[vtex,...]{...}
+%              \else
+%                \documentclass[...]{...}
+%              \fi
+%
+%            For the different output modes the following switches
+%            can be used:
+%              \ifvtexdvi, \ifvtexpdf, \ifvtexps, \ifvtexhtml
+%            And for GeX mode:
+%              \ifvtexgex
+%
+%            For detecting VTeX \VTeXversion and \OpMode
+%            has to be defined. The modes are detected by
+%            \OpMode and GeX by \gexmode.
+%
+% History:   2001/09/26 v1.0:
+%              * first public version,
+%
+% Prevent reloading more than one:
+\begingroup
+  \expandafter\let\expandafter\x\csname ver@ifvtex.sty\endcsname
+  \ifcase 0%
+    \ifx\x\relax % plain
+    \else
+      \ifx\x\empty % LaTeX
+      \else
+        1%
+      \fi
+    \fi
+  \else
+    \expandafter\ifx\csname PackageInfo\endcsname\relax
+      \def\x#1#2{%
+        \immediate\write-1{Package #1 Info: #2.}%
+      }%
+    \else
+      \def\x#1#2{\PackageInfo{#1}{#2, stopped}}%
+    \fi
+    \x{ifvtex}{The package is already loaded}%
+    \endgroup
+    \expandafter\endinput
+  \fi
+\endgroup
+%
+% Package identification:
+\begingroup
+  \expandafter\ifx\csname ProvidesPackage\endcsname\relax
+  \def\x#1#2#3[#4]{\endgroup
+    \immediate\write-1{Package: #3 #4}%
+    \xdef#1{#4}%
+  }%
+  \else
+    \def\x#1#2[#3]{\endgroup
+      #2[#3]%
+      \ifx#1\relax
+        \xdef#1{#3}%
+      \fi
+    }%
+  \fi
+\expandafter\x\csname ver@ifvtex.sty\endcsname
+\ProvidesPackage{ifvtex}%
+  [2001/06/14 v1.0 *TEST* Providing %
+   \expandafter\string\csname ifvtex\endcsname\space switches (HO)]
+%
+% Check, whether \ifvtex is already defined:
+\begingroup
+  \expandafter\ifx\csname ifvtex\endcsname\relax
+  \else
+    \edef\i/{\expandafter\string\csname ifvtex\endcsname}%
+    \expandafter\ifx\csname PackageError\endcsname\relax
+      \def\x#1#2{%
+        \edef\z{#2}%
+        \expandafter\errhelp\expandafter{\z}%
+        \errmessage{Package ifvtex Error: #1}%
+      }%
+      \def\y{^^J}%
+      \newlinechar=10
+    \else
+      \def\x#1#2{%
+        \PackageError{ifvtex}{#1}{#2}%
+      }%
+      \def\y{\MessageBreak}%
+    \fi
+    \x{Name clash, \i/ is already defined}{%
+      Incompatible versions of \i/ can cause problems,\y
+      therefore package loading is aborted.%
+    }%
+    \endgroup
+    \expandafter\endinput
+  \fi
+\endgroup
+%
+% Implementing the switch \ifvtex:
+\newif\ifvtex
+\ifx\VTeXversion\undefined
+\else
+  \ifx\VTeXversion\relax
+  \else
+    \ifx\OpMode\undefined
+    \else
+      \ifx\OpMode\relax
+      \else
+        \vtextrue
+      \fi
+    \fi
+  \fi
+\fi
+%
+% Implementing the mode and GeX switches:
+\newif\ifvtexdvi
+\newif\ifvtexpdf
+\newif\ifvtexps
+\newif\ifvtexhtml
+\newif\ifvtexgex
+\ifvtex
+  \ifcase\OpMode\relax
+    \vtexdvitrue
+  \or % 1
+    \vtexpdftrue
+  \or % 2
+    \vtexpstrue
+  \or % 3
+    \vtexpstrue
+  \or\or\or\or\or\or\or % 10
+    \vtexhtmltrue
+  \fi
+  \ifx\gexmode\undefined
+  \else
+    \ifx\gexmode\relax
+    \else
+      \ifnum\gexmode>0 %
+        \vtexgextrue
+      \fi
+    \fi
+  \fi
+\fi
+%
+% Log comment:
+\begingroup
+  \expandafter\ifx\csname PackageInfo\endcsname\relax
+    \def\x#1#2{%
+      \immediate\write-1{Package #1 Info: #2.}%
+    }%
+  \else
+    \let\x\PackageInfo
+    \expandafter\let\csname on@line\endcsname\empty
+  \fi
+  \x{ifvtex}{%
+    VTeX %
+    \ifvtex
+      in \ifvtexdvi DVI\fi
+         \ifvtexpdf PDF\fi
+         \ifvtexps PS\fi
+         \ifvtexhtml HTML\fi
+      \space mode %
+      with\ifvtexgex\else out\fi\space GeX %
+    \else
+      not %
+    \fi
+    detected%
+  }%
+\endgroup
+\endinput

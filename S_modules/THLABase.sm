@@ -1,0 +1,176 @@
+/*****************************************************************************
+ * General TrickHLA Simulation Base Class Definition Object
+ *---------------------------------------------------------------------------*
+ * This is a Simulation Definition (S_define) module that defines a general
+ * HLA interface using TrickHLA for Trick based simulations.
+ ****************************************************************************/
+/*****************************************************************************
+ *       Author: Dan E. Dexter
+ *         Date: August 2010
+ *       E-Mail: Dan.E.Dexter@nasa.gov
+ *        Phone: 281-483-1142
+ * Organization: Mail Code ER7
+ *               Simulation & Graphics Branch
+ *               Software, Robotics & Simulation Division
+ *               2101 NASA Parkway
+ *               Houston, Texas 77058
+ *---------------------------------------------------------------------------*
+ * Modified By: Edwin Z. Crues
+ *        Date: April 2020
+ * Description: Modified THLA.sm to create THLABase.sm to support
+ *              ExecutionControl extensions.
+ ****************************************************************************/
+
+// Trick include files.
+##include "trick/exec_proto.h"
+
+// TrickHLA include files.
+##include "TrickHLA/Attribute.hh"
+##include "TrickHLA/Parameter.hh"
+##include "TrickHLA/ParameterItem.hh"
+##include "TrickHLA/Interaction.hh"
+##include "TrickHLA/InteractionItem.hh"
+##include "TrickHLA/LagCompensation.hh"
+##include "TrickHLA/OwnershipItem.hh"
+##include "TrickHLA/OwnershipHandler.hh"
+##include "TrickHLA/Object.hh"
+##include "TrickHLA/ObjectDeleted.hh"
+##include "TrickHLA/Manager.hh"
+##include "TrickHLA/FedAmb.hh"
+##include "TrickHLA/Federate.hh"
+
+//=========================================================================
+// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+//=========================================================================
+
+class THLABaseSimObject : public Trick::SimObject {
+
+ public:
+   
+   //----- DATA STRUCTURE DECLARATIONS -----   
+   TrickHLA::Federate federate;
+   TrickHLA::FedAmb   federate_amb;
+   TrickHLA::Manager  manager;
+
+   THLABaseSimObject( double data_cycle,
+                      double interaction_cycle,
+                      unsigned short _1ST  = 1,
+                      unsigned short _INIT = 60,
+                      unsigned short _LAST = 65534 )
+   {
+      // Validate the data and interaction cycle times.
+      if ( data_cycle <= 0.0 ) {
+         exec_terminate( __FILE__, "THLASimObject() data_cycle must be > 0.0!" );
+      }
+      if ( interaction_cycle <= 0.0 ) {
+         exec_terminate( __FILE__, "THLASimObject() interaction_cycle must be > 0.0!" );
+      }
+      
+      
+      //-----------------------
+      //-- DEFAULT DATA JOBS --
+      //-----------------------
+      
+      //-------------------------
+      //-- INITIALIZATION JOBS --
+      //-------------------------
+
+      // Print the current TrickHLA version string.
+      P1 ("initialization") federate.print_version();
+
+      // Check and fix the FPU Control Word as a job that runs just after
+      // the Input Processor runs.
+      P1 ("initialization") federate.fix_FPU_control_word();
+
+      // Setup the HLA infrastructure.
+      P_INIT ("initialization") federate.initialize();
+      
+      // This begins the process of standing up the federate in the federation
+      // execution.  This preforms all the startup steps prior to any
+      // multi-phase inializtation process defined by the user.  The multi-
+      // phase inialization will be performed as initialization jobs between
+      // P_INIT and P_LAST.
+      P_INIT ("initialization") federate.pre_multiphase_initialization();
+      
+      // The last step of the multi-phase initialization. We make sure this
+      // initialization job runs last by setting the initialization phase
+      // to P65534, since this job indicates to the other federates that
+      // we are ready to start running the simulation.
+      P_LAST ("initialization") federate.post_multiphase_initialization();
+
+      //------------------------------
+      //-- FREEZE / CHECKPOINT JOBS --
+      //------------------------------
+
+      // Perform the federate save (checkpoint) or restore in FREEZE mode...
+      P_1ST ("checkpoint") federate.setup_checkpoint();
+      ("freeze") federate.perform_checkpoint();
+      P_1ST ("preload_checkpoint") federate.setup_restore();
+      ("freeze") federate.perform_restore();
+
+      // Coordinate federates going to run mode
+      ("freeze_init") federate.freeze_init();
+      ("freeze")      federate.check_freeze();
+      ("unfreeze")    federate.exit_freeze();
+
+
+      //--------------------
+      //-- SCHEDULED JOBS --
+      //--------------------
+
+      // Wait for the Time Advance Grant (TAG).
+      P_1ST (data_cycle, "environment") federate.wait_for_time_advance_grant();
+
+      // Process all interactions that were received.
+      P_1ST (interaction_cycle, "environment") manager.process_interactions();
+
+      // Process any deleted objects.
+      P_1ST (data_cycle, "environment") manager.process_deleted_objects();
+
+      // Grab any new cyclic data from the other Federates that has arrived and
+      // update the local state.  (This is done down here to make sure we do
+      // the copying AFTER the event loop has fired the reflect call-backs.)
+      P_1ST (data_cycle, "environment") manager.receive_cyclic_data( exec_get_sim_time() );
+
+      // Send any new cyclic data.
+      P_LAST (data_cycle, "logging") manager.send_cyclic_data( exec_get_sim_time() );
+
+      // Send any requested data. This would occur as the result of another
+      // federate requesting an attribute value update.
+      P_LAST (data_cycle, "logging") manager.send_requested_data( exec_get_sim_time() );
+
+      // Process the ownership requests.
+      P_LAST (data_cycle, "logging") manager.process_ownership();
+
+      // Request to go to the next logical time step with a HLA
+      // Time-Advance-Request (TAR).
+      P_LAST (data_cycle, "logging") federate.time_advance_request();
+
+      // Coordinate federates going to freeze mode
+      ("end_of_frame") federate.enter_freeze();
+      
+
+      //-------------------
+      //-- SHUTDOWN JOBS --
+      //-------------------
+      P_LAST ("shutdown") federate.shutdown();
+      
+   }
+   
+   // Pure virtual destructor.  Make this SimObject and abstract class.
+   // It must be extended with a specific ExecutionControl implementation.
+   virtual ~THLABaseSimObject() = 0;
+
+ private:
+   // Do not allow the implicit copy constructor or assignment operator.
+   THLABaseSimObject(const THLABaseSimObject & rhs);
+   THLABaseSimObject & operator=(const THLABaseSimObject & rhs);
+
+   // Do not allow the default constructor.
+   THLABaseSimObject();
+};
+
+// Required inline implementation of the pure virtual destructor.
+%{
+inline THLABaseSimObject::~THLABaseSimObject(){}
+%}

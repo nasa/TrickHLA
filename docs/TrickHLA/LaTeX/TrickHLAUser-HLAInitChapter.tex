@@ -1,0 +1,205 @@
+\chapter{Initialization}
+\label{sec:hla-init}
+
+As was discussed in Section~\ref{sec:hla-join},
+there is more to initializing an HLA federate using
+\TrickHLA\ than just joining the federation.
+In addition to joining,
+\TrickHLA\ {\bf requires} that you follow the
+{\em multiphase initialization process}.
+This chapter illustrates how to do that.
+
+% -----------------------------------------------------------------------
+\section{What is multiphase initialization?}
+
+The initialization of the components in a distributed simulation can be
+more complex than simply letting each components initialize itself.
+Initialization dependencies between components might require that the
+components {\em partially} initialize themselves.
+The mechanism provided by \TrickHLA\ for this called {\em multiphase
+initialization}.
+It works as follows.
+
+The developers of a distributed simulation must agree beforehand
+on the number of {\em initialization phases} to be executed by each
+simulation during startup.
+Furthermore, each phase has a unique name.
+\TrickHLA\ then provides a means for each simulation developer to
+schedule jobs during each phase of the initialization.
+In particular, data calculated during one phase may be shared with
+other federates for use during their subsequent initialization phases.
+
+% -----------------------------------------------------------------------
+\section{\tt DSESSimConfig}
+
+The \TrickHLA\ mechanism for doing this is part of the {\tt THLA\_INIT}
+sim object that was introduced in Chapter~\ref{sec:hla-join}.
+In that and all the subsequent examples so far in this guide,
+the {\tt THLA\_INIT} object consisted only of a single
+{\tt DSESSimConfig} variable.
+This variable is a fundamental part of the \TrickHLA\ infrastructure,
+and indeed, \TrickHLA\ will not function without the variable.
+
+However, in order to participate in the multiphase initialization process,
+each simulation must also define the logic to be executed during each
+phase of the initialization.
+This is done by
+\begin{itemize}
+\item{
+  Setting the {\tt THLA\_INIT} variables according to how many
+  phases there are, and
+}
+\item{
+  adding phase-specific jobs to the {\tt THLA\_INIT} sim object.
+}
+\end{itemize}
+
+% -----------------------------------------
+\subsection{{\tt THLA\_INIT} inputs for multiphase initialization}
+
+The \TrickHLA\ implemenation of multiphase initialization is based on
+HLA {\em synchronization points}.
+Federates may use synchronization points as {\em barriers} where all must
+gather before any are allowed to continue.
+\TrickHLA\ uses them in this fashion to make sure that all participating
+simulations have completed phase-$i$ processing before any of the
+simulations proceed to phase-$i+1$.
+
+Upon agreement among all the participants in the federation as to how
+many initialization phases are necessary and what each is named,
+the input file needs only include an entry for the federate object
+which specifies the name of each phase.
+For example, if a simulation requires two phases, named {\em Phase1}
+and {\em Phase2}, then the input file would include a line of the form
+
+\begin{verbatim}
+THLA.federate.multiphase_init_sync_points = "Phase1, Phase2";
+\end{verbatim}
+
+Similarly, for three phases named {\em A}, {\em B} and {\em C},
+the input file would include
+
+\begin{verbatim}
+THLA.federate.multiphase_init_sync_points = "A, B, C";
+\end{verbatim}
+
+
+% -----------------------------------------
+\subsection{{\tt THLA\_INIT} jobs for multiphase initialization}
+
+The tasks to be carried out in each phase of initialization are
+\begin{itemize}
+\item{
+  Execute some application-specific initialization code.
+}
+\item{
+  Share the results of that initialization code between the federates.
+  (This involves sending locally-calculated intialization data out to
+  other federates and receviing remotely-calculated initialization data
+  from other federates.)
+}
+\item{
+  Execute some application-specific post-initialization code.
+}
+\end{itemize}
+
+Accordingly, each phase consists of Trick jobs which make calls to
+the following functions.
+
+\begin{itemize}
+\item{{\tt THLA.manager.send\_init\_data()}}
+\item{{\tt THLA.manager.receive\_init\_data()}}
+\item{{\tt THLA.manager.wait\_for\_init\_sync\_point()}}
+\end{itemize}
+
+The arguments to the {\tt send\_init\_data()} and {\tt receive\_init\_data()}
+methods are the names of Trick variables defined in the \sdefine file.
+If there are many data to send, there will be correspondingly many
+jobs invoking {\tt send\_init\_data()}
+and similarly for receiving data.
+The argument to the {\tt wait\_for\_init\_sync\_point()} method
+is the name of the corresponding phase as defined in the sim config object.
+Invocation of the {\tt wait\_for\_init\_sync\_point()} method
+tells \TrickHLA\ that the simulation has completed the corresponding
+initialization phase.
+\TrickHLA\ ensures that no simulations will proceed beyond this point
+until all the participating simulations have reached it.\footnote{
+  This is implemented with HLA {\em synchronization points},
+  whence the name of the method.
+}
+
+This is illustrated below for two-phase initialization.
+Multiphase initialization is similar, except that there are more
+send/receive/wait-for sequences,
+one for each phase defined in the sim config object.
+
+\begin{lstlisting}[caption={Multiphase initialization jobs}]
+   //--------------------------------------------------------------------------
+   // NOTE: Initialization phase numbers must be greater than P10 so that the 
+   // initialization jobs run after the P10 THLA.manager.initialize() job.
+   //--------------------------------------------------------------------------
+
+   //
+   // PHASE 1
+   //
+   P100 (initialization) TrickHLA:
+      THLA.manager.send_init_data( In const char * obj_instance_name = "...name-of-trick-variable..." );
+   P100 (initialization) TrickHLA:
+      THLA.manager.receive_init_data( In const char * obj_instance_name = "...name-of-trick-variable..." );
+   // ...Add optional application-specific post-phase-1 processing here.
+   P100 (initialization) TrickHLA:
+      THLA.manager.wait_for_init_sync_point( In const char * syc_point_label   = "...name-of-phase-1..." );
+
+   //
+   // PHASE 2
+   //
+   P200 (initialization) TrickHLA:
+      THLA.manager.send_init_data( In const char * obj_instance_name = "...name-of-trick-variable..." );
+   P200 (initialization) TrickHLA:
+      THLA.manager.receive_init_data( In const char * obj_instance_name = "...name-of-trick-variable..." );
+   // ...Add optional application-specific post-phase-1 processing here.
+   P200 (initialization) TrickHLA:
+      THLA.manager.wait_for_init_sync_point( In const char * syc_point_label   = "...name-of-phase-2..." );
+\end{lstlisting}
+
+% -----------------------------------------
+\subsection{{\tt THLA\_INIT} jobs for one-phase initialization}
+
+If true multiphase initialization is overkill for your simulation,
+it is possible to define {\tt THLA\_INIT} jobs that just carry out
+traditional single-step initalization in a slightly simpler way
+than going through the steps described above.
+
+The tasks to be carried out in single-step initialization are
+\begin{itemize}
+\item{
+  Execute some application-specific initialization code.
+}
+\item{
+  Share the results of that initialization code between the federates.
+}
+\item{
+  Execute some application-specific post-initialization code.
+}
+\end{itemize}
+
+To do this, the following jobs can be inserted into the {\tt THLA\_INIT}
+sim object.
+
+\begin{lstlisting}[caption={One-phase initialization jobs}]
+
+   // Application-specific initialization code should have been
+   // executed already in some previous Trick initialization job
+
+   // Tell TrickHLA to "share" initialization data.
+   P100 (initialization) TrickHLA: THLA.manager.send_init_data();
+   P100 (initialization) TrickHLA: THLA.manager.receive_init_data();
+
+   // ...Add application-specific post-initialization code here if necessary.
+
+   // Tell TrickHLA that we're finished with the initialization process.
+   P100 (initialization) TrickHLA: THLA.manager.clear_init_sync_points();
+\end{lstlisting}
+
+
+

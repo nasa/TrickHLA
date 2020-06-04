@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<objectModel xsi:schemaLocation="http://standards.ieee.org/IEEE1516-2010 http://standards.ieee.org/downloads/1516/1516.2-2010/IEEE1516-DIF-2010.xsd" xmlns="http://standards.ieee.org/IEEE1516-2010" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelIdentification>
+        <name>SISO-STD-018-2020 - SISO Space Reference FOM Entity</name>
+        <type>FOM</type>
+        <version>1.0</version>
+        <modificationDate>2019-10-25</modificationDate>
+        <securityClassification>Unclassified</securityClassification>
+        <purpose>SISO Space Entity definitions</purpose>
+        <applicationDomain></applicationDomain>
+        <description>Definitions of entity and interface related object classes.</description>
+        <useLimitation></useLimitation>
+        <poc>
+            <pocType>Primary author</pocType>
+            <pocName>Edwin Z. Crues</pocName>
+            <pocOrg>NASA Johnson Space Center</pocOrg>
+            <pocTelephone>1-281-483-2902</pocTelephone>
+            <pocEmail>edwin.z.crues@nasa.gov</pocEmail>
+        </poc>
+        <poc>
+            <pocType>Contributor</pocType>
+            <pocName>Dan Dexter</pocName>
+            <pocOrg>NASA Johnson Space Center</pocOrg>
+            <pocTelephone>1-281-483-1142</pocTelephone>
+            <pocEmail>dan.e.dexter@nasa.gov</pocEmail>
+        </poc>
+        <poc>
+            <pocType>Contributor</pocType>
+            <pocName>Björn Möller</pocName>
+            <pocOrg>Pitch Technologies, Sweden</pocOrg>
+            <pocTelephone></pocTelephone>
+            <pocEmail>bjorn.moller@pitch.se</pocEmail>
+        </poc>
+        <poc>
+            <pocType>Contributor</pocType>
+            <pocName>Alfredo Garro</pocName>
+            <pocOrg>DIMES Department, University of Calabria, Italy</pocOrg>
+            <pocTelephone>+39-0984-49-4795</pocTelephone>
+            <pocEmail>alfredo.garro@unical.it</pocEmail>
+        </poc>
+        <poc>
+            <pocType>Contributor</pocType>
+            <pocName>Daniel Verret</pocName>
+            <pocOrg>ForwardSim Inc.</pocOrg>
+            <pocTelephone>418-650-3493 ext 6000</pocTelephone>
+            <pocEmail>dverret@forwardsim.com</pocEmail>
+        </poc>
+        <other>Copyright © 2020 by the Simulation Interoperability Standards Organization, Inc.
+P.O. Box 781238
+Orlando, FL 32878-1238, USA
+All rights reserved.
+
+Schema and API: SISO hereby grants a general, royalty-free license to copy, distribute, display, and make derivative works from this material, for all purposes, provided that any use of the material contains the following attribution: “Reprinted with permission from SISO Inc.” Should a reader require additional information, contact the SISO Inc. Board of Directors.
+
+Documentation: SISO hereby grants a general, royalty-free license to copy, distribute, display, and make derivative works from this material, for noncommercial purposes, provided that any use of the material contains the following attribution: “Reprinted with permission from SISO Inc.” The material may not be used for a commercial purpose without express written permission from the SISO Inc. Board of Directors.
+
+SISO Inc. Board of Directors
+P.O. Box 781238
+Orlando, FL 32878-1238, USA
+</other>
+    </modelIdentification>
+    <objects>
+        <objectClass>
+            <name>HLAobjectRoot</name>
+            <objectClass>
+                <name>PhysicalEntity</name>
+                <sharing>PublishSubscribe</sharing>
+                <semantics>A PhysicalEntity is the highest-level object class in the Space FOM entity hierarchy. This object class provides attributes to describe an entity’s location in time and space. It also contains attributes to uniquely identify it individually from all other physical entities in the federation execution. 
+ 
+Physical entities have two intrinsically associated reference frames: a 'structural frame' and a ‘body frame'. These are not registered in the Federation Execution’s Reference Frame tree (see 6.2.2) but are used to place and orient the entity in space with respect to a reference frame in that tree. The origin of the structural frame is located at some arbitrary but known point on the entity. The body frame origin is at the entity’s center of mass. The body frame is located with respect to the entity’s structural reference frame by a vector from the origin of the structural reference frame to the center of mass of the entity. This vector is expressed in the entity’s structural reference frame. The orientation of the entity’s body frame with respect to the entity’s structural reference frame is defined by an attitude quaternion. 
+ 
+The position and attitude of an entity is therefore defined by the position and attitude of the entity’s body frame with respect to the entity's parent_reference_frame, which must be a reference frame instance in the Federation Execution’s Reference Frame Tree. This, along with time, the center_of_mass vector and body_wrt_structural attitude quaternion, can be used to unambiguously locate the entity in time and space</semantics>
+                <attribute>
+                    <name>name</name>
+                    <dataType>HLAunicodeString</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition>during initialization</updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>A non-empty string that identifies the entity. Each entity instance in the federation must have a unique name.</semantics>
+                </attribute>
+                <attribute>
+                    <name>type</name>
+                    <dataType>HLAunicodeString</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition>during initialization</updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>A non-empty string that identifies the entity type. It is not a mandatory field but it can be used to differentiate from a fuel tank and a space vehicle for example.</semantics>
+                </attribute>
+                <attribute>
+                    <name>status</name>
+                    <dataType>HLAunicodeString</dataType>
+                    <updateType>Periodic</updateType>
+                    <updateCondition>when changes</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>An informative string that documents the current status of the entity (whatever that might be).</semantics>
+                </attribute>
+                <attribute>
+                    <name>parent_reference_frame</name>
+                    <dataType>HLAunicodeString</dataType>
+                    <updateType>Periodic</updateType>
+                    <updateCondition>when changes</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>The non-empty string that identifies the reference frame with respect to which the kinematic state attributes of this entity are calculated. This string must exactly match the name of some ReferenceFrame instance in the federation.</semantics>
+                </attribute>
+                <attribute>
+                    <name>state</name>
+                    <dataType>SpaceTimeCoordinateState</dataType>
+                    <updateType>Periodic</updateType>
+                    <updateCondition>when changes</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>A four dimensional representation of the entity's translational and rotational state with respect to its parent reference frame.</semantics>
+                </attribute>
+                <attribute>
+                    <name>acceleration</name>
+                    <dataType>AccelerationVector</dataType>
+                    <updateType>Periodic</updateType>
+                    <updateCondition>when changes</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>A 3-vector that specifies the acceleration of the entity body frame origin (i.e., the entity's center of mass) with respect to the parent reference frame. This is the time derivative of the velocity vector as seen by an observer fixed in the parent frame. The components of this vector are resolved onto the coordinate axes of the parent frame.</semantics>
+                </attribute>
+                <attribute>
+                    <name>rotational_acceleration</name>
+                    <dataType>AngularAccelerationVector</dataType>
+                    <updateType>Periodic</updateType>
+                    <updateCondition>when changes</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>A 3-vector that specifies the angular acceleration of the entity body frame with respect to the parent reference frame. This is the time derivative of the angular velocity vector as seen by an observer fixed in the parent frame. The components of this vector are resolved onto the coordinate axes of the entity body frame.</semantics>
+                </attribute>
+                <attribute>
+                    <name>center_of_mass</name>
+                    <dataType>PositionVector</dataType>
+                    <updateType>Periodic</updateType>
+                    <updateCondition>when changes</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>A 3-vector that specifies the position of the entity center of mass (the body frame origin) with respect to the origin of the entity's structural frame. The components of this vector are resolved onto the coordinate axes of the structural frame.</semantics>
+                </attribute>
+                <attribute>
+                    <name>body_wrt_structural</name>
+                    <dataType>AttitudeQuaternion</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition>Not updated</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>An attitude quaternion that specifies the orientation of an entity's body frame with respect to the entity's structural frame.  This attitude quaternion should never change.  If not specified, an identity quaternion is assumed.</semantics>
+                </attribute>
+                <objectClass>
+                    <name>DynamicalEntity</name>
+                    <sharing>PublishSubscribe</sharing>
+                    <semantics>The DynamicalEntity object class extends the PhysicalEntity object class to provide additional attributes associated with an object subject to non-conservative dynamic forces and/or torques. Specifically, the DynamicalEntity provides additional force, torque and mass property related parameters. These are usually associated with environmental effects and vehicle effector systems. These can be used for both visualization and to improve state propagation between updates.</semantics>
+                    <attribute>
+                        <name>force</name>
+                        <dataType>ForceVector</dataType>
+                        <updateType>Periodic</updateType>
+                        <updateCondition>when changes</updateCondition>
+                        <ownership>NoTransfer</ownership>
+                        <sharing>PublishSubscribe</sharing>
+                        <transportation>HLAreliable</transportation>
+                        <order>TimeStamp</order>
+                        <semantics>A 3-vector that specifies the total external force on the entity. Force is expressed and applied in the entity’s structural reference frame.</semantics>
+                    </attribute>
+                    <attribute>
+                        <name>torque</name>
+                        <dataType>TorqueVector</dataType>
+                        <updateType>Periodic</updateType>
+                        <updateCondition>when changes</updateCondition>
+                        <ownership>NoTransfer</ownership>
+                        <sharing>PublishSubscribe</sharing>
+                        <transportation>HLAreliable</transportation>
+                        <order>TimeStamp</order>
+                        <semantics>A 3-vector that specifies the total external torque on the entity. It is expressed in the entity’s structural reference frame.</semantics>
+                    </attribute>
+                    <attribute>
+                        <name>mass</name>
+                        <dataType>Mass</dataType>
+                        <updateType>Periodic</updateType>
+                        <updateCondition>when changes</updateCondition>
+                        <ownership>DivestAcquire</ownership>
+                        <sharing>PublishSubscribe</sharing>
+                        <transportation>HLAreliable</transportation>
+                        <order>TimeStamp</order>
+                        <semantics>The mass of the DynamicalEntity.</semantics>
+                    </attribute>
+                    <attribute>
+                        <name>mass_rate</name>
+                        <dataType>MassRate</dataType>
+                        <updateType>Periodic</updateType>
+                        <updateCondition>when changes</updateCondition>
+                        <ownership>DivestAcquire</ownership>
+                        <sharing>PublishSubscribe</sharing>
+                        <transportation>HLAreliable</transportation>
+                        <order>TimeStamp</order>
+                        <semantics>The time rate of change of the DynamicalEntity's mass.</semantics>
+                    </attribute>
+                    <attribute>
+                        <name>inertia</name>
+                        <dataType>InertiaMatrix</dataType>
+                        <updateType>Periodic</updateType>
+                        <updateCondition>when changes</updateCondition>
+                        <ownership>DivestAcquire</ownership>
+                        <sharing>PublishSubscribe</sharing>
+                        <transportation>HLAreliable</transportation>
+                        <order>TimeStamp</order>
+                        <semantics>A 3x3 matrix that specifies the centroid moments and coefficients of inertia with respect to the coordinate axes of the DynamicalEntity's body frame</semantics>
+                    </attribute>
+                    <attribute>
+                        <name>inertia_rate</name>
+                        <dataType>InertiaRateMatrix</dataType>
+                        <updateType>Periodic</updateType>
+                        <updateCondition>when changes</updateCondition>
+                        <ownership>DivestAcquire</ownership>
+                        <sharing>PublishSubscribe</sharing>
+                        <transportation>HLAreliable</transportation>
+                        <order>TimeStamp</order>
+                        <semantics>A 3x3 matrix that specifies the time rate of change of the parameters in the InertiaMatrix.  The elements in this matrix correspond directly to the elements in the InteriaMatrix.</semantics>
+                    </attribute>
+                </objectClass>
+            </objectClass>
+            <objectClass>
+                <name>PhysicalInterface</name>
+                <sharing>PublishSubscribe</sharing>
+                <semantics>Represents a location and orientation with respect to another frame.  It is intended to act as a base representation for the position and orientation of an interface associated with either another PhysicalInterface instance or a PhysicalEntity instance.  In either case, the position and orientation of the interface are specified with respect to the structural reference frame of the entity to which it is attached.  This Object Class can be used as a common base for derived interfaces like grapple fixtures, docking ports, berthing interfaces, etc.</semantics>
+                <attribute>
+                    <name>name</name>
+                    <dataType>HLAunicodeString</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition>during initialization</updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>A non-empty string that identifies the interface. Each PhysicalInterface instance in the federation must have a unique name.</semantics>
+                </attribute>
+                <attribute>
+                    <name>parent_name</name>
+                    <dataType>HLAunicodeString</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition>during initialization</updateCondition>
+                    <ownership>NoTransfer</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>The HLA Object Instance Name of the PhysicalEntity or PhysicalInterface to which this interface is attached.</semantics>
+                </attribute>
+                <attribute>
+                    <name>position</name>
+                    <dataType>PositionVector</dataType>
+                    <updateType>Conditional</updateType>
+                    <updateCondition>when changes</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>A 3-vector that specifies the position of the interface reference frame origin with respect to the parent structural reference frame. The components of this vector are resolved onto the coordinate axes of the parent frame.</semantics>
+                </attribute>
+                <attribute>
+                    <name>attitude</name>
+                    <dataType>AttitudeQuaternion</dataType>
+                    <updateType>Periodic</updateType>
+                    <updateCondition>when changes</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics>An attitude quaternion of the interfaces reference frame ('subject frame') with respect to its parent structural reference frame ('referent frame').</semantics>
+                </attribute>
+            </objectClass>
+        </objectClass>
+    </objects>
+</objectModel>

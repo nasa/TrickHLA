@@ -1,0 +1,223 @@
+\chapter{\simplesine Files}\label{sec:simplesine-files}
+
+This appendix contains the data and source code files for the
+\simplesine model.
+
+% ----------------------------------------------------------------------
+\section{\tt simplesine.h}\label{sec:simplesine-h}
+
+\begin{lstlisting}[caption={\tt simplesine.h},label={list:simplesine-h}]
+/***********************************************************************
+PURPOSE: (A simple sinewave model.)
+***********************************************************************/
+#ifndef _SIMPLESINE_H_
+#define _SIMPLESINE_H_
+
+/*----------------------------------------------------------------------
+PURPOSE: (A structure to hold the sinewave parameters.)
+----------------------------------------------------------------------*/
+typedef struct {
+  double A;     // *io -- the amplitude of the wave
+  double w;     // *io -- the frequency
+  double phi;   // *io -- the phase 
+} simplesine_params_T;
+
+/*----------------------------------------------------------------------
+PURPOSE: (A structure to hold the sinewave state and space for derivatives
+calulated for numerical integration.)
+----------------------------------------------------------------------*/
+typedef struct {
+  double x;     // *o -- the current value of the sinewave, x(t)
+  double x_dot; // *o -- the current value of the sinewave derivative
+
+  double deriv_x;     // *o -- the derivative of x
+  double deriv_x_dot; // *o -- the derivative of x_dot
+} simplesine_state_T;
+
+/*----------------------------------------------------------------------
+PURPOSE: (A structure to hold the sinewave state.)
+----------------------------------------------------------------------*/
+typedef struct {
+  simplesine_params_T params; // *i -- the parameters 
+  simplesine_state_T state;   // *i -- the state
+} simplesine_T;
+
+#endif
+\end{lstlisting}
+
+
+
+
+
+% ----------------------------------------------------------------------
+\section{\tt simplesine\_proto.h}\label{sec:simplesine-proto-h}
+
+\begin{lstlisting}[caption={\tt simplesine\_proto.h},label={list:simplesine-proto-h}]
+/***********************************************************************
+ICG: (No)
+PURPOSE: (A simple sinewave model.)
+***********************************************************************/
+
+#ifndef _SIMPLESINE_PROTO_H_
+#define _SIMPLESINE_PROTO_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "simplesine.h"
+#include "sim_services/include/integrator.h"
+
+int simplesine_calc( // RETURN: -- 0 on success
+  simplesine_T* p,   // INOUT:  -- the simplesine data structure
+  double t );        // IN:     s  the current time
+
+int simplesine_deriv( // RETURN: -- 0 on success
+  simplesine_T* s );  // INOUT:  -- pointer to the model data structure
+
+int simplesine_integ( // RETURN: -- intermediate iteration count (0 at end)
+  INTEGRATOR* I,      // INOUT:  -- integrator data structure
+  simplesine_T* s );  // INOUT:  -- data structure for the harmonic oscillator
+
+int simplesine_copyState(    // RETURN: -- 0 on success
+  simplesine_state_T* fromP, // IN:     -- where is the data coming from?
+  simplesine_state_T* toP ); // OUT:    -- where is the data going to?
+
+int simplesine_copyParams(    // RETURN: -- 0 on success
+  simplesine_params_T* fromP, // IN:     -- where is the data coming from?
+  simplesine_params_T* toP ); // OUT:    -- where is the data going to?
+
+int simplesine_copy(    // RETURN: -- 0 on success
+  simplesine_T* fromP, // IN:     -- where is the data coming from?
+  simplesine_T* toP ); // OUT:    -- where is the data going to?
+
+int simplesine_calcError(    // RETURN: -- 0 on success
+  double t,                  // IN:     -- the current time
+  simplesine_T* s,           // IN:     -- the simplesine structure
+  simplesine_state_T* diff );// OUT:    -- where to put the state error
+
+void simplesine_compensate(
+  simplesine_params_T* paramsP,
+  simplesine_state_T* uncompensated_state,
+  simplesine_state_T* compensated_state,
+  double dt );
+
+#ifdef __cplusplus
+}
+#endif
+#endif
+\end{lstlisting}
+
+% ----------------------------------------------------------------------
+\section{\tt simplesine\_InteractionHandler.hh}\label{sec:simplesine-InteractionHandler-hh}
+
+\begin{lstlisting}[caption={\tt simplesine\_InteractionHandler.hh},label={list:simplesine-InteractionHandler-hh}]
+/********************************* TRICK HEADER *******************************
+PURPOSE: (A class to send/receive HLA interactions.)
+LIBRARY DEPENDENCY: ((simplesine_InteractionHandler.o))
+*******************************************************************************/
+
+#ifndef _SIMPLESINE_INTERACTION_HANDLER_HH_
+#define _SIMPLESINE_INTERACTION_HANDLER_HH_
+
+#include "TrickHLA/include/TrickHLAInteractionHandler.hh"
+
+class simplesine_InteractionHandler : public TrickHLAInteractionHandler
+  friend class InputProcessor; // necessary for Trick
+  friend void init_attrsimplesine_InteractionHandler(); // necessary for Trick
+
+  public:
+    simplesine_InteractionHandler();
+    virtual ~simplesine_InteractionHandler(); 
+
+    void send_sine_interaction( double send_time );
+    virtual void receive_interaction();
+
+  protected:
+    double lookahead_time;
+};
+#endif // _SIMPLESINE_INTERACTION_HANDLER_HH_: Do NOT put anything after this line!
+\end{lstlisting}
+
+% ----------------------------------------------------------------------
+\section{\tt simplesine\_LagCompensator.hh}\label{sec:simplesine-LagCompensator-hh}
+
+\begin{lstlisting}[caption={\tt simplesine\_LagCompensator.hh},label={list:simplesine-LagCompensator-hh}]
+/********************************* TRICK HEADER *******************************
+PURPOSE: (Send and receive side lag compensation.)
+LIBRARY DEPENDENCY: ((simplesine_LagCompensator.o))
+*******************************************************************************/
+
+#ifndef _SIMPLESINE_LAG_COMPENSATOR_HH_
+#define _SIMPLESINE_LAG_COMPENSATOR_HH_
+
+// Model include files.
+#include "simplesine.h"
+
+// Trick HLA include files.
+#include "TrickHLA/include/TrickHLALagCompensation.hh"
+
+class simplesine_LagCompensator : public TrickHLALagCompensation
+{
+  friend class InputProcessor; // necessary for Trick
+  friend void init_attrsimplesine_LagCompensator(); // necessary for Trick
+
+  public:
+   // Public constructors and destructors.
+   simplesine_LagCompensator();           // Default constructor.
+   virtual ~simplesine_LagCompensator();  // Destructor.
+
+   int initialize( simplesine_T* sim_dataP, simplesine_T* lag_comp_dataP );
+
+   // From the TrickHLALagCompensation class.
+   virtual void send_lag_compensation();
+
+   // From the TrickHLALagCompensation class.
+   virtual void receive_lag_compensation();
+
+  private:
+    simplesine_T* uncompensated_stateP;
+    simplesine_T* compensated_stateP;
+};
+#endif // _SIMPLESINE_LAG_COMPENSATOR_HH_: Do NOT put anything after this line!
+\end{lstlisting}
+
+% ----------------------------------------------------------------------
+\section{\tt simplesine\_Packing.hh}\label{sec:simplesine-Packing-hh}
+
+\begin{lstlisting}[caption={\tt simplesine\_Packing.hh},label={list:simplesine-Packing-hh}]
+/********************************* TRICK HEADER *******************************
+PURPOSE: (packing class)
+LIBRARY DEPENDENCY: ((simplesine_Packing.o))
+*******************************************************************************/
+#ifndef _SIMPLESINE_PACKING_HH_
+#define _SIMPLESINE_PACKING_HH_
+
+#include "TrickHLA/include/TrickHLAPacking.hh"
+#include "simplesine/include/simplesine.h"
+
+class simplesine_Packing : public TrickHLAPacking
+{
+  friend class InputProcessor; // necessary for Trick
+  friend void init_attrsimplesine_Packing(); // necessary for Trick
+
+  public:
+    simplesine_Packing();           // Default constructor.
+    virtual ~simplesine_Packing();  // Destructor.
+
+    virtual void init( 
+      simplesine_T* originalP, 
+      simplesine_T* packedP,
+      simplesine_T* unpackedP );
+
+    virtual void pack();
+    virtual void unpack();
+
+  private:
+    bool is_initialized;
+    simplesine_T* originalP;
+    simplesine_T* packedP;
+    simplesine_T* unpackedP;
+};
+#endif // _SIMPLESINE_PACKING_HH_: Do NOT put anything after this line!
+\end{lstlisting}

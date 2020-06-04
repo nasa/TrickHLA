@@ -1,0 +1,400 @@
+\chapter{Joining a Federation}
+\label{sec:hla-join}
+
+In this chapter, we present a Trick simulation which uses
+\TrickHLA\ to join an HLA federation.\footnote{
+  The \TrickHLA\ initialization process is more complex than this
+  simulation illustrates.
+  The only focus here is on using \TrickHLA\ to enable HLA in a Trick
+  simulation.
+  The full \TrickHLA\ {\em multi-phase initialzation process} is discussed
+  in Section~\ref{sec:hla-init} on page~\pageref{sec:hla-init}.
+}
+If the specified federation exists,
+the simulation joins it.
+If the federation does not exist, \TrickHLA\ takes care of creating it.
+
+The simulation
+is virtually identical to {\tt SIM\_simplesine\_pubsub} presented in
+Section~\ref{sec:simplesine-model}, except that this simulation
+joins (or creates) an HLA federation.
+In particular, there is no distributed publish/subscribe;
+the publisher and subscriber are both resident in this single simulation
+process, and they exchange data to each other locally.
+
+The main tasks to HLA-enable an existing Trick simulation are to
+insert some ``standard'' \TrickHLA\ {\tt sim\_object}s
+into the \sdefine file, and
+configure the input file with new \TrickHLA\ parameters.
+The following sections illustrate what is involved.
+
+\section{\tt SIM\_simplesine\_hla\_join}
+\label{sec:SIM-simplesine-hla-join-sdefine}
+
+The first step in enabling \TrickHLA,
+is inserting two new {\tt sim\_object}s into the \sdefine file:
+one which contains the main \TrickHLA\ execution
+framework (a bunch of jobs that automate the \TrickHLA\ process)
+and
+one which contains object and jobs related to simulation configuration
+and initialization.
+The first of these, {\tt THLA}, is shown below
+and can be pasted in verbatim.\footnote{
+  Some comments have been removed from this object to reduce page space.
+}
+In most cases, very few modifications to this {\tt sim\_object} should
+be necessary.
+
+Examination of the code reveals that \TrickHLA\ is composed of three objects:
+the {\em mangager}, the {\em federate}, and the {\em federate ambassador}.
+The \TrickHLA\ infrastructure is the base manager and federate jobs
+that follow.
+In most cases, it is possible to view these objects and their
+jobs as black boxes: just paste the object into the \sdefine file.
+
+\begin{lstlisting}[caption={The {\tt THLA sim\_object}},label={list:THLA-sim-object}]
+sim_object {
+   TrickHLA: TrickHLAFreezeInteractionHandler freeze_ih;
+   TrickHLA: TrickHLAFedAmb   federate_amb;
+   TrickHLA: TrickHLAFederate federate;
+   TrickHLA: TrickHLAManager  manager;
+   double checkpoint_time;
+   char   checkpoint_label[256];
+
+   // Initialization jobs
+   P1 (initialization) TrickHLA: THLA.manager.print_version();
+   P1 (initialization) TrickHLA: THLA.federate.fix_FPU_control_word();
+   P60 (initialization) TrickHLA: THLA.federate_amb.initialize(
+      In TrickHLAFederate * federate = &THLA.federate,
+      In TrickHLAManager  * manager  = &THLA.manager );
+   P60 (initialization) TrickHLA: THLA.federate.initialize(
+      Inout TrickHLAFedAmb * federate_amb = &THLA.federate_amb );
+   P60 (initialization) TrickHLA: THLA.manager.initialize(
+      In TrickHLAFederate * federate = &THLA.federate );
+   P65534 (initialization) TrickHLA: THLA.manager.initialization_complete();
+   P65534 (initialization) TrickHLA: THLA.federate.check_pause_at_init( 
+      In const double check_pause_delta = THLA_CHECK_PAUSE_DELTA );
+
+   // Checkpoint related jobs
+   P1 (checkpoint)          TrickHLA: THLA.federate.setup_checkpoint();
+   (freeze)                 TrickHLA: THLA.federate.perform_checkpoint();
+   P1 (pre_load_checkpoint) TrickHLA: THLA.federate.setup_restore();
+   (freeze)                 TrickHLA: THLA.federate.perform_restore();
+
+   // Freeze jobs
+   (freeze)   TrickHLA: THLA.federate.check_freeze();
+   (unfreeze) TrickHLA: THLA.federate.exit_freeze();
+
+   // Scheduled jobs
+   P1 (THLA_DATA_CYCLE_TIME, environment) TrickHLA: THLA.federate.wait_for_time_advance_grant();
+   P1 (THLA_INTERACTION_CYCLE_TIME, environment) TrickHLA: THLA.manager.process_interactions();
+   P1 (THLA_DATA_CYCLE_TIME, environment) TrickHLA: THLA.manager.process_deleted_objects();
+   P1 (0.0, environment) TrickHLA: THLA.manager.start_federation_save(
+      In const char * file_name = THLA.checkpoint_label );
+   P1 (0.0, environment) TrickHLA: THLA.manager.start_federation_save_at_sim_time(
+      In double freeze_sim_time = THLA.checkpoint_time,
+      In const char * file_name = THLA.checkpoint_label );
+   P1 (0.0, environment) TrickHLA: THLA.manager.start_federation_save_at_scenario_time(
+      In double freeze_scenario_time = THLA.checkpoint_time,
+      In const char * file_name = THLA.checkpoint_label );
+   P1 (THLA_DATA_CYCLE_TIME, environment) TrickHLA: THLA.manager.receive_cyclic_data(
+      In double current_time = sys.exec.out.time );
+   P65534 (THLA_DATA_CYCLE_TIME, logging) TrickHLA: THLA.manager.send_cyclic_data(
+      In double current_time = sys.exec.out.time );
+   P65534 (THLA_DATA_CYCLE_TIME, logging) TrickHLA: THLA.manager.send_requested_data(
+      In double current_time = sys.exec.out.time );
+   P65534 (THLA_DATA_CYCLE_TIME, logging) TrickHLA: THLA.manager.process_ownership();
+   P65534 (THLA_DATA_CYCLE_TIME, logging) TrickHLA: THLA.federate.time_advance_request();
+   P65534 (THLA_DATA_CYCLE_TIME, logging) TrickHLA: THLA.federate.check_freeze_time();
+   P65534 (THLA_DATA_CYCLE_TIME, THLA_CHECK_PAUSE_JOB_OFFSET, logging) TrickHLA: THLA.federate.check_pause( 
+      In const double check_pause_delta = THLA_CHECK_PAUSE_DELTA );
+   P65534 (THLA_DATA_CYCLE_TIME, THLA_CHECK_PAUSE_JOB_OFFSET, logging) TrickHLA: THLA.federate.enter_freeze();
+
+   // Shutdown jobs
+   P65534 (shutdown) TrickHLA: THLA.manager.shutdown();
+} THLA;
+\end{lstlisting}
+
+In addition, the following {\tt THLA\_INIT} object should be put
+into the \sdefine file.
+The version shown here is sufficient for now.\footnote{
+  We will discuss this object in more detail when we address
+  \TrickHLA\ multi-phase initialization.
+}
+
+\begin{lstlisting}[caption={The {\tt THLA\_INIT sim\_object}},label={list:THLA-INIT-sim-object}]
+sim_object {
+   // The DSES simulation configuration.
+   simconfig: DSESSimConfig  dses_config;
+
+   // Generally, initialization jobs will go here, but not for this example.
+   
+   // Clear remaining initialization sync-points.
+   P100 (initialization) TrickHLA: THLA.manager.clear_init_sync_points();
+} THLA_INIT;
+\end{lstlisting}
+
+\section{Input Files}
+
+The second step in enabling \TrickHLA\ is to set its parameters in
+a Trick input file.
+The input file for {\tt SIM\_simplesine\_hla\_join} is shown below.
+
+\begin{lstlisting}[caption={{\tt SIM\_simplesine\_hla\_join} input file},label={list:SIM-simplesine-hla-join-input}]
+#include "S_properties"
+#include "S_default.dat"
+#include "Log_data/states.d"
+#include "Modified_data/realtime.d"
+#include "Modified_data/publisher.d"
+#include "Modified_data/subscriber.d"
+
+stop =32.5;
+
+//
+// Basic RTI/federation connection info
+//
+
+// Configure the CRC for the Pitch RTI.
+THLA.federate.local_settings = "crcHost = localhost\n crcPort = 8989";
+
+THLA.federate.name            = "pubsub_join";
+THLA.federate.FOM_modules     = "FOM.xml";
+THLA.federate.federation_name = "simplesine";
+
+THLA.federate.lookahead_time   = THLA_DATA_CYCLE_TIME;
+THLA.federate.time_regulating  = true;
+THLA.federate.time_constrained = true;
+THLA.federate.multiphase_init_sync_points = "Phase1, Phase2";
+
+THLA.federate.enable_known_feds      = true;
+THLA.federate.known_feds_count       = 1;
+THLA.federate.known_feds             = alloc(THLA.federate.known_feds_count);
+THLA.federate.known_feds[0].name     = "pubsub_join";
+THLA.federate.known_feds[0].required = true;
+
+// TrickHLA debug messages.
+THLA.manager.debug_handler.debug_level = THLA_LEVEL2_TRACE;
+
+//
+// SimConfig initialization
+//
+
+// DSES simulation configuration.
+THLA_INIT.dses_config.owner              = "pubsub_join";
+THLA_INIT.dses_config.run_duration       = 15.0;
+THLA_INIT.dses_config.num_federates      = 1;
+THLA_INIT.dses_config.required_federates = "pubsub_join";
+THLA_INIT.dses_config.start_year         = 2007;
+THLA_INIT.dses_config.start_seconds      = 0;
+THLA_INIT.dses_config.scenario           = "Nominal";
+THLA_INIT.dses_config.mode               = "Unknown";
+
+// Simulation Configuration for DSES Multi-phase Initialization.
+THLA.manager.sim_config.FOM_name         = "SimulationConfiguration";
+THLA.manager.sim_config.name             = "SimConfig";
+THLA.manager.sim_config.packing          = &THLA_INIT.dses_config;
+THLA.manager.sim_config.attr_count       = 8;
+THLA.manager.sim_config.attributes       = alloc(THLA.manager.sim_config.attr_count);
+
+THLA.manager.sim_config.attributes[0].FOM_name     = "owner";
+THLA.manager.sim_config.attributes[0].trick_name   = "THLA_INIT.dses_config.owner";
+THLA.manager.sim_config.attributes[0].publish      = true;
+THLA.manager.sim_config.attributes[0].subscribe    = true;
+THLA.manager.sim_config.attributes[0].rti_encoding = THLA_UNICODE_STRING;
+
+THLA.manager.sim_config.attributes[1].FOM_name     = "run_duration";
+THLA.manager.sim_config.attributes[1].trick_name   = "THLA_INIT.dses_config.run_duration_microsec";
+THLA.manager.sim_config.attributes[1].publish      = true;
+THLA.manager.sim_config.attributes[1].subscribe    = true;
+THLA.manager.sim_config.attributes[1].rti_encoding = THLA_LITTLE_ENDIAN;
+
+THLA.manager.sim_config.attributes[2].FOM_name     = "number_of_federates";
+THLA.manager.sim_config.attributes[2].trick_name   = "THLA_INIT.dses_config.num_federates";
+THLA.manager.sim_config.attributes[2].publish      = true;
+THLA.manager.sim_config.attributes[2].subscribe    = true;
+THLA.manager.sim_config.attributes[2].rti_encoding = THLA_LITTLE_ENDIAN;
+
+THLA.manager.sim_config.attributes[3].FOM_name     = "required_federates";
+THLA.manager.sim_config.attributes[3].trick_name   = "THLA_INIT.dses_config.required_federates";
+THLA.manager.sim_config.attributes[3].publish      = true;
+THLA.manager.sim_config.attributes[3].subscribe    = true;
+THLA.manager.sim_config.attributes[3].rti_encoding = THLA_UNICODE_STRING;
+
+THLA.manager.sim_config.attributes[4].FOM_name     = "start_year";
+THLA.manager.sim_config.attributes[4].trick_name   = "THLA_INIT.dses_config.start_year";
+THLA.manager.sim_config.attributes[4].publish      = true;
+THLA.manager.sim_config.attributes[4].subscribe    = true;
+THLA.manager.sim_config.attributes[4].rti_encoding = THLA_LITTLE_ENDIAN;
+
+THLA.manager.sim_config.attributes[5].FOM_name     = "start_seconds";
+THLA.manager.sim_config.attributes[5].trick_name   = "THLA_INIT.dses_config.start_seconds";
+THLA.manager.sim_config.attributes[5].publish      = true;
+THLA.manager.sim_config.attributes[5].subscribe    = true;
+THLA.manager.sim_config.attributes[5].rti_encoding = THLA_LITTLE_ENDIAN;
+
+THLA.manager.sim_config.attributes[6].FOM_name     = "scenario";
+THLA.manager.sim_config.attributes[6].trick_name   = "THLA_INIT.dses_config.scenario";
+THLA.manager.sim_config.attributes[6].publish      = true;
+THLA.manager.sim_config.attributes[6].subscribe    = true;
+THLA.manager.sim_config.attributes[6].rti_encoding = THLA_UNICODE_STRING;
+
+THLA.manager.sim_config.attributes[7].FOM_name     = "mode";
+THLA.manager.sim_config.attributes[7].trick_name   = "THLA_INIT.dses_config.mode";
+THLA.manager.sim_config.attributes[7].publish      = true;
+THLA.manager.sim_config.attributes[7].subscribe    = true;
+THLA.manager.sim_config.attributes[7].rti_encoding = THLA_UNICODE_STRING;
+
+//
+// Object info
+//
+THLA.manager.obj_count = 0;
+
+//
+// Interaction info
+//
+THLA.manager.inter_count = 0;
+\end{lstlisting}
+
+Lines 2-8 are identical to the input file for {\tt SIM\_simplesine\_pubsub}.
+Everything else is new.
+
+Lines 16-18 initialize the federation, supplying values for this federate's
+name, the name of the federation to join, the host/port information for the
+HLA RTI,\footnote{
+  The standard port number is 8989.
+  During development the host is often set to localhost, but in general
+  the RTI will be running on some agreed location on the network.
+}
+and the name of the FOM file (located in the same directory as the
+\sdefine file).
+
+Lines 20-22 are related to HLA time management: the {\em lookahead time},
+and two flags indicating whether the simulation is {\em time regulating}
+and {\em time constrained}.
+All the examples in this document use a lookahead of just under 1sec
+and are both time constrained and time regulating.
+
+Lines 24-28 itemizes a list of {\em known federates}.
+This is the \TrickHLA\ mechanism for ensuring that federates wait for
+everyone to join before proceeding.
+In this example, there is only a single federate ({\tt pubsub\_join}),
+but in cases where there are several, the array would be allocated
+to hold them all, specifying the name of each and whether they are
+required to be present before the others may proceed.
+
+Line 31 is setting the global debug level flags and lead to gradually more or less verbose output.
+
+Lines 38-45 initialize the federation's {\tt SimulationConfiguration} object.
+There is one (and only one) of these instances for all the
+federates in the federation, but each one (if it uses \TrickHLA)
+will nevertheless set these values.
+The \TrickHLA\ infrastructure ensures that even though many federates
+attempt to publish the object, it only gets created by one of them.
+One point worth noting: the value on line 39 for the
+{\tt .run\_duration} parameter ensures that the simulation does not run
+longer than the specified duration, even if that duration is less than
+the value specified with the {\tt STOP} directive (on line 7).
+
+Lines 48-101 are also related to the {\tt SimulationConfiguration} object
+as well as multi-phase initialization.
+(We do not discuss multi-phase initialization in this example.)
+
+Finally, lines 106 and 111 specify that this simulation has no objects
+to publish or subscribe and no interactions to send or receive.
+Subsequent examples will elaborate on the \TrickHLA\ publish/subscribe
+mechanisms.
+
+\section{Output}
+
+The relevant output for this simulation is the output stream from the
+running simulation, which (among other things) verifies that the simulation
+did indeed create and join an HLA federation.
+An abbreviated version of the output is shown below.
+
+\begin{lstlisting}[caption={{\tt SIM\_simplesine\_hla\_join} output},label={list:SIM-simplesine-hla-join-output}]
+...
+| |wormhole|1|0.00|2007/07/25,17:59:09| TrickHLAFedAmb::initialize()
+| |wormhole|1|0.00|2007/07/25,17:59:09| TrickHLAFederate::initialize()
+| |wormhole|1|0.00|2007/07/25,17:59:09| TrickHLAManager::initialize()
+...
+| |wormhole|1|0.00|2007/07/25,17:59:10|
+ TRIVIAL: Trick Federation "simplesine": CREATING FEDERATION EXECUTION
+| |wormhole|1|0.00|2007/07/25,17:59:10|
+ ADVISORY: Trick Federation "simplesine": SUCCESSFULLY CREATED FEDERATION EXECUTION
+| |wormhole|1|0.00|2007/07/25,17:59:10|
+ TRIVIAL: Trick Federation "simplesine": JOINING FEDERATION EXECUTION
+| |wormhole|1|0.00|2007/07/25,17:59:10|
+ ADVISORY: Trick Federation "simplesine": JOINED FEDERATION EXECUTION
+Federate Handle = 2
+...
+| |wormhole|1|0.00|2007/07/25,17:59:10| TrickHLAFederate::wait_for_required_federates_to_join()
+WAITING FOR 1 REQUIRED FEDERATES:
+    1: Waiting for Federate 'pubsub_join'
+...
+| |wormhole|1|0.00|2007/07/25,17:59:10| TrickHLAFederate::wait_for_required_federates_to_join()
+WAITING FOR 1 REQUIRED FEDERATES:
+    1: Found required Federate 'pubsub_join'
+...
+| |wormhole|1|0.00|2007/07/25,17:59:10| TrickHLAManager::initialization_complete()
+        Simulation has started and is now running...
+...
+Federate "pubsub_join" Time granted to: 1
+...
+Federate "pubsub_join" Time granted to: 16
+...
+ TRIVIAL: Trick Federation "simplesine": RESIGNING FROM FEDERATION
+...
+ ADVISORY: Trick Federation "simplesine": RESIGNED FROM FEDERATION
+...
+Federation destroyed
+...
+SIMULATION TERMINATED IN
+  PROCESS: 1
+  JOB/ROUTINE: 11/sim_services/mains/master.c
+DIAGNOSTIC:
+Simulation reached input termination time.
+
+LAST JOB CALLED: THLA.THLA.federate.time_advance_request()
+              TOTAL OVERRUNS:            0
+PERCENTAGE REALTIME OVERRUNS:        0.000%
+
+
+       SIMULATION START TIME:        0.000
+        SIMULATION STOP TIME:       15.000
+     SIMULATION ELAPSED TIME:       15.000
+         ACTUAL ELAPSED TIME:       15.000
+        ACTUAL CPU TIME USED:        0.040
+    SIMULATION / ACTUAL TIME:        1.000
+       SIMULATION / CPU TIME:      375.056
+  ACTUAL INITIALIZATION TIME:        0.000
+     INITIALIZATION CPU TIME:        0.719
+*** DYNAMIC MEMORY USAGE ***
+     CURRENT ALLOCATION SIZE:  1569508
+       NUM OF CURRENT ALLOCS:      483
+         MAX ALLOCATION SIZE:  1569508
+           MAX NUM OF ALLOCS:      483
+       TOTAL ALLOCATION SIZE:  1794096
+         TOTAL NUM OF ALLOCS:     3301
+\end{lstlisting}
+
+Lines 1-14 show the simulation running through its startup process,
+initializing the \TrickHLA\ objects which in turn create and join
+the HLA federation names {\em simplesine}.
+
+Lines 16-25 show the simulation waiting for all the required federates to join,
+which in this case is just this simulation.
+
+Lines 27-29 show the beginning and end of the time grants issues by HLA,
+starting at $t=1$ and going thru the end of the simulation duration,
+as $t$ extended past the specified limit of 15.
+
+Lines 31-35 show the simulation resigning from the federation and
+destroying it (since no federates remain).
+
+The remaining lines are standard Trick output generated at the end of a run.
+Note that in spite of the fact that the input file specified
+{\tt stop = 32.5} as shown on line 7 of the input file
+(Listing~\ref{list:SIM-simplesine-hla-join-input} on page~\pageref{list:SIM-simplesine-hla-join-input}),
+the simulation actually terminated earlier due to the
+simulation configuration {\tt .run\_duration = 15.0} as specified in
+the input file.
