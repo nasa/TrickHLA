@@ -1,8 +1,8 @@
-# TrickHLA: An IEEE 1516 High Level Architecture (HLA) Simulation Interoperability Standard Middleware for the Trick Simulation Environment
+# TrickHLA is an IEEE 1516 High Level Architecture (HLA) Simulation Interoperability Standard Middleware for the Trick Simulation Environment
 
 ## Brief Abstract:
 
-The Trick High Level Architecture (TrickHLA) software supports IEEE-1516: High Level Architecture (HLA) based simulation interoperability for the [Trick Simulation Environment](https://github.com/nasa/trick/). The TrickHLA software abstracts away the details of using HLA, allowing the user to concentrate on the simulation and not worry about having to be an HLA distributed simulation expert. The TrickHLA software is data driven and provides a simple Application Programming Interface (API) making it relatively easy to take an existing Trick simulation and make it a HLA distributed simulation.
+The TrickHLA software supports the IEEE-1516 High Level Architecture (HLA) simulation interoperability standard for the [Trick Simulation Environment](https://github.com/nasa/trick/). The TrickHLA software abstracts away the details of using HLA, allowing the user to concentrate on the simulation and not worry about having to be an HLA distributed simulation expert. The TrickHLA software is data driven and provides a simple Application Programming Interface (API) making it relatively easy to take an existing Trick simulation and make it a HLA distributed simulation.
 
 ## Copyright:
 Copyright 2020 United States Government as represented by the Administrator of the National Aeronautics and Space Administration. No copyright is claimed in the United States under Title 17, U.S. Code. All Other Rights Reserved.
