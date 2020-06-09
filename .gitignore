@@ -16,6 +16,15 @@ docs/scripts
 docs/sims
 docs/doxygen/*Err.txt
 
+# Ignore LaTeX build artifacts.
+/LaTeX/**/*.aux
+/LaTeX/**/*.bbl
+/LaTeX/**/*.blg
+/LaTeX/**/*.def
+/LaTeX/**/*.log
+/LaTeX/**/*.out
+/LaTeX/**/*.toc
+
 # Editor temporary files
 *.swp
 *~
