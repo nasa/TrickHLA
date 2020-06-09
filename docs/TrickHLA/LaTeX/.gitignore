@@ -1,0 +1,8 @@
+# Ignore LaTeX build artifacts.
+*.aux
+*.bbl
+*.blg
+*.def
+*.log
+*.out
+*.toc
