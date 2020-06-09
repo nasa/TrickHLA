@@ -2110,9 +2110,6 @@ void Manager::determine_job_cycle_time()
 
    // Verify the job cycle time against the HLA lookahead time.
    if ( ( job_cycle_time <= 0.0 ) || ( job_cycle_time < lookahead_time ) ) {
-      // Cycle time can not be less than the lookahead time.
-      job_cycle_time = lookahead_time;
-
       ostringstream errmsg;
       errmsg << "Manager::determine_job_cycle_time():" << __LINE__
              << " ERROR: The cycle time for this job is less than the HLA"
