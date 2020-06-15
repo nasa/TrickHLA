@@ -3,7 +3,7 @@
 # @brief This program applies a cppcheck program to TrickHLA source code.
 # 
 # This is a Python program used to check the TrickHLA source code using the
-# cppcheck utilitiy.
+# cppcheck utility.
 #
 # @revs_title
 # @revs_begin
