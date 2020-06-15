@@ -432,7 +432,9 @@ void SyncPntListBase::wait_for_list_synchronization(
       }
 
       // Now that the sync-point is achieved, reset the state to EXISTS.
-      sp->set_state( SYNC_PNT_STATE_EXISTS );
+      if ( sp != NULL ) {
+         sp->set_state( SYNC_PNT_STATE_EXISTS );
+      }
    }
 
    return;
@@ -520,7 +522,6 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
              << "' not found!";
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-      return;
    }
 
    return;

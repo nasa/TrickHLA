@@ -382,25 +382,25 @@ federate so the data will not be sent for '%s'.%c",
              << " module to verify the settings." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-   }
-
-   // Make sure we have at least one piece of object init data we can send.
-   if ( obj->any_locally_owned_published_init_attribute() ) {
-
-      if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "Manager::send_init_data():%d '%s'%c",
-                  __LINE__, instance_name, THLA_NEWLINE );
-      }
-
-      // Send the object init data to the other federates.
-      obj->send_init_data();
    } else {
-      if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "Manager::send_init_data():%d Nothing to send for '%s'%c",
-                  __LINE__, instance_name, THLA_NEWLINE );
+
+      // Make sure we have at least one piece of object init data we can send.
+      if ( obj->any_locally_owned_published_init_attribute() ) {
+
+         if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            send_hs( stdout, "Manager::send_init_data():%d '%s'%c",
+                     __LINE__, instance_name, THLA_NEWLINE );
+         }
+
+         // Send the object init data to the other federates.
+         obj->send_init_data();
+      } else {
+         if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            send_hs( stdout, "Manager::send_init_data():%d Nothing to send for '%s'%c",
+                     __LINE__, instance_name, THLA_NEWLINE );
+         }
       }
    }
-
    return;
 }
 
@@ -531,73 +531,74 @@ void Manager::receive_init_data(
              << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-   }
+   } else {
 
-   // Make sure we have at least one piece of data we can receive.
-   if ( obj->any_remotely_owned_subscribed_init_attribute() ) {
+      // Make sure we have at least one piece of data we can receive.
+      if ( obj->any_remotely_owned_subscribed_init_attribute() ) {
 
-      // Only wait for REQUIRED received init data and do not block waiting
-      // to receive init data if we are using the simple init scheme.
-      bool obj_required = obj->is_required() && ( execution_control->wait_on_init_data() );
+         // Only wait for REQUIRED received init data and do not block waiting
+         // to receive init data if we are using the simple init scheme.
+         bool obj_required = obj->is_required() && ( execution_control->wait_on_init_data() );
 
-      if ( obj_required ) {
-         if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            send_hs( stdout, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.%c",
-                     __LINE__, instance_name,
-                     ( obj->is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
-         }
+         if ( obj_required ) {
+            if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+               send_hs( stdout, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.%c",
+                        __LINE__, instance_name,
+                        ( obj->is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
+            }
 
-         unsigned int sleep_micros = 1000;
-         unsigned int wait_count   = 0;
-         unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+            unsigned int sleep_micros = 1000;
+            unsigned int wait_count   = 0;
+            unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
 
-         // Wait for the data to arrive.
-         while ( !obj->is_changed() ) {
+            // Wait for the data to arrive.
+            while ( !obj->is_changed() ) {
 
-            // Check for shutdown.
-            federate->check_for_shutdown_with_termination();
+               // Check for shutdown.
+               federate->check_for_shutdown_with_termination();
 
-            usleep( sleep_micros );
+               usleep( sleep_micros );
 
-            if ( ( !obj->is_changed() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-               wait_count = 0;
-               if ( !federate->is_execution_member() ) {
-                  ostringstream errmsg;
-                  errmsg << "Manager::receive_init_data():" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution member."
-                         << " This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
-                         << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << THLA_ENDL;
-                  send_hs( stderr, (char *)errmsg.str().c_str() );
-                  exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               if ( ( !obj->is_changed() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
+                  wait_count = 0;
+                  if ( !federate->is_execution_member() ) {
+                     ostringstream errmsg;
+                     errmsg << "Manager::receive_init_data():" << __LINE__
+                            << " Unexpectedly the Federate is no longer an execution member."
+                            << " This means we are either not connected to the"
+                            << " RTI or we are no longer joined to the federation"
+                            << " execution because someone forced our resignation at"
+                            << " the Central RTI Component (CRC) level!"
+                            << THLA_ENDL;
+                     send_hs( stderr, (char *)errmsg.str().c_str() );
+                     exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+                  }
                }
             }
          }
-      }
 
-      // Check for changed data which means we received something.
-      if ( obj->is_changed() ) {
-         if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            send_hs( stdout,
-                     "Manager::receive_init_data():%d Received '%s'%c",
-                     __LINE__, instance_name, THLA_NEWLINE );
+         // Check for changed data which means we received something.
+         if ( obj->is_changed() ) {
+            if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+               send_hs( stdout,
+                        "Manager::receive_init_data():%d Received '%s'%c",
+                        __LINE__, instance_name, THLA_NEWLINE );
+            }
+
+            // Receive the data from the publishing federate.
+            obj->receive_init_data();
+         } else {
+            if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+               send_hs( stdout, "Manager::receive_init_data():%d Received nothing for '%s', and marked as %s.%c",
+                        __LINE__, instance_name,
+                        ( obj_required ? "REQUIRED" : "not required" ), THLA_NEWLINE );
+            }
          }
-
-         // Receive the data from the publishing federate.
-         obj->receive_init_data();
       } else {
          if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            send_hs( stdout, "Manager::receive_init_data():%d Received nothing for '%s', and marked as %s.%c",
-                     __LINE__, instance_name,
-                     ( obj_required ? "REQUIRED" : "not required" ), THLA_NEWLINE );
+            send_hs( stdout, "Manager::receive_init_data():%d Nothing to receive for '%s'%c",
+                     __LINE__, instance_name, THLA_NEWLINE );
          }
-      }
-   } else {
-      if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "Manager::receive_init_data():%d Nothing to receive for '%s'%c",
-                  __LINE__, instance_name, THLA_NEWLINE );
       }
    }
 }

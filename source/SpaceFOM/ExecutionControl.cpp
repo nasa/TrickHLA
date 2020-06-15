@@ -863,15 +863,16 @@ void ExecutionControl::pre_multi_phase_init_processes()
              << " ERROR: Unexpected NULL THLA.manager.exec_config object." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-   }
+   } else {
 
-   // Make sure the ExCO has at least a FOM-name to be valid.
-   if ( ExCO->get_FOM_name() == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-             << " ERROR: Unexpected NULL FOM-name for the THLA.manager.exec_config object." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      // Make sure the ExCO has at least a FOM-name to be valid.
+      if ( ExCO->get_FOM_name() == NULL ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
+                << " ERROR: Unexpected NULL FOM-name for the THLA.manager.exec_config object." << THLA_ENDL;
+         send_hs( stderr, (char *)errmsg.str().c_str() );
+         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      }
    }
 
    // The User Must specify a root reference frame.
@@ -977,7 +978,9 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // Set the ExCO current and next run modes.
    this->set_current_execution_control_mode( EXECUTION_CONTROL_INITIALIZING );
-   ExCO->set_current_execution_mode( EXECUTION_MODE_INITIALIZING );
+   if ( ExCO != NULL ) {
+      ExCO->set_current_execution_mode( EXECUTION_MODE_INITIALIZING );
+   }
    this->set_requested_execution_control_mode( EXECUTION_CONTROL_INITIALIZING );
    if ( this->is_master() ) {
       this->set_next_execution_control_mode( EXECUTION_CONTROL_INITIALIZING );
@@ -1957,71 +1960,71 @@ bool ExecutionControl::run_mode_transition()
              << " The 'mtr_run' sync-point was not found!" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-   }
+   } else {
 
-   // Wait for 'mtr_run' sync-point announce.
-   sync_pnt->wait_for_announce( federate );
+      // Wait for 'mtr_run' sync-point announce.
+      sync_pnt->wait_for_announce( federate );
 
-   // Achieve the 'mtr-run' sync-point.
-   sync_pnt->achieve_sync_point( *RTI_amb );
+      // Achieve the 'mtr-run' sync-point.
+      sync_pnt->achieve_sync_point( *RTI_amb );
 
-   // Wait for 'mtr_run' sync-point synchronization.
-   sync_pnt->wait_for_synchronization( federate );
+      // Wait for 'mtr_run' sync-point synchronization.
+      sync_pnt->wait_for_synchronization( federate );
 
-   // Set the current execution mode to running.
-   this->current_execution_control_mode = EXECUTION_CONTROL_RUNNING;
-   ExCO->set_current_execution_mode( EXECUTION_MODE_RUNNING );
+      // Set the current execution mode to running.
+      this->current_execution_control_mode = EXECUTION_CONTROL_RUNNING;
+      ExCO->set_current_execution_mode( EXECUTION_MODE_RUNNING );
 
-   // Check for CTE.
-   if ( this->does_cte_timeline_exist() ) {
+      // Check for CTE.
+      if ( this->does_cte_timeline_exist() ) {
 
-      double go_to_run_time;
+         double go_to_run_time;
 
-      // The Master federate updates the ExCO with the CTE got-to-run time.
-      if ( this->is_master() ) {
+         // The Master federate updates the ExCO with the CTE got-to-run time.
+         if ( this->is_master() ) {
 
-         go_to_run_time = ExCO->get_next_mode_cte_time();
-         ExCO->send_init_data();
+            go_to_run_time = ExCO->get_next_mode_cte_time();
+            ExCO->send_init_data();
 
-      } // Other federates wait on the ExCO update with the CTE go-to-run time.
-      else {
+         } // Other federates wait on the ExCO update with the CTE go-to-run time.
+         else {
 
-         // Wait for the ExCO update with the CTE time.
-         ExCO->wait_on_update();
+            // Wait for the ExCO update with the CTE time.
+            ExCO->wait_on_update();
 
-         // Process the just received ExCO update.
-         this->process_execution_control_updates();
+            // Process the just received ExCO update.
+            this->process_execution_control_updates();
 
-         // Set the CTE time to go to run.
-         go_to_run_time = ExCO->get_next_mode_cte_time();
-      }
+            // Set the CTE time to go to run.
+            go_to_run_time = ExCO->get_next_mode_cte_time();
+         }
 
-      // Wait for the CTE go-to-run time.
-      double diff;
-      while ( this->get_cte_time() < go_to_run_time ) {
+         // Wait for the CTE go-to-run time.
+         double diff;
+         while ( this->get_cte_time() < go_to_run_time ) {
 
-         // Check for shutdown.
-         federate->check_for_shutdown_with_termination();
+            // Check for shutdown.
+            federate->check_for_shutdown_with_termination();
 
-         diff = go_to_run_time - this->get_cte_time();
-         if ( fmod( diff, 1.0 ) == 0.0 ) {
-            if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_2_TRACE,
-                                             TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
-               send_hs( stdout, "SpaceFOM::ExecutionControl::run_mode_transition():%d Going to run in %G seconds.%c",
-                        __LINE__, diff, THLA_NEWLINE );
+            diff = go_to_run_time - this->get_cte_time();
+            if ( fmod( diff, 1.0 ) == 0.0 ) {
+               if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_2_TRACE,
+                                                TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
+                  send_hs( stdout, "SpaceFOM::ExecutionControl::run_mode_transition():%d Going to run in %G seconds.%c",
+                           __LINE__, diff, THLA_NEWLINE );
+               }
             }
          }
-      }
 
-      // Print debug message if appropriate.
-      if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
-         double curr_cte_time = this->get_cte_time();
-         diff                 = curr_cte_time - go_to_run_time;
-         send_hs( stdout, "SpaceFOM::ExecutionControl::run_mode_transition():%d \n  Going to run at CTE time %.18G seconds. \n  Current CTE time %.18G seconds. \n  Difference: %.9lf seconds.%c",
-                  __LINE__, go_to_run_time, curr_cte_time, diff, THLA_NEWLINE );
+         // Print debug message if appropriate.
+         if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
+            double curr_cte_time = this->get_cte_time();
+            diff                 = curr_cte_time - go_to_run_time;
+            send_hs( stdout, "SpaceFOM::ExecutionControl::run_mode_transition():%d \n  Going to run at CTE time %.18G seconds. \n  Current CTE time %.18G seconds. \n  Difference: %.9lf seconds.%c",
+                     __LINE__, go_to_run_time, curr_cte_time, diff, THLA_NEWLINE );
+         }
       }
    }
-
    return true;
 }
 
@@ -2052,21 +2055,21 @@ bool ExecutionControl::freeze_mode_transition()
              << " The 'mtr_freeze' sync-point was not found!" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+   } else {
+
+      // Wait for 'mtr_freeze' sync-point announce.
+      sync_pnt->wait_for_announce( federate );
+
+      // Achieve the 'mtr_freeze' sync-point.
+      sync_pnt->achieve_sync_point( *RTI_amb );
+
+      // Wait for 'mtr_freeze' sync-point synchronization.
+      sync_pnt->wait_for_synchronization( federate );
+
+      // Set the current execution mode to freeze.
+      this->current_execution_control_mode = EXECUTION_CONTROL_FREEZE;
+      ExCO->set_current_execution_mode( EXECUTION_MODE_FREEZE );
    }
-
-   // Wait for 'mtr_freeze' sync-point announce.
-   sync_pnt->wait_for_announce( federate );
-
-   // Achieve the 'mtr_freeze' sync-point.
-   sync_pnt->achieve_sync_point( *RTI_amb );
-
-   // Wait for 'mtr_freeze' sync-point synchronization.
-   sync_pnt->wait_for_synchronization( federate );
-
-   // Set the current execution mode to freeze.
-   this->current_execution_control_mode = EXECUTION_CONTROL_FREEZE;
-   ExCO->set_current_execution_mode( EXECUTION_MODE_FREEZE );
-
    return false;
 }
 
@@ -2609,11 +2612,12 @@ void ExecutionControl::set_least_common_time_step(
                 << " ERROR: Execution Configuration is not an SpaceFOM ExCO." << THLA_ENDL;
          send_hs( stderr, (char *)errmsg.str().c_str() );
          exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-      }
+      } else {
 
-      // Make sure to set this for both the ExecutionControl and the ExCO.
-      this->least_common_time_step = lcts;
-      ExCO->set_least_common_time_step( lcts );
+         // Make sure to set this for both the ExecutionControl and the ExCO.
+         this->least_common_time_step = lcts;
+         ExCO->set_least_common_time_step( lcts );
+      }
    }
    return;
 }

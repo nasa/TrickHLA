@@ -2410,17 +2410,17 @@ size %d, will use the data buffer size instead.%c",
                    << "' and length " << ( ( length > 0 ) ? ( length + 16 ) : 16 ) << "!" << THLA_ENDL;
             send_hs( stderr, (char *)errmsg.str().c_str() );
             exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         } else {
+
+            // Decode the UTF-16 characters.
+            for ( size_t k = 0; k < length; k++ ) {
+               input++; // skip the high-character of the UTF-16 encoding
+               output[k] = *( input++ );
+            }
+
+            // Add the terminating null character '\0';
+            output[length] = '\0';
          }
-
-         // Decode the UTF-16 characters.
-         for ( size_t k = 0; k < length; k++ ) {
-            input++; // skip the high-character of the UTF-16 encoding
-            output[k] = *( input++ );
-         }
-
-         // Add the terminating null character '\0';
-         output[length] = '\0';
-
       } else if ( num_items > 1 ) {
          // Or is it an array of multiple strings?
 
@@ -2553,16 +2553,17 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                       << "!" << THLA_ENDL;
                send_hs( stderr, (char *)errmsg.str().c_str() );
                exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-            }
+            } else {
 
-            // Decode the UTF-16 characters.
-            for ( size_t k = 0; k < length; k++ ) {
-               input++; // skip the high-character of the UTF-16 encoding
-               output[k] = *( input++ );
-            }
+               // Decode the UTF-16 characters.
+               for ( size_t k = 0; k < length; k++ ) {
+                  input++; // skip the high-character of the UTF-16 encoding
+                  output[k] = *( input++ );
+               }
 
-            // Add the terminating null character '\0';
-            output[length] = '\0';
+               // Add the terminating null character '\0';
+               output[length] = '\0';
+            }
 
             // Skip any pad added between strings which is used to stay
             // on a 4 byte boundary. The last element has no padding.
@@ -2665,16 +2666,16 @@ WARNING: For ENCODING_TYPE_ASCII_STRING attribute '%s', decoded length %d > data
                    << "' and length " << ( ( length > 0 ) ? ( length + 16 ) : 16 ) << "!" << THLA_ENDL;
             send_hs( stderr, (char *)errmsg.str().c_str() );
             exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         } else {
+
+            // Copy the ASCII characters over.
+            if ( length > 0 ) {
+               memcpy( output, input, (size_t)length );
+            }
+
+            // Add the terminating null character '\0';
+            output[length] = '\0';
          }
-
-         // Copy the ASCII characters over.
-         if ( length > 0 ) {
-            memcpy( output, input, (size_t)length );
-         }
-
-         // Add the terminating null character '\0';
-         output[length] = '\0';
-
       } else if ( num_items > 1 ) {
          // Or is it an array of multiple strings?
 
@@ -2779,14 +2780,14 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                   // for next time.
                   *( (char **)ref2->address + i ) = (char *)TMM_resize_array_1d_a( *( (char **)ref2->address + i ),
                                                                                    (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
-                  output                          = *( (unsigned char **)ref2->address + i );
+                  output = *( (unsigned char **)ref2->address + i );
                }
             } else {
                // Allocate memory for the sim string and include room for the
                // terminating null character and add a few more bytes to give
                // us a little more space for next time.
                *( (char **)ref2->address + i ) = (char *)TMM_declare_var_1d( "char", (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
-               output                          = *( (unsigned char **)ref2->address + i );
+               output = *( (unsigned char **)ref2->address + i );
             }
 
             if ( output == NULL ) {
@@ -2798,16 +2799,17 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                       << "!" << THLA_ENDL;
                send_hs( stderr, (char *)errmsg.str().c_str() );
                exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-            }
+            } else {
 
-            // Copy the ASCII characters over.
-            if ( length > 0 ) {
-               memcpy( output, input, length );
-               input += length;
-            }
+               // Copy the ASCII characters over.
+               if ( length > 0 ) {
+                  memcpy( output, input, length );
+                  input += length;
+               }
 
-            // Add the terminating null character '\0';
-            output[length] = '\0';
+               // Add the terminating null character '\0';
+               output[length] = '\0';
+            }
 
             // Skip the padding which was added to keep the data on a 4 byte
             // boundary. The last element gets no padding.
@@ -3138,13 +3140,14 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                    << "' and length " << ( ( length > 0 ) ? ( length + 16 ) : 16 ) << "!" << THLA_ENDL;
             send_hs( stderr, (char *)errmsg.str().c_str() );
             exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         } else {
+
+            memcpy( output, ( input + start_index ), (size_t)length );
+
+            // Move to the next encoded string in the input.
+            end_index++;
+            start_index = end_index;
          }
-
-         memcpy( output, ( input + start_index ), (size_t)length );
-
-         // Move to the next encoded string in the input.
-         end_index++;
-         start_index = end_index;
       }
       break;
    }
