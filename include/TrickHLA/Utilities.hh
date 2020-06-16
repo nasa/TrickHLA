@@ -212,6 +212,13 @@ class Utilities
     *  @param  input The input value to byteswap. */
    static double byteswap_double( double input );
 
+   /*! @brief Sleep for the specified number of microseconds. The usleep() C
+    *  function is obsolete (see CWE-676). Create a wrapper around nanosleep()
+    *  to provide the same functionality as usleep().
+    *  @return Error code, where a value of 0 is for no error.
+    *  @param  usec Time to sleep in microseconds. */
+   static int micro_sleep( long usec );
+
    /*! @brief Return the current TrickHLA version string from the auto
     *  generated Version.hh header file.
     *  @return Byteswap value. */

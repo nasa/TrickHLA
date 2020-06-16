@@ -96,6 +96,18 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
       associated sync point mechanisms to coordinate federation execution
       mode transitions.*/
 
+   int64_t least_common_time_step; /**< @trick_units{--}
+      A 64 bit integer time that represents microseconds for the least common
+      value of all the time step values in the federation execution (LCTS).
+      This value is set by the Master Federate and does not change during the
+      federation execution. This is used in the computation to find the next
+      HLA Logical Time Boundary (HLTB) available to all federates in the
+      federation execution.  The basic equation is
+            HLTB = ( floor(GALT/LCTS) + 1 ) * LCTS,
+      where GALT is the greatest available logical time.  This is used to
+      synchronize the federates in a federation execution to be on a common
+      logical time boundary. */
+
   public:
    // Public constructors and destructors.
    /*! @brief Default constructor for the DIS ExecutionConfiguration class. */

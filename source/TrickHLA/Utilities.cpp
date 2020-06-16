@@ -27,6 +27,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <time.h>
 
 // Trick include files.
 #include "trick/trick_byteswap.h"
@@ -360,6 +361,20 @@ double Utilities::byteswap_double(
       break;
    }
    return ( output );
+}
+
+int Utilities::micro_sleep(
+   long usec )
+{
+   struct timespec req, rem;
+   if ( usec >= 1000000 ) {
+      req.tv_sec  = ( usec / 1000000 );
+      req.tv_nsec = ( usec - ( req.tv_sec * 1000000 ) ) * 1000;
+   } else {
+      req.tv_sec  = 0;
+      req.tv_nsec = usec * 1000;
+   }
+   return nanosleep( &req, &rem );
 }
 
 string Utilities::get_version()

@@ -1085,7 +1085,7 @@ Waiting on reservation of Object Instance Name '%s'.%c",
    unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
 
    while ( !name_registered ) {
-      usleep( sleep_micros );
+      (void)Utilities::micro_sleep( sleep_micros );
 
       if ( ( !name_registered ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
          wait_count = 0;
@@ -1278,7 +1278,7 @@ void Object::wait_on_object_registration()
    unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
 
    while ( !is_instance_handle_valid() ) {
-      usleep( sleep_micros );
+      (void)Utilities::micro_sleep( sleep_micros );
 
       if ( ( !is_instance_handle_valid() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
          wait_count = 0;
@@ -2384,7 +2384,7 @@ waiting for data at time %f seconds with timeout time %f and simulation time %f.
               && ( time < timeout )
               && blocking_cyclic_read
               && any_remotely_owned_subscribed_cyclic_attribute() ) {
-         usleep( 1 );
+         (void)Utilities::micro_sleep( 1 );
          if ( !is_changed() ) {
             time = clock.get_time();
          }
@@ -4299,7 +4299,7 @@ rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generate
             }
          } // end of 'for' loop
 
-         usleep( sleep_micros );
+         (void)Utilities::micro_sleep( sleep_micros );
 
          if ( ( ownership_counter < attr_hdl_set.size() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
             wait_count = 0;

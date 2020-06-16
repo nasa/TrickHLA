@@ -447,7 +447,7 @@ federate so this call will be ignored.%c",
                // Check for shutdown.
                federate->check_for_shutdown_with_termination();
 
-               usleep( sleep_micros );
+               (void)Utilities::micro_sleep( sleep_micros );
 
                if ( ( !objects[i].is_changed() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
                   wait_count = 0;
@@ -557,7 +557,7 @@ void Manager::receive_init_data(
                // Check for shutdown.
                federate->check_for_shutdown_with_termination();
 
-               usleep( sleep_micros );
+               (void)Utilities::micro_sleep( sleep_micros );
 
                if ( ( !obj->is_changed() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
                   wait_count = 0;
@@ -1862,7 +1862,7 @@ void Manager::wait_on_registration_of_required_objects()
 
       // Wait a little while to allow the objects to be registered.
       if ( any_unregistered_required_obj ) {
-         usleep( sleep_micros );
+         (void)Utilities::micro_sleep( sleep_micros );
 
          // Check again to see if we have any unregistered objects.
          any_unregistered_required_obj = ( current_required_obj_cnt < total_required_obj_cnt );
@@ -2961,7 +2961,7 @@ void Manager::wait_on_discovery_of_objects()
 
             // Sleep for a little while to allow the RTI to trigger the object
             // discovery callbacks.
-            usleep( sleep_micros );
+            (void)Utilities::micro_sleep( sleep_micros );
 
             if ( ( ++wait_count % wait_check ) == 0 ) {
                wait_count = 0;

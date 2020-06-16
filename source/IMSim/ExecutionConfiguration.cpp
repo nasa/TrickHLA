@@ -56,6 +56,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/Utilities.hh"
 
 //IMSim include files.
 #include "IMSim/ExecutionConfiguration.hh"
@@ -656,7 +657,7 @@ bool ExecutionConfiguration::wait_on_update() // RETURN: -- None.
          // Check for shutdown.
          federate->check_for_shutdown_with_termination();
 
-         usleep( sleep_micros );
+         (void)Utilities::micro_sleep( sleep_micros );
 
          if ( ( !this->is_changed() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
             wait_count = 0;

@@ -1430,7 +1430,7 @@ string Federate::wait_for_required_federates_to_join()
       this->check_for_shutdown_with_termination();
 
       // Sleep a little while to wait for more federates to join.
-      usleep( sleep_micros );
+      (void)Utilities::micro_sleep( sleep_micros );
 
       // Determine what federates have joined only if the joined federate
       // count has changed.
@@ -2762,7 +2762,7 @@ void Federate::setup_checkpoint()
 
          // need to wait for federation to initiate save
          while ( !start_to_save ) {
-            usleep( sleep_micros );
+            (void)Utilities::micro_sleep( sleep_micros );
 
             if ( ( !start_to_save ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
                wait_count = 0;
@@ -2995,7 +2995,7 @@ void Federate::setup_restore()
 
       // need to wait for federation to initiate restore
       while ( !start_to_restore ) {
-         usleep( sleep_micros );
+         (void)Utilities::micro_sleep( sleep_micros );
 
          if ( ( !start_to_restore ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
             wait_count = 0;
@@ -3701,7 +3701,7 @@ void Federate::create_and_join_federation()
          send_hs( stderr, "Federate::create_and_join_federation():%d Failed to join federation \"%s\" on attempt %d of %d!%c",
                   __LINE__, get_federation_name(), k, max_retries,
                   THLA_NEWLINE );
-         usleep( 100000 );
+         (void)Utilities::micro_sleep( 100000 );
       }
    }
 
@@ -3939,7 +3939,7 @@ void Federate::setup_time_constrained()
          // Check for shutdown.
          this->check_for_shutdown_with_termination();
 
-         usleep( sleep_micros );
+         (void)Utilities::micro_sleep( sleep_micros );
 
          if ( ( !time_constrained_state ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
             wait_count = 0;
@@ -4098,7 +4098,7 @@ void Federate::setup_time_regulation()
          // Check for shutdown.
          this->check_for_shutdown_with_termination();
 
-         usleep( sleep_micros );
+         (void)Utilities::micro_sleep( sleep_micros );
 
          if ( ( !time_regulating_state ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
             wait_count = 0;
@@ -4350,7 +4350,7 @@ void Federate::perform_time_advance_request()
          send_hs( stderr, "Federate::perform_time_advance_request():%d Recoverable RTI error, retry attempt: %d%c",
                   __LINE__, errorRecoveryCnt, THLA_NEWLINE );
 
-         usleep( 1000 );
+         (void)Utilities::micro_sleep( 1000 );
       }
 
    } while ( anyError && isRecoverableError && ( errorRecoveryCnt < max_retry_attempts ) );
@@ -4422,7 +4422,7 @@ void Federate::wait_for_time_advance_grant()
          this->check_for_shutdown_with_termination();
 
 #if THLA_TAG_USE_USLEEP
-         usleep( sleep_micros );
+         (void)Utilities::micro_sleep( sleep_micros );
 #else
          RELEASE_1();                     // Faster than usleep()
 #endif
@@ -5325,7 +5325,7 @@ void Federate::ask_MOM_for_auto_provide_setting()
       this->check_for_shutdown_with_termination();
 
       // Sleep a little while to wait for the information to update.
-      usleep( sleep_micros );
+      (void)Utilities::micro_sleep( sleep_micros );
 
       if ( ( auto_provide_setting < 0 ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
          wait_count = 0;
@@ -5461,7 +5461,7 @@ void Federate::load_and_print_running_federate_names()
       this->check_for_shutdown_with_termination();
 
       // Sleep a little while to wait for the information to update.
-      usleep( sleep_micros );
+      (void)Utilities::micro_sleep( sleep_micros );
 
       if ( ( running_feds_count <= 0 ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
          wait_count = 0;
@@ -5512,7 +5512,7 @@ MOM just informed us that there are %d federates currently running in the federa
       this->check_for_shutdown_with_termination();
 
       // Sleep a little while to wait for more federates to join.
-      usleep( sleep_micros );
+      (void)Utilities::micro_sleep( sleep_micros );
 
       // Determine what federates have joined only if the joined federate
       // count has changed.
@@ -5548,7 +5548,7 @@ MOM just informed us that there are %d federates currently running in the federa
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
 
-      usleep( sleep_micros );
+      (void)Utilities::micro_sleep( sleep_micros );
 
       if ( ( joined_federate_names.size() < (unsigned int)running_feds_count ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
          wait_count = 0;
@@ -6264,7 +6264,7 @@ void Federate::wait_for_federation_restore_begun()
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
 
-      usleep( sleep_micros ); // sleep until RTI responds...
+      (void)Utilities::micro_sleep( sleep_micros ); // sleep until RTI responds...
 
       if ( ( !this->restore_begun ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
          wait_count = 0;
@@ -6303,7 +6303,7 @@ void Federate::wait_until_federation_is_ready_to_restore()
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
 
-      usleep( sleep_micros ); // sleep until RTI responds...
+      (void)Utilities::micro_sleep( sleep_micros ); // sleep until RTI responds...
 
       if ( ( !this->start_to_restore ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
          wait_count = 0;
@@ -6378,7 +6378,7 @@ string Federate::wait_for_federation_restore_to_complete()
                       "completed!\nTERMINATING SIMULATION!";
          return tRetString;
       } else {
-         usleep( sleep_micros ); // sleep until RTI responds...
+         (void)Utilities::micro_sleep( sleep_micros ); // sleep until RTI responds...
 
          if ( ( !this->restore_completed ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
             wait_count = 0;
@@ -6431,7 +6431,7 @@ void Federate::wait_for_restore_request_callback()
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
 
-      usleep( sleep_micros ); // sleep until RTI responds...
+      (void)Utilities::micro_sleep( sleep_micros ); // sleep until RTI responds...
 
       if ( ( !has_restore_process_restore_request_failed() && !has_restore_process_restore_request_succeeded() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
          wait_count = 0;
@@ -6470,7 +6470,7 @@ void Federate::wait_for_restore_status_to_complete()
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
 
-      usleep( sleep_micros ); // sleep until RTI responds...
+      (void)Utilities::micro_sleep( sleep_micros ); // sleep until RTI responds...
 
       if ( ( !restore_request_complete ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
          wait_count = 0;
@@ -6509,7 +6509,7 @@ void Federate::wait_for_save_status_to_complete()
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
 
-      usleep( sleep_micros ); // sleep until RTI responds...
+      (void)Utilities::micro_sleep( sleep_micros ); // sleep until RTI responds...
 
       if ( ( !save_request_complete ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
          wait_count = 0;
@@ -6557,7 +6557,7 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
          }
          return;
       }
-      usleep( sleep_micros ); // sleep until RTI responds...
+      (void)Utilities::micro_sleep( sleep_micros ); // sleep until RTI responds...
 
       if ( ( !federation_restore_failed_callback_complete ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
          wait_count = 0;
@@ -7138,7 +7138,7 @@ void Federate::restore_federate_handles_from_MOM()
 
    // Wait until all of the federate handles have been retrieved.
    while ( joined_federate_handles.size() < (unsigned int)running_feds_count ) {
-      usleep( sleep_micros );
+      (void)Utilities::micro_sleep( sleep_micros );
 
       if ( ( joined_federate_handles.size() < (unsigned int)running_feds_count ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
          wait_count = 0;

@@ -56,6 +56,7 @@ execution.
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/Utilities.hh"
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
@@ -316,7 +317,7 @@ void ExecutionConfigurationBase::wait_on_registration()
 
       // Wait a little while to allow the objects to be registered.
       if ( any_unregistered_obj ) {
-         usleep( sleep_micros );
+         (void)Utilities::micro_sleep( sleep_micros );
 
          // Check again to determine if we have any unregistered objects.
          any_unregistered_obj = ( obj_reg_cnt < total_obj_cnt );
@@ -369,7 +370,7 @@ bool ExecutionConfigurationBase::wait_on_update() // RETURN: -- None.
          // Check for shutdown.
          federate->check_for_shutdown_with_termination();
 
-         usleep( sleep_micros );
+         (void)Utilities::micro_sleep( sleep_micros );
 
          if ( ( !this->is_changed() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
             wait_count = 0;

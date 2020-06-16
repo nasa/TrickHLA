@@ -42,6 +42,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/Utilities.hh"
 
 // DSES include files.
 #include "DSES/ExecutionConfiguration.hh"
@@ -445,7 +446,7 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_pnts()
             federate->check_for_shutdown_with_termination();
 
             // Pause and release the processor for short sleep value.
-            usleep( sleep_micros );
+            (void)Utilities::micro_sleep( sleep_micros );
 
             // Periodically check to make sure the federate is still part of
             // the federation exectuion.

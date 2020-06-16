@@ -409,7 +409,7 @@ void SyncPntListBase::wait_for_list_synchronization(
             federate->check_for_shutdown_with_termination();
 
             // Pause and release the processor for short sleep value.
-            usleep( sleep_micros );
+            (void)Utilities::micro_sleep( sleep_micros );
 
             // Periodically check to make sure the federate is still part of
             // the federation exectuion.

@@ -45,6 +45,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Parameter.hh"
+#include "TrickHLA/Utilities.hh"
 
 // IMSim include files.
 #include "IMSim/ExecutionConfiguration.hh"
@@ -789,7 +790,7 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
          // Check for shutdown.
          federate->check_for_shutdown_with_termination();
 
-         usleep( sleep_micros );
+         (void)Utilities::micro_sleep( sleep_micros );
 
          if ( ( !late_joiner_determined && !get_manager()->restore_determined )
               && ( ( ++wait_count % wait_check ) == 0 ) ) {
@@ -1212,7 +1213,7 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_pnts()
             federate->check_for_shutdown_with_termination();
 
             // Pause and release the processor for short sleep value.
-            usleep( sleep_micros );
+            (void)Utilities::micro_sleep( sleep_micros );
 
             // Periodically check to make sure the federate is still part of
             // the federation exectuion.
@@ -2361,7 +2362,7 @@ void ExecutionControl::exit_freeze()
 
          while ( !this->pause_sync_pts.check_sync_pnts( this->checktime ) ) {
             // wait for it to be announced
-            usleep( sleep_micros );
+            (void)Utilities::micro_sleep( sleep_micros );
 
             if ( ( !this->pause_sync_pts.check_sync_pnts( this->checktime ) )
                  && ( ( ++wait_count % wait_check ) == 0 ) ) {
@@ -2669,7 +2670,7 @@ bool ExecutionControl::is_save_initiated()
 
       while ( !federate->initiate_save_flag ) { // wait for federation to be synced
          this->pause_sync_pts.achieve_all_sync_pnts( *federate->get_RTI_ambassador(), this->checktime );
-         usleep( sleep_micros );
+         (void)Utilities::micro_sleep( sleep_micros );
 
          if ( ( !federate->initiate_save_flag ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
             wait_count = 0;

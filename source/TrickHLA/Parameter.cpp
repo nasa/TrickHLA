@@ -2252,6 +2252,7 @@ size %d, will use the data buffer size instead.%c",
                // for next time.
                *( (char **)address ) = (char *)TMM_resize_array_1d_a( *( (char **)address ),
                                                                       (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+
                output = *( (unsigned char **)address );
             }
          } else {
@@ -2259,6 +2260,7 @@ size %d, will use the data buffer size instead.%c",
             // terminating null character and add a few more bytes to give
             // us a little more space for next time.
             *( (char **)address ) = (char *)TMM_declare_var_1d( "char", (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+
             output = *( (unsigned char **)address );
          }
 
@@ -2643,6 +2645,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                   // for next time.
                   *( (char **)address + i ) = (char *)TMM_resize_array_1d_a( *( (char **)address + i ),
                                                                              (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+
                   output = *( (unsigned char **)address + i );
                }
             } else {
@@ -2650,6 +2653,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                // terminating null character and add a few more bytes to give
                // us a little more space for next time.
                *( (char **)address + i ) = (char *)TMM_declare_var_1d( "char", (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+
                output = *( (unsigned char **)address + i );
             }
 

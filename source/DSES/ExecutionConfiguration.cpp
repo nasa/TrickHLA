@@ -56,6 +56,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/Utilities.hh"
 
 //DSES include files.
 #include "DSES/ExecutionConfiguration.hh"
@@ -197,7 +198,7 @@ void ExecutionConfiguration::pack()
    if ( TrickHLA::Packing::should_print( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_PACKING ) ) {
       cout << "=============================================================" << endl
            << "DSES::ExecutionConfiguration::pack()" << endl
-           << "\t Current Scenario Time:   " << setprecision( 18 ) << get_federate()->scenario_timeline->get_time() << endl
+           << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << endl
            << "\t Current Simulation Time: " << the_exec->get_sim_time() << endl
            << "\t Current HLA grant time:  " << get_federate()->get_granted_time() << endl
            << "\t Current HLA request time:" << get_federate()->get_requested_time() << endl
@@ -250,7 +251,7 @@ void ExecutionConfiguration::unpack()
    if ( TrickHLA::Packing::should_print( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_PACKING ) ) {
       cout << "=============================================================" << endl
            << "DSES::ExecutionConfiguration::unpack()" << endl
-           << "\t Current Scenario Time:   " << setprecision( 18 ) << get_federate()->scenario_timeline->get_time() << endl
+           << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << endl
            << "\t Current Simulation Time: " << the_exec->get_sim_time() << endl
            << "\t Current HLA grant time:  " << get_federate()->get_granted_time() << endl
            << "\t Current HLA request time:" << get_federate()->get_requested_time() << endl
@@ -656,7 +657,7 @@ bool ExecutionConfiguration::wait_on_update() // RETURN: -- None.
          // Check for shutdown.
          federate->check_for_shutdown_with_termination();
 
-         usleep( sleep_micros );
+         (void)Utilities::micro_sleep( sleep_micros );
 
          if ( ( !this->is_changed() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
             wait_count = 0;

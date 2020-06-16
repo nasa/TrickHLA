@@ -46,6 +46,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Parameter.hh"
+#include "TrickHLA/Utilities.hh"
 
 // SpaceFOM include files.
 #include "SpaceFOM/ExecutionConfiguration.hh"
@@ -642,7 +643,7 @@ void ExecutionControl::role_determination_process()
             federate->check_for_shutdown_with_termination();
 
             // Short sleep to release process and not hog CPU.
-            usleep( this->wait_sleep );
+            (void)Utilities::micro_sleep( this->wait_sleep );
 
             // Check that we maintain federation membership.
             unsigned int wait_count = 0;
@@ -1254,7 +1255,7 @@ void ExecutionControl::shutdown()
             send_hs( stdout, "ExecutionControl::shutdown():%d: sleep for %d microsecond.%c", __LINE__,
                      ( useconds_t )( this->get_time_padding() * 1000000 ), THLA_NEWLINE );
          }
-         usleep( ( useconds_t )( this->get_time_padding() * 1000000 ) );
+         (void)Utilities::micro_sleep( ( useconds_t )( this->get_time_padding() * 1000000 ) );
       }
 
       // Tell the SpaceFOM execution control to transition to shutdown.
@@ -2542,7 +2543,7 @@ void ExecutionControl::receive_root_ref_frame()
          // Check for shutdown.
          federate->check_for_shutdown_with_termination();
 
-         usleep( sleep_micros );
+         (void)Utilities::micro_sleep( sleep_micros );
 
          if ( ( !rrf_object->is_changed() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
             wait_count = 0;

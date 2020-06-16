@@ -50,6 +50,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/Utilities.hh"
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
@@ -450,7 +451,7 @@ void ExecutionControlBase::wait_for_sync_point_announce(
                // Always check to see is a shutdown was received.
                federate->check_for_shutdown_with_termination();
 
-               usleep( sleep_micros );
+               (void)Utilities::micro_sleep( sleep_micros );
 
                if ( ( !sp->exists() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
                   wait_count = 0;
@@ -706,7 +707,7 @@ will be ignored because the sim_initialization_scheme specified does not support
          // Check for shutdown.
          federate->check_for_shutdown_with_termination();
 
-         usleep( sleep_micros );
+         (void)Utilities::micro_sleep( sleep_micros );
 
          if ( ( !execution_configuration->is_changed() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
             wait_count = 0;

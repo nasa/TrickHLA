@@ -171,7 +171,7 @@ bool SyncPnt::wait_for_announce(
       // Always check to see is a shutdown was received.
       federate->check_for_shutdown_with_termination();
 
-      usleep( sleep_micros );
+      (void)Utilities::micro_sleep( sleep_micros );
 
       // Check to make sure we're still a member of the federation execution.
       if ( ( !this->is_announced() ) && ( ( ++wait_count % this->wait_timeout ) == 0 ) ) {
@@ -248,7 +248,7 @@ bool SyncPnt::wait_for_synchronization(
       // Always check to see is a shutdown was received.
       federate->check_for_shutdown_with_termination();
 
-      usleep( this->wait_sleep );
+      (void)Utilities::micro_sleep( this->wait_sleep );
 
       // Check to make sure we're still a member of the federation execution.
       if ( ( !this->is_synchronized() ) && ( ( ++wait_count % this->wait_timeout ) == 0 ) ) {
