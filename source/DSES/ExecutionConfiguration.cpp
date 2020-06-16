@@ -39,7 +39,6 @@ NASA, Johnson Space Center\n
 #include <iomanip>
 #include <iostream>
 #include <limits>
-#include <unistd.h>
 
 // Trick include files.
 #include "trick/Executive.hh"

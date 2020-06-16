@@ -49,7 +49,6 @@ NASA, Johnson Space Center\n
 #include <stdint.h>
 #include <sys/time.h>
 #include <time.h>
-#include <unistd.h> // for sleep()
 
 // Trick include files.
 #include "trick/Clock.hh"

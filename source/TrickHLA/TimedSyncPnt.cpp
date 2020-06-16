@@ -28,7 +28,6 @@ NASA, Johnson Space Center\n
 */
 
 //System includes.
-#include <unistd.h>
 
 // Trick include files.
 #include "trick/message_proto.h"

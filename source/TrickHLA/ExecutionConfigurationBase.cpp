@@ -38,9 +38,6 @@ execution.
 */
 
 // System include files.
-//#include <iomanip>
-//#include <limits>
-#include <unistd.h>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
