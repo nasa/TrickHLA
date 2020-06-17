@@ -1161,37 +1161,37 @@ void Manager::setup_object_RTI_handles(
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
       switch ( FOM_name_type ) {
-      case 1: { // Object
-         ostringstream errmsg;
-         errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
-                << " Object FOM Name '" << obj_FOM_name << "' Not Found. Please check"
-                << " your input or modified-data files to make sure the"
-                << " Object FOM Name is correctly specified." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-         break;
-      }
-      case 2: { // Attribute
-         ostringstream errmsg;
-         errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
-                << " For Object FOM Name '" << obj_FOM_name << "', Attribute FOM Name '"
-                << attr_FOM_name << "' Not Found. Please check your input or"
-                << " modified-data files to make sure the Object Attribute"
-                << " FOM Name is correctly specified." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-         break;
-      }
-      default: { // FOM name we are working with is unknown.
-         ostringstream errmsg;
-         errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
-                << " Object or Attribute FOM Name Not Found. Please check your input or"
-                << " modified-data files to make sure the FOM Name is"
-                << " correctly specified." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-         break;
-      }
+         case 1: { // Object
+            ostringstream errmsg;
+            errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
+                   << " Object FOM Name '" << obj_FOM_name << "' Not Found. Please check"
+                   << " your input or modified-data files to make sure the"
+                   << " Object FOM Name is correctly specified." << THLA_ENDL;
+            send_hs( stderr, (char *)errmsg.str().c_str() );
+            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            break;
+         }
+         case 2: { // Attribute
+            ostringstream errmsg;
+            errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
+                   << " For Object FOM Name '" << obj_FOM_name << "', Attribute FOM Name '"
+                   << attr_FOM_name << "' Not Found. Please check your input or"
+                   << " modified-data files to make sure the Object Attribute"
+                   << " FOM Name is correctly specified." << THLA_ENDL;
+            send_hs( stderr, (char *)errmsg.str().c_str() );
+            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            break;
+         }
+         default: { // FOM name we are working with is unknown.
+            ostringstream errmsg;
+            errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
+                   << " Object or Attribute FOM Name Not Found. Please check your input or"
+                   << " modified-data files to make sure the FOM Name is"
+                   << " correctly specified." << THLA_ENDL;
+            send_hs( stderr, (char *)errmsg.str().c_str() );
+            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            break;
+         }
       }
    } catch ( FederateNotExecutionMember &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1361,38 +1361,38 @@ void Manager::setup_interaction_RTI_handles(
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
       switch ( FOM_name_type ) {
-      case 1: { // Interaction
-         ostringstream errmsg;
-         errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
-                << " Interaction FOM Name '" << inter_FOM_name << "' Not Found. Please"
-                << " check your input or modified-data files to make sure the"
-                << " Interaction FOM Name is correctly specified." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-         break;
-      }
-      case 2: { // Parameter
-         ostringstream errmsg;
-         errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
-                << " For Interaction FOM Name '" << inter_FOM_name
-                << "', Parameter FOM Name '" << param_FOM_name
-                << "' Not Found. Please check your input or modified-data files"
-                << " to make sure the Interaction Parameter FOM Name is"
-                << " correctly specified." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-         break;
-      }
-      default: { // FOM name we are working with is unknown.
-         ostringstream errmsg;
-         errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
-                << " Interaction or Parameter FOM Name Not Found. Please check your input"
-                << " or modified-data files to make sure the FOM Name is"
-                << " correctly specified." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-         break;
-      }
+         case 1: { // Interaction
+            ostringstream errmsg;
+            errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
+                   << " Interaction FOM Name '" << inter_FOM_name << "' Not Found. Please"
+                   << " check your input or modified-data files to make sure the"
+                   << " Interaction FOM Name is correctly specified." << THLA_ENDL;
+            send_hs( stderr, (char *)errmsg.str().c_str() );
+            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            break;
+         }
+         case 2: { // Parameter
+            ostringstream errmsg;
+            errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
+                   << " For Interaction FOM Name '" << inter_FOM_name
+                   << "', Parameter FOM Name '" << param_FOM_name
+                   << "' Not Found. Please check your input or modified-data files"
+                   << " to make sure the Interaction Parameter FOM Name is"
+                   << " correctly specified." << THLA_ENDL;
+            send_hs( stderr, (char *)errmsg.str().c_str() );
+            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            break;
+         }
+         default: { // FOM name we are working with is unknown.
+            ostringstream errmsg;
+            errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
+                   << " Interaction or Parameter FOM Name Not Found. Please check your input"
+                   << " or modified-data files to make sure the FOM Name is"
+                   << " correctly specified." << THLA_ENDL;
+            send_hs( stderr, (char *)errmsg.str().c_str() );
+            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            break;
+         }
       }
    } catch ( FederateNotExecutionMember &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -2244,30 +2244,30 @@ void Manager::process_interactions()
          static_cast< InteractionItem * >( interactions_queue.front() );
 
       switch ( interaction_item->interaction_type ) {
-      case TRICKHLA_MANAGER_USER_DEFINED_INTERACTION: {
-         // Process the interaction if we subscribed to it and the interaction
-         // index is valid.
-         if ( interaction_item->index >= 0 && interaction_item->index < inter_count && interactions[interaction_item->index].is_subscribe() ) {
+         case TRICKHLA_MANAGER_USER_DEFINED_INTERACTION: {
+            // Process the interaction if we subscribed to it and the interaction
+            // index is valid.
+            if ( interaction_item->index >= 0 && interaction_item->index < inter_count && interactions[interaction_item->index].is_subscribe() ) {
 
-            interactions[interaction_item->index].extract_data( interaction_item );
+               interactions[interaction_item->index].extract_data( interaction_item );
 
-            interactions[interaction_item->index].process_interaction();
+               interactions[interaction_item->index].process_interaction();
+            }
+            break;
          }
-         break;
-      }
 
-      default: {
-         ostringstream msg;
-         msg << "Manager::process_interactions():" << __LINE__
-             << "FATAL ERROR: encountered an invalid interaction type: "
-             << interaction_item->interaction_type
-             << ". Verify that you are specifying the correct interaction "
-             << "type defined in 'ManagerTypeOfInteractionEnum' enum "
-             << "found in 'Manager.hh' and re-run." << THLA_ENDL;
-         send_hs( stderr, (char *)msg.str().c_str() );
-         exec_terminate( __FILE__, (char *)msg.str().c_str() );
-         break;
-      }
+         default: {
+            ostringstream msg;
+            msg << "Manager::process_interactions():" << __LINE__
+                << "FATAL ERROR: encountered an invalid interaction type: "
+                << interaction_item->interaction_type
+                << ". Verify that you are specifying the correct interaction "
+                << "type defined in 'ManagerTypeOfInteractionEnum' enum "
+                << "found in 'Manager.hh' and re-run." << THLA_ENDL;
+            send_hs( stderr, (char *)msg.str().c_str() );
+            exec_terminate( __FILE__, (char *)msg.str().c_str() );
+            break;
+         }
       }
 
       // Now that we processed the interaction-item remove it from the queue,

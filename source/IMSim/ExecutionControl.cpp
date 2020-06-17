@@ -1452,18 +1452,18 @@ bool ExecutionControl::is_mtr_valid(
    ExecutionConfiguration *ExCO = get_execution_configuration();
 
    switch ( mtr_value ) {
-   case MTR_GOTO_RUN: {
-      return ( ( ExCO->current_execution_mode == EXECUTION_MODE_INITIALIZING ) || ( ExCO->current_execution_mode == EXECUTION_MODE_FREEZE ) );
-   }
-   case MTR_GOTO_FREEZE: {
-      return ( ( ExCO->current_execution_mode == EXECUTION_MODE_INITIALIZING ) || ( ExCO->current_execution_mode == EXECUTION_MODE_RUNNING ) );
-   }
-   case MTR_GOTO_SHUTDOWN: {
-      return ( ExCO->current_execution_mode != EXECUTION_MODE_SHUTDOWN );
-   }
-   default: {
-      return false;
-   }
+      case MTR_GOTO_RUN: {
+         return ( ( ExCO->current_execution_mode == EXECUTION_MODE_INITIALIZING ) || ( ExCO->current_execution_mode == EXECUTION_MODE_FREEZE ) );
+      }
+      case MTR_GOTO_FREEZE: {
+         return ( ( ExCO->current_execution_mode == EXECUTION_MODE_INITIALIZING ) || ( ExCO->current_execution_mode == EXECUTION_MODE_RUNNING ) );
+      }
+      case MTR_GOTO_SHUTDOWN: {
+         return ( ExCO->current_execution_mode != EXECUTION_MODE_SHUTDOWN );
+      }
+      default: {
+         return false;
+      }
    }
    return false;
 }
@@ -1472,34 +1472,34 @@ void ExecutionControl::set_mode_request_from_mtr(
    MTREnum mtr_value )
 {
    switch ( mtr_value ) {
-   case MTR_UNINITIALIZED:
-      this->pending_mtr = MTR_UNINITIALIZED;
-      set_next_execution_control_mode( EXECUTION_CONTROL_UNINITIALIZED );
-      break;
+      case MTR_UNINITIALIZED:
+         this->pending_mtr = MTR_UNINITIALIZED;
+         set_next_execution_control_mode( EXECUTION_CONTROL_UNINITIALIZED );
+         break;
 
-   case MTR_INITIALIZING:
-      this->pending_mtr = MTR_INITIALIZING;
-      set_next_execution_control_mode( EXECUTION_CONTROL_INITIALIZING );
-      break;
+      case MTR_INITIALIZING:
+         this->pending_mtr = MTR_INITIALIZING;
+         set_next_execution_control_mode( EXECUTION_CONTROL_INITIALIZING );
+         break;
 
-   case MTR_GOTO_RUN:
-      this->pending_mtr = MTR_GOTO_RUN;
-      set_next_execution_control_mode( EXECUTION_CONTROL_RUNNING );
-      break;
+      case MTR_GOTO_RUN:
+         this->pending_mtr = MTR_GOTO_RUN;
+         set_next_execution_control_mode( EXECUTION_CONTROL_RUNNING );
+         break;
 
-   case MTR_GOTO_FREEZE:
-      this->pending_mtr = MTR_GOTO_FREEZE;
-      set_next_execution_control_mode( EXECUTION_CONTROL_FREEZE );
-      break;
+      case MTR_GOTO_FREEZE:
+         this->pending_mtr = MTR_GOTO_FREEZE;
+         set_next_execution_control_mode( EXECUTION_CONTROL_FREEZE );
+         break;
 
-   case MTR_GOTO_SHUTDOWN:
-      this->pending_mtr = MTR_GOTO_SHUTDOWN;
-      set_next_execution_control_mode( EXECUTION_CONTROL_SHUTDOWN );
-      break;
+      case MTR_GOTO_SHUTDOWN:
+         this->pending_mtr = MTR_GOTO_SHUTDOWN;
+         set_next_execution_control_mode( EXECUTION_CONTROL_SHUTDOWN );
+         break;
 
-   default:
-      this->pending_mtr = MTR_UNINITIALIZED;
-      break;
+      default:
+         this->pending_mtr = MTR_UNINITIALIZED;
+         break;
    }
 
    return;
@@ -1522,93 +1522,93 @@ void ExecutionControl::set_next_execution_control_mode(
    }
 
    switch ( exec_control ) {
-   case EXECUTION_CONTROL_UNINITIALIZED:
+      case EXECUTION_CONTROL_UNINITIALIZED:
 
-      // Set the next execution mode.
-      this->requested_execution_control_mode = EXECUTION_CONTROL_UNINITIALIZED;
-      ExCO->set_next_execution_mode( EXECUTION_MODE_UNINITIALIZED );
+         // Set the next execution mode.
+         this->requested_execution_control_mode = EXECUTION_CONTROL_UNINITIALIZED;
+         ExCO->set_next_execution_mode( EXECUTION_MODE_UNINITIALIZED );
 
-      // Set the next mode times.
-      this->next_mode_scenario_time = this->get_scenario_time();      // Immediate
-      ExCO->set_next_mode_scenario_time( this->get_scenario_time() ); // Immediate
-      ExCO->set_next_mode_cte_time( this->get_cte_time() );           // Immediate
+         // Set the next mode times.
+         this->next_mode_scenario_time = this->get_scenario_time();      // Immediate
+         ExCO->set_next_mode_scenario_time( this->get_scenario_time() ); // Immediate
+         ExCO->set_next_mode_cte_time( this->get_cte_time() );           // Immediate
 
-      break;
+         break;
 
-   case EXECUTION_CONTROL_INITIALIZING:
+      case EXECUTION_CONTROL_INITIALIZING:
 
-      // Set the next execution mode.
-      this->requested_execution_control_mode = EXECUTION_CONTROL_INITIALIZING;
-      ExCO->set_next_execution_mode( EXECUTION_MODE_INITIALIZING );
+         // Set the next execution mode.
+         this->requested_execution_control_mode = EXECUTION_CONTROL_INITIALIZING;
+         ExCO->set_next_execution_mode( EXECUTION_MODE_INITIALIZING );
 
-      // Set the next mode times.
-      ExCO->set_scenario_time_epoch( this->get_scenario_time() );     // Now.
-      this->next_mode_scenario_time = this->get_scenario_time();      // Immediate
-      ExCO->set_next_mode_scenario_time( this->get_scenario_time() ); // Immediate
-      ExCO->set_next_mode_cte_time( this->get_cte_time() );           // Immediate
+         // Set the next mode times.
+         ExCO->set_scenario_time_epoch( this->get_scenario_time() );     // Now.
+         this->next_mode_scenario_time = this->get_scenario_time();      // Immediate
+         ExCO->set_next_mode_scenario_time( this->get_scenario_time() ); // Immediate
+         ExCO->set_next_mode_cte_time( this->get_cte_time() );           // Immediate
 
-      break;
+         break;
 
-   case EXECUTION_CONTROL_RUNNING:
+      case EXECUTION_CONTROL_RUNNING:
 
-      // Set the next execution mode.
-      this->requested_execution_control_mode = EXECUTION_CONTROL_RUNNING;
-      ExCO->set_next_execution_mode( EXECUTION_MODE_RUNNING );
+         // Set the next execution mode.
+         this->requested_execution_control_mode = EXECUTION_CONTROL_RUNNING;
+         ExCO->set_next_execution_mode( EXECUTION_MODE_RUNNING );
 
-      // Set the next mode times.
-      this->next_mode_scenario_time = this->get_scenario_time();          // Immediate
-      ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time ); // immediate
-      ExCO->set_next_mode_cte_time( this->get_cte_time() );
-      if ( ExCO->get_next_mode_cte_time() > -std::numeric_limits< double >::max() ) {
-         ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + this->time_padding ); // Some time in the future.
-      }
+         // Set the next mode times.
+         this->next_mode_scenario_time = this->get_scenario_time();          // Immediate
+         ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time ); // immediate
+         ExCO->set_next_mode_cte_time( this->get_cte_time() );
+         if ( ExCO->get_next_mode_cte_time() > -std::numeric_limits< double >::max() ) {
+            ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + this->time_padding ); // Some time in the future.
+         }
 
-      break;
+         break;
 
-   case EXECUTION_CONTROL_FREEZE:
+      case EXECUTION_CONTROL_FREEZE:
 
-      // Set the next execution mode.
-      this->requested_execution_control_mode = EXECUTION_CONTROL_FREEZE;
-      ExCO->set_next_execution_mode( EXECUTION_MODE_FREEZE );
+         // Set the next execution mode.
+         this->requested_execution_control_mode = EXECUTION_CONTROL_FREEZE;
+         ExCO->set_next_execution_mode( EXECUTION_MODE_FREEZE );
 
-      // Set the next mode times.
-      this->next_mode_scenario_time = this->get_scenario_time() + this->time_padding; // Some time in the future.
-      ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time );
-      ExCO->set_next_mode_cte_time( this->get_cte_time() );
-      if ( ExCO->get_next_mode_cte_time() > -std::numeric_limits< double >::max() ) {
-         ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + this->time_padding ); // Some time in the future.
-      }
+         // Set the next mode times.
+         this->next_mode_scenario_time = this->get_scenario_time() + this->time_padding; // Some time in the future.
+         ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time );
+         ExCO->set_next_mode_cte_time( this->get_cte_time() );
+         if ( ExCO->get_next_mode_cte_time() > -std::numeric_limits< double >::max() ) {
+            ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + this->time_padding ); // Some time in the future.
+         }
 
-      // Set the ExecutionControl freeze times.
-      this->scenario_freeze_time   = this->next_mode_scenario_time;
-      this->simulation_freeze_time = this->scenario_timeline->compute_simulation_time( this->next_mode_scenario_time );
+         // Set the ExecutionControl freeze times.
+         this->scenario_freeze_time   = this->next_mode_scenario_time;
+         this->simulation_freeze_time = this->scenario_timeline->compute_simulation_time( this->next_mode_scenario_time );
 
-      break;
+         break;
 
-   case EXECUTION_CONTROL_SHUTDOWN:
+      case EXECUTION_CONTROL_SHUTDOWN:
 
-      // Set the next execution mode.
-      this->requested_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
-      ExCO->set_next_execution_mode( EXECUTION_MODE_SHUTDOWN );
+         // Set the next execution mode.
+         this->requested_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
+         ExCO->set_next_execution_mode( EXECUTION_MODE_SHUTDOWN );
 
-      // Set the next mode times.
-      this->next_mode_scenario_time = this->get_scenario_time();          // Immediate.
-      ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time ); // Immediate.
-      ExCO->set_next_mode_cte_time( this->get_cte_time() );               // Immediate
+         // Set the next mode times.
+         this->next_mode_scenario_time = this->get_scenario_time();          // Immediate.
+         ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time ); // Immediate.
+         ExCO->set_next_mode_cte_time( this->get_cte_time() );               // Immediate
 
-      break;
+         break;
 
-   default:
-      this->requested_execution_control_mode = EXECUTION_CONTROL_UNINITIALIZED;
-      if ( get_manager()->should_print( TrickHLA::DEBUG_LEVEL_1_TRACE,
-                                        TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
-         ostringstream errmsg;
-         errmsg << "IMSim::ExecutionControl::set_next_execution_mode():"
-                << __LINE__ << " WARNING: Unknown execution mode value: " << exec_control
-                << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-      }
-      break;
+      default:
+         this->requested_execution_control_mode = EXECUTION_CONTROL_UNINITIALIZED;
+         if ( get_manager()->should_print( TrickHLA::DEBUG_LEVEL_1_TRACE,
+                                           TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
+            ostringstream errmsg;
+            errmsg << "IMSim::ExecutionControl::set_next_execution_mode():"
+                   << __LINE__ << " WARNING: Unknown execution mode value: " << exec_control
+                   << THLA_ENDL;
+            send_hs( stderr, (char *)errmsg.str().c_str() );
+         }
+         break;
    }
 
    return;
@@ -1685,67 +1685,67 @@ bool ExecutionControl::process_mode_transition_request()
    // Check Mode Transition Request.
    switch ( this->pending_mtr ) {
 
-   case MTR_GOTO_RUN:
+      case MTR_GOTO_RUN:
 
-      // Clear the mode change request flag.
-      this->clear_mode_transition_requested();
+         // Clear the mode change request flag.
+         this->clear_mode_transition_requested();
 
-      // Transition to run can only happen from initialization or freeze.
-      // We don't really need to do anything if we're in initialization.
-      if ( this->current_execution_control_mode == EXECUTION_CONTROL_FREEZE ) {
+         // Transition to run can only happen from initialization or freeze.
+         // We don't really need to do anything if we're in initialization.
+         if ( this->current_execution_control_mode == EXECUTION_CONTROL_FREEZE ) {
 
-         // Tell Trick to exit freeze and go to run.
-         the_exec->run();
+            // Tell Trick to exit freeze and go to run.
+            the_exec->run();
 
-         // The run transition logic will be triggered when exiting Freeze.
-         // This is done in the TrickHLA::Federate::exit_freeze() routine
-         // called when exiting Freeze.
-      }
+            // The run transition logic will be triggered when exiting Freeze.
+            // This is done in the TrickHLA::Federate::exit_freeze() routine
+            // called when exiting Freeze.
+         }
 
-      return true;
-      break;
+         return true;
+         break;
 
-   case MTR_GOTO_FREEZE:
+      case MTR_GOTO_FREEZE:
 
-      // Clear the mode change request flag.
-      this->clear_mode_transition_requested();
+         // Clear the mode change request flag.
+         this->clear_mode_transition_requested();
 
-      // Transition to freeze can only happen from initialization or run.
-      // We don't really need to do anything if we're in initialization.
-      if ( this->current_execution_control_mode == EXECUTION_CONTROL_RUNNING ) {
+         // Transition to freeze can only happen from initialization or run.
+         // We don't really need to do anything if we're in initialization.
+         if ( this->current_execution_control_mode == EXECUTION_CONTROL_RUNNING ) {
 
-         // Send out the updated ExCO.
-         ExCO->send_init_data();
+            // Send out the updated ExCO.
+            ExCO->send_init_data();
 
-         // Announce the pending freeze.
-         this->freeze_mode_announce();
+            // Announce the pending freeze.
+            this->freeze_mode_announce();
 
-         // Tell Trick to go into freeze at the appointed time.
-         the_exec->freeze( this->simulation_freeze_time );
+            // Tell Trick to go into freeze at the appointed time.
+            the_exec->freeze( this->simulation_freeze_time );
 
-         // The freeze transition logic will be done just before entering
-         // Freeze.  This is done in the TrickHLA::Federate::freeze_init()
-         // routine called when entering Freeze.
-      }
+            // The freeze transition logic will be done just before entering
+            // Freeze.  This is done in the TrickHLA::Federate::freeze_init()
+            // routine called when entering Freeze.
+         }
 
-      return true;
-      break;
+         return true;
+         break;
 
-   case MTR_GOTO_SHUTDOWN:
+      case MTR_GOTO_SHUTDOWN:
 
-      // Announce the shutdown.
-      this->shutdown_mode_announce();
+         // Announce the shutdown.
+         this->shutdown_mode_announce();
 
-      // Tell Trick to shutdown sometime in the future.
-      // The IMSim ExecutionControl shutdown transition will be made from
-      // the TrickHLA::Federate::shutdown() job.
-      the_exec->stop( the_exec->get_sim_time() + this->time_padding );
+         // Tell Trick to shutdown sometime in the future.
+         // The IMSim ExecutionControl shutdown transition will be made from
+         // the TrickHLA::Federate::shutdown() job.
+         the_exec->stop( the_exec->get_sim_time() + this->time_padding );
 
-      return true;
-      break;
+         return true;
+         break;
 
-   default:
-      break;
+      default:
+         break;
    }
 
    return false;
@@ -1840,230 +1840,230 @@ bool ExecutionControl::process_execution_control_updates()
    // Process the mode change.
    switch ( this->current_execution_control_mode ) {
 
-   case EXECUTION_CONTROL_UNINITIALIZED:
+      case EXECUTION_CONTROL_UNINITIALIZED:
 
-      // Check for SHUTDOWN.
-      if ( this->requested_execution_control_mode == EXECUTION_CONTROL_SHUTDOWN ) {
+         // Check for SHUTDOWN.
+         if ( this->requested_execution_control_mode == EXECUTION_CONTROL_SHUTDOWN ) {
 
-         // Mark the current execution mode as SHUTDOWN.
-         this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
-         ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
+            // Mark the current execution mode as SHUTDOWN.
+            this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
+            ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
 
-         // Tell the TrickHLA::Federate to shutdown.
-         // The IMSim ExecutionControl shutdown transition will be made from
-         // the TrickHLA::Federate::shutdown() job.
-         the_exec->stop();
+            // Tell the TrickHLA::Federate to shutdown.
+            // The IMSim ExecutionControl shutdown transition will be made from
+            // the TrickHLA::Federate::shutdown() job.
+            the_exec->stop();
 
-      } else {
+         } else {
 
-         errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
-                << __LINE__ << " WARNING: Execution mode mismatch between current mode ("
-                << execution_control_enum_to_string( this->current_execution_control_mode )
-                << ") and the requested execution mode ("
-                << execution_control_enum_to_string( this->requested_execution_control_mode )
-                << ")!"
-                << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
+            errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
+                   << __LINE__ << " WARNING: Execution mode mismatch between current mode ("
+                   << execution_control_enum_to_string( this->current_execution_control_mode )
+                   << ") and the requested execution mode ("
+                   << execution_control_enum_to_string( this->requested_execution_control_mode )
+                   << ")!"
+                   << THLA_ENDL;
+            send_hs( stderr, (char *)errmsg.str().c_str() );
 
-         // Return that no mode changes occurred.
-         return false;
-      }
-
-      // Return that a mode change occurred.
-      return true;
-      break;
-
-   case EXECUTION_CONTROL_INITIALIZING:
-
-      // Check for SHUTDOWN.
-      if ( this->requested_execution_control_mode == EXECUTION_CONTROL_SHUTDOWN ) {
-
-         // Mark the current execution mode as SHUTDOWN.
-         this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
-         ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
-
-         // Tell the TrickHLA::Federate to shutdown.
-         // The IMSim ExecutionControl shutdown transition will be made from
-         // the TrickHLA::Federate::shutdown() job.
-         the_exec->stop();
-
-      } else if ( this->requested_execution_control_mode == EXECUTION_CONTROL_RUNNING ) {
-
-         // Tell Trick to go to in Run at startup.
-         the_exec->set_freeze_command( false );
-
-         // This is an early joining federate in initialization.
-         // So, proceed to the run mode transition.
-         this->run_mode_transition();
-
-      } else if ( this->requested_execution_control_mode == EXECUTION_CONTROL_FREEZE ) {
-
-         // Announce the pending freeze.
-         this->freeze_mode_announce();
-
-         // Tell Trick to go into freeze at startup.
-         //the_exec->freeze();
-
-         // Tell Trick to go into freeze at startup.
-         the_exec->set_freeze_command( true );
-
-         // The freeze transition logic will be done just before entering
-         // Freeze.  This is done in the TrickHLA::Federate::freeze_init()
-         // routine called when entering Freeze.
-
-      } else if ( this->requested_execution_control_mode == EXECUTION_CONTROL_INITIALIZING ) {
-
-         // There's really nothing to do here.
-
-      } else {
-
-         errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
-                << __LINE__ << " WARNING: Execution mode mismatch between current mode ("
-                << execution_control_enum_to_string( this->current_execution_control_mode )
-                << ") and the requested execution mode ("
-                << execution_control_enum_to_string( this->requested_execution_control_mode )
-                << ")!"
-                << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-
-         // Return that no mode changes occurred.
-         return false;
-      }
-
-      // Return that a mode change occurred.
-      return true;
-      break;
-
-   case EXECUTION_CONTROL_RUNNING:
-
-      // Check for SHUTDOWN.
-      if ( this->requested_execution_control_mode == EXECUTION_CONTROL_SHUTDOWN ) {
-
-         // Print out a diagnostic warning message.
-         errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
-                << __LINE__ << " WARNING: Execution mode mismatch between current mode ("
-                << execution_control_enum_to_string( this->current_execution_control_mode )
-                << ") and the requested execution mode ("
-                << execution_control_enum_to_string( this->requested_execution_control_mode )
-                << ")!"
-                << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-
-         // Mark the current execution mode as SHUTDOWN.
-         this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
-         ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
-
-         // Tell the TrickHLA::Federate to shutdown.
-         // The IMSim ExecutionControl shutdown transition will be made from
-         // the TrickHLA::Federate::shutdown() job.
-         the_exec->stop();
-      } else if ( this->requested_execution_control_mode == EXECUTION_CONTROL_FREEZE ) {
-
-         // Print diagnostic message if appropriate.
-         if ( federate->should_print( TrickHLA::DEBUG_LEVEL_4_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
-            cout << "ExecutionControl::process_execution_control_updates()" << endl
-                 << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << endl
-                 << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
-                 << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
-                 << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << this->scenario_timeline->get_sim_offset() << endl
-                 << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << endl
-                 << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << endl;
-            if ( this->does_cte_timeline_exist() ) {
-               cout << "\t current_CTE_time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << endl
-                    << "\t CTE_time_epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << endl;
-            }
-            cout << "\t next_mode_scenario_time:   " << setprecision( 18 ) << ExCO->next_mode_scenario_time << endl
-                 << "\t next_mode_cte_time:        " << setprecision( 18 ) << ExCO->next_mode_cte_time << endl
-                 << "\t scenario_freeze_time:      " << setprecision( 18 ) << this->scenario_freeze_time << endl
-                 << "\t simulation_freeze_time:    " << setprecision( 18 ) << this->simulation_freeze_time << endl
-                 << "=============================================================" << endl;
+            // Return that no mode changes occurred.
+            return false;
          }
 
-         // Announce the pending freeze.
-         this->freeze_mode_announce();
+         // Return that a mode change occurred.
+         return true;
+         break;
 
-         // Tell Trick to go into freeze at the appointed time.
-         the_exec->freeze( this->simulation_freeze_time );
+      case EXECUTION_CONTROL_INITIALIZING:
 
-         // The freeze transition logic will be done just before entering
-         // Freeze.  This is done in the TrickHLA::Federate::freeze_init()
-         // routine called when entering Freeze.
+         // Check for SHUTDOWN.
+         if ( this->requested_execution_control_mode == EXECUTION_CONTROL_SHUTDOWN ) {
 
-      } else {
+            // Mark the current execution mode as SHUTDOWN.
+            this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
+            ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
 
+            // Tell the TrickHLA::Federate to shutdown.
+            // The IMSim ExecutionControl shutdown transition will be made from
+            // the TrickHLA::Federate::shutdown() job.
+            the_exec->stop();
+
+         } else if ( this->requested_execution_control_mode == EXECUTION_CONTROL_RUNNING ) {
+
+            // Tell Trick to go to in Run at startup.
+            the_exec->set_freeze_command( false );
+
+            // This is an early joining federate in initialization.
+            // So, proceed to the run mode transition.
+            this->run_mode_transition();
+
+         } else if ( this->requested_execution_control_mode == EXECUTION_CONTROL_FREEZE ) {
+
+            // Announce the pending freeze.
+            this->freeze_mode_announce();
+
+            // Tell Trick to go into freeze at startup.
+            //the_exec->freeze();
+
+            // Tell Trick to go into freeze at startup.
+            the_exec->set_freeze_command( true );
+
+            // The freeze transition logic will be done just before entering
+            // Freeze.  This is done in the TrickHLA::Federate::freeze_init()
+            // routine called when entering Freeze.
+
+         } else if ( this->requested_execution_control_mode == EXECUTION_CONTROL_INITIALIZING ) {
+
+            // There's really nothing to do here.
+
+         } else {
+
+            errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
+                   << __LINE__ << " WARNING: Execution mode mismatch between current mode ("
+                   << execution_control_enum_to_string( this->current_execution_control_mode )
+                   << ") and the requested execution mode ("
+                   << execution_control_enum_to_string( this->requested_execution_control_mode )
+                   << ")!"
+                   << THLA_ENDL;
+            send_hs( stderr, (char *)errmsg.str().c_str() );
+
+            // Return that no mode changes occurred.
+            return false;
+         }
+
+         // Return that a mode change occurred.
+         return true;
+         break;
+
+      case EXECUTION_CONTROL_RUNNING:
+
+         // Check for SHUTDOWN.
+         if ( this->requested_execution_control_mode == EXECUTION_CONTROL_SHUTDOWN ) {
+
+            // Print out a diagnostic warning message.
+            errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
+                   << __LINE__ << " WARNING: Execution mode mismatch between current mode ("
+                   << execution_control_enum_to_string( this->current_execution_control_mode )
+                   << ") and the requested execution mode ("
+                   << execution_control_enum_to_string( this->requested_execution_control_mode )
+                   << ")!"
+                   << THLA_ENDL;
+            send_hs( stderr, (char *)errmsg.str().c_str() );
+
+            // Mark the current execution mode as SHUTDOWN.
+            this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
+            ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
+
+            // Tell the TrickHLA::Federate to shutdown.
+            // The IMSim ExecutionControl shutdown transition will be made from
+            // the TrickHLA::Federate::shutdown() job.
+            the_exec->stop();
+         } else if ( this->requested_execution_control_mode == EXECUTION_CONTROL_FREEZE ) {
+
+            // Print diagnostic message if appropriate.
+            if ( federate->should_print( TrickHLA::DEBUG_LEVEL_4_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
+               cout << "ExecutionControl::process_execution_control_updates()" << endl
+                    << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << endl
+                    << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
+                    << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
+                    << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << this->scenario_timeline->get_sim_offset() << endl
+                    << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << endl
+                    << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << endl;
+               if ( this->does_cte_timeline_exist() ) {
+                  cout << "\t current_CTE_time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << endl
+                       << "\t CTE_time_epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << endl;
+               }
+               cout << "\t next_mode_scenario_time:   " << setprecision( 18 ) << ExCO->next_mode_scenario_time << endl
+                    << "\t next_mode_cte_time:        " << setprecision( 18 ) << ExCO->next_mode_cte_time << endl
+                    << "\t scenario_freeze_time:      " << setprecision( 18 ) << this->scenario_freeze_time << endl
+                    << "\t simulation_freeze_time:    " << setprecision( 18 ) << this->simulation_freeze_time << endl
+                    << "=============================================================" << endl;
+            }
+
+            // Announce the pending freeze.
+            this->freeze_mode_announce();
+
+            // Tell Trick to go into freeze at the appointed time.
+            the_exec->freeze( this->simulation_freeze_time );
+
+            // The freeze transition logic will be done just before entering
+            // Freeze.  This is done in the TrickHLA::Federate::freeze_init()
+            // routine called when entering Freeze.
+
+         } else {
+
+            errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
+                   << __LINE__ << " WARNING: Execution mode mismatch between current mode ("
+                   << execution_control_enum_to_string( this->current_execution_control_mode )
+                   << ") and the requested execution mode ("
+                   << execution_control_enum_to_string( this->requested_execution_control_mode )
+                   << ")!"
+                   << THLA_ENDL;
+            send_hs( stderr, (char *)errmsg.str().c_str() );
+
+            // Return that no mode changes occurred.
+            return false;
+         }
+
+         // Return that a mode change occurred.
+         return true;
+         break;
+
+      case EXECUTION_CONTROL_FREEZE:
+
+         // Check for SHUTDOWN.
+         if ( this->requested_execution_control_mode == EXECUTION_CONTROL_SHUTDOWN ) {
+
+            // Mark the current execution mode as SHUTDOWN.
+            this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
+            ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
+
+            // Shutdown the federate now.
+            exec_get_exec_cpp()->stop();
+
+         } else if ( this->requested_execution_control_mode == EXECUTION_CONTROL_RUNNING ) {
+
+            // Tell Trick to exit freeze and go to run.
+            the_exec->run();
+
+            // The run transition logic will be done just when exiting
+            // Freeze.  This is done in the TrickHLA::Federate::exit_freeze()
+            // routine called when entering Freeze.
+            // this->run_mode_transition();
+
+         } else {
+
+            errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
+                   << __LINE__ << " WARNING: Execution mode mismatch between current mode ("
+                   << execution_control_enum_to_string( this->current_execution_control_mode )
+                   << ") and the requested execution mode ("
+                   << execution_control_enum_to_string( this->requested_execution_control_mode )
+                   << ")!"
+                   << THLA_ENDL;
+            send_hs( stderr, (char *)errmsg.str().c_str() );
+
+            // Return that no mode changes occurred.
+            return false;
+         }
+
+         // Return that a mode change occurred.
+         return true;
+         break;
+
+      case EXECUTION_CONTROL_SHUTDOWN:
+
+         // Once in SHUTDOWN, we cannot do anything else.
          errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
-                << __LINE__ << " WARNING: Execution mode mismatch between current mode ("
-                << execution_control_enum_to_string( this->current_execution_control_mode )
-                << ") and the requested execution mode ("
+                << __LINE__ << " WARNING: Shutting down but received mode transition: "
                 << execution_control_enum_to_string( this->requested_execution_control_mode )
-                << ")!"
                 << THLA_ENDL;
          send_hs( stderr, (char *)errmsg.str().c_str() );
 
          // Return that no mode changes occurred.
          return false;
-      }
+         break;
 
-      // Return that a mode change occurred.
-      return true;
-      break;
-
-   case EXECUTION_CONTROL_FREEZE:
-
-      // Check for SHUTDOWN.
-      if ( this->requested_execution_control_mode == EXECUTION_CONTROL_SHUTDOWN ) {
-
-         // Mark the current execution mode as SHUTDOWN.
-         this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
-         ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
-
-         // Shutdown the federate now.
-         exec_get_exec_cpp()->stop();
-
-      } else if ( this->requested_execution_control_mode == EXECUTION_CONTROL_RUNNING ) {
-
-         // Tell Trick to exit freeze and go to run.
-         the_exec->run();
-
-         // The run transition logic will be done just when exiting
-         // Freeze.  This is done in the TrickHLA::Federate::exit_freeze()
-         // routine called when entering Freeze.
-         // this->run_mode_transition();
-
-      } else {
-
-         errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
-                << __LINE__ << " WARNING: Execution mode mismatch between current mode ("
-                << execution_control_enum_to_string( this->current_execution_control_mode )
-                << ") and the requested execution mode ("
-                << execution_control_enum_to_string( this->requested_execution_control_mode )
-                << ")!"
-                << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-
-         // Return that no mode changes occurred.
-         return false;
-      }
-
-      // Return that a mode change occurred.
-      return true;
-      break;
-
-   case EXECUTION_CONTROL_SHUTDOWN:
-
-      // Once in SHUTDOWN, we cannot do anything else.
-      errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
-             << __LINE__ << " WARNING: Shutting down but received mode transition: "
-             << execution_control_enum_to_string( this->requested_execution_control_mode )
-             << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-
-      // Return that no mode changes occurred.
-      return false;
-      break;
-
-   default:
-      break;
+      default:
+         break;
    }
 
    // Return that no mode changes occurred.

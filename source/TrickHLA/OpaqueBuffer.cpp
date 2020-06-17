@@ -86,22 +86,22 @@ OpaqueBuffer::~OpaqueBuffer() // RETURN: -- None.
 void OpaqueBuffer::set_byte_alignment( unsigned int size )
 {
    switch ( size ) {
-   case 1:
-   case 2:
-   case 4:
-   case 8:
-   case 16:
-      this->alignment = size;
-      break;
+      case 1:
+      case 2:
+      case 4:
+      case 8:
+      case 16:
+         this->alignment = size;
+         break;
 
-   default:
-      ostringstream errmsg;
-      errmsg << "OpaqueBuffer::set_byte_alignment():" << __LINE__
-             << " ERROR: Unsupported byte alignment: " << size << "!"
-             << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-      break;
+      default:
+         ostringstream errmsg;
+         errmsg << "OpaqueBuffer::set_byte_alignment():" << __LINE__
+                << " ERROR: Unsupported byte alignment: " << size << "!"
+                << THLA_ENDL;
+         send_hs( stderr, (char *)errmsg.str().c_str() );
+         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         break;
    }
 }
 
@@ -313,53 +313,53 @@ void OpaqueBuffer::byteswap_buffer_copy(
 
       // Do a byte-swap based on the size of the data.
       switch ( size ) {
-      case 1: {
-         memcpy( dest, src, 1 );
-         break;
-      }
-      case 2: {
-         unsigned short *us_src  = (unsigned short *)src;
-         unsigned short *us_dest = (unsigned short *)dest;
-         us_dest[0]              = Utilities::byteswap_unsigned_short( us_src[0] );
-         break;
-      }
-      case 4: {
-         unsigned int *ui_src  = (unsigned int *)src;
-         unsigned int *ui_dest = (unsigned int *)dest;
-         ui_dest[0]            = Utilities::byteswap_unsigned_int( ui_src[0] );
-         break;
-      }
-      case 8: {
-         // The "unsigned long long" type is at least 64 bits.
-         if ( size == sizeof( unsigned long long ) ) {
-            unsigned long long *ull_src  = (unsigned long long *)src;
-            unsigned long long *ull_dest = (unsigned long long *)dest;
-            ull_dest[0]                  = Utilities::byteswap_unsigned_long_long( ull_src[0] );
-         } else {
-            // Try doing the byteswap as a 64 bit double as a last resort if
-            // the unsigned long long on this computer is not 64 bits.
-            double *d_src  = (double *)src;
-            double *d_dest = (double *)dest;
-            d_dest[0]      = Utilities::byteswap_double( d_src[0] );
+         case 1: {
+            memcpy( dest, src, 1 );
+            break;
          }
-         break;
-      }
-      default: {
-         // The "unsigned long long" type is at least 64 bits.
-         if ( size == sizeof( unsigned long long ) ) {
-            unsigned long long *ull_src  = (unsigned long long *)src;
-            unsigned long long *ull_dest = (unsigned long long *)dest;
-            ull_dest[0]                  = Utilities::byteswap_unsigned_long_long( ull_src[0] );
-         } else {
-            ostringstream errmsg;
-            errmsg << "OpaqueBuffer::byteswap_buffer_copy():"
-                   << __LINE__ << " ERROR: Don't know how to byteswap "
-                   << size << " bytes!" << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         case 2: {
+            unsigned short *us_src  = (unsigned short *)src;
+            unsigned short *us_dest = (unsigned short *)dest;
+            us_dest[0]              = Utilities::byteswap_unsigned_short( us_src[0] );
+            break;
          }
-         break;
-      }
+         case 4: {
+            unsigned int *ui_src  = (unsigned int *)src;
+            unsigned int *ui_dest = (unsigned int *)dest;
+            ui_dest[0]            = Utilities::byteswap_unsigned_int( ui_src[0] );
+            break;
+         }
+         case 8: {
+            // The "unsigned long long" type is at least 64 bits.
+            if ( size == sizeof( unsigned long long ) ) {
+               unsigned long long *ull_src  = (unsigned long long *)src;
+               unsigned long long *ull_dest = (unsigned long long *)dest;
+               ull_dest[0]                  = Utilities::byteswap_unsigned_long_long( ull_src[0] );
+            } else {
+               // Try doing the byteswap as a 64 bit double as a last resort if
+               // the unsigned long long on this computer is not 64 bits.
+               double *d_src  = (double *)src;
+               double *d_dest = (double *)dest;
+               d_dest[0]      = Utilities::byteswap_double( d_src[0] );
+            }
+            break;
+         }
+         default: {
+            // The "unsigned long long" type is at least 64 bits.
+            if ( size == sizeof( unsigned long long ) ) {
+               unsigned long long *ull_src  = (unsigned long long *)src;
+               unsigned long long *ull_dest = (unsigned long long *)dest;
+               ull_dest[0]                  = Utilities::byteswap_unsigned_long_long( ull_src[0] );
+            } else {
+               ostringstream errmsg;
+               errmsg << "OpaqueBuffer::byteswap_buffer_copy():"
+                      << __LINE__ << " ERROR: Don't know how to byteswap "
+                      << size << " bytes!" << THLA_ENDL;
+               send_hs( stderr, (char *)errmsg.str().c_str() );
+               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            }
+            break;
+         }
       }
    } else {
       // No byte-swap needed so just copy the data.

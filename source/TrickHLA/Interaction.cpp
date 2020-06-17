@@ -300,17 +300,17 @@ Published Interaction '%s' Preferred-Order:%s%c",
    // Change the preferred order.
    try {
       switch ( preferred_order ) {
-      case TRANSPORT_RECEIVE_ORDER: {
-         rti_amb->changeInteractionOrderType( this->class_handle,
-                                              RTI1516_NAMESPACE::RECEIVE );
-         break;
-      }
-      case TRANSPORT_TIMESTAMP_ORDER:
-      default: {
-         rti_amb->changeInteractionOrderType( this->class_handle,
-                                              RTI1516_NAMESPACE::TIMESTAMP );
-         break;
-      }
+         case TRANSPORT_RECEIVE_ORDER: {
+            rti_amb->changeInteractionOrderType( this->class_handle,
+                                                 RTI1516_NAMESPACE::RECEIVE );
+            break;
+         }
+         case TRANSPORT_TIMESTAMP_ORDER:
+         default: {
+            rti_amb->changeInteractionOrderType( this->class_handle,
+                                                 RTI1516_NAMESPACE::TIMESTAMP );
+            break;
+         }
       }
    } catch ( RTI1516_NAMESPACE::InteractionClassNotPublished &e ) {
       // Macro to restore the saved FPU Control Word register value.

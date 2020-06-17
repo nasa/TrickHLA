@@ -63,22 +63,22 @@ short Utilities::byteswap_short(
 
    // sizeof(char) <= sizeof(short) <= sizeof(int)
    switch ( size ) {
-   case 2:
-      out[0] = in[1];
-      out[1] = in[0];
-      break;
-   case 4:
-      out[0] = in[3];
-      out[1] = in[2];
-      out[2] = in[1];
-      out[3] = in[0];
-      break;
-   default:
-      size_t i, k;
-      for ( i = 0, k = size - 1; i < size; ++i, --k ) {
-         out[i] = in[k];
-      }
-      break;
+      case 2:
+         out[0] = in[1];
+         out[1] = in[0];
+         break;
+      case 4:
+         out[0] = in[3];
+         out[1] = in[2];
+         out[2] = in[1];
+         out[3] = in[0];
+         break;
+      default:
+         size_t i, k;
+         for ( i = 0, k = size - 1; i < size; ++i, --k ) {
+            out[i] = in[k];
+         }
+         break;
    }
    return ( output );
 }
@@ -93,22 +93,22 @@ unsigned short Utilities::byteswap_unsigned_short(
 
    // sizeof(char) <= sizeof(short) <= sizeof(int)
    switch ( size ) {
-   case 2:
-      out[0] = in[1];
-      out[1] = in[0];
-      break;
-   case 4:
-      out[0] = in[3];
-      out[1] = in[2];
-      out[2] = in[1];
-      out[3] = in[0];
-      break;
-   default:
-      size_t i, k;
-      for ( i = 0, k = size - 1; i < size; ++i, --k ) {
-         out[i] = in[k];
-      }
-      break;
+      case 2:
+         out[0] = in[1];
+         out[1] = in[0];
+         break;
+      case 4:
+         out[0] = in[3];
+         out[1] = in[2];
+         out[2] = in[1];
+         out[3] = in[0];
+         break;
+      default:
+         size_t i, k;
+         for ( i = 0, k = size - 1; i < size; ++i, --k ) {
+            out[i] = in[k];
+         }
+         break;
    }
    return ( output );
 }
@@ -123,18 +123,18 @@ int Utilities::byteswap_int( // RETURN: -- Byteswap value.
 
    // sizeof(short) <= sizeof(int) <= sizeof(long)
    switch ( size ) {
-   case 4:
-      out[0] = in[3];
-      out[1] = in[2];
-      out[2] = in[1];
-      out[3] = in[0];
-      break;
-   default:
-      size_t i, k;
-      for ( i = 0, k = size - 1; i < size; ++i, --k ) {
-         out[i] = in[k];
-      }
-      break;
+      case 4:
+         out[0] = in[3];
+         out[1] = in[2];
+         out[2] = in[1];
+         out[3] = in[0];
+         break;
+      default:
+         size_t i, k;
+         for ( i = 0, k = size - 1; i < size; ++i, --k ) {
+            out[i] = in[k];
+         }
+         break;
    }
    return ( output );
 }
@@ -149,18 +149,18 @@ unsigned int Utilities::byteswap_unsigned_int(
 
    // sizeof(short) <= sizeof(int) <= sizeof(long)
    switch ( size ) {
-   case 4:
-      out[0] = in[3];
-      out[1] = in[2];
-      out[2] = in[1];
-      out[3] = in[0];
-      break;
-   default:
-      size_t i, k;
-      for ( i = 0, k = size - 1; i < size; ++i, --k ) {
-         out[i] = in[k];
-      }
-      break;
+      case 4:
+         out[0] = in[3];
+         out[1] = in[2];
+         out[2] = in[1];
+         out[3] = in[0];
+         break;
+      default:
+         size_t i, k;
+         for ( i = 0, k = size - 1; i < size; ++i, --k ) {
+            out[i] = in[k];
+         }
+         break;
    }
    return ( output );
 }
@@ -175,28 +175,28 @@ long Utilities::byteswap_long(
 
    // sizeof(long) >= sizeof(int)
    switch ( size ) {
-   case 4:
-      out[0] = in[3];
-      out[1] = in[2];
-      out[2] = in[1];
-      out[3] = in[0];
-      break;
-   case 8:
-      out[0] = in[7];
-      out[1] = in[6];
-      out[2] = in[5];
-      out[3] = in[4];
-      out[4] = in[3];
-      out[5] = in[2];
-      out[6] = in[1];
-      out[7] = in[0];
-      break;
-   default:
-      size_t i, k;
-      for ( i = 0, k = size - 1; i < size; ++i, --k ) {
-         out[i] = in[k];
-      }
-      break;
+      case 4:
+         out[0] = in[3];
+         out[1] = in[2];
+         out[2] = in[1];
+         out[3] = in[0];
+         break;
+      case 8:
+         out[0] = in[7];
+         out[1] = in[6];
+         out[2] = in[5];
+         out[3] = in[4];
+         out[4] = in[3];
+         out[5] = in[2];
+         out[6] = in[1];
+         out[7] = in[0];
+         break;
+      default:
+         size_t i, k;
+         for ( i = 0, k = size - 1; i < size; ++i, --k ) {
+            out[i] = in[k];
+         }
+         break;
    }
    return ( output );
 }
@@ -211,28 +211,28 @@ unsigned long Utilities::byteswap_unsigned_long(
 
    // sizeof(long) >= sizeof(int)
    switch ( size ) {
-   case 4:
-      out[0] = in[3];
-      out[1] = in[2];
-      out[2] = in[1];
-      out[3] = in[0];
-      break;
-   case 8:
-      out[0] = in[7];
-      out[1] = in[6];
-      out[2] = in[5];
-      out[3] = in[4];
-      out[4] = in[3];
-      out[5] = in[2];
-      out[6] = in[1];
-      out[7] = in[0];
-      break;
-   default:
-      size_t i, k;
-      for ( i = 0, k = size - 1; i < size; ++i, --k ) {
-         out[i] = in[k];
-      }
-      break;
+      case 4:
+         out[0] = in[3];
+         out[1] = in[2];
+         out[2] = in[1];
+         out[3] = in[0];
+         break;
+      case 8:
+         out[0] = in[7];
+         out[1] = in[6];
+         out[2] = in[5];
+         out[3] = in[4];
+         out[4] = in[3];
+         out[5] = in[2];
+         out[6] = in[1];
+         out[7] = in[0];
+         break;
+      default:
+         size_t i, k;
+         for ( i = 0, k = size - 1; i < size; ++i, --k ) {
+            out[i] = in[k];
+         }
+         break;
    }
    return ( output );
 }
@@ -248,22 +248,22 @@ long long Utilities::byteswap_long_long(
    // Specified in the C99 standard, a long long is at least 64 bits.
    // sizeof(long long) >= sizeof(long)
    switch ( size ) {
-   case 8:
-      out[0] = in[7];
-      out[1] = in[6];
-      out[2] = in[5];
-      out[3] = in[4];
-      out[4] = in[3];
-      out[5] = in[2];
-      out[6] = in[1];
-      out[7] = in[0];
-      break;
-   default:
-      size_t i, k;
-      for ( i = 0, k = size - 1; i < size; ++i, --k ) {
-         out[i] = in[k];
-      }
-      break;
+      case 8:
+         out[0] = in[7];
+         out[1] = in[6];
+         out[2] = in[5];
+         out[3] = in[4];
+         out[4] = in[3];
+         out[5] = in[2];
+         out[6] = in[1];
+         out[7] = in[0];
+         break;
+      default:
+         size_t i, k;
+         for ( i = 0, k = size - 1; i < size; ++i, --k ) {
+            out[i] = in[k];
+         }
+         break;
    }
    return ( output );
 }
@@ -279,22 +279,22 @@ unsigned long long Utilities::byteswap_unsigned_long_long(
    // Specified in the C99 standard, a long long is at least 64 bits.
    // sizeof(long long) >= sizeof(long)
    switch ( size ) {
-   case 8:
-      out[0] = in[7];
-      out[1] = in[6];
-      out[2] = in[5];
-      out[3] = in[4];
-      out[4] = in[3];
-      out[5] = in[2];
-      out[6] = in[1];
-      out[7] = in[0];
-      break;
-   default:
-      size_t i, k;
-      for ( i = 0, k = size - 1; i < size; ++i, --k ) {
-         out[i] = in[k];
-      }
-      break;
+      case 8:
+         out[0] = in[7];
+         out[1] = in[6];
+         out[2] = in[5];
+         out[3] = in[4];
+         out[4] = in[3];
+         out[5] = in[2];
+         out[6] = in[1];
+         out[7] = in[0];
+         break;
+      default:
+         size_t i, k;
+         for ( i = 0, k = size - 1; i < size; ++i, --k ) {
+            out[i] = in[k];
+         }
+         break;
    }
    return ( output );
 }
@@ -308,28 +308,28 @@ float Utilities::byteswap_float(
    unsigned char *in   = (unsigned char *)&input;
 
    switch ( size ) {
-   case 4:
-      out[0] = in[3];
-      out[1] = in[2];
-      out[2] = in[1];
-      out[3] = in[0];
-      break;
-   case 8:
-      out[0] = in[7];
-      out[1] = in[6];
-      out[2] = in[5];
-      out[3] = in[4];
-      out[4] = in[3];
-      out[5] = in[2];
-      out[6] = in[1];
-      out[7] = in[0];
-      break;
-   default:
-      size_t i, k;
-      for ( i = 0, k = size - 1; i < size; ++i, --k ) {
-         out[i] = in[k];
-      }
-      break;
+      case 4:
+         out[0] = in[3];
+         out[1] = in[2];
+         out[2] = in[1];
+         out[3] = in[0];
+         break;
+      case 8:
+         out[0] = in[7];
+         out[1] = in[6];
+         out[2] = in[5];
+         out[3] = in[4];
+         out[4] = in[3];
+         out[5] = in[2];
+         out[6] = in[1];
+         out[7] = in[0];
+         break;
+      default:
+         size_t i, k;
+         for ( i = 0, k = size - 1; i < size; ++i, --k ) {
+            out[i] = in[k];
+         }
+         break;
    }
    return ( output );
 }
@@ -343,22 +343,22 @@ double Utilities::byteswap_double(
    unsigned char *in   = (unsigned char *)&input;
 
    switch ( size ) {
-   case 8:
-      out[0] = in[7];
-      out[1] = in[6];
-      out[2] = in[5];
-      out[3] = in[4];
-      out[4] = in[3];
-      out[5] = in[2];
-      out[6] = in[1];
-      out[7] = in[0];
-      break;
-   default:
-      size_t i, k;
-      for ( i = 0, k = size - 1; i < size; ++i, --k ) {
-         out[i] = in[k];
-      }
-      break;
+      case 8:
+         out[0] = in[7];
+         out[1] = in[6];
+         out[2] = in[5];
+         out[3] = in[4];
+         out[4] = in[3];
+         out[5] = in[2];
+         out[6] = in[1];
+         out[7] = in[0];
+         break;
+      default:
+         size_t i, k;
+         for ( i = 0, k = size - 1; i < size; ++i, --k ) {
+            out[i] = in[k];
+         }
+         break;
    }
    return ( output );
 }

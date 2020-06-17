@@ -324,32 +324,32 @@ std::wstring SyncPnt::to_string()
    wstring result = L"[" + label + L"] -- ";
    switch ( this->state ) {
 
-   case SYNC_PNT_STATE_ERROR:
-      result += L"SYNC_PNT_STATE_ERROR";
-      break;
+      case SYNC_PNT_STATE_ERROR:
+         result += L"SYNC_PNT_STATE_ERROR";
+         break;
 
-   case SYNC_PNT_STATE_EXISTS:
-      result += L"SYNC_PNT_STATE_EXISTS";
-      break;
+      case SYNC_PNT_STATE_EXISTS:
+         result += L"SYNC_PNT_STATE_EXISTS";
+         break;
 
-   case SYNC_PNT_STATE_REGISTERED:
-      result += L"SYNC_PNT_STATE_REGISTERED";
-      break;
+      case SYNC_PNT_STATE_REGISTERED:
+         result += L"SYNC_PNT_STATE_REGISTERED";
+         break;
 
-   case SYNC_PNT_STATE_ANNOUNCED:
-      result += L"SYNC_PNT_STATE_ANNOUNCED";
-      break;
+      case SYNC_PNT_STATE_ANNOUNCED:
+         result += L"SYNC_PNT_STATE_ANNOUNCED";
+         break;
 
-   case SYNC_PNT_STATE_ACHIEVED:
-      result += L"SYNC_PNT_STATE_ACHIEVED";
-      break;
+      case SYNC_PNT_STATE_ACHIEVED:
+         result += L"SYNC_PNT_STATE_ACHIEVED";
+         break;
 
-   case SYNC_PNT_STATE_SYNCHRONIZED:
-      result += L"SYNC_PNT_STATE_SYNCHRONIZED";
-      break;
+      case SYNC_PNT_STATE_SYNCHRONIZED:
+         result += L"SYNC_PNT_STATE_SYNCHRONIZED";
+         break;
 
-   default:
-      result += L"SYNC_PNT_STATE_UNKNOWN";
+      default:
+         result += L"SYNC_PNT_STATE_UNKNOWN";
    }
 
    return result;

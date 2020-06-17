@@ -137,38 +137,38 @@ wstring PausePointList::to_string()
 
    switch ( state ) {
 
-   case PAUSE_POINT_STATE_ERROR:
-      result += L"PAUSE_POINT_STATE_ERROR";
-      break;
+      case PAUSE_POINT_STATE_ERROR:
+         result += L"PAUSE_POINT_STATE_ERROR";
+         break;
 
-   case PAUSE_POINT_STATE_PENDING:
-      result += L"PAUSE_POINT_STATE_PENDING";
-      break;
+      case PAUSE_POINT_STATE_PENDING:
+         result += L"PAUSE_POINT_STATE_PENDING";
+         break;
 
-   case PAUSE_POINT_STATE_ACKNOWLEDGED:
-      result += L"PAUSE_POINT_STATE_ACKNOWLEDGED";
-      break;
+      case PAUSE_POINT_STATE_ACKNOWLEDGED:
+         result += L"PAUSE_POINT_STATE_ACKNOWLEDGED";
+         break;
 
-   case PAUSE_POINT_STATE_RUN:
-      result += L"PAUSE_POINT_STATE_RUN";
-      break;
+      case PAUSE_POINT_STATE_RUN:
+         result += L"PAUSE_POINT_STATE_RUN";
+         break;
 
-   case PAUSE_POINT_STATE_EXIT:
-      result += L"PAUSE_POINT_STATE_EXIT";
-      break;
+      case PAUSE_POINT_STATE_EXIT:
+         result += L"PAUSE_POINT_STATE_EXIT";
+         break;
 
-   case PAUSE_POINT_STATE_RESTART:
-      result += L"PAUSE_POINT_STATE_RESTART";
-      break;
+      case PAUSE_POINT_STATE_RESTART:
+         result += L"PAUSE_POINT_STATE_RESTART";
+         break;
 
-   case PAUSE_POINT_STATE_RECONFIG:
-      result += L"PAUSE_POINT_STATE_RECONFIG";
-      break;
+      case PAUSE_POINT_STATE_RECONFIG:
+         result += L"PAUSE_POINT_STATE_RECONFIG";
+         break;
 
-   case PAUSE_POINT_STATE_UNKNOWN:
-   default:
-      result += L"PAUSE_POINT_STATE_UNKNOWN";
-      break;
+      case PAUSE_POINT_STATE_UNKNOWN:
+      default:
+         result += L"PAUSE_POINT_STATE_UNKNOWN";
+         break;
    }
 
    vector< SyncPnt * >::const_iterator i;

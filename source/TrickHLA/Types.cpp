@@ -40,37 +40,37 @@ string TrickHLA::execution_control_enum_to_string(
 {
    switch ( mode ) {
 
-   case EXECUTION_CONTROL_UNINITIALIZED:
-      return "EXECUTION_CONTROL_UNINITIALIZED";
-      break;
+      case EXECUTION_CONTROL_UNINITIALIZED:
+         return "EXECUTION_CONTROL_UNINITIALIZED";
+         break;
 
-   case EXECUTION_CONTROL_INITIALIZING:
-      return "EXECUTION_CONTROL_INITIALIZING";
-      break;
+      case EXECUTION_CONTROL_INITIALIZING:
+         return "EXECUTION_CONTROL_INITIALIZING";
+         break;
 
-   case EXECUTION_CONTROL_RUNNING:
-      return "EXECUTION_CONTROL_RUNNING";
-      break;
+      case EXECUTION_CONTROL_RUNNING:
+         return "EXECUTION_CONTROL_RUNNING";
+         break;
 
-   case EXECUTION_CONTROL_FREEZE:
-      return "EXECUTION_CONTROL_FREEZE";
-      break;
+      case EXECUTION_CONTROL_FREEZE:
+         return "EXECUTION_CONTROL_FREEZE";
+         break;
 
-   case EXECUTION_CONTROL_RESTART:
-      return "EXECUTION_CONTROL_RESTART";
-      break;
+      case EXECUTION_CONTROL_RESTART:
+         return "EXECUTION_CONTROL_RESTART";
+         break;
 
-   case EXECUTION_CONTROL_RECONFIG:
-      return "EXECUTION_CONTROL_RECONFIG";
-      break;
+      case EXECUTION_CONTROL_RECONFIG:
+         return "EXECUTION_CONTROL_RECONFIG";
+         break;
 
-   case EXECUTION_CONTROL_SHUTDOWN:
-      return "EXECUTION_CONTROL_SHUTDOWN";
-      break;
+      case EXECUTION_CONTROL_SHUTDOWN:
+         return "EXECUTION_CONTROL_SHUTDOWN";
+         break;
 
-   default:
-      return "UNKNOWN TrickHLA Execution Mode";
-      break;
+      default:
+         return "UNKNOWN TrickHLA Execution Mode";
+         break;
    }
 
    return "UNKNOWN TrickHLA Execution Mode";
@@ -88,37 +88,37 @@ ExecutionControlEnum TrickHLA::execution_control_int16_to_enum(
 {
    switch ( int_mode ) {
 
-   case 0:
-      return EXECUTION_CONTROL_UNINITIALIZED;
-      break;
+      case 0:
+         return EXECUTION_CONTROL_UNINITIALIZED;
+         break;
 
-   case 1:
-      return EXECUTION_CONTROL_INITIALIZING;
-      break;
+      case 1:
+         return EXECUTION_CONTROL_INITIALIZING;
+         break;
 
-   case 2:
-      return EXECUTION_CONTROL_RUNNING;
-      break;
+      case 2:
+         return EXECUTION_CONTROL_RUNNING;
+         break;
 
-   case 3:
-      return EXECUTION_CONTROL_FREEZE;
-      break;
+      case 3:
+         return EXECUTION_CONTROL_FREEZE;
+         break;
 
-   case 4:
-      return EXECUTION_CONTROL_RESTART;
-      break;
+      case 4:
+         return EXECUTION_CONTROL_RESTART;
+         break;
 
-   case 5:
-      return EXECUTION_CONTROL_RECONFIG;
-      break;
+      case 5:
+         return EXECUTION_CONTROL_RECONFIG;
+         break;
 
-   case 6:
-      return EXECUTION_CONTROL_SHUTDOWN;
-      break;
+      case 6:
+         return EXECUTION_CONTROL_SHUTDOWN;
+         break;
 
-   default:
-      return EXECUTION_CONTROL_UNINITIALIZED;
-      break;
+      default:
+         return EXECUTION_CONTROL_UNINITIALIZED;
+         break;
    }
 
    return EXECUTION_CONTROL_UNINITIALIZED;
@@ -129,37 +129,37 @@ string TrickHLA::mode_transition_enum_to_string(
 {
    switch ( mode ) {
 
-   case MODE_TRANSITION_UNINITIALIZED:
-      return "MODE_TRANSITION_UNINITIALIZED";
-      break;
+      case MODE_TRANSITION_UNINITIALIZED:
+         return "MODE_TRANSITION_UNINITIALIZED";
+         break;
 
-   case MODE_TRANSITION_INITIALIZING:
-      return "MODE_TRANSITION_INITIALIZING";
-      break;
+      case MODE_TRANSITION_INITIALIZING:
+         return "MODE_TRANSITION_INITIALIZING";
+         break;
 
-   case MODE_TRANSITION_GOTO_RUN:
-      return "MODE_TRANSITION_GOTO_RUN";
-      break;
+      case MODE_TRANSITION_GOTO_RUN:
+         return "MODE_TRANSITION_GOTO_RUN";
+         break;
 
-   case MODE_TRANSITION_GOTO_FREEZE:
-      return "MODE_TRANSITION_GOTO_FREEZE";
-      break;
+      case MODE_TRANSITION_GOTO_FREEZE:
+         return "MODE_TRANSITION_GOTO_FREEZE";
+         break;
 
-   case MODE_TRANSITION_GOTO_RESTART:
-      return "MODE_TRANSITION_GOTO_RESTART";
-      break;
+      case MODE_TRANSITION_GOTO_RESTART:
+         return "MODE_TRANSITION_GOTO_RESTART";
+         break;
 
-   case MODE_TRANSITION_GOTO_RECONFIG:
-      return "MODE_TRANSITION_GOTO_RECONFIG";
-      break;
+      case MODE_TRANSITION_GOTO_RECONFIG:
+         return "MODE_TRANSITION_GOTO_RECONFIG";
+         break;
 
-   case MODE_TRANSITION_GOTO_SHUTDOWN:
-      return "MODE_TRANSITION_GOTO_SHUTDOWN";
-      break;
+      case MODE_TRANSITION_GOTO_SHUTDOWN:
+         return "MODE_TRANSITION_GOTO_SHUTDOWN";
+         break;
 
-   default:
-      return "UNKNOWN TrickHLA Mode Transition";
-      break;
+      default:
+         return "UNKNOWN TrickHLA Mode Transition";
+         break;
    }
 
    return "UNKNOWN TrickHLA Mode Transition";
@@ -177,37 +177,37 @@ ModeTransitionEnum TrickHLA::mode_transition_int16_to_enum(
 {
    switch ( int_mode ) {
 
-   case 0:
-      return MODE_TRANSITION_UNINITIALIZED;
-      break;
+      case 0:
+         return MODE_TRANSITION_UNINITIALIZED;
+         break;
 
-   case 1:
-      return MODE_TRANSITION_INITIALIZING;
-      break;
+      case 1:
+         return MODE_TRANSITION_INITIALIZING;
+         break;
 
-   case 2:
-      return MODE_TRANSITION_GOTO_RUN;
-      break;
+      case 2:
+         return MODE_TRANSITION_GOTO_RUN;
+         break;
 
-   case 3:
-      return MODE_TRANSITION_GOTO_FREEZE;
-      break;
+      case 3:
+         return MODE_TRANSITION_GOTO_FREEZE;
+         break;
 
-   case 4:
-      return MODE_TRANSITION_GOTO_RESTART;
-      break;
+      case 4:
+         return MODE_TRANSITION_GOTO_RESTART;
+         break;
 
-   case 5:
-      return MODE_TRANSITION_GOTO_RECONFIG;
-      break;
+      case 5:
+         return MODE_TRANSITION_GOTO_RECONFIG;
+         break;
 
-   case 6:
-      return MODE_TRANSITION_GOTO_SHUTDOWN;
-      break;
+      case 6:
+         return MODE_TRANSITION_GOTO_SHUTDOWN;
+         break;
 
-   default:
-      return MODE_TRANSITION_UNINITIALIZED;
-      break;
+      default:
+         return MODE_TRANSITION_UNINITIALIZED;
+         break;
    }
 
    return MODE_TRANSITION_UNINITIALIZED;
@@ -219,33 +219,33 @@ string TrickHLA::sync_pnt_state_enum_to_string(
 
    switch ( state ) {
 
-   case SYNC_PNT_STATE_ERROR:
-      return "SYNC_PNT_STATE_ERROR";
-      break;
+      case SYNC_PNT_STATE_ERROR:
+         return "SYNC_PNT_STATE_ERROR";
+         break;
 
-   case SYNC_PNT_STATE_EXISTS:
-      return "SYNC_PNT_STATE_EXISTS";
-      break;
+      case SYNC_PNT_STATE_EXISTS:
+         return "SYNC_PNT_STATE_EXISTS";
+         break;
 
-   case SYNC_PNT_STATE_REGISTERED:
-      return "SYNC_PNT_STATE_REGISTERED";
-      break;
+      case SYNC_PNT_STATE_REGISTERED:
+         return "SYNC_PNT_STATE_REGISTERED";
+         break;
 
-   case SYNC_PNT_STATE_ANNOUNCED:
-      return "SYNC_PNT_STATE_ANNOUNCED";
-      break;
+      case SYNC_PNT_STATE_ANNOUNCED:
+         return "SYNC_PNT_STATE_ANNOUNCED";
+         break;
 
-   case SYNC_PNT_STATE_ACHIEVED:
-      return "SYNC_PNT_STATE_ACHIEVED";
-      break;
+      case SYNC_PNT_STATE_ACHIEVED:
+         return "SYNC_PNT_STATE_ACHIEVED";
+         break;
 
-   case SYNC_PNT_STATE_SYNCHRONIZED:
-      return "SYNC_PNT_STATE_SYNCHRONIZED";
-      break;
+      case SYNC_PNT_STATE_SYNCHRONIZED:
+         return "SYNC_PNT_STATE_SYNCHRONIZED";
+         break;
 
-   default:
-      return "SYNC_PNT_STATE_UNKNOWN";
-      break;
+      default:
+         return "SYNC_PNT_STATE_UNKNOWN";
+         break;
    }
 
    return "SYNC_PNT_STATE_UNKNOWN";
@@ -263,33 +263,33 @@ SyncPntStateEnum TrickHLA::sync_pnt_state_int16_to_enum(
 
    switch ( int_state ) {
 
-   case 0:
-      return SYNC_PNT_STATE_ERROR;
-      break;
+      case 0:
+         return SYNC_PNT_STATE_ERROR;
+         break;
 
-   case 1:
-      return SYNC_PNT_STATE_EXISTS;
-      break;
+      case 1:
+         return SYNC_PNT_STATE_EXISTS;
+         break;
 
-   case 2:
-      return SYNC_PNT_STATE_REGISTERED;
-      break;
+      case 2:
+         return SYNC_PNT_STATE_REGISTERED;
+         break;
 
-   case 3:
-      return SYNC_PNT_STATE_ANNOUNCED;
-      break;
+      case 3:
+         return SYNC_PNT_STATE_ANNOUNCED;
+         break;
 
-   case 4:
-      return SYNC_PNT_STATE_ACHIEVED;
-      break;
+      case 4:
+         return SYNC_PNT_STATE_ACHIEVED;
+         break;
 
-   case 5:
-      return SYNC_PNT_STATE_SYNCHRONIZED;
-      break;
+      case 5:
+         return SYNC_PNT_STATE_SYNCHRONIZED;
+         break;
 
-   default:
-      return SYNC_PNT_STATE_UNKNOWN;
-      break;
+      default:
+         return SYNC_PNT_STATE_UNKNOWN;
+         break;
    }
 
    return SYNC_PNT_STATE_UNKNOWN;
