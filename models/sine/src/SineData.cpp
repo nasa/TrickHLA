@@ -222,16 +222,16 @@ int SineData::integration()
    int ipass;
 
    // Load the current sine state.
-   load_state(&value, NULL);
+   load_state(&value, NULL);     // cppcheck-suppress [varFuncNullUB]
 
    // Load the current state derivative.
-   load_deriv(&dvdt, NULL);
+   load_deriv(&dvdt, NULL);      // cppcheck-suppress [varFuncNullUB]
 
    // Call the Trick integration service.
    ipass = integrate();
 
    // Unload the new propagated state value.
-   unload_state(&value, NULL);
+   unload_state(&value, NULL);   // cppcheck-suppress [varFuncNullUB]
 
    // Return the intermediate step ID.
    return (ipass);

@@ -368,6 +368,7 @@ ccpcheck_output_dir + '/' + ccpcheck_suppresion_autogen_file  ))
 
    # Check if auto-generating a suppression file.
    if args.autogen :
+      # NOTE: Don't enable inline-suppressions so that we get everything in the file.
 
       # Set the output file.
       output_file = ccpcheck_output_dir + '/' + ccpcheck_suppresion_autogen_file
@@ -379,6 +380,9 @@ ccpcheck_output_dir + '/' + ccpcheck_suppresion_autogen_file  ))
       shell_command.extend( cppcheck_args )
 
    else :
+
+      # Enable inline suppressions.
+      cppcheck_args.append( '--inline-suppr' )
 
       # Set the output file.
       if args.generate_xml :
