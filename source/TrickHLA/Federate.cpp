@@ -134,7 +134,7 @@ Federate::Federate()
      all_federates_joined( false ),
      lookahead( 1.0 ),
      shutdown_called( false ),
-     HLA_save_directory( NULL ),
+     HLA_save_directory( "" ),
      initiate_save_flag( false ),
      restore_process( No_Restore ),
      prev_restore_process( No_Restore ),
@@ -142,11 +142,13 @@ Federate::Federate()
      restore_in_progress( false ),
      restore_failed( false ),
      restore_is_imminent( false ),
+     save_label( "" ),
      announce_save( false ),
      save_label_generated( false ),
      save_request_complete( false ),
      save_completed( false ),
      stale_data_counter( 0 ),
+     restore_label( "" ),
      announce_restore( false ),
      restore_label_generated( false ),
      restore_begun( false ),
@@ -158,6 +160,7 @@ Federate::Federate()
      running_feds_count( 0 ),
      running_feds( NULL ),
      running_feds_count_at_time_of_restore( 0 ),
+     checkpoint_file_name( "" ),
      checkpoint_rt_itimer( Off ),
      announce_freeze( false ),
      freeze_the_federation( false ),
@@ -194,10 +197,6 @@ Federate::Federate()
      execution_control( NULL )
 {
    TRICKHLA_INIT_FPU_CONTROL_WORD;
-
-   cstr_save_label[0]      = '\0';
-   cstr_restore_label[0]   = '\0';
-   checkpoint_file_name[0] = '\0';
 
    // As a sanity check validate the FPU code word.
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -364,8 +363,6 @@ void Federate::fix_FPU_control_word()
 #endif
 
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-   return;
 }
 
 /*!
@@ -403,8 +400,6 @@ void Federate::setup(
 
    // Set up the TrickHLA::ExecutionControl instance.
    this->execution_control->setup( *this, *( this->manager ) );
-
-   return;
 }
 
 /*!
@@ -589,8 +584,6 @@ void Federate::restart_initialization()
       }
    }
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-   return;
 }
 
 /*!
@@ -625,8 +618,6 @@ void Federate::pre_multiphase_initialization()
 
    // Initialize the TrickHLA::Manager object instance.
    manager->initialize();
-
-   return;
 }
 
 /*!
@@ -649,8 +640,6 @@ void Federate::post_multiphase_initialization()
 
    // Mark the federate as having begun execution.
    this->set_federate_has_begun_execution();
-
-   return;
 }
 
 /*!
@@ -1310,7 +1299,7 @@ void Federate::determine_federate_MOM_object_instance_names()
 }
 
 bool Federate::is_required_federate(
-   wstring const &federate_name )
+   const wstring &federate_name )
 {
    for ( int i = 0; i < known_feds_count; i++ ) {
       if ( known_feds[i].required ) {
@@ -1333,7 +1322,7 @@ bool Federate::is_joined_federate(
 }
 
 bool Federate::is_joined_federate(
-   wstring const &federate_name )
+   const wstring &federate_name )
 {
    for ( unsigned int i = 0; i < joined_federate_names.size(); i++ ) {
       if ( federate_name == joined_federate_names[i] ) {
@@ -2332,8 +2321,6 @@ void Federate::register_generic_sync_point(
    // Macro to restore the saved FPU Control Word register value.
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-   return;
 }
 
 void Federate::achieve_and_wait_for_synchronization(
@@ -2490,8 +2477,6 @@ void Federate::announce_sync_point(
    // Dispatch this to the ExecutionControl process.  It will check for
    // any synchronization points that require special handling.
    execution_control->announce_sync_point( *( RTI_ambassador ), label, user_supplied_tag );
-
-   return;
 }
 
 void Federate::sync_point_registration_succeeded(
@@ -2499,8 +2484,6 @@ void Federate::sync_point_registration_succeeded(
 {
    // Call the ExecutionControl method associated with the TirckHLA::Manager.
    execution_control->sync_point_registration_succeeded( label );
-
-   return;
 }
 
 void Federate::sync_point_registration_failed(
@@ -2509,8 +2492,6 @@ void Federate::sync_point_registration_failed(
 {
    // Call the ExecutionControl method associated with the TirckHLA::Manager.
    execution_control->sync_point_registration_failed( label, not_unique );
-
-   return;
 }
 
 void Federate::federation_synchronized(
@@ -2519,8 +2500,6 @@ void Federate::federation_synchronized(
 
    // Mark the sync-point and synchronized.
    execution_control->mark_synchronized( label );
-
-   return;
 }
 
 /*!
@@ -2533,8 +2512,6 @@ void Federate::freeze_init()
 
    // Dispatch to the ExecutionControl method.
    execution_control->freeze_init();
-
-   return;
 }
 
 /*!
@@ -2557,8 +2534,6 @@ void Federate::enter_freeze()
 
    // Dispatch to the ExecutionControl method.
    execution_control->enter_freeze();
-
-   return;
 }
 
 /*!
@@ -2578,8 +2553,6 @@ void Federate::exit_freeze()
    execution_control->exit_freeze();
 
    freeze_the_federation = false;
-
-   return;
 }
 
 /*!
@@ -2609,8 +2582,6 @@ void Federate::check_freeze()
       }
       return;
    }
-
-   return;
 }
 
 void Federate::un_freeze()
@@ -2619,8 +2590,6 @@ void Federate::un_freeze()
    execution_control->un_freeze();
 
    exec_run();
-
-   return;
 }
 
 /*!
@@ -2640,8 +2609,6 @@ bool Federate::is_HLA_save_and_restore_supported()
  */
 void Federate::perform_checkpoint()
 {
-   bool force_checkpoint = false;
-
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
    if ( !is_HLA_save_and_restore_supported() ) {
@@ -2649,10 +2616,10 @@ void Federate::perform_checkpoint()
    }
 
    // Dispatch to the ExecutionControl method.
-   force_checkpoint = execution_control->perform_save();
+   bool force_checkpoint = execution_control->perform_save();
 
-   if ( start_to_save || force_checkpoint ) {
-      // if I announced the save, sim control panel was clicked and invokes the checkpoint
+   if ( this->start_to_save || force_checkpoint ) {
+      // If I announced the save, sim control panel was clicked and invokes the checkpoint
       if ( !announce_save ) {
          if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             send_hs( stdout, "Federate::perform_checkpoint():%d Federate Save Started %c",
@@ -2661,14 +2628,16 @@ void Federate::perform_checkpoint()
          // Create the filename from the Federation name and the "save-name".
          // Replace all directory characters with an underscore.
          string save_name_str;
-         StringUtilities::to_string( save_name_str, save_name );
-         str_save_label = string( get_federation_name() ) + "_" + save_name_str;
+         StringUtilities::to_string( save_name_str, this->save_name );
+         string str_save_label = string( get_federation_name() ) + "_" + save_name_str;
          for ( unsigned int i = 0; i < str_save_label.length(); i++ ) {
             if ( str_save_label[i] == '/' ) {
                str_save_label[i] = '_';
             }
          }
-         checkpoint( str_save_label.c_str() ); // calls setup_checkpoint first
+
+         // calls setup_checkpoint first
+         checkpoint( str_save_label.c_str() );
       }
       if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::perform_checkpoint():%d Checkpoint Dump Completed.%c",
@@ -2688,6 +2657,7 @@ void Federate::setup_checkpoint()
 {
    string  save_name_str;
    wstring save_name_ws;
+   string  str_save_label( this->save_label );
 
    // Don't do federate save during Init or Exit (this allows "regular" init and shutdown checkpoints)
    if ( ( exec_get_mode() == Initialization ) || ( exec_get_mode() == ExitMode ) ) {
@@ -2696,7 +2666,7 @@ void Federate::setup_checkpoint()
 
    // Determine if I am the federate that clicked Dump Chkpnt on sim control panel
    // or I am the federate that called start_federation_save
-   announce_save = !start_to_save;
+   this->announce_save = !this->start_to_save;
 
    // Check to see if the save has been initiated in the ExcutionControl process?
    // If not then just return.
@@ -2709,14 +2679,16 @@ void Federate::setup_checkpoint()
                __LINE__, THLA_NEWLINE );
    }
 
-   // if I announced the save, must initiate federation save
-   if ( announce_save ) {
-      if ( save_name.length() ) {
-         // when user calls start_federation_save, save_name is already set
+   // If I announced the save, must initiate federation save
+   if ( this->announce_save ) {
+      if ( this->save_name.length() ) {
+         // When user calls start_federation_save, save_name is already set
       } else {
-         // when user clicks Dump Chkpnt, we need to set the save_name here
-         string trick_filename, slash( "/" );
+         // When user clicks Dump Chkpnt, we need to set the save_name here
+         string trick_filename;
+         string slash( "/" );
          size_t found;
+
          // get checkpoint file name specified in control panel
          trick_filename = checkpoint_get_output_file();
 
@@ -2727,11 +2699,13 @@ void Federate::setup_checkpoint()
             save_name_str         = trick_filename.substr( found + 1 ); // filename
             size_t federation_len = strlen( get_federation_name() );
             if ( save_name_str.compare( 0, federation_len, get_federation_name() ) != 0 ) {
+               // dir/federation_filename
                trick_filename.replace( found, slash.length(),
-                                       slash + string( get_federation_name() ) + "_" ); // dir/federation_filename
+                                       slash + string( get_federation_name() ) + "_" );
             } else {
-               // if it already has federation name prepended, output_file name is good to go
-               // but remove it from save_name_str so our str_save_label setting below is correct
+               // If it already has federation name prepended, output_file name
+               // is good to go but remove it from save_name_str so our
+               // str_save_label setting below is correct
                save_name_str = trick_filename.substr( found + 1 + federation_len + 1 ); // filename
             }
          } else {
@@ -2742,15 +2716,19 @@ void Federate::setup_checkpoint()
          // Set the checkpoint restart files name.
          the_cpr->output_file = trick_filename;
 
-         str_save_label = string( get_federation_name() ) + "_" + save_name_str; // federation_filename
+         // federation_filename
+         str_save_label = string( get_federation_name() ) + "_" + save_name_str;
+
          // set the federate save_name to filename (without the federation name)- this gets announced to other feds
          StringUtilities::to_wstring( save_name_ws, save_name_str );
+
          set_save_name( save_name_ws );
       } // end set save_name
 
-      // don't request a save if another federate has already requested one
-      if ( initiate_save_flag ) {
-         request_federation_save_status(); // initiate_save_flag becomes false if another save is occurring
+      // Don't request a save if another federate has already requested one
+      if ( this->initiate_save_flag ) {
+         // initiate_save_flag becomes false if another save is occurring
+         request_federation_save_status();
          wait_for_save_status_to_complete();
 
          request_federation_save();
@@ -2763,7 +2741,7 @@ void Federate::setup_checkpoint()
          while ( !start_to_save ) {
             (void)Utilities::micro_sleep( sleep_micros );
 
-            if ( ( !start_to_save ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
+            if ( ( !this->start_to_save ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
                wait_count = 0;
                if ( !is_execution_member() ) {
                   ostringstream errmsg;
@@ -2779,7 +2757,7 @@ void Federate::setup_checkpoint()
                }
             }
          }
-         initiate_save_flag = false;
+         this->initiate_save_flag = false;
       } else {
          send_hs( stdout, "Federate::setup_checkpoint():%d Federation Save is already in progress! %c",
                   __LINE__, THLA_NEWLINE );
@@ -2815,15 +2793,13 @@ void Federate::setup_checkpoint()
 
    // This is a shortcut so that we can enforce that only these federates exist
    // when we restore
-   write_running_feds_file( (char *)str_save_label.c_str() );
+   write_running_feds_file( str_save_label );
 
    // Tell the manager to setup the checkpoint data structures.
    manager->setup_checkpoint();
 
    // Save any synchronization points.
    convert_sync_pts();
-
-   return;
 }
 
 /*!
@@ -2839,7 +2815,7 @@ void Federate::post_checkpoint()
       return;
    }
 
-   if ( start_to_save ) {
+   if ( this->start_to_save ) {
 
       // Macro to save the FPU Control Word register value.
       TRICKHLA_SAVE_FPU_CONTROL_WORD;
@@ -2892,18 +2868,19 @@ void Federate::perform_restore()
       return;
    }
 
-   if ( start_to_restore ) {
+   if ( this->start_to_restore ) {
       // if I announced the restore, sim control panel was clicked and invokes the load
-      if ( !announce_restore ) {
+      if ( !this->announce_restore ) {
          if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             send_hs( stdout, "Federate::perform_restore():%d Federate Restore Started.%c",
                      __LINE__, THLA_NEWLINE );
          }
+
          // Create the filename from the Federation name and the "restore-name".
          // Replace all directory characters with an underscore.
          string restore_name_str;
          StringUtilities::to_string( restore_name_str, restore_name );
-         str_restore_label = string( get_federation_name() ) + "_" + restore_name_str;
+         string str_restore_label = string( get_federation_name() ) + "_" + restore_name_str;
          for ( unsigned int i = 0; i < str_restore_label.length(); i++ ) {
             if ( str_restore_label[i] == '/' ) {
                str_restore_label[i] = '_';
@@ -2911,10 +2888,12 @@ void Federate::perform_restore()
          }
          send_hs( stdout, "Federate::perform_restore():%d LOADING %s%c",
                   __LINE__, str_restore_label.c_str(), THLA_NEWLINE );
-         check_HLA_save_directory(); // make sure we have a save directory specified
+
+         // make sure we have a save directory specified
+         check_HLA_save_directory();
 
          // This will run pre-load-checkpoint jobs, clear memory, read checkpoint file, and run restart jobs
-         load_checkpoint( ( string( this->HLA_save_directory ) + "/" + str_restore_label ).c_str() );
+         load_checkpoint( ( this->HLA_save_directory + "/" + str_restore_label ).c_str() );
 
          load_checkpoint_job();
 
@@ -2953,12 +2932,13 @@ void Federate::setup_restore()
                __LINE__, THLA_NEWLINE );
    }
    // Determine if I am the federate that clicked Load Chkpnt on sim control panel
-   announce_restore = !start_to_restore;
-   announce_freeze  = announce_restore;
+   this->announce_restore = !this->start_to_restore;
+   this->announce_freeze  = this->announce_restore;
 
    // if I announced the restore, must initiate federation restore
-   if ( announce_restore ) {
-      string trick_filename, slash_fedname( "/" + string( get_federation_name() ) + "_" );
+   if ( this->announce_restore ) {
+      string trick_filename;
+      string slash_fedname( "/" + string( get_federation_name() ) + "_" );
       size_t found;
 
       // Otherwise set restore_name_str using trick's file name
@@ -2973,10 +2953,15 @@ void Federate::setup_restore()
       } else {
          restore_name_str = trick_filename;
       }
-      str_restore_label = string( get_federation_name() ) + "_" + restore_name_str; // federation_filename
-      check_HLA_save_directory();                                                   // make sure we have a save directory specified
+      // federation_filename
+      string str_restore_label = string( get_federation_name() ) + "_" + restore_name_str;
+
+      // make sure we have a save directory specified
+      check_HLA_save_directory();
+
       // make sure only the required federates are in the federation before we do the restore
-      read_running_feds_file( (char *)str_restore_label.c_str() );
+      read_running_feds_file( str_restore_label );
+
       string tRetString;
       tRetString = wait_for_required_federates_to_join(); // sets running_feds_count
       if ( !tRetString.empty() ) {
@@ -2986,17 +2971,17 @@ void Federate::setup_restore()
          exec_terminate( __FILE__, (char *)tRetString.c_str() );
       }
       // set the federate restore_name to filename (without the federation name)- this gets announced to other feds
-      initiate_restore_announce( restore_name_str.c_str() );
+      initiate_restore_announce( restore_name_str );
 
       unsigned int sleep_micros = 1000;
       unsigned int wait_count   = 0;
       unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
 
       // need to wait for federation to initiate restore
-      while ( !start_to_restore ) {
+      while ( !this->start_to_restore ) {
          (void)Utilities::micro_sleep( sleep_micros );
 
-         if ( ( !start_to_restore ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
+         if ( ( !this->start_to_restore ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
             wait_count = 0;
             if ( !is_execution_member() ) {
                ostringstream errmsg;
@@ -3014,7 +2999,7 @@ void Federate::setup_restore()
       }
    }
 
-   restore_process = Restore_In_Progress;
+   this->restore_process = Restore_In_Progress;
 }
 
 /*!
@@ -3029,13 +3014,13 @@ void Federate::post_restore()
       return;
    }
 
-   if ( start_to_restore ) {
+   if ( this->start_to_restore ) {
       restore_process = Restore_Complete;
 
       // Make a copy of restore_process because it is used in the
       // inform_RTI_of_restore_completion() function.
       // (backward compatibility with previous restore process)
-      prev_restore_process = restore_process;
+      this->prev_restore_process = this->restore_process;
 
       copy_running_feds_into_known_feds();
 
@@ -3070,7 +3055,7 @@ void Federate::post_restore()
       manager->setup_all_RTI_handles();
       manager->set_all_object_instance_handles_by_name();
 
-      if ( announce_restore ) {
+      if ( this->announce_restore ) {
          set_all_federate_MOM_instance_handles_by_name();
          restore_federate_handles_from_MOM();
       }
@@ -3113,8 +3098,8 @@ void Federate::post_restore()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      HLA_time       = get_granted_time();
-      requested_time = granted_time;
+      this->HLA_time       = get_granted_time();
+      this->requested_time = this->granted_time;
 
       federation_restored();
 
@@ -3137,7 +3122,7 @@ void Federate::set_granted_time(
 }
 
 void Federate::set_granted_time(
-   RTI1516_NAMESPACE::LogicalTime const &time )
+   const RTI1516_NAMESPACE::LogicalTime &time )
 {
    granted_time.setTo( time );
 }
@@ -3149,7 +3134,7 @@ void Federate::set_requested_time(
 }
 
 void Federate::set_requested_time(
-   RTI1516_NAMESPACE::LogicalTime const &time )
+   const RTI1516_NAMESPACE::LogicalTime &time )
 {
    requested_time.setTo( time );
 }
@@ -3165,7 +3150,7 @@ void Federate::time_advance_request_to_GALT()
 {
    // Simply return if we are the master federate that created the federation,
    // or if time management is not enabled.
-   if ( ( !time_management )
+   if ( ( !this->time_management )
         || ( execution_control->is_master()
              && !execution_control->is_late_joiner() ) ) {
       return;
@@ -3219,7 +3204,7 @@ void Federate::time_advance_request_to_GALT_LCTS_multiple()
 {
    // Simply return if we are the master federate that created the federation,
    // or if time management is not enabled.
-   if ( ( !time_management )
+   if ( ( !this->time_management )
         || ( execution_control->is_master()
              && !execution_control->is_late_joiner() ) ) {
       return;
@@ -3524,14 +3509,15 @@ void Federate::join_federation(
 
       // Add the user specified FOM-modules to the vector by parsing the comma
       // separated list of modules.
-      if ( FOM_modules != NULL ) {
+      if ( this->FOM_modules != NULL ) {
          StringUtilities::tokenize( FOM_modules, fomModulesVector, "," );
       }
 
-      federate_id             = RTI_ambassador->joinFederationExecution( fed_name_ws,
+      federate_id = RTI_ambassador->joinFederationExecution( fed_name_ws,
                                                              fed_type_ws,
                                                              federation_name_ws,
                                                              fomModulesVector );
+
       this->federation_joined = true;
 
       if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -3844,8 +3830,8 @@ void Federate::setup_time_management()
 {
    // Disable time management if the federate is not setup to be
    // time-regulating or time-constrained.
-   if ( time_management && !time_regulating && !time_constrained ) {
-      time_management = false;
+   if ( this->time_management && !this->time_regulating && !this->time_constrained ) {
+      this->time_management = false;
    }
 
    if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -3857,13 +3843,13 @@ void Federate::setup_time_management()
    }
 
    // Determine if HLA time management is enabled.
-   if ( time_management ) {
+   if ( this->time_management ) {
 
       // Setup time constrained if the user wants to be constrained and our
       // current HLA time constrained state indicates we are not constrained.
-      if ( time_constrained && !time_constrained_state ) {
+      if ( this->time_constrained && !this->time_constrained_state ) {
          setup_time_constrained();
-      } else if ( !time_constrained && time_constrained_state ) {
+      } else if ( !this->time_constrained && this->time_constrained_state ) {
          // Disable time constrained if our current HLA state indicates we
          // are already constrained.
          shutdown_time_constrained();
@@ -3871,9 +3857,9 @@ void Federate::setup_time_management()
 
       // Setup time regulation if the user wanted to be regulated and our
       // current HLA time regulating state indicates we are not regulated.
-      if ( time_regulating && !time_regulating_state ) {
+      if ( this->time_regulating && !this->time_regulating_state ) {
          setup_time_regulation();
-      } else if ( !time_regulating && time_regulating_state ) {
+      } else if ( !this->time_regulating && this->time_regulating_state ) {
          // Disable time regulation if our current HLA state indicates we
          // are already regulating.
          shutdown_time_regulating();
@@ -3882,10 +3868,10 @@ void Federate::setup_time_management()
       // HLA Time Management is disabled.
 
       // Disable time constrained and time regulation.
-      if ( time_constrained_state ) {
+      if ( this->time_constrained_state ) {
          shutdown_time_constrained();
       }
-      if ( time_regulating_state ) {
+      if ( this->time_regulating_state ) {
          shutdown_time_regulating();
       }
    }
@@ -3917,8 +3903,8 @@ void Federate::setup_time_constrained()
                   __LINE__, get_federation_name(), THLA_NEWLINE );
       }
 
-      time_adv_grant         = false;
-      time_constrained_state = false;
+      this->time_adv_grant         = false;
+      this->time_constrained_state = false;
 
       // Turn on constrained status so that regulating federates will control
       // our advancement in time.
@@ -3933,7 +3919,7 @@ void Federate::setup_time_constrained()
       unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
 
       // This spin lock waits for the time constrained flag to be set from the RTI.
-      while ( !time_constrained_state ) {
+      while ( !this->time_constrained_state ) {
 
          // Check for shutdown.
          this->check_for_shutdown_with_termination();
@@ -4052,7 +4038,7 @@ void Federate::setup_time_regulation()
 {
    // Just return if HLA time management is not enabled, the user does
    // not want time regulation enabled, or if we are already regulating.
-   if ( !time_management || !time_regulating || time_regulating_state ) {
+   if ( !this->time_management || !this->time_regulating || this->time_regulating_state ) {
       return;
    }
 
@@ -4076,8 +4062,8 @@ void Federate::setup_time_regulation()
       // FedAmb::timeRegulationEnabled() callback which will set the
       // time_adv_grant and time_regulating_state flags to true.
 
-      time_adv_grant        = false;
-      time_regulating_state = false;
+      this->time_adv_grant        = false;
+      this->time_regulating_state = false;
 
       // Turn on regulating status so that constrained federates will be
       // controlled by our time.
@@ -4099,7 +4085,7 @@ void Federate::setup_time_regulation()
 
          (void)Utilities::micro_sleep( sleep_micros );
 
-         if ( ( !time_regulating_state ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
+         if ( ( !this->time_regulating_state ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
             wait_count = 0;
             if ( !is_execution_member() ) {
                ostringstream errmsg;
@@ -4121,7 +4107,7 @@ void Federate::setup_time_regulation()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      time_regulating_state = true;
+      this->time_regulating_state = true;
 
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -4221,7 +4207,7 @@ void Federate::time_advance_request()
 {
    // Skip requesting time-advancement if we are not time-regulating and
    // not time-constrained (i.e. not using time management).
-   if ( !time_management ) {
+   if ( !this->time_management ) {
       return;
    }
 
@@ -4235,11 +4221,11 @@ void Federate::time_advance_request()
    }
 
    // -- start of checkpoint additions --
-   save_completed = false; // reset ONLY at the bottom of the frame...
+   this->save_completed = false; // reset ONLY at the bottom of the frame...
    // -- end of checkpoint additions --
 
    // Build a request time.
-   requested_time += lookahead_time; //TODO: Use job cycle time instead.
+   this->requested_time += this->lookahead_time; //TODO: Use job cycle time instead.
 
    // Perform the time-advance request to go to the requested time.
    perform_time_advance_request();
@@ -4252,12 +4238,12 @@ void Federate::perform_time_advance_request()
 {
    // Skip requesting time-advancement if we are not time-regulating and
    // not time-constrained (i.e. not using time management).
-   if ( !time_management ) {
+   if ( !this->time_management ) {
       return;
    }
 
    // -- start of checkpoint additions --
-   save_completed = false; // reset ONLY at the bottom of the frame...
+   this->save_completed = false; // reset ONLY at the bottom of the frame...
    // -- end of checkpoint additions --
 
    bool anyError, isRecoverableError;
@@ -4375,7 +4361,7 @@ void Federate::wait_for_time_advance_grant()
 {
    // Skip requesting time-advancement if we are not time-regulating and
    // not time-constrained (i.e. not using time management).
-   if ( !time_management ) {
+   if ( !this->time_management ) {
       return;
    }
 
@@ -4393,7 +4379,7 @@ void Federate::wait_for_time_advance_grant()
                __LINE__, requested_time.getDoubleTime(), THLA_NEWLINE );
    }
 
-   if ( !time_adv_grant ) {
+   if ( !this->time_adv_grant ) {
 
       // NOTE: The RELEASE_1() call is almost 5 times faster than the usleep()
       // call. However, the speed is system specific so we can not reliably
@@ -4415,7 +4401,7 @@ void Federate::wait_for_time_advance_grant()
 #endif
 
       // This spin lock waits for the time advance grant from the RTI.
-      while ( !time_adv_grant ) {
+      while ( !this->time_adv_grant ) {
 
          // Check for shutdown.
          this->check_for_shutdown_with_termination();
@@ -4425,7 +4411,7 @@ void Federate::wait_for_time_advance_grant()
 #else
          RELEASE_1();                     // Faster than usleep()
 #endif
-         if ( ( !time_adv_grant ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
+         if ( ( !this->time_adv_grant ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
             wait_count = 0;
             if ( is_execution_member() ) {
                if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -4469,7 +4455,7 @@ void Federate::wait_for_time_advance_grant(
 
    // Skip requesting time-advancement if we are not time-regulating and
    // not time-constrained (i.e. not using time management).
-   if ( !time_management ) {
+   if ( !this->time_management ) {
       return;
    }
 
@@ -4490,7 +4476,7 @@ void Federate::wait_for_time_advance_grant(
    // This spin lock waits for the time advance grant from the RTI.
    stale_data_counter = 0;
    int time_out       = 0;
-   while ( ( !time_adv_grant ) && ( time_out <= time_out_tolerance ) ) {
+   while ( ( !this->time_adv_grant ) && ( time_out <= time_out_tolerance ) ) {
 
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
@@ -4546,8 +4532,8 @@ void Federate::shutdown()
 {
    // We can only shutdown if we have a name since shutdown could have been
    // called in the destructor, so we guard against that.
-   if ( !shutdown_called ) {
-      shutdown_called = true;
+   if ( !this->shutdown_called ) {
+      this->shutdown_called = true;
 
       if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::shutdown():%d %c", __LINE__,
@@ -4556,14 +4542,14 @@ void Federate::shutdown()
 
       // Check for Execution Control shutdown.  If this is NULL, then we are
       // probably shutting down prior to initialization.
-      if ( execution_control != NULL ) {
+      if ( this->execution_control != NULL ) {
          // Call Execution Control shutdown method.
-         execution_control->shutdown();
+         this->execution_control->shutdown();
       }
 
       // Shutdown the manager.
-      if ( manager != NULL ) {
-         manager->shutdown();
+      if ( this->manager != NULL ) {
+         this->manager->shutdown();
       }
 
       // Macro to save the FPU Control Word register value.
@@ -4574,7 +4560,7 @@ void Federate::shutdown()
 
       // Resign from the federation.
       // If the federate can rejoin, resign in a way so we can rejoin later...
-      if ( can_rejoin_federation ) {
+      if ( this->can_rejoin_federation ) {
          this->resign_so_we_can_rejoin();
       } else {
          this->resign();
@@ -4584,8 +4570,8 @@ void Federate::shutdown()
       this->destroy();
 
       // Remove the ExecutionConfiguration object.
-      if ( execution_control != NULL ) {
-         execution_control->remove_execution_configuration();
+      if ( this->execution_control != NULL ) {
+         this->execution_control->remove_execution_configuration();
       }
 
       // Macro to restore the saved FPU Control Word register value.
@@ -4614,8 +4600,6 @@ contact the TrickHLA team for support.%c",
       }
 #endif
    }
-
-   return;
 }
 
 /*!
@@ -4634,7 +4618,7 @@ void Federate::shutdown_time_management()
  */
 void Federate::shutdown_time_constrained()
 {
-   if ( !time_constrained_state ) {
+   if ( !this->time_constrained_state ) {
       if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::shutdown_time_constrained():%d HLA Time Constrained Already Disabled.%c",
                   __LINE__, THLA_NEWLINE );
@@ -4655,7 +4639,7 @@ void Federate::shutdown_time_constrained()
 
       try {
          RTI_ambassador->disableTimeConstrained();
-         time_constrained_state = false;
+         this->time_constrained_state = false;
       } catch ( RTI1516_NAMESPACE::TimeConstrainedIsNotEnabled &e ) {
          time_constrained_state = false;
          send_hs( stderr, "Federate::shutdown_time_constrained():%d \"%s\": TimeConstrainedIsNotEnabled EXCEPTION!%c",
@@ -4695,7 +4679,7 @@ void Federate::shutdown_time_constrained()
  */
 void Federate::shutdown_time_regulating()
 {
-   if ( !time_regulating_state ) {
+   if ( !this->time_regulating_state ) {
       if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::shutdown_time_regulating():%d HLA Time Regulation Already Disabled.%c",
                   __LINE__, THLA_NEWLINE );
@@ -4716,7 +4700,7 @@ void Federate::shutdown_time_regulating()
 
       try {
          RTI_ambassador->disableTimeRegulation();
-         time_regulating_state = false;
+         this->time_regulating_state = false;
       } catch ( RTI1516_NAMESPACE::TimeConstrainedIsNotEnabled &e ) {
          time_regulating_state = false;
          send_hs( stderr, "Federate::shutdown_time_regulating():%d \"%s\": TimeConstrainedIsNotEnabled EXCEPTION!%c",
@@ -5212,14 +5196,6 @@ void Federate::destroy()
  */
 void Federate::destroy_orphaned_federation()
 {
-#ifdef PORTICO_RTI
-   // The Portico RTI will close the connection to the RTI when we try to delete
-   // an orphaned federation, so just skip this step as a workaround.
-   send_hs( stdout, "Federate::destroy_orphaned_federation():%d WARNING: Portico RTI will close the connection, skipping...%c",
-            __LINE__, THLA_NEWLINE );
-   return;
-#endif
-
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
@@ -5260,30 +5236,29 @@ void Federate::destroy_orphaned_federation()
  *  @job_class{initialization}
  */
 void Federate::set_federation_name(
-   const char *const exec_name )
+   const string &exec_name )
 {
-
    // Check for self assign.
-   if ( federation_name != exec_name ) {
+   if ( this->federation_name != exec_name ) {
 
       // Check for "hard coded" name.
-      if ( exec_name != NULL ) {
+      if ( !exec_name.empty() ) {
 
          // Reallocate and set the federation execution name.
-         if ( federation_name != static_cast< char * >( NULL ) ) {
+         if ( this->federation_name != static_cast< char * >( NULL ) ) {
             if ( TMM_is_alloced( federation_name ) ) {
                TMM_delete_var_a( federation_name );
             }
-            federation_name = static_cast< char * >( NULL );
+            this->federation_name = static_cast< char * >( NULL );
          }
 
          // Set the federation execution name.
-         federation_name = TMM_strdup( (char *)exec_name );
+         this->federation_name = TMM_strdup( (char *)exec_name.c_str() );
       } else {
 
          // Set to a default value if not alread set in the input stream.
-         if ( federation_name == static_cast< char * >( NULL ) ) {
-            federation_name = TMM_strdup( (char *)"Trick Federation" );
+         if ( this->federation_name == static_cast< char * >( NULL ) ) {
+            this->federation_name = TMM_strdup( (char *)"Trick Federation" );
          }
       }
    }
@@ -5318,7 +5293,7 @@ void Federate::ask_MOM_for_auto_provide_setting()
    unsigned int wait_count   = 0;
    unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
 
-   while ( auto_provide_setting < 0 ) {
+   while ( this->auto_provide_setting < 0 ) {
 
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
@@ -5326,7 +5301,7 @@ void Federate::ask_MOM_for_auto_provide_setting()
       // Sleep a little while to wait for the information to update.
       (void)Utilities::micro_sleep( sleep_micros );
 
-      if ( ( auto_provide_setting < 0 ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
+      if ( ( this->auto_provide_setting < 0 ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
          wait_count = 0;
          if ( !is_execution_member() ) {
             ostringstream errmsg;
@@ -5351,8 +5326,6 @@ void Federate::ask_MOM_for_auto_provide_setting()
                __LINE__, ( ( auto_provide_setting != 0 ) ? "Yes" : "No" ),
                auto_provide_setting, THLA_NEWLINE );
    }
-
-   return;
 }
 
 void Federate::enable_MOM_auto_provide_setting(
@@ -5384,8 +5357,6 @@ void Federate::enable_MOM_auto_provide_setting(
    send_interaction( MOM_HLAsetSwitches_class_handle, param_values_map );
 
    unpublish_interaction_class( MOM_HLAsetSwitches_class_handle );
-
-   return;
 }
 
 void Federate::backup_auto_provide_setting_from_MOM_then_disable()
@@ -5401,11 +5372,9 @@ void Federate::backup_auto_provide_setting_from_MOM_then_disable()
    this->orig_auto_provide_setting = this->auto_provide_setting;
 
    // Disable Auto-Provide if it is enabled.
-   if ( auto_provide_setting != 0 ) {
+   if ( this->auto_provide_setting != 0 ) {
       enable_MOM_auto_provide_setting( false );
    }
-
-   return;
 }
 
 void Federate::restore_orig_MOM_auto_provide_setting()
@@ -5420,8 +5389,6 @@ void Federate::restore_orig_MOM_auto_provide_setting()
       }
       enable_MOM_auto_provide_setting( orig_auto_provide_setting != 0 );
    }
-
-   return;
 }
 
 //**************************************************************************
@@ -5454,7 +5421,7 @@ void Federate::load_and_print_running_federate_names()
    unsigned int wait_count   = 0;
    unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
 
-   while ( running_feds_count <= 0 ) {
+   while ( this->running_feds_count <= 0 ) {
 
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
@@ -5462,7 +5429,7 @@ void Federate::load_and_print_running_federate_names()
       // Sleep a little while to wait for the information to update.
       (void)Utilities::micro_sleep( sleep_micros );
 
-      if ( ( running_feds_count <= 0 ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
+      if ( ( this->running_feds_count <= 0 ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
          wait_count = 0;
          if ( !is_execution_member() ) {
             ostringstream errmsg;
@@ -5503,9 +5470,9 @@ MOM just informed us that there are %d federates currently running in the federa
    size_t joinedFedCount = 0;
 
    // Wait for all the required federates to join.
-   wait_count           = 0;
-   all_federates_joined = false;
-   while ( !all_federates_joined ) {
+   wait_count                 = 0;
+   this->all_federates_joined = false;
+   while ( !this->all_federates_joined ) {
 
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
@@ -5519,10 +5486,10 @@ MOM just informed us that there are %d federates currently running in the federa
          joinedFedCount = joined_federate_names.size();
 
          if ( joinedFedCount >= (unsigned int)running_feds_count ) {
-            all_federates_joined = true;
+            this->all_federates_joined = true;
          }
       }
-      if ( ( !all_federates_joined ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
+      if ( ( !this->all_federates_joined ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
          wait_count = 0;
          if ( !is_execution_member() ) {
             ostringstream errmsg;
@@ -5609,23 +5576,23 @@ MOM just informed us that there are %d federates currently running in the federa
 
 void Federate::clear_running_feds()
 {
-   if ( running_feds != static_cast< KnownFederate * >( NULL ) ) {
+   if ( this->running_feds != static_cast< KnownFederate * >( NULL ) ) {
       for ( int i = 0; i < running_feds_count; i++ ) {
-         if ( running_feds[i].MOM_instance_name != static_cast< char * >( NULL ) ) {
-            if ( TMM_is_alloced( running_feds[i].MOM_instance_name ) ) {
-               TMM_delete_var_a( running_feds[i].MOM_instance_name );
+         if ( this->running_feds[i].MOM_instance_name != static_cast< char * >( NULL ) ) {
+            if ( TMM_is_alloced( this->running_feds[i].MOM_instance_name ) ) {
+               TMM_delete_var_a( this->running_feds[i].MOM_instance_name );
             }
-            running_feds[i].MOM_instance_name = static_cast< char * >( NULL );
+            this->running_feds[i].MOM_instance_name = static_cast< char * >( NULL );
          }
-         if ( running_feds[i].name != static_cast< char * >( NULL ) ) {
-            if ( TMM_is_alloced( running_feds[i].name ) ) {
-               TMM_delete_var_a( running_feds[i].name );
+         if ( this->running_feds[i].name != static_cast< char * >( NULL ) ) {
+            if ( TMM_is_alloced( this->running_feds[i].name ) ) {
+               TMM_delete_var_a( this->running_feds[i].name );
             }
-            running_feds[i].name = static_cast< char * >( NULL );
+            this->running_feds[i].name = static_cast< char * >( NULL );
          }
       }
-      TMM_delete_var_a( running_feds );
-      running_feds = static_cast< KnownFederate * >( NULL );
+      TMM_delete_var_a( this->running_feds );
+      this->running_feds = static_cast< KnownFederate * >( NULL );
    }
 }
 
@@ -5676,16 +5643,15 @@ void Federate::update_running_feds()
    for ( map_iter = joined_federate_name_map.begin();
          map_iter != joined_federate_name_map.end(); ++map_iter ) {
 
-      running_feds[count].name = StringUtilities::ip_strdup_wstring(
-         map_iter->second.c_str() );
+      this->running_feds[count].name = StringUtilities::ip_strdup_wstring( map_iter->second.c_str() );
 
-      running_feds[count].MOM_instance_name = StringUtilities::ip_strdup_wstring(
+      this->running_feds[count].MOM_instance_name = StringUtilities::ip_strdup_wstring(
          mom_HLAfederate_inst_name_map[map_iter->first].c_str() );
 
       // If the federate was running at the time of the checkpoint, it must be
       // a 'required' federate in the restore, regardless if it is was required
       // when the federation originally started up.
-      running_feds[count].required = 1;
+      this->running_feds[count].required = 1;
 
       count++;
    }
@@ -5723,7 +5689,7 @@ not allocate memory for temp_feds when attempting to add an entry into running_f
       clear_running_feds();
 
       // assign temp_feds into running_feds
-      running_feds = temp_feds;
+      this->running_feds = temp_feds;
 
       ++running_feds_count; // make the new running_feds_count size permanent
    }
@@ -5795,7 +5761,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
 
    // allocate temporary list...
    tmp_feds = reinterpret_cast< KnownFederate * >(
-      alloc_type( running_feds_count - 1, "TrickHLA::KnownFederate" ) );
+      alloc_type( this->running_feds_count - 1, "TrickHLA::KnownFederate" ) );
    if ( tmp_feds == static_cast< KnownFederate * >( NULL ) ) {
       send_hs( stderr, "Federate::remove_discovered_object_federate_instance_id():%d Could not allocate memory for tmp_feds.!%c",
                __LINE__, THLA_NEWLINE );
@@ -5804,14 +5770,14 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    }
    // now, copy everything minus the requested name from the original list...
    int tmp_feds_cnt = 0;
-   for ( int i = 0; i < running_feds_count; i++ ) {
+   for ( int i = 0; i < this->running_feds_count; i++ ) {
       // if the name is not the one we are looking for...
-      if ( strcmp( running_feds[i].name, tFedName ) ) {
-         if ( running_feds[i].MOM_instance_name != NULL ) {
-            tmp_feds[tmp_feds_cnt].MOM_instance_name = TMM_strdup( running_feds[i].MOM_instance_name );
+      if ( strcmp( this->running_feds[i].name, tFedName ) ) {
+         if ( this->running_feds[i].MOM_instance_name != NULL ) {
+            tmp_feds[tmp_feds_cnt].MOM_instance_name = TMM_strdup( this->running_feds[i].MOM_instance_name );
          }
-         tmp_feds[tmp_feds_cnt].name     = TMM_strdup( running_feds[i].name );
-         tmp_feds[tmp_feds_cnt].required = running_feds[i].required;
+         tmp_feds[tmp_feds_cnt].name     = TMM_strdup( this->running_feds[i].name );
+         tmp_feds[tmp_feds_cnt].required = this->running_feds[i].required;
          tmp_feds_cnt++;
       }
    }
@@ -5820,10 +5786,10 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    clear_running_feds();
 
    // assign the new element count into running_feds_count.
-   running_feds_count = tmp_feds_cnt;
+   this->running_feds_count = tmp_feds_cnt;
 
    // assign pointer from the temporary list to the permanent list...
-   running_feds = tmp_feds;
+   this->running_feds = tmp_feds;
 
    if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       string id_str;
@@ -5857,21 +5823,21 @@ void Federate::remove_MOM_HLAfederation_instance_id(
 }
 
 void Federate::write_running_feds_file(
-   char *file_name ) throw( const char * )
+   const string &file_name ) throw( const char * )
 {
-   char     full_path[1024];
+   string   full_path;
    ofstream file;
 
-   snprintf( full_path, sizeof( full_path ), "%s/%s.running_feds", this->HLA_save_directory, file_name );
+   full_path = this->HLA_save_directory + "/" + file_name + ".running_feds";
    file.open( full_path, ios::out );
    if ( file.is_open() ) {
-      file << running_feds_count << endl;
+      file << this->running_feds_count << endl;
 
       // echo the contents of running_feds into file...
-      for ( int i = 0; i < running_feds_count; i++ ) {
-         file << TMM_strdup( running_feds[i].MOM_instance_name ) << endl;
-         file << TMM_strdup( running_feds[i].name ) << endl;
-         file << running_feds[i].required << endl;
+      for ( int i = 0; i < this->running_feds_count; i++ ) {
+         file << TMM_strdup( this->running_feds[i].MOM_instance_name ) << endl;
+         file << TMM_strdup( this->running_feds[i].name ) << endl;
+         file << this->running_feds[i].required << endl;
       }
 
       file.close(); // close the file.
@@ -5902,9 +5868,9 @@ void Federate::request_federation_save()
    try {
       if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::request_federation_save():%d save_name:%ls %c",
-                  __LINE__, save_name.c_str(), THLA_NEWLINE );
+                  __LINE__, this->save_name.c_str(), THLA_NEWLINE );
       }
-      RTI_ambassador->requestFederationSave( save_name );
+      RTI_ambassador->requestFederationSave( this->save_name );
    } catch ( FederateNotExecutionMember &e ) {
       send_hs( stderr, "Federate::request_federation_save():%d EXCEPTION: FederateNotExecutionMember %c",
                __LINE__, THLA_NEWLINE );
@@ -5931,9 +5897,9 @@ void Federate::request_federation_save()
 }
 
 void Federate::restore_checkpoint(
-   char *file_name )
+   const string &file_name )
 {
-   string trick_filename = string( file_name );
+   string trick_filename = file_name;
    // DANNY2.7 prepend federation name to the filename (if it's not already prepended)
    size_t federation_len = strlen( get_federation_name() );
    if ( trick_filename.compare( 0, federation_len, get_federation_name() ) != 0 ) {
@@ -5948,7 +5914,7 @@ void Federate::restore_checkpoint(
 
    // This will run pre-load-checkpoint jobs, clear memory, read checkpoint
    // file, and run restart jobs.
-   load_checkpoint( ( string( this->HLA_save_directory ) + "/" + trick_filename ).c_str() );
+   load_checkpoint( ( this->HLA_save_directory + "/" + trick_filename ).c_str() );
 
    load_checkpoint_job();
 
@@ -6044,18 +6010,18 @@ Unexpected restore process %d, which is not 'Restore_Complete' or 'Restore_Reque
 }
 
 void Federate::read_running_feds_file(
-   char *file_name ) throw( const char * )
+   const string &file_name ) throw( const char * )
 {
-   char     full_path[1024];
+   string   full_path;
    ifstream file;
 
    // DANNY2.7 prepend federation name to the filename (if it's not already prepended)
-   if ( strncmp( file_name, get_federation_name(), strlen( get_federation_name() ) ) == 0 ) {
+   if ( strncmp( file_name.c_str(), get_federation_name(), strlen( get_federation_name() ) ) == 0 ) {
       // already prepended
-      snprintf( full_path, sizeof( full_path ), "%s/%s.running_feds", this->HLA_save_directory, file_name );
+      full_path = this->HLA_save_directory + "/" + file_name + ".running_feds";
    } else {
       // prepend it here
-      snprintf( full_path, sizeof( full_path ), "%s/%s_%s.running_feds", this->HLA_save_directory, get_federation_name(), file_name );
+      full_path = this->HLA_save_directory + "/" + get_federation_name() + "_" + file_name + ".running_feds";
    }
 
    file.open( full_path, ios::in );
@@ -6063,43 +6029,43 @@ void Federate::read_running_feds_file(
 
       // clear out the known_feds from memory...
       for ( int i = 0; i < known_feds_count; i++ ) {
-         if ( known_feds[i].MOM_instance_name != static_cast< char * >( NULL ) ) {
-            if ( TMM_is_alloced( known_feds[i].MOM_instance_name ) ) {
-               TMM_delete_var_a( known_feds[i].MOM_instance_name );
+         if ( this->known_feds[i].MOM_instance_name != static_cast< char * >( NULL ) ) {
+            if ( TMM_is_alloced( this->known_feds[i].MOM_instance_name ) ) {
+               TMM_delete_var_a( this->known_feds[i].MOM_instance_name );
             }
-            known_feds[i].MOM_instance_name = static_cast< char * >( NULL );
+            this->known_feds[i].MOM_instance_name = static_cast< char * >( NULL );
          }
-         if ( known_feds[i].name != static_cast< char * >( NULL ) ) {
-            if ( TMM_is_alloced( known_feds[i].name ) ) {
-               TMM_delete_var_a( known_feds[i].name );
+         if ( this->known_feds[i].name != static_cast< char * >( NULL ) ) {
+            if ( TMM_is_alloced( this->known_feds[i].name ) ) {
+               TMM_delete_var_a( this->known_feds[i].name );
             }
-            known_feds[i].name = static_cast< char * >( NULL );
+            this->known_feds[i].name = static_cast< char * >( NULL );
          }
       }
-      TMM_delete_var_a( known_feds );
-      known_feds = NULL;
+      TMM_delete_var_a( this->known_feds );
+      this->known_feds = NULL;
 
-      file >> known_feds_count;
+      file >> this->known_feds_count;
 
       // re-allocate it...
-      known_feds = reinterpret_cast< KnownFederate * >(
-         alloc_type( known_feds_count, "TrickHLA::KnownFederate" ) );
-      if ( known_feds == static_cast< KnownFederate * >( NULL ) ) {
+      this->known_feds = reinterpret_cast< KnownFederate * >(
+         alloc_type( this->known_feds_count, "TrickHLA::KnownFederate" ) );
+      if ( this->known_feds == static_cast< KnownFederate * >( NULL ) ) {
          send_hs( stdout, "Federate::read_running_feds_file():%d Could not allocate memory for known_feds.! %c",
                   __LINE__, THLA_NEWLINE );
          exec_terminate( __FILE__, "Federate::read_running_feds_file() Could not allocate memory for known_feds.!" );
       }
 
       string current_line;
-      for ( int i = 0; i < known_feds_count; i++ ) {
+      for ( int i = 0; i < this->known_feds_count; i++ ) {
          file >> current_line;
-         known_feds[i].MOM_instance_name = TMM_strdup( (char *)current_line.c_str() );
+         this->known_feds[i].MOM_instance_name = TMM_strdup( (char *)current_line.c_str() );
 
          file >> current_line;
-         known_feds[i].name = TMM_strdup( (char *)current_line.c_str() );
+         this->known_feds[i].name = TMM_strdup( (char *)current_line.c_str() );
 
          file >> current_line;
-         known_feds[i].required = atoi( current_line.c_str() );
+         this->known_feds[i].required = atoi( current_line.c_str() );
       }
 
       file.close(); // close the file before exitting
@@ -6115,27 +6081,27 @@ void Federate::read_running_feds_file(
 void Federate::copy_running_feds_into_known_feds()
 {
    // clear out the known_feds from memory...
-   for ( int i = 0; i < known_feds_count; i++ ) {
-      if ( known_feds[i].MOM_instance_name != static_cast< char * >( NULL ) ) {
+   for ( int i = 0; i < this->known_feds_count; i++ ) {
+      if ( this->known_feds[i].MOM_instance_name != static_cast< char * >( NULL ) ) {
 
-         if ( TMM_is_alloced( known_feds[i].MOM_instance_name ) ) {
-            TMM_delete_var_a( known_feds[i].MOM_instance_name );
+         if ( TMM_is_alloced( this->known_feds[i].MOM_instance_name ) ) {
+            TMM_delete_var_a( this->known_feds[i].MOM_instance_name );
          }
-         known_feds[i].MOM_instance_name = static_cast< char * >( NULL );
+         this->known_feds[i].MOM_instance_name = static_cast< char * >( NULL );
       }
-      if ( known_feds[i].name != static_cast< char * >( NULL ) ) {
-         if ( TMM_is_alloced( known_feds[i].name ) ) {
-            TMM_delete_var_a( known_feds[i].name );
+      if ( this->known_feds[i].name != static_cast< char * >( NULL ) ) {
+         if ( TMM_is_alloced( this->known_feds[i].name ) ) {
+            TMM_delete_var_a( this->known_feds[i].name );
          }
-         known_feds[i].name = static_cast< char * >( NULL );
+         this->known_feds[i].name = static_cast< char * >( NULL );
       }
    }
-   TMM_delete_var_a( known_feds );
+   TMM_delete_var_a( this->known_feds );
 
    // re-allocate it...
-   known_feds = reinterpret_cast< KnownFederate * >(
+   this->known_feds = reinterpret_cast< KnownFederate * >(
       alloc_type( running_feds_count, "TrickHLA::KnownFederate" ) );
-   if ( known_feds == static_cast< KnownFederate * >( NULL ) ) {
+   if ( this->known_feds == static_cast< KnownFederate * >( NULL ) ) {
       send_hs( stdout, "Federate::copy_running_feds_into_known_feds():%d Could not allocate memory for known_feds.! %c",
                __LINE__, THLA_NEWLINE );
       exec_terminate( __FILE__, "Federate::copy_running_feds_into_known_feds(): Could not allocate memory for known_feds.!" );
@@ -6143,12 +6109,12 @@ void Federate::copy_running_feds_into_known_feds()
    }
 
    // now, copy everything from running_feds into known_feds...
-   known_feds_count = 0;
-   for ( int i = 0; i < running_feds_count; i++ ) {
-      known_feds[known_feds_count].MOM_instance_name = TMM_strdup( running_feds[i].MOM_instance_name );
-      known_feds[known_feds_count].name              = TMM_strdup( running_feds[i].name );
-      known_feds[known_feds_count].required          = running_feds[i].required;
-      known_feds_count++;
+   this->known_feds_count = 0;
+   for ( int i = 0; i < this->running_feds_count; i++ ) {
+      this->known_feds[this->known_feds_count].MOM_instance_name = TMM_strdup( running_feds[i].MOM_instance_name );
+      this->known_feds[this->known_feds_count].name              = TMM_strdup( running_feds[i].name );
+      this->known_feds[this->known_feds_count].required          = running_feds[i].required;
+      this->known_feds_count++;
    }
 }
 
@@ -6193,7 +6159,7 @@ void Federate::restart_checkpoint()
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    this->HLA_time        = get_granted_time();
-   requested_time        = granted_time;
+   this->requested_time  = granted_time;
    this->restore_process = No_Restore;
 
    reinstate_logged_sync_pts();
@@ -6207,21 +6173,17 @@ void Federate::restart_checkpoint()
 void Federate::federation_saved()
 {
    if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::federation_saved():%d%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Federate::federation_saved():%d%c", __LINE__, THLA_NEWLINE );
    }
-   announce_save         = false;
-   save_label_generated  = false;
-   save_request_complete = false;
-   cstr_save_label[0]    = '\0';
-   str_save_label        = "";
-   ws_save_label         = L"";
-   ;
-   save_name               = L"";
-   checkpoint_file_name[0] = '\0';
+   this->announce_save         = false;
+   this->save_label_generated  = false;
+   this->save_request_complete = false;
+   this->save_label            = "";
+   this->save_name             = L"";
+   this->checkpoint_file_name  = "";
 
-   if ( unfreeze_after_save ) {
-      announce_freeze = false; // this keeps from generating the RUNFED_v2 sync point since it's not needed
+   if ( this->unfreeze_after_save ) {
+      this->announce_freeze = false; // this keeps from generating the RUNFED_v2 sync point since it's not needed
       // exit freeze mode.
       un_freeze();
    }
@@ -6237,15 +6199,13 @@ void Federate::federation_restored()
                __LINE__, THLA_NEWLINE );
    }
    complete_restore();
-   start_to_restore      = false;
-   announce_restore      = false;
-   save_label_generated  = false;
-   restore_begun         = false;
-   restore_is_imminent   = false;
-   cstr_restore_label[0] = '\0';
-   str_restore_label     = "";
-   ws_restore_label.assign( str_restore_label.begin(), str_restore_label.end() );
-   this->restore_process = No_Restore;
+   this->start_to_restore     = false;
+   this->announce_restore     = false;
+   this->save_label_generated = false;
+   this->restore_begun        = false;
+   this->restore_is_imminent  = false;
+   this->restore_label        = "";
+   this->restore_process      = No_Restore;
 }
 
 void Federate::wait_for_federation_restore_begun()
@@ -6347,7 +6307,7 @@ string Federate::wait_for_federation_restore_to_complete()
       return tRetString;
    }
 
-   if ( restore_process == Restore_Failed ) {
+   if ( this->restore_process == Restore_Failed ) {
       // before we enter the blocking loop, the RTI informed us that it accepted
       // the failure of the the federate restore. build and return a message.
       tRetString = "Federate::wait_for_federation_restore_to_complete() "
@@ -6368,7 +6328,7 @@ string Federate::wait_for_federation_restore_to_complete()
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
 
-      if ( running_feds_count_at_time_of_restore > running_feds_count ) {
+      if ( this->running_feds_count_at_time_of_restore > this->running_feds_count ) {
          // someone has resigned since the federation restore has been initiated.
          // build a message detailing what happened and exit the routine.
          tRetString = "Federate::wait_for_federation_restore_to_complete() "
@@ -6397,7 +6357,7 @@ string Federate::wait_for_federation_restore_to_complete()
       }
    }
 
-   if ( restore_process == Restore_Failed ) {
+   if ( this->restore_process == Restore_Failed ) {
       // after this federate restore blocking loop has finished, check if the RTI
       // accepted the failure of the federate restore. build and return a message.
       tRetString = "Federate::wait_for_federation_restore_to_complete() "
@@ -6464,14 +6424,14 @@ void Federate::wait_for_restore_status_to_complete()
    unsigned int wait_count   = 0;
    unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
 
-   while ( !restore_request_complete ) {
+   while ( !this->restore_request_complete ) {
 
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
 
       (void)Utilities::micro_sleep( sleep_micros ); // sleep until RTI responds...
 
-      if ( ( !restore_request_complete ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
+      if ( ( !this->restore_request_complete ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
          wait_count = 0;
          if ( !is_execution_member() ) {
             ostringstream errmsg;
@@ -6503,14 +6463,14 @@ void Federate::wait_for_save_status_to_complete()
    unsigned int wait_count   = 0;
    unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
 
-   while ( !save_request_complete ) {
+   while ( !this->save_request_complete ) {
 
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
 
       (void)Utilities::micro_sleep( sleep_micros ); // sleep until RTI responds...
 
-      if ( ( !save_request_complete ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
+      if ( ( !this->save_request_complete ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
          wait_count = 0;
          if ( !is_execution_member() ) {
             ostringstream errmsg;
@@ -6542,7 +6502,7 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
    unsigned int wait_count   = 0;
    unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
 
-   while ( !federation_restore_failed_callback_complete ) {
+   while ( !this->federation_restore_failed_callback_complete ) {
 
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
@@ -6558,7 +6518,7 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
       }
       (void)Utilities::micro_sleep( sleep_micros ); // sleep until RTI responds...
 
-      if ( ( !federation_restore_failed_callback_complete ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
+      if ( ( !this->federation_restore_failed_callback_complete ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
          wait_count = 0;
          if ( !is_execution_member() ) {
             ostringstream errmsg;
@@ -6666,7 +6626,7 @@ void Federate::requested_federation_restore_status(
       // Macro to save the FPU Control Word register value.
       TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-      federate_ambassador->set_federation_restore_status_response_to_echo();
+      this->federate_ambassador->set_federation_restore_status_response_to_echo();
       try {
          RTI_ambassador->queryFederationRestoreStatus();
       } catch ( FederateNotExecutionMember &e ) {
@@ -6805,7 +6765,7 @@ void Federate::print_restore_failure_reason(
    }
    send_hs( stdout, (char *)msg.str().c_str() );
 
-   federation_restore_failed_callback_complete = true;
+   this->federation_restore_failed_callback_complete = true;
 }
 
 void Federate::print_save_failure_reason(
@@ -6841,10 +6801,10 @@ void Federate::print_save_failure_reason(
  *  @job_class{environment}
  */
 void Federate::set_checkpoint_file_name(
-   const char *name ) // IN: -- checkpoint file name
+   const string &name ) // IN: -- checkpoint file name
 {
-   strncpy( this->checkpoint_file_name, name, sizeof( this->checkpoint_file_name ) );
-   StringUtilities::to_wstring( save_name, name );
+   this->checkpoint_file_name = name;
+   StringUtilities::to_wstring( this->save_name, name );
 }
 
 /*!
@@ -6858,7 +6818,7 @@ void Federate::initiate_save_announce()
       return;
    }
 
-   if ( save_label_generated ) {
+   if ( this->save_label_generated ) {
       if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stderr, "Federate::initiate_save_announce():%d save_label already generated for federate '%s'%c",
                   __LINE__, name, THLA_NEWLINE );
@@ -6868,24 +6828,17 @@ void Federate::initiate_save_announce()
 
    if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::initiate_save_announce():%d Checkpoint filename:'%s'%c",
-               __LINE__, checkpoint_file_name, THLA_NEWLINE );
+               __LINE__, checkpoint_file_name.c_str(), THLA_NEWLINE );
    }
 
-   // save the checkpoint_file_name into 'save_label' class data
-   // C String
-   strncpy( this->cstr_save_label, checkpoint_file_name, sizeof( this->cstr_save_label ) );
+   // Save the checkpoint_file_name into 'save_label'
+   this->save_label = this->checkpoint_file_name;
 
-   // C++ String
-   this->str_save_label = checkpoint_file_name;
-
-   // Wide String
-   StringUtilities::to_wstring( this->ws_save_label, this->str_save_label );
-
-   save_label_generated = true;
+   this->save_label_generated = true;
 }
 
 void Federate::initiate_restore_announce(
-   const char *restore_name )
+   const string &restore_name_label )
 {
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
@@ -6893,22 +6846,19 @@ void Federate::initiate_restore_announce(
       return;
    }
 
-   // C String
-   strncpy( this->cstr_restore_label, restore_name, sizeof( this->cstr_restore_label ) );
+   this->restore_label = restore_name_label;
 
-   // C++ String
-   this->str_restore_label = TMM_strdup( (char *)restore_name );
-
-   // Wide String
-   StringUtilities::to_wstring( ws_restore_label, this->str_restore_label );
+   // Wide String restore label
+   wstring ws_restore_label;
+   StringUtilities::to_wstring( ws_restore_label, this->restore_label );
 
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    // figure out if anybody else requested a RESTORE before initiating the RESTORE!
    // change context to process for the status request...
-   restore_request_complete = false;
-   federate_ambassador->set_federation_restore_status_response_to_process();
+   this->restore_request_complete = false;
+   this->federate_ambassador->set_federation_restore_status_response_to_process();
    request_federation_restore_status();
    wait_for_restore_status_to_complete();
 
@@ -6917,15 +6867,15 @@ void Federate::initiate_restore_announce(
          send_hs( stdout, "Federate::initiate_restore_announce():%d \
 restore_process == Initiate_Restore, Telling RTI to request federation \
 restore with label '%ls'.%c",
-                  __LINE__, this->ws_restore_label.c_str(), THLA_NEWLINE );
+                  __LINE__, ws_restore_label.c_str(), THLA_NEWLINE );
       }
       try {
-         RTI_ambassador->requestFederationRestore( this->ws_restore_label );
+         RTI_ambassador->requestFederationRestore( ws_restore_label );
          this->restore_process = Restore_In_Progress;
 
          // Save the # of running_feds at the time federation restore is initiated.
          // this way, when the count decreases, we know someone has resigned!
-         running_feds_count_at_time_of_restore = running_feds_count;
+         this->running_feds_count_at_time_of_restore = this->running_feds_count;
       } catch ( FederateNotExecutionMember &e ) {
          send_hs( stderr, "Federate::initiate_restore_announce():%d EXCEPTION: FederateNotExecutionMember %c",
                   __LINE__, THLA_NEWLINE );
@@ -6990,7 +6940,7 @@ bool Federate::is_federate_executing() const
 {
    // Check if the manager has set a flag that the federate initialization has
    // completed and the federate is now executing.
-   return execution_has_begun;
+   return this->execution_has_begun;
 }
 
 bool Federate::is_MOM_HLAfederation_instance_id(
@@ -7051,7 +7001,7 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
          int num_elements = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN ) ? Utilities::byteswap_int( data[0] ) : data[0];
 
          // save the count into running_feds_count
-         running_feds_count = num_elements;
+         this->running_feds_count = num_elements;
 
          // Since this list of federate id's is current, there is no reason to
          // thrash the RTI and chase down each federate id into a name. The
@@ -7072,36 +7022,27 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
  */
 void Federate::convert_sync_pts()
 {
-
    // Dispatch to the ExecutionControl specific process.
    execution_control->convert_loggable_sync_pts();
-
-   return;
 }
 
 void Federate::reinstate_logged_sync_pts()
 {
-
    // Dispatch to the ExecutionControl specific process.
    execution_control->reinstate_logged_sync_pts();
-
-   return;
 }
 
 void Federate::check_HLA_save_directory()
 {
    // If the save directory is not specified, set it to the current RUN directory
-   if ( this->HLA_save_directory == NULL ) {
+   if ( this->HLA_save_directory.empty() ) {
 
       string run_dir = command_line_args_get_output_dir();
       string def_dir = command_line_args_get_default_dir();
 
       // build a absolute path to the RUN directory by combining default_dir
       // and run_dir from the EXECUTIVE.
-      string new_dir = def_dir + "/" + run_dir;
-
-      // copy the absolute path into 'HLA_save_directory'...
-      HLA_save_directory = TMM_strdup( (char *)new_dir.c_str() );
+      this->HLA_save_directory = def_dir + "/" + run_dir;
    }
 }
 
@@ -7121,7 +7062,7 @@ void Federate::restore_federate_handles_from_MOM()
    initialize_MOM_handles();
 
    // Clear the federate handle set
-   joined_federate_handles.clear();
+   this->joined_federate_handles.clear();
 
    AttributeHandleSet fedMomAttributes;
    fedMomAttributes.insert( MOM_HLAfederate_handle );
@@ -7136,10 +7077,10 @@ void Federate::restore_federate_handles_from_MOM()
    unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
 
    // Wait until all of the federate handles have been retrieved.
-   while ( joined_federate_handles.size() < (unsigned int)running_feds_count ) {
+   while ( this->joined_federate_handles.size() < (unsigned int)running_feds_count ) {
       (void)Utilities::micro_sleep( sleep_micros );
 
-      if ( ( joined_federate_handles.size() < (unsigned int)running_feds_count ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
+      if ( ( this->joined_federate_handles.size() < (unsigned int)this->running_feds_count ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
          wait_count = 0;
          if ( !is_execution_member() ) {
             ostringstream errmsg;
@@ -7285,7 +7226,6 @@ void Federate::rebuild_federate_handles(
                   __LINE__, id_str.c_str(), size, fed_id.c_str(), THLA_NEWLINE );
       }
    }
-   return;
 }
 
 /*!
@@ -7296,19 +7236,21 @@ void Federate::rebuild_federate_handles(
  * 'object_name.FOM_name'. Otherwise, this logic fails.
  */
 bool Federate::is_a_required_startup_federate(
-   wstring const &fed_name )
+   const wstring &fed_name )
 {
    wstring required_fed_name;
-   for ( int i = 0; i < known_feds_count; ++i ) {
-      if ( known_feds[i].required ) {
-         StringUtilities::to_wstring( required_fed_name, known_feds[i].name );
+   for ( int i = 0; i < this->known_feds_count; ++i ) {
+      if ( this->known_feds[i].required ) {
+         StringUtilities::to_wstring( required_fed_name, this->known_feds[i].name );
          if ( fed_name == required_fed_name ) { // found an exact match
             return true;
          } else {
-            // look for instance attributes of a required object. to do this, check if the
-            // "required federate name" is found inside the supplied federate name.
+            // look for instance attributes of a required object. to do this,
+            // check if the "required federate name" is found inside the supplied
+            // federate name.
             size_t found = fed_name.find( required_fed_name );
-            if ( found != wstring::npos ) { // found the "required federate name" inside the supplied federate name
+            if ( found != wstring::npos ) {
+               // found the "required federate name" inside the supplied federate name
                return true;
             }
          }

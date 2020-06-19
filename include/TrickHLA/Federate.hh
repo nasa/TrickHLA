@@ -334,7 +334,7 @@ class Federate
 
    /*! @brief Restore checkpoint.
     *  @param file_name Checkpoint file name. */
-   void restore_checkpoint( char *file_name );
+   void restore_checkpoint( const std::string &file_name );
 
    /*! @brief Inform the RTI of the success or failure of the federate restore. */
    void inform_RTI_of_restore_completion();
@@ -342,7 +342,7 @@ class Federate
    /*! @brief Read the running_feds file, replacing the data in known federates
     * data structure.
     * @param file_name Checkpoint file name. */
-   void read_running_feds_file( char *file_name ) throw( const char * );
+   void read_running_feds_file( const std::string &file_name ) throw( const char * );
 
    /*! @brief Copies the contents of the checkpoint's list of federates into
     * known federates data structure. */
@@ -490,14 +490,14 @@ class Federate
 
    /*! @brief Save the supplied checkpoint file name.
     * @param name Checkpoint file name. */
-   void set_checkpoint_file_name( const char *name );
+   void set_checkpoint_file_name( const std::string &name );
 
    /*! @brief Sets the Save filename and flag. */
    void initiate_save_announce();
 
    /*! @brief Sets the Save filename and flag.
     *  @param restore_name Restore file name. */
-   void initiate_restore_announce( const char *restore_name );
+   void initiate_restore_announce( const std::string &restore_name_label );
 
    /*! @brief Sets the Save filename and flag.
     *  @return True if restore has been announced; False otherwise. */
@@ -768,11 +768,11 @@ class Federate
 
    /*! @brief Set the name of the save.
     *  @param save_label Save name. */
-   void set_save_name( std::wstring const &save_label ) { this->save_name = save_label; }
+   void set_save_name( const std::wstring &save_label ) { this->save_name = save_label; }
 
    /*! @brief Set the name of the restore.
     *  @param restore_label Restore name. */
-   void set_restore_name( std::wstring const &restore_label ) { this->restore_name = restore_label; }
+   void set_restore_name( const std::wstring &restore_label ) { this->restore_name = restore_label; }
 
    /*! @brief Get restart state.
     *  @return True if in restart, False otherwise. */
@@ -789,7 +789,7 @@ class Federate
    // Routines to set federation state values.
    /*! @brief Set the name of the federation execution.
     *  @param exec_name Federation execution name. */
-   void set_federation_name( const char *const exec_name );
+   void set_federation_name( const std::string &exec_name );
 
    /*! @brief Query if time advance has been greanted.
     *  @return True if time advance has been granted; False otherwise. */
@@ -817,7 +817,7 @@ class Federate
 
    /*! @brief Sets the granted time from the specified LogicalTime.
     *  @param time Granted time in HLA logical time. */
-   void set_granted_time( RTI1516_NAMESPACE::LogicalTime const &time );
+   void set_granted_time( const RTI1516_NAMESPACE::LogicalTime &time );
 
    /*! @brief Sets the requested time from the specified double.
     *  @param time Requested time in seconds. */
@@ -825,7 +825,7 @@ class Federate
 
    /*! @brief Sets the requested time from the specified LogicalTime.
     *  @param time Requested time in HLA logical time. */
-   void set_requested_time( RTI1516_NAMESPACE::LogicalTime const &time );
+   void set_requested_time( const RTI1516_NAMESPACE::LogicalTime &time );
 
    /*! @brief Sets the HLA lookahead time.
     *  @param value HLA lookahead time in seconds. */
@@ -866,7 +866,7 @@ class Federate
    /*! @brief Query if a federate is required at startup.
     *  @return True if federate is required at startup; False otherwise.
     *  @param fed_name Name of potentially required federate. */
-   bool is_a_required_startup_federate( std::wstring const &fed_name );
+   bool is_a_required_startup_federate( const std::wstring &fed_name );
 
    /*! @brief Query if the federation was created by this federate.
     *  @return True if created by this federate; False otherwise. */
@@ -912,8 +912,8 @@ class Federate
    std::wstring restore_name; ///< @trick_io{**} Name for a restore file
 
    //-- BEGIN: checkpoint / restore data --
-   char *HLA_save_directory; ///< @trick_io{*i} @trick_units{--} HLA Save directory
-   bool  initiate_save_flag; ///< @trick_io{**} Save announce flag
+   std::string HLA_save_directory; ///< @trick_io{*i} @trick_units{--} HLA Save directory
+   bool        initiate_save_flag; ///< @trick_io{**} Save announce flag
 
    THLASaveRestoreProcEnum restore_process;       ///< @trick_io{**} Where we are in the restore process
    THLASaveRestoreProcEnum prev_restore_process;  ///< @trick_io{**} previous state of the restore process
@@ -922,31 +922,25 @@ class Federate
    bool                    restore_failed;        ///< @trick_io{**} Restore of the federate failed
    bool                    restore_is_imminent;   ///< @trick_io{**} Restore has been signalled by the Manager
 
-   char         cstr_save_label[256];  ///< @trick_io{**} Save file label in C string format
-   std::string  str_save_label;        ///< @trick_io{**} Save file label in C++ string format
-   std::wstring ws_save_label;         ///< @trick_io{**} Save file label in wide string format
-   bool         announce_save;         ///< @trick_io{**} flag to indicate whether we have announced the federation save
-   bool         save_label_generated;  ///< @trick_io{**} Save filename has been generated.
-   bool         save_request_complete; ///< @trick_io{**} save status request complete
-   bool         save_completed;        ///< @trick_io{**} Save completed.
+   std::string save_label;            ///< @trick_io{**} Save file label
+   bool        announce_save;         ///< @trick_io{**} flag to indicate whether we have announced the federation save
+   bool        save_label_generated;  ///< @trick_io{**} Save filename has been generated.
+   bool        save_request_complete; ///< @trick_io{**} save status request complete
+   bool        save_completed;        ///< @trick_io{**} Save completed.
 
    int stale_data_counter; ///< @trick_units{--} For DIS only: Number of cycles since the last time we received data via HLA.
 
-   char         cstr_restore_label[256];                     ///< @trick_io{**} Restore file label in C string format
-   std::string  str_restore_label;                           ///< @trick_io{**} Restore file label in C++ string format
-   std::wstring ws_restore_label;                            ///< @trick_io{**} Restore file label in wide string format
-   bool         announce_restore;                            ///< @trick_io{**} flag to indicate whether we have announced the federation restore
-   bool         restore_label_generated;                     ///< @trick_io{**} Restore filename has been generated.
-   bool         restore_begun;                               ///< @trick_io{**} Restore begun
-   bool         restore_request_complete;                    ///< @trick_io{**} restore status request complete
-   bool         restore_completed;                           ///< @trick_io{**} Restore completed.
-   bool         federation_restore_failed_callback_complete; ///< @trick_io{**} federation not restored callback complete
+   std::string restore_label;                               ///< @trick_io{**} Restore file label.
+   bool        announce_restore;                            ///< @trick_io{**} flag to indicate whether we have announced the federation restore
+   bool        restore_label_generated;                     ///< @trick_io{**} Restore filename has been generated.
+   bool        restore_begun;                               ///< @trick_io{**} Restore begun
+   bool        restore_request_complete;                    ///< @trick_io{**} restore status request complete
+   bool        restore_completed;                           ///< @trick_io{**} Restore completed.
+   bool        federation_restore_failed_callback_complete; ///< @trick_io{**} federation not restored callback complete
 
-   bool federate_has_been_restarted; /**< @trick_io{**}
-      Federate has restarted; so, do not restart again! */
+   bool federate_has_been_restarted; /**< @trick_io{**} Federate has restarted; so, do not restart again! */
 
-   bool publish_data; /**< @trick_io{**}
-      Default true. indicates if this federate's data & interactions should be processed. */
+   bool publish_data; /**< @trick_io{**} Default true. indicates if this federate's data & interactions should be processed. */
 
    // The Federates known at execution time. This is loaded when we join the
    // federation and is automatically kept current when other federates
@@ -955,11 +949,11 @@ class Federate
    KnownFederate *running_feds;                          ///< @trick_units{--} Checkpoint-able Array of running Federation Federates
    int            running_feds_count_at_time_of_restore; ///< @trick_io{**} Number of running Federates at the time of the restore (default: 0)
 
-   char checkpoint_file_name[256]; ///< @trick_io{*i} @trick_units{--} label to attach to sync point
-   Flag checkpoint_rt_itimer;      ///< @trick_io{**} loaded checkpoint RT ITIMER
-   bool announce_freeze;           ///< @trick_io{**} DANNY2.7 flag to indicate that this federate is announcing go to freeze mode
-   bool freeze_the_federation;     ///< @trick_io{**} DANNY2.7 flag to indicate the federation is going into freeze now
-   bool execution_has_begun;       ///< @trick_units{--} flag to indicate if the federate has begun simulation execution.
+   std::string checkpoint_file_name;  ///< @trick_io{*i} @trick_units{--} label to attach to sync point
+   Flag        checkpoint_rt_itimer;  ///< @trick_io{**} loaded checkpoint RT ITIMER
+   bool        announce_freeze;       ///< @trick_io{**} DANNY2.7 flag to indicate that this federate is announcing go to freeze mode
+   bool        freeze_the_federation; ///< @trick_io{**} DANNY2.7 flag to indicate the federation is going into freeze now
+   bool        execution_has_begun;   ///< @trick_units{--} flag to indicate if the federate has begun simulation execution.
    //-- END: checkpoint / restore data --
 
    // Federation time management data.
@@ -1005,13 +999,13 @@ class Federate
    TrickRTIAmbPtr        RTI_ambassador;      ///< @trick_io{**} RTI ambassador
    FedAmb *              federate_ambassador; ///< @trick_units{--} Federate ambassador.
    Manager *             manager;             ///< @trick_units{--} Associated TrickHLA Federate.
-   ExecutionControlBase *execution_control;   /**< @trick_units{--} Execution control object.  This has to point to an allocated execution control class that inherits from the ExecutionControlBase interface class.  For instance SRFOM::ExecutionControl. */
+   ExecutionControlBase *execution_control;   /**< @trick_units{--} Execution control object. This has to point to an allocated execution control class that inherits from the ExecutionControlBase interface class. For instance SRFOM::ExecutionControl. */
 
   private:
    /*! @brief Dumps the contents of the running_feds object into the supplied
     *  file name with ".running_feds" appended to it.
     *  @param file_name Checkpoint file name. */
-   void write_running_feds_file( char *file_name ) throw( const char * );
+   void write_running_feds_file( const std::string &file_name ) throw( const char * );
 
    /*! @brief Request federation save from the RTI. */
    void request_federation_save();
@@ -1062,7 +1056,7 @@ class Federate
    /*! @brief Determine if the specified federate name is a required federate.
     *  @return True if a name of required federate, otherwise false.
     *  @param federate_name Federate name to test. */
-   bool is_required_federate( std::wstring const &federate_name );
+   bool is_required_federate( const std::wstring &federate_name );
 
    /*! @brief Determine if the specified federate name is a joined federate.
     *  @return True if a name of joined federate, otherwise false.
@@ -1072,7 +1066,7 @@ class Federate
    /*! @brief Determine if the specified federate name is a joined federate.
     *  @return True if a name of joined federate, otherwise false.
     *  @param federate_name Federate name to test. */
-   bool is_joined_federate( std::wstring const &federate_name );
+   bool is_joined_federate( const std::wstring &federate_name );
 
    /*! @brief Make the HLA time-advance request using the current requested_time value. */
    void perform_time_advance_request();
