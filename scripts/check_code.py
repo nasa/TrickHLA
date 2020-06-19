@@ -368,16 +368,14 @@ ccpcheck_output_dir + '/' + ccpcheck_suppresion_autogen_file  ))
 
    # Check if auto-generating a suppression file.
    if args.autogen :
-      # NOTE: Don't enable inline-suppressions so that we get everything in the file.
+      # NOTE: Don't enable inline-suppressions so we get all issues in the file.
 
       # Set the output file.
       output_file = ccpcheck_output_dir + '/' + ccpcheck_suppresion_autogen_file
       cppcheck_args.append( '--output-file=' + output_file )
 
-      # Form the cppcheck command with command line options.
-      shell_command = [ cppcheck_cmd ]
-      shell_command.append( '--template={id}:{file}:{line}' )
-      shell_command.extend( cppcheck_args )
+      # Define the output format template.
+      cppcheck_args.insert( 0, '--template={id}:{file}:{line}' )
 
    else :
 
@@ -392,9 +390,6 @@ ccpcheck_output_dir + '/' + ccpcheck_suppresion_autogen_file  ))
 
       cppcheck_args.append( '--output-file=' + output_file )
 
-      # Form the cppcheck command with command line options.
-      shell_command = [ cppcheck_cmd ]
-      shell_command.extend( cppcheck_args )
 
    # Echo check the data if verbose is selected.
    if args.verbose :
@@ -410,6 +405,10 @@ ccpcheck_output_dir + '/' + ccpcheck_suppresion_autogen_file  ))
       TrickHLAMessage.status( 'cppcheck_build_dir    = ' + cppcheck_build_dir )
       TrickHLAMessage.status( 'cppcheck_args         = ' + ' '.join(cppcheck_args) )
       TrickHLAMessage.status( '---------------------------------------------------------------------' )
+
+   # Form the cppcheck command with command line options.
+   shell_command = [ cppcheck_cmd ]
+   shell_command.extend( cppcheck_args )
 
    #    
    # Execute the cppcheck command
