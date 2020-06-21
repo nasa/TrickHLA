@@ -101,7 +101,7 @@ void PhysicalEntityBase::initialize()
 
    // Must have federation instance name.
    if ( this->name == NULL ) {
-      errmsg << "PhysicalEntityBase::initialize():" << __LINE__
+      errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL federation instance frame name!"
              << "  Setting frame name to empty string." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
@@ -110,7 +110,7 @@ void PhysicalEntityBase::initialize()
 
    // Must have federation instance type.
    if ( this->type == NULL ) {
-      errmsg << "PhysicalEntityBase::initialize():" << __LINE__
+      errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL federation instance type!"
              << "  Setting type to empty string." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
@@ -119,7 +119,7 @@ void PhysicalEntityBase::initialize()
 
    // Must have federation instance status.
    if ( this->status == NULL ) {
-      errmsg << "PhysicalEntityBase::initialize():" << __LINE__
+      errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL federation instance status!"
              << "  Setting status to empty string." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
@@ -128,7 +128,7 @@ void PhysicalEntityBase::initialize()
 
    // Must have federation instance parent_ref_frame.
    if ( this->parent_ref_frame == NULL ) {
-      errmsg << "PhysicalEntityBase::initialize():" << __LINE__
+      errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL federation instance parent_ref_frame!"
              << "  Setting parent_ref_frame to empty string." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );

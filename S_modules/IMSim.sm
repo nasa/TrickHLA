@@ -40,10 +40,10 @@
 ##include "TrickHLA/Federate.hh"
 
 //=========================================================================
-// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+// SIM_OBJECT: IMSim - Generalized TrickHLA interface routines.
 //=========================================================================
 
-class THLABaseSimObject : public Trick::SimObject {
+class IMSimSimObject : public Trick::SimObject {
 
  public:
    
@@ -52,17 +52,17 @@ class THLABaseSimObject : public Trick::SimObject {
    TrickHLA::FedAmb   federate_amb;
    TrickHLA::Manager  manager;
    
-   double           checkpoint_time;
-   const char*      checkpoint_label;
+   double             checkpoint_time;
+   const char*        checkpoint_label;
    
-   double           check_pause_job_offset;
-   const double     CHECK_PAUSE_DELTA;
+   double             check_pause_job_offset;
+   const double       CHECK_PAUSE_DELTA;
 
-   THLABaseSimObject( double data_cycle,
-                      double interaction_cycle,
-                      unsigned short _1ST  = 1,
-                      unsigned short _INIT = 60,
-                      unsigned short _LAST = 65534 ) : CHECK_PAUSE_DELTA( 0.000001 )
+   IMSimSimObject( double data_cycle,
+                   double interaction_cycle,
+                   unsigned short _1ST  = 1,
+                   unsigned short _INIT = 60,
+                   unsigned short _LAST = 65534 ) : CHECK_PAUSE_DELTA( 0.000001 )
    {
       // Validate the data and interaction cycle times.
       if ( data_cycle <= 0.0 ) {
@@ -181,14 +181,14 @@ class THLABaseSimObject : public Trick::SimObject {
       //-------------------
       //-- SHUTDOWN JOBS --
       //-------------------
-      P_LAST ("shutdown") manager.shutdown();
+      P_LAST ("shutdown") federate.shutdown();
    }
 
  private:
    // Do not allow the implicit copy constructor or assignment operator.
-   THLABaseSimObject(const THLASimObject & rhs);
-   THLABaseSimObject & operator=(const THLABaseSimObject & rhs);
+   IMSimSimObject(const IMSimSimObject & rhs);
+   IMSimSimObject & operator=(const IMSimSimObject & rhs);
 
    // Do not allow the default constructor.
-   THLABaseSimObject();
+   IMSimSimObject();
 };

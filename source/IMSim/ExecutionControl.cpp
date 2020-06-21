@@ -114,8 +114,6 @@ ExecutionControl::~ExecutionControl()
       freeze_interaction = NULL;
       freeze_inter_count = 0;
    }
-
-   return;
 }
 
 /*!
@@ -189,8 +187,6 @@ void ExecutionControl::initialize(
 
    // Call the IMSim ExecutionControl pre-multi-phasse initialization processes.
    pre_multi_phase_init_processes();
-
-   return;
 }
 /*!
 @details This routine implements the IMSim Join Federation Process described
@@ -200,11 +196,8 @@ in section 7.2 and figure 7-3.
 */
 void ExecutionControl::join_federation_process()
 {
-
    // The base class implementation is good enough for now.
    TrickHLA::ExecutionControlBase::join_federation_process();
-
-   return;
 }
 
 /*!
@@ -262,10 +255,10 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       if ( this->is_master() ) {
-         send_hs( stdout, "Manager::IMSim_initialization_version_2():%d\n    I AM THE MASTER%c",
+         send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d\n    I AM THE MASTER%c",
                   __LINE__, THLA_NEWLINE );
       } else {
-         send_hs( stdout, "Manager::IMSim_initialization_version_2():%d\n    I AM NOT THE MASTER%c",
+         send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d\n    I AM NOT THE MASTER%c",
                   __LINE__, THLA_NEWLINE );
       }
    }
@@ -301,7 +294,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
             federate->read_running_feds_file( tRestoreName );
 
             if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-               send_hs( stdout, "Manager::IMSim_initialization_version_2():%d \
+               send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d \
 You indicated that you want a restore => I AM THE MASTER <= \
 Waiting for the required federates to join.%c",
                         __LINE__, THLA_NEWLINE );
@@ -311,7 +304,7 @@ Waiting for the required federates to join.%c",
             tRetString = federate->wait_for_required_federates_to_join();
             if ( !tRetString.empty() ) {
                tRetString += THLA_NEWLINE;
-               send_hs( stderr, "Manager::IMSim_initialization_version_2():%d%c",
+               send_hs( stderr, "IMSim::ExecutionControl::pre_multi_phase_init_processes2():%d%c",
                         __LINE__, THLA_NEWLINE );
                send_hs( stderr, (char *)tRetString.c_str() );
                exec_terminate( __FILE__, (char *)tRetString.c_str() );
@@ -341,7 +334,7 @@ Waiting for the required federates to join.%c",
             federate->copy_running_feds_into_known_feds();
 
             if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-               send_hs( stdout, "Manager::IMSim_initialization_version_2():%d \
+               send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d \
 You indicated that you want a restore => I AM THE MASTER <= \
 initiating restore request for '%s' with the RTI.%c",
                         __LINE__, tRestoreName,
@@ -355,7 +348,7 @@ initiating restore request for '%s' with the RTI.%c",
 
             if ( federate->has_restore_request_failed() ) {
                ostringstream errmsg;
-               errmsg << "Manager::IMSim_initialization_version_2():"
+               errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():"
                       << __LINE__
                       << " You indicated that you wanted to restore a "
                       << "checkpoint => I AM THE MASTER <= RTI rejected the "
@@ -388,7 +381,7 @@ initiating restore request for '%s' with the RTI.%c",
                federate->wait_for_federation_restore_failed_callback_to_complete();
 
                ostringstream errmsg;
-               errmsg << "Manager::IMSim_initialization_version_2():"
+               errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():"
                       << __LINE__
                       << " You indicated that you wanted to restore a "
                       << "checkpoint => I AM THE MASTER <= "
@@ -407,11 +400,11 @@ initiating restore request for '%s' with the RTI.%c",
             // so we can achieve it later.
             if ( this->add_sync_pnt( IMSim::STARTUP_SYNC_POINT ) ) {
                if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-                  send_hs( stdout, "ExecutionControl::pre_multi_phase_init_processes():%d Label: '%ls'%c",
+                  send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d Label: '%ls'%c",
                            __LINE__, IMSim::STARTUP_SYNC_POINT, THLA_NEWLINE );
                }
             } else {
-               send_hs( stdout, "ExecutionControl::pre_multi_phase_init_processes():%d Did not add duplicate synchronization point label '%ls'.%c",
+               send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d Did not add duplicate synchronization point label '%ls'.%c",
                         __LINE__, IMSim::STARTUP_SYNC_POINT, THLA_NEWLINE );
             }
             this->register_sync_pnt( *federate->get_RTI_ambassador(),
@@ -433,12 +426,12 @@ initiating restore request for '%s' with the RTI.%c",
 
             if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                if ( this->is_late_joiner() ) {
-                  send_hs( stdout, "Manager::IMSim_initialization_version_2():%d\n\t\
+                  send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d\n\t\
 => I AM THE MASTER ** originally a late joining federate ** <= Federation restore is complete\n    \
 Simulation has started and is now running...%c",
                            __LINE__, THLA_NEWLINE );
                } else {
-                  send_hs( stdout, "Manager::IMSim_initialization_version_2():%d\n    \
+                  send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d\n    \
 => I AM THE MASTER <= Federation restore is complete\n\t\
 Simulation has started and is now running...%c",
                            __LINE__, THLA_NEWLINE );
@@ -447,11 +440,11 @@ Simulation has started and is now running...%c",
 
             federate->set_federate_has_begun_execution();
          } else {
-            send_hs( stdout, "Manager::IMSim_initialization_version_2():%d \
+            send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d \
 You indicated that you wanted to restore a checkpoint => I AM THE MASTER <= \
 but you failed to specify the checkpoint FILE NAME!%c",
                      __LINE__, THLA_NEWLINE );
-            exec_terminate( __FILE__, "Manager::IMSim_initialization_version_2() \
+            exec_terminate( __FILE__, "IMSim::ExecutionControl::pre_multi_phase_init_processes() \
 You indicated that you wanted to restore a checkpoint => I AM THE MASTER <= \
 but you failed to specify the checkpoint FILE NAME!" );
          }
@@ -532,7 +525,7 @@ but you failed to specify the checkpoint FILE NAME!" );
          federate->check_HLA_save_directory();
 
          if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            send_hs( stdout, "Manager::IMSim_initialization_version_2():%d \
+            send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d \
 You indicated that you want a restore => I AM NOT THE MASTER <= \
 loading of the federate from the checkpoint file '%s'.%c",
                      __LINE__,
@@ -578,7 +571,7 @@ loading of the federate from the checkpoint file '%s'.%c",
             federate->wait_for_federation_restore_failed_callback_to_complete();
 
             ostringstream errmsg;
-            errmsg << "Manager::IMSim_initialization_version_2():"
+            errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():"
                    << __LINE__
                    << " You indicated that you wanted to restore a "
                    << "checkpoint => I AM THE NOT MASTER <= "
@@ -605,12 +598,12 @@ loading of the federate from the checkpoint file '%s'.%c",
 
          if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             if ( this->is_late_joiner() ) {
-               send_hs( stdout, "Manager::IMSim_initialization_version_2():%d\n\t\
+               send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d\n\t\
 => I AM NOT THE MASTER ** originally late joining federate ** <= Federation restore is complete\n    \
 Simulation has started and is now running...%c",
                         __LINE__, THLA_NEWLINE );
             } else {
-               send_hs( stdout, "Manager::IMSim_initialization_version_2():%d\n    \
+               send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes2():%d\n    \
 => I AM NOT THE MASTER <= Federation restore is complete\n    \
 Simulation has started and is now running...%c",
                         __LINE__, THLA_NEWLINE );
@@ -676,7 +669,7 @@ Simulation has started and is now running...%c",
 
             if ( !federate->is_time_management_enabled() ) {
                ostringstream errmsg;
-               errmsg << "Manager::IMSim_initialization_version_2():" << __LINE__
+               errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
                       << " ERROR: Late joining federates that do not use HLA"
                       << " time management are not supported yet!" << THLA_ENDL;
                send_hs( stderr, (char *)errmsg.str().c_str() );
@@ -741,8 +734,6 @@ Simulation has started and is now running...%c",
          }
       }
    }
-
-   return;
 }
 
 /*!
@@ -796,7 +787,7 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
             wait_count = 0;
             if ( !federate->is_execution_member() ) {
                ostringstream errmsg;
-               errmsg << "Manager::determine_if_late_joining_or_restoring_federate_IMSim():" << __LINE__
+               errmsg << "IMSim::ExecutionControl::determine_if_late_joining_or_restoring_federate_IMSim():" << __LINE__
                       << " Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
@@ -813,7 +804,7 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
    if ( late_joiner_determined ) {
 
       if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "Manager::determine_if_late_joining_or_restoring_federate_IMSim():%d Late Joining Federate:%s%c",
+         send_hs( stdout, "IMSim::ExecutionControl::determine_if_late_joining_or_restoring_federate_IMSim():%d Late Joining Federate:%s%c",
                   __LINE__, ( this->is_late_joiner ? "Yes" : "No" ), THLA_NEWLINE );
       }
       return FEDERATE_JOIN_LATE;
@@ -821,14 +812,14 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
    } else if ( get_manager()->restore_determined ) {
 
       if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "Manager::determine_if_late_joining_or_restoring_federate_IMSim():%d Restoring the Federate!%c",
+         send_hs( stdout, "IMSim::ExecutionControl::determine_if_late_joining_or_restoring_federate_IMSim():%d Restoring the Federate!%c",
                   __LINE__, THLA_NEWLINE );
       }
       return FEDERATE_JOIN_RESTORING;
 
    } else {
       ostringstream errmsg;
-      errmsg << "Manager::determine_if_late_joining_or_restoring_federate_IMSim():"
+      errmsg << "IMSim::ExecutionControl::determine_if_late_joining_or_restoring_federate_IMSim():"
              << __LINE__ << " failed to determine if late joiner or restore federate!!!"
              << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
@@ -868,8 +859,6 @@ void ExecutionControl::post_multi_phase_init_process()
       // to be synchronized on it.
       federate->achieve_and_wait_for_synchronization( IMSim::STARTUP_SYNC_POINT );
    }
-
-   return;
 }
 
 /*!
@@ -1019,7 +1008,6 @@ allocate enough memory for the ATTRIBUTES for the 'time' value of the FREEZE int
                            (void *)fiHandler->get_address_of_interaction_time(),
                            (ATTRIBUTES *)time_attr );
    }
-   return;
 }
 
 /*!
@@ -1051,8 +1039,6 @@ void ExecutionControl::add_multiphase_init_sync_points()
    this->add_sync_pnt( IMSim::STARTUP_SYNC_POINT );
    this->add_sync_pnt( IMSim::INITIALIZE_SYNC_POINT );
    this->add_sync_pnt( IMSim::SIM_CONFIG_SYNC_POINT );
-
-   return;
 }
 
 void ExecutionControl::announce_sync_point(
@@ -1150,8 +1136,6 @@ void ExecutionControl::announce_sync_point(
       // federation to by synchronized on it.
       this->achieve_sync_pnt( rti_ambassador, label );
    }
-
-   return;
 }
 
 /*!
@@ -1180,8 +1164,6 @@ void ExecutionControl::achieve_all_multiphase_init_sync_pnts(
          rti_ambassador.synchronizationPointAchieved( sp->label );
       }
    }
-
-   return;
 }
 
 /*!
@@ -1234,18 +1216,14 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_pnts()
          }
       }
    }
-
-   return;
 }
 
 void ExecutionControl::publish()
 {
-
    // Publish the freeze_interactions.
    for ( int n = 0; n < freeze_inter_count; n++ ) {
       freeze_interaction[n].publish_interaction();
    }
-   return;
 }
 
 void ExecutionControl::unpublish()
@@ -1278,13 +1256,10 @@ void ExecutionControl::unpublish()
          }
       }
    }
-
-   return;
 }
 
 void ExecutionControl::subscribe()
 {
-
    // Check to see if we are the Master federate.
    if ( this->is_master() ) {
       // Only subscribe to the Freeze interactions if this is the Master federate.
@@ -1295,7 +1270,6 @@ void ExecutionControl::subscribe()
       // Subscribe to the execution configuration if we are not the master federate.
       execution_configuration->subscribe_to_object_attributes();
    }
-   return;
 }
 
 void ExecutionControl::unsubscribe()
@@ -1330,8 +1304,6 @@ void ExecutionControl::unsubscribe()
          }
       }
    }
-
-   return;
 }
 
 bool ExecutionControl::mark_synchronized( std::wstring const &label )
@@ -1433,8 +1405,6 @@ void ExecutionControl::receive_interaction(
          return;
       }
    }
-
-   return;
 }
 
 bool ExecutionControl::set_pending_mtr(
@@ -1501,8 +1471,6 @@ void ExecutionControl::set_mode_request_from_mtr(
          this->pending_mtr = MTR_UNINITIALIZED;
          break;
    }
-
-   return;
 }
 
 void ExecutionControl::set_next_execution_control_mode(
@@ -1610,8 +1578,6 @@ void ExecutionControl::set_next_execution_control_mode(
          }
          break;
    }
-
-   return;
 }
 
 bool ExecutionControl::check_mode_transition_request()
@@ -2160,13 +2126,10 @@ bool ExecutionControl::run_mode_transition()
 
 void ExecutionControl::freeze_mode_announce()
 {
-
    // Register the 'mtr_freeze' sync-point.
    if ( this->is_master() ) {
       this->register_sync_pnt( *( federate->get_RTI_ambassador() ), L"mtr_freeze" );
    }
-
-   return;
 }
 
 bool ExecutionControl::freeze_mode_transition()
@@ -2225,8 +2188,6 @@ void ExecutionControl::shutdown_mode_announce()
 
    // Clear the mode change request flag.
    this->clear_mode_transition_requested();
-
-   return;
 }
 
 /*!
@@ -2248,8 +2209,6 @@ void ExecutionControl::shutdown_mode_transition()
 
    // Register the 'mtr_shutdown' sync-point.
    this->register_sync_pnt( *( federate->get_RTI_ambassador() ), L"mtr_shutdown" );
-
-   return;
 }
 
 void ExecutionControl::enter_freeze()
@@ -2280,8 +2239,6 @@ void ExecutionControl::enter_freeze()
          federate->un_freeze(); // will freeze again for real when we hit the freeze interaction time
       }
    }
-
-   return;
 }
 
 bool ExecutionControl::check_freeze_exit()
@@ -2405,8 +2362,6 @@ void ExecutionControl::exit_freeze()
                   __LINE__, rti_err_msg.c_str(), THLA_NEWLINE );
       }
    }
-
-   return;
 }
 
 void ExecutionControl::un_freeze()
@@ -2414,7 +2369,6 @@ void ExecutionControl::un_freeze()
    // Clear the pause sync-point master state so that we don't accidently
    // go into the run state again.
    pause_sync_pts.clear_state();
-   return;
 }
 
 void ExecutionControl::check_pause( const double check_pause_delta )
@@ -2448,8 +2402,6 @@ void ExecutionControl::check_pause( const double check_pause_delta )
          exec_freeze();
       }
    }
-
-   return;
 }
 
 // FIXME: See if this is still needed.  Trick 17 may have fixed this.
@@ -2464,11 +2416,8 @@ void ExecutionControl::check_pause( const double check_pause_delta )
 void ExecutionControl::check_pause_at_init(
    const double check_pause_delta )
 {
-
    // Dispatch to the ExecutionControl method.
    this->get_manager()->get_execution_control()->check_pause_at_init( check_pause_delta );
-
-   return;
 }
 
 void ExecutionControl::add_pause(
@@ -2523,7 +2472,6 @@ freeze_interaction's HANLDER is NULL! Request was ignored!%c",
                   freeze_scenario_time, file_name, __LINE__, THLA_NEWLINE );
       }
    }
-   return;
 }
 
 void ExecutionControl::add_freeze_scenario_time(
@@ -2721,8 +2669,6 @@ void ExecutionControl::convert_loggable_sync_pts()
 
       pause_sync_pts.convert_sync_pts( this->loggable_sync_pts );
    }
-
-   return;
 }
 
 void ExecutionControl::reinstate_logged_sync_pts()

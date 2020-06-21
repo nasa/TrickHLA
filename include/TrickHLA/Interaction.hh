@@ -247,6 +247,10 @@ class Interaction
     *  @return A copy of the federation granted time. */
    Int64Time get_granted_fed_time() const;
 
+   /*! @brief Check if federate is shutdown function was called.
+    *  @return True if the manager is shutting down the federate. */
+   bool is_shutdown_called() const;
+
    /*! @brief Determine if the verbose debug comments should be printed to the console.
     *  @return Returns true if the requested message should print level.
     *  @param level  Debug level of the incoming message.

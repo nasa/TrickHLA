@@ -133,17 +133,6 @@ class Manager
     * initialized. */
    void initialize();
 
-   /*! @brief Shutdown the federate by shutting down time management, resigning
-    * from the federation, and then attempt to destroy the federation. */
-   void shutdown();
-
-   /*! @brief Check if federate is shutting down.
-    *  @return True if the manager is shutting down the federate. */
-   bool is_shutdown() const
-   {
-      return ( shutdown_called );
-   }
-
    /*! @brief Checks to make sure the RTI is ready by making sure the
     * TrickHLA::Federate and TrickHLA:FedAmb exist and the RTI handles are
     * initialized.
@@ -415,20 +404,24 @@ class Manager
     *  @return Pointer to the associated execution configuration object. */
    void set_execution_configuration( ExecutionConfigurationBase *exec_config )
    {
-      execution_control->set_execution_configuration( exec_config );
+      this->execution_control->set_execution_configuration( exec_config );
    }
    /*! @brief Get the execution configuration object.
     *  @return Pointer to the associated execution configuration object. */
    ExecutionConfigurationBase *get_execution_configuration()
    {
-      return execution_control->get_execution_configuration();
+      return this->execution_control->get_execution_configuration();
    }
    /*! @brief Test is an execution configuration object is used.
     *  @return True if an execution configuration object is used. */
    bool is_execution_configuration_used()
    {
-      return ( execution_control->is_execution_configuration_used() );
+      return this->execution_control->is_execution_configuration_used();
    }
+
+   /*! @brief Check if federate is shutdown function was called.
+    *  @return True if the manager is shutting down the federate. */
+   bool is_shutdown_called() const;
 
    /*! @brief Determine if the verbose debug comments should be printed to the console.
     *  @return Returns true if the requested message should print level.
@@ -445,8 +438,6 @@ class Manager
    // Private data.
    //
   private:
-   bool shutdown_called; ///< @trick_units{--} Flag to indicate that shutdown has been called.
-
    ItemQueue interactions_queue; ///< @trick_io{**} Interactions queue.
 
    int              check_interactions_count; ///< @trick_units{--} Number of checkpointed interactions

@@ -629,6 +629,10 @@ class Object
    /*! @brief Unlock the ownership thread mutex. */
    void ownership_unlock() { pthread_mutex_unlock( &ownership_mutex ); }
 
+   /*! @brief Check if federate is shutdown function was called.
+    *  @return True if the manager is shutting down the federate. */
+   bool is_shutdown_called() const;
+
    /*! @brief Determine if the verbose debug comments should be printed to the console.
     *  @return Returns true if the requested message should print level.
     *  @param level  Debug level of the incoming message.

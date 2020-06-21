@@ -93,7 +93,6 @@ ExecutionControl::ExecutionControl()
 ExecutionControl::~ExecutionControl()
 {
    clear_mode_values();
-   return;
 }
 
 /*!
@@ -173,8 +172,6 @@ void ExecutionControl::initialize(
 
    // Call the DIS ExecutionControl pre-multi-phasse initialization processes.
    pre_multi_phase_init_processes();
-
-   return;
 }
 
 /*!
@@ -185,11 +182,8 @@ in section 7.2 and figure 7-3.
 */
 void ExecutionControl::join_federation_process()
 {
-
    // The base class implementation is good enough for now.
    TrickHLA::ExecutionControlBase::join_federation_process();
-
-   return;
 }
 
 /*!
@@ -308,8 +302,6 @@ void ExecutionControl::pre_multi_phase_init_processes()
       // to be synchronized on it.
       federate->achieve_and_wait_for_synchronization( DIS::INITIALIZE_SYNC_POINT );
    }
-
-   return;
 }
 
 /*!
@@ -331,8 +323,6 @@ void ExecutionControl::post_multi_phase_init_process()
       // to be synchronized on it.
       federate->achieve_and_wait_for_synchronization( DIS::STARTUP_SYNC_POINT );
    }
-
-   return;
 }
 
 /*!
@@ -349,7 +339,7 @@ void ExecutionControl::shutdown()
 void ExecutionControl::determine_federation_master()
 {
    if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::determine_federation_master():%d%c",
+      send_hs( stdout, "DIS::ExecutionControl::determine_federation_master():%d%c",
                __LINE__, THLA_NEWLINE );
    }
 
@@ -359,15 +349,13 @@ void ExecutionControl::determine_federation_master()
 
    if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       if ( this->is_master() ) {
-         send_hs( stdout, "Manager::determine_federation_master():%d\n    I AM THE MASTER%c",
+         send_hs( stdout, "DIS::ExecutionControl::determine_federation_master():%d\n    I AM THE MASTER%c",
                   __LINE__, THLA_NEWLINE );
       } else {
-         send_hs( stdout, "Manager::determine_federation_master():%d\n    I AM NOT THE MASTER%c",
+         send_hs( stdout, "DIS::ExecutionControl::determine_federation_master():%d\n    I AM NOT THE MASTER%c",
                   __LINE__, THLA_NEWLINE );
       }
    }
-
-   return;
 }
 
 /*!
@@ -394,8 +382,6 @@ void ExecutionControl::add_multiphase_init_sync_points()
    // Register initialization synchronization points used for startup regulation.
    this->add_sync_pnt( DIS::STARTUP_SYNC_POINT );
    this->add_sync_pnt( DIS::INITIALIZE_SYNC_POINT );
-
-   return;
 }
 
 void ExecutionControl::announce_sync_point(
@@ -467,8 +453,6 @@ void ExecutionControl::announce_sync_point(
       // federation to be synchronized on it.
       this->achieve_sync_pnt( rti_ambassador, label );
    }
-
-   return;
 }
 
 /*!
@@ -483,8 +467,6 @@ void ExecutionControl::clear_multiphase_init_sync_points()
              << " support multiphase initialization synchronization points." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    }
-
-   return;
 }
 
 void ExecutionControl::sync_point_registration_succeeded(
@@ -496,8 +478,6 @@ void ExecutionControl::sync_point_registration_succeeded(
    } else if ( label.compare( DIS::STARTUP_SYNC_POINT ) == 0 ) {
       federate->set_startup( true );
    }
-
-   return;
 }
 
 void ExecutionControl::sync_point_registration_failed(
@@ -525,8 +505,6 @@ Startup Synchronization Point failure, federate shutting down.%c",
          exit( 1 );
       }
    }
-
-   return;
 }
 
 void ExecutionControl::publish()
@@ -629,8 +607,6 @@ void ExecutionControl::set_mode_request_from_mtr(
          this->pending_mtr = MTR_UNINITIALIZED;
          break;
    }
-
-   return;
 }
 
 void ExecutionControl::set_next_execution_control_mode(
@@ -738,8 +714,6 @@ void ExecutionControl::set_next_execution_control_mode(
          }
          break;
    }
-
-   return;
 }
 
 bool ExecutionControl::check_mode_transition_request()
@@ -1089,7 +1063,7 @@ bool ExecutionControl::process_execution_control_updates()
 
             // Print diagnostic message if appropriate.
             if ( federate->should_print( TrickHLA::DEBUG_LEVEL_4_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
-               cout << "ExecutionControl::process_execution_control_updates()" << endl
+               cout << "DIS::ExecutionControl::process_execution_control_updates()" << endl
                     << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << endl
                     << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
                     << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
@@ -1268,7 +1242,7 @@ bool ExecutionControl::run_mode_transition()
             if ( fmod( diff, 1.0 ) == 0.0 ) {
                if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_2_TRACE,
                                                 TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
-                  send_hs( stdout, "ExecutionControl::run_mode_transition():%d Going to run in %G seconds.%c",
+                  send_hs( stdout, "DIS::ExecutionControl::run_mode_transition():%d Going to run in %G seconds.%c",
                            __LINE__, diff, THLA_NEWLINE );
                }
             }
@@ -1278,7 +1252,7 @@ bool ExecutionControl::run_mode_transition()
          if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
             double curr_cte_time = this->get_cte_time();
             diff                 = curr_cte_time - go_to_run_time;
-            send_hs( stdout, "ExecutionControl::run_mode_transition():%d \n  Going to run at CTE time %.18G seconds. \n  Current CTE time %.18G seconds. \n  Difference: %.9lf seconds.%c",
+            send_hs( stdout, "DIS::ExecutionControl::run_mode_transition():%d \n  Going to run at CTE time %.18G seconds. \n  Current CTE time %.18G seconds. \n  Difference: %.9lf seconds.%c",
                      __LINE__, go_to_run_time, curr_cte_time, diff, THLA_NEWLINE );
          }
       }
@@ -1289,13 +1263,10 @@ bool ExecutionControl::run_mode_transition()
 
 void ExecutionControl::freeze_mode_announce()
 {
-
    // Register the 'mtr_freeze' sync-point.
    if ( this->is_master() ) {
       this->register_sync_pnt( *( federate->get_RTI_ambassador() ), L"mtr_freeze" );
    }
-
-   return;
 }
 
 bool ExecutionControl::freeze_mode_transition()
@@ -1355,8 +1326,6 @@ void ExecutionControl::shutdown_mode_announce()
 
    // Clear the mode change request flag.
    this->clear_mode_transition_requested();
-
-   return;
 }
 
 /*!
@@ -1378,8 +1347,6 @@ void ExecutionControl::shutdown_mode_transition()
 
    // Register the 'mtr_shutdown' sync-point.
    this->register_sync_pnt( *( federate->get_RTI_ambassador() ), L"mtr_shutdown" );
-
-   return;
 }
 
 void ExecutionControl::check_freeze()
@@ -1420,8 +1387,7 @@ void ExecutionControl::enter_freeze()
          StringUtilities::to_wstring( pause_label_ws, pause_label );
 
          if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-            send_hs( stdout,
-                     "DIS::ExecutionControl::enter_freeze():%d announce_freeze:%s, freeze_federation:%s, pause_time:%g %c",
+            send_hs( stdout, "DIS::ExecutionControl::enter_freeze():%d announce_freeze:%s, freeze_federation:%s, pause_time:%g %c",
                      __LINE__, ( federate->announce_freeze ? "Yes" : "No" ),
                      ( federate->freeze_the_federation ? "Yes" : "No" ), pause_time,
                      THLA_NEWLINE );
@@ -1431,8 +1397,6 @@ void ExecutionControl::enter_freeze()
          federate->un_freeze(); // will freeze again for real when we hit pause sync-pt
       }
    }
-
-   return;
 }
 
 bool ExecutionControl::check_freeze_exit()
@@ -1474,8 +1438,6 @@ void ExecutionControl::exit_freeze()
                   __LINE__, rti_err_msg.c_str(), THLA_NEWLINE );
       }
    }
-
-   return;
 }
 
 void ExecutionControl::add_pause(

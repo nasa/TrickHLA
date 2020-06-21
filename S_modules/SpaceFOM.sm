@@ -51,10 +51,10 @@ class SpaceFOMSimObject : public THLABaseSimObject {
    SpaceFOM::ExecutionControl execution_control;
 
    SpaceFOMSimObject( double data_cycle,
-                  double interaction_cycle,
-                  unsigned short _1ST  = 1,
-                  unsigned short _INIT = 60,
-                  unsigned short _LAST = 65534 )
+                      double interaction_cycle,
+                      unsigned short _1ST  = 1,
+                      unsigned short _INIT = 60,
+                      unsigned short _LAST = 65534 )
      : THLABaseSimObject( data_cycle, interaction_cycle, _1ST, _INIT, _LAST ),
        ExCO( "THLA.ExCO" ),
        execution_control( ExCO )

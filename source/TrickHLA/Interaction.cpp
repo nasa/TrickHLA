@@ -234,7 +234,7 @@ void Interaction::set_user_supplied_tag(
 void Interaction::remove() // RETURN: -- None.
 {
    // Only remove the Interaction if the manager has not been shutdown.
-   if ( ( manager != NULL ) && !manager->is_shutdown() ) {
+   if ( is_shutdown_called() ) {
 
       // Get the RTI-Ambassador and check for NULL.
       RTIambassador *rti_amb = get_RTI_ambassador();
@@ -1223,4 +1223,9 @@ RTIambassador *Interaction::get_RTI_ambassador()
 {
    return ( ( this->manager != NULL ) ? this->manager->get_RTI_ambassador()
                                       : static_cast< RTI1516_NAMESPACE::RTIambassador * >( NULL ) );
+}
+
+bool Interaction::is_shutdown_called() const
+{
+   return ( ( this->manager != NULL ) ? this->manager->is_shutdown_called() : false );
 }

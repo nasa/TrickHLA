@@ -107,9 +107,9 @@ void MTRInteractionHandler::send_interaction(
 {
    // Make sure that the interaction reference has been set.
    if ( this->interaction == NULL ) {
-      send_hs( stderr, "MTRInteractionHandler::send_interaction():%d Unexpected NULL TrickHLA::Interaction.%c",
+      send_hs( stderr, "SpaceFOM::MTRInteractionHandler::send_interaction():%d Unexpected NULL TrickHLA::Interaction.%c",
                __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "MTRInteractionHandler::send_interaction():%d Unexpected NULL TrickHLA::Interaction." );
+      exec_terminate( __FILE__, "SpaceFOM::MTRInteractionHandler::send_interaction():%d Unexpected NULL TrickHLA::Interaction." );
    }
 
    // Get the ExecutionControl object and cast it to an SpaceFOM::ExecutionControl.
@@ -195,9 +195,9 @@ void MTRInteractionHandler::receive_interaction(
 {
    // Make sure that the federate reference has been set.
    if ( this->interaction == NULL ) {
-      send_hs( stderr, "MTRInteractionHandler::receive_interaction():%d Unexpected NULL TrickHLA::Interaction.%c",
+      send_hs( stderr, "SpaceFOM::MTRInteractionHandler::receive_interaction():%d Unexpected NULL TrickHLA::Interaction.%c",
                __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "MTRInteractionHandler::receive_interaction():%d Unexpected NULL TrickHLA::Interaction." );
+      exec_terminate( __FILE__, "SpaceFOM::MTRInteractionHandler::receive_interaction():%d Unexpected NULL TrickHLA::Interaction." );
    }
 
    // Get the ExecutionControl object and cast it to an SpaceFOM::ExecutionControl.
@@ -205,7 +205,7 @@ void MTRInteractionHandler::receive_interaction(
    SpaceFOM::ExecutionControl *    exco      = dynamic_cast< ExecutionControl * >( exco_base );
    if ( exco == NULL ) {
       ostringstream errmsg;
-      errmsg << "MTRInteractionHandler::receive_interaction():" << __LINE__
+      errmsg << "SpaceFOM::MTRInteractionHandler::receive_interaction():" << __LINE__
              << "  Invalid dynamic cast to SpaceFOM::ExecutionControl!" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
@@ -241,7 +241,7 @@ void MTRInteractionHandler::receive_interaction(
 
       string user_supplied_tag_string;
       TrickHLA::StringUtilities::to_string( user_supplied_tag_string, the_user_supplied_tag );
-      cout << "++++RECEIVING++++ MTRInteractionHandler::receive_interaction()" << endl
+      cout << "++++RECEIVING++++ SpaceFOM::MTRInteractionHandler::receive_interaction()" << endl
            << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl
            << "  user-supplied-tag: '" << user_supplied_tag_string << "'" << endl
            << "  user-supplied-tag-size: " << the_user_supplied_tag.size() << endl

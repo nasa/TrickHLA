@@ -164,7 +164,7 @@ void RefFrameBase::initialize(
 
    // Must have federation instance name.
    if ( this->name == NULL ) {
-      errmsg << "RefFrameBase::initialize():" << __LINE__
+      errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL federation instance frame name!"
              << "  Setting frame name to empty string." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
@@ -173,7 +173,7 @@ void RefFrameBase::initialize(
 
    // Must have federation instance parent frame name.
    if ( this->parent_name == NULL ) {
-      errmsg << "RefFrameBase::initialize():" << __LINE__
+      errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL federation instance parent frame name!"
              << "  Setting parent frame name to empty string." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
@@ -183,7 +183,7 @@ void RefFrameBase::initialize(
    // Set the reference to the reference frame.
    if ( ref_frame_data_ptr == NULL ) {
       // Print message and terminate.
-      errmsg << "RefFrameBase::initialize():" << __LINE__
+      errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
              << " ERROR: Unexpected NULL reference frame: " << this->name << THLA_ENDL;
       Trick::Executive *trick_exec = exec_get_exec_cpp();
       send_hs( stderr, (char *)errmsg.str().c_str() );

@@ -83,7 +83,7 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
    // if the interaction was not initialized in the parent class, get out of here...
    if ( interaction == NULL ) {
       ostringstream errmsg;
-      errmsg << "FreezeInteractionHandler::send_scenario_freeze_interaction("
+      errmsg << "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction("
              << freeze_time << ", " << (int)late_joining_federate << "):" << __LINE__
              << " ERROR: 'interaction' was not initialized to callback an"
              << " Interaction class. Cannot send out an interaction in"
@@ -95,7 +95,7 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
 
 #if THLA_FREEZE_INTERACTION_DEBUG
    ostringstream msg;
-   msg << " FreezeInteractionHandler::send_scenario_freeze_interaction():" << __LINE__
+   msg << "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():" << __LINE__
        << " ===> debug <===" << endl
        << " granted-time:" << interaction->get_granted_fed_time().getDoubleTime() << endl
        << " lookahead-time:" << interaction->get_fed_lookahead().getDoubleTime() << endl;
@@ -136,7 +136,7 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
    /// The wait for Time Advance Grant will be at the top of the next frame.
    if ( !interaction->get_federate()->is_time_advance_granted() ) {
       if ( should_print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-         send_hs( stdout, "FreezeInteractionHandler::send_scenario_freeze_interaction():%d Waiting for HLA Time Advance Grant (TAG).%c",
+         send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d Waiting for HLA Time Advance Grant (TAG).%c",
                   __LINE__, THLA_NEWLINE );
       }
       interaction->get_federate()->wait_for_time_advance_grant();
@@ -161,7 +161,7 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
       interaction_hla_time += lookahead;
 
       if ( should_print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-         send_hs( stdout, "FreezeInteractionHandler::send_scenario_freeze_interaction():%d \
+         send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d \
 Late joining federate, Freeze Interaction will now be sent for HLA time:%lf %c",
                   __LINE__, interaction_hla_time.getDoubleTime(), THLA_NEWLINE );
       }
@@ -184,7 +184,7 @@ Late joining federate, Freeze Interaction will now be sent for HLA time:%lf %c",
          freeze_scenario_time = curr_scenario_time + ( freeze_hla_time - granted.getDoubleTime() );
 
          ostringstream infomsg;
-         infomsg << "FreezeInteractionHandler::send_scenario_freeze_interaction():" << __LINE__ << endl
+         infomsg << "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():" << __LINE__ << endl
                  << "  Invalid freeze scenario time:" << freeze_time << endl
                  << "  Current scenario time:" << curr_scenario_time << endl
                  << "  Updated Freeze scenario time:" << freeze_scenario_time << endl
@@ -202,7 +202,7 @@ Late joining federate, Freeze Interaction will now be sent for HLA time:%lf %c",
          freeze_hla_time = freeze_t + lookahead.getDoubleTime();
 
          if ( should_print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-            send_hs( stdout, "FreezeInteractionHandler::send_scenario_freeze_interaction():%d \
+            send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d \
 Freeze HLA time is not an integer multiple of the lookahead time:%lf, using \
 new freeze HLA time:%lf %c",
                      __LINE__, lookahead.getDoubleTime(),
@@ -225,7 +225,7 @@ new freeze HLA time:%lf %c",
    // freeze in the future...
    if ( this->InteractionHandler::send_interaction( interaction_hla_time.getDoubleTime() ) ) {
       ostringstream infomsg;
-      infomsg << "FreezeInteractionHandler::send_scenario_freeze_interaction(Timestamp Order):"
+      infomsg << "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction(Timestamp Order):"
               << __LINE__ << endl
               << "  Freeze Interaction sent TSO at HLA time:" << interaction_hla_time.getDoubleTime() << " ("
               << interaction_hla_time.getTimeInMicros() << " microseconds)" << endl
@@ -239,13 +239,13 @@ new freeze HLA time:%lf %c",
       interaction->get_federate()->add_freeze_scenario_time( time );
 
       if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-         send_hs( stdout, "FreezeInteractionHandler::send_scenario_freeze_interaction()%d: Federation freeze scenario time:%lf %c",
+         send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction()%d: Federation freeze scenario time:%lf %c",
                   __LINE__, time, THLA_NEWLINE );
       }
    } else {
       // The interaction was Not sent.
       ostringstream infomsg;
-      infomsg << "FreezeInteractionHandler::send_scenario_freeze_interaction(Timestamp Order):"
+      infomsg << "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction(Timestamp Order):"
               << __LINE__ << " ERROR: Freeze Interaction Not Sent" << endl
               << "  Freeze Interaction sent TSO at HLA time:" << interaction_hla_time.getDoubleTime() << " ("
               << interaction_hla_time.getTimeInMicros() << " microseconds)" << endl
@@ -261,7 +261,7 @@ void FreezeInteractionHandler::receive_interaction(
    RTI1516_USERDATA const &theUserSuppliedTag )
 {
    ostringstream msg;
-   msg << "FreezeInteractionHandler::receive_interaction():"
+   msg << "IMSim::FreezeInteractionHandler::receive_interaction():"
        << __LINE__ << endl
        << "  Freeze scenario-time:" << time << " ("
        << Int64Interval::toMicroseconds( time ) << " microseconds)"
@@ -271,7 +271,7 @@ void FreezeInteractionHandler::receive_interaction(
    // if the interaction was not initialized into the parent class, get out of here...
    if ( interaction == NULL ) {
       ostringstream errmsg;
-      errmsg << "FreezeInteractionHandler::recieve_interaction():"
+      errmsg << "IMSim::FreezeInteractionHandler::recieve_interaction():"
              << __LINE__ << " ERROR:"
              << " 'interaction' was not initialized to callback an Interaction"
              << " class. Cannot send the time to the Interaction in order for it to"
@@ -283,7 +283,7 @@ void FreezeInteractionHandler::receive_interaction(
 
 #if THLA_FREEZE_INTERACTION_DEBUG
       ostringstream infomsg;
-      infomsg << " FreezeInteractionHandler::receive_interaction():"
+      infomsg << "IMSim::FreezeInteractionHandler::receive_interaction():"
               << __LINE__
               << " ===> debug <===" << endl
               << " granted-time:" << interaction->get_granted_fed_time().getDoubleTime() << endl

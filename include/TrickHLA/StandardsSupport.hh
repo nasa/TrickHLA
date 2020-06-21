@@ -55,22 +55,4 @@ NASA, Johnson Space Center\n
 #define RTI1516_EXCEPTION rti1516e::Exception
 #endif
 
-// The CERTI Runtime Infrastructure (RTI) does not support some of the
-// IEEE 1516 APIs.
-#ifdef CERTI_RTI
-#ifdef IEEE_1516_2010
-#define UNSUPPORTED_RTI_NAME_API
-#define UNSUPPORTED_RTI_VERSION_API
-#define UNSUPPORTED_TIME_MANAGEMENT_API
-
-// Set a default RTI name and version.
-#ifdef UNSUPPORTED_RTI_NAME_API
-#define RTI_NAME "CERTI"
-#endif
-#ifdef UNSUPPORTED_RTI_VERSION_API
-#define RTI_VERSION "Unknown"
-#endif
-#endif
-#endif
-
 #endif // _TRICKHLA_STANDARDS_SUPPORT_HH_

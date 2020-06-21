@@ -124,7 +124,6 @@ ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
       }
       owner = static_cast< char * >( NULL );
    }
-   return;
 }
 
 /*!
@@ -139,7 +138,7 @@ void ExecutionConfiguration::configure_attributes()
    // Check to make sure we have a reference to the TrickHLA::FedAmb.
    if ( S_define_name == NULL ) {
       ostringstream errmsg;
-      errmsg << "ExecutionConfiguration::configure_attributes():" << __LINE__
+      errmsg << "TrickHLA::ExecutionConfiguration::configure_attributes():" << __LINE__
              << " Unexpected NULL S_define_name." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
@@ -182,8 +181,6 @@ void ExecutionConfiguration::configure_attributes()
    trick_name_str                   = exco_name_str + string( ".required_federates" );
    this->attributes[3].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
    this->attributes[3].rti_encoding = ENCODING_UNICODE_STRING;
-
-   return;
 }
 
 /*!
@@ -234,8 +231,6 @@ void ExecutionConfiguration::configure()
 
    // Make sure we use correct function so that it is Trick managed memory.
    this->required_federates = TMM_strdup( (char *)federate_list.str().c_str() );
-
-   return;
 }
 
 /*!
@@ -288,8 +283,6 @@ void ExecutionConfiguration::pack()
            << "\trequired_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'" << endl
            << "===================================================" << endl;
    }
-
-   return;
 }
 
 /*!
@@ -327,8 +320,6 @@ void ExecutionConfiguration::unpack()
 
    // Mark that we have an ExCO update with pending changes.
    this->pending_update = true;
-
-   return;
 }
 
 /*!
@@ -356,5 +347,4 @@ void ExecutionConfiguration::print_execution_configuration()
           << "=============================================================" << THLA_ENDL;
       send_hs( stderr, (char *)msg.str().c_str() );
    }
-   return;
 }
