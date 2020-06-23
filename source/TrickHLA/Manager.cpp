@@ -88,7 +88,6 @@ Manager::Manager()
      restore_federation( 0 ),
      restore_file_name( NULL ),
      initiated_a_federation_save( false ),
-     shutdown_called( false ),
      interactions_queue(),
      check_interactions_count( 0 ),
      check_interactions( NULL ),
@@ -110,15 +109,7 @@ Manager::Manager()
  */
 Manager::~Manager()
 {
-
-   // Shutdown the federate and try to shutdown the federation as well.
-   if ( federate != NULL && federate->is_execution_member() ) {
-      // This is a BAD idea.  We need to come up with a more robust exit.
-      //this->shutdown();
-   }
-
    object_map.clear();
-
    clear_interactions();
 }
 
@@ -676,26 +667,6 @@ joining federate so this call will be ignored.%c",
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    }
-
-   return;
-}
-
-/*!
- * @job_class{shutdown}
- */
-void Manager::shutdown()
-{
-   // Make sure we only run this shutdown code once.
-   if ( !this->shutdown_called ) {
-
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "Manager::shutdown():%d %c", __LINE__,
-                  THLA_NEWLINE );
-      }
-   }
-
-   // Mark that the TrickHLA::Manager:shudown() routine has been called.
-   this->shutdown_called = true;
 
    return;
 }
@@ -3032,4 +3003,9 @@ RTIambassador *Manager::get_RTI_ambassador()
 {
    return ( ( federate != NULL ) ? federate->get_RTI_ambassador()
                                  : static_cast< RTI1516_NAMESPACE::RTIambassador * >( NULL ) );
+}
+
+bool Manager::is_shutdown_called() const
+{
+   return ( ( this->federate != NULL ) ? this->federate->is_shutdown_called() : false );
 }

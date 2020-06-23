@@ -191,7 +191,7 @@ void PausePointList::print_sync_pnts()
    string                              sync_point_label;
 
    ostringstream msg;
-   msg << "PausePointList::print_sync_pnts():" << __LINE__ << endl
+   msg << "IMSim::PausePointList::print_sync_pnts():" << __LINE__ << endl
        << "#############################" << endl
        << "Pause Point Dump: " << sync_point_list.size() << endl;
    lock_read_only();

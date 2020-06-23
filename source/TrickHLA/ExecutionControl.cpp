@@ -93,7 +93,6 @@ ExecutionControl::ExecutionControl(
 ExecutionControl::~ExecutionControl()
 {
    clear_mode_values();
-   return;
 }
 
 /*!
@@ -105,15 +104,12 @@ input files and reduce input file setting errors.
 */
 void ExecutionControl::initialize()
 {
-
    // Simple initialization does not support a Master.
    this->use_preset_master = false;
 
    // Simple initialization does not support known federates.
    federate->enable_known_feds = false;
    federate->known_feds_count  = 0;
-
-   return;
 }
 
 /*!
@@ -123,11 +119,8 @@ void ExecutionControl::initialize()
 */
 void ExecutionControl::join_federation_process()
 {
-
    // The base class implementation is good enough for now.
    TrickHLA::ExecutionControlBase::join_federation_process();
-
-   return;
 }
 
 /*!
@@ -207,8 +200,6 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // Setup the preferred order for all object attributes and interactions.
    get_manager()->setup_preferred_order_with_RTI();
-
-   return;
 }
 
 /*!
@@ -223,8 +214,6 @@ void ExecutionControl::post_multi_phase_init_processes()
 
    // Jump to the GALT.
    federate->time_advance_request_to_GALT();
-
-   return;
 }
 
 void ExecutionControl::shutdown()
@@ -270,7 +259,6 @@ void ExecutionControl::setup_object_RTI_handles()
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    }
-   return;
 }
 
 /*!
@@ -292,8 +280,6 @@ void ExecutionControl::add_initialization_sync_points()
 
    // Add the multiphase initialization synchronization points.
    this->add_multiphase_init_sync_points();
-
-   return;
 }
 
 /*!
@@ -309,13 +295,10 @@ void ExecutionControl::announce_sync_point(
    wstring const &                   label,
    RTI1516_USERDATA const &          user_supplied_tag )
 {
-
    // In this case the default SyncPntListBase::announce_sync_point works.
    // Strictly speaking, we could just not define this.  However, this provides
    // a place to implement if that changes.
    SyncPntListBase::announce_sync_point( rti_ambassador, label, user_supplied_tag );
-
-   return;
 }
 
 /*!
@@ -330,8 +313,6 @@ void ExecutionControl::clear_multiphase_init_sync_points()
              << " support multiphase initialization synchronization points." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    }
-
-   return;
 }
 
 void ExecutionControl::publish()
@@ -364,7 +345,6 @@ void ExecutionControl::receive_interaction(
    RTI1516_NAMESPACE::LogicalTime const &            theTime,
    bool                                              received_as_TSO )
 {
-
    // Return now that we put the interaction-item into the queue.
    return;
 }
@@ -378,7 +358,6 @@ void ExecutionControl::send_mode_transition_interaction(
 void ExecutionControl::set_next_execution_control_mode(
    TrickHLA::ExecutionControlEnum exec_control )
 {
-
    return;
 }
 
@@ -403,19 +382,16 @@ bool ExecutionControl::run_mode_transition()
 
 void ExecutionControl::freeze_mode_announce()
 {
-
    return;
 }
 
 bool ExecutionControl::freeze_mode_transition()
 {
-
    return false;
 }
 
 void ExecutionControl::shutdown_mode_announce()
 {
-
    return;
 }
 
@@ -424,7 +400,6 @@ void ExecutionControl::shutdown_mode_announce()
  */
 void ExecutionControl::shutdown_mode_transition()
 {
-
    return;
 }
 
@@ -464,7 +439,6 @@ void ExecutionControl::set_least_common_time_step(
       // Set for the ExecutionControl.
       this->least_common_time_step = lcts;
    }
-   return;
 }
 
 void ExecutionControl::set_time_padding( double t )
@@ -500,8 +474,6 @@ void ExecutionControl::set_time_padding( double t )
    }
 
    this->time_padding = t;
-
-   return;
 }
 
 void ExecutionControl::start_federation_save_at_scenario_time(
@@ -513,5 +485,4 @@ void ExecutionControl::start_federation_save_at_scenario_time(
           << " ERROR: The ExecutionControl does not yet support SAVE/RESTORE!" << THLA_ENDL;
    send_hs( stderr, (char *)errmsg.str().c_str() );
    exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-   return;
 }

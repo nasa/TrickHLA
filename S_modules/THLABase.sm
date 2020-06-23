@@ -40,7 +40,7 @@
 ##include "TrickHLA/Federate.hh"
 
 //=========================================================================
-// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+// SIM_OBJECT: THLABase - Generalized TrickHLA interface routines.
 //=========================================================================
 
 class THLABaseSimObject : public Trick::SimObject {

@@ -149,7 +149,7 @@ ExecutionControlBase::~ExecutionControlBase()
    // Free the memory used by the array of running Federates for the Federation.
    if ( loggable_sync_pts != static_cast< LoggableTimedSyncPnt * >( NULL ) ) {
       if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         send_hs( stdout, "~Federate() logged_sync_pts_count=%d %c",
+         send_hs( stdout, "~TrickHLA::ExecutionControlBase() logged_sync_pts_count=%d %c",
                   logged_sync_pts_count, THLA_NEWLINE );
       }
       for ( size_t i = 0; i < logged_sync_pts_count; i++ ) {
@@ -159,8 +159,6 @@ ExecutionControlBase::~ExecutionControlBase()
       loggable_sync_pts     = static_cast< LoggableTimedSyncPnt * >( NULL );
       logged_sync_pts_count = 0;
    }
-
-   return;
 }
 
 /*!
@@ -191,8 +189,6 @@ void ExecutionControlBase::setup(
 
    // Configure the default Execution Configuration attributes.
    this->execution_configuration->configure_attributes();
-
-   return;
 }
 
 /*!
@@ -222,8 +218,6 @@ void ExecutionControlBase::setup(
       // Configure the default Execution Configuration attributes.
       this->execution_configuration->configure_attributes();
    }
-
-   return;
 }
 
 /*!
@@ -244,7 +238,7 @@ void ExecutionControlBase::initialize()
 
    if ( !does_scenario_timeline_exist() ) {
       if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         send_hs( stdout, "ExecutionControlBase::initialize():%d WARNING: \
+         send_hs( stdout, "TrickHLA::ExecutionControlBase::initialize():%d WARNING: \
 ExecutionControl 'scenario_timeline' not specified in the input file. Using the \
 Trick simulation time as the default scenario-timeline.%c",
                   __LINE__, THLA_NEWLINE );
@@ -253,9 +247,9 @@ Trick simulation time as the default scenario-timeline.%c",
       // Use the simulation timeline as the default scenario timeline.
       scenario_timeline = &def_scenario_timeline;
       if ( scenario_timeline == static_cast< ScenarioTimeline * >( NULL ) ) {
-         send_hs( stderr, "ExecutionControlBase::initialize():%d FAILED to allocate enough memory for ScenarioTimeline class!%c",
+         send_hs( stderr, "TrickHLA::ExecutionControlBase::initialize():%d FAILED to allocate enough memory for ScenarioTimeline class!%c",
                   __LINE__, THLA_NEWLINE );
-         exec_terminate( __FILE__, "ExecutionControlBase::initialize():%d FAILED to allocate enough memory for ScenarioTimeline class!" );
+         exec_terminate( __FILE__, "TrickHLA::ExecutionControlBase::initialize():%d FAILED to allocate enough memory for ScenarioTimeline class!" );
       }
    }
 
@@ -266,8 +260,6 @@ Trick simulation time as the default scenario-timeline.%c",
    if ( is_execution_configuration_used() ) {
       execution_configuration->configure();
    }
-
-   return;
 }
 
 /*!
@@ -296,12 +288,10 @@ void ExecutionControlBase::join_federation_process()
    // a running federation execution that is shutting down.  This is an
    // unlikely but possible race condition.
    if ( federate->should_print( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "ExecutionControl::join_federation_process():%d Checking for shutdown %c",
+      send_hs( stdout, "TrickHLA::ExecutionControl::join_federation_process():%d Checking for shutdown %c",
                __LINE__, THLA_NEWLINE );
    }
    federate->check_for_shutdown_with_termination();
-
-   return;
 }
 
 /*!
@@ -314,7 +304,7 @@ bool ExecutionControlBase::object_instance_name_reservation_succeeded(
 
    // If ExcutionConfiguration is not set, then there is no match.
    if ( execution_configuration != NULL ) {
-      return ( false );
+      return false;
    }
 
    // Check to see if the ExecutionConfiguration object instance matches this
@@ -332,14 +322,14 @@ bool ExecutionControlBase::object_instance_name_reservation_succeeded(
       execution_configuration->set_name_registered();
 
       if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "ExecutionControlBase::object_instance_name_reservation_succeeded():%d Name:'%ls'%c",
+         send_hs( stdout, "TrickHLA::ExecutionControlBase::object_instance_name_reservation_succeeded():%d Name:'%ls'%c",
                   __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
       }
 
-      return ( true );
+      return true;
    }
 
-   return ( false );
+   return false;
 }
 
 /*!
@@ -351,7 +341,7 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
 
    // If ExcutionConfiguration is not set, then there is no match.
    if ( execution_configuration == NULL ) {
-      return ( false );
+      return false;
    }
 
    wstring ws_exec_config_name;
@@ -368,9 +358,9 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
          this->set_master( false );
       } else { // If this is the designated preset Master federate, then this is an ERROR.
          ostringstream errmsg;
-         errmsg << "ExecutionControlBase::object_instance_name_reservation_failed:" << __LINE__
+         errmsg << "TrickHLA::ExecutionControlBase::object_instance_name_reservation_failed:" << __LINE__
                 << " Failed to reserve the ExecutionConfiguration object instance name: '" << obj_instance_name.c_str()
-                << "'!  This conflicts with this being the designated Master federate!" << THLA_ENDL;
+                << "'! This conflicts with this being the designated Master federate!" << THLA_ENDL;
          send_hs( stderr, (char *)errmsg.str().c_str() );
          exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
       }
@@ -380,15 +370,15 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
       execution_configuration->set_name_registered();
 
       if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "ExecutionControlBase::object_instance_name_reservation_failed():%d Name:'%ls'%c",
+         send_hs( stdout, "TrickHLA::ExecutionControlBase::object_instance_name_reservation_failed():%d Name:'%ls'%c",
                   __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
       }
 
       // We found a match to return 'true'.
-      return ( true );
+      return true;
    }
 
-   return ( false );
+   return false;
 }
 
 /*!
@@ -397,7 +387,7 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
 void ExecutionControlBase::register_objects_with_RTI()
 {
    if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "ExecutionControlBase::register_objects_with_RTI():%d%c",
+      send_hs( stdout, "TrickHLA::ExecutionControlBase::register_objects_with_RTI():%d%c",
                __LINE__, THLA_NEWLINE );
    }
 
@@ -410,8 +400,6 @@ void ExecutionControlBase::register_objects_with_RTI()
       // Place the ExecutionConfiguration object into the Manager's object map.
       this->add_object_to_map( execution_configuration );
    }
-
-   return;
 }
 
 /*!
@@ -422,7 +410,6 @@ void ExecutionControlBase::add_object_to_map(
 {
    // Add the registered ExecutionConfiguration object instance to the map.
    this->manager->add_object_to_map( object );
-   return;
 }
 
 void ExecutionControlBase::wait_for_sync_point_announce(
@@ -456,7 +443,7 @@ void ExecutionControlBase::wait_for_sync_point_announce(
                   wait_count = 0;
                   if ( !federate->is_execution_member() ) {
                      ostringstream errmsg;
-                     errmsg << "ExecutionControlBase::wait_for_sync_point_announce():" << __LINE__
+                     errmsg << "TrickHLA::ExecutionControlBase::wait_for_sync_point_announce():" << __LINE__
                             << " Unexpectedly the Federate is no longer an execution"
                             << " member. This means we are either not connected to the"
                             << " RTI or we are no longer joined to the federation"
@@ -474,7 +461,7 @@ void ExecutionControlBase::wait_for_sync_point_announce(
             StringUtilities::to_string( name, sp->get_label() );
 
             ostringstream errmsg;
-            errmsg << "ExecutionControlBase::wait_for_sync_point_announce():" << __LINE__
+            errmsg << "TrickHLA::ExecutionControlBase::wait_for_sync_point_announce():" << __LINE__
                    << " Synchronization-Point '" << name
                    << "' already announced!";
             send_hs( stderr, (char *)errmsg.str().c_str() );
@@ -484,8 +471,6 @@ void ExecutionControlBase::wait_for_sync_point_announce(
          return;
       }
    }
-
-   return;
 }
 
 /*!
@@ -507,8 +492,6 @@ void ExecutionControlBase::add_multiphase_init_sync_points()
       StringUtilities::to_wstring( ws_label, user_sync_pt_labels.at( i ) );
       multiphase_init_sync_pnt_list.add_sync_pnt( ws_label );
    }
-
-   return;
 }
 
 /*!
@@ -521,7 +504,7 @@ void ExecutionControlBase::clear_multiphase_init_sync_points()
    // initialization process so just return.
    if ( this->manager->is_late_joining_federate() ) {
       if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "ExecutionControlBase::clear_multiphase_init_sync_points():%d Late \
+         send_hs( stdout, "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():%d Late \
 joining federate so this call will be ignored.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -529,7 +512,7 @@ joining federate so this call will be ignored.%c",
    }
 
    if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "ExecutionControlBase::clear_multiphase_init_sync_points():%d %c",
+      send_hs( stdout, "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():%d %c",
                __LINE__, THLA_NEWLINE );
    }
 
@@ -544,37 +527,37 @@ joining federate so this call will be ignored.%c",
 
    } catch ( RTI1516_NAMESPACE::SynchronizationPointLabelNotAnnounced &e ) {
       ostringstream errmsg;
-      errmsg << "ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
+      errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
              << " Exception: SynchronizationPointLabelNotAnnounced" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember &e ) {
       ostringstream errmsg;
-      errmsg << "ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
+      errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
              << " Exception: FederateNotExecutionMember" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    } catch ( RTI1516_NAMESPACE::SaveInProgress &e ) {
       ostringstream errmsg;
-      errmsg << "ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
+      errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
              << " Exception: SaveInProgress" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    } catch ( RTI1516_NAMESPACE::RestoreInProgress &e ) {
       ostringstream errmsg;
-      errmsg << "ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
+      errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
              << " Exception: RestoreInProgress" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    } catch ( RTI1516_NAMESPACE::NotConnected &e ) {
       ostringstream errmsg;
-      errmsg << "ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
+      errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
              << " Exception: NotConnected" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    } catch ( RTI1516_NAMESPACE::RTIinternalError &e ) {
       ostringstream errmsg;
-      errmsg << "ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
+      errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
              << " Exception: RTIinternalError" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
@@ -582,7 +565,7 @@ joining federate so this call will be ignored.%c",
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
-      errmsg << "ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
+      errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
              << " Exception: RTI1516_EXCEPTION " << rti_err_msg << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
@@ -591,8 +574,6 @@ joining federate so this call will be ignored.%c",
    if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       this->print_sync_pnts();
    }
-
-   return;
 }
 
 /*!
@@ -609,8 +590,6 @@ void ExecutionControlBase::achieve_all_multiphase_init_sync_pnts(
    // Iterate through this ExecutionControl's user defined multiphase
    // initialization synchronization point list and achieve them.
    multiphase_init_sync_pnt_list.achieve_all_sync_pnts( rti_ambassador );
-
-   return;
 }
 
 /*!
@@ -621,8 +600,6 @@ void ExecutionControlBase::wait_for_all_multiphase_init_sync_pnts()
    // Wait for all the user defined multiphase initialization sychronization
    // points to be achieved.
    multiphase_init_sync_pnt_list.wait_for_list_synchronization( federate );
-
-   return;
 }
 
 /*!
@@ -632,7 +609,7 @@ void ExecutionControlBase::send_execution_configuration()
 {
    if ( execution_configuration == NULL ) {
       if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "ExecutionControlBase::send_execution_configuration():%d This call \
+         send_hs( stdout, "TrickHLA::ExecutionControlBase::send_execution_configuration():%d This call \
 will be ignored because the sim_initialization_scheme specified does not support it.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -645,7 +622,7 @@ will be ignored because the sim_initialization_scheme specified does not support
    }
 
    if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "ExecutionControlBase::send_ssend_execution_configurationim_config():%d%c", __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "TrickHLA::ExecutionControlBase::send_ssend_execution_configurationim_config():%d%c", __LINE__, THLA_NEWLINE );
    }
 
    // Make sure we have at least one piece of ExecutionConfiguration data we can send.
@@ -656,7 +633,7 @@ will be ignored because the sim_initialization_scheme specified does not support
 
    } else {
       ostringstream errmsg;
-      errmsg << "ExecutionControlBase::send_execution_configuration():" << __LINE__
+      errmsg << "TrickHLA::ExecutionControlBase::send_execution_configuration():" << __LINE__
              << " ERROR: ExecutionConfiguration"
              << " is not configured to send at least one object attribute. Make"
              << " sure at least one ExecutionConfiguration attribute has 'publish = true'"
@@ -665,8 +642,6 @@ will be ignored because the sim_initialization_scheme specified does not support
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    }
-
-   return;
 }
 
 /*!
@@ -676,7 +651,7 @@ void ExecutionControlBase::receive_execution_configuration()
 {
    if ( execution_configuration == NULL ) {
       if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "ExecutionControlBase::receive_execution_configuration():%d This call \
+         send_hs( stdout, "TrickHLA::ExecutionControlBase::receive_execution_configuration():%d This call \
 will be ignored because the sim_initialization_scheme specified does not support it.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -689,7 +664,7 @@ will be ignored because the sim_initialization_scheme specified does not support
    }
 
    if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "ExecutionControlBase::receive_execution_configuration():%d Waiting...%c",
+      send_hs( stdout, "TrickHLA::ExecutionControlBase::receive_execution_configuration():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
 
@@ -712,7 +687,7 @@ will be ignored because the sim_initialization_scheme specified does not support
             wait_count = 0;
             if ( !federate->is_execution_member() ) {
                ostringstream errmsg;
-               errmsg << "ExecutionControlBase::receive_execution_configuration():" << __LINE__
+               errmsg << "TrickHLA::ExecutionControlBase::receive_execution_configuration():" << __LINE__
                       << " Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
@@ -726,7 +701,7 @@ will be ignored because the sim_initialization_scheme specified does not support
       }
 
       if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "ExecutionControlBase::receive_execution_configuration():%d Received data.%c",
+         send_hs( stdout, "TrickHLA::ExecutionControlBase::receive_execution_configuration():%d Received data.%c",
                   __LINE__, THLA_NEWLINE );
       }
 
@@ -735,7 +710,7 @@ will be ignored because the sim_initialization_scheme specified does not support
 
    } else {
       ostringstream errmsg;
-      errmsg << "ExecutionControlBase::receive_execution_configuration():" << __LINE__
+      errmsg << "TrickHLA::ExecutionControlBase::receive_execution_configuration():" << __LINE__
              << " ERROR: ExecutionConfiguration"
              << " is not configured to receive at least one object attribute."
              << " Make sure at least one ExecutionConfiguration attribute has"
@@ -745,8 +720,6 @@ will be ignored because the sim_initialization_scheme specified does not support
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    }
-
-   return;
 }
 
 /*!
@@ -761,7 +734,6 @@ void ExecutionControlBase::send_requested_data(
       // Send the data for the execution-configuration.
       execution_configuration->send_requested_data( current_time, job_cycle_time );
    }
-   return;
 }
 
 /*!
@@ -778,8 +750,6 @@ void ExecutionControlBase::receive_cyclic_data( double current_time )
       // Process and ExecutionConfiguration updates.
       this->process_execution_control_updates();
    }
-
-   return;
 }
 
 /*!
@@ -794,7 +764,6 @@ void ExecutionControlBase::provide_attribute_update(
         && ( execution_configuration->get_instance_handle() == theObject ) ) {
       execution_configuration->provide_attribute_update( theAttributes );
    }
-   return;
 }
 
 /*!
@@ -881,16 +850,16 @@ bool ExecutionControlBase::mark_object_as_deleted_from_federation(
       if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_id );
-         send_hs( stderr, "ExecutionControlBase::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s %c",
+         send_hs( stderr, "TrickHLA::ExecutionControlBase::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s %c",
                   __LINE__, execution_configuration->get_name(), id_str.c_str(),
                   ( instance_id.isValid() ? "Yes" : "No" ), THLA_NEWLINE );
       }
       execution_configuration->remove_object_instance();
 
-      return ( true );
+      return true;
    }
 
-   return ( false );
+   return false;
 }
 
 /*!
@@ -904,7 +873,6 @@ void ExecutionControlBase::process_deleted_objects()
          execution_configuration->process_deleted_object();
       }
    }
-   return;
 }
 
 double ExecutionControlBase::get_sim_time()
@@ -915,7 +883,7 @@ double ExecutionControlBase::get_sim_time()
 
    if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream errmsg;
-      errmsg << "Federate::get_sim_time():" << __LINE__
+      errmsg << "TrickHLA::ExecutionControlBase::get_sim_time():" << __LINE__
              << " WARNING: Unexpected NULL 'THLA.federate.get_sim_time'!"
              << " Please make sure you specify a sim-timeline in your input"
              << " file. Returning Trick simulation time instead!" << THLA_ENDL;
@@ -932,7 +900,7 @@ double ExecutionControlBase::get_scenario_time()
 
    if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream errmsg;
-      errmsg << "ExecutionControlBase::get_scenario_time():" << __LINE__
+      errmsg << "TrickHLA::ExecutionControlBase::get_scenario_time():" << __LINE__
              << " WARNING: Unexpected NULL 'THLA.federate.scenario_timeline'!"
              << " Please make sure you specify a scenario-timeline in your input"
              << " file. Returning Trick simulation time instead!" << THLA_ENDL;
@@ -956,7 +924,6 @@ void ExecutionControlBase::clear_mode_values()
    this->mode_transition_requested        = False;
    this->requested_execution_control_mode = EXECUTION_CONTROL_UNINITIALIZED;
    this->current_execution_control_mode   = EXECUTION_CONTROL_UNINITIALIZED;
-   return;
 }
 
 /*!
@@ -986,17 +953,15 @@ void ExecutionControlBase::enter_freeze()
 {
    // The default is to do nothing.
    if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout,
-               "ExecutionControlBase::enter_freeze():%d Freeze Announced:%s, Freeze Pending:%s%c",
+      send_hs( stdout, "TrickHLA::ExecutionControlBase::enter_freeze():%d Freeze Announced:%s, Freeze Pending:%s%c",
                __LINE__, ( federate->get_freeze_announced() ? "Yes" : "No" ),
                ( federate->get_freeze_pending() ? "Yes" : "No" ), THLA_NEWLINE );
    }
-   return;
 }
 
 bool ExecutionControlBase::check_freeze_exit()
 {
-   return ( false );
+   return false;
 }
 
 void ExecutionControlBase::exit_freeze()
@@ -1011,14 +976,11 @@ void ExecutionControlBase::check_pause( const double check_pause_delta )
 
 void ExecutionControlBase::check_pause_at_init( const double check_pause_delta )
 {
-
    // Dispatch to the ExecutionControl method.
    this->check_pause( check_pause_delta );
 
    // Mark that freeze has been announced in the Federate.
    federate->set_freeze_announced( this->is_master() );
-
-   return;
 }
 
 void ExecutionControlBase::set_master( bool master_flag )
@@ -1046,7 +1008,6 @@ void ExecutionControlBase::setup_checkpoint()
       }
       execution_configuration->setup_ownership_transfer_checkpointed_data();
    }
-   return;
 }
 
 /*!
@@ -1058,7 +1019,6 @@ void ExecutionControlBase::remove_execution_configuration()
    if ( execution_configuration != NULL ) {
       execution_configuration->remove();
    }
-   return;
 }
 
 /*!
@@ -1072,15 +1032,11 @@ void ExecutionControlBase::set_least_common_time_step(
    if ( this->is_master() ) {
       this->least_common_time_step = lcts;
    }
-   return;
 }
 
 void ExecutionControlBase::set_time_padding( double t )
 {
-
    this->time_padding = t;
-
-   return;
 }
 
 bool ExecutionControlBase::should_print(

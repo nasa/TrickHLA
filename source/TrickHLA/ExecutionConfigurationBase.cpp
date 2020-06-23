@@ -84,8 +84,6 @@ ExecutionConfigurationBase::ExecutionConfigurationBase()
    // This is both a TrickHLA::Object and Packing.
    // So, it can safely reference itself.
    this->packing = this;
-
-   return;
 }
 
 /*!
@@ -105,8 +103,6 @@ ExecutionConfigurationBase::ExecutionConfigurationBase(
    // This is both a TrickHLA::Object and Packing.
    // So, it can safely reference itself.
    this->packing = this;
-
-   return;
 }
 
 /*!
@@ -121,8 +117,6 @@ ExecutionConfigurationBase::~ExecutionConfigurationBase()
       }
       S_define_name = static_cast< char * >( NULL );
    }
-
-   return;
 }
 
 /*!
@@ -142,8 +136,6 @@ void ExecutionConfigurationBase::setup(
 
    // Configure the default Execution Configuration attributes.
    this->configure_attributes();
-
-   return;
 }
 
 /*!
@@ -162,8 +154,6 @@ void ExecutionConfigurationBase::set_S_define_name(
 
    // Set the full path S_define name.
    S_define_name = trick_MM->mm_strdup( (char *)new_name );
-
-   return;
 }
 
 void ExecutionConfigurationBase::reset_preferred_order()
@@ -175,8 +165,6 @@ void ExecutionConfigurationBase::reset_preferred_order()
          attributes[i].set_preferred_order( TRANSPORT_RECEIVE_ORDER );
       }
    }
-
-   return;
 }
 
 void ExecutionConfigurationBase::reset_ownership_states()
@@ -203,8 +191,6 @@ void ExecutionConfigurationBase::reset_ownership_states()
          }
       }
    }
-
-   return;
 }
 
 void ExecutionConfigurationBase::set_master(
@@ -235,8 +221,6 @@ void ExecutionConfigurationBase::set_master(
          attributes[i].set_subscribe( true );
       }
    }
-
-   return;
 }
 
 /*!
@@ -246,9 +230,8 @@ void ExecutionConfigurationBase::set_master(
  */
 void ExecutionConfigurationBase::wait_on_registration()
 {
-
    if ( execution_control->should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "ExecutionConfigurationBase::wait_on_registration():%d%c",
+      send_hs( stdout, "TrickHLA::ExecutionConfigurationBase::wait_on_registration():%d%c",
                __LINE__, THLA_NEWLINE );
    }
 
@@ -336,8 +319,6 @@ void ExecutionConfigurationBase::wait_on_registration()
          }
       }
    } while ( any_unregistered_obj );
-
-   return;
 }
 
 bool ExecutionConfigurationBase::wait_on_update() // RETURN: -- None.

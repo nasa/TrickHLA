@@ -96,7 +96,6 @@ ExecutionControl::ExecutionControl()
      mtr_interaction( NULL ),
      mtr_interaction_handler( NULL )
 {
-   return;
 }
 
 /*!
@@ -112,7 +111,6 @@ ExecutionControl::ExecutionControl(
      mtr_interaction( NULL ),
      mtr_interaction_handler( NULL )
 {
-   return;
 }
 
 /*!
@@ -121,7 +119,6 @@ ExecutionControl::ExecutionControl(
 ExecutionControl::~ExecutionControl()
 {
    clear_mode_values();
-   return;
 }
 
 /*!
@@ -184,8 +181,6 @@ void ExecutionControl::initialize()
                   __LINE__, THLA_NEWLINE );
       }
    }
-
-   return;
 }
 
 /*!
@@ -196,7 +191,6 @@ void ExecutionControl::initialize()
  */
 void ExecutionControl::setup_object_ref_attributes()
 {
-   return;
 }
 
 /*!
@@ -320,8 +314,6 @@ allocate enough memory for the ATTRIBUTES for the 'execution_mode' value of the 
                            mtr_interaction_handler.get_address_of_interaction_mode(),
                            (ATTRIBUTES *)mode_attr );
    }
-
-   return;
 }
 
 /*!
@@ -339,7 +331,6 @@ void ExecutionControl::setup_object_RTI_handles()
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    }
-   return;
 }
 
 /*!
@@ -352,7 +343,6 @@ void ExecutionControl::setup_interaction_RTI_handles()
       // SpaceFOM Mode Transition Request (MTR) Interaction.
       this->manager->setup_interaction_RTI_handles( 1, mtr_interaction );
    }
-   return;
 }
 
 /*!
@@ -369,8 +359,6 @@ void ExecutionControl::add_initialization_sync_points()
 
    // Add the multiphase initialization synchronization points.
    this->add_multiphase_init_sync_points();
-
-   return;
 }
 
 void ExecutionControl::announce_sync_point(
@@ -416,8 +404,6 @@ void ExecutionControl::announce_sync_point(
       // federation to be synchronized on it.
       this->achieve_sync_pnt( rti_ambassador, label );
    }
-
-   return;
 }
 
 void ExecutionControl::publish()
@@ -430,8 +416,6 @@ void ExecutionControl::publish()
       // Only publish the MTR interation if we are NOT the Master federate.
       mtr_interaction->publish_interaction();
    }
-
-   return;
 }
 
 void ExecutionControl::unpublish()
@@ -447,8 +431,6 @@ void ExecutionControl::unpublish()
    if ( mtr_interaction->is_publish() ) {
       mtr_interaction->unpublish_interaction();
    }
-
-   return;
 }
 
 void ExecutionControl::subscribe()
@@ -462,8 +444,6 @@ void ExecutionControl::subscribe()
       // Subscribe to the execution configuration if we are not the master federate.
       execution_configuration->subscribe_to_object_attributes();
    }
-
-   return;
 }
 
 void ExecutionControl::unsubscribe()
@@ -479,8 +459,6 @@ void ExecutionControl::unsubscribe()
    if ( mtr_interaction->is_subscribe() ) {
       mtr_interaction->unsubscribe_from_interaction();
    }
-
-   return;
 }
 
 /*!
@@ -504,13 +482,13 @@ void ExecutionControl::receive_interaction(
 
             string handle;
             StringUtilities::to_string( handle, theInteraction );
-            send_hs( stdout, "Manager::receive_interaction(ModeTransitionRequest):%d ID:%s, HLA-time:%G%c",
+            send_hs( stdout, "SpaceFOM::ExecutionControl::receive_interaction(ModeTransitionRequest):%d ID:%s, HLA-time:%G%c",
                      __LINE__, handle.c_str(), _time.getDoubleTime(),
                      THLA_NEWLINE );
          } else {
             string handle;
             StringUtilities::to_string( handle, theInteraction );
-            send_hs( stdout, "Manager::receive_interaction(ModeTransitionRequest):%d ID:%s%c",
+            send_hs( stdout, "SpaceFOM::ExecutionControl::receive_interaction(ModeTransitionRequest):%d ID:%s%c",
                      __LINE__, handle.c_str(), THLA_NEWLINE );
          }
       }
@@ -538,9 +516,6 @@ void ExecutionControl::receive_interaction(
          mtr_interaction->process_interaction();
       }
    }
-
-   // Return now that we put the interaction-item into the queue.
-   return;
 }
 
 /*!
@@ -551,11 +526,8 @@ in section 7.2 and figure 7-3.
 */
 void ExecutionControl::join_federation_process()
 {
-
    // The base class implementation is good enough for now.
    TrickHLA::ExecutionControlBase::join_federation_process();
-
-   return;
 }
 
 /*!
@@ -667,17 +639,15 @@ void ExecutionControl::role_determination_process()
       // Print out diagnostic message if appropriate.
       if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
          if ( this->late_joiner ) {
-            send_hs( stdout, "ExecutionControlBase::role_determination_process():%d This is a Late Joining Federate.%c",
+            send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is a Late Joining Federate.%c",
                      __LINE__, THLA_NEWLINE );
          } else {
-            send_hs( stdout, "ExecutionControlBase::role_determination_process():%d Not a Late Joining Federate.%c",
+            send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d Not a Late Joining Federate.%c",
                      __LINE__, THLA_NEWLINE );
          }
       }
 
    } // End of check for Master federate.
-
-   return;
 }
 
 /*!
@@ -751,8 +721,6 @@ void ExecutionControl::early_joiner_hla_init_process()
    this->achieve_and_wait_for_synchronization( *( federate->get_RTI_ambassador() ),
                                                federate,
                                                SpaceFOM::OBJECTS_DISCOVERED_SYNC_POINT );
-
-   return;
 }
 
 /*!
@@ -841,8 +809,6 @@ void ExecutionControl::late_joiner_hla_init_process()
    // TrickHLA::Manager::initialization_complete() step after any
    // potential Late Joiner specific multi-phase initialization with
    // other late joining federates.
-
-   return;
 }
 
 /*!
@@ -1028,8 +994,6 @@ void ExecutionControl::pre_multi_phase_init_processes()
       // Perform the scenario epoch and root reference frame discovery process.
       this->epoch_and_root_frame_discovery_process();
    }
-
-   return;
 }
 
 /*!
@@ -1226,8 +1190,6 @@ void ExecutionControl::post_multi_phase_init_processes()
       } // End of check for Master federate.
 
    } // End of check for late v. early joining federate.
-
-   return;
 }
 
 /*!
@@ -1235,12 +1197,9 @@ void ExecutionControl::post_multi_phase_init_processes()
  */
 void ExecutionControl::shutdown()
 {
-
-   // FIXME: Do we still need to check for a NULL federate?
    // If this is the Master, let's pause for a moment to let things
    // propagate through the federate before tearing things down.
-   if ( federate != NULL
-        && ( current_execution_control_mode != EXECUTION_CONTROL_SHUTDOWN ) ) {
+   if ( current_execution_control_mode != EXECUTION_CONTROL_SHUTDOWN ) {
 
       // Tell Execution Control to announce the shutdown.
       if ( this->is_master() ) {
@@ -1251,17 +1210,15 @@ void ExecutionControl::shutdown()
          // Let's pause for a moment to let things propagate through the
          // federate before tearing things down.
          if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            send_hs( stdout, "ExecutionControl::shutdown():%d: sleep for %d microsecond.%c", __LINE__,
+            send_hs( stdout, "SpaceFOM::ExecutionControl::shutdown():%d: sleep for %d microsecond.%c", __LINE__,
                      ( useconds_t )( this->get_time_padding() * 1000000 ), THLA_NEWLINE );
          }
-         (void)Utilities::micro_sleep( ( useconds_t )( this->get_time_padding() * 1000000 ) );
+         (void)Utilities::micro_sleep( (useconds_t)this->get_time_padding() * 1000000 );
       }
 
       // Tell the SpaceFOM execution control to transition to shutdown.
       this->shutdown_mode_transition();
    }
-
-   return;
 }
 
 bool ExecutionControl::set_pending_mtr(
@@ -1328,8 +1285,6 @@ void ExecutionControl::set_mode_request_from_mtr(
          this->pending_mtr = MTR_UNINITIALIZED;
          break;
    }
-
-   return;
 }
 
 void ExecutionControl::set_next_execution_control_mode(
@@ -1437,8 +1392,6 @@ void ExecutionControl::set_next_execution_control_mode(
          }
          break;
    }
-
-   return;
 }
 
 bool ExecutionControl::check_mode_transition_request()
@@ -1660,7 +1613,7 @@ bool ExecutionControl::process_execution_control_updates()
    }
 
    // Check for CTE mode time update.
-   if ( ExCO->next_mode_cte_time != this->next_mode_cte_time ) {
+   if ( this->next_mode_cte_time != ExCO->next_mode_cte_time ) {
       this->next_mode_cte_time = ExCO->next_mode_cte_time;
    }
 
@@ -1912,22 +1865,19 @@ bool ExecutionControl::process_execution_control_updates()
 void ExecutionControl::wait_on_root_frame_discovered_synchronization()
 {
    if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::wait_on_root_frame_discovered_synchronization():%d%c",
+      send_hs( stdout, "SpaceFOM::ExecutionControl::wait_on_root_frame_discovered_synchronization():%d%c",
                __LINE__, THLA_NEWLINE );
    }
 
    this->achieve_and_wait_for_synchronization( *( federate->get_RTI_ambassador() ),
                                                federate,
                                                SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT );
-
-   return;
 }
 
 void ExecutionControl::send_mode_transition_interaction(
    ModeTransitionEnum requested_mode )
 {
    send_MTR_interaction( from_mode_transition_enum( requested_mode ) );
-   return;
 }
 
 /*!
@@ -1937,7 +1887,6 @@ void ExecutionControl::send_MTR_interaction(
    SpaceFOM::MTREnum requested_mode )
 {
    this->mtr_interaction_handler.send_interaction( requested_mode );
-   return;
 }
 
 bool ExecutionControl::run_mode_transition()
@@ -2030,13 +1979,10 @@ bool ExecutionControl::run_mode_transition()
 
 void ExecutionControl::freeze_mode_announce()
 {
-
    // Register the 'mtr_freeze' sync-point.
    if ( this->is_master() ) {
       this->register_sync_pnt( *( federate->get_RTI_ambassador() ), L"mtr_freeze" );
    }
-
-   return;
 }
 
 bool ExecutionControl::freeze_mode_transition()
@@ -2095,8 +2041,6 @@ void ExecutionControl::shutdown_mode_announce()
 
    // Clear the mode change request flag.
    this->clear_mode_transition_requested();
-
-   return;
 }
 
 /*!
@@ -2116,10 +2060,12 @@ void ExecutionControl::shutdown_mode_transition()
       return;
    }
 
+   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      send_hs( stdout, "SpaceFOM::ExecutionControl::shutdown_mode_transition():%d Registered 'mtr_shutdown' synchronization point.%c",
+               __LINE__, THLA_NEWLINE );
+   }
    // Register the 'mtr_shutdown' sync-point.
    this->register_sync_pnt( *( federate->get_RTI_ambassador() ), L"mtr_shutdown" );
-
-   return;
 }
 
 /*!
@@ -2128,17 +2074,13 @@ void ExecutionControl::shutdown_mode_transition()
 bool ExecutionControl::check_for_shutdown()
 {
    if ( should_print( DEBUG_LEVEL_FULL_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "ExecutionControl::check_for_shutdown():%d Checking for shutdown %c",
+      send_hs( stdout, "SpaceFOM::ExecutionControl::check_for_shutdown():%d Checking for shutdown %c",
                __LINE__, THLA_NEWLINE );
    }
 
    // Check to see if the mtr_shutdown sync-point has been announced.
    // If so, it's time to say good bye.
-   if ( this->is_sync_pnt_announced( L"mtr_shutdown" ) ) {
-      return true;
-   }
-
-   return false;
+   return ( this->is_sync_pnt_announced( L"mtr_shutdown" ) );
 }
 
 /*!
@@ -2148,9 +2090,8 @@ bool ExecutionControl::check_for_shutdown()
  */
 bool ExecutionControl::check_for_shutdown_with_termination()
 {
-
    if ( should_print( DEBUG_LEVEL_FULL_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "ExecutionControl::check_for_shutdown_with_termination():%d Checking for shutdown %c",
+      send_hs( stdout, "SpaceFOM::ExecutionControl::check_for_shutdown_with_termination():%d Checking for shutdown %c",
                __LINE__, THLA_NEWLINE );
    }
 
@@ -2159,17 +2100,21 @@ bool ExecutionControl::check_for_shutdown_with_termination()
    if ( this->check_for_shutdown() ) {
       ostringstream errmsg;
       errmsg << "ExecutionControl::check_for_shutdown_with_termination():" << __LINE__
-             << " Federate '" << federate->get_federate_name() << "' Shutdown detected: '"
-             << federate->get_federation_name() << "' Federation detected 'mtr_shutdown' sync-point '" << THLA_ENDL;
+             << " Federate '" << this->federate->get_federate_name()
+             << "' Shutdown detected: '" << federate->get_federation_name()
+             << "' Federation detected 'mtr_shutdown' sync-point '" << THLA_ENDL;
 
-      // Tell the manager to shutdown.
-      this->manager->shutdown();
+      // Tell the federate to shutdown.
+      this->federate->shutdown();
+
+      // Wait a little while for the Federate HLA interface to shutdown before
+      // we terminate.
+      Utilities::micro_sleep( 500000 );
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
 
       return true;
    }
-
    return false;
 }
 
@@ -2196,13 +2141,10 @@ void ExecutionControl::freeze_init()
 
    // Make sure that the current execution mode is set to Freeze.
    this->set_current_execution_control_mode( EXECUTION_CONTROL_FREEZE );
-
-   return;
 }
 
 void ExecutionControl::enter_freeze()
 {
-
    // Bypass this if we are already processing a freeze command.
    if ( this->get_requested_execution_control_mode() == EXECUTION_CONTROL_FREEZE ) {
       return;
@@ -2250,8 +2192,6 @@ void ExecutionControl::enter_freeze()
             "SpaceFOM::ExecutionControl::enter_freeze():%d Freeze Announced:%s, Freeze Pending:%s%c",
             __LINE__, ( federate->get_freeze_announced() ? "Yes" : "No" ),
             ( federate->get_freeze_pending() ? "Yes" : "No" ), THLA_NEWLINE );
-
-   return;
 }
 
 bool ExecutionControl::check_freeze_exit()
@@ -2320,8 +2260,6 @@ void ExecutionControl::exit_freeze()
    // particularly true when using the CTE clock and a large mode
    // transition padding time.
    the_clock->clock_reset( the_exec->get_time_tics() );
-
-   return;
 }
 
 ExecutionConfiguration *ExecutionControl::get_execution_configuration()
@@ -2412,8 +2350,6 @@ void ExecutionControl::epoch_and_root_frame_discovery_process()
 
    // Wait on the root_frame_discovered sync-point
    this->wait_on_root_frame_discovered_synchronization();
-
-   return;
 }
 
 /*!
@@ -2434,8 +2370,6 @@ federate so the data will not be sent for '%s'.%c",
    }
 
    send_root_ref_frame();
-
-   return;
 }
 
 /*!
@@ -2481,8 +2415,6 @@ void ExecutionControl::send_root_ref_frame()
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    }
-
-   return;
 }
 
 /*!
@@ -2501,8 +2433,6 @@ void ExecutionControl::receive_init_root_ref_frame()
    }
 
    receive_root_ref_frame();
-
-   return;
 }
 
 /*!
@@ -2581,7 +2511,6 @@ void ExecutionControl::receive_root_ref_frame()
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    }
-   return;
 }
 
 void ExecutionControl::start_federation_save_at_scenario_time(
@@ -2593,7 +2522,6 @@ void ExecutionControl::start_federation_save_at_scenario_time(
           << " ERROR: The ExecutionControl does not yet support SAVE/RESTORE!" << THLA_ENDL;
    send_hs( stderr, (char *)errmsg.str().c_str() );
    exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-   return;
 }
 
 /*!
@@ -2619,7 +2547,6 @@ void ExecutionControl::set_least_common_time_step(
          ExCO->set_least_common_time_step( lcts );
       }
    }
-   return;
 }
 
 void ExecutionControl::set_time_padding( double t )
@@ -2655,6 +2582,4 @@ void ExecutionControl::set_time_padding( double t )
    }
 
    this->time_padding = t;
-
-   return;
 }

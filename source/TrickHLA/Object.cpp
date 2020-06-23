@@ -442,12 +442,10 @@ RTI1516_NAMESPACE::RTIambassador *Object::get_RTI_ambassador()
 void Object::remove()
 {
    // Only delete it if we locally own it.
-   if ( !removed_instance && is_create_HLA_instance() && ( manager != NULL ) && !manager->is_shutdown() ) {
+   if ( !removed_instance && is_create_HLA_instance() && is_shutdown_called() ) {
 
       // Macro to save the FPU Control Word register value.
       TRICKHLA_SAVE_FPU_CONTROL_WORD;
-
-      Federate *trick_fed = get_federate();
 
       // Get the RTI-Ambassador.
       RTIambassador *rti_amb = get_RTI_ambassador();
@@ -460,19 +458,22 @@ void Object::remove()
          // support event retraction so no need to store it.
          try {
 
-            // Only delete an object instance that has a valid instance handle.
-            if ( is_instance_handle_valid() ) {
+            Federate *trick_fed = get_federate();
+            if ( trick_fed != NULL ) {
+               // Only delete an object instance that has a valid instance handle.
+               if ( is_instance_handle_valid() && trick_fed->is_execution_member() ) {
 
-               // Delete the object instance at a specific time if we are
-               // time-regulating.
-               if ( trick_fed->in_time_regulating_state() ) {
-                  Int64Time new_time = get_update_time_plus_lookahead();
-                  (void)rti_amb->deleteObjectInstance( instance_handle,
-                                                       RTI1516_USERDATA( 0, 0 ),
-                                                       new_time.get() );
-               } else {
-                  (void)rti_amb->deleteObjectInstance( instance_handle,
-                                                       RTI1516_USERDATA( 0, 0 ) );
+                  // Delete the object instance at a specific time if we are
+                  // time-regulating.
+                  if ( trick_fed->in_time_regulating_state() ) {
+                     Int64Time new_time = get_update_time_plus_lookahead();
+                     (void)rti_amb->deleteObjectInstance( instance_handle,
+                                                          RTI1516_USERDATA( 0, 0 ),
+                                                          new_time.get() );
+                  } else {
+                     (void)rti_amb->deleteObjectInstance( instance_handle,
+                                                          RTI1516_USERDATA( 0, 0 ) );
+                  }
                }
             }
          } catch ( DeletePrivilegeNotHeld &e ) {
@@ -4324,4 +4325,9 @@ rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generate
 
    // Unlock the ownership mutex now that we have completed attribute ownership transfer.
    ownership_unlock();
+}
+
+bool Object::is_shutdown_called() const
+{
+   return ( ( this->manager != NULL ) ? this->manager->is_shutdown_called() : false );
 }

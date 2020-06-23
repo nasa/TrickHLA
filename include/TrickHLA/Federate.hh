@@ -235,7 +235,10 @@ class Federate
 
    /*! @brief Get a const reference to the joined federate handles.
     *  @return Pointer to associated federation execution name. */
-   RTI1516_NAMESPACE::FederateHandleSet const &get_joined_federate_handles() { return joined_federate_handles; }
+   RTI1516_NAMESPACE::FederateHandleSet const &get_joined_federate_handles()
+   {
+      return joined_federate_handles;
+   }
 
    //
    // Management Object Model (MOM) interfaces.
@@ -406,7 +409,10 @@ class Federate
    bool has_restore_request_succeeded() const { return ( restore_process == Restore_Request_Succeeded ); }
 
    /*! @brief Set the announce save flag. */
-   void set_announce_save() { announce_save = true; }
+   void set_announce_save()
+   {
+      announce_save = true;
+   }
 
    /*! @brief Set the save completed state. */
    void set_save_completed()
@@ -445,21 +451,36 @@ class Federate
    }
 
    /*! @brief Set the restore request failed state. */
-   void set_restore_request_failed() { restore_process = Restore_Request_Failed; }
+   void set_restore_request_failed()
+   {
+      restore_process = Restore_Request_Failed;
+   }
 
    /*! @brief Set the restore request succeeded state. */
-   void set_restore_request_succeeded() { restore_process = Restore_Request_Succeeded; }
+   void set_restore_request_succeeded()
+   {
+      restore_process = Restore_Request_Succeeded;
+   }
 
    /*! @brief Query if federate should publish data.
     *  @return True if data should be published; False otherwise. */
-   bool should_publish_data() const { return publish_data; }
+   bool should_publish_data() const
+   {
+      return publish_data;
+   }
 
    /*! @brief Query if federate has started a restore process.
     *  @return True if restore has started; False otherwise. */
-   bool is_start_to_restore() const { return this->start_to_restore; }
+   bool is_start_to_restore() const
+   {
+      return this->start_to_restore;
+   }
 
    /*! @brief Set the restore is imminent flag. */
-   void set_restore_is_imminent() { this->restore_is_imminent = true; }
+   void set_restore_is_imminent()
+   {
+      this->restore_is_imminent = true;
+   }
 
    /*! @brief Sets the Restore filename and flag.
     * @param status Restore success status from RTI. */
@@ -518,7 +539,10 @@ class Federate
    void reinstate_logged_sync_pts();
 
    /*! @brief Set the start to save flag. */
-   void set_start_to_save() { start_to_save = true; }
+   void set_start_to_save()
+   {
+      start_to_save = true;
+   }
 
    /*! @brief Checks to see if shutdown has been commanded.
     *  @return True if shutdown has been announced, else False. */
@@ -527,6 +551,13 @@ class Federate
    /*! @brief Checks to see if shutdown has been commanded and, if so, terminates the simulation.
     *  @return False if shutdown has NOT been announced. */
    bool check_for_shutdown_with_termination();
+
+   /*! @brief Check if federate is shutdown function was called.
+    *  @return True if the federate is shutting down the federate. */
+   bool is_shutdown_called() const
+   {
+      return this->shutdown_called;
+   }
 
    /*! @brief Check if HLA_save_directory is empty. If so, ask the EXECUTIVE
     * for info and build the absolute path of the RUN directory. */
@@ -588,24 +619,39 @@ class Federate
 
    /*! @brief Set federate execution startup state.
     *  @param flag True for federate started; False otherwise. */
-   void set_startup( bool flag ) { this->got_startup_sp = flag; }
+   void set_startup( bool flag )
+   {
+      this->got_startup_sp = flag;
+   }
 
    //=======================================================================
    // FIXME: Might consider moving these to ExecutionControl.
    /*! @brief Set that federation execution freeze has been announced.
     *  @param flag True for federate freeze announce; False otherwise. */
-   void set_freeze_announced( bool flag ) { this->announce_freeze = flag; }
+   void set_freeze_announced( bool flag )
+   {
+      this->announce_freeze = flag;
+   }
 
    /*! @brief Get that federation execution freeze announced flag state.
     *  @return True for federate freeze announced; False otherwise. */
-   bool get_freeze_announced() { return ( this->announce_freeze ); }
+   bool get_freeze_announced()
+   {
+      return this->announce_freeze;
+   }
 
    /*! @brief Get that federation execution freeze pending flag state.
     *  @return True for federate freeze is pending; False otherwise. */
-   bool get_freeze_pending() { return ( this->freeze_the_federation ); }
+   bool get_freeze_pending()
+   {
+      return this->freeze_the_federation;
+   }
 
    /*! @brief Perform federation execution freeze process. */
-   void unfreeze() { return ( this->un_freeze() ); }
+   void unfreeze()
+   {
+      return this->un_freeze();
+   }
    //=======================================================================
 
    //
@@ -712,79 +758,136 @@ class Federate
    //
    /*! @brief Get the pointer to the associated HLA RTI Ambassador instance.
     *  @return Pointer to associated RTI Ambassador. */
-   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador() { return RTI_ambassador.get(); }
+   RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador()
+   {
+      return RTI_ambassador.get();
+   }
 
    /*! @brief Get the pointer to the associated TrickHLA Federate Ambassador instance.
     *  @return Pointer to associated TrickHLA::FedAmb. */
-   FedAmb *get_fed_ambassador() { return federate_ambassador; }
+   FedAmb *get_fed_ambassador()
+   {
+      return federate_ambassador;
+   }
 
    /*! @brief Get the pointer to the associated TrickHLA::Manager instance.
     *  @return Pointer to associated TrickHLA::Manager. */
-   Manager *get_manager() { return manager; }
+   Manager *get_manager()
+   {
+      return manager;
+   }
 
    /*! @brief Get the pointer to the associated TrickHLA::Manager instance.
     *  @return Pointer to associated TrickHLA::Manager. */
-   ExecutionControlBase *get_execution_control() { return execution_control; }
+   ExecutionControlBase *get_execution_control()
+   {
+      return execution_control;
+   }
 
    /*! @brief Get the pointer to the associated federate name.
     *  @return Pointer to associated federate name. */
-   const char *get_federate_name() const { return name; }
+   const char *get_federate_name() const
+   {
+      return name;
+   }
 
    /*! @brief Get the pointer to the associated federate type.
     *  @return Pointer to associated federate type. */
-   const char *get_federate_type() const { return type; }
+   const char *get_federate_type() const
+   {
+      return type;
+   }
 
    /*! @brief Get the pointer to the associated federation execution name.
     *  @return Pointer to associated federation execution name. */
-   const char *get_federation_name() const { return federation_name; }
+   const char *get_federation_name() const
+   {
+      return federation_name;
+   }
 
    /*! @brief Get the current granted federation execution time in seconds.
     *  @return Current granted federation execution time in seconds. */
-   double get_granted_time() const { return granted_time.getDoubleTime(); }
+   double get_granted_time() const
+   {
+      return granted_time.getDoubleTime();
+   }
 
    /*! @brief Get the requested federation execution time in seconds.
     *  @return Requested federation execution time in seconds. */
-   double get_requested_time() const { return requested_time.getDoubleTime(); }
+   double get_requested_time() const
+   {
+      return requested_time.getDoubleTime();
+   }
 
    /*! @brief Get the current granted federation execution time.
     *  @return Reference to current granted federation execution time. */
-   const Int64Time &get_granted_fed_time() const { return granted_time; }
+   const Int64Time &get_granted_fed_time() const
+   {
+      return granted_time;
+   }
 
    /*! @brief Get the requested federation execution time.
     *  @return Reference to requested federation execution time. */
-   const Int64Time &get_requested_fed_time() const { return requested_time; }
+   const Int64Time &get_requested_fed_time() const
+   {
+      return requested_time;
+   }
 
    /*! @brief Get the current federate lookahead time.
     *  @return Reference to current federate lookahead time. */
-   const Int64Interval &get_lookahead() const { return lookahead; }
+   const Int64Interval &get_lookahead() const
+   {
+      return lookahead;
+   }
 
    /*! @brief Get the current federate lookahead time in seconds.
     *  @return Current federate lookahead time in seconds. */
-   const double get_lookahead_time() const { return lookahead_time; }
+   const double get_lookahead_time() const
+   {
+      return lookahead_time;
+   }
 
    /*! @brief Query of federate has a zero lookahead time.
     *  @return True if lookahead time is zero; Flase otherwise. */
-   const bool is_zero_lookahead_time() const { return ( lookahead_time <= 0.0 ); }
+   const bool is_zero_lookahead_time() const
+   {
+      return ( lookahead_time <= 0.0 );
+   }
 
    /*! @brief Set the name of the save.
     *  @param save_label Save name. */
-   void set_save_name( const std::wstring &save_label ) { this->save_name = save_label; }
+   void set_save_name( const std::wstring &save_label )
+   {
+      this->save_name = save_label;
+   }
 
    /*! @brief Set the name of the restore.
     *  @param restore_label Restore name. */
-   void set_restore_name( const std::wstring &restore_label ) { this->restore_name = restore_label; }
+   void set_restore_name( const std::wstring &restore_label )
+   {
+      this->restore_name = restore_label;
+   }
 
    /*! @brief Get restart state.
     *  @return True if in restart, False otherwise. */
-   bool get_restart() const { return this->restart_flag; }
+   bool get_restart() const
+   {
+      return this->restart_flag;
+   }
 
    /*! @brief Get restart configuration state.
     *  @return True if configuring restart, False otherwise. */
-   bool get_restart_cfg() const { return this->restart_cfg_flag; }
+   bool get_restart_cfg() const
+   {
+      return this->restart_cfg_flag;
+   }
 
    /*! @brief Get stale data counter (DIS only).
     *  @param s Pointer to stale data counter. */
-   void get_stale_data_counter( int *s ) { *s = this->stale_data_counter; }
+   void get_stale_data_counter( int *s )
+   {
+      *s = this->stale_data_counter;
+   }
 
    // Routines to set federation state values.
    /*! @brief Set the name of the federation execution.
@@ -793,23 +896,38 @@ class Federate
 
    /*! @brief Query if time advance has been greanted.
     *  @return True if time advance has been granted; False otherwise. */
-   bool is_time_advance_granted() const { return time_adv_grant; }
+   bool is_time_advance_granted() const
+   {
+      return time_adv_grant;
+   }
 
    /*! @brief Set the time advance grant flag.
     *  @param grant_flag Status of time advance grant. */
-   void set_time_advance_grant( const bool &grant_flag ) { time_adv_grant = grant_flag; }
+   void set_time_advance_grant( const bool &grant_flag )
+   {
+      time_adv_grant = grant_flag;
+   }
 
    /*! @brief Query if the federate is in a time regulating state.
     *  @return True if time regulating; False otherwise. */
-   bool in_time_regulating_state() const { return this->time_regulating_state; }
+   bool in_time_regulating_state() const
+   {
+      return this->time_regulating_state;
+   }
 
    /*! @brief Set the state of time regulation.
     *  @param regulation_state Desired state of time regulation for this federate. */
-   void set_time_regulation_state( const bool &regulation_state ) { time_regulating_state = regulation_state; }
+   void set_time_regulation_state( const bool &regulation_state )
+   {
+      time_regulating_state = regulation_state;
+   }
 
    /*! @brief Set the state of time constraint.
     *  @param constrained_state Desired state of time constraint for this federate. */
-   void set_time_constrained_state( const bool &constrained_state ) { time_constrained_state = constrained_state; }
+   void set_time_constrained_state( const bool &constrained_state )
+   {
+      time_constrained_state = constrained_state;
+   }
 
    /*! @brief Sets the granted time from the specified double.
     *  @param time Granted time in seconds. */
@@ -833,26 +951,38 @@ class Federate
 
    /*! @brief Set start to save flag.
     *  @param save_flag True if save started; False otherwise. */
-   void set_start_to_save( bool save_flag ) { this->start_to_save = save_flag; }
+   void set_start_to_save( bool save_flag )
+   {
+      this->start_to_save = save_flag;
+   }
 
    /*! @brief Set start to restore flag.
     *  @param restore_flag True if restore started; False otherwise. */
-   void set_start_to_restore( bool restore_flag ) { this->start_to_restore = restore_flag; }
+   void set_start_to_restore( bool restore_flag )
+   {
+      this->start_to_restore = restore_flag;
+   }
 
    /*! @brief Set restart flag.
     *  @param restart_now True for federate restart; False otherwise. */
-   void set_restart( bool restart_now ) { this->restart_flag = restart_now; }
+   void set_restart( bool restart_now )
+   {
+      this->restart_flag = restart_now;
+   }
 
    /*! @brief Set restart configuration flag.
     *  @param restart_cfg_now True for configuring restart; False otherwise. */
-   void set_restart_cfg( bool restart_cfg_now ) { this->restart_cfg_flag = restart_cfg_now; }
+   void set_restart_cfg( bool restart_cfg_now )
+   {
+      this->restart_cfg_flag = restart_cfg_now;
+   }
 
    /*! @brief Query if time management is enabled.
     *  @return True if time management is enabled; False otherwise. */
    bool is_time_management_enabled() const
    {
       // Time management is enabled if the local time-management flag is set.
-      return ( time_management );
+      return time_management;
    }
 
    // Checkpoint restart initialization.
@@ -861,7 +991,10 @@ class Federate
 
    /*! @brief Query if federate can rejoin federation.
     *  @return True if federate can rejoin; False otherwise. */
-   bool federate_can_rejoin_federation() const { return can_rejoin_federation; }
+   bool federate_can_rejoin_federation() const
+   {
+      return can_rejoin_federation;
+   }
 
    /*! @brief Query if a federate is required at startup.
     *  @return True if federate is required at startup; False otherwise.
@@ -870,7 +1003,10 @@ class Federate
 
    /*! @brief Query if the federation was created by this federate.
     *  @return True if created by this federate; False otherwise. */
-   bool is_federation_created_by_federate() const { return federation_created_by_federate; }
+   bool is_federation_created_by_federate() const
+   {
+      return federation_created_by_federate;
+   }
 
    /*! @brief Is the federate an execution member, which means is it connected
     * and joined to a federation execution.

@@ -3893,8 +3893,7 @@ void Federate::setup_time_constrained()
 
    // Sanity check.
    if ( RTI_ambassador.get() == NULL ) {
-      exec_terminate( __FILE__,
-                      "Federate::setup_time_constrained() ERROR: NULL pointer to RTIambassador!" );
+      exec_terminate( __FILE__, "Federate::setup_time_constrained() ERROR: NULL pointer to RTIambassador!" );
    }
 
    try {
@@ -4532,13 +4531,15 @@ void Federate::shutdown()
 {
    // We can only shutdown if we have a name since shutdown could have been
    // called in the destructor, so we guard against that.
-   if ( !this->shutdown_called ) {
+   if ( !is_shutdown_called() ) {
       this->shutdown_called = true;
 
       if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         send_hs( stdout, "Federate::shutdown():%d %c", __LINE__,
-                  THLA_NEWLINE );
+         send_hs( stdout, "Federate::shutdown():%d %c", __LINE__, THLA_NEWLINE );
       }
+
+      // Macro to save the FPU Control Word register value.
+      TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
       // Check for Execution Control shutdown.  If this is NULL, then we are
       // probably shutting down prior to initialization.
@@ -4546,14 +4547,6 @@ void Federate::shutdown()
          // Call Execution Control shutdown method.
          this->execution_control->shutdown();
       }
-
-      // Shutdown the manager.
-      if ( this->manager != NULL ) {
-         this->manager->shutdown();
-      }
-
-      // Macro to save the FPU Control Word register value.
-      TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
       // Disable Time Constrained and Time Regulation for this federate.
       this->shutdown_time_management();
@@ -4762,12 +4755,17 @@ void Federate::resign()
                   __LINE__, get_federation_name(), THLA_NEWLINE );
       }
 
-      RTI_ambassador->resignFederationExecution( RTI1516_NAMESPACE::CANCEL_THEN_DELETE_THEN_DIVEST );
+      if ( this->is_execution_member() ) {
+         RTI_ambassador->resignFederationExecution( RTI1516_NAMESPACE::CANCEL_THEN_DELETE_THEN_DIVEST );
 
-      this->federation_joined = false;
+         this->federation_joined = false;
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         send_hs( stdout, "Federate::resign():%d Resigned from Federation '%s'%c",
+         if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+            send_hs( stdout, "Federate::resign():%d Resigned from Federation '%s'%c",
+                     __LINE__, get_federation_name(), THLA_NEWLINE );
+         }
+      } else {
+         send_hs( stdout, "Federate::resign():%d Not execution member of Federation '%s'%c",
                   __LINE__, get_federation_name(), THLA_NEWLINE );
       }
    } catch ( InvalidResignAction &e ) {
@@ -5672,7 +5670,7 @@ not allocate memory for temp_feds when attempting to add an entry into running_f
 not allocate memory for temp_feds when attempting to add an entry into running_feds!" );
    } else {
 
-      // copy current running_feds entries into tempororary structure...
+      // copy current running_feds entries into temporary structure...
       for ( int i = 0; i < running_feds_count; i++ ) {
          temp_feds[i].MOM_instance_name = TMM_strdup( running_feds[i].MOM_instance_name );
          temp_feds[i].name              = TMM_strdup( running_feds[i].name );

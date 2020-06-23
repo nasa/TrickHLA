@@ -89,7 +89,7 @@ void QuaternionEncoder::encode() // Return: -- Nothing.
    } else {
       // Print message and terminate.
       ostringstream errmsg;
-      errmsg << "QuaternionEncoder::encode():" << __LINE__
+      errmsg << "SpaceFOM::QuaternionEncoder::encode():" << __LINE__
              << " Warning: Encoded data size does not match buffer!"
              << "    Encoded size: " << encoded_data.size()
              << " but Expected size: " << get_capacity();

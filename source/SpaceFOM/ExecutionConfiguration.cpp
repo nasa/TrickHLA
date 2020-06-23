@@ -123,7 +123,6 @@ ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
       }
       this->root_frame_name = static_cast< char * >( NULL );
    }
-   return;
 }
 
 /*!
@@ -204,8 +203,6 @@ void ExecutionConfiguration::configure_attributes()
    trick_name_str                   = exco_name_str + string( ".least_common_time_step" );
    this->attributes[6].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
    this->attributes[6].rti_encoding = ENCODING_LITTLE_ENDIAN;
-
-   return;
 }
 
 /*!
@@ -243,8 +240,6 @@ void ExecutionConfiguration::configure()
    // Make sure the ExecutionConfiguration attributes go out in
    // Receive-Order so that a late joining federate can get them.
    reset_preferred_order();
-
-   return;
 }
 
 /*!
@@ -387,8 +382,6 @@ void ExecutionConfiguration::unpack()
 
    // Mark that we have an ExCO update with pending changes.
    this->pending_update = true;
-
-   return;
 }
 
 void ExecutionConfiguration::set_root_frame_name(
@@ -404,8 +397,6 @@ void ExecutionConfiguration::set_root_frame_name(
 
    // Allocate and duplicate the new root reference frame name.
    this->root_frame_name = TMM_strdup( (char *)name );
-
-   return;
 }
 
 /*!
@@ -418,7 +409,6 @@ void ExecutionConfiguration::set_scenario_time_epoch(
    if ( this->execution_control->is_master() ) {
       this->scenario_time_epoch = scenario_time;
    }
-   return;
 }
 
 /*!
@@ -432,7 +422,6 @@ void ExecutionConfiguration::set_next_mode_scenario_time(
    if ( this->execution_control->is_master() ) {
       this->next_mode_scenario_time = next_mode_time;
    }
-   return;
 }
 
 /*!
@@ -446,7 +435,6 @@ void ExecutionConfiguration::set_next_mode_cte_time(
    if ( this->execution_control->is_master() ) {
       this->next_mode_cte_time = cte_time;
    }
-   return;
 }
 
 /*!
@@ -459,7 +447,6 @@ void ExecutionConfiguration::set_current_execution_mode(
    if ( this->execution_control->is_master() ) {
       this->current_execution_mode = mode;
    }
-   return;
 }
 
 /*!
@@ -470,7 +457,6 @@ void ExecutionConfiguration::set_current_execution_mode(
 {
    // WARNING: Only the Master federate should ever set this.
    set_current_execution_mode( SpaceFOM::execution_mode_enum_to_int16( mode ) );
-   return;
 }
 
 /*!
@@ -483,7 +469,6 @@ void ExecutionConfiguration::set_next_execution_mode(
    if ( this->execution_control->is_master() ) {
       this->next_execution_mode = mode;
    }
-   return;
 }
 
 /*!
@@ -494,7 +479,6 @@ void ExecutionConfiguration::set_next_execution_mode(
 {
    // WARNING: Only the Master federate should ever set this.
    set_next_execution_mode( SpaceFOM::execution_mode_enum_to_int16( mode ) );
-   return;
 }
 
 /*!
@@ -508,7 +492,6 @@ void ExecutionConfiguration::set_least_common_time_step(
    if ( execution_control->is_master() ) {
       this->least_common_time_step = lcts;
    }
-   return;
 }
 
 /*!
@@ -564,12 +547,10 @@ void ExecutionConfiguration::setup_ref_attributes(
    this->attributes = (Attribute *)trick_MM->declare_var(
       "Attribute", this->attr_count );
    if ( this->attributes == static_cast< Attribute * >( NULL ) ) {
-      send_hs( stderr,
-               "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():%d FAILED to \
+      send_hs( stderr, "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():%d FAILED to \
 allocate enough memory for the attributes of the ExCO!%c",
                __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__,
-                      "SpaceFOM::ExecutionConfiguration::setup_ref_attributes() FAILED to \
+      exec_terminate( __FILE__, "SpaceFOM::ExecutionConfiguration::setup_ref_attributes() FAILED to \
 allocate enough memory for the attributes of the ExCO!" );
    }
 
@@ -655,7 +636,7 @@ allocate enough memory for the ATTRIBUTES for the 'root_frame_name' value of the
 
    if ( get_federate()->get_manager()->debug_handler.should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       ostringstream msg2;
-      msg2 << "TrickHLA::Manager::setup_interaction_ref_attributes():" << __LINE__
+      msg2 << "SpaceFOM::ExecutionConfiguration::setup_interaction_ref_attributes():" << __LINE__
            << " FOM-Parameter:'" << this->attributes[0].get_FOM_name() << "'"
            << " NOTE: This is an auto-generated parameter so there is no"
            << " associated 'Trick-Name'." << THLA_NEWLINE;
@@ -671,8 +652,6 @@ allocate enough memory for the ATTRIBUTES for the 'root_frame_name' value of the
            << " Object FOM name:'" << this->FOM_name << "'" << THLA_NEWLINE;
       send_hs( stdout, (char *)msg2.str().c_str() );
    }
-
-   return;
 }
 
 void ExecutionConfiguration::print_execution_configuration()
@@ -693,7 +672,6 @@ void ExecutionConfiguration::print_execution_configuration()
           << "=============================================================" << THLA_ENDL;
       send_hs( stderr, (char *)msg.str().c_str() );
    }
-   return;
 }
 
 bool ExecutionConfiguration::wait_on_update() // RETURN: -- None.
