@@ -573,7 +573,7 @@ void Federate::restart_initialization()
       for ( int i = 0; i < known_feds_count; i++ ) {
 
          // A NULL or zero length Federate name is not allowed.
-         if ( ( known_feds[i].name == static_cast< char * >( NULL ) ) || ( strlen( known_feds[i].name ) == 0 ) ) {
+         if ( ( known_feds[i].name == static_cast< char * >( NULL ) ) || ( *known_feds[i].name == '\0' ) ) {
             ostringstream errmsg;
             errmsg << "Federate::restart_initialization():" << __LINE__
                    << " Invalid name of known Federate at array index: "
@@ -2696,17 +2696,16 @@ void Federate::setup_checkpoint()
          // need to prepend federation name to filename entered in sim control panel popup
          found = trick_filename.rfind( slash );
          if ( found != string::npos ) {
-            save_name_str         = trick_filename.substr( found + 1 ); // filename
-            size_t federation_len = strlen( get_federation_name() );
-            if ( save_name_str.compare( 0, federation_len, get_federation_name() ) != 0 ) {
+            save_name_str              = trick_filename.substr( found + 1 );
+            string federation_name_str = string( get_federation_name() );
+            if ( save_name_str.compare( 0, federation_name_str.length(), federation_name_str ) != 0 ) {
                // dir/federation_filename
-               trick_filename.replace( found, slash.length(),
-                                       slash + string( get_federation_name() ) + "_" );
+               trick_filename.replace( found, slash.length(), slash + federation_name_str + "_" );
             } else {
                // If it already has federation name prepended, output_file name
                // is good to go but remove it from save_name_str so our
                // str_save_label setting below is correct
-               save_name_str = trick_filename.substr( found + 1 + federation_len + 1 ); // filename
+               save_name_str = trick_filename.substr( found + 1 + federation_name_str.length() + 1 ); // filename
             }
          } else {
             save_name_str = trick_filename;
@@ -3034,11 +3033,12 @@ void Federate::post_restore()
       // wait until we get a callback to inform us that the federation restore is complete
       string tStr = wait_for_federation_restore_to_complete();
       if ( tStr.length() ) {
-         char errmsg[80];
          wait_for_federation_restore_failed_callback_to_complete();
-         snprintf( errmsg, sizeof( errmsg ), "TrickFederate::post_restore():%d %s %c", __LINE__, tStr.c_str(), THLA_NEWLINE );
-         send_hs( stderr, errmsg );
-         exec_terminate( __FILE__, errmsg );
+         ostringstream errmsg;
+         errmsg << "TrickFederate::post_restore():" << __LINE__
+                << " " << tStr.c_str() << THLA_ENDL;
+         send_hs( stderr, (char *)errmsg.str().c_str() );
+         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
       }
 
       if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -5899,9 +5899,9 @@ void Federate::restore_checkpoint(
 {
    string trick_filename = file_name;
    // DANNY2.7 prepend federation name to the filename (if it's not already prepended)
-   size_t federation_len = strlen( get_federation_name() );
-   if ( trick_filename.compare( 0, federation_len, get_federation_name() ) != 0 ) {
-      trick_filename = string( get_federation_name() ) + "_" + string( file_name );
+   string federation_name_str = string( get_federation_name() );
+   if ( trick_filename.compare( 0, federation_name_str.length(), federation_name_str ) != 0 ) {
+      trick_filename = federation_name_str + "_" + file_name;
    }
    send_hs( stdout, "Federate::restore_checkpoint() Restoring checkpoint file %s%c",
             trick_filename.c_str(), THLA_NEWLINE );
@@ -6014,12 +6014,13 @@ void Federate::read_running_feds_file(
    ifstream file;
 
    // DANNY2.7 prepend federation name to the filename (if it's not already prepended)
-   if ( strncmp( file_name.c_str(), get_federation_name(), strlen( get_federation_name() ) ) == 0 ) {
+   string federation_name_str = string( get_federation_name() );
+   if ( file_name.compare( 0, federation_name_str.length(), federation_name_str ) == 0 ) {
       // already prepended
       full_path = this->HLA_save_directory + "/" + file_name + ".running_feds";
    } else {
       // prepend it here
-      full_path = this->HLA_save_directory + "/" + get_federation_name() + "_" + file_name + ".running_feds";
+      full_path = this->HLA_save_directory + "/" + federation_name_str + "_" + file_name + ".running_feds";
    }
 
    file.open( full_path.c_str(), ios::in );
