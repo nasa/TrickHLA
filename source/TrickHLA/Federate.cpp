@@ -5827,7 +5827,7 @@ void Federate::write_running_feds_file(
    ofstream file;
 
    full_path = this->HLA_save_directory + "/" + file_name + ".running_feds";
-   file.open( full_path, ios::out );
+   file.open( full_path.c_str(), ios::out );
    if ( file.is_open() ) {
       file << this->running_feds_count << endl;
 
@@ -6022,7 +6022,7 @@ void Federate::read_running_feds_file(
       full_path = this->HLA_save_directory + "/" + get_federation_name() + "_" + file_name + ".running_feds";
    }
 
-   file.open( full_path, ios::in );
+   file.open( full_path.c_str(), ios::in );
    if ( file.is_open() ) {
 
       // clear out the known_feds from memory...
