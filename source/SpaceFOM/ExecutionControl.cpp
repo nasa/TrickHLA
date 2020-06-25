@@ -1612,10 +1612,8 @@ bool ExecutionControl::process_execution_control_updates()
       }
    }
 
-   // Check for CTE mode time update.
-   if ( this->next_mode_cte_time != ExCO->next_mode_cte_time ) {
-      this->next_mode_cte_time = ExCO->next_mode_cte_time;
-   }
+   // Enforce CTE mode time update.
+   this->next_mode_cte_time = ExCO->next_mode_cte_time;
 
    // Check for mode changes.
    if ( !mode_change ) {
