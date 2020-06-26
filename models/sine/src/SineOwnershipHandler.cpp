@@ -39,23 +39,23 @@ using namespace std;
 using namespace TrickHLA;
 using namespace TrickHLAModel;
 
-
 /*!
  * @job_class{initialization}
  */
 SineOwnershipHandler::SineOwnershipHandler()
 {
+   return;
 } // Default constructor.
-
 
 /*!
  * @job_class{shutdown}
- */SineOwnershipHandler::~SineOwnershipHandler()
+ */
+SineOwnershipHandler::~SineOwnershipHandler()
 {
+   return;
 }
 
-
- /*!
+/*!
   * @details From the TrickHLA::OwnershipHandler class. We override this
   * function so that we can initialize ownership transfer of some attributes
   * at a specific time.
@@ -63,31 +63,31 @@ SineOwnershipHandler::SineOwnershipHandler()
   * @job_class{initialization}
   */
 void SineOwnershipHandler::initialize_callback(
-   TrickHLA::Object *obj)
+   TrickHLA::Object *obj )
 {
    // Make sure we call the original function so that the callback is initialized.
-   this->OwnershipHandler::initialize_callback(obj);
+   this->OwnershipHandler::initialize_callback( obj );
 
    const int TEST_CASE = 2;
 
    // Get the vector of attribute FOM names.
    VectorOfStrings attr_FOM_names = get_attribute_FOM_names();
 
-   switch (TEST_CASE) {
+   switch ( TEST_CASE ) {
       case 0:
          // Some examples on pulling attribute ownership.
 
          // Examples showing how to Pull all attributes.
          pull_ownership(); // As soon as possible for all attributes.
-         pull_ownership(3.0);
-         pull_ownership(5.0);
+         pull_ownership( 3.0 );
+         pull_ownership( 5.0 );
 
          // Examples showing how to Pull specific attributes.
-         pull_ownership("Time"); // As soon as possible for this attribute.
-         pull_ownership("Value", 6.1);
+         pull_ownership( "Time" ); // As soon as possible for this attribute.
+         pull_ownership( "Value", 6.1 );
 
-         for (unsigned int i = 0; i < attr_FOM_names.size(); i++) {
-            pull_ownership(attr_FOM_names[i].c_str(), 7.0);
+         for ( unsigned int i = 0; i < attr_FOM_names.size(); i++ ) {
+            pull_ownership( attr_FOM_names[i].c_str(), 7.0 );
          }
          break;
 
@@ -96,15 +96,15 @@ void SineOwnershipHandler::initialize_callback(
 
          // Examples showing how to Push all attributes.
          push_ownership(); // As soon as possible for all attributes.
-         push_ownership(3.0);
-         push_ownership(5.0);
+         push_ownership( 3.0 );
+         push_ownership( 5.0 );
 
          // Examples showing how to Push specific attributes.
-         push_ownership("Time"); // As soon as possible for this attribute.
-         push_ownership("Value", 6.1);
+         push_ownership( "Time" ); // As soon as possible for this attribute.
+         push_ownership( "Value", 6.1 );
 
-         for (unsigned int i = 0; i < attr_FOM_names.size(); i++) {
-            push_ownership(attr_FOM_names[i].c_str(), 7.0);
+         for ( unsigned int i = 0; i < attr_FOM_names.size(); i++ ) {
+            push_ownership( attr_FOM_names[i].c_str(), 7.0 );
          }
          break;
 
@@ -112,10 +112,10 @@ void SineOwnershipHandler::initialize_callback(
          // Example showing a mix of pushing and pulling attribute ownership.
 
          push_ownership(); // As soon as possible for all attributes.
-         pull_ownership(3.0);
-         push_ownership(5.0);
-         pull_ownership(7.0);
-         push_ownership("Value", 9.0);
+         pull_ownership( 3.0 );
+         push_ownership( 5.0 );
+         pull_ownership( 7.0 );
+         push_ownership( "Value", 9.0 );
          break;
 
       default:

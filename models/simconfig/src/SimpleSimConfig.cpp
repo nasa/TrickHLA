@@ -42,9 +42,9 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h" // for send_hs
 
 // TrickHLA include files.
+#include "TrickHLA/Constants.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Constants.hh"
 
 // Model include files.
 #include "../include/SimpleSimConfig.hh"
@@ -57,56 +57,55 @@ using namespace TrickHLAModel;
  * @job_class{initialization}
  */
 SimpleSimConfig::SimpleSimConfig()
-   : run_duration(0.0),
-     run_duration_microsec(0L),
-     num_federates(0),
-     required_federates(NULL),
-     owner(NULL)
+   : run_duration( 0.0 ),
+     run_duration_microsec( 0L ),
+     num_federates( 0 ),
+     required_federates( NULL ),
+     owner( NULL )
 {
+   return;
 }
-
 
 /*!
  * @job_class{shutdown}
  */
 SimpleSimConfig::~SimpleSimConfig()
 {
-   if (required_federates != static_cast< char * >(NULL)) {
-      if (TMM_is_alloced(required_federates)) {
-         TMM_delete_var_a(required_federates);
+   if ( required_federates != static_cast< char * >( NULL ) ) {
+      if ( TMM_is_alloced( required_federates ) ) {
+         TMM_delete_var_a( required_federates );
       }
-      required_federates = static_cast< char * >(NULL);
+      required_federates = static_cast< char * >( NULL );
    }
 
-   if (owner != static_cast< char * >(NULL)) {
-      if (TMM_is_alloced(owner)) {
-         TMM_delete_var_a(owner);
+   if ( owner != static_cast< char * >( NULL ) ) {
+      if ( TMM_is_alloced( owner ) ) {
+         TMM_delete_var_a( owner );
       }
-      owner = static_cast< char * >(NULL);
+      owner = static_cast< char * >( NULL );
    }
 }
-
 
 /*!
  * @job_class{initialization}
  */
 void SimpleSimConfig::initialize(
-   int known_feds_count,
-   TrickHLA::KnownFederate *known_feds)
+   int                      known_feds_count,
+   TrickHLA::KnownFederate *known_feds )
 {
    // Release the memory used by the required_federates c-string.
-   if (required_federates != static_cast< char * >(NULL)) {
-      TMM_delete_var_a(required_federates);
-      required_federates = static_cast< char * >(NULL);
+   if ( required_federates != static_cast< char * >( NULL ) ) {
+      TMM_delete_var_a( required_federates );
+      required_federates = static_cast< char * >( NULL );
    }
 
    ostringstream fed_list;
-   int req_fed_cnt = 0;
+   int           req_fed_cnt = 0;
 
    // Build a comma separated list of required federate names.
-   for (int i = 0; i < known_feds_count; i++) {
-      if (known_feds[i].required) {
-         if (req_fed_cnt > 0) {
+   for ( int i = 0; i < known_feds_count; i++ ) {
+      if ( known_feds[i].required ) {
+         if ( req_fed_cnt > 0 ) {
             fed_list << ",";
          }
          fed_list << known_feds[i].name;
@@ -118,15 +117,12 @@ void SimpleSimConfig::initialize(
    this->num_federates = req_fed_cnt;
 
    // Make sure we use correct function so that it is Trick managed memory.
-   this->required_federates = TMM_strdup((char *)fed_list.str().c_str());
-
-   return;
+   this->required_federates = TMM_strdup( (char *)fed_list.str().c_str() );
 }
-
 
 void SimpleSimConfig::pack()
 {
-   if (should_print(DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING)) {
+   if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
       cout << "===================================================" << endl;
    }
 
@@ -134,73 +130,72 @@ void SimpleSimConfig::pack()
 
    // Set the stop/termination time of the Trick simulation based on the
    // run_duration setting.
-   if (terminate_time >= 1.0e20) {
-      if (should_print(DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING)) {
+   if ( terminate_time >= 1.0e20 ) {
+      if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
          cout << "SimpleSimConfig::pack() Setting simulation termination time to "
               << run_duration << " seconds." << endl;
       }
-      exec_set_terminate_time(this->run_duration);
+      exec_set_terminate_time( this->run_duration );
    } else {
       // Set the run_duration based on the Trick simulation termination time
       // and the current granted HLA time.
       this->run_duration = terminate_time - this->object->get_granted_time();
-      if (run_duration < 0.0) {
+      if ( run_duration < 0.0 ) {
          run_duration = 0.0;
       }
 
-      if (should_print(DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING)) {
+      if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
          cout << "SimpleSimConfig::pack() Setting simulation duration to "
               << run_duration << " seconds." << endl;
       }
    }
 
    // Encode the run duration into a 64 bit integer in microseconds.
-   if (this->run_duration < MAX_LOGICAL_TIME_SECONDS) {
-      this->run_duration_microsec = (long long)(this->run_duration * MICROS_MULTIPLIER);
+   if ( this->run_duration < MAX_LOGICAL_TIME_SECONDS ) {
+      this->run_duration_microsec = (long long)( this->run_duration * MICROS_MULTIPLIER );
    } else {
       this->run_duration_microsec = MAX_VALUE_IN_MICROS;
    }
 
-   if (should_print(DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING)) {
+   if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
       cout << "SimpleSimConfig::pack()" << endl
            << "\t Object-Name:'" << this->object->get_name() << "'" << endl
-           << "\t owner:'" << (owner != NULL ? owner : "") << "'" << endl
+           << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'" << endl
            << "\t run_duration:" << run_duration << " seconds" << endl
            << "\t run_duration_microsec:" << run_duration_microsec << " microseconds" << endl
            << "\t num_federates:" << num_federates << endl
-           << "\t required_federates:'" << (required_federates != NULL ? required_federates : "") << "'" << endl
+           << "\t required_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'" << endl
            << "===================================================" << endl;
    }
 }
 
-
 void SimpleSimConfig::unpack()
 {
-   if (should_print(DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING)) {
+   if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
       cout << "===================================================" << endl;
    }
 
    // Decode the run duration from a 64 bit integer in microseconds.
-   this->run_duration = ((double)this->run_duration_microsec) / MICROS_MULTIPLIER;
+   this->run_duration = ( (double)this->run_duration_microsec ) / MICROS_MULTIPLIER;
 
    // Set the stop/termination time of the Trick simulation based on the
    // run_duration setting.
-   if (run_duration >= 0.0) {
-      if (should_print(DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING)) {
+   if ( run_duration >= 0.0 ) {
+      if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
          cout << "SimpleSimConfig::unpack() Setting simulation duration to "
               << run_duration << " seconds." << endl;
       }
-      exec_set_terminate_time(this->run_duration);
+      exec_set_terminate_time( this->run_duration );
    }
 
-   if (should_print(DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING)) {
+   if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
       cout << "SimpleSimConfig::unpack()" << endl
            << "\t Object-Name:'" << this->object->get_name() << "'" << endl
-           << "\t owner:'" << (owner != NULL ? owner : "") << "'" << endl
+           << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'" << endl
            << "\t run_duration:" << run_duration << " seconds" << endl
            << "\t run_duration_microsec:" << run_duration_microsec << " microseconds" << endl
            << "\t num_federates:" << num_federates << endl
-           << "\t required_federates:'" << (required_federates != NULL ? required_federates : "") << "'" << endl
+           << "\t required_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'" << endl
            << "===================================================" << endl;
    }
 }

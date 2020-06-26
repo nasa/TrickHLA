@@ -8,6 +8,7 @@
 # @revs_title
 # @revs_begin
 # @rev_entry{ Edwin Z. Crues, NASA ER7, TrickHLA, April 2019, --, Initial creation based off of TrickHLA scripts.}
+# @rev_entry{ Dan Dexter, NASA ER6, TrickHLA, June 2020, --, Updated to process TrickHLA models code.}
 # @revs_end
 
 import sys
@@ -62,6 +63,8 @@ def main() :
       TrickHLAMessage.failure( 'Could not find the \'include\' directory!' )
    if not os.path.isdir( 'source' ) :
       TrickHLAMessage.failure( 'Could not find the \'source\' directory!' )
+   if not os.path.isdir( 'models' ) :
+      TrickHLAMessage.failure( 'Could not find the \'models\' directory!' )
    if not os.path.isdir( 'scripts' ) :
       TrickHLAMessage.failure( 'Could not find the \'scripts\' directory!' )
    
@@ -69,8 +72,14 @@ def main() :
    # If we got this far, then things look like a TrickHLA directory.
    #
    trickhla_scripts = os.path.join( trickhla_home, 'scripts' )
-   trickhla_include = os.path.join( trickhla_home, 'include' )
-   trickhla_source  = os.path.join( trickhla_home, 'source' )
+
+   # Add all the top level source code directories to format.
+   trickhla_src_paths = []
+   trickhla_src_paths.append( os.path.join( trickhla_home, 'include' ) )
+   trickhla_src_paths.append( os.path.join( trickhla_home, 'source' ) )
+   trickhla_src_paths.append( os.path.join( trickhla_home, 'models/simconfig' ) )
+   trickhla_src_paths.append( os.path.join( trickhla_home, 'models/sine' ) )
+
 
    # Find the CLANG format command.
    clang_format_cmd = find_clang_format( args.llvm_bin, args.verbose )
@@ -106,47 +115,27 @@ def main() :
                    args.in_place, args.test, args.verbose )
       
    else :
-      #
-      # Format the include and source directories.
-      #
-      # Format the include directories.
-      os.chdir( trickhla_include )
-      if args.verbose :
-         if args.clean :
-            TrickHLAMessage.status( 'Cleaning include directory:' )
-         else :
-            TrickHLAMessage.status( 'Formatting include directory:' )
-      dir_list = os.listdir( '.' )
-      for dir_entry in dir_list :
-         # Only interested in directories.  There really should not be any files.
-         if os.path.isfile( dir_entry ) : continue
-         # Either clean up or format the model directory.
-         if args.clean :
-            cleanup_directory( dir_entry, args.test, args.verbose )
-         else :
-            format_directory( dir_entry, clang_format_cmd, trickhla_scripts,
-                              args.in_place, args.test, args.verbose )
-      # End: for dir_entry in dir_list :
-   
-      # Format the source directories.
-      os.chdir( trickhla_source )
-      if args.verbose :
-         if args.clean :
-            TrickHLAMessage.status( 'Cleaning source directory:' )
-         else :
-            TrickHLAMessage.status( 'Formatting source directory:' )
-      dir_list = os.listdir( '.' )
-      for dir_entry in dir_list :
-         # Only interested in directories.  There really should not be any files.
-         if os.path.isfile( dir_entry ) : continue
-         # Either clean up or format the model directory.
-         if args.clean :
-            cleanup_directory( dir_entry, args.test, args.verbose )
-         else :
-            format_directory( dir_entry, clang_format_cmd, trickhla_scripts,
-                              args.in_place, args.test, args.verbose )
-      # End: for dir_entry in dir_list :
-   
+      for src_path in trickhla_src_paths:
+         #
+         # Format the include and source directories.
+         #
+         os.chdir( src_path )
+         if args.verbose :
+            if args.clean :
+               TrickHLAMessage.status( 'Cleaning directory: ' + src_path )
+            else :
+               TrickHLAMessage.status( 'Formatting directory: ' + src_path )
+         dir_list = os.listdir( '.' )
+         for dir_entry in dir_list :
+            # Only interested in directories.  There really should not be any files.
+            if os.path.isfile( dir_entry ) : continue
+            # Either clean up or format the model directory.
+            if args.clean :
+               cleanup_directory( dir_entry, args.test, args.verbose )
+            else :
+               format_directory( dir_entry, clang_format_cmd, trickhla_scripts,
+                                 args.in_place, args.test, args.verbose )
+         # End: for dir_entry in dir_list :
    # End: args.file :
       
    # Let the user know that we are done.
@@ -439,22 +428,22 @@ def format_directory(
       #else :
          # We should probably clean out the directory if it exists
          # but we are not going to do that.
-         
+
    # End: if not in_place :
-      
+
    # Now format recognized files in the directory.
    dir_list = os.listdir( '.' )
    for file in dir_list :
-      
+
       # Only process files.
       if os.path.isfile( file ) and not os.path.islink( file ) :
 
          # Only interested in files with certain extensions.
          if    file.endswith( '.hh' ) \
-            or file.endswith( 'h' ) \
-            or file.endswith( 'cpp' ) \
-            or file.endswith( 'c' )   :
-            
+            or file.endswith( '.h' ) \
+            or file.endswith( '.cpp' ) \
+            or file.endswith( '.c' )   :
+
             # Execute different command depending on 'in place' setting.
             if in_place :
                

@@ -34,7 +34,8 @@ NASA, Johnson Space Center\n
 #define _TRICKHLA_MODLE_SINE_OBJECT_DELETED_HH_
 
 // Forward declarations.
-namespace TrickHLA {
+namespace TrickHLA
+{
 class Object;
 }
 
@@ -56,7 +57,7 @@ class SineObjectDeleted : public TrickHLA::ObjectDeleted
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLAModel__SineObjectDeleted();
 
- public:
+  public:
    //
    // Public constructors and destructor.
    //
@@ -72,17 +73,16 @@ class SineObjectDeleted : public TrickHLA::ObjectDeleted
    /*! @brief Callback routine implementation to report that this object has
     *  been deleted from the RTI.
     *  @param obj Object which was deleted. */
-   void deleted(TrickHLA::Object *obj);
+   void deleted( TrickHLA::Object *obj );
 
- private:
+  private:
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for SineObjectDeleted class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   SineObjectDeleted(const SineObjectDeleted &rhs);
+   SineObjectDeleted( const SineObjectDeleted &rhs );
    /*! @brief Assignment operator for SineObjectDeleted class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   SineObjectDeleted &operator=(const SineObjectDeleted &rhs);
-
+   SineObjectDeleted &operator=( const SineObjectDeleted &rhs );
 };
 
 } // namespace TrickHLAModel

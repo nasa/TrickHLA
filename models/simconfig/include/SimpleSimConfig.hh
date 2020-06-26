@@ -52,11 +52,11 @@ class SimpleSimConfig : public TrickHLA::Packing
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLAModel__SimpleSimConfig();
 
-public:
-   double run_duration;             ///< @trick_units{s}  The run duration of the simulation.
+  public:
+   double    run_duration;          ///< @trick_units{s}  The run duration of the simulation.
    long long run_duration_microsec; ///< @trick_units{us} The run duration in microseconds.
 
-   int num_federates;        ///< @trick_units{--} Number of required federates.
+   int   num_federates;      ///< @trick_units{--} Number of required federates.
    char *required_federates; ///< @trick_units{--} Comma-separated list of required federates.
 
    char *owner; ///< @trick_units{--} Federates name publishing the object.
@@ -69,12 +69,11 @@ public:
    /*! @brief Destructor for the TrickHLAModel SimpleSimConfig class. */
    virtual ~SimpleSimConfig();
 
-
    /*! @brief Initialize the simulation configuration and build the list of
     * federates based on the known federates.
     *  @param known_feds_count Number of known federates.
     *  @param known_feds       Array of known federates. */
-   void initialize(int known_feds_count, TrickHLA::KnownFederate *known_feds);
+   void initialize( int known_feds_count, TrickHLA::KnownFederate *known_feds );
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to pack the data before the data is sent to the RTI. */
@@ -84,15 +83,14 @@ public:
    /*! @brief Called to unpack the data after data is received from the RTI. */
    virtual void unpack();
 
- private:
+  private:
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for SimpleSimConfig class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   SimpleSimConfig(const SimpleSimConfig &rhs);
+   SimpleSimConfig( const SimpleSimConfig &rhs );
    /*! @brief Assignment operator for SimpleSimConfig class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   SimpleSimConfig &operator=(const SimpleSimConfig &rhs);
-
+   SimpleSimConfig &operator=( const SimpleSimConfig &rhs );
 };
 
 } // namespace TrickHLAModel

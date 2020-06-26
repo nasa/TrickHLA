@@ -33,7 +33,8 @@ NASA, Johnson Space Center\n
 #define _TRICKHLA_MODEL_SINE_OWNERSHIP_HANDLER_HH_
 
 // Forward declarations.
-namespace TrickHLA {
+namespace TrickHLA
+{
 class Object;
 }
 
@@ -55,7 +56,7 @@ class SineOwnershipHandler : public TrickHLA::OwnershipHandler
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLAModel__SineOwnershipHandler();
 
- public:
+  public:
    //
    // Public constructors and destructor.
    //
@@ -64,20 +65,18 @@ class SineOwnershipHandler : public TrickHLA::OwnershipHandler
    /*! @brief Destructor for the TrickHLAModel SineOwnershipHandler class. */
    virtual ~SineOwnershipHandler();
 
-
    /*! @brief Initialization callback as part of the TrickHLA::OwnershipHandler functions.
     *  @param obj Object associated with this OwnershipHandler class. */
-   virtual void initialize_callback(TrickHLA::Object *obj);
+   virtual void initialize_callback( TrickHLA::Object *obj );
 
- private:
+  private:
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for SineOwnershipHandler class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   SineOwnershipHandler(const SineOwnershipHandler &rhs);
+   SineOwnershipHandler( const SineOwnershipHandler &rhs );
    /*! @brief Assignment operator for SineOwnershipHandler class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   SineOwnershipHandler &operator=(const SineOwnershipHandler &rhs);
-
+   SineOwnershipHandler &operator=( const SineOwnershipHandler &rhs );
 };
 
 } // namespace TrickHLAModel

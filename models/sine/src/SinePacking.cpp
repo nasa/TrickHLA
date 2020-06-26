@@ -49,54 +49,51 @@ using namespace std;
 using namespace TrickHLA;
 using namespace TrickHLAModel;
 
-
 /*!
  * @job_class{initialization}
  */
 SinePacking::SinePacking()
-   : sim_data(NULL),
-     phase_deg(0.0),
-     pack_count(0),
-     initialized(false),
-     buff_size(0),
-     buff(NULL),
-     time_attr(NULL),
-     value_attr(NULL),
-     dvdt_attr(NULL),
-     phase_attr(NULL),
-     freq_attr(NULL),
-     amp_attr(NULL),
-     tol_attr(NULL),
-     name_attr(NULL)
+   : sim_data( NULL ),
+     phase_deg( 0.0 ),
+     pack_count( 0 ),
+     initialized( false ),
+     buff_size( 0 ),
+     buff( NULL ),
+     time_attr( NULL ),
+     value_attr( NULL ),
+     dvdt_attr( NULL ),
+     phase_attr( NULL ),
+     freq_attr( NULL ),
+     amp_attr( NULL ),
+     tol_attr( NULL ),
+     name_attr( NULL )
 {
+   return;
 }
-
 
 /*!
  * @job_class{shutdown}
  */
 SinePacking::~SinePacking()
 {
-   if (buff != static_cast< unsigned char * >(NULL)) {
-      if (TMM_is_alloced((char *)buff)) {
-         TMM_delete_var_a(buff);
+   if ( buff != static_cast< unsigned char * >( NULL ) ) {
+      if ( TMM_is_alloced( (char *)buff ) ) {
+         TMM_delete_var_a( buff );
       }
-      buff = NULL;
+      buff      = NULL;
       buff_size = 0;
    }
 }
 
-
- /*!
+/*!
   * @job_class{initialization}
   */
 void SinePacking::initialize(
-   SineData *sim_data)
+   SineData *sim_data )
 {
-   this->sim_data = sim_data;
+   this->sim_data    = sim_data;
    this->initialized = true;
 }
-
 
 /*!
  * @details From the TrickHLA::Packing class. We override this function so
@@ -109,28 +106,27 @@ void SinePacking::initialize(
  * @job_class{initialization}
  */
 void SinePacking::initialize_callback(
-   TrickHLA::Object *obj)
+   TrickHLA::Object *obj )
 {
    // We must call the original function so that the callback is initialized.
-   this->Packing::initialize_callback(obj);
+   this->Packing::initialize_callback( obj );
 
    // Get a reference to the TrickHL-AAttribute for all the FOM attributes
    // names. We do this here so that we only do the attribute lookup once
    // instead of looking it up every time the unpack function is called.
-   time_attr = get_attribute_and_validate("Time");
-   value_attr = get_attribute_and_validate("Value");
-   dvdt_attr = get_attribute_and_validate("dvdt");
-   phase_attr = get_attribute_and_validate("Phase");
-   freq_attr = get_attribute_and_validate("Frequency");
-   amp_attr = get_attribute_and_validate("Amplitude");
-   tol_attr = get_attribute_and_validate("Tolerance");
-   name_attr = get_attribute_and_validate("Name");
+   time_attr  = get_attribute_and_validate( "Time" );
+   value_attr = get_attribute_and_validate( "Value" );
+   dvdt_attr  = get_attribute_and_validate( "dvdt" );
+   phase_attr = get_attribute_and_validate( "Phase" );
+   freq_attr  = get_attribute_and_validate( "Frequency" );
+   amp_attr   = get_attribute_and_validate( "Amplitude" );
+   tol_attr   = get_attribute_and_validate( "Tolerance" );
+   name_attr  = get_attribute_and_validate( "Name" );
 }
-
 
 void SinePacking::pack()
 {
-   if (!initialized) {
+   if ( !initialized ) {
       cout << "SinePacking::pack() ERROR: The initialize() function has not"
            << " been called!" << endl;
    }
@@ -150,78 +146,78 @@ void SinePacking::pack()
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if (should_print(DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING)) {
-      string obj_name = (object != NULL) ? object->get_name_string() : "";
+   if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+      string obj_name = ( object != NULL ) ? object->get_name_string() : "";
 
       cout << "SinePacking::pack()" << endl
            << "\t Object-Name:'" << obj_name << "'" << endl
 
            << "\t sim_data->name:'" << sim_data->get_name()
-           << "', Send-as-HLA-Data:" << ((name_attr->is_publish() && name_attr->is_locally_owned()) ? "Yes" : "No") << endl
+           << "', Send-as-HLA-Data:" << ( ( name_attr->is_publish() && name_attr->is_locally_owned() ) ? "Yes" : "No" ) << endl
 
            << "\t sim_data->time:" << sim_data->get_time() << " seconds"
-           << ", Send-as-HLA-Data:" << ((time_attr->is_publish() && time_attr->is_locally_owned()) ? "Yes" : "No") << endl
+           << ", Send-as-HLA-Data:" << ( ( time_attr->is_publish() && time_attr->is_locally_owned() ) ? "Yes" : "No" ) << endl
 
            << "\t sim_data->value:" << sim_data->get_value()
-           << ", Send-as-HLA-Data:" << ((value_attr->is_publish() && value_attr->is_locally_owned()) ? "Yes" : "No") << endl
+           << ", Send-as-HLA-Data:" << ( ( value_attr->is_publish() && value_attr->is_locally_owned() ) ? "Yes" : "No" ) << endl
 
            << "\t sim_data->dvdt:" << sim_data->get_derivative()
-           << ", Send-as-HLA-Data:" << ((dvdt_attr->is_publish() && dvdt_attr->is_locally_owned()) ? "Yes" : "No") << endl
+           << ", Send-as-HLA-Data:" << ( ( dvdt_attr->is_publish() && dvdt_attr->is_locally_owned() ) ? "Yes" : "No" ) << endl
 
            << "\t sim_data->phase:" << sim_data->get_phase() << " radians"
            << " ==> packing-phase:" << phase_deg << " degrees"
-           << ", Send-as-HLA-Data:" << ((phase_attr->is_publish() && phase_attr->is_locally_owned()) ? "Yes" : "No") << endl
+           << ", Send-as-HLA-Data:" << ( ( phase_attr->is_publish() && phase_attr->is_locally_owned() ) ? "Yes" : "No" ) << endl
 
            << "\t sim_data->amp:" << sim_data->get_amplitude()
-           << ", Send-as-HLA-Data:" << ((amp_attr->is_publish() && amp_attr->is_locally_owned()) ? "Yes" : "No") << endl
+           << ", Send-as-HLA-Data:" << ( ( amp_attr->is_publish() && amp_attr->is_locally_owned() ) ? "Yes" : "No" ) << endl
 
            << "\t sim_data->freq:" << sim_data->get_frequency()
-           << ", Send-as-HLA-Data:" << ((freq_attr->is_publish() && freq_attr->is_locally_owned()) ? "Yes" : "No") << endl
+           << ", Send-as-HLA-Data:" << ( ( freq_attr->is_publish() && freq_attr->is_locally_owned() ) ? "Yes" : "No" ) << endl
 
            << "\t sim_data->tol:" << sim_data->get_tolerance()
-           << ", Send-as-HLA-Data:" << ((tol_attr->is_publish() && tol_attr->is_locally_owned()) ? "Yes" : "No") << endl;
+           << ", Send-as-HLA-Data:" << ( ( tol_attr->is_publish() && tol_attr->is_locally_owned() ) ? "Yes" : "No" ) << endl;
    }
 
    // Output more debug information for a higher debug-level.
-   if (should_print(DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_PACKING)) {
+   if ( should_print( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_PACKING ) ) {
 
-      if (buff != NULL) {
+      if ( buff != NULL ) {
          cout << " SinePacking::pack() buff_size: " << buff_size << endl;
          unsigned char c = pack_count % 10;
-         for (int i = 0; i < buff_size; i++) {
+         for ( int i = 0; i < buff_size; i++ ) {
             buff[i] = c;
             cout << " SinePacking::pack() buffer[" << i << "] = " << (int)buff[i] << endl;
          }
       }
 
-      string obj_name = (object != NULL) ? object->get_name_string() : "";
+      string obj_name = ( object != NULL ) ? object->get_name_string() : "";
 
       cout << "SinePacking::pack()" << endl
            << "\t Object-Name:'" << obj_name << "'" << endl;
 
       // This part of the example goes a little deeper into the details of
       // the TrickHLA API's, where most users may never go.
-      string name_attr_str = "Name";
-      Attribute *attr = get_attribute(name_attr_str.c_str());
+      string     name_attr_str = "Name";
+      Attribute *attr          = get_attribute( name_attr_str.c_str() );
 
       cout << "\t FOM-Attribute '" << name_attr_str << "'" << endl;
 
-      if (attr != NULL) {
+      if ( attr != NULL ) {
 
          // Get the address of the "name" simulation data variable.
          char *name_sim_var = (char *)attr->get_sim_variable_address();
 
          // Make a little change to the name and print it out.
-         if (name_sim_var != NULL) {
+         if ( name_sim_var != NULL ) {
 
             // Number of bytes ref-attributes says this variable is.
             const int name_sim_var_size = attr->get_attribute_size();
 
             // Make the last character either a '0' through '9' character so
             // that we can see that the name is changing.
-            int name_len = strnlen(name_sim_var, name_sim_var_size);
-            if (name_len > 0) {
-               name_sim_var[name_len - 1] = (char)(48 + (pack_count % 10));
+            int name_len = strnlen( name_sim_var, name_sim_var_size );
+            if ( name_len > 0 ) {
+               name_sim_var[name_len - 1] = (char)( 48 + ( pack_count % 10 ) );
             }
 
             cout << "\t Value:'" << name_sim_var << "'" << endl;
@@ -237,10 +233,9 @@ void SinePacking::pack()
    }
 }
 
-
 void SinePacking::unpack()
 {
-   if (!initialized) {
+   if ( !initialized ) {
       cout << "SinePacking::unpack() ERROR: The initialize() function has not"
            << " been called!" << endl;
    }
@@ -254,76 +249,76 @@ void SinePacking::unpack()
    // corruption of the state. We always need to do this check because
    // ownership transfers could happen at any time or the data could be at a
    // different rate.
-   if (phase_attr->is_received()) {
+   if ( phase_attr->is_received() ) {
       // For this example to show how to use the Packing API's, we will
       // assume that the phase shared between federates is in degrees so
       // covert it back from degrees to radians.
-      sim_data->set_phase(phase_deg * M_PI / 180.0);
+      sim_data->set_phase( phase_deg * M_PI / 180.0 );
    }
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if (should_print(DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING)) {
+   if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
 
-      string obj_name = (object != NULL) ? object->get_name_string() : "";
+      string obj_name = ( object != NULL ) ? object->get_name_string() : "";
 
       cout << "SinePacking::unpack()" << endl
            << "\t Object-Name:'" << obj_name << "'" << endl
 
            << "\t sim_data->name:'" << sim_data->get_name() << "', Received-HLA-Data:"
-           << (name_attr->is_received() ? "Yes" : "No") << endl
+           << ( name_attr->is_received() ? "Yes" : "No" ) << endl
 
            << "\t sim_data->time:" << sim_data->get_time() << " seconds, Received-HLA-Data:"
-           << (time_attr->is_received() ? "Yes" : "No") << endl
+           << ( time_attr->is_received() ? "Yes" : "No" ) << endl
 
            << "\t sim_data->value:" << sim_data->get_value() << ", Received-HLA-Data:"
-           << (value_attr->is_received() ? "Yes" : "No") << endl
+           << ( value_attr->is_received() ? "Yes" : "No" ) << endl
 
            << "\t sim_data->dvdt:" << sim_data->get_derivative() << ", Received-HLA-Data:"
-           << (dvdt_attr->is_received() ? "Yes" : "No") << endl
+           << ( dvdt_attr->is_received() ? "Yes" : "No" ) << endl
 
            << "\t packing-phase:" << phase_deg << " degrees ==> sim_data->phase:"
            << sim_data->get_phase() << " radians, Received-HLA-Data:"
-           << (phase_attr->is_received() ? "Yes" : "No") << endl
+           << ( phase_attr->is_received() ? "Yes" : "No" ) << endl
 
            << "\t sim_data->amp:" << sim_data->get_amplitude() << ", Received-HLA-Data:"
-           << (amp_attr->is_received() ? "Yes" : "No") << endl
+           << ( amp_attr->is_received() ? "Yes" : "No" ) << endl
 
            << "\t sim_data->freq:" << sim_data->get_frequency() << ", Received-HLA-Data:"
-           << (freq_attr->is_received() ? "Yes" : "No") << endl
+           << ( freq_attr->is_received() ? "Yes" : "No" ) << endl
 
            << "\t sim_data->tol:" << sim_data->get_tolerance() << ", Received-HLA-Data:"
-           << (tol_attr->is_received() ? "Yes" : "No") << endl;
+           << ( tol_attr->is_received() ? "Yes" : "No" ) << endl;
    }
 
    // Output more debug information for a higher debug-level.
-   if (should_print(DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_PACKING)) {
-      if (buff != NULL) {
+   if ( should_print( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_PACKING ) ) {
+      if ( buff != NULL ) {
          cout << " SinePacking::unpack() buff_size: " << buff_size << endl;
-         for (int i = 0; i < buff_size; i++) {
+         for ( int i = 0; i < buff_size; i++ ) {
             cout << " SinePacking::unpack() buffer[" << i << "] = " << (int)buff[i] << endl;
          }
       }
 
-      string obj_name = (object != NULL) ? object->get_name_string() : "";
+      string obj_name = ( object != NULL ) ? object->get_name_string() : "";
 
       cout << "SinePacking::unpack()" << endl
            << "\t Object-Name:'" << obj_name << "'" << endl;
 
       // This part of the example goes a little deeper into the details of
       // the TrickHLA API's where most users may never go.
-      string name_attr_str = "Name";
-      Attribute *attr = get_attribute(name_attr_str.c_str());
+      string     name_attr_str = "Name";
+      Attribute *attr          = get_attribute( name_attr_str.c_str() );
 
       cout << "\t FOM-Attribute '" << name_attr_str << "'" << endl;
 
-      if (attr != NULL) {
+      if ( attr != NULL ) {
 
          // Get the address of the "name" simulation data variable.
          char *name_sim_var = (char *)attr->get_sim_variable_address();
 
          // Display the name.
-         if (name_sim_var != NULL) {
+         if ( name_sim_var != NULL ) {
             cout << "\t Value:'" << name_sim_var << "'" << endl;
          } else {
             cout << "\t Value:NULL" << endl;
