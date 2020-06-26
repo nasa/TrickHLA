@@ -45,32 +45,31 @@ using namespace std;
 using namespace TrickHLA;
 using namespace TrickHLAModel;
 
-
 /*!
  * @job_class{initialization}
  */
 SineConditional::SineConditional()
    : TrickHLA::Conditional(),
-     sim_data(NULL),
-     attr_pos(-1)
+     sim_data( NULL ),
+     attr_pos( -1 )
 {
+   return;
 }
-
 
 /*!
  * @job_class{shutdown}
  */
 SineConditional::~SineConditional()
 {
+   return;
 }
-
 
 /*!
  * @job_class{initialization}
  */
 void SineConditional::initialize(
-   SineData *data,
-   const char *attr_FOM_name)
+   SineData *  data,
+   const char *attr_FOM_name )
 {
    sim_data = data;
 
@@ -79,15 +78,14 @@ void SineConditional::initialize(
    // char *).
    prev_sim_data = *data;
 
-   attr_pos = convert_FOM_name_to_pos(attr_FOM_name);
+   attr_pos = convert_FOM_name_to_pos( attr_FOM_name );
 }
-
 
 /*!
  * @job_class{scheduled}
  */
 bool SineConditional::should_send(
-   TrickHLA::Attribute *attr)
+   TrickHLA::Attribute *attr )
 {
    bool rc = false; // if there is no data or wrong attribute, send nothing!
 
@@ -95,54 +93,53 @@ bool SineConditional::should_send(
    // been specified and if the specified attribute position matches the
    // supplied attribute's position, check the value of the current simulation
    // variable versus the previous value. return true if there was a change.
-   if ((sim_data != NULL) && (attr_pos != -1) &&
-       (convert_FOM_name_to_pos(attr->get_FOM_name()) == attr_pos)) {
+   if ( ( sim_data != NULL ) && ( attr_pos != -1 ) && ( convert_FOM_name_to_pos( attr->get_FOM_name() ) == attr_pos ) ) {
 
-      switch (attr_pos) {
+      switch ( attr_pos ) {
          case 0: { // "Time"
-            if (sim_data->get_time() != prev_sim_data.get_time()) {
+            if ( sim_data->get_time() != prev_sim_data.get_time() ) {
                rc = true;
             }
             break;
          }
          case 1: { // "Value"
-            if (sim_data->get_value() != prev_sim_data.get_value()) {
+            if ( sim_data->get_value() != prev_sim_data.get_value() ) {
                rc = true;
             }
             break;
          }
          case 2: { // "dvdt"
-            if (sim_data->get_derivative() != prev_sim_data.get_derivative()) {
+            if ( sim_data->get_derivative() != prev_sim_data.get_derivative() ) {
                rc = true;
             }
             break;
          }
          case 3: { // "Phase"
-            if (sim_data->get_phase() != prev_sim_data.get_phase()) {
+            if ( sim_data->get_phase() != prev_sim_data.get_phase() ) {
                rc = true;
             }
             break;
          }
          case 4: { // "Frequency"
-            if (sim_data->get_frequency() != prev_sim_data.get_frequency()) {
+            if ( sim_data->get_frequency() != prev_sim_data.get_frequency() ) {
                rc = true;
             }
             break;
          }
          case 5: { // "Amplitude"
-            if (sim_data->get_amplitude() != prev_sim_data.get_amplitude()) {
+            if ( sim_data->get_amplitude() != prev_sim_data.get_amplitude() ) {
                rc = true;
             }
             break;
          }
          case 6: { // "Tolerance"
-            if (sim_data->get_tolerance() != prev_sim_data.get_tolerance()) {
+            if ( sim_data->get_tolerance() != prev_sim_data.get_tolerance() ) {
                rc = true;
             }
             break;
          }
          case 7: { // "Name"
-            if (strcmp(sim_data->get_name(), prev_sim_data.get_name()) != 0) {
+            if ( strcmp( sim_data->get_name(), prev_sim_data.get_name() ) != 0 ) {
                rc = true;
             }
             break;
@@ -151,15 +148,14 @@ bool SineConditional::should_send(
 
       prev_sim_data = *sim_data; // make a copy of the current data
    } else {
-      send_hs(stderr, "SineConditional::should_send('%s') => ERROR: Either you \
+      send_hs( stderr, "SineConditional::should_send('%s') => ERROR: Either you \
 forgot to call the initialize() routine to specify the attribute FOM name from \
 the sim_data you wish to track or you provided the wrong TrickHLA-Attribute to \
 an already-initialized SineConditional!",
-              attr->get_FOM_name());
+               attr->get_FOM_name() );
    }
    return rc;
 }
-
 
 /*!
  * @details If a match does not exist or a empty string was supplied, -1 is
@@ -167,19 +163,19 @@ an already-initialized SineConditional!",
  * @job_class{scheduled}
  */
 int SineConditional::convert_FOM_name_to_pos(
-   const char *attr_FOM_name)
+   const char *attr_FOM_name )
 {
    string attr_name = attr_FOM_name;
 
-   if (!attr_name.empty()) {
+   if ( !attr_name.empty() ) {
       // Speed up the code by NOT using string compares, which are very costly!
       // instead, compare the first character of the attribute. since there is
       // only one overlapping first character, this should be a very fast
       // algorithm...
-      char first = attr_name[0];
+      char first  = attr_name[0];
       char second = attr_name[1];
 
-      switch (first) {
+      switch ( first ) {
          case 'A': {
             return 5; // "Amplitude"
          }
@@ -193,7 +189,7 @@ int SineConditional::convert_FOM_name_to_pos(
             return 3; // "Phase"
          }
          case 'T': {
-            if (second == 'i') {
+            if ( second == 'i' ) {
                return 0; // "Time"
             } else {
                return 6; // "Tolerance"

@@ -42,29 +42,28 @@ NASA, Johnson Space Center\n
 using namespace TrickHLA;
 using namespace TrickHLAModel;
 
-
 /*!
  * @job_class{initialization}
  */
 SineObjectDeleted::SineObjectDeleted()
    : TrickHLA::ObjectDeleted()
 {
+   return;
 }
-
 
 /*!
  * @job_class{shutdown}
  */
 SineObjectDeleted::~SineObjectDeleted()
 {
+   return;
 }
 
-
 void SineObjectDeleted::deleted(
-   TrickHLA::Object *obj)
+   TrickHLA::Object *obj )
 {
    std::ostringstream msg;
    msg << "SineObjectDeleted::deleted() Object '" << obj->get_name()
        << "' deleted from the federation.";
-   send_hs(stdout, (char *)msg.str().c_str());
+   send_hs( stdout, (char *)msg.str().c_str() );
 }

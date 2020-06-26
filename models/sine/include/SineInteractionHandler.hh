@@ -54,11 +54,11 @@ class SineInteractionHandler : public TrickHLA::InteractionHandler
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLAModel__SineInteractionHandler();
 
- public:
+  public:
    char *name;    ///< @trick_units{--} Example of a unique name to identify the interaction handler.
    char *message; ///< @trick_units{--} Example of a static array of strings.
 
- public:
+  public:
    //
    // Public constructors and destructor.
    //
@@ -67,32 +67,31 @@ class SineInteractionHandler : public TrickHLA::InteractionHandler
    /*! @brief Destructor for the TrickHLAModel SineInteractionHandler class. */
    virtual ~SineInteractionHandler();
 
- public:
+  public:
    /*! @brief Send the HLA interaction using either Timestamp Order or Receive
     * Order which is determined at compile time.
     *  @param send_time HLA time to send the interaction {s}. */
-   void send_sine_interaction(double send_time);
+   void send_sine_interaction( double send_time );
 
    /*! @brief Receive the HLA interaction.
     *  @param the_user_supplied_tag User tag. */
-   virtual void receive_interaction(RTI1516_USERDATA const &the_user_supplied_tag);
+   virtual void receive_interaction( RTI1516_USERDATA const &the_user_supplied_tag );
 
- protected:
+  protected:
    double time; ///< @trick_units{s}  Example of floating-point data.
-   int year;    ///< @trick_units{--} Example of integer data.
+   int    year; ///< @trick_units{--} Example of integer data.
 
    int send_cnt;    ///< @trick_units{--} The number of times an interaction is sent.
    int receive_cnt; ///< @trick_units{--} The number of times an interaction was received.
 
- private:
+  private:
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for SineInteractionHandler class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   SineInteractionHandler(const SineInteractionHandler &rhs);
+   SineInteractionHandler( const SineInteractionHandler &rhs );
    /*! @brief Assignment operator for SineInteractionHandler class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   SineInteractionHandler &operator=(const SineInteractionHandler &rhs);
-
+   SineInteractionHandler &operator=( const SineInteractionHandler &rhs );
 };
 
 } // namespace TrickHLAModel

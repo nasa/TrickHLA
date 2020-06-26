@@ -33,7 +33,8 @@ NASA, Johnson Space Center\n
 #define _TRICKHLA_MODEL_SINE_PACKING_HH_
 
 // Forward declarations.
-namespace TrickHLA {
+namespace TrickHLA
+{
 class Object;
 }
 
@@ -59,8 +60,7 @@ class SinePacking : public TrickHLA::Packing
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLAModel__SinePacking();
 
- public:
-
+  public:
    SineData *sim_data; ///< @trick_units{--} Simulation data.
 
    double phase_deg; ///< @trick_units{degree} Phase offset in degrees.
@@ -82,7 +82,7 @@ class SinePacking : public TrickHLA::Packing
    TrickHLA::Attribute *tol_attr;   ///< @trick_io{**} Reference to the "Tolerance" TrickHLA::Attribute.
    TrickHLA::Attribute *name_attr;  ///< @trick_io{**} Reference to the "Name" TrickHLA::Attribute.
 
- public:
+  public:
    //
    // Public constructors and destructor.
    //
@@ -91,14 +91,13 @@ class SinePacking : public TrickHLA::Packing
    /*! @brief Destructor for the TrickHLAModel SinePacking class. */
    virtual ~SinePacking();
 
-
    /*! @brief Initialize the packing object.
     *  @param sim_data The sine wave data object for packing and unpacking. */
-   void initialize(SineData *sim_data);
+   void initialize( SineData *sim_data );
 
    /*! @brief Initialization callback as part of the TrickHLA::Packing functions.
     *  @param obj Object associated with this packing class. */
-   virtual void initialize_callback(TrickHLA::Object *obj);
+   virtual void initialize_callback( TrickHLA::Object *obj );
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to pack the data before the data is sent to the RTI. */
@@ -108,16 +107,14 @@ class SinePacking : public TrickHLA::Packing
    /*! @brief Called to unpack the data after data is received from the RTI. */
    virtual void unpack();
 
-
- private:
+  private:
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for SinePacking class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   SinePacking(const SinePacking &rhs);
+   SinePacking( const SinePacking &rhs );
    /*! @brief Assignment operator for SinePacking class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   SinePacking &operator=(const SinePacking &rhs);
-
+   SinePacking &operator=( const SinePacking &rhs );
 };
 
 } // namespace TrickHLAModel

@@ -33,7 +33,8 @@ NASA, Johnson Space Center\n
 #define _TRICKHLA_MODLE_SINE_LAG_COMPENSATION_HH_
 
 // Forward declarations.
-namespace TrickHLA {
+namespace TrickHLA
+{
 class Object;
 }
 
@@ -59,7 +60,7 @@ class SineLagCompensation : public TrickHLA::LagCompensation
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLAModel__SineLagCompensation();
 
- public:
+  public:
    //
    // Public constructors and destructor.
    //
@@ -68,18 +69,17 @@ class SineLagCompensation : public TrickHLA::LagCompensation
    /*! @brief Destructor for the TrickHLAModel SineLagCompensation class. */
    virtual ~SineLagCompensation();
 
-
    /*! @brief Initialize the LagCompensation object.
     *  @param sim_data      The sine wave data object.
     *  @param lag_comp_data The sine wave lag compensation data. */
-   void initialize(SineData *sim_data, SineData *lag_comp_data);
+   void initialize( SineData *sim_data, SineData *lag_comp_data );
 
    //
    // From the TrickHLALag::Compensation class.
    //
    /*! @brief Initialization callback as part of the TrickHLA::LagCompensation functions.
     *  @param obj TrickHLA Object associated with this LagCompensation class. */
-   virtual void initialize_callback(TrickHLA::Object *obj);
+   virtual void initialize_callback( TrickHLA::Object *obj );
 
    /*! @brief Send side lag-compensation where we propagate the sine wave state
     *  head by dt to predict the value at the next data cycle. */
@@ -89,7 +89,7 @@ class SineLagCompensation : public TrickHLA::LagCompensation
     *  state ahead by dt to predict the value at the next data cycle. */
    virtual void receive_lag_compensation();
 
- private:
+  private:
    SineData *sim_data;      ///< @trick_units{--} Simulation data.
    SineData *lag_comp_data; ///< @trick_units{--} Lag compensation data.
 
@@ -102,15 +102,14 @@ class SineLagCompensation : public TrickHLA::LagCompensation
    TrickHLA::Attribute *tol_attr;   ///< @trick_io{**} Reference to the "Tolerance" TrickHLA::Attribute.
    TrickHLA::Attribute *name_attr;  ///< @trick_io{**} Reference to the "Name" TrickHLA::Attribute.
 
- private:
+  private:
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for SineLagCompensation class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   SineLagCompensation(const SineLagCompensation &rhs);
+   SineLagCompensation( const SineLagCompensation &rhs );
    /*! @brief Assignment operator for SineLagCompensation class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   SineLagCompensation &operator=(const SineLagCompensation &rhs);
-
+   SineLagCompensation &operator=( const SineLagCompensation &rhs );
 };
 
 } // namespace TrickHLAModel
