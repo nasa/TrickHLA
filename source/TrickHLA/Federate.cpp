@@ -3193,7 +3193,7 @@ void Federate::time_advance_request_to_GALT()
 
    if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::time_advance_request_to_GALT():%d Logical Time:%lf%c",
-               __LINE__, requested_time.get_double_time(), THLA_NEWLINE );
+               __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
    }
 
    // Perform the time-advance request to go to the requested time.
@@ -3253,7 +3253,7 @@ void Federate::time_advance_request_to_GALT_LCTS_multiple()
 
    if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::time_advance_request_to_GALT_LCTS_multiple():%d Logical Time:%lf%c",
-               __LINE__, requested_time.get_double_time(), THLA_NEWLINE );
+               __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
    }
 
    // Perform the time-advance request to go to the requested time.
@@ -4053,7 +4053,7 @@ void Federate::setup_time_regulation()
    try {
       if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::setup_time_regulation():%d \"%s\": ENABLING TIME REGULATION WITH LOOKAHEAD = %G seconds.%c",
-                  __LINE__, get_federation_name(), lookahead.get_double_time(), THLA_NEWLINE );
+                  __LINE__, get_federation_name(), lookahead.get_time_in_seconds(), THLA_NEWLINE );
       }
 
       // RTI_amb->enableTimeRegulation() is an implicit
@@ -4262,7 +4262,7 @@ void Federate::perform_time_advance_request()
 
       if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::perform_time_advance_request():%d Time Advance Request (TAR) to %.12G seconds.%c",
-                  __LINE__, requested_time.get_double_time(), THLA_NEWLINE );
+                  __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
       }
 
       try {
@@ -4375,7 +4375,7 @@ void Federate::wait_for_time_advance_grant()
 
    if ( should_print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_for_time_advance_grant():%d Waiting for Time Advance Grant (TAG) to %.12G seconds.%c",
-               __LINE__, requested_time.get_double_time(), THLA_NEWLINE );
+               __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
    }
 
    if ( !this->time_adv_grant ) {
@@ -4469,7 +4469,7 @@ void Federate::wait_for_time_advance_grant(
 
    if ( should_print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_for_time_advance_grant():%d Waiting for Time Advance Grant (TAG) to %.12G seconds.%c",
-               __LINE__, requested_time.get_double_time(), THLA_NEWLINE );
+               __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
    }
 
    // This spin lock waits for the time advance grant from the RTI.

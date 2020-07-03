@@ -1085,7 +1085,7 @@ void ExecutionControl::announce_sync_point(
 
       if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "IMSim::ExecutionControl::announce_sync_point():%d IMSim Pause Sync-Point:'%ls' Pause-time:%g %c",
-                  __LINE__, label.c_str(), pauseTime->get_double_time(), THLA_NEWLINE );
+                  __LINE__, label.c_str(), pauseTime->get_time_in_seconds(), THLA_NEWLINE );
       }
       this->add_pause( pauseTime, label );
 
@@ -1119,7 +1119,7 @@ void ExecutionControl::announce_sync_point(
                      __LINE__, label.c_str(), THLA_NEWLINE );
          } else {
             send_hs( stdout, "IMSim::ExecutionControl::announce_sync_point():%d IMSim Pause Sync-Point:'%ls' Pause-time:%g %c",
-                     __LINE__, label.c_str(), pauseTime->get_double_time(), THLA_NEWLINE );
+                     __LINE__, label.c_str(), pauseTime->get_time_in_seconds(), THLA_NEWLINE );
          }
       }
       this->add_pause( pauseTime, label );
@@ -1368,7 +1368,7 @@ void ExecutionControl::receive_interaction(
                string handle;
                StringUtilities::to_string( handle, theInteraction );
                send_hs( stdout, "Manager::receive_interaction(FREEZE):%d ID:%s, HLA-time:%G%c",
-                        __LINE__, handle.c_str(), _time.get_double_time(),
+                        __LINE__, handle.c_str(), _time.get_time_in_seconds(),
                         THLA_NEWLINE );
             } else {
                string handle;
@@ -2583,7 +2583,7 @@ bool ExecutionControl::check_scenario_freeze_time()
                infomsg << "Federate::check_scenario_freeze_time():" << __LINE__
                        << " Going to Trick FREEZE mode immediately:" << endl;
                if ( federate->time_management ) {
-                  infomsg << "  Granted HLA-time:" << federate->granted_time.get_double_time() << endl;
+                  infomsg << "  Granted HLA-time:" << federate->granted_time.get_time_in_seconds() << endl;
                }
                infomsg << "  Trick sim-time:" << curr_sim_time << endl
                        << "  Freeze sim-time:" << freeze_sim_time << endl
@@ -2690,8 +2690,8 @@ void ExecutionControl::reinstate_logged_sync_pts()
             /***
             //DANNY2.7 TODO: you sometimes get an exception for sync point not announced when you restore,
             //         is that an RTI bug or something we can fix here?
-            if (is_master() && (sync_point_time.get_double_time() <= get_sim_time()) ) {
-                register_generic_sync_point( sync_point_label, sync_point_time.get_double_time());
+            if (is_master() && (sync_point_time.get_time_in_seconds() <= get_sim_time()) ) {
+                register_generic_sync_point( sync_point_label, sync_point_time.get_time_in_seconds());
             }
             ***/
          }

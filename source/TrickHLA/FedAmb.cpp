@@ -651,7 +651,7 @@ void FedAmb::reflectAttributeValues(
          Int64Time time;
          time.set( theTime );
          send_hs( stdout, "FedAmb:reflectAttributeValues():%d '%s' time:%f %c",
-                  __LINE__, trickhla_obj->get_name(), time.get_double_time(),
+                  __LINE__, trickhla_obj->get_name(), time.get_time_in_seconds(),
                   THLA_NEWLINE );
       }
 
@@ -702,7 +702,7 @@ void FedAmb::reflectAttributeValues(
          Int64Time time;
          time.set( theTime );
          send_hs( stdout, "FedAmb:reflectAttributeValues():%d '%s' time:%f %c",
-                  __LINE__, trickhla_obj->get_name(), time.get_double_time(), THLA_NEWLINE );
+                  __LINE__, trickhla_obj->get_name(), time.get_time_in_seconds(), THLA_NEWLINE );
       }
 
 #ifdef THLA_OBJECT_TIME_LOGGING
@@ -1534,7 +1534,7 @@ void FedAmb::timeAdvanceGrant(
          send_hs( stdout, "FedAmb::timeAdvanceGrant():%d\nFederate \"%s\" \
 IGNORING GRANTED TIME %.12G because it is less then requested time %.12G %c",
                   __LINE__, federate->get_federate_name(),
-                  int64Time->get_double_time(),
+                  int64Time->get_time_in_seconds(),
                   federate->get_requested_time(), THLA_NEWLINE );
       }
    }

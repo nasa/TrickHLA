@@ -428,7 +428,7 @@ void ExecutionControl::announce_sync_point(
 
       if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "DIS::ExecutionControl::announce_sync_point():%d DIS Pause Sync-Point:'%ls' Pause-time:%g %c",
-                  __LINE__, label.c_str(), pauseTime->get_double_time(), THLA_NEWLINE );
+                  __LINE__, label.c_str(), pauseTime->get_time_in_seconds(), THLA_NEWLINE );
       }
       this->add_pause( pauseTime, label );
 

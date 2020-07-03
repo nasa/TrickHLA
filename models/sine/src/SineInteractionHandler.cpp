@@ -98,8 +98,8 @@ void SineInteractionHandler::send_sine_interaction(
    }
 
    // Get the HLA granted time and lookahead time.
-   double hla_granted_time = get_granted_fed_time().get_double_time();
-   double lookahead_time   = get_fed_lookahead().get_double_time();
+   double hla_granted_time = get_granted_fed_time().get_time_in_seconds();
+   double lookahead_time   = get_fed_lookahead().get_time_in_seconds();
 
    // Calculate the timestamp we will use to send the interaction in Timestamp
    // Order by using the HLA granted time and the lookahead time.

@@ -23,6 +23,7 @@ NASA, Johnson Space Center\n
 @rev_entry{Robert G. Phillips, Titan Corp., DIS, October 2004, --, Initial implementation for ISS HTV Sim}
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, March 2019, --, Version 2 origin.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, July 2020, --, Changed function names to match TrickHLA coding style.}
 @revs_end
 
 */
@@ -75,7 +76,7 @@ Int64Time::Int64Time(
  */
 Int64Time::Int64Time(
    RTI1516_NAMESPACE::HLAinteger64Time const &value )
-   : _HLAtime( value )
+   : hla_time( value )
 {
    return;
 }
@@ -85,7 +86,7 @@ Int64Time::Int64Time(
  */
 Int64Time::Int64Time(
    Int64Time const &value )
-   : _HLAtime( value.get_time_in_micros() )
+   : hla_time( value.get_time_in_micros() )
 {
    return;
 }
@@ -101,35 +102,35 @@ Int64Time::~Int64Time()
 void Int64Time::decode(
    RTI1516_USERDATA const &user_supplied_tag )
 {
-   _HLAtime.decode( user_supplied_tag );
+   hla_time.decode( user_supplied_tag );
 }
 
-long Int64Time::get_seconds() const
+int64_t Int64Time::get_seconds() const
 {
-   return ( (long)( _HLAtime.getTime() / MICROS_MULTIPLIER ) );
+   return ( ( int64_t )( hla_time.getTime() / MICROS_MULTIPLIER ) );
 }
 
-int Int64Time::get_micros() const
+int32_t Int64Time::get_micros() const
 {
-   return ( (int)( _HLAtime.getTime() % MICROS_MULTIPLIER ) );
+   return ( ( int32_t )( hla_time.getTime() % MICROS_MULTIPLIER ) );
 }
 
 int64_t Int64Time::get_time_in_micros() const
 {
-   return ( _HLAtime.getTime() );
+   return ( hla_time.getTime() );
 }
 
-double Int64Time::get_double_time() const
+double Int64Time::get_time_in_seconds() const
 {
-   double t = (double)( (double)get_micros() / (double)MICROS_MULTIPLIER );
-   t += (double)get_seconds();
-   return ( t );
+   double seconds = (double)get_seconds();
+   double micros  = (double)get_micros() / (double)MICROS_MULTIPLIER;
+   return ( seconds + micros );
 }
 
 wstring Int64Time::to_string() const
 {
    char buf[128];
-   sprintf( buf, "Int64Time<%0.06f>", get_double_time() );
+   sprintf( buf, "Int64Time<%0.06f>", get_time_in_seconds() );
    string  str( buf );
    wstring wstr;
    wstr.assign( str.begin(), str.end() );
@@ -139,24 +140,25 @@ wstring Int64Time::to_string() const
 void Int64Time::set(
    const int64_t value )
 {
-   _HLAtime.setTime( value );
+   hla_time.setTime( value );
 }
 
 void Int64Time::set(
    const double value )
 {
-   _HLAtime = Int64Interval::to_microseconds( value );
+   hla_time = Int64Interval::to_microseconds( value );
 }
 
 void Int64Time::set(
    RTI1516_NAMESPACE::LogicalTime const &value )
 {
    const RTI1516_NAMESPACE::HLAinteger64Time &p = dynamic_cast< const RTI1516_NAMESPACE::HLAinteger64Time & >( value );
-   _HLAtime                                     = p.getTime();
+
+   hla_time = p.getTime();
 }
 
 void Int64Time::set(
    Int64Time const &value )
 {
-   _HLAtime = value.get_time_in_micros();
+   hla_time = value.get_time_in_micros();
 }
