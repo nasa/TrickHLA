@@ -989,7 +989,7 @@ bool Interaction::send(
 
          if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
             send_hs( stdout, "Interaction::send():%d As Timestamp-Order: Interaction '%s' sent for time %lf seconds.%c",
-                     __LINE__, get_FOM_name(), time.get_double_time(), THLA_NEWLINE );
+                     __LINE__, get_FOM_name(), time.get_time_in_seconds(), THLA_NEWLINE );
          }
 
          // Do not send any interactions if federate save / restore has begun (see
@@ -1034,7 +1034,7 @@ Interaction '%s' is time-regulating:%s, preferred-order:%s.%c",
       errmsg << "Interaction::send():" << __LINE__ << " As "
              << ( send_with_timestamp ? "Timestamp Order" : "Receive Order" )
              << ", InvalidLogicalTime exception for " << get_FOM_name()
-             << "  time=" << time.get_double_time() << " ("
+             << "  time=" << time.get_time_in_seconds() << " ("
              << time.get_time_in_micros() << " microseconds)"
              << " error message:'" << rti_err_msg.c_str() << "'" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
@@ -1081,7 +1081,7 @@ void Interaction::process_interaction()
       if ( received_as_TSO ) {
          send_hs( stdout, "Interaction::process_interaction():%d ID:%s, FOM_name:'%s', HLA time:%G, Timestamp-Order%c",
                   __LINE__, handle_str.c_str(), get_FOM_name(),
-                  time.get_double_time(), THLA_NEWLINE );
+                  time.get_time_in_seconds(), THLA_NEWLINE );
       } else {
          send_hs( stdout, "Interaction::process_interaction():%d ID:%s, FOM_name:'%s', Receive-Order%c",
                   __LINE__, handle_str.c_str(), get_FOM_name(), THLA_NEWLINE );

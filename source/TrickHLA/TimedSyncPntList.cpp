@@ -168,7 +168,7 @@ void TimedSyncPntList::print_sync_pnts()
       TimedSyncPnt *timed_i = dynamic_cast< TimedSyncPnt * >( *i );
       sync_point_label.assign( ( *i )->get_label().begin(), ( *i )->get_label().end() );
       msg << sync_point_label << " "
-          << timed_i->get_time().get_double_time() << " "
+          << timed_i->get_time().get_time_in_seconds() << " "
           << ( *i )->get_state() << endl;
    }
    msg << "#############################" << endl;

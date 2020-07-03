@@ -809,14 +809,14 @@ class Federate
     *  @return Current granted federation execution time in seconds. */
    double get_granted_time() const
    {
-      return granted_time.get_double_time();
+      return granted_time.get_time_in_seconds();
    }
 
    /*! @brief Get the requested federation execution time in seconds.
     *  @return Requested federation execution time in seconds. */
    double get_requested_time() const
    {
-      return requested_time.get_double_time();
+      return requested_time.get_time_in_seconds();
    }
 
    /*! @brief Get the current granted federation execution time.

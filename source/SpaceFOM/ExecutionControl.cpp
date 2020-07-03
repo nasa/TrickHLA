@@ -485,7 +485,7 @@ void ExecutionControl::receive_interaction(
             string handle;
             StringUtilities::to_string( handle, theInteraction );
             send_hs( stdout, "SpaceFOM::ExecutionControl::receive_interaction(ModeTransitionRequest):%d ID:%s, HLA-time:%G%c",
-                     __LINE__, handle.c_str(), _time.get_double_time(),
+                     __LINE__, handle.c_str(), _time.get_time_in_seconds(),
                      THLA_NEWLINE );
          } else {
             string handle;

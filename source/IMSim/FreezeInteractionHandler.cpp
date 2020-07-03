@@ -100,8 +100,8 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
    ostringstream msg;
    msg << "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():" << __LINE__
        << " ===> debug <===" << endl
-       << " granted-time:" << interaction->get_granted_fed_time().get_double_time() << endl
-       << " lookahead-time:" << interaction->get_fed_lookahead().get_double_time() << endl;
+       << " granted-time:" << interaction->get_granted_fed_time().get_time_in_seconds() << endl
+       << " lookahead-time:" << interaction->get_fed_lookahead().get_time_in_seconds() << endl;
    send_hs( stdout, (char *)msg.str().c_str() );
 #endif
 
@@ -151,7 +151,7 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
 
    double curr_scenario_time   = interaction->get_federate()->get_scenario_time();
    double freeze_scenario_time = freeze_time;
-   double freeze_hla_time      = granted.get_double_time() + ( freeze_scenario_time - curr_scenario_time );
+   double freeze_hla_time      = granted.get_time_in_seconds() + ( freeze_scenario_time - curr_scenario_time );
 
    // The freeze interaction will go out as soon as possible even if the
    // federation freeze time is further out in the future. This is the HLA
@@ -166,7 +166,7 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
       if ( should_print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d \
 Late joining federate, Freeze Interaction will now be sent for HLA time:%lf %c",
-                  __LINE__, interaction_hla_time.get_double_time(), THLA_NEWLINE );
+                  __LINE__, interaction_hla_time.get_time_in_seconds(), THLA_NEWLINE );
       }
    }
 
@@ -176,15 +176,15 @@ Late joining federate, Freeze Interaction will now be sent for HLA time:%lf %c",
 
    // Make sure the time we freeze the federation (on the HLA timeline) is
    // greater than the HLA time the interaction will go out on (TSO).
-   if ( freeze_hla_time < interation_time_plus_lookahead.get_double_time() ) {
+   if ( freeze_hla_time < interation_time_plus_lookahead.get_time_in_seconds() ) {
 
       // Update the time to the earliest time that we can freeze the federation,
       // which is one lookahead frame after the freeze interaction goes out.
-      freeze_hla_time = interation_time_plus_lookahead.get_double_time();
+      freeze_hla_time = interation_time_plus_lookahead.get_time_in_seconds();
 
       if ( should_print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          // Recalculate the freeze scenario time from the updated freeze HLA time.
-         freeze_scenario_time = curr_scenario_time + ( freeze_hla_time - granted.get_double_time() );
+         freeze_scenario_time = curr_scenario_time + ( freeze_hla_time - granted.get_time_in_seconds() );
 
          ostringstream infomsg;
          infomsg << "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():" << __LINE__ << endl
@@ -192,30 +192,30 @@ Late joining federate, Freeze Interaction will now be sent for HLA time:%lf %c",
                  << "  Current scenario time:" << curr_scenario_time << endl
                  << "  Updated Freeze scenario time:" << freeze_scenario_time << endl
                  << "  Freeze federation at HLA time:" << freeze_hla_time << endl
-                 << "  Freeze Interaction sent for HLA time:" << interaction_hla_time.get_double_time() << endl
-                 << "  Current granted HLA time:" << granted.get_double_time() << THLA_ENDL;
+                 << "  Freeze Interaction sent for HLA time:" << interaction_hla_time.get_time_in_seconds() << endl
+                 << "  Current granted HLA time:" << granted.get_time_in_seconds() << THLA_ENDL;
          send_hs( stdout, (char *)infomsg.str().c_str() );
       }
    }
 
    // Make sure the freeze HLA time is an integer multiple of the lookahead.
    if ( lookahead > 0.0 ) {
-      double freeze_t = trunc( freeze_hla_time / lookahead.get_double_time() ) * lookahead.get_double_time();
+      double freeze_t = trunc( freeze_hla_time / lookahead.get_time_in_seconds() ) * lookahead.get_time_in_seconds();
       if ( freeze_hla_time > freeze_t ) {
-         freeze_hla_time = freeze_t + lookahead.get_double_time();
+         freeze_hla_time = freeze_t + lookahead.get_time_in_seconds();
 
          if ( should_print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
             send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d \
 Freeze HLA time is not an integer multiple of the lookahead time:%lf, using \
 new freeze HLA time:%lf %c",
-                     __LINE__, lookahead.get_double_time(),
+                     __LINE__, lookahead.get_time_in_seconds(),
                      freeze_hla_time, THLA_NEWLINE );
          }
       }
    }
 
    // Recalculate the freeze scenario time from the updated freeze HLA time.
-   freeze_scenario_time = curr_scenario_time + ( freeze_hla_time - granted.get_double_time() );
+   freeze_scenario_time = curr_scenario_time + ( freeze_hla_time - granted.get_time_in_seconds() );
 
    // Make sure we update the passed in time so we pass back the right value.
    freeze_time = freeze_scenario_time;
@@ -226,11 +226,11 @@ new freeze HLA time:%lf %c",
    // Notify the parent interaction handler to send the interaction using
    // Timestamp Order at the earliest convenience, even if the federation is to
    // freeze in the future...
-   if ( this->InteractionHandler::send_interaction( interaction_hla_time.get_double_time() ) ) {
+   if ( this->InteractionHandler::send_interaction( interaction_hla_time.get_time_in_seconds() ) ) {
       ostringstream infomsg;
       infomsg << "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction(Timestamp Order):"
               << __LINE__ << endl
-              << "  Freeze Interaction sent TSO at HLA time:" << interaction_hla_time.get_double_time() << " ("
+              << "  Freeze Interaction sent TSO at HLA time:" << interaction_hla_time.get_time_in_seconds() << " ("
               << interaction_hla_time.get_time_in_micros() << " microseconds)" << endl
               << "  Federation Freeze scenario time:" << time << " ("
               << Int64Interval::to_microseconds( time ) << " microseconds)" << endl
@@ -250,7 +250,7 @@ new freeze HLA time:%lf %c",
       ostringstream infomsg;
       infomsg << "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction(Timestamp Order):"
               << __LINE__ << " ERROR: Freeze Interaction Not Sent" << endl
-              << "  Freeze Interaction sent TSO at HLA time:" << interaction_hla_time.get_double_time() << " ("
+              << "  Freeze Interaction sent TSO at HLA time:" << interaction_hla_time.get_time_in_seconds() << " ("
               << interaction_hla_time.get_time_in_micros() << " microseconds)" << endl
               << "  Federation Freeze scenario time:" << time << " ("
               << Int64Interval::to_microseconds( time ) << " microseconds)" << endl
@@ -289,8 +289,8 @@ void FreezeInteractionHandler::receive_interaction(
       infomsg << "IMSim::FreezeInteractionHandler::receive_interaction():"
               << __LINE__
               << " ===> debug <===" << endl
-              << " granted-time:" << interaction->get_granted_fed_time().get_double_time() << endl
-              << " lookahead-time:" << interaction->get_fed_lookahead().get_double_time()
+              << " granted-time:" << interaction->get_granted_fed_time().get_time_in_seconds() << endl
+              << " lookahead-time:" << interaction->get_fed_lookahead().get_time_in_seconds()
               << THLA_ENDL;
       send_hs( stdout, (char *)infomsg.str().c_str() );
 #endif

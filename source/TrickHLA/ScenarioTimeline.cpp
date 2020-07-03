@@ -82,7 +82,7 @@ Int64Time ScenarioTimeline::compute_HLT(
 double ScenarioTimeline::time_from_HLT(
    Int64Time hlt )
 {
-   return ( hlt.get_double_time() + hlt_offset.get_double_time() + epoch );
+   return ( hlt.get_time_in_seconds() + hlt_offset.get_time_in_seconds() + epoch );
 }
 
 double ScenarioTimeline::get_time()
