@@ -79,7 +79,7 @@ TimedSyncPnt::~TimedSyncPnt()
 
 std::wstring TimedSyncPnt::to_string()
 {
-   wstring result = L"[" + label + L"/" + time.toString() + L"] -- ";
+   wstring result = L"[" + label + L"/" + time.to_string() + L"] -- ";
    switch ( this->state ) {
 
       case SYNC_PNT_STATE_ERROR:
@@ -124,7 +124,7 @@ void TimedSyncPnt::convert( LoggableSyncPnt &log_sync_pnt )
       log_sync_pnt.label = StringUtilities::ip_strdup_wstring( this->label );
       log_sync_pnt.state = this->state;
    } else {
-      timed_log_sync_pnt->time  = this->time.getTimeInMicros();
+      timed_log_sync_pnt->time  = this->time.get_time_in_micros();
       timed_log_sync_pnt->label = StringUtilities::ip_strdup_wstring( this->label );
       timed_log_sync_pnt->state = this->state;
    }

@@ -40,16 +40,16 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 #include "trick/trick_byteswap.h"
 
-// HLA include files.
-#include "TrickHLA/StandardsSupport.hh"
-#include RTI1516_HEADER
-
 // TrickHLA include files.
 #include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Utilities.hh"
+
+// HLA include files.
+#include RTI1516_HEADER
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
@@ -174,7 +174,6 @@ void ExecutionControlBase::setup(
    TrickHLA::Manager &                   manager,
    TrickHLA::ExecutionConfigurationBase &exec_config )
 {
-
    // Set the TrickHLA::Federate instance reference.
    this->federate = &federate;
 
@@ -202,7 +201,6 @@ void ExecutionControlBase::setup(
    TrickHLA::Federate &federate,
    TrickHLA::Manager & manager )
 {
-
    // Set the TrickHLA::Federate instance reference.
    this->federate = &federate;
 
@@ -225,7 +223,6 @@ void ExecutionControlBase::setup(
  */
 void ExecutionControlBase::initialize()
 {
-
    // Set Trick's realtime clock to the CTE clock if used.
    if ( this->does_cte_timeline_exist() ) {
       this->cte_timeline->clock_init();
@@ -338,7 +335,6 @@ bool ExecutionControlBase::object_instance_name_reservation_succeeded(
 bool ExecutionControlBase::object_instance_name_reservation_failed(
    std::wstring const &obj_instance_name )
 {
-
    // If ExcutionConfiguration is not set, then there is no match.
    if ( execution_configuration == NULL ) {
       return false;

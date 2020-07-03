@@ -98,8 +98,8 @@ void SineInteractionHandler::send_sine_interaction(
    }
 
    // Get the HLA granted time and lookahead time.
-   double hla_granted_time = get_granted_fed_time().getDoubleTime();
-   double lookahead_time   = get_fed_lookahead().getDoubleTime();
+   double hla_granted_time = get_granted_fed_time().get_double_time();
+   double lookahead_time   = get_fed_lookahead().get_double_time();
 
    // Calculate the timestamp we will use to send the interaction in Timestamp
    // Order by using the HLA granted time and the lookahead time.
@@ -134,13 +134,13 @@ void SineInteractionHandler::send_sine_interaction(
               << "  user-supplied-tag:'" << user_supplied_tag_string << "'" << endl
               << "  user-supplied-tag-size:" << user_supplied_tag.size() << endl
               << "  hla_granted_time:" << send_time << " ("
-              << Int64Interval::toMicroseconds( hla_granted_time ) << " microseconds)" << endl
+              << Int64Interval::to_microseconds( hla_granted_time ) << " microseconds)" << endl
               << "  send_time:" << send_time << " ("
-              << Int64Interval::toMicroseconds( send_time ) << " microseconds)" << endl
+              << Int64Interval::to_microseconds( send_time ) << " microseconds)" << endl
               << "  lookahead_time:" << lookahead_time << " ("
-              << Int64Interval::toMicroseconds( lookahead_time ) << " microseconds)" << endl
+              << Int64Interval::to_microseconds( lookahead_time ) << " microseconds)" << endl
               << "  timestamp:" << timestamp << " ("
-              << Int64Interval::toMicroseconds( timestamp ) << " microseconds)" << endl
+              << Int64Interval::to_microseconds( timestamp ) << " microseconds)" << endl
               << "  time:" << time << endl
               << "  year:" << year << endl
               << "  send_cnt:" << ( send_cnt + 1 ) << endl;

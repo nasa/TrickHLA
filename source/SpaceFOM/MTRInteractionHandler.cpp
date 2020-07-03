@@ -41,6 +41,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/StringUtilities.hh"
 
@@ -94,8 +95,6 @@ void MTRInteractionHandler::set_name(
       this->name = NULL;
    }
    this->name = trick_MM->mm_strdup( (char *)new_name );
-
-   return;
 }
 
 /*!
@@ -157,7 +156,7 @@ void MTRInteractionHandler::send_interaction(
             cout << "  CTE time: " << cte_time << endl;
          }
          cout << "  HLA grant time: " << granted_time << " ("
-              << TrickHLA::Int64Interval::toMicroseconds( granted_time ) << " microseconds)" << endl
+              << TrickHLA::Int64Interval::to_microseconds( granted_time ) << " microseconds)" << endl
               << "  send_cnt:" << ( send_cnt + 1 ) << endl;
       }
 
@@ -185,7 +184,7 @@ void MTRInteractionHandler::send_interaction(
             cout << "  CTE time: " << cte_time << endl;
          }
          cout << "  HLA grant time: " << granted_time << " ("
-              << TrickHLA::Int64Interval::toMicroseconds( granted_time ) << " microseconds)" << endl;
+              << TrickHLA::Int64Interval::to_microseconds( granted_time ) << " microseconds)" << endl;
       }
    }
 }
@@ -252,7 +251,7 @@ void MTRInteractionHandler::receive_interaction(
          cout << "  CTE time: " << this->cte_time << endl;
       }
       cout << "  HLA grant time: " << this->granted_time << " ("
-           << TrickHLA::Int64Interval::toMicroseconds( this->granted_time ) << " microseconds)" << endl
+           << TrickHLA::Int64Interval::to_microseconds( this->granted_time ) << " microseconds)" << endl
            << "  receive_cnt:" << ( receive_cnt + 1 ) << endl;
    }
 

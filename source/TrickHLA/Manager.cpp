@@ -44,6 +44,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/Manager.hh"
@@ -101,6 +102,7 @@ Manager::Manager()
      federate( NULL ),
      execution_control( NULL )
 {
+   return;
 }
 
 /*!
@@ -131,8 +133,6 @@ void Manager::setup(
 
    // Set the TrickHLA::ExecutionControlBase instance reference.
    this->execution_control = &execution_control;
-
-   return;
 }
 
 /*!
@@ -297,7 +297,6 @@ void Manager::restart_initialization()
  */
 void Manager::send_init_data()
 {
-
    // Late joining federates do not get to participate in the multiphase
    // initialization process so just return.
    if ( is_late_joining_federate() ) {
@@ -2290,12 +2289,12 @@ void Manager::receive_interaction(
          if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             if ( received_as_TSO ) {
                Int64Time _time;
-               _time.setTo( theTime );
+               _time.set( theTime );
 
                string handle;
                StringUtilities::to_string( handle, theInteraction );
                send_hs( stdout, "Manager::receive_interaction():%d ID:%s, HLA-time:%G%c",
-                        __LINE__, handle.c_str(), _time.getDoubleTime(),
+                        __LINE__, handle.c_str(), _time.get_double_time(),
                         THLA_NEWLINE );
             } else {
                string handle;
@@ -2815,7 +2814,7 @@ void Manager::dump_interactions()
              << "check_interactions[" << i << "].order_is_TSO           = "
              << check_interactions[i].order_is_TSO << endl
              << "check_interactions[" << i << "].time                   = "
-             << check_interactions[i].time.getTimeInMicros()
+             << check_interactions[i].time.get_time_in_micros()
              << endl;
       }
       send_hs( stdout, (char *)msg.str().c_str() );

@@ -42,6 +42,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/Utilities.hh"
@@ -148,8 +149,7 @@ void ExecutionControl::initialize(
    // For the Master federate the Trick simulation software frame must
    // match the Least Common Time Step (LCTS).
    if ( this->is_master() ) {
-      int64_t lcts                = this->least_common_time_step;
-      double  software_frame_time = double( lcts ) / 1000000.0;
+      double software_frame_time = Int64Interval::to_seconds( this->least_common_time_step );
       exec_set_software_frame( software_frame_time );
    }
 
@@ -1073,19 +1073,19 @@ void ExecutionControl::announce_sync_point(
          if ( pauseTime == NULL ) {
             pauseTime = new Int64Time( 0.0 );
          } else {
-            pauseTime->setTo( 0.0 );
+            pauseTime->set( 0.0 );
          }
       } catch ( CouldNotDecode &e ) {
          if ( pauseTime == NULL ) {
             pauseTime = new Int64Time( 0.0 );
          } else {
-            pauseTime->setTo( 0.0 );
+            pauseTime->set( 0.0 );
          }
       }
 
       if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "IMSim::ExecutionControl::announce_sync_point():%d IMSim Pause Sync-Point:'%ls' Pause-time:%g %c",
-                  __LINE__, label.c_str(), pauseTime->getDoubleTime(), THLA_NEWLINE );
+                  __LINE__, label.c_str(), pauseTime->get_double_time(), THLA_NEWLINE );
       }
       this->add_pause( pauseTime, label );
 
@@ -1119,7 +1119,7 @@ void ExecutionControl::announce_sync_point(
                      __LINE__, label.c_str(), THLA_NEWLINE );
          } else {
             send_hs( stdout, "IMSim::ExecutionControl::announce_sync_point():%d IMSim Pause Sync-Point:'%ls' Pause-time:%g %c",
-                     __LINE__, label.c_str(), pauseTime->getDoubleTime(), THLA_NEWLINE );
+                     __LINE__, label.c_str(), pauseTime->get_double_time(), THLA_NEWLINE );
          }
       }
       this->add_pause( pauseTime, label );
@@ -1363,12 +1363,12 @@ void ExecutionControl::receive_interaction(
          if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             if ( received_as_TSO ) {
                Int64Time _time;
-               _time.setTo( theTime );
+               _time.set( theTime );
 
                string handle;
                StringUtilities::to_string( handle, theInteraction );
                send_hs( stdout, "Manager::receive_interaction(FREEZE):%d ID:%s, HLA-time:%G%c",
-                        __LINE__, handle.c_str(), _time.getDoubleTime(),
+                        __LINE__, handle.c_str(), _time.get_double_time(),
                         THLA_NEWLINE );
             } else {
                string handle;
@@ -2379,7 +2379,7 @@ void ExecutionControl::check_pause( const double check_pause_delta )
       return;
    }
 
-   this->checktime.setTo( this->get_sim_time() + check_pause_delta );
+   this->checktime.set( this->get_sim_time() + check_pause_delta );
 
    if ( this->pause_sync_pts.check_sync_pnts( this->checktime ) ) {
       federate->freeze_the_federation = true;
@@ -2583,7 +2583,7 @@ bool ExecutionControl::check_scenario_freeze_time()
                infomsg << "Federate::check_scenario_freeze_time():" << __LINE__
                        << " Going to Trick FREEZE mode immediately:" << endl;
                if ( federate->time_management ) {
-                  infomsg << "  Granted HLA-time:" << federate->granted_time.getDoubleTime() << endl;
+                  infomsg << "  Granted HLA-time:" << federate->granted_time.get_double_time() << endl;
                }
                infomsg << "  Trick sim-time:" << curr_sim_time << endl
                        << "  Freeze sim-time:" << freeze_sim_time << endl
@@ -2690,14 +2690,14 @@ void ExecutionControl::reinstate_logged_sync_pts()
             /***
             //DANNY2.7 TODO: you sometimes get an exception for sync point not announced when you restore,
             //         is that an RTI bug or something we can fix here?
-            if (is_master() && (sync_point_time.getDoubleTime() <= get_sim_time()) ) {
-                register_generic_sync_point( sync_point_label, sync_point_time.getDoubleTime());
+            if (is_master() && (sync_point_time.get_double_time() <= get_sim_time()) ) {
+                register_generic_sync_point( sync_point_label, sync_point_time.get_double_time());
             }
             ***/
          }
       }
       // set the checktime to the first of the new entries...
       sync_point_time = Int64Time( this->loggable_sync_pts[0].time );
-      checktime.setTo( sync_point_time );
+      checktime.set( sync_point_time );
    }
 }

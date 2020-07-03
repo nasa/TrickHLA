@@ -55,6 +55,7 @@ SyncPntListBase::SyncPntListBase()
    : read_locks( 0 ),
      write_locks( 0 )
 {
+   return;
 }
 
 /*!

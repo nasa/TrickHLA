@@ -49,6 +49,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Constants.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/OwnershipHandler.hh"
 #include "TrickHLA/OwnershipItem.hh"
@@ -68,6 +69,7 @@ OwnershipHandler::OwnershipHandler()
      push_items_cnt( 0 ),
      push_items( NULL )
 {
+   return;
 }
 
 /*!
@@ -351,8 +353,8 @@ void OwnershipHandler::pull_ownership(
    if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       send_hs( stdout, "OwnershipHandler::pull_ownership(time=%G):%d scenario-time=%G, granted_time=%G, lookahead=%G %c",
                time, __LINE__, get_scenario_time(),
-               get_granted_fed_time().getDoubleTime(),
-               get_fed_lookahead().getDoubleTime(), THLA_NEWLINE );
+               get_granted_fed_time().get_double_time(),
+               get_fed_lookahead().get_double_time(), THLA_NEWLINE );
    }
 
    THLAAttributeMap *attr_map;
@@ -410,8 +412,8 @@ void OwnershipHandler::pull_ownership(
    if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       send_hs( stdout, "OwnershipHandler::pull_ownership(%s, time=%G):%d scenario-time=%G, granted_time=%G, lookahead=%G %c",
                attribute_FOM_name, time, __LINE__, get_scenario_time(),
-               get_granted_fed_time().getDoubleTime(),
-               get_fed_lookahead().getDoubleTime(), THLA_NEWLINE );
+               get_granted_fed_time().get_double_time(),
+               get_fed_lookahead().get_double_time(), THLA_NEWLINE );
    }
 
    THLAAttributeMap *attr_map;
@@ -456,8 +458,8 @@ void OwnershipHandler::push_ownership(
    if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       send_hs( stdout, "OwnershipHandler::push_ownership(time=%G):%d sim-time=%G, granted_time=%G, lookahead=%G %c",
                time, __LINE__, get_scenario_time(),
-               get_granted_fed_time().getDoubleTime(),
-               get_fed_lookahead().getDoubleTime(), THLA_NEWLINE );
+               get_granted_fed_time().get_double_time(),
+               get_fed_lookahead().get_double_time(), THLA_NEWLINE );
    }
 
    THLAAttributeMap *attr_map;
@@ -515,8 +517,8 @@ void OwnershipHandler::push_ownership(
    if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       send_hs( stdout, "OwnershipHandler::push_ownership(%s, time=%G):%d sim-time=%G, granted_time=%G, lookahead=%G %c",
                attribute_FOM_name, time, __LINE__, get_scenario_time(),
-               get_granted_fed_time().getDoubleTime(),
-               get_fed_lookahead().getDoubleTime(), THLA_NEWLINE );
+               get_granted_fed_time().get_double_time(),
+               get_fed_lookahead().get_double_time(), THLA_NEWLINE );
    }
 
    THLAAttributeMap *attr_map;

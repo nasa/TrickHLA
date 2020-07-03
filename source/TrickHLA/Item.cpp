@@ -40,6 +40,7 @@ using namespace TrickHLA;
 Item::Item() // RETURN: -- None.
    : next( NULL )
 {
+   return;
 }
 
 /*!
@@ -47,4 +48,5 @@ Item::Item() // RETURN: -- None.
  */
 Item::~Item() // RETURN: -- None.
 {
+   return;
 }

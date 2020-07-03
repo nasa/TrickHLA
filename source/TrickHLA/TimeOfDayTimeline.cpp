@@ -43,6 +43,7 @@ using namespace TrickHLA;
  */
 TimeOfDayTimeline::TimeOfDayTimeline()
 {
+   return;
 }
 
 /*!
@@ -50,6 +51,7 @@ TimeOfDayTimeline::TimeOfDayTimeline()
  */
 TimeOfDayTimeline::~TimeOfDayTimeline()
 {
+   return;
 }
 
 double TimeOfDayTimeline::get_time()

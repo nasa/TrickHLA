@@ -71,6 +71,7 @@ RefFrameBase::RefFrameBase()
      stc_encoder(),
      stc_data( stc_encoder.get_data() )
 {
+   return;
 }
 
 /*!

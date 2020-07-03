@@ -40,6 +40,7 @@ using namespace TrickHLA;
  */
 SimTimeline::SimTimeline()
 {
+   return;
 }
 
 /*!
@@ -47,6 +48,7 @@ SimTimeline::SimTimeline()
  */
 SimTimeline::~SimTimeline()
 {
+   return;
 }
 
 double SimTimeline::get_time()

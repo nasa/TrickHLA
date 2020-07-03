@@ -53,6 +53,7 @@ using namespace TrickHLA;
  */
 TimedSyncPntList::TimedSyncPntList()
 {
+   return;
 }
 
 void TimedSyncPntList::add_sync_pnt(
@@ -76,14 +77,6 @@ void TimedSyncPntList::add_sync_pnt(
 bool TimedSyncPntList::achieve_all_sync_pnts(
    RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
    const Int64Time &                 checkTime )
-/*
-  throws
-    SynchronizationPointLabelNotAnnounced,
-    FederateNotExecutionMember,
-    SaveInProgress,
-    RestoreInProgress,
-    RTIinternalError
-*/
 {
    bool wasAcknowledged = false;
 
@@ -175,7 +168,7 @@ void TimedSyncPntList::print_sync_pnts()
       TimedSyncPnt *timed_i = dynamic_cast< TimedSyncPnt * >( *i );
       sync_point_label.assign( ( *i )->get_label().begin(), ( *i )->get_label().end() );
       msg << sync_point_label << " "
-          << timed_i->get_time().getDoubleTime() << " "
+          << timed_i->get_time().get_double_time() << " "
           << ( *i )->get_state() << endl;
    }
    msg << "#############################" << endl;

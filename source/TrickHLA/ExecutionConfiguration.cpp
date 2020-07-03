@@ -46,20 +46,19 @@ NASA, Johnson Space Center\n
 #include "trick/exec_proto.h"
 #include "trick/message_proto.h"
 
-// HLA include files.
-#include "TrickHLA/StandardsSupport.hh"
-#include RTI1516_HEADER
-
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/Constants.hh"
-#include "TrickHLA/Federate.hh"
-#include "TrickHLA/Manager.hh"
-#include "TrickHLA/Types.hh"
-
-//TrickHLA include files.
 #include "TrickHLA/ExecutionConfiguration.hh"
 #include "TrickHLA/ExecutionControl.hh"
+#include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64Interval.hh"
+#include "TrickHLA/Manager.hh"
+#include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/Types.hh"
+
+// HLA include files.
+#include RTI1516_HEADER
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
@@ -267,11 +266,7 @@ void ExecutionConfiguration::pack()
    }
 
    // Encode the run duration into a 64 bit integer in microseconds.
-   if ( this->run_duration < MAX_LOGICAL_TIME_SECONDS ) {
-      this->run_duration_microsec = (long long)( this->run_duration * MICROS_MULTIPLIER );
-   } else {
-      this->run_duration_microsec = MAX_VALUE_IN_MICROS;
-   }
+   this->run_duration_microsec = Int64Interval::to_microseconds( this->run_duration );
 
    if ( TrickHLA::Packing::should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
       cout << "TrickHLA::ExecutionConfiguration::pack()" << endl
@@ -294,8 +289,8 @@ void ExecutionConfiguration::unpack()
       cout << "===================================================" << endl;
    }
 
-   // Decode the run duration from a 64 bit integer in microseconds.
-   this->run_duration = ( (double)this->run_duration_microsec ) / MICROS_MULTIPLIER;
+   // Decode the run duration from a 64 bit integer in microseconds to seconds.
+   this->run_duration = Int64Interval::to_seconds( this->run_duration_microsec );
 
    // Set the stop/termination time of the Trick simulation based on the
    // run_duration setting.

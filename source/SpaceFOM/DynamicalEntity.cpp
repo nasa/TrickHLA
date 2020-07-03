@@ -65,6 +65,7 @@ DynamicalEntity::DynamicalEntity() // RETURN: -- None.
  */
 DynamicalEntity::~DynamicalEntity() // RETURN: -- None.
 {
+   return;
 }
 
 void DynamicalEntity::pack()

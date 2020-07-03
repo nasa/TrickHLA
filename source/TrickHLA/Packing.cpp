@@ -56,6 +56,7 @@ using namespace TrickHLA;
 Packing::Packing()
    : object( NULL )
 {
+   return;
 }
 
 /*!
@@ -63,6 +64,7 @@ Packing::Packing()
  */
 Packing::~Packing()
 {
+   return;
 }
 
 void Packing::initialize_callback(

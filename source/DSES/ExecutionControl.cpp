@@ -40,6 +40,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Utilities.hh"
 
@@ -94,7 +95,6 @@ ExecutionControl::ExecutionControl()
 ExecutionControl::~ExecutionControl()
 {
    clear_mode_values();
-   return;
 }
 
 /*!
@@ -129,8 +129,7 @@ void ExecutionControl::initialize(
    // For the Master federate the Trick simulation software frame must
    // match the Least Common Time Step (LCTS).
    if ( this->is_master() ) {
-      int64_t lcts                = least_common_time_step;
-      double  software_frame_time = double( lcts ) / 1000000.0;
+      double software_frame_time = Int64Interval::to_seconds( least_common_time_step );
       exec_set_software_frame( software_frame_time );
    }
 

@@ -40,6 +40,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Manager.hh"
 
 // DIS include files.
@@ -133,8 +134,7 @@ void ExecutionControl::initialize(
    // For the Master federate the Trick simulation software frame must
    // match the Least Common Time Step (LCTS).
    if ( this->is_master() ) {
-      int64_t lcts                = least_common_time_step;
-      double  software_frame_time = double( lcts ) / 1000000.0;
+      double software_frame_time = Int64Interval::to_seconds( least_common_time_step );
       exec_set_software_frame( software_frame_time );
    }
 
@@ -416,19 +416,19 @@ void ExecutionControl::announce_sync_point(
          if ( pauseTime == NULL ) {
             pauseTime = new Int64Time( 0.0 );
          } else {
-            pauseTime->setTo( 0.0 );
+            pauseTime->set( 0.0 );
          }
       } catch ( CouldNotDecode &e ) {
          if ( pauseTime == NULL ) {
             pauseTime = new Int64Time( 0.0 );
          } else {
-            pauseTime->setTo( 0.0 );
+            pauseTime->set( 0.0 );
          }
       }
 
       if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "DIS::ExecutionControl::announce_sync_point():%d DIS Pause Sync-Point:'%ls' Pause-time:%g %c",
-                  __LINE__, label.c_str(), pauseTime->getDoubleTime(), THLA_NEWLINE );
+                  __LINE__, label.c_str(), pauseTime->get_double_time(), THLA_NEWLINE );
       }
       this->add_pause( pauseTime, label );
 
