@@ -46,20 +46,21 @@ NASA, Johnson Space Center\n
 #include "trick/exec_proto.h"
 #include "trick/message_proto.h"
 
-// HLA include files.
-#include "TrickHLA/StandardsSupport.hh"
-#include RTI1516_HEADER
-
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 
 //SpaceFOM include files.
 #include "SpaceFOM/ExecutionConfiguration.hh"
 #include "SpaceFOM/ExecutionControl.hh"
+
+// HLA include files.
+#include RTI1516_HEADER
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
@@ -266,7 +267,7 @@ void ExecutionConfiguration::pack()
            << "=============================================================" << endl;
    }
 
-   long long fed_lookahead = ( get_federate() != NULL ) ? get_federate()->get_lookahead().getTimeInMicros() : 0;
+   int64_t fed_lookahead = ( get_federate() != NULL ) ? get_federate()->get_lookahead().get_time_in_micros() : 0;
 
    // Do a bounds check on the least-common-time-step.
    if ( least_common_time_step < fed_lookahead ) {
@@ -319,7 +320,7 @@ void ExecutionConfiguration::unpack()
            << "=============================================================" << endl;
    }
 
-   long long fed_lookahead = ( get_federate() != NULL ) ? get_federate()->get_lookahead().getTimeInMicros() : 0;
+   int64_t fed_lookahead = ( get_federate() != NULL ) ? get_federate()->get_lookahead().get_time_in_micros() : 0;
 
    // Do a bounds check on the least-common-time-step.
    if ( least_common_time_step < fed_lookahead ) {
@@ -348,7 +349,7 @@ void ExecutionConfiguration::unpack()
    // It must be smaller than the ExCO LCTS or moding won't work properly.
    // It must also be an integer multiple of the ExCO LCTS.
    software_frame_sec  = exec_get_software_frame();
-   software_frame_usec = ( int64_t )( software_frame_sec * 1000000.0 );
+   software_frame_usec = Int64Interval::to_microseconds( software_frame_sec );
    if ( software_frame_usec != least_common_time_step ) {
       if ( software_frame_usec > least_common_time_step ) {
          ostringstream message;
@@ -358,7 +359,7 @@ void ExecutionConfiguration::unpack()
                  << software_frame_usec << " microseconds)!  Resetting the software frame ("
                  << least_common_time_step << " microseconds)!!!!" << THLA_ENDL;
          send_hs( stderr, (char *)message.str().c_str() );
-         software_frame_sec = double( least_common_time_step ) / 1000000.0;
+         software_frame_sec = Int64Interval::to_seconds( least_common_time_step );
          exec_set_software_frame( software_frame_sec );
       } else if ( least_common_time_step % software_frame_usec != 0 ) {
          ostringstream message;
@@ -368,7 +369,7 @@ void ExecutionConfiguration::unpack()
                  << software_frame_usec << " microseconds)!  Resetting the software frame ("
                  << least_common_time_step << " microseconds)!!!!" << THLA_ENDL;
          send_hs( stderr, (char *)message.str().c_str() );
-         software_frame_sec = double( least_common_time_step ) / 1000000.0;
+         software_frame_sec = Int64Interval::to_seconds( least_common_time_step );
          exec_set_software_frame( software_frame_sec );
       } else {
          // This must mean that the ExCO Least Common Time Step (LCTS) is

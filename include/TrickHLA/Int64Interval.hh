@@ -38,13 +38,12 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 
-// HLA include files.
+// TrickHLA include files.
 #include "TrickHLA/StandardsSupport.hh"
-#include RTI1516_HEADER
-
 #include <RTI/time/HLAinteger64Interval.h>
 
-// TrickHLA include files.
+// HLA include files.
+#include RTI1516_HEADER
 
 namespace TrickHLA
 {
@@ -99,7 +98,7 @@ class Int64Interval
     *  @param lhs Left hand side operand as floating point time interval in seconds. */
    virtual Int64Interval &operator=( double lhs )
    {
-      _HLAinterval = toMicroseconds( lhs );
+      _HLAinterval = to_microseconds( lhs );
       return *this;
    }
 
@@ -117,21 +116,21 @@ class Int64Interval
     *  @param lhs Left hand side operand as TrickHLA::Int64Interval time interval. */
    virtual Int64Interval &operator=( Int64Interval const &lhs )
    {
-      _HLAinterval = lhs.getTimeInMicros();
+      _HLAinterval = lhs.get_time_in_micros();
       return *this;
    }
 
    /*! @brief Interval time greater than comparison operator.
     *  @return True if right operand is greater than the left operand; False otherwise.
     *  @param lhs Left hand side operand as 64bit integer time interval in microseconds. */
-   bool operator>( int64_t lhs ) { return this->getTimeInMicros() > lhs; }
+   bool operator>( int64_t lhs ) { return this->get_time_in_micros() > lhs; }
 
    /*! @brief Interval time greater than comparison operator.
     *  @return True is right operand is greater than the left operand; False otherwise.
     *  @param lhs Left hand side operand as floating point time interval in seconds. */
    bool operator>( double lhs )
    {
-      return this->getTimeInMicros() > Int64Interval::toMicroseconds( lhs );
+      return this->get_time_in_micros() > Int64Interval::to_microseconds( lhs );
    }
 
    //
@@ -148,39 +147,39 @@ class Int64Interval
    // the encapsulated class...
    /*! @brief Return the seconds contained in the current timestamp.
     *  @return The current timestamp in seconds. */
-   long getSeconds() const;
+   long get_seconds() const;
 
    /*! @brief Return the microseconds seconds contained in the current timestamp.
     *  @return The current timestamp in integer microseconds. */
-   int getMicros() const;
+   int get_micros() const;
 
    /*! @brief Return the time, in microseconds, contained in the current
     * timestamp as a 64-bit integer value.
     *  @return Time in integer microseconds. */
-   int64_t getTimeInMicros() const;
+   int64_t get_time_in_micros() const;
 
    /*! @brief Return the current timestamp as a double precision floating point value.
     *  @return Time in seconds as a floating point double. */
-   double getDoubleTime() const;
+   double get_double_time() const;
 
    /*! @brief Returns a summary of the time.
     *  @return Summary of time as a string. */
-   std::wstring toString() const;
+   std::wstring to_string() const;
 
    //
    // Mutator methods
    //
    /*! @brief Set the time interval to the given value.
     *  @param value The desired time interval in integer microseconds. */
-   void setTo( const int64_t value );
+   void set( const int64_t value );
 
    /*! @brief Set the time interval to the given value.
     *  @param value The desired time interval in seconds. */
-   void setTo( const double value );
+   void set( const double value );
 
    /*! @brief Set the time interval to the given value.
     *  @param value The desired time interval as an HLA LogicalTimeInterval. */
-   void setTo( RTI1516_NAMESPACE::LogicalTimeInterval const &value );
+   void set( RTI1516_NAMESPACE::LogicalTimeInterval const &value );
 
    //
    // Static methods
@@ -188,7 +187,12 @@ class Int64Interval
    /*! @brief Converts the given floating point time to an integer representing microseconds.
     *  @return Time value in microseconds.
     *  @param value Time value as a floating point double in seconds. */
-   static int64_t toMicroseconds( const double value );
+   static int64_t to_microseconds( const double value );
+
+   /*! @brief Converts the given integer time in microseconds to an floating-point time representing seconds.
+    *  @return Time value in seconds.
+    *  @param usec Time value as a 64-bit integer in microseconds. */
+   static double to_seconds( const int64_t usec );
 
    //
    // Private data.

@@ -108,7 +108,7 @@ void SineLagCompensation::initialize_callback(
 
 void SineLagCompensation::send_lag_compensation()
 {
-   double dt   = get_fed_lookahead().getDoubleTime();
+   double dt   = get_fed_lookahead().get_double_time();
    double time = get_scenario_time() + dt;
 
    // Use the inherited debug-handler to allow debug comments to be turned

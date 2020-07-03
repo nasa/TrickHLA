@@ -45,6 +45,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Constants.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/InteractionHandler.hh"
 #include "TrickHLA/InteractionItem.hh"
@@ -969,7 +970,7 @@ bool Interaction::send(
    unlock();
 
    // Update the timestamp.
-   time.setTo( send_HLA_time );
+   time.set( send_HLA_time );
 
    // Get the Trick-Federate.
    Federate *trick_fed = get_federate();
@@ -988,7 +989,7 @@ bool Interaction::send(
 
          if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
             send_hs( stdout, "Interaction::send():%d As Timestamp-Order: Interaction '%s' sent for time %lf seconds.%c",
-                     __LINE__, get_FOM_name(), time.getDoubleTime(), THLA_NEWLINE );
+                     __LINE__, get_FOM_name(), time.get_double_time(), THLA_NEWLINE );
          }
 
          // Do not send any interactions if federate save / restore has begun (see
@@ -1033,8 +1034,8 @@ Interaction '%s' is time-regulating:%s, preferred-order:%s.%c",
       errmsg << "Interaction::send():" << __LINE__ << " As "
              << ( send_with_timestamp ? "Timestamp Order" : "Receive Order" )
              << ", InvalidLogicalTime exception for " << get_FOM_name()
-             << "  time=" << time.getDoubleTime() << " ("
-             << time.getTimeInMicros() << " microseconds)"
+             << "  time=" << time.get_double_time() << " ("
+             << time.get_time_in_micros() << " microseconds)"
              << " error message:'" << rti_err_msg.c_str() << "'" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( RTI1516_EXCEPTION &e ) {
@@ -1080,7 +1081,7 @@ void Interaction::process_interaction()
       if ( received_as_TSO ) {
          send_hs( stdout, "Interaction::process_interaction():%d ID:%s, FOM_name:'%s', HLA time:%G, Timestamp-Order%c",
                   __LINE__, handle_str.c_str(), get_FOM_name(),
-                  time.getDoubleTime(), THLA_NEWLINE );
+                  time.get_double_time(), THLA_NEWLINE );
       } else {
          send_hs( stdout, "Interaction::process_interaction():%d ID:%s, FOM_name:'%s', Receive-Order%c",
                   __LINE__, handle_str.c_str(), get_FOM_name(), THLA_NEWLINE );
@@ -1126,7 +1127,7 @@ void Interaction::extract_data(
 
    if ( interaction_item->is_timestamp_order() ) {
       // Update the timestamp.
-      time.setTo( interaction_item->time );
+      time.set( interaction_item->time );
 
       // Received in Timestamp Order (TSO).
       received_as_TSO = true;

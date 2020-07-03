@@ -76,6 +76,7 @@ InteractionItem::InteractionItem() // RETURN: -- None.
      order_is_TSO( false ),
      time()
 {
+   return;
 }
 
 /*!
@@ -119,7 +120,7 @@ InteractionItem::InteractionItem(
      order_is_TSO( true ),
      time()
 {
-   time.setTo( theTime );
+   time.set( theTime );
 
    // Decode the Interaction values into this Item.
    initialize( interaction_type, param_count, parameters, theParameterValues, theUserSuppliedTag );

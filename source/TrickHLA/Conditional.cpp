@@ -46,6 +46,7 @@ using namespace TrickHLA;
  */
 Conditional::Conditional() // RETURN: -- None.
 {
+   return;
 }
 
 /*!
@@ -53,6 +54,7 @@ Conditional::Conditional() // RETURN: -- None.
  */
 Conditional::~Conditional() // RETURN: -- None.
 {
+   return;
 }
 
 bool Conditional::should_send( // RETURN: -- None.

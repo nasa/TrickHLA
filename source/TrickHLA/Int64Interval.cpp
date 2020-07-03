@@ -53,7 +53,7 @@ using namespace TrickHLA;
 Int64Interval::Int64Interval(
    int64_t value )
 {
-   setTo( value );
+   set( value );
 }
 
 /*!
@@ -62,7 +62,7 @@ Int64Interval::Int64Interval(
 Int64Interval::Int64Interval(
    double value )
 {
-   setTo( value );
+   set( value );
 }
 
 /*!
@@ -71,7 +71,7 @@ Int64Interval::Int64Interval(
 Int64Interval::Int64Interval(
    RTI1516_NAMESPACE::LogicalTimeInterval const &value )
 {
-   setTo( value );
+   set( value );
 }
 
 /*!
@@ -81,6 +81,7 @@ Int64Interval::Int64Interval(
    RTI1516_NAMESPACE::HLAinteger64Interval const &value )
    : _HLAinterval( value )
 {
+   return;
 }
 
 /*!
@@ -88,8 +89,9 @@ Int64Interval::Int64Interval(
  */
 Int64Interval::Int64Interval(
    Int64Interval const &value )
-   : _HLAinterval( value.getTimeInMicros() )
+   : _HLAinterval( value.get_time_in_micros() )
 {
+   return;
 }
 
 /*!
@@ -97,60 +99,61 @@ Int64Interval::Int64Interval(
  */
 Int64Interval::~Int64Interval()
 {
+   return;
 }
 
-long Int64Interval::getSeconds() const
+long Int64Interval::get_seconds() const
 {
    return ( (long)( _HLAinterval.getInterval() / MICROS_MULTIPLIER ) );
 }
 
-int Int64Interval::getMicros() const
+int Int64Interval::get_micros() const
 {
    return ( (int)( _HLAinterval.getInterval() % MICROS_MULTIPLIER ) );
 }
 
-int64_t Int64Interval::getTimeInMicros() const
+int64_t Int64Interval::get_time_in_micros() const
 {
    return ( _HLAinterval.getInterval() );
 }
 
-double Int64Interval::getDoubleTime() const
+double Int64Interval::get_double_time() const
 {
-   double t = (double)( (double)getMicros() / (double)MICROS_MULTIPLIER );
-   t += (double)getSeconds();
-   return ( t );
+   double seconds = (double)get_seconds();
+   double micros  = (double)( (double)get_micros() / (double)MICROS_MULTIPLIER );
+   return ( seconds + micros );
 }
 
-wstring Int64Interval::toString() const
+wstring Int64Interval::to_string() const
 {
    char buf[128];
-   sprintf( buf, "Int64Interval<%0.06f>", getDoubleTime() );
+   sprintf( buf, "Int64Interval<%0.06f>", get_double_time() );
    string  str( buf );
    wstring wstr;
    wstr.assign( str.begin(), str.end() );
    return wstr;
 }
 
-void Int64Interval::setTo(
+void Int64Interval::set(
    const int64_t value )
 {
    _HLAinterval = value;
 }
 
-void Int64Interval::setTo(
+void Int64Interval::set(
    const double value )
 {
-   _HLAinterval = toMicroseconds( value );
+   _HLAinterval = to_microseconds( value );
 }
 
-void Int64Interval::setTo(
+void Int64Interval::set(
    RTI1516_NAMESPACE::LogicalTimeInterval const &value )
 {
    const RTI1516_NAMESPACE::HLAinteger64Interval &p = dynamic_cast< const RTI1516_NAMESPACE::HLAinteger64Interval & >( value );
    _HLAinterval                                     = p.getInterval();
 }
 
-int64_t Int64Interval::toMicroseconds(
+int64_t Int64Interval::to_microseconds(
    const double value )
 {
    // Do a range check on the double value.
@@ -163,4 +166,12 @@ int64_t Int64Interval::toMicroseconds(
    int64_t micros  = ( seconds >= 0 ) ? ( int64_t )( fmod( value * MICROS_MULTIPLIER, MICROS_MULTIPLIER ) + 0.5 )
                                      : ( int64_t )( fmod( value * MICROS_MULTIPLIER, MICROS_MULTIPLIER ) - 0.5 );
    return ( ( seconds * MICROS_MULTIPLIER ) + micros );
+}
+
+double Int64Interval::to_seconds(
+   const int64_t usec )
+{
+   double seconds = (double)( usec / (int64_t)MICROS_MULTIPLIER );
+   double micros  = (double)( usec % (int64_t)MICROS_MULTIPLIER ) / (double)MICROS_MULTIPLIER;
+   return ( seconds + micros );
 }

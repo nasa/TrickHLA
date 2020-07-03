@@ -43,17 +43,17 @@ execution.
 #include "trick/MemoryManager.hh"
 #include "trick/message_proto.h"
 
-// HLA include files.
-#include "TrickHLA/StandardsSupport.hh"
-#include RTI1516_HEADER
-
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Utilities.hh"
+
+// HLA include files.
+#include RTI1516_HEADER
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
@@ -110,7 +110,6 @@ ExecutionConfigurationBase::ExecutionConfigurationBase(
  */
 ExecutionConfigurationBase::~ExecutionConfigurationBase()
 {
-
    if ( S_define_name != static_cast< char * >( NULL ) ) {
       if ( trick_MM->is_alloced( (void *)S_define_name ) ) {
          trick_MM->delete_var( (void *)S_define_name );
@@ -130,7 +129,6 @@ ExecutionConfigurationBase::~ExecutionConfigurationBase()
 void ExecutionConfigurationBase::setup(
    TrickHLA::ExecutionControlBase &exec_control )
 {
-
    // Set the TrickHLA::ExecutionControlBase instance reference.
    this->execution_control = &exec_control;
 
@@ -144,7 +142,6 @@ void ExecutionConfigurationBase::setup(
 void ExecutionConfigurationBase::set_S_define_name(
    const char *new_name )
 {
-
    if ( S_define_name != static_cast< char * >( NULL ) ) {
       if ( trick_MM->is_alloced( (void *)S_define_name ) ) {
          trick_MM->delete_var( (void *)S_define_name );

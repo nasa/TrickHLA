@@ -42,6 +42,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Constants.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/InteractionHandler.hh"
 #include "TrickHLA/Utilities.hh"
@@ -55,6 +56,7 @@ using namespace TrickHLA;
 InteractionHandler::InteractionHandler() // RETURN: -- None.
    : interaction( NULL )
 {
+   return;
 }
 
 /*!
@@ -62,6 +64,7 @@ InteractionHandler::InteractionHandler() // RETURN: -- None.
  */
 InteractionHandler::~InteractionHandler() // RETURN: -- None.
 {
+   return;
 }
 
 /*!

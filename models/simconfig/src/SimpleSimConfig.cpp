@@ -43,6 +43,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/Constants.hh"
+#include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
 
@@ -151,11 +152,7 @@ void SimpleSimConfig::pack()
    }
 
    // Encode the run duration into a 64 bit integer in microseconds.
-   if ( this->run_duration < MAX_LOGICAL_TIME_SECONDS ) {
-      this->run_duration_microsec = (long long)( this->run_duration * MICROS_MULTIPLIER );
-   } else {
-      this->run_duration_microsec = MAX_VALUE_IN_MICROS;
-   }
+   this->run_duration_microsec = Int64Interval::to_microseconds( this->run_duration );
 
    if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
       cout << "SimpleSimConfig::pack()" << endl
@@ -176,7 +173,7 @@ void SimpleSimConfig::unpack()
    }
 
    // Decode the run duration from a 64 bit integer in microseconds.
-   this->run_duration = ( (double)this->run_duration_microsec ) / MICROS_MULTIPLIER;
+   this->run_duration = Int64Interval::to_seconds( this->run_duration_microsec );
 
    // Set the stop/termination time of the Trick simulation based on the
    // run_duration setting.

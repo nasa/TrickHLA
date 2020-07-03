@@ -47,6 +47,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/Constants.hh"
+#include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 
@@ -1421,24 +1422,12 @@ void Attribute::encode_logical_time() const // RETURN: -- None.
    switch ( ref2->attr->type ) {
       case TRICK_DOUBLE: {
          double *d_src = reinterpret_cast< double * >( (void *)ref2->address );
-         if ( d_src[0] < MAX_LOGICAL_TIME_SECONDS ) {
-            int64_t seconds = (int64_t)floor( d_src[0] );
-            int64_t micros  = (int64_t)fmod( d_src[0] * MICROS_MULTIPLIER, MICROS_MULTIPLIER );
-            logical_time    = seconds * MICROS_MULTIPLIER + micros;
-         } else {
-            logical_time = MAX_VALUE_IN_MICROS;
-         }
+         logical_time  = Int64Interval::to_microseconds( d_src[0] );
          break;
       }
       case TRICK_FLOAT: {
          float *f_src = reinterpret_cast< float * >( (void *)ref2->address );
-         if ( (double)f_src[0] < MAX_LOGICAL_TIME_SECONDS ) {
-            int64_t seconds = (int64_t)floor( f_src[0] );
-            int64_t micros  = (int64_t)fmod( f_src[0] * MICROS_MULTIPLIER, MICROS_MULTIPLIER );
-            logical_time    = seconds * MICROS_MULTIPLIER + micros;
-         } else {
-            logical_time = MAX_VALUE_IN_MICROS;
-         }
+         logical_time = Int64Interval::to_microseconds( (double)f_src[0] );
          break;
       }
       case TRICK_SHORT: {
@@ -1525,12 +1514,12 @@ void Attribute::decode_logical_time() // RETURN: -- None.
    switch ( ref2->attr->type ) {
       case TRICK_DOUBLE: {
          double *d_dest = reinterpret_cast< double * >( (void *)ref2->address );
-         d_dest[0]      = ( (double)logical_time ) / MICROS_MULTIPLIER;
+         d_dest[0]      = Int64Interval::to_seconds( logical_time );
          break;
       }
       case TRICK_FLOAT: {
          float *f_dest = reinterpret_cast< float * >( (void *)ref2->address );
-         f_dest[0]     = (float)( (double)logical_time / MICROS_MULTIPLIER );
+         f_dest[0]     = (float)Int64Interval::to_seconds( logical_time );
          break;
       }
       case TRICK_SHORT: {

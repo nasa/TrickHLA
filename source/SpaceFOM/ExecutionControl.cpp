@@ -42,6 +42,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Parameter.hh"
@@ -96,6 +97,7 @@ ExecutionControl::ExecutionControl()
      mtr_interaction( NULL ),
      mtr_interaction_handler( NULL )
 {
+   return;
 }
 
 /*!
@@ -111,6 +113,7 @@ ExecutionControl::ExecutionControl(
      mtr_interaction( NULL ),
      mtr_interaction_handler( NULL )
 {
+   return;
 }
 
 /*!
@@ -146,7 +149,7 @@ void ExecutionControl::initialize()
    // For the Master federate the Trick simulation software frame must
    // match the Least Common Time Step (LCTS).
    if ( this->is_master() ) {
-      double software_frame_time = double( least_common_time_step ) / 1000000.0;
+      double software_frame_time = Int64Interval::to_seconds( least_common_time_step );
       exec_set_software_frame( software_frame_time );
    }
 
@@ -191,6 +194,7 @@ void ExecutionControl::initialize()
  */
 void ExecutionControl::setup_object_ref_attributes()
 {
+   return;
 }
 
 /*!
@@ -203,7 +207,6 @@ void ExecutionControl::setup_object_ref_attributes()
  */
 void ExecutionControl::setup_interaction_ref_attributes()
 {
-
    // Allocate the Mode Transition Request Interaction.
    mtr_interaction = reinterpret_cast< Interaction * >( alloc_type( 1, "TrickHLA::Interaction" ) );
    if ( mtr_interaction == static_cast< Interaction * >( NULL ) ) {
@@ -350,7 +353,6 @@ void ExecutionControl::setup_interaction_RTI_handles()
  */
 void ExecutionControl::add_initialization_sync_points()
 {
-
    // Add the initialization synchronization points used for startup regulation.
    this->add_sync_pnt( SpaceFOM::OBJECTS_DISCOVERED_SYNC_POINT );
    this->add_sync_pnt( SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT );
@@ -392,8 +394,8 @@ void ExecutionControl::announce_sync_point(
          this->init_complete_sp_exists = true;
       }
 
-   } // By default, mark an unrecognized synchronization point is achieved.
-   else {
+   } else {
+      // By default, mark an unrecognized synchronization point is achieved.
 
       if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d Unrecognized synchronization point:'%ls', which will be achieved.%c",
@@ -478,12 +480,12 @@ void ExecutionControl::receive_interaction(
       if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          if ( received_as_TSO ) {
             Int64Time _time;
-            _time.setTo( theTime );
+            _time.set( theTime );
 
             string handle;
             StringUtilities::to_string( handle, theInteraction );
             send_hs( stdout, "SpaceFOM::ExecutionControl::receive_interaction(ModeTransitionRequest):%d ID:%s, HLA-time:%G%c",
-                     __LINE__, handle.c_str(), _time.getDoubleTime(),
+                     __LINE__, handle.c_str(), _time.get_double_time(),
                      THLA_NEWLINE );
          } else {
             string handle;
@@ -538,7 +540,6 @@ in section 7.2 and figure 7-4.
 */
 void ExecutionControl::role_determination_process()
 {
-
    // Initialize the MOM interface handles.
    federate->initialize_MOM_handles();
 
@@ -886,7 +887,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
       }
 
       // Get the master federate lookahead time.
-      int64_t L = federate->get_lookahead().getTimeInMicros();
+      int64_t L = federate->get_lookahead().get_time_in_micros();
 
       // If we have a valid lookahead time then verify the LCTS against it.
       if ( L > 0 ) {
@@ -915,7 +916,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
       }
 
       // The Master federate padding time must be an integer multiple of the LCTS.
-      int64_t MPT = ( int64_t )( this->time_padding * 1000000.0 );
+      int64_t MPT = Int64Interval::to_microseconds( this->time_padding );
       if ( ( LCTS <= 0 ) || ( MPT % LCTS ) != 0 ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
@@ -1209,11 +1210,12 @@ void ExecutionControl::shutdown()
 
          // Let's pause for a moment to let things propagate through the
          // federate before tearing things down.
+         long sleep_pad_micros = Int64Interval::to_microseconds( this->get_time_padding() );
          if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             send_hs( stdout, "SpaceFOM::ExecutionControl::shutdown():%d: sleep for %d microsecond.%c", __LINE__,
-                     ( useconds_t )( this->get_time_padding() * 1000000 ), THLA_NEWLINE );
+                     sleep_pad_micros, THLA_NEWLINE );
          }
-         (void)Utilities::micro_sleep( (useconds_t)this->get_time_padding() * 1000000 );
+         (void)Utilities::micro_sleep( sleep_pad_micros );
       }
 
       // Tell the SpaceFOM execution control to transition to shutdown.
@@ -2549,12 +2551,11 @@ void ExecutionControl::set_least_common_time_step(
 
 void ExecutionControl::set_time_padding( double t )
 {
-   int64_t       int_time;
-   ostringstream msg;
+   int64_t int_time = Int64Interval::to_microseconds( t );
 
    // Need to check that time padding is valid.
-   int_time = ( int64_t )( t * 1000000.0 );
    if ( ( int_time % least_common_time_step ) != 0 ) {
+      ostringstream msg;
       msg << "DSES::ExecutionControl::set_time_padding():" << __LINE__
           << " Time padding value (" << t
           << " must be an integer multiple of the Least Common Time Step ("

@@ -548,7 +548,7 @@ class Object
     *  @param time The last HLA logical time update value. */
    void set_last_update_time( RTI1516_NAMESPACE::LogicalTime const &time )
    {
-      last_update_time.setTo( time );
+      last_update_time.set( time );
    }
 
    /*! @brief Gets the updated time plus the lookahead time.

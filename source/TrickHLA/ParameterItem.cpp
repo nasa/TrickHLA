@@ -51,6 +51,7 @@ ParameterItem::ParameterItem()
      size( 0 ),
      data( NULL )
 {
+   return;
 }
 
 /*!

@@ -49,7 +49,7 @@ using namespace TrickHLA;
 Int64Time::Int64Time(
    int64_t value )
 {
-   setTo( value );
+   set( value );
 }
 
 /*!
@@ -58,7 +58,7 @@ Int64Time::Int64Time(
 Int64Time::Int64Time(
    double value )
 {
-   setTo( value );
+   set( value );
 }
 
 /*!
@@ -67,7 +67,7 @@ Int64Time::Int64Time(
 Int64Time::Int64Time(
    RTI1516_NAMESPACE::LogicalTime const &value )
 {
-   setTo( value );
+   set( value );
 }
 
 /*!
@@ -77,6 +77,7 @@ Int64Time::Int64Time(
    RTI1516_NAMESPACE::HLAinteger64Time const &value )
    : _HLAtime( value )
 {
+   return;
 }
 
 /*!
@@ -84,8 +85,9 @@ Int64Time::Int64Time(
  */
 Int64Time::Int64Time(
    Int64Time const &value )
-   : _HLAtime( value.getTimeInMicros() )
+   : _HLAtime( value.get_time_in_micros() )
 {
+   return;
 }
 
 /*!
@@ -93,6 +95,7 @@ Int64Time::Int64Time(
  */
 Int64Time::~Int64Time()
 {
+   return;
 }
 
 void Int64Time::decode(
@@ -101,59 +104,59 @@ void Int64Time::decode(
    _HLAtime.decode( user_supplied_tag );
 }
 
-long Int64Time::getSeconds() const
+long Int64Time::get_seconds() const
 {
    return ( (long)( _HLAtime.getTime() / MICROS_MULTIPLIER ) );
 }
 
-int Int64Time::getMicros() const
+int Int64Time::get_micros() const
 {
    return ( (int)( _HLAtime.getTime() % MICROS_MULTIPLIER ) );
 }
 
-int64_t Int64Time::getTimeInMicros() const
+int64_t Int64Time::get_time_in_micros() const
 {
    return ( _HLAtime.getTime() );
 }
 
-double Int64Time::getDoubleTime() const
+double Int64Time::get_double_time() const
 {
-   double t = (double)( (double)getMicros() / (double)MICROS_MULTIPLIER );
-   t += (double)getSeconds();
+   double t = (double)( (double)get_micros() / (double)MICROS_MULTIPLIER );
+   t += (double)get_seconds();
    return ( t );
 }
 
-wstring Int64Time::toString() const
+wstring Int64Time::to_string() const
 {
    char buf[128];
-   sprintf( buf, "Int64Time<%0.06f>", getDoubleTime() );
+   sprintf( buf, "Int64Time<%0.06f>", get_double_time() );
    string  str( buf );
    wstring wstr;
    wstr.assign( str.begin(), str.end() );
    return ( wstr );
 }
 
-void Int64Time::setTo(
+void Int64Time::set(
    const int64_t value )
 {
    _HLAtime.setTime( value );
 }
 
-void Int64Time::setTo(
+void Int64Time::set(
    const double value )
 {
-   _HLAtime = Int64Interval::toMicroseconds( value );
+   _HLAtime = Int64Interval::to_microseconds( value );
 }
 
-void Int64Time::setTo(
+void Int64Time::set(
    RTI1516_NAMESPACE::LogicalTime const &value )
 {
    const RTI1516_NAMESPACE::HLAinteger64Time &p = dynamic_cast< const RTI1516_NAMESPACE::HLAinteger64Time & >( value );
    _HLAtime                                     = p.getTime();
 }
 
-void Int64Time::setTo(
+void Int64Time::set(
    Int64Time const &value )
 {
-   _HLAtime = value.getTimeInMicros();
+   _HLAtime = value.get_time_in_micros();
 }

@@ -84,6 +84,7 @@ FedAmb::FedAmb()
      federation_restore_status_response_context_switch( false ), // process, not echo.
      federation_restored_rebuild_federate_handle_set( false )
 {
+   return;
 }
 
 /*!
@@ -91,6 +92,7 @@ FedAmb::FedAmb()
  */
 FedAmb::~FedAmb() throw()
 {
+   return;
 }
 
 /*!
@@ -104,8 +106,6 @@ void FedAmb::setup(
    // Set the associated TrickHLA Federate and Manager references.
    this->federate = &federate;
    this->manager  = &manager;
-
-   return;
 }
 
 /*!
@@ -153,8 +153,6 @@ void FedAmb::initialize()
    }
 
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-   return;
 }
 
 bool FedAmb::should_print(
@@ -202,8 +200,6 @@ void FedAmb::synchronizationPointRegistrationSucceeded(
    }
 
    federate->sync_point_registration_succeeded( label );
-
-   return;
 }
 
 void FedAmb::synchronizationPointRegistrationFailed(
@@ -218,8 +214,6 @@ void FedAmb::synchronizationPointRegistrationFailed(
    bool not_unique = ( reason == RTI1516_NAMESPACE::SYNCHRONIZATION_POINT_LABEL_NOT_UNIQUE );
 
    federate->sync_point_registration_failed( label, not_unique );
-
-   return;
 }
 
 void FedAmb::announceSynchronizationPoint(
@@ -655,9 +649,9 @@ void FedAmb::reflectAttributeValues(
 
       if ( should_print( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          Int64Time time;
-         time.setTo( theTime );
+         time.set( theTime );
          send_hs( stdout, "FedAmb:reflectAttributeValues():%d '%s' time:%f %c",
-                  __LINE__, trickhla_obj->get_name(), time.getDoubleTime(),
+                  __LINE__, trickhla_obj->get_name(), time.get_double_time(),
                   THLA_NEWLINE );
       }
 
@@ -706,9 +700,9 @@ void FedAmb::reflectAttributeValues(
 
       if ( should_print( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          Int64Time time;
-         time.setTo( theTime );
+         time.set( theTime );
          send_hs( stdout, "FedAmb:reflectAttributeValues():%d '%s' time:%f %c",
-                  __LINE__, trickhla_obj->get_name(), time.getDoubleTime(), THLA_NEWLINE );
+                  __LINE__, trickhla_obj->get_name(), time.get_double_time(), THLA_NEWLINE );
       }
 
 #ifdef THLA_OBJECT_TIME_LOGGING
@@ -1540,7 +1534,7 @@ void FedAmb::timeAdvanceGrant(
          send_hs( stdout, "FedAmb::timeAdvanceGrant():%d\nFederate \"%s\" \
 IGNORING GRANTED TIME %.12G because it is less then requested time %.12G %c",
                   __LINE__, federate->get_federate_name(),
-                  int64Time->getDoubleTime(),
+                  int64Time->get_double_time(),
                   federate->get_requested_time(), THLA_NEWLINE );
       }
    }

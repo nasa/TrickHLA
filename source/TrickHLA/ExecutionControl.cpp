@@ -42,6 +42,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionConfiguration.hh"
 #include "TrickHLA/ExecutionControl.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Parameter.hh"
@@ -443,12 +444,11 @@ void ExecutionControl::set_least_common_time_step(
 
 void ExecutionControl::set_time_padding( double t )
 {
-   int64_t       int_time;
-   ostringstream msg;
+   int64_t int_time = Int64Interval::to_microseconds( t );
 
    // Need to check that time padding is valid.
-   int_time = ( int64_t )( t * 1000000.0 );
    if ( ( int_time % least_common_time_step ) != 0 ) {
+      ostringstream msg;
       msg << "TrickHLA::ExecutionControl::set_time_padding():" << __LINE__
           << " Time padding value (" << t
           << " must be an integer multiple of the Least Common Time Step ("
