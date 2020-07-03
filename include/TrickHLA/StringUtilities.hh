@@ -126,7 +126,6 @@ class StringUtilities
    {
       std::string s;
       s.assign( input.begin(), input.end() );
-
       return TMM_strdup( (char *)s.c_str() );
    }
 

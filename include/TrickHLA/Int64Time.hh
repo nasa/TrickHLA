@@ -222,7 +222,10 @@ class Int64Time
    /*! @brief Greater than comparison operator.
     *  @return True if right operand is greater than the left operand; False otherwise.
     *  @param lhs Left hand side operand as a 64bit integer time in microseconds. */
-   bool operator>( int64_t lhs ) { return ( this->get_time_in_micros() > lhs ); }
+   bool operator>( int64_t lhs )
+   {
+      return ( this->get_time_in_micros() > lhs );
+   }
 
    /*! @brief Greater than comparison operator.
     *  @return True is right operand is greater than the left operand; False otherwise.
@@ -293,7 +296,10 @@ class Int64Time
    //
    /*! @brief Get the HLA integer time.
     *  @return A copy of the encapsulated HLAinteger64Time class. */
-   RTI1516_NAMESPACE::HLAinteger64Time get() const { return ( hla_time ); }
+   RTI1516_NAMESPACE::HLAinteger64Time get() const
+   {
+      return ( hla_time );
+   }
 
    // decodes the HLA encoded time into encapsulated class
    /*! @brief Saves the incoming HLA encoded LogicalTime into the encapsulated class.
@@ -303,16 +309,6 @@ class Int64Time
    //
    // Conversion routines
    //
-   // we need only enough methods to intercept / convert incoming data into
-   // the encapsulated class...
-   /*! @brief Return the whole seconds part of the current timestamp.
-    *  @return The whole seconds part of the timestamp in seconds. */
-   int64_t get_seconds() const;
-
-   /*! @brief Return the microseonds part of the current timestamp.
-    *  @return The microseconds part of the current timestamp. */
-   int32_t get_micros() const;
-
    /*! @brief Return the time, in microseconds, contained in the current
     * timestamp as a 64-bit integer value.
     *  @return Time in integer microseconds. */
@@ -346,6 +342,14 @@ class Int64Time
    void set( Int64Time const &value );
 
   private:
+   /*! @brief Return the whole seconds part of the current timestamp.
+    *  @return The whole seconds part of the timestamp in seconds. */
+   int64_t get_seconds() const;
+
+   /*! @brief Return the microseonds part of the current timestamp.
+    *  @return The microseconds part of the current timestamp. */
+   int32_t get_micros() const;
+
    RTI1516_NAMESPACE::HLAinteger64Time hla_time; /**< @trick_io{**}
       HLA standard's class representation of integer64 time. */
 

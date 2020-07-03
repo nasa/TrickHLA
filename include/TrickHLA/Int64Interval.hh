@@ -127,7 +127,10 @@ class Int64Interval
    /*! @brief Interval time greater than comparison operator.
     *  @return True if right operand is greater than the left operand; False otherwise.
     *  @param lhs Left hand side operand as 64bit integer time interval in microseconds. */
-   bool operator>( int64_t lhs ) { return ( this->get_time_in_micros() > lhs ); }
+   bool operator>( int64_t lhs )
+   {
+      return ( this->get_time_in_micros() > lhs );
+   }
 
    /*! @brief Interval time greater than comparison operator.
     *  @return True is right operand is greater than the left operand; False otherwise.
@@ -142,21 +145,14 @@ class Int64Interval
    //
    /*! @brief Get the HLA integer time.
     *  @return A copy of the encapsulated HLAinteger64Interval class. */
-   RTI1516_NAMESPACE::HLAinteger64Interval get() const { return ( hla_interval ); }
+   RTI1516_NAMESPACE::HLAinteger64Interval get() const
+   {
+      return ( hla_interval );
+   }
 
    //
    // Conversion routines
    //
-   // We need only enough methods to intercept / convert incoming data into
-   // the encapsulated class...
-   /*! @brief Return the whole seconds part of the current timestamp.
-    *  @return The whole seconds part of the timestamp in seconds. */
-   int64_t get_seconds() const;
-
-   /*! @brief Return the microseconds part of the current timestamp.
-    *  @return The microseconds part of the current timestamp. */
-   int32_t get_micros() const;
-
    /*! @brief Return the time, in microseconds, contained in the current
     * timestamp as a 64-bit integer value.
     *  @return Time in integer microseconds. */
@@ -202,6 +198,14 @@ class Int64Interval
    // Private data.
    //
   private:
+   /*! @brief Return the whole seconds part of the current timestamp.
+    *  @return The whole seconds part of the timestamp in seconds. */
+   int64_t get_seconds() const;
+
+   /*! @brief Return the microseconds part of the current timestamp.
+    *  @return The microseconds part of the current timestamp. */
+   int32_t get_micros() const;
+
    RTI1516_NAMESPACE::HLAinteger64Interval hla_interval; /**< @trick_io{**}
       The HLA standard's class representation of integer64 interval. */
 };

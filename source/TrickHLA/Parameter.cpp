@@ -1742,7 +1742,8 @@ void Parameter::encode_string_to_buffer()
             // boundary to keep to the standard.
             for ( size_t i = 0; i < num_items; i++ ) {
 
-               s             = *( (char **)address + i );
+               s = *( (char **)address + i );
+
                size_t length = ( s != NULL ) ? strlen( s ) : 0;
 
                // The encoded size is an HLAinteger32BE.
@@ -1882,7 +1883,8 @@ void Parameter::encode_string_to_buffer()
             // boundary to keep to the standard.
             for ( size_t i = 0; i < num_items; i++ ) {
 
-               s             = *( (char **)address + i );
+               s = *( (char **)address + i );
+
                size_t length = ( s != NULL ) ? strlen( s ) : 0;
 
                // The encoded size is an HLAinteger32BE.

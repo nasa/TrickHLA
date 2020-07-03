@@ -31,6 +31,7 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <cmath>
 #include <limits>
+#include <sstream>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -42,7 +43,7 @@ namespace TrickHLA
 {
 extern const int64_t MICROS_MULTIPLIER        = 1000000;
 extern const int64_t MAX_VALUE_IN_MICROS      = std::numeric_limits< int64_t >::max();
-extern const double  MAX_LOGICAL_TIME_SECONDS = (double)MAX_VALUE_IN_MICROS / MICROS_MULTIPLIER;
+extern const double  MAX_LOGICAL_TIME_SECONDS = ( (double)MAX_VALUE_IN_MICROS / (double)MICROS_MULTIPLIER );
 } // namespace TrickHLA
 
 using namespace std;
@@ -127,11 +128,10 @@ double Int64Interval::get_time_in_seconds() const
 
 wstring Int64Interval::to_string() const
 {
-   char buf[128];
-   sprintf( buf, "Int64Interval<%0.06f>", get_time_in_seconds() );
-   string  str( buf );
+   ostringstream msg;
+   msg << "Int64Interval<" << get_time_in_seconds() << ">";
    wstring wstr;
-   wstr.assign( str.begin(), str.end() );
+   wstr.assign( msg.str().begin(), msg.str().end() );
    return wstr;
 }
 

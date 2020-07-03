@@ -1875,7 +1875,8 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             // boundary to keep to the standard.
             for ( size_t i = 0; i < num_items; i++ ) {
 
-               s             = *( (char **)ref2->address + i );
+               s = *( (char **)ref2->address + i );
+
                size_t length = ( s != NULL ) ? strlen( s ) : 0;
 
                // The encoded size is an HLAinteger32BE.
@@ -2015,7 +2016,8 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             // boundary to keep to the standard.
             for ( size_t i = 0; i < num_items; i++ ) {
 
-               s             = *( (char **)ref2->address + i );
+               s = *( (char **)ref2->address + i );
+
                size_t length = ( s != NULL ) ? strlen( s ) : 0;
 
                // The encoded size is an HLAinteger32BE.
