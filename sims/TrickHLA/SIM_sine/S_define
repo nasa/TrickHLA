@@ -219,7 +219,7 @@ class THLAInitSimObj : public Trick::SimObject {
 // Instantiations
 AnalyticSineSimObj   A;
 PropagatedSineSimObj P;
-THLAInitSimObj THLA_INIT( THLA.manager, THLA.federate );
+THLAInitSimObj       THLA_INIT( THLA.manager, THLA.federate );
 
 
 // Define the simulation objects that have routines involved in integration.

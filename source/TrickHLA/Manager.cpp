@@ -2106,13 +2106,14 @@ void Manager::determine_job_cycle_time()
 /*!
  * @job_class{scheduled}
  */
-void Manager::send_requested_data(
-   double current_time )
+void Manager::send_requested_data()
 {
    if ( debug_handler.should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::send_requested_data():%d%c",
                __LINE__, THLA_NEWLINE );
    }
+
+   double current_time = exec_get_sim_time();
 
    // Determine the cycle time for this job if it is not yet known.
    if ( job_cycle_time == 0.0 ) {
@@ -2133,13 +2134,14 @@ void Manager::send_requested_data(
 /*!
  * @job_class{scheduled}
  */
-void Manager::send_cyclic_data(
-   double current_time )
+void Manager::send_cyclic_data()
 {
    if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::send_cyclic_data():%d%c",
                __LINE__, THLA_NEWLINE );
    }
+
+   double current_time = exec_get_sim_time();
 
    // Determine the cycle time for this job if it is not yet known.
    if ( job_cycle_time == 0.0 ) {
@@ -2164,13 +2166,14 @@ void Manager::send_cyclic_data(
  * continually reset our local simulation.
  * @job_class{scheduled}
  */
-void Manager::receive_cyclic_data(
-   double current_time )
+void Manager::receive_cyclic_data()
 {
    if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::receive_cyclic_data():%d%c",
                __LINE__, THLA_NEWLINE );
    }
+
+   double current_time = exec_get_sim_time();
 
    // Receive and process and updates for ExecutionControl.
    execution_control->receive_cyclic_data( current_time );

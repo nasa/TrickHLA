@@ -132,8 +132,8 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
    /* HLA associated reference frames packing object. */
    SpaceFOM::RefFrameBase frame_packing;
 
-   SpaceFOMRefFrameSimObject( /*SpaceFOM::*/RefFrameData & frame_data_ptr,
-                           unsigned short        _INIT = 59  )
+   SpaceFOMRefFrameSimObject( RefFrameData & frame_data_ptr,
+                              unsigned short _INIT = 59  )
    {
       // Set the reference to the reference frame.
       this->ref_frame_data_ptr = &frame_data_ptr;

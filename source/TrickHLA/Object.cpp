@@ -481,7 +481,7 @@ void Object::remove()
             string rti_err_msg;
             StringUtilities::to_string( rti_err_msg, e.what() );
             send_hs( stderr, "Object.remove():%d Could not delete object \
-            instance '%s' from RTI because of DeletePrivilegeNotHeld Exception: '%s'%c",
+instance '%s' from RTI because of DeletePrivilegeNotHeld Exception: '%s'%c",
                      __LINE__, get_name(), rti_err_msg.c_str(), THLA_NEWLINE );
          } catch ( ObjectInstanceNotKnown &e ) {
             string rti_err_msg;
@@ -1606,7 +1606,7 @@ void Object::send_requested_data(
    Int64Time update_time( current_time + cycle_time );
 
    // Update the time_plus_lookahead value.
-   get_update_time_plus_lookahead();
+   (void)get_update_time_plus_lookahead();
 
    // Make sure the current_time + cycle_time is not less than the current
    // HLA time + lookahead time, which could happen due to floating-point
@@ -1915,7 +1915,7 @@ void Object::send_cyclic_data(
    Int64Time update_time( current_time + cycle_time );
 
    // Update the time_plus_lookahead value.
-   get_update_time_plus_lookahead();
+   (void)get_update_time_plus_lookahead();
 
    // Make sure the current_time + cycle_time is not less than the current
    // HLA time + lookahead time, which could happen due to floating-point
