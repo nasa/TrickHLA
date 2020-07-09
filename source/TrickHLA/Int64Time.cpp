@@ -31,6 +31,7 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <cmath>
 #include <cstdio>
+#include <sstream>
 
 // Trick include files.
 
@@ -129,12 +130,11 @@ double Int64Time::get_time_in_seconds() const
 
 wstring Int64Time::to_string() const
 {
-   char buf[128];
-   sprintf( buf, "Int64Time<%0.06f>", get_time_in_seconds() );
-   string  str( buf );
+   ostringstream msg;
+   msg << "Int64Time<" << get_time_in_seconds() << ">";
    wstring wstr;
-   wstr.assign( str.begin(), str.end() );
-   return ( wstr );
+   wstr.assign( msg.str().begin(), msg.str().end() );
+   return wstr;
 }
 
 void Int64Time::set(

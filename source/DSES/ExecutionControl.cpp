@@ -1320,7 +1320,7 @@ bool ExecutionControl::check_freeze_exit()
 
       // Handle requests for ExCO updates.
       if ( this->execution_configuration->is_attribute_update_requested() ) {
-         this->get_manager()->send_requested_data( exec_get_sim_time() );
+         this->get_manager()->send_requested_data();
       }
 
       // Check for Trick shutdown command.

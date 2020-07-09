@@ -149,14 +149,14 @@ class IMSimSimObject : public Trick::SimObject {
       // Grab any new cyclic data from the other Federates that has arrived and
       // update the local state.  (This is done down here to make sure we do
       // the copying AFTER the event loop has fired the reflect call-backs.)
-      P_1ST (data_cycle, "environment") manager.receive_cyclic_data( exec_get_sim_time() );
+      P_1ST (data_cycle, "environment") manager.receive_cyclic_data();
 
       // Send any new cyclic data.
-      P_LAST (data_cycle, "logging") manager.send_cyclic_data( exec_get_sim_time() );
+      P_LAST (data_cycle, "logging") manager.send_cyclic_data();
 
       // Send any requested data. This would occur as the result of another
       // federate requesting an attribute value update.
-      P_LAST (data_cycle, "logging") manager.send_requested_data( exec_get_sim_time() );
+      P_LAST (data_cycle, "logging") manager.send_requested_data();
 
       // Process the ownership requests.
       P_LAST (data_cycle, "logging") manager.process_ownership();

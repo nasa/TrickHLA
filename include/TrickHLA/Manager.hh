@@ -170,9 +170,8 @@ class Manager
     *  @param sync_point_label Name of the synchronization point label. */
    void wait_for_init_sync_point( const char *sync_point_label );
 
-   /*! @brief Send the attribute value requested data to the remote federates.
-    *  @param current_time Current time. */
-   void send_requested_data( double current_time );
+   /*! @brief Send the attribute value requested data to the remote federates. */
+   void send_requested_data();
 
    /*! @brief Request an update to the object attributes for the given object
     * instance name.
@@ -184,13 +183,11 @@ class Manager
     *  @param instance_name Object instance name. */
    void request_data_update( const char *instance_name );
 
-   /*! @brief Send cyclic data to remote federates.
-    *  @param current_time Current time. */
-   void send_cyclic_data( double current_time );
+   /*! @brief Send cyclic data to remote federates. */
+   void send_cyclic_data();
 
-   /*! @brief Handle the received cyclic data.
-    *  @param current_time Current time. */
-   void receive_cyclic_data( double current_time );
+   /*! @brief Handle the received cyclic data. */
+   void receive_cyclic_data();
 
    /*! @brief Process the object discovery.
     *  @return True if the instance was recognized, false otherwise.
