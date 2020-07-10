@@ -17,6 +17,8 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{Item.cpp}
 @trick_link_dependency{ItemQueue.cpp}
+@trick_link_dependency{MutexLock.cpp}
+@trick_link_dependency{MutexProtection.cpp}
 
 @revs_title
 @revs_begin
@@ -28,7 +30,6 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <pthread.h>
 #include <string>
 
 // Trick include files.
@@ -36,6 +37,8 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/ItemQueue.hh"
+#include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Utilities.hh"
 
 //using namespace std;
@@ -45,13 +48,13 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 ItemQueue::ItemQueue()
-   : count( 0 ),
+   : mutex(),
+     count( 0 ),
      head( NULL ),
      tail( NULL ),
      original_head( NULL )
 {
-   // Initialize the mutex.
-   pthread_mutex_init( &mutex, NULL );
+   return;
 }
 
 /*!
@@ -65,7 +68,7 @@ ItemQueue::~ItemQueue()
    }
 
    // Make sure we destroy the mutex.
-   pthread_mutex_destroy( &mutex );
+   (void)mutex.unlock();
 }
 
 /*!
@@ -74,19 +77,14 @@ ItemQueue::~ItemQueue()
 void ItemQueue::dump_head_pointers(
    const char *name )
 {
-   // Note: this routine does not lock the data so it must be called after
-   //       lock() routine has been called...
-
    Item *temp = head->next;
 
-   send_hs( stdout,
-            "ItemQueue::dump_head_pointers(%s):%d Current element is %p %c",
+   send_hs( stdout, "ItemQueue::dump_head_pointers(%s):%d Current element is %p %c",
             name, __LINE__, head, THLA_NEWLINE );
 
    // adjust to the next item off the stack in a thread-safe way.
    while ( temp != NULL ) { // while there are any more elements
-      send_hs( stdout,
-               "ItemQueue::dump_head_pointers(%s):%d Current element points to %p %c",
+      send_hs( stdout, "ItemQueue::dump_head_pointers(%s):%d Current element points to %p %c",
                name, __LINE__, temp, THLA_NEWLINE );
 
       // Adjust the "head" to point to the next item in the linked-list.
@@ -100,9 +98,6 @@ void ItemQueue::dump_head_pointers(
 void ItemQueue::next(
    Item *item )
 {
-   // Note: this routine does not lock the data so it must be called after
-   //       lock() routine has been called...
-
    // adjust to the next item off the stack in a thread-safe way.
    if ( item->next != NULL ) { // is this not the end of the queue
 
@@ -123,7 +118,11 @@ void ItemQueue::next(
 void ItemQueue::pop()
 {
    // Pop the item off the stack in a thread-safe way.
-   lock();
+   //
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
+
    if ( !empty() ) {
       Item *item = head;
 
@@ -140,7 +139,6 @@ void ItemQueue::pop()
 
       count--;
    }
-   unlock();
 }
 
 /*!
@@ -150,7 +148,9 @@ void ItemQueue::push( // RETURN: -- None.
    Item *item )       // IN: -- Item to put into the queue.
 {
    // Add the item to the queue in a thread-safe way.
-   lock();
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
 
    // Add the item to the tail-end of the linked list.
    if ( tail == NULL ) {
@@ -162,8 +162,6 @@ void ItemQueue::push( // RETURN: -- None.
    }
 
    count++;
-
-   unlock();
 }
 
 /*!
@@ -171,9 +169,6 @@ void ItemQueue::push( // RETURN: -- None.
  */
 void ItemQueue::rewind()
 {
-   // Note: this routine does not lock the data so it must be called after
-   //       lock() routine has been called...
-
    // if the next() routine was ever executed to walk thru the queue without
    // popping, restore the queue's original 'head' pointer.
    if ( original_head != NULL ) {

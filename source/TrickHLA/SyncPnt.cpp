@@ -57,7 +57,8 @@ SyncPnt::SyncPnt()
 /*!
  * @job_class{initialization}
  */
-SyncPnt::SyncPnt( std::wstring const &l )
+SyncPnt::SyncPnt(
+   std::wstring const &l )
    : label( l ),
      state( SYNC_PNT_STATE_EXISTS ),
      wait_sleep( 1000 ),

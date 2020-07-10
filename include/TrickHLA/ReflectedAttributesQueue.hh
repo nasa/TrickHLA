@@ -20,6 +20,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../source/TrickHLA/ReflectedAttributesQueue.cpp}
+@trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
 
 @revs_title
 @revs_begin
@@ -32,15 +33,13 @@ NASA, Johnson Space Center\n
 #ifndef _TRICKHLA_REFLECTED_ATTRIBUTES_QUEUE_HH_
 #define _TRICKHLA_REFLECTED_ATTRIBUTES_QUEUE_HH_
 
-// System include files.
-#include <pthread.h>
+// TrickHLA include files
+#include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/Types.hh"
 
 // HLA include files.
-#include "TrickHLA/StandardsSupport.hh"
 #include RTI1516_HEADER
-
-// TrickHLA include files
-#include "TrickHLA/Types.hh"
 
 namespace TrickHLA
 {
@@ -58,7 +57,7 @@ class ReflectedAttributesQueue
    friend void init_attrTrickHLA__ReflectedAttributesQueue();
 
   public:
-   pthread_mutex_t queue_mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
+   MutexLock queue_mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
 
    // TODO: Update this class so that we can create a Trick checkpoint by adding
    // serialize and deserialize capability for the attribute_map_queue data type.

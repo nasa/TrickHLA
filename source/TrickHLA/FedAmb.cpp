@@ -30,6 +30,8 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{Federate.cpp}
 @trick_link_dependency{Manager.cpp}
+@trick_link_dependency{MutexLock.cpp}
+@trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{FedAmb.cpp}
 
 @revs_title
@@ -55,6 +57,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/FedAmb.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Utilities.hh"
 #ifdef THLA_OBJECT_TIME_LOGGING
 #include "TrickHLA/BasicClock.hh"
@@ -1027,71 +1031,74 @@ void FedAmb::requestAttributeOwnershipAssumption(
       // To make the state of the attribute push_requested flag thread safe lock
       // the mutex now. This allows us to handle multiple simultaneous requests
       // to push attributes to our federate.
-      trickhla_obj->lock();
+      {
+         // When auto_unlock_mutex goes out of scope it automatically unlocks the
+         // mutex even if there is an exception.
+         MutexProtection auto_unlock_mutex( &trickhla_obj->mutex );
 
-      // Mark which attributes we can accept ownership of.
-      for ( iter = offeredAttributes.begin(); iter != offeredAttributes.end(); ++iter ) {
+         // Mark which attributes we can accept ownership of.
+         for ( iter = offeredAttributes.begin(); iter != offeredAttributes.end(); ++iter ) {
 
-         // Get the attribute object for the given attribute handle.
-         Attribute *trick_hla_attr = trickhla_obj->get_attribute( *iter );
+            // Get the attribute object for the given attribute handle.
+            Attribute *trick_hla_attr = trickhla_obj->get_attribute( *iter );
 
-         // We can accept ownership of the attribute if our object contains it
-         // as an attribute, is remotely owned, and we are setup to publish it.
-         if ( ( trick_hla_attr != NULL ) && trick_hla_attr->is_remotely_owned() && trick_hla_attr->is_publish() ) {
+            // We can accept ownership of the attribute if our object contains it
+            // as an attribute, is remotely owned, and we are setup to publish it.
+            if ( ( trick_hla_attr != NULL ) && trick_hla_attr->is_remotely_owned() && trick_hla_attr->is_publish() ) {
 
-            trick_hla_attr->set_push_requested( true );
+               trick_hla_attr->set_push_requested( true );
 
-            if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-               send_hs( stdout, "FedAmb::requestAttributeOwnershipAssumption():%d\
+               if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
+                  send_hs( stdout, "FedAmb::requestAttributeOwnershipAssumption():%d\
 \n   Attribute '%s'->'%s' of object '%s'.%c",
-                        __LINE__,
-                        trickhla_obj->get_FOM_name(),
-                        trick_hla_attr->get_FOM_name(),
-                        trickhla_obj->get_name(), THLA_NEWLINE );
-            }
-         } else if ( trick_hla_attr == NULL ) {
+                           __LINE__,
+                           trickhla_obj->get_FOM_name(),
+                           trick_hla_attr->get_FOM_name(),
+                           trickhla_obj->get_name(), THLA_NEWLINE );
+               }
+            } else if ( trick_hla_attr == NULL ) {
 
-            // Handle the case where the attribute is not recognized.
-            any_attribute_not_recognized = true;
+               // Handle the case where the attribute is not recognized.
+               any_attribute_not_recognized = true;
 
-            if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-               send_hs( stderr, "FedAmb::requestAttributeOwnershipAssumption():%d \
+               if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
+                  send_hs( stderr, "FedAmb::requestAttributeOwnershipAssumption():%d \
 Attribute Not Recognized ERROR: Object '%s' with FOM name '%s'!%c",
-                        __LINE__,
-                        trickhla_obj->get_name(), trickhla_obj->get_FOM_name(),
-                        THLA_NEWLINE );
-            }
-         } else if ( trick_hla_attr->is_locally_owned() ) {
+                           __LINE__,
+                           trickhla_obj->get_name(), trickhla_obj->get_FOM_name(),
+                           THLA_NEWLINE );
+               }
+            } else if ( trick_hla_attr->is_locally_owned() ) {
 
-            // Handle the case where the attribute is already owned.
-            any_attribute_already_owned = true;
+               // Handle the case where the attribute is already owned.
+               any_attribute_already_owned = true;
 
-            if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-               send_hs( stderr, "FedAmb::requestAttributeOwnershipAssumption():%d \
+               if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
+                  send_hs( stderr, "FedAmb::requestAttributeOwnershipAssumption():%d \
 Attribute Already Owned ERROR: Object '%s' with attribute '%s'->'%s'!%c",
-                        __LINE__,
-                        trickhla_obj->get_name(),
-                        trickhla_obj->get_FOM_name(),
-                        trick_hla_attr->get_FOM_name(), THLA_NEWLINE );
-            }
-         } else if ( !trick_hla_attr->is_publish() ) {
+                           __LINE__,
+                           trickhla_obj->get_name(),
+                           trickhla_obj->get_FOM_name(),
+                           trick_hla_attr->get_FOM_name(), THLA_NEWLINE );
+               }
+            } else if ( !trick_hla_attr->is_publish() ) {
 
-            // Handle the case where the attribute is not published.
-            any_attribute_not_published = true;
+               // Handle the case where the attribute is not published.
+               any_attribute_not_published = true;
 
-            if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-               send_hs( stderr, "FedAmb::requestAttributeOwnershipAssumption():%d \
+               if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
+                  send_hs( stderr, "FedAmb::requestAttributeOwnershipAssumption():%d \
 Attribute Not Published ERROR: Object '%s' with attribute '%s'->'%s'!%c",
-                        __LINE__,
-                        trickhla_obj->get_name(),
-                        trickhla_obj->get_FOM_name(),
-                        trick_hla_attr->get_FOM_name(), THLA_NEWLINE );
+                           __LINE__,
+                           trickhla_obj->get_name(),
+                           trickhla_obj->get_FOM_name(),
+                           trick_hla_attr->get_FOM_name(), THLA_NEWLINE );
+               }
             }
          }
-      }
 
-      // Make sure to unlock the mutex.
-      trickhla_obj->unlock();
+         // Unlock the mutex when auto_unlock_mutex goes out of scope.
+      }
 
       // Start the thread to service the grant of the push request.
       trickhla_obj->grant_push_request_pthread();

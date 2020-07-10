@@ -18,6 +18,8 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{ItemQueue.cpp}
+@trick_link_dependency{MutexLock.cpp}
+@trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{Parameter.cpp}
 @trick_link_dependency{ParameterItem.cpp}
 @trick_link_dependency{InteractionItem.cpp}
@@ -44,6 +46,8 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/InteractionItem.hh"
+#include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
 #include "TrickHLA/Utilities.hh"
@@ -201,7 +205,9 @@ void InteractionItem::checkpoint_queue()
          exec_terminate( __FILE__, (char *)msg.str().c_str() );
       }
 
-      parameter_queue.lock();
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &parameter_queue.mutex );
 
       for ( int i = 0; i < parm_items_count; i++ ) {
 
@@ -221,9 +227,7 @@ void InteractionItem::checkpoint_queue()
          parameter_queue.next( item );
       }
 
-      parameter_queue.rewind();
-
-      parameter_queue.unlock();
+      // auto_unlock_mutex releases mutex lock here
    }
 }
 

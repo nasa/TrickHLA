@@ -36,16 +36,16 @@ NASA, Johnson Space Center\n
 #ifndef _TRICKHLA_MANAGER_HH_
 #define _TRICKHLA_MANAGER_HH_
 
-// HLA include files.
-#include "TrickHLA/StandardsSupport.hh"
-#include RTI1516_HEADER
-
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/ItemQueue.hh"
 #include "TrickHLA/Object.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
+
+// HLA include files.
+#include RTI1516_HEADER
 
 // Special handling of SWIG limitations for forward declarations.
 #ifdef SWIG
