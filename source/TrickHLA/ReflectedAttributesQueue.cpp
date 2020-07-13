@@ -16,6 +16,8 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{ReflectedAttributesQueue.cpp}
+@trick_link_dependency{MutexLock.cpp}
+@trick_link_dependency{MutexProtection.cpp}
 
 @revs_title
 @revs_begin
@@ -29,6 +31,8 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/ReflectedAttributesQueue.hh"
+#include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/MutexProtection.hh"
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
@@ -38,10 +42,10 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 ReflectedAttributesQueue::ReflectedAttributesQueue()
-   : attribute_map_queue()
+   : queue_mutex(),
+     attribute_map_queue()
 {
-   // Initialize the queue_mutex.
-   pthread_mutex_init( &queue_mutex, NULL );
+   return;
 }
 
 /*!
@@ -56,45 +60,55 @@ ReflectedAttributesQueue::~ReflectedAttributesQueue()
    }
 
    // Make sure we destroy the queue_mutex.
-   pthread_mutex_destroy( &queue_mutex );
+   (void)queue_mutex.unlock();
 }
 
 bool ReflectedAttributesQueue::empty()
 {
-   pthread_mutex_lock( &queue_mutex );
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &queue_mutex );
+
    bool queue_is_empty = attribute_map_queue.empty();
-   pthread_mutex_unlock( &queue_mutex );
    return queue_is_empty;
 }
 
 void ReflectedAttributesQueue::push(
    const AttributeHandleValueMap &theAttributes )
 {
-   pthread_mutex_lock( &queue_mutex );
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &queue_mutex );
+
    attribute_map_queue.push( theAttributes );
-   pthread_mutex_unlock( &queue_mutex );
 }
 
 void ReflectedAttributesQueue::pop()
 {
-   pthread_mutex_lock( &queue_mutex );
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &queue_mutex );
+
    attribute_map_queue.pop();
-   pthread_mutex_unlock( &queue_mutex );
 }
 
 const AttributeHandleValueMap &ReflectedAttributesQueue::front()
 {
-   pthread_mutex_lock( &queue_mutex );
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &queue_mutex );
+
    AttributeHandleValueMap &theAttributes = attribute_map_queue.front();
-   pthread_mutex_unlock( &queue_mutex );
    return theAttributes;
 }
 
 void ReflectedAttributesQueue::clear()
 {
-   pthread_mutex_lock( &queue_mutex );
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &queue_mutex );
+
    while ( !attribute_map_queue.empty() ) {
       attribute_map_queue.pop();
    }
-   pthread_mutex_unlock( &queue_mutex );
 }

@@ -18,6 +18,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Object.cpp}
 @trick_link_dependency{Attribute.cpp}
 @trick_link_dependency{Manager.cpp}
+@trick_link_dependency{MutexLock.cpp}
+@trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{OwnershipHandler.cpp}
 @trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{ReflectedAttributesQueue.cpp}
@@ -51,6 +53,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/LagCompensation.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectDeleted.hh"
 #include "TrickHLA/OwnershipHandler.hh"
@@ -97,6 +101,8 @@ Object::Object()
      ownership( NULL ),
      deleted( NULL ),
      object_deleted_from_RTI( false ),
+     mutex(),
+     ownership_mutex(),
      clock(),
      name_registered( false ),
      changed( false ),
@@ -122,10 +128,6 @@ Object::Object()
    // Make sure we allocate the map.
    attribute_values_map = new AttributeHandleValueMap();
 #endif
-
-   // Initialize the mutex.
-   pthread_mutex_init( &mutex, NULL );
-   pthread_mutex_init( &ownership_mutex, NULL );
 
 #ifdef THLA_THREAD_WAIT_FOR_DATA
    pthread_mutex_init( &data_change_mutex, NULL );
@@ -169,8 +171,8 @@ Object::~Object()
       thla_attribute_map.clear();
 
       // Make sure we destroy the mutex.
-      pthread_mutex_destroy( &mutex );
-      pthread_mutex_destroy( &ownership_mutex );
+      (void)mutex.unlock();
+      (void)ownership_mutex.unlock();
 
 #ifdef THLA_THREAD_WAIT_FOR_DATA
       pthread_mutex_destroy( &data_change_mutex );
@@ -2976,36 +2978,38 @@ void Object::release_ownership()
             __LINE__, get_name(), THLA_NEWLINE );
 #endif
 
-   // Now do one last check of the divist_requested flag with thread safety.
-   ownership_lock();
+   // Now do one last check of the divist_requested flag with thread safety and
+   // use braces to create scope for the mutex-protection to auto unlock the mutex.
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &ownership_mutex );
 
-   // If there is an ownership_handler, tell it to convert the push / pull maps
-   // into checkpoint-able data structures.
-   if ( ownership != NULL ) {
-      if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         send_hs( stdout, "Object::release_ownership():%d Telling ownership handler to clear checkpoint.%c",
-                  __LINE__, THLA_NEWLINE );
+      // If there is an ownership_handler, tell it to convert the push / pull maps
+      // into checkpoint-able data structures.
+      if ( ownership != NULL ) {
+         if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+            send_hs( stdout, "Object::release_ownership():%d Telling ownership handler to clear checkpoint.%c",
+                     __LINE__, THLA_NEWLINE );
+         }
+         ownership->clear_checkpoint();
       }
-      ownership->clear_checkpoint();
-   }
 
-   if ( !this->divest_requested ) {
-
-      // Make sure we unlock the ownership mutex before we return.
-      ownership_unlock();
-
+      if ( !this->divest_requested ) {
 #if THLA_OBJ_OWNERSHIP_DEBUG
-      send_hs( stdout, "Object::release_ownership():%d NOTE: Another thread beat us to release Attributes of Object '%s'.%c",
-               __LINE__, get_name(), THLA_NEWLINE );
+         send_hs( stdout, "Object::release_ownership():%d NOTE: Another thread beat us to release Attributes of Object '%s'.%c",
+                  __LINE__, get_name(), THLA_NEWLINE );
 #endif
 
-      // Another thread beat us to release the Attributes and is processing the
-      // divest request so just return.
-      return;
+         // Another thread beat us to release the Attributes and is processing the
+         // divest request so just return.
+         return;
+      }
+      // Clear the flag now that we are servicing the divest request.
+      this->divest_requested = false;
+
+      // Unlock the ownership mutex as auto_unlock_mutex goes out of scope.
    }
-   // Clear the flag now that we are servicing the divest request.
-   this->divest_requested = false;
-   ownership_unlock();
 
    if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
       send_hs( stdout, "Object::release_ownership():%d Attributes of Object '%s'.%c",
@@ -3203,70 +3207,74 @@ void Object::pull_ownership()
    // The Set of attribute handle to pull ownership of.
    AttributeHandleSet attr_hdl_set;
 
-   // Lock the ownership mutex since we are processing the ownership pull list.
-   ownership_lock();
+   // Lock the ownership mutex since we are processing the ownership pull list and
+   // use braces to create scope for the mutex-protection to auto unlock the mutex.
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &ownership_mutex );
 
-   // Process the pull requests.
-   pull_ownership_iter = ownership->pull_requests.begin();
-   while ( pull_ownership_iter != ownership->pull_requests.end() ) {
+      // Process the pull requests.
+      pull_ownership_iter = ownership->pull_requests.begin();
+      while ( pull_ownership_iter != ownership->pull_requests.end() ) {
 
-      // Make the iterator value easier to work with and understand what it is.
-      double pull_time = pull_ownership_iter->first;
+         // Make the iterator value easier to work with and understand what it is.
+         double pull_time = pull_ownership_iter->first;
 
-      if ( current_time >= pull_time ) {
+         if ( current_time >= pull_time ) {
 
-         // Make the iterator value easier to understand what it is.
-         attr_map = pull_ownership_iter->second;
+            // Make the iterator value easier to understand what it is.
+            attr_map = pull_ownership_iter->second;
 
-         // Process the map of attributes we desire to pull ownership for.
-         for ( attr_map_iter = attr_map->begin();
-               attr_map_iter != attr_map->end(); ++attr_map_iter ) {
+            // Process the map of attributes we desire to pull ownership for.
+            for ( attr_map_iter = attr_map->begin();
+                  attr_map_iter != attr_map->end(); ++attr_map_iter ) {
 
-            Attribute *attr = attr_map_iter->second;
+               Attribute *attr = attr_map_iter->second;
 
-            // Determine if attribute ownership can be pulled.
-            if ( attr->is_remotely_owned() && attr->is_publish() ) {
+               // Determine if attribute ownership can be pulled.
+               if ( attr->is_remotely_owned() && attr->is_publish() ) {
 
-               // We will try and pull ownership of this attribute.
-               attr_hdl_set.insert( attr->get_attribute_handle() );
+                  // We will try and pull ownership of this attribute.
+                  attr_hdl_set.insert( attr->get_attribute_handle() );
 
-               if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-                  send_hs( stdout, "Object::pull_ownership():%d\
+                  if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+                     send_hs( stdout, "Object::pull_ownership():%d\
 \n   Attribute '%s'->'%s' of object '%s'.%c",
-                           __LINE__, get_FOM_name(),
-                           attr->get_FOM_name(), get_name(), THLA_NEWLINE );
-               }
-            } else {
-               if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-                  send_hs( stdout, "Object::pull_ownership():%d Can not \
+                              __LINE__, get_FOM_name(),
+                              attr->get_FOM_name(), get_name(), THLA_NEWLINE );
+                  }
+               } else {
+                  if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+                     send_hs( stdout, "Object::pull_ownership():%d Can not \
 pull Attribute '%s'->'%s' of object '%s' for time %G because it is either already \
 owned or is not configured to be published.%c",
-                           __LINE__, get_FOM_name(),
-                           attr->get_FOM_name(), get_name(), pull_time,
-                           THLA_NEWLINE );
+                              __LINE__, get_FOM_name(),
+                              attr->get_FOM_name(), get_name(), pull_time,
+                              THLA_NEWLINE );
+                  }
                }
             }
+
+            // Erase the Attribute Map for the given pull-time from the pull
+            // requests now that we have processed it.
+            ownership->pull_requests.erase( pull_time );
+
+            // Point to the start of the iterator since we just erased an entry.
+            pull_ownership_iter = ownership->pull_requests.begin();
+
+            // We are done with the Attribute Map for the given pull-time so clear
+            // it and delete it.
+            attr_map->clear();
+            delete attr_map;
+         } else {
+            // Point to the next item in the pull ownership iterator.
+            ++pull_ownership_iter;
          }
-
-         // Erase the Attribute Map for the given pull-time from the pull
-         // requests now that we have processed it.
-         ownership->pull_requests.erase( pull_time );
-
-         // Point to the start of the iterator since we just erased an entry.
-         pull_ownership_iter = ownership->pull_requests.begin();
-
-         // We are done with the Attribute Map for the given pull-time so clear
-         // it and delete it.
-         attr_map->clear();
-         delete attr_map;
-      } else {
-         // Point to the next item in the pull ownership iterator.
-         ++pull_ownership_iter;
       }
-   }
 
-   // Unlock the ownership mutex now that we are done with the pull list.
-   ownership_unlock();
+      // Unlock the ownership mutex when auto_unlock_mutex goes out of scope.
+   }
 
    // Make the request only if we have attributes to pull ownership of.
    if ( attr_hdl_set.empty() ) {
@@ -3471,24 +3479,26 @@ void Object::grant_push_request()
 
       // To make the state of the attribute push_requested thread safe we
       // lock the mutex now.
-      lock();
+      {
+         // When auto_unlock_mutex goes out of scope it automatically unlocks the
+         // mutex even if there is an exception.
+         MutexProtection auto_unlock_mutex( &mutex );
 
-      // Another federate is trying to push the attribute ownership to us so
-      // determine which attributes we will take ownership of.
-      for ( int i = 0; i < attr_count; i++ ) {
-         // Add the attribute to the list of attributes we will accept ownership
-         // of provided the attribute is marked as one the other federate is
-         // trying to push to us and the attribute is not already owned by us.
-         if ( attributes[i].is_push_requested() && attributes[i].is_remotely_owned() ) {
-            attrs.insert( attributes[i].get_attribute_handle() );
+         // Another federate is trying to push the attribute ownership to us so
+         // determine which attributes we will take ownership of.
+         for ( int i = 0; i < attr_count; i++ ) {
+            // Add the attribute to the list of attributes we will accept ownership
+            // of provided the attribute is marked as one the other federate is
+            // trying to push to us and the attribute is not already owned by us.
+            if ( attributes[i].is_push_requested() && attributes[i].is_remotely_owned() ) {
+               attrs.insert( attributes[i].get_attribute_handle() );
+            }
+
+            // Clear the push request flag since the attribute will be processed.
+            attributes[i].set_push_requested( false );
          }
-
-         // Clear the push request flag since the attribute will be processed.
-         attributes[i].set_push_requested( false );
+         // Release the lock on the mutex when auto_unlock_mutex goes out of scope.
       }
-
-      // Release the lock on the mutex.
-      unlock();
 
       // Acquire the attribute ownership if there is at least one in the set.
       if ( !attrs.empty() ) {
@@ -3710,69 +3720,72 @@ void Object::push_ownership()
    // done using it.
    AttributeHandleSet *attr_hdl_set = new AttributeHandleSet();
 
-   // Lock the ownership mutex since we are processing the ownership push list.
-   ownership_lock();
+   // Lock the ownership mutex since we are processing the ownership push list and
+   // use braces to create scope for the mutex-protection to auto unlock the mutex.
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &ownership_mutex );
 
-   // Process the push requests.
-   push_ownership_iter = ownership->push_requests.begin();
-   while ( push_ownership_iter != ownership->push_requests.end() ) {
+      // Process the push requests.
+      push_ownership_iter = ownership->push_requests.begin();
+      while ( push_ownership_iter != ownership->push_requests.end() ) {
 
-      // Make the iterator value easier to work with and understand what it is.
-      double push_time = push_ownership_iter->first;
+         // Make the iterator value easier to work with and understand what it is.
+         double push_time = push_ownership_iter->first;
 
-      if ( current_time >= push_time ) {
+         if ( current_time >= push_time ) {
 
-         // Make the iterator value easier to understand what it is.
-         attr_map = push_ownership_iter->second;
+            // Make the iterator value easier to understand what it is.
+            attr_map = push_ownership_iter->second;
 
-         // Process the map of attributes we desire to push ownership for.
-         for ( attr_map_iter = attr_map->begin();
-               attr_map_iter != attr_map->end(); ++attr_map_iter ) {
+            // Process the map of attributes we desire to push ownership for.
+            for ( attr_map_iter = attr_map->begin();
+                  attr_map_iter != attr_map->end(); ++attr_map_iter ) {
 
-            Attribute *attr = attr_map_iter->second;
+               Attribute *attr = attr_map_iter->second;
 
-            // Determine if attribute ownership can be pushed.
-            if ( attr->is_locally_owned() ) {
+               // Determine if attribute ownership can be pushed.
+               if ( attr->is_locally_owned() ) {
 
-               // We are will try and push ownership of this attribute.
-               attr_hdl_set->insert( attr->get_attribute_handle() );
+                  // We are will try and push ownership of this attribute.
+                  attr_hdl_set->insert( attr->get_attribute_handle() );
 
-               if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-                  send_hs( stdout, "Object::push_ownership():%d\
+                  if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+                     send_hs( stdout, "Object::push_ownership():%d\
 \n   Attribute '%s'->'%s' of object '%s'.%c",
-                           __LINE__, get_FOM_name(),
-                           attr->get_FOM_name(), get_name(), THLA_NEWLINE );
-               }
-            } else {
-               if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-                  send_hs( stdout, "Object::push_ownership():%d Can not \
+                              __LINE__, get_FOM_name(),
+                              attr->get_FOM_name(), get_name(), THLA_NEWLINE );
+                  }
+               } else {
+                  if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+                     send_hs( stdout, "Object::push_ownership():%d Can not \
 push Attribute '%s'->'%s' of object '%s' for time %G because it is either already \
 owned or is not configured to be published.%c",
-                           __LINE__, get_FOM_name(),
-                           attr->get_FOM_name(), get_name(), push_time, THLA_NEWLINE );
+                              __LINE__, get_FOM_name(),
+                              attr->get_FOM_name(), get_name(), push_time, THLA_NEWLINE );
+                  }
                }
             }
+
+            // Erase the Attribute Map for the given push-time from the push
+            // requests now that we have processed it.
+            ownership->push_requests.erase( push_time );
+
+            // Point to the start of the iterator since we just deleted an item.
+            push_ownership_iter = ownership->push_requests.begin();
+
+            // We are done with the Attribute Map for the given push-time so clear
+            // it and delete it.
+            attr_map->clear();
+            delete attr_map;
+         } else {
+            // Point to the next item in the push iterator.
+            ++push_ownership_iter;
          }
-
-         // Erase the Attribute Map for the given push-time from the push
-         // requests now that we have processed it.
-         ownership->push_requests.erase( push_time );
-
-         // Point to the start of the iterator since we just deleted an item.
-         push_ownership_iter = ownership->push_requests.begin();
-
-         // We are done with the Attribute Map for the given push-time so clear
-         // it and delete it.
-         attr_map->clear();
-         delete attr_map;
-      } else {
-         // Point to the next item in the push iterator.
-         ++push_ownership_iter;
       }
+      // Unlock the ownership mutex when auto_unlock_mutex goes out of scope.
    }
-
-   // Unlock the ownership mutex now that we are done with the push list.
-   ownership_unlock();
 
    // Determine if we have any attributes to push ownership of.
    if ( attr_hdl_set->empty() ) {
@@ -4162,8 +4175,11 @@ void Object::pull_ownership_upon_rejoin()
    // The Set of attribute handle to pull ownership of.
    AttributeHandleSet attr_hdl_set;
 
-   // Lock the ownership mutex since we are processing the ownership pull list.
-   ownership_lock();
+   // Lock the ownership mutex since we are processing the ownership push list.
+   //
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &ownership_mutex );
 
    // Force the pull ownership of all attributes....
    for ( int i = 0; i < attr_count; i++ ) {
@@ -4324,8 +4340,7 @@ rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generate
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-   // Unlock the ownership mutex now that we have completed attribute ownership transfer.
-   ownership_unlock();
+   // Unlock the ownership mutex when auto_unlock_mutex goes out of scope.
 }
 
 bool Object::is_shutdown_called() const

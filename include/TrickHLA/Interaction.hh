@@ -24,6 +24,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../source/TrickHLA/Parameter.cpp}
 @trick_link_dependency{../source/TrickHLA/Manager.cpp}
+@trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../source/TrickHLA/InteractionItem.cpp}
 @trick_link_dependency{../source/TrickHLA/InteractionHandler.cpp}
@@ -46,14 +47,15 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/memorymanager_c_intf.h"
 
-// HLA include files.
-#include "TrickHLA/StandardsSupport.hh"
-#include RTI1516_HEADER
-
 // TrickHLA include files
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Int64Time.hh"
+#include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
+
+// HLA include files.
+#include RTI1516_HEADER
 
 // Special handling of SWIG limitations for forward declarations.
 #ifdef SWIG
@@ -199,12 +201,6 @@ class Interaction
     *  @return The Parameter array. */
    Parameter *get_parameters() { return parameters; }
 
-   /*! @brief Lock the thread mutex. */
-   void lock() { pthread_mutex_lock( &mutex ); }
-
-   /*! @brief Unlock the thread mutex. */
-   void unlock() { pthread_mutex_unlock( &mutex ); }
-
    // Used by TrickHLA to determine if the interaction data changed.
    /*! @brief Query if the interaction data has changed.
     *  @return True if data has changed; False otherwise. */
@@ -293,9 +289,9 @@ class Interaction
     *  @return The preferred transport order for this interaction. */
    TransportationEnum get_preferred_order() const { return preferred_order; }
 
-  private:
-   pthread_mutex_t mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
+   MutexLock mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
 
+  private:
    bool changed; ///< @trick_units{--} Flag indicating the data has changed.
 
    bool received_as_TSO; ///< @trick_units{--} True if received interaction as Timestamp order.

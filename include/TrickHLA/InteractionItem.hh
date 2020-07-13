@@ -42,13 +42,13 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 
-// HLA include files.
-#include "TrickHLA/StandardsSupport.hh"
-#include RTI1516_HEADER
-
 // TrickHLA include files.
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/ItemQueue.hh"
+#include "TrickHLA/StandardsSupport.hh"
+
+// HLA include files.
+#include RTI1516_HEADER
 
 namespace TrickHLA
 {

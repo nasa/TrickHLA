@@ -20,6 +20,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{Int64Interval.cpp}
 @trick_link_dependency{Attribute.cpp}
+@trick_link_dependency{MutexLock.cpp}
+@trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{Object.cpp}
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{OwnershipHandler.cpp}
@@ -50,6 +52,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64Interval.hh"
+#include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/OwnershipHandler.hh"
 #include "TrickHLA/OwnershipItem.hh"
@@ -83,7 +87,9 @@ OwnershipHandler::~OwnershipHandler()
 void OwnershipHandler::setup_checkpoint_requests()
 {
    // Lock the ownership mutex since we are processing the ownership list.
-   object->ownership_lock();
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &object->ownership_mutex );
 
    // To keep from leaking memory make sure we clear all checkpointing
    // structures before we create new ones.
@@ -170,9 +176,6 @@ Could not allocate memory for push_items (array of OwnershipItem type)!" );
          }
       }
    }
-
-   // Unlock the onwership mutex now that we are done with the list.
-   object->ownership_unlock();
 }
 
 void OwnershipHandler::clear_checkpoint()
@@ -204,7 +207,9 @@ void OwnershipHandler::restore_requests()
    AttributeOwnershipMap::const_iterator ownership_iter;
 
    // Lock the ownership mutex since we are processing the ownership list.
-   object->ownership_lock();
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &object->ownership_mutex );
 
    // Decode all the ownership-items in the pull_items.
    if ( pull_items_cnt > 0 ) {
@@ -263,9 +268,6 @@ void OwnershipHandler::restore_requests()
          }
       }
    }
-
-   // Unlock the onwership mutex now that we are done with the list.
-   object->ownership_unlock();
 }
 
 void OwnershipHandler::initialize_callback(
@@ -359,8 +361,10 @@ void OwnershipHandler::pull_ownership(
 
    THLAAttributeMap *attr_map;
 
-   // Lock the ownership mutex since we are processing the ownership pull list.
-   object->ownership_lock();
+   // Lock the ownership mutex since we are processing the ownership list.
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &object->ownership_mutex );
 
    // Find the attribute map for the specified time.
    AttributeOwnershipMap::const_iterator attr_map_iter = pull_requests.find( time );
@@ -386,9 +390,6 @@ void OwnershipHandler::pull_ownership(
       // Add the attribute to the map.
       attr_map->insert( make_pair( key, &attributes[i] ) );
    }
-
-   // Unlock the ownership mutex now that we are done with the pull list.
-   object->ownership_unlock();
 }
 
 void OwnershipHandler::pull_ownership( // RETURN: -- None.
@@ -418,8 +419,10 @@ void OwnershipHandler::pull_ownership(
 
    THLAAttributeMap *attr_map;
 
-   // Lock the ownership mutex since we are processing the ownership pull list.
-   object->ownership_lock();
+   // Lock the ownership mutex since we are processing the ownership list.
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &object->ownership_mutex );
 
    // Find the attribute map for the specified time.
    AttributeOwnershipMap::const_iterator attr_map_iter = pull_requests.find( time );
@@ -438,9 +441,6 @@ void OwnershipHandler::pull_ownership(
 
    // Add the attribute to the map.
    attr_map->insert( make_pair( key, attribute ) );
-
-   // Unlock the ownership mutex now that we are done with the pull list.
-   object->ownership_unlock();
 }
 
 void OwnershipHandler::push_ownership()
@@ -464,8 +464,10 @@ void OwnershipHandler::push_ownership(
 
    THLAAttributeMap *attr_map;
 
-   // Lock the ownership mutex since we are processing the ownership push list.
-   object->ownership_lock();
+   // Lock the ownership mutex since we are processing the ownership list.
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &object->ownership_mutex );
 
    // Find the attribute map for the specified time.
    AttributeOwnershipMap::const_iterator attr_map_iter = push_requests.find( time );
@@ -491,9 +493,6 @@ void OwnershipHandler::push_ownership(
       // Add the attribute to the map.
       attr_map->insert( make_pair( key, &attributes[i] ) );
    }
-
-   // Unlock the onwership mutex now that we are done with the push list.
-   object->ownership_unlock();
 }
 
 void OwnershipHandler::push_ownership(
@@ -523,8 +522,10 @@ void OwnershipHandler::push_ownership(
 
    THLAAttributeMap *attr_map;
 
-   // Lock the ownership mutex since we are processing the ownership push list.
-   object->ownership_lock();
+   // Lock the ownership mutex since we are processing the ownership list.
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &object->ownership_mutex );
 
    // Find the attribute map for the specified time.
    AttributeOwnershipMap::const_iterator attr_map_iter = push_requests.find( time );
@@ -543,9 +544,6 @@ void OwnershipHandler::push_ownership(
 
    // Add the attribute to the map.
    attr_map->insert( make_pair( key, attribute ) );
-
-   // Unlock the ownership mutex now that we are done with the push list.
-   object->ownership_unlock();
 }
 
 /*!

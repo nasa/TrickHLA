@@ -19,6 +19,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{Parameter.cpp}
 @trick_link_dependency{Manager.cpp}
+@trick_link_dependency{MutexLock.cpp}
+@trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{Federate.cpp}
 @trick_link_dependency{InteractionItem.cpp}
 @trick_link_dependency{InteractionHandler.cpp}
@@ -50,6 +52,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/InteractionHandler.hh"
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
 #include "TrickHLA/Utilities.hh"
@@ -72,6 +76,7 @@ Interaction::Interaction()
      param_count( 0 ),
      parameters( NULL ),
      handler( NULL ),
+     mutex(),
      changed( false ),
      received_as_TSO( false ),
      time( 0.0 ),
@@ -80,8 +85,7 @@ Interaction::Interaction()
      user_supplied_tag_capacity( 0 ),
      user_supplied_tag( NULL )
 {
-   // Initialize the mutex.
-   pthread_mutex_init( &mutex, NULL );
+   return;
 }
 
 /*!
@@ -101,7 +105,7 @@ Interaction::~Interaction()
    }
 
    // Make sure we destroy the mutex.
-   pthread_mutex_destroy( &mutex );
+   (void)mutex.unlock();
 }
 
 /*!
@@ -886,16 +890,20 @@ bool Interaction::send(
 
    ParameterHandleValueMap param_values_map;
 
-   // For thread safety, lock here to avoid corrupting the parameters.
-   lock();
+   // For thread safety, lock here to avoid corrupting the parameters and use
+   // braces to create scope for the mutex-protection to auto unlock the mutex.
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &mutex );
 
-   // Add all the parameter values to the map.
-   for ( int i = 0; i < param_count; i++ ) {
-      param_values_map[parameters[i].get_parameter_handle()] = parameters[i].get_encoded_parameter_value();
+      // Add all the parameter values to the map.
+      for ( int i = 0; i < param_count; i++ ) {
+         param_values_map[parameters[i].get_parameter_handle()] = parameters[i].get_encoded_parameter_value();
+      }
+
+      // Release mutex lock as auto_unlock_mutex goes out of scope
    }
-
-   // Unlock the thread mutex.
-   unlock();
 
    if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       send_hs( stdout, "Interaction::send():%d As Receive-Order: Interaction '%s'%c",
@@ -954,20 +962,24 @@ bool Interaction::send(
 
    ParameterHandleValueMap param_values_map;
 
-   // For thread safety, lock here to avoid corrupting the parameters.
-   lock();
+   // For thread safety, lock here to avoid corrupting the parameters and use
+   // braces to create scope for the mutex-protection to auto unlock the mutex.
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &mutex );
 
-   // Add all the parameter values to the map.
-   for ( int i = 0; i < param_count; i++ ) {
-      if ( should_print( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-         send_hs( stdout, "Interaction::send():%d Adding '%s' to parameter map.%c",
-                  __LINE__, parameters[i].get_FOM_name(), THLA_NEWLINE );
+      // Add all the parameter values to the map.
+      for ( int i = 0; i < param_count; i++ ) {
+         if ( should_print( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+            send_hs( stdout, "Interaction::send():%d Adding '%s' to parameter map.%c",
+                     __LINE__, parameters[i].get_FOM_name(), THLA_NEWLINE );
+         }
+         param_values_map[parameters[i].get_parameter_handle()] = parameters[i].get_encoded_parameter_value();
       }
-      param_values_map[parameters[i].get_parameter_handle()] = parameters[i].get_encoded_parameter_value();
-   }
 
-   // Unlock the thread mutex.
-   unlock();
+      // auto_unlock_mutex unlocks the mutex here as it goes out of scope.
+   }
 
    // Update the timestamp.
    time.set( send_HLA_time );
@@ -1066,37 +1078,40 @@ void Interaction::process_interaction()
       return;
    }
 
-   // For thread safety, lock here to avoid corrupting the parameters.
-   lock();
+   // For thread safety, lock here to avoid corrupting the parameters and use
+   // braces to create scope for the mutex-protection to auto unlock the mutex.
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &mutex );
 
-   // Check the change flag again now that we have the lock on the mutex.
-   if ( !is_changed() ) {
-      unlock(); // Make sure we unlock before returning.
-      return;
-   }
-
-   if ( should_print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-      string handle_str;
-      StringUtilities::to_string( handle_str, class_handle );
-      if ( received_as_TSO ) {
-         send_hs( stdout, "Interaction::process_interaction():%d ID:%s, FOM_name:'%s', HLA time:%G, Timestamp-Order%c",
-                  __LINE__, handle_str.c_str(), get_FOM_name(),
-                  time.get_time_in_seconds(), THLA_NEWLINE );
-      } else {
-         send_hs( stdout, "Interaction::process_interaction():%d ID:%s, FOM_name:'%s', Receive-Order%c",
-                  __LINE__, handle_str.c_str(), get_FOM_name(), THLA_NEWLINE );
+      // Check the change flag again now that we have the lock on the mutex.
+      if ( !is_changed() ) { // cppcheck-suppress [identicalConditionAfterEarlyExit]
+         return;
       }
+
+      if ( should_print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+         string handle_str;
+         StringUtilities::to_string( handle_str, class_handle );
+         if ( received_as_TSO ) {
+            send_hs( stdout, "Interaction::process_interaction():%d ID:%s, FOM_name:'%s', HLA time:%G, Timestamp-Order%c",
+                     __LINE__, handle_str.c_str(), get_FOM_name(),
+                     time.get_time_in_seconds(), THLA_NEWLINE );
+         } else {
+            send_hs( stdout, "Interaction::process_interaction():%d ID:%s, FOM_name:'%s', Receive-Order%c",
+                     __LINE__, handle_str.c_str(), get_FOM_name(), THLA_NEWLINE );
+         }
+      }
+
+      // Unpack all the parameter data.
+      for ( int i = 0; i < param_count; i++ ) {
+         parameters[i].unpack_parameter_buffer();
+      }
+
+      mark_unchanged();
+
+      // Unlock the mutex as the auto_unlock_mutex goes out of scope.
    }
-
-   // Unpack all the parameter data.
-   for ( int i = 0; i < param_count; i++ ) {
-      parameters[i].unpack_parameter_buffer();
-   }
-
-   mark_unchanged();
-
-   // Unlock the thread mutex.
-   unlock();
 
    // Call the users interaction handler (callback) so that they can
    // continue processing the interaction.
@@ -1137,7 +1152,10 @@ void Interaction::extract_data(
    }
 
    // For thread safety, lock here to avoid corrupting the parameters.
-   lock();
+
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
 
    // Extract the user supplied tag.
    if ( interaction_item->user_supplied_tag_size > 0 ) {
@@ -1172,8 +1190,7 @@ void Interaction::extract_data(
       interaction_item->parameter_queue.pop();
    }
 
-   // Unlock the thread mutex.
-   unlock();
+   // Unlock the mutex as auto_unlock_mutex goes out of scope.
 }
 
 void Interaction::mark_unchanged()

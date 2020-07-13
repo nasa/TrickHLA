@@ -22,6 +22,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../source/TrickHLA/Attribute.cpp}
 @trick_link_dependency{../source/TrickHLA/Manager.cpp}
+@trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../source/TrickHLA/OwnershipHandler.cpp}
 @trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../source/TrickHLA/ReflectedAttributesQueue.cpp}
@@ -61,18 +62,19 @@ NASA, Johnson Space Center\n
 #include <sys/time.h>
 #endif
 
-// HLA include files.
-#include "TrickHLA/StandardsSupport.hh"
-#include RTI1516_HEADER
-
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/BasicClock.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Int64Time.hh"
+#include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/ReflectedAttributesQueue.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
+
+// HLA include files.
+#include RTI1516_HEADER
 
 // Special handling of SWIG limitations for forward declarations.
 #ifdef SWIG
@@ -617,18 +619,6 @@ class Object
    /*! @brief Copy the packed buffer contents back to each dynamic initialization attribute. */
    void unpack_init_attribute_buffers() { unpack_attribute_buffers( CONFIG_INITIALIZE ); }
 
-   /*! @brief Lock the thread mutex. */
-   void lock() { pthread_mutex_lock( &mutex ); }
-
-   /*! @brief Unlock the thread mutex. */
-   void unlock() { pthread_mutex_unlock( &mutex ); }
-
-   /*! @brief Lock the ownership thread mutex. */
-   void ownership_lock() { pthread_mutex_lock( &ownership_mutex ); }
-
-   /*! @brief Unlock the ownership thread mutex. */
-   void ownership_unlock() { pthread_mutex_unlock( &ownership_mutex ); }
-
    /*! @brief Check if federate is shutdown function was called.
     *  @return True if the manager is shutting down the federate. */
    bool is_shutdown_called() const;
@@ -666,13 +656,13 @@ class Object
    timeval  timeofday;           ///< @trick_io{**} Current time of day (wall clock).
 #endif
 
+   MutexLock mutex;           ///< @trick_io{**} Mutex to lock thread over critical code sections.
+   MutexLock ownership_mutex; ///< @trick_io{**} Mutex to lock thread over attribute ownership code sections.
+
   protected:
    /*! @brief Gets the RTI Ambassador.
     *  @return Pointer to associated HLA RTIambassador instance. */
    RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador();
-
-   pthread_mutex_t mutex;           ///< @trick_io{**} Mutex to lock thread over critical code sections.
-   pthread_mutex_t ownership_mutex; ///< @trick_io{**} Mutex to lock thread over attribute ownership code sections.
 
 #ifdef THLA_THREAD_WAIT_FOR_DATA
    pthread_mutex_t data_change_mutex; ///< @trick_io{**} Mutex to lock thread when data_change flag is modified.

@@ -18,6 +18,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{Object.cpp}
 @trick_link_dependency{Manager.cpp}
+@trick_link_dependency{MutexLock.cpp}
+@trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{ExecutionControlBase.cpp}
 
 @revs_title
@@ -48,6 +50,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
@@ -127,7 +131,6 @@ void Manager::setup(
    Federate &            federate,
    ExecutionControlBase &execution_control )
 {
-
    // Set the TrickHLA::Federate instace reference.
    this->federate = &federate;
 
@@ -2738,7 +2741,10 @@ void Manager::setup_checkpoint_interactions()
          exec_terminate( __FILE__, (char *)msg.str().c_str() );
       }
 
-      interactions_queue.lock();
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &interactions_queue.mutex );
+
       //interactions_queue.dump_head_pointers("interactions_queue.dump");
 
       for ( int i = 0; i < interactions_queue.size(); i++ ) {
@@ -2774,7 +2780,7 @@ checkpointing into check_interactions[%d] from interaction index %d...%c",
 
       interactions_queue.rewind();
 
-      interactions_queue.unlock();
+      // auto_unlock_mutex unlocks the mutex lock here
    }
 }
 

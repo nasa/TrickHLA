@@ -21,6 +21,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../source/TrickHLA/ItemQueue.cpp}
 @trick_link_dependency{../source/TrickHLA/Item.cpp}
+@trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
 
 @revs_title
 @revs_begin
@@ -34,11 +35,9 @@ NASA, Johnson Space Center\n
 #ifndef _TRICKHLA_ITEM_QUEUE_HH_
 #define _TRICKHLA_ITEM_QUEUE_HH_
 
-// System include files.
-#include <pthread.h>
-
 // TrickHLA include files.
 #include "TrickHLA/Item.hh"
+#include "TrickHLA/MutexLock.hh"
 
 namespace TrickHLA
 {
@@ -67,11 +66,17 @@ class ItemQueue
   public:
    /*! @brief Query if the item queue is empty.
     *  @return True if empty; False otherwise. */
-   bool empty() const { return ( head == NULL ); }
+   bool empty() const
+   {
+      return ( head == NULL );
+   }
 
    /*! @brief Gets the front item on the item queue.
     *  @return The front or head item on the item queue. */
-   Item *front() { return head; }
+   Item *front()
+   {
+      return head;
+   }
 
    /*! @brief Prints the 'head' pointers for all elements in the queue.
     *  @param name Name of the caller. */
@@ -94,17 +99,14 @@ class ItemQueue
 
    /*! @brief Get the size of the item queue.
     *  @return Number of elements in the queue. */
-   int size() const { return count; }
+   int size() const
+   {
+      return count;
+   }
 
-   /*! @brief Lock the thread mutex. */
-   void lock() { pthread_mutex_lock( &mutex ); }
-
-   /*! @brief Unlock the thread mutex. */
-   void unlock() { pthread_mutex_unlock( &mutex ); }
+   MutexLock mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
 
   private:
-   pthread_mutex_t mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
-
    int count; ///< @trick_units{count} Number of elements in the queue.
 
    Item *head; ///< @trick_units{--} First item in linked-list queue.
