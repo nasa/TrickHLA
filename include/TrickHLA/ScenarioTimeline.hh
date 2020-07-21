@@ -115,22 +115,34 @@ class ScenarioTimeline : public Timeline
    /*! @brief Get the offset of the simulation time line from the scenario
     * timeline epoch.
     *  @return Offset time in seconds. */
-   virtual double get_sim_offset() { return this->sim_offset; }
+   virtual double get_sim_offset()
+   {
+      return this->sim_offset;
+   }
 
    /*! @brief Set the offset of the simulation time line from the scenario
     * timeline epoch.
     *  @param st0 The offset time in seconds. */
-   virtual void set_sim_offset( double st0 ) { this->sim_offset = st0; }
+   virtual void set_sim_offset( double st0 )
+   {
+      this->sim_offset = st0;
+   }
 
    /*! @brief Get the offset of the HLA Logical Time (HLT) timeline from the
     * scenario timeline.
     *  @return Offset in microseconds. */
-   virtual Int64Time get_HLT_offset() { return this->hlt_offset; }
+   virtual Int64Time get_HLT_offset()
+   {
+      return this->hlt_offset;
+   }
 
    /*! @brief Set the offset of the HLA Logical Time (HLT) timeline from the
     * scenario timeline.
     *  @param hlt0 Desired offset in microseconds. */
-   virtual void set_HTL_offset( Int64Time hlt0 ) { this->hlt_offset = hlt0; }
+   virtual void set_HTL_offset( Int64Time hlt0 )
+   {
+      this->hlt_offset = hlt0;
+   }
 
   protected:
    SimTimeline &sim_timeline; ///< @trick_io{**} Reference to simulation timeline.

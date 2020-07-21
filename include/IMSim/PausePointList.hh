@@ -75,7 +75,10 @@ class PausePointList : public TrickHLA::TimedSyncPntList
    PausePointList();
 
    /*! @brief Destructor for the TrickHLA PausePointList class. */
-   virtual ~PausePointList() {}
+   virtual ~PausePointList()
+   {
+      return;
+   }
 
   public:
    /*! @brief Clear the given synchronization point label.
@@ -87,14 +90,35 @@ class PausePointList : public TrickHLA::TimedSyncPntList
     * needs to go to Freeze or Run. */
    void check_state();
 
-   PausePointStateEnum get_state() const { return ( this->state ); }
-   void                clear_state() { this->state = IMSim::PAUSE_POINT_STATE_UNKNOWN; }
+   PausePointStateEnum get_state() const
+   {
+      return ( this->state );
+   }
+   void clear_state()
+   {
+      this->state = IMSim::PAUSE_POINT_STATE_UNKNOWN;
+   }
 
-   bool should_run() const { return ( this->state == PAUSE_POINT_STATE_RUN ); }
-   bool should_freeze() const { return ( this->state == PAUSE_POINT_STATE_FREEZE ); }
-   bool should_exit() const { return ( this->state == PAUSE_POINT_STATE_EXIT ); }
-   bool should_restart() const { return ( this->state == PAUSE_POINT_STATE_RESTART ); }
-   bool should_reconfig() const { return ( this->state == PAUSE_POINT_STATE_RECONFIG ); }
+   bool should_run() const
+   {
+      return ( this->state == PAUSE_POINT_STATE_RUN );
+   }
+   bool should_freeze() const
+   {
+      return ( this->state == PAUSE_POINT_STATE_FREEZE );
+   }
+   bool should_exit() const
+   {
+      return ( this->state == PAUSE_POINT_STATE_EXIT );
+   }
+   bool should_restart() const
+   {
+      return ( this->state == PAUSE_POINT_STATE_RESTART );
+   }
+   bool should_reconfig() const
+   {
+      return ( this->state == PAUSE_POINT_STATE_RECONFIG );
+   }
 
    /*! @brief Returns a wide string representing the state of the
     *  synchronization points.

@@ -76,7 +76,10 @@ class TimedSyncPntList : public TrickHLA::SyncPntListBase
    TimedSyncPntList();
 
    /*! @brief Pure virtual destructor for the TrickHLA TimedSyncPntList class. */
-   virtual ~TimedSyncPntList() {}
+   virtual ~TimedSyncPntList()
+   {
+      return;
+   }
 
    /*! @brief Add the given synchronization point label to the list.
     *  @param label Synchronization point label. */

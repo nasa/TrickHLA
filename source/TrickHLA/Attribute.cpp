@@ -541,10 +541,10 @@ void Attribute::initialize(
 void Attribute::determine_cycle_ratio(
    double core_job_cycle_time )
 {
-   if ( cycle_time <= -std::numeric_limits< double >::max() ) {
+   if ( this->cycle_time <= -std::numeric_limits< double >::max() ) {
       // User has not specified cycle-time for this attribute so assume the
       // cycle time for this attribute matches the core job cycle time.
-      cycle_ratio = 1;
+      this->cycle_ratio = 1;
    } else {
       // Do a bounds check on the core job cycle time.
       if ( core_job_cycle_time <= 0.0 ) {
@@ -552,44 +552,43 @@ void Attribute::determine_cycle_ratio(
          errmsg << "Attribute::determine_cycle_ratio():" << __LINE__
                 << " FOM Object Attribute '" << FOM_name << "' with Trick name '"
                 << trick_name << "'. The core job cycle time ("
-                << core_job_cycle_time << " seconds) for the send_cyclic_data() job"
+                << core_job_cycle_time << " seconds) for the send_cyclic_and_requested_data() job"
                 << " must be > 0. Please make sure your S_define and/or THLA.sm"
                 << " simulation module specifies a valid cycle time for the"
-                << " send_cyclic_data() job." << THLA_ENDL;
+                << " send_cyclic_and_requested_data() job." << THLA_ENDL;
          send_hs( stderr, (char *)errmsg.str().c_str() );
          exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
       }
 
       // Do a bounds check on the 'cycle_time' value.
-      if ( cycle_time < core_job_cycle_time ) {
+      if ( this->cycle_time < core_job_cycle_time ) {
          ostringstream errmsg;
          errmsg << "Attribute::determine_cycle_ratio():" << __LINE__
                 << " FOM Object Attribute '" << FOM_name << "' with Trick name '"
-                << trick_name << "' has a 'cycle_time' value of " << cycle_time
+                << trick_name << "' has a 'cycle_time' value of " << this->cycle_time
                 << " seconds, which is not valid. The attribute 'cycle_time' must"
                 << " be >= " << core_job_cycle_time << " seconds (i.e. the core job"
-                << " cycle time for the send_cyclic_data() job). Please check your"
+                << " cycle time for the send_cyclic_and_requested_data() job). Please check your"
                 << " input or modified-data files to make sure the value for the"
                 << " attribute 'cycle_time' is specified correctly." << THLA_ENDL;
          send_hs( stderr, (char *)errmsg.str().c_str() );
          exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
       }
 
-      cycle_ratio = (int)( ( cycle_time / core_job_cycle_time ) + 0.5 );
+      this->cycle_ratio = (int)( ( this->cycle_time / core_job_cycle_time ) + 0.5 );
 
       // Make sure we are ready to send the data on the first chance.
-      cycle_cnt = cycle_ratio;
+      this->cycle_cnt = this->cycle_ratio;
 
-      // The cycle-ratio must be an integer ratio so check for any fractional
-      // part.
-      if ( fmod( cycle_time, core_job_cycle_time ) != 0.0 ) {
+      // The cycle-ratio must be an integer ratio so check for any fractional part.
+      if ( fmod( this->cycle_time, core_job_cycle_time ) != 0.0 ) {
          ostringstream errmsg;
          errmsg << "Attribute::determine_cycle_ratio():" << __LINE__
                 << " FOM Object Attribute '" << FOM_name << "' with Trick name '"
-                << trick_name << "' has a 'cycle_time' value of " << cycle_time
+                << trick_name << "' has a 'cycle_time' value of " << this->cycle_time
                 << " seconds, which is not an integer multiple of the core job"
                 << " cycle time of " << core_job_cycle_time << " seconds for the"
-                << " send_cyclic_data() job. The ratio of the attribute cycle_time"
+                << " send_cyclic_and_requested_data() job. The ratio of the attribute cycle_time"
                 << " to the core job cycle time is (" << cycle_ratio << " + "
                 << fmod( cycle_time, core_job_cycle_time )
                 << "), which is not an integer. Please check your input or"
@@ -605,8 +604,8 @@ void Attribute::determine_cycle_ratio(
              << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
              << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
              << "  core_job_cycle_time:" << core_job_cycle_time << " seconds" << endl
-             << "  cyle_time:" << cycle_time << " seconds" << endl
-             << "  cycle_ratio:" << cycle_ratio << THLA_ENDL;
+             << "  cyle_time:" << this->cycle_time << " seconds" << endl
+             << "  cycle_ratio:" << this->cycle_ratio << THLA_ENDL;
          send_hs( stdout, (char *)msg.str().c_str() );
       }
    }

@@ -343,26 +343,26 @@ Output from the sender shown below reveals that it does indeed send an interacti
 | |wormhole|1|0.00|2007/08/03,22:27:05| TrickHLAManager::initialization_complete()
         Simulation has started and is now running...
 | |wormhole|1|0.00|2007/08/03,22:27:05| TrickHLAManager::receive_cyclic_data()
-| |wormhole|1|0.00|2007/08/03,22:27:05| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|0.00|2007/08/03,22:27:05| TrickHLAManager::send_cyclic_and_requested_data()
 | |wormhole|-1|0.25|2007/08/03,22:27:05| TrickHLAFedAmb::timeAdvanceGrant()
 Federate "sender" Time granted to: 1
 | |wormhole|1|1.00|2007/08/03,22:27:06| TrickHLAManager::receive_cyclic_data()
-| |wormhole|1|1.00|2007/08/03,22:27:06| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|1.00|2007/08/03,22:27:06| TrickHLAManager::send_cyclic_and_requested_data()
 | |wormhole|-1|1.25|2007/08/03,22:27:06| TrickHLAFedAmb::timeAdvanceGrant()
 Federate "sender" Time granted to: 2
 | |wormhole|1|2.00|2007/08/03,22:27:07| TrickHLAManager::receive_cyclic_data()
-| |wormhole|1|2.00|2007/08/03,22:27:07| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|2.00|2007/08/03,22:27:07| TrickHLAManager::send_cyclic_and_requested_data()
 | |wormhole|-1|2.25|2007/08/03,22:27:07| TrickHLAFedAmb::timeAdvanceGrant()
 Federate "sender" Time granted to: 3
 | |wormhole|1|3.00|2007/08/03,22:27:08| TrickHLAManager::receive_cyclic_data()
-| |wormhole|1|3.00|2007/08/03,22:27:08| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|3.00|2007/08/03,22:27:08| TrickHLAManager::send_cyclic_and_requested_data()
 | |wormhole|-1|3.25|2007/08/03,22:27:08| TrickHLAFedAmb::timeAdvanceGrant()
 Federate "sender" Time granted to: 4
 | |wormhole|1|4.00|2007/08/03,22:27:09| TrickHLAInteraction::send() Timestamp Order:
       Interaction 'SimplesineParameters' sent for time 4.999 seconds.
 | |wormhole|1|4.00|2007/08/03,22:27:09| sent interaction: SimplesineParameters
 | |wormhole|1|4.00|2007/08/03,22:27:09| TrickHLAManager::receive_cyclic_data()
-| |wormhole|1|4.00|2007/08/03,22:27:09| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|4.00|2007/08/03,22:27:09| TrickHLAManager::send_cyclic_and_requested_data()
 | |wormhole|-1|4.25|2007/08/03,22:27:09| TrickHLAFedAmb::timeAdvanceGrant()
 Federate "sender" Time granted to: 5
 ...
@@ -376,23 +376,23 @@ the interaction did indeed arrive.
 | |wormhole|1|0.00|2007/08/03,22:27:05| TrickHLAManager::initialization_complete()
         Simulation has started and is now running...
 | |wormhole|1|0.00|2007/08/03,22:27:05| TrickHLAManager::receive_cyclic_data()
-| |wormhole|1|0.00|2007/08/03,22:27:05| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|0.00|2007/08/03,22:27:05| TrickHLAManager::send_cyclic_and_requested_data()
 | |wormhole|-1|0.25|2007/08/03,22:27:05| TrickHLAFedAmb::timeAdvanceGrant()
 Federate "receiver" Time granted to: 1
 | |wormhole|1|1.00|2007/08/03,22:27:06| TrickHLAManager::receive_cyclic_data()
-| |wormhole|1|1.00|2007/08/03,22:27:06| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|1.00|2007/08/03,22:27:06| TrickHLAManager::send_cyclic_and_requested_data()
 | |wormhole|-1|1.25|2007/08/03,22:27:06| TrickHLAFedAmb::timeAdvanceGrant()
 Federate "receiver" Time granted to: 2
 | |wormhole|1|2.00|2007/08/03,22:27:07| TrickHLAManager::receive_cyclic_data()
-| |wormhole|1|2.00|2007/08/03,22:27:07| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|2.00|2007/08/03,22:27:07| TrickHLAManager::send_cyclic_and_requested_data()
 | |wormhole|-1|2.25|2007/08/03,22:27:07| TrickHLAFedAmb::timeAdvanceGrant()
 Federate "receiver" Time granted to: 3
 | |wormhole|1|3.00|2007/08/03,22:27:08| TrickHLAManager::receive_cyclic_data()
-| |wormhole|1|3.00|2007/08/03,22:27:08| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|3.00|2007/08/03,22:27:08| TrickHLAManager::send_cyclic_and_requested_data()
 | |wormhole|-1|3.25|2007/08/03,22:27:08| TrickHLAFedAmb::timeAdvanceGrant()
 Federate "receiver" Time granted to: 4
 | |wormhole|1|4.00|2007/08/03,22:27:09| TrickHLAManager::receive_cyclic_data()
-| |wormhole|1|4.00|2007/08/03,22:27:09| TrickHLAManager::send_cyclic_data()
+| |wormhole|1|4.00|2007/08/03,22:27:09| TrickHLAManager::send_cyclic_and_requested_data()
 | |wormhole|-1|4.25|2007/08/03,22:27:09| TrickHLAManager::receive_TSO_interaction() ID:77, HLA time:4.999
 | |wormhole|-1|4.25|2007/08/03,22:27:09| TrickHLAFedAmb::timeAdvanceGrant()
 Federate "receiver" Time granted to: 5

@@ -95,7 +95,10 @@ class MTRInteractionHandler : public TrickHLA::InteractionHandler
 
    /*! @brief Get the address of the MTR interaction mode transition state.
     *  @return Address of the MTR interaction mode transition state. */
-   int16_t *get_address_of_interaction_mode() { return ( &mtr_mode_int ); }
+   int16_t *get_address_of_interaction_mode()
+   {
+      return ( &mtr_mode_int );
+   }
 
   public:
    char *  name;         ///< @trick_units{--} Federation instance name for this interaction.

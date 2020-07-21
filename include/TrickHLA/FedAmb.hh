@@ -96,7 +96,10 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
    virtual ~FedAmb() throw();
 
   public:
-   Manager *get_manager() { return this->manager; }
+   Manager *get_manager()
+   {
+      return this->manager;
+   }
 
 #ifdef THLA_OBJECT_TIME_LOGGING
    TrickHLABasicClock clock; ///< @trick_units{--} The clock time used for object time logging.

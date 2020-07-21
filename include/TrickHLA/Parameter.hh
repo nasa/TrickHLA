@@ -109,11 +109,17 @@ class Parameter
 
    /*! @brief Set the debug handler for this parameter.
     *  @param hndlr The TrickHLA::DebugHandler instance. */
-   void set_debug_level( DebugHandler hndlr ) { debug_handler.set( hndlr ); }
+   void set_debug_level( DebugHandler hndlr )
+   {
+      debug_handler.set( hndlr );
+   }
 
    /*! @brief Get the FOM name for this parameter.
     *  @return The FOM name of this parameter. */
-   const char *get_FOM_name() const { return FOM_name; }
+   const char *get_FOM_name() const
+   {
+      return FOM_name;
+   }
 
    /*! @brief Set the FOM name for the paramter.
     *  @param in_name The FOM name for the paramter. */
@@ -130,7 +136,10 @@ class Parameter
 
    /*! @brief Get the Trick variable name associated with this parameter.
     *  @return The Trick variable name associated with this parameter. */
-   const char *get_trick_name() const { return trick_name; }
+   const char *get_trick_name() const
+   {
+      return trick_name;
+   }
 
    /*! @brief Set the RTI encoding and based on the new encoding determine if
     * we need to byte-swap.
@@ -157,15 +166,24 @@ class Parameter
 
    /*! @brief Determines if the parameter has to be byte swapped.
     *  @return True if parameter is byte swapped. */
-   bool is_byteswap() const { return byteswap; }
+   bool is_byteswap() const
+   {
+      return byteswap;
+   }
 
    /*! @brief Get the HLA Parameter handle.
     *  @return The HLA Parameter handle. */
-   RTI1516_NAMESPACE::ParameterHandle get_parameter_handle() const { return this->param_handle; }
+   RTI1516_NAMESPACE::ParameterHandle get_parameter_handle() const
+   {
+      return this->param_handle;
+   }
 
    /*! @brief Set the associated HLA Parameter handle.
     *  @param hdl The associated HLA Parameter handle.  */
-   void set_parameter_handle( RTI1516_NAMESPACE::ParameterHandle hdl ) { this->param_handle = hdl; }
+   void set_parameter_handle( RTI1516_NAMESPACE::ParameterHandle hdl )
+   {
+      this->param_handle = hdl;
+   }
 
    /*! @brief Gets the HLA Parameter Value using the appropriate encoding.
     *  @return Encoded parameter value. */
@@ -179,13 +197,22 @@ class Parameter
 
    /*! @brief Check if a parameter value has changed.
     *  @return True if a parameter value has changed; False otherwise. */
-   bool is_changed() const { return this->value_changed; }
+   bool is_changed() const
+   {
+      return this->value_changed;
+   }
 
    /*! @brief Mark the parameter as having changed. */
-   void mark_changed() { this->value_changed = true; }
+   void mark_changed()
+   {
+      this->value_changed = true;
+   }
 
    /*! @brief  Mark the parameter as having NOT changed. */
-   void mark_unchanged() { this->value_changed = false; }
+   void mark_unchanged()
+   {
+      this->value_changed = false;
+   }
 
    /*! @brief Unpack the parameter from the buffer into the trick-variable
     * using the appropriate decoding. */
@@ -197,11 +224,17 @@ class Parameter
 
    /*! @brief Get the Trick ATTRIBUTES for this Parameter.
     *  @return A copy of the Trick ATTRIBUTES structure for this Parameter. */
-   ATTRIBUTES get_ref2_attributes() const { return ( *attr ); }
+   ATTRIBUTES get_ref2_attributes() const
+   {
+      return ( *attr );
+   }
 
    /*! @brief Get the RTI encoding for this Parameter.
     *  @return The encoding type for this Parameter. */
-   EncodingEnum get_rti_encoding() const { return rti_encoding; }
+   EncodingEnum get_rti_encoding() const
+   {
+      return rti_encoding;
+   }
 
   private:
    unsigned char *buffer;          ///< @trick_units{--} Byte buffer for the attribute value bytes.

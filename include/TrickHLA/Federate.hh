@@ -298,7 +298,10 @@ class Federate
 
    /*! @brief Get the count of the currently running federates.
     *  @return Count of the currently running federates. */
-   int get_running_feds_count() const { return running_feds_count; }
+   int get_running_feds_count() const
+   {
+      return running_feds_count;
+   }
 
    /*! @brief Add the specified MOM HLAfederate instance ID to the list of
     * discovered federates.
@@ -394,19 +397,31 @@ class Federate
 
    /*! @brief Query if restore process restore request failed.
     *  @return True if failed, False otherwise. */
-   bool has_restore_process_restore_request_failed() const { return ( restore_process == Restore_Request_Failed ); }
+   bool has_restore_process_restore_request_failed() const
+   {
+      return ( restore_process == Restore_Request_Failed );
+   }
 
    /*! @brief Query if restore process restore request succeeded.
     *  @return True if succeeded, False otherwise. */
-   bool has_restore_process_restore_request_succeeded() const { return ( restore_process == Restore_Request_Succeeded ); }
+   bool has_restore_process_restore_request_succeeded() const
+   {
+      return ( restore_process == Restore_Request_Succeeded );
+   }
 
    /*! @brief Query if restore request failed.
     *  @return True if failed, False otherwise. */
-   bool has_restore_request_failed() const { return ( restore_process == Restore_Request_Failed ); }
+   bool has_restore_request_failed() const
+   {
+      return ( restore_process == Restore_Request_Failed );
+   }
 
    /*! @brief Query if restore request succeeded.
     *  @return True if succeeded, False otherwise. */
-   bool has_restore_request_succeeded() const { return ( restore_process == Restore_Request_Succeeded ); }
+   bool has_restore_request_succeeded() const
+   {
+      return ( restore_process == Restore_Request_Succeeded );
+   }
 
    /*! @brief Set the announce save flag. */
    void set_announce_save()
@@ -522,7 +537,10 @@ class Federate
 
    /*! @brief Sets the Save filename and flag.
     *  @return True if restore has been announced; False otherwise. */
-   bool has_restore_been_announced() const { return restore_begun; }
+   bool has_restore_been_announced() const
+   {
+      return restore_begun;
+   }
 
    /*! @brief Informs of completion of federation restore. */
    void complete_restore();

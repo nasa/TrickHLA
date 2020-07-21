@@ -175,39 +175,66 @@ class Interaction
    // Instance methods
    /*! @brief Get the FOM name for this interaction.
     *  @return Constant string with the FOM name for this interaction. */
-   const char *get_FOM_name() const { return FOM_name; }
+   const char *get_FOM_name() const
+   {
+      return FOM_name;
+   }
 
    /*! @brief Query if this interaction is published.
     *  @return True if this interaction is published; False otherwise. */
-   bool is_publish() const { return publish; }
+   bool is_publish() const
+   {
+      return publish;
+   }
 
    /*! @brief Query if this interaction is subscribed.
     *  @return True if this interaction is subscribed; False otherwise. */
-   bool is_subscribe() const { return subscribe; }
+   bool is_subscribe() const
+   {
+      return subscribe;
+   }
 
    /*! @brief Get this interactions InteractionClassHandle.
     *  @return Copy of this interactions InteractionClassHandle. */
-   RTI1516_NAMESPACE::InteractionClassHandle get_class_handle() const { return class_handle; }
+   RTI1516_NAMESPACE::InteractionClassHandle get_class_handle() const
+   {
+      return class_handle;
+   }
 
    /*! @brief Set the interaction InteractionClassHandle.
     *  @param id The interaction InteractionClassHandle. */
-   void set_class_handle( RTI1516_NAMESPACE::InteractionClassHandle id ) { this->class_handle = id; }
+   void set_class_handle( RTI1516_NAMESPACE::InteractionClassHandle id )
+   {
+      this->class_handle = id;
+   }
 
    /*! @brief Get the parameter count for this interaction.
     *  @return The parameter count for this interaction. */
-   int get_parameter_count() const { return param_count; }
+   int get_parameter_count() const
+   {
+      return param_count;
+   }
 
    /*! @brief Get the TrickHLA::Parameter array associated with this interaction.
     *  @return The Parameter array. */
-   Parameter *get_parameters() { return parameters; }
+   Parameter *get_parameters()
+   {
+      return parameters;
+   }
 
    // Used by TrickHLA to determine if the interaction data changed.
    /*! @brief Query if the interaction data has changed.
     *  @return True if data has changed; False otherwise. */
-   bool is_changed() const { return this->changed; }
+   bool is_changed() const
+   {
+      return this->changed;
+   }
 
    /*! @brief Mark the data as cahnged. */
-   void mark_changed() { this->changed = true; }
+   void mark_changed()
+   {
+      this->changed = true;
+   }
 
    /*! @brief Mark the data as unchanged, and clear the change flag for all the parameters as well. */
    void mark_unchanged();
@@ -217,15 +244,24 @@ class Interaction
    // TODO: Review this to make sure we still need this.
    /*! @brief Get the TrickHLA::InteractionHandler associated with this interaction.
     *  @return The interaction handler. */
-   InteractionHandler *get_handler() { return handler; }
+   InteractionHandler *get_handler()
+   {
+      return handler;
+   }
    /*! @brief Set the TrickHLA::InteractionHandler for this interaction.
     *  @param ptr The TrickHLA::InteractionHandler instance to use. */
-   void set_handler( InteractionHandler *ptr ) { this->handler = ptr; }
+   void set_handler( InteractionHandler *ptr )
+   {
+      this->handler = ptr;
+   }
 
    // needed so that my InteractionHandler can signal the Manager to do something...
    /*! @brief Get the associated TrickHLA::Manager instance.
     *  @return Pointer to the associated TrickHLA::Manager instance. */
-   Manager *get_manager() { return manager; }
+   Manager *get_manager()
+   {
+      return manager;
+   }
 
    /*! @brief Returns a pointer to our federate, or NULL if one does not exist yet.
     *  @return A pointer to this federate's TrickHLA::Federate instance. */
@@ -272,22 +308,37 @@ class Interaction
    void set_user_supplied_tag( unsigned char *tag, size_t tag_size );
 
    /*! @brief Mark this interaction as published. */
-   void set_publish() { publish = true; }
+   void set_publish()
+   {
+      publish = true;
+   }
 
    /*! @brief Mark this interaction as subscribed. */
-   void set_subscribe() { subscribe = true; }
+   void set_subscribe()
+   {
+      subscribe = true;
+   }
 
    /*! @brief Set the interaction parameter count.
     *  @param in_num The number of parameters in this interaction. */
-   void set_parameter_count( int in_num ) { param_count = in_num; }
+   void set_parameter_count( int in_num )
+   {
+      param_count = in_num;
+   }
 
    /*! @brief Set the parameter array.
     *  @param ptr Pointer to the TrickHLA::Parameter array associated with this interaction. */
-   void set_parameters( Parameter *ptr ) { parameters = ptr; }
+   void set_parameters( Parameter *ptr )
+   {
+      parameters = ptr;
+   }
 
    /*! @brief Get the preferred transport order for this interaction.
     *  @return The preferred transport order for this interaction. */
-   TransportationEnum get_preferred_order() const { return preferred_order; }
+   TransportationEnum get_preferred_order() const
+   {
+      return preferred_order;
+   }
 
    MutexLock mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
 

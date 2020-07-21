@@ -70,9 +70,15 @@ class OwnershipItem : public Item
    // Public constructors and destructor.
    //
    /*! @brief Default constructor for the TrickHLA OwnershipItem class. */
-   OwnershipItem() : time( 0.0 ), FOM_name( NULL ) {}
+   OwnershipItem() : time( 0.0 ), FOM_name( NULL )
+   {
+      return;
+   }
    /*! @brief Destructor for the TrickHLA OwnershipItem class. */
-   virtual ~OwnershipItem() { clear(); }
+   virtual ~OwnershipItem()
+   {
+      clear();
+   }
 
    /*! @brief Clear the Trick allocated memory for the FOM name. */
    void clear()

@@ -72,10 +72,16 @@ class SyncPntList : public TrickHLA::SyncPntListBase
    // Public constructors and destructor.
    //
    /*! @brief Default constructor for the TrickHLA SyncPntList class. */
-   SyncPntList() {}
+   SyncPntList()
+   {
+      return;
+   }
 
    /*! @brief Pure virtual destructor for the TrickHLA SyncPntList class. */
-   virtual ~SyncPntList() {}
+   virtual ~SyncPntList()
+   {
+      return;
+   }
 
   private:
    // Do not allow the copy constructor or assignment operator.

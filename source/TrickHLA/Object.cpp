@@ -124,10 +124,8 @@ Object::Object()
    received_gmt_time = 0.0;
 #endif
 
-#ifdef THLA_USE_ATTRIBUTE_MAP_CLASS_INSTANCE
    // Make sure we allocate the map.
    attribute_values_map = new AttributeHandleValueMap();
-#endif
 
 #ifdef THLA_THREAD_WAIT_FOR_DATA
    pthread_mutex_init( &data_change_mutex, NULL );
@@ -158,7 +156,6 @@ Object::~Object()
       }
 
       // FIXME: There is a problem with deleting attribute_values_map?
-#ifdef THLA_USE_ATTRIBUTE_MAP_CLASS_INSTANCE
       if ( attribute_values_map != NULL ) {
          if ( !attribute_values_map->empty() ) {
             attribute_values_map->clear();
@@ -166,7 +163,6 @@ Object::~Object()
          delete attribute_values_map;
          attribute_values_map = NULL;
       }
-#endif
 
       thla_attribute_map.clear();
 
@@ -1565,7 +1561,7 @@ void Object::send_requested_data(
    double current_time,
    double cycle_time )
 {
-   // If not attribute update has been requested then just return.
+   // If no attribute update has been requested then just return.
    if ( !attr_update_requested ) {
       return;
    }
@@ -1631,7 +1627,6 @@ void Object::send_requested_data(
    // Buffer the requested attribute values for the object.
    pack_requested_attribute_buffers();
 
-#ifdef THLA_USE_ATTRIBUTE_MAP_CLASS_INSTANCE
    try {
       // Create the map of "requested" attribute values we will be updating.
       create_requested_attribute_set();
@@ -1641,19 +1636,6 @@ void Object::send_requested_data(
       send_hs( stderr, "Object::send_requested_data():%d Can not create attribute value/pair set: '%s'%c",
                __LINE__, rti_err_msg.c_str(), THLA_NEWLINE );
    }
-#else
-   AttributeHandleValueMap *attribute_values_map = NULL;
-
-   try {
-      // Create the map of "requested" attribute values we will be updating.
-      attribute_values_map = create_requested_attribute_set();
-   } catch ( RTI1516_EXCEPTION &e ) {
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      send_hs( stderr, "Object::send_requested_data():%d Can not create attribute value/pair set: '%s'%c",
-               __LINE__, rti_err_msg.c_str(), THLA_NEWLINE );
-   }
-#endif
 
    // Determine if we need to send with a timestamp.
    bool send_with_timestamp = trick_fed->in_time_regulating_state() && ( any_attribute_FOM_specified_order || any_attribute_timestamp_order );
@@ -1867,24 +1849,22 @@ exception for '%s' with error message '%s'.%c",
    // Macro to restore the saved FPU Control Word register value.
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-#ifndef THLA_USE_ATTRIBUTE_MAP_CLASS_INSTANCE
-   // Must free the memory
-   attribute_values_map->clear();
-   delete attribute_values_map;
-#endif
 }
 
 /*!
  * @job_class{scheduled}
  */
-void Object::send_cyclic_data(
+void Object::send_cyclic_and_requested_data(
    double current_time,
    double cycle_time )
 {
+   // Make sure we clear the attribute update request flag because we only
+   // want to send data once per request.
+   attr_update_requested = false;
+
    // We can only send cyclic attribute updates for the attributes we own, are
-   // configured to publish and the cycle-time is ready for a send.
-   if ( !any_locally_owned_published_cyclic_data_ready_attribute() ) {
+   // configured to publish and the cycle-time is ready for a send or was requested.
+   if ( !any_locally_owned_published_cyclic_data_ready_or_requested_attribute() ) {
       return;
    }
 
@@ -1899,12 +1879,6 @@ void Object::send_cyclic_data(
    Int64Time t = trick_fed->get_granted_fed_time();
    set_last_update_time( t.get() );
 
-#if THLA_OBJ_DEBUG_SEND
-   send_hs( stdout, "Object::send_cyclic_data():%d For '%s' at t=%G%c",
-            __LINE__, get_name(), trick_fed->get_granted_fed_time().get_time_in_seconds(),
-            THLA_NEWLINE );
-#endif
-
    // Check for a zero lookahead time, which means the cycle_time (i.e. dt)
    // should be zero as well.
    if ( trick_fed->is_zero_lookahead_time() ) {
@@ -1912,7 +1886,7 @@ void Object::send_cyclic_data(
    }
 
    // The update_time should be the current simulation time plus the cycle
-   // time for this job.  Also, the dt value would then be the job cycle time
+   // time for this job. Also, the dt value would then be the job cycle time
    // for this job for this function. 11/28/2006 DDexter
    Int64Time update_time( current_time + cycle_time );
 
@@ -1938,39 +1912,20 @@ void Object::send_cyclic_data(
    }
 
    // Buffer the attribute values for the object.
-   pack_cyclic_attribute_buffers();
+   pack_cyclic_and_requested_attribute_buffers();
 
-#ifdef THLA_USE_ATTRIBUTE_MAP_CLASS_INSTANCE
    try {
-      // Create the map of "cyclic" attribute values we will be updating.
-      create_attribute_set( CONFIG_CYCLIC );
+      // Create the map of "cyclic" and requested attribute values we will be updating.
+      create_attribute_set( CONFIG_CYCLIC, true );
    } catch ( RTI1516_EXCEPTION &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      send_hs( stderr, "Object::send_cyclic_data():%d For object '%s', cannot create attribute value/pair set: '%s'%c",
+      send_hs( stderr, "Object::send_cyclic_and_requested_data():%d For object '%s', cannot create attribute value/pair set: '%s'%c",
                __LINE__, get_name(), rti_err_msg.c_str(), THLA_NEWLINE );
    }
-#else
-   AttributeHandleValueMap *attribute_values_map = NULL;
-   try {
-      // Create the map of "cyclic" attribute values we will be updating.
-      attribute_values_map = create_attribute_set( CONFIG_CYCLIC );
-   } catch ( RTI1516_EXCEPTION &e ) {
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      send_hs( stderr, "Object::send_cyclic_data():%d For object '%s', cannot create attribute value/pair set: '%s'%c",
-               __LINE__, get_name(), rti_err_msg.c_str(), THLA_NEWLINE );
-   }
-#endif
 
    // Make sure we don't send an empty attribute map to the other federates.
    if ( attribute_values_map->empty() ) {
-
-#ifndef THLA_USE_ATTRIBUTE_MAP_CLASS_INSTANCE
-      // Must free the memory
-      delete attribute_values_map;
-#endif
-
       // Just return because we have no data to send.
       return;
    }
@@ -1982,7 +1937,7 @@ void Object::send_cyclic_data(
       /*
       ostringstream msg;
       msg << "-------------------------------------" << endl
-          << "Object::send_cyclic_data():" << __LINE__ << endl
+          << "Object::send_cyclic_and_requested_data():" << __LINE__ << endl
           << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << " micros=" << trick_fed->get_granted_fed_time().get_time_in_micros() << endl
           << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << " micros=" << this->last_update_time.get_time_in_micros() << endl
           << "  update_time=" << update_time.get_time_in_seconds() << " micros=" << update_time.get_time_in_micros() << endl
@@ -2003,7 +1958,7 @@ void Object::send_cyclic_data(
          if ( send_with_timestamp ) {
 
             if ( should_print( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-               send_hs( stdout, "Object::send_cyclic_data():%d For object '%s', calling rti_amb->updateAttributeValues(TimestampOrder).%c",
+               send_hs( stdout, "Object::send_cyclic_and_requested_data():%d For object '%s', calling rti_amb->updateAttributeValues(TimestampOrder).%c",
                         __LINE__, get_name(), THLA_NEWLINE );
             }
 
@@ -2016,7 +1971,7 @@ void Object::send_cyclic_data(
                                                   timestamp );
          } else {
             if ( should_print( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-               send_hs( stdout, "Object::send_cyclic_data():%d For object '%s', calling rti_amb->updateAttributeValues(ReceiveOrder).%c",
+               send_hs( stdout, "Object::send_cyclic_and_requested_data():%d For object '%s', calling rti_amb->updateAttributeValues(ReceiveOrder).%c",
                         __LINE__, get_name(), THLA_NEWLINE );
             }
 
@@ -2031,13 +1986,12 @@ void Object::send_cyclic_data(
       StringUtilities::to_string( id_str, instance_handle );
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      send_hs( stderr, "Object::send_cyclic_data():%d invalid logical time \
+      send_hs( stderr, "Object::send_cyclic_and_requested_data():%d invalid logical time \
 exception for '%s' with error message '%s'.%c",
-               __LINE__, get_name(),
-               rti_err_msg.c_str(), THLA_NEWLINE );
+               __LINE__, get_name(), rti_err_msg.c_str(), THLA_NEWLINE );
 
       ostringstream errmsg;
-      errmsg << "Object::send_cyclic_data():" << __LINE__
+      errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: InvalidLogicalTime" << endl
              << "  instance_id=" << id_str << endl
              << "  sim-time=" << current_time << " ("
@@ -2060,10 +2014,10 @@ exception for '%s' with error message '%s'.%c",
    } catch ( AttributeNotOwned &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
-      send_hs( stderr, "Object::send_cyclic_data():%d detected remote ownership for '%s'%c",
+      send_hs( stderr, "Object::send_cyclic_and_requested_data():%d detected remote ownership for '%s'%c",
                __LINE__, get_name(), THLA_NEWLINE );
       ostringstream errmsg;
-      errmsg << "Object::send_cyclic_data():" << __LINE__
+      errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: AttributeNotOwned" << endl
              << "  instance_id=" << id_str << endl
              << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
@@ -2075,10 +2029,10 @@ exception for '%s' with error message '%s'.%c",
    } catch ( ObjectInstanceNotKnown &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
-      send_hs( stderr, "Object::send_cyclic_data():%d object instance not known for '%s'%c",
+      send_hs( stderr, "Object::send_cyclic_and_requested_data():%d object instance not known for '%s'%c",
                __LINE__, get_name(), THLA_NEWLINE );
       ostringstream errmsg;
-      errmsg << "Object::send_cyclic_data():" << __LINE__
+      errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: ObjectInstanceNotKnown" << endl
              << "  instance_id=" << id_str << endl
              << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
@@ -2090,10 +2044,10 @@ exception for '%s' with error message '%s'.%c",
    } catch ( AttributeNotDefined &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
-      send_hs( stderr, "Object::send_cyclic_data():%d attribute not defined for '%s'%c",
+      send_hs( stderr, "Object::send_cyclic_and_requested_data():%d attribute not defined for '%s'%c",
                __LINE__, get_name(), THLA_NEWLINE );
       ostringstream errmsg;
-      errmsg << "Object::send_cyclic_data():" << __LINE__
+      errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: AttributeNotDefined" << endl
              << "  instance_id=" << id_str << endl
              << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
@@ -2105,10 +2059,10 @@ exception for '%s' with error message '%s'.%c",
    } catch ( FederateNotExecutionMember &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
-      send_hs( stderr, "Object::send_cyclic_data():%d federation not execution member for '%s'%c",
+      send_hs( stderr, "Object::send_cyclic_and_requested_data():%d federation not execution member for '%s'%c",
                __LINE__, get_name(), THLA_NEWLINE );
       ostringstream errmsg;
-      errmsg << "Object::send_cyclic_data():" << __LINE__
+      errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: FederateNotExecutionMember" << endl
              << "  instance_id=" << id_str << endl
              << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
@@ -2120,10 +2074,10 @@ exception for '%s' with error message '%s'.%c",
    } catch ( SaveInProgress &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
-      send_hs( stderr, "Object::send_cyclic_data():%d save in progress for '%s'%c",
+      send_hs( stderr, "Object::send_cyclic_and_requested_data():%d save in progress for '%s'%c",
                __LINE__, get_name(), THLA_NEWLINE );
       ostringstream errmsg;
-      errmsg << "Object::send_cyclic_data():" << __LINE__
+      errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: SaveInProgress" << endl
              << "  instance_id=" << id_str << endl
              << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
@@ -2135,10 +2089,10 @@ exception for '%s' with error message '%s'.%c",
    } catch ( RestoreInProgress &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
-      send_hs( stderr, "Object::send_cyclic_data():%d restore in progress for '%s'%c",
+      send_hs( stderr, "Object::send_cyclic_and_requested_data():%d restore in progress for '%s'%c",
                __LINE__, get_name(), THLA_NEWLINE );
       ostringstream errmsg;
-      errmsg << "Object::send_cyclic_data():" << __LINE__
+      errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: RestoreInProgress" << endl
              << "  instance_id=" << id_str << endl
              << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
@@ -2150,10 +2104,10 @@ exception for '%s' with error message '%s'.%c",
    } catch ( NotConnected &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
-      send_hs( stderr, "Object::send_cyclic_data():%d not connected for '%s'%c",
+      send_hs( stderr, "Object::send_cyclic_and_requested_data():%d not connected for '%s'%c",
                __LINE__, get_name(), THLA_NEWLINE );
       ostringstream errmsg;
-      errmsg << "Object::send_cyclic_data():" << __LINE__
+      errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: NotConnected" << endl
              << "  instance_id=" << id_str << endl
              << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
@@ -2165,10 +2119,10 @@ exception for '%s' with error message '%s'.%c",
    } catch ( RTIinternalError &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
-      send_hs( stderr, "Object::send_cyclic_data():%d RTI internal error for '%s'%c",
+      send_hs( stderr, "Object::send_cyclic_and_requested_data():%d RTI internal error for '%s'%c",
                __LINE__, get_name(), THLA_NEWLINE );
       ostringstream errmsg;
-      errmsg << "Object::send_cyclic_data():" << __LINE__
+      errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: RTIinternalError" << endl
              << "  instance_id=" << id_str << endl
              << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
@@ -2182,10 +2136,10 @@ exception for '%s' with error message '%s'.%c",
       StringUtilities::to_string( id_str, instance_handle );
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      send_hs( stderr, "Object.send_cyclic_data():%d Exception: '%s'%c",
+      send_hs( stderr, "Object.send_cyclic_and_requested_data():%d Exception: '%s'%c",
                __LINE__, rti_err_msg.c_str(), THLA_NEWLINE );
       ostringstream errmsg;
-      errmsg << "Object::send_cyclic_data():" << __LINE__
+      errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " RTI1516_EXCEPTION" << endl
              << "  instance_id=" << id_str << endl
              << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
@@ -2199,12 +2153,6 @@ exception for '%s' with error message '%s'.%c",
    // Macro to restore the saved FPU Control Word register value.
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-#ifndef THLA_USE_ATTRIBUTE_MAP_CLASS_INSTANCE
-   // Must free the memory
-   attribute_values_map->clear();
-   delete attribute_values_map;
-#endif
 }
 
 /*!
@@ -2245,7 +2193,8 @@ void Object::receive_cyclic_data(
       // with a timeout.
 
       // Break the cycle time up into the whole and fractional parts.
-      double           whole_secs, frac_secs;
+      double           whole_secs;
+      double           frac_secs;
       static const int NANOSEC_PER_SECOND = 1000000000;
 
 #ifdef THLA_10SEC_TIMEOUT_WHILE_WAITING_FOR_DATA
@@ -2271,7 +2220,10 @@ void Object::receive_cyclic_data(
       // Block waiting to receive the data or until we timeout.
       int retval = 0;
       pthread_mutex_lock( &data_change_mutex );
-      while ( !is_changed() && ( retval == 0 ) && blocking_cyclic_read && any_remotely_owned_subscribed_cyclic_attribute() ) {
+      while ( !is_changed()
+              && ( retval == 0 )
+              && blocking_cyclic_read
+              && any_remotely_owned_subscribed_cyclic_attribute() ) {
          retval = pthread_cond_timedwait( &data_change_cv,
                                           &data_change_mutex,
                                           &cyclic_read_timeout );
@@ -2284,8 +2236,7 @@ void Object::receive_cyclic_data(
          // FOR THE HLA PERFORMANCE STUDY ONLY: Mark changed so that we can
          // collect latency numbers taking the timeout into effect.
          mark_changed();
-         send_hs( stderr, "Object::receive_cyclic_data():%d Timed out \
- waiting for data.%c",
+         send_hs( stderr, "Object::receive_cyclic_data():%d Timed out waiting for data.%c",
                   __LINE__, THLA_NEWLINE );
       }
 #else  // !HLA_PERFORMANCE_STUDY
@@ -2293,12 +2244,10 @@ void Object::receive_cyclic_data(
       // Print an error message if we timed out.
       if ( retval == ETIMEDOUT ) {
          if ( is_changed() ) {
-            send_hs( stderr, "Object::receive_cyclic_data():%d \
-Received data at a timeout boundary.%c",
+            send_hs( stderr, "Object::receive_cyclic_data():%d Received data at a timeout boundary.%c",
                      __LINE__, THLA_NEWLINE );
          } else {
-            send_hs( stderr, "Object::receive_cyclic_data():%d Timed \
-out waiting for data.%c",
+            send_hs( stderr, "Object::receive_cyclic_data():%d Timed out waiting for data.%c",
                      __LINE__, THLA_NEWLINE );
          }
       }
@@ -2313,7 +2262,9 @@ out waiting for data.%c",
 
       // Thread wait on conditional variable with no timeout.
       pthread_mutex_lock( &data_change_mutex );
-      while ( !is_changed() && blocking_cyclic_read && any_remotely_owned_subscribed_cyclic_attribute() ) {
+      while ( !is_changed()
+              && blocking_cyclic_read
+              && any_remotely_owned_subscribed_cyclic_attribute() ) {
          // NOTE: Need to timeout the pthread condition variable.
          pthread_cond_wait( &data_change_cv, &data_change_mutex );
       }
@@ -2337,11 +2288,14 @@ out waiting for data.%c",
       // the latency but at the cost of keeping the CPU at 100%.
 
       // Wait for the data to change by using a spin lock that can timeout.
-      int i;
-      while ( !is_changed() && ( time < timeout ) && blocking_cyclic_read && any_remotely_owned_subscribed_cyclic_attribute() ) {
+      unsiged int i;
+      while ( !is_changed()
+              && ( time < timeout )
+              && blocking_cyclic_read
+              && any_remotely_owned_subscribed_cyclic_attribute() ) {
 
          // Wait for the data to change by executing NOP instructions.
-         for ( i = 0; i < 100; i++ ) {
+         for ( i = 0; i < 100; ++i ) {
             // Execute "NOP" no-operation instruction (one-clock-cycle).
             // NOTE: Volatile keyword is used to keep gcc from optimizing the
             // line of assembly code and reducing the number of nop's.
@@ -2395,9 +2349,12 @@ waiting for data at time %f seconds with timeout time %f and simulation time %f.
 #else  //!THLA_USLEEP_DELAY_FOR_SPIN_LOCK
 
       // Wait for the data to change by using a spin lock that can timeout.
-      int i;
-      while ( !is_changed() && ( time < timeout ) && blocking_cyclic_read && any_remotely_owned_subscribed_cyclic_attribute() ) {
-         for ( i = 0; i < 100; i++ ) {
+      unsigned int i;
+      while ( !is_changed(
+              && ( time < timeout )
+              && blocking_cyclic_read
+              && any_remotely_owned_subscribed_cyclic_attribute() ) {
+         for ( i = 0; i < 100; ++i ) {
             // Execute "NOP" no-operation instruction (one-clock-cycle).
             // NOTE: Volatile keyword is used to keep gcc from optimizing the
             // line of assembly code and reducing the number of nop's.
@@ -2465,8 +2422,7 @@ waiting for data at %f seconds (time-of-day) with a timeout of %f seconds \
    }
 #if THLA_OBJ_DEBUG_VALID_OBJECT_RECEIVE
    else if ( is_instance_handle_valid() && current_time > 0.0L ) {
-      send_hs( stdout, "Object::receive_cyclic_data():%d NO new data for valid \
-object '%s' at t=%G%c",
+      send_hs( stdout, "Object::receive_cyclic_data():%d NO new data for valid object '%s' at t=%G%c",
                __LINE__, get_name(),
                get_granted_fed_time().get_time_in_seconds(), THLA_NEWLINE );
    }
@@ -2510,7 +2466,6 @@ void Object::send_init_data()
    // Buffer the attribute values for the object.
    pack_init_attribute_buffers();
 
-#ifdef THLA_USE_ATTRIBUTE_MAP_CLASS_INSTANCE
    try {
       // Create the map of "initialize" attribute values we will be updating.
       create_attribute_set( CONFIG_INITIALIZE );
@@ -2520,18 +2475,6 @@ void Object::send_init_data()
       send_hs( stderr, "Object::send_init_data():%d For object '%s', can not create attribute value/pair set: '%s'%c",
                __LINE__, get_name(), rti_err_msg.c_str(), THLA_NEWLINE );
    }
-#else
-   AttributeHandleValueMap *attribute_values_map = NULL;
-   try {
-      // Create the map of "initialize" attribute values we will be updating.
-      attribute_values_map = create_attribute_set( CONFIG_INITIALIZE );
-   } catch ( RTI1516_EXCEPTION &e ) {
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      send_hs( stderr, "Object::send_init_data():%d For object '%s', can not create attribute value/pair set: '%s'%c",
-               __LINE__, get_name(), rti_err_msg.c_str(), THLA_NEWLINE );
-   }
-#endif
 
    try {
       // Do not send any data if federate save / restore has begun (see
@@ -2704,12 +2647,6 @@ void Object::send_init_data()
    // Macro to restore the saved FPU Control Word register value.
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-#ifndef THLA_USE_ATTRIBUTE_MAP_CLASS_INSTANCE
-   // Must free the memory
-   attribute_values_map->clear();
-   delete attribute_values_map;
-#endif
 }
 
 /*!
@@ -2754,26 +2691,22 @@ void Object::receive_init_data()
 /*!
  * @job_class{scheduled}
  */
-#ifdef THLA_USE_ATTRIBUTE_MAP_CLASS_INSTANCE
 void Object::create_requested_attribute_set()
 {
    // Make sure we clear the map before we populate it.
    if ( !attribute_values_map->empty() ) {
       attribute_values_map->clear();
    }
-#else
-AttributeHandleValueMap *Object::create_requested_attribute_set()
-{
-   AttributeHandleValueMap *attribute_values_map = new AttributeHandleValueMap();
-#endif
 
-   for ( int i = 0; i < attr_count; i++ ) {
+   for ( int i = 0; i < attr_count; ++i ) {
 
       // TODO: In a future version, pre-sort all the items we publish so
       // that we will not need to check the publish flag, for efficiency.
       //
       // Only include attributes that have been requested, we own, and we publish.
-      if ( attributes[i].is_update_requested() && attributes[i].is_locally_owned() && attributes[i].is_publish() ) {
+      if ( attributes[i].is_update_requested()
+           && attributes[i].is_locally_owned()
+           && attributes[i].is_publish() ) {
 
          // If there was a requested update for this attribute make sure
          // we clear the request flag.
@@ -2788,37 +2721,25 @@ AttributeHandleValueMap *Object::create_requested_attribute_set()
             attributes[i].get_attribute_value();
       }
    }
-
-#ifndef THLA_USE_ATTRIBUTE_MAP_CLASS_INSTANCE
-   // The attribute_values_map variable is allocated on the heap and must be
-   // deallocated by the federate!
-   return attribute_values_map;
-#endif
 }
 
 /*!
  * @job_class{scheduled}
  */
-#ifdef THLA_USE_ATTRIBUTE_MAP_CLASS_INSTANCE
 void Object::create_attribute_set(
-   const DataUpdateEnum required_config )
+   const DataUpdateEnum required_config,
+   const bool           include_requested )
 {
    // Make sure we clear the map before we populate it.
    if ( !attribute_values_map->empty() ) {
       attribute_values_map->clear();
    }
-#else
-AttributeHandleValueMap *Object::create_attribute_set(
-   const DataUpdateEnum required_config )
-{
-   AttributeHandleValueMap *attribute_values_map = new AttributeHandleValueMap();
-#endif
 
    // If the cyclic bit is set in the required-configuration then we need
    // to check to make sure the sub-rate is ready to send flag is set for
    // each attribute.
    if ( ( required_config & CONFIG_CYCLIC ) == CONFIG_CYCLIC ) {
-      for ( int i = 0; i < attr_count; i++ ) {
+      for ( int i = 0; i < attr_count; ++i ) {
 
          // TODO: In a future version, pre-sort all the items we publish
          // so that we will not need to check the publish flag, for
@@ -2826,18 +2747,21 @@ AttributeHandleValueMap *Object::create_attribute_set(
          //
          // Only include attributes that have the required configuration,
          // we own, we publish, and the sub-rate says we are ready to
-         // send.
-         if ( ( ( attributes[i].get_configuration() & required_config ) == required_config ) && attributes[i].is_locally_owned() && attributes[i].is_publish() && attributes[i].is_data_cycle_ready() ) {
+         // send or the attribute has been requested.
+         if ( attributes[i].is_locally_owned()
+              && attributes[i].is_publish()
+              && ( ( include_requested && attributes[i].is_update_requested() )
+                   || ( attributes[i].is_data_cycle_ready() && ( ( attributes[i].get_configuration() & required_config ) == required_config ) ) ) ) {
 
-            // If there is no sub-classed TrickHLAConditional object for
-            // this attribute or if the sub-classed TrickHLAConditional
-            // object indicates that it should be sent, then add this
-            // attribute into the attribute map.
-            if ( !attributes[i].has_conditional() || attributes[i].get_conditional()->should_send( &attributes[i] ) ) {
+            // If there is no sub-classed TrickHLAConditional object for this
+            // attribute or if the sub-classed TrickHLAConditional object
+            // indicates that it should be sent, then add this attribute into\
+            // the attribute map.
+            if ( !attributes[i].has_conditional()
+                 || attributes[i].get_conditional()->should_send( &attributes[i] ) ) {
 
-               // If there was a requested update for this attribute make
-               // sure we clear the request flag now since we are handling
-               // it here.
+               // If there was a requested update for this attribute make sure
+               // we clear the request flag now since we are handling it here.
                attributes[i].set_update_requested( false );
 
                if ( should_print( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
@@ -2851,7 +2775,7 @@ AttributeHandleValueMap *Object::create_attribute_set(
          }
       }
    } else {
-      for ( int i = 0; i < attr_count; i++ ) {
+      for ( int i = 0; i < attr_count; ++i ) {
 
          // TODO: In a future version, pre-sort all the items we publish
          // so that we will not need to check the publish flag, for
@@ -2859,7 +2783,9 @@ AttributeHandleValueMap *Object::create_attribute_set(
          //
          // Only include attributes that have the required configuration,
          // we own, and we publish.
-         if ( ( ( attributes[i].get_configuration() & required_config ) == required_config ) && attributes[i].is_locally_owned() && attributes[i].is_publish() ) {
+         if ( ( ( attributes[i].get_configuration() & required_config ) == required_config )
+              && attributes[i].is_locally_owned()
+              && attributes[i].is_publish() ) {
 
             // If there was a requested update for this attribute make
             // sure we clear the request flag now since we are handling
@@ -2872,12 +2798,6 @@ AttributeHandleValueMap *Object::create_attribute_set(
          }
       }
    }
-
-#ifndef THLA_USE_ATTRIBUTE_MAP_CLASS_INSTANCE
-   // NOTE: attribute_values_map is allocated on the heap and must be
-   // deallocated by the caller to this function.
-   return attribute_values_map;
-#endif
 }
 
 #if defined( THLA_QUEUE_REFLECTED_ATTRIBUTES )
@@ -3970,21 +3890,53 @@ bool Object::any_locally_owned_published_attribute(
    const DataUpdateEnum attr_config )
 {
    for ( int i = 0; i < attr_count; i++ ) {
-      if ( attributes[i].is_locally_owned() && attributes[i].is_publish() && ( ( attributes[i].get_configuration() & attr_config ) == attr_config ) ) {
+      if ( attributes[i].is_locally_owned()
+           && attributes[i].is_publish()
+           && ( ( attributes[i].get_configuration() & attr_config ) == attr_config ) ) {
          return true;
       }
    }
    return false; // No attribute locally owned, published, for the given config.
 }
 
+// WARNING: Only call this function once per data cycle because of how the
+// attribute data ready is determined per cycle.
+bool Object::any_locally_owned_published_cyclic_data_ready_or_requested_attribute()
+{
+   bool any_ready = false;
+   for ( int i = 0; i < attr_count; ++i ) {
+
+      // We must check that a sub-rate is ready for every attribute to make sure
+      // all sub-rate counters get updated correctly.
+      bool data_cycle_ready = attributes[i].check_data_cycle_ready();
+
+      if ( !any_ready
+           && attributes[i].is_locally_owned()
+           && attributes[i].is_publish()
+           && ( attributes[i].is_update_requested()
+                || ( ( data_cycle_ready && ( ( attributes[i].get_configuration() & CONFIG_CYCLIC ) == CONFIG_CYCLIC ) ) ) ) ) {
+         any_ready = true;
+      }
+   }
+   return any_ready;
+}
+
+// WARNING: Only call this function once per data cycle because of how the
+// attribute data ready is determined per cycle.
 bool Object::any_locally_owned_published_cyclic_data_ready_attribute()
 {
    bool any_ready = false;
+   for ( int i = 0; i < attr_count; ++i ) {
 
-   // We must check that a sub-rate is ready for every attribute to make sure
-   // all sub-rate counters get updated correctly.
-   for ( int i = 0; i < attr_count; i++ ) {
-      if ( attributes[i].is_locally_owned() && attributes[i].is_publish() && ( ( attributes[i].get_configuration() & CONFIG_CYCLIC ) == CONFIG_CYCLIC ) && attributes[i].check_data_cycle_ready() ) {
+      // We must check that a sub-rate is ready for every attribute to make sure
+      // all sub-rate counters get updated correctly.
+      bool data_cycle_ready = attributes[i].check_data_cycle_ready();
+
+      if ( !any_ready
+           && attributes[i].is_locally_owned()
+           && attributes[i].is_publish()
+           && data_cycle_ready
+           && ( ( attributes[i].get_configuration() & CONFIG_CYCLIC ) == CONFIG_CYCLIC ) ) {
          any_ready = true;
       }
    }
@@ -3993,8 +3945,10 @@ bool Object::any_locally_owned_published_cyclic_data_ready_attribute()
 
 bool Object::any_locally_owned_published_requested_attribute()
 {
-   for ( int i = 0; i < attr_count; i++ ) {
-      if ( attributes[i].is_locally_owned() && attributes[i].is_publish() && attributes[i].is_update_requested() ) {
+   for ( int i = 0; i < attr_count; ++i ) {
+      if ( attributes[i].is_locally_owned()
+           && attributes[i].is_publish()
+           && attributes[i].is_update_requested() ) {
          return true;
       }
    }
@@ -4003,7 +3957,7 @@ bool Object::any_locally_owned_published_requested_attribute()
 
 bool Object::any_remotely_owned_subscribed_attribute()
 {
-   for ( int i = 0; i < attr_count; i++ ) {
+   for ( int i = 0; i < attr_count; ++i ) {
       if ( attributes[i].is_remotely_owned() && attributes[i].is_subscribe() ) {
          return true;
       }
@@ -4014,8 +3968,10 @@ bool Object::any_remotely_owned_subscribed_attribute()
 bool Object::any_remotely_owned_subscribed_attribute(
    const DataUpdateEnum attr_config )
 {
-   for ( int i = 0; i < attr_count; i++ ) {
-      if ( attributes[i].is_remotely_owned() && attributes[i].is_subscribe() && ( ( attributes[i].get_configuration() & attr_config ) == attr_config ) ) {
+   for ( int i = 0; i < attr_count; ++i ) {
+      if ( attributes[i].is_remotely_owned()
+           && attributes[i].is_subscribe()
+           && ( ( attributes[i].get_configuration() & attr_config ) == attr_config ) ) {
          return true;
       }
    }
@@ -4024,7 +3980,7 @@ bool Object::any_remotely_owned_subscribed_attribute(
 
 void Object::pack_requested_attribute_buffers()
 {
-   for ( int i = 0; i < attr_count; i++ ) {
+   for ( int i = 0; i < attr_count; ++i ) {
       if ( attributes[i].is_update_requested() ) {
          attributes[i].pack_attribute_buffer();
       }
@@ -4032,10 +3988,12 @@ void Object::pack_requested_attribute_buffers()
 }
 
 void Object::pack_attribute_buffers(
-   const DataUpdateEnum attr_config )
+   const DataUpdateEnum attr_config,
+   const bool           include_requested )
 {
-   for ( int i = 0; i < attr_count; i++ ) {
-      if ( ( attributes[i].get_configuration() & attr_config ) == attr_config ) {
+   for ( int i = 0; i < attr_count; ++i ) {
+      if ( ( include_requested && attributes[i].is_update_requested() )
+           || ( attributes[i].get_configuration() & attr_config ) == attr_config ) {
          attributes[i].pack_attribute_buffer();
       }
    }
@@ -4044,7 +4002,7 @@ void Object::pack_attribute_buffers(
 void Object::unpack_attribute_buffers(
    const DataUpdateEnum attr_config )
 {
-   for ( int i = 0; i < attr_count; i++ ) {
+   for ( int i = 0; i < attr_count; ++i ) {
       if ( ( attributes[i].get_configuration() & attr_config ) == attr_config ) {
          attributes[i].unpack_attribute_buffer();
       }

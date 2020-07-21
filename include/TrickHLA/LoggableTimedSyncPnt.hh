@@ -56,9 +56,15 @@ class LoggableTimedSyncPnt : public TrickHLA::LoggableSyncPnt
 
   public:
    /*! @brief Default constructor for the TrickHLA LoggableTimedSyncPnt class. */
-   LoggableTimedSyncPnt() : time( 0 ) {}
+   LoggableTimedSyncPnt() : time( 0 )
+   {
+      return;
+   }
    /*! @brief Destructor for the TrickHLA LoggableTimedSyncPnt class. */
-   ~LoggableTimedSyncPnt() {}
+   ~LoggableTimedSyncPnt()
+   {
+      return;
+   }
 
   public:
    int64_t time; ///< @trick_units{--} Freeze time.

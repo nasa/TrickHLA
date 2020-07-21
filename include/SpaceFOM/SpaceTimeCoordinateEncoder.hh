@@ -70,7 +70,10 @@ class SpaceTimeCoordinateEncoder : public TrickHLA::OpaqueBuffer
 
    /*! @brief Get the spacetime coordinate data.
     *  @return A reference to the SpaceTimeCoordinateData. */
-   SpaceTimeCoordinateData &get_data() { return data; }
+   SpaceTimeCoordinateData &get_data()
+   {
+      return data;
+   }
 
   protected:
    SpaceTimeCoordinateData data; ///< trick_units{--} Reference frame transmission data.

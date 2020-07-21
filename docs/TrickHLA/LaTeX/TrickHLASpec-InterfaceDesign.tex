@@ -117,14 +117,9 @@ sim_object {
       In double freeze_sim_time = THLA.checkpoint_time,
       In const char * file_name = THLA.checkpoint_label );
 
-   P1 (THLA_DATA_CYCLE_TIME, environment) TrickHLA: THLA.manager.receive_cyclic_data(
-      In double current_time = sys.exec.out.time );
+   P1 (THLA_DATA_CYCLE_TIME, environment) TrickHLA: THLA.manager.receive_cyclic_data();
 
-   P65534 (THLA_DATA_CYCLE_TIME, logging) TrickHLA: THLA.manager.send_cyclic_data(
-      In double current_time = sys.exec.out.time );
-
-   P65534 (THLA_DATA_CYCLE_TIME, logging) TrickHLA: THLA.manager.send_requested_data(
-      In double current_time = sys.exec.out.time );
+   P65534 (THLA_DATA_CYCLE_TIME, logging) TrickHLA: THLA.manager.send_cyclic_and_requested_data();
 
    P65534 (THLA_DATA_CYCLE_TIME, logging) TrickHLA: THLA.manager.process_ownership();
 

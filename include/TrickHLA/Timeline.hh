@@ -71,15 +71,24 @@ class Timeline
    //-----------------------------------------------------------------
    /*! @brief Get the elapsed time for this timeline in seconds from epoch.
     *  @return Returns the elapsed time from epoch in seconds. */
-   virtual double get_elapsed_time() { return ( get_time() - epoch ); }
+   virtual double get_elapsed_time()
+   {
+      return ( get_time() - epoch );
+   }
 
    /*! @brief Set the epoch for this timeline in seconds.
     *  @param time New time value for epoch in seconds. */
-   virtual void set_epoch( double time ) { this->epoch = time; }
+   virtual void set_epoch( double time )
+   {
+      this->epoch = time;
+   }
 
    /*! @brief Get the epoch for this timeline in seconds.
     *  @return Returns the epoch for this timeline in seconds. */
-   virtual double get_epoch() { return ( this->epoch ); }
+   virtual double get_epoch()
+   {
+      return ( this->epoch );
+   }
 
   protected:
    double epoch; /**<  @trick_units{s}

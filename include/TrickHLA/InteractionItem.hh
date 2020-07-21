@@ -145,11 +145,17 @@ class InteractionItem : public Item
 
    /*! @brief Query if this InteractionItem is sent TimeStamp Order (TSO).
     *  @return True if sent TimeStamp Order; False otherwise. */
-   bool is_timestamp_order() const { return ( order_is_TSO ); }
+   bool is_timestamp_order() const
+   {
+      return ( order_is_TSO );
+   }
 
    /*! @brief Query if this InteractionItem is sent Receive Order (RO).
     *  @return True if sent Receive Order; False otherwise. */
-   bool is_receive_order() const { return ( !order_is_TSO ); }
+   bool is_receive_order() const
+   {
+      return ( !order_is_TSO );
+   }
 
   private:
    /*! @brief Decode the Interaction values into this Item.
