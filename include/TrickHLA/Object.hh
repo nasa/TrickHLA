@@ -238,6 +238,9 @@ class Object
    // Likewise incoming data are copied to the internal byte buffer. Only
    // when the data is requested will any needed byteswap will be performed.
    //-----------------------------------------------------------------
+   /*! @brief Send the requested attribute value updates using the current simulation and lookahead times. */
+   void send_requested_data();
+
    /*! @brief Send the requested attribute value updates.
     *  @param current_time Current time in seconds.
     *  @param cycle_time   Cycle time between calls to this function in seconds. */
