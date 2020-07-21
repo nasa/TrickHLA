@@ -917,7 +917,7 @@ double ExecutionControlBase::get_cte_time()
 
 void ExecutionControlBase::clear_mode_values()
 {
-   this->mode_transition_requested        = False;
+   this->mode_transition_requested        = false;
    this->requested_execution_control_mode = EXECUTION_CONTROL_UNINITIALIZED;
    this->current_execution_control_mode   = EXECUTION_CONTROL_UNINITIALIZED;
 }

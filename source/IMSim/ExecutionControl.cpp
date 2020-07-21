@@ -1413,7 +1413,7 @@ bool ExecutionControl::set_pending_mtr(
    if ( this->is_mtr_valid( mtr_value ) ) {
       this->pending_mtr = mtr_value;
    }
-   return False;
+   return false;
 }
 
 bool ExecutionControl::is_mtr_valid(
@@ -1582,9 +1582,9 @@ void ExecutionControl::set_next_execution_control_mode(
 
 bool ExecutionControl::check_mode_transition_request()
 {
-   // Just return if False mode change has been requested.
+   // Just return if false mode change has been requested.
    if ( !this->is_mode_transition_requested() ) {
-      return False;
+      return false;
    }
 
    // Only the Master federate receives and processes Mode Transition Requests.
@@ -1595,18 +1595,18 @@ bool ExecutionControl::check_mode_transition_request()
              << mtr_enum_to_string( this->pending_mtr )
              << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
-      return False;
+      return false;
    }
 
    // First check to see if this is a valid MTR.
-   if ( !( is_mtr_valid( this->pending_mtr ) ) ) {
+   if ( !is_mtr_valid( this->pending_mtr ) ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::check_mode_transition_request():"
              << __LINE__ << " WARNING: Invalid Mode Transition Request: "
              << mtr_enum_to_string( this->pending_mtr )
              << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
-      return False;
+      return false;
    }
 
    return true;
@@ -1616,7 +1616,7 @@ bool ExecutionControl::process_mode_transition_request()
 {
    // Just return is no mode change has been requested.
    if ( !this->check_mode_transition_request() ) {
-      return False;
+      return false;
    } else {
       // Since this is a valid MTR, set the next mode from the MTR.
       this->set_mode_request_from_mtr( this->pending_mtr );

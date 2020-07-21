@@ -425,7 +425,8 @@ RTI1516_NAMESPACE::RTIambassador *Object::get_RTI_ambassador()
       Federate *trick_fed = get_federate();
 
       // Get the RTI-Ambassador.
-      rti_ambassador = ( trick_fed != NULL ) ? trick_fed->get_RTI_ambassador() : static_cast< RTI1516_NAMESPACE::RTIambassador * >( NULL );
+      rti_ambassador = ( trick_fed != NULL ) ? trick_fed->get_RTI_ambassador()
+                                             : static_cast< RTI1516_NAMESPACE::RTIambassador * >( NULL );
 
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1001,8 +1002,7 @@ WARNING: Object instance already exists so we will not reserve the instance name
       if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          send_hs( stdout, "Object::reserve_object_name_with_RTI():%d \
 Requesting reservation of Object instance name '%s'.%c",
-                  __LINE__, get_name(),
-                  THLA_NEWLINE );
+                  __LINE__, get_name(), THLA_NEWLINE );
       }
 
       // Create the wide-string version of the object instance name.
@@ -1073,8 +1073,7 @@ void Object::wait_on_object_name_reservation()
    if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
       send_hs( stdout, "Object::wait_on_object_name_reservation():%d \
 Waiting on reservation of Object Instance Name '%s'.%c",
-               __LINE__, get_name(),
-               THLA_NEWLINE );
+               __LINE__, get_name(), THLA_NEWLINE );
    }
 
    Federate *trick_fed = get_federate();
@@ -1551,6 +1550,16 @@ void Object::provide_attribute_update(
       }
 
       this->attr_update_requested = true;
+   }
+}
+
+/*!
+ * @job_class{scheduled}
+ */
+void Object::send_requested_data()
+{
+   if ( attr_update_requested ) {
+      send_requested_data( exec_get_sim_time(), get_federate()->get_lookahead_time() );
    }
 }
 

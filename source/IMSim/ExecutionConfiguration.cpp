@@ -438,26 +438,26 @@ void ExecutionConfiguration::setup_ref_attributes(
    //
    // Set up object properties specifically for the ExCO.
    //
-   // Set original data changed flag to False.
-   this->data_changed = False;
+   // Set original data changed flag to false.
+   this->data_changed = false;
 
    // Set up the fixed ExCO naming.
    this->name          = trick_MM->mm_strdup( "ExCO" );
-   this->name_required = True;
+   this->name_required = true;
    this->FOM_name      = trick_MM->mm_strdup( "IMSim::ExecutionConfiguration" );
 
    // Create the ExCO instance only if the IMSim Master federate.
    if ( this->execution_control->is_master() ) {
-      this->create_HLA_instance = True;
+      this->create_HLA_instance = true;
    } else {
-      this->create_HLA_instance = False;
+      this->create_HLA_instance = false;
    }
 
    // All IMSim compliant federates MUST have an ExCO
-   this->required = True;
+   this->required = true;
 
    // Do not block waiting for an ExCO update in normal cyclic data reads.
-   this->blocking_cyclic_read = False;
+   this->blocking_cyclic_read = false;
 
    // There's no Lag Compensation with the ExCO.
    this->lag_comp      = (LagCompensation *)NULL;
@@ -471,7 +471,7 @@ void ExecutionConfiguration::setup_ref_attributes(
 
    // No Object Deleted callback.
    this->deleted                 = (ObjectDeleted *)NULL;
-   this->object_deleted_from_RTI = False;
+   this->object_deleted_from_RTI = false;
 
    // Set up attributes.
    this->attr_count = 7;
@@ -491,13 +491,13 @@ allocate enough memory for the attributes of the ExCO!" );
    // Setup the "root_frame_name" attribute.
    this->attributes[0].FOM_name = trick_MM->mm_strdup( "root_frame_name" );
    if ( this->execution_control->is_master() ) {
-      this->attributes[0].publish       = True;
-      this->attributes[0].subscribe     = False;
-      this->attributes[0].locally_owned = True;
+      this->attributes[0].publish       = true;
+      this->attributes[0].subscribe     = false;
+      this->attributes[0].locally_owned = true;
    } else {
-      this->attributes[0].publish       = False;
-      this->attributes[0].subscribe     = True;
-      this->attributes[0].locally_owned = False;
+      this->attributes[0].publish       = false;
+      this->attributes[0].subscribe     = true;
+      this->attributes[0].locally_owned = false;
    }
    this->attributes[0].config       = CONFIG_INTERMITTENT;
    this->attributes[0].rti_encoding = ENCODING_UNICODE_STRING;

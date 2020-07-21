@@ -180,9 +180,6 @@ class Manager
     *  @param instance_name Object instance name. */
    void request_data_update( const char *instance_name );
 
-   /*! @brief Send the ExCO attribute value requested data to the remote federates. */
-   void send_requested_execution_control_data();
-
    /*! @brief Send cyclic an requested atrributes data to the remote federates. */
    void send_cyclic_and_requested_data();
 
