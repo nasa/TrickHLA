@@ -2112,19 +2112,19 @@ void Manager::determine_job_cycle_time()
 void Manager::send_requested_execution_control_data()
 {
    if ( debug_handler.should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::send_requested_ExCO_data():%d%c",
+      send_hs( stdout, "Manager::send_requested_execution_control_data():%d%c",
                __LINE__, THLA_NEWLINE );
    }
 
-   double current_time = exec_get_sim_time();
+   double current_sim_time = exec_get_sim_time();
 
    // Determine the cycle time for this job if it is not yet known.
    if ( this->job_cycle_time <= 0.0 ) {
       determine_job_cycle_time();
    }
 
-   // Send any ExecutionControl (ExCO) data.
-   execution_control->send_requested_data( current_time, this->job_cycle_time );
+   // Send any Execution-Control (ExCO) data.
+   execution_control->send_requested_data( current_sim_time, this->job_cycle_time );
 }
 
 /*!
@@ -2170,10 +2170,10 @@ void Manager::receive_cyclic_data()
                __LINE__, THLA_NEWLINE );
    }
 
-   double current_time = exec_get_sim_time();
+   double current_sim_time = exec_get_sim_time();
 
    // Receive and process and updates for ExecutionControl.
-   execution_control->receive_cyclic_data( current_time );
+   execution_control->receive_cyclic_data( current_sim_time );
 
    // Determine the cycle time for this job if it is not yet known.
    if ( this->job_cycle_time <= 0.0 ) {
@@ -2182,7 +2182,7 @@ void Manager::receive_cyclic_data()
 
    // Receive data from remote RTI federates for each of the objects.
    for ( int n = 0; n < obj_count; n++ ) {
-      objects[n].receive_cyclic_data( current_time, this->job_cycle_time );
+      objects[n].receive_cyclic_data( current_sim_time, this->job_cycle_time );
    }
 
    return;

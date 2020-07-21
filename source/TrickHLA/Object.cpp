@@ -2350,7 +2350,7 @@ waiting for data at time %f seconds with timeout time %f and simulation time %f.
 
       // Wait for the data to change by using a spin lock that can timeout.
       unsigned int i;
-      while ( !is_changed(
+      while ( !is_changed()
               && ( time < timeout )
               && blocking_cyclic_read
               && any_remotely_owned_subscribed_cyclic_attribute() ) {

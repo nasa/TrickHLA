@@ -2207,8 +2207,6 @@ bool ExecutionControl::check_freeze_exit()
       // Process and Mode Transition Requests.
       process_mode_transition_request();
 
-      double current_sim_time = exec_get_sim_time();
-
       // Handle requests for ExCO updates.
       if ( this->execution_configuration->is_attribute_update_requested() ) {
          this->manager->send_requested_execution_control_data();
