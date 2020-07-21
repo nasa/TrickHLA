@@ -72,15 +72,24 @@ class DebugHandler
 
    /*! @brief Get current debug level as an enumeration value.
     *  @return Current debug level as a DebugLevelEnum tag. */
-   const DebugLevelEnum &get_debug_level() const { return debug_level; }
+   const DebugLevelEnum &get_debug_level() const
+   {
+      return debug_level;
+   }
 
    /*! @brief Get the current debug level as an integer value.
     *  @return Current debug level as an integer value. */
-   const int get_debug_level_as_int() const { return ( (int)debug_level ); }
+   const int get_debug_level_as_int() const
+   {
+      return ( (int)debug_level );
+   }
 
    /*! @brief Get the code section for this debug handler.
     *  @return Debug handler code module as a DebugSourceEnum tag. */
-   const DebugSourceEnum &get_code_section() const { return code_section; }
+   const DebugSourceEnum &get_code_section() const
+   {
+      return code_section;
+   }
 
    /*! @brief Conditional test to see if a debug message should print.
     *  @return Returns true if the requested message should print level.

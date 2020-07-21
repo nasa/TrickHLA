@@ -88,11 +88,17 @@ class TimedSyncPnt : public TrickHLA::SyncPnt
    // Accessor functions.
    /*! @brief Get the synchronization point action time.
     *  @return Time for synchronization point action. */
-   virtual const Int64Time &get_time() const { return time; }
+   virtual const Int64Time &get_time() const
+   {
+      return time;
+   }
 
    /*! @brief Set the synchronization point action time.
     *  @param t The synchronization point action time. */
-   virtual void set_time( const Int64Time &t ) { time = t; }
+   virtual void set_time( const Int64Time &t )
+   {
+      time = t;
+   }
 
    // Utility functions.
    /*! @brief Create a C++ wide string with the synchronization point label and

@@ -229,11 +229,17 @@ class SyncPntListBase
 
    /*! @brief Get the number of synchronization points in the list.
     *  @return The number of synchronization points in the list. */
-   virtual size_t get_size() const { return sync_point_list.size(); }
+   virtual size_t get_size() const
+   {
+      return sync_point_list.size();
+   }
 
    /*! @brief
     *  @return  */
-   virtual std::wstring const get_reconfig_name() { return reconfig_name; }
+   virtual std::wstring const get_reconfig_name()
+   {
+      return reconfig_name;
+   }
 
    /*! @brief Returns a wide string representing the state of the
     *  synchronization points.

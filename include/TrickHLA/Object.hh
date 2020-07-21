@@ -46,10 +46,6 @@ NASA, Johnson Space Center\n
 #ifndef _TRICKHLA_OBJECT_HH_
 #define _TRICKHLA_OBJECT_HH_
 
-// Reuse the attribute map for updating values instead of allocating a new
-// one every time. Default: THLA_USE_ATTRIBUTE_MAP_CLASS_INSTANCE
-#define THLA_USE_ATTRIBUTE_MAP_CLASS_INSTANCE
-
 // System include files.
 #include <pthread.h>
 #include <string>
@@ -213,7 +209,10 @@ class Object
 
    /*! @brief Check if object has been deleted from the RTI.
     *  @return True if object has been deleted from the RTI. */
-   bool is_object_deleted_from_RTI() const { return object_deleted_from_RTI; }
+   bool is_object_deleted_from_RTI() const
+   {
+      return object_deleted_from_RTI;
+   }
 
    /*! @brief This object instance has been deleted from the RTI, so process
     * the delete action by calling the users delete notification callback. */
@@ -239,16 +238,15 @@ class Object
    // Likewise incoming data are copied to the internal byte buffer. Only
    // when the data is requested will any needed byteswap will be performed.
    //-----------------------------------------------------------------
-   /*! @brief Send the requested data update that came from another federate
-    * requesting an attribute value update.
+   /*! @brief Send the requested attribute value updates.
     *  @param current_time Current time in seconds.
     *  @param cycle_time   Cycle time between calls to this function in seconds. */
    void send_requested_data( double current_time, double cycle_time );
 
-   /*! @brief Send cyclic data to remote HLA federates.
+   /*! @brief Send the cyclic and requested attribute value updates.
     *  @param current_time Current time in seconds.
     *  @param cycle_time   Cycle time between calls to this function in seconds. */
-   void send_cyclic_data( double current_time, double cycle_time );
+   void send_cyclic_and_requested_data( double current_time, double cycle_time );
 
    /*! @brief Handle the received cyclic data.
     *  @param current_time Current time in seconds.
@@ -326,49 +324,85 @@ class Object
 
    /*! @brief Get the object instance name.
     *  @return Object instance name. */
-   const char *get_name() const { return name; }
+   const char *get_name() const
+   {
+      return name;
+   }
 
    /*! @brief Get the object instance name as a C++ string.
     *  @return The object instance name as a C++ string. */
-   const std::string get_name_string() const { return ( ( name != NULL ) ? name : "" ); }
+   const std::string get_name_string() const
+   {
+      return ( ( name != NULL ) ? name : "" );
+   }
 
    /*! @brief Check if an object instance name is required.
     *  @return True is the object instance name is required. */
-   bool is_name_required() const { return name_required; }
+   bool is_name_required() const
+   {
+      return name_required;
+   }
 
    /*! @brief Check if an object instance name is registered.
     *  @return True is the object instance name is registered. */
-   bool is_name_registered() const { return name_registered; }
+   bool is_name_registered() const
+   {
+      return name_registered;
+   }
 
    /*! @brief Set the name registration status as true (registered). */
-   void set_name_registered() { this->name_registered = true; }
+   void set_name_registered()
+   {
+      this->name_registered = true;
+   }
 
    /*! @brief Set the name registration status as false (not registered). */
-   void set_name_unregistered() { this->name_registered = false; }
+   void set_name_unregistered()
+   {
+      this->name_registered = false;
+   }
 
    /*! @brief Get the FOM name for this object.
     *  @return The FOM name for this object. */
-   const char *get_FOM_name() const { return FOM_name; }
+   const char *get_FOM_name() const
+   {
+      return FOM_name;
+   }
 
    /*! @brief Get the HLA Object class handle for this object.
     *  @return The HLA ObjectClassHandle for this object. */
-   RTI1516_NAMESPACE::ObjectClassHandle get_class_handle() const { return class_handle; }
+   RTI1516_NAMESPACE::ObjectClassHandle get_class_handle() const
+   {
+      return class_handle;
+   }
 
    /*! @brief Set the HLA Object class handle for this object.
     *  @param id The HLA ObjectClassHandle for this object. */
-   void set_class_handle( RTI1516_NAMESPACE::ObjectClassHandle id ) { this->class_handle = id; }
+   void set_class_handle( RTI1516_NAMESPACE::ObjectClassHandle id )
+   {
+      this->class_handle = id;
+   }
 
    /*! @brief Check if the HLA Object instance handle is valid for this object.
     *  @return True if the HLA ObjectIntanceHandle is valid for the object instance. */
-   bool is_instance_handle_valid() const { return ( instance_handle.isValid() ); }
+   bool is_instance_handle_valid() const
+   {
+      return ( instance_handle.isValid() );
+   }
 
    /*! @brief Get the HLA Object instance handle for this object instance.
     *  @return The HLA ObjectInstanceHandle for this object instance. */
-   RTI1516_NAMESPACE::ObjectInstanceHandle get_instance_handle() const { return instance_handle; }
+   RTI1516_NAMESPACE::ObjectInstanceHandle get_instance_handle() const
+   {
+      return instance_handle;
+   }
 
    /*! @brief Set the HLA Object instance handle for this object instance.
     *  @param id The HLA ObjectInstanceHandle for this object instance. */
-   void set_instance_handle( RTI1516_NAMESPACE::ObjectInstanceHandle id ) { this->instance_handle = id; }
+   void set_instance_handle( RTI1516_NAMESPACE::ObjectInstanceHandle id )
+   {
+      this->instance_handle = id;
+   }
 
    /*! @brief Set the HLA Object instance handle and name for this object instance.
     *  @param id The HLA ObjectInstanceHandle for this object instance.
@@ -385,19 +419,31 @@ class Object
 
    /*! @brief Check if the object instance has been created.
     *  @return True if the object instance has been created. */
-   bool is_create_HLA_instance() const { return this->create_HLA_instance; }
+   bool is_create_HLA_instance() const
+   {
+      return this->create_HLA_instance;
+   }
 
    /*! @brief Set the object instance creation status.
     *  @param create The associated object instance creation status; True
     *  if the object has been created, otherwise False. */
-   void set_create_HLA_instance( bool create ) { create_HLA_instance = create; }
+   void set_create_HLA_instance( bool create )
+   {
+      create_HLA_instance = create;
+   }
 
    /*! @brief Check if the object is a required object instance.
     *  @return True if this is a required object instance. */
-   bool is_required() const { return this->required; }
+   bool is_required() const
+   {
+      return this->required;
+   }
 
    /*! @brief Mark this object instance as required. */
-   void mark_required() { this->required = true; }
+   void mark_required()
+   {
+      this->required = true;
+   }
 
    /*! @brief Stops publishing data for the object attributes by setting the
     * attribute publish state to false. */
@@ -410,7 +456,10 @@ class Object
    /*! @brief Check an attribute update has been requested for an attribute
     * associated with this object instance.
     *  @return True is an attribute update has been requested. */
-   bool is_attribute_update_requested() const { return this->attr_update_requested; }
+   bool is_attribute_update_requested() const
+   {
+      return this->attr_update_requested;
+   }
 
    /*! @brief Determines if any attribute is published.
     *  @return True for any published attribute. */
@@ -433,6 +482,11 @@ class Object
     *  @return True for any locally owned and published attribute.
     *  @param attr_config Attribute configuration. */
    bool any_locally_owned_published_attribute( const DataUpdateEnum attr_config );
+
+   /*! @brief Determines if any attribute is locally owned, published, has
+       * a cycle-time that is ready for a cyclic send or is requested for update.
+       *  @return True for any locally owned, published attribute with a sub-rate that is ready or reuqested for update. */
+   bool any_locally_owned_published_cyclic_data_ready_or_requested_attribute();
 
    /*! @brief Determines if any attribute is locally owned, published, and has
     * a cycle-time that is ready for a cyclic send.
@@ -524,19 +578,31 @@ class Object
    /*! @brief Get the current Lag Compensation type for this object instance
     * attribute updates.
     *  @return The current Lag Compensation type. */
-   LagCompensationEnum get_lag_compensation_type() const { return this->lag_comp_type; }
+   LagCompensationEnum get_lag_compensation_type() const
+   {
+      return this->lag_comp_type;
+   }
 
    /*! @brief Set the ownership divestiture requested flag.
     *  @param request The desired divesiture request state. */
-   void set_divest_requested( bool request ) { this->divest_requested = request; }
+   void set_divest_requested( bool request )
+   {
+      this->divest_requested = request;
+   }
 
    /*! @brief Set ownership pull requested flag.
     *  @param request The desired pull request state. */
-   void set_pull_requested( bool request ) { this->pull_requested = request; }
+   void set_pull_requested( bool request )
+   {
+      this->pull_requested = request;
+   }
 
    /*! @brief Get the last update time.
     *  @return The last HLA logical time update value. */
-   Int64Time const &get_last_update_time() const { return ( last_update_time ); }
+   Int64Time const &get_last_update_time() const
+   {
+      return ( last_update_time );
+   }
 
    /*! @brief Return a copy of the federate's lookahead time.
     *  @return Lookahead time interval. */
@@ -578,11 +644,17 @@ class Object
 
    /*! @brief Get the count of the number of attributes associated with this object.
     *  @return The number of attributes associated with this object. */
-   int get_attribute_count() const { return attr_count; }
+   int get_attribute_count() const
+   {
+      return attr_count;
+   }
 
    /*! @brief Get the list of attributes associated with this object.
     *  @return The array of attributes associated with this object. */
-   Attribute *get_attributes() { return attributes; }
+   Attribute *get_attributes()
+   {
+      return attributes;
+   }
 
    /*! @brief Build the attribute map, which will be used for quickly looking
     * up an attribute given its AttributeHandle. */
@@ -590,7 +662,10 @@ class Object
 
    /*! @brief Get the attribute FOM names.
     *  @return A vector of strings containing the attribute FOM names. */
-   VectorOfStrings get_attribute_FOM_names() const { return attribute_FOM_names; }
+   VectorOfStrings get_attribute_FOM_names() const
+   {
+      return attribute_FOM_names;
+   }
 
    /*! @brief Pack the attributes that were part of the attribute value request
     * into the buffer that is used for sending the encoded attribute through
@@ -600,24 +675,51 @@ class Object
    /*! @brief Pack the attributes for the given configuration into the buffer
     * that is used for sending the encoded attribute through the RTI.
     *  @param attr_config Attribute configuration. */
-   void pack_attribute_buffers( const DataUpdateEnum attr_config );
+   void pack_attribute_buffers( const DataUpdateEnum attr_config )
+   {
+      pack_attribute_buffers( attr_config, false );
+   }
+
+   /*! @brief Pack the attributes for the given configuration into the buffer
+    * that is used for sending the encoded attribute through the RTI.
+    *  @param attr_config Attribute configuration.
+    *  @param include_requested True to also included requeted attributes */
+   void pack_attribute_buffers( const DataUpdateEnum attr_config, const bool include_requested );
 
    /*! @brief Unpack the buffer back into the attributes that have the given
     * configuration.
     *  @param attr_config Attribute configuration. */
    void unpack_attribute_buffers( const DataUpdateEnum attr_config );
 
+   /*! @brief Copy the cyclic and requested attribute values to the buffer for each attribute. */
+   void pack_cyclic_and_requested_attribute_buffers()
+   {
+      pack_attribute_buffers( CONFIG_CYCLIC, true );
+   }
+
    /*! @brief Copy the cyclic attribute values to the buffer for each attribute. */
-   void pack_cyclic_attribute_buffers() { pack_attribute_buffers( CONFIG_CYCLIC ); }
+   void pack_cyclic_attribute_buffers()
+   {
+      pack_attribute_buffers( CONFIG_CYCLIC );
+   }
 
    /*! @brief Copy the packed buffer contents back to each cyclic attribute. */
-   void unpack_cyclic_attribute_buffers() { unpack_attribute_buffers( CONFIG_CYCLIC ); }
+   void unpack_cyclic_attribute_buffers()
+   {
+      unpack_attribute_buffers( CONFIG_CYCLIC );
+   }
 
    /*! @brief Copy the dynamic initialization attribute values to the buffer for each attribute. */
-   void pack_init_attribute_buffers() { pack_attribute_buffers( CONFIG_INITIALIZE ); }
+   void pack_init_attribute_buffers()
+   {
+      pack_attribute_buffers( CONFIG_INITIALIZE );
+   }
 
    /*! @brief Copy the packed buffer contents back to each dynamic initialization attribute. */
-   void unpack_init_attribute_buffers() { unpack_attribute_buffers( CONFIG_INITIALIZE ); }
+   void unpack_init_attribute_buffers()
+   {
+      unpack_attribute_buffers( CONFIG_INITIALIZE );
+   }
 
    /*! @brief Check if federate is shutdown function was called.
     *  @return True if the manager is shutting down the federate. */
@@ -629,7 +731,6 @@ class Object
     *  @param code   Source code association of the incoming messages. */
    bool should_print( const DebugLevelEnum &level, const DebugSourceEnum &code ) const;
 
-#ifdef THLA_USE_ATTRIBUTE_MAP_CLASS_INSTANCE
    /*! @brief Create a name value pair set, aka attribute handle value pair,
     * for the attributes that were requested for this object. */
    void create_requested_attribute_set();
@@ -637,19 +738,16 @@ class Object
    /*! @brief Create a name value pair set, aka attribute handle value pair,
     * for the attributes of this object.
     * @param required_config Attribute configuration required in order to send data. */
-   void create_attribute_set( const DataUpdateEnum required_config );
-#else
-   /*! @brief Create a name value pair set, aka attribute handle value pair,
-    * for the attributes that were requested for this object.
-    *  @return Attribute values in a map. */
-   RTI1516_NAMESPACE::AttributeHandleValueMap *create_requested_attribute_set();
+   void create_attribute_set( const DataUpdateEnum required_config )
+   {
+      create_attribute_set( required_config, false );
+   }
 
    /*! @brief Create a name value pair set, aka attribute handle value pair,
     * for the attributes of this object.
-    *  @return Attribute values in a map.
-    *  @param required_config Attribute configuration required in order to send data. */
-   RTI1516_NAMESPACE::AttributeHandleValueMap *create_attribute_set( const TrickHLAConfigurationType required_config );
-#endif
+    * @param required_config Attribute configuration required in order to send data
+    * @param include_requested True to also included requeted attributes */
+   void create_attribute_set( const DataUpdateEnum required_config, const bool include_requested );
 
 #if ( defined( THLA_THREAD_WAIT_FOR_DATA ) && defined( THLA_THREAD_TIMED_WAIT_FOR_DATA ) )
    timespec cyclic_read_timeout; ///< @trick_io{**} Timeout for when we block waiting to receive data.
@@ -697,9 +795,7 @@ class Object
 
    RTI1516_NAMESPACE::RTIambassador *rti_ambassador; ///< @trick_io{**} Reference to the RTI ambassador.
 
-#ifdef THLA_USE_ATTRIBUTE_MAP_CLASS_INSTANCE
    RTI1516_NAMESPACE::AttributeHandleValueMap *attribute_values_map; ///< @trick_io{**} Map of attributes that will be sent as an update to other federates.
-#endif
 
    ReflectedAttributesQueue thla_reflected_attributes_queue; ///< @trick_io{**} Queue of reflected attributes.
 

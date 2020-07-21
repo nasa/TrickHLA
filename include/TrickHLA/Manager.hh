@@ -170,9 +170,6 @@ class Manager
     *  @param sync_point_label Name of the synchronization point label. */
    void wait_for_init_sync_point( const char *sync_point_label );
 
-   /*! @brief Send the attribute value requested data to the remote federates. */
-   void send_requested_data();
-
    /*! @brief Request an update to the object attributes for the given object
     * instance name.
     *  @param instance_name Object instance name. */
@@ -183,8 +180,11 @@ class Manager
     *  @param instance_name Object instance name. */
    void request_data_update( const char *instance_name );
 
-   /*! @brief Send cyclic data to remote federates. */
-   void send_cyclic_data();
+   /*! @brief Send the ExCO attribute value requested data to the remote federates. */
+   void send_requested_execution_control_data();
+
+   /*! @brief Send cyclic an requested atrributes data to the remote federates. */
+   void send_cyclic_and_requested_data();
 
    /*! @brief Handle the received cyclic data. */
    void receive_cyclic_data();
@@ -222,11 +222,17 @@ class Manager
 
    /*! @brief Get the pointer to the associated TrickHLA::Federate instance.
     *  @return Pointer to the associated TrickHLA::Federate instance. */
-   Federate *get_federate() { return federate; }
+   Federate *get_federate()
+   {
+      return federate;
+   }
 
    /*! @brief Get the pointer to the associated TrickHLA::ExecutionControlBase instance.
     *  @return Pointer to associated TrickHLA::ExecutionControlBase instance. */
-   ExecutionControlBase *get_execution_control() { return this->execution_control; }
+   ExecutionControlBase *get_execution_control()
+   {
+      return this->execution_control;
+   }
 
    /*! @brief Returns a pointer to the RTI ambassador, or NULL if one does not
     * exist yet.
@@ -368,23 +374,38 @@ class Manager
 
    /*! @brief Get the debug handler for this TrickHLA::Manager.
     *  @return The associated debug handler. */
-   const DebugHandler &get_debug_handler() const { return debug_handler; }
+   const DebugHandler &get_debug_handler() const
+   {
+      return debug_handler;
+   }
 
    /*! @brief Get the TrickHLA::Object count.
     *  @return The number of registered TrickHLA::Object instances. */
-   int get_object_count() const { return obj_count; }
+   int get_object_count() const
+   {
+      return obj_count;
+   }
 
    /*! @brief Get the array of TrickHLA::Object instances.
     *  @return Array of TrickHLA::Object instances. */
-   Object *get_objects() { return objects; }
+   Object *get_objects()
+   {
+      return objects;
+   }
 
    /*! @brief Get the number of TrickHLA::Interactions.
     *  @return The number of TrickHLA::Interaction instances. */
-   int get_interaction_count() const { return inter_count; }
+   int get_interaction_count() const
+   {
+      return inter_count;
+   }
 
    /*! @brief Get the array containing the TrickHLA::Interaction instances.
     *  @return Array of TrickHLA::Interaction instances. */
-   Interaction *get_interactions() { return interactions; }
+   Interaction *get_interactions()
+   {
+      return interactions;
+   }
 
    /*! @brief Reset the manager as initialized. */
    void reset_mgr_initialized()
@@ -395,7 +416,10 @@ class Manager
 
    /*! @brief Check if the federate has been restored.
     *  @return True if the federate has been restored. */
-   bool has_federate_been_restored() const { return federate_has_been_restored; }
+   bool has_federate_been_restored() const
+   {
+      return federate_has_been_restored;
+   }
 
    /*! @brief Set the execution configuration object.
     *  @return Pointer to the associated execution configuration object. */
@@ -440,7 +464,7 @@ class Manager
    int              check_interactions_count; ///< @trick_units{--} Number of checkpointed interactions
    InteractionItem *check_interactions;       ///< @trick_units{--} checkpoint-able version of interactions_queue
 
-   double job_cycle_time; // s Cycle time for the send_requested_data, send_cylic_data, and recieve_cyclic_data jobs
+   double job_cycle_time; // s Cycle time for the send_cyclic_and_requested_data and recieve_cyclic_data jobs
 
    bool rejoining_federate; ///< @trick_units{--} Internal flag to indicate if the federate is rejoining the federation.
    bool restore_determined; ///< @trick_io{**} Internal flag to indicate that the restore status has been determined.
@@ -469,7 +493,10 @@ class Manager
    void initialization_execution_control();
 
    /*! @brief Check to see if this is a restored federate. */
-   bool is_restore_federate() const { return restore_federate; }
+   bool is_restore_federate() const
+   {
+      return restore_federate;
+   }
 
    /*! @brief Set up the Trick ref-attributes for the user specified objects
     * and attributes.

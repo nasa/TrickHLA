@@ -166,7 +166,10 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
     *  @param object TrickHLA::Object to add to the manager object map.  */
    virtual void add_object_to_map( Object *object );
    /*! Setup the ExecutionControl interactions HLA RTI handles. */
-   virtual void register_interactions_with_RTI() { return; }
+   virtual void register_interactions_with_RTI()
+   {
+      return;
+   }
    /*! @brief Wait for a specified synchronization point label to be announced.
     *  @param sync_pnt_label Synchronization label to wait for. */
    virtual void wait_for_sync_point_announce( std::wstring const &sync_pnt_label );
@@ -254,14 +257,20 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
     *  @details Most ExecutionControl approaches require that we wait for the
     *  required initialization data.  Currently, only the 'Simple' scheme does not.
     *  @return True if ExecutionControl needs to wait on the initialization data. */
-   virtual bool wait_on_init_data() { return ( true ); }
+   virtual bool wait_on_init_data()
+   {
+      return ( true );
+   }
    /*! @brief Test to see if ExecutionControl needs to wait on initialization
     *  synchronization point.
     *  @details Most ExecutionControl approaches require that we wait for
     *  specific initialization synchronization points in sprecific orders.
     *  Currently, only the 'Simple' and 'DIS' scheme do not.
     *  @return True if ExecutionControl needs to wait on the initialization synchronization points. */
-   virtual bool wait_on_init_sync_point() { return ( true ); }
+   virtual bool wait_on_init_sync_point()
+   {
+      return ( true );
+   }
 
    //
    // ExecutionControl interaction methods.
@@ -305,15 +314,24 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
 
    /*! @brief Check to see if the Scenario Timeline exists.
     *  @return True if it exists, False otherwise. */
-   bool does_scenario_timeline_exist() const { return ( scenario_timeline != NULL ); }
+   bool does_scenario_timeline_exist() const
+   {
+      return ( scenario_timeline != NULL );
+   }
 
    /*! @brief Check to see if the Simulation Timeline exists.
     *  @return True if it exists, False otherwise. */
-   bool does_sim_timeline_exist() const { return ( sim_timeline != NULL ); }
+   bool does_sim_timeline_exist() const
+   {
+      return ( sim_timeline != NULL );
+   }
 
    /*! @brief Check to see if the CTE Timeline exists.
     *  @return True if it exists, False otherwise. */
-   bool does_cte_timeline_exist() const { return ( cte_timeline != NULL ); }
+   bool does_cte_timeline_exist() const
+   {
+      return ( cte_timeline != NULL );
+   }
 
    /*! @brief Get the current simulation time from Simulation Timeline.
     *  @return The current simulation time in seconds. */
@@ -420,7 +438,10 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
     * freeze, tell other federates to run. */
    virtual void exit_freeze();
    /*! @brief Routine to handle ExecutionControl specific action needed to un-freeze. */
-   virtual void un_freeze() { return; }
+   virtual void un_freeze()
+   {
+      return;
+   }
 
    //
    // FIXME: These pause functions should be worked into the general freeze
@@ -433,46 +454,82 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    virtual void check_pause_at_init( const double check_pause_delta );
 
    /*! @brief Set the mode transition requested flag. */
-   virtual void set_mode_transition_requested() { mode_transition_requested = true; }
+   virtual void set_mode_transition_requested()
+   {
+      mode_transition_requested = true;
+   }
    /*! @brief Clear the mode transition requested flag. */
-   virtual void clear_mode_transition_requested() { mode_transition_requested = false; }
+   virtual void clear_mode_transition_requested()
+   {
+      mode_transition_requested = false;
+   }
    /*! @brief Determine if a mode transition has been requested.
     *  @return mode_change_requested True if a mode transition has been requested. */
-   virtual bool is_mode_transition_requested() { return mode_transition_requested; }
+   virtual bool is_mode_transition_requested()
+   {
+      return mode_transition_requested;
+   }
 
    // Role determination methods.
    /*! @brief Query if there is a preset Master.
     *  @return True if there is a preset Master; False otherwise. */
-   virtual bool is_master_preset() const { return this->use_preset_master; }
+   virtual bool is_master_preset() const
+   {
+      return this->use_preset_master;
+   }
    /*! @brief Set this as the Master federate.
     *  @param master_flag True for a Master federate; False otherwise. */
    virtual void set_master( bool master_flag );
    /*! @brief Query if this is the Master federate.
     *  @return True if there is the Master; False otherwise. */
-   virtual bool is_master() const { return this->master; }
+   virtual bool is_master() const
+   {
+      return this->master;
+   }
    /*! @brief Determine if this federate is a late joining federate.
     *  @return True if this is a late joining federate. */
-   virtual bool is_late_joiner() { return this->late_joiner; }
+   virtual bool is_late_joiner()
+   {
+      return this->late_joiner;
+   }
    /*! @brief Check if we have determine if this federate is a late joining federate.
     *  @return True if late joining status is determined. */
-   virtual bool is_late_joiner_determined() { return this->late_joiner_determined; }
+   virtual bool is_late_joiner_determined()
+   {
+      return this->late_joiner_determined;
+   }
 
    // Execution mode access methods.
    /*! @brief Get the currently requested execution mode.
     *  @return The currently requested execution mode. */
-   virtual ExecutionControlEnum get_requested_execution_control_mode() { return ( this->requested_execution_control_mode ); }
+   virtual ExecutionControlEnum get_requested_execution_control_mode()
+   {
+      return ( this->requested_execution_control_mode );
+   }
    /*! @brief Set the currently requested execution mode.
     *  @param mode The requested execution mode. */
-   virtual void set_requested_execution_control_mode( ExecutionControlEnum mode ) { this->requested_execution_control_mode = mode; }
+   virtual void set_requested_execution_control_mode( ExecutionControlEnum mode )
+   {
+      this->requested_execution_control_mode = mode;
+   }
    /*! @brief Set the currently requested execution mode.
     *  @param mode The requested execution mode. */
-   virtual void set_requested_execution_control_mode( int16_t mode ) { this->requested_execution_control_mode = execution_control_int16_to_enum( mode ); }
+   virtual void set_requested_execution_control_mode( int16_t mode )
+   {
+      this->requested_execution_control_mode = execution_control_int16_to_enum( mode );
+   }
    /*! @brief Get the current execution mode.
     *  @return The current execution mode. */
-   virtual ExecutionControlEnum get_current_execution_control_mode() { return ( this->current_execution_control_mode ); }
+   virtual ExecutionControlEnum get_current_execution_control_mode()
+   {
+      return ( this->current_execution_control_mode );
+   }
    /*! @brief Set the current execution control mode.
     *  @param mode The current execution control mode. */
-   virtual void set_current_execution_control_mode( ExecutionControlEnum mode ) { this->current_execution_control_mode = mode; }
+   virtual void set_current_execution_control_mode( ExecutionControlEnum mode )
+   {
+      this->current_execution_control_mode = mode;
+   }
 
    //
    // Federation save and checkpoint
@@ -487,13 +544,22 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    // Execution Control association methods.
    /*! @brief Set the reference to the associated TrickHLA::Federate.
     *  @param fed Associated TrickHLA::Federate. */
-   virtual void set_federate( TrickHLA::Federate *fed ) { federate = fed; }
+   virtual void set_federate( TrickHLA::Federate *fed )
+   {
+      this->federate = fed;
+   }
    /*! @brief Get the reference to the associated TrickHLA::Federate.
     *  @return Pointer to the associated TrickHLA::Federate. */
-   virtual TrickHLA::Federate *get_federate() { return federate; }
+   virtual TrickHLA::Federate *get_federate()
+   {
+      return federate;
+   }
    /*! @brief Get the reference to the associated TrickHLA::Manager.
     *  @return Pointer to the associated TrickHLA::Manager. */
-   virtual TrickHLA::Manager *get_manager() { return manager; }
+   virtual TrickHLA::Manager *get_manager()
+   {
+      return manager;
+   }
    /*! @brief Get the reference to the associated TrickHLA::ExecutionConfigurationBase object.
     *  @param exec_config Pointer to the associated TrickHLA::ExecutionConfigurationBase object. */
    virtual void set_execution_configuration( ExecutionConfigurationBase *exec_config )
@@ -510,10 +576,16 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    virtual void remove_execution_configuration();
    /*! @brief Test is an execution configuration object is used.
     *  @return True if an execution configuration object is used. */
-   virtual bool is_execution_configuration_used() { return ( execution_configuration != NULL ); }
+   virtual bool is_execution_configuration_used()
+   {
+      return ( execution_configuration != NULL );
+   }
    /*! @brief Query if the 'initialization_completed' sync-point exists.
     *  @return True if sync-point exists; False otherwise. */
-   virtual bool does_init_complete_sync_point_exist() const { return init_complete_sp_exists; }
+   virtual bool does_init_complete_sync_point_exist() const
+   {
+      return init_complete_sp_exists;
+   }
 
    // Freeze time management functions.
    /*! @brief Set the least common time step in microseconds for the federation.
@@ -521,49 +593,88 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    virtual void set_least_common_time_step( int64_t lcts );
    /*! @brief Get the value of the least common time step.
     *  @return The value of the least common time step. */
-   virtual int64_t get_least_common_time_step() { return this->least_common_time_step; }
+   virtual int64_t get_least_common_time_step()
+   {
+      return this->least_common_time_step;
+   }
    /*! @brief Set the time-padding used to offset the go to run time.
     *  @param t Time in seconds to pad for time based mode transitions. */
    virtual void set_time_padding( double t );
    /*! @brief Get the time-padding used to offset the go to run time.
     *  @return Time in seconds to pad for time based mode transitions. */
-   virtual double get_time_padding() { return this->time_padding; }
+   virtual double get_time_padding()
+   {
+      return this->time_padding;
+   }
    /*! @brief Get the Federation Execution simulation time for freeze.
     *  @return Simulation time in seconds for the Federation Execution to go to freeze. */
-   virtual double get_simulation_freeze_time() { return this->simulation_freeze_time; }
+   virtual double get_simulation_freeze_time()
+   {
+      return this->simulation_freeze_time;
+   }
    /*! @brief Set the Federation Execution simulation time for freeze.
     *  @param freeze_time Simulation time in seconds for the Federation Execution to go to freeze. */
-   virtual void set_simulation_freeze_time( double freeze_time ) { this->simulation_freeze_time = freeze_time; }
+   virtual void set_simulation_freeze_time( double freeze_time )
+   {
+      this->simulation_freeze_time = freeze_time;
+   }
    /*! @brief Get the Federation Execution scenario time for freeze.
     *  @return Scenario time in seconds for the Federation Execution to go to freeze. */
-   virtual double get_scenario_freeze_time() { return this->scenario_freeze_time; }
+   virtual double get_scenario_freeze_time()
+   {
+      return this->scenario_freeze_time;
+   }
    /*! @brief Set the Federation Execution scenario time for freeze.
     *  @param freeze_time Scenario time in seconds for the Federation Execution to go to freeze. */
-   virtual void set_scenario_freeze_time( double freeze_time ) { this->scenario_freeze_time = freeze_time; }
+   virtual void set_scenario_freeze_time( double freeze_time )
+   {
+      this->scenario_freeze_time = freeze_time;
+   }
 
    //
    // Save and Restore
    /* @brief Determines if Save and Restore is supported by this ExecutionControl method.
     * @return True if Save and Restore is supported by this ExecutionControl method. */
-   virtual bool is_save_and_restore_supported() { return ( false ); }
+   virtual bool is_save_and_restore_supported()
+   {
+      return ( false );
+   }
    /*! @brief Checks if Save has been initiated by this ExecutionControl method.
     * @return True if Save is initiated and synchronized with the federation,
     * False if Save not supported. */
-   virtual bool is_save_initiated() { return ( false ); }
+   virtual bool is_save_initiated()
+   {
+      return ( false );
+   }
    /*! @brief Federates that did not announce the save, perform a save.
     * @return True if Save can proceed, False if not. */
-   virtual bool perform_save() { return ( false ); }
+   virtual bool perform_save()
+   {
+      return ( false );
+   }
    /*! @brief Converts HLA sync points into something Trick can save in a checkpoint. */
-   virtual void convert_loggable_sync_pts() { return; }
+   virtual void convert_loggable_sync_pts()
+   {
+      return;
+   }
    /*! @brief Converts checkpointed sync points into HLA sync points. */
-   virtual void reinstate_logged_sync_pts() { return; }
+   virtual void reinstate_logged_sync_pts()
+   {
+      return;
+   }
 
    /*! @brief Set the time interval in microseconds a sleep loop timeout.
     *  @param t Time in microseconds a sleep loop timeout. */
-   virtual void set_wait_sleep( unsigned int t ) { wait_sleep = t; }
+   virtual void set_wait_sleep( unsigned int t )
+   {
+      wait_sleep = t;
+   }
    /*! @brief Set the time interval in microseconds a wait loop timeout.
     *  @param t Time in microseconds a wait loop timeout. */
-   virtual void set_wait_timeout( unsigned int t ) { wait_timeout = t; }
+   virtual void set_wait_timeout( unsigned int t )
+   {
+      wait_timeout = t;
+   }
 
    /*! @brief Determine if the verbose debug comments should be printed to the console.
     *  @return Returns true if the requested message should print level.

@@ -92,59 +92,101 @@ class SineData
 
    /*! @brief Get the current time value for the sine wave function.
     *  @return The current time value for the sine wave function. */
-   double get_time() const { return time; }
+   double get_time() const
+   {
+      return time;
+   }
 
    /*! @brief Set the current value of the sine wave function.
     *  @param val Sine wave value. */
-   void set_value( double val ) { this->value = val; }
+   void set_value( double val )
+   {
+      this->value = val;
+   }
 
    /*! @brief Get the current value of the sine wave function.
     *  @return Current value of the sine wave function. */
-   double get_value() const { return value; }
+   double get_value() const
+   {
+      return value;
+   }
 
    /*! @brief Set the value of the time derivative of the sine wave function.
     *  @param deriv The time derivative value of the sine wave function. */
-   void set_derivative( double deriv ) { this->dvdt = deriv; }
+   void set_derivative( double deriv )
+   {
+      this->dvdt = deriv;
+   }
 
    /*! @brief Get the value of the time derivative of the sine wave function.
     *  @return The current value of the time derivative of the sine wave function. */
-   double get_derivative() const { return dvdt; }
+   double get_derivative() const
+   {
+      return dvdt;
+   }
 
    /*! @brief Set the phase value of the sine wave function.
     *  @param phi The phase value of the sine wave function. */
-   void set_phase( double phi ) { this->phase = phi; }
+   void set_phase( double phi )
+   {
+      this->phase = phi;
+   }
 
    /*! @brief Get the phase value of the sine wave function.
     *  @return The phase value of the sine wave function. */
-   double get_phase() const { return phase; }
+   double get_phase() const
+   {
+      return phase;
+   }
 
    /*! @brief Set the frequency value of the sine wave function.
     *  @param omega The frequency value of the sine wave function. */
-   void set_frequency( double omega ) { this->freq = omega; }
+   void set_frequency( double omega )
+   {
+      this->freq = omega;
+   }
 
    /*! @brief Get the frequency value of the sine wave function.
     *  @return The frequency value of the sine wave function. */
-   double get_frequency() const { return freq; }
+   double get_frequency() const
+   {
+      return freq;
+   }
 
    /*! @brief Set the amplitude value of the sine wave function.
     *  @param mag The amplitude value of the sine wave function. */
-   void set_amplitude( double mag ) { this->amp = mag; }
+   void set_amplitude( double mag )
+   {
+      this->amp = mag;
+   }
 
    /*! @brief Get the amplitude value of the sine wave function.
     *  @return The amplitude value of the sine wave function. */
-   double get_amplitude() const { return amp; }
+   double get_amplitude() const
+   {
+      return amp;
+   }
 
    /*! @brief Set the tolerance value of the sine wave function.
     *  @param epsilon The tolerance value of the sine wave function. */
-   void set_tolerance( double epsilon ) { this->tol = epsilon; }
+   void set_tolerance( double epsilon )
+   {
+      this->tol = epsilon;
+   }
 
    /*! @brief Get the tolerance value of the sine wave function.
     *  @return The tolerance value of the sine wave function. */
-   double get_tolerance() const { return tol; }
+   double get_tolerance() const
+   {
+      return tol;
+   }
 
    /*! @brief Get the name of the sine wave object.
     *  @return A constant pointer to the name of the sine wave object. */
-   const char *get_name() const { return name; }
+   const char *get_name() const
+   {
+      return name;
+   }
 
    /*! @brief Set the name of the sine wave object.
     *  @param n The name of the sine wave object. */

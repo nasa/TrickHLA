@@ -78,7 +78,10 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Get the ExecutionControl type identification string.
     *  @return A constant reference to the type identification string.
     */
-   virtual const std::wstring &get_type() { return ( type ); }
+   virtual const std::wstring &get_type()
+   {
+      return ( type );
+   }
 
    // Execution Control initialization routine.
    // This is called by the TrickHLA::Federate::initialize routine.
@@ -188,7 +191,10 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual bool check_mode_transition_request();
    /*! @brief Process a new mode interaction.
     *  @return True if new mode interaction is successfully processed. */
-   virtual bool process_mode_interaction() { return process_mode_transition_request(); };
+   virtual bool process_mode_interaction()
+   {
+      return process_mode_transition_request();
+   };
    /*! @brief Process a new Mode Transition Request (MTR).
     *  @return True if new MTR is successfully processed. */
    virtual bool process_mode_transition_request();
@@ -221,7 +227,10 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     * freeze, tell other federates to run. */
    virtual void exit_freeze();
    /*! @brief Routine to handle ExecutionControl specific action needed to un-freeze. */
-   virtual void un_freeze() { return; }
+   virtual void un_freeze()
+   {
+      return;
+   }
 
    //
    // FIXME: These pause functions should be worked into the general freeze
@@ -297,14 +306,20 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    // Save and Restore
    /* @brief Determines if Save and Restore is supported by this ExecutionControl method.
     * @return True if Save and Restore is supported by this ExecutionControl method. */
-   virtual bool is_save_and_restore_supported() { return ( true ); }
+   virtual bool is_save_and_restore_supported()
+   {
+      return ( true );
+   }
    /*! @brief Checks if Save has been initiated by this ExecutionControl method.
     * @return True if Save is initiated and synchronized with the federation,
     * False if Save not supported. */
    virtual bool is_save_initiated();
    /*! @brief Federates that did not announce the save, perform a save.
     * @return True if Save can proceed, False if not. */
-   virtual bool perform_save() { return ( false ); }
+   virtual bool perform_save()
+   {
+      return ( false );
+   }
    /*! @brief Converts HLA sync points into something Trick can save in a checkpoint. */
    void convert_loggable_sync_pts();
    /*! @brief Converts checkpointed sync points into HLA sync points. */

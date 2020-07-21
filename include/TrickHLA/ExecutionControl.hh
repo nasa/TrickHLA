@@ -73,7 +73,10 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Get the ExecutionControl type identification string.
     *  @return A constant reference to the type identification string.
     */
-   virtual const std::wstring &get_type() { return ( type ); }
+   virtual const std::wstring &get_type()
+   {
+      return ( type );
+   }
 
    //
    // Execution Control initialization routines.
@@ -126,14 +129,20 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @details Most ExecutionControl approaches require that we wait for the
     *  required initialization data.  Currently, only the 'Simple' scheme does not.
     *  @return True if ExecutionControl needs to wait on the initialization data. */
-   bool wait_on_init_data() { return ( false ); }
+   bool wait_on_init_data()
+   {
+      return ( false );
+   }
    /*! @brief Test to see if ExecutionControl needs to wait on initialization
     *  synchronization point.
     *  @details Most ExecutionControl approaches require that we wait for
     *  specific initialization synchronization points in sprecific orders.
     *  Currently, only the 'Simple' and 'DIS' scheme do not.
     *  @return True if ExecutionControl needs to wait on the initialization synchronization points. */
-   bool wait_on_init_sync_point() { return ( false ); }
+   bool wait_on_init_sync_point()
+   {
+      return ( false );
+   }
 
    //
    // ExecutionControl runtime routines.
@@ -156,7 +165,10 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual void send_mode_transition_interaction( TrickHLA::ModeTransitionEnum requested_mode );
    /*! @brief Process a new mode interaction.
     *  @return True if new mode interaction is successfully processed. */
-   virtual bool process_mode_interaction() { return true; };
+   virtual bool process_mode_interaction()
+   {
+      return true;
+   };
    /*! @brief Sets the next ExecutionControl run mode.
     *  @param exec_control Next ExecutionControl run mode. */
    virtual void set_next_execution_control_mode( TrickHLA::ExecutionControlEnum exec_control );

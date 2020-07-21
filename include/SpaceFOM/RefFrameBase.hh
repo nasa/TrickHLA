@@ -117,7 +117,10 @@ class RefFrameBase : public TrickHLA::Packing
 
    /*! @brief Access function to get the HLA federation instance name for the reference frame.
     *  @return Object instance name for this reference frame. */
-   virtual const char *get_name() { return name; }
+   virtual const char *get_name()
+   {
+      return name;
+   }
 
    /*! @brief Access function to set the HLA federation instance name for the parent reference frame.
     *  @param name Object instance name for the parent reference frame. */
@@ -125,7 +128,10 @@ class RefFrameBase : public TrickHLA::Packing
 
    /*! @brief Access function to get the HLA federation instance name for the parent reference frame.
     *  @return Object instance name for the parent reference frame. */
-   virtual const char *get_parent_name() { return parent_name; }
+   virtual const char *get_parent_name()
+   {
+      return parent_name;
+   }
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to pack the data before the data is sent to the RTI. */
@@ -136,7 +142,10 @@ class RefFrameBase : public TrickHLA::Packing
    virtual void unpack();
 
    // Access to protected data.
-   virtual TrickHLA::Object *get_object() { return object; }
+   virtual TrickHLA::Object *get_object()
+   {
+      return object;
+   }
 
   public:
    bool debug; ///< @trick_units{--} Debug output flag.

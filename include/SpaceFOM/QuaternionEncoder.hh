@@ -71,7 +71,10 @@ class QuaternionEncoder : public TrickHLA::OpaqueBuffer
 
    /*! @brief Get the quaternion data.
     *  @return A reference to the QuaternionData. */
-   QuaternionData &get_data() { return data; }
+   QuaternionData &get_data()
+   {
+      return data;
+   }
 
   protected:
    QuaternionData data; ///< @trick_units{--} Reference frame transmission data.

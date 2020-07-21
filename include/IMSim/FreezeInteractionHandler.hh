@@ -83,7 +83,10 @@ class FreezeInteractionHandler : public TrickHLA::InteractionHandler
    // FIXME: This is not a good thing to do.  Why have the data private?
    /*! @brief Get the address of the interaction time.
     *  @return Pointer to the interaction time. */
-   double *get_address_of_interaction_time() { return ( &time ); }
+   double *get_address_of_interaction_time()
+   {
+      return ( &time );
+   }
 
   private:
    //

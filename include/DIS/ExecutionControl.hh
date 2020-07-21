@@ -74,7 +74,10 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Get the ExecutionControl type identification string.
     *  @return A constant reference to the type identification string.
     */
-   virtual const std::wstring &get_type() { return ( type ); }
+   virtual const std::wstring &get_type()
+   {
+      return ( type );
+   }
 
    //
    // Execution Control initialization routines.
@@ -168,7 +171,10 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  specific initialization synchronization points in sprecific orders.
     *  Currently, only the 'Simple' and 'DIS' scheme do not.
     *  @return True if ExecutionControl needs to wait on the initialization synchronization points. */
-   bool wait_on_init_sync_point() { return ( false ); }
+   bool wait_on_init_sync_point()
+   {
+      return ( false );
+   }
 
    /*! @brief Sets the next ExCO run mode.
     *  @param exec_control Next Execution configuration run mode. */
@@ -183,7 +189,10 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual bool check_mode_transition_request();
    /*! @brief Process a new mode interaction.
     *  @return True if new mode interaction is successfully processed. */
-   virtual bool process_mode_interaction() { return process_mode_transition_request(); };
+   virtual bool process_mode_interaction()
+   {
+      return process_mode_transition_request();
+   };
    /*! @brief Process a new Mode Transition Request (MTR).
     *  @return True if new MTR is successfully processed. */
    virtual bool process_mode_transition_request();
@@ -243,7 +252,10 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    // Save and Restore
    /* @brief Determines if Save and Restore is supported by this ExecutionControl method.
     * @return True if Save and Restore is supported by this ExecutionControl method. */
-   virtual bool is_save_and_restore_supported() { return ( true ); }
+   virtual bool is_save_and_restore_supported()
+   {
+      return ( true );
+   }
    /*! @brief Checks if Save has been initiated by this ExecutionControl method.
     * @return True if Save is initiated and synchronized with the federation,
     * False if Save not supported. */

@@ -115,10 +115,16 @@ class Attribute
 
    /*! @brief Get the reflection rate configuration type.
     *  @return The reflection rate configuration type enumeration value. */
-   const DataUpdateEnum get_configuration() const { return config; }
+   const DataUpdateEnum get_configuration() const
+   {
+      return config;
+   }
 
    /*! @brief Set the reflection rate configuration type. */
-   void set_configuration( const DataUpdateEnum c ) { this->config = c; }
+   void set_configuration( const DataUpdateEnum c )
+   {
+      this->config = c;
+   }
 
    /*! @brief Determine the cycle-ratio given the core job cycle rate and the
     * cycle-time for this attribute.
@@ -142,49 +148,85 @@ class Attribute
 
    /*! @brief Determine if an attribute was received from another federate.
     *  @return True if new attribute value has been received. */
-   bool is_received() const { return ( value_changed && !locally_owned ); }
+   bool is_received() const
+   {
+      return ( value_changed && !locally_owned );
+   }
 
    /*! @brief Determine if an attribute value has changed.
     *  @return True if the attribute value is marked as changed. */
-   bool is_changed() const { return this->value_changed; }
+   bool is_changed() const
+   {
+      return this->value_changed;
+   }
 
    /*! @brief Mark the attribute value as changed. */
-   void mark_changed() { this->value_changed = true; }
+   void mark_changed()
+   {
+      this->value_changed = true;
+   }
 
    /*! @brief Mark the attribute value as unchanged. */
-   void mark_unchanged() { this->value_changed = false; }
+   void mark_unchanged()
+   {
+      this->value_changed = false;
+   }
 
    /*! @brief Set the debug handler settings for this attribute.
     *  @param hndlr DebugHandler from which to copy settings. */
-   void set_debug_level( DebugHandler hndlr ) { debug_handler.set( hndlr ); }
+   void set_debug_level( DebugHandler hndlr )
+   {
+      debug_handler.set( hndlr );
+   }
 
    /*! @brief Get the Federation Object Model attribute name.
     *  @return FOM name for the attribute. */
-   const char *get_FOM_name() const { return FOM_name; }
+   const char *get_FOM_name() const
+   {
+      return FOM_name;
+   }
 
    /*! @brief Get the associated Trick variable space name.
     *  @return The Trick variable space name associated with this attribute. */
-   const char *get_trick_name() const { return trick_name; }
+   const char *get_trick_name() const
+   {
+      return trick_name;
+   }
 
    /*! @brief Determine if the attribute is published.
     *  @return True if attribute is published. */
-   bool is_publish() const { return publish; }
+   bool is_publish() const
+   {
+      return publish;
+   }
 
    /*! @brief Set the attribute publish flag.
     *  @param enable Flag to set the publish state. */
-   void set_publish( bool enable ) { this->publish = enable; }
+   void set_publish( bool enable )
+   {
+      this->publish = enable;
+   }
 
    /*! @brief Determine if the attribute is subscribed.
     *  @return True if attribute is subscribed. */
-   bool is_subscribe() const { return subscribe; }
+   bool is_subscribe() const
+   {
+      return subscribe;
+   }
 
    /*! @brief Set the attribute is subscribed flag.
     *  @param enable Flag to set the subscribe state. */
-   void set_subscribe( bool enable ) { this->subscribe = enable; }
+   void set_subscribe( bool enable )
+   {
+      this->subscribe = enable;
+   }
 
    /*! @brief Determine if the attribute is locally owned.
     *  @return True is attribute is locally owned. */
-   bool is_locally_owned() const { return locally_owned; }
+   bool is_locally_owned() const
+   {
+      return locally_owned;
+   }
 
    /*! @brief Mark the attribute is locally owned flag. */
    void mark_locally_owned()
@@ -206,38 +248,65 @@ class Attribute
 
    /*! @brief Determine is the attribute is remotely owned.
     *  @return True is attribute is remotely owned. */
-   bool is_remotely_owned() const { return ( !locally_owned ); }
+   bool is_remotely_owned() const
+   {
+      return ( !locally_owned );
+   }
 
    /*! @brief Mark the attribute as remotely owned. */
-   void mark_remotely_owned() { unmark_locally_owned(); }
+   void mark_remotely_owned()
+   {
+      unmark_locally_owned();
+   }
 
    /*! @brief Determine if someone is requesting an ownership transfer of this attribute.
     *  @return True if an ownership pull is requested. */
-   bool is_pull_requested() const { return pull_requested; }
+   bool is_pull_requested() const
+   {
+      return pull_requested;
+   }
 
    /*! @brief Set the pull requested flag.
     *  @param enable Flag to set the pull requested state. */
-   void set_pull_requested( bool enable ) { this->pull_requested = enable; }
+   void set_pull_requested( bool enable )
+   {
+      this->pull_requested = enable;
+   }
 
    /*! @brief Determine if this federate is trying to push ownership of this attribute.
     *  @return True if an ownership push is requested. */
-   bool is_push_requested() const { return push_requested; }
+   bool is_push_requested() const
+   {
+      return push_requested;
+   }
 
    /*! @brief Set the ownership push flag.
     *  @param enable Flag to set the push requested state. */
-   void set_push_requested( bool enable ) { this->push_requested = enable; }
+   void set_push_requested( bool enable )
+   {
+      this->push_requested = enable;
+   }
 
    /*! @brief Determine if this federate is requesting to divest ownership of this attribute.
     *  @return True if divest ownership is requested. */
-   bool is_divest_requested() const { return divest_requested; }
+   bool is_divest_requested() const
+   {
+      return divest_requested;
+   }
 
    /*! @brief Set the ownership divest requested flag.
     *  @param enable Flag to set divest requested state. */
-   void set_divest_requested( bool enable ) { this->divest_requested = enable; }
+   void set_divest_requested( bool enable )
+   {
+      this->divest_requested = enable;
+   }
 
    /*! @brief Determine if byteswapping is required.
     *  @return True is byte swapping of the attribute date is required. */
-   bool is_byteswap() const { return byteswap; }
+   bool is_byteswap() const
+   {
+      return byteswap;
+   }
 
    /*! @brief Determine is the data cycle is ready for sending data.
     *  @return True if the data cycle is ready for a send, false otherwise.*/
@@ -259,27 +328,45 @@ class Attribute
 
    /*! @brief Set the preferred transportation order.
     *  @param order The transportation type enumeration value. */
-   void set_preferred_order( TransportationEnum order ) { this->preferred_order = order; }
+   void set_preferred_order( TransportationEnum order )
+   {
+      this->preferred_order = order;
+   }
 
    /*! @brief Get the current preferred transportation order.
     *  @return The preferred transportation order enumeration value. */
-   TransportationEnum get_preferred_order() const { return preferred_order; }
+   TransportationEnum get_preferred_order() const
+   {
+      return preferred_order;
+   }
 
    /*! @brief Determine if an update is requested.
     *  @return True if an update is requested. */
-   bool is_update_requested() const { return update_requested; }
+   bool is_update_requested() const
+   {
+      return update_requested;
+   }
 
    /*! @brief Set the attribute update requested flag.
     *  @param request_update Request update flag. */
-   void set_update_requested( bool request_update ) { this->update_requested = request_update; }
+   void set_update_requested( bool request_update )
+   {
+      this->update_requested = request_update;
+   }
 
    /*! @brief Get the RTI attribute handle.
     *  @return The RTI AttributeHandle associate with this attribute. */
-   RTI1516_NAMESPACE::AttributeHandle get_attribute_handle() const { return this->attr_handle; }
+   RTI1516_NAMESPACE::AttributeHandle get_attribute_handle() const
+   {
+      return this->attr_handle;
+   }
 
    /*! @brief Set the RTI attribute handle.
     *  @param id The RTI attribute handle associated with this attribute. */
-   void set_attribute_handle( RTI1516_NAMESPACE::AttributeHandle id ) { this->attr_handle = id; }
+   void set_attribute_handle( RTI1516_NAMESPACE::AttributeHandle id )
+   {
+      this->attr_handle = id;
+   }
 
    /*! @brief Get the Trick simulation variable associated with this attribute. */
    void *get_sim_variable_address()
@@ -298,19 +385,31 @@ class Attribute
 
    /*! @brief Check if attribute is sent conditionally.
     *  @return True if attribute is to be sent conditionally. */
-   bool has_conditional() const { return ( conditional != NULL ); }
+   bool has_conditional() const
+   {
+      return ( conditional != NULL );
+   }
 
    /*! @brief Get the associated conditionality handler.
     *  @return The conditionality handler class associated with this attribute. */
-   Conditional *get_conditional() { return conditional; }
+   Conditional *get_conditional()
+   {
+      return conditional;
+   }
 
    /*! @brief Get the Trick "Ref Attributes" associated with this attribute.
     *  @return A pointer to the Trick "Ref Attributes" class. */
-   ATTRIBUTES get_ref2_attributes() const { return ( *( ref2->attr ) ); }
+   ATTRIBUTES get_ref2_attributes() const
+   {
+      return ( *( ref2->attr ) );
+   }
 
    /*! @brief Get the RTI encoding for this attribute.
     *  @return The RTI encoding type enumeration value. */
-   EncodingEnum get_rti_encoding() const { return rti_encoding; }
+   EncodingEnum get_rti_encoding() const
+   {
+      return rti_encoding;
+   }
 
    // Set the RTI encoding and based on the new encoding determine if we
    // need to byte-swap.
@@ -414,7 +513,7 @@ class Attribute
 
    bool byteswap; ///< @trick_units{--} Flag to indicate byte-swap before RTI Rx/Tx.
 
-   int cycle_ratio; ///< @trick_units{--} Ratio of the attribute cycle-time to the send_cyclic_data job cycle time.
+   int cycle_ratio; ///< @trick_units{--} Ratio of the attribute cycle-time to the send_cyclic_and_requested_data job cycle time.
    int cycle_cnt;   ///< @trick_units{count} Internal cycle counter used to determine when cyclic data will be sent.
 
    REF2 *ref2; ///< @trick_io{**} The ref_attributes of the given trick_name.

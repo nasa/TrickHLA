@@ -141,27 +141,45 @@ class SyncPnt
    // Accessor functions.
    /*! @brief Get the synchronization point label.
     *  @return The synchronization point label. */
-   virtual std::wstring const &get_label() const { return label; }
+   virtual std::wstring const &get_label() const
+   {
+      return label;
+   }
 
    /*! @brief Get the synchronization point state.
     *  @return The current state for this synchronization point. */
-   virtual const SyncPntStateEnum get_state() const { return state; }
+   virtual const SyncPntStateEnum get_state() const
+   {
+      return state;
+   }
 
    /*! @brief Set the synchronization point label.
     *  @param l The synchronization point label. */
-   virtual void set_label( std::wstring const &l ) { label = l; }
+   virtual void set_label( std::wstring const &l )
+   {
+      label = l;
+   }
 
    /*! @brief Set the current state of the synchronization point.
     *  @param s Current synchronization point state. */
-   virtual void set_state( SyncPntStateEnum s ) { state = s; }
+   virtual void set_state( SyncPntStateEnum s )
+   {
+      state = s;
+   }
 
    /*! @brief Set the sleep time for the wait loops.
     *  @param t Sleep time in microseconds. */
-   virtual void set_wait_sleep( unsigned int t ) { wait_sleep = t; }
+   virtual void set_wait_sleep( unsigned int t )
+   {
+      wait_sleep = t;
+   }
 
    /*! @brief Set the timeout interval for the wait loops.
     *  @param t Timeout interval in microseconds. */
-   virtual void set_wait_timeout( unsigned int t ) { wait_timeout = t; }
+   virtual void set_wait_timeout( unsigned int t )
+   {
+      wait_timeout = t;
+   }
 
    // Utility functions.
    /*! @brief Create a C++ wide string with the synchronization point label and

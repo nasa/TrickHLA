@@ -2068,7 +2068,7 @@ void Manager::provide_attribute_update(
  */
 void Manager::determine_job_cycle_time()
 {
-   if ( job_cycle_time != 0.0 ) {
+   if ( this->job_cycle_time > 0.0 ) {
       return;
    }
 
@@ -2080,19 +2080,19 @@ void Manager::determine_job_cycle_time()
    // Get the lookahead time.
    double lookahead_time = ( federate != NULL ) ? federate->get_lookahead_time() : 0.0;
 
-   job_cycle_time = exec_get_job_cycle( NULL );
+   this->job_cycle_time = exec_get_job_cycle( NULL );
 
    // Verify the job cycle time against the HLA lookahead time.
-   if ( ( job_cycle_time <= 0.0 ) || ( job_cycle_time < lookahead_time ) ) {
+   if ( ( this->job_cycle_time <= 0.0 ) || ( this->job_cycle_time < lookahead_time ) ) {
       ostringstream errmsg;
       errmsg << "Manager::determine_job_cycle_time():" << __LINE__
              << " ERROR: The cycle time for this job is less than the HLA"
              << " lookahead time! The HLA Lookahead time (" << lookahead_time
              << " seconds) must be less than or equal to the job cycle time ("
-             << job_cycle_time << " seconds). Make sure 'lookahead_time' in"
+             << this->job_cycle_time << " seconds). Make sure 'lookahead_time' in"
              << " your input or modified-data file is less than or equal to the"
              << " 'THLA_DATA_CYCLE_TIME' time specified in the S_define file for"
-             << " the send_requested_data(), send_cyclic_data(), and"
+             << " the send_cyclic_and_requested_data() and"
              << " receive_cyclic_data() jobs." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
@@ -2101,62 +2101,56 @@ void Manager::determine_job_cycle_time()
    // Set the core job cycle time now that we know what it is so that the
    // attribute cyclic ratios can now be calculated for any multi-rate
    // attributes.
-   for ( int n = 0; n < obj_count; n++ ) {
-      objects[n].set_core_job_cycle_time( job_cycle_time );
+   for ( int n = 0; n < this->obj_count; ++n ) {
+      objects[n].set_core_job_cycle_time( this->job_cycle_time );
    }
 }
 
 /*!
  * @job_class{scheduled}
  */
-void Manager::send_requested_data()
+void Manager::send_requested_execution_control_data()
 {
    if ( debug_handler.should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::send_requested_data():%d%c",
+      send_hs( stdout, "Manager::send_requested_ExCO_data():%d%c",
                __LINE__, THLA_NEWLINE );
    }
 
    double current_time = exec_get_sim_time();
 
    // Determine the cycle time for this job if it is not yet known.
-   if ( job_cycle_time == 0.0 ) {
+   if ( this->job_cycle_time <= 0.0 ) {
       determine_job_cycle_time();
    }
 
-   // Send any ExecutionControl data.
-   execution_control->send_requested_data( current_time, job_cycle_time );
-
-   // Send data to remote RTI federates for each of the objects.
-   for ( int n = 0; n < obj_count; n++ ) {
-      objects[n].send_requested_data( current_time, job_cycle_time );
-   }
-
-   return;
+   // Send any ExecutionControl (ExCO) data.
+   execution_control->send_requested_data( current_time, this->job_cycle_time );
 }
 
 /*!
  * @job_class{scheduled}
  */
-void Manager::send_cyclic_data()
+void Manager::send_cyclic_and_requested_data()
 {
-   if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::send_cyclic_data():%d%c",
+   if ( debug_handler.should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      send_hs( stdout, "Manager::send_cyclic_and_requested_data():%d%c",
                __LINE__, THLA_NEWLINE );
    }
 
-   double current_time = exec_get_sim_time();
+   double current_sim_time = exec_get_sim_time();
 
    // Determine the cycle time for this job if it is not yet known.
-   if ( job_cycle_time == 0.0 ) {
+   if ( this->job_cycle_time <= 0.0 ) {
       determine_job_cycle_time();
    }
 
-   // Send data to remote RTI federates for each of the objects.
-   for ( int n = 0; n < obj_count; n++ ) {
-      objects[n].send_cyclic_data( current_time, job_cycle_time );
-   }
+   // Send any ExecutionControl data requested.
+   execution_control->send_requested_data( current_sim_time, this->job_cycle_time );
 
-   return;
+   // Send data to remote RTI federates for each of the objects.
+   for ( int n = 0; n < this->obj_count; ++n ) {
+      objects[n].send_cyclic_and_requested_data( current_sim_time, this->job_cycle_time );
+   }
 }
 
 /*!
@@ -2182,13 +2176,13 @@ void Manager::receive_cyclic_data()
    execution_control->receive_cyclic_data( current_time );
 
    // Determine the cycle time for this job if it is not yet known.
-   if ( job_cycle_time == 0.0 ) {
+   if ( this->job_cycle_time <= 0.0 ) {
       determine_job_cycle_time();
    }
 
    // Receive data from remote RTI federates for each of the objects.
    for ( int n = 0; n < obj_count; n++ ) {
-      objects[n].receive_cyclic_data( current_time, job_cycle_time );
+      objects[n].receive_cyclic_data( current_time, this->job_cycle_time );
    }
 
    return;

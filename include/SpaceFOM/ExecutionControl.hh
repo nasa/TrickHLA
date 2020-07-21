@@ -90,7 +90,10 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Get the ExecutionControl type identification string.
     *  @return A constant reference to the type identification string.
     */
-   virtual const std::wstring &get_type() { return ( type ); }
+   virtual const std::wstring &get_type()
+   {
+      return ( type );
+   }
    //
    // Execution Control initialization routines.
    // This is called by the TrickHLA::Federate::initialize routine.
@@ -245,10 +248,16 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    // SpaceFOM Extensions.
    /*! @brief Query if this is the Pacing federate.
     *  @return True if there is the Pacing federate; False otherwise. */
-   bool is_pacing() const { return this->pacing; }
+   bool is_pacing() const
+   {
+      return this->pacing;
+   }
    /*! @brief Query if this is the Root Reference Frame Publisher federate.
     *  @return True if there is the Root Reference Frame Publisher federate; False otherwise. */
-   bool is_root_frame_publisher() const { return this->root_frame_pub; }
+   bool is_root_frame_publisher() const
+   {
+      return this->root_frame_pub;
+   }
 
    //
    // Federation save and checkpoint

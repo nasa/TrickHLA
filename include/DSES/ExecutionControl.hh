@@ -72,7 +72,10 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Get the ExecutionControl type identification string.
     *  @return A constant reference to the type identification string.
     */
-   virtual const std::wstring &get_type() { return ( type ); }
+   virtual const std::wstring &get_type()
+   {
+      return ( type );
+   }
 
    //
    // Execution Control initialization routines.
@@ -158,7 +161,10 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual bool check_mode_transition_request();
    /*! @brief Process a new mode interaction.
     *  @return True if new mode interaction is successfully processed. */
-   virtual bool process_mode_interaction() { return process_mode_transition_request(); };
+   virtual bool process_mode_interaction()
+   {
+      return process_mode_transition_request();
+   };
    /*! @brief Process a new Mode Transition Request (MTR).
     *  @return True if new MTR is successfully processed. */
    virtual bool process_mode_transition_request();

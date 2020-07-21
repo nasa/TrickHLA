@@ -254,7 +254,7 @@ Trick simulation time as the default scenario-timeline.%c",
    this->set_debug_level( manager->get_debug_handler() );
 
    // Configure the ExecutionConfiguration object if present.
-   if ( is_execution_configuration_used() ) {
+   if ( execution_configuration != NULL ) {
       execution_configuration->configure();
    }
 }

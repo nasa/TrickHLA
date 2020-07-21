@@ -97,12 +97,8 @@ sim_object {
    P1 (0.0, environment) TrickHLA: THLA.manager.start_federation_save_at_scenario_time(
       In double freeze_scenario_time = THLA.checkpoint_time,
       In const char * file_name = THLA.checkpoint_label );
-   P1 (THLA_DATA_CYCLE_TIME, environment) TrickHLA: THLA.manager.receive_cyclic_data(
-      In double current_time = sys.exec.out.time );
-   P65534 (THLA_DATA_CYCLE_TIME, logging) TrickHLA: THLA.manager.send_cyclic_data(
-      In double current_time = sys.exec.out.time );
-   P65534 (THLA_DATA_CYCLE_TIME, logging) TrickHLA: THLA.manager.send_requested_data(
-      In double current_time = sys.exec.out.time );
+   P1 (THLA_DATA_CYCLE_TIME, environment) TrickHLA: THLA.manager.receive_cyclic_data();
+   P65534 (THLA_DATA_CYCLE_TIME, logging) TrickHLA: THLA.manager.send_cyclic_and_requested_data();
    P65534 (THLA_DATA_CYCLE_TIME, logging) TrickHLA: THLA.manager.process_ownership();
    P65534 (THLA_DATA_CYCLE_TIME, logging) TrickHLA: THLA.federate.time_advance_request();
    P65534 (THLA_DATA_CYCLE_TIME, logging) TrickHLA: THLA.federate.check_freeze_time();

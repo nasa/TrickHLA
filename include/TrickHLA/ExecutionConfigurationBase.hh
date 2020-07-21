@@ -103,7 +103,10 @@ class ExecutionConfigurationBase : public Object, public Packing
    /*! @brief Get the full path name in the S_define to the
     * ExecutionConfiguration object instance.
     *  @return S_define_name Full path name in the S_define for this ExecutionConfiguration instance. */
-   virtual const char *get_S_define_name() { return ( S_define_name ); }
+   virtual const char *get_S_define_name()
+   {
+      return ( S_define_name );
+   }
 
    // From the TrickHLA::Packing class.
    virtual void pack()   = 0;
@@ -139,10 +142,16 @@ class ExecutionConfigurationBase : public Object, public Packing
 
    /*! @brief Check if an update is pending.
     *  @return True is an update is pending. */
-   virtual bool update_pending() { return this->pending_update; }
+   virtual bool update_pending()
+   {
+      return this->pending_update;
+   }
 
    /*! @brief Clear the update pending flag. */
-   virtual void clear_update_pending() { this->pending_update = false; }
+   virtual void clear_update_pending()
+   {
+      this->pending_update = false;
+   }
 
    /*! @brief Get the reference to the associated TrickHLA::ExecutionControlBase object.
     *  @param exec_control Pointer to the associated TrickHLA::ExecutionControlBase object. */

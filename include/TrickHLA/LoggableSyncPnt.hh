@@ -56,9 +56,15 @@ class LoggableSyncPnt
 
   public:
    /*! @brief Default constructor for the TrickHLA LoggableSyncPnt class. */
-   LoggableSyncPnt() : label( NULL ), state( SYNC_PNT_STATE_UNKNOWN ) {}
+   LoggableSyncPnt() : label( NULL ), state( SYNC_PNT_STATE_UNKNOWN )
+   {
+      return;
+   }
    /*! @brief Destructor for the TrickHLA LoggableSyncPnt class. */
-   virtual ~LoggableSyncPnt() { LoggableSyncPnt::clear(); }
+   virtual ~LoggableSyncPnt()
+   {
+      LoggableSyncPnt::clear();
+   }
 
   public:
    /*! @brief Clear the Trick allocated memory. */

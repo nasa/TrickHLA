@@ -70,21 +70,33 @@ class OpaqueBuffer
 
    /*! @brief Get the current buffer byte alignment.
     *  @return Buffer byte alignment. */
-   unsigned int get_byte_alignment() const { return alignment; }
+   unsigned int get_byte_alignment() const
+   {
+      return alignment;
+   }
 
    /*! @brief Get the current buffer capacity.
     *  @return Buffer capacity. */
-   size_t get_capacity() const { return capacity; }
+   size_t get_capacity() const
+   {
+      return capacity;
+   }
 
    /*! @brief Ensure the buffer has at least the specified capacity.
     *  @param size Requested buffer capacity. */
    void ensure_buffer_capacity( size_t size );
 
    /*! @brief Reset the push buffer position. */
-   void reset_push_position() { this->push_pos = 0; }
+   void reset_push_position()
+   {
+      this->push_pos = 0;
+   }
 
    /*! @brief Reset the pull buffer position. */
-   void reset_pull_position() { this->pull_pos = 0; }
+   void reset_pull_position()
+   {
+      this->pull_pos = 0;
+   }
 
    /*! @brief Reset both the push and pull buffer positions. */
    void reset_buffer_positions()

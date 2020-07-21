@@ -131,28 +131,40 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    virtual void set_root_frame_name( const char *name );
    /*! @brief Get the root reference frame name.
     *  @return Root Reference Frame name as a constant string. */
-   virtual const char *get_root_frame_name() { return root_frame_name; }
+   virtual const char *get_root_frame_name()
+   {
+      return root_frame_name;
+   }
 
    /*! @brief Set the scenario time line epoch.
     *  @param scenario_time Scenario time line epoch. */
    virtual void set_scenario_time_epoch( double scenario_time );
    /*! @brief Get the scenario time line epoch.
     *  @return The scenario time line epoch. */
-   virtual double get_scenario_time_epoch() { return scenario_time_epoch; }
+   virtual double get_scenario_time_epoch()
+   {
+      return scenario_time_epoch;
+   }
 
    /*! @brief Set the scenario time for the next mode transition.
     *  @param next_mode_time Scenario time for next mode transition. */
    virtual void set_next_mode_scenario_time( double next_mode_time );
    /*! @brief Get the next mode scenario time.
     *  @return The next mode scenario time. */
-   virtual double get_next_mode_scenario_time() { return next_mode_scenario_time; }
+   virtual double get_next_mode_scenario_time()
+   {
+      return next_mode_scenario_time;
+   }
 
    /*! @brief Set the next mode CTE time.
     *  @param cte_time CTE time for next mode transition. */
    virtual void set_next_mode_cte_time( double cte_time );
    /*! @brief Get the next mode CTE time.
     *  @return The next mode CTE time. */
-   virtual double get_next_mode_cte_time() { return next_mode_cte_time; }
+   virtual double get_next_mode_cte_time()
+   {
+      return next_mode_cte_time;
+   }
 
    /*! @brief Sets the current ExCO run mode.
     *  @param mode Current Execution configuration run mode integer value. */
@@ -162,7 +174,10 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    virtual void set_current_execution_mode( IMSim::ExecutionModeEnum mode );
    /*! @brief Get the current execution mode.
     *  @return The current execution mode as an integer. */
-   virtual short get_current_execution_mode() { return current_execution_mode; }
+   virtual short get_current_execution_mode()
+   {
+      return current_execution_mode;
+   }
 
    /*! @brief Sets the next ExCO execution mode.
     *  @param mode Next Execution configuration execution mode from an integer. */
@@ -172,14 +187,20 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    virtual void set_next_execution_mode( IMSim::ExecutionModeEnum mode );
    /*! @brief Get the next execution mode.
     *  @return The next execution mode as an integer. */
-   virtual short get_next_execution_mode() { return this->next_execution_mode; }
+   virtual short get_next_execution_mode()
+   {
+      return this->next_execution_mode;
+   }
 
    /*! @brief Set the least common time step in microseconds for the federation.
     *  @param lcts Least Common Time Step time in microseconds. */
    virtual void set_least_common_time_step( int64_t lcts );
    /*! @brief Get the value of the least common time step.
     *  @return The value of the least common time step. */
-   virtual int64_t get_least_common_time_step() { return this->least_common_time_step; }
+   virtual int64_t get_least_common_time_step()
+   {
+      return this->least_common_time_step;
+   }
 
    // ExecutionConfiguration specific functions.
    /*! @brief Setup the Trick Ref Attributes for the ExCO object.
