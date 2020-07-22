@@ -20,6 +20,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Manager.cpp}
 @trick_link_dependency{MutexLock.cpp}
 @trick_link_dependency{MutexProtection.cpp}
+@trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{ExecutionControlBase.cpp}
 
 @revs_title
@@ -56,6 +57,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
 #include "TrickHLA/Utilities.hh"
+#include <TrickHLA/SleepTimeout.hh>
 
 // HLA include files.
 #include RTI1516_HEADER
@@ -430,9 +432,7 @@ federate so this call will be ignored.%c",
                         ( objects[i].is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
             }
 
-            unsigned int sleep_micros = 1000;
-            unsigned int wait_count   = 0;
-            unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+            SleepTimeout sleep_timer( 10.0, 1000 );
 
             // Wait for the data to arrive.
             while ( !objects[i].is_changed() ) {
@@ -440,10 +440,10 @@ federate so this call will be ignored.%c",
                // Check for shutdown.
                federate->check_for_shutdown_with_termination();
 
-               (void)Utilities::micro_sleep( sleep_micros );
+               (void)sleep_timer.sleep();
 
-               if ( ( !objects[i].is_changed() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-                  wait_count = 0;
+               if ( !objects[i].is_changed() && sleep_timer.timeout() ) {
+                  sleep_timer.reset();
                   if ( !federate->is_execution_member() ) {
                      ostringstream errmsg;
                      errmsg << "Manager::receive_init_data():" << __LINE__
@@ -540,9 +540,7 @@ void Manager::receive_init_data(
                         ( obj->is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
             }
 
-            unsigned int sleep_micros = 1000;
-            unsigned int wait_count   = 0;
-            unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+            SleepTimeout sleep_timer( 10.0, 1000 );
 
             // Wait for the data to arrive.
             while ( !obj->is_changed() ) {
@@ -550,10 +548,10 @@ void Manager::receive_init_data(
                // Check for shutdown.
                federate->check_for_shutdown_with_termination();
 
-               (void)Utilities::micro_sleep( sleep_micros );
+               (void)sleep_timer.sleep();
 
-               if ( ( !obj->is_changed() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-                  wait_count = 0;
+               if ( !obj->is_changed() && sleep_timer.timeout() ) {
+                  sleep_timer.reset();
                   if ( !federate->is_execution_member() ) {
                      ostringstream errmsg;
                      errmsg << "Manager::receive_init_data():" << __LINE__
@@ -1733,9 +1731,7 @@ void Manager::wait_on_registration_of_required_objects()
       }
    }
 
-   unsigned int sleep_micros = 1000;
-   unsigned int wait_count   = 0;
-   unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+   SleepTimeout sleep_timer( 10.0, 1000 );
 
    do {
 
@@ -1835,13 +1831,13 @@ void Manager::wait_on_registration_of_required_objects()
 
       // Wait a little while to allow the objects to be registered.
       if ( any_unregistered_required_obj ) {
-         (void)Utilities::micro_sleep( sleep_micros );
+         (void)sleep_timer.sleep();
 
          // Check again to see if we have any unregistered objects.
          any_unregistered_required_obj = ( current_required_obj_cnt < total_required_obj_cnt );
 
-         if ( any_unregistered_required_obj && ( ( ++wait_count % wait_check ) == 0 ) ) {
-            wait_count = 0;
+         if ( any_unregistered_required_obj && sleep_timer.timeout() ) {
+            sleep_timer.reset();
             if ( !federate->is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "Manager::wait_on_registration_of_required_objects():" << __LINE__
@@ -2901,9 +2897,7 @@ void Manager::wait_on_discovery_of_objects()
                      __LINE__, THLA_NEWLINE );
          }
 
-         unsigned int sleep_micros = 1000;
-         unsigned int wait_count   = 0;
-         unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+         SleepTimeout sleep_timer( 10.0, 1000 );
 
          // block until some / all arrive.
          do {
@@ -2913,10 +2907,10 @@ void Manager::wait_on_discovery_of_objects()
 
             // Sleep for a little while to allow the RTI to trigger the object
             // discovery callbacks.
-            (void)Utilities::micro_sleep( sleep_micros );
+            (void)sleep_timer.sleep();
 
-            if ( ( ++wait_count % wait_check ) == 0 ) {
-               wait_count = 0;
+            if ( sleep_timer.timeout() ) {
+               sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "Manager::wait_on_discovery_of_object_instance():" << __LINE__

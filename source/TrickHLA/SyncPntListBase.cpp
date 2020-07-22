@@ -17,6 +17,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{Int64Time.cpp}
+@trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{SyncPnt.cpp}
 @trick_link_dependency{SyncPntListBase.cpp}
 
@@ -40,6 +41,7 @@ NASA, Johnson Space Center\n
 // HLA include files.
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPntListBase.hh"
 #include "TrickHLA/Utilities.hh"
@@ -398,9 +400,7 @@ void SyncPntListBase::wait_for_list_synchronization(
       // Wait for a synchronization point if it is not already achieved.
       if ( ( sp != NULL ) && sp->is_valid() && !sp->is_achieved() ) {
 
-         unsigned int sleep_micros = 1000;
-         unsigned int wait_count   = 0;
-         unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+         SleepTimeout sleep_timer( 10.0, 1000 );
 
          // Wait for the federation to synchronized on the sync-point.
          while ( !sp->is_achieved() ) {
@@ -409,12 +409,12 @@ void SyncPntListBase::wait_for_list_synchronization(
             federate->check_for_shutdown_with_termination();
 
             // Pause and release the processor for short sleep value.
-            (void)Utilities::micro_sleep( sleep_micros );
+            (void)sleep_timer.sleep();
 
             // Periodically check to make sure the federate is still part of
             // the federation exectuion.
-            if ( ( !sp->is_achieved() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-               wait_count = 0;
+            if ( !sp->is_achieved() && sleep_timer.timeout() ) {
+               sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "SyncPntListBase::wait_for_all_sync_pnts_synchronization:" << __LINE__

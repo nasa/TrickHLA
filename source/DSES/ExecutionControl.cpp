@@ -17,6 +17,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../TrickHLA/SyncPntListBase.cpp}
+@trick_link_dependency{../TrickHLA/SleepTimeout.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
 
 @revs_title
@@ -42,6 +43,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/Utilities.hh"
 
 // DSES include files.
@@ -82,9 +84,7 @@ ExecutionControl::ExecutionControl()
      scenario_freeze_time( 0.0 ),
      late_joiner( false ),
      late_joiner_determined( false ),
-     federate( NULL ),
-     wait_sleep( 1000 ),
-     wait_timeout( 10000000 )
+     federate( NULL )
 {
    return;
 }
@@ -419,9 +419,7 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_pnts()
            && ( sp->label.compare( DSES::INITIALIZE_SYNC_POINT ) != 0 )
            && ( sp->label.compare( DSES::SIM_CONFIG_SYNC_POINT ) != 0 ) ) {
 
-         unsigned int sleep_micros = 1000;
-         unsigned int wait_count   = 0;
-         unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+         SleepTimeout sleep_timer( 10.0, 1000 );
 
          // Wait for the federation to synchronized on the sync-point.
          while ( !sp->is_achieved() ) {
@@ -430,12 +428,12 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_pnts()
             federate->check_for_shutdown_with_termination();
 
             // Pause and release the processor for short sleep value.
-            (void)Utilities::micro_sleep( sleep_micros );
+            (void)sleep_timer.sleep();
 
             // Periodically check to make sure the federate is still part of
             // the federation exectuion.
-            if ( ( !sp->is_achieved() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-               wait_count = 0;
+            if ( !sp->is_achieved() && sleep_timer.timeout() ) {
+               sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "SRFOM::ExecutionControl::wait_for_all_multiphase_init_sync_pnts:" << __LINE__

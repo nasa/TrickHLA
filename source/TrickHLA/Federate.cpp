@@ -23,6 +23,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{FedAmb.cpp}
 @trick_link_dependency{Federate.cpp}
 @trick_link_dependency{Manager.cpp}
+@trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{ExecutionControlBase.cpp}
 
 @revs_title
@@ -75,6 +76,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/OwnershipItem.hh"
 #include "TrickHLA/ScenarioTimeline.hh"
 #include "TrickHLA/SimTimeline.hh"
+#include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/TimeOfDayTimeline.hh"
 #include "TrickHLA/Types.hh"
@@ -1408,9 +1410,8 @@ string Federate::wait_for_required_federates_to_join()
 
    bool          found_an_unrequired_federate = false;
    set< string > unrequired_federates_list; // list of unique unrequired federate names
-   unsigned int  sleep_micros = 1000;
-   unsigned int  wait_count   = 0;
-   unsigned int  wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+
+   SleepTimeout sleep_timer( 10.0, 1000 );
 
    while ( !all_federates_joined ) {
 
@@ -1418,7 +1419,7 @@ string Federate::wait_for_required_federates_to_join()
       this->check_for_shutdown_with_termination();
 
       // Sleep a little while to wait for more federates to join.
-      (void)Utilities::micro_sleep( sleep_micros );
+      (void)sleep_timer.sleep();
 
       // Determine what federates have joined only if the joined federate
       // count has changed.
@@ -1497,8 +1498,8 @@ string Federate::wait_for_required_federates_to_join()
          }
       }
 
-      if ( ( !all_federates_joined ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-         wait_count = 0;
+      if ( !all_federates_joined && sleep_timer.timeout() ) {
+         sleep_timer.reset();
          if ( !is_execution_member() ) {
             ostringstream errmsg;
             errmsg << "Federate::wait_for_required_federates_to_join():" << __LINE__
@@ -2732,16 +2733,14 @@ void Federate::setup_checkpoint()
 
          request_federation_save();
 
-         unsigned int sleep_micros = 1000;
-         unsigned int wait_count   = 0;
-         unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+         SleepTimeout sleep_timer( 10.0, 1000 );
 
          // need to wait for federation to initiate save
          while ( !start_to_save ) {
-            (void)Utilities::micro_sleep( sleep_micros );
+            (void)sleep_timer.sleep();
 
-            if ( ( !this->start_to_save ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-               wait_count = 0;
+            if ( !this->start_to_save && sleep_timer.timeout() ) {
+               sleep_timer.reset();
                if ( !is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "Federate::setup_checkpoint():" << __LINE__
@@ -2972,16 +2971,14 @@ void Federate::setup_restore()
       // set the federate restore_name to filename (without the federation name)- this gets announced to other feds
       initiate_restore_announce( restore_name_str );
 
-      unsigned int sleep_micros = 1000;
-      unsigned int wait_count   = 0;
-      unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+      SleepTimeout sleep_timer( 10.0, 1000 );
 
       // need to wait for federation to initiate restore
       while ( !this->start_to_restore ) {
-         (void)Utilities::micro_sleep( sleep_micros );
+         (void)sleep_timer.sleep();
 
-         if ( ( !this->start_to_restore ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-            wait_count = 0;
+         if ( !this->start_to_restore && sleep_timer.timeout() ) {
+            sleep_timer.reset();
             if ( !is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "Federate::setup_restore():" << __LINE__
@@ -3684,8 +3681,7 @@ void Federate::create_and_join_federation()
 
       if ( !this->federation_joined ) {
          send_hs( stderr, "Federate::create_and_join_federation():%d Failed to join federation \"%s\" on attempt %d of %d!%c",
-                  __LINE__, get_federation_name(), k, max_retries,
-                  THLA_NEWLINE );
+                  __LINE__, get_federation_name(), k, max_retries, THLA_NEWLINE );
          (void)Utilities::micro_sleep( 100000 );
       }
    }
@@ -3913,9 +3909,7 @@ void Federate::setup_time_constrained()
       // simulation fed file we will receive TimeStamp Ordered messages.
       RTI_ambassador->enableTimeConstrained();
 
-      unsigned int sleep_micros = 1000;
-      unsigned int wait_count   = 0;
-      unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+      SleepTimeout sleep_timer( 10.0, 1000 );
 
       // This spin lock waits for the time constrained flag to be set from the RTI.
       while ( !this->time_constrained_state ) {
@@ -3923,10 +3917,10 @@ void Federate::setup_time_constrained()
          // Check for shutdown.
          this->check_for_shutdown_with_termination();
 
-         (void)Utilities::micro_sleep( sleep_micros );
+         (void)sleep_timer.sleep();
 
-         if ( ( !time_constrained_state ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-            wait_count = 0;
+         if ( !time_constrained_state && sleep_timer.timeout() ) {
+            sleep_timer.reset();
             if ( !is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "Federate::setup_time_constrained():" << __LINE__
@@ -4072,9 +4066,7 @@ void Federate::setup_time_regulation()
       // TimeStamp Ordered messages.
       RTI_ambassador->enableTimeRegulation( lookahead.get() );
 
-      unsigned int sleep_micros = 1000;
-      unsigned int wait_count   = 0;
-      unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+      SleepTimeout sleep_timer( 10.0, 1000 );
 
       // This spin lock waits for the time regulation flag to be set from the RTI.
       while ( !time_regulating_state ) {
@@ -4082,10 +4074,10 @@ void Federate::setup_time_regulation()
          // Check for shutdown.
          this->check_for_shutdown_with_termination();
 
-         (void)Utilities::micro_sleep( sleep_micros );
+         (void)sleep_timer.sleep();
 
-         if ( ( !this->time_regulating_state ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-            wait_count = 0;
+         if ( !this->time_regulating_state && sleep_timer.timeout() ) {
+            sleep_timer.reset();
             if ( !is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "Federate::setup_time_regulation():" << __LINE__
@@ -4380,24 +4372,7 @@ void Federate::wait_for_time_advance_grant()
 
    if ( !this->time_adv_grant ) {
 
-      // NOTE: The RELEASE_1() call is almost 5 times faster than the usleep()
-      // call. However, the speed is system specific so we can not reliably
-      // determine the number of wait-check loops equals 10 seconds, so we use
-      // usleep(). Because we can reliably determine the wait-check it could
-      // result in the check for HLA execution member calling the RTI very
-      // frequently resulting in an RTI performance problem. If we are using
-      // Central Timing Equipment (CTE) then we may want to revert back to
-      // RELEASE_1() so that our polling is much faster as usleep() is
-      // 1 millisecond (minimum kernel time).  Dan Dexter, NASA/ER7, June 2016
-#define THLA_TAG_USE_USLEEP 1
-#if THLA_TAG_USE_USLEEP
-      unsigned int sleep_micros = 1000;
-      unsigned int wait_count   = 0;
-      unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds using usleep()
-#else
-      unsigned int wait_count = 0;
-      unsigned int wait_check = 50000000; // Number of wait cycles for 10 seconds using RELEASE_1()
-#endif
+      SleepTimeout sleep_timer( 10.0, 1000 );
 
       // This spin lock waits for the time advance grant from the RTI.
       while ( !this->time_adv_grant ) {
@@ -4405,13 +4380,10 @@ void Federate::wait_for_time_advance_grant()
          // Check for shutdown.
          this->check_for_shutdown_with_termination();
 
-#if THLA_TAG_USE_USLEEP
-         (void)Utilities::micro_sleep( sleep_micros );
-#else
-         RELEASE_1();                     // Faster than usleep()
-#endif
-         if ( ( !this->time_adv_grant ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-            wait_count = 0;
+         (void)sleep_timer.sleep();
+
+         if ( !this->time_adv_grant && sleep_timer.timeout() ) {
+            sleep_timer.reset();
             if ( is_execution_member() ) {
                if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
                   send_hs( stdout, "Federate::wait_for_time_advance_grant():%d Still Execution Member.%c",
@@ -5287,9 +5259,7 @@ void Federate::ask_MOM_for_auto_provide_setting()
    requestedAttributes.insert( MOM_HLAautoProvide_handle );
    request_attribute_update( MOM_HLAfederation_class_handle, requestedAttributes );
 
-   unsigned int sleep_micros = 1000;
-   unsigned int wait_count   = 0;
-   unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+   SleepTimeout sleep_timer( 10.0, 1000 );
 
    while ( this->auto_provide_setting < 0 ) {
 
@@ -5297,10 +5267,10 @@ void Federate::ask_MOM_for_auto_provide_setting()
       this->check_for_shutdown_with_termination();
 
       // Sleep a little while to wait for the information to update.
-      (void)Utilities::micro_sleep( sleep_micros );
+      (void)sleep_timer.sleep();
 
-      if ( ( this->auto_provide_setting < 0 ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-         wait_count = 0;
+      if ( ( this->auto_provide_setting < 0 ) && sleep_timer.timeout() ) {
+         sleep_timer.reset();
          if ( !is_execution_member() ) {
             ostringstream errmsg;
             errmsg << "Federate::ask_MOM_for_auto_provide_setting():" << __LINE__
@@ -5415,9 +5385,7 @@ void Federate::load_and_print_running_federate_names()
    requestedAttributes.insert( MOM_HLAfederatesInFederation_handle );
    request_attribute_update( MOM_HLAfederation_class_handle, requestedAttributes );
 
-   unsigned int sleep_micros = 1000;
-   unsigned int wait_count   = 0;
-   unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+   SleepTimeout sleep_timer( 10.0, 1000 );
 
    while ( this->running_feds_count <= 0 ) {
 
@@ -5425,10 +5393,10 @@ void Federate::load_and_print_running_federate_names()
       this->check_for_shutdown_with_termination();
 
       // Sleep a little while to wait for the information to update.
-      (void)Utilities::micro_sleep( sleep_micros );
+      (void)sleep_timer.sleep();
 
-      if ( ( this->running_feds_count <= 0 ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-         wait_count = 0;
+      if ( ( this->running_feds_count <= 0 ) && sleep_timer.timeout() ) {
+         sleep_timer.reset();
          if ( !is_execution_member() ) {
             ostringstream errmsg;
             errmsg << "Federate::load_and_print_running_federate_names():" << __LINE__
@@ -5468,15 +5436,17 @@ MOM just informed us that there are %d federates currently running in the federa
    size_t joinedFedCount = 0;
 
    // Wait for all the required federates to join.
-   wait_count                 = 0;
    this->all_federates_joined = false;
+
+   sleep_timer.reset();
+
    while ( !this->all_federates_joined ) {
 
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
 
       // Sleep a little while to wait for more federates to join.
-      (void)Utilities::micro_sleep( sleep_micros );
+      (void)sleep_timer.sleep();
 
       // Determine what federates have joined only if the joined federate
       // count has changed.
@@ -5487,8 +5457,8 @@ MOM just informed us that there are %d federates currently running in the federa
             this->all_federates_joined = true;
          }
       }
-      if ( ( !this->all_federates_joined ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-         wait_count = 0;
+      if ( !this->all_federates_joined && sleep_timer.timeout() ) {
+         sleep_timer.reset();
          if ( !is_execution_member() ) {
             ostringstream errmsg;
             errmsg << "Federate::load_and_print_running_federate_names():" << __LINE__
@@ -5506,16 +5476,16 @@ MOM just informed us that there are %d federates currently running in the federa
 
    // Execute a blocking loop until the RTI responds with information for all
    // running federates
-   wait_count = 0;
+   sleep_timer.reset();
    while ( joined_federate_names.size() < (unsigned int)running_feds_count ) {
 
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
 
-      (void)Utilities::micro_sleep( sleep_micros );
+      (void)sleep_timer.sleep();
 
-      if ( ( joined_federate_names.size() < (unsigned int)running_feds_count ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-         wait_count = 0;
+      if ( ( joined_federate_names.size() < (unsigned int)running_feds_count ) && sleep_timer.timeout() ) {
+         sleep_timer.reset();
          if ( !is_execution_member() ) {
             ostringstream errmsg;
             errmsg << "Federate::load_and_print_running_federate_names():" << __LINE__
@@ -6213,19 +6183,17 @@ void Federate::wait_for_federation_restore_begun()
       send_hs( stdout, "Federate::wait_for_federation_restore_begun():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
-   unsigned int sleep_micros = 1000;
-   unsigned int wait_count   = 0;
-   unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+   SleepTimeout sleep_timer( 10.0, 1000 );
 
    while ( !this->restore_begun ) {
 
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
 
-      (void)Utilities::micro_sleep( sleep_micros ); // sleep until RTI responds...
+      (void)sleep_timer.sleep(); // sleep until RTI responds...
 
-      if ( ( !this->restore_begun ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-         wait_count = 0;
+      if ( !this->restore_begun && sleep_timer.timeout() ) {
+         sleep_timer.reset();
          if ( !is_execution_member() ) {
             ostringstream errmsg;
             errmsg << "Federate::wait_for_federation_restore_begun():" << __LINE__
@@ -6252,19 +6220,17 @@ void Federate::wait_until_federation_is_ready_to_restore()
       send_hs( stdout, "Federate::wait_until_federation_is_ready_to_restore():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
-   unsigned int sleep_micros = 1000;
-   unsigned int wait_count   = 0;
-   unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+   SleepTimeout sleep_timer( 10.0, 1000 );
 
    while ( !this->start_to_restore ) {
 
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
 
-      (void)Utilities::micro_sleep( sleep_micros ); // sleep until RTI responds...
+      (void)sleep_timer.sleep(); // sleep until RTI responds...
 
-      if ( ( !this->start_to_restore ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-         wait_count = 0;
+      if ( !this->start_to_restore && sleep_timer.timeout() ) {
+         sleep_timer.reset();
          if ( !is_execution_member() ) {
             ostringstream errmsg;
             errmsg << "Federate::wait_until_federation_is_ready_to_restore():" << __LINE__
@@ -6317,9 +6283,7 @@ string Federate::wait_for_federation_restore_to_complete()
       return tRetString;
    }
 
-   unsigned int sleep_micros = 1000;
-   unsigned int wait_count   = 0;
-   unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+   SleepTimeout sleep_timer( 10.0, 1000 );
 
    // nobody reported any problems, wait until the restore is completed.
    while ( !this->restore_completed ) {
@@ -6336,10 +6300,10 @@ string Federate::wait_for_federation_restore_to_complete()
                       "completed!\nTERMINATING SIMULATION!";
          return tRetString;
       } else {
-         (void)Utilities::micro_sleep( sleep_micros ); // sleep until RTI responds...
+         (void)sleep_timer.sleep(); // sleep until RTI responds...
 
-         if ( ( !this->restore_completed ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-            wait_count = 0;
+         if ( !this->restore_completed && sleep_timer.timeout() ) {
+            sleep_timer.reset();
             if ( !is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "Federate::wait_for_federation_restore_to_complete():" << __LINE__
@@ -6380,19 +6344,19 @@ void Federate::wait_for_restore_request_callback()
       send_hs( stdout, "Federate::wait_for_restore_request_callback():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
-   unsigned int sleep_micros = 1000;
-   unsigned int wait_count   = 0;
-   unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+   SleepTimeout sleep_timer( 10.0, 1000 );
 
    while ( !has_restore_process_restore_request_failed() && !has_restore_process_restore_request_succeeded() ) {
 
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
 
-      (void)Utilities::micro_sleep( sleep_micros ); // sleep until RTI responds...
+      (void)sleep_timer.sleep(); // sleep until RTI responds...
 
-      if ( ( !has_restore_process_restore_request_failed() && !has_restore_process_restore_request_succeeded() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-         wait_count = 0;
+      if ( !has_restore_process_restore_request_failed()
+           && !has_restore_process_restore_request_succeeded()
+           && sleep_timer.timeout() ) {
+         sleep_timer.reset();
          if ( !is_execution_member() ) {
             ostringstream errmsg;
             errmsg << "Federate::wait_for_restore_request_callback():" << __LINE__
@@ -6419,19 +6383,17 @@ void Federate::wait_for_restore_status_to_complete()
       send_hs( stdout, "Federate::wait_for_restore_status_to_complete():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
-   unsigned int sleep_micros = 1000;
-   unsigned int wait_count   = 0;
-   unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+   SleepTimeout sleep_timer( 10.0, 1000 );
 
    while ( !this->restore_request_complete ) {
 
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
 
-      (void)Utilities::micro_sleep( sleep_micros ); // sleep until RTI responds...
+      (void)sleep_timer.sleep(); // sleep until RTI responds...
 
-      if ( ( !this->restore_request_complete ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-         wait_count = 0;
+      if ( !this->restore_request_complete && sleep_timer.timeout() ) {
+         sleep_timer.reset();
          if ( !is_execution_member() ) {
             ostringstream errmsg;
             errmsg << "Federate::wait_for_restore_status_to_complete():" << __LINE__
@@ -6458,19 +6420,17 @@ void Federate::wait_for_save_status_to_complete()
       send_hs( stdout, "Federate::wait_for_save_status_to_complete():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
-   unsigned int sleep_micros = 1000;
-   unsigned int wait_count   = 0;
-   unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+   SleepTimeout sleep_timer( 10.0, 1000 );
 
    while ( !this->save_request_complete ) {
 
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
 
-      (void)Utilities::micro_sleep( sleep_micros ); // sleep until RTI responds...
+      (void)sleep_timer.sleep(); // sleep until RTI responds...
 
-      if ( ( !this->save_request_complete ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-         wait_count = 0;
+      if ( !this->save_request_complete && sleep_timer.timeout() ) {
+         sleep_timer.reset();
          if ( !is_execution_member() ) {
             ostringstream errmsg;
             errmsg << "Federate::wait_for_save_status_to_complete():" << __LINE__
@@ -6497,9 +6457,7 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
       send_hs( stdout, "Federate::wait_for_federation_restore_failed_callback_to_complete():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
-   unsigned int sleep_micros = 1000;
-   unsigned int wait_count   = 0;
-   unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+   SleepTimeout sleep_timer( 10.0, 1000 );
 
    while ( !this->federation_restore_failed_callback_complete ) {
 
@@ -6515,10 +6473,10 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
          }
          return;
       }
-      (void)Utilities::micro_sleep( sleep_micros ); // sleep until RTI responds...
+      (void)sleep_timer.sleep(); // sleep until RTI responds...
 
-      if ( ( !this->federation_restore_failed_callback_complete ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-         wait_count = 0;
+      if ( !this->federation_restore_failed_callback_complete && sleep_timer.timeout() ) {
+         sleep_timer.reset();
          if ( !is_execution_member() ) {
             ostringstream errmsg;
             errmsg << "Federate::wait_for_federation_restore_failed_callback_to_complete():" << __LINE__
@@ -7071,16 +7029,14 @@ void Federate::restore_federate_handles_from_MOM()
    requestedAttributes.insert( MOM_HLAfederate_handle );
    request_attribute_update( MOM_HLAfederate_class_handle, requestedAttributes );
 
-   unsigned int sleep_micros = 1000;
-   unsigned int wait_count   = 0;
-   unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+   SleepTimeout sleep_timer( 10.0, 1000 );
 
    // Wait until all of the federate handles have been retrieved.
    while ( this->joined_federate_handles.size() < (unsigned int)running_feds_count ) {
-      (void)Utilities::micro_sleep( sleep_micros );
+      (void)sleep_timer.sleep();
 
-      if ( ( this->joined_federate_handles.size() < (unsigned int)this->running_feds_count ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-         wait_count = 0;
+      if ( ( this->joined_federate_handles.size() < (unsigned int)this->running_feds_count ) && sleep_timer.timeout() ) {
+         sleep_timer.reset();
          if ( !is_execution_member() ) {
             ostringstream errmsg;
             errmsg << "Federate::restore_federate_handles_from_MOM():" << __LINE__

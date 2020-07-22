@@ -17,6 +17,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../TrickHLA/SyncPntListBase.cpp}
+@trick_link_dependency{../TrickHLA/SleepTimeout.cpp}
 @trick_link_dependency{RefFrameBase.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
 
@@ -47,6 +48,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/Utilities.hh"
+#include <TrickHLA/SleepTimeout.hh>
 
 // SpaceFOM include files.
 #include "SpaceFOM/ExecutionConfiguration.hh"
@@ -587,6 +589,8 @@ void ExecutionControl::role_determination_process()
          }
       }
 
+      SleepTimeout sleep_timer( 10.0, 1000 );
+
       // Block until we have determined if we are a late joining federate.
       while ( !this->late_joiner_determined ) {
 
@@ -615,12 +619,11 @@ void ExecutionControl::role_determination_process()
             federate->check_for_shutdown_with_termination();
 
             // Short sleep to release process and not hog CPU.
-            (void)Utilities::micro_sleep( this->wait_sleep );
+            (void)sleep_timer.sleep();
 
             // Check that we maintain federation membership.
-            unsigned int wait_count = 0;
-            if ( ( !this->late_joiner_determined ) && ( ( ++wait_count % this->wait_timeout ) == 0 ) ) {
-               wait_count = 0;
+            if ( !this->late_joiner_determined && sleep_timer.timeout() ) {
+               sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "SpaceFOM::ExecutionControlBase::role_determination_process():" << __LINE__
@@ -1212,8 +1215,8 @@ void ExecutionControl::shutdown()
          // federate before tearing things down.
          long sleep_pad_micros = Int64Interval::to_microseconds( this->get_time_padding() );
          if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            send_hs( stdout, "SpaceFOM::ExecutionControl::shutdown():%d: sleep for %d microsecond.%c", __LINE__,
-                     sleep_pad_micros, THLA_NEWLINE );
+            send_hs( stdout, "SpaceFOM::ExecutionControl::shutdown():%d: sleep for %d microsecond.%c",
+                     __LINE__, sleep_pad_micros, THLA_NEWLINE );
          }
          (void)Utilities::micro_sleep( sleep_pad_micros );
       }
@@ -2109,7 +2112,7 @@ bool ExecutionControl::check_for_shutdown_with_termination()
 
       // Wait a little while for the Federate HLA interface to shutdown before
       // we terminate.
-      Utilities::micro_sleep( 500000 );
+      (void)Utilities::micro_sleep( 500000 );
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
 
@@ -2462,9 +2465,7 @@ void ExecutionControl::receive_root_ref_frame()
    // Make sure we have at least one piece of root reference frame data we can receive.
    if ( rrf_object->any_remotely_owned_subscribed_init_attribute() ) {
 
-      unsigned int sleep_micros = 1000;
-      unsigned int wait_count   = 0;
-      unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+      SleepTimeout sleep_timer( 10.0, 1000 );
 
       // Wait for the data to arrive.
       while ( !rrf_object->is_changed() ) {
@@ -2472,10 +2473,10 @@ void ExecutionControl::receive_root_ref_frame()
          // Check for shutdown.
          federate->check_for_shutdown_with_termination();
 
-         (void)Utilities::micro_sleep( sleep_micros );
+         (void)sleep_timer.sleep();
 
-         if ( ( !rrf_object->is_changed() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-            wait_count = 0;
+         if ( !rrf_object->is_changed() && sleep_timer.timeout() ) {
+            sleep_timer.reset();
             if ( !federate->is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "SpaceFOM::ExecutionControl::receive_root_ref_frame():" << __LINE__
