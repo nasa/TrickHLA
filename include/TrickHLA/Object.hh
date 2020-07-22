@@ -36,15 +36,6 @@ NASA, Johnson Space Center\n
 
 */
 
-/* Commented out, and testing to be removed. DDexter, 7/22/2020
-// Allow the IO source code for io_Object.cpp to compile since we have
-// a real instance of this class in the TrickHLA::Manager for the sim_config.
-// TODO: Is this still necessary?
-#ifdef TRICK_IN_IOSRC
-#   include "TrickHLA/Manager.hh"
-#endif
-*/
-
 #ifndef _TRICKHLA_OBJECT_HH_
 #define _TRICKHLA_OBJECT_HH_
 
