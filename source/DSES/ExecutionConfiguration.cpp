@@ -23,6 +23,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/Packing.cpp}
 @trick_link_dependency{../TrickHLA/Federate.cpp}
 @trick_link_dependency{../TrickHLA/Manager.cpp}
+@trick_link_dependency{../TrickHLA/SleepTimeout.cpp}
 @trick_link_dependency{../TrickHLA/ExecutionConfigurationBase.cpp}
 @trick_link_dependency{ExecutionConfiguration.cpp}
 
@@ -51,6 +52,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
@@ -624,9 +626,7 @@ bool ExecutionConfiguration::wait_on_update() // RETURN: -- None.
    // Make sure we have at least one piece of exec-config data we can receive.
    if ( this->any_remotely_owned_subscribed_init_attribute() ) {
 
-      unsigned int sleep_micros = 1000;
-      unsigned int wait_count   = 0;
-      unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+      SleepTimeout sleep_timer( 10.0, 1000 );
 
       // Wait for the data to arrive.
       while ( !this->is_changed() ) {
@@ -634,10 +634,10 @@ bool ExecutionConfiguration::wait_on_update() // RETURN: -- None.
          // Check for shutdown.
          federate->check_for_shutdown_with_termination();
 
-         (void)Utilities::micro_sleep( sleep_micros );
+         (void)sleep_timer.sleep();
 
-         if ( ( !this->is_changed() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-            wait_count = 0;
+         if ( !this->is_changed() && sleep_timer.timeout() ) {
+            sleep_timer.reset();
             if ( !federate->is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "DSES::ExecutionConfiguration::wait_on_update():" << __LINE__

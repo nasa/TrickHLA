@@ -37,14 +37,14 @@ NASA, Johnson Space Center\n
 // System includes
 #include <string>
 
-// HLA include files.
-#include "TrickHLA/StandardsSupport.hh"
-#include RTI1516_HEADER
-
 // TrickHLA includes.
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/LoggableSyncPnt.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
+
+// HLA include files.
+#include RTI1516_HEADER
 
 namespace TrickHLA
 {
@@ -167,20 +167,6 @@ class SyncPnt
       state = s;
    }
 
-   /*! @brief Set the sleep time for the wait loops.
-    *  @param t Sleep time in microseconds. */
-   virtual void set_wait_sleep( unsigned int t )
-   {
-      wait_sleep = t;
-   }
-
-   /*! @brief Set the timeout interval for the wait loops.
-    *  @param t Timeout interval in microseconds. */
-   virtual void set_wait_timeout( unsigned int t )
-   {
-      wait_timeout = t;
-   }
-
    // Utility functions.
    /*! @brief Create a C++ wide string with the synchronization point label and
     * current state.
@@ -193,10 +179,8 @@ class SyncPnt
    virtual void convert( LoggableSyncPnt &log_sync_pnt );
 
   protected:
-   std::wstring     label;        ///< @trick_io{**} Sync-point name.
-   SyncPntStateEnum state;        ///< @trick_units{--} Sync-point state.
-   unsigned int     wait_sleep;   ///< @trick_units{us} Wait loop sleep times.
-   unsigned int     wait_timeout; ///< @trick_units{us} Wait loop timeout.
+   std::wstring     label; ///< @trick_io{**} Sync-point name.
+   SyncPntStateEnum state; ///< @trick_units{--} Sync-point state.
 };
 
 } // namespace TrickHLA

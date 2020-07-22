@@ -17,6 +17,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{SyncPntListBase.cpp}
+@trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{ExecutionControlBase.cpp}
 
 @revs_title
@@ -47,6 +48,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Utilities.hh"
+#include <TrickHLA/SleepTimeout.hh>
 
 // HLA include files.
 #include RTI1516_HEADER
@@ -86,8 +88,6 @@ ExecutionControlBase::ExecutionControlBase()
      scenario_freeze_time( 0.0 ),
      late_joiner( false ),
      late_joiner_determined( false ),
-     wait_sleep( 1000 ),
-     wait_timeout( 10000000 ),
      federate( NULL ),
      manager( NULL ),
      logged_sync_pts_count( 0 ),
@@ -121,8 +121,6 @@ ExecutionControlBase::ExecutionControlBase(
      scenario_freeze_time( 0.0 ),
      late_joiner( false ),
      late_joiner_determined( false ),
-     wait_sleep( 1000 ),
-     wait_timeout( 10000000 ),
      federate( NULL ),
      manager( NULL ),
      logged_sync_pts_count( 0 ),
@@ -423,9 +421,7 @@ void ExecutionControlBase::wait_for_sync_point_announce(
          // If the sync-point has not been announced...
          if ( !sp->is_announced() ) {
 
-            unsigned int sleep_micros = 1000;
-            unsigned int wait_count   = 0;
-            unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+            SleepTimeout sleep_timer( 10.0, 1000 );
 
             // Wait for the federation to announce the sync-point.
             while ( !sp->is_announced() ) {
@@ -433,10 +429,10 @@ void ExecutionControlBase::wait_for_sync_point_announce(
                // Always check to see is a shutdown was received.
                federate->check_for_shutdown_with_termination();
 
-               (void)Utilities::micro_sleep( sleep_micros );
+               (void)sleep_timer.sleep();
 
-               if ( ( !sp->exists() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-                  wait_count = 0;
+               if ( !sp->exists() && sleep_timer.timeout() ) {
+                  sleep_timer.reset();
                   if ( !federate->is_execution_member() ) {
                      ostringstream errmsg;
                      errmsg << "TrickHLA::ExecutionControlBase::wait_for_sync_point_announce():" << __LINE__
@@ -667,9 +663,7 @@ will be ignored because the sim_initialization_scheme specified does not support
    // Make sure we have at least one piece of ExecutionConfiguration data we can receive.
    if ( execution_configuration->any_remotely_owned_subscribed_init_attribute() ) {
 
-      unsigned int sleep_micros = 1000;
-      unsigned int wait_count   = 0;
-      unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+      SleepTimeout sleep_timer( 10.0, 1000 );
 
       // Wait for the data to arrive.
       while ( !execution_configuration->is_changed() ) {
@@ -677,10 +671,10 @@ will be ignored because the sim_initialization_scheme specified does not support
          // Check for shutdown.
          federate->check_for_shutdown_with_termination();
 
-         (void)Utilities::micro_sleep( sleep_micros );
+         (void)sleep_timer.sleep();
 
-         if ( ( !execution_configuration->is_changed() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-            wait_count = 0;
+         if ( !execution_configuration->is_changed() && sleep_timer.timeout() ) {
+            sleep_timer.reset();
             if ( !federate->is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "TrickHLA::ExecutionControlBase::receive_execution_configuration():" << __LINE__

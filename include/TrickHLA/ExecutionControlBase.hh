@@ -663,19 +663,6 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
       return;
    }
 
-   /*! @brief Set the time interval in microseconds a sleep loop timeout.
-    *  @param t Time in microseconds a sleep loop timeout. */
-   virtual void set_wait_sleep( unsigned int t )
-   {
-      wait_sleep = t;
-   }
-   /*! @brief Set the time interval in microseconds a wait loop timeout.
-    *  @param t Time in microseconds a wait loop timeout. */
-   virtual void set_wait_timeout( unsigned int t )
-   {
-      wait_timeout = t;
-   }
-
    /*! @brief Determine if the verbose debug comments should be printed to the console.
     *  @return Returns true if the requested message should print level.
     *  @param level  Debug level of the incoming message.
@@ -723,9 +710,6 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
 
    bool late_joiner;            ///< @trick_units{--} Flag that this federate is a late joiner.
    bool late_joiner_determined; ///< @trick_units{--} Flag for late joiner determination.
-
-   unsigned int wait_sleep;   ///< @trick_units{us} Wait loop sleep times.
-   unsigned int wait_timeout; ///< @trick_units{us} Wait loop timeout.
 
    // Shortcuts to associated TrickHLA management and control objects.
    TrickHLA::Federate *federate; ///< @trick_io{**} Associated federate.

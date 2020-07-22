@@ -17,6 +17,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{SyncPnt.cpp}
+@trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{Int64Time.cpp}
 
 @revs_title
@@ -37,6 +38,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPnt.hh"
 #include "TrickHLA/Utilities.hh"
+#include <TrickHLA/SleepTimeout.hh>
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
@@ -47,9 +49,7 @@ using namespace TrickHLA;
  */
 SyncPnt::SyncPnt()
    : label( L"" ),
-     state( SYNC_PNT_STATE_EXISTS ),
-     wait_sleep( 1000 ),
-     wait_timeout( 10000000 )
+     state( SYNC_PNT_STATE_EXISTS )
 {
    return;
 }
@@ -60,9 +60,7 @@ SyncPnt::SyncPnt()
 SyncPnt::SyncPnt(
    std::wstring const &l )
    : label( l ),
-     state( SYNC_PNT_STATE_EXISTS ),
-     wait_sleep( 1000 ),
-     wait_timeout( 10000000 )
+     state( SYNC_PNT_STATE_EXISTS )
 {
    return;
 }
@@ -150,9 +148,6 @@ Failed to register '%ls' synchronization point with RTI!%c",
 bool SyncPnt::wait_for_announce(
    Federate *federate )
 {
-   unsigned int sleep_micros = 1000;
-   unsigned int wait_count   = 0;
-
    // The sync-point state must be SYNC_PNT_STATE_REGISTERED.
    if ( !this->exists() && !this->is_registered() && !this->is_announced() ) {
       ostringstream errmsg;
@@ -165,17 +160,19 @@ bool SyncPnt::wait_for_announce(
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    }
 
+   SleepTimeout sleep_timer( 10.0, 1000 );
+
    // Wait for the federation to synchronize on the sync-point.
    while ( !this->is_announced() ) {
 
       // Always check to see is a shutdown was received.
       federate->check_for_shutdown_with_termination();
 
-      (void)Utilities::micro_sleep( sleep_micros );
+      (void)sleep_timer.sleep();
 
       // Check to make sure we're still a member of the federation execution.
-      if ( ( !this->is_announced() ) && ( ( ++wait_count % this->wait_timeout ) == 0 ) ) {
-         wait_count = 0;
+      if ( !this->is_announced() && sleep_timer.timeout() ) {
+         sleep_timer.reset();
          if ( !federate->is_execution_member() ) {
             ostringstream errmsg;
             errmsg
@@ -240,7 +237,7 @@ void SyncPnt::achieve_sync_point(
 bool SyncPnt::wait_for_synchronization(
    Federate *federate )
 {
-   unsigned int wait_count = 0;
+   SleepTimeout sleep_timer( 10.0, 1000 );
 
    // Wait for the federation to synchronize on the sync-point.
    while ( !this->is_synchronized() ) {
@@ -248,11 +245,11 @@ bool SyncPnt::wait_for_synchronization(
       // Always check to see is a shutdown was received.
       federate->check_for_shutdown_with_termination();
 
-      (void)Utilities::micro_sleep( this->wait_sleep );
+      (void)sleep_timer.sleep();
 
       // Check to make sure we're still a member of the federation execution.
-      if ( ( !this->is_synchronized() ) && ( ( ++wait_count % this->wait_timeout ) == 0 ) ) {
-         wait_count = 0;
+      if ( !this->is_synchronized() && sleep_timer.timeout() ) {
+         sleep_timer.reset();
          if ( !federate->is_execution_member() ) {
             ostringstream errmsg;
             errmsg

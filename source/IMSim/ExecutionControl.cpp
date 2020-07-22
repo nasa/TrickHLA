@@ -17,6 +17,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../TrickHLA/SyncPntListBase.cpp}
+@trick_link_dependency{../TrickHLA/SleepTimeout.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
 @trick_link_dependency{PausePointList.cpp}
 
@@ -45,6 +46,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Parameter.hh"
+#include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/Utilities.hh"
 
 // IMSim include files.
@@ -741,9 +743,7 @@ Simulation has started and is now running...%c",
  */
 FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federate()
 {
-   unsigned int sleep_micros = 1000;
-   unsigned int wait_count   = 0;
-   unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+   SleepTimeout sleep_timer( 10.0, 1000 );
 
    // Block until we have determined if we are a late joining federate.
    while ( !late_joiner_determined && !get_manager()->restore_determined ) {
@@ -780,11 +780,10 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
          // Check for shutdown.
          federate->check_for_shutdown_with_termination();
 
-         (void)Utilities::micro_sleep( sleep_micros );
+         (void)sleep_timer.sleep();
 
-         if ( ( !late_joiner_determined && !get_manager()->restore_determined )
-              && ( ( ++wait_count % wait_check ) == 0 ) ) {
-            wait_count = 0;
+         if ( !late_joiner_determined && !get_manager()->restore_determined && sleep_timer.timeout() ) {
+            sleep_timer.reset();
             if ( !federate->is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "IMSim::ExecutionControl::determine_if_late_joining_or_restoring_federate_IMSim():" << __LINE__
@@ -1183,9 +1182,7 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_pnts()
            && ( sp->label.compare( IMSim::INITIALIZE_SYNC_POINT ) != 0 )
            && ( sp->label.compare( IMSim::SIM_CONFIG_SYNC_POINT ) != 0 ) ) {
 
-         unsigned int sleep_micros = 1000;
-         unsigned int wait_count   = 0;
-         unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+         SleepTimeout sleep_timer( 10.0, 1000 );
 
          // Wait for the federation to synchronized on the sync-point.
          while ( !sp->is_achieved() ) {
@@ -1194,12 +1191,12 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_pnts()
             federate->check_for_shutdown_with_termination();
 
             // Pause and release the processor for short sleep value.
-            (void)Utilities::micro_sleep( sleep_micros );
+            (void)sleep_timer.sleep();
 
             // Periodically check to make sure the federate is still part of
             // the federation exectuion.
-            if ( ( !sp->is_achieved() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-               wait_count = 0;
+            if ( !sp->is_achieved() && sleep_timer.timeout() ) {
+               sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "IMSim::ExecutionControl::wait_for_all_multiphase_init_sync_pnts():" << __LINE__
@@ -2312,17 +2309,14 @@ void ExecutionControl::exit_freeze()
       if ( federate->freeze_the_federation && ( this->get_sim_time() > 0.0 ) ) { // coming out of freeze due to freeze interaction
          federate->register_generic_sync_point( IMSim::FEDRUN_SYNC_POINT );      // this tells federates to go to run
 
-         unsigned int sleep_micros = 1000;
-         unsigned int wait_count   = 0;
-         unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+         SleepTimeout sleep_timer( 10.0, 1000 );
 
          while ( !this->pause_sync_pts.check_sync_pnts( this->checktime ) ) {
             // wait for it to be announced
-            (void)Utilities::micro_sleep( sleep_micros );
+            (void)sleep_timer.sleep();
 
-            if ( ( !this->pause_sync_pts.check_sync_pnts( this->checktime ) )
-                 && ( ( ++wait_count % wait_check ) == 0 ) ) {
-               wait_count = 0;
+            if ( !this->pause_sync_pts.check_sync_pnts( this->checktime ) && sleep_timer.timeout() ) {
+               sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "Federate::announce_freeze():" << __LINE__
@@ -2611,16 +2605,14 @@ bool ExecutionControl::is_save_initiated()
    if ( federate->announce_save && !federate->initiate_save_flag && !federate->save_completed ) {
       federate->register_generic_sync_point( IMSim::FEDSAVE_SYNC_POINT );
 
-      unsigned int sleep_micros = 1000;
-      unsigned int wait_count   = 0;
-      unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+      SleepTimeout sleep_timer( 10.0, 1000 );
 
       while ( !federate->initiate_save_flag ) { // wait for federation to be synced
          this->pause_sync_pts.achieve_all_sync_pnts( *federate->get_RTI_ambassador(), this->checktime );
-         (void)Utilities::micro_sleep( sleep_micros );
+         (void)sleep_timer.sleep();
 
-         if ( ( !federate->initiate_save_flag ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-            wait_count = 0;
+         if ( !federate->initiate_save_flag && sleep_timer.timeout() ) {
+            sleep_timer.reset();
             if ( !federate->is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "Federate::setup_checkpoint():" << __LINE__

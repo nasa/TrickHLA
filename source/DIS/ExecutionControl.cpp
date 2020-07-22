@@ -81,9 +81,7 @@ ExecutionControl::ExecutionControl()
      scenario_freeze_time( 0.0 ),
      late_joiner( false ),
      late_joiner_determined( false ),
-     federate( NULL ),
-     wait_sleep( 1000 ),
-     wait_timeout( 10000000 )
+     federate( NULL )
 {
    return;
 }

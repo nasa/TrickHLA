@@ -22,6 +22,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{OwnershipHandler.cpp}
 @trick_link_dependency{Int64Time.cpp}
+@trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{ReflectedAttributesQueue.cpp}
 
 @revs_title
@@ -60,6 +61,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/OwnershipHandler.hh"
 #include "TrickHLA/Packing.hh"
 #include "TrickHLA/Utilities.hh"
+#include <TrickHLA/SleepTimeout.hh>
 
 // HLA include files.
 #include RTI1516_HEADER
@@ -1078,15 +1080,13 @@ Waiting on reservation of Object Instance Name '%s'.%c",
 
    Federate *trick_fed = get_federate();
 
-   unsigned int sleep_micros = 1000;
-   unsigned int wait_count   = 0;
-   unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+   SleepTimeout sleep_timer( 10.0, 1000 );
 
    while ( !name_registered ) {
-      (void)Utilities::micro_sleep( sleep_micros );
+      (void)sleep_timer.sleep();
 
-      if ( ( !name_registered ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-         wait_count = 0;
+      if ( !name_registered && sleep_timer.timeout() ) {
+         sleep_timer.reset();
          if ( !trick_fed->is_execution_member() ) {
             ostringstream errmsg;
             errmsg << "Object::wait_on_object_name_reservation():" << __LINE__
@@ -1271,15 +1271,13 @@ void Object::wait_on_object_registration()
 
    Federate *trick_fed = get_federate();
 
-   unsigned int sleep_micros = 1000;
-   unsigned int wait_count   = 0;
-   unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+   SleepTimeout sleep_timer( 10.0, 1000 );
 
    while ( !is_instance_handle_valid() ) {
-      (void)Utilities::micro_sleep( sleep_micros );
+      (void)sleep_timer.sleep();
 
-      if ( ( !is_instance_handle_valid() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-         wait_count = 0;
+      if ( !is_instance_handle_valid() && sleep_timer.timeout() ) {
+         sleep_timer.reset();
          if ( !trick_fed->is_execution_member() ) {
             ostringstream errmsg;
             errmsg << "Object::wait_on_object_registration():" << __LINE__
@@ -2284,6 +2282,7 @@ void Object::receive_cyclic_data(
       // Block waiting for data using a spin-lock that supports a timeout.
 
       double time = clock.get_time();
+
 #ifdef THLA_10SEC_TIMEOUT_WHILE_WAITING_FOR_DATA
       // Use a 10.0 second timeout.
       double timeout = time + 10.0;
@@ -2346,11 +2345,12 @@ waiting for data at time %f seconds with timeout time %f and simulation time %f.
       // up the CPU allowing the HLA callback thread a better chance to run.
       //
       // Wait for the data to change by using a spin lock that can timeout.
+      SleepTimeout sleep_timer( 10.0, 1 );
       while ( !is_changed()
               && ( time < timeout )
               && blocking_cyclic_read
               && any_remotely_owned_subscribed_cyclic_attribute() ) {
-         (void)Utilities::micro_sleep( 1 );
+         (void)sleep_timer.sleep();
          if ( !is_changed() ) {
             time = clock.get_time();
          }
@@ -4234,10 +4234,9 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
                   __LINE__, get_name(), rti_err_msg.c_str(), THLA_NEWLINE );
       }
 
-      Federate *   trick_fed    = get_federate();
-      unsigned int sleep_micros = 1000;
-      unsigned int wait_count   = 0;
-      unsigned int wait_check   = 10000000 / sleep_micros; // Number of wait cycles for 10 seconds
+      Federate *trick_fed = get_federate();
+
+      SleepTimeout sleep_timer( 10.0, 1000 );
 
       // Perform a blocking loop until ownership of all locally owned published
       // attributes is restored...
@@ -4283,10 +4282,10 @@ rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generate
             }
          } // end of 'for' loop
 
-         (void)Utilities::micro_sleep( sleep_micros );
+         (void)sleep_timer.sleep();
 
-         if ( ( ownership_counter < attr_hdl_set.size() ) && ( ( ++wait_count % wait_check ) == 0 ) ) {
-            wait_count = 0;
+         if ( ( ownership_counter < attr_hdl_set.size() ) && sleep_timer.timeout() ) {
+            sleep_timer.reset();
             if ( !trick_fed->is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "Object::pull_ownership_upon_rejoin():" << __LINE__
