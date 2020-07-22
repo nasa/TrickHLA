@@ -2194,7 +2194,7 @@ void Object::receive_cyclic_data(
       // 3) Spin-lock with timeout.
 
 #ifdef THLA_THREAD_WAIT_FOR_DATA
-#ifdef THLA_THREAD_TIMED_WAIT_FOR_DATA
+#   ifdef THLA_THREAD_TIMED_WAIT_FOR_DATA
       //------------------------------------------------------------------------
       // Block waiting for data using a thread wait on a conditional variable
       // with a timeout.
@@ -2204,12 +2204,12 @@ void Object::receive_cyclic_data(
       double           frac_secs;
       static const int NANOSEC_PER_SECOND = 1000000000;
 
-#ifdef THLA_10SEC_TIMEOUT_WHILE_WAITING_FOR_DATA
+#      ifdef THLA_10SEC_TIMEOUT_WHILE_WAITING_FOR_DATA
       // Use a 10 second timeout.
       frac_secs = modf( 10.0, &whole_secs );
-#else
+#      else
       frac_secs = modf( cycle_time, &whole_secs );
-#endif // THLA_10SEC_TIMEOUT_WHILE_WAITING_FOR_DATA
+#      endif // THLA_10SEC_TIMEOUT_WHILE_WAITING_FOR_DATA
 
       // Get the current time of day.
       gettimeofday( &timeofday, NULL );
@@ -2237,7 +2237,7 @@ void Object::receive_cyclic_data(
       }
       pthread_mutex_unlock( &data_change_mutex );
 
-#ifdef HLA_PERFORMANCE_STUDY
+#      ifdef HLA_PERFORMANCE_STUDY
       // Print an error message if we timed out.
       if ( retval == ETIMEDOUT ) {
          // FOR THE HLA PERFORMANCE STUDY ONLY: Mark changed so that we can
@@ -2246,7 +2246,7 @@ void Object::receive_cyclic_data(
          send_hs( stderr, "Object::receive_cyclic_data():%d Timed out waiting for data.%c",
                   __LINE__, THLA_NEWLINE );
       }
-#else  // !HLA_PERFORMANCE_STUDY
+#      else  // !HLA_PERFORMANCE_STUDY
 
       // Print an error message if we timed out.
       if ( retval == ETIMEDOUT ) {
@@ -2258,9 +2258,9 @@ void Object::receive_cyclic_data(
                      __LINE__, THLA_NEWLINE );
          }
       }
-#endif // HLA_PERFORMANCE_STUDY
+#      endif // HLA_PERFORMANCE_STUDY
 
-#else  // !THLA_THREAD_TIMED_WAIT_FOR_DATA
+#   else  // !THLA_THREAD_TIMED_WAIT_FOR_DATA
 
       //------------------------------------------------------------------------
       // Block waiting for data using a thread wait on a conditional variable
@@ -2276,21 +2276,21 @@ void Object::receive_cyclic_data(
          pthread_cond_wait( &data_change_cv, &data_change_mutex );
       }
       pthread_mutex_unlock( &data_change_mutex );
-#endif // THLA_THREAD_TIMED_WAIT_FOR_DATA
-#else  // !THLA_THREAD_WAIT_FOR_DATA
+#   endif // THLA_THREAD_TIMED_WAIT_FOR_DATA
+#else     // !THLA_THREAD_WAIT_FOR_DATA
       //------------------------------------------------------------------------
       // Block waiting for data using a spin-lock that supports a timeout.
 
       double time = clock.get_time();
 
-#ifdef THLA_10SEC_TIMEOUT_WHILE_WAITING_FOR_DATA
+#   ifdef THLA_10SEC_TIMEOUT_WHILE_WAITING_FOR_DATA
       // Use a 10.0 second timeout.
       double timeout = time + 10.0;
-#else
+#   else
       double timeout = time + cycle_time;
-#endif // THLA_10SEC_TIMEOUT_WHILE_WAITING_FOR_DATA
+#   endif // THLA_10SEC_TIMEOUT_WHILE_WAITING_FOR_DATA
 
-#ifdef HLA_PERFORMANCE_STUDY
+#   ifdef HLA_PERFORMANCE_STUDY
       // We use a different way to wait for the data for the HLA-performance
       // study because the assembly "nop" instruction causes less spikes in
       // the latency but at the cost of keeping the CPU at 100%.
@@ -2333,9 +2333,9 @@ void Object::receive_cyclic_data(
 waiting for data at time %f seconds with timeout time %f and simulation time %f.%c",
                   __LINE__, time, timeout, current_time, THLA_NEWLINE );
       }
-#else // !HLA_PERFORMANCE_STUDY
+#   else // !HLA_PERFORMANCE_STUDY
 
-#ifdef THLA_USLEEP_DELAY_FOR_SPIN_LOCK
+#      ifdef THLA_USLEEP_DELAY_FOR_SPIN_LOCK
       // On average using "usleep()" to wait for data is faster but at the
       // cost of latency spikes every once in a while. As a bonus the CPU
       // utilization will be much less using usleep() as compared to the
@@ -2355,7 +2355,7 @@ waiting for data at time %f seconds with timeout time %f and simulation time %f.
             time = clock.get_time();
          }
       }
-#else  //!THLA_USLEEP_DELAY_FOR_SPIN_LOCK
+#      else  //!THLA_USLEEP_DELAY_FOR_SPIN_LOCK
 
       // Wait for the data to change by using a spin lock that can timeout.
       unsigned int i;
@@ -2383,7 +2383,7 @@ waiting for data at time %f seconds with timeout time %f and simulation time %f.
             time = clock.get_time();
          }
       }
-#endif //THLA_USLEEP_DELAY_FOR_SPIN_LOCK
+#      endif //THLA_USLEEP_DELAY_FOR_SPIN_LOCK
 
       // Display a warning message if we timed out.
       if ( time >= timeout ) {
@@ -2399,8 +2399,8 @@ waiting for data at %f seconds (time-of-day) with a timeout of %f seconds \
                      __LINE__, time, timeout, current_time, THLA_NEWLINE );
          }
       }
-#endif // HLA_PERFORMANCE_STUDY
-#endif // THLA_THREAD_WAIT_FOR_DATA
+#   endif    // HLA_PERFORMANCE_STUDY
+#endif       // THLA_THREAD_WAIT_FOR_DATA
    }
 
    // Process the data now that it has been received (i.e. changed).

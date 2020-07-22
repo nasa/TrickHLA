@@ -60,60 +60,60 @@ NASA, Johnson Space Center\n
 #define _FPU_PC_UNDEFINED 0x100
 #define _FPU_PC_SINGLE 0x000
 #if ( defined( FPU_CW_PROTECTION ) && ( defined( __i386__ ) || defined( __x86_64__ ) ) && !defined( SWIG ) )
-#if defined( __APPLE__ )
+#   if defined( __APPLE__ )
 // Mac OS support on Intel CPUs
 // Some code below is from the fpu_control.h header file, which is missing
 // on the Mac platform. The code has been modified to work on a Mac.
 typedef unsigned int fpu_control_t __attribute__( ( __mode__( __HI__ ) ) );
 extern fpu_control_t __fpu_control;
 
-#define _FPU_VALID_BITS 0xFFFF
-#define _FPU_GETCW( cw )                   \
-   __asm__ __volatile__( "fnstcw %0"       \
-                         : "=m"( *&cw ) ); \
-   cw &= _FPU_VALID_BITS
-#define _FPU_SETCW( cw )            \
-   cw &= _FPU_VALID_BITS;           \
-   __asm__ __volatile__( "fldcw %0" \
-                         :          \
-                         : "m"( *&cw ) )
-#define TRICKHLA_INIT_FPU_CONTROL_WORD _FPU_GETCW( __fpu_control )
-#else
+#      define _FPU_VALID_BITS 0xFFFF
+#      define _FPU_GETCW( cw )                   \
+         __asm__ __volatile__( "fnstcw %0"       \
+                               : "=m"( *&cw ) ); \
+         cw &= _FPU_VALID_BITS
+#      define _FPU_SETCW( cw )            \
+         cw &= _FPU_VALID_BITS;           \
+         __asm__ __volatile__( "fldcw %0" \
+                               :          \
+                               : "m"( *&cw ) )
+#      define TRICKHLA_INIT_FPU_CONTROL_WORD _FPU_GETCW( __fpu_control )
+#   else
 // Linux support.
-#include <fpu_control.h>               // For FPU Control Word register access.
-#define TRICKHLA_INIT_FPU_CONTROL_WORD // No need to initialize for Linux.
-#endif
+#      include <fpu_control.h>               // For FPU Control Word register access.
+#      define TRICKHLA_INIT_FPU_CONTROL_WORD // No need to initialize for Linux.
+#   endif
 
-#define TRICKHLA_SAVE_FPU_CONTROL_WORD \
-   fpu_control_t _fpu_cw;              \
-   _FPU_GETCW( _fpu_cw )
-#define TRICKHLA_RESTORE_FPU_CONTROL_WORD _FPU_SETCW( _fpu_cw )
+#   define TRICKHLA_SAVE_FPU_CONTROL_WORD \
+      fpu_control_t _fpu_cw;              \
+      _FPU_GETCW( _fpu_cw )
+#   define TRICKHLA_RESTORE_FPU_CONTROL_WORD _FPU_SETCW( _fpu_cw )
 
-#define _FPU_PC_PRINT( pc ) ( ( ( pc & _FPU_PC_MASK ) == _FPU_PC_EXTENDED ) ? "Extended Double-Precision 64-bit" : ( ( ( pc & _FPU_PC_MASK ) == _FPU_PC_DOUBLE ) ? "Double-Precision 53-bit" : ( ( ( pc & _FPU_PC_MASK ) == _FPU_PC_SINGLE ) ? "Single-Precision 24-bit" : "Undefined" ) ) )
+#   define _FPU_PC_PRINT( pc ) ( ( ( pc & _FPU_PC_MASK ) == _FPU_PC_EXTENDED ) ? "Extended Double-Precision 64-bit" : ( ( ( pc & _FPU_PC_MASK ) == _FPU_PC_DOUBLE ) ? "Double-Precision 53-bit" : ( ( ( pc & _FPU_PC_MASK ) == _FPU_PC_SINGLE ) ? "Single-Precision 24-bit" : "Undefined" ) ) )
 
-#if defined( TRICKHLA_ENABLE_FPU_CONTROL_WORD_VALIDATION )
-#define TRICKHLA_VALIDATE_FPU_CONTROL_WORD                                                          \
-   {                                                                                                \
-      TRICKHLA_SAVE_FPU_CONTROL_WORD;                                                               \
-      if ( ( _fpu_cw & _FPU_PC_MASK ) != ( __fpu_control & _FPU_PC_MASK ) )                         \
-         send_hs( stderr,                                                                           \
-                  "%s:%d WARNING: We have detected that the current Floating-Point Unit (FPU) \
+#   if defined( TRICKHLA_ENABLE_FPU_CONTROL_WORD_VALIDATION )
+#      define TRICKHLA_VALIDATE_FPU_CONTROL_WORD                                                          \
+         {                                                                                                \
+            TRICKHLA_SAVE_FPU_CONTROL_WORD;                                                               \
+            if ( ( _fpu_cw & _FPU_PC_MASK ) != ( __fpu_control & _FPU_PC_MASK ) )                         \
+               send_hs( stderr,                                                                           \
+                        "%s:%d WARNING: We have detected that the current Floating-Point Unit (FPU) \
 Control-Word Precision-Control value (%#x: %s) does not match the Precision-Control \
 value at program startup (%#x: %s). The change in FPU Control-Word Precision-Control \
 could cause the numerical values in your simulation to be slightly different in \
-the 7th or 8th decimal place. Please contact the TrickHLA team for support.%c",                     \
-                  __FILE__, __LINE__, ( _fpu_cw & _FPU_PC_MASK ), _FPU_PC_PRINT( _fpu_cw ),         \
-                  ( __fpu_control & _FPU_PC_MASK ), _FPU_PC_PRINT( __fpu_control ), THLA_NEWLINE ); \
-   }
-#else
-#define TRICKHLA_VALIDATE_FPU_CONTROL_WORD // FPU Control Word validation not enabled.
-#endif
+the 7th or 8th decimal place. Please contact the TrickHLA team for support.%c",                           \
+                        __FILE__, __LINE__, ( _fpu_cw & _FPU_PC_MASK ), _FPU_PC_PRINT( _fpu_cw ),         \
+                        ( __fpu_control & _FPU_PC_MASK ), _FPU_PC_PRINT( __fpu_control ), THLA_NEWLINE ); \
+         }
+#   else
+#      define TRICKHLA_VALIDATE_FPU_CONTROL_WORD // FPU Control Word validation not enabled.
+#   endif
 
 #else
-#define TRICKHLA_INIT_FPU_CONTROL_WORD     // FPU Control Word protected not enabled.
-#define TRICKHLA_SAVE_FPU_CONTROL_WORD     // FPU Control Word protected not enabled.
-#define TRICKHLA_RESTORE_FPU_CONTROL_WORD  // FPU Control Word protected not enabled.
-#define TRICKHLA_VALIDATE_FPU_CONTROL_WORD // FPU Control Word protected not enabled.
+#   define TRICKHLA_INIT_FPU_CONTROL_WORD     // FPU Control Word protected not enabled.
+#   define TRICKHLA_SAVE_FPU_CONTROL_WORD     // FPU Control Word protected not enabled.
+#   define TRICKHLA_RESTORE_FPU_CONTROL_WORD  // FPU Control Word protected not enabled.
+#   define TRICKHLA_VALIDATE_FPU_CONTROL_WORD // FPU Control Word protected not enabled.
 #endif
 
 namespace TrickHLA

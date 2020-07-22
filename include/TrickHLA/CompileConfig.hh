@@ -65,36 +65,43 @@ NASA, Johnson Space Center\n
 
 // Make sure object time logging is not defined since we don't want to
 // use that feature.
-#ifdef THLA_OBJECT_TIME_LOGGING
-#undef THLA_OBJECT_TIME_LOGGING
-#endif
+#   ifdef THLA_OBJECT_TIME_LOGGING
+#      undef THLA_OBJECT_TIME_LOGGING
+#   endif
 
 // Use a 10-second timeout while waiting for the data to arrive.
-#ifndef THLA_10SEC_TIMEOUT_WHILE_WAITING_FOR_DATA
-#define THLA_10SEC_TIMEOUT_WHILE_WAITING_FOR_DATA
-#endif
+#   ifndef THLA_10SEC_TIMEOUT_WHILE_WAITING_FOR_DATA
+#      define THLA_10SEC_TIMEOUT_WHILE_WAITING_FOR_DATA
+#   endif
 
 // Configure to use the spin-lock, which is slightly faster than the
 // thread wait with timeout.
-#ifdef THLA_THREAD_WAIT_FOR_DATA
-#undef THLA_THREAD_WAIT_FOR_DATA
-#endif
+#   ifdef THLA_THREAD_WAIT_FOR_DATA
+#      undef THLA_THREAD_WAIT_FOR_DATA
+#   endif
 
-#if ( defined( __APPLE__ ) && ( defined( __i386__ ) || defined( __x86_64__ ) ) )
+#   if ( defined( __i386__ ) || defined( __x86_64__ ) )
+#      if defined( __APPLE__ )
 // For a Mac, use usleep() for the spin-lock delay instead of using
 // multiple NOP assembly instructions, which is much faster since it
 // yields the CPU so that the Fed-Ambassador callback thread has a
 // chance to run.
-#ifndef THLA_USLEEP_DELAY_FOR_SPIN_LOCK
-#define THLA_USLEEP_DELAY_FOR_SPIN_LOCK
-#endif
-#else
+#         ifndef THLA_USLEEP_DELAY_FOR_SPIN_LOCK
+#            define THLA_USLEEP_DELAY_FOR_SPIN_LOCK
+#         endif
+#      else
 // For Linux, use multiple NOP assembly instructions for the spin-lock
 // delay instead of using usleep() because it is much faster.
-#ifdef THLA_USLEEP_DELAY_FOR_SPIN_LOCK
-#undef THLA_USLEEP_DELAY_FOR_SPIN_LOCK
-#endif
-#endif
+#         ifdef THLA_USLEEP_DELAY_FOR_SPIN_LOCK
+#            undef THLA_USLEEP_DELAY_FOR_SPIN_LOCK
+#         endif
+#      endif
+#   else
+// Otherwise for an unknown Processor, use usleep() for the spin-lock delay.
+#      ifndef THLA_USLEEP_DELAY_FOR_SPIN_LOCK
+#         define THLA_USLEEP_DELAY_FOR_SPIN_LOCK
+#      endif
+#   endif
 
 #endif // THLA_INTRAFRAME_BLOCKING_READ_CONFIG
 
@@ -105,22 +112,22 @@ NASA, Johnson Space Center\n
 #define MIN_TRICK_PATCH 0 // Set to the minimum supported Trick Patch version.
 // Make sure the TRICK_VER compiler define is set.
 #if ( !defined( TRICK_VER ) )
-#error "The Trick version variable \"TRICK_VER\" is not set!"
-#error "The minimum acceptable version of Trick is 17.5.0!"
+#   error "The Trick version variable \"TRICK_VER\" is not set!"
+#   error "The minimum acceptable version of Trick is 17.5.0!"
 #endif
 // Check for the minimum major version of Trick.
 #if ( TRICK_VER < MIN_TRICK_VER )
-#error "The minimum acceptable version of Trick is 17.5.0!"
+#   error "The minimum acceptable version of Trick is 17.5.0!"
 #else // Check the minor version if set.
-#if ( TRICK_VER == MIN_TRICK_VER )
-#if ( defined( TRICK_MINOR ) && ( TRICK_MINOR < MIN_TRICK_MINOR ) )
-#error "The minimum acceptable version of Trick is 17.5.0!"
-#else // Check the patch version if set.
-#if ( TRICK_MINOR == MIN_TRICK_MINOR ) && ( defined( TRICK_PATCH ) && ( TRICK_PATCH < MIN_TRICK_PATCH ) )
-#error "The minimum acceptable version of Trick is 17.5.0!"
-#endif
-#endif
-#endif
+#   if ( TRICK_VER == MIN_TRICK_VER )
+#      if ( defined( TRICK_MINOR ) && ( TRICK_MINOR < MIN_TRICK_MINOR ) )
+#         error "The minimum acceptable version of Trick is 17.5.0!"
+#      else // Check the patch version if set.
+#         if ( TRICK_MINOR == MIN_TRICK_MINOR ) && ( defined( TRICK_PATCH ) && ( TRICK_PATCH < MIN_TRICK_PATCH ) )
+#            error "The minimum acceptable version of Trick is 17.5.0!"
+#         endif
+#      endif
+#   endif
 #endif
 #undef MIN_TRICK_PATCH
 #undef MIN_TRICK_MINOR
@@ -137,7 +144,7 @@ NASA, Johnson Space Center\n
 // because the Pitch RTI runs Java under the hood which causes the problem.
 // This is only supported for Intel CPU's.
 #if ( !defined( FPU_CW_PROTECTION ) && ( defined( __i386__ ) || defined( __x86_64__ ) ) )
-#define FPU_CW_PROTECTION
+#   define FPU_CW_PROTECTION
 #endif
 
 // Define TRICKHLA_ENABLE_FPU_CONTROL_WORD_VALIDATION to enabled FPU control

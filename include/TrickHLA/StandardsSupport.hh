@@ -33,26 +33,26 @@ NASA, Johnson Space Center\n
 
 // Default to the IEEE-1516.1-2010 Standard if no HLA standard was defined.
 #if ( !defined( IEEE_1516_2010 ) && !defined( IEEE_1516_2020 ) )
-#define IEEE_1516_2010
+#   define IEEE_1516_2010
 #endif
 
 // Insert a compile time error if HLA Standard 2020 is defined.
 #if ( defined( IEEE_1516_2020 ) )
-#error "ERROR: IEEE_1516_2020 standard is not yet supported!"
+#   error "ERROR: IEEE_1516_2020 standard is not yet supported!"
 #endif
 
 // Insert a compile time error if more than one HLA Standard is defined.
 #if ( defined( IEEE_1516_2010 ) && defined( IEEE_1516_2020 ) )
-#error "ERROR: Only one of IEEE_1516_2010 or IEEE_1516_2020 can be defined!"
+#   error "ERROR: Only one of IEEE_1516_2010 or IEEE_1516_2020 can be defined!"
 #endif
 
 // Define the RTI header and namespace for HLA IEEE-1516.1-2010 Standard, which
 // is also known as "HLA Evolved".
 #ifdef IEEE_1516_2010
-#define RTI1516_HEADER "RTI/RTI1516.h"
-#define RTI1516_NAMESPACE rti1516e
-#define RTI1516_USERDATA rti1516e::VariableLengthData
-#define RTI1516_EXCEPTION rti1516e::Exception
+#   define RTI1516_HEADER "RTI/RTI1516.h"
+#   define RTI1516_NAMESPACE rti1516e
+#   define RTI1516_USERDATA rti1516e::VariableLengthData
+#   define RTI1516_EXCEPTION rti1516e::Exception
 #endif
 
 #endif // _TRICKHLA_STANDARDS_SUPPORT_HH_

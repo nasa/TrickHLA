@@ -61,7 +61,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Utilities.hh"
 #ifdef THLA_OBJECT_TIME_LOGGING
-#include "TrickHLA/BasicClock.hh"
+#   include "TrickHLA/BasicClock.hh"
 #endif
 
 using namespace std;

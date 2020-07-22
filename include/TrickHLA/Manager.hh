@@ -49,7 +49,7 @@ NASA, Johnson Space Center\n
 
 // Special handling of SWIG limitations for forward declarations.
 #ifdef SWIG
-#include "TrickHLA/Interaction.hh"
+#   include "TrickHLA/Interaction.hh"
 #else
 namespace TrickHLA
 {
@@ -59,7 +59,7 @@ namespace TrickHLA
 class Interaction;
 class Object;
 } // namespace TrickHLA
-#endif
+#endif // SWIG
 
 namespace TrickHLA
 {

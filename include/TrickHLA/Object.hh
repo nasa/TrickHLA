@@ -36,12 +36,14 @@ NASA, Johnson Space Center\n
 
 */
 
+/* Commented out, and testing to be removed. DDexter, 7/22/2020
 // Allow the IO source code for io_Object.cpp to compile since we have
 // a real instance of this class in the TrickHLA::Manager for the sim_config.
 // TODO: Is this still necessary?
 #ifdef TRICK_IN_IOSRC
-#include "TrickHLA/Manager.hh"
+#   include "TrickHLA/Manager.hh"
 #endif
+*/
 
 #ifndef _TRICKHLA_OBJECT_HH_
 #define _TRICKHLA_OBJECT_HH_
@@ -55,7 +57,7 @@ NASA, Johnson Space Center\n
 
 // C based model includes.
 #if ( defined( THLA_THREAD_WAIT_FOR_DATA ) && defined( THLA_THREAD_TIMED_WAIT_FOR_DATA ) )
-#include <sys/time.h>
+#   include <sys/time.h>
 #endif
 
 // TrickHLA include files.
@@ -74,7 +76,7 @@ NASA, Johnson Space Center\n
 
 // Special handling of SWIG limitations for forward declarations.
 #ifdef SWIG
-#include "TrickHLA/Attribute.hh"
+#   include "TrickHLA/Attribute.hh"
 #else
 namespace TrickHLA
 {
@@ -83,7 +85,7 @@ namespace TrickHLA
 // declarations below.
 class Attribute;
 } // namespace TrickHLA
-#endif
+#endif // SWIG
 
 namespace TrickHLA
 {
