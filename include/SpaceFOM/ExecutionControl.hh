@@ -90,7 +90,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Get the ExecutionControl type identification string.
     *  @return A constant reference to the type identification string.
     */
-   virtual const std::wstring &get_type()
+   virtual const std::string &get_type()
    {
       return ( type );
    }
@@ -278,7 +278,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual void set_time_padding( double t );
 
   protected:
-   static const std::wstring type; ///< @trick_units{--} ExecutionControl type string.
+   static const std::string type; ///< @trick_units{--} ExecutionControl type string.
 
    MTREnum pending_mtr; ///< @trick_units{--} Pending Mode Transition Requested.
 

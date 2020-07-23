@@ -143,7 +143,7 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    // Execution Control support methods.
    //
    // Get the ExecutionControl type identification string.
-   virtual const std::wstring &get_type() = 0;
+   virtual const std::string &get_type() = 0;
    /*! Setup the ExecutionControl object Trick ref ATTRIBUTES. */
    virtual void setup_object_ref_attributes() = 0;
    /*! Setup the ExecutionControl interaction Trick ref ATTRIBUTES. */

@@ -52,7 +52,7 @@ namespace TrickHLA
 {
 
 // ExecutionControl type string.
-const std::wstring ExecutionControl::type = L"Simple";
+const std::string ExecutionControl::type = "Simple";
 
 } // namespace TrickHLA
 
@@ -105,20 +105,22 @@ input files and reduce input file setting errors.
 */
 void ExecutionControl::initialize()
 {
+   set_debug_level( federate->get_manager()->debug_handler );
+
+   if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      ostringstream msg;
+      msg << "TrickHLA::ExecutionControl::initialize():" << __LINE__
+          << " Initialization-Scheme:'" << get_type()
+          << "'" << THLA_ENDL;
+      send_hs( stderr, (char *)msg.str().c_str() );
+   }
+
    // Simple initialization does not support a Master.
    this->use_preset_master = false;
 
    // Simple initialization does not support known federates.
    federate->enable_known_feds = false;
    federate->known_feds_count  = 0;
-
-   if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      ostringstream msg;
-      msg << "TrickHLA::ExecutionControl::initialize():" << __LINE__
-          << " Initialization-Scheme:'" << get_type().c_str()
-          << "'" << THLA_ENDL;
-      send_hs( stderr, (char *)msg.str().c_str() );
-   }
 }
 
 /*!

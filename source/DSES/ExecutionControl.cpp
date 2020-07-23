@@ -56,7 +56,7 @@ namespace DSES
 {
 
 // ExecutionControl type string.
-const std::wstring ExecutionControl::type = L"DSES";
+const std::string ExecutionControl::type = "DSES";
 
 // The DSES Multiphase initialization HLA synchronization-points.
 static const std::wstring SIM_CONFIG_SYNC_POINT = L"sim_config";
@@ -105,9 +105,18 @@ input files and reduce input file setting errors.
 
 @job_class{initialization}
 */
-void ExecutionControl::initialize(
-   TrickHLA::Federate &fed )
+void ExecutionControl::initialize()
 {
+   set_debug_level( federate->get_manager()->debug_handler );
+
+   if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      ostringstream msg;
+      msg << "DSES::ExecutionControl::initialize():" << __LINE__
+          << " Initialization-Scheme:'" << get_type()
+          << "'" << THLA_ENDL;
+      send_hs( stderr, (char *)msg.str().c_str() );
+   }
+
    // Set the reference to the TrickHLA::Federate.
    this->federate = &fed;
 
@@ -137,14 +146,6 @@ void ExecutionControl::initialize(
    this->add_sync_pnt( L"mtr_run" );
    this->add_sync_pnt( L"mtr_freeze" );
    this->add_sync_pnt( L"mtr_shutdown" );
-
-   if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      ostringstream msg;
-      msg << "DSES::ExecutionControl::initialize():" << __LINE__
-          << " Initialization-Scheme:'" << get_type().c_str()
-          << "'" << THLA_ENDL;
-      send_hs( stderr, (char *)msg.str().c_str() );
-   }
 
    // Must use a preset master.
    if ( !this->is_master_preset() ) {

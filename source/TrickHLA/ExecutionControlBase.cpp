@@ -222,6 +222,8 @@ void ExecutionControlBase::setup(
  */
 void ExecutionControlBase::initialize()
 {
+   set_debug_level( federate->get_manager()->debug_handler );
+
    // Set Trick's realtime clock to the CTE clock if used.
    if ( this->does_cte_timeline_exist() ) {
       this->cte_timeline->clock_init();

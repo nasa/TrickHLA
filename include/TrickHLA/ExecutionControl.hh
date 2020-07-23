@@ -73,7 +73,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Get the ExecutionControl type identification string.
     *  @return A constant reference to the type identification string.
     */
-   virtual const std::wstring &get_type()
+   virtual const std::string &get_type()
    {
       return ( type );
    }
@@ -209,7 +209,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
                                                         const char *file_name );
 
   protected:
-   static const std::wstring type; ///< @trick_units{--} ExecutionControl type string.
+   static const std::string type; ///< @trick_units{--} ExecutionControl type string.
 
    /*! @brief Return the relevant TrickHLA::ExecutionConfiguration object.
     *  @return Pointer to the relevant TrickHLA::ExecutionConfiguration object. */

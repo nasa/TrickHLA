@@ -53,7 +53,7 @@ namespace DIS
 {
 
 // ExecutionControl type string.
-const std::wstring ExecutionControl::type = L"DIS";
+const std::string ExecutionControl::type = "DIS";
 
 // For DIS: a pause sync point for when master starts up in freeze to make other feds do the same
 static const std::wstring INITIALIZE_SYNC_POINT     = L"initialize";
@@ -102,9 +102,18 @@ input files and reduce input file setting errors.
 
 @job_class{initialization}
 */
-void ExecutionControl::initialize(
-   TrickHLA::Federate &fed )
+void ExecutionControl::initialize()
 {
+   set_debug_level( federate->get_manager()->debug_handler );
+
+   if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      ostringstream msg;
+      msg << "DIS::ExecutionControl::initialize():" << __LINE__
+          << " Initialization-Scheme:'" << get_type()
+          << "'" << THLA_ENDL;
+      send_hs( stderr, (char *)msg.str().c_str() );
+   }
+
    // Sanity check.
    if ( fed == NULL ) {
       send_hs( stdout, "DIS::ExecutionControl::initialize()%d : Null TrickHLA::Federate pointer!%c",
@@ -141,14 +150,6 @@ void ExecutionControl::initialize(
    this->add_sync_pnt( L"mtr_run" );
    this->add_sync_pnt( L"mtr_freeze" );
    this->add_sync_pnt( L"mtr_shutdown" );
-
-   if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      ostringstream msg;
-      msg << "DIS::ExecutionControl::initialize():" << __LINE__
-          << " Initialization-Scheme:'" << get_type().c_str()
-          << "'" << THLA_ENDL;
-      send_hs( stderr, (char *)msg.str().c_str() );
-   }
 
    // Must use a preset master.
    if ( !this->is_master_preset() ) {

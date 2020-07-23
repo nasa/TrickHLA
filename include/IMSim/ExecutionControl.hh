@@ -78,7 +78,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Get the ExecutionControl type identification string.
     *  @return A constant reference to the type identification string.
     */
-   virtual const std::wstring &get_type()
+   virtual const std::string &get_type()
    {
       return ( type );
    }
@@ -87,7 +87,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    // This is called by the TrickHLA::Federate::initialize routine.
    /*! @brief Execution Control initialization routine.
     *  @param federate The associated TrickHLA::Federate. */
-   virtual void initialize( TrickHLA::Federate &federate );
+   virtual void initialize();
    /*! @brief Join federation execution process. */
    virtual void join_federation_process();
    /*! @brief Process run before the multi-phase initialization begins. */
@@ -326,7 +326,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    void reinstate_logged_sync_pts();
 
   protected:
-   static const std::wstring type; ///< @trick_units{--} ExecutionControl type string.
+   static const std::string type; ///< @trick_units{--} ExecutionControl type string.
 
    MTREnum pending_mtr; ///< @trick_units{--} Pending Mode Transition Requested.
 

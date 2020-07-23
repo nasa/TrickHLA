@@ -254,7 +254,7 @@ class SyncPntListBase
    /*! @brief Dumps synchronization point information to the screen. */
    virtual void print_sync_pnts();
 
-   /*! @brief Set the debug handler.
+   /*! @brief Set the debug handler levels.
     *  @param hndlr TrickHLA::DebugHandler. */
    virtual void set_debug_level( DebugHandler hndlr )
    {
