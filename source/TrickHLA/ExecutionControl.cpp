@@ -105,8 +105,6 @@ input files and reduce input file setting errors.
 */
 void ExecutionControl::initialize()
 {
-   set_debug_level( federate->get_manager()->debug_handler );
-
    if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       ostringstream msg;
       msg << "TrickHLA::ExecutionControl::initialize():" << __LINE__

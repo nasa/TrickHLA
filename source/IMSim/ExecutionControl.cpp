@@ -129,8 +129,6 @@ input files and reduce input file setting errors.
 */
 void ExecutionControl::initialize()
 {
-   set_debug_level( federate->get_manager()->debug_handler );
-
    if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       ostringstream msg;
       msg << "IMSim::ExecutionControl::initialize():" << __LINE__
@@ -405,7 +403,7 @@ initiating restore request for '%s' with the RTI.%c",
             // Add and register the "STARTUP" sync point with all joined federates
             // so we can achieve it later.
             if ( this->add_sync_pnt( IMSim::STARTUP_SYNC_POINT ) ) {
-               if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+               if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
                   send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d Label: '%ls'%c",
                            __LINE__, IMSim::STARTUP_SYNC_POINT, THLA_NEWLINE );
                }
@@ -1086,14 +1084,14 @@ void ExecutionControl::announce_sync_point(
          }
       }
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "IMSim::ExecutionControl::announce_sync_point():%d IMSim Pause Sync-Point:'%ls' Pause-time:%g %c",
                   __LINE__, label.c_str(), pauseTime->get_time_in_seconds(), THLA_NEWLINE );
       }
       this->add_pause( pauseTime, label );
 
    } else if ( label.compare( IMSim::INIT_COMPLETE_SYNC_POINT ) == 0 ) {
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "IMSim::ExecutionControl::announce_sync_point():%d IMSim Sync-Point '%ls' Exists %c",
                   __LINE__, label.c_str(), THLA_NEWLINE );
       }
@@ -1102,7 +1100,7 @@ void ExecutionControl::announce_sync_point(
    } else if ( this->contains( label ) ) {
       // Mark init sync-point as existing/announced.
       if ( this->mark_announced( label ) ) {
-         if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             send_hs( stdout, "IMSim::ExecutionControl::announce_sync_point():%d IMSim Multiphase Init Sync-Point:'%ls'%c",
                      __LINE__, label.c_str(), THLA_NEWLINE );
          }
@@ -1116,7 +1114,7 @@ void ExecutionControl::announce_sync_point(
       // Process the sync-point as a requested pause.
       Int64Time *pauseTime = new Int64Time( 0.0 );
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          if ( label.compare( IMSim::FEDRUN_SYNC_POINT ) == 0 ) {
             send_hs( stdout, "IMSim::ExecutionControl::announce_sync_point():%d IMSim Go to Run Sync-Point:'%ls'%c",
                      __LINE__, label.c_str(), THLA_NEWLINE );
@@ -1319,7 +1317,7 @@ bool ExecutionControl::mark_synchronized( std::wstring const &label )
       // If this is the federate which is to initiate the federation save,
       // set the flag which will signal perform_checkpoint() to do so...
       if ( federate->announce_save ) {
-         if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             send_hs( stderr, "IMSim::ExecutionControl::mark_synchronized():%d '%ls' Synchronization Point, setting initiate_save_flag!%c",
                      __LINE__, label.c_str(), THLA_NEWLINE );
          }
@@ -1330,7 +1328,7 @@ bool ExecutionControl::mark_synchronized( std::wstring const &label )
    if ( found != wstring::npos ) {
       // DANNY2.7 We've been in freeze because master clicked Freeze;
       // this sync point indicates we clicked Run
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stderr, "IMSim::ExecutionControl::mark_synchronized():%d '%ls' UNFREEZING!%c",
                   __LINE__, label.c_str(), THLA_NEWLINE );
       }
@@ -1569,7 +1567,7 @@ void ExecutionControl::set_next_execution_control_mode(
 
       default:
          this->requested_execution_control_mode = EXECUTION_CONTROL_UNINITIALIZED;
-         if ( get_manager()->should_print( TrickHLA::DEBUG_LEVEL_1_TRACE,
+         if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_1_TRACE,
                                            TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
             ostringstream errmsg;
             errmsg << "IMSim::ExecutionControl::set_next_execution_mode():"
@@ -1627,7 +1625,7 @@ bool ExecutionControl::process_mode_transition_request()
    ExecutionConfiguration *ExCO = this->get_execution_configuration();
 
    // Print diagnostic message if appropriate.
-   if ( federate->should_print( TrickHLA::DEBUG_LEVEL_4_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
+   if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_4_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
       cout << "=============================================================" << endl
            << "ExecutionControl::process_mode_transition_request()" << endl
            << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << endl
@@ -1927,7 +1925,7 @@ bool ExecutionControl::process_execution_control_updates()
          } else if ( this->requested_execution_control_mode == EXECUTION_CONTROL_FREEZE ) {
 
             // Print diagnostic message if appropriate.
-            if ( federate->should_print( TrickHLA::DEBUG_LEVEL_4_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
+            if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_4_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
                cout << "ExecutionControl::process_execution_control_updates()" << endl
                     << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << endl
                     << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
@@ -2228,7 +2226,7 @@ void ExecutionControl::enter_freeze()
       if ( ( !federate->freeze_the_federation ) && ( this->get_sim_time() > 0.0 ) ) {
          double freeze_scenario_time = -DBL_MAX; // freeze immediately
 
-         if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         if ( debug_handler.should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             send_hs( stdout,
                      "Federate::enter_freeze():%d announce_freeze:%s, freeze_federation:%s, freeze_scenario_time:%g %c",
                      __LINE__, ( federate->announce_freeze ? "Yes" : "No" ),
@@ -2273,7 +2271,7 @@ bool ExecutionControl::check_freeze_exit()
    pause_sync_pts.check_state();
 
    if ( pause_sync_pts.should_exit() ) {
-      if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( debug_handler.should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::check_freeze():%d SHUTDOWN NOW!%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -2284,19 +2282,19 @@ bool ExecutionControl::check_freeze_exit()
    } else if ( pause_sync_pts.should_restart() ) {
       federate->set_restart( true );
       exec_set_exec_command( ExitCmd );
-      if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( debug_handler.should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::check_freeze():%d RESTART NOW!%c",
                   __LINE__, THLA_NEWLINE );
       }
    } else if ( pause_sync_pts.should_reconfig() ) {
       federate->set_restart_cfg( true );
       exec_set_exec_command( ExitCmd );
-      if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( debug_handler.should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::check_freeze():%d RESTART RECONFIG NOW!%c",
                   __LINE__, THLA_NEWLINE );
       }
    } else if ( pause_sync_pts.should_run() ) {
-      if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( debug_handler.should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::check_freeze():%d DOING UNFREEZE NOW!%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -2390,7 +2388,7 @@ void ExecutionControl::check_pause( const double check_pause_delta )
    }
 
    if ( federate->freeze_the_federation ) {
-      if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( debug_handler.should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "IMSim::ExecutionControlBase::check_pause():%d Commanding Trick Executive to FREEZE.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -2576,7 +2574,7 @@ bool ExecutionControl::check_scenario_freeze_time()
             freeze_scenario_times.erase( iter );
             federate->freeze_the_federation = true;
 
-            if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+            if ( debug_handler.should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
                ostringstream infomsg;
                infomsg << "Federate::check_scenario_freeze_time():" << __LINE__
                        << " Going to Trick FREEZE mode immediately:" << endl;

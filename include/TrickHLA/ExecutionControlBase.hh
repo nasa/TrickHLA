@@ -663,12 +663,6 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
       return;
    }
 
-   /*! @brief Determine if the verbose debug comments should be printed to the console.
-    *  @return Returns true if the requested message should print level.
-    *  @param level  Debug level of the incoming message.
-    *  @param code   Source code association of the incoming messages. */
-   bool should_print( const DebugLevelEnum &level, const DebugSourceEnum &code ) const;
-
   protected:
    double time_padding; ///< @trick_units{s} Time in seconds to add to the go-to-run time.
 

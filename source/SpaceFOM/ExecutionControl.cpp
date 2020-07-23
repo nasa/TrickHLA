@@ -136,8 +136,6 @@ input files and reduce input file setting errors.
 */
 void ExecutionControl::initialize()
 {
-   set_debug_level( federate->get_manager()->debug_handler );
-
    if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       ostringstream msg;
       msg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
@@ -381,7 +379,7 @@ void ExecutionControl::announce_sync_point(
 
       // Mark initialization sync-point as existing/announced.
       if ( this->mark_announced( label ) ) {
-         if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SISO SpaceFOM synchronization point announced:'%ls'%c",
                      __LINE__, label.c_str(), THLA_NEWLINE );
          }
@@ -392,7 +390,7 @@ void ExecutionControl::announce_sync_point(
 
          // NOTE: We do recognize that the 'initialization_completed'
          // synchronization point is announced but should never achieve it!
-         if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SISO SpaceFOM initialization process completed!%c",
                      __LINE__, THLA_NEWLINE );
          }
@@ -769,7 +767,7 @@ void ExecutionControl::late_joiner_hla_init_process()
    this->scenario_timeline->set_epoch( ExCO->get_scenario_time_epoch() );
 
    // Print diagnostic message if appropriate.
-   if ( federate->should_print( TrickHLA::DEBUG_LEVEL_4_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
+   if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_4_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
       cout << "SpaceFOM::ExecutionControl::late_joiner_hla_init_process()" << endl
            << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << endl
            << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
@@ -1036,7 +1034,7 @@ void ExecutionControl::post_multi_phase_init_processes()
       this->scenario_timeline->set_sim_offset( federate->get_requested_time() );
 
       // Print diagnostic message if appropriate.
-      if ( federate->should_print( TrickHLA::DEBUG_LEVEL_4_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
+      if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_4_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
          cout << "SpaceFOM::ExecutionControl::late_joiner_hla_init_process()" << endl
               << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << endl
               << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
@@ -1219,7 +1217,7 @@ void ExecutionControl::shutdown()
          // Let's pause for a moment to let things propagate through the
          // federate before tearing things down.
          long sleep_pad_micros = Int64Interval::to_microseconds( this->get_time_padding() );
-         if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             send_hs( stdout, "SpaceFOM::ExecutionControl::shutdown():%d: sleep for %d microsecond.%c",
                      __LINE__, sleep_pad_micros, THLA_NEWLINE );
          }
@@ -1392,7 +1390,7 @@ void ExecutionControl::set_next_execution_control_mode(
 
       default:
          this->requested_execution_control_mode = EXECUTION_CONTROL_UNINITIALIZED;
-         if ( get_manager()->should_print( TrickHLA::DEBUG_LEVEL_1_TRACE,
+         if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_1_TRACE,
                                            TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
             ostringstream errmsg;
             errmsg << "SpaceFOM::ExecutionControl::set_next_execution_mode():"
@@ -1455,7 +1453,7 @@ bool ExecutionControl::process_mode_transition_request()
    ExecutionConfiguration *ExCO = this->get_execution_configuration();
 
    // Print diagnostic message if appropriate.
-   if ( federate->should_print( TrickHLA::DEBUG_LEVEL_4_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
+   if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_4_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
       cout << "=============================================================" << endl
            << "SpaceFOM::ExecutionControl::process_mode_transition_request()" << endl
            << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << endl
@@ -1754,7 +1752,7 @@ bool ExecutionControl::process_execution_control_updates()
          } else if ( this->requested_execution_control_mode == EXECUTION_CONTROL_FREEZE ) {
 
             // Print diagnostic message if appropriate.
-            if ( federate->should_print( TrickHLA::DEBUG_LEVEL_4_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
+            if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_4_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
                cout << "SpaceFOM::ExecutionControl::process_execution_control_updates()" << endl
                     << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << endl
                     << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
@@ -2068,7 +2066,7 @@ void ExecutionControl::shutdown_mode_transition()
       return;
    }
 
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "SpaceFOM::ExecutionControl::shutdown_mode_transition():%d Registered 'mtr_shutdown' synchronization point.%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -2081,7 +2079,7 @@ void ExecutionControl::shutdown_mode_transition()
  */
 bool ExecutionControl::check_for_shutdown()
 {
-   if ( should_print( DEBUG_LEVEL_FULL_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( debug_handler.should_print( DEBUG_LEVEL_FULL_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "SpaceFOM::ExecutionControl::check_for_shutdown():%d Checking for shutdown %c",
                __LINE__, THLA_NEWLINE );
    }
@@ -2098,7 +2096,7 @@ bool ExecutionControl::check_for_shutdown()
  */
 bool ExecutionControl::check_for_shutdown_with_termination()
 {
-   if ( should_print( DEBUG_LEVEL_FULL_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( debug_handler.should_print( DEBUG_LEVEL_FULL_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "SpaceFOM::ExecutionControl::check_for_shutdown_with_termination():%d Checking for shutdown %c",
                __LINE__, THLA_NEWLINE );
    }

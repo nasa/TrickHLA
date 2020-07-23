@@ -468,6 +468,9 @@ void Federate::initialize()
       return;
    }
 
+   // Make sure we pass along the debug settings the user specified.
+   execution_control->set_debug_level( manager->debug_handler );
+
    // Initialize the TrickHLA::ExecutionControl object instance.
    execution_control->initialize();
 

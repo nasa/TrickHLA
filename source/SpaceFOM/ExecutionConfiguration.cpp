@@ -303,7 +303,7 @@ void ExecutionConfiguration::unpack()
    int64_t software_frame_usec;
    double  software_frame_sec;
 
-   if ( TrickHLA::Packing::should_print( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_PACKING ) ) {
+   if ( get_federate()->should_print( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_PACKING ) ) {
       cout << "=============================================================" << endl
            << "SpaceFOM::ExecutionConfiguration::unpack()" << endl
            << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << endl
@@ -637,7 +637,7 @@ allocate enough memory for the ATTRIBUTES for the 'root_frame_name' value of the
    //                                &(this->root_frame_name),
    //                                (ATTRIBUTES *) exco_attr );
 
-   if ( get_federate()->get_manager()->debug_handler.should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( get_federate()->should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       ostringstream msg2;
       msg2 << "SpaceFOM::ExecutionConfiguration::setup_interaction_ref_attributes():" << __LINE__
            << " FOM-Parameter:'" << this->attributes[0].get_FOM_name() << "'"
@@ -646,7 +646,7 @@ allocate enough memory for the ATTRIBUTES for the 'root_frame_name' value of the
       send_hs( stdout, (char *)msg2.str().c_str() );
    }
 
-   if ( get_federate()->get_manager()->debug_handler.should_print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( get_federate()->should_print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       ostringstream msg2;
       msg2 << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
            << endl
@@ -659,7 +659,7 @@ allocate enough memory for the ATTRIBUTES for the 'root_frame_name' value of the
 
 void ExecutionConfiguration::print_execution_configuration()
 {
-   if ( Packing::should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( get_federate()->should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
       ostringstream msg;
       msg << endl
           << "=============================================================" << endl

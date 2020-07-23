@@ -230,13 +230,13 @@ void ExecutionConfigurationBase::set_master(
  */
 void ExecutionConfigurationBase::wait_on_registration()
 {
-   if ( execution_control->should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( get_federate()->should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "TrickHLA::ExecutionConfigurationBase::wait_on_registration():%d%c",
                __LINE__, THLA_NEWLINE );
    }
 
    int  obj_reg_cnt   = 0;
-   bool print_summary = execution_control->should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER );
+   bool print_summary = get_federate()->should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER );
    bool any_unregistered_obj;
    int  total_obj_cnt = 1;
 
@@ -260,7 +260,7 @@ void ExecutionConfigurationBase::wait_on_registration()
          // registration count and set the flag to print a new summary.
          if ( cnt > obj_reg_cnt ) {
             obj_reg_cnt   = cnt;
-            print_summary = execution_control->should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER );
+            print_summary = get_federate()->should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER );
          }
       }
 

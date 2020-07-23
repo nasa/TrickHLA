@@ -147,7 +147,7 @@ ExecutionControlBase::~ExecutionControlBase()
 
    // Free the memory used by the array of running Federates for the Federation.
    if ( loggable_sync_pts != static_cast< LoggableTimedSyncPnt * >( NULL ) ) {
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "~TrickHLA::ExecutionControlBase() logged_sync_pts_count=%d %c",
                   logged_sync_pts_count, THLA_NEWLINE );
       }
@@ -222,8 +222,6 @@ void ExecutionControlBase::setup(
  */
 void ExecutionControlBase::initialize()
 {
-   set_debug_level( federate->get_manager()->debug_handler );
-
    // Set Trick's realtime clock to the CTE clock if used.
    if ( this->does_cte_timeline_exist() ) {
       this->cte_timeline->clock_init();
@@ -235,7 +233,7 @@ void ExecutionControlBase::initialize()
    }
 
    if ( !does_scenario_timeline_exist() ) {
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "TrickHLA::ExecutionControlBase::initialize():%d WARNING: \
 ExecutionControl 'scenario_timeline' not specified in the input file. Using the \
 Trick simulation time as the default scenario-timeline.%c",
@@ -285,7 +283,7 @@ void ExecutionControlBase::join_federation_process()
    // If shutdown sync-point is detected, then we must have entered into
    // a running federation execution that is shutting down.  This is an
    // unlikely but possible race condition.
-   if ( federate->should_print( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
+   if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "TrickHLA::ExecutionControl::join_federation_process():%d Checking for shutdown %c",
                __LINE__, THLA_NEWLINE );
    }
@@ -506,7 +504,7 @@ joining federate so this call will be ignored.%c",
       return;
    }
 
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():%d %c",
                __LINE__, THLA_NEWLINE );
    }
@@ -566,7 +564,7 @@ joining federate so this call will be ignored.%c",
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    }
 
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       this->print_sync_pnts();
    }
 }
@@ -874,7 +872,7 @@ double ExecutionControlBase::get_sim_time()
       return sim_timeline->get_time();
    }
 
-   if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( debug_handler.should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControlBase::get_sim_time():" << __LINE__
              << " WARNING: Unexpected NULL 'THLA.federate.get_sim_time'!"
@@ -891,7 +889,7 @@ double ExecutionControlBase::get_scenario_time()
       return scenario_timeline->get_time();
    }
 
-   if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( debug_handler.should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControlBase::get_scenario_time():" << __LINE__
              << " WARNING: Unexpected NULL 'THLA.federate.scenario_timeline'!"
@@ -945,7 +943,7 @@ void ExecutionControlBase::freeze_init()
 void ExecutionControlBase::enter_freeze()
 {
    // The default is to do nothing.
-   if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( debug_handler.should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "TrickHLA::ExecutionControlBase::enter_freeze():%d Freeze Announced:%s, Freeze Pending:%s%c",
                __LINE__, ( federate->get_freeze_announced() ? "Yes" : "No" ),
                ( federate->get_freeze_pending() ? "Yes" : "No" ), THLA_NEWLINE );
@@ -1032,12 +1030,3 @@ void ExecutionControlBase::set_time_padding( double t )
    this->time_padding = t;
 }
 
-bool ExecutionControlBase::should_print(
-   const DebugLevelEnum & level,
-   const DebugSourceEnum &code ) const
-{
-   if ( this->federate != NULL ) {
-      return ( this->federate->should_print( level, code ) );
-   }
-   return true;
-}

@@ -104,8 +104,6 @@ input files and reduce input file setting errors.
 */
 void ExecutionControl::initialize()
 {
-   set_debug_level( federate->get_manager()->debug_handler );
-
    if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       ostringstream msg;
       msg << "DIS::ExecutionControl::initialize():" << __LINE__
@@ -429,7 +427,7 @@ void ExecutionControl::announce_sync_point(
          }
       }
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "DIS::ExecutionControl::announce_sync_point():%d DIS Pause Sync-Point:'%ls' Pause-time:%g %c",
                   __LINE__, label.c_str(), pauseTime->get_time_in_seconds(), THLA_NEWLINE );
       }
@@ -438,7 +436,7 @@ void ExecutionControl::announce_sync_point(
    } else if ( this->contains( label ) ) {
       // Mark init sync-point as existing.
       if ( this->mark_announced( label ) ) {
-         if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             send_hs( stdout, "DIS::ExecutionControl::announce_sync_point():%d DIS Simulation Init Sync-Point:'%ls'%c",
                      __LINE__, label.c_str(), THLA_NEWLINE );
          }
@@ -707,7 +705,7 @@ void ExecutionControl::set_next_execution_control_mode(
 
       default:
          this->requested_execution_control_mode = EXECUTION_CONTROL_UNINITIALIZED;
-         if ( get_manager()->should_print( TrickHLA::DEBUG_LEVEL_1_TRACE,
+         if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_1_TRACE,
                                            TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
             ostringstream errmsg;
             errmsg << "DIS::ExecutionControl::set_next_execution_mode():"
@@ -765,7 +763,7 @@ bool ExecutionControl::process_mode_transition_request()
    ExecutionConfiguration *ExCO = this->get_execution_configuration();
 
    // Print diagnostic message if appropriate.
-   if ( federate->should_print( TrickHLA::DEBUG_LEVEL_4_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
+   if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_4_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
       cout << "=============================================================" << endl
            << "ExecutionControl::process_mode_transition_request()" << endl
            << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << endl
@@ -1065,7 +1063,7 @@ bool ExecutionControl::process_execution_control_updates()
          } else if ( this->requested_execution_control_mode == EXECUTION_CONTROL_FREEZE ) {
 
             // Print diagnostic message if appropriate.
-            if ( federate->should_print( TrickHLA::DEBUG_LEVEL_4_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
+            if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_4_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
                cout << "DIS::ExecutionControl::process_execution_control_updates()" << endl
                     << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << endl
                     << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
@@ -1389,7 +1387,7 @@ void ExecutionControl::enter_freeze()
          sprintf( pause_label, "pause_%f", pause_time );
          StringUtilities::to_wstring( pause_label_ws, pause_label );
 
-         if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         if ( debug_handler.should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             send_hs( stdout, "DIS::ExecutionControl::enter_freeze():%d announce_freeze:%s, freeze_federation:%s, pause_time:%g %c",
                      __LINE__, ( federate->announce_freeze ? "Yes" : "No" ),
                      ( federate->freeze_the_federation ? "Yes" : "No" ), pause_time,
