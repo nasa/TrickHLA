@@ -46,9 +46,10 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Utilities.hh"
-#include <TrickHLA/SleepTimeout.hh>
 
 // HLA include files.
 #include RTI1516_HEADER
@@ -602,7 +603,7 @@ void ExecutionControlBase::send_execution_configuration()
    if ( execution_configuration == NULL ) {
       if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          send_hs( stdout, "TrickHLA::ExecutionControlBase::send_execution_configuration():%d This call \
-will be ignored because the sim_initialization_scheme specified does not support it.%c",
+will be ignored because the Simulation Initialization Scheme does not support it.%c",
                   __LINE__, THLA_NEWLINE );
       }
       return;
@@ -644,7 +645,7 @@ void ExecutionControlBase::receive_execution_configuration()
    if ( execution_configuration == NULL ) {
       if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          send_hs( stdout, "TrickHLA::ExecutionControlBase::receive_execution_configuration():%d This call \
-will be ignored because the sim_initialization_scheme specified does not support it.%c",
+will be ignored because the Simulation Initialization Scheme does not support it.%c",
                   __LINE__, THLA_NEWLINE );
       }
       return;

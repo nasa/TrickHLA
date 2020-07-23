@@ -56,8 +56,9 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
+#include "TrickHLA/SleepTimeout.hh"
+#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Utilities.hh"
-#include <TrickHLA/SleepTimeout.hh>
 
 // HLA include files.
 #include RTI1516_HEADER
@@ -254,7 +255,7 @@ void Manager::restart_initialization()
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    } else {
       // FIXME: I think that this is circular.
-      execution_control->set_master( execution_control->is_master() );
+      get_execution_control()->set_master( get_execution_control()->is_master() );
    }
 
    // Setup all the Trick Ref-Attributes for the user specified objects,
@@ -272,7 +273,7 @@ void Manager::restart_initialization()
    federate->initialize_MOM_handles();
 
    // Perform the next few steps if we are the Master federate.
-   if ( execution_control->is_master() ) {
+   if ( get_execution_control()->is_master() ) {
 
       // Make sure all the federate instance handles are reset based on
       // the federate name so that the wait for required federates will work
@@ -423,7 +424,7 @@ federate so this call will be ignored.%c",
 
          // Only wait for REQUIRED received init data and do not block waiting
          // to receive init data if we are using the simple init scheme.
-         bool obj_required = objects[i].is_required() && ( execution_control->wait_on_init_data() );
+         bool obj_required = objects[i].is_required() && ( get_execution_control()->wait_on_init_data() );
 
          if ( obj_required ) {
             if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -531,7 +532,7 @@ void Manager::receive_init_data(
 
          // Only wait for REQUIRED received init data and do not block waiting
          // to receive init data if we are using the simple init scheme.
-         bool obj_required = obj->is_required() && ( execution_control->wait_on_init_data() );
+         bool obj_required = obj->is_required() && ( get_execution_control()->wait_on_init_data() );
 
          if ( obj_required ) {
             if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -602,7 +603,7 @@ void Manager::clear_init_sync_points()
 
    // Clear the multiphase initalization synchronization points associated
    // with ExecutionControl initialization.
-   execution_control->clear_multiphase_init_sync_points();
+   get_execution_control()->clear_multiphase_init_sync_points();
 
    return;
 }
@@ -613,12 +614,10 @@ void Manager::clear_init_sync_points()
 void Manager::wait_for_init_sync_point(
    const char *sync_point_label )
 {
-   //if ( ( sim_initialization_scheme == INIT_SCHEME_SIMPLE ) || ( sim_initialization_scheme == INIT_SCHEME_DIS_COMPATIBLE ) ) {
    if ( !get_execution_control()->wait_on_init_sync_point() ) {
       if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          send_hs( stdout, "Manager::wait_for_init_sync_point():%d This call \
-will be ignored because sim_initialization_scheme == (INIT_SCHEME_SIMPLE or \
-INIT_SCHEME_DIS_COMPATIBLE).%c",
+will be ignored because the Simulation Initialization Scheme does not support it.%c",
                   __LINE__, THLA_NEWLINE );
       }
       return;
@@ -647,13 +646,13 @@ joining federate so this call will be ignored.%c",
    StringUtilities::to_wstring( ws_syc_point_label, sync_point_label );
 
    // Determine if the sync-point label is valid.
-   if ( execution_control->contains( ws_syc_point_label ) ) {
+   if ( get_execution_control()->contains( ws_syc_point_label ) ) {
 
       // Achieve the specified sync-point and wait for the federation
       // to be synchronized on it.
-      execution_control->achieve_and_wait_for_synchronization( *( this->get_RTI_ambassador() ),
-                                                               this->federate,
-                                                               ws_syc_point_label );
+      get_execution_control()->achieve_and_wait_for_synchronization( *( this->get_RTI_ambassador() ),
+                                                                     this->federate,
+                                                                     ws_syc_point_label );
 
    } else {
       ostringstream errmsg;
@@ -729,7 +728,7 @@ void Manager::object_instance_name_reservation_succeeded(
 
    // If the object instance isn't recognized by ExecutionControl, then
    // handle it here.
-   if ( !execution_control->object_instance_name_reservation_succeeded( obj_instance_name ) ) {
+   if ( !get_execution_control()->object_instance_name_reservation_succeeded( obj_instance_name ) ) {
 
       Object *trickhla_obj = get_trickhla_object( obj_instance_name );
       if ( trickhla_obj != NULL ) {
@@ -759,7 +758,7 @@ void Manager::object_instance_name_reservation_failed(
    // any specialized failure handling.  If the method returns 'true' then
    // it's not a fatal error; otherwise, continue with error handling and
    // exit.
-   if ( execution_control->object_instance_name_reservation_failed( obj_instance_name ) ) {
+   if ( get_execution_control()->object_instance_name_reservation_failed( obj_instance_name ) ) {
       return;
    }
 
@@ -980,7 +979,7 @@ void Manager::setup_interaction_ref_attributes()
 
    // Tell the ExecutionControl object to setup the appropriate Trick Ref
    // ATTRIBUTES associated with the execution control mechanism.
-   execution_control->setup_interaction_ref_attributes();
+   get_execution_control()->setup_interaction_ref_attributes();
 
    return;
 }
@@ -996,13 +995,13 @@ void Manager::setup_all_RTI_handles()
    }
 
    // Set up the object RTI handles for the ExecutionControl mechanisms.
-   execution_control->setup_object_RTI_handles();
+   get_execution_control()->setup_object_RTI_handles();
 
    // Set up the object RTI handles for the simulation data objects.
    setup_object_RTI_handles( obj_count, objects );
 
    // Set up the object RTI handles for the ExecutionControl mechanisms.
-   execution_control->setup_interaction_RTI_handles();
+   get_execution_control()->setup_interaction_RTI_handles();
 
    // Simulation Interactions.
    setup_interaction_RTI_handles( inter_count, interactions );
@@ -1433,7 +1432,7 @@ void Manager::publish()
    }
 
    // Unpublish and Execution Control objects and interactions.
-   execution_control->publish();
+   get_execution_control()->publish();
 
    return;
 }
@@ -1488,7 +1487,7 @@ void Manager::unpublish()
    }
 
    // Unpublish and Execution Control objects and interactions.
-   execution_control->unpublish();
+   get_execution_control()->unpublish();
 
    return;
 }
@@ -1515,7 +1514,7 @@ void Manager::subscribe()
    }
 
    // Subscribe to anything needed for the execution control mechanisms.
-   execution_control->subscribe();
+   get_execution_control()->subscribe();
 
    return;
 }
@@ -1572,7 +1571,7 @@ void Manager::unsubscribe()
    }
 
    // Unsubscribe to anything needed for the execution control mechanisms.
-   execution_control->unsubscribe();
+   get_execution_control()->unsubscribe();
 
    return;
 }
@@ -1650,7 +1649,7 @@ void Manager::register_objects_with_RTI()
    }
 
    // Have the ExecutionControl register objects it needs with the RTI.
-   execution_control->register_objects_with_RTI();
+   get_execution_control()->register_objects_with_RTI();
 
    // For the locally owned objects register it with the RTI to get its
    // RTI object instance ID.
@@ -2053,7 +2052,7 @@ void Manager::provide_attribute_update(
    if ( trickhla_obj != NULL ) {
       trickhla_obj->provide_attribute_update( theAttributes );
    } else {
-      execution_control->provide_attribute_update( theObject, theAttributes );
+      get_execution_control()->provide_attribute_update( theObject, theAttributes );
    }
 
    return;
@@ -2120,7 +2119,7 @@ void Manager::send_cyclic_and_requested_data()
    }
 
    // Send any ExecutionControl data requested.
-   execution_control->send_requested_data( current_sim_time, this->job_cycle_time );
+   get_execution_control()->send_requested_data( current_sim_time, this->job_cycle_time );
 
    // Send data to remote RTI federates for each of the objects.
    for ( int n = 0; n < this->obj_count; ++n ) {
@@ -2148,7 +2147,7 @@ void Manager::receive_cyclic_data()
    double current_sim_time = exec_get_sim_time();
 
    // Receive and process and updates for ExecutionControl.
-   execution_control->receive_cyclic_data( current_sim_time );
+   get_execution_control()->receive_cyclic_data( current_sim_time );
 
    // Determine the cycle time for this job if it is not yet known.
    if ( this->job_cycle_time <= 0.0 ) {
@@ -2169,7 +2168,7 @@ void Manager::receive_cyclic_data()
 void Manager::process_interactions()
 {
    // Process any ExecutionControl mode transitions.
-   execution_control->process_mode_interaction();
+   get_execution_control()->process_mode_interaction();
 
    // Just return if the interaction queue is empty.
    if ( interactions_queue.empty() ) {
@@ -2285,11 +2284,11 @@ void Manager::receive_interaction(
    }
 
    // Let ExectionControl receive any interactions.
-   execution_control->receive_interaction( theInteraction,
-                                           theParameterValues,
-                                           theUserSuppliedTag,
-                                           theTime,
-                                           received_as_TSO );
+   get_execution_control()->receive_interaction( theInteraction,
+                                                 theParameterValues,
+                                                 theUserSuppliedTag,
+                                                 theTime,
+                                                 received_as_TSO );
 
    return;
 }
@@ -2323,7 +2322,7 @@ Object *Manager::get_trickhla_object(
 
    // Check for a match with the ExecutionConfiguration object associated with
    // ExecutionControl.  Returns NULL if match not found.
-   return ( execution_control->get_trickhla_object( obj_instance_name ) );
+   return ( get_execution_control()->get_trickhla_object( obj_instance_name ) );
 }
 
 /*!
@@ -2428,7 +2427,7 @@ Object *Manager::get_unregistered_object(
 
    // Check for a match with the ExecutionConfiguration object associated with
    // ExecutionControl.  Returns NULL if match not found.
-   return ( execution_control->get_unregistered_object( theObjectClass, theObjectInstanceName ) );
+   return ( get_execution_control()->get_unregistered_object( theObjectClass, theObjectInstanceName ) );
 }
 
 /*!
@@ -2452,7 +2451,7 @@ Object *Manager::get_unregistered_remote_object(
 
    // Check for a match with the ExecutionConfiguration object associated with
    // ExecutionControl.  Returns NULL if match not found.
-   return ( execution_control->get_unregistered_remote_object( theObjectClass ) );
+   return ( get_execution_control()->get_unregistered_remote_object( theObjectClass ) );
 }
 
 /*!
@@ -2482,7 +2481,7 @@ void Manager::mark_object_as_deleted_from_federation(
    // First check if this is associated with ExecutionControl.
    // If so, then perform any ExecutionControl specific actions.
    // If not, then just remove the object instance.
-   if ( !execution_control->mark_object_as_deleted_from_federation( instance_id ) ) {
+   if ( !get_execution_control()->mark_object_as_deleted_from_federation( instance_id ) ) {
 
       Object *obj = get_trickhla_object( instance_id );
       if ( obj != NULL ) {
@@ -2507,7 +2506,7 @@ void Manager::process_deleted_objects()
 {
 
    // Process ExecutionControl deletions.
-   execution_control->process_deleted_objects();
+   get_execution_control()->process_deleted_objects();
 
    // Search the simulation data objects, looking for deleted objects.
    for ( int n = 0; n < obj_count; n++ ) {
@@ -2646,7 +2645,7 @@ void Manager::start_federation_save_at_sim_time(
    const char *file_name )
 {
    start_federation_save_at_scenario_time(
-      execution_control->convert_sim_time_to_scenario_time( freeze_sim_time ),
+      get_execution_control()->convert_sim_time_to_scenario_time( freeze_sim_time ),
       file_name );
 
    return;
@@ -2658,7 +2657,7 @@ void Manager::start_federation_save_at_scenario_time(
 {
 
    // Call the ExecutionControl method.
-   execution_control->start_federation_save_at_scenario_time( freeze_scenario_time, file_name );
+   get_execution_control()->start_federation_save_at_scenario_time( freeze_scenario_time, file_name );
 
    return;
 }
@@ -2670,7 +2669,7 @@ void Manager::setup_checkpoint()
 {
 
    // Call the ExecutionControl method.
-   execution_control->setup_checkpoint();
+   get_execution_control()->setup_checkpoint();
 
    for ( int i = 0; i < obj_count; i++ ) {
       // Any object with a valid instance handle must be marked as required

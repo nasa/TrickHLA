@@ -111,6 +111,14 @@ void ExecutionControl::initialize()
    // Simple initialization does not support known federates.
    federate->enable_known_feds = false;
    federate->known_feds_count  = 0;
+
+   if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      ostringstream msg;
+      msg << "TrickHLA::ExecutionControl::initialize():" << __LINE__
+          << " Initialization-Scheme:'" << get_type().c_str()
+          << "'" << THLA_ENDL;
+      send_hs( stderr, (char *)msg.str().c_str() );
+   }
 }
 
 /*!
@@ -132,7 +140,7 @@ void ExecutionControl::join_federation_process()
 void ExecutionControl::pre_multi_phase_init_processes()
 {
    if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d", __LINE__ );
+      send_hs( stdout, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n", __LINE__ );
    }
 
    // Setup all the Trick Ref-Attributes for the user specified objects,

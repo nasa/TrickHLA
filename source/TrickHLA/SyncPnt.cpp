@@ -35,10 +35,10 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPnt.hh"
 #include "TrickHLA/Utilities.hh"
-#include <TrickHLA/SleepTimeout.hh>
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;

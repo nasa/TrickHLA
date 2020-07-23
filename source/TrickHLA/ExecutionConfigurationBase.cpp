@@ -50,9 +50,10 @@ execution.
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Utilities.hh"
-#include <TrickHLA/SleepTimeout.hh>
 
 // HLA include files.
 #include RTI1516_HEADER

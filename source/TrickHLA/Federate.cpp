@@ -326,7 +326,7 @@ void Federate::print_version() const
       StringUtilities::to_string( rti_version, RTI1516_NAMESPACE::rtiVersion() );
 #endif
 
-      send_hs( stdout, "Manager::print_version():%d TrickHLA-version:'%s', TrickHLA-release-date:'%s', RTI-name:'%s', RTI-version:'%s'%c",
+      send_hs( stdout, "Federate::print_version():%d\n\t TrickHLA-version:'%s'\n\t TrickHLA-release-date:'%s'\n\t RTI-name:'%s'\n\t RTI-version:'%s'%c",
                __LINE__, Utilities::get_version().c_str(),
                Utilities::get_release_date().c_str(),
                rti_name.c_str(), rti_version.c_str(), THLA_NEWLINE );

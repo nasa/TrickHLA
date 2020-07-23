@@ -487,7 +487,7 @@ class Manager
    /*! @brief Initializes the federation execution control scheme, which must
     * occur after the TrickHLA::Federate and TrickHLA::FedAmb has been
     * initialized. */
-   void initialization_execution_control();
+   //void initialize_execution_control();
 
    /*! @brief Check to see if this is a restored federate. */
    bool is_restore_federate() const

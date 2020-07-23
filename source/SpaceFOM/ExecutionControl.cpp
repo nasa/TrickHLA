@@ -47,8 +47,9 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Parameter.hh"
+#include "TrickHLA/SleepTimeout.hh"
+#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Utilities.hh"
-#include <TrickHLA/SleepTimeout.hh>
 
 // SpaceFOM include files.
 #include "SpaceFOM/ExecutionConfiguration.hh"
@@ -161,8 +162,11 @@ void ExecutionControl::initialize()
    this->add_sync_pnt( L"mtr_shutdown" );
 
    if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "SpaceFOM::ExecutionControl::initialize():%d%c",
-               __LINE__, THLA_NEWLINE );
+      ostringstream msg;
+      msg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
+          << " Initialization-Scheme:'" << get_type().c_str()
+          << "'" << THLA_ENDL;
+      send_hs( stderr, (char *)msg.str().c_str() );
    }
 
    // Must use a preset master.

@@ -44,6 +44,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/SleepTimeout.hh"
+#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Utilities.hh"
 
 // DSES include files.
@@ -107,7 +108,6 @@ input files and reduce input file setting errors.
 void ExecutionControl::initialize(
    TrickHLA::Federate &fed )
 {
-
    // Set the reference to the TrickHLA::Federate.
    this->federate = &fed;
 
@@ -139,8 +139,11 @@ void ExecutionControl::initialize(
    this->add_sync_pnt( L"mtr_shutdown" );
 
    if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "DSES::ExecutionControl::initialize():%d%c",
-               __LINE__, THLA_NEWLINE );
+      ostringstream msg;
+      msg << "DSES::ExecutionControl::initialize():" << __LINE__
+          << " Initialization-Scheme:'" << get_type().c_str()
+          << "'" << THLA_ENDL;
+      send_hs( stderr, (char *)msg.str().c_str() );
    }
 
    // Must use a preset master.

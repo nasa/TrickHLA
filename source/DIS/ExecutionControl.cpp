@@ -42,6 +42,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/StringUtilities.hh"
 
 // DIS include files.
 #include "DIS/ExecutionConfiguration.hh"
@@ -142,8 +143,11 @@ void ExecutionControl::initialize(
    this->add_sync_pnt( L"mtr_shutdown" );
 
    if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "DIS::ExecutionControl::initialize():%d%c",
-               __LINE__, THLA_NEWLINE );
+      ostringstream msg;
+      msg << "DIS::ExecutionControl::initialize():" << __LINE__
+          << " Initialization-Scheme:'" << get_type().c_str()
+          << "'" << THLA_ENDL;
+      send_hs( stderr, (char *)msg.str().c_str() );
    }
 
    // Must use a preset master.

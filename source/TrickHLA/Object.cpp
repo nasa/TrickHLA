@@ -60,8 +60,9 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ObjectDeleted.hh"
 #include "TrickHLA/OwnershipHandler.hh"
 #include "TrickHLA/Packing.hh"
+#include "TrickHLA/SleepTimeout.hh"
+#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Utilities.hh"
-#include <TrickHLA/SleepTimeout.hh>
 
 // HLA include files.
 #include RTI1516_HEADER
@@ -2179,6 +2180,10 @@ void Object::receive_cyclic_data(
    // There must be some remotely owned attribute that we subscribe to in
    // order for us to receive it.
    if ( !any_remotely_owned_subscribed_cyclic_attribute() ) {
+      return;
+   }
+
+   if ( blocking_cyclic_read && ( exec_get_sim_time() <= 0.0 ) ) {
       return;
    }
 
