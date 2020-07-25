@@ -54,15 +54,15 @@ DebugHandler::~DebugHandler() // RETURN: -- None.
 }
 
 bool DebugHandler::print(
-   const DebugLevelEnum & level,
-   const DebugSourceEnum &code )
+   const DebugLevelEnum  level,
+   const DebugSourceEnum code )
 {
    return ( ( debug_level >= level ) && ( ( code_section & code ) != 0 ) );
 }
 
 void DebugHandler::set(
-   const DebugLevelEnum & level,
-   const DebugSourceEnum &code )
+   const DebugLevelEnum  level,
+   const DebugSourceEnum code )
 {
    debug_level  = level;
    code_section = code;

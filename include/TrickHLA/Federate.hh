@@ -20,6 +20,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
+@trick_link_dependency{../source/TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../source/TrickHLA/ExecutionControlBase.cpp}
 @trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../source/TrickHLA/FedAmb.cpp}
@@ -47,6 +48,7 @@ NASA, Johnson Space Center\n
 #include "trick/Flag.h"
 
 // TrickHLA include files.
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/KnownFederate.hh"
 #include "TrickHLA/StandardsSupport.hh"
@@ -128,6 +130,8 @@ class Federate
 
    DebugLevelEnum  debug_level;  ///< @trick_units{--} Maximum debug report level requested by the user, default: THLA_NO_TRACE
    DebugSourceEnum code_section; ///< @trick_units{--} Code section(s) for which to activate debug messages, default: THLA_ALL_MODULES
+
+   DebugHandler   debug_handler;
 
    bool can_rejoin_federation; /**< @trick_units{--}
       Enables this federate to resign in a way to allow re-joining of the

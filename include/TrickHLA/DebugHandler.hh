@@ -64,12 +64,12 @@ class DebugHandler
     *  @return Returns true if the requested message should be printed.
     *  @param level Debug level of incoming message.
     *  @param code  Debug code source area of the incoming message. */
-   static bool print( const DebugLevelEnum &level, const DebugSourceEnum &code );
+   static bool print( const DebugLevelEnum level, const DebugSourceEnum code );
 
    /*! @brief Set the debug level and code-section..
     *  @param level Debug level of incoming message.
     *  @param code  Debug code source area of the incoming message. */
-   static void set( const DebugLevelEnum &level, const DebugSourceEnum &code );
+   static void set( const DebugLevelEnum level, const DebugSourceEnum code );
 
   public:
    static DebugLevelEnum  debug_level;  ///< @trick_units{--} Maximum debug report level requested by the user, default: THLA_NO_TRACE
