@@ -124,7 +124,6 @@ Federate::Federate()
      known_feds( NULL ),
      debug_level( DEBUG_LEVEL_NO_TRACE ),
      code_section( DEBUG_SOURCE_ALL_MODULES ),
-     debug_handler(),
      can_rejoin_federation( false ),
      freeze_delay_frames( 2 ),
      unfreeze_after_save( false ),
@@ -409,7 +408,7 @@ the documented ENUM values.%c",
    }
 
    // Set the debug level and code section in the global DebugHandler.
-   debug_handler.set( this->debug_level, this->code_section );
+   DebugHandler::set( this->debug_level, this->code_section );
 
    // Print the current TrickHLA version string.
    print_version();
