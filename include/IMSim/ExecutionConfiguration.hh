@@ -19,10 +19,10 @@ NASA, Johnson Space Center\n
 @python_module{IMSim}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../../source/TrickHLA/Packing.cpp}
 @trick_link_dependency{../../source/TrickHLA/ExecutionConfigurationBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/Packing.cpp}
 @trick_link_dependency{../../source/IMSim/ExecutionConfiguration.cpp}
+@trick_link_dependency{../../source/IMSim/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -40,6 +40,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/ExecutionConfigurationBase.hh"
+#include "TrickHLA/Packing.hh"
 
 // IMSim include files.
 #include "Types.hh"

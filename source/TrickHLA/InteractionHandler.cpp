@@ -15,11 +15,12 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{ExecutionControlBase.cpp}
+@trick_link_dependency{Federate.cpp}
 @trick_link_dependency{Int64Interval.cpp}
 @trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{Interaction.cpp}
 @trick_link_dependency{InteractionHandler.cpp}
-@trick_link_dependency{ExecutionControlBase.cpp}
 
 @revs_title
 @revs_begin
@@ -39,13 +40,14 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Constants.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64Interval.hh"
+#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/InteractionHandler.hh"
-#include "TrickHLA/Utilities.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -74,16 +76,6 @@ void InteractionHandler::initialize_callback(
    Interaction *inter )
 {
    this->interaction = inter;
-}
-
-bool InteractionHandler::should_print(
-   const DebugLevelEnum & level,
-   const DebugSourceEnum &code ) const
-{
-   if ( interaction != NULL ) {
-      return interaction->should_print( level, code );
-   }
-   return true;
 }
 
 bool InteractionHandler::send_interaction()

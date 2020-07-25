@@ -15,8 +15,8 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{ParameterItem.cpp}
 @trick_link_dependency{Item.cpp}
+@trick_link_dependency{ParameterItem.cpp}
 
 @revs_title
 @revs_begin
@@ -38,6 +38,7 @@ NASA, Johnson Space Center\n
 #include "trick/memorymanager_c_intf.h"
 
 // TrickHLA include files.
+#include "TrickHLA/Item.hh"
 #include "TrickHLA/ParameterItem.hh"
 
 using namespace std;

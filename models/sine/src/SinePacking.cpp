@@ -15,8 +15,11 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Packing.o}
-@trick_link_dependency{sine/src/SinePacking.o}
+@trick_link_dependency{../source/TrickHLA/Attribute.cpp}
+@trick_link_dependency{../source/TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{sine/src/SinePacking.cpp}
 
 @revs_title
 @revs_begin
@@ -40,7 +43,9 @@ NASA, Johnson Space Center\n
 
 // TrickHLA model include files.
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
+#include "TrickHLA/Types.hh"
 
 // Model include files.
 #include "../include/SinePacking.hh"
@@ -146,7 +151,7 @@ void SinePacking::pack()
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
       string obj_name = ( object != NULL ) ? object->get_name_string() : "";
 
       cout << "SinePacking::pack()" << endl
@@ -179,7 +184,7 @@ void SinePacking::pack()
    }
 
    // Output more debug information for a higher debug-level.
-   if ( should_print( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_PACKING ) ) {
 
       if ( buff != NULL ) {
          cout << " SinePacking::pack() buff_size: " << buff_size << endl;
@@ -258,7 +263,7 @@ void SinePacking::unpack()
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
 
       string obj_name = ( object != NULL ) ? object->get_name_string() : "";
 
@@ -292,7 +297,7 @@ void SinePacking::unpack()
    }
 
    // Output more debug information for a higher debug-level.
-   if ( should_print( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_PACKING ) ) {
       if ( buff != NULL ) {
          cout << " SinePacking::unpack() buff_size: " << buff_size << endl;
          for ( int i = 0; i < buff_size; i++ ) {

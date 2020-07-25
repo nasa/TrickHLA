@@ -16,8 +16,15 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{../TrickHLA/SyncPntListBase.cpp}
+@trick_link_dependency{../TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../TrickHLA/Federate.cpp}
+@trick_link_dependency{../TrickHLA/Int64Interval.cpp}
+@trick_link_dependency{../TrickHLA/ExecutionControlBase.cpp}
+@trick_link_dependency{../TrickHLA/Manager.cpp}
+@trick_link_dependency{../TrickHLA/Types.cpp}
+@trick_link_dependency{ExecutionConfiguration.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
+@trick_link_dependency{Types.cpp}
 
 @revs_title
 @revs_begin
@@ -39,14 +46,18 @@ NASA, Johnson Space Center\n
 // HLA include files.
 
 // TrickHLA include files.
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/StringUtilities.hh"
+#include "TrickHLA/Types.hh"
 
 // DIS include files.
 #include "DIS/ExecutionConfiguration.hh"
 #include "DIS/ExecutionControl.hh"
+#include "DIS/Types.hh"
 
 // DIS file level declarations.
 namespace DIS
@@ -104,7 +115,7 @@ input files and reduce input file setting errors.
 */
 void ExecutionControl::initialize()
 {
-   if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream msg;
       msg << "DIS::ExecutionControl::initialize():" << __LINE__
           << " Initialization-Scheme:'" << get_type()
@@ -161,7 +172,7 @@ void ExecutionControl::initialize()
       this->use_preset_master = true;
    }
 
-   if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       if ( this->is_master() ) {
          send_hs( stdout, "DIS::ExecutionControl::initialize():%d\n    I AM THE PRESET MASTER%c",
                   __LINE__, THLA_NEWLINE );
@@ -194,7 +205,7 @@ void ExecutionControl::join_federation_process()
 */
 void ExecutionControl::pre_multi_phase_init_processes()
 {
-   if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "DIS::ExecutionControl::pre_multi_phase_init_processes:%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -339,7 +350,7 @@ void ExecutionControl::shutdown()
  */
 void ExecutionControl::determine_federation_master()
 {
-   if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "DIS::ExecutionControl::determine_federation_master():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -348,7 +359,7 @@ void ExecutionControl::determine_federation_master()
    this->register_all_sync_pnts( *( federate->get_RTI_ambassador() ) );
    this->wait_for_all_announcements( federate );
 
-   if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       if ( this->is_master() ) {
          send_hs( stdout, "DIS::ExecutionControl::determine_federation_master():%d\n    I AM THE MASTER%c",
                   __LINE__, THLA_NEWLINE );
@@ -427,7 +438,7 @@ void ExecutionControl::announce_sync_point(
          }
       }
 
-      if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "DIS::ExecutionControl::announce_sync_point():%d DIS Pause Sync-Point:'%ls' Pause-time:%g %c",
                   __LINE__, label.c_str(), pauseTime->get_time_in_seconds(), THLA_NEWLINE );
       }
@@ -436,7 +447,7 @@ void ExecutionControl::announce_sync_point(
    } else if ( this->contains( label ) ) {
       // Mark init sync-point as existing.
       if ( this->mark_announced( label ) ) {
-         if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             send_hs( stdout, "DIS::ExecutionControl::announce_sync_point():%d DIS Simulation Init Sync-Point:'%ls'%c",
                      __LINE__, label.c_str(), THLA_NEWLINE );
          }
@@ -445,7 +456,7 @@ void ExecutionControl::announce_sync_point(
    } // By default, mark an unrecognized synchronization point is achieved.
    else {
 
-      if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "DIS::ExecutionControl::announce_sync_point():%d Unrecognized synchronization point:'%ls', which will be achieved.%c",
                   __LINE__, label.c_str(), THLA_NEWLINE );
       }
@@ -461,7 +472,7 @@ void ExecutionControl::announce_sync_point(
  */
 void ExecutionControl::clear_multiphase_init_sync_points()
 {
-   if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream errmsg;
       errmsg << "DIS::ExecutionControl::clear_multiphase_init_sync_points():" << __LINE__
              << " This call will be ignored because this ExecutionControl does not"
@@ -705,8 +716,7 @@ void ExecutionControl::set_next_execution_control_mode(
 
       default:
          this->requested_execution_control_mode = EXECUTION_CONTROL_UNINITIALIZED;
-         if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_1_TRACE,
-                                           TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             ostringstream errmsg;
             errmsg << "DIS::ExecutionControl::set_next_execution_mode():"
                    << __LINE__ << " WARNING: Unknown execution mode value: " << exec_control
@@ -763,7 +773,7 @@ bool ExecutionControl::process_mode_transition_request()
    ExecutionConfiguration *ExCO = this->get_execution_configuration();
 
    // Print diagnostic message if appropriate.
-   if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_4_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       cout << "=============================================================" << endl
            << "ExecutionControl::process_mode_transition_request()" << endl
            << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << endl
@@ -1063,7 +1073,7 @@ bool ExecutionControl::process_execution_control_updates()
          } else if ( this->requested_execution_control_mode == EXECUTION_CONTROL_FREEZE ) {
 
             // Print diagnostic message if appropriate.
-            if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_4_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                cout << "DIS::ExecutionControl::process_execution_control_updates()" << endl
                     << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << endl
                     << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
@@ -1241,8 +1251,7 @@ bool ExecutionControl::run_mode_transition()
 
             diff = go_to_run_time - this->get_cte_time();
             if ( fmod( diff, 1.0 ) == 0.0 ) {
-               if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_2_TRACE,
-                                                TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
+               if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   send_hs( stdout, "DIS::ExecutionControl::run_mode_transition():%d Going to run in %G seconds.%c",
                            __LINE__, diff, THLA_NEWLINE );
                }
@@ -1250,7 +1259,7 @@ bool ExecutionControl::run_mode_transition()
          }
 
          // Print debug message if appropriate.
-         if ( debug_handler.should_print( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             double curr_cte_time = this->get_cte_time();
             diff                 = curr_cte_time - go_to_run_time;
             send_hs( stdout, "DIS::ExecutionControl::run_mode_transition():%d \n  Going to run at CTE time %.18G seconds. \n  Current CTE time %.18G seconds. \n  Difference: %.9lf seconds.%c",
@@ -1387,7 +1396,7 @@ void ExecutionControl::enter_freeze()
          sprintf( pause_label, "pause_%f", pause_time );
          StringUtilities::to_wstring( pause_label_ws, pause_label );
 
-         if ( debug_handler.should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             send_hs( stdout, "DIS::ExecutionControl::enter_freeze():%d announce_freeze:%s, freeze_federation:%s, pause_time:%g %c",
                      __LINE__, ( federate->announce_freeze ? "Yes" : "No" ),
                      ( federate->freeze_the_federation ? "Yes" : "No" ), pause_time,

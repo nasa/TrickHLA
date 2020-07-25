@@ -19,9 +19,15 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Types.cpp}
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../source/TrickHLA/ExecutionConfigurationBase.cpp}
+@trick_link_dependency{../source/TrickHLA/ExecutionControlBase.cpp}
+@trick_link_dependency{../source/TrickHLA/Federate.cpp}
+@trick_link_dependency{../source/TrickHLA/ItemQueue.cpp}
+@trick_link_dependency{../source/TrickHLA/Interaction.cpp}
+@trick_link_dependency{../source/TrickHLA/InteractionItem.cpp}
 @trick_link_dependency{../source/TrickHLA/Manager.cpp}
+@trick_link_dependency{../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -37,7 +43,6 @@ NASA, Johnson Space Center\n
 #define _TRICKHLA_MANAGER_HH_
 
 // TrickHLA include files.
-#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/ItemQueue.hh"
 #include "TrickHLA/Object.hh"
@@ -56,6 +61,7 @@ namespace TrickHLA
 // NOTE: This forward declaration of TrickHLA::Interaction and TrickHLA::Object
 // are here to go with the #ifdef SWIG include.  Normally, it would go with the
 // other forward declarations below.
+class Federate;
 class Interaction;
 class Object;
 } // namespace TrickHLA
@@ -107,7 +113,8 @@ class Manager
    int          inter_count;  ///< @trick_units{--} Number of TrickHLA Interactions.
    Interaction *interactions; ///< @trick_units{--} Array of TrickHLA Interactions.
 
-   DebugHandler debug_handler; ///< @trick_units{--} Decides whether to print any debug messages.
+   DebugLevelEnum  debug_level;  ///< @trick_units{--} Maximum debug report level requested by the user, default: THLA_NO_TRACE
+   DebugSourceEnum code_section; ///< @trick_units{--} Code section(s) for which to activate debug messages, default: THLA_ALL_MODULES
 
    bool  restore_federation;          ///< @trick_io{*i} @trick_units{--} flag indicating whether to trigger the restore
    char *restore_file_name;           ///< @trick_io{*i} @trick_units{--} file name, which will be the label name
@@ -369,13 +376,6 @@ class Manager
    void provide_attribute_update( RTI1516_NAMESPACE::ObjectInstanceHandle const &theObject,
                                   RTI1516_NAMESPACE::AttributeHandleSet const &  theAttributes );
 
-   /*! @brief Get the debug handler for this TrickHLA::Manager.
-    *  @return The associated debug handler. */
-   const DebugHandler &get_debug_handler() const
-   {
-      return debug_handler;
-   }
-
    /*! @brief Get the TrickHLA::Object count.
     *  @return The number of registered TrickHLA::Object instances. */
    int get_object_count() const
@@ -440,17 +440,6 @@ class Manager
    /*! @brief Check if federate is shutdown function was called.
     *  @return True if the manager is shutting down the federate. */
    bool is_shutdown_called() const;
-
-   /*! @brief Determine if the verbose debug comments should be printed to the console.
-    *  @return Returns true if the requested message should print level.
-    *  @param level  Debug level of the incoming message.
-    *  @param code   Source code association of the incoming messages. */
-   bool should_print(
-      const DebugLevelEnum & level,
-      const DebugSourceEnum &code ) const
-   {
-      return debug_handler.should_print( level, code );
-   }
 
    //
    // Private data.

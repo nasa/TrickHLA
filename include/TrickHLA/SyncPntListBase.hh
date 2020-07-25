@@ -20,7 +20,6 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../source/TrickHLA/SyncPnt.cpp}
 @trick_link_dependency{../source/TrickHLA/SyncPntListBase.cpp}
 
@@ -40,14 +39,13 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 
-// HLA include files.
-#include "TrickHLA/StandardsSupport.hh"
-#include RTI1516_HEADER
-
 // TrickHLA include files.
-#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/LoggableSyncPnt.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/SyncPnt.hh"
+
+// HLA include files.
+#include RTI1516_HEADER
 
 namespace TrickHLA
 {
@@ -254,13 +252,6 @@ class SyncPntListBase
    /*! @brief Dumps synchronization point information to the screen. */
    virtual void print_sync_pnts();
 
-   /*! @brief Set the debug handler levels.
-    *  @param hndlr TrickHLA::DebugHandler. */
-   virtual void set_debug_level( DebugHandler hndlr )
-   {
-      debug_handler.set( hndlr );
-   }
-
   protected:
    /*! @brief Put the lock in read only state. */
    void lock_read_only();
@@ -280,8 +271,6 @@ class SyncPntListBase
    std::vector< SyncPnt * > sync_point_list; ///< @trick_io{**} Vector of synchronization points.
 
    std::wstring reconfig_name; ///< @trick_io{**} Wide string of the reconfiguration name.
-
-   DebugHandler debug_handler; ///< @trick_units{--} Decides whether to print any debug messages.
 
   private:
    // Do not allow the copy constructor or assignment operator.

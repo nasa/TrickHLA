@@ -19,12 +19,17 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{Attribute.cpp}
+@trick_link_dependency{DebugHandler.cpp}
+@trick_link_dependency{ExecutionConfiguration.cpp}
+@trick_link_dependency{ExecutionConfigurationBase.cpp}
+@trick_link_dependency{ExecutionControl.cpp}
+@trick_link_dependency{Federate.cpp}
+@trick_link_dependency{Int64Interval.cpp}
+@trick_link_dependency{Manager.cpp}
 @trick_link_dependency{Object.cpp}
 @trick_link_dependency{Packing.cpp}
-@trick_link_dependency{Federate.cpp}
-@trick_link_dependency{Manager.cpp}
-@trick_link_dependency{ExecutionConfigurationBase.cpp}
-@trick_link_dependency{ExecutionConfiguration.cpp}
+@trick_link_dependency{Types.cpp}
 
 @revs_title
 @revs_begin
@@ -49,11 +54,14 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/Constants.hh"
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfiguration.hh"
 #include "TrickHLA/ExecutionControl.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/Object.hh"
+#include "TrickHLA/Packing.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
 
@@ -237,7 +245,7 @@ void ExecutionConfiguration::configure()
 */
 void ExecutionConfiguration::pack()
 {
-   if ( TrickHLA::Packing::should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       cout << "===================================================" << endl;
    }
 
@@ -246,7 +254,7 @@ void ExecutionConfiguration::pack()
    // Set the stop/termination time of the Trick simulation based on the
    // run_duration setting.
    if ( terminate_time >= 1.0e20 ) {
-      if ( TrickHLA::Packing::should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
          cout << "TrickHLA::ExecutionConfiguration::pack() Setting simulation termination time to "
               << run_duration << " seconds." << endl;
       }
@@ -259,7 +267,7 @@ void ExecutionConfiguration::pack()
          run_duration = 0.0;
       }
 
-      if ( TrickHLA::Packing::should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
          cout << "TrickHLA::ExecutionConfiguration::pack() Setting simulation duration to "
               << run_duration << " seconds." << endl;
       }
@@ -268,7 +276,7 @@ void ExecutionConfiguration::pack()
    // Encode the run duration into a 64 bit integer in microseconds.
    this->run_duration_microsec = Int64Interval::to_microseconds( this->run_duration );
 
-   if ( TrickHLA::Packing::should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       cout << "TrickHLA::ExecutionConfiguration::pack()" << endl
            << "\tObject-Name:'" << this->object->get_name() << "'" << endl
            << "\towner:'" << ( owner != NULL ? owner : "" ) << "'" << endl
@@ -285,7 +293,7 @@ void ExecutionConfiguration::pack()
 */
 void ExecutionConfiguration::unpack()
 {
-   if ( TrickHLA::Packing::should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       cout << "===================================================" << endl;
    }
 
@@ -295,14 +303,14 @@ void ExecutionConfiguration::unpack()
    // Set the stop/termination time of the Trick simulation based on the
    // run_duration setting.
    if ( run_duration >= 0.0 ) {
-      if ( TrickHLA::Packing::should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
          cout << "TrickHLA::ExecutionConfiguration::unpack() Setting simulation duration to "
               << run_duration << " seconds." << endl;
       }
       exec_set_terminate_time( this->run_duration );
    }
 
-   if ( TrickHLA::Packing::should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       cout << "TrickHLA::ExecutionConfiguration::unpack()" << endl
            << "\tObject-Name:'" << this->object->get_name() << "'" << endl
            << "\towner:'" << ( owner != NULL ? owner : "" ) << "'" << endl
@@ -328,7 +336,7 @@ void ExecutionConfiguration::setup_ref_attributes(
 
 void ExecutionConfiguration::print_execution_configuration()
 {
-   if ( Packing::should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
       msg << endl
           << "=============================================================" << endl

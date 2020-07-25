@@ -19,8 +19,11 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLAModel}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Packing.o}
-@trick_link_dependency{simconfig/src/SimpleSimConfig.o}
+@trick_link_dependency{../source/TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../source/TrickHLA/Int64Interval.cpp}
+@trick_link_dependency{../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{simconfig/src/SimpleSimConfig.cpp}
 
 @revs_title
 @revs_begin
@@ -43,6 +46,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/Constants.hh"
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
@@ -123,7 +127,7 @@ void SimpleSimConfig::initialize(
 
 void SimpleSimConfig::pack()
 {
-   if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
       cout << "===================================================" << endl;
    }
 
@@ -132,7 +136,7 @@ void SimpleSimConfig::pack()
    // Set the stop/termination time of the Trick simulation based on the
    // run_duration setting.
    if ( terminate_time >= 1.0e20 ) {
-      if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
          cout << "SimpleSimConfig::pack() Setting simulation termination time to "
               << run_duration << " seconds." << endl;
       }
@@ -145,7 +149,7 @@ void SimpleSimConfig::pack()
          run_duration = 0.0;
       }
 
-      if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
          cout << "SimpleSimConfig::pack() Setting simulation duration to "
               << run_duration << " seconds." << endl;
       }
@@ -154,7 +158,7 @@ void SimpleSimConfig::pack()
    // Encode the run duration into a 64 bit integer in microseconds.
    this->run_duration_microsec = Int64Interval::to_microseconds( this->run_duration );
 
-   if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
       cout << "SimpleSimConfig::pack()" << endl
            << "\t Object-Name:'" << this->object->get_name() << "'" << endl
            << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'" << endl
@@ -168,7 +172,7 @@ void SimpleSimConfig::pack()
 
 void SimpleSimConfig::unpack()
 {
-   if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
       cout << "===================================================" << endl;
    }
 
@@ -178,14 +182,14 @@ void SimpleSimConfig::unpack()
    // Set the stop/termination time of the Trick simulation based on the
    // run_duration setting.
    if ( run_duration >= 0.0 ) {
-      if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
          cout << "SimpleSimConfig::unpack() Setting simulation duration to "
               << run_duration << " seconds." << endl;
       }
       exec_set_terminate_time( this->run_duration );
    }
 
-   if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
       cout << "SimpleSimConfig::unpack()" << endl
            << "\t Object-Name:'" << this->object->get_name() << "'" << endl
            << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'" << endl

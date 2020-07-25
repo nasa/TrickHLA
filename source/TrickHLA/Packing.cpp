@@ -16,8 +16,9 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{Attribute.cpp}
-@trick_link_dependency{Object.cpp}
 @trick_link_dependency{ExecutionControlBase.cpp}
+@trick_link_dependency{Federate.cpp}
+@trick_link_dependency{Object.cpp}
 @trick_link_dependency{Packing.cpp}
 
 @revs_title
@@ -42,6 +43,7 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
+#include "TrickHLA/Attribute.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Object.hh"
@@ -71,16 +73,6 @@ void Packing::initialize_callback(
    Object *obj )
 {
    this->object = obj;
-}
-
-bool Packing::should_print(
-   const DebugLevelEnum & level,
-   const DebugSourceEnum &code ) const
-{
-   if ( object != NULL ) {
-      return object->should_print( level, code );
-   }
-   return true;
 }
 
 Attribute *Packing::get_attribute(

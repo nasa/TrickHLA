@@ -15,8 +15,10 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{Timeline.cpp}
+@trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{ScenarioTimeline.cpp}
+@trick_link_dependency{SimTimeline.cpp}
+@trick_link_dependency{Timeline.cpp}
 
 @revs_title
 @revs_begin
@@ -34,6 +36,9 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/ScenarioTimeline.hh"
+#include "TrickHLA/Int64Time.hh"
+#include "TrickHLA/SimTimeline.hh"
+#include "TrickHLA/Timeline.hh"
 
 using namespace TrickHLA;
 

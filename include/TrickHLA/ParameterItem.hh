@@ -19,8 +19,8 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/ParameterItem.cpp}
 @trick_link_dependency{../source/TrickHLA/Item.cpp}
+@trick_link_dependency{../source/TrickHLA/ParameterItem.cpp}
 
 @revs_title
 @revs_begin
@@ -37,12 +37,12 @@ NASA, Johnson Space Center\n
 // System includes
 #include <cstddef>
 
-// HLA include files.
-#include "TrickHLA/StandardsSupport.hh"
-#include RTI1516_HEADER
-
 // TrickHLA include files.
 #include "TrickHLA/Item.hh"
+#include "TrickHLA/StandardsSupport.hh"
+
+// HLA include files.
+#include RTI1516_HEADER
 
 namespace TrickHLA
 {

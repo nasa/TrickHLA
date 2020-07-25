@@ -16,9 +16,15 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{../TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../TrickHLA/ExecutionControlBase.cpp}
+@trick_link_dependency{../TrickHLA/Federate.cpp}
+@trick_link_dependency{../TrickHLA/Int64Interval.cpp}
 @trick_link_dependency{../TrickHLA/InteractionHandler.cpp}
+@trick_link_dependency{../TrickHLA/Types.cpp}
 @trick_link_dependency{MTRInteractionHandler.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
+@trick_link_dependency{Types.cpp}
 
 @revs_title
 @revs_begin
@@ -40,23 +46,29 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
+#include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64Interval.hh"
-#include "TrickHLA/Manager.hh"
+#include "TrickHLA/InteractionHandler.hh"
 #include "TrickHLA/StringUtilities.hh"
+#include "TrickHLA/Types.hh"
 
 // SpaceFOM include files.
 #include "SpaceFOM/ExecutionControl.hh"
 #include "SpaceFOM/MTRInteractionHandler.hh"
+#include "SpaceFOM/Types.hh"
 
 using namespace std;
 using namespace SpaceFOM;
+using namespace TrickHLA;
 
 /*!
  * @job_class{initialization}
  */
 MTRInteractionHandler::MTRInteractionHandler(
-   TrickHLA::Federate *fed )
+   Federate *fed )
    : name( NULL ),
      mtr_mode( MTR_UNINITIALIZED ),
      mtr_mode_int( 0 ),
@@ -106,13 +118,13 @@ void MTRInteractionHandler::send_interaction(
 {
    // Make sure that the interaction reference has been set.
    if ( this->interaction == NULL ) {
-      send_hs( stderr, "SpaceFOM::MTRInteractionHandler::send_interaction():%d Unexpected NULL TrickHLA::Interaction.%c",
+      send_hs( stderr, "SpaceFOM::MTRInteractionHandler::send_interaction():%d Unexpected NULL Interaction.%c",
                __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "SpaceFOM::MTRInteractionHandler::send_interaction():%d Unexpected NULL TrickHLA::Interaction." );
+      exec_terminate( __FILE__, "SpaceFOM::MTRInteractionHandler::send_interaction():%d Unexpected NULL Interaction." );
    }
 
    // Get the ExecutionControl object and cast it to an SpaceFOM::ExecutionControl.
-   TrickHLA::ExecutionControlBase *exco_base = interaction->get_federate()->get_execution_control();
+   ExecutionControlBase *exco_base = interaction->get_federate()->get_execution_control();
 
    // Set the requested mode.
    mtr_mode     = mode_request;
@@ -136,13 +148,13 @@ void MTRInteractionHandler::send_interaction(
 
    // Notify the parent interaction handler to send the interaction using
    // Receive Order (RO).
-   bool was_sent = this->TrickHLA::InteractionHandler::send_interaction( user_supplied_tag );
+   bool was_sent = this->InteractionHandler::send_interaction( user_supplied_tag );
 
    if ( was_sent ) {
-      if ( should_print( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_INTERACTION ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
 
          string user_supplied_tag_string;
-         TrickHLA::StringUtilities::to_string( user_supplied_tag_string, user_supplied_tag );
+         StringUtilities::to_string( user_supplied_tag_string, user_supplied_tag );
 
          cout << "++++SENDING++++ MTRInteractionHandler::send_interaction("
               << "Receive Order)" << endl
@@ -156,7 +168,7 @@ void MTRInteractionHandler::send_interaction(
             cout << "  CTE time: " << cte_time << endl;
          }
          cout << "  HLA grant time: " << granted_time << " ("
-              << TrickHLA::Int64Interval::to_microseconds( granted_time ) << " microseconds)" << endl
+              << Int64Interval::to_microseconds( granted_time ) << " microseconds)" << endl
               << "  send_cnt:" << ( send_cnt + 1 ) << endl;
       }
 
@@ -165,7 +177,7 @@ void MTRInteractionHandler::send_interaction(
    } else {
       // Use the inherited debug-handler to allow debug comments to be turned
       // on and off from a setting in the input file. Use a higher debug level.
-      if ( should_print( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_INTERACTION ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
 
          // Get the current time line values.
          scenario_time = this->get_scenario_time();
@@ -184,7 +196,7 @@ void MTRInteractionHandler::send_interaction(
             cout << "  CTE time: " << cte_time << endl;
          }
          cout << "  HLA grant time: " << granted_time << " ("
-              << TrickHLA::Int64Interval::to_microseconds( granted_time ) << " microseconds)" << endl;
+              << Int64Interval::to_microseconds( granted_time ) << " microseconds)" << endl;
       }
    }
 }
@@ -194,14 +206,14 @@ void MTRInteractionHandler::receive_interaction(
 {
    // Make sure that the federate reference has been set.
    if ( this->interaction == NULL ) {
-      send_hs( stderr, "SpaceFOM::MTRInteractionHandler::receive_interaction():%d Unexpected NULL TrickHLA::Interaction.%c",
+      send_hs( stderr, "SpaceFOM::MTRInteractionHandler::receive_interaction():%d Unexpected NULL Interaction.%c",
                __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "SpaceFOM::MTRInteractionHandler::receive_interaction():%d Unexpected NULL TrickHLA::Interaction." );
+      exec_terminate( __FILE__, "SpaceFOM::MTRInteractionHandler::receive_interaction():%d Unexpected NULL Interaction." );
    }
 
    // Get the ExecutionControl object and cast it to an SpaceFOM::ExecutionControl.
-   TrickHLA::ExecutionControlBase *exco_base = interaction->get_federate()->get_execution_control();
-   SpaceFOM::ExecutionControl *    exco      = dynamic_cast< ExecutionControl * >( exco_base );
+   ExecutionControlBase *      exco_base = interaction->get_federate()->get_execution_control();
+   SpaceFOM::ExecutionControl *exco      = dynamic_cast< ExecutionControl * >( exco_base );
    if ( exco == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::receive_interaction():" << __LINE__
@@ -224,7 +236,7 @@ void MTRInteractionHandler::receive_interaction(
 
    // Convert the HLA User Supplied Tag back into a string we can use.
    string user_tag_string;
-   TrickHLA::StringUtilities::to_string( user_tag_string, the_user_supplied_tag );
+   StringUtilities::to_string( user_tag_string, the_user_supplied_tag );
 
    // Get the current time line values.
    this->scenario_time = this->get_scenario_time();
@@ -236,10 +248,10 @@ void MTRInteractionHandler::receive_interaction(
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( should_print( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_INTERACTION ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
 
       string user_supplied_tag_string;
-      TrickHLA::StringUtilities::to_string( user_supplied_tag_string, the_user_supplied_tag );
+      StringUtilities::to_string( user_supplied_tag_string, the_user_supplied_tag );
       cout << "++++RECEIVING++++ SpaceFOM::MTRInteractionHandler::receive_interaction()" << endl
            << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl
            << "  user-supplied-tag: '" << user_supplied_tag_string << "'" << endl
@@ -251,7 +263,7 @@ void MTRInteractionHandler::receive_interaction(
          cout << "  CTE time: " << this->cte_time << endl;
       }
       cout << "  HLA grant time: " << this->granted_time << " ("
-           << TrickHLA::Int64Interval::to_microseconds( this->granted_time ) << " microseconds)" << endl
+           << Int64Interval::to_microseconds( this->granted_time ) << " microseconds)" << endl
            << "  receive_cnt:" << ( receive_cnt + 1 ) << endl;
    }
 

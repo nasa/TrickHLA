@@ -19,13 +19,18 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../source/TrickHLA/Attribute.cpp}
+@trick_link_dependency{../source/TrickHLA/Federate.cpp}
+@trick_link_dependency{../source/TrickHLA/Int64Interval.cpp}
+@trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../source/TrickHLA/LagCompensation.cpp}
 @trick_link_dependency{../source/TrickHLA/Manager.cpp}
 @trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
+@trick_link_dependency{../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../source/TrickHLA/OwnershipHandler.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../source/TrickHLA/Packing.cpp}
 @trick_link_dependency{../source/TrickHLA/ReflectedAttributesQueue.cpp}
+@trick_link_dependency{../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -122,7 +127,8 @@ class Object
 
    bool required; ///< @trick_units{--} Flag indicating object is required at federation start ( default: true )
 
-   bool blocking_cyclic_read; ///< @trick_units{--} True to block in receive_cyclic_data for data to be received.
+   bool blocking_cyclic_read;       ///< @trick_units{--} True to block in receive_cyclic_data for data to be received.
+   bool first_blocking_cyclic_read; ///< @trick_units{--} True to if this is the first call to receive_cyclic_data for data to be received.
 
    int        attr_count; ///< @trick_units{--} Number of object attributes.
    Attribute *attributes; ///< @trick_units{--} Array of object attributes.
@@ -720,12 +726,6 @@ class Object
    /*! @brief Check if federate is shutdown function was called.
     *  @return True if the manager is shutting down the federate. */
    bool is_shutdown_called() const;
-
-   /*! @brief Determine if the verbose debug comments should be printed to the console.
-    *  @return Returns true if the requested message should print level.
-    *  @param level  Debug level of the incoming message.
-    *  @param code   Source code association of the incoming messages. */
-   bool should_print( const DebugLevelEnum &level, const DebugSourceEnum &code ) const;
 
    /*! @brief Create a name value pair set, aka attribute handle value pair,
     * for the attributes that were requested for this object. */

@@ -15,8 +15,9 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{sine/src/SineConditional.o}
-@trick_link_dependency{sine/src/SineData.o}
+@trick_link_dependency{../source/TrickHLA/Attribute.cpp}
+@trick_link_dependency{sine/src/SineConditional.cpp}
+@trick_link_dependency{sine/src/SineData.cpp}
 
 @revs_title
 @revs_begin
@@ -40,6 +41,7 @@ NASA, Johnson Space Center\n
 
 // Model include files.
 #include "../include/SineConditional.hh"
+#include "../include/SineData.hh"
 
 using namespace std;
 using namespace TrickHLA;

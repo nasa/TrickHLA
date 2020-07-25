@@ -28,9 +28,11 @@ execution.
 @python_module{TrickHLA}
 
 @tldh
+@trick_link_dependency{../../source/TrickHLA/Manager.cpp}
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../../source/TrickHLA/Packing.cpp}
 @trick_link_dependency{../../source/TrickHLA/ExecutionConfigurationBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
 
 @revs_title
 @revs_begin

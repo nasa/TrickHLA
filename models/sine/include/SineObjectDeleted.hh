@@ -20,7 +20,8 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLAModel}
 
 @tldh
-@trick_link_dependency{sine/src/SineObjectDeleted.o}
+@trick_link_dependency{../source/TrickHLA/Object.cpp}
+@trick_link_dependency{sine/src/SineObjectDeleted.cpp}
 
 @revs_title
 @revs_begin

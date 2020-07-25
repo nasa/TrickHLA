@@ -19,7 +19,6 @@ NASA, Johnson Space Center\n
 @python_module{IMSim}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/InteractionHandler.cpp}
 @trick_link_dependency{../../source/IMSim/FreezeInteractionHandler.cpp}
 
@@ -39,12 +38,11 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 
-// HLA include files.
-#include "TrickHLA/StandardsSupport.hh"
-#include RTI1516_HEADER
-
 // TrickHLA include files.
 #include "TrickHLA/InteractionHandler.hh"
+
+// HLA include files.
+#include RTI1516_HEADER
 
 namespace IMSim
 {

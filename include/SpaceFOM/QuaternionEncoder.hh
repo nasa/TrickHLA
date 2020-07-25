@@ -19,6 +19,7 @@ NASA, Johnson Space Center\n
 @python_module{SpaceFOM}
 
 @tldh
+@trick_link_dependency{../../source/TrickHLA/OpaqueBuffer.cpp}
 @trick_link_dependency{../../source/SpaceFOM/QuaternionEncoder.cpp}
 
 @revs_title
@@ -31,18 +32,17 @@ NASA, Johnson Space Center\n
 #ifndef _SPACEFOM_QUATERNION_ENCODER_HH_
 #define _SPACEFOM_QUATERNION_ENCODER_HH_
 
-// HLA include files.
-#include "TrickHLA/StandardsSupport.hh"
-#include RTI1516_HEADER
-#include "RTI/encoding/BasicDataElements.h"
-#include "RTI/encoding/HLAfixedArray.h"
-#include "RTI/encoding/HLAfixedRecord.h"
-
 // TrickHLA include files.
 #include "TrickHLA/OpaqueBuffer.hh"
 
 // SpaceFOM include files.
 #include "SpaceFOM/QuaternionData.h"
+
+// HLA include files.
+#include RTI1516_HEADER
+#include "RTI/encoding/BasicDataElements.h"
+#include "RTI/encoding/HLAfixedArray.h"
+#include "RTI/encoding/HLAfixedRecord.h"
 
 // Put this class in the SpaceFOM namespace.
 namespace SpaceFOM

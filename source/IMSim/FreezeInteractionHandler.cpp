@@ -15,8 +15,11 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{../TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../TrickHLA/Federate.cpp}
+@trick_link_dependency{../TrickHLA/Int64Interval.cpp}
 @trick_link_dependency{../TrickHLA/Int64Time.cpp}
-@trick_link_dependency{../TrickHLA/Interaction.cpp}
+@trick_link_dependency{../TrickHLA/Types.cpp}
 @trick_link_dependency{FreezeInteractionHandler.cpp}
 
 @revs_title
@@ -37,10 +40,12 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
+#include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64Interval.hh"
-#include "TrickHLA/Interaction.hh"
-#include "TrickHLA/StringUtilities.hh"
+#include "TrickHLA/Int64Time.hh"
+#include "TrickHLA/Types.hh"
 
 // IMSim include files.
 #include "IMSim/FreezeInteractionHandler.hh"
@@ -138,7 +143,7 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
    /// granted time then we are at the end of the frame that made the TAR call.
    /// The wait for Time Advance Grant will be at the top of the next frame.
    if ( !interaction->get_federate()->is_time_advance_granted() ) {
-      if ( should_print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d Waiting for HLA Time Advance Grant (TAG).%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -163,7 +168,7 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
    if ( late_joining_federate ) {
       interaction_hla_time += lookahead;
 
-      if ( should_print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d \
 Late joining federate, Freeze Interaction will now be sent for HLA time:%lf %c",
                   __LINE__, interaction_hla_time.get_time_in_seconds(), THLA_NEWLINE );
@@ -182,7 +187,7 @@ Late joining federate, Freeze Interaction will now be sent for HLA time:%lf %c",
       // which is one lookahead frame after the freeze interaction goes out.
       freeze_hla_time = interation_time_plus_lookahead.get_time_in_seconds();
 
-      if ( should_print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          // Recalculate the freeze scenario time from the updated freeze HLA time.
          freeze_scenario_time = curr_scenario_time + ( freeze_hla_time - granted.get_time_in_seconds() );
 
@@ -204,7 +209,7 @@ Late joining federate, Freeze Interaction will now be sent for HLA time:%lf %c",
       if ( freeze_hla_time > freeze_t ) {
          freeze_hla_time = freeze_t + lookahead.get_time_in_seconds();
 
-         if ( should_print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+         if ( DebugHandler::print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
             send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():%d \
 Freeze HLA time is not an integer multiple of the lookahead time:%lf, using \
 new freeze HLA time:%lf %c",
@@ -241,7 +246,7 @@ new freeze HLA time:%lf %c",
       // Inform the Federate the scenario time to freeze the simulation on.
       interaction->get_federate()->add_freeze_scenario_time( time );
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction()%d: Federation freeze scenario time:%lf %c",
                   __LINE__, time, THLA_NEWLINE );
       }

@@ -16,9 +16,10 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{SyncPnt.cpp}
+@trick_link_dependency{Federate.cpp}
 @trick_link_dependency{SleepTimeout.cpp}
-@trick_link_dependency{Int64Time.cpp}
+@trick_link_dependency{SyncPnt.cpp}
+@trick_link_dependency{Utilities.cpp}
 
 @revs_title
 @revs_begin

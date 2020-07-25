@@ -20,9 +20,12 @@ NASA, Johnson Space Center\n
 @python_module{DIS}
 
 @tldh
-@trick_link_dependency{../../source/DIS/ExecutionControl.cpp}
 @trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/DIS/ExecutionControl.cpp}
 @trick_link_dependency{../../source/DIS/PausePointList.cpp}
+@trick_link_dependency{../../source/DIS/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -42,6 +45,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/ExecutionControlBase.hh"
+#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Types.hh"
 
 // DIS include files.

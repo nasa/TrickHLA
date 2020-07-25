@@ -19,7 +19,9 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLAModel}
 
 @tldh
-@trick_link_dependency{sine/src/SineInteractionHandler.o}
+@trick_link_dependency{../source/TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{sine/src/SineInteractionHandler.cpp}
 
 @revs_title
 @revs_begin
@@ -42,8 +44,12 @@ NASA, Johnson Space Center\n
 
 // Model include files.
 #include "../include/SineInteractionHandler.hh"
+
+// TrickHLA include files.
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
+#include "TrickHLA/Types.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -118,7 +124,7 @@ void SineInteractionHandler::send_sine_interaction(
 #endif
 
    if ( was_sent ) {
-      if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          string user_supplied_tag_string;
          StringUtilities::to_string( user_supplied_tag_string, user_supplied_tag );
 
@@ -151,7 +157,7 @@ void SineInteractionHandler::send_sine_interaction(
    } else {
       // Use the inherited debug-handler to allow debug comments to be turned
       // on and off from a setting in the input file. Use a higher debug level.
-      if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          // The interaction was Not sent.
          cout << "+-+-NOT SENT-+-+ SineInteractionHandler::send_sine_interaction()" << endl
               << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl;
@@ -170,7 +176,7 @@ void SineInteractionHandler::receive_interaction(
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       cout << "++++RECEIVING++++ SineInteractionHandler::receive_interaction()" << endl
            << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl
            << "  message:'" << ( ( message != NULL ) ? message : "NULL" ) << "'" << endl

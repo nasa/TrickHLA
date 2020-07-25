@@ -24,9 +24,12 @@ NASA, Johnson Space Center\n
 @python_module{SpaceFOM}
 
 @tldh
+@trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
+@trick_link_dependency{../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../source/TrickHLA/Manager.cpp}
 @trick_link_dependency{../../source/TrickHLA/Packing.cpp}
-@trick_link_dependency{../../source/SpaceFOM/SpaceTimeCoordinateEncoder.cpp}
 @trick_link_dependency{../../source/SpaceFOM/RefFrameBase.cpp}
+@trick_link_dependency{../../source/SpaceFOM/SpaceTimeCoordinateEncoder.cpp}
 
 @revs_title
 @revs_begin

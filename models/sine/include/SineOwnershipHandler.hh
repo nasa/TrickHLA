@@ -19,7 +19,9 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLAModel}
 
 @tldh
-@trick_link_dependency{sine/src/SineOwnershipHandler.o}
+@trick_link_dependency{../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../source/TrickHLA/OwnershipHandler.cpp}
+@trick_link_dependency{sine/src/SineOwnershipHandler.cpp}
 
 @revs_title
 @revs_begin

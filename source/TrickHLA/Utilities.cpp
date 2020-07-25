@@ -15,6 +15,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{Types.cpp}
 @trick_link_dependency{Utilities.cpp}
 
 @revs_title
@@ -33,6 +34,7 @@ NASA, Johnson Space Center\n
 #include "trick/trick_byteswap.h"
 
 // TrickHLA include files.
+#include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 #include "TrickHLA/Version.hh"
 
@@ -50,7 +52,8 @@ bool Utilities::is_transmission_byteswap(
    const char endianness = Utilities::get_endianness();
 
    // Check encoding versus Endianness to determine if we need to byteswap.
-   return ( ( ( rti_encoding == ENCODING_BIG_ENDIAN ) && ( endianness == TRICK_LITTLE_ENDIAN ) ) || ( ( rti_encoding == ENCODING_LITTLE_ENDIAN ) && ( endianness == TRICK_BIG_ENDIAN ) ) );
+   return ( ( ( rti_encoding == ENCODING_BIG_ENDIAN ) && ( endianness == TRICK_LITTLE_ENDIAN ) )
+            || ( ( rti_encoding == ENCODING_LITTLE_ENDIAN ) && ( endianness == TRICK_BIG_ENDIAN ) ) );
 }
 
 short Utilities::byteswap_short(

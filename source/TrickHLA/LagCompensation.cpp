@@ -15,13 +15,13 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{Types.cpp}
-@trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Attribute.cpp}
-@trick_link_dependency{Object.cpp}
+@trick_link_dependency{ExecutionControlBase.cpp}
+@trick_link_dependency{Federate.cpp}
 @trick_link_dependency{Int64Interval.cpp}
 @trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{LagCompensation.cpp}
+@trick_link_dependency{Object.cpp}
 
 @revs_title
 @revs_begin
@@ -42,10 +42,12 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
+#include "TrickHLA/Attribute.hh"
 #include "TrickHLA/Constants.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64Interval.hh"
+#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/LagCompensation.hh"
 #include "TrickHLA/Object.hh"
 
@@ -59,16 +61,6 @@ void LagCompensation::initialize_callback(
    Object *obj )
 {
    this->object = obj;
-}
-
-bool LagCompensation::should_print(
-   const DebugLevelEnum & level,
-   const DebugSourceEnum &code ) const
-{
-   if ( object != NULL ) {
-      return object->should_print( level, code );
-   }
-   return true;
 }
 
 void LagCompensation::send_lag_compensation()

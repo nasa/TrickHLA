@@ -21,7 +21,13 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/Interaction.cpp}
+@trick_link_dependency{../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/SpaceFOM/ExecutionConfiguration.cpp}
 @trick_link_dependency{../../source/SpaceFOM/ExecutionControl.cpp}
+@trick_link_dependency{../../source/SpaceFOM/MTRInteractionHandler.cpp}
+@trick_link_dependency{../../source/SpaceFOM/RefFrameBase.cpp}
+@trick_link_dependency{../../source/SpaceFOM/Types.cpp}
 
 @revs_title
 @revs_begin

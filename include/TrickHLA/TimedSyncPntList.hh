@@ -22,7 +22,6 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
-@trick_link_dependency{../source/TrickHLA/SyncPnt.cpp}
 @trick_link_dependency{../source/TrickHLA/SyncPntListBase.cpp}
 @trick_link_dependency{../source/TrickHLA/TimedSyncPntList.cpp}
 
@@ -42,16 +41,13 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 
-// HLA include files.
-#include "TrickHLA/StandardsSupport.hh"
-#include RTI1516_HEADER
-
 // TrickHLA include files.
-#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Int64Time.hh"
-#include "TrickHLA/LoggableTimedSyncPnt.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/SyncPntListBase.hh"
-#include "TrickHLA/TimedSyncPnt.hh"
+
+// HLA include files.
+#include RTI1516_HEADER
 
 namespace TrickHLA
 {

@@ -21,7 +21,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../source/TrickHLA/SyncPnt.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -38,7 +38,6 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
-#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/LoggableSyncPnt.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"

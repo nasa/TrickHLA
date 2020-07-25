@@ -36,10 +36,11 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
+#include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/Item.hh"
 #include "TrickHLA/ItemQueue.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
-#include "TrickHLA/Utilities.hh"
 
 //using namespace std;
 using namespace TrickHLA;

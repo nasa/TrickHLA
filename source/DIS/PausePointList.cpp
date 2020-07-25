@@ -19,8 +19,10 @@ NASA, Johnson Space Center\n
 @python_module{DIS}
 
 @tldh
-@trick_link_dependency{Int64Time.cpp}
+@trick_link_dependency{../TrickHLA/SyncPnt.cpp}
+@trick_link_dependency{../TrickHLA/TimedSyncPnt.cpp}
 @trick_link_dependency{PausePointList.cpp}
+@trick_link_dependency{Types.cpp}
 
 @revs_title
 @revs_begin
@@ -42,9 +44,12 @@ NASA, Johnson Space Center\n
 
 // HLA include files.
 #include "TrickHLA/StringUtilities.hh"
+#include "TrickHLA/SyncPnt.hh"
+#include "TrickHLA/TimedSyncPnt.hh"
 
 // IMSim include files.
 #include "DIS/PausePointList.hh"
+#include "DIS/Types.hh"
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
@@ -68,7 +73,9 @@ bool PausePointList::clear_sync_pnt(
       vector< SyncPnt * >::iterator i;
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
          SyncPnt *sp = ( *i );
-         if ( ( sp != NULL ) && ( sp->get_state() == SYNC_PNT_STATE_ACHIEVED ) && ( label.compare( sp->get_label() ) == 0 ) ) {
+         if ( ( sp != NULL )
+              && ( sp->get_state() == SYNC_PNT_STATE_ACHIEVED )
+              && ( label.compare( sp->get_label() ) == 0 ) ) {
 
             if ( sp->get_label().find( L"stop", 0 ) == 0 ) {
                this->state = PAUSE_POINT_STATE_EXIT;

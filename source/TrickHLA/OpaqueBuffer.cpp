@@ -20,6 +20,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{OpaqueBuffer.cpp}
+@trick_link_dependency{Utilities.cpp}
 
 @revs_title
 @revs_begin

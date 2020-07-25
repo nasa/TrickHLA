@@ -16,8 +16,8 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{Conditional.cpp}
 @trick_link_dependency{Attribute.cpp}
+@trick_link_dependency{Conditional.cpp}
 
 @revs_title
 @revs_begin

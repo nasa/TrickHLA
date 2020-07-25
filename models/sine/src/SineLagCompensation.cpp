@@ -15,8 +15,9 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/LagCompensation.o}
-@trick_link_dependency{sine/src/SineLagCompensation.o}
+@trick_link_dependency{../source/TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{sine/src/SineLagCompensation.cpp}
 
 @revs_title
 @revs_begin
@@ -35,6 +36,10 @@ NASA, Johnson Space Center\n
 #include "trick/exec_proto.h"
 #include "trick/message_proto.h" // for send_hs
 #include "trick/trick_math.h"
+
+// TrickHLA include files.
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/Types.hh"
 
 // Model include files.
 #include "../include/SineData.hh"
@@ -113,7 +118,7 @@ void SineLagCompensation::send_lag_compensation()
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( should_print( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       cout << "******* SineLagCompensation::send_lag_compensation()" << endl
            << " scenario-time:" << get_scenario_time() << endl
            << "     data-time:" << sim_data->get_time() << endl
@@ -144,7 +149,7 @@ void SineLagCompensation::receive_lag_compensation()
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( should_print( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       cout << "******* SineLagCompensation::receive_lag_compensation()" << endl
            << " scenario-time:" << get_scenario_time() << endl
            << "     data-time:" << lag_comp_data->get_time() << endl
@@ -193,7 +198,7 @@ void SineLagCompensation::receive_lag_compensation()
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( should_print( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       cout << "SineLagCompensation::receive_lag_compensation() AFTER LAG COMPENSATION:" << endl
            << "\t Time \tsim_data: " << sim_data->get_time() << endl
            << "\t Value \tsim_data: " << sim_data->get_value() << endl
