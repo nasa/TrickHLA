@@ -309,24 +309,18 @@ Federate::~Federate()
 void Federate::print_version() const
 {
    if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      string rti_name, rti_version;
-
-#if defined( UNSUPPORTED_RTI_NAME_API )
-      rti_name = RTI_NAME;
-#else
+      string rti_name;
       StringUtilities::to_string( rti_name, RTI1516_NAMESPACE::rtiName() );
-#endif
-
-#if defined( UNSUPPORTED_RTI_VERSION_API )
-      rti_version = RTI_VERSION;
-#else
+      string rti_version;
       StringUtilities::to_string( rti_version, RTI1516_NAMESPACE::rtiVersion() );
-#endif
 
-      send_hs( stdout, "Federate::print_version():%d\n   TrickHLA-version:'%s'\n   TrickHLA-release-date:'%s'\n   RTI-name:'%s'\n   RTI-version:'%s'%c",
-               __LINE__, Utilities::get_version().c_str(),
-               Utilities::get_release_date().c_str(),
-               rti_name.c_str(), rti_version.c_str(), THLA_NEWLINE );
+      ostringstream msg;
+      msg << "Federate::print_version()::" << __LINE__ << endl
+          << "     TrickHLA-version:'" << Utilities::get_version() << "'" << endl
+          << "TrickHLA-release-date:'" << Utilities::get_release_date() << "'" << endl
+          << "             RTI-name:'" << rti_name << "'" << endl
+          << "          RTI-version:'" << rti_version << "'" << endl;
+      send_hs( stdout, (char *)msg.str().c_str() );
    }
 }
 
@@ -390,17 +384,10 @@ void Federate::setup(
    this->execution_control->setup( *this, *( this->manager ) );
 }
 
-/*!
- * \par<b>Assumptions and Limitations:</b>
- * - The TrickHLA::FedAmb class is actually an abstract class.  Therefore,
- * the actual object instance being passed in is an instantiable polymorphic
- * child of the RTI1516_NAMESPACE::FederateAmbassador class.
- * @job_class{initialization}
- */
-void Federate::initialize()
+/*! @brief Initialization the debug settings, print the version and apply
+ * the FPU control word fix. */
+void Federate::initialize_debug()
 {
-   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
    // Verify the debug level is correct just in case the user specifies it in
    // the input file as an integer instead of using the ENUM values...
    if ( ( this->debug_level < DEBUG_LEVEL_NO_TRACE ) || ( this->debug_level > DEBUG_LEVEL_FULL_TRACE ) ) {
@@ -425,6 +412,22 @@ the documented ENUM values.%c",
 
    // Print the current TrickHLA version string.
    print_version();
+
+   // Check and fix the FPU Control Word as a job that runs just after
+   // the Input Processor runs.
+   fix_FPU_control_word();
+}
+
+/*!
+ * \par<b>Assumptions and Limitations:</b>
+ * - The TrickHLA::FedAmb class is actually an abstract class.  Therefore,
+ * the actual object instance being passed in is an instantiable polymorphic
+ * child of the RTI1516_NAMESPACE::FederateAmbassador class.
+ * @job_class{initialization}
+ */
+void Federate::initialize()
+{
+   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    // Make sure the federate name has been specified.
    if ( ( name == NULL ) || ( *name == '\0' ) ) {

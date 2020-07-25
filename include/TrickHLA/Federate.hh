@@ -169,6 +169,9 @@ class Federate
                Manager &             federate_manager,
                ExecutionControlBase &federate_execution_control );
 
+   /*! @brief Initialization the debug settings. */
+   void initialize_debug();
+
    /*! @brief Composite initialization routine for an object instance of a Federate class. */
    void initialize();
 

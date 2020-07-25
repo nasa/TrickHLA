@@ -87,9 +87,9 @@ class IMSimSimObject : public Trick::SimObject {
       //-- INITIALIZATION JOBS --
       //-------------------------
 
-      // Check and fix the FPU Control Word as a job that runs just after
-      // the Input Processor runs.
-      P1 ("initialization") federate.fix_FPU_control_word();
+      // Initialize the debug settings just after the Input Processor runs as
+      // the first job so the debug settings are available and valid.
+      P1 ("initialization") federate.initialize_debug();
 
       P_INIT ("initialization") federate.initialize( federate_amb );
       
