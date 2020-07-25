@@ -15,16 +15,15 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{Int64Time.cpp}
-@trick_link_dependency{Timeline.cpp}
-@trick_link_dependency{SimTimeline.cpp}
-@trick_link_dependency{ScenarioTimeline.cpp}
-@trick_link_dependency{CTETimelineBase.cpp}
+@trick_link_dependency{DebugHandler.cpp}
+@trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{FedAmb.cpp}
 @trick_link_dependency{Federate.cpp}
+@trick_link_dependency{Int64Interval.cpp}
 @trick_link_dependency{Manager.cpp}
 @trick_link_dependency{SleepTimeout.cpp}
-@trick_link_dependency{ExecutionControlBase.cpp}
+@trick_link_dependency{Types.cpp}
+@trick_link_dependency{Utilities.cpp}
 
 @revs_title
 @revs_begin
@@ -67,18 +66,14 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/ExecutionConfigurationBase.hh"
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/FedAmb.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Manager.hh"
-#include "TrickHLA/OwnershipItem.hh"
-#include "TrickHLA/ScenarioTimeline.hh"
-#include "TrickHLA/SimTimeline.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StringUtilities.hh"
-#include "TrickHLA/TimeOfDayTimeline.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 
@@ -311,7 +306,7 @@ Federate::~Federate()
  */
 void Federate::print_version() const
 {
-   if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       string rti_name, rti_version;
 
 #if defined( UNSUPPORTED_RTI_NAME_API )
@@ -331,16 +326,6 @@ void Federate::print_version() const
                Utilities::get_release_date().c_str(),
                rti_name.c_str(), rti_version.c_str(), THLA_NEWLINE );
    }
-}
-
-bool Federate::should_print(
-   const DebugLevelEnum & level,
-   const DebugSourceEnum &code ) const
-{
-   if ( federate_ambassador != NULL ) {
-      return federate_ambassador->should_print( level, code );
-   }
-   return true;
 }
 
 /*!
@@ -430,7 +415,7 @@ void Federate::initialize()
       type = TMM_strdup( name );
    }
 
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::initialize():%d Federate:\"%s\" Type:\"%s\"%c",
                __LINE__, name, type, THLA_NEWLINE );
    }
@@ -468,9 +453,6 @@ void Federate::initialize()
       return;
    }
 
-   // Make sure we pass along the debug settings the user specified.
-   execution_control->set_debug_level( manager->debug_handler );
-
    // Initialize the TrickHLA::ExecutionControl object instance.
    execution_control->initialize();
 
@@ -485,7 +467,7 @@ void Federate::initialize()
  */
 void Federate::restart_initialization()
 {
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::restart_initialization():%d %c",
                __LINE__, THLA_NEWLINE );
    }
@@ -606,7 +588,7 @@ void Federate::pre_multiphase_initialization()
    execution_control->pre_multi_phase_init_processes();
 
    // Debug printout.
-   if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::pre_multiphase_initialization():%d\n     Completed pre-multiphase initialization...%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -638,7 +620,7 @@ void Federate::post_multiphase_initialization()
    execution_control->post_multi_phase_init_processes();
 
    // Debug printout.
-   if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::post_multiphase_initialization():%d\n     Simulation has started and is now running...%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -676,7 +658,7 @@ void Federate::create_RTI_ambassador_and_connect()
 
    // For HLA-Evolved, the user can set a vendor specific local settings for
    // the connect() API.
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       if ( ( local_settings == NULL ) || ( *local_settings == '\0' ) ) {
          ostringstream msg;
          msg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
@@ -887,7 +869,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
          joined_federate_names.push_back( federate_name_ws );
       }
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string id_str;
          StringUtilities::to_string( id_str, id );
          send_hs( stdout, "Federate::set_MOM_HLAfederate_instance_attributes():%d Federate OID:%s name:'%ls' size:%d %c",
@@ -1009,7 +991,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       // Add this FederateHandle to the set of joined federates.
       joined_federate_handles.insert( tHandle );
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string id_str, fed_id;
          StringUtilities::to_string( id_str, id );
          StringUtilities::to_string( fed_id, tHandle );
@@ -1069,7 +1051,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
          }
       }
    } else {
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string id_str;
          StringUtilities::to_string( id_str, id );
          send_hs( stdout, "Federate::set_MOM_HLAfederate_instance_attributes():%d FederateHandle Not found for Federate OID:%s %c",
@@ -1094,7 +1076,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
    wstring fed_mom_instance_name_ws = L"";
 
    ostringstream summary;
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       summary << "Federate::set_all_federate_MOM_instance_handles_by_name():" << __LINE__;
    }
 
@@ -1117,7 +1099,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
             // Add the federate instance handle.
             add_federate_instance_id( fed_mom_obj_instance_hdl );
 
-            if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+            if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
                string id_str;
                StringUtilities::to_string( id_str, fed_mom_obj_instance_hdl );
                summary << "\n    Federate:'" << known_feds[i].name
@@ -1130,7 +1112,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          summary << THLA_ENDL;
          send_hs( stdout, (char *)summary.str().c_str() );
       }
@@ -1146,7 +1128,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          summary << THLA_ENDL;
          send_hs( stdout, (char *)summary.str().c_str() );
       }
@@ -1161,7 +1143,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          summary << THLA_ENDL;
          send_hs( stdout, (char *)summary.str().c_str() );
       }
@@ -1176,7 +1158,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          summary << THLA_ENDL;
          send_hs( stdout, (char *)summary.str().c_str() );
       }
@@ -1194,7 +1176,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          summary << THLA_ENDL;
          send_hs( stdout, (char *)summary.str().c_str() );
       }
@@ -1212,7 +1194,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       summary << THLA_ENDL;
       send_hs( stdout, (char *)summary.str().c_str() );
    }
@@ -1346,7 +1328,7 @@ string Federate::wait_for_required_federates_to_join()
 
    // If the known Federates list is disabled then just return.
    if ( !enable_known_feds ) {
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::wait_for_required_federates_to_join():%d Check for required Federates DISABLED.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -1363,7 +1345,7 @@ string Federate::wait_for_required_federates_to_join()
 
    // If we don't have any required Federates then return.
    if ( requiredFedsCount == 0 ) {
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::wait_for_required_federates_to_join():%d NO REQUIRED FEDERATES!!!%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -1374,7 +1356,7 @@ string Federate::wait_for_required_federates_to_join()
    joined_federate_handles.clear();
 
    // Create a summary of the required federates.
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream required_fed_summary;
       required_fed_summary << "Federate::wait_for_required_federates_to_join():"
                            << __LINE__ << "\nWAITING FOR " << requiredFedsCount
@@ -1440,7 +1422,7 @@ string Federate::wait_for_required_federates_to_join()
                StringUtilities::to_string( fedname,
                                            joined_federate_names[i] );
                if ( restore_is_imminent ) {
-                  if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+                  if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
                      send_hs( stdout, "Federate::wait_for_required_federates_to_join():%d Found an UNREQUIRED federate %s!%c",
                               __LINE__, fedname.c_str(), THLA_NEWLINE );
                   }
@@ -1455,7 +1437,7 @@ string Federate::wait_for_required_federates_to_join()
          }
 
          // Print out a list of the Joined Federates.
-         if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             // Build the federate summary as an output string stream.
             ostringstream summary;
             unsigned int  cnt = 0;
@@ -1572,7 +1554,7 @@ string Federate::wait_for_required_federates_to_join()
    // instance handles for the MOM object associated with each federate.
    determine_federate_MOM_object_instance_names();
 
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_for_required_federates_to_join():%d FOUND ALL REQUIRED FEDERATES!!!%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -1588,7 +1570,7 @@ void Federate::initialize_MOM_handles()
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::initialize_MOM_handles():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -1872,7 +1854,7 @@ void Federate::subscribe_attributes(
    ObjectClassHandle         class_handle,
    AttributeHandleSet const &attribute_list )
 {
-   if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::subscribe_attributes():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -1931,7 +1913,7 @@ void Federate::unsubscribe_attributes(
    ObjectClassHandle         class_handle,
    AttributeHandleSet const &attribute_list )
 {
-   if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::unsubscribe_attributes():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -1986,7 +1968,7 @@ void Federate::request_attribute_update(
    ObjectClassHandle         class_handle,
    AttributeHandleSet const &attribute_list )
 {
-   if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::request_attribute_update():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -2042,7 +2024,7 @@ void Federate::request_attribute_update(
 
 void Federate::ask_MOM_for_federate_names()
 {
-   if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::ask_MOM_for_federate_names():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -2065,7 +2047,7 @@ void Federate::ask_MOM_for_federate_names()
 
 void Federate::unsubscribe_all_HLAfederate_class_attributes_from_MOM()
 {
-   if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::unsubscribe_all_HLAfederate_class_attributes_from_MOM():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -2104,7 +2086,7 @@ void Federate::unsubscribe_all_HLAfederate_class_attributes_from_MOM()
 
 void Federate::unsubscribe_all_HLAfederation_class_attributes_from_MOM()
 {
-   if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::unsubscribe_all_HLAfederation_class_attributes_from_MOM():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -2143,7 +2125,7 @@ void Federate::unsubscribe_all_HLAfederation_class_attributes_from_MOM()
 void Federate::publish_interaction_class(
    RTI1516_NAMESPACE::InteractionClassHandle class_handle )
 {
-   if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::publish_interaction_class():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -2181,7 +2163,7 @@ void Federate::publish_interaction_class(
 void Federate::unpublish_interaction_class(
    RTI1516_NAMESPACE::InteractionClassHandle class_handle )
 {
-   if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::unpublish_interaction_class():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -2296,7 +2278,7 @@ void Federate::register_generic_sync_point(
          RTI_ambassador->registerFederationSynchronizationPoint( label, RTI1516_USERDATA( buf, 8 ) );
       }
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stderr, "Federate::register_generic_sync_point():%d Registered '%ls' synchronization point with RTI.%c",
                   __LINE__, label.c_str(), THLA_NEWLINE );
       }
@@ -2330,7 +2312,7 @@ void Federate::register_generic_sync_point(
 void Federate::achieve_and_wait_for_synchronization(
    wstring const &label )
 {
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::achieve_and_wait_for_synchronization():%d Label:'%ls'%c",
                __LINE__, label.c_str(), THLA_NEWLINE );
    }
@@ -2397,7 +2379,7 @@ void Federate::achieve_and_wait_for_synchronization(
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    }
 
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       execution_control->print_sync_pnts();
    }
 }
@@ -2405,7 +2387,7 @@ void Federate::achieve_and_wait_for_synchronization(
 void Federate::achieve_synchronization_point(
    wstring const &label )
 {
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::achieve_synchronization_point():%d Label:'%ls'%c",
                __LINE__, label.c_str(), THLA_NEWLINE );
    }
@@ -2547,7 +2529,7 @@ void Federate::enter_freeze()
  */
 void Federate::exit_freeze()
 {
-   if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::exit_freeze():%d announce_freeze:%s, freeze_federation:%s%c",
                __LINE__, ( announce_freeze ? "Yes" : "No" ),
                ( freeze_the_federation ? "Yes" : "No" ), THLA_NEWLINE );
@@ -2571,7 +2553,7 @@ void Federate::check_freeze()
 
    SIM_MODE exec_mode = exec_get_mode();
    if ( exec_mode == Initialization ) {
-      if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::check_freeze():%d Pass first Time.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -2580,7 +2562,7 @@ void Federate::check_freeze()
    // We should only check for freeze if we are in Freeze mode. If we are not
    // in Freeze mode then return to avoid running the code below more than once.
    if ( exec_mode != Freeze ) {
-      if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::check_freeze():%d not in Freeze mode so returning.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -2625,7 +2607,7 @@ void Federate::perform_checkpoint()
    if ( this->start_to_save || force_checkpoint ) {
       // If I announced the save, sim control panel was clicked and invokes the checkpoint
       if ( !announce_save ) {
-         if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             send_hs( stdout, "Federate::perform_checkpoint():%d Federate Save Started %c",
                      __LINE__, THLA_NEWLINE );
          }
@@ -2643,7 +2625,7 @@ void Federate::perform_checkpoint()
          // calls setup_checkpoint first
          checkpoint( str_save_label.c_str() );
       }
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::perform_checkpoint():%d Checkpoint Dump Completed.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -2678,7 +2660,7 @@ void Federate::setup_checkpoint()
       return;
    }
 
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::setup_checkpoint():%d Federate Save Pre-checkpoint %c",
                __LINE__, THLA_NEWLINE );
    }
@@ -2822,7 +2804,7 @@ void Federate::post_checkpoint()
       TRICKHLA_SAVE_FPU_CONTROL_WORD;
       try {
          RTI_ambassador->federateSaveComplete();
-         if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             send_hs( stdout, "Federate::post_checkpoint():%d Federate Save Completed.%c",
                      __LINE__, THLA_NEWLINE );
          }
@@ -2849,7 +2831,7 @@ void Federate::post_checkpoint()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
    } else {
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::post_checkpoint():%d Federate Save Already Completed.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -2872,7 +2854,7 @@ void Federate::perform_restore()
    if ( this->start_to_restore ) {
       // if I announced the restore, sim control panel was clicked and invokes the load
       if ( !this->announce_restore ) {
-         if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             send_hs( stdout, "Federate::perform_restore():%d Federate Restore Started.%c",
                      __LINE__, THLA_NEWLINE );
          }
@@ -2901,7 +2883,7 @@ void Federate::perform_restore()
          //exec_freeze();
       }
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::perform_restore():%d Checkpoint Load Completed.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -2928,7 +2910,7 @@ void Federate::setup_restore()
       return;
    }
 
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::setup_restore():%d Federate Restore Pre-load.%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -3041,7 +3023,7 @@ void Federate::post_restore()
          exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
       }
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::post_restore():%d Federation Restore Completed.%c",
                   __LINE__, THLA_NEWLINE );
          send_hs( stdout, "Federate::post_restore():%d Rebuilding HLA Handles.%c",
@@ -3103,12 +3085,12 @@ void Federate::post_restore()
 
       federation_restored();
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::post_restore():%d Federate Restart Completed.%c",
                   __LINE__, THLA_NEWLINE );
       }
    } else {
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::post_restore():%d Federate Restore Already Completed.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -3191,7 +3173,7 @@ void Federate::time_advance_request_to_GALT()
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::time_advance_request_to_GALT():%d Logical Time:%lf%c",
                __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
    }
@@ -3251,7 +3233,7 @@ void Federate::time_advance_request_to_GALT_LCTS_multiple()
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::time_advance_request_to_GALT_LCTS_multiple():%d Logical Time:%lf%c",
                __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
    }
@@ -3277,7 +3259,7 @@ void Federate::create_federation()
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    }
 
-   if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::create_federation():%d Attempting to create Federation '%s'%c",
                __LINE__, get_federation_name(), THLA_NEWLINE );
    }
@@ -3321,7 +3303,7 @@ void Federate::create_federation()
       this->federation_created_by_federate = true;
       this->federation_exists              = true;
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::create_federation():%d Created Federation '%s'%c",
                   __LINE__, get_federation_name(), THLA_NEWLINE );
       }
@@ -3332,7 +3314,7 @@ void Federate::create_federation()
       // thing they do.
       this->federation_exists = true;
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::create_federation():%d Federation already exists for '%s'%c",
                   __LINE__, get_federation_name(), THLA_NEWLINE );
       }
@@ -3458,7 +3440,7 @@ void Federate::join_federation(
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    }
    if ( this->federation_joined ) {
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          ostringstream errmsg;
          errmsg << "Federate::join_federation():" << __LINE__
                 << " Federation '" << get_federation_name()
@@ -3498,7 +3480,7 @@ void Federate::join_federation(
    // so we won't worry about it here (best to make the names
    // unique if you do save/restore unless you understand how save/restore
    // will use the information.
-   if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::join_federation():%d Attempting to Join Federation '%s'%c",
                __LINE__, get_federation_name(), THLA_NEWLINE );
    }
@@ -3520,7 +3502,7 @@ void Federate::join_federation(
 
       this->federation_joined = true;
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string id_str;
          StringUtilities::to_string( id_str, federate_id );
 
@@ -3660,7 +3642,7 @@ void Federate::join_federation(
 void Federate::create_and_join_federation()
 {
    if ( this->federation_joined ) {
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          ostringstream errmsg;
          errmsg << "Federate::create_and_join_federation():" << __LINE__
                 << " Federation \"" << get_federation_name()
@@ -3715,7 +3697,7 @@ void Federate::enable_async_delivery()
    }
 
    try {
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::enable_async_delivery():%d Enabling Asynchronous Delivery %c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -3833,7 +3815,7 @@ void Federate::setup_time_management()
       this->time_management = false;
    }
 
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::setup_time_management():%d time_management:%s time_constrained:%s time_regulating:%s %c",
                __LINE__,
                ( time_management ? "Yes" : "No" ),
@@ -3896,7 +3878,7 @@ void Federate::setup_time_constrained()
    }
 
    try {
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::setup_time_constrained()%d \"%s\": ENABLING TIME CONSTRAINED %c",
                   __LINE__, get_federation_name(), THLA_NEWLINE );
       }
@@ -4048,7 +4030,7 @@ void Federate::setup_time_regulation()
    }
 
    try {
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::setup_time_regulation():%d \"%s\": ENABLING TIME REGULATION WITH LOOKAHEAD = %G seconds.%c",
                   __LINE__, get_federation_name(), lookahead.get_time_in_seconds(), THLA_NEWLINE );
       }
@@ -4207,7 +4189,7 @@ void Federate::time_advance_request()
 
    // Do not ask for a time advance on an initialization pass.
    if ( exec_get_mode() == Initialization ) {
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::time_advance_request():%d exec_init_pass() == true so returning.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -4255,7 +4237,7 @@ void Federate::perform_time_advance_request()
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
 
-      if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::perform_time_advance_request():%d Time Advance Request (TAR) to %.12G seconds.%c",
                   __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
       }
@@ -4361,14 +4343,14 @@ void Federate::wait_for_time_advance_grant()
 
    // Do not ask for a time advance on an initialization pass.
    if ( exec_get_mode() == Initialization ) {
-      if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::wait_for_time_advance_grant():%d In Initialization mode so returning.%c",
                   __LINE__, THLA_NEWLINE );
       }
       return;
    }
 
-   if ( should_print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_for_time_advance_grant():%d Waiting for Time Advance Grant (TAG) to %.12G seconds.%c",
                __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
    }
@@ -4388,7 +4370,7 @@ void Federate::wait_for_time_advance_grant()
          if ( !this->time_adv_grant && sleep_timer.timeout() ) {
             sleep_timer.reset();
             if ( is_execution_member() ) {
-               if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+               if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
                   send_hs( stdout, "Federate::wait_for_time_advance_grant():%d Still Execution Member.%c",
                            __LINE__, THLA_NEWLINE );
                }
@@ -4412,7 +4394,7 @@ void Federate::wait_for_time_advance_grant()
    this->HLA_time = get_granted_time();
 
    // Add the line number for a higher trace level.
-   if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_for_time_advance_grant():%d Time Advance Grant (TAG) to %.12G seconds.%c",
                __LINE__, HLA_time, THLA_NEWLINE );
    }
@@ -4435,14 +4417,14 @@ void Federate::wait_for_time_advance_grant(
 
    // Do not ask for a time advance on an initialization pass.
    if ( exec_get_mode() == Initialization ) {
-      if ( should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::wait_for_time_advance_grant():%d N/A because in Initialization mode.%c",
                   __LINE__, THLA_NEWLINE );
       }
       return;
    }
 
-   if ( should_print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_for_time_advance_grant():%d Waiting for Time Advance Grant (TAG) to %.12G seconds.%c",
                __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
    }
@@ -4468,7 +4450,7 @@ void Federate::wait_for_time_advance_grant(
    this->HLA_time = get_granted_time();
 
    // Add the line number for a higher trace level.
-   if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_for_time_advance_grant():%d Time Advance Grant (TAG) to %.12G seconds.%c",
                __LINE__, HLA_time, THLA_NEWLINE );
    }
@@ -4509,7 +4491,7 @@ void Federate::shutdown()
    if ( !is_shutdown_called() ) {
       this->shutdown_called = true;
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::shutdown():%d %c", __LINE__, THLA_NEWLINE );
       }
 
@@ -4587,7 +4569,7 @@ void Federate::shutdown_time_management()
 void Federate::shutdown_time_constrained()
 {
    if ( !this->time_constrained_state ) {
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::shutdown_time_constrained():%d HLA Time Constrained Already Disabled.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -4600,7 +4582,7 @@ void Federate::shutdown_time_constrained()
          return;
       }
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::shutdown_time_constrained():%d Disabling HLA Time Constrained.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -4648,7 +4630,7 @@ void Federate::shutdown_time_constrained()
 void Federate::shutdown_time_regulating()
 {
    if ( !this->time_regulating_state ) {
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::shutdown_time_regulating():%d HLA Time Regulation Already Disabled.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -4661,7 +4643,7 @@ void Federate::shutdown_time_regulating()
          return;
       }
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::shutdown_time_regulating():%d Disabling HLA Time Regulation.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -4725,7 +4707,7 @@ void Federate::resign()
    // federate registered) and to release ownership of any attributes that
    // this federate owns but does not own the privilegeToDelete for.
    try {
-      if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::resign():%d Attempting to resign from Federation '%s'%c",
                   __LINE__, get_federation_name(), THLA_NEWLINE );
       }
@@ -4735,7 +4717,7 @@ void Federate::resign()
 
          this->federation_joined = false;
 
-         if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             send_hs( stdout, "Federate::resign():%d Resigned from Federation '%s'%c",
                      __LINE__, get_federation_name(), THLA_NEWLINE );
          }
@@ -4887,7 +4869,7 @@ void Federate::resign_so_we_can_rejoin()
    }
 
    try {
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::resign_so_we_can_rejoin():%d \
 Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federation)%c",
                   __LINE__, get_federation_name(), THLA_NEWLINE );
@@ -5048,7 +5030,7 @@ void Federate::destroy()
    StringUtilities::to_wstring( federation_name_ws, federation_name );
 
    try {
-      if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::destroy():%d Attempting to Destroy Federation '%s'%c",
                   __LINE__, get_federation_name(), THLA_NEWLINE );
       }
@@ -5058,7 +5040,7 @@ void Federate::destroy()
       this->federation_exists = false;
       this->federation_joined = false;
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::destroy():%d Destroyed Federation '%s'%c",
                   __LINE__, get_federation_name(), THLA_NEWLINE );
       }
@@ -5072,7 +5054,7 @@ void Federate::destroy()
       // Put this warning message at a higher trace level since every
       // federate that is not the last one in the federation will see this
       // message when they try to destroy the federation. This is expected.
-      if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stderr, "Federate::destroy():%d Federation '%s' destroy failed because this is not the last federate, which is expected.%c",
                   __LINE__, get_federation_name(), THLA_NEWLINE );
       }
@@ -5084,7 +5066,7 @@ void Federate::destroy()
       this->federation_exists = false;
       this->federation_joined = false;
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stderr, "Federate::destroy():%d Federation '%s' Already Destroyed.%c",
                   __LINE__, get_federation_name(), THLA_NEWLINE );
       }
@@ -5096,7 +5078,7 @@ void Federate::destroy()
       this->federation_exists = false;
       this->federation_joined = false;
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stderr, "Federate::destroy():%d Federation '%s' destroy failed because we are NOT CONNECTED to the federation.%c",
                   __LINE__, get_federation_name(), THLA_NEWLINE );
       }
@@ -5119,7 +5101,7 @@ void Federate::destroy()
    }
 
    try {
-      if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::destroy():%d Attempting to disconnect from RTI %c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -5129,7 +5111,7 @@ void Federate::destroy()
       this->federation_exists = false;
       this->federation_joined = false;
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::destroy():%d Disconnected from RTI %c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -5138,7 +5120,7 @@ void Federate::destroy()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      if ( should_print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stderr, "Federate::destroy():%d Cannot disconnect from RTI because this federate is still joined.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -5183,7 +5165,7 @@ void Federate::destroy_orphaned_federation()
    wstring federation_name_ws;
    StringUtilities::to_wstring( federation_name_ws, federation_name );
 
-   if ( should_print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::destroy_orphaned_federation():%d Attempting to Destroy Orphaned Federation '%s'.%c",
                __LINE__, get_federation_name(), THLA_NEWLINE );
    }
@@ -5193,7 +5175,7 @@ void Federate::destroy_orphaned_federation()
 
       // If we don't get an exception then we successfully destroyed
       // an orphaned federation.
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::destroy_orphaned_federation():%d Successfully Destroyed Orphaned Federation '%s'.%c",
                   __LINE__, get_federation_name(), THLA_NEWLINE );
       }
@@ -5239,7 +5221,7 @@ void Federate::set_federation_name(
 
 void Federate::ask_MOM_for_auto_provide_setting()
 {
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::ask_MOM_for_auto_provide_setting():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -5292,7 +5274,7 @@ void Federate::ask_MOM_for_auto_provide_setting()
    // Only unsubscribe from the attributes we subscribed to in this function.
    unsubscribe_attributes( MOM_HLAfederation_class_handle, fedMomAttributes );
 
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::ask_MOM_for_auto_provide_setting():%d Auto-Provide:%s value:%d%c",
                __LINE__, ( ( auto_provide_setting != 0 ) ? "Yes" : "No" ),
                auto_provide_setting, THLA_NEWLINE );
@@ -5314,7 +5296,7 @@ void Federate::enable_MOM_auto_provide_setting(
       requested_auto_provide     = 0;
    }
 
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::enable_MOM_auto_provide_setting():%d Auto-Provide:%s%c",
                __LINE__, ( enable ? "Yes" : "No" ), THLA_NEWLINE );
    }
@@ -5332,7 +5314,7 @@ void Federate::enable_MOM_auto_provide_setting(
 
 void Federate::backup_auto_provide_setting_from_MOM_then_disable()
 {
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::backup_auto_provide_setting_from_MOM_then_disable():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -5354,7 +5336,7 @@ void Federate::restore_orig_MOM_auto_provide_setting()
    // Only update the auto-provide setting if the original setting does not
    // match the current setting.
    if ( auto_provide_setting != orig_auto_provide_setting ) {
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::restore_orig_MOM_auto_provide_setting():%d Auto-Provide:%s%c",
                   __LINE__, ( ( orig_auto_provide_setting != 0 ) ? "Yes" : "No" ), THLA_NEWLINE );
       }
@@ -5370,7 +5352,7 @@ void Federate::restore_orig_MOM_auto_provide_setting()
 
 void Federate::load_and_print_running_federate_names()
 {
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::load_and_print_running_federate_names():%d started.%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -5418,7 +5400,7 @@ void Federate::load_and_print_running_federate_names()
    // Only unsubscribe from the attributes we subscribed to in this function.
    unsubscribe_attributes( MOM_HLAfederation_class_handle, fedMomAttributes );
 
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::load_and_print_running_federate_names():%d \
 MOM just informed us that there are %d federates currently running in the federation.%c",
                __LINE__, running_feds_count, THLA_NEWLINE );
@@ -5511,7 +5493,7 @@ MOM just informed us that there are %d federates currently running in the federa
    update_running_feds();
 
    // Print out a list of the Running Federates.
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       // Build the federate summary as an output string stream.
       ostringstream summary;
       unsigned int  cnt = 0;
@@ -5539,7 +5521,7 @@ MOM just informed us that there are %d federates currently running in the federa
    // Do not un-subscribe to this MOM data; we DO want updates as federates
    // join / resign the federation!
 
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::load_and_print_running_federate_names():%d Done.%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -5666,7 +5648,7 @@ not allocate memory for temp_feds when attempting to add an entry into running_f
    }
 
 #if 0
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::add_a_single_entry_into_running_feds():%d Exiting routine, here is what running_feds contains:%c",
                __LINE__, THLA_NEWLINE);
       for ( int t = 0; t < running_feds_count; t++) {
@@ -5762,7 +5744,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    // assign pointer from the temporary list to the permanent list...
    this->running_feds = tmp_feds;
 
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_hndl );
       send_hs( stderr, "Federate::remove_discovered_object_federate_instance_id():%d \
@@ -5837,7 +5819,7 @@ void Federate::request_federation_save()
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    try {
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::request_federation_save():%d save_name:%ls %c",
                   __LINE__, this->save_name.c_str(), THLA_NEWLINE );
       }
@@ -5914,7 +5896,7 @@ void Federate::inform_RTI_of_restore_completion()
 
    if ( this->prev_restore_process == Restore_Complete ) {
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::inform_RTI_of_restore_completion():%d Restore Complete.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -5943,7 +5925,7 @@ void Federate::inform_RTI_of_restore_completion()
 
    } else if ( this->prev_restore_process == Restore_Failed ) {
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::inform_RTI_of_restore_completion():%d Restore Failed!%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -6097,7 +6079,7 @@ void Federate::copy_running_feds_into_known_feds()
  */
 void Federate::restart_checkpoint()
 {
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::restart_checkpoint():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -6144,7 +6126,7 @@ void Federate::restart_checkpoint()
  */
 void Federate::federation_saved()
 {
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::federation_saved():%d%c", __LINE__, THLA_NEWLINE );
    }
    this->announce_save         = false;
@@ -6166,7 +6148,7 @@ void Federate::federation_saved()
  */
 void Federate::federation_restored()
 {
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::federation_restored():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -6182,7 +6164,7 @@ void Federate::federation_restored()
 
 void Federate::wait_for_federation_restore_begun()
 {
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_for_federation_restore_begun():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -6211,7 +6193,7 @@ void Federate::wait_for_federation_restore_begun()
          }
       }
    }
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_for_federation_restore_begun():%d Done.%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -6219,7 +6201,7 @@ void Federate::wait_for_federation_restore_begun()
 
 void Federate::wait_until_federation_is_ready_to_restore()
 {
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_until_federation_is_ready_to_restore():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -6248,7 +6230,7 @@ void Federate::wait_until_federation_is_ready_to_restore()
          }
       }
    }
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_until_federation_is_ready_to_restore():%d Done.%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -6258,7 +6240,7 @@ string Federate::wait_for_federation_restore_to_complete()
 {
    string tRetString;
 
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_for_federation_restore_to_complete():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -6334,7 +6316,7 @@ string Federate::wait_for_federation_restore_to_complete()
       return tRetString;
    }
 
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_for_federation_restore_to_complete():%d Done.%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -6343,7 +6325,7 @@ string Federate::wait_for_federation_restore_to_complete()
 
 void Federate::wait_for_restore_request_callback()
 {
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_for_restore_request_callback():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -6374,7 +6356,7 @@ void Federate::wait_for_restore_request_callback()
          }
       }
    }
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_for_restore_request_callback():%d Done.%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -6382,7 +6364,7 @@ void Federate::wait_for_restore_request_callback()
 
 void Federate::wait_for_restore_status_to_complete()
 {
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_for_restore_status_to_complete():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -6411,7 +6393,7 @@ void Federate::wait_for_restore_status_to_complete()
          }
       }
    }
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_for_restore_status_to_complete():%d Done.%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -6419,7 +6401,7 @@ void Federate::wait_for_restore_status_to_complete()
 
 void Federate::wait_for_save_status_to_complete()
 {
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_for_save_status_to_complete():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -6448,7 +6430,7 @@ void Federate::wait_for_save_status_to_complete()
          }
       }
    }
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_for_save_status_to_complete():%d Done.%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -6456,7 +6438,7 @@ void Federate::wait_for_save_status_to_complete()
 
 void Federate::wait_for_federation_restore_failed_callback_to_complete()
 {
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_for_federation_restore_failed_callback_to_complete():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -6470,7 +6452,7 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
       // if the federate has already been restored, do not wait for a signal
       // from the RTI that the federation restore failed, you'll never get it!
       if ( this->restore_completed ) {
-         if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             send_hs( stdout, "Federate::wait_for_federation_restore_failed_callback_to_complete():%d Restore Complete, Done.%c",
                      __LINE__, THLA_NEWLINE );
          }
@@ -6494,7 +6476,7 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
          }
       }
    }
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_for_federation_restore_failed_callback_to_complete():%d Done.%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -6502,7 +6484,7 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
 
 void Federate::request_federation_save_status()
 {
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::request_federation_save_status():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -6536,7 +6518,7 @@ void Federate::request_federation_save_status()
 
 void Federate::request_federation_restore_status()
 {
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::request_federation_restore_status():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -6578,7 +6560,7 @@ void Federate::requested_federation_restore_status(
    bool status )
 {
    if ( !status ) {
-      if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::requested_federation_restore_status():%d%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -6779,14 +6761,14 @@ void Federate::initiate_save_announce()
    }
 
    if ( this->save_label_generated ) {
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stderr, "Federate::initiate_save_announce():%d save_label already generated for federate '%s'%c",
                   __LINE__, name, THLA_NEWLINE );
       }
       return;
    }
 
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::initiate_save_announce():%d Checkpoint filename:'%s'%c",
                __LINE__, checkpoint_file_name.c_str(), THLA_NEWLINE );
    }
@@ -6823,7 +6805,7 @@ void Federate::initiate_restore_announce(
    wait_for_restore_status_to_complete();
 
    if ( this->restore_process == Initiate_Restore ) {
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::initiate_restore_announce():%d \
 restore_process == Initiate_Restore, Telling RTI to request federation \
 restore with label '%ls'.%c",
@@ -6859,7 +6841,7 @@ restore with label '%ls'.%c",
          this->restore_process = No_Restore;
       }
    } else {
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stderr, "Federate::initiate_restore_announce():%d \
 After communicating with RTI, restore_process != Initiate_Restore, \
 Something went WRONG! %c",
@@ -6874,13 +6856,13 @@ Something went WRONG! %c",
 
 void Federate::complete_restore()
 {
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::complete_restore():%d%c",
                __LINE__, THLA_NEWLINE );
    }
 
    if ( this->restore_process != Restore_In_Progress ) {
-      if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::complete_restore():%d Restore Process != Restore_In_Progress.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -6888,7 +6870,7 @@ void Federate::complete_restore()
    }
 
    if ( !this->start_to_restore ) {
-      if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::complete_restore():%d Start to restore flag is false so set restore_completed = true.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -6915,7 +6897,7 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
 {
    // Determine if this is a MOM HLAfederation instance.
    if ( !is_MOM_HLAfederation_instance_id( instance_hndl ) ) {
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::set_federation_instance_attributes():%d WARNING: Unknown object class, expected 'HLAmanager.HLAfederation'.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -6930,7 +6912,7 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
          int *data               = (int *)attr_iter->second.data();
          int  auto_provide_state = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN ) ? Utilities::byteswap_int( data[0] ) : data[0];
 
-         if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             send_hs( stdout, "Federate::set_federation_instance_attributes():%d Auto-Provide:%s value:%d%c",
                      __LINE__, ( ( auto_provide_state != 0 ) ? "Yes" : "No" ),
                      auto_provide_state, THLA_NEWLINE );
@@ -6969,7 +6951,7 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
          // names from the RTI for all required federates. We will eventually
          // utilize the same MOM interface to rebuild this list...
 
-         if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             send_hs( stdout, "Federate::set_federation_instance_attributes():%d Found a FederationID list with %d elements.%c",
                      __LINE__, num_elements, THLA_NEWLINE );
          }
@@ -7008,7 +6990,7 @@ void Federate::check_HLA_save_directory()
 
 void Federate::restore_federate_handles_from_MOM()
 {
-   if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::restore_federate_handles_from_MOM:%d %c",
                __LINE__, THLA_NEWLINE );
    }
@@ -7176,7 +7158,7 @@ void Federate::rebuild_federate_handles(
       // Add this FederateHandle to the set of joined federates.
       joined_federate_handles.insert( tHandle );
 
-      if ( should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string id_str, fed_id;
          StringUtilities::to_string( id_str, instance_hndl );
          StringUtilities::to_string( fed_id, tHandle );

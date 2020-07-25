@@ -20,10 +20,10 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLAModel}
 
 @tldh
-@trick_link_dependency{sine/src/SineConditional.o}
-@trick_link_dependency{sine/src/SineData.o}
-@trick_link_dependency{../../source/TrickHLA/Conditional.o}
-@trick_link_dependency{../../source/TrickHLA/Attribute.o}
+@trick_link_dependency{../source/TrickHLA/Attribute.cpp}
+@trick_link_dependency{../source/TrickHLA/Conditional.cpp}
+@trick_link_dependency{sine/src/SineConditional.cpp}
+@trick_link_dependency{sine/src/SineData.cpp}
 
 @revs_title
 @revs_begin
@@ -37,6 +37,7 @@ NASA, Johnson Space Center\n
 #define _TRICKHLA_MODEL_SINE_CONDITIONAL_HH_
 
 // TrickHLA include files.
+#include "TrickHLA/Attribute.hh"
 #include "TrickHLA/Conditional.hh"
 
 // Model include files.

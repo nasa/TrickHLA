@@ -16,15 +16,17 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{Types.cpp}
-@trick_link_dependency{Int64Time.cpp}
-@trick_link_dependency{Int64Interval.cpp}
 @trick_link_dependency{Attribute.cpp}
+@trick_link_dependency{DebugHandler.cpp}
+@trick_link_dependency{ExecutionControlBase.cpp}
+@trick_link_dependency{Federate.cpp}
+@trick_link_dependency{Int64Interval.cpp}
+@trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{MutexLock.cpp}
 @trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{Object.cpp}
-@trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{OwnershipHandler.cpp}
+@trick_link_dependency{Types.cpp}
 
 @revs_title
 @revs_begin
@@ -49,14 +51,17 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/Constants.hh"
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64Interval.hh"
+#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/OwnershipHandler.hh"
 #include "TrickHLA/OwnershipItem.hh"
+#include "TrickHLA/Types.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -112,7 +117,7 @@ void OwnershipHandler::setup_checkpoint_requests()
 
    // if there are any pull_request entries, encode them to get checkpointed.
    if ( pull_items_cnt > 0 ) {
-      if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
          send_hs( stdout, "OwnershipHandler::setup_checkpoint_requests():%d Checkpointing %d pull_request elements.%c",
                   __LINE__, pull_items_cnt, THLA_NEWLINE );
       }
@@ -150,7 +155,7 @@ Could not allocate memory for pull_items (array of OwnershipItem type)!" );
 
    // if there are any push_request entries, encode them to get checkpointed.
    if ( push_items_cnt > 0 ) {
-      if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
          send_hs( stdout, "OwnershipHandler::setup_checkpoint_requests():%d Checkpointing %d push_request elements.%c",
                   __LINE__, push_items_cnt, THLA_NEWLINE );
       }
@@ -233,7 +238,7 @@ void OwnershipHandler::restore_requests()
          // Add the attribute to the map, using the FOM_name as the key.
          attr_map->insert( make_pair( pull_items[count].FOM_name, attribute ) );
 
-         if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
+         if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
             send_hs( stdout, "OwnershipHandler::restore_requests():%d Restoring ownership pull item attribute \"%s\"%c",
                      __LINE__, pull_items[count].FOM_name, THLA_NEWLINE );
          }
@@ -262,7 +267,7 @@ void OwnershipHandler::restore_requests()
          // Add the attribute to the map, using the FOM_name as the key.
          attr_map->insert( make_pair( push_items[count].FOM_name, attribute ) );
 
-         if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
+         if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
             send_hs( stdout, "OwnershipHandler::restore_requests():%d Restoring ownership push item attribute \"%s\"%c",
                      __LINE__, push_items[count].FOM_name, THLA_NEWLINE );
          }
@@ -274,16 +279,6 @@ void OwnershipHandler::initialize_callback(
    Object *obj )
 {
    this->object = obj;
-}
-
-bool OwnershipHandler::should_print(
-   const DebugLevelEnum & level,
-   const DebugSourceEnum &code ) const
-{
-   if ( object != NULL ) {
-      return object->should_print( level, code );
-   }
-   return true;
 }
 
 string OwnershipHandler::get_object_name() const
@@ -352,7 +347,7 @@ void OwnershipHandler::pull_ownership(
       return;
    }
 
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       send_hs( stdout, "OwnershipHandler::pull_ownership(time=%G):%d scenario-time=%G, granted_time=%G, lookahead=%G %c",
                time, __LINE__, get_scenario_time(),
                get_granted_fed_time().get_time_in_seconds(),
@@ -410,7 +405,7 @@ void OwnershipHandler::pull_ownership(
       return;
    }
 
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       send_hs( stdout, "OwnershipHandler::pull_ownership(%s, time=%G):%d scenario-time=%G, granted_time=%G, lookahead=%G %c",
                attribute_FOM_name, time, __LINE__, get_scenario_time(),
                get_granted_fed_time().get_time_in_seconds(),
@@ -455,7 +450,7 @@ void OwnershipHandler::push_ownership(
       return;
    }
 
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       send_hs( stdout, "OwnershipHandler::push_ownership(time=%G):%d sim-time=%G, granted_time=%G, lookahead=%G %c",
                time, __LINE__, get_scenario_time(),
                get_granted_fed_time().get_time_in_seconds(),
@@ -513,7 +508,7 @@ void OwnershipHandler::push_ownership(
       return;
    }
 
-   if ( should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       send_hs( stdout, "OwnershipHandler::push_ownership(%s, time=%G):%d sim-time=%G, granted_time=%G, lookahead=%G %c",
                attribute_FOM_name, time, __LINE__, get_scenario_time(),
                get_granted_fed_time().get_time_in_seconds(),

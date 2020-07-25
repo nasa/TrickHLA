@@ -19,9 +19,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Attribute.cpp}
-@trick_link_dependency{../source/TrickHLA/Utilities.cpp}
-@trick_link_dependency{../source/TrickHLA/Conditional.cpp}
+@trick_link_dependency{../source/TrickHLA/Manager.cpp}
 
 @revs_title
 @revs_begin
@@ -47,12 +45,12 @@ NASA, Johnson Space Center\n
 #include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
 
-// HLA include files.
-#include "TrickHLA/StandardsSupport.hh"
-#include RTI1516_HEADER
-
 // TrickHLA Model include files.
 #include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/StandardsSupport.hh"
+
+// HLA include files.
+#include RTI1516_HEADER
 
 // Whitespace characters: space (' '), tab ('\t'), carriage  return ('\r'),
 // newline ('\n'), form-feed ('\f'), and vertical tab ('\v').
@@ -78,10 +76,16 @@ class StringUtilities
    // Public constructors and destructor.
    //
    /*! @brief Default constructor for the TrickHLA StringUtilities class. */
-   StringUtilities(){};
+   StringUtilities()
+   {
+      return;
+   };
 
    /*! @brief Destructor for the TrickHLA StringUtilities class. */
-   virtual ~StringUtilities(){};
+   virtual ~StringUtilities()
+   {
+      return;
+   };
 
   public:
    /*! @brief C (char *) string to C++ wide string conversion routine.

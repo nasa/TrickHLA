@@ -22,6 +22,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../source/TrickHLA/OpaqueBuffer.cpp}
+@trick_link_dependency{../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin

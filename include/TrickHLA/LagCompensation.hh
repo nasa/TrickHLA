@@ -19,12 +19,12 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../source/TrickHLA/Attribute.cpp}
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../source/TrickHLA/Int64Interval.cpp}
 @trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../source/TrickHLA/LagCompensation.cpp}
+@trick_link_dependency{../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -72,12 +72,6 @@ class LagCompensation
    virtual ~LagCompensation(){};
 
   public:
-   /*! @brief Determine if the verbose debug comments should be printed to the console.
-    *  @return Returns true if the requested message should print level.
-    *  @param level  Debug level of the incoming message.
-    *  @param code   Source code association of the incoming messages. */
-   bool should_print( const DebugLevelEnum &level, const DebugSourceEnum &code ) const;
-
    /*! @brief Get the Attribute by FOM name.
     *  @return Attribute for the given name.
     *  @param attr_FOM_name Attribute FOM name. */

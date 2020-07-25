@@ -19,10 +19,10 @@ NASA, Johnson Space Center\n
 @python_module{SpaceFOM}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../../source/TrickHLA/Packing.cpp}
 @trick_link_dependency{../../source/TrickHLA/ExecutionConfigurationBase.cpp}
 @trick_link_dependency{../../source/SpaceFOM/ExecutionConfiguration.cpp}
+@trick_link_dependency{../../source/SpaceFOM/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -40,6 +40,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/ExecutionConfigurationBase.hh"
+#include "TrickHLA/Packing.hh"
 
 // SpaceFOM include files.
 #include "SpaceFOM/Types.hh"

@@ -20,8 +20,9 @@ NASA, Johnson Space Center\n
 @python_module{IMSim}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../../source/TrickHLA/TimedSyncPntList.cpp}
 @trick_link_dependency{../../source/IMSim/PausePointList.cpp}
+@trick_link_dependency{../../source/IMSim/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -39,15 +40,11 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 
-// HLA include files.
-#include "TrickHLA/StandardsSupport.hh"
-#include RTI1516_HEADER
-
 // TrickHLA include files.
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Int64Time.hh"
-#include "TrickHLA/LoggableTimedSyncPnt.hh"
 #include "TrickHLA/TimedSyncPntList.hh"
+
+// HLA include files.
+#include RTI1516_HEADER
 
 // IMSim include files.
 #include "IMSim/Types.hh"

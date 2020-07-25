@@ -34,9 +34,10 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
+@trick_link_dependency{../source/TrickHLA/FedAmb.cpp}
 @trick_link_dependency{../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../source/TrickHLA/Manager.cpp}
-@trick_link_dependency{../source/TrickHLA/FedAmb.cpp}
+@trick_link_dependency{../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -55,14 +56,13 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 
-// HLA include files.
+// TrickHLA include files.
 #include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/Types.hh"
+
+// HLA include files.
 #include RTI1516_HEADER
 #include "RTI/FederateAmbassador.h"
-
-// TrickHLA include files.
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Types.hh"
 
 namespace TrickHLA
 {
@@ -115,12 +115,6 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
    /*! @brief Initialize the TrickHLA Federate Ambassador instance for this
     *  Federation Execution. */
    virtual void initialize();
-
-   /*! @brief Determine if the verbose debug comments should be printed to the console.
-    *  @return Returns true if the requested message should print level.
-    *  @param level  Debug level of the incoming message.
-    *  @param code   Source code association of the incoming messages. */
-   bool should_print( const DebugLevelEnum &level, const DebugSourceEnum &code ) const;
 
    // *****************************************************************
    // The following methods fill out the required vitual methods of

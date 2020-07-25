@@ -21,6 +21,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../source/TrickHLA/Item.cpp}
 @trick_link_dependency{../source/TrickHLA/ItemQueue.cpp}
 @trick_link_dependency{../source/TrickHLA/Parameter.cpp}
 @trick_link_dependency{../source/TrickHLA/ParameterItem.cpp}
@@ -44,6 +45,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/Int64Time.hh"
+#include "TrickHLA/Item.hh"
 #include "TrickHLA/ItemQueue.hh"
 #include "TrickHLA/StandardsSupport.hh"
 

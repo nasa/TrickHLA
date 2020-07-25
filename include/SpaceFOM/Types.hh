@@ -19,6 +19,7 @@ NASA, Johnson Space Center\n
 @python_module{SpaceFOM}
 
 @tldh
+@trick_link_dependency{../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../source/SpaceFOM/Types.cpp}
 
 @revs_title

@@ -20,8 +20,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLAModel}
 
 @tldh
-@trick_link_dependency{sine/src/SineData.o}
-@trick_link_dependency{sine/src/SinePacking.o}
+@trick_link_dependency{sine/src/SineData.cpp}
 
 @revs_title
 @revs_begin

@@ -21,9 +21,13 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../../source/TrickHLA/Interaction.cpp}
+@trick_link_dependency{../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../source/IMSim/ExecutionControl.cpp}
 @trick_link_dependency{../../source/IMSim/FreezeInteractionHandler.cpp}
 @trick_link_dependency{../../source/IMSim/PausePointList.cpp}
+@trick_link_dependency{../../source/IMSim/Typs.cpp}
 
 @revs_title
 @revs_begin

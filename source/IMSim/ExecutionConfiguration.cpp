@@ -19,6 +19,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{../TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../TrickHLA/Object.cpp}
 @trick_link_dependency{../TrickHLA/Packing.cpp}
 @trick_link_dependency{../TrickHLA/Federate.cpp}
@@ -49,6 +50,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Manager.hh"
@@ -192,7 +194,7 @@ void ExecutionConfiguration::configure_attributes(
 */
 void ExecutionConfiguration::pack()
 {
-   if ( get_federate()->should_print( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       cout << "=============================================================" << endl
            << "IMSim::ExecutionConfiguration::pack()" << endl
            << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << endl
@@ -245,7 +247,7 @@ void ExecutionConfiguration::unpack()
    int64_t software_frame_usec;
    double  software_frame_sec;
 
-   if ( get_federate()->should_print( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       cout << "=============================================================" << endl
            << "IMSim::ExecutionConfiguration::unpack()" << endl
            << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << endl
@@ -503,7 +505,6 @@ allocate enough memory for the attributes of the ExCO!" );
    }
    this->attributes[0].config       = CONFIG_INTERMITTENT;
    this->attributes[0].rti_encoding = ENCODING_UNICODE_STRING;
-   this->attributes[0].set_debug_level( get_federate()->get_manager()->debug_handler );
 
    // Normally, we would specify the Trick 'name' of the simulation
    // variable.  However, T=this will be replaced with a direct construction
@@ -570,7 +571,7 @@ allocate enough memory for the ATTRIBUTES for the 'root_frame_name' value of the
    // Initialize the TrickHLA Object before we use it.
    this->initialize( this->get_federate()->get_manager() );
 
-   if ( get_federate()->should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg2;
       msg2 << "IMSim::ExecutionConfiguration::setup_interaction_ref_attributes():" << __LINE__
            << " FOM-Parameter:'" << this->attributes[0].get_FOM_name() << "'"
@@ -579,7 +580,7 @@ allocate enough memory for the ATTRIBUTES for the 'root_frame_name' value of the
       send_hs( stdout, (char *)msg2.str().c_str() );
    }
 
-   if ( get_federate()->should_print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg2;
       msg2 << "IMSim::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
            << endl
@@ -592,7 +593,7 @@ allocate enough memory for the ATTRIBUTES for the 'root_frame_name' value of the
 
 void ExecutionConfiguration::print_execution_configuration()
 {
-   if ( get_federate()->should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
       msg << endl
           << "=============================================================" << endl
@@ -619,7 +620,7 @@ bool ExecutionConfiguration::wait_on_update() // RETURN: -- None.
       return false;
    }
 
-   if ( federate->should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       send_hs( stdout, "IMSim::ExecutionConfiguration::wait_on_update():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -654,7 +655,7 @@ bool ExecutionConfiguration::wait_on_update() // RETURN: -- None.
          }
       }
 
-      if ( federate->should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
          send_hs( stdout, "IMSim::ExecutionConfiguration::wait_on_update():%d Received data.%c",
                   __LINE__, THLA_NEWLINE );
       }

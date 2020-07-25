@@ -22,6 +22,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../source/TrickHLA/InteractionHandler.cpp}
 @trick_link_dependency{../../source/SpaceFOM/MTRInteractionHandler.cpp}
+@trick_link_dependency{../../source/SpaceFOM/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -36,15 +37,14 @@ NASA, Johnson Space Center\n
 
 // System include files.
 
-// HLA include files.
-#include "TrickHLA/StandardsSupport.hh"
-#include RTI1516_HEADER
-
 // TrickHLA include files.
 #include "TrickHLA/InteractionHandler.hh"
 
 // SpaceFOM include files.
 #include "SpaceFOM/Types.hh"
+
+// HLA include files.
+#include RTI1516_HEADER
 
 // Forward Declared Classes:  Since these classes are only used as references
 // through pointers, these classes are included as forward declarations.  This

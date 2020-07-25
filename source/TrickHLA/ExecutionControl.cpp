@@ -16,8 +16,14 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{SyncPntListBase.cpp}
+@trick_link_dependency{DebugHandler.cpp}
+@trick_link_dependency{ExecutionConfiguration.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
+@trick_link_dependency{Federate.cpp}
+@trick_link_dependency{Int64Interval.cpp}
+@trick_link_dependency{Manager.cpp}
+@trick_link_dependency{SyncPntListBase.cpp}
+@trick_link_dependency{Types.cpp}
 
 @revs_title
 @revs_begin
@@ -39,13 +45,14 @@ NASA, Johnson Space Center\n
 // HLA include files.
 
 // TrickHLA include files.
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfiguration.hh"
 #include "TrickHLA/ExecutionControl.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64Interval.hh"
-#include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/Manager.hh"
-#include "TrickHLA/Parameter.hh"
+#include "TrickHLA/SyncPntListBase.hh"
+#include "TrickHLA/Types.hh"
 
 // Simple TrickHL::ExecutionControl file level declarations.
 namespace TrickHLA
@@ -105,7 +112,7 @@ input files and reduce input file setting errors.
 */
 void ExecutionControl::initialize()
 {
-   if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream msg;
       msg << "TrickHLA::ExecutionControl::initialize():" << __LINE__
           << " Initialization-Scheme:'" << get_type()
@@ -139,7 +146,7 @@ void ExecutionControl::join_federation_process()
 */
 void ExecutionControl::pre_multi_phase_init_processes()
 {
-   if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n", __LINE__ );
    }
 
@@ -166,7 +173,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
    // Don't forget to enable asynchronous delivery of messages.
    federate->enable_async_delivery();
 
-   if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       if ( this->is_master() ) {
          send_hs( stdout, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n    I AM THE MASTER%c",
                   __LINE__, THLA_NEWLINE );
@@ -315,7 +322,7 @@ void ExecutionControl::announce_sync_point(
  */
 void ExecutionControl::clear_multiphase_init_sync_points()
 {
-   if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::clear_multiphase_init_sync_points():" << __LINE__
              << " This call will be ignored because this ExecutionControl does not"

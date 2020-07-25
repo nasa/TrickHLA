@@ -16,10 +16,13 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{Int64Time.cpp}
+@trick_link_dependency{DebugHandler.cpp}
+@trick_link_dependency{Federate.cpp}
 @trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{SyncPnt.cpp}
 @trick_link_dependency{SyncPntListBase.cpp}
+@trick_link_dependency{Types.cpp}
+@trick_link_dependency{Utilities.cpp}
 
 @revs_title
 @revs_begin
@@ -39,11 +42,13 @@ NASA, Johnson Space Center\n
 #include "trick/release.h"
 
 // HLA include files.
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/Manager.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StringUtilities.hh"
+#include "TrickHLA/SyncPnt.hh"
 #include "TrickHLA/SyncPntListBase.hh"
+#include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 
 using namespace std;
@@ -222,7 +227,7 @@ void SyncPntListBase::sync_point_registration_succeeded(
    wstring const &label )
 {
    if ( this->mark_registered( label ) ) {
-      if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "SyncPntListBase::sync_point_registration_succeeded():%d Label:'%ls'%c",
                   __LINE__, label.c_str(), THLA_NEWLINE );
       }
@@ -243,7 +248,7 @@ void SyncPntListBase::sync_point_registration_failed(
       // we did not do it.
       if ( not_unique ) {
          this->mark_registered( label );
-         if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             send_hs( stdout, "SyncPntListBase::sync_point_registration_failed():%d Label:'%ls' already exists.%c",
                      __LINE__, label.c_str(), THLA_NEWLINE );
          }
@@ -264,7 +269,7 @@ void SyncPntListBase::wait_for_announcement(
    SyncPnt *sp = this->get_sync_pnt( label );
    if ( sp != NULL ) {
       sp->wait_for_announce( federate );
-      if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          ostringstream message;
          message
             << "SyncPntListBase::wait_for_announcement():"
@@ -281,7 +286,7 @@ void SyncPntListBase::wait_for_all_announcements(
 {
    vector< SyncPnt * >::const_iterator i;
 
-   if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "SyncPntListBase::wait_for_all_registrations():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
       this->print_sync_pnts();
@@ -296,7 +301,7 @@ void SyncPntListBase::wait_for_all_announcements(
       }
    }
 
-   if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       this->print_sync_pnts();
    }
 
@@ -314,7 +319,7 @@ void SyncPntListBase::announce_sync_point(
 
       // Mark initialization sync-point as existing/announced.
       if ( this->mark_announced( label ) ) {
-         if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             send_hs( stdout, "SyncPntListBase::announce_sync_point():%d Synchronization point announced:'%ls'%c",
                      __LINE__, label.c_str(), THLA_NEWLINE );
          }
@@ -323,7 +328,7 @@ void SyncPntListBase::announce_sync_point(
    } // By default, mark an unrecognized synchronization point is achieved.
    else {
 
-      if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "SyncPntListBase::announce_sync_point():%d Unrecognized synchronization point:'%ls', which will be achieved.%c",
                   __LINE__, label.c_str(), THLA_NEWLINE );
       }
@@ -469,7 +474,7 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
 
          // If the synchronization point is already achieved then print out
          // a message and move on to waiting for synchronization.
-         if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             StringUtilities::to_string( name, sp->get_label() );
             errmsg << "SyncPntListBase::achieve_and_wait_for_synchronization():"
                    << __LINE__
@@ -482,7 +487,7 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
 
          // If the synchronization point is already synchronized, then print
          // out a message and return.
-         if ( debug_handler.should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             StringUtilities::to_string( name, sp->get_label() );
             errmsg << "SyncPntListBase::achieve_and_wait_for_synchronization():"
                    << __LINE__

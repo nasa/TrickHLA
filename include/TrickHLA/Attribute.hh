@@ -21,8 +21,9 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
-@trick_link_dependency{../../source/TrickHLA/Utilities.cpp}
 @trick_link_dependency{../../source/TrickHLA/Conditional.cpp}
+@trick_link_dependency{../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/Utilities.cpp}
 
 @revs_title
 @revs_begin
@@ -43,14 +44,14 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/reference.h"
 
-// HLA include files.
-#include "TrickHLA/StandardsSupport.hh"
-#include RTI1516_HEADER
-
 // TrickHLA include files.
 #include "TrickHLA/Conditional.hh"
-#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
+
+// HLA include files.
+#include RTI1516_HEADER
 
 namespace TrickHLA
 {
@@ -170,13 +171,6 @@ class Attribute
    void mark_unchanged()
    {
       this->value_changed = false;
-   }
-
-   /*! @brief Set the debug handler settings for this attribute.
-    *  @param hndlr DebugHandler from which to copy settings. */
-   void set_debug_level( DebugHandler hndlr )
-   {
-      debug_handler.set( hndlr );
    }
 
    /*! @brief Get the Federation Object Model attribute name.
@@ -525,8 +519,6 @@ class Attribute
    bool divest_requested; ///< @trick_units{--} Are we releasing ownership?
 
    bool initialized; ///< @trick_units{--} Has this attribute been initialized?
-
-   DebugHandler debug_handler; ///< @trick_units{--} Prints out multiple debug levels
 
   private:
    // Do not allow the copy constructor or assignment operator.

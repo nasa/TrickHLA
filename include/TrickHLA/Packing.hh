@@ -71,12 +71,6 @@ class Packing
    /*! @brief Destructor for the TrickHLA Packing class. */
    virtual ~Packing();
 
-   /*! @brief Determine if the verbose debug comments should be printed to the console.
-    *  @return Returns true if the requested message should print level.
-    *  @param level  Debug level of the incoming message.
-    *  @param code   Source code association of the incoming messages. */
-   bool should_print( const DebugLevelEnum &level, const DebugSourceEnum &code ) const;
-
    /*! @brief Get the Attribute by FOM name.
     *  @return Attribute for the given name.
     *  @param attr_FOM_name Attribute FOM name. */

@@ -16,13 +16,12 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{Int64Time.cpp}
-@trick_link_dependency{ItemQueue.cpp}
+@trick_link_dependency{InteractionItem.cpp}
 @trick_link_dependency{MutexLock.cpp}
 @trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{Parameter.cpp}
 @trick_link_dependency{ParameterItem.cpp}
-@trick_link_dependency{InteractionItem.cpp}
+
 
 @revs_title
 @revs_begin
@@ -50,7 +49,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
-#include "TrickHLA/Utilities.hh"
 
 using namespace std;
 using namespace TrickHLA;

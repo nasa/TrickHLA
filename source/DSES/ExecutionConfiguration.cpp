@@ -19,13 +19,19 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{../TrickHLA/Object.cpp}
-@trick_link_dependency{../TrickHLA/Packing.cpp}
+@trick_link_dependency{../TrickHLA/Attribute.cpp}
+@trick_link_dependency{../TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../TrickHLA/Federate.cpp}
+@trick_link_dependency{../TrickHLA/Int64Interval.cpp}
+@trick_link_dependency{../TrickHLA/LagCompensation.cpp}
 @trick_link_dependency{../TrickHLA/Manager.cpp}
+@trick_link_dependency{../TrickHLA/OwnershipHandler.cpp}
+@trick_link_dependency{../TrickHLA/Packing.cpp}
 @trick_link_dependency{../TrickHLA/SleepTimeout.cpp}
-@trick_link_dependency{../TrickHLA/ExecutionConfigurationBase.cpp}
+@trick_link_dependency{../TrickHLA/Types.cpp}
 @trick_link_dependency{ExecutionConfiguration.cpp}
+@trick_link_dependency{ExecutionControl.cpp}
+@trick_link_dependency{Types.cpp}
 
 @revs_title
 @revs_begin
@@ -49,17 +55,23 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64Interval.hh"
+#include "TrickHLA/LagCompensation.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/ObjectDeleted.hh"
+#include "TrickHLA/OwnershipHandler.hh"
+#include "TrickHLA/Packing.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Utilities.hh"
 
 //DSES include files.
 #include "DSES/ExecutionConfiguration.hh"
 #include "DSES/ExecutionControl.hh"
+#include "DSES/Types.hh"
 
 // HLA include files.
 #include RTI1516_HEADER
@@ -192,7 +204,7 @@ void ExecutionConfiguration::configure_attributes(
 */
 void ExecutionConfiguration::pack()
 {
-   if ( get_federate()->should_print( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       cout << "=============================================================" << endl
            << "DSES::ExecutionConfiguration::pack()" << endl
            << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << endl
@@ -245,7 +257,7 @@ void ExecutionConfiguration::unpack()
    int64_t software_frame_usec;
    double  software_frame_sec;
 
-   if ( get_federate()->should_print( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       cout << "=============================================================" << endl
            << "DSES::ExecutionConfiguration::unpack()" << endl
            << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << endl
@@ -502,7 +514,6 @@ allocate enough memory for the attributes of the ExCO!" );
    }
    this->attributes[0].config       = CONFIG_INTERMITTENT;
    this->attributes[0].rti_encoding = ENCODING_UNICODE_STRING;
-   this->attributes[0].set_debug_level( get_federate()->get_manager()->debug_handler );
 
    // Normally, we would specify the Trick 'name' of the simulation
    // variable.  However, T=this will be replaced with a direct construction
@@ -569,7 +580,7 @@ allocate enough memory for the ATTRIBUTES for the 'root_frame_name' value of the
    // Initialize the TrickHLA Object before we use it.
    this->initialize( this->get_federate()->get_manager() );
 
-   if ( get_federate()->should_print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg2;
       msg2 << "DSES::ExecutionConfiguration::setup_interaction_ref_attributes():" << __LINE__
            << " FOM-Parameter:'" << this->attributes[0].get_FOM_name() << "'"
@@ -578,7 +589,7 @@ allocate enough memory for the ATTRIBUTES for the 'root_frame_name' value of the
       send_hs( stdout, (char *)msg2.str().c_str() );
    }
 
-   if ( get_federate()->should_print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg2;
       msg2 << "DSES::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
            << endl
@@ -591,7 +602,7 @@ allocate enough memory for the ATTRIBUTES for the 'root_frame_name' value of the
 
 void ExecutionConfiguration::print_execution_configuration()
 {
-   if ( get_federate()->should_print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
       msg << endl
           << "=============================================================" << endl
@@ -618,7 +629,7 @@ bool ExecutionConfiguration::wait_on_update() // RETURN: -- None.
       return false;
    }
 
-   if ( federate->should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       send_hs( stdout, "DSES::ExecutionConfiguration::wait_on_update():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -653,7 +664,7 @@ bool ExecutionConfiguration::wait_on_update() // RETURN: -- None.
          }
       }
 
-      if ( federate->should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
          send_hs( stdout, "DSES::ExecutionConfiguration::wait_on_update():%d Received data.%c",
                   __LINE__, THLA_NEWLINE );
       }

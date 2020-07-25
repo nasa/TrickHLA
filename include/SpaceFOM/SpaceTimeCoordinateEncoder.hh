@@ -19,6 +19,7 @@ NASA, Johnson Space Center\n
 @python_module{SpaceFOM}
 
 @tldh
+v@trick_link_dependency{../../source/TrickHLA/OpaqueBuffer.cpp}
 @trick_link_dependency{../../source/SpaceFOM/SpaceTimeCoordinateEncoder.cpp}
 
 @revs_title
@@ -31,15 +32,15 @@ NASA, Johnson Space Center\n
 #ifndef _SPACEFOM_SPACE_TIME_COORDINATE_ENCODER_HH_
 #define _SPACEFOM_SPACE_TIME_COORDINATE_ENCODER_HH_
 
-// HLA include files.
+// TrickHLA include files.
+#include "TrickHLA/OpaqueBuffer.hh"
 #include "TrickHLA/StandardsSupport.hh"
+
+// HLA include files.
 #include RTI1516_HEADER
 #include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/HLAfixedArray.h"
 #include "RTI/encoding/HLAfixedRecord.h"
-
-// TrickHLA include files.
-#include "TrickHLA/OpaqueBuffer.hh"
 
 // SpaceFOM include files.
 #include "SpaceFOM/SpaceTimeCoordinateData.h"

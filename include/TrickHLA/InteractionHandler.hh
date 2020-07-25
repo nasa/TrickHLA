@@ -23,6 +23,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../source/TrickHLA/Interaction.cpp}
 @trick_link_dependency{../source/TrickHLA/InteractionHandler.cpp}
+@trick_link_dependency{../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -36,14 +37,14 @@ NASA, Johnson Space Center\n
 #ifndef _TRICKHLA_INTERACTION_HANDLER_HH_
 #define _TRICKHLA_INTERACTION_HANDLER_HH_
 
-// HLA include files.
-#include "TrickHLA/StandardsSupport.hh"
-#include RTI1516_HEADER
-
 // TrickHLA include files.
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Int64Time.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
+
+// HLA include files.
+#include RTI1516_HEADER
 
 namespace TrickHLA
 {
@@ -78,12 +79,6 @@ class InteractionHandler
    /*! @brief Initializes the callback to the interaction.
     *  @param inter Associated interaction for this handler. */
    virtual void initialize_callback( Interaction *inter );
-
-   /*! @brief Determine if the verbose debug comments should be printed to the console.
-    *  @return Returns true if the requested message should print level.
-    *  @param level  Debug level of the incoming message.
-    *  @param code   Source code association of the incoming messages. */
-   bool should_print( const DebugLevelEnum &level, const DebugSourceEnum &code ) const;
 
    /*! @brief Sends the interaction to to RTI using Receive Order.
     *  @return True if the interaction was sent; False otherwise. */

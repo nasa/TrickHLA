@@ -27,15 +27,14 @@ NASA, Johnson Space Center\n
 #include <sstream>
 #include <string.h>
 
-#include "SpaceFOM/QuaternionEncoder.hh"
-
 // Trick include files.
 #include "trick/message_proto.h"
 
+// Model include files.
+#include "SpaceFOM/QuaternionEncoder.hh"
+
 // HLA Encoder helper includes.
 #include "RTI/VariableLengthData.h"
-
-// Model include files.
 
 using namespace rti1516e;
 using namespace std;

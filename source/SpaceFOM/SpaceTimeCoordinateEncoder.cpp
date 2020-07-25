@@ -31,11 +31,11 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/message_proto.h"
 
-// HLA Encoder helper includes.
-#include "RTI/VariableLengthData.h"
-
 // Model include files.
 #include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
+
+// HLA Encoder helper includes.
+#include "RTI/VariableLengthData.h"
 
 using namespace rti1516e;
 using namespace std;

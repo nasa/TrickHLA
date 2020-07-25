@@ -19,6 +19,9 @@ NASA, Johnson Space Center\n
 
 @python_module{TrickHLA}
 
+@tldh
+@trick_link_dependency{../source/TrickHLA/Types.cpp}
+
 @revs_title
 @revs_begin
 @rev_entry{Tony Varesic, L3, TrickHLA, July 2009, --, Checkpoint / restore of TrickHLA.}

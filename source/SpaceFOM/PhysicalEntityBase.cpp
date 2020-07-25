@@ -15,9 +15,8 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{../TrickHLA/CompileConfig.cpp}
 @trick_link_dependency{../TrickHLA/Packing.cpp}
-@trick_link_dependency{SpaceTimeCoordinateEncoder.cpp}
-@trick_link_dependency{QuaternionEncoder.cpp}
 @trick_link_dependency{PhysicalEntityBase.cpp}
 
 
@@ -44,6 +43,9 @@ NASA, Johnson Space Center\n
 #include "trick/matrix_macros.h"
 #include "trick/message_proto.h"
 #include "trick/vector_macros.h"
+
+// TrickHLA include files.
+#include "TrickHLA/CompileConfig.hh"
 
 // SpaceFOM include files.
 #include "SpaceFOM/PhysicalEntityBase.hh"

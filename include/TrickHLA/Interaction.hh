@@ -19,16 +19,16 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../source/TrickHLA/Int64Interval.cpp}
 @trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
-@trick_link_dependency{../source/TrickHLA/Parameter.cpp}
-@trick_link_dependency{../source/TrickHLA/Manager.cpp}
-@trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
-@trick_link_dependency{../source/TrickHLA/Federate.cpp}
+@trick_link_dependency{../source/TrickHLA/Interaction.cpp}
 @trick_link_dependency{../source/TrickHLA/InteractionItem.cpp}
 @trick_link_dependency{../source/TrickHLA/InteractionHandler.cpp}
-@trick_link_dependency{../source/TrickHLA/Interaction.cpp}
+@trick_link_dependency{../source/TrickHLA/Manager.cpp}
+@trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
+@trick_link_dependency{../source/TrickHLA/Parameter.cpp}
+@trick_link_dependency{../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -282,12 +282,6 @@ class Interaction
    /*! @brief Check if federate is shutdown function was called.
     *  @return True if the manager is shutting down the federate. */
    bool is_shutdown_called() const;
-
-   /*! @brief Determine if the verbose debug comments should be printed to the console.
-    *  @return Returns true if the requested message should print level.
-    *  @param level  Debug level of the incoming message.
-    *  @param code   Source code association of the incoming messages. */
-   bool should_print( const DebugLevelEnum &level, const DebugSourceEnum &code ) const;
 
    /*! @brief Set the FOM name for this interaction.
     *  @param in_name The FOM name for this interaction. */

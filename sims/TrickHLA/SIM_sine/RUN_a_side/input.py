@@ -61,7 +61,7 @@ trick.add_read(12.0 , '''A.interaction_handler.send_sine_interaction( THLA_INIT.
 # =========================================================================
 # Show or hide the TrickHLA debug messages.
 # Use Level-3 to show the ownership transfer debug messages.
-THLA.manager.debug_handler.debug_level = trick.DEBUG_LEVEL_3_TRACE
+THLA.manager.debug_level = trick.DEBUG_LEVEL_3_TRACE
 
 
 # Configure the CRC.

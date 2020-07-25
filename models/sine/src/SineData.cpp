@@ -15,8 +15,8 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{sine/src/SineData.o}
-@trick_link_dependency{sine/src/SinePacking.o}
+@trick_link_dependency{sine/src/SineData.cpp}
+@trick_link_dependency{sine/src/SinePacking.cpp}
 
 @revs_title
 @revs_begin
@@ -145,7 +145,6 @@ void SineData::compute_derivative()
 void SineData::compute_derivative(
    double t )
 {
-
    // Set the model time.
    time = t;
 
@@ -197,8 +196,6 @@ void SineData::adjust_phase(
  */
 int SineData::integration()
 {
-   int ipass;
-
    // Load the current sine state.
    load_state( &value, NULL ); // cppcheck-suppress [varFuncNullUB]
 
@@ -206,7 +203,7 @@ int SineData::integration()
    load_deriv( &dvdt, NULL ); // cppcheck-suppress [varFuncNullUB]
 
    // Call the Trick integration service.
-   ipass = integrate();
+   int ipass = integrate();
 
    // Unload the new propagated state value.
    unload_state( &value, NULL ); // cppcheck-suppress [varFuncNullUB]

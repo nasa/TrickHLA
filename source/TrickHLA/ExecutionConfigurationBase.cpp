@@ -24,12 +24,13 @@ NASA, Johnson Space Center\n
 execution.
 
 @tldh
-@trick_link_dependency{Object.cpp}
-@trick_link_dependency{Packing.cpp}
-@trick_link_dependency{Federate.cpp}
-@trick_link_dependency{Manager.cpp}
-@trick_link_dependency{SleepTimeout.cpp}
+@trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{ExecutionConfigurationBase.cpp}
+@trick_link_dependency{ExecutionControlBase.cpp}
+@trick_link_dependency{Federate.cpp}
+@trick_link_dependency{SleepTimeout.cpp}
+@trick_link_dependency{Types.cpp}
+@trick_link_dependency{Utilities.cpp}
 
 @revs_title
 @revs_begin
@@ -45,14 +46,14 @@ execution.
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/Manager.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
+#include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 
 // HLA include files.
@@ -230,13 +231,13 @@ void ExecutionConfigurationBase::set_master(
  */
 void ExecutionConfigurationBase::wait_on_registration()
 {
-   if ( get_federate()->should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       send_hs( stdout, "TrickHLA::ExecutionConfigurationBase::wait_on_registration():%d%c",
                __LINE__, THLA_NEWLINE );
    }
 
    int  obj_reg_cnt   = 0;
-   bool print_summary = get_federate()->should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER );
+   bool print_summary = DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG );
    bool any_unregistered_obj;
    int  total_obj_cnt = 1;
 
@@ -260,7 +261,7 @@ void ExecutionConfigurationBase::wait_on_registration()
          // registration count and set the flag to print a new summary.
          if ( cnt > obj_reg_cnt ) {
             obj_reg_cnt   = cnt;
-            print_summary = get_federate()->should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER );
+            print_summary = DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG );
          }
       }
 
@@ -328,7 +329,7 @@ bool ExecutionConfigurationBase::wait_on_update() // RETURN: -- None.
       return false;
    }
 
-   if ( federate->should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       send_hs( stdout, "ExecutionConfigurationBase::wait_on_update():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -363,7 +364,7 @@ bool ExecutionConfigurationBase::wait_on_update() // RETURN: -- None.
          }
       }
 
-      if ( federate->should_print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
          send_hs( stdout, "ExecutionConfigurationBase::wait_on_update():%d Received data.%c",
                   __LINE__, THLA_NEWLINE );
       }

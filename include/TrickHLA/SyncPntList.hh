@@ -21,8 +21,6 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
-@trick_link_dependency{../source/TrickHLA/SyncPnt.cpp}
 @trick_link_dependency{../source/TrickHLA/SyncPntListBase.cpp}
 
 @revs_title
@@ -41,16 +39,12 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 
-// HLA include files.
-#include "TrickHLA/StandardsSupport.hh"
-#include RTI1516_HEADER
-
 // TrickHLA include files.
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Int64Time.hh"
-#include "TrickHLA/LoggableSyncPnt.hh"
-#include "TrickHLA/SyncPnt.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/SyncPntListBase.hh"
+
+// HLA include files.
+#include RTI1516_HEADER
 
 namespace TrickHLA
 {

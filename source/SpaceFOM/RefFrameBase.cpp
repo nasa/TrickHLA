@@ -15,8 +15,11 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{../TrickHLA/Attribute.cpp}
+@trick_link_dependency{../TrickHLA/Object.cpp}
 @trick_link_dependency{../TrickHLA/Packing.cpp}
-@trick_link_dependency{SpaceTimeCoordinateEncoder.cpp}
+@trick_link_dependency{../TrickHLA/Types.cpp}
+@trick_link_dependency{ExecutionControl.cpp}
 @trick_link_dependency{RefFrameBase.cpp}
 
 @revs_title
@@ -43,8 +46,9 @@ NASA, Johnson Space Center\n
 
 // TrickHLA model include files.
 #include "TrickHLA/Attribute.hh"
-#include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
+#include "TrickHLA/Packing.hh"
+#include "TrickHLA/Types.hh"
 
 // SpaceFOM include files.
 #include "SpaceFOM/ExecutionControl.hh"

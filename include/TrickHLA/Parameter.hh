@@ -20,8 +20,9 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Utilities.cpp}
 @trick_link_dependency{../source/TrickHLA/Parameter.cpp}
+@trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../source/TrickHLA/Utilities.cpp}
 
 @revs_title
 @revs_begin
@@ -41,14 +42,13 @@ NASA, Johnson Space Center\n
 #include "trick/attributes.h"
 #include "trick/memorymanager_c_intf.h"
 
-// HLA include files.
-#include "StandardsSupport.hh"
-#include RTI1516_HEADER
-
 // TrickHLA include files.
-#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
+
+// HLA include files.
+#include RTI1516_HEADER
 
 namespace TrickHLA
 {
@@ -106,13 +106,6 @@ class Parameter
 
    /*! @brief Initializes the TrickHLA Parameter. */
    void complete_initialization();
-
-   /*! @brief Set the debug handler for this parameter.
-    *  @param hndlr The TrickHLA::DebugHandler instance. */
-   void set_debug_level( DebugHandler hndlr )
-   {
-      debug_handler.set( hndlr );
-   }
 
    /*! @brief Get the FOM name for this parameter.
     *  @return The FOM name of this parameter. */
@@ -256,8 +249,6 @@ class Parameter
    char *      interaction_FOM_name; ///< @trick_io{**} Copy of the user-supplied interaction FOM_name
 
    RTI1516_NAMESPACE::ParameterHandle param_handle; ///< @trick_io{**} The RTI parameter handle.
-
-   DebugHandler debug_handler; ///< @trick_units{--} Prints out multiple debug levels
 
    /*! @brief Ensure the parameter buffer has at least the specified capacity.
     *  @param capacity Desired capacity of the buffer in bytes. */

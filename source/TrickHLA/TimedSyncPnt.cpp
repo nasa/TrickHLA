@@ -16,8 +16,9 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{TimedSyncPnt.cpp}
 @trick_link_dependency{Int64Time.cpp}
+@trick_link_dependency{SyncPnt.cpp}
+@trick_link_dependency{TimedSyncPnt.cpp}
 
 @revs_title
 @revs_begin
@@ -33,10 +34,11 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA includes.
-#include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64Time.hh"
+#include "TrickHLA/LoggableTimedSyncPnt.hh"
 #include "TrickHLA/StringUtilities.hh"
+#include "TrickHLA/SyncPnt.hh"
 #include "TrickHLA/TimedSyncPnt.hh"
-#include "TrickHLA/Utilities.hh"
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;

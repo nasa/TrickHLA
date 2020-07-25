@@ -20,10 +20,12 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
+@trick_link_dependency{../source/TrickHLA/ExecutionControlBase.cpp}
 @trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../source/TrickHLA/FedAmb.cpp}
 @trick_link_dependency{../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../source/TrickHLA/Manager.cpp}
+@trick_link_dependency{../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -44,14 +46,14 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/Flag.h"
 
-// HLA include files.
-#include "TrickHLA/StandardsSupport.hh"
-#include RTI1516_HEADER
-
 // TrickHLA include files.
+#include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/KnownFederate.hh"
-#include "TrickHLA/SyncPntListBase.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
+
+// HLA include files.
+#include RTI1516_HEADER
 
 // FIXME: What do we do for Trick 10 to get the command-line arguments for the
 // Federate::restart_federate() job? DDexter 11/7/11
@@ -174,12 +176,6 @@ class Federate
    /*! @brief Complete the post-multiphase initialization startup process prior
     * to the federation execution going into run. */
    void post_multiphase_initialization();
-
-   /*! @brief Determine if the verbose debug comments should be printed to the console.
-    *  @return Returns true if the requested message should print level.
-    *  @param level  Debug level of the incoming message.
-    *  @param code   Source code association of the incoming messages. */
-   bool should_print( const DebugLevelEnum &level, const DebugSourceEnum &code ) const;
 
    //! @brief Create the RTI ambassador and connect to the RTI.
    void create_RTI_ambassador_and_connect();

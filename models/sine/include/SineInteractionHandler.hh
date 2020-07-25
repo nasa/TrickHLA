@@ -19,7 +19,8 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLAModel}
 
 @tldh
-@trick_link_dependency{sine/src/SineInteractionHandler.o}
+@trick_link_dependency{../source/TrickHLA/InteractionHandler.cpp}
+@trick_link_dependency{sine/src/SineInteractionHandler.cpp}
 
 @revs_title
 @revs_begin
@@ -32,8 +33,7 @@ NASA, Johnson Space Center\n
 #ifndef _TRICKHLA_MODEL_SINE_INTERACTION_HANDLER_HH_
 #define _TRICKHLA_MODEL_SINE_INTERACTION_HANDLER_HH_
 
-// We need the forward declaration and the include so that the Trick IO source
-// code will compile if we flesh out the class only in the header file.
+// TrickHLA include files.
 #include "TrickHLA/InteractionHandler.hh"
 #include "TrickHLA/StandardsSupport.hh"
 

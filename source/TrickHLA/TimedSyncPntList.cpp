@@ -16,8 +16,12 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{Federate.cpp}
 @trick_link_dependency{Int64Time.cpp}
+@trick_link_dependency{Manager.cpp}
 @trick_link_dependency{SyncPnt.cpp}
+@trick_link_dependency{SyncPntListBase.cpp}
+@trick_link_dependency{TimedSyncPnt.cpp}
 @trick_link_dependency{TimedSyncPntList.cpp}
 
 @revs_title
@@ -38,11 +42,17 @@ NASA, Johnson Space Center\n
 #include "trick/release.h"
 
 // HLA include files.
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64Time.hh"
+#include "TrickHLA/LoggableSyncPnt.hh"
+#include "TrickHLA/LoggableTimedSyncPnt.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/StringUtilities.hh"
+#include "TrickHLA/SyncPnt.hh"
+#include "TrickHLA/SyncPntListBase.hh"
+#include "TrickHLA/TimedSyncPnt.hh"
 #include "TrickHLA/TimedSyncPntList.hh"
-#include "TrickHLA/Utilities.hh"
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
@@ -60,7 +70,6 @@ void TimedSyncPntList::add_sync_pnt(
    wstring const &label )
 {
    Int64Time time( 0.0 );
-
    add_sync_pnt( label, time );
 }
 
@@ -111,7 +120,8 @@ bool TimedSyncPntList::check_sync_pnts(
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
          // Cast the SyncPnt pointer to a TimedSyncPnt pointer.
          TimedSyncPnt *timed_i = dynamic_cast< TimedSyncPnt * >( *i );
-         if ( ( timed_i->get_state() == SYNC_PNT_STATE_EXISTS ) && ( timed_i->get_time() <= checkTime ) ) {
+         if ( ( timed_i->get_state() == SYNC_PNT_STATE_EXISTS )
+              && ( timed_i->get_time() <= checkTime ) ) {
             unlock_read_only();
             return true;
          }
@@ -131,7 +141,8 @@ void TimedSyncPntList::convert_sync_pts( LoggableSyncPnt *sync_points )
       ostringstream errmsg;
       errmsg
          << "TimedSyncPntList::convert_sync_pts():" << __LINE__
-         << ": Could not cast synchronization points to timed synchronization points!" << THLA_ENDL;
+         << ": Could not cast synchronization points to timed synchronization points!"
+         << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       SyncPntListBase::convert_sync_pts( sync_points );
    } else {
@@ -156,7 +167,8 @@ void TimedSyncPntList::convert_sync_pts( LoggableSyncPnt *sync_points )
 void TimedSyncPntList::print_sync_pnts()
 {
    vector< SyncPnt * >::const_iterator i;
-   string                              sync_point_label;
+
+   string sync_point_label;
 
    ostringstream msg;
    msg << "TimedSyncPntList::print_sync_pnts():" << __LINE__ << endl

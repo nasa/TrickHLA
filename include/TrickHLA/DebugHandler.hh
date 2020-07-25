@@ -19,23 +19,19 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
+@trick_link_dependency{../source/TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
 @rev_entry{Tony Varesic, L3 Titan Group, IMSim, Jan 2010, --, Initial version.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, July 2020, --, Rewrite to use static data and functions.}
 @revs_end
 */
 
 #ifndef _TRICKHLA_DEBUG_HANDLER_HH_
 #define _TRICKHLA_DEBUG_HANDLER_HH_
-
-// System include files.
-
-// Trick include files.
-
-// HLA include files.
 
 // TrickHLA Model include files.
 #include "TrickHLA/Types.hh"
@@ -60,60 +56,24 @@ class DebugHandler
    // Constructors / destructors
    //-----------------------------------------------------------------
    /*! @brief Initialization constructor for the TrickHLA DebugHandler class. */
-   DebugHandler()
-      : debug_level( DEBUG_LEVEL_NO_TRACE ), code_section( DEBUG_SOURCE_ALL_MODULES )
-   {
-   }
+   DebugHandler();
    /*! @brief Destructor for the TrickHLA DebugHandler class. */
-   virtual ~DebugHandler()
-   {
-   }
-   // Use implicit copy constructor and assignment operator.
-
-   /*! @brief Get current debug level as an enumeration value.
-    *  @return Current debug level as a DebugLevelEnum tag. */
-   const DebugLevelEnum &get_debug_level() const
-   {
-      return debug_level;
-   }
-
-   /*! @brief Get the current debug level as an integer value.
-    *  @return Current debug level as an integer value. */
-   const int get_debug_level_as_int() const
-   {
-      return ( (int)debug_level );
-   }
-
-   /*! @brief Get the code section for this debug handler.
-    *  @return Debug handler code module as a DebugSourceEnum tag. */
-   const DebugSourceEnum &get_code_section() const
-   {
-      return code_section;
-   }
+   virtual ~DebugHandler();
 
    /*! @brief Conditional test to see if a debug message should print.
-    *  @return Returns true if the requested message should print level.
+    *  @return Returns true if the requested message should be printed.
     *  @param level Debug level of incoming message.
     *  @param code  Debug code source area of the incoming message. */
-   bool should_print(
-      const DebugLevelEnum & level,
-      const DebugSourceEnum &code ) const
-   {
-      return ( ( debug_level >= level ) && ( ( code_section & code ) != 0 ) );
-   }
+   static bool print( const DebugLevelEnum &level, const DebugSourceEnum &code );
 
-   /*! @brief Set the debug handler from existing debug handler.
-    *  @param in Debug handler from which to copy the level and code section. */
-   void set(
-      const DebugHandler &in )
-   {
-      debug_level  = in.get_debug_level();
-      code_section = in.get_code_section();
-   }
+   /*! @brief Set the debug level and code-section..
+    *  @param level Debug level of incoming message.
+    *  @param code  Debug code source area of the incoming message. */
+   static void set( const DebugLevelEnum &level, const DebugSourceEnum &code );
 
   public:
-   DebugLevelEnum  debug_level;  ///< @trick_units{--} Maximum debug report level requested by the user, default: THLA_NO_TRACE
-   DebugSourceEnum code_section; ///< @trick_units{--} Code section(s) for which to activate debug messages, default: THLA_ALL_MODULES
+   static DebugLevelEnum  debug_level;  ///< @trick_units{--} Maximum debug report level requested by the user, default: THLA_NO_TRACE
+   static DebugSourceEnum code_section; ///< @trick_units{--} Code section(s) for which to activate debug messages, default: THLA_ALL_MODULES
 };
 
 } // namespace TrickHLA

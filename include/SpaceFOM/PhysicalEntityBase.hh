@@ -24,6 +24,7 @@ NASA, Johnson Space Center\n
 @python_module{SpaceFOM}
 
 @tldh
+@trick_link_dependency{../../source/TrickHLA/OpaqueBuffer.cpp}
 @trick_link_dependency{../../source/TrickHLA/Packing.cpp}
 @trick_link_dependency{../../source/SpaceFOM/PhysicalEntityBase.cpp}
 @trick_link_dependency{../../source/SpaceFOM/SpaceTimeCoordinateEncoder.cpp}
@@ -42,8 +43,6 @@ NASA, Johnson Space Center\n
 // System include files.
 
 // TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
-#include "TrickHLA/Manager.hh"
 #include "TrickHLA/OpaqueBuffer.hh"
 #include "TrickHLA/Packing.hh"
 
