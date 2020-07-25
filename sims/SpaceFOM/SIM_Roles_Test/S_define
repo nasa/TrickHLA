@@ -160,7 +160,7 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
 //==========================================================================
 // Main TrickHLA SimObject.
 SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME, THLA_INTERACTION_CYCLE_TIME,
-                     P_HLA_EARLY, P_HLA_INIT, P_HLA_LATE );
+                        P_HLA_EARLY, P_HLA_INIT, P_HLA_LATE );
 
 // SimObject used capture simulation specific initialization.
 THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );

@@ -126,6 +126,9 @@ class Federate
    int            known_feds_count;  ///< @trick_units{--} Number of required Federates (default: 0)
    KnownFederate *known_feds;        ///< @trick_units{--} Array of all the known Federates in the simulation.
 
+   DebugLevelEnum  debug_level;  ///< @trick_units{--} Maximum debug report level requested by the user, default: THLA_NO_TRACE
+   DebugSourceEnum code_section; ///< @trick_units{--} Code section(s) for which to activate debug messages, default: THLA_ALL_MODULES
+
    bool can_rejoin_federation; /**< @trick_units{--}
       Enables this federate to resign in a way to allow re-joining of the
       federation at a later time. */

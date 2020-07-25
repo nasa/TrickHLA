@@ -323,7 +323,7 @@ class TrickHLAFederateConfig( object ):
 
    def set_debug_level( self, debug_level ):
 
-      self.manager.debug_level = debug_level
+      self.federate.debug_level = debug_level
 
       return
 

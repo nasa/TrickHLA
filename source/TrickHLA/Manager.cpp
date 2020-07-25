@@ -105,8 +105,6 @@ Manager::Manager()
      objects( NULL ),
      inter_count( 0 ),
      interactions( NULL ),
-     debug_level( DEBUG_LEVEL_NO_TRACE ),
-     code_section( DEBUG_SOURCE_ALL_MODULES ),
      restore_federation( 0 ),
      restore_file_name( NULL ),
      initiated_a_federation_save( false ),
@@ -164,9 +162,15 @@ void Manager::initialize()
 
    // Just return if the TrickHLA Manager is already initialized.
    if ( this->mgr_initialized ) {
-      send_hs( stderr, "Manager::initialize():%d Already initialized.%c",
-               __LINE__, THLA_NEWLINE );
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         send_hs( stderr, "Manager::initialize():%d Already initialized.%c",
+                  __LINE__, THLA_NEWLINE );
+      }
       return;
+   }
+
+   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      send_hs( stderr, "Manager::initialize():%d%c", __LINE__, THLA_NEWLINE );
    }
 
    // Check to make sure we have a reference to the TrickHLA::Manager.
@@ -199,29 +203,6 @@ void Manager::initialize()
       inter_count = 0;
    }
 
-   // Verify the debug level is correct just in case the user specifies it in
-   // the input file as an integer instead of using the ENUM values...
-   if ( ( this->debug_level < DEBUG_LEVEL_NO_TRACE )
-        || ( this->debug_level > DEBUG_LEVEL_FULL_TRACE ) ) {
-      send_hs( stderr, "Manager::initialize():%d You specified an \
-invalid debug level '%d' in the input file using an integer value instead of \
-an ENUM. Please double check the value you specified in the input file against \
-the documented ENUM values.%c",
-               __LINE__, (int)this->debug_level, THLA_NEWLINE );
-      if ( this->debug_level < DEBUG_LEVEL_NO_TRACE ) {
-         this->debug_level = DEBUG_LEVEL_NO_TRACE;
-         send_hs( stderr, "Manager::initialize():%d No TrickHLA debug messages will be emitted.%c",
-                  __LINE__, THLA_NEWLINE );
-      } else {
-         this->debug_level = DEBUG_LEVEL_FULL_TRACE;
-         send_hs( stderr, "Manager::initialize():%d All TrickHLA debug messages will be emitted.%c",
-                  __LINE__, THLA_NEWLINE );
-      }
-   }
-
-   // Set the debug level and code section in the global DebugHandler.
-   DebugHandler::set( this->debug_level, this->code_section );
-
    // The manager is now initialized.
    this->mgr_initialized = true;
 
@@ -232,8 +213,10 @@ void Manager::restart_initialization()
 {
    // Just return if the TrickHLA Manager is not initialized.
    if ( !mgr_initialized ) {
-      send_hs( stderr, "Manager::restart_initialization():%d Manager Not initialized, returning...%c",
-               __LINE__, THLA_NEWLINE );
+      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         send_hs( stderr, "Manager::restart_initialization():%d Manager Not initialized, returning...%c",
+                  __LINE__, THLA_NEWLINE );
+      }
       return;
    }
 
@@ -244,8 +227,7 @@ void Manager::restart_initialization()
    }
 
    if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::restart_initialization():%d%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Manager::restart_initialization():%d%c", __LINE__, THLA_NEWLINE );
    }
 
    // Make sure the Federate is initialized after the restart.

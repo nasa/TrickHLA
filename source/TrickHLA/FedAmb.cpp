@@ -108,7 +108,6 @@ void FedAmb::setup(
    Federate &federate,
    Manager & manager )
 {
-
    // Set the associated TrickHLA Federate and Manager references.
    this->federate = &federate;
    this->manager  = &manager;

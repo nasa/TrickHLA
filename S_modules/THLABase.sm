@@ -75,9 +75,6 @@ class THLABaseSimObject : public Trick::SimObject {
       //-- INITIALIZATION JOBS --
       //-------------------------
 
-      // Print the current TrickHLA version string.
-      P1 ("initialization") federate.print_version();
-
       // Check and fix the FPU Control Word as a job that runs just after
       // the Input Processor runs.
       P1 ("initialization") federate.fix_FPU_control_word();
