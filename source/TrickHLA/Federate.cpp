@@ -122,6 +122,8 @@ Federate::Federate()
      enable_known_feds( true ),
      known_feds_count( 0 ),
      known_feds( NULL ),
+     debug_level( DEBUG_LEVEL_NO_TRACE ),
+     code_section( DEBUG_SOURCE_ALL_MODULES ),
      can_rejoin_federation( false ),
      freeze_delay_frames( 2 ),
      unfreeze_after_save( false ),
@@ -321,7 +323,7 @@ void Federate::print_version() const
       StringUtilities::to_string( rti_version, RTI1516_NAMESPACE::rtiVersion() );
 #endif
 
-      send_hs( stdout, "Federate::print_version():%d\n\t TrickHLA-version:'%s'\n\t TrickHLA-release-date:'%s'\n\t RTI-name:'%s'\n\t RTI-version:'%s'%c",
+      send_hs( stdout, "Federate::print_version():%d\n   TrickHLA-version:'%s'\n   TrickHLA-release-date:'%s'\n   RTI-name:'%s'\n   RTI-version:'%s'%c",
                __LINE__, Utilities::get_version().c_str(),
                Utilities::get_release_date().c_str(),
                rti_name.c_str(), rti_version.c_str(), THLA_NEWLINE );
@@ -369,7 +371,6 @@ void Federate::setup(
    Manager &             federate_manager,
    ExecutionControlBase &federate_execution_control )
 {
-
    // Set the Federate ambassador.
    this->federate_ambassador = &federate_amb;
 
@@ -399,6 +400,31 @@ void Federate::setup(
 void Federate::initialize()
 {
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+   // Verify the debug level is correct just in case the user specifies it in
+   // the input file as an integer instead of using the ENUM values...
+   if ( ( this->debug_level < DEBUG_LEVEL_NO_TRACE ) || ( this->debug_level > DEBUG_LEVEL_FULL_TRACE ) ) {
+      send_hs( stderr, "Federate::initialize():%d You specified an \
+invalid debug level '%d' in the input file using an integer value instead of \
+an ENUM. Please double check the value you specified in the input file against \
+the documented ENUM values.%c",
+               __LINE__, (int)this->debug_level, THLA_NEWLINE );
+      if ( this->debug_level < DEBUG_LEVEL_NO_TRACE ) {
+         this->debug_level = DEBUG_LEVEL_NO_TRACE;
+         send_hs( stderr, "Federate::initialize():%d No TrickHLA debug messages will be emitted.%c",
+                  __LINE__, THLA_NEWLINE );
+      } else {
+         this->debug_level = DEBUG_LEVEL_FULL_TRACE;
+         send_hs( stderr, "Federate::initialize():%d All TrickHLA debug messages will be emitted.%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+   }
+
+   // Set the debug level and code section in the global DebugHandler.
+   DebugHandler::set( this->debug_level, this->code_section );
+
+   // Print the current TrickHLA version string.
+   print_version();
 
    // Make sure the federate name has been specified.
    if ( ( name == NULL ) || ( *name == '\0' ) ) {

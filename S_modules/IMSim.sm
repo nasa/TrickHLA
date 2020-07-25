@@ -87,18 +87,12 @@ class IMSimSimObject : public Trick::SimObject {
       //-- INITIALIZATION JOBS --
       //-------------------------
 
-      // Print the current TrickHLA version string.
-      P1 ("initialization") manager.print_version();
-
       // Check and fix the FPU Control Word as a job that runs just after
       // the Input Processor runs.
       P1 ("initialization") federate.fix_FPU_control_word();
 
-      // Setup the HLA infrastructure.
-      P_INIT ("initialization") federate_amb.initialize( federate, manager );
-      
       P_INIT ("initialization") federate.initialize( federate_amb );
-
+      
       // Initialize the TrickHLA Manger which will setup the RTI interface,
       // confirm all required federates have joined the federation, perform
       // dynamic initialization with the federates, and start the simulation.

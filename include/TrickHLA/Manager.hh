@@ -113,9 +113,6 @@ class Manager
    int          inter_count;  ///< @trick_units{--} Number of TrickHLA Interactions.
    Interaction *interactions; ///< @trick_units{--} Array of TrickHLA Interactions.
 
-   DebugLevelEnum  debug_level;  ///< @trick_units{--} Maximum debug report level requested by the user, default: THLA_NO_TRACE
-   DebugSourceEnum code_section; ///< @trick_units{--} Code section(s) for which to activate debug messages, default: THLA_ALL_MODULES
-
    bool  restore_federation;          ///< @trick_io{*i} @trick_units{--} flag indicating whether to trigger the restore
    char *restore_file_name;           ///< @trick_io{*i} @trick_units{--} file name, which will be the label name
    bool  initiated_a_federation_save; ///< @trick_io{**} did this manager initiate the federation save?
