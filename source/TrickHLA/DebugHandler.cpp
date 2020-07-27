@@ -64,6 +64,18 @@ void DebugHandler::set(
    const DebugLevelEnum  level,
    const DebugSourceEnum code )
 {
-   debug_level  = level;
-   code_section = code;
+   if ( level < DEBUG_LEVEL_NO_TRACE ) {
+      debug_level = DEBUG_LEVEL_NO_TRACE;
+   } else if ( level > DEBUG_LEVEL_FULL_TRACE ) {
+      debug_level = DEBUG_LEVEL_FULL_TRACE;
+   } else {
+      debug_level = level;
+   }
+   if ( code < DEBUG_SOURCE_NO_MODULES ) {
+      code_section = DEBUG_SOURCE_NO_MODULES;
+   } else if ( code > DEBUG_SOURCE_ALL_MODULES ) {
+      code_section = DEBUG_SOURCE_ALL_MODULES;
+   } else {
+      code_section = code;
+   }
 }

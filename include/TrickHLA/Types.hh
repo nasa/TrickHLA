@@ -146,6 +146,7 @@ typedef enum {
 */
 typedef enum {
 
+   DEBUG_SOURCE_NO_MODULES        = 0x00000000, ///< No code selected for debug messages.
    DEBUG_SOURCE_FED_AMB           = 0x00000001, ///< Adds TrickHLA::FedAmb debug messages
    DEBUG_SOURCE_FEDERATE          = 0x00000002, ///< Adds TrickHLA::Federate debug messages
    DEBUG_SOURCE_MANAGER           = 0x00000004, ///< Adds TrickHLA::Manager debug messages
