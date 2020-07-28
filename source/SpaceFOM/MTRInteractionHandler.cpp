@@ -151,7 +151,7 @@ void MTRInteractionHandler::send_interaction(
    bool was_sent = this->InteractionHandler::send_interaction( user_supplied_tag );
 
    if ( was_sent ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
 
          string user_supplied_tag_string;
          StringUtilities::to_string( user_supplied_tag_string, user_supplied_tag );
@@ -177,7 +177,7 @@ void MTRInteractionHandler::send_interaction(
    } else {
       // Use the inherited debug-handler to allow debug comments to be turned
       // on and off from a setting in the input file. Use a higher debug level.
-      if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
 
          // Get the current time line values.
          scenario_time = this->get_scenario_time();
@@ -248,7 +248,7 @@ void MTRInteractionHandler::receive_interaction(
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
 
       string user_supplied_tag_string;
       StringUtilities::to_string( user_supplied_tag_string, the_user_supplied_tag );

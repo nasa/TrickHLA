@@ -151,7 +151,7 @@ void SinePacking::pack()
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
       string obj_name = ( object != NULL ) ? object->get_name_string() : "";
 
       cout << "SinePacking::pack()" << endl
@@ -184,7 +184,7 @@ void SinePacking::pack()
    }
 
    // Output more debug information for a higher debug-level.
-   if ( DebugHandler::print( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_PACKING ) ) {
 
       if ( buff != NULL ) {
          cout << " SinePacking::pack() buff_size: " << buff_size << endl;
@@ -212,7 +212,7 @@ void SinePacking::pack()
          // Get the address of the "name" simulation data variable.
          char *name_sim_var = (char *)attr->get_sim_variable_address();
 
-         // Make a little change to the name and print it out.
+         // Make a little change to the name and show it out.
          if ( name_sim_var != NULL ) {
 
             // Number of bytes ref-attributes says this variable is.
@@ -263,7 +263,7 @@ void SinePacking::unpack()
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
 
       string obj_name = ( object != NULL ) ? object->get_name_string() : "";
 
@@ -297,7 +297,7 @@ void SinePacking::unpack()
    }
 
    // Output more debug information for a higher debug-level.
-   if ( DebugHandler::print( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_PACKING ) ) {
       if ( buff != NULL ) {
          cout << " SinePacking::unpack() buff_size: " << buff_size << endl;
          for ( int i = 0; i < buff_size; i++ ) {

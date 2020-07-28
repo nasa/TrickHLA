@@ -206,7 +206,7 @@ void Object::initialize(
    }
    this->manager = trickhla_mgr;
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
       ostringstream msg;
       msg << "Object::initialize():" << __LINE__
           << " Name:'" << name << "' FOM_name:'" << FOM_name
@@ -563,7 +563,7 @@ void Object::remove_object_instance()
    // instance handle again.
    this->instance_handle = ObjectInstanceHandle();
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
       send_hs( stderr, "Object::remove_object_instance():%d Object '%s' Instance-ID:%s Valid-ID:%s %c",
@@ -580,7 +580,7 @@ void Object::process_deleted_object()
       // only process the deleted object once.
       object_deleted_from_RTI = false;
 
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
          send_hs( stderr, "Object::process_deleted_object():%d Object '%s' Instance-ID:%s Valid-ID:%s %c",
@@ -607,7 +607,7 @@ void Object::process_deleted_object()
 void Object::mark_all_attributes_as_nonlocal()
 {
    ostringstream msg;
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
 
@@ -618,7 +618,7 @@ void Object::mark_all_attributes_as_nonlocal()
           << " Instance-ID:" << id_str;
    }
    for ( int i = 0; i < attr_count; i++ ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          msg << endl
              << "   " << ( i + 1 ) << "/" << attr_count
              << " FOM-Attribute:'" << attributes[i].get_FOM_name() << "'"
@@ -630,7 +630,7 @@ void Object::mark_all_attributes_as_nonlocal()
       if ( attributes[i].is_locally_owned() ) {
          attributes[i].unmark_locally_owned();
 
-         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
             msg << endl
                 << "   " << ( i + 1 ) << "/" << attr_count
                 << " FOM-Attribute:'" << attributes[i].get_FOM_name() << "'"
@@ -640,7 +640,7 @@ void Object::mark_all_attributes_as_nonlocal()
          }
       }
    }
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
       msg << THLA_ENDL;
       send_hs( stdout, (char *)msg.str().c_str() );
    }
@@ -660,7 +660,7 @@ void Object::publish_object_attributes()
    // Publish our associated CLASS & attributes
    if ( rti_amb != NULL ) {
 
-      if ( ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) && any_attribute_published() ) {
+      if ( ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) && any_attribute_published() ) {
          send_hs( stdout, "Object::publish_object_attributes():%d For object '%s'.%c",
                   __LINE__, get_name(), THLA_NEWLINE );
       }
@@ -747,7 +747,7 @@ void Object::unpublish_all_object_attributes()
    }
 
    if ( any_attribute_published() ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          send_hs( stdout, "Object::unpublish_all_object_attributes():%d For object '%s'.%c",
                   __LINE__, get_name(), THLA_NEWLINE );
       }
@@ -815,7 +815,7 @@ void Object::subscribe_to_object_attributes()
    // Subscribe to CLASS & attributes
    if ( rti_amb != NULL ) {
 
-      if ( ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) && any_attribute_subscribed() ) {
+      if ( ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) && any_attribute_subscribed() ) {
          send_hs( stdout, "Object::subscribe_to_object_attributes():%d For object '%s'.%c",
                   __LINE__, get_name(), THLA_NEWLINE );
       }
@@ -913,7 +913,7 @@ void Object::unsubscribe_all_object_attributes()
 
    if ( any_attribute_subscribed() ) {
 
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          send_hs( stdout, "Object::unsubscribe_all_object_attributes():%d For object '%s'.%c",
                   __LINE__, get_name(), THLA_NEWLINE );
       }
@@ -995,13 +995,13 @@ void Object::reserve_object_name_with_RTI()
    // execution. Note: We are notified in a callback if the name reservation
    // was successful or failed.
    if ( is_instance_handle_valid() ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          send_hs( stdout, "Object::reserve_object_name_with_RTI():%d \
 WARNING: Object instance already exists so we will not reserve the instance name '%s' for it!%c",
                   __LINE__, get_name(), THLA_NEWLINE );
       }
    } else {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          send_hs( stdout, "Object::reserve_object_name_with_RTI():%d \
 Requesting reservation of Object instance name '%s'.%c",
                   __LINE__, get_name(), THLA_NEWLINE );
@@ -1072,7 +1072,7 @@ void Object::wait_on_object_name_reservation()
       return;
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
       send_hs( stdout, "Object::wait_on_object_name_reservation():%d \
 Waiting on reservation of Object Instance Name '%s'.%c",
                __LINE__, get_name(), THLA_NEWLINE );
@@ -1102,7 +1102,7 @@ Waiting on reservation of Object Instance Name '%s'.%c",
       }
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
       send_hs( stdout, "Object::wait_on_object_name_reservation():%d \
 Object instance name '%s' is reserved.%c",
                __LINE__, get_name(), THLA_NEWLINE );
@@ -1135,7 +1135,7 @@ void Object::register_object_with_RTI()
    // Register object with the RTI. Registering an object with the RTI allows
    // the object to be discovered by other federates in the federation execution.
    if ( is_instance_handle_valid() ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
          send_hs( stdout, "Object::register_object_with_RTI():%d WARNING: \
@@ -1248,7 +1248,7 @@ Detected object already registered '%s' Instance-ID:%s%c",
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
       }
 
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
          send_hs( stdout, "Object::register_object_with_RTI():%d Registered '%s' Instance-ID:%s%c",
@@ -1263,7 +1263,7 @@ Detected object already registered '%s' Instance-ID:%s%c",
  */
 void Object::wait_on_object_registration()
 {
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
       send_hs( stdout, "Object::wait_on_object_registration():%d Waiting on registration of '%s' for object '%s'.%c",
                __LINE__, FOM_name, get_name(), THLA_NEWLINE );
    }
@@ -1292,7 +1292,7 @@ void Object::wait_on_object_registration()
       }
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
       send_hs( stdout, "Object::wait_on_object_registration():%d Object \
 instance '%s' for object '%s' is registered.%c",
                __LINE__, FOM_name,
@@ -1312,7 +1312,7 @@ void Object::setup_preferred_order_with_RTI()
    }
 
    ostringstream msg;
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
       msg << "Object::setup_preferred_order_with_RTI():" << __LINE__ << endl
           << "--------- Setup Preferred-Order of Locally-Owned Attributes ---------" << endl
           << " Object:'" << get_name() << "'"
@@ -1331,7 +1331,7 @@ void Object::setup_preferred_order_with_RTI()
    // Create the sets of Attribute handles for the Timestamp preferred order.
    for ( int i = 0; i < attr_count; i++ ) {
       if ( attributes[i].is_locally_owned() && ( attributes[i].get_preferred_order() == TRANSPORT_TIMESTAMP_ORDER ) ) {
-         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
             msg << "   " << ( i + 1 ) << "/" << attr_count
                 << " FOM-Attribute:'" << attributes[i].get_FOM_name() << "'"
                 << " Trick-Name:'" << attributes[i].get_trick_name() << "'"
@@ -1345,7 +1345,7 @@ void Object::setup_preferred_order_with_RTI()
    // Create the sets of Attribute handles for the Receive preferred order.
    for ( int i = 0; i < attr_count; i++ ) {
       if ( attributes[i].is_locally_owned() && ( attributes[i].get_preferred_order() == TRANSPORT_RECEIVE_ORDER ) ) {
-         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
             msg << "   " << ( i + 1 ) << "/" << attr_count
                 << " FOM-Attribute:'" << attributes[i].get_FOM_name() << "'"
                 << " Trick-Name:'" << attributes[i].get_trick_name() << "'"
@@ -1362,7 +1362,7 @@ void Object::setup_preferred_order_with_RTI()
       return;
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
       send_hs( stdout, (char *)msg.str().c_str() );
    }
 
@@ -1541,7 +1541,7 @@ void Object::provide_attribute_update(
    // Make sure we mark the request at the object level if we had at least
    // attribute we need to provide an update for.
    if ( any_attr_requested ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          send_hs( stdout, "Object::provide_attribute_update():%d Object '%s'%c",
                   __LINE__, get_name(), THLA_NEWLINE );
       }
@@ -1582,7 +1582,7 @@ void Object::send_requested_data(
       return;
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
       send_hs( stdout, "Object::send_requested_data():%d Object '%s'%c",
                __LINE__, get_name(), THLA_NEWLINE );
    }
@@ -1662,7 +1662,7 @@ void Object::send_requested_data(
          // the HLA Time Regulating state. See IEEE-1516.1-2000,
          // Sections 6.6 and 8.1.1.
          if ( send_with_timestamp ) {
-            if ( DebugHandler::print( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                send_hs( stdout, "Object::send_requested_data():%d For object '%s', calling rti_amb->updateAttributeValues(TimestampOrder).%c",
                         __LINE__, get_name(), THLA_NEWLINE );
             }
@@ -1672,7 +1672,7 @@ void Object::send_requested_data(
                                                   RTI1516_USERDATA( 0, 0 ),
                                                   update_time.get() );
          } else {
-            if ( DebugHandler::print( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                send_hs( stdout, "Object::send_requested_data():%d For object '%s', calling rti_amb->updateAttributeValues(Receive Order).%c",
                         __LINE__, get_name(), THLA_NEWLINE );
             }
@@ -1963,7 +1963,7 @@ void Object::send_cyclic_and_requested_data(
          // Sections 6.6 and 8.1.1.
          if ( send_with_timestamp ) {
 
-            if ( DebugHandler::print( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                send_hs( stdout, "Object::send_cyclic_and_requested_data():%d For object '%s', calling rti_amb->updateAttributeValues(TimestampOrder).%c",
                         __LINE__, get_name(), THLA_NEWLINE );
             }
@@ -1976,7 +1976,7 @@ void Object::send_cyclic_and_requested_data(
                                                   RTI1516_USERDATA( 0, 0 ),
                                                   timestamp );
          } else {
-            if ( DebugHandler::print( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                send_hs( stdout, "Object::send_cyclic_and_requested_data():%d For object '%s', calling rti_amb->updateAttributeValues(ReceiveOrder).%c",
                         __LINE__, get_name(), THLA_NEWLINE );
             }
@@ -2501,7 +2501,7 @@ void Object::send_init_data()
       // IEEE-1516.1-2000 sections 4.12, 4.20)
       if ( trick_fed->should_publish_data() ) {
 
-         if ( DebugHandler::print( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
             send_hs( stdout, "Object::send_init_data():%d For object '%s', calling rti_amb->updateAttributeValues(ReceiveOrder).%c",
                      __LINE__, get_name(), THLA_NEWLINE );
          }
@@ -2732,7 +2732,7 @@ void Object::create_requested_attribute_set()
          // we clear the request flag.
          attributes[i].set_update_requested( false );
 
-         if ( DebugHandler::print( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
             send_hs( stdout, "Object::create_requested_attribute_set():%d Adding '%s' to attribute map.%c",
                      __LINE__, attributes[i].get_FOM_name(), THLA_NEWLINE );
          }
@@ -2784,7 +2784,7 @@ void Object::create_attribute_set(
                // we clear the request flag now since we are handling it here.
                attributes[i].set_update_requested( false );
 
-               if ( DebugHandler::print( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+               if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                   send_hs( stdout, "Object::create_attribute_set():%d For object '%s', adding '%s' to attribute map.%c",
                            __LINE__, get_name(), attributes[i].get_FOM_name(), THLA_NEWLINE );
                }
@@ -2863,7 +2863,7 @@ void Object::extract_data(
 
          attr_changed = true;
 
-      } else if ( DebugHandler::print( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      } else if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          string id_str;
          StringUtilities::to_string( id_str, iter->first );
          send_hs( stderr, "Object::extract_data():%d WARNING: For \
@@ -2928,7 +2928,7 @@ void Object::release_ownership()
       // If there is an ownership_handler, tell it to convert the push / pull maps
       // into checkpoint-able data structures.
       if ( ownership != NULL ) {
-         if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
             send_hs( stdout, "Object::release_ownership():%d Telling ownership handler to clear checkpoint.%c",
                      __LINE__, THLA_NEWLINE );
          }
@@ -2951,7 +2951,7 @@ void Object::release_ownership()
       // Unlock the ownership mutex as auto_unlock_mutex goes out of scope.
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
       send_hs( stdout, "Object::release_ownership():%d Attributes of Object '%s'.%c",
                __LINE__, get_name(), THLA_NEWLINE );
    }
@@ -2987,7 +2987,7 @@ void Object::release_ownership()
             // The attribute is now divested which means it is now remotely owned.
             trick_hla_attr->mark_remotely_owned();
 
-            if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                send_hs( stdout, "Object::release_ownership():%d\
 \n   DIVESTED Ownership of attribute '%s'->'%s' of object '%s'.%c",
                         __LINE__,
@@ -3096,7 +3096,7 @@ void Object::pull_ownership()
 
    // We need an RTI ambassador to be able to continue.
    if ( rti_amb == NULL ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          send_hs( stdout, "Object::pull_ownership():%d Unexpected Null RTIambassador!%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -3178,14 +3178,14 @@ void Object::pull_ownership()
                   // We will try and pull ownership of this attribute.
                   attr_hdl_set.insert( attr->get_attribute_handle() );
 
-                  if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+                  if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                      send_hs( stdout, "Object::pull_ownership():%d\
 \n   Attribute '%s'->'%s' of object '%s'.%c",
                               __LINE__, get_FOM_name(),
                               attr->get_FOM_name(), get_name(), THLA_NEWLINE );
                   }
                } else {
-                  if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+                  if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                      send_hs( stdout, "Object::pull_ownership():%d Can not \
 pull Attribute '%s'->'%s' of object '%s' for time %G because it is either already \
 owned or is not configured to be published.%c",
@@ -3218,14 +3218,14 @@ owned or is not configured to be published.%c",
 
    // Make the request only if we have attributes to pull ownership of.
    if ( attr_hdl_set.empty() ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          send_hs( stdout, "Object::pull_ownership():%d No active requests, \
 %d scheduled request(s) pending for object '%s'.%c",
                   __LINE__,
                   (int)ownership->pull_requests.size(), get_name(), THLA_NEWLINE );
       }
    } else {
-      if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          send_hs( stdout, "Object::pull_ownership():%d Pulling ownership \
 for Attributes of object '%s'.%c",
                   __LINE__, get_name(), THLA_NEWLINE );
@@ -3296,7 +3296,7 @@ void Object::grant_pull_request()
    }
 
    if ( attrs_to_divest.empty() ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          send_hs( stdout, "Object::grant_pull_request():%d No requested attributes to divest ownership of for object '%s'.%c",
                   __LINE__, get_name(), THLA_NEWLINE );
       }
@@ -3314,7 +3314,7 @@ void Object::grant_pull_request()
             *divested_attrs );
 
          if ( divested_attrs->empty() ) {
-            if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                send_hs( stdout, "Object::grant_pull_request():%d \
 No attributes Divested since no federate wanted them for object '%s'.%c",
                         __LINE__, get_name(), THLA_NEWLINE );
@@ -3333,7 +3333,7 @@ No attributes Divested since no federate wanted them for object '%s'.%c",
 
                   trick_hla_attr->mark_remotely_owned();
 
-                  if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+                  if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                      send_hs( stdout, "Object::grant_pull_request():%d\
 \n   DIVESTED Ownership for attribute '%s'->'%s' of object '%s'.%c",
                               __LINE__,
@@ -3410,7 +3410,7 @@ void Object::grant_push_request()
    RTIambassador *rti_amb = get_RTI_ambassador();
 
    if ( rti_amb != NULL ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          send_hs( stdout, "Object::grant_push_request():%d Granting push request for '%s'.%c",
                   __LINE__, get_name(), THLA_NEWLINE );
       }
@@ -3462,7 +3462,7 @@ push request for object '%s'.%c",
          }
 
       } else {
-         if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
             send_hs( stdout, "Object::grant_push_request():%d No attributes \
 available to acquire ownership for object '%s'.%c",
                      __LINE__, get_name(), THLA_NEWLINE );
@@ -3605,7 +3605,7 @@ void Object::push_ownership()
 
    // We need an RTI ambassador to be able to continue.
    if ( rti_amb == NULL ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          send_hs( stdout, "Object::push_ownership():%d Unexpected Null RTIambassador!%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -3691,14 +3691,14 @@ void Object::push_ownership()
                   // We are will try and push ownership of this attribute.
                   attr_hdl_set->insert( attr->get_attribute_handle() );
 
-                  if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+                  if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                      send_hs( stdout, "Object::push_ownership():%d\
 \n   Attribute '%s'->'%s' of object '%s'.%c",
                               __LINE__, get_FOM_name(),
                               attr->get_FOM_name(), get_name(), THLA_NEWLINE );
                   }
                } else {
-                  if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+                  if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                      send_hs( stdout, "Object::push_ownership():%d Can not \
 push Attribute '%s'->'%s' of object '%s' for time %G because it is either already \
 owned or is not configured to be published.%c",
@@ -3733,14 +3733,14 @@ owned or is not configured to be published.%c",
       // a memory leak.
       delete attr_hdl_set;
 
-      if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          send_hs( stdout, "Object::push_ownership():%d No active requests, \
 %d scheduled request(s) pending for object '%s'.%c",
                   __LINE__,
                   (int)ownership->push_requests.size(), get_name(), THLA_NEWLINE );
       }
    } else {
-      if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          send_hs( stdout, "Object::push_ownership():%d Pushing ownership \
 for Attributes of object '%s'.%c",
                   __LINE__, get_name(), THLA_NEWLINE );
@@ -3772,7 +3772,7 @@ for Attributes of object '%s'.%c",
 void Object::setup_ownership_transfer_checkpointed_data()
 {
    if ( ownership != static_cast< OwnershipHandler * >( NULL ) ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          send_hs( stdout, "Object::setup_ownership_transfer_checkpointed_data():%d Object: %s.%c",
                   __LINE__, get_name(), THLA_NEWLINE );
       }
@@ -3783,7 +3783,7 @@ void Object::setup_ownership_transfer_checkpointed_data()
 void Object::restore_ownership_transfer_checkpointed_data()
 {
    if ( ownership != static_cast< OwnershipHandler * >( NULL ) ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          send_hs( stdout, "Object::restore_ownership_transfer_checkpointed_data():%d Object: %s.%c",
                   __LINE__, get_name(), THLA_NEWLINE );
       }
@@ -4176,7 +4176,7 @@ void Object::pull_ownership_upon_rejoin()
             // what the input file may have indicated.
             attributes[i].unmark_locally_owned();
 
-            if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                send_hs( stdout, "Object::pull_ownership_upon_rejoin():%d \
 Ownership check of Attribute '%s'->'%s' from object '%s' => RTI informed us that we DO NOT own it.%c",
                         __LINE__, get_FOM_name(), attributes[i].get_FOM_name(),
@@ -4219,13 +4219,13 @@ rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generate
 
    // Make the request only if we do have any attributes for which we need to pull ownership.
    if ( attr_hdl_set.empty() ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          send_hs( stdout, "Object::pull_ownership_upon_rejoin():%d No ownership \
 requests were added for object '%s'.%c",
                   __LINE__, get_name(), THLA_NEWLINE );
       }
    } else {
-      if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          send_hs( stdout, "Object::pull_ownership_upon_rejoin():%d Pulling ownership \
 for Attributes of object '%s'.%c",
                   __LINE__, get_name(), THLA_NEWLINE );

@@ -231,13 +231,13 @@ void ExecutionConfigurationBase::set_master(
  */
 void ExecutionConfigurationBase::wait_on_registration()
 {
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       send_hs( stdout, "TrickHLA::ExecutionConfigurationBase::wait_on_registration():%d%c",
                __LINE__, THLA_NEWLINE );
    }
 
    int  obj_reg_cnt   = 0;
-   bool print_summary = DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG );
+   bool print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG );
    bool any_unregistered_obj;
    int  total_obj_cnt = 1;
 
@@ -258,10 +258,10 @@ void ExecutionConfigurationBase::wait_on_registration()
          }
 
          // If we have a new registration count then update the object
-         // registration count and set the flag to print a new summary.
+         // registration count and set the flag to show a new summary.
          if ( cnt > obj_reg_cnt ) {
             obj_reg_cnt   = cnt;
-            print_summary = DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG );
+            print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG );
          }
       }
 
@@ -329,7 +329,7 @@ bool ExecutionConfigurationBase::wait_on_update() // RETURN: -- None.
       return false;
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       send_hs( stdout, "ExecutionConfigurationBase::wait_on_update():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -364,7 +364,7 @@ bool ExecutionConfigurationBase::wait_on_update() // RETURN: -- None.
          }
       }
 
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
          send_hs( stdout, "ExecutionConfigurationBase::wait_on_update():%d Received data.%c",
                   __LINE__, THLA_NEWLINE );
       }

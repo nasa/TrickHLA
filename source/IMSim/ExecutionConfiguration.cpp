@@ -194,7 +194,7 @@ void ExecutionConfiguration::configure_attributes(
 */
 void ExecutionConfiguration::pack()
 {
-   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       cout << "=============================================================" << endl
            << "IMSim::ExecutionConfiguration::pack()" << endl
            << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << endl
@@ -247,7 +247,7 @@ void ExecutionConfiguration::unpack()
    int64_t software_frame_usec;
    double  software_frame_sec;
 
-   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       cout << "=============================================================" << endl
            << "IMSim::ExecutionConfiguration::unpack()" << endl
            << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << endl
@@ -571,7 +571,7 @@ allocate enough memory for the ATTRIBUTES for the 'root_frame_name' value of the
    // Initialize the TrickHLA Object before we use it.
    this->initialize( this->get_federate()->get_manager() );
 
-   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg2;
       msg2 << "IMSim::ExecutionConfiguration::setup_interaction_ref_attributes():" << __LINE__
            << " FOM-Parameter:'" << this->attributes[0].get_FOM_name() << "'"
@@ -580,7 +580,7 @@ allocate enough memory for the ATTRIBUTES for the 'root_frame_name' value of the
       send_hs( stdout, (char *)msg2.str().c_str() );
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg2;
       msg2 << "IMSim::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
            << endl
@@ -593,7 +593,7 @@ allocate enough memory for the ATTRIBUTES for the 'root_frame_name' value of the
 
 void ExecutionConfiguration::print_execution_configuration()
 {
-   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
       msg << endl
           << "=============================================================" << endl
@@ -620,7 +620,7 @@ bool ExecutionConfiguration::wait_on_update() // RETURN: -- None.
       return false;
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       send_hs( stdout, "IMSim::ExecutionConfiguration::wait_on_update():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -655,7 +655,7 @@ bool ExecutionConfiguration::wait_on_update() // RETURN: -- None.
          }
       }
 
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
          send_hs( stdout, "IMSim::ExecutionConfiguration::wait_on_update():%d Received data.%c",
                   __LINE__, THLA_NEWLINE );
       }

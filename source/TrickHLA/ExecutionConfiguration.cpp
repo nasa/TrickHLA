@@ -245,7 +245,7 @@ void ExecutionConfiguration::configure()
 */
 void ExecutionConfiguration::pack()
 {
-   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       cout << "===================================================" << endl;
    }
 
@@ -254,7 +254,7 @@ void ExecutionConfiguration::pack()
    // Set the stop/termination time of the Trick simulation based on the
    // run_duration setting.
    if ( terminate_time >= 1.0e20 ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
          cout << "TrickHLA::ExecutionConfiguration::pack() Setting simulation termination time to "
               << run_duration << " seconds." << endl;
       }
@@ -267,7 +267,7 @@ void ExecutionConfiguration::pack()
          run_duration = 0.0;
       }
 
-      if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
          cout << "TrickHLA::ExecutionConfiguration::pack() Setting simulation duration to "
               << run_duration << " seconds." << endl;
       }
@@ -276,7 +276,7 @@ void ExecutionConfiguration::pack()
    // Encode the run duration into a 64 bit integer in microseconds.
    this->run_duration_microsec = Int64Interval::to_microseconds( this->run_duration );
 
-   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       cout << "TrickHLA::ExecutionConfiguration::pack()" << endl
            << "\tObject-Name:'" << this->object->get_name() << "'" << endl
            << "\towner:'" << ( owner != NULL ? owner : "" ) << "'" << endl
@@ -293,7 +293,7 @@ void ExecutionConfiguration::pack()
 */
 void ExecutionConfiguration::unpack()
 {
-   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       cout << "===================================================" << endl;
    }
 
@@ -303,14 +303,14 @@ void ExecutionConfiguration::unpack()
    // Set the stop/termination time of the Trick simulation based on the
    // run_duration setting.
    if ( run_duration >= 0.0 ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
          cout << "TrickHLA::ExecutionConfiguration::unpack() Setting simulation duration to "
               << run_duration << " seconds." << endl;
       }
       exec_set_terminate_time( this->run_duration );
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       cout << "TrickHLA::ExecutionConfiguration::unpack()" << endl
            << "\tObject-Name:'" << this->object->get_name() << "'" << endl
            << "\towner:'" << ( owner != NULL ? owner : "" ) << "'" << endl
@@ -336,7 +336,7 @@ void ExecutionConfiguration::setup_ref_attributes(
 
 void ExecutionConfiguration::print_execution_configuration()
 {
-   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
       msg << endl
           << "=============================================================" << endl

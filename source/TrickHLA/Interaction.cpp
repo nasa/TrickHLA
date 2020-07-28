@@ -247,7 +247,7 @@ void Interaction::remove() // RETURN: -- None.
 
             // Un-publish the Interaction.
             try {
-               if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
                   send_hs( stdout, "Interaction::remove():%d Unpublish Interaction '%s'.%c",
                            __LINE__, get_FOM_name(), THLA_NEWLINE );
                }
@@ -287,7 +287,7 @@ void Interaction::setup_preferred_order_with_RTI()
       return;
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       send_hs( stdout, "Interaction::setup_preferred_order_with_RTI():%d \
 Published Interaction '%s' Preferred-Order:%s%c",
                __LINE__, get_FOM_name(),
@@ -424,7 +424,7 @@ void Interaction::publish_interaction()
       return;
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       send_hs( stdout, "Interaction::publish_interaction():%d Interaction '%s'.%c",
                __LINE__, get_FOM_name(), THLA_NEWLINE );
    }
@@ -533,7 +533,7 @@ void Interaction::unpublish_interaction()
    // Subscribe to the interaction.
    if ( is_publish() ) {
 
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          send_hs( stdout, "Interaction::unpublish_interaction():%d Interaction '%s'%c",
                   __LINE__, get_FOM_name(), THLA_NEWLINE );
       }
@@ -643,7 +643,7 @@ void Interaction::subscribe_to_interaction()
    // Subscribe to the interaction.
    if ( is_subscribe() ) {
 
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          send_hs( stdout, "Interaction::subscribe_to_interaction():%d Interaction '%s'%c",
                   __LINE__, get_FOM_name(), THLA_NEWLINE );
       }
@@ -765,7 +765,7 @@ void Interaction::unsubscribe_from_interaction()
    // Make sure we only unsubscribe an interaction that was subscribed to.
    if ( is_subscribe() ) {
 
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          send_hs( stdout, "Interaction::unsubscribe_from_interaction():%d Interaction '%s'%c",
                   __LINE__, get_FOM_name(), THLA_NEWLINE );
       }
@@ -901,7 +901,7 @@ bool Interaction::send(
       // Release mutex lock as auto_unlock_mutex goes out of scope
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       send_hs( stdout, "Interaction::send():%d As Receive-Order: Interaction '%s'%c",
                __LINE__, get_FOM_name(), THLA_NEWLINE );
    }
@@ -967,7 +967,7 @@ bool Interaction::send(
 
       // Add all the parameter values to the map.
       for ( int i = 0; i < param_count; i++ ) {
-         if ( DebugHandler::print( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
             send_hs( stdout, "Interaction::send():%d Adding '%s' to parameter map.%c",
                      __LINE__, parameters[i].get_FOM_name(), THLA_NEWLINE );
          }
@@ -995,7 +995,7 @@ bool Interaction::send(
       // See IEEE-1516.1-2000, Sections 6.6 and 8.1.1.
       if ( send_with_timestamp ) {
 
-         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
             send_hs( stdout, "Interaction::send():%d As Timestamp-Order: Interaction '%s' sent for time %lf seconds.%c",
                      __LINE__, get_FOM_name(), time.get_time_in_seconds(), THLA_NEWLINE );
          }
@@ -1013,7 +1013,7 @@ bool Interaction::send(
             successfuly_sent = true;
          }
       } else {
-         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
             send_hs( stdout, "Interaction::send():%d As Receive-Order: \
 Interaction '%s' is time-regulating:%s, preferred-order:%s.%c",
                      __LINE__, get_FOM_name(),
@@ -1086,7 +1086,7 @@ void Interaction::process_interaction()
          return;
       }
 
-      if ( DebugHandler::print( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          string handle_str;
          StringUtilities::to_string( handle_str, class_handle );
          if ( received_as_TSO ) {
@@ -1129,7 +1129,7 @@ void Interaction::extract_data(
       return;
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       string handle_str;
       StringUtilities::to_string( handle_str, class_handle );
       send_hs( stdout, "Interaction::extract_data():%d ID:%s, FOM_name:'%s'%c",
@@ -1169,7 +1169,7 @@ void Interaction::extract_data(
       // Determine if we have a valid parameter-item.
       if ( ( param_item != NULL ) && ( param_item->index >= 0 ) && ( param_item->index < param_count ) ) {
 
-         if ( DebugHandler::print( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
             send_hs( stdout, "Interaction::extract_data():%d Decoding '%s' from parameter map.%c",
                      __LINE__, parameters[param_item->index].get_FOM_name(),
                      THLA_NEWLINE );

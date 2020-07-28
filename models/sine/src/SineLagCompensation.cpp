@@ -118,7 +118,7 @@ void SineLagCompensation::send_lag_compensation()
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( DebugHandler::print( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       cout << "******* SineLagCompensation::send_lag_compensation()" << endl
            << " scenario-time:" << get_scenario_time() << endl
            << "     data-time:" << sim_data->get_time() << endl
@@ -149,7 +149,7 @@ void SineLagCompensation::receive_lag_compensation()
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( DebugHandler::print( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       cout << "******* SineLagCompensation::receive_lag_compensation()" << endl
            << " scenario-time:" << get_scenario_time() << endl
            << "     data-time:" << lag_comp_data->get_time() << endl
@@ -198,7 +198,7 @@ void SineLagCompensation::receive_lag_compensation()
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( DebugHandler::print( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       cout << "SineLagCompensation::receive_lag_compensation() AFTER LAG COMPENSATION:" << endl
            << "\t Time \tsim_data: " << sim_data->get_time() << endl
            << "\t Value \tsim_data: " << sim_data->get_value() << endl

@@ -162,14 +162,14 @@ void Manager::initialize()
 
    // Just return if the TrickHLA Manager is already initialized.
    if ( this->mgr_initialized ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          send_hs( stderr, "Manager::initialize():%d Already initialized.%c",
                   __LINE__, THLA_NEWLINE );
       }
       return;
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stderr, "Manager::initialize():%d%c", __LINE__, THLA_NEWLINE );
    }
 
@@ -213,7 +213,7 @@ void Manager::restart_initialization()
 {
    // Just return if the TrickHLA Manager is not initialized.
    if ( !mgr_initialized ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          send_hs( stderr, "Manager::restart_initialization():%d Manager Not initialized, returning...%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -226,7 +226,7 @@ void Manager::restart_initialization()
       exec_terminate( __FILE__, "Manager::restart_initialization() Unexpected NULL Federate." );
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::restart_initialization():%d%c", __LINE__, THLA_NEWLINE );
    }
 
@@ -308,7 +308,7 @@ void Manager::send_init_data()
    // Late joining federates do not get to participate in the multiphase
    // initialization process so just return.
    if ( is_late_joining_federate() ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          send_hs( stdout, "Manager::send_init_data():%d Late joining \
 federate so this call will be ignored.%c",
                   __LINE__, THLA_NEWLINE );
@@ -323,7 +323,7 @@ federate so this call will be ignored.%c",
 
          if ( this->execution_control->wait_on_init_data() ) {
 
-            if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                send_hs( stdout, "Manager::send_init_data():%d '%s'%c",
                         __LINE__, objects[i].get_name(), THLA_NEWLINE );
             }
@@ -332,7 +332,7 @@ federate so this call will be ignored.%c",
             objects[i].send_init_data();
 
          } else {
-            if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                ostringstream msg;
                msg << "Manager::send_init_data():" << __LINE__
                    << " '" << objects[i].name << "'"
@@ -344,7 +344,7 @@ federate so this call will be ignored.%c",
             }
          }
       } else {
-         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             send_hs( stdout, "Manager::send_init_data():%d Nothing to send for '%s'%c",
                      __LINE__, objects[i].get_name(), THLA_NEWLINE );
          }
@@ -363,7 +363,7 @@ void Manager::send_init_data(
    // Late joining federates do not get to participate in the multiphase
    // initialization process so just return.
    if ( is_late_joining_federate() ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          send_hs( stdout, "Manager::send_init_data():%d Late joining \
 federate so the data will not be sent for '%s'.%c",
                   __LINE__, instance_name,
@@ -400,7 +400,7 @@ federate so the data will not be sent for '%s'.%c",
       if ( obj->any_locally_owned_published_init_attribute() ) {
 
          if ( this->execution_control->wait_on_init_data() ) {
-            if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                send_hs( stdout, "Manager::send_init_data():%d '%s'%c",
                         __LINE__, instance_name, THLA_NEWLINE );
             }
@@ -409,7 +409,7 @@ federate so the data will not be sent for '%s'.%c",
             obj->send_init_data();
 
          } else {
-            if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                ostringstream msg;
                msg << "Manager::send_init_data():" << __LINE__
                    << " '" << instance_name << "'"
@@ -421,7 +421,7 @@ federate so the data will not be sent for '%s'.%c",
             }
          }
       } else {
-         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             send_hs( stdout, "Manager::send_init_data():%d Nothing to send for '%s'%c",
                      __LINE__, instance_name, THLA_NEWLINE );
          }
@@ -438,7 +438,7 @@ void Manager::receive_init_data()
    // Late joining federates do not get to participate in the multiphase
    // initialization process so just return.
    if ( is_late_joining_federate() ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          send_hs( stdout, "Manager::receive_init_data():%d Late joining \
 federate so this call will be ignored.%c",
                   __LINE__, THLA_NEWLINE );
@@ -457,7 +457,7 @@ federate so this call will be ignored.%c",
          bool obj_required = objects[i].is_required() && ( this->execution_control->wait_on_init_data() );
 
          if ( obj_required ) {
-            if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                send_hs( stdout, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.%c",
                         __LINE__, objects[i].get_name(),
                         ( objects[i].is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
@@ -493,7 +493,7 @@ federate so this call will be ignored.%c",
 
          // Check for changed data which means we received something.
          if ( objects[i].is_changed() ) {
-            if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                send_hs( stdout, "Manager::receive_init_data():%d Received '%s'%c",
                         __LINE__, objects[i].get_name(), THLA_NEWLINE );
             }
@@ -501,14 +501,14 @@ federate so this call will be ignored.%c",
             // Receive the data from the publishing federate.
             objects[i].receive_init_data();
          } else {
-            if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                send_hs( stdout, "Manager::receive_init_data():%d Received nothing for '%s', and marked as %s.%c",
                         __LINE__, objects[i].get_name(),
                         ( obj_required ? "REQUIRED" : "not required" ), THLA_NEWLINE );
             }
          }
       } else {
-         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             send_hs( stdout, "Manager::receive_init_data():%d Nothing to receive for '%s'%c",
                      __LINE__, objects[i].get_name(), THLA_NEWLINE );
          }
@@ -525,7 +525,7 @@ void Manager::receive_init_data(
    // Late joining federates do not get to participate in the multiphase
    // initialization process so just return.
    if ( is_late_joining_federate() ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          send_hs( stdout, "Manager::receive_init_data():%d Late joining federate so skipping data for '%s'%c",
                   __LINE__, instance_name, THLA_NEWLINE );
       }
@@ -565,7 +565,7 @@ void Manager::receive_init_data(
          bool obj_required = obj->is_required() && this->execution_control->wait_on_init_data();
 
          if ( obj_required ) {
-            if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                send_hs( stdout, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.%c",
                         __LINE__, instance_name,
                         ( obj->is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
@@ -601,7 +601,7 @@ void Manager::receive_init_data(
 
          // Check for changed data which means we received something.
          if ( obj->is_changed() ) {
-            if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                send_hs( stdout,
                         "Manager::receive_init_data():%d Received '%s'%c",
                         __LINE__, instance_name, THLA_NEWLINE );
@@ -610,14 +610,14 @@ void Manager::receive_init_data(
             // Receive the data from the publishing federate.
             obj->receive_init_data();
          } else {
-            if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                send_hs( stdout, "Manager::receive_init_data():%d Received nothing for '%s', and marked as %s.%c",
                         __LINE__, instance_name,
                         ( obj_required ? "REQUIRED" : "not required" ), THLA_NEWLINE );
             }
          }
       } else {
-         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             send_hs( stdout, "Manager::receive_init_data():%d Nothing to receive for '%s'%c",
                      __LINE__, instance_name, THLA_NEWLINE );
          }
@@ -644,7 +644,7 @@ void Manager::wait_for_init_sync_point(
    const char *sync_point_label )
 {
    if ( !this->execution_control->wait_on_init_sync_point() ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          ostringstream errmsg;
          errmsg << "Manager::wait_for_init_sync_point():" << __LINE__
                 << " This call will be ignored because the Simulation"
@@ -659,7 +659,7 @@ void Manager::wait_for_init_sync_point(
    // Late joining federates do not get to participate in the multiphase
    // initialization process so just return.
    if ( is_late_joining_federate() ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          send_hs( stdout, "Manager::wait_for_init_sync_point():%d Late \
 joining federate so this call will be ignored.%c",
                   __LINE__, THLA_NEWLINE );
@@ -709,7 +709,7 @@ joining federate so this call will be ignored.%c",
 void Manager::request_data_update(
    wstring const &instance_name )
 {
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::request_data_update():%d Object:'%ls'%c",
                __LINE__, instance_name.c_str(), THLA_NEWLINE );
    }
@@ -767,7 +767,7 @@ void Manager::object_instance_name_reservation_succeeded(
       if ( trickhla_obj != NULL ) {
          trickhla_obj->set_name_registered();
 
-         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             send_hs( stdout, "Manager::object_instance_name_reservation_succeeded():%d \
 RESERVED Object Instance Name '%s'%c",
                      __LINE__, trickhla_obj->get_name(),
@@ -865,7 +865,7 @@ void Manager::add_object_to_map(
  */
 void Manager::setup_all_ref_attributes()
 {
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::setup_all_ref_attributes():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -874,20 +874,20 @@ void Manager::setup_all_ref_attributes()
    object_map.clear();
 
    if ( is_execution_configuration_used() ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          send_hs( stdout, "Manager::setup_all_ref_attributes():%d Execution-Configuration %c",
                   __LINE__, THLA_NEWLINE );
       }
       setup_object_ref_attributes( 1, get_execution_configuration() );
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::setup_all_ref_attributes():%d Objects %c",
                __LINE__, THLA_NEWLINE );
    }
    setup_object_ref_attributes( obj_count, objects );
 
-   if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::setup_all_ref_attributes():%d Interactions %c",
                __LINE__, THLA_NEWLINE );
    }
@@ -908,7 +908,7 @@ void Manager::setup_object_ref_attributes(
       return;
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::setup_object_ref_attributes():%d %c",
                __LINE__, THLA_NEWLINE );
    }
@@ -922,7 +922,7 @@ void Manager::setup_object_ref_attributes(
 
       ostringstream msg;
 
-      if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          msg << "Manager::setup_object_ref_attributes()" << __LINE__ << endl
              << "--------------- Trick REF-Attributes ---------------" << endl
              << " Object:'" << data_objects[n].get_name() << "'"
@@ -941,7 +941,7 @@ void Manager::setup_object_ref_attributes(
          // Initialize the TrickHLA-Attribute before we use it.
          attrs[i].initialize( data_objects[n].get_FOM_name(), n, i );
 
-         if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             msg << "   " << ( i + 1 ) << "/" << attr_count
                 << " FOM-Attribute:'" << attrs[i].get_FOM_name() << "'"
                 << " Trick-Name:'" << attrs[i].get_trick_name() << "'"
@@ -949,7 +949,7 @@ void Manager::setup_object_ref_attributes(
          }
       }
 
-      if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          send_hs( stdout, (char *)msg.str().c_str() );
       }
    }
@@ -967,7 +967,7 @@ void Manager::setup_interaction_ref_attributes()
       return;
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::setup_interaction_ref_attributes():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -976,7 +976,7 @@ void Manager::setup_interaction_ref_attributes()
    for ( int n = 0; n < inter_count; n++ ) {
       ostringstream msg;
 
-      if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          msg << "Manager::setup_interaction_ref_attributes():" << __LINE__ << endl
              << "--------------- Trick REF-Attributes ---------------" << endl
              << " FOM-Interaction:'" << interactions[n].get_FOM_name() << "'"
@@ -992,7 +992,7 @@ void Manager::setup_interaction_ref_attributes()
       // Process the attributes for this object.
       for ( int i = 0; i < param_count; i++ ) {
 
-         if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             msg << "   " << ( i + 1 ) << "/" << param_count
                 << " FOM-Parameter:'" << params[i].get_FOM_name() << "'"
                 << " Trick-Name:'" << params[i].get_trick_name() << "'"
@@ -1003,7 +1003,7 @@ void Manager::setup_interaction_ref_attributes()
          params[i].initialize( interactions[n].get_FOM_name(), n, i );
       }
 
-      if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          send_hs( stdout, (char *)msg.str().c_str() );
       }
    }
@@ -1020,7 +1020,7 @@ void Manager::setup_interaction_ref_attributes()
  */
 void Manager::setup_all_RTI_handles()
 {
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::setup_all_RTI_handles():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -1072,7 +1072,7 @@ void Manager::setup_object_RTI_handles(
       return;
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::setup_object_RTI_handles():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -1089,7 +1089,7 @@ void Manager::setup_object_RTI_handles(
       for ( int n = 0; n < data_obj_count; n++ ) {
          ostringstream msg;
 
-         if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             msg << "Manager::setup_object_RTI_handles()" << __LINE__ << endl
                 << "----------------- RTI Handles (Objects & Attributes) ---------------"
                 << endl
@@ -1107,7 +1107,7 @@ void Manager::setup_object_RTI_handles(
          // Get the class handle for the given object FOM name.
          data_objects[n].set_class_handle( rti_amb->getObjectClassHandle( ws_FOM_name ) );
 
-         if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             string handle_str;
             StringUtilities::to_string( handle_str, data_objects[n].get_class_handle() );
             msg << "  Result for"
@@ -1122,7 +1122,7 @@ void Manager::setup_object_RTI_handles(
          // Resolve the handles/ID's for the attributes.
          for ( int i = 0; i < attr_count; i++ ) {
 
-            if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                msg << "\tGetting RTI Attribute-Handle for '"
                    << data_objects[n].get_FOM_name() << "'->'"
                    << attrs[i].get_FOM_name() << "'" << endl;
@@ -1137,7 +1137,7 @@ void Manager::setup_object_RTI_handles(
             attrs[i].set_attribute_handle(
                rti_amb->getAttributeHandle( data_objects[n].get_class_handle(), ws_FOM_name ) );
 
-            if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                string id_str;
                StringUtilities::to_string( id_str,
                                            attrs[i].get_attribute_handle() );
@@ -1152,7 +1152,7 @@ void Manager::setup_object_RTI_handles(
          // have been set.
          data_objects[n].build_attribute_map();
 
-         if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             send_hs( stdout, (char *)msg.str().c_str() );
          }
       }
@@ -1277,7 +1277,7 @@ void Manager::setup_interaction_RTI_handles(
       return;
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::setup_interaction_RTI_handles():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -1299,7 +1299,7 @@ void Manager::setup_interaction_RTI_handles(
          inter_FOM_name = in_interactions[n].get_FOM_name();
          StringUtilities::to_wstring( ws_FOM_name, inter_FOM_name );
 
-         if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             msg << "Manager::setup_interaction_RTI_handles()" << __LINE__ << endl
                 << "----------------- RTI Handles (Interactions & Parameters) ---------------" << endl
                 << "Getting RTI Interaction-Class-Handle for"
@@ -1310,7 +1310,7 @@ void Manager::setup_interaction_RTI_handles(
          // Get the Interaction class handle.
          in_interactions[n].set_class_handle( rti_amb->getInteractionClassHandle( ws_FOM_name ) );
 
-         if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             string handle_str;
             StringUtilities::to_string( handle_str,
                                         in_interactions[n].get_class_handle() );
@@ -1331,7 +1331,7 @@ void Manager::setup_interaction_RTI_handles(
             param_FOM_name = params[i].get_FOM_name();
             StringUtilities::to_wstring( ws_FOM_name, param_FOM_name );
 
-            if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                msg << "\tGetting RTI Parameter-Handle for '"
                    << inter_FOM_name << "'->'" << param_FOM_name << "'" << endl;
             }
@@ -1342,7 +1342,7 @@ void Manager::setup_interaction_RTI_handles(
                   in_interactions[n].get_class_handle(),
                   ws_FOM_name ) );
 
-            if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                string handle_str;
                StringUtilities::to_string( handle_str,
                                            params[i].get_parameter_handle() );
@@ -1352,7 +1352,7 @@ void Manager::setup_interaction_RTI_handles(
             }
          }
 
-         if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             send_hs( stdout, (char *)msg.str().c_str() );
          }
       }
@@ -1612,7 +1612,7 @@ void Manager::unsubscribe()
  */
 void Manager::publish_and_subscribe()
 {
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::publish_and_subscribe():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -1625,7 +1625,7 @@ void Manager::publish_and_subscribe()
  */
 void Manager::reserve_object_names_with_RTI()
 {
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::reserve_object_names_with_RTI():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -1644,7 +1644,7 @@ void Manager::reserve_object_names_with_RTI()
  */
 void Manager::wait_on_reservation_of_object_names()
 {
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::wait_on_reservation_of_object_names():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -1657,12 +1657,12 @@ void Manager::wait_on_reservation_of_object_names()
          objects[n].wait_on_object_name_reservation();
       }
 
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          send_hs( stdout, "Manager::wait_on_reservation_of_object_names():%d All Object instance names reserved.%c",
                   __LINE__, THLA_NEWLINE );
       }
    } else {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          send_hs( stdout, "Manager::wait_on_reservation_of_object_names():%d No Object instance names to reserve.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -1674,7 +1674,7 @@ void Manager::wait_on_reservation_of_object_names()
  */
 void Manager::register_objects_with_RTI()
 {
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::register_objects_with_RTI():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -1700,7 +1700,7 @@ void Manager::register_objects_with_RTI()
  */
 void Manager::setup_preferred_order_with_RTI()
 {
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::setup_preferred_order_with_RTI():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -1728,7 +1728,7 @@ void Manager::setup_preferred_order_with_RTI()
  */
 void Manager::wait_on_registration_of_required_objects()
 {
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::wait_on_registration_of_required_objects():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -1740,7 +1740,7 @@ void Manager::wait_on_registration_of_required_objects()
    int  total_obj_cnt              = obj_count;
    int  current_required_obj_cnt   = 0;
    int  total_required_obj_cnt     = 0;
-   bool print_summary              = DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER );
+   bool print_summary              = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER );
    bool any_unregistered_required_obj;
 
    if ( is_execution_configuration_used() ) {
@@ -1796,10 +1796,10 @@ void Manager::wait_on_registration_of_required_objects()
          }
 
          // If we have a new registration count then update the object
-         // registration count and set the flag to print a new summary.
+         // registration count and set the flag to show a new summary.
          if ( registered_obj_cnt > current_registered_obj_cnt ) {
             current_registered_obj_cnt = registered_obj_cnt;
-            print_summary              = DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER );
+            print_summary              = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER );
          }
 
          // Update the current count of the Required registered objects.
@@ -1960,7 +1960,7 @@ void Manager::set_object_instance_handles_by_name(
    wstring ws_instance_name = L"";
 
    ostringstream summary;
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       summary << "Manager::set_object_instance_handles_by_name():"
               << __LINE__;
    }
@@ -1985,7 +1985,7 @@ void Manager::set_object_instance_handles_by_name(
                object_map[data_objects[n].get_instance_handle()] = &data_objects[n];
             }
 
-            if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                string id_str;
                StringUtilities::to_string( id_str, data_objects[n].get_instance_handle() );
                summary << "\n    Object:'" << data_objects[n].get_name()
@@ -2008,7 +2008,7 @@ void Manager::set_object_instance_handles_by_name(
                send_hs( stderr, (char *)errmsg.str().c_str() );
                exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
             } else {
-               if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                   summary << "\n    Object:'" << data_objects[n].get_name()
                           << "'  ID:Inatance-Not-Known  ID-Valid:No  Obj-Required:No";
                }
@@ -2065,7 +2065,7 @@ void Manager::set_object_instance_handles_by_name(
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       summary << THLA_ENDL;
       send_hs( stdout, (char *)summary.str().c_str() );
    }
@@ -2098,7 +2098,7 @@ void Manager::determine_job_cycle_time()
       return;
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::determine_job_cycle_time():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -2137,7 +2137,7 @@ void Manager::determine_job_cycle_time()
  */
 void Manager::send_cyclic_and_requested_data()
 {
-   if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::send_cyclic_and_requested_data():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -2170,7 +2170,7 @@ void Manager::send_cyclic_and_requested_data()
  */
 void Manager::receive_cyclic_data()
 {
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::receive_cyclic_data():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -2206,7 +2206,7 @@ void Manager::process_interactions()
       return;
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::process_interactions():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -2291,7 +2291,7 @@ void Manager::receive_interaction(
          // Add the interaction item to the queue.
          interactions_queue.push( item );
 
-         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             if ( received_as_TSO ) {
                Int64Time _time;
                _time.set( theTime );
@@ -2392,7 +2392,7 @@ bool Manager::discover_object_instance(
 
       return_value = true;
 
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          string id_str;
          StringUtilities::to_string( id_str, theObject );
          send_hs( stdout, "Manager::discover_object_instance():%d Data-Object '%s' Instance-ID:%s%c",
@@ -2406,7 +2406,7 @@ bool Manager::discover_object_instance(
       // save into my federate's discovered federate storage area
       federate->add_MOM_HLAfederate_instance_id( theObject, theObjectInstanceName );
 
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          string id_str, name_str;
          StringUtilities::to_string( id_str, theObject );
          StringUtilities::to_string( name_str, theObjectInstanceName );
@@ -2418,7 +2418,7 @@ bool Manager::discover_object_instance(
       federate->add_MOM_HLAfederation_instance_id( theObject );
       return_value = true;
 
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          string id_str, name_str;
          StringUtilities::to_string( id_str, theObject );
          StringUtilities::to_string( name_str, theObjectInstanceName );
@@ -2516,7 +2516,7 @@ void Manager::mark_object_as_deleted_from_federation(
 
       Object *obj = get_trickhla_object( instance_id );
       if ( obj != NULL ) {
-         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             string id_str;
             StringUtilities::to_string( id_str, instance_id );
             send_hs( stderr, "Manager::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s %c",
@@ -2721,7 +2721,7 @@ void Manager::setup_checkpoint_interactions()
    clear_interactions();
 
    if ( !interactions_queue.empty() ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          send_hs( stdout, "Manager::setup_checkpoint_interactions():%d interactions_queue.size()=%d%c",
                   __LINE__, interactions_queue.size(), THLA_NEWLINE );
       }
@@ -2750,7 +2750,7 @@ void Manager::setup_checkpoint_interactions()
          InteractionItem *item =
             static_cast< InteractionItem * >( interactions_queue.front() );
 
-         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             send_hs( stdout, "Manager::setup_checkpoint_interactions():%d \
 checkpointing into check_interactions[%d] from interaction index %d...%c",
                      __LINE__, i, item->index, THLA_NEWLINE );
@@ -2831,7 +2831,7 @@ void Manager::dump_interactions()
 void Manager::restore_interactions()
 {
    if ( check_interactions_count > 0 ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          send_hs( stdout, "Manager::restore_interactions():%d check_interactions_count=%d%c",
                   __LINE__, check_interactions_count, THLA_NEWLINE );
       }
@@ -2840,7 +2840,7 @@ void Manager::restore_interactions()
 
          InteractionItem *item = new InteractionItem();
 
-         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             send_hs( stdout, "Manager::restore_interactions():%d \
 restoring check_interactions[%d] into interaction index %d...parm_count=%d%c",
                      __LINE__, i, check_interactions[i].index,
@@ -2884,7 +2884,7 @@ void Manager::pull_ownership_upon_rejoin()
  */
 void Manager::wait_on_discovery_of_objects()
 {
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::wait_on_discovery_of_object_instance():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -2920,7 +2920,7 @@ void Manager::wait_on_discovery_of_objects()
            ( create_HLA_instance_object_found &&        // missing some other object(s) but
              ( discovery_count < required_count ) ) ) { // found the rejoining federate
 
-         if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             send_hs( stdout, "Manager::wait_on_discovery_of_object_instance():%d \
 - blocking loop until object discovery callbacks arrive.%c",
                      __LINE__, THLA_NEWLINE );
@@ -2973,7 +2973,7 @@ void Manager::wait_on_discovery_of_objects()
                      ( discovery_count < required_count ) ) ); // found the rejoining federate
       }
    } else {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          send_hs( stdout, "Manager::wait_on_discovery_of_object_instance():%d - No Objects to discover.%c",
                   __LINE__, THLA_NEWLINE );
       }

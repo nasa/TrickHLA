@@ -152,7 +152,7 @@ ExecutionControlBase::~ExecutionControlBase()
 
    // Free the memory used by the array of running Federates for the Federation.
    if ( loggable_sync_pts != static_cast< LoggableTimedSyncPnt * >( NULL ) ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "~TrickHLA::ExecutionControlBase() logged_sync_pts_count=%d %c",
                   logged_sync_pts_count, THLA_NEWLINE );
       }
@@ -238,7 +238,7 @@ void ExecutionControlBase::initialize()
    }
 
    if ( !does_scenario_timeline_exist() ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "TrickHLA::ExecutionControlBase::initialize():%d WARNING: \
 ExecutionControl 'scenario_timeline' not specified in the input file. Using the \
 Trick simulation time as the default scenario-timeline.%c",
@@ -285,7 +285,7 @@ void ExecutionControlBase::join_federation_process()
    // If shutdown sync-point is detected, then we must have entered into
    // a running federation execution that is shutting down.  This is an
    // unlikely but possible race condition.
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "TrickHLA::ExecutionControl::join_federation_process():%d Checking for shutdown %c",
                __LINE__, THLA_NEWLINE );
    }
@@ -319,7 +319,7 @@ bool ExecutionControlBase::object_instance_name_reservation_succeeded(
       // The name is successfully registered.
       execution_configuration->set_name_registered();
 
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "TrickHLA::ExecutionControlBase::object_instance_name_reservation_succeeded():%d Name:'%ls'%c",
                   __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
       }
@@ -366,7 +366,7 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
       // which means that another federate has already registered it.
       execution_configuration->set_name_registered();
 
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "TrickHLA::ExecutionControlBase::object_instance_name_reservation_failed():%d Name:'%ls'%c",
                   __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
       }
@@ -383,7 +383,7 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
  */
 void ExecutionControlBase::register_objects_with_RTI()
 {
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "TrickHLA::ExecutionControlBase::register_objects_with_RTI():%d%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -498,7 +498,7 @@ void ExecutionControlBase::clear_multiphase_init_sync_points()
    // Late joining federates do not get to participate in the multiphase
    // initialization process so just return.
    if ( this->manager->is_late_joining_federate() ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():%d Late \
 joining federate so this call will be ignored.%c",
                   __LINE__, THLA_NEWLINE );
@@ -506,7 +506,7 @@ joining federate so this call will be ignored.%c",
       return;
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():%d %c",
                __LINE__, THLA_NEWLINE );
    }
@@ -566,7 +566,7 @@ joining federate so this call will be ignored.%c",
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       this->print_sync_pnts();
    }
 }
@@ -603,7 +603,7 @@ void ExecutionControlBase::wait_for_all_multiphase_init_sync_pnts()
 void ExecutionControlBase::send_execution_configuration()
 {
    if ( execution_configuration == NULL ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "TrickHLA::ExecutionControlBase::send_execution_configuration():%d This call \
 will be ignored because the Simulation Initialization Scheme does not support it.%c",
                   __LINE__, THLA_NEWLINE );
@@ -616,7 +616,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
       return;
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "TrickHLA::ExecutionControlBase::send_ssend_execution_configurationim_config():%d%c", __LINE__, THLA_NEWLINE );
    }
 
@@ -645,7 +645,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
 void ExecutionControlBase::receive_execution_configuration()
 {
    if ( execution_configuration == NULL ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "TrickHLA::ExecutionControlBase::receive_execution_configuration():%d This call \
 will be ignored because the Simulation Initialization Scheme does not support it.%c",
                   __LINE__, THLA_NEWLINE );
@@ -658,7 +658,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
       return;
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "TrickHLA::ExecutionControlBase::receive_execution_configuration():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
@@ -693,7 +693,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
          }
       }
 
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "TrickHLA::ExecutionControlBase::receive_execution_configuration():%d Received data.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -840,7 +840,7 @@ bool ExecutionControlBase::mark_object_as_deleted_from_federation(
    // Remove the ExecitionControl object if present and the ID matches.
    if ( execution_configuration != NULL
         && ( execution_configuration->get_instance_handle() == instance_id ) ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_id );
          send_hs( stderr, "TrickHLA::ExecutionControlBase::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s %c",
@@ -874,7 +874,7 @@ double ExecutionControlBase::get_sim_time()
       return sim_timeline->get_time();
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControlBase::get_sim_time():" << __LINE__
              << " WARNING: Unexpected NULL 'THLA.federate.get_sim_time'!"
@@ -891,7 +891,7 @@ double ExecutionControlBase::get_scenario_time()
       return scenario_timeline->get_time();
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControlBase::get_scenario_time():" << __LINE__
              << " WARNING: Unexpected NULL 'THLA.federate.scenario_timeline'!"
@@ -945,7 +945,7 @@ void ExecutionControlBase::freeze_init()
 void ExecutionControlBase::enter_freeze()
 {
    // The default is to do nothing.
-   if ( DebugHandler::print( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "TrickHLA::ExecutionControlBase::enter_freeze():%d Freeze Announced:%s, Freeze Pending:%s%c",
                __LINE__, ( federate->get_freeze_announced() ? "Yes" : "No" ),
                ( federate->get_freeze_pending() ? "Yes" : "No" ), THLA_NEWLINE );
