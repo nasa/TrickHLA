@@ -60,7 +60,7 @@ class DebugHandler
    /*! @brief Destructor for the TrickHLA DebugHandler class. */
    virtual ~DebugHandler();
 
-   /*! @brief Conditional test to see if a debug message should show.
+   /*! @brief Conditional test to see if a debug message should be shown.
     *  @return Returns true if the requested message should be printed.
     *  @param level Debug level of incoming message.
     *  @param code  Debug code source area of the incoming message. */

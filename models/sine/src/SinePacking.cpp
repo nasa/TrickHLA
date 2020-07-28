@@ -212,7 +212,7 @@ void SinePacking::pack()
          // Get the address of the "name" simulation data variable.
          char *name_sim_var = (char *)attr->get_sim_variable_address();
 
-         // Make a little change to the name and show it out.
+         // Make a little change to the name and show it.
          if ( name_sim_var != NULL ) {
 
             // Number of bytes ref-attributes says this variable is.
