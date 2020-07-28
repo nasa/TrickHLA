@@ -124,7 +124,7 @@ void SineInteractionHandler::send_sine_interaction(
 #endif
 
    if ( was_sent ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          string user_supplied_tag_string;
          StringUtilities::to_string( user_supplied_tag_string, user_supplied_tag );
 
@@ -157,7 +157,7 @@ void SineInteractionHandler::send_sine_interaction(
    } else {
       // Use the inherited debug-handler to allow debug comments to be turned
       // on and off from a setting in the input file. Use a higher debug level.
-      if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          // The interaction was Not sent.
          cout << "+-+-NOT SENT-+-+ SineInteractionHandler::send_sine_interaction()" << endl
               << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl;
@@ -176,7 +176,7 @@ void SineInteractionHandler::receive_interaction(
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       cout << "++++RECEIVING++++ SineInteractionHandler::receive_interaction()" << endl
            << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl
            << "  message:'" << ( ( message != NULL ) ? message : "NULL" ) << "'" << endl

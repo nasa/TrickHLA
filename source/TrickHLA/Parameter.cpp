@@ -482,7 +482,7 @@ void Parameter::complete_initialization()
       send_hs( stdout, (char *)msg.str().c_str() );
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
       ostringstream msg;
       msg << "Parameter::complete_initialization():" << __LINE__ << endl
           << "========================================================" << endl
@@ -701,12 +701,12 @@ void Parameter::extract_data(
       }
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
       send_hs( stdout, "Parameter::extract_data():%d Decoded '%s' (trick_name '%s') \
 from parameter map, buffer-size:%d, expected-byte-count:%d.%c",
                __LINE__, FOM_name, trick_name, param_size, expected_byte_count, THLA_NEWLINE );
    }
-   if ( DebugHandler::print( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
       print_buffer();
    }
 
@@ -821,7 +821,7 @@ void Parameter::calculate_size_and_number_of_items()
 
    this->size = num_bytes;
 
-   if ( DebugHandler::print( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
       ostringstream msg;
       msg << "Parameter::calculate_size_and_number_of_items():" << __LINE__ << endl
           << "========================================================" << endl
@@ -903,7 +903,7 @@ void Parameter::calculate_static_number_of_items()
 
 void Parameter::pack_parameter_buffer()
 {
-   if ( DebugHandler::print( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
       ostringstream msg;
       msg << "Parameter::pack_parameter_buffer():" << __LINE__ << endl
           << "======================== BEFORE PACK ================================" << endl
@@ -954,7 +954,7 @@ void Parameter::pack_parameter_buffer()
 
          encode_boolean_to_buffer();
 
-         if ( DebugHandler::print( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
             ostringstream msg;
             msg << "Parameter::pack_parameter_buffer():" << __LINE__ << endl
                 << "================== PARAMETER ENCODE ==================================" << endl
@@ -975,7 +975,7 @@ void Parameter::pack_parameter_buffer()
 
          encode_opaque_data_to_buffer();
 
-         if ( DebugHandler::print( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
             ostringstream msg;
             msg << "Parameter::pack_parameter_buffer():" << __LINE__ << endl
                 << "================== PARAMETER ENCODE ==================================" << endl
@@ -999,7 +999,7 @@ void Parameter::pack_parameter_buffer()
 
             encode_string_to_buffer();
 
-            if ( DebugHandler::print( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
                ostringstream msg;
                msg << "Parameter::pack_parameter_buffer():" << __LINE__ << endl
                    << "================== PARAMETER ENCODE ==================================" << endl
@@ -1039,7 +1039,7 @@ void Parameter::pack_parameter_buffer()
                                      size );
             }
 
-            if ( DebugHandler::print( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
                ostringstream msg;
                msg << "Parameter::pack_parameter_buffer():" << __LINE__ << endl
                    << "================== PARAMETER ENCODE ==================================" << endl
@@ -1053,7 +1053,7 @@ void Parameter::pack_parameter_buffer()
       }
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
       ostringstream msg;
       msg << "Parameter::pack_parameter_buffer():" << __LINE__ << endl
           << "======================== AFTER PACK ================================" << endl
@@ -1103,7 +1103,7 @@ void Parameter::unpack_parameter_buffer()
 
          decode_boolean_from_buffer();
 
-         if ( DebugHandler::print( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
             ostringstream msg;
             msg << "Parameter::unpack_parameter_buffer():" << __LINE__ << endl
                 << "================== PARAMETER DECODE ==================================" << endl
@@ -1122,7 +1122,7 @@ void Parameter::unpack_parameter_buffer()
 
          decode_opaque_data_from_buffer();
 
-         if ( DebugHandler::print( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
             ostringstream msg;
             msg << "Parameter::unpack_parameter_buffer():" << __LINE__ << endl
                 << "================== PARAMETER DECODE ==================================" << endl
@@ -1148,7 +1148,7 @@ void Parameter::unpack_parameter_buffer()
 
             decode_string_from_buffer();
 
-            if ( DebugHandler::print( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
                ostringstream msg;
                msg << "Parameter::unpack_parameter_buffer():" << __LINE__ << endl
                    << "================ PARAMETER DECODE ================================" << endl
@@ -1184,7 +1184,7 @@ void Parameter::unpack_parameter_buffer()
                                      num_items,
                                      size );
 
-               if ( DebugHandler::print( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
+               if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
                   ostringstream msg;
                   msg << "Parameter::unpack_parameter_buffer():" << __LINE__ << endl
                       << "================== PARAMETER DECODE ================================" << endl
@@ -1199,7 +1199,7 @@ void Parameter::unpack_parameter_buffer()
       }
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
       ostringstream msg;
       msg << "Parameter::unpack_parameter_buffer():" << __LINE__ << endl
           << "========================================================" << endl
@@ -3033,7 +3033,7 @@ void Parameter::byteswap_buffer_copy(
    size_t num_bytes ) const
 {
    if ( num_bytes == 0 ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
          ostringstream msg;
          msg << "Parameter::byteswap_buffer_copy():" << __LINE__
              << " WARNING: FOM Parameter '" << FOM_name << "' with Trick name '"

@@ -117,7 +117,7 @@ void OwnershipHandler::setup_checkpoint_requests()
 
    // if there are any pull_request entries, encode them to get checkpointed.
    if ( pull_items_cnt > 0 ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
          send_hs( stdout, "OwnershipHandler::setup_checkpoint_requests():%d Checkpointing %d pull_request elements.%c",
                   __LINE__, pull_items_cnt, THLA_NEWLINE );
       }
@@ -155,7 +155,7 @@ Could not allocate memory for pull_items (array of OwnershipItem type)!" );
 
    // if there are any push_request entries, encode them to get checkpointed.
    if ( push_items_cnt > 0 ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
          send_hs( stdout, "OwnershipHandler::setup_checkpoint_requests():%d Checkpointing %d push_request elements.%c",
                   __LINE__, push_items_cnt, THLA_NEWLINE );
       }
@@ -238,7 +238,7 @@ void OwnershipHandler::restore_requests()
          // Add the attribute to the map, using the FOM_name as the key.
          attr_map->insert( make_pair( pull_items[count].FOM_name, attribute ) );
 
-         if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
             send_hs( stdout, "OwnershipHandler::restore_requests():%d Restoring ownership pull item attribute \"%s\"%c",
                      __LINE__, pull_items[count].FOM_name, THLA_NEWLINE );
          }
@@ -267,7 +267,7 @@ void OwnershipHandler::restore_requests()
          // Add the attribute to the map, using the FOM_name as the key.
          attr_map->insert( make_pair( push_items[count].FOM_name, attribute ) );
 
-         if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
             send_hs( stdout, "OwnershipHandler::restore_requests():%d Restoring ownership push item attribute \"%s\"%c",
                      __LINE__, push_items[count].FOM_name, THLA_NEWLINE );
          }
@@ -347,7 +347,7 @@ void OwnershipHandler::pull_ownership(
       return;
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       send_hs( stdout, "OwnershipHandler::pull_ownership(time=%G):%d scenario-time=%G, granted_time=%G, lookahead=%G %c",
                time, __LINE__, get_scenario_time(),
                get_granted_fed_time().get_time_in_seconds(),
@@ -405,7 +405,7 @@ void OwnershipHandler::pull_ownership(
       return;
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       send_hs( stdout, "OwnershipHandler::pull_ownership(%s, time=%G):%d scenario-time=%G, granted_time=%G, lookahead=%G %c",
                attribute_FOM_name, time, __LINE__, get_scenario_time(),
                get_granted_fed_time().get_time_in_seconds(),
@@ -450,7 +450,7 @@ void OwnershipHandler::push_ownership(
       return;
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       send_hs( stdout, "OwnershipHandler::push_ownership(time=%G):%d sim-time=%G, granted_time=%G, lookahead=%G %c",
                time, __LINE__, get_scenario_time(),
                get_granted_fed_time().get_time_in_seconds(),
@@ -508,7 +508,7 @@ void OwnershipHandler::push_ownership(
       return;
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       send_hs( stdout, "OwnershipHandler::push_ownership(%s, time=%G):%d sim-time=%G, granted_time=%G, lookahead=%G %c",
                attribute_FOM_name, time, __LINE__, get_scenario_time(),
                get_granted_fed_time().get_time_in_seconds(),

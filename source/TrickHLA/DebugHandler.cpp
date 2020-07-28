@@ -53,7 +53,7 @@ DebugHandler::~DebugHandler() // RETURN: -- None.
    return;
 }
 
-bool DebugHandler::print(
+bool DebugHandler::show(
    const DebugLevelEnum  level,
    const DebugSourceEnum code )
 {

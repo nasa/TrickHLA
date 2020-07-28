@@ -213,7 +213,7 @@ void Attribute::initialize(
 
    // Warn the user if the object attribute has a CONFIG_TYPE_NONE configuration.
    if ( config == CONFIG_NONE ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
          ostringstream errmsg;
          errmsg << "Attribute::initialize():" << __LINE__
                 << " WARNING: FOM Object Attribute '"
@@ -503,7 +503,7 @@ void Attribute::initialize(
    // it. It could be that the users simulation variable happens to be pointing
    // to a null string.
    if ( size == 0 ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
          ostringstream msg;
          msg << "Attribute::initialize():" << __LINE__
              << " WARNING: FOM Object Attribute '" << obj_FOM_name << "'->'"
@@ -515,7 +515,7 @@ void Attribute::initialize(
       }
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       ostringstream msg;
       msg << "Attribute::initialize():" << __LINE__ << endl
           << "========================================================" << endl
@@ -607,7 +607,7 @@ void Attribute::determine_cycle_ratio(
          exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
       }
 
-      if ( DebugHandler::print( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
          ostringstream msg;
          msg << "Attribute::determine_cycle_ratio():" << __LINE__ << endl
              << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
@@ -804,11 +804,11 @@ void Attribute::extract_data(       // RETURN: -- None
       }
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       send_hs( stdout, "Attribute::extract_data():%d Decoded '%s' (trick_name '%s') from attribute map.%c",
                __LINE__, get_FOM_name(), get_trick_name(), THLA_NEWLINE );
    }
-   if ( DebugHandler::print( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       print_buffer();
    }
 
@@ -924,7 +924,7 @@ void Attribute::calculate_size_and_number_of_items()
 
    this->size = num_bytes;
 
-   if ( DebugHandler::print( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       ostringstream msg;
       msg << "Attribute::calculate_size_and_number_of_items():" << __LINE__ << endl
           << "========================================================" << endl
@@ -1010,7 +1010,7 @@ void Attribute::calculate_static_number_of_items()
 
 void Attribute::pack_attribute_buffer()
 {
-   if ( DebugHandler::print( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       ostringstream msg;
       msg << "Attribute::pack_attribute_buffer():" << __LINE__ << endl
           << "================== BEFORE PACK ==================================" << endl
@@ -1043,7 +1043,7 @@ void Attribute::pack_attribute_buffer()
    // Don't pack the buffer if the attribute is not locally owned. Otherwise this will
    // corrupt the buffer for the data we received for this attribute from another federate.
    if ( !is_locally_owned() ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
          ostringstream msg;
          msg << "Attribute::pack_attribute_buffer():" << __LINE__ << endl
              << " FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
@@ -1078,7 +1078,7 @@ void Attribute::pack_attribute_buffer()
 
          encode_boolean_to_buffer();
 
-         if ( DebugHandler::print( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
             ostringstream msg;
             msg << "Attribute::pack_attribute_buffer():" << __LINE__ << endl
                 << "================== ATTRIBUTE ENCODE ==================================" << endl
@@ -1099,7 +1099,7 @@ void Attribute::pack_attribute_buffer()
 
          encode_opaque_data_to_buffer();
 
-         if ( DebugHandler::print( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
             ostringstream msg;
             msg << "Attribute::pack_attribute_buffer():" << __LINE__ << endl
                 << "================== ATTRIBUTE ENCODE ==================================" << endl
@@ -1122,7 +1122,7 @@ void Attribute::pack_attribute_buffer()
 
             encode_string_to_buffer();
 
-            if ( DebugHandler::print( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
                ostringstream msg;
                msg << "Attribute::pack_attribute_buffer():" << __LINE__ << endl
                    << "================== ATTRIBUTE ENCODE ==================================" << endl
@@ -1162,7 +1162,7 @@ void Attribute::pack_attribute_buffer()
                                      size );
             }
 
-            if ( DebugHandler::print( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
                ostringstream msg;
                msg << "Attribute::pack_attribute_buffer():" << __LINE__ << endl
                    << "================== ATTRIBUTE ENCODE ==================================" << endl
@@ -1176,7 +1176,7 @@ void Attribute::pack_attribute_buffer()
       }
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       ostringstream msg2;
       msg2 << "Attribute::pack_attribute_buffer():" << __LINE__ << endl
            << "================== AFTER PACK ==================================" << endl
@@ -1212,7 +1212,7 @@ void Attribute::unpack_attribute_buffer()
    // Don't unpack the attribute buffer if the attribute is locally owned, which
    // means we did not receive data from another federate for this attribute.
    if ( is_locally_owned() ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
          ostringstream msg;
          msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << endl
              << " FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
@@ -1243,7 +1243,7 @@ void Attribute::unpack_attribute_buffer()
 
          decode_boolean_from_buffer();
 
-         if ( DebugHandler::print( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
             ostringstream msg;
             msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << endl
                 << "================== ATTRIBUTE DECODE ==================================" << endl
@@ -1262,7 +1262,7 @@ void Attribute::unpack_attribute_buffer()
 
          decode_opaque_data_from_buffer();
 
-         if ( DebugHandler::print( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
             ostringstream msg;
             msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << endl
                 << "================== ATTRIBUTE DECODE =============================" << endl
@@ -1287,7 +1287,7 @@ void Attribute::unpack_attribute_buffer()
 
             decode_string_from_buffer();
 
-            if ( DebugHandler::print( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
                ostringstream msg;
                msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << endl
                    << "================== ATTRIBUTE DECODE ==================================" << endl
@@ -1324,7 +1324,7 @@ void Attribute::unpack_attribute_buffer()
                                      num_items,
                                      size );
 
-               if ( DebugHandler::print( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+               if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
                   ostringstream msg;
                   msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << endl
                       << "================== ATTRIBUTE DECODE ==================================" << endl
@@ -1339,7 +1339,7 @@ void Attribute::unpack_attribute_buffer()
       }
    }
 
-   if ( DebugHandler::print( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       ostringstream msg;
       msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << endl
           << "========================================================" << endl
@@ -3183,7 +3183,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
    size_t num_bytes ) const           // IN: -- The number of bytes in the source array.
 {
    if ( num_bytes == 0 ) {
-      if ( DebugHandler::print( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
          ostringstream msg;
          msg << "Attribute::byteswap_buffer_copy():" << __LINE__
              << " WARNING: FOM Attribute '" << FOM_name << "' with Trick name '"
