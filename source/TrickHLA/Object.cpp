@@ -137,7 +137,7 @@ Object::Object()
 #endif
 
    // Make sure we allocate the map.
-   attribute_values_map = new AttributeHandleValueMap();
+   this->attribute_values_map = new AttributeHandleValueMap();
 
 #ifdef THLA_THREAD_WAIT_FOR_DATA
    pthread_mutex_init( &data_change_mutex, NULL );
