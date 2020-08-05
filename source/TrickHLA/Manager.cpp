@@ -1733,7 +1733,6 @@ void Manager::wait_on_registration_of_required_objects()
                __LINE__, THLA_NEWLINE );
    }
 
-   int  n;
    int  required_obj_cnt;
    int  registered_obj_cnt;
    int  current_registered_obj_cnt = 0;
@@ -1786,7 +1785,7 @@ void Manager::wait_on_registration_of_required_objects()
 
          // Determine how many data objects have been registered and only if
          // they are required.
-         for ( n = 0; n < obj_count; n++ ) {
+         for ( int n = 0; n < obj_count; ++n ) {
             if ( objects[n].is_instance_handle_valid() ) {
                registered_obj_cnt++;
                if ( objects[n].is_required() ) {
@@ -1834,15 +1833,14 @@ void Manager::wait_on_registration_of_required_objects()
                     << ( get_execution_configuration()->is_instance_handle_valid() ? "REGISTERED" : "Not Registered" );
          }
 
-         for ( n = 0; n < obj_count; n++ ) {
+         for ( int n = 0; n < obj_count; ++n ) {
             // Adjust index based on sim-config or exec-config objects existing.
             summary << "\n  " << ( n + cnt ) << ":Object instance '"
                     << objects[n].get_name() << "' ";
 
             if ( objects[n].is_instance_handle_valid() ) {
                string id_str;
-               StringUtilities::to_string(
-                  id_str, objects[n].get_instance_handle() );
+               StringUtilities::to_string( id_str, objects[n].get_instance_handle() );
                summary << "(ID:" << id_str << ") ";
             }
             summary << "for class '" << objects[n].get_FOM_name() << "' is "
@@ -1886,15 +1884,17 @@ void Manager::wait_on_registration_of_required_objects()
 
    if ( is_execution_configuration_used() ) {
       // Add the exec-config instance to the map if it is not already in it.
-      if ( ( get_execution_configuration()->is_instance_handle_valid() ) && ( object_map.find( get_execution_configuration()->get_instance_handle() ) == object_map.end() ) ) {
+      if ( ( get_execution_configuration()->is_instance_handle_valid() )
+           && ( object_map.find( get_execution_configuration()->get_instance_handle() ) == object_map.end() ) ) {
          object_map[get_execution_configuration()->get_instance_handle()] = get_execution_configuration();
       }
    }
 
    // Add all valid, registered object instances to the map and only if they are
    // not already in it.
-   for ( n = 0; n < obj_count; n++ ) {
-      if ( ( objects[n].is_instance_handle_valid() ) && ( object_map.find( objects[n].get_instance_handle() ) == object_map.end() ) ) {
+   for ( int n = 0; n < obj_count; ++n ) {
+      if ( ( objects[n].is_instance_handle_valid() )
+           && ( object_map.find( objects[n].get_instance_handle() ) == object_map.end() ) ) {
          object_map[objects[n].get_instance_handle()] = &objects[n];
       }
    }
