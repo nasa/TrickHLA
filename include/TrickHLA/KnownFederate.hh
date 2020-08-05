@@ -18,6 +18,9 @@ NASA, Johnson Space Center\n
 
 @python_module{TrickHLA}
 
+@tldh
+@trick_link_dependency{../source/TrickHLA/Federate.cpp}
+
 @revs_title
 @revs_begin
 @rev_entry{Dan Dexter, L3 Titan Group, DSES, April 2006, --, Initial implementation.}
@@ -57,9 +60,18 @@ class KnownFederate
 
   public:
    /*! @brief Default constructor for the TrickHLA KnownFederate class. */
-   KnownFederate() : MOM_instance_name( NULL ), name( NULL ), required( false ){};
+   KnownFederate()
+      : MOM_instance_name( NULL ),
+        name( NULL ),
+        required( false )
+   {
+      return;
+   };
    /*! @brief Destructor for the TrickHLA KnownFederate class. */
-   ~KnownFederate(){};
+   ~KnownFederate()
+   {
+      return;
+   };
 
   private:
    // Do not allow the copy constructor or assignment operator.
