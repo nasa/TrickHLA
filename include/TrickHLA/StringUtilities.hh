@@ -165,7 +165,7 @@ class StringUtilities
       std::string &                     output,
       RTI1516_NAMESPACE::FederateHandle handle )
    {
-      to_string( output, handle.encode() );
+      to_string( output, handle.toString() );
    }
 
    /*! @brief Convert an interaction class handle to a C string representation.
@@ -175,7 +175,7 @@ class StringUtilities
       std::string &                             output,
       RTI1516_NAMESPACE::InteractionClassHandle handle )
    {
-      to_string( output, handle.encode() );
+      to_string( output, handle.toString() );
    }
 
    /*! @brief Convert an interaction class handle to a C string representation.
@@ -185,7 +185,7 @@ class StringUtilities
       std::string &                      output,
       RTI1516_NAMESPACE::ParameterHandle handle )
    {
-      to_string( output, handle.encode() );
+      to_string( output, handle.toString() );
    }
 
    /*! @brief Convert an object instance handle to a C string representation.
@@ -195,7 +195,7 @@ class StringUtilities
       std::string &                           output,
       RTI1516_NAMESPACE::ObjectInstanceHandle handle )
    {
-      to_string( output, handle.encode() );
+      to_string( output, handle.toString() );
    }
 
    /*! @brief Convert an object class handle to a C string representation.
@@ -205,7 +205,7 @@ class StringUtilities
       std::string &                        output,
       RTI1516_NAMESPACE::ObjectClassHandle handle )
    {
-      to_string( output, handle.encode() );
+      to_string( output, handle.toString() );
    }
 
    /*! @brief Convert an attribute handle to a C string representation.
@@ -215,7 +215,7 @@ class StringUtilities
       std::string &                      output,
       RTI1516_NAMESPACE::AttributeHandle handle )
    {
-      to_string( output, handle.encode() );
+      to_string( output, handle.toString() );
    }
 
    /*! @brief Trim any leading or trailing whitespace from the string.
