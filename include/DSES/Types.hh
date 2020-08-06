@@ -47,7 +47,7 @@ namespace DSES
 @brief Define the TrickHLA DSES execution mode enumeration values.
 
 The ExecutionModeEnum enumeration defines the possible execution mode
-state for a DSES compliant federate.  These mode states
+state for a DSES compliant federate. These mode states
 are important in the execution control process commanded by a Master
 federate and followed all other federates participating in a DSES
 compliant federation execution.
@@ -69,7 +69,7 @@ typedef enum {
 @brief Define the TrickHLA DSES Mode Transition Request state enumeration values.
 
 The MTREnum enumeration defines the possible mode transition requests (MTRs)
-for a Space Reference FOM compliant federate.  These mode requests are
+for a Space Reference FOM compliant federate. These mode requests are
 important in the execution control process involving mode requests from
 any federate participating in a Space FOM compliant federation execution
 and processed by the Master federate.

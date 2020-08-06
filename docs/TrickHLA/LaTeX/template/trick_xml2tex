@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 #
-# converts Trick's xml to tex.  Use trick_xml2tex --help for details
+# converts Trick's xml to tex. Use trick_xml2tex --help for details
 #
 
 # $Log: trick_xml2tex,v $

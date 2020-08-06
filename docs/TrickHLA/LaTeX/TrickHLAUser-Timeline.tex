@@ -2,17 +2,17 @@
 \label{sec:timeline}
 
 \TrickHLA\ provides a mechanism for the user to specify the scenario timeline
-for the simulation.  \TrickHLA\ needs access to the scenario timeline in order
-to coordinate freezing (pausing) the federation.  The scenario timeline is the
+for the simulation. \TrickHLA\ needs access to the scenario timeline in order
+to coordinate freezing (pausing) the federation. The scenario timeline is the
 only timeline that can be counted on to be synchronized between all the federates.
 
 % ---------------------------------------------------------------------------
 \section{What is the {\em TrickHLATimeline} class?}
 
 \TrickHLA\ provides a {\tt TrickHLATimeline} class with a {\tt get\_time()} 
-method that is used for getting the current simulation scenario time.  This is
+method that is used for getting the current simulation scenario time. This is
 a virtual method and must be overridden by a derived class in order to add 
-application-specific functionality to the simulation.  If a secnario timeline
+application-specific functionality to the simulation. If a secnario timeline
 is not specified by the user then \TrickHLA\ will use the Trick simulation time
 as the default scenario timeline, which is only valid if all Federates are using
 Trick and start with the same simulation time.

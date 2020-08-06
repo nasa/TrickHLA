@@ -131,7 +131,7 @@ void ExecutionConfiguration::configure_attributes(
 
    //
    // Assign an empty root frame name to start with.
-   // This will be reset at root frame discovery.  It can
+   // This will be reset at root frame discovery. It can
    // also be specified in the input file for the Root Reference
    // Frame Publisher (RRFP).
    //
@@ -470,7 +470,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    // Need to set the packing object.
    this->packing = packing_obj;
 
-   // No ownership transfer of the ExCO.  Only the master can own this.
+   // No ownership transfer of the ExCO. Only the master can own this.
    this->ownership = (OwnershipHandler *)NULL;
 
    // No Object Deleted callback.
@@ -507,13 +507,13 @@ allocate enough memory for the attributes of the ExCO!" );
    this->attributes[0].rti_encoding = ENCODING_UNICODE_STRING;
 
    // Normally, we would specify the Trick 'name' of the simulation
-   // variable.  However, T=this will be replaced with a direct construction
+   // variable. However, T=this will be replaced with a direct construction
    // of the Trick REF2 ATTRIBUTES for the associated variable in memory.
    //trick_name_str = exco_name_str + string( ".root_frame_name" );
    //this->attributes[0].trick_name = trick_MM->mm_strdup( trick_name_str.c_str() );
 
    // Normally we would use the Trick variable to resolve to at run time,
-   // which is supplied by the input file.  Instead, we must build the
+   // which is supplied by the input file. Instead, we must build the
    // Trick REF2 data structures with sufficient information for the
    // Attribute class to link itself into Execution Configuration
    // instance variables.

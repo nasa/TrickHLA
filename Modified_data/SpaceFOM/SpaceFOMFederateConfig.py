@@ -62,7 +62,7 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
       self.add_FOM_module( 'FOMs/SpaceFOM/SISO_SpaceFOM_entity.xml' )
       
       # Add any multi-phase initialization synchronization points.
-      # These will be federation execution specific.  These sync points
+      # These will be federation execution specific. These sync points
       # should be set in the federation execution specific extension to
       # this class.
       # self.add_multiphase_init_sync_point( 'sync_point_name' )
@@ -138,7 +138,7 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
          print 'Warning: SpaceFOMFederateConfig already initialized; set root frame ignored!'
          return
       
-      # Check to see if an ExCO is already been set.  If so, warn the user.
+      # Check to see if an ExCO is already been set. If so, warn the user.
       if self.control.root_ref_frame:
          print 'Warning: SpaceFOMFederateConfig root reference frame is already set; this will override the existing settings!'
          return
@@ -154,7 +154,7 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
       # Object (ExCO) attribute name.
       #
       # If the is not the RRFP, then the ExCO root reference frame name
-      # attribute can be set to any empty string.  It will be overwritten
+      # attribute can be set to any empty string. It will be overwritten
       # on Root Reference Frame Discovery.
       #
       if ( self.is_RRFP ) :

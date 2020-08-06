@@ -3,9 +3,9 @@
 @ingroup TrickHLA
 @brief A base implementation of a SRFOM CTE timeline.
 
-This is a baseline implementation based off of the system clock.  It is
+This is a baseline implementation based off of the system clock. It is
 intended to provide the definition of the CTE Timeline interface in the
-form of a base class.  It also provides a working implementation based on the
+form of a base class. It also provides a working implementation based on the
 system clock (see <b>Assumptions and Limitations below</b>).
 
 The expectation is that a hardware specific implementation will be developed

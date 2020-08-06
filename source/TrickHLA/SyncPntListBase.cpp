@@ -499,7 +499,7 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
 
       } else {
 
-         // Okay, something is wrong here.  Print a message and exit.
+         // Okay, something is wrong here. Print a message and exit.
          StringUtilities::to_string( name, sp->get_label() );
          errmsg << "SyncPntListBase::achieve_and_wait_for_synchronization():"
                 << __LINE__
@@ -518,7 +518,7 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
 
    } else {
 
-      // Okay, we did not find the synchronization point.  Print out an
+      // Okay, we did not find the synchronization point. Print out an
       // error message and then exit.
       StringUtilities::to_string( name, label );
       errmsg << "SyncPntListBase::achieve_and_wait_for_synchronization():"

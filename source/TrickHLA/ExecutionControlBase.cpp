@@ -283,7 +283,7 @@ void ExecutionControlBase::join_federation_process()
 
    // Check for a latent shutdown sync-point.
    // If shutdown sync-point is detected, then we must have entered into
-   // a running federation execution that is shutting down.  This is an
+   // a running federation execution that is shutting down. This is an
    // unlikely but possible race condition.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "TrickHLA::ExecutionControl::join_federation_process():%d Checking for shutdown %c",
@@ -929,7 +929,7 @@ bool ExecutionControlBase::check_for_shutdown()
 
 /*!
  * @details NOTE: If a shutdown has been announced, this routine calls the
- * Trick exec_teminate() function.  So, for shutdown, it should never return.
+ * Trick exec_teminate() function. So, for shutdown, it should never return.
  * @job_class{shutdown}
  */
 bool ExecutionControlBase::check_for_shutdown_with_termination()

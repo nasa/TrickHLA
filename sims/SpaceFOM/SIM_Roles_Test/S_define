@@ -8,9 +8,9 @@
 
 //==========================================================================
 // Define the Trick executive and services simulation object instances:
-// Use the "standard" Trick executive simulation object.  This simulation
+// Use the "standard" Trick executive simulation object. This simulation
 // object provides the traditional Trick executive capabilities but can be
-// tailored to provide facility or project unique executive behavior.  See
+// tailored to provide facility or project unique executive behavior. See
 // the Trick documentation for more on usage and available options.
 //==========================================================================
 #include "sim_objects/default_trick_sys.sm"
@@ -122,7 +122,7 @@ class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
 
 //==========================================================================
 // SIM_OBJECT: SpaceFOMRefFrameSimObject - An example reference frame
-// simulation object definition.  This can be used for SpaceFOM ReferenceFrame
+// simulation object definition. This can be used for SpaceFOM ReferenceFrame
 // object discovery and data exchange.
 //==========================================================================
 class SpaceFOMRefFrameSimObject : public Trick::SimObject {

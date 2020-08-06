@@ -104,7 +104,7 @@ class IMSimSimObject : public Trick::SimObject {
       // we are ready to start running the simulation.
       P_LAST ("initialization") manager.initialization_complete();
 
-      // FIXME: This is for IMSim and DIS only.  Needs to be moved into ExecutionControl.
+      // FIXME: This is for IMSim and DIS only. Needs to be moved into ExecutionControl.
       // Check to see if fed master started in freeze mode
       //P_LAST ("initialization") federate.check_pause_at_init( CHECK_PAUSE_DELTA );
       
@@ -141,7 +141,7 @@ class IMSimSimObject : public Trick::SimObject {
       P_1ST (data_cycle, "environment") manager.process_deleted_objects();
 
       // Grab any new cyclic data from the other Federates that has arrived and
-      // update the local state.  (This is done down here to make sure we do
+      // update the local state. (This is done down here to make sure we do
       // the copying AFTER the event loop has fired the reflect call-backs.)
       P_1ST (data_cycle, "environment") manager.receive_cyclic_data();
 
@@ -156,12 +156,12 @@ class IMSimSimObject : public Trick::SimObject {
       // Time-Advance-Request (TAR).
       P_LAST (data_cycle, "logging") federate.time_advance_request();
       
-      // FIXME: This is for IMSim only.  Needs to be moved into ExecutionControl.
+      // FIXME: This is for IMSim only. Needs to be moved into ExecutionControl.
       // Check to see if an interaction informed us that we are to
       // FREEZE the sim before entering the next logical frame.
       //P_LAST (data_cycle, "logging") federate.check_freeze_time();
 
-      // FIXME: This is for DIS only.  Needs to be moved into ExecutionControl.
+      // FIXME: This is for DIS only. Needs to be moved into ExecutionControl.
       // For DIS, check to see if federate master clicked freeze
       //P_LAST (data_cycle, check_pause_job_offset, "logging") federate.check_pause( CHECK_PAUSE_DELTA );
 

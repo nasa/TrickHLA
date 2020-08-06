@@ -3,8 +3,8 @@
 # @brief This program uses the Doxygen tool to generate TrickHLA documentation.
 # 
 # This is a Python program used to generate documentation for the TrickHLA
-# source code.  This tool uses the Doxygen tool and a series of configuration
-# files.  The default is to generate documentation for just the models.
+# source code. This tool uses the Doxygen tool and a series of configuration
+# files. The default is to generate documentation for just the models.
 # There are command line options to generate separate documentation for
 # the Python scripts, the simulations, or everything.
 #
@@ -118,7 +118,7 @@ def main() :
       model_docs = True
 
    # If 'clean' specified as a command line option, make sure that the
-   # user really wants to do that.  It WILL remove specified documentation.
+   # user really wants to do that. It WILL remove specified documentation.
    if args.clean and not args.test:
       TrickHLAMessage.warning( 'Cleaning up TrickHLA documentation!' )
       check_clean = raw_input( 'Are you sure you want to do this? [y]: ' )
@@ -353,8 +353,8 @@ def main() :
 ## Build up the TrickHLA version string.
 #
 # This routine builds up the TrickHLA version string for the Doxygen
-# generated documentation.  The version string corresponds to the TrickHLA
-# version.  The version tag represents a tag string corresponding to some
+# generated documentation. The version string corresponds to the TrickHLA
+# version. The version tag represents a tag string corresponding to some
 # identifier in the configuration management of the TrickHLA code base.
 # If one is not supplied, this command will extract the current Git hash.
 #

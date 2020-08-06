@@ -75,7 +75,7 @@ The class files are shown below.
 A class that holds information about the known federates in a federation.
 This class is used by the \TrickHLA\ model to wait for all known federates
 before starting the simulation.
-The class is really meant as a structure.  Its data fields are public.
+The class is really meant as a structure. Its data fields are public.
 The fields specify the known federate's {\em name} and whether or not
 the federate is required before the simulation starts.
 
@@ -231,7 +231,7 @@ The class files are shown below.
 
 \paragraph{Description.}
 This class represents HLA objects.
-It is large class with many methods.  
+It is large class with many methods. 
 The higher level classes delegate many tasks to this class.
 The public methods associate the object with the high-level
 {\tt TrickHLA::Manager} class, handle name reservation, publishing,
@@ -294,7 +294,7 @@ The class files are shown below.
 \paragraph{Description.}
 This class represents an HLA interaction.
 Its methods are responsible for sending interactions to remote federates
-and receiving remotely generated interations.  
+and receiving remotely generated interations. 
 The logic for handling incoming interactions is delegated to a
 helper class.
 
@@ -388,7 +388,7 @@ The class files are shown below.
 
 \paragraph{Description.}
 This class handles HLA attribute ownerhip transfer.
-It does so by queueing up transfer requests.  
+It does so by queueing up transfer requests. 
 The queued requests are processed by a job scheduled in the
 default \TrickHLA\ {\tt sim\_object}.
 Ownership may be divested using the {\tt push\_ownership()} method.
@@ -430,7 +430,7 @@ of it in the simulation {\tt S\_define} file, associate that instance
 with a particular object, and indicate whether the compensation is send-side
 or receiving-side compensation for the \TrickHLA\ compensation logic to work.
 This compensation logic is invoked jobs in the default \TrickHLA\ 
-{\tt sim\_object}.  These jobs defer to the {\tt TrickHLA::Object} class 
+{\tt sim\_object}. These jobs defer to the {\tt TrickHLA::Object} class 
 which in turn invokes application-specific lag compensation methods (if any).
 
 \paragraph{Files.}
@@ -464,7 +464,7 @@ which finally delegates to the associted application-specific
 interaction handler.
 Application-specific handlers must subclass this class.
 
-This class implements several methods for sending interactions.  
+This class implements several methods for sending interactions. 
 These may be called from simulation code, or they may be scheduled as
 Trick jobs in the {\tt S\_define} file.
 
@@ -490,7 +490,7 @@ The class files are shown below.
 \subsection{{\tt IMSim::FreezeInteractionHandler}}
 
 \paragraph{Description.}
-NOTE: This section needs to be removed.  This is now part of the DSES and
+NOTE: This section needs to be removed. This is now part of the DSES and
 IMSim {\ttfamily ExecutionControl} classes.
 
 This class handles the sending and receiving of Freeze Interactions in

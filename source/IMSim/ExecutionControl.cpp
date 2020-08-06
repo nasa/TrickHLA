@@ -125,7 +125,7 @@ ExecutionControl::~ExecutionControl()
 
 /*!
 @details This routine will set a lot of the data in the TrickHLA::Federate that
-is required for this execution control scheme.  This should greatly simplify
+is required for this execution control scheme. This should greatly simplify
 input files and reduce input file setting errors.
 
 @job_class{initialization}
@@ -235,7 +235,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // Add the IMSim multiphase initialization sync-points now that the
    // ExecutionConfiguration has been initialized in the call to
-   // the setup_all_ref_attributes() function.  We do this here so
+   // the setup_all_ref_attributes() function. We do this here so
    // that we can handle the RTI callbacks that use them.
    this->add_multiphase_init_sync_points();
 
@@ -282,7 +282,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    if ( this->is_master() ) {
       //**** This federate is the Master for the multiphase ****
-      //**** initialization process.                        ****
+      //**** initialization process                         ****
 
       // if you want to restore from a check point, force the loading of the
       // checkpoint file here...
@@ -627,7 +627,7 @@ Simulation has started and is now running...%c",
          if ( !get_manager()->is_late_joining_federate() ) {
             //**** Non-Master federate that is Not late in joining the ****
             //**** federation, so it can participate in the multiphase ****
-            //**** initialization process.                             ****
+            //**** initialization process                              ****
 
             // Call publish_and_subscribe AFTER we've initialized the manager,
             // federate, and FedAmb.
@@ -1690,7 +1690,7 @@ bool ExecutionControl::process_mode_transition_request()
             the_exec->freeze( this->simulation_freeze_time );
 
             // The freeze transition logic will be done just before entering
-            // Freeze.  This is done in the TrickHLA::Federate::freeze_init()
+            // Freeze. This is done in the TrickHLA::Federate::freeze_init()
             // routine called when entering Freeze.
          }
 
@@ -1874,7 +1874,7 @@ bool ExecutionControl::process_execution_control_updates()
             the_exec->set_freeze_command( true );
 
             // The freeze transition logic will be done just before entering
-            // Freeze.  This is done in the TrickHLA::Federate::freeze_init()
+            // Freeze. This is done in the TrickHLA::Federate::freeze_init()
             // routine called when entering Freeze.
 
          } else if ( this->requested_execution_control_mode == EXECUTION_CONTROL_INITIALIZING ) {
@@ -1952,7 +1952,7 @@ bool ExecutionControl::process_execution_control_updates()
             the_exec->freeze( this->simulation_freeze_time );
 
             // The freeze transition logic will be done just before entering
-            // Freeze.  This is done in the TrickHLA::Federate::freeze_init()
+            // Freeze. This is done in the TrickHLA::Federate::freeze_init()
             // routine called when entering Freeze.
 
          } else {
@@ -1992,7 +1992,7 @@ bool ExecutionControl::process_execution_control_updates()
             the_exec->run();
 
             // The run transition logic will be done just when exiting
-            // Freeze.  This is done in the TrickHLA::Federate::exit_freeze()
+            // Freeze. This is done in the TrickHLA::Federate::exit_freeze()
             // routine called when entering Freeze.
             // this->run_mode_transition();
 
@@ -2400,7 +2400,7 @@ void ExecutionControl::check_pause( const double check_pause_delta )
    }
 }
 
-// FIXME: See if this is still needed.  Trick 17 may have fixed this.
+// FIXME: See if this is still needed. Trick 17 may have fixed this.
 /*!
  *  @details Note that we could just have one check_pause routine and 2
  *  instances of it in the S_define file (one would be an initialization job

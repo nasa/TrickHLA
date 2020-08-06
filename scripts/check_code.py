@@ -596,7 +596,7 @@ def find_trick( trick_path=None, verbose = True ) :
             elif os.path.isdir(os.environ.get( 'HOME' ) + '/Trick' ) :
                trick_home = os.environ.get( 'HOME' ) + '/Trick'
 
-   # We're finished hunting.  Now let's check for the Trick home directory.
+   # We're finished hunting. Now let's check for the Trick home directory.
    if trick_home == None :
       TrickHLAMessage.failure( 'Could not find the Trick home directory!' )
    else :
@@ -675,7 +675,7 @@ def find_hla_rti( rti_path=None, verbose = True ) :
          else :
             TrickHLAMessage.failure( 'RTI_HOME not found: ' + rti_home )
 
-   # We're finished hunting.  Now let's check for the HLA RTI home directory.
+   # We're finished hunting. Now let's check for the HLA RTI home directory.
    if rti_home == None :
       TrickHLAMessage.failure( 'Could not find the HLA RTI home directory!' )
    else :
@@ -727,9 +727,9 @@ def get_number_of_cpus() :
 ## Function to cleans artifacts in the cppcheck autogen directory.
 #
 # This routine will clean up all the cppcheck autogen artifacts in the
-# 'cppcheck' directory.  The routine saves the current working directory and
-# then moves to the specified directory if it exists.  If not, the routine
-# returns with an error condition.  If the directory exists, this routine
+# 'cppcheck' directory. The routine saves the current working directory and
+# then moves to the specified directory if it exists. If not, the routine
+# returns with an error condition. If the directory exists, this routine
 # removes the cppcheck directory.
 #
 # @return status       Returns True if error detected.

@@ -105,7 +105,7 @@ ExecutionControl::~ExecutionControl()
 
 /*!
 @details This routine will set a lot of the data in the TrickHLA::Federate that
-is required for this execution control scheme.  This should greatly simplify
+is required for this execution control scheme. This should greatly simplify
 input files and reduce input file setting errors.
 
 @job_class{initialization}
@@ -250,7 +250,7 @@ void ExecutionControl::setup_object_ref_attributes()
 
 /*!
  * @details This routine is used to perform and inline build of the Trick
- * ref ATTRIBUTES for any mode transition interactions.  This implementation
+ * ref ATTRIBUTES for any mode transition interactions. This implementation
  * does not have any.
  *
  * @job_class{initialization}
@@ -312,7 +312,7 @@ void ExecutionControl::announce_sync_point(
    RTI1516_USERDATA const &          user_supplied_tag )
 {
    // In this case the default SyncPntListBase::announce_sync_point works.
-   // Strictly speaking, we could just not define this.  However, this provides
+   // Strictly speaking, we could just not define this. However, this provides
    // a place to implement if that changes.
    SyncPntListBase::announce_sync_point( rti_ambassador, label, user_supplied_tag );
 }
@@ -474,7 +474,7 @@ void ExecutionControl::set_time_padding( double t )
    }
 
    // The Master federate padding time must be an integer multiple of 3 or
-   // more times the Least Common Time Step (LCTS).  This will give commands
+   // more times the Least Common Time Step (LCTS). This will give commands
    // time to propagate through the system and still have time for mode
    // transitions.
    if ( int_time < ( 3 * least_common_time_step ) ) {

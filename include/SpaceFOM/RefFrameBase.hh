@@ -51,7 +51,7 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
 
 // Forward Declared Classes:  Since these classes are only used as references
-// through pointers, these classes are included as forward declarations.  This
+// through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
 namespace TrickHLA
 {
@@ -64,7 +64,7 @@ namespace SpaceFOM
 {
 
 // Forward Declared Classes:  Since these classes are only used as references
-// through pointers, these classes are included as forward declarations.  This
+// through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
 class ExecutionControl;
 
@@ -73,7 +73,7 @@ class RefFrameBase : public TrickHLA::Packing
 
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
-   // exists - at least yet).  This friend statement just tells Trick
+   // exists - at least yet). This friend statement just tells Trick
    // to go ahead and process the protected and private data as well
    // as the usual public data.
    friend class InputProcessor;

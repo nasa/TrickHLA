@@ -9,7 +9,7 @@ the problem.
 - The time scale for this timeline is always Terrestrial Time (TT) which
 complies with the Space Reference FOM standard.
 - Note that the epoch value for this CTE timeline represents the epoch or
-starting point of the CTE timeline.  This will correspond to the starting
+starting point of the CTE timeline. This will correspond to the starting
 time in the TT time standard represented in Truncated Julian Date format
 (TJD) expressed in seconds.
 
@@ -59,7 +59,7 @@ class CTETimelineBase : public Trick::Clock, public Timeline
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
-   // exists - at least yet).  This friend statement just tells Trick
+   // exists - at least yet). This friend statement just tells Trick
    // to go ahead and process the protected and private data as well
    // as the usual public data.
    friend class InputProcessor;
@@ -104,7 +104,7 @@ class CTETimelineBase : public Trick::Clock, public Timeline
 
   protected:
    clockid_t clk_id; /**<  @trick_io{**}
-      System clock type used.  The default clock ID is <i>CLOCK_REALTIME</i>. */
+      System clock type used. The default clock ID is <i>CLOCK_REALTIME</i>. */
 
   private:
    // Do not allow the copy constructor or assignment operator.

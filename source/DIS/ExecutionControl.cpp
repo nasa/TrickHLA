@@ -108,7 +108,7 @@ ExecutionControl::~ExecutionControl()
 
 /*!
 @details This routine will set a lot of the data in the TrickHLA::Federate that
-is required for this execution control scheme.  This should greatly simplify
+is required for this execution control scheme. This should greatly simplify
 input files and reduce input file setting errors.
 
 @job_class{initialization}
@@ -837,7 +837,7 @@ bool ExecutionControl::process_mode_transition_request()
             the_exec->freeze( this->simulation_freeze_time );
 
             // The freeze transition logic will be done just before entering
-            // Freeze.  This is done in the TrickHLA::Federate::freeze_init()
+            // Freeze. This is done in the TrickHLA::Federate::freeze_init()
             // routine called when entering Freeze.
          }
 
@@ -1021,7 +1021,7 @@ bool ExecutionControl::process_execution_control_updates()
             the_exec->set_freeze_command( true );
 
             // The freeze transition logic will be done just before entering
-            // Freeze.  This is done in the TrickHLA::Federate::freeze_init()
+            // Freeze. This is done in the TrickHLA::Federate::freeze_init()
             // routine called when entering Freeze.
 
          } else if ( this->requested_execution_control_mode == EXECUTION_CONTROL_INITIALIZING ) {
@@ -1099,7 +1099,7 @@ bool ExecutionControl::process_execution_control_updates()
             the_exec->freeze( this->simulation_freeze_time );
 
             // The freeze transition logic will be done just before entering
-            // Freeze.  This is done in the TrickHLA::Federate::freeze_init()
+            // Freeze. This is done in the TrickHLA::Federate::freeze_init()
             // routine called when entering Freeze.
 
          } else {
@@ -1139,7 +1139,7 @@ bool ExecutionControl::process_execution_control_updates()
             the_exec->run();
 
             // The run transition logic will be done just when exiting
-            // Freeze.  This is done in the TrickHLA::Federate::exit_freeze()
+            // Freeze. This is done in the TrickHLA::Federate::exit_freeze()
             // routine called when entering Freeze.
             // this->run_mode_transition();
 

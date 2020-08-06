@@ -326,7 +326,7 @@ void Federate::print_version() const
 
 /*!
  * @details Check that the FPU Control Word matches the value at simulation
- *  startup.  If not it will reset it back to the startup value.  It will use
+ *  startup. If not it will reset it back to the startup value. It will use
  *  the FPU Control Word value set by the Python Input Processor.
  */
 void Federate::fix_FPU_control_word()
@@ -350,7 +350,7 @@ void Federate::fix_FPU_control_word()
 
 /*!
  * \par<b>Assumptions and Limitations:</b>
- * - The TrickHLA::FedAmb class is actually an abstract class.  Therefore,
+ * - The TrickHLA::FedAmb class is actually an abstract class. Therefore,
  * the actual object instance being passed in is an instantiable polymorphic
  * child of the RTI1516_NAMESPACE::FederateAmbassador class.
  *
@@ -420,7 +420,7 @@ the documented ENUM values.%c",
 
 /*!
  * \par<b>Assumptions and Limitations:</b>
- * - The TrickHLA::FedAmb class is actually an abstract class.  Therefore,
+ * - The TrickHLA::FedAmb class is actually an abstract class. Therefore,
  * the actual object instance being passed in is an instantiable polymorphic
  * child of the RTI1516_NAMESPACE::FederateAmbassador class.
  * @job_class{initialization}
@@ -604,7 +604,7 @@ void Federate::restart_initialization()
 
 /*!
  * @details This performs all the startup steps prior to any multi-phase
- * initialization process defined by the user.  The multi-phase initialization
+ * initialization process defined by the user. The multi-phase initialization
  * will be performed as initialization jobs between P_INIT and P_LAST
  * phased initialization jobs.
  *
@@ -2489,7 +2489,7 @@ void Federate::announce_sync_point(
    RTI1516_USERDATA const &user_supplied_tag )
 {
 
-   // Dispatch this to the ExecutionControl process.  It will check for
+   // Dispatch this to the ExecutionControl process. It will check for
    // any synchronization points that require special handling.
    execution_control->announce_sync_point( *( RTI_ambassador ), label, user_supplied_tag );
 }
@@ -3825,7 +3825,7 @@ bool Federate::check_for_shutdown()
 
 /*!
  * @details NOTE: If a shutdown has been announced, this routine calls the
- * Trick exec_teminate() function.  So, for shutdown, it should never return.
+ * Trick exec_teminate() function. So, for shutdown, it should never return.
  * @job_class{shutdown}
  */
 bool Federate::check_for_shutdown_with_termination()
@@ -4527,7 +4527,7 @@ void Federate::shutdown()
       // Macro to save the FPU Control Word register value.
       TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-      // Check for Execution Control shutdown.  If this is NULL, then we are
+      // Check for Execution Control shutdown. If this is NULL, then we are
       // probably shutting down prior to initialization.
       if ( this->execution_control != NULL ) {
          // Call Execution Control shutdown method.

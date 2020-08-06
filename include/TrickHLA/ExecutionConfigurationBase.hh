@@ -62,7 +62,7 @@ class ExecutionConfigurationBase : public Object, public Packing
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
-   // exists - at least yet).  This friend statement just tells Trick
+   // exists - at least yet). This friend statement just tells Trick
    // to go ahead and process the protected and private data as well
    // as the usual public data.
    friend class InputProcessor;
@@ -86,12 +86,12 @@ class ExecutionConfigurationBase : public Object, public Packing
 
    // Default data.
    /*! @brief Sets up the attributes for this Execution Configuration object
-    *  using default values.  These can be overridden in the input file.
+    *  using default values. These can be overridden in the input file.
     *  @param exec_control Reference to the associated TrickHLA::ExecutionControlBase object. */
    virtual void setup( TrickHLA::ExecutionControlBase &exec_control );
 
    /*! @brief Sets up the attributes for this Execution Configuration object
-    *  using default values.  These can be overridden in the input file. */
+    *  using default values. These can be overridden in the input file. */
    virtual void configure_attributes() = 0;
 
    /*! @brief Configure the execution configuration object. */

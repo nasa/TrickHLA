@@ -53,7 +53,7 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
 
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
-   // exists - at least yet).  This friend statement just tells Trick
+   // exists - at least yet). This friend statement just tells Trick
    // to go ahead and process the protected and private data as well
    // as the usual public data.
    friend class InputProcessor;
@@ -65,11 +65,11 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    // The members below are part of the FOM data ExCO exchange.
    char *root_frame_name; /**<  @trick_units{--}
       Specifies the name of the root coordinate frame in the federation
-      execution's reference frame tree.  This frame shall remain fixed
+      execution's reference frame tree. This frame shall remain fixed
       throughout the federation execution. */
 
    double scenario_time_epoch; /**<  @trick_units{s}
-      Federation execution scenario time epoch.  This is the beginning epoch
+      Federation execution scenario time epoch. This is the beginning epoch
       expressed in Terrestrial Time (TT) that corresponds to HLA logical time 0.
       All joining federates shall use this time to coordinate the offset between
       their local simulation scenario times, their local simulation execution
@@ -77,13 +77,13 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
 
    double next_mode_scenario_time; /**<  @trick_units{s}
       The time for the next federation execution mode change expressed as a
-      federation scenario time reference.  Note: this is value is only
+      federation scenario time reference. Note: this is value is only
       meaningful for going into freeze; exiting freeze is coordinated through
       a sync point mechanism. */
 
    double next_mode_cte_time; /**<  @trick_units{s}
       The time for the next federation execution mode change expressed as a
-      Central Timing Equipment (CTE) time reference.  The standard for this
+      Central Timing Equipment (CTE) time reference. The standard for this
       reference shall be defined in the federation agreement when CTE is used. */
 
    short current_execution_mode; /**< @trick_units{--}
@@ -92,7 +92,7 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
 
    short next_execution_mode; /**< @trick_units{--}
       Defines the next running state of the federation execution in terms of
-      a finite set of states expressed in the RunMode enumeration.  This is
+      a finite set of states expressed in the RunMode enumeration. This is
       used in conjunction with the cte_mode_time, sim_mode_time and
       associated sync point mechanisms to coordinate federation execution
       mode transitions.*/
@@ -103,9 +103,9 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
       This value is set by the Master Federate and does not change during the
       federation execution. This is used in the computation to find the next
       HLA Logical Time Boundary (HLTB) available to all federates in the
-      federation execution.  The basic equation is
+      federation execution. The basic equation is
             HLTB = ( floor(GALT/LCTS) + 1 ) * LCTS,
-      where GALT is the greatest available logical time.  This is used to
+      where GALT is the greatest available logical time. This is used to
       synchronize the federates in a federation execution to be on a common
       logical time boundary. */
 

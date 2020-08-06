@@ -63,7 +63,7 @@ namespace TrickHLA
 {
 
 // Forward Declared Classes:  Since these classes are only used as references
-// through pointers, these classes are included as forward declarations.  This
+// through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
 class Federate;
 class Manager;
@@ -74,7 +74,7 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
-   // exists - at least yet).  This friend statement just tells Trick
+   // exists - at least yet). This friend statement just tells Trick
    // to go ahead and process the protected and private data as well
    // as the usual public data.
    friend class InputProcessor;
@@ -167,7 +167,7 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    /*! Setup the ExecutionControl objects HLA RTI handles. */
    virtual void register_objects_with_RTI();
    /*! @brief Add a TrickHLA::Object to the manager object map.
-    *  @param object TrickHLA::Object to add to the manager object map.  */
+    *  @param object TrickHLA::Object to add to the manager object map. */
    virtual void add_object_to_map( Object *object );
    /*! Setup the ExecutionControl interactions HLA RTI handles. */
    virtual void register_interactions_with_RTI()
@@ -259,7 +259,7 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    virtual void process_deleted_objects();
    /*! @brief Test to see if ExecutionControl needs to wait on initialization data.
     *  @details Most ExecutionControl approaches require that we wait for the
-    *  required initialization data.  Currently, only the 'Simple' scheme does not.
+    *  required initialization data. Currently, only the 'Simple' scheme does not.
     *  @return True if ExecutionControl needs to wait on the initialization data. */
    virtual bool wait_on_init_data()
    {
@@ -676,9 +676,9 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
       This value is set by the Master Federate and does not change during the
       federation execution. This is used in the computation to find the next
       HLA Logical Time Boundary (HLTB) available to all federates in the
-      federation execution.  The basic equation is
+      federation execution. The basic equation is
             HLTB = ( floor(GALT/LCTS) + 1 ) * LCTS,
-      where GALT is the greatest available logical time.  This is used to
+      where GALT is the greatest available logical time. This is used to
       synchronize the federates in a federation execution to be on a common
       logical time boundary. */
 

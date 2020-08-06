@@ -77,7 +77,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 // NOTE: This forward declaration of TrickHLA::Attribute is here to go with
-// the #ifdef SWIG include.  Normally, it would go with the other forward
+// the #ifdef SWIG include. Normally, it would go with the other forward
 // declarations below.
 class Attribute;
 } // namespace TrickHLA
@@ -87,7 +87,7 @@ namespace TrickHLA
 {
 
 // Forward Declared Classes:  Since these classes are only used as references
-// through pointers, these classes are included as forward declarations.  This
+// through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
 class Manager;
 class Federate;
@@ -100,7 +100,7 @@ class Object
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
-   // exists - at least yet).  This friend statement just tells Trick
+   // exists - at least yet). This friend statement just tells Trick
    // to go ahead and process the protected and private data as well
    // as the usual public data.
    friend class InputProcessor;
@@ -229,7 +229,7 @@ class Object
    // Likewise, the receive method effectively does nothing if we do
    // own the data.
    //
-   // There is copying involved.  Before the data is sent, the specified
+   // There is copying involved. Before the data is sent, the specified
    // data source is copied to a byte buffer and a byteswap is performed
    // if the byteorder of the local data does not match the byteorder used
    // to send the data through the RTI.

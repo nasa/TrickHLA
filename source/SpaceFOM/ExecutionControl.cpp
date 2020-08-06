@@ -145,7 +145,7 @@ ExecutionControl::~ExecutionControl()
 
 /*!
 @details This routine will set a lot of the data in the TrickHLA::Federate that
-is required for this execution control scheme.  This should greatly simplify
+is required for this execution control scheme. This should greatly simplify
 input files and reduce input file setting errors.
 
 @job_class{initialization}
@@ -577,7 +577,7 @@ void ExecutionControl::role_determination_process()
       federate->wait_for_required_federates_to_join();
 
       // Register the initialization synchronization points used to control
-      // the SpaceFOM startup process.  Section 7.2 Figure 7-4.
+      // the SpaceFOM startup process. Section 7.2 Figure 7-4.
       register_sync_pnt( *( federate->get_RTI_ambassador() ),
                          federate->get_joined_federate_handles(),
                          SpaceFOM::INIT_STARTED_SYNC_POINT );
@@ -688,7 +688,7 @@ void ExecutionControl::early_joiner_hla_init_process()
    // OBJECTS_DISCOVERED_SYNC_POINT, and ROOT_FRAME_DISCOVERED_SYNC_POINT.
    // and "startup" sync-points to be registered (i.e. announced).
    // Note: Do NOT register the INIT_COMPLETED_SYNC_POINT synchronization
-   // point yet.  That marks the successful completion of initialization.
+   // point yet. That marks the successful completion of initialization.
    this->wait_for_announcement( federate, INIT_STARTED_SYNC_POINT );
    this->wait_for_announcement( federate, OBJECTS_DISCOVERED_SYNC_POINT );
    this->wait_for_announcement( federate, ROOT_FRAME_DISCOVERED_SYNC_POINT );
@@ -710,7 +710,7 @@ void ExecutionControl::early_joiner_hla_init_process()
       ExCO->wait_on_object_name_reservation();
    } else {
       // NOTE:
-      // Should publish the MTR interaction here.  However, this
+      // Should publish the MTR interaction here. However, this
       // is currently handled in the manager->setup_all_RTI_handles()
       // and manager->publish_and_subscribe()!
    }
@@ -764,7 +764,7 @@ void ExecutionControl::late_joiner_hla_init_process()
    ExCO->subscribe_to_object_attributes();
 
    // NOTE:
-   // Should publish the MTR interaction here.  However, this
+   // Should publish the MTR interaction here. However, this
    // is currently handled in the manager->setup_all_RTI_handles()
    // and manager->publish_and_subscribe()!
 
@@ -949,7 +949,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
       }
 
       // The Master federate padding time must be an integer multiple of 3 or
-      // more times the Least Common Time Step (LCTS).  This will give commands
+      // more times the Least Common Time Step (LCTS). This will give commands
       // time to propagate through the system and still have time for mode
       // transitions.
       if ( MPT < ( 3 * LCTS ) ) {
@@ -1071,8 +1071,8 @@ void ExecutionControl::post_multi_phase_init_processes()
 
          case EXECUTION_CONTROL_RUNNING:
             // Since this is a later joining federate, do NOT call the SpaceFOM
-            // ExecutionControl run_mode_transition() function here.  Late joiners
-            // do NOT use the 'mtr_run' sync-points at initialization.  Late
+            // ExecutionControl run_mode_transition() function here. Late joiners
+            // do NOT use the 'mtr_run' sync-points at initialization. Late
             // joining federates go straight to run if the federation is in
             // run execution mode.
 
@@ -1087,7 +1087,7 @@ void ExecutionControl::post_multi_phase_init_processes()
             // Since this is a later joining federate, do NOT call the
             // SpaceFOM ExecutionControl freeze_mode_transition() function here.
             // Late joiners do NOT use the 'mtr_freeze' sync-points at
-            // initialization.  Instead, tell the Trick executive to startup
+            // initialization. Instead, tell the Trick executive to startup
             // in Freeze mode.
 
             // Tell the Trick executive to start up in freeze mode.
@@ -1531,7 +1531,7 @@ bool ExecutionControl::process_mode_transition_request()
             the_exec->freeze( this->simulation_freeze_time );
 
             // The freeze transition logic will be done just before entering
-            // Freeze.  This is done in the TrickHLA::Federate::freeze_init()
+            // Freeze. This is done in the TrickHLA::Federate::freeze_init()
             // routine called when entering Freeze.
          }
 
@@ -1714,7 +1714,7 @@ bool ExecutionControl::process_execution_control_updates()
             the_exec->set_freeze_command( true );
 
             // The freeze transition logic will be done just before entering
-            // Freeze.  This is done in the TrickHLA::Federate::freeze_init()
+            // Freeze. This is done in the TrickHLA::Federate::freeze_init()
             // routine called when entering Freeze.
 
          } else if ( this->requested_execution_control_mode == EXECUTION_CONTROL_INITIALIZING ) {
@@ -1792,7 +1792,7 @@ bool ExecutionControl::process_execution_control_updates()
             the_exec->freeze( this->simulation_freeze_time );
 
             // The freeze transition logic will be done just before entering
-            // Freeze.  This is done in the TrickHLA::Federate::freeze_init()
+            // Freeze. This is done in the TrickHLA::Federate::freeze_init()
             // routine called when entering Freeze.
 
          } else {
@@ -1832,7 +1832,7 @@ bool ExecutionControl::process_execution_control_updates()
             the_exec->run();
 
             // The run transition logic will be done just when exiting
-            // Freeze.  This is done in the TrickHLA::Federate::exit_freeze()
+            // Freeze. This is done in the TrickHLA::Federate::exit_freeze()
             // routine called when entering Freeze.
             // this->run_mode_transition();
 
@@ -2104,7 +2104,7 @@ bool ExecutionControl::check_for_shutdown()
 
 /*!
  * @details NOTE: If a shutdown has been announced, this routine calls the
- * Trick exec_teminate() function.  So, for shutdown, it should never return.
+ * Trick exec_teminate() function. So, for shutdown, it should never return.
  * @job_class{shutdown}
  */
 bool ExecutionControl::check_for_shutdown_with_termination()
@@ -2148,10 +2148,10 @@ void ExecutionControl::freeze_init()
    // Mark the freeze as announced.
    federate->set_freeze_announced( true );
 
-   // Transition to freeze.  However, we need to check for special case
-   // where this is a late joining federate in initialization.  For that
+   // Transition to freeze. However, we need to check for special case
+   // where this is a late joining federate in initialization. For that
    // one case, do NOT use the SpaceFOM::ExecutionControlBase::freeze_mode_transition()
-   // routine.  Just proceed to freeze.
+   // routine. Just proceed to freeze.
    if ( !this->is_late_joiner()
         || ( this->get_current_execution_control_mode() != EXECUTION_CONTROL_INITIALIZING ) ) {
       // Tell Execution Control to transition to Freeze.
@@ -2185,9 +2185,9 @@ void ExecutionControl::enter_freeze()
          return;
       }
 
-      // Okay, we can't go directly into freeze.  First we need to
+      // Okay, we can't go directly into freeze. First we need to
       // tell the other federates to go to freeze at some time in the
-      // future.  Then we can go to freeze at that time.
+      // future. Then we can go to freeze at that time.
 
       // Set the next execution mode to freeze.
       this->set_next_execution_control_mode( EXECUTION_CONTROL_FREEZE );
@@ -2273,9 +2273,9 @@ void ExecutionControl::exit_freeze()
    // Transition to run mode.
    this->run_mode_transition();
 
-   // Tell Trick to reset the realtime clock.  We need to do this
+   // Tell Trick to reset the realtime clock. We need to do this
    // since the exit_freeze job waits an indeterminate amount of time
-   // to synchronize the mtr_goto_run mode transition.  This is
+   // to synchronize the mtr_goto_run mode transition. This is
    // particularly true when using the CTE clock and a large mode
    // transition padding time.
    the_clock->clock_reset( the_exec->get_time_tics() );
@@ -2330,7 +2330,7 @@ void ExecutionControl::epoch_and_root_frame_discovery_process()
    }
 
    // If the Root Reference Frame Publisher (RRFP) then send out the
-   // root reference frame update.  Otherwise wait on the delivery of
+   // root reference frame update. Otherwise wait on the delivery of
    // the root reference frame update.
    if ( this->is_root_frame_publisher() ) {
 
@@ -2583,7 +2583,7 @@ void ExecutionControl::set_time_padding( double t )
    }
 
    // The Master federate padding time must be an integer multiple of 3 or
-   // more times the Least Common Time Step (LCTS).  This will give commands
+   // more times the Least Common Time Step (LCTS). This will give commands
    // time to propagate through the system and still have time for mode
    // transitions.
    if ( int_time < ( 3 * least_common_time_step ) ) {

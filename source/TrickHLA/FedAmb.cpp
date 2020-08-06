@@ -5,7 +5,7 @@
 interaction and time management.
 
 @details Methods of objects of this class are not intended to be called from
-the Trick S_define level.  However, this class is essentially a polymorphic
+the Trick S_define level. However, this class is essentially a polymorphic
 callback class provided to the RTI Ambassador.
 
 \par<b>Assumptions and Limitations:</b>
@@ -13,7 +13,7 @@ callback class provided to the RTI Ambassador.
 that RTI can call functions in the federate.
 - Based on HelloWorld example code.
 - None of the methods in this class are intended to be called from the Trick
-S_define level.  However, an instance of this class can be declared in the
+S_define level. However, an instance of this class can be declared in the
 S_define.
 
 @copyright Copyright 2019 United States Government as represented by the
@@ -72,9 +72,9 @@ using namespace TrickHLA;
 
 /*!
  * @details In most cases, we would allocate and set default names in the
- * constructor.  However, since we want this class to be Input
+ * constructor. However, since we want this class to be Input
  * Processor friendly, we cannot do that here since the Input
- * Processor may not have been initialized yet.  So, we have to
+ * Processor may not have been initialized yet. So, we have to
  * set the name information to NULL and then allocate and set the
  * defaults in the initialization job if not already set in the
  * input stream.

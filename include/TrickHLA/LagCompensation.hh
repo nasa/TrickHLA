@@ -54,7 +54,7 @@ class LagCompensation
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
-   // exists - at least yet).  This friend statement just tells Trick
+   // exists - at least yet). This friend statement just tells Trick
    // to go ahead and process the protected and private data as well
    // as the usual public data.
    friend class InputProcessor;
@@ -84,15 +84,15 @@ class LagCompensation
    Attribute *get_attribute_and_validate( const char *attr_FOM_name );
 
    /*! @brief Returns a copy of the object's lookahead time.
-    *  @return A copy of the federate's lookahead time.  */
+    *  @return A copy of the federate's lookahead time. */
    Int64Interval get_fed_lookahead() const;
 
    /*! @brief Returns a copy of the object's granted federation time.
-    *  @return A copy of the federate's current granted time.  */
+    *  @return A copy of the federate's current granted time. */
    Int64Time get_granted_fed_time() const;
 
    /*! @brief Returns the current scenario time.
-    *  @return Current scenario time..  */
+    *  @return Current scenario time. */
    double get_scenario_time();
 
    /*! @brief Returns the current Central Timing Equipment (CTE) time.

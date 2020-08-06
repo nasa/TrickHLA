@@ -203,7 +203,7 @@ typedef enum {
 @brief Define the TrickHLA Mode Transition state enumeration values.
 
 The TrickHLA::ModeTransitionEnum enumeration defines the possible mode
-transition for the TrickHLA::ExecutionControl executive.  These mode requests
+transition for the TrickHLA::ExecutionControl executive. These mode requests
 are important in the execution control process involving mode requests from
 any federate participating in a controlled federation execution and usually
 processed by the Master federate.

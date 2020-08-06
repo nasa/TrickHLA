@@ -83,8 +83,8 @@ class THLABaseSimObject : public Trick::SimObject {
       P_INIT ("initialization") federate.initialize();
       
       // This begins the process of standing up the federate in the federation
-      // execution.  This preforms all the startup steps prior to any
-      // multi-phase inializtation process defined by the user.  The multi-
+      // execution. This preforms all the startup steps prior to any
+      // multi-phase inializtation process defined by the user. The multi-
       // phase inialization will be performed as initialization jobs between
       // P_INIT and P_LAST.
       P_INIT ("initialization") federate.pre_multiphase_initialization();
@@ -125,7 +125,7 @@ class THLABaseSimObject : public Trick::SimObject {
       P_1ST (data_cycle, "environment") manager.process_deleted_objects();
 
       // Grab any new cyclic data from the other Federates that has arrived and
-      // update the local state.  (This is done down here to make sure we do
+      // update the local state. (This is done down here to make sure we do
       // the copying AFTER the event loop has fired the reflect call-backs.)
       P_1ST (data_cycle, "environment") manager.receive_cyclic_data();
 
@@ -151,7 +151,7 @@ class THLABaseSimObject : public Trick::SimObject {
       
    }
    
-   // Pure virtual destructor.  Make this SimObject and abstract class.
+   // Pure virtual destructor. Make this SimObject and abstract class.
    // It must be extended with a specific ExecutionControl implementation.
    virtual ~THLABaseSimObject() = 0;
 

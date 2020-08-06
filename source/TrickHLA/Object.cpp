@@ -1605,7 +1605,7 @@ void Object::send_requested_data(
    }
 
    // The update_time should be the current simulation time plus the cycle
-   // time for this job.  Also, the dt value would then be the job cycle time
+   // time for this job. Also, the dt value would then be the job cycle time
    // for this job for this function. 11/28/2006 DDexter
    Int64Time update_time( current_time + cycle_time );
 
@@ -3555,7 +3555,7 @@ void Object::negotiated_attribute_ownership_divestiture(
       } catch ( SaveInProgress &e ) {
          send_hs( stderr, "Object::negotiated_attribute_ownership_divestiture():%d SaveInProgress %c", __LINE__, THLA_NEWLINE );
       } catch ( RestoreInProgress &e ) {
-         // Be patient.  Evidently it's in progress already (perhaps due to
+         // Be patient. Evidently it's in progress already (perhaps due to
          // a previous invocation of this function).
          send_hs( stderr, "Object::negotiated_attribute_ownership_divestiture():%d RestoreInProgress %c", __LINE__, THLA_NEWLINE );
       } catch ( NotConnected &e ) {

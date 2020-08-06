@@ -75,7 +75,7 @@ trick.exec_set_trap_sigfpe(True)
 trick.checkpoint_post_init(1)
 #trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
 
-# Setup for Trick real time execution.  This is the "Pacing" function.
+# Setup for Trick real time execution. This is the "Pacing" function.
 execfile( "Modified_data/trick/realtime.py" )
 
 trick.exec_set_enable_freeze(True)
@@ -98,7 +98,7 @@ federate = SpaceFOMFederateConfig( THLA.federate,
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job
-# to configure the ExCO.  This is only needed for input file configuration.
+# to configure the ExCO. This is only needed for input file configuration.
 #federate.set_ExCO_S_define_name( 'THLA_INIT.ExCO' )
 
 # Set the debug output level.

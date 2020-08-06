@@ -120,7 +120,7 @@ void PausePointList::check_state()
    }
    unlock_read_only();
 
-   // FIXME: Commenting out to test.  This needs to be split between the
+   // FIXME: Commenting out to test. This needs to be split between the
    // DIS::ExecutinoControl and the IMSim::ExecutionControl.
    // This code needs to be moved to DIS implementation.
    //if ( init_scheme == INIT_SCHEME_DIS_COMPATIBLE ) {

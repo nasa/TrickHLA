@@ -64,7 +64,7 @@
         \def\noexpand\PfP@lly{\Gin@vlly bp}%
         \def\noexpand\PfP@urx{\Gin@vurx bp}%
         \def\noexpand\PfP@ury{\Gin@vury bp}}\x%
-%     Like "\xdef\PfP@llx{\Gin@vllx bp}..." but only for one group level.     
+%     Like "\xdef\PfP@llx{\Gin@vllx bp}..." but only for one group level.
   }
   
   \define@key{PfP}{draft}[true]{\csname PfP@draft#1\endcsname}  
@@ -113,7 +113,7 @@
   \newcommand\PSforPDF[2][]{#2}  
   
   \newcommand\PfP@relax@commands{%
-%% To prevent tabularx from execute each \cmd{\PSforPDF} more than once.  
+%% To prevent tabularx from execute each \cmd{\PSforPDF} more than once. 
     \@ifundefined{tabularx}{}{%
       \def\tabularx##1##2{\tabular{##2}}%
       \newcolumntype{X}{c}%

@@ -94,11 +94,11 @@ class TrickHLAFederateConfig( object ):
       self.federate.FOM_modules = foms_string
 
       # Note: The federate objects are added to a list in a simulation
-      # specific routine.  This code assumes that everything has been set
+      # specific routine. This code assumes that everything has been set
       # in the TrickHLAObjectConfig based objects except the TrickHLAObject
-      # references.  This code will create the appropriate number of
+      # references. This code will create the appropriate number of
       # TrickHLAObject and then use the TrickHLAObjectConfig instances to
-      # initialize them.  This will allow users to add or delete objects
+      # initialize them. This will allow users to add or delete objects
       # without having to manage array size.
 
       # Allocate the federate's federation object list.
@@ -112,11 +112,11 @@ class TrickHLAFederateConfig( object ):
          self.fed_objects[indx].initialize( self.manager.objects[indx] )
 
       # Note: The federate interactions are added to a list in a simulation
-      # specific routine.  This code assumes that everything has been set
+      # specific routine. This code assumes that everything has been set
       # in the TrickHLAInteractionConfig based interactions except the
-      # TrickHLAInteraction references.  This code will create the
+      # TrickHLAInteraction references. This code will create the
       # appropriate number of TrickHLAInteraction and then use the
-      # TrickHLAInitializationConfig instances to initialize them.  This
+      # TrickHLAInitializationConfig instances to initialize them. This
       # will allow users to add or delete objects without having to manage
       # array size.
 

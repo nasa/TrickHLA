@@ -74,7 +74,7 @@ easier to understand.
 Trick is a simulation environment used in NASA and developed at
 Johnson Space Center.
 The architectural model for this software is as defined in, and
-required by, the Trick Simulation Environment.  
+required by, the Trick Simulation Environment. 
 See references \cite{Trick:Documentation} and \cite{Trick:Tutorial}
 for more information on Trick.
 Trick-based simulations consist of {\em models} which roughly speaking
@@ -126,7 +126,7 @@ data to many subscribers without being aware of the specific recipients,
 since subscribers usually register their interest with the underlying 
 middleware instead of directly contacting the publisher.
 In HLA, the term {\em publish} is used rather unconventionally to indicate
-a federate's intent to eventually generate data values.  
+a federate's intent to eventually generate data values. 
 The actual act of generating those data values is called {\em reflection}.
 The \TrickHLA\ model provides a data-driven mechanism for associating
 Trick simulation data with HLA,
@@ -184,10 +184,10 @@ FOM file with a simulation.
 
 \item[Time Management and Lookahead.]
 One of the challenges of distributed computing is how one goes about defining
-a consistent value of time.  
+a consistent value of time. 
 One of the major aspects of HLA is its {\em time management} services which
 allow distributed simulations to proceed concurrently yet have a consistent notion
-of time.  
+of time. 
 The time management services are typically implemented on top of the
 Chandy-Misra-Bryant protocol\cite{art:chandy-misra}
 The performance of this protocol is affected significantly by a 
@@ -295,7 +295,7 @@ related to them:
     This is a C++ class which extends the abstract \TrickHLA\ class,
     {\ttfamily ExecutionControlBase}.
     This class is used to control the execution of the federate in a defined
-    HLA federation execution.  This class will implement the execution
+    HLA federation execution. This class will implement the execution
     control strategy common to all members of a federation execution.
     \TrickHLA\ provides a muber of available execution control implementations.
     For instance, the SISO standard Space Refernce Federation Object Model
@@ -307,8 +307,8 @@ related to them:
     This is a C++ class which extends the abstract \TrickHLA\ class,
     {\ttfamily ExecutionConfigurationBase}.
     This class is used to provide configuration data across a coordinated
-    federation execution.  An execution configuration class is usually paired
-    with an execution control class.  For instance, the
+    federation execution. An execution configuration class is usually paired
+    with an execution control class. For instance, the
     {\ttfamily SpaceFOM::ExecutionConfiguration} class is used with the
     {\ttfamily SpaceFOM::ExecutionControl} class.
   }
@@ -359,7 +359,7 @@ wire on each data cycle.
 \subsubsection{Lag Compensation}
 
 The underlying HLA time management mechanisms involve a protocol which involves 
-extrapolation of the system's state forward into the future.  
+extrapolation of the system's state forward into the future. 
 It is these forward predictions of the system state that are sent to remote federates.
 This mechanism is what permits the distributed federates to operate concurrently 
 but at the same time maintain a consistent notion of the current simulation time.

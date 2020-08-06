@@ -4,12 +4,12 @@
 @brief Provides methods called by the HLA RTI Ambassador.
 
 This class is essentially a polymorphic callback class provided to the
-RTI Ambassador.  It provides methods called by the RTI Ambassador for
+RTI Ambassador. It provides methods called by the RTI Ambassador for
 simulation object, interaction and time management.
 
 The methods in this class fill out the required virtual methods of the
 RTI1516_NAMESPACE::FederateAmbassador abstract class to enable the FedAmb class
-to be instantiated.  While this class is instantiable, for almost all practical
+to be instantiated. While this class is instantiable, for almost all practical
 applications, a simulation developer will want to overload the necessary
 attribute and interaction callback functions to make things work properly for
 their particular federation needs.
@@ -68,7 +68,7 @@ namespace TrickHLA
 {
 
 // Forward Declared Classes:  Since these classes are only used as references
-// through pointers, these classes are included as forward declarations.  This
+// through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
 class Federate;
 class Manager;
@@ -77,7 +77,7 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
-   // exists - at least yet).  This friend statement just tells Trick
+   // exists - at least yet). This friend statement just tells Trick
    // to go ahead and process the protected and private data as well
    // as the usual public data.
    friend class InputProcessor;
@@ -119,7 +119,7 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
    // *****************************************************************
    // The following methods fill out the required vitual methods of
    // the RTI1516_NAMESPACE::FederateAmbassador abstract class to enable the
-   // FedAmb class to be instantiated.  While this class is
+   // FedAmb class to be instantiated. While this class is
    // instantiable, for almost all practical applications, a
    // simulation developer will want to overload the necessary
    // attribute and interaction callback functions to make things
@@ -482,12 +482,12 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
       federation_restore_status_response_context_switch = false;
    }
 
-   /*! @brief Enable the option to rebuild the federate handle set after a federation restore.  */
+   /*! @brief Enable the option to rebuild the federate handle set after a federation restore. */
    void set_federation_restored_rebuild_federate_handle_set()
    {
       federation_restored_rebuild_federate_handle_set = true;
    }
-   /*! @brief Disable the option to rebuild the federate handle set after a federation restore.  */
+   /*! @brief Disable the option to rebuild the federate handle set after a federation restore. */
    void reset_federation_restored_rebuild_federate_handle_set()
    {
       federation_restored_rebuild_federate_handle_set = false;

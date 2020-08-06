@@ -59,7 +59,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 // NOTE: This forward declaration of TrickHLA::Interaction and TrickHLA::Object
-// are here to go with the #ifdef SWIG include.  Normally, it would go with the
+// are here to go with the #ifdef SWIG include. Normally, it would go with the
 // other forward declarations below.
 class Federate;
 class Interaction;
@@ -71,7 +71,7 @@ namespace TrickHLA
 {
 
 // Forward Declared Classes:  Since these classes are only used as references
-// through pointers, these classes are included as forward declarations.  This
+// through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
 class InteractionItem;
 class ExecutionConfigurationBase;
@@ -93,7 +93,7 @@ class Manager
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
-   // exists - at least yet).  This friend statement just tells Trick
+   // exists - at least yet). This friend statement just tells Trick
    // to go ahead and process the protected and private data as well
    // as the usual public data.
    friend class InputProcessor;
@@ -218,7 +218,7 @@ class Manager
    void object_instance_name_reservation_failed( std::wstring const &obj_instance_name );
 
    /*! @brief Add a TrickHLA::Object to the manager object map.
-    *  @param object TrickHLA::Object to add to the manager object map.  */
+    *  @param object TrickHLA::Object to add to the manager object map. */
    void add_object_to_map( Object *object );
 
    /*! @brief Get the pointer to the associated TrickHLA::Federate instance.
@@ -462,9 +462,9 @@ class Manager
    Federate *federate; ///< @trick_units{--} Associated TrickHLA Federate.
 
    ExecutionControlBase *execution_control; /**< @trick_units{--}
-      Execution control object.  This has to point to an allocated execution
+      Execution control object. This has to point to an allocated execution
       control class that inherits from the ExecutionControlBase interface
-      class.  For instance SRFOM::ExecutionControl. */
+      class. For instance SRFOM::ExecutionControl. */
 
    //
    // Private member functions.

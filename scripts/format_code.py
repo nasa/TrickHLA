@@ -98,7 +98,7 @@ def main() :
       TrickHLAMessage.failure( 'The \'file\' and \'clean\' options are incompatible!' )
       
    # If 'in_place' specified as a command line option, make sure that the
-   # user really wants to do that.  It WILL change code in place.
+   # user really wants to do that. It WILL change code in place.
    if args.in_place and not args.test:
       TrickHLAMessage.warning( 'Formatting TrickHLA source code in place!' )
       check_in_place = raw_input( 'Are you sure you want to do this? [y]: ' )
@@ -127,7 +127,7 @@ def main() :
                TrickHLAMessage.status( 'Formatting directory: ' + src_path )
          dir_list = os.listdir( '.' )
          for dir_entry in dir_list :
-            # Only interested in directories.  There really should not be any files.
+            # Only interested in directories. There really should not be any files.
             if os.path.isfile( dir_entry ) : continue
             # Either clean up or format the model directory.
             if args.clean :
@@ -214,7 +214,7 @@ def find_clang_format( llvm_bin, verbose = True ):
                bin_path = os.path.join( bin_path, 'bin' )
                command_path = os.path.join( bin_path, 'clang-format' )
 
-   # We're finished hunting.  Now let's check for the format command.
+   # We're finished hunting. Now let's check for the format command.
    if command_path == None :
       TrickHLAMessage.failure( 'Could not find the clang-format command!' )
    else:
@@ -231,7 +231,7 @@ def find_clang_format( llvm_bin, verbose = True ):
 
 ## Function to link the .clang-format file.
 #
-# This check if the .clang-format file exists.  If not, it links to the
+# This check if the .clang-format file exists. If not, it links to the
 # base .clang-format file in the TrickHLA scripts directory.
 #
 # @param thla_scripts  The path to the TrickHLA scripts directory.
@@ -264,10 +264,10 @@ def link_clang_format( thla_scripts, test_only = False, verbose = True ):
 
 ## Function to format a specific source file.
 #
-# This routine will format a specified source file if it exists.  The
+# This routine will format a specified source file if it exists. The
 # routine saves the current working directory and then moves to the
-# directory in which the file exists.  If not, the routine returns with an
-# error condition.  If the file exists, this routine runs the clang-format
+# directory in which the file exists. If not, the routine returns with an
+# error condition. If the file exists, this routine runs the clang-format
 # command on the specified file.
 #
 # @return error             The error status for the directory formatting.
@@ -379,9 +379,9 @@ def format_file(
 ## Function to format all the identifiable source files in a directory.
 #
 # This routine will format all the identifiable source files in a given
-# directory.  The routine saves the current working directory and then
-# moves to the specified directory if it exists.  If not, the routine
-# returns with an error condition.  If the directory exists, this routine
+# directory. The routine saves the current working directory and then
+# moves to the specified directory if it exists. If not, the routine
+# returns with an error condition. If the directory exists, this routine
 # runs the clang-format command on all identifiable source files in the
 # directory.
 #
@@ -495,9 +495,9 @@ def format_directory(
 ## Function to cleans up all the formatting artifacts in a directory.
 #
 # This routine will clean up all the identifiable formatting artifacts in
-# a given directory.  The routine saves the current working directory and
-# then moves to the specified directory if it exists.  If not, the routine
-# returns with an error condition.  If the directory exists, this routine
+# a given directory. The routine saves the current working directory and
+# then moves to the specified directory if it exists. If not, the routine
+# returns with an error condition. If the directory exists, this routine
 # removes the formatted directory.
 #
 # @param  dir_path     The path to the directory to clean up.

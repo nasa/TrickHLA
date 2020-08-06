@@ -63,7 +63,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
-   // exists - at least yet).  This friend statement just tells Trick
+   // exists - at least yet). This friend statement just tells Trick
    // to go ahead and process the protected and private data as well
    // as the usual public data.
    friend class InputProcessor;
@@ -79,7 +79,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
       Is true when this federate is the "root reference frame publisher"
       federate for the Multiphase initialization process. (default: false) */
 
-   // The SpaceFOM uses a reference frame tree.  This is the root frame.
+   // The SpaceFOM uses a reference frame tree. This is the root frame.
    RefFrameBase *root_ref_frame; /**< @trick_units{--} Reference to the
                                        root reference frame object instance. */
 

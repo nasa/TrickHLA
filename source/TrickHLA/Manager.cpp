@@ -787,8 +787,8 @@ void Manager::object_instance_name_reservation_failed(
 {
 
    // Different ExecutionControl mechanisms will handle object instance name
-   // failure differently.  So, check with the ExecutionControl to perform
-   // any specialized failure handling.  If the method returns 'true' then
+   // failure differently. So, check with the ExecutionControl to perform
+   // any specialized failure handling. If the method returns 'true' then
    // it's not a fatal error; otherwise, continue with error handling and
    // exit.
    if ( this->execution_control->object_instance_name_reservation_failed( obj_instance_name ) ) {
@@ -829,7 +829,7 @@ which keeps the instance attribute's object from becoming a Federation orphan. *
    }
 
    // Bad things have happened if the name reservation failed since it should
-   // be unique to our object, so quit the simulation.  However, since we are
+   // be unique to our object, so quit the simulation. However, since we are
    // running in a child thread created by the RTI, we need to tell the Trick
    // Executive to exit the simulation.
    exec_set_exec_command( ExitCmd );
@@ -2352,7 +2352,7 @@ Object *Manager::get_trickhla_object(
    }
 
    // Check for a match with the ExecutionConfiguration object associated with
-   // ExecutionControl.  Returns NULL if match not found.
+   // ExecutionControl. Returns NULL if match not found.
    return ( this->execution_control->get_trickhla_object( obj_instance_name ) );
 }
 
@@ -2457,7 +2457,7 @@ Object *Manager::get_unregistered_object(
    }
 
    // Check for a match with the ExecutionConfiguration object associated with
-   // ExecutionControl.  Returns NULL if match not found.
+   // ExecutionControl. Returns NULL if match not found.
    return ( this->execution_control->get_unregistered_object( theObjectClass, theObjectInstanceName ) );
 }
 
@@ -2481,7 +2481,7 @@ Object *Manager::get_unregistered_remote_object(
    }
 
    // Check for a match with the ExecutionConfiguration object associated with
-   // ExecutionControl.  Returns NULL if match not found.
+   // ExecutionControl. Returns NULL if match not found.
    return ( this->execution_control->get_unregistered_remote_object( theObjectClass ) );
 }
 

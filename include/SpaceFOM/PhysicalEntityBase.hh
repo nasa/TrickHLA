@@ -4,7 +4,7 @@
 @brief Definition of the TrickHLA SpaceFOM physical entity type.
 
 This is the base implementation for the Space Reference FOM (SpaceFOM) interface
-to the Reference Frame object.  This needs to be available to the SpaceFOM
+to the Reference Frame object. This needs to be available to the SpaceFOM
 initialization process for the root reference frame discovery step in the
 initialization process.
 
@@ -63,7 +63,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
-   // exist - at least yet).  This friend statement just tells Trick
+   // exist - at least yet). This friend statement just tells Trick
    // to go ahead and process the protected and private data as well
    // as the usual public data.
    friend class InputProcessor;

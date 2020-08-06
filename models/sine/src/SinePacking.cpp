@@ -104,7 +104,7 @@ void SinePacking::initialize(
  * @details From the TrickHLA::Packing class. We override this function so
  * that we can initialize references to the TrickHLA::Attribute's that are
  * used in the unpack function to handle attribute ownership and different
- * attribute data rates.  Use the initialize callback function as a way to
+ * attribute data rates. Use the initialize callback function as a way to
  * setup TrickHLA-Attribute references which are used to determine ownership
  * or if data for an attribute was received.
  *

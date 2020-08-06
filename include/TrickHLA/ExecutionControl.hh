@@ -53,7 +53,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
-   // exists - at least yet).  This friend statement just tells Trick
+   // exists - at least yet). This friend statement just tells Trick
    // to go ahead and process the protected and private data as well
    // as the usual public data.
    friend class InputProcessor;
@@ -128,7 +128,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual void unsubscribe();
    /*! @brief Test to see if ExecutionControl needs to wait on initialization data.
     *  @details Most ExecutionControl approaches require that we wait for the
-    *  required initialization data.  Currently, only the 'Simple' scheme does not.
+    *  required initialization data. Currently, only the 'Simple' scheme does not.
     *  @return True if ExecutionControl needs to wait on the initialization data. */
    bool wait_on_init_data()
    {

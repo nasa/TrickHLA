@@ -9,7 +9,7 @@ with the problem.
 - The time scale for this timeline is always Terrestrial Time (TT) which
 complies with the Space Reference FOM standard.
 - Note that the epoch value for this CTE timeline represents the epoch or
-starting point of the CTE timeline.  This will correspond to the starting
+starting point of the CTE timeline. This will correspond to the starting
 time in the TT time standard represented in Truncated Julian Date format
 (TJD) expressed in seconds.
 
@@ -60,7 +60,7 @@ class ScenarioTimeline : public Timeline
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
-   // exists - at least yet).  This friend statement just tells Trick
+   // exists - at least yet). This friend statement just tells Trick
    // to go ahead and process the protected and private data as well
    // as the usual public data.
    friend class InputProcessor;
@@ -150,8 +150,8 @@ class ScenarioTimeline : public Timeline
    SimTimeline &sim_timeline; ///< @trick_io{**} Reference to simulation timeline.
 
    double sim_offset; /*!< @trick_units{s} The offset of the simulation timeline
-                           from the scenario timeline epoch.  For early joiners,
-                           this number will usually be 0.0.  However, for
+                           from the scenario timeline epoch. For early joiners,
+                           this number will usually be 0.0. However, for
                            late joiners, this will provide the starting
                            offset of the simulation with respect to the
                            original start of the federation execution. */

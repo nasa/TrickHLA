@@ -51,7 +51,7 @@ class FreezeInteractionHandler : public TrickHLA::InteractionHandler
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
-   // exists - at least yet).  This friend statement just tells Trick
+   // exists - at least yet). This friend statement just tells Trick
    // to go ahead and process the protected and private data as well
    // as the usual public data.
    friend class InputProcessor;
@@ -78,7 +78,7 @@ class FreezeInteractionHandler : public TrickHLA::InteractionHandler
     *  @param theUserSuppliedTag User tag. */
    void receive_interaction( RTI1516_USERDATA const &theUserSuppliedTag );
 
-   // FIXME: This is not a good thing to do.  Why have the data private?
+   // FIXME: This is not a good thing to do. Why have the data private?
    /*! @brief Get the address of the interaction time.
     *  @return Pointer to the interaction time. */
    double *get_address_of_interaction_time()

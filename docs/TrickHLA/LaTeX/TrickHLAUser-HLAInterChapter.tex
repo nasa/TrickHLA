@@ -44,7 +44,7 @@ to receivers where it is delivered in time stamp order.
 The timetag argument must be a simulation timetag plus some lookahead
 interval.
 These send methods are sufficient unto themselves and do not need to
-be overridden in a subclass.  Indeed they are not virtual methods.
+be overridden in a subclass. Indeed they are not virtual methods.
 
 The receive method is virtual.
 The \TrickHLA\ infrastructure will automatically invoke a subclass's
@@ -118,7 +118,7 @@ output function, {\tt send\_hs()} to indicate that an interaction arrived;
 by the time the receive method is invoked,
 the data from the incoming interaction have already been stored in the
 Trick variable that is associated with the interaction in the input
-file.  (See below.)
+file. (See below.)
 So there is nothing much to do in the implementation of the receive method.
 
 \begin{lstlisting}[caption={{\tt simplesine\_InteractionHandler} methods},label={list:simplesine-interaction-handler-methods}]
@@ -148,9 +148,9 @@ simplesine_InteractionHandler::~simplesine_InteractionHandler() // RETURN: -- No
 
 
 /* ----------------------------------------------------------------------------
-PURPOSE: (Send this handler's HLA interaction.  A pointer to the interaction
+PURPOSE: (Send this handler's HLA interaction. A pointer to the interaction
   is stored in this class -- defined in the protected <interaction> field
-  in the parent class.  The TrickHLA infrastructure takes care of setting
+  in the parent class. The TrickHLA infrastructure takes care of setting
   that pointer when it sees interactions declared in the Trick input file.)
 ------------------------------------------------------------------------------*/
 void simplesine_InteractionHandler::send_sine_interaction( // RETURN: -- None.
@@ -269,7 +269,7 @@ This simulation is based on the plain subscriber simulation,
 Instead, it just waits for an interaction to arrive.
 The \TrickHLA\ infrastructure automatically handles incoming interactions
 and assigns the associated parameter values to Trick variables
-as specified in the input file.  (See next section.)
+as specified in the input file. (See next section.)
 There are no explicit jobs to schedule in the \sdefine file,
 and there are no jobs to {\tt CALL} from the input file, either.
 

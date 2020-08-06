@@ -51,13 +51,13 @@ namespace TrickHLA
 {
 
 // Forward Declared Classes:  Since these classes are only used as references
-// through pointers, these classes are included as forward declarations.  This
+// through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
 class Object;
 class Attribute;
 class OwnershipItem;
 
-// FIXME: We need to rename this.  Unfortunately, AttributeMap is already
+// FIXME: We need to rename this. Unfortunately, AttributeMap is already
 // being used by Attribute.hh.
 
 typedef std::map< std::string, Attribute * > THLAAttributeMap; // ** Map of TrickHLA-Attributes.
@@ -69,7 +69,7 @@ class OwnershipHandler
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
-   // exists - at least yet).  This friend statement just tells Trick
+   // exists - at least yet). This friend statement just tells Trick
    // to go ahead and process the protected and private data as well
    // as the usual public data.
    friend class InputProcessor;
