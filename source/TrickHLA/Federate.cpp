@@ -3845,11 +3845,11 @@ void Federate::setup_time_management()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::setup_time_management():%d time_management:%s time_constrained:%s time_regulating:%s %c",
+      send_hs( stdout, "Federate::setup_time_management():%d time_management:%s time_regulating:%s time_constrained:%s %c",
                __LINE__,
                ( time_management ? "Yes" : "No" ),
-               ( time_constrained ? "Yes" : "No" ),
-               ( time_regulating ? "Yes" : "No" ), THLA_NEWLINE );
+               ( time_regulating ? "Yes" : "No" ),
+               ( time_constrained ? "Yes" : "No" ), THLA_NEWLINE );
    }
 
    // Determine if HLA time management is enabled.

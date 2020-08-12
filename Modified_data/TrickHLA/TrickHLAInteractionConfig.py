@@ -41,6 +41,11 @@ class TrickHLAInteractionConfig( object ):
       # Allocate and empty parameters list.
       self.parameters = []
 
+      # Set the Trick HLA object reference here so that the set() function calls
+      # will work as expected. Normally, this is postponed until initialization.
+      if thla_manager_interaction != None :
+         self.hla_manager_interaction = thla_manager_interaction
+
       # Set the interaction FOM name if specified.
       if thla_FOM_name != None :
          self.set_FOM_name( thla_FOM_name )
@@ -52,11 +57,6 @@ class TrickHLAInteractionConfig( object ):
       # Set interaction handler if specified and not None.
       if thla_handler_instance != None :
          self.set_handler_instance( thla_handler_instance )
-
-      # Set the Trick HLA object reference here.
-      # Normally, this is postponed until initialization.
-      if thla_manager_interaction != None :
-         self.hla_manager_interaction = thla_manager_interaction
 
       # Still need to set the object attributes but this is left to the
       # specific implementation classes.

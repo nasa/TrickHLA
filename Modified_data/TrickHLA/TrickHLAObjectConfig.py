@@ -18,31 +18,38 @@ import trick
 class TrickHLAObjectConfig( object ):
 
    # Ties to TrickHLA from simulation.
-   hla_create             = False
-   hla_instance_name      = None
-   hla_FOM_name           = None
-   hla_lag_comp_instance  = None
-   hla_ownership_instance = None
-   hla_packing_instance   = None
-   hla_manager_object     = None
+   hla_create               = False
+   hla_instance_name        = None
+   hla_FOM_name             = None
+   hla_lag_comp_instance    = None
+   hla_ownership_instance   = None
+   hla_packing_instance     = None
+   hla_manager_object       = None
+   hla_blocking_cyclic_read = False
 
    # List of TrickHLA object attributes.
    attributes = None
 
    def __init__( self,
-                 thla_create             = False,
-                 thla_instance_name      = None,
-                 thla_FOM_name           = None,
-                 thla_lag_comp_instance  = None,
-                 thla_ownership_instance = None,
-                 thla_packing_instance   = None,
-                 thla_manager_object     = None ):
+                 thla_create               = False,
+                 thla_instance_name        = None,
+                 thla_FOM_name             = None,
+                 thla_lag_comp_instance    = None,
+                 thla_ownership_instance   = None,
+                 thla_packing_instance     = None,
+                 thla_manager_object       = None,
+                 thla_blocking_cyclic_read = False ):
 
       # Allocate and empty attribute list.
       self.attributes = []
 
+      # Set the Trick HLA object reference here so the set() function calls will
+      # work as expected. Normally this is postponed until initialization.
+      if thla_manager_object != None :
+         self.hla_manager_object = thla_manager_object
+
       # Specify if this object instance created locally.
-      self.hla_create = thla_create
+      self.set_create( thla_create )
 
       # Set lag compensation if specified and not None.
       if thla_lag_comp_instance != None :
@@ -64,10 +71,8 @@ class TrickHLAObjectConfig( object ):
       if thla_FOM_name != None :
          self.set_FOM_name( thla_FOM_name )
 
-      # Set the Trick HLA object reference here.
-      # Normally, this is postponed until initialization.
-      if thla_manager_object != None :
-         self.hla_manager_object = thla_manager_object
+      # Specify if this object will block on cyclic reads.
+      self.set_blocking_cyclic_read( thla_blocking_cyclic_read )
 
       # Still need to set the object attributes but this is left to the
       # specific implementation classes.
@@ -91,6 +96,7 @@ class TrickHLAObjectConfig( object ):
       self.set_FOM_name( self.hla_FOM_name )
       self.set_packing_instance( self.hla_packing_instance )
       self.set_create( self.hla_create )
+      self.set_blocking_cyclic_read( self.hla_blocking_cyclic_read )
 
       if self.hla_lag_comp_instance != None :
          self.set_lag_comp_instance( self.hla_lag_comp_instance )
@@ -100,8 +106,8 @@ class TrickHLAObjectConfig( object ):
 
       # Allocate the federate object's attribute list.
       self.hla_manager_object.attr_count = len(self.attributes)
-      #self.hla_manager_object.attributes = trick.alloc_type( self.hla_manager_object.attr_count, 'TrickHLA::Attribute' )
-      self.hla_manager_object.attributes = trick.TMM_declare_var_1d( 'TrickHLA::Attribute', self.hla_manager_object.attr_count )
+      self.hla_manager_object.attributes = trick.TMM_declare_var_1d( 'TrickHLA::Attribute', 
+                                                                     self.hla_manager_object.attr_count )
 
       # Loop through the federation object attributes and initialize them.
       for indx in range( 0, self.hla_manager_object.attr_count ):
@@ -121,7 +127,7 @@ class TrickHLAObjectConfig( object ):
 
    def get_create( self ):
 
-      return hla_create
+      return self.hla_create
 
 
    def set_instance_name( self, name ):
@@ -157,7 +163,6 @@ class TrickHLAObjectConfig( object ):
       self.hla_lag_comp_instance = obj_lag_comp
       if self.hla_manager_object != None :
          self.hla_manager_object.lag_comp = obj_lag_comp
-         #self.hla_manager_object.lag_comp_type = 2
          self.hla_manager_object.lag_comp_type = trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE 
 
       return
@@ -190,4 +195,14 @@ class TrickHLAObjectConfig( object ):
 
       return
 
+   def set_blocking_cyclic_read( self, blocking_cyclic_read ):
 
+      self.hla_blocking_cyclic_read = blocking_cyclic_read
+      if self.hla_manager_object != None :
+         self.hla_manager_object.blocking_cyclic_read = self.hla_blocking_cyclic_read
+
+      return
+
+   def get_blocking_cyclic_read( self ):
+
+      return self.hla_blocking_cyclic_read
