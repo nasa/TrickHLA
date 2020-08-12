@@ -222,7 +222,6 @@ class TrickHLAFederateConfig( object ):
       
       # Set the new time padding value.
       self.time_padding = float(new_padding)
-      #self.control.time_padding = self.time_padding
       self.control.set_time_padding( self.time_padding )
 
       return

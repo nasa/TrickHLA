@@ -2177,20 +2177,18 @@ void Manager::receive_cyclic_data()
 
    double current_sim_time = exec_get_sim_time();
 
-   // Receive and process and updates for ExecutionControl.
-   this->execution_control->receive_cyclic_data( current_sim_time );
-
    // Determine the cycle time for this job if it is not yet known.
    if ( this->job_cycle_time <= 0.0 ) {
       determine_job_cycle_time();
    }
 
+   // Receive and process and updates for ExecutionControl.
+   this->execution_control->receive_cyclic_data( current_sim_time );
+
    // Receive data from remote RTI federates for each of the objects.
    for ( int n = 0; n < obj_count; n++ ) {
       objects[n].receive_cyclic_data( current_sim_time, this->job_cycle_time );
    }
-
-   return;
 }
 
 /*!

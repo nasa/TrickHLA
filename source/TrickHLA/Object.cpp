@@ -2195,6 +2195,7 @@ void Object::receive_cyclic_data(
 
    // Block waiting for received data if the user has specified we must do so.
    if ( blocking_cyclic_read && !is_changed() ) {
+
       // NOTE: usleep() is causing a 1 millisecond saw-tooth pattern in the
       // latency between when we received the data in the FedAmb callback and
       // when we process that data here. Dan Dexter 2/13/2008
