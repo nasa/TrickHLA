@@ -10,7 +10,8 @@
 #    ((Relies on the simulation level trick module.))
 #
 # PROGRAMMERS:
-#    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.)))
+#    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.))
+#     ((Dan Dexter) (NASA/ER6) (Aug 2020) (--) (Added blocking_cyclic_read support.)))
 ##############################################################################
 import sys
 import trick
