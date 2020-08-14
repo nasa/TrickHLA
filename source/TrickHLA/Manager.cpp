@@ -463,7 +463,7 @@ federate so this call will be ignored.%c",
                         ( objects[i].is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
             }
 
-            SleepTimeout sleep_timer( 10.0, 1000 );
+            SleepTimeout sleep_timer;
 
             // Wait for the data to arrive.
             while ( !objects[i].is_changed() ) {
@@ -571,7 +571,7 @@ void Manager::receive_init_data(
                         ( obj->is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
             }
 
-            SleepTimeout sleep_timer( 10.0, 1000 );
+            SleepTimeout sleep_timer;
 
             // Wait for the data to arrive.
             while ( !obj->is_changed() ) {
@@ -1760,7 +1760,7 @@ void Manager::wait_on_registration_of_required_objects()
       }
    }
 
-   SleepTimeout sleep_timer( 10.0, 1000 );
+   SleepTimeout sleep_timer;
 
    do {
 
@@ -2924,7 +2924,7 @@ void Manager::wait_on_discovery_of_objects()
                      __LINE__, THLA_NEWLINE );
          }
 
-         SleepTimeout sleep_timer( 10.0, 1000 );
+         SleepTimeout sleep_timer;
 
          // block until some / all arrive.
          do {

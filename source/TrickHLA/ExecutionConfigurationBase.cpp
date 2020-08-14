@@ -241,7 +241,7 @@ void ExecutionConfigurationBase::wait_on_registration()
    bool any_unregistered_obj;
    int  total_obj_cnt = 1;
 
-   SleepTimeout sleep_timer( 10.0, 1000 );
+   SleepTimeout sleep_timer;
 
    do {
 
@@ -337,7 +337,7 @@ bool ExecutionConfigurationBase::wait_on_update() // RETURN: -- None.
    // Make sure we have at least one piece of Execution Configuration data we can receive.
    if ( this->any_remotely_owned_subscribed_init_attribute() ) {
 
-      SleepTimeout sleep_timer( 10.0, 1000 );
+      SleepTimeout sleep_timer;
 
       // Wait for the data to arrive.
       while ( !this->is_changed() ) {

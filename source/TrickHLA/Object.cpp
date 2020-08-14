@@ -1080,7 +1080,7 @@ Waiting on reservation of Object Instance Name '%s'.%c",
 
    Federate *trick_fed = get_federate();
 
-   SleepTimeout sleep_timer( 10.0, 1000 );
+   SleepTimeout sleep_timer;
 
    while ( !name_registered ) {
       (void)sleep_timer.sleep();
@@ -1270,7 +1270,7 @@ void Object::wait_on_object_registration()
 
    Federate *trick_fed = get_federate();
 
-   SleepTimeout sleep_timer( 10.0, 1000 );
+   SleepTimeout sleep_timer;
 
    while ( !is_instance_handle_valid() ) {
       (void)sleep_timer.sleep();
@@ -2357,16 +2357,13 @@ waiting for data at time %f seconds with timeout time %f and simulation time %f.
       // up the CPU allowing the HLA callback thread a better chance to run.
       //
       // Wait for the data to change by using a spin lock that can timeout.
-      SleepTimeout sleep_timer( 10.0, 1 );
       while ( !is_changed()
               && ( time < timeout )
               && blocking_cyclic_read
               && any_remotely_owned_subscribed_cyclic_attribute() ) {
-         (void)sleep_timer.sleep();
-         if ( !is_changed() ) {
-            time = clock.get_time();
-         }
+         time = clock.get_time();
       }
+
 #      else  //!THLA_USLEEP_DELAY_FOR_SPIN_LOCK
 
       // Wait for the data to change by using a spin lock that can timeout.
@@ -4249,7 +4246,7 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
 
       Federate *trick_fed = get_federate();
 
-      SleepTimeout sleep_timer( 10.0, 1000 );
+      SleepTimeout sleep_timer;
 
       // Perform a blocking loop until ownership of all locally owned published
       // attributes is restored...

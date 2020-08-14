@@ -1425,7 +1425,7 @@ string Federate::wait_for_required_federates_to_join()
    bool          found_an_unrequired_federate = false;
    set< string > unrequired_federates_list; // list of unique unrequired federate names
 
-   SleepTimeout sleep_timer( 10.0, 1000 );
+   SleepTimeout sleep_timer;
 
    while ( !all_federates_joined ) {
 
@@ -2747,7 +2747,7 @@ void Federate::setup_checkpoint()
 
          request_federation_save();
 
-         SleepTimeout sleep_timer( 10.0, 1000 );
+         SleepTimeout sleep_timer;
 
          // need to wait for federation to initiate save
          while ( !start_to_save ) {
@@ -2985,7 +2985,7 @@ void Federate::setup_restore()
       // set the federate restore_name to filename (without the federation name)- this gets announced to other feds
       initiate_restore_announce( restore_name_str );
 
-      SleepTimeout sleep_timer( 10.0, 1000 );
+      SleepTimeout sleep_timer;
 
       // need to wait for federation to initiate restore
       while ( !this->start_to_restore ) {
@@ -3923,7 +3923,7 @@ void Federate::setup_time_constrained()
       // simulation fed file we will receive TimeStamp Ordered messages.
       RTI_ambassador->enableTimeConstrained();
 
-      SleepTimeout sleep_timer( 10.0, 1000 );
+      SleepTimeout sleep_timer;
 
       // This spin lock waits for the time constrained flag to be set from the RTI.
       while ( !this->time_constrained_state ) {
@@ -4080,7 +4080,7 @@ void Federate::setup_time_regulation()
       // TimeStamp Ordered messages.
       RTI_ambassador->enableTimeRegulation( lookahead.get() );
 
-      SleepTimeout sleep_timer( 10.0, 1000 );
+      SleepTimeout sleep_timer;
 
       // This spin lock waits for the time regulation flag to be set from the RTI.
       while ( !time_regulating_state ) {
@@ -4386,7 +4386,7 @@ void Federate::wait_for_time_advance_grant()
 
    if ( !this->time_adv_grant ) {
 
-      SleepTimeout sleep_timer( 10.0, 1000 );
+      SleepTimeout sleep_timer;
 
       // This spin lock waits for the time advance grant from the RTI.
       while ( !this->time_adv_grant ) {
@@ -5273,7 +5273,7 @@ void Federate::ask_MOM_for_auto_provide_setting()
    requestedAttributes.insert( MOM_HLAautoProvide_handle );
    request_attribute_update( MOM_HLAfederation_class_handle, requestedAttributes );
 
-   SleepTimeout sleep_timer( 10.0, 1000 );
+   SleepTimeout sleep_timer;
 
    while ( this->auto_provide_setting < 0 ) {
 
@@ -5399,7 +5399,7 @@ void Federate::load_and_print_running_federate_names()
    requestedAttributes.insert( MOM_HLAfederatesInFederation_handle );
    request_attribute_update( MOM_HLAfederation_class_handle, requestedAttributes );
 
-   SleepTimeout sleep_timer( 10.0, 1000 );
+   SleepTimeout sleep_timer;
 
    while ( this->running_feds_count <= 0 ) {
 
@@ -6197,7 +6197,7 @@ void Federate::wait_for_federation_restore_begun()
       send_hs( stdout, "Federate::wait_for_federation_restore_begun():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
-   SleepTimeout sleep_timer( 10.0, 1000 );
+   SleepTimeout sleep_timer;
 
    while ( !this->restore_begun ) {
 
@@ -6234,7 +6234,7 @@ void Federate::wait_until_federation_is_ready_to_restore()
       send_hs( stdout, "Federate::wait_until_federation_is_ready_to_restore():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
-   SleepTimeout sleep_timer( 10.0, 1000 );
+   SleepTimeout sleep_timer;
 
    while ( !this->start_to_restore ) {
 
@@ -6297,7 +6297,7 @@ string Federate::wait_for_federation_restore_to_complete()
       return tRetString;
    }
 
-   SleepTimeout sleep_timer( 10.0, 1000 );
+   SleepTimeout sleep_timer;
 
    // nobody reported any problems, wait until the restore is completed.
    while ( !this->restore_completed ) {
@@ -6358,7 +6358,7 @@ void Federate::wait_for_restore_request_callback()
       send_hs( stdout, "Federate::wait_for_restore_request_callback():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
-   SleepTimeout sleep_timer( 10.0, 1000 );
+   SleepTimeout sleep_timer;
 
    while ( !has_restore_process_restore_request_failed() && !has_restore_process_restore_request_succeeded() ) {
 
@@ -6397,7 +6397,7 @@ void Federate::wait_for_restore_status_to_complete()
       send_hs( stdout, "Federate::wait_for_restore_status_to_complete():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
-   SleepTimeout sleep_timer( 10.0, 1000 );
+   SleepTimeout sleep_timer;
 
    while ( !this->restore_request_complete ) {
 
@@ -6434,7 +6434,7 @@ void Federate::wait_for_save_status_to_complete()
       send_hs( stdout, "Federate::wait_for_save_status_to_complete():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
-   SleepTimeout sleep_timer( 10.0, 1000 );
+   SleepTimeout sleep_timer;
 
    while ( !this->save_request_complete ) {
 
@@ -6471,7 +6471,7 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
       send_hs( stdout, "Federate::wait_for_federation_restore_failed_callback_to_complete():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
-   SleepTimeout sleep_timer( 10.0, 1000 );
+   SleepTimeout sleep_timer;
 
    while ( !this->federation_restore_failed_callback_complete ) {
 
@@ -7043,7 +7043,7 @@ void Federate::restore_federate_handles_from_MOM()
    requestedAttributes.insert( MOM_HLAfederate_handle );
    request_attribute_update( MOM_HLAfederate_class_handle, requestedAttributes );
 
-   SleepTimeout sleep_timer( 10.0, 1000 );
+   SleepTimeout sleep_timer;
 
    // Wait until all of the federate handles have been retrieved.
    while ( this->joined_federate_handles.size() < (unsigned int)running_feds_count ) {

@@ -161,7 +161,7 @@ bool SyncPnt::wait_for_announce(
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    }
 
-   SleepTimeout sleep_timer( 10.0, 1000 );
+   SleepTimeout sleep_timer;
 
    // Wait for the federation to synchronize on the sync-point.
    while ( !this->is_announced() ) {
@@ -238,7 +238,7 @@ void SyncPnt::achieve_sync_point(
 bool SyncPnt::wait_for_synchronization(
    Federate *federate )
 {
-   SleepTimeout sleep_timer( 10.0, 1000 );
+   SleepTimeout sleep_timer;
 
    // Wait for the federation to synchronize on the sync-point.
    while ( !this->is_synchronized() ) {

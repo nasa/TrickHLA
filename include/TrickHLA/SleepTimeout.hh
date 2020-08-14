@@ -34,6 +34,9 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <time.h>
 
+#define DEFAULT_SLEEP_TIMEOUT_IN_SECS 10.0
+#define DEFAULT_SLEEP_WAIT_IN_NANOSEC 25
+
 namespace TrickHLA
 {
 

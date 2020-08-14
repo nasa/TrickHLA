@@ -405,7 +405,7 @@ void SyncPntListBase::wait_for_list_synchronization(
       // Wait for a synchronization point if it is not already achieved.
       if ( ( sp != NULL ) && sp->is_valid() && !sp->is_achieved() ) {
 
-         SleepTimeout sleep_timer( 10.0, 1000 );
+         SleepTimeout sleep_timer;
 
          // Wait for the federation to synchronized on the sync-point.
          while ( !sp->is_achieved() ) {
