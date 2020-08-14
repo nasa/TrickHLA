@@ -155,12 +155,10 @@ void ExecutionControl::initialize()
       this->federate->time_management  = true;
       this->federate->time_regulating  = true;
       this->federate->time_constrained = true;
-   }
 
-   // The software frame is set from the ExCO Least Common Time Step.
-   // For the Master federate the Trick simulation software frame must
-   // match the Least Common Time Step (LCTS).
-   if ( this->is_master() ) {
+      // The software frame is set from the ExCO Least Common Time Step.
+      // For the Master federate the Trick simulation software frame must
+      // match the Least Common Time Step (LCTS).
       double software_frame_time = Int64Interval::to_seconds( this->least_common_time_step );
       exec_set_software_frame( software_frame_time );
    }
@@ -748,7 +746,7 @@ Simulation has started and is now running...%c",
  */
 FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federate()
 {
-   SleepTimeout sleep_timer( 10.0, 1000 );
+   SleepTimeout sleep_timer;
 
    // Block until we have determined if we are a late joining federate.
    while ( !late_joiner_determined && !get_manager()->restore_determined ) {
@@ -1186,7 +1184,7 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_pnts()
            && ( sp->label.compare( IMSim::INITIALIZE_SYNC_POINT ) != 0 )
            && ( sp->label.compare( IMSim::SIM_CONFIG_SYNC_POINT ) != 0 ) ) {
 
-         SleepTimeout sleep_timer( 10.0, 1000 );
+         SleepTimeout sleep_timer;
 
          // Wait for the federation to synchronized on the sync-point.
          while ( !sp->is_achieved() ) {
@@ -2311,7 +2309,7 @@ void ExecutionControl::exit_freeze()
       if ( federate->freeze_the_federation && ( this->get_sim_time() > 0.0 ) ) { // coming out of freeze due to freeze interaction
          federate->register_generic_sync_point( IMSim::FEDRUN_SYNC_POINT );      // this tells federates to go to run
 
-         SleepTimeout sleep_timer( 10.0, 1000 );
+         SleepTimeout sleep_timer;
 
          while ( !this->pause_sync_pts.check_sync_pnts( this->checktime ) ) {
             // wait for it to be announced
@@ -2607,7 +2605,7 @@ bool ExecutionControl::is_save_initiated()
    if ( federate->announce_save && !federate->initiate_save_flag && !federate->save_completed ) {
       federate->register_generic_sync_point( IMSim::FEDSAVE_SYNC_POINT );
 
-      SleepTimeout sleep_timer( 10.0, 1000 );
+      SleepTimeout sleep_timer;
 
       while ( !federate->initiate_save_flag ) { // wait for federation to be synced
          this->pause_sync_pts.achieve_all_sync_pnts( *federate->get_RTI_ambassador(), this->checktime );

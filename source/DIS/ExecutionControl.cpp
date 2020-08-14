@@ -145,12 +145,10 @@ void ExecutionControl::initialize()
       federate->time_management  = true;
       federate->time_regulating  = true;
       federate->time_constrained = true;
-   }
 
-   // The software frame is set from the ExCO Least Common Time Step.
-   // For the Master federate the Trick simulation software frame must
-   // match the Least Common Time Step (LCTS).
-   if ( this->is_master() ) {
+      // The software frame is set from the ExCO Least Common Time Step.
+      // For the Master federate the Trick simulation software frame must
+      // match the Least Common Time Step (LCTS).
       double software_frame_time = Int64Interval::to_seconds( least_common_time_step );
       exec_set_software_frame( software_frame_time );
    }

@@ -133,12 +133,10 @@ void ExecutionControl::initialize()
       federate->time_management  = true;
       federate->time_regulating  = true;
       federate->time_constrained = true;
-   }
 
-   // The software frame is set from the ExCO Least Common Time Step.
-   // For the Master federate the Trick simulation software frame must
-   // match the Least Common Time Step (LCTS).
-   if ( this->is_master() ) {
+      // The software frame is set from the ExCO Least Common Time Step.
+      // For the Master federate the Trick simulation software frame must
+      // match the Least Common Time Step (LCTS).
       double software_frame_time = Int64Interval::to_seconds( least_common_time_step );
       exec_set_software_frame( software_frame_time );
    }
@@ -424,7 +422,7 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_pnts()
            && ( sp->label.compare( DSES::INITIALIZE_SYNC_POINT ) != 0 )
            && ( sp->label.compare( DSES::SIM_CONFIG_SYNC_POINT ) != 0 ) ) {
 
-         SleepTimeout sleep_timer( 10.0, 1000 );
+         SleepTimeout sleep_timer;
 
          // Wait for the federation to synchronized on the sync-point.
          while ( !sp->is_achieved() ) {

@@ -636,7 +636,7 @@ bool ExecutionConfiguration::wait_on_update() // RETURN: -- None.
    // Make sure we have at least one piece of exec-config data we can receive.
    if ( this->any_remotely_owned_subscribed_init_attribute() ) {
 
-      SleepTimeout sleep_timer( 10.0, 1000 );
+      SleepTimeout sleep_timer;
 
       // Wait for the data to arrive.
       while ( !this->is_changed() ) {

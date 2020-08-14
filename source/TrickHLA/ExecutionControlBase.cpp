@@ -424,7 +424,7 @@ void ExecutionControlBase::wait_for_sync_point_announce(
          // If the sync-point has not been announced...
          if ( !sp->is_announced() ) {
 
-            SleepTimeout sleep_timer( 10.0, 1000 );
+            SleepTimeout sleep_timer;
 
             // Wait for the federation to announce the sync-point.
             while ( !sp->is_announced() ) {
@@ -666,7 +666,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
    // Make sure we have at least one piece of ExecutionConfiguration data we can receive.
    if ( execution_configuration->any_remotely_owned_subscribed_init_attribute() ) {
 
-      SleepTimeout sleep_timer( 10.0, 1000 );
+      SleepTimeout sleep_timer;
 
       // Wait for the data to arrive.
       while ( !execution_configuration->is_changed() ) {
