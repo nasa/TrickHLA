@@ -4246,9 +4246,9 @@ void Federate::perform_time_advance_request()
    // Clear the TAR flag before we make our request.
    this->time_adv_requested = false;
 
-   bool anyError, isRecoverableError;
-   int  errorRecoveryCnt   = 0;
-   int  max_retry_attempts = 1000;
+   bool anyError;
+   bool isRecoverableError;
+   int  errorRecoveryCnt = 0;
 
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
@@ -4343,7 +4343,7 @@ void Federate::perform_time_advance_request()
          (void)Utilities::micro_sleep( 1000 );
       }
 
-   } while ( anyError && isRecoverableError && ( errorRecoveryCnt < max_retry_attempts ) );
+   } while ( anyError && isRecoverableError && ( errorRecoveryCnt < 1000 ) );
 
    // Macro to restore the saved FPU Control Word register value.
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
