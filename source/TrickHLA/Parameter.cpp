@@ -236,7 +236,11 @@ void Parameter::complete_initialization()
    // Verify that the rti_encoding value is valid given the ref-attributes type.
    switch ( attr->type ) {
       case TRICK_BOOLEAN: {
-         if ( ( rti_encoding != ENCODING_BIG_ENDIAN ) && ( rti_encoding != ENCODING_LITTLE_ENDIAN ) && ( rti_encoding != ENCODING_BOOLEAN ) && ( rti_encoding != ENCODING_NO_ENCODING ) && ( rti_encoding != ENCODING_UNKNOWN ) ) {
+         if ( ( rti_encoding != ENCODING_BIG_ENDIAN )
+              && ( rti_encoding != ENCODING_LITTLE_ENDIAN )
+              && ( rti_encoding != ENCODING_BOOLEAN )
+              && ( rti_encoding != ENCODING_NO_ENCODING )
+              && ( rti_encoding != ENCODING_UNKNOWN ) ) {
             ostringstream errmsg;
             errmsg << "Parameter::complete_initialization():" << __LINE__
                    << " FOM Interaction Parameter '"
@@ -254,7 +258,12 @@ void Parameter::complete_initialization()
       }
       case TRICK_CHARACTER:
       case TRICK_UNSIGNED_CHARACTER: {
-         if ( ( rti_encoding != ENCODING_BIG_ENDIAN ) && ( rti_encoding != ENCODING_LITTLE_ENDIAN ) && ( rti_encoding != ENCODING_NO_ENCODING ) && ( rti_encoding != ENCODING_UNICODE_STRING ) && ( rti_encoding != ENCODING_OPAQUE_DATA ) && ( rti_encoding != ENCODING_UNKNOWN ) ) {
+         if ( ( rti_encoding != ENCODING_BIG_ENDIAN )
+              && ( rti_encoding != ENCODING_LITTLE_ENDIAN )
+              && ( rti_encoding != ENCODING_NO_ENCODING )
+              && ( rti_encoding != ENCODING_UNICODE_STRING )
+              && ( rti_encoding != ENCODING_OPAQUE_DATA )
+              && ( rti_encoding != ENCODING_UNKNOWN ) ) {
             ostringstream errmsg;
             errmsg << "Parameter::complete_initialization():" << __LINE__
                    << " FOM Interaction Parameter '"
@@ -272,7 +281,8 @@ void Parameter::complete_initialization()
 
          // For the ENCODING_UNICODE_STRING encoding, we only support a 1-D dynamic
          // array of characters.
-         if ( ( rti_encoding == ENCODING_UNICODE_STRING ) && ( ( attr->num_index != 1 ) || ( attr->index[attr->num_index - 1].size != 0 ) ) ) {
+         if ( ( rti_encoding == ENCODING_UNICODE_STRING )
+              && ( ( attr->num_index != 1 ) || ( attr->index[attr->num_index - 1].size != 0 ) ) ) {
             ostringstream errmsg;
             errmsg << "Parameter::complete_initialization():" << __LINE__
                    << " FOM Interaction Parameter '"
@@ -288,7 +298,8 @@ void Parameter::complete_initialization()
 
          // For the ENCODING_OPAQUE_DATA encoding, we only support a 1-D dynamic
          // array of characters.
-         if ( ( rti_encoding == ENCODING_OPAQUE_DATA ) && ( ( attr->num_index != 1 ) || ( attr->index[attr->num_index - 1].size != 0 ) ) ) {
+         if ( ( rti_encoding == ENCODING_OPAQUE_DATA )
+              && ( ( attr->num_index != 1 ) || ( attr->index[attr->num_index - 1].size != 0 ) ) ) {
             ostringstream errmsg;
             errmsg << "Parameter::complete_initialization():" << __LINE__
                    << " FOM Interaction Parameter '"
@@ -314,7 +325,11 @@ void Parameter::complete_initialization()
       case TRICK_UNSIGNED_LONG:
       case TRICK_LONG_LONG:
       case TRICK_UNSIGNED_LONG_LONG: {
-         if ( ( rti_encoding != ENCODING_LOGICAL_TIME ) && ( rti_encoding != ENCODING_BIG_ENDIAN ) && ( rti_encoding != ENCODING_LITTLE_ENDIAN ) && ( rti_encoding != ENCODING_NO_ENCODING ) && ( rti_encoding != ENCODING_UNKNOWN ) ) {
+         if ( ( rti_encoding != ENCODING_LOGICAL_TIME )
+              && ( rti_encoding != ENCODING_BIG_ENDIAN )
+              && ( rti_encoding != ENCODING_LITTLE_ENDIAN )
+              && ( rti_encoding != ENCODING_NO_ENCODING )
+              && ( rti_encoding != ENCODING_UNKNOWN ) ) {
             ostringstream errmsg;
             errmsg << "Parameter::complete_initialization():" << __LINE__
                    << " FOM Interaction Parameter '"
@@ -331,7 +346,12 @@ void Parameter::complete_initialization()
          break;
       }
       case TRICK_STRING: {
-         if ( ( rti_encoding != ENCODING_C_STRING ) && ( rti_encoding != ENCODING_UNICODE_STRING ) && ( rti_encoding != ENCODING_ASCII_STRING ) && ( rti_encoding != ENCODING_OPAQUE_DATA ) && ( rti_encoding != ENCODING_NO_ENCODING ) && ( rti_encoding != ENCODING_UNKNOWN ) ) {
+         if ( ( rti_encoding != ENCODING_C_STRING )
+              && ( rti_encoding != ENCODING_UNICODE_STRING )
+              && ( rti_encoding != ENCODING_ASCII_STRING )
+              && ( rti_encoding != ENCODING_OPAQUE_DATA )
+              && ( rti_encoding != ENCODING_NO_ENCODING )
+              && ( rti_encoding != ENCODING_UNKNOWN ) ) {
             ostringstream errmsg;
             errmsg << "Parameter::complete_initialization():" << __LINE__
                    << " FOM Interaction Parameter '"
@@ -471,7 +491,9 @@ void Parameter::complete_initialization()
    // Check to make sure the users simulation variable has memory allocated to
    // it. It could be that the users simulation variable happens to be pointing
    // to a null string.
-   if ( size == 0 ) {
+   if ( ( size == 0 )
+        && ( attr->type != TRICK_STRING )
+        && !( ( attr->type == TRICK_CHARACTER ) && ( attr->num_index > 0 ) ) ) {
       ostringstream msg;
       msg << "Parameter::complete_initialization():" << __LINE__
           << " WARNING: FOM Interaction Parameter '" << interaction_FOM_name

@@ -263,7 +263,11 @@ void Attribute::initialize(
    // Verify that the rti_encoding value is valid given the ref-attributes type.
    switch ( ref2->attr->type ) {
       case TRICK_BOOLEAN: {
-         if ( ( rti_encoding != ENCODING_BIG_ENDIAN ) && ( rti_encoding != ENCODING_LITTLE_ENDIAN ) && ( rti_encoding != ENCODING_BOOLEAN ) && ( rti_encoding != ENCODING_NO_ENCODING ) && ( rti_encoding != ENCODING_UNKNOWN ) ) {
+         if ( ( rti_encoding != ENCODING_BIG_ENDIAN )
+              && ( rti_encoding != ENCODING_LITTLE_ENDIAN )
+              && ( rti_encoding != ENCODING_BOOLEAN )
+              && ( rti_encoding != ENCODING_NO_ENCODING )
+              && ( rti_encoding != ENCODING_UNKNOWN ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
                    << " FOM Object Attribute '"
@@ -282,7 +286,12 @@ void Attribute::initialize(
 
       case TRICK_CHARACTER:
       case TRICK_UNSIGNED_CHARACTER: {
-         if ( ( rti_encoding != ENCODING_BIG_ENDIAN ) && ( rti_encoding != ENCODING_LITTLE_ENDIAN ) && ( rti_encoding != ENCODING_NO_ENCODING ) && ( rti_encoding != ENCODING_UNICODE_STRING ) && ( rti_encoding != ENCODING_OPAQUE_DATA ) && ( rti_encoding != ENCODING_UNKNOWN ) ) {
+         if ( ( rti_encoding != ENCODING_BIG_ENDIAN )
+              && ( rti_encoding != ENCODING_LITTLE_ENDIAN )
+              && ( rti_encoding != ENCODING_NO_ENCODING )
+              && ( rti_encoding != ENCODING_UNICODE_STRING )
+              && ( rti_encoding != ENCODING_OPAQUE_DATA )
+              && ( rti_encoding != ENCODING_UNKNOWN ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
                    << " FOM Object Attribute '"
@@ -300,7 +309,8 @@ void Attribute::initialize(
 
          // For the ENCODING_TYPE_UNICODE_STRING encoding, we only support a 1-D dynamic
          // array of characters.
-         if ( ( rti_encoding == ENCODING_UNICODE_STRING ) && ( ( ref2->attr->num_index != 1 ) || ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 ) ) ) {
+         if ( ( rti_encoding == ENCODING_UNICODE_STRING )
+              && ( ( ref2->attr->num_index != 1 ) || ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 ) ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
                    << " FOM Object Attribute '"
@@ -316,7 +326,8 @@ void Attribute::initialize(
 
          // For the ENCODING_TYPE_OPAQUE_DATA encoding, we only support a 1-D dynamic
          // array of characters.
-         if ( ( rti_encoding == ENCODING_OPAQUE_DATA ) && ( ( ref2->attr->num_index != 1 ) || ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 ) ) ) {
+         if ( ( rti_encoding == ENCODING_OPAQUE_DATA )
+              && ( ( ref2->attr->num_index != 1 ) || ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 ) ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
                    << " FOM Object Attribute '"
@@ -342,7 +353,11 @@ void Attribute::initialize(
       case TRICK_UNSIGNED_LONG:
       case TRICK_LONG_LONG:
       case TRICK_UNSIGNED_LONG_LONG: {
-         if ( ( rti_encoding != ENCODING_BIG_ENDIAN ) && ( rti_encoding != ENCODING_LITTLE_ENDIAN ) && ( rti_encoding != ENCODING_LOGICAL_TIME ) && ( rti_encoding != ENCODING_NO_ENCODING ) && ( rti_encoding != ENCODING_UNKNOWN ) ) {
+         if ( ( rti_encoding != ENCODING_BIG_ENDIAN )
+              && ( rti_encoding != ENCODING_LITTLE_ENDIAN )
+              && ( rti_encoding != ENCODING_LOGICAL_TIME )
+              && ( rti_encoding != ENCODING_NO_ENCODING )
+              && ( rti_encoding != ENCODING_UNKNOWN ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
                    << " FOM Object Attribute '"
@@ -360,7 +375,12 @@ void Attribute::initialize(
       }
 
       case TRICK_STRING: {
-         if ( ( rti_encoding != ENCODING_C_STRING ) && ( rti_encoding != ENCODING_UNICODE_STRING ) && ( rti_encoding != ENCODING_ASCII_STRING ) && ( rti_encoding != ENCODING_OPAQUE_DATA ) && ( rti_encoding != ENCODING_NO_ENCODING ) && ( rti_encoding != ENCODING_UNKNOWN ) ) {
+         if ( ( rti_encoding != ENCODING_C_STRING )
+              && ( rti_encoding != ENCODING_UNICODE_STRING )
+              && ( rti_encoding != ENCODING_ASCII_STRING )
+              && ( rti_encoding != ENCODING_OPAQUE_DATA )
+              && ( rti_encoding != ENCODING_NO_ENCODING )
+              && ( rti_encoding != ENCODING_UNKNOWN ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
                    << " FOM Object Attribute '"
@@ -502,7 +522,9 @@ void Attribute::initialize(
    // Check to make sure the users simulation variable has memory allocated to
    // it. It could be that the users simulation variable happens to be pointing
    // to a null string.
-   if ( size == 0 ) {
+   if ( ( size == 0 )
+        && ( ref2->attr->type != TRICK_STRING )
+        && !( ( ref2->attr->type == TRICK_CHARACTER ) && ( ref2->attr->num_index > 0 ) ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
          ostringstream msg;
          msg << "Attribute::initialize():" << __LINE__

@@ -2387,7 +2387,8 @@ void ExecutionControl::send_init_root_ref_frame()
    if ( this->manager->is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "SpaceFOM::ExecutionControl::send_init_root_ref_frame():%d Late joining \
-federate so the data will not be sent for '%s'.%c", __LINE__, execution_configuration->get_name(),
+federate so the data will not be sent for '%s'.%c",
+                  __LINE__, execution_configuration->get_name(),
                   THLA_NEWLINE );
       }
       return;
