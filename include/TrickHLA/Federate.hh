@@ -634,11 +634,6 @@ class Federate
    /*! @brief Wait for a HLA time-advance grant. */
    void wait_for_time_advance_grant();
 
-   /*! @brief Wait for a HLA time-advance grant, but allow for an early exit
-    * if it takes longer than time_out_tolerance (for SSTF).
-    *  @param time_out_tolerance Timeout tolerance in nanoseconds. */
-   void wait_for_time_advance_grant( int time_out_tolerance );
-
    /*! @brief Set federate execution startup state.
     *  @param flag True for federate started; False otherwise. */
    void set_startup( bool flag )
@@ -920,14 +915,14 @@ class Federate
     *  @return True if time advance has been granted; False otherwise. */
    bool is_time_advance_granted() const
    {
-      return time_adv_grant;
+      return this->time_adv_granted;
    }
 
    /*! @brief Set the time advance grant flag.
     *  @param grant_flag Status of time advance grant. */
    void set_time_advance_grant( const bool &grant_flag )
    {
-      time_adv_grant = grant_flag;
+      this->time_adv_granted = grant_flag;
    }
 
    /*! @brief Query if the federate is in a time regulating state.
@@ -941,14 +936,14 @@ class Federate
     *  @param regulation_state Desired state of time regulation for this federate. */
    void set_time_regulation_state( const bool &regulation_state )
    {
-      time_regulating_state = regulation_state;
+      this->time_regulating_state = regulation_state;
    }
 
    /*! @brief Set the state of time constraint.
     *  @param constrained_state Desired state of time constraint for this federate. */
    void set_time_constrained_state( const bool &constrained_state )
    {
-      time_constrained_state = constrained_state;
+      this->time_constrained_state = constrained_state;
    }
 
    /*! @brief Sets the granted time from the specified double.
@@ -1004,7 +999,7 @@ class Federate
    bool is_time_management_enabled() const
    {
       // Time management is enabled if the local time-management flag is set.
-      return time_management;
+      return this->time_management;
    }
 
    // Checkpoint restart initialization.
@@ -1116,14 +1111,15 @@ class Federate
 
    // Federation time management data.
    //
-   bool      time_adv_grant;   ///< @trick_units{--} Time advance grant flag.
-   Int64Time granted_time;     ///< @trick_units{--} HLA time given by RTI
-   Int64Time requested_time;   ///< @trick_units{--} requested/desired HLA time
-   double    HLA_time;         ///< @trick_units{s}  Current HLA time.
-   bool      start_to_save;    ///< @trick_io{**} Save flag
-   bool      start_to_restore; ///< @trick_io{**} Restore flag
-   bool      restart_flag;     ///< @trick_io{**} Restart flag
-   bool      restart_cfg_flag; ///< @trick_io{**} Restart flag with new configuration
+   bool      time_adv_requested; ///< @trick_units{--} Time advance requested flag.
+   bool      time_adv_granted;   ///< @trick_units{--} Time advance granted flag.
+   Int64Time granted_time;       ///< @trick_units{--} HLA time given by RTI
+   Int64Time requested_time;     ///< @trick_units{--} requested/desired HLA time
+   double    HLA_time;           ///< @trick_units{s}  Current HLA time.
+   bool      start_to_save;      ///< @trick_io{**} Save flag
+   bool      start_to_restore;   ///< @trick_io{**} Restore flag
+   bool      restart_flag;       ///< @trick_io{**} Restart flag
+   bool      restart_cfg_flag;   ///< @trick_io{**} Restart flag with new configuration
 
    // Fields related to the initial master/slave interactions.
    //

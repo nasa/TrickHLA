@@ -164,7 +164,8 @@ Federate::Federate()
      announce_freeze( false ),
      freeze_the_federation( false ),
      execution_has_begun( false ),
-     time_adv_grant( false ),
+     time_adv_requested( false ),
+     time_adv_granted( false ),
      granted_time( 0.0 ),
      requested_time( 0.0 ),
      HLA_time( 0.0 ),
@@ -505,12 +506,6 @@ void Federate::restart_initialization()
 
    // Update the lookahead time in our time object.
    set_lookahead( lookahead_time );
-
-   // Disable time management if the federate is not setup to be
-   // time-regulating or time-constrained.
-   if ( time_management && !time_regulating && !time_constrained ) {
-      time_management = false;
-   }
 
    if ( federate_ambassador == static_cast< FedAmb * >( NULL ) ) {
       ostringstream errmsg;
@@ -3161,9 +3156,7 @@ void Federate::time_advance_request_to_GALT()
 {
    // Simply return if we are the master federate that created the federation,
    // or if time management is not enabled.
-   if ( ( !this->time_management )
-        || ( execution_control->is_master()
-             && !execution_control->is_late_joiner() ) ) {
+   if ( !this->time_management || ( execution_control->is_master() && !execution_control->is_late_joiner() ) ) {
       return;
    }
 
@@ -3215,9 +3208,7 @@ void Federate::time_advance_request_to_GALT_LCTS_multiple()
 {
    // Simply return if we are the master federate that created the federation,
    // or if time management is not enabled.
-   if ( ( !this->time_management )
-        || ( execution_control->is_master()
-             && !execution_control->is_late_joiner() ) ) {
+   if ( !this->time_management || ( execution_control->is_master() && !execution_control->is_late_joiner() ) ) {
       return;
    }
 
@@ -3838,18 +3829,12 @@ bool Federate::check_for_shutdown_with_termination()
 */
 void Federate::setup_time_management()
 {
-   // Disable time management if the federate is not setup to be
-   // time-regulating or time-constrained.
-   if ( this->time_management && !this->time_regulating && !this->time_constrained ) {
-      this->time_management = false;
-   }
-
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::setup_time_management():%d time_management:%s time_regulating:%s time_constrained:%s %c",
                __LINE__,
-               ( time_management ? "Yes" : "No" ),
-               ( time_regulating ? "Yes" : "No" ),
-               ( time_constrained ? "Yes" : "No" ), THLA_NEWLINE );
+               ( this->time_management ? "Yes" : "No" ),
+               ( this->time_regulating ? "Yes" : "No" ),
+               ( this->time_constrained ? "Yes" : "No" ), THLA_NEWLINE );
    }
 
    // Determine if HLA time management is enabled.
@@ -3857,22 +3842,30 @@ void Federate::setup_time_management()
 
       // Setup time constrained if the user wants to be constrained and our
       // current HLA time constrained state indicates we are not constrained.
-      if ( this->time_constrained && !this->time_constrained_state ) {
-         setup_time_constrained();
-      } else if ( !this->time_constrained && this->time_constrained_state ) {
-         // Disable time constrained if our current HLA state indicates we
-         // are already constrained.
-         shutdown_time_constrained();
+      if ( this->time_constrained ) {
+         if ( !this->time_constrained_state ) {
+            setup_time_constrained();
+         }
+      } else {
+         if ( this->time_constrained_state ) {
+            // Disable time constrained if our current HLA state indicates we
+            // are already constrained.
+            shutdown_time_constrained();
+         }
       }
 
       // Setup time regulation if the user wanted to be regulated and our
       // current HLA time regulating state indicates we are not regulated.
-      if ( this->time_regulating && !this->time_regulating_state ) {
-         setup_time_regulation();
-      } else if ( !this->time_regulating && this->time_regulating_state ) {
-         // Disable time regulation if our current HLA state indicates we
-         // are already regulating.
-         shutdown_time_regulating();
+      if ( this->time_regulating ) {
+         if ( !this->time_regulating_state ) {
+            setup_time_regulation();
+         }
+      } else {
+         if ( this->time_regulating_state ) {
+            // Disable time regulation if our current HLA state indicates we
+            // are already regulating.
+            shutdown_time_regulating();
+         }
       }
    } else {
       // HLA Time Management is disabled.
@@ -3894,7 +3887,7 @@ void Federate::setup_time_constrained()
 {
    // Just return if HLA time management is not enabled, the user does
    // not want time constrained enabled, or if we are already constrained.
-   if ( !time_management || !time_constrained || time_constrained_state ) {
+   if ( !this->time_management || !this->time_constrained || this->time_constrained_state ) {
       return;
    }
 
@@ -3912,7 +3905,7 @@ void Federate::setup_time_constrained()
                   __LINE__, get_federation_name(), THLA_NEWLINE );
       }
 
-      this->time_adv_grant         = false;
+      this->time_adv_granted       = false;
       this->time_constrained_state = false;
 
       // Turn on constrained status so that regulating federates will control
@@ -3933,7 +3926,7 @@ void Federate::setup_time_constrained()
 
          (void)sleep_timer.sleep();
 
-         if ( !time_constrained_state && sleep_timer.timeout() ) {
+         if ( !this->time_constrained_state && sleep_timer.timeout() ) {
             sleep_timer.reset();
             if ( !is_execution_member() ) {
                ostringstream errmsg;
@@ -3954,7 +3947,7 @@ void Federate::setup_time_constrained()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      time_constrained_state = true;
+      this->time_constrained_state = true;
 
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -4054,8 +4047,7 @@ void Federate::setup_time_regulation()
 
    // Sanity check.
    if ( RTI_ambassador.get() == NULL ) {
-      exec_terminate( __FILE__,
-                      "Federate::setup_time_regulation() ERROR: NULL pointer to RTIambassador!" );
+      exec_terminate( __FILE__, "Federate::setup_time_regulation() ERROR: NULL pointer to RTIambassador!" );
    }
 
    try {
@@ -4067,9 +4059,9 @@ void Federate::setup_time_regulation()
       // RTI_amb->enableTimeRegulation() is an implicit
       // RTI_amb->timeAdvanceRequest() so clear the flags since we will get a
       // FedAmb::timeRegulationEnabled() callback which will set the
-      // time_adv_grant and time_regulating_state flags to true.
+      // time_adv_granted and time_regulating_state flags to true.
 
-      this->time_adv_grant        = false;
+      this->time_adv_granted      = false;
       this->time_regulating_state = false;
 
       // Turn on regulating status so that constrained federates will be
@@ -4083,7 +4075,7 @@ void Federate::setup_time_regulation()
       SleepTimeout sleep_timer;
 
       // This spin lock waits for the time regulation flag to be set from the RTI.
-      while ( !time_regulating_state ) {
+      while ( !this->time_regulating_state ) {
 
          // Check for shutdown.
          this->check_for_shutdown_with_termination();
@@ -4251,6 +4243,9 @@ void Federate::perform_time_advance_request()
    this->save_completed = false; // reset ONLY at the bottom of the frame...
    // -- end of checkpoint additions --
 
+   // Clear the TAR flag before we make our request.
+   this->time_adv_requested = false;
+
    bool anyError, isRecoverableError;
    int  errorRecoveryCnt   = 0;
    int  max_retry_attempts = 1000;
@@ -4263,6 +4258,10 @@ void Federate::perform_time_advance_request()
       anyError           = false;
       isRecoverableError = false;
 
+      // Mark that the time advance has not yet been granted. This variable
+      // will be updated in the FederateAmbassador class callback.
+      this->time_adv_granted = false;
+
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
 
@@ -4272,12 +4271,13 @@ void Federate::perform_time_advance_request()
       }
 
       try {
-         // Mark that the time advance has not yet been granted. This variable
-         // will be updated in the FederateAmbassador class callback.
-         time_adv_grant = false;
-
          // Request that time be advanced to the new time.
          RTI_ambassador->timeAdvanceRequest( requested_time.get() );
+
+         // Indicate we issued a TAR since we successfully made the request
+         // without an exception.
+         this->time_adv_requested = true;
+
       } catch ( InvalidLogicalTime &e ) {
          anyError           = true;
          isRecoverableError = false;
@@ -4370,6 +4370,17 @@ void Federate::wait_for_time_advance_grant()
       return;
    }
 
+   // If no time advance has been requested and no time has been granted then
+   // return. Otherwise we will be in deadlock waiting for a TAG that will
+   // never arrive.
+   if ( !this->time_adv_requested && !this->time_adv_granted ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         send_hs( stdout, "Federate::wait_for_time_advance_grant():%d WARNING: No Time Advance Requested!%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      return;
+   }
+
    // Do not ask for a time advance on an initialization pass.
    if ( exec_get_mode() == Initialization ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -4384,19 +4395,19 @@ void Federate::wait_for_time_advance_grant()
                __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
    }
 
-   if ( !this->time_adv_grant ) {
+   if ( !this->time_adv_granted ) {
 
       SleepTimeout sleep_timer;
 
       // This spin lock waits for the time advance grant from the RTI.
-      while ( !this->time_adv_grant ) {
+      while ( !this->time_adv_granted ) {
 
          // Check for shutdown.
          this->check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 
-         if ( !this->time_adv_grant && sleep_timer.timeout() ) {
+         if ( !this->time_adv_granted && sleep_timer.timeout() ) {
             sleep_timer.reset();
             if ( is_execution_member() ) {
                if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -4416,62 +4427,6 @@ void Federate::wait_for_time_advance_grant()
                exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
             }
          }
-      }
-   }
-
-   // Record the granted time in the HLA_time variable, so we can plot it in Trick.
-   this->HLA_time = get_granted_time();
-
-   // Add the line number for a higher trace level.
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::wait_for_time_advance_grant():%d Time Advance Grant (TAG) to %.12G seconds.%c",
-               __LINE__, HLA_time, THLA_NEWLINE );
-   }
-}
-
-/*!
- * \par<b>Assumptions and Limitations:</b>
- * - Currently only used with DIS initialization scheme.
- *  @job_class{scheduled}
- */
-void Federate::wait_for_time_advance_grant(
-   int time_out_tolerance )
-{
-
-   // Skip requesting time-advancement if we are not time-regulating and
-   // not time-constrained (i.e. not using time management).
-   if ( !this->time_management ) {
-      return;
-   }
-
-   // Do not ask for a time advance on an initialization pass.
-   if ( exec_get_mode() == Initialization ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         send_hs( stdout, "Federate::wait_for_time_advance_grant():%d N/A because in Initialization mode.%c",
-                  __LINE__, THLA_NEWLINE );
-      }
-      return;
-   }
-
-   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::wait_for_time_advance_grant():%d Waiting for Time Advance Grant (TAG) to %.12G seconds.%c",
-               __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
-   }
-
-   // This spin lock waits for the time advance grant from the RTI.
-   stale_data_counter = 0;
-   int time_out       = 0;
-   while ( ( !this->time_adv_grant ) && ( time_out <= time_out_tolerance ) ) {
-
-      // Check for shutdown.
-      this->check_for_shutdown_with_termination();
-
-      time_out++;
-      RELEASE_1();
-
-      // Don't wait anymore if past time_out_tolerance
-      if ( time_out > time_out_tolerance ) {
-         stale_data_counter++;
       }
    }
 
@@ -4620,11 +4575,11 @@ void Federate::shutdown_time_constrained()
          RTI_ambassador->disableTimeConstrained();
          this->time_constrained_state = false;
       } catch ( RTI1516_NAMESPACE::TimeConstrainedIsNotEnabled &e ) {
-         time_constrained_state = false;
+         this->time_constrained_state = false;
          send_hs( stderr, "Federate::shutdown_time_constrained():%d \"%s\": TimeConstrainedIsNotEnabled EXCEPTION!%c",
                   __LINE__, get_federation_name(), THLA_NEWLINE );
       } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember &e ) {
-         time_constrained_state = false;
+         this->time_constrained_state = false;
          send_hs( stderr, "Federate::shutdown_time_constrained():%d \"%s\": FederateNotExecutionMember EXCEPTION!%c",
                   __LINE__, get_federation_name(), THLA_NEWLINE );
       } catch ( RTI1516_NAMESPACE::SaveInProgress &e ) {
@@ -4634,7 +4589,7 @@ void Federate::shutdown_time_constrained()
          send_hs( stderr, "Federate::shutdown_time_constrained():%d \"%s\": RestoreInProgress EXCEPTION!%c",
                   __LINE__, get_federation_name(), THLA_NEWLINE );
       } catch ( RTI1516_NAMESPACE::NotConnected &e ) {
-         time_constrained_state = false;
+         this->time_constrained_state = false;
          send_hs( stderr, "Federate::shutdown_time_constrained():%d \"%s\": NotConnected EXCEPTION!%c",
                   __LINE__, get_federation_name(), THLA_NEWLINE );
       } catch ( RTI1516_NAMESPACE::RTIinternalError &e ) {
@@ -4681,11 +4636,11 @@ void Federate::shutdown_time_regulating()
          RTI_ambassador->disableTimeRegulation();
          this->time_regulating_state = false;
       } catch ( RTI1516_NAMESPACE::TimeConstrainedIsNotEnabled &e ) {
-         time_regulating_state = false;
+         this->time_regulating_state = false;
          send_hs( stderr, "Federate::shutdown_time_regulating():%d \"%s\": TimeConstrainedIsNotEnabled EXCEPTION!%c",
                   __LINE__, get_federation_name(), THLA_NEWLINE );
       } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember &e ) {
-         time_regulating_state = false;
+         this->time_regulating_state = false;
          send_hs( stderr, "Federate::shutdown_time_regulating():%d \"%s\": FederateNotExecutionMember EXCEPTION!%c",
                   __LINE__, get_federation_name(), THLA_NEWLINE );
       } catch ( RTI1516_NAMESPACE::SaveInProgress &e ) {
@@ -4695,7 +4650,7 @@ void Federate::shutdown_time_regulating()
          send_hs( stderr, "Federate::shutdown_time_regulating():%d \"%s\": RestoreInProgress EXCEPTION!%c",
                   __LINE__, get_federation_name(), THLA_NEWLINE );
       } catch ( RTI1516_NAMESPACE::NotConnected &e ) {
-         time_constrained_state = false;
+         this->time_constrained_state = false;
          send_hs( stderr, "Federate::shutdown_time_regulating():%d \"%s\": NotConnected EXCEPTION!%c",
                   __LINE__, get_federation_name(), THLA_NEWLINE );
       } catch ( RTI1516_NAMESPACE::RTIinternalError &e ) {

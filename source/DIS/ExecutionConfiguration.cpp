@@ -307,23 +307,27 @@ void ExecutionConfiguration::unpack()
 
    if ( software_frame_usec != least_common_time_step ) {
       if ( software_frame_usec > least_common_time_step ) {
-         ostringstream message;
-         message << "DIS::ExecutionConfiguration::unpack():" << __LINE__
-                 << " WARNING: ExCO least_common_time_step (" << least_common_time_step
-                 << " microseconds) is less than the federate software frame ("
-                 << software_frame_usec << " microseconds)!  Resetting the software frame ("
-                 << least_common_time_step << " microseconds)!!!!" << THLA_ENDL;
-         send_hs( stderr, (char *)message.str().c_str() );
+         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+            ostringstream message;
+            message << "DIS::ExecutionConfiguration::unpack():" << __LINE__
+                    << " WARNING: ExCO least_common_time_step (" << least_common_time_step
+                    << " microseconds) is less than the federate software frame ("
+                    << software_frame_usec << " microseconds)!  Resetting the software frame ("
+                    << least_common_time_step << " microseconds)!!!!" << THLA_ENDL;
+            send_hs( stdout, (char *)message.str().c_str() );
+         }
          software_frame_sec = Int64Interval::to_seconds( least_common_time_step );
          exec_set_software_frame( software_frame_sec );
       } else if ( least_common_time_step % software_frame_usec != 0 ) {
-         ostringstream message;
-         message << "DIS::ExecutionConfiguration::unpack():" << __LINE__
-                 << " WARNING: ExCO least_common_time_step (" << least_common_time_step
-                 << " microseconds) is not an integer multiple of the federate software frame ("
-                 << software_frame_usec << " microseconds)!  Resetting the software frame ("
-                 << least_common_time_step << " microseconds)!!!!" << THLA_ENDL;
-         send_hs( stderr, (char *)message.str().c_str() );
+         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+            ostringstream message;
+            message << "DIS::ExecutionConfiguration::unpack():" << __LINE__
+                    << " WARNING: ExCO least_common_time_step (" << least_common_time_step
+                    << " microseconds) is not an integer multiple of the federate software frame ("
+                    << software_frame_usec << " microseconds)!  Resetting the software frame ("
+                    << least_common_time_step << " microseconds)!!!!" << THLA_ENDL;
+            send_hs( stdout, (char *)message.str().c_str() );
+         }
          software_frame_sec = Int64Interval::to_seconds( least_common_time_step );
          exec_set_software_frame( software_frame_sec );
       } else {
@@ -615,7 +619,7 @@ void ExecutionConfiguration::print_execution_configuration()
           << "\t next_execution_mode:     " << DIS::execution_mode_enum_to_string( DIS::execution_mode_int16_to_enum( next_execution_mode ) ) << endl
           << "\t least_common_time_step:  " << least_common_time_step << " microseconds" << endl
           << "=============================================================" << THLA_ENDL;
-      send_hs( stderr, (char *)msg.str().c_str() );
+      send_hs( stdout, (char *)msg.str().c_str() );
    }
 }
 
@@ -680,7 +684,6 @@ bool ExecutionConfiguration::wait_on_update() // RETURN: -- None.
              << " 'subscribe = true' set. Please check your input or modified-data"
              << " files to make sure the 'subscribe' value is correctly specified."
              << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    }
 

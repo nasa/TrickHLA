@@ -117,7 +117,7 @@ void ExecutionControl::initialize()
       msg << "TrickHLA::ExecutionControl::initialize():" << __LINE__
           << " Initialization-Scheme:'" << get_type()
           << "'" << THLA_ENDL;
-      send_hs( stderr, (char *)msg.str().c_str() );
+      send_hs( stdout, (char *)msg.str().c_str() );
    }
 
    // Simple initialization does not support a Master.
@@ -327,7 +327,7 @@ void ExecutionControl::clear_multiphase_init_sync_points()
       errmsg << "TrickHLA::ExecutionControl::clear_multiphase_init_sync_points():" << __LINE__
              << " This call will be ignored because this ExecutionControl does not"
              << " support multiphase initialization synchronization points." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stdout, (char *)errmsg.str().c_str() );
    }
 }
 
