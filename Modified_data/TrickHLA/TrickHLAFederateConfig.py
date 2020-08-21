@@ -70,8 +70,8 @@ class TrickHLAFederateConfig( object ):
       self.set_federation_name(thla_federation_name)
       self.set_federate_name(thla_federate_name)
 
-      # Set up the default time management policy.
-      self.set_time_management( )
+      # Set up the default HLA time management policy.
+      self.setup_HLA_time_management( )
 
       return
 
@@ -245,22 +245,33 @@ class TrickHLAFederateConfig( object ):
          print 'TrickHLAFederateConfig.set_time_regulating(): Warning, already initialized, function ignored!'
       else:
          self.federate.time_regulating = time_regulating
-         
+
       return
 
-
-   def set_time_management( self,
-      lookahead   = 1.0,
-      constrained = True,
-      regulating  = True ):
-
+   def set_time_management( self, time_management ) :
+      
       # You can only set time management before initialize method is called.
       if self.initialized :
          print 'TrickHLAFederateConfig.set_time_management(): Warning, already initialized, function ignored!'
       else:
+         self.federate.time_management = time_management
+
+      return
+
+   def setup_HLA_time_management( self,
+      lookahead    = 1.0,
+      constrained  = True,
+      regulating   = True,
+      time_managed = True ):
+
+      # You can only setup HLA time management before initialize method is called.
+      if self.initialized :
+         print 'TrickHLAFederateConfig.setup_HLA_time_management(): Warning, already initialized, function ignored!'
+      else:
          self.set_lookahead_time( lookahead )
          self.set_time_constrained( constrained )
          self.set_time_regulating( regulating )
+         self.set_time_management( time_managed )
 
       return
 

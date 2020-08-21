@@ -39,7 +39,7 @@ using namespace TrickHLA;
  */
 SleepTimeout::SleepTimeout()
 {
-   set( DEFAULT_SLEEP_TIMEOUT_IN_SECS, DEFAULT_SLEEP_WAIT_IN_NANOSEC );
+   set( THLA_DEFAULT_SLEEP_TIMEOUT_IN_SECS, THLA_DEFAULT_SLEEP_WAIT_IN_NANOSEC );
 }
 
 SleepTimeout::SleepTimeout(

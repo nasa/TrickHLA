@@ -459,7 +459,7 @@ void ExecutionControlBase::wait_for_sync_point_announce(
             errmsg << "TrickHLA::ExecutionControlBase::wait_for_sync_point_announce():" << __LINE__
                    << " Synchronization-Point '" << name
                    << "' already announced!";
-            send_hs( stderr, (char *)errmsg.str().c_str() );
+            send_hs( stdout, (char *)errmsg.str().c_str() );
          }
 
          // Done waiting for sync-point to be synchronized so return.
@@ -843,7 +843,7 @@ bool ExecutionControlBase::mark_object_as_deleted_from_federation(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_id );
-         send_hs( stderr, "TrickHLA::ExecutionControlBase::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s %c",
+         send_hs( stdout, "TrickHLA::ExecutionControlBase::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s %c",
                   __LINE__, execution_configuration->get_name(), id_str.c_str(),
                   ( instance_id.isValid() ? "Yes" : "No" ), THLA_NEWLINE );
       }
@@ -880,7 +880,7 @@ double ExecutionControlBase::get_sim_time()
              << " WARNING: Unexpected NULL 'THLA.federate.get_sim_time'!"
              << " Please make sure you specify a sim-timeline in your input"
              << " file. Returning Trick simulation time instead!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stdout, (char *)errmsg.str().c_str() );
    }
    return exec_get_sim_time();
 }
@@ -897,7 +897,7 @@ double ExecutionControlBase::get_scenario_time()
              << " WARNING: Unexpected NULL 'THLA.federate.scenario_timeline'!"
              << " Please make sure you specify a scenario-timeline in your input"
              << " file. Returning Trick simulation time instead!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stdout, (char *)errmsg.str().c_str() );
    }
 
    return this->get_sim_time();

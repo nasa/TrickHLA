@@ -1507,8 +1507,8 @@ void FedAmb::timeConstrainedEnabled(
                federate->get_granted_time(), THLA_NEWLINE );
    }
 
-   // Set the control flags after the show above to avoid a race condition with
-   // the main Trick thread printing to the console when these flags are set.
+   // Set the control flags after the debug show above to avoid a race condition
+   // with the main Trick thread printing to the console when these flags are set.
    federate->set_time_advance_grant( true );
    federate->set_time_constrained_state( true );
 }

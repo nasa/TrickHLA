@@ -348,6 +348,6 @@ void ExecutionConfiguration::print_execution_configuration()
           << "\t required_federates:    '" << required_federates << "'" << endl
           << "\t owner:                 '" << owner << "'" << endl
           << "=============================================================" << THLA_ENDL;
-      send_hs( stderr, (char *)msg.str().c_str() );
+      send_hs( stdout, (char *)msg.str().c_str() );
    }
 }

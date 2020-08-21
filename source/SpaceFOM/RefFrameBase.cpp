@@ -169,19 +169,23 @@ void RefFrameBase::initialize(
 
    // Must have federation instance name.
    if ( this->name == NULL ) {
-      errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
-             << " WARNING: Unexpected NULL federation instance frame name!"
-             << "  Setting frame name to empty string." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      if ( debug ) {
+         errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
+                << " WARNING: Unexpected NULL federation instance frame name!"
+                << "  Setting frame name to empty string." << THLA_ENDL;
+         send_hs( stderr, (char *)errmsg.str().c_str() );
+      }
       this->name = trick_MM->mm_strdup( "" );
    }
 
    // Must have federation instance parent frame name.
    if ( this->parent_name == NULL ) {
-      errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
-             << " WARNING: Unexpected NULL federation instance parent frame name!"
-             << "  Setting parent frame name to empty string." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      if ( debug ) {
+         errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
+                << " WARNING: Unexpected NULL federation instance parent frame name!"
+                << "  Setting parent frame name to empty string." << THLA_ENDL;
+         send_hs( stderr, (char *)errmsg.str().c_str() );
+      }
       this->parent_name = trick_MM->mm_strdup( "" );
    }
 
