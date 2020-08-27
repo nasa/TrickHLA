@@ -23,48 +23,84 @@ from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
 def print_usage_message( ):
 
    print ' '
-   print 'TrickHLA SpaceFOM Master Simulation Command Line Configuration Options:'
-   print '   -h          : Print this help message.'
-   print '   -help       : Print this help message.'
-   print '   -stop [time]: Time to stop simulation.'
-   print '   -nostop     : Set no stop time on simulation.'
+   print 'TrickHLA SpaceFOM Root-Reference-Frame Simulation Command Line Configuration Options:'
+   print '  -h -help         : Print this help message.'
+   print '  -stop [time]     : Time to stop simulation.'
+   print '  -nostop          : Set no stop time on simulation.'
+   print '  -verbose [on|off]: on: Show verbose messages (Default), off: disable messages.'
    print ' '
 
+   trick.exec_terminate_with_return( -1,
+                                     sys._getframe(0).f_code.co_filename,
+                                     sys._getframe(0).f_lineno,
+                                     'Print usage message.')
    return
 
 
-def process_command_line_args():
-   # Iterate through to test the command line options.
-   for arg in argv :
+def parse_command_line( ) :
+   
+   global print_usage
+   global run_duration
+   global verbose
+   
+   # Get the Trick command line arguments.
+   argc = trick.command_line_args_get_argc()
+   argv = trick.command_line_args_get_argv()
+   
+   # Process the command line arguments.
+   # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
+   index = 2
+   while (index < argc) :
       
-      if str(arg) == '-stop' :
-         run_duration = float(argv.next())
-
-      if str(arg) == '-nostop' :
+      if (str(argv[index]) == '-stop') :
+         index = index + 1
+         if (index < argc) :
+            run_duration = float(str(argv[index]))
+         else :
+            print "ERROR: Missing -stop [time] argument."
+            print_usage = True
+            
+      elif (str(argv[index]) == '-nostop') :
          run_duration = None
-
-      if (str(arg) == '-h') | (str(arg) == '-help'):
+         
+      elif ((str(argv[index]) == '-h') | (str(argv[index]) == '-help')) :
          print_usage = True
-         print_usage_message()
-         trick.exec_terminate_with_return( -1,
-                                           sys._getframe(0).f_code.co_filename,
-                                           sys._getframe(0).f_lineno,
-                                          'Print usage message.')
-
+      
+      elif (str(argv[index]) == '-verbose') :
+         index = index + 1
+         if (index < argc) :
+            if (str(argv[index]) == 'on') :
+               verbose = True
+            elif (str(argv[index]) == 'off') :
+               verbose = False
+            else :
+               print 'ERROR: Unknown -verbose argument: ' + str(argv[index])
+               print_usage = True
+         else :
+            print "ERROR: Missing -verbose [on|off] argument."
+            print_usage = True
+         
+      else :
+         print 'ERROR: Unknown command line argument ' + str(argv[index])
+         print_usage = True
+         
+      index = index + 1
    return
 
-
-# Get the Trick command line arguments.
-argc = trick.command_line_args_get_argc()
-argv = trick.command_line_args_get_argv()
-
+# Default: Don't show usage.
 print_usage = False
 
 # Set the default run duration.
 run_duration = 10.0
 
-# Process the command line options.
-process_command_line_args()
+# Default is to show verbose messages.
+verbose = True
+
+parse_command_line()
+
+if (print_usage == True) :
+   print_usage_message()
+
 
 #---------------------------------------------
 # Set up Trick executive parameters.
@@ -99,7 +135,10 @@ federate = SpaceFOMFederateConfig( THLA.federate,
 #federate.set_ExCO_S_define_name( 'THLA_INIT.ExCO' )
 
 # Set the debug output level.
-federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
+if (verbose == True) : 
+   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
+else :
+   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
 
 #--------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.
@@ -200,7 +239,7 @@ root_frame = SpaceFOMRefFrameObject( federate.is_RRFP,
                                      'root_ref_frame.frame_packing' )
 
 # Set the debug flag for the root reference frame.
-root_ref_frame.frame_packing.debug = True
+root_ref_frame.frame_packing.debug = verbose
 
 # Set the root frame for the federate.
 federate.set_root_frame( root_frame )
@@ -216,7 +255,7 @@ frame_A = SpaceFOMRefFrameObject( True,
                                   'ref_frame_A.frame_packing' )
 
 # Set the debug flag for the root reference frame.
-ref_frame_A.frame_packing.debug = True
+ref_frame_A.frame_packing.debug = verbose
 
 # Add this reference frame to the list of managed object.
 federate.add_fed_object( frame_A )

@@ -2117,7 +2117,7 @@ bool ExecutionControl::check_for_shutdown()
 bool ExecutionControl::check_for_shutdown_with_termination()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_FULL_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "SpaceFOM::ExecutionControl::check_for_shutdown_with_termination():%d Checking for shutdown %c",
+      send_hs( stdout, "SpaceFOM::ExecutionControl::check_for_shutdown_with_termination():%d Checking for shutdown. %c",
                __LINE__, THLA_NEWLINE );
    }
 

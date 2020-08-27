@@ -59,6 +59,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/BasicClock.hh"
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/MutexLock.hh"
@@ -538,8 +539,7 @@ class Object
    /*! @brief Turn off local flag in all attributes. */
    void mark_all_attributes_as_nonlocal();
 
-   /*! @brief Used by the TrickHLA extension to determine if the object data
-    * changed.
+   /*! @brief Used by the TrickHLA extension to determine if the object data changed.
     *  @return True if object data has changed. */
    bool is_changed()
    {
@@ -797,6 +797,10 @@ class Object
    ReflectedAttributesQueue thla_reflected_attributes_queue; ///< @trick_io{**} Queue of reflected attributes.
 
    AttributeMap thla_attribute_map; ///< @trick_io{**} Map of the Attribute's, key is the AttributeHandle.
+
+  public:
+   unsigned long long send_count;    ///< @trick_units{--} Number of times data from this object was sent.
+   unsigned long long receive_count; ///< @trick_units{--} Number of times data for this object was received.
 
   private:
    /*! @brief Sets the new value of the name attribute.

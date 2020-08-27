@@ -55,6 +55,7 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/FedAmb.hh"
 #include "TrickHLA/Federate.hh"
@@ -583,6 +584,9 @@ void FedAmb::reflectAttributeValues(
 #else
       trickhla_obj->extract_data( (AttributeHandleValueMap &)theAttributeValues );
 #endif
+#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+      ++trickhla_obj->receive_count;
+#endif
    } else if ( ( federate != NULL ) && federate->is_federate_instance_id( theObject ) ) {
 
       if ( federation_restored_rebuild_federate_handle_set ) {
@@ -662,6 +666,9 @@ void FedAmb::reflectAttributeValues(
 #else
       trickhla_obj->extract_data( (AttributeHandleValueMap &)theAttributeValues );
 #endif
+#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+      ++trickhla_obj->receive_count;
+#endif
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string id_str;
@@ -711,6 +718,9 @@ void FedAmb::reflectAttributeValues(
       trickhla_obj->enqueue_data( (AttributeHandleValueMap &)theAttributeValues );
 #else
       trickhla_obj->extract_data( (AttributeHandleValueMap &)theAttributeValues );
+#endif
+#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+      ++trickhla_obj->receive_count;
 #endif
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {

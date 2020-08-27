@@ -29,6 +29,10 @@ NASA, Johnson Space Center\n
 #ifndef _TRICKHLA_COMPILE_CONFIG_H_
 #define _TRICKHLA_COMPILE_CONFIG_H_
 
+// For blocking cyclic reads, do a check on the send and received data counts.
+// Default: NO_THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+#define NO_THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+
 // We support 3 different techniques to block waiting for data.
 // 1) Thread wait on a conditional variable with a timeout when
 //    THLA_THREAD_WAIT_FOR_DATA and THLA_THREAD_TIMED_WAIT_FOR_DATA are defined.
