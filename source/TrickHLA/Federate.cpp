@@ -732,7 +732,7 @@ void Federate::create_RTI_ambassador_and_connect()
              << " For Federate: '" << name
              << "' of Federation: '" << federation_name
              << "' with local_settings: '" << ( ( local_settings != NULL ) ? local_settings : "" )
-             << "' got EXCEPTION: ConnectionFailed: '" << rti_err_msg << "'."
+             << "' with EXCEPTION: ConnectionFailed: '" << rti_err_msg << "'."
              << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
@@ -746,7 +746,7 @@ void Federate::create_RTI_ambassador_and_connect()
              << " For Federate: '" << name
              << "' of Federation: '" << federation_name
              << "' with local_settings: '" << ( ( local_settings != NULL ) ? local_settings : "" )
-             << "' got EXCEPTION: InvalidLocalSettingsDesignator" << THLA_ENDL;
+             << "' with EXCEPTION: InvalidLocalSettingsDesignator" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    } catch ( UnsupportedCallbackModel &e ) {
@@ -759,7 +759,7 @@ void Federate::create_RTI_ambassador_and_connect()
              << " For Federate: '" << name
              << "' of Federation: '" << federation_name
              << "' with local_settings: '" << ( ( local_settings != NULL ) ? local_settings : "" )
-             << "' got EXCEPTION: UnsupportedCallbackModel" << THLA_ENDL;
+             << "' with EXCEPTION: UnsupportedCallbackModel" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    } catch ( AlreadyConnected &e ) {
@@ -772,7 +772,7 @@ void Federate::create_RTI_ambassador_and_connect()
              << " For Federate: '" << name
              << "' of Federation: '" << federation_name
              << "' with local_settings: '" << ( ( local_settings != NULL ) ? local_settings : "" )
-             << "' got EXCEPTION: AlreadyConnected" << THLA_ENDL;
+             << "' with EXCEPTION: AlreadyConnected" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    } catch ( CallNotAllowedFromWithinCallback &e ) {
@@ -785,7 +785,7 @@ void Federate::create_RTI_ambassador_and_connect()
              << " For Federate: '" << name
              << "' of Federation: '" << federation_name
              << "' with local_settings: '" << ( ( local_settings != NULL ) ? local_settings : "" )
-             << "' got EXCEPTION: CallNotAllowedFromWithinCallback" << THLA_ENDL;
+             << "' with EXCEPTION: CallNotAllowedFromWithinCallback" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    } catch ( RTIinternalError &e ) {
@@ -801,7 +801,7 @@ void Federate::create_RTI_ambassador_and_connect()
              << " For Federate: '" << name
              << "' of Federation: '" << federation_name
              << "' with local_settings: '" << ( ( local_settings != NULL ) ? local_settings : "" )
-             << "' got RTIinternalError: '" << rti_err_msg
+             << "' with RTIinternalError: '" << rti_err_msg
              << "'. One possible"
              << " cause could be that the Central RTI Component is not running,"
              << " or is not running on the computer you think it is on. Please"
@@ -4479,6 +4479,16 @@ void Federate::shutdown()
          send_hs( stdout, "Federate::shutdown():%d %c", __LINE__, THLA_NEWLINE );
       }
 
+#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+      for ( int i = 0; i < this->manager->obj_count; ++i ) {
+         cout << "Federate::shutdown():" << __LINE__
+              << " Object[" << i << "]:'" << this->manager->objects[i].get_name() << "'"
+              << " send_count:" << this->manager->objects[i].send_count
+              << " receive_count:" << this->manager->objects[i].receive_count
+              << endl;
+      }
+#endif
+
       // Macro to save the FPU Control Word register value.
       TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
@@ -5274,7 +5284,9 @@ void Federate::enable_MOM_auto_provide_setting(
    if ( enable ) {
       this->auto_provide_setting = 1;
       // 1 as 32-bit Big Endian as required for the HLAautoProvide parameter.
-      requested_auto_provide = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN ) ? Utilities::byteswap_int( 1 ) : 1;
+      requested_auto_provide = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN )
+                                  ? Utilities::byteswap_int( 1 )
+                                  : 1;
    } else {
       this->auto_provide_setting = 0;
       requested_auto_provide     = 0;
@@ -5562,7 +5574,7 @@ void Federate::update_running_feds()
                   __LINE__, i, running_feds[i].name, THLA_NEWLINE );
       }
 
-      // terminate the execution since the counters got out of sync...
+      // Terminate the execution since the counters are out of sync...
       ostringstream errmsg;
       errmsg << "Federate::update_running_feds():" << __LINE__
              << " FATAL_ERROR: joined_federate_name_map contains "
@@ -5574,23 +5586,24 @@ void Federate::update_running_feds()
       return;
    }
 
-   // loop through joined_federate_name_map to build the running_feds list
-   int                                        count = 0;
+   // Loop through joined_federate_name_map to build the running_feds list
+   int index = 0;
+
    TrickHLAObjInstanceNameMap::const_iterator map_iter;
    for ( map_iter = joined_federate_name_map.begin();
          map_iter != joined_federate_name_map.end(); ++map_iter ) {
 
-      this->running_feds[count].name = StringUtilities::ip_strdup_wstring( map_iter->second.c_str() );
+      this->running_feds[index].name = StringUtilities::ip_strdup_wstring( map_iter->second.c_str() );
 
-      this->running_feds[count].MOM_instance_name = StringUtilities::ip_strdup_wstring(
+      this->running_feds[index].MOM_instance_name = StringUtilities::ip_strdup_wstring(
          mom_HLAfederate_inst_name_map[map_iter->first].c_str() );
 
       // If the federate was running at the time of the checkpoint, it must be
       // a 'required' federate in the restore, regardless if it is was required
       // when the federation originally started up.
-      this->running_feds[count].required = 1;
+      this->running_feds[index].required = true;
 
-      count++;
+      ++index;
    }
 }
 
@@ -5620,7 +5633,7 @@ not allocate memory for temp_feds when attempting to add an entry into running_f
       map_iter                                        = joined_federate_name_map.begin();
       temp_feds[running_feds_count].MOM_instance_name = StringUtilities::ip_strdup_wstring( mom_HLAfederate_inst_name_map[map_iter->first].c_str() );
       temp_feds[running_feds_count].name              = StringUtilities::ip_strdup_wstring( map_iter->second.c_str() );
-      temp_feds[running_feds_count].required          = 1;
+      temp_feds[running_feds_count].required          = true;
 
       // delete running_feds data structure.
       clear_running_feds();

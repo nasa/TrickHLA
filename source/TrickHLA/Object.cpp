@@ -130,7 +130,9 @@ Object::Object()
      manager( NULL ),
      rti_ambassador( NULL ),
      thla_reflected_attributes_queue(),
-     thla_attribute_map()
+     thla_attribute_map(),
+     send_count( 0LL ),
+     receive_count( 0LL )
 {
 #ifdef THLA_OBJECT_TIME_LOGGING
    received_gmt_time = 0.0;
@@ -1644,7 +1646,9 @@ void Object::send_requested_data(
    }
 
    // Determine if we need to send with a timestamp.
-   bool send_with_timestamp = trick_fed->in_time_regulating_state() && ( any_attribute_FOM_specified_order || any_attribute_timestamp_order );
+   bool send_with_timestamp = trick_fed->in_time_regulating_state()
+                              && ( any_attribute_FOM_specified_order
+                                   || any_attribute_timestamp_order );
 
    try {
       // Send the Attributes to the federation.
@@ -1680,6 +1684,9 @@ void Object::send_requested_data(
                                                   *attribute_values_map,
                                                   RTI1516_USERDATA( 0, 0 ) );
          }
+#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+         ++send_count;
+#endif
       }
    } catch ( InvalidLogicalTime &e ) {
       string id_str;
@@ -1986,6 +1993,9 @@ void Object::send_cyclic_and_requested_data(
                                                   *attribute_values_map,
                                                   RTI1516_USERDATA( 0, 0 ) );
          }
+#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+         ++send_count;
+#endif
       }
    } catch ( InvalidLogicalTime &e ) {
       string id_str;
@@ -2416,10 +2426,9 @@ waiting for data at %f seconds (time-of-day) with a timeout of %f seconds \
    if ( is_changed() ) {
 
 #if THLA_OBJ_DEBUG_RECEIVE
-      Federate *trick_fed = get_federate();
       send_hs( stdout, "Object::receive_cyclic_data():%d for '%s' at t=%G%c",
-               __LINE__, get_name(),
-               trick_fed->get_granted_fed_time().get_time_in_seconds(), THLA_NEWLINE );
+               __LINE__, get_name(), get_granted_fed_time().get_time_in_seconds(),
+               THLA_NEWLINE );
 #endif
 
       // Unpack the buffer and copy the values to the object attributes.
@@ -2441,8 +2450,8 @@ waiting for data at %f seconds (time-of-day) with a timeout of %f seconds \
 #if THLA_OBJ_DEBUG_VALID_OBJECT_RECEIVE
    else if ( is_instance_handle_valid() && current_time > 0.0L ) {
       send_hs( stdout, "Object::receive_cyclic_data():%d NO new data for valid object '%s' at t=%G%c",
-               __LINE__, get_name(),
-               get_granted_fed_time().get_time_in_seconds(), THLA_NEWLINE );
+               __LINE__, get_name(), get_granted_fed_time().get_time_in_seconds(),
+               THLA_NEWLINE );
    }
 #endif
 #if THLA_OBJ_DEBUG_RECEIVE
@@ -2510,6 +2519,9 @@ void Object::send_init_data()
          (void)rti_amb->updateAttributeValues( this->instance_handle,
                                                *attribute_values_map,
                                                RTI1516_USERDATA( 0, 0 ) );
+#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+         ++send_count;
+#endif
       }
    } catch ( InvalidLogicalTime &e ) {
       string id_str;
@@ -2843,8 +2855,9 @@ void Object::extract_data(
    // extract the data from the buffer that is returned by
    // getValue().
 
+   bool attr_changed = false;
+
    AttributeHandleValueMap::iterator iter;
-   bool                              attr_changed = false;
 
    for ( iter = theAttributes.begin(); iter != theAttributes.end(); ++iter ) {
 
