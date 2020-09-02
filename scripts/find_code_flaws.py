@@ -37,9 +37,7 @@ def main() :
    #
    parser = argparse.ArgumentParser( prog='find_code_flaws',\
                                      formatter_class=argparse.RawDescriptionHelpFormatter,\
-                                     description='Check the TrickHLA source code using flawfinder.',\
-                                     epilog=textwrap.dedent('''\
-Options -m0, -m1, -m2, -m3, -m4, -m5 ''' ))
+                                     description='Check the TrickHLA source code using flawfinder.' )
 
    parser.add_argument( '-m0',\
                         help='Maximum flaw risk checking. Check source with minimum risk level 0 for inclusion in hitlist.',\
