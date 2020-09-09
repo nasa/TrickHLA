@@ -83,7 +83,7 @@ ExecutionConfigurationBase::ExecutionConfigurationBase()
      execution_control( NULL )
 {
    // Set the name to an empty string.
-   name = trick_MM->mm_strdup( (char *)"" );
+   this->name = trick_MM->mm_strdup( (char *)"" );
 
    // This is both a TrickHLA::Object and Packing.
    // So, it can safely reference itself.

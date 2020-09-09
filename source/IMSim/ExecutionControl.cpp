@@ -168,6 +168,9 @@ void ExecutionControl::initialize()
    this->add_sync_pnt( L"mtr_freeze" );
    this->add_sync_pnt( L"mtr_shutdown" );
 
+   // Make sure we initialize the base class.
+   TrickHLA::ExecutionControlBase::initialize();
+
    // Must use a preset master.
    if ( !this->is_master_preset() ) {
       ostringstream errmsg;
@@ -190,7 +193,7 @@ void ExecutionControl::initialize()
       }
    }
 
-   // Call the IMSim ExecutionControl pre-multi-phasse initialization processes.
+   // Call the IMSim ExecutionControl pre-multi-phase initialization processes.
    pre_multi_phase_init_processes();
 }
 /*!
@@ -2387,7 +2390,7 @@ void ExecutionControl::check_pause( const double check_pause_delta )
 
    if ( federate->freeze_the_federation ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "IMSim::ExecutionControlBase::check_pause():%d Commanding Trick Executive to FREEZE.%c",
+         send_hs( stdout, "IMSim::ExecutionControl::check_pause():%d Commanding Trick Executive to FREEZE.%c",
                   __LINE__, THLA_NEWLINE );
       }
       if ( this->get_sim_time() <= 0.0 ) {

@@ -126,6 +126,9 @@ void ExecutionControl::initialize()
    // Simple initialization does not support known federates.
    federate->enable_known_feds = false;
    federate->known_feds_count  = 0;
+
+   // Make sure we initialize the base class.
+   TrickHLA::ExecutionControlBase::initialize();
 }
 
 /*!
