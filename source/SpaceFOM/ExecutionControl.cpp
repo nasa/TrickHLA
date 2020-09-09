@@ -184,6 +184,9 @@ void ExecutionControl::initialize()
    this->add_sync_pnt( L"mtr_freeze" );
    this->add_sync_pnt( L"mtr_shutdown" );
 
+   // Make sure we initialize the base class.
+   TrickHLA::ExecutionControlBase::initialize();
+
    // Must use a preset master.
    if ( !this->is_master_preset() ) {
       ostringstream errmsg;
@@ -388,7 +391,6 @@ void ExecutionControl::announce_sync_point(
    wstring const &                   label,
    RTI1516_USERDATA const &          user_supplied_tag )
 {
-
    // Check to see if the synchronization point is known?
    if ( this->contains( label ) ) {
 
@@ -644,7 +646,7 @@ void ExecutionControl::role_determination_process()
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "SpaceFOM::ExecutionControlBase::role_determination_process():" << __LINE__
+                  errmsg << "SpaceFOM::ExecutionControl::role_determination_process():" << __LINE__
                          << " Unexpectedly the Federate is no longer an execution member."
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"

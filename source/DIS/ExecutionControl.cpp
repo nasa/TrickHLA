@@ -158,6 +158,9 @@ void ExecutionControl::initialize()
    this->add_sync_pnt( L"mtr_freeze" );
    this->add_sync_pnt( L"mtr_shutdown" );
 
+   // Make sure we initialize the base class.
+   TrickHLA::ExecutionControlBase::initialize();
+
    // Must use a preset master.
    if ( !this->is_master_preset() ) {
       ostringstream errmsg;
@@ -180,7 +183,7 @@ void ExecutionControl::initialize()
       }
    }
 
-   // Call the DIS ExecutionControl pre-multi-phasse initialization processes.
+   // Call the DIS ExecutionControl pre-multi-phase initialization processes.
    pre_multi_phase_init_processes();
 }
 
