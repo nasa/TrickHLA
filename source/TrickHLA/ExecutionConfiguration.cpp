@@ -192,6 +192,7 @@ void ExecutionConfiguration::configure_attributes()
 
 /*!
  * @job_class{initialization}
+ * NOTE: The initialize( manager ) function must be called before this function.
  */
 void ExecutionConfiguration::configure()
 {
