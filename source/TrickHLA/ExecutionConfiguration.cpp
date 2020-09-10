@@ -211,11 +211,6 @@ void ExecutionConfiguration::configure()
       federate = manager->get_federate();
    }
 
-   //FIXME: This porbably isn't needed anymore.
-   // Make sure we call the original function of the parent class so that
-   // the object is initialized completely.
-   this->Object::initialize( manager );
-
    // Release the memory used by the required_federates c-string.
    if ( required_federates != static_cast< char * >( NULL ) ) {
       TMM_delete_var_a( required_federates );
