@@ -33,39 +33,20 @@ NASA, Johnson Space Center\n
 // Default: NO_THLA_CHECK_SEND_AND_RECEIVE_COUNTS
 #define NO_THLA_CHECK_SEND_AND_RECEIVE_COUNTS
 
-// We support 3 different techniques to block waiting for data.
-// 1) Thread wait on a conditional variable with a timeout when
-//    THLA_THREAD_WAIT_FOR_DATA and THLA_THREAD_TIMED_WAIT_FOR_DATA are defined.
-// 2) Thread wait on a conditional variable with no timeout when
-//    THLA_THREAD_WAIT_FOR_DATA is defined and THLA_THREAD_TIMED_WAIT_FOR_DATA
-//    is not defined.
-// 3) Spin-lock with timeout when THLA_THREAD_WAIT_FOR_DATA is not defined.
-//
-// Set to THLA_THREAD_WAIT_FOR_DATA to use a thread conditional variable wait
-// for data to arrive.
-// Default: NO_THLA_THREAD_WAIT_FOR_DATA (i.e. Use a spin-lock.)
-#define NO_THLA_THREAD_WAIT_FOR_DATA
-
-// Set to THLA_THREAD_TIMED_WAIT_FOR_DATA to use a timed thread wait so that if
-// data does not come in the thread wait will timeout.
-// Default: THLA_THREAD_TIMED_WAIT_FOR_DATA
-#define THLA_THREAD_TIMED_WAIT_FOR_DATA
-
-// Set to THLA_10SEC_TIMEOUT_WHILE_WAITING_FOR_DATA to use a 10 second timeout
-// while waiting for data during a blocked read.
-// Default: THLA_10SEC_TIMEOUT_WHILE_WAITING_FOR_DATA
-#define THLA_10SEC_TIMEOUT_WHILE_WAITING_FOR_DATA
+// Measure the elapsed time between cyclic data reads.
+// Default: NO_THLA_CYCLIC_READ_TIME_STATS
+#define NO_THLA_CYCLIC_READ_TIME_STATS
 
 // Set to THLA_QUEUE_REFLECTED_ATTRIBUTES to enable the queue of the reflected
 // attributes values.
 // Default: THLA_QUEUE_REFLECTED_ATTRIBUTES
 #define THLA_QUEUE_REFLECTED_ATTRIBUTES
 
-// Set to THLA_INTRAFRAME_BLOCKING_READ_CONFIG to enable the settings for
-// blocking HLA data reads within the same frame.
-// Default: THLA_INTRAFRAME_BLOCKING_READ_CONFIG
-#define THLA_INTRAFRAME_BLOCKING_READ_CONFIG
-#ifdef THLA_INTRAFRAME_BLOCKING_READ_CONFIG
+// Set to THLA_BLOCKING_CYCLIC_READS_CONFIG to enable the settings for
+// blocking HLA cyclic data reads.
+// Default: THLA_BLOCKING_CYCLIC_READS_CONFIG
+#define THLA_BLOCKING_CYCLIC_READS_CONFIG
+#ifdef THLA_BLOCKING_CYCLIC_READS_CONFIG
 
 // Make sure object time logging is not defined since we don't want to
 // use that feature.
@@ -73,41 +54,28 @@ NASA, Johnson Space Center\n
 #      undef THLA_OBJECT_TIME_LOGGING
 #   endif
 
-// Use a 10-second timeout while waiting for the data to arrive.
-#   ifndef THLA_10SEC_TIMEOUT_WHILE_WAITING_FOR_DATA
-#      define THLA_10SEC_TIMEOUT_WHILE_WAITING_FOR_DATA
-#   endif
-
-// Configure to use the spin-lock, which is slightly faster than the
-// thread wait with timeout.
-#   ifdef THLA_THREAD_WAIT_FOR_DATA
-#      undef THLA_THREAD_WAIT_FOR_DATA
-#   endif
-
 #   if ( defined( __i386__ ) || defined( __x86_64__ ) )
 #      if defined( __APPLE__ )
-// For a Mac, use usleep() for the spin-lock delay instead of using
-// multiple NOP assembly instructions, which is much faster since it
-// yields the CPU so that the Fed-Ambassador callback thread has a
-// chance to run.
-#         ifndef THLA_USLEEP_DELAY_FOR_SPIN_LOCK
-#            define THLA_USLEEP_DELAY_FOR_SPIN_LOCK
+// For a Mac, do not use multiple NOP assembly instructions for the spin-lock
+// delay, which is much faster since it yields the CPU so the Fed-Ambassador
+// callback thread has a chance to run.
+#         ifdef THLA_NOP_DELAY_FOR_SPIN_LOCK
+#            undef THLA_NOP_DELAY_FOR_SPIN_LOCK
 #         endif
 #      else
-// For Linux, use multiple NOP assembly instructions for the spin-lock
+// For Linux, do not use multiple NOP assembly instructions for the spin-lock
 // delay instead of using usleep() because it is much faster.
-#         ifdef THLA_USLEEP_DELAY_FOR_SPIN_LOCK
-#            undef THLA_USLEEP_DELAY_FOR_SPIN_LOCK
+#         ifdef THLA_NOP_DELAY_FOR_SPIN_LOCK
+#            undef THLA_NOP_DELAY_FOR_SPIN_LOCK
 #         endif
 #      endif
 #   else
-// Otherwise for an unknown Processor, use usleep() for the spin-lock delay.
-#      ifndef THLA_USLEEP_DELAY_FOR_SPIN_LOCK
-#         define THLA_USLEEP_DELAY_FOR_SPIN_LOCK
+// Otherwise for an unknown Processor, do not use nop for the spin-lock delay.
+#      ifdef THLA_NOP_DELAY_FOR_SPIN_LOCK
+#         undef THLA_NOP_DELAY_FOR_SPIN_LOCK
 #      endif
 #   endif
-
-#endif // THLA_INTRAFRAME_BLOCKING_READ_CONFIG
+#endif // THLA_BLOCKING_CYCLIC_READS_CONFIG
 
 // Insert a compile time error if an unsupported version of Trick 17 is used.
 // Minimum supported Trick 17 version: 17.5.0

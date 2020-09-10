@@ -137,10 +137,16 @@ class Utilities
    // Public constructors and destructor.
    //
    /*! @brief Default constructor for the TrickHLA Utilities class. */
-   Utilities(){};
+   Utilities()
+   {
+      return;
+   }
 
    /*! @brief Destructor for the TrickHLA Utilities class. */
-   virtual ~Utilities(){};
+   virtual ~Utilities()
+   {
+      return;
+   }
 
   public:
    /*! @brief Get the endianness.

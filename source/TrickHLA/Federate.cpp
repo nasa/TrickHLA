@@ -4489,6 +4489,15 @@ void Federate::shutdown()
       }
 #endif
 
+#ifdef THLA_CYCLIC_READ_TIME_STATS
+      for ( int i = 0; i < this->manager->obj_count; ++i ) {
+         cout << "Federate::shutdown():" << __LINE__
+              << " Object[" << i << "]:'" << this->manager->objects[i].get_name() << "' "
+              << this->manager->objects[i].elapsed_time_stats.to_string()
+              << endl;
+      }
+#endif
+
       // Macro to save the FPU Control Word register value.
       TRICKHLA_SAVE_FPU_CONTROL_WORD;
 

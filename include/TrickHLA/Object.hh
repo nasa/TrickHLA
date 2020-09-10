@@ -20,6 +20,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../source/TrickHLA/Attribute.cpp}
+@trick_link_dependency{../source/TrickHLA/ElapsedTimeStats.cpp}
 @trick_link_dependency{../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../source/TrickHLA/Int64Interval.cpp}
 @trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
@@ -51,15 +52,11 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/attributes.h"
 
-// C based model includes.
-#if ( defined( THLA_THREAD_WAIT_FOR_DATA ) && defined( THLA_THREAD_TIMED_WAIT_FOR_DATA ) )
-#   include <sys/time.h>
-#endif
-
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/BasicClock.hh"
 #include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/ElapsedTimeStats.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/MutexLock.hh"
@@ -744,11 +741,6 @@ class Object
     * @param include_requested True to also included requeted attributes */
    void create_attribute_set( const DataUpdateEnum required_config, const bool include_requested );
 
-#if ( defined( THLA_THREAD_WAIT_FOR_DATA ) && defined( THLA_THREAD_TIMED_WAIT_FOR_DATA ) )
-   timespec cyclic_read_timeout; ///< @trick_io{**} Timeout for when we block waiting to receive data.
-   timeval  timeofday;           ///< @trick_io{**} Current time of day (wall clock).
-#endif
-
    MutexLock mutex;           ///< @trick_io{**} Mutex to lock thread over critical code sections.
    MutexLock ownership_mutex; ///< @trick_io{**} Mutex to lock thread over attribute ownership code sections.
 
@@ -756,11 +748,6 @@ class Object
    /*! @brief Gets the RTI Ambassador.
     *  @return Pointer to associated HLA RTIambassador instance. */
    RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador();
-
-#ifdef THLA_THREAD_WAIT_FOR_DATA
-   pthread_mutex_t data_change_mutex; ///< @trick_io{**} Mutex to lock thread when data_change flag is modified.
-   pthread_cond_t  data_change_cv;    ///< @trick_io{**} Pthread Condition Variable for data change flag.
-#endif
 
    BasicClock clock; ///< @trick_units{--} Clock time object.
 
@@ -801,6 +788,8 @@ class Object
   public:
    unsigned long long send_count;    ///< @trick_units{--} Number of times data from this object was sent.
    unsigned long long receive_count; ///< @trick_units{--} Number of times data for this object was received.
+
+   ElapsedTimeStats elapsed_time_stats; ///< @trick_units{--} Statistics of elapsed times between cyclic data reads.
 
   private:
    /*! @brief Sets the new value of the name attribute.
