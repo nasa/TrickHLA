@@ -60,9 +60,15 @@ class ObjectDeleted
    // Constructors / destructors
    //-----------------------------------------------------------------
    /*! @brief Default constructor for the TrickHLA ObjectDeleted class. */
-   ObjectDeleted(){};
+   ObjectDeleted()
+   {
+      return;
+   }
    /*! @brief Destructor for the TrickHLA ObjectDeleted class. */
-   virtual ~ObjectDeleted(){};
+   virtual ~ObjectDeleted()
+   {
+      return;
+   }
 
    // Use implicit copy constructor and assignment operator.
 
@@ -73,7 +79,10 @@ class ObjectDeleted
    /*! @brief Mark this specified object as deleted.
     *  @param theObj Deleted object. */
    virtual void deleted(
-      Object *theObj ){};
+      Object *theObj )
+   {
+      return;
+   }
 };
 
 } // namespace TrickHLA

@@ -67,9 +67,15 @@ class LagCompensation
    // Constructors / destructors
    //-----------------------------------------------------------------
    /*! @brief Default constructor for the TrickHLA LagCompensation class. */
-   LagCompensation() : object( NULL ){};
+   LagCompensation() : object( NULL )
+   {
+      return;
+   }
    /*! @brief Destructor for the TrickHLA LagCompensation class. */
-   virtual ~LagCompensation(){};
+   virtual ~LagCompensation()
+   {
+      return;
+   }
 
   public:
    /*! @brief Get the Attribute by FOM name.

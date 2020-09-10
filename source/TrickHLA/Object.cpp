@@ -17,6 +17,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{Attribute.cpp}
 @trick_link_dependency{DebugHandler.cpp}
+@trick_link_dependency{ElapsedTimeStats.cpp}
 @trick_link_dependency{Federate.cpp}
 @trick_link_dependency{Int64Interval.cpp}
 @trick_link_dependency{Int64Time.cpp}
@@ -57,6 +58,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Constants.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/ElapsedTimeStats.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Int64Time.hh"
@@ -132,7 +134,8 @@ Object::Object()
      thla_reflected_attributes_queue(),
      thla_attribute_map(),
      send_count( 0LL ),
-     receive_count( 0LL )
+     receive_count( 0LL ),
+     elapsed_time_stats()
 {
 #ifdef THLA_OBJECT_TIME_LOGGING
    received_gmt_time = 0.0;
@@ -140,11 +143,6 @@ Object::Object()
 
    // Make sure we allocate the map.
    this->attribute_values_map = new AttributeHandleValueMap();
-
-#ifdef THLA_THREAD_WAIT_FOR_DATA
-   pthread_mutex_init( &data_change_mutex, NULL );
-   pthread_cond_init( &data_change_cv, NULL );
-#endif
 }
 
 /*!
@@ -184,10 +182,6 @@ Object::~Object()
       (void)mutex.unlock();
       (void)ownership_mutex.unlock();
 
-#ifdef THLA_THREAD_WAIT_FOR_DATA
-      pthread_mutex_destroy( &data_change_mutex );
-      pthread_cond_destroy( &data_change_cv );
-#endif
       removed_instance = true;
    }
 }
@@ -2206,183 +2200,32 @@ void Object::receive_cyclic_data(
    // Block waiting for received data if the user has specified we must do so.
    if ( blocking_cyclic_read && !is_changed() ) {
 
-      // NOTE: usleep() is causing a 1 millisecond saw-tooth pattern in the
-      // latency between when we received the data in the FedAmb callback and
-      // when we process that data here. Dan Dexter 2/13/2008
-      //
-      // We support 3 different techniques to block waiting for data.
-      // 1) Thread wait on a conditional variable with a timeout.
-      // 2) Thread wait on a conditional variable with no timeout.
-      // 3) Spin-lock with timeout.
-
-#ifdef THLA_THREAD_WAIT_FOR_DATA
-#   ifdef THLA_THREAD_TIMED_WAIT_FOR_DATA
-      //------------------------------------------------------------------------
-      // Block waiting for data using a thread wait on a conditional variable
-      // with a timeout.
-
-      // Break the cycle time up into the whole and fractional parts.
-      double           whole_secs;
-      double           frac_secs;
-      static const int NANOSEC_PER_SECOND = 1000000000;
-
-#      ifdef THLA_10SEC_TIMEOUT_WHILE_WAITING_FOR_DATA
-      // Use a 10 second timeout.
-      frac_secs = modf( 10.0, &whole_secs );
-#      else
-      frac_secs = modf( cycle_time, &whole_secs );
-#      endif // THLA_10SEC_TIMEOUT_WHILE_WAITING_FOR_DATA
-
-      // Get the current time of day.
-      gettimeofday( &timeofday, NULL );
-
-      // Calculate the timeout from the cycle_time and time of day.
-      cyclic_read_timeout.tv_sec  = timeofday.tv_sec + (long)whole_secs;
-      cyclic_read_timeout.tv_nsec = ( timeofday.tv_usec * 1000 ) + (long)( frac_secs * NANOSEC_PER_SECOND );
-
-      // Do a range check on the nanoseconds field.
-      if ( cyclic_read_timeout.tv_nsec >= NANOSEC_PER_SECOND ) {
-         cyclic_read_timeout.tv_sec += (int)( cyclic_read_timeout.tv_nsec / NANOSEC_PER_SECOND );
-         cyclic_read_timeout.tv_nsec %= NANOSEC_PER_SECOND;
-      }
-
-      // Block waiting to receive the data or until we timeout.
-      int retval = 0;
-      pthread_mutex_lock( &data_change_mutex );
-      while ( !is_changed()
-              && ( retval == 0 )
-              && blocking_cyclic_read
-              && any_remotely_owned_subscribed_cyclic_attribute() ) {
-         retval = pthread_cond_timedwait( &data_change_cv,
-                                          &data_change_mutex,
-                                          &cyclic_read_timeout );
-      }
-      pthread_mutex_unlock( &data_change_mutex );
-
-#      ifdef HLA_PERFORMANCE_STUDY
-      // Print an error message if we timed out.
-      if ( retval == ETIMEDOUT ) {
-         // FOR THE HLA PERFORMANCE STUDY ONLY: Mark changed so that we can
-         // collect latency numbers taking the timeout into effect.
-         mark_changed();
-         send_hs( stderr, "Object::receive_cyclic_data():%d Timed out waiting for data.%c",
-                  __LINE__, THLA_NEWLINE );
-      }
-#      else  // !HLA_PERFORMANCE_STUDY
-
-      // Print an error message if we timed out.
-      if ( retval == ETIMEDOUT ) {
-         if ( is_changed() ) {
-            send_hs( stderr, "Object::receive_cyclic_data():%d Received data at a timeout boundary.%c",
-                     __LINE__, THLA_NEWLINE );
-         } else {
-            send_hs( stderr, "Object::receive_cyclic_data():%d Timed out waiting for data.%c",
-                     __LINE__, THLA_NEWLINE );
-         }
-      }
-#      endif // HLA_PERFORMANCE_STUDY
-
-#   else  // !THLA_THREAD_TIMED_WAIT_FOR_DATA
-
-      //------------------------------------------------------------------------
-      // Block waiting for data using a thread wait on a conditional variable
-      // with no timeout.
-      // NOTE: We could be stuck in an infinite loop if no data ever comes in!
-
-      // Thread wait on conditional variable with no timeout.
-      pthread_mutex_lock( &data_change_mutex );
-      while ( !is_changed()
-              && blocking_cyclic_read
-              && any_remotely_owned_subscribed_cyclic_attribute() ) {
-         // NOTE: Need to timeout the pthread condition variable.
-         pthread_cond_wait( &data_change_cv, &data_change_mutex );
-      }
-      pthread_mutex_unlock( &data_change_mutex );
-#   endif // THLA_THREAD_TIMED_WAIT_FOR_DATA
-#else     // !THLA_THREAD_WAIT_FOR_DATA
-      //------------------------------------------------------------------------
       // Block waiting for data using a spin-lock that supports a timeout.
-
       double time = clock.get_time();
 
-#   ifdef THLA_10SEC_TIMEOUT_WHILE_WAITING_FOR_DATA
       // Use a 10.0 second timeout.
       double timeout = time + 10.0;
-#   else
-      double timeout = time + cycle_time;
-#   endif // THLA_10SEC_TIMEOUT_WHILE_WAITING_FOR_DATA
 
-#   ifdef HLA_PERFORMANCE_STUDY
-      // We use a different way to wait for the data for the HLA-performance
-      // study because the assembly "nop" instruction causes less spikes in
-      // the latency but at the cost of keeping the CPU at 100%.
-
-      // Wait for the data to change by using a spin lock that can timeout.
-      unsiged int i;
-      while ( !is_changed()
-              && ( time < timeout )
-              && blocking_cyclic_read
-              && any_remotely_owned_subscribed_cyclic_attribute() ) {
-
-         // Wait for the data to change by executing NOP instructions.
-         for ( i = 0; i < 100; ++i ) {
-            // Execute "NOP" no-operation instruction (one-clock-cycle).
-            // NOTE: Volatile keyword is used to keep gcc from optimizing the
-            // line of assembly code and reducing the number of nop's.
-            // The :: indicates we won't use any input or output operand.
-            asm volatile( "nop" :: );
-            asm volatile( "nop" :: );
-            asm volatile( "nop" :: );
-            asm volatile( "nop" :: );
-            asm volatile( "nop" :: );
-            asm volatile( "nop" :: );
-            asm volatile( "nop" :: );
-            asm volatile( "nop" :: );
-            asm volatile( "nop" :: );
-            asm volatile( "nop" :: );
-         }
-         if ( !is_changed() ) {
-            // Get the current clock time.
-            time = clock.get_time();
-         }
-      }
-      if ( time >= timeout ) {
-         // FOR THE HLA PERFORMANCE STUDY ONLY: Mark changed so that we can
-         // collect latency numbers taking the timeout into effect.
-         mark_changed();
-
-         send_hs( stderr, "Object::receive_cyclic_data():%d Timed out \
-waiting for data at time %f seconds with timeout time %f and simulation time %f.%c",
-                  __LINE__, time, timeout, current_time, THLA_NEWLINE );
-      }
-#   else // !HLA_PERFORMANCE_STUDY
-
-#      ifdef THLA_USLEEP_DELAY_FOR_SPIN_LOCK
       // On average using "usleep()" to wait for data is faster but at the
-      // cost of latency spikes every once in a while. As a bonus the CPU
-      // utilization will be much less using usleep() as compared to the
-      // assembly "nop" instruction. If you care about hard realtime performance
-      // (i.e. maximum latency) then use the assembly "nop" method, otherwise
-      // usleep() will give better average performance mainly because it frees
-      // up the CPU allowing the HLA callback thread a better chance to run.
+      // cost of latency spikes every once in a while. The CPUutilization will
+      // be much less using usleep() as compared to the assembly "nop"
+      // instruction. If you care about hard realtime performance (i.e. maximum
+      // latency) then use the assembly "nop" method, otherwise usleep() will
+      // give better average performance mainly because it will free up the CPU
+      // allowing the HLA callback thread a better chance to run.
+      //
+      // NOTE: Using usleep() for a spin-lock delay will cause a 1 millisecond
+      // saw-tooth pattern in the latency between when we received the data in
+      // the FedAmb callback and when we process the data here. Dan Dexter 2/13/2008
       //
       // Wait for the data to change by using a spin lock that can timeout.
       while ( !is_changed()
               && ( time < timeout )
               && blocking_cyclic_read
               && any_remotely_owned_subscribed_cyclic_attribute() ) {
-         time = clock.get_time();
-      }
 
-#      else  //!THLA_USLEEP_DELAY_FOR_SPIN_LOCK
-
-      // Wait for the data to change by using a spin lock that can timeout.
-      unsigned int i;
-      while ( !is_changed()
-              && ( time < timeout )
-              && blocking_cyclic_read
-              && any_remotely_owned_subscribed_cyclic_attribute() ) {
-         for ( i = 0; i < 100; ++i ) {
+#ifdef THLA_NOP_DELAY_FOR_SPIN_LOCK
+         for ( unsigned int i = 0; i < 10; ++i ) {
             // Execute "NOP" no-operation instruction (one-clock-cycle).
             // NOTE: Volatile keyword is used to keep gcc from optimizing the
             // line of assembly code and reducing the number of nop's.
@@ -2401,8 +2244,11 @@ waiting for data at time %f seconds with timeout time %f and simulation time %f.
          if ( !is_changed() ) {
             time = clock.get_time();
          }
+#else  // !THLA_USLEEP_DELAY_FOR_SPIN_LOCK
+
+         time = clock.get_time();
+#endif // THLA_USLEEP_DELAY_FOR_SPIN_LOCK
       }
-#      endif //THLA_USLEEP_DELAY_FOR_SPIN_LOCK
 
       // Display a warning message if we timed out.
       if ( time >= timeout ) {
@@ -2418,8 +2264,6 @@ waiting for data at %f seconds (time-of-day) with a timeout of %f seconds \
                      __LINE__, time, timeout, current_time, THLA_NEWLINE );
          }
       }
-#   endif    // HLA_PERFORMANCE_STUDY
-#endif       // THLA_THREAD_WAIT_FOR_DATA
    }
 
    // Process the data now that it has been received (i.e. changed).
@@ -2429,6 +2273,10 @@ waiting for data at %f seconds (time-of-day) with a timeout of %f seconds \
       send_hs( stdout, "Object::receive_cyclic_data():%d for '%s' at t=%G%c",
                __LINE__, get_name(), get_granted_fed_time().get_time_in_seconds(),
                THLA_NEWLINE );
+#endif
+
+#ifdef THLA_CYCLIC_READ_TIME_STATS
+      elapsed_time_stats.measure();
 #endif
 
       // Unpack the buffer and copy the values to the object attributes.
@@ -4042,59 +3890,28 @@ void Object::unpack_attribute_buffers(
 
 void Object::set_to_unblocking_cyclic_reads()
 {
-#ifdef THLA_THREAD_WAIT_FOR_DATA
-   pthread_mutex_lock( &data_change_mutex );
-#endif
-
    this->blocking_cyclic_read       = false;
    this->first_blocking_cyclic_read = true;
-
-#ifdef THLA_THREAD_WAIT_FOR_DATA
-   pthread_cond_signal( &data_change_cv );
-   pthread_mutex_unlock( &data_change_mutex );
-#endif
 }
 
 void Object::notify_attribute_ownership_changed()
 {
-#ifdef THLA_THREAD_WAIT_FOR_DATA
-   pthread_mutex_lock( &data_change_mutex );
-   pthread_cond_signal( &data_change_cv );
-   pthread_mutex_unlock( &data_change_mutex );
-#endif
+   return;
 }
 
 void Object::mark_changed()
 {
-#ifdef THLA_THREAD_WAIT_FOR_DATA
-   pthread_mutex_lock( &data_change_mutex );
-#endif
-
    this->changed = true;
-
-#ifdef THLA_THREAD_WAIT_FOR_DATA
-   pthread_cond_signal( &data_change_cv );
-   pthread_mutex_unlock( &data_change_mutex );
-#endif
 }
 
 void Object::mark_unchanged()
 {
-#ifdef THLA_THREAD_WAIT_FOR_DATA
-   pthread_mutex_lock( &data_change_mutex );
-#endif
-
    this->changed = false;
 
    // Clear the change flag for each of the attributes as well.
    for ( int i = 0; i < attr_count; i++ ) {
       attributes[i].mark_unchanged();
    }
-
-#ifdef THLA_THREAD_WAIT_FOR_DATA
-   pthread_cond_signal( &data_change_cv );
-   pthread_mutex_unlock( &data_change_mutex );
-#endif
 }
 
 Int64Time const &Object::get_update_time_plus_lookahead()

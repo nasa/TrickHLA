@@ -56,9 +56,15 @@ class BasicClock
   public:
    // Public constructors and destructors.
    /*! @brief Default constructor for the TrickHLA BasicClock class. */
-   BasicClock() : first_pass( true ){};
+   BasicClock() : first_pass( true )
+   {
+      return;
+   }
    /*! @brief Destructor for the TrickHLA BasicClock class. */
-   virtual ~BasicClock(){}; // Destructor.
+   virtual ~BasicClock()
+   {
+      return;
+   }
 
    // Use implicit copy constructor and assignment operator.
 

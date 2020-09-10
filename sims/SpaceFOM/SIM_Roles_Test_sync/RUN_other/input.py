@@ -224,6 +224,9 @@ trick.exec_set_freeze_command(False)
 trick.sim_control_panel_set_enabled(False)
 trick.exec_set_stack_trace(False)
 
+# Log the elapsed-time between cyclic data reads.
+execfile( "Modified_data/elapsed_time.dr" )
+
 
 # =========================================================================
 # Set up the HLA interfaces.
