@@ -254,11 +254,11 @@ Trick simulation time as the default scenario-timeline.%c",
       }
    }
 
-   // Configure the ExecutionConfiguration object if present.
-   //TEMP
-   //   if ( execution_configuration != NULL ) {
-   //      execution_configuration->configure();
-   //   }
+   // Initialize then Configure the ExecutionConfiguration object if present.
+   if ( execution_configuration != NULL ) {
+      execution_configuration->initialize( this->manager );
+      execution_configuration->configure();
+   }
 }
 
 /*!
