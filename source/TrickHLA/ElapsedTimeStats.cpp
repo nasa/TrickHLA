@@ -34,7 +34,6 @@ NASA, Johnson Space Center\n
 #include "trick/clock_proto.h"
 
 // TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/ElapsedTimeStats.hh"
 
 using namespace std;
@@ -45,11 +44,11 @@ using namespace TrickHLA;
  */
 ElapsedTimeStats::ElapsedTimeStats()
    : first_pass( true ),
+     elapsed_time( 0.0 ),
+     prev_time( 0 ),
      count( 0 ),
      min( 0 ),
      max( 0 ),
-     elapsed_time( 0.0 ),
-     prev_time( 0 ),
      time_sum( 0.0 ),
      time_squared_sum( 0.0 )
 {
