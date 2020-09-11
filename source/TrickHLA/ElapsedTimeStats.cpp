@@ -26,8 +26,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <limits>
-#include <math.h>
+#include <cmath>
 #include <sstream>
 #include <string>
 
