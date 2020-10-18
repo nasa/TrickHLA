@@ -442,8 +442,8 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_pnts()
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "SRFOM::ExecutionControl::wait_for_all_multiphase_init_sync_pnts:" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution"
+                  errmsg << "DSES::ExecutionControl::wait_for_all_multiphase_init_sync_pnts:" << __LINE__
+                         << " ERROR: Unexpectedly the Federate is no longer an execution"
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
@@ -630,7 +630,7 @@ void ExecutionControl::set_next_execution_control_mode(
    if ( !this->is_master() ) {
       ostringstream errmsg;
       errmsg << "DSES::ExecutionControl::set_next_execution_mode():" << __LINE__
-             << " This should only be called by the Master federate!" << THLA_ENDL;
+             << " ERROR: This should only be called by the Master federate!" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
       return;
@@ -1199,7 +1199,7 @@ bool ExecutionControl::run_mode_transition()
    if ( sync_pnt == (TrickHLA::SyncPnt *)NULL ) {
       ostringstream errmsg;
       errmsg << "DSES::ExecutionControl::run_mode_transition():" << __LINE__
-             << " The 'mtr_run' sync-point was not found!" << THLA_ENDL;
+             << " ERROR: The 'mtr_run' sync-point was not found!" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    } else {
@@ -1291,7 +1291,7 @@ bool ExecutionControl::freeze_mode_transition()
    if ( sync_pnt == (TrickHLA::SyncPnt *)NULL ) {
       ostringstream errmsg;
       errmsg << "DSES::ExecutionControl::freeze_mode_transition():" << __LINE__
-             << " The 'mtr_freeze' sync-point was not found!" << THLA_ENDL;
+             << " ERROR: The 'mtr_freeze' sync-point was not found!" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    } else {

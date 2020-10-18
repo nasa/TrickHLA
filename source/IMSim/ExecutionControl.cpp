@@ -2106,7 +2106,7 @@ bool ExecutionControl::run_mode_transition()
             diff = go_to_run_time - this->get_cte_time();
             if ( fmod( diff, 1.0 ) == 0.0 ) {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                  send_hs( stdout, "ExecutionControl::run_mode_transition():%d Going to run in %G seconds.%c",
+                  send_hs( stdout, "IMSim::ExecutionControl::run_mode_transition():%d Going to run in %G seconds.%c",
                            __LINE__, diff, THLA_NEWLINE );
                }
             }
@@ -2116,7 +2116,7 @@ bool ExecutionControl::run_mode_transition()
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             double curr_cte_time = this->get_cte_time();
             diff                 = curr_cte_time - go_to_run_time;
-            send_hs( stdout, "ExecutionControl::run_mode_transition():%d \n  Going to run at CTE time %.18G seconds. \n  Current CTE time %.18G seconds. \n  Difference: %.9lf seconds.%c",
+            send_hs( stdout, "IMSim::ExecutionControl::run_mode_transition():%d \n  Going to run at CTE time %.18G seconds. \n  Current CTE time %.18G seconds. \n  Difference: %.9lf seconds.%c",
                      __LINE__, go_to_run_time, curr_cte_time, diff, THLA_NEWLINE );
          }
       }
@@ -2229,7 +2229,7 @@ void ExecutionControl::enter_freeze()
 
          if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             send_hs( stdout,
-                     "Federate::enter_freeze():%d announce_freeze:%s, freeze_federation:%s, freeze_scenario_time:%g %c",
+                     "IMSim::ExecutionControl::enter_freeze():%d announce_freeze:%s, freeze_federation:%s, freeze_scenario_time:%g %c",
                      __LINE__, ( federate->announce_freeze ? "Yes" : "No" ),
                      ( federate->freeze_the_federation ? "Yes" : "No" ),
                      freeze_scenario_time, THLA_NEWLINE );
@@ -2251,21 +2251,21 @@ bool ExecutionControl::check_freeze_exit()
    try {
       pause_sync_pts.achieve_all_sync_pnts( *( federate->get_RTI_ambassador() ), checktime );
    } catch ( SynchronizationPointLabelNotAnnounced &e ) {
-      send_hs( stderr, "Federate::check_freeze():%d EXCEPTION: SynchronizationPointLabelNotAnnounced%c",
+      send_hs( stderr, "IMSim::ExecutionControl::check_freeze():%d EXCEPTION: SynchronizationPointLabelNotAnnounced%c",
                __LINE__, THLA_NEWLINE );
    } catch ( FederateNotExecutionMember &e ) {
-      send_hs( stderr, "Federate::check_freeze():%d EXCEPTION: FederateNotExecutionMember%c",
+      send_hs( stderr, "IMSim::ExecutionControl::check_freeze():%d EXCEPTION: FederateNotExecutionMember%c",
                __LINE__, THLA_NEWLINE );
    } catch ( SaveInProgress &e ) {
-      send_hs( stderr, "Federate::check_freeze():%d EXCEPTION: SaveInProgress%c",
+      send_hs( stderr, "IMSim::ExecutionControl::check_freeze():%d EXCEPTION: SaveInProgress%c",
                __LINE__, THLA_NEWLINE );
    } catch ( RestoreInProgress &e ) {
-      send_hs( stderr, "Federate::check_freeze():%d EXCEPTION: RestoreInProgress%c",
+      send_hs( stderr, "IMSim::ExecutionControl::check_freeze():%d EXCEPTION: RestoreInProgress%c",
                __LINE__, THLA_NEWLINE );
    } catch ( RTIinternalError &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      send_hs( stderr, "Federate::check_freeze():%d EXCEPTION: RTIinternalError: '%s'%c",
+      send_hs( stderr, "IMSim::ExecutionControl::check_freeze():%d EXCEPTION: RTIinternalError: '%s'%c",
                __LINE__, rti_err_msg.c_str(), THLA_NEWLINE );
    }
 
@@ -2273,7 +2273,7 @@ bool ExecutionControl::check_freeze_exit()
 
    if ( pause_sync_pts.should_exit() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "Federate::check_freeze():%d SHUTDOWN NOW!%c",
+         send_hs( stdout, "IMSim::ExecutionControl::check_freeze():%d SHUTDOWN NOW!%c",
                   __LINE__, THLA_NEWLINE );
       }
       federate->set_restart( false );
@@ -2284,19 +2284,19 @@ bool ExecutionControl::check_freeze_exit()
       federate->set_restart( true );
       exec_set_exec_command( ExitCmd );
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "Federate::check_freeze():%d RESTART NOW!%c",
+         send_hs( stdout, "IMSim::ExecutionControl::check_freeze():%d RESTART NOW!%c",
                   __LINE__, THLA_NEWLINE );
       }
    } else if ( pause_sync_pts.should_reconfig() ) {
       federate->set_restart_cfg( true );
       exec_set_exec_command( ExitCmd );
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "Federate::check_freeze():%d RESTART RECONFIG NOW!%c",
+         send_hs( stdout, "IMSim::ExecutionControl::check_freeze():%d RESTART RECONFIG NOW!%c",
                   __LINE__, THLA_NEWLINE );
       }
    } else if ( pause_sync_pts.should_run() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "Federate::check_freeze():%d DOING UNFREEZE NOW!%c",
+         send_hs( stdout, "IMSim::ExecutionControl::check_freeze():%d DOING UNFREEZE NOW!%c",
                   __LINE__, THLA_NEWLINE );
       }
       federate->un_freeze();
@@ -2322,7 +2322,7 @@ void ExecutionControl::exit_freeze()
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "Federate::announce_freeze():" << __LINE__
+                  errmsg << "IMSim::ExecutionControl::announce_freeze():" << __LINE__
                          << " Unexpectedly the Federate is no longer an execution"
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
@@ -2452,7 +2452,7 @@ void ExecutionControl::start_federation_save_at_scenario_time(
 
    if ( freeze_interaction->get_handler() != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "Manager::start_federation_save_at_scenario_time(%g, '%s'):%d%c",
+         send_hs( stdout, "IMSim::ExecutionControl::start_federation_save_at_scenario_time(%g, '%s'):%d%c",
                   freeze_scenario_time, file_name, __LINE__, THLA_NEWLINE );
       }
       federate->set_announce_save();
@@ -2464,7 +2464,7 @@ void ExecutionControl::start_federation_save_at_scenario_time(
       get_manager()->initiate_federation_save( file_name );
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "Manager::start_federation_save_at_scenario_time(%g, '%s'):%d \
+         send_hs( stdout, "IMSim::ExecutionControl::start_federation_save_at_scenario_time(%g, '%s'):%d \
 freeze_interaction's HANLDER is NULL! Request was ignored!%c",
                   freeze_scenario_time, file_name, __LINE__, THLA_NEWLINE );
       }
@@ -2577,7 +2577,7 @@ bool ExecutionControl::check_scenario_freeze_time()
 
             if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                ostringstream infomsg;
-               infomsg << "Federate::check_scenario_freeze_time():" << __LINE__
+               infomsg << "IMSim::ExecutionControl::check_scenario_freeze_time():" << __LINE__
                        << " Going to Trick FREEZE mode immediately:" << endl;
                if ( federate->time_management ) {
                   infomsg << "  Granted HLA-time:" << federate->granted_time.get_time_in_seconds() << endl;
@@ -2618,7 +2618,7 @@ bool ExecutionControl::is_save_initiated()
             sleep_timer.reset();
             if ( !federate->is_execution_member() ) {
                ostringstream errmsg;
-               errmsg << "Federate::setup_checkpoint():" << __LINE__
+               errmsg << "IMSim::ExecutionControl::setup_checkpoint():" << __LINE__
                       << " Unexpectedly the Federate is no longer an execution"
                       << " member. This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
@@ -2656,9 +2656,9 @@ void ExecutionControl::convert_loggable_sync_pts()
       this->loggable_sync_pts = reinterpret_cast< LoggableTimedSyncPnt * >(
          alloc_type( (int)this->logged_sync_pts_count, "TrickHLA::LoggableSyncPts" ) );
       if ( this->loggable_sync_pts == static_cast< LoggableTimedSyncPnt * >( NULL ) ) {
-         send_hs( stderr, "Federate::convert_sync_pts():%d Could not allocate memory for loggable sync points.! %c",
+         send_hs( stderr, "IMSim::ExecutionControl::convert_sync_pts():%d Could not allocate memory for loggable sync points.! %c",
                   __LINE__, THLA_NEWLINE );
-         exec_terminate( __FILE__, "Federate::convert_sync_pts(): Could not allocate memory for loggable sync points.!" );
+         exec_terminate( __FILE__, "IMSim::ExecutionControl::convert_sync_pts(): Could not allocate memory for loggable sync points.!" );
          return;
       }
 

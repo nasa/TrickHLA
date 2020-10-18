@@ -25,9 +25,11 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <limits>
 #include <math.h>
 #include <time.h>
+
+// Trick include files.
+#include "trick/clock_proto.h"
 
 // TrickHLA include files.
 #include "TrickHLA/SleepTimeout.hh"
@@ -39,7 +41,7 @@ using namespace TrickHLA;
  */
 SleepTimeout::SleepTimeout()
 {
-   set( THLA_DEFAULT_SLEEP_TIMEOUT_IN_SECS, THLA_DEFAULT_SLEEP_WAIT_IN_NANOSEC );
+   set( THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
 }
 
 SleepTimeout::SleepTimeout(
@@ -58,30 +60,37 @@ void SleepTimeout::set(
    double timeout_seconds,
    long   sleep_micros )
 {
-   // Do a bounds check on the timeout time and calculate the timeout-count.
-   if ( timeout_seconds < ( sleep_micros * ( (double)std::numeric_limits< unsigned long >::max() / 1000000.0 ) ) ) {
-      this->timeout_count = (unsigned long)round( timeout_seconds * 1000000.0 / (double)sleep_micros );
-   } else {
-      this->timeout_count = std::numeric_limits< unsigned long >::max();
-   }
+   // Use a positive timeout time in microseconds.
+   this->timeout_time = fabs( timeout_seconds ) * 1000000; // in microseconds
 
    // Calculate the requested sleep-time.
    if ( sleep_micros >= 1000000 ) {
-      req.tv_sec  = ( sleep_micros / 1000000 );
-      req.tv_nsec = ( sleep_micros - ( req.tv_sec * 1000000 ) ) * 1000;
+      sleep_time.tv_sec  = ( sleep_micros / 1000000 );
+      sleep_time.tv_nsec = ( sleep_micros - ( sleep_time.tv_sec * 1000000 ) ) * 1000;
+   } else if ( sleep_micros > 0 ) {
+      sleep_time.tv_sec  = 0;
+      sleep_time.tv_nsec = sleep_micros * 1000;
    } else {
-      req.tv_sec  = 0;
-      req.tv_nsec = sleep_micros * 1000;
+      sleep_time.tv_sec  = 0;
+      sleep_time.tv_nsec = 0;
    }
 
-   // Make sure we do a reset now that the timeout and sleep values have changed.
+   // Make sure we do a reset now that the timeout and sleep values are set.
    reset();
 }
 
 int SleepTimeout::sleep()
 {
-   if ( count < timeout_count ) {
-      ++count;
-   }
-   return nanosleep( &req, NULL );
+   return nanosleep( &sleep_time, NULL );
+}
+
+const bool SleepTimeout::timeout()
+{
+   return ( clock_wall_time() >= this->timeout_clock_time );
+}
+
+/*! @brief Reset the internal timeout time. */
+void SleepTimeout::reset()
+{
+   this->timeout_clock_time = clock_wall_time() + this->timeout_time;
 }

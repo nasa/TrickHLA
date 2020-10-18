@@ -1569,7 +1569,7 @@ void Parameter::decode_opaque_data_from_buffer()
 
       // Do a sanity check on the decoded length, it should not be negative.
       size_t length;
-      if ( decoded_count < 0 ) { // cppcheck-suppress [knownConditionTrueFalse]
+      if ( decoded_count < 0 ) {
          send_hs( stderr, "Parameter::decode_opaque_data_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will use 0 instead.%c",
                   __LINE__, FOM_name, decoded_count, THLA_NEWLINE );
@@ -1587,7 +1587,7 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will us
          data_buff_size = 0;
       }
 
-      if ( length > data_buff_size ) { // cppcheck-suppress [unsignedLessThanZero]
+      if ( length > data_buff_size ) {
          send_hs( stderr, "Parameter::decode_opaque_data_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d > data buffer \
 size %d, will use the data buffer size instead.%c",
@@ -2226,7 +2226,7 @@ void Parameter::decode_string_from_buffer()
 
             // Do a sanity check on the decoded length, it should not be negative.
             size_t length;
-            if ( decoded_count < 0 ) { // cppcheck-suppress [knownConditionTrueFalse]
+            if ( decoded_count < 0 ) {
                send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING parameter '%s', decoded length %d < 0, will use 0 instead.%c",
                         __LINE__, FOM_name, decoded_count, THLA_NEWLINE );
@@ -2244,7 +2244,7 @@ WARNING: For ENCODING_UNICODE_STRING parameter '%s', decoded length %d < 0, will
                } else {
                   data_buff_size = 0;
                }
-               if ( length > data_buff_size ) { // cppcheck-suppress [unsignedLessThanZero]
+               if ( length > data_buff_size ) {
                   send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING parameter '%s', decoded length %d > data buffer \
 size %d, will use the data buffer size instead.%c",
@@ -2322,7 +2322,7 @@ size %d, will use the data buffer size instead.%c",
 
             // Sanity check, we should not get a negative element count.
             size_t num_elements;
-            if ( decoded_count < 0 ) { // cppcheck-suppress [knownConditionTrueFalse]
+            if ( decoded_count < 0 ) {
                send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING parmeter '%s', decoded element count %d < 0, will use 0 instead.%c",
                         __LINE__, FOM_name, decoded_count, THLA_NEWLINE );
@@ -2333,7 +2333,7 @@ WARNING: For ENCODING_UNICODE_STRING parmeter '%s', decoded element count %d < 0
 
             // Handle the situation where more strings are in the input encoding
             // than what exist in the ref-attributes.
-            if ( num_elements > num_items ) { // cppcheck-suppress [unsignedLessThanZero]
+            if ( num_elements > num_items ) {
                send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for parameter '%s'!%c",
                         __LINE__, num_elements, num_items, FOM_name, THLA_NEWLINE );
@@ -2374,7 +2374,7 @@ WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for 
 
                // Do a sanity check on the decoded length, it should not be negative.
                size_t length;
-               if ( decoded_inner_count < 0 ) { // cppcheck-suppress [knownConditionTrueFalse]
+               if ( decoded_inner_count < 0 ) {
                   send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING array element %d of %d, parameter '%s', the decoded \
 length %d < 0, will use 0 instead.%c",
@@ -2386,7 +2386,7 @@ length %d < 0, will use 0 instead.%c",
 
                // Do a sanity check on the decoded length as compared to how much
                // data remains in the buffer.
-               if ( length > data_buff_size ) { // cppcheck-suppress [unsignedLessThanZero]
+               if ( length > data_buff_size ) {
                   send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_UNICODE_STRING array element %d of %d, parameter '%s', the decoded \
 length %d > data buffer size %d, will use the data buffer size instead.%c",
@@ -2489,7 +2489,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
 
             // Do a sanity check on the decoded length, it should not be negative.
             size_t length;
-            if ( decoded_count < 0 ) { // cppcheck-suppress [knownConditionTrueFalse]
+            if ( decoded_count < 0 ) {
                send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING parmeter '%s', decoded length %d < 0, will use 0 instead.%c",
                         __LINE__, FOM_name, decoded_count, THLA_NEWLINE );
@@ -2507,7 +2507,7 @@ WARNING: For ENCODING_ASCII_STRING parmeter '%s', decoded length %d < 0, will us
                data_buff_size = 0;
             }
 
-            if ( length > data_buff_size ) { // cppcheck-suppress [unsignedLessThanZero]
+            if ( length > data_buff_size ) {
                send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING parameter '%s', decoded length %d > data buffer size \
 %d, will use the data buffer size instead.%c",
@@ -2580,7 +2580,7 @@ WARNING: For ENCODING_ASCII_STRING parameter '%s', decoded length %d > data buff
 
             // Sanity check, we should not get a negative element count.
             size_t num_elements;
-            if ( decoded_count < 0 ) { // cppcheck-suppress [knownConditionTrueFalse]
+            if ( decoded_count < 0 ) {
                send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING parameter '%s', decoded element count %d < 0, will use 0 instead.%c",
                         __LINE__, FOM_name, decoded_count, THLA_NEWLINE );
@@ -2591,7 +2591,7 @@ WARNING: For ENCODING_ASCII_STRING parameter '%s', decoded element count %d < 0,
 
             // Handle the situation where more strings are in the input encoding
             // than what exist in the ref-attributes.
-            if ( num_elements > num_items ) { // cppcheck-suppress [unsignedLessThanZero]
+            if ( num_elements > num_items ) {
                send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: Truncating array of ENCODING_ASCII_STRING from %d to %d elements for parameter '%s'!%c",
                         __LINE__, num_elements, num_items, FOM_name, THLA_NEWLINE );
@@ -2626,7 +2626,7 @@ WARNING: Truncating array of ENCODING_ASCII_STRING from %d to %d elements for pa
 
                // Do a sanity check on the decoded length, it should not be negative.
                size_t length;
-               if ( decoded_inner_count < 0 ) { // cppcheck-suppress [knownConditionTrueFalse]
+               if ( decoded_inner_count < 0 ) {
                   send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING array element %d, parameter '%s', the decoded \
 length %d < 0, will use 0 instead.%c",
@@ -2638,7 +2638,7 @@ length %d < 0, will use 0 instead.%c",
 
                // Do a sanity check on the decoded length as compared to how much
                // data remains in the buffer.
-               if ( length > data_buff_size ) { // cppcheck-suppress [unsignedLessThanZero]
+               if ( length > data_buff_size ) {
                   send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING array element %d, parameter '%s', the decoded \
 length %d > data buffer size %d, will use the data buffer size instead.%c",
@@ -2741,7 +2741,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
 
             // Do a sanity check on the decoded length, it should not be negative.
             size_t length;
-            if ( decoded_count < 0 ) { // cppcheck-suppress [knownConditionTrueFalse]
+            if ( decoded_count < 0 ) {
                send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA parameter '%s', decoded length %d < 0, will use 0 instead.%c",
                         __LINE__, FOM_name, decoded_count, THLA_NEWLINE );
@@ -2758,7 +2758,7 @@ WARNING: For ENCODING_OPAQUE_DATA parameter '%s', decoded length %d < 0, will us
             } else {
                data_buff_size = 0;
             }
-            if ( length > data_buff_size ) { // cppcheck-suppress [unsignedLessThanZero]
+            if ( length > data_buff_size ) {
                send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA parameter '%s', decoded length %d > data buffer size \
 %d, will use the data buffer size instead.%c",
@@ -2824,7 +2824,7 @@ WARNING: For ENCODING_OPAQUE_DATA parameter '%s', decoded length %d > data buffe
 
             // Sanity check, we should not get a negative element count.
             size_t num_elements;
-            if ( decoded_count < 0 ) { // cppcheck-suppress [knownConditionTrueFalse]
+            if ( decoded_count < 0 ) {
                send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA parameter '%s', decoded element count %d < 0, will use 0 instead.%c",
                         __LINE__, FOM_name, decoded_count, THLA_NEWLINE );
@@ -2835,7 +2835,7 @@ WARNING: For ENCODING_OPAQUE_DATA parameter '%s', decoded element count %d < 0, 
 
             // Handle the situation where more strings are in the input encoding
             // than what exist in the ref-attributes.
-            if ( num_elements > num_items ) { // cppcheck-suppress [unsignedLessThanZero]
+            if ( num_elements > num_items ) {
                send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: Truncating array of ENCODING_OPAQUE_DATA from %d to %d elements for parameter '%s'!%c",
                         __LINE__, num_elements, num_items, FOM_name, THLA_NEWLINE );
@@ -2870,7 +2870,7 @@ WARNING: Truncating array of ENCODING_OPAQUE_DATA from %d to %d elements for par
 
                // Do a sanity check on the decoded length, it should not be negative.
                size_t length;
-               if ( decoded_inner_count < 0 ) { // cppcheck-suppress [knownConditionTrueFalse]
+               if ( decoded_inner_count < 0 ) {
                   send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA array element %d, parameter '%s', the decoded \
 length %d < 0, will use 0 instead.%c",
@@ -2882,7 +2882,7 @@ length %d < 0, will use 0 instead.%c",
 
                // Do a sanity check on the decoded length as compared to how much
                // data remains in the buffer.
-               if ( length > data_buff_size ) { // cppcheck-suppress [unsignedLessThanZero]
+               if ( length > data_buff_size ) {
                   send_hs( stderr, "Parameter::decode_string_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA array element %d, parameter '%s', the decoded \
 length %d > data buffer size %d, will use the data buffer size instead.%c",

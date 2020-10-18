@@ -153,7 +153,7 @@ void ExecutionConfiguration::configure_attributes()
    if ( S_define_name == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::configure_attributes():" << __LINE__
-             << " Unexpected NULL S_define_name." << THLA_ENDL;
+             << " ERROR: Unexpected NULL S_define_name." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
       return;
@@ -229,7 +229,7 @@ void ExecutionConfiguration::configure()
    if ( manager == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::configure():" << __LINE__
-             << " Unexpected NULL TrickHLA::Manager." << THLA_ENDL;
+             << " ERROR: Unexpected NULL TrickHLA::Manager." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
       return;
@@ -518,9 +518,7 @@ void ExecutionConfiguration::set_least_common_time_step(
 void ExecutionConfiguration::setup_ref_attributes(
    Packing *packing_obj )
 {
-
-   exec_terminate( __FILE__,
-                   "SpaceFOM::ExecutionConfiguration::setup_ref_attributes() This routine does NOT work and should not be called!" );
+   exec_terminate( __FILE__, "SpaceFOM::ExecutionConfiguration::setup_ref_attributes() ERROR: This routine does NOT work and should not be called!" );
 
    //
    // Set up object properties specifically for the ExCO.
@@ -723,7 +721,7 @@ bool ExecutionConfiguration::wait_on_update() // RETURN: -- None.
             if ( !federate->is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "SpaceFOM::ExecutionConfiguration::wait_on_update():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"

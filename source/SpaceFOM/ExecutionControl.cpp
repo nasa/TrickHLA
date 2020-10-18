@@ -190,8 +190,8 @@ void ExecutionControl::initialize()
    // Must use a preset master.
    if ( !this->is_master_preset() ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::initialize(): WARNING:" << __LINE__
-             << " Only a preset master is supported. Make sure to set"
+      errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
+             << " WARNING: Only a preset master is supported. Make sure to set"
              << " 'THLA.federate.use_preset_master = true' in your input file."
              << " Setting use_preset_master to true!"
              << THLA_ENDL;
@@ -353,7 +353,7 @@ void ExecutionControl::setup_object_RTI_handles()
    } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_object_RTI_handles():" << __LINE__
-             << " Unexpected NULL ExCO!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL ExCO!" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    }
@@ -647,7 +647,7 @@ void ExecutionControl::role_determination_process()
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "SpaceFOM::ExecutionControl::role_determination_process():" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution member."
+                         << " ERROR: Unexpectedly the Federate is no longer an execution member."
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
@@ -877,7 +877,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
          exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():%d No root reference frame!%c",
+            send_hs( stdout, "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():%d WARNING: No root reference frame!%c",
                      __LINE__, THLA_NEWLINE );
          }
       }
@@ -1097,6 +1097,10 @@ void ExecutionControl::post_multi_phase_init_processes()
             break;
 
          case EXECUTION_CONTROL_SHUTDOWN:
+
+            send_hs( stdout, "SpaceFOM::ExecutionControl::post_multi_phase_init_process():%d Commanding Trick Exec to stop.%c",
+                     __LINE__, THLA_NEWLINE );
+
             // Tell Trick to shutdown.
             // The SpaceFOM ExecutionControl shutdown transition will be made from
             // the TrickHLA::Federate::shutdown() job.
@@ -1105,9 +1109,9 @@ void ExecutionControl::post_multi_phase_init_processes()
 
          default:
             ExCO->print_execution_configuration();
-            send_hs( stderr, "SpaceFOM::ExecutionControl::post_multi_phase_init_process():%d SpaceFOM ExecutionControl invalid execution mode (%s), exiting...%c",
+            send_hs( stderr, "SpaceFOM::ExecutionControl::post_multi_phase_init_process():%d ERROR: SpaceFOM ExecutionControl invalid execution mode (%s), exiting...%c",
                      __LINE__, execution_control_enum_to_string( this->requested_execution_control_mode ).c_str(), THLA_NEWLINE );
-            exec_terminate( __FILE__, "SpaceFOM::ExecutionControl::initialization_complete() SpaceFOM ExecutionControl invalid execution mode, exiting..." );
+            exec_terminate( __FILE__, "SpaceFOM::ExecutionControl::initialization_complete() ERROR: SpaceFOM ExecutionControl invalid execution mode, exiting..." );
       }
 
    } else {
@@ -1163,10 +1167,9 @@ void ExecutionControl::post_multi_phase_init_processes()
 
                default:
                   ExCO->print_execution_configuration();
-                  send_hs( stderr, "SpaceFOM::ExecutionControl::post_multi_phase_init_process():%d SpaceFOM ExecutionControl invalid execution mode (%s), exiting...%c",
+                  send_hs( stderr, "SpaceFOM::ExecutionControl::post_multi_phase_init_process():%d ERROR: SpaceFOM ExecutionControl invalid execution mode (%s), exiting...%c",
                            __LINE__, execution_control_enum_to_string( this->requested_execution_control_mode ).c_str(), THLA_NEWLINE );
-                  exec_terminate( __FILE__,
-                                  "SpaceFOM::ExecutionControl::post_multi_phase_init_process() SpaceFOM ExecutionControl invalid execution mode, exiting..." );
+                  exec_terminate( __FILE__, "SpaceFOM::ExecutionControl::post_multi_phase_init_process() ERROR: SpaceFOM ExecutionControl invalid execution mode, exiting..." );
             }
 
          } // End of MTR check.
@@ -1234,7 +1237,7 @@ void ExecutionControl::shutdown()
          // federate before tearing things down.
          long sleep_pad_micros = Int64Interval::to_microseconds( this->get_time_padding() );
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "SpaceFOM::ExecutionControl::shutdown():%d: sleep for %d microsecond.%c",
+            send_hs( stdout, "SpaceFOM::ExecutionControl::shutdown():%d: sleep for %d microseconds.%c",
                      __LINE__, sleep_pad_micros, THLA_NEWLINE );
          }
          (void)Utilities::micro_sleep( sleep_pad_micros );
@@ -1321,7 +1324,7 @@ void ExecutionControl::set_next_execution_control_mode(
    if ( !this->is_master() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::set_next_execution_mode():" << __LINE__
-             << " This should only be called by the Master federate!" << THLA_ENDL;
+             << " ERROR: This should only be called by the Master federate!" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
       return;
@@ -1427,8 +1430,8 @@ bool ExecutionControl::check_mode_transition_request()
    // Only the Master federate receives and processes Mode Transition Requests.
    if ( !this->is_master() ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::check_mode_transition_request():"
-             << __LINE__ << " WARNING: Received Mode Transition Request and not Master: "
+      errmsg << "SpaceFOM::ExecutionControl::check_mode_transition_request():" << __LINE__
+             << " WARNING: Received Mode Transition Request and not Master: "
              << mtr_enum_to_string( this->pending_mtr )
              << THLA_ENDL;
       send_hs( stdout, (char *)errmsg.str().c_str() );
@@ -1438,8 +1441,8 @@ bool ExecutionControl::check_mode_transition_request()
    // First check to see if this is a valid MTR.
    if ( !is_mtr_valid( this->pending_mtr ) ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::check_mode_transition_request():"
-             << __LINE__ << " WARNING: Invalid Mode Transition Request: "
+      errmsg << "SpaceFOM::ExecutionControl::check_mode_transition_request():" << __LINE__
+             << " WARNING: Invalid Mode Transition Request: "
              << mtr_enum_to_string( this->pending_mtr )
              << THLA_ENDL;
       send_hs( stdout, (char *)errmsg.str().c_str() );
@@ -1544,6 +1547,9 @@ bool ExecutionControl::process_mode_transition_request()
          // Announce the shutdown.
          this->shutdown_mode_announce();
 
+         send_hs( stdout, "SpaceFOM::ExecutionControl::process_mode_transition_request():%d MTR_GOTO_SHUTDOWN %c",
+                  __LINE__, THLA_NEWLINE );
+
          // Tell Trick to shutdown sometime in the future.
          // The SpaceFOM ExecutionControl shutdown transition will be made from
          // the TrickHLA::Federate::shutdown() job.
@@ -1585,8 +1591,8 @@ bool ExecutionControl::process_execution_control_updates()
 
    // The Master federate should never have to process ExCO updates.
    if ( this->is_master() ) {
-      errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():"
-             << __LINE__ << " WARNING: Master receive an ExCO update: "
+      errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
+             << " WARNING: Master receive an ExCO update: "
              << execution_control_enum_to_string( this->requested_execution_control_mode )
              << THLA_ENDL;
       send_hs( stdout, (char *)errmsg.str().c_str() );
@@ -1602,8 +1608,8 @@ bool ExecutionControl::process_execution_control_updates()
 
    // Check for consistency between ExecutionControl and ExCO ExcutionMode.
    if ( exco_cem != current_exection_mode ) {
-      errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():"
-             << __LINE__ << " WARNING: Current execution mode mismatch between ExecutionControl ("
+      errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
+             << " WARNING: Current execution mode mismatch between ExecutionControl ("
              << execution_control_enum_to_string( this->current_execution_control_mode )
              << ") and the ExCO current execution mode ("
              << execution_mode_enum_to_string( exco_cem )
@@ -1624,8 +1630,8 @@ bool ExecutionControl::process_execution_control_updates()
          this->scenario_freeze_time             = ExCO->next_mode_scenario_time;
          this->simulation_freeze_time           = this->scenario_timeline->compute_simulation_time( this->scenario_freeze_time );
       } else {
-         errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():"
-                << __LINE__ << " WARNING: Invalid ExCO next execution mode: "
+         errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
+                << " WARNING: Invalid ExCO next execution mode: "
                 << execution_mode_enum_to_string( exco_nem ) << "!"
                 << THLA_ENDL;
          send_hs( stdout, (char *)errmsg.str().c_str() );
@@ -1656,15 +1662,19 @@ bool ExecutionControl::process_execution_control_updates()
             this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
             ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
 
+            if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+               send_hs( stdout, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN %c",
+                        __LINE__, THLA_NEWLINE );
+            }
+
             // Tell the TrickHLA::Federate to shutdown.
             // The SpaceFOM ExecutionControl shutdown transition will be made from
             // the TrickHLA::Federate::shutdown() job.
             the_exec->stop();
 
          } else {
-
-            errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():"
-                   << __LINE__ << " WARNING: Execution mode mismatch between current mode ("
+            errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
+                   << " WARNING: Execution mode mismatch between current mode ("
                    << execution_control_enum_to_string( this->current_execution_control_mode )
                    << ") and the requested execution mode ("
                    << execution_control_enum_to_string( this->requested_execution_control_mode )
@@ -1688,6 +1698,11 @@ bool ExecutionControl::process_execution_control_updates()
             // Mark the current execution mode as SHUTDOWN.
             this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
             ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
+
+            if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+               send_hs( stdout, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN %c",
+                        __LINE__, THLA_NEWLINE );
+            }
 
             // Tell the TrickHLA::Federate to shutdown.
             // The SpaceFOM ExecutionControl shutdown transition will be made from
@@ -1724,8 +1739,8 @@ bool ExecutionControl::process_execution_control_updates()
 
          } else {
 
-            errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():"
-                   << __LINE__ << " WARNING: Execution mode mismatch between current mode ("
+            errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
+                   << " WARNING: Execution mode mismatch between current mode ("
                    << execution_control_enum_to_string( this->current_execution_control_mode )
                    << ") and the requested execution mode ("
                    << execution_control_enum_to_string( this->requested_execution_control_mode )
@@ -1748,8 +1763,8 @@ bool ExecutionControl::process_execution_control_updates()
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                // Print out a diagnostic warning message.
-               errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():"
-                      << __LINE__ << " WARNING: Execution mode mismatch between current mode ("
+               errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
+                      << " WARNING: Execution mode mismatch between current mode ("
                       << execution_control_enum_to_string( this->current_execution_control_mode )
                       << ") and the requested execution mode ("
                       << execution_control_enum_to_string( this->requested_execution_control_mode )
@@ -1761,6 +1776,11 @@ bool ExecutionControl::process_execution_control_updates()
             // Mark the current execution mode as SHUTDOWN.
             this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
             ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
+
+            if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+               send_hs( stdout, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN %c",
+                        __LINE__, THLA_NEWLINE );
+            }
 
             // Tell the TrickHLA::Federate to shutdown.
             // The SpaceFOM ExecutionControl shutdown transition will be made from
@@ -1801,8 +1821,8 @@ bool ExecutionControl::process_execution_control_updates()
          } else {
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-               errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():"
-                      << __LINE__ << " WARNING: Execution mode mismatch between current mode ("
+               errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
+                      << " WARNING: Execution mode mismatch between current mode ("
                       << execution_control_enum_to_string( this->current_execution_control_mode )
                       << ") and the requested execution mode ("
                       << execution_control_enum_to_string( this->requested_execution_control_mode )
@@ -1844,8 +1864,8 @@ bool ExecutionControl::process_execution_control_updates()
          } else {
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-               errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():"
-                      << __LINE__ << " WARNING: Execution mode mismatch between current mode ("
+               errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
+                      << " WARNING: Execution mode mismatch between current mode ("
                       << execution_control_enum_to_string( this->current_execution_control_mode )
                       << ") and the requested execution mode ("
                       << execution_control_enum_to_string( this->requested_execution_control_mode )
@@ -1866,8 +1886,8 @@ bool ExecutionControl::process_execution_control_updates()
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             // Once in SHUTDOWN, we cannot do anything else.
-            errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():"
-                   << __LINE__ << " WARNING: Shutting down but received mode transition: "
+            errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
+                   << " WARNING: Shutting down but received mode transition: "
                    << execution_control_enum_to_string( this->requested_execution_control_mode )
                    << THLA_ENDL;
             send_hs( stdout, (char *)errmsg.str().c_str() );
@@ -1935,7 +1955,7 @@ bool ExecutionControl::run_mode_transition()
    if ( sync_pnt == (TrickHLA::SyncPnt *)NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::run_mode_transition():" << __LINE__
-             << " The 'mtr_run' sync-point was not found!" << THLA_ENDL;
+             << " ERROR: The 'mtr_run' sync-point was not found!" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    } else {
@@ -1996,7 +2016,8 @@ bool ExecutionControl::run_mode_transition()
          // Print debug message if appropriate.
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             double curr_cte_time = this->get_cte_time();
-            diff                 = curr_cte_time - go_to_run_time;
+
+            diff = curr_cte_time - go_to_run_time;
             send_hs( stdout, "SpaceFOM::ExecutionControl::run_mode_transition():%d \n  Going to run at CTE time %.18G seconds. \n  Current CTE time %.18G seconds. \n  Difference: %.9lf seconds.%c",
                      __LINE__, go_to_run_time, curr_cte_time, diff, THLA_NEWLINE );
          }
@@ -2026,7 +2047,7 @@ bool ExecutionControl::freeze_mode_transition()
    if ( sync_pnt == (TrickHLA::SyncPnt *)NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::freeze_mode_transition():" << __LINE__
-             << " The 'mtr_freeze' sync-point was not found!" << THLA_ENDL;
+             << " ERROR: The 'mtr_freeze' sync-point was not found!" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    } else {
@@ -2049,7 +2070,6 @@ bool ExecutionControl::freeze_mode_transition()
 
 void ExecutionControl::shutdown_mode_announce()
 {
-
    // Only the Master federate will ever announce a shutdown.
    if ( !this->is_master() ) {
       return;
@@ -2119,7 +2139,7 @@ bool ExecutionControl::check_for_shutdown()
 bool ExecutionControl::check_for_shutdown_with_termination()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_FULL_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "SpaceFOM::ExecutionControl::check_for_shutdown_with_termination():%d Checking for shutdown. %c",
+      send_hs( stdout, "SpaceFOM::ExecutionControl::check_for_shutdown_with_termination():%d Checking for shutdown.%c",
                __LINE__, THLA_NEWLINE );
    }
 
@@ -2127,10 +2147,14 @@ bool ExecutionControl::check_for_shutdown_with_termination()
    // If so, it's time to say good bye.
    if ( this->check_for_shutdown() ) {
       ostringstream errmsg;
-      errmsg << "ExecutionControl::check_for_shutdown_with_termination():" << __LINE__
-             << " Federate '" << this->federate->get_federate_name()
-             << "' Shutdown detected: '" << federate->get_federation_name()
-             << "' Federation detected 'mtr_shutdown' sync-point '" << THLA_ENDL;
+      errmsg << "SpaceFOM::ExecutionControl::check_for_shutdown_with_termination():" << __LINE__
+             << " WARNING: This Federate '" << this->federate->get_federate_name()
+             << "' detected a Shutdown sync-point 'mtr_shutdown' for the '"
+             << federate->get_federation_name() << "' Federation."
+             << THLA_ENDL;
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         send_hs( stderr, (char *)errmsg.str().c_str() );
+      }
 
       // Tell the federate to shutdown.
       this->federate->shutdown();
@@ -2138,7 +2162,6 @@ bool ExecutionControl::check_for_shutdown_with_termination()
       // Wait a little while for the Federate HLA interface to shutdown before
       // we terminate.
       (void)Utilities::micro_sleep( 500000 );
-      send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
 
       return true;
@@ -2241,6 +2264,12 @@ bool ExecutionControl::check_freeze_exit()
 
       // Check for Trick shutdown command.
       if ( the_exec->get_exec_command() == ExitCmd ) {
+
+         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+            send_hs( stdout, "SpaceFOM::ExecutionControl::check_freeze_exit():%d Trick shutdown commanded.%c",
+                     __LINE__, THLA_NEWLINE );
+         }
+
          // Tell the TrickHLA::Federate to shutdown.
          // The SpaceFOM ExecutionControl shutdown transition will be made from
          // the TrickHLA::Federate::shutdown() job.
@@ -2257,6 +2286,11 @@ bool ExecutionControl::check_freeze_exit()
 
       // Check for shutdown.
       if ( this->current_execution_control_mode == EXECUTION_CONTROL_SHUTDOWN ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+            send_hs( stdout, "SpaceFOM::ExecutionControl::check_freeze_exit():%d Execution Control Shutdown commanded.%c",
+                     __LINE__, THLA_NEWLINE );
+         }
+
          // Tell the TrickHLA::Federate to shutdown.
          // The SpaceFOM execution control shutdown transition will be made from
          // the TrickHLA::Federate::shutdown() job.
@@ -2390,8 +2424,7 @@ void ExecutionControl::send_init_root_ref_frame()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "SpaceFOM::ExecutionControl::send_init_root_ref_frame():%d Late joining \
 federate so the data will not be sent for '%s'.%c",
-                  __LINE__, execution_configuration->get_name(),
-                  THLA_NEWLINE );
+                  __LINE__, execution_configuration->get_name(), THLA_NEWLINE );
       }
       return;
    }
@@ -2422,7 +2455,8 @@ void ExecutionControl::send_root_ref_frame()
    rrf_obj = root_ref_frame->get_object();
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "SpaceFOM::ExecutionControl::send_root_ref_frame():%d%c", __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "SpaceFOM::ExecutionControl::send_root_ref_frame():%d%c",
+               __LINE__, THLA_NEWLINE );
    }
 
    // Make sure we have at least one piece of ExCO data we can send.
@@ -2434,11 +2468,11 @@ void ExecutionControl::send_root_ref_frame()
    } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::send_root_ref_frame():" << __LINE__
-             << " ERROR: Root Reference Frame"
-             << " is not configured to send at least one object attribute. Make"
-             << " sure at least one 'root_ref_frame' attribute has 'publish = true'"
-             << " set. Please check your input or modified-data files to make"
-             << " sure the 'publish' value is correctly specified." << THLA_ENDL;
+             << " ERROR: Root Reference Frame is not configured to send at"
+             << " least one object attribute. Make sure at least one"
+             << " 'root_ref_frame' attribute has 'publish = true' set. Please"
+             << " check your input or modified-data files to make sure the"
+             << " 'publish' value is correctly specified." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    }
@@ -2504,7 +2538,7 @@ void ExecutionControl::receive_root_ref_frame()
             if ( !federate->is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "SpaceFOM::ExecutionControl::receive_root_ref_frame():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
@@ -2581,8 +2615,8 @@ void ExecutionControl::set_time_padding( double t )
    // Need to check that time padding is valid.
    if ( ( int_time % least_common_time_step ) != 0 ) {
       ostringstream msg;
-      msg << "DSES::ExecutionControl::set_time_padding():" << __LINE__
-          << " Time padding value (" << t
+      msg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
+          << " ERROR: Time padding value (" << t
           << " must be an integer multiple of the Least Common Time Step ("
           << least_common_time_step << ")!" << THLA_NEWLINE;
       send_hs( stderr, msg.str().c_str() );
@@ -2596,7 +2630,7 @@ void ExecutionControl::set_time_padding( double t )
    // transitions.
    if ( int_time < ( 3 * least_common_time_step ) ) {
       ostringstream errmsg;
-      errmsg << "DSES::ExecutionControl::set_time_padding():" << __LINE__
+      errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
              << " ERROR: Mode transition padding time (" << int_time
              << " microseconds) is not a multiple of 3 or more of the ExCO"
              << " Least Common Time Step (" << least_common_time_step

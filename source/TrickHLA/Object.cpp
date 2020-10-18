@@ -195,9 +195,9 @@ void Object::initialize(
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    if ( trickhla_mgr == NULL ) {
-      send_hs( stderr, "Object::initialize():%d Unexpected NULL Trick-HLA-Manager!%c",
+      send_hs( stderr, "Object::initialize():%d ERROR: Unexpected NULL Trick-HLA-Manager!%c",
                __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "Object::initialize() Unexpected NULL Trick-HLA-Manager!" );
+      exec_terminate( __FILE__, "Object::initialize() ERROR: Unexpected NULL Trick-HLA-Manager!" );
       return;
    }
    this->manager = trickhla_mgr;
@@ -213,10 +213,11 @@ void Object::initialize(
 
    // Make sure we have a valid object instance name if the user has indicated
    // that we are creating the HLA instance or if the instance name is required.
-   if ( ( is_create_HLA_instance() || is_name_required() ) && ( ( name == NULL ) || ( *name == '\0' ) ) ) {
+   if ( ( is_create_HLA_instance() || is_name_required() )
+        && ( ( name == NULL ) || ( *name == '\0' ) ) ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
-             << " Missing Object Name. Please check your input or modified-data"
+             << " ERROR: Missing Object Name. Please check your input or modified-data"
              << " files to make sure the object name is correctly specified."
              << " A valid object instance name is required if you are creating"
              << " an HLA instance of this object (i.e. 'create_HLA_instance'"
@@ -233,7 +234,7 @@ void Object::initialize(
    if ( ( FOM_name == NULL ) || ( *FOM_name == '\0' ) ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
-             << " Object '" << name << "' is missing the Object FOM Name."
+             << " ERROR: Object '" << name << "' is missing the Object FOM Name."
              << " Please check your input or modified-data files to make sure"
              << " the object FOM name is correctly specified." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
@@ -244,7 +245,7 @@ void Object::initialize(
    if ( ( lag_comp_type < LAG_COMPENSATION_FIRST_VALUE ) || ( lag_comp_type > LAG_COMPENSATION_LAST_VALUE ) ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
-             << " For object '" << name << "', the Lag-Compensation Type"
+             << " ERROR: For object '" << name << "', the Lag-Compensation Type"
              << " setting 'lag_comp_type' has a value that is out of the valid"
              << " range of " << LAG_COMPENSATION_FIRST_VALUE << " to "
              << LAG_COMPENSATION_LAST_VALUE << ". Please check your input"
@@ -258,7 +259,7 @@ void Object::initialize(
    if ( ( lag_comp_type != LAG_COMPENSATION_NONE ) && ( lag_comp == NULL ) ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
-             << " For object '" << name << "', Lag-Compensation 'lag_comp_type'"
+             << " ERROR: For object '" << name << "', Lag-Compensation 'lag_comp_type'"
              << " is specified, but 'lag_comp' is NULL! Please check your input"
              << " or modified-data files to make sure the Lag-Compensation type"
              << " and object are correctly specified." << THLA_ENDL;
@@ -270,7 +271,7 @@ void Object::initialize(
    if ( ( attr_count > 0 ) && ( attributes == NULL ) ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
-             << " For object '" << name << "', the 'attr_count' is "
+             << " ERROR: For object '" << name << "', the 'attr_count' is "
              << attr_count << " but no 'attributes' are"
              << " specified. Please check your input or modified-data files to"
              << " make sure the attributes are correctly specified."
@@ -284,7 +285,7 @@ void Object::initialize(
    if ( ( attr_count <= 0 ) && ( attributes != NULL ) ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
-             << " For object '" << name << "', the 'attr_count' is "
+             << " ERROR: For object '" << name << "', the 'attr_count' is "
              << attr_count << " but 'attributes' have been"
              << " specified. Please check your input or modified-data files to"
              << " make sure the attributes are correctly specified."
@@ -298,7 +299,7 @@ void Object::initialize(
    if ( ( packing != NULL ) && ( dynamic_cast< Packing * >( packing ) == NULL ) ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
-             << " For object '" << name << "',"
+             << " ERROR: For object '" << name << "',"
              << " the 'packing' setting does not point to a class that"
              << " extends the Packing class. Please check your input"
              << " or modified-data files to make sure the attributes are"
@@ -312,7 +313,7 @@ void Object::initialize(
    if ( ( ownership != NULL ) && ( dynamic_cast< OwnershipHandler * >( ownership ) == NULL ) ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
-             << " For object '" << name << "',"
+             << " ERROR: For object '" << name << "',"
              << " the 'ownership' setting does not point to a class that"
              << " extends the OwnershipHandler class. Please check"
              << " your input or modified-data files to make sure the"
@@ -326,7 +327,7 @@ void Object::initialize(
    if ( ( deleted != NULL ) && ( dynamic_cast< ObjectDeleted * >( deleted ) == NULL ) ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
-             << " For object '" << name << "', the 'deleted' setting does not"
+             << " ERROR: For object '" << name << "', the 'deleted' setting does not"
              << " point to a class that extends the ObjectDeleted"
              << " class. Please check your input or modified-data files to make"
              << " sure the attributes are correctly specified." << THLA_ENDL;
@@ -364,7 +365,7 @@ void Object::initialize(
       if ( ( attributes[i].get_FOM_name() == NULL ) || ( *( attributes[i].get_FOM_name() ) == '\0' ) ) {
          ostringstream errmsg;
          errmsg << "Object::initialize():" << __LINE__
-                << " Object with FOM Name '" << name << "' has a missing"
+                << " ERROR: Object with FOM Name '" << name << "' has a missing"
                 << " Attribute FOM Name at array index " << i << ". Please"
                 << " check your input or modified-data files to make sure the"
                 << " object attribute FOM name is correctly specified."
@@ -390,7 +391,7 @@ void Object::initialize(
    if ( ( lag_comp != NULL ) && ( dynamic_cast< LagCompensation * >( lag_comp ) == NULL ) ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
-             << " For object '" << name << "', the 'lag_comp' setting does not"
+             << " ERROR: For object '" << name << "', the 'lag_comp' setting does not"
              << " point to a class that extends the LagCompensation"
              << " class. Please check your input or modified-data files to make"
              << " sure the attributes are correctly specified." << THLA_ENDL;
@@ -1033,7 +1034,7 @@ Requesting reservation of Object instance name '%s'.%c",
          StringUtilities::to_string( rti_err_msg, e.what() );
          ostringstream errmsg;
          errmsg << "Object::reserve_object_name_with_RTI():" << __LINE__
-                << " Exception reserving '" << get_name() << "': '"
+                << " ERROR: Exception reserving '" << get_name() << "': '"
                 << rti_err_msg << "'.";
          send_hs( stderr, (char *)errmsg.str().c_str() );
          exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
@@ -1086,7 +1087,7 @@ Waiting on reservation of Object Instance Name '%s'.%c",
          if ( !trick_fed->is_execution_member() ) {
             ostringstream errmsg;
             errmsg << "Object::wait_on_object_name_reservation():" << __LINE__
-                   << " Unexpectedly the Federate is no longer an execution member."
+                   << " ERROR: Unexpectedly the Federate is no longer an execution member."
                    << " This means we are either not connected to the"
                    << " RTI or we are no longer joined to the federation"
                    << " execution because someone forced our resignation at"
@@ -1189,7 +1190,7 @@ Detected object already registered '%s' Instance-ID:%s%c",
          StringUtilities::to_string( rti_err_msg, e.what() );
          ostringstream errmsg;
          errmsg << "Object::register_object_with_RTI():" << __LINE__
-                << " Exception registering '" << get_name() << "': '"
+                << " ERROR: Exception registering '" << get_name() << "': '"
                 << rti_err_msg << "'." << THLA_ENDL;
          send_hs( stderr, (char *)errmsg.str().c_str() );
          exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
@@ -1234,7 +1235,7 @@ Detected object already registered '%s' Instance-ID:%s%c",
             StringUtilities::to_string( rti_err_msg, e.what() );
             ostringstream errmsg;
             errmsg << "Object::register_object_with_RTI():" << __LINE__
-                   << " Exception getting instance name for '" << get_name()
+                   << " ERROR: Exception getting instance name for '" << get_name()
                    << "' ID:" << id_str << "  '" << rti_err_msg << "'." << THLA_ENDL;
             send_hs( stderr, (char *)errmsg.str().c_str() );
             exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
@@ -1276,7 +1277,7 @@ void Object::wait_on_object_registration()
          if ( !trick_fed->is_execution_member() ) {
             ostringstream errmsg;
             errmsg << "Object::wait_on_object_registration():" << __LINE__
-                   << " Unexpectedly the Federate is no longer an execution member."
+                   << " ERROR: Unexpectedly the Federate is no longer an execution member."
                    << " This means we are either not connected to the"
                    << " RTI or we are no longer joined to the federation"
                    << " execution because someone forced our resignation at"
@@ -1938,7 +1939,9 @@ void Object::send_cyclic_and_requested_data(
    }
 
    // Determine if we need to send with a timestamp.
-   bool send_with_timestamp = trick_fed->in_time_regulating_state() && ( any_attribute_FOM_specified_order || any_attribute_timestamp_order );
+   bool send_with_timestamp = trick_fed->in_time_regulating_state()
+                              && ( any_attribute_FOM_specified_order
+                                   || any_attribute_timestamp_order );
 
    try {
       /*
@@ -2185,83 +2188,82 @@ void Object::receive_cyclic_data(
       return;
    }
 
-   // If we are doing blocking reads, we need to skip the first one since it
-   // occurs at the top of the frame before any data has been sent resulting
-   // in deadlock until the read 10 second timer expires.
-   if ( blocking_cyclic_read && first_blocking_cyclic_read ) {
-      first_blocking_cyclic_read = false;
-
-      // For the first read attempt, just return if no data has been received.
-      if ( !is_changed() ) {
-         return;
-      }
-   }
-
    // Block waiting for received data if the user has specified we must do so.
-   if ( blocking_cyclic_read && !is_changed() ) {
+   if ( blocking_cyclic_read ) {
 
-      // Block waiting for data using a spin-lock that supports a timeout.
-      double time = clock.get_time();
+      // If we are doing blocking reads, we need to skip the first one since it
+      // occurs at the top of the frame before any data has been sent resulting
+      // in deadlock until the read 10 second timer expires.
+      if ( first_blocking_cyclic_read ) {
+         first_blocking_cyclic_read = false;
 
-      // Use a 10.0 second timeout.
-      double timeout = time + 10.0;
+         // For the first read attempt, just return if no data has been received.
+         if ( !is_changed() ) {
+            return;
+         }
+      }
 
-      // On average using "usleep()" to wait for data is faster but at the
-      // cost of latency spikes every once in a while. The CPUutilization will
-      // be much less using usleep() as compared to the assembly "nop"
-      // instruction. If you care about hard realtime performance (i.e. maximum
-      // latency) then use the assembly "nop" method, otherwise usleep() will
-      // give better average performance mainly because it will free up the CPU
-      // allowing the HLA callback thread a better chance to run.
-      //
-      // NOTE: Using usleep() for a spin-lock delay will cause a 1 millisecond
-      // saw-tooth pattern in the latency between when we received the data in
-      // the FedAmb callback and when we process the data here. Dan Dexter 2/13/2008
-      //
-      // Wait for the data to change by using a spin lock that can timeout.
-      while ( !is_changed()
-              && ( time < timeout )
-              && blocking_cyclic_read
-              && any_remotely_owned_subscribed_cyclic_attribute() ) {
+      // Block waiting for data if it has not arrived yet.
+      if ( !is_changed() ) {
+
+         SleepTimeout sleep_timer;
+
+         // On average using "usleep()" to wait for data is faster but at the
+         // cost of latency spikes every once in a while. The CPU utilization
+         // will be much less using usleep() as compared to the assembly "nop"
+         // instruction. If you care about hard realtime performance
+         // (i.e. maximum latency) then use the assembly "nop" method, otherwise
+         // usleep() will give better average performance mainly because it will
+         // free up the CPU allowing the HLA callback thread a better chance to
+         // run.
+         //
+         // NOTE: Using usleep() for a spin-lock delay will cause a
+         // 1 millisecond saw-tooth pattern in the latency between when we
+         // received the data in the FedAmb callback and when we process the
+         // data here. Dan Dexter 2/13/2008
+         //
+         // Wait for the data to change by using a spin lock that can timeout.
+         while ( !is_changed()
+                 && !sleep_timer.timeout()
+                 && blocking_cyclic_read
+                 && any_remotely_owned_subscribed_cyclic_attribute() ) {
 
 #ifdef THLA_NOP_DELAY_FOR_SPIN_LOCK
-         for ( unsigned int i = 0; i < 10; ++i ) {
-            // Execute "NOP" no-operation instruction (one-clock-cycle).
-            // NOTE: Volatile keyword is used to keep gcc from optimizing the
-            // line of assembly code and reducing the number of nop's.
-            // The :: indicates we won't use any input or output operand.
-            asm volatile( "nop" :: );
-            asm volatile( "nop" :: );
-            asm volatile( "nop" :: );
-            asm volatile( "nop" :: );
-            asm volatile( "nop" :: );
-            asm volatile( "nop" :: );
-            asm volatile( "nop" :: );
-            asm volatile( "nop" :: );
-            asm volatile( "nop" :: );
-            asm volatile( "nop" :: );
-         }
-         if ( !is_changed() ) {
-            time = clock.get_time();
-         }
-#else  // !THLA_USLEEP_DELAY_FOR_SPIN_LOCK
+#   if ( defined( __i386__ ) || defined( __x86_64__ ) )
+            for ( unsigned int i = 0; i < 10; ++i ) {
+               // Execute "NOP" no-operation instruction (one-clock-cycle).
+               // NOTE: Volatile keyword is used to keep gcc from optimizing the
+               // line of assembly code and reducing the number of nop's.
+               // The :: indicates we won't use any input or output operand.
+               asm volatile( "nop" :: );
+               asm volatile( "nop" :: );
+               asm volatile( "nop" :: );
+               asm volatile( "nop" :: );
+               asm volatile( "nop" :: );
+               asm volatile( "nop" :: );
+               asm volatile( "nop" :: );
+               asm volatile( "nop" :: );
+               asm volatile( "nop" :: );
+               asm volatile( "nop" :: );
+            }
+#   endif
+#else // !THLA_USLEEP_DELAY_FOR_SPIN_LOCK
 
-         time = clock.get_time();
+            // Yield the processor.
+            (void)sleep_timer.sleep();
+
 #endif // THLA_USLEEP_DELAY_FOR_SPIN_LOCK
-      }
+         }
 
-      // Display a warning message if we timed out.
-      if ( time >= timeout ) {
-         if ( is_changed() ) {
-            send_hs( stderr, "Object::receive_cyclic_data():%d Received \
-data at a timeout boundary at %f seconds (time-of-day) with a timeout of %f \
-seconds (time-of-day) and simulation time %f.%c",
-                     __LINE__, time, timeout, current_time, THLA_NEWLINE );
-         } else {
-            send_hs( stderr, "Object::receive_cyclic_data():%d Timed out \
-waiting for data at %f seconds (time-of-day) with a timeout of %f seconds \
-(time-of-day) and simulation time %f.%c",
-                     __LINE__, time, timeout, current_time, THLA_NEWLINE );
+         // Display a warning message if we timed out.
+         if ( sleep_timer.timeout() ) {
+            if ( is_changed() ) {
+               send_hs( stderr, "Object::receive_cyclic_data():%d Received data at a timeout boundary for simulation time %f.%c",
+                        __LINE__, current_time, THLA_NEWLINE );
+            } else {
+               send_hs( stderr, "Object::receive_cyclic_data():%d Timed out waiting for data for simulation time %f.%c",
+                        __LINE__, current_time, THLA_NEWLINE );
+            }
          }
       }
    }
@@ -2296,7 +2298,7 @@ waiting for data at %f seconds (time-of-day) with a timeout of %f seconds \
       mark_unchanged();
    }
 #if THLA_OBJ_DEBUG_VALID_OBJECT_RECEIVE
-   else if ( is_instance_handle_valid() && current_time > 0.0L ) {
+   else if ( is_instance_handle_valid() && ( current_time > 0.0L ) ) {
       send_hs( stdout, "Object::receive_cyclic_data():%d NO new data for valid object '%s' at t=%G%c",
                __LINE__, get_name(), get_granted_fed_time().get_time_in_seconds(),
                THLA_NEWLINE );
@@ -3621,7 +3623,7 @@ for Attributes of object '%s'.%c",
                                 ownership_divestiture_pthread_function,
                                 divest_thread_args );
       if ( ret ) {
-         exec_terminate( __FILE__, "Object::push_ownership() Failed to\
+         exec_terminate( __FILE__, "Object::push_ownership() ERROR: Failed to\
  create ownership divestiture pthread!" );
          exit( 0 );
       }
@@ -3993,7 +3995,9 @@ void Object::pull_ownership_upon_rejoin()
 
       try {
          // IEEE 1516.1-2000 section 7.18
-         if ( attributes[i].is_publish() && attributes[i].is_locally_owned() && !rti_amb->isAttributeOwnedByFederate( this->instance_handle, attributes[i].get_attribute_handle() ) ) {
+         if ( attributes[i].is_publish()
+              && attributes[i].is_locally_owned()
+              && !rti_amb->isAttributeOwnedByFederate( this->instance_handle, attributes[i].get_attribute_handle() ) ) {
 
             // RTI tells us that this attribute is not owned by this federate. Add
             // attribute handle to the collection for the impending ownership pull.
@@ -4089,7 +4093,9 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
          for ( int i = 0; i < attr_count; i++ ) {
             try {
                // IEEE 1516.1-2000 section 7.18
-               if ( attributes[i].is_publish() && attributes[i].is_locally_owned() && rti_amb->isAttributeOwnedByFederate( this->instance_handle, attributes[i].get_attribute_handle() ) ) {
+               if ( attributes[i].is_publish()
+                    && attributes[i].is_locally_owned()
+                    && rti_amb->isAttributeOwnedByFederate( this->instance_handle, attributes[i].get_attribute_handle() ) ) {
                   ownership_counter++;
                }
             } catch ( ObjectInstanceNotKnown &e ) {
@@ -4129,7 +4135,7 @@ rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generate
             if ( !trick_fed->is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "Object::pull_ownership_upon_rejoin():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"

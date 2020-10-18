@@ -543,6 +543,7 @@ class Object
 #if defined( THLA_QUEUE_REFLECTED_ATTRIBUTES )
       if ( !changed ) {
          if ( !thla_reflected_attributes_queue.empty() ) {
+            // The 'changed' flag is set when the data is extracted.
             extract_data( (RTI1516_NAMESPACE::AttributeHandleValueMap &)thla_reflected_attributes_queue.front() );
             thla_reflected_attributes_queue.pop();
          }

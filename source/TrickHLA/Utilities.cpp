@@ -369,15 +369,18 @@ double Utilities::byteswap_double(
 int Utilities::micro_sleep(
    long usec )
 {
-   struct timespec req, rem;
+   struct timespec sleep_time;
    if ( usec >= 1000000 ) {
-      req.tv_sec  = ( usec / 1000000 );
-      req.tv_nsec = ( usec - ( req.tv_sec * 1000000 ) ) * 1000;
+      sleep_time.tv_sec  = ( usec / 1000000 );
+      sleep_time.tv_nsec = ( usec - ( sleep_time.tv_sec * 1000000 ) ) * 1000;
+   } else if ( usec > 0 ) {
+      sleep_time.tv_sec  = 0;
+      sleep_time.tv_nsec = usec * 1000;
    } else {
-      req.tv_sec  = 0;
-      req.tv_nsec = usec * 1000;
+      sleep_time.tv_sec  = 0;
+      sleep_time.tv_nsec = 0;
    }
-   return nanosleep( &req, &rem );
+   return nanosleep( &sleep_time, NULL );
 }
 
 string Utilities::get_version()
