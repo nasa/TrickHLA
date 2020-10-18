@@ -34,8 +34,8 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <time.h>
 
-#define THLA_DEFAULT_SLEEP_TIMEOUT_IN_SECS 10.0
-#define THLA_DEFAULT_SLEEP_WAIT_IN_NANOSEC 25
+#define THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC 10.0
+#define THLA_DEFAULT_SLEEP_WAIT_IN_MICROS 25
 
 namespace TrickHLA
 {
@@ -69,7 +69,7 @@ class SleepTimeout
 
    /*! @brief Set the timeout and sleep times.
     *  @param timeout_seconds Timeout time in seconds.
-    *  @param sleep_micros Time to sleep in microseconds. */
+    *  @param sleep_micros Time to sleep in microseconds with a minimum value of 0. */
    void set( double timeout_seconds, long sleep_micros );
 
    /*! @brief Sleep for the configured sleep time.
@@ -78,21 +78,15 @@ class SleepTimeout
 
    /*! @brief Determine if we cumulatively slept for the configured timeout time.
     *  @return True if timeout exceeded, false otherwise. */
-   const bool timeout()
-   {
-      return ( this->count >= this->timeout_count );
-   }
+   const bool timeout();
 
-   /*! @brief Reset the internal timeout counter. */
-   void reset()
-   {
-      this->count = 0;
-   }
+   /*! @brief Reset the internal timeout time. */
+   void reset();
 
   protected:
-   struct timespec req;           ///< @trick_io{**} Time-spec for the requested sleep time.
-   unsigned long   count;         ///< @trick_io{**} How many times we check for a timeout.
-   unsigned long   timeout_count; ///< @trick_io{**} Timeout count limit.
+   long long       timeout_time;       ///< @trick_io{**} Timeout elapsed time in microseconds.
+   long long       timeout_clock_time; ///< @trick_io{**} Clock timeout time in microseconds
+   struct timespec sleep_time;         ///< @trick_io{**} Time-spec for the requested sleep time.
 
   private:
    // Do not allow the copy constructor or assignment operator.

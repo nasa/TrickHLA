@@ -448,8 +448,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    Packing *packing_obj )
 {
 
-   exec_terminate( __FILE__,
-                   "DIS::ExecutionConfiguration::setup_ref_attributes() This routine does NOT work and should not be called!" );
+   exec_terminate( __FILE__, "DIS::ExecutionConfiguration::setup_ref_attributes() ERROR: This routine does NOT work and should not be called!" );
 
    //
    // Set up object properties specifically for the ExCO.
@@ -655,7 +654,7 @@ bool ExecutionConfiguration::wait_on_update() // RETURN: -- None.
             if ( !federate->is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "DIS::ExecutionConfiguration::wait_on_update():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"

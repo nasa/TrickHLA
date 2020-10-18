@@ -322,9 +322,9 @@ cppcheck_output_dir + '/' + ccpcheck_suppresion_autogen_file  ))
       cppcheck_args.append( '-v' )
 
    if args.check_inconclusive :
-      # From cppcheck usage: Allow cppcheck to report even though the analysis is
-      # inconclusive. There are false positives with this option. Each result must be
-      # carefully investigated before you know if it is good or bad.
+      # From cppcheck usage: Allow cppcheck to report even though the analysis
+      # is inconclusive. There are false positives with this option. Each result
+      # must be carefully investigated before you know if it is good or bad.
       cppcheck_args.append( '--inconclusive' )
 
    # Use the c++03 standard
