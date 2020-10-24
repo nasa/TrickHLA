@@ -42,41 +42,6 @@ NASA, Johnson Space Center\n
 // Default: THLA_QUEUE_REFLECTED_ATTRIBUTES
 #define THLA_QUEUE_REFLECTED_ATTRIBUTES
 
-// Set to THLA_BLOCKING_CYCLIC_READS_CONFIG to enable the settings for
-// blocking HLA cyclic data reads.
-// Default: THLA_BLOCKING_CYCLIC_READS_CONFIG
-#define THLA_BLOCKING_CYCLIC_READS_CONFIG
-#ifdef THLA_BLOCKING_CYCLIC_READS_CONFIG
-
-// Make sure object time logging is not defined since we don't want to
-// use that feature.
-#   ifdef THLA_OBJECT_TIME_LOGGING
-#      undef THLA_OBJECT_TIME_LOGGING
-#   endif
-
-#   if ( defined( __i386__ ) || defined( __x86_64__ ) )
-#      if defined( __APPLE__ )
-// For a Mac, do not use multiple NOP assembly instructions for the spin-lock
-// delay, which is much faster since it yields the CPU so the Fed-Ambassador
-// callback thread has a chance to run.
-#         ifdef THLA_NOP_DELAY_FOR_SPIN_LOCK
-#            undef THLA_NOP_DELAY_FOR_SPIN_LOCK
-#         endif
-#      else
-// For Linux, do not use multiple NOP assembly instructions for the spin-lock
-// delay instead of using usleep() because it is much faster.
-#         ifdef THLA_NOP_DELAY_FOR_SPIN_LOCK
-#            undef THLA_NOP_DELAY_FOR_SPIN_LOCK
-#         endif
-#      endif
-#   else
-// Otherwise for an unknown Processor, do not use nop for the spin-lock delay.
-#      ifdef THLA_NOP_DELAY_FOR_SPIN_LOCK
-#         undef THLA_NOP_DELAY_FOR_SPIN_LOCK
-#      endif
-#   endif
-#endif // THLA_BLOCKING_CYCLIC_READS_CONFIG
-
 // Insert a compile time error if an unsupported version of Trick 17 is used.
 // Minimum supported Trick 17 version: 17.5.0
 #define MIN_TRICK_VER 17  // Set to the minimum supported Trick Major version.
@@ -124,9 +89,5 @@ NASA, Johnson Space Center\n
 // has an effect if FPU_CW_PROTECTION is defined as well.
 // Default: NO_TRICKHLA_ENABLE_FPU_CONTROL_WORD_VALIDATION
 #define NO_TRICKHLA_ENABLE_FPU_CONTROL_WORD_VALIDATION
-
-// Define TRICKHLA_ENABLE_FOM_DUMP to enable a debug dump of the parsed FOMs.
-// Default: NO_TRICKHLA_ENABLE_FOM_DUMP
-#define NO_TRICKHLA_ENABLE_FOM_DUMP
 
 #endif // _TRICKHLA_COMPILE_CONFIG_H_

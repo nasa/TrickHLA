@@ -167,7 +167,7 @@ int64_t Int64Interval::to_microseconds(
    }
    int64_t seconds = (int64_t)trunc( value );
    int64_t micros  = ( seconds >= 0 ) ? ( int64_t )( fmod( value * MICROS_MULTIPLIER, MICROS_MULTIPLIER ) + 0.5 )
-                                     : ( int64_t )( fmod( value * MICROS_MULTIPLIER, MICROS_MULTIPLIER ) - 0.5 );
+                                      : ( int64_t )( fmod( value * MICROS_MULTIPLIER, MICROS_MULTIPLIER ) - 0.5 );
    return ( ( seconds * MICROS_MULTIPLIER ) + micros );
 }
 

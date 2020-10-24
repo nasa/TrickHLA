@@ -93,7 +93,7 @@ void ElapsedTimeStats::measure()
 /*!
  * @job_class{scheduled}
  */
-std::string ElapsedTimeStats::to_string()
+const std::string ElapsedTimeStats::to_string()
 {
    stringstream msg;
    msg << "ElapsedTimeStats::to_string():" << __LINE__

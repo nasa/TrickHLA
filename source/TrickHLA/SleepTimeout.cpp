@@ -84,7 +84,7 @@ int SleepTimeout::sleep()
    return nanosleep( &sleep_time, NULL );
 }
 
-const bool SleepTimeout::timeout()
+const bool SleepTimeout::timeout() const
 {
    return ( clock_wall_time() >= this->timeout_clock_time );
 }

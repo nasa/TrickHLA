@@ -101,10 +101,6 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
       return this->manager;
    }
 
-#ifdef THLA_OBJECT_TIME_LOGGING
-   TrickHLABasicClock clock; ///< @trick_units{--} The clock time used for object time logging.
-#endif
-
   public:
    /*! @brief Setup the required class instance associations.
     *  @param federate  Associated TrickHLA::Federate class instance.

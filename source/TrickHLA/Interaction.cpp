@@ -141,6 +141,8 @@ void Interaction::initialize(
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    }
 
+   // TODO: Get the preferred order by parsing the FOM.
+   //
    // Do a quick bounds check on the 'preferred_order' value.
    if ( ( preferred_order < TRANSPORT_FIRST_VALUE ) || ( preferred_order > TRANSPORT_LAST_VALUE ) ) {
       ostringstream errmsg;
@@ -984,25 +986,26 @@ bool Interaction::send(
    Federate *trick_fed = get_federate();
 
    // Determine if the interaction should be sent with a timestamp.
-   bool send_with_timestamp = trick_fed->in_time_regulating_state() && ( preferred_order != TRANSPORT_RECEIVE_ORDER );
+   // See IEEE 1516.1-2010 Section 6.12.
+   bool send_with_timestamp = trick_fed->in_time_regulating_state()
+                              && ( preferred_order != TRANSPORT_RECEIVE_ORDER );
 
    bool successfuly_sent = false;
    try {
-      // TODO: Get the preferred order by parsing the FOM.
-      //
-      // The message will only be sent as TSO if our Federate is in the HLA Time
-      // Regulating state and the interaction prefers timestamp order.
-      // See IEEE-1516.1-2000, Sections 6.6 and 8.1.1.
-      if ( send_with_timestamp ) {
+      // Do not send any interactions if federate save or restore has begun (see
+      // IEEE-1516.1-2000 sections 4.12, 4.20)
+      if ( trick_fed->should_publish_data() ) {
 
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-            send_hs( stdout, "Interaction::send():%d As Timestamp-Order: Interaction '%s' sent for time %lf seconds.%c",
-                     __LINE__, get_FOM_name(), time.get_time_in_seconds(), THLA_NEWLINE );
-         }
+         // The message will only be sent as TSO if our Federate is in the HLA Time
+         // Regulating state and the interaction prefers timestamp order.
+         // See IEEE-1516.1-2000, Sections 6.6 and 8.1.1.
+         if ( send_with_timestamp ) {
 
-         // Do not send any interactions if federate save / restore has begun (see
-         // IEEE-1516.1-2000 sections 4.12, 4.20)
-         if ( trick_fed->should_publish_data() ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+               send_hs( stdout, "Interaction::send():%d As Timestamp-Order: Interaction '%s' sent for time %lf seconds.%c",
+                        __LINE__, get_FOM_name(), time.get_time_in_seconds(), THLA_NEWLINE );
+            }
+
             // This call returns an event retraction handle but we
             // don't support event retraction so no need to store it.
             // Send in Timestamp Order.
@@ -1011,20 +1014,17 @@ bool Interaction::send(
                                             the_user_supplied_tag,
                                             time.get() );
             successfuly_sent = true;
-         }
-      } else {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-            send_hs( stdout, "Interaction::send():%d As Receive-Order: \
-Interaction '%s' is time-regulating:%s, preferred-order:%s.%c",
-                     __LINE__, get_FOM_name(),
-                     ( trick_fed->in_time_regulating_state() ? "Yes" : "No" ),
-                     ( ( preferred_order == TRANSPORT_RECEIVE_ORDER ) ? "receive" : "timestamp" ),
-                     THLA_NEWLINE );
-         }
 
-         // Do not send any interactions if federate save / restore has begun (see
-         // IEEE-1516.1-2000 sections 4.12, 4.20)
-         if ( trick_fed->should_publish_data() ) {
+         } else {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+               send_hs( stdout, "Interaction::send():%d As Receive-Order: \
+Interaction '%s' is time-regulating:%s, preferred-order:%s.%c",
+                        __LINE__, get_FOM_name(),
+                        ( trick_fed->in_time_regulating_state() ? "Yes" : "No" ),
+                        ( ( preferred_order == TRANSPORT_RECEIVE_ORDER ) ? "receive" : "timestamp" ),
+                        THLA_NEWLINE );
+            }
+
             // Send in Receive Order (i.e. with no timestamp).
             (void)rti_amb->sendInteraction( this->class_handle,
                                             param_values_map,
