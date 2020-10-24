@@ -140,11 +140,6 @@ class Object
    ObjectDeleted *deleted;                 ///< @trick_units{--} Object Deleted callback object.
    bool           object_deleted_from_RTI; ///< @trick_units{--} Flag that is true when this object has been deleted from the RTI.
 
-#ifdef THLA_OBJECT_TIME_LOGGING
-  public:
-   double received_gmt_time; ///< @trick_units{--} Received GMT time.
-#endif
-
   public:
    //
    // Public constructors and destructor.

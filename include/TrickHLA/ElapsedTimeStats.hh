@@ -64,7 +64,7 @@ class ElapsedTimeStats
    void measure();
 
    /*! @brief Returns a string summary of the elapsed time statistics. */
-   std::string to_string();
+   const std::string to_string();
 
   private:
    bool first_pass; ///< @trick_io{--} Flag indicates first pass to determine external clock.

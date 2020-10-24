@@ -104,7 +104,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
       return parent_ref_frame;
    }
 
-   double get_time()
+   const double get_time()
    {
       return state.time;
    }

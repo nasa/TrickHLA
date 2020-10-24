@@ -63,9 +63,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Types.hh"
-#ifdef THLA_OBJECT_TIME_LOGGING
-#   include "TrickHLA/BasicClock.hh"
-#endif
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
@@ -85,9 +82,6 @@ FedAmb::FedAmb()
    : FederateAmbassador(),
      federate( NULL ),
      manager( NULL ),
-#ifdef THLA_OBJECT_TIME_LOGGING
-     clock(),
-#endif
      federation_restore_status_response_context_switch( false ), // process, not echo.
      federation_restored_rebuild_federate_handle_set( false )
 {
@@ -560,11 +554,6 @@ void FedAmb::reflectAttributeValues(
    RTI1516_NAMESPACE::TransportationType             theType,
    RTI1516_NAMESPACE::SupplementalReflectInfo        theReflectInfo ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-#ifdef THLA_OBJECT_TIME_LOGGING
-   // Get the current GMT time in seconds.
-   double gmt_secs = clock.get_time();
-#endif
-
    // Get the TrickHLA object for the given Object Instance Handle.
    Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( theObject ) : NULL;
 
@@ -573,10 +562,6 @@ void FedAmb::reflectAttributeValues(
          send_hs( stdout, "FedAmb:reflectAttributeValues():%d '%s'%c",
                   __LINE__, trickhla_obj->get_name(), THLA_NEWLINE );
       }
-#ifdef THLA_OBJECT_TIME_LOGGING
-      // Set the time the data was received in this callback.
-      trickhla_obj->received_gmt_time = gmt_secs;
-#endif
 
       // Pass the attribute values off to the object.
 #if defined( THLA_QUEUE_REFLECTED_ATTRIBUTES )
@@ -636,11 +621,6 @@ void FedAmb::reflectAttributeValues(
    RTI1516_NAMESPACE::OrderType                      receivedOrder,
    RTI1516_NAMESPACE::SupplementalReflectInfo        theReflectInfo ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-#ifdef THLA_OBJECT_TIME_LOGGING
-   // Get the current GMT time in seconds.
-   double gmt_secs = clock.get_time();
-#endif
-
    // Get the TrickHLA object for the given Object Instance Handle.
    Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( theObject ) : NULL;
 
@@ -653,11 +633,6 @@ void FedAmb::reflectAttributeValues(
                   __LINE__, trickhla_obj->get_name(), time.get_time_in_seconds(),
                   THLA_NEWLINE );
       }
-
-#ifdef THLA_OBJECT_TIME_LOGGING
-      // Set the time the data was received in this callback.
-      trickhla_obj->received_gmt_time = gmt_secs;
-#endif
 
       // Pass the attribute values off to the object.
       trickhla_obj->set_last_update_time( theTime );
@@ -690,11 +665,6 @@ void FedAmb::reflectAttributeValues(
    RTI1516_NAMESPACE::MessageRetractionHandle        theHandle,
    RTI1516_NAMESPACE::SupplementalReflectInfo        theReflectInfo ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-#ifdef THLA_OBJECT_TIME_LOGGING
-   // Get the current GMT time in seconds.
-   double gmt_secs = clock.get_time();
-#endif
-
    // Get the TrickHLA object for the given Object Instance Handle.
    Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( theObject ) : NULL;
 
@@ -706,11 +676,6 @@ void FedAmb::reflectAttributeValues(
          send_hs( stdout, "FedAmb:reflectAttributeValues():%d '%s' time:%f %c",
                   __LINE__, trickhla_obj->get_name(), time.get_time_in_seconds(), THLA_NEWLINE );
       }
-
-#ifdef THLA_OBJECT_TIME_LOGGING
-      // Set the time the data was received in this callback.
-      trickhla_obj->received_gmt_time = gmt_secs;
-#endif
 
       // Pass the attribute values off to the object.
       trickhla_obj->set_last_update_time( theTime );

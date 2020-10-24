@@ -137,10 +137,6 @@ Object::Object()
      receive_count( 0LL ),
      elapsed_time_stats()
 {
-#ifdef THLA_OBJECT_TIME_LOGGING
-   received_gmt_time = 0.0;
-#endif
-
    // Make sure we allocate the map.
    this->attribute_values_map = new AttributeHandleValueMap();
 }
@@ -341,6 +337,8 @@ void Object::initialize(
       attr_count = 0;
    }
 
+   // TODO: Get the preferred order by parsing the FOM.
+   //
    // Determine if any attribute is the FOM specified order.
    any_attribute_FOM_specified_order = false;
    for ( int i = 0; !any_attribute_FOM_specified_order && i < attr_count; i++ ) {
@@ -349,6 +347,8 @@ void Object::initialize(
       }
    }
 
+   // TODO: Get the preferred order by parsing the FOM.
+   //
    // Determine if any attribute is Timestamp Order.
    any_attribute_timestamp_order = false;
    for ( int i = 0; !any_attribute_timestamp_order && i < attr_count; i++ ) {
@@ -1327,7 +1327,8 @@ void Object::setup_preferred_order_with_RTI()
 
    // Create the sets of Attribute handles for the Timestamp preferred order.
    for ( int i = 0; i < attr_count; i++ ) {
-      if ( attributes[i].is_locally_owned() && ( attributes[i].get_preferred_order() == TRANSPORT_TIMESTAMP_ORDER ) ) {
+      if ( attributes[i].is_locally_owned()
+           && ( attributes[i].get_preferred_order() == TRANSPORT_TIMESTAMP_ORDER ) ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
             msg << "   " << ( i + 1 ) << "/" << attr_count
                 << " FOM-Attribute:'" << attributes[i].get_FOM_name() << "'"
@@ -1341,7 +1342,8 @@ void Object::setup_preferred_order_with_RTI()
 
    // Create the sets of Attribute handles for the Receive preferred order.
    for ( int i = 0; i < attr_count; i++ ) {
-      if ( attributes[i].is_locally_owned() && ( attributes[i].get_preferred_order() == TRANSPORT_RECEIVE_ORDER ) ) {
+      if ( attributes[i].is_locally_owned()
+           && ( attributes[i].get_preferred_order() == TRANSPORT_RECEIVE_ORDER ) ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
             msg << "   " << ( i + 1 ) << "/" << attr_count
                 << " FOM-Attribute:'" << attributes[i].get_FOM_name() << "'"
@@ -1641,19 +1643,17 @@ void Object::send_requested_data(
    }
 
    // Determine if we need to send with a timestamp.
+   // See IEEE 1516.1-2010 Section 6.10.
    bool send_with_timestamp = trick_fed->in_time_regulating_state()
-                              && ( any_attribute_FOM_specified_order
-                                   || any_attribute_timestamp_order );
-
+                              && ( any_attribute_timestamp_order
+                                   || any_attribute_FOM_specified_order );
    try {
       // Send the Attributes to the federation.
       //
       // This call returns an event retraction handle but we don't support event
       // retraction so no need to store it.
 
-      // TODO: Get the preferred order by parsing the FOM.
-      //
-      // Do not send any data if federate save / restore has begun (see
+      // Do not send any data if federate save or restore has begun (see
       // IEEE-1516.1-2000 sections 4.12, 4.20)
       if ( trick_fed->should_publish_data() ) {
 
@@ -1662,19 +1662,22 @@ void Object::send_requested_data(
          // Sections 6.6 and 8.1.1.
          if ( send_with_timestamp ) {
             if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-               send_hs( stdout, "Object::send_requested_data():%d For object '%s', calling rti_amb->updateAttributeValues(TimestampOrder).%c",
+               send_hs( stdout, "Object::send_requested_data():%d For object '%s', updating attribute values as Timestamp Order.%c",
                         __LINE__, get_name(), THLA_NEWLINE );
             }
 
+            // Send as Timestamp Order
             (void)rti_amb->updateAttributeValues( this->instance_handle,
                                                   *attribute_values_map,
                                                   RTI1516_USERDATA( 0, 0 ),
                                                   update_time.get() );
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-               send_hs( stdout, "Object::send_requested_data():%d For object '%s', calling rti_amb->updateAttributeValues(Receive Order).%c",
+               send_hs( stdout, "Object::send_requested_data():%d For object '%s', updating attribute values as Receive Order.%c",
                         __LINE__, get_name(), THLA_NEWLINE );
             }
+
+            // Send as Receive Order
             (void)rti_amb->updateAttributeValues( this->instance_handle,
                                                   *attribute_values_map,
                                                   RTI1516_USERDATA( 0, 0 ) );
@@ -1690,8 +1693,7 @@ void Object::send_requested_data(
       StringUtilities::to_string( rti_err_msg, e.what() );
       send_hs( stderr, "Object::send_requested_data():%d invalid logical time \
 exception for '%s' with error message '%s'.%c",
-               __LINE__, get_name(),
-               rti_err_msg.c_str(), THLA_NEWLINE );
+               __LINE__, get_name(), rti_err_msg.c_str(), THLA_NEWLINE );
       ostringstream errmsg;
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: InvalidLogicalTime" << endl
@@ -1939,26 +1941,13 @@ void Object::send_cyclic_and_requested_data(
    }
 
    // Determine if we need to send with a timestamp.
+   // See IEEE 1516.1-2010 Section 6.10.
    bool send_with_timestamp = trick_fed->in_time_regulating_state()
-                              && ( any_attribute_FOM_specified_order
-                                   || any_attribute_timestamp_order );
-
+                              && ( any_attribute_timestamp_order
+                                   || any_attribute_FOM_specified_order );
    try {
-      /*
-      ostringstream msg;
-      msg << "-------------------------------------" << endl
-          << "Object::send_cyclic_and_requested_data():" << __LINE__ << endl
-          << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << " micros=" << trick_fed->get_granted_fed_time().get_time_in_micros() << endl
-          << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << " micros=" << this->last_update_time.get_time_in_micros() << endl
-          << "  update_time=" << update_time.get_time_in_seconds() << " micros=" << update_time.get_time_in_micros() << endl
-          << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << " micros=" << trick_fed->get_lookahead().get_time_in_micros() << endl
-          << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << " micros=" << this->time_plus_lookahead.get_time_in_micros() << endl
-          << "-------------------------------------" << endl;
-      send_hs( stdout, (char *)msg.str().c_str() );
-*/
-
-      // TODO: Get the preferred order by parsing the FOM.
-      //
+      // Do not send any data if federate save or restore has begun (see
+      // IEEE-1516.1-2000 sections 4.12, 4.20)
       if ( trick_fed->should_publish_data() ) {
 
          // The message will only be sent as TSO if our Federate is in the
@@ -1968,24 +1957,22 @@ void Object::send_cyclic_and_requested_data(
          if ( send_with_timestamp ) {
 
             if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-               send_hs( stdout, "Object::send_cyclic_and_requested_data():%d For object '%s', calling rti_amb->updateAttributeValues(TimestampOrder).%c",
+               send_hs( stdout, "Object::send_cyclic_and_requested_data():%d For object '%s', updating attribute values at Timestamp Order.%c",
                         __LINE__, get_name(), THLA_NEWLINE );
             }
 
-            // Send in Timestamp Order
-            HLAinteger64Time timestamp = update_time.get();
-
+            // Send as Timestamp Order
             (void)rti_amb->updateAttributeValues( this->instance_handle,
                                                   *attribute_values_map,
                                                   RTI1516_USERDATA( 0, 0 ),
-                                                  timestamp );
+                                                  update_time.get() );
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-               send_hs( stdout, "Object::send_cyclic_and_requested_data():%d For object '%s', calling rti_amb->updateAttributeValues(ReceiveOrder).%c",
+               send_hs( stdout, "Object::send_cyclic_and_requested_data():%d For object '%s', updating attribute values as Receive Order.%c",
                         __LINE__, get_name(), THLA_NEWLINE );
             }
 
-            // Send in Receive Order (i.e. with no timestamp).
+            // Send as Receive Order (i.e. with no timestamp).
             (void)rti_amb->updateAttributeValues( this->instance_handle,
                                                   *attribute_values_map,
                                                   RTI1516_USERDATA( 0, 0 ) );
@@ -2228,31 +2215,8 @@ void Object::receive_cyclic_data(
                  && blocking_cyclic_read
                  && any_remotely_owned_subscribed_cyclic_attribute() ) {
 
-#ifdef THLA_NOP_DELAY_FOR_SPIN_LOCK
-#   if ( defined( __i386__ ) || defined( __x86_64__ ) )
-            for ( unsigned int i = 0; i < 10; ++i ) {
-               // Execute "NOP" no-operation instruction (one-clock-cycle).
-               // NOTE: Volatile keyword is used to keep gcc from optimizing the
-               // line of assembly code and reducing the number of nop's.
-               // The :: indicates we won't use any input or output operand.
-               asm volatile( "nop" :: );
-               asm volatile( "nop" :: );
-               asm volatile( "nop" :: );
-               asm volatile( "nop" :: );
-               asm volatile( "nop" :: );
-               asm volatile( "nop" :: );
-               asm volatile( "nop" :: );
-               asm volatile( "nop" :: );
-               asm volatile( "nop" :: );
-               asm volatile( "nop" :: );
-            }
-#   endif
-#else // !THLA_USLEEP_DELAY_FOR_SPIN_LOCK
-
             // Yield the processor.
             (void)sleep_timer.sleep();
-
-#endif // THLA_USLEEP_DELAY_FOR_SPIN_LOCK
          }
 
          // Display a warning message if we timed out.
@@ -2359,7 +2323,7 @@ void Object::send_init_data()
       if ( trick_fed->should_publish_data() ) {
 
          if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-            send_hs( stdout, "Object::send_init_data():%d For object '%s', calling rti_amb->updateAttributeValues(ReceiveOrder).%c",
+            send_hs( stdout, "Object::send_init_data():%d For object '%s', updating attribute values as Receive Order.%c",
                      __LINE__, get_name(), THLA_NEWLINE );
          }
 
@@ -2580,8 +2544,8 @@ void Object::create_requested_attribute_set()
 
    for ( int i = 0; i < attr_count; ++i ) {
 
-      // TODO: In a future version, pre-sort all the items we publish so
-      // that we will not need to check the publish flag, for efficiency.
+      // TODO: Pre-sort all the items we publish so that we will not need
+      // to check the publish flag, for efficiency.
       //
       // Only include attributes that have been requested, we own, and we publish.
       if ( attributes[i].is_update_requested()
@@ -2621,9 +2585,8 @@ void Object::create_attribute_set(
    if ( ( required_config & CONFIG_CYCLIC ) == CONFIG_CYCLIC ) {
       for ( int i = 0; i < attr_count; ++i ) {
 
-         // TODO: In a future version, pre-sort all the items we publish
-         // so that we will not need to check the publish flag, for
-         // efficiency.
+         // TODO: Pre-sort all the items we publish so that we will not need
+         // to check the publish flag, for efficiency.
          //
          // Only include attributes that have the required configuration,
          // we own, we publish, and the sub-rate says we are ready to
@@ -2657,9 +2620,8 @@ void Object::create_attribute_set(
    } else {
       for ( int i = 0; i < attr_count; ++i ) {
 
-         // TODO: In a future version, pre-sort all the items we publish
-         // so that we will not need to check the publish flag, for
-         // efficiency.
+         // TODO: Pre-sort all the items we publish so that we will not need
+         // to check the publish flag, for efficiency.
          //
          // Only include attributes that have the required configuration,
          // we own, and we publish.

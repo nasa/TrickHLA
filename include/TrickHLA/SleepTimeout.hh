@@ -78,7 +78,7 @@ class SleepTimeout
 
    /*! @brief Determine if we cumulatively slept for the configured timeout time.
     *  @return True if timeout exceeded, false otherwise. */
-   const bool timeout();
+   const bool timeout() const;
 
    /*! @brief Reset the internal timeout time. */
    void reset();
