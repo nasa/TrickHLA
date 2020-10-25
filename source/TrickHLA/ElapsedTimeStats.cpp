@@ -39,8 +39,6 @@ NASA, Johnson Space Center\n
 using namespace std;
 using namespace TrickHLA;
 
-#define RUNNING_SUMS_IN_SECONDS
-
 /*!
  * @job_class{initialization}
  */
@@ -98,10 +96,8 @@ void ElapsedTimeStats::measure()
 const double ElapsedTimeStats::confidence_to_Z(
    double &confidence )
 {
-   // Confidence to Z values: 80%:Z=1.282, 90%:Z=1.645, 95%:Z=1.960,
-   // 98%:Z=2.326, 99%:Z=2.576, 99.5%:Z=2.807, 99.9%:Z=3.291, 99.99%:Z=3.891,
-   // 99.999%:Z=4.417
-   //
+   // The confidence level to Z values used below can be found here:
+   // https://www.calculator.net/confidence-interval-calculator.html
    double Z;
    if ( confidence >= 0.99999 ) {
       confidence = 0.99999;
