@@ -69,14 +69,14 @@ class ElapsedTimeStats
   private:
    bool first_pass; ///< @trick_io{--} Flag indicates first pass to determine external clock.
 
-   long long elapsed_time; ///< @trick_io{--} Current elapsed time.
-
    long long prev_time; ///< @trick_io{--} Previous elapsed time.
 
    unsigned long long count; ///< @trick_io{--} Number of elapsed times measured.
 
-   long long min; ///< @trick_io{--} Minmum elapsed time measured.
-   long long max; ///< @trick_io{--} Maximum elapsed time measured.
+   double elapsed_time; ///< @trick_io{--} Current elapsed time.
+
+   double min; ///< @trick_io{--} Minmum elapsed time measured.
+   double max; ///< @trick_io{--} Maximum elapsed time measured.
 
    double time_sum;         ///< @trick_io{--} Sum of the elapsed time measured.
    double time_squared_sum; ///< @trick_io{--} Sum of the elapsed time squared.
