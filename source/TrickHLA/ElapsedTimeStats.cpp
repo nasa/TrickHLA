@@ -95,87 +95,100 @@ void ElapsedTimeStats::measure()
 /*!
  * @job_class{scheduled}
  */
+const double ElapsedTimeStats::confidence_to_Z(
+   double &confidence )
+{
+   // Confidence to Z values: 80%:Z=1.282, 90%:Z=1.645, 95%:Z=1.960,
+   // 98%:Z=2.326, 99%:Z=2.576, 99.5%:Z=2.807, 99.9%:Z=3.291, 99.99%:Z=3.891,
+   // 99.999%:Z=4.417
+   //
+   double Z;
+   if ( confidence >= 0.99999 ) {
+      confidence = 0.99999;
+      Z          = 4.417;
+   } else if ( confidence >= 0.9999 ) {
+      confidence = 0.9999;
+      Z          = 3.891;
+   } else if ( confidence >= 0.999 ) {
+      confidence = 0.999;
+      Z          = 3.291;
+   } else if ( confidence >= 0.995 ) {
+      confidence = 0.995;
+      Z          = 2.807;
+   } else if ( confidence >= 0.99 ) {
+      confidence = 0.99;
+      Z          = 2.576;
+   } else if ( confidence >= 0.98 ) {
+      confidence = 0.98;
+      Z          = 2.326;
+   } else if ( confidence >= 0.95 ) {
+      confidence = 0.95;
+      Z          = 1.960;
+   } else if ( confidence >= 0.90 ) {
+      confidence = 0.90;
+      Z          = 1.645;
+   } else {
+      confidence = 0.80;
+      Z          = 1.282;
+   }
+   return Z;
+}
+
+/*!
+ * @job_class{scheduled}
+ */
 const std::string ElapsedTimeStats::to_string()
 {
    stringstream msg;
    msg << "ElapsedTimeStats::to_string():" << __LINE__ << endl;
 
    if ( count > 0 ) {
-      double time_mean = time_sum / (double)count; // milliseconds
+      double mean = time_sum / (double)count; // milliseconds
 
       // Calculate the corrected sample standard deviation from the unbiased
       // sample variance.
       // See https://en.wikipedia.org/wiki/Standard_deviation
       // See https://en.wikipedia.org/wiki/Bessel%27s_correction
-      double variance = ( ( time_squared_sum / (double)count ) - ( time_mean * time_mean ) );
+      //
+      double variance = ( time_squared_sum / (double)count ) - ( mean * mean );
       if ( count > 1 ) {
-         variance *= ( (double)count / (double)( count - 1 ) );
+         variance *= (double)count / (double)( count - 1 );
       }
-      double time_std_dev = sqrt( abs( variance ) ); // milliseconds
+      double std_dev = sqrt( abs( variance ) ); // milliseconds
 
       // Determine the number of samples for statistical significance.
-      // From http://www.itl.nist.gov/div898//handbook/prc/section2/prc222.htm
-      // and from
+      // http://www.itl.nist.gov/div898//handbook/prc/section2/prc222.htm
       // https://www.isixsigma.com/tools-templates/sampling-data/how-determine-sample-size-determining-sample-size/
-      // https://www.unc.edu/~rls/s151-2010/class23.pdf
-      // N >= ((Z * std_dev)/M)^2 for 95% confidence with a margin of error
+      // N >= ((Z * std_dev)/M)^2 for 99.9% confidence with a margin of error
       // of M (i.e. mean +/- M).
       //
-      // Confidence of 80%:Z=1.28, 90%:Z=1.645, 95%:Z=1.96, 98%:Z=2.33,
-      // 99%:Z=2.58, 99.5%:Z=2.807, 99.9%:Z=3.29, 99.99%:Z=3.89
-      //
       double confidence = 0.999;
-      double Z;
-      if ( confidence >= 0.9999 ) {
-         confidence = 0.9999;
-         Z          = 3.890;
-      } else if ( confidence >= 0.999 ) {
-         confidence = 0.999;
-         Z          = 3.290;
-      } else if ( confidence >= 0.995 ) {
-         confidence = 0.995;
-         Z          = 2.807;
-      } else if ( confidence >= 0.99 ) {
-         confidence = 0.99;
-         Z          = 2.576;
-      } else if ( confidence >= 0.98 ) {
-         confidence = 0.98;
-         Z          = 2.326;
-      } else if ( confidence >= 0.95 ) {
-         confidence = 0.95;
-         Z          = 1.960;
-      } else if ( confidence >= 0.90 ) {
-         confidence = 0.90;
-         Z          = 1.645;
-      } else {
-         confidence = 0.80;
-         Z          = 1.280;
-      }
+      double Z          = confidence_to_Z( confidence );
 
-      // Calculate the margin of error based on the statistics.
-      // M = (Z * std_dev)/√N
-      double moe         = ( Z * time_std_dev ) / sqrt( count ); // milliseconds
-      double moe_percent = moe / time_mean;
-
-      // To estimate the average elapsed time between reads to within
-      // 0.001 milliseconds with a 99.9% confidence we need at
-      // least X samples based on the statistics.
+      // Goal: To estimate the average elapsed time between reads to within
+      // some percent (? milliseconds) of the mean with a 99.9% confidence we
+      // need at least N samples based on the statistics.
       //
-      // Use a Margin of Error (M) that is 0.1% within the mean value.
+      // Use a Margin of Error (M) that is 0.25% within the mean value.
       double M_percent = 0.0025;
-      double M         = time_mean * M_percent; // milliseconds
+      double M         = mean * M_percent; // milliseconds
 
       // √N >= (Z * std_dev) / M
-      double sqrt_N = Z * time_std_dev / M;
+      double sqrt_N = Z * std_dev / M;
 
       // N >= ((Z * std_dev) / M)^2
       long long min_sample_size = (long long)ceil( sqrt_N * sqrt_N );
 
+      // Calculate the margin of error based on the statistics.
+      // M = (Z * std_dev) / √N
+      double moe         = ( Z * std_dev ) / sqrt( count ); // milliseconds
+      double moe_percent = moe / mean;
+
       msg << "    sample-count: " << count << endl
           << "             min: " << min << " milliseconds" << endl
           << "             max: " << max << " milliseconds" << endl
-          << "            mean: " << time_mean << " milliseconds" << endl
-          << "  sample-std-dev: " << time_std_dev << " milliseconds" << endl
+          << "            mean: " << mean << " milliseconds" << endl
+          << "  sample-std-dev: " << std_dev << " milliseconds" << endl
           << " margin-of-error: " << ( moe_percent * 100.0 )
           << "% (" << moe << " milliseconds) with "
           << ( confidence * 100.0 ) << "% confidence" << endl

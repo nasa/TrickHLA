@@ -63,6 +63,9 @@ class ElapsedTimeStats
    /*! @brief Measure the elapsed time. */
    void measure();
 
+   /*! @brief Convert confidence level to Z value. */
+   const double confidence_to_Z( double &confidence );
+
    /*! @brief Returns a string summary of the elapsed time statistics. */
    const std::string to_string();
 
