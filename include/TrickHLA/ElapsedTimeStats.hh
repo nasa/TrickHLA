@@ -70,19 +70,19 @@ class ElapsedTimeStats
    const std::string to_string();
 
   private:
-   bool first_pass; ///< @trick_io{--} Flag indicates first pass to determine external clock.
+   bool first_pass; ///< @trick_units{--} Flag indicates first pass to determine external clock.
 
-   long long prev_time; ///< @trick_io{--} Previous elapsed time.
+   long long prev_time; ///< @trick_units{--} Previous elapsed time.
 
-   unsigned long long count; ///< @trick_io{--} Number of elapsed times measured.
+   unsigned long long count; ///< @trick_units{--} Number of elapsed times measured.
 
-   double elapsed_time; ///< @trick_io{--} Current elapsed time.
+   double elapsed_time; ///< @trick_units{--} Current elapsed time.
 
-   double min; ///< @trick_io{--} Minmum elapsed time measured.
-   double max; ///< @trick_io{--} Maximum elapsed time measured.
+   double min; ///< @trick_units{--} Minimum elapsed time measured.
+   double max; ///< @trick_units{--} Maximum elapsed time measured.
 
-   double time_sum;         ///< @trick_io{--} Sum of the elapsed time measured.
-   double time_squared_sum; ///< @trick_io{--} Sum of the elapsed time squared.
+   double time_sum;         ///< @trick_units{--} Sum of the elapsed time measured.
+   double time_squared_sum; ///< @trick_units{--} Sum of the elapsed time squared.
 };
 
 } // namespace TrickHLA
