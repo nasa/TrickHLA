@@ -39,16 +39,18 @@ NASA, Johnson Space Center\n
 using namespace std;
 using namespace TrickHLA;
 
+#define RUNNING_SUMS_IN_SECONDS
+
 /*!
  * @job_class{initialization}
  */
 ElapsedTimeStats::ElapsedTimeStats()
    : first_pass( true ),
-     elapsed_time( 0.0 ),
      prev_time( 0 ),
      count( 0 ),
-     min( 0 ),
-     max( 0 ),
+     elapsed_time( 0.0 ),
+     min( 0.0 ),
+     max( 0.0 ),
      time_sum( 0.0 ),
      time_squared_sum( 0.0 )
 {
@@ -72,10 +74,10 @@ void ElapsedTimeStats::measure()
    if ( first_pass ) {
       first_pass = false;
    } else {
-      elapsed_time = time - prev_time;
+      elapsed_time = ( time - prev_time ) * 0.001; // milliseconds
       if ( count == 0 ) {
-         max = elapsed_time;
-         min = elapsed_time;
+         max = elapsed_time; // milliseconds
+         min = elapsed_time; // milliseconds
       } else {
          if ( elapsed_time > max ) {
             max = elapsed_time;
@@ -83,8 +85,8 @@ void ElapsedTimeStats::measure()
             min = elapsed_time;
          }
       }
-      time_sum += elapsed_time;
-      time_squared_sum += elapsed_time * elapsed_time;
+      time_sum += elapsed_time;                        // milliseconds
+      time_squared_sum += elapsed_time * elapsed_time; // milliseconds^2
       ++count;
    }
    prev_time = time;
@@ -96,31 +98,99 @@ void ElapsedTimeStats::measure()
 const std::string ElapsedTimeStats::to_string()
 {
    stringstream msg;
-   msg << "ElapsedTimeStats::to_string():" << __LINE__
-       << " count:" << count;
+   msg << "ElapsedTimeStats::to_string():" << __LINE__ << endl;
 
    if ( count > 0 ) {
-      double mean = time_sum / count;
+      double time_mean = time_sum / (double)count; // milliseconds
 
       // Calculate the corrected sample standard deviation from the unbiased
       // sample variance.
       // See https://en.wikipedia.org/wiki/Standard_deviation
       // See https://en.wikipedia.org/wiki/Bessel%27s_correction
-      double variance = ( ( time_squared_sum / count ) - ( mean * mean ) );
+      double variance = ( ( time_squared_sum / (double)count ) - ( time_mean * time_mean ) );
       if ( count > 1 ) {
-         variance *= (double)count / (double)( count - 1 );
+         variance *= ( (double)count / (double)( count - 1 ) );
       }
-      double time_std_dev = sqrt( abs( variance ) );
+      double time_std_dev = sqrt( abs( variance ) ); // milliseconds
 
-      msg << " min:" << ( min * 0.001 ) << " milliseconds"
-          << " max:" << ( max * 0.001 ) << " milliseconds"
-          << " mean:" << ( mean * 0.001 ) << " milliseconds"
-          << " sample-std-dev:" << ( time_std_dev * 0.001 ) << " milliseconds";
+      // Determine the number of samples for statistical significance.
+      // From http://www.itl.nist.gov/div898//handbook/prc/section2/prc222.htm
+      // and from
+      // https://www.isixsigma.com/tools-templates/sampling-data/how-determine-sample-size-determining-sample-size/
+      // https://www.unc.edu/~rls/s151-2010/class23.pdf
+      // N >= ((Z * std_dev)/M)^2 for 95% confidence with a margin of error
+      // of M (i.e. mean +/- M).
+      //
+      // Confidence of 80%:Z=1.28, 90%:Z=1.645, 95%:Z=1.96, 98%:Z=2.33,
+      // 99%:Z=2.58, 99.5%:Z=2.807, 99.9%:Z=3.29, 99.99%:Z=3.89
+      //
+      double confidence = 0.999;
+      double Z;
+      if ( confidence >= 0.9999 ) {
+         confidence = 0.9999;
+         Z          = 3.890;
+      } else if ( confidence >= 0.999 ) {
+         confidence = 0.999;
+         Z          = 3.290;
+      } else if ( confidence >= 0.995 ) {
+         confidence = 0.995;
+         Z          = 2.807;
+      } else if ( confidence >= 0.99 ) {
+         confidence = 0.99;
+         Z          = 2.576;
+      } else if ( confidence >= 0.98 ) {
+         confidence = 0.98;
+         Z          = 2.326;
+      } else if ( confidence >= 0.95 ) {
+         confidence = 0.95;
+         Z          = 1.960;
+      } else if ( confidence >= 0.90 ) {
+         confidence = 0.90;
+         Z          = 1.645;
+      } else {
+         confidence = 0.80;
+         Z          = 1.280;
+      }
+
+      // Calculate the margin of error based on the statistics.
+      // M = (Z * std_dev)/√N
+      double moe         = ( Z * time_std_dev ) / sqrt( count ); // milliseconds
+      double moe_percent = moe / time_mean;
+
+      // To estimate the average elapsed time between reads to within
+      // 0.001 milliseconds with a 99.9% confidence we need at
+      // least X samples based on the statistics.
+      //
+      // Use a Margin of Error (M) that is 0.1% within the mean value.
+      double M_percent = 0.0025;
+      double M         = time_mean * M_percent; // milliseconds
+
+      // √N >= (Z * std_dev) / M
+      double sqrt_N = Z * time_std_dev / M;
+
+      // N >= ((Z * std_dev) / M)^2
+      long long min_sample_size = (long long)ceil( sqrt_N * sqrt_N );
+
+      msg << "    sample-count: " << count << endl
+          << "             min: " << min << " milliseconds" << endl
+          << "             max: " << max << " milliseconds" << endl
+          << "            mean: " << time_mean << " milliseconds" << endl
+          << "  sample-std-dev: " << time_std_dev << " milliseconds" << endl
+          << " margin-of-error: " << ( moe_percent * 100.0 )
+          << "% (" << moe << " milliseconds) with "
+          << ( confidence * 100.0 ) << "% confidence" << endl
+          << " min-sample-size: " << min_sample_size << endl
+          << "To estimate the average elapsed time between reads to within "
+          << ( M_percent * 100.0 ) << "% ("
+          << M << " milliseconds) with a "
+          << ( confidence * 100.0 ) << "% confidence we need at least "
+          << min_sample_size << " samples based on the statistics." << endl;
    } else {
-      msg << " min:N/A"
-          << " max:N/A"
-          << " mean:N/A"
-          << " sample-std-dev:N/A";
+      msg << "    sample-count: " << count << endl
+          << "             min: N/A" << endl
+          << "             max: N/A" << endl
+          << "            mean: N/A" << endl
+          << "  sample-std-dev: N/A" << endl;
    }
    return msg.str();
 }
