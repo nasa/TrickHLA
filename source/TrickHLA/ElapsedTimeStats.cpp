@@ -155,15 +155,16 @@ const std::string ElapsedTimeStats::to_string()
       // Determine the number of samples for statistical significance.
       // http://www.itl.nist.gov/div898//handbook/prc/section2/prc222.htm
       // https://www.isixsigma.com/tools-templates/sampling-data/how-determine-sample-size-determining-sample-size/
-      // N >= ((Z * std_dev)/M)^2 for 99.9% confidence with a margin of error
-      // of M (i.e. mean +/- M).
+      // N >= ((Z * std_dev)/M)^2 for 99.9% confidence level with a margin of
+      // error of M (i.e. mean +/- M).
       //
       double confidence = 0.999;
       double Z          = confidence_to_Z( confidence );
 
       // Goal: To estimate the average elapsed time between reads to within
-      // some percent (? milliseconds) of the mean with a 99.9% confidence we
-      // need at least N samples based on the statistics.
+      // some percent (? milliseconds) of the mean (margin of error) with a
+      // 99.9% confidence level we need at least N samples based on the
+      // statistics.
       //
       // Use a Margin of Error (M) that is 0.25% within the mean value.
       double M_percent = 0.0025;
@@ -189,10 +190,10 @@ const std::string ElapsedTimeStats::to_string()
           << "% (" << moe << " milliseconds) with "
           << ( confidence * 100.0 ) << "% confidence" << endl
           << " min-sample-size: " << min_sample_size << endl
-          << "To estimate the average elapsed time between reads to within "
+          << "To estimate the average elapsed time between reads to within a "
           << ( M_percent * 100.0 ) << "% ("
-          << M << " milliseconds) with a "
-          << ( confidence * 100.0 ) << "% confidence we need at least "
+          << M << " milliseconds) margin of error with a "
+          << ( confidence * 100.0 ) << "% confidence level we need at least "
           << min_sample_size << " samples based on the statistics." << endl;
    } else {
       msg << "    sample-count: " << count << endl
