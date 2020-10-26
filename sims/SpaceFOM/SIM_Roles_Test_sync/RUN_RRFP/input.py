@@ -30,7 +30,7 @@ def print_usage_message( ) :
    print 'TrickHLA SpaceFOM Root-Reference-Frame Simulation Command Line Configuration Options:'
    print '  -h -help              : Print this help message.'
    print '  -realtime [on|off]    : on: Turns on realtiem clock (Default), off: disables it.'
-   print '  -hla-time-mgt [on|off]: on: Turns on HLA Time Managment (Default), off: disables it.'
+   print '  -hla-time-mgt [on|off]: on: Turns on HLA Time Management (Default), off: disables it.'
    print '  -regulating [on|off]  : on: Turns on HLA Time Regulating (Default), off: disables it.'
    print '  -constrained [on|off] : on: Turns on HLA Time Constrained (Default), off: disables it.'
    print '  -stop [time]          : Time to stop simulation.'
@@ -265,10 +265,10 @@ federate.set_lookahead_time( 0.250 )
 
 # Setup Time Management parameters.
 if (hla_time_mgt == False) :
-   print 'HLA Time Managment Disabled.'
+   print 'HLA Time Management Disabled.'
    federate.set_time_management( False )
 else :
-   print 'HLA Time Managment Enabled.'
+   print 'HLA Time Management Enabled.'
    # True to enable TAR/TAG/Regulating/Constrained HLA API's
    federate.set_time_management( True )
    
