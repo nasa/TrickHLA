@@ -4481,20 +4481,24 @@ void Federate::shutdown()
 
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
       for ( int i = 0; i < this->manager->obj_count; ++i ) {
-         cout << "Federate::shutdown():" << __LINE__
-              << " Object[" << i << "]:'" << this->manager->objects[i].get_name() << "'"
-              << " send_count:" << this->manager->objects[i].send_count
-              << " receive_count:" << this->manager->objects[i].receive_count
-              << endl;
+         ostringstream msg;
+         msg << "Federate::shutdown():" << __LINE__
+             << " Object[" << i << "]:'" << this->manager->objects[i].get_name() << "'"
+             << " send_count:" << this->manager->objects[i].send_count
+             << " receive_count:" << this->manager->objects[i].receive_count
+             << endl;
+         send_hs( stdout, (char *)msg.str().c_str() );
       }
 #endif
 
 #ifdef THLA_CYCLIC_READ_TIME_STATS
       for ( int i = 0; i < this->manager->obj_count; ++i ) {
-         cout << "Federate::shutdown():" << __LINE__
-              << " Object[" << i << "]:'" << this->manager->objects[i].get_name() << "' "
-              << this->manager->objects[i].elapsed_time_stats.to_string()
-              << endl;
+         ostringstream msg;
+         msg << "Federate::shutdown():" << __LINE__
+             << " Object[" << i << "]:'" << this->manager->objects[i].get_name() << "' "
+             << this->manager->objects[i].elapsed_time_stats.to_string()
+             << endl;
+         send_hs( stdout, (char *)msg.str().c_str() );
       }
 #endif
 

@@ -181,26 +181,28 @@ const std::string ElapsedTimeStats::to_string()
       double moe         = ( Z * std_dev ) / sqrt( count ); // milliseconds
       double moe_percent = moe / mean;
 
+      // We have to double escape the % sign so that send_hs() will print the
+      // percent character '%' correctly and not as a c-string formating code.
       msg << "    sample-count: " << count << endl
           << "             min: " << min << " milliseconds" << endl
           << "             max: " << max << " milliseconds" << endl
           << "            mean: " << mean << " milliseconds" << endl
           << "  sample-std-dev: " << std_dev << " milliseconds" << endl
           << " margin-of-error: " << ( moe_percent * 100.0 )
-          << "% (" << moe << " milliseconds) with "
-          << ( confidence * 100.0 ) << "% confidence" << endl
+          << "%%%% (" << moe << " milliseconds) with "
+          << ( confidence * 100.0 ) << "%%%% confidence" << endl
           << " min-sample-size: " << min_sample_size << endl
-          << "To estimate the average elapsed time between reads to within a "
-          << ( M_percent * 100.0 ) << "% ("
+          << "        guidance: To estimate the average elapsed time between reads to within a "
+          << ( M_percent * 100.0 ) << "%%%% ("
           << M << " milliseconds) margin of error with a "
-          << ( confidence * 100.0 ) << "% confidence level we need at least "
-          << min_sample_size << " samples based on the statistics." << endl;
+          << ( confidence * 100.0 ) << "%%%% confidence level we need at least "
+          << min_sample_size << " samples based on the statistics.";
    } else {
       msg << "    sample-count: " << count << endl
           << "             min: N/A" << endl
           << "             max: N/A" << endl
           << "            mean: N/A" << endl
-          << "  sample-std-dev: N/A" << endl;
+          << "  sample-std-dev: N/A";
    }
    return msg.str();
 }
