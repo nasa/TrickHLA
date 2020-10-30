@@ -8,6 +8,8 @@ except NameError:
     drg = []
 
 drg.append(trick.DRBinary("ELAPSED_TIME"))
+drg[DR_GROUP_ID].set_buffer_type(trick.DR_Buffer)
+drg[DR_GROUP_ID].set_max_buffer_size(4000000 * 4 * 2) # 4,000,000 samples * 4 Hz * 2 data and time
 drg[DR_GROUP_ID].set_freq(trick.DR_Always)
 drg[DR_GROUP_ID].set_cycle(0.25)
 drg[DR_GROUP_ID].set_single_prec_only(False)
