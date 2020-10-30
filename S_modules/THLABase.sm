@@ -148,10 +148,9 @@ class THLABaseSimObject : public Trick::SimObject {
       //-- SHUTDOWN JOBS --
       //-------------------
       P_LAST ("shutdown") federate.shutdown();
-      
    }
    
-   // Pure virtual destructor. Make this SimObject and abstract class.
+   // Pure virtual destructor. Make this SimObject an abstract class.
    // It must be extended with a specific ExecutionControl implementation.
    virtual ~THLABaseSimObject() = 0;
 
