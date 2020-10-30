@@ -105,13 +105,37 @@ else
       ifeq ("$(wildcard ${RTI_JAVA_LIB_PATH})","")
          $(error "The path specified by RTI_JAVA_LIB_PATH is invalid for ${RTI_JAVA_LIB_PATH}")
       endif
-      TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PATH} -ljvm -Wl,-rpath,${RTI_JAVA_LIB_PATH}
-      TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib/gcc41_64 -lrti1516e64 -lfedtime1516e64 -Wl,-rpath,${RTI_HOME}/lib/gcc41_64
-      TRICK_USER_LINK_LIBS += -Wl,-rpath,${RTI_JAVA_LIB_PATH}/..
+      TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PATH} -ljvm -Wl,-rpath,${RTI_JAVA_LIB_PATH} -Wl,-rpath,${RTI_JAVA_LIB_PATH}/..
 
       # Add the CLASSPATH environment variable to the simulation executable.
       export CLASSPATH += ${RTI_HOME}/lib/prti1516e.jar
       export TRICK_GTE_EXT += CLASSPATH
+
+      # Determine what compiler Trick is using to figure out the correct Pitch library to use.
+      ifneq (,$(findstring trick-gte, $(shell which trick-gte)))
+         CPPC_CMD = $(shell trick-gte TRICK_CXX)
+         ifeq (,$(CPPC_CMD))
+            CPPC_CMD = $(shell trick-gte TRICK_CPPC)
+         endif
+      else
+         CPPC_CMD = $(shell gte TRICK_CXX)
+         ifeq (,$(CPPC_CMD))
+            CPPC_CMD = $(shell gte TRICK_CPPC)
+         endif
+      endif
+
+      # Determine what gcc library version to use.
+      COMPILER_VERSION = $(shell $(CPPC_CMD) -dumpversion | cut -d . -f 1)
+      COMPILER_GTE_7 = $(shell echo $(COMPILER_VERSION)\>=7 | bc )
+      COMPILER_GTE_5 = $(shell echo $(COMPILER_VERSION)\>=5 | bc )
+      ifeq ($(COMPILER_GTE_7),1)
+         TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib/gcc73_64 -lrti1516e64 -lfedtime1516e64 -Wl,-rpath,${RTI_HOME}/lib/gcc73_64
+      else ifeq ($(COMPILER_GTE_5),1)
+         TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib/gcc52_64 -lrti1516e64 -lfedtime1516e64 -Wl,-rpath,${RTI_HOME}/lib/gcc52_64
+      else
+         TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib/gcc41_64 -lrti1516e64 -lfedtime1516e64 -Wl,-rpath,${RTI_HOME}/lib/gcc41_64
+      endif
+
    else ifeq ($(RTI_VENDOR),Mak)
       TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib -lrti1516e64 -lfedtime1516e64
    else ifeq ($(RTI_VENDOR),Mak_HLA_Evolved)
