@@ -8,7 +8,7 @@ trick.checkpoint_post_init(1)
 #trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
 
 # Realtime setup
-execfile( 'Modified_data/trick/realtime.py' )
+exec(open( "Modified_data/trick/realtime.py" ).read())
 
 # Trick config
 trick.exec_set_enable_freeze(True)
@@ -21,7 +21,7 @@ run_duration = 15.0
 #---------------------------------------------
 # Set up data to record.
 #---------------------------------------------
-execfile( 'Log_data/log_sine_states.py' )
+exec(open( "Log_data/log_sine_states.py" ).read())
 log_sine_states( 'A', 0.250 )
 log_sine_states( 'P', 0.250 )
 
@@ -29,7 +29,7 @@ log_sine_states( 'P', 0.250 )
 #---------------------------------------------
 # Set up the initial Sine states
 #---------------------------------------------
-execfile( 'Modified_data/sine_init.py' )
+exec(open( "Modified_data/sine_init.py" ).read())
 
 
 # Example of a 1-dimensional dynamic array.

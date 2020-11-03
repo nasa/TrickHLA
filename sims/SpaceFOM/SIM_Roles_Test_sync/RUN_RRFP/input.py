@@ -197,7 +197,7 @@ trick.exec_set_trap_sigfpe(True)
 # Setup for Trick real time execution. This is the "Pacing" function.
 if (realtime_clock == True) :   
    print ('Realtime Clock Enabled.')
-   execfile( "Modified_data/trick/realtime.py" )
+   exec(open( "Modified_data/trick/realtime.py" ).read())
 else :
    print ('Realtime Clock Disabled.')
 

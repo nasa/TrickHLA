@@ -111,7 +111,7 @@ trick.checkpoint_post_init(1)
 #trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
 
 # Setup for Trick real time execution. This is the "Pacing" function.
-execfile( "Modified_data/trick/realtime.py" )
+exec(open( "Modified_data/trick/realtime.py" ).read())
 
 trick.exec_set_enable_freeze(True)
 trick.exec_set_freeze_command(True)

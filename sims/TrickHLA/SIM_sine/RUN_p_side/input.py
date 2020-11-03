@@ -24,7 +24,7 @@ run_duration = 15.0
 #---------------------------------------------
 # Set up data to record.
 #---------------------------------------------
-execfile( 'Log_data/log_sine_states.py' )
+exec(open( "Log_data/log_sine_states.py" ).read())
 log_sine_states( 'A', 0.250 )
 log_sine_states( 'P', 0.250 )
 
@@ -32,7 +32,7 @@ log_sine_states( 'P', 0.250 )
 #---------------------------------------------
 # Set up the initial Sine states
 #---------------------------------------------
-execfile( 'Modified_data/sine_init.py' )
+exec(open( "Modified_data/sine_init.py" ).read())
 
 
 #TODO: setup integration
