@@ -46,8 +46,8 @@
 class THLABaseSimObject : public Trick::SimObject {
 
  public:
-   
-   //----- DATA STRUCTURE DECLARATIONS -----   
+
+   //----- DATA STRUCTURE DECLARATIONS -----
    TrickHLA::Federate federate;
    TrickHLA::FedAmb   federate_amb;
    TrickHLA::Manager  manager;
@@ -65,12 +65,12 @@ class THLABaseSimObject : public Trick::SimObject {
       if ( interaction_cycle <= 0.0 ) {
          exec_terminate( __FILE__, "THLASimObject() interaction_cycle must be > 0.0!" );
       }
-      
-      
+
+
       //-----------------------
       //-- DEFAULT DATA JOBS --
       //-----------------------
-      
+
       //-------------------------
       //-- INITIALIZATION JOBS --
       //-------------------------
@@ -81,14 +81,14 @@ class THLABaseSimObject : public Trick::SimObject {
 
       // Setup the HLA infrastructure.
       P_INIT ("initialization") federate.initialize();
-      
+
       // This begins the process of standing up the federate in the federation
       // execution. This preforms all the startup steps prior to any
       // multi-phase inializtation process defined by the user. The multi-
       // phase inialization will be performed as initialization jobs between
       // P_INIT and P_LAST.
       P_INIT ("initialization") federate.pre_multiphase_initialization();
-      
+
       // The last step of the multi-phase initialization. We make sure this
       // initialization job runs last by setting the initialization phase
       // to P65534, since this job indicates to the other federates that
@@ -142,14 +142,14 @@ class THLABaseSimObject : public Trick::SimObject {
 
       // Coordinate federates going to freeze mode
       ("end_of_frame") federate.enter_freeze();
-      
+
 
       //-------------------
       //-- SHUTDOWN JOBS --
       //-------------------
       P_LAST ("shutdown") federate.shutdown();
    }
-   
+
    // Pure virtual destructor. Make this SimObject an abstract class.
    // It must be extended with a specific ExecutionControl implementation.
    virtual ~THLABaseSimObject() = 0;
@@ -163,7 +163,7 @@ class THLABaseSimObject : public Trick::SimObject {
    THLABaseSimObject();
 };
 
-// Required inline implementation of the pure virtual destructor.
+// Required implementation of the pure virtual destructor.
 %{
-inline THLABaseSimObject::~THLABaseSimObject(){}
+   THLABaseSimObject::~THLABaseSimObject(){}
 %}

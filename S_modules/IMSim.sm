@@ -46,15 +46,15 @@
 class IMSimSimObject : public Trick::SimObject {
 
  public:
-   
+
    //----- DATA STRUCTURE DECLARATIONS -----   
    TrickHLA::Federate federate;
    TrickHLA::FedAmb   federate_amb;
    TrickHLA::Manager  manager;
-   
+
    double             checkpoint_time;
    const char*        checkpoint_label;
-   
+
    double             check_pause_job_offset;
    const double       CHECK_PAUSE_DELTA;
 
@@ -71,18 +71,18 @@ class IMSimSimObject : public Trick::SimObject {
       if ( interaction_cycle <= 0.0 ) {
          exec_terminate( __FILE__, "THLASimObject() interaction_cycle must be > 0.0!" );
       }
-      
+
       // Calculate and validate the check-pause job offset time.
       if ( data_cycle <= CHECK_PAUSE_DELTA ) {
          exec_terminate( __FILE__, "THLASimObject() data_cycle must be > CHECK_PAUSE_DELTA!" );
       }
       check_pause_job_offset = data_cycle - CHECK_PAUSE_DELTA;
-      
-      
+
+
       //-----------------------
       //-- DEFAULT DATA JOBS --
       //-----------------------
-      
+
       //-------------------------
       //-- INITIALIZATION JOBS --
       //-------------------------
@@ -92,7 +92,7 @@ class IMSimSimObject : public Trick::SimObject {
       P1 ("initialization") federate.initialize_debug();
 
       P_INIT ("initialization") federate.initialize( federate_amb );
-      
+
       // Initialize the TrickHLA Manger which will setup the RTI interface,
       // confirm all required federates have joined the federation, perform
       // dynamic initialization with the federates, and start the simulation.
@@ -107,7 +107,7 @@ class IMSimSimObject : public Trick::SimObject {
       // FIXME: This is for IMSim and DIS only. Needs to be moved into ExecutionControl.
       // Check to see if fed master started in freeze mode
       //P_LAST ("initialization") federate.check_pause_at_init( CHECK_PAUSE_DELTA );
-      
+
       // Coordinate Central Timing Equipment (CTE) go to run.
       //P_LAST ("initialization") federate.coordinate_CTE_go_to_run();
 
@@ -155,7 +155,7 @@ class IMSimSimObject : public Trick::SimObject {
       // Request to go to the next logical time step with a HLA
       // Time-Advance-Request (TAR).
       P_LAST (data_cycle, "logging") federate.time_advance_request();
-      
+
       // FIXME: This is for IMSim only. Needs to be moved into ExecutionControl.
       // Check to see if an interaction informed us that we are to
       // FREEZE the sim before entering the next logical frame.
@@ -167,7 +167,7 @@ class IMSimSimObject : public Trick::SimObject {
 
       // Coordinate federates going to freeze mode
       ("end_of_frame") federate.enter_freeze();
-      
+
 
       //-------------------
       //-- SHUTDOWN JOBS --

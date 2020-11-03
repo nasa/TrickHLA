@@ -366,7 +366,10 @@ class Attribute
    void *get_sim_variable_address()
    {
       // Address to a string is different so handle differently.
-      if ( ( ref2->attr->type == TRICK_STRING ) || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) ) && ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
+      if ( ( ref2->attr->type == TRICK_STRING )
+           || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
+                && ( ref2->attr->num_index > 0 )
+                && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
          return ( *( (void **)( ref2->address ) ) );
       } else {
          return ( ref2->address );
