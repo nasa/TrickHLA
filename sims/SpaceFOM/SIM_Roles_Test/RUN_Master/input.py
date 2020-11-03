@@ -24,13 +24,13 @@ from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 def print_usage_message( ):
 
-   print ' '
-   print 'TrickHLA SpaceFOM Master Simulation Command Line Configuration Options:'
-   print '  -h -help         : Print this help message.'
-   print '  -stop [time]     : Time to stop simulation.'
-   print '  -nostop          : Set no stop time on simulation.'
-   print '  -verbose [on|off]: on: Show verbose messages (Default), off: disable messages.'
-   print ' '
+   print (' ')
+   print ('TrickHLA SpaceFOM Master Simulation Command Line Configuration Options:')
+   print ('  -h -help         : Print this help message.')
+   print ('  -stop [time]     : Time to stop simulation.')
+   print ('  -nostop          : Set no stop time on simulation.')
+   print ('  -verbose [on|off]: on: Show verbose messages (Default), off: disable messages.')
+   print (' ')
 
    trick.exec_terminate_with_return( -1,
                                      sys._getframe(0).f_code.co_filename,
@@ -59,7 +59,7 @@ def parse_command_line( ) :
          if (index < argc) :
             run_duration = float(str(argv[index]))
          else :
-            print "ERROR: Missing -stop [time] argument."
+            print ('ERROR: Missing -stop [time] argument.')
             print_usage = True
             
       elif (str(argv[index]) == '-nostop') :
@@ -76,14 +76,14 @@ def parse_command_line( ) :
             elif (str(argv[index]) == 'off') :
                verbose = False
             else :
-               print 'ERROR: Unknown -verbose argument: ' + str(argv[index])
+               print ('ERROR: Unknown -verbose argument: ' + str(argv[index]))
                print_usage = True
          else :
-            print "ERROR: Missing -verbose [on|off] argument."
+            print ('ERROR: Missing -verbose [on|off] argument.')
             print_usage = True
          
       else :
-         print 'ERROR: Unknown command line argument ' + str(argv[index])
+         print ('ERROR: Unknown command line argument ' + str(argv[index]))
          print_usage = True
          
       index = index + 1
