@@ -119,7 +119,7 @@ execfile( "Modified_data/trick/realtime.py" )
 trick.exec_set_enable_freeze(False)
 trick.exec_set_freeze_command(False)
 trick.sim_control_panel_set_enabled(False)
-trick.exec_set_stack_trace(True)
+trick.exec_set_stack_trace(False)
 
 
 # =========================================================================

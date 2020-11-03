@@ -1,5 +1,5 @@
 /*****************************************************************************
- * General Basin TrickHLA Simulation Definition Object
+ * General TrickHLA Simulation Definition Object
  *---------------------------------------------------------------------------*
  * This is a Simulation Definition (S_define) module that defines a general
  * HLA interface using TrickHLA for Trick based simulations.
@@ -36,10 +36,10 @@
 class THLASimObject : public THLABaseSimObject {
 
  public:
-   
+
    // The Simple TrickHLA example Execution Configuration Object (ExCO).
    TrickHLA::ExecutionConfiguration simple_sim_config;
-   
+
    // The simple TrickHLA Execution Control object.
    TrickHLA::ExecutionControl execution_control;
 

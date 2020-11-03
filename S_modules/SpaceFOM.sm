@@ -43,10 +43,10 @@
 class SpaceFOMSimObject : public THLABaseSimObject {
 
  public:
-   
+
    // The Space Reference FOM (SpaceFOM) Execution Configuration Object (ExCO).
    SpaceFOM::ExecutionConfiguration ExCO;
-   
+
    // The Space Reference FOM (SpaceFOM) Execution Control object.
    SpaceFOM::ExecutionControl execution_control;
 
