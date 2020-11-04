@@ -16,7 +16,7 @@
 #    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.)))
 ##############################################################################
 import sys
-sys.path.append('../../../')
+sys.path.append( '../../../' )
 # Load the SpaceFOM specific federate configuration object.
 from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
 # Load the SpaceFOM specific reference frame configuration object.
@@ -24,18 +24,18 @@ from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 def print_usage_message( ):
 
-   print (' ')
-   print ('TrickHLA SpaceFOM Master Simulation Command Line Configuration Options:')
-   print ('  -h -help         : Print this help message.')
-   print ('  -stop [time]     : Time to stop simulation.')
-   print ('  -nostop          : Set no stop time on simulation.')
-   print ('  -verbose [on|off]: on: Show verbose messages (Default), off: disable messages.')
-   print (' ')
+   print( ' ' )
+   print( 'TrickHLA SpaceFOM Master Simulation Command Line Configuration Options:' )
+   print( '  -h -help         : Print this help message.' )
+   print( '  -stop [time]     : Time to stop simulation.' )
+   print( '  -nostop          : Set no stop time on simulation.' )
+   print( '  -verbose [on|off]: on: Show verbose messages (Default), off: disable messages.' )
+   print( ' ' )
 
    trick.exec_terminate_with_return( -1,
                                      sys._getframe(0).f_code.co_filename,
                                      sys._getframe(0).f_lineno,
-                                     'Print usage message.')
+                                     'Print usage message.' )
    return
 
 
@@ -59,7 +59,7 @@ def parse_command_line( ) :
          if (index < argc) :
             run_duration = float(str(argv[index]))
          else :
-            print ('ERROR: Missing -stop [time] argument.')
+            print( 'ERROR: Missing -stop [time] argument.' )
             print_usage = True
             
       elif (str(argv[index]) == '-nostop') :
@@ -76,14 +76,14 @@ def parse_command_line( ) :
             elif (str(argv[index]) == 'off') :
                verbose = False
             else :
-               print ('ERROR: Unknown -verbose argument: ' + str(argv[index]))
+               print( 'ERROR: Unknown -verbose argument: ' + str(argv[index]) )
                print_usage = True
          else :
-            print ('ERROR: Missing -verbose [on|off] argument.')
+            print( 'ERROR: Missing -verbose [on|off] argument.' )
             print_usage = True
          
       else :
-         print ('ERROR: Unknown command line argument ' + str(argv[index]))
+         print( 'ERROR: Unknown command line argument ' + str(argv[index]) )
          print_usage = True
          
       index = index + 1
@@ -111,7 +111,7 @@ if (print_usage == True) :
 trick.exec_set_trap_sigfpe(True)
 #trick.checkpoint_pre_init(1)
 trick.checkpoint_post_init(1)
-#trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
+#trick.add_read(0.0 , '''trick.checkpoint( 'chkpnt_point' )''')
 
 trick.exec_set_enable_freeze(True)
 trick.exec_set_freeze_command(True)
@@ -192,7 +192,7 @@ federate.set_time_constrained( True )
 # By setting this we are specifying the use of Common Timing Equipment (CTE)
 # for controlling the Mode Transitions for all federates using CTE.
 # Don't really need CTE for RRFP.
-THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::CTETimelineBase' )
+THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::CTETimelineBase')
 
 
 #---------------------------------------------------------------------------
