@@ -25,7 +25,7 @@ def print_usage_message( ):
    print(' ')
    print('TrickHLA SpaceFOM Master/Pacing/Root-Reference-Frame Simulation Command Line Configuration Options:')
    print('  -h -help         : Print this help message.')
-   print('  -stop [time]     : Time to stop simulation.')
+   print('  -stop [time]     : Time to stop simulation, default is 10.0 seconds.')
    print('  -nostop          : Set no stop time on simulation.')
    print('  -verbose [on|off]: on: Show verbose messages (Default), off: disable messages.')
    print(' ')

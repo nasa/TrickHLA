@@ -25,7 +25,7 @@ def print_usage_message( ):
    print(' ')
    print('TrickHLA SpaceFOM Root-Reference-Frame Simulation Command Line Configuration Options:')
    print('  -h -help         : Print this help message.')
-   print('  -stop [time]     : Time to stop simulation.')
+   print('  -stop [time]     : Time to stop simulation, default is 10.0 seconds.')
    print('  -nostop          : Set no stop time on simulation.')
    print('  -verbose [on|off]: on: Show verbose messages (Default), off: disable messages.')
    print(' ')
@@ -172,7 +172,7 @@ THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 federate.set_lookahead_time( 0.250 )
 
 # Setup Time Management parameters.
-federate.set_time_regulating( False )
+federate.set_time_regulating( True )
 federate.set_time_constrained( True )
 
 #--------------------------------------------------------------------------

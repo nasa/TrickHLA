@@ -29,11 +29,11 @@ def print_usage_message( ) :
    print(' ')
    print('TrickHLA SpaceFOM Master/Pacing/Root-Reference-Frame Simulation Command Line Configuration Options:')
    print('  -h -help              : Print this help message.')
-   print('  -realtime [on|off]    : on: Turns on realtiem clock (Default), off: disables it.')
+   print('  -realtime [on|off]    : on: Turns on realtime clock (Default), off: disables it.')
    print('  -hla-time-mgt [on|off]: on: Turns on HLA Time Management (Default), off: disables it.')
    print('  -regulating [on|off]  : on: Turns on HLA Time Regulating (Default), off: disables it.')
    print('  -constrained [on|off] : on: Turns on HLA Time Constrained (Default), off: disables it.')
-   print('  -stop [time]          : Time to stop simulation.')
+   print('  -stop [time]          : Time to stop simulation, default is 10.0 seconds.')
    print('  -nostop               : Set no stop time on simulation.')
    print('  -verbose [on|off]     : on: Show verbose messages, off: disable messages (Default).')
    print(' ')
@@ -176,7 +176,6 @@ run_duration = 10.0
 
 # Default no verbose messages.
 verbose = False
-
 
 parse_command_line()
 
