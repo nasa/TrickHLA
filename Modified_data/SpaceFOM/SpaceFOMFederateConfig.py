@@ -74,7 +74,7 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
       
       # You can only change master state before initialize method is called.
       if self.initialized :
-         print( 'SpaceFOMFederateConfig.set_master_role(): Warning, already initialized, function ignored!' )
+         print ('SpaceFOMFederateConfig.set_master_role(): Warning, already initialized, function ignored!')
       else:
          self.is_master = master_state
          self.control.master = master_state
@@ -86,7 +86,7 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
       
       # You can only change pacing state before initialize method is called.
       if self.initialized :
-         print( 'SpaceFOMFederateConfig.set_pacing_role(): Warning, already initialized, function ignored!' )
+         print ('SpaceFOMFederateConfig.set_pacing_role(): Warning, already initialized, function ignored!')
       else:
          self.is_pacing = pacing_state
          self.control.pacing = pacing_state
@@ -98,7 +98,7 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
       
       # You can only change RRFP state before initialize method is called.
       if self.initialized :
-         print( 'SpaceFOMFederateConfig.set_RRFP_role(): Warning, already initialized, function ignored!' )
+         print ('SpaceFOMFederateConfig.set_RRFP_role(): Warning, already initialized, function ignored!')
       else:
          self.is_RRFP = RRFP_state
          self.control.root_frame_pub = RRFP_state
@@ -110,7 +110,7 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
       
       # You can only change RRFP state before initialize method is called.
       if self.initialized :
-         print( 'SpaceFOMFederateConfig.set_config_S_define_name(): Warning, already initialized, function ignored!' )
+         print ('SpaceFOMFederateConfig.set_config_S_define_name(): Warning, already initialized, function ignored!')
       else:
          self.config_S_define_name = config_S_define_name
 
@@ -121,7 +121,7 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
       
       # You can only set sim_config path before initialize method is called.
       if self.initialized :
-         print( 'SpaceFOMFederateConfig.set_scenario_timeline_epoch(): Warning, already initialized, function ignored!' )
+         print ('SpaceFOMFederateConfig.set_scenario_timeline_epoch(): Warning, already initialized, function ignored!')
          return
 
       # Set the new Least Common Time Step value.
@@ -135,12 +135,12 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
       
       # You can only set root frame before initialize method is called.
       if self.initialized :
-         print( 'SpaceFOMFederateConfig.set_root_frame: Warning, already initialized, function ignored!' )
+         print ('SpaceFOMFederateConfig.set_root_frame: Warning, already initialized, function ignored!')
          return
       
       # Check to see if an ExCO is already been set. If so, warn the user.
       if self.control.root_ref_frame:
-         print( 'SpaceFOMFederateConfig.set_root_frame(): Warning, root reference frame is already set; this will override the existing settings!' )
+         print ('SpaceFOMFederateConfig.set_root_frame(): Warning, root reference frame is already set; this will override the existing settings!')
          return
       
       #
@@ -172,7 +172,7 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
       
       # You can only initialize once.
       if self.initialized :
-         print( 'SpaceFOMFederateConfig.initialize(): Warning, already initialized! Ignoring!' )
+         print ('SpaceFOMFederateConfig.initialize(): Warning, already initialized! Ignoring!')
          return
       
       # Call the base class initialization utility function.

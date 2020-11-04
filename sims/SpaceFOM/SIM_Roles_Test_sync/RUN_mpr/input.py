@@ -15,7 +15,7 @@
 #     ((Dan Dexter) (NASA/ER6) (Aug 2020) (--) (Updated command-line parsing.))))
 ##############################################################################
 import sys
-sys.path.append( '../../../' )
+sys.path.append('../../../')
 # Load the SpaceFOM specific federate configuration object.
 from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
 # Load the SpaceFOM specific reference frame configuration object.
@@ -26,22 +26,22 @@ from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
 #---------------------------------------------------------------------------
 def print_usage_message( ) :
 
-   print( ' ' )
-   print( 'TrickHLA SpaceFOM Master/Pacing/Root-Reference-Frame Simulation Command Line Configuration Options:' )
-   print( '  -h -help              : Print this help message.' )
-   print( '  -realtime [on|off]    : on: Turns on realtiem clock (Default), off: disables it.' )
-   print( '  -hla-time-mgt [on|off]: on: Turns on HLA Time Management (Default), off: disables it.' )
-   print( '  -regulating [on|off]  : on: Turns on HLA Time Regulating (Default), off: disables it.' )
-   print( '  -constrained [on|off] : on: Turns on HLA Time Constrained (Default), off: disables it.' )
-   print( '  -stop [time]          : Time to stop simulation.' )
-   print( '  -nostop               : Set no stop time on simulation.' )
-   print( '  -verbose [on|off]     : on: Show verbose messages, off: disable messages (Default).' )
-   print( ' ' )
+   print (' ')
+   print ('TrickHLA SpaceFOM Master/Pacing/Root-Reference-Frame Simulation Command Line Configuration Options:')
+   print ('  -h -help              : Print this help message.')
+   print ('  -realtime [on|off]    : on: Turns on realtiem clock (Default), off: disables it.')
+   print ('  -hla-time-mgt [on|off]: on: Turns on HLA Time Management (Default), off: disables it.')
+   print ('  -regulating [on|off]  : on: Turns on HLA Time Regulating (Default), off: disables it.')
+   print ('  -constrained [on|off] : on: Turns on HLA Time Constrained (Default), off: disables it.')
+   print ('  -stop [time]          : Time to stop simulation.')
+   print ('  -nostop               : Set no stop time on simulation.')
+   print ('  -verbose [on|off]     : on: Show verbose messages, off: disable messages (Default).')
+   print (' ')
    
    trick.exec_terminate_with_return( -1,
                                      sys._getframe(0).f_code.co_filename,
                                      sys._getframe(0).f_lineno,
-                                     'Print usage message.' )
+                                     'Print usage message.')
    return
 
 
@@ -72,10 +72,10 @@ def parse_command_line( ) :
             elif (str(argv[index]) == 'off') :
                realtime_clock = False
             else :
-               print( 'ERROR: Unknown -realtime argument: ' + str(argv[index]) )
+               print ('ERROR: Unknown -realtime argument: ' + str(argv[index]))
                print_usage = True
          else :
-            print( 'ERROR: Missing -realtime [on|off] argument.' )
+            print ('ERROR: Missing -realtime [on|off] argument.')
             print_usage = True
             
       elif (str(argv[index]) == '-hla-time-mgt') :
@@ -86,10 +86,10 @@ def parse_command_line( ) :
             elif (str(argv[index]) == 'off') :
                hla_time_mgt = False
             else :
-               print( 'ERROR: Unknown -hla-time-mgt argument: ' + str(argv[index]) )
+               print ('ERROR: Unknown -hla-time-mgt argument: ' + str(argv[index]))
                print_usage = True
          else :
-            print( 'ERROR: Missing -hla-time-mgt [on|off] argument.' )
+            print ('ERROR: Missing -hla-time-mgt [on|off] argument.')
             print_usage = True
             
       elif (str(argv[index]) == '-regulating') :
@@ -100,10 +100,10 @@ def parse_command_line( ) :
             elif (str(argv[index]) == 'off') :
                time_regulating = False
             else :
-               print( 'ERROR: Unknown -regulating argument: ' + str(argv[index]) )
+               print ('ERROR: Unknown -regulating argument: ' + str(argv[index]))
                print_usage = True
          else :
-            print( 'ERROR: Missing -regulating [on|off] argument.' )
+            print ('ERROR: Missing -regulating [on|off] argument.')
             print_usage = True
             
       elif (str(argv[index]) == '-constrained') :
@@ -114,10 +114,10 @@ def parse_command_line( ) :
             elif (str(argv[index]) == 'off') :
                time_constrained = False
             else :
-               print( 'ERROR: Unknown -constrained argument: ' + str(argv[index]) )
+               print ('ERROR: Unknown -constrained argument: ' + str(argv[index]))
                print_usage = True
          else :
-            print( 'ERROR: Missing -constrained [on|off] argument.' )
+            print ('ERROR: Missing -constrained [on|off] argument.')
             print_usage = True
             
       elif (str(argv[index]) == '-stop') :
@@ -125,7 +125,7 @@ def parse_command_line( ) :
          if (index < argc) :
             run_duration = float(str(argv[index]))
          else :
-            print( 'ERROR: Missing -stop [time] argument.' )
+            print ('ERROR: Missing -stop [time] argument.')
             print_usage = True
             
       elif (str(argv[index]) == '-nostop') :
@@ -142,14 +142,14 @@ def parse_command_line( ) :
             elif (str(argv[index]) == 'off') :
                verbose = False
             else :
-               print( 'ERROR: Unknown -verbose argument: ' + str(argv[index]) )
+               print ('ERROR: Unknown -verbose argument: ' + str(argv[index]))
                print_usage = True
          else :
-            print( 'ERROR: Missing -verbose [on|off] argument.' )
+            print ('ERROR: Missing -verbose [on|off] argument.')
             print_usage = True
       
       else :
-         print( 'ERROR: Unknown command line argument ' + str(argv[index]) )
+         print ('ERROR: Unknown command line argument ' + str(argv[index]))
          print_usage = True
          
       index = index + 1
@@ -191,15 +191,15 @@ if (print_usage == True) :
 trick.exec_set_trap_sigfpe(True)
 #trick.checkpoint_pre_init(1)
 #trick.checkpoint_post_init(1)
-#trick.add_read(0.0 , '''trick.checkpoint( 'chkpnt_point' )''')
+#trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
 
 
 # Setup for Trick real time execution. This is the "Pacing" function.
 if (realtime_clock == True) :   
-   print( 'Realtime Clock Enabled.' )
+   print ('Realtime Clock Enabled.')
    exec(open( "Modified_data/trick/realtime.py" ).read())
 else :
-   print( 'Realtime Clock Disabled.' )
+   print ('Realtime Clock Disabled.')
 
 
 trick.exec_set_enable_freeze(False)
@@ -274,25 +274,25 @@ federate.set_time_padding( 2.0 )
 
 # Setup Time Management parameters.
 if (hla_time_mgt == False) :
-   print( 'HLA Time Management Disabled.' )
+   print ('HLA Time Management Disabled.')
    federate.set_time_management( False )
 else :
-   print( 'HLA Time Management Enabled.' )
+   print ('HLA Time Management Enabled.')
    # True to enable TAR/TAG/Regulating/Constrained HLA API's
    federate.set_time_management( True )
    
    if (time_regulating == False) :
-      print( 'HLA Time Regulating Disabled.' )
+      print ('HLA Time Regulating Disabled.')
       federate.set_time_regulating( False )
    else :
-      print( 'HLA Time Regulating Enabled.' )
+      print ('HLA Time Regulating Enabled.')
       federate.set_time_regulating( True )
    
    if (time_constrained == False) :
-      print( 'HLA Time Constrained Disabled.' )
+      print ('HLA Time Constrained Disabled.')
       federate.set_time_constrained( False )
    else :
-      print( 'HLA Time Constrained Enabled.' )
+      print ('HLA Time Constrained Enabled.')
       federate.set_time_constrained( True )
 
 
@@ -403,5 +403,5 @@ federate.initialize()
 # Set up simulation termination time.
 #---------------------------------------------------------------------------
 if run_duration:
-   print( 'Run duration: ' + str(run_duration))
+   print ('Run duration: ' + str(run_duration))
    trick.sim_services.exec_set_terminate_time( run_duration )
