@@ -30,13 +30,13 @@ def print_usage_message( ) :
    print('TrickHLA SpaceFOM Other Simulation Command Line Configuration Options:')
    print('  -h -help                : Print this help message.')
    print('  -blocking-reads [on|off]: on: Turns on blocking cyclic reads, off: disables it (Default).')
-   print('  -realtime [on|off]      : on: Turns on realtiem clock, off: disables it (Default).')
+   print('  -realtime [on|off]      : on: Turns on realtime clock, off: disables it (Default).')
    print('  -hla-time-mgt [on|off]  : on: Turns on HLA Time Management (Default), off: disables it.')
    print('  -regulating [on|off]    : on: Turns on HLA Time Regulating, off: disables it (Default).')
    print('  -constrained [on|off]   : on: Turns on HLA Time Constrained (Default), off: disables it.')
-   print('  -stop [time]            : Time to stop simulation.')
+   print('  -stop [time]            : Time to stop simulation, default is 10.0 seconds.')
    print('  -nostop                 : Set no stop time on simulation.')
-   print('  -verbose [on|off]     : on: Show verbose messages, off: disable messages (Default).')
+   print('  -verbose [on|off]       : on: Show verbose messages, off: disable messages (Default).')
    print(' ')
    
    trick.exec_terminate_with_return( -1,
@@ -184,7 +184,7 @@ realtime_clock = False
 # Default: Use HLA time management.
 hla_time_mgt = True
 
-# Default: Time-Regulating
+# Default: Not Time-Regulating
 time_regulating = False
 
 # Default: Time-Constrained
@@ -195,7 +195,6 @@ run_duration = 10.0
 
 # Default no verbose messages.
 verbose = False
-
 
 parse_command_line()
 
