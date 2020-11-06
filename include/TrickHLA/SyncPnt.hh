@@ -95,12 +95,7 @@ class SyncPnt
 
    /*! @brief Notify the RTI that the synchronization point has been achieved.
     *  @param RTI_amb The HLA RTI Ambassador. */
-   virtual void achieve_sync_point( RTI1516_NAMESPACE::RTIambassador &RTI_amb ) throw( RTI1516_NAMESPACE::SynchronizationPointLabelNotAnnounced,
-                                                                                       RTI1516_NAMESPACE::FederateNotExecutionMember,
-                                                                                       RTI1516_NAMESPACE::SaveInProgress,
-                                                                                       RTI1516_NAMESPACE::RestoreInProgress,
-                                                                                       RTI1516_NAMESPACE::NotConnected,
-                                                                                       RTI1516_NAMESPACE::RTIinternalError );
+   virtual void achieve_sync_point( RTI1516_NAMESPACE::RTIambassador &RTI_amb );
 
    /*! @brief Wait for this synchronization point to be synchronized.
     *  @param federate The TrickHLA::Federate instance. */

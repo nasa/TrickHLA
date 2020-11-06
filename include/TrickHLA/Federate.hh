@@ -352,7 +352,7 @@ class Federate
    /*! @brief Read the running_feds file, replacing the data in known federates
     * data structure.
     * @param file_name Checkpoint file name. */
-   void read_running_feds_file( const std::string &file_name ) throw( const char * );
+   void read_running_feds_file( const std::string &file_name );
 
    /*! @brief Copies the contents of the checkpoint's list of federates into
     * known federates data structure. */
@@ -1159,7 +1159,7 @@ class Federate
    /*! @brief Dumps the contents of the running_feds object into the supplied
     *  file name with ".running_feds" appended to it.
     *  @param file_name Checkpoint file name. */
-   void write_running_feds_file( const std::string &file_name ) throw( const char * );
+   void write_running_feds_file( const std::string &file_name );
 
    /*! @brief Request federation save from the RTI. */
    void request_federation_save();

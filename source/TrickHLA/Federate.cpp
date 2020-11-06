@@ -5786,7 +5786,7 @@ void Federate::remove_MOM_HLAfederation_instance_id(
 }
 
 void Federate::write_running_feds_file(
-   const string &file_name ) throw( const char * )
+   const string &file_name )
 {
    string   full_path;
    ofstream file;
@@ -5973,7 +5973,7 @@ Unexpected restore process %d, which is not 'Restore_Complete' or 'Restore_Reque
 }
 
 void Federate::read_running_feds_file(
-   const string &file_name ) throw( const char * )
+   const string &file_name )
 {
    string   full_path;
    ifstream file;

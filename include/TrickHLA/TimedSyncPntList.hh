@@ -89,12 +89,7 @@ class TimedSyncPntList : public TrickHLA::SyncPntListBase
    /*! @brief Achieve all the synchronization points in the list.
     *  @return True is any synchronization point in the list was achieved.
     *  @param rti_ambassador Reference to the HLA RTI Ambassador instance. */
-   virtual bool achieve_all_sync_pnts( RTI1516_NAMESPACE::RTIambassador &rti_ambassador ) throw( RTI1516_NAMESPACE::SynchronizationPointLabelNotAnnounced,
-                                                                                                 RTI1516_NAMESPACE::FederateNotExecutionMember,
-                                                                                                 RTI1516_NAMESPACE::SaveInProgress,
-                                                                                                 RTI1516_NAMESPACE::RestoreInProgress,
-                                                                                                 RTI1516_NAMESPACE::NotConnected,
-                                                                                                 RTI1516_NAMESPACE::RTIinternalError )
+   virtual bool achieve_all_sync_pnts( RTI1516_NAMESPACE::RTIambassador &rti_ambassador )
    {
       Int64Time time( 0.0 );
       return ( achieve_all_sync_pnts( rti_ambassador, time ) );

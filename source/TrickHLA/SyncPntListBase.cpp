@@ -448,12 +448,7 @@ void SyncPntListBase::wait_for_list_synchronization(
 void SyncPntListBase::achieve_and_wait_for_synchronization(
    RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
    Federate *                        federate,
-   std::wstring const &              label ) throw( RTI1516_NAMESPACE::SynchronizationPointLabelNotAnnounced,
-                                      RTI1516_NAMESPACE::FederateNotExecutionMember,
-                                      RTI1516_NAMESPACE::SaveInProgress,
-                                      RTI1516_NAMESPACE::RestoreInProgress,
-                                      RTI1516_NAMESPACE::NotConnected,
-                                      RTI1516_NAMESPACE::RTIinternalError )
+   std::wstring const &              label )
 {
    string        name;
    ostringstream errmsg;
@@ -536,12 +531,7 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
  * @job_class{initialization}
  */
 bool SyncPntListBase::achieve_all_sync_pnts(
-   RTI1516_NAMESPACE::RTIambassador &rti_ambassador ) throw( RTI1516_NAMESPACE::SynchronizationPointLabelNotAnnounced,
-                                                             RTI1516_NAMESPACE::FederateNotExecutionMember,
-                                                             RTI1516_NAMESPACE::SaveInProgress,
-                                                             RTI1516_NAMESPACE::RestoreInProgress,
-                                                             RTI1516_NAMESPACE::NotConnected,
-                                                             RTI1516_NAMESPACE::RTIinternalError )
+   RTI1516_NAMESPACE::RTIambassador &rti_ambassador )
 {
    bool wasAcknowledged = false;
 
