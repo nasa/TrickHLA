@@ -384,12 +384,7 @@ void ExecutionControl::announce_sync_point(
  * @job_class{initialization}
  */
 void ExecutionControl::achieve_all_multiphase_init_sync_pnts(
-   RTI1516_NAMESPACE::RTIambassador &rti_ambassador ) throw( RTI1516_NAMESPACE::SynchronizationPointLabelNotAnnounced,
-                                                             RTI1516_NAMESPACE::FederateNotExecutionMember,
-                                                             RTI1516_NAMESPACE::SaveInProgress,
-                                                             RTI1516_NAMESPACE::RestoreInProgress,
-                                                             RTI1516_NAMESPACE::NotConnected,
-                                                             RTI1516_NAMESPACE::RTIinternalError )
+   RTI1516_NAMESPACE::RTIambassador &rti_ambassador )
 {
    // Iterate through this ExecutionControl's synchronization point list.
    vector< SyncPnt * >::const_iterator i;

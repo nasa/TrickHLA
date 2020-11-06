@@ -198,12 +198,7 @@ bool SyncPnt::wait_for_announce(
 }
 
 void SyncPnt::achieve_sync_point(
-   RTI1516_NAMESPACE::RTIambassador &RTI_amb ) throw( RTI1516_NAMESPACE::SynchronizationPointLabelNotAnnounced,
-                                                      RTI1516_NAMESPACE::FederateNotExecutionMember,
-                                                      RTI1516_NAMESPACE::SaveInProgress,
-                                                      RTI1516_NAMESPACE::RestoreInProgress,
-                                                      RTI1516_NAMESPACE::NotConnected,
-                                                      RTI1516_NAMESPACE::RTIinternalError )
+   RTI1516_NAMESPACE::RTIambassador &RTI_amb )
 {
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;

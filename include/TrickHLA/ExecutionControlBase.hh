@@ -190,13 +190,7 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
     *  synchronization points if they are not already achieved and are not
     *  one of the predefined ExecutionControl synchronization points.
     *  @param rti_ambassador Reference to the HLA RTI Ambassador instance. */
-   void achieve_all_multiphase_init_sync_pnts(
-      RTI1516_NAMESPACE::RTIambassador &rti_ambassador ) throw( RTI1516_NAMESPACE::SynchronizationPointLabelNotAnnounced,
-                                                                RTI1516_NAMESPACE::FederateNotExecutionMember,
-                                                                RTI1516_NAMESPACE::SaveInProgress,
-                                                                RTI1516_NAMESPACE::RestoreInProgress,
-                                                                RTI1516_NAMESPACE::NotConnected,
-                                                                RTI1516_NAMESPACE::RTIinternalError );
+   void achieve_all_multiphase_init_sync_pnts( RTI1516_NAMESPACE::RTIambassador &rti_ambassador );
    /*! @brief Wait for all the user defined mulit-phase initialization
     *  synchronization points if they are not already achieved and are not
     *  one of the predefined ExecutionControl synchronization points. */

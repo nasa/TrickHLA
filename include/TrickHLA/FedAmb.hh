@@ -52,6 +52,12 @@ NASA, Johnson Space Center\n
 #ifndef _TRICKHLA_FED_AMB_HH_
 #define _TRICKHLA_FED_AMB_HH_
 
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+
 // System includes
 
 // Trick include files.
@@ -67,7 +73,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-// Forward Declared Classes:  Since these classes are only used as references
+// Forward Declared Classes: Since these classes are only used as references
 // through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
 class Federate;
@@ -503,5 +509,7 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
 };
 
 } // namespace TrickHLA
+
+#pragma GCC diagnostic pop
 
 #endif // _TRICKHLA_FED_AMB_HH_ -- Do NOT put anything after this line.
