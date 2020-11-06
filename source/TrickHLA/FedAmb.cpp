@@ -159,6 +159,12 @@ void FedAmb::initialize()
 // Federation Management Services //
 ////////////////////////////////////
 
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+
 void FedAmb::connectionLost(
    wstring const &faultDescription ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
@@ -1523,3 +1529,5 @@ FedAmb::requestRetraction():%d %c",
             federate->get_federate_name(),
             __LINE__, THLA_NEWLINE );
 }
+
+#pragma GCC diagnostic pop

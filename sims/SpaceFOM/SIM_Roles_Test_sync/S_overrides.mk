@@ -16,10 +16,12 @@ endif
 #=============================================================================
 
 TRICK_CFLAGS    += -I.
+TRICK_CFLAGS    += -Wno-deprecated-declarations
 TRICK_CFLAGS    += -DTHLA_CHECK_SEND_AND_RECEIVE_COUNTS
 TRICK_CFLAGS    += -DTHLA_CYCLIC_READ_TIME_STATS
 TRICK_CFLAGS    += -O3
 TRICK_CXXFLAGS  += -I.
+TRICK_CXXFLAGS  += -Wno-deprecated-declarations
 TRICK_CXXFLAGS  += -DTHLA_CHECK_SEND_AND_RECEIVE_COUNTS
 TRICK_CXXFLAGS  += -DTHLA_CYCLIC_READ_TIME_STATS
 TRICK_CXXFLAGS  += -O3
