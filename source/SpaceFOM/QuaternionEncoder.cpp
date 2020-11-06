@@ -33,8 +33,14 @@ NASA, Johnson Space Center\n
 // Model include files.
 #include "SpaceFOM/QuaternionEncoder.hh"
 
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA Encoder helper includes.
 #include "RTI/VariableLengthData.h"
+#pragma GCC diagnostic pop
 
 using namespace rti1516e;
 using namespace std;

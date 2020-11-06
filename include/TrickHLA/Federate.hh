@@ -54,8 +54,14 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
 
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA include files.
 #include RTI1516_HEADER
+#pragma GCC diagnostic pop
 
 // FIXME: What do we do for Trick 10 to get the command-line arguments for the
 // Federate::restart_federate() job? DDexter 11/7/11
@@ -1150,7 +1156,10 @@ class Federate
 
    // Federation required associations.
    //
-   TrickRTIAmbPtr        RTI_ambassador;      ///< @trick_io{**} RTI ambassador
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+   TrickRTIAmbPtr RTI_ambassador; ///< @trick_io{**} RTI ambassador
+#pragma GCC diagnostic pop
    FedAmb *              federate_ambassador; ///< @trick_units{--} Federate ambassador.
    Manager *             manager;             ///< @trick_units{--} Associated TrickHLA Federate.
    ExecutionControlBase *execution_control;   /**< @trick_units{--} Execution control object. This has to point to an allocated execution control class that inherits from the ExecutionControlBase interface class. For instance SRFOM::ExecutionControl. */

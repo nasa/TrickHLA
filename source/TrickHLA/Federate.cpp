@@ -80,8 +80,14 @@ NASA, Johnson Space Center\n
 // Access the Trick global objects for CheckPoint restart and the Clock.
 extern Trick::CheckPointRestart *the_cpr;
 
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
 // Note: This has to follow the Federate include.
 #include <RTI/RTIambassadorFactory.h>
+#pragma GCC diagnostic pop
 
 #ifdef __cplusplus
 extern "C" {
