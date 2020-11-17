@@ -1942,6 +1942,10 @@ void Object::send_cyclic_and_requested_data(
 
    // Make sure we don't send an empty attribute map to the other federates.
    if ( attribute_values_map->empty() ) {
+      // Macro to restore the saved FPU Control Word register value.
+      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
       // Just return because we have no data to send.
       return;
    }
@@ -2600,7 +2604,8 @@ void Object::create_attribute_set(
          if ( attributes[i].is_locally_owned()
               && attributes[i].is_publish()
               && ( ( include_requested && attributes[i].is_update_requested() )
-                   || ( attributes[i].is_data_cycle_ready() && ( ( attributes[i].get_configuration() & required_config ) == required_config ) ) ) ) {
+                   || ( attributes[i].is_data_cycle_ready()
+                        && ( ( attributes[i].get_configuration() & required_config ) == required_config ) ) ) ) {
 
             // If there is no sub-classed TrickHLAConditional object for this
             // attribute or if the sub-classed TrickHLAConditional object
@@ -2631,9 +2636,9 @@ void Object::create_attribute_set(
          //
          // Only include attributes that have the required configuration,
          // we own, and we publish.
-         if ( ( ( attributes[i].get_configuration() & required_config ) == required_config )
-              && attributes[i].is_locally_owned()
-              && attributes[i].is_publish() ) {
+         if ( attributes[i].is_locally_owned()
+              && attributes[i].is_publish()
+              && ( ( attributes[i].get_configuration() & required_config ) == required_config ) ) {
 
             // If there was a requested update for this attribute make
             // sure we clear the request flag now since we are handling
@@ -3763,7 +3768,8 @@ bool Object::any_locally_owned_published_cyclic_data_ready_or_requested_attribut
            && attributes[i].is_locally_owned()
            && attributes[i].is_publish()
            && ( attributes[i].is_update_requested()
-                || ( ( data_cycle_ready && ( ( attributes[i].get_configuration() & CONFIG_CYCLIC ) == CONFIG_CYCLIC ) ) ) ) ) {
+                || ( ( data_cycle_ready
+                       && ( ( attributes[i].get_configuration() & CONFIG_CYCLIC ) == CONFIG_CYCLIC ) ) ) ) ) {
          any_ready = true;
       }
    }
