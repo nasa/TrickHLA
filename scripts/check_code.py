@@ -499,8 +499,8 @@ def find_cppcheck( cppcheck_bin, verbose = True ) :
                # Let the use know that we have CPPCHECK_HOME and where it is.
                TrickHLAMessage.status( 'CPPCHECK_HOME: ' + cppcheck_home )
 
-               # Form the cppcheck command based on CPPCHECK_HOME.
-               cppcheck_command = cppcheck_home + '/cppcheck'
+            # Form the cppcheck command based on CPPCHECK_HOME.
+            cppcheck_command = cppcheck_home + '/cppcheck'
 
          else :
             TrickHLAMessage.failure( 'CPPCHECK_HOME not found: ' + cppcheck_home )
