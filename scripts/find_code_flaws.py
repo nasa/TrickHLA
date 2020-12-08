@@ -216,12 +216,12 @@ def find_flawfinder( flawfinder_bin, verbose = True ) :
          # Check to see if FLAWFINDER_HOME exists.
          if os.path.isdir( flawfinder_home ) :
 
+            # Form the flawfinder command based on FLAWFINDER_HOME.
+            flawfinder_command = flawfinder_home + '/flawfinder'
+            
             if verbose :
                # Let the use know that we have FLAWFINDER_HOME and where it is.
                TrickHLAMessage.status( 'FLAWFINDER_HOME: ' + flawfinder_home )
-
-            # Form the flawfinder command based on FLAWFINDER_HOME.
-            flawfinder_command = flawfinder_home + '/flawfinder'
 
          else :
             TrickHLAMessage.failure( 'FLAWFINDER_HOME not found: ' + flawfinder_home )
