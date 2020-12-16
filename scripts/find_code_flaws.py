@@ -220,7 +220,7 @@ def find_flawfinder( flawfinder_bin, verbose = True ) :
             flawfinder_command = flawfinder_home + '/flawfinder'
             
             if verbose :
-               # Let the use know that we have FLAWFINDER_HOME and where it is.
+               # Let the user know that we have FLAWFINDER_HOME and where it is.
                TrickHLAMessage.status( 'FLAWFINDER_HOME: ' + flawfinder_home )
 
          else :
