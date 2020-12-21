@@ -1,7 +1,7 @@
 ############################################################################
 # @file trickhla_models.py
 # @brief Defines the list of active models in TrickHLA.
-# 
+#
 # This is a Python module provides lists of the active models in the
 # TrickHLA include and source directories.
 ############################################################################
@@ -20,4 +20,3 @@ trickhla_models_source = {
    'TrickHLA':'source/TrickHLA',
    'SRFOM':'source/SRFOM'
 }
-
