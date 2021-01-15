@@ -734,16 +734,17 @@ void ExecutionControlBase::send_requested_data(
 /*!
  * @job_class{scheduled}
  */
-void ExecutionControlBase::receive_cyclic_data( double current_time )
+void ExecutionControlBase::receive_cyclic_data()
 {
    // Receive the requested data for the ExecutionConfiguration if we have one.
    if ( execution_configuration != NULL ) {
 
-      // Receive the ExecutionConfiguration data.
-      execution_configuration->receive_init_data();
-
-      // Process and ExecutionConfiguration updates.
-      this->process_execution_control_updates();
+      // Process all the received ExecutionConfiguration data in the
+      // buffer/queue, which shows up as changed.
+      while ( execution_configuration->is_changed() ) {
+         execution_configuration->receive_init_data();
+         this->process_execution_control_updates();
+      }
    }
 }
 
@@ -755,7 +756,7 @@ void ExecutionControlBase::provide_attribute_update(
    AttributeHandleSet const &  theAttributes )
 {
    // If we have an ExecutionConfiguration then provide attribute updates.
-   if ( execution_configuration != NULL
+   if ( ( execution_configuration != NULL )
         && ( execution_configuration->get_instance_handle() == theObject ) ) {
       execution_configuration->provide_attribute_update( theAttributes );
    }
