@@ -2169,15 +2169,13 @@ exception for '%s' with error message '%s'.%c",
  * @details If the object is owned remotely, this function copies its internal
  * data into simulation object and marks the object as "unchanged". This data
  * was deposited by the reflect callback and marked as "changed". By marking it
- *  as unchanged, we avoid copying the same data over and over. If the object
- *  is locally owned, we shouldn't be receiving any remote data anyway and if
- *  we were to -- bogusly -- copy it to the internal byte buffer, we'd
- *  continually reset our local simulation.
+ * as unchanged, we avoid copying the same data over and over. If the object
+ * is locally owned, we shouldn't be receiving any remote data anyway and if
+ * we were to -- bogusly -- copy it to the internal byte buffer, we'd
+ * continually reset our local simulation.
  * @job_class{scheduled}
  */
-void Object::receive_cyclic_data(
-   double current_time,
-   double cycle_time )
+void Object::receive_cyclic_data()
 {
    // There must be some remotely owned attribute that we subscribe to in
    // order for us to receive it.
@@ -2232,11 +2230,11 @@ void Object::receive_cyclic_data(
          // Display a warning message if we timed out.
          if ( sleep_timer.timeout() ) {
             if ( is_changed() ) {
-               send_hs( stderr, "Object::receive_cyclic_data():%d Received data at a timeout boundary for simulation time %f.%c",
-                        __LINE__, current_time, THLA_NEWLINE );
+               send_hs( stderr, "Object::receive_cyclic_data():%d Received data at a timeout boundary for simulation-time %f.%c",
+                        __LINE__, exec_get_sim_time(), THLA_NEWLINE );
             } else {
-               send_hs( stderr, "Object::receive_cyclic_data():%d Timed out waiting for data for simulation time %f.%c",
-                        __LINE__, current_time, THLA_NEWLINE );
+               send_hs( stderr, "Object::receive_cyclic_data():%d Timed out waiting for data for simulation-time %f.%c",
+                        __LINE__, exec_get_sim_time(), THLA_NEWLINE );
             }
          }
       }
@@ -2245,42 +2243,47 @@ void Object::receive_cyclic_data(
    // Process the data now that it has been received (i.e. changed).
    if ( is_changed() ) {
 
-#if THLA_OBJ_DEBUG_RECEIVE
-      send_hs( stdout, "Object::receive_cyclic_data():%d for '%s' at t=%G%c",
-               __LINE__, get_name(), get_granted_fed_time().get_time_in_seconds(),
-               THLA_NEWLINE );
-#endif
-
 #ifdef THLA_CYCLIC_READ_TIME_STATS
       elapsed_time_stats.measure();
 #endif
 
-      // Unpack the buffer and copy the values to the object attributes.
-      unpack_cyclic_attribute_buffers();
+      do {
+#if THLA_OBJ_DEBUG_RECEIVE
+         send_hs( stdout, "Object::receive_cyclic_data():%d for '%s' at HLA-logical-time=%G%c",
+                  __LINE__, get_name(), get_granted_fed_time().get_time_in_seconds(),
+                  THLA_NEWLINE );
+#endif
 
-      // Unpack the data for the object if we have a packing object.
-      if ( packing != NULL ) {
-         packing->unpack();
-      }
+         // Unpack the buffer and copy the values to the object attributes.
+         unpack_cyclic_attribute_buffers();
 
-      // Do receive side lag compensation.
-      if ( ( lag_comp_type == LAG_COMPENSATION_RECEIVE_SIDE ) && ( lag_comp != NULL ) ) {
-         lag_comp->receive_lag_compensation();
-      }
+         // Unpack the data for the object if we have a packing object.
+         if ( packing != NULL ) {
+            packing->unpack();
+         }
 
-      // Mark the data as unchanged now that we have unpacked the buffer.
-      mark_unchanged();
+         // Do receive side lag compensation.
+         if ( ( lag_comp_type == LAG_COMPENSATION_RECEIVE_SIDE ) && ( lag_comp != NULL ) ) {
+            lag_comp->receive_lag_compensation();
+         }
+
+         // Mark this data as unchanged now that we have processed it from the buffer.
+         mark_unchanged();
+
+         // Check for more object attribute data in the buffer/queue for this
+         // object instance, which will show up as still being changed.
+      } while ( is_changed() );
    }
 #if THLA_OBJ_DEBUG_VALID_OBJECT_RECEIVE
-   else if ( is_instance_handle_valid() && ( current_time > 0.0L ) ) {
-      send_hs( stdout, "Object::receive_cyclic_data():%d NO new data for valid object '%s' at t=%G%c",
+   else if ( is_instance_handle_valid() && ( exec_get_sim_time() > 0.0 ) ) {
+      send_hs( stdout, "Object::receive_cyclic_data():%d NO new data for valid object '%s' at HLA-logical-time=%G%c",
                __LINE__, get_name(), get_granted_fed_time().get_time_in_seconds(),
                THLA_NEWLINE );
    }
 #endif
 #if THLA_OBJ_DEBUG_RECEIVE
    else {
-      send_hs( stdout, "Object::receive_cyclic_data():%d NO new data for '%s' at t=%G%c",
+      send_hs( stdout, "Object::receive_cyclic_data():%d NO new data for '%s' at HLA-logical-time=%G%c",
                __LINE__, get_name(), get_granted_fed_time().get_time_in_seconds(),
                THLA_NEWLINE );
    }
@@ -2523,6 +2526,11 @@ void Object::receive_init_data()
 
    if ( is_changed() ) {
 
+#if THLA_OBJ_DEBUG_RECEIVE
+      send_hs( stdout, "Object::receive_init_data():%d for '%s'%c",
+               __LINE__, get_name(), THLA_NEWLINE );
+#endif
+
       // Unpack the buffer and copy the values to the object attributes.
       unpack_init_attribute_buffers();
 
@@ -2536,7 +2544,7 @@ void Object::receive_init_data()
    }
 #if THLA_OBJ_DEBUG_RECEIVE
    else {
-      send_hs( stdout, "****** Object::receive_init_data():%d No initialize data for '%s'%c",
+      send_hs( stdout, "Object::receive_init_data():%d NO initialization data for '%s'%c",
                __LINE__, get_name(), THLA_NEWLINE );
    }
 #endif

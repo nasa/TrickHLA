@@ -248,10 +248,8 @@ class Object
     *  @param cycle_time   Cycle time between calls to this function in seconds. */
    void send_cyclic_and_requested_data( double current_time, double cycle_time );
 
-   /*! @brief Handle the received cyclic data.
-    *  @param current_time Current time in seconds.
-    *  @param cycle_time   Cycle time between calls to this function in seconds. */
-   void receive_cyclic_data( double current_time, double cycle_time );
+   /*! @brief Handle the received cyclic data. */
+   void receive_cyclic_data();
 
    /*! @brief Send initialization data to remote HLA federates. */
    void send_init_data();
