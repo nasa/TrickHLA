@@ -1,0 +1,459 @@
+\documentclass{beamer}
+\mode<presentation> {
+
+% The Beamer class comes with a number of default slide themes
+% which change the colors and layouts of slides. Below this is a list
+% of all the themes, uncomment each in turn to see what they look like.
+
+%\usetheme{default}
+%\usetheme{AnnArbor}
+%\usetheme{Antibes}
+%\usetheme{Bergen}
+%\usetheme{Berkeley}
+%\usetheme{Berlin}
+%\usetheme{Boadilla}
+%\usetheme{CambridgeUS}
+%\usetheme{Copenhagen}
+%\usetheme{Darmstadt}
+%\usetheme{Dresden}
+%\usetheme{Frankfurt}
+%\usetheme{Goettingen}
+%\usetheme{Hannover}
+%\usetheme{Ilmenau}
+%\usetheme{JuanLesPins}
+%\usetheme{Luebeck}
+\usetheme{Madrid}
+%\usetheme{Malmoe}
+%\usetheme{Marburg}
+%\usetheme{Montpellier}
+%\usetheme{PaloAlto}
+%usetheme{Pittsburgh}
+%\usetheme{Rochester}
+%\usetheme{Singapore}
+%\usetheme{Szeged}
+%\usetheme{Warsaw}
+
+% As well as themes, the Beamer class has a number of color themes
+% for any slide theme. Uncomment each of these in turn to see how it
+% changes the colors of your current slide theme.
+
+%\usecolortheme{albatross}
+%\usecolortheme{beaver}
+%\usecolortheme{beetle}
+%\usecolortheme{crane}
+%\usecolortheme{dolphin}
+%\usecolortheme{dove}
+%\usecolortheme{fly}
+%\usecolortheme{lily}
+%\usecolortheme{orchid}
+%\usecolortheme{rose}
+%\usecolortheme{seagull}
+%\usecolortheme{seahorse}
+%\usecolortheme{whale}
+%\usecolortheme{wolverine}
+
+%\setbeamertemplate{footline} % To remove the footer line in all slides uncomment this line
+%\setbeamertemplate{footline}[page number] % To replace the footer line in all slides with a simple slide count uncomment this line
+
+%\setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
+}
+
+\usepackage{graphicx} % Allows including images
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{fancyvrb}
+
+\usepackage{array}
+% Support allignment and newlines in table cells
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+
+\newenvironment{hanging}
+   { \par
+     \vspace{0.2cm}
+     \parskip 0.2cm
+     \leftskip 1.5cm
+     \parindent -0.75cm
+     \par
+   }
+   { \par
+     \leftskip 0.0cm
+     \parindent 0.0cm
+     \parskip 0.0cm
+     \vspace{0.2cm}
+   }
+
+%----------------------------------------------------------------------------------------
+%  TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\title[TrickHLA]{TrickHLA v3}
+\subtitle{An HLA interface package for Trick}
+
+\author[Crues,Dexter]{Edwin Z. Crues, Ph.D. \\ Daniel E. Dexter}
+\institute[NASA JSC] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
+{
+Simulation and Graphics Branch (ER7)\\
+NASA Johnson Space Center \\
+2101 NASA Parkway, Houston, Texas, 77058\\
+\medskip
+\texttt{edwin.z.crues@nasa.gov}\\
+\texttt{daniel.e.dexter@nasa.gov}
+}
+%\date{\today}
+\date{January 2021}
+
+%------------------------------------------------
+
+\graphicspath{ {./figures/} }
+
+\begin{document}
+
+   \begin{frame}
+      \titlepage
+   \end{frame}
+
+   \begin{frame}
+      \frametitle{Outline}
+      \tableofcontents
+   \end{frame}
+   
+   \section{Introduction}
+   
+   \begin{frame}
+      \frametitle{Introduction}
+      \begin{itemize}
+         \item The main design goal of TrickHLA is to allow existing Trick simulations to use the IEEE-1516 High Level Architecture (HLA) with minimal development effort.
+         \item TrickHLA is an HLA abstraction for the Trick simulation environment.
+         \item TrickHLA is data driven and provides a simple API for the HLA functionality.
+         \item TrickHLA is available from the Trick website http://trick.jsc.nasa.gov/
+      \end{itemize}
+   \end{frame}
+   
+   \section{Minimum Software Requirements}
+   
+   \begin{frame}
+      \frametitle{Minimum Software Requirements}
+      \begin{itemize}
+         \item Trick version 17 or newer.
+         \item IEEE-1516-2010 HLA standard compliant Runtime Infrastructure (RTI).
+         \item TrickHLA callback interfaces must be written in C++.
+      \end{itemize}
+   \end{frame}
+   
+   \section{TrickHLA Features}
+
+   \begin{frame}
+      \frametitle{TrickHLA Features}
+      \begin{center}
+      \Huge{TrickHLA Features}
+      \end{center}
+   \end{frame}
+   
+   \begin{frame}
+      \frametitle{TrickHLA Features}
+      \begin{itemize}
+         \item Primitive C/C++ data types.
+         \item Static arrays of primitive data types.
+         \item One-dimensional dynamic arrays of primitive data types.
+         \item Strings and static arrays of strings.
+         \item Opaque (hidden type) data.
+         \item Automatically encodes/decodes the data to/from the RTI using the specified HLA encoding.
+         \item Big/Little Endian for primitives
+         \item HLAunicodeString, HLAASCIIstring, and HLAopaqueData for strings (i.e. char *)
+         \item User defined packing and unpacking functions to allow for data transformations before data is sent to (pack) or after data is received from (unpack) the other federates.
+         \item Automatically handles HLA time advancement.
+      \end{itemize}
+   \end{frame}
+   
+   \begin{frame}
+      \frametitle{TrickHLA Features}
+      \framesubtitle{Continued}
+      \begin{itemize}
+         \item Handles real time and non-real time simulations
+         \item Lag Compensation
+         \begin{itemize}
+            \item None
+            \item Sending-side
+            \item Receive-side
+            \end{itemize}
+         \item Interactions (job safe and thread safe)
+         \begin{itemize}
+            \item Receive Order (RO)
+            \item Timestamp Order (TSO)
+         \end{itemize}
+         \item Ownership Transfer
+         \item Multiphase Initialization, which allows simulation initialization data to be shared between federates before the simulation starts. This includes a simulation configuration object.
+         \item Automatically synchronizes the startup of a distributed simulation without depending on specific federate start order.
+      \end{itemize}
+   \end{frame}
+   
+   \begin{frame}
+      \frametitle{TrickHLA Features}
+      \framesubtitle{Continued}
+      \begin{itemize}
+         \item Coordinated Federation Save \& Restore.
+         \item Late joining federates.
+         \item Supports IEEE-1516.1-2000, and IEEE-1516.1-2010 (a.k.a HLA Evolved).
+         \item Allows subscription to non-required federate data.
+         \item Attribute preferred order (Receive or Timestamp Order) can be overridden.
+         \item Blocking cyclic data reads (only 2 federate case supported for now).
+         \item Notification of object deletions.
+      \end{itemize}
+   \end{frame}
+   
+   \section{Setting up the Environment}
+
+   \begin{frame}
+      \frametitle{Setting up the Environment}
+      \begin{center}
+      \Huge{Setting up the Environment}
+      \end{center}
+   \end{frame}
+   
+   \begin{frame}[fragile]
+      \frametitle{Setting up the Environment}
+      \begin{itemize}
+         \item Set the path to the TrickHLA directory
+         \begin{itemize}
+            \item Set the environment variable \texttt{TRICKHLA\_HOME} to the system file path for the TrickHLA source directory.
+            \item For example:
+\begin{Verbatim}[frame=single]
+setenv TRICKHLA_HOME ${HOME}/Trick/hla/TrickHLA
+\end{Verbatim}
+         \end{itemize}
+         \item Add the TrickHLA models directory to the Trick compile environment
+         \begin{itemize}
+            \item The Trick environment variable \texttt{TRICK\_CXXFLAGS} must include the path to the TrickHLA models.
+            \item For example:
+\begin{Verbatim}[frame=single]
+TRICK_CXXFLAGS += -I${TRICKHLA_HOME}/models
+\end{Verbatim}
+         \end{itemize}
+      \end{itemize}
+   \end{frame}
+   
+   \begin{frame}[fragile]
+      \frametitle{Setting up the Environment}
+      \framesubtitle{Setting up a C-Shell environment}
+      \begin{itemize}
+         \item Set up the RTI for a C-Shell environment
+         \begin{itemize}
+            \item Copy the provided scripts \texttt{/.rti\_cshrc} file to your home directory.
+            \item Change the \texttt{RTI\_HOME} environment variable in the \texttt{.rti\_cshrc} file to point to the location of your RTI installation.
+            \item For example:
+\begin{Verbatim}[frame=single]
+setenv RTI_HOME ${HOME}/rti/prti1516e_v5.5.1
+\end{Verbatim}
+            \item Add the following lines to your \texttt{.Trick\_user\_cshrc} file in your home directory.
+\begin{Verbatim}[frame=single]
+# Perform RTI setup, which MUST occur after you set
+# up your TRICK_CXXFLAGS since .rti_cshrc will appended
+# entries to it.
+if ( -e ${HOME}/.rti_cshrc ) then
+   source ${HOME}/.rti_cshrc
+endif
+\end{Verbatim}
+         \end{itemize}
+      \end{itemize}
+   \end{frame}
+   
+   \begin{frame}[fragile]
+      \frametitle{Setting up the Environment}
+      \framesubtitle{Setting up a Bourne Shell environment}
+      \begin{itemize}
+         \item Set up the RTI Bourne Shell environment
+         \begin{itemize}
+            \item Copy the provided scripts \texttt{/.rti\_profile} file to your home directory.
+            \item Change the \texttt{RTI\_HOME} environment variable in the \texttt{.rti\_profile} file to point to the location of your RTI installation.
+            \item For example:
+\begin{Verbatim}[frame=single]
+set RTI_HOME=${HOME}/rti/prti1516e_v5.5.1
+export RTI_HOME
+\end{Verbatim}
+            \item Add the following lines to your \texttt{.Trick\_profile} file in your home directory.
+\begin{Verbatim}[frame=single]
+# Perform RTI setup, which MUST occur after you set
+# up your TRICK_CXXFLAGS since .rti_profile will appended
+# entries to it.
+if [ -f ${HOME}/.rti_profile ] ; then
+. ${HOME}/.rti_profile
+fi
+\end{Verbatim}
+         \end{itemize}
+      \end{itemize}
+   \end{frame}
+   
+   \section{Sine Wave Simulation Example}
+
+   \begin{frame}
+      \frametitle{Sine Wave Simulation Example}
+      \begin{center}
+      \Huge{Sine Wave Simulation Example}
+      \end{center}
+   \end{frame}
+   
+   \begin{frame}
+      \frametitle{Sine Wave Simulation Example}
+      \begin{itemize}
+         \item A simple simulation of a sinusoid will be used to describe the TrickHLA concepts.
+         \item The example can be found in \texttt{\$\{TRICKHLA\_HOME\}/sims/TrickHLA/SIM\_sine}.
+         \item Equation of a sinusoid with a given amplitude $a$, angular frequency $\omega$ (period $2\pi/\omega$), and phase $\phi$: $f(t) = a \sin( \omega t + \phi )$
+      \end{itemize}
+
+      \begin{small}
+      \begin{center}
+      \begin{tabular}{ |l|c|c| } \hline
+       \bf{Sinusoidal Parameter} & \bf{Analytic} & \bf{Propagated} \\ \hline
+       Amplitude & 2 & 1 \\ \hline
+       Frequency & 0.1963 & 0.3927 \\ \hline
+       Period & 32 & 16 \\ \hline
+      \end{tabular}
+      \end{center}
+      \end{small}
+
+      \begin{center}
+      \begin{figure}
+      \includegraphics[scale=0.65]{TutorialFig1.pdf}
+      \end{figure}
+      \end{center}
+      
+   \end{frame}
+   
+   \section{Steps to Adding TrickHLA to a Trick Simulation}
+
+   \begin{frame}
+      \frametitle{Steps to Adding TrickHLA to a Trick Simulation}
+      \begin{center}
+      \Huge{Steps to Adding TrickHLA to a Trick Simulation}
+      \end{center}
+   \end{frame}
+   
+   \begin{frame}
+      \frametitle{Steps to Adding TrickHLA to a Trick Simulation}
+      \begin{itemize}
+      \item Adding TrickHLA to a Trick simulation consists of three steps.
+      \end{itemize}
+      \begin{hanging}
+      Step 1: Add the provided TrickHLA specific \texttt{THLA.sm} simulation
+      module to your \texttt{S\_define} file, and pass in the \texttt{data\_cycle}
+      and \texttt{interaction\_cycle} parameter values, using the \texttt{
+      THLA\_DATA\_CYCLE\_TIME} and \texttt{THLA\_INTERACTION\_CYCLE\_TIME}
+      values defined at the top of the \texttt{S\_define} file.
+      
+      Step 2: Add a generic \texttt{THLA\_INIT} multiphase initialization sim
+      object to your \texttt{S\_define} file, and pass in the \texttt{TrickHLA::Manager}
+      and \texttt{TrickHLA::Federate} objects from \texttt{THLA.sm}.
+      
+      Step 3: Configure TrickHLA through settings in your simulation RUN \texttt{input.py} file.
+      \end{hanging}
+      
+   \end{frame}
+   
+   \begin{frame}[fragile]
+      \frametitle{Steps to Adding TrickHLA to a Trick Simulation}
+      \framesubtitle{Step 1: THLA Simulation Object}
+      \begin{itemize}
+         \item Add to your S\_define file:
+\begin{Verbatim}[frame=single, fontsize=\tiny]
+// Define HLA job cycle times:
+#define THLA_DATA_CYCLE_TIME         0.250  // HLA data communication cycle time.
+#define THLA_INTERACTION_CYCLE_TIME  0.050  // HLA Interaction cycle time.
+
+// get sim object for generalized TrickHLA interface routines:
+#include ”../../../../shared/trick10/S_modules/THLA.sm”
+THLASimObject THLA( THLA_DATA_CYCLE_TIME, THLA_INTERACTION_CYCLE_TIME);
+\end{Verbatim}
+         \item \texttt{THLA\_DATA\_CYCLE\_TIME} defines the rate at which data is
+         exchanged through the RTI.
+         \item \texttt{THLA\_INTERACTION\_CYCLE\_TIME} defines the rate at which
+         received Interactions in Receive-Order (RO) will be serviced.
+         \item Each of the above two values must be an integer multiple of Trick’s
+         real-time frame (i.e., the $n$ value set via
+         \texttt{trick.exec\_set\_software\_frame($n$)} ). 
+      \end{itemize}
+   \end{frame}
+   
+   \begin{frame}
+      \frametitle{Steps to Adding TrickHLA to a Trick Simulation}
+      \framesubtitle{TrickHLA jobs in THLA.sm}
+      \begin{figure}
+      \includegraphics[scale=0.4]{TutorialTHLAJobs.pdf}
+      \end{figure}
+   \end{frame}
+   
+   \begin{frame}[fragile]
+      \frametitle{Steps to Adding TrickHLA to a Trick Simulation}
+      \framesubtitle{Step 2: THLA\_INIT Simulation Object}
+      \begin{itemize}
+         \item Add to your S\_define file:
+      \end{itemize}
+\begin{Verbatim}[frame=single, fontsize=\tiny]
+##include "simconfig/include/SimpleSimConfig.hh”
+class THLAInitSimObject : public Trick::SimObject {
+  public:
+    SimpleSimConfig simple_sim_config; // The simple simulation configuration
+    THLAInitSimObject( TrickHLAManager  & thla_mngr,
+                       TrickHLAFederate & thla_fed )
+       : thla_manager( thla_mngr ), thla_federate( thla_fed )
+    {
+       // Make sure we initialize the sim config before the TrickHLAManager
+       P1 ("initialization") simple_sim_config.initialize(
+                                       thla_federate.known_feds_count,
+                                       thla_federate.known_feds ); 
+       // Send all the initialization data
+       P100 ("initialization") thla_manager.send_init_data();
+       // Wait to receive all the initialization data
+       P100 ("initialization") thla_manager.receive_init_data();
+       // Clear remaining initialization sync-points
+       P100 ("initialization") thla_manager.clear_init_sync_points();
+  private:
+    TrickHLAManager  & thla_manager;
+    TrickHLAFederate & thla_federate;
+    THLAInitSimObject(const THLAInitSimObject & rhs); // do not allow copy
+    THLAInitSimObject & operator=(const THLAInitSimObject & rhs); // do not allow assign
+    THLAInitSimObject();  // do not allow default constructor
+};
+THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
+\end{Verbatim}
+   \end{frame}
+   
+   \begin{frame}
+      \frametitle{Steps to Adding TrickHLA to a Trick Simulation}
+      \framesubtitle{Step 3: Configuring TrickHLA}
+      \begin{itemize}
+         \item The last step to adding TrickHLA to a simulation is to configure
+         it through settings in your input.py file.
+         \item The majority of the presentation will cover TrickHLA configuration for:
+      \begin{enumerate}
+         \item General Configuration
+         \item Multiphase Initialization
+         \item Data Packing and Unpacking
+         \item Interactions
+         \item Ownership Transfer
+         \item Lag Compensation
+         \item Object Deletion 
+      \end{enumerate}
+      \end{itemize}
+   \end{frame}
+   
+   \include{TrickHLATutorial-Configuration.tex}
+   
+   \include{TrickHLATutorial-MultiPhase.tex}
+   
+   \include{TrickHLATutorial-DataPacking.tex}
+   
+   \include{TrickHLATutorial-Interactions.tex}
+   
+   \include{TrickHLATutorial-LagComp.tex}
+   
+   \include{TrickHLATutorial-Ownership.tex}
+   
+   \include{TrickHLATutorial-Deletion.tex}
+
+   \begin{frame}
+      \titlepage
+   \end{frame}
+   
+\end{document}
