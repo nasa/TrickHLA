@@ -216,9 +216,8 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
     *  @param current_time   Current time.
     *  @param job_cycle_time Cycle time for this send requested data call. */
    virtual void send_requested_data( double current_time, double job_cycle_time );
-   /*! @brief Handle the received cyclic data.
-    *  @param current_time Current time. */
-   virtual void receive_cyclic_data( double current_time );
+   /*! @brief Handle the received cyclic data. */
+   virtual void receive_cyclic_data();
    /*! @brief Requesting an attribute value update for the given object
     *  instance and attributes.
     *  @param theObject HLA object instance handle.
