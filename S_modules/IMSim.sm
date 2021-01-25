@@ -66,15 +66,15 @@ class IMSimSimObject : public Trick::SimObject {
    {
       // Validate the data and interaction cycle times.
       if ( data_cycle <= 0.0 ) {
-         exec_terminate( __FILE__, "THLASimObject() data_cycle must be > 0.0!" );
+         exec_terminate( __FILE__, "IMSimSimObject() data_cycle must be > 0.0!" );
       }
       if ( interaction_cycle <= 0.0 ) {
-         exec_terminate( __FILE__, "THLASimObject() interaction_cycle must be > 0.0!" );
+         exec_terminate( __FILE__, "IMSimSimObject() interaction_cycle must be > 0.0!" );
       }
 
       // Calculate and validate the check-pause job offset time.
       if ( data_cycle <= CHECK_PAUSE_DELTA ) {
-         exec_terminate( __FILE__, "THLASimObject() data_cycle must be > CHECK_PAUSE_DELTA!" );
+         exec_terminate( __FILE__, "IMSimSimObject() data_cycle must be > CHECK_PAUSE_DELTA!" );
       }
       check_pause_job_offset = data_cycle - CHECK_PAUSE_DELTA;
 
