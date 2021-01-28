@@ -60,10 +60,10 @@ class THLABaseSimObject : public Trick::SimObject {
    {
       // Validate the data and interaction cycle times.
       if ( data_cycle <= 0.0 ) {
-         exec_terminate( __FILE__, "THLASimObject() data_cycle must be > 0.0!" );
+         exec_terminate( __FILE__, "THLABaseSimObject() data_cycle must be > 0.0!" );
       }
       if ( interaction_cycle <= 0.0 ) {
-         exec_terminate( __FILE__, "THLASimObject() interaction_cycle must be > 0.0!" );
+         exec_terminate( __FILE__, "THLABaseSimObject() interaction_cycle must be > 0.0!" );
       }
 
 
