@@ -1,0 +1,515 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Primary document style
+\documentclass[11pt,english,letterpaper]{article}
+\setlength{\parskip}{\baselineskip}
+\setlength{\parindent}{0pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Required packages
+\usepackage[english]{babel}
+%\usepackage{helvet}
+\usepackage{textcomp}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{multiaudience}
+\usepackage{fancyhdr} % needed for header and footer
+\usepackage{lastpage} % needed for page numbering 1 of 2, 2 of 2, etc...
+\usepackage[colorlinks]{hyperref}
+\hypersetup{
+   colorlinks=true,
+   linkcolor=blue,
+   filecolor=green,
+   citecolor=blue,
+   urlcolor=red,
+   plainpages=false,
+   pdfpagelabels=true
+}
+\usepackage{biblatex}
+\usepackage{tabularx} % Better tables.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Page spacing options
+\topmargin 0in 
+\headheight 0.25in
+\headsep 12pt  
+\textheight 9in 
+\textwidth 6.5in
+\oddsidemargin 0in
+\evensidemargin 0in
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% End of preamble
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\SetNewAudience{editorial}
+\DefCurrentAudience{editorial} % Uncomment this to see editorial text.
+
+\newcommand{\example}[1]{{\textcolor{blue}{\textit{#1}}}}
+
+\addbibresource{IEEE1516.bib}
+\addbibresource{SpaceFOM_FESFA_Template.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Starting Document Content
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\begin{center}
+\begin{LARGE}
+{\bfseries Space Reference Federation Object Model\\
+(SpaceFOM)\\
+Federation Execution Specific Federation Agreement\\
+(FESFA)}\\
+\vspace{10pt}
+\end{LARGE}
+{\normalsize for the}\\
+\vspace{10pt}
+\begin{LARGE}
+{\bfseries \example{\textlangle{}Federation Execution Title\textrangle{}}}
+\end{LARGE}
+\end{center}
+
+\begin{shownto}{editorial}
+{\color{red} The information that appears in red text is intended
+to be editorial and directive content.  It is not intended to appear in the
+finished document.  This text can be hidden by commenting out or deleting the
+
+\texttt{\textbackslash DefCurrentAudience\{editorial\}}
+
+line in this document's \texttt{*.tex} file.  The \example{blue italic text}
+represents example text and is intended to be replaced with the Federattion
+Execution specific text.  When complete, the document should not have any red
+or {\color{blue}blue} text, other than hyprelinked text.
+
+The Space Reference Federation Object Model (SpaceFOM) Federation Execution
+Specific Federation Agreement (FESFA) is a document that provides specific
+configuration data necessary to achieve interoperability based on the SpaceFOM.
+Several rules in the SpaceFOM put requirements on what data need to be recorded
+in the FESFA. This template establishes the standard format and content so that
+all SpaceFOM FESFA products contain the same basic information and have the
+same basic look.}
+\end{shownto}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Purpose}
+
+\example{ This section of the FESFA template will provide the general purpose
+and description of this specific SpaceFOM-compliant federation execution.
+This should include intended scenarios and other information that describes
+the nature of the federates participating in a federation execution compliant
+with this FESFA.\cite{IEEE1516:FRAMEWORK,IEEE1516:API,IEEE1516:OMT}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Identification}
+
+\begin{shownto}{editorial}
+{\color{red} This section of the FESFA template provides the general
+identifying information associates with the federation execution.
+
+General name identifying the federation execution, this should match the
+\textlangle{}Federation Execution Title\textrangle{} in the title above but not
+necessarily the “HLA Federation Execution Name” below.}
+\end{shownto}
+
+\textbf{Federation Execution Title: } \underline{\example{Your Federation Execution Title Here}}
+
+\begin{shownto}{editorial}
+{\color{red} Information pertaining to the principal point of contact for this FESFA.}
+\end{shownto}
+
+\textbf{Point of Contact: }
+
+\hspace{0.25in}
+\begin{tabularx}{\textwidth}{lX}
+Name:    & \underline{\example{Your Name}} \\
+Phone:   & \underline{\example{Your Phone Number}} \\
+Email:   & \underline{\example{Your Email Address}} \\
+Address: & \underline{\example{Your Phydical Address}}
+\end{tabularx}
+
+\begin{shownto}{editorial}
+{\color{red} Real world time frame (calendar dates) for proposed federation
+executions, not to be confused with federation execution scenario dates.}
+\end{shownto}
+
+\textbf{Planned Execution Time Frame: }
+
+\hspace{0.25in}
+\begin{tabular}{ll}
+From: & \underline{\example{Earliest Date}} \\
+To:   & \underline{\example{Latest Date}}
+\end{tabular}
+
+\begin{shownto}{editorial}
+{\color{red} HLA federation execution name, not necessarily the identification
+name from above.}
+\end{shownto}
+
+\textbf{HLA Federation Execution Name: } \underline{\example{The Federation Execution Name}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Federation Composition}
+
+\begin{shownto}{editorial}
+{\color{red} This section of the FESFA template provides the identifying
+information associates with the composition of the federation execution.
+
+Information on the federate providing the role of the Master Federate for this
+federation execution.}
+\end{shownto}
+
+\textbf{Master Federate: }
+\underline{\example{Federate Name}}
+
+\begin{shownto}{editorial}
+{\color{red} Information on the federate providing the role of the Pacing
+Federate for this federation execution.}
+\end{shownto}
+
+\textbf{Pacing Federate: }
+\underline{\example{Federate Name}}
+
+\begin{shownto}{editorial}
+{\color{red} Information on the federate providing the role of the Root
+Reference Frame Publisher (RRFP) federate for this federation execution.}
+\end{shownto}
+
+\textbf{Root Reference Frame Publisher (RRFP): }
+\underline{\example{Federate Name}}
+
+\begin{shownto}{editorial}
+{\color{red} List the names and descriptions of any additional required
+federates for this federation execution. Add additional lines as needed.}
+\end{shownto}
+
+\textbf{Additional required federates: }
+
+\begin{tabularx}{\textwidth}{|l|X|} \hline
+\textbf{Name} & \textbf{Description} \\ \hline
+\example{Federate Name 1} &
+\example{Potentially lengthy multiline description.  This could be really long
+long long long long long long long.} \\ \hline
+\example{Federate Name 2} &
+\example{Potentially lengthy multiline description.} \\ \hline
+\example{etc.} &  \\ \hline
+\end{tabularx}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Time Management}
+
+\begin{shownto}{editorial}
+{\color{red} This section of the FESFA template provides the general time
+management information associates with the federation execution. All
+participating time managed federates will need this information. Some of this
+information is published by the Master Federate in the Execution Control Object
+(ExCO).
+
+The starting date for the federation execution federation scenario time (FST\textsubscript{0}).
+This can be given as a calendar date and time but will ultimately have to be
+converted into the Terrestrial Time (TT) scale in Truncated Julian Date (TJD)
+format, in seconds.}
+\end{shownto}
+
+\textbf{Epoch: } \underline{\example{Starting date and time.}} (TT scale in TJD format)
+
+\begin{shownto}{editorial}
+{\color{red} The federation execution’s nominal HLA Logical Time (HLT) step in
+microseconds.}
+\end{shownto}
+
+\textbf{Federation HLT step: } \underline{\example{numerical time step}} (microseconds)
+
+\begin{shownto}{editorial}
+{\color{red} The federation execution’s Least Common Time Step (LCTS) in
+microseconds. This is the least common value of all the federate time steps for
+the time regulating federates in a federation execution.}
+\end{shownto}
+
+\textbf{Federation LCTS: }  \underline{\example{numerical time step}} (microseconds)
+
+\begin{shownto}{editorial}
+{\color{red} Identify the supported time management type for this federation execution.}
+\end{shownto}
+
+\textbf{Supported Time Management Types: }
+
+\hspace{0.25in}
+\begin{tabular}{ll}
+No Pacing:                                & \underline{\example{(yes/no)}} \\
+Scaled Pacing:                            & \underline{\example{(yes/no)}} \\
+Real-time Pacing with Unlimited Overruns: & \underline{\example{(yes/no)}} \\
+Real-time Pacing with Limited Overruns:   & \underline{\example{(yes/no)}} \\
+Strict/Conservative Real-time Pacing:     & \underline{\example{(yes/no)}} \\
+\end{tabular}
+
+\begin{shownto}{editorial}
+{\color{red} If any of the real-time pacing options are supported, then include
+a section that describes limitations and how those overruns are handled.}
+\end{shownto}
+
+\textbf{Overrun handling: } \underline{\example{Description of how overruns
+are handled.}}
+
+\begin{shownto}{editorial}
+{\color{red} Indication of the existence of Central Timing Equipment (CTE) to
+control the federation execution time advance for real-time hardware-in-the-loop
+(HwITL) simulations. This is a yes or no question.}
+\end{shownto}
+
+\textbf{CTE federates exists: } \underline{\example{(yes/no)}}
+
+\begin{shownto}{editorial}
+{\color{red} References to any document(s) that describes the implementation
+and configuration details for any CTE. Add additional document references as
+necessary. Just mark (N/A) if no CTE is used.}
+\end{shownto}
+
+\textbf{CTE specification document(s): }
+\begin{enumerate}
+\item \example{CTE reference document 1.}
+\item \example{CTE reference document 2.}
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Reference Frames}
+
+\begin{shownto}{editorial}
+{\color{red} This section of the FESFA template provides the names and
+descriptions of the principal reference frames published during a federation
+execution. It should be sufficient to understand the principal topology of the
+federation execution’s reference frame tree.
+
+The name and brief description of the reference frame that represents the
+common base (root) reference frame for the federation execution’s reference
+frame tree.}
+\end{shownto}
+
+\textbf{Root Reference Frame: }
+
+\begin{tabularx}{\textwidth}{lX}
+Name & Description \\
+\example{Root Frame Name} &
+\example{A short description of the root reference frame.  If not apparent from
+the name and short desciption, a reference should be provided.\cite{vallado2001}}
+\end{tabularx}
+
+\begin{shownto}{editorial}
+{\color{red} The name, parent, and brief description of any additional reference
+frame that play an important role in the federation execution’s reference frame
+tree. Any reference frames published by or subscribed to by required federates
+should be listed here. This list should represent the union of all reference
+frames listed in the FCDs of the required federates. It may also include
+reference frames of other potential federates. Add additional lines as
+necessary.}
+\end{shownto}
+
+\textbf{Additional Reference Frames: }
+
+\begin{tabularx}{\textwidth}{|l|l|X|} \hline
+Name & Parent & Description \\ \hline
+\example{EarthCentericInertial} &
+\example{Root Frame Name} &
+\example{Description of the Earth centered inertial reference frame.} \\ \hline
+\example{EarthCentericFixed} &
+\example{EarthCenteredInertial} &
+\example{Description of the Earth centered planet fixed frame.} \\ \hline
+\example{MoonCentricInertial} &
+\example{Root Frame Name} &
+\example{Description of the Moon centered inertial reference frame.} \\ \hline
+\end{tabularx}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Object Management}
+
+\begin{shownto}{editorial}
+{\color{red} This section of the FESFA template provides the general object
+management information associated with the federation execution. Most
+participating federates will need this information.
+
+List the type strings associated with any PhysicalEntity object’s “type”
+attribute used in this federation execution. List both the string (tag) values
+and a description of each tag.}
+\end{shownto}
+
+\textbf{Physical Entity Object Type Strings: }
+
+\begin{tabularx}{\textwidth}{|l|X|} \hline
+Type String (Tag) & Description \\ \hline
+\example{Tag 1} & \example{The description of the tag.} \\ \hline
+\example{Tag 2} & \example{The description of the tag.} \\ \hline
+\example{etc.} & \\ \hline
+\end{tabularx}
+
+\begin{shownto}{editorial}
+{\color{red} List the status strings associated with any PhysicalEntity object’s
+“status” attribute used in this federation execution. List both the string (tag)
+values and a description of each tag.}
+\end{shownto}
+
+\textbf{Physical Entity Object Status Strings: }
+
+\begin{tabularx}{\textwidth}{|l|X|} \hline
+Status String (Tag) & Description \\ \hline
+\example{String 1} & \example{The description of the string.} \\ \hline
+\example{String 2} & \example{The description of the string.} \\ \hline
+\example{etc.} &  \\ \hline
+\end{tabularx}
+
+\begin{shownto}{editorial}
+{\color{red} A brief description of the canonical naming convention used to
+distinguish PhysicalInterface object instances from one another. Add additional
+lines as necessary.}
+\end{shownto}
+
+\textbf{Physical Interface Instance Naming Convention: }
+
+\example{Provide a detailed explaination of the \texttt{PhysicalInterface}
+instance naming convention used to uniquely identify the interfaces to
+\texttt{PhysicalEntities}.}
+
+\begin{shownto}{editorial}
+{\color{red} The name, type, and brief description of any key object instances
+that play an important role in the federation execution. Add additional lines
+as necessary.}
+\end{shownto}
+
+\textbf{Key Object Instances: }
+
+\begin{tabularx}{\textwidth}{|l|l|X|} \hline
+Name & Object Class & Description \\ \hline
+\example{Instance Name 1} & \example{\texttt{ObjectType}} &
+\example{The description of the string.} \\ \hline
+\example{Instance Name 2} & \example{\texttt{ObjectType}} &
+\example{The description of the string.} \\ \hline
+\example{etc.} & \\ \hline
+\end{tabularx}
+
+\begin{shownto}{editorial}
+{\color{red} List the name and description of any additional FOM modules need
+by this federation execution. This should be the union of all FOM modules
+listed in the FCDs of the required federates. It may also include other FOM
+modules of other potential federates. Add additional lines as necessary.}
+\end{shownto}
+
+\textbf{Additional FOM Modules: }
+
+\begin{tabularx}{\textwidth}{|l|X|} \hline
+FOM Module Name & Description \\ \hline
+\example{Module Name 1} & \example{The description of the FOM module.} \\ \hline
+\example{Module Name 2} & \example{The description of the FOM module.} \\ \hline
+\example{etc.} &  \\ \hline
+\end{tabularx}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Initialization}
+
+\begin{shownto}{editorial}
+{\color{red} This section of the FESFA template provides the information
+associates with the initialization policy and approach use in the federation
+execution. It specifically focuses on the details of any multiphase
+initialization. All Early Joiner federates participating in the multiphase
+initialization process will need this information.
+
+Indication for the use of multiphase initialization (MPI). This is a yes or no
+question.}
+\end{shownto}
+
+\textbf{MPI Used: } \underline{\example{(yes/no)}}
+
+\begin{shownto}{editorial}
+{\color{red} The MPI specification can consist of an inline description of the
+MPI approach. Alternately, list references to any document(s) that describes
+the implementation and configuration details for any MPI used in the startup of
+the federation execution. Add additional document references as necessary. Just
+mark (N/A) if no MPI is used.}
+\end{shownto}
+
+\textbf{MPI Specification: }
+\begin{enumerate}
+\item \example{MPI reference document 1.}
+\item \example{MPI reference document 2.}
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Additional Technical Information}
+
+\begin{shownto}{editorial}
+{\color{red} This section of the FESFA template provides any additional
+technical information needed by federates participating in the federation
+execution. This section may be marked (N/A) or omitted if there is no
+additional technical information.
+
+Specify any non-standard switches settings required to configure the RTI for
+this federation execution. For instance, this is where the behavior of the
+Auto-Provide switch would be documented if enabled. Add additional lines as
+necessary. Just mark (N/A) or omit if none.}
+\end{shownto}
+
+\textbf{Non-standard Switches Settings: }
+
+\begin{tabularx}{\textwidth}{|l|l|X|} \hline
+\textbf{Switch} & \textbf{Value} & \textbf{Description} \\ \hline
+\example{Switch} & \example{\texttt{Value}} &
+\example{The description of the switch setting.} \\ \hline
+\example{Switch} & \example{\texttt{Value}} &
+\example{The description of the switch setting.} \\ \hline
+\example{etc.} &  & \\ \hline
+\end{tabularx}
+
+\begin{shownto}{editorial}
+{\color{red} List or describe any additional data sources and/or databases
+required to support this federation execution. Add additional lines as
+necessary. Just mark (N/A) or omit if no additional data sources are needed.}
+\end{shownto}
+
+\textbf{Additional Common Data and/or Databases: }
+
+\begin{tabularx}{\textwidth}{|l|X|} \hline
+\textbf{Data Source} & \textbf{Data Description} \\ \hline
+\example{Source 1} & 
+\example{The description of the data.} \\ \hline
+\example{Source 2} & 
+\example{The description of the data.} \\ \hline
+\example{etc.} &  \\ \hline
+\end{tabularx}
+
+\begin{shownto}{editorial}
+{\color{red} References to any additional technical document. Add additional
+document references as necessary. Just mark (N/A) or omit if none.}
+\end{shownto}
+
+\textbf{Additional Technical Documents: }
+\begin{enumerate}
+\item \example{Technical reference document 1.}
+\item \example{Technical reference document 2.}
+\end{enumerate}
+
+\begin{shownto}{editorial}
+{\color{red} The next section is automatically generated by \LaTeX using the
+BibLaTeX pacakge and Biber program.  A bibliography will be generated from
+\LaTeX citations that occur in the document.}
+\end{shownto}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\printbibliography
+
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% End Document Content
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
