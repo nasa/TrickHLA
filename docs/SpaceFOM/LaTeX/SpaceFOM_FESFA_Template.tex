@@ -1,4 +1,24 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% TrickHLA SpaceFOM FESFA Template
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%% Purpose:
+%%%   This document provides a LaTeX based implementation of the SISO
+%%%   SpaceFOM Federation Execution Specific Federation Agreement (FESFA).
+%%%   This is a template document that is intended to provide a starting
+%%%   point for anyone that needs to create SpaceFOM-compliant FESFA.
+%%%
+%%%   The document contains editorial notes, in red.  These notes can be
+%%%   revealed or hidden using the LaTeX 'multiaudience' package.  This
+%%%   document also contains example place holder text, marked with the
+%%%   \example{} text entries.  These examples are intended to be replaced
+%%%   with normal and appropriate text entries.
+%%%
+%%% Revision History:
+%%%   January 2021: Edwin Z. Crues: Initial version based on SISO templates.
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Primary document style
 \documentclass[11pt,english,letterpaper]{article}
@@ -129,10 +149,10 @@ necessarily the “HLA Federation Execution Name” below.}
 
 \hspace{0.25in}
 \begin{tabularx}{\textwidth}{lX}
-Name:    & \underline{\example{Your Name}} \\
-Phone:   & \underline{\example{Your Phone Number}} \\
-Email:   & \underline{\example{Your Email Address}} \\
-Address: & \underline{\example{Your Phydical Address}}
+Name:    & \underline{\example{POC Name}} \\
+Phone:   & \underline{\example{POC Phone Number}} \\
+Email:   & \underline{\example{POC Email Address}} \\
+Address: & \underline{\example{POC Phydical Address}}
 \end{tabularx}
 
 \begin{shownto}{editorial}
@@ -223,14 +243,14 @@ format, in seconds.}
 \textbf{Epoch: } \underline{\example{Starting date and time.}} (TT scale in TJD format)
 
 \begin{shownto}{editorial}
-{\color{red} The federation execution’s nominal HLA Logical Time (HLT) step in
+{\color{red} The federation execution's nominal HLA Logical Time (HLT) step in
 microseconds.}
 \end{shownto}
 
 \textbf{Federation HLT step: } \underline{\example{numerical time step}} (microseconds)
 
 \begin{shownto}{editorial}
-{\color{red} The federation execution’s Least Common Time Step (LCTS) in
+{\color{red} The federation execution's Least Common Time Step (LCTS) in
 microseconds. This is the least common value of all the federate time steps for
 the time regulating federates in a federation execution.}
 \end{shownto}
@@ -288,10 +308,10 @@ necessary. Just mark (N/A) if no CTE is used.}
 {\color{red} This section of the FESFA template provides the names and
 descriptions of the principal reference frames published during a federation
 execution. It should be sufficient to understand the principal topology of the
-federation execution’s reference frame tree.
+federation execution's reference frame tree.
 
 The name and brief description of the reference frame that represents the
-common base (root) reference frame for the federation execution’s reference
+common base (root) reference frame for the federation execution's reference
 frame tree.}
 \end{shownto}
 
@@ -301,12 +321,12 @@ frame tree.}
 Name & Description \\
 \example{Root Frame Name} &
 \example{A short description of the root reference frame.  If not apparent from
-the name and short desciption, a reference should be provided.\cite{vallado2001}}
+the name and short description, a reference should be provided.\cite{vallado2001}}
 \end{tabularx}
 
 \begin{shownto}{editorial}
 {\color{red} The name, parent, and brief description of any additional reference
-frame that play an important role in the federation execution’s reference frame
+frame that play an important role in the federation execution's reference frame
 tree. Any reference frames published by or subscribed to by required federates
 should be listed here. This list should represent the union of all reference
 frames listed in the FCDs of the required federates. It may also include
@@ -337,7 +357,7 @@ Name & Parent & Description \\ \hline
 management information associated with the federation execution. Most
 participating federates will need this information.
 
-List the type strings associated with any PhysicalEntity object’s “type”
+List the type strings associated with any PhysicalEntity object's `type'
 attribute used in this federation execution. List both the string (tag) values
 and a description of each tag.}
 \end{shownto}
@@ -352,8 +372,8 @@ Type String (Tag) & Description \\ \hline
 \end{tabularx}
 
 \begin{shownto}{editorial}
-{\color{red} List the status strings associated with any PhysicalEntity object’s
-“status” attribute used in this federation execution. List both the string (tag)
+{\color{red} List the status strings associated with any PhysicalEntity object's
+`status' attribute used in this federation execution. List both the string (tag)
 values and a description of each tag.}
 \end{shownto}
 
@@ -374,7 +394,7 @@ lines as necessary.}
 
 \textbf{Physical Interface Instance Naming Convention: }
 
-\example{Provide a detailed explaination of the \texttt{PhysicalInterface}
+\example{Provide a detailed explanation of the \texttt{PhysicalInterface}
 instance naming convention used to uniquely identify the interfaces to
 \texttt{PhysicalEntities}.}
 
@@ -396,7 +416,7 @@ Name & Object Class & Description \\ \hline
 \end{tabularx}
 
 \begin{shownto}{editorial}
-{\color{red} List the name and description of any additional FOM modules need
+{\color{red} List the name and description of any additional FOM modules needed
 by this federation execution. This should be the union of all FOM modules
 listed in the FCDs of the required federates. It may also include other FOM
 modules of other potential federates. Add additional lines as necessary.}
@@ -499,7 +519,7 @@ document references as necessary. Just mark (N/A) or omit if none.}
 
 \begin{shownto}{editorial}
 {\color{red} The next section is automatically generated by \LaTeX using the
-BibLaTeX pacakge and Biber program.  A bibliography will be generated from
+BibLaTeX package and Biber program.  A bibliography will be generated from
 \LaTeX citations that occur in the document.}
 \end{shownto}
 

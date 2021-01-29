@@ -1,0 +1,591 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% TrickHLA SpaceFOM FCD Template
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%% Purpose:
+%%%   This document provides a LaTeX based implementation of the SISO
+%%%   SpaceFOM Federate Compliance Document (FCD).  This is a template
+%%%   document that is intended to provide a starting point for anyone that
+%%%   needs to create SpaceFOM-compliant FCD.
+%%%
+%%%   The document contains editorial notes, in red.  These notes can be
+%%%   revealed or hidden using the LaTeX 'multiaudience' package.  This
+%%%   document also contains example place holder text, marked with the
+%%%   \example{} text entries.  These examples are intended to be replaced
+%%%   with normal and appropriate text entries.
+%%%
+%%% Revision History:
+%%%   January 2021: Edwin Z. Crues: Initial version based on SISO templates.
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Primary document style
+\documentclass[11pt,english,letterpaper]{article}
+\setlength{\parskip}{\baselineskip}
+\setlength{\parindent}{0pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Required packages
+\usepackage[english]{babel}
+%\usepackage{helvet}
+\usepackage{textcomp}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{multiaudience}
+\usepackage{fancyhdr} % needed for header and footer
+\usepackage{lastpage} % needed for page numbering 1 of 2, 2 of 2, etc...
+\usepackage[colorlinks]{hyperref}
+\hypersetup{
+   colorlinks=true,
+   linkcolor=blue,
+   filecolor=green,
+   citecolor=blue,
+   urlcolor=red,
+   plainpages=false,
+   pdfpagelabels=true
+}
+\usepackage{biblatex}
+\usepackage{tabularx} % Better tables.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Page spacing options
+\topmargin 0in 
+\headheight 0.25in
+\headsep 12pt  
+\textheight 9in 
+\textwidth 6.5in
+\oddsidemargin 0in
+\evensidemargin 0in
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% End of preamble
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\SetNewAudience{editorial}
+\DefCurrentAudience{editorial} % Uncomment this to see editorial text.
+
+\newcommand{\example}[1]{{\textcolor{blue}{\textit{#1}}}}
+
+\addbibresource{IEEE1516.bib}
+\addbibresource{SpaceFOM_FCD_Template.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Starting Document Content
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\begin{center}
+\begin{LARGE}
+{\bfseries Space Reference Federation Object Model\\
+(SpaceFOM)\\
+Federate Compliance Document (FCD)}\\
+\vspace{10pt}
+\end{LARGE}
+{\normalsize for the}\\
+\vspace{10pt}
+\begin{LARGE}
+{\bfseries \example{\textlangle{}Federate Name\textrangle{}}}
+\end{LARGE}
+\end{center}
+
+\begin{shownto}{editorial}
+{\color{red} The information that appears in red text is intended
+to be editorial and directive content.  It is not intended to appear in the
+finished document.  This text can be hidden by commenting out or deleting the
+
+\texttt{\textbackslash DefCurrentAudience\{editorial\}}
+
+line in this document's \texttt{*.tex} file.  The \example{blue italic text}
+represents example text and is intended to be replaced with the Federate
+specific text.  When complete, the document should not have any red
+or {\color{blue}blue} text, other than hyprelinked text.
+
+The Space Reference Federation Object Model (SpaceFOM) Federate Compliance
+Declaration (FCD) is a document that provides specific configuration data
+necessary to achieve interoperability based on the SpaceFOM. Several rules
+in the SpaceFOM put requirements on what data need to be recorded in the FCD.
+In general, The FCD describes which capabilities a federate has and which roles
+it can play in a SpaceFOM-compliant federation execution. This template
+establishes the standard format and content so that all SpaceFOM FCD products
+contain the same basic information and have the same basic look.}
+\end{shownto}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Purpose}
+
+\example{ This section of the FCD template will provide the general purpose and
+description of this specific SpaceFOM-compliant federate. This should include
+intended scenarios and other information that describes the nature of the
+federate's capabilities and compliance as a SpaceFOM-compliant federate.
+Federate providers should provide a federate compliance declarations to
+facilitate the assessment of the suitability of a federate in a specific
+federation execution. \cite{IEEE1516:FRAMEWORK,IEEE1516:API,IEEE1516:OMT}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Identification}
+
+\begin{shownto}{editorial}
+{\color{red} This section of the FCD template provides the general identifying
+information associates with this federate.
+
+General name identifying this federate, this should match the
+\textlangle{}Federate Name\textrangle{} in the title above but not necessarily
+the name used when the federate joins an HLA federation execution (see ``HLA
+Federation Execution Join Name'' below).}
+\end{shownto}
+
+\textbf{Name: } \underline{\example{This Federate's Name}}
+
+\begin{shownto}{editorial}
+{\color{red} Specify the federate version identification.}
+\end{shownto}
+
+\textbf{Version: } \underline{\example{Version Tag}}
+
+\begin{shownto}{editorial}
+{\color{red} Information pertaining to the principal point of contact for
+this FCD.}
+\end{shownto}
+
+\textbf{Point of Contact: }
+
+\hspace{0.25in}
+\begin{tabularx}{\textwidth}{lX}
+Name:    & \underline{\example{POC Name}} \\
+Phone:   & \underline{\example{POC Phone Number}} \\
+Email:   & \underline{\example{POC Email Address}} \\
+Address: & \underline{\example{POC Phydical Address}}
+\end{tabularx}
+
+\begin{shownto}{editorial}
+{\color{red} The HLA name used by this federate when joining an HLA federation
+execution, not necessarily the identification name from above. Specify the
+name here if it is fixed or indicate the means for setting if it can be
+configured at runtime.}
+\end{shownto}
+
+\textbf{HLA Federation Execution Join Name: } \underline{\example{Federate Instance Join Name}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{SpaceFOM Federate Roles Supported}
+
+\begin{shownto}{editorial}
+{\color{red} This section of the FCD template provides information on the
+SpaceFOM roles that this federate can support.
+
+Statement that this federate can fulfill the role of the Master Federate in a
+SpaceFOM-compliant federation execution. This is a yes or no question.}
+\end{shownto}
+
+\textbf{Can act as Master Federate: } \underline{\example{(yes/no)}}
+
+\begin{shownto}{editorial}
+{\color{red} Statement that this federate can fulfill the role of the Pacing
+Federate in a SpaceFOM-compliant federation execution. This is a yes or no
+question.}
+\end{shownto}
+
+\textbf{Can act as Pacing Federate: } \underline{\example{(yes/no)}}
+
+\begin{shownto}{editorial}
+{\color{red} Statement that this federate can fulfill the role of the Root
+Reference Frame Publisher (RRFP) federate in a SpaceFOM-compliant federation
+execution. This is a yes or no question.}
+\end{shownto}
+
+\textbf{Can act as Root Reference Frame Publisher: } \underline{\example{(yes/no)}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Time Management}
+
+\begin{shownto}{editorial}
+{\color{red} This section of the FCD template provides the general time
+management information associates with this federate.
+
+Specify the earliest and latest valid operating Simulation Scenario Time (SST)
+dates and times for this federate. This can be given as a calendar date and time
+but will ultimately have to be converted into the Terrestrial Time (TT) scale in
+Truncated Julian Date (TJD) format.}
+\end{shownto}
+
+\textbf{Valid Operating Time Frame: }
+
+\hspace{0.25in}
+\begin{tabular}{ll}
+Earliest:& \underline{\example{Earliest Date}} (TT scale in TJD format)\\
+Latest:  & \underline{\example{Latest Date}} (TT scale in TJD format)
+\end{tabular}
+
+\begin{shownto}{editorial}
+{\color{red}Specify the minimum, nominal, and maximum HLA Logical Time (HLT)
+step in microseconds supported by this federate. These time step capabilities
+will inform the Least Common Time Step (LCTS) calculation for any federation
+execution that this federate joins.}
+\end{shownto}
+
+\textbf{Time Step Support: }
+
+\hspace{0.25in}
+\begin{tabular}{ll}
+Minimum: & \underline{\example{Smallest time step}} (microseconds)\\
+Nominal: & \underline{\example{Normal time step}} (microseconds)\\
+Maximum: & \underline{\example{Largest time step}} (microseconds)
+\end{tabular}
+
+\begin{shownto}{editorial}
+{\color{red} Indication that this federate supports being an Early Joiner
+federate. This is a yes or no question.}
+\end{shownto}
+
+\textbf{Supports Early Joining: } \underline{ \example{(yes/no)}}
+
+\begin{shownto}{editorial}
+{\color{red} Indication that this federate supports being a Late Joiner
+federate. This is a yes or no question.}
+\end{shownto}
+
+\textbf{Supports Late Joining: } \underline{ \example{(yes/no)}}
+
+\begin{shownto}{editorial}
+{\color{red} Specify if this federate can or should be a time regulating federate.}
+\end{shownto}
+
+\textbf{Time Regulating: } \underline{ \example{(required/optional/no)}}
+
+\begin{shownto}{editorial}
+{\color{red} Specify if this federate can or should be a time constrained federate.}
+\end{shownto}
+
+\textbf{Time Constrained: } \underline{ \example{(required/optional/no)}}
+
+\begin{shownto}{editorial}
+{\color{red} Identify the supported time management type for this federate.
+These are yes or no questions.}
+\end{shownto}
+
+\textbf{Supported Time Management Types: }
+
+\hspace{0.25in}
+\begin{tabular}{ll}
+No Pacing:                                & \underline{\example{(yes/no)}} \\
+Scaled Pacing:                            & \underline{\example{(yes/no)}} \\
+Real-time Pacing with Unlimited Overruns: & \underline{\example{(yes/no)}} \\
+Real-time Pacing with Limited Overruns:   & \underline{\example{(yes/no)}} \\
+Strict/Conservative Real-time Pacing:     & \underline{\example{(yes/no)}} \\
+\end{tabular}
+
+\begin{shownto}{editorial}
+{\color{red} If any of the real-time pacing options are supported, then
+include a section that describes limitations and how those overruns are
+handled.}
+\end{shownto}
+
+\textbf{Overrun handling: } \underline{\example{Description of how overruns
+are handled.}}
+
+\begin{shownto}{editorial}
+{\color{red} Indication that this federate requires support for Central
+Timing Equipment (CTE) to control its time advance. This is a yes or no
+question.}
+\end{shownto}
+
+\textbf{Requires CTE: } \underline{\example{(yes/no)}}
+
+\begin{shownto}{editorial}
+{\color{red} References to any document(s) that describes the implementation
+and configuration details for any CTE. Add additional document references as
+necessary. Just mark (N/A) if CTE is not required.}
+\end{shownto}
+
+\textbf{CTE specification document(s): } \underline{\example{(yes/no)}}
+\begin{enumerate}
+\item \example{CTE reference document 1.}
+\item \example{CTE reference document 2.}
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Reference Frames}
+
+\begin{shownto}{editorial}
+{\color{red} This section of the FCD template provides the names and
+descriptions of the principal reference frames published by or required by
+this federate.
+
+If this federate can publish a root reference frame, then this is the name and
+brief description of the reference frame that represents the common base (root)
+reference frame for a SpaceFOM-compliant reference frame tree. If this federate
+cannot publish a root reference frame, then this entry should be omitted.}
+\end{shownto}
+
+\textbf{Root Reference Frame: }
+
+\begin{tabularx}{\textwidth}{lX}
+Name & Description \\
+\example{Root Frame Name} &
+\example{A short description of the root reference frame.  If not apparent from
+the name and short description, a reference should be provided.\cite{vallado2001}}
+\end{tabularx}
+
+\begin{shownto}{editorial}
+{\color{red} The name, parent, and brief description of any reference frames
+published by this federate. Add additional lines as necessary.}
+\end{shownto}
+
+\textbf{Published Reference Frames: }
+
+\begin{tabularx}{\textwidth}{|l|l|X|} \hline
+Name & Parent & Description \\ \hline
+\example{Frame name} &
+\example{Name of parent frame} &
+\example{Description of this federate's reference frame.} \\ \hline
+\example{etc.} &
+\example{Name of parent frame} &
+\example{etc.} \\ \hline
+\end{tabularx}
+
+\begin{shownto}{editorial}
+{\color{red} The name, parent, and brief description of any reference frames
+required by this federate. Add additional lines as necessary.}
+\end{shownto}
+
+\textbf{Required Reference Frames: }
+
+\begin{tabularx}{\textwidth}{|l|X|} \hline
+Name & Description \\ \hline
+\example{Root frame name} &
+\example{Description of the frame dependency.} \\ \hline
+\example{EarthCenteredInertial} &
+\example{All \texttt{DynamicalEntity} states are expressed in this frame.} \\ \hline
+\example{etc.} &
+\example{etc.} \\ \hline
+\end{tabularx}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Object Management}
+
+\begin{shownto}{editorial}
+{\color{red} This section of the FCD template provides the general object
+management information associated with the federate. The information in this
+section will inform the overall object management strategy for a federation
+execution in which this federate participates.
+
+List the type strings associated with any PhysicalEntity object's ``type''
+attribute used in this federate. List both the string (tag) values and a
+description of each tag.}
+\end{shownto}
+
+\textbf{Physical Entity Object Type Strings: }
+
+\begin{tabularx}{\textwidth}{|l|X|} \hline
+Type String (Tag) & Description \\ \hline
+\example{Tag 1} & \example{The description of the tag.} \\ \hline
+\example{Tag 2} & \example{The description of the tag.} \\ \hline
+\example{etc.} & \\ \hline
+\end{tabularx}
+
+\begin{shownto}{editorial}
+{\color{red} List the status strings associated with any PhysicalEntity
+object's ``status'' attribute used in this federate. List both the string (tag)
+values and a description of each tag.}
+\end{shownto}
+
+\textbf{Physical Entity Object Status Strings: }
+
+\begin{tabularx}{\textwidth}{|l|X|} \hline
+Status String (Tag) & Description \\ \hline
+\example{String 1} & \example{The description of the string.} \\ \hline
+\example{String 2} & \example{The description of the string.} \\ \hline
+\example{etc.} &  \\ \hline
+\end{tabularx}
+
+\begin{shownto}{editorial}
+{\color{red} A brief description of the canonical naming convention used
+to distinguish PhysicalInterface object instances from one another. Add
+additional lines as necessary.}
+\end{shownto}
+
+\textbf{Physical Interface Instance Naming Convention: }
+
+\example{Provide a detailed explanation of the \texttt{PhysicalInterface}
+instance naming convention used to uniquely identify the interfaces to
+\texttt{PhysicalEntities}.}
+
+\begin{shownto}{editorial}
+{\color{red} List the name and brief description of all \texttt{PhysicalInterface}
+instances. Add additional lines as necessary.}
+\end{shownto}
+
+\textbf{Physical Interface Instances: }
+
+\begin{tabularx}{\textwidth}{|l|X|} \hline
+Interface Instance Name & Description \\ \hline
+\example{Instance Name 1} & 
+\example{The description of the string.} \\ \hline
+\example{Instance Name 2} & 
+\example{The description of the string.} \\ \hline
+\example{etc.} & \\ \hline
+\end{tabularx}
+
+\begin{shownto}{editorial}
+{\color{red} List the name, type, and brief description of any published
+object instances. Add additional lines as necessary.}
+\end{shownto}
+
+\textbf{Published Object Instances: }
+
+\begin{tabularx}{\textwidth}{|l|l|X|} \hline
+Name & Type & Description \\ \hline
+\example{Instance Name 1} & \example{\texttt{ObjectType}} &
+\example{The description of the string.} \\ \hline
+\example{Instance Name 2} & \example{\texttt{ObjectType}} &
+\example{The description of the string.} \\ \hline
+\example{etc.} & \\ \hline
+\end{tabularx}
+
+
+
+
+\begin{shownto}{editorial}
+{\color{red} Editorial text.}
+\end{shownto}
+
+\begin{shownto}{editorial}
+{\color{red} List the name, type, and brief description of any required
+object instances. Add additional lines as necessary.}
+\end{shownto}
+
+\textbf{Required Object Instances: }
+
+\begin{tabularx}{\textwidth}{|l|l|X|} \hline
+Name & Type & Description \\ \hline
+\example{Instance Name 1} & \example{\texttt{ObjectType}} &
+\example{The description of the string.} \\ \hline
+\example{Instance Name 2} & \example{\texttt{ObjectType}} &
+\example{The description of the string.} \\ \hline
+\example{etc.} & \\ \hline
+\end{tabularx}
+
+\begin{shownto}{editorial}
+{\color{red}List the name and description of any additional FOM modules need by
+this federate. Add additional lines as necessary.}
+\end{shownto}
+
+\textbf{Additional FOM Modules: }
+
+\begin{tabularx}{\textwidth}{|l|X|} \hline
+FOM Module Name & Description \\ \hline
+\example{Module Name 1} & \example{The description of the FOM module.} \\ \hline
+\example{Module Name 2} & \example{The description of the FOM module.} \\ \hline
+\example{etc.} &  \\ \hline
+\end{tabularx}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Initialization}
+
+\begin{shownto}{editorial}
+{\color{red} This section of the FCD template provides the information
+associates with the initialization policy and approach use by this federate. It
+specifically focuses on the details of its multiphase initialization process.
+The information in this section will inform the overall MPI strategy for a
+federation execution in which this federate participates.
+
+Indication for the use of multiphase initialization (MPI). This is a yes or no
+question.}
+\end{shownto}
+
+\textbf{MPI Used: } \underline{\example{(yes/no)}}
+
+\begin{shownto}{editorial}
+{\color{red} The MPI specification can consist of an inline description of the
+MPI approach. Alternately, list references to any document(s) that describes the
+implementation and configuration details for any MPI used in the startup of the
+federation execution. Add additional document references as necessary. Just mark
+(N/A) if no MPI is used.}
+\end{shownto}
+
+\textbf{MPI Specification: }
+\begin{enumerate}
+\item \example{MPI reference document 1.}
+\item \example{MPI reference document 2.}
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Additional Technical Information}
+
+\begin{shownto}{editorial}
+{\color{red} This section of the FCD template provides any additional technical
+information needed by this federate. This section may be marked (N/A) or omitted
+if there is no additional technical information.
+
+List or describe any additional data sources and/or databases required to
+support this federate. Add additional lines as necessary. Just mark (N/A) or
+omit if no additional data sources are needed.}
+\end{shownto}
+
+\textbf{Additional Data and/or Databases: }
+
+\begin{tabularx}{\textwidth}{|l|X|} \hline
+\textbf{Data Source} & \textbf{Data Description} \\ \hline
+\example{Source 1} & 
+\example{The description of the data.} \\ \hline
+\example{Source 2} & 
+\example{The description of the data.} \\ \hline
+\example{etc.} &  \\ \hline
+\end{tabularx}
+
+\begin{shownto}{editorial}
+{\color{red} References to any additional technical document. Add additional
+document references as necessary. Just mark (N/A) or omit if none.}
+\end{shownto}
+
+\textbf{Additional Technical Documents: }
+\begin{enumerate}
+\item \example{Technical reference document 1.}
+\item \example{Technical reference document 2.}
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Compliance Statement}
+
+\begin{shownto}{editorial}
+{\color{red} This is the general acknowledgement that this federate complies
+with the Space Reference FOM standard. This is a yes or no question.}
+\end{shownto}
+
+This federate fulfills all relevant requirements in the SpaceFOM version 1.0: \underline{\example{(yes/no)}}
+
+\begin{shownto}{editorial}
+{\color{red} If the answer to the compliance question above is “no”, then an
+explanatory note can be provided here.}
+\end{shownto}
+
+
+\begin{shownto}{editorial}
+{\color{red} The next section is automatically generated by \LaTeX using the
+BibLaTeX pacakge and Biber program.  A bibliography will be generated from
+\LaTeX citations that occur in the document.}
+\end{shownto}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\printbibliography
+
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% End Document Content
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
