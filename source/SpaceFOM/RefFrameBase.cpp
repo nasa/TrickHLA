@@ -60,8 +60,6 @@ using namespace SpaceFOM;
 #define REF_FRAME_PACKING_DEBUG 0
 #define REF_FRAME_PACKING_EXTRA_DEBUG 0
 
-extern Trick::MemoryManager *trick_MM;
-
 /*!
  * @job_class{initialization}
  */

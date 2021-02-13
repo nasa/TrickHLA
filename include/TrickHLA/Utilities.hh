@@ -81,7 +81,7 @@ extern fpu_control_t __fpu_control;
 #      define TRICKHLA_INIT_FPU_CONTROL_WORD _FPU_GETCW( __fpu_control )
 #   else
 // Linux support.
-#      include <fpu_control.h> // For FPU Control Word register access.
+#      include <fpu_control.h>               // For FPU Control Word register access.
 #      define TRICKHLA_INIT_FPU_CONTROL_WORD // No need to initialize for Linux.
 #   endif
 
@@ -111,9 +111,9 @@ the 7th or 8th decimal place. Please contact the TrickHLA team for support.%c", 
 #   endif
 
 #else
-#   define TRICKHLA_INIT_FPU_CONTROL_WORD // FPU Control Word protected not enabled.
-#   define TRICKHLA_SAVE_FPU_CONTROL_WORD // FPU Control Word protected not enabled.
-#   define TRICKHLA_RESTORE_FPU_CONTROL_WORD // FPU Control Word protected not enabled.
+#   define TRICKHLA_INIT_FPU_CONTROL_WORD     // FPU Control Word protected not enabled.
+#   define TRICKHLA_SAVE_FPU_CONTROL_WORD     // FPU Control Word protected not enabled.
+#   define TRICKHLA_RESTORE_FPU_CONTROL_WORD  // FPU Control Word protected not enabled.
 #   define TRICKHLA_VALIDATE_FPU_CONTROL_WORD // FPU Control Word protected not enabled.
 #endif
 

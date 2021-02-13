@@ -53,8 +53,6 @@ NASA, Johnson Space Center\n
 using namespace std;
 using namespace SpaceFOM;
 
-extern Trick::MemoryManager *trick_MM;
-
 /*!
  * @job_class{initialization}
  */
