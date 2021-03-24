@@ -155,7 +155,7 @@ void InteractionItem::initialize(
    this->interaction_type = inter_type;
 
    // Decode all the parameters from the map.
-   for ( int p = 0; p < param_count; p++ ) {
+   for ( int p = 0; p < param_count; ++p ) {
       // Note that we are using a const_iterator since this map does not support
       // an iterator.
       RTI1516_NAMESPACE::ParameterHandleValueMap::const_iterator param_iter;
@@ -196,7 +196,7 @@ void InteractionItem::checkpoint_queue()
       if ( parm_items == static_cast< ParameterItem * >( NULL ) ) {
          ostringstream msg;
          msg << "InteractionItem::checkpoint_queue():" << __LINE__
-             << " Failed to allocate enough memory for a parm_items linear"
+             << " ERROR: Failed to allocate enough memory for a parm_items linear"
              << " array of " << parm_items_count << " elements" << THLA_ENDL;
          send_hs( stderr, (char *)msg.str().c_str() );
          exec_terminate( __FILE__, (char *)msg.str().c_str() );
@@ -206,7 +206,7 @@ void InteractionItem::checkpoint_queue()
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &parameter_queue.mutex );
 
-      for ( int i = 0; i < parm_items_count; i++ ) {
+      for ( int i = 0; i < parm_items_count; ++i ) {
 
          ParameterItem *item = static_cast< ParameterItem * >( parameter_queue.front() );
 
@@ -231,7 +231,7 @@ void InteractionItem::checkpoint_queue()
 void InteractionItem::clear_parm_items()
 {
    if ( ( parm_items_count != 0 ) && ( parm_items != NULL ) ) {
-      for ( int i = 0; i < parm_items_count; i++ ) {
+      for ( int i = 0; i < parm_items_count; ++i ) {
          parm_items[i].clear();
       }
       TMM_delete_var_a( parm_items );
@@ -244,7 +244,7 @@ void InteractionItem::restore_queue()
 {
    if ( parm_items_count != 0 ) {
 
-      for ( int i = 0; i < parm_items_count; i++ ) {
+      for ( int i = 0; i < parm_items_count; ++i ) {
 
          ParameterItem *item = new ParameterItem();
 

@@ -1218,7 +1218,7 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_pnts()
 void ExecutionControl::publish()
 {
    // Publish the freeze_interactions.
-   for ( int n = 0; n < freeze_inter_count; n++ ) {
+   for ( int n = 0; n < freeze_inter_count; ++n ) {
       freeze_interaction[n].publish_interaction();
    }
 }
@@ -1233,13 +1233,13 @@ void ExecutionControl::unpublish()
    }
 
    // Unpublish all the freeze_interactions.
-   for ( int i = 0; i < freeze_inter_count; i++ ) {
+   for ( int i = 0; i < freeze_inter_count; ++i ) {
 
       // Only unpublish a FREEZE interaction that we publish.
       if ( freeze_interaction[i].is_publish() ) {
 
          do_unpublish = true;
-         for ( int k = 0; ( k < i ) && do_unpublish; k++ ) {
+         for ( int k = 0; ( k < i ) && do_unpublish; ++k ) {
             // Unpublish an interaction Class only once, so see if we have
             // already unpublished the same interaction class that was published.
             if ( freeze_interaction[k].is_publish()
@@ -1260,7 +1260,7 @@ void ExecutionControl::subscribe()
    // Check to see if we are the Master federate.
    if ( this->is_master() ) {
       // Only subscribe to the Freeze interactions if this is the Master federate.
-      for ( int n = 0; n < freeze_inter_count; n++ ) {
+      for ( int n = 0; n < freeze_inter_count; ++n ) {
          freeze_interaction[n].subscribe_to_interaction();
       }
    } else {
@@ -1282,11 +1282,11 @@ void ExecutionControl::unsubscribe()
    // Unsubscribe the mtr_interactions.
    // Only unsubscribe an MTR interaction that we subscribe.
    // Unsubscribe from all the freeze_interactions.
-   for ( int i = 0; i < freeze_inter_count; i++ ) {
+   for ( int i = 0; i < freeze_inter_count; ++i ) {
       // Only unsubscribe from FREEZE interactions that are subscribed to.
       if ( freeze_interaction[i].is_subscribe() ) {
          do_unsubscribe = true;
-         for ( int k = 0; ( k < i ) && do_unsubscribe; k++ ) {
+         for ( int k = 0; ( k < i ) && do_unsubscribe; ++k ) {
             // Unsubscribe from an interaction Class only once, so see if
             // we have already unsubscribed from the same interaction class
             // that was subscribed to.
@@ -1352,7 +1352,7 @@ void ExecutionControl::receive_interaction(
 {
 
    // Find the TrickHLAFreezeInteraction we have data for.
-   for ( int i = 0; i < freeze_inter_count; i++ ) {
+   for ( int i = 0; i < freeze_inter_count; ++i ) {
       // Process the FREEZE interaction if we subscribed to it and we have the
       // same class handle.
       if ( freeze_interaction[i].is_subscribe() && ( freeze_interaction[i].get_class_handle() == theInteraction ) ) {
@@ -2669,7 +2669,7 @@ void ExecutionControl::reinstate_logged_sync_pts()
 
       pause_sync_pts.reset();
 
-      for ( size_t i = 0; i < this->logged_sync_pts_count; i++ ) {
+      for ( size_t i = 0; i < this->logged_sync_pts_count; ++i ) {
          sync_point_time = Int64Time( this->loggable_sync_pts[i].time );
 
          if ( this->loggable_sync_pts[i].label != NULL ) {

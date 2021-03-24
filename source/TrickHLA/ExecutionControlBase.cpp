@@ -162,7 +162,7 @@ ExecutionControlBase::~ExecutionControlBase()
          send_hs( stdout, "~TrickHLA::ExecutionControlBase() logged_sync_pts_count=%d %c",
                   logged_sync_pts_count, THLA_NEWLINE );
       }
-      for ( size_t i = 0; i < logged_sync_pts_count; i++ ) {
+      for ( size_t i = 0; i < logged_sync_pts_count; ++i ) {
          loggable_sync_pts[i].clear();
       }
       TMM_delete_var_a( loggable_sync_pts );
@@ -489,7 +489,7 @@ void ExecutionControlBase::add_multiphase_init_sync_points()
    }
 
    // Add the user specified multiphase initialization sync-points to the list.
-   for ( unsigned int i = 0; i < user_sync_pt_labels.size(); i++ ) {
+   for ( unsigned int i = 0; i < user_sync_pt_labels.size(); ++i ) {
       wstring ws_label;
       StringUtilities::to_wstring( ws_label, user_sync_pt_labels.at( i ) );
       multiphase_init_sync_pnt_list.add_sync_pnt( ws_label );

@@ -759,7 +759,7 @@ class Object
 
    bool removed_instance; ///< @trick_units{--} Flag to indicate if object instance was removed from RTI.
 
-   bool first_blocking_cyclic_read; ///< @trick_units{--} True to if this is the first call to receive_cyclic_data for data to be received.
+   bool first_blocking_cyclic_read; ///< @trick_units{--} True if this is the first call to receive_cyclic_data for data to be received.
 
    bool any_attribute_FOM_specified_order; ///< @trick_units{--} True if any attribute is the FOM specified order.
    bool any_attribute_timestamp_order;     ///< @trick_units{--} True if any attribute is timestamp order.

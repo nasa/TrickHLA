@@ -168,7 +168,7 @@ void ExecutionConfigurationBase::reset_preferred_order()
    this->any_attribute_timestamp_order = false;
 
    if ( ( attr_count > 0 ) && ( attributes != NULL ) ) {
-      for ( int i = 0; i < attr_count; i++ ) {
+      for ( int i = 0; i < attr_count; ++i ) {
          attributes[i].set_preferred_order( TRANSPORT_RECEIVE_ORDER );
       }
    }
@@ -181,7 +181,7 @@ void ExecutionConfigurationBase::reset_ownership_states()
    set_create_HLA_instance( true );
 
    if ( ( attr_count > 0 ) && ( attributes != NULL ) ) {
-      for ( int i = 0; i < attr_count; i++ ) {
+      for ( int i = 0; i < attr_count; ++i ) {
 
          // All the simulation configuration attributes must be configured
          // for initialization.
@@ -210,7 +210,7 @@ void ExecutionConfigurationBase::set_master(
       // Since we will be publishing the execution configuration object, make
       // sure the attribute locally own flag is set, the publish flag is set,
       // and the subscribe flag is cleared.
-      for ( int i = 0; i < attr_count; i++ ) {
+      for ( int i = 0; i < attr_count; ++i ) {
          attributes[i].mark_locally_owned();
          attributes[i].set_publish( true );
          attributes[i].set_subscribe( false );
@@ -222,7 +222,7 @@ void ExecutionConfigurationBase::set_master(
       // Since we will be subscribing the execution configuration object, make
       // sure the attribute remotely own flag is set, the publish flag is
       // cleared, and the subscribe flag is set.
-      for ( int i = 0; i < attr_count; i++ ) {
+      for ( int i = 0; i < attr_count; ++i ) {
          attributes[i].mark_remotely_owned();
          attributes[i].set_publish( false );
          attributes[i].set_subscribe( true );

@@ -189,7 +189,7 @@ void SinePacking::pack()
       if ( buff != NULL ) {
          cout << " SinePacking::pack() buff_size: " << buff_size << endl;
          unsigned char c = pack_count % 10;
-         for ( int i = 0; i < buff_size; i++ ) {
+         for ( int i = 0; i < buff_size; ++i ) {
             buff[i] = c;
             cout << " SinePacking::pack() buffer[" << i << "] = " << (int)buff[i] << endl;
          }
@@ -300,7 +300,7 @@ void SinePacking::unpack()
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_PACKING ) ) {
       if ( buff != NULL ) {
          cout << " SinePacking::unpack() buff_size: " << buff_size << endl;
-         for ( int i = 0; i < buff_size; i++ ) {
+         for ( int i = 0; i < buff_size; ++i ) {
             cout << " SinePacking::unpack() buffer[" << i << "] = " << (int)buff[i] << endl;
          }
       }

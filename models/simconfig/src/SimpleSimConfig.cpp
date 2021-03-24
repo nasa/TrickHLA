@@ -108,7 +108,7 @@ void SimpleSimConfig::initialize(
    int           req_fed_cnt = 0;
 
    // Build a comma separated list of required federate names.
-   for ( int i = 0; i < known_feds_count; i++ ) {
+   for ( int i = 0; i < known_feds_count; ++i ) {
       if ( known_feds[i].required ) {
          if ( req_fed_cnt > 0 ) {
             fed_list << ",";

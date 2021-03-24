@@ -884,7 +884,7 @@ void Attribute::calculate_size_and_number_of_items()
             // Determine total number of bytes used by the Trick simulation
             // variable, and the data can be binary and not just the printable
             // ASCII characters.
-            for ( size_t i = 0; i < num_items; i++ ) {
+            for ( size_t i = 0; i < num_items; ++i ) {
                char *s = *( (char **)ref2->address + i );
                if ( s != NULL ) {
                   int length = get_size( s );
@@ -899,7 +899,7 @@ void Attribute::calculate_size_and_number_of_items()
             // For the ENCODING_TYPE_C_STRING, ENCODING_TYPE_UNICODE_STRING, and ENCODING_TYPE_ASCII_STRING
             // encodings assume the string is terminated with a null character
             // and determine the number of characters using strlen().
-            for ( size_t i = 0; i < num_items; i++ ) {
+            for ( size_t i = 0; i < num_items; ++i ) {
                char *s = *( (char **)ref2->address + i );
                if ( s != NULL ) {
                   num_bytes += strlen( s );
@@ -995,7 +995,7 @@ bool Attribute::is_static_in_size() const
       // If this is not an array (i.e. num_index == 0) or has static arrays then
       // this attribute is static in size.
       if ( ref2->attr->num_index > 0 ) {
-         for ( int i = 0; i < ref2->attr->num_index; i++ ) {
+         for ( int i = 0; i < ref2->attr->num_index; ++i ) {
             // Make sure each dimension is statically defined (i.e. not zero).
             if ( ref2->attr->index[i].size <= 0 ) {
                return false;
@@ -1020,7 +1020,7 @@ void Attribute::calculate_static_number_of_items()
 
    // Determine the number of items this attribute has (i.e. items in array).
    if ( ref2->attr->num_index > 0 ) {
-      for ( int i = 0; i < ref2->attr->num_index; i++ ) {
+      for ( int i = 0; i < ref2->attr->num_index; ++i ) {
          if ( ref2->attr->index[i].size > 0 ) {
             length *= (size_t)ref2->attr->index[i].size;
          }
@@ -1414,7 +1414,7 @@ void Attribute::encode_boolean_to_buffer() // RETURN: -- None.
    if ( num_items == 1 ) {
       int_dest[0] = ( bool_src[0] ? HLAtrue : 0 );
    } else {
-      for ( size_t k = 0; k < num_items; k++ ) {
+      for ( size_t k = 0; k < num_items; ++k ) {
          int_dest[k] = ( bool_src[k] ? HLAtrue : 0 );
       }
    }
@@ -1438,7 +1438,7 @@ void Attribute::decode_boolean_from_buffer() const // RETURN: -- None.
    if ( num_items == 1 ) {
       bool_dest[0] = ( int_src[0] != 0 );
    } else {
-      for ( size_t k = 0; k < num_items; k++ ) {
+      for ( size_t k = 0; k < num_items; ++k ) {
          bool_dest[k] = ( int_src[k] != 0 );
       }
    }
@@ -1851,7 +1851,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
                size_t length = strlen( s );
 
                // Encode as UTF-16 characters in Big Endian
-               for ( size_t k = 0; k < length; k++ ) {
+               for ( size_t k = 0; k < length; ++k ) {
                   *( output++ ) = '\0';
                   *( output++ ) = (unsigned char)*( s++ );
                }
@@ -1903,7 +1903,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             // UTF-16 character encoding of the string separated by possible
             // Null character '\0' padding between strings to stay on a 4 byte
             // boundary to keep to the standard.
-            for ( size_t i = 0; i < num_items; i++ ) {
+            for ( size_t i = 0; i < num_items; ++i ) {
 
                s = *( (char **)ref2->address + i );
 
@@ -1928,7 +1928,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
 
                if ( s != NULL ) {
                   // Encode as UTF-16 characters in Big Endian
-                  for ( size_t k = 0; k < length; k++ ) {
+                  for ( size_t k = 0; k < length; ++k ) {
                      *( output++ ) = '\0';
                      *( output++ ) = (unsigned char)*( s++ );
                   }
@@ -2044,7 +2044,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             // ASCII characters in the string separated by possible Null
             // character '\0' padding between strings to stay on a 4 byte
             // boundary to keep to the standard.
-            for ( size_t i = 0; i < num_items; i++ ) {
+            for ( size_t i = 0; i < num_items; ++i ) {
 
                s = *( (char **)ref2->address + i );
 
@@ -2079,7 +2079,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
                // gets no padding.
                if ( ( i < ( num_items - 1 ) ) && ( ( ( 4 + length ) % 4 ) != 0 ) ) {
                   size_t pad_cnt = 4 - ( ( 4 + length ) % 4 );
-                  for ( size_t k = 0; k < pad_cnt; k++ ) {
+                  for ( size_t k = 0; k < pad_cnt; ++k ) {
                      *( output++ ) = '\0';
                   }
                   byte_count += pad_cnt;
@@ -2152,7 +2152,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
 
             // We need to determine the total number of bytes of data.
             num_elements = 0;
-            for ( size_t i = 0; i < num_items; i++ ) {
+            for ( size_t i = 0; i < num_items; ++i ) {
                s = *( (char **)ref2->address + i );
                if ( s != NULL ) {
                   int trick_size = get_size( s );
@@ -2197,7 +2197,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             // Buffer contains the characters in the string separated by
             // possible Null character '\0' padding between strings to stay
             // on a 4 byte boundary to keep to the standard.
-            for ( size_t i = 0; i < num_items; i++ ) {
+            for ( size_t i = 0; i < num_items; ++i ) {
 
                // Determine the length of the "char *" for the given array index.
                s                 = *( (char **)ref2->address + i );
@@ -2233,7 +2233,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
                // gets no padding.
                if ( ( i < ( num_items - 1 ) ) && ( ( ( 4 + length ) % 4 ) != 0 ) ) {
                   size_t pad_cnt = 4 - ( ( 4 + length ) % 4 );
-                  for ( size_t k = 0; k < pad_cnt; k++ ) {
+                  for ( size_t k = 0; k < pad_cnt; ++k ) {
                      *( output++ ) = '\0';
                   }
                   byte_count += pad_cnt;
@@ -2260,7 +2260,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
          size_t byte_count = 0;
 
          // Send the data bytes as is.
-         for ( size_t i = 0; i < num_items; i++ ) {
+         for ( size_t i = 0; i < num_items; ++i ) {
 
             s = *( (char **)ref2->address + i );
 
@@ -2306,7 +2306,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
          size_t byte_count = 0;
 
          // Box-car encode the strings.
-         for ( size_t i = 0; i < num_items; i++ ) {
+         for ( size_t i = 0; i < num_items; ++i ) {
 
             s = *( (char **)ref2->address + i );
 
@@ -2439,7 +2439,7 @@ size %d, will use the data buffer size instead.%c",
             } else {
 
                // Decode the UTF-16 characters.
-               for ( size_t k = 0; k < length; k++ ) {
+               for ( size_t k = 0; k < length; ++k ) {
                   input++; // skip the high-character of the UTF-16 encoding
                   output[k] = *( input++ );
                }
@@ -2500,7 +2500,7 @@ WARNING: Truncating array of ENCODING_TYPE_UNICODE_STRING from %d to %d elements
             }
 
             // Decode each of the HLAunicodeString elements.
-            for ( size_t i = 0; i < num_elements; i++ ) {
+            for ( size_t i = 0; i < num_elements; ++i ) {
 
                // Decode the length of the string which is an HLAinteger32BE (Big Endian).
                if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
@@ -2584,7 +2584,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                } else {
 
                   // Decode the UTF-16 characters.
-                  for ( size_t k = 0; k < length; k++ ) {
+                  for ( size_t k = 0; k < length; ++k ) {
                      input++; // skip the high-character of the UTF-16 encoding
                      output[k] = *( input++ );
                   }
@@ -2752,7 +2752,7 @@ WARNING: Truncating array of ENCODING_TYPE_ASCII_STRING from %d to %d elements f
             }
 
             // Decode each of the HLAASCIIstring elements.
-            for ( size_t i = 0; i < num_elements; i++ ) {
+            for ( size_t i = 0; i < num_elements; ++i ) {
 
                // Decode the length of the string which is an HLAinteger32BE (Big Endian).
                if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
@@ -2996,7 +2996,7 @@ WARNING: Truncating array of ENCODING_TYPE_OPAQUE_DATA from %d to %d elements fo
             }
 
             // Decode each of the HLAASCIIstring elements.
-            for ( size_t i = 0; i < num_elements; i++ ) {
+            for ( size_t i = 0; i < num_elements; ++i ) {
 
                // Decode the length of the string which is an HLAinteger32BE (Big Endian).
                if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
@@ -3141,7 +3141,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
          input = buffer;
 
          // Decode the box-car encoded strings.
-         for ( size_t i = 0; i < num_items; i++ ) {
+         for ( size_t i = 0; i < num_items; ++i ) {
 
             // Find the end of the encoded string which is the null character.
             while ( *( input + end_index ) != '\0' ) {
@@ -3235,7 +3235,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             if ( length == 1 ) {
                d_dest[0] = Utilities::byteswap_double( d_src[0] );
             } else {
-               for ( size_t k = 0; k < length; k++ ) {
+               for ( size_t k = 0; k < length; ++k ) {
                   d_dest[k] = Utilities::byteswap_double( d_src[k] );
                }
             }
@@ -3247,7 +3247,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             if ( length == 1 ) {
                f_dest[0] = Utilities::byteswap_float( f_src[0] );
             } else {
-               for ( size_t k = 0; k < length; k++ ) {
+               for ( size_t k = 0; k < length; ++k ) {
                   f_dest[k] = Utilities::byteswap_float( f_src[k] );
                }
             }
@@ -3266,7 +3266,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             if ( length == 1 ) {
                s_dest[0] = Utilities::byteswap_short( s_src[0] );
             } else {
-               for ( size_t k = 0; k < length; k++ ) {
+               for ( size_t k = 0; k < length; ++k ) {
                   s_dest[k] = Utilities::byteswap_short( s_src[k] );
                }
             }
@@ -3278,7 +3278,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             if ( length == 1 ) {
                us_dest[0] = Utilities::byteswap_unsigned_short( us_src[0] );
             } else {
-               for ( size_t k = 0; k < length; k++ ) {
+               for ( size_t k = 0; k < length; ++k ) {
                   us_dest[k] = Utilities::byteswap_unsigned_short( us_src[k] );
                }
             }
@@ -3290,7 +3290,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             if ( length == 1 ) {
                i_dest[0] = Utilities::byteswap_int( i_src[0] );
             } else {
-               for ( size_t k = 0; k < length; k++ ) {
+               for ( size_t k = 0; k < length; ++k ) {
                   i_dest[k] = Utilities::byteswap_int( i_src[k] );
                }
             }
@@ -3302,7 +3302,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             if ( length == 1 ) {
                ui_dest[0] = Utilities::byteswap_unsigned_int( ui_src[0] );
             } else {
-               for ( size_t k = 0; k < length; k++ ) {
+               for ( size_t k = 0; k < length; ++k ) {
                   ui_dest[k] = Utilities::byteswap_unsigned_int( ui_src[k] );
                }
             }
@@ -3314,7 +3314,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             if ( length == 1 ) {
                l_dest[0] = Utilities::byteswap_long( l_src[0] );
             } else {
-               for ( size_t k = 0; k < length; k++ ) {
+               for ( size_t k = 0; k < length; ++k ) {
                   l_dest[k] = Utilities::byteswap_long( l_src[k] );
                }
             }
@@ -3326,7 +3326,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             if ( length == 1 ) {
                ul_dest[0] = Utilities::byteswap_unsigned_long( ul_src[0] );
             } else {
-               for ( size_t k = 0; k < length; k++ ) {
+               for ( size_t k = 0; k < length; ++k ) {
                   ul_dest[k] = Utilities::byteswap_unsigned_long( ul_src[k] );
                }
             }
@@ -3338,7 +3338,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             if ( length == 1 ) {
                ll_dest[0] = Utilities::byteswap_long_long( ll_src[0] );
             } else {
-               for ( size_t k = 0; k < length; k++ ) {
+               for ( size_t k = 0; k < length; ++k ) {
                   ll_dest[k] = Utilities::byteswap_long_long( ll_src[k] );
                }
             }
@@ -3350,7 +3350,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             if ( length == 1 ) {
                ull_dest[0] = Utilities::byteswap_unsigned_long_long( ull_src[0] );
             } else {
-               for ( size_t k = 0; k < length; k++ ) {
+               for ( size_t k = 0; k < length; ++k ) {
                   ull_dest[k] = Utilities::byteswap_unsigned_long_long( ull_src[k] );
                }
             }
@@ -3456,7 +3456,7 @@ void Attribute::print_buffer() const
       double *dbl_array = reinterpret_cast< double * >( (void *)buffer );
 
       if ( is_byteswap() ) {
-         for ( size_t i = 0; i < num_items; i++ ) {
+         for ( size_t i = 0; i < num_items; ++i ) {
             // Undo the byteswap for display
             double b_value = Utilities::byteswap_double( dbl_array[i] );
             msg << "\ti:" << i
@@ -3464,7 +3464,7 @@ void Attribute::print_buffer() const
                 << " byteswap-value:" << dbl_array[i] << endl;
          }
       } else {
-         for ( size_t i = 0; i < num_items; i++ ) {
+         for ( size_t i = 0; i < num_items; ++i ) {
             msg << " i:" << i << " " << dbl_array[i] << endl;
          }
       }
@@ -3476,7 +3476,7 @@ void Attribute::print_buffer() const
       msg << "\tAttribute size:" << size << endl
           << "\tIndex\tValue\tCharacter" << endl;
 
-      for ( size_t i = 0; i < size; i++ ) {
+      for ( size_t i = 0; i < size; ++i ) {
          int char_value = char_array[i];
          msg << "\t" << i << "\t" << char_value;
          if ( isgraph( char_array[i] ) ) {

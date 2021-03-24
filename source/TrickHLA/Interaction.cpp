@@ -902,7 +902,7 @@ bool Interaction::send(
       MutexProtection auto_unlock_mutex( &mutex );
 
       // Add all the parameter values to the map.
-      for ( int i = 0; i < param_count; i++ ) {
+      for ( int i = 0; i < param_count; ++i ) {
          param_values_map[parameters[i].get_parameter_handle()] = parameters[i].get_encoded_parameter_value();
       }
 
@@ -974,7 +974,7 @@ bool Interaction::send(
       MutexProtection auto_unlock_mutex( &mutex );
 
       // Add all the parameter values to the map.
-      for ( int i = 0; i < param_count; i++ ) {
+      for ( int i = 0; i < param_count; ++i ) {
          if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
             send_hs( stdout, "Interaction::send():%d Adding '%s' to parameter map.%c",
                      __LINE__, parameters[i].get_FOM_name(), THLA_NEWLINE );
@@ -1088,7 +1088,7 @@ void Interaction::process_interaction()
       MutexProtection auto_unlock_mutex( &mutex );
 
       // Check the change flag again now that we have the lock on the mutex.
-      if ( !is_changed() ) { // cppcheck-suppress [identicalConditionAfterEarlyExit]
+      if ( !is_changed() ) {
          return;
       }
 
@@ -1106,7 +1106,7 @@ void Interaction::process_interaction()
       }
 
       // Unpack all the parameter data.
-      for ( int i = 0; i < param_count; i++ ) {
+      for ( int i = 0; i < param_count; ++i ) {
          parameters[i].unpack_parameter_buffer();
       }
 
@@ -1200,7 +1200,7 @@ void Interaction::mark_unchanged()
    this->changed = false;
 
    // Clear the change flag for each of the attributes as well.
-   for ( int i = 0; i < param_count; i++ ) {
+   for ( int i = 0; i < param_count; ++i ) {
       parameters[i].mark_unchanged();
    }
 }

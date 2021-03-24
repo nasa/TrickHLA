@@ -49,11 +49,19 @@ MutexLock::~MutexLock()
    pthread_mutex_destroy( &mutex );
 }
 
+/*!
+ * @brief Lock the mutex.
+ * @return Integer value of 0 for success, otherwise non-zero for an error.
+ */
 const int MutexLock::lock()
 {
    return pthread_mutex_lock( &mutex );
 }
 
+/*!
+ * @brief Unlock the mutex.
+ * @return Integer value of 0 for success, otherwise non-zero for an error.
+ */
 const int MutexLock::unlock()
 {
    return pthread_mutex_unlock( &mutex );

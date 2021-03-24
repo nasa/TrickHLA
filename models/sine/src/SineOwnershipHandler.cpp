@@ -87,7 +87,7 @@ void SineOwnershipHandler::initialize_callback(
          pull_ownership( "Time" ); // As soon as possible for this attribute.
          pull_ownership( "Value", 6.1 );
 
-         for ( unsigned int i = 0; i < attr_FOM_names.size(); i++ ) {
+         for ( unsigned int i = 0; i < attr_FOM_names.size(); ++i ) {
             pull_ownership( attr_FOM_names[i].c_str(), 7.0 );
          }
          break;
@@ -104,7 +104,7 @@ void SineOwnershipHandler::initialize_callback(
          push_ownership( "Time" ); // As soon as possible for this attribute.
          push_ownership( "Value", 6.1 );
 
-         for ( unsigned int i = 0; i < attr_FOM_names.size(); i++ ) {
+         for ( unsigned int i = 0; i < attr_FOM_names.size(); ++i ) {
             push_ownership( attr_FOM_names[i].c_str(), 7.0 );
          }
          break;

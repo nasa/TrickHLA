@@ -225,7 +225,7 @@ void ExecutionConfiguration::configure()
    }
 
    // Build a comma separated list of required federate names.
-   for ( int i = 0; i < federate->known_feds_count; i++ ) {
+   for ( int i = 0; i < federate->known_feds_count; ++i ) {
       if ( federate->known_feds[i].required ) {
          if ( required_federate_count > 0 ) {
             federate_list << ",";

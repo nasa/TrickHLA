@@ -347,7 +347,7 @@ void Object::initialize(
    //
    // Determine if any attribute is the FOM specified order.
    any_attribute_FOM_specified_order = false;
-   for ( int i = 0; !any_attribute_FOM_specified_order && i < attr_count; i++ ) {
+   for ( int i = 0; !any_attribute_FOM_specified_order && i < attr_count; ++i ) {
       if ( attributes[i].get_preferred_order() == TRANSPORT_SPECIFIED_IN_FOM ) {
          any_attribute_FOM_specified_order = true;
       }
@@ -357,14 +357,14 @@ void Object::initialize(
    //
    // Determine if any attribute is Timestamp Order.
    any_attribute_timestamp_order = false;
-   for ( int i = 0; !any_attribute_timestamp_order && i < attr_count; i++ ) {
+   for ( int i = 0; !any_attribute_timestamp_order && i < attr_count; ++i ) {
       if ( attributes[i].get_preferred_order() == TRANSPORT_TIMESTAMP_ORDER ) {
          any_attribute_timestamp_order = true;
       }
    }
 
    // Build the string array of attributes FOM names.
-   for ( int i = 0; i < attr_count; i++ ) {
+   for ( int i = 0; i < attr_count; ++i ) {
       // Validate the FOM-name to make sure we don't have a  problem with the
       // list of names as well as get a difficult to debug runtime error for
       // the string constructor if we had a null FOM-name.
@@ -620,7 +620,7 @@ void Object::mark_all_attributes_as_nonlocal()
           << " FOM-Name:'" << get_FOM_name() << "'"
           << " Instance-ID:" << id_str;
    }
-   for ( int i = 0; i < attr_count; i++ ) {
+   for ( int i = 0; i < attr_count; ++i ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          msg << endl
              << "   " << ( i + 1 ) << "/" << attr_count
@@ -672,7 +672,7 @@ void Object::publish_object_attributes()
          AttributeHandleSet attrs;
 
          // Publish only the attributes we have the publish flag set for.
-         for ( int i = 0; i < attr_count; i++ ) {
+         for ( int i = 0; i < attr_count; ++i ) {
             if ( attributes[i].is_publish() ) {
                attrs.insert( attributes[i].get_attribute_handle() );
             }
@@ -830,7 +830,7 @@ void Object::subscribe_to_object_attributes()
          AttributeHandleSet attrs;
 
          // Subscribe only to the attributes we have the subscribe flag set for.
-         for ( int i = 0; i < attr_count; i++ ) {
+         for ( int i = 0; i < attr_count; ++i ) {
             if ( attributes[i].is_subscribe() ) {
                attrs.insert( attributes[i].get_attribute_handle() );
             }
@@ -1332,7 +1332,7 @@ void Object::setup_preferred_order_with_RTI()
    AttributeHandleSet RO_attr_handle_set  = AttributeHandleSet();
 
    // Create the sets of Attribute handles for the Timestamp preferred order.
-   for ( int i = 0; i < attr_count; i++ ) {
+   for ( int i = 0; i < attr_count; ++i ) {
       if ( attributes[i].is_locally_owned()
            && ( attributes[i].get_preferred_order() == TRANSPORT_TIMESTAMP_ORDER ) ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
@@ -1347,7 +1347,7 @@ void Object::setup_preferred_order_with_RTI()
    }
 
    // Create the sets of Attribute handles for the Receive preferred order.
-   for ( int i = 0; i < attr_count; i++ ) {
+   for ( int i = 0; i < attr_count; ++i ) {
       if ( attributes[i].is_locally_owned()
            && ( attributes[i].get_preferred_order() == TRANSPORT_RECEIVE_ORDER ) ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
@@ -1459,7 +1459,7 @@ void Object::request_attribute_value_update()
 
    // Create the set of Attribute handles we need to request an update for.
    AttributeHandleSet attr_handle_set = AttributeHandleSet();
-   for ( int i = 0; i < attr_count; i++ ) {
+   for ( int i = 0; i < attr_count; ++i ) {
       // Only include attributes that are remotely owned that are subscribed to.
       if ( attributes[i].is_remotely_owned() && attributes[i].is_subscribe() ) {
          attr_handle_set.insert( attributes[i].get_attribute_handle() );
@@ -1532,7 +1532,7 @@ void Object::provide_attribute_update(
 
    // Search the TrickHLA object attributes to see if any of them are
    // part of the set of the attribute value update request.
-   for ( int i = 0; i < attr_count; i++ ) {
+   for ( int i = 0; i < attr_count; ++i ) {
 
       // Determine if this object attribute needs to provide an update.
       if ( theAttributes.find( attributes[i].get_attribute_handle() ) != theAttributes.end() ) {
@@ -2801,7 +2801,7 @@ void Object::release_ownership()
    AttributeHandleSet attrs;
 
    // Create the list of attributes we can divest ownership of.
-   for ( int i = 0; i < attr_count; i++ ) {
+   for ( int i = 0; i < attr_count; ++i ) {
       // Only release ownership of the attributes we locally own.
       if ( attributes[i].is_divest_requested() && attributes[i].is_locally_owned() ) {
          attrs.insert( attributes[i].get_attribute_handle() );
@@ -3125,7 +3125,7 @@ void Object::grant_pull_request()
    AttributeHandleSet attrs_to_divest;
 
    // Determine which attributes to grant the pull request for.
-   for ( int i = 0; i < attr_count; i++ ) {
+   for ( int i = 0; i < attr_count; ++i ) {
       // Another federate is trying to pull ownership so grant the pull
       // request for only the attributes that have a pull request enabled
       // and that we locally own.
@@ -3268,7 +3268,7 @@ void Object::grant_push_request()
 
          // Another federate is trying to push the attribute ownership to us so
          // determine which attributes we will take ownership of.
-         for ( int i = 0; i < attr_count; i++ ) {
+         for ( int i = 0; i < attr_count; ++i ) {
             // Add the attribute to the list of attributes we will accept ownership
             // of provided the attribute is marked as one the other federate is
             // trying to push to us and the attribute is not already owned by us.
@@ -3636,7 +3636,7 @@ void Object::restore_ownership_transfer_checkpointed_data()
 void Object::set_core_job_cycle_time(
    double cycle_time )
 {
-   for ( int i = 0; i < attr_count; i++ ) {
+   for ( int i = 0; i < attr_count; ++i ) {
       attributes[i].determine_cycle_ratio( cycle_time );
    }
 }
@@ -3662,7 +3662,7 @@ void Object::set_name(
 void Object::build_attribute_map()
 {
    thla_attribute_map.clear();
-   for ( int i = 0; i < attr_count; i++ ) {
+   for ( int i = 0; i < attr_count; ++i ) {
       thla_attribute_map[attributes[i].get_attribute_handle()] = &attributes[i];
    }
 }
@@ -3685,7 +3685,7 @@ Attribute *Object::get_attribute(
    const char *attr_FOM_name )
 {
    if ( attr_FOM_name != NULL ) {
-      for ( int i = 0; i < attr_count; i++ ) {
+      for ( int i = 0; i < attr_count; ++i ) {
          if ( strcmp( attr_FOM_name, attributes[i].get_FOM_name() ) == 0 ) {
             return ( &attributes[i] );
          }
@@ -3696,21 +3696,21 @@ Attribute *Object::get_attribute(
 
 void Object::stop_publishing_attributes()
 {
-   for ( int i = 0; i < attr_count; i++ ) {
+   for ( int i = 0; i < attr_count; ++i ) {
       attributes[i].set_publish( false );
    }
 }
 
 void Object::stop_subscribing_attributes()
 {
-   for ( int i = 0; i < attr_count; i++ ) {
+   for ( int i = 0; i < attr_count; ++i ) {
       attributes[i].set_subscribe( false );
    }
 }
 
 bool Object::any_attribute_published()
 {
-   for ( int i = 0; i < attr_count; i++ ) {
+   for ( int i = 0; i < attr_count; ++i ) {
       if ( attributes[i].is_publish() ) {
          return true;
       }
@@ -3720,7 +3720,7 @@ bool Object::any_attribute_published()
 
 bool Object::any_attribute_subscribed()
 {
-   for ( int i = 0; i < attr_count; i++ ) {
+   for ( int i = 0; i < attr_count; ++i ) {
       if ( attributes[i].is_subscribe() ) {
          return true;
       }
@@ -3730,7 +3730,7 @@ bool Object::any_attribute_subscribed()
 
 bool Object::any_locally_owned_attribute()
 {
-   for ( int i = 0; i < attr_count; i++ ) {
+   for ( int i = 0; i < attr_count; ++i ) {
       if ( attributes[i].is_locally_owned() ) {
          return true;
       }
@@ -3740,7 +3740,7 @@ bool Object::any_locally_owned_attribute()
 
 bool Object::any_locally_owned_published_attribute()
 {
-   for ( int i = 0; i < attr_count; i++ ) {
+   for ( int i = 0; i < attr_count; ++i ) {
       if ( attributes[i].is_locally_owned() && attributes[i].is_publish() ) {
          return true;
       }
@@ -3751,7 +3751,7 @@ bool Object::any_locally_owned_published_attribute()
 bool Object::any_locally_owned_published_attribute(
    const DataUpdateEnum attr_config )
 {
-   for ( int i = 0; i < attr_count; i++ ) {
+   for ( int i = 0; i < attr_count; ++i ) {
       if ( attributes[i].is_locally_owned()
            && attributes[i].is_publish()
            && ( ( attributes[i].get_configuration() & attr_config ) == attr_config ) ) {
@@ -3893,7 +3893,7 @@ void Object::mark_unchanged()
    this->changed = false;
 
    // Clear the change flag for each of the attributes as well.
-   for ( int i = 0; i < attr_count; i++ ) {
+   for ( int i = 0; i < attr_count; ++i ) {
       attributes[i].mark_unchanged();
    }
 }
@@ -3973,7 +3973,7 @@ void Object::pull_ownership_upon_rejoin()
    MutexProtection auto_unlock_mutex( &ownership_mutex );
 
    // Force the pull ownership of all attributes....
-   for ( int i = 0; i < attr_count; i++ ) {
+   for ( int i = 0; i < attr_count; ++i ) {
 
       try {
          // IEEE 1516.1-2000 section 7.18
@@ -4072,7 +4072,7 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
          // reset ownership count for this loop through all the attributes
          ownership_counter = 0;
 
-         for ( int i = 0; i < attr_count; i++ ) {
+         for ( int i = 0; i < attr_count; ++i ) {
             try {
                // IEEE 1516.1-2000 section 7.18
                if ( attributes[i].is_publish()
