@@ -293,7 +293,7 @@ void Manager::restart_initialization()
    }
 
    // Restore ownership_transfer data for all objects...
-   for ( int i = 0; i < obj_count; i++ ) {
+   for ( int i = 0; i < obj_count; ++i ) {
       objects[i].restore_ownership_transfer_checkpointed_data();
    }
 
@@ -323,7 +323,7 @@ federate so this call will be ignored.%c",
    }
 
    // Go through the list of objects.
-   for ( int i = 0; i < obj_count; i++ ) {
+   for ( int i = 0; i < obj_count; ++i ) {
       // Make sure we have at least one piece of object init data we can send.
       if ( objects[i].any_locally_owned_published_init_attribute() ) {
 
@@ -453,7 +453,7 @@ federate so this call will be ignored.%c",
    }
 
    // Go through the list of objects.
-   for ( int i = 0; i < obj_count; i++ ) {
+   for ( int i = 0; i < obj_count; ++i ) {
 
       // Make sure we have at least one piece of data we can receive.
       if ( objects[i].any_remotely_owned_subscribed_init_attribute() ) {
@@ -812,7 +812,7 @@ for more than one Federate.%c",
             __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
 
    wstring obj_name;
-   for ( int n = 0; n < obj_count; n++ ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       StringUtilities::to_wstring( obj_name, objects[n].get_name() );
       if ( obj_name == obj_instance_name ) {
          if ( objects[n].is_create_HLA_instance() ) {
@@ -921,7 +921,7 @@ void Manager::setup_object_ref_attributes(
 
    // Resolve all the Ref-Attributes for all the simulation initialization
    // objects and attributes.
-   for ( int n = 0; n < data_obj_count; n++ ) {
+   for ( int n = 0; n < data_obj_count; ++n ) {
 
       // Initialize the TrickHLA-Object before we use it.
       data_objects[n].initialize( this );
@@ -942,7 +942,7 @@ void Manager::setup_object_ref_attributes(
       Attribute *attrs      = data_objects[n].get_attributes();
 
       // Process the attributes for this object.
-      for ( int i = 0; i < attr_count; i++ ) {
+      for ( int i = 0; i < attr_count; ++i ) {
 
          // Initialize the TrickHLA-Attribute before we use it.
          attrs[i].initialize( data_objects[n].get_FOM_name(), n, i );
@@ -979,7 +979,7 @@ void Manager::setup_interaction_ref_attributes()
    }
 
    // Interactions.
-   for ( int n = 0; n < inter_count; n++ ) {
+   for ( int n = 0; n < inter_count; ++n ) {
       ostringstream msg;
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -996,7 +996,7 @@ void Manager::setup_interaction_ref_attributes()
       Parameter *params      = interactions[n].get_parameters();
 
       // Process the attributes for this object.
-      for ( int i = 0; i < param_count; i++ ) {
+      for ( int i = 0; i < param_count; ++i ) {
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             msg << "   " << ( i + 1 ) << "/" << param_count
@@ -1092,7 +1092,7 @@ void Manager::setup_object_RTI_handles(
    try {
 
       // Resolve all the handles/ID's for the objects and attributes.
-      for ( int n = 0; n < data_obj_count; n++ ) {
+      for ( int n = 0; n < data_obj_count; ++n ) {
          ostringstream msg;
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -1126,7 +1126,7 @@ void Manager::setup_object_RTI_handles(
          Attribute *attrs      = data_objects[n].get_attributes();
 
          // Resolve the handles/ID's for the attributes.
-         for ( int i = 0; i < attr_count; i++ ) {
+         for ( int i = 0; i < attr_count; ++i ) {
 
             if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                msg << "\tGetting RTI Attribute-Handle for '"
@@ -1297,7 +1297,7 @@ void Manager::setup_interaction_RTI_handles(
    try {
 
       // Process all the Interactions.
-      for ( int n = 0; n < interactions_counter; n++ ) {
+      for ( int n = 0; n < interactions_counter; ++n ) {
          ostringstream msg;
 
          // The Interaction FOM name.
@@ -1330,7 +1330,7 @@ void Manager::setup_interaction_RTI_handles(
          Parameter *params      = in_interactions[n].get_parameters();
 
          // Process the parameters for the interaction.
-         for ( int i = 0; i < param_count; i++ ) {
+         for ( int i = 0; i < param_count; ++i ) {
 
             // The Parameter FOM name.
             FOM_name_type  = 2; // Parameter
@@ -1459,12 +1459,12 @@ void Manager::publish()
    }
 
    // Publish attributes for all the Trick-HLA-Objects we know about.
-   for ( n = 0; n < obj_count; n++ ) {
+   for ( n = 0; n < obj_count; ++n ) {
       objects[n].publish_object_attributes();
    }
 
    // Publish the interactions.
-   for ( n = 0; n < inter_count; n++ ) {
+   for ( n = 0; n < inter_count; ++n ) {
       interactions[n].publish_interaction();
    }
 
@@ -1487,12 +1487,12 @@ void Manager::unpublish()
    }
 
    // Unpublish from all attributes for all the objects.
-   for ( i = 0; i < obj_count; i++ ) {
+   for ( i = 0; i < obj_count; ++i ) {
       // Only unpublish an object class if we had published at least
       // one attribute.
       if ( objects[i].any_attribute_published() ) {
          do_unpublish = true;
-         for ( k = 0; ( k < i ) && do_unpublish; k++ ) {
+         for ( k = 0; ( k < i ) && do_unpublish; ++k ) {
             // Unpublish an object Class only once, so see if we have already
             // unpublished from the same object class that was published.
             if ( objects[k].any_attribute_published() && ( objects[i].get_class_handle() == objects[k].get_class_handle() ) ) {
@@ -1506,11 +1506,11 @@ void Manager::unpublish()
    }
 
    // Unpublish all the interactions.
-   for ( i = 0; i < inter_count; i++ ) {
+   for ( i = 0; i < inter_count; ++i ) {
       // Only unpublish an interaction that we publish.
       if ( interactions[i].is_publish() ) {
          do_unpublish = true;
-         for ( k = 0; ( k < i ) && do_unpublish; k++ ) {
+         for ( k = 0; ( k < i ) && do_unpublish; ++k ) {
             // Unpublish an interaction Class only once, so see if we have
             // already unpublished the same interaction class that was published.
             if ( interactions[k].is_publish() && ( interactions[i].get_class_handle() == interactions[k].get_class_handle() ) ) {
@@ -1541,12 +1541,12 @@ void Manager::subscribe()
    }
 
    // Subscribe to attributes for all the Trick-HLA-Objects we know about.
-   for ( n = 0; n < obj_count; n++ ) {
+   for ( n = 0; n < obj_count; ++n ) {
       objects[n].subscribe_to_object_attributes();
    }
 
    // Subscribe to the interactions.
-   for ( n = 0; n < inter_count; n++ ) {
+   for ( n = 0; n < inter_count; ++n ) {
       interactions[n].subscribe_to_interaction();
    }
 
@@ -1569,12 +1569,12 @@ void Manager::unsubscribe()
    }
 
    // Unsubscribe from all attributes for all the objects.
-   for ( i = 0; i < obj_count; i++ ) {
+   for ( i = 0; i < obj_count; ++i ) {
       // Only unsubscribe from an object class if we had subscribed to at
       // least one attribute.
       if ( objects[i].any_attribute_subscribed() ) {
          do_unsubscribe = true;
-         for ( k = 0; ( k < i ) && do_unsubscribe; k++ ) {
+         for ( k = 0; ( k < i ) && do_unsubscribe; ++k ) {
             // Unsubscribe from an object Class only once, so see if
             // we have already unsubscribed from the same object class
             // that was subscribed to.
@@ -1589,11 +1589,11 @@ void Manager::unsubscribe()
    }
 
    // Unsubscribe from all the interactions.
-   for ( i = 0; i < inter_count; i++ ) {
+   for ( i = 0; i < inter_count; ++i ) {
       // Only unsubscribe from interactions that are subscribed to.
       if ( interactions[i].is_subscribe() ) {
          do_unsubscribe = true;
-         for ( k = 0; ( k < i ) && do_unsubscribe; k++ ) {
+         for ( k = 0; ( k < i ) && do_unsubscribe; ++k ) {
             // Unsubscribe from an interaction Class only once, so see if
             // we have already unsubscribed from the same interaction class
             // that was subscribed to.
@@ -1638,7 +1638,7 @@ void Manager::reserve_object_names_with_RTI()
 
    // For the locally owned objects, reserve the object instance name with
    // the RTI.
-   for ( int n = 0; n < obj_count; n++ ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       objects[n].reserve_object_name_with_RTI();
    }
 }
@@ -1659,7 +1659,7 @@ void Manager::wait_on_reservation_of_object_names()
    if ( obj_count > 0 ) {
       // Wait for each RTI object instance name to be registered with the RTI,
       // but for only the names we requested registration for.
-      for ( int n = 0; n < obj_count; n++ ) {
+      for ( int n = 0; n < obj_count; ++n ) {
          objects[n].wait_on_object_name_reservation();
       }
 
@@ -1690,7 +1690,7 @@ void Manager::register_objects_with_RTI()
 
    // For the locally owned objects register it with the RTI to get its
    // RTI object instance ID.
-   for ( int n = 0; n < obj_count; n++ ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       objects[n].register_object_with_RTI();
 
       // Add the registered object instance to the map and only if it is
@@ -1717,12 +1717,12 @@ void Manager::setup_preferred_order_with_RTI()
    }
 
    // Setup the preferred order for all the object attributes.
-   for ( int n = 0; n < obj_count; n++ ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       objects[n].setup_preferred_order_with_RTI();
    }
 
    // Setup the preferred order for all the interactions.
-   for ( int i = 0; i < inter_count; i++ ) {
+   for ( int i = 0; i < inter_count; ++i ) {
       interactions[i].setup_preferred_order_with_RTI();
    }
 }
@@ -1760,7 +1760,7 @@ void Manager::wait_on_registration_of_required_objects()
 
    // Loop through all of the objects to count the # of required objects; do not
    // assume that all of them are required!
-   for ( int i = 0; i < obj_count; i++ ) {
+   for ( int i = 0; i < obj_count; ++i ) {
       if ( objects[i].is_required() ) {
          total_required_obj_cnt++;
       }
@@ -1973,7 +1973,7 @@ void Manager::set_object_instance_handles_by_name(
 
    try {
       // Resolve all the handles/ID's for the objects and attributes.
-      for ( int n = 0; n < data_obj_count; n++ ) {
+      for ( int n = 0; n < data_obj_count; ++n ) {
 
          // Create the wide-string version of the instance name.
          char *instance_name = (char *)data_objects[n].get_name();
@@ -2185,7 +2185,7 @@ void Manager::receive_cyclic_data()
    this->execution_control->receive_cyclic_data();
 
    // Receive data from remote RTI federates for each of the objects.
-   for ( int n = 0; n < obj_count; n++ ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       objects[n].receive_cyclic_data();
    }
 }
@@ -2261,7 +2261,7 @@ void Manager::receive_interaction(
    bool                           received_as_TSO )
 {
    // Find the Interaction we have data for.
-   for ( int i = 0; i < inter_count; i++ ) {
+   for ( int i = 0; i < inter_count; ++i ) {
 
       // Process the interaction if we subscribed to it and we have the same class handle.
       if ( interactions[i].is_subscribe()
@@ -2341,7 +2341,7 @@ Object *Manager::get_trickhla_object(
    wstring ws_obj_name;
 
    // Search the data objects first.
-   for ( int n = 0; n < obj_count; n++ ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       StringUtilities::to_wstring( ws_obj_name, objects[n].get_name() );
       if ( ws_obj_name == obj_instance_name ) {
          return ( &objects[n] );
@@ -2437,7 +2437,7 @@ Object *Manager::get_unregistered_object(
    wstring ws_obj_name;
 
    // Search the simulation data objects first.
-   for ( int n = 0; n < obj_count; n++ ) {
+   for ( int n = 0; n < obj_count; ++n ) {
 
       // Find the object that is not registered (i.e. the instance ID == 0),
       // has the same class handle as the one specified, and has the same name
@@ -2465,7 +2465,7 @@ Object *Manager::get_unregistered_remote_object(
    ObjectClassHandle const &theObjectClass )
 {
    // Search the simulation data objects first.
-   for ( int n = 0; n < obj_count; n++ ) {
+   for ( int n = 0; n < obj_count; ++n ) {
 
       // Return the first TrickHLA object that we did not create an HLA
       // instance for, has the same class handle as the one specified, is not
@@ -2537,7 +2537,7 @@ void Manager::process_deleted_objects()
    this->execution_control->process_deleted_objects();
 
    // Search the simulation data objects, looking for deleted objects.
-   for ( int n = 0; n < obj_count; n++ ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       if ( objects[n].is_object_deleted_from_RTI() ) {
          objects[n].process_deleted_object();
       }
@@ -2551,7 +2551,7 @@ void Manager::process_deleted_objects()
  */
 void Manager::pull_ownership()
 {
-   for ( int n = 0; n < obj_count; n++ ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       objects[n].pull_ownership();
    }
 }
@@ -2561,7 +2561,7 @@ void Manager::pull_ownership()
  */
 void Manager::push_ownership()
 {
-   for ( int n = 0; n < obj_count; n++ ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       objects[n].push_ownership();
    }
 }
@@ -2571,7 +2571,7 @@ void Manager::push_ownership()
  */
 void Manager::grant_pull_request()
 {
-   for ( int n = 0; n < obj_count; n++ ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       objects[n].grant_pull_request();
    }
 }
@@ -2581,7 +2581,7 @@ void Manager::grant_pull_request()
  */
 void Manager::release_ownership()
 {
-   for ( int n = 0; n < obj_count; n++ ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       objects[n].release_ownership();
    }
 }
@@ -2698,7 +2698,7 @@ void Manager::setup_checkpoint()
    // Call the ExecutionControl method.
    this->execution_control->setup_checkpoint();
 
-   for ( int i = 0; i < obj_count; i++ ) {
+   for ( int i = 0; i < obj_count; ++i ) {
       // Any object with a valid instance handle must be marked as required
       // to ensure the restore process will wait for this object instance
       // to exist.
@@ -2714,8 +2714,12 @@ void Manager::setup_checkpoint()
 
 void Manager::setup_checkpoint_interactions()
 {
-   // Clear the checkpoint for the interactions so that we don't lead memory.
+   // Clear the checkpoint for the interactions so that we don't leak memory.
    clear_interactions();
+
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &interactions_queue.mutex );
 
    if ( !interactions_queue.empty() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -2729,27 +2733,23 @@ void Manager::setup_checkpoint_interactions()
       if ( check_interactions == static_cast< InteractionItem * >( NULL ) ) {
          ostringstream msg;
          msg << "Manager::setup_checkpoint_interactions():" << __LINE__
-             << " Failed to allocate enough memory for a check_interactions"
-             << " linear array of " << check_interactions_count << " elements"
+             << " ERROR: Failed to allocate enough memory for check_interactions"
+             << " linear array of " << check_interactions_count << " elements."
              << THLA_ENDL;
          send_hs( stderr, (char *)msg.str().c_str() );
          exec_terminate( __FILE__, (char *)msg.str().c_str() );
       }
 
-      // When auto_unlock_mutex goes out of scope it automatically unlocks the
-      // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &interactions_queue.mutex );
-
       //interactions_queue.dump_head_pointers("interactions_queue.dump");
 
-      for ( int i = 0; i < interactions_queue.size(); i++ ) {
+      for ( int i = 0; i < interactions_queue.size(); ++i ) {
 
          InteractionItem *item =
             static_cast< InteractionItem * >( interactions_queue.front() );
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             send_hs( stdout, "Manager::setup_checkpoint_interactions():%d \
-checkpointing into check_interactions[%d] from interaction index %d...%c",
+Checkpointing into check_interactions[%d] from interaction index %d...%c",
                      __LINE__, i, item->index, THLA_NEWLINE );
          }
          check_interactions[i].index            = item->index;
@@ -2774,15 +2774,14 @@ checkpointing into check_interactions[%d] from interaction index %d...%c",
       }
 
       interactions_queue.rewind();
-
-      // auto_unlock_mutex unlocks the mutex lock here
    }
+   // auto_unlock_mutex unlocks the mutex lock here
 }
 
 void Manager::clear_interactions()
 {
    if ( check_interactions_count > 0 ) {
-      for ( int i = 0; i < check_interactions_count; i++ ) {
+      for ( int i = 0; i < check_interactions_count; ++i ) {
          check_interactions[i].clear_parm_items();
       }
       trick_MM->delete_var( check_interactions );
@@ -2798,7 +2797,7 @@ void Manager::dump_interactions()
       msg << "Manager::dump_interactions():" << __LINE__
           << "check_interactions contains these "
           << check_interactions_count << " elements:" << endl;
-      for ( int i = 0; i < check_interactions_count; i++ ) {
+      for ( int i = 0; i < check_interactions_count; ++i ) {
          msg << "check_interactions[" << i << "].index                  = "
              << check_interactions[i].index << endl
              << "check_interactions[" << i << "].interaction_type       = '"
@@ -2806,7 +2805,7 @@ void Manager::dump_interactions()
              << "check_interactions[" << i << "].parm_items_count       = "
              << check_interactions[i].parm_items_count
              << endl;
-         for ( int j = 0; j < check_interactions[i].parm_items_count; j++ ) {
+         for ( int j = 0; j < check_interactions[i].parm_items_count; ++j ) {
             msg << "check_interactions[" << i << "].parm_items[" << j << "].index    = "
                 << check_interactions[i].parm_items[j].index << endl
                 << "check_interactions[" << i << "].parm_items[" << j << "].size     = "
@@ -2833,7 +2832,7 @@ void Manager::restore_interactions()
                   __LINE__, check_interactions_count, THLA_NEWLINE );
       }
 
-      for ( int i = 0; i < check_interactions_count; i++ ) {
+      for ( int i = 0; i < check_interactions_count; ++i ) {
 
          InteractionItem *item = new InteractionItem();
 
@@ -2867,7 +2866,7 @@ restoring check_interactions[%d] into interaction index %d...parm_count=%d%c",
  */
 void Manager::pull_ownership_upon_rejoin()
 {
-   for ( int n = 0; n < obj_count; n++ ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       if ( objects[n].is_create_HLA_instance() ) {
          objects[n].pull_ownership_upon_rejoin();
       }
@@ -2893,7 +2892,7 @@ void Manager::wait_on_discovery_of_objects()
       int  required_count                   = 0;
       int  discovery_count                  = 0;
       bool create_HLA_instance_object_found = false;
-      for ( int n = 0; n < obj_count; n++ ) {
+      for ( int n = 0; n < obj_count; ++n ) {
          if ( objects[n].is_required() ) {
             required_count++;
          }
@@ -2954,7 +2953,7 @@ void Manager::wait_on_discovery_of_objects()
             // Check if any objects were discovered while we were napping.
             discovery_count                  = 0;
             create_HLA_instance_object_found = false;
-            for ( int n = 0; n < obj_count; n++ ) {
+            for ( int n = 0; n < obj_count; ++n ) {
                if ( objects[n].is_required() && objects[n].is_instance_handle_valid() ) {
                   discovery_count++;
                   if ( objects[n].is_create_HLA_instance() ) {
@@ -2985,7 +2984,7 @@ void Manager::wait_on_discovery_of_objects()
  */
 bool Manager::is_this_a_rejoining_federate()
 {
-   for ( int n = 0; n < obj_count; n++ ) {
+   for ( int n = 0; n < obj_count; ++n ) {
       // Was the required 'create_HLA_instance' object found?
       if ( objects[n].is_required() && objects[n].is_create_HLA_instance() && objects[n].is_instance_handle_valid() ) {
 
