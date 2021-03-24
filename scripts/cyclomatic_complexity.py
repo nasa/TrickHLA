@@ -4,8 +4,10 @@
 #
 # This is a Python program used to check the TrickHLA source code
 # cyclomatic complexity using the lizard utility.
-# https://github.com/terryyin/lizard
-# https://pypi.org/project/lizard/
+# 1) git clone https://github.com/terryyin/lizard.git
+# 2) cd lizard
+# 3) ./build.sh
+# 4) sudo python setup.py install
 #
 # @revs_title
 # @revs_begin
@@ -83,7 +85,7 @@ Available here https://github.com/terryyin/lizard' )
    # Find the lizard command and get the lizard version number.
    lizard_cmd, lizard_ver = find_lizard( None, False )
    if lizard_cmd is None:
-      TrickHLAMessage.failure( 'No lizard command found!' )
+      TrickHLAMessage.failure( 'No lizard command found! Try running: git clone https://github.com/terryyin/lizard.git && cd lizard && ./build.sh && sudo python setup.py install' )
 
    # Form relative paths to all the source directories used by TrickHLA.
    trickhla_source_dirs.extend ( ['./include/'] )
