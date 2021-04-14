@@ -657,7 +657,7 @@ void ExecutionControl::role_determination_process()
                      message << " Init-Started sync-point status: NULL";
                   }
                   message << ", Init-Complete sync-point exists: "
-                          << this->does_init_complete_sync_point_exist();
+                          << ( this->does_init_complete_sync_point_exist() ? "Yes" : "No" );
 
                   message << ", Still waiting..." << THLA_ENDL;
                   send_hs( stdout, (char *)message.str().c_str() );
