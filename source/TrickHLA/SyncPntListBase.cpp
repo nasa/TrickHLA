@@ -263,19 +263,30 @@ void SyncPntListBase::sync_point_registration_failed(
 }
 
 void SyncPntListBase::wait_for_announcement(
-   Federate *     federate,
+   Federate *     fed_ptr,
    wstring const &label )
 {
    SyncPnt *sp = this->get_sync_pnt( label );
    if ( sp != NULL ) {
-      sp->wait_for_announce( federate );
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string sp_label;
          StringUtilities::to_string( sp_label, sp->to_wstring() );
 
          ostringstream message;
          message << "SyncPntListBase::wait_for_announcement():" << __LINE__
-                 << ": Sync-point announced: " << sp_label << THLA_ENDL;
+                 << " Sync-point: " << sp_label << THLA_ENDL;
+         send_hs( stderr, (char *)message.str().c_str() );
+      }
+
+      sp->wait_for_announce( fed_ptr );
+
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string sp_label;
+         StringUtilities::to_string( sp_label, sp->to_wstring() );
+
+         ostringstream message;
+         message << "SyncPntListBase::wait_for_announcement():" << __LINE__
+                 << " Sync-point announced: " << sp_label << THLA_ENDL;
          send_hs( stderr, (char *)message.str().c_str() );
       }
    }

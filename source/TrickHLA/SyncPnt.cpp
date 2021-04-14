@@ -94,10 +94,8 @@ void SyncPnt::register_sync_point(
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      send_hs( stderr, "SyncPnt::register_sync_point():%d \
-Failed to register '%ls' synchronization point with RTI!%c",
-               __LINE__,
-               this->label.c_str(), THLA_NEWLINE );
+      send_hs( stderr, "SyncPnt::register_sync_point():%d Failed to register '%ls' synchronization point with RTI!%c",
+               __LINE__, this->label.c_str(), THLA_NEWLINE );
       exit( 0 );
    }
 
@@ -131,10 +129,8 @@ void SyncPnt::register_sync_point(
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      send_hs( stderr, "SyncPnt::register_sync_point():%d \
-Failed to register '%ls' synchronization point with RTI!%c",
-               __LINE__,
-               this->label.c_str(), THLA_NEWLINE );
+      send_hs( stderr, "SyncPnt::register_sync_point():%d Failed to register '%ls' synchronization point with RTI!%c",
+               __LINE__, this->label.c_str(), THLA_NEWLINE );
       exit( 0 );
    }
 
@@ -177,14 +173,12 @@ bool SyncPnt::wait_for_announce(
          sleep_timer.reset();
          if ( !federate->is_execution_member() ) {
             ostringstream errmsg;
-            errmsg
-               << "SyncPnt::wait_for_announce():"
-               << __LINE__
-               << " Unexpectedly the Federate is no longer an execution"
-               << " member. This means we are either not connected to the"
-               << " RTI or we are no longer joined to the federation"
-               << " execution because someone forced our resignation at"
-               << " the Central RTI Component (CRC) level!" << THLA_ENDL;
+            errmsg << "SyncPnt::wait_for_announce():" << __LINE__
+                   << " Unexpectedly the Federate is no longer an execution"
+                   << " member. This means we are either not connected to the"
+                   << " RTI or we are no longer joined to the federation"
+                   << " execution because someone forced our resignation at"
+                   << " the Central RTI Component (CRC) level!" << THLA_ENDL;
             send_hs( stderr, (char *)errmsg.str().c_str() );
             exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
             return false;
@@ -249,14 +243,12 @@ bool SyncPnt::wait_for_synchronization(
          sleep_timer.reset();
          if ( !federate->is_execution_member() ) {
             ostringstream errmsg;
-            errmsg
-               << "SyncPnt::wait_for_synchronization():"
-               << __LINE__
-               << " Unexpectedly the Federate is no longer an execution"
-               << " member. This means we are either not connected to the"
-               << " RTI or we are no longer joined to the federation"
-               << " execution because someone forced our resignation at"
-               << " the Central RTI Component (CRC) level!" << THLA_ENDL;
+            errmsg << "SyncPnt::wait_for_synchronization():" << __LINE__
+                   << " Unexpectedly the Federate is no longer an execution"
+                   << " member. This means we are either not connected to the"
+                   << " RTI or we are no longer joined to the federation"
+                   << " execution because someone forced our resignation at"
+                   << " the Central RTI Component (CRC) level!" << THLA_ENDL;
             send_hs( stderr, (char *)errmsg.str().c_str() );
             exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
             return false;
