@@ -268,25 +268,27 @@ void SyncPntListBase::wait_for_announcement(
 {
    SyncPnt *sp = this->get_sync_pnt( label );
    if ( sp != NULL ) {
+      string sp_status;
+
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string sp_label;
-         StringUtilities::to_string( sp_label, sp->to_wstring() );
+         // Get the current sync-point status.
+         StringUtilities::to_string( sp_status, sp->to_wstring() );
 
          ostringstream message;
          message << "SyncPntListBase::wait_for_announcement():" << __LINE__
-                 << " Sync-point: " << sp_label << THLA_ENDL;
+                 << " Sync-point: " << sp_status << THLA_ENDL;
          send_hs( stderr, (char *)message.str().c_str() );
       }
 
       sp->wait_for_announce( fed_ptr );
 
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string sp_label;
-         StringUtilities::to_string( sp_label, sp->to_wstring() );
+         // Get the current sync-point status.
+         StringUtilities::to_string( sp_status, sp->to_wstring() );
 
          ostringstream message;
          message << "SyncPntListBase::wait_for_announcement():" << __LINE__
-                 << " Sync-point announced: " << sp_label << THLA_ENDL;
+                 << " Sync-point announced: " << sp_status << THLA_ENDL;
          send_hs( stderr, (char *)message.str().c_str() );
       }
    }
