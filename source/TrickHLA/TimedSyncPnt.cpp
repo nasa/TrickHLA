@@ -79,9 +79,9 @@ TimedSyncPnt::~TimedSyncPnt()
    return;
 }
 
-std::wstring TimedSyncPnt::to_string()
+std::wstring TimedSyncPnt::to_wstring()
 {
-   wstring result = L"[" + label + L"/" + time.to_string() + L"] -- ";
+   wstring result = L"[" + label + L"/" + time.to_wstring() + L"] -- ";
    switch ( this->state ) {
 
       case SYNC_PNT_STATE_ERROR:

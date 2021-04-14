@@ -151,7 +151,7 @@ federate.set_pacing_role( False ) # This is NOT the Pacing federate.
 federate.set_RRFP_role( False )   # This is NOT the Root Reference Frame Publisher.
 
 #--------------------------------------------------------------------------
-# Add in know required federates.
+# Add in known required federates.
 #--------------------------------------------------------------------------
 federate.add_known_fededrate( True, str(federate.federate.name) )
 federate.add_known_fededrate( True, 'Pacing' )

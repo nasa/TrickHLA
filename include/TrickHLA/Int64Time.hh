@@ -326,7 +326,7 @@ class Int64Time
 
    /*! @brief Returns a wide string representing the time.
     *  @return Wide string representing the time. */
-   std::wstring to_string() const;
+   std::wstring to_wstring() const;
 
    //
    // Mutator methods

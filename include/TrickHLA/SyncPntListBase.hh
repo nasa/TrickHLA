@@ -238,7 +238,7 @@ class SyncPntListBase
    /*! @brief Returns a wide string representing the state of the
     *  synchronization points.
     *  @return String summary of synchronization points. */
-   virtual std::wstring to_string();
+   virtual std::wstring to_wstring();
 
    /*! @brief Converts the vector of synchronization points to a
     *  checkpoint-able class.

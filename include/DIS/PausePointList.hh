@@ -122,7 +122,7 @@ class PausePointList : public TrickHLA::TimedSyncPntList
    /*! @brief Returns a wide string representing the state of the
     *  synchronization points.
     *  @return String summary of synchronization points. */
-   std::wstring to_string();
+   std::wstring to_wstring();
 
    /*! @brief Dumps synchronization point information to the screen. */
    virtual void print_sync_pnts();

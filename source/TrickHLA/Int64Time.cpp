@@ -129,7 +129,7 @@ double Int64Time::get_time_in_seconds() const
    return ( seconds + micros );
 }
 
-wstring Int64Time::to_string() const
+wstring Int64Time::to_wstring() const
 {
    ostringstream msg;
    msg << "Int64Time<" << get_time_in_seconds() << ">";

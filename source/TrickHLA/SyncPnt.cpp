@@ -151,12 +151,13 @@ bool SyncPnt::wait_for_announce(
 {
    // The sync-point state must be SYNC_PNT_STATE_REGISTERED.
    if ( !this->exists() && !this->is_registered() && !this->is_announced() ) {
+      string sp_label;
+      StringUtilities::to_string( sp_label, this->to_wstring() );
+
       ostringstream errmsg;
-      errmsg
-         << "SyncPnt::wait_for_announce():"
-         << __LINE__
-         << ": Bad sync-point state for sync-point!"
-         << "  The sync-point state is: " << this->to_string().c_str() << THLA_ENDL;
+      errmsg << "SyncPnt::wait_for_announce():" << __LINE__
+             << ": Bad sync-point state for sync-point!"
+             << "  The sync-point state is: " << sp_label << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    }
@@ -313,7 +314,7 @@ bool SyncPnt::is_error()
             && ( this->state != SYNC_PNT_STATE_SYNCHRONIZED ) );
 }
 
-std::wstring SyncPnt::to_string()
+std::wstring SyncPnt::to_wstring()
 {
    wstring result = L"[" + label + L"] -- ";
    switch ( this->state ) {
@@ -345,7 +346,6 @@ std::wstring SyncPnt::to_string()
       default:
          result += L"SYNC_PNT_STATE_UNKNOWN";
    }
-
    return result;
 }
 

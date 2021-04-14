@@ -238,7 +238,7 @@ federate.set_pacing_role( True ) # This is the Pacing federate.
 federate.set_RRFP_role( True )   # This is the Root Reference Frame Publisher.
 
 #--------------------------------------------------------------------------
-# Add in know required federates.
+# Add in known required federates.
 #--------------------------------------------------------------------------
 # This is the RRFP federate.
 # It doesn't really need to know about any other federates.

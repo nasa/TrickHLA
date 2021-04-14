@@ -169,8 +169,8 @@ class Int64Interval
    double get_time_in_seconds() const;
 
    /*! @brief Returns a summary of the time.
-    *  @return Summary of time as a string. */
-   std::wstring to_string() const;
+    *  @return Summary of time as a wide string. */
+   std::wstring to_wstring() const;
 
    //
    // Mutator methods

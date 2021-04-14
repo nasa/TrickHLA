@@ -170,8 +170,8 @@ class SyncPnt
    // Utility functions.
    /*! @brief Create a C++ wide string with the synchronization point label and
     * current state.
-    *  @return A string with the synchronization point label and current state. */
-   virtual std::wstring to_string();
+    *  @return A wide string with the synchronization point label and current state. */
+   virtual std::wstring to_wstring();
 
    /*! @brief Convert the synchronization point into and loggable
     * synchronization point.

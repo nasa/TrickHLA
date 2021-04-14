@@ -270,11 +270,12 @@ void SyncPntListBase::wait_for_announcement(
    if ( sp != NULL ) {
       sp->wait_for_announce( federate );
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string sp_label;
+         StringUtilities::to_string( sp_label, sp->to_wstring() );
+
          ostringstream message;
-         message
-            << "SyncPntListBase::wait_for_announcement():"
-            << __LINE__
-            << ": Sync-point announced: " << sp->to_string().c_str() << THLA_ENDL;
+         message << "SyncPntListBase::wait_for_announcement():" << __LINE__
+                 << ": Sync-point announced: " << sp_label << THLA_ENDL;
          send_hs( stderr, (char *)message.str().c_str() );
       }
    }
@@ -729,7 +730,7 @@ void SyncPntListBase::unlock_read_write()
    write_locks--;
 }
 
-wstring SyncPntListBase::to_string()
+wstring SyncPntListBase::to_wstring()
 {
    wstring result;
 
@@ -742,7 +743,7 @@ wstring SyncPntListBase::to_string()
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
       SyncPnt *sp = ( *i );
       if ( sp != NULL ) {
-         result += L"  " + sp->to_string() + L"\n";
+         result += L"  " + sp->to_wstring() + L"\n";
       }
    }
    result += L"\n";
@@ -776,7 +777,7 @@ void SyncPntListBase::print_sync_pnts()
        << "Sync Point Dump: " << sync_point_list.size() << endl;
    lock_read_only();
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-      spwl = ( *i )->to_string();
+      spwl = ( *i )->to_wstring();
       sync_point_label.assign( spwl.begin(), spwl.end() );
       msg << sync_point_label << endl;
    }

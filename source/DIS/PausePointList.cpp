@@ -137,7 +137,7 @@ void PausePointList::check_state()
    //}
 }
 
-wstring PausePointList::to_string()
+wstring PausePointList::to_wstring()
 {
    wstring result;
 
@@ -184,7 +184,7 @@ wstring PausePointList::to_string()
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
       SyncPnt *sp = ( *i );
       if ( sp != NULL ) {
-         result += L"  " + sp->to_string() + L"\n";
+         result += L"  " + sp->to_wstring() + L"\n";
       }
    }
    result += L"\n";
