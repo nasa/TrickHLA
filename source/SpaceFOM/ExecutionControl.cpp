@@ -645,12 +645,21 @@ void ExecutionControl::role_determination_process()
             if ( !this->late_joiner_determined && sleep_timer.timeout() ) {
                sleep_timer.reset();
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                  string sp_status;
-                  StringUtilities::to_string( sp_status, sp->to_wstring() );
                   ostringstream message;
-                  message << "SpaceFOM::ExecutionControl::role_determination_process():" << __LINE__
-                          << " Sync-point status: " << sp_status
-                          << ", Still waiting..." << THLA_ENDL;
+                  message << "SpaceFOM::ExecutionControl::role_determination_process():"
+                          << __LINE__;
+
+                  if ( sp != NULL ) {
+                     string sp_status;
+                     StringUtilities::to_string( sp_status, sp->to_wstring() );
+                     message << " Init-Started sync-point status: " << sp_status;
+                  } else {
+                     message << " Init-Started sync-point status: NULL";
+                  }
+                  message << ", Init-Complete sync-point exists: "
+                          << this->does_init_complete_sync_point_exist();
+
+                  message << ", Still waiting..." << THLA_ENDL;
                   send_hs( stdout, (char *)message.str().c_str() );
                }
                if ( !federate->is_execution_member() ) {
