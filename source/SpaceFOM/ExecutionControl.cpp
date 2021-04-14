@@ -620,7 +620,7 @@ void ExecutionControl::role_determination_process()
          // We are not a late joiner if we received the announce for the
          // 'initialization started' sync-point. (Nominal Initialization)
          SyncPnt *sp = this->get_sync_pnt( SpaceFOM::INIT_STARTED_SYNC_POINT );
-         if ( sp != NULL && sp->is_announced() ) {
+         if ( ( sp != NULL ) && sp->is_announced() ) {
             this->late_joiner            = false;
             this->late_joiner_determined = true;
          }
@@ -644,6 +644,15 @@ void ExecutionControl::role_determination_process()
             // Check that we maintain federation membership.
             if ( !this->late_joiner_determined && sleep_timer.timeout() ) {
                sleep_timer.reset();
+               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+                  string sp_status;
+                  StringUtilities::to_string( sp_status, sp->to_wstring() );
+                  ostringstream message;
+                  message << "SpaceFOM::ExecutionControl::role_determination_process():" << __LINE__
+                          << " Sync-point status: " << sp_status
+                          << ", Still waiting..." << THLA_ENDL;
+                  send_hs( stdout, (char *)message.str().c_str() );
+               }
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "SpaceFOM::ExecutionControl::role_determination_process():" << __LINE__
