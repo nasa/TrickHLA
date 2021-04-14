@@ -641,9 +641,11 @@ void ExecutionControl::role_determination_process()
             // Short sleep to release process and not hog CPU.
             (void)sleep_timer.sleep();
 
-            // Check that we maintain federation membership.
+            // Periodically check if we are still an execution member and
+            // display sync-point status if needed as well.
             if ( !this->late_joiner_determined && sleep_timer.timeout() ) {
                sleep_timer.reset();
+
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   ostringstream message;
                   message << "SpaceFOM::ExecutionControl::role_determination_process():"
@@ -662,6 +664,8 @@ void ExecutionControl::role_determination_process()
                   message << ", Still waiting..." << THLA_ENDL;
                   send_hs( stdout, (char *)message.str().c_str() );
                }
+
+               // Check that we maintain federation membership.
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "SpaceFOM::ExecutionControl::role_determination_process():" << __LINE__
@@ -684,7 +688,7 @@ void ExecutionControl::role_determination_process()
             send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is a Late Joining Federate.%c",
                      __LINE__, THLA_NEWLINE );
          } else {
-            send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d Not a Late Joining Federate.%c",
+            send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is an Early Joining Federate.%c",
                      __LINE__, THLA_NEWLINE );
          }
       }

@@ -147,13 +147,13 @@ bool SyncPnt::wait_for_announce(
 {
    // The sync-point state must be SYNC_PNT_STATE_REGISTERED.
    if ( !this->exists() && !this->is_registered() && !this->is_announced() ) {
-      string sp_label;
-      StringUtilities::to_string( sp_label, this->to_wstring() );
+      string sp_status;
+      StringUtilities::to_string( sp_status, this->to_wstring() );
 
       ostringstream errmsg;
       errmsg << "SyncPnt::wait_for_announce():" << __LINE__
-             << ": Bad sync-point state for sync-point!"
-             << "  The sync-point state is: " << sp_label << THLA_ENDL;
+             << " Bad sync-point state for sync-point!"
+             << " The sync-point state is: " << sp_status << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    }
