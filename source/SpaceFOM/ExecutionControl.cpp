@@ -646,7 +646,7 @@ void ExecutionControl::role_determination_process()
             if ( !this->late_joiner_determined && sleep_timer.timeout() ) {
                sleep_timer.reset();
 
-               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+               if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   ostringstream message;
                   message << "SpaceFOM::ExecutionControl::role_determination_process():"
                           << __LINE__;
