@@ -75,7 +75,7 @@ bool PausePointList::clear_sync_pnt(
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
          SyncPnt *sp = ( *i );
          if ( ( sp != NULL )
-              && ( sp->get_state() == SYNC_PNT_STATE_ACHIEVED )
+              && ( sp->get_state() == SYNC_PT_STATE_ACHIEVED )
               && ( label.compare( sp->get_label() ) == 0 ) ) {
 
             if ( sp->get_label().find( L"stop", 0 ) == 0 ) {
@@ -112,7 +112,7 @@ void PausePointList::check_state()
    if ( !sync_point_list.empty() ) {
       vector< SyncPnt * >::const_iterator i;
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-         if ( ( *i )->get_state() == SYNC_PNT_STATE_ACHIEVED ) {
+         if ( ( *i )->get_state() == SYNC_PT_STATE_ACHIEVED ) {
             this->state = PAUSE_POINT_STATE_FREEZE;
             unlock_read_only();
             return;

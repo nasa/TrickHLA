@@ -328,12 +328,12 @@ class Manager
     * the objects that are locally owned. */
    void reserve_object_names_with_RTI();
 
-   /*! @brief Waits on the reservation of the RTI object instance names for the
+   /*! @brief Waits for the reservation of the RTI object instance names for the
     * locally owned objects. */
-   void wait_on_reservation_of_object_names();
+   void wait_for_reservation_of_object_names();
 
-   /*! @brief Waits on the discovery of object instances. */
-   void wait_on_discovery_of_objects();
+   /*! @brief Waits for the discovery of object instances. */
+   void wait_for_discovery_of_objects();
 
    /*! @brief Checks if any object discoveries have occurred.
     *  @return True if this is a rejoining federate. */
@@ -343,9 +343,9 @@ class Manager
     * but only for the objects that are locally owned. */
    void register_objects_with_RTI();
 
-   /* @brief Waits on the registration of all the required RTI object
+   /* @brief Waits for the registration of all the required RTI object
     * instances with the RTI. */
-   void wait_on_registration_of_required_objects();
+   void wait_for_registration_of_required_objects();
 
    /*! @brief Sets the RTI run-time type IDs/handles for the object, attributes,
     * interactions, and parameters. */

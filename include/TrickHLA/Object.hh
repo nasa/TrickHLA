@@ -184,15 +184,15 @@ class Object
    /*! @brief Reserves a unique object instance name with the RTI. */
    void reserve_object_name_with_RTI();
 
-   /*! @brief Waits on the reservation of the HLA object instance name with the RTI. */
-   void wait_on_object_name_reservation();
+   /*! @brief Waits for the reservation of the HLA object instance name with the RTI. */
+   void wait_for_object_name_reservation();
 
    /*! @brief Creates an HLA object instance and registers it with the RTI,
     * but only if we own it locally. */
    void register_object_with_RTI();
 
-   /*! @brief Waits on the registration of this HLA object instance with the RTI. */
-   void wait_on_object_registration();
+   /*! @brief Waits for the registration of this HLA object instance with the RTI. */
+   void wait_for_object_registration();
 
    /*! @brief Setup the preferred order for the locally owned attributes. */
    void setup_preferred_order_with_RTI();

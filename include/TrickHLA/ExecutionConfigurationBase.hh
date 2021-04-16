@@ -134,13 +134,13 @@ class ExecutionConfigurationBase : public Object, public Packing
    /*! @brief Print the current Execution Configuration object to the console. */
    virtual void print_execution_configuration() = 0;
 
-   /*! @brief Waits on the registration of the ExecutionConfiguration
+   /*! @brief Waits for the registration of the ExecutionConfiguration
     * object instances with the RTI. */
-   virtual void wait_on_registration();
+   virtual void wait_for_registration();
 
-   /*! @brief Wait on an Execution Configuration update.
+   /*! @brief Wait for an Execution Configuration update.
     *  @return True for successful wait. */
-   virtual bool wait_on_update();
+   virtual bool wait_for_update();
 
    /*! @brief Check if an update is pending.
     *  @return True is an update is pending. */

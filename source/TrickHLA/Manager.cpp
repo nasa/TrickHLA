@@ -327,7 +327,7 @@ federate so this call will be ignored.%c",
       // Make sure we have at least one piece of object init data we can send.
       if ( objects[i].any_locally_owned_published_init_attribute() ) {
 
-         if ( this->execution_control->wait_on_init_data() ) {
+         if ( this->execution_control->wait_for_init_data() ) {
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                send_hs( stdout, "Manager::send_init_data():%d '%s'%c",
@@ -405,7 +405,7 @@ federate so the data will not be sent for '%s'.%c",
       // Make sure we have at least one piece of object init data we can send.
       if ( obj->any_locally_owned_published_init_attribute() ) {
 
-         if ( this->execution_control->wait_on_init_data() ) {
+         if ( this->execution_control->wait_for_init_data() ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                send_hs( stdout, "Manager::send_init_data():%d '%s'%c",
                         __LINE__, instance_name, THLA_NEWLINE );
@@ -460,7 +460,7 @@ federate so this call will be ignored.%c",
 
          // Only wait for REQUIRED received init data and do not block waiting
          // to receive init data if we are using the simple init scheme.
-         bool obj_required = objects[i].is_required() && ( this->execution_control->wait_on_init_data() );
+         bool obj_required = objects[i].is_required() && ( this->execution_control->wait_for_init_data() );
 
          if ( obj_required ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -568,7 +568,7 @@ void Manager::receive_init_data(
 
          // Only wait for REQUIRED received init data and do not block waiting
          // to receive init data if we are using the simple init scheme.
-         bool obj_required = obj->is_required() && this->execution_control->wait_on_init_data();
+         bool obj_required = obj->is_required() && this->execution_control->wait_for_init_data();
 
          if ( obj_required ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -649,7 +649,7 @@ void Manager::clear_init_sync_points()
 void Manager::wait_for_init_sync_point(
    const char *sync_point_label )
 {
-   if ( !this->execution_control->wait_on_init_sync_point() ) {
+   if ( !this->execution_control->wait_for_init_sync_point() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          ostringstream errmsg;
          errmsg << "Manager::wait_for_init_sync_point():" << __LINE__
@@ -1648,10 +1648,10 @@ void Manager::reserve_object_names_with_RTI()
  * names for the locally owned objects have been reserved.
  * @job_class{initialization}
  */
-void Manager::wait_on_reservation_of_object_names()
+void Manager::wait_for_reservation_of_object_names()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::wait_on_reservation_of_object_names():%d%c",
+      send_hs( stdout, "Manager::wait_for_reservation_of_object_names():%d%c",
                __LINE__, THLA_NEWLINE );
    }
 
@@ -1660,16 +1660,16 @@ void Manager::wait_on_reservation_of_object_names()
       // Wait for each RTI object instance name to be registered with the RTI,
       // but for only the names we requested registration for.
       for ( int n = 0; n < obj_count; ++n ) {
-         objects[n].wait_on_object_name_reservation();
+         objects[n].wait_for_object_name_reservation();
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "Manager::wait_on_reservation_of_object_names():%d All Object instance names reserved.%c",
+         send_hs( stdout, "Manager::wait_for_reservation_of_object_names():%d All Object instance names reserved.%c",
                   __LINE__, THLA_NEWLINE );
       }
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "Manager::wait_on_reservation_of_object_names():%d No Object instance names to reserve.%c",
+         send_hs( stdout, "Manager::wait_for_reservation_of_object_names():%d No Object instance names to reserve.%c",
                   __LINE__, THLA_NEWLINE );
       }
    }
@@ -1732,10 +1732,10 @@ void Manager::setup_preferred_order_with_RTI()
  * instances in the Federation have been registered.
  * @job_class{initialization}
  */
-void Manager::wait_on_registration_of_required_objects()
+void Manager::wait_for_registration_of_required_objects()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::wait_on_registration_of_required_objects():%d%c",
+      send_hs( stdout, "Manager::wait_for_registration_of_required_objects():%d%c",
                __LINE__, THLA_NEWLINE );
    }
 
@@ -1820,7 +1820,7 @@ void Manager::wait_on_registration_of_required_objects()
 
          // Build the summary as an output string stream.
          ostringstream summary;
-         summary << "Manager::wait_on_registration_of_required_objects():"
+         summary << "Manager::wait_for_registration_of_required_objects():"
                  << __LINE__ << "\nREQUIRED-OBJECTS:" << total_required_obj_cnt
                  << "   Total-Objects:" << total_obj_cnt;
 
@@ -1874,7 +1874,7 @@ void Manager::wait_on_registration_of_required_objects()
             sleep_timer.reset();
             if ( !federate->is_execution_member() ) {
                ostringstream errmsg;
-               errmsg << "Manager::wait_on_registration_of_required_objects():" << __LINE__
+               errmsg << "Manager::wait_for_registration_of_required_objects():" << __LINE__
                       << " Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
@@ -2878,10 +2878,10 @@ void Manager::pull_ownership_upon_rejoin()
  * discovered.
  * @job_class{initialization}
  */
-void Manager::wait_on_discovery_of_objects()
+void Manager::wait_for_discovery_of_objects()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::wait_on_discovery_of_object_instance():%d%c",
+      send_hs( stdout, "Manager::wait_for_discovery_of_object_instance():%d%c",
                __LINE__, THLA_NEWLINE );
    }
 
@@ -2917,7 +2917,7 @@ void Manager::wait_on_discovery_of_objects()
              ( discovery_count < required_count ) ) ) { // found the rejoining federate
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            send_hs( stdout, "Manager::wait_on_discovery_of_object_instance():%d \
+            send_hs( stdout, "Manager::wait_for_discovery_of_object_instance():%d \
 - blocking loop until object discovery callbacks arrive.%c",
                      __LINE__, THLA_NEWLINE );
          }
@@ -2938,7 +2938,7 @@ void Manager::wait_on_discovery_of_objects()
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "Manager::wait_on_discovery_of_object_instance():" << __LINE__
+                  errmsg << "Manager::wait_for_discovery_of_object_instance():" << __LINE__
                          << " Unexpectedly the Federate is no longer an execution member."
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
@@ -2970,7 +2970,7 @@ void Manager::wait_on_discovery_of_objects()
       }
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, "Manager::wait_on_discovery_of_object_instance():%d - No Objects to discover.%c",
+         send_hs( stdout, "Manager::wait_for_discovery_of_object_instance():%d - No Objects to discover.%c",
                   __LINE__, THLA_NEWLINE );
       }
    }

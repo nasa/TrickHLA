@@ -50,7 +50,7 @@ using namespace TrickHLA;
  */
 SyncPnt::SyncPnt()
    : label( L"" ),
-     state( SYNC_PNT_STATE_EXISTS )
+     state( SYNC_PT_STATE_EXISTS )
 {
    return;
 }
@@ -61,7 +61,7 @@ SyncPnt::SyncPnt()
 SyncPnt::SyncPnt(
    std::wstring const &l )
    : label( l ),
-     state( SYNC_PNT_STATE_EXISTS )
+     state( SYNC_PT_STATE_EXISTS )
 {
    return;
 }
@@ -86,7 +86,7 @@ void SyncPnt::register_sync_point(
                                                       RTI1516_USERDATA( 0, 0 ) );
 
       // Mark the sync-point as registered.
-      this->set_state( SYNC_PNT_STATE_REGISTERED );
+      this->set_state( SYNC_PT_STATE_REGISTERED );
 
    } catch ( RTI1516_EXCEPTION &e ) {
 
@@ -121,7 +121,7 @@ void SyncPnt::register_sync_point(
                                                       federate_handle_set );
 
       // Mark the sync-point as registered.
-      this->set_state( SYNC_PNT_STATE_REGISTERED );
+      this->set_state( SYNC_PT_STATE_REGISTERED );
 
    } catch ( RTI1516_EXCEPTION &e ) {
 
@@ -145,7 +145,7 @@ void SyncPnt::register_sync_point(
 bool SyncPnt::wait_for_announce(
    Federate *federate )
 {
-   // The sync-point state must be SYNC_PNT_STATE_REGISTERED.
+   // The sync-point state must be SYNC_PT_STATE_REGISTERED.
    if ( !this->exists() && !this->is_registered() && !this->is_announced() ) {
       string sp_status;
       StringUtilities::to_string( sp_status, this->to_wstring() );
@@ -187,7 +187,7 @@ bool SyncPnt::wait_for_announce(
    }
 
    // Mark the sync-point as announced.
-   this->set_state( SYNC_PNT_STATE_ANNOUNCED );
+   this->set_state( SYNC_PT_STATE_ANNOUNCED );
 
    return true;
 }
@@ -216,7 +216,7 @@ void SyncPnt::achieve_sync_point(
    }
 
    // Mark the sync-point as achieved.
-   this->set_state( SYNC_PNT_STATE_ACHIEVED );
+   this->set_state( SYNC_PT_STATE_ACHIEVED );
 
    // Macro to restore the saved FPU Control Word register value.
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -257,53 +257,53 @@ bool SyncPnt::wait_for_synchronization(
    }
 
    // Now that the federation is synchronized on the synchronization point,
-   // return to SYNC_PNT_STATE_EXISTS state.
-   this->set_state( SYNC_PNT_STATE_EXISTS );
+   // return to SYNC_PT_STATE_EXISTS state.
+   this->set_state( SYNC_PT_STATE_EXISTS );
 
    return true;
 }
 
 bool SyncPnt::is_valid()
 {
-   return ( ( this->state == SYNC_PNT_STATE_EXISTS )
-            || ( this->state == SYNC_PNT_STATE_REGISTERED )
-            || ( this->state == SYNC_PNT_STATE_ANNOUNCED )
-            || ( this->state == SYNC_PNT_STATE_ACHIEVED )
-            || ( this->state == SYNC_PNT_STATE_SYNCHRONIZED ) );
+   return ( ( this->state == SYNC_PT_STATE_EXISTS )
+            || ( this->state == SYNC_PT_STATE_REGISTERED )
+            || ( this->state == SYNC_PT_STATE_ANNOUNCED )
+            || ( this->state == SYNC_PT_STATE_ACHIEVED )
+            || ( this->state == SYNC_PT_STATE_SYNCHRONIZED ) );
 }
 
 bool SyncPnt::exists()
 {
-   return ( this->state == SYNC_PNT_STATE_EXISTS );
+   return ( this->state == SYNC_PT_STATE_EXISTS );
 }
 
 bool SyncPnt::is_registered()
 {
-   return ( this->state == SYNC_PNT_STATE_REGISTERED );
+   return ( this->state == SYNC_PT_STATE_REGISTERED );
 }
 
 bool SyncPnt::is_announced()
 {
-   return ( this->state == SYNC_PNT_STATE_ANNOUNCED );
+   return ( this->state == SYNC_PT_STATE_ANNOUNCED );
 }
 
 bool SyncPnt::is_achieved()
 {
-   return ( this->state == SYNC_PNT_STATE_ACHIEVED );
+   return ( this->state == SYNC_PT_STATE_ACHIEVED );
 }
 
 bool SyncPnt::is_synchronized()
 {
-   return ( this->state == SYNC_PNT_STATE_SYNCHRONIZED );
+   return ( this->state == SYNC_PT_STATE_SYNCHRONIZED );
 }
 
 bool SyncPnt::is_error()
 {
-   return ( ( this->state != SYNC_PNT_STATE_EXISTS )
-            && ( this->state != SYNC_PNT_STATE_REGISTERED )
-            && ( this->state != SYNC_PNT_STATE_ANNOUNCED )
-            && ( this->state != SYNC_PNT_STATE_ACHIEVED )
-            && ( this->state != SYNC_PNT_STATE_SYNCHRONIZED ) );
+   return ( ( this->state != SYNC_PT_STATE_EXISTS )
+            && ( this->state != SYNC_PT_STATE_REGISTERED )
+            && ( this->state != SYNC_PT_STATE_ANNOUNCED )
+            && ( this->state != SYNC_PT_STATE_ACHIEVED )
+            && ( this->state != SYNC_PT_STATE_SYNCHRONIZED ) );
 }
 
 std::wstring SyncPnt::to_wstring()
@@ -311,32 +311,32 @@ std::wstring SyncPnt::to_wstring()
    wstring result = L"[" + label + L"] -- ";
    switch ( this->state ) {
 
-      case SYNC_PNT_STATE_ERROR:
-         result += L"SYNC_PNT_STATE_ERROR";
+      case SYNC_PT_STATE_ERROR:
+         result += L"SYNC_PT_STATE_ERROR";
          break;
 
-      case SYNC_PNT_STATE_EXISTS:
-         result += L"SYNC_PNT_STATE_EXISTS";
+      case SYNC_PT_STATE_EXISTS:
+         result += L"SYNC_PT_STATE_EXISTS";
          break;
 
-      case SYNC_PNT_STATE_REGISTERED:
-         result += L"SYNC_PNT_STATE_REGISTERED";
+      case SYNC_PT_STATE_REGISTERED:
+         result += L"SYNC_PT_STATE_REGISTERED";
          break;
 
-      case SYNC_PNT_STATE_ANNOUNCED:
-         result += L"SYNC_PNT_STATE_ANNOUNCED";
+      case SYNC_PT_STATE_ANNOUNCED:
+         result += L"SYNC_PT_STATE_ANNOUNCED";
          break;
 
-      case SYNC_PNT_STATE_ACHIEVED:
-         result += L"SYNC_PNT_STATE_ACHIEVED";
+      case SYNC_PT_STATE_ACHIEVED:
+         result += L"SYNC_PT_STATE_ACHIEVED";
          break;
 
-      case SYNC_PNT_STATE_SYNCHRONIZED:
-         result += L"SYNC_PNT_STATE_SYNCHRONIZED";
+      case SYNC_PT_STATE_SYNCHRONIZED:
+         result += L"SYNC_PT_STATE_SYNCHRONIZED";
          break;
 
       default:
-         result += L"SYNC_PNT_STATE_UNKNOWN";
+         result += L"SYNC_PT_STATE_UNKNOWN";
    }
    return result;
 }

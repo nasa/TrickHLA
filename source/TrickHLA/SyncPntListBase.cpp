@@ -383,7 +383,7 @@ bool SyncPntListBase::achieve_sync_pnt(
    RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
    SyncPnt *                         sync_pnt )
 {
-   sync_pnt->set_state( SYNC_PNT_STATE_ACHIEVED );
+   sync_pnt->set_state( SYNC_PT_STATE_ACHIEVED );
    try {
       rti_ambassador.synchronizationPointAchieved( sync_pnt->get_label() );
    } catch ( SynchronizationPointLabelNotAnnounced &e ) {
@@ -452,7 +452,7 @@ void SyncPntListBase::wait_for_list_synchronization(
 
       // Now that the sync-point is achieved, reset the state to EXISTS.
       if ( sp != NULL ) {
-         sp->set_state( SYNC_PNT_STATE_EXISTS );
+         sp->set_state( SYNC_PT_STATE_EXISTS );
       }
    }
 
@@ -564,7 +564,7 @@ bool SyncPntListBase::achieve_all_sync_pnts(
    return ( wasAcknowledged );
 }
 
-SyncPntStateEnum SyncPntListBase::get_sync_pnt_state(
+SyncPtStateEnum SyncPntListBase::get_sync_pnt_state(
    wstring const &label )
 {
    lock_read_write();
@@ -588,15 +588,15 @@ SyncPntStateEnum SyncPntListBase::get_sync_pnt_state(
    unlock_read_write();
 
    // Hmmm. . . We did not find the sync-point.
-   return SYNC_PNT_STATE_ERROR;
+   return SYNC_PT_STATE_ERROR;
 }
 
 bool SyncPntListBase::is_sync_pnt_announced(
    wstring const &label )
 {
 
-   SyncPntStateEnum state = get_sync_pnt_state( label );
-   if ( state == SYNC_PNT_STATE_ANNOUNCED ) {
+   SyncPtStateEnum state = get_sync_pnt_state( label );
+   if ( state == SYNC_PT_STATE_ANNOUNCED ) {
       return true;
    }
    return false;
@@ -672,7 +672,7 @@ bool SyncPntListBase::mark_registered(
       SyncPnt *sp = ( *i );
 
       if ( ( sp != NULL ) && ( sp->get_label().compare( label ) == 0 ) ) {
-         sp->set_state( SYNC_PNT_STATE_REGISTERED );
+         sp->set_state( SYNC_PT_STATE_REGISTERED );
          return true;
       }
    }
@@ -690,7 +690,7 @@ bool SyncPntListBase::mark_announced(
       SyncPnt *sp = ( *i );
 
       if ( ( sp != NULL ) && ( sp->get_label().compare( label ) == 0 ) ) {
-         sp->set_state( SYNC_PNT_STATE_ANNOUNCED );
+         sp->set_state( SYNC_PT_STATE_ANNOUNCED );
          return true;
       }
    }
@@ -710,7 +710,7 @@ bool SyncPntListBase::mark_synchronized(
       // Mark the synchronization point at achieved which indicates the
       // federation is synchronized on the synchronization point.
       if ( ( sp != NULL ) && ( sp->get_label().compare( label ) == 0 ) ) {
-         sp->set_state( SYNC_PNT_STATE_SYNCHRONIZED );
+         sp->set_state( SYNC_PT_STATE_SYNCHRONIZED );
          return true;
       }
    }

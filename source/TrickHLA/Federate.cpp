@@ -21,6 +21,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Federate.cpp}
 @trick_link_dependency{Int64Interval.cpp}
 @trick_link_dependency{Manager.cpp}
+@trick_link_dependency{MutexLock.cpp}
+@trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{Utilities.cpp}
@@ -72,6 +74,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
@@ -194,6 +198,7 @@ Federate::Federate()
      MOM_HLAfederateName_handle(),
      MOM_HLAfederate_handle(),
      mom_HLAfederate_inst_name_map(),
+     joined_federate_mutex(),
      joined_federate_name_map(),
      joined_federate_handles(),
      joined_federate_names(),
@@ -308,6 +313,9 @@ Federate::~Federate()
 
    // Set the references to the ambassadors.
    federate_ambassador = static_cast< FedAmb * >( NULL );
+
+   // Make sure we destroy the mutex.
+   (void)joined_federate_mutex.unlock();
 }
 
 /*!
@@ -837,7 +845,6 @@ void Federate::remove_federate_instance_id(
 {
    TrickHLAObjInstanceNameMap::iterator iter;
    iter = joined_federate_name_map.find( instance_hndl );
-
    if ( iter != joined_federate_name_map.end() ) {
       joined_federate_name_map.erase( iter );
    }
@@ -853,6 +860,13 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
    ObjectInstanceHandle           id,
    AttributeHandleValueMap const &values )
 {
+   // Concurrency critical code section because joined-federate state used by
+   // the blocking Federate::wait_for_required_federates_to_join() function.
+   //
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &joined_federate_mutex );
+
    // Add the federate ID if we don't know about it already.
    if ( !is_federate_instance_id( id ) ) {
       add_federate_instance_id( id );
@@ -1039,15 +1053,15 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
                break;
             }
          }
-         // update the running_feds if the federate name was not found...
+         // Update the running_feds if the federate name was not found...
          if ( !found ) {
             if ( joined_federate_name_map.size() == 1 ) {
                add_a_single_entry_into_running_feds();
 
-               // clear the entry after it is absorbed into running_feds...
+               // Clear the entry after it is absorbed into running_feds...
                joined_federate_name_map.clear();
             } else {
-               // loop thru all joined_federate_name_map entries removing stray
+               // Loop thru all joined_federate_name_map entries removing stray
                // NULL string entries
                TrickHLAObjInstanceNameMap::iterator map_iter;
                for ( map_iter = joined_federate_name_map.begin();
@@ -1066,15 +1080,15 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
                if ( joined_federate_name_map.size() == 1 ) {
                   add_a_single_entry_into_running_feds();
 
-                  // clear the entry after it is absorbed into running_feds...
+                  // Clear the entry after it is absorbed into running_feds...
                   joined_federate_name_map.clear();
                } else {
-                  // process multiple joined_federate_name_map entries
+                  // Process multiple joined_federate_name_map entries
                   clear_running_feds();
                   running_feds_count++;
                   update_running_feds();
 
-                  // clear the entries after they are absorbed into running_feds...
+                  // Clear the entries after they are absorbed into running_feds...
                   joined_federate_name_map.clear();
                }
             }
@@ -1421,14 +1435,14 @@ string Federate::wait_for_required_federates_to_join()
    size_t joinedFedCount = 0;
 
    // Wait for all the required federates to join.
-   all_federates_joined = false;
+   this->all_federates_joined = false;
 
    bool          found_an_unrequired_federate = false;
    set< string > unrequired_federates_list; // list of unique unrequired federate names
 
-   SleepTimeout sleep_timer;
+   SleepTimeout sleep_timer( THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC, 10000 );
 
-   while ( !all_federates_joined ) {
+   while ( !this->all_federates_joined ) {
 
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
@@ -1436,84 +1450,92 @@ string Federate::wait_for_required_federates_to_join()
       // Sleep a little while to wait for more federates to join.
       (void)sleep_timer.sleep();
 
-      // Determine what federates have joined only if the joined federate
-      // count has changed.
-      if ( joinedFedCount != joined_federate_names.size() ) {
-         joinedFedCount = joined_federate_names.size();
+      // Concurrency critical code section because joined-federate state is changed
+      // by FedAmb callback to the Federate::set_MOM_HLAfederate_instance_attributes()
+      // function.
+      {
+         // When auto_unlock_mutex goes out of scope it automatically unlocks the
+         // mutex even if there is an exception.
+         MutexProtection auto_unlock_mutex( &joined_federate_mutex );
 
-         // Count the number of joined Required federates.
-         reqFedCnt = 0;
-         for ( i = 0; i < joined_federate_names.size(); ++i ) {
-            if ( is_required_federate( joined_federate_names[i] ) ) {
-               reqFedCnt++;
-            } else {
-               found_an_unrequired_federate = true;
-               string fedname;
-               StringUtilities::to_string( fedname,
-                                           joined_federate_names[i] );
-               if ( restore_is_imminent ) {
-                  if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-                     send_hs( stdout, "Federate::wait_for_required_federates_to_join():%d Found an UNREQUIRED federate %s!%c",
-                              __LINE__, fedname.c_str(), THLA_NEWLINE );
-                  }
-                  unrequired_federates_list.insert( fedname );
-               }
-            }
-         }
+         // Determine what federates have joined only if the joined federate
+         // count has changed.
+         if ( joinedFedCount != joined_federate_names.size() ) {
+            joinedFedCount = joined_federate_names.size();
 
-         // Determine if all the Required federates have joined.
-         if ( reqFedCnt >= requiredFedsCount ) {
-            all_federates_joined = true;
-         }
-
-         // Print out a list of the Joined Federates.
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-            // Build the federate summary as an output string stream.
-            ostringstream summary;
-            unsigned int  cnt = 0;
-
-            summary << "Federate::wait_for_required_federates_to_join():"
-                    << __LINE__ << "\nWAITING FOR " << requiredFedsCount
-                    << " REQUIRED FEDERATES:";
-
-            // Summarize the required federates first.
-            for ( i = 0; i < (unsigned int)known_feds_count; ++i ) {
-               cnt++;
-               if ( known_feds[i].required ) {
-                  if ( is_joined_federate( known_feds[i].name ) ) {
-                     summary << "\n    " << cnt
-                             << ": Found joined required federate '"
-                             << known_feds[i].name << "'";
-                  } else {
-                     summary << "\n    " << cnt
-                             << ": Waiting for required federate '"
-                             << known_feds[i].name << "'";
-                  }
-               }
-            }
-
-            // Summarize all the remaining non-required joined federates.
+            // Count the number of joined Required federates.
+            reqFedCnt = 0;
             for ( i = 0; i < joined_federate_names.size(); ++i ) {
-               if ( !is_required_federate( joined_federate_names[i] ) ) {
-                  cnt++;
-
-                  // We need a string version of the wide-string federate name.
+               if ( is_required_federate( joined_federate_names[i] ) ) {
+                  reqFedCnt++;
+               } else {
+                  found_an_unrequired_federate = true;
                   string fedname;
-                  StringUtilities::to_string(
-                     fedname, joined_federate_names[i] );
-
-                  summary << "\n    " << cnt << ": Found joined federate '"
-                          << fedname.c_str() << "'";
+                  StringUtilities::to_string( fedname,
+                                              joined_federate_names[i] );
+                  if ( restore_is_imminent ) {
+                     if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+                        send_hs( stdout, "Federate::wait_for_required_federates_to_join():%d Found an UNREQUIRED federate %s!%c",
+                                 __LINE__, fedname.c_str(), THLA_NEWLINE );
+                     }
+                     unrequired_federates_list.insert( fedname );
+                  }
                }
             }
-            summary << THLA_ENDL;
 
-            // Display the federate summary.
-            send_hs( stdout, (char *)summary.str().c_str() );
+            // Determine if all the Required federates have joined.
+            if ( reqFedCnt >= requiredFedsCount ) {
+               this->all_federates_joined = true;
+            }
+
+            // Print out a list of the Joined Federates.
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+               // Build the federate summary as an output string stream.
+               ostringstream summary;
+               unsigned int  cnt = 0;
+
+               summary << "Federate::wait_for_required_federates_to_join():"
+                       << __LINE__ << "\nWAITING FOR " << requiredFedsCount
+                       << " REQUIRED FEDERATES:";
+
+               // Summarize the required federates first.
+               for ( i = 0; i < (unsigned int)known_feds_count; ++i ) {
+                  cnt++;
+                  if ( known_feds[i].required ) {
+                     if ( is_joined_federate( known_feds[i].name ) ) {
+                        summary << "\n    " << cnt
+                                << ": Found joined required federate '"
+                                << known_feds[i].name << "'";
+                     } else {
+                        summary << "\n    " << cnt
+                                << ": Waiting for required federate '"
+                                << known_feds[i].name << "'";
+                     }
+                  }
+               }
+
+               // Summarize all the remaining non-required joined federates.
+               for ( i = 0; i < joined_federate_names.size(); ++i ) {
+                  if ( !is_required_federate( joined_federate_names[i] ) ) {
+                     cnt++;
+
+                     // We need a string version of the wide-string federate name.
+                     string fedname;
+                     StringUtilities::to_string( fedname, joined_federate_names[i] );
+
+                     summary << "\n    " << cnt << ": Found joined federate '"
+                             << fedname.c_str() << "'";
+                  }
+               }
+               summary << THLA_ENDL;
+
+               // Display the federate summary.
+               send_hs( stdout, (char *)summary.str().c_str() );
+            }
          }
-      }
+      } // unlock automatically when mutex goes out of scope
 
-      if ( !all_federates_joined && sleep_timer.timeout() ) {
+      if ( !this->all_federates_joined && sleep_timer.timeout() ) {
          sleep_timer.reset();
          if ( !is_execution_member() ) {
             ostringstream errmsg;

@@ -731,7 +731,7 @@ void ExecutionControl::early_joiner_hla_init_process()
       ExCO->reserve_object_name_with_RTI();
 
       // Wait for success or failure for the ExCO name reservation.
-      ExCO->wait_on_object_name_reservation();
+      ExCO->wait_for_object_name_reservation();
    } else {
       // NOTE:
       // Should publish the MTR interaction here. However, this
@@ -747,7 +747,7 @@ void ExecutionControl::early_joiner_hla_init_process()
    // locally owned objects. Calling this function will block until all
    // the object instances names for the locally owned objects have been
    // reserved.
-   manager->wait_on_reservation_of_object_names();
+   manager->wait_for_reservation_of_object_names();
 
    // Creates an RTI object instance and registers it with the RTI, but
    // only for the objects that we create.
@@ -756,7 +756,7 @@ void ExecutionControl::early_joiner_hla_init_process()
    // Waits on the registration of all the required RTI object instances
    // with the RTI. Calling this function will block until all the
    // required object instances in the Federation have been registered.
-   manager->wait_on_registration_of_required_objects();
+   manager->wait_for_registration_of_required_objects();
 
    // Achieve the "objects_discovered" sync-point and wait for the
    // federation to be synchronized on it. There is a race condition
@@ -794,13 +794,13 @@ void ExecutionControl::late_joiner_hla_init_process()
 
    // Wait for the registration of the ExCO. Calling this function will
    // block until the ExCO object instances has been registered.
-   ExCO->wait_on_registration();
+   ExCO->wait_for_registration();
 
    // Request a ExCO object update.
    manager->request_data_update( ExCO->get_name() );
 
    // Wait for the ExCO attribute reflection.
-   ExCO->wait_on_update();
+   ExCO->wait_for_update();
 
    // Set scenario timeline epoch and time.
    this->scenario_timeline->set_epoch( ExCO->get_scenario_time_epoch() );
@@ -840,7 +840,7 @@ void ExecutionControl::late_joiner_hla_init_process()
    // locally owned objects. Calling this function will block until all
    // the object instances names for the locally owned objects have been
    // reserved.
-   manager->wait_on_reservation_of_object_names();
+   manager->wait_for_reservation_of_object_names();
 
    // Creates an RTI object instance and registers it with the RTI, but
    // only for the objects that we create.
@@ -849,7 +849,7 @@ void ExecutionControl::late_joiner_hla_init_process()
    // Waits on the registration of all the required RTI object instances
    // with the RTI. Calling this function will block until all the
    // required object instances in the Federation have been registered.
-   manager->wait_on_registration_of_required_objects();
+   manager->wait_for_registration_of_required_objects();
 
    // NOTE: The remainder of this SpaceFOM process is handled in the
    // TrickHLA::Manager::initialization_complete() step after any
@@ -1232,7 +1232,7 @@ void ExecutionControl::post_multi_phase_init_processes()
       else {
 
          // Wait on the ExCO update.
-         ExCO->wait_on_update();
+         ExCO->wait_for_update();
 
          // Process the just received ExCO update.
          this->process_execution_control_updates();
@@ -1942,10 +1942,10 @@ bool ExecutionControl::process_execution_control_updates()
  * root_frame_discovered synchronization point.
  * @job_class{initialization}
  */
-void ExecutionControl::wait_on_root_frame_discovered_synchronization()
+void ExecutionControl::wait_for_root_frame_discovered_synchronization()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "SpaceFOM::ExecutionControl::wait_on_root_frame_discovered_synchronization():%d%c",
+      send_hs( stdout, "SpaceFOM::ExecutionControl::wait_for_root_frame_discovered_synchronization():%d%c",
                __LINE__, THLA_NEWLINE );
    }
 
@@ -2019,7 +2019,7 @@ bool ExecutionControl::run_mode_transition()
             // Other federates wait on the ExCO update with the CTE go-to-run time.
 
             // Wait for the ExCO update with the CTE time.
-            ExCO->wait_on_update();
+            ExCO->wait_for_update();
 
             // Process the just received ExCO update.
             this->process_execution_control_updates();
@@ -2394,7 +2394,7 @@ void ExecutionControl::epoch_and_root_frame_discovery_process()
    } else {
 
       // Wait on the ExCO update with the scenario timeline epoch.
-      ExCO->wait_on_update();
+      ExCO->wait_for_update();
 
       // Process the just received ExCO update.
       this->process_execution_control_updates();
@@ -2435,14 +2435,14 @@ void ExecutionControl::epoch_and_root_frame_discovery_process()
    } else {
 
       // Now receive the latest ExCO update with the root reference frame update.
-      ExCO->wait_on_update();
+      ExCO->wait_for_update();
 
       // Process the just received ExCO update.
       this->process_execution_control_updates();
    }
 
    // Wait on the root_frame_discovered sync-point
-   this->wait_on_root_frame_discovered_synchronization();
+   this->wait_for_root_frame_discovered_synchronization();
 }
 
 /*!

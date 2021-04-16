@@ -206,7 +206,7 @@ class SyncPntListBase
    /*! @brief Get the state of the given synchronization point label.
     *  @return Synchronization point state.
     *  @param label The synchronization point label. */
-   virtual SyncPntStateEnum get_sync_pnt_state( std::wstring const &label );
+   virtual SyncPtStateEnum get_sync_pnt_state( std::wstring const &label );
 
    /*! @brief Check if specified synchronization point has been announced.
     *  @return True if announced.

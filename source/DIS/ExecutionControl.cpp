@@ -272,7 +272,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
       // locally owned objects. Calling this function will block until all
       // the object instances names for the locally owned objects have been
       // reserved.
-      get_manager()->wait_on_reservation_of_object_names();
+      get_manager()->wait_for_reservation_of_object_names();
 
       // Creates an RTI object instance and registers it with the RTI, but
       // only for the objects that are locally owned.
@@ -282,9 +282,9 @@ void ExecutionControl::pre_multi_phase_init_processes()
       get_manager()->setup_preferred_order_with_RTI();
 
       //DANNY2.7 moved this here because there is race condition (starting with
-      // Pitch 4.4) after wait_on_registration_of_required_objects any federate
+      // Pitch 4.4) after wait_for_registration_of_required_objects any federate
       // (instead of the 1st one started) can become the master because
-      // wait_on_registration_of_required_objects is random. We need the 1st
+      // wait_for_registration_of_required_objects is random. We need the 1st
       // federate started to be the master so that master's sim control panel
       // controls pausing and checkpoints.
       // Determine if this federate is the Master.
@@ -293,7 +293,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
       // Waits on the registration of all the required RTI object instances with
       // the RTI. Calling this function will block until all the required object
       // instances in the Federation have been registered.
-      get_manager()->wait_on_registration_of_required_objects();
+      get_manager()->wait_for_registration_of_required_objects();
 
       // Initialize the MOM interface handles.
       federate->initialize_MOM_handles();
@@ -1234,7 +1234,7 @@ bool ExecutionControl::run_mode_transition()
          else {
 
             // Wait for the ExCO update with the CTE time.
-            ExCO->wait_on_update();
+            ExCO->wait_for_update();
 
             // Process the just received ExCO update.
             this->process_execution_control_updates();

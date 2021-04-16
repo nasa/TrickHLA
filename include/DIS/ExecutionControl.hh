@@ -169,13 +169,13 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Determine if this federate is the Master for the federation. */
    void determine_federation_master();
 
-   /*! @brief Test to see if ExecutionControl needs to wait on initialization
+   /*! @brief Test to see if ExecutionControl needs to wait for the initialization
     *  synchronization point.
     *  @details Most ExecutionControl approaches require that we wait for
     *  specific initialization synchronization points in sprecific orders.
     *  Currently, only the 'Simple' and 'DIS' scheme do not.
     *  @return True if ExecutionControl needs to wait on the initialization synchronization points. */
-   bool wait_on_init_sync_point()
+   bool wait_for_init_sync_point()
    {
       return ( false );
    }

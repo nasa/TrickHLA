@@ -482,13 +482,13 @@ but you failed to specify the checkpoint FILE NAME!" );
          get_manager()->reserve_object_names_with_RTI();
 
          // Wait for success or failure for the "SimConfig" name reservation.
-         execution_configuration->wait_on_object_name_reservation();
+         execution_configuration->wait_for_object_name_reservation();
 
          // Waits on the reservation of the RTI object instance names for the
          // locally owned objects. Calling this function will block until all
          // the object instances names for the locally owned objects have been
          // reserved.
-         get_manager()->wait_on_reservation_of_object_names();
+         get_manager()->wait_for_reservation_of_object_names();
 
          // Creates an RTI object instance and registers it with the RTI, but
          // only for the objects that we create.
@@ -500,7 +500,7 @@ but you failed to specify the checkpoint FILE NAME!" );
          // Waits on the registration of all the required RTI object instances
          // with the RTI. Calling this function will block until all the
          // required object instances in the Federation have been registered.
-         get_manager()->wait_on_registration_of_required_objects();
+         get_manager()->wait_for_registration_of_required_objects();
 
          // Wait for the "sim_config", "initialize", and "startup" sync-points
          // to be registered.
@@ -642,7 +642,7 @@ Simulation has started and is now running...%c",
             // locally owned objects. Calling this function will block until all
             // the object instances names for the locally owned objects have been
             // reserved.
-            get_manager()->wait_on_reservation_of_object_names();
+            get_manager()->wait_for_reservation_of_object_names();
 
             // Creates an RTI object instance and registers it with the RTI, but
             // only for the objects that are locally owned.
@@ -655,7 +655,7 @@ Simulation has started and is now running...%c",
             // instances with the RTI. Calling this function will block until
             // all the required object instances in the Federation have been
             // registered.
-            get_manager()->wait_on_registration_of_required_objects();
+            get_manager()->wait_for_registration_of_required_objects();
 
             // Wait for the "sim_config", "initialize", and "startup" sync-points
             // to be registered.
@@ -690,20 +690,20 @@ Simulation has started and is now running...%c",
             // Wait for the registration of the simulation configuration object.
             // Calling this function will block until all the simulation config
             // object instances in the Federation has been registered.
-            execution_configuration->wait_on_registration();
+            execution_configuration->wait_for_registration();
 
             // Request a simulation configuration object update.
             get_manager()->request_data_update( execution_configuration->get_name() );
 
             // Wait for the "Simulation Configuration" object attribute reflection.
-            execution_configuration->wait_on_update();
+            execution_configuration->wait_for_update();
 
             // Call publish_and_subscribe AFTER we've initialized the manager,
             // federate, and FedAmb.
             get_manager()->publish_and_subscribe();
 
             // Wait for all objects to be discovered, if necessary.
-            get_manager()->wait_on_discovery_of_objects();
+            get_manager()->wait_for_discovery_of_objects();
 
             // If this is a rejoining federate, re-aquire ownership of its attributes.
             if ( get_manager()->is_this_a_rejoining_federate() ) {
@@ -724,7 +724,7 @@ Simulation has started and is now running...%c",
                // locally owned objects. Calling this function will block until all
                // the object instances names for the locally owned objects have been
                // reserved.
-               get_manager()->wait_on_reservation_of_object_names();
+               get_manager()->wait_for_reservation_of_object_names();
 
                // Creates an RTI object instance and registers it with the RTI, but
                // only for the objects that are locally owned.
@@ -738,7 +738,7 @@ Simulation has started and is now running...%c",
             // instances with the RTI. Calling this function will block until
             // all the required object instances in the Federation have been
             // registered.
-            get_manager()->wait_on_registration_of_required_objects();
+            get_manager()->wait_for_registration_of_required_objects();
          }
       }
    }
@@ -2082,7 +2082,7 @@ bool ExecutionControl::run_mode_transition()
          else {
 
             // Wait for the ExCO update with the CTE time.
-            ExCO->wait_on_update();
+            ExCO->wait_for_update();
 
             // Process the just received ExCO update.
             this->process_execution_control_updates();
