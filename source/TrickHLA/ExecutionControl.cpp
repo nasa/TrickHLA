@@ -211,7 +211,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
    // locally owned objects. Calling this function will block until all
    // the object instances names for the locally owned objects have been
    // reserved.
-   get_manager()->wait_on_reservation_of_object_names();
+   get_manager()->wait_for_reservation_of_object_names();
 
    // Creates an RTI object instance and registers it with the RTI, but
    // only for the objects that are locally owned.

@@ -148,7 +148,7 @@ class SyncPnt
 
    /*! @brief Get the synchronization point state.
     *  @return The current state for this synchronization point. */
-   virtual const SyncPntStateEnum get_state() const
+   virtual const SyncPtStateEnum get_state() const
    {
       return state;
    }
@@ -162,7 +162,7 @@ class SyncPnt
 
    /*! @brief Set the current state of the synchronization point.
     *  @param s Current synchronization point state. */
-   virtual void set_state( SyncPntStateEnum s )
+   virtual void set_state( SyncPtStateEnum s )
    {
       state = s;
    }
@@ -179,8 +179,8 @@ class SyncPnt
    virtual void convert( LoggableSyncPnt &log_sync_pnt );
 
   protected:
-   std::wstring     label; ///< @trick_io{**} Sync-point name.
-   SyncPntStateEnum state; ///< @trick_units{--} Sync-point state.
+   std::wstring    label; ///< @trick_io{**} Sync-point name.
+   SyncPtStateEnum state; ///< @trick_units{--} Sync-point state.
 };
 
 } // namespace TrickHLA

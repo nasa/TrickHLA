@@ -26,6 +26,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../source/TrickHLA/FedAmb.cpp}
 @trick_link_dependency{../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../source/TrickHLA/Manager.cpp}
+@trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../source/TrickHLA/Types.cpp}
 
 @revs_title
@@ -51,6 +52,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/KnownFederate.hh"
+#include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
 
@@ -1147,9 +1149,11 @@ class Federate
    RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederateName_handle;    ///< @trick_io{**} MOM attribute handle to Federate name.
    RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederate_handle;        ///< @trick_io{**} MOM attribute handle to Federate-Handle.
    TrickHLAObjInstanceNameMap           mom_HLAfederate_inst_name_map; ///< @trick_io{**} Map of the MOM HLAfederate instances name map.
-   TrickHLAObjInstanceNameMap           joined_federate_name_map;      ///< @trick_io{**} Map of the federate instances.
-   RTI1516_NAMESPACE::FederateHandleSet joined_federate_handles;       ///< @trick_io{**} FederateHandles of joined federates.
-   VectorOfWstrings                     joined_federate_names;         ///< @trick_io{**} Names of the joined federates.
+
+   MutexLock                            joined_federate_mutex;    ///< @trick_io{**} Mutex to lock thread over critical code sections.
+   TrickHLAObjInstanceNameMap           joined_federate_name_map; ///< @trick_io{**} Map of the federate instances.
+   RTI1516_NAMESPACE::FederateHandleSet joined_federate_handles;  ///< @trick_io{**} FederateHandles of joined federates.
+   VectorOfWstrings                     joined_federate_names;    ///< @trick_io{**} Names of the joined federates.
 
    RTI1516_NAMESPACE::InteractionClassHandle MOM_HLAsetSwitches_class_handle; ///< @trick_io{**} MOM HLAsetSwitches class handle.
    RTI1516_NAMESPACE::ParameterHandle        MOM_HLAautoProvide_param_handle; ///< @trick_io{**} MOM HLAautoProvide parameter handle.

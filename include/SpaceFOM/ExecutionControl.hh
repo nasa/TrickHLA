@@ -183,9 +183,9 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    // SpaceFOM extensions.
    /*! @brief Process to determine the federation execution epoch and root reference frame. */
    virtual void epoch_and_root_frame_discovery_process();
-   /*! @brief Waits on synchronization of the root_frame_discovered
+   /*! @brief Waits for the synchronization of the root_frame_discovered
     * synchronization point. */
-   void wait_on_root_frame_discovered_synchronization();
+   void wait_for_root_frame_discovered_synchronization();
    /*! @brief Send a mode transition request to the Master federate.
     *  @param requested_mode Requested mode. */
    void send_MTR_interaction( MTREnum requested_mode );

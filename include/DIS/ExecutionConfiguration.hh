@@ -202,7 +202,7 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
 
    /*! @brief Wait on an ExCO update.
     *  @return True for successful wait. */
-   virtual bool wait_on_update();
+   virtual bool wait_for_update();
 
   private:
    // Do not allow the copy constructor or assignment operator.

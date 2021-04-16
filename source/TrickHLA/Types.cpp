@@ -214,83 +214,83 @@ ModeTransitionEnum TrickHLA::mode_transition_int16_to_enum(
 }
 
 string TrickHLA::sync_pnt_state_enum_to_string(
-   SyncPntStateEnum state )
+   SyncPtStateEnum state )
 {
 
    switch ( state ) {
 
-      case SYNC_PNT_STATE_ERROR:
-         return "SYNC_PNT_STATE_ERROR";
+      case SYNC_PT_STATE_ERROR:
+         return "SYNC_PT_STATE_ERROR";
          break;
 
-      case SYNC_PNT_STATE_EXISTS:
-         return "SYNC_PNT_STATE_EXISTS";
+      case SYNC_PT_STATE_EXISTS:
+         return "SYNC_PT_STATE_EXISTS";
          break;
 
-      case SYNC_PNT_STATE_REGISTERED:
-         return "SYNC_PNT_STATE_REGISTERED";
+      case SYNC_PT_STATE_REGISTERED:
+         return "SYNC_PT_STATE_REGISTERED";
          break;
 
-      case SYNC_PNT_STATE_ANNOUNCED:
-         return "SYNC_PNT_STATE_ANNOUNCED";
+      case SYNC_PT_STATE_ANNOUNCED:
+         return "SYNC_PT_STATE_ANNOUNCED";
          break;
 
-      case SYNC_PNT_STATE_ACHIEVED:
-         return "SYNC_PNT_STATE_ACHIEVED";
+      case SYNC_PT_STATE_ACHIEVED:
+         return "SYNC_PT_STATE_ACHIEVED";
          break;
 
-      case SYNC_PNT_STATE_SYNCHRONIZED:
-         return "SYNC_PNT_STATE_SYNCHRONIZED";
+      case SYNC_PT_STATE_SYNCHRONIZED:
+         return "SYNC_PT_STATE_SYNCHRONIZED";
          break;
 
       default:
-         return "SYNC_PNT_STATE_UNKNOWN";
+         return "SYNC_PT_STATE_UNKNOWN";
          break;
    }
 
-   return "SYNC_PNT_STATE_UNKNOWN";
+   return "SYNC_PT_STATE_UNKNOWN";
 }
 
 int16_t TrickHLA::sync_pnt_state_enum_to_int16(
-   SyncPntStateEnum state )
+   SyncPtStateEnum state )
 {
    return (int16_t)state;
 }
 
-SyncPntStateEnum TrickHLA::sync_pnt_state_int16_to_enum(
+SyncPtStateEnum TrickHLA::sync_pnt_state_int16_to_enum(
    int16_t int_state )
 {
 
    switch ( int_state ) {
 
       case 0:
-         return SYNC_PNT_STATE_ERROR;
+         return SYNC_PT_STATE_ERROR;
          break;
 
       case 1:
-         return SYNC_PNT_STATE_EXISTS;
+         return SYNC_PT_STATE_EXISTS;
          break;
 
       case 2:
-         return SYNC_PNT_STATE_REGISTERED;
+         return SYNC_PT_STATE_REGISTERED;
          break;
 
       case 3:
-         return SYNC_PNT_STATE_ANNOUNCED;
+         return SYNC_PT_STATE_ANNOUNCED;
          break;
 
       case 4:
-         return SYNC_PNT_STATE_ACHIEVED;
+         return SYNC_PT_STATE_ACHIEVED;
          break;
 
       case 5:
-         return SYNC_PNT_STATE_SYNCHRONIZED;
+         return SYNC_PT_STATE_SYNCHRONIZED;
          break;
 
       default:
-         return SYNC_PNT_STATE_UNKNOWN;
+         return SYNC_PT_STATE_UNKNOWN;
          break;
    }
 
-   return SYNC_PNT_STATE_UNKNOWN;
+   return SYNC_PT_STATE_UNKNOWN;
 }

@@ -230,26 +230,26 @@ typedef enum {
 } ModeTransitionEnum;
 
 /*!
-@enum SyncPntStateEnum
+@enum SyncPtStateEnum
 @brief Define the TrickHLA synchronization point state enumeration values.
 
-The SyncPntStateEnum enumeration defines the possible synchronization
+The SyncPtStateEnum enumeration defines the possible synchronization
 point (sync-point) synchronization states for a TrickHLA based federate.
 These sync-point states correspond directly to the sync-point states in HLA.
 */
 typedef enum {
 
-   SYNC_PNT_STATE_FIRST_VALUE  = 0,      ///< Set to the First value in the enumeration.
-   SYNC_PNT_STATE_ERROR        = 0,      ///< Sync-point error.
-   SYNC_PNT_STATE_EXISTS       = 1,      ///< Sync-point exists.
-   SYNC_PNT_STATE_REGISTERED   = 2,      ///< Sync-point registered.
-   SYNC_PNT_STATE_ANNOUNCED    = 3,      ///< Sync-point announced.
-   SYNC_PNT_STATE_ACHIEVED     = 4,      ///< Sync-point achieved.
-   SYNC_PNT_STATE_SYNCHRONIZED = 5,      ///< Sync-point synchronized.
-   SYNC_PNT_STATE_LAST_VALUE   = 5,      ///< Set to the Last value in the enumeration.
-   SYNC_PNT_STATE_UNKNOWN      = INT_MAX ///< Unknown state.
+   SYNC_PT_STATE_FIRST_VALUE  = 0,      ///< Set to the First value in the enumeration.
+   SYNC_PT_STATE_ERROR        = 0,      ///< Sync-point error.
+   SYNC_PT_STATE_EXISTS       = 1,      ///< Sync-point exists.
+   SYNC_PT_STATE_REGISTERED   = 2,      ///< Sync-point registered.
+   SYNC_PT_STATE_ANNOUNCED    = 3,      ///< Sync-point announced.
+   SYNC_PT_STATE_ACHIEVED     = 4,      ///< Sync-point achieved.
+   SYNC_PT_STATE_SYNCHRONIZED = 5,      ///< Sync-point synchronized.
+   SYNC_PT_STATE_LAST_VALUE   = 5,      ///< Set to the Last value in the enumeration.
+   SYNC_PT_STATE_UNKNOWN      = INT_MAX ///< Unknown state.
 
-} SyncPntStateEnum;
+} SyncPtStateEnum;
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
@@ -301,21 +301,21 @@ int16_t mode_transition_enum_to_int16( ModeTransitionEnum mode );
  *  @param int_mode Mode transition as integer. */
 ModeTransitionEnum mode_transition_int16_to_enum( int16_t int_mode );
 
-// TrickHLA::SyncPntStateEnum methods
+// TrickHLA::SyncPtStateEnum methods
 /*! @brief Convert a Synchronization Point State enum value into a printable string.
  *  @return TrickHLA sync point state as a printable string.
  *  @param state Sync point state enumeration value to convert. */
-std::string sync_pnt_state_enum_to_string( SyncPntStateEnum state );
+std::string sync_pnt_state_enum_to_string( SyncPtStateEnum state );
 
 /*! @brief Convert a Synchronization Point State enum value into a 16 bit integer.
  *  @return TrickHLA sync point state as a 16 bit integer.
  *  @param state Sync point state enumeration value to convert. */
-int16_t sync_pnt_state_enum_to_int16( SyncPntStateEnum state );
+int16_t sync_pnt_state_enum_to_int16( SyncPtStateEnum state );
 
 /*! @brief Convert an integer value to a Synchronization Point State enumeration value.
  *  @return TrickHLA Synchronization Point State enum value.
  *  @param int_state Sync point state value as a 16 bit integer. */
-SyncPntStateEnum sync_pnt_state_int16_to_enum( int16_t int_state );
+SyncPtStateEnum sync_pnt_state_int16_to_enum( int16_t int_state );
 
 } // namespace TrickHLA
 

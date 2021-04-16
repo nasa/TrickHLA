@@ -235,10 +235,10 @@ void ExecutionConfigurationBase::set_master(
  * object instance in the Federation has been registered.
  * @job_class{initialization}
  */
-void ExecutionConfigurationBase::wait_on_registration()
+void ExecutionConfigurationBase::wait_for_registration()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      send_hs( stdout, "TrickHLA::ExecutionConfigurationBase::wait_on_registration():%d%c",
+      send_hs( stdout, "TrickHLA::ExecutionConfigurationBase::wait_for_registration():%d%c",
                __LINE__, THLA_NEWLINE );
    }
 
@@ -277,7 +277,7 @@ void ExecutionConfigurationBase::wait_on_registration()
 
          // Build the summary as an output string stream.
          ostringstream summary;
-         summary << "ExecutionConfigurationBase::wait_on_registration()"
+         summary << "ExecutionConfigurationBase::wait_for_registration()"
                  << __LINE__ << "\nOBJECTS: " << total_obj_cnt;
 
          // Execution-Configuration object
@@ -311,7 +311,7 @@ void ExecutionConfigurationBase::wait_on_registration()
             sleep_timer.reset();
             if ( !get_federate()->is_execution_member() ) {
                ostringstream errmsg;
-               errmsg << "ExecutionConfigurationBase::wait_on_registration():" << __LINE__
+               errmsg << "ExecutionConfigurationBase::wait_for_registration():" << __LINE__
                       << " Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
@@ -326,7 +326,7 @@ void ExecutionConfigurationBase::wait_on_registration()
    } while ( any_unregistered_obj );
 }
 
-bool ExecutionConfigurationBase::wait_on_update() // RETURN: -- None.
+bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
 {
    Federate *federate = get_federate();
 
@@ -336,7 +336,7 @@ bool ExecutionConfigurationBase::wait_on_update() // RETURN: -- None.
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      send_hs( stdout, "ExecutionConfigurationBase::wait_on_update():%d Waiting...%c",
+      send_hs( stdout, "ExecutionConfigurationBase::wait_for_update():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
 
@@ -357,7 +357,7 @@ bool ExecutionConfigurationBase::wait_on_update() // RETURN: -- None.
             sleep_timer.reset();
             if ( !federate->is_execution_member() ) {
                ostringstream errmsg;
-               errmsg << "ExecutionConfigurationBase::wait_on_update():" << __LINE__
+               errmsg << "ExecutionConfigurationBase::wait_for_update():" << __LINE__
                       << " Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
@@ -371,7 +371,7 @@ bool ExecutionConfigurationBase::wait_on_update() // RETURN: -- None.
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-         send_hs( stdout, "ExecutionConfigurationBase::wait_on_update():%d Received data.%c",
+         send_hs( stdout, "ExecutionConfigurationBase::wait_for_update():%d Received data.%c",
                   __LINE__, THLA_NEWLINE );
       }
 
@@ -380,7 +380,7 @@ bool ExecutionConfigurationBase::wait_on_update() // RETURN: -- None.
 
    } else {
       ostringstream errmsg;
-      errmsg << "ExecutionConfigurationBase::wait_on_update():" << __LINE__
+      errmsg << "ExecutionConfigurationBase::wait_for_update():" << __LINE__
              << " ERROR: Execution-Configuration"
              << " is not configured to receive at least one object attribute."
              << " Make sure at least one 'exec_config' attribute has"

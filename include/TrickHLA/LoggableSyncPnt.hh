@@ -59,7 +59,7 @@ class LoggableSyncPnt
 
   public:
    /*! @brief Default constructor for the TrickHLA LoggableSyncPnt class. */
-   LoggableSyncPnt() : label( NULL ), state( SYNC_PNT_STATE_UNKNOWN )
+   LoggableSyncPnt() : label( NULL ), state( SYNC_PT_STATE_UNKNOWN )
    {
       return;
    }

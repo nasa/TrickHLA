@@ -120,7 +120,7 @@ bool TimedSyncPntList::check_sync_pnts(
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
          // Cast the SyncPnt pointer to a TimedSyncPnt pointer.
          TimedSyncPnt *timed_i = dynamic_cast< TimedSyncPnt * >( *i );
-         if ( ( timed_i->get_state() == SYNC_PNT_STATE_EXISTS )
+         if ( ( timed_i->get_state() == SYNC_PT_STATE_EXISTS )
               && ( timed_i->get_time() <= checkTime ) ) {
             unlock_read_only();
             return true;

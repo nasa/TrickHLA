@@ -1056,7 +1056,7 @@ Requesting reservation of Object instance name '%s'.%c",
  * reserved, but only if the object is locally owned.
  * @job_class{initialization}
  */
-void Object::wait_on_object_name_reservation()
+void Object::wait_for_object_name_reservation()
 {
    // Just return if the object instance name is not required.
    if ( !is_name_required() ) {
@@ -1076,7 +1076,7 @@ void Object::wait_on_object_name_reservation()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-      send_hs( stdout, "Object::wait_on_object_name_reservation():%d \
+      send_hs( stdout, "Object::wait_for_object_name_reservation():%d \
 Waiting on reservation of Object Instance Name '%s'.%c",
                __LINE__, get_name(), THLA_NEWLINE );
    }
@@ -1092,7 +1092,7 @@ Waiting on reservation of Object Instance Name '%s'.%c",
          sleep_timer.reset();
          if ( !trick_fed->is_execution_member() ) {
             ostringstream errmsg;
-            errmsg << "Object::wait_on_object_name_reservation():" << __LINE__
+            errmsg << "Object::wait_for_object_name_reservation():" << __LINE__
                    << " ERROR: Unexpectedly the Federate is no longer an execution member."
                    << " This means we are either not connected to the"
                    << " RTI or we are no longer joined to the federation"
@@ -1106,7 +1106,7 @@ Waiting on reservation of Object Instance Name '%s'.%c",
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-      send_hs( stdout, "Object::wait_on_object_name_reservation():%d \
+      send_hs( stdout, "Object::wait_for_object_name_reservation():%d \
 Object instance name '%s' is reserved.%c",
                __LINE__, get_name(), THLA_NEWLINE );
    }
@@ -1264,10 +1264,10 @@ Detected object already registered '%s' Instance-ID:%s%c",
  * @details Calling this function will block until the object instance is registered.
  * @job_class{initialization}
  */
-void Object::wait_on_object_registration()
+void Object::wait_for_object_registration()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-      send_hs( stdout, "Object::wait_on_object_registration():%d Waiting on registration of '%s' for object '%s'.%c",
+      send_hs( stdout, "Object::wait_for_object_registration():%d Waiting on registration of '%s' for object '%s'.%c",
                __LINE__, FOM_name, get_name(), THLA_NEWLINE );
    }
 
@@ -1282,7 +1282,7 @@ void Object::wait_on_object_registration()
          sleep_timer.reset();
          if ( !trick_fed->is_execution_member() ) {
             ostringstream errmsg;
-            errmsg << "Object::wait_on_object_registration():" << __LINE__
+            errmsg << "Object::wait_for_object_registration():" << __LINE__
                    << " ERROR: Unexpectedly the Federate is no longer an execution member."
                    << " This means we are either not connected to the"
                    << " RTI or we are no longer joined to the federation"
@@ -1296,7 +1296,7 @@ void Object::wait_on_object_registration()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-      send_hs( stdout, "Object::wait_on_object_registration():%d Object \
+      send_hs( stdout, "Object::wait_for_object_registration():%d Object \
 instance '%s' for object '%s' is registered.%c",
                __LINE__, FOM_name,
                get_name(), THLA_NEWLINE );

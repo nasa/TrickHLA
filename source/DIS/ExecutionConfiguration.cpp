@@ -628,7 +628,7 @@ void ExecutionConfiguration::print_execution_configuration()
    }
 }
 
-bool ExecutionConfiguration::wait_on_update() // RETURN: -- None.
+bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
 {
    Federate *federate = get_federate();
 
@@ -638,7 +638,7 @@ bool ExecutionConfiguration::wait_on_update() // RETURN: -- None.
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      send_hs( stdout, "DIS::ExecutionConfiguration::wait_on_update():%d Waiting...%c",
+      send_hs( stdout, "DIS::ExecutionConfiguration::wait_for_update():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
 
@@ -659,7 +659,7 @@ bool ExecutionConfiguration::wait_on_update() // RETURN: -- None.
             sleep_timer.reset();
             if ( !federate->is_execution_member() ) {
                ostringstream errmsg;
-               errmsg << "DIS::ExecutionConfiguration::wait_on_update():" << __LINE__
+               errmsg << "DIS::ExecutionConfiguration::wait_for_update():" << __LINE__
                       << " ERROR: Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
@@ -673,7 +673,7 @@ bool ExecutionConfiguration::wait_on_update() // RETURN: -- None.
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-         send_hs( stdout, "DIS::ExecutionConfiguration::wait_on_update():%d Received data.%c",
+         send_hs( stdout, "DIS::ExecutionConfiguration::wait_for_update():%d Received data.%c",
                   __LINE__, THLA_NEWLINE );
       }
 
@@ -682,7 +682,7 @@ bool ExecutionConfiguration::wait_on_update() // RETURN: -- None.
 
    } else {
       ostringstream errmsg;
-      errmsg << "DIS::ExecutionConfiguration::wait_on_update():" << __LINE__
+      errmsg << "DIS::ExecutionConfiguration::wait_for_update():" << __LINE__
              << " ERROR: Execution-Configuration"
              << " is not configured to receive at least one object attribute."
              << " Make sure at least one 'exec_config' attribute has"

@@ -254,7 +254,7 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
     *  @details Most ExecutionControl approaches require that we wait for the
     *  required initialization data. Currently, only the 'Simple' scheme does not.
     *  @return True if ExecutionControl needs to wait on the initialization data. */
-   virtual bool wait_on_init_data()
+   virtual bool wait_for_init_data()
    {
       return ( true );
    }
@@ -264,7 +264,7 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
     *  specific initialization synchronization points in sprecific orders.
     *  Currently, only the 'Simple' and 'DIS' scheme do not.
     *  @return True if ExecutionControl needs to wait on the initialization synchronization points. */
-   virtual bool wait_on_init_sync_point()
+   virtual bool wait_for_init_sync_point()
    {
       return ( true );
    }
