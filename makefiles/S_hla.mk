@@ -94,6 +94,9 @@ else
       ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/amd64/server)","")
          # User specified their own RTI_JAVA_HOME, configure a valid default lib path if needed.
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/amd64/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/server)","")
+         # User specified their own RTI_JAVA_HOME, configure a valid default lib path if needed.
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/server
       else
          # Default to JRE that came with the Pitch RTI if needed.
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/amd64/server
@@ -105,7 +108,7 @@ else
       ifeq ("$(wildcard ${RTI_JAVA_LIB_PATH})","")
          $(error "The path specified by RTI_JAVA_LIB_PATH is invalid for ${RTI_JAVA_LIB_PATH}")
       endif
-      TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PATH} -ljvm -Wl,-rpath,${RTI_JAVA_LIB_PATH} -Wl,-rpath,${RTI_JAVA_LIB_PATH}/..
+      TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PATH}/.. -L${RTI_JAVA_LIB_PATH} -ljava -ljvm -lverify -Wl,-rpath,${RTI_JAVA_LIB_PATH}/.. -Wl,-rpath,${RTI_JAVA_LIB_PATH}
 
       # Add the CLASSPATH environment variable to the simulation executable.
       export CLASSPATH += ${RTI_HOME}/lib/prti1516e.jar
@@ -129,11 +132,17 @@ else
       COMPILER_GTE_7 = $(shell echo $(COMPILER_VERSION)\>=7 | bc )
       COMPILER_GTE_5 = $(shell echo $(COMPILER_VERSION)\>=5 | bc )
       ifeq ($(COMPILER_GTE_7),1)
-         TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib/gcc73_64 -lrti1516e64 -lfedtime1516e64 -Wl,-rpath,${RTI_HOME}/lib/gcc73_64
+         RTI_LIB_PATH = ${RTI_HOME}/lib/gcc73_64
       else ifeq ($(COMPILER_GTE_5),1)
-         TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib/gcc52_64 -lrti1516e64 -lfedtime1516e64 -Wl,-rpath,${RTI_HOME}/lib/gcc52_64
+         RTI_LIB_PATH = ${RTI_HOME}/lib/gcc52_64
       else
-         TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib/gcc41_64 -lrti1516e64 -lfedtime1516e64 -Wl,-rpath,${RTI_HOME}/lib/gcc41_64
+         RTI_LIB_PATH = ${RTI_HOME}/lib/gcc41_64
+      endif
+      TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -lrti1516e64 -lfedtime1516e64 -Wl,-rpath,${RTI_LIB_PATH}
+
+      # On Ubuntu, the user needs to add the LD_LIBRARY_PATH shown below to their environment.
+      ifneq ("$(wildcard /etc/lsb-release)","")
+        $(info "Add this to your .bashrc file: export LD_LIBRARY_PATH=${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}")
       endif
 
    else ifeq ($(RTI_VENDOR),Mak)
