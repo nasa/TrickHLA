@@ -91,6 +91,7 @@ extern Trick::CheckPointRestart *the_cpr;
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // Note: This has to follow the Federate include.
 #include <RTI/RTIambassadorFactory.h>
+#include <RTI/encoding/BasicDataElements.h>
 #pragma GCC diagnostic pop
 
 #ifdef __cplusplus
@@ -872,43 +873,30 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       add_federate_instance_id( id );
    }
 
-   wstring                                 federate_name_ws( L"" );
-   AttributeHandleValueMap::const_iterator attr_iter;
+   wstring federate_name_ws( L"" );
 
    // Find the Federate name for the given MOM federate Name attribute handle.
-   attr_iter = values.find( MOM_HLAfederateName_handle );
+   AttributeHandleValueMap::const_iterator attr_iter = values.find( MOM_HLAfederateName_handle );
 
    // Determine if we have a federate name attribute.
    if ( attr_iter != values.end() ) {
 
-      // Extract the size of the data and the data bytes.
-      size_t num_bytes = attr_iter->second.size();
-      char * data      = (char *)attr_iter->second.data();
+      // Federate name is encoded into variable length data.
+      VariableLengthData const &value = attr_iter->second;
 
-      // The Federate name is encoded in the HLAunicodeString format. The first
-      // four bytes represent the number of two-byte characters that are in the
-      // string. For example, a federate name of "CEV" would have the following
-      // ASCII decimal values in the character array:
-      //  0 0 0 3 0 67 0 69 0 86
-      //  ---+---    |    |    |
-      //     |       |    |    |
-      // size = 3    C    E    V
-      //
-      for ( size_t i = 5; i < num_bytes; i += 2 ) {
-         federate_name_ws.append( data + i, data + i + 1 );
-      }
-
+      HLAunicodeString fed_name_unicode;
+      fed_name_unicode.decode( value );
+      federate_name_ws             = wstring( fed_name_unicode );
       joined_federate_name_map[id] = federate_name_ws;
 
       // Make sure that the federate name does not exist before adding.
       bool found = false;
-      for ( unsigned int i = 0; !found && ( i < joined_federate_names.size() ); ++i ) {
+      for ( size_t i = 0; !found && ( i < joined_federate_names.size() ); ++i ) {
          if ( joined_federate_names[i] == federate_name_ws ) {
             found = true;
             break; // exit 'for loop'
          }
       }
-
       if ( !found ) {
          joined_federate_names.push_back( federate_name_ws );
       }
@@ -950,8 +938,10 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       //
       // First 4 bytes (first 32-bit integer) is the number of elements.
       // Decode size from Big Endian encoded integer.
-      unsigned char *dataPtr = (unsigned char *)attr_iter->second.data();
-      size_t         size    = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN ) ? (size_t)Utilities::byteswap_int( *(int *)dataPtr ) : ( size_t ) * (int *)dataPtr;
+      unsigned char *data = (unsigned char *)attr_iter->second.data();
+      size_t         size = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN )
+                               ? (size_t)Utilities::byteswap_int( *(int *)data )
+                               : ( size_t ) * (int *)data;
       if ( size != 4 ) {
          ostringstream errmsg;
          errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():"
@@ -963,18 +953,18 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       }
 
       // Point to the start of the federate handle ID in the encoded data.
-      dataPtr += 4;
+      data += 4;
 
-      VariableLengthData handle_data;
-      handle_data.setData( dataPtr, size );
+      VariableLengthData encoded_fed_handle;
+      encoded_fed_handle.setData( data, size );
 
-      FederateHandle tHandle;
+      FederateHandle fed_handle;
 
       // Macro to save the FPU Control Word register value.
       TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
       try {
-         tHandle = RTI_ambassador->decodeFederateHandle( handle_data );
+         fed_handle = RTI_ambassador->decodeFederateHandle( encoded_fed_handle );
       } catch ( CouldNotDecode &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1027,18 +1017,17 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
          exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
          exit( 1 );
       }
-
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
       // Add this FederateHandle to the set of joined federates.
-      joined_federate_handles.insert( tHandle );
+      joined_federate_handles.insert( fed_handle );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string id_str, fed_id;
          StringUtilities::to_string( id_str, id );
-         StringUtilities::to_string( fed_id, tHandle );
+         StringUtilities::to_string( fed_id, fed_handle );
          send_hs( stdout, "Federate::set_MOM_HLAfederate_instance_attributes():%d Federate-OID:%s num_bytes:%d Federate-ID:%s %c",
                   __LINE__, id_str.c_str(), size, fed_id.c_str(), THLA_NEWLINE );
       }
