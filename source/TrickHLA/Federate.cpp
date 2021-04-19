@@ -868,7 +868,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &joined_federate_mutex );
 
-   // Add the federate ID if we don't know about it already.
+   // Add the federate ID (i.e. federate handle) if we don't know about it already.
    if ( !is_federate_instance_id( id ) ) {
       add_federate_instance_id( id );
    }
@@ -884,9 +884,12 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       // Federate name is encoded into variable length data.
       VariableLengthData const &value = attr_iter->second;
 
+      // Decode the federate name that is encoded as a unicode string.
       HLAunicodeString fed_name_unicode;
       fed_name_unicode.decode( value );
-      federate_name_ws             = wstring( fed_name_unicode );
+      federate_name_ws = wstring( fed_name_unicode );
+
+      // Map the federate name to the federate ID.
       joined_federate_name_map[id] = federate_name_ws;
 
       // Make sure that the federate name does not exist before adding.
@@ -894,10 +897,10 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       for ( size_t i = 0; !found && ( i < joined_federate_names.size() ); ++i ) {
          if ( joined_federate_names[i] == federate_name_ws ) {
             found = true;
-            break; // exit 'for loop'
          }
       }
       if ( !found ) {
+         // Record the federate name.
          joined_federate_names.push_back( federate_name_ws );
       }
 
@@ -929,7 +932,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
          exit( 1 );
       }
 
-      // The HLAfederateHandle has the HLAhandle datatype which is has the
+      // The HLAfederateHandle has the HLAhandle datatype which has the
       // HLAvariableArray encoding with an HLAbyte element type.
       //  0 0 0 4 0 0 0 2
       //  ---+--- | | | |
@@ -1032,7 +1035,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
                   __LINE__, id_str.c_str(), size, fed_id.c_str(), THLA_NEWLINE );
       }
 
-      // If this federate is running, add the new entry into running_feds...
+      // If this federate is running, add the new entry into running_feds.
       if ( is_federate_executing() ) {
          bool found = false;
          for ( int loop = 0; loop < running_feds_count; ++loop ) {
@@ -1042,16 +1045,16 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
                break;
             }
          }
-         // Update the running_feds if the federate name was not found...
+         // Update the running_feds if the federate name was not found.
          if ( !found ) {
             if ( joined_federate_name_map.size() == 1 ) {
                add_a_single_entry_into_running_feds();
 
-               // Clear the entry after it is absorbed into running_feds...
+               // Clear the entry after it is absorbed into running_feds.
                joined_federate_name_map.clear();
             } else {
                // Loop thru all joined_federate_name_map entries removing stray
-               // NULL string entries
+               // NULL string entries.
                TrickHLAObjInstanceNameMap::iterator map_iter;
                for ( map_iter = joined_federate_name_map.begin();
                      map_iter != joined_federate_name_map.end(); ++map_iter ) {
@@ -1065,19 +1068,19 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
                }
 
                // After the purge, if there is only one value, process the
-               // single element...
+               // single element.
                if ( joined_federate_name_map.size() == 1 ) {
                   add_a_single_entry_into_running_feds();
 
-                  // Clear the entry after it is absorbed into running_feds...
+                  // Clear the entry after it is absorbed into running_feds.
                   joined_federate_name_map.clear();
                } else {
-                  // Process multiple joined_federate_name_map entries
+                  // Process multiple joined_federate_name_map entries.
                   clear_running_feds();
                   ++running_feds_count;
                   update_running_feds();
 
-                  // Clear the entries after they are absorbed into running_feds...
+                  // Clear the entries after they are absorbed into running_feds.
                   joined_federate_name_map.clear();
                }
             }
