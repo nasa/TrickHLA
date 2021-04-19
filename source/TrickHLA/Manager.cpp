@@ -1836,39 +1836,43 @@ void Manager::wait_for_registration_of_required_objects()
                  << __LINE__ << "\nREQUIRED-OBJECTS:" << total_required_obj_cnt
                  << "   Total-Objects:" << total_obj_cnt;
 
-         // When auto_unlock_mutex goes out of scope it automatically unlocks
-         // the mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &obj_discovery_mutex );
+         // Concurrency critical code section for discovered objects being set
+         // in FedAmb callback.
+         {
+            // When auto_unlock_mutex goes out of scope it automatically unlocks
+            // the mutex even if there is an exception.
+            MutexProtection auto_unlock_mutex( &obj_discovery_mutex );
 
-         if ( is_execution_configuration_used() ) {
-            // Execution-Configuration object
-            summary << "\n  " << cnt << ":Object instance '" << get_execution_configuration()->get_name() << "' ";
-            cnt++;
-            if ( get_execution_configuration()->is_instance_handle_valid() ) {
-               string id_str;
-               StringUtilities::to_string( id_str, get_execution_configuration()->get_instance_handle() );
-               summary << "(ID:" << id_str << ") ";
+            if ( is_execution_configuration_used() ) {
+               // Execution-Configuration object
+               summary << "\n  " << cnt << ":Object instance '" << get_execution_configuration()->get_name() << "' ";
+               cnt++;
+               if ( get_execution_configuration()->is_instance_handle_valid() ) {
+                  string id_str;
+                  StringUtilities::to_string( id_str, get_execution_configuration()->get_instance_handle() );
+                  summary << "(ID:" << id_str << ") ";
+               }
+               summary << "for class '" << get_execution_configuration()->get_FOM_name() << "' is "
+                       << ( get_execution_configuration()->is_required() ? "REQUIRED" : "not required" )
+                       << " and is "
+                       << ( get_execution_configuration()->is_instance_handle_valid() ? "REGISTERED" : "Not Registered" );
             }
-            summary << "for class '" << get_execution_configuration()->get_FOM_name() << "' is "
-                    << ( get_execution_configuration()->is_required() ? "REQUIRED" : "not required" )
-                    << " and is "
-                    << ( get_execution_configuration()->is_instance_handle_valid() ? "REGISTERED" : "Not Registered" );
-         }
 
-         for ( int n = 0; n < obj_count; ++n ) {
-            // Adjust index based on sim-config or exec-config objects existing.
-            summary << "\n  " << ( n + cnt ) << ":Object instance '"
-                    << objects[n].get_name() << "' ";
+            for ( int n = 0; n < obj_count; ++n ) {
+               // Adjust index based on sim-config or exec-config objects existing.
+               summary << "\n  " << ( n + cnt ) << ":Object instance '"
+                       << objects[n].get_name() << "' ";
 
-            if ( objects[n].is_instance_handle_valid() ) {
-               string id_str;
-               StringUtilities::to_string( id_str, objects[n].get_instance_handle() );
-               summary << "(ID:" << id_str << ") ";
+               if ( objects[n].is_instance_handle_valid() ) {
+                  string id_str;
+                  StringUtilities::to_string( id_str, objects[n].get_instance_handle() );
+                  summary << "(ID:" << id_str << ") ";
+               }
+               summary << "for class '" << objects[n].get_FOM_name() << "' is "
+                       << ( objects[n].is_required() ? "REQUIRED" : "not required" )
+                       << " and is "
+                       << ( objects[n].is_instance_handle_valid() ? "REGISTERED" : "Not Registered" );
             }
-            summary << "for class '" << objects[n].get_FOM_name() << "' is "
-                    << ( objects[n].is_required() ? "REQUIRED" : "not required" )
-                    << " and is "
-                    << ( objects[n].is_instance_handle_valid() ? "REGISTERED" : "Not Registered" );
          }
          summary << THLA_ENDL;
 
@@ -1904,24 +1908,28 @@ void Manager::wait_for_registration_of_required_objects()
       }
    } while ( any_unregistered_required_obj );
 
-   // When auto_unlock_mutex goes out of scope it automatically unlocks
-   // the mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &obj_discovery_mutex );
+   // Concurrency critical code section for discovered objects being set
+   // in FedAmb callback.
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks
+      // the mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &obj_discovery_mutex );
 
-   if ( is_execution_configuration_used() ) {
-      // Add the exec-config instance to the map if it is not already in it.
-      if ( ( get_execution_configuration()->is_instance_handle_valid() )
-           && ( object_map.find( get_execution_configuration()->get_instance_handle() ) == object_map.end() ) ) {
-         object_map[get_execution_configuration()->get_instance_handle()] = get_execution_configuration();
+      if ( is_execution_configuration_used() ) {
+         // Add the exec-config instance to the map if it is not already in it.
+         if ( ( get_execution_configuration()->is_instance_handle_valid() )
+              && ( object_map.find( get_execution_configuration()->get_instance_handle() ) == object_map.end() ) ) {
+            object_map[get_execution_configuration()->get_instance_handle()] = get_execution_configuration();
+         }
       }
-   }
 
-   // Add all valid, registered object instances to the map and only if they are
-   // not already in it.
-   for ( int n = 0; n < obj_count; ++n ) {
-      if ( ( objects[n].is_instance_handle_valid() )
-           && ( object_map.find( objects[n].get_instance_handle() ) == object_map.end() ) ) {
-         object_map[objects[n].get_instance_handle()] = &objects[n];
+      // Add all valid, registered object instances to the map and only if they are
+      // not already in it.
+      for ( int n = 0; n < obj_count; ++n ) {
+         if ( ( objects[n].is_instance_handle_valid() )
+              && ( object_map.find( objects[n].get_instance_handle() ) == object_map.end() ) ) {
+            object_map[objects[n].get_instance_handle()] = &objects[n];
+         }
       }
    }
 }
