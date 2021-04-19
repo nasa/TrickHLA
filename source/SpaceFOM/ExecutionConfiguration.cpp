@@ -268,22 +268,25 @@ void ExecutionConfiguration::configure()
 void ExecutionConfiguration::pack()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      cout << "=============================================================" << endl
-           << "SpaceFOM::ExecutionConfiguration::pack()" << endl
-           << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << endl
-           << "\t Current Simulation Time: " << the_exec->get_sim_time() << endl
-           << "\t Current HLA grant time:  " << get_federate()->get_granted_time() << endl
-           << "\t Current HLA request time:" << get_federate()->get_requested_time() << endl
-           << "............................................................." << endl
-           << "\t Object-Name:             " << this->get_name() << "'" << endl
-           << "\t root_frame_name:         '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'" << endl
-           << "\t scenario_time_epoch:     " << setprecision( 18 ) << scenario_time_epoch << endl
-           << "\t next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << endl
-           << "\t next_mode_cte_time:      " << setprecision( 18 ) << next_mode_cte_time << endl
-           << "\t current_execution_mode:  " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << endl
-           << "\t next_execution_mode:     " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
-           << "\t least_common_time_step:  " << least_common_time_step << " microseconds" << endl
-           << "=============================================================" << endl;
+      ostringstream msg;
+      msg << endl
+          << "=============================================================" << endl
+          << "SpaceFOM::ExecutionConfiguration::pack()" << endl
+          << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << endl
+          << "\t Current Simulation Time: " << the_exec->get_sim_time() << endl
+          << "\t Current HLA grant time:  " << get_federate()->get_granted_time() << endl
+          << "\t Current HLA request time:" << get_federate()->get_requested_time() << endl
+          << "............................................................." << endl
+          << "\t Object-Name:             " << this->get_name() << "'" << endl
+          << "\t root_frame_name:         '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'" << endl
+          << "\t scenario_time_epoch:     " << setprecision( 18 ) << scenario_time_epoch << endl
+          << "\t next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << endl
+          << "\t next_mode_cte_time:      " << setprecision( 18 ) << next_mode_cte_time << endl
+          << "\t current_execution_mode:  " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << endl
+          << "\t next_execution_mode:     " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
+          << "\t least_common_time_step:  " << least_common_time_step << " microseconds" << endl
+          << "=============================================================" << endl;
+      send_hs( stdout, (char *)msg.str().c_str() );
    }
 
    int64_t fed_lookahead = ( get_federate() != NULL ) ? get_federate()->get_lookahead().get_time_in_micros() : 0;
@@ -321,22 +324,25 @@ void ExecutionConfiguration::unpack()
    double  software_frame_sec;
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      cout << "=============================================================" << endl
-           << "SpaceFOM::ExecutionConfiguration::unpack()" << endl
-           << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << endl
-           << "\t Current Simulation Time: " << the_exec->get_sim_time() << endl
-           << "\t Current HLA grant time:  " << get_federate()->get_granted_time() << endl
-           << "\t Current HLA request time:" << get_federate()->get_requested_time() << endl
-           << "............................................................." << endl
-           << "\t Object-Name:            '" << this->get_name() << "'" << endl
-           << "\t root_frame_name:        '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'" << endl
-           << "\t scenario_time_epoch:    " << setprecision( 18 ) << scenario_time_epoch << endl
-           << "\t next_mode_scenario_time:" << setprecision( 18 ) << next_mode_scenario_time << endl
-           << "\t next_mode_cte_time:     " << setprecision( 18 ) << next_mode_cte_time << endl
-           << "\t current_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << endl
-           << "\t next_execution_mode:    " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
-           << "\t least_common_time_step: " << least_common_time_step << " microseconds" << endl
-           << "=============================================================" << endl;
+      ostringstream msg;
+      msg << endl
+          << "=============================================================" << endl
+          << "SpaceFOM::ExecutionConfiguration::unpack()" << endl
+          << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << endl
+          << "\t Current Simulation Time: " << the_exec->get_sim_time() << endl
+          << "\t Current HLA grant time:  " << get_federate()->get_granted_time() << endl
+          << "\t Current HLA request time:" << get_federate()->get_requested_time() << endl
+          << "............................................................." << endl
+          << "\t Object-Name:            '" << this->get_name() << "'" << endl
+          << "\t root_frame_name:        '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'" << endl
+          << "\t scenario_time_epoch:    " << setprecision( 18 ) << scenario_time_epoch << endl
+          << "\t next_mode_scenario_time:" << setprecision( 18 ) << next_mode_scenario_time << endl
+          << "\t next_mode_cte_time:     " << setprecision( 18 ) << next_mode_cte_time << endl
+          << "\t current_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << endl
+          << "\t next_execution_mode:    " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
+          << "\t least_common_time_step: " << least_common_time_step << " microseconds" << endl
+          << "=============================================================" << endl;
+      send_hs( stdout, (char *)msg.str().c_str() );
    }
 
    int64_t fed_lookahead = ( get_federate() != NULL ) ? get_federate()->get_lookahead().get_time_in_micros() : 0;

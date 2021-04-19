@@ -238,10 +238,9 @@ void FedAmb::federationSynchronized(
          strIds += id;
          strIds += " ";
       }
-      send_hs( stderr, "FedAmb::federationSynchronized():%d ERROR: these \
+      send_hs( stderr, "FedAmb::federationSynchronized():%d ERROR: These \
 federate handles failed to synchronize on sync-point '%ls': %s%c",
-               __LINE__,
-               label.c_str(), strIds.c_str(), THLA_NEWLINE );
+               __LINE__, label.c_str(), strIds.c_str(), THLA_NEWLINE );
    }
 }
 

@@ -1005,7 +1005,8 @@ void ExecutionControl::pre_multi_phase_init_processes()
    ExCO->reset_preferred_order();
 
    // Reset the ownership flags and the attribute configuration flags for
-   // the ExCO object. This also resets the create instance flag to true.
+   // the ExCO object. This resets all attribute config states to CONFIG_INITIALIZE.
+   // This also resets the create instance flag to true.
    ExCO->reset_ownership_states();
 
    // Setup the ExCO object now because we use a preset master.
