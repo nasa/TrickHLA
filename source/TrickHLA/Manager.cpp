@@ -1904,6 +1904,10 @@ void Manager::wait_for_registration_of_required_objects()
       }
    } while ( any_unregistered_required_obj );
 
+   // When auto_unlock_mutex goes out of scope it automatically unlocks
+   // the mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &obj_discovery_mutex );
+
    if ( is_execution_configuration_used() ) {
       // Add the exec-config instance to the map if it is not already in it.
       if ( ( get_execution_configuration()->is_instance_handle_valid() )
