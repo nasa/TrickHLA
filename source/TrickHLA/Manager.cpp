@@ -122,6 +122,7 @@ Manager::Manager()
      restore_determined( false ),
      restore_federate( false ),
      mgr_initialized( false ),
+     obj_discovery_mutex(),
      object_map(),
      federate_has_been_restored( false ),
      federate( NULL ),
@@ -138,6 +139,9 @@ Manager::~Manager()
 {
    object_map.clear();
    clear_interactions();
+
+   // Make sure we unlock the mutex.
+   (void)obj_discovery_mutex.unlock();
 }
 
 /*!
@@ -1766,7 +1770,7 @@ void Manager::wait_for_registration_of_required_objects()
       }
    }
 
-   SleepTimeout sleep_timer;
+   SleepTimeout sleep_timer( THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC, 10000 );
 
    do {
 
@@ -1778,24 +1782,32 @@ void Manager::wait_for_registration_of_required_objects()
          required_obj_cnt   = 0;
          registered_obj_cnt = 0;
 
-         if ( is_execution_configuration_used() ) {
-            // Determine if the Execution-Configuration object has been
-            // registered and only if it is required.
-            if ( get_execution_configuration()->is_instance_handle_valid() ) {
-               registered_obj_cnt++;
-               if ( get_execution_configuration()->is_required() ) {
-                  required_obj_cnt++;
+         // Concurrency critical code section for discovered objects being set
+         // in FedAmb callback.
+         {
+            // When auto_unlock_mutex goes out of scope it automatically unlocks
+            // the mutex even if there is an exception.
+            MutexProtection auto_unlock_mutex( &obj_discovery_mutex );
+
+            if ( is_execution_configuration_used() ) {
+               // Determine if the Execution-Configuration object has been
+               // registered and only if it is required.
+               if ( get_execution_configuration()->is_instance_handle_valid() ) {
+                  registered_obj_cnt++;
+                  if ( get_execution_configuration()->is_required() ) {
+                     required_obj_cnt++;
+                  }
                }
             }
-         }
 
-         // Determine how many data objects have been registered and only if
-         // they are required.
-         for ( int n = 0; n < obj_count; ++n ) {
-            if ( objects[n].is_instance_handle_valid() ) {
-               registered_obj_cnt++;
-               if ( objects[n].is_required() ) {
-                  required_obj_cnt++;
+            // Determine how many data objects have been registered and only if
+            // they are required.
+            for ( int n = 0; n < obj_count; ++n ) {
+               if ( objects[n].is_instance_handle_valid() ) {
+                  registered_obj_cnt++;
+                  if ( objects[n].is_required() ) {
+                     required_obj_cnt++;
+                  }
                }
             }
          }
@@ -1823,6 +1835,10 @@ void Manager::wait_for_registration_of_required_objects()
          summary << "Manager::wait_for_registration_of_required_objects():"
                  << __LINE__ << "\nREQUIRED-OBJECTS:" << total_required_obj_cnt
                  << "   Total-Objects:" << total_obj_cnt;
+
+         // When auto_unlock_mutex goes out of scope it automatically unlocks
+         // the mutex even if there is an exception.
+         MutexProtection auto_unlock_mutex( &obj_discovery_mutex );
 
          if ( is_execution_configuration_used() ) {
             // Execution-Configuration object
@@ -2361,6 +2377,10 @@ bool Manager::discover_object_instance(
    ObjectClassHandle    theObjectClass,
    wstring const &      theObjectInstanceName )
 {
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &obj_discovery_mutex );
+
    bool return_value = false;
 
    // Get the unregistered TrickHLA Object for the given class handle and

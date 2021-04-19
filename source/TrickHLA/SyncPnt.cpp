@@ -195,6 +195,15 @@ bool SyncPnt::wait_for_announce(
 void SyncPnt::achieve_sync_point(
    RTI1516_NAMESPACE::RTIambassador &RTI_amb )
 {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      string name;
+      StringUtilities::to_string( name, this->label );
+      ostringstream msg;
+      msg << "SyncPnt::achieve_sync_point():" << __LINE__
+          << " Synchronization-Point '" << name << "'" << THLA_ENDL;
+      send_hs( stdout, (char *)msg.str().c_str() );
+   }
+
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
@@ -228,6 +237,15 @@ void SyncPnt::achieve_sync_point(
 bool SyncPnt::wait_for_synchronization(
    Federate *federate )
 {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      string name;
+      StringUtilities::to_string( name, this->label );
+      ostringstream msg;
+      msg << "SyncPnt::wait_for_synchronization():" << __LINE__
+          << " Synchronization-Point '" << name << "'" << THLA_ENDL;
+      send_hs( stdout, (char *)msg.str().c_str() );
+   }
+
    SleepTimeout sleep_timer;
 
    // Wait for the federation to synchronize on the sync-point.

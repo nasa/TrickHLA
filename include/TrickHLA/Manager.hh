@@ -26,6 +26,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../source/TrickHLA/Interaction.cpp}
 @trick_link_dependency{../source/TrickHLA/InteractionItem.cpp}
 @trick_link_dependency{../source/TrickHLA/Manager.cpp}
+@trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../source/TrickHLA/Types.cpp}
 
@@ -45,6 +46,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/ItemQueue.hh"
+#include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
@@ -460,6 +462,8 @@ class Manager
    bool restore_federate;   ///< @trick_io{**} Internal flag to indicate if the federate is to be restored
 
    bool mgr_initialized; ///< @trick_units{--} Internal flag to indicate Manager is initialized.
+
+   MutexLock obj_discovery_mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
 
    ObjectInstanceMap object_map; ///< @trick_io{**} Map of all the Objects this federate uses, the Key is the object instance-handle.
 

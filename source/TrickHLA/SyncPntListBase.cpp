@@ -464,8 +464,8 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
    Federate *                        federate,
    std::wstring const &              label )
 {
-   string        name;
-   ostringstream errmsg;
+   string name;
+   StringUtilities::to_string( name, label );
 
    // Check for the synchronization point by label.
    SyncPnt *sp = this->get_sync_pnt( label );
@@ -481,10 +481,10 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
 
       } else if ( sp->is_achieved() ) {
 
-         // If the synchronization point is already achieved then show out
+         // If the synchronization point is already achieved then print out
          // a message and move on to waiting for synchronization.
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-            StringUtilities::to_string( name, sp->get_label() );
+            ostringstream errmsg;
             errmsg << "SyncPntListBase::achieve_and_wait_for_synchronization():"
                    << __LINE__
                    << " Synchronization-Point '" << name
@@ -494,10 +494,10 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
 
       } else if ( sp->is_synchronized() ) {
 
-         // If the synchronization point is already synchronized, then show
+         // If the synchronization point is already synchronized, then print
          // out a message and return.
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-            StringUtilities::to_string( name, sp->get_label() );
+            ostringstream errmsg;
             errmsg << "SyncPntListBase::achieve_and_wait_for_synchronization():"
                    << __LINE__
                    << " Synchronization-Point '" << name
@@ -509,7 +509,7 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
       } else {
 
          // Okay, something is wrong here. Print a message and exit.
-         StringUtilities::to_string( name, sp->get_label() );
+         ostringstream errmsg;
          errmsg << "SyncPntListBase::achieve_and_wait_for_synchronization():"
                 << __LINE__
                 << " Synchronization-Point '" << name
@@ -529,7 +529,7 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
 
       // Okay, we did not find the synchronization point. Print out an
       // error message and then exit.
-      StringUtilities::to_string( name, label );
+      ostringstream errmsg;
       errmsg << "SyncPntListBase::achieve_and_wait_for_synchronization():"
              << __LINE__
              << " Synchronization-Point '" << name
