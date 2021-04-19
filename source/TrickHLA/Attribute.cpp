@@ -1462,42 +1462,42 @@ void Attribute::encode_logical_time() const // RETURN: -- None.
       }
       case TRICK_SHORT: {
          short *s_src = (short *)ref2->address;
-         logical_time = ( int64_t )( MICROS_MULTIPLIER * s_src[0] );
+         logical_time = (int64_t)( MICROS_MULTIPLIER * s_src[0] );
          break;
       }
       case TRICK_UNSIGNED_SHORT: {
          unsigned short *us_src = (unsigned short *)ref2->address;
-         logical_time           = ( int64_t )( MICROS_MULTIPLIER * us_src[0] );
+         logical_time           = (int64_t)( MICROS_MULTIPLIER * us_src[0] );
          break;
       }
       case TRICK_INTEGER: {
          int *i_src   = (int *)ref2->address;
-         logical_time = ( int64_t )( MICROS_MULTIPLIER * i_src[0] );
+         logical_time = (int64_t)( MICROS_MULTIPLIER * i_src[0] );
          break;
       }
       case TRICK_UNSIGNED_INTEGER: {
          unsigned int *ui_src = (unsigned int *)ref2->address;
-         logical_time         = ( int64_t )( MICROS_MULTIPLIER * ui_src[0] );
+         logical_time         = (int64_t)( MICROS_MULTIPLIER * ui_src[0] );
          break;
       }
       case TRICK_LONG: {
          long *l_src  = (long *)ref2->address;
-         logical_time = ( int64_t )( MICROS_MULTIPLIER * l_src[0] );
+         logical_time = (int64_t)( MICROS_MULTIPLIER * l_src[0] );
          break;
       }
       case TRICK_UNSIGNED_LONG: {
          unsigned long *ul_src = (unsigned long *)ref2->address;
-         logical_time          = ( int64_t )( MICROS_MULTIPLIER * ul_src[0] );
+         logical_time          = (int64_t)( MICROS_MULTIPLIER * ul_src[0] );
          break;
       }
       case TRICK_LONG_LONG: {
          long long *ll_src = (long long *)ref2->address;
-         logical_time      = ( int64_t )( MICROS_MULTIPLIER * ll_src[0] );
+         logical_time      = (int64_t)( MICROS_MULTIPLIER * ll_src[0] );
          break;
       }
       case TRICK_UNSIGNED_LONG_LONG: {
          unsigned long long *ull_src = (unsigned long long *)ref2->address;
-         logical_time                = ( int64_t )( MICROS_MULTIPLIER * ull_src[0] );
+         logical_time                = (int64_t)( MICROS_MULTIPLIER * ull_src[0] );
          break;
       }
       default: {
@@ -1932,7 +1932,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
                      *( output++ ) = '\0';
                      *( output++ ) = (unsigned char)*( s++ );
                   }
-                  byte_count += ( size_t )( 2 * length );
+                  byte_count += (size_t)( 2 * length );
                }
 
                // Separate the strings by a null UTF-16 character if padding
@@ -2488,7 +2488,7 @@ WARNING: Truncating array of ENCODING_TYPE_UNICODE_STRING from %d to %d elements
             // data_buff_size = (size - 4 - 4 * num_elements)/2
             size_t data_buff_size;
             if ( ref2->attr->type == TRICK_STRING ) {
-               if ( size > ( size_t )( 4 * ( num_elements + 1 ) ) ) {
+               if ( size > (size_t)( 4 * ( num_elements + 1 ) ) ) {
                   data_buff_size = ( size - ( 4 * ( (size_t)num_elements + 1 ) ) ) / 2;
                } else {
                   data_buff_size = 0;

@@ -609,7 +609,7 @@ void ExecutionControl::role_determination_process()
          }
       }
 
-      SleepTimeout sleep_timer;
+      SleepTimeout sleep_timer( THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC, 10000 );
 
       // Block until we have determined if we are a late joining federate.
       while ( !this->late_joiner_determined ) {

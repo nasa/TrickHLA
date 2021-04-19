@@ -824,7 +824,7 @@ void Parameter::calculate_size_and_number_of_items()
          // NOTE: For now we assume 1-D array.
 
          // get_size returns the number of elements in the array.
-         num_bytes = ( size_t )( get_size( *(char **)address ) * attr->size );
+         num_bytes = (size_t)( get_size( *(char **)address ) * attr->size );
 
          // Since the users variable is a pointer, we need to recalculate
          // the number of items.
@@ -1325,42 +1325,42 @@ void Parameter::encode_logical_time() const
       }
       case TRICK_SHORT: {
          short *s_src = (short *)address;
-         logical_time = ( int64_t )( MICROS_MULTIPLIER * s_src[0] );
+         logical_time = (int64_t)( MICROS_MULTIPLIER * s_src[0] );
          break;
       }
       case TRICK_UNSIGNED_SHORT: {
          unsigned short *us_src = (unsigned short *)address;
-         logical_time           = ( int64_t )( MICROS_MULTIPLIER * us_src[0] );
+         logical_time           = (int64_t)( MICROS_MULTIPLIER * us_src[0] );
          break;
       }
       case TRICK_INTEGER: {
          int *i_src   = (int *)address;
-         logical_time = ( int64_t )( MICROS_MULTIPLIER * i_src[0] );
+         logical_time = (int64_t)( MICROS_MULTIPLIER * i_src[0] );
          break;
       }
       case TRICK_UNSIGNED_INTEGER: {
          unsigned int *ui_src = (unsigned int *)address;
-         logical_time         = ( int64_t )( MICROS_MULTIPLIER * ui_src[0] );
+         logical_time         = (int64_t)( MICROS_MULTIPLIER * ui_src[0] );
          break;
       }
       case TRICK_LONG: {
          long *l_src  = (long *)address;
-         logical_time = ( int64_t )( MICROS_MULTIPLIER * l_src[0] );
+         logical_time = (int64_t)( MICROS_MULTIPLIER * l_src[0] );
          break;
       }
       case TRICK_UNSIGNED_LONG: {
          unsigned long *ul_src = (unsigned long *)address;
-         logical_time          = ( int64_t )( MICROS_MULTIPLIER * ul_src[0] );
+         logical_time          = (int64_t)( MICROS_MULTIPLIER * ul_src[0] );
          break;
       }
       case TRICK_LONG_LONG: {
          long long *ll_src = (long long *)address;
-         logical_time      = ( int64_t )( MICROS_MULTIPLIER * ll_src[0] );
+         logical_time      = (int64_t)( MICROS_MULTIPLIER * ll_src[0] );
          break;
       }
       case TRICK_UNSIGNED_LONG_LONG: {
          unsigned long long *ull_src = (unsigned long long *)address;
-         logical_time                = ( int64_t )( MICROS_MULTIPLIER * ull_src[0] );
+         logical_time                = (int64_t)( MICROS_MULTIPLIER * ull_src[0] );
          break;
       }
       default: {
@@ -2356,7 +2356,7 @@ WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for 
             //            }
             size_t data_buff_size;
             if ( size > ( 4 * ( num_elements + 1 ) ) ) {
-               data_buff_size = ( size - ( size_t )( 4 * ( num_elements + 1 ) ) ) / 2;
+               data_buff_size = ( size - (size_t)( 4 * ( num_elements + 1 ) ) ) / 2;
             } else {
                data_buff_size = 0;
             }
@@ -2608,7 +2608,7 @@ WARNING: Truncating array of ENCODING_ASCII_STRING from %d to %d elements for pa
             // data_buff_size = size - 4 - 4 * num_elements
             size_t data_buff_size;
             if ( size > ( 4 * ( num_elements + 1 ) ) ) {
-               data_buff_size = size - ( size_t )( 4 * ( num_elements + 1 ) );
+               data_buff_size = size - (size_t)( 4 * ( num_elements + 1 ) );
             } else {
                data_buff_size = 0;
             }
@@ -2852,7 +2852,7 @@ WARNING: Truncating array of ENCODING_OPAQUE_DATA from %d to %d elements for par
             // data_buff_size = size - 4 - 4 * num_elements
             size_t data_buff_size;
             if ( size > ( 4 * ( 1 + (size_t)num_elements ) ) ) {
-               data_buff_size = size - ( size_t )( 4 * ( 1 + num_elements ) );
+               data_buff_size = size - (size_t)( 4 * ( 1 + num_elements ) );
             } else {
                data_buff_size = 0;
             }

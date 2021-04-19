@@ -109,12 +109,12 @@ void Int64Time::decode(
 
 int64_t Int64Time::get_seconds() const
 {
-   return ( ( int64_t )( hla_time.getTime() / MICROS_MULTIPLIER ) );
+   return ( (int64_t)( hla_time.getTime() / MICROS_MULTIPLIER ) );
 }
 
 int32_t Int64Time::get_micros() const
 {
-   return ( ( int32_t )( hla_time.getTime() % MICROS_MULTIPLIER ) );
+   return ( (int32_t)( hla_time.getTime() % MICROS_MULTIPLIER ) );
 }
 
 int64_t Int64Time::get_time_in_micros() const
