@@ -20,6 +20,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
+@trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../source/TrickHLA/SyncPnt.cpp}
 @trick_link_dependency{../source/TrickHLA/SyncPntListBase.cpp}
 
@@ -41,6 +42,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/LoggableSyncPnt.hh"
+#include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/SyncPnt.hh"
 
@@ -127,13 +129,20 @@ class SyncPntListBase
     *  and is one of the sync-points created.
     *  @param label      Sync-point label.
     *  @param not_unique True if not unique label. */
-   virtual void sync_point_registration_failed( std::wstring const &label, bool not_unique );
+   virtual void sync_point_registration_failed( std::wstring const &label,
+                                                bool                not_unique );
 
    /*! @brief Wait for the sync-point to be announced by the RTI.
     *  @param fed_ptr Pointer to TrickHLA::Federate instance.
     *  @param label   Sync-point label. */
    virtual void wait_for_announcement( Federate *          fed_ptr,
                                        std::wstring const &label );
+
+   /*! @brief Wait for the sync-point to be announced by the RTI.
+    *  @param fed_ptr Pointer to TrickHLA::Federate instance.
+    *  @param sync_pt Sync-point instance. */
+   virtual void wait_for_announcement( Federate *fed_ptr,
+                                       SyncPnt * sync_pt );
 
    /*! @brief Wait for all the sync-points to be registered with the RTI.
     *  @param fed_ptr Pointer to TrickHLA::Federate instance. */
@@ -249,20 +258,42 @@ class SyncPntListBase
    virtual void print_sync_pnts();
 
   protected:
-   /*! @brief Put the lock in read only state. */
-   void lock_read_only();
+   // Principal synchronization point functions.
+   /*! @brief Register the synchronization point with the RTI.
+    *  @param RTI_amb HLA RTI Ambassador.
+    *  @param sync_pnt The SyncPnt instance. */
+   virtual void register_sync_point( RTI1516_NAMESPACE::RTIambassador &RTI_amb,
+                                     SyncPnt *                         sync_pnt );
 
-   /*! @brief Put the lock in read/write state. */
-   void lock_read_write();
+   /*! @brief Register the synchronization point with the RTI.
+    *  @param RTI_amb The HLA RTI Ambassador.
+    *  @param federate_handle_set HLA Federation handle set.
+    *  @param sync_pnt The SyncPnt instance. */
+   virtual void register_sync_point(
+      RTI1516_NAMESPACE::RTIambassador &          RTI_amb,
+      RTI1516_NAMESPACE::FederateHandleSet const &federate_handle_set,
+      SyncPnt *                                   sync_pnt );
 
-   /*! @brief Unlock the read only lock. */
-   void unlock_read_only();
+   /*! @brief Wait for the announcement of the synchronization point.
+    *  @param federate The TrickHLA::Federate instance.
+    *  @param sync_pnt The SyncPnt instance. */
+   bool wait_for_sync_pnt_announce( Federate *federate,
+                                    SyncPnt * sync_pnt );
 
-   /*! @brief Unlock the read/write lock. */
-   void unlock_read_write();
+   /*! @brief Notify the RTI that the synchronization point has been achieved.
+    *  @param RTI_amb The HLA RTI Ambassador.
+    *  @param sync_pnt The SyncPnt instance. */
+   virtual void achieve_sync_point( RTI1516_NAMESPACE::RTIambassador &RTI_amb,
+                                    SyncPnt *                         sync_pnt );
 
-   int read_locks;  ///< @trick_units{--} Read lock count.
-   int write_locks; ///< @trick_units{--} Write lock count.
+   /*! @brief Wait for this synchronization point to be synchronized.
+    *  @param federate The TrickHLA::Federate instance.
+    *  @param sync_pnt The SyncPnt instance. */
+   bool wait_for_synchronization( Federate *federate,
+                                  SyncPnt * sync_pnt );
+
+  protected:
+   MutexLock mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
 
    std::vector< SyncPnt * > sync_point_list; ///< @trick_io{**} Vector of synchronization points.
 

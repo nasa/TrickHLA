@@ -1993,13 +1993,13 @@ bool ExecutionControl::run_mode_transition()
    } else {
 
       // Wait for 'mtr_run' sync-point announce.
-      sync_pnt->wait_for_announce( federate );
+      this->wait_for_sync_pnt_announce( federate, sync_pnt );
 
       // Achieve the 'mtr-run' sync-point.
-      sync_pnt->achieve_sync_point( *RTI_amb );
+      this->achieve_sync_point( *RTI_amb, sync_pnt );
 
       // Wait for 'mtr_run' sync-point synchronization.
-      sync_pnt->wait_for_synchronization( federate );
+      this->wait_for_synchronization( federate, sync_pnt );
 
       // Set the current execution mode to running.
       this->current_execution_control_mode = EXECUTION_CONTROL_RUNNING;
@@ -2085,13 +2085,13 @@ bool ExecutionControl::freeze_mode_transition()
    } else {
 
       // Wait for 'mtr_freeze' sync-point announce.
-      sync_pnt->wait_for_announce( federate );
+      this->wait_for_sync_pnt_announce( federate, sync_pnt );
 
       // Achieve the 'mtr_freeze' sync-point.
-      sync_pnt->achieve_sync_point( *RTI_amb );
+      this->achieve_sync_point( *RTI_amb, sync_pnt );
 
       // Wait for 'mtr_freeze' sync-point synchronization.
-      sync_pnt->wait_for_synchronization( federate );
+      this->wait_for_synchronization( federate, sync_pnt );
 
       // Set the current execution mode to freeze.
       this->current_execution_control_mode = EXECUTION_CONTROL_FREEZE;

@@ -2542,7 +2542,6 @@ void Federate::sync_point_registration_failed(
 void Federate::federation_synchronized(
    wstring const &label )
 {
-
    // Mark the sync-point and synchronized.
    execution_control->mark_synchronized( label );
 }

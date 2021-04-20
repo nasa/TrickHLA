@@ -83,30 +83,6 @@ class SyncPnt
    /*! @brief Destructor for the TrickHLA SyncPnt class. */
    virtual ~SyncPnt();
 
-   // Principal synchronization point functions.
-   /*! @brief Register the synchronization point with the RTI.
-    *  @param RTI_amb HLA RTI Ambassador. */
-   virtual void register_sync_point( RTI1516_NAMESPACE::RTIambassador &RTI_amb );
-
-   /*! @brief Register the synchronization point with the RTI.
-    *  @param RTI_amb The HLA RTI Ambassador.
-    *  @param federate_handle_set HLA Federation handle set. */
-   virtual void register_sync_point(
-      RTI1516_NAMESPACE::RTIambassador &          RTI_amb,
-      RTI1516_NAMESPACE::FederateHandleSet const &federate_handle_set );
-
-   /*! @brief Wait for the announcement of the synchronization point.
-    *  @param federate The TrickHLA::Federate instance. */
-   bool wait_for_announce( Federate *federate );
-
-   /*! @brief Notify the RTI that the synchronization point has been achieved.
-    *  @param RTI_amb The HLA RTI Ambassador. */
-   virtual void achieve_sync_point( RTI1516_NAMESPACE::RTIambassador &RTI_amb );
-
-   /*! @brief Wait for this synchronization point to be synchronized.
-    *  @param federate The TrickHLA::Federate instance. */
-   bool wait_for_synchronization( Federate *federate );
-
    // Functions to check synchronization point state.
    /*! @brief Check if the synchronization point has been created and exists
     *  in at least on valid state.

@@ -37,7 +37,10 @@ using namespace TrickHLA;
  */
 MutexLock::MutexLock()
 {
-   pthread_mutex_init( &mutex, NULL );
+   pthread_mutexattr_t attr;
+   pthread_mutexattr_init( &attr );
+   pthread_mutexattr_settype( &attr, PTHREAD_MUTEX_RECURSIVE );
+   pthread_mutex_init( &mutex, &attr );
 }
 
 /*!
@@ -46,6 +49,7 @@ MutexLock::MutexLock()
  */
 MutexLock::~MutexLock()
 {
+   (void)unlock();
    pthread_mutex_destroy( &mutex );
 }
 

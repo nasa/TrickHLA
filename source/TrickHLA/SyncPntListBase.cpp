@@ -18,6 +18,8 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{Federate.cpp}
+@trick_link_dependency{MutexLock.cpp}
+@trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{SyncPnt.cpp}
 @trick_link_dependency{SyncPntListBase.cpp}
@@ -44,6 +46,8 @@ NASA, Johnson Space Center\n
 // HLA include files.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPnt.hh"
@@ -59,8 +63,7 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 SyncPntListBase::SyncPntListBase()
-   : read_locks( 0 ),
-     write_locks( 0 )
+   : mutex()
 {
    return;
 }
@@ -71,47 +74,43 @@ SyncPntListBase::SyncPntListBase()
  */
 SyncPntListBase::~SyncPntListBase()
 {
-   SyncPntListBase::reset();
+   reset();
+   // Make sure we unlock the mutex.
+   (void)mutex.unlock();
 }
 
 void SyncPntListBase::add_sync_pnt(
    wstring const &label )
 {
    SyncPnt *sp = new SyncPnt( label );
-   lock_read_write();
+
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
    sync_point_list.push_back( sp );
-   unlock_read_write();
 }
 
 SyncPnt *SyncPntListBase::get_sync_pnt(
    std::wstring const &label )
 {
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
 
-   // Mark the read lock.
-   lock_read_only();
-
-   // Find the sync-point.
    if ( !sync_point_list.empty() ) {
 
+      // Find the sync-point.
       vector< SyncPnt * >::const_iterator i;
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-
          SyncPnt *sp = ( *i );
 
          // Check for a match.
          if ( ( sp != NULL ) && ( sp->get_label().compare( label ) == 0 ) ) {
-
-            // Release the read lock.
-            unlock_read_only();
-
             // Return the sync-point.
             return sp;
          }
       }
    }
-
-   // Release the read lock.
-   unlock_read_only();
 
    // Must not have found the sync-point.
    return NULL;
@@ -121,27 +120,15 @@ SyncPnt *SyncPntListBase::register_sync_pnt(
    RTI1516_NAMESPACE::RTIambassador &rti_amb,
    wstring const &                   label )
 {
-   lock_read_only();
-   if ( !sync_point_list.empty() ) {
-      vector< SyncPnt * >::const_iterator i;
-      for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-         SyncPnt *sp = ( *i );
-         if ( ( sp != NULL ) && ( sp->get_label().compare( label ) == 0 ) ) {
-            // Check to see if the sync-point is already registered.
-            if ( sp->is_registered() ) {
-               unlock_read_only();
-               return sp;
-            }
-            sp->register_sync_point( rti_amb );
-            unlock_read_only();
-            return sp;
-         }
-      }
-   }
-   unlock_read_only();
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
 
-   // Must not have found the sync-point.
-   return NULL;
+   SyncPnt *sp = get_sync_pnt( label );
+   if ( ( sp != NULL ) && !sp->is_registered() ) {
+      register_sync_point( rti_amb, sp );
+   }
+   return sp;
 }
 
 SyncPnt *SyncPntListBase::register_sync_pnt(
@@ -149,51 +136,36 @@ SyncPnt *SyncPntListBase::register_sync_pnt(
    RTI1516_NAMESPACE::FederateHandleSet const &federate_handle_set,
    wstring const &                             label )
 {
-   lock_read_only();
-   if ( !sync_point_list.empty() ) {
-      vector< SyncPnt * >::const_iterator i;
-      for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-         SyncPnt *sp = ( *i );
-         if ( ( sp != NULL ) && ( sp->get_label().compare( label ) == 0 ) ) {
-            // Check to see if the sync-point is already registered.
-            if ( sp->is_registered() ) {
-               unlock_read_only();
-               return sp;
-            }
-            sp->register_sync_point( rti_amb, federate_handle_set );
-            unlock_read_only();
-            return sp;
-         }
-      }
-   }
-   unlock_read_only();
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
 
-   // Must not have found the sync-point.
-   return NULL;
+   SyncPnt *sp = get_sync_pnt( label );
+   if ( ( sp != NULL ) && !sp->is_registered() ) {
+      register_sync_point( rti_amb, federate_handle_set, sp );
+   }
+   return sp;
 }
 
 void SyncPntListBase::register_all_sync_pnts(
    RTI1516_NAMESPACE::RTIambassador &rti_ambassador )
 {
-   // Macro to save the FPU Control Word register value.
-   TRICKHLA_SAVE_FPU_CONTROL_WORD;
-
    // Iterate through all the synchronization points that have been added.
    vector< SyncPnt * >::const_iterator i;
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
       SyncPnt *sp = ( *i );
+
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &mutex );
+
       // Only add them if they are not already registered.
       if ( ( sp != NULL ) && !sp->is_registered() ) {
+
          // Register the synchronization point.
-         sp->register_sync_point( rti_ambassador );
+         register_sync_point( rti_ambassador, sp );
       }
    }
-
-   // Macro to restore the saved FPU Control Word register value.
-   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-   return;
 }
 
 void SyncPntListBase::register_all_sync_pnts(
@@ -203,24 +175,22 @@ void SyncPntListBase::register_all_sync_pnts(
    if ( federate_handle_set.empty() ) {
       register_all_sync_pnts( rti_ambassador );
    } else {
-      // Macro to save the FPU Control Word register value.
-      TRICKHLA_SAVE_FPU_CONTROL_WORD;
-
       vector< SyncPnt * >::const_iterator i;
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
          SyncPnt *sp = ( *i );
+
+         // When auto_unlock_mutex goes out of scope it automatically unlocks
+         // the mutex even if there is an exception.
+         MutexProtection auto_unlock_mutex( &mutex );
+
          // Only add them if they are not already registered.
          if ( ( sp != NULL ) && !sp->is_registered() ) {
+
             // Register the synchronization point with federate in set.
-            sp->register_sync_point( rti_ambassador, federate_handle_set );
+            register_sync_point( rti_ambassador, federate_handle_set, sp );
          }
       }
-
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
    }
-   return;
 }
 
 void SyncPntListBase::sync_point_registration_succeeded(
@@ -232,14 +202,12 @@ void SyncPntListBase::sync_point_registration_succeeded(
                   __LINE__, label.c_str(), THLA_NEWLINE );
       }
    }
-   return;
 }
 
 void SyncPntListBase::sync_point_registration_failed(
    wstring const &label,
    bool           not_unique )
 {
-
    // Only handle the sync-points we know about.
    if ( this->contains( label ) ) {
 
@@ -253,20 +221,27 @@ void SyncPntListBase::sync_point_registration_failed(
                      __LINE__, label.c_str(), THLA_NEWLINE );
          }
       } else {
-         send_hs( stderr, "SyncPntListBase::sync_point_registration_failed():%d '%ls' Synchronization Point failure, federate shutting down!%c",
-                  __LINE__, label.c_str(), THLA_NEWLINE );
+         ostringstream errmsg;
+         errmsg << "SyncPntListBase::sync_point_registration_failed():" << __LINE__
+                << " '" << label.c_str() << "'" << THLA_ENDL;
+         send_hs( stderr, (char *)errmsg.str().c_str() );
+         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
          exit( 1 );
       }
    }
-
-   return;
 }
 
 void SyncPntListBase::wait_for_announcement(
-   Federate *     fed_ptr,
-   wstring const &label )
+   Federate *          fed_ptr,
+   std::wstring const &label )
 {
-   SyncPnt *sp = this->get_sync_pnt( label );
+   this->wait_for_announcement( fed_ptr, this->get_sync_pnt( label ) );
+}
+
+void SyncPntListBase::wait_for_announcement(
+   Federate *fed_ptr,
+   SyncPnt * sp )
+{
    if ( sp != NULL ) {
       string sp_status;
 
@@ -280,7 +255,7 @@ void SyncPntListBase::wait_for_announcement(
          send_hs( stderr, (char *)message.str().c_str() );
       }
 
-      sp->wait_for_announce( fed_ptr );
+      wait_for_sync_pnt_announce( fed_ptr, sp );
 
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          // Get the current sync-point status.
@@ -292,7 +267,6 @@ void SyncPntListBase::wait_for_announcement(
          send_hs( stderr, (char *)message.str().c_str() );
       }
    }
-   return;
 }
 
 void SyncPntListBase::wait_for_all_announcements(
@@ -309,17 +283,14 @@ void SyncPntListBase::wait_for_all_announcements(
    // Iterate through the synchronization point list.
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
       SyncPnt *sp = ( *i );
-      if ( sp != NULL ) {
-         // Wait for the synchronization point announcement.
-         sp->wait_for_announce( fed_ptr );
-      }
+
+      // Wait for the sync-point announcement.
+      this->wait_for_announcement( fed_ptr, sp );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       this->print_sync_pnts();
    }
-
-   return;
 }
 
 void SyncPntListBase::announce_sync_point(
@@ -327,20 +298,18 @@ void SyncPntListBase::announce_sync_point(
    wstring const &                   label,
    RTI1516_USERDATA const &          user_supplied_tag )
 {
-
    // Check to see if the synchronization point is known?
    if ( this->contains( label ) ) {
 
-      // Mark initialization sync-point as existing/announced.
+      // Mark sync-point as existing/announced.
       if ( this->mark_announced( label ) ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             send_hs( stdout, "SyncPntListBase::announce_sync_point():%d Synchronization point announced:'%ls'%c",
                      __LINE__, label.c_str(), THLA_NEWLINE );
          }
       }
-
-   } // By default, mark an unrecognized synchronization point is achieved.
-   else {
+   } else {
+      // By default, achieve unrecognized synchronization point.
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "SyncPntListBase::announce_sync_point():%d Unrecognized synchronization point:'%ls', which will be achieved.%c",
@@ -351,112 +320,119 @@ void SyncPntListBase::announce_sync_point(
       // federation to be synchronized on it.
       this->achieve_sync_pnt( rti_ambassador, label );
    }
-   return;
 }
 
 bool SyncPntListBase::achieve_sync_pnt(
    RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
    wstring const &                   label )
 {
-   lock_read_only();
-   if ( !sync_point_list.empty() ) {
-      vector< SyncPnt * >::const_iterator i;
-      for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-         SyncPnt *sp = ( *i );
-         if ( ( sp != NULL ) && ( sp->get_label().compare( label ) == 0 ) ) {
-            // Check to see if the sync-point is already achieved.
-            if ( sp->is_achieved() ) {
-               unlock_read_only();
-               return false;
-            }
-            bool returnValue = this->achieve_sync_pnt( rti_ambassador, sp );
-            unlock_read_only();
-            return returnValue;
-         }
-      }
-   }
-   unlock_read_only();
-   return false;
+   return this->achieve_sync_pnt( rti_ambassador, this->get_sync_pnt( label ) );
 }
 
 bool SyncPntListBase::achieve_sync_pnt(
    RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
    SyncPnt *                         sync_pnt )
 {
-   sync_pnt->set_state( SYNC_PT_STATE_ACHIEVED );
-   try {
-      rti_ambassador.synchronizationPointAchieved( sync_pnt->get_label() );
-   } catch ( SynchronizationPointLabelNotAnnounced &e ) {
-      unlock_read_only();
-      throw; // Rethrow the exception.
-   } catch ( FederateNotExecutionMember &e ) {
-      unlock_read_only();
-      throw; // Rethrow the exception.
-   } catch ( SaveInProgress &e ) {
-      unlock_read_only();
-      throw; // Rethrow the exception.
-   } catch ( RestoreInProgress &e ) {
-      unlock_read_only();
-      throw; // Rethrow the exception.
-   } catch ( NotConnected &e ) {
-      unlock_read_only();
-      throw; // Rethrow the exception.
-   } catch ( RTIinternalError &e ) {
-      unlock_read_only();
-      throw; // Rethrow the exception.
+   if ( sync_pnt != NULL ) {
+      try {
+         // When auto_unlock_mutex goes out of scope it automatically unlocks the
+         // mutex even if there is an exception.
+         MutexProtection auto_unlock_mutex( &mutex );
+
+         rti_ambassador.synchronizationPointAchieved( sync_pnt->get_label() );
+         sync_pnt->set_state( SYNC_PT_STATE_ACHIEVED );
+
+      } catch ( SynchronizationPointLabelNotAnnounced &e ) {
+         throw; // Rethrow the exception.
+      } catch ( FederateNotExecutionMember &e ) {
+         throw; // Rethrow the exception.
+      } catch ( SaveInProgress &e ) {
+         throw; // Rethrow the exception.
+      } catch ( RestoreInProgress &e ) {
+         throw; // Rethrow the exception.
+      } catch ( NotConnected &e ) {
+         throw; // Rethrow the exception.
+      } catch ( RTIinternalError &e ) {
+         throw; // Rethrow the exception.
+      }
+      return true;
    }
-   return true;
+   return false;
 }
 
 void SyncPntListBase::wait_for_list_synchronization(
    Federate *federate )
 {
+   bool         achieved, valid_and_not_achieved;
+   SleepTimeout sleep_timer( THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC, 10000 );
+
    // Iterate through this SyncPntList's synchronization point list.
    vector< SyncPnt * >::const_iterator i;
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
       SyncPnt *sp = ( *i );
 
-      // Wait for a synchronization point if it is not already achieved.
-      if ( ( sp != NULL ) && sp->is_valid() && !sp->is_achieved() ) {
+      // Critical code section with a scope specific mutex lock.
+      {
+         // When auto_unlock_mutex goes out of scope it automatically unlocks the
+         // mutex even if there is an exception.
+         MutexProtection auto_unlock_mutex( &mutex );
+         valid_and_not_achieved = ( sp != NULL ) && sp->is_valid() && !sp->is_achieved();
+      }
 
-         SleepTimeout sleep_timer;
+      // Wait for a synchronization point if it is not already achieved.
+      if ( valid_and_not_achieved ) {
 
          // Wait for the federation to synchronized on the sync-point.
-         while ( !sp->is_achieved() ) {
+         do {
 
-            // Always check to see is a shutdown was received.
-            federate->check_for_shutdown_with_termination();
+            // Critical code section with a scope specific mutex lock.
+            {
+               // When auto_unlock_mutex goes out of scope it automatically unlocks the
+               // mutex even if there is an exception.
+               MutexProtection auto_unlock_mutex( &mutex );
+               achieved = sp->is_achieved();
+            }
 
-            // Pause and release the processor for short sleep value.
-            (void)sleep_timer.sleep();
+            if ( !achieved ) {
+               // Always check to see is a shutdown was received.
+               federate->check_for_shutdown_with_termination();
 
-            // Periodically check to make sure the federate is still part of
-            // the federation exectuion.
-            if ( !sp->is_achieved() && sleep_timer.timeout() ) {
-               sleep_timer.reset();
-               if ( !federate->is_execution_member() ) {
-                  ostringstream errmsg;
-                  errmsg << "SyncPntListBase::wait_for_all_sync_pnts_synchronization:" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution"
-                         << " member. This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
-                         << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << THLA_ENDL;
-                  send_hs( stderr, (char *)errmsg.str().c_str() );
-                  exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               // Pause and release the processor for short sleep value.
+               (void)sleep_timer.sleep();
+
+               // Periodically check to make sure the federate is still part of
+               // the federation execution.
+               if ( sleep_timer.timeout() ) {
+                  sleep_timer.reset();
+                  if ( !federate->is_execution_member() ) {
+                     ostringstream errmsg;
+                     errmsg << "SyncPntListBase::wait_for_all_sync_pnts_synchronization:" << __LINE__
+                            << " Unexpectedly the Federate is no longer an execution"
+                            << " member. This means we are either not connected to the"
+                            << " RTI or we are no longer joined to the federation"
+                            << " execution because someone forced our resignation at"
+                            << " the Central RTI Component (CRC) level!"
+                            << THLA_ENDL;
+                     send_hs( stderr, (char *)errmsg.str().c_str() );
+                     exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+                  }
                }
             }
+         } while ( !achieved );
+      }
+
+      // Critical code section with a scope specific mutex lock.
+      {
+         // When auto_unlock_mutex goes out of scope it automatically unlocks the
+         // mutex even if there is an exception.
+         MutexProtection auto_unlock_mutex( &mutex );
+
+         // Now that the sync-point is achieved, reset the state to EXISTS.
+         if ( ( sp != NULL ) && !sp->is_achieved() ) {
+            sp->set_state( SYNC_PT_STATE_EXISTS );
          }
       }
-
-      // Now that the sync-point is achieved, reset the state to EXISTS.
-      if ( sp != NULL ) {
-         sp->set_state( SYNC_PT_STATE_EXISTS );
-      }
    }
-
-   return;
 }
 
 void SyncPntListBase::achieve_and_wait_for_synchronization(
@@ -477,7 +453,7 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
       if ( sp->is_announced() ) {
 
          // Achieve the synchronization point.
-         sp->achieve_sync_point( rti_ambassador );
+         achieve_sync_point( rti_ambassador, sp );
 
       } else if ( sp->is_achieved() ) {
 
@@ -519,9 +495,18 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
          return;
       }
 
+      bool achieved_and_not_synched;
+      {
+         // When auto_unlock_mutex goes out of scope it automatically unlocks the
+         // mutex even if there is an exception.
+         MutexProtection auto_unlock_mutex( &mutex );
+         achieved_and_not_synched = sp->is_achieved() && !sp->is_synchronized();
+      }
       // If achieved and not synchronized, then synchronize with the federation.
-      if ( sp->is_achieved() && !sp->is_synchronized() ) {
-         sp->wait_for_synchronization( federate );
+      if ( achieved_and_not_synched ) {
+         // WARNING: Make sure we don't lock the mutex before we make this
+         // call otherwise it will block the FedAmb callbacks.
+         wait_for_synchronization( federate, sp );
          return;
       }
 
@@ -537,8 +522,6 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    }
-
-   return;
 }
 
 /*!
@@ -547,65 +530,55 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
 bool SyncPntListBase::achieve_all_sync_pnts(
    RTI1516_NAMESPACE::RTIambassador &rti_ambassador )
 {
-   bool wasAcknowledged = false;
+   bool acknowledged = false;
 
    // Iterate through ALL the synchronization points.
    vector< SyncPnt * >::const_iterator i;
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
       SyncPnt *sp = ( *i );
 
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &mutex );
+
       if ( ( sp != NULL ) && sp->is_valid() && !sp->is_achieved() ) {
          if ( this->achieve_sync_pnt( rti_ambassador, sp ) ) {
-            wasAcknowledged = true;
+            acknowledged = true;
          }
       }
    }
-
-   return ( wasAcknowledged );
+   return ( acknowledged );
 }
 
 SyncPtStateEnum SyncPntListBase::get_sync_pnt_state(
    wstring const &label )
 {
-   lock_read_write();
-   if ( !sync_point_list.empty() ) {
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
 
-      // Iterate through the sync-point list.
-      vector< SyncPnt * >::iterator i;
-      for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-         SyncPnt *sp = ( *i );
-
-         // Check if this is the sync-point that we're looking for.
-         if ( ( sp != NULL ) && ( label.compare( sp->get_label() ) == 0 ) ) {
-
-            // This is the sync-point we're looking for.
-            sync_point_list.end();
-            unlock_read_write();
-            return sp->get_state();
-         }
-      }
+   SyncPnt *sp = get_sync_pnt( label );
+   if ( sp != NULL ) {
+      return sp->get_state();
    }
-   unlock_read_write();
-
-   // Hmmm. . . We did not find the sync-point.
+   // We did not find the sync-point.
    return SYNC_PT_STATE_ERROR;
 }
 
 bool SyncPntListBase::is_sync_pnt_announced(
    wstring const &label )
 {
-
    SyncPtStateEnum state = get_sync_pnt_state( label );
-   if ( state == SYNC_PT_STATE_ANNOUNCED ) {
-      return true;
-   }
-   return false;
+   return ( state == SYNC_PT_STATE_ANNOUNCED );
 }
 
 bool SyncPntListBase::clear_sync_pnt(
    wstring const &label )
 {
-   lock_read_write();
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
+
    if ( !sync_point_list.empty() ) {
       vector< SyncPnt * >::iterator i;
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
@@ -618,18 +591,19 @@ bool SyncPntListBase::clear_sync_pnt(
             delete sp;
             i = sync_point_list.end();
 
-            unlock_read_write();
             return true;
          }
       }
    }
-   unlock_read_write();
    return false;
 }
 
 void SyncPntListBase::reset()
 {
-   lock_read_write();
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
+
    while ( !sync_point_list.empty() ) {
       if ( *sync_point_list.begin() != NULL ) {
          delete ( *sync_point_list.begin() );
@@ -637,7 +611,6 @@ void SyncPntListBase::reset()
       }
    }
    sync_point_list.clear();
-   unlock_read_write();
 }
 
 /*!
@@ -646,18 +619,19 @@ void SyncPntListBase::reset()
 bool SyncPntListBase::contains(
    wstring const &label )
 {
-   lock_read_only();
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
+
    if ( !sync_point_list.empty() ) {
       vector< SyncPnt * >::const_iterator i;
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
          SyncPnt *sp = ( *i );
          if ( ( sp != NULL ) && ( sp->get_label().compare( label ) == 0 ) ) {
-            unlock_read_only();
             return true;
          }
       }
    }
-   unlock_read_only();
    return false;
 }
 
@@ -667,14 +641,14 @@ bool SyncPntListBase::contains(
 bool SyncPntListBase::mark_registered(
    wstring const &label )
 {
-   vector< SyncPnt * >::const_iterator i;
-   for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-      SyncPnt *sp = ( *i );
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
 
-      if ( ( sp != NULL ) && ( sp->get_label().compare( label ) == 0 ) ) {
-         sp->set_state( SYNC_PT_STATE_REGISTERED );
-         return true;
-      }
+   SyncPnt *sp = get_sync_pnt( label );
+   if ( sp != NULL ) {
+      sp->set_state( SYNC_PT_STATE_REGISTERED );
+      return true;
    }
    return false;
 }
@@ -685,14 +659,14 @@ bool SyncPntListBase::mark_registered(
 bool SyncPntListBase::mark_announced(
    wstring const &label )
 {
-   vector< SyncPnt * >::const_iterator i;
-   for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-      SyncPnt *sp = ( *i );
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
 
-      if ( ( sp != NULL ) && ( sp->get_label().compare( label ) == 0 ) ) {
-         sp->set_state( SYNC_PT_STATE_ANNOUNCED );
-         return true;
-      }
+   SyncPnt *sp = get_sync_pnt( label );
+   if ( sp != NULL ) {
+      sp->set_state( SYNC_PT_STATE_ANNOUNCED );
+      return true;
    }
    return false;
 }
@@ -703,99 +677,348 @@ bool SyncPntListBase::mark_announced(
 bool SyncPntListBase::mark_synchronized(
    wstring const &label )
 {
-   vector< SyncPnt * >::const_iterator i;
-   for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-      SyncPnt *sp = ( *i );
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
+
+   SyncPnt *sp = get_sync_pnt( label );
+
+   if ( sp != NULL ) {
 
       // Mark the synchronization point at achieved which indicates the
       // federation is synchronized on the synchronization point.
-      if ( ( sp != NULL ) && ( sp->get_label().compare( label ) == 0 ) ) {
-         sp->set_state( SYNC_PT_STATE_SYNCHRONIZED );
-         return true;
-      }
+      sp->set_state( SYNC_PT_STATE_SYNCHRONIZED );
+
+      return true;
    }
    return false;
 }
 
-void SyncPntListBase::lock_read_only()
-{
-   while ( write_locks > 0 ) {
-      RELEASE_1();
-   }
-   read_locks++;
-}
-
-void SyncPntListBase::lock_read_write()
-{
-   while ( ( write_locks + read_locks ) > 0 ) {
-      RELEASE_1();
-   }
-   write_locks++;
-}
-
-void SyncPntListBase::unlock_read_only()
-{
-   read_locks--;
-}
-
-void SyncPntListBase::unlock_read_write()
-{
-   write_locks--;
-}
-
 wstring SyncPntListBase::to_wstring()
 {
-   wstring result;
-
-   result = L"Sync Points\n  state: ";
+   wstring result = L"Sync Points\n  state: ";
 
    // Extension class dependent code would go here.
 
-   vector< SyncPnt * >::const_iterator i;
-   lock_read_only();
-   for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-      SyncPnt *sp = ( *i );
-      if ( sp != NULL ) {
-         result += L"  " + sp->to_wstring() + L"\n";
+   // Critical code section.
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &mutex );
+
+      vector< SyncPnt * >::const_iterator i;
+      for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
+         SyncPnt *sp = ( *i );
+         if ( sp != NULL ) {
+            result += L"  " + sp->to_wstring() + L"\n";
+         }
       }
    }
    result += L"\n";
-   unlock_read_only();
    return result;
 }
 
 void SyncPntListBase::convert_sync_pts(
    LoggableSyncPnt *sync_points )
 {
-   int                                 loop = 0;
-   vector< SyncPnt * >::const_iterator i;
+   int loop = 0;
 
-   lock_read_only();
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
+
+   vector< SyncPnt * >::const_iterator i;
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
       ( *i )->convert( sync_points[loop++] );
    }
-
-   unlock_read_only();
 }
 
 void SyncPntListBase::print_sync_pnts()
 {
-   vector< SyncPnt * >::const_iterator i;
-   string                              sync_point_label;
-   wstring                             spwl;
+   string  sync_point_label;
+   wstring spwl;
 
    ostringstream msg;
    msg << "SyncPntListBase::print_sync_pnts():" << __LINE__ << endl
        << "#############################" << endl
        << "Sync Point Dump: " << sync_point_list.size() << endl;
-   lock_read_only();
-   for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-      spwl = ( *i )->to_wstring();
-      sync_point_label.assign( spwl.begin(), spwl.end() );
-      msg << sync_point_label << endl;
+
+   // Critical code section.
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &mutex );
+
+      vector< SyncPnt * >::const_iterator i;
+      for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
+         spwl = ( *i )->to_wstring();
+         sync_point_label.assign( spwl.begin(), spwl.end() );
+         msg << sync_point_label << endl;
+      }
    }
    msg << "#############################" << endl;
    send_hs( stdout, (char *)msg.str().c_str() );
+}
 
-   unlock_read_only();
+void SyncPntListBase::register_sync_point(
+   RTI1516_NAMESPACE::RTIambassador &RTI_amb,
+   SyncPnt *                         sp )
+{
+   // Macro to save the FPU Control Word register value.
+   TRICKHLA_SAVE_FPU_CONTROL_WORD;
+
+   // Register the sync-point label.
+   try {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks
+      // the mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &mutex );
+
+      RTI_amb.registerFederationSynchronizationPoint( sp->get_label(),
+                                                      RTI1516_USERDATA( 0, 0 ) );
+      // Mark the sync-point as registered.
+      sp->set_state( SYNC_PT_STATE_REGISTERED );
+
+   } catch ( RTI1516_EXCEPTION &e ) {
+
+      // Macro to restore the saved FPU Control Word register value.
+      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+      string name;
+      StringUtilities::to_string( name, sp->get_label() );
+      ostringstream errmsg;
+      errmsg << "SyncPntListBase::register_sync_point():" << __LINE__
+             << " Failed to register '" << name
+             << "' synchronization point with RTI!" << THLA_ENDL;
+      send_hs( stderr, (char *)errmsg.str().c_str() );
+      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      exit( 0 );
+   }
+
+   // Macro to restore the saved FPU Control Word register value.
+   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+}
+
+void SyncPntListBase::register_sync_point(
+   RTI1516_NAMESPACE::RTIambassador &          RTI_amb,
+   RTI1516_NAMESPACE::FederateHandleSet const &federate_handle_set,
+   SyncPnt *                                   sp )
+{
+   // Macro to save the FPU Control Word register value.
+   TRICKHLA_SAVE_FPU_CONTROL_WORD;
+
+   // Register the sync-point label.
+   try {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks
+      // the mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &mutex );
+
+      RTI_amb.registerFederationSynchronizationPoint( sp->get_label(),
+                                                      RTI1516_USERDATA( 0, 0 ),
+                                                      federate_handle_set );
+      // Mark the sync-point as registered.
+      sp->set_state( SYNC_PT_STATE_REGISTERED );
+
+   } catch ( RTI1516_EXCEPTION &e ) {
+
+      // Macro to restore the saved FPU Control Word register value.
+      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+      string name;
+      StringUtilities::to_string( name, sp->get_label() );
+      ostringstream errmsg;
+      errmsg << "SyncPntListBase::register_sync_point():" << __LINE__
+             << " Failed to register '" << name
+             << "' synchronization point with RTI!" << THLA_ENDL;
+      send_hs( stderr, (char *)errmsg.str().c_str() );
+      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      exit( 0 );
+   }
+
+   // Macro to restore the saved FPU Control Word register value.
+   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+}
+
+bool SyncPntListBase::wait_for_sync_pnt_announce(
+   Federate *federate,
+   SyncPnt * sp )
+{
+   if ( sp != NULL ) {
+
+      // Critical code section.
+      {
+         // When auto_unlock_mutex goes out of scope it automatically unlocks the
+         // mutex even if there is an exception.
+         MutexProtection auto_unlock_mutex( &mutex );
+
+         // The sync-point state must be SYNC_PT_STATE_REGISTERED.
+         if ( !sp->exists() && !sp->is_registered() && !sp->is_announced() ) {
+            string sp_status;
+            StringUtilities::to_string( sp_status, sp->to_wstring() );
+
+            ostringstream errmsg;
+            errmsg << "SyncPntListBase::wait_for_sync_pt_announce():" << __LINE__
+                   << " Bad sync-point state for sync-point!"
+                   << " The sync-point state: " << sp_status << THLA_ENDL;
+            send_hs( stderr, (char *)errmsg.str().c_str() );
+            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         }
+      }
+
+      bool         announced;
+      SleepTimeout sleep_timer( THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC, 10000 );
+
+      // Wait for the federation to synchronize on the sync-point.
+      do {
+
+         // Critical code section.
+         {
+            // When auto_unlock_mutex goes out of scope it automatically unlocks the
+            // mutex even if there is an exception.
+            MutexProtection auto_unlock_mutex( &mutex );
+            announced = sp->is_announced();
+         }
+
+         if ( !announced ) {
+            // Always check to see is a shutdown was received.
+            federate->check_for_shutdown_with_termination();
+
+            (void)sleep_timer.sleep();
+
+            // Check to make sure we're still a member of the federation execution.
+            if ( sleep_timer.timeout() ) {
+               sleep_timer.reset();
+               if ( !federate->is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "SyncPntListBase::wait_for_sync_pt_announce():" << __LINE__
+                         << " Unexpectedly the Federate is no longer an execution"
+                         << " member. This means we are either not connected to the"
+                         << " RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation at"
+                         << " the Central RTI Component (CRC) level!" << THLA_ENDL;
+                  send_hs( stderr, (char *)errmsg.str().c_str() );
+                  exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+                  return false;
+               }
+            }
+         }
+      } while ( !announced );
+
+      return true;
+   }
+   return false;
+}
+
+void SyncPntListBase::achieve_sync_point(
+   RTI1516_NAMESPACE::RTIambassador &RTI_amb,
+   SyncPnt *                         sp )
+{
+   if ( sp != NULL ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string name;
+         StringUtilities::to_string( name, sp->get_label() );
+         ostringstream msg;
+         msg << "SyncPntListBase::achieve_sync_point():" << __LINE__
+             << " Synchronization-Point '" << name << "'" << THLA_ENDL;
+         send_hs( stdout, (char *)msg.str().c_str() );
+      }
+
+      // Macro to save the FPU Control Word register value.
+      TRICKHLA_SAVE_FPU_CONTROL_WORD;
+
+      // Achieve this synchronization point.
+      try {
+         // When auto_unlock_mutex goes out of scope it automatically unlocks the
+         // mutex even if there is an exception.
+         MutexProtection auto_unlock_mutex( &mutex );
+
+         RTI_amb.synchronizationPointAchieved( sp->get_label() );
+
+         // Mark the sync-point as achieved.
+         sp->set_state( SYNC_PT_STATE_ACHIEVED );
+
+      } catch ( SynchronizationPointLabelNotAnnounced &e ) {
+         throw; // Rethrow the exception.
+      } catch ( FederateNotExecutionMember &e ) {
+         throw; // Rethrow the exception.
+      } catch ( SaveInProgress &e ) {
+         throw; // Rethrow the exception.
+      } catch ( RestoreInProgress &e ) {
+         throw; // Rethrow the exception.
+      } catch ( NotConnected &e ) {
+         throw; // Rethrow the exception.
+      } catch ( RTIinternalError &e ) {
+         throw; // Rethrow the exception.
+      }
+
+      // Macro to restore the saved FPU Control Word register value.
+      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+   }
+}
+
+bool SyncPntListBase::wait_for_synchronization(
+   Federate *federate,
+   SyncPnt * sp )
+{
+   if ( sp != NULL ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string name;
+         StringUtilities::to_string( name, sp->get_label() );
+         ostringstream msg;
+         msg << "SyncPntListBase::wait_for_synchronization():" << __LINE__
+             << " Synchronization-Point '" << name << "'" << THLA_ENDL;
+         send_hs( stdout, (char *)msg.str().c_str() );
+      }
+
+      bool         synchronized;
+      SleepTimeout sleep_timer( THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC, 10000 );
+
+      // Wait for the federation to synchronize on the sync-point.
+      do {
+         // Critical code section.
+         {
+            // When auto_unlock_mutex goes out of scope it automatically unlocks
+            // the mutex even if there is an exception.
+            MutexProtection auto_unlock_mutex( &mutex );
+
+            synchronized = sp->is_synchronized();
+            if ( synchronized ) {
+               // Now that the federation is synchronized on the synchronization point,
+               // return to SYNC_PT_STATE_EXISTS state.
+               sp->set_state( SYNC_PT_STATE_EXISTS );
+            }
+         }
+
+         if ( !synchronized ) {
+            // Always check to see is a shutdown was received.
+            federate->check_for_shutdown_with_termination();
+
+            (void)sleep_timer.sleep();
+
+            // Check to make sure we're still a member of the federation execution.
+            if ( sleep_timer.timeout() ) {
+               sleep_timer.reset();
+               if ( !federate->is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "SyncPntListBase::wait_for_synchronization():" << __LINE__
+                         << " Unexpectedly the Federate is no longer an execution"
+                         << " member. This means we are either not connected to the"
+                         << " RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation at"
+                         << " the Central RTI Component (CRC) level!" << THLA_ENDL;
+                  send_hs( stderr, (char *)errmsg.str().c_str() );
+                  exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+                  return false;
+               }
+            }
+         }
+      } while ( !synchronized );
+
+      return true;
+   }
+   return false;
 }
