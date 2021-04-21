@@ -66,6 +66,11 @@ static const std::wstring SIM_CONFIG_SYNC_POINT = L"sim_config";
 static const std::wstring INITIALIZE_SYNC_POINT = L"initialize";
 static const std::wstring STARTUP_SYNC_POINT    = L"startup";
 
+// SISO SpaceFOM Mode Transition Request (MTR) sync-points.
+static const std::wstring MTR_RUN_SYNC_POINT      = L"mtr_run";
+static const std::wstring MTR_FREEZE_SYNC_POINT   = L"mtr_freeze";
+static const std::wstring MTR_SHUTDOWN_SYNC_POINT = L"mtr_shutdown";
+
 } // namespace DSES
 
 using namespace std;
@@ -142,9 +147,9 @@ void ExecutionControl::initialize()
    }
 
    // Add the Mode Transition Request synchronization points.
-   this->add_sync_pnt( L"mtr_run" );
-   this->add_sync_pnt( L"mtr_freeze" );
-   this->add_sync_pnt( L"mtr_shutdown" );
+   this->add_sync_pnt( MTR_RUN_SYNC_POINT );
+   this->add_sync_pnt( MTR_FREEZE_SYNC_POINT );
+   this->add_sync_pnt( MTR_SHUTDOWN_SYNC_POINT );
 
    // Make sure we initialize the base class.
    TrickHLA::ExecutionControlBase::initialize();
@@ -1185,9 +1190,9 @@ bool ExecutionControl::run_mode_transition()
 
    // Register the 'mtr_run' sync-point.
    if ( this->is_master() ) {
-      sync_pnt = this->register_sync_pnt( *RTI_amb, L"mtr_run" );
+      sync_pnt = this->register_sync_pnt( *RTI_amb, MTR_RUN_SYNC_POINT );
    } else {
-      sync_pnt = this->get_sync_pnt( L"mtr_run" );
+      sync_pnt = this->get_sync_pnt( MTR_RUN_SYNC_POINT );
    }
 
    // Make sure that we have a valid sync-point.
@@ -1269,7 +1274,7 @@ void ExecutionControl::freeze_mode_announce()
 {
    // Register the 'mtr_freeze' sync-point.
    if ( this->is_master() ) {
-      this->register_sync_pnt( *( federate->get_RTI_ambassador() ), L"mtr_freeze" );
+      this->register_sync_pnt( *( federate->get_RTI_ambassador() ), MTR_FREEZE_SYNC_POINT );
    }
 }
 
@@ -1280,7 +1285,7 @@ bool ExecutionControl::freeze_mode_transition()
    TrickHLA::SyncPnt *     sync_pnt = NULL;
 
    // Get the 'mtr_freeze' sync-point.
-   sync_pnt = this->get_sync_pnt( L"mtr_freeze" );
+   sync_pnt = this->get_sync_pnt( MTR_FREEZE_SYNC_POINT );
 
    // Make sure that we have a valid sync-point.
    if ( sync_pnt == (TrickHLA::SyncPnt *)NULL ) {
@@ -1292,13 +1297,13 @@ bool ExecutionControl::freeze_mode_transition()
    } else {
 
       // Wait for 'mtr_freeze' sync-point announce.
-      sync_pnt->wait_for_announce( federate );
+      this->wait_for_sync_pnt_announce( federate, sync_pnt );
 
       // Achieve the 'mtr_freeze' sync-point.
-      sync_pnt->achieve_sync_point( *RTI_amb );
+      this->achieve_sync_point( *RTI_amb, sync_pnt );
 
       // Wait for 'mtr_freeze' sync-point synchronization.
-      sync_pnt->wait_for_synchronization( federate );
+      this->wait_for_synchronization( federate, sync_pnt );
 
       // Set the current execution mode to freeze.
       this->current_execution_control_mode = EXECUTION_CONTROL_FREEZE;
@@ -1389,7 +1394,7 @@ void ExecutionControl::shutdown_mode_transition()
    }
 
    // Register the 'mtr_shutdown' sync-point.
-   this->register_sync_pnt( *( federate->get_RTI_ambassador() ), L"mtr_shutdown" );
+   this->register_sync_pnt( *( federate->get_RTI_ambassador() ), MTR_SHUTDOWN_SYNC_POINT );
 }
 
 ExecutionConfiguration *ExecutionControl::get_execution_configuration()
