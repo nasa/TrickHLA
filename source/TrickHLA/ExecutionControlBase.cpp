@@ -839,7 +839,6 @@ Object *ExecutionControlBase::get_unregistered_remote_object(
 bool ExecutionControlBase::mark_object_as_deleted_from_federation(
    RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_id )
 {
-
    // Remove the ExecitionControl object if present and the ID matches.
    if ( execution_configuration != NULL
         && ( execution_configuration->get_instance_handle() == instance_id ) ) {
@@ -851,6 +850,9 @@ bool ExecutionControlBase::mark_object_as_deleted_from_federation(
                   ( instance_id.isValid() ? "Yes" : "No" ), THLA_NEWLINE );
       }
       execution_configuration->remove_object_instance();
+
+      //TODO: Shutdown federate when ExCO is deleted.
+      set_requested_execution_control_mode( EXECUTION_CONTROL_SHUTDOWN );
 
       return true;
    }
