@@ -2609,6 +2609,9 @@ void Federate::check_freeze()
       return;
    }
 
+   // Check to see if we should shutdown.
+   this->check_for_shutdown_with_termination();
+
    SIM_MODE exec_mode = exec_get_mode();
    if ( exec_mode == Initialization ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
