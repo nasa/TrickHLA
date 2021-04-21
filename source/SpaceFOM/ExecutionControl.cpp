@@ -2158,9 +2158,10 @@ bool ExecutionControl::check_for_shutdown()
                __LINE__, THLA_NEWLINE );
    }
 
-   // Check to see if the mtr_shutdown sync-point has been announced.
-   // If so, it's time to say good bye.
-   return ( this->is_sync_pnt_announced( L"mtr_shutdown" ) );
+   // Check to see if the mtr_shutdown sync-point has been announced or if the
+   // ExCO object has been deleted as indicators to shutdown.
+   return ( this->is_sync_pnt_announced( L"mtr_shutdown" )
+            || this->execution_configuration->is_object_deleted_from_RTI() );
 }
 
 /*!
