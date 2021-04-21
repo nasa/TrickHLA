@@ -2150,6 +2150,10 @@ void ExecutionControl::shutdown_mode_transition()
    }
    // Register the 'mtr_shutdown' sync-point.
    this->register_sync_pnt( *( federate->get_RTI_ambassador() ), MTR_SHUTDOWN_SYNC_POINT );
+
+   // Wait for the 'mtr_shutdown' announcement to make sure it goes through
+   // before we shutdown.
+   this->wait_for_announcement( federate, MTR_SHUTDOWN_SYNC_POINT );
 }
 
 /*!
