@@ -852,7 +852,6 @@ bool ExecutionControlBase::mark_object_as_deleted_from_federation(
       execution_configuration->remove_object_instance();
 
       //TODO: Shutdown federate when ExCO is deleted.
-      set_requested_execution_control_mode( EXECUTION_CONTROL_SHUTDOWN );
 
       return true;
    }
