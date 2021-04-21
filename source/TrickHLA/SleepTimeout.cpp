@@ -45,6 +45,12 @@ SleepTimeout::SleepTimeout()
 }
 
 SleepTimeout::SleepTimeout(
+   long sleep_micros )
+{
+   set( THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC, sleep_micros );
+}
+
+SleepTimeout::SleepTimeout(
    double timeout_seconds,
    long   sleep_micros )
 {

@@ -85,7 +85,7 @@ static const std::wstring INIT_COMPLETED_SYNC_POINT        = L"initialization_co
 static const std::wstring OBJECTS_DISCOVERED_SYNC_POINT    = L"objects_discovered";
 static const std::wstring ROOT_FRAME_DISCOVERED_SYNC_POINT = L"root_frame_discovered";
 
-// SISO SpaceFOM Mode Transition Request (MTR) sync-points.
+// SISO SpaceFOM Mode Transition Request (MTR) synchronization-points.
 static const std::wstring MTR_RUN_SYNC_POINT      = L"mtr_run";
 static const std::wstring MTR_FREEZE_SYNC_POINT   = L"mtr_freeze";
 static const std::wstring MTR_SHUTDOWN_SYNC_POINT = L"mtr_shutdown";
@@ -614,7 +614,7 @@ void ExecutionControl::role_determination_process()
          }
       }
 
-      SleepTimeout sleep_timer( THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC, 10000 );
+      SleepTimeout sleep_timer;
 
       // Block until we have determined if we are a late joining federate.
       while ( !this->late_joiner_determined ) {
@@ -2133,7 +2133,6 @@ void ExecutionControl::shutdown_mode_announce()
  */
 void ExecutionControl::shutdown_mode_transition()
 {
-
    // Only the Master federate has any SpaceFOM tasks for shutdown.
    if ( !this->is_master() ) {
       return;

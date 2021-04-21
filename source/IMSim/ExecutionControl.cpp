@@ -73,7 +73,7 @@ static const std::wstring FEDSAVE_SYNC_POINT        = L"FEDSAVE_v2";
 static const std::wstring FEDRUN_SYNC_POINT         = L"FEDRUN_v2";
 static const std::wstring STARTUP_FREEZE_SYNC_POINT = L"pause_0.0";
 
-// SISO SpaceFOM Mode Transition Request (MTR) sync-points.
+// SISO SpaceFOM Mode Transition Request (MTR) synchronization-points.
 static const std::wstring MTR_RUN_SYNC_POINT      = L"mtr_run";
 static const std::wstring MTR_FREEZE_SYNC_POINT   = L"mtr_freeze";
 static const std::wstring MTR_SHUTDOWN_SYNC_POINT = L"mtr_shutdown";

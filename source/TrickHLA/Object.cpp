@@ -2201,7 +2201,7 @@ void Object::receive_cyclic_data()
       // Block waiting for data if it has not arrived yet.
       if ( !is_changed() ) {
 
-         SleepTimeout sleep_timer;
+         SleepTimeout sleep_timer( THLA_SLEEP_WAIT_IN_MICROS_FOR_PERFORMANCE );
 
          // On average using "usleep()" to wait for data is faster but at the
          // cost of latency spikes every once in a while. The CPU utilization

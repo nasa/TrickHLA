@@ -668,7 +668,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
    // Make sure we have at least one piece of ExecutionConfiguration data we can receive.
    if ( execution_configuration->any_remotely_owned_subscribed_init_attribute() ) {
 
-      SleepTimeout sleep_timer;
+      SleepTimeout sleep_timer( THLA_SLEEP_WAIT_IN_MICROS_FOR_PERFORMANCE );
 
       // Wait for the data to arrive.
       while ( !execution_configuration->is_changed() ) {

@@ -1770,7 +1770,7 @@ void Manager::wait_for_registration_of_required_objects()
       }
    }
 
-   SleepTimeout sleep_timer( THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC, 10000 );
+   SleepTimeout sleep_timer;
 
    do {
 

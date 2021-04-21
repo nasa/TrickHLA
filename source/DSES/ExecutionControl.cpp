@@ -66,7 +66,7 @@ static const std::wstring SIM_CONFIG_SYNC_POINT = L"sim_config";
 static const std::wstring INITIALIZE_SYNC_POINT = L"initialize";
 static const std::wstring STARTUP_SYNC_POINT    = L"startup";
 
-// SISO SpaceFOM Mode Transition Request (MTR) sync-points.
+// SISO SpaceFOM Mode Transition Request (MTR) synchronization-points.
 static const std::wstring MTR_RUN_SYNC_POINT      = L"mtr_run";
 static const std::wstring MTR_FREEZE_SYNC_POINT   = L"mtr_freeze";
 static const std::wstring MTR_SHUTDOWN_SYNC_POINT = L"mtr_shutdown";

@@ -1426,7 +1426,7 @@ string Federate::wait_for_required_federates_to_join()
    bool          found_an_unrequired_federate = false;
    set< string > unrequired_federates_list; // list of unique unrequired federate names
 
-   SleepTimeout sleep_timer( THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC, 10000 );
+   SleepTimeout sleep_timer;
 
    this->all_federates_joined = false;
 
@@ -4434,7 +4434,7 @@ void Federate::wait_for_time_advance_grant()
 
    if ( !this->time_adv_granted ) {
 
-      SleepTimeout sleep_timer;
+      SleepTimeout sleep_timer( THLA_SLEEP_WAIT_IN_MICROS_FOR_PERFORMANCE );
 
       // This spin lock waits for the time advance grant from the RTI.
       while ( !this->time_adv_granted ) {

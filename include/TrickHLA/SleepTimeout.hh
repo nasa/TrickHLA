@@ -35,7 +35,8 @@ NASA, Johnson Space Center\n
 #include <time.h>
 
 #define THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC 10.0
-#define THLA_DEFAULT_SLEEP_WAIT_IN_MICROS 25
+#define THLA_DEFAULT_SLEEP_WAIT_IN_MICROS 10000
+#define THLA_SLEEP_WAIT_IN_MICROS_FOR_PERFORMANCE 25
 
 namespace TrickHLA
 {
@@ -58,6 +59,10 @@ class SleepTimeout
    //
    /*! @brief Default constructor for the TrickHLA SleepTimeout class. */
    SleepTimeout();
+
+   /*! @brief Constructor for TrickHLA SleepTimeout class, uses a default timeout of 10 seconds.
+    *  @param sleep_micros Time to sleep in microseconds. */
+   SleepTimeout( long sleep_micros );
 
    /*! @brief Constructor for the TrickHLA SleepTimeout class.
     *  @param timeout_seconds Timeout time in seconds.

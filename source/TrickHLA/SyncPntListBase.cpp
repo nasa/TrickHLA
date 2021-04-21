@@ -364,7 +364,7 @@ void SyncPntListBase::wait_for_list_synchronization(
    Federate *federate )
 {
    bool         achieved, valid_and_not_achieved;
-   SleepTimeout sleep_timer( THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC, 10000 );
+   SleepTimeout sleep_timer;
 
    // Iterate through this SyncPntList's synchronization point list.
    vector< SyncPnt * >::const_iterator i;
@@ -869,7 +869,7 @@ bool SyncPntListBase::wait_for_sync_pnt_announce(
       }
 
       bool         announced;
-      SleepTimeout sleep_timer( THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC, 10000 );
+      SleepTimeout sleep_timer;
 
       // Wait for the federation to synchronize on the sync-point.
       do {
@@ -975,7 +975,7 @@ bool SyncPntListBase::wait_for_synchronization(
       }
 
       bool         synchronized;
-      SleepTimeout sleep_timer( THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC, 10000 );
+      SleepTimeout sleep_timer;
 
       // Wait for the federation to synchronize on the sync-point.
       do {
