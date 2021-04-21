@@ -1828,7 +1828,6 @@ void Manager::wait_for_registration_of_required_objects()
       // Print a summary of what objects are registered and which ones are not.
       if ( print_summary ) {
          print_summary = false;
-         int cnt       = 1;
 
          // Build the summary as an output string stream.
          ostringstream summary;
@@ -1843,6 +1842,7 @@ void Manager::wait_for_registration_of_required_objects()
             // the mutex even if there is an exception.
             MutexProtection auto_unlock_mutex( &obj_discovery_mutex );
 
+            int cnt = 1;
             if ( is_execution_configuration_used() ) {
                // Execution-Configuration object
                summary << "\n  " << cnt << ":Object instance '" << get_execution_configuration()->get_name() << "' ";

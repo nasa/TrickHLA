@@ -62,7 +62,7 @@ class SleepTimeout
 
    /*! @brief Constructor for TrickHLA SleepTimeout class, uses a default timeout of 10 seconds.
     *  @param sleep_micros Time to sleep in microseconds. */
-   SleepTimeout( long sleep_micros );
+   explicit SleepTimeout( long sleep_micros );
 
    /*! @brief Constructor for the TrickHLA SleepTimeout class.
     *  @param timeout_seconds Timeout time in seconds.
