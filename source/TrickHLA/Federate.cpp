@@ -4434,7 +4434,7 @@ void Federate::wait_for_time_advance_grant()
 
    if ( !this->time_adv_granted ) {
 
-      SleepTimeout sleep_timer( THLA_SLEEP_WAIT_IN_MICROS_FOR_PERFORMANCE );
+      SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // This spin lock waits for the time advance grant from the RTI.
       while ( !this->time_adv_granted ) {
