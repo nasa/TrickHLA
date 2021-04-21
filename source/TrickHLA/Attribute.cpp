@@ -1738,11 +1738,6 @@ size %d, will use the data buffer size instead.%c",
          // It's a pointer
          output = *( (unsigned char **)ref2->address );
 
-         /*
-         send_hs( stderr, "Attribute::decode_opaque_data_from_buffer():%d \
-It's a pointer---------------------------------.%c", __LINE__, THLA_NEWLINE ); //TEMP
-          */
-
          if ( output != NULL ) {
             // The output array size must exactly match the incoming data size for opaque data.
             if ( decoded_length != get_size( (char *)output ) ) {
@@ -1760,10 +1755,6 @@ It's a pointer---------------------------------.%c", __LINE__, THLA_NEWLINE ); /
       } else {
          // It's either a primitive type or a static array.
          output = (unsigned char *)ref2->address;
-         /*
-         send_hs( stderr, "Attribute::decode_opaque_data_from_buffer():%d \
-It's either a primitive type or a static array---------------------------------.%c", __LINE__, THLA_NEWLINE ); //TEMP
-          */
 
          if ( output != NULL ) {
             // The output array size must exactly match the incoming data
