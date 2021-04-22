@@ -2195,7 +2195,7 @@ bool ExecutionControl::check_for_shutdown_with_termination()
          errmsg << " Shutdown sync-point 'mtr_shutdown',";
       }
       if ( this->execution_configuration->object_deleted_from_RTI ) {
-         errmsg << " Execution Configuration (ExCO) object deleted from the RTI";
+         errmsg << " Execution Configuration Object (ExCO) deleted from the RTI";
       }
       errmsg << " for the '" << federate->get_federation_name()
              << "' Federation." << THLA_ENDL;
