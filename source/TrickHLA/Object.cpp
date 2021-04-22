@@ -119,6 +119,7 @@ Object::Object()
      packing( NULL ),
      ownership( NULL ),
      deleted( NULL ),
+     process_object_deleted_from_RTI( false ),
      object_deleted_from_RTI( false ),
      mutex(),
      ownership_mutex(),
@@ -543,13 +544,14 @@ instance '%s' from RTI because of Exception: '%s'%c",
 void Object::remove_object_instance()
 {
    // Set a flag to capture the notification of object deletion.
-   object_deleted_from_RTI = true;
+   this->process_object_deleted_from_RTI = true;
+   this->object_deleted_from_RTI         = true;
 
    // Since the object has been deleted from the federation, make sure it is
    // no longer required in the federation. if a checkpoint is cut after this
    // object is removed, we need to correctly identify this object as not
    // required when restoring the saved federation...
-   required = false;
+   this->required = false;
 
    // Handle the case where we are publishing data for attributes we got
    // ownership transferred to us, since we don't own the privilege to delete.
@@ -577,11 +579,11 @@ void Object::remove_object_instance()
 
 void Object::process_deleted_object()
 {
-   if ( object_deleted_from_RTI ) {
+   if ( this->process_object_deleted_from_RTI ) {
 
       // Set the flag that callback may have been triggered, so that we
       // only process the deleted object once.
-      object_deleted_from_RTI = false;
+      this->process_object_deleted_from_RTI = false;
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          string id_str;

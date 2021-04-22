@@ -850,9 +850,6 @@ bool ExecutionControlBase::mark_object_as_deleted_from_federation(
                   ( instance_id.isValid() ? "Yes" : "No" ), THLA_NEWLINE );
       }
       execution_configuration->remove_object_instance();
-
-      //TODO: Shutdown federate when ExCO is deleted.
-
       return true;
    }
 
@@ -866,7 +863,7 @@ void ExecutionControlBase::process_deleted_objects()
 {
    // Process ExecutionConfiguration deletion if we have one.
    if ( execution_configuration != NULL ) {
-      if ( execution_configuration->is_object_deleted_from_RTI() ) {
+      if ( execution_configuration->process_object_deleted_from_RTI ) {
          execution_configuration->process_deleted_object();
       }
    }

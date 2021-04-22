@@ -483,8 +483,9 @@ void ExecutionConfiguration::setup_ref_attributes(
    this->ownership = (OwnershipHandler *)NULL;
 
    // No Object Deleted callback.
-   this->deleted                 = (ObjectDeleted *)NULL;
-   this->object_deleted_from_RTI = false;
+   this->deleted                         = (ObjectDeleted *)NULL;
+   this->process_object_deleted_from_RTI = false;
+   this->object_deleted_from_RTI         = false;
 
    // Set up attributes.
    this->attr_count = 7;

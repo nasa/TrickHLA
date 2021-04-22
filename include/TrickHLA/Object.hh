@@ -143,8 +143,9 @@ class Object
 
    OwnershipHandler *ownership; ///< @trick_units{--} Manages attribute ownership.
 
-   ObjectDeleted *deleted;                 ///< @trick_units{--} Object Deleted callback object.
-   bool           object_deleted_from_RTI; ///< @trick_units{--} Flag that is true when this object has been deleted from the RTI.
+   ObjectDeleted *deleted;                         ///< @trick_units{--} Object Deleted callback object.
+   bool           process_object_deleted_from_RTI; ///< @trick_units{--} Flag that is true when to process the object has been deleted from the RTI.
+   bool           object_deleted_from_RTI;         ///< @trick_units{--} Flag that is true when this object has been deleted from the RTI.
 
   public:
    //
@@ -203,13 +204,6 @@ class Object
 
    /*! @brief Marks this object as deleted from the RTI and sets all attributes as non-local. */
    void remove_object_instance();
-
-   /*! @brief Check if object has been deleted from the RTI.
-    *  @return True if object has been deleted from the RTI. */
-   bool is_object_deleted_from_RTI() const
-   {
-      return object_deleted_from_RTI;
-   }
 
    /*! @brief This object instance has been deleted from the RTI, so process
     * the delete action by calling the users delete notification callback. */

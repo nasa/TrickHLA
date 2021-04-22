@@ -651,7 +651,7 @@ void ExecutionControl::role_determination_process()
             if ( !this->late_joiner_determined && sleep_timer.timeout() ) {
                sleep_timer.reset();
 
-               if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+               if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   ostringstream message;
                   message << "SpaceFOM::ExecutionControl::role_determination_process():"
                           << __LINE__;
@@ -2169,7 +2169,7 @@ bool ExecutionControl::check_for_shutdown()
    // Check to see if the mtr_shutdown sync-point has been announced or if the
    // ExCO object has been deleted as indicators to shutdown.
    return ( this->is_sync_pnt_announced( MTR_SHUTDOWN_SYNC_POINT )
-            || this->execution_configuration->is_object_deleted_from_RTI() );
+            || this->execution_configuration->object_deleted_from_RTI );
 }
 
 /*!
@@ -2190,8 +2190,15 @@ bool ExecutionControl::check_for_shutdown_with_termination()
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::check_for_shutdown_with_termination():" << __LINE__
              << " WARNING: This Federate '" << this->federate->get_federate_name()
-             << "' detected a Shutdown sync-point 'mtr_shutdown' for the '"
-             << federate->get_federation_name() << "' Federation." << THLA_ENDL;
+             << "' detected a";
+      if ( this->is_sync_pnt_announced( MTR_SHUTDOWN_SYNC_POINT ) ) {
+         errmsg << " Shutdown sync-point 'mtr_shutdown',";
+      }
+      if ( this->execution_configuration->object_deleted_from_RTI ) {
+         errmsg << " Execution Configuration (ExCO) object deleted from the RTI";
+      }
+      errmsg << " for the '" << federate->get_federation_name()
+             << "' Federation." << THLA_ENDL;
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stderr, (char *)errmsg.str().c_str() );
@@ -2217,7 +2224,6 @@ bool ExecutionControl::check_for_shutdown_with_termination()
  */
 void ExecutionControl::freeze_init()
 {
-
    // Mark the freeze as announced.
    federate->set_freeze_announced( true );
 

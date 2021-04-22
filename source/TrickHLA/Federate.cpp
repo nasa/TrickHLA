@@ -2604,13 +2604,13 @@ void Federate::exit_freeze()
  */
 void Federate::check_freeze()
 {
+   // Check to see if we should shutdown.
+   this->check_for_shutdown_with_termination();
+
    // Check to see if the ExecutionControl should exit freeze.
    if ( execution_control->check_freeze_exit() ) {
       return;
    }
-
-   // Check to see if we should shutdown.
-   this->check_for_shutdown_with_termination();
 
    SIM_MODE exec_mode = exec_get_mode();
    if ( exec_mode == Initialization ) {

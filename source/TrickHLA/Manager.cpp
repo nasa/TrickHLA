@@ -2564,13 +2564,12 @@ void Manager::mark_object_as_deleted_from_federation(
  */
 void Manager::process_deleted_objects()
 {
-
    // Process ExecutionControl deletions.
    this->execution_control->process_deleted_objects();
 
    // Search the simulation data objects, looking for deleted objects.
    for ( int n = 0; n < obj_count; ++n ) {
-      if ( objects[n].is_object_deleted_from_RTI() ) {
+      if ( objects[n].process_object_deleted_from_RTI ) {
          objects[n].process_deleted_object();
       }
    }
