@@ -2245,6 +2245,19 @@ void ExecutionControl::enter_freeze()
 {
    // Bypass this if we are already processing a freeze command.
    if ( this->get_requested_execution_control_mode() == EXECUTION_CONTROL_FREEZE ) {
+
+      // Determine if the Trick control panel "freeze" button was pressed more
+      // than once if the simulation time is less than the current scheduled
+      // freeze time for a FreezeCmd.
+      if ( ( exec_get_exec_command() == FreezeCmd )
+           && ( exec_get_sim_time() < this->get_simulation_freeze_time() ) ) {
+
+         // The Trick simulation control panel "freeze" button was hit more than
+         // once before the scheduled freeze time, so go back to run.
+         exec_run();
+      }
+
+      // The requested mode is already EXECUTION_CONTROL_FREEZE so return.
       return;
    }
 
@@ -2283,7 +2296,6 @@ void ExecutionControl::enter_freeze()
 
       // NOTE: The actual freeze transition will be done in the
       // Federate::freeze_init() job.
-      // this->freeze_mode_transition();
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {

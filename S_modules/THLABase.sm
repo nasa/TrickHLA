@@ -99,16 +99,16 @@ class THLABaseSimObject : public Trick::SimObject {
       //-- FREEZE / CHECKPOINT JOBS --
       //------------------------------
 
-      // Perform the federate save (checkpoint) or restore in FREEZE mode...
+      // Perform the federate save (checkpoint) or restore in FREEZE mode.
       P_1ST ("checkpoint") federate.setup_checkpoint();
       ("freeze") federate.perform_checkpoint();
       P_1ST ("preload_checkpoint") federate.setup_restore();
       ("freeze") federate.perform_restore();
 
-      // Coordinate federates going to run mode
-      ("freeze_init") federate.freeze_init();
-      ("freeze")      federate.check_freeze();
-      ("unfreeze")    federate.exit_freeze();
+      // Coordinate federates going to run mode.
+      P_1ST ("freeze_init") federate.freeze_init();
+      P_1ST ("freeze") federate.check_freeze();
+      ("unfreeze") federate.exit_freeze();
 
 
       //--------------------
