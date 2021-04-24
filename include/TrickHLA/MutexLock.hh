@@ -53,7 +53,7 @@ class MutexLock
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLA MutexLock class. */
+   /*! @brief Default constructor for the TrickHLA MutexLock class with mutex attribute PTHREAD_MUTEX_RECURSIVE. */
    MutexLock();
    /*! @brief Destructor for the TrickHLA MutexLock class. */
    virtual ~MutexLock();

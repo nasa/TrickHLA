@@ -221,12 +221,6 @@ Federate::Federate()
  */
 Federate::~Federate()
 {
-   // Shutdown the federate and try to destroy the federation.
-   if ( execution_has_begun ) {
-      // FIXME: Not sure that this is a good idea.
-      shutdown();
-   }
-
    // Free the memory used for the federate name.
    if ( name != static_cast< char * >( NULL ) ) {
       if ( TMM_is_alloced( name ) ) {
@@ -724,12 +718,16 @@ void Federate::create_RTI_ambassador_and_connect()
       if ( ( local_settings == NULL ) || ( *local_settings == '\0' ) ) {
          // Use default vendor local settings.
          RTI_ambassador->connect( *federate_ambassador, HLA_IMMEDIATE );
+
       } else {
          wstring local_settings_ws;
          StringUtilities::to_wstring( local_settings_ws, local_settings );
 
          RTI_ambassador->connect( *federate_ambassador, HLA_IMMEDIATE, local_settings_ws );
       }
+
+      // Reset the Federate shutdown-called flag now that we are connected.
+      this->shutdown_called = false;
 
       // Make sure we delete the factory now that we are done with it.
       delete rtiAmbassadorFactory;
@@ -4507,8 +4505,7 @@ bool Federate::is_execution_member()
  */
 void Federate::shutdown()
 {
-   // We can only shutdown if we have a name since shutdown could have been
-   // called in the destructor, so we guard against that.
+   // Guard against doing a shutdown more than once.
    if ( !is_shutdown_called() ) {
       this->shutdown_called = true;
 
