@@ -416,65 +416,6 @@ void ExecutionControlBase::add_object_to_map(
    this->manager->add_object_to_map( object );
 }
 
-void ExecutionControlBase::wait_for_sync_point_announce(
-   wstring const &label )
-{
-   // Iterate through the synchronization points.
-   vector< SyncPnt * >::const_iterator i;
-   for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-
-      SyncPnt *sp = ( *i );
-
-      // See if sync-point label matches.
-      if ( ( sp != NULL ) && ( sp->get_label().compare( label ) == 0 ) ) {
-
-         // If the sync-point has not been announced...
-         if ( !sp->is_announced() ) {
-
-            SleepTimeout sleep_timer;
-
-            // Wait for the federation to announce the sync-point.
-            while ( !sp->is_announced() ) {
-
-               // Always check to see is a shutdown was received.
-               federate->check_for_shutdown_with_termination();
-
-               (void)sleep_timer.sleep();
-
-               if ( !sp->exists() && sleep_timer.timeout() ) {
-                  sleep_timer.reset();
-                  if ( !federate->is_execution_member() ) {
-                     ostringstream errmsg;
-                     errmsg << "TrickHLA::ExecutionControlBase::wait_for_sync_point_announce():" << __LINE__
-                            << " Unexpectedly the Federate is no longer an execution"
-                            << " member. This means we are either not connected to the"
-                            << " RTI or we are no longer joined to the federation"
-                            << " execution because someone forced our resignation at"
-                            << " the Central RTI Component (CRC) level!"
-                            << THLA_ENDL;
-                     send_hs( stderr, (char *)errmsg.str().c_str() );
-                     exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-                  }
-               }
-            }
-
-         } else { // sync-point already announced! complain but do not terminate.
-            string name;
-            StringUtilities::to_string( name, sp->get_label() );
-
-            ostringstream errmsg;
-            errmsg << "TrickHLA::ExecutionControlBase::wait_for_sync_point_announce():" << __LINE__
-                   << " Synchronization-Point '" << name
-                   << "' already announced!";
-            send_hs( stdout, (char *)errmsg.str().c_str() );
-         }
-
-         // Done waiting for sync-point to be synchronized so return.
-         return;
-      }
-   }
-}
-
 /*!
  * @job_class{initialization}
  */
@@ -492,7 +433,7 @@ void ExecutionControlBase::add_multiphase_init_sync_points()
    for ( unsigned int i = 0; i < user_sync_pt_labels.size(); ++i ) {
       wstring ws_label;
       StringUtilities::to_wstring( ws_label, user_sync_pt_labels.at( i ) );
-      multiphase_init_sync_pnt_list.add_sync_pnt( ws_label );
+      multiphase_init_sync_pnt_list.add_sync_point( ws_label );
    }
 }
 
@@ -521,11 +462,11 @@ joining federate so this call will be ignored.%c",
    try {
 
       // Achieve all the multiphase initialization synchronization points except.
-      this->achieve_all_multiphase_init_sync_pnts( *federate->get_RTI_ambassador() );
+      this->achieve_all_multiphase_init_sync_points( *federate->get_RTI_ambassador() );
 
       // Now wait for all the multiphase initialization sync-points to be
       // synchronized in the federation.
-      this->wait_for_all_multiphase_init_sync_pnts();
+      this->wait_for_all_multiphase_init_sync_points();
 
    } catch ( RTI1516_NAMESPACE::SynchronizationPointLabelNotAnnounced &e ) {
       ostringstream errmsg;
@@ -574,25 +515,25 @@ joining federate so this call will be ignored.%c",
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      this->print_sync_pnts();
+      this->print_sync_points();
    }
 }
 
 /*!
  * @job_class{initialization}
  */
-void ExecutionControlBase::achieve_all_multiphase_init_sync_pnts(
+void ExecutionControlBase::achieve_all_multiphase_init_sync_points(
    RTI1516_NAMESPACE::RTIambassador &rti_ambassador )
 {
    // Iterate through this ExecutionControl's user defined multiphase
    // initialization synchronization point list and achieve them.
-   multiphase_init_sync_pnt_list.achieve_all_sync_pnts( rti_ambassador );
+   multiphase_init_sync_pnt_list.achieve_all_sync_points( rti_ambassador );
 }
 
 /*!
  * @job_class{initialization}
  */
-void ExecutionControlBase::wait_for_all_multiphase_init_sync_pnts()
+void ExecutionControlBase::wait_for_all_multiphase_init_sync_points()
 {
    // Wait for all the user defined multiphase initialization sychronization
    // points to be achieved.

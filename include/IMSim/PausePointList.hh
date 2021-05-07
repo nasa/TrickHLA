@@ -87,7 +87,7 @@ class PausePointList : public TrickHLA::TimedSyncPntList
    /*! @brief Clear the given synchronization point label.
     *  @return True if synchronization point is cleared.
     *  @param label The synchronization point label. */
-   virtual bool clear_sync_pnt( std::wstring const &label );
+   virtual bool clear_sync_point( std::wstring const &label );
 
    /*! @brief Check the state of the sync-points to determine if the state
     * needs to go to Freeze or Run. */
@@ -129,7 +129,7 @@ class PausePointList : public TrickHLA::TimedSyncPntList
    std::wstring to_wstring();
 
    /*! @brief Dumps synchronization point information to the screen. */
-   virtual void print_sync_pnts();
+   virtual void print_sync_points();
 
   private:
    PausePointStateEnum state; ///< @trick_units{--} State of the pause points.

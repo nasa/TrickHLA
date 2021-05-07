@@ -123,11 +123,11 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  synchronization points if they are not already achieved and are not
     *  one of the predefined ExecutionControl synchronization points.
     *  @param rti_ambassador Reference to the HLA RTI Ambassador instance. */
-   void achieve_all_multiphase_init_sync_pnts( RTI1516_NAMESPACE::RTIambassador &rti_ambassador );
+   void achieve_all_multiphase_init_sync_points( RTI1516_NAMESPACE::RTIambassador &rti_ambassador );
    /*! @brief Wait for all the user defined mulit-phase initialization
     *  synchronization points if they are not already achieved and are not
     *  one of the predefined ExecutionControl synchronization points. */
-   void wait_for_all_multiphase_init_sync_pnts();
+   void wait_for_all_multiphase_init_sync_points();
    /*! Publish the ExecutionControl objects and interactions. */
    virtual void publish();
    /*! Unpublish the ExecutionControl objects and interactions. */

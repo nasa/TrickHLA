@@ -83,39 +83,39 @@ class SyncPntListBase
   public:
    /*! @brief Add the given synchronization point label to the list.
     *  @param label Synchronization point label. */
-   virtual void add_sync_pnt( std::wstring const &label );
+   virtual void add_sync_point( std::wstring const &label );
 
    /*! @brief Get the pointer to the synchronization point associated with the
     * given label.
     *  @return The synchronization point associated with the label. */
-   virtual SyncPnt *get_sync_pnt( std::wstring const &label );
+   virtual SyncPnt *get_sync_point( std::wstring const &label );
 
    /*! @brief Register a synchronization point associated with the given label.
     *  @return The newly created synchronization point.
-    *  @param rti_ambassador Reference to RTI Ambassador.
+    *  @param RTI_amb Reference to RTI Ambassador.
     *  @param label  Synchronization point label. */
-   virtual SyncPnt *register_sync_pnt( RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-                                       std::wstring const &              label );
+   virtual SyncPnt *register_sync_point( RTI1516_NAMESPACE::RTIambassador &RTI_amb,
+                                         std::wstring const &              label );
 
    /*! @brief Register a synchronization point associated with the given label.
     *  @return The newly created synchronization point.
-    *  @param rti_ambassador              Reference to RTI Ambassador.
+    *  @param RTI_amb              Reference to RTI Ambassador.
     *  @param label               Synchronization point label.
     *  @param federate_handle_set Federate handle set. */
-   virtual SyncPnt *register_sync_pnt(
-      RTI1516_NAMESPACE::RTIambassador &          rti_ambassador,
+   virtual SyncPnt *register_sync_point(
+      RTI1516_NAMESPACE::RTIambassador &          RTI_amb,
       RTI1516_NAMESPACE::FederateHandleSet const &federate_handle_set,
       std::wstring const &                        label );
 
    /*! @brief Register all the synchronization point in this list.
-    *  @param rti_ambassador Reference to RTI Ambassador. */
-   virtual void register_all_sync_pnts( RTI1516_NAMESPACE::RTIambassador &rti_ambassador );
+    *  @param RTI_amb Reference to RTI Ambassador. */
+   virtual void register_all_sync_points( RTI1516_NAMESPACE::RTIambassador &RTI_amb );
 
    /*! @brief Register all the sync-points with the RTI for the given set of federate handles.
-    *  @param rti_ambassador             Reference to the HLA RTI Ambassador instance.
+    *  @param RTI_amb             Reference to the HLA RTI Ambassador instance.
     *  @param federate_handle_set Federate Handle set. */
-   virtual void register_all_sync_pnts(
-      RTI1516_NAMESPACE::RTIambassador &          rti_ambassador,
+   virtual void register_all_sync_points(
+      RTI1516_NAMESPACE::RTIambassador &          RTI_amb,
       RTI1516_NAMESPACE::FederateHandleSet const &federate_handle_set );
 
    /*! @brief Callback from TrickHLA::FedAmb through TrickHLA::Federate for
@@ -132,62 +132,50 @@ class SyncPntListBase
    virtual void sync_point_registration_failed( std::wstring const &label,
                                                 bool                not_unique );
 
-   /*! @brief Wait for the sync-point to be announced by the RTI.
-    *  @param fed_ptr Pointer to TrickHLA::Federate instance.
-    *  @param label   Sync-point label. */
-   virtual void wait_for_announcement( Federate *          fed_ptr,
-                                       std::wstring const &label );
-
-   /*! @brief Wait for the sync-point to be announced by the RTI.
-    *  @param fed_ptr Pointer to TrickHLA::Federate instance.
-    *  @param sync_pt Sync-point instance. */
-   virtual void wait_for_announcement( Federate *fed_ptr,
-                                       SyncPnt * sync_pt );
-
    /*! @brief Wait for all the sync-points to be registered with the RTI.
     *  @param fed_ptr Pointer to TrickHLA::Federate instance. */
    virtual void wait_for_all_announcements( Federate *fed_ptr );
 
    /*! @brief The RTI has announced the existence of a synchronization point.
-    *  @param rti_ambassador    Reference to the HLA RTI Ambassador instance.
+    *  @param RTI_amb    Reference to the HLA RTI Ambassador instance.
     *  @param label             Sync-point label.
     *  @param user_supplied_tag Use supplied tag.*/
    virtual void announce_sync_point(
-      RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
+      RTI1516_NAMESPACE::RTIambassador &RTI_amb,
       std::wstring const &              label,
       RTI1516_USERDATA const &          user_supplied_tag );
 
    /*! @brief Achieve all the synchronization points in the list.
     *  @return True is any synchronization point in the list was achieved.
-    *  @param rti_ambassador Reference to the HLA RTI Ambassador instance. */
-   virtual bool achieve_all_sync_pnts( RTI1516_NAMESPACE::RTIambassador &rti_ambassador );
+    *  @param RTI_amb Reference to the HLA RTI Ambassador instance. */
+   virtual bool achieve_all_sync_points( RTI1516_NAMESPACE::RTIambassador &RTI_amb );
 
    /*! @brief Wait for all the synchronization points in the list to be
     *  achieved.
     *  @param federate Federate associated with this list. */
-   void wait_for_list_synchronization( Federate *federate );
+   virtual void wait_for_list_synchronization( Federate *federate );
 
    /*! @brief Achieve the synchronization point associated with this label.
     *  @return True if achieved, false otherwise.
-    *  @param rti_ambassador Reference to RTI Ambassador.
+    *  @param RTI_amb Reference to RTI Ambassador.
     *  @param label  Synchronization point label. */
-   virtual bool achieve_sync_pnt( RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-                                  std::wstring const &              label );
+   virtual bool achieve_sync_point( RTI1516_NAMESPACE::RTIambassador &RTI_amb,
+                                    std::wstring const &              label );
 
    /*! @brief Achieve the given synchronization point.
     *  @return True if achieved, false otherwise.
-    *  @param rti_ambassador Reference to RTI Ambassador.
+    *  @param RTI_amb Reference to RTI Ambassador.
     *  @param sync_pnt       Specified synchronization point. */
-   virtual bool achieve_sync_pnt( RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-                                  SyncPnt *                         sync_pnt );
+   virtual bool achieve_sync_point( RTI1516_NAMESPACE::RTIambassador &RTI_amb,
+                                    SyncPnt *                         sync_pnt );
 
    /*! @brief Achieve the specified sync-point and wait for the federation to
     *  be synchronized on it.
-    *  @param rti_ambassador Reference to RTI Ambassador.
+    *  @param RTI_amb Reference to RTI Ambassador.
     *  @param federate       Associated federate.
     *  @param label          Synchronization point label. */
    virtual void achieve_and_wait_for_synchronization(
-      RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
+      RTI1516_NAMESPACE::RTIambassador &RTI_amb,
       Federate *                        federate,
       std::wstring const &              label );
 
@@ -215,17 +203,17 @@ class SyncPntListBase
    /*! @brief Get the state of the given synchronization point label.
     *  @return Synchronization point state.
     *  @param label The synchronization point label. */
-   virtual SyncPtStateEnum get_sync_pnt_state( std::wstring const &label );
+   virtual SyncPtStateEnum get_sync_point_state( std::wstring const &label );
 
    /*! @brief Check if specified synchronization point has been announced.
     *  @return True if announced.
     *  @param label The synchronization point label. */
-   virtual bool is_sync_pnt_announced( std::wstring const &label );
+   virtual bool is_sync_point_announced( std::wstring const &label );
 
    /*! @brief Clear the given synchronization point label.
     *  @return True if synchronization point is cleared.
     *  @param label The synchronization point label. */
-   virtual bool clear_sync_pnt( std::wstring const &label );
+   virtual bool clear_sync_point( std::wstring const &label );
 
    /*! @brief Reset the list of synchronization points. */
    virtual void reset();
@@ -252,10 +240,10 @@ class SyncPntListBase
    /*! @brief Converts the vector of synchronization points to a
     *  checkpoint-able class.
     *  @param sync_points Area to populate. */
-   virtual void convert_sync_pts( LoggableSyncPnt *sync_points );
+   virtual void convert_sync_points( LoggableSyncPnt *sync_points );
 
    /*! @brief Dumps synchronization point information to the screen. */
-   virtual void print_sync_pnts();
+   virtual void print_sync_points();
 
   protected:
    // Principal synchronization point functions.
@@ -275,22 +263,22 @@ class SyncPntListBase
       SyncPnt *                                   sync_pnt );
 
    /*! @brief Wait for the announcement of the synchronization point.
+    *  @param fed_ptr Pointer to TrickHLA::Federate instance.
+    *  @param label   Sync-point label. */
+   virtual bool wait_for_sync_point_announcement( Federate *          federate,
+                                                  std::wstring const &label );
+
+   /*! @brief Wait for the announcement of the synchronization point.
     *  @param federate The TrickHLA::Federate instance.
     *  @param sync_pnt The SyncPnt instance. */
-   bool wait_for_sync_pnt_announce( Federate *federate,
-                                    SyncPnt * sync_pnt );
-
-   /*! @brief Notify the RTI that the synchronization point has been achieved.
-    *  @param RTI_amb The HLA RTI Ambassador.
-    *  @param sync_pnt The SyncPnt instance. */
-   virtual void achieve_sync_point( RTI1516_NAMESPACE::RTIambassador &RTI_amb,
-                                    SyncPnt *                         sync_pnt );
+   virtual bool wait_for_sync_point_announcement( Federate *federate,
+                                                  SyncPnt * sync_pnt );
 
    /*! @brief Wait for this synchronization point to be synchronized.
     *  @param federate The TrickHLA::Federate instance.
     *  @param sync_pnt The SyncPnt instance. */
-   bool wait_for_synchronization( Federate *federate,
-                                  SyncPnt * sync_pnt );
+   virtual bool wait_for_synchronization( Federate *federate,
+                                          SyncPnt * sync_pnt );
 
   protected:
    MutexLock mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.

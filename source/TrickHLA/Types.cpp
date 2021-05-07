@@ -213,7 +213,7 @@ ModeTransitionEnum TrickHLA::mode_transition_int16_to_enum(
    return MODE_TRANSITION_UNINITIALIZED;
 }
 
-string TrickHLA::sync_pnt_state_enum_to_string(
+string TrickHLA::sync_point_state_enum_to_string(
    SyncPtStateEnum state )
 {
 
@@ -251,13 +251,13 @@ string TrickHLA::sync_pnt_state_enum_to_string(
    return "SYNC_PT_STATE_UNKNOWN";
 }
 
-int16_t TrickHLA::sync_pnt_state_enum_to_int16(
+int16_t TrickHLA::sync_point_state_enum_to_int16(
    SyncPtStateEnum state )
 {
    return (int16_t)state;
 }
 
-SyncPtStateEnum TrickHLA::sync_pnt_state_int16_to_enum(
+SyncPtStateEnum TrickHLA::sync_point_state_int16_to_enum(
    int16_t int_state )
 {
 

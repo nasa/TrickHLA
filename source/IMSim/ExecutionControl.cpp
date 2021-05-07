@@ -169,9 +169,9 @@ void ExecutionControl::initialize()
    }
 
    // Add the Mode Transition Request synchronization points.
-   this->add_sync_pnt( MTR_RUN_SYNC_POINT );
-   this->add_sync_pnt( MTR_FREEZE_SYNC_POINT );
-   this->add_sync_pnt( MTR_SHUTDOWN_SYNC_POINT );
+   this->add_sync_point( MTR_RUN_SYNC_POINT );
+   this->add_sync_point( MTR_FREEZE_SYNC_POINT );
+   this->add_sync_point( MTR_SHUTDOWN_SYNC_POINT );
 
    // Make sure we initialize the base class.
    TrickHLA::ExecutionControlBase::initialize();
@@ -411,7 +411,7 @@ initiating restore request for '%s' with the RTI.%c",
 
             // Add and register the "STARTUP" sync point with all joined federates
             // so we can achieve it later.
-            if ( this->add_sync_pnt( IMSim::STARTUP_SYNC_POINT ) ) {
+            if ( this->add_sync_point( IMSim::STARTUP_SYNC_POINT ) ) {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d Label: '%ls'%c",
                            __LINE__, IMSim::STARTUP_SYNC_POINT, THLA_NEWLINE );
@@ -420,12 +420,12 @@ initiating restore request for '%s' with the RTI.%c",
                send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d Did not add duplicate synchronization point label '%ls'.%c",
                         __LINE__, IMSim::STARTUP_SYNC_POINT, THLA_NEWLINE );
             }
-            this->register_sync_pnt( *federate->get_RTI_ambassador(),
-                                     federate->get_joined_federate_handles(),
-                                     IMSim::STARTUP_SYNC_POINT );
+            this->register_sync_point( *federate->get_RTI_ambassador(),
+                                       federate->get_joined_federate_handles(),
+                                       IMSim::STARTUP_SYNC_POINT );
 
             // Wait for the announcement of "STARTUP" sync-point before proceeding.
-            this->wait_for_sync_point_announce( IMSim::STARTUP_SYNC_POINT );
+            this->wait_for_sync_point_announcement( federate, IMSim::STARTUP_SYNC_POINT );
 
             // Restart myself...
             get_manager()->restart_initialization();
@@ -472,8 +472,8 @@ but you failed to specify the checkpoint FILE NAME!" );
 
          // Register the Multi-phase intialization sync-points just for the
          // joined federates.
-         this->register_all_sync_pnts( *federate->get_RTI_ambassador(),
-                                       federate->get_joined_federate_handles() );
+         this->register_all_sync_points( *federate->get_RTI_ambassador(),
+                                         federate->get_joined_federate_handles() );
 
          // Call publish_and_subscribe AFTER we've initialized the manager,
          // federate, and FedAmb.
@@ -597,7 +597,7 @@ loading of the federate from the checkpoint file '%s'.%c",
          }
 
          // Wait for the announcement of "STARTUP" sync-point before proceeding.
-         this->wait_for_sync_point_announce( IMSim::STARTUP_SYNC_POINT );
+         this->wait_for_sync_point_announcement( federate, IMSim::STARTUP_SYNC_POINT );
 
          // restart myself...
          get_manager()->restart_initialization();
@@ -1045,9 +1045,9 @@ void ExecutionControl::add_multiphase_init_sync_points()
    ExecutionControlBase::add_multiphase_init_sync_points();
 
    // Register initialization synchronization points used for startup regulation.
-   this->add_sync_pnt( IMSim::STARTUP_SYNC_POINT );
-   this->add_sync_pnt( IMSim::INITIALIZE_SYNC_POINT );
-   this->add_sync_pnt( IMSim::SIM_CONFIG_SYNC_POINT );
+   this->add_sync_point( IMSim::STARTUP_SYNC_POINT );
+   this->add_sync_point( IMSim::INITIALIZE_SYNC_POINT );
+   this->add_sync_point( IMSim::SIM_CONFIG_SYNC_POINT );
 }
 
 void ExecutionControl::announce_sync_point(
@@ -1143,14 +1143,14 @@ void ExecutionControl::announce_sync_point(
 
       // Unknown synchronization point so achieve it but don't wait for the
       // federation to by synchronized on it.
-      this->achieve_sync_pnt( rti_ambassador, label );
+      this->achieve_sync_point( rti_ambassador, label );
    }
 }
 
 /*!
  * @job_class{initialization}
  */
-void ExecutionControl::achieve_all_multiphase_init_sync_pnts(
+void ExecutionControl::achieve_all_multiphase_init_sync_points(
    RTI1516_NAMESPACE::RTIambassador &rti_ambassador )
 {
    // Iterate through this ExecutionControl's synchronization point list.
@@ -1173,7 +1173,7 @@ void ExecutionControl::achieve_all_multiphase_init_sync_pnts(
 /*!
  * @job_class{initialization}
  */
-void ExecutionControl::wait_for_all_multiphase_init_sync_pnts()
+void ExecutionControl::wait_for_all_multiphase_init_sync_points()
 {
    // Iterate through this ExecutionControl's synchronization point list.
    vector< SyncPnt * >::const_iterator i;
@@ -1204,7 +1204,7 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_pnts()
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "IMSim::ExecutionControl::wait_for_all_multiphase_init_sync_pnts():" << __LINE__
+                  errmsg << "IMSim::ExecutionControl::wait_for_all_multiphase_init_sync_points():" << __LINE__
                          << " Unexpectedly the Federate is no longer an execution"
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
@@ -2045,9 +2045,9 @@ bool ExecutionControl::run_mode_transition()
 
    // Register the 'mtr_run' sync-point.
    if ( this->is_master() ) {
-      sync_pnt = this->register_sync_pnt( *RTI_amb, MTR_RUN_SYNC_POINT );
+      sync_pnt = this->register_sync_point( *RTI_amb, MTR_RUN_SYNC_POINT );
    } else {
-      sync_pnt = this->get_sync_pnt( MTR_RUN_SYNC_POINT );
+      sync_pnt = this->get_sync_point( MTR_RUN_SYNC_POINT );
    }
 
    // Make sure that we have a valid sync-point.
@@ -2060,13 +2060,13 @@ bool ExecutionControl::run_mode_transition()
    } else {
 
       // Wait for 'mtr_run' sync-point announce.
-      sync_pnt->wait_for_announce( federate );
+      this->wait_for_sync_point_announcement( federate, sync_pnt );
 
       // Achieve the 'mtr-run' sync-point.
-      sync_pnt->achieve_sync_point( *RTI_amb );
+      this->achieve_sync_point( *RTI_amb, sync_pnt );
 
       // Wait for 'mtr_run' sync-point synchronization.
-      sync_pnt->wait_for_synchronization( federate );
+      this->wait_for_synchronization( federate, sync_pnt );
 
       // Set the current execution mode to running.
       this->current_execution_control_mode = EXECUTION_CONTROL_RUNNING;
@@ -2128,7 +2128,7 @@ void ExecutionControl::freeze_mode_announce()
 {
    // Register the 'mtr_freeze' sync-point.
    if ( this->is_master() ) {
-      this->register_sync_pnt( *( federate->get_RTI_ambassador() ), MTR_FREEZE_SYNC_POINT );
+      this->register_sync_point( *( federate->get_RTI_ambassador() ), MTR_FREEZE_SYNC_POINT );
    }
 }
 
@@ -2139,7 +2139,7 @@ bool ExecutionControl::freeze_mode_transition()
    TrickHLA::SyncPnt *     sync_pnt = NULL;
 
    // Get the 'mtr_freeze' sync-point.
-   sync_pnt = this->get_sync_pnt( MTR_FREEZE_SYNC_POINT );
+   sync_pnt = this->get_sync_point( MTR_FREEZE_SYNC_POINT );
 
    // Make sure that we have a valid sync-point.
    if ( sync_pnt == (TrickHLA::SyncPnt *)NULL ) {
@@ -2151,7 +2151,7 @@ bool ExecutionControl::freeze_mode_transition()
    } else {
 
       // Wait for 'mtr_freeze' sync-point announce.
-      this->wait_for_sync_pnt_announce( federate, sync_pnt );
+      this->wait_for_sync_point_announcement( federate, sync_pnt );
 
       // Achieve the 'mtr_freeze' sync-point.
       this->achieve_sync_point( *RTI_amb, sync_pnt );
@@ -2208,7 +2208,7 @@ void ExecutionControl::shutdown_mode_transition()
    }
 
    // Register the 'mtr_shutdown' sync-point.
-   this->register_sync_pnt( *( federate->get_RTI_ambassador() ), MTR_SHUTDOWN_SYNC_POINT );
+   this->register_sync_point( *( federate->get_RTI_ambassador() ), MTR_SHUTDOWN_SYNC_POINT );
 }
 
 void ExecutionControl::enter_freeze()
@@ -2249,7 +2249,7 @@ bool ExecutionControl::check_freeze_exit()
    }
 
    try {
-      pause_sync_pts.achieve_all_sync_pnts( *( federate->get_RTI_ambassador() ), checktime );
+      pause_sync_pts.achieve_all_sync_points( *( federate->get_RTI_ambassador() ), checktime );
    } catch ( SynchronizationPointLabelNotAnnounced &e ) {
       send_hs( stderr, "IMSim::ExecutionControl::check_freeze():%d EXCEPTION: SynchronizationPointLabelNotAnnounced%c",
                __LINE__, THLA_NEWLINE );
@@ -2314,11 +2314,11 @@ void ExecutionControl::exit_freeze()
 
          SleepTimeout sleep_timer;
 
-         while ( !this->pause_sync_pts.check_sync_pnts( this->checktime ) ) {
+         while ( !this->pause_sync_pts.check_sync_points( this->checktime ) ) {
             // wait for it to be announced
             (void)sleep_timer.sleep();
 
-            if ( !this->pause_sync_pts.check_sync_pnts( this->checktime ) && sleep_timer.timeout() ) {
+            if ( !this->pause_sync_pts.check_sync_points( this->checktime ) && sleep_timer.timeout() ) {
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
@@ -2339,7 +2339,7 @@ void ExecutionControl::exit_freeze()
          federate->announce_freeze = false;    // reset for the next time we freeze
       }
       try {
-         this->pause_sync_pts.achieve_all_sync_pnts( *federate->get_RTI_ambassador(), this->checktime );
+         this->pause_sync_pts.achieve_all_sync_points( *federate->get_RTI_ambassador(), this->checktime );
       } catch ( SynchronizationPointLabelNotAnnounced &e ) {
          send_hs( stderr, "IMSim::ExecutionControl::exit_freeze():%d EXCEPTION: SynchronizationPointLabelNotAnnounced%c",
                   __LINE__, THLA_NEWLINE );
@@ -2378,12 +2378,12 @@ void ExecutionControl::check_pause( const double check_pause_delta )
 
    this->checktime.set( this->get_sim_time() + check_pause_delta );
 
-   if ( this->pause_sync_pts.check_sync_pnts( this->checktime ) ) {
+   if ( this->pause_sync_pts.check_sync_points( this->checktime ) ) {
       federate->freeze_the_federation = true;
    } else if ( this->get_manager()->is_late_joining_federate() ) {
       // check if the requested time has a sync-point.
       this->checktime = federate->requested_time;
-      if ( this->pause_sync_pts.check_sync_pnts( this->checktime ) ) {
+      if ( this->pause_sync_pts.check_sync_points( this->checktime ) ) {
          federate->freeze_the_federation = true;
       }
    }
@@ -2421,13 +2421,13 @@ void ExecutionControl::add_pause(
    Int64Time *    time,
    wstring const &label )
 {
-   pause_sync_pts.add_sync_pnt( label, *time );
+   pause_sync_pts.add_sync_point( label, *time );
 }
 
 void ExecutionControl::clear_pause(
    wstring const &label )
 {
-   pause_sync_pts.clear_sync_pnt( label );
+   pause_sync_pts.clear_sync_point( label );
 }
 
 ExecutionConfiguration *ExecutionControl::get_execution_configuration()
@@ -2611,7 +2611,7 @@ bool ExecutionControl::is_save_initiated()
       SleepTimeout sleep_timer;
 
       while ( !federate->initiate_save_flag ) { // wait for federation to be synced
-         this->pause_sync_pts.achieve_all_sync_pnts( *federate->get_RTI_ambassador(), this->checktime );
+         this->pause_sync_pts.achieve_all_sync_points( *federate->get_RTI_ambassador(), this->checktime );
          (void)sleep_timer.sleep();
 
          if ( !federate->initiate_save_flag && sleep_timer.timeout() ) {
@@ -2662,7 +2662,7 @@ void ExecutionControl::convert_loggable_sync_pts()
          return;
       }
 
-      pause_sync_pts.convert_sync_pts( this->loggable_sync_pts );
+      pause_sync_pts.convert_sync_points( this->loggable_sync_pts );
    }
 }
 
@@ -2681,7 +2681,7 @@ void ExecutionControl::reinstate_logged_sync_pts()
             StringUtilities::to_wstring( sync_point_label, this->loggable_sync_pts[i].label );
             // since the RTI already contains the registered sync points prior
             // to the checkpoint, we just need to add them back into myself...
-            //pause_sync_pts.add_sync_pnt( sync_point_label, sync_point_time );
+            //pause_sync_pts.add_sync_point( sync_point_label, sync_point_time );
             /***
             //DANNY2.7 TODO: you sometimes get an exception for sync point not announced when you restore,
             //         is that an RTI bug or something we can fix here?

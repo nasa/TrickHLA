@@ -79,7 +79,7 @@ SyncPntListBase::~SyncPntListBase()
    (void)mutex.unlock();
 }
 
-void SyncPntListBase::add_sync_pnt(
+void SyncPntListBase::add_sync_point(
    wstring const &label )
 {
    SyncPnt *sp = new SyncPnt( label );
@@ -90,7 +90,7 @@ void SyncPntListBase::add_sync_pnt(
    sync_point_list.push_back( sp );
 }
 
-SyncPnt *SyncPntListBase::get_sync_pnt(
+SyncPnt *SyncPntListBase::get_sync_point(
    std::wstring const &label )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -116,23 +116,23 @@ SyncPnt *SyncPntListBase::get_sync_pnt(
    return NULL;
 }
 
-SyncPnt *SyncPntListBase::register_sync_pnt(
-   RTI1516_NAMESPACE::RTIambassador &rti_amb,
+SyncPnt *SyncPntListBase::register_sync_point(
+   RTI1516_NAMESPACE::RTIambassador &RTI_amb,
    wstring const &                   label )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPnt *sp = get_sync_pnt( label );
+   SyncPnt *sp = get_sync_point( label );
    if ( ( sp != NULL ) && !sp->is_registered() ) {
-      register_sync_point( rti_amb, sp );
+      register_sync_point( RTI_amb, sp );
    }
    return sp;
 }
 
-SyncPnt *SyncPntListBase::register_sync_pnt(
-   RTI1516_NAMESPACE::RTIambassador &          rti_amb,
+SyncPnt *SyncPntListBase::register_sync_point(
+   RTI1516_NAMESPACE::RTIambassador &          RTI_amb,
    RTI1516_NAMESPACE::FederateHandleSet const &federate_handle_set,
    wstring const &                             label )
 {
@@ -140,15 +140,15 @@ SyncPnt *SyncPntListBase::register_sync_pnt(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPnt *sp = get_sync_pnt( label );
+   SyncPnt *sp = get_sync_point( label );
    if ( ( sp != NULL ) && !sp->is_registered() ) {
-      register_sync_point( rti_amb, federate_handle_set, sp );
+      register_sync_point( RTI_amb, federate_handle_set, sp );
    }
    return sp;
 }
 
-void SyncPntListBase::register_all_sync_pnts(
-   RTI1516_NAMESPACE::RTIambassador &rti_ambassador )
+void SyncPntListBase::register_all_sync_points(
+   RTI1516_NAMESPACE::RTIambassador &RTI_amb )
 {
    // Iterate through all the synchronization points that have been added.
    vector< SyncPnt * >::const_iterator i;
@@ -163,17 +163,17 @@ void SyncPntListBase::register_all_sync_pnts(
       if ( ( sp != NULL ) && !sp->is_registered() ) {
 
          // Register the synchronization point.
-         register_sync_point( rti_ambassador, sp );
+         register_sync_point( RTI_amb, sp );
       }
    }
 }
 
-void SyncPntListBase::register_all_sync_pnts(
-   RTI1516_NAMESPACE::RTIambassador &          rti_ambassador,
+void SyncPntListBase::register_all_sync_points(
+   RTI1516_NAMESPACE::RTIambassador &          RTI_amb,
    RTI1516_NAMESPACE::FederateHandleSet const &federate_handle_set )
 {
    if ( federate_handle_set.empty() ) {
-      register_all_sync_pnts( rti_ambassador );
+      register_all_sync_points( RTI_amb );
    } else {
       vector< SyncPnt * >::const_iterator i;
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
@@ -187,7 +187,7 @@ void SyncPntListBase::register_all_sync_pnts(
          if ( ( sp != NULL ) && !sp->is_registered() ) {
 
             // Register the synchronization point with federate in set.
-            register_sync_point( rti_ambassador, federate_handle_set, sp );
+            register_sync_point( RTI_amb, federate_handle_set, sp );
          }
       }
    }
@@ -231,53 +231,15 @@ void SyncPntListBase::sync_point_registration_failed(
    }
 }
 
-void SyncPntListBase::wait_for_announcement(
-   Federate *          fed_ptr,
-   std::wstring const &label )
-{
-   this->wait_for_announcement( fed_ptr, this->get_sync_pnt( label ) );
-}
-
-void SyncPntListBase::wait_for_announcement(
-   Federate *fed_ptr,
-   SyncPnt * sp )
-{
-   if ( sp != NULL ) {
-      string sp_status;
-
-      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         // Get the current sync-point status.
-         StringUtilities::to_string( sp_status, sp->to_wstring() );
-
-         ostringstream message;
-         message << "SyncPntListBase::wait_for_announcement():" << __LINE__
-                 << " Sync-point: " << sp_status << THLA_ENDL;
-         send_hs( stderr, (char *)message.str().c_str() );
-      }
-
-      wait_for_sync_pnt_announce( fed_ptr, sp );
-
-      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         // Get the current sync-point status.
-         StringUtilities::to_string( sp_status, sp->to_wstring() );
-
-         ostringstream message;
-         message << "SyncPntListBase::wait_for_announcement():" << __LINE__
-                 << " Sync-point announced: " << sp_status << THLA_ENDL;
-         send_hs( stderr, (char *)message.str().c_str() );
-      }
-   }
-}
-
 void SyncPntListBase::wait_for_all_announcements(
    Federate *fed_ptr )
 {
    vector< SyncPnt * >::const_iterator i;
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "SyncPntListBase::wait_for_all_registrations():%d Waiting...%c",
+      send_hs( stdout, "SyncPntListBase::wait_for_all_announcements():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
-      this->print_sync_pnts();
+      this->print_sync_points();
    }
 
    // Iterate through the synchronization point list.
@@ -285,16 +247,16 @@ void SyncPntListBase::wait_for_all_announcements(
       SyncPnt *sp = ( *i );
 
       // Wait for the sync-point announcement.
-      this->wait_for_announcement( fed_ptr, sp );
+      this->wait_for_sync_point_announcement( fed_ptr, sp );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      this->print_sync_pnts();
+      this->print_sync_points();
    }
 }
 
 void SyncPntListBase::announce_sync_point(
-   RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
+   RTI1516_NAMESPACE::RTIambassador &RTI_amb,
    wstring const &                   label,
    RTI1516_USERDATA const &          user_supplied_tag )
 {
@@ -318,46 +280,8 @@ void SyncPntListBase::announce_sync_point(
 
       // Unknown synchronization point so achieve it but don't wait for the
       // federation to be synchronized on it.
-      this->achieve_sync_pnt( rti_ambassador, label );
+      (void)achieve_sync_point( RTI_amb, label );
    }
-}
-
-bool SyncPntListBase::achieve_sync_pnt(
-   RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-   wstring const &                   label )
-{
-   return this->achieve_sync_pnt( rti_ambassador, this->get_sync_pnt( label ) );
-}
-
-bool SyncPntListBase::achieve_sync_pnt(
-   RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-   SyncPnt *                         sync_pnt )
-{
-   if ( sync_pnt != NULL ) {
-      try {
-         // When auto_unlock_mutex goes out of scope it automatically unlocks the
-         // mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &mutex );
-
-         rti_ambassador.synchronizationPointAchieved( sync_pnt->get_label() );
-         sync_pnt->set_state( SYNC_PT_STATE_ACHIEVED );
-
-      } catch ( SynchronizationPointLabelNotAnnounced &e ) {
-         throw; // Rethrow the exception.
-      } catch ( FederateNotExecutionMember &e ) {
-         throw; // Rethrow the exception.
-      } catch ( SaveInProgress &e ) {
-         throw; // Rethrow the exception.
-      } catch ( RestoreInProgress &e ) {
-         throw; // Rethrow the exception.
-      } catch ( NotConnected &e ) {
-         throw; // Rethrow the exception.
-      } catch ( RTIinternalError &e ) {
-         throw; // Rethrow the exception.
-      }
-      return true;
-   }
-   return false;
 }
 
 void SyncPntListBase::wait_for_list_synchronization(
@@ -379,7 +303,7 @@ void SyncPntListBase::wait_for_list_synchronization(
          valid_and_not_achieved = ( sp != NULL ) && sp->is_valid() && !sp->is_achieved();
       }
 
-      // Wait for a synchronization point if it is not already achieved.
+      // Wait for a synchronization point if it is valid but not achieved.
       if ( valid_and_not_achieved ) {
 
          // Wait for the federation to synchronized on the sync-point.
@@ -406,7 +330,7 @@ void SyncPntListBase::wait_for_list_synchronization(
                   sleep_timer.reset();
                   if ( !federate->is_execution_member() ) {
                      ostringstream errmsg;
-                     errmsg << "SyncPntListBase::wait_for_all_sync_pnts_synchronization:" << __LINE__
+                     errmsg << "SyncPntListBase::wait_for_list_synchronization():" << __LINE__
                             << " Unexpectedly the Federate is no longer an execution"
                             << " member. This means we are either not connected to the"
                             << " RTI or we are no longer joined to the federation"
@@ -436,7 +360,7 @@ void SyncPntListBase::wait_for_list_synchronization(
 }
 
 void SyncPntListBase::achieve_and_wait_for_synchronization(
-   RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
+   RTI1516_NAMESPACE::RTIambassador &RTI_amb,
    Federate *                        federate,
    std::wstring const &              label )
 {
@@ -444,7 +368,7 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
    StringUtilities::to_string( name, label );
 
    // Check for the synchronization point by label.
-   SyncPnt *sp = this->get_sync_pnt( label );
+   SyncPnt *sp = this->get_sync_point( label );
 
    // If the pointer is not NULL then we found it.
    if ( sp != NULL ) {
@@ -453,7 +377,7 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
       if ( sp->is_announced() ) {
 
          // Achieve the synchronization point.
-         achieve_sync_point( rti_ambassador, sp );
+         (void)achieve_sync_point( RTI_amb, sp );
 
       } else if ( sp->is_achieved() ) {
 
@@ -527,8 +451,8 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
 /*!
  * @job_class{initialization}
  */
-bool SyncPntListBase::achieve_all_sync_pnts(
-   RTI1516_NAMESPACE::RTIambassador &rti_ambassador )
+bool SyncPntListBase::achieve_all_sync_points(
+   RTI1516_NAMESPACE::RTIambassador &RTI_amb )
 {
    bool acknowledged = false;
 
@@ -542,7 +466,7 @@ bool SyncPntListBase::achieve_all_sync_pnts(
       MutexProtection auto_unlock_mutex( &mutex );
 
       if ( ( sp != NULL ) && sp->is_valid() && !sp->is_achieved() ) {
-         if ( this->achieve_sync_pnt( rti_ambassador, sp ) ) {
+         if ( achieve_sync_point( RTI_amb, sp ) ) {
             acknowledged = true;
          }
       }
@@ -550,14 +474,14 @@ bool SyncPntListBase::achieve_all_sync_pnts(
    return ( acknowledged );
 }
 
-SyncPtStateEnum SyncPntListBase::get_sync_pnt_state(
+SyncPtStateEnum SyncPntListBase::get_sync_point_state(
    wstring const &label )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPnt *sp = get_sync_pnt( label );
+   SyncPnt *sp = get_sync_point( label );
    if ( sp != NULL ) {
       return sp->get_state();
    }
@@ -565,14 +489,14 @@ SyncPtStateEnum SyncPntListBase::get_sync_pnt_state(
    return SYNC_PT_STATE_ERROR;
 }
 
-bool SyncPntListBase::is_sync_pnt_announced(
+bool SyncPntListBase::is_sync_point_announced(
    wstring const &label )
 {
-   SyncPtStateEnum state = get_sync_pnt_state( label );
+   SyncPtStateEnum state = get_sync_point_state( label );
    return ( state == SYNC_PT_STATE_ANNOUNCED );
 }
 
-bool SyncPntListBase::clear_sync_pnt(
+bool SyncPntListBase::clear_sync_point(
    wstring const &label )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -645,7 +569,7 @@ bool SyncPntListBase::mark_registered(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPnt *sp = get_sync_pnt( label );
+   SyncPnt *sp = get_sync_point( label );
    if ( sp != NULL ) {
       sp->set_state( SYNC_PT_STATE_REGISTERED );
       return true;
@@ -663,7 +587,7 @@ bool SyncPntListBase::mark_announced(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPnt *sp = get_sync_pnt( label );
+   SyncPnt *sp = get_sync_point( label );
    if ( sp != NULL ) {
       sp->set_state( SYNC_PT_STATE_ANNOUNCED );
       return true;
@@ -681,14 +605,12 @@ bool SyncPntListBase::mark_synchronized(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPnt *sp = get_sync_pnt( label );
-
+   SyncPnt *sp = get_sync_point( label );
    if ( sp != NULL ) {
 
       // Mark the synchronization point at achieved which indicates the
       // federation is synchronized on the synchronization point.
       sp->set_state( SYNC_PT_STATE_SYNCHRONIZED );
-
       return true;
    }
    return false;
@@ -718,7 +640,7 @@ wstring SyncPntListBase::to_wstring()
    return result;
 }
 
-void SyncPntListBase::convert_sync_pts(
+void SyncPntListBase::convert_sync_points(
    LoggableSyncPnt *sync_points )
 {
    int loop = 0;
@@ -733,13 +655,13 @@ void SyncPntListBase::convert_sync_pts(
    }
 }
 
-void SyncPntListBase::print_sync_pnts()
+void SyncPntListBase::print_sync_points()
 {
    string  sync_point_label;
    wstring spwl;
 
    ostringstream msg;
-   msg << "SyncPntListBase::print_sync_pnts():" << __LINE__ << endl
+   msg << "SyncPntListBase::print_sync_points():" << __LINE__ << endl
        << "#############################" << endl
        << "Sync Point Dump: " << sync_point_list.size() << endl;
 
@@ -842,25 +764,35 @@ void SyncPntListBase::register_sync_point(
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 }
 
-bool SyncPntListBase::wait_for_sync_pnt_announce(
+bool SyncPntListBase::wait_for_sync_point_announcement(
+   Federate *          federate,
+   std::wstring const &label )
+{
+   return this->wait_for_sync_point_announcement( federate, get_sync_point( label ) );
+}
+
+bool SyncPntListBase::wait_for_sync_point_announcement(
    Federate *federate,
    SyncPnt * sp )
 {
    if ( sp != NULL ) {
+
+      bool announced;
 
       // Critical code section.
       {
          // When auto_unlock_mutex goes out of scope it automatically unlocks the
          // mutex even if there is an exception.
          MutexProtection auto_unlock_mutex( &mutex );
+         announced = sp->is_announced();
 
          // The sync-point state must be SYNC_PT_STATE_REGISTERED.
-         if ( !sp->exists() && !sp->is_registered() && !sp->is_announced() ) {
+         if ( !sp->exists() && !sp->is_registered() && !announced ) {
             string sp_status;
             StringUtilities::to_string( sp_status, sp->to_wstring() );
 
             ostringstream errmsg;
-            errmsg << "SyncPntListBase::wait_for_sync_pt_announce():" << __LINE__
+            errmsg << "SyncPntListBase::wait_for_sync_point_announcement():" << __LINE__
                    << " Bad sync-point state for sync-point!"
                    << " The sync-point state: " << sp_status << THLA_ENDL;
             send_hs( stderr, (char *)errmsg.str().c_str() );
@@ -868,11 +800,44 @@ bool SyncPntListBase::wait_for_sync_pnt_announce(
          }
       }
 
-      bool         announced;
+      if ( !announced && DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         // Get the current sync-point status.
+         string sp_status;
+         StringUtilities::to_string( sp_status, sp->to_wstring() );
+
+         ostringstream message;
+         message << "SyncPntListBase::wait_for_sync_point_announcement():" << __LINE__
+                 << " Sync-point: " << sp_status << THLA_ENDL;
+         send_hs( stderr, (char *)message.str().c_str() );
+      }
+
       SleepTimeout sleep_timer;
 
-      // Wait for the federation to synchronize on the sync-point.
-      do {
+      // Wait for the sync-point to be announced.
+      while ( !announced ) {
+
+         // Always check to see is a shutdown was received.
+         federate->check_for_shutdown_with_termination();
+
+         (void)sleep_timer.sleep();
+
+         // Check to make sure we're still a member of the federation execution.
+         if ( sleep_timer.timeout() ) {
+            sleep_timer.reset();
+
+            if ( !federate->is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "SyncPntListBase::wait_for_sync_point_announcement():" << __LINE__
+                      << " Unexpectedly the Federate is no longer an execution"
+                      << " member. This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!" << THLA_ENDL;
+               send_hs( stderr, (char *)errmsg.str().c_str() );
+               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               return false;
+            }
+         }
 
          // Critical code section.
          {
@@ -881,38 +846,32 @@ bool SyncPntListBase::wait_for_sync_pnt_announce(
             MutexProtection auto_unlock_mutex( &mutex );
             announced = sp->is_announced();
          }
+      }
 
-         if ( !announced ) {
-            // Always check to see is a shutdown was received.
-            federate->check_for_shutdown_with_termination();
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         // Get the current sync-point status.
+         string sp_status;
+         StringUtilities::to_string( sp_status, sp->to_wstring() );
 
-            (void)sleep_timer.sleep();
-
-            // Check to make sure we're still a member of the federation execution.
-            if ( sleep_timer.timeout() ) {
-               sleep_timer.reset();
-               if ( !federate->is_execution_member() ) {
-                  ostringstream errmsg;
-                  errmsg << "SyncPntListBase::wait_for_sync_pt_announce():" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution"
-                         << " member. This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
-                         << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!" << THLA_ENDL;
-                  send_hs( stderr, (char *)errmsg.str().c_str() );
-                  exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-                  return false;
-               }
-            }
-         }
-      } while ( !announced );
+         ostringstream message;
+         message << "SyncPntListBase::wait_for_sync_point_announcement():" << __LINE__
+                 << " Sync-point announced: " << sp_status << THLA_ENDL;
+         send_hs( stderr, (char *)message.str().c_str() );
+      }
 
       return true;
    }
    return false;
 }
 
-void SyncPntListBase::achieve_sync_point(
+bool SyncPntListBase::achieve_sync_point(
+   RTI1516_NAMESPACE::RTIambassador &RTI_amb,
+   wstring const &                   label )
+{
+   return achieve_sync_point( RTI_amb, this->get_sync_point( label ) );
+}
+
+bool SyncPntListBase::achieve_sync_point(
    RTI1516_NAMESPACE::RTIambassador &RTI_amb,
    SyncPnt *                         sp )
 {
@@ -957,7 +916,10 @@ void SyncPntListBase::achieve_sync_point(
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+      return true;
    }
+   return false;
 }
 
 bool SyncPntListBase::wait_for_synchronization(

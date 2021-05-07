@@ -174,9 +174,6 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    {
       return;
    }
-   /*! @brief Wait for a specified synchronization point label to be announced.
-    *  @param sync_pnt_label Synchronization label to wait for. */
-   virtual void wait_for_sync_point_announce( std::wstring const &sync_pnt_label );
    /*! Add initialization synchronization points to regulate startup. */
    virtual void add_initialization_sync_points() = 0;
    /*! Add user defined multiphase initialization synchronization points to
@@ -190,11 +187,11 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
     *  synchronization points if they are not already achieved and are not
     *  one of the predefined ExecutionControl synchronization points.
     *  @param rti_ambassador Reference to the HLA RTI Ambassador instance. */
-   void achieve_all_multiphase_init_sync_pnts( RTI1516_NAMESPACE::RTIambassador &rti_ambassador );
+   void achieve_all_multiphase_init_sync_points( RTI1516_NAMESPACE::RTIambassador &rti_ambassador );
    /*! @brief Wait for all the user defined mulit-phase initialization
     *  synchronization points if they are not already achieved and are not
     *  one of the predefined ExecutionControl synchronization points. */
-   void wait_for_all_multiphase_init_sync_pnts();
+   void wait_for_all_multiphase_init_sync_points();
 
    /*! Publish the ExecutionControl objects and interactions. */
    virtual void publish() = 0;

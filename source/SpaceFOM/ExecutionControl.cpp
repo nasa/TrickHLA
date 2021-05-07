@@ -185,9 +185,9 @@ void ExecutionControl::initialize()
    }
 
    // Add the Mode Transition Request synchronization points.
-   this->add_sync_pnt( MTR_RUN_SYNC_POINT );
-   this->add_sync_pnt( MTR_FREEZE_SYNC_POINT );
-   this->add_sync_pnt( MTR_SHUTDOWN_SYNC_POINT );
+   this->add_sync_point( MTR_RUN_SYNC_POINT );
+   this->add_sync_point( MTR_FREEZE_SYNC_POINT );
+   this->add_sync_point( MTR_SHUTDOWN_SYNC_POINT );
 
    // Make sure we initialize the base class.
    TrickHLA::ExecutionControlBase::initialize();
@@ -382,10 +382,10 @@ void ExecutionControl::setup_interaction_RTI_handles()
 void ExecutionControl::add_initialization_sync_points()
 {
    // Add the initialization synchronization points used for startup regulation.
-   this->add_sync_pnt( SpaceFOM::OBJECTS_DISCOVERED_SYNC_POINT );
-   this->add_sync_pnt( SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT );
-   this->add_sync_pnt( SpaceFOM::INIT_COMPLETED_SYNC_POINT );
-   this->add_sync_pnt( SpaceFOM::INIT_STARTED_SYNC_POINT );
+   this->add_sync_point( SpaceFOM::OBJECTS_DISCOVERED_SYNC_POINT );
+   this->add_sync_point( SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT );
+   this->add_sync_point( SpaceFOM::INIT_COMPLETED_SYNC_POINT );
+   this->add_sync_point( SpaceFOM::INIT_STARTED_SYNC_POINT );
 
    // Add the multiphase initialization synchronization points.
    this->add_multiphase_init_sync_points();
@@ -431,7 +431,7 @@ void ExecutionControl::announce_sync_point(
 
       // Unknown synchronization point so achieve it but don't wait for the
       // federation to be synchronized on it.
-      this->achieve_sync_pnt( rti_ambassador, label );
+      this->achieve_sync_point( rti_ambassador, label );
    }
 }
 
@@ -585,20 +585,20 @@ void ExecutionControl::role_determination_process()
 
       // Register the initialization synchronization points used to control
       // the SpaceFOM startup process. Section 7.2 Figure 7-4.
-      register_sync_pnt( *( federate->get_RTI_ambassador() ),
-                         federate->get_joined_federate_handles(),
-                         SpaceFOM::INIT_STARTED_SYNC_POINT );
-      register_sync_pnt( *( federate->get_RTI_ambassador() ),
-                         federate->get_joined_federate_handles(),
-                         SpaceFOM::OBJECTS_DISCOVERED_SYNC_POINT );
-      register_sync_pnt( *( federate->get_RTI_ambassador() ),
-                         federate->get_joined_federate_handles(),
-                         SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT );
+      register_sync_point( *( federate->get_RTI_ambassador() ),
+                           federate->get_joined_federate_handles(),
+                           SpaceFOM::INIT_STARTED_SYNC_POINT );
+      register_sync_point( *( federate->get_RTI_ambassador() ),
+                           federate->get_joined_federate_handles(),
+                           SpaceFOM::OBJECTS_DISCOVERED_SYNC_POINT );
+      register_sync_point( *( federate->get_RTI_ambassador() ),
+                           federate->get_joined_federate_handles(),
+                           SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT );
 
       // Register all the user defined multiphase initialization
       // synchronization points just for the joined federates.
-      multiphase_init_sync_pnt_list.register_all_sync_pnts( *( federate->get_RTI_ambassador() ),
-                                                            federate->get_joined_federate_handles() );
+      multiphase_init_sync_pnt_list.register_all_sync_points( *( federate->get_RTI_ambassador() ),
+                                                              federate->get_joined_federate_handles() );
 
    } else {
 
@@ -624,7 +624,7 @@ void ExecutionControl::role_determination_process()
 
          // We are not a late joiner if we received the announce for the
          // 'initialization started' sync-point. (Nominal Initialization)
-         SyncPnt *sp = this->get_sync_pnt( SpaceFOM::INIT_STARTED_SYNC_POINT );
+         SyncPnt *sp = this->get_sync_point( SpaceFOM::INIT_STARTED_SYNC_POINT );
          if ( ( sp != NULL ) && sp->is_announced() ) {
             this->late_joiner            = false;
             this->late_joiner_determined = true;
@@ -718,9 +718,9 @@ void ExecutionControl::early_joiner_hla_init_process()
    // and "startup" sync-points to be registered (i.e. announced).
    // Note: Do NOT register the INIT_COMPLETED_SYNC_POINT synchronization
    // point yet. That marks the successful completion of initialization.
-   this->wait_for_announcement( federate, INIT_STARTED_SYNC_POINT );
-   this->wait_for_announcement( federate, OBJECTS_DISCOVERED_SYNC_POINT );
-   this->wait_for_announcement( federate, ROOT_FRAME_DISCOVERED_SYNC_POINT );
+   this->wait_for_sync_point_announcement( federate, INIT_STARTED_SYNC_POINT );
+   this->wait_for_sync_point_announcement( federate, OBJECTS_DISCOVERED_SYNC_POINT );
+   this->wait_for_sync_point_announcement( federate, ROOT_FRAME_DISCOVERED_SYNC_POINT );
 
    // Setup all the RTI handles for the objects, attributes and interaction
    // parameters.
@@ -1163,8 +1163,8 @@ void ExecutionControl::post_multi_phase_init_processes()
          federate->restore_orig_MOM_auto_provide_setting();
 
          // Let the late joining federates know that we have completed initialization.
-         register_sync_pnt( *( federate->get_RTI_ambassador() ),
-                            SpaceFOM::INIT_COMPLETED_SYNC_POINT );
+         register_sync_point( *( federate->get_RTI_ambassador() ),
+                              SpaceFOM::INIT_COMPLETED_SYNC_POINT );
 
          // Check for an initialization mode transition request.
          if ( this->check_mode_transition_request() ) {
@@ -1983,9 +1983,9 @@ bool ExecutionControl::run_mode_transition()
 
    // Register the 'mtr_run' sync-point.
    if ( this->is_master() ) {
-      sync_pnt = this->register_sync_pnt( *RTI_amb, MTR_RUN_SYNC_POINT );
+      sync_pnt = this->register_sync_point( *RTI_amb, MTR_RUN_SYNC_POINT );
    } else {
-      sync_pnt = this->get_sync_pnt( MTR_RUN_SYNC_POINT );
+      sync_pnt = this->get_sync_point( MTR_RUN_SYNC_POINT );
    }
 
    // Make sure that we have a valid sync-point.
@@ -1998,7 +1998,7 @@ bool ExecutionControl::run_mode_transition()
    } else {
 
       // Wait for 'mtr_run' sync-point announce.
-      this->wait_for_sync_pnt_announce( federate, sync_pnt );
+      this->wait_for_sync_point_announcement( federate, sync_pnt );
 
       // Achieve the 'mtr-run' sync-point.
       this->achieve_sync_point( *RTI_amb, sync_pnt );
@@ -2067,7 +2067,7 @@ void ExecutionControl::freeze_mode_announce()
 {
    // Register the 'mtr_freeze' sync-point.
    if ( this->is_master() ) {
-      this->register_sync_pnt( *( federate->get_RTI_ambassador() ), MTR_FREEZE_SYNC_POINT );
+      this->register_sync_point( *( federate->get_RTI_ambassador() ), MTR_FREEZE_SYNC_POINT );
    }
 }
 
@@ -2078,7 +2078,7 @@ bool ExecutionControl::freeze_mode_transition()
    TrickHLA::SyncPnt *     sync_pnt = NULL;
 
    // Get the 'mtr_freeze' sync-point.
-   sync_pnt = this->get_sync_pnt( MTR_FREEZE_SYNC_POINT );
+   sync_pnt = this->get_sync_point( MTR_FREEZE_SYNC_POINT );
 
    // Make sure that we have a valid sync-point.
    if ( sync_pnt == (TrickHLA::SyncPnt *)NULL ) {
@@ -2090,7 +2090,7 @@ bool ExecutionControl::freeze_mode_transition()
    } else {
 
       // Wait for 'mtr_freeze' sync-point announce.
-      this->wait_for_sync_pnt_announce( federate, sync_pnt );
+      this->wait_for_sync_point_announcement( federate, sync_pnt );
 
       // Achieve the 'mtr_freeze' sync-point.
       this->achieve_sync_point( *RTI_amb, sync_pnt );
@@ -2149,11 +2149,11 @@ void ExecutionControl::shutdown_mode_transition()
                __LINE__, THLA_NEWLINE );
    }
    // Register the 'mtr_shutdown' sync-point.
-   this->register_sync_pnt( *( federate->get_RTI_ambassador() ), MTR_SHUTDOWN_SYNC_POINT );
+   this->register_sync_point( *( federate->get_RTI_ambassador() ), MTR_SHUTDOWN_SYNC_POINT );
 
    // Wait for the 'mtr_shutdown' announcement to make sure it goes through
    // before we shutdown.
-   this->wait_for_announcement( federate, MTR_SHUTDOWN_SYNC_POINT );
+   this->wait_for_sync_point_announcement( federate, MTR_SHUTDOWN_SYNC_POINT );
 }
 
 /*!
@@ -2168,7 +2168,7 @@ bool ExecutionControl::check_for_shutdown()
 
    // Check to see if the mtr_shutdown sync-point has been announced or if the
    // ExCO object has been deleted as indicators to shutdown.
-   return ( this->is_sync_pnt_announced( MTR_SHUTDOWN_SYNC_POINT )
+   return ( this->is_sync_point_announced( MTR_SHUTDOWN_SYNC_POINT )
             || this->execution_configuration->object_deleted_from_RTI );
 }
 
@@ -2191,7 +2191,7 @@ bool ExecutionControl::check_for_shutdown_with_termination()
       errmsg << "SpaceFOM::ExecutionControl::check_for_shutdown_with_termination():" << __LINE__
              << " WARNING: This Federate '" << this->federate->get_federate_name()
              << "' detected a";
-      if ( this->is_sync_pnt_announced( MTR_SHUTDOWN_SYNC_POINT ) ) {
+      if ( this->is_sync_point_announced( MTR_SHUTDOWN_SYNC_POINT ) ) {
          errmsg << " Shutdown sync-point 'mtr_shutdown',";
       }
       if ( this->execution_configuration->object_deleted_from_RTI ) {

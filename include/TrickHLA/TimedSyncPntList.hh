@@ -85,20 +85,20 @@ class TimedSyncPntList : public TrickHLA::SyncPntListBase
 
    /*! @brief Add the given synchronization point label to the list.
     *  @param label Synchronization point label. */
-   virtual void add_sync_pnt( std::wstring const &label );
+   virtual void add_sync_point( std::wstring const &label );
 
    /*! @brief Add the given synchronization point label and action time to the list.
     *  @param label Synchronization point label.
     *  @param time  Action time. */
-   virtual void add_sync_pnt( std::wstring const &label, const Int64Time &time );
+   virtual void add_sync_point( std::wstring const &label, const Int64Time &time );
 
    /*! @brief Achieve all the synchronization points in the list.
     *  @return True is any synchronization point in the list was achieved.
     *  @param rti_ambassador Reference to the HLA RTI Ambassador instance. */
-   virtual bool achieve_all_sync_pnts( RTI1516_NAMESPACE::RTIambassador &rti_ambassador )
+   virtual bool achieve_all_sync_points( RTI1516_NAMESPACE::RTIambassador &rti_ambassador )
    {
       Int64Time time( 0.0 );
-      return ( achieve_all_sync_pnts( rti_ambassador, time ) );
+      return ( achieve_all_sync_points( rti_ambassador, time ) );
    }
 
    /*! @brief Acknowledge all the synchronization point less than or equal to
@@ -106,22 +106,22 @@ class TimedSyncPntList : public TrickHLA::SyncPntListBase
     *  @return True if acknowledged, false otherwise.
     *  @param rti_ambassador    Reference to RTI Ambassador.
     *  @param checkTime Time to check. */
-   virtual bool achieve_all_sync_pnts( RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-                                       const Int64Time &                 checkTime );
+   virtual bool achieve_all_sync_points( RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
+                                         const Int64Time &                 checkTime );
 
    /*! @brief Determine if we have any synchronization point that has a action
     * time less than the given time.
     *  @return True if sync-point is ready to be cleared.
     *  @param checkTime Time to check. */
-   virtual bool check_sync_pnts( const Int64Time &checkTime );
+   virtual bool check_sync_points( const Int64Time &checkTime );
 
    /*! @brief Converts the vector of synchronization points to a
     *  checkpoint-able class.
     *  @param pts Area to populate. */
-   virtual void convert_sync_pts( LoggableSyncPnt *pts );
+   virtual void convert_sync_points( LoggableSyncPnt *pts );
 
    /*! @brief Dumps synchronization point information to the screen. */
-   virtual void print_sync_pnts();
+   virtual void print_sync_points();
 
   private:
    // Do not allow the copy constructor or assignment operator.

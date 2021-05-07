@@ -305,17 +305,17 @@ ModeTransitionEnum mode_transition_int16_to_enum( int16_t int_mode );
 /*! @brief Convert a Synchronization Point State enum value into a printable string.
  *  @return TrickHLA sync point state as a printable string.
  *  @param state Sync point state enumeration value to convert. */
-std::string sync_pnt_state_enum_to_string( SyncPtStateEnum state );
+std::string sync_point_state_enum_to_string( SyncPtStateEnum state );
 
 /*! @brief Convert a Synchronization Point State enum value into a 16 bit integer.
  *  @return TrickHLA sync point state as a 16 bit integer.
  *  @param state Sync point state enumeration value to convert. */
-int16_t sync_pnt_state_enum_to_int16( SyncPtStateEnum state );
+int16_t sync_point_state_enum_to_int16( SyncPtStateEnum state );
 
 /*! @brief Convert an integer value to a Synchronization Point State enumeration value.
  *  @return TrickHLA Synchronization Point State enum value.
  *  @param int_state Sync point state value as a 16 bit integer. */
-SyncPtStateEnum sync_pnt_state_int16_to_enum( int16_t int_state );
+SyncPtStateEnum sync_point_state_int16_to_enum( int16_t int_state );
 
 } // namespace TrickHLA
 

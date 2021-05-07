@@ -159,9 +159,9 @@ void ExecutionControl::initialize()
    }
 
    // Add the Mode Transition Request synchronization points.
-   this->add_sync_pnt( MTR_RUN_SYNC_POINT );
-   this->add_sync_pnt( MTR_FREEZE_SYNC_POINT );
-   this->add_sync_pnt( MTR_SHUTDOWN_SYNC_POINT );
+   this->add_sync_point( MTR_RUN_SYNC_POINT );
+   this->add_sync_point( MTR_FREEZE_SYNC_POINT );
+   this->add_sync_point( MTR_SHUTDOWN_SYNC_POINT );
 
    // Make sure we initialize the base class.
    TrickHLA::ExecutionControlBase::initialize();
@@ -362,7 +362,7 @@ void ExecutionControl::determine_federation_master()
    }
 
    // Register the initialization synchronization points and wait for confirmation.
-   this->register_all_sync_pnts( *( federate->get_RTI_ambassador() ) );
+   this->register_all_sync_points( *( federate->get_RTI_ambassador() ) );
    this->wait_for_all_announcements( federate );
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
@@ -398,8 +398,8 @@ void ExecutionControl::setup_interaction_RTI_handles()
 void ExecutionControl::add_multiphase_init_sync_points()
 {
    // Register initialization synchronization points used for startup regulation.
-   this->add_sync_pnt( DIS::STARTUP_SYNC_POINT );
-   this->add_sync_pnt( DIS::INITIALIZE_SYNC_POINT );
+   this->add_sync_point( DIS::STARTUP_SYNC_POINT );
+   this->add_sync_point( DIS::INITIALIZE_SYNC_POINT );
 }
 
 void ExecutionControl::announce_sync_point(
@@ -469,7 +469,7 @@ void ExecutionControl::announce_sync_point(
 
       // Unknown synchronization point so achieve it but don't wait for the
       // federation to be synchronized on it.
-      this->achieve_sync_pnt( rti_ambassador, label );
+      this->achieve_sync_point( rti_ambassador, label );
    }
 }
 
@@ -1197,9 +1197,9 @@ bool ExecutionControl::run_mode_transition()
 
    // Register the 'mtr_run' sync-point.
    if ( this->is_master() ) {
-      sync_pnt = this->register_sync_pnt( *RTI_amb, MTR_RUN_SYNC_POINT );
+      sync_pnt = this->register_sync_point( *RTI_amb, MTR_RUN_SYNC_POINT );
    } else {
-      sync_pnt = this->get_sync_pnt( MTR_RUN_SYNC_POINT );
+      sync_pnt = this->get_sync_point( MTR_RUN_SYNC_POINT );
    }
 
    // Make sure that we have a valid sync-point.
@@ -1212,13 +1212,13 @@ bool ExecutionControl::run_mode_transition()
    } else {
 
       // Wait for 'mtr_run' sync-point announce.
-      sync_pnt->wait_for_announce( federate );
+      this->wait_for_sync_point_announcement( federate, sync_pnt );
 
       // Achieve the 'mtr-run' sync-point.
-      sync_pnt->achieve_sync_point( *RTI_amb );
+      this->achieve_sync_point( *RTI_amb, sync_pnt );
 
       // Wait for 'mtr_run' sync-point synchronization.
-      sync_pnt->wait_for_synchronization( federate );
+      this->wait_for_synchronization( federate, sync_pnt );
 
       // Set the current execution mode to running.
       this->current_execution_control_mode = EXECUTION_CONTROL_RUNNING;
@@ -1281,7 +1281,7 @@ void ExecutionControl::freeze_mode_announce()
 {
    // Register the 'mtr_freeze' sync-point.
    if ( this->is_master() ) {
-      this->register_sync_pnt( *( federate->get_RTI_ambassador() ), MTR_FREEZE_SYNC_POINT );
+      this->register_sync_point( *( federate->get_RTI_ambassador() ), MTR_FREEZE_SYNC_POINT );
    }
 }
 
@@ -1292,7 +1292,7 @@ bool ExecutionControl::freeze_mode_transition()
    TrickHLA::SyncPnt *     sync_pnt = NULL;
 
    // Get the 'mtr_freeze' sync-point.
-   sync_pnt = this->get_sync_pnt( MTR_FREEZE_SYNC_POINT );
+   sync_pnt = this->get_sync_point( MTR_FREEZE_SYNC_POINT );
 
    // Make sure that we have a valid sync-point.
    if ( sync_pnt == (TrickHLA::SyncPnt *)NULL ) {
@@ -1304,7 +1304,7 @@ bool ExecutionControl::freeze_mode_transition()
    } else {
 
       // Wait for 'mtr_freeze' sync-point announce.
-      this->wait_for_sync_pnt_announce( federate, sync_pnt );
+      this->wait_for_sync_point_announcement( federate, sync_pnt );
 
       // Achieve the 'mtr_freeze' sync-point.
       this->achieve_sync_point( *RTI_amb, sync_pnt );
@@ -1362,7 +1362,7 @@ void ExecutionControl::shutdown_mode_transition()
    }
 
    // Register the 'mtr_shutdown' sync-point.
-   this->register_sync_pnt( *( federate->get_RTI_ambassador() ), MTR_SHUTDOWN_SYNC_POINT );
+   this->register_sync_point( *( federate->get_RTI_ambassador() ), MTR_SHUTDOWN_SYNC_POINT );
 }
 
 void ExecutionControl::check_freeze()
@@ -1434,7 +1434,7 @@ void ExecutionControl::exit_freeze()
       // so acknowledge the pause sync point
       //(if the Federation Manager is master then this has no effect)
       try {
-         this->pause_sync_pts.achieve_all_sync_pnts( *federate->get_RTI_ambassador(), this->checktime );
+         this->pause_sync_pts.achieve_all_sync_points( *federate->get_RTI_ambassador(), this->checktime );
       } catch ( SynchronizationPointLabelNotAnnounced &e ) {
          send_hs( stderr, "DIS::ExecutionControl::exit_freeze():%d EXCEPTION: SynchronizationPointLabelNotAnnounced%c",
                   __LINE__, THLA_NEWLINE );
@@ -1460,7 +1460,7 @@ void ExecutionControl::add_pause(
    Int64Time *    time,
    wstring const &label )
 {
-   pause_sync_pts.add_sync_pnt( label, *time );
+   pause_sync_pts.add_sync_point( label, *time );
 }
 
 ExecutionConfiguration *ExecutionControl::get_execution_configuration()

@@ -2437,7 +2437,7 @@ void Federate::achieve_and_wait_for_synchronization(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      execution_control->print_sync_pnts();
+      execution_control->print_sync_points();
    }
 }
 

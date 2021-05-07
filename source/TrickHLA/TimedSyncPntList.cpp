@@ -19,6 +19,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Federate.cpp}
 @trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{Manager.cpp}
+@trick_link_dependency{MutexLock.cpp}
+@trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{SyncPnt.cpp}
 @trick_link_dependency{SyncPntListBase.cpp}
 @trick_link_dependency{TimedSyncPnt.cpp}
@@ -48,6 +50,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/LoggableSyncPnt.hh"
 #include "TrickHLA/LoggableTimedSyncPnt.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPnt.hh"
 #include "TrickHLA/SyncPntListBase.hh"
@@ -66,30 +70,35 @@ TimedSyncPntList::TimedSyncPntList()
    return;
 }
 
-void TimedSyncPntList::add_sync_pnt(
+void TimedSyncPntList::add_sync_point(
    wstring const &label )
 {
    Int64Time time( 0.0 );
-   add_sync_pnt( label, time );
+   add_sync_point( label, time );
 }
 
-void TimedSyncPntList::add_sync_pnt(
+void TimedSyncPntList::add_sync_point(
    wstring const &  label,
    const Int64Time &time )
 {
    TimedSyncPnt *sp = new TimedSyncPnt( time, label );
-   lock_read_write();
+
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
    sync_point_list.push_back( sp );
-   unlock_read_write();
 }
 
-bool TimedSyncPntList::achieve_all_sync_pnts(
+bool TimedSyncPntList::achieve_all_sync_points(
    RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
    const Int64Time &                 checkTime )
 {
    bool wasAcknowledged = false;
 
-   lock_read_only();
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
+
    if ( !sync_point_list.empty() ) {
       vector< SyncPnt * >::const_iterator i;
 
@@ -99,22 +108,23 @@ bool TimedSyncPntList::achieve_all_sync_pnts(
 
          if ( sp != NULL && sp->exists() && !sp->is_achieved() ) {
             if ( sp->get_time() <= checkTime ) {
-               if ( this->achieve_sync_pnt( rti_ambassador, sp ) ) {
+               if ( this->achieve_sync_point( rti_ambassador, sp ) ) {
                   wasAcknowledged = true;
                }
             }
          }
       }
    }
-   unlock_read_only();
-
    return wasAcknowledged;
 }
 
-bool TimedSyncPntList::check_sync_pnts(
+bool TimedSyncPntList::check_sync_points(
    const Int64Time &checkTime )
 {
-   lock_read_only();
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
+
    if ( !sync_point_list.empty() ) {
       vector< SyncPnt * >::const_iterator i;
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
@@ -122,16 +132,14 @@ bool TimedSyncPntList::check_sync_pnts(
          TimedSyncPnt *timed_i = dynamic_cast< TimedSyncPnt * >( *i );
          if ( ( timed_i->get_state() == SYNC_PT_STATE_EXISTS )
               && ( timed_i->get_time() <= checkTime ) ) {
-            unlock_read_only();
             return true;
          }
       }
    }
-   unlock_read_only();
    return false;
 }
 
-void TimedSyncPntList::convert_sync_pts( LoggableSyncPnt *sync_points )
+void TimedSyncPntList::convert_sync_points( LoggableSyncPnt *sync_points )
 {
    // Cast the LoggableSyncPnt pointer to a LoggableTimedSyncPnt pointer.
    LoggableTimedSyncPnt *timed_sync_points = dynamic_cast< LoggableTimedSyncPnt * >( sync_points );
@@ -139,17 +147,19 @@ void TimedSyncPntList::convert_sync_pts( LoggableSyncPnt *sync_points )
    // If the cast failed, then treat it like a regular SyncPnt but warn user.
    if ( timed_sync_points == NULL ) {
       ostringstream errmsg;
-      errmsg
-         << "TimedSyncPntList::convert_sync_pts():" << __LINE__
-         << ": Could not cast synchronization points to timed synchronization points!"
-         << THLA_ENDL;
+      errmsg << "TimedSyncPntList::convert_sync_pts():" << __LINE__
+             << ": Could not cast synchronization points to timed synchronization points!"
+             << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
-      SyncPntListBase::convert_sync_pts( sync_points );
+      SyncPntListBase::convert_sync_points( sync_points );
    } else {
       int                                 loop = 0;
       vector< SyncPnt * >::const_iterator i;
 
-      lock_read_only();
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &mutex );
+
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
          // Cast the SyncPnt pointer to a TimedSyncPnt pointer.
          TimedSyncPnt *timed_i = dynamic_cast< TimedSyncPnt * >( *i );
@@ -160,21 +170,23 @@ void TimedSyncPntList::convert_sync_pts( LoggableSyncPnt *sync_points )
          }
       }
    }
-
-   unlock_read_only();
 }
 
-void TimedSyncPntList::print_sync_pnts()
+void TimedSyncPntList::print_sync_points()
 {
    vector< SyncPnt * >::const_iterator i;
 
    string sync_point_label;
 
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
+
    ostringstream msg;
-   msg << "TimedSyncPntList::print_sync_pnts():" << __LINE__ << endl
+   msg << "TimedSyncPntList::print_sync_points():" << __LINE__ << endl
        << "#############################" << endl
        << "Sync Point Dump: " << sync_point_list.size() << endl;
-   lock_read_only();
+
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
       // Cast the SyncPnt pointer to a TimedSyncPnt pointer.
       TimedSyncPnt *timed_i = dynamic_cast< TimedSyncPnt * >( *i );
@@ -185,6 +197,4 @@ void TimedSyncPntList::print_sync_pnts()
    }
    msg << "#############################" << endl;
    send_hs( stdout, (char *)msg.str().c_str() );
-
-   unlock_read_only();
 }

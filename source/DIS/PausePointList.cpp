@@ -19,6 +19,8 @@ NASA, Johnson Space Center\n
 @python_module{DIS}
 
 @tldh
+@trick_link_dependency{../TrickHLA/MutexLock.cpp}
+@trick_link_dependency{../TrickHLA/MutexProtection.cpp}
 @trick_link_dependency{../TrickHLA/SyncPnt.cpp}
 @trick_link_dependency{../TrickHLA/TimedSyncPnt.cpp}
 @trick_link_dependency{PausePointList.cpp}
@@ -34,8 +36,6 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-//#include <iostream>
-//#include <sstream>
 
 // Trick include files.
 #include "trick/exec_proto.h"
@@ -43,6 +43,8 @@ NASA, Johnson Space Center\n
 #include "trick/release.h"
 
 // HLA include files.
+#include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPnt.hh"
 #include "TrickHLA/TimedSyncPnt.hh"
@@ -65,10 +67,13 @@ PausePointList::PausePointList()
    return;
 }
 
-bool PausePointList::clear_sync_pnt(
+bool PausePointList::clear_sync_point(
    wstring const &label )
 {
-   lock_read_write();
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
+
    if ( !sync_point_list.empty() ) {
       vector< SyncPnt * >::iterator i;
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
@@ -89,13 +94,10 @@ bool PausePointList::clear_sync_pnt(
             sync_point_list.erase( i );
             delete sp;
             i = sync_point_list.end();
-
-            unlock_read_write();
             return true;
          }
       }
    }
-   unlock_read_write();
    return false;
 }
 
@@ -107,18 +109,19 @@ void PausePointList::check_state()
       return;
    }
 
-   lock_read_only();
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
+
    if ( !sync_point_list.empty() ) {
       vector< SyncPnt * >::const_iterator i;
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
          if ( ( *i )->get_state() == SYNC_PT_STATE_ACHIEVED ) {
             this->state = PAUSE_POINT_STATE_FREEZE;
-            unlock_read_only();
             return;
          }
       }
    }
-   unlock_read_only();
 
    // FIXME: Commenting out to test. This needs to be split between the
    // DIS::ExecutinoControl and the IMSim::ExecutionControl.
@@ -180,7 +183,10 @@ wstring PausePointList::to_wstring()
    }
 
    vector< SyncPnt * >::const_iterator i;
-   lock_read_only();
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
+
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
       SyncPnt *sp = ( *i );
       if ( sp != NULL ) {
@@ -188,21 +194,23 @@ wstring PausePointList::to_wstring()
       }
    }
    result += L"\n";
-   unlock_read_only();
-
    return result;
 }
 
-void PausePointList::print_sync_pnts()
+void PausePointList::print_sync_points()
 {
    vector< SyncPnt * >::const_iterator i;
    string                              sync_point_label;
 
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
+
    ostringstream msg;
-   msg << "DIS::PausePointList::print_sync_pnts():" << __LINE__ << endl
+   msg << "DIS::PausePointList::print_sync_points():" << __LINE__ << endl
        << "#############################" << endl
        << "Pause Point Dump: " << sync_point_list.size() << endl;
-   lock_read_only();
+
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
       // Cast the SyncPnt pointer to a TimedSyncPnt pointer.
       TimedSyncPnt *timed_i = dynamic_cast< TimedSyncPnt * >( *i );
@@ -213,6 +221,4 @@ void PausePointList::print_sync_pnts()
    }
    msg << "#############################" << endl;
    send_hs( stdout, (char *)msg.str().c_str() );
-
-   unlock_read_only();
 }
