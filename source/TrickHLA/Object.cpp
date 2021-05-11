@@ -2564,9 +2564,6 @@ void Object::create_requested_attribute_set()
 
    for ( int i = 0; i < attr_count; ++i ) {
 
-      // TODO: Pre-sort all the items we publish so that we will not need
-      // to check the publish flag, for efficiency.
-      //
       // Only include attributes that have been requested, we own, and we publish.
       if ( attributes[i].is_update_requested()
            && attributes[i].is_locally_owned()
@@ -2605,9 +2602,6 @@ void Object::create_attribute_set(
    if ( ( required_config & CONFIG_CYCLIC ) == CONFIG_CYCLIC ) {
       for ( int i = 0; i < attr_count; ++i ) {
 
-         // TODO: Pre-sort all the items we publish so that we will not need
-         // to check the publish flag, for efficiency.
-         //
          // Only include attributes that have the required configuration,
          // we own, we publish, and the sub-rate says we are ready to
          // send or the attribute has been requested.
@@ -2617,12 +2611,14 @@ void Object::create_attribute_set(
                    || ( attributes[i].is_data_cycle_ready()
                         && ( ( attributes[i].get_configuration() & required_config ) == required_config ) ) ) ) {
 
-            // If there is no sub-classed TrickHLAConditional object for this
-            // attribute or if the sub-classed TrickHLAConditional object
-            // indicates that it should be sent, then add this attribute into\
-            // the attribute map.
+            // If there is no sub-classed TrickHLA-Conditional object for this
+            // attribute or if the sub-classed Conditional object indicates that
+            // it should be sent, then add this attribute into the attribute
+            // map. NOTE: Override the Conditional if the attribute has been
+            // requested by another Federate to make sure it is sent.
             if ( !attributes[i].has_conditional()
-                 || attributes[i].get_conditional()->should_send( &attributes[i] ) ) {
+                 || attributes[i].get_conditional()->should_send( &attributes[i] )
+                 || ( include_requested && attributes[i].is_update_requested() ) ) {
 
                // If there was a requested update for this attribute make sure
                // we clear the request flag now since we are handling it here.
@@ -2641,9 +2637,6 @@ void Object::create_attribute_set(
    } else {
       for ( int i = 0; i < attr_count; ++i ) {
 
-         // TODO: Pre-sort all the items we publish so that we will not need
-         // to check the publish flag, for efficiency.
-         //
          // Only include attributes that have the required configuration,
          // we own, and we publish.
          if ( attributes[i].is_locally_owned()
