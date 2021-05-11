@@ -1208,11 +1208,11 @@ void Interaction::mark_unchanged()
 /*!
  * @details If the manager does not exist, -1.0 seconds is assigned to the returned object.
  */
-Int64Interval Interaction::get_fed_lookahead() const
+Int64Interval Interaction::get_lookahead() const
 {
    Int64Interval i;
    if ( manager != NULL ) {
-      i = manager->get_fed_lookahead();
+      i = manager->get_lookahead();
    } else {
       i = Int64Interval( -1.0 );
    }
@@ -1223,11 +1223,11 @@ Int64Interval Interaction::get_fed_lookahead() const
  * @details If the manager does not exist, MAX_LOGICAL_TIME_SECONDS is assigned
  * to the returned object.
  */
-Int64Time Interaction::get_granted_fed_time() const
+Int64Time Interaction::get_granted_time() const
 {
    Int64Time t;
    if ( manager != NULL ) {
-      t = manager->get_granted_fed_time();
+      t = manager->get_granted_time();
    } else {
       t = Int64Time( MAX_LOGICAL_TIME_SECONDS );
    }

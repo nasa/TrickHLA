@@ -132,8 +132,8 @@ void SinePacking::initialize_callback(
 void SinePacking::pack()
 {
    if ( !initialized ) {
-      cout << "SinePacking::pack() ERROR: The initialize() function has not"
-           << " been called!" << endl;
+      cout << "SinePacking::pack():" << __LINE__
+           << " ERROR: The initialize() function has not been called!" << endl;
    }
 
    // Just count the number of times the pack() function gets called.
@@ -154,7 +154,7 @@ void SinePacking::pack()
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
       string obj_name = ( object != NULL ) ? object->get_name_string() : "";
 
-      cout << "SinePacking::pack()" << endl
+      cout << "SinePacking::pack():" << __LINE__ << endl
            << "\t Object-Name:'" << obj_name << "'" << endl
 
            << "\t sim_data->name:'" << sim_data->get_name()
@@ -187,17 +187,19 @@ void SinePacking::pack()
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_PACKING ) ) {
 
       if ( buff != NULL ) {
-         cout << " SinePacking::pack() buff_size: " << buff_size << endl;
+         cout << " SinePacking::pack():" << __LINE__
+              << " buff_size: " << buff_size << endl;
          unsigned char c = pack_count % 10;
          for ( int i = 0; i < buff_size; ++i ) {
             buff[i] = c;
-            cout << " SinePacking::pack() buffer[" << i << "] = " << (int)buff[i] << endl;
+            cout << " SinePacking::pack():" << __LINE__
+                 << " buffer[" << i << "] = " << (int)buff[i] << endl;
          }
       }
 
       string obj_name = ( object != NULL ) ? object->get_name_string() : "";
 
-      cout << "SinePacking::pack()" << endl
+      cout << "SinePacking::pack():" << __LINE__ << endl
            << "\t Object-Name:'" << obj_name << "'" << endl;
 
       // This part of the example goes a little deeper into the details of
@@ -241,8 +243,8 @@ void SinePacking::pack()
 void SinePacking::unpack()
 {
    if ( !initialized ) {
-      cout << "SinePacking::unpack() ERROR: The initialize() function has not"
-           << " been called!" << endl;
+      cout << "SinePacking::unpack():" << __LINE__
+           << " ERROR: The initialize() function has not been called!" << endl;
    }
 
    // If the HLA phase attribute has changed and is remotely owned (i.e. is
@@ -267,7 +269,7 @@ void SinePacking::unpack()
 
       string obj_name = ( object != NULL ) ? object->get_name_string() : "";
 
-      cout << "SinePacking::unpack()" << endl
+      cout << "SinePacking::unpack():" << __LINE__ << endl
            << "\t Object-Name:'" << obj_name << "'" << endl
 
            << "\t sim_data->name:'" << sim_data->get_name() << "', Received-HLA-Data:"
@@ -299,15 +301,17 @@ void SinePacking::unpack()
    // Output more debug information for a higher debug-level.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_PACKING ) ) {
       if ( buff != NULL ) {
-         cout << " SinePacking::unpack() buff_size: " << buff_size << endl;
+         cout << " SinePacking::unpack():" << __LINE__
+              << " buff_size: " << buff_size << endl;
          for ( int i = 0; i < buff_size; ++i ) {
-            cout << " SinePacking::unpack() buffer[" << i << "] = " << (int)buff[i] << endl;
+            cout << " SinePacking::unpack():" << __LINE__
+                 << " buffer[" << i << "] = " << (int)buff[i] << endl;
          }
       }
 
       string obj_name = ( object != NULL ) ? object->get_name_string() : "";
 
-      cout << "SinePacking::unpack()" << endl
+      cout << "SinePacking::unpack():" << __LINE__ << endl
            << "\t Object-Name:'" << obj_name << "'" << endl;
 
       // This part of the example goes a little deeper into the details of

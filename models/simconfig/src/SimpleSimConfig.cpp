@@ -137,20 +137,22 @@ void SimpleSimConfig::pack()
    // run_duration setting.
    if ( terminate_time >= 1.0e20 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-         cout << "SimpleSimConfig::pack() Setting simulation termination time to "
+         cout << "SimpleSimConfig::pack():" << __LINE__
+              << " Setting simulation termination time to "
               << run_duration << " seconds." << endl;
       }
       exec_set_terminate_time( this->run_duration );
    } else {
       // Set the run_duration based on the Trick simulation termination time
       // and the current granted HLA time.
-      this->run_duration = terminate_time - this->object->get_granted_time();
+      this->run_duration = terminate_time - this->object->get_granted_time().get_time_in_seconds();
       if ( run_duration < 0.0 ) {
          run_duration = 0.0;
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-         cout << "SimpleSimConfig::pack() Setting simulation duration to "
+         cout << "SimpleSimConfig::pack(:" << __LINE__
+              << " Setting simulation duration to "
               << run_duration << " seconds." << endl;
       }
    }
@@ -159,7 +161,7 @@ void SimpleSimConfig::pack()
    this->run_duration_microsec = Int64Interval::to_microseconds( this->run_duration );
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      cout << "SimpleSimConfig::pack()" << endl
+      cout << "SimpleSimConfig::pack():" << __LINE__ << endl
            << "\t Object-Name:'" << this->object->get_name() << "'" << endl
            << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'" << endl
            << "\t run_duration:" << run_duration << " seconds" << endl
@@ -183,14 +185,15 @@ void SimpleSimConfig::unpack()
    // run_duration setting.
    if ( run_duration >= 0.0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-         cout << "SimpleSimConfig::unpack() Setting simulation duration to "
+         cout << "SimpleSimConfig::unpack():" << __LINE__
+              << " Setting simulation duration to "
               << run_duration << " seconds." << endl;
       }
       exec_set_terminate_time( this->run_duration );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      cout << "SimpleSimConfig::unpack()" << endl
+      cout << "SimpleSimConfig::unpack():" << __LINE__ << endl
            << "\t Object-Name:'" << this->object->get_name() << "'" << endl
            << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'" << endl
            << "\t run_duration:" << run_duration << " seconds" << endl

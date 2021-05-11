@@ -108,11 +108,11 @@ class InteractionHandler
 
    /*! @brief Return a copy of the interactions lookahead time.
     *  @return A copy of the federation lookahead time. */
-   Int64Interval get_fed_lookahead() const;
+   Int64Interval get_lookahead() const;
 
    /*! @brief Return a copy of the granted HLA logical time.
     *  @return A copy of the federation granted time. */
-   Int64Time get_granted_fed_time() const;
+   Int64Time get_granted_time() const;
 
    /*! @brief Returns the current simulation time.
     *  @return Current simulation time. */

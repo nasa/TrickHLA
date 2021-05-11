@@ -1563,7 +1563,7 @@ void Object::provide_attribute_update(
 void Object::send_requested_data()
 {
    if ( attr_update_requested ) {
-      send_requested_data( exec_get_sim_time(), get_federate()->get_lookahead_time() );
+      send_requested_data( exec_get_sim_time(), get_federate()->get_lookahead_time_in_seconds() );
    }
 }
 
@@ -1602,7 +1602,7 @@ void Object::send_requested_data(
    RTIambassador *rti_amb = get_RTI_ambassador();
 
    // Time tag the data we're about to send out
-   Int64Time t = trick_fed->get_granted_fed_time();
+   Int64Time t = trick_fed->get_granted_time();
    set_last_update_time( t.get() );
 
    // Check for a zero lookahead time, which means the cycle_time (i.e. dt)
@@ -1712,8 +1712,8 @@ exception for '%s' with error message '%s'.%c",
              << Int64Interval::to_microseconds( cycle_time ) << " microseconds)" << endl
              << "  sim-time + cycle_time=" << ( current_time + cycle_time ) << " ("
              << Int64Interval::to_microseconds( current_time + cycle_time ) << " microseconds)" << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << " ("
-             << trick_fed->get_granted_fed_time().get_time_in_micros() << " microseconds)" << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << " ("
+             << trick_fed->get_granted_time().get_time_in_micros() << " microseconds)" << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << " ("
              << trick_fed->get_lookahead().get_time_in_micros() << " microseconds)" << endl
              << "  update_time=" << update_time.get_time_in_seconds() << " ("
@@ -1733,7 +1733,7 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: AttributeNotOwned" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
@@ -1749,7 +1749,7 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: ObjectInstanceNotKnown" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
@@ -1764,7 +1764,7 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: AttributeNotDefined" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
@@ -1779,7 +1779,7 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception:FederateNotExecutionMember" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
@@ -1794,7 +1794,7 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: SaveInProgress" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
@@ -1809,7 +1809,7 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: RestoreInProgress" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
@@ -1824,7 +1824,7 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: NotConnected" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
@@ -1839,7 +1839,7 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: RTIinternalError" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
@@ -1856,7 +1856,7 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " RTI1516_EXCEPTION" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
@@ -1894,7 +1894,7 @@ void Object::send_cyclic_and_requested_data(
    RTIambassador *rti_amb = get_RTI_ambassador();
 
    // Time tag the data we're about to send out
-   Int64Time t = trick_fed->get_granted_fed_time();
+   Int64Time t = trick_fed->get_granted_time();
    set_last_update_time( t.get() );
 
    // Check for a zero lookahead time, which means the cycle_time (i.e. dt)
@@ -2012,8 +2012,8 @@ exception for '%s' with error message '%s'.%c",
              << Int64Interval::to_microseconds( cycle_time ) << " microseconds)" << endl
              << "  sim-time + cycle_time=" << ( current_time + cycle_time ) << " ("
              << Int64Interval::to_microseconds( current_time + cycle_time ) << " microseconds)" << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << " ("
-             << trick_fed->get_granted_fed_time().get_time_in_micros() << " microseconds)" << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << " ("
+             << trick_fed->get_granted_time().get_time_in_micros() << " microseconds)" << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << " ("
              << trick_fed->get_lookahead().get_time_in_micros() << " microseconds)" << endl
              << "  update_time=" << update_time.get_time_in_seconds() << " ("
@@ -2032,7 +2032,7 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: AttributeNotOwned" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
@@ -2047,7 +2047,7 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: ObjectInstanceNotKnown" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
@@ -2062,7 +2062,7 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: AttributeNotDefined" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
@@ -2077,7 +2077,7 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: FederateNotExecutionMember" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
@@ -2092,7 +2092,7 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: SaveInProgress" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
@@ -2107,7 +2107,7 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: RestoreInProgress" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
@@ -2122,7 +2122,7 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: NotConnected" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
@@ -2137,7 +2137,7 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: RTIinternalError" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
@@ -2154,7 +2154,7 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " RTI1516_EXCEPTION" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
@@ -2252,7 +2252,7 @@ void Object::receive_cyclic_data()
       do {
 #if THLA_OBJ_DEBUG_RECEIVE
          send_hs( stdout, "Object::receive_cyclic_data():%d for '%s' at HLA-logical-time=%G%c",
-                  __LINE__, get_name(), get_granted_fed_time().get_time_in_seconds(),
+                  __LINE__, get_name(), get_granted_time().get_time_in_seconds().get_time_in_seconds(),
                   THLA_NEWLINE );
 #endif
 
@@ -2279,14 +2279,14 @@ void Object::receive_cyclic_data()
 #if THLA_OBJ_DEBUG_VALID_OBJECT_RECEIVE
    else if ( is_instance_handle_valid() && ( exec_get_sim_time() > 0.0 ) ) {
       send_hs( stdout, "Object::receive_cyclic_data():%d NO new data for valid object '%s' at HLA-logical-time=%G%c",
-               __LINE__, get_name(), get_granted_fed_time().get_time_in_seconds(),
+               __LINE__, get_name(), get_granted_time().get_time_in_seconds().get_time_in_seconds(),
                THLA_NEWLINE );
    }
 #endif
 #if THLA_OBJ_DEBUG_RECEIVE
    else {
       send_hs( stdout, "Object::receive_cyclic_data():%d NO new data for '%s' at HLA-logical-time=%G%c",
-               __LINE__, get_name(), get_granted_fed_time().get_time_in_seconds(),
+               __LINE__, get_name(), get_granted_time().get_time_in_seconds().get_time_in_seconds(),
                THLA_NEWLINE );
    }
 #endif
@@ -2311,7 +2311,7 @@ void Object::send_init_data()
    RTIambassador *rti_amb = get_RTI_ambassador();
 
    // Update the time for the data we're about to send out
-   Int64Time t = trick_fed->get_granted_fed_time();
+   Int64Time t = trick_fed->get_granted_time();
    set_last_update_time( t.get() );
 
    // If we have a data packing object then pack the data now.
@@ -2364,8 +2364,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: InvalidLogicalTime" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << " ("
-             << trick_fed->get_granted_fed_time().get_time_in_micros() << " microseconds)" << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << " ("
+             << trick_fed->get_granted_time().get_time_in_micros() << " microseconds)" << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << " ("
              << trick_fed->get_lookahead().get_time_in_micros() << " microseconds)" << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << " ("
@@ -2382,7 +2382,7 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: AttributeNotOwned" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -2396,7 +2396,7 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: ObjectInstanceNotKnown" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -2410,7 +2410,7 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: AttributeNotDefined" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -2424,7 +2424,7 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: FederateNotExecutionMember" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -2438,7 +2438,7 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: SaveInProgress" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -2452,7 +2452,7 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: RestoreInProgress" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -2466,7 +2466,7 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: NotConnected" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -2480,7 +2480,7 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: RTIinternalError" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -2496,7 +2496,7 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: " << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_fed_time().get_time_in_seconds() << endl
+             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -3915,18 +3915,13 @@ Int64Time const &Object::get_update_time_plus_lookahead()
    return ( time_plus_lookahead );
 }
 
-double Object::get_granted_time() const
-{
-   return ( ( manager != NULL ) ? manager->get_granted_time() : 0.0 );
-}
-
 /*!
  * @details  If the manager does not exist, -1.0 seconds is returned.
  */
-Int64Interval Object::get_fed_lookahead() const
+Int64Interval Object::get_lookahead() const
 {
    if ( manager != NULL ) {
-      return manager->get_fed_lookahead();
+      return manager->get_lookahead();
    } else {
       Int64Interval di( -1.0 );
       return di;
@@ -3936,10 +3931,10 @@ Int64Interval Object::get_fed_lookahead() const
 /*!
  * @details If the manager does not exist, MAX_LOGICAL_TIME_SECONDS is returned.
  */
-Int64Time Object::get_granted_fed_time() const
+Int64Time Object::get_granted_time() const
 {
    if ( manager != NULL ) {
-      return manager->get_granted_fed_time();
+      return manager->get_granted_time();
    } else {
       Int64Time dt( MAX_LOGICAL_TIME_SECONDS );
       return dt;

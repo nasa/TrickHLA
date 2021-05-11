@@ -150,11 +150,11 @@ bool SineConditional::should_send(
 
       prev_sim_data = *sim_data; // make a copy of the current data
    } else {
-      send_hs( stderr, "SineConditional::should_send('%s') => ERROR: Either you \
+      send_hs( stderr, "SineConditional::should_send('%s'):%d => ERROR: Either you \
 forgot to call the initialize() routine to specify the attribute FOM name from \
 the sim_data you wish to track or you provided the wrong TrickHLA-Attribute to \
 an already-initialized SineConditional!",
-               attr->get_FOM_name() );
+               attr->get_FOM_name(), __LINE__ );
    }
    return rc;
 }

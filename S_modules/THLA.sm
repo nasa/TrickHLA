@@ -17,16 +17,16 @@
  *---------------------------------------------------------------------------*
  * Modified By: Edwin Z. Crues
  *        Date: April 2020
- * Description: Extended THLABase.sm to support SRFOM.
+ * Description: Extended THLABase.sm to support TrickHLA Simple Init Scheme.
  ****************************************************************************/
 
 // TrickHLA SimObject base class.
 #include "THLABase.sm"
 
-// SRFOM Execution Control class definition.
+// TrickHLA Simple Init Scheme Execution Control class definition.
 ##include "TrickHLA/ExecutionControl.hh"
 
-// SRFOM Execution Configuration (ExCO) class definition.
+//  TrickHLA Simple Init Scheme Execution Configuration (ExCO) class definition.
 ##include "TrickHLA/ExecutionConfiguration.hh"
 
 //=========================================================================
@@ -40,7 +40,7 @@ class THLASimObject : public THLABaseSimObject {
    // The Simple TrickHLA example Execution Configuration Object (ExCO).
    TrickHLA::ExecutionConfiguration simple_sim_config;
 
-   // The simple TrickHLA Execution Control object.
+   // The Simple TrickHLA Execution Control object.
    TrickHLA::ExecutionControl execution_control;
 
    THLASimObject( double data_cycle,

@@ -105,8 +105,8 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
    ostringstream msg;
    msg << "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction():" << __LINE__
        << " ===> debug <===" << endl
-       << " granted-time:" << interaction->get_granted_fed_time().get_time_in_seconds() << endl
-       << " lookahead-time:" << interaction->get_fed_lookahead().get_time_in_seconds() << endl;
+       << " granted-time:" << interaction->get_granted_time().get_time_in_seconds() << endl
+       << " lookahead-time:" << interaction->get_lookahead().get_time_in_seconds() << endl;
    send_hs( stdout, (char *)msg.str().c_str() );
 #endif
 
@@ -150,8 +150,8 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
       interaction->get_federate()->wait_for_time_advance_grant();
    }
 
-   Int64Interval lookahead              = interaction->get_fed_lookahead();
-   Int64Time     granted                = interaction->get_granted_fed_time();
+   Int64Interval lookahead              = interaction->get_lookahead();
+   Int64Time     granted                = interaction->get_granted_time();
    Int64Time     granted_plus_lookahead = granted + lookahead;
 
    double curr_scenario_time   = interaction->get_federate()->get_scenario_time();
@@ -294,8 +294,8 @@ void FreezeInteractionHandler::receive_interaction(
       infomsg << "IMSim::FreezeInteractionHandler::receive_interaction():"
               << __LINE__
               << " ===> debug <===" << endl
-              << " granted-time:" << interaction->get_granted_fed_time().get_time_in_seconds() << endl
-              << " lookahead-time:" << interaction->get_fed_lookahead().get_time_in_seconds()
+              << " granted-time:" << interaction->get_granted_time().get_time_in_seconds() << endl
+              << " lookahead-time:" << interaction->get_lookahead().get_time_in_seconds()
               << THLA_ENDL;
       send_hs( stdout, (char *)infomsg.str().c_str() );
 #endif

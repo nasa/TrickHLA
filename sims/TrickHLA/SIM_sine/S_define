@@ -77,6 +77,7 @@ class AnalyticSineSimObj : public Trick::SimObject {
    AnalyticSineSimObj & operator=(const AnalyticSineSimObj & rhs);
 };
 
+
 //=============================================================================
 // SIM_OBJECT: PropagatedSineSimObj
 // Sim-object for an propagated solution of a sine wave.
@@ -215,6 +216,7 @@ class THLAInitSimObj : public Trick::SimObject {
    // Do not allow the default constructor.
    THLAInitSimObj();
 };
+
 
 // Instantiations
 AnalyticSineSimObj   A;

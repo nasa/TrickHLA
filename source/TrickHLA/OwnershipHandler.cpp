@@ -350,8 +350,8 @@ void OwnershipHandler::pull_ownership(
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       send_hs( stdout, "OwnershipHandler::pull_ownership(time=%G):%d scenario-time=%G, granted_time=%G, lookahead=%G %c",
                time, __LINE__, get_scenario_time(),
-               get_granted_fed_time().get_time_in_seconds(),
-               get_fed_lookahead().get_time_in_seconds(), THLA_NEWLINE );
+               get_granted_time().get_time_in_seconds(),
+               get_lookahead().get_time_in_seconds(), THLA_NEWLINE );
    }
 
    THLAAttributeMap *attr_map;
@@ -408,8 +408,8 @@ void OwnershipHandler::pull_ownership(
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       send_hs( stdout, "OwnershipHandler::pull_ownership(%s, time=%G):%d scenario-time=%G, granted_time=%G, lookahead=%G %c",
                attribute_FOM_name, time, __LINE__, get_scenario_time(),
-               get_granted_fed_time().get_time_in_seconds(),
-               get_fed_lookahead().get_time_in_seconds(), THLA_NEWLINE );
+               get_granted_time().get_time_in_seconds(),
+               get_lookahead().get_time_in_seconds(), THLA_NEWLINE );
    }
 
    THLAAttributeMap *attr_map;
@@ -453,8 +453,8 @@ void OwnershipHandler::push_ownership(
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       send_hs( stdout, "OwnershipHandler::push_ownership(time=%G):%d sim-time=%G, granted_time=%G, lookahead=%G %c",
                time, __LINE__, get_scenario_time(),
-               get_granted_fed_time().get_time_in_seconds(),
-               get_fed_lookahead().get_time_in_seconds(), THLA_NEWLINE );
+               get_granted_time().get_time_in_seconds(),
+               get_lookahead().get_time_in_seconds(), THLA_NEWLINE );
    }
 
    THLAAttributeMap *attr_map;
@@ -511,8 +511,8 @@ void OwnershipHandler::push_ownership(
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       send_hs( stdout, "OwnershipHandler::push_ownership(%s, time=%G):%d sim-time=%G, granted_time=%G, lookahead=%G %c",
                attribute_FOM_name, time, __LINE__, get_scenario_time(),
-               get_granted_fed_time().get_time_in_seconds(),
-               get_fed_lookahead().get_time_in_seconds(), THLA_NEWLINE );
+               get_granted_time().get_time_in_seconds(),
+               get_lookahead().get_time_in_seconds(), THLA_NEWLINE );
    }
 
    THLAAttributeMap *attr_map;
@@ -544,11 +544,11 @@ void OwnershipHandler::push_ownership(
 /*!
  *  @details If the manager does not exist, -1.0 seconds is assigned to the returned object.
  */
-Int64Interval OwnershipHandler::get_fed_lookahead() const
+Int64Interval OwnershipHandler::get_lookahead() const
 {
    Int64Interval di;
    if ( object != NULL ) {
-      di = object->get_fed_lookahead();
+      di = object->get_lookahead();
    } else {
       di = Int64Interval( -1.0 );
    }
@@ -558,11 +558,11 @@ Int64Interval OwnershipHandler::get_fed_lookahead() const
 /*!
  *  @details If the object does not exist, MAX_LOGICAL_TIME_SECONDS is
  *  assigned to the returned object. */
-Int64Time OwnershipHandler::get_granted_fed_time() const
+Int64Time OwnershipHandler::get_granted_time() const
 {
    Int64Time dt;
    if ( object != NULL ) {
-      dt = object->get_granted_fed_time();
+      dt = object->get_granted_time();
    } else {
       dt = Int64Time( MAX_LOGICAL_TIME_SECONDS );
    }

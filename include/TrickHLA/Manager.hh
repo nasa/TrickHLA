@@ -248,17 +248,13 @@ class Manager
     * @return Pointer to the RTI ambassador. */
    RTI1516_NAMESPACE::RTIambassador *get_RTI_ambassador();
 
-   /*! @brief Get the granted HLA time.
-    *  @return Granted HLA time. */
-   double get_granted_time() const;
-
    /*! @brief Return a copy of the federate's lookahead time.
     *  @return This federate's lookahead time interval. */
-   Int64Interval get_fed_lookahead() const;
+   Int64Interval get_lookahead() const;
 
    /*! @brief Return a copy of the granted HLA logical time.
     *  @return The granted federation time. */
-   Int64Time get_granted_fed_time() const;
+   Int64Time get_granted_time() const;
 
    // Interactions
    /*! @brief Process the received interactions. */

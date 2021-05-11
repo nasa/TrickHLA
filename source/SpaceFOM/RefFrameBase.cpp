@@ -287,7 +287,7 @@ void RefFrameBase::pack()
    // Print out debug information if desired.
    if ( debug ) {
       cout.precision( 15 );
-      cout << "RefFrameBase::pack()" << endl
+      cout << "RefFrameBase::pack():" << __LINE__ << endl
            << "\tObject-Name: '" << object->get_name() << "'" << endl
            << "\tname: '" << ( this->name != NULL ? this->name : "" ) << "'" << endl
            << "\tparent_name: '" << ( this->parent_name != NULL ? this->parent_name : "" ) << "'" << endl
@@ -310,8 +310,8 @@ void RefFrameBase::unpack()
    //double dt; // Local vs. remote time difference.
 
    if ( !initialized ) {
-      cout << "RefFrameBase::unpack() ERROR: The initialize() function has not"
-           << " been called!" << endl;
+      cout << "RefFrameBase::unpack():" << __LINE__
+           << " ERROR: The initialize() function has not been called!" << endl;
    }
 
    // Use the HLA encoder helpers to decode the reference frame fixed record.
@@ -330,7 +330,7 @@ void RefFrameBase::unpack()
       // Print out debug information if desired.
       if ( debug ) {
          cout.precision( 15 );
-         cout << "RefFrameBase::unpack()" << endl
+         cout << "RefFrameBase::unpack():" << __LINE__ << endl
               << "\tObject-Name: '" << object->get_name() << "'" << endl
               << "\tname: '" << ( this->name != NULL ? this->name : "" ) << "'" << endl
               << "\tparent_name: '" << ( this->parent_name != NULL ? this->parent_name : "" ) << "'" << endl

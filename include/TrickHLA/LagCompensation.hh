@@ -91,11 +91,11 @@ class LagCompensation
 
    /*! @brief Returns a copy of the object's lookahead time.
     *  @return A copy of the federate's lookahead time. */
-   Int64Interval get_fed_lookahead() const;
+   Int64Interval get_lookahead() const;
 
    /*! @brief Returns a copy of the object's granted federation time.
     *  @return A copy of the federate's current granted time. */
-   Int64Time get_granted_fed_time() const;
+   Int64Time get_granted_time() const;
 
    /*! @brief Returns the current scenario time.
     *  @return Current scenario time. */

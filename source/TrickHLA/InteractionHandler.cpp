@@ -109,22 +109,22 @@ void InteractionHandler::receive_interaction(
             __LINE__, THLA_NEWLINE );
 }
 
-Int64Interval InteractionHandler::get_fed_lookahead() const
+Int64Interval InteractionHandler::get_lookahead() const
 {
    Int64Interval di;
    if ( interaction != NULL ) {
-      di = interaction->get_fed_lookahead();
+      di = interaction->get_lookahead();
    } else {
       di = Int64Interval( -1.0 );
    }
    return di;
 }
 
-Int64Time InteractionHandler::get_granted_fed_time() const
+Int64Time InteractionHandler::get_granted_time() const
 {
    Int64Time dt;
    if ( interaction != NULL ) {
-      dt = interaction->get_granted_fed_time();
+      dt = interaction->get_granted_time();
    } else {
       dt = Int64Time( MAX_LOGICAL_TIME_SECONDS );
    }

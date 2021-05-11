@@ -142,7 +142,7 @@ Federate::Federate()
      federation_exists( false ),
      federation_joined( false ),
      all_federates_joined( false ),
-     lookahead( 1.0 ),
+     lookahead( 0.0 ),
      shutdown_called( false ),
      HLA_save_directory( "" ),
      initiate_save_flag( false ),
@@ -3139,7 +3139,7 @@ void Federate::post_restore()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      this->HLA_time       = get_granted_time();
+      this->HLA_time       = this->granted_time.get_time_in_seconds();
       this->requested_time = this->granted_time;
 
       federation_restored();
@@ -4466,7 +4466,7 @@ void Federate::wait_for_time_advance_grant()
    }
 
    // Record the granted time in the HLA_time variable, so we can plot it in Trick.
-   this->HLA_time = get_granted_time();
+   this->HLA_time = this->granted_time.get_time_in_seconds();
 
    // Add the line number for a higher trace level.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -6146,8 +6146,8 @@ void Federate::restart_checkpoint()
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-   this->HLA_time        = get_granted_time();
-   this->requested_time  = granted_time;
+   this->HLA_time        = this->granted_time.get_time_in_seconds();
+   this->requested_time  = this->granted_time;
    this->restore_process = No_Restore;
 
    reinstate_logged_sync_pts();

@@ -774,13 +774,13 @@ bool ExecutionControl::process_mode_transition_request()
    // Print diagnostic message if appropriate.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       cout << "=============================================================" << endl
-           << "ExecutionControl::process_mode_transition_request()" << endl
+           << "ExecutionControl::process_mode_transition_request():" << __LINE__ << endl
            << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << endl
            << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
            << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
            << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << this->scenario_timeline->get_sim_offset() << endl
-           << "\t Current HLA grant time:    " << federate->get_granted_time() << endl
-           << "\t Current HLA request time:  " << federate->get_requested_time() << endl
+           << "\t Current HLA grant time:    " << federate->get_granted_time().get_time_in_seconds() << endl
+           << "\t Current HLA request time:  " << federate->get_requested_time().get_time_in_seconds() << endl
            << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << endl
            << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << endl;
       if ( this->does_cte_timeline_exist() ) {
@@ -1073,7 +1073,7 @@ bool ExecutionControl::process_execution_control_updates()
 
             // Print diagnostic message if appropriate.
             if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-               cout << "DSES::ExecutionControl::process_execution_control_updates()" << endl
+               cout << "DSES::ExecutionControl::process_execution_control_updates():" << __LINE__ << endl
                     << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << endl
                     << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
                     << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl

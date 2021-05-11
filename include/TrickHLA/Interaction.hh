@@ -279,11 +279,11 @@ class Interaction
 
    /*! @brief Return a copy of the federate's lookahead time.
     *  @return A copy of the federate's lookahead time. */
-   Int64Interval get_fed_lookahead() const;
+   Int64Interval get_lookahead() const;
 
    /*! @brief Return a copy of the granted HLA logical time.
     *  @return A copy of the federation granted time. */
-   Int64Time get_granted_fed_time() const;
+   Int64Time get_granted_time() const;
 
    /*! @brief Check if federate is shutdown function was called.
     *  @return True if the manager is shutting down the federate. */

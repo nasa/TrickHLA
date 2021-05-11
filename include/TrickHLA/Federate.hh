@@ -830,30 +830,16 @@ class Federate
       return federation_name;
    }
 
-   /*! @brief Get the current granted federation execution time in seconds.
-    *  @return Current granted federation execution time in seconds. */
-   double get_granted_time() const
-   {
-      return granted_time.get_time_in_seconds();
-   }
-
-   /*! @brief Get the requested federation execution time in seconds.
-    *  @return Requested federation execution time in seconds. */
-   double get_requested_time() const
-   {
-      return requested_time.get_time_in_seconds();
-   }
-
-   /*! @brief Get the current granted federation execution time.
-    *  @return Reference to current granted federation execution time. */
-   const Int64Time &get_granted_fed_time() const
+   /*! @brief Get the current granted HLA federation execution time.
+    *  @return Reference to current granted HLA federation execution time. */
+   const Int64Time &get_granted_time() const
    {
       return granted_time;
    }
 
-   /*! @brief Get the requested federation execution time.
-    *  @return Reference to requested federation execution time. */
-   const Int64Time &get_requested_fed_time() const
+   /*! @brief Get the requested HLA federation execution time.
+    *  @return Reference to requested HLA federation execution time. */
+   const Int64Time &get_requested_time() const
    {
       return requested_time;
    }
@@ -867,7 +853,7 @@ class Federate
 
    /*! @brief Get the current federate lookahead time in seconds.
     *  @return Current federate lookahead time in seconds. */
-   const double get_lookahead_time() const
+   const double get_lookahead_time_in_seconds() const
    {
       return lookahead_time;
    }
@@ -928,7 +914,7 @@ class Federate
 
    /*! @brief Set the time advance grant flag.
     *  @param grant_flag Status of time advance grant. */
-   void set_time_advance_grant( const bool &grant_flag )
+   void set_time_advance_granted( const bool &grant_flag )
    {
       this->time_adv_granted = grant_flag;
    }

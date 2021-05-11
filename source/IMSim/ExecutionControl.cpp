@@ -179,8 +179,8 @@ void ExecutionControl::initialize()
    // Must use a preset master.
    if ( !this->is_master_preset() ) {
       ostringstream errmsg;
-      errmsg << "IMSim::ExecutionControl::initialize(): WARNING:" << __LINE__
-             << " Only a preset master is supported. Make sure to set"
+      errmsg << "IMSim::ExecutionControl::initialize():" << __LINE__
+             << " WARNING: Only a preset master is supported. Make sure to set"
              << " 'THLA.federate.use_preset_master = true' in your input file."
              << " Setting use_preset_master to true!"
              << THLA_ENDL;
@@ -350,8 +350,7 @@ Waiting for the required federates to join.%c",
                send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d \
 You indicated that you want a restore => I AM THE MASTER <= \
 initiating restore request for '%s' with the RTI.%c",
-                        __LINE__, tRestoreName,
-                        THLA_NEWLINE );
+                        __LINE__, tRestoreName, THLA_NEWLINE );
             }
             // request federation restore from RTI
             federate->initiate_restore_announce( tRestoreName );
@@ -541,8 +540,7 @@ but you failed to specify the checkpoint FILE NAME!" );
             send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d \
 You indicated that you want a restore => I AM NOT THE MASTER <= \
 loading of the federate from the checkpoint file '%s'.%c",
-                     __LINE__,
-                     tRestoreName, THLA_NEWLINE );
+                     __LINE__, tRestoreName, THLA_NEWLINE );
          }
          federate->restore_checkpoint( tRestoreName );
 
@@ -589,8 +587,8 @@ loading of the federate from the checkpoint file '%s'.%c",
                    << " You indicated that you wanted to restore a "
                    << "checkpoint => I AM THE NOT MASTER <= "
                    << "wait_for_federation_restore_to_complete() failed!!!"
-                   << THLA_ENDL;
-            errmsg << endl
+                   << THLA_ENDL
+                   << endl
                    << tStr;
             send_hs( stderr, (char *)errmsg.str().c_str() );
             exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
@@ -1634,8 +1632,8 @@ bool ExecutionControl::process_mode_transition_request()
            << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
            << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
            << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << this->scenario_timeline->get_sim_offset() << endl
-           << "\t Current HLA grant time:    " << federate->get_granted_time() << endl
-           << "\t Current HLA request time:  " << federate->get_requested_time() << endl
+           << "\t Current HLA grant time:    " << federate->get_granted_time().get_time_in_seconds() << endl
+           << "\t Current HLA request time:  " << federate->get_requested_time().get_time_in_seconds() << endl
            << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << endl
            << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << endl;
       if ( this->does_cte_timeline_exist() ) {
@@ -1928,7 +1926,7 @@ bool ExecutionControl::process_execution_control_updates()
 
             // Print diagnostic message if appropriate.
             if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-               cout << "ExecutionControl::process_execution_control_updates()" << endl
+               cout << "ExecutionControl::process_execution_control_updates():" << __LINE__ << endl
                     << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << endl
                     << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
                     << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl

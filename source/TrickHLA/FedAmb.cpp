@@ -1464,12 +1464,12 @@ void FedAmb::timeRegulationEnabled(
       send_hs( stdout, "FedAmb::timeRegulationEnabled():%d Federate \
 \"%s\" Time granted to: %.12G %c",
                __LINE__, federate->get_federate_name(),
-               federate->get_granted_time(), THLA_NEWLINE );
+               federate->get_granted_time().get_time_in_seconds(), THLA_NEWLINE );
    }
 
    // Set the control flags after the show above to avoid a race condition with
    // the main Trick thread printing to the console when these flags are set.
-   federate->set_time_advance_grant( true );
+   federate->set_time_advance_granted( true );
    federate->set_time_regulation_state( true );
 }
 
@@ -1484,40 +1484,38 @@ void FedAmb::timeConstrainedEnabled(
       send_hs( stdout, "FedAmb::timeConstrainedEnabled():%d Federate \
 \"%s\" Time granted to: %.12G %c",
                __LINE__, federate->get_federate_name(),
-               federate->get_granted_time(), THLA_NEWLINE );
+               federate->get_granted_time().get_time_in_seconds(), THLA_NEWLINE );
    }
 
    // Set the control flags after the debug show above to avoid a race condition
    // with the main Trick thread printing to the console when these flags are set.
-   federate->set_time_advance_grant( true );
+   federate->set_time_advance_granted( true );
    federate->set_time_constrained_state( true );
 }
 
 void FedAmb::timeAdvanceGrant(
    RTI1516_NAMESPACE::LogicalTime const &theTime ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   Int64Time *int64Time = new Int64Time( theTime );
+   Int64Time int64Time( theTime );
 
    // Ignore any granted time less than the requested time otherwise it will
    // break our concept of HLA time since we are using scheduled jobs for
    // processing HLA data sends, receives, etc and expected the next granted
    // time to match our requested time. Dan Dexter, 2/12/2007
-   if ( *int64Time >= federate->get_requested_fed_time() ) {
+   if ( int64Time >= federate->get_requested_time() ) {
 
       // Set the appropriate time control flags.
       federate->set_granted_time( theTime );
-      federate->set_time_advance_grant( true );
+      federate->set_time_advance_granted( true );
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-         send_hs( stdout, "FedAmb::timeAdvanceGrant():%d\nFederate \"%s\" \
+         send_hs( stdout, "FedAmb::timeAdvanceGrant():%d\nWARNING: Federate \"%s\" \
 IGNORING GRANTED TIME %.12G because it is less then requested time %.12G %c",
                   __LINE__, federate->get_federate_name(),
-                  int64Time->get_time_in_seconds(),
-                  federate->get_requested_time(), THLA_NEWLINE );
+                  int64Time.get_time_in_seconds(),
+                  federate->get_requested_time().get_time_in_seconds(), THLA_NEWLINE );
       }
    }
-
-   delete int64Time;
 }
 
 void FedAmb::requestRetraction(
@@ -1525,8 +1523,7 @@ void FedAmb::requestRetraction(
 {
    send_hs( stderr, "This federate '%s' does not support this function: \
 FedAmb::requestRetraction():%d %c",
-            federate->get_federate_name(),
-            __LINE__, THLA_NEWLINE );
+            federate->get_federate_name(), __LINE__, THLA_NEWLINE );
 }
 
 #pragma GCC diagnostic pop

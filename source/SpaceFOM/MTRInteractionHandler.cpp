@@ -144,7 +144,7 @@ void MTRInteractionHandler::send_interaction(
    if ( exco_base->does_cte_timeline_exist() ) {
       cte_time = this->get_cte_time();
    }
-   granted_time = this->interaction->get_federate()->get_granted_time();
+   granted_time = this->interaction->get_federate()->get_granted_time().get_time_in_seconds();
 
    // Notify the parent interaction handler to send the interaction using
    // Receive Order (RO).
@@ -157,7 +157,7 @@ void MTRInteractionHandler::send_interaction(
          StringUtilities::to_string( user_supplied_tag_string, user_supplied_tag );
 
          cout << "++++SENDING++++ MTRInteractionHandler::send_interaction("
-              << "Receive Order)" << endl
+              << "Receive Order):" << __LINE__ << endl
               << "  name: '" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl
               << "  user-supplied-tag: '" << user_supplied_tag_string << "'" << endl
               << "  user-supplied-tag-size: " << user_supplied_tag.size() << endl
@@ -185,10 +185,11 @@ void MTRInteractionHandler::send_interaction(
          if ( exco_base->does_cte_timeline_exist() ) {
             cte_time = this->get_cte_time();
          }
-         granted_time = interaction->get_federate()->get_granted_time();
+         granted_time = interaction->get_federate()->get_granted_time().get_time_in_seconds();
 
          // The interaction was Not sent.
-         cout << "+-+-NOT SENT-+-+ MTRInteractionHandler::send_sine_interaction()" << endl
+         cout << "+-+-NOT SENT-+-+ MTRInteractionHandler::send_sine_interaction():"
+              << __LINE__ << endl
               << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl
               << "  Scenario time: " << scenario_time << endl
               << "  Simulation time: " << sim_time << endl;
@@ -244,7 +245,7 @@ void MTRInteractionHandler::receive_interaction(
    if ( exco->does_cte_timeline_exist() ) {
       this->cte_time = this->get_cte_time();
    }
-   this->granted_time = interaction->get_federate()->get_granted_time();
+   this->granted_time = interaction->get_federate()->get_granted_time().get_time_in_seconds();
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
@@ -252,7 +253,8 @@ void MTRInteractionHandler::receive_interaction(
 
       string user_supplied_tag_string;
       StringUtilities::to_string( user_supplied_tag_string, the_user_supplied_tag );
-      cout << "++++RECEIVING++++ SpaceFOM::MTRInteractionHandler::receive_interaction()" << endl
+      cout << "++++RECEIVING++++ SpaceFOM::MTRInteractionHandler::receive_interaction():"
+           << __LINE__ << endl
            << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl
            << "  user-supplied-tag: '" << user_supplied_tag_string << "'" << endl
            << "  user-supplied-tag-size: " << the_user_supplied_tag.size() << endl

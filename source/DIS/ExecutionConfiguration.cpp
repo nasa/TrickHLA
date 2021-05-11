@@ -210,11 +210,11 @@ void ExecutionConfiguration::pack()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       cout << "=============================================================" << endl
-           << "DIS::ExecutionConfiguration::pack()" << endl
+           << "DIS::ExecutionConfiguration::pack():" << __LINE__ << endl
            << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << endl
            << "\t Current Simulation Time: " << the_exec->get_sim_time() << endl
-           << "\t Current HLA grant time:  " << get_federate()->get_granted_time() << endl
-           << "\t Current HLA request time:" << get_federate()->get_requested_time() << endl
+           << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << endl
+           << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << endl
            << "............................................................." << endl
            << "\t Object-Name:             " << this->get_name() << "'" << endl
            << "\t root_frame_name:         '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'" << endl
@@ -263,11 +263,11 @@ void ExecutionConfiguration::unpack()
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       cout << "=============================================================" << endl
-           << "DIS::ExecutionConfiguration::unpack()" << endl
+           << "DIS::ExecutionConfiguration::unpack():" << __LINE__ << endl
            << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << endl
            << "\t Current Simulation Time: " << the_exec->get_sim_time() << endl
-           << "\t Current HLA grant time:  " << get_federate()->get_granted_time() << endl
-           << "\t Current HLA request time:" << get_federate()->get_requested_time() << endl
+           << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << endl
+           << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << endl
            << "............................................................." << endl
            << "\t Object-Name:            '" << this->get_name() << "'" << endl
            << "\t root_frame_name:        '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'" << endl
@@ -615,7 +615,7 @@ void ExecutionConfiguration::print_execution_configuration()
       ostringstream msg;
       msg << endl
           << "=============================================================" << endl
-          << "DIS::ExecutionConfiguration::print_exec_config()" << endl
+          << "DIS::ExecutionConfiguration::print_exec_config():" << __LINE__ << endl
           << "\t Object-Name:             '" << this->get_name() << "'" << endl
           << "\t root_frame_name:         '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'" << endl
           << "\t scenario_time_epoch:     " << setprecision( 18 ) << scenario_time_epoch << endl

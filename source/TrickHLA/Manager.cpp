@@ -2138,7 +2138,7 @@ void Manager::determine_job_cycle_time()
    }
 
    // Get the lookahead time.
-   double lookahead_time = ( federate != NULL ) ? federate->get_lookahead_time() : 0.0;
+   double lookahead_time = ( federate != NULL ) ? federate->get_lookahead_time_in_seconds() : 0.0;
 
    this->job_cycle_time = exec_get_job_cycle( NULL );
 
@@ -2617,16 +2617,11 @@ void Manager::release_ownership()
    }
 }
 
-double Manager::get_granted_time() const
-{
-   return ( federate != NULL ) ? federate->get_granted_time() : 0.0;
-}
-
 /*!
  * @details If the federate does not exist, -1.0 seconds is assigned to the
  * returned object.
  */
-Int64Interval Manager::get_fed_lookahead() const
+Int64Interval Manager::get_lookahead() const
 {
    Int64Interval di;
    if ( federate != NULL ) {
@@ -2641,11 +2636,11 @@ Int64Interval Manager::get_fed_lookahead() const
  * @details If the federate does not exist, MAX_LOGICAL_TIME_SECONDS is
  * assigned to the returned object.
  */
-Int64Time Manager::get_granted_fed_time() const
+Int64Time Manager::get_granted_time() const
 {
    Int64Time dt;
    if ( federate != NULL ) {
-      dt = federate->get_granted_fed_time();
+      dt = federate->get_granted_time();
    } else {
       dt = Int64Time( MAX_LOGICAL_TIME_SECONDS );
    }

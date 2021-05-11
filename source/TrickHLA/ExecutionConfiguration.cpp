@@ -1,7 +1,7 @@
 /*!
 @file TrickHLA/ExecutionConfiguration.cpp
 @ingroup TrickHLA
-@brief Implementation of the TrickHLA TrickHLA Execution Configuration Object (ExCO).
+@brief Implementation of the TrickHLA Execution Configuration Object (ExCO).
 
 \par<b>Assumptions and Limitations:</b>
 - One and only one ExecutionConfiguration object should exist in an federation
@@ -257,20 +257,22 @@ void ExecutionConfiguration::pack()
    // run_duration setting.
    if ( terminate_time >= 1.0e20 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-         cout << "TrickHLA::ExecutionConfiguration::pack() Setting simulation termination time to "
+         cout << "TrickHLA::ExecutionConfiguration::pack():" << __LINE__
+              << " Setting simulation termination time to "
               << run_duration << " seconds." << endl;
       }
       exec_set_terminate_time( this->run_duration );
    } else {
       // Set the run_duration based on the Trick simulation termination time
       // and the current granted HLA time.
-      this->run_duration = terminate_time - this->object->get_granted_time();
+      this->run_duration = terminate_time - this->object->get_granted_time().get_time_in_seconds();
       if ( run_duration < 0.0 ) {
          run_duration = 0.0;
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-         cout << "TrickHLA::ExecutionConfiguration::pack() Setting simulation duration to "
+         cout << "TrickHLA::ExecutionConfiguration::pack():" << __LINE__
+              << " Setting simulation duration to "
               << run_duration << " seconds." << endl;
       }
    }
@@ -279,7 +281,7 @@ void ExecutionConfiguration::pack()
    this->run_duration_microsec = Int64Interval::to_microseconds( this->run_duration );
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      cout << "TrickHLA::ExecutionConfiguration::pack()" << endl
+      cout << "TrickHLA::ExecutionConfiguration::pack():" << __LINE__ << endl
            << "\tObject-Name:'" << this->object->get_name() << "'" << endl
            << "\towner:'" << ( owner != NULL ? owner : "" ) << "'" << endl
            << "\trun_duration:" << run_duration << " seconds" << endl
@@ -306,14 +308,15 @@ void ExecutionConfiguration::unpack()
    // run_duration setting.
    if ( run_duration >= 0.0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-         cout << "TrickHLA::ExecutionConfiguration::unpack() Setting simulation duration to "
+         cout << "TrickHLA::ExecutionConfiguration::unpack():" << __LINE__
+              << " Setting simulation duration to "
               << run_duration << " seconds." << endl;
       }
       exec_set_terminate_time( this->run_duration );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      cout << "TrickHLA::ExecutionConfiguration::unpack()" << endl
+      cout << "TrickHLA::ExecutionConfiguration::unpack():" << __LINE__ << endl
            << "\tObject-Name:'" << this->object->get_name() << "'" << endl
            << "\towner:'" << ( owner != NULL ? owner : "" ) << "'" << endl
            << "\trun_duration:" << run_duration << " seconds" << endl
@@ -342,7 +345,7 @@ void ExecutionConfiguration::print_execution_configuration()
       ostringstream msg;
       msg << endl
           << "=============================================================" << endl
-          << "TrickHLA::ExecutionConfiguration::print_exec_config()" << endl
+          << "TrickHLA::ExecutionConfiguration::print_exec_config():" << __LINE__ << endl
           << "\t Object-Name:           '" << this->get_name() << "'" << endl
           << "\t run_duration:          " << setprecision( 18 ) << run_duration << endl
           << "\t run_duration_microsec: " << setprecision( 18 ) << run_duration_microsec << endl

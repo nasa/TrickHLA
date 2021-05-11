@@ -127,20 +127,20 @@ Attribute *LagCompensation::get_attribute_and_validate(
    return attr;
 }
 
-Int64Interval LagCompensation::get_fed_lookahead() const
+Int64Interval LagCompensation::get_lookahead() const
 {
    if ( object != NULL ) {
-      return object->get_fed_lookahead();
+      return object->get_lookahead();
    } else {
       Int64Interval di( -1.0 );
       return di;
    }
 }
 
-Int64Time LagCompensation::get_granted_fed_time() const
+Int64Time LagCompensation::get_granted_time() const
 {
    if ( object != NULL ) {
-      return object->get_granted_fed_time();
+      return object->get_granted_time();
    } else {
       Int64Time dt( MAX_LOGICAL_TIME_SECONDS );
       return dt;

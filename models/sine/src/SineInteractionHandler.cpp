@@ -104,8 +104,8 @@ void SineInteractionHandler::send_sine_interaction(
    }
 
    // Get the HLA granted time and lookahead time.
-   double hla_granted_time = get_granted_fed_time().get_time_in_seconds();
-   double lookahead_time   = get_fed_lookahead().get_time_in_seconds();
+   double hla_granted_time = get_granted_time().get_time_in_seconds();
+   double lookahead_time   = get_lookahead().get_time_in_seconds();
 
    // Calculate the timestamp we will use to send the interaction in Timestamp
    // Order by using the HLA granted time and the lookahead time.
@@ -130,10 +130,11 @@ void SineInteractionHandler::send_sine_interaction(
 
          cout << "++++SENDING++++ SineInteractionHandler::send_sine_interaction("
 #if SINE_SEND_INTERACTION_TSO
-              << "Timestamp Order)" << endl
+              << "Timestamp Order):"
 #else
-              << "Receive Order)" << endl
+              << "Receive Order):"
 #endif
+              << __LINE__ << endl
               << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl
               << "  message:'" << ( ( message != NULL ) ? message : "NULL" ) << "'" << endl
               << "  message length:" << ( ( message != NULL ) ? strlen( message ) : 0 ) << endl
@@ -159,7 +160,8 @@ void SineInteractionHandler::send_sine_interaction(
       // on and off from a setting in the input file. Use a higher debug level.
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          // The interaction was Not sent.
-         cout << "+-+-NOT SENT-+-+ SineInteractionHandler::send_sine_interaction()" << endl
+         cout << "+-+-NOT SENT-+-+ SineInteractionHandler::send_sine_interaction():"
+              << __LINE__ << endl
               << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl;
       }
    }
@@ -177,7 +179,8 @@ void SineInteractionHandler::receive_interaction(
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-      cout << "++++RECEIVING++++ SineInteractionHandler::receive_interaction()" << endl
+      cout << "++++RECEIVING++++ SineInteractionHandler::receive_interaction():"
+           << __LINE__ << endl
            << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl
            << "  message:'" << ( ( message != NULL ) ? message : "NULL" ) << "'" << endl
            << "  message length:" << ( ( message != NULL ) ? strlen( message ) : 0 ) << endl

@@ -64,7 +64,7 @@ void SineObjectDeleted::deleted(
    TrickHLA::Object *obj )
 {
    std::ostringstream msg;
-   msg << "SineObjectDeleted::deleted() Object '" << obj->get_name()
-       << "' deleted from the federation.";
+   msg << "SineObjectDeleted::deleted():" << __LINE__
+       << " Object '" << obj->get_name() << "' deleted from the federation.";
    send_hs( stdout, (char *)msg.str().c_str() );
 }

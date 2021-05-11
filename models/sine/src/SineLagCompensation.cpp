@@ -113,13 +113,13 @@ void SineLagCompensation::initialize_callback(
 
 void SineLagCompensation::send_lag_compensation()
 {
-   double dt   = get_fed_lookahead().get_time_in_seconds();
+   double dt   = get_lookahead().get_time_in_seconds();
    double time = get_scenario_time() + dt;
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
-      cout << "******* SineLagCompensation::send_lag_compensation()" << endl
+      cout << "******* SineLagCompensation::send_lag_compensation():" << __LINE__ << endl
            << " scenario-time:" << get_scenario_time() << endl
            << "     data-time:" << sim_data->get_time() << endl
            << "            dt:" << dt << endl
@@ -150,13 +150,14 @@ void SineLagCompensation::receive_lag_compensation()
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
-      cout << "******* SineLagCompensation::receive_lag_compensation()" << endl
+      cout << "******* SineLagCompensation::receive_lag_compensation():" << __LINE__ << endl
            << " scenario-time:" << get_scenario_time() << endl
            << "     data-time:" << lag_comp_data->get_time() << endl
            << "            dt:" << dt << endl
            << " adjusted-time:" << time << endl;
 
-      cout << "SineLagCompensation::receive_lag_compensation() Before Lag Compensation:" << endl
+      cout << "SineLagCompensation::receive_lag_compensation():" << __LINE__
+           << " Before Lag Compensation:" << endl
            << "\t Time \tlagging_data: " << lag_comp_data->get_time() << endl
            << "\t Value \tlagging_data: " << lag_comp_data->get_value() << endl
            << "\t dvdt \tlagging_data: " << lag_comp_data->get_derivative() << endl
@@ -199,7 +200,8 @@ void SineLagCompensation::receive_lag_compensation()
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
-      cout << "SineLagCompensation::receive_lag_compensation() AFTER LAG COMPENSATION:" << endl
+      cout << "SineLagCompensation::receive_lag_compensation():" << __LINE__
+           << " AFTER LAG COMPENSATION:" << endl
            << "\t Time \tsim_data: " << sim_data->get_time() << endl
            << "\t Value \tsim_data: " << sim_data->get_value() << endl
            << "\t dvdt \tsim_data: " << sim_data->get_derivative() << endl

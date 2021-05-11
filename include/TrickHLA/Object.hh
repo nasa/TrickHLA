@@ -598,11 +598,11 @@ class Object
 
    /*! @brief Return a copy of the federate's lookahead time.
     *  @return Lookahead time interval. */
-   Int64Interval get_fed_lookahead() const;
+   Int64Interval get_lookahead() const;
 
    /*! @brief Get the currently granted federation HLA logical time.
     *  @return A copy of the granted HLA logical time. */
-   Int64Time get_granted_fed_time() const;
+   Int64Time get_granted_time() const;
 
    /*! @brief Set the last update time.
     *  @param time The last HLA logical time update value. */
@@ -614,10 +614,6 @@ class Object
    /*! @brief Gets the updated time plus the lookahead time.
     *  @return Logical time. */
    Int64Time const &get_update_time_plus_lookahead();
-
-   /*! @brief Get the granted HLA time.
-    *  @return Granted time. */
-   double get_granted_time() const;
 
    /*! @brief Gets the attribute for the given HLA Attribute-Handle.
     *  @return Associated TrickHLA::Attribute.

@@ -49,7 +49,7 @@ SineData::SineData()
      value( 0.0 ),
      dvdt( 0.0 ),
      phase( 0.0 ),
-     freq( 2 * M_PI ),
+     freq( 2.0 * M_PI ),
      amp( 1.0 ),
      tol( 0.001 ),
      name( NULL )
@@ -165,7 +165,8 @@ void SineData::adjust_phase() // RETURN: -- None.
    test_deriv = freq * amp * cos( ( freq * time ) + phase );
 
    // Check for phase adjustment.
-   if ( ( M_ABS( test_value - value ) > ( tol / amp ) ) || ( ( ( test_deriv > 0.0 ) ? 1 : 0 ) != ( ( dvdt > 0.0 ) ? 1 : 0 ) ) ) {
+   if ( ( M_ABS( test_value - value ) > ( tol / amp ) )
+        || ( ( ( test_deriv > 0.0 ) ? 1 : 0 ) != ( ( dvdt > 0.0 ) ? 1 : 0 ) ) ) {
 
       // Sine value does not match expected value so adjust phase to match.
       phase = asin( value / amp );
