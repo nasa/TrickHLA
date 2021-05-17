@@ -265,8 +265,9 @@ void Manager::restart_initialization()
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    }
-   // The set_master() set's additional parameter so call it again to force the
-   // a complete master state.
+
+   // The set_master() function set's additional parameter so call it again to
+   // force the a complete master state.
    bool master_flag = this->execution_control->is_master();
    this->execution_control->set_master( master_flag );
 

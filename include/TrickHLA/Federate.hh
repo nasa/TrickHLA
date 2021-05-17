@@ -27,6 +27,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../source/TrickHLA/Manager.cpp}
 @trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
+@trick_link_dependency{../source/TrickHLA/MutexProtection.cpp}
 @trick_link_dependency{../source/TrickHLA/Types.cpp}
 
 @revs_title
@@ -53,6 +54,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/KnownFederate.hh"
 #include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
 
@@ -614,8 +616,16 @@ class Federate
    //
    // Time management initialization functions.
    //
+   /*! @brief Enable time constrained.
+    *  @param True the granted HLA Logical time */
+   void set_time_constrained_enabled( RTI1516_NAMESPACE::LogicalTime const &time );
+
    /*! @brief Setup this federate's constrained time management. */
    void setup_time_constrained();
+
+   /*! @brief Enable time regulating.
+    *  @param True the granted HLA Logical time */
+   void set_time_regulation_enabled( RTI1516_NAMESPACE::LogicalTime const &time );
 
    /*! @brief Setup this federate's regulate time management. */
    void setup_time_regulation();
@@ -642,18 +652,36 @@ class Federate
    /*! @brief Wait for a HLA time-advance grant. */
    void wait_for_time_advance_grant();
 
+   /*! @brief Initialize the thread memory associated with the Trick child threads. */
+   void initialize_thread_state();
+
+   /*! @brief Associate a Trick child thread with TrickHLA. */
+   void associate_to_trick_child_thread( const unsigned int thread_id );
+
+   /*! @brief Announce to all the child threads the main thread has data available. */
+   void announce_data_available();
+
+   /*! @brief Announce to all the child threads the main thread sent the data. */
+   void announce_data_sent();
+
+   /*! @brief Wait to send data until all Trick child threads are ready. */
+   void wait_to_send_data();
+
+   /*! @brief Wait to receive data when the Trick main thread is ready. */
+   void wait_to_receive_data();
+
    /*! @brief Set federate execution startup state.
     *  @param flag True for federate started; False otherwise. */
-   void set_startup( bool flag )
+   void set_startup( const bool flag )
    {
-      this->got_startup_sp = flag;
+      this->got_startup_sync_point = flag;
    }
 
    //=======================================================================
    // FIXME: Might consider moving these to ExecutionControl.
    /*! @brief Set that federation execution freeze has been announced.
     *  @param flag True for federate freeze announce; False otherwise. */
-   void set_freeze_announced( bool flag )
+   void set_freeze_announced( const bool flag )
    {
       this->announce_freeze = flag;
    }
@@ -905,19 +933,27 @@ class Federate
     *  @param exec_name Federation execution name. */
    void set_federation_name( const std::string &exec_name );
 
-   /*! @brief Query if time advance has been greanted.
+   /*! @brief Query if time advance has been granted.
     *  @return True if time advance has been granted; False otherwise. */
-   bool is_time_advance_granted() const
+   bool is_time_advance_granted()
    {
-      return this->time_adv_granted;
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+
+      return ( this->time_adv_state == TIME_ADVANCE_GRANTED );
    }
 
-   /*! @brief Set the time advance grant flag.
-    *  @param grant_flag Status of time advance grant. */
-   void set_time_advance_granted( const bool &grant_flag )
-   {
-      this->time_adv_granted = grant_flag;
-   }
+   /*! @brief Sets the granted time from the specified double.
+    *  @param time Granted time in seconds. */
+   void set_granted_time( double time );
+
+   /*! @brief Sets the granted time from the specified LogicalTime.
+    *  @param time Granted time in HLA logical time. */
+   void set_granted_time( const RTI1516_NAMESPACE::LogicalTime &time );
+
+   /*! @brief Set the time advance as granted. */
+   void set_time_advance_granted( const RTI1516_NAMESPACE::LogicalTime &time );
 
    /*! @brief Query if the federate is in a time regulating state.
     *  @return True if time regulating; False otherwise. */
@@ -939,14 +975,6 @@ class Federate
    {
       this->time_constrained_state = constrained_state;
    }
-
-   /*! @brief Sets the granted time from the specified double.
-    *  @param time Granted time in seconds. */
-   void set_granted_time( double time );
-
-   /*! @brief Sets the granted time from the specified LogicalTime.
-    *  @param time Granted time in HLA logical time. */
-   void set_granted_time( const RTI1516_NAMESPACE::LogicalTime &time );
 
    /*! @brief Sets the requested time from the specified double.
     *  @param time Requested time in seconds. */
@@ -1043,7 +1071,7 @@ class Federate
    void exit_freeze();
 
   private:
-   // Federation state variable.
+   // Federation state variables.
    //
    RTI1516_NAMESPACE::FederateHandle federate_id;                    ///< @trick_io{**} Federate ID.
    bool                              federation_created_by_federate; ///< @trick_io{**} Federate successfully created the federation if True.
@@ -1105,22 +1133,20 @@ class Federate
 
    // Federation time management data.
    //
-   bool      time_adv_requested; ///< @trick_units{--} Time advance requested flag.
-   bool      time_adv_granted;   ///< @trick_units{--} Time advance granted flag.
-   Int64Time granted_time;       ///< @trick_units{--} HLA time given by RTI
-   Int64Time requested_time;     ///< @trick_units{--} requested/desired HLA time
-   double    HLA_time;           ///< @trick_units{s}  Current HLA time.
-   bool      start_to_save;      ///< @trick_io{**} Save flag
-   bool      start_to_restore;   ///< @trick_io{**} Restore flag
-   bool      restart_flag;       ///< @trick_io{**} Restart flag
-   bool      restart_cfg_flag;   ///< @trick_io{**} Restart flag with new configuration
+   unsigned int time_adv_state;       ///< @trick_units{--} HLA Time advance state.
+   MutexLock    time_adv_state_mutex; ///< @trick_units{--} HLA Time advance state mutex lock.
+   Int64Time    granted_time;         ///< @trick_units{--} HLA time given by RTI
+   Int64Time    requested_time;       ///< @trick_units{--} requested/desired HLA time
+   double       HLA_time;             ///< @trick_units{s}  Current HLA time.
+   bool         start_to_save;        ///< @trick_io{**} Save flag
+   bool         start_to_restore;     ///< @trick_io{**} Restore flag
+   bool         restart_flag;         ///< @trick_io{**} Restart flag
+   bool         restart_cfg_flag;     ///< @trick_io{**} Restart flag with new configuration
 
-   // Fields related to the initial master/slave interactions.
-   //
    bool time_regulating_state;  ///< @trick_units{--} Internal flag, federates HLA Time Regulation state (default: false).
    bool time_constrained_state; ///< @trick_units{--} Internal flag, federates HLA Time Constrained state (default: false).
 
-   bool got_startup_sp;             ///< @trick_units{--} "startup" SP has been created. For DIS compatibility
+   bool got_startup_sync_point;     ///< @trick_units{--} "startup" Sync-Point has been created. For DIS compatibility
    bool make_copy_of_run_directory; ///< @trick_units{--} Make a backup of RUN directory before restarting the federation via federation manager (default: false).
 
    RTI1516_NAMESPACE::ObjectClassHandle MOM_HLAfederation_class_handle;      ///< @trick_io{**} MOM Federation class handle.
@@ -1143,6 +1169,10 @@ class Federate
 
    RTI1516_NAMESPACE::InteractionClassHandle MOM_HLAsetSwitches_class_handle; ///< @trick_io{**} MOM HLAsetSwitches class handle.
    RTI1516_NAMESPACE::ParameterHandle        MOM_HLAautoProvide_param_handle; ///< @trick_io{**} MOM HLAautoProvide parameter handle.
+
+   unsigned int *thread_state;       ///< @trick_units{--} TrickHLA state of trick child threads being used.
+   unsigned int  thread_state_cnt;   ///< @trick_units{--} TrickHLA state of trick child threads being used count.
+   MutexLock     thread_state_mutex; ///< @trick_units{--} TrickHLA thread state mutex.
 
    // Federation required associations.
    //

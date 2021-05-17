@@ -251,6 +251,31 @@ typedef enum {
 
 } SyncPtStateEnum;
 
+/*!
+@enum ThreadStateEnum
+@brief Define the Trick child thread state for TrickHLA jobs.
+*/
+typedef enum {
+
+   THREAD_STATE_UNKNOWN          = 0, ///< Unknown state.
+   THREAD_STATE_RESET            = 1, ///< Thread used by TrickHLA jobs but state not set yet.
+   THREAD_STATE_READY_TO_SEND    = 2, ///< Thread used by TrickHLA jobs ready to send data.
+   THREAD_STATE_READY_TO_RECEIVE = 3  ///< Thread used by TrickHLA jobs ready to receive data.
+
+} ThreadStateEnum;
+
+/*!
+@enum TimeAdvanceStateEnum
+@brief Define the Trick child thread Time Advance Request (TAR) state.
+*/
+typedef enum {
+
+   TIME_ADVANCE_RESET     = 0, ///< Reset state, before time advance request.
+   TIME_ADVANCE_REQUESTED = 1, ///< Time Advance Requested.
+   TIME_ADVANCE_GRANTED   = 2  ///< Time Advance Granted.
+
+} TimeAdvanceStateEnum;
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 

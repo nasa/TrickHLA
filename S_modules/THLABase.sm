@@ -19,6 +19,12 @@
  *        Date: April 2020
  * Description: Modified THLA.sm to create THLABase.sm to support
  *              ExecutionControl extensions.
+ *---------------------------------------------------------------------------*
+ * Modified By: Dan Dexter
+ *        Date: May 2021
+ * Description: Modified THLABase.sm to work with THLAThread.sm to support
+ *              TrickHLA working with HLA data processed across different
+ *              Trick child threads.
  ****************************************************************************/
 
 // Trick include files.
@@ -26,6 +32,7 @@
 
 // TrickHLA include files.
 ##include "TrickHLA/Attribute.hh"
+##include "TrickHLA/Conditional.hh"
 ##include "TrickHLA/Parameter.hh"
 ##include "TrickHLA/ParameterItem.hh"
 ##include "TrickHLA/Interaction.hh"
@@ -66,7 +73,6 @@ class THLABaseSimObject : public Trick::SimObject {
          exec_terminate( __FILE__, "THLABaseSimObject() interaction_cycle must be > 0.0!" );
       }
 
-
       //-----------------------
       //-- DEFAULT DATA JOBS --
       //-----------------------
@@ -79,6 +85,9 @@ class THLABaseSimObject : public Trick::SimObject {
       // the first job so the debug settings are available and valid.
       P1 ("initialization") federate.initialize_debug();
 
+      // Initialize thread state memory associated with the Trick child threads.
+      P1 ("initialization") federate.initialize_thread_state();
+      
       // Setup the HLA infrastructure.
       P_INIT ("initialization") federate.initialize();
 
@@ -110,7 +119,6 @@ class THLABaseSimObject : public Trick::SimObject {
       P_1ST ("freeze") federate.check_freeze();
       ("unfreeze") federate.exit_freeze();
 
-
       //--------------------
       //-- SCHEDULED JOBS --
       //--------------------
@@ -124,10 +132,16 @@ class THLABaseSimObject : public Trick::SimObject {
       // Process any deleted objects.
       P_1ST (data_cycle, "environment") manager.process_deleted_objects();
 
-      // Grab any new cyclic data from the other Federates that has arrived and
-      // update the local state. (This is done down here to make sure we do
-      // the copying AFTER the event loop has fired the reflect call-backs.)
+      // Grab any new cyclic data from the other Federates that has arrived
+      // and update the local state. (This is done down here to make sure we
+      // do the copying AFTER the event loop has fired the reflect call-backs.)
       P_1ST (data_cycle, "environment") manager.receive_cyclic_data();
+
+      // Annouce to the Trick child threads the data is available.
+      P_1ST (data_cycle, "environment") federate.announce_data_available();
+
+      // Wait to send the data when all child threads are ready.
+      P_LAST (data_cycle, "logging") federate.wait_to_send_data();
 
       // Send any new cyclic and requeted data. Requested data would occur as
       // the result of another federate requesting an attribute value update.
@@ -136,13 +150,15 @@ class THLABaseSimObject : public Trick::SimObject {
       // Process the ownership requests.
       P_LAST (data_cycle, "logging") manager.process_ownership();
 
+      // Announce to the Trick child threads the data was sent.
+      P_LAST (data_cycle, "logging") federate.announce_data_sent();
+
       // Request to go to the next logical time step with a HLA
       // Time-Advance-Request (TAR).
       P_LAST (data_cycle, "logging") federate.time_advance_request();
 
       // Coordinate federates going to freeze mode
       ("end_of_frame") federate.enter_freeze();
-
 
       //-------------------
       //-- SHUTDOWN JOBS --
