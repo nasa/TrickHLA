@@ -1456,41 +1456,23 @@ FedAmb::attributeIsOwnedByRTI():%d %c",
 void FedAmb::timeRegulationEnabled(
    RTI1516_NAMESPACE::LogicalTime const &theFederateTime ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   // Set the appropriate time.
-   federate->set_granted_time( theFederateTime );
-   federate->set_requested_time( theFederateTime );
-
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::timeRegulationEnabled():%d Federate \
-\"%s\" Time granted to: %.12G %c",
-               __LINE__, federate->get_federate_name(),
-               federate->get_granted_time().get_time_in_seconds(), THLA_NEWLINE );
+      send_hs( stdout, "FedAmb::timeRegulationEnabled():%d Federate \"%s\" %c",
+               __LINE__, federate->get_federate_name(), THLA_NEWLINE );
    }
-
-   // Set the control flags after the show above to avoid a race condition with
-   // the main Trick thread printing to the console when these flags are set.
-   federate->set_time_advance_granted( true );
-   federate->set_time_regulation_state( true );
+   federate->set_time_regulation_enabled( theFederateTime );
 }
 
 void FedAmb::timeConstrainedEnabled(
    RTI1516_NAMESPACE::LogicalTime const &theFederateTime ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   // Set the appropriate time.
-   federate->set_granted_time( theFederateTime );
-   federate->set_requested_time( theFederateTime );
-
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       send_hs( stdout, "FedAmb::timeConstrainedEnabled():%d Federate \
 \"%s\" Time granted to: %.12G %c",
                __LINE__, federate->get_federate_name(),
                federate->get_granted_time().get_time_in_seconds(), THLA_NEWLINE );
    }
-
-   // Set the control flags after the debug show above to avoid a race condition
-   // with the main Trick thread printing to the console when these flags are set.
-   federate->set_time_advance_granted( true );
-   federate->set_time_constrained_state( true );
+   federate->set_time_constrained_enabled( theFederateTime );
 }
 
 void FedAmb::timeAdvanceGrant(
@@ -1504,9 +1486,8 @@ void FedAmb::timeAdvanceGrant(
    // time to match our requested time. Dan Dexter, 2/12/2007
    if ( int64Time >= federate->get_requested_time() ) {
 
-      // Set the appropriate time control flags.
-      federate->set_granted_time( theTime );
-      federate->set_time_advance_granted( true );
+      federate->set_time_advance_granted( theTime );
+
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          send_hs( stdout, "FedAmb::timeAdvanceGrant():%d\nWARNING: Federate \"%s\" \

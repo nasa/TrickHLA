@@ -175,8 +175,8 @@ Federate::Federate()
      announce_freeze( false ),
      freeze_the_federation( false ),
      execution_has_begun( false ),
-     time_adv_requested( false ),
-     time_adv_granted( false ),
+     time_adv_state( TIME_ADVANCE_RESET ),
+     time_adv_state_mutex(),
      granted_time( 0.0 ),
      requested_time( 0.0 ),
      HLA_time( 0.0 ),
@@ -186,7 +186,7 @@ Federate::Federate()
      restart_cfg_flag( false ),
      time_regulating_state( false ),
      time_constrained_state( false ),
-     got_startup_sp( false ),
+     got_startup_sync_point( false ),
      make_copy_of_run_directory( false ),
      MOM_HLAfederation_class_handle(),
      MOM_HLAfederatesInFederation_handle(),
@@ -203,6 +203,9 @@ Federate::Federate()
      joined_federate_name_map(),
      joined_federate_handles(),
      joined_federate_names(),
+     thread_state( NULL ),
+     thread_state_cnt( 0 ),
+     thread_state_mutex(),
      RTI_ambassador( NULL ),
      federate_ambassador( NULL ),
      manager( NULL ),
@@ -310,7 +313,18 @@ Federate::~Federate()
    federate_ambassador = static_cast< FedAmb * >( NULL );
 
    // Make sure we unlock the mutex.
+   (void)time_adv_state_mutex.unlock();
    (void)joined_federate_mutex.unlock();
+   (void)thread_state_mutex.unlock();
+
+   // Release the thread state array.
+   if ( thread_state != NULL ) {
+      thread_state_cnt = 0;
+      if ( TMM_is_alloced( (char *)thread_state ) ) {
+         TMM_delete_var_a( thread_state );
+      }
+      thread_state = NULL;
+   }
 }
 
 /*!
@@ -429,6 +443,44 @@ the documented ENUM values.%c",
 }
 
 /*!
+ * @brief Initialize the thread memory associated with the Trick child threads.
+ */
+void Federate::initialize_thread_state()
+{
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &thread_state_mutex );
+
+   // Allocate the thread state array for all the child threads and
+   // include the Trick main thread.
+   this->thread_state_cnt = exec_get_num_threads();
+   if ( this->thread_state_cnt == 0 ) {
+      this->thread_state_cnt = 1;
+   }
+
+   this->thread_state = (unsigned int *)TMM_declare_var_1d( "unsigned int",
+                                                            this->thread_state_cnt );
+   if ( this->thread_state == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Federate::initialize_thread_state():" << __LINE__
+             << " ERROR: Could not allocate memory for thread_state"
+             << " for requested size " << thread_state_cnt
+             << "'!" << THLA_ENDL;
+      send_hs( stderr, (char *)errmsg.str().c_str() );
+      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      exit( 1 );
+   }
+
+   // Main Trick thread runs TrickHLA.
+   this->thread_state[0] = THREAD_STATE_RESET;
+
+   // We don't know if the Child threads are running TrickHLA jobs yet.
+   for ( unsigned int id = 1; id < thread_state_cnt; ++id ) {
+      this->thread_state[id] = THREAD_STATE_UNKNOWN;
+   }
+}
+
+/*!
  * \par<b>Assumptions and Limitations:</b>
  * - The TrickHLA::FedAmb class is actually an abstract class. Therefore,
  * the actual object instance being passed in is an instantiable polymorphic
@@ -513,7 +565,7 @@ void Federate::restart_initialization()
 
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-   // Update the lookahead time in our time object.
+   // Update the lookahead time in our HLA time line.
    set_lookahead( lookahead_time );
 
    if ( federate_ambassador == static_cast< FedAmb * >( NULL ) ) {
@@ -603,6 +655,7 @@ void Federate::restart_initialization()
          }
       }
    }
+
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 }
 
@@ -3139,8 +3192,12 @@ void Federate::post_restore()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      this->HLA_time       = this->granted_time.get_time_in_seconds();
-      this->requested_time = this->granted_time;
+      {
+         // When auto_unlock_mutex goes out of scope it automatically unlocks the
+         // mutex even if there is an exception.
+         MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+         this->requested_time = this->granted_time;
+      }
 
       federation_restored();
 
@@ -3156,33 +3213,75 @@ void Federate::post_restore()
    }
 }
 
+/*! @brief Set the time advance as granted. */
+void Federate::set_time_advance_granted(
+   const RTI1516_NAMESPACE::LogicalTime &time )
+{
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+
+   this->granted_time.set( time );
+
+   // Record the granted time in the HLA_time variable, so we can plot it
+   // in Trick data products.
+   this->HLA_time = granted_time.get_time_in_seconds();
+
+   this->time_adv_state = TIME_ADVANCE_GRANTED;
+}
+
 void Federate::set_granted_time(
    double time )
 {
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+
    granted_time.set( time );
+
+   // Record the granted time in the HLA_time variable, so we can plot it
+   // in Trick data products.
+   this->HLA_time = granted_time.get_time_in_seconds();
 }
 
 void Federate::set_granted_time(
    const RTI1516_NAMESPACE::LogicalTime &time )
 {
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+
    granted_time.set( time );
+
+   // Record the granted time in the HLA_time variable, so we can plot it
+   // in Trick data products.
+   this->HLA_time = granted_time.get_time_in_seconds();
 }
 
 void Federate::set_requested_time(
    double time )
 {
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
    requested_time.set( time );
 }
 
 void Federate::set_requested_time(
    const RTI1516_NAMESPACE::LogicalTime &time )
 {
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
    requested_time.set( time );
 }
 
 void Federate::set_lookahead(
    double value )
 {
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
    lookahead.set( value );
    lookahead_time = value;
 }
@@ -3915,6 +4014,29 @@ void Federate::setup_time_management()
    }
 }
 
+void Federate::set_time_constrained_enabled(
+   RTI1516_NAMESPACE::LogicalTime const &time )
+{
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+
+      // Set the control flags after the debug show above to avoid a race condition
+      // with the main Trick thread printing to the console when these flags are set.
+      set_requested_time( time );
+      set_time_advance_granted( time );
+      set_time_constrained_state( true );
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
+      send_hs( stdout, "Federate::set_time_constrained_enabled():%d Federate \
+\"%s\" Time granted to: %.12G %c",
+               __LINE__, get_federate_name(),
+               get_granted_time().get_time_in_seconds(), THLA_NEWLINE );
+   }
+}
+
 /*!
 * @job_class{initialization}.
 */
@@ -3940,8 +4062,14 @@ void Federate::setup_time_constrained()
                   __LINE__, get_federation_name(), THLA_NEWLINE );
       }
 
-      this->time_adv_granted       = false;
-      this->time_constrained_state = false;
+      {
+         // When auto_unlock_mutex goes out of scope it automatically unlocks the
+         // mutex even if there is an exception.
+         MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+
+         this->time_adv_state         = TIME_ADVANCE_RESET;
+         this->time_constrained_state = false;
+      }
 
       // Turn on constrained status so that regulating federates will control
       // our advancement in time.
@@ -4066,6 +4194,31 @@ void Federate::setup_time_constrained()
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 }
 
+/*! @brief Enable time regulating.
+ *  @param True the granted HLA Logical time */
+void Federate::set_time_regulation_enabled(
+   RTI1516_NAMESPACE::LogicalTime const &time )
+{
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+
+      // Set the control flags after the show above to avoid a race condition with
+      // the main Trick thread printing to the console when these flags are set.
+      set_requested_time( time );
+      set_time_advance_granted( time );
+      set_time_regulation_state( true );
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
+      send_hs( stdout, "Federate::set_time_regulation_enabled():%d Federate \
+\"%s\" Time granted to: %.12G %c",
+               __LINE__, get_federate_name(),
+               get_granted_time().get_time_in_seconds(), THLA_NEWLINE );
+   }
+}
+
 /*!
 * @job_class{initialization}.
 */
@@ -4094,10 +4247,16 @@ void Federate::setup_time_regulation()
       // RTI_amb->enableTimeRegulation() is an implicit
       // RTI_amb->timeAdvanceRequest() so clear the flags since we will get a
       // FedAmb::timeRegulationEnabled() callback which will set the
-      // time_adv_granted and time_regulating_state flags to true.
+      // time-adv state and time_regulating_state flags to true/granted.
 
-      this->time_adv_granted      = false;
-      this->time_regulating_state = false;
+      {
+         // When auto_unlock_mutex goes out of scope it automatically unlocks the
+         // mutex even if there is an exception.
+         MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+
+         this->time_adv_state        = TIME_ADVANCE_RESET;
+         this->time_regulating_state = false;
+      }
 
       // Turn on regulating status so that constrained federates will be
       // controlled by our time.
@@ -4256,8 +4415,14 @@ void Federate::time_advance_request()
    this->save_completed = false; // reset ONLY at the bottom of the frame...
    // -- end of checkpoint additions --
 
-   // Build a request time.
-   this->requested_time += this->lookahead_time; //TODO: Use job cycle time instead.
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+
+      // Build a request time.
+      this->requested_time += this->lookahead_time;
+   }
 
    // Perform the time-advance request to go to the requested time.
    perform_time_advance_request();
@@ -4278,8 +4443,14 @@ void Federate::perform_time_advance_request()
    this->save_completed = false; // reset ONLY at the bottom of the frame...
    // -- end of checkpoint additions --
 
-   // Clear the TAR flag before we make our request.
-   this->time_adv_requested = false;
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+
+      // Clear the TAR flag before we make our request.
+      this->time_adv_state = TIME_ADVANCE_RESET;
+   }
 
    bool anyError;
    bool isRecoverableError;
@@ -4293,10 +4464,6 @@ void Federate::perform_time_advance_request()
       anyError           = false;
       isRecoverableError = false;
 
-      // Mark that the time advance has not yet been granted. This variable
-      // will be updated in the FederateAmbassador class callback.
-      this->time_adv_granted = false;
-
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
 
@@ -4306,12 +4473,16 @@ void Federate::perform_time_advance_request()
       }
 
       try {
+         // When auto_unlock_mutex goes out of scope it automatically unlocks
+         // the mutex even if there is an exception.
+         MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+
          // Request that time be advanced to the new time.
          RTI_ambassador->timeAdvanceRequest( requested_time.get() );
 
          // Indicate we issued a TAR since we successfully made the request
          // without an exception.
-         this->time_adv_requested = true;
+         this->time_adv_state = TIME_ADVANCE_REQUESTED;
 
       } catch ( InvalidLogicalTime &e ) {
          anyError           = true;
@@ -4395,24 +4566,291 @@ void Federate::perform_time_advance_request()
 }
 
 /*!
+ * @brief Associate a Trick child thread with TrickHLA.
+ */
+void Federate::associate_to_trick_child_thread(
+   const unsigned int thread_id )
+{
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &thread_state_mutex );
+
+   // Verify the total thread count.
+   if ( this->thread_state_cnt != exec_get_num_threads() ) {
+      ostringstream errmsg;
+      errmsg << "Federate::associate_to_trick_child_thread():" << __LINE__
+             << " ERROR: The total number of Trick threads "
+             << exec_get_num_threads() << " (main + child threads) does not"
+             << " match the number (" << this->thread_state_cnt
+             << ") we initialized to in Federate::initialize_threads() with"
+             << " tread-id:" << thread_id << THLA_ENDL;
+      send_hs( stderr, (char *)errmsg.str().c_str() );
+      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+   }
+
+   // Verify the thread-id specified.
+   if ( thread_id >= this->thread_state_cnt ) {
+      ostringstream errmsg;
+      errmsg << "Federate::associate_to_trick_child_thread():" << __LINE__
+             << " ERROR: Trick total child thread count " << thread_state_cnt
+             << " (main + child threads), Invalid specified child tread-id:"
+             << thread_id << THLA_ENDL;
+      send_hs( stderr, (char *)errmsg.str().c_str() );
+      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+   }
+
+   // We don't support more than one thread association to the same thread-id.
+   if ( this->thread_state[thread_id] != THREAD_STATE_UNKNOWN ) {
+      ostringstream errmsg;
+      errmsg << "Federate::associate_to_trick_child_thread():" << __LINE__
+             << " ERROR: You can not associate the same Trick child thread (id:"
+             << thread_id << ") more than once with TrickHLA!" << THLA_ENDL;
+      send_hs( stderr, (char *)errmsg.str().c_str() );
+      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      send_hs( stdout, "Federate::associate_to_trick_child_thread():%d Trick child thread (id:%d).%c",
+               __LINE__, thread_id, THLA_NEWLINE );
+   }
+
+   this->thread_state[thread_id] = THREAD_STATE_RESET;
+}
+
+/*!
+ * @brief Announce all the HLA data was sent.
+ */
+void Federate::announce_data_available()
+{
+   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      send_hs( stdout, "Federate::announce_data_available():%d%c",
+               __LINE__, THLA_NEWLINE );
+   }
+
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &thread_state_mutex );
+
+   for ( unsigned int id = 1; id < thread_state_cnt; ++id ) {
+      if ( this->thread_state[id] != THREAD_STATE_UNKNOWN ) {
+         this->thread_state[id] = THREAD_STATE_READY_TO_RECEIVE;
+      }
+   }
+   this->thread_state[0] = THREAD_STATE_READY_TO_RECEIVE;
+}
+
+/*!
+ * @brief Announce all the HLA data was sent.
+ */
+void Federate::announce_data_sent()
+{
+   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      send_hs( stdout, "Federate::announce_data_sent():%d%c",
+               __LINE__, THLA_NEWLINE );
+   }
+
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &thread_state_mutex );
+
+   this->thread_state[0] = THREAD_STATE_READY_TO_SEND;
+}
+
+/*!
+ * @brief Wait for all Trick child threads running a TrickHLA object to do a time advance request.
+ */
+void Federate::wait_to_send_data()
+{
+   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      send_hs( stdout, "Federate::wait_to_send_data():%d Waiting...%c",
+               __LINE__, THLA_NEWLINE );
+   }
+
+   // Get the ID of the thread that called this function.
+   unsigned int thread_id = exec_get_process_id();
+
+   // Determine if this is the main thread (id = 0) or a child thread.
+   if ( thread_id == 0 ) {
+
+      // Wait for all the child threads to be ready to send data.
+      SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
+      bool         all_ready_to_send;
+
+      // Wait for all Trick child threads that are running TrickHLA
+      // Objects to be ready to send data.
+      do {
+         all_ready_to_send = true;
+
+         {
+            // When auto_unlock_mutex goes out of scope it automatically unlocks the
+            // mutex even if there is an exception.
+            MutexProtection auto_unlock_mutex( &thread_state_mutex );
+
+            // Don't check Trick main thread (id = 0), only check child threads.
+            for ( unsigned int id = 1; ( id < thread_state_cnt ) && all_ready_to_send; ++id ) {
+
+               // If the state is THREAD_STATE_UNKNOWN then there are no TrickHLA
+               // jobs on this thread. Otherwise if we are not THREAD_STATE_READY_TO_SEND
+               // then not all the threads are ready to send data.
+               if ( ( thread_state[id] != THREAD_STATE_READY_TO_SEND )
+                    && ( thread_state[id] != THREAD_STATE_UNKNOWN ) ) {
+                  all_ready_to_send = false;
+               }
+            }
+         }
+
+         if ( !all_ready_to_send ) {
+
+            // Check for shutdown.
+            this->check_for_shutdown_with_termination();
+
+            (void)sleep_timer.sleep();
+
+            if ( sleep_timer.timeout() ) {
+               sleep_timer.reset();
+               if ( !is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "Federate::wait_to_send_data():" << __LINE__
+                         << " Unexpectedly the Federate is no longer an execution"
+                         << " member. This means we are either not connected to the"
+                         << " RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation at"
+                         << " the Central RTI Component (CRC) level!"
+                         << THLA_ENDL;
+                  send_hs( stderr, (char *)errmsg.str().c_str() );
+                  exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               }
+            }
+         }
+      } while ( !all_ready_to_send );
+
+   } else {
+
+      bool sent_data;
+
+      {
+         // When auto_unlock_mutex goes out of scope it automatically unlocks the
+         // mutex even if there is an exception.
+         MutexProtection auto_unlock_mutex( &thread_state_mutex );
+
+         // Mark this child thread as ready to send.
+         thread_state[thread_id] = THREAD_STATE_READY_TO_SEND;
+
+         sent_data = ( thread_state[0] == THREAD_STATE_READY_TO_SEND );
+      }
+
+      // See if the main thread has announced it has sent the data.
+      if ( !sent_data ) {
+         SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
+
+         // Wait for the main thread to have sent the data.
+         do {
+            // Check for shutdown.
+            this->check_for_shutdown_with_termination();
+
+            (void)sleep_timer.sleep();
+
+            if ( sleep_timer.timeout() ) {
+               sleep_timer.reset();
+               if ( !is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "Federate::wait_to_send_data():" << __LINE__
+                         << " Unexpectedly the Federate is no longer an execution"
+                         << " member. This means we are either not connected to the"
+                         << " RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation at"
+                         << " the Central RTI Component (CRC) level!"
+                         << THLA_ENDL;
+                  send_hs( stderr, (char *)errmsg.str().c_str() );
+                  exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               }
+            }
+
+            {
+               // When auto_unlock_mutex goes out of scope it automatically unlocks the
+               // mutex even if there is an exception.
+               MutexProtection auto_unlock_mutex( &thread_state_mutex );
+
+               sent_data = ( thread_state[0] == THREAD_STATE_READY_TO_SEND );
+            }
+
+         } while ( !sent_data );
+      }
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      send_hs( stdout, "Federate::wait_to_send_data():%d Done%c",
+               __LINE__, THLA_NEWLINE );
+   }
+}
+
+/*! @brief Wait to receive data when the Trick main thread is ready. */
+void Federate::wait_to_receive_data()
+{
+   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      send_hs( stdout, "Federate::wait_to_receive_data():%d Waiting...%c",
+               __LINE__, THLA_NEWLINE );
+   }
+
+   bool ready_to_receive;
+
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &thread_state_mutex );
+
+      ready_to_receive = ( thread_state[0] == THREAD_STATE_READY_TO_RECEIVE );
+   }
+
+   // See if the main thread has announced it has received data.
+   if ( !ready_to_receive ) {
+      SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
+
+      // Wait for the main thread to receive data.
+      do {
+         // Check for shutdown.
+         this->check_for_shutdown_with_termination();
+
+         (void)sleep_timer.sleep();
+
+         if ( sleep_timer.timeout() ) {
+            sleep_timer.reset();
+            if ( !is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "Federate::wait_to_receive_data():" << __LINE__
+                      << " Unexpectedly the Federate is no longer an execution"
+                      << " member. This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!"
+                      << THLA_ENDL;
+               send_hs( stderr, (char *)errmsg.str().c_str() );
+               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            }
+         }
+
+         {
+            // When auto_unlock_mutex goes out of scope it automatically unlocks the
+            // mutex even if there is an exception.
+            MutexProtection auto_unlock_mutex( &thread_state_mutex );
+
+            ready_to_receive = ( thread_state[0] == THREAD_STATE_READY_TO_RECEIVE );
+         }
+      } while ( !ready_to_receive );
+   }
+   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      send_hs( stdout, "Federate::wait_to_receive_data():%d Done%c",
+               __LINE__, THLA_NEWLINE );
+   }
+}
+
+/*!
  *  @job_class{scheduled}
  */
 void Federate::wait_for_time_advance_grant()
 {
-   // Skip requesting time-advancement if we are not time-regulating and
-   // not time-constrained (i.e. not using time management).
+   // Skip requesting time-advancement if time management is not enabled.
    if ( !this->time_management ) {
-      return;
-   }
-
-   // If no time advance has been requested and no time has been granted then
-   // return. Otherwise we will be in deadlock waiting for a TAG that will
-   // never arrive.
-   if ( !this->time_adv_requested && !this->time_adv_granted ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         send_hs( stdout, "Federate::wait_for_time_advance_grant():%d WARNING: No Time Advance Requested!%c",
-                  __LINE__, THLA_NEWLINE );
-      }
       return;
    }
 
@@ -4425,24 +4863,48 @@ void Federate::wait_for_time_advance_grant()
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::wait_for_time_advance_grant():%d Waiting for Time Advance Grant (TAG) to %.12G seconds.%c",
-               __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
+   unsigned short state;
+
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+      state = this->time_adv_state;
    }
 
-   if ( !this->time_adv_granted ) {
+   if ( state == TIME_ADVANCE_RESET ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         send_hs( stdout, "Federate::wait_for_time_advance_grant():%d WARNING: No Time Advance Requested!%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      return;
+   }
+
+   if ( state != TIME_ADVANCE_GRANTED ) {
+
+      if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         send_hs( stdout, "Federate::wait_for_time_advance_grant():%d Waiting for Time Advance Grant (TAG) to %.12G seconds.%c",
+                  __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
+      }
 
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // This spin lock waits for the time advance grant from the RTI.
-      while ( !this->time_adv_granted ) {
-
+      do {
          // Check for shutdown.
          this->check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 
-         if ( !this->time_adv_granted && sleep_timer.timeout() ) {
+         {
+            // When auto_unlock_mutex goes out of scope it automatically unlocks
+            // the mutex even if there is an exception.
+            MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+            state = this->time_adv_state;
+         }
+
+         if ( ( state != TIME_ADVANCE_GRANTED ) && sleep_timer.timeout() ) {
+
             sleep_timer.reset();
             if ( is_execution_member() ) {
                if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -4462,16 +4924,13 @@ void Federate::wait_for_time_advance_grant()
                exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
             }
          }
-      }
+      } while ( state != TIME_ADVANCE_GRANTED );
    }
-
-   // Record the granted time in the HLA_time variable, so we can plot it in Trick.
-   this->HLA_time = this->granted_time.get_time_in_seconds();
 
    // Add the line number for a higher trace level.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_for_time_advance_grant():%d Time Advance Grant (TAG) to %.12G seconds.%c",
-               __LINE__, HLA_time, THLA_NEWLINE );
+               __LINE__, granted_time.get_time_in_seconds(), THLA_NEWLINE );
    }
 }
 
@@ -6146,9 +6605,14 @@ void Federate::restart_checkpoint()
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-   this->HLA_time        = this->granted_time.get_time_in_seconds();
-   this->requested_time  = this->granted_time;
-   this->restore_process = No_Restore;
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+
+      this->requested_time  = this->granted_time;
+      this->restore_process = No_Restore;
+   }
 
    reinstate_logged_sync_pts();
 

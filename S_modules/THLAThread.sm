@@ -1,0 +1,92 @@
+/*****************************************************************************
+ * General TrickHLA Simulation Thread Class Definition Object
+ *---------------------------------------------------------------------------*
+ * This is a Simulation Definition (S_define) module that defines a general
+ * HLA interface using TrickHLA for Trick based simulations.
+ ****************************************************************************/
+/*****************************************************************************
+ *       Author: Dan E. Dexter
+ *         Date: August 2010
+ *       E-Mail: Dan.E.Dexter@nasa.gov
+ *        Phone: 281-483-1142
+ * Organization: Mail Code ER7
+ *               Simulation & Graphics Branch
+ *               Software, Robotics & Simulation Division
+ *               2101 NASA Parkway
+ *               Houston, Texas 77058
+ *---------------------------------------------------------------------------*
+ * Modified By: Dan Dexter
+ *        Date: May 2021
+ * Description: Modified THLABase.sm to work with THLAThread.sm to support
+ *              TrickHLA working with HLA data processed across different
+ *              Trick child threads.
+ ****************************************************************************/
+
+// Trick include files.
+##include "trick/exec_proto.h"
+
+// TrickHLA include files.
+##include "TrickHLA/Attribute.hh"
+##include "TrickHLA/Conditional.hh"
+##include "TrickHLA/Parameter.hh"
+##include "TrickHLA/ParameterItem.hh"
+##include "TrickHLA/Interaction.hh"
+##include "TrickHLA/InteractionItem.hh"
+##include "TrickHLA/LagCompensation.hh"
+##include "TrickHLA/OwnershipItem.hh"
+##include "TrickHLA/OwnershipHandler.hh"
+##include "TrickHLA/Object.hh"
+##include "TrickHLA/ObjectDeleted.hh"
+##include "TrickHLA/Manager.hh"
+##include "TrickHLA/FedAmb.hh"
+##include "TrickHLA/Federate.hh"
+
+//============================================================================
+// SIM_OBJECT: THLAThreadSimObject - TrickHLA Multi-Thread interface routines.
+//============================================================================
+
+class THLAThreadSimObject : public Trick::SimObject {
+
+ public:
+
+   //----- DATA STRUCTURE DECLARATIONS -----
+
+   THLAThreadSimObject( TrickHLA::Federate & thla_fed,
+                        double data_cycle,
+                        unsigned int _THREAD_ID,
+                        unsigned short _1ST  = 1,
+                        unsigned short _LAST = 65534 )
+      : federate( thla_fed ),
+        thread_id( _THREAD_ID )
+   {
+      // Do a sanity check on the data cycle time.
+      if ( data_cycle <= 0.0 ) {
+         exec_terminate( __FILE__, "THLAThreadSimObject() data_cycle must be > 0.0!" );
+      }
+
+      // Associate this Trick child thread ID to our TrickHLA Federate.
+      // Because the federate class initializes the thread state array as a
+      // phase 1 (i.e., P1) initialization class job, the earliest we can
+      // associate the Trick child thread is phase 2 (i.e., P2).
+      P2 ("initialization") federate.associate_to_trick_child_thread( thread_id );
+
+      // Wait for the data to be received.
+      C_THREAD_ID P_1ST (data_cycle, "environment") federate.wait_to_receive_data();
+
+      // Wait to send the data when all child threads are ready.
+      C_THREAD_ID P_LAST (data_cycle, "logging") federate.wait_to_send_data();
+   }
+
+ protected:
+   TrickHLA::Federate & federate;
+   unsigned int         thread_id;
+   
+ private:
+   // Do not allow the implicit copy constructor or assignment operator.
+   THLAThreadSimObject(const THLAThreadSimObject & rhs);
+   THLAThreadSimObject & operator=(const THLAThreadSimObject & rhs);
+   
+   // Do not allow the default constructor.
+   THLAThreadSimObject();
+};
+

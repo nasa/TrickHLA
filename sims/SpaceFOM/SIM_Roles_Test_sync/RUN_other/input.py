@@ -32,7 +32,7 @@ def print_usage_message( ) :
    print('  -blocking-reads [on|off]: on: Turns on blocking cyclic reads, off: disables it (Default).')
    print('  -realtime [on|off]      : on: Turns on realtime clock, off: disables it (Default).')
    print('  -hla-time-mgt [on|off]  : on: Turns on HLA Time Management (Default), off: disables it.')
-   print('  -regulating [on|off]    : on: Turns on HLA Time Regulating, off: disables it (Default).')
+   print('  -regulating [on|off]    : on: Turns on HLA Time Regulating (Default), off: disables it.')
    print('  -constrained [on|off]   : on: Turns on HLA Time Constrained (Default), off: disables it.')
    print('  -stop [time]            : Time to stop simulation, default is 10.0 seconds.')
    print('  -nostop                 : Set no stop time on simulation.')
@@ -184,8 +184,8 @@ realtime_clock = False
 # Default: Use HLA time management.
 hla_time_mgt = True
 
-# Default: Not Time-Regulating
-time_regulating = False
+# Default: Time-Regulating
+time_regulating = True
 
 # Default: Time-Constrained
 time_constrained = True
