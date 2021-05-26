@@ -4443,6 +4443,9 @@ void Federate::perform_time_advance_request()
    this->save_completed = false; // reset ONLY at the bottom of the frame...
    // -- end of checkpoint additions --
 
+   bool any_error, recoverable_error;
+   int  error_recovery_cnt = 0;
+
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
@@ -4452,17 +4455,13 @@ void Federate::perform_time_advance_request()
       this->time_adv_state = TIME_ADVANCE_RESET;
    }
 
-   bool anyError;
-   bool isRecoverableError;
-   int  errorRecoveryCnt = 0;
-
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    do {
       // Reset the error flags.
-      anyError           = false;
-      isRecoverableError = false;
+      any_error         = false;
+      recoverable_error = false;
 
       // Check for shutdown.
       this->check_for_shutdown_with_termination();
@@ -4485,53 +4484,67 @@ void Federate::perform_time_advance_request()
          this->time_adv_state = TIME_ADVANCE_REQUESTED;
 
       } catch ( InvalidLogicalTime &e ) {
-         anyError           = true;
-         isRecoverableError = false;
+         any_error         = true;
+         recoverable_error = false;
          send_hs( stderr, "Federate::perform_time_advance_request():%d EXCEPTION: InvalidLogicalTime%c",
                   __LINE__, THLA_NEWLINE );
       } catch ( LogicalTimeAlreadyPassed &e ) {
-         anyError           = false;
-         isRecoverableError = false;
+         any_error         = true;
+         recoverable_error = false;
          send_hs( stderr, "Federate::perform_time_advance_request():%d EXCEPTION: LogicalTimeAlreadyPassed%c",
                   __LINE__, THLA_NEWLINE );
       } catch ( InTimeAdvancingState &e ) {
          // A time advance request is still being processed by the RTI so show
          // a message and treat this as a successful time advance request.
+         any_error         = false;
+         recoverable_error = false;
+
+         {
+            // When auto_unlock_mutex goes out of scope it automatically unlocks
+            // the mutex even if there is an exception.
+            MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+
+            // Only indicate we are in the time advance reqeusted state if we
+            // are still in the time advance reset state (i.e. not granted yet).
+            if ( this->time_adv_state == TIME_ADVANCE_RESET ) {
+               this->time_adv_state = TIME_ADVANCE_REQUESTED;
+            }
+         }
          send_hs( stderr, "Federate::perform_time_advance_request():%d WARNING: Ignoring InTimeAdvancingState HLA Exception.%c",
                   __LINE__, THLA_NEWLINE );
       } catch ( RequestForTimeRegulationPending &e ) {
-         anyError           = true;
-         isRecoverableError = true;
+         any_error         = true;
+         recoverable_error = true;
          send_hs( stderr, "Federate::perform_time_advance_request():%d EXCEPTION: RequestForTimeRegulationPending%c",
                   __LINE__, THLA_NEWLINE );
       } catch ( RequestForTimeConstrainedPending &e ) {
-         anyError           = true;
-         isRecoverableError = true;
+         any_error         = true;
+         recoverable_error = true;
          send_hs( stderr, "Federate::perform_time_advance_request():%d EXCEPTION: RequestForTimeConstrainedPending%c",
                   __LINE__, THLA_NEWLINE );
       } catch ( FederateNotExecutionMember &e ) {
-         anyError           = true;
-         isRecoverableError = false;
+         any_error         = true;
+         recoverable_error = false;
          send_hs( stderr, "Federate::perform_time_advance_request():%d EXCEPTION: FederateNotExecutionMember%c",
                   __LINE__, THLA_NEWLINE );
       } catch ( SaveInProgress &e ) {
-         anyError           = true;
-         isRecoverableError = true;
+         any_error         = true;
+         recoverable_error = true;
          send_hs( stderr, "Federate::perform_time_advance_request():%d EXCEPTION: SaveInProgress%c",
                   __LINE__, THLA_NEWLINE );
       } catch ( RestoreInProgress &e ) {
-         anyError           = true;
-         isRecoverableError = true;
+         any_error         = true;
+         recoverable_error = true;
          send_hs( stderr, "Federate::perform_time_advance_request():%d EXCEPTION: RestoreInProgress%c",
                   __LINE__, THLA_NEWLINE );
       } catch ( NotConnected &e ) {
-         anyError           = true;
-         isRecoverableError = false;
+         any_error         = true;
+         recoverable_error = false;
          send_hs( stderr, "Federate::perform_time_advance_request():%d EXCEPTION: NotConnected%c",
                   __LINE__, THLA_NEWLINE );
       } catch ( RTIinternalError &e ) {
-         anyError           = true;
-         isRecoverableError = false;
+         any_error         = true;
+         recoverable_error = false;
 
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -4541,15 +4554,15 @@ void Federate::perform_time_advance_request()
 
       // For any recoverable error, count the error and wait for a little while
       // before trying again.
-      if ( anyError && isRecoverableError ) {
-         ++errorRecoveryCnt;
+      if ( any_error && recoverable_error ) {
+         ++error_recovery_cnt;
          send_hs( stderr, "Federate::perform_time_advance_request():%d Recoverable RTI error, retry attempt: %d%c",
-                  __LINE__, errorRecoveryCnt, THLA_NEWLINE );
+                  __LINE__, error_recovery_cnt, THLA_NEWLINE );
 
          (void)Utilities::micro_sleep( 1000 );
       }
 
-   } while ( anyError && isRecoverableError && ( errorRecoveryCnt < 1000 ) );
+   } while ( any_error && recoverable_error && ( error_recovery_cnt < 1000 ) );
 
    // Macro to restore the saved FPU Control Word register value.
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -4557,7 +4570,7 @@ void Federate::perform_time_advance_request()
 
    // If we have any errors at this point or exceed the maximum error
    // recovery attempts then display an error message and exit.
-   if ( anyError ) {
+   if ( any_error ) {
       send_hs( stderr, "Federate::perform_time_advance_request():%d \"%s\": Unrecoverable RTI Error, exiting!%c",
                __LINE__, get_federation_name(), THLA_NEWLINE );
       exec_terminate( __FILE__, "Federate::perform_time_advance_request() ERROR: Unrecoverable RTI Error, exiting!!" );
