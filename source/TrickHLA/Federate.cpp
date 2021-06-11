@@ -451,13 +451,16 @@ void Federate::initialize_thread_state()
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &thread_state_mutex );
 
-   // Allocate the thread state array for all the child threads and
-   // include the Trick main thread.
+   // Determine the total number of Trick threads (main + child).
    this->thread_state_cnt = exec_get_num_threads();
+
+   // Protect against the thread count being unexpectedly zero and should be
+   // at least 1 for the Trick main thread.
    if ( this->thread_state_cnt == 0 ) {
       this->thread_state_cnt = 1;
    }
 
+   // Allocate the thread state array for all the Trick threads (main + child).
    this->thread_state = (unsigned int *)TMM_declare_var_1d( "unsigned int",
                                                             this->thread_state_cnt );
    if ( this->thread_state == NULL ) {
@@ -4588,25 +4591,37 @@ void Federate::associate_to_trick_child_thread(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &thread_state_mutex );
 
-   // Verify the total thread count.
-   if ( this->thread_state_cnt != exec_get_num_threads() ) {
+   // Verify the Federate::initialize_thread_state() function was called as
+   // required before this function is called by checking if the thread count
+   // was initialized.
+   if ( this->thread_state_cnt == 0 ) {
       ostringstream errmsg;
       errmsg << "Federate::associate_to_trick_child_thread():" << __LINE__
-             << " ERROR: The total number of Trick threads "
-             << exec_get_num_threads() << " (main + child threads) does not"
-             << " match the number (" << this->thread_state_cnt
-             << ") we initialized to in Federate::initialize_threads() with"
-             << " tread-id:" << thread_id << THLA_ENDL;
+             << " ERROR: Federate::initialize_thread_state() must be"
+             << " called once before calling this function." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
    }
 
-   // Verify the thread-id specified.
+   // Verify the total Trick thread count (main + child).
+   if ( this->thread_state_cnt != exec_get_num_threads() ) {
+      ostringstream errmsg;
+      errmsg << "Federate::associate_to_trick_child_thread():" << __LINE__
+             << " ERROR: The total number of Trick threads "
+             << exec_get_num_threads() << " (main + child threads) does"
+             << " not match the number (" << this->thread_state_cnt
+             << ") we initialized to in Federate::initialize_thread_state()"
+             << " for the specified thread-id:" << thread_id << THLA_ENDL;
+      send_hs( stderr, (char *)errmsg.str().c_str() );
+      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+   }
+
+   // Verify the child thread-id specified is in range.
    if ( thread_id >= this->thread_state_cnt ) {
       ostringstream errmsg;
       errmsg << "Federate::associate_to_trick_child_thread():" << __LINE__
-             << " ERROR: Trick total child thread count " << thread_state_cnt
-             << " (main + child threads), Invalid specified child tread-id:"
+             << " ERROR: Total Trick thread count " << thread_state_cnt
+             << " (main + child threads), Invalid specified child thread-id:"
              << thread_id << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
       exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
@@ -4627,6 +4642,7 @@ void Federate::associate_to_trick_child_thread(
                __LINE__, thread_id, THLA_NEWLINE );
    }
 
+   // Make sure we mark the thread state as reset now that we associated to it.
    this->thread_state[thread_id] = THREAD_STATE_RESET;
 }
 
