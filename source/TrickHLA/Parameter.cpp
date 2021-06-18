@@ -134,8 +134,7 @@ void Parameter::initialize(
              << interaction_index << "].parameters[" << parameter_index
              << "].FOM_name' in either your input file or modified-data files"
              << " is correctly specified." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Make sure we have a valid parameter Trick-Name.
@@ -148,8 +147,7 @@ void Parameter::initialize(
              << interaction_index << "].parameters[" << parameter_index
              << "].trick_name' in either your input file or modified-data files"
              << " is correctly specified." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Do a quick bounds check on the rti_encoding value.
@@ -164,8 +162,7 @@ void Parameter::initialize(
              << ". Please check your input or modified-data files to make sure"
              << " the value for the 'rti_encoding' is correctly specified."
              << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Get the ref-attributes.
@@ -183,8 +180,7 @@ void Parameter::initialize(
              << " If '" << trick_name << "' is an inherited variable then make"
              << " sure the base class uses either the 'public' or 'protected'"
              << " access level for the variable." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
       address              = ref2->address;
@@ -215,16 +211,14 @@ void Parameter::initialize(
       errmsg << "Parameter::initialize(const char *, void *, ATTRIBUTES *):" << __LINE__
              << " ERROR: For FOM Interaction Parameter '" << interaction_fom_name
              << "'. Unexpected NULL trick variable address." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
    if ( attr == NULL ) {
       ostringstream errmsg;
       errmsg << "Parameter::initialize(const char *, void *, ATTRIBUTES *):" << __LINE__
              << " ERROR: For FOM Interaction Parameter '" << interaction_fom_name
              << "'. Unexpected NULL ATTRIBUTES pointer." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    interaction_FOM_name = TMM_strdup( (char *)interaction_fom_name );
@@ -257,8 +251,7 @@ void Parameter::complete_initialization()
                    << "parameter represents a 'bool' type. Please check your input "
                    << "or modified-data files to make sure the value for the 'rti_"
                    << "encoding' is correctly specified." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
       }
@@ -281,8 +274,7 @@ void Parameter::complete_initialization()
                    << " 'unsigned char' type. Please check your input or"
                    << " modified-data files to make sure the value for the"
                    << " 'rti_encoding' is correctly specified." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
 
          // For the ENCODING_UNICODE_STRING encoding, we only support a 1-D dynamic
@@ -298,8 +290,7 @@ void Parameter::complete_initialization()
                    << " 'char *' or 'unsigned char *'). Please check your input or"
                    << " modified-data files to make sure the value for the"
                    << " 'rti_encoding' is correctly specified." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
 
          // For the ENCODING_OPAQUE_DATA encoding, we only support a 1-D dynamic
@@ -316,8 +307,7 @@ void Parameter::complete_initialization()
                    << " 'char *' or 'unsigned char *'). Please check your input or"
                    << " modified-data files to make sure the value for the"
                    << " 'rti_encoding' is correctly specified." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
       }
@@ -346,8 +336,7 @@ void Parameter::complete_initialization()
                    << "parameter represents a primitive type. Please check your "
                    << "input or modified-data files to make sure the value for the "
                    << "'rti_encoding' is correctly specified." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
       }
@@ -370,8 +359,7 @@ void Parameter::complete_initialization()
                    << "check your input or modified-data files to make sure the "
                    << "value for the 'rti_encoding' is correctly specified."
                    << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
 
          // Only support an array of characters (i.e. char *) for ENCODING_NO_ENCODING.
@@ -386,8 +374,7 @@ void Parameter::complete_initialization()
                    << " 'char *'). Please check your input or modified-data"
                    << " files to make sure the value for the 'rti_encoding' is"
                    << " correctly specified." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
       }
@@ -411,8 +398,7 @@ void Parameter::complete_initialization()
                 << attr->num_index << "-dimensional dynamic array."
                 << " Only one-dimensional dynamic arrays are supported for now."
                 << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
    } else {
       // String type:
@@ -433,8 +419,7 @@ void Parameter::complete_initialization()
                       << ( attr->num_index + 1 ) << "-dimensional dynamic array"
                       << " of strings. Only one-dimensional dynamic arrays are"
                       << " supported for now." << THLA_ENDL;
-               send_hs( stderr, (char *)errmsg.str().c_str() );
-               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
       }
@@ -449,8 +434,7 @@ void Parameter::complete_initialization()
              << interaction_FOM_name << "'->'" << FOM_name
              << "' with Trick name '" << trick_name
              << "' and rti_encoding = " << rti_encoding << "." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // We do not support an array of primitive types for the logical
@@ -464,8 +448,7 @@ void Parameter::complete_initialization()
              << " for the 'rti_encoding'. Please check your input or modified-data"
              << " files to make sure the value for the 'rti_encoding' is"
              << " correctly specified." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // The units must be in seconds if the ENCODING_LOGICAL_TIME is used.
@@ -478,8 +461,7 @@ void Parameter::complete_initialization()
              << " 'rti_encoding' is set to ENCODING_LOGICAL_TIME. Please check your"
              << " input or modified-data files to make sure the value for the"
              << " 'rti_encoding' is correctly specified." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Determine if we need to do a byteswap for data transmission.
@@ -614,14 +596,14 @@ void Parameter::extract_data(
                    << " using Lag Compensation one possible cause of this problem"
                    << " is that your lag compensation variables are not the correct"
                    << " size or type." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
 #if 1
             // For now just return if we have a data size mismatch. This will
             // allow us to continue to run even though the other federate is
             // sending us data that is not correct in size.
+            send_hs( stderr, (char *)errmsg.str().c_str() );
             return;
 #else
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
 #endif
          }
 
@@ -654,8 +636,7 @@ void Parameter::extract_data(
                    << " FOM. If you are using Lag Compensation one possible cause of"
                    << " this problem is that your lag compensation variables are not"
                    << " the correct size or type." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
          // Ensure enough buffer capacity.
          ensure_buffer_capacity( param_size );
@@ -767,9 +748,7 @@ void Parameter::ensure_buffer_capacity(
              << " ERROR: Could not allocate memory for buffer for requested"
              << " capacity " << capacity << " for parameter '" << FOM_name
              << "'!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-      exit( 1 );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
 
@@ -1369,8 +1348,7 @@ void Parameter::encode_logical_time() const
                 << " ERROR: For Parameter '" << FOM_name << "' with Trick name '"
                 << trick_name << "' the type is not supported for the"
                 << " ENCODING_LOGICAL_TIME encoding." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
    }
@@ -1469,8 +1447,7 @@ void Parameter::decode_logical_time()
                 << " ERROR: For Parameter '" << FOM_name << "' with Trick name '"
                 << trick_name << "' the type is not supported for the"
                 << " ENCODING_LOGICAL_TIME encoding." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
    }
@@ -1654,8 +1631,7 @@ size %d, will use the data buffer size instead.%c",
                 << " ERROR: Could not allocate memory for ENCODING_OPAQUE_DATA Parameter '"
                 << FOM_name << "' with Trick name '" << trick_name
                 << "' and length " << length << "!" << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       // Copy the characters over.
@@ -2144,8 +2120,7 @@ void Parameter::encode_string_to_buffer()
                    << "' with Trick name '" << trick_name << "', actual data size"
                    << " (" << byte_count << ") != expected Trick simulation variable"
                    << " size (" << size << ")!" << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
 
          // The amount of data in the buffer (i.e. size) is the number of
@@ -2288,8 +2263,7 @@ size %d, will use the data buffer size instead.%c",
                       << " ERROR: Could not allocate memory for ENCODING_UNICODE_STRING"
                       << " parameter '" << FOM_name << "' and length "
                       << ( ( length > 0 ) ? ( length + 16 ) : 16 ) << "!" << THLA_ENDL;
-               send_hs( stderr, (char *)errmsg.str().c_str() );
-               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               DebugHandler::terminate_with_message( errmsg.str() );
             } else {
 
                // Decode the UTF-16 characters.
@@ -2433,8 +2407,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                          << " ERROR: Could not allocate memory for ENCODING_UNICODE_STRING"
                          << " parameter '" << FOM_name << "' and length "
                          << ( ( length > 0 ) ? ( length + 16 ) : 16 ) << "!" << THLA_ENDL;
-                  send_hs( stderr, (char *)errmsg.str().c_str() );
-                  exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+                  DebugHandler::terminate_with_message( errmsg.str() );
                } else {
 
                   // Decode the UTF-16 characters.
@@ -2546,8 +2519,7 @@ WARNING: For ENCODING_ASCII_STRING parameter '%s', decoded length %d > data buff
                       << " ERROR: Could not allocate memory for ENCODING_ASCII_STRING"
                       << " parameter '" << FOM_name << "' and length "
                       << ( ( length > 0 ) ? ( length + 16 ) : 16 ) << "!" << THLA_ENDL;
-               send_hs( stderr, (char *)errmsg.str().c_str() );
-               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               DebugHandler::terminate_with_message( errmsg.str() );
             } else {
 
                // Copy the ASCII characters over.
@@ -2685,8 +2657,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                          << " ERROR: Could not allocate memory for ENCODING_ASCII_STRING"
                          << " parameter '" << FOM_name << "' and length "
                          << ( ( length > 0 ) ? ( length + 16 ) : 16 ) << "!" << THLA_ENDL;
-                  send_hs( stderr, (char *)errmsg.str().c_str() );
-                  exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+                  DebugHandler::terminate_with_message( errmsg.str() );
                } else {
 
                   // Copy the ASCII characters over.
@@ -2794,8 +2765,7 @@ WARNING: For ENCODING_OPAQUE_DATA parameter '%s', decoded length %d > data buffe
                       << " ERROR: Could not allocate memory for ENCODING_OPAQUE_DATA"
                       << " parameter '" << FOM_name << "' and length "
                       << length << "!" << THLA_ENDL;
-               send_hs( stderr, (char *)errmsg.str().c_str() );
-               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               DebugHandler::terminate_with_message( errmsg.str() );
             }
 
             // Copy the characters over.
@@ -2926,8 +2896,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                          << " ERROR: Could not allocate memory for ENCODING_OPAQUE_DATA"
                          << " parameter '" << FOM_name << "' and length "
                          << length << "!" << THLA_ENDL;
-                  send_hs( stderr, (char *)errmsg.str().c_str() );
-                  exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+                  DebugHandler::terminate_with_message( errmsg.str() );
                }
 
                // Copy the characters over.
@@ -2966,8 +2935,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
             errmsg << "Parameter::decode_string_from_buffer():" << __LINE__
                    << " ERROR: For ENCODING_NO_ENCODING, Parameter '" << FOM_name
                    << "' with Trick name '" << trick_name << "' is NULL!" << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
 
          // The existing output "char *" variable size must exactly match the
@@ -2979,8 +2947,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                    << "' with Trick name '" << trick_name << "', received data"
                    << " size (" << size << ") != Trick simulation variable size ("
                    << get_size( (char *)output ) << ")!" << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
 
          // Copy the characters over.
@@ -3024,8 +2991,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                       << " ERROR: Could not allocate memory for ENCODING_C_STRING"
                       << " parameter '" << FOM_name << "' and length "
                       << ( ( length > 0 ) ? ( length + 16 ) : 16 ) << "!" << THLA_ENDL;
-               send_hs( stderr, (char *)errmsg.str().c_str() );
-               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               DebugHandler::terminate_with_message( errmsg.str() );
             }
 
             memcpy( *( (char **)address + i ), ( input + start_index ), (size_t)length );

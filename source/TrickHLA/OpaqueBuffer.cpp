@@ -19,6 +19,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{OpaqueBuffer.cpp}
 @trick_link_dependency{Utilities.cpp}
 
@@ -42,6 +43,7 @@ NASA, Johnson Space Center\n
 #include "trick/trick_byteswap.h"
 
 // TrickHLA model include files.
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/OpaqueBuffer.hh"
 #include "TrickHLA/Utilities.hh"
 
@@ -100,8 +102,7 @@ void OpaqueBuffer::set_byte_alignment( unsigned int size )
          errmsg << "OpaqueBuffer::set_byte_alignment():" << __LINE__
                 << " ERROR: Unsupported byte alignment: " << size << "!"
                 << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
          break;
    }
 }
@@ -141,8 +142,7 @@ void OpaqueBuffer::ensure_buffer_capacity(
       errmsg << "OpaqueBuffer::ensure_buffer_capacity():" << __LINE__
              << " ERROR: Could not allocate memory for buffer for requested"
              << " capacity " << capacity << "!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
 
@@ -227,8 +227,7 @@ void OpaqueBuffer::pull_from_buffer(
              << " ERROR: Trying to pull " << size << " bytes from the buffer at"
              << " position " << pull_pos << ", which exceeds the end of the buffer"
              << " by " << ( ( pull_pos + size ) - capacity ) << " bytes!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Display a warning if an unsupported encoding is used.
@@ -291,8 +290,7 @@ void OpaqueBuffer::pull_pad_from_buffer(
              << " buffer at position " << pull_pos << ", which exceeds the end of"
              << " the buffer by " << ( ( pull_pos + pad_size ) - capacity )
              << " bytes!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Update the buffer position where we pull data from.
@@ -356,8 +354,7 @@ void OpaqueBuffer::byteswap_buffer_copy(
                errmsg << "OpaqueBuffer::byteswap_buffer_copy():"
                       << __LINE__ << " ERROR: Don't know how to byteswap "
                       << size << " bytes!" << THLA_ENDL;
-               send_hs( stderr, (char *)errmsg.str().c_str() );
-               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               DebugHandler::terminate_with_message( errmsg.str() );
             }
             break;
          }

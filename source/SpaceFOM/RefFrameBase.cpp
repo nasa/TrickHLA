@@ -16,6 +16,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../TrickHLA/Attribute.cpp}
+@trick_link_dependency{../TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../TrickHLA/Object.cpp}
 @trick_link_dependency{../TrickHLA/Packing.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
@@ -46,6 +47,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA model include files.
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Packing.hh"
 #include "TrickHLA/Types.hh"
@@ -193,8 +195,7 @@ void RefFrameBase::initialize(
       errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
              << " ERROR: Unexpected NULL reference frame: " << this->name << THLA_ENDL;
       Trick::Executive *trick_exec = exec_get_exec_cpp();
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      trick_exec->exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
    this->ref_frame_data = ref_frame_data_ptr;
 

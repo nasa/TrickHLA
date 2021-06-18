@@ -188,9 +188,7 @@ void Manager::initialize()
       ostringstream errmsg;
       errmsg << "Manager::initialize():" << __LINE__
              << " Unexpected NULL TrickHLA::Federate." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-      return;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Check to make sure we have a reference to the TrickHLA::ExecutionControlBase.
@@ -198,9 +196,7 @@ void Manager::initialize()
       ostringstream errmsg;
       errmsg << "Manager::initialize():" << __LINE__
              << " Unexpected NULL TrickHLA::ExecutionControlBase." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-      return;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Reset the TrickHLA Object count value if needed.
@@ -231,9 +227,10 @@ void Manager::restart_initialization()
    }
 
    if ( federate == NULL ) {
-      send_hs( stderr, "Manager::restart_initialization():%d Unexpected NULL Federate.%c",
-               __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "Manager::restart_initialization() Unexpected NULL Federate." );
+      ostringstream errmsg;
+      errmsg << "Manager::restart_initialization():" << __LINE__
+             << " Unexpected NULL Federate!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -262,8 +259,7 @@ void Manager::restart_initialization()
       ostringstream errmsg;
       errmsg << "Manager::restart_initialization():" << __LINE__
              << " NULL ExecutionControl reference." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // The set_master() function set's additional parameter so call it again to
@@ -387,8 +383,7 @@ federate so the data will not be sent for '%s'.%c",
       ostringstream errmsg;
       errmsg << "Manager::send_init_data():" << __LINE__
              << " Null Object Instance Name" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    wstring obj_instance_name;
@@ -403,8 +398,7 @@ federate so the data will not be sent for '%s'.%c",
              << " Name '" << instance_name << "' does not correspond to any"
              << " known object. Please check your S_define file or simulation"
              << " module to verify the settings." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
       // Make sure we have at least one piece of object init data we can send.
@@ -495,8 +489,7 @@ federate so this call will be ignored.%c",
                             << " execution because someone forced our resignation at"
                             << " the Central RTI Component (CRC) level!"
                             << THLA_ENDL;
-                     send_hs( stderr, (char *)errmsg.str().c_str() );
-                     exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+                     DebugHandler::terminate_with_message( errmsg.str() );
                   }
                }
             }
@@ -547,8 +540,7 @@ void Manager::receive_init_data(
       ostringstream errmsg;
       errmsg << "Manager::receive_init_data():" << __LINE__
              << " Null Object Instance Name";
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    wstring obj_instance_name;
@@ -564,8 +556,7 @@ void Manager::receive_init_data(
              << "' does not correspond to any known object. Please check your"
              << " S_define file or simulation module to verify the settings."
              << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
       // Make sure we have at least one piece of data we can receive.
@@ -603,8 +594,7 @@ void Manager::receive_init_data(
                             << " execution because someone forced our resignation at"
                             << " the Central RTI Component (CRC) level!"
                             << THLA_ENDL;
-                     send_hs( stderr, (char *)errmsg.str().c_str() );
-                     exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+                     DebugHandler::terminate_with_message( errmsg.str() );
                   }
                }
             }
@@ -682,8 +672,7 @@ joining federate so this call will be ignored.%c",
       ostringstream errmsg;
       errmsg << "Manager::wait_for_init_sync_point():" << __LINE__
              << " Null Sync-Point Label" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    wstring ws_syc_point_label;
@@ -707,8 +696,7 @@ joining federate so this call will be ignored.%c",
              << " to make sure the 'THLA.federate.multiphase_init_sync_points'"
              << " correctly specifies all the synchronization-point labels that"
              << " will be used for multi-phase initialization." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    return;
@@ -848,11 +836,7 @@ which keeps the instance attribute's object from becoming a Federation orphan. *
    ostringstream errmsg;
    errmsg << "Manager::object_instance_name_reservation_failed:" << __LINE__
           << " Exiting..." << THLA_ENDL;
-   send_hs( stderr, (char *)errmsg.str().c_str() );
-   exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-   exit( 1 );
-
-   return;
+   DebugHandler::terminate_with_message( errmsg.str() );
 }
 
 /*!
@@ -1066,10 +1050,10 @@ void Manager::setup_object_RTI_handles(
    }
 
    if ( federate == NULL ) {
-      send_hs( stderr, "Manager::setup_object_RTI_handles():%d Unexpected NULL Federate.%c",
-               __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "Manager::setup_object_RTI_handles() Unexpected NULL Federate." );
-      return;
+      ostringstream errmsg;
+      errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
+             << " Unexpected NULL Federate!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -1077,10 +1061,10 @@ void Manager::setup_object_RTI_handles(
 
    RTIambassador *rti_amb = get_RTI_ambassador();
    if ( rti_amb == NULL ) {
-      send_hs( stderr, "Manager::setup_object_RTI_handles():%d Unexpected NULL RTIambassador.%c",
-               __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "Manager::setup_object_RTI_handles() Unexpected NULL RTIambassador." );
-      return;
+      ostringstream errmsg;
+      errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
+             << " Unexpected NULL RTIambassador!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -1179,8 +1163,7 @@ void Manager::setup_object_RTI_handles(
                    << " Object FOM Name '" << obj_FOM_name << "' Not Found. Please check"
                    << " your input or modified-data files to make sure the"
                    << " Object FOM Name is correctly specified." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
             break;
          }
          case 2: { // Attribute
@@ -1190,8 +1173,7 @@ void Manager::setup_object_RTI_handles(
                    << attr_FOM_name << "' Not Found. Please check your input or"
                    << " modified-data files to make sure the Object Attribute"
                    << " FOM Name is correctly specified." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
             break;
          }
          default: { // FOM name we are working with is unknown.
@@ -1200,8 +1182,7 @@ void Manager::setup_object_RTI_handles(
                    << " Object or Attribute FOM Name Not Found. Please check your input or"
                    << " modified-data files to make sure the FOM Name is"
                    << " correctly specified." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
             break;
          }
       }
@@ -1213,8 +1194,7 @@ void Manager::setup_object_RTI_handles(
       ostringstream errmsg;
       errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
              << " Federate Not Execution Member" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( NotConnected &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1223,8 +1203,7 @@ void Manager::setup_object_RTI_handles(
       ostringstream errmsg;
       errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
              << " Not Connected" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTIinternalError &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1236,8 +1215,7 @@ void Manager::setup_object_RTI_handles(
       errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
              << " RTIinternalError: '"
              << rti_err_msg << "'" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_EXCEPTION &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1248,8 +1226,7 @@ void Manager::setup_object_RTI_handles(
       errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
              << " RTI1516_EXCEPTION for '"
              << rti_err_msg << "'" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
    // Macro to restore the saved FPU Control Word register value.
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1271,10 +1248,10 @@ void Manager::setup_interaction_RTI_handles(
    }
 
    if ( federate == NULL ) {
-      send_hs( stderr, "Manager::setup_interaction_RTI_handles():%d Unexpected NULL Federate.%c",
-               __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "Manager::setup_interaction_RTI_handles() Unexpected NULL Federate." );
-      return;
+      ostringstream errmsg;
+      errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
+             << " Unexpected NULL Federate!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -1282,10 +1259,10 @@ void Manager::setup_interaction_RTI_handles(
 
    RTIambassador *rti_amb = get_RTI_ambassador();
    if ( rti_amb == NULL ) {
-      send_hs( stderr, "Manager::setup_interaction_RTI_handles():%d Unexpected NULL RTIambassador.%c",
-               __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "Manager::setup_interaction_RTI_handles() Unexpected NULL RTIambassador." );
-      return;
+      ostringstream errmsg;
+      errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
+             << " Unexpected NULL RTIambassador!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -1379,8 +1356,7 @@ void Manager::setup_interaction_RTI_handles(
                    << " Interaction FOM Name '" << inter_FOM_name << "' Not Found. Please"
                    << " check your input or modified-data files to make sure the"
                    << " Interaction FOM Name is correctly specified." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
             break;
          }
          case 2: { // Parameter
@@ -1391,8 +1367,7 @@ void Manager::setup_interaction_RTI_handles(
                    << "' Not Found. Please check your input or modified-data files"
                    << " to make sure the Interaction Parameter FOM Name is"
                    << " correctly specified." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
             break;
          }
          default: { // FOM name we are working with is unknown.
@@ -1401,8 +1376,7 @@ void Manager::setup_interaction_RTI_handles(
                    << " Interaction or Parameter FOM Name Not Found. Please check your input"
                    << " or modified-data files to make sure the FOM Name is"
                    << " correctly specified." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
             break;
          }
       }
@@ -1411,17 +1385,19 @@ void Manager::setup_interaction_RTI_handles(
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      send_hs( stderr, "Manager::setup_interaction_RTI_handles():%d FederateNotExecutionMember%c",
-               __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "Manager::setup_interaction_RTI_handles() FederateNotExecutionMember" );
+      ostringstream errmsg;
+      errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
+             << " FederateNotExecutionMember!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( NotConnected &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      send_hs( stderr, "Manager::setup_interaction_RTI_handles():%d NotConnected%c",
-               __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "Manager::setup_interaction_RTI_handles() NotConnected" );
+      ostringstream errmsg;
+      errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
+             << " NotConnected!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTIinternalError &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1432,8 +1408,7 @@ void Manager::setup_interaction_RTI_handles(
       ostringstream errmsg;
       errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
              << " RTIinternalError: '" << rti_err_msg << "'" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_EXCEPTION &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1444,8 +1419,7 @@ void Manager::setup_interaction_RTI_handles(
       ostringstream errmsg;
       errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
              << " exception for '" << rti_err_msg << "'" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
    // Macro to restore the saved FPU Control Word register value.
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1902,8 +1876,7 @@ void Manager::wait_for_registration_of_required_objects()
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!"
                       << THLA_ENDL;
-               send_hs( stderr, (char *)errmsg.str().c_str() );
-               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
       }
@@ -1975,10 +1948,10 @@ void Manager::set_object_instance_handles_by_name(
    }
 
    if ( federate == NULL ) {
-      send_hs( stderr, "Manager::set_object_instance_handles_by_name():%d Unexpected NULL Federate.%c",
-               __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "Manager::set_object_instance_handles_by_name() Unexpected NULL Federate." );
-      return;
+      ostringstream errmsg;
+      errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
+             << " Unexpected NULL Federate!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -1986,10 +1959,10 @@ void Manager::set_object_instance_handles_by_name(
 
    RTIambassador *rti_amb = get_RTI_ambassador();
    if ( rti_amb == NULL ) {
-      send_hs( stderr, "Manager::set_object_instance_handles_by_name():%d Unexpected NULL RTIambassador.%c",
-               __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "Manager::set_object_instance_handles_by_name() Unexpected NULL RTIambassador." );
-      return;
+      ostringstream errmsg;
+      errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
+             << " Unexpected NULL RTIambassador!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    wstring ws_instance_name = L"";
@@ -2040,8 +2013,7 @@ void Manager::set_object_instance_handles_by_name(
                errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
                       << " ERROR: Object Instance Not Known for '"
                       << ( instance_name != NULL ? instance_name : "" ) << "'" << THLA_ENDL;
-               send_hs( stderr, (char *)errmsg.str().c_str() );
-               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               DebugHandler::terminate_with_message( errmsg.str() );
             } else {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                   summary << "\n    Object:'" << data_objects[n].get_name()
@@ -2058,8 +2030,7 @@ void Manager::set_object_instance_handles_by_name(
       ostringstream errmsg;
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
              << " ERROR: Federation Not Execution Member" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( NotConnected &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -2068,8 +2039,7 @@ void Manager::set_object_instance_handles_by_name(
       ostringstream errmsg;
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
              << " ERROR: Not Connected" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTIinternalError &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -2080,8 +2050,7 @@ void Manager::set_object_instance_handles_by_name(
       ostringstream errmsg;
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
              << " RTIinternalError: '" << rti_err_msg << "'" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_EXCEPTION &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -2093,8 +2062,7 @@ void Manager::set_object_instance_handles_by_name(
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
              << " RTI1516_EXCEPTION for '"
              << rti_err_msg << "'" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
    // Macro to restore the saved FPU Control Word register value.
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -2155,8 +2123,7 @@ void Manager::determine_job_cycle_time()
              << " 'THLA_DATA_CYCLE_TIME' time specified in the S_define file for"
              << " the send_cyclic_and_requested_data() and"
              << " receive_cyclic_data() jobs." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Set the core job cycle time now that we know what it is so that the
@@ -2258,15 +2225,14 @@ void Manager::process_interactions()
          }
 
          default: {
-            ostringstream msg;
-            msg << "Manager::process_interactions():" << __LINE__
-                << "FATAL ERROR: encountered an invalid interaction type: "
-                << interaction_item->interaction_type
-                << ". Verify that you are specifying the correct interaction "
-                << "type defined in 'ManagerTypeOfInteractionEnum' enum "
-                << "found in 'Manager.hh' and re-run." << THLA_ENDL;
-            send_hs( stderr, (char *)msg.str().c_str() );
-            exec_terminate( __FILE__, (char *)msg.str().c_str() );
+            ostringstream errmsg;
+            errmsg << "Manager::process_interactions():" << __LINE__
+                   << " FATAL ERROR: encountered an invalid interaction type: "
+                   << interaction_item->interaction_type
+                   << ". Verify that you are specifying the correct interaction "
+                   << "type defined in 'ManagerTypeOfInteractionEnum' enum "
+                   << "found in 'Manager.hh' and re-run." << THLA_ENDL;
+            DebugHandler::terminate_with_message( errmsg.str() );
             break;
          }
       }
@@ -2758,13 +2724,12 @@ void Manager::setup_checkpoint_interactions()
       check_interactions       = reinterpret_cast< InteractionItem * >(
          alloc_type( check_interactions_count, "TrickHLA::InteractionItem" ) );
       if ( check_interactions == static_cast< InteractionItem * >( NULL ) ) {
-         ostringstream msg;
-         msg << "Manager::setup_checkpoint_interactions():" << __LINE__
-             << " ERROR: Failed to allocate enough memory for check_interactions"
-             << " linear array of " << check_interactions_count << " elements."
-             << THLA_ENDL;
-         send_hs( stderr, (char *)msg.str().c_str() );
-         exec_terminate( __FILE__, (char *)msg.str().c_str() );
+         ostringstream errmsg;
+         errmsg << "Manager::setup_checkpoint_interactions():" << __LINE__
+                << " ERROR: Failed to allocate enough memory for check_interactions"
+                << " linear array of " << check_interactions_count << " elements."
+                << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       //interactions_queue.dump_head_pointers("interactions_queue.dump");
@@ -2972,8 +2937,7 @@ void Manager::wait_for_discovery_of_objects()
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!"
                          << THLA_ENDL;
-                  send_hs( stderr, (char *)errmsg.str().c_str() );
-                  exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+                  DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
 

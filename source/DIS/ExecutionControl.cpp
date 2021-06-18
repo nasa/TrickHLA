@@ -130,9 +130,10 @@ void ExecutionControl::initialize()
 
    // Sanity check.
    if ( fed == NULL ) {
-      send_hs( stdout, "DIS::ExecutionControl::initialize()%d : Null TrickHLA::Federate pointer!%c",
-               __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "DIS::ExecutionControl::initialize() ERROR: NULL pointer to TrickHLA::Federate!" );
+      ostringstream errmsg;
+      errmsg << "DIS::ExecutionControl::initialize():" << __LINE__
+             << " Null TrickHLA::Federate pointer!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Set the reference to the TrickHLA::Federate.
@@ -638,9 +639,7 @@ void ExecutionControl::set_next_execution_control_mode(
       ostringstream errmsg;
       errmsg << "DIS::ExecutionControl::set_next_execution_mode():" << __LINE__
              << " ERROR: This should only be called by the Master federate!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-      return;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    switch ( exec_control ) {
@@ -1207,8 +1206,7 @@ bool ExecutionControl::run_mode_transition()
       ostringstream errmsg;
       errmsg << "DIS::ExecutionControl::run_mode_transition():" << __LINE__
              << " ERROR: The 'mtr_run' sync-point was not found!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
       // Wait for 'mtr_run' sync-point announce.
@@ -1299,8 +1297,7 @@ bool ExecutionControl::freeze_mode_transition()
       ostringstream errmsg;
       errmsg << "DIS::ExecutionControl::freeze_mode_transition():" << __LINE__
              << " ERROR: The 'mtr_freeze' sync-point was not found!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
       // Wait for 'mtr_freeze' sync-point announce.
@@ -1472,8 +1469,7 @@ ExecutionConfiguration *ExecutionControl::get_execution_configuration()
       ostringstream errmsg;
       errmsg << "DIS::ExecutionControl::epoch_and_root_frame_discovery_process():" << __LINE__
              << " ERROR: Execution Configureation is not an DIS ExCO." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
    return ( this->get_execution_configuration() );
 }

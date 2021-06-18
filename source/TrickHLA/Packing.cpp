@@ -16,6 +16,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{Attribute.cpp}
+@trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
 @trick_link_dependency{Object.cpp}
@@ -42,6 +43,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Object.hh"
@@ -92,8 +94,7 @@ Attribute *Packing::get_attribute_and_validate(
       errmsg << "Packing::get_attribute_and_validate():" << __LINE__
              << " ERROR: Unexpected NULL attribute FOM name specified."
              << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Get the attribute by FOM name.
@@ -109,8 +110,7 @@ Attribute *Packing::get_attribute_and_validate(
              << " correct, the FOM contains an attribute named '"
              << attr_FOM_name << "' and that your input file is properly"
              << " configured for this attribute." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
    return attr;
 }

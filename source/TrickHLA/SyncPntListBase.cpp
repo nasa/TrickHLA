@@ -224,9 +224,7 @@ void SyncPntListBase::sync_point_registration_failed(
          ostringstream errmsg;
          errmsg << "SyncPntListBase::sync_point_registration_failed():" << __LINE__
                 << " '" << label.c_str() << "'" << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-         exit( 1 );
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
 }
@@ -337,8 +335,7 @@ void SyncPntListBase::wait_for_list_synchronization(
                             << " execution because someone forced our resignation at"
                             << " the Central RTI Component (CRC) level!"
                             << THLA_ENDL;
-                     send_hs( stderr, (char *)errmsg.str().c_str() );
-                     exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+                     DebugHandler::terminate_with_message( errmsg.str() );
                   }
                }
             }
@@ -414,9 +411,7 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
                 << __LINE__
                 << " Synchronization-Point '" << name
                 << "' has not been announced with the RTI!";
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-         return;
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       bool achieved_and_not_synched;
@@ -443,8 +438,7 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
              << __LINE__
              << " Synchronization-Point '" << name
              << "' not found!";
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
 
@@ -712,9 +706,7 @@ void SyncPntListBase::register_sync_point(
       errmsg << "SyncPntListBase::register_sync_point():" << __LINE__
              << " Failed to register '" << name
              << "' synchronization point with RTI!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-      exit( 0 );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Macro to restore the saved FPU Control Word register value.
@@ -754,9 +746,7 @@ void SyncPntListBase::register_sync_point(
       errmsg << "SyncPntListBase::register_sync_point():" << __LINE__
              << " Failed to register '" << name
              << "' synchronization point with RTI!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-      exit( 0 );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Macro to restore the saved FPU Control Word register value.
@@ -795,8 +785,7 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
             errmsg << "SyncPntListBase::wait_for_sync_point_announcement():" << __LINE__
                    << " Bad sync-point state for sync-point!"
                    << " The sync-point state: " << sp_status << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
       }
 
@@ -833,8 +822,7 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!" << THLA_ENDL;
-               send_hs( stderr, (char *)errmsg.str().c_str() );
-               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               DebugHandler::terminate_with_message( errmsg.str() );
                return false;
             }
          }
@@ -972,8 +960,7 @@ bool SyncPntListBase::wait_for_synchronization(
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!" << THLA_ENDL;
-                  send_hs( stderr, (char *)errmsg.str().c_str() );
-                  exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+                  DebugHandler::terminate_with_message( errmsg.str() );
                   return false;
                }
             }

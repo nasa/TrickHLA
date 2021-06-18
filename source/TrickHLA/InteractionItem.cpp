@@ -16,6 +16,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{InteractionItem.cpp}
 @trick_link_dependency{MutexLock.cpp}
 @trick_link_dependency{MutexProtection.cpp}
@@ -43,6 +44,7 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
@@ -194,12 +196,11 @@ void InteractionItem::checkpoint_queue()
       parm_items = reinterpret_cast< ParameterItem * >(
          alloc_type( parm_items_count, "TrickHLA::ParameterItem" ) );
       if ( parm_items == static_cast< ParameterItem * >( NULL ) ) {
-         ostringstream msg;
-         msg << "InteractionItem::checkpoint_queue():" << __LINE__
-             << " ERROR: Failed to allocate enough memory for a parm_items linear"
-             << " array of " << parm_items_count << " elements" << THLA_ENDL;
-         send_hs( stderr, (char *)msg.str().c_str() );
-         exec_terminate( __FILE__, (char *)msg.str().c_str() );
+         ostringstream errmsg;
+         errmsg << "InteractionItem::checkpoint_queue():" << __LINE__
+                << " ERROR: Failed to allocate enough memory for a parm_items linear"
+                << " array of " << parm_items_count << " elements" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       // When auto_unlock_mutex goes out of scope it automatically unlocks the

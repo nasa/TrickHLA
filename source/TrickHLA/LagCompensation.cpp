@@ -16,6 +16,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{Attribute.cpp}
+@trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
 @trick_link_dependency{Int64Interval.cpp}
@@ -44,6 +45,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/Constants.hh"
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64Interval.hh"
@@ -70,8 +72,7 @@ void LagCompensation::send_lag_compensation()
           << " ERROR: Your class that extends LagCompensation must implement"
           << " the 'virtual void send_lag_compensation()' function!"
           << THLA_ENDL;
-   send_hs( stderr, (char *)errmsg.str().c_str() );
-   exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+   DebugHandler::terminate_with_message( errmsg.str() );
 }
 
 void LagCompensation::receive_lag_compensation()
@@ -81,8 +82,7 @@ void LagCompensation::receive_lag_compensation()
           << " ERROR: Your class that extends LagCompensation must implement"
           << " the 'virtual void receive_lag_compensation()' function!"
           << THLA_ENDL;
-   send_hs( stderr, (char *)errmsg.str().c_str() );
-   exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+   DebugHandler::terminate_with_message( errmsg.str() );
 }
 
 Attribute *LagCompensation::get_attribute(
@@ -104,8 +104,7 @@ Attribute *LagCompensation::get_attribute_and_validate(
       errmsg << "LagCompensation::get_attribute_and_validate():" << __LINE__
              << " ERROR: Unexpected NULL attribute FOM name specified."
              << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Get the attribute by FOM name.
@@ -121,8 +120,7 @@ Attribute *LagCompensation::get_attribute_and_validate(
              << " correct, the FOM contains an attribute named '"
              << attr_FOM_name << "' and that your input file is properly"
              << " configured for this attribute." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
    return attr;
 }

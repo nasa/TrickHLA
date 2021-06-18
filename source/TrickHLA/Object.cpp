@@ -198,10 +198,10 @@ void Object::initialize(
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    if ( trickhla_mgr == NULL ) {
-      send_hs( stderr, "Object::initialize():%d ERROR: Unexpected NULL Trick-HLA-Manager!%c",
-               __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "Object::initialize() ERROR: Unexpected NULL Trick-HLA-Manager!" );
-      return;
+      ostringstream errmsg;
+      errmsg << "Object::initialize():" << __LINE__
+             << " Unexpected NULL TrickHLA-Manager!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
    this->manager = trickhla_mgr;
 
@@ -226,8 +226,7 @@ void Object::initialize(
              << " an HLA instance of this object (i.e. 'create_HLA_instance'"
              << " field is set to true) or if the 'name_required' field is set"
              << " to true, which is the default." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } else if ( name == NULL ) {
       // Make sure the name is at least not NULL.
       set_name( "" );
@@ -240,8 +239,7 @@ void Object::initialize(
              << " ERROR: Object '" << name << "' is missing the Object FOM Name."
              << " Please check your input or modified-data files to make sure"
              << " the object FOM name is correctly specified." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Do a bounds check on the 'lag_comp_type' value.
@@ -254,8 +252,7 @@ void Object::initialize(
              << LAG_COMPENSATION_LAST_VALUE << ". Please check your input"
              << " or modified-data files to make sure the 'lag_comp_type' value"
              << " is correctly specified." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Make sure we have a lag compensation object if lag-compensation is specified.
@@ -266,8 +263,7 @@ void Object::initialize(
              << " is specified, but 'lag_comp' is NULL! Please check your input"
              << " or modified-data files to make sure the Lag-Compensation type"
              << " and object are correctly specified." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // If we have an attribute count but no attributes then let the user know.
@@ -279,8 +275,7 @@ void Object::initialize(
              << " specified. Please check your input or modified-data files to"
              << " make sure the attributes are correctly specified."
              << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // If we have attributes but the attribute-count is invalid then let
@@ -293,8 +288,7 @@ void Object::initialize(
              << " specified. Please check your input or modified-data files to"
              << " make sure the attributes are correctly specified."
              << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // If the user specified a packing object then make sure it extends the
@@ -307,8 +301,7 @@ void Object::initialize(
              << " extends the Packing class. Please check your input"
              << " or modified-data files to make sure the attributes are"
              << " correctly specified." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // If the user specified ownership handler object then make sure it extends
@@ -321,8 +314,7 @@ void Object::initialize(
              << " extends the OwnershipHandler class. Please check"
              << " your input or modified-data files to make sure the"
              << " attributes are correctly specified." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // If the user specified a resignation identification object then make sure
@@ -334,8 +326,7 @@ void Object::initialize(
              << " point to a class that extends the ObjectDeleted"
              << " class. Please check your input or modified-data files to make"
              << " sure the attributes are correctly specified." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Reset the TrickHLA Attributes count if it is negative or if there
@@ -377,8 +368,7 @@ void Object::initialize(
                 << " check your input or modified-data files to make sure the"
                 << " object attribute FOM name is correctly specified."
                 << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
       attribute_FOM_names.push_back( string( attributes[i].get_FOM_name() ) );
    }
@@ -402,8 +392,7 @@ void Object::initialize(
              << " point to a class that extends the LagCompensation"
              << " class. Please check your input or modified-data files to make"
              << " sure the attributes are correctly specified." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Initialize the Lag-Compensation.
@@ -1044,8 +1033,7 @@ Requesting reservation of Object instance name '%s'.%c",
          errmsg << "Object::reserve_object_name_with_RTI():" << __LINE__
                 << " ERROR: Exception reserving '" << get_name() << "': '"
                 << rti_err_msg << "'.";
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1101,8 +1089,7 @@ Waiting on reservation of Object Instance Name '%s'.%c",
                    << " execution because someone forced our resignation at"
                    << " the Central RTI Component (CRC) level!"
                    << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
       }
    }
@@ -1200,8 +1187,7 @@ Detected object already registered '%s' Instance-ID:%s%c",
          errmsg << "Object::register_object_with_RTI():" << __LINE__
                 << " ERROR: Exception registering '" << get_name() << "': '"
                 << rti_err_msg << "'." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       // Macro to restore the saved FPU Control Word register value.
@@ -1245,8 +1231,7 @@ Detected object already registered '%s' Instance-ID:%s%c",
             errmsg << "Object::register_object_with_RTI():" << __LINE__
                    << " ERROR: Exception getting instance name for '" << get_name()
                    << "' ID:" << id_str << "  '" << rti_err_msg << "'." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1291,8 +1276,7 @@ void Object::wait_for_object_registration()
                    << " execution because someone forced our resignation at"
                    << " the Central RTI Component (CRC) level!"
                    << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
       }
    }
@@ -3599,9 +3583,11 @@ for Attributes of object '%s'.%c",
                                 ownership_divestiture_pthread_function,
                                 divest_thread_args );
       if ( ret ) {
-         exec_terminate( __FILE__, "Object::push_ownership() ERROR: Failed to\
- create ownership divestiture pthread!" );
-         exit( 0 );
+         ostringstream errmsg;
+         errmsg << "Object::push_ownership():" << __LINE__
+                << " Failed to create ownership divestiture pthread!"
+                << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
 }
@@ -4113,8 +4099,7 @@ rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generate
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!"
                       << THLA_ENDL;
-               send_hs( stderr, (char *)errmsg.str().c_str() );
-               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
       } // end of 'while' loop

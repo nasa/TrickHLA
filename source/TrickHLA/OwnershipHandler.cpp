@@ -123,12 +123,11 @@ void OwnershipHandler::setup_checkpoint_requests()
       }
       pull_items = reinterpret_cast< OwnershipItem * >( alloc_type( (int)pull_items_cnt, "TrickHLA::OwnershipItem" ) );
       if ( pull_items == static_cast< OwnershipItem * >( NULL ) ) {
-         send_hs( stderr, "OwnershipHandler::setup_checkpoint_requests():%d \
-Could not allocate memory for pull_items (array of OwnershipItem type)!%c",
-                  __LINE__, THLA_NEWLINE );
-         exec_terminate( __FILE__, "OwnershipHandler::setup_checkpoint_requests(): \
-Could not allocate memory for pull_items (array of OwnershipItem type)!" );
-         return;
+         ostringstream errmsg;
+         errmsg << "OwnershipHandler::setup_checkpoint_requests():" << __LINE__
+                << " Could not allocate memory for pull_items (array of OwnershipItem type)!"
+                << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       // now, encode them to get checkpointed.
@@ -161,12 +160,11 @@ Could not allocate memory for pull_items (array of OwnershipItem type)!" );
       }
       push_items = reinterpret_cast< OwnershipItem * >( alloc_type( (int)push_items_cnt, "TrickHLA::OwnershipItem" ) );
       if ( push_items == static_cast< OwnershipItem * >( NULL ) ) {
-         send_hs( stderr, "OwnershipHandler::setup_checkpoint_requests():%d \
-Could not allocate memory for push_items (array of OwnershipItem type)!%c",
-                  __LINE__, THLA_NEWLINE );
-         exec_terminate( __FILE__, "OwnershipHandler::setup_checkpoint_requests(): \
-Could not allocate memory for push_items (array of OwnershipItem type)!" );
-         return;
+         ostringstream errmsg;
+         errmsg << "OwnershipHandler::setup_checkpoint_requests():" << __LINE__
+                << " Could not allocate memory for push_items (array of OwnershipItem type)!"
+                << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       // now, encode them to get checkpointed.

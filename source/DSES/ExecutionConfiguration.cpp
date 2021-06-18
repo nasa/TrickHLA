@@ -238,8 +238,7 @@ void ExecutionConfiguration::pack()
              << " ERROR: ExCO least_common_time_step (" << least_common_time_step
              << " microseconds) is not greater than or equal to this federates lookahead time ("
              << fed_lookahead << " microseconds)!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // The least-common-time-step time must be an integer multiple of
@@ -250,8 +249,7 @@ void ExecutionConfiguration::pack()
              << " ERROR: ExCO least_common_time_step (" << least_common_time_step
              << " microseconds) is not an integer multiple of the federate lookahead time ("
              << fed_lookahead << " microseconds)!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
 
@@ -291,8 +289,7 @@ void ExecutionConfiguration::unpack()
              << " ERROR: ExCO least_common_time_step (" << least_common_time_step
              << " microseconds) is not greater than or equal to this federates lookahead time ("
              << fed_lookahead << " microseconds)!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Our federates lookahead time must be an integer multiple of the
@@ -303,8 +300,7 @@ void ExecutionConfiguration::unpack()
              << " ERROR: ExCO least_common_time_step (" << least_common_time_step
              << " microseconds) is not an integer multiple of the federate lookahead time ("
              << fed_lookahead << " microseconds)!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Check the Trick executive software frame.
@@ -454,8 +450,11 @@ void ExecutionConfiguration::set_next_execution_mode(
 void ExecutionConfiguration::setup_ref_attributes(
    Packing *packing_obj )
 {
-
-   exec_terminate( __FILE__, "DSES::ExecutionConfiguration::setup_ref_attributes() ERROR: This routine does NOT work and should not be called!" );
+   ostringstream errmsg;
+   errmsg << "DSES::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
+          << " ERROR: This routine does NOT work and should not be called!"
+          << THLA_ENDL;
+   DebugHandler::terminate_with_message( errmsg.str() );
 
    //
    // Set up object properties specifically for the ExCO.
@@ -501,11 +500,11 @@ void ExecutionConfiguration::setup_ref_attributes(
    this->attributes = (Attribute *)trick_MM->declare_var(
       "Attribute", this->attr_count );
    if ( this->attributes == static_cast< Attribute * >( NULL ) ) {
-      send_hs( stderr, "DSES::ExecutionConfiguration::setup_ref_attributes():%d FAILED to \
-allocate enough memory for the attributes of the ExCO!%c",
-               __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "DSES::ExecutionConfiguration::setup_ref_attributes() FAILED to \
-allocate enough memory for the attributes of the ExCO!" );
+      ostringstream errmsg;
+      errmsg << "DSES::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
+             << " FAILED to allocate enough memory for the attributes of the ExCO!"
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    //
@@ -540,11 +539,11 @@ allocate enough memory for the attributes of the ExCO!" );
    // Allocate the Trick REF2 data structure.
    REF2 *exco_ref2 = reinterpret_cast< REF2 * >( malloc( sizeof( REF2 ) ) );
    if ( exco_ref2 == static_cast< REF2 * >( NULL ) ) {
-      send_hs( stderr, "DSES::ExecutionConfiguration::setup_ref_attributes():%d FAILED to \
-allocate enough memory for the REF2 structure for the 'root_frame_name' value of the ExCO!%c",
-               __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "DSES::ExecutionConfiguration::setup_ref_attributes() FAILED to \
-allocate enough memory for the REF2 structure for the 'root_frame_name' value of the ExCO!" );
+      ostringstream errmsg;
+      errmsg << "DSES::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
+             << " FAILED to allocate enough memory for the REF2 structure for"
+             << " the 'root_frame_name' value of the ExCO!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Allocate the Trick ATTRIBUTES data structure with room for two
@@ -552,11 +551,11 @@ allocate enough memory for the REF2 structure for the 'root_frame_name' value of
    // marking the end of the structure.
    ATTRIBUTES *exco_attr = reinterpret_cast< ATTRIBUTES * >( malloc( 2 * sizeof( ATTRIBUTES ) ) );
    if ( exco_attr == static_cast< ATTRIBUTES * >( NULL ) ) {
-      send_hs( stderr, "DSES::ExecutionConfiguration::setup_ref_attributes():%d FAILED to \
-allocate enough memory for the ATTRIBUTES for the 'root_frame_name' value of the ExCO!%c",
-               __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "DSES::ExecutionConfiguration::setup_ref_attributes() FAILED to \
-allocate enough memory for the ATTRIBUTES for the 'root_frame_name' value of the ExCO!" );
+      ostringstream errmsg;
+      errmsg << "DSES::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
+             << " FAILED to allocate enough memory for the ATTRIBUTES for the"
+             << " 'root_frame_name' value of the ExCO!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Find the 'root_frame_name' value in the ExCO ATTRIBUTES.
@@ -668,8 +667,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!"
                       << THLA_ENDL;
-               send_hs( stderr, (char *)errmsg.str().c_str() );
-               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
       }
@@ -691,8 +689,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
              << " 'subscribe = true' set. Please check your input or modified-data"
              << " files to make sure the 'subscribe' value is correctly specified."
              << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    return true;

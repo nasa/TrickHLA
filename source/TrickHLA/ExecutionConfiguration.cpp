@@ -153,9 +153,7 @@ void ExecutionConfiguration::configure_attributes()
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionConfiguration::configure_attributes():" << __LINE__
              << " Unexpected NULL S_define_name." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-      return;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Convert the S_define_name to a string.
@@ -211,9 +209,7 @@ void ExecutionConfiguration::configure()
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionConfiguration::initialize():" << __LINE__
              << " Null TrickHLA::Manager passed in!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-      return;
+      DebugHandler::terminate_with_message( errmsg.str() );
    } else {
       federate = manager->get_federate();
    }

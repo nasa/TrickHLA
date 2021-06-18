@@ -27,10 +27,18 @@ NASA, Johnson Space Center\n
 
 */
 
+// System include files.
+#include <stdio.h>
+
+// Trick include files.
+#include "trick/exec_proto.h"
+#include "trick/message_proto.h"
+
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Types.hh"
 
+using namespace std;
 using namespace TrickHLA;
 
 // Initialize the DebugHandler level and code section values.
@@ -78,4 +86,12 @@ void DebugHandler::set(
    } else {
       code_section = code;
    }
+}
+
+void DebugHandler::terminate_with_message(
+   const string &message )
+{
+   send_hs( stderr, (char *)message.c_str() );
+   exec_terminate( __FILE__, (char *)message.c_str() );
+   exit( 1 );
 }

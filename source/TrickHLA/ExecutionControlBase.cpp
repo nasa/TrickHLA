@@ -254,9 +254,11 @@ Trick simulation time as the default scenario-timeline.%c",
       // Use the simulation timeline as the default scenario timeline.
       scenario_timeline = &def_scenario_timeline;
       if ( scenario_timeline == static_cast< ScenarioTimeline * >( NULL ) ) {
-         send_hs( stderr, "TrickHLA::ExecutionControlBase::initialize():%d FAILED to allocate enough memory for ScenarioTimeline class!%c",
-                  __LINE__, THLA_NEWLINE );
-         exec_terminate( __FILE__, "TrickHLA::ExecutionControlBase::initialize():%d FAILED to allocate enough memory for ScenarioTimeline class!" );
+         ostringstream errmsg;
+         errmsg << "TrickHLA::ExecutionControlBase::initialize():" << __LINE__
+                << " FAILED to allocate enough memory for ScenarioTimeline class!"
+                << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
 
@@ -365,8 +367,7 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
          errmsg << "TrickHLA::ExecutionControlBase::object_instance_name_reservation_failed:" << __LINE__
                 << " Failed to reserve the ExecutionConfiguration object instance name: '" << obj_instance_name.c_str()
                 << "'! This conflicts with this being the designated Master federate!" << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       // We failed to register the ExecutionConfiguration object instance name
@@ -472,46 +473,39 @@ joining federate so this call will be ignored.%c",
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
              << " Exception: SynchronizationPointLabelNotAnnounced" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember &e ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
              << " Exception: FederateNotExecutionMember" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::SaveInProgress &e ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
              << " Exception: SaveInProgress" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::RestoreInProgress &e ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
              << " Exception: RestoreInProgress" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::NotConnected &e ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
              << " Exception: NotConnected" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::RTIinternalError &e ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
              << " Exception: RTIinternalError" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTI1516_EXCEPTION &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
              << " Exception: RTI1516_EXCEPTION " << rti_err_msg << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
@@ -577,8 +571,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
              << " sure at least one ExecutionConfiguration attribute has 'publish = true'"
              << " set. Please check your input or modified-data files to make"
              << " sure the 'publish' value is correctly specified." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
 
@@ -630,8 +623,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!"
                       << THLA_ENDL;
-               send_hs( stderr, (char *)errmsg.str().c_str() );
-               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
       }
@@ -653,8 +645,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
              << " 'subscribe = true' set. Please check your input or modified-data"
              << " files to make sure the 'subscribe' value is correctly specified."
              << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
 

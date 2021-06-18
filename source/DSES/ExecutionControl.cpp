@@ -449,8 +449,7 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_points()
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!"
                          << THLA_ENDL;
-                  send_hs( stderr, (char *)errmsg.str().c_str() );
-                  exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+                  DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
          }
@@ -631,9 +630,7 @@ void ExecutionControl::set_next_execution_control_mode(
       ostringstream errmsg;
       errmsg << "DSES::ExecutionControl::set_next_execution_mode():" << __LINE__
              << " ERROR: This should only be called by the Master federate!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-      return;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    switch ( exec_control ) {
@@ -1200,8 +1197,7 @@ bool ExecutionControl::run_mode_transition()
       ostringstream errmsg;
       errmsg << "DSES::ExecutionControl::run_mode_transition():" << __LINE__
              << " ERROR: The 'mtr_run' sync-point was not found!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
       // Wait for 'mtr_run' sync-point announce.
@@ -1292,8 +1288,7 @@ bool ExecutionControl::freeze_mode_transition()
       ostringstream errmsg;
       errmsg << "DSES::ExecutionControl::freeze_mode_transition():" << __LINE__
              << " ERROR: The 'mtr_freeze' sync-point was not found!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
       // Wait for 'mtr_freeze' sync-point announce.
@@ -1406,8 +1401,7 @@ ExecutionConfiguration *ExecutionControl::get_execution_configuration()
       ostringstream errmsg;
       errmsg << "DSES::ExecutionControl::epoch_and_root_frame_discovery_process():" << __LINE__
              << " ERROR: Execution Configureation is not an DSES ExCO." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
    return ( this->get_execution_configuration() );
 }

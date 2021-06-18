@@ -135,8 +135,7 @@ void Attribute::initialize(
          errmsg << " For FOM Attribute Named '" << FOM_name << "'.";
       }
       errmsg << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Make sure we have a valid attribute FOM name.
@@ -148,8 +147,7 @@ void Attribute::initialize(
              << object_index << "].attributes[" << attribute_index
              << "].FOM_name' in either your input file or modified-data files"
              << " is correctly specified." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Make sure we have a valid attribute Trick-Name.
@@ -162,8 +160,7 @@ void Attribute::initialize(
              << object_index << "].attributes[" << attribute_index
              << "].trick_name' in either your input file or modified-data files"
              << " is correctly specified." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Do a quick bounds check on the 'rti_encoding' value.
@@ -177,8 +174,7 @@ void Attribute::initialize(
              << " to " << ENCODING_LAST_VALUE << ". Please check your input or"
              << " modified-data files to make sure the value for the 'rti_encoding'"
              << " is correctly specified." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Do a quick bounds check on the 'preferred_order' value.
@@ -192,8 +188,7 @@ void Attribute::initialize(
              << " THLA_RECEIVE_ORDER. Please check your input or modified-data"
              << " files to make sure the 'preferred_order' is correctly specified."
              << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Do a bounds check on the 'config' value.
@@ -207,8 +202,7 @@ void Attribute::initialize(
              << " to " << CONFIG_MAX_VALUE << ". Please check your input or"
              << " modified-data files to make sure the value for 'config'"
              << " is correctly specified." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Warn the user if the object attribute has a CONFIG_TYPE_NONE configuration.
@@ -235,8 +229,7 @@ void Attribute::initialize(
              << " 'cycle_time' must be > 0. Please check your input or"
              << " modified-data files to make sure the value for the 'cycle_time'"
              << " is correctly specified." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Get the ref-attributes for the given trick-name.
@@ -256,8 +249,7 @@ void Attribute::initialize(
              << trick_name << "' is an inherited variable then make"
              << " sure the base class uses either the 'public' or 'protected'"
              << " access level for the variable." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Verify that the rti_encoding value is valid given the ref-attributes type.
@@ -278,8 +270,7 @@ void Attribute::initialize(
                    << "attribute represents a 'bool' type. Please check your input "
                    << "or modified-data files to make sure the value for the 'rti_"
                    << "encoding' is correctly specified." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
       }
@@ -303,8 +294,7 @@ void Attribute::initialize(
                    << " 'unsigned char' type. Please check  your input or"
                    << " modified-data files to make sure the value for the"
                    << " 'rti_encoding' is correctly specified." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
 
          // For the ENCODING_TYPE_UNICODE_STRING encoding, we only support a 1-D dynamic
@@ -320,8 +310,7 @@ void Attribute::initialize(
                    << " 'char *' or 'unsigned char *'). Please check your input or"
                    << " modified-data files to make sure the value for the"
                    << " 'rti_encoding' is correctly specified." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
 
          // For the ENCODING_TYPE_OPAQUE_DATA encoding, we only support a 1-D dynamic
@@ -337,8 +326,7 @@ void Attribute::initialize(
                    << " 'char *' or 'unsigned char *'). Please check your input or"
                    << " modified-data files to make sure the value for the"
                    << " 'rti_encoding' is correctly specified." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
       }
@@ -368,8 +356,7 @@ void Attribute::initialize(
                    << "attribute represents a primitive type. Please check your "
                    << "input or modified-data files to make sure the value for the "
                    << "'rti_encoding' is correctly specified." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
       }
@@ -392,8 +379,7 @@ void Attribute::initialize(
                    << "(i.e. char *). Please check your input or modified-data "
                    << "files to make sure the value for the 'rti_encoding' is "
                    << "correctly specified." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
 
          // Only support an array of characters (i.e. char *) for ENCODING_TYPE_NO_ENCODING.
@@ -407,8 +393,7 @@ void Attribute::initialize(
                    << " 'char *'). Please check your input or modified-data"
                    << " files to make sure the value for the 'rti_encoding' is"
                    << " correctly specified." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
          break;
       }
@@ -432,8 +417,7 @@ void Attribute::initialize(
                 << "' is a " << ref2->attr->num_index << "-dimensional dynamic array."
                 << " Only one-dimensional dynamic arrays are supported for now."
                 << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
    } else {
       // String type:
@@ -454,8 +438,7 @@ void Attribute::initialize(
                       << "-dimensional dynamic array of strings. Only"
                       << " one-dimensional dynamic arrays are supported for now."
                       << THLA_ENDL;
-               send_hs( stderr, (char *)errmsg.str().c_str() );
-               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
       }
@@ -469,8 +452,7 @@ void Attribute::initialize(
              << " rti_encoding for FOM Object Attribute '" << obj_FOM_name
              << "'->'" << FOM_name << "' with Trick name '" << trick_name
              << "' and rti_encoding = " << rti_encoding << "." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // We do not support an array of primitive types for the logical
@@ -484,8 +466,7 @@ void Attribute::initialize(
              << " for the 'rti_encoding'. Please check your input or modified-data"
              << " files to make sure the value for the 'rti_encoding' is"
              << " correctly specified." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // The units must be in seconds if the ENCODING_TYPE_LOGICAL_TIME is used.
@@ -498,8 +479,7 @@ void Attribute::initialize(
              << " 'rti_encoding' is set to ENCODING_TYPE_LOGICAL_TIME. Please check your"
              << " input or modified-data files to make sure the value for the"
              << " 'rti_encoding' is correctly specified." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Determine if we need to do a byteswap for data transmission.
@@ -587,8 +567,7 @@ void Attribute::determine_cycle_ratio(
                 << " must be > 0. Please make sure your S_define and/or THLA.sm"
                 << " simulation module specifies a valid cycle time for the"
                 << " send_cyclic_and_requested_data() job." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       // Do a bounds check on the 'cycle_time' value.
@@ -602,8 +581,7 @@ void Attribute::determine_cycle_ratio(
                 << " cycle time for the send_cyclic_and_requested_data() job). Please check your"
                 << " input or modified-data files to make sure the value for the"
                 << " attribute 'cycle_time' is specified correctly." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       this->cycle_ratio = (int)( ( this->cycle_time / core_job_cycle_time ) + 0.5 );
@@ -625,8 +603,7 @@ void Attribute::determine_cycle_ratio(
                 << "), which is not an integer. Please check your input or"
                 << " modified-data files to make sure the value for the attribute"
                 << " 'cycle_time' is specified correctly." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
@@ -713,14 +690,15 @@ void Attribute::extract_data(       // RETURN: -- None
                    << " FOM. If you are using Lag Compensation one possible cause of"
                    << " this problem is that your lag compensation variables are not"
                    << " the correct size or type." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
 #if 1
+            send_hs( stderr, (char *)errmsg.str().c_str() );
+
             // For now just return if we have a data size mismatch. This will
             // allow us to continue to run even though the other federate is
             // sending us data that is not correct in size.
             return;
 #else
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
 #endif
          }
 
@@ -752,8 +730,7 @@ void Attribute::extract_data(       // RETURN: -- None
                    << " defined in the FOM. If you are using Lag Compensation one"
                    << " possible cause of this problem is that your lag compensation"
                    << " variables are not the correct size or type." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
          // Ensure enough buffer capacity.
          ensure_buffer_capacity( attr_size );
@@ -863,9 +840,7 @@ void Attribute::ensure_buffer_capacity(
              << " ERROR: Could not allocate memory for buffer for requested"
              << " capacity " << capacity << " for Attribute '" << FOM_name
              << "' with Trick name '" << trick_name << "'!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-      exit( 1 );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
 
@@ -1506,8 +1481,7 @@ void Attribute::encode_logical_time() const // RETURN: -- None.
                 << " ERROR: For Attribute '" << FOM_name << "' with Trick name '"
                 << trick_name << "' the type is not supported for the"
                 << " ENCODING_TYPE_LOGICAL_TIME encoding." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
    }
@@ -1606,8 +1580,7 @@ void Attribute::decode_logical_time() // RETURN: -- None.
                 << " ERROR: For Attribute '" << FOM_name << "' with Trick name '"
                 << trick_name << "' the type is not supported for the"
                 << " ENCODING_TYPE_LOGICAL_TIME encoding." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
    }
@@ -1782,8 +1755,7 @@ size %d, will use the data buffer size instead.%c",
                 << " ERROR: Could not allocate memory for ENCODING_TYPE_OPAQUE_DATA Attribute '"
                 << FOM_name << "' with Trick name '" << trick_name << "' and length "
                 << decoded_length << "!" << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       // Copy the characters over.
@@ -2272,8 +2244,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
                    << "' with Trick name '" << trick_name << "', actual data size"
                    << " (" << byte_count << ") != expected Trick simulation variable"
                    << " size (" << size << ")!" << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
 
          // The amount of data in the buffer (i.e. size) is the number of
@@ -2425,8 +2396,7 @@ size %d, will use the data buffer size instead.%c",
                       << " ERROR: Could not allocate memory for ENCODING_TYPE_UNICODE_STRING Attribute '"
                       << FOM_name << "' with Trick name '" << trick_name
                       << "' and length " << ( ( length > 0 ) ? ( length + 16 ) : 16 ) << "!" << THLA_ENDL;
-               send_hs( stderr, (char *)errmsg.str().c_str() );
-               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               DebugHandler::terminate_with_message( errmsg.str() );
             } else {
 
                // Decode the UTF-16 characters.
@@ -2570,8 +2540,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                          << " Attribute '" << FOM_name << "' with Trick name '"
                          << trick_name << "' and length " << ( ( length > 0 ) ? ( length + 16 ) : 16 )
                          << "!" << THLA_ENDL;
-                  send_hs( stderr, (char *)errmsg.str().c_str() );
-                  exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+                  DebugHandler::terminate_with_message( errmsg.str() );
                } else {
 
                   // Decode the UTF-16 characters.
@@ -2685,8 +2654,7 @@ WARNING: For ENCODING_TYPE_ASCII_STRING attribute '%s', decoded length %d > data
                       << " ERROR: Could not allocate memory for ENCODING_TYPE_ASCII_STRING Attribute '"
                       << FOM_name << "' with Trick name '" << trick_name
                       << "' and length " << ( ( length > 0 ) ? ( length + 16 ) : 16 ) << "!" << THLA_ENDL;
-               send_hs( stderr, (char *)errmsg.str().c_str() );
-               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               DebugHandler::terminate_with_message( errmsg.str() );
             } else {
 
                // Copy the ASCII characters over.
@@ -2820,8 +2788,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                          << " Attribute '" << FOM_name << "' with Trick name '"
                          << trick_name << "' and length " << ( ( length > 0 ) ? ( length + 16 ) : 16 )
                          << "!" << THLA_ENDL;
-                  send_hs( stderr, (char *)errmsg.str().c_str() );
-                  exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+                  DebugHandler::terminate_with_message( errmsg.str() );
                } else {
 
                   // Copy the ASCII characters over.
@@ -2932,8 +2899,7 @@ WARNING: For ENCODING_TYPE_OPAQUE_DATA attribute '%s', decoded length %d > data 
                       << " ERROR: Could not allocate memory for ENCODING_TYPE_OPAQUE_DATA Attribute '"
                       << FOM_name << "' with Trick name '" << trick_name
                       << "' and length " << length << "!" << THLA_ENDL;
-               send_hs( stderr, (char *)errmsg.str().c_str() );
-               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               DebugHandler::terminate_with_message( errmsg.str() );
             }
 
             // Copy the characters over.
@@ -3062,8 +3028,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                          << " ERROR: Could not allocate memory for ENCODING_TYPE_OPAQUE_DATA"
                          << " Attribute '" << FOM_name << "' with Trick name '"
                          << trick_name << "' and length " << length << "!" << THLA_ENDL;
-                  send_hs( stderr, (char *)errmsg.str().c_str() );
-                  exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+                  DebugHandler::terminate_with_message( errmsg.str() );
                }
 
                // Copy the characters over.
@@ -3101,8 +3066,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
             errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
                    << " ERROR: For ENCODING_TYPE_NO_ENCODING, Attribute '" << FOM_name
                    << "' with Trick name '" << trick_name << "' is NULL!" << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
 
          // The existing output "char *" variable size must exactly match the
@@ -3114,8 +3078,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                    << "' with Trick name '" << trick_name << "', received data"
                    << " size (" << size << ") != Trick simulation variable size ("
                    << get_size( (char *)output ) << ")!" << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
 
          // Copy the characters over.
@@ -3167,8 +3130,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                       << " ERROR: Could not allocate memory for ENCODING_TYPE_C_STRING attribute '"
                       << FOM_name << "' with Trick name '" << trick_name
                       << "' and length " << ( ( length > 0 ) ? ( length + 16 ) : 16 ) << "!" << THLA_ENDL;
-               send_hs( stderr, (char *)errmsg.str().c_str() );
-               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               DebugHandler::terminate_with_message( errmsg.str() );
             } else {
 
                memcpy( output, ( input + start_index ), (size_t)length );

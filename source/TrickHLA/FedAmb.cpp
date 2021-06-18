@@ -120,9 +120,7 @@ void FedAmb::initialize()
       ostringstream errmsg;
       errmsg << "FedAmb::initialize():" << __LINE__
              << " Unexpected NULL TrickHLA::Federate." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-      return;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Check to make sure we have a reference to the TrickHLA::Manager.
@@ -130,9 +128,7 @@ void FedAmb::initialize()
       ostringstream errmsg;
       errmsg << "FedAmb::initialize():" << __LINE__
              << " Unexpected NULL TrickHLA::Manager." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-      return;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Generate a valid federate name.
@@ -147,9 +143,7 @@ void FedAmb::initialize()
       ostringstream errmsg;
       errmsg << "FedAmb::initialize():" << __LINE__
              << " Unexpected NULL federate name." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-      return;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -170,13 +164,12 @@ void FedAmb::connectionLost(
 {
    string faultMsg;
    StringUtilities::to_string( faultMsg, faultDescription );
-   ostringstream msg;
-   msg << "FedAmb::connectionLost():" << __LINE__
-       << " Lost the connection to the Central RTI Component (CRC)."
-       << " Reason:'" << faultMsg << "'."
-       << " Terminating the simulation!" << THLA_ENDL;
-   send_hs( stderr, (char *)msg.str().c_str() );
-   exec_terminate( __FILE__, (char *)msg.str().c_str() );
+   ostringstream errmsg;
+   errmsg << "FedAmb::connectionLost():" << __LINE__
+          << " Lost the connection to the Central RTI Component (CRC)."
+          << " Reason:'" << faultMsg << "'."
+          << " Terminating the simulation!" << THLA_ENDL;
+   DebugHandler::terminate_with_message( errmsg.str() );
 }
 
 void FedAmb::reportFederationExecutions(

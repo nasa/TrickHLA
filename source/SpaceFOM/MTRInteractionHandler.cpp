@@ -118,9 +118,10 @@ void MTRInteractionHandler::send_interaction(
 {
    // Make sure that the interaction reference has been set.
    if ( this->interaction == NULL ) {
-      send_hs( stderr, "SpaceFOM::MTRInteractionHandler::send_interaction():%d Unexpected NULL Interaction.%c",
-               __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "SpaceFOM::MTRInteractionHandler::send_interaction():%d Unexpected NULL Interaction." );
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::MTRInteractionHandler::send_interaction():" << __LINE__
+             << " Unexpected NULL Interaction!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Get the ExecutionControl object and cast it to an SpaceFOM::ExecutionControl.
@@ -207,9 +208,10 @@ void MTRInteractionHandler::receive_interaction(
 {
    // Make sure that the federate reference has been set.
    if ( this->interaction == NULL ) {
-      send_hs( stderr, "SpaceFOM::MTRInteractionHandler::receive_interaction():%d Unexpected NULL Interaction.%c",
-               __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "SpaceFOM::MTRInteractionHandler::receive_interaction():%d Unexpected NULL Interaction." );
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::MTRInteractionHandler::receive_interaction():" << __LINE__
+             << " Unexpected NULL Interaction!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Get the ExecutionControl object and cast it to an SpaceFOM::ExecutionControl.
@@ -219,9 +221,7 @@ void MTRInteractionHandler::receive_interaction(
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::receive_interaction():" << __LINE__
              << "  Invalid dynamic cast to SpaceFOM::ExecutionControl!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-      return;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Set MTR.

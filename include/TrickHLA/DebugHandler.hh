@@ -66,10 +66,14 @@ class DebugHandler
     *  @param code  Debug code source area of the incoming message. */
    static bool show( const DebugLevelEnum level, const DebugSourceEnum code );
 
-   /*! @brief Set the debug level and code-section..
+   /*! @brief Set the debug level and code-section.
     *  @param level Debug level of incoming message.
     *  @param code  Debug code source area of the incoming message. */
    static void set( const DebugLevelEnum level, const DebugSourceEnum code );
+
+   /*! @brief Print the message then shutdown by calling exec_terminate().
+    *  @param message Error message to print to standard error. */
+   static void terminate_with_message( const std::string &message );
 
   public:
    static DebugLevelEnum  debug_level;  ///< @trick_units{--} Maximum debug report level requested by the user, default: THLA_NO_TRACE

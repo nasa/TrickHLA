@@ -275,8 +275,7 @@ void ExecutionControl::setup_object_RTI_handles()
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::setup_object_RTI_handles():" << __LINE__
              << " Unexpected NULL ExCO!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
 
@@ -431,8 +430,7 @@ ExecutionConfiguration *ExecutionControl::get_execution_configuration()
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::get_execution_configuration():" << __LINE__
              << " ERROR: Execution Configuration is not an TrickHLA ExCO." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
    return ( ExCO );
 }
@@ -451,8 +449,7 @@ void ExecutionControl::set_least_common_time_step(
          ostringstream errmsg;
          errmsg << "TrickHLA::ExecutionControl::set_least_common_time_step():" << __LINE__
                 << " ERROR: Execution Configuration is not an TrickHLA ExCO." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       // Set for the ExecutionControl.
@@ -466,14 +463,12 @@ void ExecutionControl::set_time_padding( double t )
 
    // Need to check that time padding is valid.
    if ( ( int_time % least_common_time_step ) != 0 ) {
-      ostringstream msg;
-      msg << "TrickHLA::ExecutionControl::set_time_padding():" << __LINE__
-          << " Time padding value (" << t
-          << " must be an integer multiple of the Least Common Time Step ("
-          << least_common_time_step << ")!" << THLA_NEWLINE;
-      send_hs( stderr, msg.str().c_str() );
-      exec_terminate( __FILE__, msg.str().c_str() );
-      return;
+      ostringstream errmsg;
+      errmsg << "TrickHLA::ExecutionControl::set_time_padding():" << __LINE__
+             << " Time padding value (" << t
+             << " must be an integer multiple of the Least Common Time Step ("
+             << least_common_time_step << ")!" << THLA_NEWLINE;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // The Master federate padding time must be an integer multiple of 3 or
@@ -487,8 +482,7 @@ void ExecutionControl::set_time_padding( double t )
              << " microseconds) is not a multiple of 3 or more of the ExCO"
              << " Least Common Time Step (" << least_common_time_step
              << " microseconds)!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    this->time_padding = t;
@@ -501,6 +495,5 @@ void ExecutionControl::start_federation_save_at_scenario_time(
    ostringstream errmsg;
    errmsg << "TrickHLA::ExecutionControl::start_federation_save_at_scenario_time:" << __LINE__
           << " ERROR: The ExecutionControl does not yet support SAVE/RESTORE!" << THLA_ENDL;
-   send_hs( stderr, (char *)errmsg.str().c_str() );
-   exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+   DebugHandler::terminate_with_message( errmsg.str() );
 }

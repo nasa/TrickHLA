@@ -313,14 +313,13 @@ Waiting for the required federates to join.%c",
                         __LINE__, THLA_NEWLINE );
             }
             // Make sure only the required federates have joined the federation.
-            string tRetString;
-            tRetString = federate->wait_for_required_federates_to_join();
-            if ( !tRetString.empty() ) {
-               tRetString += THLA_NEWLINE;
-               send_hs( stderr, "IMSim::ExecutionControl::pre_multi_phase_init_processes2():%d%c",
-                        __LINE__, THLA_NEWLINE );
-               send_hs( stderr, (char *)tRetString.c_str() );
-               exec_terminate( __FILE__, (char *)tRetString.c_str() );
+            string return_string;
+            return_string = federate->wait_for_required_federates_to_join();
+            if ( !return_string.empty() ) {
+               ostringstream errmsg;
+               errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
+                      << " " << return_string << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
             }
 
             // Load the MASTER federate from the checkpoint file...
@@ -369,8 +368,7 @@ initiating restore request for '%s' with the RTI.%c",
                       << "\n      See IEEE 1516.1-2000, Section 4.18 for "
                       << "further info for the reasons why the RTI would reject"
                       << " the federation restore request..." << THLA_ENDL;
-               send_hs( stderr, (char *)errmsg.str().c_str() );
-               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               DebugHandler::terminate_with_message( errmsg.str() );
             }
 
             // Wait for RTI to inform us that the federation restore has
@@ -401,8 +399,7 @@ initiating restore request for '%s' with the RTI.%c",
                       << THLA_ENDL;
                errmsg << endl
                       << tStr;
-               send_hs( stderr, (char *)errmsg.str().c_str() );
-               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               DebugHandler::terminate_with_message( errmsg.str() );
             }
 
             // Rebuild the 'federate handle set' because the federation was restored
@@ -452,13 +449,12 @@ Simulation has started and is now running...%c",
 
             federate->set_federate_has_begun_execution();
          } else {
-            send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d \
-You indicated that you wanted to restore a checkpoint => I AM THE MASTER <= \
-but you failed to specify the checkpoint FILE NAME!%c",
-                     __LINE__, THLA_NEWLINE );
-            exec_terminate( __FILE__, "IMSim::ExecutionControl::pre_multi_phase_init_processes() \
-You indicated that you wanted to restore a checkpoint => I AM THE MASTER <= \
-but you failed to specify the checkpoint FILE NAME!" );
+            ostringstream errmsg;
+            errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
+                   << " You indicated that you wanted to restore a checkpoint"
+                   << " => I AM THE MASTER <= but you failed to specify the"
+                   << "  checkpoint FILE NAME!" << THLA_ENDL;
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
       } else { // MASTER but restore was not specified
 
@@ -590,8 +586,7 @@ loading of the federate from the checkpoint file '%s'.%c",
                    << THLA_ENDL
                    << endl
                    << tStr;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
 
          // Wait for the announcement of "STARTUP" sync-point before proceeding.
@@ -683,8 +678,7 @@ Simulation has started and is now running...%c",
                errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
                       << " ERROR: Late joining federates that do not use HLA"
                       << " time management are not supported yet!" << THLA_ENDL;
-               send_hs( stderr, (char *)errmsg.str().c_str() );
-               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               DebugHandler::terminate_with_message( errmsg.str() );
             }
 
             // Subscribe to the simulation configuration attributes.
@@ -802,8 +796,7 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!"
                       << THLA_ENDL;
-               send_hs( stderr, (char *)errmsg.str().c_str() );
-               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
       }
@@ -830,8 +823,7 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
       errmsg << "IMSim::ExecutionControl::determine_if_late_joining_or_restoring_federate_IMSim():"
              << __LINE__ << " failed to determine if late joiner or restore federate!!!"
              << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    return FEDERATE_JOIN_NOMINAL;
@@ -903,22 +895,21 @@ void ExecutionControl::setup_interaction_ref_attributes()
    freeze_interaction = reinterpret_cast< Interaction * >(
       alloc_type( freeze_inter_count, "TrickHLA::Interaction" ) );
    if ( freeze_interaction == static_cast< Interaction * >( NULL ) ) {
-      send_hs( stderr, "IMSim::ExecutionControl::setup_interaction_ref_attributes():%d FAILED to \
-allocate enough memory for Interaction specialized to FREEZE the sim!%c",
-               __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "IMSim::ExecutionControl::setup_interaction_ref_attributes() FAILED to \
-allocate enough memory for Interaction specialized to FREEZE the sim!" );
+      ostringstream errmsg;
+      errmsg << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
+             << " FAILED to allocate enough memory for Interaction specialized"
+             << " to FREEZE the sim!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
    FreezeInteractionHandler *fiHandler =
       reinterpret_cast< FreezeInteractionHandler * >(
          alloc_type( 1, "TrickHLA::FreezeInteractionHandler" ) );
    if ( fiHandler == static_cast< FreezeInteractionHandler * >( NULL ) ) {
-      send_hs( stderr, "IMSim::ExecutionControl::setup_interaction_ref_attributes():%d FAILED to \
-allocate enough memory for FreezeInteractionHandler!%c",
-               __LINE__,
-               THLA_NEWLINE );
-      exec_terminate( __FILE__, "IMSim::ExecutionControl::setup_interaction_ref_attributes() FAILED to \
-allocate enough memory for FreezeInteractionHandler!" );
+      ostringstream errmsg;
+      errmsg << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
+             << " FAILED to allocate enough memory for FreezeInteractionHandler!"
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    freeze_interaction->set_handler( fiHandler );
@@ -932,11 +923,11 @@ allocate enough memory for FreezeInteractionHandler!" );
       alloc_type( freeze_interaction->get_parameter_count(),
                   "TrickHLA::Parameter" ) );
    if ( tParm == static_cast< Parameter * >( NULL ) ) {
-      send_hs( stderr, "IMSim::ExecutionControl::setup_interaction_ref_attributes():%d FAILED to \
-allocate enough memory for the parameters of the FREEZE interaction!%c",
-               __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "IMSim::ExecutionControl::setup_interaction_ref_attributes() FAILED to \
-allocate enough memory for the parameters of the FREEZE interaction!" );
+      ostringstream errmsg;
+      errmsg << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
+             << " FAILED to allocate enough memory for the parameters of the"
+             << " FREEZE interaction!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
       tParm[0].set_FOM_name( "time" );
@@ -957,11 +948,11 @@ allocate enough memory for the parameters of the FREEZE interaction!" );
    ATTRIBUTES *time_attr;
    time_attr = (ATTRIBUTES *)malloc( 2 * sizeof( ATTRIBUTES ) );
    if ( time_attr == static_cast< ATTRIBUTES * >( NULL ) ) {
-      send_hs( stderr, "IMSim::ExecutionControl::setup_interaction_ref_attributes():%d FAILED to \
-allocate enough memory for the ATTRIBUTES for the 'time' value of the FREEZE interaction!%c",
-               __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "IMSim::ExecutionControl::setup_interaction_ref_attributes() FAILED to \
-allocate enough memory for the ATTRIBUTES for the 'time' value of the FREEZE interaction!" );
+      ostringstream errmsg;
+      errmsg << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
+             << " FAILED to allocate enough memory for the ATTRIBUTES for the"
+             << " 'time' value of the FREEZE interaction!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // find the 'time' value in the Freeze Interaction Handler's ATTRIBUTES.
@@ -1209,8 +1200,7 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_points()
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!"
                          << THLA_ENDL;
-                  send_hs( stderr, (char *)errmsg.str().c_str() );
-                  exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+                  DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
          }
@@ -1484,9 +1474,7 @@ void ExecutionControl::set_next_execution_control_mode(
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::set_next_execution_mode():" << __LINE__
              << " This should only be called by the Master federate!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-      return;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    switch ( exec_control ) {
@@ -2053,8 +2041,7 @@ bool ExecutionControl::run_mode_transition()
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::run_mode_transition():" << __LINE__
              << " The 'mtr_run' sync-point was not found!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
       // Wait for 'mtr_run' sync-point announce.
@@ -2144,8 +2131,7 @@ bool ExecutionControl::freeze_mode_transition()
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::freeze_mode_transition():" << __LINE__
              << " The 'mtr_freeze' sync-point was not found!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
       // Wait for 'mtr_freeze' sync-point announce.
@@ -2327,8 +2313,7 @@ void ExecutionControl::exit_freeze()
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!"
                          << THLA_ENDL;
-                  send_hs( stderr, (char *)errmsg.str().c_str() );
-                  exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+                  DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
          }
@@ -2437,8 +2422,7 @@ ExecutionConfiguration *ExecutionControl::get_execution_configuration()
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::epoch_and_root_frame_discovery_process():" << __LINE__
              << " ERROR: Execution Configureation is not an IMSim ExCO." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
    return ( this->get_execution_configuration() );
 }
@@ -2623,8 +2607,7 @@ bool ExecutionControl::is_save_initiated()
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!"
                       << THLA_ENDL;
-               send_hs( stderr, (char *)errmsg.str().c_str() );
-               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
       }
@@ -2654,10 +2637,11 @@ void ExecutionControl::convert_loggable_sync_pts()
       this->loggable_sync_pts = reinterpret_cast< LoggableTimedSyncPnt * >(
          alloc_type( (int)this->logged_sync_pts_count, "TrickHLA::LoggableSyncPts" ) );
       if ( this->loggable_sync_pts == static_cast< LoggableTimedSyncPnt * >( NULL ) ) {
-         send_hs( stderr, "IMSim::ExecutionControl::convert_sync_pts():%d Could not allocate memory for loggable sync points.! %c",
-                  __LINE__, THLA_NEWLINE );
-         exec_terminate( __FILE__, "IMSim::ExecutionControl::convert_sync_pts(): Could not allocate memory for loggable sync points.!" );
-         return;
+         ostringstream errmsg;
+         errmsg << "IMSim::ExecutionControl::convert_sync_pts():" << __LINE__
+                << " FAILED to allocate enough memory for the loggable sync points!"
+                << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       pause_sync_pts.convert_sync_points( this->loggable_sync_pts );

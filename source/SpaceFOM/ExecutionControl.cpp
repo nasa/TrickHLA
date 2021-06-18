@@ -239,11 +239,11 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // Allocate the Mode Transition Request Interaction.
    mtr_interaction = reinterpret_cast< Interaction * >( alloc_type( 1, "TrickHLA::Interaction" ) );
    if ( mtr_interaction == static_cast< Interaction * >( NULL ) ) {
-      send_hs( stderr, "SpaceFOM::ExecutionControl::setup_MTR_interaction_ref_attributes():%d FAILED to \
-allocate enough memory for Interaction specialized to MTR the sim!%c",
-               __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "SpaceFOM::ExecutionControl::setup_MTR_interaction_ref_attributes() FAILED to \
-allocate enough memory for Interaction specialized to MTR the sim!" );
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionControl::setup_MTR_interaction_ref_attributes():" << __LINE__
+             << " FAILED to allocate enough memory for Interaction specialized"
+             << " to MTR the sim!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Set up name, handler, publish and subscribe.
@@ -262,11 +262,11 @@ allocate enough memory for Interaction specialized to MTR the sim!" );
       alloc_type( mtr_interaction->get_parameter_count(),
                   "TrickHLA::Parameter" ) );
    if ( tParm == static_cast< Parameter * >( NULL ) ) {
-      send_hs( stderr, "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():%d FAILED to \
-allocate enough memory for the parameters of the MTR interaction!%c",
-               __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes() FAILED to \
-allocate enough memory for the parameters of the MTR interaction!" );
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
+             << " FAILED to allocate enough memory for the parameters of the"
+             << " MTR interaction!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
       tParm[0].set_FOM_name( "execution_mode" );
@@ -287,11 +287,11 @@ allocate enough memory for the parameters of the MTR interaction!" );
    ATTRIBUTES *mode_attr;
    mode_attr = (ATTRIBUTES *)malloc( 2 * sizeof( ATTRIBUTES ) );
    if ( mode_attr == static_cast< ATTRIBUTES * >( NULL ) ) {
-      send_hs( stderr, "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():%d FAILED to \
-allocate enough memory for the ATTRIBUTES for the 'execution_mode' value of the MTR interaction!%c",
-               __LINE__, THLA_NEWLINE );
-      exec_terminate( __FILE__, "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes() FAILED to \
-allocate enough memory for the ATTRIBUTES for the 'execution_mode' value of the MTR interaction!" );
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
+             << " FAILED to aallocate enough memory for the ATTRIBUTES for the"
+             << " 'execution_mode' value of the MTR interaction!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Find the 'execution_mode' value in the MTR Interaction Handler's ATTRIBUTES.
@@ -359,8 +359,7 @@ void ExecutionControl::setup_object_RTI_handles()
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_object_RTI_handles():" << __LINE__
              << " ERROR: Unexpected NULL ExCO!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
 
@@ -680,8 +679,7 @@ void ExecutionControl::role_determination_process()
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!"
                          << THLA_ENDL;
-                  send_hs( stderr, (char *)errmsg.str().c_str() );
-                  exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+                  DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
          }
@@ -878,8 +876,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
              << " ERROR: Unexpected NULL THLA.manager.exec_config object." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
       // Make sure the ExCO has at least a FOM-name to be valid.
@@ -887,8 +884,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
                 << " ERROR: Unexpected NULL FOM-name for the THLA.manager.exec_config object." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
 
@@ -900,8 +896,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
                 << " ERROR: Unexpected NULL THLA.manager.root_ref_frame object." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             send_hs( stdout, "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():%d WARNING: No root reference frame!%c",
@@ -921,8 +916,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
          errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
                 << " ERROR: ExCO Least-Common-Time-Step (LCTS) time (" << LCTS
                 << " microseconds) is not greater than zero!" << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       // The LCTS must match in both this ExecutionControl and the associated ExCO.
@@ -932,8 +926,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
                 << " ERROR: Least-Common-Time-Step (LCTS) time here(" << LCTS
                 << " microseconds) not equal to ExCO LCTS (" << ExCO->get_least_common_time_step()
                 << "!" << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       // Get the master federate lookahead time.
@@ -949,8 +942,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
                    << " microseconds) is not less than or equal to the"
                    << " ExCO Least-Common-Time-Step (LCTS) time ("
                    << LCTS << " microseconds)!" << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
 
          // The master federate lookahead must be an integer multiple of the LCTS.
@@ -960,8 +952,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
                    << " ERROR: ExCO Least-Common-Time-Step (LCTS) time (" << LCTS
                    << " microseconds) is not an integer multiple of the Federate"
                    << " Lookahead time (" << L << " microseconds)!" << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
-            exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+            DebugHandler::terminate_with_message( errmsg.str() );
          }
       }
 
@@ -973,8 +964,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
                 << " ERROR: Mode transition padding time (" << MPT
                 << " microseconds) is not an integer multiple of the ExCO"
                 << " Least Common Time Step (" << LCTS << " microseconds)!" << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       // The Master federate padding time must be an integer multiple of 3 or
@@ -988,8 +978,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
                 << " microseconds) is not a multiple of 3 or more of the ExCO"
                 << " Least Common Time Step (" << ExCO->least_common_time_step
                 << " microseconds)!" << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
 
@@ -1139,9 +1128,12 @@ void ExecutionControl::post_multi_phase_init_processes()
 
          default:
             ExCO->print_execution_configuration();
-            send_hs( stderr, "SpaceFOM::ExecutionControl::post_multi_phase_init_process():%d ERROR: SpaceFOM ExecutionControl invalid execution mode (%s), exiting...%c",
-                     __LINE__, execution_control_enum_to_string( this->requested_execution_control_mode ).c_str(), THLA_NEWLINE );
-            exec_terminate( __FILE__, "SpaceFOM::ExecutionControl::initialization_complete() ERROR: SpaceFOM ExecutionControl invalid execution mode, exiting..." );
+            ostringstream errmsg;
+            errmsg << "SpaceFOM::ExecutionControl::post_multi_phase_init_process():" << __LINE__
+                   << " ERROR: SpaceFOM ExecutionControl invalid execution mode"
+                   << " (" << execution_control_enum_to_string( this->requested_execution_control_mode )
+                   << "), exiting..." << THLA_ENDL;
+            DebugHandler::terminate_with_message( errmsg.str() );
       }
 
    } else {
@@ -1197,9 +1189,13 @@ void ExecutionControl::post_multi_phase_init_processes()
 
                default:
                   ExCO->print_execution_configuration();
-                  send_hs( stderr, "SpaceFOM::ExecutionControl::post_multi_phase_init_process():%d ERROR: SpaceFOM ExecutionControl invalid execution mode (%s), exiting...%c",
-                           __LINE__, execution_control_enum_to_string( this->requested_execution_control_mode ).c_str(), THLA_NEWLINE );
-                  exec_terminate( __FILE__, "SpaceFOM::ExecutionControl::post_multi_phase_init_process() ERROR: SpaceFOM ExecutionControl invalid execution mode, exiting..." );
+
+                  ostringstream errmsg;
+                  errmsg << "SpaceFOM::ExecutionControl::post_multi_phase_init_process():" << __LINE__
+                         << " ERROR: SpaceFOM ExecutionControl invalid execution mode"
+                         << " (" << execution_control_enum_to_string( this->requested_execution_control_mode )
+                         << "), exiting..." << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
             }
 
          } // End of MTR check.
@@ -1355,9 +1351,7 @@ void ExecutionControl::set_next_execution_control_mode(
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::set_next_execution_mode():" << __LINE__
              << " ERROR: This should only be called by the Master federate!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
-      return;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    switch ( exec_control ) {
@@ -1993,8 +1987,7 @@ bool ExecutionControl::run_mode_transition()
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::run_mode_transition():" << __LINE__
              << " ERROR: The 'mtr_run' sync-point was not found!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
       // Wait for 'mtr_run' sync-point announce.
@@ -2085,8 +2078,7 @@ bool ExecutionControl::freeze_mode_transition()
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::freeze_mode_transition():" << __LINE__
              << " ERROR: The 'mtr_freeze' sync-point was not found!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
       // Wait for 'mtr_freeze' sync-point announce.
@@ -2210,7 +2202,7 @@ bool ExecutionControl::check_for_shutdown_with_termination()
       // Wait a little while for the Federate HLA interface to shutdown before
       // we terminate.
       (void)Utilities::micro_sleep( 500000 );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
 
       return true;
    }
@@ -2392,8 +2384,7 @@ ExecutionConfiguration *ExecutionControl::get_execution_configuration()
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::get_execution_configuration():" << __LINE__
              << " ERROR: Execution Configuration is not an SpaceFOM ExCO." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
    return ( ExCO );
 }
@@ -2509,8 +2500,7 @@ void ExecutionControl::send_root_ref_frame()
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::send_root_ref_frame():" << __LINE__
              << " ERROR: Root Reference Frame is not set!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
    rrf_obj = root_ref_frame->get_object();
 
@@ -2533,8 +2523,7 @@ void ExecutionControl::send_root_ref_frame()
              << " 'root_ref_frame' attribute has 'publish = true' set. Please"
              << " check your input or modified-data files to make sure the"
              << " 'publish' value is correctly specified." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
 
@@ -2602,8 +2591,7 @@ void ExecutionControl::receive_root_ref_frame()
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!"
                       << THLA_ENDL;
-               send_hs( stderr, (char *)errmsg.str().c_str() );
-               exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+               DebugHandler::terminate_with_message( errmsg.str() );
             }
          }
       }
@@ -2624,8 +2612,7 @@ void ExecutionControl::receive_root_ref_frame()
              << " 'root_ref_frame' attribute has 'subscribe = true' set. Please"
              << " check your input or modified-data files to make sure the"
              << " 'subscribe' value is correctly specified." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
 
@@ -2637,8 +2624,7 @@ void ExecutionControl::start_federation_save_at_scenario_time(
    errmsg << "SpaceFOM::ExecutionControl::start_federation_save_at_scenario_time:" << __LINE__
           << " ERROR: The ExecutionControl does not yet support SAVE/RESTORE!"
           << THLA_ENDL;
-   send_hs( stderr, (char *)errmsg.str().c_str() );
-   exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+   DebugHandler::terminate_with_message( errmsg.str() );
 }
 
 /*!
@@ -2656,8 +2642,7 @@ void ExecutionControl::set_least_common_time_step(
          errmsg << "SpaceFOM::ExecutionControl::set_least_common_time_step():" << __LINE__
                 << " ERROR: Execution Configuration is not an SpaceFOM ExCO."
                 << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-         exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+         DebugHandler::terminate_with_message( errmsg.str() );
       } else {
 
          // Make sure to set this for both the ExecutionControl and the ExCO.
@@ -2673,14 +2658,12 @@ void ExecutionControl::set_time_padding( double t )
 
    // Need to check that time padding is valid.
    if ( ( int_time % least_common_time_step ) != 0 ) {
-      ostringstream msg;
-      msg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
-          << " ERROR: Time padding value (" << t
-          << " must be an integer multiple of the Least Common Time Step ("
-          << least_common_time_step << ")!" << THLA_NEWLINE;
-      send_hs( stderr, msg.str().c_str() );
-      exec_terminate( __FILE__, msg.str().c_str() );
-      return;
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
+             << " ERROR: Time padding value (" << t
+             << " must be an integer multiple of the Least Common Time Step ("
+             << least_common_time_step << ")!" << THLA_NEWLINE;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // The Master federate padding time must be an integer multiple of 3 or
@@ -2694,8 +2677,7 @@ void ExecutionControl::set_time_padding( double t )
              << " microseconds) is not a multiple of 3 or more of the ExCO"
              << " Least Common Time Step (" << least_common_time_step
              << " microseconds)!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      exec_terminate( __FILE__, (char *)errmsg.str().c_str() );
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    this->time_padding = t;
