@@ -522,11 +522,11 @@ void ExecutionConfiguration::set_least_common_time_step(
 void ExecutionConfiguration::setup_ref_attributes(
    Packing *packing_obj )
 {
-   ostringstream errmsg;
-   errmsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
-          << " ERROR: This routine does NOT work and should not be called!"
-          << THLA_ENDL;
-   DebugHandler::terminate_with_message( errmsg.str() );
+   ostringstream errormsg;
+   errormsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
+            << " ERROR: This routine does NOT work and should not be called!"
+            << THLA_ENDL;
+   DebugHandler::terminate_with_message( errormsg.str() );
 
    //
    // Set up object properties specifically for the ExCO.
@@ -659,22 +659,22 @@ void ExecutionConfiguration::setup_ref_attributes(
    //                                (ATTRIBUTES *) exco_attr );
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      ostringstream msg2;
-      msg2 << "SpaceFOM::ExecutionConfiguration::setup_interaction_ref_attributes():" << __LINE__
-           << " FOM-Parameter:'" << this->attributes[0].get_FOM_name() << "'"
-           << " NOTE: This is an auto-generated parameter so there is no"
-           << " associated 'Trick-Name'." << THLA_NEWLINE;
-      send_hs( stdout, (char *)msg2.str().c_str() );
+      ostringstream msg;
+      msg << "SpaceFOM::ExecutionConfiguration::setup_interaction_ref_attributes():" << __LINE__
+          << " FOM-Parameter:'" << this->attributes[0].get_FOM_name() << "'"
+          << " NOTE: This is an auto-generated parameter so there is no"
+          << " associated 'Trick-Name'." << THLA_NEWLINE;
+      send_hs( stdout, (char *)msg.str().c_str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      ostringstream msg2;
-      msg2 << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
-           << endl
-           << "--------------- Trick REF-Attributes ---------------"
-           << endl
-           << " Object FOM name:'" << this->FOM_name << "'" << THLA_NEWLINE;
-      send_hs( stdout, (char *)msg2.str().c_str() );
+      ostringstream msg;
+      msg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
+          << endl
+          << "--------------- Trick REF-Attributes ---------------"
+          << endl
+          << " Object FOM name:'" << this->FOM_name << "'" << THLA_NEWLINE;
+      send_hs( stdout, (char *)msg.str().c_str() );
    }
 }
 

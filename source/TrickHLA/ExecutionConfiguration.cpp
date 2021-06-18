@@ -200,18 +200,12 @@ void ExecutionConfiguration::configure_attributes()
  */
 void ExecutionConfiguration::configure()
 {
-   Federate *    federate;
-   ostringstream federate_list;
-   int           required_federate_count = 0;
-
-   // Check the manager and then get the federate.
-   if ( manager == NULL ) {
+   // Check the manager.
+   if ( this->manager == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionConfiguration::initialize():" << __LINE__
              << " Null TrickHLA::Manager passed in!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } else {
-      federate = manager->get_federate();
    }
 
    // Release the memory used by the required_federates c-string.
@@ -220,14 +214,26 @@ void ExecutionConfiguration::configure()
       required_federates = static_cast< char * >( NULL );
    }
 
-   // Build a comma separated list of required federate names.
-   for ( int i = 0; i < federate->known_feds_count; ++i ) {
-      if ( federate->known_feds[i].required ) {
-         if ( required_federate_count > 0 ) {
-            federate_list << ",";
+   ostringstream federate_list;
+   int           required_federate_count = 0;
+
+   Federate *federate = this->manager->get_federate();
+   if ( federate == NULL ) {
+      ostringstream errmsg;
+      errmsg << "TrickHLA::ExecutionConfiguration::initialize():" << __LINE__
+             << " Null TrickHLA-Federate pointer!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   } else {
+
+      // Build a comma separated list of required federate names.
+      for ( int i = 0; i < federate->known_feds_count; ++i ) {
+         if ( federate->known_feds[i].required ) {
+            if ( required_federate_count > 0 ) {
+               federate_list << ",";
+            }
+            federate_list << federate->known_feds[i].name;
+            ++required_federate_count;
          }
-         federate_list << federate->known_feds[i].name;
-         required_federate_count++;
       }
    }
 

@@ -215,14 +215,14 @@ void MTRInteractionHandler::receive_interaction(
    }
 
    // Get the ExecutionControl object and cast it to an SpaceFOM::ExecutionControl.
-   ExecutionControlBase *      exco_base = interaction->get_federate()->get_execution_control();
-   SpaceFOM::ExecutionControl *exco      = dynamic_cast< ExecutionControl * >( exco_base );
-   if ( exco == NULL ) {
+   ExecutionControlBase *exco_base = interaction->get_federate()->get_execution_control();
+   if ( exco_base == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::receive_interaction():" << __LINE__
-             << "  Invalid dynamic cast to SpaceFOM::ExecutionControl!" << THLA_ENDL;
+             << "  Unexpected NULL SpaceFOM::ExecutionControl!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
+   SpaceFOM::ExecutionControl *exco = dynamic_cast< ExecutionControl * >( exco_base );
 
    // Set MTR.
    this->mtr_mode = mtr_int16_to_enum( this->mtr_mode_int );
