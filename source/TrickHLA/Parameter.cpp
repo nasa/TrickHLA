@@ -597,10 +597,11 @@ void Parameter::extract_data(
                    << " is that your lag compensation variables are not the correct"
                    << " size or type." << THLA_ENDL;
 #if 1
+            send_hs( stderr, (char *)errmsg.str().c_str() );
+
             // For now just return if we have a data size mismatch. This will
             // allow us to continue to run even though the other federate is
             // sending us data that is not correct in size.
-            send_hs( stderr, (char *)errmsg.str().c_str() );
             return;
 #else
             DebugHandler::terminate_with_message( errmsg.str() );

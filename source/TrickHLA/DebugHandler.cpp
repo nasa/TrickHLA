@@ -28,7 +28,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <stdio.h>
+#include <cstdlib>
 
 // Trick include files.
 #include "trick/exec_proto.h"
