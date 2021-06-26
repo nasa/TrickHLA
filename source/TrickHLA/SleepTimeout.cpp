@@ -73,12 +73,13 @@ void SleepTimeout::set(
    const long   sleep_micros )
 {
    // Do a bounds check on the timeout in seconds and convert it to microseconds.
-   if ( timeout_seconds <= 0.0 ) {
+   double timeout_micros = timeout_seconds * 1000000; // in microseconds
+   if ( timeout_micros <= 0.0 ) {
       this->timeout_time = 0;
-   } else if ( ( timeout_seconds * 1000000 ) >= std::numeric_limits< long long >::max() ) {
+   } else if ( timeout_micros >= (double)std::numeric_limits< long long >::max() ) {
       this->timeout_time = std::numeric_limits< long long >::max();
    } else {
-      this->timeout_time = timeout_seconds * 1000000; // in microseconds
+      this->timeout_time = (long long)timeout_micros;
    }
 
    // Calculate the requested sleep-time.
