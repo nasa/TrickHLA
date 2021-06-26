@@ -746,6 +746,7 @@ Simulation has started and is now running...%c",
  */
 FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federate()
 {
+   SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
    SleepTimeout sleep_timer;
 
    // Block until we have determined if we are a late joining federate.
@@ -785,18 +786,27 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
 
          (void)sleep_timer.sleep();
 
-         if ( !late_joiner_determined && !get_manager()->restore_determined && sleep_timer.timeout() ) {
-            sleep_timer.reset();
-            if ( !federate->is_execution_member() ) {
-               ostringstream errmsg;
-               errmsg << "IMSim::ExecutionControl::determine_if_late_joining_or_restoring_federate_IMSim():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution member."
-                      << " This means we are either not connected to the"
-                      << " RTI or we are no longer joined to the federation"
-                      << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << THLA_ENDL;
-               DebugHandler::terminate_with_message( errmsg.str() );
+         if ( !late_joiner_determined && !get_manager()->restore_determined ) {
+
+            if ( sleep_timer.timeout() ) {
+               sleep_timer.reset();
+               if ( !federate->is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "IMSim::ExecutionControl::determine_if_late_joining_or_restoring_federate_IMSim():" << __LINE__
+                         << " Unexpectedly the Federate is no longer an execution member."
+                         << " This means we are either not connected to the"
+                         << " RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation at"
+                         << " the Central RTI Component (CRC) level!"
+                         << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
+               }
+            }
+
+            if ( print_timer.timeout() ) {
+               print_timer.reset();
+               send_hs( stdout, "IMSim::ExecutionControl::determine_if_late_joining_or_restoring_federate_IMSim():%d Waiting...%c",
+                        __LINE__, THLA_NEWLINE );
             }
          }
       }
@@ -1176,6 +1186,7 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_points()
            && ( sp->label.compare( IMSim::INITIALIZE_SYNC_POINT ) != 0 )
            && ( sp->label.compare( IMSim::SIM_CONFIG_SYNC_POINT ) != 0 ) ) {
 
+         SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
          SleepTimeout sleep_timer;
 
          // Wait for the federation to synchronized on the sync-point.
@@ -1189,18 +1200,27 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_points()
 
             // Periodically check to make sure the federate is still part of
             // the federation exectuion.
-            if ( !sp->is_achieved() && sleep_timer.timeout() ) {
-               sleep_timer.reset();
-               if ( !federate->is_execution_member() ) {
-                  ostringstream errmsg;
-                  errmsg << "IMSim::ExecutionControl::wait_for_all_multiphase_init_sync_points():" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution"
-                         << " member. This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
-                         << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << THLA_ENDL;
-                  DebugHandler::terminate_with_message( errmsg.str() );
+            if ( !sp->is_achieved() ) {
+
+               if ( sleep_timer.timeout() ) {
+                  sleep_timer.reset();
+                  if ( !federate->is_execution_member() ) {
+                     ostringstream errmsg;
+                     errmsg << "IMSim::ExecutionControl::wait_for_all_multiphase_init_sync_points():" << __LINE__
+                            << " Unexpectedly the Federate is no longer an execution"
+                            << " member. This means we are either not connected to the"
+                            << " RTI or we are no longer joined to the federation"
+                            << " execution because someone forced our resignation at"
+                            << " the Central RTI Component (CRC) level!"
+                            << THLA_ENDL;
+                     DebugHandler::terminate_with_message( errmsg.str() );
+                  }
+               }
+
+               if ( print_timer.timeout() ) {
+                  print_timer.reset();
+                  send_hs( stdout, "ExecutionControl::wait_for_all_multiphase_init_sync_points():%d Waiting...%c",
+                           __LINE__, THLA_NEWLINE );
                }
             }
          }
@@ -2291,29 +2311,38 @@ bool ExecutionControl::check_freeze_exit()
 
 void ExecutionControl::exit_freeze()
 {
-
    if ( federate->announce_freeze ) {                                            //DANNY2.7
       if ( federate->freeze_the_federation && ( this->get_sim_time() > 0.0 ) ) { // coming out of freeze due to freeze interaction
          federate->register_generic_sync_point( IMSim::FEDRUN_SYNC_POINT );      // this tells federates to go to run
 
+         SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
          SleepTimeout sleep_timer;
 
          while ( !this->pause_sync_pts.check_sync_points( this->checktime ) ) {
             // wait for it to be announced
             (void)sleep_timer.sleep();
 
-            if ( !this->pause_sync_pts.check_sync_points( this->checktime ) && sleep_timer.timeout() ) {
-               sleep_timer.reset();
-               if ( !federate->is_execution_member() ) {
-                  ostringstream errmsg;
-                  errmsg << "IMSim::ExecutionControl::announce_freeze():" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution"
-                         << " member. This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
-                         << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << THLA_ENDL;
-                  DebugHandler::terminate_with_message( errmsg.str() );
+            if ( !this->pause_sync_pts.check_sync_points( this->checktime ) ) {
+
+               if ( sleep_timer.timeout() ) {
+                  sleep_timer.reset();
+                  if ( !federate->is_execution_member() ) {
+                     ostringstream errmsg;
+                     errmsg << "IMSim::ExecutionControl::exit_freeze():" << __LINE__
+                            << " Unexpectedly the Federate is no longer an execution"
+                            << " member. This means we are either not connected to the"
+                            << " RTI or we are no longer joined to the federation"
+                            << " execution because someone forced our resignation at"
+                            << " the Central RTI Component (CRC) level!"
+                            << THLA_ENDL;
+                     DebugHandler::terminate_with_message( errmsg.str() );
+                  }
+               }
+
+               if ( print_timer.timeout() ) {
+                  print_timer.reset();
+                  send_hs( stderr, "IMSim::ExecutionControl::exit_freeze():%d Waiting...%c",
+                           __LINE__, THLA_NEWLINE );
                }
             }
          }
@@ -2590,24 +2619,34 @@ bool ExecutionControl::is_save_initiated()
    if ( federate->announce_save && !federate->initiate_save_flag && !federate->save_completed ) {
       federate->register_generic_sync_point( IMSim::FEDSAVE_SYNC_POINT );
 
+      SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
       SleepTimeout sleep_timer;
 
       while ( !federate->initiate_save_flag ) { // wait for federation to be synced
          this->pause_sync_pts.achieve_all_sync_points( *federate->get_RTI_ambassador(), this->checktime );
          (void)sleep_timer.sleep();
 
-         if ( !federate->initiate_save_flag && sleep_timer.timeout() ) {
-            sleep_timer.reset();
-            if ( !federate->is_execution_member() ) {
-               ostringstream errmsg;
-               errmsg << "IMSim::ExecutionControl::setup_checkpoint():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution"
-                      << " member. This means we are either not connected to the"
-                      << " RTI or we are no longer joined to the federation"
-                      << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << THLA_ENDL;
-               DebugHandler::terminate_with_message( errmsg.str() );
+         if ( !federate->initiate_save_flag ) {
+
+            if ( sleep_timer.timeout() ) {
+               sleep_timer.reset();
+               if ( !federate->is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "IMSim::ExecutionControl::setup_checkpoint():" << __LINE__
+                         << " Unexpectedly the Federate is no longer an execution"
+                         << " member. This means we are either not connected to the"
+                         << " RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation at"
+                         << " the Central RTI Component (CRC) level!"
+                         << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
+               }
+            }
+
+            if ( print_timer.timeout() ) {
+               print_timer.reset();
+               send_hs( stdout, "IMSim::ExecutionControl::setup_checkpoint():%d Waiting '%s'%c",
+                        __LINE__, THLA_NEWLINE );
             }
          }
       }

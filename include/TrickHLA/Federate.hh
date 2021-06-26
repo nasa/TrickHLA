@@ -141,6 +141,8 @@ class Federate
    DebugLevelEnum  debug_level;  ///< @trick_units{--} Maximum debug report level requested by the user, default: THLA_NO_TRACE
    DebugSourceEnum code_section; ///< @trick_units{--} Code section(s) for which to activate debug messages, default: THLA_ALL_MODULES
 
+   double wait_status_time; ///< @trick_units{s} How long to wait in a spin-lock in seconds before we print a status message.
+
    bool can_rejoin_federation; /**< @trick_units{--}
       Enables this federate to resign in a way to allow re-joining of the
       federation at a later time. */

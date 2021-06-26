@@ -135,6 +135,7 @@ Federate::Federate()
      known_feds( NULL ),
      debug_level( DEBUG_LEVEL_NO_TRACE ),
      code_section( DEBUG_SOURCE_ALL_MODULES ),
+     wait_status_time( 30.0 ),
      can_rejoin_federation( false ),
      freeze_delay_frames( 2 ),
      unfreeze_after_save( false ),
@@ -1448,9 +1449,11 @@ string Federate::wait_for_required_federates_to_join()
    size_t i, req_fed_cnt;
    size_t joined_fed_cnt = 0;
 
+   bool          print_summary                = false;
    bool          found_an_unrequired_federate = false;
    set< string > unrequired_federates_list; // list of unique unrequired federate names
 
+   SleepTimeout print_timer( this->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
    SleepTimeout sleep_timer;
 
    this->all_federates_joined = false;
@@ -1502,65 +1505,78 @@ string Federate::wait_for_required_federates_to_join()
                this->all_federates_joined = true;
             }
 
-            // Print out a list of the Joined Federates.
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-               // Build the federate summary as an output string stream.
-               ostringstream summary;
-               unsigned int  cnt = 0;
+            // Determine if we should print a summary.
+            print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE );
+         }
 
-               summary << "Federate::wait_for_required_federates_to_join():"
-                       << __LINE__ << "\nWAITING FOR " << required_feds_count
-                       << " REQUIRED FEDERATES:";
+         // Print out a list of the Joined Federates.
+         if ( print_summary ) {
+            print_summary = false;
 
-               // Summarize the required federates first.
-               for ( i = 0; i < (unsigned int)known_feds_count; ++i ) {
-                  ++cnt;
-                  if ( known_feds[i].required ) {
-                     if ( is_joined_federate( known_feds[i].name ) ) {
-                        summary << "\n    " << cnt
-                                << ": Found joined required federate '"
-                                << known_feds[i].name << "'";
-                     } else {
-                        summary << "\n    " << cnt
-                                << ": Waiting for required federate '"
-                                << known_feds[i].name << "'";
-                     }
+            // Build the federate summary as an output string stream.
+            ostringstream summary;
+            unsigned int  cnt = 0;
+
+            summary << "Federate::wait_for_required_federates_to_join():"
+                    << __LINE__ << "\nWAITING FOR " << required_feds_count
+                    << " REQUIRED FEDERATES:";
+
+            // Summarize the required federates first.
+            for ( i = 0; i < (unsigned int)known_feds_count; ++i ) {
+               ++cnt;
+               if ( known_feds[i].required ) {
+                  if ( is_joined_federate( known_feds[i].name ) ) {
+                     summary << "\n    " << cnt
+                             << ": Found joined required federate '"
+                             << known_feds[i].name << "'";
+                  } else {
+                     summary << "\n    " << cnt
+                             << ": Waiting for required federate '"
+                             << known_feds[i].name << "'";
                   }
                }
-
-               // Summarize all the remaining non-required joined federates.
-               for ( i = 0; i < joined_federate_names.size(); ++i ) {
-                  if ( !is_required_federate( joined_federate_names[i] ) ) {
-                     ++cnt;
-
-                     // We need a string version of the wide-string federate name.
-                     string fedname;
-                     StringUtilities::to_string( fedname, joined_federate_names[i] );
-
-                     summary << "\n    " << cnt << ": Found joined federate '"
-                             << fedname.c_str() << "'";
-                  }
-               }
-               summary << THLA_ENDL;
-
-               // Display the federate summary.
-               send_hs( stdout, (char *)summary.str().c_str() );
             }
+
+            // Summarize all the remaining non-required joined federates.
+            for ( i = 0; i < joined_federate_names.size(); ++i ) {
+               if ( !is_required_federate( joined_federate_names[i] ) ) {
+                  ++cnt;
+
+                  // We need a string version of the wide-string federate name.
+                  string fedname;
+                  StringUtilities::to_string( fedname, joined_federate_names[i] );
+
+                  summary << "\n    " << cnt << ": Found joined federate '"
+                          << fedname.c_str() << "'";
+               }
+            }
+            summary << THLA_ENDL;
+
+            // Display the federate summary.
+            send_hs( stdout, (char *)summary.str().c_str() );
          }
       } // Mutex protection goes out of scope here
 
-      if ( !this->all_federates_joined && sleep_timer.timeout() ) {
-         sleep_timer.reset();
-         if ( !is_execution_member() ) {
-            ostringstream errmsg;
-            errmsg << "Federate::wait_for_required_federates_to_join():" << __LINE__
-                   << " Unexpectedly the Federate is no longer an execution member."
-                   << " This means we are either not connected to the"
-                   << " RTI or we are no longer joined to the federation"
-                   << " execution because someone forced our resignation at"
-                   << " the Central RTI Component (CRC) level!"
-                   << THLA_ENDL;
-            DebugHandler::terminate_with_message( errmsg.str() );
+      if ( !this->all_federates_joined ) {
+
+         if ( sleep_timer.timeout() ) {
+            sleep_timer.reset();
+            if ( !is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "Federate::wait_for_required_federates_to_join():" << __LINE__
+                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!"
+                      << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+
+         if ( print_timer.timeout() ) {
+            print_timer.reset();
+            print_summary = true;
          }
       }
    }
@@ -2791,24 +2807,34 @@ void Federate::setup_checkpoint()
 
          request_federation_save();
 
+         SleepTimeout print_timer( this->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
          SleepTimeout sleep_timer;
 
          // need to wait for federation to initiate save
          while ( !start_to_save ) {
             (void)sleep_timer.sleep();
 
-            if ( !this->start_to_save && sleep_timer.timeout() ) {
-               sleep_timer.reset();
-               if ( !is_execution_member() ) {
-                  ostringstream errmsg;
-                  errmsg << "Federate::setup_checkpoint():" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution"
-                         << " member. This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
-                         << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << THLA_ENDL;
-                  DebugHandler::terminate_with_message( errmsg.str() );
+            if ( !this->start_to_save ) {
+
+               if ( sleep_timer.timeout() ) {
+                  sleep_timer.reset();
+                  if ( !is_execution_member() ) {
+                     ostringstream errmsg;
+                     errmsg << "Federate::setup_checkpoint():" << __LINE__
+                            << " Unexpectedly the Federate is no longer an execution"
+                            << " member. This means we are either not connected to the"
+                            << " RTI or we are no longer joined to the federation"
+                            << " execution because someone forced our resignation at"
+                            << " the Central RTI Component (CRC) level!"
+                            << THLA_ENDL;
+                     DebugHandler::terminate_with_message( errmsg.str() );
+                  }
+               }
+
+               if ( print_timer.timeout() ) {
+                  print_timer.reset();
+                  send_hs( stdout, "Federate::setup_checkpoint():%d Federate Save Pre-checkpoint, wiating...%c",
+                           __LINE__, THLA_NEWLINE );
                }
             }
          }
@@ -3029,24 +3055,34 @@ void Federate::setup_restore()
       // set the federate restore_name to filename (without the federation name)- this gets announced to other feds
       initiate_restore_announce( restore_name_str );
 
+      SleepTimeout print_timer( this->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
       SleepTimeout sleep_timer;
 
       // need to wait for federation to initiate restore
       while ( !this->start_to_restore ) {
          (void)sleep_timer.sleep();
 
-         if ( !this->start_to_restore && sleep_timer.timeout() ) {
-            sleep_timer.reset();
-            if ( !is_execution_member() ) {
-               ostringstream errmsg;
-               errmsg << "Federate::setup_restore():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution"
-                      << " member. This means we are either not connected to the"
-                      << " RTI or we are no longer joined to the federation"
-                      << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << THLA_ENDL;
-               DebugHandler::terminate_with_message( errmsg.str() );
+         if ( !this->start_to_restore ) {
+
+            if ( sleep_timer.timeout() ) {
+               sleep_timer.reset();
+               if ( !is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "Federate::setup_restore():" << __LINE__
+                         << " Unexpectedly the Federate is no longer an execution"
+                         << " member. This means we are either not connected to the"
+                         << " RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation at"
+                         << " the Central RTI Component (CRC) level!"
+                         << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
+               }
+            }
+
+            if ( print_timer.timeout() ) {
+               print_timer.reset();
+               send_hs( stdout, "Federate::setup_restore():%d Federate Restore Pre-load, waiting...%c",
+                        __LINE__, THLA_NEWLINE );
             }
          }
       }
@@ -4012,6 +4048,7 @@ void Federate::setup_time_constrained()
       // simulation fed file we will receive TimeStamp Ordered messages.
       RTI_ambassador->enableTimeConstrained();
 
+      SleepTimeout print_timer( this->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
       SleepTimeout sleep_timer;
 
       // This spin lock waits for the time constrained flag to be set from the RTI.
@@ -4022,18 +4059,26 @@ void Federate::setup_time_constrained()
 
          (void)sleep_timer.sleep();
 
-         if ( !this->time_constrained_state && sleep_timer.timeout() ) {
-            sleep_timer.reset();
-            if ( !is_execution_member() ) {
-               ostringstream errmsg;
-               errmsg << "Federate::setup_time_constrained():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution"
-                      << " member. This means we are either not connected to the"
-                      << " RTI or we are no longer joined to the federation"
-                      << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << THLA_ENDL;
-               DebugHandler::terminate_with_message( errmsg.str() );
+         if ( !this->time_constrained_state ) {
+            if ( sleep_timer.timeout() ) {
+               sleep_timer.reset();
+               if ( !is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "Federate::setup_time_constrained():" << __LINE__
+                         << " Unexpectedly the Federate is no longer an execution"
+                         << " member. This means we are either not connected to the"
+                         << " RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation at"
+                         << " the Central RTI Component (CRC) level!"
+                         << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
+               }
+            }
+
+            if ( print_timer.timeout() ) {
+               print_timer.reset();
+               send_hs( stdout, "Federate::setup_time_constrained()%d \"%s\": ENABLING TIME CONSTRAINED, waiting...%c",
+                        __LINE__, get_federation_name(), THLA_NEWLINE );
             }
          }
       }
@@ -4198,6 +4243,7 @@ void Federate::setup_time_regulation()
       // TimeStamp Ordered messages.
       RTI_ambassador->enableTimeRegulation( lookahead.get() );
 
+      SleepTimeout print_timer( this->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
       SleepTimeout sleep_timer;
 
       // This spin lock waits for the time regulation flag to be set from the RTI.
@@ -4208,18 +4254,27 @@ void Federate::setup_time_regulation()
 
          (void)sleep_timer.sleep();
 
-         if ( !this->time_regulating_state && sleep_timer.timeout() ) {
-            sleep_timer.reset();
-            if ( !is_execution_member() ) {
-               ostringstream errmsg;
-               errmsg << "Federate::setup_time_regulation():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution"
-                      << " member. This means we are either not connected to the"
-                      << " RTI or we are no longer joined to the federation"
-                      << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << THLA_ENDL;
-               DebugHandler::terminate_with_message( errmsg.str() );
+         if ( !this->time_regulating_state ) {
+
+            if ( sleep_timer.timeout() ) {
+               sleep_timer.reset();
+               if ( !is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "Federate::setup_time_regulation():" << __LINE__
+                         << " Unexpectedly the Federate is no longer an execution"
+                         << " member. This means we are either not connected to the"
+                         << " RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation at"
+                         << " the Central RTI Component (CRC) level!"
+                         << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
+               }
+            }
+
+            if ( print_timer.timeout() ) {
+               print_timer.reset();
+               send_hs( stdout, "Federate::setup_time_regulation():%d \"%s\": ENABLING TIME REGULATION WITH LOOKAHEAD = %G seconds, waiting...%c",
+                        __LINE__, get_federation_name(), lookahead.get_time_in_seconds(), THLA_NEWLINE );
             }
          }
       }
@@ -4626,6 +4681,8 @@ void Federate::wait_to_send_data()
    // Determine if this is the main thread (id = 0) or a child thread.
    if ( thread_id == 0 ) {
 
+      SleepTimeout print_timer( this->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
+
       // Wait for all the child threads to be ready to send data.
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
       bool         all_ready_to_send;
@@ -4674,6 +4731,12 @@ void Federate::wait_to_send_data()
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
             }
+
+            if ( print_timer.timeout() ) {
+               print_timer.reset();
+               send_hs( stdout, "Federate::wait_to_send_data():%d Waiting...%c",
+                        __LINE__, THLA_NEWLINE );
+            }
          }
       } while ( !all_ready_to_send );
 
@@ -4694,6 +4757,8 @@ void Federate::wait_to_send_data()
 
       // See if the main thread has announced it has sent the data.
       if ( !sent_data ) {
+
+         SleepTimeout print_timer( this->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
          SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
          // Wait for the main thread to have sent the data.
@@ -4716,6 +4781,12 @@ void Federate::wait_to_send_data()
                          << THLA_ENDL;
                   DebugHandler::terminate_with_message( errmsg.str() );
                }
+            }
+
+            if ( print_timer.timeout() ) {
+               print_timer.reset();
+               send_hs( stdout, "Federate::wait_to_send_data():%d Waiting...%c",
+                        __LINE__, THLA_NEWLINE );
             }
 
             {
@@ -4756,6 +4827,7 @@ void Federate::wait_to_receive_data()
 
    // See if the main thread has announced it has received data.
    if ( !ready_to_receive ) {
+      SleepTimeout print_timer( this->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // Wait for the main thread to receive data.
@@ -4778,6 +4850,12 @@ void Federate::wait_to_receive_data()
                       << THLA_ENDL;
                DebugHandler::terminate_with_message( errmsg.str() );
             }
+         }
+
+         if ( print_timer.timeout() ) {
+            print_timer.reset();
+            send_hs( stdout, "Federate::wait_to_receive_data():%d Waiting...%c",
+                     __LINE__, THLA_NEWLINE );
          }
 
          {
@@ -4838,6 +4916,7 @@ void Federate::wait_for_time_advance_grant()
                   __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
       }
 
+      SleepTimeout print_timer( this->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // This spin lock waits for the time advance grant from the RTI.
@@ -4854,24 +4933,27 @@ void Federate::wait_for_time_advance_grant()
             state = this->time_adv_state;
          }
 
-         if ( ( state != TIME_ADVANCE_GRANTED ) && sleep_timer.timeout() ) {
+         if ( state != TIME_ADVANCE_GRANTED ) {
 
-            sleep_timer.reset();
-            if ( is_execution_member() ) {
-               if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-                  send_hs( stdout, "Federate::wait_for_time_advance_grant():%d Still Execution Member.%c",
-                           __LINE__, THLA_NEWLINE );
+            if ( sleep_timer.timeout() ) {
+               sleep_timer.reset();
+               if ( !is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "Federate::wait_for_time_advance_grant():" << __LINE__
+                         << " Unexpectedly the Federate is no longer an execution"
+                         << " member. This means we are either not connected to the"
+                         << " RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation at"
+                         << " the Central RTI Component (CRC) level!"
+                         << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
                }
-            } else {
-               ostringstream errmsg;
-               errmsg << "Federate::wait_for_time_advance_grant():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution"
-                      << " member. This means we are either not connected to the"
-                      << " RTI or we are no longer joined to the federation"
-                      << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << THLA_ENDL;
-               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+
+            if ( print_timer.timeout() ) {
+               print_timer.reset();
+               send_hs( stdout, "Federate::wait_for_time_advance_grant():%d Waiting...%c",
+                        __LINE__, THLA_NEWLINE );
             }
          }
       } while ( state != TIME_ADVANCE_GRANTED );
@@ -5679,6 +5761,7 @@ void Federate::ask_MOM_for_auto_provide_setting()
    requestedAttributes.insert( MOM_HLAautoProvide_handle );
    request_attribute_update( MOM_HLAfederation_class_handle, requestedAttributes );
 
+   SleepTimeout print_timer( this->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
    SleepTimeout sleep_timer;
 
    while ( this->auto_provide_setting < 0 ) {
@@ -5689,18 +5772,27 @@ void Federate::ask_MOM_for_auto_provide_setting()
       // Sleep a little while to wait for the information to update.
       (void)sleep_timer.sleep();
 
-      if ( ( this->auto_provide_setting < 0 ) && sleep_timer.timeout() ) {
-         sleep_timer.reset();
-         if ( !is_execution_member() ) {
-            ostringstream errmsg;
-            errmsg << "Federate::ask_MOM_for_auto_provide_setting():" << __LINE__
-                   << " Unexpectedly the Federate is no longer an execution member."
-                   << " This means we are either not connected to the"
-                   << " RTI or we are no longer joined to the federation"
-                   << " execution because someone forced our resignation at"
-                   << " the Central RTI Component (CRC) level!"
-                   << THLA_ENDL;
-            DebugHandler::terminate_with_message( errmsg.str() );
+      if ( this->auto_provide_setting < 0 ) {
+
+         if ( sleep_timer.timeout() ) {
+            sleep_timer.reset();
+            if ( !is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "Federate::ask_MOM_for_auto_provide_setting():" << __LINE__
+                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!"
+                      << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+
+         if ( print_timer.timeout() ) {
+            print_timer.reset();
+            send_hs( stdout, "Federate::ask_MOM_for_auto_provide_setting():%d Waiting...%c",
+                     __LINE__, THLA_NEWLINE );
          }
       }
    }
@@ -5806,6 +5898,7 @@ void Federate::load_and_print_running_federate_names()
    requestedAttributes.insert( MOM_HLAfederatesInFederation_handle );
    request_attribute_update( MOM_HLAfederation_class_handle, requestedAttributes );
 
+   SleepTimeout print_timer( this->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
    SleepTimeout sleep_timer;
 
    while ( this->running_feds_count <= 0 ) {
@@ -5816,18 +5909,27 @@ void Federate::load_and_print_running_federate_names()
       // Sleep a little while to wait for the information to update.
       (void)sleep_timer.sleep();
 
-      if ( ( this->running_feds_count <= 0 ) && sleep_timer.timeout() ) {
-         sleep_timer.reset();
-         if ( !is_execution_member() ) {
-            ostringstream errmsg;
-            errmsg << "Federate::load_and_print_running_federate_names():" << __LINE__
-                   << " Unexpectedly the Federate is no longer an execution member."
-                   << " This means we are either not connected to the"
-                   << " RTI or we are no longer joined to the federation"
-                   << " execution because someone forced our resignation at"
-                   << " the Central RTI Component (CRC) level!"
-                   << THLA_ENDL;
-            DebugHandler::terminate_with_message( errmsg.str() );
+      if ( this->running_feds_count <= 0 ) {
+
+         if ( sleep_timer.timeout() ) {
+            sleep_timer.reset();
+            if ( !is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "Federate::load_and_print_running_federate_names():" << __LINE__
+                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!"
+                      << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+
+         if ( print_timer.timeout() ) {
+            print_timer.reset();
+            send_hs( stdout, "Federate::load_and_print_running_federate_names():%d Waiting...%c",
+                     __LINE__, THLA_NEWLINE );
          }
       }
    }
@@ -5848,6 +5950,7 @@ MOM just informed us that there are %d federates currently running in the federa
    // Wait for all the required federates to join.
    this->all_federates_joined = false;
 
+   print_timer.reset();
    sleep_timer.reset();
 
    while ( !this->all_federates_joined ) {
@@ -5867,24 +5970,34 @@ MOM just informed us that there are %d federates currently running in the federa
             this->all_federates_joined = true;
          }
       }
-      if ( !this->all_federates_joined && sleep_timer.timeout() ) {
-         sleep_timer.reset();
-         if ( !is_execution_member() ) {
-            ostringstream errmsg;
-            errmsg << "Federate::load_and_print_running_federate_names():" << __LINE__
-                   << " Unexpectedly the Federate is no longer an execution member."
-                   << " This means we are either not connected to the"
-                   << " RTI or we are no longer joined to the federation"
-                   << " execution because someone forced our resignation at"
-                   << " the Central RTI Component (CRC) level!"
-                   << THLA_ENDL;
-            DebugHandler::terminate_with_message( errmsg.str() );
+      if ( !this->all_federates_joined ) {
+
+         if ( sleep_timer.timeout() ) {
+            sleep_timer.reset();
+            if ( !is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "Federate::load_and_print_running_federate_names():" << __LINE__
+                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!"
+                      << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+
+         if ( print_timer.timeout() ) {
+            print_timer.reset();
+            send_hs( stdout, "Federate::load_and_print_running_federate_names():%d Waiting...%c",
+                     __LINE__, THLA_NEWLINE );
          }
       }
    }
 
    // Execute a blocking loop until the RTI responds with information for all
    // running federates
+   print_timer.reset();
    sleep_timer.reset();
    while ( joined_federate_names.size() < (unsigned int)running_feds_count ) {
 
@@ -5893,18 +6006,27 @@ MOM just informed us that there are %d federates currently running in the federa
 
       (void)sleep_timer.sleep();
 
-      if ( ( joined_federate_names.size() < (unsigned int)running_feds_count ) && sleep_timer.timeout() ) {
-         sleep_timer.reset();
-         if ( !is_execution_member() ) {
-            ostringstream errmsg;
-            errmsg << "Federate::load_and_print_running_federate_names():" << __LINE__
-                   << " Unexpectedly the Federate is no longer an execution member."
-                   << " This means we are either not connected to the"
-                   << " RTI or we are no longer joined to the federation"
-                   << " execution because someone forced our resignation at"
-                   << " the Central RTI Component (CRC) level!"
-                   << THLA_ENDL;
-            DebugHandler::terminate_with_message( errmsg.str() );
+      if ( joined_federate_names.size() < (unsigned int)running_feds_count ) {
+
+         if ( sleep_timer.timeout() ) {
+            sleep_timer.reset();
+            if ( !is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "Federate::load_and_print_running_federate_names():" << __LINE__
+                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!"
+                      << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+
+         if ( print_timer.timeout() ) {
+            print_timer.reset();
+            send_hs( stdout, "Federate::load_and_print_running_federate_names():%d Waiting...%c",
+                     __LINE__, THLA_NEWLINE );
          }
       }
    }
@@ -6595,6 +6717,8 @@ void Federate::wait_for_federation_restore_begun()
       send_hs( stdout, "Federate::wait_for_federation_restore_begun():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
+
+   SleepTimeout print_timer( this->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
    SleepTimeout sleep_timer;
 
    while ( !this->restore_begun ) {
@@ -6604,18 +6728,27 @@ void Federate::wait_for_federation_restore_begun()
 
       (void)sleep_timer.sleep(); // sleep until RTI responds...
 
-      if ( !this->restore_begun && sleep_timer.timeout() ) {
-         sleep_timer.reset();
-         if ( !is_execution_member() ) {
-            ostringstream errmsg;
-            errmsg << "Federate::wait_for_federation_restore_begun():" << __LINE__
-                   << " Unexpectedly the Federate is no longer an execution member."
-                   << " This means we are either not connected to the"
-                   << " RTI or we are no longer joined to the federation"
-                   << " execution because someone forced our resignation at"
-                   << " the Central RTI Component (CRC) level!"
-                   << THLA_ENDL;
-            DebugHandler::terminate_with_message( errmsg.str() );
+      if ( !this->restore_begun ) {
+
+         if ( sleep_timer.timeout() ) {
+            sleep_timer.reset();
+            if ( !is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "Federate::wait_for_federation_restore_begun():" << __LINE__
+                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!"
+                      << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+
+         if ( print_timer.timeout() ) {
+            print_timer.reset();
+            send_hs( stdout, "Federate::wait_for_federation_restore_begun():%d Waiting...%c",
+                     __LINE__, THLA_NEWLINE );
          }
       }
    }
@@ -6631,6 +6764,8 @@ void Federate::wait_until_federation_is_ready_to_restore()
       send_hs( stdout, "Federate::wait_until_federation_is_ready_to_restore():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
+
+   SleepTimeout print_timer( this->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
    SleepTimeout sleep_timer;
 
    while ( !this->start_to_restore ) {
@@ -6640,18 +6775,27 @@ void Federate::wait_until_federation_is_ready_to_restore()
 
       (void)sleep_timer.sleep(); // sleep until RTI responds...
 
-      if ( !this->start_to_restore && sleep_timer.timeout() ) {
-         sleep_timer.reset();
-         if ( !is_execution_member() ) {
-            ostringstream errmsg;
-            errmsg << "Federate::wait_until_federation_is_ready_to_restore():" << __LINE__
-                   << " Unexpectedly the Federate is no longer an execution member."
-                   << " This means we are either not connected to the"
-                   << " RTI or we are no longer joined to the federation"
-                   << " execution because someone forced our resignation at"
-                   << " the Central RTI Component (CRC) level!"
-                   << THLA_ENDL;
-            DebugHandler::terminate_with_message( errmsg.str() );
+      if ( !this->start_to_restore ) {
+
+         if ( sleep_timer.timeout() ) {
+            sleep_timer.reset();
+            if ( !is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "Federate::wait_until_federation_is_ready_to_restore():" << __LINE__
+                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!"
+                      << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+
+         if ( print_timer.timeout() ) {
+            print_timer.reset();
+            send_hs( stdout, "Federate::wait_until_federation_is_ready_to_restore():%d Waiting...%c",
+                     __LINE__, THLA_NEWLINE );
          }
       }
    }
@@ -6693,6 +6837,7 @@ string Federate::wait_for_federation_restore_to_complete()
       return return_string;
    }
 
+   SleepTimeout print_timer( this->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
    SleepTimeout sleep_timer;
 
    // nobody reported any problems, wait until the restore is completed.
@@ -6712,18 +6857,27 @@ string Federate::wait_for_federation_restore_to_complete()
       } else {
          (void)sleep_timer.sleep(); // sleep until RTI responds...
 
-         if ( !this->restore_completed && sleep_timer.timeout() ) {
-            sleep_timer.reset();
-            if ( !is_execution_member() ) {
-               ostringstream errmsg;
-               errmsg << "Federate::wait_for_federation_restore_to_complete():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution member."
-                      << " This means we are either not connected to the"
-                      << " RTI or we are no longer joined to the federation"
-                      << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << THLA_ENDL;
-               DebugHandler::terminate_with_message( errmsg.str() );
+         if ( !this->restore_completed ) {
+
+            if ( sleep_timer.timeout() ) {
+               sleep_timer.reset();
+               if ( !is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "Federate::wait_for_federation_restore_to_complete():" << __LINE__
+                         << " Unexpectedly the Federate is no longer an execution member."
+                         << " This means we are either not connected to the"
+                         << " RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation at"
+                         << " the Central RTI Component (CRC) level!"
+                         << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
+               }
+            }
+
+            if ( print_timer.timeout() ) {
+               print_timer.reset();
+               send_hs( stdout, "Federate::wait_for_federation_restore_to_complete():%d Waiting...%c",
+                        __LINE__, THLA_NEWLINE );
             }
          }
       }
@@ -6753,6 +6907,8 @@ void Federate::wait_for_restore_request_callback()
       send_hs( stdout, "Federate::wait_for_restore_request_callback():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
+
+   SleepTimeout print_timer( this->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
    SleepTimeout sleep_timer;
 
    while ( !has_restore_process_restore_request_failed() && !has_restore_process_restore_request_succeeded() ) {
@@ -6763,19 +6919,27 @@ void Federate::wait_for_restore_request_callback()
       (void)sleep_timer.sleep(); // sleep until RTI responds...
 
       if ( !has_restore_process_restore_request_failed()
-           && !has_restore_process_restore_request_succeeded()
-           && sleep_timer.timeout() ) {
-         sleep_timer.reset();
-         if ( !is_execution_member() ) {
-            ostringstream errmsg;
-            errmsg << "Federate::wait_for_restore_request_callback():" << __LINE__
-                   << " Unexpectedly the Federate is no longer an execution member."
-                   << " This means we are either not connected to the"
-                   << " RTI or we are no longer joined to the federation"
-                   << " execution because someone forced our resignation at"
-                   << " the Central RTI Component (CRC) level!"
-                   << THLA_ENDL;
-            DebugHandler::terminate_with_message( errmsg.str() );
+           && !has_restore_process_restore_request_succeeded() ) {
+
+         if ( sleep_timer.timeout() ) {
+            sleep_timer.reset();
+            if ( !is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "Federate::wait_for_restore_request_callback():" << __LINE__
+                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!"
+                      << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+
+         if ( print_timer.timeout() ) {
+            print_timer.reset();
+            send_hs( stdout, "Federate::wait_for_restore_request_callback():%d Waiting...%c",
+                     __LINE__, THLA_NEWLINE );
          }
       }
    }
@@ -6791,6 +6955,8 @@ void Federate::wait_for_restore_status_to_complete()
       send_hs( stdout, "Federate::wait_for_restore_status_to_complete():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
+
+   SleepTimeout print_timer( this->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
    SleepTimeout sleep_timer;
 
    while ( !this->restore_request_complete ) {
@@ -6800,18 +6966,27 @@ void Federate::wait_for_restore_status_to_complete()
 
       (void)sleep_timer.sleep(); // sleep until RTI responds...
 
-      if ( !this->restore_request_complete && sleep_timer.timeout() ) {
-         sleep_timer.reset();
-         if ( !is_execution_member() ) {
-            ostringstream errmsg;
-            errmsg << "Federate::wait_for_restore_status_to_complete():" << __LINE__
-                   << " Unexpectedly the Federate is no longer an execution member."
-                   << " This means we are either not connected to the"
-                   << " RTI or we are no longer joined to the federation"
-                   << " execution because someone forced our resignation at"
-                   << " the Central RTI Component (CRC) level!"
-                   << THLA_ENDL;
-            DebugHandler::terminate_with_message( errmsg.str() );
+      if ( !this->restore_request_complete ) {
+
+         if ( sleep_timer.timeout() ) {
+            sleep_timer.reset();
+            if ( !is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "Federate::wait_for_restore_status_to_complete():" << __LINE__
+                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!"
+                      << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+
+         if ( print_timer.timeout() ) {
+            print_timer.reset();
+            send_hs( stdout, "Federate::wait_for_restore_status_to_complete():%d Waiting...%c",
+                     __LINE__, THLA_NEWLINE );
          }
       }
    }
@@ -6827,6 +7002,8 @@ void Federate::wait_for_save_status_to_complete()
       send_hs( stdout, "Federate::wait_for_save_status_to_complete():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
+
+   SleepTimeout print_timer( this->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
    SleepTimeout sleep_timer;
 
    while ( !this->save_request_complete ) {
@@ -6836,18 +7013,27 @@ void Federate::wait_for_save_status_to_complete()
 
       (void)sleep_timer.sleep(); // sleep until RTI responds...
 
-      if ( !this->save_request_complete && sleep_timer.timeout() ) {
-         sleep_timer.reset();
-         if ( !is_execution_member() ) {
-            ostringstream errmsg;
-            errmsg << "Federate::wait_for_save_status_to_complete():" << __LINE__
-                   << " Unexpectedly the Federate is no longer an execution member."
-                   << " This means we are either not connected to the"
-                   << " RTI or we are no longer joined to the federation"
-                   << " execution because someone forced our resignation at"
-                   << " the Central RTI Component (CRC) level!"
-                   << THLA_ENDL;
-            DebugHandler::terminate_with_message( errmsg.str() );
+      if ( !this->save_request_complete ) {
+
+         if ( sleep_timer.timeout() ) {
+            sleep_timer.reset();
+            if ( !is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "Federate::wait_for_save_status_to_complete():" << __LINE__
+                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!"
+                      << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+
+         if ( print_timer.timeout() ) {
+            print_timer.reset();
+            send_hs( stdout, "Federate::wait_for_save_status_to_complete():%d Waiting...%c",
+                     __LINE__, THLA_NEWLINE );
          }
       }
    }
@@ -6863,6 +7049,8 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
       send_hs( stdout, "Federate::wait_for_federation_restore_failed_callback_to_complete():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
+
+   SleepTimeout print_timer( this->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
    SleepTimeout sleep_timer;
 
    while ( !this->federation_restore_failed_callback_complete ) {
@@ -6881,18 +7069,27 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
       }
       (void)sleep_timer.sleep(); // sleep until RTI responds...
 
-      if ( !this->federation_restore_failed_callback_complete && sleep_timer.timeout() ) {
-         sleep_timer.reset();
-         if ( !is_execution_member() ) {
-            ostringstream errmsg;
-            errmsg << "Federate::wait_for_federation_restore_failed_callback_to_complete():" << __LINE__
-                   << " Unexpectedly the Federate is no longer an execution member."
-                   << " This means we are either not connected to the"
-                   << " RTI or we are no longer joined to the federation"
-                   << " execution because someone forced our resignation at"
-                   << " the Central RTI Component (CRC) level!"
-                   << THLA_ENDL;
-            DebugHandler::terminate_with_message( errmsg.str() );
+      if ( !this->federation_restore_failed_callback_complete ) {
+
+         if ( sleep_timer.timeout() ) {
+            sleep_timer.reset();
+            if ( !is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "Federate::wait_for_federation_restore_failed_callback_to_complete():" << __LINE__
+                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!"
+                      << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+
+         if ( print_timer.timeout() ) {
+            print_timer.reset();
+            send_hs( stdout, "Federate::wait_for_federation_restore_failed_callback_to_complete():%d Waiting...%c",
+                     __LINE__, THLA_NEWLINE );
          }
       }
    }
@@ -7449,6 +7646,7 @@ void Federate::restore_federate_handles_from_MOM()
    requestedAttributes.insert( MOM_HLAfederate_handle );
    request_attribute_update( MOM_HLAfederate_class_handle, requestedAttributes );
 
+   SleepTimeout print_timer( this->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
    SleepTimeout sleep_timer;
    bool         all_found = false;
 
@@ -7482,6 +7680,12 @@ void Federate::restore_federate_handles_from_MOM()
                       << THLA_ENDL;
                DebugHandler::terminate_with_message( errmsg.str() );
             }
+         }
+
+         if ( print_timer.timeout() ) {
+            print_timer.reset();
+            send_hs( stdout, "Federate::restore_federate_handles_from_MOM:%d Waiting...%c",
+                     __LINE__, THLA_NEWLINE );
          }
       }
    } while ( !all_found );

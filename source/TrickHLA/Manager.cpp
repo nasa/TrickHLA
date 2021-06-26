@@ -468,6 +468,7 @@ federate so this call will be ignored.%c",
                         ( objects[i].is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
             }
 
+            SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
             SleepTimeout sleep_timer;
 
             // Wait for the data to arrive.
@@ -478,18 +479,28 @@ federate so this call will be ignored.%c",
 
                (void)sleep_timer.sleep();
 
-               if ( !objects[i].is_changed() && sleep_timer.timeout() ) {
-                  sleep_timer.reset();
-                  if ( !federate->is_execution_member() ) {
-                     ostringstream errmsg;
-                     errmsg << "Manager::receive_init_data():" << __LINE__
-                            << " Unexpectedly the Federate is no longer an execution member."
-                            << " This means we are either not connected to the"
-                            << " RTI or we are no longer joined to the federation"
-                            << " execution because someone forced our resignation at"
-                            << " the Central RTI Component (CRC) level!"
-                            << THLA_ENDL;
-                     DebugHandler::terminate_with_message( errmsg.str() );
+               if ( !objects[i].is_changed() ) {
+
+                  if ( sleep_timer.timeout() ) {
+                     sleep_timer.reset();
+                     if ( !federate->is_execution_member() ) {
+                        ostringstream errmsg;
+                        errmsg << "Manager::receive_init_data():" << __LINE__
+                               << " Unexpectedly the Federate is no longer an execution member."
+                               << " This means we are either not connected to the"
+                               << " RTI or we are no longer joined to the federation"
+                               << " execution because someone forced our resignation at"
+                               << " the Central RTI Component (CRC) level!"
+                               << THLA_ENDL;
+                        DebugHandler::terminate_with_message( errmsg.str() );
+                     }
+                  }
+
+                  if ( print_timer.timeout() ) {
+                     print_timer.reset();
+                     send_hs( stdout, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.%c",
+                              __LINE__, objects[i].get_name(),
+                              ( objects[i].is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
                   }
                }
             }
@@ -573,6 +584,7 @@ void Manager::receive_init_data(
                         ( obj->is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
             }
 
+            SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
             SleepTimeout sleep_timer;
 
             // Wait for the data to arrive.
@@ -583,18 +595,27 @@ void Manager::receive_init_data(
 
                (void)sleep_timer.sleep();
 
-               if ( !obj->is_changed() && sleep_timer.timeout() ) {
-                  sleep_timer.reset();
-                  if ( !federate->is_execution_member() ) {
-                     ostringstream errmsg;
-                     errmsg << "Manager::receive_init_data():" << __LINE__
-                            << " Unexpectedly the Federate is no longer an execution member."
-                            << " This means we are either not connected to the"
-                            << " RTI or we are no longer joined to the federation"
-                            << " execution because someone forced our resignation at"
-                            << " the Central RTI Component (CRC) level!"
-                            << THLA_ENDL;
-                     DebugHandler::terminate_with_message( errmsg.str() );
+               if ( !obj->is_changed() ) {
+                  if ( sleep_timer.timeout() ) {
+                     sleep_timer.reset();
+                     if ( !federate->is_execution_member() ) {
+                        ostringstream errmsg;
+                        errmsg << "Manager::receive_init_data():" << __LINE__
+                               << " Unexpectedly the Federate is no longer an execution member."
+                               << " This means we are either not connected to the"
+                               << " RTI or we are no longer joined to the federation"
+                               << " execution because someone forced our resignation at"
+                               << " the Central RTI Component (CRC) level!"
+                               << THLA_ENDL;
+                        DebugHandler::terminate_with_message( errmsg.str() );
+                     }
+                  }
+
+                  if ( print_timer.timeout() ) {
+                     print_timer.reset();
+                     send_hs( stdout, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.%c",
+                              __LINE__, instance_name,
+                              ( obj->is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
                   }
                }
             }
@@ -1720,20 +1741,21 @@ void Manager::wait_for_registration_of_required_objects()
 
    int  required_obj_cnt;
    int  registered_obj_cnt;
-   int  current_registered_obj_cnt = 0;
-   int  total_obj_cnt              = obj_count;
-   int  current_required_obj_cnt   = 0;
-   int  total_required_obj_cnt     = 0;
-   bool print_summary              = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER );
+   int  current_registered_obj_cnt  = 0;
+   int  total_obj_cnt               = obj_count;
+   int  current_required_obj_cnt    = 0;
+   int  total_required_obj_cnt      = 0;
+   bool print_summary               = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER );
+   bool print_only_unregistered_obj = false;
    bool any_unregistered_required_obj;
 
    if ( is_execution_configuration_used() ) {
       // Make sure to count the exec-config object.
-      total_obj_cnt++;
+      ++total_obj_cnt;
 
       // Determine if the Execution-Configuration object is required and it should be.
       if ( get_execution_configuration()->is_required() ) {
-         total_required_obj_cnt++;
+         ++total_required_obj_cnt;
       }
    }
 
@@ -1741,12 +1763,14 @@ void Manager::wait_for_registration_of_required_objects()
    // assume that all of them are required!
    for ( int i = 0; i < obj_count; ++i ) {
       if ( objects[i].is_required() ) {
-         total_required_obj_cnt++;
+         ++total_required_obj_cnt;
       }
    }
 
-   SleepTimeout sleep_timer;
+   // Timer for when to print a summary of unregistered objects every 30 seconds.
+   SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
 
+   SleepTimeout sleep_timer;
    do {
 
       // Check for shutdown.
@@ -1768,9 +1792,9 @@ void Manager::wait_for_registration_of_required_objects()
                // Determine if the Execution-Configuration object has been
                // registered and only if it is required.
                if ( get_execution_configuration()->is_instance_handle_valid() ) {
-                  registered_obj_cnt++;
+                  ++registered_obj_cnt;
                   if ( get_execution_configuration()->is_required() ) {
-                     required_obj_cnt++;
+                     ++required_obj_cnt;
                   }
                }
             }
@@ -1779,9 +1803,9 @@ void Manager::wait_for_registration_of_required_objects()
             // they are required.
             for ( int n = 0; n < obj_count; ++n ) {
                if ( objects[n].is_instance_handle_valid() ) {
-                  registered_obj_cnt++;
+                  ++registered_obj_cnt;
                   if ( objects[n].is_required() ) {
-                     required_obj_cnt++;
+                     ++required_obj_cnt;
                   }
                }
             }
@@ -1791,7 +1815,9 @@ void Manager::wait_for_registration_of_required_objects()
          // registration count and set the flag to show a new summary.
          if ( registered_obj_cnt > current_registered_obj_cnt ) {
             current_registered_obj_cnt = registered_obj_cnt;
-            print_summary              = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER );
+            if ( !print_summary ) {
+               print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER );
+            }
          }
 
          // Update the current count of the Required registered objects.
@@ -1801,14 +1827,24 @@ void Manager::wait_for_registration_of_required_objects()
       }
 
       // Print a summary of what objects are registered and which ones are not.
-      if ( print_summary ) {
-         print_summary = false;
+      if ( print_summary || print_only_unregistered_obj ) {
+
+         // If we need to print a summary because we have more registered
+         // objects then clear the flag to only print unregistered objects
+         // so that we get the full list.
+         if ( print_summary ) {
+            print_only_unregistered_obj = false;
+         }
 
          // Build the summary as an output string stream.
          ostringstream summary;
          summary << "Manager::wait_for_registration_of_required_objects():"
                  << __LINE__ << "\nREQUIRED-OBJECTS:" << total_required_obj_cnt
-                 << "   Total-Objects:" << total_obj_cnt;
+                 << "  Total-Objects:" << total_obj_cnt;
+
+         if ( print_only_unregistered_obj ) {
+            summary << "\nSHOWING ONLY UNREGISTERED OBJECTS:";
+         }
 
          // Concurrency critical code section for discovered objects being set
          // in FedAmb callback.
@@ -1819,40 +1855,53 @@ void Manager::wait_for_registration_of_required_objects()
 
             int cnt = 1;
             if ( is_execution_configuration_used() ) {
-               // Execution-Configuration object
-               summary << "\n  " << cnt << ":Object instance '" << get_execution_configuration()->get_name() << "' ";
-               cnt++;
-               if ( get_execution_configuration()->is_instance_handle_valid() ) {
-                  string id_str;
-                  StringUtilities::to_string( id_str, get_execution_configuration()->get_instance_handle() );
-                  summary << "(ID:" << id_str << ") ";
+               if ( !print_only_unregistered_obj
+                    || !get_execution_configuration()->is_instance_handle_valid() ) {
+
+                  // Execution-Configuration object
+                  summary << "\n  " << cnt << ":Object instance '" << get_execution_configuration()->get_name() << "' ";
+
+                  if ( get_execution_configuration()->is_instance_handle_valid() ) {
+                     string id_str;
+                     StringUtilities::to_string( id_str, get_execution_configuration()->get_instance_handle() );
+                     summary << "(ID:" << id_str << ") ";
+                  }
+                  summary << "for class '" << get_execution_configuration()->get_FOM_name() << "' is "
+                          << ( get_execution_configuration()->is_required() ? "REQUIRED" : "not required" )
+                          << " and is "
+                          << ( get_execution_configuration()->is_instance_handle_valid() ? "REGISTERED" : "Not Registered" );
                }
-               summary << "for class '" << get_execution_configuration()->get_FOM_name() << "' is "
-                       << ( get_execution_configuration()->is_required() ? "REQUIRED" : "not required" )
-                       << " and is "
-                       << ( get_execution_configuration()->is_instance_handle_valid() ? "REGISTERED" : "Not Registered" );
+               ++cnt; // Count the execution configuration.
             }
 
             for ( int n = 0; n < obj_count; ++n ) {
-               // Adjust index based on sim-config or exec-config objects existing.
-               summary << "\n  " << ( n + cnt ) << ":Object instance '"
-                       << objects[n].get_name() << "' ";
+               if ( !print_only_unregistered_obj
+                    || !objects[n].is_instance_handle_valid() ) {
 
-               if ( objects[n].is_instance_handle_valid() ) {
-                  string id_str;
-                  StringUtilities::to_string( id_str, objects[n].get_instance_handle() );
-                  summary << "(ID:" << id_str << ") ";
+                  // Adjust index based on sim-config or exec-config objects existing.
+                  summary << "\n  " << ( n + cnt ) << ":Object instance '"
+                          << objects[n].get_name() << "' ";
+
+                  if ( objects[n].is_instance_handle_valid() ) {
+                     string id_str;
+                     StringUtilities::to_string( id_str, objects[n].get_instance_handle() );
+                     summary << "(ID:" << id_str << ") ";
+                  }
+                  summary << "for class '" << objects[n].get_FOM_name() << "' is "
+                          << ( objects[n].is_required() ? "REQUIRED" : "not required" )
+                          << " and is "
+                          << ( objects[n].is_instance_handle_valid() ? "REGISTERED" : "Not Registered" );
                }
-               summary << "for class '" << objects[n].get_FOM_name() << "' is "
-                       << ( objects[n].is_required() ? "REQUIRED" : "not required" )
-                       << " and is "
-                       << ( objects[n].is_instance_handle_valid() ? "REGISTERED" : "Not Registered" );
             }
          }
          summary << THLA_ENDL;
 
          // Display the summary.
          send_hs( stdout, (char *)summary.str().c_str() );
+
+         // Reset the flags for printing a summary.
+         print_summary               = false;
+         print_only_unregistered_obj = false;
       }
 
       // Determine if we have any unregistered objects.
@@ -1865,18 +1914,34 @@ void Manager::wait_for_registration_of_required_objects()
          // Check again to see if we have any unregistered objects.
          any_unregistered_required_obj = ( current_required_obj_cnt < total_required_obj_cnt );
 
-         if ( any_unregistered_required_obj && sleep_timer.timeout() ) {
-            sleep_timer.reset();
-            if ( !federate->is_execution_member() ) {
-               ostringstream errmsg;
-               errmsg << "Manager::wait_for_registration_of_required_objects():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution member."
-                      << " This means we are either not connected to the"
-                      << " RTI or we are no longer joined to the federation"
-                      << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << THLA_ENDL;
-               DebugHandler::terminate_with_message( errmsg.str() );
+         if ( any_unregistered_required_obj ) {
+
+            // If we timeout check to see if we are still an execution member.
+            if ( sleep_timer.timeout() ) {
+               sleep_timer.reset();
+
+               if ( !federate->is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "Manager::wait_for_registration_of_required_objects():" << __LINE__
+                         << " Unexpectedly the Federate is no longer an execution"
+                         << " member. This means we are either not connected to"
+                         << " the RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation"
+                         << " at the Central RTI Component (CRC) level!"
+                         << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
+               }
+            }
+
+            // Determine if we should print a summary of unregistered objects.
+            if ( print_timer.timeout() ) {
+               print_timer.reset();
+
+               // If we timeout, then force print a summary of only the
+               // unregistered objects just in case the user has a bad
+               // configuration and they are in deadlock here. Print only
+               // unregistered objects to keep the list short and to the point.
+               print_only_unregistered_obj = true;
             }
          }
       }
@@ -2914,6 +2979,7 @@ void Manager::wait_for_discovery_of_objects()
                      __LINE__, THLA_NEWLINE );
          }
 
+         SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
          SleepTimeout sleep_timer;
 
          // block until some / all arrive.
@@ -2941,12 +3007,19 @@ void Manager::wait_for_discovery_of_objects()
                }
             }
 
-            // Check if any objects were discovered while we were napping.
+            if ( print_timer.timeout() ) {
+               print_timer.reset();
+               send_hs( stdout, "Manager::wait_for_discovery_of_object_instance():%d \
+- blocking loop until object discovery callbacks arrive.%c",
+                        __LINE__, THLA_NEWLINE );
+            }
+
+            // Check if any objects were discovered while we were sleeping.
             discovery_count                  = 0;
             create_HLA_instance_object_found = false;
             for ( int n = 0; n < obj_count; ++n ) {
                if ( objects[n].is_required() && objects[n].is_instance_handle_valid() ) {
-                  discovery_count++;
+                  ++discovery_count;
                   if ( objects[n].is_create_HLA_instance() ) {
                      create_HLA_instance_object_found = true;
                   }

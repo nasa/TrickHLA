@@ -1073,23 +1073,34 @@ Waiting on reservation of Object Instance Name '%s'.%c",
 
    Federate *trick_fed = get_federate();
 
+   SleepTimeout print_timer( trick_fed->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
    SleepTimeout sleep_timer;
 
    while ( !name_registered ) {
       (void)sleep_timer.sleep();
 
-      if ( !name_registered && sleep_timer.timeout() ) {
-         sleep_timer.reset();
-         if ( !trick_fed->is_execution_member() ) {
-            ostringstream errmsg;
-            errmsg << "Object::wait_for_object_name_reservation():" << __LINE__
-                   << " ERROR: Unexpectedly the Federate is no longer an execution member."
-                   << " This means we are either not connected to the"
-                   << " RTI or we are no longer joined to the federation"
-                   << " execution because someone forced our resignation at"
-                   << " the Central RTI Component (CRC) level!"
-                   << THLA_ENDL;
-            DebugHandler::terminate_with_message( errmsg.str() );
+      if ( !name_registered ) {
+
+         if ( sleep_timer.timeout() ) {
+            sleep_timer.reset();
+            if ( !trick_fed->is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "Object::wait_for_object_name_reservation():" << __LINE__
+                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
+                      << " This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!"
+                      << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+
+         if ( print_timer.timeout() ) {
+            print_timer.reset();
+            send_hs( stdout, "Object::wait_for_object_name_reservation():%d \
+Waiting on reservation of Object Instance Name '%s'.%c",
+                     __LINE__, get_name(), THLA_NEWLINE );
          }
       }
    }
@@ -1260,23 +1271,33 @@ void Object::wait_for_object_registration()
 
    Federate *trick_fed = get_federate();
 
+   SleepTimeout print_timer( trick_fed->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
    SleepTimeout sleep_timer;
 
    while ( !is_instance_handle_valid() ) {
       (void)sleep_timer.sleep();
 
-      if ( !is_instance_handle_valid() && sleep_timer.timeout() ) {
-         sleep_timer.reset();
-         if ( !trick_fed->is_execution_member() ) {
-            ostringstream errmsg;
-            errmsg << "Object::wait_for_object_registration():" << __LINE__
-                   << " ERROR: Unexpectedly the Federate is no longer an execution member."
-                   << " This means we are either not connected to the"
-                   << " RTI or we are no longer joined to the federation"
-                   << " execution because someone forced our resignation at"
-                   << " the Central RTI Component (CRC) level!"
-                   << THLA_ENDL;
-            DebugHandler::terminate_with_message( errmsg.str() );
+      if ( !is_instance_handle_valid() ) {
+
+         if ( sleep_timer.timeout() ) {
+            sleep_timer.reset();
+            if ( !trick_fed->is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "Object::wait_for_object_registration():" << __LINE__
+                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
+                      << " This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!"
+                      << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+
+         if ( print_timer.timeout() ) {
+            print_timer.reset();
+            send_hs( stdout, "Object::wait_for_object_registration():%d Waiting on registration of '%s' for object '%s'.%c",
+                     __LINE__, FOM_name, get_name(), THLA_NEWLINE );
          }
       }
    }
@@ -4038,6 +4059,7 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
 
       Federate *trick_fed = get_federate();
 
+      SleepTimeout print_timer( trick_fed->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
       SleepTimeout sleep_timer;
 
       // Perform a blocking loop until ownership of all locally owned published
@@ -4088,18 +4110,28 @@ rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generate
 
          (void)sleep_timer.sleep();
 
-         if ( ( ownership_counter < attr_hdl_set.size() ) && sleep_timer.timeout() ) {
-            sleep_timer.reset();
-            if ( !trick_fed->is_execution_member() ) {
-               ostringstream errmsg;
-               errmsg << "Object::pull_ownership_upon_rejoin():" << __LINE__
-                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
-                      << " This means we are either not connected to the"
-                      << " RTI or we are no longer joined to the federation"
-                      << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << THLA_ENDL;
-               DebugHandler::terminate_with_message( errmsg.str() );
+         if ( ownership_counter < attr_hdl_set.size() ) {
+
+            if ( sleep_timer.timeout() ) {
+               sleep_timer.reset();
+               if ( !trick_fed->is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "Object::pull_ownership_upon_rejoin():" << __LINE__
+                         << " ERROR: Unexpectedly the Federate is no longer an execution member."
+                         << " This means we are either not connected to the"
+                         << " RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation at"
+                         << " the Central RTI Component (CRC) level!"
+                         << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
+               }
+            }
+
+            if ( print_timer.timeout() ) {
+               print_timer.reset();
+               send_hs( stdout, "Object::pull_ownership_upon_rejoin():%d Pulling ownership \
+for Attributes of object '%s', waiting...%c",
+                        __LINE__, get_name(), THLA_NEWLINE );
             }
          }
       } // end of 'while' loop

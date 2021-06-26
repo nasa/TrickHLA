@@ -286,6 +286,7 @@ void SyncPntListBase::wait_for_list_synchronization(
    Federate *federate )
 {
    bool         achieved, valid_and_not_achieved;
+   SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
    SleepTimeout sleep_timer;
 
    // Iterate through this SyncPntList's synchronization point list.
@@ -309,8 +310,8 @@ void SyncPntListBase::wait_for_list_synchronization(
 
             // Critical code section with a scope specific mutex lock.
             {
-               // When auto_unlock_mutex goes out of scope it automatically unlocks the
-               // mutex even if there is an exception.
+               // When auto_unlock_mutex goes out of scope it automatically
+               // unlocks the mutex even if there is an exception.
                MutexProtection auto_unlock_mutex( &mutex );
                achieved = sp->is_achieved();
             }
@@ -337,6 +338,16 @@ void SyncPntListBase::wait_for_list_synchronization(
                             << THLA_ENDL;
                      DebugHandler::terminate_with_message( errmsg.str() );
                   }
+               }
+
+               if ( print_timer.timeout() ) {
+                  print_timer.reset();
+                  string name;
+                  StringUtilities::to_string( name, sp->get_label() );
+                  ostringstream msg;
+                  msg << "SyncPntListBase::wait_for_synchronization():" << __LINE__
+                      << " Synchronization-Point '" << name << "', waiting..." << THLA_ENDL;
+                  send_hs( stdout, (char *)msg.str().c_str() );
                }
             }
          } while ( !achieved );
@@ -789,21 +800,25 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
          }
       }
 
-      if ( !announced && DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         // Get the current sync-point status.
-         string sp_status;
-         StringUtilities::to_string( sp_status, sp->to_wstring() );
-
-         ostringstream message;
-         message << "SyncPntListBase::wait_for_sync_point_announcement():" << __LINE__
-                 << " Sync-point: " << sp_status << THLA_ENDL;
-         send_hs( stderr, (char *)message.str().c_str() );
-      }
-
+      bool         print_summary = DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE );
+      SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
       SleepTimeout sleep_timer;
 
       // Wait for the sync-point to be announced.
       while ( !announced ) {
+
+         if ( print_summary ) {
+            print_summary = false;
+
+            // Get the current sync-point status.
+            string sp_status;
+            StringUtilities::to_string( sp_status, sp->to_wstring() );
+
+            ostringstream message;
+            message << "SyncPntListBase::wait_for_sync_point_announcement():" << __LINE__
+                    << " Sync-point: " << sp_status << THLA_ENDL;
+            send_hs( stdout, (char *)message.str().c_str() );
+         }
 
          // Always check to see is a shutdown was received.
          federate->check_for_shutdown_with_termination();
@@ -813,7 +828,6 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
          // Check to make sure we're still a member of the federation execution.
          if ( sleep_timer.timeout() ) {
             sleep_timer.reset();
-
             if ( !federate->is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "SyncPntListBase::wait_for_sync_point_announcement():" << __LINE__
@@ -823,8 +837,13 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!" << THLA_ENDL;
                DebugHandler::terminate_with_message( errmsg.str() );
-               return false;
             }
+         }
+
+         // Determine if we should print a summary.
+         if ( print_timer.timeout() ) {
+            print_timer.reset();
+            print_summary = true;
          }
 
          // Critical code section.
@@ -844,7 +863,7 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
          ostringstream message;
          message << "SyncPntListBase::wait_for_sync_point_announcement():" << __LINE__
                  << " Sync-point announced: " << sp_status << THLA_ENDL;
-         send_hs( stderr, (char *)message.str().c_str() );
+         send_hs( stdout, (char *)message.str().c_str() );
       }
 
       return true;
@@ -915,20 +934,23 @@ bool SyncPntListBase::wait_for_synchronization(
    SyncPnt * sp )
 {
    if ( sp != NULL ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string name;
-         StringUtilities::to_string( name, sp->get_label() );
-         ostringstream msg;
-         msg << "SyncPntListBase::wait_for_synchronization():" << __LINE__
-             << " Synchronization-Point '" << name << "'" << THLA_ENDL;
-         send_hs( stdout, (char *)msg.str().c_str() );
-      }
-
+      bool         print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE );
       bool         synchronized;
+      SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
       SleepTimeout sleep_timer;
 
       // Wait for the federation to synchronize on the sync-point.
       do {
+         if ( print_summary ) {
+            print_summary = false;
+            string name;
+            StringUtilities::to_string( name, sp->get_label() );
+            ostringstream msg;
+            msg << "SyncPntListBase::wait_for_synchronization():" << __LINE__
+                << " Synchronization-Point '" << name << "'" << THLA_ENDL;
+            send_hs( stdout, (char *)msg.str().c_str() );
+         }
+
          // Critical code section.
          {
             // When auto_unlock_mutex goes out of scope it automatically unlocks
@@ -963,6 +985,12 @@ bool SyncPntListBase::wait_for_synchronization(
                   DebugHandler::terminate_with_message( errmsg.str() );
                   return false;
                }
+            }
+
+            // Print a summary if we timeout waiting.
+            if ( print_timer.timeout() ) {
+               print_timer.reset();
+               print_summary = true;
             }
          }
       } while ( !synchronized );

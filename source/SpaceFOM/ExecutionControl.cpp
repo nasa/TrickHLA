@@ -613,6 +613,8 @@ void ExecutionControl::role_determination_process()
          }
       }
 
+      bool         print_summary = DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL );
+      SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
       SleepTimeout sleep_timer;
 
       // Block until we have determined if we are a late joining federate.
@@ -647,41 +649,55 @@ void ExecutionControl::role_determination_process()
 
             // Periodically check if we are still an execution member and
             // display sync-point status if needed as well.
-            if ( !this->late_joiner_determined && sleep_timer.timeout() ) {
-               sleep_timer.reset();
+            if ( !this->late_joiner_determined ) {
 
-               if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                  ostringstream message;
-                  message << "SpaceFOM::ExecutionControl::role_determination_process():"
-                          << __LINE__;
+               if ( sleep_timer.timeout() ) {
+                  sleep_timer.reset();
 
-                  if ( sp != NULL ) {
-                     string sp_status;
-                     StringUtilities::to_string( sp_status, sp->to_wstring() );
-                     message << " Init-Started sync-point status: " << sp_status;
-                  } else {
-                     message << " Init-Started sync-point status: NULL";
+                  if ( !print_summary ) {
+                     print_summary = DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL );
                   }
-                  message << ", Init-Complete sync-point exists: "
-                          << ( this->does_init_complete_sync_point_exist() ? "Yes" : "No" );
 
-                  message << ", Still waiting..." << THLA_ENDL;
-                  send_hs( stdout, (char *)message.str().c_str() );
+                  // Check that we maintain federation membership.
+                  if ( !federate->is_execution_member() ) {
+                     ostringstream errmsg;
+                     errmsg << "SpaceFOM::ExecutionControl::role_determination_process():" << __LINE__
+                            << " ERROR: Unexpectedly the Federate is no longer an execution member."
+                            << " This means we are either not connected to the"
+                            << " RTI or we are no longer joined to the federation"
+                            << " execution because someone forced our resignation at"
+                            << " the Central RTI Component (CRC) level!"
+                            << THLA_ENDL;
+                     DebugHandler::terminate_with_message( errmsg.str() );
+                  }
                }
 
-               // Check that we maintain federation membership.
-               if ( !federate->is_execution_member() ) {
-                  ostringstream errmsg;
-                  errmsg << "SpaceFOM::ExecutionControl::role_determination_process():" << __LINE__
-                         << " ERROR: Unexpectedly the Federate is no longer an execution member."
-                         << " This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
-                         << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << THLA_ENDL;
-                  DebugHandler::terminate_with_message( errmsg.str() );
+               if ( print_timer.timeout() ) {
+                  print_timer.reset();
+                  print_summary = true;
                }
             }
+         }
+
+         if ( print_summary ) {
+            print_summary = false;
+
+            ostringstream message;
+            message << "SpaceFOM::ExecutionControl::role_determination_process():"
+                    << __LINE__;
+
+            if ( sp != NULL ) {
+               string sp_status;
+               StringUtilities::to_string( sp_status, sp->to_wstring() );
+               message << " Init-Started sync-point status: " << sp_status;
+            } else {
+               message << " Init-Started sync-point status: NULL";
+            }
+            message << ", Init-Complete sync-point exists: "
+                    << ( this->does_init_complete_sync_point_exist() ? "Yes" : "No" );
+
+            message << ", Still waiting..." << THLA_ENDL;
+            send_hs( stdout, (char *)message.str().c_str() );
          }
       }
 
@@ -2570,6 +2586,7 @@ void ExecutionControl::receive_root_ref_frame()
    // Make sure we have at least one piece of root reference frame data we can receive.
    if ( rrf_object->any_remotely_owned_subscribed_init_attribute() ) {
 
+      SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
       SleepTimeout sleep_timer;
 
       // Wait for the data to arrive.
@@ -2580,18 +2597,27 @@ void ExecutionControl::receive_root_ref_frame()
 
          (void)sleep_timer.sleep();
 
-         if ( !rrf_object->is_changed() && sleep_timer.timeout() ) {
-            sleep_timer.reset();
-            if ( !federate->is_execution_member() ) {
-               ostringstream errmsg;
-               errmsg << "SpaceFOM::ExecutionControl::receive_root_ref_frame():" << __LINE__
-                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
-                      << " This means we are either not connected to the"
-                      << " RTI or we are no longer joined to the federation"
-                      << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << THLA_ENDL;
-               DebugHandler::terminate_with_message( errmsg.str() );
+         if ( !rrf_object->is_changed() ) {
+
+            if ( sleep_timer.timeout() ) {
+               sleep_timer.reset();
+               if ( !federate->is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "SpaceFOM::ExecutionControl::receive_root_ref_frame():" << __LINE__
+                         << " ERROR: Unexpectedly the Federate is no longer an execution member."
+                         << " This means we are either not connected to the"
+                         << " RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation at"
+                         << " the Central RTI Component (CRC) level!"
+                         << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
+               }
+            }
+
+            if ( print_timer.timeout() ) {
+               print_timer.reset();
+               send_hs( stdout, "SpaceFOM::ExectionControl::receive_root_ref_frame():%d Waiting...%c",
+                        __LINE__, THLA_NEWLINE );
             }
          }
       }

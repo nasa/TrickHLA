@@ -247,6 +247,7 @@ void ExecutionConfigurationBase::wait_for_registration()
    bool any_unregistered_obj;
    int  total_obj_cnt = 1;
 
+   SleepTimeout print_timer( get_federate()->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
    SleepTimeout sleep_timer;
 
    do {
@@ -260,14 +261,16 @@ void ExecutionConfigurationBase::wait_for_registration()
 
          // Determine if the Exec-Configuration object has been registered.
          if ( this->is_instance_handle_valid() ) {
-            cnt++;
+            ++cnt;
          }
 
          // If we have a new registration count then update the object
          // registration count and set the flag to show a new summary.
          if ( cnt > obj_reg_cnt ) {
-            obj_reg_cnt   = cnt;
-            print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG );
+            obj_reg_cnt = cnt;
+            if ( !print_summary ) {
+               print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG );
+            }
          }
       }
 
@@ -307,18 +310,26 @@ void ExecutionConfigurationBase::wait_for_registration()
          // Check again to determine if we have any unregistered objects.
          any_unregistered_obj = ( obj_reg_cnt < total_obj_cnt );
 
-         if ( any_unregistered_obj && sleep_timer.timeout() ) {
-            sleep_timer.reset();
-            if ( !get_federate()->is_execution_member() ) {
-               ostringstream errmsg;
-               errmsg << "ExecutionConfigurationBase::wait_for_registration():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution member."
-                      << " This means we are either not connected to the"
-                      << " RTI or we are no longer joined to the federation"
-                      << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << THLA_ENDL;
-               DebugHandler::terminate_with_message( errmsg.str() );
+         if ( any_unregistered_obj ) {
+
+            if ( sleep_timer.timeout() ) {
+               sleep_timer.reset();
+               if ( !get_federate()->is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "ExecutionConfigurationBase::wait_for_registration():" << __LINE__
+                         << " Unexpectedly the Federate is no longer an execution member."
+                         << " This means we are either not connected to the"
+                         << " RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation at"
+                         << " the Central RTI Component (CRC) level!"
+                         << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
+               }
+            }
+
+            if ( print_timer.timeout() ) {
+               print_timer.reset();
+               print_summary = true;
             }
          }
       }
@@ -342,6 +353,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
    // Make sure we have at least one piece of Execution Configuration data we can receive.
    if ( this->any_remotely_owned_subscribed_init_attribute() ) {
 
+      SleepTimeout print_timer( get_federate()->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
       SleepTimeout sleep_timer;
 
       // Wait for the data to arrive.
@@ -352,18 +364,27 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
 
          (void)sleep_timer.sleep();
 
-         if ( !this->is_changed() && sleep_timer.timeout() ) {
-            sleep_timer.reset();
-            if ( !federate->is_execution_member() ) {
-               ostringstream errmsg;
-               errmsg << "ExecutionConfigurationBase::wait_for_update():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution member."
-                      << " This means we are either not connected to the"
-                      << " RTI or we are no longer joined to the federation"
-                      << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << THLA_ENDL;
-               DebugHandler::terminate_with_message( errmsg.str() );
+         if ( !this->is_changed() ) {
+
+            if ( sleep_timer.timeout() ) {
+               sleep_timer.reset();
+               if ( !federate->is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "ExecutionConfigurationBase::wait_for_update():" << __LINE__
+                         << " Unexpectedly the Federate is no longer an execution member."
+                         << " This means we are either not connected to the"
+                         << " RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation at"
+                         << " the Central RTI Component (CRC) level!"
+                         << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
+               }
+            }
+
+            if ( print_timer.timeout() ) {
+               print_timer.reset();
+               send_hs( stdout, "ExecutionConfigurationBase::wait_for_update():%d Waiting...%c",
+                        __LINE__, THLA_NEWLINE );
             }
          }
       }

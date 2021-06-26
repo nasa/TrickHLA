@@ -10,7 +10,8 @@
 #    ((Relies on the simulation level trick module.))
 #
 # PROGRAMMERS:
-#    (((Edwin Z. Crues) (NASA) (Jan 2019) (--) (SpaceFOM support and testing.)))
+#    (((Edwin Z. Crues) (NASA) (Jan 2019) (--) (SpaceFOM support and testing.))
+#     ((Dan Dexter) (NASA) (June 2021) (--) (Added set_wait_status_time.)))
 ##############################################################################
 import trick
 
@@ -334,6 +335,15 @@ class TrickHLAFederateConfig( object ):
    def set_debug_level( self, debug_level ):
 
       self.federate.debug_level = debug_level
+
+      return
+
+
+   def set_wait_status_time( self, wait_status_time ):
+
+      # Set the time in seconds TrickHLA will wait in a any spin-lock
+      # before it will print a status message to the console.
+      self.federate.wait_status_time = wait_status_time
 
       return
 

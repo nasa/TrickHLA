@@ -715,6 +715,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
    // Make sure we have at least one piece of exec-config data we can receive.
    if ( this->any_remotely_owned_subscribed_init_attribute() ) {
 
+      SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // Wait for the data to arrive.
@@ -725,18 +726,27 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
 
          (void)sleep_timer.sleep();
 
-         if ( !this->is_changed() && sleep_timer.timeout() ) {
-            sleep_timer.reset();
-            if ( !federate->is_execution_member() ) {
-               ostringstream errmsg;
-               errmsg << "SpaceFOM::ExecutionConfiguration::wait_for_update():" << __LINE__
-                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
-                      << " This means we are either not connected to the"
-                      << " RTI or we are no longer joined to the federation"
-                      << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << THLA_ENDL;
-               DebugHandler::terminate_with_message( errmsg.str() );
+         if ( !this->is_changed() ) {
+
+            if ( sleep_timer.timeout() ) {
+               sleep_timer.reset();
+               if ( !federate->is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "SpaceFOM::ExecutionConfiguration::wait_for_update():" << __LINE__
+                         << " ERROR: Unexpectedly the Federate is no longer an execution member."
+                         << " This means we are either not connected to the"
+                         << " RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation at"
+                         << " the Central RTI Component (CRC) level!"
+                         << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
+               }
+            }
+
+            if ( print_timer.timeout() ) {
+               print_timer.reset();
+               send_hs( stdout, "SpaceFOM::ExecutionConfiguration::wait_for_update():%d Waiting...%c",
+                        __LINE__, THLA_NEWLINE );
             }
          }
       }

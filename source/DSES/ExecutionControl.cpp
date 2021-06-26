@@ -425,6 +425,7 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_points()
            && ( sp->label.compare( DSES::INITIALIZE_SYNC_POINT ) != 0 )
            && ( sp->label.compare( DSES::SIM_CONFIG_SYNC_POINT ) != 0 ) ) {
 
+         SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
          SleepTimeout sleep_timer;
 
          // Wait for the federation to synchronized on the sync-point.
@@ -438,18 +439,27 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_points()
 
             // Periodically check to make sure the federate is still part of
             // the federation exectuion.
-            if ( !sp->is_achieved() && sleep_timer.timeout() ) {
-               sleep_timer.reset();
-               if ( !federate->is_execution_member() ) {
-                  ostringstream errmsg;
-                  errmsg << "DSES::ExecutionControl::wait_for_all_multiphase_init_sync_pnts:" << __LINE__
-                         << " ERROR: Unexpectedly the Federate is no longer an execution"
-                         << " member. This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
-                         << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << THLA_ENDL;
-                  DebugHandler::terminate_with_message( errmsg.str() );
+            if ( !sp->is_achieved() ) {
+
+               if ( sleep_timer.timeout() ) {
+                  sleep_timer.reset();
+                  if ( !federate->is_execution_member() ) {
+                     ostringstream errmsg;
+                     errmsg << "DSES::ExecutionControl::wait_for_all_multiphase_init_sync_points:" << __LINE__
+                            << " ERROR: Unexpectedly the Federate is no longer an execution"
+                            << " member. This means we are either not connected to the"
+                            << " RTI or we are no longer joined to the federation"
+                            << " execution because someone forced our resignation at"
+                            << " the Central RTI Component (CRC) level!"
+                            << THLA_ENDL;
+                     DebugHandler::terminate_with_message( errmsg.str() );
+                  }
+               }
+
+               if ( print_timer.timeout() ) {
+                  print_timer.reset();
+                  send_hs( stdout, "DSES::ExecutionControl::wait_for_all_multiphase_init_sync_points():%d Waiting...%c",
+                           __LINE__, THLA_NEWLINE );
                }
             }
          }

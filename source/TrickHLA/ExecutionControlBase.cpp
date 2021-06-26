@@ -602,6 +602,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
    // Make sure we have at least one piece of ExecutionConfiguration data we can receive.
    if ( execution_configuration->any_remotely_owned_subscribed_init_attribute() ) {
 
+      SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // Wait for the data to arrive.
@@ -612,18 +613,27 @@ will be ignored because the Simulation Initialization Scheme does not support it
 
          (void)sleep_timer.sleep();
 
-         if ( !execution_configuration->is_changed() && sleep_timer.timeout() ) {
-            sleep_timer.reset();
-            if ( !federate->is_execution_member() ) {
-               ostringstream errmsg;
-               errmsg << "TrickHLA::ExecutionControlBase::receive_execution_configuration():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution member."
-                      << " This means we are either not connected to the"
-                      << " RTI or we are no longer joined to the federation"
-                      << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << THLA_ENDL;
-               DebugHandler::terminate_with_message( errmsg.str() );
+         if ( !execution_configuration->is_changed() ) {
+
+            if ( sleep_timer.timeout() ) {
+               sleep_timer.reset();
+               if ( !federate->is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "TrickHLA::ExecutionControlBase::receive_execution_configuration():" << __LINE__
+                         << " Unexpectedly the Federate is no longer an execution member."
+                         << " This means we are either not connected to the"
+                         << " RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation at"
+                         << " the Central RTI Component (CRC) level!"
+                         << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
+               }
+            }
+
+            if ( print_timer.timeout() ) {
+               print_timer.reset();
+               send_hs( stdout, "TrickHLA::ExecutionControlBase::receive_execution_configuration():%d Waiting...%c",
+                        __LINE__, THLA_NEWLINE );
             }
          }
       }
