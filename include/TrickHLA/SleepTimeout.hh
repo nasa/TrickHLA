@@ -94,7 +94,7 @@ class SleepTimeout
 
   protected:
    long long       timeout_time;       ///< @trick_io{**} Timeout elapsed time in microseconds.
-   long long       timeout_clock_time; ///< @trick_io{**} Clock timeout time in microseconds
+   long long       timeout_clock_time; ///< @trick_io{**} Clock timeout time in microseconds.
    struct timespec sleep_time;         ///< @trick_io{**} Time-spec for the requested sleep time.
 
   private:
