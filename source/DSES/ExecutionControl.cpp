@@ -425,7 +425,7 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_points()
            && ( sp->label.compare( DSES::INITIALIZE_SYNC_POINT ) != 0 )
            && ( sp->label.compare( DSES::SIM_CONFIG_SYNC_POINT ) != 0 ) ) {
 
-         SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
+         SleepTimeout print_timer( federate->wait_status_time );
          SleepTimeout sleep_timer;
 
          // Wait for the federation to synchronized on the sync-point.

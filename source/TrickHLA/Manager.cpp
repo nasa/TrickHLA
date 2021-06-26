@@ -468,7 +468,7 @@ federate so this call will be ignored.%c",
                         ( objects[i].is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
             }
 
-            SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
+            SleepTimeout print_timer( federate->wait_status_time );
             SleepTimeout sleep_timer;
 
             // Wait for the data to arrive.
@@ -584,7 +584,7 @@ void Manager::receive_init_data(
                         ( obj->is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
             }
 
-            SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
+            SleepTimeout print_timer( federate->wait_status_time );
             SleepTimeout sleep_timer;
 
             // Wait for the data to arrive.
@@ -1768,7 +1768,7 @@ void Manager::wait_for_registration_of_required_objects()
    }
 
    // Timer for when to print a summary of unregistered objects every 30 seconds.
-   SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
+   SleepTimeout print_timer( federate->wait_status_time );
 
    SleepTimeout sleep_timer;
    do {
@@ -2979,7 +2979,7 @@ void Manager::wait_for_discovery_of_objects()
                      __LINE__, THLA_NEWLINE );
          }
 
-         SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
+         SleepTimeout print_timer( federate->wait_status_time );
          SleepTimeout sleep_timer;
 
          // block until some / all arrive.

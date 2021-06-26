@@ -1073,7 +1073,7 @@ Waiting on reservation of Object Instance Name '%s'.%c",
 
    Federate *trick_fed = get_federate();
 
-   SleepTimeout print_timer( trick_fed->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
+   SleepTimeout print_timer( trick_fed->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( !name_registered ) {
@@ -1271,7 +1271,7 @@ void Object::wait_for_object_registration()
 
    Federate *trick_fed = get_federate();
 
-   SleepTimeout print_timer( trick_fed->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
+   SleepTimeout print_timer( trick_fed->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( !is_instance_handle_valid() ) {
@@ -4059,7 +4059,7 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
 
       Federate *trick_fed = get_federate();
 
-      SleepTimeout print_timer( trick_fed->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
+      SleepTimeout print_timer( trick_fed->wait_status_time );
       SleepTimeout sleep_timer;
 
       // Perform a blocking loop until ownership of all locally owned published

@@ -25,7 +25,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <math.h>
+#include <limits>
 #include <time.h>
 
 // Trick include files.
@@ -42,6 +42,12 @@ using namespace TrickHLA;
 SleepTimeout::SleepTimeout()
 {
    set( THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
+}
+
+SleepTimeout::SleepTimeout(
+   double timeout_seconds )
+{
+   set( timeout_seconds, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
 }
 
 SleepTimeout::SleepTimeout(
@@ -66,8 +72,14 @@ void SleepTimeout::set(
    double timeout_seconds,
    long   sleep_micros )
 {
-   // Use a positive timeout time in microseconds.
-   this->timeout_time = fabs( timeout_seconds ) * 1000000; // in microseconds
+   // Do a bounds check on the timeout in seconds and convert it to microseconds.
+   if ( timeout_seconds <= 0.0 ) {
+      this->timeout_time = 0;
+   } else if ( ( timeout_seconds * 1000000 ) >= std::numeric_limits< long long >::max() ) {
+      this->timeout_time = std::numeric_limits< long long >::max();
+   } else {
+      this->timeout_time = timeout_seconds * 1000000; // in microseconds
+   }
 
    // Calculate the requested sleep-time.
    if ( sleep_micros >= 1000000 ) {

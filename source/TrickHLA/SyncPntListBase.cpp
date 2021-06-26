@@ -286,7 +286,7 @@ void SyncPntListBase::wait_for_list_synchronization(
    Federate *federate )
 {
    bool         achieved, valid_and_not_achieved;
-   SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
+   SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
 
    // Iterate through this SyncPntList's synchronization point list.
@@ -801,7 +801,7 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
       }
 
       bool         print_summary = DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE );
-      SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
+      SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
       // Wait for the sync-point to be announced.
@@ -936,7 +936,7 @@ bool SyncPntListBase::wait_for_synchronization(
    if ( sp != NULL ) {
       bool         print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE );
       bool         synchronized;
-      SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
+      SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
       // Wait for the federation to synchronize on the sync-point.

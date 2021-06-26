@@ -247,7 +247,7 @@ void ExecutionConfigurationBase::wait_for_registration()
    bool any_unregistered_obj;
    int  total_obj_cnt = 1;
 
-   SleepTimeout print_timer( get_federate()->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
+   SleepTimeout print_timer( get_federate()->wait_status_time );
    SleepTimeout sleep_timer;
 
    do {
@@ -353,7 +353,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
    // Make sure we have at least one piece of Execution Configuration data we can receive.
    if ( this->any_remotely_owned_subscribed_init_attribute() ) {
 
-      SleepTimeout print_timer( get_federate()->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
+      SleepTimeout print_timer( get_federate()->wait_status_time );
       SleepTimeout sleep_timer;
 
       // Wait for the data to arrive.

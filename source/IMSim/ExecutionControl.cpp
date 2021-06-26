@@ -746,7 +746,7 @@ Simulation has started and is now running...%c",
  */
 FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federate()
 {
-   SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
+   SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
 
    // Block until we have determined if we are a late joining federate.
@@ -1186,7 +1186,7 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_points()
            && ( sp->label.compare( IMSim::INITIALIZE_SYNC_POINT ) != 0 )
            && ( sp->label.compare( IMSim::SIM_CONFIG_SYNC_POINT ) != 0 ) ) {
 
-         SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
+         SleepTimeout print_timer( federate->wait_status_time );
          SleepTimeout sleep_timer;
 
          // Wait for the federation to synchronized on the sync-point.
@@ -2315,7 +2315,7 @@ void ExecutionControl::exit_freeze()
       if ( federate->freeze_the_federation && ( this->get_sim_time() > 0.0 ) ) { // coming out of freeze due to freeze interaction
          federate->register_generic_sync_point( IMSim::FEDRUN_SYNC_POINT );      // this tells federates to go to run
 
-         SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
+         SleepTimeout print_timer( federate->wait_status_time );
          SleepTimeout sleep_timer;
 
          while ( !this->pause_sync_pts.check_sync_points( this->checktime ) ) {
@@ -2619,7 +2619,7 @@ bool ExecutionControl::is_save_initiated()
    if ( federate->announce_save && !federate->initiate_save_flag && !federate->save_completed ) {
       federate->register_generic_sync_point( IMSim::FEDSAVE_SYNC_POINT );
 
-      SleepTimeout print_timer( federate->wait_status_time, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
+      SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
       while ( !federate->initiate_save_flag ) { // wait for federation to be synced

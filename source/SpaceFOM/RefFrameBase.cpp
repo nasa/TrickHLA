@@ -194,7 +194,6 @@ void RefFrameBase::initialize(
       // Print message and terminate.
       errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
              << " ERROR: Unexpected NULL reference frame: " << this->name << THLA_ENDL;
-      Trick::Executive *trick_exec = exec_get_exec_cpp();
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
    this->ref_frame_data = ref_frame_data_ptr;
