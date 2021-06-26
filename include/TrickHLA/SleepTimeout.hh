@@ -62,16 +62,16 @@ class SleepTimeout
 
    /*! @brief Constructor for TrickHLA SleepTimeout class, uses default sleep time of 10,000 microsecond.
     *  @param timeout_seconds Timeout time in seconds. */
-   explicit SleepTimeout( double timeout_seconds );
+   explicit SleepTimeout( const double timeout_seconds );
 
    /*! @brief Constructor for TrickHLA SleepTimeout class, uses a default timeout of 10 seconds.
     *  @param sleep_micros Time to sleep in microseconds. */
-   explicit SleepTimeout( long sleep_micros );
+   explicit SleepTimeout( const long sleep_micros );
 
    /*! @brief Constructor for the TrickHLA SleepTimeout class.
     *  @param timeout_seconds Timeout time in seconds.
     *  @param sleep_micros Time to sleep in microseconds. */
-   SleepTimeout( double timeout_seconds, long sleep_micros );
+   SleepTimeout( const double timeout_seconds, const long sleep_micros );
 
    /*! @brief Destructor for the TrickHLA SleepTimeout class. */
    virtual ~SleepTimeout();
@@ -79,7 +79,7 @@ class SleepTimeout
    /*! @brief Set the timeout and sleep times.
     *  @param timeout_seconds Timeout time in seconds.
     *  @param sleep_micros Time to sleep in microseconds with a minimum value of 0. */
-   void set( double timeout_seconds, long sleep_micros );
+   void set( const double timeout_seconds, const long sleep_micros );
 
    /*! @brief Sleep for the configured sleep time.
     *  @return Integer value of 0 for success, otherwise non-zero for an error. */

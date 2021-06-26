@@ -45,20 +45,20 @@ SleepTimeout::SleepTimeout()
 }
 
 SleepTimeout::SleepTimeout(
-   double timeout_seconds )
+   const double timeout_seconds )
 {
    set( timeout_seconds, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
 }
 
 SleepTimeout::SleepTimeout(
-   long sleep_micros )
+   const long sleep_micros )
 {
    set( THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC, sleep_micros );
 }
 
 SleepTimeout::SleepTimeout(
-   double timeout_seconds,
-   long   sleep_micros )
+   const double timeout_seconds,
+   const long   sleep_micros )
 {
    set( timeout_seconds, sleep_micros );
 }
@@ -69,8 +69,8 @@ SleepTimeout::~SleepTimeout()
 }
 
 void SleepTimeout::set(
-   double timeout_seconds,
-   long   sleep_micros )
+   const double timeout_seconds,
+   const long   sleep_micros )
 {
    // Do a bounds check on the timeout in seconds and convert it to microseconds.
    if ( timeout_seconds <= 0.0 ) {
