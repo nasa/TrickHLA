@@ -637,6 +637,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
    // Make sure we have at least one piece of exec-config data we can receive.
    if ( this->any_remotely_owned_subscribed_init_attribute() ) {
 
+      long long    wallclock_time;
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
@@ -650,7 +651,10 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
 
          if ( !this->is_changed() ) {
 
-            if ( sleep_timer.timeout() ) {
+            // To be more efficient, we get the time once and share it.
+            wallclock_time = sleep_timer.time();
+
+            if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
@@ -665,7 +669,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
                }
             }
 
-            if ( print_timer.timeout() ) {
+            if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                send_hs( stdout, "IMSim::ExecutionConfiguration::wait_for_update():%d Waiting...%c",
                         __LINE__, THLA_NEWLINE );

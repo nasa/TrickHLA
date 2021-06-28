@@ -286,6 +286,7 @@ void SyncPntListBase::wait_for_list_synchronization(
    Federate *federate )
 {
    bool         achieved, valid_and_not_achieved;
+   long long    wallclock_time;
    SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -323,9 +324,12 @@ void SyncPntListBase::wait_for_list_synchronization(
                // Pause and release the processor for short sleep value.
                (void)sleep_timer.sleep();
 
+               // To be more efficient, we get the time once and share it.
+               wallclock_time = sleep_timer.time();
+
                // Periodically check to make sure the federate is still part of
                // the federation execution.
-               if ( sleep_timer.timeout() ) {
+               if ( sleep_timer.timeout( wallclock_time ) ) {
                   sleep_timer.reset();
                   if ( !federate->is_execution_member() ) {
                      ostringstream errmsg;
@@ -340,7 +344,7 @@ void SyncPntListBase::wait_for_list_synchronization(
                   }
                }
 
-               if ( print_timer.timeout() ) {
+               if ( print_timer.timeout( wallclock_time ) ) {
                   print_timer.reset();
                   string name;
                   StringUtilities::to_string( name, sp->get_label() );
@@ -801,6 +805,7 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
       }
 
       bool         print_summary = DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE );
+      long long    wallclock_time; // cppcheck-suppress [variableScope]
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
@@ -825,8 +830,11 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
 
          (void)sleep_timer.sleep();
 
+         // To be more efficient, we get the time once and share it.
+         wallclock_time = sleep_timer.time();
+
          // Check to make sure we're still a member of the federation execution.
-         if ( sleep_timer.timeout() ) {
+         if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
             if ( !federate->is_execution_member() ) {
                ostringstream errmsg;
@@ -841,7 +849,7 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
          }
 
          // Determine if we should print a summary.
-         if ( print_timer.timeout() ) {
+         if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
             print_summary = true;
          }
@@ -936,6 +944,7 @@ bool SyncPntListBase::wait_for_synchronization(
    if ( sp != NULL ) {
       bool         print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE );
       bool         synchronized;
+      long long    wallclock_time;
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
@@ -971,8 +980,11 @@ bool SyncPntListBase::wait_for_synchronization(
 
             (void)sleep_timer.sleep();
 
+            // To be more efficient, we get the time once and share it.
+            wallclock_time = sleep_timer.time();
+
             // Check to make sure we're still a member of the federation execution.
-            if ( sleep_timer.timeout() ) {
+            if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
@@ -988,7 +1000,7 @@ bool SyncPntListBase::wait_for_synchronization(
             }
 
             // Print a summary if we timeout waiting.
-            if ( print_timer.timeout() ) {
+            if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                print_summary = true;
             }

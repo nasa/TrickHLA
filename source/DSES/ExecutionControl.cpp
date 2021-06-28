@@ -425,6 +425,7 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_points()
            && ( sp->label.compare( DSES::INITIALIZE_SYNC_POINT ) != 0 )
            && ( sp->label.compare( DSES::SIM_CONFIG_SYNC_POINT ) != 0 ) ) {
 
+         long long    wallclock_time;
          SleepTimeout print_timer( federate->wait_status_time );
          SleepTimeout sleep_timer;
 
@@ -441,7 +442,10 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_points()
             // the federation exectuion.
             if ( !sp->is_achieved() ) {
 
-               if ( sleep_timer.timeout() ) {
+               // To be more efficient, we get the time once and share it.
+               wallclock_time = sleep_timer.time();
+
+               if ( sleep_timer.timeout( wallclock_time ) ) {
                   sleep_timer.reset();
                   if ( !federate->is_execution_member() ) {
                      ostringstream errmsg;
@@ -456,7 +460,7 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_points()
                   }
                }
 
-               if ( print_timer.timeout() ) {
+               if ( print_timer.timeout( wallclock_time ) ) {
                   print_timer.reset();
                   send_hs( stdout, "DSES::ExecutionControl::wait_for_all_multiphase_init_sync_points():%d Waiting...%c",
                            __LINE__, THLA_NEWLINE );

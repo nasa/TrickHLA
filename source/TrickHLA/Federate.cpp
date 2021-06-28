@@ -1453,6 +1453,7 @@ string Federate::wait_for_required_federates_to_join()
    bool          found_an_unrequired_federate = false;
    set< string > unrequired_federates_list; // list of unique unrequired federate names
 
+   long long    wallclock_time;
    SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -1559,7 +1560,10 @@ string Federate::wait_for_required_federates_to_join()
 
       if ( !this->all_federates_joined ) {
 
-         if ( sleep_timer.timeout() ) {
+         // To be more efficient, we get the time once and share it.
+         wallclock_time = sleep_timer.time();
+
+         if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
             if ( !is_execution_member() ) {
                ostringstream errmsg;
@@ -1574,7 +1578,7 @@ string Federate::wait_for_required_federates_to_join()
             }
          }
 
-         if ( print_timer.timeout() ) {
+         if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
             print_summary = true;
          }
@@ -2807,6 +2811,7 @@ void Federate::setup_checkpoint()
 
          request_federation_save();
 
+         long long    wallclock_time;
          SleepTimeout print_timer( this->wait_status_time );
          SleepTimeout sleep_timer;
 
@@ -2816,7 +2821,10 @@ void Federate::setup_checkpoint()
 
             if ( !this->start_to_save ) {
 
-               if ( sleep_timer.timeout() ) {
+               // To be more efficient, we get the time once and share it.
+               wallclock_time = sleep_timer.time();
+
+               if ( sleep_timer.timeout( wallclock_time ) ) {
                   sleep_timer.reset();
                   if ( !is_execution_member() ) {
                      ostringstream errmsg;
@@ -2831,7 +2839,7 @@ void Federate::setup_checkpoint()
                   }
                }
 
-               if ( print_timer.timeout() ) {
+               if ( print_timer.timeout( wallclock_time ) ) {
                   print_timer.reset();
                   send_hs( stdout, "Federate::setup_checkpoint():%d Federate Save Pre-checkpoint, wiating...%c",
                            __LINE__, THLA_NEWLINE );
@@ -3055,6 +3063,7 @@ void Federate::setup_restore()
       // set the federate restore_name to filename (without the federation name)- this gets announced to other feds
       initiate_restore_announce( restore_name_str );
 
+      long long    wallclock_time;
       SleepTimeout print_timer( this->wait_status_time );
       SleepTimeout sleep_timer;
 
@@ -3064,7 +3073,10 @@ void Federate::setup_restore()
 
          if ( !this->start_to_restore ) {
 
-            if ( sleep_timer.timeout() ) {
+            // To be more efficient, we get the time once and share it.
+            wallclock_time = sleep_timer.time();
+
+            if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
                if ( !is_execution_member() ) {
                   ostringstream errmsg;
@@ -3079,7 +3091,7 @@ void Federate::setup_restore()
                }
             }
 
-            if ( print_timer.timeout() ) {
+            if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                send_hs( stdout, "Federate::setup_restore():%d Federate Restore Pre-load, waiting...%c",
                         __LINE__, THLA_NEWLINE );
@@ -4048,6 +4060,7 @@ void Federate::setup_time_constrained()
       // simulation fed file we will receive TimeStamp Ordered messages.
       RTI_ambassador->enableTimeConstrained();
 
+      long long    wallclock_time;
       SleepTimeout print_timer( this->wait_status_time );
       SleepTimeout sleep_timer;
 
@@ -4060,7 +4073,11 @@ void Federate::setup_time_constrained()
          (void)sleep_timer.sleep();
 
          if ( !this->time_constrained_state ) {
-            if ( sleep_timer.timeout() ) {
+
+            // To be more efficient, we get the time once and share it.
+            wallclock_time = sleep_timer.time();
+
+            if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
                if ( !is_execution_member() ) {
                   ostringstream errmsg;
@@ -4075,7 +4092,7 @@ void Federate::setup_time_constrained()
                }
             }
 
-            if ( print_timer.timeout() ) {
+            if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                send_hs( stdout, "Federate::setup_time_constrained()%d \"%s\": ENABLING TIME CONSTRAINED, waiting...%c",
                         __LINE__, get_federation_name(), THLA_NEWLINE );
@@ -4243,6 +4260,7 @@ void Federate::setup_time_regulation()
       // TimeStamp Ordered messages.
       RTI_ambassador->enableTimeRegulation( lookahead.get() );
 
+      long long    wallclock_time;
       SleepTimeout print_timer( this->wait_status_time );
       SleepTimeout sleep_timer;
 
@@ -4256,7 +4274,10 @@ void Federate::setup_time_regulation()
 
          if ( !this->time_regulating_state ) {
 
-            if ( sleep_timer.timeout() ) {
+            // To be more efficient, we get the time once and share it.
+            wallclock_time = sleep_timer.time();
+
+            if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
                if ( !is_execution_member() ) {
                   ostringstream errmsg;
@@ -4271,7 +4292,7 @@ void Federate::setup_time_regulation()
                }
             }
 
-            if ( print_timer.timeout() ) {
+            if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                send_hs( stdout, "Federate::setup_time_regulation():%d \"%s\": ENABLING TIME REGULATION WITH LOOKAHEAD = %G seconds, waiting...%c",
                         __LINE__, get_federation_name(), lookahead.get_time_in_seconds(), THLA_NEWLINE );
@@ -4681,11 +4702,12 @@ void Federate::wait_to_send_data()
    // Determine if this is the main thread (id = 0) or a child thread.
    if ( thread_id == 0 ) {
 
+      bool         all_ready_to_send;
+      long long    wallclock_time;
       SleepTimeout print_timer( this->wait_status_time );
 
       // Wait for all the child threads to be ready to send data.
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
-      bool         all_ready_to_send;
 
       // Wait for all Trick child threads that are running TrickHLA
       // Objects to be ready to send data.
@@ -4717,7 +4739,10 @@ void Federate::wait_to_send_data()
 
             (void)sleep_timer.sleep();
 
-            if ( sleep_timer.timeout() ) {
+            // To be more efficient, we get the time once and share it.
+            wallclock_time = sleep_timer.time();
+
+            if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
                if ( !is_execution_member() ) {
                   ostringstream errmsg;
@@ -4732,7 +4757,7 @@ void Federate::wait_to_send_data()
                }
             }
 
-            if ( print_timer.timeout() ) {
+            if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                send_hs( stdout, "Federate::wait_to_send_data():%d Waiting...%c",
                         __LINE__, THLA_NEWLINE );
@@ -4758,6 +4783,7 @@ void Federate::wait_to_send_data()
       // See if the main thread has announced it has sent the data.
       if ( !sent_data ) {
 
+         long long    wallclock_time; // cppcheck-suppress [variableScope]
          SleepTimeout print_timer( this->wait_status_time );
          SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
@@ -4768,7 +4794,10 @@ void Federate::wait_to_send_data()
 
             (void)sleep_timer.sleep();
 
-            if ( sleep_timer.timeout() ) {
+            // To be more efficient, we get the time once and share it.
+            wallclock_time = sleep_timer.time();
+
+            if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
                if ( !is_execution_member() ) {
                   ostringstream errmsg;
@@ -4783,7 +4812,7 @@ void Federate::wait_to_send_data()
                }
             }
 
-            if ( print_timer.timeout() ) {
+            if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                send_hs( stdout, "Federate::wait_to_send_data():%d Waiting...%c",
                         __LINE__, THLA_NEWLINE );
@@ -4827,6 +4856,8 @@ void Federate::wait_to_receive_data()
 
    // See if the main thread has announced it has received data.
    if ( !ready_to_receive ) {
+
+      long long    wallclock_time; // cppcheck-suppress [variableScope]
       SleepTimeout print_timer( this->wait_status_time );
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
@@ -4837,7 +4868,10 @@ void Federate::wait_to_receive_data()
 
          (void)sleep_timer.sleep();
 
-         if ( sleep_timer.timeout() ) {
+         // To be more efficient, we get the time once and share it.
+         wallclock_time = sleep_timer.time();
+
+         if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
             if ( !is_execution_member() ) {
                ostringstream errmsg;
@@ -4852,7 +4886,7 @@ void Federate::wait_to_receive_data()
             }
          }
 
-         if ( print_timer.timeout() ) {
+         if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
             send_hs( stdout, "Federate::wait_to_receive_data():%d Waiting...%c",
                      __LINE__, THLA_NEWLINE );
@@ -4916,6 +4950,7 @@ void Federate::wait_for_time_advance_grant()
                   __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
       }
 
+      long long    wallclock_time;
       SleepTimeout print_timer( this->wait_status_time );
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
@@ -4935,7 +4970,10 @@ void Federate::wait_for_time_advance_grant()
 
          if ( state != TIME_ADVANCE_GRANTED ) {
 
-            if ( sleep_timer.timeout() ) {
+            // To be more efficient, we get the time once and share it.
+            wallclock_time = sleep_timer.time();
+
+            if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
                if ( !is_execution_member() ) {
                   ostringstream errmsg;
@@ -4950,7 +4988,7 @@ void Federate::wait_for_time_advance_grant()
                }
             }
 
-            if ( print_timer.timeout() ) {
+            if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                send_hs( stdout, "Federate::wait_for_time_advance_grant():%d Waiting...%c",
                         __LINE__, THLA_NEWLINE );
@@ -5761,6 +5799,7 @@ void Federate::ask_MOM_for_auto_provide_setting()
    requestedAttributes.insert( MOM_HLAautoProvide_handle );
    request_attribute_update( MOM_HLAfederation_class_handle, requestedAttributes );
 
+   long long    wallclock_time;
    SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -5774,7 +5813,10 @@ void Federate::ask_MOM_for_auto_provide_setting()
 
       if ( this->auto_provide_setting < 0 ) {
 
-         if ( sleep_timer.timeout() ) {
+         // To be more efficient, we get the time once and share it.
+         wallclock_time = sleep_timer.time();
+
+         if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
             if ( !is_execution_member() ) {
                ostringstream errmsg;
@@ -5789,7 +5831,7 @@ void Federate::ask_MOM_for_auto_provide_setting()
             }
          }
 
-         if ( print_timer.timeout() ) {
+         if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
             send_hs( stdout, "Federate::ask_MOM_for_auto_provide_setting():%d Waiting...%c",
                      __LINE__, THLA_NEWLINE );
@@ -5898,6 +5940,7 @@ void Federate::load_and_print_running_federate_names()
    requestedAttributes.insert( MOM_HLAfederatesInFederation_handle );
    request_attribute_update( MOM_HLAfederation_class_handle, requestedAttributes );
 
+   long long    wallclock_time;
    SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -5911,7 +5954,10 @@ void Federate::load_and_print_running_federate_names()
 
       if ( this->running_feds_count <= 0 ) {
 
-         if ( sleep_timer.timeout() ) {
+         // To be more efficient, we get the time once and share it.
+         wallclock_time = sleep_timer.time();
+
+         if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
             if ( !is_execution_member() ) {
                ostringstream errmsg;
@@ -5926,7 +5972,7 @@ void Federate::load_and_print_running_federate_names()
             }
          }
 
-         if ( print_timer.timeout() ) {
+         if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
             send_hs( stdout, "Federate::load_and_print_running_federate_names():%d Waiting...%c",
                      __LINE__, THLA_NEWLINE );
@@ -5972,7 +6018,10 @@ MOM just informed us that there are %d federates currently running in the federa
       }
       if ( !this->all_federates_joined ) {
 
-         if ( sleep_timer.timeout() ) {
+         // To be more efficient, we get the time once and share it.
+         wallclock_time = sleep_timer.time();
+
+         if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
             if ( !is_execution_member() ) {
                ostringstream errmsg;
@@ -5987,7 +6036,7 @@ MOM just informed us that there are %d federates currently running in the federa
             }
          }
 
-         if ( print_timer.timeout() ) {
+         if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
             send_hs( stdout, "Federate::load_and_print_running_federate_names():%d Waiting...%c",
                      __LINE__, THLA_NEWLINE );
@@ -6008,7 +6057,10 @@ MOM just informed us that there are %d federates currently running in the federa
 
       if ( joined_federate_names.size() < (unsigned int)running_feds_count ) {
 
-         if ( sleep_timer.timeout() ) {
+         // To be more efficient, we get the time once and share it.
+         wallclock_time = sleep_timer.time();
+
+         if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
             if ( !is_execution_member() ) {
                ostringstream errmsg;
@@ -6023,7 +6075,7 @@ MOM just informed us that there are %d federates currently running in the federa
             }
          }
 
-         if ( print_timer.timeout() ) {
+         if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
             send_hs( stdout, "Federate::load_and_print_running_federate_names():%d Waiting...%c",
                      __LINE__, THLA_NEWLINE );
@@ -6718,6 +6770,7 @@ void Federate::wait_for_federation_restore_begun()
                __LINE__, THLA_NEWLINE );
    }
 
+   long long    wallclock_time;
    SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -6730,7 +6783,10 @@ void Federate::wait_for_federation_restore_begun()
 
       if ( !this->restore_begun ) {
 
-         if ( sleep_timer.timeout() ) {
+         // To be more efficient, we get the time once and share it.
+         wallclock_time = sleep_timer.time();
+
+         if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
             if ( !is_execution_member() ) {
                ostringstream errmsg;
@@ -6745,7 +6801,7 @@ void Federate::wait_for_federation_restore_begun()
             }
          }
 
-         if ( print_timer.timeout() ) {
+         if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
             send_hs( stdout, "Federate::wait_for_federation_restore_begun():%d Waiting...%c",
                      __LINE__, THLA_NEWLINE );
@@ -6765,6 +6821,7 @@ void Federate::wait_until_federation_is_ready_to_restore()
                __LINE__, THLA_NEWLINE );
    }
 
+   long long    wallclock_time;
    SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -6777,7 +6834,10 @@ void Federate::wait_until_federation_is_ready_to_restore()
 
       if ( !this->start_to_restore ) {
 
-         if ( sleep_timer.timeout() ) {
+         // To be more efficient, we get the time once and share it.
+         wallclock_time = sleep_timer.time();
+
+         if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
             if ( !is_execution_member() ) {
                ostringstream errmsg;
@@ -6792,7 +6852,7 @@ void Federate::wait_until_federation_is_ready_to_restore()
             }
          }
 
-         if ( print_timer.timeout() ) {
+         if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
             send_hs( stdout, "Federate::wait_until_federation_is_ready_to_restore():%d Waiting...%c",
                      __LINE__, THLA_NEWLINE );
@@ -6837,6 +6897,7 @@ string Federate::wait_for_federation_restore_to_complete()
       return return_string;
    }
 
+   long long    wallclock_time;
    SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -6859,7 +6920,10 @@ string Federate::wait_for_federation_restore_to_complete()
 
          if ( !this->restore_completed ) {
 
-            if ( sleep_timer.timeout() ) {
+            // To be more efficient, we get the time once and share it.
+            wallclock_time = sleep_timer.time();
+
+            if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
                if ( !is_execution_member() ) {
                   ostringstream errmsg;
@@ -6874,7 +6938,7 @@ string Federate::wait_for_federation_restore_to_complete()
                }
             }
 
-            if ( print_timer.timeout() ) {
+            if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                send_hs( stdout, "Federate::wait_for_federation_restore_to_complete():%d Waiting...%c",
                         __LINE__, THLA_NEWLINE );
@@ -6908,6 +6972,7 @@ void Federate::wait_for_restore_request_callback()
                __LINE__, THLA_NEWLINE );
    }
 
+   long long    wallclock_time;
    SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -6921,7 +6986,10 @@ void Federate::wait_for_restore_request_callback()
       if ( !has_restore_process_restore_request_failed()
            && !has_restore_process_restore_request_succeeded() ) {
 
-         if ( sleep_timer.timeout() ) {
+         // To be more efficient, we get the time once and share it.
+         wallclock_time = sleep_timer.time();
+
+         if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
             if ( !is_execution_member() ) {
                ostringstream errmsg;
@@ -6936,7 +7004,7 @@ void Federate::wait_for_restore_request_callback()
             }
          }
 
-         if ( print_timer.timeout() ) {
+         if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
             send_hs( stdout, "Federate::wait_for_restore_request_callback():%d Waiting...%c",
                      __LINE__, THLA_NEWLINE );
@@ -6956,6 +7024,7 @@ void Federate::wait_for_restore_status_to_complete()
                __LINE__, THLA_NEWLINE );
    }
 
+   long long    wallclock_time;
    SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -6968,7 +7037,10 @@ void Federate::wait_for_restore_status_to_complete()
 
       if ( !this->restore_request_complete ) {
 
-         if ( sleep_timer.timeout() ) {
+         // To be more efficient, we get the time once and share it.
+         wallclock_time = sleep_timer.time();
+
+         if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
             if ( !is_execution_member() ) {
                ostringstream errmsg;
@@ -6983,7 +7055,7 @@ void Federate::wait_for_restore_status_to_complete()
             }
          }
 
-         if ( print_timer.timeout() ) {
+         if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
             send_hs( stdout, "Federate::wait_for_restore_status_to_complete():%d Waiting...%c",
                      __LINE__, THLA_NEWLINE );
@@ -7003,6 +7075,7 @@ void Federate::wait_for_save_status_to_complete()
                __LINE__, THLA_NEWLINE );
    }
 
+   long long    wallclock_time;
    SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -7015,7 +7088,10 @@ void Federate::wait_for_save_status_to_complete()
 
       if ( !this->save_request_complete ) {
 
-         if ( sleep_timer.timeout() ) {
+         // To be more efficient, we get the time once and share it.
+         wallclock_time = sleep_timer.time();
+
+         if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
             if ( !is_execution_member() ) {
                ostringstream errmsg;
@@ -7030,7 +7106,7 @@ void Federate::wait_for_save_status_to_complete()
             }
          }
 
-         if ( print_timer.timeout() ) {
+         if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
             send_hs( stdout, "Federate::wait_for_save_status_to_complete():%d Waiting...%c",
                      __LINE__, THLA_NEWLINE );
@@ -7050,6 +7126,7 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
                __LINE__, THLA_NEWLINE );
    }
 
+   long long    wallclock_time;
    SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -7071,7 +7148,10 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
 
       if ( !this->federation_restore_failed_callback_complete ) {
 
-         if ( sleep_timer.timeout() ) {
+         // To be more efficient, we get the time once and share it.
+         wallclock_time = sleep_timer.time();
+
+         if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
             if ( !is_execution_member() ) {
                ostringstream errmsg;
@@ -7086,7 +7166,7 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
             }
          }
 
-         if ( print_timer.timeout() ) {
+         if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
             send_hs( stdout, "Federate::wait_for_federation_restore_failed_callback_to_complete():%d Waiting...%c",
                      __LINE__, THLA_NEWLINE );
@@ -7646,9 +7726,10 @@ void Federate::restore_federate_handles_from_MOM()
    requestedAttributes.insert( MOM_HLAfederate_handle );
    request_attribute_update( MOM_HLAfederate_class_handle, requestedAttributes );
 
+   bool         all_found = false;
+   long long    wallclock_time;
    SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
-   bool         all_found = false;
 
    // Wait for all the federate handles to be retrieved.
    do {
@@ -7667,7 +7748,10 @@ void Federate::restore_federate_handles_from_MOM()
       if ( !all_found ) {
          (void)sleep_timer.sleep();
 
-         if ( sleep_timer.timeout() ) {
+         // To be more efficient, we get the time once and share it.
+         wallclock_time = sleep_timer.time();
+
+         if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
             if ( !is_execution_member() ) {
                ostringstream errmsg;
@@ -7682,7 +7766,7 @@ void Federate::restore_federate_handles_from_MOM()
             }
          }
 
-         if ( print_timer.timeout() ) {
+         if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
             send_hs( stdout, "Federate::restore_federate_handles_from_MOM:%d Waiting...%c",
                      __LINE__, THLA_NEWLINE );

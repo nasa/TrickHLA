@@ -102,9 +102,20 @@ int SleepTimeout::sleep()
    return nanosleep( &sleep_time, NULL );
 }
 
+const long long SleepTimeout::time() const
+{
+   return clock_wall_time();
+}
+
 const bool SleepTimeout::timeout() const
 {
    return ( clock_wall_time() >= this->timeout_clock_time );
+}
+
+const bool SleepTimeout::timeout(
+   const long long time_in_micros ) const
+{
+   return ( time_in_micros >= this->timeout_clock_time );
 }
 
 /*! @brief Reset the internal timeout time. */

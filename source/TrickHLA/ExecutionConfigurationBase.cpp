@@ -247,6 +247,7 @@ void ExecutionConfigurationBase::wait_for_registration()
    bool any_unregistered_obj;
    int  total_obj_cnt = 1;
 
+   long long    wallclock_time;
    SleepTimeout print_timer( get_federate()->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -312,7 +313,10 @@ void ExecutionConfigurationBase::wait_for_registration()
 
          if ( any_unregistered_obj ) {
 
-            if ( sleep_timer.timeout() ) {
+            // To be more efficient, we get the time once and share it.
+            wallclock_time = sleep_timer.time();
+
+            if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
                if ( !get_federate()->is_execution_member() ) {
                   ostringstream errmsg;
@@ -327,7 +331,7 @@ void ExecutionConfigurationBase::wait_for_registration()
                }
             }
 
-            if ( print_timer.timeout() ) {
+            if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                print_summary = true;
             }
@@ -353,6 +357,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
    // Make sure we have at least one piece of Execution Configuration data we can receive.
    if ( this->any_remotely_owned_subscribed_init_attribute() ) {
 
+      long long    wallclock_time;
       SleepTimeout print_timer( get_federate()->wait_status_time );
       SleepTimeout sleep_timer;
 
@@ -366,7 +371,10 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
 
          if ( !this->is_changed() ) {
 
-            if ( sleep_timer.timeout() ) {
+            // To be more efficient, we get the time once and share it.
+            wallclock_time = sleep_timer.time();
+
+            if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
@@ -381,7 +389,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
                }
             }
 
-            if ( print_timer.timeout() ) {
+            if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                send_hs( stdout, "ExecutionConfigurationBase::wait_for_update():%d Waiting...%c",
                         __LINE__, THLA_NEWLINE );

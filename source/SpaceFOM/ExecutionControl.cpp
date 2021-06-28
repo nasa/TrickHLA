@@ -614,6 +614,7 @@ void ExecutionControl::role_determination_process()
       }
 
       bool         print_summary = DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL );
+      long long    wallclock_time;
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
@@ -651,7 +652,10 @@ void ExecutionControl::role_determination_process()
             // display sync-point status if needed as well.
             if ( !this->late_joiner_determined ) {
 
-               if ( sleep_timer.timeout() ) {
+               // To be more efficient, we get the time once and share it.
+               wallclock_time = sleep_timer.time();
+
+               if ( sleep_timer.timeout( wallclock_time ) ) {
                   sleep_timer.reset();
 
                   if ( !print_summary ) {
@@ -672,7 +676,7 @@ void ExecutionControl::role_determination_process()
                   }
                }
 
-               if ( print_timer.timeout() ) {
+               if ( print_timer.timeout( wallclock_time ) ) {
                   print_timer.reset();
                   print_summary = true;
                }
@@ -2586,6 +2590,7 @@ void ExecutionControl::receive_root_ref_frame()
    // Make sure we have at least one piece of root reference frame data we can receive.
    if ( rrf_object->any_remotely_owned_subscribed_init_attribute() ) {
 
+      long long    wallclock_time;
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
@@ -2599,7 +2604,10 @@ void ExecutionControl::receive_root_ref_frame()
 
          if ( !rrf_object->is_changed() ) {
 
-            if ( sleep_timer.timeout() ) {
+            // To be more efficient, we get the time once and share it.
+            wallclock_time = sleep_timer.time();
+
+            if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
@@ -2614,7 +2622,7 @@ void ExecutionControl::receive_root_ref_frame()
                }
             }
 
-            if ( print_timer.timeout() ) {
+            if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                send_hs( stdout, "SpaceFOM::ExectionControl::receive_root_ref_frame():%d Waiting...%c",
                         __LINE__, THLA_NEWLINE );

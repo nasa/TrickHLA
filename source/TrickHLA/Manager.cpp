@@ -468,6 +468,7 @@ federate so this call will be ignored.%c",
                         ( objects[i].is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
             }
 
+            long long    wallclock_time;
             SleepTimeout print_timer( federate->wait_status_time );
             SleepTimeout sleep_timer;
 
@@ -481,7 +482,10 @@ federate so this call will be ignored.%c",
 
                if ( !objects[i].is_changed() ) {
 
-                  if ( sleep_timer.timeout() ) {
+                  // To be more efficient, we get the time once and share it.
+                  wallclock_time = sleep_timer.time();
+
+                  if ( sleep_timer.timeout( wallclock_time ) ) {
                      sleep_timer.reset();
                      if ( !federate->is_execution_member() ) {
                         ostringstream errmsg;
@@ -496,7 +500,7 @@ federate so this call will be ignored.%c",
                      }
                   }
 
-                  if ( print_timer.timeout() ) {
+                  if ( print_timer.timeout( wallclock_time ) ) {
                      print_timer.reset();
                      send_hs( stdout, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.%c",
                               __LINE__, objects[i].get_name(),
@@ -584,6 +588,7 @@ void Manager::receive_init_data(
                         ( obj->is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
             }
 
+            long long    wallclock_time;
             SleepTimeout print_timer( federate->wait_status_time );
             SleepTimeout sleep_timer;
 
@@ -596,7 +601,11 @@ void Manager::receive_init_data(
                (void)sleep_timer.sleep();
 
                if ( !obj->is_changed() ) {
-                  if ( sleep_timer.timeout() ) {
+
+                  // To be more efficient, we get the time once and share it.
+                  wallclock_time = sleep_timer.time();
+
+                  if ( sleep_timer.timeout( wallclock_time ) ) {
                      sleep_timer.reset();
                      if ( !federate->is_execution_member() ) {
                         ostringstream errmsg;
@@ -611,7 +620,7 @@ void Manager::receive_init_data(
                      }
                   }
 
-                  if ( print_timer.timeout() ) {
+                  if ( print_timer.timeout( wallclock_time ) ) {
                      print_timer.reset();
                      send_hs( stdout, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.%c",
                               __LINE__, instance_name,
@@ -1767,10 +1776,10 @@ void Manager::wait_for_registration_of_required_objects()
       }
    }
 
-   // Timer for when to print a summary of unregistered objects every 30 seconds.
+   long long    wallclock_time;
    SleepTimeout print_timer( federate->wait_status_time );
-
    SleepTimeout sleep_timer;
+
    do {
 
       // Check for shutdown.
@@ -1916,8 +1925,11 @@ void Manager::wait_for_registration_of_required_objects()
 
          if ( any_unregistered_required_obj ) {
 
+            // To be more efficient, we get the time once and share it.
+            wallclock_time = sleep_timer.time();
+
             // If we timeout check to see if we are still an execution member.
-            if ( sleep_timer.timeout() ) {
+            if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
 
                if ( !federate->is_execution_member() ) {
@@ -1934,7 +1946,7 @@ void Manager::wait_for_registration_of_required_objects()
             }
 
             // Determine if we should print a summary of unregistered objects.
-            if ( print_timer.timeout() ) {
+            if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
 
                // If we timeout, then force print a summary of only the
@@ -2979,6 +2991,7 @@ void Manager::wait_for_discovery_of_objects()
                      __LINE__, THLA_NEWLINE );
          }
 
+         long long    wallclock_time; // cppcheck-suppress [variableScope]
          SleepTimeout print_timer( federate->wait_status_time );
          SleepTimeout sleep_timer;
 
@@ -2992,7 +3005,10 @@ void Manager::wait_for_discovery_of_objects()
             // discovery callbacks.
             (void)sleep_timer.sleep();
 
-            if ( sleep_timer.timeout() ) {
+            // To be more efficient, we get the time once and share it.
+            wallclock_time = sleep_timer.time();
+
+            if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
@@ -3007,7 +3023,7 @@ void Manager::wait_for_discovery_of_objects()
                }
             }
 
-            if ( print_timer.timeout() ) {
+            if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                send_hs( stdout, "Manager::wait_for_discovery_of_object_instance():%d \
 - blocking loop until object discovery callbacks arrive.%c",

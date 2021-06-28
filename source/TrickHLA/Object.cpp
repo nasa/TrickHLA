@@ -1073,6 +1073,7 @@ Waiting on reservation of Object Instance Name '%s'.%c",
 
    Federate *trick_fed = get_federate();
 
+   long long    wallclock_time;
    SleepTimeout print_timer( trick_fed->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -1081,7 +1082,10 @@ Waiting on reservation of Object Instance Name '%s'.%c",
 
       if ( !name_registered ) {
 
-         if ( sleep_timer.timeout() ) {
+         // To be more efficient, we get the time once and share it.
+         wallclock_time = sleep_timer.time();
+
+         if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
             if ( !trick_fed->is_execution_member() ) {
                ostringstream errmsg;
@@ -1096,7 +1100,7 @@ Waiting on reservation of Object Instance Name '%s'.%c",
             }
          }
 
-         if ( print_timer.timeout() ) {
+         if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
             send_hs( stdout, "Object::wait_for_object_name_reservation():%d \
 Waiting on reservation of Object Instance Name '%s'.%c",
@@ -1271,6 +1275,7 @@ void Object::wait_for_object_registration()
 
    Federate *trick_fed = get_federate();
 
+   long long    wallclock_time;
    SleepTimeout print_timer( trick_fed->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -1279,7 +1284,10 @@ void Object::wait_for_object_registration()
 
       if ( !is_instance_handle_valid() ) {
 
-         if ( sleep_timer.timeout() ) {
+         // To be more efficient, we get the time once and share it.
+         wallclock_time = sleep_timer.time();
+
+         if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
             if ( !trick_fed->is_execution_member() ) {
                ostringstream errmsg;
@@ -1294,7 +1302,7 @@ void Object::wait_for_object_registration()
             }
          }
 
-         if ( print_timer.timeout() ) {
+         if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
             send_hs( stdout, "Object::wait_for_object_registration():%d Waiting on registration of '%s' for object '%s'.%c",
                      __LINE__, FOM_name, get_name(), THLA_NEWLINE );
@@ -4059,6 +4067,7 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
 
       Federate *trick_fed = get_federate();
 
+      long long    wallclock_time;
       SleepTimeout print_timer( trick_fed->wait_status_time );
       SleepTimeout sleep_timer;
 
@@ -4112,7 +4121,10 @@ rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generate
 
          if ( ownership_counter < attr_hdl_set.size() ) {
 
-            if ( sleep_timer.timeout() ) {
+            // To be more efficient, we get the time once and share it.
+            wallclock_time = sleep_timer.time();
+
+            if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
                if ( !trick_fed->is_execution_member() ) {
                   ostringstream errmsg;
@@ -4127,7 +4139,7 @@ rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generate
                }
             }
 
-            if ( print_timer.timeout() ) {
+            if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                send_hs( stdout, "Object::pull_ownership_upon_rejoin():%d Pulling ownership \
 for Attributes of object '%s', waiting...%c",

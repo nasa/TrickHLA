@@ -746,6 +746,7 @@ Simulation has started and is now running...%c",
  */
 FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federate()
 {
+   long long    wallclock_time;
    SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
 
@@ -788,7 +789,10 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
 
          if ( !late_joiner_determined && !get_manager()->restore_determined ) {
 
-            if ( sleep_timer.timeout() ) {
+            // To be more efficient, we get the time once and share it.
+            wallclock_time = sleep_timer.time();
+
+            if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
@@ -803,7 +807,7 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
                }
             }
 
-            if ( print_timer.timeout() ) {
+            if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                send_hs( stdout, "IMSim::ExecutionControl::determine_if_late_joining_or_restoring_federate_IMSim():%d Waiting...%c",
                         __LINE__, THLA_NEWLINE );
@@ -1186,6 +1190,7 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_points()
            && ( sp->label.compare( IMSim::INITIALIZE_SYNC_POINT ) != 0 )
            && ( sp->label.compare( IMSim::SIM_CONFIG_SYNC_POINT ) != 0 ) ) {
 
+         long long    wallclock_time;
          SleepTimeout print_timer( federate->wait_status_time );
          SleepTimeout sleep_timer;
 
@@ -1199,10 +1204,13 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_points()
             (void)sleep_timer.sleep();
 
             // Periodically check to make sure the federate is still part of
-            // the federation exectuion.
+            // the federation execution.
             if ( !sp->is_achieved() ) {
 
-               if ( sleep_timer.timeout() ) {
+               // To be more efficient, we get the time once and share it.
+               wallclock_time = sleep_timer.time();
+
+               if ( sleep_timer.timeout( wallclock_time ) ) {
                   sleep_timer.reset();
                   if ( !federate->is_execution_member() ) {
                      ostringstream errmsg;
@@ -1217,7 +1225,7 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_points()
                   }
                }
 
-               if ( print_timer.timeout() ) {
+               if ( print_timer.timeout( wallclock_time ) ) {
                   print_timer.reset();
                   send_hs( stdout, "ExecutionControl::wait_for_all_multiphase_init_sync_points():%d Waiting...%c",
                            __LINE__, THLA_NEWLINE );
@@ -2315,6 +2323,7 @@ void ExecutionControl::exit_freeze()
       if ( federate->freeze_the_federation && ( this->get_sim_time() > 0.0 ) ) { // coming out of freeze due to freeze interaction
          federate->register_generic_sync_point( IMSim::FEDRUN_SYNC_POINT );      // this tells federates to go to run
 
+         long long    wallclock_time;
          SleepTimeout print_timer( federate->wait_status_time );
          SleepTimeout sleep_timer;
 
@@ -2324,7 +2333,10 @@ void ExecutionControl::exit_freeze()
 
             if ( !this->pause_sync_pts.check_sync_points( this->checktime ) ) {
 
-               if ( sleep_timer.timeout() ) {
+               // To be more efficient, we get the time once and share it.
+               wallclock_time = sleep_timer.time();
+
+               if ( sleep_timer.timeout( wallclock_time ) ) {
                   sleep_timer.reset();
                   if ( !federate->is_execution_member() ) {
                      ostringstream errmsg;
@@ -2339,7 +2351,7 @@ void ExecutionControl::exit_freeze()
                   }
                }
 
-               if ( print_timer.timeout() ) {
+               if ( print_timer.timeout( wallclock_time ) ) {
                   print_timer.reset();
                   send_hs( stderr, "IMSim::ExecutionControl::exit_freeze():%d Waiting...%c",
                            __LINE__, THLA_NEWLINE );
@@ -2619,6 +2631,7 @@ bool ExecutionControl::is_save_initiated()
    if ( federate->announce_save && !federate->initiate_save_flag && !federate->save_completed ) {
       federate->register_generic_sync_point( IMSim::FEDSAVE_SYNC_POINT );
 
+      long long    wallclock_time;
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
@@ -2628,7 +2641,10 @@ bool ExecutionControl::is_save_initiated()
 
          if ( !federate->initiate_save_flag ) {
 
-            if ( sleep_timer.timeout() ) {
+            // To be more efficient, we get the time once and share it.
+            wallclock_time = sleep_timer.time();
+
+            if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
@@ -2643,7 +2659,7 @@ bool ExecutionControl::is_save_initiated()
                }
             }
 
-            if ( print_timer.timeout() ) {
+            if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                send_hs( stdout, "IMSim::ExecutionControl::setup_checkpoint():%d Waiting '%s'%c",
                         __LINE__, THLA_NEWLINE );
