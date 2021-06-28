@@ -65,15 +65,15 @@ class THLAThreadSimObject : public Trick::SimObject {
       }
 
       // Associate this Trick child thread ID to our TrickHLA Federate.
-      // Because the federate class initializes the thread state array as a
-      // phase 1 (i.e., P1) initialization class job, the earliest we can
-      // associate the Trick child thread is phase 2 (i.e., P2).
+      // Because the federate class initializes the thread state array as
+      // a phase 1 (i.e. P1) initialization class job, the earliest we can
+      // associate the Trick child thread is phase 2 (i.e. P2).
       P2 ("initialization") federate.associate_to_trick_child_thread( thread_id );
 
-      // Wait for the data to be received.
+      // Wait for the HLA data to be received.
       C_THREAD_ID P_1ST (data_cycle, "environment") federate.wait_to_receive_data();
 
-      // Wait to send the data when all child threads are ready.
+      // Wait to send the HLA data when all Trick child threads are ready.
       C_THREAD_ID P_LAST (data_cycle, "logging") federate.wait_to_send_data();
    }
 
