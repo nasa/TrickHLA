@@ -198,16 +198,16 @@ void SineData::adjust_phase(
 int SineData::integration()
 {
    // Load the current sine state.
-   load_state( &value, NULL ); // cppcheck-suppress [varFuncNullUB]
+   load_state( &value, NULL ); // cppcheck-suppress [varFuncNullUB,unmatchedSuppression]
 
    // Load the current state derivative.
-   load_deriv( &dvdt, NULL ); // cppcheck-suppress [varFuncNullUB]
+   load_deriv( &dvdt, NULL ); // cppcheck-suppress [varFuncNullUB,unmatchedSuppression]
 
    // Call the Trick integration service.
    int ipass = integrate();
 
    // Unload the new propagated state value.
-   unload_state( &value, NULL ); // cppcheck-suppress [varFuncNullUB]
+   unload_state( &value, NULL ); // cppcheck-suppress [varFuncNullUB,unmatchedSuppression]
 
    // Return the intermediate step ID.
    return ( ipass );

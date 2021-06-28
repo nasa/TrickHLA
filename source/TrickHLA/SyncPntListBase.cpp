@@ -805,7 +805,7 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
       }
 
       bool         print_summary = DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE );
-      long long    wallclock_time; // cppcheck-suppress [variableScope]
+      long long    wallclock_time; // cppcheck-suppress [variableScope,unmatchedSuppression]
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 

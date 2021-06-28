@@ -4783,7 +4783,7 @@ void Federate::wait_to_send_data()
       // See if the main thread has announced it has sent the data.
       if ( !sent_data ) {
 
-         long long    wallclock_time; // cppcheck-suppress [variableScope]
+         long long    wallclock_time; // cppcheck-suppress [variableScope,unmatchedSuppression]
          SleepTimeout print_timer( this->wait_status_time );
          SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
@@ -4857,7 +4857,7 @@ void Federate::wait_to_receive_data()
    // See if the main thread has announced it has received data.
    if ( !ready_to_receive ) {
 
-      long long    wallclock_time; // cppcheck-suppress [variableScope]
+      long long    wallclock_time; // cppcheck-suppress [variableScope,unmatchedSuppression]
       SleepTimeout print_timer( this->wait_status_time );
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 

@@ -2991,7 +2991,7 @@ void Manager::wait_for_discovery_of_objects()
                      __LINE__, THLA_NEWLINE );
          }
 
-         long long    wallclock_time; // cppcheck-suppress [variableScope]
+         long long    wallclock_time; // cppcheck-suppress [variableScope,unmatchedSuppression]
          SleepTimeout print_timer( federate->wait_status_time );
          SleepTimeout sleep_timer;
 
