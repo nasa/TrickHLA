@@ -9,6 +9,7 @@
 # @revs_begin
 # @rev_entry{ Edwin Z. Crues, NASA ER7, TrickHLA, March 2020, --, Initial creation based off of Dan Dexter's cppcheck_trickhla.csh script.}
 # @rev_entry{ Dan Dexter, NASA ER6, TrickHLA, March 2020, --, Fixed cppcheck arguments for checking includes, fixed args validation, using Trick version year and added --inconclusive option.}
+# @rev_entry{ Dan Dexter, NASA ER6, TrickHLA, June 2021, --, Using a build output directory unique to the check being done for better build artifact caching.}
 # @revs_end
 #
 import sys
@@ -131,24 +132,30 @@ Examples:\n  check_code -s -o -v\n  check_code -i -o -v''' ) )
    if args.autogen:
       # -a
       required_arg_cnt += 1
+      cppcheck_build_dir = cppcheck_output_dir + '/build_autogen'
    if args.clean_gen_files:
       # -c
       required_arg_cnt += 1
    if args.check_errors_only:
       # -e
       required_arg_cnt += 1
+      cppcheck_build_dir = cppcheck_output_dir + '/build_check_errors_only'
    if args.check_includes:
       # -i
       required_arg_cnt += 1
+      cppcheck_build_dir = cppcheck_output_dir + '/build_check_includes'
    if args.check_all:
       # -s
       required_arg_cnt += 1
+      cppcheck_build_dir = cppcheck_output_dir + '/build_check_all'
    if args.check_for_unused:
       # -u
       required_arg_cnt += 1
+      cppcheck_build_dir = cppcheck_output_dir + '/build_check_unused'
    if args.generate_xml:
       # -x
       required_arg_cnt += 1
+      cppcheck_build_dir = cppcheck_output_dir + '/build_generate_xml'
    if required_arg_cnt == 0:
       arg_error = True
       TrickHLAMessage.warning( 'You must specify one of \'-a\', \'-c\', \'-e\', \'-i\', \'-s\', \'-u\' or \'-x\'!' )
