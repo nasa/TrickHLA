@@ -477,9 +477,10 @@ void Federate::initialize_thread_state()
    // Main Trick thread runs TrickHLA.
    this->thread_state[0] = THREAD_STATE_RESET;
 
-   // We don't know if the Child threads are running TrickHLA jobs yet.
+   // We don't know if the Child threads are running TrickHLA jobs yet so
+   // mark them all as not associated.
    for ( unsigned int id = 1; id < this->thread_state_cnt; ++id ) {
-      this->thread_state[id] = THREAD_STATE_UNKNOWN;
+      this->thread_state[id] = THREAD_STATE_NOT_ASSOCIATED;
    }
 }
 
@@ -4630,7 +4631,7 @@ void Federate::associate_to_trick_child_thread(
    }
 
    // We don't support more than one thread association to the same thread-id.
-   if ( this->thread_state[thread_id] != THREAD_STATE_UNKNOWN ) {
+   if ( this->thread_state[thread_id] != THREAD_STATE_NOT_ASSOCIATED ) {
       ostringstream errmsg;
       errmsg << "Federate::associate_to_trick_child_thread():" << __LINE__
              << " ERROR: You can not associate the same Trick child thread (id:"
@@ -4661,9 +4662,9 @@ void Federate::announce_data_available()
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &thread_state_mutex );
 
-   // Process all the Trick child threads first.
+   // Process all the Trick child threads associated to TrickHLA first.
    for ( unsigned int id = 1; id < this->thread_state_cnt; ++id ) {
-      if ( this->thread_state[id] != THREAD_STATE_UNKNOWN ) {
+      if ( this->thread_state[id] != THREAD_STATE_NOT_ASSOCIATED ) {
          this->thread_state[id] = THREAD_STATE_READY_TO_RECEIVE;
       }
    }
@@ -4722,14 +4723,14 @@ void Federate::wait_to_send_data()
          // Check all the associated thread-id's.
          while ( ( id < this->thread_state_cnt ) && all_ready_to_send ) {
 
-            // If the state is THREAD_STATE_UNKNOWN then there are no
-            // TrickHLA jobs on this thread, so move on to the next thread
-            // ID. If the state is THREAD_STATE_READY_TO_SEND then this
-            // thread-id is ready, so check the next ID. Otherwise we are
-            // not ready to send and don't move on from the current
+            // If the state is THREAD_STATE_NOT_ASSOCIATED then there are
+            // no TrickHLA jobs on this thread, so move on to the next
+            // thread-id. If the state is THREAD_STATE_READY_TO_SEND then
+            // this thread-id is ready, so check the next ID. Otherwise we
+            // are not ready to send and don't move on from the current
             // thread-id.
             if ( ( thread_state[id] == THREAD_STATE_READY_TO_SEND )
-                 || ( thread_state[id] == THREAD_STATE_UNKNOWN ) ) {
+                 || ( thread_state[id] == THREAD_STATE_NOT_ASSOCIATED ) ) {
                // Move to the next thread-id because the current ID is
                // ready. This results in checking all the ID's just once.
                ++id;
@@ -4765,14 +4766,14 @@ void Federate::wait_to_send_data()
                // Check all the associated thread-id's.
                while ( ( id < this->thread_state_cnt ) && all_ready_to_send ) {
 
-                  // If the state is THREAD_STATE_UNKNOWN then there are no
-                  // TrickHLA jobs on this thread, so move on to the next thread
-                  // ID. If the state is THREAD_STATE_READY_TO_SEND then this
-                  // thread-id is ready, so check the next ID. Otherwise we are
-                  // not ready to send and don't move on from the current
+                  // If the state is THREAD_STATE_NOT_ASSOCIATED then there are
+                  // no TrickHLA jobs on this thread, so move on to the next
+                  // thread-id. If the state is THREAD_STATE_READY_TO_SEND then
+                  // this thread-id is ready, so check the next ID. Otherwise we
+                  // are not ready to send and don't move on from the current
                   // thread-id.
                   if ( ( thread_state[id] == THREAD_STATE_READY_TO_SEND )
-                       || ( thread_state[id] == THREAD_STATE_UNKNOWN ) ) {
+                       || ( thread_state[id] == THREAD_STATE_NOT_ASSOCIATED ) ) {
                      // Move to the next thread-id because the current ID is
                      // ready. This results in checking all the ID's just once.
                      ++id;

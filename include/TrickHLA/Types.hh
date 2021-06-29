@@ -257,7 +257,7 @@ typedef enum {
 */
 typedef enum {
 
-   THREAD_STATE_UNKNOWN          = 0, ///< Unknown state.
+   THREAD_STATE_NOT_ASSOCIATED   = 0, ///< Thread is not used (i.e. associated) to TrickHLA jobs.
    THREAD_STATE_RESET            = 1, ///< Thread used by TrickHLA jobs but state not set yet.
    THREAD_STATE_READY_TO_SEND    = 2, ///< Thread used by TrickHLA jobs ready to send data.
    THREAD_STATE_READY_TO_RECEIVE = 3  ///< Thread used by TrickHLA jobs ready to receive data.
