@@ -1463,7 +1463,7 @@ string Federate::wait_for_required_federates_to_join()
    while ( !this->all_federates_joined ) {
 
       // Check for shutdown.
-      this->check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
       // Sleep a little while to wait for more federates to join.
       (void)sleep_timer.sleep();
@@ -2637,7 +2637,7 @@ void Federate::exit_freeze()
 void Federate::check_freeze()
 {
    // Check to see if we should shutdown.
-   this->check_for_shutdown_with_termination();
+   check_for_shutdown_with_termination();
 
    // Check to see if the ExecutionControl should exit freeze.
    if ( execution_control->check_freeze_exit() ) {
@@ -4068,7 +4068,7 @@ void Federate::setup_time_constrained()
       while ( !this->time_constrained_state ) {
 
          // Check for shutdown.
-         this->check_for_shutdown_with_termination();
+         check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 
@@ -4268,7 +4268,7 @@ void Federate::setup_time_regulation()
       while ( !this->time_regulating_state ) {
 
          // Check for shutdown.
-         this->check_for_shutdown_with_termination();
+         check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 
@@ -4471,7 +4471,7 @@ void Federate::perform_time_advance_request()
       recoverable_error = false;
 
       // Check for shutdown.
-      this->check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "Federate::perform_time_advance_request():%d Time Advance Request (TAR) to %.12G seconds.%c",
@@ -4666,6 +4666,8 @@ void Federate::announce_data_available()
          this->thread_state[id] = THREAD_STATE_READY_TO_RECEIVE;
       }
    }
+
+   // Make sure we set the state of the main thread last.
    this->thread_state[0] = THREAD_STATE_READY_TO_RECEIVE;
 }
 
@@ -4683,11 +4685,14 @@ void Federate::announce_data_sent()
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &thread_state_mutex );
 
+   // Set the state of the main thread as ready to send.
    this->thread_state[0] = THREAD_STATE_READY_TO_SEND;
 }
 
 /*!
- * @brief Wait for all Trick child threads running a TrickHLA object to do a time advance request.
+ * @brief Wait for the HLA data to be sent if a Trick child thread or if the
+ * calling thread is the Trick main thread then wait for all associated Trick
+ * child threads to have called this function.
  */
 void Federate::wait_to_send_data()
 {
@@ -4702,130 +4707,159 @@ void Federate::wait_to_send_data()
    // Determine if this is the main thread (id = 0) or a child thread.
    if ( thread_id == 0 ) {
 
-      bool         all_ready_to_send;
-      long long    wallclock_time;
-      SleepTimeout print_timer( this->wait_status_time );
+      unsigned int id;
 
-      // Wait for all the child threads to be ready to send data.
-      SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
+      // Trick Main Thread: Determine if all the Trick child threads associated
+      // to TrickHLA are ready to send data.
+      bool all_ready_to_send = true;
+      {
+         // When auto_unlock_mutex goes out of scope it automatically
+         // unlocks the mutex even if there is an exception.
+         MutexProtection auto_unlock_mutex( &thread_state_mutex );
 
-      // Wait for all Trick child threads that are running TrickHLA
-      // Objects to be ready to send data.
-      do {
-         all_ready_to_send = true;
+         // Don't check Trick main thread (id = 0), only check child threads.
+         for ( id = 1; ( id < thread_state_cnt ) && all_ready_to_send; ++id ) {
 
-         {
-            // When auto_unlock_mutex goes out of scope it automatically unlocks the
-            // mutex even if there is an exception.
-            MutexProtection auto_unlock_mutex( &thread_state_mutex );
-
-            // Don't check Trick main thread (id = 0), only check child threads.
-            for ( unsigned int id = 1; ( id < thread_state_cnt ) && all_ready_to_send; ++id ) {
-
-               // If the state is THREAD_STATE_UNKNOWN then there are no TrickHLA
-               // jobs on this thread. Otherwise if we are not THREAD_STATE_READY_TO_SEND
-               // then not all the threads are ready to send data.
-               if ( ( thread_state[id] != THREAD_STATE_READY_TO_SEND )
-                    && ( thread_state[id] != THREAD_STATE_UNKNOWN ) ) {
-                  all_ready_to_send = false;
-               }
+            // If the state is THREAD_STATE_UNKNOWN then there are no
+            // TrickHLA jobs on this thread. Otherwise if we are not
+            // THREAD_STATE_READY_TO_SEND then not all the threads are
+            // ready to send data.
+            if ( ( thread_state[id] != THREAD_STATE_READY_TO_SEND )
+                 && ( thread_state[id] != THREAD_STATE_UNKNOWN ) ) {
+               all_ready_to_send = false;
             }
          }
+      }
 
-         if ( !all_ready_to_send ) {
+      if ( !all_ready_to_send ) {
+
+         long long    wallclock_time;
+         SleepTimeout print_timer( this->wait_status_time );
+         SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
+
+         // Wait for all Trick child threads associated to TrickHLA to be
+         // ready to send data.
+         do {
 
             // Check for shutdown.
-            this->check_for_shutdown_with_termination();
+            check_for_shutdown_with_termination();
 
             (void)sleep_timer.sleep();
 
-            // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
+            // Determine if all the Trick child threads are ready to send data.
+            all_ready_to_send = true;
+            {
+               // When auto_unlock_mutex goes out of scope it automatically
+               // unlocks the mutex even if there is an exception.
+               MutexProtection auto_unlock_mutex( &thread_state_mutex );
 
-            if ( sleep_timer.timeout( wallclock_time ) ) {
-               sleep_timer.reset();
-               if ( !is_execution_member() ) {
-                  ostringstream errmsg;
-                  errmsg << "Federate::wait_to_send_data():" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution"
-                         << " member. This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
-                         << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << THLA_ENDL;
-                  DebugHandler::terminate_with_message( errmsg.str() );
+               // Don't check Trick main thread (id = 0), only check child threads.
+               for ( id = 1; ( id < thread_state_cnt ) && all_ready_to_send; ++id ) {
+
+                  // If the state is THREAD_STATE_UNKNOWN then there are no
+                  // TrickHLA jobs on this thread. Otherwise if we are not
+                  // THREAD_STATE_READY_TO_SEND then not all the threads are
+                  // ready to send data.
+                  if ( ( thread_state[id] != THREAD_STATE_READY_TO_SEND )
+                       && ( thread_state[id] != THREAD_STATE_UNKNOWN ) ) {
+                     all_ready_to_send = false;
+                  }
                }
             }
 
-            if ( print_timer.timeout( wallclock_time ) ) {
-               print_timer.reset();
-               send_hs( stdout, "Federate::wait_to_send_data():%d Waiting...%c",
-                        __LINE__, THLA_NEWLINE );
-            }
-         }
-      } while ( !all_ready_to_send );
+            if ( !all_ready_to_send ) {
 
+               // To be more efficient, we get the time once and share it.
+               wallclock_time = sleep_timer.time();
+
+               if ( sleep_timer.timeout( wallclock_time ) ) {
+                  sleep_timer.reset();
+                  if ( !is_execution_member() ) {
+                     ostringstream errmsg;
+                     errmsg << "Federate::wait_to_send_data():" << __LINE__
+                            << " Unexpectedly the Federate is no longer an execution"
+                            << " member. This means we are either not connected to the"
+                            << " RTI or we are no longer joined to the federation"
+                            << " execution because someone forced our resignation at"
+                            << " the Central RTI Component (CRC) level!"
+                            << THLA_ENDL;
+                     DebugHandler::terminate_with_message( errmsg.str() );
+                  }
+               }
+
+               if ( print_timer.timeout( wallclock_time ) ) {
+                  print_timer.reset();
+                  send_hs( stdout, "Federate::wait_to_send_data():%d Waiting...%c",
+                           __LINE__, THLA_NEWLINE );
+               }
+            }
+         } while ( !all_ready_to_send );
+      }
    } else {
 
+      // Trick Child Thread associated to TrickHLA: Determine if the
+      // Trick main thread has sent all the HLA data.
       bool sent_data;
-
       {
-         // When auto_unlock_mutex goes out of scope it automatically unlocks the
-         // mutex even if there is an exception.
+         // When auto_unlock_mutex goes out of scope it automatically unlocks
+         // the mutex even if there is an exception.
          MutexProtection auto_unlock_mutex( &thread_state_mutex );
 
          // Mark this child thread as ready to send.
          thread_state[thread_id] = THREAD_STATE_READY_TO_SEND;
 
+         // Determine if all the data has been sent by the main thread.
          sent_data = ( thread_state[0] == THREAD_STATE_READY_TO_SEND );
       }
 
       // See if the main thread has announced it has sent the data.
       if ( !sent_data ) {
 
-         long long    wallclock_time; // cppcheck-suppress [variableScope,unmatchedSuppression]
+         long long    wallclock_time;
          SleepTimeout print_timer( this->wait_status_time );
          SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
          // Wait for the main thread to have sent the data.
          do {
             // Check for shutdown.
-            this->check_for_shutdown_with_termination();
+            check_for_shutdown_with_termination();
 
             (void)sleep_timer.sleep();
 
-            // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
-
-            if ( sleep_timer.timeout( wallclock_time ) ) {
-               sleep_timer.reset();
-               if ( !is_execution_member() ) {
-                  ostringstream errmsg;
-                  errmsg << "Federate::wait_to_send_data():" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution"
-                         << " member. This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
-                         << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << THLA_ENDL;
-                  DebugHandler::terminate_with_message( errmsg.str() );
-               }
-            }
-
-            if ( print_timer.timeout( wallclock_time ) ) {
-               print_timer.reset();
-               send_hs( stdout, "Federate::wait_to_send_data():%d Waiting...%c",
-                        __LINE__, THLA_NEWLINE );
-            }
-
             {
-               // When auto_unlock_mutex goes out of scope it automatically unlocks the
-               // mutex even if there is an exception.
+               // When auto_unlock_mutex goes out of scope it automatically
+               // unlocks the mutex even if there is an exception.
                MutexProtection auto_unlock_mutex( &thread_state_mutex );
 
                sent_data = ( thread_state[0] == THREAD_STATE_READY_TO_SEND );
             }
 
+            if ( !sent_data ) {
+
+               // To be more efficient, we get the time once and share it.
+               wallclock_time = sleep_timer.time();
+
+               if ( sleep_timer.timeout( wallclock_time ) ) {
+                  sleep_timer.reset();
+                  if ( !is_execution_member() ) {
+                     ostringstream errmsg;
+                     errmsg << "Federate::wait_to_send_data():" << __LINE__
+                            << " Unexpectedly the Federate is no longer an execution"
+                            << " member. This means we are either not connected to the"
+                            << " RTI or we are no longer joined to the federation"
+                            << " execution because someone forced our resignation at"
+                            << " the Central RTI Component (CRC) level!"
+                            << THLA_ENDL;
+                     DebugHandler::terminate_with_message( errmsg.str() );
+                  }
+               }
+
+               if ( print_timer.timeout( wallclock_time ) ) {
+                  print_timer.reset();
+                  send_hs( stdout, "Federate::wait_to_send_data():%d Waiting...%c",
+                           __LINE__, THLA_NEWLINE );
+               }
+            }
          } while ( !sent_data );
       }
    }
@@ -4845,10 +4879,9 @@ void Federate::wait_to_receive_data()
    }
 
    bool ready_to_receive;
-
    {
-      // When auto_unlock_mutex goes out of scope it automatically unlocks the
-      // mutex even if there is an exception.
+      // When auto_unlock_mutex goes out of scope it automatically unlocks
+      // the mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &thread_state_mutex );
 
       ready_to_receive = ( thread_state[0] == THREAD_STATE_READY_TO_RECEIVE );
@@ -4857,47 +4890,50 @@ void Federate::wait_to_receive_data()
    // See if the main thread has announced it has received data.
    if ( !ready_to_receive ) {
 
-      long long    wallclock_time; // cppcheck-suppress [variableScope,unmatchedSuppression]
+      long long    wallclock_time;
       SleepTimeout print_timer( this->wait_status_time );
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // Wait for the main thread to receive data.
       do {
          // Check for shutdown.
-         this->check_for_shutdown_with_termination();
+         check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 
-         // To be more efficient, we get the time once and share it.
-         wallclock_time = sleep_timer.time();
-
-         if ( sleep_timer.timeout( wallclock_time ) ) {
-            sleep_timer.reset();
-            if ( !is_execution_member() ) {
-               ostringstream errmsg;
-               errmsg << "Federate::wait_to_receive_data():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution"
-                      << " member. This means we are either not connected to the"
-                      << " RTI or we are no longer joined to the federation"
-                      << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!"
-                      << THLA_ENDL;
-               DebugHandler::terminate_with_message( errmsg.str() );
-            }
-         }
-
-         if ( print_timer.timeout( wallclock_time ) ) {
-            print_timer.reset();
-            send_hs( stdout, "Federate::wait_to_receive_data():%d Waiting...%c",
-                     __LINE__, THLA_NEWLINE );
-         }
-
          {
-            // When auto_unlock_mutex goes out of scope it automatically unlocks the
-            // mutex even if there is an exception.
+            // When auto_unlock_mutex goes out of scope it automatically
+            // unlocks the  mutex even if there is an exception.
             MutexProtection auto_unlock_mutex( &thread_state_mutex );
 
             ready_to_receive = ( thread_state[0] == THREAD_STATE_READY_TO_RECEIVE );
+         }
+
+         if ( !ready_to_receive ) {
+
+            // To be more efficient, we get the time once and share it.
+            wallclock_time = sleep_timer.time();
+
+            if ( sleep_timer.timeout( wallclock_time ) ) {
+               sleep_timer.reset();
+               if ( !is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "Federate::wait_to_receive_data():" << __LINE__
+                         << " Unexpectedly the Federate is no longer an execution"
+                         << " member. This means we are either not connected to the"
+                         << " RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation at"
+                         << " the Central RTI Component (CRC) level!"
+                         << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
+               }
+            }
+
+            if ( print_timer.timeout( wallclock_time ) ) {
+               print_timer.reset();
+               send_hs( stdout, "Federate::wait_to_receive_data():%d Waiting...%c",
+                        __LINE__, THLA_NEWLINE );
+            }
          }
       } while ( !ready_to_receive );
    }
@@ -4927,7 +4963,6 @@ void Federate::wait_for_time_advance_grant()
    }
 
    unsigned short state;
-
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
@@ -4957,7 +4992,7 @@ void Federate::wait_for_time_advance_grant()
       // This spin lock waits for the time advance grant from the RTI.
       do {
          // Check for shutdown.
-         this->check_for_shutdown_with_termination();
+         check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 
@@ -5806,7 +5841,7 @@ void Federate::ask_MOM_for_auto_provide_setting()
    while ( this->auto_provide_setting < 0 ) {
 
       // Check for shutdown.
-      this->check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
       // Sleep a little while to wait for the information to update.
       (void)sleep_timer.sleep();
@@ -5947,7 +5982,7 @@ void Federate::load_and_print_running_federate_names()
    while ( this->running_feds_count <= 0 ) {
 
       // Check for shutdown.
-      this->check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
       // Sleep a little while to wait for the information to update.
       (void)sleep_timer.sleep();
@@ -6002,7 +6037,7 @@ MOM just informed us that there are %d federates currently running in the federa
    while ( !this->all_federates_joined ) {
 
       // Check for shutdown.
-      this->check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
       // Sleep a little while to wait for more federates to join.
       (void)sleep_timer.sleep();
@@ -6051,7 +6086,7 @@ MOM just informed us that there are %d federates currently running in the federa
    while ( joined_federate_names.size() < (unsigned int)running_feds_count ) {
 
       // Check for shutdown.
-      this->check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
       (void)sleep_timer.sleep();
 
@@ -6777,7 +6812,7 @@ void Federate::wait_for_federation_restore_begun()
    while ( !this->restore_begun ) {
 
       // Check for shutdown.
-      this->check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
       (void)sleep_timer.sleep(); // sleep until RTI responds...
 
@@ -6828,7 +6863,7 @@ void Federate::wait_until_federation_is_ready_to_restore()
    while ( !this->start_to_restore ) {
 
       // Check for shutdown.
-      this->check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
       (void)sleep_timer.sleep(); // sleep until RTI responds...
 
@@ -6905,7 +6940,7 @@ string Federate::wait_for_federation_restore_to_complete()
    while ( !this->restore_completed ) {
 
       // Check for shutdown.
-      this->check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
       if ( this->running_feds_count_at_time_of_restore > this->running_feds_count ) {
          // someone has resigned since the federation restore has been initiated.
@@ -6979,7 +7014,7 @@ void Federate::wait_for_restore_request_callback()
    while ( !has_restore_process_restore_request_failed() && !has_restore_process_restore_request_succeeded() ) {
 
       // Check for shutdown.
-      this->check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
       (void)sleep_timer.sleep(); // sleep until RTI responds...
 
@@ -7031,7 +7066,7 @@ void Federate::wait_for_restore_status_to_complete()
    while ( !this->restore_request_complete ) {
 
       // Check for shutdown.
-      this->check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
       (void)sleep_timer.sleep(); // sleep until RTI responds...
 
@@ -7082,7 +7117,7 @@ void Federate::wait_for_save_status_to_complete()
    while ( !this->save_request_complete ) {
 
       // Check for shutdown.
-      this->check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
       (void)sleep_timer.sleep(); // sleep until RTI responds...
 
@@ -7133,7 +7168,7 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
    while ( !this->federation_restore_failed_callback_complete ) {
 
       // Check for shutdown.
-      this->check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
       // if the federate has already been restored, do not wait for a signal
       // from the RTI that the federation restore failed, you'll never get it!
