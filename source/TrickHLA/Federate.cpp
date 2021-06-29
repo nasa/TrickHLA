@@ -468,7 +468,7 @@ void Federate::initialize_thread_state()
       ostringstream errmsg;
       errmsg << "Federate::initialize_thread_state():" << __LINE__
              << " ERROR: Could not allocate memory for thread_state"
-             << " for requested size " << thread_state_cnt
+             << " for requested size " << this->thread_state_cnt
              << "'!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
       exit( 1 );
@@ -478,7 +478,7 @@ void Federate::initialize_thread_state()
    this->thread_state[0] = THREAD_STATE_RESET;
 
    // We don't know if the Child threads are running TrickHLA jobs yet.
-   for ( unsigned int id = 1; id < thread_state_cnt; ++id ) {
+   for ( unsigned int id = 1; id < this->thread_state_cnt; ++id ) {
       this->thread_state[id] = THREAD_STATE_UNKNOWN;
    }
 }
@@ -4661,13 +4661,14 @@ void Federate::announce_data_available()
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &thread_state_mutex );
 
-   for ( unsigned int id = 1; id < thread_state_cnt; ++id ) {
+   // Process all the Trick child threads first.
+   for ( unsigned int id = 1; id < this->thread_state_cnt; ++id ) {
       if ( this->thread_state[id] != THREAD_STATE_UNKNOWN ) {
          this->thread_state[id] = THREAD_STATE_READY_TO_RECEIVE;
       }
    }
 
-   // Make sure we set the state of the main thread last.
+   // Make sure we set the state of the Trick main thread last.
    this->thread_state[0] = THREAD_STATE_READY_TO_RECEIVE;
 }
 
@@ -4707,7 +4708,8 @@ void Federate::wait_to_send_data()
    // Determine if this is the main thread (id = 0) or a child thread.
    if ( thread_id == 0 ) {
 
-      unsigned int id;
+      // Don't check the Trick main thread (id = 0), only check child threads.
+      unsigned int id = 1;
 
       // Trick Main Thread: Determine if all the Trick child threads associated
       // to TrickHLA are ready to send data.
@@ -4717,8 +4719,8 @@ void Federate::wait_to_send_data()
          // unlocks the mutex even if there is an exception.
          MutexProtection auto_unlock_mutex( &thread_state_mutex );
 
-         // Don't check Trick main thread (id = 0), only check child threads.
-         for ( id = 1; ( id < thread_state_cnt ) && all_ready_to_send; ++id ) {
+         // Check all the associated thread-id's.
+         while ( ( id < this->thread_state_cnt ) && all_ready_to_send ) {
 
             // If the state is THREAD_STATE_UNKNOWN then there are no
             // TrickHLA jobs on this thread. Otherwise if we are not
@@ -4726,7 +4728,12 @@ void Federate::wait_to_send_data()
             // ready to send data.
             if ( ( thread_state[id] != THREAD_STATE_READY_TO_SEND )
                  && ( thread_state[id] != THREAD_STATE_UNKNOWN ) ) {
+               // Stay on the current ID and mark as not ready to send.
                all_ready_to_send = false;
+            } else {
+               // Move to the next thread-id because the current id is
+               // ready. This results in checking all the ID's just once.
+               ++id;
             }
          }
       }
@@ -4753,8 +4760,8 @@ void Federate::wait_to_send_data()
                // unlocks the mutex even if there is an exception.
                MutexProtection auto_unlock_mutex( &thread_state_mutex );
 
-               // Don't check Trick main thread (id = 0), only check child threads.
-               for ( id = 1; ( id < thread_state_cnt ) && all_ready_to_send; ++id ) {
+               // Check all the associated thread-id's.
+               while ( ( id < this->thread_state_cnt ) && all_ready_to_send ) {
 
                   // If the state is THREAD_STATE_UNKNOWN then there are no
                   // TrickHLA jobs on this thread. Otherwise if we are not
@@ -4762,7 +4769,12 @@ void Federate::wait_to_send_data()
                   // ready to send data.
                   if ( ( thread_state[id] != THREAD_STATE_READY_TO_SEND )
                        && ( thread_state[id] != THREAD_STATE_UNKNOWN ) ) {
+                     // Stay on the current ID and mark as not ready to send.
                      all_ready_to_send = false;
+                  } else {
+                     // Move to the next thread-id because the current id is
+                     // ready. This results in checking all the ID's just once.
+                     ++id;
                   }
                }
             }
