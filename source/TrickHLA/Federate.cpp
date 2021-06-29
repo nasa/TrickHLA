@@ -4723,17 +4723,19 @@ void Federate::wait_to_send_data()
          while ( ( id < this->thread_state_cnt ) && all_ready_to_send ) {
 
             // If the state is THREAD_STATE_UNKNOWN then there are no
-            // TrickHLA jobs on this thread. Otherwise if we are not
-            // THREAD_STATE_READY_TO_SEND then not all the threads are
-            // ready to send data.
-            if ( ( thread_state[id] != THREAD_STATE_READY_TO_SEND )
-                 && ( thread_state[id] != THREAD_STATE_UNKNOWN ) ) {
-               // Stay on the current ID and mark as not ready to send.
-               all_ready_to_send = false;
-            } else {
-               // Move to the next thread-id because the current id is
+            // TrickHLA jobs on this thread, so move on to the next thread
+            // ID. If the state is THREAD_STATE_READY_TO_SEND then this
+            // thread-id is ready, so check the next ID. Otherwise we are
+            // not ready to send and don't move on from the current
+            // thread-id.
+            if ( ( thread_state[id] == THREAD_STATE_READY_TO_SEND )
+                 || ( thread_state[id] == THREAD_STATE_UNKNOWN ) ) {
+               // Move to the next thread-id because the current ID is
                // ready. This results in checking all the ID's just once.
                ++id;
+            } else {
+               // Stay on the current ID and indicate not ready to send.
+               all_ready_to_send = false;
             }
          }
       }
@@ -4764,17 +4766,19 @@ void Federate::wait_to_send_data()
                while ( ( id < this->thread_state_cnt ) && all_ready_to_send ) {
 
                   // If the state is THREAD_STATE_UNKNOWN then there are no
-                  // TrickHLA jobs on this thread. Otherwise if we are not
-                  // THREAD_STATE_READY_TO_SEND then not all the threads are
-                  // ready to send data.
-                  if ( ( thread_state[id] != THREAD_STATE_READY_TO_SEND )
-                       && ( thread_state[id] != THREAD_STATE_UNKNOWN ) ) {
-                     // Stay on the current ID and mark as not ready to send.
-                     all_ready_to_send = false;
-                  } else {
-                     // Move to the next thread-id because the current id is
+                  // TrickHLA jobs on this thread, so move on to the next thread
+                  // ID. If the state is THREAD_STATE_READY_TO_SEND then this
+                  // thread-id is ready, so check the next ID. Otherwise we are
+                  // not ready to send and don't move on from the current
+                  // thread-id.
+                  if ( ( thread_state[id] == THREAD_STATE_READY_TO_SEND )
+                       || ( thread_state[id] == THREAD_STATE_UNKNOWN ) ) {
+                     // Move to the next thread-id because the current ID is
                      // ready. This results in checking all the ID's just once.
                      ++id;
+                  } else {
+                     // Stay on the current ID and indicate not ready to send.
+                     all_ready_to_send = false;
                   }
                }
             }
