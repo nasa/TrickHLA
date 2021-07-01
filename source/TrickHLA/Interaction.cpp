@@ -840,7 +840,7 @@ bool Interaction::send(
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    // Get the Trick-Federate.
-   Federate *trick_fed = get_federate();
+   Federate *federate = get_federate();
 
    // Get the RTI-Ambassador.
    RTIambassador *rti_amb = get_RTI_ambassador();
@@ -878,7 +878,7 @@ bool Interaction::send(
 
       // Do not send any interactions if federate save / restore has begun (see
       // IEEE-1516.1-2000 sections 4.12, 4.20)
-      if ( trick_fed->should_publish_data() ) {
+      if ( federate->should_publish_data() ) {
          // This call returns an event retraction handle but we
          // don't support event retraction so no need to store it.
          (void)rti_amb->sendInteraction( this->class_handle,
@@ -947,18 +947,18 @@ bool Interaction::send(
    time.set( send_HLA_time );
 
    // Get the Trick-Federate.
-   Federate *trick_fed = get_federate();
+   Federate *federate = get_federate();
 
    // Determine if the interaction should be sent with a timestamp.
    // See IEEE 1516.1-2010 Section 6.12.
-   bool send_with_timestamp = trick_fed->in_time_regulating_state()
+   bool send_with_timestamp = federate->in_time_regulating_state()
                               && ( preferred_order != TRANSPORT_RECEIVE_ORDER );
 
    bool successfuly_sent = false;
    try {
       // Do not send any interactions if federate save or restore has begun (see
       // IEEE-1516.1-2000 sections 4.12, 4.20)
-      if ( trick_fed->should_publish_data() ) {
+      if ( federate->should_publish_data() ) {
 
          // The message will only be sent as TSO if our Federate is in the HLA Time
          // Regulating state and the interaction prefers timestamp order.
@@ -984,7 +984,7 @@ bool Interaction::send(
                send_hs( stdout, "Interaction::send():%d As Receive-Order: \
 Interaction '%s' is time-regulating:%s, preferred-order:%s.%c",
                         __LINE__, get_FOM_name(),
-                        ( trick_fed->in_time_regulating_state() ? "Yes" : "No" ),
+                        ( federate->in_time_regulating_state() ? "Yes" : "No" ),
                         ( ( preferred_order == TRANSPORT_RECEIVE_ORDER ) ? "receive" : "timestamp" ),
                         THLA_NEWLINE );
             }

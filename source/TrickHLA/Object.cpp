@@ -417,11 +417,11 @@ RTI1516_NAMESPACE::RTIambassador *Object::get_RTI_ambassador()
       TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
       // Get the Trick-Federate.
-      Federate *trick_fed = get_federate();
+      Federate *federate = get_federate();
 
       // Get the RTI-Ambassador.
-      rti_ambassador = ( trick_fed != NULL ) ? trick_fed->get_RTI_ambassador()
-                                             : static_cast< RTI1516_NAMESPACE::RTIambassador * >( NULL );
+      rti_ambassador = ( federate != NULL ) ? federate->get_RTI_ambassador()
+                                            : static_cast< RTI1516_NAMESPACE::RTIambassador * >( NULL );
 
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -453,14 +453,14 @@ void Object::remove()
          // support event retraction so no need to store it.
          try {
 
-            Federate *trick_fed = get_federate();
-            if ( trick_fed != NULL ) {
+            Federate *federate = get_federate();
+            if ( federate != NULL ) {
                // Only delete an object instance that has a valid instance handle.
-               if ( is_instance_handle_valid() && trick_fed->is_execution_member() ) {
+               if ( is_instance_handle_valid() && federate->is_execution_member() ) {
 
                   // Delete the object instance at a specific time if we are
                   // time-regulating.
-                  if ( trick_fed->in_time_regulating_state() ) {
+                  if ( federate->in_time_regulating_state() ) {
                      Int64Time new_time = get_update_time_plus_lookahead();
                      (void)rti_amb->deleteObjectInstance( instance_handle,
                                                           RTI1516_USERDATA( 0, 0 ),
@@ -1071,16 +1071,16 @@ Waiting on reservation of Object Instance Name '%s'.%c",
                __LINE__, get_name(), THLA_NEWLINE );
    }
 
-   Federate *trick_fed = get_federate();
+   Federate *federate = get_federate();
 
    long long    wallclock_time;
-   SleepTimeout print_timer( trick_fed->wait_status_time );
+   SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( !name_registered ) {
 
       // Check for shutdown.
-      get_federate()->check_for_shutdown_with_termination();
+      federate->check_for_shutdown_with_termination();
 
       (void)sleep_timer.sleep();
 
@@ -1091,7 +1091,7 @@ Waiting on reservation of Object Instance Name '%s'.%c",
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
-            if ( !trick_fed->is_execution_member() ) {
+            if ( !federate->is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "Object::wait_for_object_name_reservation():" << __LINE__
                       << " ERROR: Unexpectedly the Federate is no longer an execution member."
@@ -1277,16 +1277,16 @@ void Object::wait_for_object_registration()
                __LINE__, FOM_name, get_name(), THLA_NEWLINE );
    }
 
-   Federate *trick_fed = get_federate();
+   Federate *federate = get_federate();
 
    long long    wallclock_time;
-   SleepTimeout print_timer( trick_fed->wait_status_time );
+   SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( !is_instance_handle_valid() ) {
 
       // Check for shutdown.
-      get_federate()->check_for_shutdown_with_termination();
+      federate->check_for_shutdown_with_termination();
 
       (void)sleep_timer.sleep();
 
@@ -1297,7 +1297,7 @@ void Object::wait_for_object_registration()
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
-            if ( !trick_fed->is_execution_member() ) {
+            if ( !federate->is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "Object::wait_for_object_registration():" << __LINE__
                       << " ERROR: Unexpectedly the Federate is no longer an execution member."
@@ -1584,7 +1584,8 @@ void Object::provide_attribute_update(
 void Object::send_requested_data()
 {
    if ( attr_update_requested ) {
-      send_requested_data( exec_get_sim_time(), get_federate()->get_lookahead_time_in_seconds() );
+      send_requested_data( exec_get_sim_time(),
+                           get_federate()->get_lookahead_time_in_seconds() );
    }
 }
 
@@ -1618,17 +1619,17 @@ void Object::send_requested_data(
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-   Federate *trick_fed = get_federate();
+   Federate *federate = get_federate();
 
    RTIambassador *rti_amb = get_RTI_ambassador();
 
    // Time tag the data we're about to send out
-   Int64Time t = trick_fed->get_granted_time();
+   Int64Time t = federate->get_granted_time();
    set_last_update_time( t.get() );
 
    // Check for a zero lookahead time, which means the cycle_time (i.e. dt)
    // should be zero as well.
-   if ( trick_fed->is_zero_lookahead_time() ) {
+   if ( federate->is_zero_lookahead_time() ) {
       cycle_time = 0.0;
    }
 
@@ -1673,7 +1674,7 @@ void Object::send_requested_data(
 
    // Determine if we need to send with a timestamp.
    // See IEEE 1516.1-2010 Section 6.10.
-   bool send_with_timestamp = trick_fed->in_time_regulating_state()
+   bool send_with_timestamp = federate->in_time_regulating_state()
                               && ( any_attribute_timestamp_order
                                    || any_attribute_FOM_specified_order );
    try {
@@ -1684,7 +1685,7 @@ void Object::send_requested_data(
 
       // Do not send any data if federate save or restore has begun (see
       // IEEE-1516.1-2000 sections 4.12, 4.20)
-      if ( trick_fed->should_publish_data() ) {
+      if ( federate->should_publish_data() ) {
 
          // The message will only be sent as TSO if our Federate is in
          // the HLA Time Regulating state. See IEEE-1516.1-2000,
@@ -1733,10 +1734,10 @@ exception for '%s' with error message '%s'.%c",
              << Int64Interval::to_microseconds( cycle_time ) << " microseconds)" << endl
              << "  sim-time + cycle_time=" << ( current_time + cycle_time ) << " ("
              << Int64Interval::to_microseconds( current_time + cycle_time ) << " microseconds)" << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << " ("
-             << trick_fed->get_granted_time().get_time_in_micros() << " microseconds)" << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << " ("
-             << trick_fed->get_lookahead().get_time_in_micros() << " microseconds)" << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << " ("
+             << federate->get_granted_time().get_time_in_micros() << " microseconds)" << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << " ("
+             << federate->get_lookahead().get_time_in_micros() << " microseconds)" << endl
              << "  update_time=" << update_time.get_time_in_seconds() << " ("
              << update_time.get_time_in_micros() << " microseconds)" << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << " ("
@@ -1754,8 +1755,8 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: AttributeNotOwned" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -1770,8 +1771,8 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: ObjectInstanceNotKnown" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -1785,8 +1786,8 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: AttributeNotDefined" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -1800,8 +1801,8 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception:FederateNotExecutionMember" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -1815,8 +1816,8 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: SaveInProgress" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -1830,8 +1831,8 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: RestoreInProgress" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -1845,8 +1846,8 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: NotConnected" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -1860,8 +1861,8 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: RTIinternalError" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -1877,8 +1878,8 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " RTI1516_EXCEPTION" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -1910,17 +1911,17 @@ void Object::send_cyclic_and_requested_data(
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-   Federate *trick_fed = get_federate();
+   Federate *federate = get_federate();
 
    RTIambassador *rti_amb = get_RTI_ambassador();
 
    // Time tag the data we're about to send out
-   Int64Time t = trick_fed->get_granted_time();
+   Int64Time t = federate->get_granted_time();
    set_last_update_time( t.get() );
 
    // Check for a zero lookahead time, which means the cycle_time (i.e. dt)
    // should be zero as well.
-   if ( trick_fed->is_zero_lookahead_time() ) {
+   if ( federate->is_zero_lookahead_time() ) {
       cycle_time = 0.0;
    }
 
@@ -1975,13 +1976,13 @@ void Object::send_cyclic_and_requested_data(
 
    // Determine if we need to send with a timestamp.
    // See IEEE 1516.1-2010 Section 6.10.
-   bool send_with_timestamp = trick_fed->in_time_regulating_state()
+   bool send_with_timestamp = federate->in_time_regulating_state()
                               && ( any_attribute_timestamp_order
                                    || any_attribute_FOM_specified_order );
    try {
       // Do not send any data if federate save or restore has begun (see
       // IEEE-1516.1-2000 sections 4.12, 4.20)
-      if ( trick_fed->should_publish_data() ) {
+      if ( federate->should_publish_data() ) {
 
          // The message will only be sent as TSO if our Federate is in the
          // HLA Time Regulating state and we have at least one attribute
@@ -2033,10 +2034,10 @@ exception for '%s' with error message '%s'.%c",
              << Int64Interval::to_microseconds( cycle_time ) << " microseconds)" << endl
              << "  sim-time + cycle_time=" << ( current_time + cycle_time ) << " ("
              << Int64Interval::to_microseconds( current_time + cycle_time ) << " microseconds)" << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << " ("
-             << trick_fed->get_granted_time().get_time_in_micros() << " microseconds)" << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << " ("
-             << trick_fed->get_lookahead().get_time_in_micros() << " microseconds)" << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << " ("
+             << federate->get_granted_time().get_time_in_micros() << " microseconds)" << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << " ("
+             << federate->get_lookahead().get_time_in_micros() << " microseconds)" << endl
              << "  update_time=" << update_time.get_time_in_seconds() << " ("
              << update_time.get_time_in_micros() << " microseconds)" << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << " ("
@@ -2053,8 +2054,8 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: AttributeNotOwned" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -2068,8 +2069,8 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: ObjectInstanceNotKnown" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -2083,8 +2084,8 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: AttributeNotDefined" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -2098,8 +2099,8 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: FederateNotExecutionMember" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -2113,8 +2114,8 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: SaveInProgress" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -2128,8 +2129,8 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: RestoreInProgress" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -2143,8 +2144,8 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: NotConnected" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -2158,8 +2159,8 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: RTIinternalError" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -2175,8 +2176,8 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " RTI1516_EXCEPTION" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
@@ -2327,12 +2328,12 @@ void Object::send_init_data()
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-   Federate *trick_fed = get_federate();
+   Federate *federate = get_federate();
 
    RTIambassador *rti_amb = get_RTI_ambassador();
 
    // Update the time for the data we're about to send out
-   Int64Time t = trick_fed->get_granted_time();
+   Int64Time t = federate->get_granted_time();
    set_last_update_time( t.get() );
 
    // If we have a data packing object then pack the data now.
@@ -2356,7 +2357,7 @@ void Object::send_init_data()
    try {
       // Do not send any data if federate save / restore has begun (see
       // IEEE-1516.1-2000 sections 4.12, 4.20)
-      if ( trick_fed->should_publish_data() ) {
+      if ( federate->should_publish_data() ) {
 
          if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
             send_hs( stdout, "Object::send_init_data():%d For object '%s', updating attribute values as Receive Order.%c",
@@ -2385,10 +2386,10 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: InvalidLogicalTime" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << " ("
-             << trick_fed->get_granted_time().get_time_in_micros() << " microseconds)" << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << " ("
-             << trick_fed->get_lookahead().get_time_in_micros() << " microseconds)" << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << " ("
+             << federate->get_granted_time().get_time_in_micros() << " microseconds)" << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << " ("
+             << federate->get_lookahead().get_time_in_micros() << " microseconds)" << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << " ("
              << this->last_update_time.get_time_in_micros() << " microseconds)" << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << " ("
@@ -2403,8 +2404,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: AttributeNotOwned" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
@@ -2417,8 +2418,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: ObjectInstanceNotKnown" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
@@ -2431,8 +2432,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: AttributeNotDefined" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
@@ -2445,8 +2446,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: FederateNotExecutionMember" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
@@ -2459,8 +2460,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: SaveInProgress" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
@@ -2473,8 +2474,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: RestoreInProgress" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
@@ -2487,8 +2488,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: NotConnected" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
@@ -2501,8 +2502,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: RTIinternalError" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
@@ -2517,8 +2518,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: " << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << trick_fed->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << trick_fed->get_lookahead().get_time_in_seconds() << endl
+             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
              << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
              << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
@@ -2963,10 +2964,10 @@ void Object::pull_ownership()
 
    double current_time = 0.0;
 
-   Federate *trick_fed = get_federate();
+   Federate *federate = get_federate();
 
    // Use the HLA Federated Logical Time if time management is enabled.
-   if ( ( trick_fed != NULL ) && trick_fed->is_time_management_enabled() ) {
+   if ( federate->is_time_management_enabled() ) {
 
       try {
          HLAinteger64Time HLAtime;
@@ -2995,7 +2996,7 @@ void Object::pull_ownership()
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
    } else {
       // Use the simulation time for the current time.
-      current_time = get_federate()->get_execution_control()->get_sim_time();
+      current_time = federate->get_execution_control()->get_sim_time();
    }
 
    THLAAttributeMap *                    attr_map;
@@ -3474,10 +3475,10 @@ void Object::push_ownership()
    // Get the current time.
    double current_time = 0.0;
 
-   Federate *trick_fed = get_federate();
+   Federate *federate = get_federate();
 
    // Use the HLA Federated Logical Time if time management is enabled.
-   if ( ( trick_fed != NULL ) && trick_fed->is_time_management_enabled() ) {
+   if ( federate->is_time_management_enabled() ) {
 
       try {
          HLAinteger64Time HLAtime;
@@ -3506,7 +3507,7 @@ void Object::push_ownership()
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
    } else {
       // Use the simulation time for the current time.
-      current_time = get_federate()->get_execution_control()->get_sim_time();
+      current_time = federate->get_execution_control()->get_sim_time();
    }
 
    THLAAttributeMap *                    attr_map;
@@ -3921,9 +3922,9 @@ Int64Time const &Object::get_update_time_plus_lookahead()
    time_plus_lookahead = last_update_time;
 
    // Get the Trick-Federate.
-   Federate *trick_fed = get_federate();
-   if ( trick_fed != NULL ) {
-      time_plus_lookahead += trick_fed->get_lookahead();
+   Federate *federate = get_federate();
+   if ( federate != NULL ) {
+      time_plus_lookahead += federate->get_lookahead();
    } else {
       send_hs( stderr, "Object::get_update_time_plus_lookahead():%d Unexpected NULL Trick-Federate.%c",
                __LINE__, THLA_NEWLINE );
@@ -4073,11 +4074,11 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
                   __LINE__, get_name(), rti_err_msg.c_str(), THLA_NEWLINE );
       }
 
-      Federate *trick_fed = get_federate();
+      Federate *federate = get_federate();
 
       int          i;
       long long    wallclock_time;
-      SleepTimeout print_timer( trick_fed->wait_status_time );
+      SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
       // Perform a blocking loop until ownership of all locally owned published
@@ -4127,7 +4128,7 @@ rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generate
          } // end of 'for' loop
 
          // Check for shutdown.
-         get_federate()->check_for_shutdown_with_termination();
+         federate->check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 
@@ -4138,7 +4139,7 @@ rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generate
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
-               if ( !trick_fed->is_execution_member() ) {
+               if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "Object::pull_ownership_upon_rejoin():" << __LINE__
                          << " ERROR: Unexpectedly the Federate is no longer an execution member."

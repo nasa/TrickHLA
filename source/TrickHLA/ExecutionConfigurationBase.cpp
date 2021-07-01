@@ -242,19 +242,21 @@ void ExecutionConfigurationBase::wait_for_registration()
                __LINE__, THLA_NEWLINE );
    }
 
+   Federate *federate = get_federate();
+
    int  obj_reg_cnt   = 0;
    bool print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG );
    bool any_unregistered_obj;
    int  total_obj_cnt = 1;
 
    long long    wallclock_time;
-   SleepTimeout print_timer( get_federate()->wait_status_time );
+   SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
 
    do {
 
       // Check for shutdown.
-      get_federate()->check_for_shutdown_with_termination();
+      federate->check_for_shutdown_with_termination();
 
       // Data objects.
       if ( obj_reg_cnt < total_obj_cnt ) {
@@ -318,7 +320,7 @@ void ExecutionConfigurationBase::wait_for_registration()
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
-               if ( !get_federate()->is_execution_member() ) {
+               if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "ExecutionConfigurationBase::wait_for_registration():" << __LINE__
                          << " Unexpectedly the Federate is no longer an execution member."
@@ -358,7 +360,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
    if ( this->any_remotely_owned_subscribed_init_attribute() ) {
 
       long long    wallclock_time;
-      SleepTimeout print_timer( get_federate()->wait_status_time );
+      SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
       // Wait for the data to arrive.
