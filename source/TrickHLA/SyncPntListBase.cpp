@@ -805,7 +805,7 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
       }
 
       bool         print_summary = DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE );
-      long long    wallclock_time; // cppcheck-suppress [variableScope,unmatchedSuppression]
+      long long    wallclock_time;
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
@@ -830,36 +830,39 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
 
          (void)sleep_timer.sleep();
 
-         // To be more efficient, we get the time once and share it.
-         wallclock_time = sleep_timer.time();
-
-         // Check to make sure we're still a member of the federation execution.
-         if ( sleep_timer.timeout( wallclock_time ) ) {
-            sleep_timer.reset();
-            if ( !federate->is_execution_member() ) {
-               ostringstream errmsg;
-               errmsg << "SyncPntListBase::wait_for_sync_point_announcement():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution"
-                      << " member. This means we are either not connected to the"
-                      << " RTI or we are no longer joined to the federation"
-                      << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!" << THLA_ENDL;
-               DebugHandler::terminate_with_message( errmsg.str() );
-            }
-         }
-
-         // Determine if we should print a summary.
-         if ( print_timer.timeout( wallclock_time ) ) {
-            print_timer.reset();
-            print_summary = true;
-         }
-
          // Critical code section.
          {
             // When auto_unlock_mutex goes out of scope it automatically unlocks the
             // mutex even if there is an exception.
             MutexProtection auto_unlock_mutex( &mutex );
             announced = sp->is_announced();
+         }
+
+         if ( !announced ) {
+
+            // To be more efficient, we get the time once and share it.
+            wallclock_time = sleep_timer.time();
+
+            // Check to make sure we're still a member of the federation execution.
+            if ( sleep_timer.timeout( wallclock_time ) ) {
+               sleep_timer.reset();
+               if ( !federate->is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "SyncPntListBase::wait_for_sync_point_announcement():" << __LINE__
+                         << " Unexpectedly the Federate is no longer an execution"
+                         << " member. This means we are either not connected to the"
+                         << " RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation at"
+                         << " the Central RTI Component (CRC) level!" << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
+               }
+            }
+
+            // Determine if we should print a summary.
+            if ( print_timer.timeout( wallclock_time ) ) {
+               print_timer.reset();
+               print_summary = true;
+            }
          }
       }
 
@@ -975,6 +978,7 @@ bool SyncPntListBase::wait_for_synchronization(
          }
 
          if ( !synchronized ) {
+
             // Always check to see is a shutdown was received.
             federate->check_for_shutdown_with_termination();
 

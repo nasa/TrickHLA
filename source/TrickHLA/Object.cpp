@@ -1078,6 +1078,10 @@ Waiting on reservation of Object Instance Name '%s'.%c",
    SleepTimeout sleep_timer;
 
    while ( !name_registered ) {
+
+      // Check for shutdown.
+      get_federate()->check_for_shutdown_with_termination();
+
       (void)sleep_timer.sleep();
 
       if ( !name_registered ) {
@@ -1280,6 +1284,10 @@ void Object::wait_for_object_registration()
    SleepTimeout sleep_timer;
 
    while ( !is_instance_handle_valid() ) {
+
+      // Check for shutdown.
+      get_federate()->check_for_shutdown_with_termination();
+
       (void)sleep_timer.sleep();
 
       if ( !is_instance_handle_valid() ) {
@@ -4067,6 +4075,7 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
 
       Federate *trick_fed = get_federate();
 
+      int          i;
       long long    wallclock_time;
       SleepTimeout print_timer( trick_fed->wait_status_time );
       SleepTimeout sleep_timer;
@@ -4079,7 +4088,7 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
          // reset ownership count for this loop through all the attributes
          ownership_counter = 0;
 
-         for ( int i = 0; i < attr_count; ++i ) {
+         for ( i = 0; i < attr_count; ++i ) {
             try {
                // IEEE 1516.1-2000 section 7.18
                if ( attributes[i].is_publish()
@@ -4116,6 +4125,9 @@ rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generate
                         rti_err_msg.c_str(), THLA_NEWLINE );
             }
          } // end of 'for' loop
+
+         // Check for shutdown.
+         get_federate()->check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 

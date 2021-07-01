@@ -3025,8 +3025,7 @@ void Manager::wait_for_discovery_of_objects()
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               send_hs( stdout, "Manager::wait_for_discovery_of_object_instance():%d \
-- blocking loop until object discovery callbacks arrive.%c",
+               send_hs( stdout, "Manager::wait_for_discovery_of_object_instance():%d Waiting...%c",
                         __LINE__, THLA_NEWLINE );
             }
 

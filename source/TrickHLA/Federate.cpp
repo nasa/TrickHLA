@@ -2818,6 +2818,10 @@ void Federate::setup_checkpoint()
 
          // need to wait for federation to initiate save
          while ( !start_to_save ) {
+
+            // Check for shutdown.
+            check_for_shutdown_with_termination();
+
             (void)sleep_timer.sleep();
 
             if ( !this->start_to_save ) {
@@ -3070,6 +3074,10 @@ void Federate::setup_restore()
 
       // need to wait for federation to initiate restore
       while ( !this->start_to_restore ) {
+
+         // Check for shutdown.
+         check_for_shutdown_with_termination();
+
          (void)sleep_timer.sleep();
 
          if ( !this->start_to_restore ) {
@@ -7798,6 +7806,10 @@ void Federate::restore_federate_handles_from_MOM()
       }
 
       if ( !all_found ) {
+
+         // Check for shutdown.
+         check_for_shutdown_with_termination();
+
          (void)sleep_timer.sleep();
 
          // To be more efficient, we get the time once and share it.
