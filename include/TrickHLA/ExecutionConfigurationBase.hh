@@ -80,7 +80,7 @@ class ExecutionConfigurationBase : public Object, public Packing
    ExecutionConfigurationBase();
    /*! @brief Initialization constructor for the TrickHLA ExecutionConfigurationBase class.
     *  @param s_define_name Full path name in the S_define for this ExecutionConfiguration instance. */
-   ExecutionConfigurationBase( const char *s_define_name );
+   explicit ExecutionConfigurationBase( const char *s_define_name );
    /*! @brief Pure virtual destructor for the TrickHLA ExecutionConfigurationBase class. */
    virtual ~ExecutionConfigurationBase() = 0;
 

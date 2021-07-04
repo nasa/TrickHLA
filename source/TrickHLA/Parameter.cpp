@@ -2978,12 +2978,11 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
 
                // Determine if we need to allocate more memory for the sim string.
                if ( (int)length >= get_size( *( (char **)address + i ) ) ) {
-                  *( (char **)address + i ) = (char *)TMM_resize_array_1d_a( *( (char **)address + i ),
-                                                                             (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+                  *( (char **)address + i ) = (char *)TMM_resize_array_1d_a( *( (char **)address + i ), length + 16 );
                }
             } else {
                // Allocate memory for the sim string.
-               *( (char **)address + i ) = (char *)TMM_declare_var_1d( "char", (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+               *( (char **)address + i ) = (char *)TMM_declare_var_1d( "char", length + 16 );
             }
 
             if ( *( (char **)address + i ) == NULL ) {
@@ -2991,7 +2990,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                errmsg << "Parameter::decode_string_from_buffer():" << __LINE__
                       << " ERROR: Could not allocate memory for ENCODING_C_STRING"
                       << " parameter '" << FOM_name << "' and length "
-                      << ( ( length > 0 ) ? ( length + 16 ) : 16 ) << "!" << THLA_ENDL;
+                      << ( length + 16 ) << "!" << THLA_ENDL;
                DebugHandler::terminate_with_message( errmsg.str() );
             }
 

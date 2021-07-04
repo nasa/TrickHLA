@@ -108,7 +108,7 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    ExecutionControlBase();
    /*! @brief Initialization constructor for the ExecutionControlBase class.
     *  @param exec_config The associated ExecutionConfigurationBase class instance. */
-   ExecutionControlBase( ExecutionConfigurationBase &exec_config );
+   explicit ExecutionControlBase( ExecutionConfigurationBase &exec_config );
    /*! @brief Destructor for the ExecutionControlBase class. */
    virtual ~ExecutionControlBase() = 0;
 

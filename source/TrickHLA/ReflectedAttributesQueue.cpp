@@ -98,7 +98,7 @@ const AttributeHandleValueMap &ReflectedAttributesQueue::front()
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &queue_mutex );
 
-   AttributeHandleValueMap &theAttributes = attribute_map_queue.front();
+   const AttributeHandleValueMap &theAttributes = attribute_map_queue.front();
    return theAttributes;
 }
 

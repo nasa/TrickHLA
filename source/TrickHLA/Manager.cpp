@@ -2954,14 +2954,15 @@ void Manager::wait_for_discovery_of_objects()
                __LINE__, THLA_NEWLINE );
    }
 
-   // do we have Simulation object(s) to interrogate?
+   // Do we have Simulation object(s) to interrogate?
    if ( obj_count > 0 ) {
 
-      // see if any object discoveries have occurred...
+      // See if any object discoveries have occurred...
+      int  n;
       int  required_count                   = 0;
       int  discovery_count                  = 0;
       bool create_HLA_instance_object_found = false;
-      for ( int n = 0; n < obj_count; ++n ) {
+      for ( n = 0; n < obj_count; ++n ) {
          if ( objects[n].is_required() ) {
             required_count++;
          }
@@ -2973,21 +2974,20 @@ void Manager::wait_for_discovery_of_objects()
          }
       }
 
-      // if all of the required objects were discovered, exit immediately.
+      // If all of the required objects were discovered, exit immediately.
       if ( discovery_count == required_count ) {
          return;
       }
 
-      // figure out how many objects have been discovered so far...
+      // Figure out how many objects have been discovered so far...
       if ( ( !create_HLA_instance_object_found && // still missing some objects other than
              ( discovery_count < ( required_count - 1 ) ) )
            ||                                           // the one for the rejoining federate, or
            ( create_HLA_instance_object_found &&        // missing some other object(s) but
              ( discovery_count < required_count ) ) ) { // found the rejoining federate
 
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            send_hs( stdout, "Manager::wait_for_discovery_of_object_instance():%d \
-- blocking loop until object discovery callbacks arrive.%c",
+         if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+            send_hs( stdout, "Manager::wait_for_discovery_of_object_instance():%d Waiting for object discovery callbacks to arrive.%c",
                      __LINE__, THLA_NEWLINE );
          }
 
@@ -2995,7 +2995,7 @@ void Manager::wait_for_discovery_of_objects()
          SleepTimeout print_timer( federate->wait_status_time );
          SleepTimeout sleep_timer;
 
-         // block until some / all arrive.
+         // Block until some / all arrive.
          do {
 
             // Check for shutdown.
@@ -3032,7 +3032,7 @@ void Manager::wait_for_discovery_of_objects()
             // Check if any objects were discovered while we were sleeping.
             discovery_count                  = 0;
             create_HLA_instance_object_found = false;
-            for ( int n = 0; n < obj_count; ++n ) {
+            for ( n = 0; n < obj_count; ++n ) {
                if ( objects[n].is_required() && objects[n].is_instance_handle_valid() ) {
                   ++discovery_count;
                   if ( objects[n].is_create_HLA_instance() ) {
@@ -3048,7 +3048,7 @@ void Manager::wait_for_discovery_of_objects()
                      ( discovery_count < required_count ) ) ); // found the rejoining federate
       }
    } else {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
          send_hs( stdout, "Manager::wait_for_discovery_of_object_instance():%d - No Objects to discover.%c",
                   __LINE__, THLA_NEWLINE );
       }

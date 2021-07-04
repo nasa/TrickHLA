@@ -3112,14 +3112,13 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                // TODO: Find a more efficient way to determine if we need to
                // reallocate memory for the string.
                if ( length >= get_size( (char *)output ) ) {
-                  *( (char **)ref2->address + i ) = (char *)TMM_resize_array_1d_a( *( (char **)ref2->address + i ),
-                                                                                   ( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+                  *( (char **)ref2->address + i ) = (char *)TMM_resize_array_1d_a( *( (char **)ref2->address + i ), length + 16 );
 
                   output = *( (unsigned char **)ref2->address + i );
                }
             } else {
                // Allocate memory for the sim string.
-               *( (char **)ref2->address + i ) = (char *)TMM_declare_var_1d( "char", ( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+               *( (char **)ref2->address + i ) = (char *)TMM_declare_var_1d( "char", length + 16 );
 
                output = *( (unsigned char **)ref2->address + i );
             }
@@ -3129,7 +3128,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
                       << " ERROR: Could not allocate memory for ENCODING_TYPE_C_STRING attribute '"
                       << FOM_name << "' with Trick name '" << trick_name
-                      << "' and length " << ( ( length > 0 ) ? ( length + 16 ) : 16 ) << "!" << THLA_ENDL;
+                      << "' and length " << ( length + 16 ) << "!" << THLA_ENDL;
                DebugHandler::terminate_with_message( errmsg.str() );
             } else {
 

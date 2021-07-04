@@ -290,8 +290,12 @@ Examples:\n  check_code -s -o -v\n  check_code -i -o -v\n  check_code -c -vv''' 
    #
    # Let's start building the cppcheck command arguments.
    #
-   # Skip the suppress directives if we are checking include header files.
-   if not args.check_includes:
+   # Suppress directives for non-TrickHLA include header files.
+   if args.check_includes:
+      trickhla_ignore.append( '--suppress=unmatchedSuppression' )
+      # Ignore/suppress the Trick header file warnings.
+      trickhla_ignore.append( '--suppress=missingInclude:' + trick_home + '/include/trick/rand_generator.h' )
+   else:
       # Ignore/suppress the HLA Evolved standard header file warnings.
       trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_home + '/include/RTI/Exception.h' )
       trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_home + '/include/RTI/Typedefs.h' )
@@ -301,6 +305,8 @@ Examples:\n  check_code -s -o -v\n  check_code -i -o -v\n  check_code -c -vv''' 
       trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_home + '/include/RTI/encoding/DataElement.h' )
       trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_home + '/include/RTI/encoding/HLAfixedRecord.h' )
       trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_home + '/include/RTI/time/HLAinteger64Time.h' )
+      # Ignore/suppress the Trick header file warnings.
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/ThreadTrigger.hh' )
 
    # Set the cppcheck arguments based on the type of code checking the user wants to do.
    if args.check_errors_only:
