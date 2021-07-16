@@ -541,7 +541,10 @@ void Attribute::initialize(
           << "  buffer_capacity:" << buffer_capacity << endl
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
           << "  rti_encoding:" << rti_encoding << endl;
-      if ( ( ref2->attr->type == TRICK_STRING ) || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) ) && ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
+      if ( ( ref2->attr->type == TRICK_STRING )
+           || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
+                && ( ref2->attr->num_index > 0 )
+                && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *(char **)ref2->address ) << "\"" << endl;
       }
       send_hs( stdout, (char *)msg.str().c_str() );
@@ -773,7 +776,9 @@ void Attribute::extract_data(       // RETURN: -- None
          break;
       }
       default: {
-         if ( ( ref2->attr->type != TRICK_STRING ) && ( attr_size != expected_byte_count ) && ( rti_encoding != ENCODING_UNICODE_STRING ) ) {
+         if ( ( ref2->attr->type != TRICK_STRING )
+              && ( attr_size != expected_byte_count )
+              && ( rti_encoding != ENCODING_UNICODE_STRING ) ) {
 
             ostringstream errmsg;
             errmsg << "Attribute::extract_data():" << __LINE__
@@ -849,7 +854,10 @@ void Attribute::calculate_size_and_number_of_items()
    size_t num_bytes = 0;
 
    // Handle Strings differently since we need to know the length of each string.
-   if ( ( ref2->attr->type == TRICK_STRING ) || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) ) && ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
+   if ( ( ref2->attr->type == TRICK_STRING )
+        || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
+             && ( ref2->attr->num_index > 0 )
+             && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
 
       calculate_static_number_of_items();
 
@@ -945,7 +953,10 @@ void Attribute::calculate_size_and_number_of_items()
           << "  buffer_capacity:" << buffer_capacity << endl
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
           << "  rti_encoding:" << rti_encoding << endl;
-      if ( ( ref2->attr->type == TRICK_STRING ) || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) ) && ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
+      if ( ( ref2->attr->type == TRICK_STRING )
+           || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
+                && ( ref2->attr->num_index > 0 )
+                && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *(char **)ref2->address ) << "\"" << endl;
       }
       send_hs( stdout, (char *)msg.str().c_str() );
@@ -1031,7 +1042,10 @@ void Attribute::pack_attribute_buffer()
           << "  buffer_capacity:" << buffer_capacity << endl
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
           << "  rti_encoding:" << rti_encoding << endl;
-      if ( ( ref2->attr->type == TRICK_STRING ) || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) ) && ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
+      if ( ( ref2->attr->type == TRICK_STRING )
+           || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
+                && ( ref2->attr->num_index > 0 )
+                && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *(char **)ref2->address ) << "\"" << endl;
       }
       send_hs( stdout, (char *)msg.str().c_str() );
@@ -1109,7 +1123,10 @@ void Attribute::pack_attribute_buffer()
       }
       default: {
          // Must handle the string as a special case because of special encodings.
-         if ( ( ref2->attr->type == TRICK_STRING ) || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) ) && ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
+         if ( ( ref2->attr->type == TRICK_STRING )
+              || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
+                   && ( ref2->attr->num_index > 0 )
+                   && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
             // NOTE: For now we must calculate size every time because on a
             // receive, the 'size' is adjusted to the number of bytes received
             // and does not reflect what we are sending. We only have this
@@ -1139,7 +1156,8 @@ void Attribute::pack_attribute_buffer()
             ensure_buffer_capacity( size );
 
             // Determine if the users variable is a pointer.
-            if ( ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) {
+            if ( ( ref2->attr->num_index > 0 )
+                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) {
                // It's a pointer
 
                // Byteswap if needed and copy the attribute to the buffer.
@@ -1197,7 +1215,10 @@ void Attribute::pack_attribute_buffer()
            << "  buffer_capacity:" << buffer_capacity << endl
            << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
            << "  rti_encoding:" << rti_encoding << endl;
-      if ( ( ref2->attr->type == TRICK_STRING ) || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) ) && ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
+      if ( ( ref2->attr->type == TRICK_STRING )
+           || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
+                && ( ref2->attr->num_index > 0 )
+                && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
          msg2 << "  value:\"" << ( *(char **)ref2->address ) << "\"" << endl;
       }
       send_hs( stdout, (char *)msg2.str().c_str() );
@@ -1272,7 +1293,10 @@ void Attribute::unpack_attribute_buffer()
       }
       default: {
          // Must handle the string as a special case because of special encodings.
-         if ( ( ref2->attr->type == TRICK_STRING ) || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) ) && ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
+         if ( ( ref2->attr->type == TRICK_STRING )
+              || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
+                   && ( ref2->attr->num_index > 0 )
+                   && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
             // The size is the received size but recalculate the number of items.
             if ( !size_is_static ) {
                if ( ref2->attr->type == TRICK_STRING ) {
@@ -1360,7 +1384,10 @@ void Attribute::unpack_attribute_buffer()
           << "  buffer_capacity:" << buffer_capacity << endl
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
           << "  rti_encoding:" << rti_encoding << endl;
-      if ( ( ref2->attr->type == TRICK_STRING ) || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) ) && ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
+      if ( ( ref2->attr->type == TRICK_STRING )
+           || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
+                && ( ref2->attr->num_index > 0 )
+                && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *(char **)ref2->address ) << "\"" << endl;
       }
       send_hs( stdout, (char *)msg.str().c_str() );

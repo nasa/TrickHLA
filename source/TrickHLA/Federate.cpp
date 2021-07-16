@@ -7036,7 +7036,8 @@ void Federate::wait_for_restore_request_callback()
    SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
-   while ( !has_restore_process_restore_request_failed() && !has_restore_process_restore_request_succeeded() ) {
+   while ( !has_restore_process_restore_request_failed()
+           && !has_restore_process_restore_request_succeeded() ) {
 
       // Check for shutdown.
       check_for_shutdown_with_termination();

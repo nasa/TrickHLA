@@ -514,7 +514,10 @@ void Parameter::complete_initialization()
           << "  buffer_capacity:" << buffer_capacity << endl
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
           << "  rti_encoding:" << rti_encoding << endl;
-      if ( ( attr->type == TRICK_STRING ) || ( ( ( attr->type == TRICK_CHARACTER ) || ( attr->type == TRICK_UNSIGNED_CHARACTER ) ) && ( attr->num_index > 0 ) && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
+      if ( ( attr->type == TRICK_STRING )
+           || ( ( ( attr->type == TRICK_CHARACTER ) || ( attr->type == TRICK_UNSIGNED_CHARACTER ) )
+                && ( attr->num_index > 0 )
+                && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *(char **)address ) << "\"" << endl;
       }
       send_hs( stdout, (char *)msg.str().c_str() );
@@ -758,7 +761,10 @@ void Parameter::calculate_size_and_number_of_items()
    size_t num_bytes = 0;
 
    // Handle Strings differently since we need to know the length of each string.
-   if ( ( attr->type == TRICK_STRING ) || ( ( ( attr->type == TRICK_CHARACTER ) || ( attr->type == TRICK_UNSIGNED_CHARACTER ) ) && ( attr->num_index > 0 ) && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
+   if ( ( attr->type == TRICK_STRING )
+        || ( ( ( attr->type == TRICK_CHARACTER ) || ( attr->type == TRICK_UNSIGNED_CHARACTER ) )
+             && ( attr->num_index > 0 )
+             && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
 
       calculate_static_number_of_items();
 
@@ -849,7 +855,10 @@ void Parameter::calculate_size_and_number_of_items()
           << "  buffer_capacity:" << buffer_capacity << endl
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
           << "  rti_encoding:" << rti_encoding << endl;
-      if ( ( attr->type == TRICK_STRING ) || ( ( ( attr->type == TRICK_CHARACTER ) || ( attr->type == TRICK_UNSIGNED_CHARACTER ) ) && ( attr->num_index > 0 ) && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
+      if ( ( attr->type == TRICK_STRING )
+           || ( ( ( attr->type == TRICK_CHARACTER ) || ( attr->type == TRICK_UNSIGNED_CHARACTER ) )
+                && ( attr->num_index > 0 )
+                && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *(char **)address ) << "\"" << endl;
       }
       send_hs( stdout, (char *)msg.str().c_str() );
@@ -932,7 +941,10 @@ void Parameter::pack_parameter_buffer()
           << "  buffer_capacity:" << buffer_capacity << endl
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
           << "  rti_encoding:" << rti_encoding << endl;
-      if ( ( attr->type == TRICK_STRING ) || ( ( ( attr->type == TRICK_CHARACTER ) || ( attr->type == TRICK_UNSIGNED_CHARACTER ) ) && ( attr->num_index > 0 ) && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
+      if ( ( attr->type == TRICK_STRING )
+           || ( ( ( attr->type == TRICK_CHARACTER ) || ( attr->type == TRICK_UNSIGNED_CHARACTER ) )
+                && ( attr->num_index > 0 )
+                && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *(char **)address ) << "\"" << endl;
       }
       send_hs( stdout, (char *)msg.str().c_str() );
@@ -996,7 +1008,10 @@ void Parameter::pack_parameter_buffer()
       }
       default: {
          // Must handle the string as a special case because of special encodings.
-         if ( ( attr->type == TRICK_STRING ) || ( ( ( attr->type == TRICK_CHARACTER ) || ( attr->type == TRICK_UNSIGNED_CHARACTER ) ) && ( attr->num_index > 0 ) && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
+         if ( ( attr->type == TRICK_STRING )
+              || ( ( ( attr->type == TRICK_CHARACTER ) || ( attr->type == TRICK_UNSIGNED_CHARACTER ) )
+                   && ( attr->num_index > 0 )
+                   && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
 
             // NOTE: For now we must calculate size everytime because on a receive,
             // the 'size' is adjusted to the number of bytes received and does not
@@ -1082,7 +1097,10 @@ void Parameter::pack_parameter_buffer()
           << "  buffer_capacity:" << buffer_capacity << endl
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
           << "  rti_encoding:" << rti_encoding << endl;
-      if ( ( attr->type == TRICK_STRING ) || ( ( ( attr->type == TRICK_CHARACTER ) || ( attr->type == TRICK_UNSIGNED_CHARACTER ) ) && ( attr->num_index > 0 ) && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
+      if ( ( attr->type == TRICK_STRING )
+           || ( ( ( attr->type == TRICK_CHARACTER ) || ( attr->type == TRICK_UNSIGNED_CHARACTER ) )
+                && ( attr->num_index > 0 )
+                && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *(char **)address ) << "\"" << endl;
       }
       send_hs( stdout, (char *)msg.str().c_str() );
@@ -1143,7 +1161,10 @@ void Parameter::unpack_parameter_buffer()
       }
       default: {
          // Must handle the string as a special case because of special encodings.
-         if ( ( attr->type == TRICK_STRING ) || ( ( ( attr->type == TRICK_CHARACTER ) || ( attr->type == TRICK_UNSIGNED_CHARACTER ) ) && ( attr->num_index > 0 ) && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
+         if ( ( attr->type == TRICK_STRING )
+              || ( ( ( attr->type == TRICK_CHARACTER ) || ( attr->type == TRICK_UNSIGNED_CHARACTER ) )
+                   && ( attr->num_index > 0 )
+                   && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
 
             // The size is the received size but recalculate the number of items.
             if ( !size_is_static ) {
@@ -1228,7 +1249,10 @@ void Parameter::unpack_parameter_buffer()
           << "  buffer_capacity:" << buffer_capacity << endl
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
           << "  rti_encoding:" << rti_encoding << endl;
-      if ( ( attr->type == TRICK_STRING ) || ( ( ( attr->type == TRICK_CHARACTER ) || ( attr->type == TRICK_UNSIGNED_CHARACTER ) ) && ( attr->num_index > 0 ) && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
+      if ( ( attr->type == TRICK_STRING )
+           || ( ( ( attr->type == TRICK_CHARACTER ) || ( attr->type == TRICK_UNSIGNED_CHARACTER ) )
+                && ( attr->num_index > 0 )
+                && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *(char **)address ) << "\"" << endl;
       }
       send_hs( stdout, (char *)msg.str().c_str() );

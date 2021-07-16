@@ -878,8 +878,7 @@ void Manager::add_object_to_map(
    // Add the registered ExecutionConfiguration object instance to the map
    // only if it is not already in it.
    if ( ( object->is_instance_handle_valid() )
-        && ( this->object_map.find( object->get_instance_handle() )
-             == this->object_map.end() ) ) {
+        && ( this->object_map.find( object->get_instance_handle() ) == this->object_map.end() ) ) {
       this->object_map[object->get_instance_handle()] = object;
    }
    return;
@@ -1504,7 +1503,8 @@ void Manager::unpublish()
          for ( k = 0; ( k < i ) && do_unpublish; ++k ) {
             // Unpublish an object Class only once, so see if we have already
             // unpublished from the same object class that was published.
-            if ( objects[k].any_attribute_published() && ( objects[i].get_class_handle() == objects[k].get_class_handle() ) ) {
+            if ( objects[k].any_attribute_published()
+                 && ( objects[i].get_class_handle() == objects[k].get_class_handle() ) ) {
                do_unpublish = false;
             }
          }
@@ -1522,7 +1522,8 @@ void Manager::unpublish()
          for ( k = 0; ( k < i ) && do_unpublish; ++k ) {
             // Unpublish an interaction Class only once, so see if we have
             // already unpublished the same interaction class that was published.
-            if ( interactions[k].is_publish() && ( interactions[i].get_class_handle() == interactions[k].get_class_handle() ) ) {
+            if ( interactions[k].is_publish()
+                 && ( interactions[i].get_class_handle() == interactions[k].get_class_handle() ) ) {
                do_unpublish = false;
             }
          }
@@ -1587,7 +1588,8 @@ void Manager::unsubscribe()
             // Unsubscribe from an object Class only once, so see if
             // we have already unsubscribed from the same object class
             // that was subscribed to.
-            if ( objects[k].any_attribute_subscribed() && ( objects[i].get_class_handle() == objects[k].get_class_handle() ) ) {
+            if ( objects[k].any_attribute_subscribed()
+                 && ( objects[i].get_class_handle() == objects[k].get_class_handle() ) ) {
                do_unsubscribe = false;
             }
          }
@@ -1606,7 +1608,8 @@ void Manager::unsubscribe()
             // Unsubscribe from an interaction Class only once, so see if
             // we have already unsubscribed from the same interaction class
             // that was subscribed to.
-            if ( interactions[k].is_subscribe() && ( interactions[i].get_class_handle() == interactions[k].get_class_handle() ) ) {
+            if ( interactions[k].is_subscribe()
+                 && ( interactions[i].get_class_handle() == interactions[k].get_class_handle() ) ) {
                do_unsubscribe = false;
             }
          }
@@ -1704,7 +1707,8 @@ void Manager::register_objects_with_RTI()
 
       // Add the registered object instance to the map and only if it is
       // not already in it.
-      if ( ( objects[n].is_instance_handle_valid() ) && ( object_map.find( objects[n].get_instance_handle() ) == object_map.end() ) ) {
+      if ( ( objects[n].is_instance_handle_valid() )
+           && ( object_map.find( objects[n].get_instance_handle() ) == object_map.end() ) ) {
          object_map[objects[n].get_instance_handle()] = &objects[n];
       }
    }
@@ -2066,7 +2070,8 @@ void Manager::set_object_instance_handles_by_name(
 
             // Now that we have an instance handle, add it to the object-map if
             // it is not already in it.
-            if ( ( data_objects[n].is_instance_handle_valid() ) && ( object_map.find( data_objects[n].get_instance_handle() ) == object_map.end() ) ) {
+            if ( ( data_objects[n].is_instance_handle_valid() )
+                 && ( object_map.find( data_objects[n].get_instance_handle() ) == object_map.end() ) ) {
                object_map[data_objects[n].get_instance_handle()] = &data_objects[n];
             }
 
@@ -2292,7 +2297,9 @@ void Manager::process_interactions()
          case TRICKHLA_MANAGER_USER_DEFINED_INTERACTION: {
             // Process the interaction if we subscribed to it and the interaction
             // index is valid.
-            if ( interaction_item->index >= 0 && interaction_item->index < inter_count && interactions[interaction_item->index].is_subscribe() ) {
+            if ( ( interaction_item->index >= 0 )
+                 && ( interaction_item->index < inter_count )
+                 && interactions[interaction_item->index].is_subscribe() ) {
 
                interactions[interaction_item->index].extract_data( interaction_item );
 
@@ -2518,7 +2525,8 @@ Object *Manager::get_unregistered_object(
       // Find the object that is not registered (i.e. the instance ID == 0),
       // has the same class handle as the one specified, and has the same name
       // as the object instance name that is specified.
-      if ( ( objects[n].get_class_handle() == theObjectClass ) && ( !objects[n].is_instance_handle_valid() ) ) {
+      if ( ( objects[n].get_class_handle() == theObjectClass )
+           && ( !objects[n].is_instance_handle_valid() ) ) {
 
          StringUtilities::to_wstring( ws_obj_name, objects[n].get_name() );
 
@@ -2548,7 +2556,12 @@ Object *Manager::get_unregistered_remote_object(
       // registered (i.e. the instance ID == 0), and does not have an Object
       // Instance Name associated with it, and a name is not required or the
       // user did not specify one.
-      if ( ( !objects[n].is_create_HLA_instance() ) && ( objects[n].get_class_handle() == theObjectClass ) && ( !objects[n].is_instance_handle_valid() ) && ( !objects[n].is_name_required() || ( objects[n].get_name() == NULL ) || ( *( objects[n].get_name() ) == '\0' ) ) ) {
+      if ( ( !objects[n].is_create_HLA_instance() )
+           && ( objects[n].get_class_handle() == theObjectClass )
+           && ( !objects[n].is_instance_handle_valid() )
+           && ( !objects[n].is_name_required()
+                || ( objects[n].get_name() == NULL )
+                || ( *( objects[n].get_name() ) == '\0' ) ) ) {
          return ( &objects[n] );
       }
    }
@@ -3065,7 +3078,9 @@ bool Manager::is_this_a_rejoining_federate()
 {
    for ( int n = 0; n < obj_count; ++n ) {
       // Was the required 'create_HLA_instance' object found?
-      if ( objects[n].is_required() && objects[n].is_create_HLA_instance() && objects[n].is_instance_handle_valid() ) {
+      if ( objects[n].is_required()
+           && objects[n].is_create_HLA_instance()
+           && objects[n].is_instance_handle_valid() ) {
 
          // Set a flag to indicate that this federate is rejoining the federation
          rejoining_federate = true;

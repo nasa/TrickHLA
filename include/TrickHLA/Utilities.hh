@@ -93,18 +93,20 @@ extern fpu_control_t __fpu_control;
 #   define _FPU_PC_PRINT( pc ) ( ( ( pc & _FPU_PC_MASK ) == _FPU_PC_EXTENDED ) ? "Extended Double-Precision 64-bit" : ( ( ( pc & _FPU_PC_MASK ) == _FPU_PC_DOUBLE ) ? "Double-Precision 53-bit" : ( ( ( pc & _FPU_PC_MASK ) == _FPU_PC_SINGLE ) ? "Single-Precision 24-bit" : "Undefined" ) ) )
 
 #   if defined( TRICKHLA_ENABLE_FPU_CONTROL_WORD_VALIDATION )
-#      define TRICKHLA_VALIDATE_FPU_CONTROL_WORD                                                          \
-         {                                                                                                \
-            TRICKHLA_SAVE_FPU_CONTROL_WORD;                                                               \
-            if ( ( _fpu_cw & _FPU_PC_MASK ) != ( __fpu_control & _FPU_PC_MASK ) )                         \
-               send_hs( stderr,                                                                           \
-                        "%s:%d WARNING: We have detected that the current Floating-Point Unit (FPU) \
-Control-Word Precision-Control value (%#x: %s) does not match the Precision-Control \
-value at program startup (%#x: %s). The change in FPU Control-Word Precision-Control \
-could cause the numerical values in your simulation to be slightly different in \
-the 7th or 8th decimal place. Please contact the TrickHLA team for support.%c",                           \
-                        __FILE__, __LINE__, ( _fpu_cw & _FPU_PC_MASK ), _FPU_PC_PRINT( _fpu_cw ),         \
-                        ( __fpu_control & _FPU_PC_MASK ), _FPU_PC_PRINT( __fpu_control ), THLA_NEWLINE ); \
+#      define TRICKHLA_VALIDATE_FPU_CONTROL_WORD                                    \
+         {                                                                          \
+            TRICKHLA_SAVE_FPU_CONTROL_WORD;                                         \
+            if ( ( _fpu_cw & _FPU_PC_MASK ) != ( __fpu_control & _FPU_PC_MASK ) ) { \
+               send_hs( stderr, "%s:%d WARNING: We have detected that the current \
+Floating-Point Unit (FPU) Control-Word Precision-Control value (%#x: %s) does not \
+match the Precision-Control value at program startup (%#x: %s). The change in FPU \
+Control-Word Precision-Control could cause the numerical values in your simulation \
+to be slightly different in the 7th or 8th decimal place. Please contact the \
+TrickHLA team for support.%c",                                                      \
+                        __FILE__, __LINE__, ( _fpu_cw & _FPU_PC_MASK ),             \
+                        _FPU_PC_PRINT( _fpu_cw ), ( __fpu_control & _FPU_PC_MASK ), \
+                        _FPU_PC_PRINT( __fpu_control ), THLA_NEWLINE );             \
+            }                                                                       \
          }
 #   else
 #      define TRICKHLA_VALIDATE_FPU_CONTROL_WORD // FPU Control Word validation not enabled.
