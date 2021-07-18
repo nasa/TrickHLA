@@ -1597,8 +1597,12 @@ void Attribute::decode_logical_time() // RETURN: -- None.
       }
       case TRICK_UNSIGNED_LONG_LONG: {
          unsigned long long *ull_dest = (unsigned long long *)ref2->address;
-         int64_t             value    = logical_time / MICROS_MULTIPLIER;
-         ull_dest[0]                  = ( value > MAX_VALUE_IN_MICROS ) ? (unsigned long long)MAX_VALUE_IN_MICROS : (unsigned long long)value;
+
+         int64_t value = logical_time / MICROS_MULTIPLIER;
+
+         ull_dest[0] = ( value > MAX_VALUE_IN_MICROS )
+                          ? (unsigned long long)MAX_VALUE_IN_MICROS
+                          : (unsigned long long)value;
          break;
       }
       default: {
@@ -1763,7 +1767,8 @@ size %d, will use the data buffer size instead.%c",
                // WORKAROUND: Trick 10 can't handle a length of zero so to
                // workaround the memory manager problem use a size of 1 in
                // the allocation.
-               ref2->address = (char *)TMM_resize_array_1d_a( (char *)ref2->address, ( ( decoded_length > 0 ) ? decoded_length : 1 ) );
+               ref2->address = (char *)TMM_resize_array_1d_a( (char *)ref2->address,
+                                                              ( ( decoded_length > 0 ) ? decoded_length : 1 ) );
                output        = (unsigned char *)ref2->address;
             }
          } else {
@@ -1820,7 +1825,9 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             output = buffer;
 
             // The encoded size is an HLAinteger32BE.
-            int encoded_size = ( num_elements <= (size_t)std::numeric_limits< int >::max() ) ? (int)num_elements : std::numeric_limits< int >::max();
+            int encoded_size = ( num_elements <= (size_t)std::numeric_limits< int >::max() )
+                                  ? (int)num_elements
+                                  : std::numeric_limits< int >::max();
 
             // Store the number of elements as an HLAinteger32BE (Big Endian).
             if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
@@ -1856,7 +1863,9 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
 
             // Number of HLAASCIIstring elements to be encoded in the
             // HLAvariableArray. The encoded size is an HLAinteger32BE.
-            int num_outer_elements = ( num_items <= (size_t)std::numeric_limits< int >::max() ) ? (int)num_items : std::numeric_limits< int >::max();
+            int num_outer_elements = ( num_items <= (size_t)std::numeric_limits< int >::max() )
+                                        ? (int)num_items
+                                        : std::numeric_limits< int >::max();
 
             // Encoded size is the number of outer elements (HLAuncodeString)
             // then a HLAuncodeString element followed by an optional pad then
@@ -1900,7 +1909,9 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
                size_t length = ( s != NULL ) ? strlen( s ) : 0;
 
                // The encoded size is an HLAinteger32BE.
-               int encoded_size = ( length <= (size_t)std::numeric_limits< int >::max() ) ? (int)length : std::numeric_limits< int >::max();
+               int encoded_size = ( length <= (size_t)std::numeric_limits< int >::max() )
+                                     ? (int)length
+                                     : std::numeric_limits< int >::max();
 
                // Store the number of elements as an HLAinteger32BE (Big Endian).
                if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
@@ -1962,7 +1973,9 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             output = buffer;
 
             // The encoded size is an HLAinteger32BE.
-            int encoded_size = ( num_elements <= (size_t)std::numeric_limits< int >::max() ) ? (int)num_elements : std::numeric_limits< int >::max();
+            int encoded_size = ( num_elements <= (size_t)std::numeric_limits< int >::max() )
+                                  ? (int)num_elements
+                                  : std::numeric_limits< int >::max();
 
             // Store the number of elements as an HLAinteger32BE (Big Endian).
             if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
@@ -1997,7 +2010,9 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
 
             // Number of HLAASCIIstring elements to be encoded in the
             // HLAvariableArray. The encoded size is an HLAinteger32BE.
-            int num_outer_elements = ( num_items <= (size_t)std::numeric_limits< int >::max() ) ? (int)num_items : std::numeric_limits< int >::max();
+            int num_outer_elements = ( num_items <= (size_t)std::numeric_limits< int >::max() )
+                                        ? (int)num_items
+                                        : std::numeric_limits< int >::max();
 
             // Encoded size is the number of outer elements (HLAASCIIstring)
             // then a HLAASCIIstring element followed by an optional pad then
@@ -2041,7 +2056,9 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
                size_t length = ( s != NULL ) ? strlen( s ) : 0;
 
                // The encoded size is an HLAinteger32BE.
-               int encoded_size = ( length <= (size_t)std::numeric_limits< int >::max() ) ? (int)length : std::numeric_limits< int >::max();
+               int encoded_size = ( length <= (size_t)std::numeric_limits< int >::max() )
+                                     ? (int)length
+                                     : std::numeric_limits< int >::max();
 
                // Store the number of elements as an HLAinteger32BE (Big Endian).
                if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
@@ -2108,7 +2125,9 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             output = buffer;
 
             // The encoded size is an HLAinteger32BE.
-            int encoded_size = ( num_elements <= (size_t)std::numeric_limits< int >::max() ) ? (int)num_elements : std::numeric_limits< int >::max();
+            int encoded_size = ( num_elements <= (size_t)std::numeric_limits< int >::max() )
+                                  ? (int)num_elements
+                                  : std::numeric_limits< int >::max();
 
             // Store the number of elements as an HLAinteger32BE (Big Endian).
             if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
@@ -2138,7 +2157,9 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
 
             // Number of HLAASCIIstring elements to be encoded in the
             // HLAvariableArray. The encoded size is an HLAinteger32BE.
-            int num_outer_elements = ( num_items <= (size_t)std::numeric_limits< int >::max() ) ? (int)num_items : std::numeric_limits< int >::max();
+            int num_outer_elements = ( num_items <= (size_t)std::numeric_limits< int >::max() )
+                                        ? (int)num_items
+                                        : std::numeric_limits< int >::max();
 
             // We need to determine the total number of bytes of data.
             num_elements = 0;
@@ -2195,7 +2216,9 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
                size_t length     = ( trick_size >= 0 ) ? (size_t)trick_size : 0;
 
                // The encoded size is an HLAinteger32BE.
-               int encoded_size = ( length <= (size_t)std::numeric_limits< int >::max() ) ? (int)length : std::numeric_limits< int >::max();
+               int encoded_size = ( length <= (size_t)std::numeric_limits< int >::max() )
+                                     ? (int)length
+                                     : std::numeric_limits< int >::max();
 
                // Store the number of elements as an HLAinteger32BE (Big Endian).
                if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
@@ -3381,18 +3404,32 @@ bool Attribute::is_supported_attribute_type() const // RETURN: -- True if suppor
 
    switch ( ref2->attr->type ) {
       case TRICK_BOOLEAN: {
-         return ( ( rti_encoding == ENCODING_BIG_ENDIAN ) || ( rti_encoding == ENCODING_LITTLE_ENDIAN ) || ( rti_encoding == ENCODING_BOOLEAN ) || ( rti_encoding == ENCODING_UNKNOWN ) || ( rti_encoding == ENCODING_NO_ENCODING ) );
+         return ( ( rti_encoding == ENCODING_BIG_ENDIAN )
+                  || ( rti_encoding == ENCODING_LITTLE_ENDIAN )
+                  || ( rti_encoding == ENCODING_BOOLEAN )
+                  || ( rti_encoding == ENCODING_UNKNOWN )
+                  || ( rti_encoding == ENCODING_NO_ENCODING ) );
       }
       case TRICK_CHARACTER:
       case TRICK_UNSIGNED_CHARACTER: {
-         return ( ( rti_encoding == ENCODING_BIG_ENDIAN ) || ( rti_encoding == ENCODING_LITTLE_ENDIAN ) || ( rti_encoding == ENCODING_UNKNOWN ) || ( rti_encoding == ENCODING_UNICODE_STRING ) || ( rti_encoding == ENCODING_OPAQUE_DATA ) || ( rti_encoding == ENCODING_NO_ENCODING ) );
+         return ( ( rti_encoding == ENCODING_BIG_ENDIAN )
+                  || ( rti_encoding == ENCODING_LITTLE_ENDIAN )
+                  || ( rti_encoding == ENCODING_UNKNOWN )
+                  || ( rti_encoding == ENCODING_UNICODE_STRING )
+                  || ( rti_encoding == ENCODING_OPAQUE_DATA )
+                  || ( rti_encoding == ENCODING_NO_ENCODING ) );
       }
       case TRICK_STRING: {
          // Only support an 1-D array of characters (char *) for ENCODING_TYPE_NO_ENCODING.
          if ( ( rti_encoding == ENCODING_NO_ENCODING ) && ( ref2->attr->num_index != 0 ) ) {
             return false;
          }
-         return ( ( rti_encoding == ENCODING_C_STRING ) || ( rti_encoding == ENCODING_UNICODE_STRING ) || ( rti_encoding == ENCODING_ASCII_STRING ) || ( rti_encoding == ENCODING_OPAQUE_DATA ) || ( rti_encoding == ENCODING_UNKNOWN ) || ( rti_encoding == ENCODING_NO_ENCODING ) );
+         return ( ( rti_encoding == ENCODING_C_STRING )
+                  || ( rti_encoding == ENCODING_UNICODE_STRING )
+                  || ( rti_encoding == ENCODING_ASCII_STRING )
+                  || ( rti_encoding == ENCODING_OPAQUE_DATA )
+                  || ( rti_encoding == ENCODING_UNKNOWN )
+                  || ( rti_encoding == ENCODING_NO_ENCODING ) );
       }
       case TRICK_DOUBLE:
       case TRICK_FLOAT:
@@ -3409,7 +3446,11 @@ bool Attribute::is_supported_attribute_type() const // RETURN: -- True if suppor
          if ( ( rti_encoding == ENCODING_LOGICAL_TIME ) && ( ref2->attr->num_index > 0 ) ) {
             return false;
          }
-         return ( ( rti_encoding == ENCODING_BIG_ENDIAN ) || ( rti_encoding == ENCODING_LITTLE_ENDIAN ) || ( rti_encoding == ENCODING_LOGICAL_TIME ) || ( rti_encoding == ENCODING_UNKNOWN ) || ( rti_encoding == ENCODING_NO_ENCODING ) );
+         return ( ( rti_encoding == ENCODING_BIG_ENDIAN )
+                  || ( rti_encoding == ENCODING_LITTLE_ENDIAN )
+                  || ( rti_encoding == ENCODING_LOGICAL_TIME )
+                  || ( rti_encoding == ENCODING_UNKNOWN )
+                  || ( rti_encoding == ENCODING_NO_ENCODING ) );
       }
       default: {
          return false; // Type not supported
