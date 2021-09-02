@@ -2604,7 +2604,7 @@ void Federate::enter_freeze()
       if ( exec_get_exec_command() != FreezeCmd ) {
          return; // Trick freeze has not been commanded.
       }
-      if ( freeze_the_federation ) {
+      if ( this->freeze_the_federation ) {
          return; // freeze already commanded and we will freeze at top of next frame
       }
    }

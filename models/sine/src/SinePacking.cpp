@@ -158,29 +158,45 @@ void SinePacking::pack()
            << "\t Object-Name:'" << obj_name << "'" << endl
 
            << "\t sim_data->name:'" << sim_data->get_name()
-           << "', Send-as-HLA-Data:" << ( ( name_attr->is_publish() && name_attr->is_locally_owned() ) ? "Yes" : "No" ) << endl
+           << "', Send-as-HLA-Data:"
+           << ( ( name_attr->is_publish() && name_attr->is_locally_owned() ) ? "Yes" : "No" )
+           << endl
 
            << "\t sim_data->time:" << sim_data->get_time() << " seconds"
-           << ", Send-as-HLA-Data:" << ( ( time_attr->is_publish() && time_attr->is_locally_owned() ) ? "Yes" : "No" ) << endl
+           << ", Send-as-HLA-Data:"
+           << ( ( time_attr->is_publish() && time_attr->is_locally_owned() ) ? "Yes" : "No" )
+           << endl
 
            << "\t sim_data->value:" << sim_data->get_value()
-           << ", Send-as-HLA-Data:" << ( ( value_attr->is_publish() && value_attr->is_locally_owned() ) ? "Yes" : "No" ) << endl
+           << ", Send-as-HLA-Data:"
+           << ( ( value_attr->is_publish() && value_attr->is_locally_owned() ) ? "Yes" : "No" )
+           << endl
 
            << "\t sim_data->dvdt:" << sim_data->get_derivative()
-           << ", Send-as-HLA-Data:" << ( ( dvdt_attr->is_publish() && dvdt_attr->is_locally_owned() ) ? "Yes" : "No" ) << endl
+           << ", Send-as-HLA-Data:"
+           << ( ( dvdt_attr->is_publish() && dvdt_attr->is_locally_owned() ) ? "Yes" : "No" )
+           << endl
 
            << "\t sim_data->phase:" << sim_data->get_phase() << " radians"
            << " ==> packing-phase:" << phase_deg << " degrees"
-           << ", Send-as-HLA-Data:" << ( ( phase_attr->is_publish() && phase_attr->is_locally_owned() ) ? "Yes" : "No" ) << endl
+           << ", Send-as-HLA-Data:"
+           << ( ( phase_attr->is_publish() && phase_attr->is_locally_owned() ) ? "Yes" : "No" )
+           << endl
 
            << "\t sim_data->amp:" << sim_data->get_amplitude()
-           << ", Send-as-HLA-Data:" << ( ( amp_attr->is_publish() && amp_attr->is_locally_owned() ) ? "Yes" : "No" ) << endl
+           << ", Send-as-HLA-Data:"
+           << ( ( amp_attr->is_publish() && amp_attr->is_locally_owned() ) ? "Yes" : "No" )
+           << endl
 
            << "\t sim_data->freq:" << sim_data->get_frequency()
-           << ", Send-as-HLA-Data:" << ( ( freq_attr->is_publish() && freq_attr->is_locally_owned() ) ? "Yes" : "No" ) << endl
+           << ", Send-as-HLA-Data:"
+           << ( ( freq_attr->is_publish() && freq_attr->is_locally_owned() ) ? "Yes" : "No" )
+           << endl
 
            << "\t sim_data->tol:" << sim_data->get_tolerance()
-           << ", Send-as-HLA-Data:" << ( ( tol_attr->is_publish() && tol_attr->is_locally_owned() ) ? "Yes" : "No" ) << endl;
+           << ", Send-as-HLA-Data:"
+           << ( ( tol_attr->is_publish() && tol_attr->is_locally_owned() ) ? "Yes" : "No" )
+           << endl;
    }
 
    // Output more debug information for a higher debug-level.
@@ -220,11 +236,11 @@ void SinePacking::pack()
             // Number of bytes ref-attributes says this variable is.
             const int name_sim_var_size = attr->get_attribute_size();
 
-            // Make the last character either a '0' through '9' character so
-            // that we can see that the name is changing.
+            // NOTE: Make the last character either a '0' through '9' character
+            // so that we can see that the name is changing.
             int name_len = strnlen( name_sim_var, name_sim_var_size );
             if ( name_len > 0 ) {
-               name_sim_var[name_len - 1] = (char)( 48 + ( pack_count % 10 ) );
+               name_sim_var[name_len - 1] = (char)( '0' + ( pack_count % 10 ) );
             }
 
             cout << "\t Value:'" << string( name_sim_var ) << "'" << endl;
@@ -272,29 +288,36 @@ void SinePacking::unpack()
       cout << "SinePacking::unpack():" << __LINE__ << endl
            << "\t Object-Name:'" << obj_name << "'" << endl
 
-           << "\t sim_data->name:'" << sim_data->get_name() << "', Received-HLA-Data:"
+           << "\t sim_data->name:'" << sim_data->get_name()
+           << "', Received-HLA-Data:"
            << ( name_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t sim_data->time:" << sim_data->get_time() << " seconds, Received-HLA-Data:"
+           << "\t sim_data->time:" << sim_data->get_time()
+           << " seconds, Received-HLA-Data:"
            << ( time_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t sim_data->value:" << sim_data->get_value() << ", Received-HLA-Data:"
+           << "\t sim_data->value:" << sim_data->get_value()
+           << ", Received-HLA-Data:"
            << ( value_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t sim_data->dvdt:" << sim_data->get_derivative() << ", Received-HLA-Data:"
+           << "\t sim_data->dvdt:" << sim_data->get_derivative()
+           << ", Received-HLA-Data:"
            << ( dvdt_attr->is_received() ? "Yes" : "No" ) << endl
 
            << "\t packing-phase:" << phase_deg << " degrees ==> sim_data->phase:"
            << sim_data->get_phase() << " radians, Received-HLA-Data:"
            << ( phase_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t sim_data->amp:" << sim_data->get_amplitude() << ", Received-HLA-Data:"
+           << "\t sim_data->amp:" << sim_data->get_amplitude()
+           << ", Received-HLA-Data:"
            << ( amp_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t sim_data->freq:" << sim_data->get_frequency() << ", Received-HLA-Data:"
+           << "\t sim_data->freq:" << sim_data->get_frequency()
+           << ", Received-HLA-Data:"
            << ( freq_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t sim_data->tol:" << sim_data->get_tolerance() << ", Received-HLA-Data:"
+           << "\t sim_data->tol:" << sim_data->get_tolerance()
+           << ", Received-HLA-Data:"
            << ( tol_attr->is_received() ? "Yes" : "No" ) << endl;
    }
 
@@ -336,7 +359,8 @@ void SinePacking::unpack()
          // Print the state of the TrickHLA-Attribute internal buffer.
          attr->print_buffer();
       } else {
-         cout << "\t NULL Attribute for FOM-Attribute '" << name_attr_str << "'" << endl;
+         cout << "\t NULL Attribute for FOM-Attribute '" << name_attr_str
+              << "'" << endl;
       }
    }
 }

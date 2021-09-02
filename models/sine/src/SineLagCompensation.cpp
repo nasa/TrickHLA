@@ -158,6 +158,7 @@ void SineLagCompensation::receive_lag_compensation()
 
       cout << "SineLagCompensation::receive_lag_compensation():" << __LINE__
            << " Before Lag Compensation:" << endl
+           << "\t Name \tlagging_data: " << lag_comp_data->get_name() << endl
            << "\t Time \tlagging_data: " << lag_comp_data->get_time() << endl
            << "\t Value \tlagging_data: " << lag_comp_data->get_value() << endl
            << "\t dvdt \tlagging_data: " << lag_comp_data->get_derivative() << endl
@@ -202,6 +203,7 @@ void SineLagCompensation::receive_lag_compensation()
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       cout << "SineLagCompensation::receive_lag_compensation():" << __LINE__
            << " AFTER LAG COMPENSATION:" << endl
+           << "\t Name \tsim_data: " << sim_data->get_name() << endl
            << "\t Time \tsim_data: " << sim_data->get_time() << endl
            << "\t Value \tsim_data: " << sim_data->get_value() << endl
            << "\t dvdt \tsim_data: " << sim_data->get_derivative() << endl
