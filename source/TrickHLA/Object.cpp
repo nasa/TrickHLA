@@ -1074,7 +1074,7 @@ Waiting on reservation of Object Instance Name '%s'.%c",
    Federate *federate = get_federate();
 
    long long    wallclock_time;
-   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout print_timer( (double)federate->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( !name_registered ) {
@@ -1280,7 +1280,7 @@ void Object::wait_for_object_registration()
    Federate *federate = get_federate();
 
    long long    wallclock_time;
-   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout print_timer( (double)federate->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( !is_instance_handle_valid() ) {
@@ -2225,7 +2225,7 @@ void Object::receive_cyclic_data()
       // Block waiting for data if it has not arrived yet.
       if ( !is_changed() ) {
 
-         SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
+         SleepTimeout sleep_timer( (long)THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
          // On average using "usleep()" to wait for data is faster but at the
          // cost of latency spikes every once in a while. The CPU utilization
@@ -4078,7 +4078,7 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
 
       int          i;
       long long    wallclock_time;
-      SleepTimeout print_timer( federate->wait_status_time );
+      SleepTimeout print_timer( (double)federate->wait_status_time );
       SleepTimeout sleep_timer;
 
       // Perform a blocking loop until ownership of all locally owned published

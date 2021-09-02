@@ -16,6 +16,7 @@ ifeq ("$(wildcard ${RTI_HOME})","")
 endif
 
 # These are for TrickHLA
+TRICK_SFLAGS   += -I${TRICKHLA_HOME}/S_modules
 TRICK_CFLAGS   += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -DIEEE_1516_2010
 TRICK_CXXFLAGS += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -DIEEE_1516_2010
 
@@ -36,13 +37,15 @@ endif
 ifeq ($(TRICK_HOST_TYPE),Darwin)
 
    ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
-      # Allow the user to override RTI_JAVA_HOME or RTI_JAVA_LIB_PATH, otherwise we provide defaults.
+      # Allow the user to override RTI_JAVA_HOME or RTI_JAVA_LIB_PATH,
+      # otherwise we provide defaults.
       ifdef RTI_JAVA_HOME
          $(info "User defined RTI_JAVA_HOME = ${RTI_JAVA_HOME}")
       endif
       RTI_JAVA_HOME ?= ${RTI_HOME}/jre
       ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/server)","")
-         # User specified their own RTI_JAVA_HOME, configure a valid default lib path if needed.
+         # User specified their own RTI_JAVA_HOME, configure a valid default
+         # lib path if needed.
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/server
       else
          # Default to JRE that came with the Pitch RTI if needed.
@@ -57,7 +60,8 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
          $(error "The path specified by RTI_JAVA_LIB_PATH is invalid for ${RTI_JAVA_LIB_PATH}")
       endif
 
-      # Determine what compiler Trick is using to figure out the correct Pitch library to use.
+      # Determine what compiler Trick is using to figure out the correct
+      # Pitch library to use.
       ifneq (,$(findstring trick-gte, $(shell which trick-gte)))
          CPPC_CMD = $(shell trick-gte TRICK_CXX)
          ifeq (,$(CPPC_CMD))
@@ -76,7 +80,8 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
          export DYLD_LIBRARY_PATH += :${RTI_HOME}/lib/gcc42
          TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib/gcc42 -lrti1516e -lfedtime1516e
       endif
-      # Add the CLASSPATH and DYLD_LIBRARY_PATH environment variables to the simulation executable.
+      # Add the CLASSPATH and DYLD_LIBRARY_PATH environment variables to the 
+      # simulation executable.
       export CLASSPATH += ${RTI_HOME}/lib/prti1516e.jar
       export TRICK_GTE_EXT += CLASSPATH DYLD_LIBRARY_PATH
    else
@@ -86,16 +91,19 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
 else
 
    ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
-      # Allow the user to override RTI_JAVA_HOME or RTI_JAVA_LIB_PATH, otherwise we provide defaults.
+      # Allow the user to override RTI_JAVA_HOME or RTI_JAVA_LIB_PATH,
+      # otherwise we provide defaults.
       ifdef RTI_JAVA_HOME
          $(info "User defined RTI_JAVA_HOME = ${RTI_JAVA_HOME}")
       endif
       RTI_JAVA_HOME ?= ${RTI_HOME}/jre
       ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/amd64/server)","")
-         # User specified their own RTI_JAVA_HOME, configure a valid default lib path if needed.
+         # User specified their own RTI_JAVA_HOME, configure a valid default
+         # lib path if needed.
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/amd64/server
       else ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/server)","")
-         # User specified their own RTI_JAVA_HOME, configure a valid default lib path if needed.
+         # User specified their own RTI_JAVA_HOME, configure a valid default
+         # lib path if needed.
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/server
       else
          # Default to JRE that came with the Pitch RTI if needed.
@@ -114,7 +122,8 @@ else
       export CLASSPATH += ${RTI_HOME}/lib/prti1516e.jar
       export TRICK_GTE_EXT += CLASSPATH
 
-      # Determine what compiler Trick is using to figure out the correct Pitch library to use.
+      # Determine what compiler Trick is using to figure out the correct
+      # Pitch library to use.
       ifneq (,$(findstring trick-gte, $(shell which trick-gte)))
          CPPC_CMD = $(shell trick-gte TRICK_CXX)
          ifeq (,$(CPPC_CMD))
@@ -140,7 +149,8 @@ else
       endif
       TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -lrti1516e64 -lfedtime1516e64 -Wl,-rpath,${RTI_LIB_PATH}
 
-      # On Ubuntu, the user needs to add the LD_LIBRARY_PATH shown below to their environment.
+      # On Ubuntu, the user needs to add the LD_LIBRARY_PATH shown below to
+      # their environment.
       ifneq ("$(wildcard /etc/lsb-release)","")
         $(info "Add this to your .bashrc file: export LD_LIBRARY_PATH=${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}")
       endif
@@ -155,8 +165,6 @@ else
 
 endif
 
-TRICK_SFLAGS += -I${TRICKHLA_HOME}/S_modules
-
 ifdef TRICK_ICG_EXCLUDE
    TRICK_ICG_EXCLUDE += :${RTI_HOME}/include
 else
@@ -168,4 +176,3 @@ ifdef TRICK_SWIG_EXCLUDE
 else
    TRICK_SWIG_EXCLUDE = ${RTI_HOME}/include
 endif
-

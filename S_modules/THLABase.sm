@@ -157,7 +157,7 @@ class THLABaseSimObject : public Trick::SimObject {
       // Time-Advance-Request (TAR).
       P_LAST (data_cycle, "logging") federate.time_advance_request();
 
-      // Coordinate federates going to freeze mode
+      // Coordinate federates going to freeze mode.
       ("end_of_frame") federate.enter_freeze();
 
       //-------------------

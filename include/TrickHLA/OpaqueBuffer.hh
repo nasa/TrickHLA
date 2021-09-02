@@ -111,7 +111,7 @@ class OpaqueBuffer
     *  @param size Size of data in bytes. */
    void push_to_buffer( void *src, size_t size )
    {
-      push_to_buffer( src, size, ENCODING_NO_ENCODING );
+      push_to_buffer( src, size, ENCODING_NONE );
    }
 
    /*! @brief Push the specified data into the buffer using the specified
@@ -127,7 +127,7 @@ class OpaqueBuffer
     *  @param size Size of data in bytes. */
    void pull_from_buffer( void *dest, size_t size )
    {
-      pull_from_buffer( dest, size, ENCODING_NO_ENCODING );
+      pull_from_buffer( dest, size, ENCODING_NONE );
    }
 
    /*! @brief Pull the specified number of data bytes from the buffer into the

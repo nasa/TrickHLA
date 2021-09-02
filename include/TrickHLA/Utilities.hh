@@ -170,63 +170,74 @@ class Utilities
    /*! @brief Byteswap an short integer type.
     *  @return Byteswap value.
     *  @param  input The input value to byteswap. */
-   static short byteswap_short( short input );
+   static short byteswap_short( const short input );
 
    /*! @brief Byteswap an unsigned short integer type.
     *  @return Byteswap value.
     *  @param  input The input value to byteswap. */
-   static unsigned short byteswap_unsigned_short( unsigned short input );
+   static unsigned short byteswap_unsigned_short( const unsigned short input );
 
    /*! @brief Byteswap an int integer type.
     *  @return Byteswap value.
     *  @param  input The input value to byteswap. */
-   static int byteswap_int( int input );
+   static int byteswap_int( const int input );
 
    /*! @brief Byteswap an unsigned int integer type.
     *  @return Byteswap value.
     *  @param  input The input value to byteswap. */
-   static unsigned int byteswap_unsigned_int( unsigned int input );
+   static unsigned int byteswap_unsigned_int( const unsigned int input );
 
    /*! @brief Byteswap a long integer type.
     *  @return Byteswap value.
     *  @param  input The input value to byteswap. */
-   static long byteswap_long( long input );
+   static long byteswap_long( const long input );
 
    /*! @brief Byteswap an unsigned long integer type.
     *  @return Byteswap value.
     *  @param  input The input value to byteswap. */
-   static unsigned long byteswap_unsigned_long( unsigned long input );
+   static unsigned long byteswap_unsigned_long( const unsigned long input );
 
    /*! @brief Byteswap a long long integer type.
     *  @details The long long type is defined in the C99 standard and is at
     *  least 64 bits.
     *  @return Byteswap value.
     *  @param  input The input value to byteswap. */
-   static long long byteswap_long_long( long long input );
+   static long long byteswap_long_long( const long long input );
 
    /*! @brief Byteswap an unsigned long long integer type.
     *  @details The unsigned long long type is defined in the C99 standard and
     *  is at least 64 bits.
     *  @return Byteswap value.
     *  @param  input The input value to byteswap. */
-   static unsigned long long byteswap_unsigned_long_long( unsigned long long input );
+   static unsigned long long byteswap_unsigned_long_long( const unsigned long long input );
 
    /*! @brief Byteswap float floating-point type.
     *  @return Byteswap value.
     *  @param  input The input value to byteswap. */
-   static float byteswap_float( float input );
+   static float byteswap_float( const float input );
 
    /*! @brief Byteswap double floating-point type.
     *  @return Byteswap value.
     *  @param  input The input value to byteswap. */
-   static double byteswap_double( double input );
+   static double byteswap_double( const double input );
+
+   /*! @brief Round to the next positive multiple of 8.
+    *  @return The value rounded to the next positive multiple of 8.
+    *  @param  value The value to round to next positive multiple of 8. */
+   static size_t next_positive_multiple_of_8( const size_t value );
+
+   /*! @brief Round to the next positive multiple of N.
+    *  @return The value rounded to the next positive multiple of N.
+    *  @param  value The value to round to next positive multiple of N.
+    *  @param  n The number to round up the value to the next positive multiple of. */
+   static size_t next_positive_multiple_of_N( const size_t value, const unsigned int n );
 
    /*! @brief Sleep for the specified number of microseconds. The usleep() C
     *  function is obsolete (see CWE-676). Create a wrapper around nanosleep()
     *  to provide the same functionality as usleep().
     *  @return Error code, where a value of 0 is for no error.
     *  @param  usec Time to sleep in microseconds. */
-   static int micro_sleep( long usec );
+   static int micro_sleep( const long usec );
 
    /*! @brief Return the current TrickHLA version string from the auto
     *  generated Version.hh header file.

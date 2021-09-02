@@ -469,7 +469,7 @@ federate so this call will be ignored.%c",
             }
 
             long long    wallclock_time;
-            SleepTimeout print_timer( federate->wait_status_time );
+            SleepTimeout print_timer( (double)federate->wait_status_time );
             SleepTimeout sleep_timer;
 
             // Wait for the data to arrive.
@@ -589,7 +589,7 @@ void Manager::receive_init_data(
             }
 
             long long    wallclock_time;
-            SleepTimeout print_timer( federate->wait_status_time );
+            SleepTimeout print_timer( (double)federate->wait_status_time );
             SleepTimeout sleep_timer;
 
             // Wait for the data to arrive.
@@ -1781,7 +1781,7 @@ void Manager::wait_for_registration_of_required_objects()
    }
 
    long long    wallclock_time;
-   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout print_timer( (double)federate->wait_status_time );
    SleepTimeout sleep_timer;
 
    do {
@@ -3005,7 +3005,7 @@ void Manager::wait_for_discovery_of_objects()
          }
 
          long long    wallclock_time; // cppcheck-suppress [variableScope,unmatchedSuppression]
-         SleepTimeout print_timer( federate->wait_status_time );
+         SleepTimeout print_timer( (double)federate->wait_status_time );
          SleepTimeout sleep_timer;
 
          // Block until some / all arrive.

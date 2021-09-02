@@ -258,7 +258,7 @@ void Attribute::initialize(
          if ( ( rti_encoding != ENCODING_BIG_ENDIAN )
               && ( rti_encoding != ENCODING_LITTLE_ENDIAN )
               && ( rti_encoding != ENCODING_BOOLEAN )
-              && ( rti_encoding != ENCODING_NO_ENCODING )
+              && ( rti_encoding != ENCODING_NONE )
               && ( rti_encoding != ENCODING_UNKNOWN ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
@@ -279,7 +279,7 @@ void Attribute::initialize(
       case TRICK_UNSIGNED_CHARACTER: {
          if ( ( rti_encoding != ENCODING_BIG_ENDIAN )
               && ( rti_encoding != ENCODING_LITTLE_ENDIAN )
-              && ( rti_encoding != ENCODING_NO_ENCODING )
+              && ( rti_encoding != ENCODING_NONE )
               && ( rti_encoding != ENCODING_UNICODE_STRING )
               && ( rti_encoding != ENCODING_OPAQUE_DATA )
               && ( rti_encoding != ENCODING_UNKNOWN ) ) {
@@ -344,7 +344,7 @@ void Attribute::initialize(
          if ( ( rti_encoding != ENCODING_BIG_ENDIAN )
               && ( rti_encoding != ENCODING_LITTLE_ENDIAN )
               && ( rti_encoding != ENCODING_LOGICAL_TIME )
-              && ( rti_encoding != ENCODING_NO_ENCODING )
+              && ( rti_encoding != ENCODING_NONE )
               && ( rti_encoding != ENCODING_UNKNOWN ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
@@ -366,7 +366,7 @@ void Attribute::initialize(
               && ( rti_encoding != ENCODING_UNICODE_STRING )
               && ( rti_encoding != ENCODING_ASCII_STRING )
               && ( rti_encoding != ENCODING_OPAQUE_DATA )
-              && ( rti_encoding != ENCODING_NO_ENCODING )
+              && ( rti_encoding != ENCODING_NONE )
               && ( rti_encoding != ENCODING_UNKNOWN ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
@@ -383,7 +383,7 @@ void Attribute::initialize(
          }
 
          // Only support an array of characters (i.e. char *) for ENCODING_TYPE_NO_ENCODING.
-         if ( ( rti_encoding == ENCODING_NO_ENCODING ) && ( ref2->attr->num_index != 0 ) ) {
+         if ( ( rti_encoding == ENCODING_NONE ) && ( ref2->attr->num_index != 0 ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
                    << " FOM Object Attribute '"
@@ -676,7 +676,7 @@ void Attribute::extract_data(       // RETURN: -- None
          memcpy( buffer, attr_value->data(), attr_size );
          break;
       }
-      case ENCODING_NO_ENCODING: {
+      case ENCODING_NONE: {
          // The byte counts must match between the received attribute and
          // the Trick simulation variable for ENCODING_TYPE_NO_ENCODING since this
          // RTI encoding only supports a fixed length array of characters.
@@ -863,7 +863,7 @@ void Attribute::calculate_size_and_number_of_items()
 
       switch ( rti_encoding ) {
          case ENCODING_OPAQUE_DATA:
-         case ENCODING_NO_ENCODING: {
+         case ENCODING_NONE: {
             // Determine total number of bytes used by the Trick simulation
             // variable, and the data can be binary and not just the printable
             // ASCII characters.
@@ -2259,7 +2259,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
          }
          break;
       }
-      case ENCODING_NO_ENCODING: {
+      case ENCODING_NONE: {
          // No-encoding of the data, just send the bytes as is.
 
          // Make sure we can hold the encoded data in the buffer.
@@ -2385,8 +2385,9 @@ WARNING: For ENCODING_TYPE_UNICODE_STRING attribute '%s' (trick_name: '%s'), dec
                length = (size_t)decoded_count;
             }
 
-            // If the users Trick simulation is static in size then we need to
-            // do a bounds check so that we don't overflow the users variable.
+            // If the users Trick simulation variable is static in size then we
+            // need to do a bounds check so that we don't overflow the users
+            // variable.
             if ( size_is_static ) {
                size_t data_buff_size;
                if ( ref2->attr->type == TRICK_STRING ) {
@@ -2404,8 +2405,7 @@ WARNING: For ENCODING_TYPE_UNICODE_STRING attribute '%s' (trick_name: '%s'), dec
                   send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_TYPE_UNICODE_STRING parameter '%s', decoded length %d > data buffer \
 size %d, will use the data buffer size instead.%c",
-                           __LINE__, FOM_name, length,
-                           data_buff_size, THLA_NEWLINE );
+                           __LINE__, FOM_name, length, data_buff_size, THLA_NEWLINE );
                   length = data_buff_size;
                }
             }
@@ -2426,8 +2426,8 @@ size %d, will use the data buffer size instead.%c",
                   // Make sure to make room for the terminating null character,
                   // and add a few more bytes to give us a little more space
                   // for next time.
-                  *( (char **)ref2->address ) = (char *)TMM_resize_array_1d_a( *( (char **)ref2->address ),
-                                                                               (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+                  int array_size              = Utilities::next_positive_multiple_of_8( length );
+                  *( (char **)ref2->address ) = (char *)TMM_resize_array_1d_a( *( (char **)ref2->address ), array_size );
 
                   output = *( (unsigned char **)ref2->address );
                }
@@ -2435,7 +2435,8 @@ size %d, will use the data buffer size instead.%c",
                // Allocate memory for the sim string and include room for the
                // terminating null character and add a few more bytes to give
                // us a little more space for next time.
-               *( (char **)ref2->address ) = (char *)TMM_declare_var_1d( "char", (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+               int array_size              = Utilities::next_positive_multiple_of_8( length );
+               *( (char **)ref2->address ) = (char *)TMM_declare_var_1d( "char", array_size );
 
                output = *( (unsigned char **)ref2->address );
             }
@@ -2445,7 +2446,8 @@ size %d, will use the data buffer size instead.%c",
                errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
                       << " ERROR: Could not allocate memory for ENCODING_TYPE_UNICODE_STRING Attribute '"
                       << FOM_name << "' with Trick name '" << trick_name
-                      << "' and length " << ( ( length > 0 ) ? ( length + 16 ) : 16 ) << "!" << THLA_ENDL;
+                      << "' and length " << Utilities::next_positive_multiple_of_8( length )
+                      << "!" << THLA_ENDL;
                DebugHandler::terminate_with_message( errmsg.str() );
             } else {
 
@@ -2569,8 +2571,8 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                      // Make sure to make room for the terminating null character,
                      // and add a few more bytes to give us a little more space
                      // for next time.
-                     *( (char **)ref2->address + i ) = (char *)TMM_resize_array_1d_a( *( (char **)ref2->address + i ),
-                                                                                      (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+                     int array_size                  = Utilities::next_positive_multiple_of_8( length );
+                     *( (char **)ref2->address + i ) = (char *)TMM_resize_array_1d_a( *( (char **)ref2->address + i ), array_size );
 
                      output = *( (unsigned char **)ref2->address + i );
                   }
@@ -2578,7 +2580,8 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                   // Allocate memory for the sim string and include room for the
                   // terminating null character and add a few more bytes to give
                   // us a little more space for next time.
-                  *( (char **)ref2->address + i ) = (char *)TMM_declare_var_1d( "char", (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+                  int array_size                  = Utilities::next_positive_multiple_of_8( length );
+                  *( (char **)ref2->address + i ) = (char *)TMM_declare_var_1d( "char", array_size );
 
                   output = *( (unsigned char **)ref2->address + i );
                }
@@ -2588,7 +2591,8 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                   errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
                          << " ERROR: Could not allocate memory for ENCODING_TYPE_UNICODE_STRING"
                          << " Attribute '" << FOM_name << "' with Trick name '"
-                         << trick_name << "' and length " << ( ( length > 0 ) ? ( length + 16 ) : 16 )
+                         << trick_name << "' and length "
+                         << Utilities::next_positive_multiple_of_8( length )
                          << "!" << THLA_ENDL;
                   DebugHandler::terminate_with_message( errmsg.str() );
                } else {
@@ -2684,8 +2688,8 @@ WARNING: For ENCODING_TYPE_ASCII_STRING attribute '%s', decoded length %d > data
                   // Make sure to make room for the terminating null character,
                   // and add a few more bytes to give us a little more space
                   // for next time.
-                  *( (char **)ref2->address ) = (char *)TMM_resize_array_1d_a( *( (char **)ref2->address ),
-                                                                               (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+                  int array_size              = Utilities::next_positive_multiple_of_8( length );
+                  *( (char **)ref2->address ) = (char *)TMM_resize_array_1d_a( *( (char **)ref2->address ), array_size );
 
                   output = *( (unsigned char **)ref2->address );
                }
@@ -2693,7 +2697,8 @@ WARNING: For ENCODING_TYPE_ASCII_STRING attribute '%s', decoded length %d > data
                // Allocate memory for the sim string and include room for the
                // terminating null character and add a few more bytes to give
                // us a little more space for next time.
-               *( (char **)ref2->address ) = (char *)TMM_declare_var_1d( "char", (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+               int array_size              = Utilities::next_positive_multiple_of_8( length );
+               *( (char **)ref2->address ) = (char *)TMM_declare_var_1d( "char", array_size );
 
                output = *( (unsigned char **)ref2->address );
             }
@@ -2703,7 +2708,8 @@ WARNING: For ENCODING_TYPE_ASCII_STRING attribute '%s', decoded length %d > data
                errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
                       << " ERROR: Could not allocate memory for ENCODING_TYPE_ASCII_STRING Attribute '"
                       << FOM_name << "' with Trick name '" << trick_name
-                      << "' and length " << ( ( length > 0 ) ? ( length + 16 ) : 16 ) << "!" << THLA_ENDL;
+                      << "' and length " << Utilities::next_positive_multiple_of_8( length )
+                      << "!" << THLA_ENDL;
                DebugHandler::terminate_with_message( errmsg.str() );
             } else {
 
@@ -2817,8 +2823,8 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                      // Make sure to make room for the terminating null character,
                      // and add a few more bytes to give us a little more space
                      // for next time.
-                     *( (char **)ref2->address + i ) = (char *)TMM_resize_array_1d_a( *( (char **)ref2->address + i ),
-                                                                                      (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+                     int array_size                  = Utilities::next_positive_multiple_of_8( length );
+                     *( (char **)ref2->address + i ) = (char *)TMM_resize_array_1d_a( *( (char **)ref2->address + i ), array_size );
 
                      output = *( (unsigned char **)ref2->address + i );
                   }
@@ -2826,7 +2832,8 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                   // Allocate memory for the sim string and include room for the
                   // terminating null character and add a few more bytes to give
                   // us a little more space for next time.
-                  *( (char **)ref2->address + i ) = (char *)TMM_declare_var_1d( "char", (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+                  int array_size                  = Utilities::next_positive_multiple_of_8( length );
+                  *( (char **)ref2->address + i ) = (char *)TMM_declare_var_1d( "char", array_size );
 
                   output = *( (unsigned char **)ref2->address + i );
                }
@@ -2836,7 +2843,8 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                   errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
                          << " ERROR: Could not allocate memory for ENCODING_TYPE_ASCII_STRING"
                          << " Attribute '" << FOM_name << "' with Trick name '"
-                         << trick_name << "' and length " << ( ( length > 0 ) ? ( length + 16 ) : 16 )
+                         << trick_name << "' and length "
+                         << Utilities::next_positive_multiple_of_8( length )
                          << "!" << THLA_ENDL;
                   DebugHandler::terminate_with_message( errmsg.str() );
                } else {
@@ -2913,8 +2921,7 @@ WARNING: For ENCODING_TYPE_OPAQUE_DATA attribute '%s', decoded length %d < 0, wi
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_TYPE_OPAQUE_DATA attribute '%s', decoded length %d > data buffer size \
 %d, will use the data buffer size instead.%c",
-                        __LINE__, FOM_name, length,
-                        data_buff_size, THLA_NEWLINE );
+                        __LINE__, FOM_name, length, data_buff_size, THLA_NEWLINE );
                length = data_buff_size;
             }
 
@@ -3103,7 +3110,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
          }
          break;
       }
-      case ENCODING_NO_ENCODING: {
+      case ENCODING_NONE: {
          // No-Encoding of the data, just use it as is.
 
          input = buffer;
@@ -3162,13 +3169,15 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                // TODO: Find a more efficient way to determine if we need to
                // reallocate memory for the string.
                if ( length >= get_size( (char *)output ) ) {
-                  *( (char **)ref2->address + i ) = (char *)TMM_resize_array_1d_a( *( (char **)ref2->address + i ), length + 16 );
+                  int array_size                  = Utilities::next_positive_multiple_of_8( length );
+                  *( (char **)ref2->address + i ) = (char *)TMM_resize_array_1d_a( *( (char **)ref2->address + i ), array_size );
 
                   output = *( (unsigned char **)ref2->address + i );
                }
             } else {
                // Allocate memory for the sim string.
-               *( (char **)ref2->address + i ) = (char *)TMM_declare_var_1d( "char", length + 16 );
+               int array_size                  = Utilities::next_positive_multiple_of_8( length );
+               *( (char **)ref2->address + i ) = (char *)TMM_declare_var_1d( "char", array_size );
 
                output = *( (unsigned char **)ref2->address + i );
             }
@@ -3178,7 +3187,8 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
                       << " ERROR: Could not allocate memory for ENCODING_TYPE_C_STRING attribute '"
                       << FOM_name << "' with Trick name '" << trick_name
-                      << "' and length " << ( length + 16 ) << "!" << THLA_ENDL;
+                      << "' and length " << Utilities::next_positive_multiple_of_8( length )
+                      << "!" << THLA_ENDL;
                DebugHandler::terminate_with_message( errmsg.str() );
             } else {
 
@@ -3221,7 +3231,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
 
    // Determine if we can just copy the data between the two buffers since
    // we don't need to byteswap or do any special encoding.
-   if ( ( !byteswap ) || ( rti_encoding == ENCODING_NO_ENCODING ) ) {
+   if ( ( !byteswap ) || ( rti_encoding == ENCODING_NONE ) ) {
 
       // Copy the source into the destination since there is no byteswaping
       // or any special encoding.
@@ -3408,7 +3418,7 @@ bool Attribute::is_supported_attribute_type() const // RETURN: -- True if suppor
                   || ( rti_encoding == ENCODING_LITTLE_ENDIAN )
                   || ( rti_encoding == ENCODING_BOOLEAN )
                   || ( rti_encoding == ENCODING_UNKNOWN )
-                  || ( rti_encoding == ENCODING_NO_ENCODING ) );
+                  || ( rti_encoding == ENCODING_NONE ) );
       }
       case TRICK_CHARACTER:
       case TRICK_UNSIGNED_CHARACTER: {
@@ -3417,11 +3427,11 @@ bool Attribute::is_supported_attribute_type() const // RETURN: -- True if suppor
                   || ( rti_encoding == ENCODING_UNKNOWN )
                   || ( rti_encoding == ENCODING_UNICODE_STRING )
                   || ( rti_encoding == ENCODING_OPAQUE_DATA )
-                  || ( rti_encoding == ENCODING_NO_ENCODING ) );
+                  || ( rti_encoding == ENCODING_NONE ) );
       }
       case TRICK_STRING: {
          // Only support an 1-D array of characters (char *) for ENCODING_TYPE_NO_ENCODING.
-         if ( ( rti_encoding == ENCODING_NO_ENCODING ) && ( ref2->attr->num_index != 0 ) ) {
+         if ( ( rti_encoding == ENCODING_NONE ) && ( ref2->attr->num_index != 0 ) ) {
             return false;
          }
          return ( ( rti_encoding == ENCODING_C_STRING )
@@ -3429,7 +3439,7 @@ bool Attribute::is_supported_attribute_type() const // RETURN: -- True if suppor
                   || ( rti_encoding == ENCODING_ASCII_STRING )
                   || ( rti_encoding == ENCODING_OPAQUE_DATA )
                   || ( rti_encoding == ENCODING_UNKNOWN )
-                  || ( rti_encoding == ENCODING_NO_ENCODING ) );
+                  || ( rti_encoding == ENCODING_NONE ) );
       }
       case TRICK_DOUBLE:
       case TRICK_FLOAT:
@@ -3450,7 +3460,7 @@ bool Attribute::is_supported_attribute_type() const // RETURN: -- True if suppor
                   || ( rti_encoding == ENCODING_LITTLE_ENDIAN )
                   || ( rti_encoding == ENCODING_LOGICAL_TIME )
                   || ( rti_encoding == ENCODING_UNKNOWN )
-                  || ( rti_encoding == ENCODING_NO_ENCODING ) );
+                  || ( rti_encoding == ENCODING_NONE ) );
       }
       default: {
          return false; // Type not supported

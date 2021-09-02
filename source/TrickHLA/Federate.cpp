@@ -1455,7 +1455,7 @@ string Federate::wait_for_required_federates_to_join()
    set< string > unrequired_federates_list; // list of unique unrequired federate names
 
    long long    wallclock_time;
-   SleepTimeout print_timer( this->wait_status_time );
+   SleepTimeout print_timer( (double)this->wait_status_time );
    SleepTimeout sleep_timer;
 
    this->all_federates_joined = false;
@@ -2813,7 +2813,7 @@ void Federate::setup_checkpoint()
          request_federation_save();
 
          long long    wallclock_time;
-         SleepTimeout print_timer( this->wait_status_time );
+         SleepTimeout print_timer( (double)this->wait_status_time );
          SleepTimeout sleep_timer;
 
          // need to wait for federation to initiate save
@@ -3069,7 +3069,7 @@ void Federate::setup_restore()
       initiate_restore_announce( restore_name_str );
 
       long long    wallclock_time;
-      SleepTimeout print_timer( this->wait_status_time );
+      SleepTimeout print_timer( (double)this->wait_status_time );
       SleepTimeout sleep_timer;
 
       // need to wait for federation to initiate restore
@@ -4070,7 +4070,7 @@ void Federate::setup_time_constrained()
       RTI_ambassador->enableTimeConstrained();
 
       long long    wallclock_time;
-      SleepTimeout print_timer( this->wait_status_time );
+      SleepTimeout print_timer( (double)this->wait_status_time );
       SleepTimeout sleep_timer;
 
       // This spin lock waits for the time constrained flag to be set from the RTI.
@@ -4198,7 +4198,7 @@ void Federate::setup_time_constrained()
 }
 
 /*! @brief Enable time regulating.
- *  @param True the granted HLA Logical time */
+ *  @param time the granted HLA Logical time */
 void Federate::set_time_regulation_enabled(
    RTI1516_NAMESPACE::LogicalTime const &time )
 {
@@ -4270,7 +4270,7 @@ void Federate::setup_time_regulation()
       RTI_ambassador->enableTimeRegulation( lookahead.get() );
 
       long long    wallclock_time;
-      SleepTimeout print_timer( this->wait_status_time );
+      SleepTimeout print_timer( (double)this->wait_status_time );
       SleepTimeout sleep_timer;
 
       // This spin lock waits for the time regulation flag to be set from the RTI.
@@ -4720,8 +4720,11 @@ void Federate::wait_to_send_data()
       // Don't check the Trick main thread (id = 0), only check child threads.
       unsigned int id = 1;
 
-      // Trick Main Thread: Determine if all the Trick child threads associated
-      // to TrickHLA are ready to send data.
+      // Trick Main Thread: Take a quick first look to determine if all the
+      // Trick child threads associated to TrickHLA are ready to send data.
+      // If all the child threads are ready to send data then this quick look
+      // will return faster than the more involved spin-lock code section
+      // further below with the sleep code.
       bool all_ready_to_send = true;
       {
          // When auto_unlock_mutex goes out of scope it automatically
@@ -4749,11 +4752,13 @@ void Federate::wait_to_send_data()
          }
       }
 
+      // If the quick look was not successful do a more involved spin-lock with
+      // sleeps, which adds more wait latency.
       if ( !all_ready_to_send ) {
 
          long long    wallclock_time;
-         SleepTimeout print_timer( this->wait_status_time );
-         SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
+         SleepTimeout print_timer( (double)this->wait_status_time );
+         SleepTimeout sleep_timer( (long)THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
          // Wait for all Trick child threads associated to TrickHLA to be
          // ready to send data.
@@ -4822,8 +4827,8 @@ void Federate::wait_to_send_data()
       }
    } else {
 
-      // Trick Child Thread associated to TrickHLA: Determine if the
-      // Trick main thread has sent all the HLA data.
+      // Trick Child Thread associated to TrickHLA: Do a quick look to
+      // determine if the Trick main thread has sent all the HLA data.
       bool sent_data;
       {
          // When auto_unlock_mutex goes out of scope it automatically unlocks
@@ -4837,12 +4842,14 @@ void Federate::wait_to_send_data()
          sent_data = ( thread_state[0] == THREAD_STATE_READY_TO_SEND );
       }
 
-      // See if the main thread has announced it has sent the data.
+      // If the quick look to see if the main thread has announced it has sent
+      // the data has not succeeded then do a more involved spin-lock with a
+      // sleep. This will have more wait latency.
       if ( !sent_data ) {
 
          long long    wallclock_time;
-         SleepTimeout print_timer( this->wait_status_time );
-         SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
+         SleepTimeout print_timer( (double)this->wait_status_time );
+         SleepTimeout sleep_timer( (long)THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
          // Wait for the main thread to have sent the data.
          do {
@@ -4916,8 +4923,8 @@ void Federate::wait_to_receive_data()
    if ( !ready_to_receive ) {
 
       long long    wallclock_time;
-      SleepTimeout print_timer( this->wait_status_time );
-      SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
+      SleepTimeout print_timer( (double)this->wait_status_time );
+      SleepTimeout sleep_timer( (long)THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // Wait for the main thread to receive data.
       do {
@@ -5011,8 +5018,8 @@ void Federate::wait_for_time_advance_grant()
       }
 
       long long    wallclock_time;
-      SleepTimeout print_timer( this->wait_status_time );
-      SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
+      SleepTimeout print_timer( (double)this->wait_status_time );
+      SleepTimeout sleep_timer( (long)THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // This spin lock waits for the time advance grant from the RTI.
       do {
@@ -5860,7 +5867,7 @@ void Federate::ask_MOM_for_auto_provide_setting()
    request_attribute_update( MOM_HLAfederation_class_handle, requestedAttributes );
 
    long long    wallclock_time;
-   SleepTimeout print_timer( this->wait_status_time );
+   SleepTimeout print_timer( (double)this->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( this->auto_provide_setting < 0 ) {
@@ -6001,7 +6008,7 @@ void Federate::load_and_print_running_federate_names()
    request_attribute_update( MOM_HLAfederation_class_handle, requestedAttributes );
 
    long long    wallclock_time;
-   SleepTimeout print_timer( this->wait_status_time );
+   SleepTimeout print_timer( (double)this->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( this->running_feds_count <= 0 ) {
@@ -6831,7 +6838,7 @@ void Federate::wait_for_federation_restore_begun()
    }
 
    long long    wallclock_time;
-   SleepTimeout print_timer( this->wait_status_time );
+   SleepTimeout print_timer( (double)this->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( !this->restore_begun ) {
@@ -6882,7 +6889,7 @@ void Federate::wait_until_federation_is_ready_to_restore()
    }
 
    long long    wallclock_time;
-   SleepTimeout print_timer( this->wait_status_time );
+   SleepTimeout print_timer( (double)this->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( !this->start_to_restore ) {
@@ -6958,7 +6965,7 @@ string Federate::wait_for_federation_restore_to_complete()
    }
 
    long long    wallclock_time;
-   SleepTimeout print_timer( this->wait_status_time );
+   SleepTimeout print_timer( (double)this->wait_status_time );
    SleepTimeout sleep_timer;
 
    // nobody reported any problems, wait until the restore is completed.
@@ -7033,7 +7040,7 @@ void Federate::wait_for_restore_request_callback()
    }
 
    long long    wallclock_time;
-   SleepTimeout print_timer( this->wait_status_time );
+   SleepTimeout print_timer( (double)this->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( !has_restore_process_restore_request_failed()
@@ -7086,7 +7093,7 @@ void Federate::wait_for_restore_status_to_complete()
    }
 
    long long    wallclock_time;
-   SleepTimeout print_timer( this->wait_status_time );
+   SleepTimeout print_timer( (double)this->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( !this->restore_request_complete ) {
@@ -7137,7 +7144,7 @@ void Federate::wait_for_save_status_to_complete()
    }
 
    long long    wallclock_time;
-   SleepTimeout print_timer( this->wait_status_time );
+   SleepTimeout print_timer( (double)this->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( !this->save_request_complete ) {
@@ -7188,7 +7195,7 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
    }
 
    long long    wallclock_time;
-   SleepTimeout print_timer( this->wait_status_time );
+   SleepTimeout print_timer( (double)this->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( !this->federation_restore_failed_callback_complete ) {
@@ -7789,7 +7796,7 @@ void Federate::restore_federate_handles_from_MOM()
 
    bool         all_found = false;
    long long    wallclock_time;
-   SleepTimeout print_timer( this->wait_status_time );
+   SleepTimeout print_timer( (double)this->wait_status_time );
    SleepTimeout sleep_timer;
 
    // Wait for all the federate handles to be retrieved.

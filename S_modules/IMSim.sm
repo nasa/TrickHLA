@@ -105,7 +105,7 @@ class IMSimSimObject : public Trick::SimObject {
       P_LAST ("initialization") manager.initialization_complete();
 
       // FIXME: This is for IMSim and DIS only. Needs to be moved into ExecutionControl.
-      // Check to see if fed master started in freeze mode
+      // Check to see if fed master started in freeze mode.
       //P_LAST ("initialization") federate.check_pause_at_init( CHECK_PAUSE_DELTA );
 
       // Coordinate Central Timing Equipment (CTE) go to run.
@@ -115,16 +115,16 @@ class IMSimSimObject : public Trick::SimObject {
       //-- FREEZE / CHECKPOINT JOBS --
       //------------------------------
 
-      // Perform the federate save (checkpoint) or restore in FREEZE mode...
+      // Perform the federate save (checkpoint) or restore in FREEZE mode.
       P_1ST ("checkpoint") federate.setup_checkpoint();
       ("freeze") federate.perform_checkpoint();
       P_1ST ("preload_checkpoint") federate.setup_restore();
       ("freeze") federate.perform_restore();
 
-      // Coordinate federates going to run mode
-      ("freeze_init") federate.freeze_init();
-      ("freeze")      federate.check_freeze();
-      ("unfreeze")    federate.exit_freeze();
+      // Coordinate federates going to run mode.
+      P_1ST ("freeze_init") federate.freeze_init();
+      P_1ST ("freeze") federate.check_freeze();
+      ("unfreeze") federate.exit_freeze();
 
 
       //--------------------
@@ -165,7 +165,7 @@ class IMSimSimObject : public Trick::SimObject {
       // For DIS, check to see if federate master clicked freeze
       //P_LAST (data_cycle, check_pause_job_offset, "logging") federate.check_pause( CHECK_PAUSE_DELTA );
 
-      // Coordinate federates going to freeze mode
+      // Coordinate federates going to freeze mode.
       ("end_of_frame") federate.enter_freeze();
 
 

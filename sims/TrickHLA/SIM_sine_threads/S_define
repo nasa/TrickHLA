@@ -4,14 +4,14 @@
 //=============================================================================
 // Define the job calling intervals.
 //=============================================================================
-#define DYN_RATE   0.250    // The propagation frequency of the reference object.
-#define LOG_CYCLE  0.250    // Data Logging Rate.
+#define DYN_RATE  0.250 // The propagation rate of the reference object.
+#define LOG_CYCLE 0.250 // Data Logging Rate.
 
 //=============================================================================
 // Define the HLA job cycle times.
 //=============================================================================
-#define THLA_DATA_CYCLE_TIME         0.250  // HLA data communication cycle time.
-#define THLA_INTERACTION_CYCLE_TIME  0.050  // HLA Interaction cycle time.
+#define THLA_DATA_CYCLE_TIME        0.250 // HLA data communication cycle time.
+#define THLA_INTERACTION_CYCLE_TIME 0.050 // HLA Interaction cycle time.
 
 //=============================================================================
 // Define the HLA phase initialization priorities.

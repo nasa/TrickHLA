@@ -94,7 +94,7 @@ class SleepTimeout
    const bool timeout() const;
 
    /*! @brief Determine if we cumulatively slept for the configured timeout time.
-    *  @param time_micros Wall clock time in microseconds.
+    *  @param time_in_micros Wall clock time in microseconds.
     *  @return True if timeout exceeded, false otherwise. */
    const bool timeout( const long long time_in_micros ) const;
 

@@ -603,8 +603,8 @@ will be ignored because the Simulation Initialization Scheme does not support it
    if ( execution_configuration->any_remotely_owned_subscribed_init_attribute() ) {
 
       long long    wallclock_time;
-      SleepTimeout print_timer( federate->wait_status_time );
-      SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
+      SleepTimeout print_timer( (double)federate->wait_status_time );
+      SleepTimeout sleep_timer( (long)THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // Wait for the data to arrive.
       while ( !execution_configuration->is_changed() ) {

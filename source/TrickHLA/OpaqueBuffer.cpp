@@ -179,13 +179,13 @@ void OpaqueBuffer::push_to_buffer(
    }
 
    // Display a warning if an unsupported encoding is used.
-   if ( ( encoding != ENCODING_LITTLE_ENDIAN ) && ( encoding != ENCODING_BIG_ENDIAN ) && ( encoding != ENCODING_NO_ENCODING ) ) {
+   if ( ( encoding != ENCODING_LITTLE_ENDIAN ) && ( encoding != ENCODING_BIG_ENDIAN ) && ( encoding != ENCODING_NONE ) ) {
       ostringstream errmsg;
       errmsg << "OpaqueBuffer::push_to_buffer():" << __LINE__
              << " WARNING: Unsupported 'encoding' " << encoding << ". It must be"
              << " one of ENCODING_LITTLE_ENDIAN:" << ENCODING_LITTLE_ENDIAN
              << ", ENCODING_BIG_ENDIAN:" << ENCODING_BIG_ENDIAN
-             << ", or ENCODING_NO_ENCODING:" << ENCODING_NO_ENCODING << THLA_ENDL;
+             << ", or ENCODING_NONE:" << ENCODING_NONE << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    }
 
@@ -231,13 +231,13 @@ void OpaqueBuffer::pull_from_buffer(
    }
 
    // Display a warning if an unsupported encoding is used.
-   if ( ( encoding != ENCODING_LITTLE_ENDIAN ) && ( encoding != ENCODING_BIG_ENDIAN ) && ( encoding != ENCODING_NO_ENCODING ) ) {
+   if ( ( encoding != ENCODING_LITTLE_ENDIAN ) && ( encoding != ENCODING_BIG_ENDIAN ) && ( encoding != ENCODING_NONE ) ) {
       ostringstream errmsg;
       errmsg << "OpaqueBuffer::pull_from_buffer():" << __LINE__
              << " WARNING: Unsupported 'encoding' " << encoding << ". It must be"
              << " one of ENCODING_LITTLE_ENDIAN:" << ENCODING_LITTLE_ENDIAN
              << ", ENCODING_BIG_ENDIAN:" << ENCODING_BIG_ENDIAN
-             << ", or ENCODING_NO_ENCODING:" << ENCODING_NO_ENCODING << THLA_ENDL;
+             << ", or ENCODING_NONE:" << ENCODING_NONE << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    }
 

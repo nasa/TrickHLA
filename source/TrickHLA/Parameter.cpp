@@ -239,14 +239,14 @@ void Parameter::complete_initialization()
          if ( ( rti_encoding != ENCODING_BIG_ENDIAN )
               && ( rti_encoding != ENCODING_LITTLE_ENDIAN )
               && ( rti_encoding != ENCODING_BOOLEAN )
-              && ( rti_encoding != ENCODING_NO_ENCODING )
+              && ( rti_encoding != ENCODING_NONE )
               && ( rti_encoding != ENCODING_UNKNOWN ) ) {
             ostringstream errmsg;
             errmsg << "Parameter::complete_initialization():" << __LINE__
                    << " FOM Interaction Parameter '"
                    << interaction_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                    << trick_name << "' must use either the ENCODING_BIG_ENDIAN, "
-                   << " ENCODING_LITTLE_ENDIAN, ENCODING_BOOLEAN, ENCODING_NO_ENCODING, or "
+                   << " ENCODING_LITTLE_ENDIAN, ENCODING_BOOLEAN, ENCODING_NONE, or "
                    << "ENCODING_UNKNOWN value for the 'rti_encoding' when the "
                    << "parameter represents a 'bool' type. Please check your input "
                    << "or modified-data files to make sure the value for the 'rti_"
@@ -259,7 +259,7 @@ void Parameter::complete_initialization()
       case TRICK_UNSIGNED_CHARACTER: {
          if ( ( rti_encoding != ENCODING_BIG_ENDIAN )
               && ( rti_encoding != ENCODING_LITTLE_ENDIAN )
-              && ( rti_encoding != ENCODING_NO_ENCODING )
+              && ( rti_encoding != ENCODING_NONE )
               && ( rti_encoding != ENCODING_UNICODE_STRING )
               && ( rti_encoding != ENCODING_OPAQUE_DATA )
               && ( rti_encoding != ENCODING_UNKNOWN ) ) {
@@ -268,7 +268,7 @@ void Parameter::complete_initialization()
                    << " FOM Interaction Parameter '"
                    << interaction_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                    << trick_name << "' must use either the ENCODING_BIG_ENDIAN,"
-                   << " ENCODING_LITTLE_ENDIAN, ENCODING_NO_ENCODING, ENCODING_UNICODE_STRING,"
+                   << " ENCODING_LITTLE_ENDIAN, ENCODING_NONE, ENCODING_UNICODE_STRING,"
                    << " ENCODING_OPAQUE_DATA, or ENCODING_UNKNOWN, value for the"
                    << " 'rti_encoding' when the parameter  represents a 'char' or"
                    << " 'unsigned char' type. Please check your input or"
@@ -324,14 +324,14 @@ void Parameter::complete_initialization()
          if ( ( rti_encoding != ENCODING_LOGICAL_TIME )
               && ( rti_encoding != ENCODING_BIG_ENDIAN )
               && ( rti_encoding != ENCODING_LITTLE_ENDIAN )
-              && ( rti_encoding != ENCODING_NO_ENCODING )
+              && ( rti_encoding != ENCODING_NONE )
               && ( rti_encoding != ENCODING_UNKNOWN ) ) {
             ostringstream errmsg;
             errmsg << "Parameter::complete_initialization():" << __LINE__
                    << " FOM Interaction Parameter '"
                    << interaction_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                    << trick_name << "' must use either the ENCODING_LOGICAL_TIME,"
-                   << " ENCODING_BIG_ENDIAN, ENCODING_LITTLE_ENDIAN, ENCODING_NO_ENCODING, or "
+                   << " ENCODING_BIG_ENDIAN, ENCODING_LITTLE_ENDIAN, ENCODING_NONE, or "
                    << "ENCODING_UNKNOWN value for the 'rti_encoding' when the "
                    << "parameter represents a primitive type. Please check your "
                    << "input or modified-data files to make sure the value for the "
@@ -345,7 +345,7 @@ void Parameter::complete_initialization()
               && ( rti_encoding != ENCODING_UNICODE_STRING )
               && ( rti_encoding != ENCODING_ASCII_STRING )
               && ( rti_encoding != ENCODING_OPAQUE_DATA )
-              && ( rti_encoding != ENCODING_NO_ENCODING )
+              && ( rti_encoding != ENCODING_NONE )
               && ( rti_encoding != ENCODING_UNKNOWN ) ) {
             ostringstream errmsg;
             errmsg << "Parameter::complete_initialization():" << __LINE__
@@ -353,7 +353,7 @@ void Parameter::complete_initialization()
                    << interaction_FOM_name << "'->'" << FOM_name
                    << "' with Trick name '" << trick_name
                    << "' must use either the ENCODING_C_STRING, ENCODING_UNICODE_STRING,"
-                   << " ENCODING_ASCII_STRING, ENCODING_OPAQUE_DATA, ENCODING_NO_ENCODING, or "
+                   << " ENCODING_ASCII_STRING, ENCODING_OPAQUE_DATA, ENCODING_NONE, or "
                    << "ENCODING_UNKNOWN value for the 'rti_encoding' when the "
                    << "parameter represents a String type (i.e. char *). Please "
                    << "check your input or modified-data files to make sure the "
@@ -362,14 +362,14 @@ void Parameter::complete_initialization()
             DebugHandler::terminate_with_message( errmsg.str() );
          }
 
-         // Only support an array of characters (i.e. char *) for ENCODING_NO_ENCODING.
-         if ( ( rti_encoding == ENCODING_NO_ENCODING ) && ( attr->num_index != 0 ) ) {
+         // Only support an array of characters (i.e. char *) for ENCODING_NONE.
+         if ( ( rti_encoding == ENCODING_NONE ) && ( attr->num_index != 0 ) ) {
             ostringstream errmsg;
             errmsg << "Parameter::complete_initialization():" << __LINE__
                    << " FOM Interaction Parameter '"
                    << interaction_FOM_name << "'->'" << FOM_name
                    << "' with Trick name '"
-                   << trick_name << "' and 'rti_encoding' of ENCODING_NO_ENCODING must"
+                   << trick_name << "' and 'rti_encoding' of ENCODING_NONE must"
                    << " represent a one-dimensional array of characters (i.e."
                    << " 'char *'). Please check your input or modified-data"
                    << " files to make sure the value for the 'rti_encoding' is"
@@ -581,9 +581,9 @@ void Parameter::extract_data(
          memcpy( buffer, param_data, param_size );
          break;
       }
-      case ENCODING_NO_ENCODING: {
+      case ENCODING_NONE: {
          // The byte counts must match between the received attribute and
-         // the Trick simulation variable for ENCODING_NO_ENCODING since this
+         // the Trick simulation variable for ENCODING_NONE since this
          // RTI encoding only supports a fixed length array of characters.
          if ( param_size != expected_byte_count ) {
             ostringstream errmsg;
@@ -592,8 +592,8 @@ void Parameter::extract_data(
                    << "'->'" << FOM_name << "' with Trick name '" << trick_name
                    << "', the received FOM data size (" << param_size << " bytes) != Expected"
                    << " Trick simulation variable memory size (" << expected_byte_count
-                   << " bytes) for the rti_encoding of ENCODING_NO_ENCODING. The"
-                   << " ENCODING_NO_ENCODING only supports a fixed length array of"
+                   << " bytes) for the rti_encoding of ENCODING_NONE. The"
+                   << " ENCODING_NONE only supports a fixed length array of"
                    << " characters. Make sure your simulation variable is the same"
                    << " size and type as what is defined in the FOM. If you are"
                    << " using Lag Compensation one possible cause of this problem"
@@ -772,7 +772,7 @@ void Parameter::calculate_size_and_number_of_items()
 
       switch ( rti_encoding ) {
          case ENCODING_OPAQUE_DATA:
-         case ENCODING_NO_ENCODING: {
+         case ENCODING_NONE: {
             // Determine total number of bytes used by the Trick simulation
             // variable, and the data can be binary and not just the printable
             // ASCII characters.
@@ -2133,7 +2133,7 @@ void Parameter::encode_string_to_buffer()
          }
          break;
       }
-      case ENCODING_NO_ENCODING: {
+      case ENCODING_NONE: {
          // No-encoding of the data, just send the bytes as is.
 
          // Make sure we can hold the encoded data in the buffer.
@@ -2164,7 +2164,7 @@ void Parameter::encode_string_to_buffer()
          if ( byte_count != size ) {
             ostringstream errmsg;
             errmsg << "Parameter::encode_string_to_buffer():" << __LINE__
-                   << " ERROR: For ENCODING_NO_ENCODING, Parameter '" << FOM_name
+                   << " ERROR: For ENCODING_NONE, Parameter '" << FOM_name
                    << "' with Trick name '" << trick_name << "', actual data size"
                    << " (" << byte_count << ") != expected Trick simulation variable"
                    << " size (" << size << ")!" << THLA_ENDL;
@@ -2291,8 +2291,8 @@ size %d, will use the data buffer size instead.%c",
                   // Make sure to make room for the terminating null character,
                   // and add a few more bytes to give us a little more space
                   // for next time.
-                  *( (char **)address ) = (char *)TMM_resize_array_1d_a( *( (char **)address ),
-                                                                         (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+                  int array_size        = Utilities::next_positive_multiple_of_8( length );
+                  *( (char **)address ) = (char *)TMM_resize_array_1d_a( *( (char **)address ), array_size );
 
                   output = *( (unsigned char **)address );
                }
@@ -2300,7 +2300,8 @@ size %d, will use the data buffer size instead.%c",
                // Allocate memory for the sim string and include room for the
                // terminating null character and add a few more bytes to give
                // us a little more space for next time.
-               *( (char **)address ) = (char *)TMM_declare_var_1d( "char", (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+               int array_size        = Utilities::next_positive_multiple_of_8( length );
+               *( (char **)address ) = (char *)TMM_declare_var_1d( "char", array_size );
 
                output = *( (unsigned char **)address );
             }
@@ -2310,7 +2311,8 @@ size %d, will use the data buffer size instead.%c",
                errmsg << "Parameter::decode_string_from_buffer():" << __LINE__
                       << " ERROR: Could not allocate memory for ENCODING_UNICODE_STRING"
                       << " parameter '" << FOM_name << "' and length "
-                      << ( ( length > 0 ) ? ( length + 16 ) : 16 ) << "!" << THLA_ENDL;
+                      << Utilities::next_positive_multiple_of_8( length )
+                      << "!" << THLA_ENDL;
                DebugHandler::terminate_with_message( errmsg.str() );
             } else {
 
@@ -2435,8 +2437,8 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                      // Make sure to make room for the terminating null character,
                      // and add a few more bytes to give us a little more space
                      // for next time.
-                     *( (char **)address + i ) = (char *)TMM_resize_array_1d_a( *( (char **)address + i ),
-                                                                                (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+                     int array_size            = Utilities::next_positive_multiple_of_8( length );
+                     *( (char **)address + i ) = (char *)TMM_resize_array_1d_a( *( (char **)address + i ), array_size );
 
                      output = *( (unsigned char **)address + i );
                   }
@@ -2444,7 +2446,8 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                   // Allocate memory for the sim string and include room for the
                   // terminating null character and add a few more bytes to give
                   // us a little more space for next time.
-                  *( (char **)address + i ) = (char *)TMM_declare_var_1d( "char", (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+                  int array_size            = Utilities::next_positive_multiple_of_8( length );
+                  *( (char **)address + i ) = (char *)TMM_declare_var_1d( "char", array_size );
 
                   output = *( (unsigned char **)address + i );
                }
@@ -2454,7 +2457,8 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                   errmsg << "Parameter::decode_string_from_buffer():" << __LINE__
                          << " ERROR: Could not allocate memory for ENCODING_UNICODE_STRING"
                          << " parameter '" << FOM_name << "' and length "
-                         << ( ( length > 0 ) ? ( length + 16 ) : 16 ) << "!" << THLA_ENDL;
+                         << Utilities::next_positive_multiple_of_8( length )
+                         << "!" << THLA_ENDL;
                   DebugHandler::terminate_with_message( errmsg.str() );
                } else {
 
@@ -2547,8 +2551,8 @@ WARNING: For ENCODING_ASCII_STRING parameter '%s', decoded length %d > data buff
                   // Make sure to make room for the terminating null character,
                   // and add a few more bytes to give us a little more space
                   // for next time.
-                  *( (char **)address ) = (char *)TMM_resize_array_1d_a( *( (char **)address ),
-                                                                         (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+                  int array_size        = Utilities::next_positive_multiple_of_8( length );
+                  *( (char **)address ) = (char *)TMM_resize_array_1d_a( *( (char **)address ), array_size );
 
                   output = *( (unsigned char **)address );
                }
@@ -2556,7 +2560,8 @@ WARNING: For ENCODING_ASCII_STRING parameter '%s', decoded length %d > data buff
                // Allocate memory for the sim string and include room for the
                // terminating null character and add a few more bytes to give
                // us a little more space for next time.
-               *( (char **)address ) = (char *)TMM_declare_var_1d( "char", (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+               int array_size        = Utilities::next_positive_multiple_of_8( length );
+               *( (char **)address ) = (char *)TMM_declare_var_1d( "char", array_size );
 
                output = *( (unsigned char **)address );
             }
@@ -2566,7 +2571,8 @@ WARNING: For ENCODING_ASCII_STRING parameter '%s', decoded length %d > data buff
                errmsg << "Parameter::decode_string_from_buffer():" << __LINE__
                       << " ERROR: Could not allocate memory for ENCODING_ASCII_STRING"
                       << " parameter '" << FOM_name << "' and length "
-                      << ( ( length > 0 ) ? ( length + 16 ) : 16 ) << "!" << THLA_ENDL;
+                      << Utilities::next_positive_multiple_of_8( length )
+                      << "!" << THLA_ENDL;
                DebugHandler::terminate_with_message( errmsg.str() );
             } else {
 
@@ -2685,8 +2691,8 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                      // Make sure to make room for the terminating null character,
                      // and add a few more bytes to give us a little more space
                      // for next time.
-                     *( (char **)address + i ) = (char *)TMM_resize_array_1d_a( *( (char **)address + i ),
-                                                                                (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+                     int array_size            = Utilities::next_positive_multiple_of_8( length );
+                     *( (char **)address + i ) = (char *)TMM_resize_array_1d_a( *( (char **)address + i ), array_size );
 
                      output = *( (unsigned char **)address + i );
                   }
@@ -2694,7 +2700,8 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                   // Allocate memory for the sim string and include room for the
                   // terminating null character and add a few more bytes to give
                   // us a little more space for next time.
-                  *( (char **)address + i ) = (char *)TMM_declare_var_1d( "char", (int)( ( length > 0 ) ? ( length + 16 ) : 16 ) );
+                  int array_size            = Utilities::next_positive_multiple_of_8( length );
+                  *( (char **)address + i ) = (char *)TMM_declare_var_1d( "char", array_size );
 
                   output = *( (unsigned char **)address + i );
                }
@@ -2704,7 +2711,8 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                   errmsg << "Parameter::decode_string_from_buffer():" << __LINE__
                          << " ERROR: Could not allocate memory for ENCODING_ASCII_STRING"
                          << " parameter '" << FOM_name << "' and length "
-                         << ( ( length > 0 ) ? ( length + 16 ) : 16 ) << "!" << THLA_ENDL;
+                         << Utilities::next_positive_multiple_of_8( length )
+                         << "!" << THLA_ENDL;
                   DebugHandler::terminate_with_message( errmsg.str() );
                } else {
 
@@ -2971,7 +2979,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
          }
          break;
       }
-      case ENCODING_NO_ENCODING: {
+      case ENCODING_NONE: {
          // No-Encoding of the data, just use it as is.
 
          input = buffer;
@@ -2982,7 +2990,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
          if ( output == NULL ) {
             ostringstream errmsg;
             errmsg << "Parameter::decode_string_from_buffer():" << __LINE__
-                   << " ERROR: For ENCODING_NO_ENCODING, Parameter '" << FOM_name
+                   << " ERROR: For ENCODING_NONE, Parameter '" << FOM_name
                    << "' with Trick name '" << trick_name << "' is NULL!" << THLA_ENDL;
             DebugHandler::terminate_with_message( errmsg.str() );
          }
@@ -2992,7 +3000,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
          if ( (int)size != get_size( (char *)output ) ) {
             ostringstream errmsg;
             errmsg << "Parameter::decode_string_from_buffer():" << __LINE__
-                   << " ERROR: For ENCODING_NO_ENCODING, Parameter '" << FOM_name
+                   << " ERROR: For ENCODING_NONE, Parameter '" << FOM_name
                    << "' with Trick name '" << trick_name << "', received data"
                    << " size (" << size << ") != Trick simulation variable size ("
                    << get_size( (char *)output ) << ")!" << THLA_ENDL;
@@ -3026,11 +3034,13 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
 
                // Determine if we need to allocate more memory for the sim string.
                if ( (int)length >= get_size( *( (char **)address + i ) ) ) {
-                  *( (char **)address + i ) = (char *)TMM_resize_array_1d_a( *( (char **)address + i ), length + 16 );
+                  int array_size            = Utilities::next_positive_multiple_of_8( length );
+                  *( (char **)address + i ) = (char *)TMM_resize_array_1d_a( *( (char **)address + i ), array_size );
                }
             } else {
                // Allocate memory for the sim string.
-               *( (char **)address + i ) = (char *)TMM_declare_var_1d( "char", length + 16 );
+               int array_size            = Utilities::next_positive_multiple_of_8( length );
+               *( (char **)address + i ) = (char *)TMM_declare_var_1d( "char", array_size );
             }
 
             if ( *( (char **)address + i ) == NULL ) {
@@ -3038,7 +3048,8 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                errmsg << "Parameter::decode_string_from_buffer():" << __LINE__
                       << " ERROR: Could not allocate memory for ENCODING_C_STRING"
                       << " parameter '" << FOM_name << "' and length "
-                      << ( length + 16 ) << "!" << THLA_ENDL;
+                      << Utilities::next_positive_multiple_of_8( length )
+                      << "!" << THLA_ENDL;
                DebugHandler::terminate_with_message( errmsg.str() );
             }
 
@@ -3081,7 +3092,7 @@ void Parameter::byteswap_buffer_copy(
 
    // Determine if we can just copy the data between the two buffers since
    // we don't need to byteswap or do any special encoding.
-   if ( ( !byteswap ) || ( rti_encoding == ENCODING_NO_ENCODING ) ) {
+   if ( ( !byteswap ) || ( rti_encoding == ENCODING_NONE ) ) {
 
       // Copy the source into the destination since there is no byteswaping
       // or any special encoding.
@@ -3269,7 +3280,7 @@ bool Parameter::is_supported_parameter_type() const
                   || ( rti_encoding == ENCODING_LITTLE_ENDIAN )
                   || ( rti_encoding == ENCODING_BOOLEAN )
                   || ( rti_encoding == ENCODING_UNKNOWN )
-                  || ( rti_encoding == ENCODING_NO_ENCODING ) );
+                  || ( rti_encoding == ENCODING_NONE ) );
       }
       case TRICK_CHARACTER:
       case TRICK_UNSIGNED_CHARACTER: {
@@ -3278,11 +3289,11 @@ bool Parameter::is_supported_parameter_type() const
                   || ( rti_encoding == ENCODING_UNKNOWN )
                   || ( rti_encoding == ENCODING_UNICODE_STRING )
                   || ( rti_encoding == ENCODING_OPAQUE_DATA )
-                  || ( rti_encoding == ENCODING_NO_ENCODING ) );
+                  || ( rti_encoding == ENCODING_NONE ) );
       }
       case TRICK_STRING: {
-         // Only support an 1-D array of characters (char *) for ENCODING_NO_ENCODING.
-         if ( ( rti_encoding == ENCODING_NO_ENCODING ) && ( attr->num_index != 0 ) ) {
+         // Only support an 1-D array of characters (char *) for ENCODING_NONE.
+         if ( ( rti_encoding == ENCODING_NONE ) && ( attr->num_index != 0 ) ) {
             return false;
          }
          return ( ( rti_encoding == ENCODING_C_STRING )
@@ -3290,7 +3301,7 @@ bool Parameter::is_supported_parameter_type() const
                   || ( rti_encoding == ENCODING_ASCII_STRING )
                   || ( rti_encoding == ENCODING_OPAQUE_DATA )
                   || ( rti_encoding == ENCODING_UNKNOWN )
-                  || ( rti_encoding == ENCODING_NO_ENCODING ) );
+                  || ( rti_encoding == ENCODING_NONE ) );
       }
       case TRICK_DOUBLE:
       case TRICK_FLOAT:
@@ -3311,7 +3322,7 @@ bool Parameter::is_supported_parameter_type() const
                   || ( rti_encoding == ENCODING_LITTLE_ENDIAN )
                   || ( rti_encoding == ENCODING_LOGICAL_TIME )
                   || ( rti_encoding == ENCODING_UNKNOWN )
-                  || ( rti_encoding == ENCODING_NO_ENCODING ) );
+                  || ( rti_encoding == ENCODING_NONE ) );
       }
       default: {
          return false; // Type not supported

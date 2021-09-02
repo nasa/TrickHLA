@@ -459,15 +459,15 @@ void ExecutionControl::set_least_common_time_step(
 
 void ExecutionControl::set_time_padding( double t )
 {
-   int64_t int_time = Int64Interval::to_microseconds( t );
+   int64_t time_in_micros = Int64Interval::to_microseconds( t );
 
    // Need to check that time padding is valid.
-   if ( ( int_time % least_common_time_step ) != 0 ) {
+   if ( ( time_in_micros % this->least_common_time_step ) != 0 ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::set_time_padding():" << __LINE__
              << " Time padding value (" << t
-             << " must be an integer multiple of the Least Common Time Step ("
-             << least_common_time_step << ")!" << THLA_NEWLINE;
+             << " seconds) must be an integer multiple of the Least Common Time Step ("
+             << this->least_common_time_step << " microseconds)!" << THLA_NEWLINE;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -475,17 +475,17 @@ void ExecutionControl::set_time_padding( double t )
    // more times the Least Common Time Step (LCTS). This will give commands
    // time to propagate through the system and still have time for mode
    // transitions.
-   if ( int_time < ( 3 * least_common_time_step ) ) {
+   if ( time_in_micros < ( 3 * this->least_common_time_step ) ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::set_time_padding():" << __LINE__
-             << " ERROR: Mode transition padding time (" << int_time
+             << " ERROR: Mode transition padding time (" << time_in_micros
              << " microseconds) is not a multiple of 3 or more of the ExCO"
-             << " Least Common Time Step (" << least_common_time_step
+             << " Least Common Time Step (" << this->least_common_time_step
              << " microseconds)!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   this->time_padding = t;
+   this->time_padding = Int64Interval::to_seconds( time_in_micros );
 }
 
 void ExecutionControl::start_federation_save_at_scenario_time(

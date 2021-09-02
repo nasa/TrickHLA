@@ -250,7 +250,7 @@ void ExecutionConfigurationBase::wait_for_registration()
    int  total_obj_cnt = 1;
 
    long long    wallclock_time;
-   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout print_timer( (double)federate->wait_status_time );
    SleepTimeout sleep_timer;
 
    do {
@@ -360,7 +360,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
    if ( this->any_remotely_owned_subscribed_init_attribute() ) {
 
       long long    wallclock_time;
-      SleepTimeout print_timer( federate->wait_status_time );
+      SleepTimeout print_timer( (double)federate->wait_status_time );
       SleepTimeout sleep_timer;
 
       // Wait for the data to arrive.

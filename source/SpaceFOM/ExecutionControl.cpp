@@ -615,7 +615,7 @@ void ExecutionControl::role_determination_process()
 
       bool         print_summary = DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL );
       long long    wallclock_time;
-      SleepTimeout print_timer( federate->wait_status_time );
+      SleepTimeout print_timer( (double)federate->wait_status_time );
       SleepTimeout sleep_timer;
 
       // Block until we have determined if we are a late joining federate.
@@ -1109,7 +1109,7 @@ void ExecutionControl::post_multi_phase_init_processes()
       switch ( this->requested_execution_control_mode ) {
 
          case EXECUTION_CONTROL_RUNNING:
-            // Since this is a later joining federate, do NOT call the SpaceFOM
+            // Since this is a late joining federate, do NOT call the SpaceFOM
             // ExecutionControl run_mode_transition() function here. Late joiners
             // do NOT use the 'mtr_run' sync-points at initialization. Late
             // joining federates go straight to run if the federation is in
@@ -1123,7 +1123,7 @@ void ExecutionControl::post_multi_phase_init_processes()
             break;
 
          case EXECUTION_CONTROL_FREEZE:
-            // Since this is a later joining federate, do NOT call the
+            // Since this is a late joining federate, do NOT call the
             // SpaceFOM ExecutionControl freeze_mode_transition() function here.
             // Late joiners do NOT use the 'mtr_freeze' sync-points at
             // initialization. Instead, tell the Trick executive to startup
@@ -2255,7 +2255,42 @@ void ExecutionControl::freeze_init()
 
 void ExecutionControl::enter_freeze()
 {
-   // Bypass this if we are already processing a freeze command.
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      string exec_cmd_str;
+      switch ( exec_get_exec_command() ) {
+         case NoCmd:
+            exec_cmd_str = "NoCmd";
+            break;
+         case FreezeCmd:
+            exec_cmd_str = "FreezeCmd";
+            break;
+         case RunCmd:
+            exec_cmd_str = "RunCmd";
+            break;
+         case ExitCmd:
+            exec_cmd_str = "ExitCmd";
+            break;
+         default:
+            exec_cmd_str = "Unknown";
+            break;
+      }
+      ostringstream msg;
+      msg << "SpaceFOM::ExecutionControl::enter_freeze():" << __LINE__ << THLA_NEWLINE
+          << "   Master-federate:" << ( this->is_master() ? "Yes" : "No" )
+          << THLA_NEWLINE
+          << "   Requested-ExCO-mode:" << execution_mode_enum_to_string( from_execution_control_enum( this->get_requested_execution_control_mode() ) )
+          << THLA_NEWLINE
+          << "   Trick-sim-time:" << exec_get_sim_time()
+          << "   Trick-exec-command:" << exec_cmd_str
+          << THLA_NEWLINE
+          << "   Sim-freeze-time:" << this->get_simulation_freeze_time()
+          << "   Freeze-announced:" << ( federate->get_freeze_announced() ? "Yes" : "No" )
+          << "   Freeze-pending:" << ( federate->get_freeze_pending() ? "Yes" : "No" )
+          << THLA_NEWLINE;
+      send_hs( stdout, (char *)msg.str().c_str() );
+   }
+
+   // Determine if we are already processing a freeze command.
    if ( this->get_requested_execution_control_mode() == EXECUTION_CONTROL_FREEZE ) {
 
       // Determine if the Trick control panel "freeze" button was pressed more
@@ -2267,9 +2302,17 @@ void ExecutionControl::enter_freeze()
          // The Trick simulation control panel "freeze" button was hit more than
          // once before the scheduled freeze time, so go back to run.
          exec_run();
+
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+            send_hs( stdout, "SpaceFOM::ExecutionControl::enter_freeze():%d Detected duplicate Freeze command, ignoring.%c",
+                     __LINE__, THLA_NEWLINE );
+         }
       }
 
-      // The requested mode is already EXECUTION_CONTROL_FREEZE so return.
+      // The requested mode is already EXECUTION_CONTROL_FREEZE so return. This
+      // can happen if the scheduled freeze is activated and this end of frame
+      // function is called again instead of the Trick Sim Control Panel
+      // Freeze button being pressed.
       return;
    }
 
@@ -2310,7 +2353,7 @@ void ExecutionControl::enter_freeze()
       // Federate::freeze_init() job.
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "SpaceFOM::ExecutionControl::enter_freeze():%d Freeze Announced:%s, Freeze Pending:%s%c",
                __LINE__, ( federate->get_freeze_announced() ? "Yes" : "No" ),
                ( federate->get_freeze_pending() ? "Yes" : "No" ), THLA_NEWLINE );
@@ -2591,7 +2634,7 @@ void ExecutionControl::receive_root_ref_frame()
    if ( rrf_object->any_remotely_owned_subscribed_init_attribute() ) {
 
       long long    wallclock_time;
-      SleepTimeout print_timer( federate->wait_status_time );
+      SleepTimeout print_timer( (double)federate->wait_status_time );
       SleepTimeout sleep_timer;
 
       // Wait for the data to arrive.
@@ -2688,15 +2731,15 @@ void ExecutionControl::set_least_common_time_step(
 
 void ExecutionControl::set_time_padding( double t )
 {
-   int64_t int_time = Int64Interval::to_microseconds( t );
+   int64_t time_in_micros = Int64Interval::to_microseconds( t );
 
    // Need to check that time padding is valid.
-   if ( ( int_time % least_common_time_step ) != 0 ) {
+   if ( ( time_in_micros % this->least_common_time_step ) != 0 ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
              << " ERROR: Time padding value (" << t
-             << " must be an integer multiple of the Least Common Time Step ("
-             << least_common_time_step << ")!" << THLA_NEWLINE;
+             << " seconds) must be an integer multiple of the Least Common Time Step ("
+             << this->least_common_time_step << " microseconds)!" << THLA_NEWLINE;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -2704,15 +2747,15 @@ void ExecutionControl::set_time_padding( double t )
    // more times the Least Common Time Step (LCTS). This will give commands
    // time to propagate through the system and still have time for mode
    // transitions.
-   if ( int_time < ( 3 * least_common_time_step ) ) {
+   if ( time_in_micros < ( 3 * this->least_common_time_step ) ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
-             << " ERROR: Mode transition padding time (" << int_time
+             << " ERROR: Mode transition padding time (" << time_in_micros
              << " microseconds) is not a multiple of 3 or more of the ExCO"
-             << " Least Common Time Step (" << least_common_time_step
+             << " Least Common Time Step (" << this->least_common_time_step
              << " microseconds)!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   this->time_padding = t;
+   this->time_padding = Int64Interval::to_seconds( time_in_micros );
 }

@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/DebugHndler.cpp
+@file TrickHLA/DebugHandler.cpp
 @ingroup TrickHLA
 @brief Multi-level debug reporter.
 

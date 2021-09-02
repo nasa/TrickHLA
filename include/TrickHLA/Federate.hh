@@ -548,7 +548,7 @@ class Federate
    void initiate_save_announce();
 
    /*! @brief Sets the Save filename and flag.
-    *  @param restore_name Restore file name. */
+    *  @param restore_name_label Restore file name. */
    void initiate_restore_announce( const std::string &restore_name_label );
 
    /*! @brief Sets the Save filename and flag.
@@ -619,14 +619,14 @@ class Federate
    // Time management initialization functions.
    //
    /*! @brief Enable time constrained.
-    *  @param True the granted HLA Logical time */
+    *  @param time the granted HLA Logical time */
    void set_time_constrained_enabled( RTI1516_NAMESPACE::LogicalTime const &time );
 
    /*! @brief Setup this federate's constrained time management. */
    void setup_time_constrained();
 
    /*! @brief Enable time regulating.
-    *  @param True the granted HLA Logical time */
+    *  @param time the granted HLA Logical time */
    void set_time_regulation_enabled( RTI1516_NAMESPACE::LogicalTime const &time );
 
    /*! @brief Setup this federate's regulate time management. */

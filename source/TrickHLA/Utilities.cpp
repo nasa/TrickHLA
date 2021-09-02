@@ -57,7 +57,7 @@ bool Utilities::is_transmission_byteswap(
 }
 
 short Utilities::byteswap_short(
-   short input )
+   const short input )
 {
    short          output;
    const size_t   size = sizeof( output );
@@ -87,7 +87,7 @@ short Utilities::byteswap_short(
 }
 
 unsigned short Utilities::byteswap_unsigned_short(
-   unsigned short input )
+   const unsigned short input )
 {
    unsigned short output;
    const size_t   size = sizeof( output );
@@ -117,7 +117,7 @@ unsigned short Utilities::byteswap_unsigned_short(
 }
 
 int Utilities::byteswap_int( // RETURN: -- Byteswap value.
-   int input )               // IN: -- The input value to byteswap.
+   const int input )         // IN: -- The input value to byteswap.
 {
    int            output;
    const size_t   size = sizeof( output );
@@ -143,7 +143,7 @@ int Utilities::byteswap_int( // RETURN: -- Byteswap value.
 }
 
 unsigned int Utilities::byteswap_unsigned_int(
-   unsigned int input )
+   const unsigned int input )
 {
    unsigned int   output;
    const size_t   size = sizeof( output );
@@ -169,7 +169,7 @@ unsigned int Utilities::byteswap_unsigned_int(
 }
 
 long Utilities::byteswap_long(
-   long input )
+   const long input )
 {
    long           output;
    const size_t   size = sizeof( output );
@@ -205,7 +205,7 @@ long Utilities::byteswap_long(
 }
 
 unsigned long Utilities::byteswap_unsigned_long(
-   unsigned long input )
+   const unsigned long input )
 {
    unsigned long  output;
    const size_t   size = sizeof( output );
@@ -241,7 +241,7 @@ unsigned long Utilities::byteswap_unsigned_long(
 }
 
 long long Utilities::byteswap_long_long(
-   long long input )
+   const long long input )
 {
    long long      output;
    const size_t   size = sizeof( output );
@@ -272,7 +272,7 @@ long long Utilities::byteswap_long_long(
 }
 
 unsigned long long Utilities::byteswap_unsigned_long_long(
-   unsigned long long input )
+   const unsigned long long input )
 {
    unsigned long long output;
    const size_t       size = sizeof( output );
@@ -303,7 +303,7 @@ unsigned long long Utilities::byteswap_unsigned_long_long(
 }
 
 float Utilities::byteswap_float(
-   float input )
+   const float input )
 {
    float          output;
    const size_t   size = sizeof( output );
@@ -338,7 +338,7 @@ float Utilities::byteswap_float(
 }
 
 double Utilities::byteswap_double(
-   double input )
+   const double input )
 {
    double         output;
    const size_t   size = sizeof( output );
@@ -366,8 +366,25 @@ double Utilities::byteswap_double(
    return ( output );
 }
 
+size_t Utilities::next_positive_multiple_of_8(
+   const size_t value )
+{
+   // Round up to the next positive multiple of 8.
+   return Utilities::next_positive_multiple_of_N( value, 8 );
+}
+
+size_t Utilities::next_positive_multiple_of_N(
+   const size_t       value,
+   const unsigned int n )
+{
+   // Round up to the next positive multiple of N where the minimum result is N.
+   // The result will always be greater than the positive value specified by
+   // up to a count of N.
+   return ( ( value >= n ) ? ( n * ( ( value / n ) + 1 ) ) : n );
+}
+
 int Utilities::micro_sleep(
-   long usec )
+   const long usec )
 {
    struct timespec sleep_time;
    if ( usec >= 1000000 ) {

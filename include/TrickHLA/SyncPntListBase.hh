@@ -263,8 +263,8 @@ class SyncPntListBase
       SyncPnt *                                   sync_pnt );
 
    /*! @brief Wait for the announcement of the synchronization point.
-    *  @param fed_ptr Pointer to TrickHLA::Federate instance.
-    *  @param label   Sync-point label. */
+    *  @param federate Pointer to TrickHLA::Federate instance.
+    *  @param label    Sync-point label. */
    virtual bool wait_for_sync_point_announcement( Federate *          federate,
                                                   std::wstring const &label );
 

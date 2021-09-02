@@ -227,7 +227,7 @@ void SinePacking::pack()
                name_sim_var[name_len - 1] = (char)( 48 + ( pack_count % 10 ) );
             }
 
-            cout << "\t Value:'" << name_sim_var << "'" << endl;
+            cout << "\t Value:'" << string( name_sim_var ) << "'" << endl;
          } else {
             cout << "\t Value:NULL" << endl;
          }
@@ -328,7 +328,7 @@ void SinePacking::unpack()
 
          // Display the name.
          if ( name_sim_var != NULL ) {
-            cout << "\t Value:'" << name_sim_var << "'" << endl;
+            cout << "\t Value:'" << string( name_sim_var ) << "'" << endl;
          } else {
             cout << "\t Value:NULL" << endl;
          }
