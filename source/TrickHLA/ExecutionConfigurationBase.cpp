@@ -313,7 +313,7 @@ void ExecutionConfigurationBase::wait_for_registration()
          // Check again to determine if we have any unregistered objects.
          any_unregistered_obj = ( obj_reg_cnt < total_obj_cnt );
 
-         if ( any_unregistered_obj ) {
+         if ( any_unregistered_obj ) { // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
 
             // To be more efficient, we get the time once and share it.
             wallclock_time = sleep_timer.time();

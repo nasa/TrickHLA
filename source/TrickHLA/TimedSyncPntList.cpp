@@ -78,7 +78,7 @@ void TimedSyncPntList::add_sync_point(
 }
 
 void TimedSyncPntList::add_sync_point(
-   wstring const &  label,
+   wstring const   &label,
    const Int64Time &time )
 {
    TimedSyncPnt *sp = new TimedSyncPnt( time, label );
@@ -91,7 +91,7 @@ void TimedSyncPntList::add_sync_point(
 
 bool TimedSyncPntList::achieve_all_sync_points(
    RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-   const Int64Time &                 checkTime )
+   const Int64Time                  &checkTime )
 {
    bool wasAcknowledged = false;
 

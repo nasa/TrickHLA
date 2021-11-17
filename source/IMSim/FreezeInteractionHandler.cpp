@@ -66,8 +66,8 @@ FreezeInteractionHandler::FreezeInteractionHandler() // RETURN: -- None.
 }
 
 /*!
-* @job_class{shutdown}
-*/
+ * @job_class{shutdown}
+ */
 FreezeInteractionHandler::~FreezeInteractionHandler() // RETURN: -- None.
 {
    return;

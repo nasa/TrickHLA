@@ -108,7 +108,7 @@ ExecutionControl::ExecutionControl()
  */
 ExecutionControl::~ExecutionControl()
 {
-   clear_mode_values();
+   this->clear_mode_values();
 }
 
 /*!
@@ -287,13 +287,13 @@ void ExecutionControl::pre_multi_phase_init_processes()
       // Setup the preferred order for all object attributes and interactions.
       get_manager()->setup_preferred_order_with_RTI();
 
-      //DANNY2.7 moved this here because there is race condition (starting with
-      // Pitch 4.4) after wait_for_registration_of_required_objects any federate
-      // (instead of the 1st one started) can become the master because
-      // wait_for_registration_of_required_objects is random. We need the 1st
-      // federate started to be the master so that master's sim control panel
-      // controls pausing and checkpoints.
-      // Determine if this federate is the Master.
+      // DANNY2.7 moved this here because there is race condition (starting with
+      //  Pitch 4.4) after wait_for_registration_of_required_objects any federate
+      //  (instead of the 1st one started) can become the master because
+      //  wait_for_registration_of_required_objects is random. We need the 1st
+      //  federate started to be the master so that master's sim control panel
+      //  controls pausing and checkpoints.
+      //  Determine if this federate is the Master.
       determine_federation_master();
 
       // Waits on the registration of all the required RTI object instances with
@@ -310,8 +310,8 @@ void ExecutionControl::pre_multi_phase_init_processes()
          // Make sure all required federates have joined the federation.
          (void)federate->wait_for_required_federates_to_join();
 
-         //DANNY2.7 when master is started in freeze, create a pause sync point
-         // so other feds will start in freeze
+         // DANNY2.7 when master is started in freeze, create a pause sync point
+         //  so other feds will start in freeze
          if ( exec_get_freeze_command() != 0 ) {
             federate->register_generic_sync_point( DIS::STARTUP_FREEZE_SYNC_POINT, 0.0 );
          }
@@ -330,7 +330,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
 */
 void ExecutionControl::post_multi_phase_init_process()
 {
-   //DANNY2.7 need this so that write_running_feds_file for checkpoint will work
+   // DANNY2.7 need this so that write_running_feds_file for checkpoint will work
    federate->load_and_print_running_federate_names();
 
    // Setup HLA time management.
@@ -405,8 +405,8 @@ void ExecutionControl::add_multiphase_init_sync_points()
 
 void ExecutionControl::announce_sync_point(
    RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-   wstring const &                   label,
-   RTI1516_USERDATA const &          user_supplied_tag )
+   wstring const                    &label,
+   RTI1516_USERDATA const           &user_supplied_tag )
 {
    // Parse the sync-point to see if we have a pause sync-point.
    string label_str;
@@ -1020,7 +1020,7 @@ bool ExecutionControl::process_execution_control_updates()
             this->freeze_mode_announce();
 
             // Tell Trick to go into freeze at startup.
-            //the_exec->freeze();
+            // the_exec->freeze();
 
             // Tell Trick to go into freeze at startup.
             the_exec->set_freeze_command( true );
@@ -1190,9 +1190,9 @@ bool ExecutionControl::process_execution_control_updates()
 
 bool ExecutionControl::run_mode_transition()
 {
-   RTIambassador *         RTI_amb  = federate->get_RTI_ambassador();
+   RTIambassador          *RTI_amb  = federate->get_RTI_ambassador();
    ExecutionConfiguration *ExCO     = get_execution_configuration();
-   SyncPnt *               sync_pnt = NULL;
+   SyncPnt                *sync_pnt = NULL;
 
    // Register the 'mtr_run' sync-point.
    if ( this->is_master() ) {
@@ -1285,9 +1285,9 @@ void ExecutionControl::freeze_mode_announce()
 
 bool ExecutionControl::freeze_mode_transition()
 {
-   RTIambassador *         RTI_amb  = federate->get_RTI_ambassador();
+   RTIambassador          *RTI_amb  = federate->get_RTI_ambassador();
    ExecutionConfiguration *ExCO     = get_execution_configuration();
-   TrickHLA::SyncPnt *     sync_pnt = NULL;
+   TrickHLA::SyncPnt      *sync_pnt = NULL;
 
    // Get the 'mtr_freeze' sync-point.
    sync_pnt = this->get_sync_point( MTR_FREEZE_SYNC_POINT );
@@ -1369,9 +1369,9 @@ void ExecutionControl::check_freeze()
 
 void ExecutionControl::enter_freeze()
 {
-   //DANNY2.7 create a pause sync point when master hits Sim Control Panel
-   // Freeze button (if the Federation Manager is master then this has
-   // no effect) determine if I am the federate that clicked Freeze
+   // DANNY2.7 create a pause sync point when master hits Sim Control Panel
+   //  Freeze button (if the Federation Manager is master then this has
+   //  no effect) determine if I am the federate that clicked Freeze
    if ( this->get_sim_time() <= 0.0 ) {
       federate->announce_freeze = this->is_master();
    } else if ( !federate->freeze_the_federation ) {
@@ -1424,7 +1424,7 @@ bool ExecutionControl::check_freeze_exit()
 
 void ExecutionControl::exit_freeze()
 {
-   if ( federate->announce_freeze ) {          //DANNY2.7
+   if ( federate->announce_freeze ) {          // DANNY2.7
       if ( federate->freeze_the_federation ) { // coming out of freeze due to reaching sync point
          federate->announce_freeze = false;    // reset for the next time we freeze
       }
@@ -1454,7 +1454,7 @@ void ExecutionControl::exit_freeze()
 }
 
 void ExecutionControl::add_pause(
-   Int64Time *    time,
+   Int64Time     *time,
    wstring const &label )
 {
    pause_sync_pts.add_sync_point( label, *time );
@@ -1476,7 +1476,7 @@ ExecutionConfiguration *ExecutionControl::get_execution_configuration()
 
 bool ExecutionControl::is_save_initiated()
 {
-   //TODO: should DIS use a sync point like IMSim here ?
+   // TODO: should DIS use a sync point like IMSim here ?
    federate->initiate_save_flag = true;
    return ( true );
 }

@@ -107,7 +107,7 @@ class Parameter
     *  @param in_attr ATTRIBUTES of the trick variable.
     */
    void initialize( const char *interaction_fom_name,
-                    void *      in_addr,
+                    void       *in_addr,
                     ATTRIBUTES *in_attr );
 
    /*! @brief Initializes the TrickHLA Parameter. */
@@ -250,9 +250,9 @@ class Parameter
 
    bool byteswap; ///< @trick_units{--} Flag to indicate byte-swap before RTI Rx/Tx.
 
-   void *      address;              ///< @trick_io{**} Address of the trick variable
+   void       *address;              ///< @trick_io{**} Address of the trick variable
    ATTRIBUTES *attr;                 ///< @trick_io{**} ATTRIBUTES of the trick variable
-   char *      interaction_FOM_name; ///< @trick_io{**} Copy of the user-supplied interaction FOM_name
+   char       *interaction_FOM_name; ///< @trick_io{**} Copy of the user-supplied interaction FOM_name
 
    RTI1516_NAMESPACE::ParameterHandle param_handle; ///< @trick_io{**} The RTI parameter handle.
 
@@ -313,8 +313,8 @@ class Parameter
     *  @param type      The type of the data.
     *  @param length    The length/number of entries in the source array.
     *  @param num_bytes The number of bytes in the source array. */
-   void byteswap_buffer_copy( void * dest,
-                              void * src,
+   void byteswap_buffer_copy( void  *dest,
+                              void  *src,
                               int    type,
                               size_t length,
                               size_t num_bytes ) const;

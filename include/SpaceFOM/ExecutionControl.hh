@@ -140,8 +140,8 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @param user_supplied_tag Use supplied tag.*/
    virtual void announce_sync_point(
       RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-      std::wstring const &              label,
-      RTI1516_USERDATA const &          user_supplied_tag );
+      std::wstring const               &label,
+      RTI1516_USERDATA const           &user_supplied_tag );
 
    /*! @brief Publish the ExecutionControl objects and interactions. */
    virtual void publish();
@@ -162,10 +162,10 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     * @param theTime            HLA time for the interaction.
     * @param received_as_TSO    True if interaction was received by RTI as TSO. */
    virtual void receive_interaction(
-      RTI1516_NAMESPACE::InteractionClassHandle const & theInteraction,
+      RTI1516_NAMESPACE::InteractionClassHandle const  &theInteraction,
       RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-      RTI1516_USERDATA const &                          theUserSuppliedTag,
-      RTI1516_NAMESPACE::LogicalTime const &            theTime,
+      RTI1516_USERDATA const                           &theUserSuppliedTag,
+      RTI1516_NAMESPACE::LogicalTime const             &theTime,
       bool                                              received_as_TSO );
    /*! @brief Send a mode transition request to the Master federate.
     *  @param requested_mode Requested mode. */

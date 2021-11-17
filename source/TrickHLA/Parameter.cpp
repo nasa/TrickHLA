@@ -200,7 +200,7 @@ void Parameter::initialize(
  */
 void Parameter::initialize(
    const char *interaction_fom_name,
-   void *      in_addr,
+   void       *in_addr,
    ATTRIBUTES *in_attr )
 {
    address = in_addr;
@@ -505,7 +505,7 @@ void Parameter::complete_initialization()
           << "  attr->units:" << attr->units << endl
           << "  size:" << size << endl
           << "  num_items:" << num_items << endl
-          //TODO: Figure out get_size_from_attributes() API in Trick 10.
+          // TODO: Figure out get_size_from_attributes() API in Trick 10.
           //<< "  get_size_from_attributes():" << get_size_from_attributes(attr, attr->name) << endl
           << "  attr->size:" << attr->size << endl
           << "  attr->num_index:" << attr->num_index << endl
@@ -849,7 +849,7 @@ void Parameter::calculate_size_and_number_of_items()
           << "  ref2->attr->units:" << attr->units << endl
           << "  size:" << size << endl
           << "  num_items:" << num_items << endl;
-      //TODO: Figure out get_size_from_attributes() API in Trick 10.
+      // TODO: Figure out get_size_from_attributes() API in Trick 10.
       msg << "  ref2->attr->size:" << attr->size << endl
           << "  ref2->attr->num_index:" << attr->num_index << endl
           << "  ref2->attr->index[0].size:" << ( attr->num_index >= 1 ? attr->index[0].size : 0 ) << endl
@@ -934,7 +934,7 @@ void Parameter::pack_parameter_buffer()
           << "  ref2->attr->units:" << attr->units << endl
           << "  size:" << size << endl
           << "  num_items:" << num_items << endl
-          //TODO: Figure out get_size_from_attributes() API in Trick 10.
+          // TODO: Figure out get_size_from_attributes() API in Trick 10.
           //<< "  get_size_from_attributes():" << get_size_from_attributes(attr, attr->name) << endl
           << "  ref2->attr->size:" << attr->size << endl
           << "  ref2->attr->num_index:" << attr->num_index << endl
@@ -1090,7 +1090,7 @@ void Parameter::pack_parameter_buffer()
           << "  ref2->attr->units:" << attr->units << endl
           << "  size:" << size << endl
           << "  num_items:" << num_items << endl
-          //TODO: Figure out get_size_from_attributes() API in Trick 10.
+          // TODO: Figure out get_size_from_attributes() API in Trick 10.
           //<< "  get_size_from_attributes():" << get_size_from_attributes(attr, attr->name) << endl
           << "  ref2->attr->size:" << attr->size << endl
           << "  ref2->attr->num_index:" << attr->num_index << endl
@@ -1242,7 +1242,7 @@ void Parameter::unpack_parameter_buffer()
           << "  ref2->attr->units:" << attr->units << endl
           << "  size:" << size << endl
           << "  num_items:" << num_items << endl
-          //TODO: Figure out get_size_from_attributes() API in Trick 10.
+          // TODO: Figure out get_size_from_attributes() API in Trick 10.
           //<< "  get_size_from_attributes():" << get_size_from_attributes(attr, attr->name) << endl
           << "  ref2->attr->size:" << attr->size << endl
           << "  ref2->attr->num_index:" << attr->num_index << endl
@@ -1421,7 +1421,7 @@ void Parameter::decode_logical_time()
          break;
       }
       case TRICK_SHORT: {
-         short * s_dest = (short *)address;
+         short  *s_dest = (short *)address;
          int64_t value  = logical_time / MICROS_MULTIPLIER;
          s_dest[0]      = ( value > SHRT_MAX ) ? SHRT_MAX : (short)value;
          break;
@@ -1433,7 +1433,7 @@ void Parameter::decode_logical_time()
          break;
       }
       case TRICK_INTEGER: {
-         int *   i_dest = (int *)address;
+         int    *i_dest = (int *)address;
          int64_t value  = logical_time / MICROS_MULTIPLIER;
          i_dest[0]      = ( value > INT_MAX ) ? INT_MAX : (int)value;
          break;
@@ -1445,7 +1445,7 @@ void Parameter::decode_logical_time()
          break;
       }
       case TRICK_LONG: {
-         long *  l_dest = (long *)address;
+         long   *l_dest = (long *)address;
          int64_t value  = logical_time / MICROS_MULTIPLIER;
          l_dest[0]      = ( value > LONG_MAX ) ? LONG_MAX : (long)value;
          break;
@@ -1491,7 +1491,7 @@ void Parameter::encode_opaque_data_to_buffer()
       // Handle the other primitive types.
       unsigned char *output;       // Cast the buffer to be a character array.
       int            num_elements; // Number of elements in the encoded string.
-      char *         s;            // pointer to a string
+      char          *s;            // pointer to a string
 
       // HLAopaqueData format documented in IEEE Standard 1516.2-2000, which
       // will handle variable length binary data.
@@ -1674,7 +1674,7 @@ size %d, will use the data buffer size instead.%c",
 void Parameter::encode_string_to_buffer()
 {
    unsigned char *output; // Cast the buffer to be a character array.
-   char *         s;      // pointer to a string
+   char          *s;      // pointer to a string
 
    switch ( rti_encoding ) {
       case ENCODING_UNICODE_STRING: {
@@ -1750,7 +1750,7 @@ void Parameter::encode_string_to_buffer()
             // 4: encoded size,
             // 2 * (size + num_items): all string characters (UTF-16) + possible NULLs
             // 6 * num_items: 2 pad and 4 bytes for character count per element
-            //encoded_size = 4 + 2 * (size + num_items) + 6 * num_items;
+            // encoded_size = 4 + 2 * (size + num_items) + 6 * num_items;
             // Make sure we can hold the encoded data.
             ensure_buffer_capacity( 4 + 2 * size + 8 * num_items );
 
@@ -1897,7 +1897,7 @@ void Parameter::encode_string_to_buffer()
             // 4: encoded size,
             // (size + num_items): all string characters + possible NULLs
             // 7 * num_items: 3 pad + 4 bytes for character count per element
-            //encoded_size = 4 + (size + num_items) + 7 * num_items;
+            // encoded_size = 4 + (size + num_items) + 7 * num_items;
             // Make sure we can hold the encoded data.
             ensure_buffer_capacity( 4 + size + 8 * num_items );
 
@@ -2365,7 +2365,7 @@ WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for 
             // Calculate the number of UTF-16 characters which is the number of
             // bytes in the buffer minus the encoded length fields divided by 2.
             // data_buff_size = (size - 4 - 4 * num_elements)/2
-            //TODO: IS THIS NEEDED INSTEAD?
+            // TODO: IS THIS NEEDED INSTEAD?
             //            int data_buff_size = size;
             //            if ( attr->type == TRICK_STRING ) {
             //               data_buff_size = (size - (4 * (num_elements + 1))) / 2;
@@ -3071,8 +3071,8 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
  * for now.
  */
 void Parameter::byteswap_buffer_copy(
-   void * dest,
-   void * src,
+   void  *dest,
+   void  *src,
    int    type,
    size_t length,
    size_t num_bytes ) const
@@ -3103,7 +3103,7 @@ void Parameter::byteswap_buffer_copy(
       // Do the byteswap based on the type.
       switch ( type ) {
          case TRICK_DOUBLE: {
-            double *d_src  = static_cast< double * >( src );
+            double *d_src  = static_cast< double  *>( src );
             double *d_dest = static_cast< double * >( dest );
             if ( length == 1 ) {
                d_dest[0] = Utilities::byteswap_double( d_src[0] );
@@ -3115,7 +3115,7 @@ void Parameter::byteswap_buffer_copy(
             break;
          }
          case TRICK_FLOAT: {
-            float *f_src  = static_cast< float * >( src );
+            float *f_src  = static_cast< float  *>( src );
             float *f_dest = static_cast< float * >( dest );
             if ( length == 1 ) {
                f_dest[0] = Utilities::byteswap_float( f_src[0] );

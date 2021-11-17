@@ -128,11 +128,11 @@ void PausePointList::check_state()
    // FIXME: Commenting out to test. This needs to be split between the
    // DIS::ExecutinoControl and the IMSim::ExecutionControl.
    // This code needs to be moved to DIS implementation.
-   //if ( init_scheme == INIT_SCHEME_DIS_COMPATIBLE ) {
+   // if ( init_scheme == INIT_SCHEME_DIS_COMPATIBLE ) {
    // Transition into a RUN state immediately.
-   //this->state = PAUSE_POINT_STATE_RUN;
+   // this->state = PAUSE_POINT_STATE_RUN;
    //} // This code needs to be moved to an IMSim implementation.
-   //else {
+   // else {
    // We can only transition to the Run state if we are not currently in an
    // Unknown state. Also, do not jump into Run state if we are currently in
    // Freeze mode.

@@ -57,12 +57,12 @@ SineOwnershipHandler::~SineOwnershipHandler()
 }
 
 /*!
-  * @details From the TrickHLA::OwnershipHandler class. We override this
-  * function so that we can initialize ownership transfer of some attributes
-  * at a specific time.
-  *
-  * @job_class{initialization}
-  */
+ * @details From the TrickHLA::OwnershipHandler class. We override this
+ * function so that we can initialize ownership transfer of some attributes
+ * at a specific time.
+ *
+ * @job_class{initialization}
+ */
 void SineOwnershipHandler::initialize_callback(
    TrickHLA::Object *obj )
 {

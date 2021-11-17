@@ -70,7 +70,7 @@ SineConditional::~SineConditional()
  * @job_class{initialization}
  */
 void SineConditional::initialize(
-   SineData *  data,
+   SineData   *data,
    const char *attr_FOM_name )
 {
    sim_data = data;

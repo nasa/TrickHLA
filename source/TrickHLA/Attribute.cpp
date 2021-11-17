@@ -313,8 +313,8 @@ void Attribute::initialize(
             DebugHandler::terminate_with_message( errmsg.str() );
          }
 
-         // For the ENCODING_TYPE_OPAQUE_DATA encoding, we only support a 1-D dynamic
-         // array of characters.
+         // For the ENCODING_TYPE_OPAQUE_DATA encoding, we only support a
+         // 1-D dynamic array of characters.
          if ( ( rti_encoding == ENCODING_OPAQUE_DATA )
               && ( ( ref2->attr->num_index != 1 ) || ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 ) ) ) {
             ostringstream errmsg;
@@ -529,8 +529,8 @@ void Attribute::initialize(
           << "  ref2->attr->units:" << ref2->attr->units << endl
           << "  size:" << size << endl
           << "  num_items:" << num_items << endl;
-      //TODO: Figure out get_size_from_attributes() API in Trick 10.
-      //  << "  get_size_from_attributes():" << get_size_from_attributes(ref2->attr, ref2->attr->name) << endl
+      // TODO: Figure out get_size_from_attributes() API in Trick 10.
+      //   << "  get_size_from_attributes():" << get_size_from_attributes(ref2->attr, ref2->attr->name) << endl
       msg << "  ref2->attr->size:" << ref2->attr->size << endl
           << "  ref2->attr->num_index:" << ref2->attr->num_index << endl
           << "  ref2->attr->index[0].size:" << ( ref2->attr->num_index >= 1 ? ref2->attr->index[0].size : 0 ) << endl
@@ -879,9 +879,10 @@ void Attribute::calculate_size_and_number_of_items()
             break;
          }
          default: {
-            // For the ENCODING_TYPE_C_STRING, ENCODING_TYPE_UNICODE_STRING, and ENCODING_TYPE_ASCII_STRING
-            // encodings assume the string is terminated with a null character
-            // and determine the number of characters using strlen().
+            // For the ENCODING_TYPE_C_STRING, ENCODING_TYPE_UNICODE_STRING,
+            // and ENCODING_TYPE_ASCII_STRING encodings assume the string is
+            // terminated with a null character and determine the number of
+            // characters using strlen().
             for ( size_t i = 0; i < num_items; ++i ) {
                char *s = *( (char **)ref2->address + i );
                if ( s != NULL ) {
@@ -941,8 +942,8 @@ void Attribute::calculate_size_and_number_of_items()
           << "  ref2->attr->units:" << ref2->attr->units << endl
           << "  size:" << size << endl
           << "  num_items:" << num_items << endl
-          //TODO: Figure out get_size_from_attributes() API in Trick 10.
-          //  << "  get_size_from_attributes():" << get_size_from_attributes(ref2->attr, ref2->attr->name) << endl
+          // TODO: Figure out get_size_from_attributes() API in Trick 10.
+          //   << "  get_size_from_attributes():" << get_size_from_attributes(ref2->attr, ref2->attr->name) << endl
           << "  ref2->attr->size:" << ref2->attr->size << endl
           << "  ref2->attr->num_index:" << ref2->attr->num_index << endl
           << "  ref2->attr->index[0].size:" << ( ref2->attr->num_index >= 1 ? ref2->attr->index[0].size : 0 ) << endl
@@ -1030,8 +1031,8 @@ void Attribute::pack_attribute_buffer()
           << "  ref2->attr->units:" << ref2->attr->units << endl
           << "  size:" << size << endl
           << "  num_items:" << num_items << endl
-          //TODO: Figure out get_size_from_attributes() API in Trick 10.
-          //  << "  get_size_from_attributes():" << get_size_from_attributes(ref2->attr, ref2->attr->name) << endl
+          // TODO: Figure out get_size_from_attributes() API in Trick 10.
+          //   << "  get_size_from_attributes():" << get_size_from_attributes(ref2->attr, ref2->attr->name) << endl
           << "  ref2->attr->size:" << ref2->attr->size << endl
           << "  ref2->attr->num_index:" << ref2->attr->num_index << endl
           << "  ref2->attr->index[0].size:" << ( ref2->attr->num_index >= 1 ? ref2->attr->index[0].size : 0 ) << endl
@@ -1203,8 +1204,8 @@ void Attribute::pack_attribute_buffer()
            << "  ref2->attr->units:" << ref2->attr->units << endl
            << "  size:" << size << endl
            << "  num_items:" << num_items << endl
-           //TODO: Figure out get_size_from_attributes() API in Trick 10.
-           //   << "  get_size_from_attributes():" << get_size_from_attributes(ref2->attr, ref2->attr->name) << endl
+           // TODO: Figure out get_size_from_attributes() API in Trick 10.
+           //    << "  get_size_from_attributes():" << get_size_from_attributes(ref2->attr, ref2->attr->name) << endl
            << "  ref2->attr->size:" << ref2->attr->size << endl
            << "  ref2->attr->num_index:" << ref2->attr->num_index << endl
            << "  ref2->attr->index[0].size:" << ( ref2->attr->num_index >= 1 ? ref2->attr->index[0].size : 0 ) << endl
@@ -1372,8 +1373,8 @@ void Attribute::unpack_attribute_buffer()
           << "  ref2->attr->units:" << ref2->attr->units << endl
           << "  size:" << size << endl
           << "  num_items:" << num_items << endl
-          //TODO: Figure out get_size_from_attributes() API in Trick 10.
-          //  << "  get_size_from_attributes():" << get_size_from_attributes(ref2->attr, ref2->attr->name) << endl
+          // TODO: Figure out get_size_from_attributes() API in Trick 10.
+          //   << "  get_size_from_attributes():" << get_size_from_attributes(ref2->attr, ref2->attr->name) << endl
           << "  ref2->attr->size:" << ref2->attr->size << endl
           << "  ref2->attr->num_index:" << ref2->attr->num_index << endl
           << "  ref2->attr->index[0].size:" << ( ref2->attr->num_index >= 1 ? ref2->attr->index[0].size : 0 ) << endl
@@ -1554,7 +1555,7 @@ void Attribute::decode_logical_time() // RETURN: -- None.
          break;
       }
       case TRICK_SHORT: {
-         short * s_dest = (short *)ref2->address;
+         short  *s_dest = (short *)ref2->address;
          int64_t value  = logical_time / MICROS_MULTIPLIER;
          s_dest[0]      = ( value > SHRT_MAX ) ? SHRT_MAX : (short)value;
          break;
@@ -1566,7 +1567,7 @@ void Attribute::decode_logical_time() // RETURN: -- None.
          break;
       }
       case TRICK_INTEGER: {
-         int *   i_dest = (int *)ref2->address;
+         int    *i_dest = (int *)ref2->address;
          int64_t value  = logical_time / MICROS_MULTIPLIER;
          i_dest[0]      = ( value > INT_MAX ) ? INT_MAX : (int)value;
          break;
@@ -1578,7 +1579,7 @@ void Attribute::decode_logical_time() // RETURN: -- None.
          break;
       }
       case TRICK_LONG: {
-         long *  l_dest = (long *)ref2->address;
+         long   *l_dest = (long *)ref2->address;
          int64_t value  = logical_time / MICROS_MULTIPLIER;
          l_dest[0]      = ( value > LONG_MAX ) ? LONG_MAX : (long)value;
          break;
@@ -1626,7 +1627,7 @@ void Attribute::encode_opaque_data_to_buffer() // RETURN: -- None.
       // Handle the other primitive types.
       unsigned char *output;       // Cast the buffer to be a character array.
       int            num_elements; // Number of elements in the encoded string.
-      char *         s;            // pointer to a string
+      char          *s;            // pointer to a string
 
       // HLAopaqueData format documented in IEEE Standard 1516.2-2000, which
       // will handle variable length binary data.
@@ -1801,7 +1802,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
 {
    unsigned char *output;       // Cast the buffer to be a character array.
    size_t         num_elements; // Number of elements in the encoded string.
-   char *         s;            // pointer to a string
+   char          *s;            // pointer to a string
 
    switch ( rti_encoding ) {
       case ENCODING_UNICODE_STRING: {
@@ -1877,7 +1878,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             // 4: encoded size,
             // 2 * (size + num_items): all string characters (UTF-16) + possible NULLs
             // 6 * num_items: 2 pad and 4 bytes for character count per element
-            //encoded_size = 4 + 2 * (size + num_items) + 6 * num_items;
+            // encoded_size = 4 + 2 * (size + num_items) + 6 * num_items;
             // Make sure we can hold the encoded data.
             ensure_buffer_capacity( 4 + 2 * size + 8 * num_items );
 
@@ -2024,7 +2025,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             // 4: encoded size,
             // (size + num_items): all string characters + possible NULLs
             // 7 * num_items: 3 pad + 4 bytes for character count per element
-            //encoded_size = 4 + (size + num_items) + 7 * num_items;
+            // encoded_size = 4 + (size + num_items) + 7 * num_items;
             // Make sure we can hold the encoded data.
             ensure_buffer_capacity( 4 + size + 8 * num_items );
 
@@ -3210,8 +3211,8 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
  * - Only primitive types and static arrays of primitive type are supported for now.
  */
 void Attribute::byteswap_buffer_copy( // RETURN: -- None.
-   void * dest,                       // IN: -- Destination to copy data to.
-   void * src,                        // IN: -- Source of the data to byteswap and copy from.
+   void  *dest,                       // IN: -- Destination to copy data to.
+   void  *src,                        // IN: -- Source of the data to byteswap and copy from.
    int    type,                       // IN: -- The type of the data.
    size_t length,                     // IN: -- The length/number of entries in the source array.
    size_t num_bytes ) const           // IN: -- The number of bytes in the source array.
@@ -3242,7 +3243,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
       // Do the byteswap based on the type.
       switch ( type ) {
          case TRICK_DOUBLE: {
-            double *d_src  = static_cast< double * >( src );
+            double *d_src  = static_cast< double  *>( src );
             double *d_dest = static_cast< double * >( dest );
             if ( length == 1 ) {
                d_dest[0] = Utilities::byteswap_double( d_src[0] );
@@ -3254,7 +3255,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_FLOAT: {
-            float *f_src  = static_cast< float * >( src );
+            float *f_src  = static_cast< float  *>( src );
             float *f_dest = static_cast< float * >( dest );
             if ( length == 1 ) {
                f_dest[0] = Utilities::byteswap_float( f_src[0] );

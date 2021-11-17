@@ -42,7 +42,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
 
-//using namespace std;
+// using namespace std;
 using namespace TrickHLA;
 
 /*!

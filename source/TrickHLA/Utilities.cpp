@@ -276,8 +276,8 @@ unsigned long long Utilities::byteswap_unsigned_long_long(
 {
    unsigned long long output;
    const size_t       size = sizeof( output );
-   unsigned char *    out  = (unsigned char *)&output;
-   unsigned char *    in   = (unsigned char *)&input;
+   unsigned char     *out  = (unsigned char *)&output;
+   unsigned char     *in   = (unsigned char *)&input;
 
    // Specified in the C99 standard, a long long is at least 64 bits.
    // sizeof(long long) >= sizeof(long)

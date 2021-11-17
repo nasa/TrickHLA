@@ -107,7 +107,7 @@ class TimedSyncPntList : public TrickHLA::SyncPntListBase
     *  @param rti_ambassador    Reference to RTI Ambassador.
     *  @param checkTime Time to check. */
    virtual bool achieve_all_sync_points( RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-                                         const Int64Time &                 checkTime );
+                                         const Int64Time                  &checkTime );
 
    /*! @brief Determine if we have any synchronization point that has a action
     * time less than the given time.

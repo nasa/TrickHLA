@@ -111,7 +111,7 @@ ExecutionControl::ExecutionControl()
  */
 ExecutionControl::~ExecutionControl()
 {
-   clear_mode_values();
+   this->clear_mode_values();
 
    // Free up the allocated Freeze Interaction.
    if ( freeze_interaction != static_cast< Interaction * >( NULL ) ) {
@@ -513,8 +513,8 @@ Simulation has started and is now running...%c",
          // Send the "Simulation Configuration".
          this->send_execution_configuration();
 
-         //DANNY2.7 When master is started in freeze, create a pause sync point
-         // so other feds will start in freeze.
+         // DANNY2.7 When master is started in freeze, create a pause sync point
+         //  so other feds will start in freeze.
          if ( exec_get_freeze_command() != 0 ) {
             federate->register_generic_sync_point( IMSim::STARTUP_FREEZE_SYNC_POINT, 0.0 );
          }
@@ -1055,8 +1055,8 @@ void ExecutionControl::add_multiphase_init_sync_points()
 
 void ExecutionControl::announce_sync_point(
    RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-   wstring const &                   label,
-   RTI1516_USERDATA const &          user_supplied_tag )
+   wstring const                    &label,
+   RTI1516_USERDATA const           &user_supplied_tag )
 {
    // Parse the sync-point to see if we have a pause sync-point.
    string label_str;
@@ -1365,10 +1365,10 @@ bool ExecutionControl::mark_synchronized( std::wstring const &label )
  * @job_class{scheduled}
  */
 void ExecutionControl::receive_interaction(
-   RTI1516_NAMESPACE::InteractionClassHandle const & theInteraction,
+   RTI1516_NAMESPACE::InteractionClassHandle const  &theInteraction,
    RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-   RTI1516_USERDATA const &                          theUserSuppliedTag,
-   RTI1516_NAMESPACE::LogicalTime const &            theTime,
+   RTI1516_USERDATA const                           &theUserSuppliedTag,
+   RTI1516_NAMESPACE::LogicalTime const             &theTime,
    bool                                              received_as_TSO )
 {
 
@@ -1883,7 +1883,7 @@ bool ExecutionControl::process_execution_control_updates()
             this->freeze_mode_announce();
 
             // Tell Trick to go into freeze at startup.
-            //the_exec->freeze();
+            // the_exec->freeze();
 
             // Tell Trick to go into freeze at startup.
             the_exec->set_freeze_command( true );
@@ -2053,9 +2053,9 @@ bool ExecutionControl::process_execution_control_updates()
 
 bool ExecutionControl::run_mode_transition()
 {
-   RTIambassador *         RTI_amb  = federate->get_RTI_ambassador();
+   RTIambassador          *RTI_amb  = federate->get_RTI_ambassador();
    ExecutionConfiguration *ExCO     = get_execution_configuration();
-   SyncPnt *               sync_pnt = NULL;
+   SyncPnt                *sync_pnt = NULL;
 
    // Register the 'mtr_run' sync-point.
    if ( this->is_master() ) {
@@ -2147,9 +2147,9 @@ void ExecutionControl::freeze_mode_announce()
 
 bool ExecutionControl::freeze_mode_transition()
 {
-   RTIambassador *         RTI_amb  = federate->get_RTI_ambassador();
+   RTIambassador          *RTI_amb  = federate->get_RTI_ambassador();
    ExecutionConfiguration *ExCO     = get_execution_configuration();
-   TrickHLA::SyncPnt *     sync_pnt = NULL;
+   TrickHLA::SyncPnt      *sync_pnt = NULL;
 
    // Get the 'mtr_freeze' sync-point.
    sync_pnt = this->get_sync_point( MTR_FREEZE_SYNC_POINT );
@@ -2225,8 +2225,8 @@ void ExecutionControl::shutdown_mode_transition()
 
 void ExecutionControl::enter_freeze()
 {
-   //DANNY2.7 send a freeze interaction when master hits Sim Control Panel
-   // Freeze button. Determine if I am the federate that clicked Freeze
+   // DANNY2.7 send a freeze interaction when master hits Sim Control Panel
+   //  Freeze button. Determine if I am the federate that clicked Freeze
    if ( this->get_sim_time() <= 0.0 ) {
       federate->announce_freeze = this->is_master();
    } else if ( !federate->freeze_the_federation ) {
@@ -2319,7 +2319,7 @@ bool ExecutionControl::check_freeze_exit()
 
 void ExecutionControl::exit_freeze()
 {
-   if ( federate->announce_freeze ) {                                            //DANNY2.7
+   if ( federate->announce_freeze ) {                                            // DANNY2.7
       if ( federate->freeze_the_federation && ( this->get_sim_time() > 0.0 ) ) { // coming out of freeze due to freeze interaction
          federate->register_generic_sync_point( IMSim::FEDRUN_SYNC_POINT );      // this tells federates to go to run
 
@@ -2394,8 +2394,8 @@ void ExecutionControl::un_freeze()
 
 void ExecutionControl::check_pause( const double check_pause_delta )
 {
-   //DANNY2.7 for IMSim, check_pause is only used at init time to handle start
-   // in freeze mode.
+   // DANNY2.7 for IMSim, check_pause is only used at init time to handle start
+   //  in freeze mode.
    if ( this->get_sim_time() > 0.0 ) {
       return;
    }
@@ -2442,7 +2442,7 @@ void ExecutionControl::check_pause_at_init(
 }
 
 void ExecutionControl::add_pause(
-   Int64Time *    time,
+   Int64Time     *time,
    wstring const &label )
 {
    pause_sync_pts.add_sync_point( label, *time );
@@ -2718,7 +2718,7 @@ void ExecutionControl::reinstate_logged_sync_pts()
             StringUtilities::to_wstring( sync_point_label, this->loggable_sync_pts[i].label );
             // since the RTI already contains the registered sync points prior
             // to the checkpoint, we just need to add them back into myself...
-            //pause_sync_pts.add_sync_point( sync_point_label, sync_point_time );
+            // pause_sync_pts.add_sync_point( sync_point_label, sync_point_time );
             /***
             //DANNY2.7 TODO: you sometimes get an exception for sync point not announced when you restore,
             //         is that an RTI bug or something we can fix here?

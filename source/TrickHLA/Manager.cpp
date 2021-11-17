@@ -153,7 +153,7 @@ Manager::~Manager()
  * @job_class{default_data}
  */
 void Manager::setup(
-   Federate &            federate,
+   Federate             &federate,
    ExecutionControlBase &execution_control )
 {
    // Set the TrickHLA::Federate instace reference.
@@ -923,7 +923,7 @@ void Manager::setup_all_ref_attributes()
  */
 void Manager::setup_object_ref_attributes(
    const int data_obj_count,
-   Object *  data_objects )
+   Object   *data_objects )
 {
    // Just return if we are already initialized.
    if ( this->mgr_initialized ) {
@@ -1069,7 +1069,7 @@ void Manager::setup_all_RTI_handles()
  */
 void Manager::setup_object_RTI_handles(
    const int data_obj_count,
-   Object *  data_objects )
+   Object   *data_objects )
 {
    // Just return if we are already initialized.
    if ( this->mgr_initialized ) {
@@ -1104,7 +1104,7 @@ void Manager::setup_object_RTI_handles(
    const char *obj_FOM_name  = "";
    const char *attr_FOM_name = "";
    wstring     ws_FOM_name   = L"";
-   int         FOM_name_type = 0; //0:N/A 1:Object 2:Attribute - What name are we dealing with.
+   int         FOM_name_type = 0; // 0:N/A 1:Object 2:Attribute - What name are we dealing with.
 
    // Initialize the Object and Attribute RTI handles.
    try {
@@ -1302,7 +1302,7 @@ void Manager::setup_interaction_RTI_handles(
    const char *inter_FOM_name = "";
    const char *param_FOM_name = "";
    wstring     ws_FOM_name    = L"";
-   int         FOM_name_type  = 0; //0:NA 1:Interaction 2:Parameter  What name we are dealing with.
+   int         FOM_name_type  = 0; // 0:NA 1:Interaction 2:Parameter  What name we are dealing with.
 
    // Initialize the Interaction and Parameter RTI handles.
    try {
@@ -1927,7 +1927,7 @@ void Manager::wait_for_registration_of_required_objects()
          // Check again to see if we have any unregistered objects.
          any_unregistered_required_obj = ( current_required_obj_cnt < total_required_obj_cnt );
 
-         if ( any_unregistered_required_obj ) {
+         if ( any_unregistered_required_obj ) { // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
 
             // To be more efficient, we get the time once and share it.
             wallclock_time = sleep_timer.time();
@@ -2019,7 +2019,7 @@ void Manager::set_all_object_instance_handles_by_name()
  */
 void Manager::set_object_instance_handles_by_name(
    const int data_obj_count,
-   Object *  data_objects )
+   Object   *data_objects )
 {
    // Just return if we are already initialized.
    if ( this->mgr_initialized ) {
@@ -2161,7 +2161,7 @@ void Manager::set_object_instance_handles_by_name(
  */
 void Manager::provide_attribute_update(
    ObjectInstanceHandle const &theObject,
-   AttributeHandleSet const &  theAttributes )
+   AttributeHandleSet const   &theAttributes )
 {
    // Determine which data object the user is requesting an update for.
    Object *trickhla_obj = get_trickhla_object( theObject );
@@ -2333,10 +2333,10 @@ void Manager::process_interactions()
  * @job_class{scheduled}
  */
 void Manager::receive_interaction(
-   InteractionClassHandle const & theInteraction,
+   InteractionClassHandle const  &theInteraction,
    ParameterHandleValueMap const &theParameterValues,
-   RTI1516_USERDATA const &       theUserSuppliedTag,
-   LogicalTime const &            theTime,
+   RTI1516_USERDATA const        &theUserSuppliedTag,
+   LogicalTime const             &theTime,
    bool                           received_as_TSO )
 {
    // Find the Interaction we have data for.
@@ -2438,7 +2438,7 @@ Object *Manager::get_trickhla_object(
 bool Manager::discover_object_instance(
    ObjectInstanceHandle theObject,
    ObjectClassHandle    theObjectClass,
-   wstring const &      theObjectInstanceName )
+   wstring const       &theObjectInstanceName )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -2515,7 +2515,7 @@ bool Manager::discover_object_instance(
  */
 Object *Manager::get_unregistered_object(
    ObjectClassHandle const &theObjectClass,
-   wstring const &          theObjectInstanceName )
+   wstring const           &theObjectInstanceName )
 {
    wstring ws_obj_name;
 
@@ -2811,7 +2811,7 @@ void Manager::setup_checkpoint_interactions()
       }
 
       check_interactions_count = interactions_queue.size();
-      check_interactions       = reinterpret_cast< InteractionItem * >(
+      check_interactions       = reinterpret_cast< InteractionItem       *>(
          alloc_type( check_interactions_count, "TrickHLA::InteractionItem" ) );
       if ( check_interactions == static_cast< InteractionItem * >( NULL ) ) {
          ostringstream errmsg;
@@ -2822,7 +2822,7 @@ void Manager::setup_checkpoint_interactions()
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
-      //interactions_queue.dump_head_pointers("interactions_queue.dump");
+      // interactions_queue.dump_head_pointers("interactions_queue.dump");
 
       for ( int i = 0; i < interactions_queue.size(); ++i ) {
 

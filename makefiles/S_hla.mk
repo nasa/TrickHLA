@@ -44,8 +44,6 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
       endif
       RTI_JAVA_HOME ?= ${RTI_HOME}/jre
       ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/server)","")
-         # User specified their own RTI_JAVA_HOME, configure a valid default
-         # lib path if needed.
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/server
       else
          # Default to JRE that came with the Pitch RTI if needed.
@@ -98,12 +96,8 @@ else
       endif
       RTI_JAVA_HOME ?= ${RTI_HOME}/jre
       ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/amd64/server)","")
-         # User specified their own RTI_JAVA_HOME, configure a valid default
-         # lib path if needed.
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/amd64/server
       else ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/server)","")
-         # User specified their own RTI_JAVA_HOME, configure a valid default
-         # lib path if needed.
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/server
       else
          # Default to JRE that came with the Pitch RTI if needed.

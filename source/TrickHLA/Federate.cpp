@@ -207,6 +207,7 @@ Federate::Federate()
      thread_state( NULL ),
      thread_state_cnt( 0 ),
      thread_state_mutex(),
+     thread_state_associated( false ),
      RTI_ambassador( NULL ),
      federate_ambassador( NULL ),
      manager( NULL ),
@@ -288,7 +289,7 @@ Federate::~Federate()
          }
       }
       TMM_delete_var_a( known_feds );
-      known_feds       = static_cast< KnownFederate * >( NULL );
+      known_feds       = static_cast< KnownFederate       *>( NULL );
       known_feds_count = 0;
    }
 
@@ -386,8 +387,8 @@ void Federate::fix_FPU_control_word()
  * @job_class{default_data}
  */
 void Federate::setup(
-   FedAmb &              federate_amb,
-   Manager &             federate_manager,
+   FedAmb               &federate_amb,
+   Manager              &federate_manager,
    ExecutionControlBase &federate_execution_control )
 {
    // Set the Federate ambassador.
@@ -921,7 +922,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       // Federate name is encoded into variable length data.
       VariableLengthData const &value = attr_iter->second;
 
-      // Decode the federate name that is encoded as a unicode string.
+      // Decode the federate name that is encoded as a Unicode string.
       HLAunicodeString fed_name_unicode;
       fed_name_unicode.decode( value );
       federate_name_ws = wstring( fed_name_unicode );
@@ -1490,8 +1491,7 @@ string Federate::wait_for_required_federates_to_join()
                } else {
                   found_an_unrequired_federate = true;
                   string fedname;
-                  StringUtilities::to_string( fedname,
-                                              joined_federate_names[i] );
+                  StringUtilities::to_string( fedname, joined_federate_names[i] );
                   if ( restore_is_imminent ) {
                      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
                         send_hs( stdout, "Federate::wait_for_required_federates_to_join():%d Found an UNREQUIRED federate %s!%c",
@@ -2368,7 +2368,7 @@ void Federate::register_generic_sync_point(
          // no time specified
          RTI_ambassador->registerFederationSynchronizationPoint( label, RTI1516_USERDATA( 0, 0 ) );
       } else {
-         //DANNY2.7 convert time to microseconds and encode in a buffer to send to RTI
+         // DANNY2.7 convert time to microseconds and encode in a buffer to send to RTI
          int64_t       _value = Int64Interval::to_microseconds( time );
          unsigned char buf[8];
          buf[0] = (unsigned char)( ( _value >> 56 ) & 0xFF );
@@ -2548,7 +2548,7 @@ void Federate::achieve_synchronization_point(
 }
 
 void Federate::announce_sync_point(
-   wstring const &         label,
+   wstring const          &label,
    RTI1516_USERDATA const &user_supplied_tag )
 {
 
@@ -2991,7 +2991,7 @@ void Federate::perform_restore()
 
          load_checkpoint_job();
 
-         //exec_freeze();
+         // exec_freeze();
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -3949,8 +3949,8 @@ bool Federate::check_for_shutdown_with_termination()
 }
 
 /*!
-* @job_class{initialization}.
-*/
+ * @job_class{initialization}.
+ */
 void Federate::setup_time_management()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -4028,8 +4028,8 @@ void Federate::set_time_constrained_enabled(
 }
 
 /*!
-* @job_class{initialization}.
-*/
+ * @job_class{initialization}.
+ */
 void Federate::setup_time_constrained()
 {
    // Just return if HLA time management is not enabled, the user does
@@ -4223,8 +4223,8 @@ void Federate::set_time_regulation_enabled(
 }
 
 /*!
-* @job_class{initialization}.
-*/
+ * @job_class{initialization}.
+ */
 void Federate::setup_time_regulation()
 {
    // Just return if HLA time management is not enabled, the user does
@@ -4654,6 +4654,9 @@ void Federate::associate_to_trick_child_thread(
 
    // Make sure we mark the thread state as reset now that we associated to it.
    this->thread_state[thread_id] = THREAD_STATE_RESET;
+
+   // We now have at least one Trick child thread associated to TrickHLA.
+   this->thread_state_associated = true;
 }
 
 /*!
@@ -4666,19 +4669,23 @@ void Federate::announce_data_available()
                __LINE__, THLA_NEWLINE );
    }
 
-   // When auto_unlock_mutex goes out of scope it automatically unlocks the
-   // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &thread_state_mutex );
+   // Process Trick child thread states associated to TrickHLA.
+   if ( this->thread_state_associated ) {
 
-   // Process all the Trick child threads associated to TrickHLA first.
-   for ( unsigned int id = 1; id < this->thread_state_cnt; ++id ) {
-      if ( this->thread_state[id] != THREAD_STATE_NOT_ASSOCIATED ) {
-         this->thread_state[id] = THREAD_STATE_READY_TO_RECEIVE;
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &thread_state_mutex );
+
+      // Process all the Trick child threads associated to TrickHLA first.
+      for ( unsigned int id = 1; id < this->thread_state_cnt; ++id ) {
+         if ( this->thread_state[id] != THREAD_STATE_NOT_ASSOCIATED ) {
+            this->thread_state[id] = THREAD_STATE_READY_TO_RECEIVE;
+         }
       }
-   }
 
-   // Make sure we set the state of the Trick main thread last.
-   this->thread_state[0] = THREAD_STATE_READY_TO_RECEIVE;
+      // Make sure we set the state of the Trick main thread last.
+      this->thread_state[0] = THREAD_STATE_READY_TO_RECEIVE;
+   }
 }
 
 /*!
@@ -4691,12 +4698,16 @@ void Federate::announce_data_sent()
                __LINE__, THLA_NEWLINE );
    }
 
-   // When auto_unlock_mutex goes out of scope it automatically unlocks the
-   // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &thread_state_mutex );
+   // Process Trick child thread states associated to TrickHLA.
+   if ( this->thread_state_associated ) {
 
-   // Set the state of the main thread as ready to send.
-   this->thread_state[0] = THREAD_STATE_READY_TO_SEND;
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &thread_state_mutex );
+
+      // Set the state of the main thread as ready to send.
+      this->thread_state[0] = THREAD_STATE_READY_TO_SEND;
+   }
 }
 
 /*!
@@ -4706,6 +4717,15 @@ void Federate::announce_data_sent()
  */
 void Federate::wait_to_send_data()
 {
+   // Don't process Trick child thread states associated to TrickHLA if none exist.
+   if ( !this->thread_state_associated ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         send_hs( stdout, "Federate::wait_to_send_data():%d%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      return;
+   }
+
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_to_send_data():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
@@ -4905,6 +4925,15 @@ void Federate::wait_to_send_data()
 /*! @brief Wait to receive data when the Trick main thread is ready. */
 void Federate::wait_to_receive_data()
 {
+   // Don't process Trick child thread states associated to TrickHLA if none exist.
+   if ( !this->thread_state_associated ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         send_hs( stdout, "Federate::wait_to_receive_data():%d%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      return;
+   }
+
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_to_receive_data():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
@@ -6227,7 +6256,7 @@ void Federate::update_running_feds()
    }
 
    if ( (int)joined_federate_name_map.size() != running_feds_count ) {
-      // show out the contents of 'joined_federate_name_map'
+      // Show the contents of 'joined_federate_name_map'
       TrickHLAObjInstanceNameMap::const_iterator map_iter;
       for ( map_iter = joined_federate_name_map.begin();
             map_iter != joined_federate_name_map.end();
@@ -6329,7 +6358,7 @@ void Federate::add_a_single_entry_into_running_feds()
 
 void Federate::add_MOM_HLAfederate_instance_id(
    ObjectInstanceHandle instance_hndl,
-   wstring const &      instance_name )
+   wstring const       &instance_name )
 {
    mom_HLAfederate_inst_name_map[instance_hndl] = instance_name;
 }
@@ -6340,8 +6369,8 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    remove_federate_instance_id( instance_hndl );
    remove_MOM_HLAfederation_instance_id( instance_hndl );
 
-   char *                               tMOMName  = NULL;
-   char *                               tFedName  = NULL;
+   char                                *tMOMName  = NULL;
+   char                                *tFedName  = NULL;
    bool                                 foundName = false;
    TrickHLAObjInstanceNameMap::iterator iter;
 

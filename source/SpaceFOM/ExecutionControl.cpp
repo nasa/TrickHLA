@@ -392,8 +392,8 @@ void ExecutionControl::add_initialization_sync_points()
 
 void ExecutionControl::announce_sync_point(
    RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-   wstring const &                   label,
-   RTI1516_USERDATA const &          user_supplied_tag )
+   wstring const                    &label,
+   RTI1516_USERDATA const           &user_supplied_tag )
 {
    // Check to see if the synchronization point is known?
    if ( this->contains( label ) ) {
@@ -493,10 +493,10 @@ void ExecutionControl::unsubscribe()
  * @job_class{scheduled}
  */
 void ExecutionControl::receive_interaction(
-   RTI1516_NAMESPACE::InteractionClassHandle const & theInteraction,
+   RTI1516_NAMESPACE::InteractionClassHandle const  &theInteraction,
    RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-   RTI1516_USERDATA const &                          theUserSuppliedTag,
-   RTI1516_NAMESPACE::LogicalTime const &            theTime,
+   RTI1516_USERDATA const                           &theUserSuppliedTag,
+   RTI1516_NAMESPACE::LogicalTime const             &theTime,
    bool                                              received_as_TSO )
 {
    // Process the MTR interaction if we subscribed to it and we have the
@@ -727,7 +727,7 @@ initialization process described in section 7.2 and figure 7-5.
 */
 void ExecutionControl::early_joiner_hla_init_process()
 {
-   Manager *                   manager = this->manager;
+   Manager                    *manager = this->manager;
    ExecutionConfigurationBase *ExCO    = this->get_execution_configuration();
 
    // Wait for the SpaceFOM initialization ExecutionConrtol synchronization
@@ -800,7 +800,7 @@ described in section 7.2 and figure 7-9.
 */
 void ExecutionControl::late_joiner_hla_init_process()
 {
-   Manager *               manager = this->manager;
+   Manager                *manager = this->manager;
    ExecutionConfiguration *ExCO    = this->get_execution_configuration();
 
    // Setup all the RTI handles for the objects, attributes and interaction
@@ -888,7 +888,7 @@ process described in section 7.2 figure 7-2.
 */
 void ExecutionControl::pre_multi_phase_init_processes()
 {
-   Manager *               manager = this->manager;
+   Manager                *manager = this->manager;
    ExecutionConfiguration *ExCO    = this->get_execution_configuration();
 
    // The User Must specify an ExCO.
@@ -1769,7 +1769,7 @@ bool ExecutionControl::process_execution_control_updates()
             this->freeze_mode_announce();
 
             // Tell Trick to go into freeze at startup.
-            //the_exec->freeze();
+            // the_exec->freeze();
 
             // Tell Trick to go into freeze at startup.
             the_exec->set_freeze_command( true );
@@ -1991,9 +1991,9 @@ void ExecutionControl::send_MTR_interaction(
 
 bool ExecutionControl::run_mode_transition()
 {
-   RTIambassador *         RTI_amb  = federate->get_RTI_ambassador();
+   RTIambassador          *RTI_amb  = federate->get_RTI_ambassador();
    ExecutionConfiguration *ExCO     = get_execution_configuration();
-   SyncPnt *               sync_pnt = NULL;
+   SyncPnt                *sync_pnt = NULL;
 
    // Register the 'mtr_run' sync-point.
    if ( this->is_master() ) {
@@ -2086,9 +2086,9 @@ void ExecutionControl::freeze_mode_announce()
 
 bool ExecutionControl::freeze_mode_transition()
 {
-   RTIambassador *         RTI_amb  = federate->get_RTI_ambassador();
+   RTIambassador          *RTI_amb  = federate->get_RTI_ambassador();
    ExecutionConfiguration *ExCO     = get_execution_configuration();
-   TrickHLA::SyncPnt *     sync_pnt = NULL;
+   TrickHLA::SyncPnt      *sync_pnt = NULL;
 
    // Get the 'mtr_freeze' sync-point.
    sync_pnt = this->get_sync_point( MTR_FREEZE_SYNC_POINT );
@@ -2327,7 +2327,7 @@ void ExecutionControl::enter_freeze()
          // NOTE: This will prevent the SimControl panel freeze button
          // from working.
          // Uncomment the following line if you really want this behavior.
-         //this->unfreeze();
+         // this->unfreeze();
 
          return;
       }

@@ -179,8 +179,8 @@ class Federate
     *  @param federate_amb               Associated federate ambassador class instance.
     *  @param federate_manager           Associated federate manager class instance.
     *  @param federate_execution_control Associated federate execution control class instance. */
-   void setup( FedAmb &              federate_amb,
-               Manager &             federate_manager,
+   void setup( FedAmb               &federate_amb,
+               Manager              &federate_manager,
                ExecutionControlBase &federate_execution_control );
 
    /*! @brief Initialization the debug settings. */
@@ -227,7 +227,7 @@ class Federate
    /*! @brief The RTI has announced the existence of a synchronization point.
     *  @param label             Sync-point label.
     *  @param user_supplied_tag Use supplied tag.*/
-   void announce_sync_point( std::wstring const &    label,
+   void announce_sync_point( std::wstring const     &label,
                              RTI1516_USERDATA const &user_supplied_tag );
 
    /*! @brief Marks a synchronization point as registered in the federation.
@@ -324,7 +324,7 @@ class Federate
     *  @param instance_hndl Object instance handle.
     *  @param instance_name Object instance Name. */
    void add_MOM_HLAfederate_instance_id( RTI1516_NAMESPACE::ObjectInstanceHandle instance_hndl,
-                                         std::wstring const &                    instance_name );
+                                         std::wstring const                     &instance_name );
 
    /*! @brief Remove the specified Federate instance ID to the list of
     * discovered federates.
@@ -1172,9 +1172,10 @@ class Federate
    RTI1516_NAMESPACE::InteractionClassHandle MOM_HLAsetSwitches_class_handle; ///< @trick_io{**} MOM HLAsetSwitches class handle.
    RTI1516_NAMESPACE::ParameterHandle        MOM_HLAautoProvide_param_handle; ///< @trick_io{**} MOM HLAautoProvide parameter handle.
 
-   unsigned int *thread_state;       ///< @trick_units{--} TrickHLA state of trick child threads being used.
-   unsigned int  thread_state_cnt;   ///< @trick_units{--} TrickHLA state of trick child threads being used count.
-   MutexLock     thread_state_mutex; ///< @trick_units{--} TrickHLA thread state mutex.
+   unsigned int *thread_state;            ///< @trick_units{--} TrickHLA state of trick child threads being used.
+   unsigned int  thread_state_cnt;        ///< @trick_units{--} TrickHLA state of trick child threads being used count.
+   MutexLock     thread_state_mutex;      ///< @trick_units{--} TrickHLA thread state mutex.
+   bool          thread_state_associated; ///< @trick_units{--} True if at least one Trick Child thread is associated to TrickHLA.
 
    // Federation required associations.
    //
@@ -1182,8 +1183,8 @@ class Federate
 #pragma GCC diagnostic ignored "-Wdeprecated"
    TrickRTIAmbPtr RTI_ambassador; ///< @trick_io{**} RTI ambassador
 #pragma GCC diagnostic pop
-   FedAmb *              federate_ambassador; ///< @trick_units{--} Federate ambassador.
-   Manager *             manager;             ///< @trick_units{--} Associated TrickHLA Federate.
+   FedAmb               *federate_ambassador; ///< @trick_units{--} Federate ambassador.
+   Manager              *manager;             ///< @trick_units{--} Associated TrickHLA Federate.
    ExecutionControlBase *execution_control;   /**< @trick_units{--} Execution control object. This has to point to an allocated execution control class that inherits from the ExecutionControlBase interface class. For instance SRFOM::ExecutionControl. */
 
   private:

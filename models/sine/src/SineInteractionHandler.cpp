@@ -110,7 +110,7 @@ void SineInteractionHandler::send_sine_interaction(
    // Calculate the timestamp we will use to send the interaction in Timestamp
    // Order by using the HLA granted time and the lookahead time.
    // double timestamp = hla_granted_time + lookahead_time;
-   double timestamp = time + lookahead_time; //DANNY2.7 use sim time because granted time may be behind a frame
+   double timestamp = time + lookahead_time; // DANNY2.7 use sim time because granted time may be behind a frame
 
 #if SINE_SEND_INTERACTION_TSO
    // Notify the parent interaction handler to send the interaction using

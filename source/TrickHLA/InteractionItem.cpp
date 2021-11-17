@@ -89,9 +89,9 @@ InteractionItem::InteractionItem(
    int                                               interaction_index,
    int                                               interaction_type,
    int                                               param_count,
-   Parameter *                                       parameters,
+   Parameter                                        *parameters,
    RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-   RTI1516_USERDATA const &                          theUserSuppliedTag )
+   RTI1516_USERDATA const                           &theUserSuppliedTag )
    : index( interaction_index ),
      parameter_queue(),
      interaction_type( -1 ),
@@ -111,10 +111,10 @@ InteractionItem::InteractionItem(
    int                                               interaction_index,
    int                                               interaction_type,
    int                                               param_count,
-   Parameter *                                       parameters,
+   Parameter                                        *parameters,
    RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-   RTI1516_USERDATA const &                          theUserSuppliedTag,
-   RTI1516_NAMESPACE::LogicalTime const &            theTime )
+   RTI1516_USERDATA const                           &theUserSuppliedTag,
+   RTI1516_NAMESPACE::LogicalTime const             &theTime )
    : index( interaction_index ),
      parameter_queue(),
      interaction_type( -1 ),
@@ -150,9 +150,9 @@ InteractionItem::~InteractionItem()
 void InteractionItem::initialize(
    int                                               inter_type,
    int                                               param_count,
-   Parameter *                                       parameters,
+   Parameter                                        *parameters,
    RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-   RTI1516_USERDATA const &                          theUserSuppliedTag )
+   RTI1516_USERDATA const                           &theUserSuppliedTag )
 {
    this->interaction_type = inter_type;
 

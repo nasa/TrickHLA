@@ -91,8 +91,8 @@ SinePacking::~SinePacking()
 }
 
 /*!
-  * @job_class{initialization}
-  */
+ * @job_class{initialization}
+ */
 void SinePacking::initialize(
    SineData *sim_data )
 {

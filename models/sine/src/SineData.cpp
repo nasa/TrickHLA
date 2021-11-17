@@ -102,7 +102,7 @@ SineData::~SineData()
  * @job_class{scheduled}
  */
 void SineData::copy_data(
-   SineData *orig ) // IN:     -- Orginal source data to copy.
+   const SineData *orig ) // IN: -- Orginal source data to copy.
 {
    // Use the default assignment operator to copy.
    *this = *orig;

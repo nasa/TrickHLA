@@ -93,7 +93,7 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
 
   protected:
    Federate *federate; ///< @trick_units{--} Associated TrickHLA::Federate.
-   Manager * manager;  ///< @trick_units{--} Associated TrickHLA::Manager.
+   Manager  *manager;  ///< @trick_units{--} Associated TrickHLA::Manager.
 
   public:
    /*! @brief Default constructor for the TrickHLA FedAmb class. */
@@ -112,7 +112,7 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
     *  @param federate  Associated TrickHLA::Federate class instance.
     *  @param manager   Associated TrickHLA::Manager class instance. */
    void setup( Federate &federate,
-               Manager & manager );
+               Manager  &manager );
 
    /*! @brief Initialize the TrickHLA Federate Ambassador instance for this
     *  Federation Execution. */
@@ -145,17 +145,17 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
    synchronizationPointRegistrationSucceeded( std::wstring const &label ) throw( RTI1516_NAMESPACE::FederateInternalError );
 
    virtual void
-   synchronizationPointRegistrationFailed( std::wstring const &                                 label,
+   synchronizationPointRegistrationFailed( std::wstring const                                  &label,
                                            RTI1516_NAMESPACE::SynchronizationPointFailureReason reason ) throw( RTI1516_NAMESPACE::FederateInternalError );
 
    // 4.8
    virtual void
-   announceSynchronizationPoint( std::wstring const &                         label,
+   announceSynchronizationPoint( std::wstring const                          &label,
                                  RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag ) throw( RTI1516_NAMESPACE::FederateInternalError );
 
    // 4.10
    virtual void
-   federationSynchronized( std::wstring const &                        label,
+   federationSynchronized( std::wstring const                         &label,
                            RTI1516_NAMESPACE::FederateHandleSet const &failedToSyncSet ) throw( RTI1516_NAMESPACE::FederateInternalError );
 
    // 4.12
@@ -163,7 +163,7 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
    initiateFederateSave( std::wstring const &label ) throw( RTI1516_NAMESPACE::FederateInternalError );
 
    virtual void
-   initiateFederateSave( std::wstring const &                  label,
+   initiateFederateSave( std::wstring const                   &label,
                          RTI1516_NAMESPACE::LogicalTime const &theTime ) throw( RTI1516_NAMESPACE::FederateInternalError );
 
    // 4.15
@@ -192,8 +192,8 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
 
    // 4.21
    virtual void
-   initiateFederateRestore( std::wstring const &              label,
-                            std::wstring const &              federateName,
+   initiateFederateRestore( std::wstring const               &label,
+                            std::wstring const               &federateName,
                             RTI1516_NAMESPACE::FederateHandle handle ) throw( RTI1516_NAMESPACE::FederateInternalError );
 
    // 4.23
@@ -256,19 +256,19 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
    discoverObjectInstance(
       RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
       RTI1516_NAMESPACE::ObjectClassHandle    theObjectClass,
-      std::wstring const &                    theObjectInstanceName ) throw( RTI1516_NAMESPACE::FederateInternalError );
+      std::wstring const                     &theObjectInstanceName ) throw( RTI1516_NAMESPACE::FederateInternalError );
 
    virtual void
    discoverObjectInstance( RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
                            RTI1516_NAMESPACE::ObjectClassHandle    theObjectClass,
-                           std::wstring const &                    theObjectInstanceName,
+                           std::wstring const                     &theObjectInstanceName,
                            RTI1516_NAMESPACE::FederateHandle       producingFederate ) throw( RTI1516_NAMESPACE::FederateInternalError );
 
    // 6.7
    virtual void
    reflectAttributeValues( RTI1516_NAMESPACE::ObjectInstanceHandle           theObject,
                            RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributeValues,
-                           RTI1516_NAMESPACE::VariableLengthData const &     theUserSuppliedTag,
+                           RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
                            RTI1516_NAMESPACE::OrderType                      sentOrder,
                            RTI1516_NAMESPACE::TransportationType             theType,
                            RTI1516_NAMESPACE::SupplementalReflectInfo        theReflectInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
@@ -276,20 +276,20 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
    virtual void
    reflectAttributeValues( RTI1516_NAMESPACE::ObjectInstanceHandle           theObject,
                            RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributeValues,
-                           RTI1516_NAMESPACE::VariableLengthData const &     theUserSuppliedTag,
+                           RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
                            RTI1516_NAMESPACE::OrderType                      sentOrder,
                            RTI1516_NAMESPACE::TransportationType             theType,
-                           RTI1516_NAMESPACE::LogicalTime const &            theTime,
+                           RTI1516_NAMESPACE::LogicalTime const             &theTime,
                            RTI1516_NAMESPACE::OrderType                      receivedOrder,
                            RTI1516_NAMESPACE::SupplementalReflectInfo        theReflectInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
 
    virtual void
    reflectAttributeValues( RTI1516_NAMESPACE::ObjectInstanceHandle           theObject,
                            RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributeValues,
-                           RTI1516_NAMESPACE::VariableLengthData const &     theUserSuppliedTag,
+                           RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
                            RTI1516_NAMESPACE::OrderType                      sentOrder,
                            RTI1516_NAMESPACE::TransportationType             theType,
-                           RTI1516_NAMESPACE::LogicalTime const &            theTime,
+                           RTI1516_NAMESPACE::LogicalTime const             &theTime,
                            RTI1516_NAMESPACE::OrderType                      receivedOrder,
                            RTI1516_NAMESPACE::MessageRetractionHandle        theHandle,
                            RTI1516_NAMESPACE::SupplementalReflectInfo        theReflectInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
@@ -298,7 +298,7 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
    virtual void
    receiveInteraction( RTI1516_NAMESPACE::InteractionClassHandle         theInteraction,
                        RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-                       RTI1516_NAMESPACE::VariableLengthData const &     theUserSuppliedTag,
+                       RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
                        RTI1516_NAMESPACE::OrderType                      sentOrder,
                        RTI1516_NAMESPACE::TransportationType             theType,
                        RTI1516_NAMESPACE::SupplementalReceiveInfo        theReceiveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
@@ -306,20 +306,20 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
    virtual void
    receiveInteraction( RTI1516_NAMESPACE::InteractionClassHandle         theInteraction,
                        RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-                       RTI1516_NAMESPACE::VariableLengthData const &     theUserSuppliedTag,
+                       RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
                        RTI1516_NAMESPACE::OrderType                      sentOrder,
                        RTI1516_NAMESPACE::TransportationType             theType,
-                       RTI1516_NAMESPACE::LogicalTime const &            theTime,
+                       RTI1516_NAMESPACE::LogicalTime const             &theTime,
                        RTI1516_NAMESPACE::OrderType                      receivedOrder,
                        RTI1516_NAMESPACE::SupplementalReceiveInfo        theReceiveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
 
    virtual void
    receiveInteraction( RTI1516_NAMESPACE::InteractionClassHandle         theInteraction,
                        RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-                       RTI1516_NAMESPACE::VariableLengthData const &     theUserSuppliedTag,
+                       RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
                        RTI1516_NAMESPACE::OrderType                      sentOrder,
                        RTI1516_NAMESPACE::TransportationType             theType,
-                       RTI1516_NAMESPACE::LogicalTime const &            theTime,
+                       RTI1516_NAMESPACE::LogicalTime const             &theTime,
                        RTI1516_NAMESPACE::OrderType                      receivedOrder,
                        RTI1516_NAMESPACE::MessageRetractionHandle        theHandle,
                        RTI1516_NAMESPACE::SupplementalReceiveInfo        theReceiveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
@@ -335,7 +335,7 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
    removeObjectInstance( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
                          RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag,
                          RTI1516_NAMESPACE::OrderType                 sentOrder,
-                         RTI1516_NAMESPACE::LogicalTime const &       theTime,
+                         RTI1516_NAMESPACE::LogicalTime const        &theTime,
                          RTI1516_NAMESPACE::OrderType                 receivedOrder,
                          RTI1516_NAMESPACE::SupplementalRemoveInfo    theRemoveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
 
@@ -343,7 +343,7 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
    removeObjectInstance( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
                          RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag,
                          RTI1516_NAMESPACE::OrderType                 sentOrder,
-                         RTI1516_NAMESPACE::LogicalTime const &       theTime,
+                         RTI1516_NAMESPACE::LogicalTime const        &theTime,
                          RTI1516_NAMESPACE::OrderType                 receivedOrder,
                          RTI1516_NAMESPACE::MessageRetractionHandle   theHandle,
                          RTI1516_NAMESPACE::SupplementalRemoveInfo    theRemoveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError );
@@ -372,7 +372,7 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
    virtual void
    turnUpdatesOnForObjectInstance( RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
                                    RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes,
-                                   std::wstring const &                         updateRateDesignator ) throw( RTI1516_NAMESPACE::FederateInternalError );
+                                   std::wstring const                          &updateRateDesignator ) throw( RTI1516_NAMESPACE::FederateInternalError );
 
    // 6.20
    virtual void

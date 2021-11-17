@@ -206,7 +206,7 @@ void OwnershipHandler::clear_checkpoint()
 
 void OwnershipHandler::restore_requests()
 {
-   THLAAttributeMap *                    attr_map;
+   THLAAttributeMap                     *attr_map;
    AttributeOwnershipMap::const_iterator ownership_iter;
 
    // Lock the ownership mutex since we are processing the ownership list.

@@ -204,7 +204,7 @@ class SineData
    //
    /*! @brief Utility function to copy data from source to this object.
     *  @param orig Sine wave data object to copy into. */
-   void copy_data( SineData *orig );
+   void copy_data( const SineData *orig );
 
    //
    // Public modeling functions.

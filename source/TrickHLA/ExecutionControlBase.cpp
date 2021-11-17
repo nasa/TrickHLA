@@ -146,7 +146,7 @@ ExecutionControlBase::ExecutionControlBase(
  */
 ExecutionControlBase::~ExecutionControlBase()
 {
-   clear_mode_values();
+   this->clear_mode_values();
 
    // Free the memory used for the multiphase initialization synchronization points.
    if ( multiphase_init_sync_points != static_cast< char * >( NULL ) ) {
@@ -166,7 +166,7 @@ ExecutionControlBase::~ExecutionControlBase()
          loggable_sync_pts[i].clear();
       }
       TMM_delete_var_a( loggable_sync_pts );
-      loggable_sync_pts     = static_cast< LoggableTimedSyncPnt * >( NULL );
+      loggable_sync_pts     = static_cast< LoggableTimedSyncPnt     *>( NULL );
       logged_sync_pts_count = 0;
    }
 }
@@ -180,8 +180,8 @@ ExecutionControlBase::~ExecutionControlBase()
  * @job_class{default_data}
  */
 void ExecutionControlBase::setup(
-   TrickHLA::Federate &                  federate,
-   TrickHLA::Manager &                   manager,
+   TrickHLA::Federate                   &federate,
+   TrickHLA::Manager                    &manager,
    TrickHLA::ExecutionConfigurationBase &exec_config )
 {
    // Set the TrickHLA::Federate instance reference.
@@ -209,7 +209,7 @@ void ExecutionControlBase::setup(
  */
 void ExecutionControlBase::setup(
    TrickHLA::Federate &federate,
-   TrickHLA::Manager & manager )
+   TrickHLA::Manager  &manager )
 {
    // Set the TrickHLA::Federate instance reference.
    this->federate = &federate;
@@ -699,7 +699,7 @@ void ExecutionControlBase::receive_cyclic_data()
  */
 void ExecutionControlBase::provide_attribute_update(
    ObjectInstanceHandle const &theObject,
-   AttributeHandleSet const &  theAttributes )
+   AttributeHandleSet const   &theAttributes )
 {
    // If we have an ExecutionConfiguration then provide attribute updates.
    if ( ( execution_configuration != NULL )
@@ -735,7 +735,7 @@ Object *ExecutionControlBase::get_trickhla_object(
  */
 Object *ExecutionControlBase::get_unregistered_object(
    RTI1516_NAMESPACE::ObjectClassHandle const &theObjectClass,
-   std::wstring const &                        theObjectInstanceName )
+   std::wstring const                         &theObjectInstanceName )
 {
    wstring ws_obj_name;
 

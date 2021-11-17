@@ -99,7 +99,7 @@ class StringUtilities
     *  @param input  The input C string. */
    static void to_wstring(
       std::wstring &output,
-      const char *  input )
+      const char   *input )
    {
       std::string s = ( input != NULL ) ? input : "";
       output.assign( s.begin(), s.end() );
@@ -109,7 +109,7 @@ class StringUtilities
     *  @param output The output wide string.
     *  @param input  The input C++ string. */
    static void to_wstring(
-      std::wstring &     output,
+      std::wstring      &output,
       std::string const &input )
    {
       output.assign( input.begin(), input.end() );
@@ -119,7 +119,7 @@ class StringUtilities
     *  @param output The output C++ string.
     *  @param input  The input wide string. */
    static void to_string(
-      std::string &       output,
+      std::string        &output,
       std::wstring const &input )
    {
       output.assign( input.begin(), input.end() );
@@ -143,7 +143,7 @@ class StringUtilities
     *  @param output The output C++ string with only printable characters.
     *  @param data   User supplied tag */
    static void to_printable_string(
-      std::string &           output,
+      std::string            &output,
       RTI1516_USERDATA const &data )
    {
       output.assign( (const char *)data.data(), data.size() );
@@ -158,7 +158,7 @@ class StringUtilities
     *  @param output The output C++ string.
     *  @param data   User supplied tag */
    static void to_string(
-      std::string &           output,
+      std::string            &output,
       RTI1516_USERDATA const &data )
    {
       output.assign( (const char *)data.data(), data.size() );
@@ -168,7 +168,7 @@ class StringUtilities
     *  @param output The output C++ string.
     *  @param handle Federate handle. */
    static void to_string(
-      std::string &                     output,
+      std::string                      &output,
       RTI1516_NAMESPACE::FederateHandle handle )
    {
       to_string( output, handle.toString() );
@@ -178,7 +178,7 @@ class StringUtilities
     *  @param output The output C++ string.
     *  @param handle Class handle. */
    static void to_string(
-      std::string &                             output,
+      std::string                              &output,
       RTI1516_NAMESPACE::InteractionClassHandle handle )
    {
       to_string( output, handle.toString() );
@@ -188,7 +188,7 @@ class StringUtilities
     *  @param output The output C++ string.
     *  @param handle Parameter Handle. */
    static void to_string(
-      std::string &                      output,
+      std::string                       &output,
       RTI1516_NAMESPACE::ParameterHandle handle )
    {
       to_string( output, handle.toString() );
@@ -198,7 +198,7 @@ class StringUtilities
     *  @param output The output C++ string.
     *  @param handle Instance handle. */
    static void to_string(
-      std::string &                           output,
+      std::string                            &output,
       RTI1516_NAMESPACE::ObjectInstanceHandle handle )
    {
       to_string( output, handle.toString() );
@@ -208,7 +208,7 @@ class StringUtilities
     *  @param output The output C++ string.
     *  @param handle Class handle. */
    static void to_string(
-      std::string &                        output,
+      std::string                         &output,
       RTI1516_NAMESPACE::ObjectClassHandle handle )
    {
       to_string( output, handle.toString() );
@@ -218,7 +218,7 @@ class StringUtilities
     *  @param output The output C++ string.
     *  @param handle Attribute handle. */
    static void to_string(
-      std::string &                      output,
+      std::string                       &output,
       RTI1516_NAMESPACE::AttributeHandle handle )
    {
       to_string( output, handle.toString() );
@@ -294,9 +294,9 @@ class StringUtilities
     *  @param tokens     Tokens of the string.
     *  @param delimiters Delimiter characters for tokenizing the string. */
    static void tokenize(
-      std::string const &         str,
+      std::string const          &str,
       std::vector< std::string > &tokens,
-      std::string const &         delimiters = "," )
+      std::string const          &delimiters = "," )
    {
       // Skip delimiters at the beginning.
       std::string::size_type lastPos = str.find_first_not_of( delimiters, 0 );
@@ -330,9 +330,9 @@ class StringUtilities
     *  @param tokens     Tokens of the string.
     *  @param delimiters Delimiter characters for tokenizing the string. */
    static void tokenize(
-      std::string const &          str,
+      std::string const           &str,
       std::vector< std::wstring > &tokens,
-      std::string const &          delimiters = "," )
+      std::string const           &delimiters = "," )
    {
       // Skip delimiters at the beginning.
       std::string::size_type lastPos = str.find_first_not_of( delimiters, 0 );

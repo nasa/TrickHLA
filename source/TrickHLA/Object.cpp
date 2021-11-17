@@ -2999,7 +2999,7 @@ void Object::pull_ownership()
       current_time = federate->get_execution_control()->get_sim_time();
    }
 
-   THLAAttributeMap *                    attr_map;
+   THLAAttributeMap                     *attr_map;
    THLAAttributeMap::const_iterator      attr_map_iter;
    AttributeOwnershipMap::const_iterator pull_ownership_iter;
 
@@ -3510,7 +3510,7 @@ void Object::push_ownership()
       current_time = federate->get_execution_control()->get_sim_time();
    }
 
-   THLAAttributeMap *                    attr_map;
+   THLAAttributeMap                     *attr_map;
    THLAAttributeMap::const_iterator      attr_map_iter;
    AttributeOwnershipMap::const_iterator push_ownership_iter;
 
@@ -3617,9 +3617,9 @@ for Attributes of object '%s'.%c",
 
       pthread_t divest;
       int       ret = pthread_create( &divest,
-                                NULL,
-                                ownership_divestiture_pthread_function,
-                                divest_thread_args );
+                                      NULL,
+                                      ownership_divestiture_pthread_function,
+                                      divest_thread_args );
       if ( ret ) {
          ostringstream errmsg;
          errmsg << "Object::push_ownership():" << __LINE__

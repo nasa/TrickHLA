@@ -147,7 +147,7 @@ void OpaqueBuffer::ensure_buffer_capacity(
 }
 
 void OpaqueBuffer::push_to_buffer(
-   void *       src,
+   void        *src,
    size_t       size,
    EncodingEnum encoding )
 {
@@ -201,7 +201,7 @@ void OpaqueBuffer::push_to_buffer(
  * - The destination must be large enough to hold size bytes of data.
  */
 void OpaqueBuffer::pull_from_buffer(
-   void *       dest,
+   void        *dest,
    size_t       size,
    EncodingEnum encoding )
 {
@@ -302,8 +302,8 @@ void OpaqueBuffer::pull_pad_from_buffer(
  * - The destination must be large enough to hold size bytes of data.
  */
 void OpaqueBuffer::byteswap_buffer_copy(
-   void *       dest,
-   void *       src,
+   void        *dest,
+   void        *src,
    size_t       size,
    EncodingEnum encoding )
 {

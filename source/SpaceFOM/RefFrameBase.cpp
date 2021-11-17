@@ -99,10 +99,10 @@ RefFrameBase::~RefFrameBase()
  */
 void RefFrameBase::default_data(
    SpaceFOM::ExecutionControl *execution_control,
-   TrickHLA::Object *          object,
-   const char *                sim_obj_name,
-   const char *                ref_frame_obj_name,
-   const char *                ref_frame_name,
+   TrickHLA::Object           *object,
+   const char                 *sim_obj_name,
+   const char                 *ref_frame_obj_name,
+   const char                 *ref_frame_name,
    bool                        publishes )
 {
    string ref_frame_name_str = string( sim_obj_name ) + "." + string( ref_frame_obj_name );
@@ -307,7 +307,7 @@ void RefFrameBase::pack()
 
 void RefFrameBase::unpack()
 {
-   //double dt; // Local vs. remote time difference.
+   // double dt; // Local vs. remote time difference.
 
    if ( !initialized ) {
       cout << "RefFrameBase::unpack():" << __LINE__

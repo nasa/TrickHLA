@@ -69,7 +69,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
 
-//SpaceFOM include files.
+// SpaceFOM include files.
 #include "SpaceFOM/ExecutionConfiguration.hh"
 #include "SpaceFOM/ExecutionControl.hh"
 
@@ -599,8 +599,8 @@ void ExecutionConfiguration::setup_ref_attributes(
    // Normally, we would specify the Trick 'name' of the simulation
    // variable. However, T=this will be replaced with a direct construction
    // of the Trick REF2 ATTRIBUTES for the associated variable in memory.
-   //trick_name_str = exco_name_str + string( ".root_frame_name" );
-   //this->attributes[0].trick_name = trick_MM->mm_strdup( trick_name_str.c_str() );
+   // trick_name_str = exco_name_str + string( ".root_frame_name" );
+   // this->attributes[0].trick_name = trick_MM->mm_strdup( trick_name_str.c_str() );
 
    // Normally we would use the Trick variable to resolve to at run time,
    // which is supplied by the input file. Instead, we must build the
@@ -654,7 +654,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    // in-line, and not via the Trick input file, use the alternate version of
    // the initialize routine which does not resolve the fully-qualified Trick
    // name to access the ATTRIBUTES if the trick variable...
-   //this->attributes[0].initialize( this->FOM_name,
+   // this->attributes[0].initialize( this->FOM_name,
    //                                &(this->root_frame_name),
    //                                (ATTRIBUTES *) exco_attr );
 
