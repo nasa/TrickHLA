@@ -72,9 +72,18 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
          endif
       endif
       ifneq (,$(findstring clang, $(shell $(CPPC_CMD) --version | grep clang)))
-         export DYLD_LIBRARY_PATH += :${RTI_HOME}/lib/clang5
-         TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib -L${RTI_HOME}/lib/clang5 -v -Wl,-rpath,${RTI_HOME}/lib/clang5 -lrti1516e -lfedtime1516e -L${RTI_JAVA_LIB_PATH} -v -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljvm
+         # Determine what clang library version to use.
+         COMPILER_VERSION = $(shell $(CPPC_CMD) --version | grep clang | cut -d' ' -f 4 | cut -d . -f 1)
+         COMPILER_GTE_12 = $(shell echo $(COMPILER_VERSION)\>=12 | bc )
+         ifeq ($(COMPILER_GTE_12),1)
+            export DYLD_LIBRARY_PATH += :${RTI_HOME}/lib/clang12
+            TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib -L${RTI_HOME}/lib/clang12 -v -Wl,-rpath,${RTI_HOME}/lib/clang12 -lrti1516e -lfedtime1516e -L${RTI_JAVA_LIB_PATH} -v -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljvm
+         else
+            export DYLD_LIBRARY_PATH += :${RTI_HOME}/lib/clang5
+            TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib -L${RTI_HOME}/lib/clang5 -v -Wl,-rpath,${RTI_HOME}/lib/clang5 -lrti1516e -lfedtime1516e -L${RTI_JAVA_LIB_PATH} -v -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljvm
+         endif
       else
+         # Using gcc compiler instead of clang.
          export DYLD_LIBRARY_PATH += :${RTI_HOME}/lib/gcc42
          TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib/gcc42 -lrti1516e -lfedtime1516e
       endif
