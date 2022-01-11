@@ -74,7 +74,12 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
       ifneq (,$(findstring clang, $(shell $(CPPC_CMD) --version | grep clang)))
          # Determine what clang library version to use.
          COMPILER_VERSION = $(shell $(CPPC_CMD) --version | grep clang | cut -d' ' -f 4 | cut -d . -f 1)
-         COMPILER_GTE_12 = $(shell echo $(COMPILER_VERSION)\>=12 | bc )
+         ifneq ("$(wildcard ${RTI_HOME}/lib/clang12)","")
+            # The clang12 library exists but is the compiler at least version 12.
+            COMPILER_GTE_12 = $(shell echo $(COMPILER_VERSION)\>=12 | bc )
+         else
+            COMPILER_GTE_12 = 0
+         endif
          ifeq ($(COMPILER_GTE_12),1)
             export DYLD_LIBRARY_PATH += :${RTI_HOME}/lib/clang12
             TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib -L${RTI_HOME}/lib/clang12 -v -Wl,-rpath,${RTI_HOME}/lib/clang12 -lrti1516e -lfedtime1516e -L${RTI_JAVA_LIB_PATH} -v -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljvm
@@ -141,14 +146,30 @@ else
 
       # Determine what gcc library version to use.
       COMPILER_VERSION = $(shell $(CPPC_CMD) -dumpversion | cut -d . -f 1)
-      COMPILER_GTE_7 = $(shell echo $(COMPILER_VERSION)\>=7 | bc )
-      COMPILER_GTE_5 = $(shell echo $(COMPILER_VERSION)\>=5 | bc )
+      ifneq ("$(wildcard ${RTI_HOME}/lib/gcc73_64)","")
+         # The gcc73_64 library exists but is the compiler at least version 7.
+         COMPILER_GTE_7 = $(shell echo $(COMPILER_VERSION)\>=7 | bc )
+      else
+         COMPILER_GTE_7 = 0
+      endif
+      ifneq ("$(wildcard ${RTI_HOME}/lib/gcc52_64)","")
+         COMPILER_GTE_5 = $(shell echo $(COMPILER_VERSION)\>=5 | bc )
+      else
+         COMPILER_GTE_5 = 0
+      endif
+      ifneq ("$(wildcard ${RTI_HOME}/lib/gcc41_64)","")
+         COMPILER_GTE_4 = $(shell echo $(COMPILER_VERSION)\>=4 | bc )
+      else
+         COMPILER_GTE_4 = 0
+      endif
       ifeq ($(COMPILER_GTE_7),1)
          RTI_LIB_PATH = ${RTI_HOME}/lib/gcc73_64
       else ifeq ($(COMPILER_GTE_5),1)
          RTI_LIB_PATH = ${RTI_HOME}/lib/gcc52_64
-      else
+      else else ifeq ($(COMPILER_GTE_4),1)
          RTI_LIB_PATH = ${RTI_HOME}/lib/gcc41_64
+      else
+         RTI_LIB_PATH = ${RTI_HOME}/lib/gcc34_64
       endif
       TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -lrti1516e64 -lfedtime1516e64 -Wl,-rpath,${RTI_LIB_PATH}
 
