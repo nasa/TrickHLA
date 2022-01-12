@@ -166,7 +166,7 @@ else
          RTI_LIB_PATH = ${RTI_HOME}/lib/gcc73_64
       else ifeq ($(COMPILER_GTE_5),1)
          RTI_LIB_PATH = ${RTI_HOME}/lib/gcc52_64
-      else else ifeq ($(COMPILER_GTE_4),1)
+      else ifeq ($(COMPILER_GTE_4),1)
          RTI_LIB_PATH = ${RTI_HOME}/lib/gcc41_64
       else
          RTI_LIB_PATH = ${RTI_HOME}/lib/gcc34_64
