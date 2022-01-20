@@ -63,7 +63,7 @@ using namespace TrickHLA;
 
 /*!
  * @details The endianess of the computer is determined as part of the
- * Attribute contstruction process.
+ * Attribute construction process.
  * @job_class{initialization}
  */
 Attribute::Attribute()
@@ -220,12 +220,12 @@ void Attribute::initialize(
 
    // Do a bounds check on the 'cycle_time' value. Once we have a valid
    // job-cycle-time we will do another bounds check against that value.
-   if ( ( cycle_time <= 0.0 ) && ( cycle_time > -std::numeric_limits< double >::max() ) ) {
+   if ( ( this->cycle_time <= 0.0 ) && ( this->cycle_time > -std::numeric_limits< double >::max() ) ) {
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
              << " FOM Object Attribute '" << obj_FOM_name << "'->'" << FOM_name
              << "' with Trick name '" << trick_name << "' has a 'cycle_time' value"
-             << " of " << cycle_time << " seconds, which is not valid. The"
+             << " of " << this->cycle_time << " seconds, which is not valid. The"
              << " 'cycle_time' must be > 0. Please check your input or"
              << " modified-data files to make sure the value for the 'cycle_time'"
              << " is correctly specified." << THLA_ENDL;
@@ -553,7 +553,7 @@ void Attribute::initialize(
 }
 
 void Attribute::determine_cycle_ratio(
-   double core_job_cycle_time )
+   const double core_job_cycle_time )
 {
    if ( this->cycle_time <= -std::numeric_limits< double >::max() ) {
       // User has not specified cycle-time for this attribute so assume the
@@ -564,9 +564,10 @@ void Attribute::determine_cycle_ratio(
       if ( core_job_cycle_time <= 0.0 ) {
          ostringstream errmsg;
          errmsg << "Attribute::determine_cycle_ratio():" << __LINE__
-                << " FOM Object Attribute '" << FOM_name << "' with Trick name '"
-                << trick_name << "'. The core job cycle time ("
-                << core_job_cycle_time << " seconds) for the send_cyclic_and_requested_data() job"
+                << " FOM Object Attribute '" << this->FOM_name
+                << "' with Trick name '" << this->trick_name
+                << "'. The core job cycle time (" << core_job_cycle_time
+                << " seconds) for the send_cyclic_and_requested_data() job"
                 << " must be > 0. Please make sure your S_define and/or THLA.sm"
                 << " simulation module specifies a valid cycle time for the"
                 << " send_cyclic_and_requested_data() job." << THLA_ENDL;
@@ -577,19 +578,22 @@ void Attribute::determine_cycle_ratio(
       if ( this->cycle_time < core_job_cycle_time ) {
          ostringstream errmsg;
          errmsg << "Attribute::determine_cycle_ratio():" << __LINE__
-                << " FOM Object Attribute '" << FOM_name << "' with Trick name '"
-                << trick_name << "' has a 'cycle_time' value of " << this->cycle_time
-                << " seconds, which is not valid. The attribute 'cycle_time' must"
-                << " be >= " << core_job_cycle_time << " seconds (i.e. the core job"
-                << " cycle time for the send_cyclic_and_requested_data() job). Please check your"
-                << " input or modified-data files to make sure the value for the"
-                << " attribute 'cycle_time' is specified correctly." << THLA_ENDL;
+                << " FOM Object Attribute '" << this->FOM_name
+                << "' with Trick name '" << this->trick_name
+                << "' has a 'cycle_time' value of " << this->cycle_time
+                << " seconds, which is not valid. The attribute 'cycle_time'"
+                << " must be >= " << core_job_cycle_time
+                << " seconds (i.e. the core job cycle time for the"
+                << " send_cyclic_and_requested_data() job). Please check your"
+                << " input or modified-data files to make sure the value for"
+                << " the attribute 'cycle_time' is specified correctly."
+                << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
-      this->cycle_ratio = (int)( ( this->cycle_time / core_job_cycle_time ) + 0.5 );
+      this->cycle_ratio = (int)round( this->cycle_time / core_job_cycle_time );
 
-      // Make sure we are ready to send the data on the first chance.
+      // Make sure we are ready to send the data on the first check.
       this->cycle_cnt = this->cycle_ratio;
 
       // The cycle-ratio must be an integer ratio so check for any fractional part.
@@ -597,12 +601,13 @@ void Attribute::determine_cycle_ratio(
          ostringstream errmsg;
          errmsg << "Attribute::determine_cycle_ratio():" << __LINE__
                 << " FOM Object Attribute '" << FOM_name << "' with Trick name '"
-                << trick_name << "' has a 'cycle_time' value of " << this->cycle_time
+                << this->trick_name << "' has a 'cycle_time' value of "
+                << this->cycle_time
                 << " seconds, which is not an integer multiple of the core job"
                 << " cycle time of " << core_job_cycle_time << " seconds for the"
-                << " send_cyclic_and_requested_data() job. The ratio of the attribute cycle_time"
-                << " to the core job cycle time is (" << cycle_ratio << " + "
-                << fmod( cycle_time, core_job_cycle_time )
+                << " send_cyclic_and_requested_data() job. The ratio of the"
+                << " attribute cycle_time to the core job cycle time is ("
+                << this->cycle_ratio << " + " << fmod( this->cycle_time, core_job_cycle_time )
                 << "), which is not an integer. Please check your input or"
                 << " modified-data files to make sure the value for the attribute"
                 << " 'cycle_time' is specified correctly." << THLA_ENDL;
@@ -612,8 +617,8 @@ void Attribute::determine_cycle_ratio(
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
          ostringstream msg;
          msg << "Attribute::determine_cycle_ratio():" << __LINE__ << endl
-             << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
-             << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
+             << "  FOM_name:'" << ( ( this->FOM_name != NULL ) ? this->FOM_name : "NULL" ) << "'" << endl
+             << "  trick_name:'" << ( ( this->trick_name != NULL ) ? this->trick_name : "NULL" ) << "'" << endl
              << "  core_job_cycle_time:" << core_job_cycle_time << " seconds" << endl
              << "  cyle_time:" << this->cycle_time << " seconds" << endl
              << "  cycle_ratio:" << this->cycle_ratio << THLA_ENDL;

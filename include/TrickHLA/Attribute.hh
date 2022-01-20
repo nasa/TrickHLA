@@ -136,7 +136,7 @@ class Attribute
    /*! @brief Determine the cycle-ratio given the core job cycle rate and the
     * cycle-time for this attribute.
     *  @param core_job_cycle_time Core job cycle time in seconds. */
-   void determine_cycle_ratio( double core_job_cycle_time );
+   void determine_cycle_ratio( const double core_job_cycle_time );
 
    /*! @brief Pack the attribute into the buffer using the appropriate encoding. */
    void pack_attribute_buffer();
@@ -268,7 +268,7 @@ class Attribute
 
    /*! @brief Set the pull requested flag.
     *  @param enable Flag to set the pull requested state. */
-   void set_pull_requested( bool enable )
+   void set_pull_requested( const bool enable )
    {
       this->pull_requested = enable;
    }
@@ -282,7 +282,7 @@ class Attribute
 
    /*! @brief Set the ownership push flag.
     *  @param enable Flag to set the push requested state. */
-   void set_push_requested( bool enable )
+   void set_push_requested( const bool enable )
    {
       this->push_requested = enable;
    }
@@ -296,7 +296,7 @@ class Attribute
 
    /*! @brief Set the ownership divest requested flag.
     *  @param enable Flag to set divest requested state. */
-   void set_divest_requested( bool enable )
+   void set_divest_requested( const bool enable )
    {
       this->divest_requested = enable;
    }
@@ -317,7 +317,7 @@ class Attribute
 
    /*! @brief Determine is the data cycle is ready for sending data.
     *  @return True if the data cycle is ready for a send, false otherwise.*/
-   bool check_data_cycle_ready() // RETURN: -- True if the data cycle is ready for a send, false otherwise.
+   const bool check_data_cycle_ready() // RETURN: -- True if the data cycle is ready for a send, false otherwise.
    {
       if ( ( cycle_ratio <= 1 ) || ( ( ++cycle_cnt ) >= cycle_ratio ) ) {
          cycle_cnt = 0;
@@ -328,7 +328,7 @@ class Attribute
 
    /*! @brief Set the preferred transportation order.
     *  @param order The transportation type enumeration value. */
-   void set_preferred_order( TransportationEnum order )
+   void set_preferred_order( const TransportationEnum order )
    {
       this->preferred_order = order;
    }
@@ -349,7 +349,7 @@ class Attribute
 
    /*! @brief Set the attribute update requested flag.
     *  @param request_update Request update flag. */
-   void set_update_requested( bool request_update )
+   void set_update_requested( const bool request_update )
    {
       this->update_requested = request_update;
    }
@@ -416,7 +416,7 @@ class Attribute
 
    // Set the RTI encoding and based on the new encoding determine if we
    // need to byte-swap.
-   void set_encoding( EncodingEnum in_type )
+   void set_encoding( const EncodingEnum in_type )
    {
       rti_encoding = in_type;
 
@@ -430,7 +430,7 @@ class Attribute
 
    /*! @brief Calculate the number of items in the attribute.
     *  @return Number of items in the attribute. */
-   size_t calculate_number_of_items()
+   const size_t calculate_number_of_items()
    {
       calculate_size_and_number_of_items();
       return num_items;

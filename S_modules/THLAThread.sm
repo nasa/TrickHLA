@@ -57,7 +57,8 @@ class THLAThreadSimObject : public Trick::SimObject {
                         unsigned short _1ST  = 1,
                         unsigned short _LAST = 65534 )
       : federate( thla_fed ),
-        thread_id( _THREAD_ID )
+        thread_id( _THREAD_ID ),
+        data_cycle_time( data_cycle )
    {
       // Do a sanity check on the data cycle time.
       if ( data_cycle <= 0.0 ) {
@@ -68,7 +69,7 @@ class THLAThreadSimObject : public Trick::SimObject {
       // Because the federate class initializes the thread state array as
       // a phase 1 (i.e. P1) initialization class job, the earliest we can
       // associate the Trick child thread is phase 2 (i.e. P2).
-      P2 ("initialization") federate.associate_to_trick_child_thread( thread_id );
+      P2 ("initialization") federate.associate_to_trick_child_thread( thread_id, data_cycle_time );
 
       // Wait for the HLA data to be received.
       C_THREAD_ID P_1ST (data_cycle, "environment") federate.wait_to_receive_data();
@@ -80,6 +81,7 @@ class THLAThreadSimObject : public Trick::SimObject {
  protected:
    TrickHLA::Federate & federate;
    unsigned int         thread_id;
+   double               data_cycle_time;
    
  private:
    // Do not allow the implicit copy constructor or assignment operator.

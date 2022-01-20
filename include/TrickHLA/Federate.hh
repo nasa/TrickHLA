@@ -655,10 +655,10 @@ class Federate
    void wait_for_time_advance_grant();
 
    /*! @brief Initialize the thread memory associated with the Trick child threads. */
-   void initialize_thread_state();
+   void initialize_thread_state( const double data_cycle );
 
    /*! @brief Associate a Trick child thread with TrickHLA. */
-   void associate_to_trick_child_thread( const unsigned int thread_id );
+   void associate_to_trick_child_thread( const unsigned int thread_id, const double data_cycle );
 
    /*! @brief Announce to all the child threads the main thread has data available. */
    void announce_data_available();
@@ -1172,10 +1172,11 @@ class Federate
    RTI1516_NAMESPACE::InteractionClassHandle MOM_HLAsetSwitches_class_handle; ///< @trick_io{**} MOM HLAsetSwitches class handle.
    RTI1516_NAMESPACE::ParameterHandle        MOM_HLAautoProvide_param_handle; ///< @trick_io{**} MOM HLAautoProvide parameter handle.
 
-   unsigned int *thread_state;            ///< @trick_units{--} TrickHLA state of trick child threads being used.
-   unsigned int  thread_state_cnt;        ///< @trick_units{--} TrickHLA state of trick child threads being used count.
-   MutexLock     thread_state_mutex;      ///< @trick_units{--} TrickHLA thread state mutex.
-   bool          thread_state_associated; ///< @trick_units{--} True if at least one Trick Child thread is associated to TrickHLA.
+   unsigned int *thread_state;                 ///< @trick_units{--} TrickHLA state of trick child threads being used.
+   unsigned int  thread_state_cnt;             ///< @trick_units{--} TrickHLA state of trick child threads being used count.
+   MutexLock     thread_state_mutex;           ///< @trick_units{--} TrickHLA thread state mutex.
+   bool          thread_state_associated;      ///< @trick_units{--} True if at least one Trick Child thread is associated to TrickHLA.
+   long long    *thread_state_data_cycle_tics; ///< @trick_units{--} Trick child thread data cycle rate.
 
    // Federation required associations.
    //

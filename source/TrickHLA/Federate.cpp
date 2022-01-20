@@ -39,6 +39,7 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <arpa/inet.h>
+#include <cmath>
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib> // for atof
@@ -208,6 +209,7 @@ Federate::Federate()
      thread_state_cnt( 0 ),
      thread_state_mutex(),
      thread_state_associated( false ),
+     thread_state_data_cycle_tics( NULL ),
      RTI_ambassador( NULL ),
      federate_ambassador( NULL ),
      manager( NULL ),
@@ -319,13 +321,20 @@ Federate::~Federate()
    (void)joined_federate_mutex.unlock();
    (void)thread_state_mutex.unlock();
 
-   // Release the thread state array.
+   // Release the thread state arrays.
    if ( thread_state != NULL ) {
       thread_state_cnt = 0;
       if ( TMM_is_alloced( (char *)thread_state ) ) {
          TMM_delete_var_a( thread_state );
       }
       thread_state = NULL;
+   }
+   if ( thread_state_data_cycle_tics != NULL ) {
+      thread_state_cnt = 0;
+      if ( TMM_is_alloced( (char *)thread_state_data_cycle_tics ) ) {
+         TMM_delete_var_a( thread_state_data_cycle_tics );
+      }
+      thread_state_data_cycle_tics = NULL;
    }
 }
 
@@ -447,11 +456,21 @@ the documented ENUM values.%c",
 /*!
  * @brief Initialize the thread memory associated with the Trick child threads.
  */
-void Federate::initialize_thread_state()
+void Federate::initialize_thread_state(
+   const double data_cycle )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &thread_state_mutex );
+
+   // Save the data cycle time and validate.
+   if ( data_cycle <= 0.0 ) {
+      ostringstream errmsg;
+      errmsg << "Federate::initialize_thread_state():" << __LINE__
+             << " ERROR: data_cycle time (" << data_cycle
+             << ") must be > 0.0!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
 
    // Determine the total number of Trick threads (main + child).
    this->thread_state_cnt = exec_get_num_threads();
@@ -475,13 +494,33 @@ void Federate::initialize_thread_state()
       exit( 1 );
    }
 
+   // Allocate the thread data cycle tics array for all the Trick threads.
+   this->thread_state_data_cycle_tics = (long long *)TMM_declare_var_1d( "long long",
+                                                                         this->thread_state_cnt );
+   if ( this->thread_state == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Federate::initialize_thread_state():" << __LINE__
+             << " ERROR: Could not allocate memory for thread_state_data_cycle_tics"
+             << " for requested size " << this->thread_state_cnt
+             << "'!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      exit( 1 );
+   }
+
    // Main Trick thread runs TrickHLA.
-   this->thread_state[0] = THREAD_STATE_RESET;
+   this->thread_state[0]                 = THREAD_STATE_RESET;
+   this->thread_state_data_cycle_tics[0] = (long long)round( data_cycle * exec_get_time_tic_value() );
 
    // We don't know if the Child threads are running TrickHLA jobs yet so
    // mark them all as not associated.
    for ( unsigned int id = 1; id < this->thread_state_cnt; ++id ) {
-      this->thread_state[id] = THREAD_STATE_NOT_ASSOCIATED;
+      this->thread_state[id]                 = THREAD_STATE_NOT_ASSOCIATED;
+      this->thread_state_data_cycle_tics[id] = 0;
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      send_hs( stdout, "Federate::initialize_thread_state():%d Trick main thread (id:0, data_cycle:%.3f).%c",
+               __LINE__, data_cycle, THLA_NEWLINE );
    }
 }
 
@@ -4599,7 +4638,8 @@ void Federate::perform_time_advance_request()
  * @brief Associate a Trick child thread with TrickHLA.
  */
 void Federate::associate_to_trick_child_thread(
-   const unsigned int thread_id )
+   const unsigned int thread_id,
+   const double       data_cycle )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -4647,9 +4687,62 @@ void Federate::associate_to_trick_child_thread(
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
+   // Calculate the number of tics for the child thread data cycle.
+   this->thread_state_data_cycle_tics[thread_id] = (long long)round( data_cycle * exec_get_time_tic_value() );
+
+#ifdef THLA_CHILD_THREAD_SUB_DATA_RATE
+   // The child thread data cycle rate must less than or equal to the main
+   // thread data cycle.
+   if ( this->thread_state_data_cycle_tics[thread_id] < this->thread_state_data_cycle_tics[0] ) {
+      double        main_thread_data_cycle = (double)this->thread_state_data_cycle_tics[0] / exec_get_time_tic_value();
+      ostringstream errmsg;
+      errmsg << "Federate::associate_to_trick_child_thread():" << __LINE__
+             << " ERROR: The data-cycle time for the Trick child thread (id:"
+             << thread_id << ", data_cycle:" << data_cycle
+             << ") cannot be less than the Trick main thread"
+             << " (data_cycle:" << main_thread_data_cycle << ")!"
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // The child thread data cycle must be an integer multiple of the main thread
+   // data cycle.
+   if ( this->thread_state_data_cycle_tics[thread_id] % this->thread_state_data_cycle_tics[0] != 0 ) {
+      double        main_thread_data_cycle = (double)this->thread_state_data_cycle_tics[0] / exec_get_time_tic_value();
+      ostringstream errmsg;
+      errmsg << "Federate::associate_to_trick_child_thread():" << __LINE__
+             << " ERROR: The data-cycle time for the Trick child thread (id:"
+             << thread_id << ", data_cycle:" << data_cycle
+             << ") must be an integer multiple of the Trick main thread"
+             << " (data_cycle:" << main_thread_data_cycle << ")!"
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+#else
+   // TODO: Allow child threads running at a different data cycle time.
+   // For now, we only allow child threads with the exact same data cycle time
+   // as the Trick main thread.
+   if ( this->thread_state_data_cycle_tics[thread_id] != this->thread_state_data_cycle_tics[0] ) {
+      double        main_thread_data_cycle = (double)this->thread_state_data_cycle_tics[0] / exec_get_time_tic_value();
+      ostringstream errmsg;
+      errmsg << "Federate::associate_to_trick_child_thread():" << __LINE__
+             << " ERROR: The data-cycle time for the Trick child thread (id:"
+             << thread_id << ", data_cycle:" << data_cycle
+             << ") must be the same as the Trick main thread"
+             << " (data_cycle:" << main_thread_data_cycle << ")!"
+             << " NOTE: If you need to send HLA Attribute data at a different"
+             << " rate than the Trick Main Thread data-cycle time then either"
+             << " use the Conditional TrickHLA callback API or use the"
+             << " TrickHLA Attribute.cycle_time setting for each attribute of"
+             << " a TrickHLA Object to set a data-cycle time at a sub-rate."
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+#endif
+
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::associate_to_trick_child_thread():%d Trick child thread (id:%d).%c",
-               __LINE__, thread_id, THLA_NEWLINE );
+      send_hs( stdout, "Federate::associate_to_trick_child_thread():%d Trick child thread (id:%d, data_cycle:%.3f).%c",
+               __LINE__, thread_id, data_cycle, THLA_NEWLINE );
    }
 
    // Make sure we mark the thread state as reset now that we associated to it.
@@ -4734,11 +4827,24 @@ void Federate::wait_to_send_data()
    // Get the ID of the thread that called this function.
    unsigned int thread_id = exec_get_process_id();
 
-   // Determine if this is the main thread (id = 0) or a child thread.
+   // Determine if this is the main thread (id = 0) or a child thread. The main
+   // thread will wait for all the child threads to be ready to send before
+   // returning.
    if ( thread_id == 0 ) {
 
       // Don't check the Trick main thread (id = 0), only check child threads.
       unsigned int id = 1;
+
+      // Is the child thread wait_to_send_data() job aligned to run at the same
+      // time/frame as the main thread wait_to_send_data() job.
+#ifdef THLA_CHILD_THREAD_SUB_DATA_RATE
+      bool aligned_to_main_thread = ( ( id < this->thread_state_cnt ) && ( this->thread_state_data_cycle_tics[id] > 0 ) )
+                                       ? ( ( exec_get_time_tics() % this->thread_state_data_cycle_tics[id] ) == 0 )
+                                       : false;
+#else
+      // All child threads must be aligned to the main thread.
+      const bool aligned_to_main_thread = true;
+#endif
 
       // Trick Main Thread: Take a quick first look to determine if all the
       // Trick child threads associated to TrickHLA are ready to send data.
@@ -4759,12 +4865,19 @@ void Federate::wait_to_send_data()
             // thread-id. If the state is THREAD_STATE_READY_TO_SEND then
             // this thread-id is ready, so check the next ID. Otherwise we
             // are not ready to send and don't move on from the current
-            // thread-id.
-            if ( ( thread_state[id] == THREAD_STATE_READY_TO_SEND )
+            // thread-id. Skip this child thread if it is not scheduled to
+            // run at the same time as the main thread for this job.
+            if ( !aligned_to_main_thread
+                 || ( thread_state[id] == THREAD_STATE_READY_TO_SEND )
                  || ( thread_state[id] == THREAD_STATE_NOT_ASSOCIATED ) ) {
                // Move to the next thread-id because the current ID is
                // ready. This results in checking all the ID's just once.
                ++id;
+#ifdef THLA_CHILD_THREAD_SUB_DATA_RATE
+               aligned_to_main_thread = ( ( id < this->thread_state_cnt ) && ( this->thread_state_data_cycle_tics[id] > 0 ) )
+                                           ? ( ( exec_get_time_tics() % this->thread_state_data_cycle_tics[id] ) == 0 )
+                                           : false;
+#endif
             } else {
                // Stay on the current ID and indicate not ready to send.
                all_ready_to_send = false;
@@ -4804,12 +4917,19 @@ void Federate::wait_to_send_data()
                   // thread-id. If the state is THREAD_STATE_READY_TO_SEND then
                   // this thread-id is ready, so check the next ID. Otherwise we
                   // are not ready to send and don't move on from the current
-                  // thread-id.
-                  if ( ( thread_state[id] == THREAD_STATE_READY_TO_SEND )
+                  // thread-id. Skip this child thread if it is not scheduled to
+                  // run at the same time as the main thread for this job.
+                  if ( !aligned_to_main_thread
+                       || ( thread_state[id] == THREAD_STATE_READY_TO_SEND )
                        || ( thread_state[id] == THREAD_STATE_NOT_ASSOCIATED ) ) {
                      // Move to the next thread-id because the current ID is
                      // ready. This results in checking all the ID's just once.
                      ++id;
+#ifdef THLA_CHILD_THREAD_SUB_DATA_RATE
+                     aligned_to_main_thread = ( ( id < this->thread_state_cnt ) && ( this->thread_state_data_cycle_tics[id] > 0 ) )
+                                                 ? ( ( exec_get_time_tics() % this->thread_state_data_cycle_tics[id] ) == 0 )
+                                                 : false;
+#endif
                   } else {
                      // Stay on the current ID and indicate not ready to send.
                      all_ready_to_send = false;
@@ -4839,16 +4959,19 @@ void Federate::wait_to_send_data()
 
                if ( print_timer.timeout( wallclock_time ) ) {
                   print_timer.reset();
-                  send_hs( stdout, "Federate::wait_to_send_data():%d Waiting...%c",
-                           __LINE__, THLA_NEWLINE );
+                  send_hs( stdout, "Federate::wait_to_send_data():%d Waiting on child thread %d...%c",
+                           __LINE__, id, THLA_NEWLINE );
                }
             }
          } while ( !all_ready_to_send );
       }
    } else {
 
-      // Trick Child Thread associated to TrickHLA: Do a quick look to
-      // determine if the Trick main thread has sent all the HLA data.
+      // Trick Child Threads associated to TrickHLA need to wait for the Trick
+      // main thread to send all the HLA data.
+
+      // Do a quick look to determine if the Trick main thread has sent all
+      // the HLA data.
       bool sent_data;
       {
          // When auto_unlock_mutex goes out of scope it automatically unlocks
