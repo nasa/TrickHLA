@@ -1172,11 +1172,11 @@ class Federate
    RTI1516_NAMESPACE::InteractionClassHandle MOM_HLAsetSwitches_class_handle; ///< @trick_io{**} MOM HLAsetSwitches class handle.
    RTI1516_NAMESPACE::ParameterHandle        MOM_HLAautoProvide_param_handle; ///< @trick_io{**} MOM HLAautoProvide parameter handle.
 
-   unsigned int *thread_state;                 ///< @trick_units{--} TrickHLA state of trick child threads being used.
-   unsigned int  thread_state_cnt;             ///< @trick_units{--} TrickHLA state of trick child threads being used count.
-   MutexLock     thread_state_mutex;           ///< @trick_units{--} TrickHLA thread state mutex.
-   bool          thread_state_associated;      ///< @trick_units{--} True if at least one Trick Child thread is associated to TrickHLA.
-   long long    *thread_state_data_cycle_tics; ///< @trick_units{--} Trick child thread data cycle rate.
+   unsigned int *thread_state;            ///< @trick_units{--} TrickHLA state of trick child threads being used.
+   unsigned int  thread_state_cnt;        ///< @trick_units{--} TrickHLA state of trick child threads being used count.
+   MutexLock     thread_state_mutex;      ///< @trick_units{--} TrickHLA thread state mutex.
+   bool          thread_state_associated; ///< @trick_units{--} True if at least one Trick Child thread is associated to TrickHLA.
+   double        thread_state_data_cycle; ///< @trick_units{--} Trick main thread data cycle time.
 
    // Federation required associations.
    //

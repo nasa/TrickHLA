@@ -42,13 +42,6 @@ NASA, Johnson Space Center\n
 // Default: THLA_QUEUE_REFLECTED_ATTRIBUTES
 #define THLA_QUEUE_REFLECTED_ATTRIBUTES
 
-// For now, TrickHLA does not support Trick child threads natively sending
-// data at a different rate (i.e. running at a different rate) than the Trick
-// main thread. Workaround is to use the Conditional TrickHLA API or by using
-// the Attribute.cycle_time value for each attribute in the Object class.
-// Default: NO_THLA_CHILD_THREAD_SUB_DATA_RATE
-#define NO_THLA_CHILD_THREAD_SUB_DATA_RATE
-
 // Insert a compile time error if an unsupported version of Trick 17 is used.
 // Minimum supported Trick 17 version: 17.5.0
 #define MIN_TRICK_VER 17  // Set to the minimum supported Trick Major version.
