@@ -4681,7 +4681,7 @@ void Federate::associate_to_trick_child_thread(
              << " rate than the Trick Main Thread data-cycle time then either"
              << " use the Conditional TrickHLA callback API or use the"
              << " TrickHLA Attribute.cycle_time setting for each attribute of"
-             << " a TrickHLA Object to set a data-cycle time at a sub-rate."
+             << " a TrickHLA Object to desired data-cycle time."
              << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
