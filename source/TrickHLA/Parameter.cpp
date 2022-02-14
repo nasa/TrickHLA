@@ -200,7 +200,7 @@ void Parameter::initialize(
  */
 void Parameter::initialize(
    const char *interaction_fom_name,
-   void       *in_addr,
+   void *      in_addr,
    ATTRIBUTES *in_attr )
 {
    address = in_addr;
@@ -812,7 +812,7 @@ void Parameter::calculate_size_and_number_of_items()
          // NOTE: For now we assume 1-D array.
 
          // get_size returns the number of elements in the array.
-         num_bytes = (size_t)( get_size( *(char **)address ) * attr->size );
+         num_bytes = ( size_t )( get_size( *(char **)address ) * attr->size );
 
          // Since the users variable is a pointer, we need to recalculate
          // the number of items.
@@ -1331,42 +1331,42 @@ void Parameter::encode_logical_time() const
       }
       case TRICK_SHORT: {
          short *s_src = (short *)address;
-         logical_time = (int64_t)( MICROS_MULTIPLIER * s_src[0] );
+         logical_time = ( int64_t )( MICROS_MULTIPLIER * s_src[0] );
          break;
       }
       case TRICK_UNSIGNED_SHORT: {
          unsigned short *us_src = (unsigned short *)address;
-         logical_time           = (int64_t)( MICROS_MULTIPLIER * us_src[0] );
+         logical_time           = ( int64_t )( MICROS_MULTIPLIER * us_src[0] );
          break;
       }
       case TRICK_INTEGER: {
          int *i_src   = (int *)address;
-         logical_time = (int64_t)( MICROS_MULTIPLIER * i_src[0] );
+         logical_time = ( int64_t )( MICROS_MULTIPLIER * i_src[0] );
          break;
       }
       case TRICK_UNSIGNED_INTEGER: {
          unsigned int *ui_src = (unsigned int *)address;
-         logical_time         = (int64_t)( MICROS_MULTIPLIER * ui_src[0] );
+         logical_time         = ( int64_t )( MICROS_MULTIPLIER * ui_src[0] );
          break;
       }
       case TRICK_LONG: {
          long *l_src  = (long *)address;
-         logical_time = (int64_t)( MICROS_MULTIPLIER * l_src[0] );
+         logical_time = ( int64_t )( MICROS_MULTIPLIER * l_src[0] );
          break;
       }
       case TRICK_UNSIGNED_LONG: {
          unsigned long *ul_src = (unsigned long *)address;
-         logical_time          = (int64_t)( MICROS_MULTIPLIER * ul_src[0] );
+         logical_time          = ( int64_t )( MICROS_MULTIPLIER * ul_src[0] );
          break;
       }
       case TRICK_LONG_LONG: {
          long long *ll_src = (long long *)address;
-         logical_time      = (int64_t)( MICROS_MULTIPLIER * ll_src[0] );
+         logical_time      = ( int64_t )( MICROS_MULTIPLIER * ll_src[0] );
          break;
       }
       case TRICK_UNSIGNED_LONG_LONG: {
          unsigned long long *ull_src = (unsigned long long *)address;
-         logical_time                = (int64_t)( MICROS_MULTIPLIER * ull_src[0] );
+         logical_time                = ( int64_t )( MICROS_MULTIPLIER * ull_src[0] );
          break;
       }
       default: {
@@ -1421,7 +1421,7 @@ void Parameter::decode_logical_time()
          break;
       }
       case TRICK_SHORT: {
-         short  *s_dest = (short *)address;
+         short * s_dest = (short *)address;
          int64_t value  = logical_time / MICROS_MULTIPLIER;
          s_dest[0]      = ( value > SHRT_MAX ) ? SHRT_MAX : (short)value;
          break;
@@ -1433,7 +1433,7 @@ void Parameter::decode_logical_time()
          break;
       }
       case TRICK_INTEGER: {
-         int    *i_dest = (int *)address;
+         int *   i_dest = (int *)address;
          int64_t value  = logical_time / MICROS_MULTIPLIER;
          i_dest[0]      = ( value > INT_MAX ) ? INT_MAX : (int)value;
          break;
@@ -1445,7 +1445,7 @@ void Parameter::decode_logical_time()
          break;
       }
       case TRICK_LONG: {
-         long   *l_dest = (long *)address;
+         long *  l_dest = (long *)address;
          int64_t value  = logical_time / MICROS_MULTIPLIER;
          l_dest[0]      = ( value > LONG_MAX ) ? LONG_MAX : (long)value;
          break;
@@ -1491,7 +1491,7 @@ void Parameter::encode_opaque_data_to_buffer()
       // Handle the other primitive types.
       unsigned char *output;       // Cast the buffer to be a character array.
       int            num_elements; // Number of elements in the encoded string.
-      char          *s;            // pointer to a string
+      char *         s;            // pointer to a string
 
       // HLAopaqueData format documented in IEEE Standard 1516.2-2000, which
       // will handle variable length binary data.
@@ -1674,7 +1674,7 @@ size %d, will use the data buffer size instead.%c",
 void Parameter::encode_string_to_buffer()
 {
    unsigned char *output; // Cast the buffer to be a character array.
-   char          *s;      // pointer to a string
+   char *         s;      // pointer to a string
 
    switch ( rti_encoding ) {
       case ENCODING_UNICODE_STRING: {
@@ -2372,7 +2372,7 @@ WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for 
             //            }
             size_t data_buff_size;
             if ( size > ( 4 * ( num_elements + 1 ) ) ) {
-               data_buff_size = ( size - (size_t)( 4 * ( num_elements + 1 ) ) ) / 2;
+               data_buff_size = ( size - ( size_t )( 4 * ( num_elements + 1 ) ) ) / 2;
             } else {
                data_buff_size = 0;
             }
@@ -2626,7 +2626,7 @@ WARNING: Truncating array of ENCODING_ASCII_STRING from %d to %d elements for pa
             // data_buff_size = size - 4 - 4 * num_elements
             size_t data_buff_size;
             if ( size > ( 4 * ( num_elements + 1 ) ) ) {
-               data_buff_size = size - (size_t)( 4 * ( num_elements + 1 ) );
+               data_buff_size = size - ( size_t )( 4 * ( num_elements + 1 ) );
             } else {
                data_buff_size = 0;
             }
@@ -2871,7 +2871,7 @@ WARNING: Truncating array of ENCODING_OPAQUE_DATA from %d to %d elements for par
             // data_buff_size = size - 4 - 4 * num_elements
             size_t data_buff_size;
             if ( size > ( 4 * ( 1 + (size_t)num_elements ) ) ) {
-               data_buff_size = size - (size_t)( 4 * ( 1 + num_elements ) );
+               data_buff_size = size - ( size_t )( 4 * ( 1 + num_elements ) );
             } else {
                data_buff_size = 0;
             }
@@ -3071,8 +3071,8 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
  * for now.
  */
 void Parameter::byteswap_buffer_copy(
-   void  *dest,
-   void  *src,
+   void * dest,
+   void * src,
    int    type,
    size_t length,
    size_t num_bytes ) const
@@ -3103,7 +3103,7 @@ void Parameter::byteswap_buffer_copy(
       // Do the byteswap based on the type.
       switch ( type ) {
          case TRICK_DOUBLE: {
-            double *d_src  = static_cast< double  *>( src );
+            double *d_src  = static_cast< double * >( src );
             double *d_dest = static_cast< double * >( dest );
             if ( length == 1 ) {
                d_dest[0] = Utilities::byteswap_double( d_src[0] );
@@ -3115,7 +3115,7 @@ void Parameter::byteswap_buffer_copy(
             break;
          }
          case TRICK_FLOAT: {
-            float *f_src  = static_cast< float  *>( src );
+            float *f_src  = static_cast< float * >( src );
             float *f_dest = static_cast< float * >( dest );
             if ( length == 1 ) {
                f_dest[0] = Utilities::byteswap_float( f_src[0] );

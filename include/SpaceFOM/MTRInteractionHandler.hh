@@ -107,7 +107,7 @@ class MTRInteractionHandler : public TrickHLA::InteractionHandler
    }
 
   public:
-   char   *name;         ///< @trick_units{--} Federation instance name for this interaction.
+   char *  name;         ///< @trick_units{--} Federation instance name for this interaction.
    MTREnum mtr_mode;     ///< @trick_units{--} Requested mode transition state.
    int16_t mtr_mode_int; ///< @trick_units{--} Requested mode transition state (integer version).
 

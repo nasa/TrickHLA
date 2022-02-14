@@ -107,12 +107,12 @@ Int64Interval::~Int64Interval()
 
 int64_t Int64Interval::get_seconds() const
 {
-   return ( (int64_t)( hla_interval.getInterval() / MICROS_MULTIPLIER ) );
+   return ( ( int64_t )( hla_interval.getInterval() / MICROS_MULTIPLIER ) );
 }
 
 int32_t Int64Interval::get_micros() const
 {
-   return ( (int32_t)( hla_interval.getInterval() % MICROS_MULTIPLIER ) );
+   return ( ( int32_t )( hla_interval.getInterval() % MICROS_MULTIPLIER ) );
 }
 
 int64_t Int64Interval::get_time_in_micros() const
@@ -166,8 +166,8 @@ int64_t Int64Interval::to_microseconds(
       return -MAX_VALUE_IN_MICROS;
    }
    int64_t seconds = (int64_t)trunc( value );
-   int64_t micros  = ( seconds >= 0 ) ? (int64_t)( fmod( value * MICROS_MULTIPLIER, MICROS_MULTIPLIER ) + 0.5 )
-                                      : (int64_t)( fmod( value * MICROS_MULTIPLIER, MICROS_MULTIPLIER ) - 0.5 );
+   int64_t micros  = ( seconds >= 0 ) ? ( int64_t )( fmod( value * MICROS_MULTIPLIER, MICROS_MULTIPLIER ) + 0.5 )
+                                      : ( int64_t )( fmod( value * MICROS_MULTIPLIER, MICROS_MULTIPLIER ) - 0.5 );
    return ( ( seconds * MICROS_MULTIPLIER ) + micros );
 }
 

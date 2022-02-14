@@ -116,8 +116,8 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @param user_supplied_tag Use supplied tag.*/
    virtual void announce_sync_point(
       RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-      std::wstring const               &label,
-      RTI1516_USERDATA const           &user_supplied_tag );
+      std::wstring const &              label,
+      RTI1516_USERDATA const &          user_supplied_tag );
    /*! Clear any remaining multiphase initialization synchronization points
     *  that have not been achieved and wait for the federation to be
     *  synchronized on it. */

@@ -88,8 +88,8 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
   public:
    // Principal timelines for federation execution control.
    ScenarioTimeline *scenario_timeline; ///< @trick_io{**} The scenario timeline.
-   SimTimeline      *sim_timeline;      ///< @trick_io{**} The simulation timeline.
-   CTETimelineBase  *cte_timeline;      ///< @trick_io{**} The Central Timing Equipment (CTE) timeline.
+   SimTimeline *     sim_timeline;      ///< @trick_io{**} The simulation timeline.
+   CTETimelineBase * cte_timeline;      ///< @trick_io{**} The Central Timing Equipment (CTE) timeline.
 
    // These are the execution control roles available to a federate.
    bool use_preset_master; /**< @trick_units{--}
@@ -123,15 +123,15 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
     * @param federate         Associated federate manager class instance.
     * @param manager          Associated federate manager class instance.
     * @param exec_config      Associated Execution Configuration Object (ExCO). */
-   virtual void setup( TrickHLA::Federate                   &federate,
-                       TrickHLA::Manager                    &manager,
+   virtual void setup( TrickHLA::Federate &                  federate,
+                       TrickHLA::Manager &                   manager,
                        TrickHLA::ExecutionConfigurationBase &exec_config );
    /*! @brief Setup the federate wide references in the ExecutionControl class
     * instance.
     * @param federate Associated federate manager class instance.
     * @param manager  Associated federate manager class instance. */
    virtual void setup( TrickHLA::Federate &federate,
-                       TrickHLA::Manager  &manager );
+                       TrickHLA::Manager & manager );
    /*! @brief Initialize the TrickHLA::ExecutionControlBase object instance. */
    virtual void initialize();
    /*! @brief Join federation execution process. */
@@ -220,7 +220,7 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
     *  @param theObject HLA object instance handle.
     *  @param theAttributes HLA attribute handle set. */
    virtual void provide_attribute_update( RTI1516_NAMESPACE::ObjectInstanceHandle const &theObject,
-                                          RTI1516_NAMESPACE::AttributeHandleSet const   &theAttributes );
+                                          RTI1516_NAMESPACE::AttributeHandleSet const &  theAttributes );
    /*! @brief Gets the TrickHLA Object for the specified RTI Object Instance Name.
     *  @return TrickHLA Object.
     *  @param obj_instance_name Object instance name. */
@@ -232,7 +232,7 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
     *  @param theObjectInstanceName Object instance name. */
    virtual Object *get_unregistered_object(
       RTI1516_NAMESPACE::ObjectClassHandle const &theObjectClass,
-      std::wstring const                         &theObjectInstanceName );
+      std::wstring const &                        theObjectInstanceName );
    /*! @brief Returns the first object that is remotely owned, has the same
     * Object-Class, is not registered, and does not have an Object Instance
     * Name associated with it.
@@ -277,10 +277,10 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
     * @param theTime            HLA time for the interaction.
     * @param received_as_TSO    True if interaction was received by RTI as TSO. */
    virtual void receive_interaction(
-      RTI1516_NAMESPACE::InteractionClassHandle const  &theInteraction,
+      RTI1516_NAMESPACE::InteractionClassHandle const & theInteraction,
       RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-      RTI1516_USERDATA const                           &theUserSuppliedTag,
-      RTI1516_NAMESPACE::LogicalTime const             &theTime,
+      RTI1516_USERDATA const &                          theUserSuppliedTag,
+      RTI1516_NAMESPACE::LogicalTime const &            theTime,
       bool                                              received_as_TSO ) = 0;
    /*! @brief Send a mode transition request to the Master federate.
     *  @param requested_mode Requested mode. */
@@ -701,7 +701,7 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
 
    // Shortcuts to associated TrickHLA management and control objects.
    TrickHLA::Federate *federate; ///< @trick_io{**} Associated federate.
-   TrickHLA::Manager  *manager;  ///< @trick_io{**} Associated manager.
+   TrickHLA::Manager * manager;  ///< @trick_io{**} Associated manager.
 
    size_t                logged_sync_pts_count; ///< @trick_units{--} number of logged sync pts
    LoggableTimedSyncPnt *loggable_sync_pts;     ///< @trick_units{--} converted Sync Point data that gets checkpointed

@@ -118,9 +118,9 @@ class InteractionItem : public Item
    InteractionItem( int                                               interaction_index,
                     int                                               interaction_type,
                     int                                               param_count,
-                    Parameter                                        *parameters,
+                    Parameter *                                       parameters,
                     RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-                    RTI1516_USERDATA const                           &theUserSuppliedTag );
+                    RTI1516_USERDATA const &                          theUserSuppliedTag );
 
    /*! @brief Initialization constructor for the TrickHLA InteractionItem class.
     *  @param interaction_index  Interaction index.
@@ -133,10 +133,10 @@ class InteractionItem : public Item
    InteractionItem( int                                               interaction_index,
                     int                                               interaction_type,
                     int                                               param_count,
-                    Parameter                                        *parameters,
+                    Parameter *                                       parameters,
                     RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-                    RTI1516_USERDATA const                           &theUserSuppliedTag,
-                    RTI1516_NAMESPACE::LogicalTime const             &theTime );
+                    RTI1516_USERDATA const &                          theUserSuppliedTag,
+                    RTI1516_NAMESPACE::LogicalTime const &            theTime );
 
    /*! @brief Destructor for the TrickHLA InteractionItem class. */
    virtual ~InteractionItem();
@@ -174,9 +174,9 @@ class InteractionItem : public Item
     *  @param theUserSuppliedTag User supplied tag. */
    void initialize( int                                               inter_type,
                     int                                               param_count,
-                    Parameter                                        *parameters,
+                    Parameter *                                       parameters,
                     RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-                    RTI1516_USERDATA const                           &theUserSuppliedTag );
+                    RTI1516_USERDATA const &                          theUserSuppliedTag );
 
   private:
    // Do not allow the copy constructor or assignment operator.

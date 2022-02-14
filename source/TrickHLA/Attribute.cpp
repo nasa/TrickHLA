@@ -1470,42 +1470,42 @@ void Attribute::encode_logical_time() const // RETURN: -- None.
       }
       case TRICK_SHORT: {
          short *s_src = (short *)ref2->address;
-         logical_time = (int64_t)( MICROS_MULTIPLIER * s_src[0] );
+         logical_time = ( int64_t )( MICROS_MULTIPLIER * s_src[0] );
          break;
       }
       case TRICK_UNSIGNED_SHORT: {
          unsigned short *us_src = (unsigned short *)ref2->address;
-         logical_time           = (int64_t)( MICROS_MULTIPLIER * us_src[0] );
+         logical_time           = ( int64_t )( MICROS_MULTIPLIER * us_src[0] );
          break;
       }
       case TRICK_INTEGER: {
          int *i_src   = (int *)ref2->address;
-         logical_time = (int64_t)( MICROS_MULTIPLIER * i_src[0] );
+         logical_time = ( int64_t )( MICROS_MULTIPLIER * i_src[0] );
          break;
       }
       case TRICK_UNSIGNED_INTEGER: {
          unsigned int *ui_src = (unsigned int *)ref2->address;
-         logical_time         = (int64_t)( MICROS_MULTIPLIER * ui_src[0] );
+         logical_time         = ( int64_t )( MICROS_MULTIPLIER * ui_src[0] );
          break;
       }
       case TRICK_LONG: {
          long *l_src  = (long *)ref2->address;
-         logical_time = (int64_t)( MICROS_MULTIPLIER * l_src[0] );
+         logical_time = ( int64_t )( MICROS_MULTIPLIER * l_src[0] );
          break;
       }
       case TRICK_UNSIGNED_LONG: {
          unsigned long *ul_src = (unsigned long *)ref2->address;
-         logical_time          = (int64_t)( MICROS_MULTIPLIER * ul_src[0] );
+         logical_time          = ( int64_t )( MICROS_MULTIPLIER * ul_src[0] );
          break;
       }
       case TRICK_LONG_LONG: {
          long long *ll_src = (long long *)ref2->address;
-         logical_time      = (int64_t)( MICROS_MULTIPLIER * ll_src[0] );
+         logical_time      = ( int64_t )( MICROS_MULTIPLIER * ll_src[0] );
          break;
       }
       case TRICK_UNSIGNED_LONG_LONG: {
          unsigned long long *ull_src = (unsigned long long *)ref2->address;
-         logical_time                = (int64_t)( MICROS_MULTIPLIER * ull_src[0] );
+         logical_time                = ( int64_t )( MICROS_MULTIPLIER * ull_src[0] );
          break;
       }
       default: {
@@ -1560,7 +1560,7 @@ void Attribute::decode_logical_time() // RETURN: -- None.
          break;
       }
       case TRICK_SHORT: {
-         short  *s_dest = (short *)ref2->address;
+         short * s_dest = (short *)ref2->address;
          int64_t value  = logical_time / MICROS_MULTIPLIER;
          s_dest[0]      = ( value > SHRT_MAX ) ? SHRT_MAX : (short)value;
          break;
@@ -1572,7 +1572,7 @@ void Attribute::decode_logical_time() // RETURN: -- None.
          break;
       }
       case TRICK_INTEGER: {
-         int    *i_dest = (int *)ref2->address;
+         int *   i_dest = (int *)ref2->address;
          int64_t value  = logical_time / MICROS_MULTIPLIER;
          i_dest[0]      = ( value > INT_MAX ) ? INT_MAX : (int)value;
          break;
@@ -1584,7 +1584,7 @@ void Attribute::decode_logical_time() // RETURN: -- None.
          break;
       }
       case TRICK_LONG: {
-         long   *l_dest = (long *)ref2->address;
+         long *  l_dest = (long *)ref2->address;
          int64_t value  = logical_time / MICROS_MULTIPLIER;
          l_dest[0]      = ( value > LONG_MAX ) ? LONG_MAX : (long)value;
          break;
@@ -1632,7 +1632,7 @@ void Attribute::encode_opaque_data_to_buffer() // RETURN: -- None.
       // Handle the other primitive types.
       unsigned char *output;       // Cast the buffer to be a character array.
       int            num_elements; // Number of elements in the encoded string.
-      char          *s;            // pointer to a string
+      char *         s;            // pointer to a string
 
       // HLAopaqueData format documented in IEEE Standard 1516.2-2000, which
       // will handle variable length binary data.
@@ -1807,7 +1807,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
 {
    unsigned char *output;       // Cast the buffer to be a character array.
    size_t         num_elements; // Number of elements in the encoded string.
-   char          *s;            // pointer to a string
+   char *         s;            // pointer to a string
 
    switch ( rti_encoding ) {
       case ENCODING_UNICODE_STRING: {
@@ -1939,7 +1939,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
                      *( output++ ) = '\0';
                      *( output++ ) = (unsigned char)*( s++ );
                   }
-                  byte_count += (size_t)( 2 * length );
+                  byte_count += ( size_t )( 2 * length );
                }
 
                // Separate the strings by a null UTF-16 character if padding
@@ -2507,7 +2507,7 @@ WARNING: Truncating array of ENCODING_TYPE_UNICODE_STRING from %d to %d elements
             // data_buff_size = (size - 4 - 4 * num_elements)/2
             size_t data_buff_size;
             if ( ref2->attr->type == TRICK_STRING ) {
-               if ( size > (size_t)( 4 * ( num_elements + 1 ) ) ) {
+               if ( size > ( size_t )( 4 * ( num_elements + 1 ) ) ) {
                   data_buff_size = ( size - ( 4 * ( (size_t)num_elements + 1 ) ) ) / 2;
                } else {
                   data_buff_size = 0;
@@ -3216,8 +3216,8 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
  * - Only primitive types and static arrays of primitive type are supported for now.
  */
 void Attribute::byteswap_buffer_copy( // RETURN: -- None.
-   void  *dest,                       // IN: -- Destination to copy data to.
-   void  *src,                        // IN: -- Source of the data to byteswap and copy from.
+   void * dest,                       // IN: -- Destination to copy data to.
+   void * src,                        // IN: -- Source of the data to byteswap and copy from.
    int    type,                       // IN: -- The type of the data.
    size_t length,                     // IN: -- The length/number of entries in the source array.
    size_t num_bytes ) const           // IN: -- The number of bytes in the source array.
@@ -3248,7 +3248,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
       // Do the byteswap based on the type.
       switch ( type ) {
          case TRICK_DOUBLE: {
-            double *d_src  = static_cast< double  *>( src );
+            double *d_src  = static_cast< double * >( src );
             double *d_dest = static_cast< double * >( dest );
             if ( length == 1 ) {
                d_dest[0] = Utilities::byteswap_double( d_src[0] );
@@ -3260,7 +3260,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_FLOAT: {
-            float *f_src  = static_cast< float  *>( src );
+            float *f_src  = static_cast< float * >( src );
             float *f_dest = static_cast< float * >( dest );
             if ( length == 1 ) {
                f_dest[0] = Utilities::byteswap_float( f_src[0] );

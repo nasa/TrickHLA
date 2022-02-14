@@ -101,7 +101,7 @@ FedAmb::~FedAmb() throw()
  */
 void FedAmb::setup(
    Federate &federate,
-   Manager  &manager )
+   Manager & manager )
 {
    // Set the associated TrickHLA Federate and Manager references.
    this->federate = &federate;
@@ -192,7 +192,7 @@ void FedAmb::synchronizationPointRegistrationSucceeded(
 }
 
 void FedAmb::synchronizationPointRegistrationFailed(
-   wstring const                                       &label,
+   wstring const &                                      label,
    RTI1516_NAMESPACE::SynchronizationPointFailureReason reason ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
@@ -206,14 +206,14 @@ void FedAmb::synchronizationPointRegistrationFailed(
 }
 
 void FedAmb::announceSynchronizationPoint(
-   wstring const                               &label,
+   wstring const &                              label,
    RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    federate->announce_sync_point( label, theUserSuppliedTag );
 }
 
 void FedAmb::federationSynchronized(
-   wstring const                              &label,
+   wstring const &                             label,
    RTI1516_NAMESPACE::FederateHandleSet const &failedToSyncSet ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
@@ -249,7 +249,7 @@ void FedAmb::initiateFederateSave(
 }
 
 void FedAmb::initiateFederateSave(
-   wstring const                        &label,
+   wstring const &                       label,
    RTI1516_NAMESPACE::LogicalTime const &theTime ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
@@ -329,8 +329,8 @@ void FedAmb::federationRestoreBegun() throw( RTI1516_NAMESPACE::FederateInternal
 }
 
 void FedAmb::initiateFederateRestore(
-   wstring const                    &label,
-   wstring const                    &federateName,
+   wstring const &                   label,
+   wstring const &                   federateName,
    RTI1516_NAMESPACE::FederateHandle handle ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
@@ -496,7 +496,7 @@ void FedAmb::multipleObjectInstanceNameReservationFailed(
 void FedAmb::discoverObjectInstance(
    RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
    RTI1516_NAMESPACE::ObjectClassHandle    theObjectClass,
-   wstring const                          &theObjectInstanceName ) throw( RTI1516_NAMESPACE::FederateInternalError )
+   wstring const &                         theObjectInstanceName ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string id_str, name_str;
@@ -529,7 +529,7 @@ NULL Manager! Can't do anything with discovered object '%s' Instance-ID:%s%c",
 void FedAmb::discoverObjectInstance(
    RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
    RTI1516_NAMESPACE::ObjectClassHandle    theObjectClass,
-   wstring const                          &theObjectInstanceName,
+   wstring const &                         theObjectInstanceName,
    RTI1516_NAMESPACE::FederateHandle       producingFederate ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
@@ -547,7 +547,7 @@ federate '%s'):%d calling 'discoverObjectInstance' to finish the discovery.%c",
 void FedAmb::reflectAttributeValues(
    RTI1516_NAMESPACE::ObjectInstanceHandle           theObject,
    RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributeValues,
-   RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
+   RTI1516_NAMESPACE::VariableLengthData const &     theUserSuppliedTag,
    RTI1516_NAMESPACE::OrderType                      sentOrder,
    RTI1516_NAMESPACE::TransportationType             theType,
    RTI1516_NAMESPACE::SupplementalReflectInfo        theReflectInfo ) throw( RTI1516_NAMESPACE::FederateInternalError )
@@ -612,10 +612,10 @@ void FedAmb::reflectAttributeValues(
 void FedAmb::reflectAttributeValues(
    RTI1516_NAMESPACE::ObjectInstanceHandle           theObject,
    RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributeValues,
-   RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
+   RTI1516_NAMESPACE::VariableLengthData const &     theUserSuppliedTag,
    RTI1516_NAMESPACE::OrderType                      sentOrder,
    RTI1516_NAMESPACE::TransportationType             theType,
-   RTI1516_NAMESPACE::LogicalTime const             &theTime,
+   RTI1516_NAMESPACE::LogicalTime const &            theTime,
    RTI1516_NAMESPACE::OrderType                      receivedOrder,
    RTI1516_NAMESPACE::SupplementalReflectInfo        theReflectInfo ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
@@ -655,10 +655,10 @@ void FedAmb::reflectAttributeValues(
 void FedAmb::reflectAttributeValues(
    RTI1516_NAMESPACE::ObjectInstanceHandle           theObject,
    RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributeValues,
-   RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
+   RTI1516_NAMESPACE::VariableLengthData const &     theUserSuppliedTag,
    RTI1516_NAMESPACE::OrderType                      sentOrder,
    RTI1516_NAMESPACE::TransportationType             theType,
-   RTI1516_NAMESPACE::LogicalTime const             &theTime,
+   RTI1516_NAMESPACE::LogicalTime const &            theTime,
    RTI1516_NAMESPACE::OrderType                      receivedOrder,
    RTI1516_NAMESPACE::MessageRetractionHandle        theHandle,
    RTI1516_NAMESPACE::SupplementalReflectInfo        theReflectInfo ) throw( RTI1516_NAMESPACE::FederateInternalError )
@@ -698,7 +698,7 @@ void FedAmb::reflectAttributeValues(
 void FedAmb::receiveInteraction(
    RTI1516_NAMESPACE::InteractionClassHandle         theInteraction,
    RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-   RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
+   RTI1516_NAMESPACE::VariableLengthData const &     theUserSuppliedTag,
    RTI1516_NAMESPACE::OrderType                      sentOrder,
    RTI1516_NAMESPACE::TransportationType             theType,
    RTI1516_NAMESPACE::SupplementalReceiveInfo        theReceiveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError )
@@ -726,10 +726,10 @@ void FedAmb::receiveInteraction(
 void FedAmb::receiveInteraction(
    RTI1516_NAMESPACE::InteractionClassHandle         theInteraction,
    RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-   RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
+   RTI1516_NAMESPACE::VariableLengthData const &     theUserSuppliedTag,
    RTI1516_NAMESPACE::OrderType                      sentOrder,
    RTI1516_NAMESPACE::TransportationType             theType,
-   RTI1516_NAMESPACE::LogicalTime const             &theTime,
+   RTI1516_NAMESPACE::LogicalTime const &            theTime,
    RTI1516_NAMESPACE::OrderType                      receivedOrder,
    RTI1516_NAMESPACE::SupplementalReceiveInfo        theReceiveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
@@ -754,10 +754,10 @@ void FedAmb::receiveInteraction(
 void FedAmb::receiveInteraction(
    RTI1516_NAMESPACE::InteractionClassHandle         theInteraction,
    RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-   RTI1516_NAMESPACE::VariableLengthData const      &theUserSuppliedTag,
+   RTI1516_NAMESPACE::VariableLengthData const &     theUserSuppliedTag,
    RTI1516_NAMESPACE::OrderType                      sentOrder,
    RTI1516_NAMESPACE::TransportationType             theType,
-   RTI1516_NAMESPACE::LogicalTime const             &theTime,
+   RTI1516_NAMESPACE::LogicalTime const &            theTime,
    RTI1516_NAMESPACE::OrderType                      receivedOrder,
    RTI1516_NAMESPACE::MessageRetractionHandle        theHandle,
    RTI1516_NAMESPACE::SupplementalReceiveInfo        theReceiveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError )
@@ -813,7 +813,7 @@ void FedAmb::removeObjectInstance(
    RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
    RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag,
    RTI1516_NAMESPACE::OrderType                 sentOrder,
-   RTI1516_NAMESPACE::LogicalTime const        &theTime,
+   RTI1516_NAMESPACE::LogicalTime const &       theTime,
    RTI1516_NAMESPACE::OrderType                 receivedOrder,
    RTI1516_NAMESPACE::SupplementalRemoveInfo    theRemoveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
@@ -842,7 +842,7 @@ void FedAmb::removeObjectInstance(
    RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
    RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag,
    RTI1516_NAMESPACE::OrderType                 sentOrder,
-   RTI1516_NAMESPACE::LogicalTime const        &theTime,
+   RTI1516_NAMESPACE::LogicalTime const &       theTime,
    RTI1516_NAMESPACE::OrderType                 receivedOrder,
    RTI1516_NAMESPACE::MessageRetractionHandle   theHandle,
    RTI1516_NAMESPACE::SupplementalRemoveInfo    theRemoveInfo ) throw( RTI1516_NAMESPACE::FederateInternalError )
@@ -911,7 +911,7 @@ FedAmb::turnUpdatesOnForObjectInstance():%d %c",
 void FedAmb::turnUpdatesOnForObjectInstance(
    RTI1516_NAMESPACE::ObjectInstanceHandle      theObject,
    RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes,
-   wstring const                               &updateRateDesignator ) throw( RTI1516_NAMESPACE::FederateInternalError )
+   wstring const &                              updateRateDesignator ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    send_hs( stderr, "This federate '%s' does not support this function: \
 FedAmb::turnUpdatesOnForObjectInstance():%d %c",

@@ -113,16 +113,16 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    virtual void unpack();
 
   protected:
-   char  *name;             ///< @trick_units{--} Name of this entity(required).
-   char  *type;             ///< @trick_units{--} True underlying type for this entity(optional).
-   char  *status;           ///< @trick_units{--} Status string for this entity (optional).
-   char  *parent_ref_frame; ///< @trick_units{--} Name of this entity's parent frame(required).
+   char * name;             ///< @trick_units{--} Name of this entity(required).
+   char * type;             ///< @trick_units{--} True underlying type for this entity(optional).
+   char * status;           ///< @trick_units{--} Status string for this entity (optional).
+   char * parent_ref_frame; ///< @trick_units{--} Name of this entity's parent frame(required).
    double accel[3];         ///< @trick_units{m/s2} Vehicle inertial acceleration (optional).
    double rot_accel[3];     ///< @trick_units{rad/s2} Angular body accels, body referenced (optional).
    double cm[3];            ///< @trick_units{m} Center of mass location in vehicle structural frame (required).
 
    SpaceTimeCoordinateData &state;           ///< @trick_units{--} SpaceTimeCoordinate from encoder (required).
-   QuaternionData          &body_wrt_struct; ///< @trick_units{--} Attitude quaternion for body frame w.r.t. structural frame.(optional)
+   QuaternionData &         body_wrt_struct; ///< @trick_units{--} Attitude quaternion for body frame w.r.t. structural frame.(optional)
 
    // Instantiate the Space/Time Coordinate encoder
    SpaceTimeCoordinateEncoder stc_encoder;  ///< @trick_units{--} Entity state encoder.

@@ -291,7 +291,7 @@ Federate::~Federate()
          }
       }
       TMM_delete_var_a( known_feds );
-      known_feds       = static_cast< KnownFederate       *>( NULL );
+      known_feds       = static_cast< KnownFederate * >( NULL );
       known_feds_count = 0;
    }
 
@@ -389,8 +389,8 @@ void Federate::fix_FPU_control_word()
  * @job_class{default_data}
  */
 void Federate::setup(
-   FedAmb               &federate_amb,
-   Manager              &federate_manager,
+   FedAmb &              federate_amb,
+   Manager &             federate_manager,
    ExecutionControlBase &federate_execution_control )
 {
    // Set the Federate ambassador.
@@ -2568,7 +2568,7 @@ void Federate::achieve_synchronization_point(
 }
 
 void Federate::announce_sync_point(
-   wstring const          &label,
+   wstring const &         label,
    RTI1516_USERDATA const &user_supplied_tag )
 {
 
@@ -6404,7 +6404,7 @@ void Federate::add_a_single_entry_into_running_feds()
 
 void Federate::add_MOM_HLAfederate_instance_id(
    ObjectInstanceHandle instance_hndl,
-   wstring const       &instance_name )
+   wstring const &      instance_name )
 {
    mom_HLAfederate_inst_name_map[instance_hndl] = instance_name;
 }
@@ -6415,8 +6415,8 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    remove_federate_instance_id( instance_hndl );
    remove_MOM_HLAfederation_instance_id( instance_hndl );
 
-   char                                *tMOMName  = NULL;
-   char                                *tFedName  = NULL;
+   char *                               tMOMName  = NULL;
+   char *                               tFedName  = NULL;
    bool                                 foundName = false;
    TrickHLAObjInstanceNameMap::iterator iter;
 

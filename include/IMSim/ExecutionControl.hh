@@ -129,8 +129,8 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @param user_supplied_tag Use supplied tag.*/
    virtual void announce_sync_point(
       RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-      std::wstring const               &label,
-      RTI1516_USERDATA const           &user_supplied_tag );
+      std::wstring const &              label,
+      RTI1516_USERDATA const &          user_supplied_tag );
    /*! @brief Achieve all the user defined mulit-phase initialization
     *  synchronization points if they are not already achieved and are not
     *  one of the predefined ExecutionControl synchronization points.
@@ -165,10 +165,10 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     * @param theTime            HLA time for the interaction.
     * @param received_as_TSO    True if interaction was received by RTI as TSO. */
    virtual void receive_interaction(
-      RTI1516_NAMESPACE::InteractionClassHandle const  &theInteraction,
+      RTI1516_NAMESPACE::InteractionClassHandle const & theInteraction,
       RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-      RTI1516_USERDATA const                           &theUserSuppliedTag,
-      RTI1516_NAMESPACE::LogicalTime const             &theTime,
+      RTI1516_USERDATA const &                          theUserSuppliedTag,
+      RTI1516_NAMESPACE::LogicalTime const &            theTime,
       bool                                              received_as_TSO );
    /*! @brief Send a mode transition request to the Master federate.
     *  @param requested_mode Requested mode. */
@@ -329,7 +329,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    MTREnum pending_mtr; ///< @trick_units{--} Pending Mode Transition Requested.
 
    int                             freeze_inter_count;         ///< @trick_io{**} Number of TrickHLA Freeze Interactions.
-   TrickHLA::Interaction          *freeze_interaction;         ///< @trick_io{**} Interaction to FREEZE the sim at a specified time.MTRInteractionHandler   mtr_interaction_handler; ///< @trick_units{--} SRFOM MTR interaction handler.
+   TrickHLA::Interaction *         freeze_interaction;         ///< @trick_io{**} Interaction to FREEZE the sim at a specified time.MTRInteractionHandler   mtr_interaction_handler; ///< @trick_units{--} SRFOM MTR interaction handler.
    IMSim::FreezeInteractionHandler freeze_interaction_handler; ///< @trick_units{--} Freeze interaction handler.
 
    FreezeTimeSet freeze_scenario_times; ///< @trick_io{**} collection of scenario times when we must enter FREEZE mode

@@ -349,7 +349,7 @@ class Interaction
 
    Int64Time time; ///< @trick_units{--} Time used for Timestamp Order interaction.
 
-   Manager                                  *manager;      ///< @trick_units{--} TrickHLA Manager.
+   Manager *                                 manager;      ///< @trick_units{--} TrickHLA Manager.
    RTI1516_NAMESPACE::InteractionClassHandle class_handle; ///< @trick_io{**} RTI Interaction Class handle.
 
    size_t         user_supplied_tag_size;     ///< @trick_units{--} Number of bytes in the user supplied tag.

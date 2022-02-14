@@ -136,7 +136,7 @@ class Object
    int        attr_count; ///< @trick_units{--} Number of object attributes.
    Attribute *attributes; ///< @trick_units{--} Array of object attributes.
 
-   LagCompensation    *lag_comp;      ///< @trick_units{--} Lag compensation object.
+   LagCompensation *   lag_comp;      ///< @trick_units{--} Lag compensation object.
    LagCompensationEnum lag_comp_type; ///< @trick_units{--} Type of lag compensation.
 
    Packing *packing; ///< @trick_units{--} Data pack/unpack object.
@@ -400,7 +400,7 @@ class Object
     *  @param id The HLA ObjectInstanceHandle for this object instance.
     *  @param instance_name The associated object instance name. */
    void set_instance_handle_and_name( RTI1516_NAMESPACE::ObjectInstanceHandle id,
-                                      std::wstring const                     &instance_name )
+                                      std::wstring const &                    instance_name )
    {
       set_instance_handle( id );
       std::string instance_name_str;
@@ -808,7 +808,7 @@ class Object
 typedef std::map< RTI1516_NAMESPACE::ObjectInstanceHandle, Object * > ObjectInstanceMap; ///< trick_io{**} Map of TrickHLA objects.
 
 typedef struct {
-   Object                                *trick_hla_obj; ///< trick_io{**} Pointer to TrickHLA object.
+   Object *                               trick_hla_obj; ///< trick_io{**} Pointer to TrickHLA object.
    RTI1516_NAMESPACE::AttributeHandleSet *handle_set;    ///< trick_io{**} Pointer to attribute handle set to divest ownership of.
 } DivestThreadArgs;
 

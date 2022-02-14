@@ -310,8 +310,8 @@ void ExecutionControl::add_multiphase_init_sync_points()
 
 void ExecutionControl::announce_sync_point(
    RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-   wstring const                    &label,
-   RTI1516_USERDATA const           &user_supplied_tag )
+   wstring const &                   label,
+   RTI1516_USERDATA const &          user_supplied_tag )
 {
    // In this case the default SyncPntListBase::announce_sync_point works.
    // Strictly speaking, we could just not define this. However, this provides
@@ -357,10 +357,10 @@ void ExecutionControl::unsubscribe()
  * @job_class{scheduled}
  */
 void ExecutionControl::receive_interaction(
-   RTI1516_NAMESPACE::InteractionClassHandle const  &theInteraction,
+   RTI1516_NAMESPACE::InteractionClassHandle const & theInteraction,
    RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-   RTI1516_USERDATA const                           &theUserSuppliedTag,
-   RTI1516_NAMESPACE::LogicalTime const             &theTime,
+   RTI1516_USERDATA const &                          theUserSuppliedTag,
+   RTI1516_NAMESPACE::LogicalTime const &            theTime,
    bool                                              received_as_TSO )
 {
    // Return now that we put the interaction-item into the queue.
