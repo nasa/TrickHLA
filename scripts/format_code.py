@@ -178,14 +178,12 @@ def find_clang_format( llvm_bin, verbose = True ):
          if os.path.isdir( llvm_home ):
 
             if verbose:
-               # Let the use know that we have LLVM_HOME and where it is.
+               # Let the user know that we have LLVM_HOME and where it is.
                TrickHLAMessage.status( 'LLVM_HOME: ' + llvm_home )
 
-               # Form the clang format command based on LLVM_HOME.
-               clang_format_cmd = llvm_home + '/clang-format'
-
+            command_path = os.path.join( llvm_home, 'bin', 'clang-format' )
          else:
-            TrickHLAMessage.failure( 'LLVM_HOME not found: ' + llvm_home )
+            TrickHLAMessage.failure( 'LLVM_HOME directory not found: ' + llvm_home )
 
       else:
 
@@ -195,30 +193,40 @@ def find_clang_format( llvm_bin, verbose = True ):
          elif os.path.isfile( '/usr/local/bin/clang-format' ):
             command_path = '/usr/local/bin/clang-format'
          else:
-
             # Let's look for it in Brew.
-            if os.path.isdir( '/usr/local/Cellar/llvm' ):
+            if os.path.isdir( '/usr/local/Cellar' ):
 
-               # There is an LLVM installation in brew.
-               llvm_versions = os.listdir( '/usr/local/Cellar/llvm' )
-
-               # Assume we will be using the latest version.
-               llvm_version = llvm_versions[0]
-               for version in llvm_versions:
-                  if llvm_version < version:
-                     llvm_version = version
-
-               # Generate the clang-format command
-               bin_path = os.path.join( '/usr/local/Cellar/llvm', llvm_version )
-               bin_path = os.path.join( bin_path, 'bin' )
-               command_path = os.path.join( bin_path, 'clang-format' )
+               # Determine if the default llvm formula is installed.
+               if os.path.isdir( '/usr/local/Cellar/llvm' ):
+   
+                  # There is an llvm installation in brew.
+                  llvm_versions = os.listdir( '/usr/local/Cellar/llvm' )
+   
+                  # Assume we will be using the latest version.
+                  llvm_version = llvm_versions[0]
+                  for version in llvm_versions:
+                     if version > llvm_version:
+                        llvm_version = version
+   
+                  # Generate the clang-format command.
+                  bin_path = os.path.join( '/usr/local/Cellar/llvm', llvm_version )
+                  command_path = os.path.join( bin_path, 'bin', 'clang-format' )
+               else:
+                  # TODO: Default llvm Brew formula not installed, so search for
+                  # llvm installed for a specific version (i.e. llvm@11):
+                  # brew list -1 --formula | grep llvm | sort -ur
+                  #
+                  # For Mac OS, use a workaround for now to check for llvm@11
+                  # since newer versions are not supported by Trick yet.
+                  if os.path.isfile( '/usr/local/opt/llvm@11/bin/clang-format' ):
+                     command_path = '/usr/local/opt/llvm@11/bin/clang-format'
 
    # We're finished hunting. Now let's check for the format command.
    if command_path is None:
       TrickHLAMessage.failure( 'Could not find the clang-format command!' )
    else:
       if not os.path.isfile( command_path ):
-         TrickHLAMessage.failure( 'Could not find the clang-format command!: '\
+         TrickHLAMessage.failure( 'Could not find the clang-format command: '\
                                   +command_path )
       else:
          if verbose:
