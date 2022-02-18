@@ -119,9 +119,9 @@ Attribute::~Attribute()
 }
 
 void Attribute::initialize(
-   const char *obj_FOM_name,
-   const int   object_index,
-   const int   attribute_index )
+   char const *obj_FOM_name,
+   int const   object_index,
+   int const   attribute_index )
 {
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
@@ -253,7 +253,7 @@ void Attribute::initialize(
    }
 
    // Verify that the rti_encoding value is valid given the ref-attributes type.
-   switch ( ref2->attr->type ) {
+   switch ( ref2->attr->type ) { // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
       case TRICK_BOOLEAN: {
          if ( ( rti_encoding != ENCODING_BIG_ENDIAN )
               && ( rti_encoding != ENCODING_LITTLE_ENDIAN )
@@ -553,7 +553,7 @@ void Attribute::initialize(
 }
 
 void Attribute::determine_cycle_ratio(
-   const double core_job_cycle_time )
+   double const core_job_cycle_time )
 {
    if ( this->cycle_time <= -std::numeric_limits< double >::max() ) {
       // User has not specified cycle-time for this attribute so assume the

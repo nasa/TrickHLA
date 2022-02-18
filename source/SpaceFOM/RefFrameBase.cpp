@@ -100,9 +100,9 @@ RefFrameBase::~RefFrameBase()
 void RefFrameBase::default_data(
    SpaceFOM::ExecutionControl *execution_control,
    TrickHLA::Object *          object,
-   const char *                sim_obj_name,
-   const char *                ref_frame_obj_name,
-   const char *                ref_frame_name,
+   char const *                sim_obj_name,
+   char const *                ref_frame_obj_name,
+   char const *                ref_frame_name,
    bool                        publishes )
 {
    string ref_frame_name_str = string( sim_obj_name ) + "." + string( ref_frame_obj_name );
@@ -165,11 +165,10 @@ void RefFrameBase::default_data(
 void RefFrameBase::initialize(
    RefFrameData *ref_frame_data_ptr )
 {
-   ostringstream errmsg;
-
    // Must have federation instance name.
    if ( this->name == NULL ) {
       if ( debug ) {
+         ostringstream errmsg;
          errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
                 << " WARNING: Unexpected NULL federation instance frame name!"
                 << "  Setting frame name to empty string." << THLA_ENDL;
@@ -181,6 +180,7 @@ void RefFrameBase::initialize(
    // Must have federation instance parent frame name.
    if ( this->parent_name == NULL ) {
       if ( debug ) {
+         ostringstream errmsg;
          errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
                 << " WARNING: Unexpected NULL federation instance parent frame name!"
                 << "  Setting parent frame name to empty string." << THLA_ENDL;
@@ -191,9 +191,10 @@ void RefFrameBase::initialize(
 
    // Set the reference to the reference frame.
    if ( ref_frame_data_ptr == NULL ) {
-      // Print message and terminate.
+      ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
              << " ERROR: Unexpected NULL reference frame: " << this->name << THLA_ENDL;
+      // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
    this->ref_frame_data = ref_frame_data_ptr;
@@ -232,7 +233,7 @@ void RefFrameBase::initialize_callback(
 /*!
  * @job_class{initialization}
  */
-void RefFrameBase::set_name( const char *new_name )
+void RefFrameBase::set_name( char const *new_name )
 {
    if ( this->name != NULL ) {
       trick_MM->delete_var( (void *)this->name );
@@ -244,7 +245,7 @@ void RefFrameBase::set_name( const char *new_name )
 /*!
  * @job_class{initialization}
  */
-void RefFrameBase::set_parent_name( const char *name )
+void RefFrameBase::set_parent_name( char const *name )
 {
    if ( this->parent_name != NULL ) {
       trick_MM->delete_var( (void *)this->parent_name );
@@ -382,7 +383,7 @@ void RefFrameBase::unpack()
  * @job_class{default_data}
  */
 char *RefFrameBase::allocate_input_string( // RETURN: -- None.
-   const char *c_string )                  // IN: -- String to allocate.
+   char const *c_string )                  // IN: -- String to allocate.
 {
    char *new_c_str;
 
@@ -396,7 +397,7 @@ char *RefFrameBase::allocate_input_string( // RETURN: -- None.
  * @job_class{default_data}
  */
 char *RefFrameBase::allocate_input_string( // RETURN: -- None.
-   string cpp_string )                     // IN: -- String to allocate.
+   string const &cpp_string )              // IN: -- String to allocate.
 {
    char *new_c_str;
 

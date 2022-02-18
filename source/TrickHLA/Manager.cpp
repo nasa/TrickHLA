@@ -264,8 +264,8 @@ void Manager::restart_initialization()
 
    // The set_master() function set's additional parameter so call it again to
    // force the a complete master state.
-   bool master_flag = this->execution_control->is_master();
-   this->execution_control->set_master( master_flag );
+   bool master_flag = this->execution_control->is_master(); // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
+   this->execution_control->set_master( master_flag );      // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
 
    // Setup all the Trick Ref-Attributes for the user specified objects,
    // attributes, interactions and parameters.
@@ -365,7 +365,7 @@ federate so this call will be ignored.%c",
  * @job_class{initialization}
  */
 void Manager::send_init_data(
-   const char *instance_name )
+   char const *instance_name )
 {
    // Late joining federates do not get to participate in the multiphase
    // initialization process so just return.
@@ -539,7 +539,7 @@ federate so this call will be ignored.%c",
  * @job_class{initialization}
  */
 void Manager::receive_init_data(
-   const char *instance_name )
+   char const *instance_name )
 {
    // Late joining federates do not get to participate in the multiphase
    // initialization process so just return.
@@ -672,7 +672,7 @@ void Manager::clear_init_sync_points()
  * @job_class{initialization}
  */
 void Manager::wait_for_init_sync_point(
-   const char *sync_point_label )
+   char const *sync_point_label )
 {
    if ( !this->execution_control->wait_for_init_sync_point() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -769,7 +769,7 @@ void Manager::request_data_update(
  * @job_class{initialization}
  */
 void Manager::request_data_update(
-   const char *instance_name )
+   char const *instance_name )
 {
    if ( ( instance_name == NULL ) || ( instance_name[0] == '\0' ) ) {
       return;
@@ -922,7 +922,7 @@ void Manager::setup_all_ref_attributes()
  * @job_class{initialization}
  */
 void Manager::setup_object_ref_attributes(
-   const int data_obj_count,
+   int const data_obj_count,
    Object *  data_objects )
 {
    // Just return if we are already initialized.
@@ -1068,7 +1068,7 @@ void Manager::setup_all_RTI_handles()
  * @job_class{initialization}
  */
 void Manager::setup_object_RTI_handles(
-   const int data_obj_count,
+   int const data_obj_count,
    Object *  data_objects )
 {
    // Just return if we are already initialized.
@@ -1101,8 +1101,8 @@ void Manager::setup_object_RTI_handles(
                __LINE__, THLA_NEWLINE );
    }
 
-   const char *obj_FOM_name  = "";
-   const char *attr_FOM_name = "";
+   char const *obj_FOM_name  = "";
+   char const *attr_FOM_name = "";
    wstring     ws_FOM_name   = L"";
    int         FOM_name_type = 0; // 0:N/A 1:Object 2:Attribute - What name are we dealing with.
 
@@ -1266,7 +1266,7 @@ void Manager::setup_object_RTI_handles(
  * @job_class{initialization}
  */
 void Manager::setup_interaction_RTI_handles(
-   const int    interactions_counter,
+   int const    interactions_counter,
    Interaction *in_interactions )
 {
    // Just return if we are already initialized.
@@ -1299,8 +1299,8 @@ void Manager::setup_interaction_RTI_handles(
                __LINE__, THLA_NEWLINE );
    }
 
-   const char *inter_FOM_name = "";
-   const char *param_FOM_name = "";
+   char const *inter_FOM_name = "";
+   char const *param_FOM_name = "";
    wstring     ws_FOM_name    = L"";
    int         FOM_name_type  = 0; // 0:NA 1:Interaction 2:Parameter  What name we are dealing with.
 
@@ -2018,7 +2018,7 @@ void Manager::set_all_object_instance_handles_by_name()
  * @job_class{initialization}
  */
 void Manager::set_object_instance_handles_by_name(
-   const int data_obj_count,
+   int const data_obj_count,
    Object *  data_objects )
 {
    // Just return if we are already initialized.
@@ -2337,7 +2337,7 @@ void Manager::receive_interaction(
    ParameterHandleValueMap const &theParameterValues,
    RTI1516_USERDATA const &       theUserSuppliedTag,
    LogicalTime const &            theTime,
-   bool                           received_as_TSO )
+   bool const                     received_as_TSO )
 {
    // Find the Interaction we have data for.
    for ( int i = 0; i < inter_count; ++i ) {
@@ -2705,7 +2705,7 @@ Int64Time Manager::get_granted_time() const
 }
 
 bool Manager::is_RTI_ready(
-   const char *method_name )
+   char const *method_name )
 {
    if ( federate == NULL ) {
       send_hs( stderr, "Manager::%s:%d Unexpected NULL Federate.%c",
@@ -2737,7 +2737,7 @@ bool Manager::is_RTI_ready(
  * them and mess things up.
  */
 void Manager::initiate_federation_save(
-   const char *file_name )
+   char const *file_name )
 {
    federate->set_checkpoint_file_name( file_name );
    federate->initiate_save_announce();
@@ -2746,14 +2746,14 @@ void Manager::initiate_federation_save(
 }
 
 void Manager::start_federation_save(
-   const char *file_name )
+   char const *file_name )
 {
    start_federation_save_at_scenario_time( -DBL_MAX, file_name );
 }
 
 void Manager::start_federation_save_at_sim_time(
    double      freeze_sim_time,
-   const char *file_name )
+   char const *file_name )
 {
    start_federation_save_at_scenario_time(
       this->execution_control->convert_sim_time_to_scenario_time( freeze_sim_time ),
@@ -2764,7 +2764,7 @@ void Manager::start_federation_save_at_sim_time(
 
 void Manager::start_federation_save_at_scenario_time(
    double      freeze_scenario_time,
-   const char *file_name )
+   char const *file_name )
 {
 
    // Call the ExecutionControl method.

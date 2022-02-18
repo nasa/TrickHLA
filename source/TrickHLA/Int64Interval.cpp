@@ -42,9 +42,9 @@ NASA, Johnson Space Center\n
 
 namespace TrickHLA
 {
-extern const int64_t MICROS_MULTIPLIER        = 1000000;
-extern const int64_t MAX_VALUE_IN_MICROS      = std::numeric_limits< int64_t >::max();
-extern const double  MAX_LOGICAL_TIME_SECONDS = ( (double)MAX_VALUE_IN_MICROS / (double)MICROS_MULTIPLIER );
+extern int64_t const MICROS_MULTIPLIER        = 1000000;
+extern int64_t const MAX_VALUE_IN_MICROS      = std::numeric_limits< int64_t >::max();
+extern double const  MAX_LOGICAL_TIME_SECONDS = ( (double)MAX_VALUE_IN_MICROS / (double)MICROS_MULTIPLIER );
 } // namespace TrickHLA
 
 using namespace std;
@@ -137,13 +137,13 @@ wstring Int64Interval::to_wstring() const
 }
 
 void Int64Interval::set(
-   const int64_t value )
+   int64_t const value )
 {
    hla_interval = value;
 }
 
 void Int64Interval::set(
-   const double value )
+   double const value )
 {
    hla_interval = to_microseconds( value );
 }
@@ -151,13 +151,13 @@ void Int64Interval::set(
 void Int64Interval::set(
    RTI1516_NAMESPACE::LogicalTimeInterval const &value )
 {
-   const RTI1516_NAMESPACE::HLAinteger64Interval &p = dynamic_cast< const RTI1516_NAMESPACE::HLAinteger64Interval & >( value );
+   RTI1516_NAMESPACE::HLAinteger64Interval const &p = dynamic_cast< RTI1516_NAMESPACE::HLAinteger64Interval const & >( value );
 
    hla_interval = p.getInterval();
 }
 
 int64_t Int64Interval::to_microseconds(
-   const double value )
+   double const value )
 {
    // Do a range check on the double value in seconds.
    if ( value > MAX_LOGICAL_TIME_SECONDS ) {
@@ -172,7 +172,7 @@ int64_t Int64Interval::to_microseconds(
 }
 
 double Int64Interval::to_seconds(
-   const int64_t usec )
+   int64_t const usec )
 {
    double seconds = (double)( usec / (int64_t)MICROS_MULTIPLIER );
    double micros  = (double)( usec % (int64_t)MICROS_MULTIPLIER ) / (double)MICROS_MULTIPLIER;

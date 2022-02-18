@@ -74,12 +74,12 @@ class Packing
    /*! @brief Get the Attribute by FOM name.
     *  @return Attribute for the given name.
     *  @param attr_FOM_name Attribute FOM name. */
-   Attribute *get_attribute( const char *attr_FOM_name );
+   Attribute *get_attribute( char const *attr_FOM_name );
 
    /*! @brief This function returns the Attribute for the given attribute FOM name.
     *  @return Attribute for the given name.
     *  @param attr_FOM_name Attribute FOM name. */
-   Attribute *get_attribute_and_validate( const char *attr_FOM_name );
+   Attribute *get_attribute_and_validate( char const *attr_FOM_name );
 
    /*! @brief Get the current scenario time.
     *  @return Returns the current scenario time. */
@@ -110,10 +110,10 @@ class Packing
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for Packing class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   Packing( const Packing &rhs );
+   Packing( Packing const &rhs );
    /*! @brief Assignment operator for Packing class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   Packing &operator=( const Packing &rhs );
+   Packing &operator=( Packing const &rhs );
 };
 
 } // namespace TrickHLA

@@ -89,10 +89,10 @@ class QuaternionEncoder : public TrickHLA::OpaqueBuffer
    // This object is not copyable
    /*! @brief Copy constructor for QuaternionEncoder class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   QuaternionEncoder( const QuaternionEncoder & );
+   QuaternionEncoder( QuaternionEncoder const &rhs );
    /*! @brief Assignment operator for QuaternionEncoder class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   QuaternionEncoder &operator=( const QuaternionEncoder & );
+   QuaternionEncoder &operator=( QuaternionEncoder &rhs );
 };
 
 } // namespace SpaceFOM

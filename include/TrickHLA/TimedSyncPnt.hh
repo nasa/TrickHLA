@@ -86,7 +86,7 @@ class TimedSyncPnt : public TrickHLA::SyncPnt
    /*! @brief Initialization constructor.
     *  @param t Synchronization point action time.
     *  @param l Synchronization point label. */
-   TimedSyncPnt( const Int64Time &t, std::wstring const &l );
+   TimedSyncPnt( Int64Time const &t, std::wstring const &l );
 
    /*! @brief Destructor for the TrickHLA TimedSyncPnt class. */
    virtual ~TimedSyncPnt();
@@ -94,14 +94,14 @@ class TimedSyncPnt : public TrickHLA::SyncPnt
    // Accessor functions.
    /*! @brief Get the synchronization point action time.
     *  @return Time for synchronization point action. */
-   virtual const Int64Time &get_time() const
+   virtual Int64Time const &get_time() const
    {
       return time;
    }
 
    /*! @brief Set the synchronization point action time.
     *  @param t The synchronization point action time. */
-   virtual void set_time( const Int64Time &t )
+   virtual void set_time( Int64Time const &t )
    {
       time = t;
    }

@@ -147,7 +147,7 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    // Execution Control support methods.
    //
    // Get the ExecutionControl type identification string.
-   virtual const std::string &get_type() = 0;
+   virtual std::string const &get_type() = 0;
    /*! Setup the ExecutionControl object Trick ref ATTRIBUTES. */
    virtual void setup_object_ref_attributes() = 0;
    /*! Setup the ExecutionControl interaction Trick ref ATTRIBUTES. */
@@ -442,10 +442,10 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    // ExecutionControl methodology.
    /*! @brief Check if we hit a pause sync point and need to go to freeze.
     *  @param check_pause_delta Check pause job delta time in seconds. */
-   virtual void check_pause( const double check_pause_delta );
+   virtual void check_pause( double const check_pause_delta );
    /*! @brief Checking if we started in freeze.
     *  @param check_pause_delta Check pause job delta time in seconds. */
-   virtual void check_pause_at_init( const double check_pause_delta );
+   virtual void check_pause_at_init( double const check_pause_delta );
 
    /*! @brief Set the mode transition requested flag. */
    virtual void set_mode_transition_requested()
@@ -530,7 +530,7 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    /*! @brief Start the Federation save at the specified scenario time.
     *  @param freeze_scenario_time Scenario time to freeze.
     *  @param file_name            Checkpoint file name. */
-   virtual void start_federation_save_at_scenario_time( double freeze_scenario_time, const char *file_name ) = 0;
+   virtual void start_federation_save_at_scenario_time( double freeze_scenario_time, char const *file_name ) = 0;
    /*! @brief Setup the checkpoint data structures. */
    virtual void setup_checkpoint();
 
@@ -710,10 +710,10 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    // Do not allow the copy constructor.
    /*! @brief Copy constructor for ExecutionControlBase class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   ExecutionControlBase( const ExecutionControlBase &rhs );
+   ExecutionControlBase( ExecutionControlBase const &rhs );
    /*! @brief Assignment operator for ExecutionControlBase class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   ExecutionControlBase &operator=( const ExecutionControlBase &rhs );
+   ExecutionControlBase &operator=( ExecutionControlBase const &rhs );
 };
 
 } // namespace TrickHLA

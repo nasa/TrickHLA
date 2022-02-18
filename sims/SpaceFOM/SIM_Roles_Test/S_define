@@ -84,11 +84,11 @@ class THLAInitSimObject : public Trick::SimObject {
  private:
    TrickHLA::Manager  & thla_manager;
    TrickHLA::Federate & thla_federate;
- 
+	
    // Do not allow the implicit copy constructor or assignment operator.
    THLAInitSimObject(const THLAInitSimObject & rhs);
    THLAInitSimObject & operator=(const THLAInitSimObject & rhs);
-   
+	
    // Do not allow the default constructor.
    THLAInitSimObject();
 

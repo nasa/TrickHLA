@@ -80,31 +80,31 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    void initialize();
 
    // Access functions.
-   virtual void        set_name( const char *name );
-   virtual const char *get_name()
+   virtual void        set_name( char const *name );
+   virtual char const *get_name()
    {
       return name;
    }
 
-   virtual void        set_type( const char *type );
-   virtual const char *get_type()
+   virtual void        set_type( char *type );
+   virtual char const *get_type()
    {
       return type;
    }
 
-   virtual void        set_status( const char *status );
-   virtual const char *get_status()
+   virtual void        set_status( char const *status );
+   virtual char const *get_status()
    {
       return status;
    }
 
-   virtual void        set_parent_ref_frame( const char *parent_ref_frame );
-   virtual const char *get_parent_ref_frame()
+   virtual void        set_parent_ref_frame( char const *parent_ref_frame );
+   virtual char const *get_parent_ref_frame()
    {
       return parent_ref_frame;
    }
 
-   const double get_time()
+   double const get_time()
    {
       return state.time;
    }
@@ -130,8 +130,8 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
 
   private:
    // This object is not copyable
-   PhysicalEntityBase( const PhysicalEntityBase & );
-   PhysicalEntityBase &operator=( const PhysicalEntityBase & );
+   PhysicalEntityBase( PhysicalEntityBase const &rhs );
+   PhysicalEntityBase &operator=( PhysicalEntityBase const &rhs );
 };
 
 } // namespace SpaceFOM

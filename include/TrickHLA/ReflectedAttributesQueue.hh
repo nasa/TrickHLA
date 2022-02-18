@@ -89,7 +89,7 @@ class ReflectedAttributesQueue
 
    /*! @brief Push the attributes onto the queue.
     *  @param theAttributes The reflected attributes. */
-   void push( const RTI1516_NAMESPACE::AttributeHandleValueMap &theAttributes );
+   void push( RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributes );
 
    /*! @brief Pop the front value off the queue and the destructor for the
     * value will be called. */
@@ -97,7 +97,7 @@ class ReflectedAttributesQueue
 
    /*! @brief Get the first/oldest item in the queue.
     *  @return The first/oldest item in the queue. */
-   const RTI1516_NAMESPACE::AttributeHandleValueMap &front();
+   RTI1516_NAMESPACE::AttributeHandleValueMap const &front();
 
    /*! @brief Clear the queue of all values. */
    void clear();
@@ -106,10 +106,10 @@ class ReflectedAttributesQueue
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for ReflectedAttributesQueue class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   ReflectedAttributesQueue( const ReflectedAttributesQueue &rhs );
+   ReflectedAttributesQueue( ReflectedAttributesQueue const &rhs );
    /*! @brief Assignment operator for ReflectedAttributesQueue class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   ReflectedAttributesQueue &operator=( const ReflectedAttributesQueue &rhs );
+   ReflectedAttributesQueue &operator=( ReflectedAttributesQueue const &rhs );
 };
 
 } // namespace TrickHLA

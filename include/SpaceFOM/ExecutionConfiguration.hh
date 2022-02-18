@@ -115,7 +115,7 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    ExecutionConfiguration();
    /*! @brief Initialization constructor for the TrickHLA ExecutionConfiguration class.
     *  @param s_define_name Full path name in the S_define for this ExecutionConfiguration instance. */
-   explicit ExecutionConfiguration( const char *s_define_name );
+   explicit ExecutionConfiguration( char const *s_define_name );
    /*! @brief Pure virtual destructor for the SpaceFOM ExecutionConfiguration class. */
    virtual ~ExecutionConfiguration();
 
@@ -134,10 +134,10 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    // FOM data public accessor interface.
    /*! @brief Set the root reference frame name.
     *  @param name Root reference frame name. */
-   virtual void set_root_frame_name( const char *name );
+   virtual void set_root_frame_name( char const *name );
    /*! @brief Get the root reference frame name.
     *  @return Root Reference Frame name as a constant string. */
-   virtual const char *get_root_frame_name()
+   virtual char const *get_root_frame_name()
    {
       return root_frame_name;
    }
@@ -221,8 +221,8 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
 
   private:
    // Do not allow the copy constructor or assignment operator.
-   ExecutionConfiguration( const ExecutionConfiguration &rhs );
-   ExecutionConfiguration &operator=( const ExecutionConfiguration &rhs );
+   ExecutionConfiguration( ExecutionConfiguration const &rhs );
+   ExecutionConfiguration &operator=( ExecutionConfiguration const &rhs );
 };
 
 } // namespace SpaceFOM

@@ -120,7 +120,7 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    /*! @brief Sets up the attributes for the ExCO using default values.
     *  These can be overridden in the input file.
     *  @param exco_name S_define level Trick name for ExCO. */
-   virtual void configure_attributes( const char *exco_name );
+   virtual void configure_attributes( char const *exco_name );
 
    // From the TrickHLA::Packing class.
    virtual void pack();
@@ -129,10 +129,10 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    // FOM data public accessor interface.
    /*! @brief Set the root reference frame name.
     *  @param name Root reference frame name. */
-   virtual void set_root_frame_name( const char *name );
+   virtual void set_root_frame_name( char const *name );
    /*! @brief Get the root reference frame name.
     *  @return Root Reference Frame name as a constant string. */
-   virtual const char *get_root_frame_name()
+   virtual char const *get_root_frame_name()
    {
       return root_frame_name;
    }
@@ -216,8 +216,8 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
 
   private:
    // Do not allow the copy constructor or assignment operator.
-   ExecutionConfiguration( const ExecutionConfiguration &rhs );
-   ExecutionConfiguration &operator=( const ExecutionConfiguration &rhs );
+   ExecutionConfiguration( ExecutionConfiguration const &rhs );
+   ExecutionConfiguration &operator=( ExecutionConfiguration const &rhs );
 };
 
 } // namespace IMSim

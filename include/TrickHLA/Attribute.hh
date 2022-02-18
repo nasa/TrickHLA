@@ -116,19 +116,19 @@ class Attribute
     *  @param object_index The array index to the parent Object.
     *  @param attribute_index The array index to this Attribute.
     */
-   void initialize( const char *obj_FOM_name,
-                    const int   object_index,
-                    const int   attribute_index );
+   void initialize( char const *obj_FOM_name,
+                    int const   object_index,
+                    int const   attribute_index );
 
    /*! @brief Get the reflection rate configuration type.
     *  @return The reflection rate configuration type enumeration value. */
-   const DataUpdateEnum get_configuration() const
+   DataUpdateEnum const get_configuration() const
    {
       return config;
    }
 
    /*! @brief Set the reflection rate configuration type. */
-   void set_configuration( const DataUpdateEnum c )
+   void set_configuration( DataUpdateEnum const c )
    {
       this->config = c;
    }
@@ -136,7 +136,7 @@ class Attribute
    /*! @brief Determine the cycle-ratio given the core job cycle rate and the
     * cycle-time for this attribute.
     *  @param core_job_cycle_time Core job cycle time in seconds. */
-   void determine_cycle_ratio( const double core_job_cycle_time );
+   void determine_cycle_ratio( double const core_job_cycle_time );
 
    /*! @brief Pack the attribute into the buffer using the appropriate encoding. */
    void pack_attribute_buffer();
@@ -181,14 +181,14 @@ class Attribute
 
    /*! @brief Get the Federation Object Model attribute name.
     *  @return FOM name for the attribute. */
-   const char *get_FOM_name() const
+   char const *get_FOM_name() const
    {
       return FOM_name;
    }
 
    /*! @brief Get the associated Trick variable space name.
     *  @return The Trick variable space name associated with this attribute. */
-   const char *get_trick_name() const
+   char const *get_trick_name() const
    {
       return trick_name;
    }
@@ -268,7 +268,7 @@ class Attribute
 
    /*! @brief Set the pull requested flag.
     *  @param enable Flag to set the pull requested state. */
-   void set_pull_requested( const bool enable )
+   void set_pull_requested( bool const enable )
    {
       this->pull_requested = enable;
    }
@@ -282,7 +282,7 @@ class Attribute
 
    /*! @brief Set the ownership push flag.
     *  @param enable Flag to set the push requested state. */
-   void set_push_requested( const bool enable )
+   void set_push_requested( bool const enable )
    {
       this->push_requested = enable;
    }
@@ -296,7 +296,7 @@ class Attribute
 
    /*! @brief Set the ownership divest requested flag.
     *  @param enable Flag to set divest requested state. */
-   void set_divest_requested( const bool enable )
+   void set_divest_requested( bool const enable )
    {
       this->divest_requested = enable;
    }
@@ -317,7 +317,7 @@ class Attribute
 
    /*! @brief Determine is the data cycle is ready for sending data.
     *  @return True if the data cycle is ready for a send, false otherwise.*/
-   const bool check_data_cycle_ready() // RETURN: -- True if the data cycle is ready for a send, false otherwise.
+   bool const check_data_cycle_ready() // RETURN: -- True if the data cycle is ready for a send, false otherwise.
    {
       if ( ( cycle_ratio <= 1 ) || ( ( ++cycle_cnt ) >= cycle_ratio ) ) {
          cycle_cnt = 0;
@@ -328,7 +328,7 @@ class Attribute
 
    /*! @brief Set the preferred transportation order.
     *  @param order The transportation type enumeration value. */
-   void set_preferred_order( const TransportationEnum order )
+   void set_preferred_order( TransportationEnum const order )
    {
       this->preferred_order = order;
    }
@@ -349,7 +349,7 @@ class Attribute
 
    /*! @brief Set the attribute update requested flag.
     *  @param request_update Request update flag. */
-   void set_update_requested( const bool request_update )
+   void set_update_requested( bool const request_update )
    {
       this->update_requested = request_update;
    }
@@ -416,7 +416,7 @@ class Attribute
 
    // Set the RTI encoding and based on the new encoding determine if we
    // need to byte-swap.
-   void set_encoding( const EncodingEnum in_type )
+   void set_encoding( EncodingEnum const in_type )
    {
       rti_encoding = in_type;
 
@@ -430,7 +430,7 @@ class Attribute
 
    /*! @brief Calculate the number of items in the attribute.
     *  @return Number of items in the attribute. */
-   const size_t calculate_number_of_items()
+   size_t const calculate_number_of_items()
    {
       calculate_size_and_number_of_items();
       return num_items;
@@ -533,10 +533,10 @@ class Attribute
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for Attribute class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   Attribute( const Attribute &rhs );
+   Attribute( Attribute const &rhs );
    /*! @brief Assignment operator for Attribute class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   Attribute &operator=( const Attribute &rhs );
+   Attribute &operator=( Attribute const &rhs );
 };
 
 typedef std::map< RTI1516_NAMESPACE::AttributeHandle, Attribute * > AttributeMap; ///< @trick_io{**} Map of attributes.

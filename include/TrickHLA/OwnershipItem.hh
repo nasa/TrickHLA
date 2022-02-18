@@ -101,10 +101,10 @@ class OwnershipItem : public Item
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for OwnershipItem class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   OwnershipItem( const OwnershipItem &rhs );
+   OwnershipItem( OwnershipItem const &rhs );
    /*! @brief Assignment operator for OwnershipItem class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   OwnershipItem &operator=( const OwnershipItem &rhs );
+   OwnershipItem &operator=( OwnershipItem const &rhs );
 };
 
 } // namespace TrickHLA

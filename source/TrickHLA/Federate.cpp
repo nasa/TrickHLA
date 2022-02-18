@@ -450,7 +450,7 @@ the documented ENUM values.%c",
  * @brief Initialize the thread memory associated with the Trick child threads.
  */
 void Federate::initialize_thread_state(
-   const double data_cycle )
+   double const data_cycle )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -1370,7 +1370,7 @@ void Federate::determine_federate_MOM_object_instance_names()
 }
 
 bool Federate::is_required_federate(
-   const wstring &federate_name )
+   wstring const &federate_name )
 {
    for ( int i = 0; i < known_feds_count; ++i ) {
       if ( known_feds[i].required ) {
@@ -1385,7 +1385,7 @@ bool Federate::is_required_federate(
 }
 
 bool Federate::is_joined_federate(
-   const char *federate_name )
+   char const *federate_name )
 {
    wstring fed_name_ws;
    StringUtilities::to_wstring( fed_name_ws, federate_name );
@@ -1393,7 +1393,7 @@ bool Federate::is_joined_federate(
 }
 
 bool Federate::is_joined_federate(
-   const wstring &federate_name )
+   wstring const &federate_name )
 {
    for ( unsigned int i = 0; i < joined_federate_names.size(); ++i ) {
       if ( federate_name == joined_federate_names[i] ) {
@@ -3251,7 +3251,7 @@ void Federate::post_restore()
 
 /*! @brief Set the time advance as granted. */
 void Federate::set_time_advance_granted(
-   const RTI1516_NAMESPACE::LogicalTime &time )
+   RTI1516_NAMESPACE::LogicalTime const &time )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -3281,7 +3281,7 @@ void Federate::set_granted_time(
 }
 
 void Federate::set_granted_time(
-   const RTI1516_NAMESPACE::LogicalTime &time )
+   RTI1516_NAMESPACE::LogicalTime const &time )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -3304,7 +3304,7 @@ void Federate::set_requested_time(
 }
 
 void Federate::set_requested_time(
-   const RTI1516_NAMESPACE::LogicalTime &time )
+   RTI1516_NAMESPACE::LogicalTime const &time )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -3601,8 +3601,8 @@ void Federate::create_federation()
  * @job_class{initialization}
  */
 void Federate::join_federation(
-   const char *const federate_name,
-   const char *const federate_type )
+   char const *const federate_name,
+   char const *const federate_type )
 {
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
@@ -3825,7 +3825,7 @@ void Federate::create_and_join_federation()
 
    // Here we loop around the create and join federation calls until until we
    // are successful or hit the maximum number of attempts.
-   const int max_retries = 100;
+   int const max_retries = 100;
 
    for ( int k = 1; ( !this->federation_joined ) && ( k <= max_retries ); ++k ) {
 
@@ -4619,8 +4619,8 @@ void Federate::perform_time_advance_request()
  * @brief Associate a Trick child thread with TrickHLA.
  */
 void Federate::associate_to_trick_child_thread(
-   const unsigned int thread_id,
-   const double       data_cycle )
+   unsigned int const thread_id,
+   double const       data_cycle )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -5888,7 +5888,7 @@ void Federate::destroy_orphaned_federation()
  *  @job_class{initialization}
  */
 void Federate::set_federation_name(
-   const string &exec_name )
+   string const &exec_name )
 {
    // Check for self assign.
    if ( this->federation_name != exec_name ) {
@@ -6515,7 +6515,7 @@ void Federate::remove_MOM_HLAfederation_instance_id(
 }
 
 void Federate::write_running_feds_file(
-   const string &file_name )
+   string const &file_name )
 {
    string   full_path;
    ofstream file;
@@ -6588,7 +6588,7 @@ void Federate::request_federation_save()
 }
 
 void Federate::restore_checkpoint(
-   const string &file_name )
+   string const &file_name )
 {
    string trick_filename = file_name;
    // DANNY2.7 prepend federation name to the filename (if it's not already prepended)
@@ -6701,7 +6701,7 @@ Unexpected restore process %d, which is not 'Restore_Complete' or 'Restore_Reque
 }
 
 void Federate::read_running_feds_file(
-   const string &file_name )
+   string const &file_name )
 {
    string   full_path;
    ifstream file;
@@ -7583,7 +7583,7 @@ void Federate::print_save_failure_reason(
  *  @job_class{environment}
  */
 void Federate::set_checkpoint_file_name(
-   const string &name ) // IN: -- checkpoint file name
+   string const &name ) // IN: -- checkpoint file name
 {
    this->checkpoint_file_name = name;
    StringUtilities::to_wstring( this->save_name, name );
@@ -7620,7 +7620,7 @@ void Federate::initiate_save_announce()
 }
 
 void Federate::initiate_restore_announce(
-   const string &restore_name_label )
+   string const &restore_name_label )
 {
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
@@ -8057,7 +8057,7 @@ void Federate::rebuild_federate_handles(
  * 'object_name.FOM_name'. Otherwise, this logic fails.
  */
 bool Federate::is_a_required_startup_federate(
-   const wstring &fed_name )
+   wstring const &fed_name )
 {
    wstring required_fed_name;
    for ( int i = 0; i < this->known_feds_count; ++i ) {

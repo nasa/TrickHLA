@@ -182,10 +182,10 @@ class InteractionItem : public Item
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for InteractionItem class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   InteractionItem( const InteractionItem &rhs );
+   InteractionItem( InteractionItem const &rhs );
    /*! @brief Assignment operator for InteractionItem class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   InteractionItem &operator=( const InteractionItem &rhs );
+   InteractionItem &operator=( InteractionItem const &rhs );
 };
 
 } // namespace TrickHLA

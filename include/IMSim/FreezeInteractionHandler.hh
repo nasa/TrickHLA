@@ -106,15 +106,15 @@ class FreezeInteractionHandler : public TrickHLA::InteractionHandler
     *  @return True is values match to within a tolerance; False otherwise.
     *  @param v1 First value in comparison.
     *  @param v2 Second value in comparison. */
-   static bool check_values( const double &v1, const double &v2 )
+   static bool check_values( double const &v1, double const &v2 )
    {
       return ( ( v1 == v2 ) || ( ( v2 > v1 ) ? ( ( v2 - v1 ) < 0.000001 ) : ( ( v1 - v2 ) < 0.000001 ) ) );
    }
 
   private:
    // Do not allow the copy constructor or assignment operator.
-   FreezeInteractionHandler( const FreezeInteractionHandler &rhs );
-   FreezeInteractionHandler &operator=( const FreezeInteractionHandler &rhs );
+   FreezeInteractionHandler( FreezeInteractionHandler const &rhs );
+   FreezeInteractionHandler &operator=( FreezeInteractionHandler const &rhs );
 };
 
 } // namespace IMSim

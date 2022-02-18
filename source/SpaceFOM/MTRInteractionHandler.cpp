@@ -98,7 +98,7 @@ MTRInteractionHandler::~MTRInteractionHandler() // RETURN: -- None.
  * @job_class{default_data}
  */
 void MTRInteractionHandler::set_name(
-   const char *new_name )
+   char const *new_name )
 {
    if ( this->name != NULL ) {
       if ( trick_MM->is_alloced( this->name ) ) {

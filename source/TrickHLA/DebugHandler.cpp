@@ -62,15 +62,15 @@ DebugHandler::~DebugHandler() // RETURN: -- None.
 }
 
 bool DebugHandler::show(
-   const DebugLevelEnum  level,
-   const DebugSourceEnum code )
+   DebugLevelEnum const  level,
+   DebugSourceEnum const code )
 {
    return ( ( debug_level >= level ) && ( ( code_section & code ) != 0 ) );
 }
 
 void DebugHandler::set(
-   const DebugLevelEnum  level,
-   const DebugSourceEnum code )
+   DebugLevelEnum const  level,
+   DebugSourceEnum const code )
 {
    if ( level < DEBUG_LEVEL_NO_TRACE ) {
       debug_level = DEBUG_LEVEL_NO_TRACE;
@@ -89,7 +89,7 @@ void DebugHandler::set(
 }
 
 void DebugHandler::terminate_with_message(
-   const string &message )
+   string const &message )
 {
    send_hs( stderr, (char *)message.c_str() );
    exec_terminate( __FILE__, (char *)message.c_str() );

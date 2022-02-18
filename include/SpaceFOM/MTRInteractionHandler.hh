@@ -97,7 +97,7 @@ class MTRInteractionHandler : public TrickHLA::InteractionHandler
    // Public utility functions.
    /*! @brief Set the associated name for this interaction handler.
     *  @param new_name  Associated name. */
-   virtual void set_name( const char *new_name );
+   virtual void set_name( char const *new_name );
 
    /*! @brief Get the address of the MTR interaction mode transition state.
     *  @return Address of the MTR interaction mode transition state. */
@@ -128,10 +128,10 @@ class MTRInteractionHandler : public TrickHLA::InteractionHandler
    MTRInteractionHandler();
    /*! @brief Copy constructor for MTRInteractionHandler class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   MTRInteractionHandler( const MTRInteractionHandler &rhs );
+   MTRInteractionHandler( MTRInteractionHandler const &rhs );
    /*! @brief Assignment operator for MTRInteractionHandler class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   MTRInteractionHandler &operator=( const MTRInteractionHandler &rhs );
+   MTRInteractionHandler &operator=( MTRInteractionHandler const &rhs );
 };
 
 } // namespace SpaceFOM

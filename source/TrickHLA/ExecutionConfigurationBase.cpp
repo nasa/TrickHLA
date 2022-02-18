@@ -100,7 +100,7 @@ ExecutionConfigurationBase::ExecutionConfigurationBase()
  * @job_class{initialization}
  */
 ExecutionConfigurationBase::ExecutionConfigurationBase(
-   const char *s_define_name )
+   char const *s_define_name )
    : pending_update( false ),
      execution_control( NULL )
 {
@@ -150,7 +150,7 @@ void ExecutionConfigurationBase::setup(
  * @job_class{initialization}
  */
 void ExecutionConfigurationBase::set_S_define_name(
-   const char *new_name )
+   char const *new_name )
 {
    if ( S_define_name != static_cast< char * >( NULL ) ) {
       if ( trick_MM->is_alloced( (void *)S_define_name ) ) {

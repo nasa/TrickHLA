@@ -72,11 +72,11 @@ class TimeOfDayTimeline : public Timeline
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for TimeOfDayTimeline class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   TimeOfDayTimeline( const TimeOfDayTimeline &rhs );
+   TimeOfDayTimeline( TimeOfDayTimeline const &rhs );
 
    /*! @brief Assignment operator for TimeOfDayTimeline class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   TimeOfDayTimeline &operator=( const TimeOfDayTimeline &rhs );
+   TimeOfDayTimeline &operator=( TimeOfDayTimeline const &rhs );
 };
 
 } // namespace TrickHLA

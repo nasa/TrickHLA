@@ -100,11 +100,11 @@ class Timeline
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for Timeline class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   Timeline( const Timeline &rhs );
+   Timeline( Timeline const &rhs );
 
    /*! @brief Assignment operator for Timeline class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   Timeline &operator=( const Timeline &rhs );
+   Timeline &operator=( Timeline const &rhs );
 };
 
 } // namespace TrickHLA

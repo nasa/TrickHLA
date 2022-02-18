@@ -300,34 +300,34 @@ VectorOfStrings OwnershipHandler::get_attribute_FOM_names() const
 }
 
 Attribute *OwnershipHandler::get_attribute(
-   const char *attribute_FOM_name )
+   char const *attribute_FOM_name )
 {
    return ( ( object != NULL ) ? object->get_attribute( attribute_FOM_name ) : NULL );
 }
 
 bool OwnershipHandler::is_locally_owned(
-   const char *attribute_FOM_name )
+   char const *attribute_FOM_name )
 {
    Attribute *attribute = get_attribute( attribute_FOM_name );
    return ( ( attribute != NULL ) ? attribute->is_locally_owned() : false );
 }
 
 bool OwnershipHandler::is_remotely_owned(
-   const char *attribute_FOM_name )
+   char const *attribute_FOM_name )
 {
    Attribute *attribute = get_attribute( attribute_FOM_name );
    return ( ( attribute != NULL ) ? attribute->is_remotely_owned() : false );
 }
 
 bool OwnershipHandler::is_published(
-   const char *attribute_FOM_name )
+   char const *attribute_FOM_name )
 {
    Attribute *attribute = get_attribute( attribute_FOM_name );
    return ( ( attribute != NULL ) ? attribute->is_publish() : false );
 }
 
 bool OwnershipHandler::is_subscribed(
-   const char *attribute_FOM_name )
+   char const *attribute_FOM_name )
 {
    Attribute *attribute = get_attribute( attribute_FOM_name );
    return ( ( attribute != NULL ) ? attribute->is_subscribe() : false );
@@ -386,13 +386,13 @@ void OwnershipHandler::pull_ownership(
 }
 
 void OwnershipHandler::pull_ownership( // RETURN: -- None.
-   const char *attribute_FOM_name )    // IN: -- Attribute FOM name.
+   char const *attribute_FOM_name )    // IN: -- Attribute FOM name.
 {
    pull_ownership( attribute_FOM_name, -std::numeric_limits< double >::max() );
 }
 
 void OwnershipHandler::pull_ownership(
-   const char *attribute_FOM_name,
+   char const *attribute_FOM_name,
    double      time )
 {
    // Find the attribute for the givn attribute FOM name.
@@ -489,13 +489,13 @@ void OwnershipHandler::push_ownership(
 }
 
 void OwnershipHandler::push_ownership(
-   const char *attribute_FOM_name )
+   char const *attribute_FOM_name )
 {
    push_ownership( attribute_FOM_name, -std::numeric_limits< double >::max() );
 }
 
 void OwnershipHandler::push_ownership(
-   const char *attribute_FOM_name,
+   char const *attribute_FOM_name,
    double      time )
 {
    // Find the attribute for the given attribute FOM name.

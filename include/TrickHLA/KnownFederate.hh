@@ -77,10 +77,10 @@ class KnownFederate
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for KnownFederate class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   KnownFederate( const KnownFederate &rhs );
+   KnownFederate( KnownFederate const &rhs );
    /*! @brief Assignment operator for KnownFederate class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   KnownFederate &operator=( const KnownFederate &rhs );
+   KnownFederate &operator=( KnownFederate const &rhs );
 };
 
 } // namespace TrickHLA

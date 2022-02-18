@@ -93,7 +93,7 @@ void ElapsedTimeStats::measure()
 /*!
  * @job_class{scheduled}
  */
-const double ElapsedTimeStats::confidence_to_Z(
+double const ElapsedTimeStats::confidence_to_Z(
    double &confidence )
 {
    // The confidence level to Z values used below can be found here:
@@ -133,7 +133,7 @@ const double ElapsedTimeStats::confidence_to_Z(
 /*!
  * @job_class{scheduled}
  */
-const std::string ElapsedTimeStats::to_string()
+std::string const ElapsedTimeStats::to_string()
 {
    stringstream msg;
    msg << "ElapsedTimeStats::to_string():" << __LINE__ << endl;

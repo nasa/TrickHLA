@@ -130,7 +130,7 @@ ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
  * @job_class{default_data}
  */
 void ExecutionConfiguration::configure_attributes(
-   const char *exco_name )
+   char const *exco_name )
 {
    string exco_name_str = string( exco_name );
    string trick_name_str;
@@ -339,7 +339,7 @@ void ExecutionConfiguration::unpack()
 }
 
 void ExecutionConfiguration::set_root_frame_name(
-   const char *name )
+   char const *name )
 {
    // Free the Trick memory if it's already allocated.
    if ( this->root_frame_name != static_cast< char * >( NULL ) ) {

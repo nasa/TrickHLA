@@ -153,7 +153,7 @@ class Utilities
   public:
    /*! @brief Get the endianness.
     *  @return Either TRICK_BIG_ENDIAN (char)0x00 or TRICK_LITTLE_ENDIAN (char)0x01 */
-   static const char get_endianness()
+   static char const get_endianness()
    {
       static char endianness = (char)( std::max( TRICK_LITTLE_ENDIAN, TRICK_BIG_ENDIAN ) + 1 );
       if ( ( endianness != TRICK_LITTLE_ENDIAN ) && ( endianness != TRICK_BIG_ENDIAN ) ) {
@@ -165,79 +165,79 @@ class Utilities
    /*! @brief Determine if the RTI data needs a byteswap before transmission.
     *  @return True if byteswap is needed.
     *  @param  rti_encoding TrickHLA RTI encoding of the data. */
-   static bool is_transmission_byteswap( const EncodingEnum rti_encoding );
+   static bool is_transmission_byteswap( EncodingEnum const rti_encoding );
 
    /*! @brief Byteswap an short integer type.
     *  @return Byteswap value.
     *  @param  input The input value to byteswap. */
-   static short byteswap_short( const short input );
+   static short byteswap_short( short const input );
 
    /*! @brief Byteswap an unsigned short integer type.
     *  @return Byteswap value.
     *  @param  input The input value to byteswap. */
-   static unsigned short byteswap_unsigned_short( const unsigned short input );
+   static unsigned short byteswap_unsigned_short( unsigned short const input );
 
    /*! @brief Byteswap an int integer type.
     *  @return Byteswap value.
     *  @param  input The input value to byteswap. */
-   static int byteswap_int( const int input );
+   static int byteswap_int( int const input );
 
    /*! @brief Byteswap an unsigned int integer type.
     *  @return Byteswap value.
     *  @param  input The input value to byteswap. */
-   static unsigned int byteswap_unsigned_int( const unsigned int input );
+   static unsigned int byteswap_unsigned_int( unsigned int const input );
 
    /*! @brief Byteswap a long integer type.
     *  @return Byteswap value.
     *  @param  input The input value to byteswap. */
-   static long byteswap_long( const long input );
+   static long byteswap_long( long const input );
 
    /*! @brief Byteswap an unsigned long integer type.
     *  @return Byteswap value.
     *  @param  input The input value to byteswap. */
-   static unsigned long byteswap_unsigned_long( const unsigned long input );
+   static unsigned long byteswap_unsigned_long( unsigned long const input );
 
    /*! @brief Byteswap a long long integer type.
     *  @details The long long type is defined in the C99 standard and is at
     *  least 64 bits.
     *  @return Byteswap value.
     *  @param  input The input value to byteswap. */
-   static long long byteswap_long_long( const long long input );
+   static long long byteswap_long_long( long long const input );
 
    /*! @brief Byteswap an unsigned long long integer type.
     *  @details The unsigned long long type is defined in the C99 standard and
     *  is at least 64 bits.
     *  @return Byteswap value.
     *  @param  input The input value to byteswap. */
-   static unsigned long long byteswap_unsigned_long_long( const unsigned long long input );
+   static unsigned long long byteswap_unsigned_long_long( unsigned long long const input );
 
    /*! @brief Byteswap float floating-point type.
     *  @return Byteswap value.
     *  @param  input The input value to byteswap. */
-   static float byteswap_float( const float input );
+   static float byteswap_float( float const input );
 
    /*! @brief Byteswap double floating-point type.
     *  @return Byteswap value.
     *  @param  input The input value to byteswap. */
-   static double byteswap_double( const double input );
+   static double byteswap_double( double const input );
 
    /*! @brief Round to the next positive multiple of 8.
     *  @return The value rounded to the next positive multiple of 8.
     *  @param  value The value to round to next positive multiple of 8. */
-   static size_t next_positive_multiple_of_8( const size_t value );
+   static size_t next_positive_multiple_of_8( size_t const value );
 
    /*! @brief Round to the next positive multiple of N.
     *  @return The value rounded to the next positive multiple of N.
     *  @param  value The value to round to next positive multiple of N.
     *  @param  n The number to round up the value to the next positive multiple of. */
-   static size_t next_positive_multiple_of_N( const size_t value, const unsigned int n );
+   static size_t next_positive_multiple_of_N( size_t const value, unsigned int const n );
 
    /*! @brief Sleep for the specified number of microseconds. The usleep() C
     *  function is obsolete (see CWE-676). Create a wrapper around nanosleep()
     *  to provide the same functionality as usleep().
     *  @return Error code, where a value of 0 is for no error.
     *  @param  usec Time to sleep in microseconds. */
-   static int micro_sleep( const long usec );
+   static int micro_sleep( long const usec );
 
    /*! @brief Return the current TrickHLA version string from the auto
     *  generated Version.hh header file.
@@ -253,11 +253,11 @@ class Utilities
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for Utilities class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   Utilities( const Utilities &rhs );
+   Utilities( Utilities const &rhs );
 
    /*! @brief Assignment operator for Utilities class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   Utilities &operator=( const Utilities &rhs );
+   Utilities &operator=( Utilities const &rhs );
 };
 
 } // namespace TrickHLA

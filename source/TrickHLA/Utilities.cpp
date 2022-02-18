@@ -47,9 +47,9 @@ using namespace std;
 using namespace TrickHLA;
 
 bool Utilities::is_transmission_byteswap(
-   const EncodingEnum rti_encoding )
+   EncodingEnum const rti_encoding )
 {
-   const char endianness = Utilities::get_endianness();
+   char const endianness = Utilities::get_endianness();
 
    // Check encoding versus Endianness to determine if we need to byteswap.
    return ( ( ( rti_encoding == ENCODING_BIG_ENDIAN ) && ( endianness == TRICK_LITTLE_ENDIAN ) )
@@ -57,10 +57,10 @@ bool Utilities::is_transmission_byteswap(
 }
 
 short Utilities::byteswap_short(
-   const short input )
+   short const input )
 {
    short          output;
-   const size_t   size = sizeof( output );
+   size_t const   size = sizeof( output );
    unsigned char *out  = (unsigned char *)&output;
    unsigned char *in   = (unsigned char *)&input;
 
@@ -87,10 +87,10 @@ short Utilities::byteswap_short(
 }
 
 unsigned short Utilities::byteswap_unsigned_short(
-   const unsigned short input )
+   unsigned short const input )
 {
    unsigned short output;
-   const size_t   size = sizeof( output );
+   size_t const   size = sizeof( output );
    unsigned char *out  = (unsigned char *)&output;
    unsigned char *in   = (unsigned char *)&input;
 
@@ -117,10 +117,10 @@ unsigned short Utilities::byteswap_unsigned_short(
 }
 
 int Utilities::byteswap_int( // RETURN: -- Byteswap value.
-   const int input )         // IN: -- The input value to byteswap.
+   int const input )         // IN: -- The input value to byteswap.
 {
    int            output;
-   const size_t   size = sizeof( output );
+   size_t const   size = sizeof( output );
    unsigned char *out  = (unsigned char *)&output;
    unsigned char *in   = (unsigned char *)&input;
 
@@ -143,10 +143,10 @@ int Utilities::byteswap_int( // RETURN: -- Byteswap value.
 }
 
 unsigned int Utilities::byteswap_unsigned_int(
-   const unsigned int input )
+   unsigned int const input )
 {
    unsigned int   output;
-   const size_t   size = sizeof( output );
+   size_t const   size = sizeof( output );
    unsigned char *out  = (unsigned char *)&output;
    unsigned char *in   = (unsigned char *)&input;
 
@@ -169,10 +169,10 @@ unsigned int Utilities::byteswap_unsigned_int(
 }
 
 long Utilities::byteswap_long(
-   const long input )
+   long const input )
 {
    long           output;
-   const size_t   size = sizeof( output );
+   size_t const   size = sizeof( output );
    unsigned char *out  = (unsigned char *)&output;
    unsigned char *in   = (unsigned char *)&input;
 
@@ -205,10 +205,10 @@ long Utilities::byteswap_long(
 }
 
 unsigned long Utilities::byteswap_unsigned_long(
-   const unsigned long input )
+   unsigned long const input )
 {
    unsigned long  output;
-   const size_t   size = sizeof( output );
+   size_t const   size = sizeof( output );
    unsigned char *out  = (unsigned char *)&output;
    unsigned char *in   = (unsigned char *)&input;
 
@@ -241,10 +241,10 @@ unsigned long Utilities::byteswap_unsigned_long(
 }
 
 long long Utilities::byteswap_long_long(
-   const long long input )
+   long long const input )
 {
    long long      output;
-   const size_t   size = sizeof( output );
+   size_t const   size = sizeof( output );
    unsigned char *out  = (unsigned char *)&output;
    unsigned char *in   = (unsigned char *)&input;
 
@@ -272,10 +272,10 @@ long long Utilities::byteswap_long_long(
 }
 
 unsigned long long Utilities::byteswap_unsigned_long_long(
-   const unsigned long long input )
+   unsigned long long const input )
 {
    unsigned long long output;
-   const size_t       size = sizeof( output );
+   size_t const       size = sizeof( output );
    unsigned char *    out  = (unsigned char *)&output;
    unsigned char *    in   = (unsigned char *)&input;
 
@@ -303,10 +303,10 @@ unsigned long long Utilities::byteswap_unsigned_long_long(
 }
 
 float Utilities::byteswap_float(
-   const float input )
+   float const input )
 {
    float          output;
-   const size_t   size = sizeof( output );
+   size_t const   size = sizeof( output );
    unsigned char *out  = (unsigned char *)&output;
    unsigned char *in   = (unsigned char *)&input;
 
@@ -338,10 +338,10 @@ float Utilities::byteswap_float(
 }
 
 double Utilities::byteswap_double(
-   const double input )
+   double const input )
 {
    double         output;
-   const size_t   size = sizeof( output );
+   size_t const   size = sizeof( output );
    unsigned char *out  = (unsigned char *)&output;
    unsigned char *in   = (unsigned char *)&input;
 
@@ -367,15 +367,15 @@ double Utilities::byteswap_double(
 }
 
 size_t Utilities::next_positive_multiple_of_8(
-   const size_t value )
+   size_t const value )
 {
    // Round up to the next positive multiple of 8.
    return Utilities::next_positive_multiple_of_N( value, 8 );
 }
 
 size_t Utilities::next_positive_multiple_of_N(
-   const size_t       value,
-   const unsigned int n )
+   size_t const       value,
+   unsigned int const n )
 {
    // Round up to the next positive multiple of N where the minimum result is N.
    // The result will always be greater than the positive value specified by
@@ -384,7 +384,7 @@ size_t Utilities::next_positive_multiple_of_N(
 }
 
 int Utilities::micro_sleep(
-   const long usec )
+   long const usec )
 {
    struct timespec sleep_time;
    if ( usec >= 1000000 ) {

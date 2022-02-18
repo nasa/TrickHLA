@@ -139,7 +139,7 @@ void PhysicalEntityBase::initialize()
    return;
 }
 
-void PhysicalEntityBase::set_name( const char *new_name )
+void PhysicalEntityBase::set_name( char const *new_name )
 {
    if ( this->name != NULL ) {
       trick_MM->delete_var( (void *)this->name );
@@ -148,7 +148,7 @@ void PhysicalEntityBase::set_name( const char *new_name )
    return;
 }
 
-void PhysicalEntityBase::set_type( const char *new_name )
+void PhysicalEntityBase::set_type( char const *new_name )
 {
    if ( this->type != NULL ) {
       trick_MM->delete_var( (void *)this->type );
@@ -157,7 +157,7 @@ void PhysicalEntityBase::set_type( const char *new_name )
    return;
 }
 
-void PhysicalEntityBase::set_status( const char *new_name )
+void PhysicalEntityBase::set_status( char const *new_name )
 {
    if ( this->status != NULL ) {
       trick_MM->delete_var( (void *)this->status );
@@ -166,7 +166,7 @@ void PhysicalEntityBase::set_status( const char *new_name )
    return;
 }
 
-void PhysicalEntityBase::set_parent_ref_frame( const char *new_name )
+void PhysicalEntityBase::set_parent_ref_frame( char const *new_name )
 {
    if ( this->parent_ref_frame != NULL ) {
       trick_MM->delete_var( (void *)this->parent_ref_frame );

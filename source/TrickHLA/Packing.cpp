@@ -76,7 +76,7 @@ void Packing::initialize_callback(
 }
 
 Attribute *Packing::get_attribute(
-   const char *attr_FOM_name )
+   char const *attr_FOM_name )
 {
    return object->get_attribute( attr_FOM_name );
 }
@@ -86,7 +86,7 @@ Attribute *Packing::get_attribute(
  *  then exec-terminate is called.
  */
 Attribute *Packing::get_attribute_and_validate(
-   const char *attr_FOM_name )
+   char const *attr_FOM_name )
 {
    // Make sure the FOM name is not NULL.
    if ( attr_FOM_name == NULL ) {

@@ -77,11 +77,11 @@ class SimTimeline : public Timeline
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for SimTimeline class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   SimTimeline( const SimTimeline &rhs );
+   SimTimeline( SimTimeline const &rhs );
 
    /*! @brief Assignment operator for SimTimeline class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   SimTimeline &operator=( const SimTimeline &rhs );
+   SimTimeline &operator=( SimTimeline const &rhs );
 };
 
 } // namespace TrickHLA

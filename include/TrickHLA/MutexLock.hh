@@ -60,11 +60,11 @@ class MutexLock
 
    /*! @brief Lock the mutex.
     *  @return Integer value of 0 for success, otherwise non-zero for an error. */
-   const int lock();
+   int const lock();
 
    /*! @brief Unlock the mutex.
     *  @return Integer value of 0 for success, otherwise non-zero for an error. */
-   const int unlock();
+   int const unlock();
 
    pthread_mutex_t mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
 
@@ -72,10 +72,10 @@ class MutexLock
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for MutexLock class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   MutexLock( const MutexLock &rhs );
+   MutexLock( MutexLock const &rhs );
    /*! @brief Assignment operator for MutexLock class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   MutexLock &operator=( const MutexLock &rhs );
+   MutexLock &operator=( MutexLock const &rhs );
 };
 
 } // namespace TrickHLA

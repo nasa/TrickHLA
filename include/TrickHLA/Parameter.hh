@@ -96,9 +96,9 @@ class Parameter
     *  @param interaction_index The array index to the parent TrickHLA::Interaction.
     *  @param parameter_index The array index to this Parameter.
     */
-   void initialize( const char *interaction_fom_name,
-                    const int   interaction_index,
-                    const int   parameter_index );
+   void initialize( char const *interaction_fom_name,
+                    int const   interaction_index,
+                    int const   parameter_index );
 
    /*! @brief Initializes the TrickHLA Parameter from the supplied address and
     * ATTRIBUTES of the trick variable.
@@ -106,7 +106,7 @@ class Parameter
     *  @param in_addr Address of the trick variable.
     *  @param in_attr ATTRIBUTES of the trick variable.
     */
-   void initialize( const char *interaction_fom_name,
+   void initialize( char const *interaction_fom_name,
                     void *      in_addr,
                     ATTRIBUTES *in_attr );
 
@@ -115,14 +115,14 @@ class Parameter
 
    /*! @brief Get the FOM name for this parameter.
     *  @return The FOM name of this parameter. */
-   const char *get_FOM_name() const
+   char const *get_FOM_name() const
    {
       return FOM_name;
    }
 
    /*! @brief Set the FOM name for the paramter.
     *  @param in_name The FOM name for the paramter. */
-   void set_FOM_name( const char *in_name )
+   void set_FOM_name( char const *in_name )
    {
       if ( FOM_name != NULL ) {
          if ( TMM_is_alloced( FOM_name ) ) {
@@ -135,7 +135,7 @@ class Parameter
 
    /*! @brief Get the Trick variable name associated with this parameter.
     *  @return The Trick variable name associated with this parameter. */
-   const char *get_trick_name() const
+   char const *get_trick_name() const
    {
       return trick_name;
    }
@@ -191,8 +191,8 @@ class Parameter
    /*! @brief Extract the data out of the HLA Parameter Value.
     *  @param param_size Parameter data size.
     *  @param param_data Parameter data. */
-   void extract_data( const size_t         param_size,
-                      const unsigned char *param_data );
+   void extract_data( size_t const         param_size,
+                      unsigned char const *param_data );
 
    /*! @brief Check if a parameter value has changed.
     *  @return True if a parameter value has changed; False otherwise. */
@@ -323,11 +323,11 @@ class Parameter
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for Parameter class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   Parameter( const Parameter &rhs );
+   Parameter( Parameter const &rhs );
 
    /*! @brief Assignment operator for Parameter class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   Parameter &operator=( const Parameter &rhs );
+   Parameter &operator=( Parameter const &rhs );
 };
 
 } // namespace TrickHLA

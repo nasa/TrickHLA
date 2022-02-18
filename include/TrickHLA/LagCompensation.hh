@@ -81,13 +81,13 @@ class LagCompensation
    /*! @brief Get the Attribute by FOM name.
     *  @return Attribute for the given name.
     *  @param attr_FOM_name Attribute FOM name. */
-   Attribute *get_attribute( const char *attr_FOM_name );
+   Attribute *get_attribute( char const *attr_FOM_name );
 
    /*! @brief Get the Attribute for the given attribute FOM name an validate
     *  that is exists.
     *  @return Attribute for the given name.
     *  @param attr_FOM_name Attribute FOM name. */
-   Attribute *get_attribute_and_validate( const char *attr_FOM_name );
+   Attribute *get_attribute_and_validate( char const *attr_FOM_name );
 
    /*! @brief Returns a copy of the object's lookahead time.
     *  @return A copy of the federate's lookahead time. */
@@ -126,10 +126,10 @@ class LagCompensation
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for LagCompensation class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   LagCompensation( const LagCompensation &rhs );
+   LagCompensation( LagCompensation const &rhs );
    /*! @brief Assignment operator for LagCompensation class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   LagCompensation &operator=( const LagCompensation &rhs );
+   LagCompensation &operator=( LagCompensation const &rhs );
 };
 
 } // namespace TrickHLA

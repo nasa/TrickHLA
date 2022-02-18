@@ -99,9 +99,9 @@ class RefFrameBase : public TrickHLA::Packing
     *  */
    virtual void default_data( SpaceFOM::ExecutionControl *execution_control,
                               TrickHLA::Object *          object,
-                              const char *                sim_obj_name,
-                              const char *                ref_frame_obj_name,
-                              const char *                ref_frame_name,
+                              char const *                sim_obj_name,
+                              char const *                ref_frame_obj_name,
+                              char const *                ref_frame_name,
                               bool                        publishes );
 
    // Initialize the packing object.
@@ -116,22 +116,22 @@ class RefFrameBase : public TrickHLA::Packing
    // Access functions.
    /*! @brief Access function to set the HLA federation instance name for the reference frame.
     *  @param new_name Object instance name for this reference frame. */
-   virtual void set_name( const char *new_name );
+   virtual void set_name( char const *new_name );
 
    /*! @brief Access function to get the HLA federation instance name for the reference frame.
     *  @return Object instance name for this reference frame. */
-   virtual const char *get_name()
+   virtual char const *get_name()
    {
       return name;
    }
 
    /*! @brief Access function to set the HLA federation instance name for the parent reference frame.
     *  @param name Object instance name for the parent reference frame. */
-   virtual void set_parent_name( const char *name );
+   virtual void set_parent_name( char const *name );
 
    /*! @brief Access function to get the HLA federation instance name for the parent reference frame.
     *  @return Object instance name for the parent reference frame. */
-   virtual const char *get_parent_name()
+   virtual char const *get_parent_name()
    {
       return parent_name;
    }
@@ -169,17 +169,17 @@ class RefFrameBase : public TrickHLA::Packing
    // This object is not copyable
    /*! @brief Copy constructor for RefFrameBase class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   RefFrameBase( const RefFrameBase & );
+   RefFrameBase( RefFrameBase const &rhs );
    /*! @brief Assignment operator for RefFrameBase class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   RefFrameBase &operator=( const RefFrameBase & );
+   RefFrameBase &operator=( RefFrameBase const &rhs );
 
    /*! @brief Uses Trick memory allocation routines to allocate a new string
     *  that is input file compliant. */
-   char *allocate_input_string( const char *c_string );
+   char *allocate_input_string( char const *c_string );
    /*! @brief Uses Trick memory allocation routines to allocate a new string
     *  that is input file compliant. */
-   char *allocate_input_string( std::string cpp_string );
+   char *allocate_input_string( std::string const &cpp_string );
 };
 
 } // namespace SpaceFOM

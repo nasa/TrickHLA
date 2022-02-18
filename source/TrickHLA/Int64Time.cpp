@@ -139,13 +139,13 @@ wstring Int64Time::to_wstring() const
 }
 
 void Int64Time::set(
-   const int64_t value )
+   int64_t const value )
 {
    hla_time.setTime( value );
 }
 
 void Int64Time::set(
-   const double value )
+   double const value )
 {
    hla_time = Int64Interval::to_microseconds( value );
 }
@@ -153,7 +153,7 @@ void Int64Time::set(
 void Int64Time::set(
    RTI1516_NAMESPACE::LogicalTime const &value )
 {
-   const RTI1516_NAMESPACE::HLAinteger64Time &p = dynamic_cast< const RTI1516_NAMESPACE::HLAinteger64Time & >( value );
+   RTI1516_NAMESPACE::HLAinteger64Time const &p = dynamic_cast< RTI1516_NAMESPACE::HLAinteger64Time const & >( value );
 
    hla_time = p.getTime();
 }

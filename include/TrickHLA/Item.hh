@@ -64,10 +64,10 @@ class Item
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for Item class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   Item( const Item &rhs );
+   Item( Item const &rhs );
    /*! @brief Assignment operator for Item class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   Item &operator=( const Item &rhs );
+   Item &operator=( Item const &rhs );
 };
 
 } // namespace TrickHLA

@@ -62,21 +62,21 @@ namespace IMSim
 {
 
 // ExecutionControl type string.
-const std::string ExecutionControl::type = "IMSim";
+std::string const ExecutionControl::type = "IMSim";
 
 // The IMSim Multiphase initialization HLA synchronization-points (version 2).
-static const std::wstring SIM_CONFIG_SYNC_POINT     = L"sim_config_v2";
-static const std::wstring INITIALIZE_SYNC_POINT     = L"initialize_v2";
-static const std::wstring INIT_COMPLETE_SYNC_POINT  = L"initialization_complete_v2";
-static const std::wstring STARTUP_SYNC_POINT        = L"startup_v2";
-static const std::wstring FEDSAVE_SYNC_POINT        = L"FEDSAVE_v2";
-static const std::wstring FEDRUN_SYNC_POINT         = L"FEDRUN_v2";
-static const std::wstring STARTUP_FREEZE_SYNC_POINT = L"pause_0.0";
+static std::wstring const SIM_CONFIG_SYNC_POINT     = L"sim_config_v2";
+static std::wstring const INITIALIZE_SYNC_POINT     = L"initialize_v2";
+static std::wstring const INIT_COMPLETE_SYNC_POINT  = L"initialization_complete_v2";
+static std::wstring const STARTUP_SYNC_POINT        = L"startup_v2";
+static std::wstring const FEDSAVE_SYNC_POINT        = L"FEDSAVE_v2";
+static std::wstring const FEDRUN_SYNC_POINT         = L"FEDRUN_v2";
+static std::wstring const STARTUP_FREEZE_SYNC_POINT = L"pause_0.0";
 
 // SISO SpaceFOM Mode Transition Request (MTR) synchronization-points.
-static const std::wstring MTR_RUN_SYNC_POINT      = L"mtr_run";
-static const std::wstring MTR_FREEZE_SYNC_POINT   = L"mtr_freeze";
-static const std::wstring MTR_SHUTDOWN_SYNC_POINT = L"mtr_shutdown";
+static std::wstring const MTR_RUN_SYNC_POINT      = L"mtr_run";
+static std::wstring const MTR_FREEZE_SYNC_POINT   = L"mtr_freeze";
+static std::wstring const MTR_SHUTDOWN_SYNC_POINT = L"mtr_shutdown";
 
 } // namespace IMSim
 
@@ -1369,7 +1369,7 @@ void ExecutionControl::receive_interaction(
    RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
    RTI1516_USERDATA const &                          theUserSuppliedTag,
    RTI1516_NAMESPACE::LogicalTime const &            theTime,
-   bool                                              received_as_TSO )
+   bool const                                        received_as_TSO )
 {
 
    // Find the TrickHLAFreezeInteraction we have data for.
@@ -2392,7 +2392,7 @@ void ExecutionControl::un_freeze()
    pause_sync_pts.clear_state();
 }
 
-void ExecutionControl::check_pause( const double check_pause_delta )
+void ExecutionControl::check_pause( double const check_pause_delta )
 {
    // DANNY2.7 for IMSim, check_pause is only used at init time to handle start
    //  in freeze mode.
@@ -2435,7 +2435,7 @@ void ExecutionControl::check_pause( const double check_pause_delta )
  *  @job_class{initialization}
  */
 void ExecutionControl::check_pause_at_init(
-   const double check_pause_delta )
+   double const check_pause_delta )
 {
    // Dispatch to the ExecutionControl method.
    this->get_manager()->get_execution_control()->check_pause_at_init( check_pause_delta );
@@ -2470,7 +2470,7 @@ ExecutionConfiguration *ExecutionControl::get_execution_configuration()
 
 void ExecutionControl::start_federation_save_at_scenario_time(
    double      freeze_scenario_time,
-   const char *file_name )
+   char const *file_name )
 {
 
    if ( freeze_interaction->get_handler() != NULL ) {

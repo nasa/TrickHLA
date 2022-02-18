@@ -117,7 +117,7 @@ ExecutionConfiguration::ExecutionConfiguration()
  * @job_class{initialization}
  */
 ExecutionConfiguration::ExecutionConfiguration(
-   const char *s_define_name )
+   char const *s_define_name )
    : ExecutionConfigurationBase( s_define_name ),
      root_frame_name( NULL ),
      scenario_time_epoch( -std::numeric_limits< double >::max() ),
@@ -407,7 +407,7 @@ void ExecutionConfiguration::unpack()
 }
 
 void ExecutionConfiguration::set_root_frame_name(
-   const char *name )
+   char const *name )
 {
    // Free the Trick memory if it's already allocated.
    if ( this->root_frame_name != static_cast< char * >( NULL ) ) {

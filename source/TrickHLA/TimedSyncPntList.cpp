@@ -79,7 +79,7 @@ void TimedSyncPntList::add_sync_point(
 
 void TimedSyncPntList::add_sync_point(
    wstring const &  label,
-   const Int64Time &time )
+   Int64Time const &time )
 {
    TimedSyncPnt *sp = new TimedSyncPnt( time, label );
 
@@ -91,7 +91,7 @@ void TimedSyncPntList::add_sync_point(
 
 bool TimedSyncPntList::achieve_all_sync_points(
    RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-   const Int64Time &                 checkTime )
+   Int64Time const &                 checkTime )
 {
    bool wasAcknowledged = false;
 
@@ -119,7 +119,7 @@ bool TimedSyncPntList::achieve_all_sync_points(
 }
 
 bool TimedSyncPntList::check_sync_points(
-   const Int64Time &checkTime )
+   Int64Time const &checkTime )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.

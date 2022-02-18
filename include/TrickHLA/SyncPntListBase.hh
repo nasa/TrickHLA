@@ -130,7 +130,7 @@ class SyncPntListBase
     *  @param label      Sync-point label.
     *  @param not_unique True if not unique label. */
    virtual void sync_point_registration_failed( std::wstring const &label,
-                                                bool                not_unique );
+                                                bool const          not_unique );
 
    /*! @brief Wait for all the sync-points to be registered with the RTI.
     *  @param fed_ptr Pointer to TrickHLA::Federate instance. */
@@ -291,10 +291,10 @@ class SyncPntListBase
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for SyncPntListBase class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   SyncPntListBase( const SyncPntListBase &rhs );
+   SyncPntListBase( SyncPntListBase const &rhs );
    /*! @brief Assignment operator for SyncPntListBase class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   SyncPntListBase &operator=( const SyncPntListBase &rhs );
+   SyncPntListBase &operator=( SyncPntListBase const &rhs );
 };
 
 } // namespace TrickHLA

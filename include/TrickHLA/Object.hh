@@ -261,7 +261,7 @@ class Object
 #if defined( THLA_QUEUE_REFLECTED_ATTRIBUTES )
    /*! @brief Enqueue the reflected attributes.
     *  @param theAttributes Attributes data. */
-   void enqueue_data( const RTI1516_NAMESPACE::AttributeHandleValueMap &theAttributes );
+   void enqueue_data( RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributes );
 #endif
 
    /*! @brief This function extracts the new attribute values.
@@ -316,14 +316,14 @@ class Object
 
    /*! @brief Get the object instance name.
     *  @return Object instance name. */
-   const char *get_name() const
+   char const *get_name() const
    {
       return name;
    }
 
    /*! @brief Get the object instance name as a C++ string.
     *  @return The object instance name as a C++ string. */
-   const std::string get_name_string() const
+   std::string const get_name_string() const
    {
       return ( ( name != NULL ) ? name : "" );
    }
@@ -356,7 +356,7 @@ class Object
 
    /*! @brief Get the FOM name for this object.
     *  @return The FOM name for this object. */
-   const char *get_FOM_name() const
+   char const *get_FOM_name() const
    {
       return FOM_name;
    }
@@ -473,7 +473,7 @@ class Object
     * the given attribute configuration.
     *  @return True for any locally owned and published attribute.
     *  @param attr_config Attribute configuration. */
-   bool any_locally_owned_published_attribute( const DataUpdateEnum attr_config );
+   bool any_locally_owned_published_attribute( DataUpdateEnum const attr_config );
 
    /*! @brief Determines if any attribute is locally owned, published, has
     * a cycle-time that is ready for a cyclic send or is requested for update.
@@ -506,7 +506,7 @@ class Object
     * subscribed to for the given attribute configuration.
     *  @return True for any remotely owned, subscribed attribute.
     *  @param attr_config Attribute configuration. */
-   bool any_remotely_owned_subscribed_attribute( const DataUpdateEnum attr_config );
+   bool any_remotely_owned_subscribed_attribute( DataUpdateEnum const attr_config );
 
    /*! @brief Determines if any cyclically updated attributes are remotely
     * owned and subscribed.
@@ -623,12 +623,12 @@ class Object
    /*! @brief Gets the attribute for the given FOM name.
     *  @return Associated TrickHLA::Attribute.
     *  @param attr_FOM_name Attribute FOM name. */
-   Attribute *get_attribute( std::string attr_FOM_name );
+   Attribute *get_attribute( std::string const &attr_FOM_name );
 
    /*! @brief Gets the attribute for the given FOM name.
     *  @return Associated TrickHLA::Attribute.
     *  @param attr_FOM_name Attribute FOM name. */
-   Attribute *get_attribute( const char *attr_FOM_name );
+   Attribute *get_attribute( char const *attr_FOM_name );
 
    /*! @brief Get the count of the number of attributes associated with this object.
     *  @return The number of attributes associated with this object. */
@@ -663,7 +663,7 @@ class Object
    /*! @brief Pack the attributes for the given configuration into the buffer
     * that is used for sending the encoded attribute through the RTI.
     *  @param attr_config Attribute configuration. */
-   void pack_attribute_buffers( const DataUpdateEnum attr_config )
+   void pack_attribute_buffers( DataUpdateEnum const attr_config )
    {
       pack_attribute_buffers( attr_config, false );
    }
@@ -672,12 +672,12 @@ class Object
     * that is used for sending the encoded attribute through the RTI.
     *  @param attr_config Attribute configuration.
     *  @param include_requested True to also included requeted attributes */
-   void pack_attribute_buffers( const DataUpdateEnum attr_config, const bool include_requested );
+   void pack_attribute_buffers( DataUpdateEnum const attr_config, bool const include_requested );
 
    /*! @brief Unpack the buffer back into the attributes that have the given
     * configuration.
     *  @param attr_config Attribute configuration. */
-   void unpack_attribute_buffers( const DataUpdateEnum attr_config );
+   void unpack_attribute_buffers( DataUpdateEnum const attr_config );
 
    /*! @brief Copy the cyclic and requested attribute values to the buffer for each attribute. */
    void pack_cyclic_and_requested_attribute_buffers()
@@ -720,7 +720,7 @@ class Object
    /*! @brief Create a name value pair set, aka attribute handle value pair,
     * for the attributes of this object.
     * @param required_config Attribute configuration required in order to send data. */
-   void create_attribute_set( const DataUpdateEnum required_config )
+   void create_attribute_set( DataUpdateEnum const required_config )
    {
       create_attribute_set( required_config, false );
    }
@@ -729,7 +729,7 @@ class Object
     * for the attributes of this object.
     * @param required_config Attribute configuration required in order to send data
     * @param include_requested True to also included requeted attributes */
-   void create_attribute_set( const DataUpdateEnum required_config, const bool include_requested );
+   void create_attribute_set( DataUpdateEnum const required_config, bool const include_requested );
 
    MutexLock mutex;           ///< @trick_io{**} Mutex to lock thread over critical code sections.
    MutexLock ownership_mutex; ///< @trick_io{**} Mutex to lock thread over attribute ownership code sections.
@@ -784,11 +784,11 @@ class Object
   private:
    /*! @brief Sets the new value of the name attribute.
     *  @param new_name New name for the object instance. */
-   void set_name( const char *new_name );
+   void set_name( char const *new_name );
 
    /*! @brief Set the name of the object and mark it as changed.
     *  @param new_name The new name of the object. */
-   void set_name_and_mark_changed( const char *new_name )
+   void set_name_and_mark_changed( char const *new_name )
    {
       set_name( new_name );
       mark_changed();
@@ -798,10 +798,10 @@ class Object
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for Object class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   Object( const Object &rhs );
+   Object( Object const &rhs );
    /*! @brief Assignment operator for Object class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   Object &operator=( const Object &rhs );
+   Object &operator=( Object const &rhs );
 };
 
 // The Key is the object instance handle.

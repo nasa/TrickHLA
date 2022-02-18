@@ -118,9 +118,9 @@ Parameter::~Parameter()
  * @job_class{initialization}
  */
 void Parameter::initialize(
-   const char *interaction_fom_name,
-   const int   interaction_index,
-   const int   parameter_index )
+   char const *interaction_fom_name,
+   int const   interaction_index,
+   int const   parameter_index )
 {
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
@@ -199,7 +199,7 @@ void Parameter::initialize(
  * @job_class{initialization}
  */
 void Parameter::initialize(
-   const char *interaction_fom_name,
+   char const *interaction_fom_name,
    void *      in_addr,
    ATTRIBUTES *in_attr )
 {
@@ -208,14 +208,14 @@ void Parameter::initialize(
 
    if ( address == NULL ) {
       ostringstream errmsg;
-      errmsg << "Parameter::initialize(const char *, void *, ATTRIBUTES *):" << __LINE__
+      errmsg << "Parameter::initialize(char const *, void *, ATTRIBUTES *):" << __LINE__
              << " ERROR: For FOM Interaction Parameter '" << interaction_fom_name
              << "'. Unexpected NULL trick variable address." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    if ( attr == NULL ) {
       ostringstream errmsg;
-      errmsg << "Parameter::initialize(const char *, void *, ATTRIBUTES *):" << __LINE__
+      errmsg << "Parameter::initialize(char const *, void *, ATTRIBUTES *):" << __LINE__
              << " ERROR: For FOM Interaction Parameter '" << interaction_fom_name
              << "'. Unexpected NULL ATTRIBUTES pointer." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -539,8 +539,8 @@ VariableLengthData Parameter::get_encoded_parameter_value()
 }
 
 void Parameter::extract_data(
-   const size_t         param_size,
-   const unsigned char *param_data )
+   size_t const         param_size,
+   unsigned char const *param_data )
 {
    // Make sure we actually have parameter data to process.
    if ( ( param_size == 0 ) || ( param_data == NULL ) ) {

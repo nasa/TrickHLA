@@ -150,7 +150,7 @@ class Manager
     * initialized.
     *  @return True if the RTI is ready, false otherwise.
     *  @param method_name The method/function name. */
-   bool is_RTI_ready( const char *method_name );
+   bool is_RTI_ready( char const *method_name );
 
    /*! @brief Check if this is a late joining federate.
     *  @return True if the is a late joining federate. */
@@ -164,7 +164,7 @@ class Manager
 
    /*! @brief Sends the initialization data for the specified object instance name.
     *  @return Name of object instance name to send data for. */
-   void send_init_data( const char *instance_name );
+   void send_init_data( char const *instance_name );
 
    /*! @brief Wait to receive all the initialization data that is marked as required. */
    void receive_init_data();
@@ -172,7 +172,7 @@ class Manager
    /*! @brief Wait to receive the initialization data for the specified object
     * instance name.
     * @return Name of object instance name to receive data for. */
-   void receive_init_data( const char *instance_name );
+   void receive_init_data( char const *instance_name );
 
    /*! @brief Clear any remaining initialization sync-points. */
    void clear_init_sync_points();
@@ -180,7 +180,7 @@ class Manager
    /*! @brief Achieve then wait for the federation to become synchronized for
     * the specified sync-point label.
     *  @param sync_point_label Name of the synchronization point label. */
-   void wait_for_init_sync_point( const char *sync_point_label );
+   void wait_for_init_sync_point( char const *sync_point_label );
 
    /*! @brief Request an update to the object attributes for the given object
     * instance name.
@@ -190,7 +190,7 @@ class Manager
    /*! @brief Request an update to the object attributes for the given object
     * instance name.
     *  @param instance_name Object instance name. */
-   void request_data_update( const char *instance_name );
+   void request_data_update( char const *instance_name );
 
    /*! @brief Send cyclic an requested atrributes data to the remote federates. */
    void send_cyclic_and_requested_data();
@@ -272,7 +272,7 @@ class Manager
       RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
       RTI1516_USERDATA const &                          theUserSuppliedTag,
       RTI1516_NAMESPACE::LogicalTime const &            theTime,
-      bool                                              received_as_TSO );
+      bool const                                        received_as_TSO );
 
    /*! @brief Process the ownership requests. */
    void process_ownership();
@@ -291,17 +291,17 @@ class Manager
 
    /*! @brief Start the federation save as soon as possible.
     *  @param file_name Checkpoint file name. */
-   void start_federation_save( const char *file_name );
+   void start_federation_save( char const *file_name );
 
    /*! @brief Start the Federation save at the specified simulation time.
     *  @param freeze_sim_time Simulation time to freeze.
     *  @param file_name       Checkpoint file name. */
-   void start_federation_save_at_sim_time( double freeze_sim_time, const char *file_name );
+   void start_federation_save_at_sim_time( double freeze_sim_time, char const *file_name );
 
    /*! @brief Start the Federation save at the specified scenario time.
     *  @param freeze_scenario_time Scenario time to freeze.
     *  @param file_name            Checkpoint file name. */
-   void start_federation_save_at_scenario_time( double freeze_scenario_time, const char *file_name );
+   void start_federation_save_at_scenario_time( double freeze_scenario_time, char const *file_name );
 
    /*! @brief Setup the checkpoint data structures. */
    void setup_checkpoint();
@@ -352,14 +352,14 @@ class Manager
    /*! @brief Sets the RTI run-time type IDs/handles for the object and attributes.
     *  @param data_obj_count Number of objects.
     *  @param data_objects   Simulation TrickHLA Objects. */
-   void setup_object_RTI_handles( const int data_obj_count,
+   void setup_object_RTI_handles( int const data_obj_count,
                                   Object *  data_objects );
 
    /*! @brief Sets the RTI run-time type IDs/handles for the specified
     * interactions and parameters.
     *  @param interactions_counter Number of interactions.
     *  @param in_interactions      Simulation TrickHLA Interaction objects. */
-   void setup_interaction_RTI_handles( const int    interactions_counter,
+   void setup_interaction_RTI_handles( int const    interactions_counter,
                                        Interaction *in_interactions );
 
    /*! @brief Set up the Trick ref-attributes for the user specified objects,
@@ -491,7 +491,7 @@ class Manager
     * and attributes.
     * @param data_obj_count Number of objects.
     * @param data_objects   Simulation TrickHLA::Objects. */
-   void setup_object_ref_attributes( const int data_obj_count,
+   void setup_object_ref_attributes( int const data_obj_count,
                                      Object *  data_objects );
 
    /*! @brief Set up the Trick ref-attributes for the user specified
@@ -504,7 +504,7 @@ class Manager
    /*! @brief Set object instance handles by using the object instance names.
     *  @param data_obj_count Number of objects.
     *  @param data_objects   Simulation TrickHLA Objects. */
-   void set_object_instance_handles_by_name( const int data_obj_count,
+   void set_object_instance_handles_by_name( int const data_obj_count,
                                              Object *  data_objects );
 
    /*! @brief Returns the first object that matches the specified Object-Class,
@@ -549,7 +549,7 @@ class Manager
    /*! @brief Tell the federate to initiate a save announce with the
     * user-supplied checkpoint name set for the current frame.
     *  @param file_name Checkpoint file name. */
-   void initiate_federation_save( const char *file_name );
+   void initiate_federation_save( char const *file_name );
 
    //
    // Checkpoint / clear / restore any interactions
@@ -571,10 +571,10 @@ class Manager
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for Manager class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   Manager( const Manager &rhs );
+   Manager( Manager const &rhs );
    /*! @brief Assignment operator for Manager class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   Manager &operator=( const Manager &rhs );
+   Manager &operator=( Manager const &rhs );
 };
 
 } // namespace TrickHLA

@@ -99,7 +99,7 @@ class StringUtilities
     *  @param input  The input C string. */
    static void to_wstring(
       std::wstring &output,
-      const char *  input )
+      char const *  input )
    {
       std::string s = ( input != NULL ) ? input : "";
       output.assign( s.begin(), s.end() );
@@ -146,7 +146,7 @@ class StringUtilities
       std::string &           output,
       RTI1516_USERDATA const &data )
    {
-      output.assign( (const char *)data.data(), data.size() );
+      output.assign( (char const *)data.data(), data.size() );
       for ( size_t i = 0; i < output.size(); ++i ) {
          if ( !isprint( output[i] ) ) {
             output.replace( i, 1, 1, ' ' );
@@ -161,7 +161,7 @@ class StringUtilities
       std::string &           output,
       RTI1516_USERDATA const &data )
    {
-      output.assign( (const char *)data.data(), data.size() );
+      output.assign( (char const *)data.data(), data.size() );
    }
 
    /*! @brief Convert a federate handle to a C string representation.
@@ -366,11 +366,11 @@ class StringUtilities
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for StringUtilities class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   StringUtilities( const StringUtilities &rhs );
+   StringUtilities( StringUtilities const &rhs );
 
    /*! @brief Assignment operator for StringUtilities class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   StringUtilities &operator=( const StringUtilities &rhs );
+   StringUtilities &operator=( StringUtilities const &rhs );
 };
 
 } // namespace TrickHLA

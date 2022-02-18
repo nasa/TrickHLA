@@ -58,7 +58,7 @@ MutexLock::~MutexLock()
  * @brief Lock the mutex.
  * @return Integer value of 0 for success, otherwise non-zero for an error.
  */
-const int MutexLock::lock()
+int const MutexLock::lock()
 {
    return pthread_mutex_lock( &mutex );
 }
@@ -67,7 +67,7 @@ const int MutexLock::lock()
  * @brief Unlock the mutex.
  * @return Integer value of 0 for success, otherwise non-zero for an error.
  */
-const int MutexLock::unlock()
+int const MutexLock::unlock()
 {
    return pthread_mutex_unlock( &mutex );
 }

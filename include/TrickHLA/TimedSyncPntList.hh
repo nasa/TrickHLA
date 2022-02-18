@@ -90,7 +90,7 @@ class TimedSyncPntList : public TrickHLA::SyncPntListBase
    /*! @brief Add the given synchronization point label and action time to the list.
     *  @param label Synchronization point label.
     *  @param time  Action time. */
-   virtual void add_sync_point( std::wstring const &label, const Int64Time &time );
+   virtual void add_sync_point( std::wstring const &label, Int64Time const &time );
 
    /*! @brief Achieve all the synchronization points in the list.
     *  @return True is any synchronization point in the list was achieved.
@@ -107,13 +107,13 @@ class TimedSyncPntList : public TrickHLA::SyncPntListBase
     *  @param rti_ambassador    Reference to RTI Ambassador.
     *  @param checkTime Time to check. */
    virtual bool achieve_all_sync_points( RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-                                         const Int64Time &                 checkTime );
+                                         Int64Time const &                 checkTime );
 
    /*! @brief Determine if we have any synchronization point that has a action
     * time less than the given time.
     *  @return True if sync-point is ready to be cleared.
     *  @param checkTime Time to check. */
-   virtual bool check_sync_points( const Int64Time &checkTime );
+   virtual bool check_sync_points( Int64Time const &checkTime );
 
    /*! @brief Converts the vector of synchronization points to a
     *  checkpoint-able class.
@@ -127,10 +127,10 @@ class TimedSyncPntList : public TrickHLA::SyncPntListBase
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for TimedSyncPntList class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   TimedSyncPntList( const TimedSyncPntList &rhs );
+   TimedSyncPntList( TimedSyncPntList const &rhs );
    /*! @brief Assignment operator for TimedSyncPntList class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   TimedSyncPntList &operator=( const TimedSyncPntList &rhs );
+   TimedSyncPntList &operator=( TimedSyncPntList const &rhs );
 };
 
 } // namespace TrickHLA

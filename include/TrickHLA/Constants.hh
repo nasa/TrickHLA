@@ -38,9 +38,9 @@ namespace TrickHLA
 {
 
 // Reference the global static representations in Int64Interval.cpp
-extern const int64_t MICROS_MULTIPLIER;        ///< @trick_units{--}
-extern const int64_t MAX_VALUE_IN_MICROS;      ///< @trick_units{us}
-extern const double  MAX_LOGICAL_TIME_SECONDS; ///< @trick_units{s}
+extern int64_t const MICROS_MULTIPLIER;        ///< @trick_units{--}
+extern int64_t const MAX_VALUE_IN_MICROS;      ///< @trick_units{us}
+extern double const  MAX_LOGICAL_TIME_SECONDS; ///< @trick_units{s}
 
 } // namespace TrickHLA
 

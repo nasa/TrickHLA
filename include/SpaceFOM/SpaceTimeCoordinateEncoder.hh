@@ -108,10 +108,10 @@ class SpaceTimeCoordinateEncoder : public TrickHLA::OpaqueBuffer
    // This object is not copyable
    /*! @brief Copy constructor for SpaceTimeCoordinateEncoder class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   SpaceTimeCoordinateEncoder( const SpaceTimeCoordinateEncoder & );
+   SpaceTimeCoordinateEncoder( SpaceTimeCoordinateEncoder const &rhs );
    /*! @brief Assignment operator for SpaceTimeCoordinateEncoder class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   SpaceTimeCoordinateEncoder &operator=( const SpaceTimeCoordinateEncoder & );
+   SpaceTimeCoordinateEncoder &operator=( SpaceTimeCoordinateEncoder &rhs );
 };
 
 } // namespace SpaceFOM

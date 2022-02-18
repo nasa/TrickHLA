@@ -206,7 +206,7 @@ void SyncPntListBase::sync_point_registration_succeeded(
 
 void SyncPntListBase::sync_point_registration_failed(
    wstring const &label,
-   bool           not_unique )
+   bool const     not_unique )
 {
    // Only handle the sync-points we know about.
    if ( this->contains( label ) ) {

@@ -1084,7 +1084,7 @@ Waiting on reservation of Object Instance Name '%s'.%c",
 
       (void)sleep_timer.sleep();
 
-      if ( !name_registered ) {
+      if ( !name_registered ) { // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
 
          // To be more efficient, we get the time once and share it.
          wallclock_time = sleep_timer.time();
@@ -2610,8 +2610,8 @@ void Object::create_requested_attribute_set()
  * @job_class{scheduled}
  */
 void Object::create_attribute_set(
-   const DataUpdateEnum required_config,
-   const bool           include_requested )
+   DataUpdateEnum const required_config,
+   bool const           include_requested )
 {
    // Make sure we clear the map before we populate it.
    if ( !attribute_values_map->empty() ) {
@@ -2683,7 +2683,7 @@ void Object::create_attribute_set(
  * @job_class{scheduled}
  */
 void Object::enqueue_data(
-   const AttributeHandleValueMap &theAttributes )
+   AttributeHandleValueMap const &theAttributes )
 {
    thla_reflected_attributes_queue.push( theAttributes );
 }
@@ -3661,7 +3661,7 @@ void Object::set_core_job_cycle_time(
 }
 
 void Object::set_name(
-   const char *new_name )
+   char const *new_name )
 {
    // Delete the existing memory used by the name.
    if ( this->name != static_cast< char * >( NULL ) ) {
@@ -3695,13 +3695,13 @@ Attribute *Object::get_attribute(
 }
 
 Attribute *Object::get_attribute(
-   string attr_FOM_name )
+   string const &attr_FOM_name )
 {
    return get_attribute( attr_FOM_name.c_str() );
 }
 
 Attribute *Object::get_attribute(
-   const char *attr_FOM_name )
+   char const *attr_FOM_name )
 {
    if ( attr_FOM_name != NULL ) {
       for ( int i = 0; i < attr_count; ++i ) {
@@ -3768,7 +3768,7 @@ bool Object::any_locally_owned_published_attribute()
 }
 
 bool Object::any_locally_owned_published_attribute(
-   const DataUpdateEnum attr_config )
+   DataUpdateEnum const attr_config )
 {
    for ( int i = 0; i < attr_count; ++i ) {
       if ( attributes[i].is_locally_owned()
@@ -3848,7 +3848,7 @@ bool Object::any_remotely_owned_subscribed_attribute()
 }
 
 bool Object::any_remotely_owned_subscribed_attribute(
-   const DataUpdateEnum attr_config )
+   DataUpdateEnum const attr_config )
 {
    for ( int i = 0; i < attr_count; ++i ) {
       if ( attributes[i].is_remotely_owned()
@@ -3870,8 +3870,8 @@ void Object::pack_requested_attribute_buffers()
 }
 
 void Object::pack_attribute_buffers(
-   const DataUpdateEnum attr_config,
-   const bool           include_requested )
+   DataUpdateEnum const attr_config,
+   bool const           include_requested )
 {
    for ( int i = 0; i < attr_count; ++i ) {
       if ( ( include_requested && attributes[i].is_update_requested() )
@@ -3882,7 +3882,7 @@ void Object::pack_attribute_buffers(
 }
 
 void Object::unpack_attribute_buffers(
-   const DataUpdateEnum attr_config )
+   DataUpdateEnum const attr_config )
 {
    for ( int i = 0; i < attr_count; ++i ) {
       if ( ( attributes[i].get_configuration() & attr_config ) == attr_config ) {

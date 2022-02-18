@@ -71,7 +71,7 @@ class ExecutionConfigurationBase : public Object, public Packing
    friend void init_attrTrickHLA__ExecutionConfigurationBase();
 
   public:
-   const char *S_define_name; /**< @trick_units{--}
+   char const *S_define_name; /**< @trick_units{--}
       Full path name in the S_define for this ExecutionConfiguration instance. */
 
   public:
@@ -80,7 +80,7 @@ class ExecutionConfigurationBase : public Object, public Packing
    ExecutionConfigurationBase();
    /*! @brief Initialization constructor for the TrickHLA ExecutionConfigurationBase class.
     *  @param s_define_name Full path name in the S_define for this ExecutionConfiguration instance. */
-   explicit ExecutionConfigurationBase( const char *s_define_name );
+   explicit ExecutionConfigurationBase( char const *s_define_name );
    /*! @brief Pure virtual destructor for the TrickHLA ExecutionConfigurationBase class. */
    virtual ~ExecutionConfigurationBase() = 0;
 
@@ -100,12 +100,12 @@ class ExecutionConfigurationBase : public Object, public Packing
    /*! @brief Set the full path name in the S_define to the
     * ExecutionConfiguration object instance.
     *  @param new_name Full path name in the S_define for this ExecutionConfiguration instance. */
-   virtual void set_S_define_name( const char *new_name );
+   virtual void set_S_define_name( char const *new_name );
 
    /*! @brief Get the full path name in the S_define to the
     * ExecutionConfiguration object instance.
     *  @return S_define_name Full path name in the S_define for this ExecutionConfiguration instance. */
-   virtual const char *get_S_define_name()
+   virtual char const *get_S_define_name()
    {
       return ( S_define_name );
    }
@@ -181,11 +181,11 @@ class ExecutionConfigurationBase : public Object, public Packing
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for ExecutionConfigurationBase class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   ExecutionConfigurationBase( const ExecutionConfigurationBase &rhs );
+   ExecutionConfigurationBase( ExecutionConfigurationBase const &rhs );
 
    /*! @brief Assignment operator for ExecutionConfigurationBase class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   ExecutionConfigurationBase &operator=( const ExecutionConfigurationBase &rhs );
+   ExecutionConfigurationBase &operator=( ExecutionConfigurationBase const &rhs );
 };
 
 } // namespace TrickHLA

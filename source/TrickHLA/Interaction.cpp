@@ -203,11 +203,11 @@ void Interaction::initialize(
              << " make sure an Interaction-Handler is correctly specified."
              << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
+   } else {
+
+      // Initialize the Interaction-Handler.
+      handler->initialize_callback( this );
    }
-
-   // Initialize the Interaction-Handler.
-   handler->initialize_callback( this );
-
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 }
 

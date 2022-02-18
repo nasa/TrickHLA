@@ -110,10 +110,10 @@ class CTETimelineBase : public Trick::Clock, public Timeline
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for CTETimelineBase class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   CTETimelineBase( const CTETimelineBase &rhs );
+   CTETimelineBase( CTETimelineBase const &rhs );
    /*! @brief Assignment operator for CTETimelineBase class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   CTETimelineBase &operator=( const CTETimelineBase &rhs );
+   CTETimelineBase &operator=( CTETimelineBase const &rhs );
 };
 
 } // namespace TrickHLA

@@ -60,7 +60,7 @@ ParameterItem::ParameterItem()
 */
 ParameterItem::ParameterItem(
    int                                          parameter_index,
-   const RTI1516_NAMESPACE::VariableLengthData *param_value )
+   RTI1516_NAMESPACE::VariableLengthData const *param_value )
    : index( parameter_index ),
      size( 0 ),
      data( NULL )

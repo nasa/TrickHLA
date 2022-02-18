@@ -88,10 +88,10 @@ class LoggableSyncPnt
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for LoggableSyncPnt class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   LoggableSyncPnt( const LoggableSyncPnt &rhs );
+   LoggableSyncPnt( LoggableSyncPnt const &rhs );
    /*! @brief Assignment operator for LoggableSyncPnt class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   LoggableSyncPnt &operator=( const LoggableSyncPnt &rhs );
+   LoggableSyncPnt &operator=( LoggableSyncPnt const &rhs );
 };
 
 } // namespace TrickHLA

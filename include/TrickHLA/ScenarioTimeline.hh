@@ -164,11 +164,11 @@ class ScenarioTimeline : public Timeline
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for ScenarioTimeline class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   ScenarioTimeline( const ScenarioTimeline &rhs );
+   ScenarioTimeline( ScenarioTimeline const &rhs );
 
    /*! @brief Assignment operator for ScenarioTimeline class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   ScenarioTimeline &operator=( const ScenarioTimeline &rhs );
+   ScenarioTimeline &operator=( ScenarioTimeline const &rhs );
 };
 
 } // namespace TrickHLA

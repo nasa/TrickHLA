@@ -62,16 +62,16 @@ class SleepTimeout
 
    /*! @brief Constructor for TrickHLA SleepTimeout class, uses default sleep time of 10,000 microsecond.
     *  @param timeout_seconds Timeout time in seconds. */
-   explicit SleepTimeout( const double timeout_seconds );
+   explicit SleepTimeout( double const timeout_seconds );
 
    /*! @brief Constructor for TrickHLA SleepTimeout class, uses a default timeout of 10 seconds.
     *  @param sleep_micros Time to sleep in microseconds. */
-   explicit SleepTimeout( const long sleep_micros );
+   explicit SleepTimeout( long const sleep_micros );
 
    /*! @brief Constructor for the TrickHLA SleepTimeout class.
     *  @param timeout_seconds Timeout time in seconds.
     *  @param sleep_micros Time to sleep in microseconds. */
-   SleepTimeout( const double timeout_seconds, const long sleep_micros );
+   SleepTimeout( double const timeout_seconds, long const sleep_micros );
 
    /*! @brief Destructor for the TrickHLA SleepTimeout class. */
    virtual ~SleepTimeout();
@@ -79,7 +79,7 @@ class SleepTimeout
    /*! @brief Set the timeout and sleep times.
     *  @param timeout_seconds Timeout time in seconds.
     *  @param sleep_micros Time to sleep in microseconds with a minimum value of 0. */
-   void set( const double timeout_seconds, const long sleep_micros );
+   void set( double const timeout_seconds, long const sleep_micros );
 
    /*! @brief Sleep for the configured sleep time.
     *  @return Integer value of 0 for success, otherwise non-zero for an error. */
@@ -87,16 +87,16 @@ class SleepTimeout
 
    /*! @brief Gets the wall clock time.
     *  @return The wall clock time in microseconds. */
-   const long long time() const;
+   long long const time() const;
 
    /*! @brief Determine if we cumulatively slept for the configured timeout time.
     *  @return True if timeout exceeded, false otherwise. */
-   const bool timeout() const;
+   bool const timeout() const;
 
    /*! @brief Determine if we cumulatively slept for the configured timeout time.
     *  @param time_in_micros Wall clock time in microseconds.
     *  @return True if timeout exceeded, false otherwise. */
-   const bool timeout( const long long time_in_micros ) const;
+   bool const timeout( long long const time_in_micros ) const;
 
    /*! @brief Reset the internal timeout time. */
    void reset();
@@ -110,10 +110,10 @@ class SleepTimeout
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for SleepTimeout class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   SleepTimeout( const SleepTimeout &rhs );
+   SleepTimeout( SleepTimeout const &rhs );
    /*! @brief Assignment operator for SleepTimeout class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   SleepTimeout &operator=( const SleepTimeout &rhs );
+   SleepTimeout &operator=( SleepTimeout const &rhs );
 };
 
 } // namespace TrickHLA

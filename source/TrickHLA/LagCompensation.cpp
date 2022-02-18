@@ -86,7 +86,7 @@ void LagCompensation::receive_lag_compensation()
 }
 
 Attribute *LagCompensation::get_attribute(
-   const char *attr_FOM_name )
+   char const *attr_FOM_name )
 {
    return object->get_attribute( attr_FOM_name );
 }
@@ -96,7 +96,7 @@ Attribute *LagCompensation::get_attribute(
  *  then exec-terminate is called.
  */
 Attribute *LagCompensation::get_attribute_and_validate(
-   const char *attr_FOM_name )
+   char const *attr_FOM_name )
 {
    // Make sure the FOM name is not NULL.
    if ( attr_FOM_name == NULL ) {

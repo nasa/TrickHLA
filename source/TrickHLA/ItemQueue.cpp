@@ -76,7 +76,7 @@ ItemQueue::~ItemQueue()
  * @job_class{initialization}
  */
 void ItemQueue::dump_head_pointers(
-   const char *name )
+   char const *name )
 {
    Item *temp = head->next;
 

@@ -124,7 +124,7 @@ class SyncPnt
 
    /*! @brief Get the synchronization point state.
     *  @return The current state for this synchronization point. */
-   virtual const SyncPtStateEnum get_state() const
+   virtual SyncPtStateEnum const get_state() const
    {
       return state;
    }

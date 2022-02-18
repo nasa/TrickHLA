@@ -87,10 +87,10 @@ class SyncPntList : public TrickHLA::SyncPntListBase
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for SyncPntList class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   SyncPntList( const SyncPntList &rhs );
+   SyncPntList( SyncPntList const &rhs );
    /*! @brief Assignment operator for SyncPntList class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   SyncPntList &operator=( const SyncPntList &rhs );
+   SyncPntList &operator=( SyncPntList const &rhs );
 };
 
 } // namespace TrickHLA

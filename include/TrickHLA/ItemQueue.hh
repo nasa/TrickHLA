@@ -80,7 +80,7 @@ class ItemQueue
 
    /*! @brief Prints the 'head' pointers for all elements in the queue.
     *  @param name Name of the caller. */
-   void dump_head_pointers( const char *name );
+   void dump_head_pointers( char const *name );
 
    /*! @brief Sets head to the passed-in element's next value.
     *  @param item Item to extract the 'next' data pointer. */
@@ -118,10 +118,10 @@ class ItemQueue
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for ItemQueue class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   ItemQueue( const ItemQueue &rhs );
+   ItemQueue( ItemQueue const &rhs );
    /*! @brief Assignment operator for ItemQueue class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   ItemQueue &operator=( const ItemQueue &rhs );
+   ItemQueue &operator=( ItemQueue const &rhs );
 };
 
 } // namespace TrickHLA

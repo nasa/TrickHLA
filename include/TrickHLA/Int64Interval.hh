@@ -177,11 +177,11 @@ class Int64Interval
    //
    /*! @brief Set the time interval to the given value.
     *  @param value The desired time interval in integer microseconds. */
-   void set( const int64_t value );
+   void set( int64_t const value );
 
    /*! @brief Set the time interval to the given value.
     *  @param value The desired time interval in seconds. */
-   void set( const double value );
+   void set( double const value );
 
    /*! @brief Set the time interval to the given value.
     *  @param value The desired time interval as an HLA LogicalTimeInterval. */
@@ -193,12 +193,12 @@ class Int64Interval
    /*! @brief Converts the given floating point time to an integer representing microseconds.
     *  @return Time value in microseconds.
     *  @param value Time value as a floating point double in seconds. */
-   static int64_t to_microseconds( const double value );
+   static int64_t to_microseconds( double const value );
 
    /*! @brief Converts the given integer time in microseconds to an floating-point time representing seconds.
     *  @return Time value in seconds.
     *  @param usec Time value as a 64-bit integer in microseconds. */
-   static double to_seconds( const int64_t usec );
+   static double to_seconds( int64_t const usec );
 
    //
    // Private data.

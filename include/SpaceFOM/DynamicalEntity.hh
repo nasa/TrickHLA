@@ -77,8 +77,8 @@ class DynamicalEntity : public SpaceFOM::PhysicalEntityBase
 
   private:
    // This object is not copyable
-   DynamicalEntity( const DynamicalEntity & );
-   DynamicalEntity &operator=( const DynamicalEntity & );
+   DynamicalEntity( DynamicalEntity const & );
+   DynamicalEntity &operator=( DynamicalEntity const & );
 };
 
 } // namespace SpaceFOM

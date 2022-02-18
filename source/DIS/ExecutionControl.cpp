@@ -64,17 +64,17 @@ namespace DIS
 {
 
 // ExecutionControl type string.
-const std::string ExecutionControl::type = "DIS";
+std::string const ExecutionControl::type = "DIS";
 
 // For DIS: a pause sync point for when master starts up in freeze to make other feds do the same
-static const std::wstring INITIALIZE_SYNC_POINT     = L"initialize";
-static const std::wstring STARTUP_SYNC_POINT        = L"startup";
-static const std::wstring STARTUP_FREEZE_SYNC_POINT = L"pause_0.0";
+static std::wstring const INITIALIZE_SYNC_POINT     = L"initialize";
+static std::wstring const STARTUP_SYNC_POINT        = L"startup";
+static std::wstring const STARTUP_FREEZE_SYNC_POINT = L"pause_0.0";
 
 // SISO SpaceFOM Mode Transition Request (MTR) synchronization-points.
-static const std::wstring MTR_RUN_SYNC_POINT      = L"mtr_run";
-static const std::wstring MTR_FREEZE_SYNC_POINT   = L"mtr_freeze";
-static const std::wstring MTR_SHUTDOWN_SYNC_POINT = L"mtr_shutdown";
+static std::wstring const MTR_RUN_SYNC_POINT      = L"mtr_run";
+static std::wstring const MTR_FREEZE_SYNC_POINT   = L"mtr_freeze";
+static std::wstring const MTR_SHUTDOWN_SYNC_POINT = L"mtr_shutdown";
 
 } // namespace DIS
 

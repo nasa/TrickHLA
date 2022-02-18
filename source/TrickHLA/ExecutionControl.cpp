@@ -59,7 +59,7 @@ namespace TrickHLA
 {
 
 // ExecutionControl type string.
-const std::string ExecutionControl::type = "Simple";
+std::string const ExecutionControl::type = "Simple";
 
 } // namespace TrickHLA
 
@@ -361,7 +361,7 @@ void ExecutionControl::receive_interaction(
    RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
    RTI1516_USERDATA const &                          theUserSuppliedTag,
    RTI1516_NAMESPACE::LogicalTime const &            theTime,
-   bool                                              received_as_TSO )
+   bool const                                        received_as_TSO )
 {
    // Return now that we put the interaction-item into the queue.
    return;
@@ -490,7 +490,7 @@ void ExecutionControl::set_time_padding( double t )
 
 void ExecutionControl::start_federation_save_at_scenario_time(
    double      freeze_scenario_time,
-   const char *file_name )
+   char const *file_name )
 {
    ostringstream errmsg;
    errmsg << "TrickHLA::ExecutionControl::start_federation_save_at_scenario_time:" << __LINE__

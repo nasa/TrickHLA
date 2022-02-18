@@ -77,18 +77,18 @@ namespace SpaceFOM
 {
 
 // ExecutionControl type string.
-const std::string ExecutionControl::type = "SpaceFOM";
+std::string const ExecutionControl::type = "SpaceFOM";
 
 // SISO Space Reference FOM initialization HLA synchronization-points.
-static const std::wstring INIT_STARTED_SYNC_POINT          = L"initialization_started";
-static const std::wstring INIT_COMPLETED_SYNC_POINT        = L"initialization_completed";
-static const std::wstring OBJECTS_DISCOVERED_SYNC_POINT    = L"objects_discovered";
-static const std::wstring ROOT_FRAME_DISCOVERED_SYNC_POINT = L"root_frame_discovered";
+static std::wstring const INIT_STARTED_SYNC_POINT          = L"initialization_started";
+static std::wstring const INIT_COMPLETED_SYNC_POINT        = L"initialization_completed";
+static std::wstring const OBJECTS_DISCOVERED_SYNC_POINT    = L"objects_discovered";
+static std::wstring const ROOT_FRAME_DISCOVERED_SYNC_POINT = L"root_frame_discovered";
 
 // SISO SpaceFOM Mode Transition Request (MTR) synchronization-points.
-static const std::wstring MTR_RUN_SYNC_POINT      = L"mtr_run";
-static const std::wstring MTR_FREEZE_SYNC_POINT   = L"mtr_freeze";
-static const std::wstring MTR_SHUTDOWN_SYNC_POINT = L"mtr_shutdown";
+static std::wstring const MTR_RUN_SYNC_POINT      = L"mtr_run";
+static std::wstring const MTR_FREEZE_SYNC_POINT   = L"mtr_freeze";
+static std::wstring const MTR_SHUTDOWN_SYNC_POINT = L"mtr_shutdown";
 
 } // namespace SpaceFOM
 
@@ -247,8 +247,8 @@ void ExecutionControl::setup_interaction_ref_attributes()
    }
 
    // Set up name, handler, publish and subscribe.
-   mtr_interaction->set_FOM_name( (char *)"ModeTransitionRequest" );
-   mtr_interaction->set_handler( &mtr_interaction_handler );
+   mtr_interaction->set_FOM_name( (char *)"ModeTransitionRequest" ); // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
+   mtr_interaction->set_handler( &mtr_interaction_handler );         // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
    mtr_interaction_handler.set_name( "ModeTransitionRequest" );
    if ( this->is_master() ) {
       mtr_interaction->set_subscribe();
@@ -497,7 +497,7 @@ void ExecutionControl::receive_interaction(
    RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
    RTI1516_USERDATA const &                          theUserSuppliedTag,
    RTI1516_NAMESPACE::LogicalTime const &            theTime,
-   bool                                              received_as_TSO )
+   bool const                                        received_as_TSO )
 {
    // Process the MTR interaction if we subscribed to it and we have the
    // same class handle.
@@ -2565,7 +2565,7 @@ void ExecutionControl::send_root_ref_frame()
              << " ERROR: Root Reference Frame is not set!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
-   rrf_obj = root_ref_frame->get_object();
+   rrf_obj = root_ref_frame->get_object(); // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "SpaceFOM::ExecutionControl::send_root_ref_frame():%d%c",
@@ -2695,7 +2695,7 @@ void ExecutionControl::receive_root_ref_frame()
 
 void ExecutionControl::start_federation_save_at_scenario_time(
    double      freeze_scenario_time,
-   const char *file_name )
+   char const *file_name )
 {
    ostringstream errmsg;
    errmsg << "SpaceFOM::ExecutionControl::start_federation_save_at_scenario_time:" << __LINE__

@@ -65,10 +65,10 @@ class MutexProtection
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for MutexProtection class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   MutexProtection( const MutexProtection &rhs );
+   MutexProtection( MutexProtection const &rhs );
    /*! @brief Assignment operator for MutexProtection class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   MutexProtection &operator=( const MutexProtection &rhs );
+   MutexProtection &operator=( MutexProtection const &rhs );
 };
 
 } // namespace TrickHLA

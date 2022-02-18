@@ -74,7 +74,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Get the ExecutionControl type identification string.
     *  @return A constant reference to the type identification string.
     */
-   virtual const std::string &get_type()
+   virtual std::string const &get_type()
    {
       return ( type );
    }
@@ -159,7 +159,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
       RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
       RTI1516_USERDATA const &                          theUserSuppliedTag,
       RTI1516_NAMESPACE::LogicalTime const &            theTime,
-      bool                                              received_as_TSO );
+      bool const                                        received_as_TSO );
 
    /*! @brief Send a mode transition request to the Master federate.
     *  @param requested_mode Requested mode. */
@@ -207,10 +207,10 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @param freeze_scenario_time Scenario time to freeze.
     *  @param file_name            Checkpoint file name. */
    virtual void start_federation_save_at_scenario_time( double      freeze_scenario_time,
-                                                        const char *file_name );
+                                                        char const *file_name );
 
   protected:
-   static const std::string type; ///< @trick_units{--} ExecutionControl type string.
+   static std::string const type; ///< @trick_units{--} ExecutionControl type string.
 
    /*! @brief Return the relevant TrickHLA::ExecutionConfiguration object.
     *  @return Pointer to the relevant TrickHLA::ExecutionConfiguration object. */
@@ -220,10 +220,10 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    // Do not allow the copy constructor.
    /*! @brief Copy constructor for ExecutionControl class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   ExecutionControl( const ExecutionControl &rhs );
+   ExecutionControl( ExecutionControl const &rhs );
    /*! @brief Assignment operator for ExecutionControl class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   ExecutionControl &operator=( const ExecutionControl &rhs );
+   ExecutionControl &operator=( ExecutionControl const &rhs );
 };
 
 } // namespace TrickHLA

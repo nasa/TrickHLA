@@ -181,7 +181,7 @@ class Interaction
    // Instance methods
    /*! @brief Get the FOM name for this interaction.
     *  @return Constant string with the FOM name for this interaction. */
-   const char *get_FOM_name() const
+   char const *get_FOM_name() const
    {
       return FOM_name;
    }
@@ -360,10 +360,10 @@ class Interaction
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for Interaction class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   Interaction( const Interaction &rhs );
+   Interaction( Interaction const &rhs );
    /*! @brief Assignment operator for Interaction class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   Interaction &operator=( const Interaction &rhs );
+   Interaction &operator=( Interaction const &rhs );
 };
 
 } // namespace TrickHLA

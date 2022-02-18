@@ -356,7 +356,7 @@ class Federate
 
    /*! @brief Restore checkpoint.
     *  @param file_name Checkpoint file name. */
-   void restore_checkpoint( const std::string &file_name );
+   void restore_checkpoint( std::string const &file_name );
 
    /*! @brief Inform the RTI of the success or failure of the federate restore. */
    void inform_RTI_of_restore_completion();
@@ -364,7 +364,7 @@ class Federate
    /*! @brief Read the running_feds file, replacing the data in known federates
     * data structure.
     * @param file_name Checkpoint file name. */
-   void read_running_feds_file( const std::string &file_name );
+   void read_running_feds_file( std::string const &file_name );
 
    /*! @brief Copies the contents of the checkpoint's list of federates into
     * known federates data structure. */
@@ -542,14 +542,14 @@ class Federate
 
    /*! @brief Save the supplied checkpoint file name.
     * @param name Checkpoint file name. */
-   void set_checkpoint_file_name( const std::string &name );
+   void set_checkpoint_file_name( std::string const &name );
 
    /*! @brief Sets the Save filename and flag. */
    void initiate_save_announce();
 
    /*! @brief Sets the Save filename and flag.
     *  @param restore_name_label Restore file name. */
-   void initiate_restore_announce( const std::string &restore_name_label );
+   void initiate_restore_announce( std::string const &restore_name_label );
 
    /*! @brief Sets the Save filename and flag.
     *  @return True if restore has been announced; False otherwise. */
@@ -655,10 +655,10 @@ class Federate
    void wait_for_time_advance_grant();
 
    /*! @brief Initialize the thread memory associated with the Trick child threads. */
-   void initialize_thread_state( const double data_cycle );
+   void initialize_thread_state( double const data_cycle );
 
    /*! @brief Associate a Trick child thread with TrickHLA. */
-   void associate_to_trick_child_thread( const unsigned int thread_id, const double data_cycle );
+   void associate_to_trick_child_thread( unsigned int const thread_id, double const data_cycle );
 
    /*! @brief Announce to all the child threads the main thread has data available. */
    void announce_data_available();
@@ -674,7 +674,7 @@ class Federate
 
    /*! @brief Set federate execution startup state.
     *  @param flag True for federate started; False otherwise. */
-   void set_startup( const bool flag )
+   void set_startup( bool const flag )
    {
       this->got_startup_sync_point = flag;
    }
@@ -683,7 +683,7 @@ class Federate
    // FIXME: Might consider moving these to ExecutionControl.
    /*! @brief Set that federation execution freeze has been announced.
     *  @param flag True for federate freeze announce; False otherwise. */
-   void set_freeze_announced( const bool flag )
+   void set_freeze_announced( bool const flag )
    {
       this->announce_freeze = flag;
    }
@@ -841,70 +841,70 @@ class Federate
 
    /*! @brief Get the pointer to the associated federate name.
     *  @return Pointer to associated federate name. */
-   const char *get_federate_name() const
+   char const *get_federate_name() const
    {
       return name;
    }
 
    /*! @brief Get the pointer to the associated federate type.
     *  @return Pointer to associated federate type. */
-   const char *get_federate_type() const
+   char const *get_federate_type() const
    {
       return type;
    }
 
    /*! @brief Get the pointer to the associated federation execution name.
     *  @return Pointer to associated federation execution name. */
-   const char *get_federation_name() const
+   char const *get_federation_name() const
    {
       return federation_name;
    }
 
    /*! @brief Get the current granted HLA federation execution time.
     *  @return Reference to current granted HLA federation execution time. */
-   const Int64Time &get_granted_time() const
+   Int64Time const &get_granted_time() const
    {
       return granted_time;
    }
 
    /*! @brief Get the requested HLA federation execution time.
     *  @return Reference to requested HLA federation execution time. */
-   const Int64Time &get_requested_time() const
+   Int64Time const &get_requested_time() const
    {
       return requested_time;
    }
 
    /*! @brief Get the current federate lookahead time.
     *  @return Reference to current federate lookahead time. */
-   const Int64Interval &get_lookahead() const
+   Int64Interval const &get_lookahead() const
    {
       return lookahead;
    }
 
    /*! @brief Get the current federate lookahead time in seconds.
     *  @return Current federate lookahead time in seconds. */
-   const double get_lookahead_time_in_seconds() const
+   double const get_lookahead_time_in_seconds() const
    {
       return lookahead_time;
    }
 
    /*! @brief Query of federate has a zero lookahead time.
     *  @return True if lookahead time is zero; Flase otherwise. */
-   const bool is_zero_lookahead_time() const
+   bool const is_zero_lookahead_time() const
    {
       return ( lookahead_time <= 0.0 );
    }
 
    /*! @brief Set the name of the save.
     *  @param save_label Save name. */
-   void set_save_name( const std::wstring &save_label )
+   void set_save_name( std::wstring const &save_label )
    {
       this->save_name = save_label;
    }
 
    /*! @brief Set the name of the restore.
     *  @param restore_label Restore name. */
-   void set_restore_name( const std::wstring &restore_label )
+   void set_restore_name( std::wstring const &restore_label )
    {
       this->restore_name = restore_label;
    }
@@ -933,7 +933,7 @@ class Federate
    // Routines to set federation state values.
    /*! @brief Set the name of the federation execution.
     *  @param exec_name Federation execution name. */
-   void set_federation_name( const std::string &exec_name );
+   void set_federation_name( std::string const &exec_name );
 
    /*! @brief Query if time advance has been granted.
     *  @return True if time advance has been granted; False otherwise. */
@@ -952,10 +952,10 @@ class Federate
 
    /*! @brief Sets the granted time from the specified LogicalTime.
     *  @param time Granted time in HLA logical time. */
-   void set_granted_time( const RTI1516_NAMESPACE::LogicalTime &time );
+   void set_granted_time( RTI1516_NAMESPACE::LogicalTime const &time );
 
    /*! @brief Set the time advance as granted. */
-   void set_time_advance_granted( const RTI1516_NAMESPACE::LogicalTime &time );
+   void set_time_advance_granted( RTI1516_NAMESPACE::LogicalTime const &time );
 
    /*! @brief Query if the federate is in a time regulating state.
     *  @return True if time regulating; False otherwise. */
@@ -966,14 +966,14 @@ class Federate
 
    /*! @brief Set the state of time regulation.
     *  @param regulation_state Desired state of time regulation for this federate. */
-   void set_time_regulation_state( const bool &regulation_state )
+   void set_time_regulation_state( bool const regulation_state )
    {
       this->time_regulating_state = regulation_state;
    }
 
    /*! @brief Set the state of time constraint.
     *  @param constrained_state Desired state of time constraint for this federate. */
-   void set_time_constrained_state( const bool &constrained_state )
+   void set_time_constrained_state( bool const constrained_state )
    {
       this->time_constrained_state = constrained_state;
    }
@@ -984,7 +984,7 @@ class Federate
 
    /*! @brief Sets the requested time from the specified LogicalTime.
     *  @param time Requested time in HLA logical time. */
-   void set_requested_time( const RTI1516_NAMESPACE::LogicalTime &time );
+   void set_requested_time( RTI1516_NAMESPACE::LogicalTime const &time );
 
    /*! @brief Sets the HLA lookahead time.
     *  @param value HLA lookahead time in seconds. */
@@ -1040,7 +1040,7 @@ class Federate
    /*! @brief Query if a federate is required at startup.
     *  @return True if federate is required at startup; False otherwise.
     *  @param fed_name Name of potentially required federate. */
-   bool is_a_required_startup_federate( const std::wstring &fed_name );
+   bool is_a_required_startup_federate( std::wstring const &fed_name );
 
    /*! @brief Query if the federation was created by this federate.
     *  @return True if created by this federate; False otherwise. */
@@ -1192,7 +1192,7 @@ class Federate
    /*! @brief Dumps the contents of the running_feds object into the supplied
     *  file name with ".running_feds" appended to it.
     *  @param file_name Checkpoint file name. */
-   void write_running_feds_file( const std::string &file_name );
+   void write_running_feds_file( std::string const &file_name );
 
    /*! @brief Request federation save from the RTI. */
    void request_federation_save();
@@ -1238,22 +1238,22 @@ class Federate
    /*! @brief Join a federation.
     *  @param federate_name Name of this federate.
     *  @param federate_type Type for this federate. */
-   void join_federation( const char *const federate_name, const char *const federate_type );
+   void join_federation( char const *const federate_name, char const *const federate_type );
 
    /*! @brief Determine if the specified federate name is a required federate.
     *  @return True if a name of required federate, otherwise false.
     *  @param federate_name Federate name to test. */
-   bool is_required_federate( const std::wstring &federate_name );
+   bool is_required_federate( std::wstring const &federate_name );
 
    /*! @brief Determine if the specified federate name is a joined federate.
     *  @return True if a name of joined federate, otherwise false.
     *  @param federate_name Federate name to test. */
-   bool is_joined_federate( const char *federate_name );
+   bool is_joined_federate( char const *federate_name );
 
    /*! @brief Determine if the specified federate name is a joined federate.
     *  @return True if a name of joined federate, otherwise false.
     *  @param federate_name Federate name to test. */
-   bool is_joined_federate( const std::wstring &federate_name );
+   bool is_joined_federate( std::wstring const &federate_name );
 
    /*! @brief Make the HLA time-advance request using the current requested_time value. */
    void perform_time_advance_request();
@@ -1268,11 +1268,11 @@ class Federate
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for Federate class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   Federate( const Federate &rhs );
+   Federate( Federate const &rhs );
 
    /*! @brief Assignment operator for Federate class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   Federate &operator=( const Federate &rhs );
+   Federate &operator=( Federate const &rhs );
 };
 
 } // namespace TrickHLA

@@ -59,17 +59,17 @@ namespace DSES
 {
 
 // ExecutionControl type string.
-const std::string ExecutionControl::type = "DSES";
+std::string const ExecutionControl::type = "DSES";
 
 // The DSES Multiphase initialization HLA synchronization-points.
-static const std::wstring SIM_CONFIG_SYNC_POINT = L"sim_config";
-static const std::wstring INITIALIZE_SYNC_POINT = L"initialize";
-static const std::wstring STARTUP_SYNC_POINT    = L"startup";
+static std::wstring const SIM_CONFIG_SYNC_POINT = L"sim_config";
+static std::wstring const INITIALIZE_SYNC_POINT = L"initialize";
+static std::wstring const STARTUP_SYNC_POINT    = L"startup";
 
 // SISO SpaceFOM Mode Transition Request (MTR) synchronization-points.
-static const std::wstring MTR_RUN_SYNC_POINT      = L"mtr_run";
-static const std::wstring MTR_FREEZE_SYNC_POINT   = L"mtr_freeze";
-static const std::wstring MTR_SHUTDOWN_SYNC_POINT = L"mtr_shutdown";
+static std::wstring const MTR_RUN_SYNC_POINT      = L"mtr_run";
+static std::wstring const MTR_FREEZE_SYNC_POINT   = L"mtr_freeze";
+static std::wstring const MTR_SHUTDOWN_SYNC_POINT = L"mtr_shutdown";
 
 } // namespace DSES
 

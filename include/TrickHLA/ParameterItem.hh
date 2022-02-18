@@ -75,7 +75,7 @@ class ParameterItem : public Item
     *  @param parameter_index Parameter index.
     *  @param param_value HLA RTI Parameter value. */
    ParameterItem( int                                          parameter_index,
-                  const RTI1516_NAMESPACE::VariableLengthData *param_value );
+                  RTI1516_NAMESPACE::VariableLengthData const *param_value );
 
    /*! @brief Destructor for the TrickHLA ParameterItem class. */
    virtual ~ParameterItem();
@@ -94,10 +94,10 @@ class ParameterItem : public Item
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for ParameterItem class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   ParameterItem( const ParameterItem &rhs );
+   ParameterItem( ParameterItem const &rhs );
    /*! @brief Assignment operator for ParameterItem class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   ParameterItem &operator=( const ParameterItem &rhs );
+   ParameterItem &operator=( ParameterItem const &rhs );
 };
 
 } // namespace TrickHLA

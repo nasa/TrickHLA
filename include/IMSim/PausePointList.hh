@@ -138,10 +138,10 @@ class PausePointList : public TrickHLA::TimedSyncPntList
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for PausePointList class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   PausePointList( const PausePointList &rhs );
+   PausePointList( PausePointList const &rhs );
    /*! @brief Assignment operator for PausePointList class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   PausePointList &operator=( const PausePointList &rhs );
+   PausePointList &operator=( PausePointList const &rhs );
 };
 
 } // namespace IMSim

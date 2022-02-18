@@ -45,20 +45,20 @@ SleepTimeout::SleepTimeout()
 }
 
 SleepTimeout::SleepTimeout(
-   const double timeout_seconds )
+   double const timeout_seconds )
 {
    set( timeout_seconds, THLA_DEFAULT_SLEEP_WAIT_IN_MICROS );
 }
 
 SleepTimeout::SleepTimeout(
-   const long sleep_micros )
+   long const sleep_micros )
 {
    set( THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC, sleep_micros );
 }
 
 SleepTimeout::SleepTimeout(
-   const double timeout_seconds,
-   const long   sleep_micros )
+   double const timeout_seconds,
+   long const   sleep_micros )
 {
    set( timeout_seconds, sleep_micros );
 }
@@ -69,8 +69,8 @@ SleepTimeout::~SleepTimeout()
 }
 
 void SleepTimeout::set(
-   const double timeout_seconds,
-   const long   sleep_micros )
+   double const timeout_seconds,
+   long const   sleep_micros )
 {
    // Do a bounds check on the timeout in seconds and convert it to microseconds.
    if ( timeout_seconds <= 0.0 ) {
@@ -102,18 +102,18 @@ int SleepTimeout::sleep()
    return nanosleep( &sleep_time, NULL );
 }
 
-const long long SleepTimeout::time() const
+long long const SleepTimeout::time() const
 {
    return clock_wall_time();
 }
 
-const bool SleepTimeout::timeout() const
+bool const SleepTimeout::timeout() const
 {
    return ( clock_wall_time() >= this->timeout_clock_time );
 }
 
-const bool SleepTimeout::timeout(
-   const long long time_in_micros ) const
+bool const SleepTimeout::timeout(
+   long long const time_in_micros ) const
 {
    return ( time_in_micros >= this->timeout_clock_time );
 }

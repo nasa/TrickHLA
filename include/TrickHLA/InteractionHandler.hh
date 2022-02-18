@@ -140,10 +140,10 @@ class InteractionHandler
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for InteractionHandler class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   InteractionHandler( const InteractionHandler &rhs );
+   InteractionHandler( InteractionHandler const &rhs );
    /*! @brief Assignment operator for InteractionHandler class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   InteractionHandler &operator=( const InteractionHandler &rhs );
+   InteractionHandler &operator=( InteractionHandler const &rhs );
 };
 
 } // namespace TrickHLA

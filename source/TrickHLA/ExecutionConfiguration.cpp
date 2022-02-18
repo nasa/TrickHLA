@@ -106,7 +106,7 @@ ExecutionConfiguration::ExecutionConfiguration()
  * @job_class{initialization}
  */
 ExecutionConfiguration::ExecutionConfiguration(
-   const char *s_define_name )
+   char const *s_define_name )
    : ExecutionConfigurationBase( s_define_name ),
      run_duration( 0.0 ),
      run_duration_microsec( 0L ),
