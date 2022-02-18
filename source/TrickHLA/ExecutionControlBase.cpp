@@ -307,35 +307,34 @@ void ExecutionControlBase::join_federation_process()
 bool ExecutionControlBase::object_instance_name_reservation_succeeded(
    std::wstring const &obj_instance_name )
 {
-   wstring ws_exec_config_name;
-
    // If ExcutionConfiguration is not set, then there is no match.
    if ( execution_configuration != NULL ) {
-      return false;
-   }
 
-   // Check to see if the ExecutionConfiguration object instance matches this
-   // object instance name.
-   StringUtilities::to_wstring( ws_exec_config_name, execution_configuration->get_name() );
-   if ( obj_instance_name == ws_exec_config_name ) {
+      // We need the wide-string version of the ExCO name.
+      wstring ws_exec_config_name;
+      StringUtilities::to_wstring( ws_exec_config_name, execution_configuration->get_name() );
 
-      // We are the Master federate if we succeeded in reserving the
-      // ExecutionConfiguration object name and the master was not preset.
-      if ( !this->is_master_preset() ) {
-         this->set_master( true );
+      // Check to see if the ExecutionConfiguration object instance matches this
+      // object instance name.
+      if ( obj_instance_name == ws_exec_config_name ) {
+
+         // We are the Master federate if we succeeded in reserving the
+         // ExecutionConfiguration object name and the master was not preset.
+         if ( !this->is_master_preset() ) {
+            this->set_master( true );
+         }
+
+         // The name is successfully registered.
+         execution_configuration->set_name_registered();
+
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+            send_hs( stdout, "TrickHLA::ExecutionControlBase::object_instance_name_reservation_succeeded():%d Name:'%ls'%c",
+                     __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
+         }
+
+         return true;
       }
-
-      // The name is successfully registered.
-      execution_configuration->set_name_registered();
-
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "TrickHLA::ExecutionControlBase::object_instance_name_reservation_succeeded():%d Name:'%ls'%c",
-                  __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
-      }
-
-      return true;
    }
-
    return false;
 }
 
@@ -909,12 +908,12 @@ void ExecutionControlBase::exit_freeze()
    return;
 }
 
-void ExecutionControlBase::check_pause( const double check_pause_delta )
+void ExecutionControlBase::check_pause( double const check_pause_delta )
 {
    return;
 }
 
-void ExecutionControlBase::check_pause_at_init( const double check_pause_delta )
+void ExecutionControlBase::check_pause_at_init( double const check_pause_delta )
 {
    // Dispatch to the ExecutionControl method.
    this->check_pause( check_pause_delta );
