@@ -86,7 +86,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
       return name;
    }
 
-   virtual void        set_type( char *type );
+   virtual void        set_type( char const *type );
    virtual char const *get_type()
    {
       return type;
