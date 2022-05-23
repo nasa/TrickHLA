@@ -121,9 +121,9 @@ bool const SleepTimeout::timeout(
 /*! @brief Reset the internal timeout time. */
 void SleepTimeout::reset()
 {
-   long long time = clock_wall_time();
-   if ( time < ( std::numeric_limits< long long >::max() - this->timeout_time ) ) {
-      this->timeout_clock_time = time + this->timeout_time;
+   long long t = clock_wall_time();
+   if ( t < ( std::numeric_limits< long long >::max() - this->timeout_time ) ) {
+      this->timeout_clock_time = t + this->timeout_time;
    } else {
       this->timeout_clock_time = std::numeric_limits< long long >::max();
    }

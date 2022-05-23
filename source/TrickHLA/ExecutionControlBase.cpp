@@ -274,21 +274,21 @@ Trick simulation time as the default scenario-timeline.%c",
 */
 void ExecutionControlBase::join_federation_process()
 {
-   TrickHLA::Federate *federate = this->get_federate();
+   TrickHLA::Federate *fed = this->get_federate();
 
    // Create the RTI Ambassador and connect.
-   federate->create_RTI_ambassador_and_connect();
+   fed->create_RTI_ambassador_and_connect();
 
    // Destroy the federation if it was orphaned from a previous simulation
    // run that did not shutdown cleanly.
-   federate->destroy_orphaned_federation();
+   fed->destroy_orphaned_federation();
 
    // All federates try to create the federation then join it because we use
    // a preset master.
-   federate->create_and_join_federation();
+   fed->create_and_join_federation();
 
    // Don't forget to enable asynchronous delivery of messages.
-   federate->enable_async_delivery();
+   fed->enable_async_delivery();
 
    // Check for a latent shutdown sync-point.
    // If shutdown sync-point is detected, then we must have entered into
@@ -298,7 +298,7 @@ void ExecutionControlBase::join_federation_process()
       send_hs( stdout, "TrickHLA::ExecutionControl::join_federation_process():%d Checking for shutdown %c",
                __LINE__, THLA_NEWLINE );
    }
-   federate->check_for_shutdown_with_termination();
+   fed->check_for_shutdown_with_termination();
 }
 
 /*!
