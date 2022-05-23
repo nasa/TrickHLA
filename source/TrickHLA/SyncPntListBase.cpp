@@ -118,7 +118,7 @@ SyncPnt *SyncPntListBase::get_sync_point(
 
 SyncPnt *SyncPntListBase::register_sync_point(
    RTI1516_NAMESPACE::RTIambassador &RTI_amb,
-   wstring const &                   label )
+   wstring const                    &label )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -132,9 +132,9 @@ SyncPnt *SyncPntListBase::register_sync_point(
 }
 
 SyncPnt *SyncPntListBase::register_sync_point(
-   RTI1516_NAMESPACE::RTIambassador &          RTI_amb,
+   RTI1516_NAMESPACE::RTIambassador           &RTI_amb,
    RTI1516_NAMESPACE::FederateHandleSet const &federate_handle_set,
-   wstring const &                             label )
+   wstring const                              &label )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -169,7 +169,7 @@ void SyncPntListBase::register_all_sync_points(
 }
 
 void SyncPntListBase::register_all_sync_points(
-   RTI1516_NAMESPACE::RTIambassador &          RTI_amb,
+   RTI1516_NAMESPACE::RTIambassador           &RTI_amb,
    RTI1516_NAMESPACE::FederateHandleSet const &federate_handle_set )
 {
    if ( federate_handle_set.empty() ) {
@@ -255,8 +255,8 @@ void SyncPntListBase::wait_for_all_announcements(
 
 void SyncPntListBase::announce_sync_point(
    RTI1516_NAMESPACE::RTIambassador &RTI_amb,
-   wstring const &                   label,
-   RTI1516_USERDATA const &          user_supplied_tag )
+   wstring const                    &label,
+   RTI1516_USERDATA const           &user_supplied_tag )
 {
    // Check to see if the synchronization point is known?
    if ( this->contains( label ) ) {
@@ -373,8 +373,8 @@ void SyncPntListBase::wait_for_list_synchronization(
 
 void SyncPntListBase::achieve_and_wait_for_synchronization(
    RTI1516_NAMESPACE::RTIambassador &RTI_amb,
-   Federate *                        federate,
-   std::wstring const &              label )
+   Federate                         *federate,
+   std::wstring const               &label )
 {
    string name;
    StringUtilities::to_string( name, label );
@@ -693,7 +693,7 @@ void SyncPntListBase::print_sync_points()
 
 void SyncPntListBase::register_sync_point(
    RTI1516_NAMESPACE::RTIambassador &RTI_amb,
-   SyncPnt *                         sp )
+   SyncPnt                          *sp )
 {
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
@@ -730,9 +730,9 @@ void SyncPntListBase::register_sync_point(
 }
 
 void SyncPntListBase::register_sync_point(
-   RTI1516_NAMESPACE::RTIambassador &          RTI_amb,
+   RTI1516_NAMESPACE::RTIambassador           &RTI_amb,
    RTI1516_NAMESPACE::FederateHandleSet const &federate_handle_set,
-   SyncPnt *                                   sp )
+   SyncPnt                                    *sp )
 {
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
@@ -770,7 +770,7 @@ void SyncPntListBase::register_sync_point(
 }
 
 bool SyncPntListBase::wait_for_sync_point_announcement(
-   Federate *          federate,
+   Federate           *federate,
    std::wstring const &label )
 {
    return this->wait_for_sync_point_announcement( federate, get_sync_point( label ) );
@@ -778,7 +778,7 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
 
 bool SyncPntListBase::wait_for_sync_point_announcement(
    Federate *federate,
-   SyncPnt * sp )
+   SyncPnt  *sp )
 {
    if ( sp != NULL ) {
 
@@ -884,14 +884,14 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
 
 bool SyncPntListBase::achieve_sync_point(
    RTI1516_NAMESPACE::RTIambassador &RTI_amb,
-   wstring const &                   label )
+   wstring const                    &label )
 {
    return achieve_sync_point( RTI_amb, this->get_sync_point( label ) );
 }
 
 bool SyncPntListBase::achieve_sync_point(
    RTI1516_NAMESPACE::RTIambassador &RTI_amb,
-   SyncPnt *                         sp )
+   SyncPnt                          *sp )
 {
    if ( sp != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -942,7 +942,7 @@ bool SyncPntListBase::achieve_sync_point(
 
 bool SyncPntListBase::wait_for_synchronization(
    Federate *federate,
-   SyncPnt * sp )
+   SyncPnt  *sp )
 {
    if ( sp != NULL ) {
       bool         print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE );

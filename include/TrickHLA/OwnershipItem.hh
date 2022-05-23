@@ -69,7 +69,7 @@ class OwnershipItem : public Item
 
   public:
    double time;     ///< @trick_units{--} Federation time when this attribute's ownership is to be transferred.
-   char * FOM_name; ///< @trick_units{--} FOM name for the attribute.
+   char  *FOM_name; ///< @trick_units{--} FOM name for the attribute.
 
   public:
    //

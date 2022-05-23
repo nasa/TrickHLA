@@ -405,8 +405,8 @@ void ExecutionControl::add_multiphase_init_sync_points()
 
 void ExecutionControl::announce_sync_point(
    RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-   wstring const &                   label,
-   RTI1516_USERDATA const &          user_supplied_tag )
+   wstring const                    &label,
+   RTI1516_USERDATA const           &user_supplied_tag )
 {
    // Parse the sync-point to see if we have a pause sync-point.
    string label_str;
@@ -1190,9 +1190,9 @@ bool ExecutionControl::process_execution_control_updates()
 
 bool ExecutionControl::run_mode_transition()
 {
-   RTIambassador *         RTI_amb  = federate->get_RTI_ambassador();
+   RTIambassador          *RTI_amb  = federate->get_RTI_ambassador();
    ExecutionConfiguration *ExCO     = get_execution_configuration();
-   SyncPnt *               sync_pnt = NULL;
+   SyncPnt                *sync_pnt = NULL;
 
    // Register the 'mtr_run' sync-point.
    if ( this->is_master() ) {
@@ -1285,9 +1285,9 @@ void ExecutionControl::freeze_mode_announce()
 
 bool ExecutionControl::freeze_mode_transition()
 {
-   RTIambassador *         RTI_amb  = federate->get_RTI_ambassador();
+   RTIambassador          *RTI_amb  = federate->get_RTI_ambassador();
    ExecutionConfiguration *ExCO     = get_execution_configuration();
-   TrickHLA::SyncPnt *     sync_pnt = NULL;
+   TrickHLA::SyncPnt      *sync_pnt = NULL;
 
    // Get the 'mtr_freeze' sync-point.
    sync_pnt = this->get_sync_point( MTR_FREEZE_SYNC_POINT );
@@ -1454,7 +1454,7 @@ void ExecutionControl::exit_freeze()
 }
 
 void ExecutionControl::add_pause(
-   Int64Time *    time,
+   Int64Time     *time,
    wstring const &label )
 {
    pause_sync_pts.add_sync_point( label, *time );

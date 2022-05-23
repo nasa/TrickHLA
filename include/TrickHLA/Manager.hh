@@ -137,7 +137,7 @@ class Manager
    /*! @brief Setup the required class instance associations.
     *  @param federate          Associated TrickHLA::Federate class instance.
     *  @param execution_control Associated ExecutionControl class instance. */
-   void setup( Federate &            federate,
+   void setup( Federate             &federate,
                ExecutionControlBase &execution_control );
 
    /*! @brief Initializes the federate using the a multiphase initialization
@@ -205,7 +205,7 @@ class Manager
     *  @param theObjectInstanceName Name of the instance. */
    bool discover_object_instance( RTI1516_NAMESPACE::ObjectInstanceHandle theObject,
                                   RTI1516_NAMESPACE::ObjectClassHandle    theObjectClass,
-                                  std::wstring const &                    theObjectInstanceName );
+                                  std::wstring const                     &theObjectInstanceName );
 
    /*! @brief Gets the TrickHLA Object for the specified RTI Object Instance Handle.
     *  @return TrickHLA Object.
@@ -268,10 +268,10 @@ class Manager
     * @param theTime            HLA time for the interaction.
     * @param received_as_TSO    True if interaction was received by RTI as TSO. */
    void receive_interaction(
-      RTI1516_NAMESPACE::InteractionClassHandle const & theInteraction,
+      RTI1516_NAMESPACE::InteractionClassHandle const  &theInteraction,
       RTI1516_NAMESPACE::ParameterHandleValueMap const &theParameterValues,
-      RTI1516_USERDATA const &                          theUserSuppliedTag,
-      RTI1516_NAMESPACE::LogicalTime const &            theTime,
+      RTI1516_USERDATA const                           &theUserSuppliedTag,
+      RTI1516_NAMESPACE::LogicalTime const             &theTime,
       bool const                                        received_as_TSO );
 
    /*! @brief Process the ownership requests. */
@@ -353,7 +353,7 @@ class Manager
     *  @param data_obj_count Number of objects.
     *  @param data_objects   Simulation TrickHLA Objects. */
    void setup_object_RTI_handles( int const data_obj_count,
-                                  Object *  data_objects );
+                                  Object   *data_objects );
 
    /*! @brief Sets the RTI run-time type IDs/handles for the specified
     * interactions and parameters.
@@ -375,7 +375,7 @@ class Manager
     *  @param theObject HLA object instance handle.
     *  @param theAttributes HLA attribute handle set. */
    void provide_attribute_update( RTI1516_NAMESPACE::ObjectInstanceHandle const &theObject,
-                                  RTI1516_NAMESPACE::AttributeHandleSet const &  theAttributes );
+                                  RTI1516_NAMESPACE::AttributeHandleSet const   &theAttributes );
 
    /*! @brief Get the TrickHLA::Object count.
     *  @return The number of registered TrickHLA::Object instances. */
@@ -492,7 +492,7 @@ class Manager
     * @param data_obj_count Number of objects.
     * @param data_objects   Simulation TrickHLA::Objects. */
    void setup_object_ref_attributes( int const data_obj_count,
-                                     Object *  data_objects );
+                                     Object   *data_objects );
 
    /*! @brief Set up the Trick ref-attributes for the user specified
     * interactions and parameters. */
@@ -505,7 +505,7 @@ class Manager
     *  @param data_obj_count Number of objects.
     *  @param data_objects   Simulation TrickHLA Objects. */
    void set_object_instance_handles_by_name( int const data_obj_count,
-                                             Object *  data_objects );
+                                             Object   *data_objects );
 
    /*! @brief Returns the first object that matches the specified Object-Class,
     * object instance name, and is not registered, i.e. the instance ID == 0.
@@ -514,7 +514,7 @@ class Manager
     *  @param theObjectInstanceName Object instance name. */
    Object *get_unregistered_object(
       RTI1516_NAMESPACE::ObjectClassHandle const &theObjectClass,
-      std::wstring const &                        theObjectInstanceName );
+      std::wstring const                         &theObjectInstanceName );
 
    /*! @brief Returns the first object that is remotely owned, has the same
     * Object-Class, is not registered, and does not have an Object Instance

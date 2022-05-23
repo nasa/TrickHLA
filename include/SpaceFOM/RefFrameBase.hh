@@ -98,10 +98,10 @@ class RefFrameBase : public TrickHLA::Packing
     *  @param publishes Does this federate publish this reference frame.
     *  */
    virtual void default_data( SpaceFOM::ExecutionControl *execution_control,
-                              TrickHLA::Object *          object,
-                              char const *                sim_obj_name,
-                              char const *                ref_frame_obj_name,
-                              char const *                ref_frame_name,
+                              TrickHLA::Object           *object,
+                              char const                 *sim_obj_name,
+                              char const                 *ref_frame_obj_name,
+                              char const                 *ref_frame_name,
                               bool                        publishes );
 
    // Initialize the packing object.
@@ -155,7 +155,7 @@ class RefFrameBase : public TrickHLA::Packing
 
   protected:
    bool                 initialized;    ///< @trick_units{--} Initialization indication flag.
-   RefFrameData *       ref_frame_data; ///< @trick_units{--} Reference frame data.
+   RefFrameData        *ref_frame_data; ///< @trick_units{--} Reference frame data.
    TrickHLA::Attribute *ref_frame_attr; ///< @trick_io{**} Reference Frame Attribute.
 
    char *name;        ///< @trick_units{--} Name of the reference frame.
@@ -163,7 +163,7 @@ class RefFrameBase : public TrickHLA::Packing
 
    // Instantiate the Space/Time Coordinate encoder
    SpaceTimeCoordinateEncoder stc_encoder; ///< @trick_units{--} Encoder.
-   SpaceTimeCoordinateData &  stc_data;    ///< @trick_units{--} Encoder data.
+   SpaceTimeCoordinateData   &stc_data;    ///< @trick_units{--} Encoder data.
 
   private:
    // This object is not copyable
