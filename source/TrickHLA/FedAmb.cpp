@@ -370,9 +370,11 @@ void FedAmb::federationRestoreStatusResponse(
       send_hs( stdout, "FedAmb::federationRestoreStatusResponse():%d %c",
                __LINE__, THLA_NEWLINE );
    }
-   if ( federation_restore_status_response_context_switch == 0 ) { // process
+   if ( !this->federation_restore_status_response_context_switch ) {
+      // process
       federate->process_requested_federation_restore_status( theFederateStatusVector );
-   } else if ( federation_restore_status_response_context_switch == 1 ) { // echo
+   } else {
+      // echo
       federate->print_requested_federation_restore_status( theFederateStatusVector );
    }
 }
