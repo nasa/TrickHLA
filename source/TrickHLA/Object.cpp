@@ -1290,7 +1290,7 @@ void Object::wait_for_object_registration()
 
       (void)sleep_timer.sleep();
 
-      if ( !is_instance_handle_valid() ) {
+      if ( !is_instance_handle_valid() ) { // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
 
          // To be more efficient, we get the time once and share it.
          wallclock_time = sleep_timer.time();
