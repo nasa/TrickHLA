@@ -291,7 +291,7 @@ Federate::~Federate()
          }
       }
       TMM_delete_var_a( known_feds );
-      known_feds       = static_cast< KnownFederate * >( NULL );
+      known_feds       = static_cast< KnownFederate       *>( NULL );
       known_feds_count = 0;
    }
 
@@ -389,8 +389,8 @@ void Federate::fix_FPU_control_word()
  * @job_class{default_data}
  */
 void Federate::setup(
-   FedAmb &              federate_amb,
-   Manager &             federate_manager,
+   FedAmb               &federate_amb,
+   Manager              &federate_manager,
    ExecutionControlBase &federate_execution_control )
 {
    // Set the Federate ambassador.
@@ -2568,7 +2568,7 @@ void Federate::achieve_synchronization_point(
 }
 
 void Federate::announce_sync_point(
-   wstring const &         label,
+   wstring const          &label,
    RTI1516_USERDATA const &user_supplied_tag )
 {
 
@@ -5890,10 +5890,11 @@ void Federate::destroy_orphaned_federation()
 void Federate::set_federation_name(
    string const &exec_name )
 {
-   // Check for self assign.
-   if ( this->federation_name != exec_name ) {
+   // Check for a NULL current federatin name or a self assigned name.
+   if ( ( this->federation_name == static_cast< char * >( NULL ) )
+        || ( this->federation_name != exec_name ) ) {
 
-      // Check for "hard coded" name.
+      // Check for an empty (i.e. zero length) name.
       if ( !exec_name.empty() ) {
 
          // Reallocate and set the federation execution name.
@@ -5908,9 +5909,9 @@ void Federate::set_federation_name(
          this->federation_name = TMM_strdup( (char *)exec_name.c_str() );
       } else {
 
-         // Set to a default value if not alread set in the input stream.
+         // Set to a default value if not already set in the input stream.
          if ( this->federation_name == static_cast< char * >( NULL ) ) {
-            this->federation_name = TMM_strdup( (char *)"Trick Federation" );
+            this->federation_name = TMM_strdup( (char *)"TrickHLA Federation" );
          }
       }
    }
@@ -6404,7 +6405,7 @@ void Federate::add_a_single_entry_into_running_feds()
 
 void Federate::add_MOM_HLAfederate_instance_id(
    ObjectInstanceHandle instance_hndl,
-   wstring const &      instance_name )
+   wstring const       &instance_name )
 {
    mom_HLAfederate_inst_name_map[instance_hndl] = instance_name;
 }
@@ -6415,8 +6416,8 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    remove_federate_instance_id( instance_hndl );
    remove_MOM_HLAfederation_instance_id( instance_hndl );
 
-   char *                               tMOMName  = NULL;
-   char *                               tFedName  = NULL;
+   char                                *tMOMName  = NULL;
+   char                                *tFedName  = NULL;
    bool                                 foundName = false;
    TrickHLAObjInstanceNameMap::iterator iter;
 
@@ -7445,13 +7446,12 @@ void Federate::print_requested_federation_restore_status(
    while ( vector_iter != status_vector.end() ) {
 
       // dump the contents, for now...
-      string name;
-      StringUtilities::to_string( name, vector_iter->preRestoreHandle );
-      msg << "Federate::print_requested_federation_restore_status() "
-          << __LINE__
-          << "pre-restore fed_id=" << name;
-      StringUtilities::to_string( name, vector_iter->postRestoreHandle );
-      msg << ", post-restore fed_id =" << name
+      string id_name;
+      StringUtilities::to_string( id_name, vector_iter->preRestoreHandle );
+      msg << "Federate::print_requested_federation_restore_status() " << __LINE__
+          << "pre-restore fed_id=" << id_name;
+      StringUtilities::to_string( id_name, vector_iter->postRestoreHandle );
+      msg << ", post-restore fed_id =" << id_name
           << ", status matrix: \n   NO_RESTORE_IN_PROGRESS="
           << ( vector_iter->status == NO_RESTORE_IN_PROGRESS )
           << "\n   FEDERATE_RESTORE_REQUEST_PENDING="
@@ -7465,7 +7465,7 @@ void Federate::print_requested_federation_restore_status(
           << "\n   FEDERATE_WAITING_FOR_FEDERATION_TO_RESTORE="
           << ( vector_iter->status == FEDERATE_WAITING_FOR_FEDERATION_TO_RESTORE )
           << endl;
-      // load the next element from 'theFederateStatusVector'.
+      // Load the next element from 'theFederateStatusVector'.
       ++vector_iter;
    }
    send_hs( stdout, (char *)msg.str().c_str() );
