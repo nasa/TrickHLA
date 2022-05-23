@@ -666,9 +666,6 @@ void SyncPntListBase::convert_sync_points(
 
 void SyncPntListBase::print_sync_points()
 {
-   string  sync_point_label;
-   wstring spwl;
-
    ostringstream msg;
    msg << "SyncPntListBase::print_sync_points():" << __LINE__ << endl
        << "#############################" << endl
@@ -676,13 +673,15 @@ void SyncPntListBase::print_sync_points()
 
    // Critical code section.
    {
+      string sync_point_label;
+
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &mutex );
 
       vector< SyncPnt * >::const_iterator i;
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-         spwl = ( *i )->to_wstring();
+         wstring spwl = ( *i )->to_wstring();
          sync_point_label.assign( spwl.begin(), spwl.end() );
          msg << sync_point_label << endl;
       }

@@ -713,12 +713,11 @@ void ExecutionControlBase::provide_attribute_update(
 Object *ExecutionControlBase::get_trickhla_object(
    wstring const &obj_instance_name )
 {
-   wstring ws_obj_name;
-
    // Check to see if there is and ExecutionConfiguration object.
    if ( execution_configuration != NULL ) {
 
       // Execution Configuration object.
+      wstring ws_obj_name;
       StringUtilities::to_wstring( ws_obj_name, get_execution_configuration()->get_name() );
       if ( ws_obj_name == obj_instance_name ) {
          return ( execution_configuration );
@@ -736,8 +735,6 @@ Object *ExecutionControlBase::get_unregistered_object(
    RTI1516_NAMESPACE::ObjectClassHandle const &theObjectClass,
    std::wstring const                         &theObjectInstanceName )
 {
-   wstring ws_obj_name;
-
    // Check to see if there is and ExecutionConfiguration object.
    if ( execution_configuration != NULL ) {
 
@@ -745,6 +742,7 @@ Object *ExecutionControlBase::get_unregistered_object(
       if ( ( execution_configuration->get_class_handle() == theObjectClass )
            && ( !execution_configuration->is_instance_handle_valid() ) ) {
 
+         wstring ws_obj_name;
          StringUtilities::to_wstring( ws_obj_name, get_execution_configuration()->get_name() );
 
          // Determine if the name matches the object instance name.

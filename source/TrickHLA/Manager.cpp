@@ -1103,11 +1103,11 @@ void Manager::setup_object_RTI_handles(
 
    char const *obj_FOM_name  = "";
    char const *attr_FOM_name = "";
-   wstring     ws_FOM_name   = L"";
    int         FOM_name_type = 0; // 0:N/A 1:Object 2:Attribute - What name are we dealing with.
 
    // Initialize the Object and Attribute RTI handles.
    try {
+      wstring ws_FOM_name = L"";
 
       // Resolve all the handles/ID's for the objects and attributes.
       for ( int n = 0; n < data_obj_count; ++n ) {
@@ -1301,11 +1301,11 @@ void Manager::setup_interaction_RTI_handles(
 
    char const *inter_FOM_name = "";
    char const *param_FOM_name = "";
-   wstring     ws_FOM_name    = L"";
    int         FOM_name_type  = 0; // 0:NA 1:Interaction 2:Parameter  What name we are dealing with.
 
    // Initialize the Interaction and Parameter RTI handles.
    try {
+      wstring ws_FOM_name = L"";
 
       // Process all the Interactions.
       for ( int n = 0; n < interactions_counter; ++n ) {
@@ -2046,8 +2046,6 @@ void Manager::set_object_instance_handles_by_name(
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   wstring ws_instance_name = L"";
-
    ostringstream summary;
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       summary << "Manager::set_object_instance_handles_by_name():"
@@ -2055,6 +2053,8 @@ void Manager::set_object_instance_handles_by_name(
    }
 
    try {
+      wstring ws_instance_name = L"";
+
       // Resolve all the handles/ID's for the objects and attributes.
       for ( int n = 0; n < data_obj_count; ++n ) {
 

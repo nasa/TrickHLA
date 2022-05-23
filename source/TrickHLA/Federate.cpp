@@ -2755,9 +2755,7 @@ void Federate::perform_checkpoint()
  */
 void Federate::setup_checkpoint()
 {
-   string  save_name_str;
-   wstring save_name_ws;
-   string  str_save_label( this->save_label );
+   string str_save_label( this->save_label );
 
    // Don't do federate save during Init or Exit (this allows "regular" init and shutdown checkpoints)
    if ( ( exec_get_mode() == Initialization ) || ( exec_get_mode() == ExitMode ) ) {
@@ -2788,6 +2786,7 @@ void Federate::setup_checkpoint()
          string trick_filename;
          string slash( "/" );
          size_t found;
+         string save_name_str;
 
          // get checkpoint file name specified in control panel
          trick_filename = checkpoint_get_output_file();
@@ -2818,7 +2817,9 @@ void Federate::setup_checkpoint()
          // federation_filename
          str_save_label = string( get_federation_name() ) + "_" + save_name_str;
 
-         // set the federate save_name to filename (without the federation name)- this gets announced to other feds
+         // Set the federate save_name to filename (without the federation name)
+         // - this gets announced to other feds
+         wstring save_name_ws;
          StringUtilities::to_wstring( save_name_ws, save_name_str );
 
          set_save_name( save_name_ws );
