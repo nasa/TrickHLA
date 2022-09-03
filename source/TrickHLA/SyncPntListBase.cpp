@@ -221,9 +221,11 @@ void SyncPntListBase::sync_point_registration_failed(
                      __LINE__, label.c_str(), THLA_NEWLINE );
          }
       } else {
+         string name;
+         StringUtilities::to_string( name, label );
          ostringstream errmsg;
          errmsg << "SyncPntListBase::sync_point_registration_failed():" << __LINE__
-                << " '" << label.c_str() << "'" << THLA_ENDL;
+                << " '" << name << "'" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    }

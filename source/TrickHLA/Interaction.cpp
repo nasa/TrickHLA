@@ -1008,7 +1008,7 @@ Interaction '%s' is time-regulating:%s, preferred-order:%s.%c",
              << ", InvalidLogicalTime exception for " << get_FOM_name()
              << "  time=" << time.get_time_in_seconds() << " ("
              << time.get_time_in_micros() << " microseconds)"
-             << " error message:'" << rti_err_msg.c_str() << "'" << THLA_ENDL;
+             << " error message:'" << rti_err_msg << "'" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( RTI1516_EXCEPTION &e ) {
       string rti_err_msg;
@@ -1017,7 +1017,7 @@ Interaction '%s' is time-regulating:%s, preferred-order:%s.%c",
       errmsg << "Interaction::send():" << __LINE__ << " As "
              << ( send_with_timestamp ? "Timestamp Order" : "Receive Order" )
              << ", Interaction '" << get_FOM_name() << "' with exception '"
-             << rti_err_msg.c_str() << "'" << THLA_ENDL;
+             << rti_err_msg << "'" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    }
 

@@ -364,7 +364,8 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
       } else { // If this is the designated preset Master federate, then this is an ERROR.
          ostringstream errmsg;
          errmsg << "TrickHLA::ExecutionControlBase::object_instance_name_reservation_failed:" << __LINE__
-                << " Failed to reserve the ExecutionConfiguration object instance name: '" << obj_instance_name.c_str()
+                << " Failed to reserve the ExecutionConfiguration object instance name: '"
+                << execution_configuration->get_name()
                 << "'! This conflicts with this being the designated Master federate!" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }

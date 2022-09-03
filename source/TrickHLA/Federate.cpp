@@ -1192,7 +1192,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
                string id_str;
                StringUtilities::to_string( id_str, fed_mom_obj_instance_hdl );
                summary << "\n    Federate:'" << known_feds[i].name
-                       << "' MOM-Object-ID:" << id_str.c_str();
+                       << "' MOM-Object-ID:" << id_str;
             }
          }
       }
@@ -1206,10 +1206,12 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
          send_hs( stdout, (char *)summary.str().c_str() );
       }
 
+      string fed_mom_instance_name;
+      StringUtilities::to_string( fed_mom_instance_name, fed_mom_instance_name_ws );
       ostringstream errmsg;
       errmsg << "Federate::set_all_federate_MOM_instance_handles_by_name():" << __LINE__
              << " ERROR: Object Instance Not Known for '"
-             << fed_mom_instance_name_ws.c_str() << "'" << THLA_ENDL;
+             << fed_mom_instance_name << "'" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( FederateNotExecutionMember &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1355,12 +1357,14 @@ void Federate::determine_federate_MOM_object_instance_names()
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
       string id_str;
       StringUtilities::to_string( id_str, fed_mom_instance_hdl );
+      string fed_name_str;
+      StringUtilities::to_string( fed_name_str, fed_name_ws );
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
       errmsg << "Object::register_object_with_RTI():" << __LINE__
              << " Exception getting MOM instance name for '"
-             << fed_name_ws.c_str() << "' ID:" << id_str
+             << fed_name_str << "' ID:" << id_str
              << " '" << rti_err_msg << "'." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -1569,7 +1573,7 @@ string Federate::wait_for_required_federates_to_join()
                   StringUtilities::to_string( fedname, joined_federate_names[i] );
 
                   summary << "\n    " << cnt << ": Found joined federate '"
-                          << fedname.c_str() << "'";
+                          << fedname << "'";
                }
             }
             summary << THLA_ENDL;
@@ -1606,10 +1610,10 @@ string Federate::wait_for_required_federates_to_join()
       }
    }
 
-   // once a list of joined federates has been built, and we are to restore the
-   // check if there are any unrequired federates. If any are found, terminate
-   // the simulation with a verbose message stating which federates were
-   // joined as unrequired, as well as the required federates, so the user
+   // Once a list of joined federates has been built, and we are to restore the
+   // checkpoint if there are any non-required federates. If any are found,
+   // terminate the simulation with a verbose message stating which federates
+   // were joined as non-required, as well as the required federates, so the user
    // knows what happened and know how to properly restart the federation. We
    // do this to inform the user that they did something wrong and gracefully
    // terminate the execution instead of the federation failing to restore
@@ -1632,22 +1636,22 @@ string Federate::wait_for_required_federates_to_join()
          errmsg << "federates are: ";
       }
       set< string >::const_iterator cii;
-      string                        tNames;
+      string                        names;
       for ( cii = unrequired_federates_list.begin();
             cii != unrequired_federates_list.end(); ++cii ) {
-         tNames += *cii + ", ";
+         names += *cii + ", ";
       }
-      tNames = tNames.substr( 0, tNames.length() - 2 ); // remove trailing comma and space
-      errmsg << tNames << "\n\tThe required federates are: ";
-      tNames = "";
+      names.resize( names.length() - 2 ); // remove trailing comma and space
+      errmsg << names << "\n\tThe required federates are: ";
+      names = "";
       for ( i = 0; i < (unsigned int)known_feds_count; ++i ) {
          if ( known_feds[i].required ) {
-            tNames += known_feds[i].name;
-            tNames += ", ";
+            names += known_feds[i].name;
+            names += ", ";
          }
       }
-      tNames = tNames.substr( 0, tNames.length() - 2 ); // remove trailing comma and space
-      errmsg << tNames << "\nTERMINATING EXECUTION!";
+      names.resize( names.length() - 2 ); // remove trailing comma and space
+      errmsg << names << "\nTERMINATING EXECUTION!";
 
       status_string = errmsg.str();
       return status_string;
@@ -3168,7 +3172,7 @@ void Federate::post_restore()
          wait_for_federation_restore_failed_callback_to_complete();
          ostringstream errmsg;
          errmsg << "TrickFederate::post_restore():" << __LINE__
-                << " " << tStr.c_str() << THLA_ENDL;
+                << " " << tStr << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
