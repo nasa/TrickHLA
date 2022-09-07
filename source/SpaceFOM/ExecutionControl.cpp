@@ -441,7 +441,7 @@ void ExecutionControl::publish()
       // Publish the execution configuration if we are the master federate.
       execution_configuration->publish_object_attributes();
    } else {
-      // Only publish the MTR interation if we are NOT the Master federate.
+      // Only publish the MTR interaction if we are NOT the Master federate.
       mtr_interaction->publish_interaction();
    }
 }
@@ -463,7 +463,6 @@ void ExecutionControl::unpublish()
 
 void ExecutionControl::subscribe()
 {
-
    // Check to see if we are the Master federate.
    if ( this->is_master() ) {
       // Only subscribe to the MTR interaction if this is the Master federate.
@@ -477,13 +476,13 @@ void ExecutionControl::subscribe()
 void ExecutionControl::unsubscribe()
 {
    // Check to see if we are the Master federate.
-   if ( this->is_master() ) {
+   if ( !this->is_master() ) {
       // Unsubscribe from the execution configuration if we are NOT the Master federate.
       execution_configuration->unsubscribe_all_object_attributes();
    }
 
    // Unsubscribe the mtr_interactions.
-   // Only unsubscribe an MTR interaction that we subscribe.
+   // Only unsubscribe an MTR interaction that we subscribe to.
    if ( mtr_interaction->is_subscribe() ) {
       mtr_interaction->unsubscribe_from_interaction();
    }
@@ -559,8 +558,8 @@ void ExecutionControl::join_federation_process()
 }
 
 /*!
-@details This routine implements the SpaceFOM Role Determination Process described
-in section 7.2 and figure 7-4.
+@details This routine implements the SpaceFOM Role Determination Process
+described in section 7.2 and figure 7-4.
 
 @job_class{initialization}
 */
