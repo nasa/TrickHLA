@@ -64,7 +64,7 @@ class TrickHLAFederateConfig( object ):
 
       self.federate = thla_federate
       self.manager  = thla_manager
-      self.endabled = thla_enabled
+      self.enabled  = thla_enabled
       self.control  = thla_control
       self.config   = thla_config
 
@@ -106,7 +106,7 @@ class TrickHLAFederateConfig( object ):
       self.manager.obj_count = len(self.fed_objects)
       if self.manager.obj_count:
          self.manager.objects = trick.alloc_type( self.manager.obj_count,
-                                                  'TrickHLA::Object'        )
+                                                  'TrickHLA::Object'      )
 
       # Loop through the federation objects and initialize them.
       for indx in range( 0, self.manager.obj_count ):
@@ -125,7 +125,7 @@ class TrickHLAFederateConfig( object ):
       self.manager.inter_count = len(self.fed_interactions)
       if self.manager.inter_count:
          self.manager.interactions = trick.alloc_type( self.manager.inter_count,
-                                                       'TrickHLA::Interaction'    )
+                                                       'TrickHLA::Interaction'   )
 
       # Loop through the federation interactions and initialize them.
       for indx in range( 0, self.manager.inter_count ):
@@ -144,7 +144,7 @@ class TrickHLAFederateConfig( object ):
             indx += 1
             
       else:
-         # Disable know federates if none have been added.
+         # Disable known federates if none have been added.
          self.federate.enable_known_feds = False
 
       # Loop through the multi-phase initialization sync points appending them
