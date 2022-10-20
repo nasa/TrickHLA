@@ -97,7 +97,7 @@ void SleepTimeout::set(
    reset();
 }
 
-int SleepTimeout::sleep()
+int const SleepTimeout::sleep() const
 {
    return nanosleep( &sleep_time, NULL );
 }
@@ -109,7 +109,7 @@ long long const SleepTimeout::time() const
 
 bool const SleepTimeout::timeout() const
 {
-   return ( clock_wall_time() >= this->timeout_clock_time );
+   return timeout( time() );
 }
 
 bool const SleepTimeout::timeout(
@@ -121,7 +121,7 @@ bool const SleepTimeout::timeout(
 /*! @brief Reset the internal timeout time. */
 void SleepTimeout::reset()
 {
-   long long t = clock_wall_time();
+   long long t = time();
    if ( t < ( std::numeric_limits< long long >::max() - this->timeout_time ) ) {
       this->timeout_clock_time = t + this->timeout_time;
    } else {
