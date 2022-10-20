@@ -61,7 +61,7 @@ DebugHandler::~DebugHandler() // RETURN: -- None.
    return;
 }
 
-bool DebugHandler::show(
+bool const DebugHandler::show(
    DebugLevelEnum const  level,
    DebugSourceEnum const code )
 {

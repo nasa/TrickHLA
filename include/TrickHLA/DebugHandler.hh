@@ -64,7 +64,7 @@ class DebugHandler
     *  @return Returns true if the requested message should be printed.
     *  @param level Debug level of incoming message.
     *  @param code  Debug code source area of the incoming message. */
-   static bool show( DebugLevelEnum const level, DebugSourceEnum const code );
+   static bool const show( DebugLevelEnum const level, DebugSourceEnum const code );
 
    /*! @brief Set the debug level and code-section.
     *  @param level Debug level of incoming message.
