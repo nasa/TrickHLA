@@ -710,7 +710,7 @@ void SyncPntListBase::register_sync_point(
       // Mark the sync-point as registered.
       sp->set_state( SYNC_PT_STATE_REGISTERED );
 
-   } catch ( RTI1516_EXCEPTION &e ) {
+   } catch ( RTI1516_EXCEPTION const &e ) {
 
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -750,7 +750,7 @@ void SyncPntListBase::register_sync_point(
       // Mark the sync-point as registered.
       sp->set_state( SYNC_PT_STATE_REGISTERED );
 
-   } catch ( RTI1516_EXCEPTION &e ) {
+   } catch ( RTI1516_EXCEPTION const &e ) {
 
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -918,17 +918,17 @@ bool SyncPntListBase::achieve_sync_point(
          // Mark the sync-point as achieved.
          sp->set_state( SYNC_PT_STATE_ACHIEVED );
 
-      } catch ( SynchronizationPointLabelNotAnnounced &e ) {
+      } catch ( SynchronizationPointLabelNotAnnounced const &e ) {
          throw; // Rethrow the exception.
-      } catch ( FederateNotExecutionMember &e ) {
+      } catch ( FederateNotExecutionMember const &e ) {
          throw; // Rethrow the exception.
-      } catch ( SaveInProgress &e ) {
+      } catch ( SaveInProgress const &e ) {
          throw; // Rethrow the exception.
-      } catch ( RestoreInProgress &e ) {
+      } catch ( RestoreInProgress const &e ) {
          throw; // Rethrow the exception.
-      } catch ( NotConnected &e ) {
+      } catch ( NotConnected const &e ) {
          throw; // Rethrow the exception.
-      } catch ( RTIinternalError &e ) {
+      } catch ( RTIinternalError const &e ) {
          throw; // Rethrow the exception.
       }
 

@@ -1180,7 +1180,7 @@ void Manager::setup_object_RTI_handles(
             send_hs( stdout, (char *)msg.str().c_str() );
          }
       }
-   } catch ( NameNotFound &e ) {
+   } catch ( NameNotFound const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -1215,7 +1215,7 @@ void Manager::setup_object_RTI_handles(
             break;
          }
       }
-   } catch ( FederateNotExecutionMember &e ) {
+   } catch ( FederateNotExecutionMember const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -1224,7 +1224,7 @@ void Manager::setup_object_RTI_handles(
       errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
              << " Federate Not Execution Member" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( NotConnected &e ) {
+   } catch ( NotConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -1233,7 +1233,7 @@ void Manager::setup_object_RTI_handles(
       errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
              << " Not Connected" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTIinternalError &e ) {
+   } catch ( RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -1245,7 +1245,7 @@ void Manager::setup_object_RTI_handles(
              << " RTIinternalError: '"
              << rti_err_msg << "'" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_EXCEPTION &e ) {
+   } catch ( RTI1516_EXCEPTION const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -1373,7 +1373,7 @@ void Manager::setup_interaction_RTI_handles(
             send_hs( stdout, (char *)msg.str().c_str() );
          }
       }
-   } catch ( NameNotFound &e ) {
+   } catch ( NameNotFound const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -1409,7 +1409,7 @@ void Manager::setup_interaction_RTI_handles(
             break;
          }
       }
-   } catch ( FederateNotExecutionMember &e ) {
+   } catch ( FederateNotExecutionMember const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -1418,7 +1418,7 @@ void Manager::setup_interaction_RTI_handles(
       errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
              << " FederateNotExecutionMember!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( NotConnected &e ) {
+   } catch ( NotConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -1427,7 +1427,7 @@ void Manager::setup_interaction_RTI_handles(
       errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
              << " NotConnected!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTIinternalError &e ) {
+   } catch ( RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -1438,7 +1438,7 @@ void Manager::setup_interaction_RTI_handles(
       errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
              << " RTIinternalError: '" << rti_err_msg << "'" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_EXCEPTION &e ) {
+   } catch ( RTI1516_EXCEPTION const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -2083,7 +2083,7 @@ void Manager::set_object_instance_handles_by_name(
                        << "  ID-Valid:" << ( data_objects[n].is_instance_handle_valid() ? "Yes" : "No" )
                        << "  Obj-Required:" << ( data_objects[n].is_required() ? "Yes" : "No" );
             }
-         } catch ( ObjectInstanceNotKnown &e ) {
+         } catch ( ObjectInstanceNotKnown const &e ) {
             // If this object is not required, just ignore the object instance
             // not known exception, otherwise handle the exception.
             if ( data_objects[n].is_required() ) {
@@ -2104,7 +2104,7 @@ void Manager::set_object_instance_handles_by_name(
             }
          }
       }
-   } catch ( FederateNotExecutionMember &e ) {
+   } catch ( FederateNotExecutionMember const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -2113,7 +2113,7 @@ void Manager::set_object_instance_handles_by_name(
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
              << " ERROR: Federation Not Execution Member" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( NotConnected &e ) {
+   } catch ( NotConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -2122,7 +2122,7 @@ void Manager::set_object_instance_handles_by_name(
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
              << " ERROR: Not Connected" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTIinternalError &e ) {
+   } catch ( RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -2133,7 +2133,7 @@ void Manager::set_object_instance_handles_by_name(
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
              << " RTIinternalError: '" << rti_err_msg << "'" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_EXCEPTION &e ) {
+   } catch ( RTI1516_EXCEPTION const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;

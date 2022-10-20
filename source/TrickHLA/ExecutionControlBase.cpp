@@ -469,37 +469,37 @@ joining federate so this call will be ignored.%c",
       // synchronized in the federation.
       this->wait_for_all_multiphase_init_sync_points();
 
-   } catch ( RTI1516_NAMESPACE::SynchronizationPointLabelNotAnnounced &e ) {
+   } catch ( RTI1516_NAMESPACE::SynchronizationPointLabelNotAnnounced const &e ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
              << " Exception: SynchronizationPointLabelNotAnnounced" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember &e ) {
+   } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
              << " Exception: FederateNotExecutionMember" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::SaveInProgress &e ) {
+   } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
              << " Exception: SaveInProgress" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::RestoreInProgress &e ) {
+   } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
              << " Exception: RestoreInProgress" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::NotConnected &e ) {
+   } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
              << " Exception: NotConnected" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::RTIinternalError &e ) {
+   } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
              << " Exception: RTIinternalError" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_EXCEPTION &e ) {
+   } catch ( RTI1516_EXCEPTION const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;

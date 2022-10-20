@@ -256,7 +256,7 @@ void Interaction::remove() // RETURN: -- None.
                }
 
                rti_amb->unpublishInteractionClass( get_class_handle() );
-            } catch ( RTI1516_EXCEPTION &e ) {
+            } catch ( RTI1516_EXCEPTION const &e ) {
                string rti_err_msg;
                StringUtilities::to_string( rti_err_msg, e.what() );
                send_hs( stderr, "Interaction::remove():%d Unpublish Interaction '%s' exception '%s'%c",
@@ -316,7 +316,7 @@ Published Interaction '%s' Preferred-Order:%s%c",
             break;
          }
       }
-   } catch ( RTI1516_NAMESPACE::InteractionClassNotPublished &e ) {
+   } catch ( RTI1516_NAMESPACE::InteractionClassNotPublished const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -326,7 +326,7 @@ Published Interaction '%s' Preferred-Order:%s%c",
              << " EXCEPTION: InteractionClassNotPublished for Interaction '"
              << get_FOM_name() << "'" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember &e ) {
+   } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -336,7 +336,7 @@ Published Interaction '%s' Preferred-Order:%s%c",
              << " EXCEPTION: FederateNotExecutionMember for Interaction '"
              << get_FOM_name() << "'" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::InteractionClassNotDefined &e ) {
+   } catch ( RTI1516_NAMESPACE::InteractionClassNotDefined const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -346,7 +346,7 @@ Published Interaction '%s' Preferred-Order:%s%c",
              << " EXCEPTION: InteractionClassNotDefined for Interaction '"
              << get_FOM_name() << "'" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::RestoreInProgress &e ) {
+   } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -356,7 +356,7 @@ Published Interaction '%s' Preferred-Order:%s%c",
              << " EXCEPTION: RestoreInProgress for Interaction '"
              << get_FOM_name() << "'" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::RTIinternalError &e ) {
+   } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -366,7 +366,7 @@ Published Interaction '%s' Preferred-Order:%s%c",
              << " EXCEPTION: RTIinternalError for Interaction '"
              << get_FOM_name() << "'" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::SaveInProgress &e ) {
+   } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -376,7 +376,7 @@ Published Interaction '%s' Preferred-Order:%s%c",
              << " EXCEPTION: SaveInProgress for Interaction '"
              << get_FOM_name() << "'" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::NotConnected &e ) {
+   } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -386,7 +386,7 @@ Published Interaction '%s' Preferred-Order:%s%c",
              << " EXCEPTION: NotConnected for Interaction '"
              << get_FOM_name() << "'" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_EXCEPTION &e ) {
+   } catch ( RTI1516_EXCEPTION const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -430,7 +430,7 @@ void Interaction::publish_interaction()
    // Publish the Interaction
    try {
       rti_amb->publishInteractionClass( this->class_handle );
-   } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember &e ) {
+   } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -440,7 +440,7 @@ void Interaction::publish_interaction()
              << " EXCEPTION: FederateNotExecutionMember for Interaction '"
              << get_FOM_name() << "'" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::InteractionClassNotDefined &e ) {
+   } catch ( RTI1516_NAMESPACE::InteractionClassNotDefined const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -450,7 +450,7 @@ void Interaction::publish_interaction()
              << " EXCEPTION: InteractionClassNotDefined for Interaction '"
              << get_FOM_name() << "'" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::RestoreInProgress &e ) {
+   } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -460,7 +460,7 @@ void Interaction::publish_interaction()
              << " EXCEPTION: RestoreInProgress for Interaction '"
              << get_FOM_name() << "'" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::RTIinternalError &e ) {
+   } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -470,7 +470,7 @@ void Interaction::publish_interaction()
              << " EXCEPTION: RTIinternalError for Interaction '"
              << get_FOM_name() << "'" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::SaveInProgress &e ) {
+   } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -480,7 +480,7 @@ void Interaction::publish_interaction()
              << " EXCEPTION: SaveInProgress for Interaction '"
              << get_FOM_name() << "'" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::NotConnected &e ) {
+   } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -490,7 +490,7 @@ void Interaction::publish_interaction()
              << " EXCEPTION: NotConnected for Interaction '"
              << get_FOM_name() << "'" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_EXCEPTION &e ) {
+   } catch ( RTI1516_EXCEPTION const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -531,7 +531,7 @@ void Interaction::unpublish_interaction()
 
       try {
          rti_amb->unpublishInteractionClass( this->class_handle );
-      } catch ( RTI1516_NAMESPACE::InteractionClassNotDefined &e ) {
+      } catch ( RTI1516_NAMESPACE::InteractionClassNotDefined const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -541,7 +541,7 @@ void Interaction::unpublish_interaction()
                 << " EXCEPTION: InteractionClassNotDefined for Interaction '"
                 << get_FOM_name() << "'" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
-      } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember &e ) {
+      } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -551,7 +551,7 @@ void Interaction::unpublish_interaction()
                 << " EXCEPTION: FederateNotExecutionMember for Interaction '"
                 << get_FOM_name() << "'" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
-      } catch ( RTI1516_NAMESPACE::SaveInProgress &e ) {
+      } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -561,7 +561,7 @@ void Interaction::unpublish_interaction()
                 << " EXCEPTION: SaveInProgress for Interaction '"
                 << get_FOM_name() << "'" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
-      } catch ( RTI1516_NAMESPACE::RestoreInProgress &e ) {
+      } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -571,7 +571,7 @@ void Interaction::unpublish_interaction()
                 << " EXCEPTION: RestoreInProgress for Interaction '"
                 << get_FOM_name() << "'" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
-      } catch ( RTI1516_NAMESPACE::NotConnected &e ) {
+      } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -581,7 +581,7 @@ void Interaction::unpublish_interaction()
                 << " EXCEPTION: NotConnected for Interaction '"
                 << get_FOM_name() << "'" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
-      } catch ( RTI1516_NAMESPACE::RTIinternalError &e ) {
+      } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -591,7 +591,7 @@ void Interaction::unpublish_interaction()
                 << " EXCEPTION: RTIinternalError for Interaction '"
                 << get_FOM_name() << "'" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
-      } catch ( RTI1516_EXCEPTION &e ) {
+      } catch ( RTI1516_EXCEPTION const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -634,7 +634,7 @@ void Interaction::subscribe_to_interaction()
 
       try {
          rti_amb->subscribeInteractionClass( this->class_handle, true );
-      } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember &e ) {
+      } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -644,7 +644,7 @@ void Interaction::subscribe_to_interaction()
                 << " EXCEPTION: FederateNotExecutionMember for Interaction '"
                 << get_FOM_name() << "'" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
-      } catch ( RTI1516_NAMESPACE::FederateServiceInvocationsAreBeingReportedViaMOM &e ) {
+      } catch ( RTI1516_NAMESPACE::FederateServiceInvocationsAreBeingReportedViaMOM const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -654,7 +654,7 @@ void Interaction::subscribe_to_interaction()
                 << " EXCEPTION: FederateServiceInvocationsAreBeingReportedViaMOM for Interaction '"
                 << get_FOM_name() << "'" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
-      } catch ( RTI1516_NAMESPACE::InteractionClassNotDefined &e ) {
+      } catch ( RTI1516_NAMESPACE::InteractionClassNotDefined const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -664,7 +664,7 @@ void Interaction::subscribe_to_interaction()
                 << " EXCEPTION: InteractionClassNotDefined for Interaction '"
                 << get_FOM_name() << "'" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
-      } catch ( RTI1516_NAMESPACE::RestoreInProgress &e ) {
+      } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -674,7 +674,7 @@ void Interaction::subscribe_to_interaction()
                 << " EXCEPTION: RestoreInProgress for Interaction '"
                 << get_FOM_name() << "'" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
-      } catch ( RTI1516_NAMESPACE::RTIinternalError &e ) {
+      } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -684,7 +684,7 @@ void Interaction::subscribe_to_interaction()
                 << " EXCEPTION: RTIinternalError for Interaction '"
                 << get_FOM_name() << "'" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
-      } catch ( RTI1516_NAMESPACE::SaveInProgress &e ) {
+      } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -694,7 +694,7 @@ void Interaction::subscribe_to_interaction()
                 << " EXCEPTION:  SaveInProgress for Interaction '"
                 << get_FOM_name() << "'" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
-      } catch ( RTI1516_NAMESPACE::NotConnected &e ) {
+      } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -704,7 +704,7 @@ void Interaction::subscribe_to_interaction()
                 << " EXCEPTION: NotConnected for Interaction '"
                 << get_FOM_name() << "'" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
-      } catch ( RTI1516_EXCEPTION &e ) {
+      } catch ( RTI1516_EXCEPTION const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -748,7 +748,7 @@ void Interaction::unsubscribe_from_interaction()
 
       try {
          rti_amb->unsubscribeInteractionClass( this->class_handle );
-      } catch ( RTI1516_NAMESPACE::InteractionClassNotDefined &e ) {
+      } catch ( RTI1516_NAMESPACE::InteractionClassNotDefined const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -758,7 +758,7 @@ void Interaction::unsubscribe_from_interaction()
                 << " EXCEPTION: InteractionClassNotDefined for Interaction '"
                 << get_FOM_name() << "'" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
-      } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember &e ) {
+      } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -768,7 +768,7 @@ void Interaction::unsubscribe_from_interaction()
                 << " EXCEPTION: FederateNotExecutionMember for Interaction '"
                 << get_FOM_name() << "'" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
-      } catch ( RTI1516_NAMESPACE::SaveInProgress &e ) {
+      } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -778,7 +778,7 @@ void Interaction::unsubscribe_from_interaction()
                 << " EXCEPTION: SaveInProgress for Interaction '"
                 << get_FOM_name() << "'" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
-      } catch ( RTI1516_NAMESPACE::RestoreInProgress &e ) {
+      } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -788,7 +788,7 @@ void Interaction::unsubscribe_from_interaction()
                 << " EXCEPTION: RestoreInProgress for Interaction '"
                 << get_FOM_name() << "'" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
-      } catch ( RTI1516_NAMESPACE::NotConnected &e ) {
+      } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -798,7 +798,7 @@ void Interaction::unsubscribe_from_interaction()
                 << " EXCEPTION: NotConnected for Interaction '"
                 << get_FOM_name() << "'" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
-      } catch ( RTI1516_NAMESPACE::RTIinternalError &e ) {
+      } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -808,7 +808,7 @@ void Interaction::unsubscribe_from_interaction()
                 << " EXCEPTION: RTIinternalError for Interaction '"
                 << get_FOM_name() << "'" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
-      } catch ( RTI1516_EXCEPTION &e ) {
+      } catch ( RTI1516_EXCEPTION const &e ) {
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -886,7 +886,7 @@ bool Interaction::send(
                                          the_user_supplied_tag );
          successfuly_sent = true;
       }
-   } catch ( RTI1516_EXCEPTION &e ) {
+   } catch ( RTI1516_EXCEPTION const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       send_hs( stderr, "Interaction::send():%d As Receive-Order: Interaction '%s' with exception '%s'%c",
@@ -996,7 +996,7 @@ Interaction '%s' is time-regulating:%s, preferred-order:%s.%c",
             successfuly_sent = true;
          }
       }
-   } catch ( RTI1516_NAMESPACE::InvalidLogicalTime &e ) {
+   } catch ( RTI1516_NAMESPACE::InvalidLogicalTime const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -1010,7 +1010,7 @@ Interaction '%s' is time-regulating:%s, preferred-order:%s.%c",
              << time.get_time_in_micros() << " microseconds)"
              << " error message:'" << rti_err_msg << "'" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
-   } catch ( RTI1516_EXCEPTION &e ) {
+   } catch ( RTI1516_EXCEPTION const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
