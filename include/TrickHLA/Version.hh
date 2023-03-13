@@ -25,10 +25,10 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_VERSION_HH_
-#define _TRICKHLA_VERSION_HH_
+#ifndef TRICKHLA_VERSION_HH
+#define TRICKHLA_VERSION_HH
 
 #define TRICKHLA_VERSION "d3.0.0"
 #define TRICKHLA_RELEASE_DATE "2020-07-24"
 
-#endif // _TRICKHLA_VERSION_HH_
+#endif // TRICKHLA_VERSION_HH
