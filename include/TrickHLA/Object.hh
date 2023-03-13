@@ -42,8 +42,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_OBJECT_HH_
-#define _TRICKHLA_OBJECT_HH_
+#ifndef TRICKHLA_OBJECT_HH
+#define TRICKHLA_OBJECT_HH
 
 // System include files.
 #include <pthread.h>
@@ -814,4 +814,4 @@ typedef struct {
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_OBJECT_HH_
+#endif // TRICKHLA_OBJECT_HH

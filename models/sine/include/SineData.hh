@@ -30,8 +30,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_MODEL_SINE_DATA_HH_
-#define _TRICKHLA_MODEL_SINE_DATA_HH_
+#ifndef TRICKHLA_MODEL_SINE_DATA_HH
+#define TRICKHLA_MODEL_SINE_DATA_HH
 
 // Trick includes.
 #include "trick/exec_proto.h"
@@ -237,4 +237,4 @@ class SineData
 
 } // namespace TrickHLAModel
 
-#endif // _TRICKHLA_MODEL_SINE_DATA_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_MODEL_SINE_DATA_HH: Do NOT put anything after this line!

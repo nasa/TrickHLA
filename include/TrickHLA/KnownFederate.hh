@@ -30,8 +30,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_KNOWN_FEDERATE_HH_
-#define _TRICKHLA_KNOWN_FEDERATE_HH_
+#ifndef TRICKHLA_KNOWN_FEDERATE_HH
+#define TRICKHLA_KNOWN_FEDERATE_HH
 
 namespace TrickHLA
 {
@@ -85,4 +85,4 @@ class KnownFederate
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_KNOWN_FEDERATE_HH_
+#endif // TRICKHLA_KNOWN_FEDERATE_HH

@@ -32,8 +32,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_INT64_INTERVAL_HH_
-#define _TRICKHLA_INT64_INTERVAL_HH_
+#ifndef TRICKHLA_INT64_INTERVAL_HH
+#define TRICKHLA_INT64_INTERVAL_HH
 
 // System includes.
 
@@ -218,4 +218,4 @@ class Int64Interval
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_INT64_INTERVAL_HH_
+#endif // TRICKHLA_INT64_INTERVAL_HH

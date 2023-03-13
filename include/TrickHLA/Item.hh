@@ -30,8 +30,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_ITEM_HH_
-#define _TRICKHLA_ITEM_HH_
+#ifndef TRICKHLA_ITEM_HH
+#define TRICKHLA_ITEM_HH
 
 namespace TrickHLA
 {
@@ -72,4 +72,4 @@ class Item
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_ITEM_HH_
+#endif // TRICKHLA_ITEM_HH

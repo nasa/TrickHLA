@@ -33,8 +33,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _IMSIM_EXECUTION_CONFIGURATION_HH_
-#define _IMSIM_EXECUTION_CONFIGURATION_HH_
+#ifndef IMSIM_EXECUTION_CONFIGURATION_HH
+#define IMSIM_EXECUTION_CONFIGURATION_HH
 
 // System include files.
 
@@ -222,4 +222,4 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
 
 } // namespace IMSim
 
-#endif // _IMSIM_EXECUTION_CONFIGURATION_HH_: Do NOT put anything after this line!
+#endif // IMSIM_EXECUTION_CONFIGURATION_HH: Do NOT put anything after this line!

@@ -29,8 +29,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _SPACEFOM_TYPES_HH_
-#define _SPACEFOM_TYPES_HH_
+#ifndef SPACEFOM_TYPES_HH
+#define SPACEFOM_TYPES_HH
 
 // System includes.
 #include <stdint.h>
@@ -129,4 +129,4 @@ MTREnum from_mode_transition_enum( TrickHLA::ModeTransitionEnum mode );
 
 } // namespace SpaceFOM
 
-#endif // _SPACEFOM_TYPES_HH_: Do NOT put anything after this line!
+#endif // SPACEFOM_TYPES_HH: Do NOT put anything after this line!

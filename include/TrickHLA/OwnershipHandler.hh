@@ -36,8 +36,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_OWNERSHIP_HANDLER_HH_
-#define _TRICKHLA_OWNERSHIP_HANDLER_HH_
+#ifndef TRICKHLA_OWNERSHIP_HANDLER_HH
+#define TRICKHLA_OWNERSHIP_HANDLER_HH
 
 // System include files.
 #include <string>
@@ -220,4 +220,4 @@ class OwnershipHandler
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_OWNERSHIP_HANDLER_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_OWNERSHIP_HANDLER_HH: Do NOT put anything after this line!

@@ -31,8 +31,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_PARAMETER_ITEM_HH_
-#define _TRICKHLA_PARAMETER_ITEM_HH_
+#ifndef TRICKHLA_PARAMETER_ITEM_HH
+#define TRICKHLA_PARAMETER_ITEM_HH
 
 // System includes
 #include <cstddef>
@@ -102,4 +102,4 @@ class ParameterItem : public Item
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_PARAMETER_ITEM_HH_
+#endif // TRICKHLA_PARAMETER_ITEM_HH

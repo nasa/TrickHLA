@@ -32,8 +32,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _SPACEFOM_MTR_INTERACTION_HANDLER_HH_
-#define _SPACEFOM_MTR_INTERACTION_HANDLER_HH_
+#ifndef SPACEFOM_MTR_INTERACTION_HANDLER_HH
+#define SPACEFOM_MTR_INTERACTION_HANDLER_HH
 
 // System include files.
 
@@ -136,4 +136,4 @@ class MTRInteractionHandler : public TrickHLA::InteractionHandler
 
 } // namespace SpaceFOM
 
-#endif // _SPACEFOM_MTR_INTERACTION_HANDLER_HH_: Do NOT put anything after this line!
+#endif // SPACEFOM_MTR_INTERACTION_HANDLER_HH: Do NOT put anything after this line!

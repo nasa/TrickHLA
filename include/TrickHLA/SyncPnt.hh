@@ -31,8 +31,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_SYNC_PNT_HH_
-#define _TRICKHLA_SYNC_PNT_HH_
+#ifndef TRICKHLA_SYNC_PNT_HH
+#define TRICKHLA_SYNC_PNT_HH
 
 // System includes
 #include <string>
@@ -161,4 +161,4 @@ class SyncPnt
 
 } // namespace TrickHLA
 
-#endif /* _TRICKHLA_SYNC_PNT_HH_ */
+#endif /* TRICKHLA_SYNC_PNT_HH */

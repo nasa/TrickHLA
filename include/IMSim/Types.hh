@@ -29,8 +29,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _IMSIM_TYPES_HH_
-#define _IMSIM_TYPES_HH_
+#ifndef IMSIM_TYPES_HH
+#define IMSIM_TYPES_HH
 
 // System includes.
 #include <stdint.h>
@@ -166,4 +166,4 @@ PausePointStateEnum pause_pnt_state_int16_to_enum( int16_t int_state );
 
 } // namespace IMSim
 
-#endif // _IMSIM_TYPES_HH_: Do NOT put anything after this line!
+#endif // IMSIM_TYPES_HH: Do NOT put anything after this line!

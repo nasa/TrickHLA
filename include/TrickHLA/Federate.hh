@@ -40,8 +40,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_FEDERATE_HH_
-#define _TRICKHLA_FEDERATE_HH_
+#ifndef TRICKHLA_FEDERATE_HH
+#define TRICKHLA_FEDERATE_HH
 
 // System includes.
 #include <string>
@@ -1277,4 +1277,4 @@ class Federate
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_FEDERATE_HH_
+#endif // TRICKHLA_FEDERATE_HH

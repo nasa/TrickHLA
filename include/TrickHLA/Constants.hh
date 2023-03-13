@@ -28,8 +28,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_CONSTANTS_HH_
-#define _TRICKHLA_CONSTANTS_HH_
+#ifndef TRICKHLA_CONSTANTS_HH
+#define TRICKHLA_CONSTANTS_HH
 
 // System include files.
 #include <stdint.h>
@@ -44,4 +44,4 @@ extern double const  MAX_LOGICAL_TIME_SECONDS; ///< @trick_units{s}
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_CONSTANTS_HH_
+#endif // TRICKHLA_CONSTANTS_HH

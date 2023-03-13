@@ -31,8 +31,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_LOGGABLE_SYNC_PNT_HH_
-#define _TRICKHLA_LOGGABLE_SYNC_PNT_HH_
+#ifndef TRICKHLA_LOGGABLE_SYNC_PNT_HH
+#define TRICKHLA_LOGGABLE_SYNC_PNT_HH
 
 // Trick include files.
 #include "trick/memorymanager_c_intf.h"
@@ -96,4 +96,4 @@ class LoggableSyncPnt
 
 } // namespace TrickHLA
 
-#endif /* _TRICKHLA_LOGGABLE_SYNC_PNT_HH_ */
+#endif /* TRICKHLA_LOGGABLE_SYNC_PNT_HH */

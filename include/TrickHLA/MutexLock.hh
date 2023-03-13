@@ -28,8 +28,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_MUTEX_LOCK_HH_
-#define _TRICKHLA_MUTEX_LOCK_HH_
+#ifndef TRICKHLA_MUTEX_LOCK_HH
+#define TRICKHLA_MUTEX_LOCK_HH
 
 // System include files.
 #include <pthread.h>
@@ -80,4 +80,4 @@ class MutexLock
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_MUTEX_LOCK_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_MUTEX_LOCK_HH: Do NOT put anything after this line!

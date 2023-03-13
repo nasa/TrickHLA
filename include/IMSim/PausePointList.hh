@@ -33,8 +33,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _IMSIM_PAUSE_POINT_LIST_HH_
-#define _IMSIM_PAUSE_POINT_LIST_HH_
+#ifndef IMSIM_PAUSE_POINT_LIST_HH
+#define IMSIM_PAUSE_POINT_LIST_HH
 
 // System includes.
 
@@ -146,4 +146,4 @@ class PausePointList : public TrickHLA::TimedSyncPntList
 
 } // namespace IMSim
 
-#endif /* _IMSIM_PAUSE_POINT_LIST_HH_ */
+#endif /* IMSIM_PAUSE_POINT_LIST_HH */

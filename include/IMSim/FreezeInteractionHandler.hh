@@ -31,8 +31,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _IMSIM_FREEZE_INTERACTION_HANDLER_HH_
-#define _IMSIM_FREEZE_INTERACTION_HANDLER_HH_
+#ifndef IMSIM_FREEZE_INTERACTION_HANDLER_HH
+#define IMSIM_FREEZE_INTERACTION_HANDLER_HH
 
 // System include files.
 
@@ -119,4 +119,4 @@ class FreezeInteractionHandler : public TrickHLA::InteractionHandler
 
 } // namespace IMSim
 
-#endif // _IMSIM_FREEZE_INTERACTION_HANDLER_HH_: Do NOT put anything after this line!
+#endif // IMSIM_FREEZE_INTERACTION_HANDLER_HH: Do NOT put anything after this line!

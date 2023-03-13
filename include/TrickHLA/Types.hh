@@ -29,8 +29,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_TYPES_HH_
-#define _TRICKHLA_TYPES_HH_
+#ifndef TRICKHLA_TYPES_HH
+#define TRICKHLA_TYPES_HH
 
 // System include files.
 #include <limits.h>
@@ -344,4 +344,4 @@ SyncPtStateEnum sync_point_state_int16_to_enum( int16_t int_state );
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_TYPES_HH_
+#endif // TRICKHLA_TYPES_HH

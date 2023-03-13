@@ -31,8 +31,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_OBJECT_DELETED_HH_
-#define _TRICKHLA_OBJECT_DELETED_HH_
+#ifndef TRICKHLA_OBJECT_DELETED_HH
+#define TRICKHLA_OBJECT_DELETED_HH
 
 // TrickHLA include files.
 
@@ -87,4 +87,4 @@ class ObjectDeleted
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_OBJECT_DELETED_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_OBJECT_DELETED_HH: Do NOT put anything after this line!

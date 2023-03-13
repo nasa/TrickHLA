@@ -33,8 +33,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_TIMED_SYNC_PNT_LIST_HH_
-#define _TRICKHLA_TIMED_SYNC_PNT_LIST_HH_
+#ifndef TRICKHLA_TIMED_SYNC_PNT_LIST_HH
+#define TRICKHLA_TIMED_SYNC_PNT_LIST_HH
 
 // System includes.
 #include <string>
@@ -135,4 +135,4 @@ class TimedSyncPntList : public TrickHLA::SyncPntListBase
 
 } // namespace TrickHLA
 
-#endif /* _TRICKHLA_TIMED_SYNC_PNT_LIST_HH_ */
+#endif /* TRICKHLA_TIMED_SYNC_PNT_LIST_HH */

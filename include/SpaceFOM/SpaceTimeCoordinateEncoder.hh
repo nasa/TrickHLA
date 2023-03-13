@@ -29,8 +29,8 @@ v@trick_link_dependency{../../source/TrickHLA/OpaqueBuffer.cpp}
 
 */
 
-#ifndef _SPACEFOM_SPACE_TIME_COORDINATE_ENCODER_HH_
-#define _SPACEFOM_SPACE_TIME_COORDINATE_ENCODER_HH_
+#ifndef SPACEFOM_SPACE_TIME_COORDINATE_ENCODER_HH
+#define SPACEFOM_SPACE_TIME_COORDINATE_ENCODER_HH
 
 // TrickHLA include files.
 #include "TrickHLA/OpaqueBuffer.hh"
@@ -116,4 +116,4 @@ class SpaceTimeCoordinateEncoder : public TrickHLA::OpaqueBuffer
 
 } // namespace SpaceFOM
 
-#endif // End of _SPACEFOM_SPACE_TIME_COORDINATE_ENCODER_HH_: Do NOT put anything after this line!
+#endif // End of SPACEFOM_SPACE_TIME_COORDINATE_ENCODER_HH: Do NOT put anything after this line!

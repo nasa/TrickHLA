@@ -38,8 +38,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _SPACEFOM_REF_FRAME_BASE_HH_
-#define _SPACEFOM_REF_FRAME_BASE_HH_
+#ifndef SPACEFOM_REF_FRAME_BASE_HH
+#define SPACEFOM_REF_FRAME_BASE_HH
 
 // System include files.
 
@@ -184,4 +184,4 @@ class RefFrameBase : public TrickHLA::Packing
 
 } // namespace SpaceFOM
 
-#endif // _SPACEFOM_REF_FRAME_BASE_HH_: Do NOT put anything after this line!
+#endif // SPACEFOM_REF_FRAME_BASE_HH: Do NOT put anything after this line!

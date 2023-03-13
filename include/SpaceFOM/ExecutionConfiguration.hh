@@ -33,8 +33,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _SPACEFOM_EXECUTION_CONFIGURATION_HH_
-#define _SPACEFOM_EXECUTION_CONFIGURATION_HH_
+#ifndef SPACEFOM_EXECUTION_CONFIGURATION_HH
+#define SPACEFOM_EXECUTION_CONFIGURATION_HH
 
 // System include files.
 
@@ -227,4 +227,4 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
 
 } // namespace SpaceFOM
 
-#endif // _SPACEFOM_EXECUTION_CONFIGURATION_HH_: Do NOT put anything after this line!
+#endif // SPACEFOM_EXECUTION_CONFIGURATION_HH: Do NOT put anything after this line!

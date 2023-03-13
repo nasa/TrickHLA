@@ -28,8 +28,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_STANDARDS_SUPPORT_HH_
-#define _TRICKHLA_STANDARDS_SUPPORT_HH_
+#ifndef TRICKHLA_STANDARDS_SUPPORT_HH
+#define TRICKHLA_STANDARDS_SUPPORT_HH
 
 // Default to the IEEE-1516.1-2010 Standard if no HLA standard was defined.
 #if ( !defined( IEEE_1516_2010 ) && !defined( IEEE_1516_2020 ) )
@@ -55,4 +55,4 @@ NASA, Johnson Space Center\n
 #   define RTI1516_EXCEPTION rti1516e::Exception
 #endif
 
-#endif // _TRICKHLA_STANDARDS_SUPPORT_HH_
+#endif // TRICKHLA_STANDARDS_SUPPORT_HH

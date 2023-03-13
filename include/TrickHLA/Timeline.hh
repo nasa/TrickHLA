@@ -30,8 +30,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_TIMELINE_HH_
-#define _TRICKHLA_TIMELINE_HH_
+#ifndef TRICKHLA_TIMELINE_HH
+#define TRICKHLA_TIMELINE_HH
 
 namespace TrickHLA
 {
@@ -109,4 +109,4 @@ class Timeline
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_TIMELINE_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_TIMELINE_HH: Do NOT put anything after this line!

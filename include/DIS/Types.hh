@@ -29,8 +29,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _DIS_TYPES_HH_
-#define _DIS_TYPES_HH_
+#ifndef DIS_TYPES_HH
+#define DIS_TYPES_HH
 
 // System includes.
 #include <stdint.h>
@@ -164,4 +164,4 @@ PausePointStateEnum pause_pnt_state_int16_to_enum( int16_t int_state );
 
 } // namespace DIS
 
-#endif // _DIS_TYPES_HH_: Do NOT put anything after this line!
+#endif // DIS_TYPES_HH: Do NOT put anything after this line!

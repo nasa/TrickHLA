@@ -42,8 +42,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_SCENARIO_TIMELINE_HH_
-#define _TRICKHLA_SCENARIO_TIMELINE_HH_
+#ifndef TRICKHLA_SCENARIO_TIMELINE_HH
+#define TRICKHLA_SCENARIO_TIMELINE_HH
 
 // System include files.
 #include <stdint.h>
@@ -173,4 +173,4 @@ class ScenarioTimeline : public Timeline
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_SCENARIO_TIMELINE_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_SCENARIO_TIMELINE_HH: Do NOT put anything after this line!

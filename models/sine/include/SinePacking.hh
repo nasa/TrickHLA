@@ -33,8 +33,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_MODEL_SINE_PACKING_HH_
-#define _TRICKHLA_MODEL_SINE_PACKING_HH_
+#ifndef TRICKHLA_MODEL_SINE_PACKING_HH
+#define TRICKHLA_MODEL_SINE_PACKING_HH
 
 // Forward declarations.
 namespace TrickHLA
@@ -123,4 +123,4 @@ class SinePacking : public TrickHLA::Packing
 
 } // namespace TrickHLAModel
 
-#endif // _TRICKHLA_MODEL_SINE_PACKING_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_MODEL_SINE_PACKING_HH: Do NOT put anything after this line!

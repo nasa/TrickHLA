@@ -36,8 +36,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _SPACEFOM_EXECUTON_CONTROL_HH_
-#define _SPACEFOM_EXECUTON_CONTROL_HH_
+#ifndef SPACEFOM_EXECUTON_CONTROL_HH
+#define SPACEFOM_EXECUTON_CONTROL_HH
 
 // System includes.
 
@@ -307,4 +307,4 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
 
 } // namespace SpaceFOM
 
-#endif /* _SPACEFOM_EXECUTON_CONTROL_HH_ */
+#endif /* SPACEFOM_EXECUTON_CONTROL_HH */

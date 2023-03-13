@@ -28,8 +28,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_SLEEP_TIMEOUT_HH_
-#define _TRICKHLA_SLEEP_TIMEOUT_HH_
+#ifndef TRICKHLA_SLEEP_TIMEOUT_HH
+#define TRICKHLA_SLEEP_TIMEOUT_HH
 
 // System include files.
 #include <time.h>
@@ -118,4 +118,4 @@ class SleepTimeout
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_SLEEP_TIMEOUT_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_SLEEP_TIMEOUT_HH: Do NOT put anything after this line!

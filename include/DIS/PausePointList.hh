@@ -34,8 +34,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _DIS_PAUSE_POINT_LIST_HH_
-#define _DIS_PAUSE_POINT_LIST_HH_
+#ifndef DIS_PAUSE_POINT_LIST_HH
+#define DIS_PAUSE_POINT_LIST_HH
 
 // System includes.
 
@@ -142,4 +142,4 @@ class PausePointList : public TrickHLA::TimedSyncPntList
 
 } // namespace DIS
 
-#endif /* _DIS_PAUSE_POINT_LIST_HH_ */
+#endif /* DIS_PAUSE_POINT_LIST_HH */

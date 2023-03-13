@@ -37,8 +37,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _SPACEFOM_PHYSICAL_ENTITY_BASE_HH_
-#define _SPACEFOM_PHYSICAL_ENTITY_BASE_HH_
+#ifndef SPACEFOM_PHYSICAL_ENTITY_BASE_HH
+#define SPACEFOM_PHYSICAL_ENTITY_BASE_HH
 
 // System include files.
 
@@ -136,4 +136,4 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
 
 } // namespace SpaceFOM
 
-#endif // _SPACEFOM_PHYSICAL_ENTITY_BASE_HH_: Do NOT put anything after this line!
+#endif // SPACEFOM_PHYSICAL_ENTITY_BASE_HH: Do NOT put anything after this line!

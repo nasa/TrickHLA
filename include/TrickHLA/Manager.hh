@@ -40,8 +40,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_MANAGER_HH_
-#define _TRICKHLA_MANAGER_HH_
+#ifndef TRICKHLA_MANAGER_HH
+#define TRICKHLA_MANAGER_HH
 
 // TrickHLA include files.
 #include "TrickHLA/ExecutionControlBase.hh"
@@ -579,4 +579,4 @@ class Manager
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_MANAGER_HH_
+#endif // TRICKHLA_MANAGER_HH

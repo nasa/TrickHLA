@@ -33,8 +33,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _DSES_EXECUTION_CONFIGURATION_HH_
-#define _DSES_EXECUTION_CONFIGURATION_HH_
+#ifndef DSES_EXECUTION_CONFIGURATION_HH
+#define DSES_EXECUTION_CONFIGURATION_HH
 
 // System include files.
 
@@ -212,4 +212,4 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
 
 } // namespace DSES
 
-#endif // _DSES_EXECUTION_CONFIGURATION_HH_: Do NOT put anything after this line!
+#endif // DSES_EXECUTION_CONFIGURATION_HH: Do NOT put anything after this line!

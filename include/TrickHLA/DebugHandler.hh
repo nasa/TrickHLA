@@ -30,8 +30,8 @@ NASA, Johnson Space Center\n
 @revs_end
 */
 
-#ifndef _TRICKHLA_DEBUG_HANDLER_HH_
-#define _TRICKHLA_DEBUG_HANDLER_HH_
+#ifndef TRICKHLA_DEBUG_HANDLER_HH
+#define TRICKHLA_DEBUG_HANDLER_HH
 
 // TrickHLA Model include files.
 #include "TrickHLA/Types.hh"
@@ -82,4 +82,4 @@ class DebugHandler
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_DEBUG_HANDLER_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_DEBUG_HANDLER_HH: Do NOT put anything after this line!

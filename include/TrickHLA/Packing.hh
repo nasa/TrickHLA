@@ -35,8 +35,8 @@ NASA, Johnson Space Center\n
 @revs_end
 */
 
-#ifndef _TRICKHLA_PACKING_HH_
-#define _TRICKHLA_PACKING_HH_
+#ifndef TRICKHLA_PACKING_HH
+#define TRICKHLA_PACKING_HH
 
 // TrickHLA include files.
 #include "TrickHLA/Types.hh"
@@ -118,4 +118,4 @@ class Packing
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_PACKING_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_PACKING_HH: Do NOT put anything after this line!

@@ -32,8 +32,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_INT64_TIME_HH_
-#define _TRICKHLA_INT64_TIME_HH_
+#ifndef TRICKHLA_INT64_TIME_HH
+#define TRICKHLA_INT64_TIME_HH
 
 // System include files.
 #include <stdint.h>
@@ -363,4 +363,4 @@ class Int64Time
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_INT64_TIME_HH_
+#endif // TRICKHLA_INT64_TIME_HH

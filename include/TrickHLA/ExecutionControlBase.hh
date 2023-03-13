@@ -40,8 +40,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_EXECUTION_CONTROL_BASE_HH_
-#define _TRICKHLA_EXECUTION_CONTROL_BASE_HH_
+#ifndef TRICKHLA_EXECUTION_CONTROL_BASE_HH
+#define TRICKHLA_EXECUTION_CONTROL_BASE_HH
 
 // System includes.
 #include <string>
@@ -718,4 +718,4 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
 
 } // namespace TrickHLA
 
-#endif /* _TRICKHLA_EXECUTION_CONTROL_BASE_HH_ */
+#endif /* TRICKHLA_EXECUTION_CONTROL_BASE_HH */

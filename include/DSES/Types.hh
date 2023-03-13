@@ -29,8 +29,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _DSES_TYPES_HH_
-#define _DSES_TYPES_HH_
+#ifndef DSES_TYPES_HH
+#define DSES_TYPES_HH
 
 // System includes.
 #include <stdint.h>
@@ -125,4 +125,4 @@ MTREnum mtr_int16_to_enum( int16_t mtr_int );
 
 } // namespace DSES
 
-#endif // _DSES_TYPES_HH_: Do NOT put anything after this line!
+#endif // DSES_TYPES_HH: Do NOT put anything after this line!

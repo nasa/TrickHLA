@@ -31,8 +31,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_MODLE_SINE_OBJECT_DELETED_HH_
-#define _TRICKHLA_MODLE_SINE_OBJECT_DELETED_HH_
+#ifndef TRICKHLA_MODLE_SINE_OBJECT_DELETED_HH
+#define TRICKHLA_MODLE_SINE_OBJECT_DELETED_HH
 
 // Forward declarations.
 namespace TrickHLA
@@ -88,4 +88,4 @@ class SineObjectDeleted : public TrickHLA::ObjectDeleted
 
 } // namespace TrickHLAModel
 
-#endif // _TRICKHLA_MODLE_SINE_OBJECT_DELETED_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_MODLE_SINE_OBJECT_DELETED_HH: Do NOT put anything after this line!

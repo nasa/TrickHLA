@@ -30,8 +30,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_STRING_UTIL_HH_
-#define _TRICKHLA_STRING_UTIL_HH_
+#ifndef TRICKHLA_STRING_UTILITIES_HH
+#define TRICKHLA_STRING_UTILITIES_HH
 
 // System include files.
 #include <cstdlib>
@@ -375,4 +375,4 @@ class StringUtilities
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_STRING_UTIL_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_STRING_UTILITIES_HH: Do NOT put anything after this line!

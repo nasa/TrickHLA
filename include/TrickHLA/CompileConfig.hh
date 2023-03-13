@@ -26,8 +26,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_COMPILE_CONFIG_H_
-#define _TRICKHLA_COMPILE_CONFIG_H_
+#ifndef TRICKHLA_COMPILE_CONFIG_HH
+#define TRICKHLA_COMPILE_CONFIG_HH
 
 // For blocking cyclic reads, do a check on the send and received data counts.
 // Default: NO_THLA_CHECK_SEND_AND_RECEIVE_COUNTS
@@ -90,4 +90,4 @@ NASA, Johnson Space Center\n
 // Default: NO_TRICKHLA_ENABLE_FPU_CONTROL_WORD_VALIDATION
 #define NO_TRICKHLA_ENABLE_FPU_CONTROL_WORD_VALIDATION
 
-#endif // _TRICKHLA_COMPILE_CONFIG_H_
+#endif // TRICKHLA_COMPILE_CONFIG_HH

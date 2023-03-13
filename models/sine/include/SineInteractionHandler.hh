@@ -30,8 +30,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_MODEL_SINE_INTERACTION_HANDLER_HH_
-#define _TRICKHLA_MODEL_SINE_INTERACTION_HANDLER_HH_
+#ifndef TRICKHLA_MODEL_SINE_INTERACTION_HANDLER_HH
+#define TRICKHLA_MODEL_SINE_INTERACTION_HANDLER_HH
 
 // TrickHLA include files.
 #include "TrickHLA/InteractionHandler.hh"
@@ -96,4 +96,4 @@ class SineInteractionHandler : public TrickHLA::InteractionHandler
 
 } // namespace TrickHLAModel
 
-#endif // _TRICKHLA_MODEL_SINE_INTERACTION_HANDLER_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_MODEL_SINE_INTERACTION_HANDLER_HH: Do NOT put anything after this line!

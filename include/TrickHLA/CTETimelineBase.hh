@@ -40,8 +40,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_CTE_TIMELINE_BASE_HH_
-#define _TRICKHLA_CTE_TIMELINE_BASE_HH_
+#ifndef TRICKHLA_CTE_TIMELINE_BASE_HH
+#define TRICKHLA_CTE_TIMELINE_BASE_HH
 
 // System include files.
 #include <time.h>
@@ -118,4 +118,4 @@ class CTETimelineBase : public Trick::Clock, public Timeline
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_CTE_TIMELINE_BASE_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_CTE_TIMELINE_BASE_HH: Do NOT put anything after this line!

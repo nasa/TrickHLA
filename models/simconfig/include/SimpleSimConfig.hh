@@ -30,8 +30,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_MODEL_SIMPLE_SIM_CONFIG_HH_
-#define _TRICKHLA_MODEL_SIMPLE_SIM_CONFIG_HH_
+#ifndef TRICKHLA_MODEL_SIMPLE_SIM_CONFIG_HH
+#define TRICKHLA_MODEL_SIMPLE_SIM_CONFIG_HH
 
 // TrickHLA include files.
 #include "TrickHLA/KnownFederate.hh"
@@ -95,4 +95,4 @@ class SimpleSimConfig : public TrickHLA::Packing
 
 } // namespace TrickHLAModel
 
-#endif // _TRICKHLA_MODEL_SIMPLE_SIM_CONFIG_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_MODEL_SIMPLE_SIM_CONFIG_HH: Do NOT put anything after this line!

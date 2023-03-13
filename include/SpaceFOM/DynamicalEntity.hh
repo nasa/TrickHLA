@@ -34,8 +34,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _SPACEFOM_DYNAMICAL_ENTITY_HH_
-#define _SPACEFOM_DYNAMICAL_ENTITY_HH_
+#ifndef SPACEFOM_DYNAMICAL_ENTITY_HH
+#define SPACEFOM_DYNAMICAL_ENTITY_HH
 
 // SpaceFOM include files.
 #include "SpaceFOM/PhysicalEntityBase.hh"
@@ -83,4 +83,4 @@ class DynamicalEntity : public SpaceFOM::PhysicalEntityBase
 
 } // namespace SpaceFOM
 
-#endif // _SPACEFOM_DYNAMICAL_ENTITY_HH_: Do NOT put anything after this line!
+#endif // SPACEFOM_DYNAMICAL_ENTITY_HH: Do NOT put anything after this line!

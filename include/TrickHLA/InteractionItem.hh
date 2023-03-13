@@ -36,8 +36,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_INTERACTION_ITEM_HH_
-#define _TRICKHLA_INTERACTION_ITEM_HH_
+#ifndef TRICKHLA_INTERACTION_ITEM_HH
+#define TRICKHLA_INTERACTION_ITEM_HH
 
 // System include files.
 
@@ -190,4 +190,4 @@ class InteractionItem : public Item
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_INTERACTION_ITEM_HH_
+#endif // TRICKHLA_INTERACTION_ITEM_HH

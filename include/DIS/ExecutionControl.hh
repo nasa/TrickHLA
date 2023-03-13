@@ -34,8 +34,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _DIS_EXECUTON_CONTROL_HH_
-#define _DIS_EXECUTON_CONTROL_HH_
+#ifndef DIS_EXECUTON_CONTROL_HH
+#define DIS_EXECUTON_CONTROL_HH
 
 // System includes.
 
@@ -289,4 +289,4 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
 
 } // namespace DIS
 
-#endif /* _DIS_EXECUTON_CONTROL_HH_ */
+#endif /* DIS_EXECUTON_CONTROL_HH */

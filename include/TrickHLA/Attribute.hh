@@ -33,8 +33,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_ATTRIBUTE_HH_
-#define _TRICKHLA_ATTRIBUTE_HH_
+#ifndef TRICKHLA_ATTRIBUTE_HH
+#define TRICKHLA_ATTRIBUTE_HH
 
 // System includes.
 #include <map>
@@ -543,4 +543,4 @@ typedef std::map< RTI1516_NAMESPACE::AttributeHandle, Attribute * > AttributeMap
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_ATTRIBUTE_HH_
+#endif // TRICKHLA_ATTRIBUTE_HH

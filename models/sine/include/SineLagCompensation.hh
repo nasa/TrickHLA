@@ -33,8 +33,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_MODLE_SINE_LAG_COMPENSATION_HH_
-#define _TRICKHLA_MODLE_SINE_LAG_COMPENSATION_HH_
+#ifndef TRICKHLA_MODLE_SINE_LAG_COMPENSATION_HH
+#define TRICKHLA_MODLE_SINE_LAG_COMPENSATION_HH
 
 // Forward declarations.
 namespace TrickHLA
@@ -118,4 +118,4 @@ class SineLagCompensation : public TrickHLA::LagCompensation
 
 } // namespace TrickHLAModel
 
-#endif // _TRICKHLA_MODLE_SINE_LAG_COMPENSATION_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_MODLE_SINE_LAG_COMPENSATION_HH: Do NOT put anything after this line!

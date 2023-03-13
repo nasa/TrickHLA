@@ -31,8 +31,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_SIM_TIMELINE_HH_
-#define _TRICKHLA_SIM_TIMELINE_HH_
+#ifndef TRICKHLA_SIM_TIMELINE_HH
+#define TRICKHLA_SIM_TIMELINE_HH
 
 // TrickHLA include files.
 #include "TrickHLA/Timeline.hh"
@@ -86,4 +86,4 @@ class SimTimeline : public Timeline
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_SIM_TIMELINE_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_SIM_TIMELINE_HH: Do NOT put anything after this line!

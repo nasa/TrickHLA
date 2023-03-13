@@ -33,8 +33,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_OPAQUE_BUFFER_HH_
-#define _TRICKHLA_OPAQUE_BUFFER_HH_
+#ifndef TRICKHLA_OPAQUE_BUFFER_HH
+#define TRICKHLA_OPAQUE_BUFFER_HH
 
 // System include
 
@@ -168,4 +168,4 @@ class OpaqueBuffer
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_OPAQUE_BUFFER_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_OPAQUE_BUFFER_HH: Do NOT put anything after this line!

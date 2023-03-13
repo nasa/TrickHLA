@@ -34,8 +34,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_UTILITIES_HH_
-#define _TRICKHLA_UTILITIES_HH_
+#ifndef TRICKHLA_UTILITIES_HH
+#define TRICKHLA_UTILITIES_HH
 
 // System include files.
 #include <string>
@@ -262,4 +262,4 @@ class Utilities
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_UTILITIES_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_UTILITIES_HH: Do NOT put anything after this line!

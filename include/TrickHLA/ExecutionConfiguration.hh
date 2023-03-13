@@ -33,8 +33,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_EXECUTION_CONFIGURATION_HH_
-#define _TRICKHLA_EXECUTION_CONFIGURATION_HH_
+#ifndef TRICKHLA_EXECUTION_CONFIGURATION_HH
+#define TRICKHLA_EXECUTION_CONFIGURATION_HH
 
 // System include files.
 
@@ -105,4 +105,4 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_EXECUTION_CONFIGURATION_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_EXECUTION_CONFIGURATION_HH: Do NOT put anything after this line!

@@ -25,8 +25,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _SPACEFOM_REF_FRAME_DATA_H_
-#define _SPACEFOM_REF_FRAME_DATA_H_
+#ifndef SPACEFOM_REF_FRAME_DATA_H
+#define SPACEFOM_REF_FRAME_DATA_H
 
 #include "SpaceFOM/SpaceTimeCoordinateData.h"
 
@@ -49,4 +49,4 @@ typedef struct {
 } // namespace SpaceFOM
 #endif
 
-#endif // _SPACEFOM_REF_FRAME_DATA_H_: Do NOT put anything after this line!
+#endif // SPACEFOM_REF_FRAME_DATA_H: Do NOT put anything after this line!

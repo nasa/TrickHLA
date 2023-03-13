@@ -31,8 +31,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_MODEL_SINE_OWNERSHIP_HANDLER_HH_
-#define _TRICKHLA_MODEL_SINE_OWNERSHIP_HANDLER_HH_
+#ifndef TRICKHLA_MODEL_SINE_OWNERSHIP_HANDLER_HH
+#define TRICKHLA_MODEL_SINE_OWNERSHIP_HANDLER_HH
 
 // Forward declarations.
 namespace TrickHLA
@@ -83,4 +83,4 @@ class SineOwnershipHandler : public TrickHLA::OwnershipHandler
 
 } // namespace TrickHLAModel
 
-#endif // _TRICKHLA_MODEL_SINE_OWNERSHIP_HANDLER_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_MODEL_SINE_OWNERSHIP_HANDLER_HH: Do NOT put anything after this line!

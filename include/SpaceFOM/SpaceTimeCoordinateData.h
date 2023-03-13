@@ -25,8 +25,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _SPACEFOM_SPACE_TIME_COORDINATE_DATA_H_
-#define _SPACEFOM_SPACE_TIME_COORDINATE_DATA_H_
+#ifndef SPACEFOM_SPACE_TIME_COORDINATE_DATA_H
+#define SPACEFOM_SPACE_TIME_COORDINATE_DATA_H
 
 #ifdef __cplusplus
 // Place the struct in a namespace when C++.
@@ -49,4 +49,4 @@ typedef struct {
 } // namespace SpaceFOM
 #endif
 
-#endif // _SPACEFOM_SPACE_TIME_COORDINATE_DATA_H_: Do NOT put anything after this line!
+#endif // SPACEFOM_SPACE_TIME_COORDINATE_DATA_H: Do NOT put anything after this line!

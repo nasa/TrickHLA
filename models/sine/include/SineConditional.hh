@@ -33,8 +33,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_MODEL_SINE_CONDITIONAL_HH_
-#define _TRICKHLA_MODEL_SINE_CONDITIONAL_HH_
+#ifndef TRICKHLA_MODEL_SINE_CONDITIONAL_HH
+#define TRICKHLA_MODEL_SINE_CONDITIONAL_HH
 
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
@@ -93,4 +93,4 @@ class SineConditional : public TrickHLA::Conditional
 
 } // namespace TrickHLAModel
 
-#endif // _TRICKHLA_MODEL_SINE_CONDITIONAL_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_MODEL_SINE_CONDITIONAL_HH: Do NOT put anything after this line!

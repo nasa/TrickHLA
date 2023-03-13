@@ -28,8 +28,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_BASIC_CLOCK_HH_
-#define _TRICKHLA_BASIC_CLOCK_HH_
+#ifndef TRICKHLA_BASIC_CLOCK_HH
+#define TRICKHLA_BASIC_CLOCK_HH
 
 // System includes
 
@@ -83,4 +83,4 @@ class BasicClock
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_BASIC_CLOCK_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_BASIC_CLOCK_HH: Do NOT put anything after this line!

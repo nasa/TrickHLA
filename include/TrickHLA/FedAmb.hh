@@ -49,8 +49,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_FED_AMB_HH_
-#define _TRICKHLA_FED_AMB_HH_
+#ifndef TRICKHLA_FED_AMB_HH
+#define TRICKHLA_FED_AMB_HH
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -512,4 +512,4 @@ class FedAmb : public RTI1516_NAMESPACE::FederateAmbassador
 
 #pragma GCC diagnostic pop
 
-#endif // _TRICKHLA_FED_AMB_HH_ -- Do NOT put anything after this line.
+#endif // TRICKHLA_FED_AMB_HH -- Do NOT put anything after this line.

@@ -41,8 +41,8 @@ execution.
 
 */
 
-#ifndef _TRICKHLA_EXECUTION_CONFIGURATION_BASE_HH_
-#define _TRICKHLA_EXECUTION_CONFIGURATION_BASE_HH_
+#ifndef TRICKHLA_EXECUTION_CONFIGURATION_BASE_HH
+#define TRICKHLA_EXECUTION_CONFIGURATION_BASE_HH
 
 // System include files.
 
@@ -190,4 +190,4 @@ class ExecutionConfigurationBase : public Object, public Packing
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_EXECUTION_CONFIGURATION_BASE_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_EXECUTION_CONFIGURATION_BASE_HH: Do NOT put anything after this line!

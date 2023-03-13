@@ -32,8 +32,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_ITEM_QUEUE_HH_
-#define _TRICKHLA_ITEM_QUEUE_HH_
+#ifndef TRICKHLA_ITEM_QUEUE_HH
+#define TRICKHLA_ITEM_QUEUE_HH
 
 // TrickHLA include files.
 #include "TrickHLA/Item.hh"
@@ -126,4 +126,4 @@ class ItemQueue
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_ITEM_QUEUE_HH_
+#endif // TRICKHLA_ITEM_QUEUE_HH

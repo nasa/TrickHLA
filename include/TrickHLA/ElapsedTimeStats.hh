@@ -26,8 +26,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_ELAPSED_TIME_STATS_HH_
-#define _TRICKHLA_ELAPSED_TIME_STATS_HH_
+#ifndef TRICKHLA_ELAPSED_TIME_STATS_HH
+#define TRICKHLA_ELAPSED_TIME_STATS_HH
 
 // System includes
 #include <string>
@@ -87,4 +87,4 @@ class ElapsedTimeStats
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_ELAPSED_TIME_STATS_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_ELAPSED_TIME_STATS_HH: Do NOT put anything after this line!

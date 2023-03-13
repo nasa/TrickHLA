@@ -36,8 +36,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _IMSIM_EXECUTON_CONTROL_HH_
-#define _IMSIM_EXECUTON_CONTROL_HH_
+#ifndef IMSIM_EXECUTON_CONTROL_HH
+#define IMSIM_EXECUTON_CONTROL_HH
 
 // System includes.
 
@@ -353,4 +353,4 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
 
 } // namespace IMSim
 
-#endif /* _IMSIM_EXECUTON_CONTROL_HH_ */
+#endif /* IMSIM_EXECUTON_CONTROL_HH */

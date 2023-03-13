@@ -31,8 +31,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_REFLECTED_ATTRIBUTES_QUEUE_HH_
-#define _TRICKHLA_REFLECTED_ATTRIBUTES_QUEUE_HH_
+#ifndef TRICKHLA_REFLECTED_ATTRIBUTES_QUEUE_HH
+#define TRICKHLA_REFLECTED_ATTRIBUTES_QUEUE_HH
 
 // TrickHLA include files
 #include "TrickHLA/MutexLock.hh"
@@ -114,4 +114,4 @@ class ReflectedAttributesQueue
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_REFLECTED_ATTRIBUTES_QUEUE_HH_: Do NOT put anything after this line!
+#endif // TRICKHLA_REFLECTED_ATTRIBUTES_QUEUE_HH: Do NOT put anything after this line!

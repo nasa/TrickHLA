@@ -31,8 +31,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _TRICKHLA_OWNERSHIP_ITEM_HH_
-#define _TRICKHLA_OWNERSHIP_ITEM_HH_
+#ifndef TRICKHLA_OWNERSHIP_ITEM_HH
+#define TRICKHLA_OWNERSHIP_ITEM_HH
 
 // Trick include files.
 #include "trick/exec_proto.h"
@@ -109,4 +109,4 @@ class OwnershipItem : public Item
 
 } // namespace TrickHLA
 
-#endif // _TRICKHLA_OWNERSHIP_ITEM_HH_
+#endif // TRICKHLA_OWNERSHIP_ITEM_HH

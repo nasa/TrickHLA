@@ -29,8 +29,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef _SPACEFOM_QUATERNION_ENCODER_HH_
-#define _SPACEFOM_QUATERNION_ENCODER_HH_
+#ifndef SPACEFOM_QUATERNION_ENCODER_HH
+#define SPACEFOM_QUATERNION_ENCODER_HH
 
 // TrickHLA include files.
 #include "TrickHLA/OpaqueBuffer.hh"
@@ -97,4 +97,4 @@ class QuaternionEncoder : public TrickHLA::OpaqueBuffer
 
 } // namespace SpaceFOM
 
-#endif /* _SPACEFOM_QUATERNION_ENCODER_HH_ */
+#endif /* SPACEFOM_QUATERNION_ENCODER_HH */
