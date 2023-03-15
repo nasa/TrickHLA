@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # @file run_doxygen.py
 # @brief This program uses the Doxygen tool to generate TrickHLA documentation.
 #
@@ -120,7 +120,7 @@ def main():
    # user really wants to do that. It WILL remove specified documentation.
    if args.clean and not args.test:
       TrickHLAMessage.warning( 'Cleaning up TrickHLA documentation!' )
-      check_clean = raw_input( 'Are you sure you want to do this? [y]: ' )
+      check_clean = input( 'Are you sure you want to do this? [y]: ' )
       if check_clean == 'y':
          TrickHLAMessage.status( 'Proceeding with cleaning . . .' )
       else:

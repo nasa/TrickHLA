@@ -1,13 +1,15 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # @file cyclomatic_complexity.py
 # @brief This program uses the lizard python utility to determine cyclomatic complexity.
 #
 # This is a Python program used to check the TrickHLA source code
 # cyclomatic complexity using the lizard utility.
+# 1) sudo pip3 install lizard
+# OR
 # 1) git clone https://github.com/terryyin/lizard.git
 # 2) cd lizard
 # 3) ./build.sh
-# 4) sudo python setup.py install
+# 4) sudo python3 setup.py install
 #
 # @revs_title
 # @revs_begin
@@ -172,7 +174,9 @@ def find_lizard( lizard_bin, verbose = True ):
       else:
 
          # LIZARD_HOME is not set so look in the standard locations for lizard.
-         if os.path.isfile( '/usr/bin/lizard' ):
+         if os.path.isfile( 'lizard' ):
+            lizard_command = 'lizard'
+         elif os.path.isfile( '/usr/bin/lizard' ):
             lizard_command = '/usr/bin/lizard'
          elif os.path.isfile( '/usr/local/bin/lizard' ):
             lizard_command = '/usr/local/bin/lizard'

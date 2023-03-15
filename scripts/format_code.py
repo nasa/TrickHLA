@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # @file format_code.py
 # @brief This program applies a format standard to TrickHLA source code.
 #
@@ -100,7 +100,7 @@ def main():
    # user really wants to do that. It WILL change code in place.
    if args.in_place and not args.test:
       TrickHLAMessage.warning( 'Formatting TrickHLA source code in place!' )
-      check_in_place = raw_input( 'Are you sure you want to do this? [y]: ' )
+      check_in_place = input( 'Are you sure you want to do this? [y]: ' )
       if check_in_place == 'y':
          TrickHLAMessage.status( 'Proceeding with formatting . . .' )
       else:
@@ -188,7 +188,9 @@ def find_clang_format( llvm_bin, verbose = True ):
       else:
 
          # LLVM_HOME is not set so look in the standard locations for clang-format.
-         if os.path.isfile( '/usr/bin/clang-format' ):
+         if os.path.isfile( 'clang-format' ):
+            command_path = 'clang-format'
+         elif os.path.isfile( '/usr/bin/clang-format' ):
             command_path = '/usr/bin/clang-format'
          elif os.path.isfile( '/usr/local/bin/clang-format' ):
             command_path = '/usr/local/bin/clang-format'

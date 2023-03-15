@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # @file check_code.py
 # @brief This program applies a flawfinder program to TrickHLA source code.
 #
@@ -225,7 +225,9 @@ def find_flawfinder( flawfinder_bin, verbose = True ):
       else:
 
          # FLAWFINDER_HOME is not set so look in the standard locations for flawfinder.
-         if os.path.isfile( '/usr/bin/flawfinder' ):
+         if os.path.isfile( 'flawfinder' ):
+            flawfinder_command = 'flawfinder'
+         elif os.path.isfile( '/usr/bin/flawfinder' ):
             flawfinder_command = '/usr/bin/flawfinder'
          elif os.path.isfile( '/usr/local/bin/flawfinder' ):
             flawfinder_command = '/usr/local/bin/flawfinder'

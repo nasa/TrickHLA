@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # @file check_code.py
 # @brief This program applies a cppcheck program to TrickHLA source code.
 #
@@ -520,7 +520,9 @@ def find_cppcheck( cppcheck_bin, verbose = True ):
       else:
 
          # CPPCHECK_HOME is not set so look in the standard locations for cppcheck.
-         if os.path.isfile( '/usr/bin/cppcheck' ):
+         if os.path.isfile( 'cppcheck' ):
+            cppcheck_command = 'cppcheck'
+         elif os.path.isfile( '/usr/bin/cppcheck' ):
             cppcheck_command = '/usr/bin/cppcheck'
          elif os.path.isfile( '/usr/local/bin/cppcheck' ):
             cppcheck_command = '/usr/local/bin/cppcheck'
