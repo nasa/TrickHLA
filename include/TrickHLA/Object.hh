@@ -200,7 +200,7 @@ class Object
 
    /*! @brief Sets the core job cycle time used by the multi-rate attributes.
     *  @param cycle_time The core job cycle time in seconds. */
-   void set_core_job_cycle_time( double cycle_time );
+   void set_core_job_cycle_time( double const cycle_time );
 
    /*! @brief Marks this object as deleted from the RTI and sets all attributes as non-local. */
    void remove_object_instance();
@@ -233,14 +233,12 @@ class Object
    void send_requested_data();
 
    /*! @brief Send the requested attribute value updates.
-    *  @param current_time Current time in seconds.
-    *  @param cycle_time   Cycle time between calls to this function in seconds. */
-   void send_requested_data( double current_time, double cycle_time );
+    *  @param update_time The time to HLA Logical Time to update the atributes to. */
+   void send_requested_data( Int64Time const &update_time );
 
    /*! @brief Send the cyclic and requested attribute value updates.
-    *  @param current_time Current time in seconds.
-    *  @param cycle_time   Cycle time between calls to this function in seconds. */
-   void send_cyclic_and_requested_data( double current_time, double cycle_time );
+    *  @param update_time The time to HLA Logical Time to update the atributes to. */
+   void send_cyclic_and_requested_data( Int64Time const &update_time );
 
    /*! @brief Handle the received cyclic data. */
    void receive_cyclic_data();
@@ -589,13 +587,6 @@ class Object
       this->pull_requested = request;
    }
 
-   /*! @brief Get the last update time.
-    *  @return The last HLA logical time update value. */
-   Int64Time const &get_last_update_time() const
-   {
-      return ( last_update_time );
-   }
-
    /*! @brief Return a copy of the federate's lookahead time.
     *  @return Lookahead time interval. */
    Int64Interval get_lookahead() const;
@@ -603,17 +594,6 @@ class Object
    /*! @brief Get the currently granted federation HLA logical time.
     *  @return A copy of the granted HLA logical time. */
    Int64Time get_granted_time() const;
-
-   /*! @brief Set the last update time.
-    *  @param time The last HLA logical time update value. */
-   void set_last_update_time( RTI1516_NAMESPACE::LogicalTime const &time )
-   {
-      last_update_time.set( time );
-   }
-
-   /*! @brief Gets the updated time plus the lookahead time.
-    *  @return Logical time. */
-   Int64Time const &get_update_time_plus_lookahead();
 
    /*! @brief Gets the attribute for the given HLA Attribute-Handle.
     *  @return Associated TrickHLA::Attribute.
@@ -756,9 +736,6 @@ class Object
 
    RTI1516_NAMESPACE::ObjectClassHandle    class_handle;    ///< @trick_io{**} HLA Object Class handle.
    RTI1516_NAMESPACE::ObjectInstanceHandle instance_handle; ///< @trick_io{**} HLA Object Instance handle.
-
-   Int64Time last_update_time;    ///< @trick_io{**} Last update time.
-   Int64Time time_plus_lookahead; ///< @trick_io{**} Time plus lookahead.
 
    bool pull_requested;   ///< @trick_units{--} Has someone asked to own us?
    bool divest_requested; ///< @trick_units{--} Are we releasing ownership?

@@ -73,7 +73,7 @@ class SimpleSimConfig : public TrickHLA::Packing
     * federates based on the known federates.
     *  @param known_feds_count Number of known federates.
     *  @param known_feds       Array of known federates. */
-   void initialize( int known_feds_count, TrickHLA::KnownFederate *known_feds );
+   void initialize( int const known_feds_count, TrickHLA::KnownFederate *known_feds );
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to pack the data before the data is sent to the RTI. */
@@ -87,10 +87,10 @@ class SimpleSimConfig : public TrickHLA::Packing
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for SimpleSimConfig class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   SimpleSimConfig( const SimpleSimConfig &rhs );
+   SimpleSimConfig( SimpleSimConfig const &rhs );
    /*! @brief Assignment operator for SimpleSimConfig class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   SimpleSimConfig &operator=( const SimpleSimConfig &rhs );
+   SimpleSimConfig &operator=( SimpleSimConfig const &rhs );
 };
 
 } // namespace TrickHLAModel

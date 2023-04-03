@@ -987,7 +987,7 @@ bool Attribute::is_static_in_size() const
       // If this is not an array (i.e. num_index == 0) or has static arrays then
       // this attribute is static in size.
       if ( ref2->attr->num_index > 0 ) {
-         for ( int i = 0; i < ref2->attr->num_index; ++i ) {
+         for ( unsigned int i = 0; i < ref2->attr->num_index; ++i ) {
             // Make sure each dimension is statically defined (i.e. not zero).
             if ( ref2->attr->index[i].size <= 0 ) {
                return false;
@@ -1012,7 +1012,7 @@ void Attribute::calculate_static_number_of_items()
 
    // Determine the number of items this attribute has (i.e. items in array).
    if ( ref2->attr->num_index > 0 ) {
-      for ( int i = 0; i < ref2->attr->num_index; ++i ) {
+      for ( unsigned int i = 0; i < ref2->attr->num_index; ++i ) {
          if ( ref2->attr->index[i].size > 0 ) {
             length *= (size_t)ref2->attr->index[i].size;
          }
@@ -1539,7 +1539,7 @@ void Attribute::decode_logical_time() // RETURN: -- None.
    int64_t        logical_time = 0;
    unsigned char *src          = buffer;
 
-   logical_time = ( logical_time << 8 ) | src[0];
+   logical_time = ( logical_time << 8 ) | src[0]; // cppcheck-suppress [badBitmaskCheck]
    logical_time = ( logical_time << 8 ) | src[1];
    logical_time = ( logical_time << 8 ) | src[2];
    logical_time = ( logical_time << 8 ) | src[3];

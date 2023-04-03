@@ -210,9 +210,8 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    /*! @brief Receive the ExecutionConfiguration data from the master federate. */
    virtual void receive_execution_configuration();
    /*! @brief Send the attribute value requested data to the remote federates.
-    *  @param current_time   Current time.
-    *  @param job_cycle_time Cycle time for this send requested data call. */
-   virtual void send_requested_data( double current_time, double job_cycle_time );
+    *  @param update_time  Update time. */
+   virtual void send_requested_data( Int64Time const &update_time );
    /*! @brief Handle the received cyclic data. */
    virtual void receive_cyclic_data();
    /*! @brief Requesting an attribute value update for the given object

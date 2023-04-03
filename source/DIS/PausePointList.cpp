@@ -114,12 +114,11 @@ void PausePointList::check_state()
    MutexProtection auto_unlock_mutex( &mutex );
 
    if ( !sync_point_list.empty() ) {
-      vector< SyncPnt * >::const_iterator i;
-      for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-         if ( ( *i )->get_state() == SYNC_PT_STATE_ACHIEVED ) {
-            this->state = PAUSE_POINT_STATE_FREEZE;
-            return;
-         }
+      if ( std::any_of( sync_point_list.begin(),
+                        sync_point_list.end(),
+                        []( SyncPtStateEnum const s ) { return s == SYNC_PT_STATE_ACHIEVED; } ) ) {
+         this->state = PAUSE_POINT_STATE_FREEZE;
+         return;
       }
    }
 
@@ -137,7 +136,6 @@ void PausePointList::check_state()
    if ( ( state != PAUSE_POINT_STATE_FREEZE ) && ( state != PAUSE_POINT_STATE_UNKNOWN ) ) {
       this->state = PAUSE_POINT_STATE_RUN;
    }
-   //}
 }
 
 wstring PausePointList::to_wstring()

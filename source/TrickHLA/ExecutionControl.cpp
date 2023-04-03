@@ -231,7 +231,7 @@ void ExecutionControl::post_multi_phase_init_processes()
    // Make sure we setup time constrained and time regulating with the RTI.
    federate->setup_time_management();
 
-   // Jump to the GALT.
+   // Jump to the GALT that is a multiple of the lookahead time.
    federate->time_advance_request_to_GALT();
 }
 

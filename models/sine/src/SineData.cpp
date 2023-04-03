@@ -102,7 +102,7 @@ SineData::~SineData()
  * @job_class{scheduled}
  */
 void SineData::copy_data(
-   const SineData *orig ) // IN: -- Orginal source data to copy.
+   SineData const *orig ) // IN: -- Orginal source data to copy.
 {
    // Use the default assignment operator to copy.
    *this = *orig;
@@ -121,7 +121,7 @@ void SineData::compute_value()
  * @job_class{scheduled}
  */
 void SineData::compute_value(
-   double t )
+   double const t )
 {
    // Set the current model time.
    time = t;
@@ -143,7 +143,7 @@ void SineData::compute_derivative()
  * @job_class{derivative}
  */
 void SineData::compute_derivative(
-   double t )
+   double const t )
 {
    // Set the model time.
    time = t;
@@ -183,7 +183,7 @@ void SineData::adjust_phase() // RETURN: -- None.
 }
 
 void SineData::adjust_phase(
-   double t )
+   double const t )
 {
    // Set the model time.
    time = t;

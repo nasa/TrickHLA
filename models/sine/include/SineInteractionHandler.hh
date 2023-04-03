@@ -71,7 +71,7 @@ class SineInteractionHandler : public TrickHLA::InteractionHandler
    /*! @brief Send the HLA interaction using either Timestamp Order or Receive
     * Order which is determined at compile time.
     *  @param send_time HLA time to send the interaction {s}. */
-   void send_sine_interaction( double send_time );
+   void send_sine_interaction( double const send_time );
 
    /*! @brief Receive the HLA interaction.
     *  @param the_user_supplied_tag User tag. */
@@ -88,10 +88,10 @@ class SineInteractionHandler : public TrickHLA::InteractionHandler
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for SineInteractionHandler class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   SineInteractionHandler( const SineInteractionHandler &rhs );
+   SineInteractionHandler( SineInteractionHandler const &rhs );
    /*! @brief Assignment operator for SineInteractionHandler class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   SineInteractionHandler &operator=( const SineInteractionHandler &rhs );
+   SineInteractionHandler &operator=( SineInteractionHandler const &rhs );
 };
 
 } // namespace TrickHLAModel

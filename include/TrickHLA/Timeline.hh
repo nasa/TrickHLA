@@ -54,7 +54,7 @@ class Timeline
    //-----------------------------------------------------------------
    /*! @brief Initialization constructor for the TrickHLA CTETimelineBase class.
     *  @param t0 Epoch for the timeline. */
-   Timeline( double t0 = 0.0 );
+   explicit Timeline( double t0 = 0.0 );
 
    /*! @brief Pure virtual destructor for the TrickHLA CTETimelineBase class. */
    virtual ~Timeline() = 0;
@@ -93,7 +93,7 @@ class Timeline
   protected:
    double epoch; /**<  @trick_units{s}
       Epoch for the simulation. This is the value of the timeline when the
-      execution starts up. This value is often zero but is note required to
+      execution starts up. This value is often zero but is not required to
       be zero. */
 
   private:

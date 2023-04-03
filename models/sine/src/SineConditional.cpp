@@ -71,7 +71,7 @@ SineConditional::~SineConditional()
  */
 void SineConditional::initialize(
    SineData   *data,
-   const char *attr_FOM_name )
+   char const *attr_FOM_name )
 {
    sim_data = data;
 
@@ -165,7 +165,7 @@ an already-initialized SineConditional!",
  * @job_class{scheduled}
  */
 int SineConditional::convert_FOM_name_to_pos(
-   const char *attr_FOM_name )
+   char const *attr_FOM_name )
 {
    string attr_name = attr_FOM_name;
 

@@ -54,11 +54,13 @@ class THLAThreadSimObject : public Trick::SimObject {
    THLAThreadSimObject( TrickHLA::Federate & thla_fed,
                         double data_cycle,
                         unsigned int _THREAD_ID,
+                        std::string object_instance_names = "",
                         unsigned short _1ST  = 1,
                         unsigned short _LAST = 65534 )
       : federate( thla_fed ),
+        data_cycle_time( data_cycle ),
         thread_id( _THREAD_ID ),
-        data_cycle_time( data_cycle )
+        obj_instance_names( object_instance_names )
    {
       // Do a sanity check on the data cycle time.
       if ( data_cycle <= 0.0 ) {
@@ -68,8 +70,11 @@ class THLAThreadSimObject : public Trick::SimObject {
       // Associate this Trick child thread ID to our TrickHLA Federate.
       // Because the federate class initializes the thread state array as
       // a phase 1 (i.e. P1) initialization class job, the earliest we can
-      // associate the Trick child thread is phase 2 (i.e. P2).
-      P2 ("initialization") federate.associate_to_trick_child_thread( thread_id, data_cycle_time );
+      // associate the Trick child thread is phase 2 (i.e. P2). The HLA object
+      // instance names, as a comma seperated string, that are associated with
+      // this Trick child thread. TrickHLA will maintain data choherancy for the
+      // HLA object instances specififed over the data cycle time specified.
+      P2 ("initialization") federate.associate_to_trick_child_thread( thread_id, data_cycle_time, obj_instance_names );
 
       // Wait for the HLA data to be received.
       C_THREAD_ID P_1ST (data_cycle, "environment") federate.wait_to_receive_data();
@@ -80,14 +85,15 @@ class THLAThreadSimObject : public Trick::SimObject {
 
  protected:
    TrickHLA::Federate & federate;
-   unsigned int         thread_id;
    double               data_cycle_time;
-   
+   unsigned int         thread_id;
+   std::string          obj_instance_names; // HLA object instance names, comma seperated string, associated with this thread.
+
  private:
    // Do not allow the implicit copy constructor or assignment operator.
    THLAThreadSimObject(const THLAThreadSimObject & rhs);
    THLAThreadSimObject & operator=(const THLAThreadSimObject & rhs);
-   
+
    // Do not allow the default constructor.
    THLAThreadSimObject();
 };

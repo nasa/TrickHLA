@@ -24,6 +24,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{MutexLock.cpp}
 @trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{SleepTimeout.cpp}
+@trick_link_dependency{TrickThreadCoordinator.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{Utilities.cpp}
 
@@ -79,6 +80,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StringUtilities.hh"
+#include "TrickHLA/TrickThreadCoordinator.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 
@@ -205,11 +207,7 @@ Federate::Federate()
      joined_federate_name_map(),
      joined_federate_handles(),
      joined_federate_names(),
-     thread_state( NULL ),
-     thread_state_cnt( 0 ),
-     thread_state_mutex(),
-     thread_state_associated( false ),
-     thread_state_data_cycle( 0.0 ),
+     thread_coordinator(),
      RTI_ambassador( NULL ),
      federate_ambassador( NULL ),
      manager( NULL ),
@@ -276,7 +274,7 @@ Federate::~Federate()
 
    // Free the memory used by the array of known Federates for the Federation.
    if ( known_feds != static_cast< KnownFederate * >( NULL ) ) {
-      for ( int i = 0; i < known_feds_count; ++i ) {
+      for ( unsigned int i = 0; i < known_feds_count; ++i ) {
          if ( known_feds[i].MOM_instance_name != static_cast< char * >( NULL ) ) {
             if ( TMM_is_alloced( known_feds[i].MOM_instance_name ) ) {
                TMM_delete_var_a( known_feds[i].MOM_instance_name );
@@ -319,16 +317,6 @@ Federate::~Federate()
    // Make sure we unlock the mutex.
    (void)time_adv_state_mutex.unlock();
    (void)joined_federate_mutex.unlock();
-   (void)thread_state_mutex.unlock();
-
-   // Release the thread state arrays.
-   if ( thread_state != NULL ) {
-      thread_state_cnt = 0;
-      if ( TMM_is_alloced( (char *)thread_state ) ) {
-         TMM_delete_var_a( thread_state );
-      }
-      thread_state = NULL;
-   }
 }
 
 /*!
@@ -410,6 +398,9 @@ void Federate::setup(
 
    // Set up the TrickHLA::ExecutionControl instance.
    this->execution_control->setup( *this, *( this->manager ) );
+
+   // Set up the TrickHLA::TrickThreadCoordinator instance.
+   this->thread_coordinator.setup( *this, *( this->manager ) );
 }
 
 /*! @brief Initialization the debug settings, show the version and apply
@@ -450,59 +441,16 @@ the documented ENUM values.%c",
  * @brief Initialize the thread memory associated with the Trick child threads.
  */
 void Federate::initialize_thread_state(
-   double const data_cycle )
+   double const main_thread_data_cycle_time )
 {
-   // When auto_unlock_mutex goes out of scope it automatically unlocks the
-   // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &thread_state_mutex );
 
-   // Set the Trick main thread data-cycle time.
-   this->thread_state_data_cycle = data_cycle;
-
-   // Save the data cycle time and validate.
-   if ( this->thread_state_data_cycle <= 0.0 ) {
-      ostringstream errmsg;
-      errmsg << "Federate::initialize_thread_state():" << __LINE__
-             << " ERROR: data_cycle time (" << this->thread_state_data_cycle
-             << ") must be > 0.0!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Determine the total number of Trick threads (main + child).
-   this->thread_state_cnt = exec_get_num_threads();
-
-   // Protect against the thread count being unexpectedly zero and should be
-   // at least 1 for the Trick main thread.
-   if ( this->thread_state_cnt == 0 ) {
-      this->thread_state_cnt = 1;
-   }
-
-   // Allocate the thread state array for all the Trick threads (main + child).
-   this->thread_state = (unsigned int *)TMM_declare_var_1d( "unsigned int",
-                                                            this->thread_state_cnt );
-   if ( this->thread_state == NULL ) {
-      ostringstream errmsg;
-      errmsg << "Federate::initialize_thread_state():" << __LINE__
-             << " ERROR: Could not allocate memory for thread_state"
-             << " for requested size " << this->thread_state_cnt
-             << "'!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-      exit( 1 );
-   }
-
-   //  Trick Main thread runs the core TrickHLA jobs.
-   this->thread_state[0] = THREAD_STATE_RESET;
-
-   // We don't know if the Child threads are running TrickHLA jobs yet so
-   // mark them all as not associated.
-   for ( unsigned int id = 1; id < this->thread_state_cnt; ++id ) {
-      this->thread_state[id] = THREAD_STATE_NOT_ASSOCIATED;
-   }
-
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::initialize_thread_state():%d Trick main thread (id:0, data_cycle:%.3f).%c",
-               __LINE__, this->thread_state_data_cycle, THLA_NEWLINE );
+               __LINE__, main_thread_data_cycle_time, THLA_NEWLINE );
    }
+
+   // Delegate to the Trick thread coordinator.
+   this->thread_coordinator.initialize_thread_state( main_thread_data_cycle_time );
 }
 
 /*!
@@ -657,7 +605,7 @@ void Federate::restart_initialization()
       }
 
       // Validate the name of each Federate known to be in the Federation.
-      for ( int i = 0; i < known_feds_count; ++i ) {
+      for ( unsigned int i = 0; i < known_feds_count; ++i ) {
 
          // A NULL or zero length Federate name is not allowed.
          if ( ( known_feds[i].name == static_cast< char * >( NULL ) ) || ( *known_feds[i].name == '\0' ) ) {
@@ -1174,7 +1122,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
    // Resolve all the federate instance handles given the federate names.
    try {
-      for ( int i = 0; i < known_feds_count; ++i ) {
+      for ( unsigned int i = 0; i < known_feds_count; ++i ) {
          if ( known_feds[i].MOM_instance_name != NULL ) {
 
             // Create the wide-string version of the MOM instance name.
@@ -1311,7 +1259,7 @@ void Federate::determine_federate_MOM_object_instance_names()
       for ( fed_iter = joined_federate_name_map.begin();
             fed_iter != joined_federate_name_map.end(); ++fed_iter ) {
 
-         for ( int i = 0; i < known_feds_count; ++i ) {
+         for ( unsigned int i = 0; i < known_feds_count; ++i ) {
             StringUtilities::to_wstring( fed_name_ws, known_feds[i].name );
 
             if ( fed_iter->second.compare( fed_name_ws ) == 0 ) {
@@ -1376,7 +1324,7 @@ void Federate::determine_federate_MOM_object_instance_names()
 bool Federate::is_required_federate(
    wstring const &federate_name )
 {
-   for ( int i = 0; i < known_feds_count; ++i ) {
+   for ( unsigned int i = 0; i < known_feds_count; ++i ) {
       if ( known_feds[i].required ) {
          wstring required_fed_name;
          StringUtilities::to_wstring( required_fed_name, known_feds[i].name );
@@ -1425,7 +1373,7 @@ string Federate::wait_for_required_federates_to_join()
 
    // Determine how many required federates we have.
    unsigned int required_feds_count = 0;
-   for ( int i = 0; i < known_feds_count; ++i ) {
+   for ( unsigned int i = 0; i < known_feds_count; ++i ) {
       if ( known_feds[i].required ) {
          ++required_feds_count;
       }
@@ -1449,7 +1397,7 @@ string Federate::wait_for_required_federates_to_join()
 
       // Display the initial summary of the required federates we are waiting for.
       int cnt = 0;
-      for ( int i = 0; i < known_feds_count; ++i ) {
+      for ( unsigned int i = 0; i < known_feds_count; ++i ) {
          // Create a summary of the required federates by name.
          if ( known_feds[i].required ) {
             ++cnt;
@@ -1479,8 +1427,8 @@ string Federate::wait_for_required_federates_to_join()
    bool          found_an_unrequired_federate = false;
    set< string > unrequired_federates_list; // list of unique unrequired federate names
 
-   long long    wallclock_time;
-   SleepTimeout print_timer( (double)this->wait_status_time );
+   int64_t      wallclock_time;
+   SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
    this->all_federates_joined = false;
@@ -2837,8 +2785,8 @@ void Federate::setup_checkpoint()
 
          request_federation_save();
 
-         long long    wallclock_time;
-         SleepTimeout print_timer( (double)this->wait_status_time );
+         int64_t      wallclock_time;
+         SleepTimeout print_timer( this->wait_status_time );
          SleepTimeout sleep_timer;
 
          // need to wait for federation to initiate save
@@ -3093,8 +3041,8 @@ void Federate::setup_restore()
       // set the federate restore_name to filename (without the federation name)- this gets announced to other feds
       initiate_restore_announce( restore_name_str );
 
-      long long    wallclock_time;
-      SleepTimeout print_timer( (double)this->wait_status_time );
+      int64_t      wallclock_time;
+      SleepTimeout print_timer( this->wait_status_time );
       SleepTimeout sleep_timer;
 
       // need to wait for federation to initiate restore
@@ -3202,16 +3150,16 @@ void Federate::post_restore()
       // Restore ownership transfer data for all objects
       Object *objects   = manager->get_objects();
       int     obj_count = manager->get_object_count();
-      for ( int i = 0; i < obj_count; ++i ) {
+      for ( unsigned int i = 0; i < obj_count; ++i ) {
          objects[i].restore_ownership_transfer_checkpointed_data();
       }
 
       // Macro to save the FPU Control Word register value.
       TRICKHLA_SAVE_FPU_CONTROL_WORD;
       try {
-         HLAinteger64Time fedTime;
-         RTI_ambassador->queryLogicalTime( fedTime );
-         set_granted_time( fedTime );
+         HLAinteger64Time time;
+         RTI_ambassador->queryLogicalTime( time );
+         set_granted_time( time );
       } catch ( FederateNotExecutionMember const &e ) {
          send_hs( stderr, "Federate::post_restore():%d queryLogicalTime EXCEPTION: FederateNotExecutionMember%c",
                   __LINE__, THLA_NEWLINE );
@@ -3266,7 +3214,7 @@ void Federate::set_time_advance_granted(
 
    // Record the granted time in the HLA_time variable, so we can plot it
    // in Trick data products.
-   this->HLA_time = granted_time.get_time_in_seconds();
+   this->HLA_time = this->granted_time.get_time_in_seconds();
 
    this->time_adv_state = TIME_ADVANCE_GRANTED;
 }
@@ -3278,11 +3226,11 @@ void Federate::set_granted_time(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
 
-   granted_time.set( time );
+   this->granted_time.set( time );
 
    // Record the granted time in the HLA_time variable, so we can plot it
    // in Trick data products.
-   this->HLA_time = granted_time.get_time_in_seconds();
+   this->HLA_time = this->granted_time.get_time_in_seconds();
 }
 
 void Federate::set_granted_time(
@@ -3292,11 +3240,11 @@ void Federate::set_granted_time(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
 
-   granted_time.set( time );
+   this->granted_time.set( time );
 
    // Record the granted time in the HLA_time variable, so we can plot it
    // in Trick data products.
-   this->HLA_time = granted_time.get_time_in_seconds();
+   this->HLA_time = this->granted_time.get_time_in_seconds();
 }
 
 void Federate::set_requested_time(
@@ -3339,15 +3287,16 @@ void Federate::time_advance_request_to_GALT()
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    try {
-      HLAinteger64Time fedTime;
-      if ( RTI_ambassador->queryGALT( fedTime ) ) {
+      HLAinteger64Time time;
+      if ( RTI_ambassador->queryGALT( time ) ) {
          int64_t L = lookahead.get_time_in_micros();
          if ( L > 0 ) {
-            int64_t GALT = fedTime.getTime();
+            int64_t GALT = time.getTime();
+
             // Make sure the time is an integer multiple of the lookahead time.
-            fedTime.setTime( ( ( GALT / L ) + 1 ) * L );
+            time.setTime( ( ( GALT / L ) + 1 ) * L );
          }
-         set_requested_time( fedTime );
+         set_requested_time( time );
       }
    } catch ( FederateNotExecutionMember const &e ) {
       send_hs( stderr, "Federate::time_advance_request_to_GALT():%d Query-GALT EXCEPTION: FederateNotExecutionMember%c",
@@ -3371,7 +3320,7 @@ void Federate::time_advance_request_to_GALT()
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::time_advance_request_to_GALT():%d Logical Time:%lf%c",
+      send_hs( stdout, "Federate::time_advance_request_to_GALT():%d Requested-Time:%lf%c",
                __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
    }
 
@@ -3390,7 +3339,6 @@ void Federate::time_advance_request_to_GALT_LCTS_multiple()
    // Setup the Least-Common-Time-Step time value.
    int64_t LCTS = execution_control->get_least_common_time_step();
    if ( LCTS <= 0 ) {
-      // FIXME: EZC - Need to figure out what the correct call is for this.
       LCTS = lookahead.get_time_in_micros();
    }
 
@@ -3398,14 +3346,15 @@ void Federate::time_advance_request_to_GALT_LCTS_multiple()
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    try {
-      HLAinteger64Time fedTime;
-      if ( RTI_ambassador->queryGALT( fedTime ) ) {
+      HLAinteger64Time time;
+      if ( RTI_ambassador->queryGALT( time ) ) {
          if ( LCTS > 0 ) {
-            int64_t GALT = fedTime.getTime();
+            int64_t GALT = time.getTime();
+
             // Make sure the time is an integer multiple of the LCTS time.
-            fedTime.setTime( ( ( GALT / LCTS ) + 1 ) * LCTS );
+            time.setTime( ( ( GALT / LCTS ) + 1 ) * LCTS );
          }
-         set_requested_time( fedTime );
+         set_requested_time( time );
       }
    } catch ( FederateNotExecutionMember const &e ) {
       send_hs( stderr, "Federate::time_advance_request_to_GALT_LCTS_multiple():%d Query-GALT EXCEPTION: FederateNotExecutionMember%c",
@@ -3429,7 +3378,7 @@ void Federate::time_advance_request_to_GALT_LCTS_multiple()
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::time_advance_request_to_GALT_LCTS_multiple():%d Logical Time:%lf%c",
+      send_hs( stdout, "Federate::time_advance_request_to_GALT_LCTS_multiple():%d Requested-Time:%lf%c",
                __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
    }
 
@@ -4094,8 +4043,8 @@ void Federate::setup_time_constrained()
       // simulation fed file we will receive TimeStamp Ordered messages.
       RTI_ambassador->enableTimeConstrained();
 
-      long long    wallclock_time;
-      SleepTimeout print_timer( (double)this->wait_status_time );
+      int64_t      wallclock_time;
+      SleepTimeout print_timer( this->wait_status_time );
       SleepTimeout sleep_timer;
 
       // This spin lock waits for the time constrained flag to be set from the RTI.
@@ -4294,8 +4243,8 @@ void Federate::setup_time_regulation()
       // TimeStamp Ordered messages.
       RTI_ambassador->enableTimeRegulation( lookahead.get() );
 
-      long long    wallclock_time;
-      SleepTimeout print_timer( (double)this->wait_status_time );
+      int64_t      wallclock_time;
+      SleepTimeout print_timer( this->wait_status_time );
       SleepTimeout sleep_timer;
 
       // This spin lock waits for the time regulation flag to be set from the RTI.
@@ -4625,82 +4574,16 @@ void Federate::perform_time_advance_request()
  */
 void Federate::associate_to_trick_child_thread(
    unsigned int const thread_id,
-   double const       data_cycle )
+   double const       data_cycle,
+   string const      &obj_insance_names )
 {
-   // When auto_unlock_mutex goes out of scope it automatically unlocks the
-   // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &thread_state_mutex );
-
-   // Verify the Federate::initialize_thread_state() function was called as
-   // required before this function is called by checking if the thread count
-   // was initialized.
-   if ( this->thread_state_cnt == 0 ) {
-      ostringstream errmsg;
-      errmsg << "Federate::associate_to_trick_child_thread():" << __LINE__
-             << " ERROR: Federate::initialize_thread_state() must be"
-             << " called once before calling this function." << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Verify the total Trick thread count (main + child).
-   if ( this->thread_state_cnt != exec_get_num_threads() ) {
-      ostringstream errmsg;
-      errmsg << "Federate::associate_to_trick_child_thread():" << __LINE__
-             << " ERROR: The total number of Trick threads "
-             << exec_get_num_threads() << " (main + child threads) does"
-             << " not match the number (" << this->thread_state_cnt
-             << ") we initialized to in Federate::initialize_thread_state()"
-             << " for the specified thread-id:" << thread_id << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Verify the child thread-id specified is in range.
-   if ( thread_id >= this->thread_state_cnt ) {
-      ostringstream errmsg;
-      errmsg << "Federate::associate_to_trick_child_thread():" << __LINE__
-             << " ERROR: Total Trick thread count " << thread_state_cnt
-             << " (main + child threads), Invalid specified child thread-id:"
-             << thread_id << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // We don't support more than one thread association to the same thread-id.
-   if ( this->thread_state[thread_id] != THREAD_STATE_NOT_ASSOCIATED ) {
-      ostringstream errmsg;
-      errmsg << "Federate::associate_to_trick_child_thread():" << __LINE__
-             << " ERROR: You can not associate the same Trick child thread (id:"
-             << thread_id << ") more than once with TrickHLA!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // We only allow child threads with the exact same data cycle time
-   // as the Trick main thread.
-   if ( data_cycle != this->thread_state_data_cycle ) {
-      ostringstream errmsg;
-      errmsg << "Federate::associate_to_trick_child_thread():" << __LINE__
-             << " ERROR: The data-cycle time for the Trick child thread (id:"
-             << thread_id << ", data_cycle:" << data_cycle
-             << ") must be the same as the Trick main thread"
-             << " (data_cycle:" << this->thread_state_data_cycle << ")!"
-             << " NOTE: If you need to send HLA Attribute data at a different"
-             << " rate than the Trick Main Thread data-cycle time then either"
-             << " use the Conditional TrickHLA callback API or use the"
-             << " TrickHLA Attribute.cycle_time setting for each attribute of"
-             << " a TrickHLA Object to desired data-cycle time."
-             << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::associate_to_trick_child_thread():%d Trick child thread (id:%d, data_cycle:%.3f).%c",
                __LINE__, thread_id, data_cycle, THLA_NEWLINE );
    }
 
-   // Make sure we mark the thread state as reset now that we associated to it.
-   this->thread_state[thread_id] = THREAD_STATE_RESET;
-
-   // We now have at least one Trick child thread associated to TrickHLA.
-   this->thread_state_associated = true;
+   // Delegate to the Trick child thread coordinator.
+   this->thread_coordinator.associate_to_trick_child_thread( thread_id, data_cycle, obj_insance_names );
 }
 
 /*!
@@ -4708,28 +4591,13 @@ void Federate::associate_to_trick_child_thread(
  */
 void Federate::announce_data_available()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::announce_data_available():%d%c",
-               __LINE__, THLA_NEWLINE );
+   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      send_hs( stdout, "Federate::announce_data_available():%d Thread:%d%c",
+               __LINE__, exec_get_process_id(), THLA_NEWLINE );
    }
 
-   // Process Trick child thread states associated to TrickHLA.
-   if ( this->thread_state_associated ) {
-
-      // When auto_unlock_mutex goes out of scope it automatically unlocks the
-      // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &thread_state_mutex );
-
-      // Process all the Trick child threads associated to TrickHLA first.
-      for ( unsigned int id = 1; id < this->thread_state_cnt; ++id ) {
-         if ( this->thread_state[id] != THREAD_STATE_NOT_ASSOCIATED ) {
-            this->thread_state[id] = THREAD_STATE_READY_TO_RECEIVE;
-         }
-      }
-
-      // Make sure we set the state of the Trick main thread last.
-      this->thread_state[0] = THREAD_STATE_READY_TO_RECEIVE;
-   }
+   // Delegate to the Trick child thread coordinator.
+   this->thread_coordinator.announce_data_available();
 }
 
 /*!
@@ -4737,21 +4605,13 @@ void Federate::announce_data_available()
  */
 void Federate::announce_data_sent()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::announce_data_sent():%d%c",
-               __LINE__, THLA_NEWLINE );
+   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      send_hs( stdout, "Federate::announce_data_sent():%d Thread:%d%c",
+               __LINE__, exec_get_process_id(), THLA_NEWLINE );
    }
 
-   // Process Trick child thread states associated to TrickHLA.
-   if ( this->thread_state_associated ) {
-
-      // When auto_unlock_mutex goes out of scope it automatically unlocks the
-      // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &thread_state_mutex );
-
-      // Set the state of the main thread as ready to send.
-      this->thread_state[0] = THREAD_STATE_READY_TO_SEND;
-   }
+   // Delegate to the Trick child thread coordinator.
+   this->thread_coordinator.announce_data_sent();
 }
 
 /*!
@@ -4761,298 +4621,44 @@ void Federate::announce_data_sent()
  */
 void Federate::wait_to_send_data()
 {
-   // Don't process Trick child thread states associated to TrickHLA if none exist.
-   if ( !this->thread_state_associated ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         send_hs( stdout, "Federate::wait_to_send_data():%d%c",
-                  __LINE__, THLA_NEWLINE );
-      }
-      return;
-   }
-
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::wait_to_send_data():%d Waiting...%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Federate::wait_to_send_data():%d Thread:%d%c",
+               __LINE__, exec_get_process_id(), THLA_NEWLINE );
    }
 
-   // Get the ID of the thread that called this function.
-   unsigned int thread_id = exec_get_process_id();
-
-   // Determine if this is the main thread (id = 0) or a child thread. The main
-   // thread will wait for all the child threads to be ready to send before
-   // returning.
-   if ( thread_id == 0 ) {
-
-      // Don't check the Trick main thread (id = 0), only check child threads.
-      unsigned int id = 1;
-
-      // Trick Main Thread: Take a quick first look to determine if all the
-      // Trick child threads associated to TrickHLA are ready to send data.
-      // If all the child threads are ready to send data then this quick look
-      // will return faster than the more involved spin-lock code section
-      // further below with the sleep code.
-      bool all_ready_to_send = true;
-      {
-         // When auto_unlock_mutex goes out of scope it automatically
-         // unlocks the mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &thread_state_mutex );
-
-         // Check all the associated thread-id's.
-         while ( ( id < this->thread_state_cnt ) && all_ready_to_send ) {
-
-            // If the state is THREAD_STATE_NOT_ASSOCIATED then there are
-            // no TrickHLA jobs on this thread, so move on to the next
-            // thread-id. If the state is THREAD_STATE_READY_TO_SEND then
-            // this thread-id is ready, so check the next ID. Otherwise we
-            // are not ready to send and don't move on from the current
-            // thread-id. Skip this child thread if it is not scheduled to
-            // run at the same time as the main thread for this job.
-            if ( ( thread_state[id] == THREAD_STATE_READY_TO_SEND )
-                 || ( thread_state[id] == THREAD_STATE_NOT_ASSOCIATED ) ) {
-               // Move to the next thread-id because the current ID is
-               // ready. This results in checking all the ID's just once.
-               ++id;
-            } else {
-               // Stay on the current ID and indicate not ready to send.
-               all_ready_to_send = false;
-            }
-         }
-      }
-
-      // If the quick look was not successful do a more involved spin-lock with
-      // sleeps, which adds more wait latency.
-      if ( !all_ready_to_send ) {
-
-         long long    wallclock_time;
-         SleepTimeout print_timer( (double)this->wait_status_time );
-         SleepTimeout sleep_timer( (long)THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
-
-         // Wait for all Trick child threads associated to TrickHLA to be
-         // ready to send data.
-         do {
-
-            // Check for shutdown.
-            check_for_shutdown_with_termination();
-
-            (void)sleep_timer.sleep();
-
-            // Determine if all the Trick child threads are ready to send data.
-            all_ready_to_send = true;
-            {
-               // When auto_unlock_mutex goes out of scope it automatically
-               // unlocks the mutex even if there is an exception.
-               MutexProtection auto_unlock_mutex( &thread_state_mutex );
-
-               // Check all the associated thread-id's.
-               while ( ( id < this->thread_state_cnt ) && all_ready_to_send ) {
-
-                  // If the state is THREAD_STATE_NOT_ASSOCIATED then there are
-                  // no TrickHLA jobs on this thread, so move on to the next
-                  // thread-id. If the state is THREAD_STATE_READY_TO_SEND then
-                  // this thread-id is ready, so check the next ID. Otherwise we
-                  // are not ready to send and don't move on from the current
-                  // thread-id. Skip this child thread if it is not scheduled to
-                  // run at the same time as the main thread for this job.
-                  if ( ( thread_state[id] == THREAD_STATE_READY_TO_SEND )
-                       || ( thread_state[id] == THREAD_STATE_NOT_ASSOCIATED ) ) {
-                     // Move to the next thread-id because the current ID is
-                     // ready. This results in checking all the ID's just once.
-                     ++id;
-                  } else {
-                     // Stay on the current ID and indicate not ready to send.
-                     all_ready_to_send = false;
-                  }
-               }
-            }
-
-            if ( !all_ready_to_send ) {
-
-               // To be more efficient, we get the time once and share it.
-               wallclock_time = sleep_timer.time();
-
-               if ( sleep_timer.timeout( wallclock_time ) ) {
-                  sleep_timer.reset();
-                  if ( !is_execution_member() ) {
-                     ostringstream errmsg;
-                     errmsg << "Federate::wait_to_send_data():" << __LINE__
-                            << " Unexpectedly the Federate is no longer an execution"
-                            << " member. This means we are either not connected to the"
-                            << " RTI or we are no longer joined to the federation"
-                            << " execution because someone forced our resignation at"
-                            << " the Central RTI Component (CRC) level!"
-                            << THLA_ENDL;
-                     DebugHandler::terminate_with_message( errmsg.str() );
-                  }
-               }
-
-               if ( print_timer.timeout( wallclock_time ) ) {
-                  print_timer.reset();
-                  send_hs( stdout, "Federate::wait_to_send_data():%d Waiting on child thread %d...%c",
-                           __LINE__, id, THLA_NEWLINE );
-               }
-            }
-         } while ( !all_ready_to_send );
-      }
-   } else {
-
-      // Trick Child Threads associated to TrickHLA need to wait for the Trick
-      // main thread to send all the HLA data.
-
-      // Do a quick look to determine if the Trick main thread has sent all
-      // the HLA data.
-      bool sent_data;
-      {
-         // When auto_unlock_mutex goes out of scope it automatically unlocks
-         // the mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &thread_state_mutex );
-
-         // Mark this child thread as ready to send.
-         thread_state[thread_id] = THREAD_STATE_READY_TO_SEND;
-
-         // Determine if all the data has been sent by the main thread.
-         sent_data = ( thread_state[0] == THREAD_STATE_READY_TO_SEND );
-      }
-
-      // If the quick look to see if the main thread has announced it has sent
-      // the data has not succeeded then do a more involved spin-lock with a
-      // sleep. This will have more wait latency.
-      if ( !sent_data ) {
-
-         long long    wallclock_time;
-         SleepTimeout print_timer( (double)this->wait_status_time );
-         SleepTimeout sleep_timer( (long)THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
-
-         // Wait for the main thread to have sent the data.
-         do {
-            // Check for shutdown.
-            check_for_shutdown_with_termination();
-
-            (void)sleep_timer.sleep();
-
-            {
-               // When auto_unlock_mutex goes out of scope it automatically
-               // unlocks the mutex even if there is an exception.
-               MutexProtection auto_unlock_mutex( &thread_state_mutex );
-
-               sent_data = ( thread_state[0] == THREAD_STATE_READY_TO_SEND );
-            }
-
-            if ( !sent_data ) {
-
-               // To be more efficient, we get the time once and share it.
-               wallclock_time = sleep_timer.time();
-
-               if ( sleep_timer.timeout( wallclock_time ) ) {
-                  sleep_timer.reset();
-                  if ( !is_execution_member() ) {
-                     ostringstream errmsg;
-                     errmsg << "Federate::wait_to_send_data():" << __LINE__
-                            << " Unexpectedly the Federate is no longer an execution"
-                            << " member. This means we are either not connected to the"
-                            << " RTI or we are no longer joined to the federation"
-                            << " execution because someone forced our resignation at"
-                            << " the Central RTI Component (CRC) level!"
-                            << THLA_ENDL;
-                     DebugHandler::terminate_with_message( errmsg.str() );
-                  }
-               }
-
-               if ( print_timer.timeout( wallclock_time ) ) {
-                  print_timer.reset();
-                  send_hs( stdout, "Federate::wait_to_send_data():%d Waiting...%c",
-                           __LINE__, THLA_NEWLINE );
-               }
-            }
-         } while ( !sent_data );
-      }
-   }
-
-   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::wait_to_send_data():%d Done%c",
-               __LINE__, THLA_NEWLINE );
-   }
+   // Delegate to the Trick child thread coordinator.
+   this->thread_coordinator.wait_to_send_data();
 }
 
 /*! @brief Wait to receive data when the Trick main thread is ready. */
 void Federate::wait_to_receive_data()
 {
-   // Don't process Trick child thread states associated to TrickHLA if none exist.
-   if ( !this->thread_state_associated ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         send_hs( stdout, "Federate::wait_to_receive_data():%d%c",
-                  __LINE__, THLA_NEWLINE );
-      }
-      return;
-   }
-
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::wait_to_receive_data():%d Waiting...%c",
-               __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "Federate::wait_to_receive_data():%d Thread:%d%c",
+               __LINE__, exec_get_process_id(), THLA_NEWLINE );
    }
 
-   bool ready_to_receive;
-   {
-      // When auto_unlock_mutex goes out of scope it automatically unlocks
-      // the mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &thread_state_mutex );
+   // Delegate to the Trick child thread coordinator.
+   this->thread_coordinator.wait_to_receive_data();
+}
 
-      ready_to_receive = ( thread_state[0] == THREAD_STATE_READY_TO_RECEIVE );
-   }
+/*! @brief Get the data cycle time for the configured object index or return
+ * the default data cycle time otherwise. */
+int64_t const Federate::get_data_cycle_time_micros_for_obj(
+   unsigned int const obj_index,
+   int64_t const      default_data_cycle_us ) const
+{
+   // Delegate to the Trick child thread coordinator.
+   return this->thread_coordinator.get_data_cycle_time_micros_for_obj( obj_index, default_data_cycle_us );
+}
 
-   // See if the main thread has announced it has received data.
-   if ( !ready_to_receive ) {
-
-      long long    wallclock_time;
-      SleepTimeout print_timer( (double)this->wait_status_time );
-      SleepTimeout sleep_timer( (long)THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
-
-      // Wait for the main thread to receive data.
-      do {
-         // Check for shutdown.
-         check_for_shutdown_with_termination();
-
-         (void)sleep_timer.sleep();
-
-         {
-            // When auto_unlock_mutex goes out of scope it automatically
-            // unlocks the  mutex even if there is an exception.
-            MutexProtection auto_unlock_mutex( &thread_state_mutex );
-
-            ready_to_receive = ( thread_state[0] == THREAD_STATE_READY_TO_RECEIVE );
-         }
-
-         if ( !ready_to_receive ) {
-
-            // To be more efficient, we get the time once and share it.
-            wallclock_time = sleep_timer.time();
-
-            if ( sleep_timer.timeout( wallclock_time ) ) {
-               sleep_timer.reset();
-               if ( !is_execution_member() ) {
-                  ostringstream errmsg;
-                  errmsg << "Federate::wait_to_receive_data():" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution"
-                         << " member. This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
-                         << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!"
-                         << THLA_ENDL;
-                  DebugHandler::terminate_with_message( errmsg.str() );
-               }
-            }
-
-            if ( print_timer.timeout( wallclock_time ) ) {
-               print_timer.reset();
-               send_hs( stdout, "Federate::wait_to_receive_data():%d Waiting...%c",
-                        __LINE__, THLA_NEWLINE );
-            }
-         }
-      } while ( !ready_to_receive );
-   }
-   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::wait_to_receive_data():%d Done%c",
-               __LINE__, THLA_NEWLINE );
-   }
+/*! @brief Is the object for the given index on a data cycle boundary. */
+bool const Federate::on_data_cycle_boundary_for_obj(
+   unsigned int const obj_index,
+   int64_t const      sim_time_us ) const
+{
+   // Delegate to the Trick child thread coordinator.
+   return this->thread_coordinator.on_data_cycle_boundary_for_obj( obj_index, sim_time_us );
 }
 
 /*!
@@ -5097,9 +4703,9 @@ void Federate::wait_for_time_advance_grant()
                   __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
       }
 
-      long long    wallclock_time;
-      SleepTimeout print_timer( (double)this->wait_status_time );
-      SleepTimeout sleep_timer( (long)THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
+      int64_t      wallclock_time;
+      SleepTimeout print_timer( this->wait_status_time );
+      SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // This spin lock waits for the time advance grant from the RTI.
       do {
@@ -5147,7 +4753,7 @@ void Federate::wait_for_time_advance_grant()
    // Add the line number for a higher trace level.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_for_time_advance_grant():%d Time Advance Grant (TAG) to %.12G seconds.%c",
-               __LINE__, granted_time.get_time_in_seconds(), THLA_NEWLINE );
+               __LINE__, this->granted_time.get_time_in_seconds(), THLA_NEWLINE );
    }
 }
 
@@ -5190,7 +4796,7 @@ void Federate::shutdown()
       }
 
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
-      for ( int i = 0; i < this->manager->obj_count; ++i ) {
+      for ( unsigned int i = 0; i < this->manager->obj_count; ++i ) {
          ostringstream msg;
          msg << "Federate::shutdown():" << __LINE__
              << " Object[" << i << "]:'" << this->manager->objects[i].get_name() << "'"
@@ -5202,7 +4808,7 @@ void Federate::shutdown()
 #endif
 
 #ifdef THLA_CYCLIC_READ_TIME_STATS
-      for ( int i = 0; i < this->manager->obj_count; ++i ) {
+      for ( unsigned int i = 0; i < this->manager->obj_count; ++i ) {
          ostringstream msg;
          msg << "Federate::shutdown():" << __LINE__
              << " Object[" << i << "]:'" << this->manager->objects[i].get_name() << "' "
@@ -5947,8 +5553,8 @@ void Federate::ask_MOM_for_auto_provide_setting()
    requestedAttributes.insert( MOM_HLAautoProvide_handle );
    request_attribute_update( MOM_HLAfederation_class_handle, requestedAttributes );
 
-   long long    wallclock_time;
-   SleepTimeout print_timer( (double)this->wait_status_time );
+   int64_t      wallclock_time;
+   SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( this->auto_provide_setting < 0 ) {
@@ -6088,8 +5694,8 @@ void Federate::load_and_print_running_federate_names()
    requestedAttributes.insert( MOM_HLAfederatesInFederation_handle );
    request_attribute_update( MOM_HLAfederation_class_handle, requestedAttributes );
 
-   long long    wallclock_time;
-   SleepTimeout print_timer( (double)this->wait_status_time );
+   int64_t      wallclock_time;
+   SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( this->running_feds_count <= 0 ) {
@@ -6275,7 +5881,7 @@ MOM just informed us that there are %d federates currently running in the federa
 void Federate::clear_running_feds()
 {
    if ( this->running_feds != static_cast< KnownFederate * >( NULL ) ) {
-      for ( int i = 0; i < running_feds_count; ++i ) {
+      for ( unsigned int i = 0; i < running_feds_count; ++i ) {
          if ( this->running_feds[i].MOM_instance_name != static_cast< char * >( NULL ) ) {
             if ( TMM_is_alloced( this->running_feds[i].MOM_instance_name ) ) {
                TMM_delete_var_a( this->running_feds[i].MOM_instance_name );
@@ -6318,7 +5924,7 @@ void Federate::update_running_feds()
                   map_iter->second.c_str(), THLA_NEWLINE );
       }
 
-      for ( int i = 0; i < running_feds_count; ++i ) {
+      for ( unsigned int i = 0; i < running_feds_count; ++i ) {
          send_hs( stdout, "Federate::update_running_feds():%d running_feds[%d]=%s %c",
                   __LINE__, i, running_feds[i].name, THLA_NEWLINE );
       }
@@ -6334,7 +5940,7 @@ void Federate::update_running_feds()
    }
 
    // Loop through joined_federate_name_map to build the running_feds list
-   int index = 0;
+   unsigned int index = 0;
 
    TrickHLAObjInstanceNameMap::const_iterator map_iter;
    for ( map_iter = joined_federate_name_map.begin();
@@ -6371,7 +5977,7 @@ void Federate::add_a_single_entry_into_running_feds()
    } else {
 
       // copy current running_feds entries into temporary structure...
-      for ( int i = 0; i < running_feds_count; ++i ) {
+      for ( unsigned int i = 0; i < running_feds_count; ++i ) {
          temp_feds[i].MOM_instance_name = TMM_strdup( running_feds[i].MOM_instance_name );
          temp_feds[i].name              = TMM_strdup( running_feds[i].name );
          temp_feds[i].required          = running_feds[i].required;
@@ -6440,7 +6046,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
 
    // search for the federate information from running_feds...
    foundName = false;
-   for ( int i = 0; i < running_feds_count; ++i ) {
+   for ( unsigned int i = 0; i < running_feds_count; ++i ) {
       if ( !strcmp( running_feds[i].MOM_instance_name, tMOMName ) ) {
          foundName = true;
          tFedName  = TMM_strdup( running_feds[i].name );
@@ -6468,7 +6074,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    }
    // now, copy everything minus the requested name from the original list...
    int tmp_feds_cnt = 0;
-   for ( int i = 0; i < this->running_feds_count; ++i ) {
+   for ( unsigned int i = 0; i < this->running_feds_count; ++i ) {
       // if the name is not the one we are looking for...
       if ( strcmp( this->running_feds[i].name, tFedName ) ) {
          if ( this->running_feds[i].MOM_instance_name != NULL ) {
@@ -6532,7 +6138,7 @@ void Federate::write_running_feds_file(
       file << this->running_feds_count << endl;
 
       // echo the contents of running_feds into file...
-      for ( int i = 0; i < this->running_feds_count; ++i ) {
+      for ( unsigned int i = 0; i < this->running_feds_count; ++i ) {
          file << TMM_strdup( this->running_feds[i].MOM_instance_name ) << endl;
          file << TMM_strdup( this->running_feds[i].name ) << endl;
          file << this->running_feds[i].required << endl;
@@ -6726,7 +6332,7 @@ void Federate::read_running_feds_file(
    if ( file.is_open() ) {
 
       // clear out the known_feds from memory...
-      for ( int i = 0; i < known_feds_count; ++i ) {
+      for ( unsigned int i = 0; i < known_feds_count; ++i ) {
          if ( this->known_feds[i].MOM_instance_name != static_cast< char * >( NULL ) ) {
             if ( TMM_is_alloced( this->known_feds[i].MOM_instance_name ) ) {
                TMM_delete_var_a( this->known_feds[i].MOM_instance_name );
@@ -6756,7 +6362,7 @@ void Federate::read_running_feds_file(
       }
 
       string current_line;
-      for ( int i = 0; i < this->known_feds_count; ++i ) {
+      for ( unsigned int i = 0; i < this->known_feds_count; ++i ) {
          file >> current_line;
          this->known_feds[i].MOM_instance_name = TMM_strdup( (char *)current_line.c_str() );
 
@@ -6779,7 +6385,7 @@ void Federate::read_running_feds_file(
 void Federate::copy_running_feds_into_known_feds()
 {
    // clear out the known_feds from memory...
-   for ( int i = 0; i < this->known_feds_count; ++i ) {
+   for ( unsigned int i = 0; i < this->known_feds_count; ++i ) {
       if ( this->known_feds[i].MOM_instance_name != static_cast< char * >( NULL ) ) {
 
          if ( TMM_is_alloced( this->known_feds[i].MOM_instance_name ) ) {
@@ -6808,7 +6414,7 @@ void Federate::copy_running_feds_into_known_feds()
 
    // now, copy everything from running_feds into known_feds...
    this->known_feds_count = 0;
-   for ( int i = 0; i < this->running_feds_count; ++i ) {
+   for ( unsigned int i = 0; i < this->running_feds_count; ++i ) {
       this->known_feds[this->known_feds_count].MOM_instance_name = TMM_strdup( running_feds[i].MOM_instance_name );
       this->known_feds[this->known_feds_count].name              = TMM_strdup( running_feds[i].name );
       this->known_feds[this->known_feds_count].required          = running_feds[i].required;
@@ -6918,8 +6524,8 @@ void Federate::wait_for_federation_restore_begun()
                __LINE__, THLA_NEWLINE );
    }
 
-   long long    wallclock_time;
-   SleepTimeout print_timer( (double)this->wait_status_time );
+   int64_t      wallclock_time;
+   SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( !this->restore_begun ) {
@@ -6969,8 +6575,8 @@ void Federate::wait_until_federation_is_ready_to_restore()
                __LINE__, THLA_NEWLINE );
    }
 
-   long long    wallclock_time;
-   SleepTimeout print_timer( (double)this->wait_status_time );
+   int64_t      wallclock_time;
+   SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( !this->start_to_restore ) {
@@ -7045,8 +6651,8 @@ string Federate::wait_for_federation_restore_to_complete()
       return return_string;
    }
 
-   long long    wallclock_time;
-   SleepTimeout print_timer( (double)this->wait_status_time );
+   int64_t      wallclock_time;
+   SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
    // nobody reported any problems, wait until the restore is completed.
@@ -7120,8 +6726,8 @@ void Federate::wait_for_restore_request_callback()
                __LINE__, THLA_NEWLINE );
    }
 
-   long long    wallclock_time;
-   SleepTimeout print_timer( (double)this->wait_status_time );
+   int64_t      wallclock_time;
+   SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( !has_restore_process_restore_request_failed()
@@ -7173,8 +6779,8 @@ void Federate::wait_for_restore_status_to_complete()
                __LINE__, THLA_NEWLINE );
    }
 
-   long long    wallclock_time;
-   SleepTimeout print_timer( (double)this->wait_status_time );
+   int64_t      wallclock_time;
+   SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( !this->restore_request_complete ) {
@@ -7224,8 +6830,8 @@ void Federate::wait_for_save_status_to_complete()
                __LINE__, THLA_NEWLINE );
    }
 
-   long long    wallclock_time;
-   SleepTimeout print_timer( (double)this->wait_status_time );
+   int64_t      wallclock_time;
+   SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( !this->save_request_complete ) {
@@ -7275,8 +6881,8 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
                __LINE__, THLA_NEWLINE );
    }
 
-   long long    wallclock_time;
-   SleepTimeout print_timer( (double)this->wait_status_time );
+   int64_t      wallclock_time;
+   SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( !this->federation_restore_failed_callback_complete ) {
@@ -7875,8 +7481,8 @@ void Federate::restore_federate_handles_from_MOM()
    request_attribute_update( MOM_HLAfederate_class_handle, requestedAttributes );
 
    bool         all_found = false;
-   long long    wallclock_time;
-   SleepTimeout print_timer( (double)this->wait_status_time );
+   int64_t      wallclock_time;
+   SleepTimeout print_timer( this->wait_status_time );
    SleepTimeout sleep_timer;
 
    // Wait for all the federate handles to be retrieved.
@@ -8065,7 +7671,7 @@ bool Federate::is_a_required_startup_federate(
    wstring const &fed_name )
 {
    wstring required_fed_name;
-   for ( int i = 0; i < this->known_feds_count; ++i ) {
+   for ( unsigned int i = 0; i < this->known_feds_count; ++i ) {
       if ( this->known_feds[i].required ) {
          StringUtilities::to_wstring( required_fed_name, this->known_feds[i].name );
          if ( fed_name == required_fed_name ) { // found an exact match

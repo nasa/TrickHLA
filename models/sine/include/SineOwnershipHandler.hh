@@ -75,10 +75,10 @@ class SineOwnershipHandler : public TrickHLA::OwnershipHandler
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for SineOwnershipHandler class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   SineOwnershipHandler( const SineOwnershipHandler &rhs );
+   SineOwnershipHandler( SineOwnershipHandler const &rhs );
    /*! @brief Assignment operator for SineOwnershipHandler class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   SineOwnershipHandler &operator=( const SineOwnershipHandler &rhs );
+   SineOwnershipHandler &operator=( SineOwnershipHandler const &rhs );
 };
 
 } // namespace TrickHLAModel

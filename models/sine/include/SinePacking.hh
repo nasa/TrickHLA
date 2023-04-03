@@ -115,10 +115,10 @@ class SinePacking : public TrickHLA::Packing
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for SinePacking class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   SinePacking( const SinePacking &rhs );
+   SinePacking( SinePacking const &rhs );
    /*! @brief Assignment operator for SinePacking class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   SinePacking &operator=( const SinePacking &rhs );
+   SinePacking &operator=( SinePacking const &rhs );
 };
 
 } // namespace TrickHLAModel

@@ -113,8 +113,8 @@ void SineLagCompensation::initialize_callback(
 
 void SineLagCompensation::send_lag_compensation()
 {
-   double dt   = get_lookahead().get_time_in_seconds();
-   double time = get_scenario_time() + dt;
+   double const dt   = get_lookahead().get_time_in_seconds();
+   double const time = get_scenario_time() + dt;
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
@@ -144,8 +144,8 @@ void SineLagCompensation::receive_lag_compensation()
    // happen to be in the local variable, which would cause data corruption of
    // the state. We always need to do this check because ownership transfers
    // could happen at any time or the data could be at a different rate.
-   double time = get_scenario_time();
-   double dt   = time - lag_comp_data->get_time();
+   double const time = get_scenario_time();
+   double const dt   = time - lag_comp_data->get_time();
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
@@ -157,7 +157,7 @@ void SineLagCompensation::receive_lag_compensation()
            << " adjusted-time:" << time << endl;
 
       cout << "SineLagCompensation::receive_lag_compensation():" << __LINE__
-           << " Before Lag Compensation:" << endl
+           << " BEFORE Lag Compensation:" << endl
            << "\t Name \tlagging_data: " << lag_comp_data->get_name() << endl
            << "\t Time \tlagging_data: " << lag_comp_data->get_time() << endl
            << "\t Value \tlagging_data: " << lag_comp_data->get_value() << endl

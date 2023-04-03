@@ -43,12 +43,12 @@ class THLASimObject : public THLABaseSimObject {
    // The Simple TrickHLA Execution Control object.
    TrickHLA::ExecutionControl execution_control;
 
-   THLASimObject( double data_cycle,
-                  double interaction_cycle,
+   THLASimObject( double main_thread_data_cycle,
+                  double main_thread_interaction_cycle,
                   unsigned short _1ST  = 1,
                   unsigned short _INIT = 60,
                   unsigned short _LAST = 65534 )
-     : THLABaseSimObject( data_cycle, interaction_cycle, _1ST, _INIT, _LAST ),
+     : THLABaseSimObject( main_thread_data_cycle, main_thread_interaction_cycle, _1ST, _INIT, _LAST ),
        simple_sim_config( "THLA.simple_sim_config" ),
        execution_control( simple_sim_config )
    {

@@ -200,10 +200,10 @@ void SinePacking::pack()
    }
 
    // Output more debug information for a higher debug-level.
-   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_PACKING ) ) {
 
       if ( buff != NULL ) {
-         cout << " SinePacking::pack():" << __LINE__
+         cout << " SinePacking::pack():" << __LINE__ << " ADDITIONAL DEBUG:" << endl
               << " buff_size: " << buff_size << endl;
          unsigned char c = pack_count % 10;
          for ( int i = 0; i < buff_size; ++i ) {
@@ -215,7 +215,7 @@ void SinePacking::pack()
 
       string obj_name = ( object != NULL ) ? object->get_name_string() : "";
 
-      cout << "SinePacking::pack():" << __LINE__ << endl
+      cout << "SinePacking::pack():" << __LINE__ << " ADDITIONAL DEBUG:" << endl
            << "\t Object-Name:'" << obj_name << "'" << endl;
 
       // This part of the example goes a little deeper into the details of
@@ -248,8 +248,10 @@ void SinePacking::pack()
             cout << "\t Value:NULL" << endl;
          }
 
-         // Print the state of the TrickHLA-Attribute internal buffer.
-         attr->print_buffer();
+         if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PACKING ) ) {
+            // Print the state of the TrickHLA-Attribute internal buffer.
+            attr->print_buffer();
+         }
       } else {
          cout << "\t NULL Attribute for FOM-Attribute '" << name_attr_str << "'" << endl;
       }
@@ -322,9 +324,10 @@ void SinePacking::unpack()
    }
 
    // Output more debug information for a higher debug-level.
-   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_PACKING ) ) {
+
       if ( buff != NULL ) {
-         cout << " SinePacking::unpack():" << __LINE__
+         cout << " SinePacking::unpack():" << __LINE__ << " ADDITIONAL DEBUG:" << endl
               << " buff_size: " << buff_size << endl;
          for ( int i = 0; i < buff_size; ++i ) {
             cout << " SinePacking::unpack():" << __LINE__
@@ -334,7 +337,7 @@ void SinePacking::unpack()
 
       string obj_name = ( object != NULL ) ? object->get_name_string() : "";
 
-      cout << "SinePacking::unpack():" << __LINE__ << endl
+      cout << "SinePacking::unpack():" << __LINE__ << " ADDITIONAL DEBUG:" << endl
            << "\t Object-Name:'" << obj_name << "'" << endl;
 
       // This part of the example goes a little deeper into the details of
@@ -356,8 +359,10 @@ void SinePacking::unpack()
             cout << "\t Value:NULL" << endl;
          }
 
-         // Print the state of the TrickHLA-Attribute internal buffer.
-         attr->print_buffer();
+         if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PACKING ) ) {
+            // Print the state of the TrickHLA-Attribute internal buffer.
+            attr->print_buffer();
+         }
       } else {
          cout << "\t NULL Attribute for FOM-Attribute '" << name_attr_str
               << "'" << endl;

@@ -613,8 +613,8 @@ void ExecutionControl::role_determination_process()
       }
 
       bool         print_summary = DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL );
-      long long    wallclock_time;
-      SleepTimeout print_timer( (double)federate->wait_status_time );
+      int64_t      wallclock_time;
+      SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
       // Block until we have determined if we are a late joining federate.
@@ -649,7 +649,7 @@ void ExecutionControl::role_determination_process()
 
             // Periodically check if we are still an execution member and
             // display sync-point status if needed as well.
-            if ( !this->late_joiner_determined ) {
+            if ( !this->late_joiner_determined ) { // cppcheck-suppress [knownConditionTrueFalse]
 
                // To be more efficient, we get the time once and share it.
                wallclock_time = sleep_timer.time();
@@ -2633,8 +2633,8 @@ void ExecutionControl::receive_root_ref_frame()
    // Make sure we have at least one piece of root reference frame data we can receive.
    if ( rrf_object->any_remotely_owned_subscribed_init_attribute() ) {
 
-      long long    wallclock_time;
-      SleepTimeout print_timer( (double)federate->wait_status_time );
+      int64_t      wallclock_time;
+      SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
       // Wait for the data to arrive.

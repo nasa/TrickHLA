@@ -28,6 +28,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../source/TrickHLA/Manager.cpp}
 @trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../source/TrickHLA/MutexProtection.cpp}
+@trick_link_dependency{../source/TrickHLA/TrickThreadCoordinator.cpp}
 @trick_link_dependency{../source/TrickHLA/Types.cpp}
 
 @revs_title
@@ -56,6 +57,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/TrickThreadCoordinator.hh"
 #include "TrickHLA/Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -655,10 +657,12 @@ class Federate
    void wait_for_time_advance_grant();
 
    /*! @brief Initialize the thread memory associated with the Trick child threads. */
-   void initialize_thread_state( double const data_cycle );
+   void initialize_thread_state( double const main_thread_data_cycle_time );
 
    /*! @brief Associate a Trick child thread with TrickHLA. */
-   void associate_to_trick_child_thread( unsigned int const thread_id, double const data_cycle );
+   void associate_to_trick_child_thread( unsigned int const thread_id,
+                                         double const       data_cycle,
+                                         std::string const &obj_isntance_names );
 
    /*! @brief Announce to all the child threads the main thread has data available. */
    void announce_data_available();
@@ -671,6 +675,15 @@ class Federate
 
    /*! @brief Wait to receive data when the Trick main thread is ready. */
    void wait_to_receive_data();
+
+   /*! @brief Get the data cycle time in microseconds for the configured object
+    * index or return the default data cycle time in microseconds otherwise. */
+   int64_t const get_data_cycle_time_micros_for_obj( unsigned int const obj_index,
+                                                     int64_t const      default_data_cycle_us ) const;
+
+   /*! @brief Is the object for the given index on a data cycle boundary. */
+   bool const on_data_cycle_boundary_for_obj( unsigned int const obj_index,
+                                              int64_t const      sim_time_us ) const;
 
    /*! @brief Set federate execution startup state.
     *  @param flag True for federate started; False otherwise. */
@@ -822,77 +835,84 @@ class Federate
     *  @return Pointer to associated TrickHLA::FedAmb. */
    FedAmb *get_fed_ambassador()
    {
-      return federate_ambassador;
+      return this->federate_ambassador;
    }
 
    /*! @brief Get the pointer to the associated TrickHLA::Manager instance.
     *  @return Pointer to associated TrickHLA::Manager. */
    Manager *get_manager()
    {
-      return manager;
+      return this->manager;
    }
 
    /*! @brief Get the pointer to the associated TrickHLA::Manager instance.
     *  @return Pointer to associated TrickHLA::Manager. */
    ExecutionControlBase *get_execution_control()
    {
-      return execution_control;
+      return this->execution_control;
    }
 
    /*! @brief Get the pointer to the associated federate name.
     *  @return Pointer to associated federate name. */
    char const *get_federate_name() const
    {
-      return name;
+      return this->name;
    }
 
    /*! @brief Get the pointer to the associated federate type.
     *  @return Pointer to associated federate type. */
    char const *get_federate_type() const
    {
-      return type;
+      return this->type;
    }
 
    /*! @brief Get the pointer to the associated federation execution name.
     *  @return Pointer to associated federation execution name. */
    char const *get_federation_name() const
    {
-      return federation_name;
+      return this->federation_name;
    }
 
    /*! @brief Get the current granted HLA federation execution time.
     *  @return Reference to current granted HLA federation execution time. */
    Int64Time const &get_granted_time() const
    {
-      return granted_time;
+      return this->granted_time;
+   }
+
+   /*! @brief Get the current granted HLA federation execution time in microseconds.
+    *  @return Reference to current granted HLA federation execution time. */
+   double const get_granted_time_in_micros() const
+   {
+      return this->granted_time.get_time_in_micros();
    }
 
    /*! @brief Get the requested HLA federation execution time.
     *  @return Reference to requested HLA federation execution time. */
    Int64Time const &get_requested_time() const
    {
-      return requested_time;
+      return this->requested_time;
    }
 
    /*! @brief Get the current federate lookahead time.
     *  @return Reference to current federate lookahead time. */
    Int64Interval const &get_lookahead() const
    {
-      return lookahead;
+      return this->lookahead;
    }
 
    /*! @brief Get the current federate lookahead time in seconds.
-    *  @return Current federate lookahead time in seconds. */
-   double const get_lookahead_time_in_seconds() const
+    *  @return Current federate lookahead time in microseconds. */
+   int64_t const get_lookahead_time_in_micros() const
    {
-      return lookahead_time;
+      return this->lookahead.get_time_in_micros();
    }
 
    /*! @brief Query of federate has a zero lookahead time.
     *  @return True if lookahead time is zero; Flase otherwise. */
    bool const is_zero_lookahead_time() const
    {
-      return ( lookahead_time <= 0.0 );
+      return ( this->lookahead.get_time_in_micros() <= 0 );
    }
 
    /*! @brief Set the name of the save.
@@ -1139,7 +1159,7 @@ class Federate
    MutexLock    time_adv_state_mutex; ///< @trick_units{--} HLA Time advance state mutex lock.
    Int64Time    granted_time;         ///< @trick_units{--} HLA time given by RTI
    Int64Time    requested_time;       ///< @trick_units{--} requested/desired HLA time
-   double       HLA_time;             ///< @trick_units{s}  Current HLA time.
+   double       HLA_time;             ///< @trick_units{s}  Current HLA time to allow for plotting.
    bool         start_to_save;        ///< @trick_io{**} Save flag
    bool         start_to_restore;     ///< @trick_io{**} Restore flag
    bool         restart_flag;         ///< @trick_io{**} Restart flag
@@ -1172,11 +1192,7 @@ class Federate
    RTI1516_NAMESPACE::InteractionClassHandle MOM_HLAsetSwitches_class_handle; ///< @trick_io{**} MOM HLAsetSwitches class handle.
    RTI1516_NAMESPACE::ParameterHandle        MOM_HLAautoProvide_param_handle; ///< @trick_io{**} MOM HLAautoProvide parameter handle.
 
-   unsigned int *thread_state;            ///< @trick_units{--} TrickHLA state of trick child threads being used.
-   unsigned int  thread_state_cnt;        ///< @trick_units{--} TrickHLA state of trick child threads being used count.
-   MutexLock     thread_state_mutex;      ///< @trick_units{--} TrickHLA thread state mutex.
-   bool          thread_state_associated; ///< @trick_units{--} True if at least one Trick Child thread is associated to TrickHLA.
-   double        thread_state_data_cycle; ///< @trick_units{--} Trick main thread data cycle time.
+   TrickThreadCoordinator thread_coordinator; ///< @trick_units{--} Trick child thread coordinator with HLA.
 
    // Federation required associations.
    //
@@ -1185,7 +1201,7 @@ class Federate
    TrickRTIAmbPtr RTI_ambassador; ///< @trick_io{**} RTI ambassador
 #pragma GCC diagnostic pop
    FedAmb               *federate_ambassador; ///< @trick_units{--} Federate ambassador.
-   Manager              *manager;             ///< @trick_units{--} Associated TrickHLA Federate.
+   Manager              *manager;             ///< @trick_units{--} Associated TrickHLA Federate Manager.
    ExecutionControlBase *execution_control;   /**< @trick_units{--} Execution control object. This has to point to an allocated execution control class that inherits from the ExecutionControlBase interface class. For instance SRFOM::ExecutionControl. */
 
   private:

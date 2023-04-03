@@ -602,9 +602,9 @@ will be ignored because the Simulation Initialization Scheme does not support it
    // Make sure we have at least one piece of ExecutionConfiguration data we can receive.
    if ( execution_configuration->any_remotely_owned_subscribed_init_attribute() ) {
 
-      long long    wallclock_time;
-      SleepTimeout print_timer( (double)federate->wait_status_time );
-      SleepTimeout sleep_timer( (long)THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
+      int64_t      wallclock_time;
+      SleepTimeout print_timer( federate->wait_status_time );
+      SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // Wait for the data to arrive.
       while ( !execution_configuration->is_changed() ) {
@@ -667,13 +667,12 @@ will be ignored because the Simulation Initialization Scheme does not support it
  * @job_class{scheduled}
  */
 void ExecutionControlBase::send_requested_data(
-   double current_time,
-   double job_cycle_time )
+   Int64Time const &update_time )
 {
    // Send the requested data for the ExecutionConfiguration if we have one.
    if ( execution_configuration != NULL ) {
       // Send the data for the execution-configuration.
-      execution_configuration->send_requested_data( current_time, job_cycle_time );
+      execution_configuration->send_requested_data( update_time );
    }
 }
 

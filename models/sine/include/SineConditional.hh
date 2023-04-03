@@ -71,7 +71,7 @@ class SineConditional : public TrickHLA::Conditional
     *  @param data          External simulation data.
     *  @param attr_FOM_name FOM name of the attribute to track when changed.
     */
-   void initialize( SineData *data, const char *attr_FOM_name );
+   void initialize( SineData *data, char const *attr_FOM_name );
 
    /*! @brief Determines if the attribute has changed and returns the truth of
     *  that determination.
@@ -83,7 +83,7 @@ class SineConditional : public TrickHLA::Conditional
    /*! @brief Determines the supplied name's position in the SineData structure.
     *  @return position in SineData.
     *  @param attr_FOM_name FOM name of the attribute. */
-   int convert_FOM_name_to_pos( const char *attr_FOM_name );
+   int convert_FOM_name_to_pos( char const *attr_FOM_name );
 
    SineData *sim_data;      ///< @trick_units{--} pointer to the data to reflect in this cycle
    SineData  prev_sim_data; ///< @trick_units{--} copy of the data we previously reflected

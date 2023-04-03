@@ -885,7 +885,7 @@ bool Parameter::is_static_in_size() const
       // If this is not an array (i.e. num_index == 0) or has static arrays then
       // this parameter is static in size.
       if ( attr->num_index > 0 ) {
-         for ( int i = 0; i < attr->num_index; ++i ) {
+         for ( unsigned int i = 0; i < attr->num_index; ++i ) {
             // Make sure each dimension is statically defined (i.e. not zero).
             if ( attr->index[i].size <= 0 ) {
                return false;
@@ -910,7 +910,7 @@ void Parameter::calculate_static_number_of_items()
 
    // Determine the number of items this parameter has (i.e. items in array).
    if ( attr->num_index > 0 ) {
-      for ( int i = 0; i < attr->num_index; ++i ) {
+      for ( unsigned int i = 0; i < attr->num_index; ++i ) {
          if ( attr->index[i].size > 0 ) {
             length *= (size_t)attr->index[i].size;
          }
@@ -1400,7 +1400,7 @@ void Parameter::decode_logical_time()
    int64_t        logical_time = 0;
    unsigned char *src          = buffer;
 
-   logical_time = ( logical_time << 8 ) | src[0];
+   logical_time = ( logical_time << 8 ) | src[0]; // cppcheck-suppress [badBitmaskCheck]
    logical_time = ( logical_time << 8 ) | src[1];
    logical_time = ( logical_time << 8 ) | src[2];
    logical_time = ( logical_time << 8 ) | src[3];

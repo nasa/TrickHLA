@@ -635,7 +635,6 @@ void FedAmb::reflectAttributeValues(
       }
 
       // Pass the attribute values off to the object.
-      trickhla_obj->set_last_update_time( theTime );
 #if defined( THLA_QUEUE_REFLECTED_ATTRIBUTES )
       trickhla_obj->enqueue_data( (AttributeHandleValueMap &)theAttributeValues );
 #else
@@ -678,7 +677,6 @@ void FedAmb::reflectAttributeValues(
       }
 
       // Pass the attribute values off to the object.
-      trickhla_obj->set_last_update_time( theTime );
 #if defined( THLA_QUEUE_REFLECTED_ATTRIBUTES )
       trickhla_obj->enqueue_data( (AttributeHandleValueMap &)theAttributeValues );
 #else

@@ -106,9 +106,10 @@ class PropagatedSineSimObj : public THLAThreadSimObject {
    PropagatedSineSimObj( TrickHLA::Federate & thla_fed,
                          double data_cycle,
                          unsigned short _THREAD_ID,
+                         std::string object_instance_names = "",
                          unsigned short _1ST  = 1,
                          unsigned short _LAST = 65534 ) 
-      : THLAThreadSimObject( thla_fed, data_cycle, _THREAD_ID, _1ST, _LAST )
+      : THLAThreadSimObject( thla_fed, data_cycle, _THREAD_ID, object_instance_names, _1ST, _LAST )
    {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
@@ -230,10 +231,25 @@ class THLAInitSimObj : public Trick::SimObject {
 
 
 // Instantiations
-AnalyticSineSimObj   A;
-THLAThreadSimObject  THLAThread1( THLA.federate, THLA_DATA_CYCLE_TIME, 1, P_HLA_EARLY, P_HLA_LATE );
-PropagatedSineSimObj P( THLA.federate, THLA_DATA_CYCLE_TIME, 2, P_HLA_EARLY, P_HLA_LATE );
-THLAInitSimObj       THLA_INIT( THLA.manager, THLA.federate );
+AnalyticSineSimObj A;
+
+// Example 1 showing a THLAThread sim-object created to associate the Trick child
+// thread (i.e. 1) used by the 'A' sim-object to TrickHLA with the specified
+// HLA data cycle time.
+THLAThreadSimObject THLAThread1( THLA.federate,
+                                 THLA_DATA_CYCLE_TIME,     // Data cycle time for this thread.
+                                 1,                        // Trick child thread 1 (i.e. C1).
+                                 "A-side-Federate.Test" ); // Object-instance names associated to this thread.
+
+// Example 2 showing a 'P' sim-object that extends the TrickHLAThread sim-object
+// to associate a Trick child thread (i.e. 2) to TrickHLA with the specified
+// HLA data cycle time.
+PropagatedSineSimObj P( THLA.federate,
+                        THLA_DATA_CYCLE_TIME,     // Data cycle time for this thread.
+                        2,                        // Trick child thread 2 (i.e. C2)
+                        "P-side-Federate.Test" ); // Object-instance names associated to this thread.
+
+THLAInitSimObj THLA_INIT( THLA.manager, THLA.federate );
 
 
 // Define the simulation objects that have routines involved in integration.

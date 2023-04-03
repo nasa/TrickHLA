@@ -80,10 +80,10 @@ class SineObjectDeleted : public TrickHLA::ObjectDeleted
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for SineObjectDeleted class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   SineObjectDeleted( const SineObjectDeleted &rhs );
+   SineObjectDeleted( SineObjectDeleted const &rhs );
    /*! @brief Assignment operator for SineObjectDeleted class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   SineObjectDeleted &operator=( const SineObjectDeleted &rhs );
+   SineObjectDeleted &operator=( SineObjectDeleted const &rhs );
 };
 
 } // namespace TrickHLAModel

@@ -69,7 +69,7 @@ void SineOwnershipHandler::initialize_callback(
    // Make sure we call the original function so that the callback is initialized.
    this->OwnershipHandler::initialize_callback( obj );
 
-   const int TEST_CASE = 2;
+   int const TEST_CASE = 3;
 
    // Get the vector of attribute FOM names.
    VectorOfStrings attr_FOM_names = get_attribute_FOM_names();
@@ -117,6 +117,13 @@ void SineOwnershipHandler::initialize_callback(
          push_ownership( 5.0 );
          pull_ownership( 7.0 );
          push_ownership( "Value", 9.0 );
+         break;
+
+      case 3:
+         // Example showing a simple push and pull of ownership.
+
+         push_ownership( 5.0 );
+         pull_ownership( 10.0 );
          break;
 
       default:

@@ -569,8 +569,7 @@ void ExecutionConfiguration::setup_ref_attributes(
 
    // Set up attributes.
    this->attr_count = 7;
-   this->attributes = (Attribute *)trick_MM->declare_var(
-      "Attribute", this->attr_count );
+   this->attributes = (Attribute *)trick_MM->declare_var( "Attribute", this->attr_count );
    if ( this->attributes == static_cast< Attribute * >( NULL ) ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
@@ -583,7 +582,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    // Specify the ExCO attributes.
    //
    // Setup the "root_frame_name" attribute.
-   this->attributes[0].FOM_name = trick_MM->mm_strdup( "root_frame_name" );
+   this->attributes[0].FOM_name = trick_MM->mm_strdup( "root_frame_name" ); // cppcheck-suppress [nullPointerRedundantCheck]
    if ( this->execution_control->is_master() ) {
       this->attributes[0].publish       = true;
       this->attributes[0].subscribe     = false;
@@ -715,9 +714,9 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
    // Make sure we have at least one piece of exec-config data we can receive.
    if ( this->any_remotely_owned_subscribed_init_attribute() ) {
 
-      long long    wallclock_time;
-      SleepTimeout print_timer( (double)federate->wait_status_time );
-      SleepTimeout sleep_timer( (long)THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
+      int64_t      wallclock_time;
+      SleepTimeout print_timer( federate->wait_status_time );
+      SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // Wait for the data to arrive.
       while ( !this->is_changed() ) {

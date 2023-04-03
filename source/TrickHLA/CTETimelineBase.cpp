@@ -88,11 +88,11 @@ double CTETimelineBase::get_time()
 /*!
  * @details Call the system clock_gettime to get the current real time.
  */
-long long CTETimelineBase::wall_clock_time()
+int64_t CTETimelineBase::wall_clock_time()
 {
    struct timespec tp;
    clock_gettime( clk_id, &tp );
-   return (long long)tp.tv_sec * 1000000LL + (long long)( ( tp.tv_nsec ) / 1000 );
+   return (int64_t)tp.tv_sec * 1000000LL + (int64_t)( ( tp.tv_nsec ) / 1000 );
 }
 
 /*!

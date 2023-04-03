@@ -95,7 +95,7 @@ SimpleSimConfig::~SimpleSimConfig()
  * @job_class{initialization}
  */
 void SimpleSimConfig::initialize(
-   int                      known_feds_count,
+   int const                known_feds_count,
    TrickHLA::KnownFederate *known_feds )
 {
    // Release the memory used by the required_federates c-string.

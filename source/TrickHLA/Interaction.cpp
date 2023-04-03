@@ -860,7 +860,7 @@ bool Interaction::send(
       MutexProtection auto_unlock_mutex( &mutex );
 
       // Add all the parameter values to the map.
-      for ( int i = 0; i < param_count; ++i ) {
+      for ( unsigned int i = 0; i < param_count; ++i ) {
          param_values_map[parameters[i].get_parameter_handle()] = parameters[i].get_encoded_parameter_value();
       }
 
@@ -932,7 +932,7 @@ bool Interaction::send(
       MutexProtection auto_unlock_mutex( &mutex );
 
       // Add all the parameter values to the map.
-      for ( int i = 0; i < param_count; ++i ) {
+      for ( unsigned int i = 0; i < param_count; ++i ) {
          if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
             send_hs( stdout, "Interaction::send():%d Adding '%s' to parameter map.%c",
                      __LINE__, parameters[i].get_FOM_name(), THLA_NEWLINE );
@@ -951,8 +951,8 @@ bool Interaction::send(
 
    // Determine if the interaction should be sent with a timestamp.
    // See IEEE 1516.1-2010 Section 6.12.
-   bool send_with_timestamp = federate->in_time_regulating_state()
-                              && ( preferred_order != TRANSPORT_RECEIVE_ORDER );
+   bool const send_with_timestamp = federate->in_time_regulating_state()
+                                    && ( preferred_order != TRANSPORT_RECEIVE_ORDER );
 
    bool successfuly_sent = false;
    try {
@@ -1064,7 +1064,7 @@ void Interaction::process_interaction()
       }
 
       // Unpack all the parameter data.
-      for ( int i = 0; i < param_count; ++i ) {
+      for ( unsigned int i = 0; i < param_count; ++i ) {
          parameters[i].unpack_parameter_buffer();
       }
 
@@ -1158,7 +1158,7 @@ void Interaction::mark_unchanged()
    this->changed = false;
 
    // Clear the change flag for each of the attributes as well.
-   for ( int i = 0; i < param_count; ++i ) {
+   for ( unsigned int i = 0; i < param_count; ++i ) {
       parameters[i].mark_unchanged();
    }
 }

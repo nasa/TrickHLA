@@ -102,7 +102,7 @@ int const SleepTimeout::sleep() const
    return nanosleep( &sleep_time, NULL );
 }
 
-long long const SleepTimeout::time() const
+int64_t const SleepTimeout::time() const
 {
    return clock_wall_time();
 }
@@ -113,7 +113,7 @@ bool const SleepTimeout::timeout() const
 }
 
 bool const SleepTimeout::timeout(
-   long long const time_in_micros ) const
+   int64_t const time_in_micros ) const
 {
    return ( time_in_micros >= this->timeout_clock_time );
 }
@@ -121,7 +121,7 @@ bool const SleepTimeout::timeout(
 /*! @brief Reset the internal timeout time. */
 void SleepTimeout::reset()
 {
-   long long t = time();
+   int64_t t = time();
    if ( t < ( std::numeric_limits< long long >::max() - this->timeout_time ) ) {
       this->timeout_clock_time = t + this->timeout_time;
    } else {

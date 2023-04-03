@@ -83,7 +83,7 @@ class SineData
    // Public access functions.
    /*! @brief Set the current time for the sine wave.
     *  @param t Time value for sine wave function. */
-   int set_time( double t )
+   int set_time( double const t )
    {
       this->time = t;
       return ( 0 );
@@ -98,7 +98,7 @@ class SineData
 
    /*! @brief Set the current value of the sine wave function.
     *  @param val Sine wave value. */
-   void set_value( double val )
+   void set_value( double const val )
    {
       this->value = val;
    }
@@ -112,7 +112,7 @@ class SineData
 
    /*! @brief Set the value of the time derivative of the sine wave function.
     *  @param deriv The time derivative value of the sine wave function. */
-   void set_derivative( double deriv )
+   void set_derivative( double const deriv )
    {
       this->dvdt = deriv;
    }
@@ -126,7 +126,7 @@ class SineData
 
    /*! @brief Set the phase value of the sine wave function.
     *  @param phi The phase value of the sine wave function. */
-   void set_phase( double phi )
+   void set_phase( double const phi )
    {
       this->phase = phi;
    }
@@ -140,7 +140,7 @@ class SineData
 
    /*! @brief Set the frequency value of the sine wave function.
     *  @param omega The frequency value of the sine wave function. */
-   void set_frequency( double omega )
+   void set_frequency( double const omega )
    {
       this->freq = omega;
    }
@@ -154,7 +154,7 @@ class SineData
 
    /*! @brief Set the amplitude value of the sine wave function.
     *  @param mag The amplitude value of the sine wave function. */
-   void set_amplitude( double mag )
+   void set_amplitude( double const mag )
    {
       this->amp = mag;
    }
@@ -168,7 +168,7 @@ class SineData
 
    /*! @brief Set the tolerance value of the sine wave function.
     *  @param epsilon The tolerance value of the sine wave function. */
-   void set_tolerance( double epsilon )
+   void set_tolerance( double const epsilon )
    {
       this->tol = epsilon;
    }
@@ -189,7 +189,7 @@ class SineData
 
    /*! @brief Set the name of the sine wave object.
     *  @param n The name of the sine wave object. */
-   void set_name( const char *n )
+   void set_name( char const *n )
    {
       if ( n != this->name ) {
          if ( ( this->name != NULL ) && TMM_is_alloced( this->name ) ) {
@@ -204,7 +204,7 @@ class SineData
    //
    /*! @brief Utility function to copy data from source to this object.
     *  @param orig Sine wave data object to copy into. */
-   void copy_data( const SineData *orig );
+   void copy_data( SineData const *orig );
 
    //
    // Public modeling functions.
@@ -214,21 +214,21 @@ class SineData
 
    /*! @brief Computes the value of the test data.
     *  @param t Current model time. */
-   void compute_value( double t );
+   void compute_value( double const t );
 
    /*! @brief Computes the derivative of the test data. */
    void compute_derivative();
 
    /*! @brief Computes the derivative of the test data.
     *  @param t Current integration time. */
-   void compute_derivative( double t );
+   void compute_derivative( double const t );
 
    /*! @brief Computes the current phase offset from the current value and derivative.*/
    void adjust_phase();
 
    /*! @brief Computes the phase offset for the provided model time.
     *  @param t Current model time {s}. */
-   void adjust_phase( double t );
+   void adjust_phase( double const t );
 
    /*! @brief Sine wave integration routine.
     *  @return Intermediate step ID. */

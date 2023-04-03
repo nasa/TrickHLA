@@ -306,7 +306,13 @@ Examples:\n  check_code -s -o -v\n  check_code -i -o -v\n  check_code -c -vv''' 
       trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_home + '/include/RTI/encoding/HLAfixedRecord.h' )
       trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_home + '/include/RTI/time/HLAinteger64Time.h' )
       # Ignore/suppress the Trick header file warnings.
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/DataRecordGroup.hh' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/InstrumentBase.hh' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/SysThread.hh' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/ThreadBase.hh' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/Threads.hh' )
       trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/ThreadTrigger.hh' )
+      trickhla_ignore.append( '--suppress=uninitMemberVar:' + trick_home + '/include/trick/SimObject.hh' )
 
    # Set the cppcheck arguments based on the type of code checking the user wants to do.
    if args.check_errors_only:

@@ -122,8 +122,8 @@ int64_t Int64Interval::get_time_in_micros() const
 
 double Int64Interval::get_time_in_seconds() const
 {
-   double seconds = (double)get_seconds();
-   double micros  = (double)get_micros() / (double)MICROS_MULTIPLIER;
+   double const seconds = (double)get_seconds();
+   double const micros  = (double)get_micros() / (double)MICROS_MULTIPLIER;
    return ( seconds + micros );
 }
 
@@ -165,16 +165,22 @@ int64_t Int64Interval::to_microseconds(
    } else if ( value < -MAX_LOGICAL_TIME_SECONDS ) {
       return -MAX_VALUE_IN_MICROS;
    }
-   int64_t seconds = (int64_t)trunc( value );
-   int64_t micros  = ( seconds >= 0 ) ? (int64_t)( fmod( value * MICROS_MULTIPLIER, MICROS_MULTIPLIER ) + 0.5 )
-                                      : (int64_t)( fmod( value * MICROS_MULTIPLIER, MICROS_MULTIPLIER ) - 0.5 );
-   return ( ( seconds * MICROS_MULTIPLIER ) + micros );
+
+   // A more efficient way to calculate the time in microseconds by avoiding fmod().
+   double        seconds;
+   int64_t const micros = (int64_t)round( modf( value, &seconds ) * MICROS_MULTIPLIER );
+   return ( ( (int64_t)seconds * MICROS_MULTIPLIER ) + micros );
+
+   //   int64_t const seconds = (int64_t)trunc( value );
+   //   int64_t const micros  = ( seconds >= 0 ) ? (int64_t)( fmod( value * MICROS_MULTIPLIER, MICROS_MULTIPLIER ) + 0.5 )
+   //                                            : (int64_t)( fmod( value * MICROS_MULTIPLIER, MICROS_MULTIPLIER ) - 0.5 );
+   //   return ( ( seconds * MICROS_MULTIPLIER ) + micros );
 }
 
 double Int64Interval::to_seconds(
    int64_t const usec )
 {
-   double seconds = (double)( usec / (int64_t)MICROS_MULTIPLIER );
-   double micros  = (double)( usec % (int64_t)MICROS_MULTIPLIER ) / (double)MICROS_MULTIPLIER;
+   double const seconds = (double)( usec / (int64_t)MICROS_MULTIPLIER );
+   double const micros  = (double)( usec % (int64_t)MICROS_MULTIPLIER ) / (double)MICROS_MULTIPLIER;
    return ( seconds + micros );
 }

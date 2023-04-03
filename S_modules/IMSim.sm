@@ -58,25 +58,25 @@ class IMSimSimObject : public Trick::SimObject {
    double             check_pause_job_offset;
    const double       CHECK_PAUSE_DELTA;
 
-   IMSimSimObject( double data_cycle,
-                   double interaction_cycle,
+   IMSimSimObject( double main_thread_data_cycle,
+                   double main_thread_interaction_cycle,
                    unsigned short _1ST  = 1,
                    unsigned short _INIT = 60,
                    unsigned short _LAST = 65534 ) : CHECK_PAUSE_DELTA( 0.000001 )
    {
       // Validate the data and interaction cycle times.
-      if ( data_cycle <= 0.0 ) {
-         exec_terminate( __FILE__, "IMSimSimObject() data_cycle must be > 0.0!" );
+      if ( main_thread_data_cycle <= 0.0 ) {
+         exec_terminate( __FILE__, "IMSimSimObject() main_thread_data_cycle must be > 0.0!" );
       }
-      if ( interaction_cycle <= 0.0 ) {
-         exec_terminate( __FILE__, "IMSimSimObject() interaction_cycle must be > 0.0!" );
+      if ( main_thread_interaction_cycle <= 0.0 ) {
+         exec_terminate( __FILE__, "IMSimSimObject() main_thread_interaction_cycle must be > 0.0!" );
       }
 
       // Calculate and validate the check-pause job offset time.
-      if ( data_cycle <= CHECK_PAUSE_DELTA ) {
-         exec_terminate( __FILE__, "IMSimSimObject() data_cycle must be > CHECK_PAUSE_DELTA!" );
+      if ( main_thread_data_cycle <= CHECK_PAUSE_DELTA ) {
+         exec_terminate( __FILE__, "IMSimSimObject() main_thread_data_cycle must be > CHECK_PAUSE_DELTA!" );
       }
-      check_pause_job_offset = data_cycle - CHECK_PAUSE_DELTA;
+      check_pause_job_offset = main_thread_data_cycle - CHECK_PAUSE_DELTA;
 
 
       //-----------------------
@@ -132,38 +132,38 @@ class IMSimSimObject : public Trick::SimObject {
       //--------------------
 
       // Wait for the Time Advance Grant (TAG).
-      P_1ST (data_cycle, "environment") federate.wait_for_time_advance_grant();
+      P_1ST (main_thread_data_cycle, "environment") federate.wait_for_time_advance_grant();
 
       // Process all interactions that were received.
-      P_1ST (interaction_cycle, "environment") manager.process_interactions();
+      P_1ST (main_thread_interaction_cycle, "environment") manager.process_interactions();
 
       // Process any deleted objects.
-      P_1ST (data_cycle, "environment") manager.process_deleted_objects();
+      P_1ST (main_thread_data_cycle, "environment") manager.process_deleted_objects();
 
       // Grab any new cyclic data from the other Federates that has arrived and
       // update the local state. (This is done down here to make sure we do
       // the copying AFTER the event loop has fired the reflect call-backs.)
-      P_1ST (data_cycle, "environment") manager.receive_cyclic_data();
+      P_1ST (main_thread_data_cycle, "environment") manager.receive_cyclic_data();
 
       // Send any new cyclic and requeted data. Requested data would occur as
       // the result of another federate requesting an attribute value update.
-      P_LAST (data_cycle, "logging") manager.send_cyclic_and_requested_data();
+      P_LAST (main_thread_data_cycle, "logging") manager.send_cyclic_and_requested_data();
 
       // Process the ownership requests.
-      P_LAST (data_cycle, "logging") manager.process_ownership();
+      P_LAST (main_thread_data_cycle, "logging") manager.process_ownership();
 
       // Request to go to the next logical time step with a HLA
       // Time-Advance-Request (TAR).
-      P_LAST (data_cycle, "logging") federate.time_advance_request();
+      P_LAST (main_thread_data_cycle, "logging") federate.time_advance_request();
 
       // FIXME: This is for IMSim only. Needs to be moved into ExecutionControl.
       // Check to see if an interaction informed us that we are to
       // FREEZE the sim before entering the next logical frame.
-      //P_LAST (data_cycle, "logging") federate.check_freeze_time();
+      //P_LAST (main_thread_data_cycle, "logging") federate.check_freeze_time();
 
       // FIXME: This is for DIS only. Needs to be moved into ExecutionControl.
       // For DIS, check to see if federate master clicked freeze
-      //P_LAST (data_cycle, check_pause_job_offset, "logging") federate.check_pause( CHECK_PAUSE_DELTA );
+      //P_LAST (main_thread_data_cycle, check_pause_job_offset, "logging") federate.check_pause( CHECK_PAUSE_DELTA );
 
       // Coordinate federates going to freeze mode.
       ("end_of_frame") federate.enter_freeze();

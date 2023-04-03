@@ -81,7 +81,7 @@ SineInteractionHandler::~SineInteractionHandler()
 }
 
 void SineInteractionHandler::send_sine_interaction(
-   double send_time )
+   double const send_time )
 {
    // Update the time with the simulation time.
    time = send_time;

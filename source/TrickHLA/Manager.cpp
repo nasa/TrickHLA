@@ -117,7 +117,7 @@ Manager::Manager()
      interactions_queue(),
      check_interactions_count( 0 ),
      check_interactions( NULL ),
-     job_cycle_time( 0.0 ),
+     job_cycle_time_micros( 0 ),
      rejoining_federate( false ),
      restore_determined( false ),
      restore_federate( false ),
@@ -220,7 +220,7 @@ void Manager::restart_initialization()
    // Just return if the TrickHLA Manager is not initialized.
    if ( !mgr_initialized ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stderr, "Manager::restart_initialization():%d Manager Not initialized, returning...%c",
+         send_hs( stderr, "Manager::restart_initialization():%d Manager Not initialized, returning.%c",
                   __LINE__, THLA_NEWLINE );
       }
       return;
@@ -293,18 +293,16 @@ void Manager::restart_initialization()
       (void)federate->wait_for_required_federates_to_join();
    }
 
-   // Restore ownership_transfer data for all objects...
-   for ( int i = 0; i < obj_count; ++i ) {
-      objects[i].restore_ownership_transfer_checkpointed_data();
+   // Restore ownership_transfer data for all objects.
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
+      objects[n].restore_ownership_transfer_checkpointed_data();
    }
 
-   // Restore checkpointed interactions...
+   // Restore checkpointed interactions.
    restore_interactions();
 
    // The manager is now initialized.
    this->mgr_initialized = true;
-
-   return;
 }
 
 /*!
@@ -324,25 +322,25 @@ federate so this call will be ignored.%c",
    }
 
    // Go through the list of objects.
-   for ( int i = 0; i < obj_count; ++i ) {
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
       // Make sure we have at least one piece of object init data we can send.
-      if ( objects[i].any_locally_owned_published_init_attribute() ) {
+      if ( objects[n].any_locally_owned_published_init_attribute() ) {
 
          if ( this->execution_control->wait_for_init_data() ) {
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                send_hs( stdout, "Manager::send_init_data():%d '%s'%c",
-                        __LINE__, objects[i].get_name(), THLA_NEWLINE );
+                        __LINE__, objects[n].get_name(), THLA_NEWLINE );
             }
 
             // Send the object init data to the other federates.
-            objects[i].send_init_data();
+            objects[n].send_init_data();
 
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                ostringstream msg;
                msg << "Manager::send_init_data():" << __LINE__
-                   << " '" << objects[i].name << "'"
+                   << " '" << objects[n].name << "'"
                    << " This call will be ignored because the Simulation"
                    << " Initialization Scheme (Type:'"
                    << this->execution_control->get_type()
@@ -353,12 +351,10 @@ federate so this call will be ignored.%c",
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             send_hs( stdout, "Manager::send_init_data():%d Nothing to send for '%s'%c",
-                     __LINE__, objects[i].get_name(), THLA_NEWLINE );
+                     __LINE__, objects[n].get_name(), THLA_NEWLINE );
          }
       }
    }
-
-   return;
 }
 
 /*!
@@ -432,7 +428,6 @@ federate so the data will not be sent for '%s'.%c",
          }
       }
    }
-   return;
 }
 
 /*!
@@ -452,35 +447,35 @@ federate so this call will be ignored.%c",
    }
 
    // Go through the list of objects.
-   for ( int i = 0; i < obj_count; ++i ) {
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
 
       // Make sure we have at least one piece of data we can receive.
-      if ( objects[i].any_remotely_owned_subscribed_init_attribute() ) {
+      if ( objects[n].any_remotely_owned_subscribed_init_attribute() ) {
 
          // Only wait for REQUIRED received init data and do not block waiting
          // to receive init data if we are using the simple init scheme.
-         bool obj_required = objects[i].is_required() && ( this->execution_control->wait_for_init_data() );
+         bool obj_required = objects[n].is_required() && ( this->execution_control->wait_for_init_data() );
 
          if ( obj_required ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                send_hs( stdout, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.%c",
-                        __LINE__, objects[i].get_name(),
-                        ( objects[i].is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
+                        __LINE__, objects[n].get_name(),
+                        ( objects[n].is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
             }
 
-            long long    wallclock_time;
-            SleepTimeout print_timer( (double)federate->wait_status_time );
+            int64_t      wallclock_time;
+            SleepTimeout print_timer( federate->wait_status_time );
             SleepTimeout sleep_timer;
 
             // Wait for the data to arrive.
-            while ( !objects[i].is_changed() ) {
+            while ( !objects[n].is_changed() ) {
 
                // Check for shutdown.
                federate->check_for_shutdown_with_termination();
 
                (void)sleep_timer.sleep();
 
-               if ( !objects[i].is_changed() ) {
+               if ( !objects[n].is_changed() ) {
 
                   // To be more efficient, we get the time once and share it.
                   wallclock_time = sleep_timer.time();
@@ -503,33 +498,33 @@ federate so this call will be ignored.%c",
                   if ( print_timer.timeout( wallclock_time ) ) {
                      print_timer.reset();
                      send_hs( stdout, "Manager::receive_init_data():%d Waiting for '%s', and marked as %s.%c",
-                              __LINE__, objects[i].get_name(),
-                              ( objects[i].is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
+                              __LINE__, objects[n].get_name(),
+                              ( objects[n].is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
                   }
                }
             }
          }
 
          // Check for changed data which means we received something.
-         if ( objects[i].is_changed() ) {
+         if ( objects[n].is_changed() ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                send_hs( stdout, "Manager::receive_init_data():%d Received '%s'%c",
-                        __LINE__, objects[i].get_name(), THLA_NEWLINE );
+                        __LINE__, objects[n].get_name(), THLA_NEWLINE );
             }
 
             // Receive the data from the publishing federate.
-            objects[i].receive_init_data();
+            objects[n].receive_init_data();
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                send_hs( stdout, "Manager::receive_init_data():%d Received nothing for '%s', and marked as %s.%c",
-                        __LINE__, objects[i].get_name(),
+                        __LINE__, objects[n].get_name(),
                         ( obj_required ? "REQUIRED" : "not required" ), THLA_NEWLINE );
             }
          }
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             send_hs( stdout, "Manager::receive_init_data():%d Nothing to receive for '%s'%c",
-                     __LINE__, objects[i].get_name(), THLA_NEWLINE );
+                     __LINE__, objects[n].get_name(), THLA_NEWLINE );
          }
       }
    }
@@ -588,8 +583,8 @@ void Manager::receive_init_data(
                         ( obj->is_required() ? "REQUIRED" : "not required" ), THLA_NEWLINE );
             }
 
-            long long    wallclock_time;
-            SleepTimeout print_timer( (double)federate->wait_status_time );
+            int64_t      wallclock_time;
+            SleepTimeout print_timer( federate->wait_status_time );
             SleepTimeout sleep_timer;
 
             // Wait for the data to arrive.
@@ -664,8 +659,6 @@ void Manager::clear_init_sync_points()
    // Clear the multiphase initalization synchronization points associated
    // with ExecutionControl initialization.
    this->execution_control->clear_multiphase_init_sync_points();
-
-   return;
 }
 
 /*!
@@ -728,8 +721,6 @@ joining federate so this call will be ignored.%c",
              << " will be used for multi-phase initialization." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
-
-   return;
 }
 
 /*!
@@ -804,8 +795,6 @@ RESERVED Object Instance Name '%s'%c",
          }
       }
    }
-
-   return;
 }
 
 /*!
@@ -835,7 +824,7 @@ for more than one Federate.%c",
             __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
 
    wstring obj_name;
-   for ( int n = 0; n < obj_count; ++n ) {
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
       StringUtilities::to_wstring( obj_name, objects[n].get_name() );
       if ( obj_name == obj_instance_name ) {
          if ( objects[n].is_create_HLA_instance() ) {
@@ -864,7 +853,7 @@ which keeps the instance attribute's object from becoming a Federation orphan. *
    exec_set_exec_command( ExitCmd );
    // Bail from the execution just in case the above command fails
    ostringstream errmsg;
-   errmsg << "Manager::object_instance_name_reservation_failed:" << __LINE__
+   errmsg << "Manager::object_instance_name_reservation_failed():" << __LINE__
           << " Exiting..." << THLA_ENDL;
    DebugHandler::terminate_with_message( errmsg.str() );
 }
@@ -881,7 +870,6 @@ void Manager::add_object_to_map(
         && ( this->object_map.find( object->get_instance_handle() ) == this->object_map.end() ) ) {
       this->object_map[object->get_instance_handle()] = object;
    }
-   return;
 }
 
 /*!
@@ -939,7 +927,7 @@ void Manager::setup_object_ref_attributes(
 
    // Resolve all the Ref-Attributes for all the simulation initialization
    // objects and attributes.
-   for ( int n = 0; n < data_obj_count; ++n ) {
+   for ( unsigned int n = 0; n < data_obj_count; ++n ) {
 
       // Initialize the TrickHLA-Object before we use it.
       data_objects[n].initialize( this );
@@ -956,11 +944,11 @@ void Manager::setup_object_ref_attributes(
              << endl;
       }
 
-      int        attr_count = data_objects[n].get_attribute_count();
+      int const  attr_count = data_objects[n].get_attribute_count();
       Attribute *attrs      = data_objects[n].get_attributes();
 
       // Process the attributes for this object.
-      for ( int i = 0; i < attr_count; ++i ) {
+      for ( unsigned int i = 0; i < attr_count; ++i ) {
 
          // Initialize the TrickHLA-Attribute before we use it.
          attrs[i].initialize( data_objects[n].get_FOM_name(), n, i );
@@ -1010,11 +998,11 @@ void Manager::setup_interaction_ref_attributes()
       // Initialize the TrickHLA Interaction before we use it.
       interactions[n].initialize( this );
 
-      int        param_count = interactions[n].get_parameter_count();
+      int const  param_count = interactions[n].get_parameter_count();
       Parameter *params      = interactions[n].get_parameters();
 
       // Process the attributes for this object.
-      for ( int i = 0; i < param_count; ++i ) {
+      for ( unsigned int i = 0; i < param_count; ++i ) {
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             msg << "   " << ( i + 1 ) << "/" << param_count
@@ -1035,8 +1023,6 @@ void Manager::setup_interaction_ref_attributes()
    // Tell the ExecutionControl object to setup the appropriate Trick Ref
    // ATTRIBUTES associated with the execution control mechanism.
    this->execution_control->setup_interaction_ref_attributes();
-
-   return;
 }
 
 /*!
@@ -1060,8 +1046,6 @@ void Manager::setup_all_RTI_handles()
 
    // Simulation Interactions.
    setup_interaction_RTI_handles( inter_count, interactions );
-
-   return;
 }
 
 /*!
@@ -1110,7 +1094,7 @@ void Manager::setup_object_RTI_handles(
       wstring ws_FOM_name = L"";
 
       // Resolve all the handles/ID's for the objects and attributes.
-      for ( int n = 0; n < data_obj_count; ++n ) {
+      for ( unsigned int n = 0; n < data_obj_count; ++n ) {
          ostringstream msg;
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -1140,11 +1124,11 @@ void Manager::setup_object_RTI_handles(
                 << " Class-ID:" << handle_str << endl;
          }
 
-         int        attr_count = data_objects[n].get_attribute_count();
+         int const  attr_count = data_objects[n].get_attribute_count();
          Attribute *attrs      = data_objects[n].get_attributes();
 
          // Resolve the handles/ID's for the attributes.
-         for ( int i = 0; i < attr_count; ++i ) {
+         for ( unsigned int i = 0; i < attr_count; ++i ) {
 
             if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                msg << "\tGetting RTI Attribute-Handle for '"
@@ -1337,11 +1321,11 @@ void Manager::setup_interaction_RTI_handles(
          }
 
          // The parameters.
-         int        param_count = in_interactions[n].get_parameter_count();
+         int const  param_count = in_interactions[n].get_parameter_count();
          Parameter *params      = in_interactions[n].get_parameters();
 
          // Process the parameters for the interaction.
-         for ( int i = 0; i < param_count; ++i ) {
+         for ( unsigned int i = 0; i < param_count; ++i ) {
 
             // The Parameter FOM name.
             FOM_name_type  = 2; // Parameter
@@ -1460,7 +1444,7 @@ void Manager::setup_interaction_RTI_handles(
  */
 void Manager::publish()
 {
-   int n;
+   unsigned int n;
 
    if ( !is_RTI_ready( "publish" ) ) {
       return;
@@ -1476,10 +1460,8 @@ void Manager::publish()
       interactions[n].publish_interaction();
    }
 
-   // Unpublish and Execution Control objects and interactions.
+   // Publish Execution Control objects and interactions.
    this->execution_control->publish();
-
-   return;
 }
 
 /*!
@@ -1487,8 +1469,8 @@ void Manager::publish()
  */
 void Manager::unpublish()
 {
-   int  i, k;
-   bool do_unpublish;
+   unsigned int i, k;
+   bool         do_unpublish;
 
    if ( !is_RTI_ready( "unpublish" ) ) {
       return;
@@ -1533,10 +1515,8 @@ void Manager::unpublish()
       }
    }
 
-   // Unpublish and Execution Control objects and interactions.
+   // Unpublish Execution Control objects and interactions.
    this->execution_control->unpublish();
-
-   return;
 }
 
 /*!
@@ -1544,7 +1524,7 @@ void Manager::unpublish()
  */
 void Manager::subscribe()
 {
-   int n;
+   unsigned int n;
 
    if ( !is_RTI_ready( "subscribe" ) ) {
       return;
@@ -1562,8 +1542,6 @@ void Manager::subscribe()
 
    // Subscribe to anything needed for the execution control mechanisms.
    this->execution_control->subscribe();
-
-   return;
 }
 
 /*!
@@ -1571,8 +1549,8 @@ void Manager::subscribe()
  */
 void Manager::unsubscribe()
 {
-   int  i, k;
-   bool do_unsubscribe;
+   unsigned int i, k;
+   bool         do_unsubscribe;
 
    if ( !is_RTI_ready( "unsubscribe" ) ) {
       return;
@@ -1621,8 +1599,6 @@ void Manager::unsubscribe()
 
    // Unsubscribe to anything needed for the execution control mechanisms.
    this->execution_control->unsubscribe();
-
-   return;
 }
 
 /*!
@@ -1650,7 +1626,7 @@ void Manager::reserve_object_names_with_RTI()
 
    // For the locally owned objects, reserve the object instance name with
    // the RTI.
-   for ( int n = 0; n < obj_count; ++n ) {
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
       objects[n].reserve_object_name_with_RTI();
    }
 }
@@ -1671,7 +1647,7 @@ void Manager::wait_for_reservation_of_object_names()
    if ( obj_count > 0 ) {
       // Wait for each RTI object instance name to be registered with the RTI,
       // but for only the names we requested registration for.
-      for ( int n = 0; n < obj_count; ++n ) {
+      for ( unsigned int n = 0; n < obj_count; ++n ) {
          objects[n].wait_for_object_name_reservation();
       }
 
@@ -1702,7 +1678,7 @@ void Manager::register_objects_with_RTI()
 
    // For the locally owned objects register it with the RTI to get its
    // RTI object instance ID.
-   for ( int n = 0; n < obj_count; ++n ) {
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
       objects[n].register_object_with_RTI();
 
       // Add the registered object instance to the map and only if it is
@@ -1730,12 +1706,12 @@ void Manager::setup_preferred_order_with_RTI()
    }
 
    // Setup the preferred order for all the object attributes.
-   for ( int n = 0; n < obj_count; ++n ) {
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
       objects[n].setup_preferred_order_with_RTI();
    }
 
    // Setup the preferred order for all the interactions.
-   for ( int i = 0; i < inter_count; ++i ) {
+   for ( unsigned int i = 0; i < inter_count; ++i ) {
       interactions[i].setup_preferred_order_with_RTI();
    }
 }
@@ -1774,14 +1750,14 @@ void Manager::wait_for_registration_of_required_objects()
 
    // Loop through all of the objects to count the # of required objects; do not
    // assume that all of them are required!
-   for ( int i = 0; i < obj_count; ++i ) {
-      if ( objects[i].is_required() ) {
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
+      if ( objects[n].is_required() ) {
          ++total_required_obj_cnt;
       }
    }
 
-   long long    wallclock_time;
-   SleepTimeout print_timer( (double)federate->wait_status_time );
+   int64_t      wallclock_time;
+   SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
 
    do {
@@ -1814,7 +1790,7 @@ void Manager::wait_for_registration_of_required_objects()
 
             // Determine how many data objects have been registered and only if
             // they are required.
-            for ( int n = 0; n < obj_count; ++n ) {
+            for ( unsigned int n = 0; n < obj_count; ++n ) {
                if ( objects[n].is_instance_handle_valid() ) {
                   ++registered_obj_cnt;
                   if ( objects[n].is_required() ) {
@@ -1887,7 +1863,7 @@ void Manager::wait_for_registration_of_required_objects()
                ++cnt; // Count the execution configuration.
             }
 
-            for ( int n = 0; n < obj_count; ++n ) {
+            for ( unsigned int n = 0; n < obj_count; ++n ) {
                if ( !print_only_unregistered_obj
                     || !objects[n].is_instance_handle_valid() ) {
 
@@ -1980,7 +1956,7 @@ void Manager::wait_for_registration_of_required_objects()
 
       // Add all valid, registered object instances to the map and only if they are
       // not already in it.
-      for ( int n = 0; n < obj_count; ++n ) {
+      for ( unsigned int n = 0; n < obj_count; ++n ) {
          if ( ( objects[n].is_instance_handle_valid() )
               && ( object_map.find( objects[n].get_instance_handle() ) == object_map.end() ) ) {
             object_map[objects[n].get_instance_handle()] = &objects[n];
@@ -2056,7 +2032,7 @@ void Manager::set_object_instance_handles_by_name(
       wstring ws_instance_name = L"";
 
       // Resolve all the handles/ID's for the objects and attributes.
-      for ( int n = 0; n < data_obj_count; ++n ) {
+      for ( unsigned int n = 0; n < data_obj_count; ++n ) {
 
          // Create the wide-string version of the instance name.
          char *instance_name = (char *)data_objects[n].get_name();
@@ -2170,8 +2146,6 @@ void Manager::provide_attribute_update(
    } else {
       this->execution_control->provide_attribute_update( theObject, theAttributes );
    }
-
-   return;
 }
 
 /*!
@@ -2179,7 +2153,7 @@ void Manager::provide_attribute_update(
  */
 void Manager::determine_job_cycle_time()
 {
-   if ( this->job_cycle_time > 0.0 ) {
+   if ( this->job_cycle_time_micros > 0 ) {
       return;
    }
 
@@ -2189,18 +2163,21 @@ void Manager::determine_job_cycle_time()
    }
 
    // Get the lookahead time.
-   double lookahead_time = ( federate != NULL ) ? federate->get_lookahead_time_in_seconds() : 0.0;
+   int64_t const lookahead_time_micros = federate->get_lookahead_time_in_micros();
 
-   this->job_cycle_time = exec_get_job_cycle( NULL );
+   // Get the cycle time.
+   double const cycle_time     = exec_get_job_cycle( NULL );
+   this->job_cycle_time_micros = Int64Interval::to_microseconds( cycle_time );
 
    // Verify the job cycle time against the HLA lookahead time.
-   if ( ( this->job_cycle_time <= 0.0 ) || ( this->job_cycle_time < lookahead_time ) ) {
+   if ( ( this->job_cycle_time_micros <= 0 ) || ( this->job_cycle_time_micros < lookahead_time_micros ) ) {
       ostringstream errmsg;
       errmsg << "Manager::determine_job_cycle_time():" << __LINE__
              << " ERROR: The cycle time for this job is less than the HLA"
-             << " lookahead time! The HLA Lookahead time (" << lookahead_time
+             << " lookahead time! The HLA Lookahead time ("
+             << Int64Interval::to_seconds( lookahead_time_micros )
              << " seconds) must be less than or equal to the job cycle time ("
-             << this->job_cycle_time << " seconds). Make sure 'lookahead_time' in"
+             << cycle_time << " seconds). Make sure 'lookahead_time' in"
              << " your input or modified-data file is less than or equal to the"
              << " 'THLA_DATA_CYCLE_TIME' time specified in the S_define file for"
              << " the send_cyclic_and_requested_data() and"
@@ -2211,8 +2188,8 @@ void Manager::determine_job_cycle_time()
    // Set the core job cycle time now that we know what it is so that the
    // attribute cyclic ratios can now be calculated for any multi-rate
    // attributes.
-   for ( int n = 0; n < this->obj_count; ++n ) {
-      objects[n].set_core_job_cycle_time( this->job_cycle_time );
+   for ( unsigned int n = 0; n < this->obj_count; ++n ) {
+      objects[n].set_core_job_cycle_time( cycle_time );
    }
 }
 
@@ -2226,19 +2203,96 @@ void Manager::send_cyclic_and_requested_data()
                __LINE__, THLA_NEWLINE );
    }
 
-   double current_sim_time = exec_get_sim_time();
+   int64_t const sim_time_micros     = Int64Interval::to_microseconds( exec_get_sim_time() );
+   int64_t const granted_time_micros = get_granted_time_in_micros();
+   bool const    zero_lookahead      = federate->is_zero_lookahead_time();
 
-   // Determine the cycle time for this job if it is not yet known.
-   if ( this->job_cycle_time <= 0.0 ) {
+   // Initial time values.
+   int64_t   dt      = zero_lookahead ? 0 : get_lookahead_time_in_micros();
+   int64_t   prev_dt = dt;
+   Int64Time granted_plus_lookahead( granted_time_micros + dt );
+   Int64Time update_time( granted_plus_lookahead );
+
+   // Determine the main thread cycle time for this job if it is not yet known.
+   if ( this->job_cycle_time_micros <= 0 ) {
       determine_job_cycle_time();
    }
 
+   // Only update the time if time management is enabled.
+   if ( federate->is_time_management_enabled() ) {
+
+      // Check for a zero lookahead time, which means the cycle_time (i.e. dt)
+      // should be zero as well.
+      dt = zero_lookahead ? 0 : this->job_cycle_time_micros;
+
+      // Reuse the update_time if the data cycle time (dt) is the same.
+      if ( dt != prev_dt ) {
+         prev_dt = dt;
+
+         // The update_time should be the current granted time plus the data cycle
+         // delta time for this job if HLA Time Management is enabled otherwise it
+         // is the simulation time plus the cycle delta time for this job. Also, the
+         // dt value would then be the job cycle delta time for this job for this
+         // function. 11/28/2006 DDexter
+         //
+         // When Tsim+dt == Tgrant+Lookahead
+         // Tgrant          Tgrant + Lookahead
+         // +---------------+---------------
+         // Tsim            Tsim + dt
+         //
+         // When Tsim+dt > Tgrant+Lookahead
+         // Tgrant          Tmin = Tgrant + Lookahead
+         // +---------------+--------+------
+         // Tsim                     Tsim + dt
+         //
+         // Even when using HLA Time Management the simulation time (Tsim) will
+         // not match the Granted time (Tgrant) for some circumstances, which is
+         // the case for a late joining federate. The data cycle time (dt) is how
+         // often we send and receive data, which may or may not match the lookahead.
+         // This is why we prefer to use an updated time of Tupdate = Tgrant + dt.
+         update_time.set( granted_time_micros + dt );
+
+         // Make sure the update time is not less than the granted time + lookahead.
+         if ( update_time < granted_plus_lookahead ) {
+            update_time.set( granted_plus_lookahead );
+         }
+      }
+   }
+
    // Send any ExecutionControl data requested.
-   this->execution_control->send_requested_data( current_sim_time, this->job_cycle_time );
+   this->execution_control->send_requested_data( update_time );
 
    // Send data to remote RTI federates for each of the objects.
-   for ( int n = 0; n < this->obj_count; ++n ) {
-      objects[n].send_cyclic_and_requested_data( current_sim_time, this->job_cycle_time );
+   for ( unsigned int obj_index = 0; obj_index < this->obj_count; ++obj_index ) {
+
+      // Only send data if we are on the data cycle time boundary for this object.
+      if ( this->federate->on_data_cycle_boundary_for_obj( obj_index, sim_time_micros ) ) {
+
+         // Only update the time if time management is enabled.
+         if ( federate->is_time_management_enabled() ) {
+
+            // Check for a zero lookahead time, which means the cycle_time
+            // (i.e. dt) should be zero as well.
+            dt = zero_lookahead ? 0
+                                : this->federate->get_data_cycle_time_micros_for_obj(
+                                   obj_index, this->job_cycle_time_micros );
+
+            // Reuse the update_time if the data cycle time (dt) is the same.
+            if ( dt != prev_dt ) {
+               prev_dt = dt;
+
+               update_time.set( granted_time_micros + dt );
+
+               // Make sure the update time is not less than the granted time + lookahead.
+               if ( update_time < granted_plus_lookahead ) {
+                  update_time.set( granted_plus_lookahead );
+               }
+            }
+         }
+
+         // Send the data for the object.
+         objects[obj_index].send_cyclic_and_requested_data( update_time );
+      }
    }
 }
 
@@ -2259,12 +2313,18 @@ void Manager::receive_cyclic_data()
                __LINE__, THLA_NEWLINE );
    }
 
+   int64_t const sim_time_micros = Int64Interval::to_microseconds( exec_get_sim_time() );
+
    // Receive and process any updates for ExecutionControl.
    this->execution_control->receive_cyclic_data();
 
    // Receive data from remote RTI federates for each of the objects.
-   for ( int n = 0; n < obj_count; ++n ) {
-      objects[n].receive_cyclic_data();
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
+
+      // Only receive data if we are on the data cycle time boundary for this object.
+      if ( this->federate->on_data_cycle_boundary_for_obj( n, sim_time_micros ) ) {
+         objects[n].receive_cyclic_data();
+      }
    }
 }
 
@@ -2340,7 +2400,7 @@ void Manager::receive_interaction(
    bool const                     received_as_TSO )
 {
    // Find the Interaction we have data for.
-   for ( int i = 0; i < inter_count; ++i ) {
+   for ( unsigned int i = 0; i < inter_count; ++i ) {
 
       // Process the interaction if we subscribed to it and we have the same class handle.
       if ( interactions[i].is_subscribe()
@@ -2396,8 +2456,6 @@ void Manager::receive_interaction(
                                                  theUserSuppliedTag,
                                                  theTime,
                                                  received_as_TSO );
-
-   return;
 }
 
 /*!
@@ -2420,7 +2478,7 @@ Object *Manager::get_trickhla_object(
    wstring ws_obj_name;
 
    // Search the data objects first.
-   for ( int n = 0; n < obj_count; ++n ) {
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
       StringUtilities::to_wstring( ws_obj_name, objects[n].get_name() );
       if ( ws_obj_name == obj_instance_name ) {
          return ( &objects[n] );
@@ -2520,7 +2578,7 @@ Object *Manager::get_unregistered_object(
    wstring ws_obj_name;
 
    // Search the simulation data objects first.
-   for ( int n = 0; n < obj_count; ++n ) {
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
 
       // Find the object that is not registered (i.e. the instance ID == 0),
       // has the same class handle as the one specified, and has the same name
@@ -2549,7 +2607,7 @@ Object *Manager::get_unregistered_remote_object(
    ObjectClassHandle const &theObjectClass )
 {
    // Search the simulation data objects first.
-   for ( int n = 0; n < obj_count; ++n ) {
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
 
       // Return the first TrickHLA object that we did not create an HLA
       // instance for, has the same class handle as the one specified, is not
@@ -2612,8 +2670,6 @@ void Manager::mark_object_as_deleted_from_federation(
          obj->remove_object_instance();
       }
    }
-
-   return;
 }
 
 /*!
@@ -2625,13 +2681,11 @@ void Manager::process_deleted_objects()
    this->execution_control->process_deleted_objects();
 
    // Search the simulation data objects, looking for deleted objects.
-   for ( int n = 0; n < obj_count; ++n ) {
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
       if ( objects[n].process_object_deleted_from_RTI ) {
          objects[n].process_deleted_object();
       }
    }
-
-   return;
 }
 
 /*!
@@ -2639,7 +2693,7 @@ void Manager::process_deleted_objects()
  */
 void Manager::pull_ownership()
 {
-   for ( int n = 0; n < obj_count; ++n ) {
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
       objects[n].pull_ownership();
    }
 }
@@ -2649,7 +2703,7 @@ void Manager::pull_ownership()
  */
 void Manager::push_ownership()
 {
-   for ( int n = 0; n < obj_count; ++n ) {
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
       objects[n].push_ownership();
    }
 }
@@ -2659,7 +2713,7 @@ void Manager::push_ownership()
  */
 void Manager::grant_pull_request()
 {
-   for ( int n = 0; n < obj_count; ++n ) {
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
       objects[n].grant_pull_request();
    }
 }
@@ -2669,7 +2723,7 @@ void Manager::grant_pull_request()
  */
 void Manager::release_ownership()
 {
-   for ( int n = 0; n < obj_count; ++n ) {
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
       objects[n].release_ownership();
    }
 }
@@ -2680,13 +2734,15 @@ void Manager::release_ownership()
  */
 Int64Interval Manager::get_lookahead() const
 {
-   Int64Interval di;
-   if ( federate != NULL ) {
-      di = federate->get_lookahead();
-   } else {
-      di = Int64Interval( -1.0 );
-   }
-   return di;
+   return this->federate->get_lookahead();
+}
+
+/*!
+ * @details Returns the lookhead time in microseconds.
+ */
+double const Manager::get_lookahead_time_in_micros() const
+{
+   return this->federate->get_lookahead_time_in_micros();
 }
 
 /*!
@@ -2695,13 +2751,15 @@ Int64Interval Manager::get_lookahead() const
  */
 Int64Time Manager::get_granted_time() const
 {
-   Int64Time dt;
-   if ( federate != NULL ) {
-      dt = federate->get_granted_time();
-   } else {
-      dt = Int64Time( MAX_LOGICAL_TIME_SECONDS );
-   }
-   return dt;
+   return this->federate->get_granted_time();
+}
+
+/*!
+ * @details Returns the granted time in microseconds.
+ */
+double const Manager::get_granted_time_in_micros() const
+{
+   return this->federate->get_granted_time_in_micros();
 }
 
 bool Manager::is_RTI_ready(
@@ -2731,7 +2789,7 @@ bool Manager::is_RTI_ready(
 }
 
 /*!
- * @details Trigger federation save, at current time or user-specified time...\n
+ * @details Trigger federation save, at current time or user-specified time.\n
  * NOTE: These routines do not coordinate a federation save via interactions
  * so make these internal routines so that the user does not accidentally call
  * them and mess things up.
@@ -2758,19 +2816,14 @@ void Manager::start_federation_save_at_sim_time(
    start_federation_save_at_scenario_time(
       this->execution_control->convert_sim_time_to_scenario_time( freeze_sim_time ),
       file_name );
-
-   return;
 }
 
 void Manager::start_federation_save_at_scenario_time(
    double      freeze_scenario_time,
    char const *file_name )
 {
-
    // Call the ExecutionControl method.
    this->execution_control->start_federation_save_at_scenario_time( freeze_scenario_time, file_name );
-
-   return;
 }
 
 /*!
@@ -2781,15 +2834,15 @@ void Manager::setup_checkpoint()
    // Call the ExecutionControl method.
    this->execution_control->setup_checkpoint();
 
-   for ( int i = 0; i < obj_count; ++i ) {
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
       // Any object with a valid instance handle must be marked as required
       // to ensure the restore process will wait for this object instance
       // to exist.
-      if ( objects[i].is_instance_handle_valid() ) {
-         objects[i].mark_required();
+      if ( objects[n].is_instance_handle_valid() ) {
+         objects[n].mark_required();
       }
       // Setup the ownership handler checkpoint data structures.
-      objects[i].setup_ownership_transfer_checkpointed_data();
+      objects[n].setup_ownership_transfer_checkpointed_data();
    }
 
    setup_checkpoint_interactions();
@@ -2824,14 +2877,13 @@ void Manager::setup_checkpoint_interactions()
 
       // interactions_queue.dump_head_pointers("interactions_queue.dump");
 
-      for ( int i = 0; i < interactions_queue.size(); ++i ) {
+      for ( unsigned int i = 0; i < interactions_queue.size(); ++i ) {
 
-         InteractionItem *item =
-            static_cast< InteractionItem * >( interactions_queue.front() );
+         InteractionItem *item = static_cast< InteractionItem * >( interactions_queue.front() );
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             send_hs( stdout, "Manager::setup_checkpoint_interactions():%d \
-Checkpointing into check_interactions[%d] from interaction index %d...%c",
+Checkpointing into check_interactions[%d] from interaction index %d.%c",
                      __LINE__, i, item->index, THLA_NEWLINE );
          }
          check_interactions[i].index            = item->index;
@@ -2863,7 +2915,7 @@ Checkpointing into check_interactions[%d] from interaction index %d...%c",
 void Manager::clear_interactions()
 {
    if ( check_interactions_count > 0 ) {
-      for ( int i = 0; i < check_interactions_count; ++i ) {
+      for ( unsigned int i = 0; i < check_interactions_count; ++i ) {
          check_interactions[i].clear_parm_items();
       }
       trick_MM->delete_var( check_interactions );
@@ -2879,7 +2931,7 @@ void Manager::dump_interactions()
       msg << "Manager::dump_interactions():" << __LINE__
           << "check_interactions contains these "
           << check_interactions_count << " elements:" << endl;
-      for ( int i = 0; i < check_interactions_count; ++i ) {
+      for ( unsigned int i = 0; i < check_interactions_count; ++i ) {
          msg << "check_interactions[" << i << "].index                  = "
              << check_interactions[i].index << endl
              << "check_interactions[" << i << "].interaction_type       = '"
@@ -2887,11 +2939,11 @@ void Manager::dump_interactions()
              << "check_interactions[" << i << "].parm_items_count       = "
              << check_interactions[i].parm_items_count
              << endl;
-         for ( int j = 0; j < check_interactions[i].parm_items_count; ++j ) {
-            msg << "check_interactions[" << i << "].parm_items[" << j << "].index    = "
-                << check_interactions[i].parm_items[j].index << endl
-                << "check_interactions[" << i << "].parm_items[" << j << "].size     = "
-                << check_interactions[i].parm_items[j].size
+         for ( unsigned int k = 0; k < check_interactions[i].parm_items_count; ++k ) {
+            msg << "check_interactions[" << i << "].parm_items[" << k << "].index    = "
+                << check_interactions[i].parm_items[k].index << endl
+                << "check_interactions[" << i << "].parm_items[" << k << "].size     = "
+                << check_interactions[i].parm_items[k].size
                 << endl;
          }
          msg << "check_interactions[" << i << "].user_supplied_tag_size = "
@@ -2914,13 +2966,13 @@ void Manager::restore_interactions()
                   __LINE__, check_interactions_count, THLA_NEWLINE );
       }
 
-      for ( int i = 0; i < check_interactions_count; ++i ) {
+      for ( unsigned int i = 0; i < check_interactions_count; ++i ) {
 
          InteractionItem *item = new InteractionItem();
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             send_hs( stdout, "Manager::restore_interactions():%d \
-restoring check_interactions[%d] into interaction index %d...parm_count=%d%c",
+restoring check_interactions[%d] into interaction index %d, parm_count=%d%c",
                      __LINE__, i, check_interactions[i].index,
                      check_interactions[i].parm_items_count, THLA_NEWLINE );
          }
@@ -2948,7 +3000,7 @@ restoring check_interactions[%d] into interaction index %d...parm_count=%d%c",
  */
 void Manager::pull_ownership_upon_rejoin()
 {
-   for ( int n = 0; n < obj_count; ++n ) {
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
       if ( objects[n].is_create_HLA_instance() ) {
          objects[n].pull_ownership_upon_rejoin();
       }
@@ -2970,12 +3022,11 @@ void Manager::wait_for_discovery_of_objects()
    // Do we have Simulation object(s) to interrogate?
    if ( obj_count > 0 ) {
 
-      // See if any object discoveries have occurred...
-      int  n;
+      // See if any object discoveries have occurred.
       int  required_count                   = 0;
       int  discovery_count                  = 0;
       bool create_HLA_instance_object_found = false;
-      for ( n = 0; n < obj_count; ++n ) {
+      for ( unsigned int n = 0; n < obj_count; ++n ) {
          if ( objects[n].is_required() ) {
             required_count++;
          }
@@ -2992,7 +3043,7 @@ void Manager::wait_for_discovery_of_objects()
          return;
       }
 
-      // Figure out how many objects have been discovered so far...
+      // Figure out how many objects have been discovered so far.
       if ( ( !create_HLA_instance_object_found && // still missing some objects other than
              ( discovery_count < ( required_count - 1 ) ) )
            ||                                           // the one for the rejoining federate, or
@@ -3004,11 +3055,11 @@ void Manager::wait_for_discovery_of_objects()
                      __LINE__, THLA_NEWLINE );
          }
 
-         long long    wallclock_time; // cppcheck-suppress [variableScope,unmatchedSuppression]
-         SleepTimeout print_timer( (double)federate->wait_status_time );
+         int64_t      wallclock_time; // cppcheck-suppress [variableScope,unmatchedSuppression]
+         SleepTimeout print_timer( federate->wait_status_time );
          SleepTimeout sleep_timer;
 
-         // Block until some / all arrive.
+         // Block until some or all objects arrive.
          do {
 
             // Check for shutdown.
@@ -3045,7 +3096,7 @@ void Manager::wait_for_discovery_of_objects()
             // Check if any objects were discovered while we were sleeping.
             discovery_count                  = 0;
             create_HLA_instance_object_found = false;
-            for ( n = 0; n < obj_count; ++n ) {
+            for ( unsigned int n = 0; n < obj_count; ++n ) {
                if ( objects[n].is_required() && objects[n].is_instance_handle_valid() ) {
                   ++discovery_count;
                   if ( objects[n].is_create_HLA_instance() ) {
@@ -3076,7 +3127,7 @@ void Manager::wait_for_discovery_of_objects()
  */
 bool Manager::is_this_a_rejoining_federate()
 {
-   for ( int n = 0; n < obj_count; ++n ) {
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
       // Was the required 'create_HLA_instance' object found?
       if ( objects[n].is_required()
            && objects[n].is_create_HLA_instance()

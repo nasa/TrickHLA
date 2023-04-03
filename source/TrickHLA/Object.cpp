@@ -131,8 +131,6 @@ Object::Object()
      first_blocking_cyclic_read( true ),
      any_attribute_FOM_specified_order( false ),
      any_attribute_timestamp_order( false ),
-     last_update_time( 0.0 ),
-     time_plus_lookahead( 0.0 ),
      pull_requested( false ),
      divest_requested( false ),
      attribute_FOM_names(),
@@ -331,32 +329,32 @@ void Object::initialize(
 
    // Reset the TrickHLA Attributes count if it is negative or if there
    // are no attributes.
-   if ( ( attr_count < 0 ) || ( attributes == NULL ) ) {
-      attr_count = 0;
+   if ( ( this->attr_count < 0 ) || ( attributes == NULL ) ) {
+      this->attr_count = 0;
    }
 
    // TODO: Get the preferred order by parsing the FOM.
    //
    // Determine if any attribute is the FOM specified order.
-   any_attribute_FOM_specified_order = false;
-   for ( int i = 0; !any_attribute_FOM_specified_order && i < attr_count; ++i ) {
+   this->any_attribute_FOM_specified_order = false;
+   for ( unsigned int i = 0; !any_attribute_FOM_specified_order && i < attr_count; ++i ) {
       if ( attributes[i].get_preferred_order() == TRANSPORT_SPECIFIED_IN_FOM ) {
-         any_attribute_FOM_specified_order = true;
+         this->any_attribute_FOM_specified_order = true;
       }
    }
 
    // TODO: Get the preferred order by parsing the FOM.
    //
    // Determine if any attribute is Timestamp Order.
-   any_attribute_timestamp_order = false;
-   for ( int i = 0; !any_attribute_timestamp_order && i < attr_count; ++i ) {
+   this->any_attribute_timestamp_order = false;
+   for ( unsigned int i = 0; !any_attribute_timestamp_order && i < attr_count; ++i ) {
       if ( attributes[i].get_preferred_order() == TRANSPORT_TIMESTAMP_ORDER ) {
-         any_attribute_timestamp_order = true;
+         this->any_attribute_timestamp_order = true;
       }
    }
 
    // Build the string array of attributes FOM names.
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
       // Validate the FOM-name to make sure we don't have a  problem with the
       // list of names as well as get a difficult to debug runtime error for
       // the string constructor if we had a null FOM-name.
@@ -401,8 +399,6 @@ void Object::initialize(
    }
 
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-   return;
 }
 
 Federate *Object::get_federate()
@@ -461,10 +457,10 @@ void Object::remove()
                   // Delete the object instance at a specific time if we are
                   // time-regulating.
                   if ( federate->in_time_regulating_state() ) {
-                     Int64Time new_time = get_update_time_plus_lookahead();
+                     Int64Time update_time( get_granted_time() + get_lookahead() );
                      (void)rti_amb->deleteObjectInstance( instance_handle,
                                                           RTI1516_USERDATA( 0, 0 ),
-                                                          new_time.get() );
+                                                          update_time.get() );
                   } else {
                      (void)rti_amb->deleteObjectInstance( instance_handle,
                                                           RTI1516_USERDATA( 0, 0 ) );
@@ -611,7 +607,7 @@ void Object::mark_all_attributes_as_nonlocal()
           << " FOM-Name:'" << get_FOM_name() << "'"
           << " Instance-ID:" << id_str;
    }
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          msg << endl
              << "   " << ( i + 1 ) << "/" << attr_count
@@ -663,7 +659,7 @@ void Object::publish_object_attributes()
          AttributeHandleSet attrs;
 
          // Publish only the attributes we have the publish flag set for.
-         for ( int i = 0; i < attr_count; ++i ) {
+         for ( unsigned int i = 0; i < attr_count; ++i ) {
             if ( attributes[i].is_publish() ) {
                attrs.insert( attributes[i].get_attribute_handle() );
             }
@@ -821,7 +817,7 @@ void Object::subscribe_to_object_attributes()
          AttributeHandleSet attrs;
 
          // Subscribe only to the attributes we have the subscribe flag set for.
-         for ( int i = 0; i < attr_count; ++i ) {
+         for ( unsigned int i = 0; i < attr_count; ++i ) {
             if ( attributes[i].is_subscribe() ) {
                attrs.insert( attributes[i].get_attribute_handle() );
             }
@@ -1073,8 +1069,8 @@ Waiting on reservation of Object Instance Name '%s'.%c",
 
    Federate *federate = get_federate();
 
-   long long    wallclock_time;
-   SleepTimeout print_timer( (double)federate->wait_status_time );
+   int64_t      wallclock_time;
+   SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( !name_registered ) {
@@ -1279,8 +1275,8 @@ void Object::wait_for_object_registration()
 
    Federate *federate = get_federate();
 
-   long long    wallclock_time;
-   SleepTimeout print_timer( (double)federate->wait_status_time );
+   int64_t      wallclock_time;
+   SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
 
    while ( !is_instance_handle_valid() ) {
@@ -1355,7 +1351,7 @@ void Object::setup_preferred_order_with_RTI()
    AttributeHandleSet RO_attr_handle_set  = AttributeHandleSet();
 
    // Create the sets of Attribute handles for the Timestamp preferred order.
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
       if ( attributes[i].is_locally_owned()
            && ( attributes[i].get_preferred_order() == TRANSPORT_TIMESTAMP_ORDER ) ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
@@ -1370,7 +1366,7 @@ void Object::setup_preferred_order_with_RTI()
    }
 
    // Create the sets of Attribute handles for the Receive preferred order.
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
       if ( attributes[i].is_locally_owned()
            && ( attributes[i].get_preferred_order() == TRANSPORT_RECEIVE_ORDER ) ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
@@ -1482,7 +1478,7 @@ void Object::request_attribute_value_update()
 
    // Create the set of Attribute handles we need to request an update for.
    AttributeHandleSet attr_handle_set = AttributeHandleSet();
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
       // Only include attributes that are remotely owned that are subscribed to.
       if ( attributes[i].is_remotely_owned() && attributes[i].is_subscribe() ) {
          attr_handle_set.insert( attributes[i].get_attribute_handle() );
@@ -1555,7 +1551,7 @@ void Object::provide_attribute_update(
 
    // Search the TrickHLA object attributes to see if any of them are
    // part of the set of the attribute value update request.
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
 
       // Determine if this object attribute needs to provide an update.
       if ( theAttributes.find( attributes[i].get_attribute_handle() ) != theAttributes.end() ) {
@@ -1584,8 +1580,8 @@ void Object::provide_attribute_update(
 void Object::send_requested_data()
 {
    if ( attr_update_requested ) {
-      send_requested_data( exec_get_sim_time(),
-                           get_federate()->get_lookahead_time_in_seconds() );
+      Int64Time granted_plus_lookahead( get_granted_time() + get_lookahead() );
+      send_requested_data( granted_plus_lookahead );
    }
 }
 
@@ -1593,8 +1589,7 @@ void Object::send_requested_data()
  * @job_class{scheduled}
  */
 void Object::send_requested_data(
-   double current_time,
-   double cycle_time )
+   Int64Time const &update_time )
 {
    // If no attribute update has been requested then just return.
    if ( !attr_update_requested ) {
@@ -1603,7 +1598,7 @@ void Object::send_requested_data(
 
    // Make sure we clear the attribute update request flag because we only
    // want to send data once per request.
-   attr_update_requested = false;
+   this->attr_update_requested = false;
 
    // We can only send attribute updates for the attributes we own and are
    // configured to publish.
@@ -1618,36 +1613,6 @@ void Object::send_requested_data(
 
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
-
-   Federate *federate = get_federate();
-
-   RTIambassador *rti_amb = get_RTI_ambassador();
-
-   // Time tag the data we're about to send out
-   Int64Time t = federate->get_granted_time();
-   set_last_update_time( t.get() );
-
-   // Check for a zero lookahead time, which means the cycle_time (i.e. dt)
-   // should be zero as well.
-   if ( federate->is_zero_lookahead_time() ) {
-      cycle_time = 0.0;
-   }
-
-   // The update_time should be the current simulation time plus the cycle
-   // time for this job. Also, the dt value would then be the job cycle time
-   // for this job for this function. 11/28/2006 DDexter
-   Int64Time update_time( current_time + cycle_time );
-
-   // Update the time_plus_lookahead value.
-   (void)get_update_time_plus_lookahead();
-
-   // Make sure the current_time + cycle_time is not less than the current
-   // HLA time + lookahead time, which could happen due to floating-point
-   // round-off.
-   if ( update_time < time_plus_lookahead ) {
-      update_time.set( time_plus_lookahead );
-      cycle_time = time_plus_lookahead.get_time_in_seconds() - current_time;
-   }
 
    // Do send side lag compensation.
    if ( ( lag_comp_type == LAG_COMPENSATION_SEND_SIDE ) && ( lag_comp != NULL ) ) {
@@ -1672,11 +1637,16 @@ void Object::send_requested_data(
                __LINE__, rti_err_msg.c_str(), THLA_NEWLINE );
    }
 
-   // Determine if we need to send with a timestamp.
-   // See IEEE 1516.1-2010 Section 6.10.
-   bool send_with_timestamp = federate->in_time_regulating_state()
-                              && ( any_attribute_timestamp_order
-                                   || any_attribute_FOM_specified_order );
+   Federate *federate = get_federate();
+
+   // The message will only be sent as TSO if our Federate is in the HLA Time
+   // Regulating state and we have at least one attribute with a preferred
+   // timestamp order. Assumes the FOM specified order is TSO.
+   // See IEEE-1516.1-2000, Sections 6.6 and 8.1.1.
+   bool const send_with_timestamp = federate->in_time_regulating_state()
+                                    && ( this->any_attribute_timestamp_order
+                                         || this->any_attribute_FOM_specified_order );
+
    try {
       // Send the Attributes to the federation.
       //
@@ -1687,15 +1657,15 @@ void Object::send_requested_data(
       // IEEE-1516.1-2000 sections 4.12, 4.20)
       if ( federate->should_publish_data() ) {
 
-         // The message will only be sent as TSO if our Federate is in
-         // the HLA Time Regulating state. See IEEE-1516.1-2000,
-         // Sections 6.6 and 8.1.1.
+         RTIambassador *rti_amb = get_RTI_ambassador();
+
          if ( send_with_timestamp ) {
             if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-               send_hs( stdout, "Object::send_requested_data():%d For object '%s', updating attribute values as Timestamp Order.%c",
-                        __LINE__, get_name(), THLA_NEWLINE );
+               send_hs( stdout, "Object::send_requested_data():%d \
+Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds.%c",
+                        __LINE__, get_name(), update_time.get_time_in_seconds(),
+                        THLA_NEWLINE );
             }
-
             // Send as Timestamp Order
             (void)rti_amb->updateAttributeValues( this->instance_handle,
                                                   *attribute_values_map,
@@ -1703,7 +1673,7 @@ void Object::send_requested_data(
                                                   update_time.get() );
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-               send_hs( stdout, "Object::send_requested_data():%d For object '%s', updating attribute values as Receive Order.%c",
+               send_hs( stdout, "Object::send_requested_data():%d Object '%s', Receive Order (RO) Attribute update.%c",
                         __LINE__, get_name(), THLA_NEWLINE );
             }
 
@@ -1728,22 +1698,12 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: InvalidLogicalTime" << endl
              << "  instance_id=" << id_str << endl
-             << "  sim-time=" << current_time << " ("
-             << Int64Interval::to_microseconds( current_time ) << " microseconds)" << endl
-             << "  cycle_time=" << cycle_time << " ("
-             << Int64Interval::to_microseconds( cycle_time ) << " microseconds)" << endl
-             << "  sim-time + cycle_time=" << ( current_time + cycle_time ) << " ("
-             << Int64Interval::to_microseconds( current_time + cycle_time ) << " microseconds)" << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << " ("
-             << federate->get_granted_time().get_time_in_micros() << " microseconds)" << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << " ("
-             << federate->get_lookahead().get_time_in_micros() << " microseconds)" << endl
+             << "  granted=" << get_granted_time().get_time_in_seconds() << " ("
+             << get_granted_time().get_time_in_micros() << " microseconds)" << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << " ("
+             << get_lookahead().get_time_in_micros() << " microseconds)" << endl
              << "  update_time=" << update_time.get_time_in_seconds() << " ("
-             << update_time.get_time_in_micros() << " microseconds)" << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << " ("
-             << last_update_time.get_time_in_micros() << " microseconds)" << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << " ("
-             << time_plus_lookahead.get_time_in_micros() << " microseconds)" << endl;
+             << update_time.get_time_in_micros() << " microseconds)" << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( AttributeNotOwned const &e ) {
       string id_str;
@@ -1755,11 +1715,9 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: AttributeNotOwned" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( ObjectInstanceNotKnown const &e ) {
       string id_str;
@@ -1771,11 +1729,9 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: ObjectInstanceNotKnown" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( AttributeNotDefined const &e ) {
       string id_str;
@@ -1786,11 +1742,9 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: AttributeNotDefined" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( FederateNotExecutionMember const &e ) {
       string id_str;
@@ -1801,11 +1755,9 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception:FederateNotExecutionMember" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( SaveInProgress const &e ) {
       string id_str;
@@ -1816,11 +1768,9 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: SaveInProgress" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( RestoreInProgress const &e ) {
       string id_str;
@@ -1831,11 +1781,9 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: RestoreInProgress" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( NotConnected const &e ) {
       string id_str;
@@ -1846,11 +1794,9 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: NotConnected" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( RTIinternalError const &e ) {
       string id_str;
@@ -1861,11 +1807,9 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: RTIinternalError" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( RTI1516_EXCEPTION const &e ) {
       string id_str;
@@ -1878,11 +1822,9 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_requested_data():" << __LINE__
              << " RTI1516_EXCEPTION" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    }
 
@@ -1895,12 +1837,11 @@ exception for '%s' with error message '%s'.%c",
  * @job_class{scheduled}
  */
 void Object::send_cyclic_and_requested_data(
-   double current_time,
-   double cycle_time )
+   Int64Time const &update_time )
 {
    // Make sure we clear the attribute update request flag because we only
    // want to send data once per request.
-   attr_update_requested = false;
+   this->attr_update_requested = false;
 
    // We can only send cyclic attribute updates for the attributes we own, are
    // configured to publish and the cycle-time is ready for a send or was requested.
@@ -1910,36 +1851,6 @@ void Object::send_cyclic_and_requested_data(
 
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
-
-   Federate *federate = get_federate();
-
-   RTIambassador *rti_amb = get_RTI_ambassador();
-
-   // Time tag the data we're about to send out
-   Int64Time t = federate->get_granted_time();
-   set_last_update_time( t.get() );
-
-   // Check for a zero lookahead time, which means the cycle_time (i.e. dt)
-   // should be zero as well.
-   if ( federate->is_zero_lookahead_time() ) {
-      cycle_time = 0.0;
-   }
-
-   // The update_time should be the current simulation time plus the cycle
-   // time for this job. Also, the dt value would then be the job cycle time
-   // for this job for this function. 11/28/2006 DDexter
-   Int64Time update_time( current_time + cycle_time );
-
-   // Update the time_plus_lookahead value.
-   (void)get_update_time_plus_lookahead();
-
-   // Make sure the current_time + cycle_time is not less than the current
-   // HLA time + lookahead time, which could happen due to floating-point
-   // round-off.
-   if ( update_time < time_plus_lookahead ) {
-      update_time.set( time_plus_lookahead );
-      cycle_time = time_plus_lookahead.get_time_in_seconds() - current_time;
-   }
 
    // Do send side lag compensation.
    if ( ( lag_comp_type == LAG_COMPENSATION_SEND_SIDE ) && ( lag_comp != NULL ) ) {
@@ -1974,25 +1885,30 @@ void Object::send_cyclic_and_requested_data(
       return;
    }
 
-   // Determine if we need to send with a timestamp.
-   // See IEEE 1516.1-2010 Section 6.10.
-   bool send_with_timestamp = federate->in_time_regulating_state()
-                              && ( any_attribute_timestamp_order
-                                   || any_attribute_FOM_specified_order );
+   Federate *federate = get_federate();
+
+   // The message will only be sent as TSO if our Federate is in the HLA Time
+   // Regulating state and we have at least one attribute with a preferred
+   // timestamp order. Assumes the FOM specified order is TSO.
+   // See IEEE-1516.1-2000, Sections 6.6 and 8.1.1.
+   bool const send_with_timestamp = federate->in_time_regulating_state()
+                                    && ( this->any_attribute_timestamp_order
+                                         || this->any_attribute_FOM_specified_order );
+
    try {
       // Do not send any data if federate save or restore has begun (see
       // IEEE-1516.1-2000 sections 4.12, 4.20)
       if ( federate->should_publish_data() ) {
 
-         // The message will only be sent as TSO if our Federate is in the
-         // HLA Time Regulating state and we have at least one attribute
-         // with a preferred timestamp order. See IEEE-1516.1-2000,
-         // Sections 6.6 and 8.1.1.
+         RTIambassador *rti_amb = get_RTI_ambassador();
+
          if ( send_with_timestamp ) {
 
             if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-               send_hs( stdout, "Object::send_cyclic_and_requested_data():%d For object '%s', updating attribute values at Timestamp Order.%c",
-                        __LINE__, get_name(), THLA_NEWLINE );
+               send_hs( stdout, "Object::send_cyclic_and_requested_data():%d \
+Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds.%c",
+                        __LINE__, get_name(), update_time.get_time_in_seconds(),
+                        THLA_NEWLINE );
             }
 
             // Send as Timestamp Order
@@ -2002,7 +1918,7 @@ void Object::send_cyclic_and_requested_data(
                                                   update_time.get() );
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-               send_hs( stdout, "Object::send_cyclic_and_requested_data():%d For object '%s', updating attribute values as Receive Order.%c",
+               send_hs( stdout, "Object::send_cyclic_and_requested_data():%d Object '%s', Receive Order (RO) Attribute update.%c",
                         __LINE__, get_name(), THLA_NEWLINE );
             }
 
@@ -2028,22 +1944,12 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: InvalidLogicalTime" << endl
              << "  instance_id=" << id_str << endl
-             << "  sim-time=" << current_time << " ("
-             << Int64Interval::to_microseconds( current_time ) << " microseconds)" << endl
-             << "  cycle_time=" << cycle_time << " ("
-             << Int64Interval::to_microseconds( cycle_time ) << " microseconds)" << endl
-             << "  sim-time + cycle_time=" << ( current_time + cycle_time ) << " ("
-             << Int64Interval::to_microseconds( current_time + cycle_time ) << " microseconds)" << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << " ("
-             << federate->get_granted_time().get_time_in_micros() << " microseconds)" << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << " ("
-             << federate->get_lookahead().get_time_in_micros() << " microseconds)" << endl
+             << "  granted=" << get_granted_time().get_time_in_seconds() << " ("
+             << get_granted_time().get_time_in_micros() << " microseconds)" << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << " ("
+             << get_lookahead().get_time_in_micros() << " microseconds)" << endl
              << "  update_time=" << update_time.get_time_in_seconds() << " ("
-             << update_time.get_time_in_micros() << " microseconds)" << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << " ("
-             << this->last_update_time.get_time_in_micros() << " microseconds)" << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << " ("
-             << this->time_plus_lookahead.get_time_in_micros() << " microseconds)" << endl;
+             << update_time.get_time_in_micros() << " microseconds)" << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( AttributeNotOwned const &e ) {
       string id_str;
@@ -2054,11 +1960,9 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: AttributeNotOwned" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( ObjectInstanceNotKnown const &e ) {
       string id_str;
@@ -2069,11 +1973,9 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: ObjectInstanceNotKnown" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( AttributeNotDefined const &e ) {
       string id_str;
@@ -2084,11 +1986,9 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: AttributeNotDefined" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( FederateNotExecutionMember const &e ) {
       string id_str;
@@ -2099,11 +1999,9 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: FederateNotExecutionMember" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( SaveInProgress const &e ) {
       string id_str;
@@ -2114,11 +2012,9 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: SaveInProgress" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( RestoreInProgress const &e ) {
       string id_str;
@@ -2129,11 +2025,9 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: RestoreInProgress" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( NotConnected const &e ) {
       string id_str;
@@ -2144,11 +2038,9 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: NotConnected" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( RTIinternalError const &e ) {
       string id_str;
@@ -2159,11 +2051,9 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " Exception: RTIinternalError" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( RTI1516_EXCEPTION const &e ) {
       string id_str;
@@ -2176,11 +2066,9 @@ exception for '%s' with error message '%s'.%c",
       errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
              << " RTI1516_EXCEPTION" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    }
 
@@ -2225,7 +2113,7 @@ void Object::receive_cyclic_data()
       // Block waiting for data if it has not arrived yet.
       if ( !is_changed() ) {
 
-         SleepTimeout sleep_timer( (long)THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
+         SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
          // On average using "usleep()" to wait for data is faster but at the
          // cost of latency spikes every once in a while. The CPU utilization
@@ -2254,10 +2142,10 @@ void Object::receive_cyclic_data()
          // Display a warning message if we timed out.
          if ( sleep_timer.timeout() ) {
             if ( is_changed() ) {
-               send_hs( stderr, "Object::receive_cyclic_data():%d Received data at a timeout boundary for simulation-time %f.%c",
+               send_hs( stderr, "Object::receive_cyclic_data():%d Received data at a timeout boundary at simulation-time %f.%c",
                         __LINE__, exec_get_sim_time(), THLA_NEWLINE );
             } else {
-               send_hs( stderr, "Object::receive_cyclic_data():%d Timed out waiting for data for simulation-time %f.%c",
+               send_hs( stderr, "Object::receive_cyclic_data():%d Timed out waiting for data at simulation-time %f.%c",
                         __LINE__, exec_get_sim_time(), THLA_NEWLINE );
             }
          }
@@ -2274,7 +2162,7 @@ void Object::receive_cyclic_data()
       do {
 #if THLA_OBJ_DEBUG_RECEIVE
          send_hs( stdout, "Object::receive_cyclic_data():%d for '%s' at HLA-logical-time=%G%c",
-                  __LINE__, get_name(), get_granted_time().get_time_in_seconds().get_time_in_seconds(),
+                  __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds(),
                   THLA_NEWLINE );
 #endif
 
@@ -2301,14 +2189,14 @@ void Object::receive_cyclic_data()
 #if THLA_OBJ_DEBUG_VALID_OBJECT_RECEIVE
    else if ( is_instance_handle_valid() && ( exec_get_sim_time() > 0.0 ) ) {
       send_hs( stdout, "Object::receive_cyclic_data():%d NO new data for valid object '%s' at HLA-logical-time=%G%c",
-               __LINE__, get_name(), get_granted_time().get_time_in_seconds().get_time_in_seconds(),
+               __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds(),
                THLA_NEWLINE );
    }
 #endif
 #if THLA_OBJ_DEBUG_RECEIVE
    else {
       send_hs( stdout, "Object::receive_cyclic_data():%d NO new data for '%s' at HLA-logical-time=%G%c",
-               __LINE__, get_name(), get_granted_time().get_time_in_seconds().get_time_in_seconds(),
+               __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds(),
                THLA_NEWLINE );
    }
 #endif
@@ -2328,13 +2216,8 @@ void Object::send_init_data()
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-   Federate *federate = get_federate();
-
-   RTIambassador *rti_amb = get_RTI_ambassador();
-
-   // Update the time for the data we're about to send out
-   Int64Time t = federate->get_granted_time();
-   set_last_update_time( t.get() );
+   Federate      *federate = get_federate();
+   RTIambassador *rti_amb  = get_RTI_ambassador();
 
    // If we have a data packing object then pack the data now.
    if ( packing != NULL ) {
@@ -2386,14 +2269,10 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: InvalidLogicalTime" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << " ("
-             << federate->get_granted_time().get_time_in_micros() << " microseconds)" << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << " ("
-             << federate->get_lookahead().get_time_in_micros() << " microseconds)" << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << " ("
-             << this->last_update_time.get_time_in_micros() << " microseconds)" << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << " ("
-             << this->time_plus_lookahead.get_time_in_micros() << " microseconds)" << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << " ("
+             << get_granted_time().get_time_in_micros() << " microseconds)" << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << " ("
+             << get_lookahead().get_time_in_micros() << " microseconds)" << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( AttributeNotOwned const &e ) {
       string id_str;
@@ -2404,10 +2283,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: AttributeNotOwned" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( ObjectInstanceNotKnown const &e ) {
       string id_str;
@@ -2418,10 +2295,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: ObjectInstanceNotKnown" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( AttributeNotDefined const &e ) {
       string id_str;
@@ -2432,10 +2307,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: AttributeNotDefined" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( FederateNotExecutionMember const &e ) {
       string id_str;
@@ -2446,10 +2319,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: FederateNotExecutionMember" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( SaveInProgress const &e ) {
       string id_str;
@@ -2460,10 +2331,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: SaveInProgress" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( RestoreInProgress const &e ) {
       string id_str;
@@ -2474,10 +2343,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: RestoreInProgress" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( NotConnected const &e ) {
       string id_str;
@@ -2488,10 +2355,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: NotConnected" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( RTIinternalError const &e ) {
       string id_str;
@@ -2502,10 +2367,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: RTIinternalError" << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( RTI1516_EXCEPTION const &e ) {
       string id_str;
@@ -2518,10 +2381,8 @@ void Object::send_init_data()
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: " << endl
              << "  instance_id=" << id_str << endl
-             << "  fed_time=" << federate->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << federate->get_lookahead().get_time_in_seconds() << endl
-             << "  last_update_time=" << this->last_update_time.get_time_in_seconds() << endl
-             << "  fed+lookahead=" << this->time_plus_lookahead.get_time_in_seconds() << endl;
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    }
 
@@ -2584,7 +2445,7 @@ void Object::create_requested_attribute_set()
       attribute_values_map->clear();
    }
 
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
 
       // Only include attributes that have been requested, we own, and we publish.
       if ( attributes[i].is_update_requested()
@@ -2600,8 +2461,7 @@ void Object::create_requested_attribute_set()
                      __LINE__, attributes[i].get_FOM_name(), THLA_NEWLINE );
          }
          // Create the Attribute-Value from the buffered data.
-         ( *attribute_values_map )[attributes[i].get_attribute_handle()] =
-            attributes[i].get_attribute_value();
+         ( *attribute_values_map )[attributes[i].get_attribute_handle()] = attributes[i].get_attribute_value();
       }
    }
 }
@@ -2622,7 +2482,7 @@ void Object::create_attribute_set(
    // to check to make sure the sub-rate is ready to send flag is set for
    // each attribute.
    if ( ( required_config & CONFIG_CYCLIC ) == CONFIG_CYCLIC ) {
-      for ( int i = 0; i < attr_count; ++i ) {
+      for ( unsigned int i = 0; i < attr_count; ++i ) {
 
          // Only include attributes that have the required configuration,
          // we own, we publish, and the sub-rate says we are ready to
@@ -2657,7 +2517,7 @@ void Object::create_attribute_set(
          }
       }
    } else {
-      for ( int i = 0; i < attr_count; ++i ) {
+      for ( unsigned int i = 0; i < attr_count; ++i ) {
 
          // Only include attributes that have the required configuration,
          // we own, and we publish.
@@ -2818,7 +2678,7 @@ void Object::release_ownership()
    AttributeHandleSet attrs;
 
    // Create the list of attributes we can divest ownership of.
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
       // Only release ownership of the attributes we locally own.
       if ( attributes[i].is_divest_requested() && attributes[i].is_locally_owned() ) {
          attrs.insert( attributes[i].get_attribute_handle() );
@@ -3142,7 +3002,7 @@ void Object::grant_pull_request()
    AttributeHandleSet attrs_to_divest;
 
    // Determine which attributes to grant the pull request for.
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
       // Another federate is trying to pull ownership so grant the pull
       // request for only the attributes that have a pull request enabled
       // and that we locally own.
@@ -3285,7 +3145,7 @@ void Object::grant_push_request()
 
          // Another federate is trying to push the attribute ownership to us so
          // determine which attributes we will take ownership of.
-         for ( int i = 0; i < attr_count; ++i ) {
+         for ( unsigned int i = 0; i < attr_count; ++i ) {
             // Add the attribute to the list of attributes we will accept ownership
             // of provided the attribute is marked as one the other federate is
             // trying to push to us and the attribute is not already owned by us.
@@ -3653,9 +3513,9 @@ void Object::restore_ownership_transfer_checkpointed_data()
 }
 
 void Object::set_core_job_cycle_time(
-   double cycle_time )
+   double const cycle_time )
 {
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
       attributes[i].determine_cycle_ratio( cycle_time );
    }
 }
@@ -3681,9 +3541,23 @@ void Object::set_name(
 void Object::build_attribute_map()
 {
    thla_attribute_map.clear();
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
       thla_attribute_map[attributes[i].get_attribute_handle()] = &attributes[i];
    }
+}
+
+/*! @brief Return a copy of the federate's lookahead time.
+ *  @return Lookahead time interval. */
+Int64Interval Object::get_lookahead() const
+{
+   return this->manager->get_federate()->get_lookahead();
+}
+
+/*! @brief Get the currently granted federation HLA logical time.
+ *  @return A copy of the granted HLA logical time. */
+Int64Time Object::get_granted_time() const
+{
+   return this->manager->get_federate()->get_granted_time();
 }
 
 Attribute *Object::get_attribute(
@@ -3704,7 +3578,7 @@ Attribute *Object::get_attribute(
    char const *attr_FOM_name )
 {
    if ( attr_FOM_name != NULL ) {
-      for ( int i = 0; i < attr_count; ++i ) {
+      for ( unsigned int i = 0; i < attr_count; ++i ) {
          if ( strcmp( attr_FOM_name, attributes[i].get_FOM_name() ) == 0 ) {
             return ( &attributes[i] );
          }
@@ -3715,21 +3589,21 @@ Attribute *Object::get_attribute(
 
 void Object::stop_publishing_attributes()
 {
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
       attributes[i].set_publish( false );
    }
 }
 
 void Object::stop_subscribing_attributes()
 {
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
       attributes[i].set_subscribe( false );
    }
 }
 
 bool Object::any_attribute_published()
 {
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
       if ( attributes[i].is_publish() ) {
          return true;
       }
@@ -3739,7 +3613,7 @@ bool Object::any_attribute_published()
 
 bool Object::any_attribute_subscribed()
 {
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
       if ( attributes[i].is_subscribe() ) {
          return true;
       }
@@ -3749,7 +3623,7 @@ bool Object::any_attribute_subscribed()
 
 bool Object::any_locally_owned_attribute()
 {
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
       if ( attributes[i].is_locally_owned() ) {
          return true;
       }
@@ -3785,7 +3659,7 @@ bool Object::any_locally_owned_published_attribute(
 bool Object::any_locally_owned_published_cyclic_data_ready_or_requested_attribute()
 {
    bool any_ready = false;
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
 
       // We must check that a sub-rate is ready for every attribute to make sure
       // all sub-rate counters get updated correctly.
@@ -3808,7 +3682,7 @@ bool Object::any_locally_owned_published_cyclic_data_ready_or_requested_attribut
 bool Object::any_locally_owned_published_cyclic_data_ready_attribute()
 {
    bool any_ready = false;
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
 
       // We must check that a sub-rate is ready for every attribute to make sure
       // all sub-rate counters get updated correctly.
@@ -3827,7 +3701,7 @@ bool Object::any_locally_owned_published_cyclic_data_ready_attribute()
 
 bool Object::any_locally_owned_published_requested_attribute()
 {
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
       if ( attributes[i].is_locally_owned()
            && attributes[i].is_publish()
            && attributes[i].is_update_requested() ) {
@@ -3839,7 +3713,7 @@ bool Object::any_locally_owned_published_requested_attribute()
 
 bool Object::any_remotely_owned_subscribed_attribute()
 {
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
       if ( attributes[i].is_remotely_owned() && attributes[i].is_subscribe() ) {
          return true;
       }
@@ -3850,7 +3724,7 @@ bool Object::any_remotely_owned_subscribed_attribute()
 bool Object::any_remotely_owned_subscribed_attribute(
    DataUpdateEnum const attr_config )
 {
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
       if ( attributes[i].is_remotely_owned()
            && attributes[i].is_subscribe()
            && ( ( attributes[i].get_configuration() & attr_config ) == attr_config ) ) {
@@ -3862,7 +3736,7 @@ bool Object::any_remotely_owned_subscribed_attribute(
 
 void Object::pack_requested_attribute_buffers()
 {
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
       if ( attributes[i].is_update_requested() ) {
          attributes[i].pack_attribute_buffer();
       }
@@ -3873,7 +3747,7 @@ void Object::pack_attribute_buffers(
    DataUpdateEnum const attr_config,
    bool const           include_requested )
 {
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
       if ( ( include_requested && attributes[i].is_update_requested() )
            || ( attributes[i].get_configuration() & attr_config ) == attr_config ) {
          attributes[i].pack_attribute_buffer();
@@ -3884,7 +3758,7 @@ void Object::pack_attribute_buffers(
 void Object::unpack_attribute_buffers(
    DataUpdateEnum const attr_config )
 {
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
       if ( ( attributes[i].get_configuration() & attr_config ) == attr_config ) {
          attributes[i].unpack_attribute_buffer();
       }
@@ -3912,49 +3786,8 @@ void Object::mark_unchanged()
    this->changed = false;
 
    // Clear the change flag for each of the attributes as well.
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
       attributes[i].mark_unchanged();
-   }
-}
-
-Int64Time const &Object::get_update_time_plus_lookahead()
-{
-   time_plus_lookahead = last_update_time;
-
-   // Get the Trick-Federate.
-   Federate *federate = get_federate();
-   if ( federate != NULL ) {
-      time_plus_lookahead += federate->get_lookahead();
-   } else {
-      send_hs( stderr, "Object::get_update_time_plus_lookahead():%d Unexpected NULL Trick-Federate.%c",
-               __LINE__, THLA_NEWLINE );
-   }
-   return ( time_plus_lookahead );
-}
-
-/*!
- * @details  If the manager does not exist, -1.0 seconds is returned.
- */
-Int64Interval Object::get_lookahead() const
-{
-   if ( manager != NULL ) {
-      return manager->get_lookahead();
-   } else {
-      Int64Interval di( -1.0 );
-      return di;
-   }
-}
-
-/*!
- * @details If the manager does not exist, MAX_LOGICAL_TIME_SECONDS is returned.
- */
-Int64Time Object::get_granted_time() const
-{
-   if ( manager != NULL ) {
-      return manager->get_granted_time();
-   } else {
-      Int64Time dt( MAX_LOGICAL_TIME_SECONDS );
-      return dt;
    }
 }
 
@@ -3987,7 +3820,7 @@ void Object::pull_ownership_upon_rejoin()
    MutexProtection auto_unlock_mutex( &ownership_mutex );
 
    // Force the pull ownership of all attributes....
-   for ( int i = 0; i < attr_count; ++i ) {
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
 
       try {
          // IEEE 1516.1-2000 section 7.18
@@ -4077,8 +3910,8 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
       Federate *federate = get_federate();
 
       int          i;
-      long long    wallclock_time;
-      SleepTimeout print_timer( (double)federate->wait_status_time );
+      int64_t      wallclock_time;
+      SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
       // Perform a blocking loop until ownership of all locally owned published

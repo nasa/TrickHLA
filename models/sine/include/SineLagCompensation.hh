@@ -110,10 +110,10 @@ class SineLagCompensation : public TrickHLA::LagCompensation
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for SineLagCompensation class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   SineLagCompensation( const SineLagCompensation &rhs );
+   SineLagCompensation( SineLagCompensation const &rhs );
    /*! @brief Assignment operator for SineLagCompensation class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   SineLagCompensation &operator=( const SineLagCompensation &rhs );
+   SineLagCompensation &operator=( SineLagCompensation const &rhs );
 };
 
 } // namespace TrickHLAModel

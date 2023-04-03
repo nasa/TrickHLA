@@ -68,7 +68,7 @@ ElapsedTimeStats::~ElapsedTimeStats()
  */
 void ElapsedTimeStats::measure()
 {
-   long long time = clock_wall_time(); // in microseconds
+   int64_t time = clock_wall_time(); // in microseconds
    if ( first_pass ) {
       first_pass = false;
    } else {
@@ -174,7 +174,7 @@ std::string const ElapsedTimeStats::to_string()
       double sqrt_N = Z * std_dev / M;
 
       // N >= ((Z * std_dev) / M)^2
-      long long min_sample_size = (long long)ceil( sqrt_N * sqrt_N );
+      int64_t min_sample_size = (int64_t)ceil( sqrt_N * sqrt_N );
 
       // Calculate the margin of error based on the statistics.
       // M = (Z * std_dev) / √N
