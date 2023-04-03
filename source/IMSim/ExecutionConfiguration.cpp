@@ -248,7 +248,7 @@ void ExecutionConfiguration::pack()
 */
 void ExecutionConfiguration::unpack()
 {
-   int64_t software_frame_usec;
+   int64_t software_frame_micros;
    double  software_frame_sec;
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
@@ -296,29 +296,29 @@ void ExecutionConfiguration::unpack()
    // Check the Trick executive software frame.
    // It must be smaller than the ExCO LCTS or moding won't work properly.
    // It must also be an integer multiple of the ExCO LCTS.
-   software_frame_sec  = exec_get_software_frame();
-   software_frame_usec = Int64Interval::to_microseconds( software_frame_sec );
+   software_frame_sec    = exec_get_software_frame();
+   software_frame_micros = Int64Interval::to_microseconds( software_frame_sec );
 
-   if ( software_frame_usec != least_common_time_step ) {
-      if ( software_frame_usec > least_common_time_step ) {
+   if ( software_frame_micros != least_common_time_step ) {
+      if ( software_frame_micros > least_common_time_step ) {
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
             ostringstream message;
             message << "IMSim::ExecutionConfiguration::unpack():" << __LINE__
                     << " WARNING: ExCO least_common_time_step (" << least_common_time_step
                     << " microseconds) is less than the federate software frame ("
-                    << software_frame_usec << " microseconds)!  Resetting the software frame ("
+                    << software_frame_micros << " microseconds)!  Resetting the software frame ("
                     << least_common_time_step << " microseconds)!!!!" << THLA_ENDL;
             send_hs( stdout, (char *)message.str().c_str() );
          }
          software_frame_sec = Int64Interval::to_seconds( least_common_time_step );
          exec_set_software_frame( software_frame_sec );
-      } else if ( least_common_time_step % software_frame_usec != 0 ) {
+      } else if ( least_common_time_step % software_frame_micros != 0 ) {
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
             ostringstream message;
             message << "IMSim::ExecutionConfiguration::unpack():" << __LINE__
                     << " WARNING: ExCO least_common_time_step (" << least_common_time_step
                     << " microseconds) is not an integer multiple of the federate software frame ("
-                    << software_frame_usec << " microseconds)!  Resetting the software frame ("
+                    << software_frame_micros << " microseconds)!  Resetting the software frame ("
                     << least_common_time_step << " microseconds)!!!!" << THLA_ENDL;
             send_hs( stdout, (char *)message.str().c_str() );
          }

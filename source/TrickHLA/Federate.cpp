@@ -4646,19 +4646,19 @@ void Federate::wait_to_receive_data()
  * the default data cycle time otherwise. */
 int64_t const Federate::get_data_cycle_time_micros_for_obj(
    unsigned int const obj_index,
-   int64_t const      default_data_cycle_us ) const
+   int64_t const      default_data_cycle_micros ) const
 {
    // Delegate to the Trick child thread coordinator.
-   return this->thread_coordinator.get_data_cycle_time_micros_for_obj( obj_index, default_data_cycle_us );
+   return this->thread_coordinator.get_data_cycle_time_micros_for_obj( obj_index, default_data_cycle_micros );
 }
 
 /*! @brief Is the object for the given index on a data cycle boundary. */
 bool const Federate::on_data_cycle_boundary_for_obj(
    unsigned int const obj_index,
-   int64_t const      sim_time_us ) const
+   int64_t const      sim_time_micros ) const
 {
    // Delegate to the Trick child thread coordinator.
-   return this->thread_coordinator.on_data_cycle_boundary_for_obj( obj_index, sim_time_us );
+   return this->thread_coordinator.on_data_cycle_boundary_for_obj( obj_index, sim_time_micros );
 }
 
 /*!

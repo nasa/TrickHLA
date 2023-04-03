@@ -679,11 +679,11 @@ class Federate
    /*! @brief Get the data cycle time in microseconds for the configured object
     * index or return the default data cycle time in microseconds otherwise. */
    int64_t const get_data_cycle_time_micros_for_obj( unsigned int const obj_index,
-                                                     int64_t const      default_data_cycle_us ) const;
+                                                     int64_t const      default_data_cycle_micros ) const;
 
    /*! @brief Is the object for the given index on a data cycle boundary. */
    bool const on_data_cycle_boundary_for_obj( unsigned int const obj_index,
-                                              int64_t const      sim_time_us ) const;
+                                              int64_t const      sim_time_micros ) const;
 
    /*! @brief Set federate execution startup state.
     *  @param flag True for federate started; False otherwise. */

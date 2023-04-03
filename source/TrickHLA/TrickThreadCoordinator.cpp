@@ -219,7 +219,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    double const       data_cycle,
    string const      &obj_insance_names )
 {
-   int64_t data_cycle_us = Int64Interval::to_microseconds( data_cycle );
+   int64_t data_cycle_micros = Int64Interval::to_microseconds( data_cycle );
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -284,7 +284,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
 
    // The child thread data cycle time cannot be less than (i.e. faster)
    // than the main thread cycle time.
-   if ( data_cycle_us < this->main_thread_data_cycle_micros ) {
+   if ( data_cycle_micros < this->main_thread_data_cycle_micros ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
              << " ERROR: The data cycle time for the Trick child thread (thread-id:"
@@ -298,7 +298,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
 
    // Only allow child threads with a data cycle time that is an integer
    // multiple of the Trick main thread cycle time.
-   if ( ( data_cycle_us % main_thread_data_cycle_micros ) != 0 ) {
+   if ( ( data_cycle_micros % main_thread_data_cycle_micros ) != 0 ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
              << " ERROR: The data cycle time for the Trick child thread (thread-id:"
@@ -326,7 +326,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
          if ( obj_instance_name == this->manager->objects[obj_index].get_name_string() ) {
 
             if ( ( this->data_cycle_micros_per_thread[thread_id] > 0 )
-                 && ( this->data_cycle_micros_per_thread[thread_id] != data_cycle_us ) ) {
+                 && ( this->data_cycle_micros_per_thread[thread_id] != data_cycle_micros ) ) {
                ostringstream errmsg;
                errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
                       << " ERROR: For the object instance name specified:'"
@@ -341,7 +341,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
                DebugHandler::terminate_with_message( errmsg.str() );
 
             } else if ( ( this->data_cycle_micros_per_obj[obj_index] > 0 )
-                        && ( this->data_cycle_micros_per_obj[obj_index] != data_cycle_us ) ) {
+                        && ( this->data_cycle_micros_per_obj[obj_index] != data_cycle_micros ) ) {
                ostringstream errmsg;
                errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
                       << " ERROR: For the object instance name specified:'"
@@ -360,8 +360,8 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
                found_object            = true;
                any_valid_instance_name = true;
 
-               this->data_cycle_micros_per_thread[thread_id] = data_cycle_us;
-               this->data_cycle_micros_per_obj[obj_index]    = data_cycle_us;
+               this->data_cycle_micros_per_thread[thread_id] = data_cycle_micros;
+               this->data_cycle_micros_per_obj[obj_index]    = data_cycle_micros;
             }
          }
       }
@@ -381,7 +381,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    // If the data cycle time for this child thread does not match the
    // main thread data cycle time then the user must specify all the valid
    // HLA object instance names associated to this child thread.
-   if ( ( data_cycle_us != this->main_thread_data_cycle_micros ) && !any_valid_instance_name ) {
+   if ( ( data_cycle_micros != this->main_thread_data_cycle_micros ) && !any_valid_instance_name ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
              << " ERROR: For the Trick child thread (thread-id:" << thread_id
@@ -415,7 +415,7 @@ void TrickThreadCoordinator::announce_data_available()
    // Process Trick child thread states associated to TrickHLA.
    if ( this->any_thread_associated ) {
 
-      int64_t const sim_time_us = Int64Interval::to_microseconds( exec_get_sim_time() );
+      int64_t const sim_time_micros = Int64Interval::to_microseconds( exec_get_sim_time() );
 
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
@@ -425,7 +425,7 @@ void TrickThreadCoordinator::announce_data_available()
       // and only for threads on the data cycle time boundary.
       for ( unsigned int id = 1; id < this->thread_state_cnt; ++id ) {
          if ( ( this->thread_state[id] != THREAD_STATE_NOT_ASSOCIATED )
-              && on_data_cycle_boundary_for_thread( id, sim_time_us ) ) {
+              && on_data_cycle_boundary_for_thread( id, sim_time_micros ) ) {
 
             this->thread_state[id] = THREAD_STATE_READY_TO_RECEIVE;
          }
@@ -488,7 +488,7 @@ void TrickThreadCoordinator::wait_to_send_data()
    // returning.
    if ( thread_id == 0 ) {
 
-      int64_t const sim_time_us = Int64Interval::to_microseconds( exec_get_sim_time() );
+      int64_t const sim_time_micros = Int64Interval::to_microseconds( exec_get_sim_time() );
 
       // Don't check the Trick main thread (id = 0), only check child threads.
       unsigned int id = 1;
@@ -517,7 +517,7 @@ void TrickThreadCoordinator::wait_to_send_data()
             // Also skip if this thread is not on a data cycle boundary.
             if ( ( this->thread_state[id] == THREAD_STATE_READY_TO_SEND )
                  || ( this->thread_state[id] == THREAD_STATE_NOT_ASSOCIATED )
-                 || !on_data_cycle_boundary_for_thread( id, sim_time_us ) ) {
+                 || !on_data_cycle_boundary_for_thread( id, sim_time_micros ) ) {
                // Move to the next thread-id because the current ID is
                // ready. This results in checking all the ID's just once.
                ++id;
@@ -565,7 +565,7 @@ void TrickThreadCoordinator::wait_to_send_data()
                   // Also skip if this thread is not on a data cycle boundary.
                   if ( ( this->thread_state[id] == THREAD_STATE_READY_TO_SEND )
                        || ( this->thread_state[id] == THREAD_STATE_NOT_ASSOCIATED )
-                       || !on_data_cycle_boundary_for_thread( id, sim_time_us ) ) {
+                       || !on_data_cycle_boundary_for_thread( id, sim_time_micros ) ) {
                      // Move to the next thread-id because the current ID is
                      // ready. This results in checking all the ID's just once.
                      ++id;
@@ -775,25 +775,25 @@ void TrickThreadCoordinator::wait_to_receive_data()
 
 bool const TrickThreadCoordinator::on_data_cycle_boundary_for_thread(
    unsigned int const thread_id,
-   int64_t const      sim_time_us ) const
+   int64_t const      sim_time_micros ) const
 {
    // On boundary if sim-time modulo cycle-time is less than 1 microsecond.
    return ( ( this->any_thread_associated
               && ( thread_id < this->thread_state_cnt )
               && ( this->data_cycle_micros_per_thread[thread_id] > 0 ) )
-               ? ( ( sim_time_us % this->data_cycle_micros_per_thread[thread_id] ) == 0 )
+               ? ( ( sim_time_micros % this->data_cycle_micros_per_thread[thread_id] ) == 0 )
                : true );
 }
 
 bool const TrickThreadCoordinator::on_data_cycle_boundary_for_obj(
    unsigned int const obj_index,
-   int64_t const      sim_time_us ) const
+   int64_t const      sim_time_micros ) const
 {
    // On boundary if sim-time modulo cycle-time is less than 1 microsecond.
    return ( ( this->any_thread_associated
               && ( obj_index < this->manager->obj_count )
               && ( this->data_cycle_micros_per_obj[obj_index] > 0 ) )
-               ? ( ( sim_time_us % this->data_cycle_micros_per_obj[obj_index] ) == 0 )
+               ? ( ( sim_time_micros % this->data_cycle_micros_per_obj[obj_index] ) == 0 )
                : true );
 }
 
@@ -801,11 +801,11 @@ bool const TrickThreadCoordinator::on_data_cycle_boundary_for_obj(
  * the default data cycle time otherwise. */
 int64_t const TrickThreadCoordinator::get_data_cycle_time_micros_for_obj(
    unsigned int const obj_index,
-   int64_t const      default_data_cycle_us ) const
+   int64_t const      default_data_cycle_micros ) const
 {
    return ( this->any_thread_associated
             && ( obj_index < this->manager->obj_count )
-            && ( this->data_cycle_micros_per_obj[obj_index] > default_data_cycle_us ) )
+            && ( this->data_cycle_micros_per_obj[obj_index] > default_data_cycle_micros ) )
              ? this->data_cycle_micros_per_obj[obj_index]
-             : default_data_cycle_us;
+             : default_data_cycle_micros;
 }

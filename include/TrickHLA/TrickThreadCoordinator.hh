@@ -97,15 +97,15 @@ class TrickThreadCoordinator
    void wait_to_receive_data();
 
    bool const on_data_cycle_boundary_for_thread( unsigned int const thread_id,
-                                                 int64_t const      sim_time_us ) const;
+                                                 int64_t const      sim_time_micros ) const;
 
    bool const on_data_cycle_boundary_for_obj( unsigned int const obj_index,
-                                              int64_t const      sim_time_us ) const;
+                                              int64_t const      sim_time_micros ) const;
 
    /*! @brief Get the data cycle time for the configured object index or return
     * the default data cycle time. */
    int64_t const get_data_cycle_time_micros_for_obj( unsigned int const obj_index,
-                                                     int64_t const      default_data_cycle_us ) const;
+                                                     int64_t const      default_data_cycle_micros ) const;
 
   protected:
    Federate *federate; ///< @trick_units{--} Associated TrickHLA::Federate.
