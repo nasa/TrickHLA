@@ -42,6 +42,7 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cmath>
+#include <cstdint>
 #include <cstdlib>
 #include <iostream>
 #include <pthread.h>

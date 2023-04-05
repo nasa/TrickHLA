@@ -33,10 +33,10 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_TYPES_HH
 
 // System include files.
+#include <cstdint>
 #include <limits.h>
 #include <map>
 #include <queue>
-#include <stdint.h>
 #include <string>
 #include <vector>
 

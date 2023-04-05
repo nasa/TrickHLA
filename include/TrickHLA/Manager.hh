@@ -43,6 +43,9 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_MANAGER_HH
 #define TRICKHLA_MANAGER_HH
 
+// System include files.
+#include <cstdint>
+
 // TrickHLA include files.
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/ItemQueue.hh"

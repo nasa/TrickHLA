@@ -46,7 +46,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_SCENARIO_TIMELINE_HH
 
 // System include files.
-#include <stdint.h>
+#include <cstdint>
 
 // TrickHLA include files.
 #include "TrickHLA/Int64Time.hh"

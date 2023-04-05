@@ -33,7 +33,7 @@ NASA, Johnson Space Center\n
 #define DIS_TYPES_HH
 
 // System includes.
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 
 // TrickHLA include.

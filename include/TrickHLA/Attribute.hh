@@ -37,6 +37,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_ATTRIBUTE_HH
 
 // System includes.
+#include <cstdint>
 #include <map>
 #include <stdlib.h>
 #include <string>
