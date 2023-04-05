@@ -87,7 +87,7 @@ class THLAThreadSimObject : public Trick::SimObject {
    TrickHLA::Federate & federate;
    double               data_cycle_time;
    unsigned int         thread_id;
-   std::string          obj_instance_names; // HLA object instance names, comma seperated string, associated with this thread.
+   std::string          obj_instance_names; ///< @trick_units{--} HLA object instance names, comma seperated string, associated with this thread.
 
  private:
    // Do not allow the implicit copy constructor or assignment operator.
