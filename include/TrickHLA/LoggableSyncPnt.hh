@@ -34,10 +34,10 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_LOGGABLE_SYNC_PNT_HH
 #define TRICKHLA_LOGGABLE_SYNC_PNT_HH
 
+// System include files.
+
 // Trick include files.
 #include "trick/memorymanager_c_intf.h"
-
-// HLA include files.
 
 // TrickHLA include files.
 #include "TrickHLA/Types.hh"

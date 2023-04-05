@@ -117,7 +117,7 @@ Manager::Manager()
      interactions_queue(),
      check_interactions_count( 0 ),
      check_interactions( NULL ),
-     job_cycle_time_micros( 0 ),
+     job_cycle_time_micros( 0LL ),
      rejoining_federate( false ),
      restore_determined( false ),
      restore_federate( false ),
@@ -2153,7 +2153,7 @@ void Manager::provide_attribute_update(
  */
 void Manager::determine_job_cycle_time()
 {
-   if ( this->job_cycle_time_micros > 0 ) {
+   if ( this->job_cycle_time_micros > 0LL ) {
       return;
    }
 
@@ -2170,7 +2170,7 @@ void Manager::determine_job_cycle_time()
    this->job_cycle_time_micros = Int64Interval::to_microseconds( cycle_time );
 
    // Verify the job cycle time against the HLA lookahead time.
-   if ( ( this->job_cycle_time_micros <= 0 ) || ( this->job_cycle_time_micros < lookahead_time_micros ) ) {
+   if ( ( this->job_cycle_time_micros <= 0LL ) || ( this->job_cycle_time_micros < lookahead_time_micros ) ) {
       ostringstream errmsg;
       errmsg << "Manager::determine_job_cycle_time():" << __LINE__
              << " ERROR: The cycle time for this job is less than the HLA"
@@ -2208,13 +2208,13 @@ void Manager::send_cyclic_and_requested_data()
    bool const    zero_lookahead      = federate->is_zero_lookahead_time();
 
    // Initial time values.
-   int64_t   dt      = zero_lookahead ? 0 : get_lookahead_time_in_micros();
+   int64_t   dt      = zero_lookahead ? 0LL : get_lookahead_time_in_micros();
    int64_t   prev_dt = dt;
    Int64Time granted_plus_lookahead( granted_time_micros + dt );
    Int64Time update_time( granted_plus_lookahead );
 
    // Determine the main thread cycle time for this job if it is not yet known.
-   if ( this->job_cycle_time_micros <= 0 ) {
+   if ( this->job_cycle_time_micros <= 0LL ) {
       determine_job_cycle_time();
    }
 
@@ -2223,7 +2223,7 @@ void Manager::send_cyclic_and_requested_data()
 
       // Check for a zero lookahead time, which means the cycle_time (i.e. dt)
       // should be zero as well.
-      dt = zero_lookahead ? 0 : this->job_cycle_time_micros;
+      dt = zero_lookahead ? 0LL : this->job_cycle_time_micros;
 
       // Reuse the update_time if the data cycle time (dt) is the same.
       if ( dt != prev_dt ) {
@@ -2273,7 +2273,7 @@ void Manager::send_cyclic_and_requested_data()
 
             // Check for a zero lookahead time, which means the cycle_time
             // (i.e. dt) should be zero as well.
-            dt = zero_lookahead ? 0
+            dt = zero_lookahead ? 0LL
                                 : this->federate->get_data_cycle_time_micros_for_obj(
                                    obj_index, this->job_cycle_time_micros );
 

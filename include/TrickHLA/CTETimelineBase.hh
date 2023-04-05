@@ -89,7 +89,7 @@ class CTETimelineBase : public Trick::Clock, public Timeline
 
    /*! @brief Get the wall clock time.
     *  @return The current real time as a count of microseconds. */
-   virtual int64_t wall_clock_time();
+   virtual long long wall_clock_time();
 
    /*! @brief Stop the CTE clock.
     *  @return Default implementation always returns 0. */

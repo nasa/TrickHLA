@@ -37,6 +37,7 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_EXECUTION_CONFIGURATION_HH
 
 // System include files.
+#include <cstdint>
 
 // TrickHLA include files.
 #include "TrickHLA/ExecutionConfigurationBase.hh"

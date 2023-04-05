@@ -35,6 +35,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_TRICK_THREAD_COORDINATOR_HH
 
 // System includes
+#include <cstdint>
 #include <string>
 
 // TrickHLA include files.
@@ -96,9 +97,11 @@ class TrickThreadCoordinator
    /*! @brief Wait to receive data when the Trick main thread is ready. */
    void wait_to_receive_data();
 
+   /*! @brief On boundary if sim-time is an integer multiple of a valid cycle-time. */
    bool const on_data_cycle_boundary_for_thread( unsigned int const thread_id,
                                                  int64_t const      sim_time_micros ) const;
 
+   /*! @brief On boundary if sim-time is an integer multiple of a valid cycle-time. */
    bool const on_data_cycle_boundary_for_obj( unsigned int const obj_index,
                                               int64_t const      sim_time_micros ) const;
 

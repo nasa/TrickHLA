@@ -36,7 +36,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_INT64_TIME_HH
 
 // System include files.
-#include <stdint.h>
+#include <cstdint>
 
 // Trick include files.
 

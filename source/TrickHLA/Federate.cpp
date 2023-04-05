@@ -42,6 +42,7 @@ NASA, Johnson Space Center\n
 #include <arpa/inet.h>
 #include <cmath>
 #include <cstddef>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib> // for atof
 #include <float.h>

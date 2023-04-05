@@ -32,7 +32,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_CONSTANTS_HH
 
 // System include files.
-#include <stdint.h>
+#include <cstdint>
 
 namespace TrickHLA
 {

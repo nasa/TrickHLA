@@ -31,9 +31,9 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cmath>
+#include <cstdint>
 #include <limits>
 #include <sstream>
-#include <stdint.h>
 #include <stdio.h>
 
 // TrickHLA include files.

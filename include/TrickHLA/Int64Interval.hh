@@ -36,6 +36,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_INT64_INTERVAL_HH
 
 // System includes.
+#include <cstdint>
 
 // Trick includes.
 

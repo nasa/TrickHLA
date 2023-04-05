@@ -36,6 +36,7 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cmath>
+#include <cstdint>
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
@@ -73,7 +74,7 @@ TrickThreadCoordinator::TrickThreadCoordinator() // RETURN: -- None.
      data_cycle_micros_per_thread( NULL ),
      data_cycle_micros_per_obj( NULL ),
      any_thread_associated( false ),
-     main_thread_data_cycle_micros( 0 )
+     main_thread_data_cycle_micros( 0LL )
 {
    return;
 }
@@ -187,7 +188,7 @@ void TrickThreadCoordinator::initialize_thread_state(
       exit( 1 );
    }
    for ( unsigned int id = 0; id < this->thread_state_cnt; ++id ) {
-      this->data_cycle_micros_per_thread[id] = 0;
+      this->data_cycle_micros_per_thread[id] = 0LL;
    }
 
    // Allocate memory for the data cycle times per each object instance.
@@ -202,7 +203,7 @@ void TrickThreadCoordinator::initialize_thread_state(
       exit( 1 );
    }
    for ( unsigned int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
-      this->data_cycle_micros_per_obj[obj_index] = 0;
+      this->data_cycle_micros_per_obj[obj_index] = 0LL;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -298,7 +299,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
 
    // Only allow child threads with a data cycle time that is an integer
    // multiple of the Trick main thread cycle time.
-   if ( ( data_cycle_micros % main_thread_data_cycle_micros ) != 0 ) {
+   if ( ( data_cycle_micros % main_thread_data_cycle_micros ) != 0LL ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
              << " ERROR: The data cycle time for the Trick child thread (thread-id:"
@@ -325,7 +326,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
 
          if ( obj_instance_name == this->manager->objects[obj_index].get_name_string() ) {
 
-            if ( ( this->data_cycle_micros_per_thread[thread_id] > 0 )
+            if ( ( this->data_cycle_micros_per_thread[thread_id] > 0LL )
                  && ( this->data_cycle_micros_per_thread[thread_id] != data_cycle_micros ) ) {
                ostringstream errmsg;
                errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
@@ -340,7 +341,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
                       << THLA_ENDL;
                DebugHandler::terminate_with_message( errmsg.str() );
 
-            } else if ( ( this->data_cycle_micros_per_obj[obj_index] > 0 )
+            } else if ( ( this->data_cycle_micros_per_obj[obj_index] > 0LL )
                         && ( this->data_cycle_micros_per_obj[obj_index] != data_cycle_micros ) ) {
                ostringstream errmsg;
                errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
@@ -773,32 +774,34 @@ void TrickThreadCoordinator::wait_to_receive_data()
    }
 }
 
+/*! @brief On boundary if sim-time is an integer multiple of a valid cycle-time. */
 bool const TrickThreadCoordinator::on_data_cycle_boundary_for_thread(
    unsigned int const thread_id,
    int64_t const      sim_time_micros ) const
 {
-   // On boundary if sim-time modulo cycle-time is less than 1 microsecond.
+   // On boundary if sim-time is an integer multiple of a valid cycle-time.
    return ( ( this->any_thread_associated
               && ( thread_id < this->thread_state_cnt )
-              && ( this->data_cycle_micros_per_thread[thread_id] > 0 ) )
-               ? ( ( sim_time_micros % this->data_cycle_micros_per_thread[thread_id] ) == 0 )
+              && ( this->data_cycle_micros_per_thread[thread_id] > 0LL ) )
+               ? ( ( sim_time_micros % this->data_cycle_micros_per_thread[thread_id] ) == 0LL )
                : true );
 }
 
+/*! @brief On boundary if sim-time is an integer multiple of a valid cycle-time. */
 bool const TrickThreadCoordinator::on_data_cycle_boundary_for_obj(
    unsigned int const obj_index,
    int64_t const      sim_time_micros ) const
 {
-   // On boundary if sim-time modulo cycle-time is less than 1 microsecond.
+   // On boundary if sim-time is an integer multiple of a valid cycle-time.
    return ( ( this->any_thread_associated
               && ( obj_index < this->manager->obj_count )
-              && ( this->data_cycle_micros_per_obj[obj_index] > 0 ) )
-               ? ( ( sim_time_micros % this->data_cycle_micros_per_obj[obj_index] ) == 0 )
+              && ( this->data_cycle_micros_per_obj[obj_index] > 0LL ) )
+               ? ( ( sim_time_micros % this->data_cycle_micros_per_obj[obj_index] ) == 0LL )
                : true );
 }
 
-/*! @brief Get the data cycle time for the configured object index or return
- * the default data cycle time otherwise. */
+/*! @brief Get the data cycle time for the specified object index, otherwise
+ * return the default data cycle time. */
 int64_t const TrickThreadCoordinator::get_data_cycle_time_micros_for_obj(
    unsigned int const obj_index,
    int64_t const      default_data_cycle_micros ) const

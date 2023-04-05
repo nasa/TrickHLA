@@ -44,6 +44,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_EXECUTION_CONTROL_BASE_HH
 
 // System includes.
+#include <cstdint>
 #include <string>
 
 // Trick include files.

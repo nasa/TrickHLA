@@ -45,6 +45,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_FEDERATE_HH
 
 // System includes.
+#include <cstdint>
 #include <string>
 
 // Trick include files.
@@ -912,7 +913,7 @@ class Federate
     *  @return True if lookahead time is zero; Flase otherwise. */
    bool const is_zero_lookahead_time() const
    {
-      return ( this->lookahead.get_time_in_micros() <= 0 );
+      return ( this->lookahead.get_time_in_micros() <= 0LL );
    }
 
    /*! @brief Set the name of the save.

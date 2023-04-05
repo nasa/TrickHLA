@@ -41,6 +41,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cstdint>
 #include <iomanip>
 #include <limits>
 #include <math.h>
