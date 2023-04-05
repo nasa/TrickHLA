@@ -39,6 +39,7 @@ NASA, Johnson Space Center\n
 */
 
 // System includes
+#include <cstdint>
 
 // Trick include files.
 
