@@ -99,6 +99,9 @@ Examples:\n  check_code -s -o -v\n  check_code -i -o -v\n  check_code -c -vv''' 
    parser.add_argument( '-x', '--xml_output', \
                         help = 'Same as -s but the output is XML.', \
                         action = 'store_true', dest = 'generate_xml' )
+   parser.add_argument( '--cstyle_casts', \
+                        help = 'Suppress C-style casts.', \
+                        action = 'store_true', dest = 'suppress_cstylecasts' )
 
    # Parse the command line arguments.
    args = parser.parse_args()
@@ -313,6 +316,10 @@ Examples:\n  check_code -s -o -v\n  check_code -i -o -v\n  check_code -c -vv''' 
       trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/Threads.hh' )
       trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/ThreadTrigger.hh' )
       trickhla_ignore.append( '--suppress=uninitMemberVar:' + trick_home + '/include/trick/SimObject.hh' )
+
+   if args.suppress_cstylecasts:
+      # Suppress C-style casts.
+      trickhla_ignore.append( '--suppress=cstyleCast' )
 
    # Set the cppcheck arguments based on the type of code checking the user wants to do.
    if args.check_errors_only:
