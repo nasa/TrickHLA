@@ -462,7 +462,7 @@ class Manager
    int              check_interactions_count; ///< @trick_units{--} Number of checkpointed interactions
    InteractionItem *check_interactions;       ///< @trick_units{--} checkpoint-able version of interactions_queue
 
-   long long job_cycle_time_micros; // us Cycle time for the send_cyclic_and_requested_data and recieve_cyclic_data jobs
+   int64_t job_cycle_time_micros; // us Cycle time for the send_cyclic_and_requested_data and recieve_cyclic_data jobs
 
    bool rejoining_federate; ///< @trick_units{--} Internal flag to indicate if the federate is rejoining the federation.
    bool restore_determined; ///< @trick_io{**} Internal flag to indicate that the restore status has been determined.

@@ -33,6 +33,9 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_MODEL_SIMPLE_SIM_CONFIG_HH
 #define TRICKHLA_MODEL_SIMPLE_SIM_CONFIG_HH
 
+// System include files.
+#include <cstdint>
+
 // TrickHLA include files.
 #include "TrickHLA/KnownFederate.hh"
 #include "TrickHLA/Packing.hh"
@@ -53,7 +56,7 @@ class SimpleSimConfig : public TrickHLA::Packing
    friend void init_attrTrickHLAModel__SimpleSimConfig();
 
   public:
-   double  run_duration;          ///< @trick_units{s}  The run duration of the simulation.
+   double  run_duration;          ///< @trick_units{s}  The run duration of the simulation in seconds.
    int64_t run_duration_microsec; ///< @trick_units{us} The run duration in microseconds.
 
    int   num_federates;      ///< @trick_units{--} Number of required federates.

@@ -30,6 +30,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_ELAPSED_TIME_STATS_HH
 
 // System includes
+#include <cstdint>
 #include <string>
 
 // Trick includes
@@ -72,9 +73,9 @@ class ElapsedTimeStats
   private:
    bool first_pass; ///< @trick_units{--} Flag indicates first pass to determine external clock.
 
-   long long prev_time; ///< @trick_units{microseconds} Previous elapsed time.
+   int64_t prev_time; ///< @trick_units{microseconds} Previous elapsed time.
 
-   unsigned long long count; ///< @trick_units{--} Number of elapsed times measured.
+   uint64_t count; ///< @trick_units{--} Number of elapsed times measured.
 
    double elapsed_time; ///< @trick_units{milliseconds} Current elapsed time.
 
