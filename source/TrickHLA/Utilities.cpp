@@ -28,6 +28,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <string>
 #include <time.h>
 
 // Trick include files.

@@ -24,6 +24,9 @@ NASA, Johnson Space Center\n
 
 */
 
+// System include files.
+#include <string>
+
 // DIS include files.
 #include "DIS/Types.hh"
 

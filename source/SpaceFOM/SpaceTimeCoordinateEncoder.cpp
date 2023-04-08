@@ -26,7 +26,7 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <iostream>
 #include <sstream>
-#include <string.h>
+#include <string>
 
 // Trick include files.
 #include "trick/message_proto.h"

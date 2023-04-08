@@ -56,13 +56,17 @@ class IMSimSimObject : public Trick::SimObject {
    const char*        checkpoint_label;
 
    double             check_pause_job_offset;
-   const double       CHECK_PAUSE_DELTA;
+   double const       CHECK_PAUSE_DELTA;
 
    IMSimSimObject( double main_thread_data_cycle,
                    double main_thread_interaction_cycle,
                    unsigned short _1ST  = 1,
                    unsigned short _INIT = 60,
-                   unsigned short _LAST = 65534 ) : CHECK_PAUSE_DELTA( 0.000001 )
+                   unsigned short _LAST = 65534,
+                   std::string object_instance_names = "" ) 
+      : data_cycle_time( main_thread_data_cycle ),
+        obj_instance_names( object_instance_names ),
+        CHECK_PAUSE_DELTA( 0.000001 )
    {
       // Validate the data and interaction cycle times.
       if ( main_thread_data_cycle <= 0.0 ) {
@@ -90,6 +94,14 @@ class IMSimSimObject : public Trick::SimObject {
       // Initialize the debug settings just after the Input Processor runs as
       // the first job so the debug settings are available and valid.
       P1 ("initialization") federate.initialize_debug();
+      
+      // Initialize thread state memory associated with the Trick child threads.
+      P1 ("initialization") federate.initialize_thread_state( data_cycle_time, obj_instance_names );
+
+      // Associate the Trick main thread the the specified object instance names.
+      // TrickHLA will maintain data choherancy for the HLA object instances
+      // specified over the data cycle time specified.
+      P1 ("initialization") federate.associate_to_trick_child_thread( 0, data_cycle_time, obj_instance_names );
 
       P_INIT ("initialization") federate.initialize( federate_amb );
 
@@ -175,10 +187,14 @@ class IMSimSimObject : public Trick::SimObject {
       P_LAST ("shutdown") federate.shutdown();
    }
 
+ protected:
+    double      data_cycle_time;
+    std::string obj_instance_names; ///< @trick_units{--} HLA object instance names, comma seperated string, associated with the main thread.
+ 
  private:
    // Do not allow the implicit copy constructor or assignment operator.
-   IMSimSimObject(const IMSimSimObject & rhs);
-   IMSimSimObject & operator=(const IMSimSimObject & rhs);
+   IMSimSimObject( IMSimSimObject const & rhs );
+   IMSimSimObject & operator=( IMSimSimObject const & rhs );
 
    // Do not allow the default constructor.
    IMSimSimObject();

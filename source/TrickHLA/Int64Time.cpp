@@ -34,6 +34,7 @@ NASA, Johnson Space Center\n
 #include <cstdint>
 #include <cstdio>
 #include <sstream>
+#include <string>
 
 // Trick include files.
 

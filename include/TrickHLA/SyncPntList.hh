@@ -35,7 +35,6 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_SYNC_PNT_LIST_HH
 
 // System includes.
-#include <string>
 
 // Trick include files.
 

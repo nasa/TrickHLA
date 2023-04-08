@@ -54,8 +54,14 @@ class SpaceFOMSimObject : public THLABaseSimObject {
                       double main_thread_interaction_cycle,
                       unsigned short _1ST  = 1,
                       unsigned short _INIT = 60,
-                      unsigned short _LAST = 65534 )
-     : THLABaseSimObject( main_thread_data_cycle, main_thread_interaction_cycle, _1ST, _INIT, _LAST ),
+                      unsigned short _LAST = 65534,
+                      std::string object_instance_names = "" )
+     : THLABaseSimObject( main_thread_data_cycle,
+                          main_thread_interaction_cycle,
+                          _1ST,
+                          _INIT,
+                          _LAST,
+                          object_instance_names ),
        ExCO( "THLA.ExCO" ),
        execution_control( ExCO )
    {
@@ -69,8 +75,8 @@ class SpaceFOMSimObject : public THLABaseSimObject {
 
  private:
    // Do not allow the implicit copy constructor or assignment operator.
-   SpaceFOMSimObject(const SpaceFOMSimObject & rhs);
-   SpaceFOMSimObject & operator=(const SpaceFOMSimObject & rhs);
+   SpaceFOMSimObject( SpaceFOMSimObject const & rhs );
+   SpaceFOMSimObject & operator=( SpaceFOMSimObject const & rhs );
 
    // Do not allow the default constructor.
    SpaceFOMSimObject();

@@ -47,6 +47,7 @@ NASA, Johnson Space Center\n
 #include <iostream>
 #include <pthread.h>
 #include <sstream>
+#include <string>
 
 // Trick include files.
 #include "trick/exec_proto.h"

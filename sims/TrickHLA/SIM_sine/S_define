@@ -73,8 +73,8 @@ class AnalyticSineSimObj : public Trick::SimObject {
    
  private:
    // Do not allow the implicit copy constructor or assignment operator.
-   AnalyticSineSimObj(const AnalyticSineSimObj & rhs);
-   AnalyticSineSimObj & operator=(const AnalyticSineSimObj & rhs);
+   AnalyticSineSimObj( AnalyticSineSimObj const & rhs );
+   AnalyticSineSimObj & operator=( AnalyticSineSimObj const & rhs );
 };
 
 
@@ -127,8 +127,8 @@ class PropagatedSineSimObj : public Trick::SimObject {
 
  private:
    // Do not allow the implicit copy constructor or assignment operator.
-   PropagatedSineSimObj(const PropagatedSineSimObj & rhs);
-   PropagatedSineSimObj & operator=(const PropagatedSineSimObj & rhs);
+   PropagatedSineSimObj( PropagatedSineSimObj const & rhs );
+   PropagatedSineSimObj & operator=( PropagatedSineSimObj const & rhs );
 };
 
 
@@ -210,8 +210,8 @@ class THLAInitSimObj : public Trick::SimObject {
    TrickHLA::Federate & thla_federate;
  
    // Do not allow the implicit copy constructor or assignment operator.
-   THLAInitSimObj(const THLAInitSimObj & rhs);
-   THLAInitSimObj & operator=(const THLAInitSimObj & rhs);
+   THLAInitSimObj( THLAInitSimObj const & rhs );
+   THLAInitSimObj & operator=( THLAInitSimObj const & rhs );
    
    // Do not allow the default constructor.
    THLAInitSimObj();

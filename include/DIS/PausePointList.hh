@@ -37,7 +37,8 @@ NASA, Johnson Space Center\n
 #ifndef DIS_PAUSE_POINT_LIST_HH
 #define DIS_PAUSE_POINT_LIST_HH
 
-// System includes.
+// System include files.
+#include <string>
 
 // Trick include files.
 

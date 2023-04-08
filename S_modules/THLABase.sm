@@ -63,8 +63,10 @@ class THLABaseSimObject : public Trick::SimObject {
                       double interaction_cycle,
                       unsigned short _1ST  = 1,
                       unsigned short _INIT = 60,
-                      unsigned short _LAST = 65534 )
-      : data_cycle_time( data_cycle )
+                      unsigned short _LAST = 65534,
+                      std::string object_instance_names = "" )
+      : data_cycle_time( data_cycle ),
+        obj_instance_names( object_instance_names )
    {
       // Validate the data and interaction cycle times.
       if ( data_cycle <= 0.0 ) {
@@ -88,7 +90,12 @@ class THLABaseSimObject : public Trick::SimObject {
 
       // Initialize thread state memory associated with the Trick child threads.
       P1 ("initialization") federate.initialize_thread_state( data_cycle_time );
-      
+
+      // Associate the Trick main thread to the specified object instance names.
+      // TrickHLA will maintain data choherancy for the HLA object instances
+      // specified over the data cycle time specified.
+      P1 ("initialization") federate.associate_to_trick_child_thread( 0, data_cycle_time, obj_instance_names );
+
       // Setup the HLA infrastructure.
       P_INIT ("initialization") federate.initialize();
 
@@ -172,12 +179,13 @@ class THLABaseSimObject : public Trick::SimObject {
    virtual ~THLABaseSimObject() = 0;
 
  protected:
-   double data_cycle_time;
+   double      data_cycle_time;
+   std::string obj_instance_names; ///< @trick_units{--} HLA object instance names, comma seperated string, associated with the main thread.
    
  private:
    // Do not allow the implicit copy constructor or assignment operator.
-   THLABaseSimObject(const THLABaseSimObject & rhs);
-   THLABaseSimObject & operator=(const THLABaseSimObject & rhs);
+   THLABaseSimObject( THLABaseSimObject const & rhs );
+   THLABaseSimObject & operator=( THLABaseSimObject const & rhs );
 
    // Do not allow the default constructor.
    THLABaseSimObject();

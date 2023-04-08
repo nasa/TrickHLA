@@ -41,6 +41,7 @@ execution.
 
 // System include files.
 #include <cstdint>
+#include <string>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"

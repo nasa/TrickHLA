@@ -73,7 +73,7 @@ class THLAThreadSimObject : public Trick::SimObject {
       // associate the Trick child thread is phase 2 (i.e. P2). The HLA object
       // instance names, as a comma seperated string, that are associated with
       // this Trick child thread. TrickHLA will maintain data choherancy for the
-      // HLA object instances specififed over the data cycle time specified.
+      // HLA object instances specified over the data cycle time specified.
       P2 ("initialization") federate.associate_to_trick_child_thread( thread_id, data_cycle_time, obj_instance_names );
 
       // Wait for the HLA data to be received.
@@ -91,8 +91,8 @@ class THLAThreadSimObject : public Trick::SimObject {
 
  private:
    // Do not allow the implicit copy constructor or assignment operator.
-   THLAThreadSimObject(const THLAThreadSimObject & rhs);
-   THLAThreadSimObject & operator=(const THLAThreadSimObject & rhs);
+   THLAThreadSimObject( THLAThreadSimObject const & rhs );
+   THLAThreadSimObject & operator=( THLAThreadSimObject const & rhs );
 
    // Do not allow the default constructor.
    THLAThreadSimObject();

@@ -39,8 +39,9 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_EXECUTON_CONTROL_HH
 #define SPACEFOM_EXECUTON_CONTROL_HH
 
-// System includes.
+// System include files.
 #include <cstdint>
+#include <string>
 
 // Trick include files.
 

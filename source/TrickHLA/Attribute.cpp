@@ -41,7 +41,7 @@ NASA, Johnson Space Center\n
 #include <cstdint>
 #include <limits>
 #include <sstream>
-#include <string.h>
+#include <string>
 
 // Trick include files.
 #include "trick/exec_proto.h"

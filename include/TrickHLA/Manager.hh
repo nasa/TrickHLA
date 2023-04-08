@@ -45,6 +45,7 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cstdint>
+#include <string>
 
 // TrickHLA include files.
 #include "TrickHLA/ExecutionControlBase.hh"

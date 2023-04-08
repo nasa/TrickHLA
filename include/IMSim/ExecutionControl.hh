@@ -39,7 +39,8 @@ NASA, Johnson Space Center\n
 #ifndef IMSIM_EXECUTON_CONTROL_HH
 #define IMSIM_EXECUTON_CONTROL_HH
 
-// System includes.
+// System include files.
+#include <string>
 
 // Trick include files.
 
