@@ -53,7 +53,7 @@ class IMSimSimObject : public Trick::SimObject {
    TrickHLA::Manager  manager;
 
    double             checkpoint_time;
-   const char*        checkpoint_label;
+   char const *       checkpoint_label;
 
    double             check_pause_job_offset;
    double const       CHECK_PAUSE_DELTA;
