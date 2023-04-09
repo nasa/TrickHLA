@@ -386,9 +386,9 @@ void RefFrameBase::unpack()
 char *RefFrameBase::allocate_input_string( // RETURN: -- None.
    char const *c_string )                  // IN: -- String to allocate.
 {
-   string str = (c_string != NULL) ? c_string : "";
+   string str = ( c_string != NULL ) ? c_string : "";
 
-   char * new_c_str = (char *)TMM_declare_var_1d( "char", str.length() + 1 );
+   char *new_c_str = (char *)TMM_declare_var_1d( "char", str.length() + 1 );
    strncpy( new_c_str, c_string, str.length() + 1 );
 
    return new_c_str;
@@ -400,7 +400,7 @@ char *RefFrameBase::allocate_input_string( // RETURN: -- None.
 char *RefFrameBase::allocate_input_string( // RETURN: -- None.
    string const &cpp_string )              // IN: -- String to allocate.
 {
-   char * new_c_str = (char *)TMM_declare_var_1d( "char", cpp_string.length() + 1 );
+   char *new_c_str = (char *)TMM_declare_var_1d( "char", cpp_string.length() + 1 );
    strncpy( new_c_str, cpp_string.c_str(), cpp_string.length() + 1 );
 
    return new_c_str;
