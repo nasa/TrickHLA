@@ -174,33 +174,41 @@ void TrickThreadCoordinator::initialize_thread_state(
    }
 
    // Allocate memory for the data cycle times per each thread.
-   this->data_cycle_micros_per_thread = (long long *)TMM_declare_var_1d( "long long", this->thread_state_cnt );
-   if ( this->data_cycle_micros_per_thread == NULL ) {
-      ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::initialize_thread_state():" << __LINE__
-             << " ERROR: Could not allocate memory for 'data_cycle_micros_per_thread'"
-             << " for requested size " << this->thread_state_cnt
-             << "'!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-      exit( 1 );
-   }
-   for ( unsigned int id = 0; id < this->thread_state_cnt; ++id ) {
-      this->data_cycle_micros_per_thread[id] = 0LL;
+   if ( this->thread_state_cnt > 0 ) {
+      this->data_cycle_micros_per_thread = (long long *)TMM_declare_var_1d( "long long", this->thread_state_cnt );
+      if ( this->data_cycle_micros_per_thread == NULL ) {
+         ostringstream errmsg;
+         errmsg << "TrickThreadCoordinator::initialize_thread_state():" << __LINE__
+                << " ERROR: Could not allocate memory for 'data_cycle_micros_per_thread'"
+                << " for requested size " << this->thread_state_cnt
+                << "'!" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+         exit( 1 );
+      }
+      for ( unsigned int id = 0; id < this->thread_state_cnt; ++id ) {
+         this->data_cycle_micros_per_thread[id] = 0LL;
+      }
+   } else {
+      this->data_cycle_micros_per_thread = NULL;
    }
 
    // Allocate memory for the data cycle times per each object instance.
-   this->data_cycle_micros_per_obj = (long long *)TMM_declare_var_1d( "long long", this->manager->obj_count );
-   if ( this->data_cycle_micros_per_obj == NULL ) {
-      ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::initialize_thread_state():" << __LINE__
-             << " ERROR: Could not allocate memory for 'data_cycle_micros_per_obj'"
-             << " for requested size " << this->manager->obj_count
-             << "'!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-      exit( 1 );
-   }
-   for ( unsigned int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
-      this->data_cycle_micros_per_obj[obj_index] = 0LL;
+   if ( this->manager->obj_count > 0 ) {
+      this->data_cycle_micros_per_obj = (long long *)TMM_declare_var_1d( "long long", this->manager->obj_count );
+      if ( this->data_cycle_micros_per_obj == NULL ) {
+         ostringstream errmsg;
+         errmsg << "TrickThreadCoordinator::initialize_thread_state():" << __LINE__
+                << " ERROR: Could not allocate memory for 'data_cycle_micros_per_obj'"
+                << " for requested size " << this->manager->obj_count
+                << "'!" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+         exit( 1 );
+      }
+      for ( unsigned int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
+         this->data_cycle_micros_per_obj[obj_index] = 0LL;
+      }
+   } else {
+      this->data_cycle_micros_per_obj = NULL;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -329,7 +337,8 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
 
          if ( obj_instance_name == this->manager->objects[obj_index].get_name_string() ) {
 
-            if ( ( this->data_cycle_micros_per_thread[thread_id] > 0LL )
+            if ( ( this->data_cycle_micros_per_thread != NULL )
+                 && ( this->data_cycle_micros_per_thread[thread_id] > 0LL )
                  && ( this->data_cycle_micros_per_thread[thread_id] != data_cycle_micros ) ) {
                ostringstream errmsg;
                errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
@@ -345,7 +354,8 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
                       << " ensure data coherency." << THLA_ENDL;
                DebugHandler::terminate_with_message( errmsg.str() );
 
-            } else if ( ( this->data_cycle_micros_per_obj[obj_index] > 0LL )
+            } else if ( ( this->data_cycle_micros_per_obj != NULL )
+                        && ( this->data_cycle_micros_per_obj[obj_index] > 0LL )
                         && ( this->data_cycle_micros_per_obj[obj_index] != data_cycle_micros ) ) {
                ostringstream errmsg;
                errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
@@ -353,7 +363,9 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
                       << obj_instance_name << "' an existing entry for this"
                       << " object (thread-id:" << thread_id
                       << ", data_cycle:"
-                      << Int64Interval::to_seconds( this->data_cycle_micros_per_thread[thread_id] )
+                      << ( ( this->data_cycle_micros_per_thread != NULL )
+                              ? Int64Interval::to_seconds( this->data_cycle_micros_per_thread[thread_id] )
+                              : -1 )
                       << ") has a data cycle time that does not match the"
                       << " data cycle time specified:" << data_cycle
                       << ". An object instance must use the same data cycle"
@@ -365,8 +377,13 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
                found_object            = true;
                any_valid_instance_name = true;
 
-               this->data_cycle_micros_per_thread[thread_id] = data_cycle_micros;
-               this->data_cycle_micros_per_obj[obj_index]    = data_cycle_micros;
+               if ( this->data_cycle_micros_per_thread != NULL ) {
+                  this->data_cycle_micros_per_thread[thread_id] = data_cycle_micros;
+               }
+
+               if ( this->data_cycle_micros_per_obj != NULL ) {
+                  this->data_cycle_micros_per_obj[obj_index] = data_cycle_micros;
+               }
             }
          }
       }
@@ -410,7 +427,9 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    if ( thread_id == 0 ) {
       // Ensure we set the data cycle time for the main thread even if no
       // object instance names were specified.
-      this->data_cycle_micros_per_thread[0] = this->main_thread_data_cycle_micros;
+      if ( this->data_cycle_micros_per_thread != NULL ) {
+         this->data_cycle_micros_per_thread[0] = this->main_thread_data_cycle_micros;
+      }
    } else {
       // We now have at least one Trick child thread associated to TrickHLA.
       this->any_child_thread_associated = true;
