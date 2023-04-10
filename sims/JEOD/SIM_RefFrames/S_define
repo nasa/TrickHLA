@@ -13,13 +13,23 @@
 // tailored to provide facility or project unique executive behavior. See
 // the Trick documentation for more on usage and available options.
 //==========================================================================
+// Define the JEOD compatible phase initialization priorities.
+#include "default_priority_settings.sm"
+
+// Define the Trick default system infrastructure.
 #include "sim_objects/default_trick_sys.sm"
+
+//==========================================================================
+// Define the JEOD job cycle times.
+//==========================================================================
+#define LOW_RATE_ENV  60.00    // Low-rate environment update interval
+#define DYNAMICS       0.03125 // Vehicle and plantary dynamics interval (32Hz)
 
 //==========================================================================
 // Define the Trick HLA job cycle times.
 //==========================================================================
-#define THLA_DATA_CYCLE_TIME        0.250 // HLA data communication cycle time.
-#define THLA_INTERACTION_CYCLE_TIME 0.03125 // HLA Interaction cycle time.
+#define THLA_DATA_CYCLE_TIME        0.250    // HLA data communication cycle time.
+#define THLA_INTERACTION_CYCLE_TIME DYNAMICS // HLA Interaction cycle time.
 
 //==========================================================================
 // Define the HLA phase initialization priorities.
@@ -30,8 +40,28 @@
 
 
 //==========================================================================
+// JEOD include files used in SimObject definitions or for input file 
+// instantiations.
+//==========================================================================
+#include "jeod_sys.sm"
+
+// Set up desired time types and include the JEOD time S_module
+#define TIME_MODEL_UT1
+#define TIME_MODEL_UTC
+#define TIME_MODEL_TT
+#define TIME_MODEL_GMST
+#define TIME_CALENDAR_UPDATE_INTERVAL  DYNAMICS
+#include "jeod_time.sm"
+
+#include "dynamics.sm"
+#include "environment.sm"
+#include "sun_basic.sm"
+#include "earth_basic.sm"
+#include "moon_basic.sm"
+
+//==========================================================================
 // Trick HLA and SpaceFOM include files used in SimObject definitions or
-// for inputfile instantiations.
+// for input file instantiations.
 //==========================================================================
 // This is needed for CTE timeline instantiation in the input file.
 ##include "TrickHLA/CTETimelineBase.hh"
