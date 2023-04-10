@@ -54,7 +54,7 @@
 #include "jeod_time.sm"
 
 #include "dynamics.sm"
-#include "environment.sm"
+#include "environment_de421.sm"
 #include "sun_basic.sm"
 #include "earth_basic.sm"
 #include "moon_basic.sm"

@@ -4,7 +4,7 @@
 #     example Root Reference Frame Publisher (RRFP) federate run.)
 #
 # REFERENCE:
-#    (Trick 17 documentation.)
+#    (Trick 19 documentation.)
 #
 # ASSUMPTIONS AND LIMITATIONS:
 #    ((Uses the SpaceFOMFederateConfig Python class.)
@@ -23,7 +23,7 @@ from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
 def print_usage_message( ):
 
    print(' ')
-   print('TrickHLA SpaceFOM Root-Reference-Frame Simulation Command Line Configuration Options:')
+   print('JEOD-based SpaceFOM Reference Frame Simulation Command Line Configuration Options:')
    print('  -h -help         : Print this help message.')
    print('  -stop [time]     : Time to stop simulation, default is 10.0 seconds.')
    print('  -nostop          : Set no stop time on simulation.')
@@ -125,8 +125,8 @@ federate = SpaceFOMFederateConfig( THLA.federate,
                                    THLA.manager,
                                    THLA.execution_control,
                                    THLA.ExCO,
-                                   'SpaceFOM_Roles_Test',
-                                   'RRFP',
+                                   'SpaceFOM_JEOD_Test',
+                                   'JEODRefFrames',
                                    True )
 
 # Set the name of the ExCO S_define instance.
