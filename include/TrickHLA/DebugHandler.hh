@@ -33,6 +33,9 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_DEBUG_HANDLER_HH
 #define TRICKHLA_DEBUG_HANDLER_HH
 
+// System include files.
+#include <string>
+
 // TrickHLA Model include files.
 #include "TrickHLA/Types.hh"
 

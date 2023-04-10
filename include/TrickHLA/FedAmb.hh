@@ -58,7 +58,8 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 
-// System includes
+// System include files.
+#include <string>
 
 // Trick include files.
 

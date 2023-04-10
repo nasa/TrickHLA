@@ -39,6 +39,7 @@ NASA, Johnson Space Center\n
 #include <limits>
 #include <math.h>
 #include <sstream>
+#include <string>
 
 // Trick includes.
 #include "trick/Executive.hh"

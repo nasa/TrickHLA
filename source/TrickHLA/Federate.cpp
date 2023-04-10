@@ -51,7 +51,7 @@ NASA, Johnson Space Center\n
 #include <limits>
 #include <memory> // for auto_ptr
 #include <sstream>
-#include <stdint.h>
+#include <string>
 #include <sys/time.h>
 #include <time.h>
 
@@ -444,7 +444,6 @@ the documented ENUM values.%c",
 void Federate::initialize_thread_state(
    double const main_thread_data_cycle_time )
 {
-
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::initialize_thread_state():%d Trick main thread (id:0, data_cycle:%.3f).%c",
                __LINE__, main_thread_data_cycle_time, THLA_NEWLINE );

@@ -86,8 +86,8 @@ class THLAInitSimObject : public Trick::SimObject {
    TrickHLA::Federate & thla_federate;
  
    // Do not allow the implicit copy constructor or assignment operator.
-   THLAInitSimObject(const THLAInitSimObject & rhs);
-   THLAInitSimObject & operator=(const THLAInitSimObject & rhs);
+   THLAInitSimObject( THLAInitSimObject const & rhs );
+   THLAInitSimObject & operator=( THLAInitSimObject const & rhs );
    
    // Do not allow the default constructor.
    THLAInitSimObject();
@@ -113,8 +113,8 @@ class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
   private:
 
    // This object is not copyable
-   SpaceFOMRefFrameTreeSimObject( const SpaceFOMRefFrameTreeSimObject & );
-   SpaceFOMRefFrameTreeSimObject & operator=( const SpaceFOMRefFrameTreeSimObject & );
+   SpaceFOMRefFrameTreeSimObject( SpaceFOMRefFrameTreeSimObject const & );
+   SpaceFOMRefFrameTreeSimObject & operator=( SpaceFOMRefFrameTreeSimObject const & );
 
 
 };
@@ -149,8 +149,8 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
    RefFrameData * ref_frame_data_ptr;
 
    // This object is not copyable
-   SpaceFOMRefFrameSimObject( const SpaceFOMRefFrameSimObject & );
-   SpaceFOMRefFrameSimObject & operator=( const SpaceFOMRefFrameSimObject & );
+   SpaceFOMRefFrameSimObject( SpaceFOMRefFrameSimObject const & );
+   SpaceFOMRefFrameSimObject & operator=( SpaceFOMRefFrameSimObject const & );
 
 };
 

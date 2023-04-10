@@ -24,6 +24,9 @@ NASA, Johnson Space Center\n
 
 */
 
+// System include files.
+#include <string>
+
 // IMSim include files.
 #include "IMSim/Types.hh"
 

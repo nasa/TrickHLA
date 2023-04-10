@@ -34,7 +34,6 @@ NASA, Johnson Space Center\n
 #include <cstdlib>
 #include <iostream>
 #include <limits>
-#include <string>
 
 // Trick include files.
 #include "trick/message_proto.h"

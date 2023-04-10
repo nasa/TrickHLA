@@ -36,7 +36,8 @@ NASA, Johnson Space Center\n
 #ifndef IMSIM_PAUSE_POINT_LIST_HH
 #define IMSIM_PAUSE_POINT_LIST_HH
 
-// System includes.
+// System includes.// System include files.
+#include <string>
 
 // Trick include files.
 

@@ -42,9 +42,11 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cstdint>
+#include <cstring>
 #include <iomanip>
 #include <limits>
 #include <math.h>
+#include <string>
 
 // Trick includes.
 #include "trick/Executive.hh"

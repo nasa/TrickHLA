@@ -37,6 +37,7 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <iomanip>
 #include <math.h>
+#include <string>
 
 // Trick includes.
 #include "trick/Executive.hh"

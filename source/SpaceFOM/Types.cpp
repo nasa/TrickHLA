@@ -24,6 +24,9 @@ NASA, Johnson Space Center\n
 
 */
 
+// System include files.
+#include <string>
+
 // SpaceFOM include files.
 #include "SpaceFOM/Types.hh"
 

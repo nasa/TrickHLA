@@ -42,6 +42,7 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_REF_FRAME_BASE_HH
 
 // System include files.
+#include <string>
 
 // TrickHLA include files.
 #include "TrickHLA/Packing.hh"

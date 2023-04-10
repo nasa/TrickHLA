@@ -35,6 +35,7 @@ NASA, Johnson Space Center\n
 #include <limits>
 #include <sstream>
 #include <stdio.h>
+#include <string>
 
 // TrickHLA include files.
 #include "TrickHLA/Int64Interval.hh"

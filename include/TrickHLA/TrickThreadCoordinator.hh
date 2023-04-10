@@ -111,6 +111,13 @@ class TrickThreadCoordinator
                                                      int64_t const      default_data_cycle_micros ) const;
 
   protected:
+   /*! @brief Wait to send data for Trick main thread. */
+   void wait_to_send_data_for_main_thread();
+
+   /*! @brief Wait to send data for Trick child thread. */
+   void wait_to_send_data_for_child_thread( unsigned int const thread_id );
+
+  protected:
    Federate *federate; ///< @trick_units{--} Associated TrickHLA::Federate.
    Manager  *manager;  ///< @trick_units{--} Associated TrickHLA::Manager.
 
@@ -122,7 +129,7 @@ class TrickThreadCoordinator
    long long *data_cycle_micros_per_thread; ///< @trick_units{--} Data cycle times per thread in microseconds.
    long long *data_cycle_micros_per_obj;    ///< @trick_units{--} Data cycle times per object instance in microseconds.
 
-   bool any_thread_associated; ///< @trick_units{--} True if at least one Trick Child thread is associated to TrickHLA.
+   bool any_child_thread_associated; ///< @trick_units{--} True if at least one Trick Child thread is associated to TrickHLA.
 
    long long main_thread_data_cycle_micros; ///< @trick_units{--} Trick main thread data cycle time in microseconds.
 };
