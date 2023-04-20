@@ -54,10 +54,15 @@
 #include "jeod_time.sm"
 
 #include "dynamics.sm"
-#include "environment_de421.sm"
+
+#ifndef EPHEM_DE440
+ #define EPHEM_DE440
+#endif
+#include "environment.sm"
 #include "sun_basic.sm"
 #include "earth_basic.sm"
 #include "moon_basic.sm"
+#include "mars_basic.sm"
 
 //==========================================================================
 // Trick HLA and SpaceFOM include files used in SimObject definitions or
