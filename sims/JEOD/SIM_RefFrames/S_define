@@ -138,8 +138,15 @@ class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
 
   public:
    /* Reference frame data. */
-   RefFrameData root_frame_data;
-   RefFrameData frame_A_data;
+   RefFrameData ssbary_data;
+   RefFrameData embary_data;
+   RefFrameData embary_rot_data;
+   RefFrameData earth_inertial_data;
+   RefFrameData moon_inertial_data;
+   RefFrameData earth_fixed_data;
+   RefFrameData moon_fixed_data;
+   RefFrameData mars_inertial_data;
+   RefFrameData mars_fixed_data;
 
    SpaceFOMRefFrameTreeSimObject( )
    {
@@ -202,6 +209,13 @@ THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
 
 // SimObject used for root reference frame discovery.
 SpaceFOMRefFrameTreeSimObject ref_frame_tree;
-SpaceFOMRefFrameSimObject root_ref_frame( ref_frame_tree.root_frame_data );
-SpaceFOMRefFrameSimObject ref_frame_A( ref_frame_tree.frame_A_data );
+SpaceFOMRefFrameSimObject solar_system_barycenter( ref_frame_tree.ssbary_data );
+SpaceFOMRefFrameSimObject earth_moon_barycenter( ref_frame_tree.embary_data );
+SpaceFOMRefFrameSimObject earth_moon_rotating( ref_frame_tree.embary_rot_data );
+SpaceFOMRefFrameSimObject earth_centered_intertial( ref_frame_tree.earth_inertial_data );
+SpaceFOMRefFrameSimObject moon_centered_intertial( ref_frame_tree.moon_inertial_data );
+SpaceFOMRefFrameSimObject earth_centered_fixed( ref_frame_tree.earth_fixed_data );
+SpaceFOMRefFrameSimObject moon_centered_fixed( ref_frame_tree.moon_fixed_data );
+SpaceFOMRefFrameSimObject mars_centered_intertial( ref_frame_tree.mars_inertial_data );
+SpaceFOMRefFrameSimObject mars_centered_fixed( ref_frame_tree.mars_fixed_data );
 
