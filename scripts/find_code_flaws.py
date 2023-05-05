@@ -247,7 +247,7 @@ def find_flawfinder( flawfinder_bin, verbose = True ):
    # Now get the flawfinder version ID tag.
    #
    try:
-      flawfinder_version = str( subprocess.check_output( [flawfinder_command, '--version'] ) ).strip()
+      flawfinder_version = subprocess.check_output( [flawfinder_command, '--version'] ).decode('utf8', errors='strict').strip()
    except subprocess.CalledProcessError:
       TrickHLAMessage.error( subprocess.CalledProcessError.message )
       TrickHLAMessage.failure( '\'flawfinder --version\' command failed!: '

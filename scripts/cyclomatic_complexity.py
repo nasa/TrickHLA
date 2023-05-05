@@ -196,8 +196,8 @@ def find_lizard( lizard_bin, verbose = True ):
    # Now get the lizard version ID tag.
    #
    try:
-      lizard_version = str( subprocess.check_output( [lizard_command, '--version'],
-                                                     stderr = subprocess.STDOUT ) ).strip()
+      lizard_version = subprocess.check_output( [lizard_command, '--version'],
+                                                stderr = subprocess.STDOUT ).decode('utf8', errors='strict').strip()
    except subprocess.CalledProcessError:
       TrickHLAMessage.error( subprocess.CalledProcessError.message )
       TrickHLAMessage.failure( '\'lizard --version\' command failed!: '
