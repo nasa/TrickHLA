@@ -2516,7 +2516,8 @@ bool Manager::discover_object_instance(
    if ( trickhla_obj == NULL ) {
 
       // Get the first unregistered remotely owned object that has the
-      // given object class type.
+      // given object class type and only if the object instance name is
+      // not required.
       trickhla_obj = get_unregistered_remote_object( theObjectClass );
    }
 
