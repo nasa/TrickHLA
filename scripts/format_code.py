@@ -14,6 +14,8 @@
 import sys
 import os
 import argparse
+import shutil
+import subprocess
 
 from trickhla_message import *
 from trickhla_environment import *
@@ -187,14 +189,42 @@ def find_clang_format( llvm_bin, verbose = True ):
 
       else:
 
-         # LLVM_HOME is not set so look in the standard locations for clang-format.
-         if os.path.isfile( 'clang-format' ):
-            command_path = 'clang-format'
-         elif os.path.isfile( '/usr/bin/clang-format' ):
-            command_path = '/usr/bin/clang-format'
-         elif os.path.isfile( '/usr/local/bin/clang-format' ):
-            command_path = '/usr/local/bin/clang-format'
-         else:
+         # LLVM_HOME is not set so look in the standard locations for
+         # clang-format starting with the system path first.
+         command_path = shutil.which( 'clang-format' )
+         if command_path is None:
+            if os.path.isfile( '/usr/bin/clang-format' ):
+               command_path = '/usr/bin/clang-format'
+            elif os.path.isfile( '/usr/local/bin/clang-format' ):
+               command_path = '/usr/local/bin/clang-format'
+            elif os.path.isfile( '/opt/homebrew/bin/clang-format' ):
+               command_path = '/opt/homebrew/bin/clang-format'
+
+         if command_path is None:
+            # If we still have not found the clang-format command then see what
+            # llvm home path Trick is using since it must exist in order to
+            # compile Trick.
+            trick_home = os.environ.get( 'TRICK_HOME' )
+            if trickhla_home is not None:
+               trick_config_status_file = os.path.join( trick_home, 'config.status' )
+               if os.path.isfile( trick_config_status_file ):
+                  llvm_home_grep_cmd = [ 'grep', 'LLVM_HOME', trick_config_status_file ]
+                  try:
+                     # S["LLVM_HOME"]="/home/username/clang+llvm-14.0.6-x86_64"
+                     trick_llvm_config = subprocess.check_output( llvm_home_grep_cmd ).decode('utf8', errors='strict').strip()
+                  except subprocess.CalledProcessError:
+                     trick_llvm_config = ''
+
+                  # Split the string into a list of its parts with " as the delimiter.
+                  trick_llvm_home_list = trick_llvm_config.split( '"' )
+
+                  # ['S[', 'LLVM_HOME', ']=', '/home/username/clang+llvm-14.0.6-x86_64', '']
+                  if len( trick_llvm_home_list ) > 3:
+                     trick_clang_format_path = os.path.join( trick_llvm_home_list[3], 'bin', 'clang-format' )
+                     if os.path.isfile( trick_clang_format_path ):
+                        command_path = trick_clang_format_path
+
+         if command_path is None:
             # Let's look for it in Brew.
             if os.path.isdir( '/usr/local/Cellar' ):
 
@@ -218,9 +248,15 @@ def find_clang_format( llvm_bin, verbose = True ):
                   # llvm installed for a specific version (i.e. llvm@11):
                   # brew list -1 --formula | grep llvm | sort -ur
                   #
-                  # For Mac OS, use a workaround for now to check for llvm@11
-                  # since newer versions are not supported by Trick yet.
-                  if os.path.isfile( '/usr/local/opt/llvm@11/bin/clang-format' ):
+                  # For Mac OS, use a workaround for now to check for llvm@14
+                  # and older versions.
+                  if os.path.isfile( '/usr/local/opt/llvm@14/bin/clang-format' ):
+                     command_path = '/usr/local/opt/llvm@14/bin/clang-format'
+                  elif os.path.isfile( '/usr/local/opt/llvm@13/bin/clang-format' ):
+                     command_path = '/usr/local/opt/llvm@13/bin/clang-format'
+                  elif os.path.isfile( '/usr/local/opt/llvm@12/bin/clang-format' ):
+                     command_path = '/usr/local/opt/llvm@12/bin/clang-format'
+                  elif os.path.isfile( '/usr/local/opt/llvm@11/bin/clang-format' ):
                      command_path = '/usr/local/opt/llvm@11/bin/clang-format'
 
    # We're finished hunting. Now let's check for the format command.
@@ -229,11 +265,11 @@ def find_clang_format( llvm_bin, verbose = True ):
    else:
       if not os.path.isfile( command_path ):
          TrickHLAMessage.failure( 'Could not find the clang-format command: '\
-                                  +command_path )
+                                  + command_path )
       else:
          if verbose:
             TrickHLAMessage.status( 'Using CLANG format command: '\
-                                     +command_path )
+                                     + command_path )
 
    return command_path
 
@@ -261,12 +297,12 @@ def link_clang_format( thla_scripts, test_only = False, verbose = True ):
    else:
       if test_only:
          TrickHLAMessage.status( 'Would link format specification: '\
-                                 +thla_clang_format )
+                                 + thla_clang_format )
       else:
          os.symlink( thla_clang_format, '.clang-format' )
          if verbose:
             TrickHLAMessage.status( 'Linking to format specification: '\
-                                    +thla_clang_format )
+                                    + thla_clang_format )
 
    return
 

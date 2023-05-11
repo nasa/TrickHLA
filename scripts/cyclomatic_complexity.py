@@ -20,6 +20,7 @@ import time
 import os
 import subprocess
 import argparse
+import shutil
 
 from trickhla_message import *
 from trickhla_environment import *
@@ -173,13 +174,16 @@ def find_lizard( lizard_bin, verbose = True ):
 
       else:
 
-         # LIZARD_HOME is not set so look in the standard locations for lizard.
-         if os.path.isfile( 'lizard' ):
-            lizard_command = 'lizard'
-         elif os.path.isfile( '/usr/bin/lizard' ):
-            lizard_command = '/usr/bin/lizard'
-         elif os.path.isfile( '/usr/local/bin/lizard' ):
-            lizard_command = '/usr/local/bin/lizard'
+         # LIZARD_HOME is not set so look in the standard locations for lizard
+         # starting with the system path first.
+         lizard_command = shutil.which( 'lizard' )
+         if lizard_command is None:
+            if os.path.isfile( '/usr/bin/lizard' ):
+               lizard_command = '/usr/bin/lizard'
+            elif os.path.isfile( '/usr/local/bin/lizard' ):
+               lizard_command = '/usr/local/bin/lizard'
+            elif os.path.isfile( '/opt/homebrew/bin/lizard' ):
+               lizard_command = '/opt/homebrew/bin/lizard'
 
    # We're finished hunting. Now let's check for the lizard command.
    if lizard_command is None:
@@ -187,7 +191,7 @@ def find_lizard( lizard_bin, verbose = True ):
    else:
       if not os.path.isfile( lizard_command ):
          TrickHLAMessage.failure( 'Could not find the lizard command!: '\
-                                  +lizard_command )
+                                  + lizard_command )
       else:
          if verbose:
             TrickHLAMessage.status( 'Using lizard command: ' + lizard_command )
@@ -201,7 +205,7 @@ def find_lizard( lizard_bin, verbose = True ):
    except subprocess.CalledProcessError:
       TrickHLAMessage.error( subprocess.CalledProcessError.message )
       TrickHLAMessage.failure( '\'lizard --version\' command failed!: '
-                               +lizard_command )
+                               + lizard_command )
 
    return lizard_command, lizard_version
 

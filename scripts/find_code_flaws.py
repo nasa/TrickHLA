@@ -14,6 +14,7 @@ import time
 import os
 import subprocess
 import argparse
+import shutil
 
 from trickhla_message import *
 from trickhla_environment import *
@@ -224,13 +225,16 @@ def find_flawfinder( flawfinder_bin, verbose = True ):
 
       else:
 
-         # FLAWFINDER_HOME is not set so look in the standard locations for flawfinder.
-         if os.path.isfile( 'flawfinder' ):
-            flawfinder_command = 'flawfinder'
-         elif os.path.isfile( '/usr/bin/flawfinder' ):
-            flawfinder_command = '/usr/bin/flawfinder'
-         elif os.path.isfile( '/usr/local/bin/flawfinder' ):
-            flawfinder_command = '/usr/local/bin/flawfinder'
+         # FLAWFINDER_HOME is not set so look in the standard locations for
+         # flawfinder starting with the system path first.
+         flawfinder_command = shutil.which( 'flawfinder' )
+         if flawfinder_command is None:
+            if os.path.isfile( '/usr/bin/flawfinder' ):
+               flawfinder_command = '/usr/bin/flawfinder'
+            elif os.path.isfile( '/usr/local/bin/flawfinder' ):
+               flawfinder_command = '/usr/local/bin/flawfinder'
+            elif os.path.isfile( '/opt/homebrew/bin/flawfinder' ):
+               flawfinder_command = '/opt/homebrew/bin/flawfinder'
 
    # We're finished hunting. Now let's check for the flawfinder command.
    if flawfinder_command is None:
@@ -238,7 +242,7 @@ def find_flawfinder( flawfinder_bin, verbose = True ):
    else:
       if not os.path.isfile( flawfinder_command ):
          TrickHLAMessage.failure( 'Could not find the flawfinder command!: '\
-                                  +flawfinder_command )
+                                  + flawfinder_command )
       else:
          if verbose:
             TrickHLAMessage.status( 'Using flawfinder command: ' + flawfinder_command )
@@ -251,7 +255,7 @@ def find_flawfinder( flawfinder_bin, verbose = True ):
    except subprocess.CalledProcessError:
       TrickHLAMessage.error( subprocess.CalledProcessError.message )
       TrickHLAMessage.failure( '\'flawfinder --version\' command failed!: '
-                               +flawfinder_command )
+                               + flawfinder_command )
 
    return flawfinder_command, flawfinder_version
 
