@@ -205,7 +205,7 @@ def find_clang_format( llvm_bin, verbose = True ):
             # llvm home path Trick is using since it must exist in order to
             # compile Trick.
             trick_home = os.environ.get( 'TRICK_HOME' )
-            if trickhla_home is not None:
+            if trick_home is not None:
                trick_config_status_file = os.path.join( trick_home, 'config.status' )
                if os.path.isfile( trick_config_status_file ):
                   llvm_home_grep_cmd = [ 'grep', 'LLVM_HOME', trick_config_status_file ]
