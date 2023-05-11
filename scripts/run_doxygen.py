@@ -369,7 +369,7 @@ def build_version_string(
       version_string = version_id + ': ' + version_tag
    # Otherwise, get the Git hash.
    else:
-      version_tag = subprocess.check_output( ['git', 'rev-parse', '--short', 'HEAD'] )
+      version_tag = subprocess.check_output( ['git', 'rev-parse', '--short', 'HEAD'] ).decode('utf8', errors='strict').strip()
       version_string = version_id + ': Git#' + version_tag.rstrip()
 
    return version_string
