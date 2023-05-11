@@ -23,13 +23,14 @@
 // Define the JEOD job cycle times.
 //==========================================================================
 #define LOW_RATE_ENV  60.00    // Low-rate environment update interval
-#define DYNAMICS       0.03125 // Vehicle and plantary dynamics interval (32Hz)
+#define HIGH_RATE_ENV  0.250   // High-rate environment update interval
+#define DYNAMICS       0.03125 // Vehicle and planetary dynamics interval (32Hz)
 
 //==========================================================================
 // Define the Trick HLA job cycle times.
 //==========================================================================
-#define THLA_DATA_CYCLE_TIME        0.250    // HLA data communication cycle time.
-#define THLA_INTERACTION_CYCLE_TIME DYNAMICS // HLA Interaction cycle time.
+#define THLA_DATA_CYCLE_TIME        HIGH_RATE_ENV // HLA data communication cycle time.
+#define THLA_INTERACTION_CYCLE_TIME DYNAMICS      // HLA Interaction cycle time.
 
 //==========================================================================
 // Define the HLA phase initialization priorities.
@@ -131,33 +132,62 @@ class THLAInitSimObject : public Trick::SimObject {
 
 
 //==========================================================================
-// SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An example reference frame tree
+// SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An JEOD reference frame tree
 // simulation object definition.
 //==========================================================================
+##include "utils/ref_frames/include/ref_frame_state.hh"
 class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
 
   public:
-   /* Reference frame data. */
-   RefFrameData ssbary_data;
-   RefFrameData embary_data;
-   RefFrameData embary_rot_data;
-   RefFrameData earth_inertial_data;
-   RefFrameData moon_inertial_data;
-   RefFrameData earth_fixed_data;
-   RefFrameData moon_fixed_data;
-   RefFrameData mars_inertial_data;
-   RefFrameData mars_fixed_data;
+   // Need additional reference frames not directly associated with a
+   // planet.  These are for the two principal barycentric frames for
+   // the solar system (SSBary) and the Earth-Moon (EMBary)
+   jeod::RefFrame * ssbary_ptr; ///< @trick_units{--} Solar system barycenter.
+   jeod::RefFrame * embary_ptr; ///< @trick_units{--} Earth-Moon system barycenter.
 
-   SpaceFOMRefFrameTreeSimObject( )
+   // SpaceFOM Reference Frame Tree constructor.
+   SpaceFOMRefFrameTreeSimObject( jeod::DynManager & dyn_manager_in,
+                                  jeod::Planet     & sun_in,
+                                  jeod::Planet     & earth_in,
+                                  jeod::Planet     & moon_in,
+                                  jeod::Planet     & mars_in )
+   : dyn_manager(dyn_manager_in),
+     sun(sun_in),
+     earth(earth_in),
+     moon(moon_in),
+     mars(mars_in)
    {
+      // Wee need to subscribe to the desired reference frames to insure that
+      // JEOD updates them.
+      // We can start with the planetary frames.
+      P_EPH ("initialization") sun.inertial.subscribe();
+      P_EPH ("initialization") earth.inertial.subscribe();
+      P_EPH ("initialization") earth.pfix.subscribe();
+      P_EPH ("initialization") moon.inertial.subscribe();
+      P_EPH ("initialization") moon.pfix.subscribe();
+      P_EPH ("initialization") mars.inertial.subscribe();
+      P_EPH ("initialization") mars.pfix.subscribe();
+
+      // We need to lookup the barycentric frames.
+      ssbary_ptr = dyn_manager.find_ref_frame ("SSBary.inertial");
+      embary_ptr = dyn_manager.find_ref_frame ("EMBary.inertial");
+
+      // Subscribe to the barycenter frames.
+      P_EPH ("initialization") ssbary_ptr->subscribe();
+      P_EPH ("initialization") embary_ptr->subscribe();
    }
 
   private:
+    // Need for scheduled job persitence.
+    const jeod::DynManager & dyn_manager;
+    jeod::Planet & sun;
+    jeod::Planet & earth;
+    jeod::Planet & moon;
+    jeod::Planet & mars;
 
    // This object is not copyable
    SpaceFOMRefFrameTreeSimObject( const SpaceFOMRefFrameTreeSimObject & );
    SpaceFOMRefFrameTreeSimObject & operator=( const SpaceFOMRefFrameTreeSimObject & );
-
 
 };
 
@@ -167,28 +197,41 @@ class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
 // simulation object definition. This can be used for SpaceFOM ReferenceFrame
 // object discovery and data exchange.
 //==========================================================================
+##include "utils/ref_frames/include/ref_frame.hh"
+##include "JEOD/JEODRefFrameState.hh"
 class SpaceFOMRefFrameSimObject : public Trick::SimObject {
 
   public:
-   
-   /* HLA associated reference frames packing object. */
-   SpaceFOM::RefFrameBase frame_packing;
 
-   SpaceFOMRefFrameSimObject( RefFrameData & frame_data_ptr,
-                              unsigned short _INIT = 59  )
+   /* HLA associated reference frames packing object. */
+   JEODRefFrameState frame_packing;
+
+   /* JEOD Reference Frame state in SpaceFOM parent frame. */
+   jeod::RefFrameState ref_frame_state;
+
+   /* SimObjct constructor. */
+   SpaceFOMRefFrameSimObject( jeod::RefFrame * parent_frame_in,
+                              jeod::RefFrame * target_frame_in,
+                              unsigned short   _INIT = 59  )
+   : parent_frame_ptr(parent_frame_in),
+     target_frame_ptr(target_frame_in)
    {
-      // Set the reference to the reference frame.
-      this->ref_frame_data_ptr = &frame_data_ptr;
-      
       //
       // Initialization jobs
       //
-      P_INIT ("initialization") frame_packing.initialize( ref_frame_data_ptr );
+      P_INIT ("initialization") frame_packing.initialize( &ref_frame_state );
+      (HIGH_RATE_ENV, "environment") update ();
 
    }
 
   private:
-   RefFrameData * ref_frame_data_ptr;
+   jeod::RefFrame * parent_frame_ptr;
+   jeod::RefFrame * target_frame_ptr;
+
+   /* Update the SpaceFOM reference frame wrt. the specified parent
+   frame. */ void update () {
+      target_frame_ptr->compute_relative_state( *parent_frame_ptr, ref_frame_state );
+   }
 
    // This object is not copyable
    SpaceFOMRefFrameSimObject( const SpaceFOMRefFrameSimObject & );
@@ -207,15 +250,16 @@ SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME, THLA_INTERACTION_CYCLE_TIME,
 // SimObject used capture simulation specific initialization.
 THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
 
-// SimObject used for root reference frame discovery.
-SpaceFOMRefFrameTreeSimObject ref_frame_tree;
-SpaceFOMRefFrameSimObject solar_system_barycenter( ref_frame_tree.ssbary_data );
-SpaceFOMRefFrameSimObject earth_moon_barycenter( ref_frame_tree.embary_data );
-SpaceFOMRefFrameSimObject earth_moon_rotating( ref_frame_tree.embary_rot_data );
-SpaceFOMRefFrameSimObject earth_centered_intertial( ref_frame_tree.earth_inertial_data );
-SpaceFOMRefFrameSimObject moon_centered_intertial( ref_frame_tree.moon_inertial_data );
-SpaceFOMRefFrameSimObject earth_centered_fixed( ref_frame_tree.earth_fixed_data );
-SpaceFOMRefFrameSimObject moon_centered_fixed( ref_frame_tree.moon_fixed_data );
-SpaceFOMRefFrameSimObject mars_centered_intertial( ref_frame_tree.mars_inertial_data );
-SpaceFOMRefFrameSimObject mars_centered_fixed( ref_frame_tree.mars_fixed_data );
+// Build the SpaceFOM Reference Frame Tree using JEOD reference frames.
+SpaceFOMRefFrameTreeSimObject ref_frame_tree( dynamics.dyn_manager, sun.planet, earth.planet, moon.planet, mars.planet);
+
+SpaceFOMRefFrameSimObject solar_system_barycenter( ref_frame_tree.ssbary_ptr, ref_frame_tree.ssbary_ptr );
+SpaceFOMRefFrameSimObject sun_inertial( ref_frame_tree.ssbary_ptr, &sun.planet.inertial );
+SpaceFOMRefFrameSimObject earth_moon_barycenter( ref_frame_tree.ssbary_ptr, ref_frame_tree.embary_ptr );
+SpaceFOMRefFrameSimObject earth_centered_intertial( ref_frame_tree.embary_ptr, &earth.planet.inertial );
+SpaceFOMRefFrameSimObject moon_centered_intertial( ref_frame_tree.embary_ptr, &moon.planet.inertial );
+SpaceFOMRefFrameSimObject earth_centered_fixed( &earth.planet.inertial, &earth.planet.pfix );
+SpaceFOMRefFrameSimObject moon_centered_fixed( &moon.planet.inertial, &moon.planet.pfix );
+SpaceFOMRefFrameSimObject mars_centered_intertial( ref_frame_tree.ssbary_ptr, &mars.planet.inertial );
+SpaceFOMRefFrameSimObject mars_centered_fixed( &mars.planet.inertial, &mars.planet.pfix );
 
