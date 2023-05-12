@@ -1,6 +1,6 @@
 #=============================================================================
 # Set up HLA and TrickHLA environment.
-# Note the developer should check out latest TrickHLA tag to location
+# Note the developer should check out the latest TrickHLA tag to the location
 # defined below in $TRICKHLA_HOME
 #=============================================================================
 TRICKHLA_HOME ?= ${MODEL_PACKAGE_HOME}/TrickHLA
@@ -15,12 +15,15 @@ ifeq ("$(wildcard ${RTI_HOME})","")
    $(error "Must specify a valid RTI_HOME environment variable, which is currently set to invalid path ${RTI_HOME}")
 endif
 
-# These are for TrickHLA
+# Needed for TrickHLA.
 TRICK_SFLAGS   += -I${TRICKHLA_HOME}/S_modules
 TRICK_CFLAGS   += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -DIEEE_1516_2010
 TRICK_CXXFLAGS += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -DIEEE_1516_2010
 
-# These are for the HLA RTI libraries
+# The HLA IEEE 1516 header files are c++11 standard compliant.
+TRICK_ICGFLAGS += --icg-std=c++11
+
+# Needed for the HLA IEEE 1516 header files.
 ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
    TRICK_CFLAGS   += -I${RTI_HOME}/include
    TRICK_CXXFLAGS += -I${RTI_HOME}/include
