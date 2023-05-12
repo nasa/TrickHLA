@@ -99,20 +99,14 @@ RefFrameBase::~RefFrameBase()
  * @job_class{default_data}
  */
 void RefFrameBase::default_data(
-   SpaceFOM::ExecutionControl *execution_control,
-   TrickHLA::Object           *object,
-   char const                 *sim_obj_name,
-   char const                 *ref_frame_obj_name,
-   char const                 *ref_frame_name,
-   bool                        publishes )
+   TrickHLA::Object *object,
+   char const       *sim_obj_name,
+   char const       *ref_frame_obj_name,
+   char const       *ref_frame_name,
+   bool              publishes )
 {
    string ref_frame_name_str = string( sim_obj_name ) + "." + string( ref_frame_obj_name );
    string trick_name_str;
-
-   //
-   // Assign the reference in the manager to this Reference Frame object.
-   //
-   execution_control->root_ref_frame = this;
 
    //---------------------------------------------------------
    // Set up the execution configuration HLA object mappings.
