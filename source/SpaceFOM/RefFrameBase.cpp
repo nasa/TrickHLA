@@ -58,6 +58,7 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/RefFrameBase.hh"
 
 using namespace std;
+using namespace TrickHLA;
 using namespace SpaceFOM;
 
 #define REF_FRAME_PACKING_DEBUG 0
@@ -102,11 +103,31 @@ void RefFrameBase::default_data(
    TrickHLA::Object *object,
    char const       *sim_obj_name,
    char const       *ref_frame_obj_name,
+   char const       *ref_frame_parent_name,
    char const       *ref_frame_name,
    bool              publishes )
 {
    string ref_frame_name_str = string( sim_obj_name ) + "." + string( ref_frame_obj_name );
    string trick_name_str;
+
+   // Set the frame name and parent frame name.
+   if( publishes ){
+      if( ref_frame_parent_name != NULL ){
+         this->parent_name = trick_MM->mm_strdup( ref_frame_parent_name );
+      }
+      else{
+         this->parent_name = trick_MM->mm_strdup( "" );
+      }
+      if( ref_frame_name != NULL ){
+         this->name = trick_MM->mm_strdup( ref_frame_name );
+      }
+      else{
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
+                << " WARNING: Unexpected NULL federation instance frame name!" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+   }
 
    //---------------------------------------------------------
    // Set up the execution configuration HLA object mappings.

@@ -100,6 +100,7 @@ class RefFrameBase : public TrickHLA::Packing
    virtual void default_data( TrickHLA::Object *object,
                               char const       *sim_obj_name,
                               char const       *ref_frame_obj_name,
+                              char const       *ref_frame_parent_name,
                               char const       *ref_frame_name,
                               bool              publishes );
 

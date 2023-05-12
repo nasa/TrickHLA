@@ -235,22 +235,8 @@ void JEODRefFrameState::unpack()
       // Time tag for this state data.
       this->time = stc_data.time;
 
-      // Set the frame name and parent name.
-      if ( this->name != NULL ) {
-         free( this->name );
-         this->name = NULL;
-      }
-      this->name = strdup( this->name );
+      // The frame name and parent name are already 'unpacked'.
 
-      if ( this->parent_name != NULL ) {
-         free( this->parent_name );
-         this->parent_name = NULL;
-      }
-      if ( this->parent_name != NULL ) {
-         if ( this->parent_name[0] != '\0' ) {
-            this->parent_name = strdup( this->parent_name );
-         }
-      }
    }
 
    return;

@@ -118,6 +118,39 @@ trick.exec_set_stack_trace(False)
 
 
 # =========================================================================
+# Set up the JEOD environment.
+# =========================================================================
+jeod_time.time_manager_init.initializer = "UTC"
+jeod_time.time_manager_init.sim_start_format = trick.TimeEnum.calendar
+
+jeod_time.time_utc.calendar_year   = 2009
+jeod_time.time_utc.calendar_month  =   1
+jeod_time.time_utc.calendar_day    =   30
+jeod_time.time_utc.calendar_hour   =    12
+jeod_time.time_utc.calendar_minute =    0
+jeod_time.time_utc.calendar_second =  0.0
+
+jeod_time.time_tai.initialize_from_name = "UTC"
+jeod_time.time_tt.initialize_from_name  = "TAI"
+
+jeod_time.time_tai.update_from_name = "Dyn"
+jeod_time.time_utc.update_from_name = "TAI"
+jeod_time.time_tt.update_from_name  = "TAI"
+
+dynamics.dyn_manager_init.mode = trick.DynManagerInit.EphemerisMode_Ephemerides
+# dynamics.dyn_manager_init.central_point_name = "Earth"
+abm_integrator = trick.ABM4IntegratorConstructor()
+dynamics.dyn_manager_init.integ_constructor = abm_integrator 
+
+# Configure the ephemeris model
+env.de4xx.set_model_number(440)
+
+
+# Configure the integrator.
+#fast_integ_loop.integ_loop.set_deriv_ephem_update (1)
+
+
+# =========================================================================
 # Set up the HLA interfaces.
 # =========================================================================
 # Instantiate the Python SpaceFOM configuration object.
@@ -185,90 +218,37 @@ federate.set_time_constrained( True )
 
 
 #---------------------------------------------------------------------------
-# Set up for Root Reference Frame data.
+# Set up the Reference Frame objects.
 #---------------------------------------------------------------------------
-root_frame_name = 'RootFrame'
-parent_frame_name = ''
 
-ref_frame_tree.root_frame_data.name = root_frame_name
-ref_frame_tree.root_frame_data.parent_name = parent_frame_name
-                                        
-ref_frame_tree.root_frame_data.state.pos[0] = 0.0
-ref_frame_tree.root_frame_data.state.pos[1] = 0.0
-ref_frame_tree.root_frame_data.state.pos[2] = 0.0
-ref_frame_tree.root_frame_data.state.vel[0] = 0.0
-ref_frame_tree.root_frame_data.state.vel[1] = 0.0
-ref_frame_tree.root_frame_data.state.vel[2] = 0.0
-ref_frame_tree.root_frame_data.state.quat_scalar  = 1.0
-ref_frame_tree.root_frame_data.state.quat_vector[0] = 0.0
-ref_frame_tree.root_frame_data.state.quat_vector[1] = 0.0
-ref_frame_tree.root_frame_data.state.quat_vector[2] = 0.0
-ref_frame_tree.root_frame_data.state.ang_vel[0] = 0.0
-ref_frame_tree.root_frame_data.state.ang_vel[1] = 0.0
-ref_frame_tree.root_frame_data.state.ang_vel[2] = 0.0
-ref_frame_tree.root_frame_data.state.time = 0.0
+# Set the debug flag for the reference frames.
+solar_system_barycenter.frame_packing.debug = verbose
+sun_inertial.frame_packing.debug = verbose
+earth_moon_barycenter.frame_packing.debug = verbose
+earth_centered_inertial.frame_packing.debug = verbose
+moon_centered_inertial.frame_packing.debug = verbose
+mars_centered_inertial.frame_packing.debug = verbose
+earth_centered_fixed.frame_packing.debug = verbose
+moon_centered_fixed.frame_packing.debug = verbose
+mars_centered_fixed.frame_packing.debug = verbose
 
-
-ref_frame_tree.frame_A_data.name = 'FrameA'
-ref_frame_tree.frame_A_data.parent_name = root_frame_name
-                                        
-ref_frame_tree.frame_A_data.state.pos[0] = 10.0
-ref_frame_tree.frame_A_data.state.pos[1] = 10.0
-ref_frame_tree.frame_A_data.state.pos[2] = 10.0
-ref_frame_tree.frame_A_data.state.vel[0] = 0.0
-ref_frame_tree.frame_A_data.state.vel[1] = 0.0
-ref_frame_tree.frame_A_data.state.vel[2] = 0.0
-ref_frame_tree.frame_A_data.state.quat_scalar  = 1.0
-ref_frame_tree.frame_A_data.state.quat_vector[0] = 0.0
-ref_frame_tree.frame_A_data.state.quat_vector[1] = 0.0
-ref_frame_tree.frame_A_data.state.quat_vector[2] = 0.0
-ref_frame_tree.frame_A_data.state.ang_vel[0] = 0.0
-ref_frame_tree.frame_A_data.state.ang_vel[1] = 0.0
-ref_frame_tree.frame_A_data.state.ang_vel[2] = 0.0
-ref_frame_tree.frame_A_data.state.time = 0.0
-
-
-#---------------------------------------------------------------------------
-# Set up the Root Reference Frame object for discovery.
-# If it is the RRFP, it will publish the frame.
-# If it is NOT the RRFP, it will subscribe to the frame.
-#---------------------------------------------------------------------------
-root_frame = SpaceFOMRefFrameObject( federate.is_RRFP,
-                                     'RootFrame',
-                                     root_ref_frame.frame_packing,
-                                     'root_ref_frame.frame_packing' )
-
-# Set the debug flag for the root reference frame.
-root_ref_frame.frame_packing.debug = verbose
-
-# Set the root frame for the federate.
-federate.set_root_frame( root_frame )
-
-#---------------------------------------------------------------------------
-# Set up the Root Reference Frame object for discovery.
-# If it is the RRFP, it will publish the frame.
-# If it is NOT the RRFP, it will subscribe to the frame.
-#---------------------------------------------------------------------------
-frame_A = SpaceFOMRefFrameObject( True,
-                                  'FrameA',
-                                  ref_frame_A.frame_packing,
-                                  'ref_frame_A.frame_packing' )
-
-# Set the debug flag for the root reference frame.
-ref_frame_A.frame_packing.debug = verbose
-
-# Add this reference frame to the list of managed object.
-federate.add_fed_object( frame_A )
 
 #---------------------------------------------------------------------------
 # Add the HLA SimObjects associated with this federate.
 # This is really only useful for turning on and off HLA objects.
-# This doesn't really apply to these example simulations which are only HLA.
 #---------------------------------------------------------------------------
 federate.add_sim_object( THLA )
 federate.add_sim_object( THLA_INIT )
-federate.add_sim_object( root_ref_frame )
-federate.add_sim_object( ref_frame_A )
+federate.add_sim_object( ref_frame_tree )
+federate.add_sim_object( solar_system_barycenter )
+federate.add_sim_object( sun_inertial )
+federate.add_sim_object( earth_moon_barycenter )
+federate.add_sim_object( earth_centered_inertial )
+federate.add_sim_object( moon_centered_inertial )
+federate.add_sim_object( mars_centered_inertial )
+federate.add_sim_object( earth_centered_fixed )
+federate.add_sim_object( moon_centered_fixed )
+federate.add_sim_object( mars_centered_fixed )
 
 
 #---------------------------------------------------------------------------

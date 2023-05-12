@@ -166,7 +166,7 @@ class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
       //
       // Default data jobs
       //
-      ("default_data") allocate_tree(thla_manager);
+      //("default_data") allocate_tree(thla_manager);
 
       // Wee need to subscribe to the desired reference frames to insure that
       // JEOD updates them.
@@ -239,14 +239,13 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
      target_frame_ptr(target_frame_in)
    {
       //
-      // Default data jobs
-      //
-
-      //
       // Initialization jobs
       //
+      // Initialize the reference frame packing object.
       P_INIT ("initialization") frame_packing.initialize( &ref_frame_state );
-      (HIGH_RATE_ENV, "environment") update ();
+
+      // Update the reference frame state at the environment high rate.
+      (HIGH_RATE_ENV, "environment") update();
 
    }
 
@@ -257,8 +256,14 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
 
    /* Update the SpaceFOM reference frame wrt. the specified parent frame. */
    void update () {
+
+      // Compute the target reference frame wrt. the specified parent frame.
       target_frame_ptr->compute_relative_state( *parent_frame_ptr, ref_frame_state );
+
+      // Set the time tag for this reference frame state.
       frame_packing.set_time((time_tt.trunc_julian_time * 86400.0));
+
+      return;
    }
 
    // This object is not copyable
@@ -289,9 +294,9 @@ SpaceFOMRefFrameTreeSimObject ref_frame_tree( THLA.manager,
 SpaceFOMRefFrameSimObject solar_system_barycenter( jeod_time.time_tt, ref_frame_tree.ssbary_ptr, ref_frame_tree.ssbary_ptr );
 SpaceFOMRefFrameSimObject sun_inertial( jeod_time.time_tt, ref_frame_tree.ssbary_ptr, &sun.planet.inertial );
 SpaceFOMRefFrameSimObject earth_moon_barycenter( jeod_time.time_tt, ref_frame_tree.ssbary_ptr, ref_frame_tree.embary_ptr );
-SpaceFOMRefFrameSimObject earth_centered_intertial( jeod_time.time_tt, ref_frame_tree.embary_ptr, &earth.planet.inertial );
-SpaceFOMRefFrameSimObject moon_centered_intertial( jeod_time.time_tt, ref_frame_tree.embary_ptr, &moon.planet.inertial );
-SpaceFOMRefFrameSimObject mars_centered_intertial( jeod_time.time_tt, ref_frame_tree.ssbary_ptr, &mars.planet.inertial );
+SpaceFOMRefFrameSimObject earth_centered_inertial( jeod_time.time_tt, ref_frame_tree.embary_ptr, &earth.planet.inertial );
+SpaceFOMRefFrameSimObject moon_centered_inertial( jeod_time.time_tt, ref_frame_tree.embary_ptr, &moon.planet.inertial );
+SpaceFOMRefFrameSimObject mars_centered_inertial( jeod_time.time_tt, ref_frame_tree.ssbary_ptr, &mars.planet.inertial );
 SpaceFOMRefFrameSimObject earth_centered_fixed( jeod_time.time_tt, &earth.planet.inertial, &earth.planet.pfix );
 SpaceFOMRefFrameSimObject moon_centered_fixed( jeod_time.time_tt, &moon.planet.inertial, &moon.planet.pfix );
 SpaceFOMRefFrameSimObject mars_centered_fixed( jeod_time.time_tt, &mars.planet.inertial, &mars.planet.pfix );
@@ -301,61 +306,84 @@ SpaceFOMRefFrameSimObject mars_centered_fixed( jeod_time.time_tt, &mars.planet.i
 // Create the THLA connections for the SpaceFOM Reference Frame Tree.
 //==========================================================================
 void create_connections() {
+
+   // Allocate the Reference Frame tree.
+   ref_frame_tree.allocate_tree( THLA.manager );
+
+   // Setup the Solar System barycenter frame as the root reference frame.
    solar_system_barycenter.frame_packing.default_data( &(THLA.manager.objects[0]),
                                                        "solar_system_barycenter",
                                                        "frame_packing",
+                                                       NULL,
                                                        "SolarSystemBarycentricInertial",
                                                        true );
-   // Set the root reference frame for Execution Control.
+
+   // Set the Solar System barycenter frame as the root reference frame.
    THLA.execution_control.root_ref_frame = &(solar_system_barycenter.frame_packing);
 
+   // Setup the Sun inertial reference frame.
    sun_inertial.frame_packing.default_data( &(THLA.manager.objects[1]),
                                             "sun_inertial",
                                             "frame_packing",
+                                            "SolarSystemBarycentricInertial",
                                             "SunCentricInertial",
                                             true );
 
+   // Setup the Earth-Moon barycentric inertial reference frame.
    earth_moon_barycenter.frame_packing.default_data( &(THLA.manager.objects[2]),
                                                      "earth_moon_barycenter",
                                                      "frame_packing",
+                                                     "SolarSystemBarycentricInertial",
                                                      "EarthMoonBarycentricInertial",
                                                      true );
 
-   earth_centered_intertial.frame_packing.default_data( &(THLA.manager.objects[3]),
-                                                        "earth_centered_intertial",
-                                                        "frame_packing",
-                                                        "EarthMJ2000Eq",
-                                                        true );
-
-   moon_centered_intertial.frame_packing.default_data( &(THLA.manager.objects[4]),
-                                                       "moon_centered_intertial",
+   // Setup the Earth inertial reference frame.
+   earth_centered_inertial.frame_packing.default_data( &(THLA.manager.objects[3]),
+                                                       "earth_centered_inertial",
                                                        "frame_packing",
-                                                       "MoonCentricInertial",
+                                                       "EarthMoonBarycentricInertial",
+                                                       "EarthMJ2000Eq",
                                                        true );
 
-   mars_centered_intertial.frame_packing.default_data( &(THLA.manager.objects[5]),
-                                                       "mars_centered_intertial",
-                                                       "frame_packing",
-                                                       "MarsCentricInertial",
-                                                       true );
+   // Setup the Moon inertial reference frame.
+   moon_centered_inertial.frame_packing.default_data( &(THLA.manager.objects[4]),
+                                                      "moon_centered_inertial",
+                                                      "frame_packing",
+                                                      "EarthMoonBarycentricInertial",
+                                                      "MoonCentricInertial",
+                                                      true );
 
+   // Setup the Mars inertial reference frame.
+   mars_centered_inertial.frame_packing.default_data( &(THLA.manager.objects[5]),
+                                                      "mars_centered_inertial",
+                                                      "frame_packing",
+                                                      "SolarSystemBarycentricInertial",
+                                                      "MarsCentricInertial",
+                                                      true );
+
+   // Setup the Earth fixed reference frame.
    earth_centered_fixed.frame_packing.default_data( &(THLA.manager.objects[6]),
                                                     "earth_centered_fixed",
                                                     "frame_packing",
+                                                    "EarthMJ2000Eq",
                                                     "EarthCentricFixed",
                                                     true );
 
+   // Setup the Moon fixed reference frame.
    moon_centered_fixed.frame_packing.default_data( &(THLA.manager.objects[7]),
-                                                    "moon_centered_fixed",
-                                                    "frame_packing",
-                                                    "MoonCentricFixed",
-                                                    true );
+                                                   "moon_centered_fixed",
+                                                   "frame_packing",
+                                                   "MoonCentricInertial",
+                                                   "MoonCentricFixed",
+                                                   true );
 
+   // Setup the Mars fixed reference frame.
    mars_centered_fixed.frame_packing.default_data( &(THLA.manager.objects[8]),
-                                                    "mars_centered_fixed",
-                                                    "frame_packing",
-                                                    "MarsCentricFixed",
-                                                    true );
+                                                   "mars_centered_fixed",
+                                                   "frame_packing",
+                                                   "MarsCentricFixed",
+                                                   "MarsCentricInertial",
+                                                   true );
 
 }
 
