@@ -38,6 +38,7 @@ else
 endif
 
 ifeq ($(TRICK_HOST_TYPE),Darwin)
+   # macOS
 
    ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
       # Allow the user to override RTI_JAVA_HOME or RTI_JAVA_LIB_PATH,
@@ -104,6 +105,7 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
    endif
 
 else
+   # Linux
 
    ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
       # Allow the user to override RTI_JAVA_HOME or RTI_JAVA_LIB_PATH,
@@ -114,6 +116,8 @@ else
       RTI_JAVA_HOME ?= ${RTI_HOME}/jre
       ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/amd64/server)","")
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/amd64/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/aarch64/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/aarch64/server
       else ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/server)","")
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/server
       else
