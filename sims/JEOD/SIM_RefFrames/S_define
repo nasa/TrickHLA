@@ -139,6 +139,7 @@ class THLAInitSimObject : public Trick::SimObject {
 // SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An JEOD reference frame tree
 // simulation object definition.
 //==========================================================================
+##include <iostream>
 ##include "utils/ref_frames/include/ref_frame_state.hh"
 class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
 
@@ -170,22 +171,7 @@ class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
 
       // Wee need to subscribe to the desired reference frames to insure that
       // JEOD updates them.
-      // We can start with the planetary frames.
-      P_EPH ("initialization") sun.inertial.subscribe();
-      P_EPH ("initialization") earth.inertial.subscribe();
-      P_EPH ("initialization") earth.pfix.subscribe();
-      P_EPH ("initialization") moon.inertial.subscribe();
-      P_EPH ("initialization") moon.pfix.subscribe();
-      P_EPH ("initialization") mars.inertial.subscribe();
-      P_EPH ("initialization") mars.pfix.subscribe();
-
-      // We need to lookup the barycentric frames.
-      ssbary_ptr = dyn_manager.find_ref_frame ("SSBary.inertial");
-      embary_ptr = dyn_manager.find_ref_frame ("EMBary.inertial");
-
-      // Subscribe to the barycenter frames.
-      P_EPH ("initialization") ssbary_ptr->subscribe();
-      P_EPH ("initialization") embary_ptr->subscribe();
+      P_EPH ("initialization") subscribe_to_frames();
    }
 
    // Allocate the reference frame objects needed for this tree.
@@ -193,6 +179,45 @@ class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
       thla_manager.obj_count = NUM_SPACEFOM_REFERENCE_FRAMES;
       thla_manager.objects = (TrickHLA::Object*)trick_MM->declare_var( "TrickHLA::Object",
                                                                        thla_manager.obj_count );
+      return;
+   }
+
+   // Subscribe to the needed JEOD reference frames.
+   void subscribe_to_frames(){
+
+      // We can start with the planetary frames.
+      sun.inertial.subscribe();
+      earth.inertial.subscribe();
+      earth.pfix.subscribe();
+      moon.inertial.subscribe();
+      moon.pfix.subscribe();
+      mars.inertial.subscribe();
+      mars.pfix.subscribe();
+
+      // We need to lookup the barycentric frames.
+      ssbary_ptr = dyn_manager.find_ref_frame ("SSBary.inertial");
+      // Must have a reference to the Solar System Barycenter frame.
+      if ( ssbary_ptr == NULL ) {
+         std::ostringstream errmsg;
+         errmsg << "S_deSpaceFOMRefFrameTreeSimObject::subscribe_to_frames():" << __LINE__
+                << " ERROR: Unexpected NULL reference frame: SSBary.inertial" << THLA_ENDL;
+         // Print message and terminate.
+         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      embary_ptr = dyn_manager.find_ref_frame ("EMBary.inertial");
+      if ( embary_ptr == NULL ) {
+         std::ostringstream errmsg;
+         errmsg << "S_deSpaceFOMRefFrameTreeSimObject::subscribe_to_frames():" << __LINE__
+                << " ERROR: Unexpected NULL reference frame: EMBary.inertial" << THLA_ENDL;
+         // Print message and terminate.
+         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      }
+
+      // Subscribe to the barycenter frames.
+      ssbary_ptr->subscribe();
+      embary_ptr->subscribe();
+
+      return;
    }
 
   private:
