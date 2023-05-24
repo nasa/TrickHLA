@@ -370,7 +370,7 @@ Examples:\n  check_code -s -o -v --cstyle_casts\n  check_code -i -o -v\n  check_
       # Add the multi-processor parallelization arguments.
       cppc_loadmax = None
       if num_cpus > 1:
-         cppc_loadmax = ( 3 * num_cpus ) / 2
+         cppc_loadmax = int( ( 3 * num_cpus ) / 2 )
          # Set the number of cppcheck job threads and limit the load.
          cppcheck_args.extend( ['-j', str( num_cpus ), '-l', str( cppc_loadmax )] )
 
