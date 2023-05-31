@@ -35,8 +35,8 @@
 //==========================================================================
 // Define the HLA phase initialization priorities.
 //==========================================================================
-#define P_HLA_INIT   60    // HLA initialization phase.
 #define P_HLA_EARLY  1     // HLA early job phase.
+#define P_HLA_INIT   60    // HLA initialization phase.
 #define P_HLA_LATE   65534 // HLA late job phase.
 
 
@@ -91,15 +91,26 @@
 // SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
 // initialization SimObject.
 //==========================================================================
-class THLAInitSimObject : public Trick::SimObject {
+class JEODHLAInitSimObject : public Trick::SimObject {
 
  public:
 
-   THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
-                      TrickHLA::Federate & thla_fed   ) 
-      : thla_manager( thla_mngr ),
-        thla_federate( thla_fed )
+   JEODHLAInitSimObject( jeod::TimeManager          & time_manager_in,
+                         jeod::TimeManagerInit      & time_manager_init_in,
+                         jeod::TimeTT               & time_in,
+                         TrickHLA::Manager          & thla_mngr,
+                         TrickHLA::Federate         & thla_fed,
+                         SpaceFOM::ExecutionControl & exec_ctrl )
+      : time_manager(time_manager_in),
+        time_manager_init(time_manager_init_in),
+        time_tt(time_in),
+        thla_manager( thla_mngr ),
+        thla_federate( thla_fed ),
+        execution_control( exec_ctrl )
    {
+
+      // Initialize the epoch based on the starting JEOD time.
+      P60 ("initialization") set_scenario_timeline_epoch(time_tt);
 
       //--------------------------------------------------------------------
       // NOTE: Initialization phase numbers must be greater than P60 
@@ -121,27 +132,43 @@ class THLAInitSimObject : public Trick::SimObject {
       P100 ("initialization") thla_manager.clear_init_sync_points();
    }
 
+ protected:
+   void set_scenario_timeline_epoch(jeod::TimeTT & tt_time){
+      // Set the epoch if this is the Master federate.
+      if( execution_control.is_master() ){
+         execution_control.scenario_timeline->set_epoch((tt_time.trunc_julian_time * 86400.0));
+      }
+      // Otherwise, it will be set through the ExCO.
+      else {
+         ;
+      }
+   }
+
  private:
-   TrickHLA::Manager  & thla_manager;
-   TrickHLA::Federate & thla_federate;
+   jeod::TimeManager          & time_manager;
+   jeod::TimeManagerInit      & time_manager_init;
+   jeod::TimeTT               & time_tt;
+   TrickHLA::Manager          & thla_manager;
+   TrickHLA::Federate         & thla_federate;
+   SpaceFOM::ExecutionControl & execution_control;
 	
    // Do not allow the implicit copy constructor or assignment operator.
-   THLAInitSimObject(const THLAInitSimObject & rhs);
-   THLAInitSimObject & operator=(const THLAInitSimObject & rhs);
+   JEODHLAInitSimObject(const JEODHLAInitSimObject & rhs);
+   JEODHLAInitSimObject & operator=(const JEODHLAInitSimObject & rhs);
 	
    // Do not allow the default constructor.
-   THLAInitSimObject();
+   JEODHLAInitSimObject();
 
 };
 
 
 //==========================================================================
-// SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An JEOD reference frame tree
+// SIM_OBJECT: JEODRefFrameTreeSimObject - An JEOD reference frame tree
 // simulation object definition.
 //==========================================================================
 ##include <iostream>
 ##include "utils/ref_frames/include/ref_frame_state.hh"
-class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
+class JEODRefFrameTreeSimObject : public Trick::SimObject {
 
   public:
    // Need additional reference frames not directly associated with a
@@ -151,12 +178,12 @@ class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
    jeod::RefFrame * embary_ptr; ///< @trick_units{--} Earth-Moon system barycenter.
 
    // SpaceFOM Reference Frame Tree constructor.
-   SpaceFOMRefFrameTreeSimObject( TrickHLA::Manager & thla_manager_in,
-                                  jeod::DynManager  & dyn_manager_in,
-                                  jeod::Planet      & sun_in,
-                                  jeod::Planet      & earth_in,
-                                  jeod::Planet      & moon_in,
-                                  jeod::Planet      & mars_in )
+   JEODRefFrameTreeSimObject( TrickHLA::Manager & thla_manager_in,
+                              jeod::DynManager  & dyn_manager_in,
+                              jeod::Planet      & sun_in,
+                              jeod::Planet      & earth_in,
+                              jeod::Planet      & moon_in,
+                              jeod::Planet      & mars_in )
    : thla_manager(thla_manager_in),
      dyn_manager(dyn_manager_in),
      sun(sun_in),
@@ -169,7 +196,7 @@ class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
       //
       //("default_data") allocate_tree(thla_manager);
 
-      // Wee need to subscribe to the desired reference frames to insure that
+      // We need to subscribe to the desired reference frames to insure that
       // JEOD updates them.
       P_EPH ("initialization") subscribe_to_frames();
    }
@@ -199,7 +226,7 @@ class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
       // Must have a reference to the Solar System Barycenter frame.
       if ( ssbary_ptr == NULL ) {
          std::ostringstream errmsg;
-         errmsg << "S_deSpaceFOMRefFrameTreeSimObject::subscribe_to_frames():" << __LINE__
+         errmsg << "S_deJEODRefFrameTreeSimObject::subscribe_to_frames():" << __LINE__
                 << " ERROR: Unexpected NULL reference frame: SSBary.inertial" << THLA_ENDL;
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
@@ -207,7 +234,7 @@ class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
       embary_ptr = dyn_manager.find_ref_frame ("EMBary.inertial");
       if ( embary_ptr == NULL ) {
          std::ostringstream errmsg;
-         errmsg << "S_deSpaceFOMRefFrameTreeSimObject::subscribe_to_frames():" << __LINE__
+         errmsg << "S_deJEODRefFrameTreeSimObject::subscribe_to_frames():" << __LINE__
                 << " ERROR: Unexpected NULL reference frame: EMBary.inertial" << THLA_ENDL;
          // Print message and terminate.
          TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
@@ -230,21 +257,21 @@ class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
     jeod::Planet & mars;
 
    // This object is not copyable
-   SpaceFOMRefFrameTreeSimObject( const SpaceFOMRefFrameTreeSimObject & );
-   SpaceFOMRefFrameTreeSimObject & operator=( const SpaceFOMRefFrameTreeSimObject & );
+   JEODRefFrameTreeSimObject( const JEODRefFrameTreeSimObject & );
+   JEODRefFrameTreeSimObject & operator=( const JEODRefFrameTreeSimObject & );
 
 };
 
 
 //==========================================================================
-// SIM_OBJECT: SpaceFOMRefFrameSimObject - An example reference frame
+// SIM_OBJECT: JEODRefFrameSimObject - An example reference frame
 // simulation object definition. This can be used for SpaceFOM ReferenceFrame
 // object discovery and data exchange.
 //==========================================================================
 ##include "environment/time/include/time_tt.hh"
 ##include "utils/ref_frames/include/ref_frame.hh"
 ##include "JEOD/JEODRefFrameState.hh"
-class SpaceFOMRefFrameSimObject : public Trick::SimObject {
+class JEODRefFrameSimObject : public Trick::SimObject {
 
   public:
 
@@ -255,7 +282,7 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
    jeod::RefFrameState ref_frame_state;
 
    /* SimObjct constructor. */
-   SpaceFOMRefFrameSimObject( jeod::TimeTT   & time_in,
+   JEODRefFrameSimObject( jeod::TimeTT   & time_in,
                               jeod::RefFrame * parent_frame_in,
                               jeod::RefFrame * target_frame_in,
                               unsigned short   _INIT = 59  )
@@ -292,8 +319,8 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
    }
 
    // This object is not copyable
-   SpaceFOMRefFrameSimObject( const SpaceFOMRefFrameSimObject & );
-   SpaceFOMRefFrameSimObject & operator=( const SpaceFOMRefFrameSimObject & );
+   JEODRefFrameSimObject( const JEODRefFrameSimObject & );
+   JEODRefFrameSimObject & operator=( const JEODRefFrameSimObject & );
 
 };
 
@@ -306,25 +333,30 @@ SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME, THLA_INTERACTION_CYCLE_TIME,
                         P_HLA_EARLY, P_HLA_INIT, P_HLA_LATE );
 
 // SimObject used capture simulation specific initialization.
-THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
+JEODHLAInitSimObject THLA_INIT( jeod_time.time_manager,
+                                jeod_time.time_manager_init,
+                                jeod_time.time_tt,
+                                THLA.manager,
+                                THLA.federate,
+                                THLA.execution_control );
 
 // Build the SpaceFOM Reference Frame Tree using JEOD reference frames.
-SpaceFOMRefFrameTreeSimObject ref_frame_tree( THLA.manager,
-                                              dynamics.dyn_manager,
-                                              sun.planet,
-                                              earth.planet,
-                                              moon.planet,
-                                              mars.planet  );
+JEODRefFrameTreeSimObject ref_frame_tree( THLA.manager,
+                                          dynamics.dyn_manager,
+                                          sun.planet,
+                                          earth.planet,
+                                          moon.planet,
+                                          mars.planet  );
 
-SpaceFOMRefFrameSimObject solar_system_barycenter( jeod_time.time_tt, ref_frame_tree.ssbary_ptr, ref_frame_tree.ssbary_ptr );
-SpaceFOMRefFrameSimObject sun_inertial( jeod_time.time_tt, ref_frame_tree.ssbary_ptr, &sun.planet.inertial );
-SpaceFOMRefFrameSimObject earth_moon_barycenter( jeod_time.time_tt, ref_frame_tree.ssbary_ptr, ref_frame_tree.embary_ptr );
-SpaceFOMRefFrameSimObject earth_centered_inertial( jeod_time.time_tt, ref_frame_tree.embary_ptr, &earth.planet.inertial );
-SpaceFOMRefFrameSimObject moon_centered_inertial( jeod_time.time_tt, ref_frame_tree.embary_ptr, &moon.planet.inertial );
-SpaceFOMRefFrameSimObject mars_centered_inertial( jeod_time.time_tt, ref_frame_tree.ssbary_ptr, &mars.planet.inertial );
-SpaceFOMRefFrameSimObject earth_centered_fixed( jeod_time.time_tt, &earth.planet.inertial, &earth.planet.pfix );
-SpaceFOMRefFrameSimObject moon_centered_fixed( jeod_time.time_tt, &moon.planet.inertial, &moon.planet.pfix );
-SpaceFOMRefFrameSimObject mars_centered_fixed( jeod_time.time_tt, &mars.planet.inertial, &mars.planet.pfix );
+JEODRefFrameSimObject solar_system_barycenter( jeod_time.time_tt, ref_frame_tree.ssbary_ptr, ref_frame_tree.ssbary_ptr );
+JEODRefFrameSimObject sun_inertial( jeod_time.time_tt, ref_frame_tree.ssbary_ptr, &sun.planet.inertial );
+JEODRefFrameSimObject earth_moon_barycenter( jeod_time.time_tt, ref_frame_tree.ssbary_ptr, ref_frame_tree.embary_ptr );
+JEODRefFrameSimObject earth_centered_inertial( jeod_time.time_tt, ref_frame_tree.embary_ptr, &earth.planet.inertial );
+JEODRefFrameSimObject moon_centered_inertial( jeod_time.time_tt, ref_frame_tree.embary_ptr, &moon.planet.inertial );
+JEODRefFrameSimObject mars_centered_inertial( jeod_time.time_tt, ref_frame_tree.ssbary_ptr, &mars.planet.inertial );
+JEODRefFrameSimObject earth_centered_fixed( jeod_time.time_tt, &earth.planet.inertial, &earth.planet.pfix );
+JEODRefFrameSimObject moon_centered_fixed( jeod_time.time_tt, &moon.planet.inertial, &moon.planet.pfix );
+JEODRefFrameSimObject mars_centered_fixed( jeod_time.time_tt, &mars.planet.inertial, &mars.planet.pfix );
 
 
 //==========================================================================

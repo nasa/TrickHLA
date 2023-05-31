@@ -111,9 +111,9 @@ trick.exec_set_trap_sigfpe(True)
 trick.checkpoint_post_init(1)
 #trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
 
-trick.exec_set_enable_freeze(False)
-trick.exec_set_freeze_command(False)
-trick.sim_control_panel_set_enabled(False)
+trick.exec_set_enable_freeze(True)
+trick.exec_set_freeze_command(True)
+trick.sim_control_panel_set_enabled(True)
 trick.exec_set_stack_trace(False)
 
 
@@ -176,18 +176,17 @@ else :
 #--------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.
 #--------------------------------------------------------------------------
-federate.set_master_role( False ) # This is NOT the Master federate.
-federate.set_pacing_role( False ) # This is NOT the Pacing federate.
-federate.set_RRFP_role( True )    # This is the Root Reference Frame Publisher.
+federate.set_master_role( True ) # This is the Master federate.
+federate.set_pacing_role( True ) # This is the Pacing federate.
+federate.set_RRFP_role( True )   # This is the Root Reference Frame Publisher.
 
 #--------------------------------------------------------------------------
 # Add in known required federates.
 #--------------------------------------------------------------------------
 # This is the RRFP federate.
 # It doesn't really need to know about any other federates.
-#federate.add_known_fededrate( True, str(federate.federate.name) )
-#federate.add_known_fededrate( True, 'Master' )
-#federate.add_known_fededrate( True, 'Pacing' )
+federate.add_known_fededrate( True, str(federate.federate.name) )
+federate.add_known_fededrate( True, 'Other' )
 
 #--------------------------------------------------------------------------
 # Configure the CRC.
@@ -203,6 +202,13 @@ THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 #--------------------------------------------------------------------------
 # Must specify a federate HLA lookahead value in seconds.
 federate.set_lookahead_time( 0.250 )
+
+# Must specify the Least Common Time Step for all federates in the
+# federation execution.
+federate.set_least_common_time_step( 250000 )
+
+# Set the amount of seconds used to 'pad' mode transitions.
+federate.set_time_padding( 2.0 )
 
 # Setup Time Management parameters.
 federate.set_time_regulating( True )

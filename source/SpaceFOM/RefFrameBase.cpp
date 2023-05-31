@@ -144,7 +144,6 @@ void RefFrameBase::default_data(
    //
    // Specify the Reference Frame attributes.
    //
-   // Setup the "root_frame_name" attribute.
    object->attributes[0].FOM_name      = allocate_input_string( "name" );
    trick_name_str                      = ref_frame_name_str + string( ".name" );
    object->attributes[0].trick_name    = allocate_input_string( trick_name_str );
@@ -263,10 +262,22 @@ void RefFrameBase::set_name( char const *new_name )
  */
 void RefFrameBase::set_parent_name( char const *name )
 {
+   ostringstream errmsg;
+
+   // Check for initialization.
+   if ( initialized ) {
+      errmsg << "SpaceFOM::RefFrameBase::set_parent_name():" << __LINE__
+             << " ERROR: The initialize() function has already been called" << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Check for NULL parent_name.
    if ( this->parent_name != NULL ) {
       trick_MM->delete_var( (void *)this->parent_name );
    }
    this->parent_name = trick_MM->mm_strdup( name );
+
    return;
 }
 
