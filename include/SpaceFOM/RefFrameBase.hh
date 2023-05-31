@@ -1,7 +1,7 @@
 /*!
 @file SpaceFOM/RefFrameBase.hh
 @ingroup SpaceFOM
-@brief This class provides data packing for the SpaceFOM Reference Frames.
+@brief This class provides an extendable base class for SpaceFOM Reference Frames packing.
 
 This is the base implementation for the Space Reference FOM (SpaceFOM)
 interface to the Reference Frame object. This needs to be available
@@ -105,9 +105,8 @@ class RefFrameBase : public TrickHLA::Packing
                               bool              publishes );
 
    // Initialize the packing object.
-   /*! @brief Set the reference to the reference frame data.
-    *  @param ref_frame_data_ptr Pointer to the RefFrameData instance. */
-   void initialize( RefFrameData *ref_frame_data_ptr );
+   /*! @brief Set the reference to the reference frame data. */
+   void initialize( );
 
    /*! @brief Initialization callback as part of the TrickHLA::Packing functions.
     *  @param obj Object associated with this packing class. */
@@ -138,11 +137,11 @@ class RefFrameBase : public TrickHLA::Packing
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to pack the data before the data is sent to the RTI. */
-   virtual void pack();
+   virtual void pack() = 0;
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to unpack the data after data is received from the RTI. */
-   virtual void unpack();
+   virtual void unpack() = 0;
 
    // Access to protected data.
    virtual TrickHLA::Object *get_object()
@@ -155,7 +154,6 @@ class RefFrameBase : public TrickHLA::Packing
 
   protected:
    bool                 initialized;    ///< @trick_units{--} Initialization indication flag.
-   RefFrameData        *ref_frame_data; ///< @trick_units{--} Reference frame data.
    TrickHLA::Attribute *ref_frame_attr; ///< @trick_io{**} Reference Frame Attribute.
 
    char *name;        ///< @trick_units{--} Name of the reference frame.
