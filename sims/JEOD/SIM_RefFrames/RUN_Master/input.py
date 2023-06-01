@@ -1,17 +1,19 @@
 ##############################################################################
 # PURPOSE:
 #    (This is a Python input file for configuring the Space Reference FOM
-#     example Root Reference Frame Publisher (RRFP) federate run.)
+#     example Master federate run.)
 #
 # REFERENCE:
-#    (Trick 19 documentation.)
+#    (Trick documentation.)
 #
 # ASSUMPTIONS AND LIMITATIONS:
 #    ((Uses the SpaceFOMFederateConfig Python class.)
-#     (Uses the SpaceFOMRefFrameObject Python class.))
+#     (Uses the SpaceFOMRefFrameObject Python class.)
+#     (Instantiated the default TrickHLATimeOfDayTimeline based CTE time
+#      line for testing.))
 #
 # PROGRAMMERS:
-#    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.)))
+#    (((Edwin Z. Crues) (NASA/ER7) (June 2023) (--) (JEOD support and testing.)))
 ##############################################################################
 import sys
 sys.path.append('../../../')
@@ -23,7 +25,7 @@ from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
 def print_usage_message( ):
 
    print(' ')
-   print('JEOD-based SpaceFOM Reference Frame Simulation Command Line Configuration Options:')
+   print('TrickHLA SpaceFOM JEOD Master Simulation Command Line Configuration Options:')
    print('  -h -help         : Print this help message.')
    print('  -stop [time]     : Time to stop simulation, default is 10.0 seconds.')
    print('  -nostop          : Set no stop time on simulation.')
@@ -114,7 +116,7 @@ trick.checkpoint_post_init(1)
 trick.exec_set_enable_freeze(True)
 trick.exec_set_freeze_command(True)
 trick.sim_control_panel_set_enabled(True)
-trick.exec_set_stack_trace(False)
+trick.exec_set_stack_trace(True)
 
 
 # =========================================================================
@@ -123,11 +125,11 @@ trick.exec_set_stack_trace(False)
 jeod_time.time_manager_init.initializer = "UTC"
 jeod_time.time_manager_init.sim_start_format = trick.TimeEnum.calendar
 
-jeod_time.time_utc.calendar_year   = 1969
+jeod_time.time_utc.calendar_year   = 2023
 jeod_time.time_utc.calendar_month  =    7
-jeod_time.time_utc.calendar_day    =   20
-jeod_time.time_utc.calendar_hour   =   20
-jeod_time.time_utc.calendar_minute =   17
+jeod_time.time_utc.calendar_day    =    4
+jeod_time.time_utc.calendar_hour   =   12
+jeod_time.time_utc.calendar_minute =    0
 jeod_time.time_utc.calendar_second =  0.0
 
 jeod_time.time_tai.initialize_from_name = "UTC"
@@ -159,13 +161,14 @@ federate = SpaceFOMFederateConfig( THLA.federate,
                                    THLA.execution_control,
                                    THLA.ExCO,
                                    'SpaceFOM_JEOD_Test',
-                                   'JEODRefFrames',
+                                   'Master',
                                    True )
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job
 # to configure the ExCO. This is only needed for input file configuration.
 #federate.set_ExCO_S_define_name( 'THLA_INIT.ExCO' )
+
 
 # Set the debug output level.
 if (verbose == True) : 
@@ -176,17 +179,15 @@ else :
 #--------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.
 #--------------------------------------------------------------------------
-federate.set_master_role( False ) # This is the Master federate.
-federate.set_pacing_role( False ) # This is the Pacing federate.
-federate.set_RRFP_role( True )    # This is the Root Reference Frame Publisher.
+federate.set_master_role( True ) # This is the Master federate.
+federate.set_pacing_role( True ) # This is also the Pacing federate.
+federate.set_RRFP_role( False )  # This is NOT the Root Reference Frame Publisher.
 
 #--------------------------------------------------------------------------
 # Add in known required federates.
 #--------------------------------------------------------------------------
-# This is the RRFP federate.
-# It doesn't really need to know about any other federates.
 federate.add_known_fededrate( True, str(federate.federate.name) )
-federate.add_known_fededrate( True, 'Master' )
+federate.add_known_fededrate( True, 'RRFP' )
 
 #--------------------------------------------------------------------------
 # Configure the CRC.
@@ -200,6 +201,9 @@ THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 #--------------------------------------------------------------------------
 # Set up federate related time related parameters.
 #--------------------------------------------------------------------------
+# Pull the scenario timeline epoch from JEOD.
+federate.set_scenario_timeline_epoch( jeod_time.time_tt.trunc_julian_time * 86400.0 )
+
 # Must specify a federate HLA lookahead value in seconds.
 federate.set_lookahead_time( 0.250 )
 
@@ -220,7 +224,7 @@ federate.set_time_constrained( True )
 # By setting this we are specifying the use of Common Timing Equipment (CTE)
 # for controlling the Mode Transitions for all federates using CTE.
 # Don't really need CTE for RRFP.
-#THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::CTETimelineBase' )
+THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::CTETimelineBase' )
 
 
 #---------------------------------------------------------------------------
