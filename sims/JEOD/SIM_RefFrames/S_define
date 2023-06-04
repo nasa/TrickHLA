@@ -283,9 +283,9 @@ class JEODRefFrameSimObject : public Trick::SimObject {
 
    /* SimObjct constructor. */
    JEODRefFrameSimObject( jeod::TimeTT   & time_in,
-                              jeod::RefFrame * parent_frame_in,
-                              jeod::RefFrame * target_frame_in,
-                              unsigned short   _INIT = 59  )
+                          jeod::RefFrame * parent_frame_in,
+                          jeod::RefFrame * target_frame_in,
+                          unsigned short   _INIT = 59  )
    : time_tt(time_in),
      parent_frame_ptr(parent_frame_in),
      target_frame_ptr(target_frame_in)
@@ -373,7 +373,7 @@ void create_connections() {
                                                        "frame_packing",
                                                        NULL,
                                                        "SolarSystemBarycentricInertial",
-                                                       true );
+                                                       false );
 
    // Set the Solar System barycenter frame as the root reference frame.
    THLA.execution_control.root_ref_frame = &(solar_system_barycenter.frame_packing);
@@ -384,7 +384,7 @@ void create_connections() {
                                             "frame_packing",
                                             "SolarSystemBarycentricInertial",
                                             "SunCentricInertial",
-                                            true );
+                                            false );
 
    // Setup the Earth-Moon barycentric inertial reference frame.
    earth_moon_barycenter.frame_packing.default_data( &(THLA.manager.objects[2]),
@@ -392,7 +392,7 @@ void create_connections() {
                                                      "frame_packing",
                                                      "SolarSystemBarycentricInertial",
                                                      "EarthMoonBarycentricInertial",
-                                                     true );
+                                                     false );
 
    // Setup the Earth inertial reference frame.
    earth_centered_inertial.frame_packing.default_data( &(THLA.manager.objects[3]),
@@ -400,7 +400,7 @@ void create_connections() {
                                                        "frame_packing",
                                                        "EarthMoonBarycentricInertial",
                                                        "EarthMJ2000Eq",
-                                                       true );
+                                                       false );
 
    // Setup the Moon inertial reference frame.
    moon_centered_inertial.frame_packing.default_data( &(THLA.manager.objects[4]),
@@ -408,7 +408,7 @@ void create_connections() {
                                                       "frame_packing",
                                                       "EarthMoonBarycentricInertial",
                                                       "MoonCentricInertial",
-                                                      true );
+                                                      false );
 
    // Setup the Mars inertial reference frame.
    mars_centered_inertial.frame_packing.default_data( &(THLA.manager.objects[5]),
@@ -416,7 +416,7 @@ void create_connections() {
                                                       "frame_packing",
                                                       "SolarSystemBarycentricInertial",
                                                       "MarsCentricInertial",
-                                                      true );
+                                                      false );
 
    // Setup the Earth fixed reference frame.
    earth_centered_fixed.frame_packing.default_data( &(THLA.manager.objects[6]),
@@ -424,7 +424,7 @@ void create_connections() {
                                                     "frame_packing",
                                                     "EarthMJ2000Eq",
                                                     "EarthCentricFixed",
-                                                    true );
+                                                    false );
 
    // Setup the Moon fixed reference frame.
    moon_centered_fixed.frame_packing.default_data( &(THLA.manager.objects[7]),
@@ -432,7 +432,7 @@ void create_connections() {
                                                    "frame_packing",
                                                    "MoonCentricInertial",
                                                    "MoonCentricFixed",
-                                                   true );
+                                                   false );
 
    // Setup the Mars fixed reference frame.
    mars_centered_fixed.frame_packing.default_data( &(THLA.manager.objects[8]),
@@ -440,7 +440,7 @@ void create_connections() {
                                                    "frame_packing",
                                                    "MarsCentricFixed",
                                                    "MarsCentricInertial",
-                                                   true );
+                                                   false );
 
 }
 

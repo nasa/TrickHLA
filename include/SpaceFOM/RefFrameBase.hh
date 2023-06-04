@@ -97,7 +97,7 @@ class RefFrameBase : public TrickHLA::Packing
     *  @param ref_frame_name Name of the ReferenceFrame instance.
     *  @param publishes Does this federate publish this reference frame.
     *  */
-   virtual void default_data( TrickHLA::Object *object,
+   virtual void default_data( TrickHLA::Object *mngr_object,
                               char const       *sim_obj_name,
                               char const       *ref_frame_obj_name,
                               char const       *ref_frame_parent_name,
@@ -134,6 +134,12 @@ class RefFrameBase : public TrickHLA::Packing
    {
       return parent_name;
    }
+
+   /*! @brief Access function to set the appropriate publish flags. */
+   virtual void publish();
+
+   /*! @brief Access function to set the appropriate subscribe flags. */
+   virtual void subscribe();
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to pack the data before the data is sent to the RTI. */

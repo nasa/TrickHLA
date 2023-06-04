@@ -79,6 +79,10 @@ def parse_command_line( ) :
          else :
             print('ERROR: Missing -verbose [on|off] argument.')
             print_usage = True
+      
+      elif (str(argv[index]) == '-d') :
+         # Catch the Trick debug command line option an do NOT terminate.
+         print('DEBUG: Specified input file debug uption to Trick.')
          
       else :
          print('ERROR: Unknown command line argument ' + str(argv[index]))
@@ -113,7 +117,7 @@ trick.checkpoint_post_init(1)
 
 trick.exec_set_enable_freeze(True)
 trick.exec_set_freeze_command(True)
-trick.sim_control_panel_set_enabled(True)
+trick.sim_control_panel_set_enabled(False)
 trick.exec_set_stack_trace(False)
 
 
@@ -237,6 +241,17 @@ mars_centered_inertial.frame_packing.debug = verbose
 earth_centered_fixed.frame_packing.debug = verbose
 moon_centered_fixed.frame_packing.debug = verbose
 mars_centered_fixed.frame_packing.debug = verbose
+
+# Mark the frames as published.
+solar_system_barycenter.frame_packing.publish();
+sun_inertial.frame_packing.publish();
+earth_moon_barycenter.frame_packing.publish();
+earth_centered_inertial.frame_packing.publish();
+moon_centered_inertial.frame_packing.publish();
+mars_centered_inertial.frame_packing.publish();
+earth_centered_fixed.frame_packing.publish();
+moon_centered_fixed.frame_packing.publish();
+mars_centered_fixed.frame_packing.publish();
 
 
 #---------------------------------------------------------------------------

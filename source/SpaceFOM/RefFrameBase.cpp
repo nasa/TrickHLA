@@ -99,7 +99,7 @@ RefFrameBase::~RefFrameBase()
  * @job_class{default_data}
  */
 void RefFrameBase::default_data(
-   TrickHLA::Object *object,
+   TrickHLA::Object *mngr_object,
    char const       *sim_obj_name,
    char const       *ref_frame_obj_name,
    char const       *ref_frame_parent_name,
@@ -108,6 +108,9 @@ void RefFrameBase::default_data(
 {
    string ref_frame_name_str = string( sim_obj_name ) + "." + string( ref_frame_obj_name );
    string trick_name_str;
+
+   // Associate the instantiated Manager object with this packing object.
+   this->object = mngr_object;
 
    // Set the frame name and parent frame name.
    if( publishes ){
@@ -265,6 +268,52 @@ void RefFrameBase::set_parent_name( char const *name )
       trick_MM->delete_var( (void *)this->parent_name );
    }
    this->parent_name = trick_MM->mm_strdup( name );
+
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void RefFrameBase::publish()
+{
+   ostringstream errmsg;
+
+   if ( this->initialized ){
+      ostringstream errmsg;
+      errmsg << "RefFrameBase::publish():" << __LINE__
+             << " WARNING: Ignoring, reference frame already initialized!" << THLA_ENDL;
+      send_hs( stderr, (char *)errmsg.str().c_str() );
+   }
+   else {
+      object->create_HLA_instance         = true;
+      object->attributes[0].publish       = true;
+      object->attributes[0].subscribe     = false;
+      object->attributes[0].locally_owned = true;
+   }
+
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void RefFrameBase::subscribe()
+{
+   ostringstream errmsg;
+
+   if ( this->initialized ){
+      ostringstream errmsg;
+      errmsg << "RefFrameBase::publish():" << __LINE__
+             << " WARNING: Ignoring, reference frame already initialized!" << THLA_ENDL;
+      send_hs( stderr, (char *)errmsg.str().c_str() );
+   }
+   else {
+      object->create_HLA_instance         = false;
+      object->attributes[0].publish       = false;
+      object->attributes[0].subscribe     = true;
+      object->attributes[0].locally_owned = false;
+   }
 
    return;
 }

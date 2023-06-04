@@ -81,6 +81,10 @@ def parse_command_line( ) :
          else :
             print('ERROR: Missing -verbose [on|off] argument.')
             print_usage = True
+      
+      elif (str(argv[index]) == '-d') :
+         # Catch the Trick debug command line option an do NOT terminate.
+         print('DEBUG: Specified input file debug uption to Trick.')
          
       else :
          print('ERROR: Unknown command line argument ' + str(argv[index]))
@@ -187,7 +191,7 @@ federate.set_RRFP_role( False )  # This is NOT the Root Reference Frame Publishe
 # Add in known required federates.
 #--------------------------------------------------------------------------
 federate.add_known_fededrate( True, str(federate.federate.name) )
-federate.add_known_fededrate( True, 'RRFP' )
+federate.add_known_fededrate( True, 'JEODRefFrames' )
 
 #--------------------------------------------------------------------------
 # Configure the CRC.
