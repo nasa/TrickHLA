@@ -186,10 +186,10 @@ void Manager::initialize()
    }
 
    // Check to make sure we have a reference to the TrickHLA::Manager.
-   if ( federate == NULL ) {
+   if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::Federate." << THLA_ENDL;
+             << " ERROR: Unexpected NULL Manager.federate pointer!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -197,7 +197,7 @@ void Manager::initialize()
    if ( this->execution_control == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::ExecutionControlBase." << THLA_ENDL;
+             << " ERROR: Unexpected NULL Manager.execution_control pointer!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -206,7 +206,7 @@ void Manager::initialize()
    if ( ( obj_count > 0 ) && ( objects == NULL ) ) {
       ostringstream errmsg;
       errmsg << "Manager::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL 'objects' array for a non zero obj_count:"
+             << " ERROR: Unexpected NULL 'Manager.objects' array for a non zero obj_count:"
              << obj_count << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -221,7 +221,7 @@ void Manager::initialize()
    if ( ( inter_count > 0 ) && ( interactions == NULL ) ) {
       ostringstream errmsg;
       errmsg << "Manager::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL 'interactions' array for a non zero inter_count:"
+             << " ERROR: Unexpected NULL 'Manager.interactions' array for a non zero inter_count:"
              << inter_count << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -248,10 +248,10 @@ void Manager::restart_initialization()
       return;
    }
 
-   if ( federate == NULL ) {
+   if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::restart_initialization():" << __LINE__
-             << " ERROR: Unexpected NULL Federate!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL Manager.federate pointer!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -270,7 +270,7 @@ void Manager::restart_initialization()
    if ( ( obj_count > 0 ) && ( objects == NULL ) ) {
       ostringstream errmsg;
       errmsg << "Manager::restart_initialization():" << __LINE__
-             << " ERROR: Unexpected NULL 'objects' array for a non zero obj_count:"
+             << " ERROR: Unexpected NULL 'Manager.objects' array for a non zero obj_count:"
              << obj_count << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -285,7 +285,7 @@ void Manager::restart_initialization()
    if ( ( inter_count > 0 ) && ( interactions == NULL ) ) {
       ostringstream errmsg;
       errmsg << "Manager::restart_initialization():" << __LINE__
-             << " ERROR: Unexpected NULL 'interactions' array for a non zero inter_count:"
+             << " ERROR: Unexpected NULL 'Manager.interactions' array for a non zero inter_count:"
              << inter_count << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -300,7 +300,7 @@ void Manager::restart_initialization()
    if ( execution_control == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::restart_initialization():" << __LINE__
-             << " ERROR: NULL ExecutionControl reference." << THLA_ENDL;
+             << " ERROR: Unexpected NULL Manager.execution_control pointer!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -1103,10 +1103,10 @@ void Manager::setup_object_RTI_handles(
       return;
    }
 
-   if ( federate == NULL ) {
+   if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected NULL Federate!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL Manager.federate pointer!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -1301,10 +1301,10 @@ void Manager::setup_interaction_RTI_handles(
       return;
    }
 
-   if ( federate == NULL ) {
+   if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::setup_interaction_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected NULL Federate!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL Manager.federate pointer!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -2045,10 +2045,10 @@ void Manager::set_object_instance_handles_by_name(
       return;
    }
 
-   if ( federate == NULL ) {
+   if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
-             << " ERROR: Unexpected NULL Federate!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL Manager.federate pointer!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -2807,8 +2807,8 @@ double const Manager::get_granted_time_in_micros() const
 bool Manager::is_RTI_ready(
    char const *method_name )
 {
-   if ( federate == NULL ) {
-      send_hs( stderr, "Manager::%s:%d Unexpected NULL Federate.%c",
+   if ( this->federate == NULL ) {
+      send_hs( stderr, "Manager::%s:%d Unexpected NULL Manager.federate pointer!%c",
                method_name, __LINE__, THLA_NEWLINE );
       return false;
    }
@@ -2818,7 +2818,7 @@ bool Manager::is_RTI_ready(
 
    bool rti_valid = true;
    if ( get_RTI_ambassador() == NULL ) {
-      send_hs( stderr, "Manager::%s:%d Unexpected NULL RTIambassador.%c",
+      send_hs( stderr, "Manager::%s:%d Unexpected NULL RTIambassador!%c",
                method_name, __LINE__, THLA_NEWLINE );
       rti_valid = false;
    }
