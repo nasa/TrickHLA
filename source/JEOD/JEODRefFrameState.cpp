@@ -174,6 +174,11 @@ void JEODRefFrameState::pack()
            << "\t\t" << stc_data.pos[0] << endl
            << "\t\t" << stc_data.pos[1] << endl
            << "\t\t" << stc_data.pos[2] << endl
+           << "\tattitude (quaternion:s,v): " << endl
+           << "\t\t" << stc_data.quat_scalar << endl
+           << "\t\t" << stc_data.quat_vector[0] << endl
+           << "\t\t" << stc_data.quat_vector[1] << endl
+           << "\t\t" << stc_data.quat_vector[2] << endl
            << endl;
    }
 
@@ -217,6 +222,11 @@ void JEODRefFrameState::unpack()
               << "\t\t" << stc_data.pos[0] << endl
               << "\t\t" << stc_data.pos[1] << endl
               << "\t\t" << stc_data.pos[2] << endl
+              << "\tattitude (quaternion:s,v): " << endl
+              << "\t\t" << stc_data.quat_scalar << endl
+              << "\t\t" << stc_data.quat_vector[0] << endl
+              << "\t\t" << stc_data.quat_vector[1] << endl
+              << "\t\t" << stc_data.quat_vector[2] << endl
               << endl;
       }
 

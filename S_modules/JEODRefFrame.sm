@@ -1,0 +1,112 @@
+/*****************************************************************************
+ * General TrickHLA Space Reference Federation Object Model (SpaceFOM)
+ * Simulation Definition Object that defines a JEOD refrence frame.
+ *---------------------------------------------------------------------------*
+ * This is a Simulation Definition (S_define) module that defines a mapping
+ * between a JEOD reference frame and a SpaceFOM reference frame.
+ ****************************************************************************/
+/*****************************************************************************
+ *       Author: Edwin Z. Crues
+ *         Date: June 2023
+ *       E-Mail: Edwin.Z.Crues@nasa.gov
+ *        Phone: 281-483-2902
+ * Organization: Mail Code ER7
+ *               Simulation & Graphics Branch
+ *               Software, Robotics & Simulation Division
+ *               2101 NASA Parkway
+ *               Houston, Texas 77058
+ *---------------------------------------------------------------------------*
+ * Modified By: 
+ *        Date: 
+ * Description: 
+ ****************************************************************************/
+
+//==========================================================================
+// SIM_OBJECT: JEODRefFrameSimObject - An example reference frame
+// simulation object definition. This can be used for SpaceFOM ReferenceFrame
+// object discovery and data exchange.
+//==========================================================================
+##include "environment/time/include/time_tt.hh"
+##include "utils/ref_frames/include/ref_frame.hh"
+##include "JEOD/JEODRefFrameState.hh"
+
+class JEODRefFrameSimObject : public Trick::SimObject {
+
+  public:
+
+   /* HLA associated reference frames packing object. */
+   JEODRefFrameState frame_packing;
+
+   /* JEOD Reference Frame state in SpaceFOM parent frame. */
+   jeod::RefFrameState ref_frame_state;
+
+   /* SimObjct constructor. */
+   JEODRefFrameSimObject( jeod::TimeTT   & time_in,
+                          unsigned short   INIT = 59 )
+   : time_tt(time_in)
+   {
+      //
+      // Initialization jobs
+      //
+      // Initialize the reference frame packing object.
+      PINIT ("initialization") frame_packing.initialize( &ref_frame_state );
+
+      // Update the reference frame state at the environment high rate.
+      (HIGH_RATE_ENV, "environment") update();
+
+   }
+
+   /* Target and parent frame accessor methods. */
+   void set_frames( jeod::RefFrame * parent_in,
+                    jeod::RefFrame * target_in )
+   {
+      set_parent( parent_in );
+      set_target( target_in );
+      return;
+   }
+
+   void set_target( jeod::RefFrame * target_in )
+   {
+      target_frame_ptr = target_in;
+      return;
+   }
+
+   jeod::RefFrame * get_target()
+   {
+      return target_frame_ptr;
+   }
+
+   void set_parent( jeod::RefFrame * parent_in )
+   {
+      parent_frame_ptr = parent_in;
+      return;
+   }
+
+   jeod::RefFrame * get_parent()
+   {
+      return parent_frame_ptr;
+   }
+
+
+  private:
+   jeod::TimeTT   & time_tt;
+   jeod::RefFrame * parent_frame_ptr;
+   jeod::RefFrame * target_frame_ptr;
+
+   /* Update the SpaceFOM reference frame wrt. the specified parent frame. */
+   void update () {
+
+      // Compute the target reference frame wrt. the specified parent frame.
+      target_frame_ptr->compute_relative_state( *parent_frame_ptr, ref_frame_state );
+
+      // Set the time tag for this reference frame state.
+      frame_packing.set_time((time_tt.trunc_julian_time * 86400.0));
+
+      return;
+   }
+
+   // This object is not copyable
+   JEODRefFrameSimObject( const JEODRefFrameSimObject & );
+   JEODRefFrameSimObject & operator=( const JEODRefFrameSimObject & );
+
+};

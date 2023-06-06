@@ -99,8 +99,8 @@ print_usage = False
 # Set the default run duration.
 run_duration = 10.0
 
-# Default is to show verbose messages.
-verbose = True
+# Default is to NOT show verbose messages.
+verbose = False
 
 parse_command_line()
 
@@ -117,6 +117,8 @@ trick.exec_set_trap_sigfpe(True)
 trick.checkpoint_post_init(1)
 #trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
 
+trick.real_time_enable()
+trick.exec_set_software_frame(0.250)
 trick.exec_set_enable_freeze(True)
 trick.exec_set_freeze_command(True)
 trick.sim_control_panel_set_enabled(True)
@@ -270,7 +272,8 @@ federate.add_sim_object( mars_centered_fixed )
 #---------------------------------------------------------------------------
 #federate.disable()
 federate.initialize()
-# Override the object count.
+
+# FIXME: Override the object count.
 THLA.manager.obj_count = 9
 
 

@@ -97,8 +97,8 @@ print_usage = False
 # Set the default run duration.
 run_duration = 10.0
 
-# Default is to show verbose messages.
-verbose = True
+# Default is to NOT show verbose messages.
+verbose = False
 
 parse_command_line()
 
@@ -278,7 +278,8 @@ federate.add_sim_object( mars_centered_fixed )
 #---------------------------------------------------------------------------
 #federate.disable()
 federate.initialize()
-# Override the object count.
+
+# FIXME: Override the object count.
 THLA.manager.obj_count = 9
 
 
