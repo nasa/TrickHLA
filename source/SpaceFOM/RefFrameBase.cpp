@@ -113,22 +113,20 @@ void RefFrameBase::default_data(
    this->object = mngr_object;
 
    // Set the frame name and parent frame name.
-   if( publishes ){
-      if( ref_frame_parent_name != NULL ){
-         this->parent_name = trick_MM->mm_strdup( ref_frame_parent_name );
-      }
-      else{
-         this->parent_name = trick_MM->mm_strdup( "" );
-      }
-      if( ref_frame_name != NULL ){
-         this->name = trick_MM->mm_strdup( ref_frame_name );
-      }
-      else{
-         ostringstream errmsg;
-         errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
-                << " WARNING: Unexpected NULL federation instance frame name!" << THLA_ENDL;
-         DebugHandler::terminate_with_message( errmsg.str() );
-      }
+   if( ref_frame_parent_name != NULL ){
+      this->parent_name = trick_MM->mm_strdup( ref_frame_parent_name );
+   }
+   else{
+      this->parent_name = trick_MM->mm_strdup( "" );
+   }
+   if( ref_frame_name != NULL ){
+      this->name = trick_MM->mm_strdup( ref_frame_name );
+   }
+   else{
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
+             << " WARNING: Unexpected NULL federation instance frame name!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    //---------------------------------------------------------
@@ -290,6 +288,12 @@ void RefFrameBase::publish()
       object->attributes[0].publish       = true;
       object->attributes[0].subscribe     = false;
       object->attributes[0].locally_owned = true;
+      object->attributes[1].publish       = true;
+      object->attributes[1].subscribe     = false;
+      object->attributes[1].locally_owned = true;
+      object->attributes[2].publish       = true;
+      object->attributes[2].subscribe     = false;
+      object->attributes[2].locally_owned = true;
    }
 
    return;
@@ -313,6 +317,12 @@ void RefFrameBase::subscribe()
       object->attributes[0].publish       = false;
       object->attributes[0].subscribe     = true;
       object->attributes[0].locally_owned = false;
+      object->attributes[1].publish       = false;
+      object->attributes[1].subscribe     = true;
+      object->attributes[1].locally_owned = false;
+      object->attributes[2].publish       = false;
+      object->attributes[2].subscribe     = true;
+      object->attributes[2].locally_owned = false;
    }
 
    return;

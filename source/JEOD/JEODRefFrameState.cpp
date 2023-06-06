@@ -123,7 +123,7 @@ void JEODRefFrameState::initialize(
    this->ref_frame_state = ref_frame_state_ptr;
 
    // Mark this as initialized.
-   this->initialized = true;
+   RefFrameBase::initialize();
 
    // Return to calling routine.
    return;

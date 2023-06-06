@@ -270,6 +270,8 @@ federate.add_sim_object( mars_centered_fixed )
 #---------------------------------------------------------------------------
 #federate.disable()
 federate.initialize()
+# Override the object count.
+THLA.manager.obj_count = 9
 
 
 #---------------------------------------------------------------------------

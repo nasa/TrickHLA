@@ -174,6 +174,7 @@ federate = SpaceFOMFederateConfig( THLA.federate,
 # Set the debug output level.
 if (verbose == True) : 
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
+#   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_9_TRACE )
 else :
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
 
@@ -277,6 +278,8 @@ federate.add_sim_object( mars_centered_fixed )
 #---------------------------------------------------------------------------
 #federate.disable()
 federate.initialize()
+# Override the object count.
+THLA.manager.obj_count = 9
 
 
 #---------------------------------------------------------------------------
