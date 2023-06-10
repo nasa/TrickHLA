@@ -55,7 +55,7 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 Int64Interval::Int64Interval(
-   int64_t value )
+   int64_t const value )
 {
    set( value );
 }
@@ -64,7 +64,7 @@ Int64Interval::Int64Interval(
  * @job_class{initialization}
  */
 Int64Interval::Int64Interval(
-   double value )
+   double const value )
 {
    set( value );
 }
@@ -108,17 +108,17 @@ Int64Interval::~Int64Interval()
 
 int64_t Int64Interval::get_seconds() const
 {
-   return ( (int64_t)( hla_interval.getInterval() / MICROS_MULTIPLIER ) );
+   return ( (int64_t)( this->hla_interval.getInterval() / MICROS_MULTIPLIER ) );
 }
 
 int32_t Int64Interval::get_micros() const
 {
-   return ( (int32_t)( hla_interval.getInterval() % MICROS_MULTIPLIER ) );
+   return ( (int32_t)( this->hla_interval.getInterval() % MICROS_MULTIPLIER ) );
 }
 
 int64_t Int64Interval::get_time_in_micros() const
 {
-   return ( hla_interval.getInterval() );
+   return ( this->hla_interval.getInterval() );
 }
 
 double Int64Interval::get_time_in_seconds() const
@@ -126,6 +126,11 @@ double Int64Interval::get_time_in_seconds() const
    double const seconds = (double)get_seconds();
    double const micros  = (double)get_micros() / (double)MICROS_MULTIPLIER;
    return ( seconds + micros );
+}
+
+bool Int64Interval::is_zero() const
+{
+   return this->hla_interval.isZero();
 }
 
 wstring Int64Interval::to_wstring() const
@@ -140,21 +145,21 @@ wstring Int64Interval::to_wstring() const
 void Int64Interval::set(
    int64_t const value )
 {
-   hla_interval = value;
+   this->hla_interval = value;
 }
 
 void Int64Interval::set(
    double const value )
 {
-   hla_interval = to_microseconds( value );
+   this->hla_interval = to_microseconds( value );
 }
 
 void Int64Interval::set(
    RTI1516_NAMESPACE::LogicalTimeInterval const &value )
 {
-   RTI1516_NAMESPACE::HLAinteger64Interval const &p = dynamic_cast< RTI1516_NAMESPACE::HLAinteger64Interval const & >( value );
+   RTI1516_NAMESPACE::HLAinteger64Interval const &t = dynamic_cast< RTI1516_NAMESPACE::HLAinteger64Interval const & >( value );
 
-   hla_interval = p.getInterval();
+   this->hla_interval = t.getInterval();
 }
 
 int64_t Int64Interval::to_microseconds(

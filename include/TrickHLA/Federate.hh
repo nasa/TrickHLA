@@ -910,10 +910,10 @@ class Federate
    }
 
    /*! @brief Query of federate has a zero lookahead time.
-    *  @return True if lookahead time is zero; Flase otherwise. */
+    *  @return True if lookahead time is zero; False otherwise. */
    bool const is_zero_lookahead_time() const
    {
-      return ( this->lookahead.get_time_in_micros() <= 0LL );
+      return this->lookahead.is_zero();
    }
 
    /*! @brief Set the name of the save.
@@ -1104,6 +1104,8 @@ class Federate
 
    Int64Interval lookahead; ///< @trick_units{--} Lookahead time for data.
 
+   int64_t TAR_job_cycle_time_micros; // us Cycle time for the time_advance_request job.
+
    bool shutdown_called; ///< @trick_units{--} Flag to indicate shutdown has been called.
 
    std::wstring save_name;    ///< @trick_io{**} Name for a save file
@@ -1271,6 +1273,9 @@ class Federate
     *  @return True if a name of joined federate, otherwise false.
     *  @param federate_name Federate name to test. */
    bool is_joined_federate( std::wstring const &federate_name );
+
+   /*! @brief Determine the job cycle-time of the time_advance_request() job. */
+   void determine_TAR_job_cycle_time();
 
    /*! @brief Make the HLA time-advance request using the current requested_time value. */
    void perform_time_advance_request();

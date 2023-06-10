@@ -81,11 +81,11 @@ class Int64Interval
 
    /*! @brief Initialization constructor for the TrickHLA Int64Interval class.
     *  @param value 64bit integer value initialization. */
-   explicit Int64Interval( int64_t value );
+   explicit Int64Interval( int64_t const value );
 
    /*! @brief Initialization constructor for the TrickHLA Int64Interval class.
     *  @param value Floating point double value initialization. */
-   explicit Int64Interval( double value );
+   explicit Int64Interval( double const value );
 
    /*! @brief Initialization constructor for the TrickHLA Int64Interval class.
     *  @param value HLA Logical Time Interval value initialization. */
@@ -107,45 +107,53 @@ class Int64Interval
    //
    /*! @brief Assignment operator from double time value.
     *  @return A corresponding TrickHLA::Int64Interval time value.
-    *  @param lhs Left hand side operand as floating point time interval in seconds. */
-   virtual Int64Interval &operator=( double lhs )
+    *  @param rhs Right hand side operand as floating point time interval in seconds. */
+   Int64Interval &operator=( double rhs )
    {
-      hla_interval = to_microseconds( lhs );
+      this->hla_interval = to_microseconds( rhs );
       return ( *this );
    }
 
    /*! @brief Assignment operator from 64bit integer time value.
     *  @return A corresponding TrickHLA::Int64Interval time value.
-    *  @param lhs Left hand side operand as 64bit integer time interval in microseconds. */
-   virtual Int64Interval &operator=( int64_t lhs )
+    *  @param rhs Right hand side operand as 64bit integer time interval in microseconds. */
+   Int64Interval &operator=( int64_t const rhs )
    {
-      hla_interval = lhs;
+      this->hla_interval = rhs;
       return ( *this );
    }
 
    /*! @brief Assignment operator from TrickHLA::Int64Inteval time interval value.
     *  @return A corresponding TrickHLA::Int64Interval time value.
-    *  @param lhs Left hand side operand as TrickHLA::Int64Interval time interval. */
-   virtual Int64Interval &operator=( Int64Interval const &lhs )
+    *  @param rhs Right hand side operand as TrickHLA::Int64Interval time interval. */
+   Int64Interval &operator=( Int64Interval const &rhs )
    {
-      hla_interval = lhs.get_time_in_micros();
+      this->hla_interval = rhs.get_time_in_micros();
       return ( *this );
    }
 
    /*! @brief Interval time greater than comparison operator.
-    *  @return True if right operand is greater than the left operand; False otherwise.
-    *  @param lhs Left hand side operand as 64bit integer time interval in microseconds. */
-   bool operator>( int64_t lhs )
+    *  @return True is right operand is greater than the left operand; False otherwise.
+    *  @param rhs Right hand side operand as floating point time interval in seconds. */
+   bool operator>( double const rhs ) const
    {
-      return ( this->get_time_in_micros() > lhs );
+      return ( get_time_in_micros() > Int64Interval::to_microseconds( rhs ) );
    }
 
    /*! @brief Interval time greater than comparison operator.
-    *  @return True is right operand is greater than the left operand; False otherwise.
-    *  @param lhs Left hand side operand as floating point time interval in seconds. */
-   bool operator>( double lhs )
+    *  @return True if right operand is greater than the left operand; False otherwise.
+    *  @param rhs Right hand side operand as 64bit integer time interval in microseconds. */
+   bool operator>( int64_t const rhs ) const
    {
-      return ( this->get_time_in_micros() > Int64Interval::to_microseconds( lhs ) );
+      return ( get_time_in_micros() > rhs );
+   }
+
+   /*! @brief Interval time greater than comparison operator.
+    *  @return True if right operand is greater than the left operand; False otherwise.
+    *  @param rhs Right hand side operand as TrickHLA::Int64Interval time interval. */
+   bool operator>( Int64Interval const &rhs ) const
+   {
+      return ( get_time_in_micros() > rhs.get_time_in_micros() );
    }
 
    //
@@ -155,7 +163,7 @@ class Int64Interval
     *  @return A copy of the encapsulated HLAinteger64Interval class. */
    RTI1516_NAMESPACE::HLAinteger64Interval get() const
    {
-      return ( hla_interval );
+      return ( this->hla_interval );
    }
 
    //
@@ -169,6 +177,10 @@ class Int64Interval
    /*! @brief Return the current timestamp in seconds as a double precision floating point value.
     *  @return Time in seconds as a floating point double. */
    double get_time_in_seconds() const;
+
+   /*! @brief Return true if the value is zero, false otherwise.
+    *  @return True if zero, false otherwise. */
+   bool is_zero() const;
 
    /*! @brief Returns a summary of the time.
     *  @return Summary of time as a wide string. */

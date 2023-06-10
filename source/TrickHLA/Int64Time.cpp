@@ -52,7 +52,7 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 Int64Time::Int64Time(
-   int64_t value )
+   int64_t const value )
 {
    set( value );
 }
@@ -61,7 +61,7 @@ Int64Time::Int64Time(
  * @job_class{initialization}
  */
 Int64Time::Int64Time(
-   double value )
+   double const value )
 {
    set( value );
 }
@@ -106,28 +106,28 @@ Int64Time::~Int64Time()
 void Int64Time::decode(
    RTI1516_USERDATA const &user_supplied_tag )
 {
-   hla_time.decode( user_supplied_tag );
+   this->hla_time.decode( user_supplied_tag );
 }
 
 int64_t Int64Time::get_seconds() const
 {
-   return ( (int64_t)( hla_time.getTime() / MICROS_MULTIPLIER ) );
+   return ( (int64_t)( this->hla_time.getTime() / MICROS_MULTIPLIER ) );
 }
 
 int32_t Int64Time::get_micros() const
 {
-   return ( (int32_t)( hla_time.getTime() % MICROS_MULTIPLIER ) );
+   return ( (int32_t)( this->hla_time.getTime() % MICROS_MULTIPLIER ) );
 }
 
 int64_t Int64Time::get_time_in_micros() const
 {
-   return ( hla_time.getTime() );
+   return ( this->hla_time.getTime() );
 }
 
 double Int64Time::get_time_in_seconds() const
 {
-   double seconds = (double)get_seconds();
-   double micros  = (double)get_micros() / (double)MICROS_MULTIPLIER;
+   double const seconds = (double)get_seconds();
+   double const micros  = (double)get_micros() / (double)MICROS_MULTIPLIER;
    return ( seconds + micros );
 }
 
@@ -143,25 +143,25 @@ wstring Int64Time::to_wstring() const
 void Int64Time::set(
    int64_t const value )
 {
-   hla_time.setTime( value );
+   this->hla_time.setTime( value );
 }
 
 void Int64Time::set(
    double const value )
 {
-   hla_time = Int64Interval::to_microseconds( value );
+   this->hla_time = Int64Interval::to_microseconds( value );
 }
 
 void Int64Time::set(
    RTI1516_NAMESPACE::LogicalTime const &value )
 {
-   RTI1516_NAMESPACE::HLAinteger64Time const &p = dynamic_cast< RTI1516_NAMESPACE::HLAinteger64Time const & >( value );
+   RTI1516_NAMESPACE::HLAinteger64Time const &t = dynamic_cast< RTI1516_NAMESPACE::HLAinteger64Time const & >( value );
 
-   hla_time = p.getTime();
+   this->hla_time = t.getTime();
 }
 
 void Int64Time::set(
    Int64Time const &value )
 {
-   hla_time = value.get_time_in_micros();
+   this->hla_time = value.get_time_in_micros();
 }

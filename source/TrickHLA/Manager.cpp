@@ -2259,11 +2259,6 @@ void Manager::determine_job_cycle_time()
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::determine_job_cycle_time():%d%c",
-               __LINE__, THLA_NEWLINE );
-   }
-
    // Get the lookahead time.
    int64_t const lookahead_time_micros = federate->get_lookahead_time_in_micros();
 
@@ -2279,12 +2274,17 @@ void Manager::determine_job_cycle_time()
              << " lookahead time! The HLA Lookahead time ("
              << Int64Interval::to_seconds( lookahead_time_micros )
              << " seconds) must be less than or equal to the job cycle time ("
-             << cycle_time << " seconds). Make sure 'lookahead_time' in"
+             << cycle_time << " seconds). Make sure the 'lookahead_time' in"
              << " your input or modified-data file is less than or equal to the"
              << " 'THLA_DATA_CYCLE_TIME' time specified in the S_define file for"
              << " the send_cyclic_and_requested_data() and"
              << " receive_cyclic_data() jobs." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      send_hs( stdout, "Manager::determine_job_cycle_time():%d cycle-time:%f seconds%c",
+               __LINE__, cycle_time, THLA_NEWLINE );
    }
 
    // Set the core job cycle time now that we know what it is so that the
@@ -2300,11 +2300,6 @@ void Manager::determine_job_cycle_time()
  */
 void Manager::send_cyclic_and_requested_data()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::send_cyclic_and_requested_data():%d%c",
-               __LINE__, THLA_NEWLINE );
-   }
-
    int64_t const sim_time_micros     = Int64Interval::to_microseconds( exec_get_sim_time() );
    int64_t const granted_time_micros = get_granted_time_in_micros();
    bool const    zero_lookahead      = federate->is_zero_lookahead_time();
@@ -2359,6 +2354,11 @@ void Manager::send_cyclic_and_requested_data()
             update_time.set( granted_plus_lookahead );
          }
       }
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      send_hs( stdout, "Manager::send_cyclic_and_requested_data():%d HLA Logical Time:%.12G seconds.%c",
+               __LINE__, update_time.get_time_in_seconds(), THLA_NEWLINE );
    }
 
    // Send any ExecutionControl data requested.

@@ -148,6 +148,7 @@ Federate::Federate()
      federation_joined( false ),
      all_federates_joined( false ),
      lookahead( 0.0 ),
+     TAR_job_cycle_time_micros( 0LL ),
      shutdown_called( false ),
      HLA_save_directory( "" ),
      initiate_save_flag( false ),
@@ -4384,6 +4385,44 @@ void Federate::setup_time_regulation()
 /*!
  * @job_class{scheduled}
  */
+void Federate::determine_TAR_job_cycle_time()
+{
+   if ( this->TAR_job_cycle_time_micros > 0LL ) {
+      return;
+   }
+
+   // Get the lookahead time.
+   int64_t const lookahead_time_micros = get_lookahead_time_in_micros();
+
+   // Get the cycle time.
+   double const cycle_time         = exec_get_job_cycle( NULL );
+   this->TAR_job_cycle_time_micros = Int64Interval::to_microseconds( cycle_time );
+
+   // Verify the job cycle time against the HLA lookahead time.
+   if ( ( this->TAR_job_cycle_time_micros <= 0LL )
+        || ( this->TAR_job_cycle_time_micros < lookahead_time_micros ) ) {
+      ostringstream errmsg;
+      errmsg << "Federate::determine_TAR_job_cycle_time():" << __LINE__
+             << " ERROR: The cycle time for this job is less than the HLA"
+             << " lookahead time! The HLA Lookahead time ("
+             << Int64Interval::to_seconds( lookahead_time_micros )
+             << " seconds) must be less than or equal to the job cycle time ("
+             << cycle_time << " seconds). Make sure the 'lookahead_time' in"
+             << " your input or modified-data file is less than or equal to the"
+             << " 'THLA_DATA_CYCLE_TIME' time specified in the S_define file for"
+             << " the time_advance_request() job." << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      send_hs( stdout, "Federate::determine_TAR_job_cycle_time():%d cycle-time:%f seconds %c",
+               __LINE__, cycle_time, THLA_NEWLINE );
+   }
+}
+
+/*!
+ * @job_class{scheduled}
+ */
 void Federate::time_advance_request()
 {
    // Skip requesting time-advancement if we are not time-regulating and
@@ -4401,6 +4440,11 @@ void Federate::time_advance_request()
       return;
    }
 
+   // Determine the TAR job cycle time if the value is not set.
+   if ( this->TAR_job_cycle_time_micros <= 0LL ) {
+      determine_TAR_job_cycle_time();
+   }
+
    // -- start of checkpoint additions --
    this->save_completed = false; // reset ONLY at the bottom of the frame...
    // -- end of checkpoint additions --
@@ -4410,8 +4454,15 @@ void Federate::time_advance_request()
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
 
-      // Build a request time.
-      this->requested_time += this->lookahead_time;
+      // Build thge requested HLA logical time.
+      if ( is_zero_lookahead_time() ) {
+         // Use the TAR job cycle time for the time-step.
+         this->requested_time += this->TAR_job_cycle_time_micros;
+      } else {
+         // Use the lookahead time for the time-step.
+         // Requested time = granted time + lookahead
+         this->requested_time += this->lookahead;
+      }
    }
 
    // Perform the time-advance request to go to the requested time.
@@ -4457,8 +4508,13 @@ void Federate::perform_time_advance_request()
       check_for_shutdown_with_termination();
 
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         send_hs( stdout, "Federate::perform_time_advance_request():%d Time Advance Request (TAR) to %.12G seconds.%c",
-                  __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
+         if ( is_zero_lookahead_time() ) {
+            send_hs( stdout, "Federate::perform_time_advance_request():%d Time Advance Request Available (TARA) to %.12G seconds.%c",
+                     __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
+         } else {
+            send_hs( stdout, "Federate::perform_time_advance_request():%d Time Advance Request (TAR) to %.12G seconds.%c",
+                     __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
+         }
       }
 
       try {
@@ -4466,8 +4522,14 @@ void Federate::perform_time_advance_request()
          // the mutex even if there is an exception.
          MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
 
-         // Request that time be advanced to the new time.
-         RTI_ambassador->timeAdvanceRequest( requested_time.get() );
+         if ( is_zero_lookahead_time() ) {
+            // Request that time be advanced to the new time, but still allow
+            // TSO data for Treq = Tgrant
+            RTI_ambassador->timeAdvanceRequestAvailable( requested_time.get() );
+         } else {
+            // Request that time be advanced to the new time.
+            RTI_ambassador->timeAdvanceRequest( requested_time.get() );
+         }
 
          // Indicate we issued a TAR since we successfully made the request
          // without an exception.
@@ -4606,8 +4668,9 @@ void Federate::announce_data_available()
 void Federate::announce_data_sent()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::announce_data_sent():%d Thread:%d%c",
-               __LINE__, exec_get_process_id(), THLA_NEWLINE );
+      send_hs( stdout, "Federate::announce_data_sent():%d Thread:%d Granted HLA-time:%.12G seconds.%c",
+               __LINE__, exec_get_process_id(), granted_time.get_time_in_seconds(),
+               THLA_NEWLINE );
    }
 
    // Delegate to the Trick child thread coordinator.

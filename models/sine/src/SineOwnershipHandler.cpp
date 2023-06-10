@@ -69,10 +69,10 @@ void SineOwnershipHandler::initialize_callback(
    // Make sure we call the original function so that the callback is initialized.
    this->OwnershipHandler::initialize_callback( obj );
 
-   int const TEST_CASE = 3;
-
    // Get the vector of attribute FOM names.
    VectorOfStrings attr_FOM_names = get_attribute_FOM_names();
+
+   int const TEST_CASE = 3;
 
    switch ( TEST_CASE ) {
       case 0:
