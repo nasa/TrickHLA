@@ -2357,7 +2357,7 @@ void Manager::send_cyclic_and_requested_data()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::send_cyclic_and_requested_data():%d HLA Logical Time:%.12G seconds.%c",
+      send_hs( stdout, "Manager::send_cyclic_and_requested_data():%d HLA-time:%.12G seconds.%c",
                __LINE__, update_time.get_time_in_seconds(), THLA_NEWLINE );
    }
 

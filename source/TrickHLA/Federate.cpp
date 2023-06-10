@@ -4454,7 +4454,7 @@ void Federate::time_advance_request()
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
 
-      // Build thge requested HLA logical time.
+      // Build the requested HLA logical time for the next time step.
       if ( is_zero_lookahead_time() ) {
          // Use the TAR job cycle time for the time-step.
          this->requested_time += this->TAR_job_cycle_time_micros;
