@@ -41,6 +41,7 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_JEOD_REF_FRAME_STATE_HH
 
 // JEOD include files.
+#include "environment/time/include/time_tt.hh"
 #include "utils/ref_frames/include/ref_frame_state.hh"
 
 // SpaceFOM include files.
@@ -72,7 +73,8 @@ class JEODRefFrameState : public SpaceFOM::RefFrameBase
    // Initialize the packing object.
    /*! @brief Set the reference to the reference frame data.
     *  @param ref_frame_state_ptr Pointer to the jeod::RefFrameState instance. */
-   void initialize( jeod::RefFrameState *ref_frame_state_ptr );
+   void initialize( jeod::TimeTT        &time_tt_in,
+                    jeod::RefFrameState *ref_frame_state_ptr );
 
    /*! @brief Access function to set the HLA federation scenario time.
     *  @param new_time Associated federation scenario time. */
@@ -97,6 +99,7 @@ class JEODRefFrameState : public SpaceFOM::RefFrameBase
 
   protected:
    double               time;            ///< trick_units{s}   Truncated Julian date in TT time scale.
+   jeod::TimeTT        *time_tt;         ///< trick_units{--}  JEOD TT time standard.
    jeod::RefFrameState *ref_frame_state; ///< @trick_units{--} JEOD reference frame state.
 
   private:

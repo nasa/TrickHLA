@@ -97,7 +97,7 @@ def parse_command_line( ) :
 print_usage = False
 
 # Set the default run duration.
-run_duration = 10.0
+run_duration = 2.0
 
 # Default is to NOT show verbose messages.
 verbose = False
@@ -179,8 +179,10 @@ federate = SpaceFOMFederateConfig( THLA.federate,
 # Set the debug output level.
 if (verbose == True) : 
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
+#   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_9_TRACE )
 else :
-   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
+#   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
+   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_1_TRACE )
 
 #--------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.
@@ -241,7 +243,7 @@ THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHL
 solar_system_barycenter.frame_packing.debug = verbose
 sun_inertial.frame_packing.debug = verbose
 earth_moon_barycenter.frame_packing.debug = verbose
-earth_centered_inertial.frame_packing.debug = verbose
+earth_centered_inertial.frame_packing.debug = True
 moon_centered_inertial.frame_packing.debug = verbose
 mars_centered_inertial.frame_packing.debug = verbose
 earth_centered_fixed.frame_packing.debug = verbose

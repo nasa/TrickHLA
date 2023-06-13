@@ -95,7 +95,7 @@ def parse_command_line( ) :
 print_usage = False
 
 # Set the default run duration.
-run_duration = 10.0
+run_duration = 2.0
 
 # Default is to NOT show verbose messages.
 verbose = False
@@ -115,6 +115,7 @@ trick.exec_set_trap_sigfpe(True)
 trick.checkpoint_post_init(1)
 #trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
 
+trick.exec_set_software_frame(0.250)
 trick.exec_set_enable_freeze(True)
 trick.exec_set_freeze_command(True)
 trick.sim_control_panel_set_enabled(False)
@@ -124,22 +125,16 @@ trick.exec_set_stack_trace(False)
 # =========================================================================
 # Set up the JEOD environment.
 # =========================================================================
-jeod_time.time_manager_init.initializer = "UTC"
-jeod_time.time_manager_init.sim_start_format = trick.TimeEnum.calendar
+#jeod_time.time_manager_init.initializer = "TAI"
+#jeod_time.time_manager_init.sim_start_format = trick.TimeEnum.truncated_julian;
+#jeod_time.time_tai.trunc_julian_time = 12345.6789
 
-jeod_time.time_utc.calendar_year   = 1969
-jeod_time.time_utc.calendar_month  =    7
-jeod_time.time_utc.calendar_day    =   20
-jeod_time.time_utc.calendar_hour   =   20
-jeod_time.time_utc.calendar_minute =   17
-jeod_time.time_utc.calendar_second =  0.0
+jeod_time.time_utc.initialize_from_name = "TAI"
+#jeod_time.time_tt.initialize_from_name = "TAI"
 
-jeod_time.time_tai.initialize_from_name = "UTC"
-jeod_time.time_tt.initialize_from_name  = "TAI"
-
-jeod_time.time_tai.update_from_name = "Dyn"
+#jeod_time.time_tai.update_from_name = "Dyn"
 jeod_time.time_utc.update_from_name = "TAI"
-jeod_time.time_tt.update_from_name  = "TAI"
+#jeod_time.time_tt.update_from_name  = "TAI"
 
 dynamics.dyn_manager_init.mode = trick.DynManagerInit.EphemerisMode_Ephemerides
 # dynamics.dyn_manager_init.central_point_name = "Earth"
@@ -233,13 +228,13 @@ federate.set_time_constrained( True )
 #---------------------------------------------------------------------------
 
 # Set the debug flag for the reference frames.
-solar_system_barycenter.frame_packing.debug = verbose
+solar_system_barycenter.frame_packing.debug = True
 sun_inertial.frame_packing.debug = verbose
 earth_moon_barycenter.frame_packing.debug = verbose
-earth_centered_inertial.frame_packing.debug = verbose
+earth_centered_inertial.frame_packing.debug = True
 moon_centered_inertial.frame_packing.debug = verbose
 mars_centered_inertial.frame_packing.debug = verbose
-earth_centered_fixed.frame_packing.debug = verbose
+earth_centered_fixed.frame_packing.debug = True
 moon_centered_fixed.frame_packing.debug = verbose
 mars_centered_fixed.frame_packing.debug = verbose
 

@@ -70,6 +70,7 @@ using namespace SpaceFOM;
 JEODRefFrameState::JEODRefFrameState()
    : RefFrameBase(),
      time(0.0),
+     time_tt(NULL),
      ref_frame_state(NULL)
 {
    return;
@@ -86,6 +87,7 @@ JEODRefFrameState::~JEODRefFrameState()
  * @job_class{initialization}
  */
 void JEODRefFrameState::initialize(
+   jeod::TimeTT        &time_tt_in,
    jeod::RefFrameState *ref_frame_state_ptr )
 {
    // Must have federation instance name.
@@ -121,6 +123,9 @@ void JEODRefFrameState::initialize(
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
    this->ref_frame_state = ref_frame_state_ptr;
+
+   // Set the JEOD time reference.
+   time_tt = &time_tt_in;
 
    // Mark this as initialized.
    RefFrameBase::initialize();
@@ -181,6 +186,18 @@ void JEODRefFrameState::pack()
            << "\t\t" << stc_data.quat_vector[2] << endl
            << endl;
    }
+   if ( debug ) {
+      cout << "JEODRefFrameState::pack():" << __LINE__ << endl
+           << "\tSim Sec: " << exec_get_sim_time()  << endl
+           << "\tSeconds: " << (time_tt->trunc_julian_time * 86400.0) << endl
+           << "\tDate: " << time_tt->calendar_year
+           << "-" << time_tt->calendar_month
+           << "-" << time_tt->calendar_day
+           << "::" << time_tt->calendar_hour
+           << ":" << time_tt->calendar_minute
+           << ":" << time_tt->calendar_second << endl
+           << endl;
+   }
 
    // Encode the data into the reference frame buffer.
    stc_encoder.encode();
@@ -227,6 +244,18 @@ void JEODRefFrameState::unpack()
               << "\t\t" << stc_data.quat_vector[0] << endl
               << "\t\t" << stc_data.quat_vector[1] << endl
               << "\t\t" << stc_data.quat_vector[2] << endl
+              << endl;
+      }
+      if ( debug ) {
+         cout << "JEODRefFrameState::unpack():" << __LINE__ << endl
+              << "\tSim Sec: " << exec_get_sim_time()  << endl
+              << "\tSeconds: " << (time_tt->trunc_julian_time * 86400.0) << endl
+              << "\tDate: " << time_tt->calendar_year
+              << "-" << time_tt->calendar_month
+              << "-" << time_tt->calendar_day
+              << "::" << time_tt->calendar_hour
+              << ":" << time_tt->calendar_minute
+              << ":" << time_tt->calendar_second << endl
               << endl;
       }
 

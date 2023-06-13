@@ -42,14 +42,20 @@ class JEODRefFrameSimObject : public Trick::SimObject {
 
    /* SimObjct constructor. */
    JEODRefFrameSimObject( jeod::TimeTT   & time_in,
-                          unsigned short   INIT = 59 )
+                          unsigned short   _INIT = 59,
+                          unsigned short   _UPDATE = 99 )
    : time_tt(time_in)
-   {
+   {    
       //
       // Initialization jobs
       //
-      // Initialize the reference frame packing object.
-      PINIT ("initialization") frame_packing.initialize( &ref_frame_state );
+      // Initialize the reference frame packing object.  This needs to run
+      // before the HLA initialization jobs run.
+      P_INIT ("initialization") frame_packing.initialize( time_tt, &ref_frame_state );
+      
+      // This needs to run after the JEOD dynamics manager initializes the
+      // simulation and before the federate sends the initialization data.
+      P_UPDATE ("initialization") update();
 
       // Update the reference frame state at the environment high rate.
       (HIGH_RATE_ENV, "environment") update();
@@ -87,12 +93,6 @@ class JEODRefFrameSimObject : public Trick::SimObject {
       return parent_frame_ptr;
    }
 
-
-  private:
-   jeod::TimeTT   & time_tt;
-   jeod::RefFrame * parent_frame_ptr;
-   jeod::RefFrame * target_frame_ptr;
-
    /* Update the SpaceFOM reference frame wrt. the specified parent frame. */
    void update () {
 
@@ -104,6 +104,12 @@ class JEODRefFrameSimObject : public Trick::SimObject {
 
       return;
    }
+
+
+  private:
+   jeod::TimeTT   & time_tt;
+   jeod::RefFrame * parent_frame_ptr;
+   jeod::RefFrame * target_frame_ptr;
 
    // This object is not copyable
    JEODRefFrameSimObject( const JEODRefFrameSimObject & );
