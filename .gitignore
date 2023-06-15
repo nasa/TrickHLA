@@ -70,6 +70,9 @@ SIM_*.xml
 # Ignore trick-generated makefiles for unit tests
 Makefile.trick
 
+# JEOD specific files
+jeod_chkpnt_post_init
+
 # Eclipse specific files
 Debug
 .cproject
