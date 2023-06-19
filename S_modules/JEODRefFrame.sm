@@ -35,7 +35,7 @@ class JEODRefFrameSimObject : public Trick::SimObject {
   public:
 
    /* HLA associated reference frames packing object. */
-   JEODRefFrameState frame_packing;
+   SpaceFOM::JEODRefFrameState frame_packing;
 
    /* JEOD Reference Frame state in SpaceFOM parent frame. */
    jeod::RefFrameState ref_frame_state;

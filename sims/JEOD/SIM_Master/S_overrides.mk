@@ -5,7 +5,7 @@
 -include ${HOME}/.trickhla/S_user_env.mk
 
 ifdef JEOD_HOME
-TRICK_SFLAGS += -I${JEOD_HOME}/lib/jeod/JEOD_S_modules
+TRICK_SFLAGS += -I${JEOD_HOME}/S_modules
 include $(JEOD_HOME)/bin/jeod/generic_S_overrides.mk
 else
 $(error "You must set the JEOD_HOME environment variable.")

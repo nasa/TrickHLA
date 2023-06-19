@@ -1,17 +1,19 @@
 ##############################################################################
 # PURPOSE:
 #    (This is a Python input file for configuring the Space Reference FOM
-#     example Root Reference Frame Publisher (RRFP) federate run.)
+#     example vehicle federate run.)
 #
 # REFERENCE:
-#    (Trick 19 documentation.)
+#    (Trick documentation.)
 #
 # ASSUMPTIONS AND LIMITATIONS:
 #    ((Uses the SpaceFOMFederateConfig Python class.)
-#     (Uses the SpaceFOMRefFrameObject Python class.))
+#     (Uses the SpaceFOMRefFrameObject Python class.)
+#     (Instantiated the default TrickHLATimeOfDayTimeline based CTE time
+#      line for testing.))
 #
 # PROGRAMMERS:
-#    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.)))
+#    (((Edwin Z. Crues) (NASA/ER7) (June 2023) (--) (JEOD support and testing.)))
 ##############################################################################
 import sys
 sys.path.append('../../../')
@@ -23,7 +25,7 @@ from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
 def print_usage_message( ):
 
    print(' ')
-   print('JEOD-based SpaceFOM Reference Frame Simulation Command Line Configuration Options:')
+   print('TrickHLA SpaceFOM JEOD Master Simulation Command Line Configuration Options:')
    print('  -h -help         : Print this help message.')
    print('  -stop [time]     : Time to stop simulation, default is 10.0 seconds.')
    print('  -nostop          : Set no stop time on simulation.')
@@ -115,38 +117,130 @@ trick.exec_set_trap_sigfpe(True)
 trick.checkpoint_post_init(1)
 #trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
 
+trick.real_time_enable()
 trick.exec_set_software_frame(0.250)
 trick.exec_set_enable_freeze(True)
 trick.exec_set_freeze_command(True)
 trick.sim_control_panel_set_enabled(False)
-trick.exec_set_stack_trace(False)
+trick.exec_set_stack_trace(True)
 
 
 # =========================================================================
 # Set up the JEOD environment.
 # =========================================================================
-#jeod_time.time_manager_init.initializer = "TAI"
-#jeod_time.time_manager_init.sim_start_format = trick.TimeEnum.truncated_julian;
-#jeod_time.time_tai.trunc_julian_time = 12345.6789
+jeod_time.time_manager_init.initializer = "UTC"
+jeod_time.time_manager_init.sim_start_format = trick.TimeEnum.calendar
+
+jeod_time.time_utc.calendar_year   = 1969
+jeod_time.time_utc.calendar_month  =    7
+jeod_time.time_utc.calendar_day    =   20
+jeod_time.time_utc.calendar_hour   =   12
+jeod_time.time_utc.calendar_minute =    0
+jeod_time.time_utc.calendar_second =  0.0
 
 jeod_time.time_utc.initialize_from_name = "TAI"
-#jeod_time.time_tt.initialize_from_name = "TAI"
+jeod_time.time_tt.initialize_from_name  = "TAI"
 
-#jeod_time.time_tai.update_from_name = "Dyn"
+jeod_time.time_tai.update_from_name = "Dyn"
 jeod_time.time_utc.update_from_name = "TAI"
-#jeod_time.time_tt.update_from_name  = "TAI"
-
-dynamics.dyn_manager_init.mode = trick.DynManagerInit.EphemerisMode_Ephemerides
-# dynamics.dyn_manager_init.central_point_name = "Earth"
-abm_integrator = trick.ABM4IntegratorConstructor()
-dynamics.dyn_manager_init.integ_constructor = abm_integrator 
+jeod_time.time_tt.update_from_name  = "TAI"
 
 # Configure the ephemeris model
 env.de4xx.set_model_number(440)
 
+# Setup for Lunar orbit.
+earth.rnp.rnp_type = trick.PlanetRNP.RotationOnly
+earth.rnp.enable_polar = False
 
-# Configure the integrator.
-#fast_integ_loop.integ_loop.set_deriv_ephem_update (1)
+# Setup radiation pressure.
+vehicle.rad_surface.albedo = 1.0
+vehicle.rad_surface.diffuse = .27
+vehicle.rad_surface.temperature = 0.0
+vehicle.rad_surface.thermal.active = False
+vehicle.rad_surface.thermal.thermal_power_dump = 0.0
+vehicle.rad_surface.thermal.emissivity = 1.0e-12
+vehicle.rad_surface.thermal.heat_capacity = 0.0
+vehicle.rad_surface.cx_area  = trick.attach_units( "m2",2.1432)
+
+# Setup atmosphere model.
+# No atmosphere for this problem.
+vehicle.aero_drag.active = False
+vehicle.atmos_state.active = False
+
+# Setup gravity model.
+vehicle.sun_grav_control.source_name = "Sun"
+vehicle.sun_grav_control.active      = True
+vehicle.sun_grav_control.spherical   = True
+vehicle.sun_grav_control.gradient    = False
+
+vehicle.earth_grav_control.source_name = "Earth"
+vehicle.earth_grav_control.active      = True
+vehicle.earth_grav_control.spherical   = True
+vehicle.earth_grav_control.gradient    = False
+
+vehicle.moon_grav_control.source_name = "Moon"
+vehicle.moon_grav_control.active      = True
+vehicle.moon_grav_control.spherical   = False
+vehicle.moon_grav_control.gradient    = False
+vehicle.moon_grav_control.degree      = 60
+vehicle.moon_grav_control.order       = 60
+
+vehicle.mars_grav_control.source_name = "Mars"
+vehicle.mars_grav_control.active      = False
+vehicle.mars_grav_control.spherical   = True
+vehicle.mars_grav_control.gradient    = False
+
+vehicle.dyn_body.grav_interaction.add_control(vehicle.sun_grav_control)
+vehicle.dyn_body.grav_interaction.add_control(vehicle.earth_grav_control)
+vehicle.dyn_body.grav_interaction.add_control(vehicle.moon_grav_control)
+vehicle.dyn_body.grav_interaction.add_control(vehicle.mars_grav_control)
+
+# Setup mass properties.
+#defaults units are SI unless otherwise stated.
+vehicle.mass_init.set_subject_body( vehicle.dyn_body.mass )
+vehicle.mass_init.properties.mass = 424.0
+vehicle.mass_init.properties.pt_orientation.data_source =    trick.Orientation.InputEigenRotation
+vehicle.mass_init.properties.pt_orientation.eigen_angle = 0.0
+vehicle.mass_init.properties.pt_orientation.eigen_axis  = [ 0.0, 1.0, 0.0]
+vehicle.mass_init.properties.position    = [ 0.0, 0.0, 0.0]
+vehicle.mass_init.properties.inertia[0]  = [ 1.0, 0.0, 0.0]
+vehicle.mass_init.properties.inertia[1]  = [ 0.0, 1.0, 0.0]
+vehicle.mass_init.properties.inertia[2]  = [ 0.0, 0.0, 1.0]
+
+# Set initial state.
+vehicle.pfix.reference_name     = "Moon"
+vehicle.lvlh.reference_name     = "Moon"
+vehicle.orb_elem.reference_name = "Moon"
+
+vehicle.trans_init.set_subject_body( vehicle.dyn_body )
+vehicle.trans_init.reference_ref_frame_name = "Moon.inertial"
+vehicle.trans_init.body_frame_id            = "composite_body"
+
+vehicle.lvlh_init.set_subject_body( vehicle.dyn_body )
+vehicle.lvlh_init.planet_name                = "Moon"
+vehicle.lvlh_init.body_frame_id              = "composite_body"
+vehicle.lvlh_init.orientation.data_source    = trick.Orientation.InputEulerRotation
+vehicle.lvlh_init.orientation.euler_sequence = trick.Orientation.Yaw_Pitch_Roll
+vehicle.lvlh_init.orientation.euler_angles   = [ 0.0, 0.0, 0.0]
+vehicle.lvlh_init.ang_velocity               = [ 0.0, 0.0, 0.0]
+
+vehicle.trans_init.position  = trick.attach_units( "km",[  1296.944012, -1060.824450, 2522.289146])
+vehicle.trans_init.velocity  = trick.attach_units( "km/s",[ -.930578, -.439312, .862075])
+
+# Setup Dynamics Manager info.
+dynamics.dyn_manager.add_body_action(vehicle.mass_init)
+dynamics.dyn_manager.add_body_action(vehicle.trans_init)
+dynamics.dyn_manager.add_body_action(vehicle.lvlh_init)
+
+# Configure vehicle integration information.
+vehicle.dyn_body.set_name( "PhysicalEntity" )
+vehicle.dyn_body.integ_frame_name       = "Moon.inertial"
+vehicle.dyn_body.translational_dynamics = True
+vehicle.dyn_body.rotational_dynamics    = True
+
+# Setup the integrator.
+dynamics.dyn_manager_init.sim_integ_opt = trick.sim_services.Runge_Kutta_4
+dynamics.dyn_manager.deriv_ephem_update = True
 
 
 # =========================================================================
@@ -158,13 +252,14 @@ federate = SpaceFOMFederateConfig( THLA.federate,
                                    THLA.execution_control,
                                    THLA.ExCO,
                                    'SpaceFOM_JEOD_Test',
-                                   'JEODRefFrames',
+                                   'Vehicle',
                                    True )
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job
 # to configure the ExCO. This is only needed for input file configuration.
 #federate.set_ExCO_S_define_name( 'THLA_INIT.ExCO' )
+
 
 # Set the debug output level.
 if (verbose == True) : 
@@ -177,17 +272,16 @@ else :
 #--------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.
 #--------------------------------------------------------------------------
-federate.set_master_role( False ) # This is the Master federate.
-federate.set_pacing_role( False ) # This is the Pacing federate.
-federate.set_RRFP_role( True )    # This is the Root Reference Frame Publisher.
+federate.set_master_role( False ) # This is NOT the Master federate.
+federate.set_pacing_role( False ) # This is NOT the Pacing federate.
+federate.set_RRFP_role( False )   # This is NOT the Root Reference Frame Publisher.
 
 #--------------------------------------------------------------------------
 # Add in known required federates.
 #--------------------------------------------------------------------------
-# This is the RRFP federate.
-# It doesn't really need to know about any other federates.
 federate.add_known_fededrate( True, str(federate.federate.name) )
 federate.add_known_fededrate( True, 'Master' )
+federate.add_known_fededrate( True, 'JEODRefFrames' )
 
 #--------------------------------------------------------------------------
 # Configure the CRC.
@@ -201,6 +295,9 @@ THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 #--------------------------------------------------------------------------
 # Set up federate related time related parameters.
 #--------------------------------------------------------------------------
+# Pull the scenario timeline epoch from JEOD.
+federate.set_scenario_timeline_epoch( jeod_time.time_tt.trunc_julian_time * 86400.0 )
+
 # Must specify a federate HLA lookahead value in seconds.
 federate.set_lookahead_time( 0.250 )
 
@@ -221,7 +318,7 @@ federate.set_time_constrained( True )
 # By setting this we are specifying the use of Common Timing Equipment (CTE)
 # for controlling the Mode Transitions for all federates using CTE.
 # Don't really need CTE for RRFP.
-#THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::CTETimelineBase' )
+THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::CTETimelineBase' )
 
 
 #---------------------------------------------------------------------------
@@ -238,17 +335,6 @@ mars_centered_inertial.frame_packing.debug = verbose
 earth_centered_fixed.frame_packing.debug = True
 moon_centered_fixed.frame_packing.debug = verbose
 mars_centered_fixed.frame_packing.debug = verbose
-
-# Mark the frames as published.
-solar_system_barycenter.frame_packing.publish();
-sun_inertial.frame_packing.publish();
-earth_moon_barycenter.frame_packing.publish();
-earth_centered_inertial.frame_packing.publish();
-moon_centered_inertial.frame_packing.publish();
-mars_centered_inertial.frame_packing.publish();
-earth_centered_fixed.frame_packing.publish();
-moon_centered_fixed.frame_packing.publish();
-mars_centered_fixed.frame_packing.publish();
 
 
 #---------------------------------------------------------------------------

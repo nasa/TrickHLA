@@ -34,7 +34,7 @@
 // Define the HLA phase initialization priorities.
 //==========================================================================
 #define P_HLA_EARLY  1     // HLA early job phase.
-#define P_HLA_INIT   9     // HLA initialization phase.
+#define P_HLA_INIT   60    // HLA initialization phase.
 #define P_HLA_LATE   65534 // HLA late job phase.
 
 
@@ -116,7 +116,7 @@ JEODHLAInitSimObject THLA_INIT( jeod_time.time_manager,
                                 THLA.manager,
                                 THLA.federate,
                                 THLA.execution_control,
-                                P_HLA_INIT );
+                                (P_HLA_INIT-1) );
 
 // Build the SpaceFOM Reference Frame Tree using JEOD reference frames.
 JEODRefFrameTreeSimObject ref_frame_tree( THLA.manager,
