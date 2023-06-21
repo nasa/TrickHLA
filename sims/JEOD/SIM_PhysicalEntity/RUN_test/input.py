@@ -21,6 +21,8 @@ sys.path.append('../../../')
 from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
 # Load the SpaceFOM specific reference frame configuration object.
 from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
+# Load the SpaceFOM/JEOD specific reference frame tree configuration object.
+from Modified_data.JEOD.JEODRefFrameTreeObject import *
 
 def print_usage_message( ):
 
@@ -324,6 +326,7 @@ THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHL
 #---------------------------------------------------------------------------
 # Set up the Reference Frame objects.
 #---------------------------------------------------------------------------
+frame_tree = JEODRefFrameTreeObject( federate, ref_frame_tree )
 
 # Set the debug flag for the reference frames.
 solar_system_barycenter.frame_packing.debug = True
@@ -360,9 +363,6 @@ federate.add_sim_object( mars_centered_fixed )
 #---------------------------------------------------------------------------
 #federate.disable()
 federate.initialize()
-
-# FIXME: Override the object count.
-THLA.manager.obj_count = 9
 
 
 #---------------------------------------------------------------------------

@@ -20,6 +20,7 @@
  *        Date: 
  * Description: 
  ****************************************************************************/
+ 
 
 //==========================================================================
 // SIM_OBJECT: JEODRefFrameTreeSimObject - An JEOD reference frame tree
@@ -52,7 +53,9 @@ class JEODRefFrameTreeSimObject : public Trick::SimObject {
       //
       // Default data jobs
       //
+ #ifdef DEFAULT_DATA_CONFIG
       ("default_data") configure_tree();
+ #endif
 
       // We need to subscribe to the desired reference frames to insure that
       // JEOD updates them.
