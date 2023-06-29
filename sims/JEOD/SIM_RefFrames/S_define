@@ -141,10 +141,35 @@ JEODRefFrameSimObject moon_centered_fixed( jeod_time.time_tt, (P_HLA_INIT-1), 40
 JEODRefFrameSimObject mars_centered_fixed( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
 
 
+// Setup the integration loop.
+IntegLoop sim_integ_loop  (DYNAMICS) earth, moon, mars, dynamics;
+
+
 //==========================================================================
 // Create the THLA connections for the SpaceFOM Reference Frame Tree.
 //==========================================================================
 void create_connections() {
+
+#ifdef DEFAULT_DATA_CONFIG
+   //
+   // This code will only be executed when we want to configure the reference
+   // frame tree using default data instead of in the input file.
+   //
+   // Allocate the HLA objects for the Reference Frame tree.
+   THLA.manager.obj_count = 9;
+   THLA.manager.objects = (TrickHLA::Object*)trick_MM->declare_var( "TrickHLA::Object",
+                                                                    THLA.manager.obj_count );
+   // Assign the HLA objects to the associated frame.
+   solar_system_barycenter.frame_packing.set_object(&(THLA.manager.objects[0]));
+   sun_inertial.frame_packing.set_object(&(THLA.manager.objects[1]));
+   earth_moon_barycenter.frame_packing.set_object(&(THLA.manager.objects[2]));
+   earth_centered_inertial.frame_packing.set_object(&(THLA.manager.objects[3]));
+   moon_centered_inertial.frame_packing.set_object(&(THLA.manager.objects[4]));
+   mars_centered_inertial.frame_packing.set_object(&(THLA.manager.objects[5]));
+   earth_centered_fixed.frame_packing.set_object(&(THLA.manager.objects[6]));
+   moon_centered_fixed.frame_packing.set_object(&(THLA.manager.objects[7]));
+   mars_centered_fixed.frame_packing.set_object(&(THLA.manager.objects[8]));
+#endif
 
    // Make the connections for the Sun, Earth, Moon, Mars reference frame tree.
    ref_frame_tree.ssbary_frame_ptr = &solar_system_barycenter.frame_packing;

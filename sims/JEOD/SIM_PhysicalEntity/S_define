@@ -239,6 +239,7 @@ class VehicleSimObject: public VehicleAtmSimObject
    VehicleSimObject & operator = (const VehicleSimObject&);
 
 };
+
 VehicleSimObject vehicle ( dynamics.dyn_manager,
                            earth.atmos,
                            earth.wind_velocity,
@@ -265,12 +266,26 @@ vcollect vehicle.dyn_body.collect.collect_no_xmit_forc jeod::CollectForce::creat
 //==========================================================================
 #include "SpaceFOM.sm"
 
+// Main TrickHLA SimObject.
+SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME, THLA_INTERACTION_CYCLE_TIME,
+                        P_HLA_EARLY, P_HLA_INIT, P_HLA_LATE );
+
 
 //==========================================================================
 // SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
 // initialization SimObject.
 //==========================================================================
 #include "JEODHLAInit.sm"
+
+// SimObject used capture simulation specific initialization.
+JEODHLAInitSimObject THLA_INIT( jeod_time.time_manager,
+                                jeod_time.time_manager_init,
+                                jeod_time.time_tai,
+                                jeod_time.time_tt,
+                                THLA.manager,
+                                THLA.federate,
+                                THLA.execution_control,
+                                P_HLA_INIT );
 
 
 //==========================================================================
@@ -286,24 +301,6 @@ vcollect vehicle.dyn_body.collect.collect_no_xmit_forc jeod::CollectForce::creat
 // object discovery and data exchange.
 //==========================================================================
 #include "JEODRefFrame.sm"
-
-
-//==========================================================================
-// SimObject instantiations.
-//==========================================================================
-// Main TrickHLA SimObject.
-SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME, THLA_INTERACTION_CYCLE_TIME,
-                        P_HLA_EARLY, P_HLA_INIT, P_HLA_LATE );
-
-// SimObject used capture simulation specific initialization.
-JEODHLAInitSimObject THLA_INIT( jeod_time.time_manager,
-                                jeod_time.time_manager_init,
-                                jeod_time.time_tai,
-                                jeod_time.time_tt,
-                                THLA.manager,
-                                THLA.federate,
-                                THLA.execution_control,
-                                P_HLA_INIT );
 
 // Build the SpaceFOM Reference Frame Tree using JEOD reference frames.
 JEODRefFrameTreeSimObject ref_frame_tree( THLA.manager,
@@ -328,13 +325,34 @@ JEODRefFrameSimObject mars_centered_fixed( jeod_time.time_tt, (P_HLA_INIT-1), 40
 
 
 // Setup the integration loop.
-IntegLoop sim_integ_loop  (DYNAMICS) earth, moon, vehicle, dynamics;
+IntegLoop sim_integ_loop  (DYNAMICS) earth, moon, mars, vehicle, dynamics;
 
 
 //==========================================================================
 // Create the THLA connections for the SpaceFOM Reference Frame Tree.
 //==========================================================================
 void create_connections() {
+
+#ifdef DEFAULT_DATA_CONFIG
+   //
+   // This code will only be executed when we want to configure the reference
+   // frame tree using default data instead of in the input file.
+   //
+   // Allocate the HLA objects for the Reference Frame tree.
+   THLA.manager.obj_count = 9;
+   THLA.manager.objects = (TrickHLA::Object*)trick_MM->declare_var( "TrickHLA::Object",
+                                                                    THLA.manager.obj_count );
+   // Assign the HLA objects to the associated frame.
+   solar_system_barycenter.frame_packing.set_object(&(THLA.manager.objects[0]));
+   sun_inertial.frame_packing.set_object(&(THLA.manager.objects[1]));
+   earth_moon_barycenter.frame_packing.set_object(&(THLA.manager.objects[2]));
+   earth_centered_inertial.frame_packing.set_object(&(THLA.manager.objects[3]));
+   moon_centered_inertial.frame_packing.set_object(&(THLA.manager.objects[4]));
+   mars_centered_inertial.frame_packing.set_object(&(THLA.manager.objects[5]));
+   earth_centered_fixed.frame_packing.set_object(&(THLA.manager.objects[6]));
+   moon_centered_fixed.frame_packing.set_object(&(THLA.manager.objects[7]));
+   mars_centered_fixed.frame_packing.set_object(&(THLA.manager.objects[8]));
+#endif
 
    // Make the connections for the Sun, Earth, Moon, Mars reference frame tree.
    ref_frame_tree.ssbary_frame_ptr = &solar_system_barycenter.frame_packing;

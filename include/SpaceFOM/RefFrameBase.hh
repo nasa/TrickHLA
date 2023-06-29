@@ -94,15 +94,16 @@ class RefFrameBase : public TrickHLA::Packing
     *  @param object TrickHLA::Object associated with this reference frame.
     *  @param sim_obj_name Name of SimObject containing this reference frame.
     *  @param ref_frame_obj_name Name of the ReferenceFrame object in the SimObject.
+    *  @param ref_frame_parent_name Name of the parent frame for this ReferenceFrame instance.
     *  @param ref_frame_name Name of the ReferenceFrame instance.
     *  @param publishes Does this federate publish this reference frame.
     *  */
-   virtual void default_data( TrickHLA::Object *mngr_object,
-                              char const       *sim_obj_name,
+   virtual void default_data( char const       *sim_obj_name,
                               char const       *ref_frame_obj_name,
                               char const       *ref_frame_parent_name,
                               char const       *ref_frame_name,
-                              bool              publishes );
+                              bool              publishes,
+                              TrickHLA::Object *mngr_object = NULL);
 
    // Initialize the packing object.
    /*! @brief Set the reference to the reference frame data. */
@@ -148,6 +149,9 @@ class RefFrameBase : public TrickHLA::Packing
    // From the TrickHLA::Packing class.
    /*! @brief Called to unpack the data after data is received from the RTI. */
    virtual void unpack() = 0;
+
+   // Access to protected data.
+   virtual void set_object( TrickHLA::Object * mngr_obj );
 
    // Access to protected data.
    virtual TrickHLA::Object *get_object()

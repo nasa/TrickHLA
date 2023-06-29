@@ -136,17 +136,13 @@ jeod_time.time_utc.initialize_from_name = "TAI"
 jeod_time.time_utc.update_from_name = "TAI"
 #jeod_time.time_tt.update_from_name  = "TAI"
 
-dynamics.dyn_manager_init.mode = trick.DynManagerInit.EphemerisMode_Ephemerides
-# dynamics.dyn_manager_init.central_point_name = "Earth"
-abm_integrator = trick.ABM4IntegratorConstructor()
-dynamics.dyn_manager_init.integ_constructor = abm_integrator 
-
 # Configure the ephemeris model
 env.de4xx.set_model_number(440)
+dynamics.dyn_manager_init.mode = trick.DynManagerInit.EphemerisMode_Ephemerides
 
-
-# Configure the integrator.
-#fast_integ_loop.integ_loop.set_deriv_ephem_update (1)
+# Setup the integrator.
+dynamics.dyn_manager_init.sim_integ_opt = trick.sim_services.Runge_Kutta_4
+dynamics.dyn_manager.deriv_ephem_update = True
 
 
 # =========================================================================
@@ -274,9 +270,6 @@ federate.add_sim_object( mars_centered_fixed )
 #---------------------------------------------------------------------------
 #federate.disable()
 federate.initialize()
-
-# FIXME: Override the object count.
-THLA.manager.obj_count = 9
 
 
 #---------------------------------------------------------------------------

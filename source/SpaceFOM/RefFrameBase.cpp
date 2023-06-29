@@ -99,18 +99,41 @@ RefFrameBase::~RefFrameBase()
  * @job_class{default_data}
  */
 void RefFrameBase::default_data(
-   TrickHLA::Object *mngr_object,
    char const       *sim_obj_name,
    char const       *ref_frame_obj_name,
    char const       *ref_frame_parent_name,
    char const       *ref_frame_name,
-   bool              publishes )
+   bool              publishes,
+   TrickHLA::Object *mngr_object )
 {
    string ref_frame_name_str = string( sim_obj_name ) + "." + string( ref_frame_obj_name );
    string trick_name_str;
 
    // Associate the instantiated Manager object with this packing object.
-   this->object = mngr_object;
+   if ( mngr_object == NULL ) {
+      if ( this->object == NULL ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
+                << " WARNING: Unexpected NULL THLAManager object for ReferenceFrame \""
+                << ref_frame_name << "\"!" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      // If the mngr_object is not set but the object is, use that.
+   }
+   else {
+      if ( this->object == NULL ) {
+         // If the object is not already set, use the passed in mngr_object.
+         this->object = mngr_object;
+      }
+      else{
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
+                << " WARNING: THLAManager object for ReferenceFrame \""
+                << ref_frame_name << "\" is already set!" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+   }
+
 
    // Set the frame name and parent frame name.
    if( ref_frame_parent_name != NULL ){
@@ -324,6 +347,27 @@ void RefFrameBase::subscribe()
       object->attributes[2].subscribe     = true;
       object->attributes[2].locally_owned = false;
    }
+
+   return;
+}
+
+/*!
+ * @job_class{default_data}
+ */
+void RefFrameBase::set_object( TrickHLA::Object * mngr_obj )
+{
+   ostringstream errmsg;
+
+   // Check for initialization.
+   if ( initialized ) {
+      errmsg << "SpaceFOM::RefFrameBase::set_object():" << __LINE__
+             << " ERROR: The initialize() function has already been called" << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Assign the object.
+   this->object = mngr_obj;
 
    return;
 }

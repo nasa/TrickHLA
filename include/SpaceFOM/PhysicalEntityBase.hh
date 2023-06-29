@@ -76,6 +76,22 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    PhysicalEntityBase();          // Default constructor.
    virtual ~PhysicalEntityBase(); // Destructor.
 
+   // Default data.
+   /*! @brief Sets up the attributes for a PhysicalEntity using default values.
+    *  @param object TrickHLA::Object associated with this PhysicalEntity.
+    *  @param sim_obj_name Name of SimObject containing this PhysicalEntity.
+    *  @param entity_obj_name Name of the ReferenceFrame object in the SimObject.
+    *  @param entity_name Name of the PhysicalEntity instance.
+    *  @param parent_ref_frame_name Name of the parent ReferenceFrame for this PhysicalEntity instance.
+    *  @param publishes Does this federate publish this PhysicalEntity.
+    *  */
+   virtual void default_data( TrickHLA::Object *mngr_object,
+                              char const       *sim_obj_name,
+                              char const       *entity_obj_name,
+                              char const       *entity_name,
+                              char const       *parent_ref_frame_name,
+                              bool              publishes );
+
    // Initialization routines.
    void initialize();
 
@@ -109,8 +125,8 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
       return state.time;
    }
 
-   virtual void pack();
-   virtual void unpack();
+   virtual void pack() = 0;
+   virtual void unpack() = 0;
 
   protected:
    char  *name;             ///< @trick_units{--} Name of this entity(required).
@@ -130,8 +146,19 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
 
   private:
    // This object is not copyable
+   /*! @brief Copy constructor for PhysicalEntityBase class.
+    *  @details This constructor is private to prevent inadvertent copies. */
    PhysicalEntityBase( PhysicalEntityBase const &rhs );
+   /*! @brief Assignment operator for PhysicalEntityBase class.
+    *  @details This assignment operator is private to prevent inadvertent copies. */
    PhysicalEntityBase &operator=( PhysicalEntityBase const &rhs );
+
+   /*! @brief Uses Trick memory allocation routines to allocate a new string
+    *  that is input file compliant. */
+   char *allocate_input_string( char const *c_string );
+   /*! @brief Uses Trick memory allocation routines to allocate a new string
+    *  that is input file compliant. */
+   char *allocate_input_string( std::string const &cpp_string );
 };
 
 } // namespace SpaceFOM
