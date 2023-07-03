@@ -106,6 +106,13 @@ class Packing
   protected:
    Object *object; ///< @trick_io{**} Object associated with this packing class.
 
+   /*! @brief Uses Trick memory allocation routines to allocate a new string
+    *  that is input file compliant. */
+   char *allocate_input_string( char const *c_string );
+   /*! @brief Uses Trick memory allocation routines to allocate a new string
+    *  that is input file compliant. */
+   char *allocate_input_string( std::string const &cpp_string );
+
   private:
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for Packing class.

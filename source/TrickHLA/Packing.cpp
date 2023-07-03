@@ -134,3 +134,24 @@ double Packing::get_cte_time()
    }
    return -std::numeric_limits< double >::max();
 }
+
+/*!
+ * @job_class{default_data}
+ */
+char *Packing::allocate_input_string( // RETURN: -- None.
+   char const *c_string )             // IN: -- String to allocate.
+{
+   return allocate_input_string( string( c_string ) );
+}
+
+/*!
+ * @job_class{default_data}
+ */
+char *Packing::allocate_input_string( // RETURN: -- None.
+   string const &cpp_string )         // IN: -- String to allocate.
+{
+   char *new_c_str = (char *)TMM_declare_var_1d( "char", cpp_string.length() + 1 );
+   strncpy( new_c_str, cpp_string.c_str(), cpp_string.length() + 1 );
+
+   return new_c_str;
+}

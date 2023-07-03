@@ -11,7 +11,7 @@
 #     (Assumes that trick is available globally.))
 #
 # PROGRAMMERS:
-#    (((Edwin Z. Crues) (NASA) (June 2016) (--) (Space FOM development)))
+#    (((Edwin Z. Crues) (NASA) (July 2023) (--) (Space FOM development)))
 ##############################################################################
 import trick
 from ..SpaceFOM.SpaceFOMFederateConfig import *

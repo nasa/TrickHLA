@@ -1,5 +1,5 @@
 /*!
-@file SpaceFOM/PhysicalEntityBase.cpp
+@file SpaceFOM/DynamicalEntityBase.cpp
 @ingroup SpaceFOM
 @brief This class provides data packing for the SpaceFOM Reference Frames.
 
@@ -15,10 +15,8 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{../TrickHLA/CompileConfig.cpp}
 @trick_link_dependency{../TrickHLA/Packing.cpp}
-@trick_link_dependency{PhysicalEntityBase.cpp}
-
+@trick_link_dependency{DynamicalEntityBase.cpp}
 
 @revs_title
 @revs_begin
@@ -38,11 +36,11 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
-#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.hh"
 #include "trick/matrix_macros.h"
-#include "trick/message_proto.h"
+//#include "trick/message_proto.h"
 #include "trick/vector_macros.h"
+#include "trick/MemoryManager.hh"
 
 // TrickHLA include files.
 #include "TrickHLA/CompileConfig.hh"
@@ -53,8 +51,9 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Types.hh"
 
 // SpaceFOM include files.
-#include "SpaceFOM/PhysicalEntityBase.hh"
+#include "SpaceFOM/DynamicalEntityBase.hh"
 
+//using namespace std;
 using namespace std;
 using namespace TrickHLA;
 using namespace SpaceFOM;
@@ -62,52 +61,29 @@ using namespace SpaceFOM;
 /*!
  * @job_class{initialization}
  */
-PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
-   : debug(false),
-     initialized(false),
-     entity_attr(NULL),
-     name( NULL ),
-     type( NULL ),
-     status( NULL ),
-     parent_ref_frame( NULL ),
-     state( stc_encoder.get_data() ),
-     body_wrt_struct( quat_encoder.get_data() )
+DynamicalEntityBase::DynamicalEntityBase() // RETURN: -- None.
+   : mass( 0.0 ),
+     mass_rate( 0.0 )
 {
-   V_INIT( accel );
-   V_INIT( rot_accel );
-   V_INIT( cm );
+   V_INIT( force );
+   V_INIT( torque );
+   M_IDENT( inertia );
+   M_IDENT( inertia_rate );
 }
 
 /*!
  * @job_class{shutdown}
  */
-PhysicalEntityBase::~PhysicalEntityBase() // RETURN: -- None.
+DynamicalEntityBase::~DynamicalEntityBase() // RETURN: -- None.
 {
-   if ( this->name != (char *)NULL ) {
-      trick_MM->delete_var( (void *)this->name );
-      this->name = (char *)NULL;
-   }
-   if ( this->type != (char *)NULL ) {
-      trick_MM->delete_var( (void *)this->type );
-      this->type = (char *)NULL;
-   }
-   if ( this->status != (char *)NULL ) {
-      trick_MM->delete_var( (void *)this->status );
-      this->status = (char *)NULL;
-   }
-   if ( this->parent_ref_frame != (char *)NULL ) {
-      trick_MM->delete_var( (void *)this->parent_ref_frame );
-      this->parent_ref_frame = (char *)NULL;
-   }
-   initialized = false;
-   entity_attr = NULL;
+   return;
 }
 
 /*!
  * @details These can be overridden in the input file.
  * @job_class{default_data}
  */
-void PhysicalEntityBase::default_data(
+void DynamicalEntityBase::default_data(
    TrickHLA::Object *mngr_object,
    char const       *sim_obj_name,
    char const       *entity_obj_name,
@@ -133,8 +109,8 @@ void PhysicalEntityBase::default_data(
    }
    else{
       ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalEntityBase::default_data():" << __LINE__
-             << " WARNING: Unexpected NULL federation instance PhysicalEntity name!" << THLA_ENDL;
+      errmsg << "SpaceFOM::DynamicalEntityBase::default_data():" << __LINE__
+             << " WARNING: Unexpected NULL federation instance DymamicalEntity name!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -142,12 +118,12 @@ void PhysicalEntityBase::default_data(
    // Set up the execution configuration HLA object mappings.
    //---------------------------------------------------------
    // Set the FOM name of the ExCO object.
-   object->FOM_name            = allocate_input_string( "PhysicalEntity" );
+   object->FOM_name            = allocate_input_string( "DymamicalEntity" );
    object->name                = allocate_input_string( entity_name );
    object->create_HLA_instance = publishes;
    object->packing             = this;
-   // Allocate the attributes for the PhysicalEntity HLA object.
-   object->attr_count = 9;
+   // Allocate the attributes for the DymamicalEntity HLA object.
+   object->attr_count = 15;
    object->attributes = (TrickHLA::Attribute *)trick_MM->declare_var( "TrickHLA::Attribute", object->attr_count );
 
    //
@@ -234,93 +210,69 @@ void PhysicalEntityBase::default_data(
    object->attributes[8].locally_owned = publishes;
    object->attributes[8].rti_encoding  = TrickHLA::ENCODING_OPAQUE_DATA;
 
+   object->attributes[9].FOM_name      = allocate_input_string( "force" );
+   trick_name_str                      = entity_name_str + string( ".force" );
+   object->attributes[9].trick_name    = allocate_input_string( trick_name_str );
+   object->attributes[9].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[9].publish       = publishes;
+   object->attributes[9].subscribe     = !publishes;
+   object->attributes[9].locally_owned = publishes;
+   object->attributes[9].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
+
+   object->attributes[10].FOM_name      = allocate_input_string( "torque" );
+   trick_name_str                      = entity_name_str + string( ".torque" );
+   object->attributes[10].trick_name    = allocate_input_string( trick_name_str );
+   object->attributes[10].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[10].publish       = publishes;
+   object->attributes[10].subscribe     = !publishes;
+   object->attributes[10].locally_owned = publishes;
+   object->attributes[10].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
+
+   object->attributes[11].FOM_name      = allocate_input_string( "mass" );
+   trick_name_str                      = entity_name_str + string( ".mass" );
+   object->attributes[11].trick_name    = allocate_input_string( trick_name_str );
+   object->attributes[11].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[11].publish       = publishes;
+   object->attributes[11].subscribe     = !publishes;
+   object->attributes[11].locally_owned = publishes;
+   object->attributes[11].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
+
+   object->attributes[12].FOM_name      = allocate_input_string( "mass_rate" );
+   trick_name_str                      = entity_name_str + string( ".mass_rate" );
+   object->attributes[12].trick_name    = allocate_input_string( trick_name_str );
+   object->attributes[12].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[12].publish       = publishes;
+   object->attributes[12].subscribe     = !publishes;
+   object->attributes[12].locally_owned = publishes;
+   object->attributes[12].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
+
+   object->attributes[13].FOM_name      = allocate_input_string( "inertia" );
+   trick_name_str                      = entity_name_str + string( ".inertia" );
+   object->attributes[13].trick_name    = allocate_input_string( trick_name_str );
+   object->attributes[13].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[13].publish       = publishes;
+   object->attributes[13].subscribe     = !publishes;
+   object->attributes[13].locally_owned = publishes;
+   object->attributes[13].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
+
+   object->attributes[14].FOM_name      = allocate_input_string( "inertia_rate" );
+   trick_name_str                      = entity_name_str + string( ".inertia_rate" );
+   object->attributes[14].trick_name    = allocate_input_string( trick_name_str );
+   object->attributes[14].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
+   object->attributes[14].publish       = publishes;
+   object->attributes[14].subscribe     = !publishes;
+   object->attributes[14].locally_owned = publishes;
+   object->attributes[14].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
+
    return;
 }
+
 
 /*!
  * @job_class{initialization}
  */
-void PhysicalEntityBase::initialize()
+void DynamicalEntityBase::initialize()
 {
-   ostringstream errmsg;
-
-   // Must have federation instance name.
-   if ( this->name == NULL ) {
-      errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
-             << " WARNING: Unexpected NULL entity name!"
-             << "  Setting frame name to empty string." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      this->name = trick_MM->mm_strdup( "" );
-   }
-
-   // Must have federation instance type.
-   if ( this->type == NULL ) {
-      errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
-             << " WARNING: Unexpected NULL entity type!"
-             << "  Setting type to empty string." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      this->type = trick_MM->mm_strdup( "" );
-   }
-
-   // Must have federation instance status.
-   if ( this->status == NULL ) {
-      errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
-             << " WARNING: Unexpected NULL entity status!"
-             << "  Setting status to empty string." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      this->status = trick_MM->mm_strdup( "" );
-   }
-
-   // Must have federation instance parent_ref_frame.
-   if ( this->parent_ref_frame == NULL ) {
-      errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
-             << " WARNING: Unexpected NULL entity parent_ref_frame!"
-             << "  Setting parent_ref_frame to empty string." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
-      this->parent_ref_frame = trick_MM->mm_strdup( "" );
-   }
-
-   // Mark this as initialized.
-   this->initialized = true;
-
-   // Return to calling routine.
+   PhysicalEntityBase::initialize();
    return;
 }
-
-void PhysicalEntityBase::set_name( char const *new_name )
-{
-   if ( this->name != NULL ) {
-      trick_MM->delete_var( (void *)this->name );
-   }
-   this->name = trick_MM->mm_strdup( new_name );
-   return;
-}
-
-void PhysicalEntityBase::set_type( char const *new_name )
-{
-   if ( this->type != NULL ) {
-      trick_MM->delete_var( (void *)this->type );
-   }
-   this->type = trick_MM->mm_strdup( new_name );
-   return;
-}
-
-void PhysicalEntityBase::set_status( char const *new_name )
-{
-   if ( this->status != NULL ) {
-      trick_MM->delete_var( (void *)this->status );
-   }
-   this->status = trick_MM->mm_strdup( new_name );
-   return;
-}
-
-void PhysicalEntityBase::set_parent_ref_frame( char const *new_name )
-{
-   if ( this->parent_ref_frame != NULL ) {
-      trick_MM->delete_var( (void *)this->parent_ref_frame );
-   }
-   this->parent_ref_frame = trick_MM->mm_strdup( new_name );
-
-   return;
-}
-

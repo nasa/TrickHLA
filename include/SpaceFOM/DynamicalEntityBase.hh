@@ -1,12 +1,10 @@
 /*!
-@file SpaceFOM/DynamicalEntity.hh
+@file SpaceFOM/DynamicalEntityBase.hh
 @ingroup SpaceFOM
 @brief Definition of the TrickHLA SpaceFOM Dynamical entity type.
 
 This is the base implementation for the Space Reference FOM (SpaceFOM) interface
-to the Reference Frame object. This needs to be available to the SpaceFOM
-initialization process for the root reference frame discovery step in the
-initialization process.
+to the DynamicalEntity object.
 
 @copyright Copyright 2019 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
@@ -25,17 +23,17 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/SpaceFOM/PhysicalEntityBase.cpp}
-@trick_link_dependency{../../source/SpaceFOM/DynamicalEntity.cpp}
+@trick_link_dependency{../../source/SpaceFOM/DynamicalEntityBase.cpp}
 
 @revs_title
 @revs_begin
-@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, July 2023, --, Initial version.}
 @revs_end
 
 */
 
-#ifndef SPACEFOM_DYNAMICAL_ENTITY_HH
-#define SPACEFOM_DYNAMICAL_ENTITY_HH
+#ifndef SPACEFOM_DYNAMICAL_ENTITY_BASE_HH
+#define SPACEFOM_DYNAMICAL_ENTITY_BASE_HH
 
 // SpaceFOM include files.
 #include "SpaceFOM/PhysicalEntityBase.hh"
@@ -43,7 +41,7 @@ NASA, Johnson Space Center\n
 namespace SpaceFOM
 {
 
-class DynamicalEntity : public SpaceFOM::PhysicalEntityBase
+class DynamicalEntityBase : virtual public SpaceFOM::PhysicalEntityBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -53,16 +51,39 @@ class DynamicalEntity : public SpaceFOM::PhysicalEntityBase
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrSpaceFOM__DynamicalEntity();
+   friend void init_attrSpaceFOM__DynamicalEntityBase();
 
   public:
    // Public constructors and destructors.
-   DynamicalEntity();          // Default constructor.
-   virtual ~DynamicalEntity(); // Destructor.
+   DynamicalEntityBase();          // Default constructor.
+   virtual ~DynamicalEntityBase(); // Destructor.
 
-   // Data pack and unpack routines.
-   virtual void pack();
-   virtual void unpack();
+   // Default data.
+   /*! @brief Sets up the attributes for a DynamicalEntity using default values.
+    *  @param object TrickHLA::Object associated with this DynamicalEntity.
+    *  @param sim_obj_name Name of SimObject containing this DynamicalEntity.
+    *  @param entity_obj_name Name of the ReferenceFrame object in the SimObject.
+    *  @param entity_name Name of the DynamicalEntity instance.
+    *  @param parent_ref_frame_name Name of the parent ReferenceFrame for this DynamicalEntity instance.
+    *  @param publishes Does this federate publish this DynamicalEntity.
+    *  */
+   virtual void default_data( TrickHLA::Object *mngr_object,
+                              char const       *sim_obj_name,
+                              char const       *entity_obj_name,
+                              char const       *entity_name,
+                              char const       *parent_ref_frame_name,
+                              bool              publishes );
+
+   // Initialization routines.
+   virtual void initialize();
+
+   // From the TrickHLA::Packing class.
+   /*! @brief Called to pack the data before the data is sent to the RTI. */
+   virtual void pack() = 0;
+
+   // From the TrickHLA::Packing class.
+   /*! @brief Called to unpack the data after data is received from the RTI. */
+   virtual void unpack() = 0;
 
   protected:
    double force[3];           ///< @trick_units{N} Total external force on vehicle applied
@@ -77,10 +98,10 @@ class DynamicalEntity : public SpaceFOM::PhysicalEntityBase
 
   private:
    // This object is not copyable
-   DynamicalEntity( DynamicalEntity const & );
-   DynamicalEntity &operator=( DynamicalEntity const & );
+   DynamicalEntityBase( DynamicalEntityBase const & );
+   DynamicalEntityBase &operator=( DynamicalEntityBase const & );
 };
 
 } // namespace SpaceFOM
 
-#endif // SPACEFOM_DYNAMICAL_ENTITY_HH: Do NOT put anything after this line!
+#endif // SPACEFOM_DYNAMICAL_ENTITY_BASE_HH: Do NOT put anything after this line!

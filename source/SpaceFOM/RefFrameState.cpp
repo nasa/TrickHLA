@@ -67,7 +67,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 RefFrameState::RefFrameState()
-   : ref_frame_data( NULL)
+   : ref_frame_data(NULL)
 {
    return;
 }
@@ -77,14 +77,6 @@ RefFrameState::RefFrameState()
  */
 RefFrameState::~RefFrameState()
 {
-   if ( this->name != (char *)NULL ) {
-      trick_MM->delete_var( (void *)this->name );
-      this->name = (char *)NULL;
-   }
-   if ( this->parent_name != (char *)NULL ) {
-      trick_MM->delete_var( (void *)this->parent_name );
-      this->parent_name = (char *)NULL;
-   }
 }
 
 /*!
@@ -175,15 +167,14 @@ void RefFrameState::unpack()
    // Use the HLA encoder helpers to decode the reference frame fixed record.
    stc_encoder.decode();
 
-   // If the HLA phase attribute has changed and is remotely owned (i.e. is
+   // If the HLA attribute has changed and is remotely owned (i.e. is
    // coming from another federate) then override our simulation state with the
-   // incoming value. If we locally own the "Phase" attribute then we do not
-   // want to override it's value. If we did not do this check then we would be
+   // incoming value.  If we locally own the attribute then we do not want to
+   // override it's value.  If we did not do this check then we would be
    // overriding state of something we own and publish with whatever value
-   // happen to be in the "phase_deg" local variable, which would cause data
-   // corruption of the state. We always need to do this check because
-   // ownership transfers could happen at any time or the data could be at a
-   // different rate.
+   // happen to be in the local variable, which would cause data corruption of
+   // the state.  We always need to do this check because ownership transfers
+   // could happen at any time or the data could be at a different rate.
    if ( ref_frame_attr->is_received() ) {
       // Print out debug information if desired.
       if ( debug ) {

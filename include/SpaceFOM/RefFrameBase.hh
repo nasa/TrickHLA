@@ -182,12 +182,6 @@ class RefFrameBase : public TrickHLA::Packing
     *  @details This assignment operator is private to prevent inadvertent copies. */
    RefFrameBase &operator=( RefFrameBase const &rhs );
 
-   /*! @brief Uses Trick memory allocation routines to allocate a new string
-    *  that is input file compliant. */
-   char *allocate_input_string( char const *c_string );
-   /*! @brief Uses Trick memory allocation routines to allocate a new string
-    *  that is input file compliant. */
-   char *allocate_input_string( std::string const &cpp_string );
 };
 
 } // namespace SpaceFOM
