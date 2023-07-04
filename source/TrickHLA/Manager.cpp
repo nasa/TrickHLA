@@ -2575,6 +2575,24 @@ Object *Manager::get_trickhla_object(
  * @job_class{scheduled}
  */
 Object *Manager::get_trickhla_object(
+   string const &obj_instance_name )
+{
+   // Search the data objects first.
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
+      if ( objects[n].get_name_string() == obj_instance_name ) {
+         return ( &objects[n] );
+      }
+   }
+
+   // Check for a match with the ExecutionConfiguration object associated with
+   // ExecutionControl. Returns NULL if match not found.
+   return ( this->execution_control->get_trickhla_object( obj_instance_name ) );
+}
+
+/*!
+ * @job_class{scheduled}
+ */
+Object *Manager::get_trickhla_object(
    wstring const &obj_instance_name )
 {
    wstring ws_obj_name;

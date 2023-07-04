@@ -224,6 +224,10 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    /*! @brief Gets the TrickHLA Object for the specified RTI Object Instance Name.
     *  @return TrickHLA Object.
     *  @param obj_instance_name Object instance name. */
+   virtual Object *get_trickhla_object( std::string const &obj_instance_name );
+   /*! @brief Gets the TrickHLA Object for the specified RTI Object Instance Name.
+    *  @return TrickHLA Object.
+    *  @param obj_instance_name Object instance name. */
    virtual Object *get_trickhla_object( std::wstring const &obj_instance_name );
    /*! @brief Returns the first object that matches the specified Object-Class,
     * object instance name, and is not registered, i.e. the instance ID == 0.

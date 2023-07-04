@@ -4644,6 +4644,17 @@ void Federate::associate_to_trick_child_thread(
                __LINE__, thread_id, data_cycle, THLA_NEWLINE );
    }
 
+   // For now, do not allow Trick child threads for a zero lookahead time
+   // because the API's to assist with getting zero lookahead cyclic data are
+   // not thread safe at this point.
+   if ( ( this->lookahead_time <= 0.0 ) && ( thread_id != 0 ) ) {
+      ostringstream errmsg;
+      errmsg << "Federate::associate_to_trick_child_thread():" << __LINE__
+             << " ERROR: Associated Trick child threads are not supported when"
+             << " a zero-lookahead time is used." << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    // Delegate to the Trick child thread coordinator.
    this->thread_coordinator.associate_to_trick_child_thread( thread_id, data_cycle, obj_insance_names );
 }
@@ -4722,6 +4733,50 @@ bool const Federate::on_data_cycle_boundary_for_obj(
 {
    // Delegate to the Trick child thread coordinator.
    return this->thread_coordinator.on_data_cycle_boundary_for_obj( obj_index, sim_time_micros );
+}
+
+void Federate::send_zero_lookahead_data(
+   string const &obj_instance_name )
+{
+   TrickHLA::Object *obj = manager->get_trickhla_object( obj_instance_name );
+   if ( obj == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Federate::send_zero_lookahead_data():" << __LINE__
+             << " ERROR: Could not find the object instance name specified:"
+             << obj_instance_name << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // TODO: Only send this on the same Trick child thread that this object
+   // instance was associated to to ensure data coherency.
+
+   obj->send_cyclic_and_requested_data( this->granted_time );
+}
+
+void Federate::wait_to_receive_zero_lookahead_data(
+   string const &obj_instance_name )
+{
+   TrickHLA::Object *obj = manager->get_trickhla_object( obj_instance_name );
+   if ( obj == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Federate::wait_to_receive_zero_lookahead_data():" << __LINE__
+             << " ERROR: Could not find the object instance name specified:"
+             << obj_instance_name << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // TODO: Only receive on the same Trick child thread that this object
+   // instance was associated to to ensure data coherency.
+
+   while ( !obj->is_changed() && obj->any_remotely_owned_subscribed_cyclic_attribute() ) {
+
+      // TODO: wait_for_zero_lookahead_TAR_TAG();
+
+      perform_time_advance_request(); // TODO: Disable Debug comments.
+      wait_for_time_advance_grant();  // TODO: Disable Debug comments.
+
+      // TODO: Do the typical loop error detection code here.
+   }
 }
 
 /*!

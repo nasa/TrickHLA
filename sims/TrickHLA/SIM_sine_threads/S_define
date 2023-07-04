@@ -36,9 +36,8 @@
 
 ##include "simconfig/include/SimpleSimConfig.hh"
 
-//=============================================================================
-// SIM_OBJECT: AThreadSimObj - A-side thread jobs.
-//=============================================================================
+
+// TrickHLA support for Trick Child Thread.
 #include "THLAThread.sm"
 
 
