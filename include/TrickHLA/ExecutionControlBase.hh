@@ -582,8 +582,8 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    }
 
    // Freeze time management functions.
-   /*! @brief Set the least common time step in microseconds for the federation.
-    *  @param lcts Least Common Time Step time in microseconds. */
+   /*! @brief Set the least common time step in the base HLA Logical Time representation for the federation.
+    *  @param lcts Least Common Time Step time in base time. */
    virtual void set_least_common_time_step( int64_t lcts );
    /*! @brief Get the value of the least common time step.
     *  @return The value of the least common time step. */
@@ -661,12 +661,12 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    double time_padding; ///< @trick_units{s} Time in seconds to add to the go-to-run time.
 
    int64_t least_common_time_step; /**< @trick_units{--}
-      A 64 bit integer time that represents microseconds for the least common
-      value of all the time step values in the federation execution (LCTS).
-      This value is set by the Master Federate and does not change during the
-      federation execution. This is used in the computation to find the next
-      HLA Logical Time Boundary (HLTB) available to all federates in the
-      federation execution. The basic equation is
+      A 64 bit integer time that represents the base HLA Logical Time representation
+      for the least common value of all the time step values in the federation
+      execution (LCTS). This value is set by the Master Federate and does not
+      change during the federation execution. This is used in the computation to
+      find the next HLA Logical Time Boundary (HLTB) available to all federates
+      in the federation execution. The basic equation is
             HLTB = ( floor(GALT/LCTS) + 1 ) * LCTS,
       where GALT is the greatest available logical time. This is used to
       synchronize the federates in a federation execution to be on a common

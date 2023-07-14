@@ -366,7 +366,7 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
       } else { // If this is the designated preset Master federate, then this is an ERROR.
          ostringstream errmsg;
          errmsg << "TrickHLA::ExecutionControlBase::object_instance_name_reservation_failed:" << __LINE__
-                << " Failed to reserve the ExecutionConfiguration object instance name: '"
+                << " FAILED to reserve the ExecutionConfiguration object instance name: '"
                 << execution_configuration->get_name()
                 << "'! This conflicts with this being the designated Master federate!" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
@@ -626,7 +626,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "TrickHLA::ExecutionControlBase::receive_execution_configuration():" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution member."
+                         << " ERROR: Unexpectedly the Federate is no longer an execution member."
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"

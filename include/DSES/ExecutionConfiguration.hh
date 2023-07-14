@@ -99,7 +99,7 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
       mode transitions.*/
 
    int64_t least_common_time_step; /**< @trick_units{--}
-      A 64 bit integer time that represents microseconds for the least common
+      A 64 bit integer time that represents the base time for the least common
       value of all the time step values in the federation execution (LCTS).
       This value is set by the Master Federate and does not change during the
       federation execution. This is used in the computation to find the next

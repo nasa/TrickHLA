@@ -19,7 +19,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../TrickHLA/ExecutionControlBase.cpp}
 @trick_link_dependency{../TrickHLA/Federate.cpp}
-@trick_link_dependency{../TrickHLA/Int64Interval.cpp}
+@trick_link_dependency{../TrickHLA/Int64BaseTime.cpp}
 @trick_link_dependency{../TrickHLA/InteractionHandler.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
 @trick_link_dependency{MTRInteractionHandler.cpp}
@@ -51,7 +51,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/Int64Interval.hh"
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/InteractionHandler.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
@@ -121,7 +121,7 @@ void MTRInteractionHandler::send_interaction(
    if ( this->interaction == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::send_interaction():" << __LINE__
-             << " Unexpected NULL Interaction!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL Interaction!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -170,7 +170,8 @@ void MTRInteractionHandler::send_interaction(
             cout << "  CTE time: " << cte_time << endl;
          }
          cout << "  HLA grant time: " << granted_time << " ("
-              << Int64Interval::to_microseconds( granted_time ) << " microseconds)" << endl
+              << Int64BaseTime::to_base_time( granted_time ) << " "
+              << Int64BaseTime::get_units() << ")" << endl
               << "  send_cnt:" << ( send_cnt + 1 ) << endl;
       }
 
@@ -199,7 +200,8 @@ void MTRInteractionHandler::send_interaction(
             cout << "  CTE time: " << cte_time << endl;
          }
          cout << "  HLA grant time: " << granted_time << " ("
-              << Int64Interval::to_microseconds( granted_time ) << " microseconds)" << endl;
+              << Int64BaseTime::to_base_time( granted_time ) << " "
+              << Int64BaseTime::get_units() << ")" << endl;
       }
    }
 }
@@ -211,7 +213,7 @@ void MTRInteractionHandler::receive_interaction(
    if ( this->interaction == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::receive_interaction():" << __LINE__
-             << " Unexpected NULL Interaction!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL Interaction!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -220,7 +222,7 @@ void MTRInteractionHandler::receive_interaction(
    if ( exco == static_cast< ExecutionControl * >( NULL ) ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::receive_interaction():" << __LINE__
-             << "  Unexpected NULL SpaceFOM::ExecutionControl!" << THLA_ENDL;
+             << "  ERROR: Unexpected NULL SpaceFOM::ExecutionControl!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
       exit( 1 );
    }
@@ -266,7 +268,8 @@ void MTRInteractionHandler::receive_interaction(
          cout << "  CTE time: " << this->cte_time << endl;
       }
       cout << "  HLA grant time: " << this->granted_time << " ("
-           << Int64Interval::to_microseconds( this->granted_time ) << " microseconds)" << endl
+           << Int64BaseTime::to_base_time( this->granted_time ) << " "
+           << Int64BaseTime::get_units() << ")" << endl
            << "  receive_cnt:" << ( receive_cnt + 1 ) << endl;
    }
 

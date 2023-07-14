@@ -320,7 +320,7 @@ Waiting for the required federates to join.%c",
             if ( !return_string.empty() ) {
                ostringstream errmsg;
                errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-                      << " " << return_string << THLA_ENDL;
+                      << " ERROR: " << return_string << THLA_ENDL;
                DebugHandler::terminate_with_message( errmsg.str() );
             }
 
@@ -363,7 +363,7 @@ initiating restore request for '%s' with the RTI.%c",
                ostringstream errmsg;
                errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():"
                       << __LINE__
-                      << " You indicated that you wanted to restore a "
+                      << " ERROR: You indicated that you wanted to restore a "
                       << "checkpoint => I AM THE MASTER <= RTI rejected the "
                       << "restore request!!!! Make sure that you are restoring "
                       << "the federates from an identical federation save set."
@@ -395,7 +395,7 @@ initiating restore request for '%s' with the RTI.%c",
                ostringstream errmsg;
                errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():"
                       << __LINE__
-                      << " You indicated that you wanted to restore a "
+                      << " ERROR: You indicated that you wanted to restore a "
                       << "checkpoint => I AM THE MASTER <= "
                       << "wait_for_federation_restore_to_complete() failed!!!"
                       << THLA_ENDL;
@@ -453,7 +453,7 @@ Simulation has started and is now running...%c",
          } else {
             ostringstream errmsg;
             errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-                   << " You indicated that you wanted to restore a checkpoint"
+                   << " ERROR: You indicated that you wanted to restore a checkpoint"
                    << " => I AM THE MASTER <= but you failed to specify the"
                    << "  checkpoint FILE NAME!" << THLA_ENDL;
             DebugHandler::terminate_with_message( errmsg.str() );
@@ -582,7 +582,7 @@ loading of the federate from the checkpoint file '%s'.%c",
             ostringstream errmsg;
             errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():"
                    << __LINE__
-                   << " You indicated that you wanted to restore a "
+                   << " ERROR: You indicated that you wanted to restore a "
                    << "checkpoint => I AM THE NOT MASTER <= "
                    << "wait_for_federation_restore_to_complete() failed!!!"
                    << THLA_ENDL
@@ -799,7 +799,7 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "IMSim::ExecutionControl::determine_if_late_joining_or_restoring_federate_IMSim():" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution member."
+                         << " ERROR: Unexpectedly the Federate is no longer an execution member."
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
@@ -837,7 +837,7 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
    } else {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::determine_if_late_joining_or_restoring_federate_IMSim():"
-             << __LINE__ << " failed to determine if late joiner or restore federate!!!"
+             << __LINE__ << " ERROR: Failed to determine if late joiner or restore federate!!!"
              << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -1217,7 +1217,7 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_points()
                   if ( !federate->is_execution_member() ) {
                      ostringstream errmsg;
                      errmsg << "IMSim::ExecutionControl::wait_for_all_multiphase_init_sync_points():" << __LINE__
-                            << " Unexpectedly the Federate is no longer an execution"
+                            << " ERROR: Unexpectedly the Federate is no longer an execution"
                             << " member. This means we are either not connected to the"
                             << " RTI or we are no longer joined to the federation"
                             << " execution because someone forced our resignation at"
@@ -1503,7 +1503,7 @@ void ExecutionControl::set_next_execution_control_mode(
    if ( !this->is_master() ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::set_next_execution_mode():" << __LINE__
-             << " This should only be called by the Master federate!" << THLA_ENDL;
+             << " ERROR: This should only be called by the Master federate!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -2070,7 +2070,7 @@ bool ExecutionControl::run_mode_transition()
    if ( sync_pnt == (TrickHLA::SyncPnt *)NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::run_mode_transition():" << __LINE__
-             << " The 'mtr_run' sync-point was not found!" << THLA_ENDL;
+             << " ERROR: The 'mtr_run' sync-point was not found!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
@@ -2160,7 +2160,7 @@ bool ExecutionControl::freeze_mode_transition()
    if ( sync_pnt == (TrickHLA::SyncPnt *)NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::freeze_mode_transition():" << __LINE__
-             << " The 'mtr_freeze' sync-point was not found!" << THLA_ENDL;
+             << " ERROR: The 'mtr_freeze' sync-point was not found!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
@@ -2343,7 +2343,7 @@ void ExecutionControl::exit_freeze()
                   if ( !federate->is_execution_member() ) {
                      ostringstream errmsg;
                      errmsg << "IMSim::ExecutionControl::exit_freeze():" << __LINE__
-                            << " Unexpectedly the Federate is no longer an execution"
+                            << " ERROR: Unexpectedly the Federate is no longer an execution"
                             << " member. This means we are either not connected to the"
                             << " RTI or we are no longer joined to the federation"
                             << " execution because someone forced our resignation at"
@@ -2651,7 +2651,7 @@ bool ExecutionControl::is_save_initiated()
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "IMSim::ExecutionControl::setup_checkpoint():" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution"
+                         << " ERROR: Unexpectedly the Federate is no longer an execution"
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"

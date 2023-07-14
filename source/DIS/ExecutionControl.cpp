@@ -133,7 +133,7 @@ void ExecutionControl::initialize()
    if ( fed == NULL ) {
       ostringstream errmsg;
       errmsg << "DIS::ExecutionControl::initialize():" << __LINE__
-             << " Null TrickHLA::Federate pointer!" << THLA_ENDL;
+             << " ERROR: Null TrickHLA::Federate pointer!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 

@@ -17,6 +17,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{Federate.cpp}
+@trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Int64Interval.cpp}
 @trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{Interaction.cpp}
@@ -49,9 +50,9 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
-#include "TrickHLA/Constants.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Interaction.hh"
@@ -132,7 +133,7 @@ void Interaction::initialize(
    if ( trickhla_mgr == NULL ) {
       ostringstream errmsg;
       errmsg << "Interaction::initialize():" << __LINE__
-             << " Unexpected NULL TrickHLA-Manager!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL TrickHLA-Manager!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    this->manager = trickhla_mgr;
@@ -141,7 +142,7 @@ void Interaction::initialize(
    if ( ( FOM_name == NULL ) || ( *FOM_name == '\0' ) ) {
       ostringstream errmsg;
       errmsg << "Interaction::initialize():" << __LINE__
-             << " Missing Interaction FOM Name."
+             << " ERROR: Missing Interaction FOM Name."
              << " Please check your input or modified-data files to make sure the"
              << " Interaction FOM name is correctly specified." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -153,7 +154,7 @@ void Interaction::initialize(
    if ( ( preferred_order < TRANSPORT_FIRST_VALUE ) || ( preferred_order > TRANSPORT_LAST_VALUE ) ) {
       ostringstream errmsg;
       errmsg << "Interaction::initialize():" << __LINE__
-             << " For Interaction '"
+             << " ERROR: For Interaction '"
              << FOM_name << "', the 'preferred_order' is not valid and must be one"
              << " of TRANSPORT_SPECIFIED_IN_FOM, TRANSPORT_TIMESTAMP_ORDER or"
              << " TRANSPORT_RECEIVE_ORDER. Please check your input or modified-data"
@@ -166,7 +167,7 @@ void Interaction::initialize(
    if ( ( param_count > 0 ) && ( parameters == NULL ) ) {
       ostringstream errmsg;
       errmsg << "Interaction::initialize():" << __LINE__
-             << " For Interaction '"
+             << " ERROR: For Interaction '"
              << FOM_name << "', the 'param_count' is " << param_count
              << " but no 'parameters' are specified. Please check your input or"
              << " modified-data files to make sure the Interaction Parameters are"
@@ -179,7 +180,7 @@ void Interaction::initialize(
    if ( ( param_count <= 0 ) && ( parameters != NULL ) ) {
       ostringstream errmsg;
       errmsg << "Interaction::initialize():" << __LINE__
-             << " For Interaction '"
+             << " ERROR: For Interaction '"
              << FOM_name << "', the 'param_count' is " << param_count
              << " but 'parameters' have been specified. Please check your input"
              << " or modified-data files to make sure the Interaction Parameters"
@@ -198,7 +199,7 @@ void Interaction::initialize(
    if ( handler == NULL ) {
       ostringstream errmsg;
       errmsg << "Interaction::initialize():" << __LINE__
-             << " An Interaction-Handler for"
+             << " ERROR: An Interaction-Handler for"
              << " 'handler' was not specified for the '" << FOM_name << "'"
              << " interaction. Please check your input or modified-data files to"
              << " make sure an Interaction-Handler is correctly specified."
@@ -1008,7 +1009,7 @@ Interaction '%s' is time-regulating:%s, preferred-order:%s.%c",
              << ( send_with_timestamp ? "Timestamp Order" : "Receive Order" )
              << ", InvalidLogicalTime exception for " << get_FOM_name()
              << "  time=" << time.get_time_in_seconds() << " ("
-             << time.get_time_in_micros() << " microseconds)"
+             << time.get_base_time() << " " << Int64BaseTime::get_units()
              << " error message:'" << rti_err_msg << "'" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( RTI1516_EXCEPTION const &e ) {
@@ -1179,8 +1180,8 @@ Int64Interval Interaction::get_lookahead() const
 }
 
 /*!
- * @details If the manager does not exist, MAX_LOGICAL_TIME_SECONDS is assigned
- * to the returned object.
+ * @details If the manager does not exist, Int64BaseTime::get_max_logical_time_in_seconds()
+ * is assigned to the returned object.
  */
 Int64Time Interaction::get_granted_time() const
 {
@@ -1188,7 +1189,7 @@ Int64Time Interaction::get_granted_time() const
    if ( manager != NULL ) {
       t = manager->get_granted_time();
    } else {
-      t = Int64Time( MAX_LOGICAL_TIME_SECONDS );
+      t = Int64Time( Int64BaseTime::get_max_logical_time_in_seconds() );
    }
    return t;
 }

@@ -17,7 +17,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{DebugHandler.cpp}
-@trick_link_dependency{Int64Interval.cpp}
+@trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Parameter.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{Utilities.cpp}
@@ -51,9 +51,8 @@ NASA, Johnson Space Center\n
 #include "trick/trick_byteswap.h"
 
 // TrickHLA include files.
-#include "TrickHLA/Constants.hh"
 #include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Int64Interval.hh"
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
@@ -130,7 +129,7 @@ void Parameter::initialize(
    if ( ( FOM_name == NULL ) || ( *FOM_name == '\0' ) ) {
       ostringstream errmsg;
       errmsg << "Parameter::initialize():" << __LINE__
-             << " Interaction with FOM Name '"
+             << " ERROR: Interaction with FOM Name '"
              << interaction_fom_name << "' has a missing FOM name for the"
              << " parameter. Make sure 'THLA.manager.interactions["
              << interaction_index << "].parameters[" << parameter_index
@@ -143,7 +142,7 @@ void Parameter::initialize(
    if ( ( trick_name == NULL ) || ( *trick_name == '\0' ) ) {
       ostringstream errmsg;
       errmsg << "Parameter::initialize():" << __LINE__
-             << " FOM Interaction Parameter '"
+             << " ERROR: FOM Interaction Parameter '"
              << interaction_fom_name << "'->'" << FOM_name << "' has a missing"
              << " Trick name for the parameter. Make sure 'THLA.manager.interactions["
              << interaction_index << "].parameters[" << parameter_index
@@ -156,7 +155,7 @@ void Parameter::initialize(
    if ( ( rti_encoding < ENCODING_FIRST_VALUE ) || ( rti_encoding > ENCODING_LAST_VALUE ) ) {
       ostringstream errmsg;
       errmsg << "Parameter::initialize():" << __LINE__
-             << " FOM Interaction Parameter '"
+             << " ERROR: FOM Interaction Parameter '"
              << interaction_fom_name << "'->'" << FOM_name << "' with Trick name '"
              << trick_name << "' has an 'rti_encoding' value of "
              << rti_encoding << " which is out of the valid range of "
@@ -174,7 +173,7 @@ void Parameter::initialize(
    if ( ref2 == (REF2 *)NULL ) {
       ostringstream errmsg;
       errmsg << "Parameter::initialize():" << __LINE__
-             << " FOM Interaction Parameter '"
+             << " ERROR: FOM Interaction Parameter '"
              << interaction_fom_name << "'->'" << FOM_name
              << "' Error retrieving Trick ref-attributes for '" << trick_name
              << "'. Please check your input or modified-data files to make sure"
@@ -245,7 +244,7 @@ void Parameter::complete_initialization()
               && ( rti_encoding != ENCODING_UNKNOWN ) ) {
             ostringstream errmsg;
             errmsg << "Parameter::complete_initialization():" << __LINE__
-                   << " FOM Interaction Parameter '"
+                   << " ERROR: FOM Interaction Parameter '"
                    << interaction_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                    << trick_name << "' must use either the ENCODING_BIG_ENDIAN, "
                    << " ENCODING_LITTLE_ENDIAN, ENCODING_BOOLEAN, ENCODING_NONE, or "
@@ -267,7 +266,7 @@ void Parameter::complete_initialization()
               && ( rti_encoding != ENCODING_UNKNOWN ) ) {
             ostringstream errmsg;
             errmsg << "Parameter::complete_initialization():" << __LINE__
-                   << " FOM Interaction Parameter '"
+                   << " ERROR: FOM Interaction Parameter '"
                    << interaction_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                    << trick_name << "' must use either the ENCODING_BIG_ENDIAN,"
                    << " ENCODING_LITTLE_ENDIAN, ENCODING_NONE, ENCODING_UNICODE_STRING,"
@@ -285,7 +284,7 @@ void Parameter::complete_initialization()
               && ( ( attr->num_index != 1 ) || ( attr->index[attr->num_index - 1].size != 0 ) ) ) {
             ostringstream errmsg;
             errmsg << "Parameter::complete_initialization():" << __LINE__
-                   << " FOM Interaction Parameter '"
+                   << " ERROR: FOM Interaction Parameter '"
                    << interaction_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                    << trick_name << "' and 'rti_encoding' of ENCODING_UNICODE_STRING must"
                    << " represent a one-dimensional array of characters (i.e."
@@ -301,7 +300,7 @@ void Parameter::complete_initialization()
               && ( ( attr->num_index != 1 ) || ( attr->index[attr->num_index - 1].size != 0 ) ) ) {
             ostringstream errmsg;
             errmsg << "Parameter::complete_initialization():" << __LINE__
-                   << " FOM Interaction Parameter '"
+                   << " ERROR: FOM Interaction Parameter '"
                    << interaction_FOM_name << "'->'" << FOM_name
                    << "' with Trick name '" << trick_name
                    << "' and 'rti_encoding' of ENCODING_OPAQUE_DATA must"
@@ -330,7 +329,7 @@ void Parameter::complete_initialization()
               && ( rti_encoding != ENCODING_UNKNOWN ) ) {
             ostringstream errmsg;
             errmsg << "Parameter::complete_initialization():" << __LINE__
-                   << " FOM Interaction Parameter '"
+                   << " ERROR: FOM Interaction Parameter '"
                    << interaction_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                    << trick_name << "' must use either the ENCODING_LOGICAL_TIME,"
                    << " ENCODING_BIG_ENDIAN, ENCODING_LITTLE_ENDIAN, ENCODING_NONE, or "
@@ -351,7 +350,7 @@ void Parameter::complete_initialization()
               && ( rti_encoding != ENCODING_UNKNOWN ) ) {
             ostringstream errmsg;
             errmsg << "Parameter::complete_initialization():" << __LINE__
-                   << " FOM Interaction Parameter '"
+                   << " ERROR: FOM Interaction Parameter '"
                    << interaction_FOM_name << "'->'" << FOM_name
                    << "' with Trick name '" << trick_name
                    << "' must use either the ENCODING_C_STRING, ENCODING_UNICODE_STRING,"
@@ -368,7 +367,7 @@ void Parameter::complete_initialization()
          if ( ( rti_encoding == ENCODING_NONE ) && ( attr->num_index != 0 ) ) {
             ostringstream errmsg;
             errmsg << "Parameter::complete_initialization():" << __LINE__
-                   << " FOM Interaction Parameter '"
+                   << " ERROR: FOM Interaction Parameter '"
                    << interaction_FOM_name << "'->'" << FOM_name
                    << "' with Trick name '"
                    << trick_name << "' and 'rti_encoding' of ENCODING_NONE must"
@@ -393,7 +392,7 @@ void Parameter::complete_initialization()
       if ( ( attr->num_index > 1 ) && ( attr->index[attr->num_index - 1].size == 0 ) ) {
          ostringstream errmsg;
          errmsg << "Parameter::complete_initialization():" << __LINE__
-                << " FOM Interaction Parameter '"
+                << " ERROR: FOM Interaction Parameter '"
                 << interaction_FOM_name << "'->'" << FOM_name
                 << "' with Trick name '" << trick_name << "' and type '"
                 << attr->type_name << "' is a "
@@ -415,7 +414,7 @@ void Parameter::complete_initialization()
             if ( attr->index[i].size == 0 ) {
                ostringstream errmsg;
                errmsg << "Parameter::complete_initialization():" << __LINE__
-                      << " FOM Interaction Parameter '"
+                      << " ERROR: FOM Interaction Parameter '"
                       << interaction_FOM_name << "'->'" << FOM_name
                       << "' with Trick name '" << trick_name << "' is a "
                       << ( attr->num_index + 1 ) << "-dimensional dynamic array"
@@ -444,7 +443,7 @@ void Parameter::complete_initialization()
    if ( ( rti_encoding == ENCODING_LOGICAL_TIME ) && ( attr->num_index > 0 ) ) {
       ostringstream errmsg;
       errmsg << "Parameter::complete_initialization():" << __LINE__
-             << " FOM Interaction Parameter '"
+             << " ERROR: FOM Interaction Parameter '"
              << interaction_FOM_name << "'->'" << FOM_name << "' with Trick name '"
              << trick_name << "' can not be an array when using ENCODING_LOGICAL_TIME"
              << " for the 'rti_encoding'. Please check your input or modified-data"
@@ -457,7 +456,7 @@ void Parameter::complete_initialization()
    if ( ( rti_encoding == ENCODING_LOGICAL_TIME ) && ( strcmp( "s", attr->units ) != 0 ) ) {
       ostringstream errmsg;
       errmsg << "Parameter::complete_initialization():" << __LINE__
-             << " FOM Interaction Parameter '"
+             << " ERROR: FOM Interaction Parameter '"
              << interaction_FOM_name << "'->'" << FOM_name << "' with Trick name '"
              << trick_name << "' must have the units of 'seconds' when the"
              << " 'rti_encoding' is set to ENCODING_LOGICAL_TIME. Please check your"
@@ -1317,58 +1316,58 @@ void Parameter::decode_boolean_from_buffer() const
 
 void Parameter::encode_logical_time() const
 {
-   // Integer representing time in microseconds.
+   // Integer representing time in the base HLA Logical Time representation.
    int64_t logical_time = 0;
 
    switch ( attr->type ) {
       case TRICK_DOUBLE: {
          double *d_src = static_cast< double * >( address );
-         logical_time  = Int64Interval::to_microseconds( d_src[0] );
+         logical_time  = Int64BaseTime::to_base_time( d_src[0] );
          break;
       }
       case TRICK_FLOAT: {
          float *f_src = static_cast< float * >( address );
-         logical_time = Int64Interval::to_microseconds( (double)f_src[0] );
+         logical_time = Int64BaseTime::to_base_time( (double)f_src[0] );
          break;
       }
       case TRICK_SHORT: {
          short *s_src = (short *)address;
-         logical_time = (int64_t)( MICROS_MULTIPLIER * s_src[0] );
+         logical_time = (int64_t)( Int64BaseTime::get_base_time_multiplier() * s_src[0] );
          break;
       }
       case TRICK_UNSIGNED_SHORT: {
          unsigned short *us_src = (unsigned short *)address;
-         logical_time           = (int64_t)( MICROS_MULTIPLIER * us_src[0] );
+         logical_time           = (int64_t)( Int64BaseTime::get_base_time_multiplier() * us_src[0] );
          break;
       }
       case TRICK_INTEGER: {
          int *i_src   = (int *)address;
-         logical_time = (int64_t)( MICROS_MULTIPLIER * i_src[0] );
+         logical_time = (int64_t)( Int64BaseTime::get_base_time_multiplier() * i_src[0] );
          break;
       }
       case TRICK_UNSIGNED_INTEGER: {
          unsigned int *ui_src = (unsigned int *)address;
-         logical_time         = (int64_t)( MICROS_MULTIPLIER * ui_src[0] );
+         logical_time         = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ui_src[0] );
          break;
       }
       case TRICK_LONG: {
          long *l_src  = (long *)address;
-         logical_time = (int64_t)( MICROS_MULTIPLIER * l_src[0] );
+         logical_time = (int64_t)( Int64BaseTime::get_base_time_multiplier() * l_src[0] );
          break;
       }
       case TRICK_UNSIGNED_LONG: {
          unsigned long *ul_src = (unsigned long *)address;
-         logical_time          = (int64_t)( MICROS_MULTIPLIER * ul_src[0] );
+         logical_time          = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ul_src[0] );
          break;
       }
       case TRICK_LONG_LONG: {
          long long *ll_src = (long long *)address;
-         logical_time      = (int64_t)( MICROS_MULTIPLIER * ll_src[0] );
+         logical_time      = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ll_src[0] );
          break;
       }
       case TRICK_UNSIGNED_LONG_LONG: {
          unsigned long long *ull_src = (unsigned long long *)address;
-         logical_time                = (int64_t)( MICROS_MULTIPLIER * ull_src[0] );
+         logical_time                = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ull_src[0] );
          break;
       }
       default: {
@@ -1398,7 +1397,7 @@ void Parameter::encode_logical_time() const
 
 void Parameter::decode_logical_time()
 {
-   // Integer representing time in microseconds.
+   // Integer representing time in the base HLA Logical Time representation.
    int64_t        logical_time = 0;
    unsigned char *src          = buffer;
 
@@ -1414,61 +1413,61 @@ void Parameter::decode_logical_time()
    switch ( attr->type ) {
       case TRICK_DOUBLE: {
          double *d_dest = static_cast< double * >( address );
-         d_dest[0]      = Int64Interval::to_seconds( logical_time );
+         d_dest[0]      = Int64BaseTime::to_seconds( logical_time );
          break;
       }
       case TRICK_FLOAT: {
          float *f_dest = static_cast< float * >( address );
-         f_dest[0]     = (float)Int64Interval::to_seconds( logical_time );
+         f_dest[0]     = (float)Int64BaseTime::to_seconds( logical_time );
          break;
       }
       case TRICK_SHORT: {
          short  *s_dest = (short *)address;
-         int64_t value  = logical_time / MICROS_MULTIPLIER;
+         int64_t value  = logical_time / Int64BaseTime::get_base_time_multiplier();
          s_dest[0]      = ( value > SHRT_MAX ) ? SHRT_MAX : (short)value;
          break;
       }
       case TRICK_UNSIGNED_SHORT: {
          unsigned short *us_dest = (unsigned short *)address;
-         int64_t         value   = logical_time / MICROS_MULTIPLIER;
+         int64_t         value   = logical_time / Int64BaseTime::get_base_time_multiplier();
          us_dest[0]              = ( value > USHRT_MAX ) ? USHRT_MAX : (unsigned short)value;
          break;
       }
       case TRICK_INTEGER: {
          int    *i_dest = (int *)address;
-         int64_t value  = logical_time / MICROS_MULTIPLIER;
+         int64_t value  = logical_time / Int64BaseTime::get_base_time_multiplier();
          i_dest[0]      = ( value > INT_MAX ) ? INT_MAX : (int)value;
          break;
       }
       case TRICK_UNSIGNED_INTEGER: {
          unsigned int *ui_dest = (unsigned int *)address;
-         int64_t       value   = logical_time / MICROS_MULTIPLIER;
+         int64_t       value   = logical_time / Int64BaseTime::get_base_time_multiplier();
          ui_dest[0]            = ( value > UINT_MAX ) ? UINT_MAX : (unsigned int)value;
          break;
       }
       case TRICK_LONG: {
          long   *l_dest = (long *)address;
-         int64_t value  = logical_time / MICROS_MULTIPLIER;
+         int64_t value  = logical_time / Int64BaseTime::get_base_time_multiplier();
          l_dest[0]      = ( value > LONG_MAX ) ? LONG_MAX : (long)value;
          break;
       }
       case TRICK_UNSIGNED_LONG: {
          unsigned long *ul_dest = (unsigned long *)address;
-         int64_t        value   = logical_time / MICROS_MULTIPLIER;
+         int64_t        value   = logical_time / Int64BaseTime::get_base_time_multiplier();
          ul_dest[0]             = ( value > (int64_t)ULONG_MAX ) ? ULONG_MAX : (unsigned long)value;
          break;
       }
       case TRICK_LONG_LONG: {
          long long *ll_dest = (long long *)address;
-         int64_t    value   = logical_time / MICROS_MULTIPLIER;
-         ll_dest[0]         = ( value > MAX_VALUE_IN_MICROS ) ? MAX_VALUE_IN_MICROS : (long long)value;
+         int64_t    value   = logical_time / Int64BaseTime::get_base_time_multiplier();
+         ll_dest[0]         = ( value > Int64BaseTime::get_max_base_time() ) ? Int64BaseTime::get_max_base_time() : (long long)value;
          break;
       }
       case TRICK_UNSIGNED_LONG_LONG: {
          unsigned long long *ull_dest = (unsigned long long *)address;
-         int64_t             value    = logical_time / MICROS_MULTIPLIER;
-         ull_dest[0]                  = ( value > MAX_VALUE_IN_MICROS )
-                                           ? (unsigned long long)MAX_VALUE_IN_MICROS
+         int64_t             value    = logical_time / Int64BaseTime::get_base_time_multiplier();
+         ull_dest[0]                  = ( value > Int64BaseTime::get_max_base_time() )
+                                           ? (unsigned long long)Int64BaseTime::get_max_base_time()
                                            : (unsigned long long)value;
          break;
       }

@@ -25,7 +25,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{ExecutionConfigurationBase.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{Int64Interval.cpp}
+@trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Manager.cpp}
 @trick_link_dependency{Object.cpp}
 @trick_link_dependency{Packing.cpp}
@@ -54,12 +54,11 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
-#include "TrickHLA/Constants.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfiguration.hh"
 #include "TrickHLA/ExecutionControl.hh"
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/Int64Interval.hh"
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Packing.hh"
@@ -95,7 +94,7 @@ extern ATTRIBUTES attrTrickHLA__ExecutionConfiguration[];
  */
 ExecutionConfiguration::ExecutionConfiguration()
    : run_duration( 0.0 ),
-     run_duration_microsec( 0L ),
+     run_duration_base_time( 0L ),
      num_federates( 0 ),
      required_federates( NULL ),
      owner( NULL )
@@ -110,7 +109,7 @@ ExecutionConfiguration::ExecutionConfiguration(
    char const *s_define_name )
    : ExecutionConfigurationBase( s_define_name ),
      run_duration( 0.0 ),
-     run_duration_microsec( 0L ),
+     run_duration_base_time( 0L ),
      num_federates( 0 ),
      required_federates( NULL ),
      owner( NULL )
@@ -153,7 +152,7 @@ void ExecutionConfiguration::configure_attributes()
    if ( S_define_name == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionConfiguration::configure_attributes():" << __LINE__
-             << " Unexpected NULL S_define_name." << THLA_ENDL;
+             << " ERROR: Unexpected NULL S_define_name." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -180,7 +179,7 @@ void ExecutionConfiguration::configure_attributes()
    this->attributes[0].rti_encoding = ENCODING_UNICODE_STRING;
 
    this->attributes[1].FOM_name     = trick_MM->mm_strdup( "run_duration" );
-   trick_name_str                   = exco_name_str + string( ".run_duration_microsec" );
+   trick_name_str                   = exco_name_str + string( ".run_duration_base_time" );
    this->attributes[1].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
    this->attributes[1].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
@@ -205,7 +204,7 @@ void ExecutionConfiguration::configure()
    if ( this->manager == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionConfiguration::initialize():" << __LINE__
-             << " Null TrickHLA::Manager passed in!" << THLA_ENDL;
+             << " ERROR: Null TrickHLA::Manager passed in!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -222,7 +221,7 @@ void ExecutionConfiguration::configure()
    if ( federate == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionConfiguration::initialize():" << __LINE__
-             << " Null TrickHLA-Federate pointer!" << THLA_ENDL;
+             << " ERROR: Null TrickHLA-Federate pointer!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
@@ -280,15 +279,15 @@ void ExecutionConfiguration::pack()
       }
    }
 
-   // Encode the run duration into a 64 bit integer in microseconds.
-   this->run_duration_microsec = Int64Interval::to_microseconds( this->run_duration );
+   // Encode the run duration into a 64 bit integer base time.
+   this->run_duration_base_time = Int64BaseTime::to_base_time( this->run_duration );
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       cout << "TrickHLA::ExecutionConfiguration::pack():" << __LINE__ << endl
            << "\tObject-Name:'" << this->object->get_name() << "'" << endl
            << "\towner:'" << ( owner != NULL ? owner : "" ) << "'" << endl
            << "\trun_duration:" << run_duration << " seconds" << endl
-           << "\trun_duration_microsec:" << run_duration_microsec << " microseconds" << endl
+           << "\trun_duration_base_time:" << run_duration_base_time << " " << Int64BaseTime::get_units() << endl
            << "\tnum_federates:" << num_federates << endl
            << "\trequired_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'" << endl
            << "===================================================" << endl;
@@ -304,8 +303,8 @@ void ExecutionConfiguration::unpack()
       cout << "===================================================" << endl;
    }
 
-   // Decode the run duration from a 64 bit integer in microseconds to seconds.
-   this->run_duration = Int64Interval::to_seconds( this->run_duration_microsec );
+   // Decode the run duration from a 64 bit integer in bae time to seconds.
+   this->run_duration = Int64BaseTime::to_seconds( this->run_duration_base_time );
 
    // Set the stop/termination time of the Trick simulation based on the
    // run_duration setting.
@@ -323,7 +322,7 @@ void ExecutionConfiguration::unpack()
            << "\tObject-Name:'" << this->object->get_name() << "'" << endl
            << "\towner:'" << ( owner != NULL ? owner : "" ) << "'" << endl
            << "\trun_duration:" << run_duration << " seconds" << endl
-           << "\trun_duration_microsec:" << run_duration_microsec << " microseconds" << endl
+           << "\run_duration_base_time:" << run_duration_base_time << " " << Int64BaseTime::get_units() << endl
            << "\tnum_federates:" << num_federates << endl
            << "\trequired_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'" << endl
            << "===================================================" << endl;
@@ -350,8 +349,8 @@ void ExecutionConfiguration::print_execution_configuration()
           << "=============================================================" << endl
           << "TrickHLA::ExecutionConfiguration::print_exec_config():" << __LINE__ << endl
           << "\t Object-Name:           '" << this->get_name() << "'" << endl
-          << "\t run_duration:          " << setprecision( 18 ) << run_duration << endl
-          << "\t run_duration_microsec: " << setprecision( 18 ) << run_duration_microsec << endl
+          << "\t run_duration:          " << setprecision( 18 ) << run_duration << " seconds" << endl
+          << "\t run_duration_base_time:" << setprecision( 18 ) << run_duration_base_time << " " << Int64BaseTime::get_units() << endl
           << "\t num_federates:         " << setprecision( 18 ) << num_federates << endl
           << "\t required_federates:    '" << required_federates << "'" << endl
           << "\t owner:                 '" << owner << "'" << endl

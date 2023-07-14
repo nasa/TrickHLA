@@ -19,7 +19,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../TrickHLA/ExecutionConfigurationBase.cpp}
 @trick_link_dependency{../TrickHLA/Federate.cpp}
-@trick_link_dependency{../TrickHLA/Int64Interval.cpp}
+@trick_link_dependency{../TrickHLA/Int64BaseTime.cpp}
 @trick_link_dependency{../TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../TrickHLA/InteractionItem.cpp}
 @trick_link_dependency{../TrickHLA/Manager.cpp}
@@ -60,7 +60,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/Int64Interval.hh"
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/Manager.hh"
@@ -183,7 +183,7 @@ void ExecutionControl::initialize()
    // For the Master federate the Trick simulation software frame must
    // match the Least Common Time Step (LCTS).
    if ( this->is_master() ) {
-      double software_frame_time = Int64Interval::to_seconds( least_common_time_step );
+      double software_frame_time = Int64BaseTime::to_seconds( least_common_time_step );
       exec_set_software_frame( software_frame_time );
    }
 
@@ -937,7 +937,8 @@ void ExecutionControl::pre_multi_phase_init_processes()
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
                 << " ERROR: ExCO Least-Common-Time-Step (LCTS) time (" << LCTS
-                << " microseconds) is not greater than zero!" << THLA_ENDL;
+                << " " << Int64BaseTime::get_units()
+                << ") is not greater than zero!" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -946,13 +947,14 @@ void ExecutionControl::pre_multi_phase_init_processes()
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
                 << " ERROR: Least-Common-Time-Step (LCTS) time here(" << LCTS
-                << " microseconds) not equal to ExCO LCTS (" << ExCO->get_least_common_time_step()
+                << " " << Int64BaseTime::get_units()
+                << ") not equal to ExCO LCTS (" << ExCO->get_least_common_time_step()
                 << "!" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       // Get the master federate lookahead time.
-      int64_t L = federate->get_lookahead().get_time_in_micros();
+      int64_t L = federate->get_lookahead_in_base_time();
 
       // If we have a valid lookahead time then verify the LCTS against it.
       if ( L > 0 ) {
@@ -961,9 +963,10 @@ void ExecutionControl::pre_multi_phase_init_processes()
             ostringstream errmsg;
             errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
                    << " ERROR: Master federate Lookahead time (" << L
-                   << " microseconds) is not less than or equal to the"
+                   << " " << Int64BaseTime::get_units()
+                   << ") is not less than or equal to the"
                    << " ExCO Least-Common-Time-Step (LCTS) time ("
-                   << LCTS << " microseconds)!" << THLA_ENDL;
+                   << LCTS << " " << Int64BaseTime::get_units() << ")!" << THLA_ENDL;
             DebugHandler::terminate_with_message( errmsg.str() );
          }
 
@@ -972,20 +975,24 @@ void ExecutionControl::pre_multi_phase_init_processes()
             ostringstream errmsg;
             errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
                    << " ERROR: ExCO Least-Common-Time-Step (LCTS) time (" << LCTS
-                   << " microseconds) is not an integer multiple of the Federate"
-                   << " Lookahead time (" << L << " microseconds)!" << THLA_ENDL;
+                   << " " << Int64BaseTime::get_units()
+                   << ") is not an integer multiple of the Federate"
+                   << " Lookahead time (" << L << " " << Int64BaseTime::get_units()
+                   << ")!" << THLA_ENDL;
             DebugHandler::terminate_with_message( errmsg.str() );
          }
       }
 
       // The Master federate padding time must be an integer multiple of the LCTS.
-      int64_t MPT = Int64Interval::to_microseconds( this->time_padding );
+      int64_t MPT = Int64BaseTime::to_base_time( this->time_padding );
       if ( ( LCTS <= 0 ) || ( MPT % LCTS ) != 0 ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
                 << " ERROR: Mode transition padding time (" << MPT
-                << " microseconds) is not an integer multiple of the ExCO"
-                << " Least Common Time Step (" << LCTS << " microseconds)!" << THLA_ENDL;
+                << " " << Int64BaseTime::get_units()
+                << ") is not an integer multiple of the ExCO"
+                << " Least Common Time Step (" << LCTS << " " << Int64BaseTime::get_units()
+                << ")!" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -997,9 +1004,10 @@ void ExecutionControl::pre_multi_phase_init_processes()
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
                 << " ERROR: Mode transition padding time (" << MPT
-                << " microseconds) is not a multiple of 3 or more of the ExCO"
+                << " " << Int64BaseTime::get_units()
+                << ") is not a multiple of 3 or more of the ExCO"
                 << " Least Common Time Step (" << ExCO->least_common_time_step
-                << " microseconds)!" << THLA_ENDL;
+                << " " << Int64BaseTime::get_units() << ")!" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
@@ -1283,12 +1291,12 @@ void ExecutionControl::shutdown()
 
          // Let's pause for a moment to let things propagate through the
          // federate before tearing things down.
-         long sleep_pad_micros = Int64Interval::to_microseconds( this->get_time_padding() );
+         long sleep_pad_base_time = Int64BaseTime::to_base_time( this->get_time_padding() );
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "SpaceFOM::ExecutionControl::shutdown():%d: sleep for %d microseconds.%c",
-                     __LINE__, sleep_pad_micros, THLA_NEWLINE );
+            send_hs( stdout, "SpaceFOM::ExecutionControl::shutdown():%d: sleep for %d %s.%c",
+                     __LINE__, sleep_pad_base_time, Int64BaseTime::get_units().c_str(), THLA_NEWLINE );
          }
-         (void)Utilities::micro_sleep( sleep_pad_micros );
+         (void)Utilities::micro_sleep( sleep_pad_base_time );
       }
 
       // Tell the SpaceFOM execution control to transition to shutdown.
@@ -2734,15 +2742,16 @@ void ExecutionControl::set_least_common_time_step(
 
 void ExecutionControl::set_time_padding( double t )
 {
-   int64_t time_in_micros = Int64Interval::to_microseconds( t );
+   int64_t base_time = Int64BaseTime::to_base_time( t );
 
    // Need to check that time padding is valid.
-   if ( ( time_in_micros % this->least_common_time_step ) != 0 ) {
+   if ( ( base_time % this->least_common_time_step ) != 0 ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
              << " ERROR: Time padding value (" << t
              << " seconds) must be an integer multiple of the Least Common Time Step ("
-             << this->least_common_time_step << " microseconds)!" << THLA_NEWLINE;
+             << this->least_common_time_step << " " << Int64BaseTime::get_units()
+             << ")!" << THLA_NEWLINE;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -2750,15 +2759,17 @@ void ExecutionControl::set_time_padding( double t )
    // more times the Least Common Time Step (LCTS). This will give commands
    // time to propagate through the system and still have time for mode
    // transitions.
-   if ( time_in_micros < ( 3 * this->least_common_time_step ) ) {
+   if ( base_time < ( 3 * this->least_common_time_step ) ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
-             << " ERROR: Mode transition padding time (" << time_in_micros
-             << " microseconds) is not a multiple of 3 or more of the ExCO"
+             << " ERROR: Mode transition padding time (" << base_time
+             << " " << Int64BaseTime::get_units()
+             << ") is not a multiple of 3 or more of the ExCO"
              << " Least Common Time Step (" << this->least_common_time_step
-             << " microseconds)!" << THLA_ENDL;
+             << " " << Int64BaseTime::get_units()
+             << ")!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   this->time_padding = Int64Interval::to_seconds( time_in_micros );
+   this->time_padding = Int64BaseTime::to_seconds( base_time );
 }

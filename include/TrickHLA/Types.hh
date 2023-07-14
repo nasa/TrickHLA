@@ -56,6 +56,34 @@ namespace TrickHLA
 {
 
 /*!
+@enum HLABaseTimeEnum
+@brief Define the HLA Logical Time base units supported.
+*/
+typedef enum {
+
+   HLA_BASE_TIME_SECONDS          = 0,  ///< Base time units in seconds.
+   HLA_BASE_TIME_100_MILLISECONDS = 1,  ///< Base time units in 100-milliseconds.
+   HLA_BASE_TIME_10_MILLISECONDS  = 2,  ///< Base time units in 10-milliseconds.
+   HLA_BASE_TIME_MILLISECONDS     = 3,  ///< Base time units in milliseconds.
+   HLA_BASE_TIME_100_MICROSECONDS = 4,  ///< Base time units in 100-microseconds.
+   HLA_BASE_TIME_10_MICROSECONDS  = 5,  ///< Base time units in 10-microseconds.
+   HLA_BASE_TIME_MICROSECONDS     = 6,  ///< Base time units in microseconds.
+   HLA_BASE_TIME_100_NANOSECONDS  = 7,  ///< Base time units in 100-nanoseconds.
+   HLA_BASE_TIME_10_NANOSECONDS   = 8,  ///< Base time units in 10-nanoseconds.
+   HLA_BASE_TIME_NANOSECONDS      = 9,  ///< Base time units in nanoseconds.
+   HLA_BASE_TIME_100_PICOSECONDS  = 10, ///< Base time units in 100-picoseconds.
+   HLA_BASE_TIME_10_PICOSECONDS   = 11, ///< Base time units in 10-picoseconds.
+   HLA_BASE_TIME_PICOSECONDS      = 12, ///< Base time units in picoseconds.
+   HLA_BASE_TIME_100_FEMTOSECONDS = 13, ///< Base time units in 100-femtoseconds.
+   HLA_BASE_TIME_10_FEMTOSECONDS  = 14, ///< Base time units in 10-femtoseconds.
+   HLA_BASE_TIME_FEMTOSECONDS     = 15, ///< Base time units in femtoseconds.
+   HLA_BASE_TIME_100_ATTOSECONDS  = 16, ///< Base time units in 100-attoseconds.
+   HLA_BASE_TIME_10_ATTOSECONDS   = 17, ///< Base time units in 10-attoseconds.
+   HLA_BASE_TIME_ATTOSECONDS      = 18  ///< Base time units in attoseconds.
+
+} HLABaseTimeEnum;
+
+/*!
 @enum DataUpdateEnum
 @brief Define the TrickHLA attribute update reflection type.
 */

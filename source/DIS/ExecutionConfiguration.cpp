@@ -22,7 +22,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/Attribute.cpp}
 @trick_link_dependency{../TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../TrickHLA/Federate.cpp}
-@trick_link_dependency{../TrickHLA/Int64Interval.cpp}
+@trick_link_dependency{../TrickHLA/Int64BaseTime.cpp}
 @trick_link_dependency{../TrickHLA/LagCompensation.cpp}
 @trick_link_dependency{../TrickHLA/Packing.cpp}
 @trick_link_dependency{../TrickHLA/OwnershipHandler.cpp}
@@ -59,7 +59,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/Int64Interval.hh"
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/LagCompensation.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/ObjectDeleted.hh"
@@ -225,19 +225,21 @@ void ExecutionConfiguration::pack()
            << "\t next_mode_cte_time:      " << setprecision( 18 ) << next_mode_cte_time << endl
            << "\t current_execution_mode:  " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << endl
            << "\t next_execution_mode:     " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
-           << "\t least_common_time_step:  " << least_common_time_step << " microseconds" << endl
+           << "\t least_common_time_step:  " << least_common_time_step << " " << Int64BaseTime::get_units() << endl
            << "=============================================================" << endl;
    }
 
-   int64_t fed_lookahead = ( get_federate() != NULL ) ? get_federate()->get_lookahead().get_time_in_micros() : 0;
+   int64_t fed_lookahead = ( get_federate() != NULL ) ? get_federate()->get_lookahead().get_base_time() : 0;
 
    // Do a bounds check on the least-common-time-step.
    if ( least_common_time_step < fed_lookahead ) {
       ostringstream errmsg;
       errmsg << "DIS::ExecutionConfiguration::pack():" << __LINE__
              << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-             << " microseconds) is not greater than or equal to this federates lookahead time ("
-             << fed_lookahead << " microseconds)!" << THLA_ENDL;
+             << " " << Int64BaseTime::get_units()
+             << ") is not greater than or equal to this federates lookahead time ("
+             << fed_lookahead << " " << Int64BaseTime::get_units()
+             << ")!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -247,8 +249,10 @@ void ExecutionConfiguration::pack()
       ostringstream errmsg;
       errmsg << "DIS::ExecutionConfiguration::pack():" << __LINE__
              << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-             << " microseconds) is not an integer multiple of the federate lookahead time ("
-             << fed_lookahead << " microseconds)!" << THLA_ENDL;
+             << " " << Int64BaseTime::get_units()
+             << ") is not an integer multiple of the federate lookahead time ("
+             << fed_lookahead << " " << Int64BaseTime::get_units()
+             << ")!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -258,7 +262,7 @@ void ExecutionConfiguration::pack()
 */
 void ExecutionConfiguration::unpack()
 {
-   int64_t software_frame_micros;
+   int64_t software_frame_base_time;
    double  software_frame_sec;
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
@@ -276,19 +280,21 @@ void ExecutionConfiguration::unpack()
            << "\t next_mode_cte_time:     " << setprecision( 18 ) << next_mode_cte_time << endl
            << "\t current_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << endl
            << "\t next_execution_mode:    " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
-           << "\t least_common_time_step: " << least_common_time_step << " microseconds" << endl
+           << "\t least_common_time_step: " << least_common_time_step << " " << Int64BaseTime::get_units() << endl
            << "=============================================================" << endl;
    }
 
-   int64_t fed_lookahead = ( get_federate() != NULL ) ? get_federate()->get_lookahead().get_time_in_micros() : 0;
+   int64_t fed_lookahead = ( get_federate() != NULL ) ? get_federate()->get_lookahead().get_base_time() : 0;
 
    // Do a bounds check on the least-common-time-step.
    if ( least_common_time_step < fed_lookahead ) {
       ostringstream errmsg;
       errmsg << "DIS::ExecutionConfiguration::unpack():" << __LINE__
              << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-             << " microseconds) is not greater than or equal to this federates lookahead time ("
-             << fed_lookahead << " microseconds)!" << THLA_ENDL;
+             << " " << Int64BaseTime::get_units()
+             << ") is not greater than or equal to this federates lookahead time ("
+             << fed_lookahead << " " << Int64BaseTime::get_units()
+             << ")!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -298,41 +304,49 @@ void ExecutionConfiguration::unpack()
       ostringstream errmsg;
       errmsg << "DIS::ExecutionConfiguration::unpack():" << __LINE__
              << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-             << " microseconds) is not an integer multiple of the federate lookahead time ("
-             << fed_lookahead << " microseconds)!" << THLA_ENDL;
+             << " " << Int64BaseTime::get_units()
+             << ") is not an integer multiple of the federate lookahead time ("
+             << fed_lookahead << " " << Int64BaseTime::get_units()
+             << ")!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Check the Trick executive software frame.
    // It must be smaller than the ExCO LCTS or moding won't work properly.
    // It must also be an integer multiple of the ExCO LCTS.
-   software_frame_sec    = exec_get_software_frame();
-   software_frame_micros = Int64Interval::to_microseconds( software_frame_sec );
+   software_frame_sec       = exec_get_software_frame();
+   software_frame_base_time = Int64BaseTime::to_base_time( software_frame_sec );
 
-   if ( software_frame_micros != least_common_time_step ) {
-      if ( software_frame_micros > least_common_time_step ) {
+   if ( software_frame_base_time != least_common_time_step ) {
+      if ( software_frame_base_time > least_common_time_step ) {
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
             ostringstream message;
             message << "DIS::ExecutionConfiguration::unpack():" << __LINE__
                     << " WARNING: ExCO least_common_time_step (" << least_common_time_step
-                    << " microseconds) is less than the federate software frame ("
-                    << software_frame_micros << " microseconds)!  Resetting the software frame ("
-                    << least_common_time_step << " microseconds)!!!!" << THLA_ENDL;
+                    << " " << Int64BaseTime::get_units()
+                    << ") is less than the federate software frame ("
+                    << software_frame_base_time << " " << Int64BaseTime::get_units()
+                    << ")!  Resetting the software frame ("
+                    << least_common_time_step << " " << Int64BaseTime::get_units()
+                    << ")!!!!" << THLA_ENDL;
             send_hs( stdout, (char *)message.str().c_str() );
          }
-         software_frame_sec = Int64Interval::to_seconds( least_common_time_step );
+         software_frame_sec = Int64BaseTime::to_seconds( least_common_time_step );
          exec_set_software_frame( software_frame_sec );
-      } else if ( least_common_time_step % software_frame_micros != 0 ) {
+      } else if ( least_common_time_step % software_frame_base_time != 0 ) {
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
             ostringstream message;
             message << "DIS::ExecutionConfiguration::unpack():" << __LINE__
                     << " WARNING: ExCO least_common_time_step (" << least_common_time_step
-                    << " microseconds) is not an integer multiple of the federate software frame ("
-                    << software_frame_micros << " microseconds)!  Resetting the software frame ("
-                    << least_common_time_step << " microseconds)!!!!" << THLA_ENDL;
+                    << " " << Int64BaseTime::get_units()
+                    << ") is not an integer multiple of the federate software frame ("
+                    << software_frame_base_time << " " << Int64BaseTime::get_units()
+                    << ")!  Resetting the software frame ("
+                    << least_common_time_step << " " << Int64BaseTime::get_units()
+                    << ")!!!!" << THLA_ENDL;
             send_hs( stdout, (char *)message.str().c_str() );
          }
-         software_frame_sec = Int64Interval::to_seconds( least_common_time_step );
+         software_frame_sec = Int64BaseTime::to_seconds( least_common_time_step );
          exec_set_software_frame( software_frame_sec );
       } else {
          // This must mean that the ExCO Least Common Time Step (LCTS) is
@@ -624,7 +638,7 @@ void ExecutionConfiguration::print_execution_configuration()
           << "\t next_mode_cte_time:      " << setprecision( 18 ) << next_mode_cte_time << endl
           << "\t current_execution_mode:  " << DIS::execution_mode_enum_to_string( DIS::execution_mode_int16_to_enum( current_execution_mode ) ) << endl
           << "\t next_execution_mode:     " << DIS::execution_mode_enum_to_string( DIS::execution_mode_int16_to_enum( next_execution_mode ) ) << endl
-          << "\t least_common_time_step:  " << least_common_time_step << " microseconds" << endl
+          << "\t least_common_time_step:  " << least_common_time_step << " " << Int64BaseTime::get_units() << endl
           << "=============================================================" << THLA_ENDL;
       send_hs( stdout, (char *)msg.str().c_str() );
    }

@@ -50,8 +50,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Packing.hh"
 
 // SpaceFOM include files.
-#include "SpaceFOM/RefFrameData.h"
 #include "SpaceFOM/RefFrameBase.hh"
+#include "SpaceFOM/RefFrameData.h"
 #include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
 
 // Forward Declared Classes:  Since these classes are only used as references
@@ -105,7 +105,6 @@ class RefFrameState : public SpaceFOM::RefFrameBase
    /*! @brief Called to unpack the data after data is received from the RTI. */
    virtual void unpack();
 
-
   protected:
    RefFrameData *ref_frame_data; ///< @trick_units{--} Reference frame data.
 
@@ -117,7 +116,6 @@ class RefFrameState : public SpaceFOM::RefFrameBase
    /*! @brief Assignment operator for RefFrameState class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
    RefFrameState &operator=( RefFrameState const &rhs );
-
 };
 
 } // namespace SpaceFOM

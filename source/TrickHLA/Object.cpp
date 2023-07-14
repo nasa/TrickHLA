@@ -19,6 +19,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{ElapsedTimeStats.cpp}
 @trick_link_dependency{Federate.cpp}
+@trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Int64Interval.cpp}
 @trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{LagCompensation.cpp}
@@ -58,10 +59,10 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/Constants.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ElapsedTimeStats.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/LagCompensation.hh"
@@ -200,7 +201,7 @@ void Object::initialize(
    if ( trickhla_mgr == NULL ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
-             << " Unexpected NULL TrickHLA-Manager!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL TrickHLA-Manager!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    this->manager = trickhla_mgr;
@@ -1701,11 +1702,14 @@ exception for '%s' with error message '%s'.%c",
              << " Exception: InvalidLogicalTime" << endl
              << "  instance_id=" << id_str << endl
              << "  granted=" << get_granted_time().get_time_in_seconds() << " ("
-             << get_granted_time().get_time_in_micros() << " microseconds)" << endl
+             << get_granted_time().get_base_time() << " " << Int64BaseTime::get_units()
+             << ")" << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << " ("
-             << get_lookahead().get_time_in_micros() << " microseconds)" << endl
+             << get_lookahead().get_base_time() << " " << Int64BaseTime::get_units()
+             << ")" << endl
              << "  update_time=" << update_time.get_time_in_seconds() << " ("
-             << update_time.get_time_in_micros() << " microseconds)" << endl;
+             << update_time.get_base_time() << " " << Int64BaseTime::get_units()
+             << ")" << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( AttributeNotOwned const &e ) {
       string id_str;
@@ -1947,11 +1951,14 @@ exception for '%s' with error message '%s'.%c",
              << " Exception: InvalidLogicalTime" << endl
              << "  instance_id=" << id_str << endl
              << "  granted=" << get_granted_time().get_time_in_seconds() << " ("
-             << get_granted_time().get_time_in_micros() << " microseconds)" << endl
+             << get_granted_time().get_base_time() << " " << Int64BaseTime::get_units()
+             << ")" << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << " ("
-             << get_lookahead().get_time_in_micros() << " microseconds)" << endl
+             << get_lookahead().get_base_time() << " " << Int64BaseTime::get_units()
+             << ")" << endl
              << "  update_time=" << update_time.get_time_in_seconds() << " ("
-             << update_time.get_time_in_micros() << " microseconds)" << endl;
+             << update_time.get_base_time() << " " << Int64BaseTime::get_units()
+             << ")" << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( AttributeNotOwned const &e ) {
       string id_str;
@@ -2272,9 +2279,11 @@ void Object::send_init_data()
              << " Exception: InvalidLogicalTime" << endl
              << "  instance_id=" << id_str << endl
              << "  granted=" << get_granted_time().get_time_in_seconds() << " ("
-             << get_granted_time().get_time_in_micros() << " microseconds)" << endl
+             << get_granted_time().get_base_time() << " " << Int64BaseTime::get_units()
+             << ")" << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << " ("
-             << get_lookahead().get_time_in_micros() << " microseconds)" << endl;
+             << get_lookahead().get_base_time() << " " << Int64BaseTime::get_units()
+             << ")" << endl;
       send_hs( stderr, (char *)errmsg.str().c_str() );
    } catch ( AttributeNotOwned const &e ) {
       string id_str;
@@ -3485,7 +3494,7 @@ for Attributes of object '%s'.%c",
       if ( ret ) {
          ostringstream errmsg;
          errmsg << "Object::push_ownership():" << __LINE__
-                << " Failed to create ownership divestiture pthread!"
+                << " ERROR: Failed to create ownership divestiture pthread!"
                 << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
