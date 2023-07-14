@@ -88,10 +88,10 @@ class Int64BaseTime
       return units_string;
    }
 
-   /*! @brief A string of all the base units that exceeds the specified units.
+   /*! @brief A string representing the specified units.
     *  @param units The base time units.
-    *  @return A string of all the base units that exceeds the specified units. */
-   static std::string get_units_that_exceeds( HLABaseTimeEnum const units );
+    *  @return A string representing the specified units. */
+   static std::string get_units_string( HLABaseTimeEnum const units );
 
    /*! @brief The base time multiplier.
     *  @return The base time multiplier. */
@@ -114,13 +114,18 @@ class Int64BaseTime
       return ( std::numeric_limits< int64_t >::max() );
    }
 
-   /*! @brief Determine if the specified value can exceeds the resolution of
+   /*! @brief Determine the best supporting base time resolution for the value.
+    *  @return The best supporting bae time enum value.
+    *  @param value Time value as a floating point double in seconds. */
+   static HLABaseTimeEnum best_base_time_resolution( double const value );
+
+   /*! @brief Determine if the specified value exceeds the resolution of
     *  the base time (i.e. value is much smaller than base time resolution).
     *  @return True if the value exceeds the resolution of the base time.
     *  @param value Time value as a floating point double in seconds. */
    static bool exceeds_base_time_resolution( double const value );
 
-   /*! @brief Determine if the specified value can exceeds the resolution of
+   /*! @brief Determine if the specified value exceeds the resolution of
     *  the base time (i.e. value is much smaller than base time resolution).
     *  @return True if the value exceeds the resolution of the base time.
     *  @param value Time value as a floating point double in seconds.

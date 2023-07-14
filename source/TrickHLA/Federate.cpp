@@ -47,6 +47,7 @@ NASA, Johnson Space Center\n
 #include <cstdlib> // for atof
 #include <float.h>
 #include <fstream> // for ifstream
+#include <iomanip>
 #include <iostream>
 #include <limits>
 #include <memory> // for auto_ptr
@@ -3313,22 +3314,23 @@ void Federate::set_lookahead(
    if ( Int64BaseTime::exceeds_base_time_resolution( value ) ) {
       ostringstream errmsg;
       errmsg << "Federate::set_lookahead():" << __LINE__
-             << " ERROR: The lookahead time specified (" << value
+             << " ERROR: The lookahead time specified (" << setprecision( 18 ) << value
              << " seconds) requires more resolution than whole "
              << Int64BaseTime::get_units()
              << ". The HLA Logical Time is a 64-bit integer"
              << " representing " << Int64BaseTime::get_units()
              << " and cannot represent a lookahead time of "
-             << ( value * Int64BaseTime::get_base_time_multiplier() )
+             << setprecision( 18 ) << ( value * Int64BaseTime::get_base_time_multiplier() )
              << " " << Int64BaseTime::get_units() << ". You can adjust the"
              << " base HLA Logical Time resolution by setting"
-             << " 'THLA.federate.HLA_time_base_units = trick.<HLA_BASE_TIME_UNITS>'"
-             << " in your input file where HLA_BASE_TIME_UNITS is one of "
-             << Int64BaseTime::get_units_that_exceeds( Int64BaseTime::get_base_units() )
-             << ". The current HLA base time resolution is "
-             << Int64BaseTime::get_units() << ". You will also need to update"
-             << " your FOM to specify the change in timing class resolution."
-             << THLA_ENDL;
+             << " 'THLA.federate.HLA_time_base_units = trick."
+             << Int64BaseTime::get_units_string( Int64BaseTime::best_base_time_resolution( value ) )
+             << "' in your input file. The current HLA base time resolution is "
+             << Int64BaseTime::get_units_string( Int64BaseTime::get_base_units() )
+             << ". You also need to update both the Federation Execution"
+             << " Specific Federation Agreement (FESFA) and Federate Compliance"
+             << " Declaration (FCD) documents for your Federation to document"
+             << " the change in timing class resolution." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -3338,7 +3340,8 @@ void Federate::set_lookahead(
       errmsg << "Federate::set_lookahead():" << __LINE__
              << " ERROR: The Trick time tic value (" << exec_get_time_tic_value()
              << ") does not have enough resolution to represent the HLA lookahead time ("
-             << value << " seconds). Please update the Trick time tic value in"
+             << setprecision( 18 ) << value
+             << " seconds). Please update the Trick time tic value in"
              << " your input file (i.e. by calling 'trick.exec_set_time_tic_value()')."
              << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );

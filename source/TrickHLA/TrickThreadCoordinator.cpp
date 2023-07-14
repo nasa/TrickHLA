@@ -39,6 +39,7 @@ NASA, Johnson Space Center\n
 #include <cmath>
 #include <cstdint>
 #include <cstdlib>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -137,21 +138,24 @@ void TrickThreadCoordinator::initialize_thread_state(
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize_thread_state():" << __LINE__
              << " ERROR: The main_thread_data_cycle_time specified (thread-id:0, "
-             << main_thread_data_cycle_time << " seconds) requires more resolution"
+             << setprecision( 18 ) << main_thread_data_cycle_time
+             << " seconds) requires more resolution"
              << " than whole " << Int64BaseTime::get_units()
              << ". The HLA Logical Time is a 64-bit integer"
              << " representing " << Int64BaseTime::get_units()
              << " and cannot represent the Trick main thread data-cycle time of "
-             << ( main_thread_data_cycle_time * Int64BaseTime::get_base_time_multiplier() )
+             << setprecision( 18 ) << ( main_thread_data_cycle_time * Int64BaseTime::get_base_time_multiplier() )
              << " " << Int64BaseTime::get_units() << ". You can adjust the"
              << " base HLA Logical Time resolution by setting"
-             << " 'THLA.federate.HLA_time_base_units = trick.<HLA_BASE_TIME_UNITS>'"
-             << " in your input file where HLA_BASE_TIME_UNITS is one of "
-             << Int64BaseTime::get_units_that_exceeds( Int64BaseTime::get_base_units() )
-             << ". The current HLA base time resolution is "
-             << Int64BaseTime::get_units() << ". You will also need to update"
-             << " your FOM to specify the change in timing class resolution."
-             << THLA_ENDL;
+             << " 'THLA.federate.HLA_time_base_units = trick."
+             << Int64BaseTime::get_units_string(
+                   Int64BaseTime::best_base_time_resolution( main_thread_data_cycle_time ) )
+             << "' in your input file. The current HLA base time resolution is "
+             << Int64BaseTime::get_units_string( Int64BaseTime::get_base_units() )
+             << ". You also need to update both the Federation Execution"
+             << " Specific Federation Agreement (FESFA) and Federate Compliance"
+             << " Declaration (FCD) documents for your Federation to document"
+             << " the change in timing class resolution." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -160,7 +164,8 @@ void TrickThreadCoordinator::initialize_thread_state(
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize_thread_state():" << __LINE__
              << " ERROR: The main_thread_data_cycle_time specified (thread-id:0, "
-             << main_thread_data_cycle_time << " seconds) requires more resolution"
+             << setprecision( 18 ) << main_thread_data_cycle_time
+             << " seconds) requires more resolution"
              << " than the Trick time Tic value (" << exec_get_time_tic_value()
              << "). Please update the Trick time tic value in your input"
              << " file (i.e. by calling 'trick.exec_set_time_tic_value()')."
@@ -264,21 +269,24 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
              << " ERROR: The data_cycle time specified (thread-id:" << thread_id
-             << ", data_cycle:" << data_cycle << " seconds) requires more resolution"
+             << ", data_cycle:" << setprecision( 18 ) << data_cycle
+             << " seconds) requires more resolution"
              << " than whole " << Int64BaseTime::get_units()
              << ". The HLA Logical Time is a 64-bit integer"
              << " representing " << Int64BaseTime::get_units()
              << " and cannot represent the Trick child thread data-cycle time of "
-             << ( data_cycle * Int64BaseTime::get_base_time_multiplier() )
+             << setprecision( 18 ) << ( data_cycle * Int64BaseTime::get_base_time_multiplier() )
              << " " << Int64BaseTime::get_units() << ". You can adjust the"
              << " base HLA Logical Time resolution by setting"
-             << " 'THLA.federate.HLA_time_base_units = trick.<HLA_BASE_TIME_UNITS>'"
-             << " in your input file where HLA_BASE_TIME_UNITS is one of "
-             << Int64BaseTime::get_units_that_exceeds( Int64BaseTime::get_base_units() )
-             << ". The current HLA base time resolution is "
-             << Int64BaseTime::get_units() << ". You will also need to update"
-             << " your FOM to specify the change in timing class resolution."
-             << THLA_ENDL;
+             << " 'THLA.federate.HLA_time_base_units = trick."
+             << Int64BaseTime::get_units_string(
+                   Int64BaseTime::best_base_time_resolution( data_cycle ) )
+             << "' in your input file. The current HLA base time resolution is "
+             << Int64BaseTime::get_units_string( Int64BaseTime::get_base_units() )
+             << ". You also need to update both the Federation Execution"
+             << " Specific Federation Agreement (FESFA) and Federate Compliance"
+             << " Declaration (FCD) documents for your Federation to document"
+             << " the change in timing class resolution." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -286,7 +294,8 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    if ( Int64BaseTime::exceeds_base_time_resolution( data_cycle, exec_get_time_tic_value() ) ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-             << " ERROR: The data_cycle specified (thread-id:0, " << data_cycle
+             << " ERROR: The data_cycle specified (thread-id:0, "
+             << setprecision( 18 ) << data_cycle
              << " seconds) requires more resolution than the Trick time Tic value ("
              << exec_get_time_tic_value()
              << "). Please update the Trick time tic value in your input"

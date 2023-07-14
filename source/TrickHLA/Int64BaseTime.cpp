@@ -173,58 +173,66 @@ void Int64BaseTime::set(
 /*!
  * @job_class{initialization}
  */
-string Int64BaseTime::get_units_that_exceeds(
+std::string Int64BaseTime::get_units_string(
    HLABaseTimeEnum const units )
 {
-   string msg = "";
-   if ( units >= HLA_BASE_TIME_PICOSECONDS ) {
-      msg = "Unknown";
-   } else {
-      int next_units = (int)units + 1;
-      switch ( next_units ) {
-         case HLA_BASE_TIME_SECONDS:
-            msg += "HLA_BASE_TIME_SECONDS, ";
-         case HLA_BASE_TIME_100_MILLISECONDS:
-            msg += "HLA_BASE_TIME_100_MILLISECONDS, ";
-         case HLA_BASE_TIME_10_MILLISECONDS:
-            msg += "HLA_BASE_TIME_10_MILLISECONDS, ";
-         case HLA_BASE_TIME_MILLISECONDS:
-            msg += "HLA_BASE_TIME_MILLISECONDS, ";
-         case HLA_BASE_TIME_100_MICROSECONDS:
-            msg += "HLA_BASE_TIME_100_MICROSECONDS, ";
-         case HLA_BASE_TIME_10_MICROSECONDS:
-            msg += "HLA_BASE_TIME_10_MICROSECONDS, ";
-         case HLA_BASE_TIME_MICROSECONDS:
-            msg += "HLA_BASE_TIME_MICROSECONDS, ";
-         case HLA_BASE_TIME_100_NANOSECONDS:
-            msg += "HLA_BASE_TIME_100_NANOSECONDS, ";
-         case HLA_BASE_TIME_10_NANOSECONDS:
-            msg += "HLA_BASE_TIME_10_NANOSECONDS, ";
-         case HLA_BASE_TIME_NANOSECONDS:
-            msg += "HLA_BASE_TIME_NANOSECONDS, ";
-         case HLA_BASE_TIME_100_PICOSECONDS:
-            msg += "HLA_BASE_TIME_100_PICOSECONDS, ";
-         case HLA_BASE_TIME_10_PICOSECONDS:
-            msg += "HLA_BASE_TIME_10_PICOSECONDS, ";
-         case HLA_BASE_TIME_PICOSECONDS:
-            msg += "HLA_BASE_TIME_PICOSECONDS, ";
-         case HLA_BASE_TIME_100_FEMTOSECONDS:
-            msg += "HLA_BASE_TIME_100_FEMTOSECONDS, ";
-         case HLA_BASE_TIME_10_FEMTOSECONDS:
-            msg += "HLA_BASE_TIME_10_FEMTOSECONDS, ";
-         case HLA_BASE_TIME_FEMTOSECONDS:
-            msg += "HLA_BASE_TIME_FEMTOSECONDS, ";
-         case HLA_BASE_TIME_100_ATTOSECONDS:
-            msg += "HLA_BASE_TIME_100_ATTOSECONDS, ";
-         case HLA_BASE_TIME_10_ATTOSECONDS:
-            msg += "HLA_BASE_TIME_10_ATTOSECONDS, or ";
-         case HLA_BASE_TIME_ATTOSECONDS:
-         default:
-            msg += "HLA_BASE_TIME_ATTOSECONDS";
-            break;
-      }
+   switch ( units ) {
+      case HLA_BASE_TIME_SECONDS:
+         return "HLA_BASE_TIME_SECONDS";
+      case HLA_BASE_TIME_100_MILLISECONDS:
+         return "HLA_BASE_TIME_100_MILLISECONDS";
+      case HLA_BASE_TIME_10_MILLISECONDS:
+         return "HLA_BASE_TIME_10_MILLISECONDS";
+      case HLA_BASE_TIME_MILLISECONDS:
+         return "HLA_BASE_TIME_MILLISECONDS";
+      case HLA_BASE_TIME_100_MICROSECONDS:
+         return "HLA_BASE_TIME_100_MICROSECONDS";
+      case HLA_BASE_TIME_10_MICROSECONDS:
+         return "HLA_BASE_TIME_10_MICROSECONDS";
+      case HLA_BASE_TIME_MICROSECONDS:
+         return "HLA_BASE_TIME_MICROSECONDS";
+      case HLA_BASE_TIME_100_NANOSECONDS:
+         return "HLA_BASE_TIME_100_NANOSECONDS";
+      case HLA_BASE_TIME_10_NANOSECONDS:
+         return "HLA_BASE_TIME_10_NANOSECONDS";
+      case HLA_BASE_TIME_NANOSECONDS:
+         return "HLA_BASE_TIME_NANOSECONDS";
+      case HLA_BASE_TIME_100_PICOSECONDS:
+         return "HLA_BASE_TIME_100_PICOSECONDS";
+      case HLA_BASE_TIME_10_PICOSECONDS:
+         return "HLA_BASE_TIME_10_PICOSECONDS";
+      case HLA_BASE_TIME_PICOSECONDS:
+         return "HLA_BASE_TIME_PICOSECONDS";
+      case HLA_BASE_TIME_100_FEMTOSECONDS:
+         return "HLA_BASE_TIME_100_FEMTOSECONDS";
+      case HLA_BASE_TIME_10_FEMTOSECONDS:
+         return "HLA_BASE_TIME_10_FEMTOSECONDS";
+      case HLA_BASE_TIME_FEMTOSECONDS:
+         return "HLA_BASE_TIME_FEMTOSECONDS";
+      case HLA_BASE_TIME_100_ATTOSECONDS:
+         return "HLA_BASE_TIME_100_ATTOSECONDS";
+      case HLA_BASE_TIME_10_ATTOSECONDS:
+         return "HLA_BASE_TIME_10_ATTOSECONDS";
+      case HLA_BASE_TIME_ATTOSECONDS:
+      default:
+         return "HLA_BASE_TIME_ATTOSECONDS";
    }
-   return msg;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+HLABaseTimeEnum Int64BaseTime::best_base_time_resolution(
+   double const value )
+{
+   int resolution = (int)HLA_BASE_TIME_SECONDS;
+   for ( long long multiplier = 1;
+         ( resolution < (int)HLA_BASE_TIME_ATTOSECONDS )
+         && exceeds_base_time_resolution( value, multiplier );
+         ++resolution, multiplier *= 10LL ) {
+      // Do nothing
+   }
+   return (HLABaseTimeEnum)resolution;
 }
 
 /*!
@@ -233,8 +241,7 @@ string Int64BaseTime::get_units_that_exceeds(
 bool Int64BaseTime::exceeds_base_time_resolution(
    double const value )
 {
-   double seconds;
-   return ( modf( value * base_time_multiplier, &seconds ) != 0.0 );
+   return exceeds_base_time_resolution( value, base_time_multiplier );
 }
 
 /*!
