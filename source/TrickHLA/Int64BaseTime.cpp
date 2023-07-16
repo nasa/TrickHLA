@@ -82,7 +82,7 @@ Int64BaseTime::~Int64BaseTime()
 void Int64BaseTime::set(
    HLABaseTimeEnum const units )
 {
-   switch ( base_units ) {
+   switch ( units ) {
       case HLA_BASE_TIME_SECONDS: // range: +/-292471208677.536 years with 1 second resolution
          base_time_multiplier = 1LL;
          units_string         = "seconds";

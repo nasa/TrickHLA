@@ -79,19 +79,10 @@ THLA.federate.lookahead_time = 0.250
 
 # We need more HLA Logical Time resolution because the lookahead time cannot
 # be represented by the default microsecond resolution.
-THLA.federate.HLA_base_time_units = trick.HLA_BASE_TIME_100_NANOSECONDS
+THLA.federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_100_NANOSECONDS )
 
-# Scale up the Trick Tic value to support the HLA base time resolution.
-# Trick Tics is limited to a value of 2^31.
-time_res = int( pow( 10, THLA.federate.HLA_base_time_units ) )
-tic_value = trick.exec_get_time_tic_value()
-max_int32 = int( pow( 2, 31 ) )
-while tic_value < time_res and tic_value < max_int32:
-   tic_value *= 10
-if tic_value <= max_int32:
-   trick.exec_set_time_tic_value( tic_value )
-else:
-   sys.exit( "ERROR: Trick cannot represent the required Tic value: " + str( time_res ) )
+# Scale the Trick Time Tic value based on the HLA base time units.
+THLA.federate.scale_trick_tics_to_base_time_units()
 
 
 # Configure the federate.

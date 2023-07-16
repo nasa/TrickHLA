@@ -20,6 +20,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{ExecutionConfigurationBase.cpp}
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
+@trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Manager.cpp}
 @trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{Types.cpp}
@@ -52,6 +53,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StandardsSupport.hh"
@@ -963,17 +965,17 @@ void ExecutionControlBase::remove_execution_configuration()
 /*!
  * @details WARNING: Only the Master federate should ever set this.
  */
-void ExecutionControlBase::set_least_common_time_step(
-   int64_t lcts )
+void ExecutionControlBase::set_least_common_time_step_in_seconds(
+   double const lcts )
 {
    // TODO: Need more checking here.
    // WARNING: Only the Master federate should ever set this.
    if ( this->is_master() ) {
-      this->least_common_time_step = lcts;
+      this->least_common_time_step = Int64BaseTime::to_base_time( lcts );
    }
 }
 
-void ExecutionControlBase::set_time_padding( double t )
+void ExecutionControlBase::set_time_padding_in_seconds( double const t )
 {
    this->time_padding = t;
 }

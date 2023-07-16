@@ -582,9 +582,10 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    }
 
    // Freeze time management functions.
-   /*! @brief Set the least common time step in the base HLA Logical Time representation for the federation.
-    *  @param lcts Least Common Time Step time in base time. */
-   virtual void set_least_common_time_step( int64_t lcts );
+   /*! @brief Set the least common time step in seconds for the federation.
+    *  @param lcts Least Common Time Step time in seconds. */
+   virtual void set_least_common_time_step_in_seconds( double const lcts );
+
    /*! @brief Get the value of the least common time step.
     *  @return The value of the least common time step. */
    virtual int64_t get_least_common_time_step()
@@ -593,7 +594,8 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    }
    /*! @brief Set the time-padding used to offset the go to run time.
     *  @param t Time in seconds to pad for time based mode transitions. */
-   virtual void set_time_padding( double t );
+   virtual void set_time_padding_in_seconds( double const t );
+
    /*! @brief Get the time-padding used to offset the go to run time.
     *  @return Time in seconds to pad for time based mode transitions. */
    virtual double get_time_padding()

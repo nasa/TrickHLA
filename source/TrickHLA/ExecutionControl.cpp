@@ -440,8 +440,8 @@ ExecutionConfiguration *ExecutionControl::get_execution_configuration()
 /*!
  * @details WARNING: Only the Master federate should ever set this.
  */
-void ExecutionControl::set_least_common_time_step(
-   int64_t lcts )
+void ExecutionControl::set_least_common_time_step_in_seconds(
+   double const lcts )
 {
    // WARNING: Only the Master federate should ever set this.
    if ( this->is_master() ) {
@@ -449,17 +449,17 @@ void ExecutionControl::set_least_common_time_step(
       ExecutionConfiguration *ExCO = dynamic_cast< ExecutionConfiguration * >( execution_configuration );
       if ( ExCO == NULL ) {
          ostringstream errmsg;
-         errmsg << "TrickHLA::ExecutionControl::set_least_common_time_step():" << __LINE__
+         errmsg << "TrickHLA::ExecutionControl::set_least_common_time_step_in_seconds():" << __LINE__
                 << " ERROR: Execution Configuration is not an TrickHLA ExCO." << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
       // Set for the ExecutionControl.
-      this->least_common_time_step = lcts;
+      this->least_common_time_step = Int64BaseTime::to_base_time( lcts );
    }
 }
 
-void ExecutionControl::set_time_padding( double t )
+void ExecutionControl::set_time_padding_in_seconds( double t )
 {
    int64_t base_time = Int64BaseTime::to_base_time( t );
 

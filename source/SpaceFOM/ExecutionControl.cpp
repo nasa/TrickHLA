@@ -2718,8 +2718,8 @@ void ExecutionControl::start_federation_save_at_scenario_time(
 /*!
  * @details WARNING: Only the Master federate should ever set this.
  */
-void ExecutionControl::set_least_common_time_step(
-   int64_t lcts )
+void ExecutionControl::set_least_common_time_step_in_seconds(
+   double const lcts )
 {
    // WARNING: Only the Master federate should ever set this.
    if ( this->is_master() ) {
@@ -2727,20 +2727,20 @@ void ExecutionControl::set_least_common_time_step(
       ExecutionConfiguration *ExCO = dynamic_cast< ExecutionConfiguration * >( execution_configuration );
       if ( ExCO == NULL ) {
          ostringstream errmsg;
-         errmsg << "SpaceFOM::ExecutionControl::set_least_common_time_step():" << __LINE__
+         errmsg << "SpaceFOM::ExecutionControl::set_least_common_time_step_in_seconds():" << __LINE__
                 << " ERROR: Execution Configuration is not an SpaceFOM ExCO."
                 << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       } else {
 
          // Make sure to set this for both the ExecutionControl and the ExCO.
-         this->least_common_time_step = lcts;
-         ExCO->set_least_common_time_step( lcts );
+         this->least_common_time_step = Int64BaseTime::to_base_time( lcts );
+         ExCO->set_least_common_time_step_in_seconds( lcts );
       }
    }
 }
 
-void ExecutionControl::set_time_padding( double t )
+void ExecutionControl::set_time_padding_in_seconds( double t )
 {
    int64_t base_time = Int64BaseTime::to_base_time( t );
 

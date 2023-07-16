@@ -135,7 +135,6 @@ Federate::Federate()
      time_regulating( true ),
      time_constrained( true ),
      time_management( true ),
-     HLA_base_time_units( HLA_BASE_TIME_MICROSECONDS ),
      enable_known_feds( true ),
      known_feds_count( 0 ),
      known_feds( NULL ),
@@ -432,8 +431,8 @@ the documented ENUM values.%c",
    // Set the debug level and code section in the global DebugHandler.
    DebugHandler::set( this->debug_level, this->code_section );
 
-   // Set the HLA Logical time base units in the global Int64BaseTime.
-   Int64BaseTime::set( this->HLA_base_time_units );
+   // Set the default HLA Logical time base units in the global Int64BaseTime.
+   set_HLA_base_time_units( HLA_BASE_TIME_MICROSECONDS );
 
    // Print the current TrickHLA version string.
    print_version();
@@ -495,9 +494,9 @@ void Federate::initialize()
              << " ERROR: The Trick time tic value (" << exec_get_time_tic_value()
              << ") cannot support the HLA base time resolution ("
              << Int64BaseTime::get_units()
-             << ") corresponding to THLA.federate.HLA_base_time_units="
+             << ") corresponding to THLA.federate.set_HLA_base_time_unit("
              << Int64BaseTime::get_base_units()
-             << ". Please update the Trick time tic value in your input file"
+             << "). Please update the Trick time tic value in your input file"
              << " (i.e. by calling 'trick.exec_set_time_tic_value()')."
              << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -554,7 +553,7 @@ void Federate::restart_initialization()
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    // Update the lookahead time in our HLA time line.
-   set_lookahead( lookahead_time );
+   set_lookahead_in_seconds( lookahead_time );
 
    if ( federate_ambassador == static_cast< FedAmb * >( NULL ) ) {
       ostringstream errmsg;
@@ -3306,14 +3305,59 @@ void Federate::set_requested_time(
    this->requested_time.set( time );
 }
 
-void Federate::set_lookahead(
+HLABaseTimeEnum Federate::get_HLA_base_time_units() const
+{
+   return Int64BaseTime::get_base_units();
+}
+
+void Federate::set_HLA_base_time_units(
+   HLABaseTimeEnum const base_time_units )
+{
+   // Set the HLA Logical time base units in the global Int64BaseTime.
+   Int64BaseTime::set( base_time_units );
+}
+
+void Federate::scale_trick_tics_to_base_time_units()
+{
+   long long time_res  = Int64BaseTime::get_base_time_multiplier();
+   long long tic_value = exec_get_time_tic_value();
+
+   // Scale up the Trick tim Tic value to support the HLA base time units.
+   // Trick Time Tics is limited to a value of 2^31.
+   while ( ( tic_value < time_res ) && ( tic_value < std::numeric_limits< int >::max() ) ) {
+      tic_value *= 10;
+   }
+
+   if ( tic_value <= std::numeric_limits< int >::max() ) {
+      // Update the Trick Time Tic value only if we are increasing the resolution.
+      if ( tic_value > exec_get_time_tic_value() ) {
+         exec_set_time_tic_value( tic_value );
+
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+            send_hs( stdout, "Federate::scale_trick_tics_to_base_time_units():%d New Trick time tics:%d.%c",
+                     __LINE__, tic_value, THLA_NEWLINE );
+         }
+      }
+   } else {
+      ostringstream errmsg;
+      errmsg << "Federate::scale_trick_tics_to_base_time_units():" << __LINE__
+             << " ERROR: Trick cannot represent the required time Tic value "
+             << setprecision( 18 ) << time_res
+             << " in order to support the HLA base units of '"
+             << Int64BaseTime::get_units()
+             << "'." << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+}
+
+void Federate::set_lookahead_in_seconds(
    double const value )
 {
    // Determine if the lookahead time needs a resolution that exceeds the
    // configured HLA base time.
    if ( Int64BaseTime::exceeds_base_time_resolution( value ) ) {
       ostringstream errmsg;
-      errmsg << "Federate::set_lookahead():" << __LINE__
+      errmsg << "Federate::set_lookahead_in_seconds():" << __LINE__
              << " ERROR: The lookahead time specified (" << setprecision( 18 ) << value
              << " seconds) requires more resolution than whole "
              << Int64BaseTime::get_units()
@@ -3337,7 +3381,7 @@ void Federate::set_lookahead(
    // Determine if the Trick time Tic can represent the lookahead time.
    if ( Int64BaseTime::exceeds_base_time_resolution( value, exec_get_time_tic_value() ) ) {
       ostringstream errmsg;
-      errmsg << "Federate::set_lookahead():" << __LINE__
+      errmsg << "Federate::set_lookahead_in_seconds():" << __LINE__
              << " ERROR: The Trick time tic value (" << exec_get_time_tic_value()
              << ") does not have enough resolution to represent the HLA lookahead time ("
              << setprecision( 18 ) << value

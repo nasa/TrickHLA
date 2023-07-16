@@ -523,13 +523,13 @@ void ExecutionConfiguration::set_next_execution_mode(
 /*!
  * @details WARNING: Only the Master federate should ever set this.
  */
-void ExecutionConfiguration::set_least_common_time_step(
-   int64_t lcts )
+void ExecutionConfiguration::set_least_common_time_step_in_seconds(
+   double const lcts )
 {
    // TODO: Need more checking here.
    // WARNING: Only the Master federate should ever set this.
    if ( execution_control->is_master() ) {
-      this->least_common_time_step = lcts;
+      this->least_common_time_step = Int64BaseTime::to_base_time( lcts );
    }
 }
 

@@ -199,9 +199,10 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
       return this->next_execution_mode;
    }
 
-   /*! @brief Set the least common time step in the base time for the federation.
-    *  @param lcts Least Common Time Step time in the base time. */
-   virtual void set_least_common_time_step( int64_t lcts );
+   /*! @brief Set the least common time step in seconds for the federation.
+    *  @param lcts Least Common Time Step time in seconds. */
+   virtual void set_least_common_time_step_in_seconds( double const lcts );
+
    /*! @brief Get the value of the least common time step.
     *  @return The value of the least common time step. */
    virtual int64_t get_least_common_time_step()

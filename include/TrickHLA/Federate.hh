@@ -135,8 +135,6 @@ class Federate
    bool time_constrained; ///< @trick_units{--} HLA Time Constrained flag (default: true).
    bool time_management;  ///< @trick_units{--} Enable HLA Time Management flag (default: true).
 
-   HLABaseTimeEnum HLA_base_time_units; ///< @trick_units{--} HLA Logical Base Time units. (default: HLA_BASE_TIME_MICROSECONDS).
-
    // The Federates known to be in the Federation, and specified in the input files.
    // TODO: change this to be an STL Array.
    bool           enable_known_feds; ///< @trick_units{--} Enable use of known Federates list (default: true)
@@ -1009,9 +1007,20 @@ class Federate
     *  @param time Requested time in HLA logical time. */
    void set_requested_time( RTI1516_NAMESPACE::LogicalTime const &time );
 
+   /*! @brief Sets the HLA base time units.
+    *  @param base_time_units HLA base time units. */
+   HLABaseTimeEnum get_HLA_base_time_units() const;
+
+   /*! @brief Sets the HLA base time units.
+    *  @param base_time_units HLA base time units. */
+   void set_HLA_base_time_units( HLABaseTimeEnum const base_time_units );
+
+   /*! @brief Scale the Trick Time Tic value given the HLA base time units. */
+   void scale_trick_tics_to_base_time_units();
+
    /*! @brief Sets the HLA lookahead time.
     *  @param value HLA lookahead time in seconds. */
-   void set_lookahead( double const value );
+   void set_lookahead_in_seconds( double const value );
 
    /*! @brief Set start to save flag.
     *  @param save_flag True if save started; False otherwise. */
