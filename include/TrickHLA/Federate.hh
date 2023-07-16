@@ -1022,6 +1022,9 @@ class Federate
     *  @param value HLA lookahead time in seconds. */
    void set_lookahead_in_seconds( double const value );
 
+   /*! @brief Refresh the HLA lookahead base time espcially needed if HLA base time units change. */
+   void refresh_lookahead_base_time();
+
    /*! @brief Set start to save flag.
     *  @param save_flag True if save started; False otherwise. */
    void set_start_to_save( bool const save_flag )

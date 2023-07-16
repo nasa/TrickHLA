@@ -586,12 +586,17 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
     *  @param lcts Least Common Time Step time in seconds. */
    virtual void set_least_common_time_step_in_seconds( double const lcts );
 
+   /*! @brief Refresh the least common time step especially if the HLA base time units changed.
+    *  @param lcts Least Common Time Step time in seconds. */
+   virtual void refresh_least_common_time_step();
+
    /*! @brief Get the value of the least common time step.
     *  @return The value of the least common time step. */
    virtual int64_t get_least_common_time_step()
    {
       return this->least_common_time_step;
    }
+
    /*! @brief Set the time-padding used to offset the go to run time.
     *  @param t Time in seconds to pad for time based mode transitions. */
    virtual void set_time_padding_in_seconds( double const t );
@@ -661,6 +666,8 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
 
   protected:
    double time_padding; ///< @trick_units{s} Time in seconds to add to the go-to-run time.
+
+   double least_common_time_step_seconds; /**< @trick_units{--} The LCTS in seconds. */
 
    int64_t least_common_time_step; /**< @trick_units{--}
       A 64 bit integer time that represents the base HLA Logical Time representation

@@ -91,6 +91,7 @@ ExecutionControlBase::ExecutionControlBase()
      master( false ),
      multiphase_init_sync_points( NULL ),
      time_padding( 5.0 ),
+     least_common_time_step_seconds( -1.0 ),
      least_common_time_step( -1 ),
      execution_configuration( NULL ),
      multiphase_init_sync_pnt_list(),
@@ -971,8 +972,16 @@ void ExecutionControlBase::set_least_common_time_step_in_seconds(
    // TODO: Need more checking here.
    // WARNING: Only the Master federate should ever set this.
    if ( this->is_master() ) {
-      this->least_common_time_step = Int64BaseTime::to_base_time( lcts );
+      this->least_common_time_step_seconds = lcts;
+      this->least_common_time_step         = Int64BaseTime::to_base_time( lcts );
    }
+}
+
+void ExecutionControlBase::refresh_least_common_time_step()
+{
+   // Refresh the LCTS by setting the value again, which will calculate a new
+   // LCTS using the HLA base time units.
+   set_least_common_time_step_in_seconds( this->least_common_time_step_seconds );
 }
 
 void ExecutionControlBase::set_time_padding_in_seconds( double const t )

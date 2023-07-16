@@ -282,6 +282,10 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @param lcts Least Common Time Step time in seconds. */
    virtual void set_least_common_time_step_in_seconds( double const lcts );
 
+   /*! @brief Refresh the least common time step especially if the HLA base time units changed.
+    *  @param lcts Least Common Time Step time in seconds. */
+   virtual void refresh_least_common_time_step();
+
    /*! @brief Set the time-padding used to offset the go to run time.
     *  @param t Time in seconds to pad for time based mode transitions. */
    virtual void set_time_padding_in_seconds( double t );

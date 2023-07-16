@@ -3315,6 +3315,12 @@ void Federate::set_HLA_base_time_units(
 {
    // Set the HLA Logical time base units in the global Int64BaseTime.
    Int64BaseTime::set( base_time_units );
+
+   // Refresh the lookahead time given the new HLA base time units.
+   refresh_lookahead_base_time();
+
+   // Refresh the LCTS given the new HLA base time units.
+   execution_control->refresh_least_common_time_step();
 }
 
 void Federate::scale_trick_tics_to_base_time_units()
@@ -3396,6 +3402,13 @@ void Federate::set_lookahead_in_seconds(
    MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
    this->lookahead.set( value );
    this->lookahead_time = value;
+}
+
+/*! @brief Update the HLA lookahead base time. */
+void Federate::refresh_lookahead_base_time()
+{
+   // Recalculate the lookahead HLA time in base time units.
+   set_lookahead_in_seconds( this->lookahead_time );
 }
 
 void Federate::time_advance_request_to_GALT()

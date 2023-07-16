@@ -2734,10 +2734,18 @@ void ExecutionControl::set_least_common_time_step_in_seconds(
       } else {
 
          // Make sure to set this for both the ExecutionControl and the ExCO.
-         this->least_common_time_step = Int64BaseTime::to_base_time( lcts );
+         this->least_common_time_step_seconds = lcts;
+         this->least_common_time_step         = Int64BaseTime::to_base_time( lcts );
          ExCO->set_least_common_time_step_in_seconds( lcts );
       }
    }
+}
+
+void ExecutionControl::refresh_least_common_time_step()
+{
+   // Refresh the LCTS by setting the value again, which will calculate a new
+   // LCTS using the HLA base time units.
+   set_least_common_time_step_in_seconds( this->least_common_time_step_seconds );
 }
 
 void ExecutionControl::set_time_padding_in_seconds( double t )
