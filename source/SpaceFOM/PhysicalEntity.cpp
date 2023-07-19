@@ -1,5 +1,5 @@
 /*!
-@file SpaceFOM/SpaceFOMPhysicalEntity.cpp
+@file SpaceFOM/PhysicalEntity.cpp
 @ingroup SpaceFOM
 @brief This class provides data packing for the SpaceFOM Reference Frames.
 
@@ -17,7 +17,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../TrickHLA/CompileConfig.cpp}
 @trick_link_dependency{../TrickHLA/Packing.cpp}
-@trick_link_dependency{SpaceFOMPhysicalEntity.cpp}
+@trick_link_dependency{PhysicalEntity.cpp}
 
 
 @revs_title
@@ -51,7 +51,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Types.hh"
 
 // SpaceFOM include files.
-#include "SpaceFOM/SpaceFOMPhysicalEntity.hh"
+#include "SpaceFOM/PhysicalEntity.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -60,7 +60,7 @@ using namespace SpaceFOM;
 /*!
  * @job_class{initialization}
  */
-SpaceFOMPhysicalEntity::SpaceFOMPhysicalEntity() // RETURN: -- None.
+PhysicalEntity::PhysicalEntity() // RETURN: -- None.
    : physical_data( NULL )
 {
 }
@@ -68,7 +68,7 @@ SpaceFOMPhysicalEntity::SpaceFOMPhysicalEntity() // RETURN: -- None.
 /*!
  * @job_class{shutdown}
  */
-SpaceFOMPhysicalEntity::~SpaceFOMPhysicalEntity() // RETURN: -- None.
+PhysicalEntity::~PhysicalEntity() // RETURN: -- None.
 {
    physical_data = NULL;
 }
@@ -76,14 +76,14 @@ SpaceFOMPhysicalEntity::~SpaceFOMPhysicalEntity() // RETURN: -- None.
 /*!
  * @job_class{initialization}
  */
-void SpaceFOMPhysicalEntity::initialize(
+void PhysicalEntity::initialize(
       PhysicalEntityData *physical_data_ptr )
 {
    ostringstream errmsg;
 
    // Set the reference to the reference frame.
    if ( physical_data == NULL ) {
-      errmsg << "SpaceFOM::SpaceFOMPhysicalEntity::initialize():" << __LINE__
+      errmsg << "SpaceFOM::PhysicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL PhysicalEntityData: " << this->name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
@@ -99,13 +99,13 @@ void SpaceFOMPhysicalEntity::initialize(
 
 
 
-void SpaceFOMPhysicalEntity::pack()
+void PhysicalEntity::pack()
 {
    int iinc;
 
    // Check for initialization.
    if ( !initialized ) {
-      cout << "JEODSpaceFOMPhysicalEntity::pack() ERROR: The initialize() function has not"
+      cout << "JEODPhysicalEntity::pack() ERROR: The initialize() function has not"
            << " been called!" << endl;
    }
 
@@ -141,7 +141,7 @@ void SpaceFOMPhysicalEntity::pack()
    // Print out debug information if desired.
    if ( debug ) {
       cout.precision( 15 );
-      cout << "SpaceFOMPhysicalEntity::pack():" << __LINE__ << endl
+      cout << "PhysicalEntity::pack():" << __LINE__ << endl
            << "\tObject-Name: '" << object->get_name() << "'" << endl
            << "\tname:   '" << ( this->name != NULL ? this->name : "" ) << "'" << endl
            << "\type:    '" << ( this->type != NULL ? this->type : "" ) << "'" << endl
@@ -169,12 +169,12 @@ void SpaceFOMPhysicalEntity::pack()
 
 
 
-void SpaceFOMPhysicalEntity::unpack()
+void PhysicalEntity::unpack()
 {
    // double dt; // Local vs. remote time difference.
 
    if ( !initialized ) {
-      cout << "SpaceFOMPhysicalEntity::unpack():" << __LINE__
+      cout << "PhysicalEntity::unpack():" << __LINE__
            << " ERROR: The initialize() function has not been called!" << endl;
    }
 
@@ -194,7 +194,7 @@ void SpaceFOMPhysicalEntity::unpack()
       // Print out debug information if desired.
       if ( debug ) {
          cout.precision( 15 );
-         cout << "SpaceFOMPhysicalEntity::pack():" << __LINE__ << endl
+         cout << "PhysicalEntity::pack():" << __LINE__ << endl
               << "\tObject-Name: '" << object->get_name() << "'" << endl
               << "\tname:   '" << ( this->name != NULL ? this->name : "" ) << "'" << endl
               << "\type:    '" << ( this->type != NULL ? this->type : "" ) << "'" << endl

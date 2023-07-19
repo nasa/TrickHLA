@@ -122,7 +122,7 @@ class MoonSimObject : public Moon_LP150Q_SimObject
    jeod::De4xxEphemeris & de4xx;
   public:
    MoonSimObject( jeod::DynManager     & dyn_manager_,
-                  jeod::GravityManager   & grav_manager_,
+                  jeod::GravityManager & grav_manager_,
                   jeod::De4xxEphemeris & de4xx_)
    : Moon_LP150Q_SimObject( dyn_manager_, grav_manager_), de4xx( de4xx_)
   {
@@ -366,3 +366,4 @@ void create_connections() {
    ref_frame_tree.mars_pfix_frame_ptr = &mars_centered_fixed.frame_packing;
 
 }
+

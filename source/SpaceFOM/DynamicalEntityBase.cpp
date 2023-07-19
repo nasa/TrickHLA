@@ -68,7 +68,7 @@ DynamicalEntityBase::DynamicalEntityBase() // RETURN: -- None.
    V_INIT( force );
    V_INIT( torque );
    M_IDENT( inertia );
-   M_IDENT( inertia_rate );
+   M_INIT( inertia_rate );
 }
 
 /*!

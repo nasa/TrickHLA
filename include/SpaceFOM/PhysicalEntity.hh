@@ -1,5 +1,5 @@
 /*!
-@file SpaceFOM/SpaceFOMPhysicalEntity.hh
+@file SpaceFOM/PhysicalEntity.hh
 @ingroup SpaceFOM
 @brief Definition of the TrickHLA SpaceFOM physical entity type.
 
@@ -23,7 +23,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/SpaceFOM/PhysicalEntityBase.cpp}
-@trick_link_dependency{../../source/SpaceFOM/SpaceFOMPhysicalEntity.cpp}
+@trick_link_dependency{../../source/SpaceFOM/PhysicalEntity.cpp}
 
 @revs_title
 @revs_begin
@@ -52,7 +52,7 @@ class OpaqueBuffer;
 namespace SpaceFOM
 {
 
-class SpaceFOMPhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
+class PhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -62,12 +62,12 @@ class SpaceFOMPhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrSpaceFOM__SpaceFOMPhysicalEntity();
+   friend void init_attrSpaceFOM__PhysicalEntity();
 
   public:
    // Public constructors and destructors.
-   SpaceFOMPhysicalEntity();          // Default constructor.
-   virtual ~SpaceFOMPhysicalEntity(); // Destructor.
+   PhysicalEntity();          // Default constructor.
+   virtual ~PhysicalEntity(); // Destructor.
 
    // Initialize the packing object.
    /*! @brief Set the reference to the physical entity data.
@@ -88,12 +88,12 @@ class SpaceFOMPhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
 
   private:
    // This object is not copyable
-   /*! @brief Copy constructor for SpaceFOMPhysicalEntity class.
+   /*! @brief Copy constructor for PhysicalEntity class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   SpaceFOMPhysicalEntity( SpaceFOMPhysicalEntity const &rhs );
-   /*! @brief Assignment operator for SpaceFOMPhysicalEntity class.
+   PhysicalEntity( PhysicalEntity const &rhs );
+   /*! @brief Assignment operator for PhysicalEntity class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   SpaceFOMPhysicalEntity &operator=( SpaceFOMPhysicalEntity const &rhs );
+   PhysicalEntity &operator=( PhysicalEntity const &rhs );
 
 };
 

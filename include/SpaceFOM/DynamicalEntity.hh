@@ -1,12 +1,10 @@
 /*!
 @file SpaceFOM/DynamicalEntity.hh
 @ingroup SpaceFOM
-@brief Definition of the TrickHLA SpaceFOM Dynamical entity type.
+@brief Definition of the TrickHLA SpaceFOM physical entity type.
 
 This is the base implementation for the Space Reference FOM (SpaceFOM) interface
-to the Reference Frame object. This needs to be available to the SpaceFOM
-initialization process for the root reference frame discovery step in the
-initialization process.
+to the DynamicalEntity object.
 
 @copyright Copyright 2019 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
@@ -24,7 +22,7 @@ NASA, Johnson Space Center\n
 @python_module{SpaceFOM}
 
 @tldh
-@trick_link_dependency{../../source/SpaceFOM/PhysicalEntityBase.cpp}
+@trick_link_dependency{../../source/SpaceFOM/DynamicalEntityBase.cpp}
 @trick_link_dependency{../../source/SpaceFOM/DynamicalEntity.cpp}
 
 @revs_title
@@ -37,13 +35,25 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_DYNAMICAL_ENTITY_HH
 #define SPACEFOM_DYNAMICAL_ENTITY_HH
 
+// System include files.
+
+// TrickHLA include files.
+
 // SpaceFOM include files.
-#include "SpaceFOM/PhysicalEntityBase.hh"
+#include "SpaceFOM/DynamicalEntityData.h"
+#include "SpaceFOM/DynamicalEntityBase.hh"
+#include "SpaceFOM/PhysicalEntity.hh"
+
+namespace TrickHLA
+{
+class Packing;
+class OpaqueBuffer;
+} // namespace TrickHLA
 
 namespace SpaceFOM
 {
 
-class DynamicalEntity : public SpaceFOM::PhysicalEntityBase
+class DynamicalEntity : public SpaceFOM::PhysicalEntity, public SpaceFOM::DynamicalEntityBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -60,25 +70,33 @@ class DynamicalEntity : public SpaceFOM::PhysicalEntityBase
    DynamicalEntity();          // Default constructor.
    virtual ~DynamicalEntity(); // Destructor.
 
-   // Data pack and unpack routines.
+   // Initialize the packing object.
+   /*! @brief Set the reference to the physical entity data.
+    *  @param ref_frame_data_ptr Pointer to the RefFrameData instance. */
+   void initialize( PhysicalEntityData  * physical_data_ptr,
+                    DynamicalEntityData * dynamics_data_ptr );
+
+   // From the TrickHLA::Packing class.
+   /*! @brief Called to pack the data before the data is sent to the RTI. */
    virtual void pack();
+
+   // From the TrickHLA::Packing class.
+   /*! @brief Called to unpack the data after data is received from the RTI. */
    virtual void unpack();
 
+
   protected:
-   double force[3];           ///< @trick_units{N} Total external force on vehicle applied
-                              ///       through the vehicle center of mass.
-                              ///       Expressed in the vehicle struct frame.
-   double torque[3];          ///< @trick_units{N*m} Total external torques on vehicle.
-                              ///       Expressed in the vehicle struct frame.
-   double mass;               ///< @trick_units{kg} Vehicle mass.
-   double mass_rate;          ///< @trick_units{kg/s} Vehicle mass flow rate.
-   double inertia[3][3];      ///< @trick_units{kg*m2} Inertia matrix in element body frame.
-   double inertia_rate[3][3]; ///< @trick_units{kg*m2/s} Inertia matrix in element body frame.
+   DynamicalEntityData *dynamical_data; ///< @trick_units{--} Dynamical entity data.
 
   private:
    // This object is not copyable
-   DynamicalEntity( DynamicalEntity const & );
-   DynamicalEntity &operator=( DynamicalEntity const & );
+   /*! @brief Copy constructor for DynamicalEntity class.
+    *  @details This constructor is private to prevent inadvertent copies. */
+   DynamicalEntity( DynamicalEntity const &rhs );
+   /*! @brief Assignment operator for DynamicalEntity class.
+    *  @details This assignment operator is private to prevent inadvertent copies. */
+   DynamicalEntity &operator=( DynamicalEntity const &rhs );
+
 };
 
 } // namespace SpaceFOM
