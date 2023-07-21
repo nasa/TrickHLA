@@ -149,7 +149,7 @@ Federate::Federate()
      federation_joined( false ),
      all_federates_joined( false ),
      lookahead( 0.0 ),
-     TAR_job_cycle_time_micros( 0LL ),
+     TAR_job_cycle_base_time( 0LL ),
      shutdown_called( false ),
      HLA_save_directory( "" ),
      initiate_save_flag( false ),
@@ -4525,30 +4525,31 @@ void Federate::setup_time_regulation()
  */
 void Federate::determine_TAR_job_cycle_time()
 {
-   if ( this->TAR_job_cycle_time_micros > 0LL ) {
+   if ( this->TAR_job_cycle_base_time > 0LL ) {
       return;
    }
 
-   // Get the lookahead time.
-   int64_t const lookahead_time_micros = get_lookahead_time_in_micros();
+   // Get the lookahead in the base time units.
+   int64_t const lookahead_base_time = get_lookahead_in_base_time();
 
    // Get the cycle time.
-   double const cycle_time         = exec_get_job_cycle( NULL );
-   this->TAR_job_cycle_time_micros = Int64Interval::to_microseconds( cycle_time );
+   double const cycle_time       = exec_get_job_cycle( NULL );
+   this->TAR_job_cycle_base_time = Int64BaseTime::to_base_time( cycle_time );
 
    // Verify the job cycle time against the HLA lookahead time.
-   if ( ( this->TAR_job_cycle_time_micros <= 0LL )
-        || ( this->TAR_job_cycle_time_micros < lookahead_time_micros ) ) {
+   if ( ( this->TAR_job_cycle_base_time <= 0LL )
+        || ( this->TAR_job_cycle_base_time < lookahead_base_time ) ) {
       ostringstream errmsg;
       errmsg << "Federate::determine_TAR_job_cycle_time():" << __LINE__
              << " ERROR: The cycle time for this job is less than the HLA"
              << " lookahead time! The HLA Lookahead time ("
-             << Int64Interval::to_seconds( lookahead_time_micros )
+             << setprecision( 18 ) << Int64BaseTime::to_seconds( lookahead_base_time )
              << " seconds) must be less than or equal to the job cycle time ("
-             << cycle_time << " seconds). Make sure the 'lookahead_time' in"
-             << " your input or modified-data file is less than or equal to the"
-             << " 'THLA_DATA_CYCLE_TIME' time specified in the S_define file for"
-             << " the time_advance_request() job." << THLA_ENDL;
+             << setprecision( 18 ) << cycle_time
+             << " seconds). Make sure the 'lookahead_time' in"
+             << " your input.py or modified-data file is less than or equal to"
+             << " the 'THLA_DATA_CYCLE_TIME' time specified in the S_define file"
+             << " for the time_advance_request() job." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -4579,7 +4580,7 @@ void Federate::time_advance_request()
    }
 
    // Determine the TAR job cycle time if the value is not set.
-   if ( this->TAR_job_cycle_time_micros <= 0LL ) {
+   if ( this->TAR_job_cycle_base_time <= 0LL ) {
       determine_TAR_job_cycle_time();
    }
 
@@ -4595,7 +4596,7 @@ void Federate::time_advance_request()
       // Build the requested HLA logical time for the next time step.
       if ( is_zero_lookahead_time() ) {
          // Use the TAR job cycle time for the time-step.
-         this->requested_time += this->TAR_job_cycle_time_micros;
+         this->requested_time += this->TAR_job_cycle_base_time;
       } else {
          // Use the lookahead time for the time-step.
          // Requested time = granted time + lookahead

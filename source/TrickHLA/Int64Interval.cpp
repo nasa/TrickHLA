@@ -108,7 +108,7 @@ int64_t Int64Interval::get_seconds() const
 
 int64_t Int64Interval::get_fractional_seconds() const
 {
-   return ( (int32_t)( this->hla_interval.getInterval() % Int64BaseTime::get_base_time_multiplier() ) );
+   return ( (int64_t)( this->hla_interval.getInterval() % Int64BaseTime::get_base_time_multiplier() ) );
 }
 
 int64_t Int64Interval::get_base_time() const
@@ -121,11 +121,6 @@ double Int64Interval::get_time_in_seconds() const
    double const seconds    = (double)get_seconds();
    double const fractional = (double)get_fractional_seconds() / (double)Int64BaseTime::get_base_time_multiplier();
    return ( seconds + fractional );
-}
-
-bool Int64Interval::is_zero() const
-{
-   return this->hla_interval.isZero();
 }
 
 bool Int64Interval::is_zero() const

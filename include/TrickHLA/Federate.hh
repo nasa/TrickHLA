@@ -1121,7 +1121,7 @@ class Federate
 
    Int64Interval lookahead; ///< @trick_units{--} Lookahead time for data.
 
-   int64_t TAR_job_cycle_time_micros; // us Cycle time for the time_advance_request job.
+   int64_t TAR_job_cycle_base_time; ///< @trick_io{**}  Cycle time for the time_advance_request job in base time units.
 
    bool shutdown_called; ///< @trick_units{--} Flag to indicate shutdown has been called.
 
