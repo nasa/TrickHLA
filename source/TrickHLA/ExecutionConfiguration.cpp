@@ -140,7 +140,7 @@ ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
 }
 
 /*!
- * @details These can be overridden in the input file.
+ * @details These can be overridden in the input.py file.
  * @job_class{default_data}
  */
 void ExecutionConfiguration::configure_attributes()

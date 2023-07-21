@@ -146,7 +146,7 @@ void Attribute::initialize(
              << " ERROR: Object with FOM Name '" << obj_FOM_name << "' has a missing"
              << " FOM name for the attribute. Make sure THLA.manager.objects["
              << object_index << "].attributes[" << attribute_index
-             << "].FOM_name' in either your input file or modified-data files"
+             << "].FOM_name' in either your input.py file or modified-data files"
              << " is correctly specified." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -159,7 +159,7 @@ void Attribute::initialize(
              << obj_FOM_name << "'->'" << FOM_name << "' has a missing Trick name"
              << " for the attribute. Make sure THLA.manager.objects["
              << object_index << "].attributes[" << attribute_index
-             << "].trick_name' in either your input file or modified-data files"
+             << "].trick_name' in either your input.py file or modified-data files"
              << " is correctly specified." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }

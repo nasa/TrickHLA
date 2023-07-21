@@ -154,7 +154,7 @@ ExecutionControl::~ExecutionControl()
 /*!
 @details This routine will set a lot of the data in the TrickHLA::Federate that
 is required for this execution control scheme. This should greatly simplify
-input files and reduce input file setting errors.
+input.py files and reduce input.py file setting errors.
 
 @job_class{initialization}
 */
@@ -200,7 +200,7 @@ void ExecutionControl::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
              << " WARNING: Only a preset master is supported. Make sure to set"
-             << " 'THLA.federate.use_preset_master = true' in your input file."
+             << " 'THLA.federate.use_preset_master = true' in your input.py file."
              << " Setting use_preset_master to true!"
              << THLA_ENDL;
       send_hs( stdout, (char *)errmsg.str().c_str() );
@@ -280,7 +280,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
 
    // Since this is an interaction handler generated on the fly, there is no
    // Trick variable to resolve to at run time, which is supplied by the
-   // input file. we must build data structures with sufficient information
+   // input.py file. we must build data structures with sufficient information
    // for the Parameter class to link itself into the just generated
    // Freeze Interaction Handler, and its sole parameter ('execution_mode').
 
@@ -340,7 +340,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    }
 
    // Initialize the TrickHLA Parameter. Since we built the interaction handler
-   // in-line, and not via the Trick input file, use the alternate version of
+   // in-line, and not via the Trick input.py file, use the alternate version of
    // the initialize routine which does not resolve the fully-qualified Trick
    // name to access the ATTRIBUTES if the trick variable...
    if ( tParm != static_cast< Parameter * >( NULL ) ) {
@@ -2718,7 +2718,7 @@ void ExecutionControl::start_federation_save_at_scenario_time(
 /*!
  * @details WARNING: Only the Master federate should ever set this.
  */
-void ExecutionControl::set_least_common_time_step_in_seconds(
+void ExecutionControl::set_least_common_time_step(
    double const lcts )
 {
    // WARNING: Only the Master federate should ever set this.
@@ -2727,7 +2727,7 @@ void ExecutionControl::set_least_common_time_step_in_seconds(
       ExecutionConfiguration *ExCO = dynamic_cast< ExecutionConfiguration * >( execution_configuration );
       if ( ExCO == NULL ) {
          ostringstream errmsg;
-         errmsg << "SpaceFOM::ExecutionControl::set_least_common_time_step_in_seconds():" << __LINE__
+         errmsg << "SpaceFOM::ExecutionControl::set_least_common_time_step():" << __LINE__
                 << " ERROR: Execution Configuration is not an SpaceFOM ExCO."
                 << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
@@ -2736,7 +2736,7 @@ void ExecutionControl::set_least_common_time_step_in_seconds(
          // Make sure to set this for both the ExecutionControl and the ExCO.
          this->least_common_time_step_seconds = lcts;
          this->least_common_time_step         = Int64BaseTime::to_base_time( lcts );
-         ExCO->set_least_common_time_step_in_seconds( lcts );
+         ExCO->set_least_common_time_step( lcts );
       }
    }
 }
@@ -2745,10 +2745,10 @@ void ExecutionControl::refresh_least_common_time_step()
 {
    // Refresh the LCTS by setting the value again, which will calculate a new
    // LCTS using the HLA base time units.
-   set_least_common_time_step_in_seconds( this->least_common_time_step_seconds );
+   set_least_common_time_step( this->least_common_time_step_seconds );
 }
 
-void ExecutionControl::set_time_padding_in_seconds( double t )
+void ExecutionControl::set_time_padding( double t )
 {
    int64_t base_time = Int64BaseTime::to_base_time( t );
 

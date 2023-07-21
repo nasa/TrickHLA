@@ -133,7 +133,7 @@ ExecutionControl::~ExecutionControl()
 /*!
 @details This routine will set a lot of the data in the TrickHLA::Federate that
 is required for this execution control scheme. This should greatly simplify
-input files and reduce input file setting errors.
+input.py files and reduce input.py file setting errors.
 
 @job_class{initialization}
 */
@@ -183,7 +183,7 @@ void ExecutionControl::initialize()
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::initialize():" << __LINE__
              << " WARNING: Only a preset master is supported. Make sure to set"
-             << " 'THLA.federate.use_preset_master = true' in your input file."
+             << " 'THLA.federate.use_preset_master = true' in your input.py file."
              << " Setting use_preset_master to true!"
              << THLA_ENDL;
       send_hs( stdout, (char *)errmsg.str().c_str() );
@@ -954,7 +954,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
 
    // since this is an interaction handler generated on the fly, there is no
    // trick variable to resolve to at run time, which is supplied by the
-   // input file. we must build data structures with sufficient information
+   // input.py file. we must build data structures with sufficient information
    // for the Parameter class to link itself into the just generated
    // Freeze Interaction Handler, and its sole parameter ('time').
 
@@ -1014,7 +1014,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    }
 
    // Initialize the TrickHLA Parameter. Since we built the interaction handler
-   // in-line, and not via the trick input file, use the alternate version of
+   // in-line, and not via the trick input.py file, use the alternate version of
    // the initialize routine which does not resolve the fully-qualified trick
    // name to access the ATTRIBUTES if the trick variable...
    if ( tParm != static_cast< Parameter * >( NULL ) ) {
@@ -2540,7 +2540,7 @@ bool ExecutionControl::check_freeze_time()
 
    if ( do_immediate_freeze ) {
       // DANNY2.7 Go to FREEZE at top of next frame.
-      exec_freeze(); // go to freeze at top of next frame (other federates MUST have their software frame set in input file!)
+      exec_freeze(); // go to freeze at top of next frame (other federates MUST have their software frame set in input.py file!)
       // If we are to initiate the federation save, register a sync point
       // which must be acknowledged only in freeze mode!!!
       if ( federate->announce_save ) {

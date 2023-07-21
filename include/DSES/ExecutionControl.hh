@@ -200,7 +200,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    // Freeze time management functions.
    /*! @brief Set the time-padding used to offset the go to run time.
     *  @param t Time in seconds to pad for time based mode transitions. */
-   virtual void set_time_padding_in_seconds( double t );
+   virtual void set_time_padding( double t );
 
   protected:
    static std::string const type; ///< @trick_units{--} ExecutionControl type string.

@@ -270,14 +270,14 @@ federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_MICROSECONDS )
 federate.scale_trick_tics_to_base_time_units()
 
 # Must specify a federate HLA lookahead value in seconds.
-federate.set_lookahead_time_in_seconds( 0.250 )
+federate.set_lookahead_time( 0.250 )
 
 # Must specify the Least Common Time Step for all federates in the
 # federation execution.
-federate.set_least_common_time_step_in_seconds( 0.250 )
+federate.set_least_common_time_step( 0.250 )
 
 # Set the amount of seconds used to 'pad' mode transitions.
-federate.set_time_padding_in_seconds( 2.0 )
+federate.set_time_padding( 2.0 )
 
 
 # Setup Time Management parameters.

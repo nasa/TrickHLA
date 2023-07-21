@@ -2598,7 +2598,7 @@ void Object::extract_data(
          StringUtilities::to_string( id_str, iter->first );
          send_hs( stderr, "Object::extract_data():%d WARNING: For \
 Object '%s' with FOM name '%s', data was received for Attribute-ID:%s, which \
-has not been configured for this object instance in the input file. Ignoring \
+has not been configured for this object instance in the input.py file. Ignoring \
 this attribute.%c",
                   __LINE__, name, FOM_name, id_str.c_str(), THLA_NEWLINE );
       }
@@ -3845,7 +3845,7 @@ void Object::pull_ownership_upon_rejoin()
 
             // Turn off the 'locally_owned' flag on this attribute since the RTI
             // just informed us that we do not own this attribute, regardless of
-            // what the input file may have indicated.
+            // what the input.py file may have indicated.
             attributes[i].unmark_locally_owned();
 
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {

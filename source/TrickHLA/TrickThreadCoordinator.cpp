@@ -150,7 +150,10 @@ void TrickThreadCoordinator::initialize_thread_state(
              << " 'THLA.federate.HLA_time_base_units = trick."
              << Int64BaseTime::get_units_string(
                    Int64BaseTime::best_base_time_resolution( main_thread_data_cycle_time ) )
-             << "' in your input file. The current HLA base time resolution is "
+             << "' or 'federate.set_HLA_base_time_units( "
+             << Int64BaseTime::get_units_string(
+                   Int64BaseTime::best_base_time_resolution( main_thread_data_cycle_time ) )
+             << " )' in your input.py file. The current HLA base time resolution is "
              << Int64BaseTime::get_units_string( Int64BaseTime::get_base_units() )
              << ". You also need to update both the Federation Execution"
              << " Specific Federation Agreement (FESFA) and Federate Compliance"
@@ -167,7 +170,7 @@ void TrickThreadCoordinator::initialize_thread_state(
              << setprecision( 18 ) << main_thread_data_cycle_time
              << " seconds) requires more resolution"
              << " than the Trick time Tic value (" << exec_get_time_tic_value()
-             << "). Please update the Trick time tic value in your input"
+             << "). Please update the Trick time tic value in your input.py"
              << " file (i.e. by calling 'trick.exec_set_time_tic_value()')."
              << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -281,7 +284,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
              << " 'THLA.federate.HLA_time_base_units = trick."
              << Int64BaseTime::get_units_string(
                    Int64BaseTime::best_base_time_resolution( data_cycle ) )
-             << "' in your input file. The current HLA base time resolution is "
+             << "' in your input.py file. The current HLA base time resolution is "
              << Int64BaseTime::get_units_string( Int64BaseTime::get_base_units() )
              << ". You also need to update both the Federation Execution"
              << " Specific Federation Agreement (FESFA) and Federate Compliance"

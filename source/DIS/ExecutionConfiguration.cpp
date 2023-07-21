@@ -136,7 +136,7 @@ ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
 }
 
 /*!
- * @details These can be overridden in the input file.
+ * @details These can be overridden in the input.py file.
  * @job_class{default_data}
  */
 void ExecutionConfiguration::configure_attributes(
@@ -148,7 +148,7 @@ void ExecutionConfiguration::configure_attributes(
    //
    // Assign an empty root frame name to start with.
    // This will be reset at root frame discovery. It can
-   // also be specified in the input file for the Root Reference
+   // also be specified in the input.py file for the Root Reference
    // Frame Publisher (RRFP).
    //
    this->root_frame_name = trick_MM->mm_strdup( "" );
@@ -546,7 +546,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    // this->attributes[0].trick_name = trick_MM->mm_strdup( trick_name_str.c_str() );
 
    // Normally we would use the Trick variable to resolve to at run time,
-   // which is supplied by the input file. Instead, we must build the
+   // which is supplied by the input.py file. Instead, we must build the
    // Trick REF2 data structures with sufficient information for the
    // Attribute class to link itself into Execution Configuration
    // instance variables.
@@ -594,7 +594,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    this->attributes[0].initialize( this->FOM_name, 0, 0 );
 
    // Initialize the TrickHLA Attribute. Since we built the attributes
-   // in-line, and not via the Trick input file, use the alternate version of
+   // in-line, and not via the Trick input.py file, use the alternate version of
    // the initialize routine which does not resolve the fully-qualified Trick
    // name to access the ATTRIBUTES if the trick variable...
    // this->attributes[0].initialize( this->FOM_name,

@@ -108,7 +108,7 @@ Attribute *Packing::get_attribute_and_validate(
              << "', failed to find the Attribute for an attribute named"
              << " '" << attr_FOM_name << "'. Make sure the FOM attribute name is"
              << " correct, the FOM contains an attribute named '"
-             << attr_FOM_name << "' and that your input file is properly"
+             << attr_FOM_name << "' and that your input.py file is properly"
              << " configured for this attribute." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }

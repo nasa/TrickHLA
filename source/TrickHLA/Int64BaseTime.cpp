@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 
 @revs_title
 @revs_begin
-@rev_entry{Dan Dexter, NASA ER6, TrickHLA, July 2023, --, Base time for given time units.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, July 2023, --, Base time for given time unit.}
 @revs_end
 
 */
@@ -31,10 +31,6 @@ NASA, Johnson Space Center\n
 #include <cstdio>
 #include <sstream>
 #include <string>
-
-// Trick include files.
-
-// HLA include files.
 
 // TrickHLA include files.
 #include "TrickHLA/CompileConfig.hh"
@@ -49,10 +45,10 @@ using namespace TrickHLA;
 HLABaseTimeEnum Int64BaseTime::base_units               = HLA_BASE_TIME_MICROSECONDS;
 std::string     Int64BaseTime::units_string             = "microseconds";
 int64_t         Int64BaseTime::base_time_multiplier     = 1000000LL;
-double          Int64BaseTime::max_logical_time_seconds = ( (double)std::numeric_limits< int64_t >::max() / (double)1000000 );
+double          Int64BaseTime::max_logical_time_seconds = ( (double)std::numeric_limits< int64_t >::max() / (double)Int64BaseTime::base_time_multiplier );
 
 /*!
- * @job_class{initialization}
+ * @brief Default constructor with microsecond base units_string.
  */
 Int64BaseTime::Int64BaseTime()
 {
@@ -60,7 +56,8 @@ Int64BaseTime::Int64BaseTime()
 }
 
 /*!
- * @job_class{initialization}
+ * @brief Constructor with base units_string specified.
+ * @param units The base time units to use.
  */
 Int64BaseTime::Int64BaseTime(
    HLABaseTimeEnum const units )
@@ -69,7 +66,7 @@ Int64BaseTime::Int64BaseTime(
 }
 
 /*!
- * @job_class{shutdown}
+ * @brief Destructor for the TrickHLA Int64BaseTime class.
  */
 Int64BaseTime::~Int64BaseTime()
 {
@@ -77,7 +74,8 @@ Int64BaseTime::~Int64BaseTime()
 }
 
 /*!
- * @job_class{initialization}
+ * @brief Determine if the specified value exceeds the base time resolution.
+ * @param units The base time units to use.
  */
 void Int64BaseTime::set(
    HLABaseTimeEnum const units )
@@ -171,7 +169,9 @@ void Int64BaseTime::set(
 }
 
 /*!
- * @job_class{initialization}
+ * @brief A string representing the specified units.
+ * @param units The base time units.
+ * @return A string representing the specified units.
  */
 std::string Int64BaseTime::get_units_string(
    HLABaseTimeEnum const units )
@@ -220,7 +220,9 @@ std::string Int64BaseTime::get_units_string(
 }
 
 /*!
- * @job_class{initialization}
+ * @brief Determine the best supporting base time resolution for the value.
+ * @return The best supporting base time enum value.
+ * @param value Time value as a floating point double in seconds.
  */
 HLABaseTimeEnum Int64BaseTime::best_base_time_resolution(
    double const value )
@@ -236,7 +238,10 @@ HLABaseTimeEnum Int64BaseTime::best_base_time_resolution(
 }
 
 /*!
- * @job_class{initialization}
+ * @brief Determine if the specified value exceeds the resolution of
+ *  the base time (i.e. value is much smaller than base time resolution).
+ *  @return True if the value exceeds the resolution of the base time.
+ * @param value Time value as a floating point double in seconds.
  */
 bool Int64BaseTime::exceeds_base_time_resolution(
    double const value )
@@ -245,7 +250,11 @@ bool Int64BaseTime::exceeds_base_time_resolution(
 }
 
 /*!
- * @job_class{initialization}
+ * @brief Determine if the specified value exceeds the resolution of
+ *  a base time with the corresponding multiplier.
+ * @return True if the value exceeds the resolution of the base time.
+ * @param value Time value as a floating point double in seconds.
+ * @param multiplier Base time multiplier.
  */
 bool Int64BaseTime::exceeds_base_time_resolution(
    double const value,
@@ -256,7 +265,10 @@ bool Int64BaseTime::exceeds_base_time_resolution(
 }
 
 /*!
- * @job_class{initialization}
+ * @brief Converts the given floating point time to an integer representing
+ *  the time in the HLA Logical base time.
+ * @return Time value in the HLA Logical base time.
+ * @param value Time value as a floating point double in seconds.
  */
 int64_t Int64BaseTime::to_base_time(
    double const value )
@@ -277,12 +289,14 @@ int64_t Int64BaseTime::to_base_time(
    // which is faster.
    // int64_t const seconds   = (int64_t)trunc( value );
    // int64_t const fractional = ( seconds >= 0 ) ? (int64_t)( fmod( value * MICROS_MULTIPLIER, MICROS_MULTIPLIER ) + 0.5 )
-   //                                            : (int64_t)( fmod( value * MICROS_MULTIPLIER, MICROS_MULTIPLIER ) - 0.5 );
+   //                                             : (int64_t)( fmod( value * MICROS_MULTIPLIER, MICROS_MULTIPLIER ) - 0.5 );
    // return ( ( seconds * MICROS_MULTIPLIER ) + fractional );
 }
 
 /*!
- * @job_class{initialization}
+ * @brief Converts the given integer time to an floating-point time representing seconds.
+ * @return Time value in seconds.
+ * @param time_in_base_units Time value as a 64-bit integer in the units_string specified for this class.
  */
 double Int64BaseTime::to_seconds(
    int64_t const time_in_base_units )
@@ -293,7 +307,9 @@ double Int64BaseTime::to_seconds(
 }
 
 /*!
- * @job_class{initialization}
+ * @brief Converts the given integer time to an integer time representing whole seconds.
+ * @return Time value in whole seconds.
+ * @param time_in_base_units Time value as a 64-bit integer in the units_string specified for this class.
  */
 int64_t Int64BaseTime::to_whole_seconds(
    int64_t const time_in_base_units )

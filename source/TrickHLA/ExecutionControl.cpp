@@ -108,7 +108,7 @@ ExecutionControl::~ExecutionControl()
 /*!
 @details This routine will set a lot of the data in the TrickHLA::Federate that
 is required for this execution control scheme. This should greatly simplify
-input files and reduce input file setting errors.
+input.py files and reduce input.py file setting errors.
 
 @job_class{initialization}
 */
@@ -440,7 +440,7 @@ ExecutionConfiguration *ExecutionControl::get_execution_configuration()
 /*!
  * @details WARNING: Only the Master federate should ever set this.
  */
-void ExecutionControl::set_least_common_time_step_in_seconds(
+void ExecutionControl::set_least_common_time_step(
    double const lcts )
 {
    // WARNING: Only the Master federate should ever set this.
@@ -449,7 +449,7 @@ void ExecutionControl::set_least_common_time_step_in_seconds(
       ExecutionConfiguration *ExCO = dynamic_cast< ExecutionConfiguration * >( execution_configuration );
       if ( ExCO == NULL ) {
          ostringstream errmsg;
-         errmsg << "TrickHLA::ExecutionControl::set_least_common_time_step_in_seconds():" << __LINE__
+         errmsg << "TrickHLA::ExecutionControl::set_least_common_time_step():" << __LINE__
                 << " ERROR: Execution Configuration is not an TrickHLA ExCO." << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -464,10 +464,10 @@ void ExecutionControl::refresh_least_common_time_step()
 {
    // Refresh the LCTS by setting the value again, which will calculate a new
    // LCTS using the HLA base time units.
-   set_least_common_time_step_in_seconds( this->least_common_time_step_seconds );
+   set_least_common_time_step( this->least_common_time_step_seconds );
 }
 
-void ExecutionControl::set_time_padding_in_seconds( double t )
+void ExecutionControl::set_time_padding( double t )
 {
    int64_t base_time = Int64BaseTime::to_base_time( t );
 

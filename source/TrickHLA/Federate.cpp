@@ -410,11 +410,11 @@ void Federate::setup(
 void Federate::initialize_debug()
 {
    // Verify the debug level is correct just in case the user specifies it in
-   // the input file as an integer instead of using the ENUM values...
+   // the input.py file as an integer instead of using the ENUM values...
    if ( ( this->debug_level < DEBUG_LEVEL_NO_TRACE ) || ( this->debug_level > DEBUG_LEVEL_FULL_TRACE ) ) {
       send_hs( stderr, "Federate::initialize():%d You specified an \
-invalid debug level '%d' in the input file using an integer value instead of \
-an ENUM. Please double check the value you specified in the input file against \
+invalid debug level '%d' in the input.py file using an integer value instead of \
+an ENUM. Please double check the value you specified in the input.py file against \
 the documented ENUM values.%c",
                __LINE__, (int)this->debug_level, THLA_NEWLINE );
       if ( this->debug_level < DEBUG_LEVEL_NO_TRACE ) {
@@ -496,7 +496,7 @@ void Federate::initialize()
              << Int64BaseTime::get_units()
              << ") corresponding to THLA.federate.set_HLA_base_time_unit("
              << Int64BaseTime::get_base_units()
-             << "). Please update the Trick time tic value in your input file"
+             << "). Please update the Trick time tic value in your input.py file"
              << " (i.e. by calling 'trick.exec_set_time_tic_value()')."
              << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -553,7 +553,7 @@ void Federate::restart_initialization()
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    // Update the lookahead time in our HLA time line.
-   set_lookahead_in_seconds( lookahead_time );
+   set_lookahead( lookahead_time );
 
    if ( federate_ambassador == static_cast< FedAmb * >( NULL ) ) {
       ostringstream errmsg;
@@ -578,7 +578,7 @@ void Federate::restart_initialization()
              << " ERROR: Invalid HLA lookahead time!"
              << " Lookahead time (" << lookahead_time << " seconds)"
              << " must be greater than or equal to zero and not negative. Make"
-             << " sure 'lookahead_time' in your input or modified-data file is"
+             << " sure 'lookahead_time' in your input.py or modified-data file is"
              << " not a negative number." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -588,7 +588,7 @@ void Federate::restart_initialization()
       ostringstream errmsg;
       errmsg << "Federate::restart_initialization():" << __LINE__
              << " ERROR: Invalid FOM-modules."
-             << " Please check your input or modified-data files to make sure"
+             << " Please check your input.py or modified-data files to make sure"
              << " 'FOM_modules' is correctly specified, where 'FOM_modules' is";
       errmsg << " a comma separated list of FOM-module filenames.";
       errmsg << THLA_ENDL;
@@ -600,7 +600,7 @@ void Federate::restart_initialization()
       ostringstream errmsg;
       errmsg << "Federate::restart_initialization():" << __LINE__
              << " ERROR: Invalid Federate Execution Name."
-             << " Please check your input or modified-data files to make sure"
+             << " Please check your input.py or modified-data files to make sure"
              << " the 'federation_name' is correctly specified." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -729,7 +729,7 @@ void Federate::create_RTI_ambassador_and_connect()
          msg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
              << " WARNING: Local settings designator 'THLA.federate.local_settings'"
              << " for the RTI-Ambassador connection was not specified in the"
-             << " input file, using HLA-Evolved vendor defaults." << THLA_ENDL;
+             << " input.py file, using HLA-Evolved vendor defaults." << THLA_ENDL;
          send_hs( stdout, (char *)msg.str().c_str() );
       } else {
          ostringstream msg;
@@ -2588,7 +2588,7 @@ void Federate::enter_freeze()
 {
 
    // Initiate a federation freeze when a Trick freeze is commanded. (If we're
-   // here at time 0, set_exec_freeze_command was called in input file.)
+   // here at time 0, set_exec_freeze_command was called in input.py file.)
    // Otherwise get out now.
    if ( execution_control->get_sim_time() > 0.0 ) {
       if ( exec_get_exec_command() != FreezeCmd ) {
@@ -3317,7 +3317,7 @@ void Federate::set_HLA_base_time_units(
    Int64BaseTime::set( base_time_units );
 
    // Refresh the lookahead time given the new HLA base time units.
-   refresh_lookahead_base_time();
+   refresh_lookahead();
 
    // Refresh the LCTS given the new HLA base time units.
    execution_control->refresh_least_common_time_step();
@@ -3328,7 +3328,7 @@ void Federate::scale_trick_tics_to_base_time_units()
    long long time_res  = Int64BaseTime::get_base_time_multiplier();
    long long tic_value = exec_get_time_tic_value();
 
-   // Scale up the Trick tim Tic value to support the HLA base time units.
+   // Scale up the Trick time Tic value to support the HLA base time units.
    // Trick Time Tics is limited to a value of 2^31.
    while ( ( tic_value < time_res ) && ( tic_value < std::numeric_limits< int >::max() ) ) {
       tic_value *= 10;
@@ -3356,14 +3356,14 @@ void Federate::scale_trick_tics_to_base_time_units()
    }
 }
 
-void Federate::set_lookahead_in_seconds(
+void Federate::set_lookahead(
    double const value )
 {
    // Determine if the lookahead time needs a resolution that exceeds the
    // configured HLA base time.
    if ( Int64BaseTime::exceeds_base_time_resolution( value ) ) {
       ostringstream errmsg;
-      errmsg << "Federate::set_lookahead_in_seconds():" << __LINE__
+      errmsg << "Federate::set_lookahead():" << __LINE__
              << " ERROR: The lookahead time specified (" << setprecision( 18 ) << value
              << " seconds) requires more resolution than whole "
              << Int64BaseTime::get_units()
@@ -3375,7 +3375,9 @@ void Federate::set_lookahead_in_seconds(
              << " base HLA Logical Time resolution by setting"
              << " 'THLA.federate.HLA_time_base_units = trick."
              << Int64BaseTime::get_units_string( Int64BaseTime::best_base_time_resolution( value ) )
-             << "' in your input file. The current HLA base time resolution is "
+             << "' or 'federate.set_HLA_base_time_units( "
+             << Int64BaseTime::get_units_string( Int64BaseTime::best_base_time_resolution( value ) )
+             << " )' in your input.py file. The current HLA base time resolution is "
              << Int64BaseTime::get_units_string( Int64BaseTime::get_base_units() )
              << ". You also need to update both the Federation Execution"
              << " Specific Federation Agreement (FESFA) and Federate Compliance"
@@ -3387,12 +3389,12 @@ void Federate::set_lookahead_in_seconds(
    // Determine if the Trick time Tic can represent the lookahead time.
    if ( Int64BaseTime::exceeds_base_time_resolution( value, exec_get_time_tic_value() ) ) {
       ostringstream errmsg;
-      errmsg << "Federate::set_lookahead_in_seconds():" << __LINE__
+      errmsg << "Federate::set_lookahead():" << __LINE__
              << " ERROR: The Trick time tic value (" << exec_get_time_tic_value()
              << ") does not have enough resolution to represent the HLA lookahead time ("
              << setprecision( 18 ) << value
-             << " seconds). Please update the Trick time tic value in"
-             << " your input file (i.e. by calling 'trick.exec_set_time_tic_value()')."
+             << " seconds). Please update the Trick time tic value in your"
+             << " input.py file (i.e. by calling 'trick.exec_set_time_tic_value()')."
              << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -3405,10 +3407,10 @@ void Federate::set_lookahead_in_seconds(
 }
 
 /*! @brief Update the HLA lookahead base time. */
-void Federate::refresh_lookahead_base_time()
+void Federate::refresh_lookahead()
 {
    // Recalculate the lookahead HLA time in base time units.
-   set_lookahead_in_seconds( this->lookahead_time );
+   set_lookahead( this->lookahead_time );
 }
 
 void Federate::time_advance_request_to_GALT()
@@ -6357,9 +6359,9 @@ void Federate::restore_checkpoint(
 
    load_checkpoint_job();
 
-   // If exec_set_freeze_command(true) is in master fed's input file when
+   // If exec_set_freeze_command(true) is in master fed's input.py file when
    // check-pointed, then restore starts up in freeze.
-   // DANNY2.7 Clear non-master fed's freeze command so it doesnt cause
+   // DANNY2.7 Clear non-master fed's freeze command so it does not cause
    // unnecessary freeze interaction to be sent.
    if ( !execution_control->is_master() ) {
       exec_set_freeze_command( false );

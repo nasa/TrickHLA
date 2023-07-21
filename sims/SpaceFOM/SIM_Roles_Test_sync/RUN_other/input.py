@@ -286,7 +286,7 @@ federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_MICROSECONDS )
 federate.scale_trick_tics_to_base_time_units()
 
 # Must specify a federate HLA lookahead value in seconds.
-federate.set_lookahead_time_in_seconds( 0.250 )
+federate.set_lookahead_time( 0.250 )
 
 
 # Setup Time Management parameters.

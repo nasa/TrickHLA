@@ -196,7 +196,7 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
 
    /*! @brief Set the least common time step in seconds for the federation.
     *  @param lcts Least Common Time Step time in seconds. */
-   virtual void set_least_common_time_step_in_seconds( double const lcts );
+   virtual void set_least_common_time_step( double const lcts );
 
    /*! @brief Get the value of the least common time step.
     *  @return The value of the least common time step. */

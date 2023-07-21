@@ -24,7 +24,7 @@ NASA, Johnson Space Center\n
 
 @revs_title
 @revs_begin
-@rev_entry{Dan Dexter, NASA ER6, TrickHLA, July 2023, --, Base time for given time units.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, July 2023, --, Base time for given time unit.}
 @revs_end
 
 */
@@ -115,7 +115,7 @@ class Int64BaseTime
    }
 
    /*! @brief Determine the best supporting base time resolution for the value.
-    *  @return The best supporting bae time enum value.
+    *  @return The best supporting base time enum value.
     *  @param value Time value as a floating point double in seconds. */
    static HLABaseTimeEnum best_base_time_resolution( double const value );
 
@@ -126,10 +126,10 @@ class Int64BaseTime
    static bool exceeds_base_time_resolution( double const value );
 
    /*! @brief Determine if the specified value exceeds the resolution of
-    *  the base time (i.e. value is much smaller than base time resolution).
+    *  a base time with the corresponding multiplier.
     *  @return True if the value exceeds the resolution of the base time.
     *  @param value Time value as a floating point double in seconds.
-    *  @param multiplier Bsse tie multiplier.*/
+    *  @param multiplier Base time multiplier. */
    static bool exceeds_base_time_resolution( double const value, long long multiplier );
 
    /*! @brief Converts the given floating point time to an integer representing

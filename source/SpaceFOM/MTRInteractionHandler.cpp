@@ -179,7 +179,7 @@ void MTRInteractionHandler::send_interaction(
       send_cnt++;
    } else {
       // Use the inherited debug-handler to allow debug comments to be turned
-      // on and off from a setting in the input file. Use a higher debug level.
+      // on and off from a setting in the input.py file. Use a higher debug level.
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
 
          // Get the current time line values.
@@ -251,7 +251,7 @@ void MTRInteractionHandler::receive_interaction(
    this->granted_time = interaction->get_federate()->get_granted_time().get_time_in_seconds();
 
    // Use the inherited debug-handler to allow debug comments to be turned
-   // on and off from a setting in the input file.
+   // on and off from a setting in the input.py file.
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
 
       string user_supplied_tag_string;

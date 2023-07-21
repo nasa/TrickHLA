@@ -938,7 +938,7 @@ in order to re-acquire ownership. They were either deleted, or are orphans in th
 Federation with no possibility of regaining ownership. **\n   ** In order for \
 the rejoin to succeed, you must resign this Federate with the directive to divest \
 ownership of its instance attributes. This is accomplished by setting the \
-'THLA.federate.can_rejoin_federation' flag to true in the input file which \
+'THLA.federate.can_rejoin_federation' flag to true in the input.py file which \
 resigned this Federate. **\n   ** Note: In order for the Federation rejoin to \
 be successful, make sure that there is at least one other Federate set up to \
 publish at least one of the attributes (by setting the 'publish' flag to true in \

@@ -251,7 +251,7 @@ void ExecutionControlBase::initialize()
    if ( !does_scenario_timeline_exist() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "TrickHLA::ExecutionControlBase::initialize():%d WARNING: \
-ExecutionControl 'scenario_timeline' not specified in the input file. Using the \
+ExecutionControl 'scenario_timeline' not specified in the input.py file. Using the \
 Trick simulation time as the default scenario-timeline.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -928,7 +928,7 @@ void ExecutionControlBase::check_pause_at_init( double const check_pause_delta )
 void ExecutionControlBase::set_master( bool master_flag )
 {
    // Don't change the master flag setting if the user has preset a value
-   // in the input file.
+   // in the input.py file.
    if ( !is_master_preset() ) {
       this->master = master_flag;
       // Make sure that the Execution Configuration object is set properly.
@@ -966,7 +966,7 @@ void ExecutionControlBase::remove_execution_configuration()
 /*!
  * @details WARNING: Only the Master federate should ever set this.
  */
-void ExecutionControlBase::set_least_common_time_step_in_seconds(
+void ExecutionControlBase::set_least_common_time_step(
    double const lcts )
 {
    // TODO: Need more checking here.
@@ -981,10 +981,10 @@ void ExecutionControlBase::refresh_least_common_time_step()
 {
    // Refresh the LCTS by setting the value again, which will calculate a new
    // LCTS using the HLA base time units.
-   set_least_common_time_step_in_seconds( this->least_common_time_step_seconds );
+   set_least_common_time_step( this->least_common_time_step_seconds );
 }
 
-void ExecutionControlBase::set_time_padding_in_seconds( double const t )
+void ExecutionControlBase::set_time_padding( double const t )
 {
    this->time_padding = t;
 }
