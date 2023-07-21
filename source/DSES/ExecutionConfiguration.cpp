@@ -227,7 +227,7 @@ void ExecutionConfiguration::pack()
            << "\t next_mode_cte_time:      " << setprecision( 18 ) << next_mode_cte_time << endl
            << "\t current_execution_mode:  " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << endl
            << "\t next_execution_mode:     " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
-           << "\t least_common_time_step:  " << least_common_time_step << " " << Int64TimeBase::get_units() << endl
+           << "\t least_common_time_step:  " << least_common_time_step << " " << Int64BaseTime::get_units() << endl
            << "=============================================================" << endl;
    }
 
