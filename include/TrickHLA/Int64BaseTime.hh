@@ -111,7 +111,7 @@ class Int64BaseTime
     *  @return The maximum base time. */
    static int64_t get_max_base_time()
    {
-      return ( std::numeric_limits< int64_t >::max() );
+      return ( INT64_MAX );
    }
 
    /*! @brief Determine the best supporting base time resolution for the value.

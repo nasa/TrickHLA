@@ -45,7 +45,7 @@ using namespace TrickHLA;
 HLABaseTimeEnum Int64BaseTime::base_units               = HLA_BASE_TIME_MICROSECONDS;
 std::string     Int64BaseTime::units_string             = "microseconds";
 int64_t         Int64BaseTime::base_time_multiplier     = 1000000LL;
-double          Int64BaseTime::max_logical_time_seconds = ( (double)std::numeric_limits< int64_t >::max() / (double)Int64BaseTime::base_time_multiplier );
+double          Int64BaseTime::max_logical_time_seconds = ( (double)INT64_MAX / (double)Int64BaseTime::base_time_multiplier );
 
 /*!
  * @brief Default constructor with microsecond base units_string.
@@ -165,7 +165,7 @@ void Int64BaseTime::set(
          break;
    }
    base_units               = units;
-   max_logical_time_seconds = ( (double)std::numeric_limits< int64_t >::max() / (double)base_time_multiplier );
+   max_logical_time_seconds = ( (double)INT64_MAX / (double)base_time_multiplier );
 }
 
 /*!
@@ -275,9 +275,9 @@ int64_t Int64BaseTime::to_base_time(
 {
    // Do a range check on the double value in seconds.
    if ( value > max_logical_time_seconds ) {
-      return std::numeric_limits< int64_t >::max();
+      return INT64_MAX;
    } else if ( value < -max_logical_time_seconds ) {
-      return -std::numeric_limits< int64_t >::max();
+      return -INT64_MAX;
    }
 
    // A more efficient way to calculate the time in the base units_string by avoiding fmod().
