@@ -22,7 +22,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Attribute.cpp}
 @trick_link_dependency{Conditional.cpp}
 @trick_link_dependency{DebugHandler.cpp}
-@trick_link_dependency{Int64Interval.cpp}
+@trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{Utilities.cpp}
 
@@ -53,9 +53,8 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/Conditional.hh"
-#include "TrickHLA/Constants.hh"
 #include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Int64Interval.hh"
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 
@@ -130,8 +129,8 @@ void Attribute::initialize(
    // Make sure we have a valid Object FOM name.
    if ( ( obj_FOM_name == NULL ) || ( *obj_FOM_name == '\0' ) ) {
       ostringstream errmsg;
-      errmsg << "Attribute::initialize():" << __LINE__ << " ERROR:"
-             << " Unexpected NULL Object FOM-Name argument passed to this"
+      errmsg << "Attribute::initialize():" << __LINE__
+             << " ERROR: Unexpected NULL Object FOM-Name argument passed to this"
              << " function.";
       if ( FOM_name != NULL ) {
          errmsg << " For FOM Attribute Named '" << FOM_name << "'.";
@@ -144,10 +143,10 @@ void Attribute::initialize(
    if ( ( FOM_name == NULL ) || ( *FOM_name == '\0' ) ) {
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
-             << " Object with FOM Name '" << obj_FOM_name << "' has a missing"
+             << " ERROR: Object with FOM Name '" << obj_FOM_name << "' has a missing"
              << " FOM name for the attribute. Make sure THLA.manager.objects["
              << object_index << "].attributes[" << attribute_index
-             << "].FOM_name' in either your input file or modified-data files"
+             << "].FOM_name' in either your input.py file or modified-data files"
              << " is correctly specified." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -156,11 +155,11 @@ void Attribute::initialize(
    if ( ( trick_name == NULL ) || ( *trick_name == '\0' ) ) {
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
-             << " FOM Object Attribute '"
+             << " ERROR: FOM Object Attribute '"
              << obj_FOM_name << "'->'" << FOM_name << "' has a missing Trick name"
              << " for the attribute. Make sure THLA.manager.objects["
              << object_index << "].attributes[" << attribute_index
-             << "].trick_name' in either your input file or modified-data files"
+             << "].trick_name' in either your input.py file or modified-data files"
              << " is correctly specified." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -169,7 +168,7 @@ void Attribute::initialize(
    if ( ( rti_encoding < ENCODING_FIRST_VALUE ) || ( rti_encoding > ENCODING_LAST_VALUE ) ) {
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
-             << " FOM Object Attribute '"
+             << " ERROR: FOM Object Attribute '"
              << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
              << trick_name << "' has an 'rti_encoding' value of " << rti_encoding
              << " which is out of the valid range of " << ENCODING_FIRST_VALUE
@@ -183,7 +182,7 @@ void Attribute::initialize(
    if ( ( preferred_order < TRANSPORT_FIRST_VALUE ) || ( preferred_order > TRANSPORT_LAST_VALUE ) ) {
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
-             << " FOM Object Attribute '"
+             << " ERROR: FOM Object Attribute '"
              << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
              << trick_name << "' has an invalid 'preferred_order' and it must be"
              << " one of TRANSPORT_TYPE_SPECIFIED_IN_FOM, THLA_TIMESTAMP_ORDER or"
@@ -197,7 +196,7 @@ void Attribute::initialize(
    if ( ( config < CONFIG_NONE ) || ( config > CONFIG_MAX_VALUE ) ) {
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
-             << " FOM Object Attribute '"
+             << " ERROR: FOM Object Attribute '"
              << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
              << trick_name << "' has a 'config' value of " << config
              << " which is out of the valid range of " << CONFIG_NONE
@@ -225,7 +224,7 @@ void Attribute::initialize(
    if ( ( this->cycle_time <= 0.0 ) && ( this->cycle_time > -std::numeric_limits< double >::max() ) ) {
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
-             << " FOM Object Attribute '" << obj_FOM_name << "'->'" << FOM_name
+             << " ERROR: FOM Object Attribute '" << obj_FOM_name << "'->'" << FOM_name
              << "' with Trick name '" << trick_name << "' has a 'cycle_time' value"
              << " of " << this->cycle_time << " seconds, which is not valid. The"
              << " 'cycle_time' must be > 0. Please check your input or"
@@ -243,7 +242,7 @@ void Attribute::initialize(
    if ( ref2 == NULL ) {
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
-             << " FOM Object Attribute '"
+             << " ERROR: FOM Object Attribute '"
              << obj_FOM_name << "'->'" << FOM_name << "', Error retrieving Trick"
              << " ref-attributes for '" << trick_name << "'. Please check"
              << " your input or modified-data files to make sure the object"
@@ -264,7 +263,7 @@ void Attribute::initialize(
               && ( rti_encoding != ENCODING_UNKNOWN ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
-                   << " FOM Object Attribute '"
+                   << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                    << trick_name << "' must use either the ENCODING_TYPE_BIG_ENDIAN, "
                    << "ENCODING_TYPE_LITTLE_ENDIAN, ENCODING_TYPE_BOOLEAN, ENCODING_TYPE_NO_ENCODING, or "
@@ -287,7 +286,7 @@ void Attribute::initialize(
               && ( rti_encoding != ENCODING_UNKNOWN ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
-                   << " FOM Object Attribute '"
+                   << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                    << trick_name << "' must use either the ENCODING_TYPE_BIG_ENDIAN,"
                    << " ENCODING_TYPE_LITTLE_ENDIAN, ENCODING_TYPE_NO_ENCODING, ENCODING_TYPE_UNICODE_STRING,"
@@ -305,7 +304,7 @@ void Attribute::initialize(
               && ( ( ref2->attr->num_index != 1 ) || ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 ) ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
-                   << " FOM Object Attribute '"
+                   << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                    << trick_name << "' and 'rti_encoding' of ENCODING_TYPE_UNICODE_STRING must"
                    << " represent a one-dimensional array of characters (i.e."
@@ -321,7 +320,7 @@ void Attribute::initialize(
               && ( ( ref2->attr->num_index != 1 ) || ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 ) ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
-                   << " FOM Object Attribute '"
+                   << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                    << trick_name << "' and 'rti_encoding' of ENCODING_TYPE_OPAQUE_DATA must"
                    << " represent a one-dimensional array of characters (i.e."
@@ -350,7 +349,7 @@ void Attribute::initialize(
               && ( rti_encoding != ENCODING_UNKNOWN ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
-                   << " FOM Object Attribute '"
+                   << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                    << trick_name << "' must use either the ENCODING_TYPE_LOGICAL_TIME, "
                    << "ENCODING_TYPE_BIG_ENDIAN, ENCODING_TYPE_LITTLE_ENDIAN, ENCODING_TYPE_NO_ENCODING, or "
@@ -372,7 +371,7 @@ void Attribute::initialize(
               && ( rti_encoding != ENCODING_UNKNOWN ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
-                   << " FOM Object Attribute '"
+                   << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                    << trick_name << "' must use either the ENCODING_TYPE_C_STRING, "
                    << "ENCODING_TYPE_UNICODE_STRING, ENCODING_TYPE_ASCII_STRING, ENCODING_TYPE_OPAQUE_DATA, "
@@ -388,7 +387,7 @@ void Attribute::initialize(
          if ( ( rti_encoding == ENCODING_NONE ) && ( ref2->attr->num_index != 0 ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
-                   << " FOM Object Attribute '"
+                   << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                    << trick_name << "' and 'rti_encoding' of ENCODING_TYPE_NO_ENCODING must"
                    << " represent a one-dimensional array of characters (i.e."
@@ -413,7 +412,7 @@ void Attribute::initialize(
       if ( ( ref2->attr->num_index > 1 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) {
          ostringstream errmsg;
          errmsg << "Attribute::initialize():" << __LINE__
-                << " FOM Object Attribute '"
+                << " ERROR: FOM Object Attribute '"
                 << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                 << trick_name << "' and type '" << ref2->attr->type_name
                 << "' is a " << ref2->attr->num_index << "-dimensional dynamic array."
@@ -434,7 +433,7 @@ void Attribute::initialize(
             if ( ref2->attr->index[i].size == 0 ) {
                ostringstream errmsg;
                errmsg << "Attribute::initialize():" << __LINE__
-                      << " FOM Object Attribute '"
+                      << " ERROR: FOM Object Attribute '"
                       << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                       << trick_name << "' is a " << ( ref2->attr->num_index + 1 )
                       << "-dimensional dynamic array of strings. Only"
@@ -462,7 +461,7 @@ void Attribute::initialize(
    if ( ( rti_encoding == ENCODING_LOGICAL_TIME ) && ( ref2->attr->num_index > 0 ) ) {
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
-             << " FOM Object Attribute '"
+             << " ERROR: FOM Object Attribute '"
              << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
              << trick_name << "' can not be an array when using ENCODING_TYPE_LOGICAL_TIME"
              << " for the 'rti_encoding'. Please check your input or modified-data"
@@ -475,7 +474,7 @@ void Attribute::initialize(
    if ( ( rti_encoding == ENCODING_LOGICAL_TIME ) && ( strcmp( "s", ref2->attr->units ) != 0 ) ) {
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
-             << " FOM Object Attribute '"
+             << " ERROR: FOM Object Attribute '"
              << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
              << trick_name << "' must have the units of 'seconds' when the"
              << " 'rti_encoding' is set to ENCODING_TYPE_LOGICAL_TIME. Please check your"
@@ -566,7 +565,7 @@ void Attribute::determine_cycle_ratio(
       if ( core_job_cycle_time <= 0.0 ) {
          ostringstream errmsg;
          errmsg << "Attribute::determine_cycle_ratio():" << __LINE__
-                << " FOM Object Attribute '" << this->FOM_name
+                << " ERROR: FOM Object Attribute '" << this->FOM_name
                 << "' with Trick name '" << this->trick_name
                 << "'. The core job cycle time (" << core_job_cycle_time
                 << " seconds) for the send_cyclic_and_requested_data() job"
@@ -580,7 +579,7 @@ void Attribute::determine_cycle_ratio(
       if ( this->cycle_time < core_job_cycle_time ) {
          ostringstream errmsg;
          errmsg << "Attribute::determine_cycle_ratio():" << __LINE__
-                << " FOM Object Attribute '" << this->FOM_name
+                << " ERROR: FOM Object Attribute '" << this->FOM_name
                 << "' with Trick name '" << this->trick_name
                 << "' has a 'cycle_time' value of " << this->cycle_time
                 << " seconds, which is not valid. The attribute 'cycle_time'"
@@ -602,7 +601,7 @@ void Attribute::determine_cycle_ratio(
       if ( fmod( this->cycle_time, core_job_cycle_time ) != 0.0 ) {
          ostringstream errmsg;
          errmsg << "Attribute::determine_cycle_ratio():" << __LINE__
-                << " FOM Object Attribute '" << FOM_name << "' with Trick name '"
+                << " ERROR: FOM Object Attribute '" << FOM_name << "' with Trick name '"
                 << this->trick_name << "' has a 'cycle_time' value of "
                 << this->cycle_time
                 << " seconds, which is not an integer multiple of the core job"
@@ -1456,58 +1455,58 @@ void Attribute::decode_boolean_from_buffer() const // RETURN: -- None.
 
 void Attribute::encode_logical_time() const // RETURN: -- None.
 {
-   // Integer representing time in microseconds.
+   // Integer representing time in the HLA Logical Time base.
    int64_t logical_time = 0;
 
    switch ( ref2->attr->type ) {
       case TRICK_DOUBLE: {
          double *d_src = reinterpret_cast< double * >( (void *)ref2->address );
-         logical_time  = Int64Interval::to_microseconds( d_src[0] );
+         logical_time  = Int64BaseTime::to_base_time( d_src[0] );
          break;
       }
       case TRICK_FLOAT: {
          float *f_src = reinterpret_cast< float * >( (void *)ref2->address );
-         logical_time = Int64Interval::to_microseconds( (double)f_src[0] );
+         logical_time = Int64BaseTime::to_base_time( (double)f_src[0] );
          break;
       }
       case TRICK_SHORT: {
          short *s_src = (short *)ref2->address;
-         logical_time = (int64_t)( MICROS_MULTIPLIER * s_src[0] );
+         logical_time = (int64_t)( Int64BaseTime::get_base_time_multiplier() * s_src[0] );
          break;
       }
       case TRICK_UNSIGNED_SHORT: {
          unsigned short *us_src = (unsigned short *)ref2->address;
-         logical_time           = (int64_t)( MICROS_MULTIPLIER * us_src[0] );
+         logical_time           = (int64_t)( Int64BaseTime::get_base_time_multiplier() * us_src[0] );
          break;
       }
       case TRICK_INTEGER: {
          int *i_src   = (int *)ref2->address;
-         logical_time = (int64_t)( MICROS_MULTIPLIER * i_src[0] );
+         logical_time = (int64_t)( Int64BaseTime::get_base_time_multiplier() * i_src[0] );
          break;
       }
       case TRICK_UNSIGNED_INTEGER: {
          unsigned int *ui_src = (unsigned int *)ref2->address;
-         logical_time         = (int64_t)( MICROS_MULTIPLIER * ui_src[0] );
+         logical_time         = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ui_src[0] );
          break;
       }
       case TRICK_LONG: {
          long *l_src  = (long *)ref2->address;
-         logical_time = (int64_t)( MICROS_MULTIPLIER * l_src[0] );
+         logical_time = (int64_t)( Int64BaseTime::get_base_time_multiplier() * l_src[0] );
          break;
       }
       case TRICK_UNSIGNED_LONG: {
          unsigned long *ul_src = (unsigned long *)ref2->address;
-         logical_time          = (int64_t)( MICROS_MULTIPLIER * ul_src[0] );
+         logical_time          = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ul_src[0] );
          break;
       }
       case TRICK_LONG_LONG: {
          long long *ll_src = (long long *)ref2->address;
-         logical_time      = (int64_t)( MICROS_MULTIPLIER * ll_src[0] );
+         logical_time      = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ll_src[0] );
          break;
       }
       case TRICK_UNSIGNED_LONG_LONG: {
          unsigned long long *ull_src = (unsigned long long *)ref2->address;
-         logical_time                = (int64_t)( MICROS_MULTIPLIER * ull_src[0] );
+         logical_time                = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ull_src[0] );
          break;
       }
       default: {
@@ -1537,7 +1536,7 @@ void Attribute::encode_logical_time() const // RETURN: -- None.
 
 void Attribute::decode_logical_time() // RETURN: -- None.
 {
-   // Integer representing time in microseconds.
+   // Integer representing time in the HLA Logical Time base.
    int64_t        logical_time = 0;
    unsigned char *src          = buffer;
 
@@ -1553,63 +1552,63 @@ void Attribute::decode_logical_time() // RETURN: -- None.
    switch ( ref2->attr->type ) {
       case TRICK_DOUBLE: {
          double *d_dest = reinterpret_cast< double * >( (void *)ref2->address );
-         d_dest[0]      = Int64Interval::to_seconds( logical_time );
+         d_dest[0]      = Int64BaseTime::to_seconds( logical_time );
          break;
       }
       case TRICK_FLOAT: {
          float *f_dest = reinterpret_cast< float * >( (void *)ref2->address );
-         f_dest[0]     = (float)Int64Interval::to_seconds( logical_time );
+         f_dest[0]     = (float)Int64BaseTime::to_seconds( logical_time );
          break;
       }
       case TRICK_SHORT: {
          short  *s_dest = (short *)ref2->address;
-         int64_t value  = logical_time / MICROS_MULTIPLIER;
+         int64_t value  = logical_time / Int64BaseTime::get_base_time_multiplier();
          s_dest[0]      = ( value > SHRT_MAX ) ? SHRT_MAX : (short)value;
          break;
       }
       case TRICK_UNSIGNED_SHORT: {
          unsigned short *us_dest = (unsigned short *)ref2->address;
-         int64_t         value   = logical_time / MICROS_MULTIPLIER;
+         int64_t         value   = logical_time / Int64BaseTime::get_base_time_multiplier();
          us_dest[0]              = ( value > USHRT_MAX ) ? USHRT_MAX : (unsigned short)value;
          break;
       }
       case TRICK_INTEGER: {
          int    *i_dest = (int *)ref2->address;
-         int64_t value  = logical_time / MICROS_MULTIPLIER;
+         int64_t value  = logical_time / Int64BaseTime::get_base_time_multiplier();
          i_dest[0]      = ( value > INT_MAX ) ? INT_MAX : (int)value;
          break;
       }
       case TRICK_UNSIGNED_INTEGER: {
          unsigned int *ui_dest = (unsigned int *)ref2->address;
-         int64_t       value   = logical_time / MICROS_MULTIPLIER;
+         int64_t       value   = logical_time / Int64BaseTime::get_base_time_multiplier();
          ui_dest[0]            = ( value > UINT_MAX ) ? UINT_MAX : (unsigned int)value;
          break;
       }
       case TRICK_LONG: {
          long   *l_dest = (long *)ref2->address;
-         int64_t value  = logical_time / MICROS_MULTIPLIER;
+         int64_t value  = logical_time / Int64BaseTime::get_base_time_multiplier();
          l_dest[0]      = ( value > LONG_MAX ) ? LONG_MAX : (long)value;
          break;
       }
       case TRICK_UNSIGNED_LONG: {
          unsigned long *ul_dest = (unsigned long *)ref2->address;
-         int64_t        value   = logical_time / MICROS_MULTIPLIER;
+         int64_t        value   = logical_time / Int64BaseTime::get_base_time_multiplier();
          ul_dest[0]             = ( value > (int64_t)ULONG_MAX ) ? ULONG_MAX : (unsigned long)value;
          break;
       }
       case TRICK_LONG_LONG: {
          long long *ll_dest = (long long *)ref2->address;
-         int64_t    value   = logical_time / MICROS_MULTIPLIER;
-         ll_dest[0]         = ( value > MAX_VALUE_IN_MICROS ) ? MAX_VALUE_IN_MICROS : (long long)value;
+         int64_t    value   = logical_time / Int64BaseTime::get_base_time_multiplier();
+         ll_dest[0]         = ( value > Int64BaseTime::get_max_base_time() ) ? Int64BaseTime::get_max_base_time() : (long long)value;
          break;
       }
       case TRICK_UNSIGNED_LONG_LONG: {
          unsigned long long *ull_dest = (unsigned long long *)ref2->address;
 
-         int64_t value = logical_time / MICROS_MULTIPLIER;
+         int64_t value = logical_time / Int64BaseTime::get_base_time_multiplier();
 
-         ull_dest[0] = ( value > MAX_VALUE_IN_MICROS )
-                          ? (unsigned long long)MAX_VALUE_IN_MICROS
+         ull_dest[0] = ( value > Int64BaseTime::get_max_base_time() )
+                          ? (unsigned long long)Int64BaseTime::get_max_base_time()
                           : (unsigned long long)value;
          break;
       }

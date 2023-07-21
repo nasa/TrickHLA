@@ -56,6 +56,34 @@ namespace TrickHLA
 {
 
 /*!
+@enum HLABaseTimeEnum
+@brief Define the HLA Logical Time base units supported.
+*/
+typedef enum {
+
+   HLA_BASE_TIME_SECONDS          = 0,  ///< Range +/-292471208677.536 years with 1 second resolution.
+   HLA_BASE_TIME_100_MILLISECONDS = 1,  ///< Range +/-29247120867.753 years with 100 millisecond resolution.
+   HLA_BASE_TIME_10_MILLISECONDS  = 2,  ///< Range +/-2924712086.775 years with 10 millisecond resolution.
+   HLA_BASE_TIME_MILLISECONDS     = 3,  ///< Range +/-292471208.677 years with 1 millisecond resolution.
+   HLA_BASE_TIME_100_MICROSECONDS = 4,  ///< Range +/-29247120.867 years with 100 microsecond resolution.
+   HLA_BASE_TIME_10_MICROSECONDS  = 5,  ///< Range +/-2924712.086 years with 10 microsecond resolution.
+   HLA_BASE_TIME_MICROSECONDS     = 6,  ///< Range +/-292471.208 years with 1 microsecond resolution.
+   HLA_BASE_TIME_100_NANOSECONDS  = 7,  ///< Range +/-29247.120 years with 100 nanosecond resolution.
+   HLA_BASE_TIME_10_NANOSECONDS   = 8,  ///< Range +/-2924.712 years with 10 nanosecond resolution.
+   HLA_BASE_TIME_NANOSECONDS      = 9,  ///< Range +/-292.471 years with 1 nanosecond resolution.
+   HLA_BASE_TIME_100_PICOSECONDS  = 10, ///< Range +/-29.247 years with 100 picosecond resolution.
+   HLA_BASE_TIME_10_PICOSECONDS   = 11, ///< Range +/-2.924 years with 10 picosecond resolution.
+   HLA_BASE_TIME_PICOSECONDS      = 12, ///< Range +/-2562.047 hours with 1 picosecond resolution.
+   HLA_BASE_TIME_100_FEMTOSECONDS = 13, ///< Range +/-256.204 hours with 100 femosecond resolution.
+   HLA_BASE_TIME_10_FEMTOSECONDS  = 14, ///< Range +/-25.620 hours with 10 femosecond resolution.
+   HLA_BASE_TIME_FEMTOSECONDS     = 15, ///< Range +/-2.562 hours with 1 femosecond resolution.
+   HLA_BASE_TIME_100_ATTOSECONDS  = 16, ///< Range +/-922.337 seconds with 100 attosecond resolution.
+   HLA_BASE_TIME_10_ATTOSECONDS   = 17, ///< Range +/-92.233 seconds with 10 attosecond resolution.
+   HLA_BASE_TIME_ATTOSECONDS      = 18  ///< Range +/-9.223 seconds with 1 attosecond resolution.
+
+} HLABaseTimeEnum;
+
+/*!
 @enum DataUpdateEnum
 @brief Define the TrickHLA attribute update reflection type.
 */

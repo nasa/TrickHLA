@@ -261,17 +261,13 @@ class Manager
     *  @return This federate's lookahead time interval. */
    Int64Interval get_lookahead() const;
 
-   /*! @brief Return the federate's lookahead time in microseconds.
-    *  @return This federate's lookahead time interval in microseconds. */
-   double const get_lookahead_time_in_micros() const;
-
    /*! @brief Return a copy of the granted HLA logical time.
     *  @return The granted federation time. */
    Int64Time get_granted_time() const;
 
-   /*! @brief Retun the granted HLA logical time in microseconds.
+   /*! @brief Return the granted HLA logical time in seconds.
     *  @return The granted federation time in seconds */
-   double const get_granted_time_in_micros() const;
+   int64_t const get_granted_base_time() const;
 
    // Interactions
    /*! @brief Process the received interactions. */
@@ -468,7 +464,7 @@ class Manager
    int              check_interactions_count; ///< @trick_units{--} Number of checkpointed interactions
    InteractionItem *check_interactions;       ///< @trick_units{--} checkpoint-able version of interactions_queue
 
-   int64_t job_cycle_time_micros; // us Cycle time for the send_cyclic_and_requested_data and recieve_cyclic_data jobs
+   int64_t job_cycle_base_time; // us Cycle base time for the send_cyclic_and_requested_data and recieve_cyclic_data jobs
 
    bool rejoining_federate; ///< @trick_units{--} Internal flag to indicate if the federate is rejoining the federation.
    bool restore_determined; ///< @trick_io{**} Internal flag to indicate that the restore status has been determined.

@@ -63,7 +63,7 @@ OpaqueBuffer::OpaqueBuffer()
 {
    // Default to a buffer capacity of 1 for now just to make sure we have
    // a buffer allocated in Trick managed memory. This allows the buffer to
-   // be specified in the input file as a sim variable to use with TrickHLA.
+   // be specified in the input.py file as a sim variable to use with TrickHLA.
    ensure_buffer_capacity( 1 );
 }
 

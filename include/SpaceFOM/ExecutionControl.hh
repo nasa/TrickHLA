@@ -278,9 +278,14 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
 
    //
    // Freeze time management functions.
-   /*! @brief Set the least common time step in microseconds for the federation.
-    *  @param lcts Least Common Time Step time in microseconds. */
-   virtual void set_least_common_time_step( int64_t lcts );
+   /*! @brief Set the least common time step in seconds for the federation.
+    *  @param lcts Least Common Time Step time in seconds. */
+   virtual void set_least_common_time_step( double const lcts );
+
+   /*! @brief Refresh the least common time step especially if the HLA base time units changed.
+    *  @param lcts Least Common Time Step time in seconds. */
+   virtual void refresh_least_common_time_step();
+
    /*! @brief Set the time-padding used to offset the go to run time.
     *  @param t Time in seconds to pad for time based mode transitions. */
    virtual void set_time_padding( double t );

@@ -17,6 +17,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../TrickHLA/Federate.cpp}
+@trick_link_dependency{../TrickHLA/Int64BaseTime.cpp}
 @trick_link_dependency{../TrickHLA/Int64Interval.cpp}
 @trick_link_dependency{../TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
@@ -43,6 +44,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Types.hh"
@@ -236,11 +238,14 @@ new freeze HLA time:%lf %c",
       infomsg << "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction(Timestamp Order):"
               << __LINE__ << endl
               << "  Freeze Interaction sent TSO at HLA time:" << interaction_hla_time.get_time_in_seconds() << " ("
-              << interaction_hla_time.get_time_in_micros() << " microseconds)" << endl
+              << interaction_hla_time.get_base_time() << " " << Int64BaseTime::get_units()
+              << ")" << endl
               << "  Federation Freeze scenario time:" << time << " ("
-              << Int64Interval::to_microseconds( time ) << " microseconds)" << endl
+              << Int64BaseTime::to_base_time( time ) << " " << Int64BaseTime::get_units()
+              << ")" << endl
               << "  Federation Freeze HLA time:" << freeze_hla_time << " ("
-              << freeze_hla_time << " microseconds)" << THLA_ENDL;
+              << freeze_hla_time << " " << Int64BaseTime::get_units()
+              << ")" << THLA_ENDL;
       send_hs( stdout, (char *)infomsg.str().c_str() );
 
       // Inform the Federate the scenario time to freeze the simulation on.
@@ -256,11 +261,12 @@ new freeze HLA time:%lf %c",
       infomsg << "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction(Timestamp Order):"
               << __LINE__ << " ERROR: Freeze Interaction Not Sent" << endl
               << "  Freeze Interaction sent TSO at HLA time:" << interaction_hla_time.get_time_in_seconds() << " ("
-              << interaction_hla_time.get_time_in_micros() << " microseconds)" << endl
+              << interaction_hla_time.get_base_time() << " " << Int64BaseTime::get_units() << ")" << endl
               << "  Federation Freeze scenario time:" << time << " ("
-              << Int64Interval::to_microseconds( time ) << " microseconds)" << endl
+              << Int64BaseTime::to_base_time( time ) << " " << Int64BaseTime::get_units() << ")" << endl
               << "  Federation Freeze HLA time:" << freeze_hla_time << " ("
-              << freeze_hla_time << " microseconds)" << THLA_ENDL;
+              << freeze_hla_time << " " << Int64BaseTime::get_units()
+              << ")" << THLA_ENDL;
       send_hs( stdout, (char *)infomsg.str().c_str() );
    }
 }
@@ -272,8 +278,8 @@ void FreezeInteractionHandler::receive_interaction(
    msg << "IMSim::FreezeInteractionHandler::receive_interaction():"
        << __LINE__ << endl
        << "  Freeze scenario-time:" << time << " ("
-       << Int64Interval::to_microseconds( time ) << " microseconds)"
-       << THLA_ENDL;
+       << Int64BaseTime::to_base_time( time ) << " " << Int64BaseTime::get_units()
+       << ")" << THLA_ENDL;
    send_hs( stdout, (char *)msg.str().c_str() );
 
    // if the interaction was not initialized into the parent class, get out of here...

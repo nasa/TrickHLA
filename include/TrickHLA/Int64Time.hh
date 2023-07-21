@@ -19,6 +19,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
+@trick_link_dependency{../source/TrickHLA/Int64BaseTime.cpp}
 @trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../source/TrickHLA/Int64Interval.cpp}
 
@@ -43,6 +44,7 @@ NASA, Johnson Space Center\n
 // Trick include files.
 
 // TrickHLA includes
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/StandardsSupport.hh"
 
@@ -112,13 +114,13 @@ class Int64Time
     *  @param rhs Right hand side operand as floating point double time in seconds. */
    Int64Time &operator=( double const rhs )
    {
-      this->hla_time = Int64Interval::to_microseconds( rhs );
+      this->hla_time = Int64BaseTime::to_base_time( rhs );
       return ( *this );
    }
 
    /*! @brief Assignment operator.
     *  @return A corresponding TrickHLA::Int64Time time value.
-    *  @param rhs Right hand side operand as 64bit integer time in microseconds. */
+    *  @param rhs Right hand side operand as 64bit integer time in the base time. */
    Int64Time &operator=( int64_t const rhs )
    {
       this->hla_time = rhs;
@@ -130,7 +132,7 @@ class Int64Time
     *  @param rhs Right hand side operand as TrickHLA::Int64Time. */
    Int64Time &operator=( Int64Time const &rhs )
    {
-      this->hla_time = rhs.get_time_in_micros();
+      this->hla_time = rhs.get_base_time();
       return ( *this );
    }
 
@@ -139,16 +141,16 @@ class Int64Time
     *  @param rhs Right hand side operand as a floating point double time in seconds. */
    Int64Time operator+=( double const rhs )
    {
-      set( get_time_in_micros() + Int64Interval::to_microseconds( rhs ) );
+      set( get_base_time() + Int64BaseTime::to_base_time( rhs ) );
       return ( *this );
    }
 
    /*! @brief Addition then assignment operator.
     *  @return A corresponding TrickHLA::Int64Time time value.
-    *  @param rhs Right hand side operand as 64bit integer time in microseconds. */
+    *  @param rhs Right hand side operand as 64bit integer time in the base time. */
    Int64Time operator+=( int64_t const rhs )
    {
-      set( get_time_in_micros() + rhs );
+      set( get_base_time() + rhs );
       return ( *this );
    }
 
@@ -157,7 +159,7 @@ class Int64Time
     *  @param rhs Right hand side operand as a TrickHLA::Int64Interval. */
    Int64Time operator+=( Int64Interval const &rhs )
    {
-      set( get_time_in_micros() + rhs.get_time_in_micros() );
+      set( get_base_time() + rhs.get_base_time() );
       return ( *this );
    }
 
@@ -166,7 +168,7 @@ class Int64Time
     *  @param rhs Right hand side operand as a TrickHLA::Int64Time. */
    Int64Time operator+=( Int64Time const &rhs )
    {
-      set( get_time_in_micros() + rhs.get_time_in_micros() );
+      set( get_base_time() + rhs.get_base_time() );
       return ( *this );
    }
 
@@ -175,16 +177,16 @@ class Int64Time
     *  @param rhs Right hand side operand as a floating point double time in seconds. */
    Int64Time operator+( double const rhs ) const
    {
-      Int64Time t( get_time_in_micros() + Int64Interval::to_microseconds( rhs ) );
+      Int64Time t( get_base_time() + Int64BaseTime::to_base_time( rhs ) );
       return ( t );
    }
 
    /*! @brief Addition operator.
     *  @return A corresponding TrickHLA::Int64Time time value.
-    *  @param rhs Right hand side operand as 64bit integer time in microseconds. */
+    *  @param rhs Right hand side operand as 64bit integer time in the base time. */
    Int64Time operator+( int64_t const rhs ) const
    {
-      Int64Time t( get_time_in_micros() + rhs );
+      Int64Time t( get_base_time() + rhs );
       return ( t );
    }
 
@@ -193,7 +195,7 @@ class Int64Time
     *  @param rhs Right hand side operand as a TrickHLA::Int64Interval. */
    Int64Time operator+( Int64Interval const &rhs ) const
    {
-      Int64Time t( get_time_in_micros() + rhs.get_time_in_micros() );
+      Int64Time t( get_base_time() + rhs.get_base_time() );
       return ( t );
    }
 
@@ -202,7 +204,7 @@ class Int64Time
     *  @param rhs Right hand side operand as a TrickHLA::Int64Time. */
    Int64Time operator+( Int64Time const &rhs ) const
    {
-      Int64Time t( get_time_in_micros() + rhs.get_time_in_micros() );
+      Int64Time t( get_base_time() + rhs.get_base_time() );
       return ( t );
    }
 
@@ -211,16 +213,16 @@ class Int64Time
     *  @param rhs Right hand side operand as a floating point double time in seconds. */
    Int64Time operator-( double const rhs ) const
    {
-      Int64Time t( get_time_in_micros() - Int64Interval::to_microseconds( rhs ) );
+      Int64Time t( get_base_time() - Int64BaseTime::to_base_time( rhs ) );
       return ( t );
    }
 
    /*! @brief Subtraction operator.
     *  @return A corresponding TrickHLA::Int64Time time value.
-    *  @param rhs Right hand side operand as 64bit integer time in microseconds. */
+    *  @param rhs Right hand side operand as 64bit integer time in the base time. */
    Int64Time operator-( int64_t const rhs ) const
    {
-      Int64Time t( get_time_in_micros() - rhs );
+      Int64Time t( get_base_time() - rhs );
       return ( t );
    }
 
@@ -229,7 +231,7 @@ class Int64Time
     *  @param rhs Right hand side operand as a TrickHLA::Int64Interval. */
    Int64Time operator-( Int64Interval const &rhs ) const
    {
-      Int64Time t( get_time_in_micros() - rhs.get_time_in_micros() );
+      Int64Time t( get_base_time() - rhs.get_base_time() );
       return ( t );
    }
 
@@ -238,7 +240,7 @@ class Int64Time
     *  @param rhs Right hand side operand as a TrickHLA::Int64Time. */
    Int64Time operator-( Int64Time const &rhs ) const
    {
-      Int64Time t( get_time_in_micros() - rhs.get_time_in_micros() );
+      Int64Time t( get_base_time() - rhs.get_base_time() );
       return ( t );
    }
 
@@ -247,16 +249,16 @@ class Int64Time
     *  @param rhs Right hand side operand as a floating point double time in seconds. */
    Int64Time operator*( double const rhs ) const
    {
-      Int64Time t( get_time_in_micros() * Int64Interval::to_microseconds( rhs ) );
+      Int64Time t( get_base_time() * Int64BaseTime::to_base_time( rhs ) );
       return ( t );
    }
 
    /*! @brief Multiplication operator.
     *  @return A corresponding TrickHLA::Int64Time time value.
-    *  @param rhs Right hand side operand as 64bit integer time in microseconds. */
+    *  @param rhs Right hand side operand as 64bit integer time in the base time. */
    Int64Time operator*( int64_t const rhs ) const
    {
-      Int64Time t( get_time_in_micros() * rhs );
+      Int64Time t( get_base_time() * rhs );
       return ( t );
    }
 
@@ -265,7 +267,7 @@ class Int64Time
     *  @param rhs Right hand side operand as a TrickHLA::Int64Interval. */
    Int64Time operator*( Int64Interval const &rhs ) const
    {
-      Int64Time t( get_time_in_micros() * rhs.get_time_in_micros() );
+      Int64Time t( get_base_time() * rhs.get_base_time() );
       return ( t );
    }
 
@@ -274,7 +276,7 @@ class Int64Time
     *  @param rhs Right hand side operand as a TrickHLA::Int64Time. */
    Int64Time operator*( Int64Time const &rhs ) const
    {
-      Int64Time t( get_time_in_micros() * rhs.get_time_in_micros() );
+      Int64Time t( get_base_time() * rhs.get_base_time() );
       return ( t );
    }
 
@@ -283,16 +285,16 @@ class Int64Time
     *  @param rhs Right hand side operand as a floating point double time in seconds. */
    Int64Time operator/( double const rhs ) const
    {
-      Int64Time t( get_time_in_micros() / Int64Interval::to_microseconds( rhs ) );
+      Int64Time t( get_base_time() / Int64BaseTime::to_base_time( rhs ) );
       return ( t );
    }
 
    /*! @brief Division operator.
     *  @return A corresponding TrickHLA::Int64Time time value.
-    *  @param rhs Right hand side operand as 64bit integer time in microseconds. */
+    *  @param rhs Right hand side operand as 64bit integer time in the base time. */
    Int64Time operator/( int64_t const rhs ) const
    {
-      Int64Time t( get_time_in_micros() / rhs );
+      Int64Time t( get_base_time() / rhs );
       return ( t );
    }
 
@@ -301,7 +303,7 @@ class Int64Time
     *  @param rhs Right hand side operand as a TrickHLA::Int64Interval. */
    Int64Time operator/( Int64Interval const &rhs ) const
    {
-      Int64Time t( get_time_in_micros() / rhs.get_time_in_micros() );
+      Int64Time t( get_base_time() / rhs.get_base_time() );
       return ( t );
    }
 
@@ -310,7 +312,7 @@ class Int64Time
     *  @param rhs Right hand side operand as a TrickHLA::Int64Time. */
    Int64Time operator/( Int64Time const &rhs ) const
    {
-      Int64Time t( get_time_in_micros() / rhs.get_time_in_micros() );
+      Int64Time t( get_base_time() / rhs.get_base_time() );
       return ( t );
    }
 
@@ -319,16 +321,16 @@ class Int64Time
     *  @param rhs Right hand side operand as a floating point double time in seconds. */
    Int64Time operator%( double const rhs ) const
    {
-      Int64Time t( get_time_in_micros() % Int64Interval::to_microseconds( rhs ) );
+      Int64Time t( get_base_time() % Int64BaseTime::to_base_time( rhs ) );
       return ( t );
    }
 
    /*! @brief Modulo operator.
     *  @return A corresponding TrickHLA::Int64Time time value.
-    *  @param rhs Right hand side operand as 64bit integer time in microseconds. */
+    *  @param rhs Right hand side operand as 64bit integer time in the base time. */
    Int64Time operator%( int64_t const rhs ) const
    {
-      Int64Time t( get_time_in_micros() % rhs );
+      Int64Time t( get_base_time() % rhs );
       return ( t );
    }
 
@@ -337,7 +339,7 @@ class Int64Time
     *  @param rhs Right hand side operand as a TrickHLA::Int64Interval. */
    Int64Time operator%( Int64Interval const &rhs ) const
    {
-      Int64Time t( get_time_in_micros() % rhs.get_time_in_micros() );
+      Int64Time t( get_base_time() % rhs.get_base_time() );
       return ( t );
    }
 
@@ -346,7 +348,7 @@ class Int64Time
     *  @param rhs Right hand side operand as a TrickHLA::Int64Time. */
    Int64Time operator%( Int64Time const &rhs ) const
    {
-      Int64Time t( get_time_in_micros() % rhs.get_time_in_micros() );
+      Int64Time t( get_base_time() % rhs.get_base_time() );
       return ( t );
    }
 
@@ -355,15 +357,15 @@ class Int64Time
     *  @param rhs Right hand side operand as a floating point double time in seconds. */
    bool operator<( double const rhs ) const
    {
-      return ( get_time_in_micros() < Int64Interval::to_microseconds( rhs ) );
+      return ( get_base_time() < Int64BaseTime::to_base_time( rhs ) );
    }
 
    /*! @brief Less than comparison operator.
     *  @return True if right operand is greater than the left operand; False otherwise.
-    *  @param rhs Right hand side operand as 64bit integer time in microseconds. */
+    *  @param rhs Right hand side operand as 64bit integer time in the base time. */
    bool operator<( int64_t const rhs ) const
    {
-      return ( get_time_in_micros() < rhs );
+      return ( get_base_time() < rhs );
    }
 
    /*! @brief Less than comparison operator.
@@ -371,7 +373,7 @@ class Int64Time
     *  @param rhs Right hand side operand as a TrickHLA::Int64Time. */
    bool operator<( Int64Time const &rhs ) const
    {
-      return ( get_time_in_micros() < rhs.get_time_in_micros() );
+      return ( get_base_time() < rhs.get_base_time() );
    }
 
    /*! @brief Greater than comparison operator.
@@ -379,15 +381,15 @@ class Int64Time
     *  @param rhs Right hand side operand as floating point time in seconds. */
    bool operator>( double const rhs ) const
    {
-      return ( get_time_in_micros() > Int64Interval::to_microseconds( rhs ) );
+      return ( get_base_time() > Int64BaseTime::to_base_time( rhs ) );
    }
 
    /*! @brief Greater than comparison operator.
     *  @return True if right operand is greater than the left operand; False otherwise.
-    *  @param rhs Right hand side operand as a 64bit integer time in microseconds. */
+    *  @param rhs Right hand side operand as a 64bit integer time in the base time. */
    bool operator>( int64_t const rhs ) const
    {
-      return ( get_time_in_micros() > rhs );
+      return ( get_base_time() > rhs );
    }
 
    /*! @brief Greater than comparison operator.
@@ -395,7 +397,7 @@ class Int64Time
     *  @param rhs Right hand side operand a TrickHLA::Int64Time. */
    bool operator>( Int64Time const &rhs ) const
    {
-      return ( get_time_in_micros() > rhs.get_time_in_micros() );
+      return ( get_base_time() > rhs.get_base_time() );
    }
 
    /*! @brief Less than or equal to comparison operator.
@@ -403,15 +405,15 @@ class Int64Time
     *  @param rhs Right hand side operand as a floating point double time in seconds. */
    bool operator<=( double const rhs ) const
    {
-      return ( get_time_in_micros() <= Int64Interval::to_microseconds( rhs ) );
+      return ( get_base_time() <= Int64BaseTime::to_base_time( rhs ) );
    }
 
    /*! @brief Less than or equal to comparison operator.
     *  @return True is right operand is less than or equal to the left operand; False otherwise.
-    *  @param rhs Right hand side operand as 64bit integer time in microseconds. */
+    *  @param rhs Right hand side operand as 64bit integer time in the base time. */
    bool operator<=( int64_t const rhs ) const
    {
-      return ( get_time_in_micros() <= rhs );
+      return ( get_base_time() <= rhs );
    }
 
    /*! @brief Less than or equal to comparison operator.
@@ -419,7 +421,7 @@ class Int64Time
     *  @param rhs Right hand side operand a TrickHLA::Int64Time. */
    bool operator<=( Int64Time const &rhs ) const
    {
-      return ( get_time_in_micros() <= rhs.get_time_in_micros() );
+      return ( get_base_time() <= rhs.get_base_time() );
    }
 
    /*! @brief Greater than or equal to comparison operator.
@@ -427,15 +429,15 @@ class Int64Time
     *  @param rhs Right hand side operand as a floating point double time in seconds. */
    bool operator>=( double const rhs ) const
    {
-      return ( get_time_in_micros() >= Int64Interval::to_microseconds( rhs ) );
+      return ( get_base_time() >= Int64BaseTime::to_base_time( rhs ) );
    }
 
    /*! @brief Greater than or equal to comparison operator.
     *  @return True is right operand is greater than or equal to the left operand; False otherwise.
-    *  @param rhs Right hand side operand as 64bit integer time in microseconds. */
+    *  @param rhs Right hand side operand as 64bit integer time in the base time. */
    bool operator>=( int64_t const rhs ) const
    {
-      return ( get_time_in_micros() >= rhs );
+      return ( get_base_time() >= rhs );
    }
 
    /*! @brief Greater than or equal to comparison operator.
@@ -443,7 +445,7 @@ class Int64Time
     *  @param rhs Right hand side operand as a TrickHLA::Int64Time. */
    bool operator>=( Int64Time const &rhs ) const
    {
-      return ( get_time_in_micros() >= rhs.get_time_in_micros() );
+      return ( get_base_time() >= rhs.get_base_time() );
    }
 
    /*! @brief Equals comparison operator.
@@ -451,15 +453,15 @@ class Int64Time
     *  @param rhs Right hand side operand as a floating point double time in seconds. */
    bool operator==( double const rhs ) const
    {
-      return ( get_time_in_micros() == Int64Interval::to_microseconds( rhs ) );
+      return ( get_base_time() == Int64BaseTime::to_base_time( rhs ) );
    }
 
    /*! @brief Equals comparison operator.
     *  @return True is right operand is equal to the left operand; False otherwise.
-    *  @param rhs Right hand side operand as a 64bit integer time in microseconds. */
+    *  @param rhs Right hand side operand as a 64bit integer time in the base time. */
    bool operator==( int64_t const rhs ) const
    {
-      return ( get_time_in_micros() == rhs );
+      return ( get_base_time() == rhs );
    }
 
    /*! @brief Equals comparison operator.
@@ -467,7 +469,7 @@ class Int64Time
     *  @param rhs Right hand side operand as a TrickHLA::Int64Time. */
    bool operator==( Int64Time const &rhs ) const
    {
-      return ( get_time_in_micros() == rhs.get_time_in_micros() );
+      return ( get_base_time() == rhs.get_base_time() );
    }
 
    /*! @brief Not equal to comparison operator.
@@ -475,15 +477,15 @@ class Int64Time
     *  @param rhs Right hand side operand as a floating point double time in seconds. */
    bool operator!=( double const rhs ) const
    {
-      return ( get_time_in_micros() != Int64Interval::to_microseconds( rhs ) );
+      return ( get_base_time() != Int64BaseTime::to_base_time( rhs ) );
    }
 
    /*! @brief Not equal to comparison operator.
     *  @return True is right operand is not equal to the left operand; False otherwise.
-    *  @param rhs Right hand side operand as a 64bit integer time in microseconds. */
+    *  @param rhs Right hand side operand as a 64bit integer time in the base time. */
    bool operator!=( int64_t const rhs ) const
    {
-      return ( get_time_in_micros() != rhs );
+      return ( get_base_time() != rhs );
    }
 
    /*! @brief Not equal to comparison operator.
@@ -491,7 +493,7 @@ class Int64Time
     *  @param rhs Right hand side operand as a TrickHLA::Int64Time. */
    bool operator!=( Int64Time const &rhs ) const
    {
-      return ( get_time_in_micros() != rhs.get_time_in_micros() );
+      return ( get_base_time() != rhs.get_base_time() );
    }
 
    //
@@ -512,10 +514,10 @@ class Int64Time
    //
    // Conversion routines
    //
-   /*! @brief Return the time, in microseconds, contained in the current
+   /*! @brief Return the time, in the base time, contained in the current
     * timestamp as a 64-bit integer value.
-    *  @return Time in integer microseconds. */
-   int64_t get_time_in_micros() const;
+    *  @return Time in integer the base time. */
+   int64_t get_base_time() const;
 
    /*! @brief Return the current timestamp in seconds as a double precision floating point value.
     *  @return Time in seconds as a floating point double. */
@@ -529,7 +531,7 @@ class Int64Time
    // Mutator methods
    //
    /*! @brief Set the time to the given value.
-    *  @param value The desired time in integer microseconds. */
+    *  @param value The desired time in integer the base time. */
    void set( int64_t const value );
 
    /*! @brief Set the time to the given value.
@@ -549,9 +551,9 @@ class Int64Time
     *  @return The whole seconds part of the timestamp in seconds. */
    int64_t get_seconds() const;
 
-   /*! @brief Return the microseconds part of the current timestamp.
-    *  @return The microseconds part of the current timestamp. */
-   int32_t get_micros() const;
+   /*! @brief Return the the fractional time part of the current timestamp.
+    *  @return The the fractional part of the current timestamp. */
+   int64_t get_fractional_seconds() const;
 
    RTI1516_NAMESPACE::HLAinteger64Time hla_time; /**< @trick_io{**}
       HLA standard's class representation of integer64 time. */

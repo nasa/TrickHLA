@@ -15,6 +15,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{Int64Interval.cpp}
 @trick_link_dependency{Types.cpp}
@@ -41,7 +42,7 @@ NASA, Johnson Space Center\n
 // HLA include files.
 
 // TrickHLA include files.
-#include "TrickHLA/Constants.hh"
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Types.hh"
 
@@ -90,7 +91,7 @@ Int64Time::Int64Time(
  */
 Int64Time::Int64Time(
    Int64Time const &value )
-   : hla_time( value.get_time_in_micros() )
+   : hla_time( value.get_base_time() )
 {
    return;
 }
@@ -111,24 +112,24 @@ void Int64Time::decode(
 
 int64_t Int64Time::get_seconds() const
 {
-   return ( (int64_t)( this->hla_time.getTime() / MICROS_MULTIPLIER ) );
+   return ( (int64_t)( this->hla_time.getTime() / Int64BaseTime::get_base_time_multiplier() ) );
 }
 
-int32_t Int64Time::get_micros() const
+int64_t Int64Time::get_fractional_seconds() const
 {
-   return ( (int32_t)( this->hla_time.getTime() % MICROS_MULTIPLIER ) );
+   return ( (int64_t)( this->hla_time.getTime() % Int64BaseTime::get_base_time_multiplier() ) );
 }
 
-int64_t Int64Time::get_time_in_micros() const
+int64_t Int64Time::get_base_time() const
 {
    return ( this->hla_time.getTime() );
 }
 
 double Int64Time::get_time_in_seconds() const
 {
-   double const seconds = (double)get_seconds();
-   double const micros  = (double)get_micros() / (double)MICROS_MULTIPLIER;
-   return ( seconds + micros );
+   double const seconds    = (double)get_seconds();
+   double const fractional = (double)get_fractional_seconds() / (double)Int64BaseTime::get_base_time_multiplier();
+   return ( seconds + fractional );
 }
 
 wstring Int64Time::to_wstring() const
@@ -149,7 +150,7 @@ void Int64Time::set(
 void Int64Time::set(
    double const value )
 {
-   this->hla_time = Int64Interval::to_microseconds( value );
+   this->hla_time = Int64BaseTime::to_base_time( value );
 }
 
 void Int64Time::set(
@@ -163,5 +164,5 @@ void Int64Time::set(
 void Int64Time::set(
    Int64Time const &value )
 {
-   this->hla_time = value.get_time_in_micros();
+   this->hla_time = value.get_base_time();
 }

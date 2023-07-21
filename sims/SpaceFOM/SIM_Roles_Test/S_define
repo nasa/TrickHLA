@@ -125,12 +125,13 @@ class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
 // simulation object definition. This can be used for SpaceFOM ReferenceFrame
 // object discovery and data exchange.
 //==========================================================================
+##include "SpaceFOM/RefFrameState.hh"
 class SpaceFOMRefFrameSimObject : public Trick::SimObject {
 
   public:
    
    /* HLA associated reference frames packing object. */
-   SpaceFOM::RefFrameBase frame_packing;
+   SpaceFOM::RefFrameState frame_packing;
 
    SpaceFOMRefFrameSimObject( RefFrameData & frame_data_ptr,
                               unsigned short _INIT = 59  )

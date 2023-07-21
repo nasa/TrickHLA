@@ -1,4 +1,3 @@
-
 #---------------------------------------------
 # Set up Trick executive parameters.
 #---------------------------------------------
@@ -79,7 +78,16 @@ THLA.federate.debug_level = trick.DEBUG_LEVEL_5_TRACE
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 # Mak specific local settings designator, which is anything from the rid.mtl file:
 #THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
+
 THLA.federate.lookahead_time = 0.250
+
+# We need more HLA Logical Time resolution because the lookahead time cannot
+# be represented by the default microsecond resolution.
+THLA.federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_100_NANOSECONDS )
+
+# Scale the Trick Time Tic value based on the HLA base time units.
+THLA.federate.scale_trick_tics_to_base_time_units()
+
 
 # Configure the federate.
 THLA.federate.name             = 'P-side-Federate'

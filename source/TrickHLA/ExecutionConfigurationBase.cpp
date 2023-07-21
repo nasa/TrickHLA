@@ -325,7 +325,7 @@ void ExecutionConfigurationBase::wait_for_registration()
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "ExecutionConfigurationBase::wait_for_registration():" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution member."
+                         << " ERROR: Unexpectedly the Federate is no longer an execution member."
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
@@ -383,7 +383,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "ExecutionConfigurationBase::wait_for_update():" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution member."
+                         << " ERROR: Unexpectedly the Federate is no longer an execution member."
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"

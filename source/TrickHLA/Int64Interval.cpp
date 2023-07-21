@@ -15,6 +15,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{Int64Interval.cpp}
 @trick_link_dependency{Types.cpp}
@@ -38,15 +39,9 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA include files.
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Types.hh"
-
-namespace TrickHLA
-{
-extern int64_t const MICROS_MULTIPLIER        = 1000000;
-extern int64_t const MAX_VALUE_IN_MICROS      = std::numeric_limits< int64_t >::max();
-extern double const  MAX_LOGICAL_TIME_SECONDS = ( (double)MAX_VALUE_IN_MICROS / (double)MICROS_MULTIPLIER );
-} // namespace TrickHLA
 
 using namespace std;
 using namespace TrickHLA;
@@ -93,7 +88,7 @@ Int64Interval::Int64Interval(
  */
 Int64Interval::Int64Interval(
    Int64Interval const &value )
-   : hla_interval( value.get_time_in_micros() )
+   : hla_interval( value.get_base_time() )
 {
    return;
 }
@@ -108,24 +103,29 @@ Int64Interval::~Int64Interval()
 
 int64_t Int64Interval::get_seconds() const
 {
-   return ( (int64_t)( this->hla_interval.getInterval() / MICROS_MULTIPLIER ) );
+   return ( (int64_t)( this->hla_interval.getInterval() / Int64BaseTime::get_base_time_multiplier() ) );
 }
 
-int32_t Int64Interval::get_micros() const
+int64_t Int64Interval::get_fractional_seconds() const
 {
-   return ( (int32_t)( this->hla_interval.getInterval() % MICROS_MULTIPLIER ) );
+   return ( (int32_t)( this->hla_interval.getInterval() % Int64BaseTime::get_base_time_multiplier() ) );
 }
 
-int64_t Int64Interval::get_time_in_micros() const
+int64_t Int64Interval::get_base_time() const
 {
    return ( this->hla_interval.getInterval() );
 }
 
 double Int64Interval::get_time_in_seconds() const
 {
-   double const seconds = (double)get_seconds();
-   double const micros  = (double)get_micros() / (double)MICROS_MULTIPLIER;
-   return ( seconds + micros );
+   double const seconds    = (double)get_seconds();
+   double const fractional = (double)get_fractional_seconds() / (double)Int64BaseTime::get_base_time_multiplier();
+   return ( seconds + fractional );
+}
+
+bool Int64Interval::is_zero() const
+{
+   return this->hla_interval.isZero();
 }
 
 bool Int64Interval::is_zero() const
@@ -151,7 +151,7 @@ void Int64Interval::set(
 void Int64Interval::set(
    double const value )
 {
-   this->hla_interval = to_microseconds( value );
+   this->hla_interval = Int64BaseTime::to_base_time( value );
 }
 
 void Int64Interval::set(
@@ -160,33 +160,5 @@ void Int64Interval::set(
    RTI1516_NAMESPACE::HLAinteger64Interval const &t = dynamic_cast< RTI1516_NAMESPACE::HLAinteger64Interval const & >( value );
 
    this->hla_interval = t.getInterval();
-}
 
-int64_t Int64Interval::to_microseconds(
-   double const value )
-{
-   // Do a range check on the double value in seconds.
-   if ( value > MAX_LOGICAL_TIME_SECONDS ) {
-      return MAX_VALUE_IN_MICROS;
-   } else if ( value < -MAX_LOGICAL_TIME_SECONDS ) {
-      return -MAX_VALUE_IN_MICROS;
-   }
-
-   // A more efficient way to calculate the time in microseconds by avoiding fmod().
-   double        seconds;
-   int64_t const micros = (int64_t)round( modf( value, &seconds ) * MICROS_MULTIPLIER );
-   return ( ( (int64_t)seconds * MICROS_MULTIPLIER ) + micros );
-
-   //   int64_t const seconds = (int64_t)trunc( value );
-   //   int64_t const micros  = ( seconds >= 0 ) ? (int64_t)( fmod( value * MICROS_MULTIPLIER, MICROS_MULTIPLIER ) + 0.5 )
-   //                                            : (int64_t)( fmod( value * MICROS_MULTIPLIER, MICROS_MULTIPLIER ) - 0.5 );
-   //   return ( ( seconds * MICROS_MULTIPLIER ) + micros );
-}
-
-double Int64Interval::to_seconds(
-   int64_t const usec )
-{
-   double const seconds = (double)( usec / (int64_t)MICROS_MULTIPLIER );
-   double const micros  = (double)( usec % (int64_t)MICROS_MULTIPLIER ) / (double)MICROS_MULTIPLIER;
-   return ( seconds + micros );
 }

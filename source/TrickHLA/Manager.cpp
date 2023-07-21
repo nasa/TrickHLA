@@ -20,6 +20,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{ExecutionConfigurationBase.cpp}
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
+@trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Int64Interval.cpp}
 @trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{Interaction.cpp}
@@ -56,11 +57,11 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/Constants.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Interaction.hh"
@@ -119,7 +120,7 @@ Manager::Manager()
      interactions_queue(),
      check_interactions_count( 0 ),
      check_interactions( NULL ),
-     job_cycle_time_micros( 0LL ),
+     job_cycle_base_time( 0LL ),
      rejoining_federate( false ),
      restore_determined( false ),
      restore_federate( false ),
@@ -937,7 +938,7 @@ in order to re-acquire ownership. They were either deleted, or are orphans in th
 Federation with no possibility of regaining ownership. **\n   ** In order for \
 the rejoin to succeed, you must resign this Federate with the directive to divest \
 ownership of its instance attributes. This is accomplished by setting the \
-'THLA.federate.can_rejoin_federation' flag to true in the input file which \
+'THLA.federate.can_rejoin_federation' flag to true in the input.py file which \
 resigned this Federate. **\n   ** Note: In order for the Federation rejoin to \
 be successful, make sure that there is at least one other Federate set up to \
 publish at least one of the attributes (by setting the 'publish' flag to true in \
@@ -2255,24 +2256,24 @@ void Manager::provide_attribute_update(
  */
 void Manager::determine_job_cycle_time()
 {
-   if ( this->job_cycle_time_micros > 0LL ) {
+   if ( this->job_cycle_base_time > 0LL ) {
       return;
    }
 
    // Get the lookahead time.
-   int64_t const lookahead_time_micros = federate->get_lookahead_time_in_micros();
+   int64_t const lookahead_time_base_time = federate->get_lookahead_in_base_time();
 
    // Get the cycle time.
-   double const cycle_time     = exec_get_job_cycle( NULL );
-   this->job_cycle_time_micros = Int64Interval::to_microseconds( cycle_time );
+   double const cycle_time   = exec_get_job_cycle( NULL );
+   this->job_cycle_base_time = Int64BaseTime::to_base_time( cycle_time );
 
    // Verify the job cycle time against the HLA lookahead time.
-   if ( ( this->job_cycle_time_micros <= 0LL ) || ( this->job_cycle_time_micros < lookahead_time_micros ) ) {
+   if ( ( this->job_cycle_base_time <= 0LL ) || ( this->job_cycle_base_time < lookahead_time_base_time ) ) {
       ostringstream errmsg;
       errmsg << "Manager::determine_job_cycle_time():" << __LINE__
              << " ERROR: The cycle time for this job is less than the HLA"
              << " lookahead time! The HLA Lookahead time ("
-             << Int64Interval::to_seconds( lookahead_time_micros )
+             << Int64BaseTime::to_seconds( lookahead_time_base_time )
              << " seconds) must be less than or equal to the job cycle time ("
              << cycle_time << " seconds). Make sure the 'lookahead_time' in"
              << " your input or modified-data file is less than or equal to the"
@@ -2300,18 +2301,23 @@ void Manager::determine_job_cycle_time()
  */
 void Manager::send_cyclic_and_requested_data()
 {
-   int64_t const sim_time_micros     = Int64Interval::to_microseconds( exec_get_sim_time() );
-   int64_t const granted_time_micros = get_granted_time_in_micros();
-   bool const    zero_lookahead      = federate->is_zero_lookahead_time();
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      send_hs( stdout, "Manager::send_cyclic_and_requested_data():%d%c",
+               __LINE__, THLA_NEWLINE );
+   }
+
+   int64_t const sim_time_in_base_time = Int64BaseTime::to_base_time( exec_get_sim_time() );
+   int64_t const granted_base_time     = get_granted_base_time();
+   bool const    zero_lookahead        = federate->is_zero_lookahead_time();
 
    // Initial time values.
-   int64_t   dt      = zero_lookahead ? 0LL : get_lookahead_time_in_micros();
+   int64_t   dt      = zero_lookahead ? 0LL : federate->get_lookahead_in_base_time();
    int64_t   prev_dt = dt;
-   Int64Time granted_plus_lookahead( granted_time_micros + dt );
+   Int64Time granted_plus_lookahead( granted_base_time + dt );
    Int64Time update_time( granted_plus_lookahead );
 
    // Determine the main thread cycle time for this job if it is not yet known.
-   if ( this->job_cycle_time_micros <= 0LL ) {
+   if ( this->job_cycle_base_time <= 0LL ) {
       determine_job_cycle_time();
    }
 
@@ -2320,7 +2326,7 @@ void Manager::send_cyclic_and_requested_data()
 
       // Check for a zero lookahead time, which means the cycle_time (i.e. dt)
       // should be zero as well.
-      dt = zero_lookahead ? 0LL : this->job_cycle_time_micros;
+      dt = zero_lookahead ? 0LL : this->job_cycle_base_time;
 
       // Reuse the update_time if the data cycle time (dt) is the same.
       if ( dt != prev_dt ) {
@@ -2347,7 +2353,7 @@ void Manager::send_cyclic_and_requested_data()
          // the case for a late joining federate. The data cycle time (dt) is how
          // often we send and receive data, which may or may not match the lookahead.
          // This is why we prefer to use an updated time of Tupdate = Tgrant + dt.
-         update_time.set( granted_time_micros + dt );
+         update_time.set( granted_base_time + dt );
 
          // Make sure the update time is not less than the granted time + lookahead.
          if ( update_time < granted_plus_lookahead ) {
@@ -2368,7 +2374,7 @@ void Manager::send_cyclic_and_requested_data()
    for ( unsigned int obj_index = 0; obj_index < this->obj_count; ++obj_index ) {
 
       // Only send data if we are on the data cycle time boundary for this object.
-      if ( this->federate->on_data_cycle_boundary_for_obj( obj_index, sim_time_micros ) ) {
+      if ( this->federate->on_data_cycle_boundary_for_obj( obj_index, sim_time_in_base_time ) ) {
 
          // Only update the time if time management is enabled.
          if ( federate->is_time_management_enabled() ) {
@@ -2376,14 +2382,14 @@ void Manager::send_cyclic_and_requested_data()
             // Check for a zero lookahead time, which means the cycle_time
             // (i.e. dt) should be zero as well.
             dt = zero_lookahead ? 0LL
-                                : this->federate->get_data_cycle_time_micros_for_obj(
-                                   obj_index, this->job_cycle_time_micros );
+                                : this->federate->get_data_cycle_base_time_for_obj(
+                                   obj_index, this->job_cycle_base_time );
 
             // Reuse the update_time if the data cycle time (dt) is the same.
             if ( dt != prev_dt ) {
                prev_dt = dt;
 
-               update_time.set( granted_time_micros + dt );
+               update_time.set( granted_base_time + dt );
 
                // Make sure the update time is not less than the granted time + lookahead.
                if ( update_time < granted_plus_lookahead ) {
@@ -2415,7 +2421,7 @@ void Manager::receive_cyclic_data()
                __LINE__, THLA_NEWLINE );
    }
 
-   int64_t const sim_time_micros = Int64Interval::to_microseconds( exec_get_sim_time() );
+   int64_t const sim_time_in_base_time = Int64BaseTime::to_base_time( exec_get_sim_time() );
 
    // Receive and process any updates for ExecutionControl.
    this->execution_control->receive_cyclic_data();
@@ -2424,7 +2430,7 @@ void Manager::receive_cyclic_data()
    for ( unsigned int n = 0; n < obj_count; ++n ) {
 
       // Only receive data if we are on the data cycle time boundary for this object.
-      if ( this->federate->on_data_cycle_boundary_for_obj( n, sim_time_micros ) ) {
+      if ( this->federate->on_data_cycle_boundary_for_obj( n, sim_time_in_base_time ) ) {
          objects[n].receive_cyclic_data();
       }
    }
@@ -2859,16 +2865,8 @@ Int64Interval Manager::get_lookahead() const
 }
 
 /*!
- * @details Returns the lookhead time in microseconds.
- */
-double const Manager::get_lookahead_time_in_micros() const
-{
-   return this->federate->get_lookahead_time_in_micros();
-}
-
-/*!
- * @details If the federate does not exist, MAX_LOGICAL_TIME_SECONDS is
- * assigned to the returned object.
+ * @details If the federate does not exist, Int64BaseTime::get_max_logical_time_in_seconds()
+ * is assigned to the returned object.
  */
 Int64Time Manager::get_granted_time() const
 {
@@ -2876,11 +2874,11 @@ Int64Time Manager::get_granted_time() const
 }
 
 /*!
- * @details Returns the granted time in microseconds.
+ * @details Returns the granted time in base time.
  */
-double const Manager::get_granted_time_in_micros() const
+int64_t const Manager::get_granted_base_time() const
 {
-   return this->federate->get_granted_time_in_micros();
+   return this->federate->get_granted_base_time();
 }
 
 bool Manager::is_RTI_ready(
@@ -3072,7 +3070,7 @@ void Manager::dump_interactions()
              << "check_interactions[" << i << "].order_is_TSO           = "
              << check_interactions[i].order_is_TSO << endl
              << "check_interactions[" << i << "].time                   = "
-             << check_interactions[i].time.get_time_in_micros()
+             << check_interactions[i].time.get_base_time()
              << endl;
       }
       send_hs( stdout, (char *)msg.str().c_str() );
