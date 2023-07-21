@@ -155,5 +155,4 @@ void Int64Interval::set(
    RTI1516_NAMESPACE::HLAinteger64Interval const &t = dynamic_cast< RTI1516_NAMESPACE::HLAinteger64Interval const & >( value );
 
    this->hla_interval = t.getInterval();
-
 }
