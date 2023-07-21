@@ -227,7 +227,7 @@ void SyncPntListBase::sync_point_registration_failed(
          StringUtilities::to_string( name, label );
          ostringstream errmsg;
          errmsg << "SyncPntListBase::sync_point_registration_failed():" << __LINE__
-                << " '" << name << "'" << THLA_ENDL;
+                << " ERROR: '" << name << "'" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
@@ -338,7 +338,7 @@ void SyncPntListBase::wait_for_list_synchronization(
                   if ( !federate->is_execution_member() ) {
                      ostringstream errmsg;
                      errmsg << "SyncPntListBase::wait_for_list_synchronization():" << __LINE__
-                            << " Unexpectedly the Federate is no longer an execution"
+                            << " ERROR: Unexpectedly the Federate is no longer an execution"
                             << " member. This means we are either not connected to the"
                             << " RTI or we are no longer joined to the federation"
                             << " execution because someone forced our resignation at"
@@ -428,7 +428,7 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
          ostringstream errmsg;
          errmsg << "SyncPntListBase::achieve_and_wait_for_synchronization():"
                 << __LINE__
-                << " Synchronization-Point '" << name
+                << " ERROR: Synchronization-Point '" << name
                 << "' has not been announced with the RTI!";
          DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -455,7 +455,7 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
       ostringstream errmsg;
       errmsg << "SyncPntListBase::achieve_and_wait_for_synchronization():"
              << __LINE__
-             << " Synchronization-Point '" << name
+             << " ERROR: Synchronization-Point '" << name
              << "' not found!";
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -722,7 +722,7 @@ void SyncPntListBase::register_sync_point(
       StringUtilities::to_string( name, sp->get_label() );
       ostringstream errmsg;
       errmsg << "SyncPntListBase::register_sync_point():" << __LINE__
-             << " Failed to register '" << name
+             << " ERROR: Failed to register '" << name
              << "' synchronization point with RTI!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -762,7 +762,7 @@ void SyncPntListBase::register_sync_point(
       StringUtilities::to_string( name, sp->get_label() );
       ostringstream errmsg;
       errmsg << "SyncPntListBase::register_sync_point():" << __LINE__
-             << " Failed to register '" << name
+             << " ERROR: Failed to register '" << name
              << "' synchronization point with RTI!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -801,7 +801,7 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
 
             ostringstream errmsg;
             errmsg << "SyncPntListBase::wait_for_sync_point_announcement():" << __LINE__
-                   << " Bad sync-point state for sync-point!"
+                   << " ERROR: Bad sync-point state for sync-point!"
                    << " The sync-point state: " << sp_status << THLA_ENDL;
             DebugHandler::terminate_with_message( errmsg.str() );
          }
@@ -852,7 +852,7 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "SyncPntListBase::wait_for_sync_point_announcement():" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution"
+                         << " ERROR: Unexpectedly the Federate is no longer an execution"
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
@@ -996,7 +996,7 @@ bool SyncPntListBase::wait_for_synchronization(
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "SyncPntListBase::wait_for_synchronization():" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution"
+                         << " ERROR: Unexpectedly the Federate is no longer an execution"
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"

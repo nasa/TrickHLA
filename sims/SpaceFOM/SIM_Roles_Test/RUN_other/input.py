@@ -169,6 +169,12 @@ THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 #--------------------------------------------------------------------------
 # Set up federate related time related parameters.
 #--------------------------------------------------------------------------
+# Specify the HLA base time units (default: trick.HLA_BASE_TIME_MICROSECONDS).
+federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_MICROSECONDS )
+
+# Scale the Trick Time Tic value based on the HLA base time units.
+federate.scale_trick_tics_to_base_time_units()
+
 # Must specify a federate HLA lookahead value in seconds.
 federate.set_lookahead_time( 0.250 )
 

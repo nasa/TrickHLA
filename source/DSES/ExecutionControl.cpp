@@ -111,7 +111,7 @@ ExecutionControl::~ExecutionControl()
 /*!
 @details This routine will set a lot of the data in the TrickHLA::Federate that
 is required for this execution control scheme. This should greatly simplify
-input files and reduce input file setting errors.
+input.py files and reduce input.py file setting errors.
 
 @job_class{initialization}
 */
@@ -161,7 +161,7 @@ void ExecutionControl::initialize()
       ostringstream errmsg;
       errmsg << "DSES::ExecutionControl::initialize(): WARNING:" << __LINE__
              << " Only a preset master is supported. Make sure to set"
-             << " 'THLA.federate.use_preset_master = true' in your input file."
+             << " 'THLA.federate.use_preset_master = true' in your input.py file."
              << " Setting use_preset_master to true!"
              << THLA_ENDL;
       send_hs( stdout, (char *)errmsg.str().c_str() );

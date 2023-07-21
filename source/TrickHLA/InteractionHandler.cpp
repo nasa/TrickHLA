@@ -17,6 +17,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
+@trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Int64Interval.cpp}
 @trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{Interaction.cpp}
@@ -40,9 +41,9 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/Constants.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Interaction.hh"
@@ -125,7 +126,7 @@ Int64Time InteractionHandler::get_granted_time() const
    if ( interaction != NULL ) {
       dt = interaction->get_granted_time();
    } else {
-      dt = Int64Time( MAX_LOGICAL_TIME_SECONDS );
+      dt = Int64Time( Int64BaseTime::get_max_logical_time_in_seconds() );
    }
    return dt;
 }

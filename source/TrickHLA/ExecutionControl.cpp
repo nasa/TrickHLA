@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{ExecutionConfiguration.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{Int64Interval.cpp}
+@trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Manager.cpp}
 @trick_link_dependency{SyncPntListBase.cpp}
 @trick_link_dependency{Types.cpp}
@@ -51,7 +51,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionConfiguration.hh"
 #include "TrickHLA/ExecutionControl.hh"
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/Int64Interval.hh"
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/SyncPntListBase.hh"
 #include "TrickHLA/Types.hh"
@@ -108,7 +108,7 @@ ExecutionControl::~ExecutionControl()
 /*!
 @details This routine will set a lot of the data in the TrickHLA::Federate that
 is required for this execution control scheme. This should greatly simplify
-input files and reduce input file setting errors.
+input.py files and reduce input.py file setting errors.
 
 @job_class{initialization}
 */
@@ -276,7 +276,7 @@ void ExecutionControl::setup_object_RTI_handles()
    } else {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::setup_object_RTI_handles():" << __LINE__
-             << " Unexpected NULL ExCO!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL ExCO!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -441,7 +441,7 @@ ExecutionConfiguration *ExecutionControl::get_execution_configuration()
  * @details WARNING: Only the Master federate should ever set this.
  */
 void ExecutionControl::set_least_common_time_step(
-   int64_t lcts )
+   double const lcts )
 {
    // WARNING: Only the Master federate should ever set this.
    if ( this->is_master() ) {
@@ -455,21 +455,30 @@ void ExecutionControl::set_least_common_time_step(
       }
 
       // Set for the ExecutionControl.
-      this->least_common_time_step = lcts;
+      this->least_common_time_step_seconds = lcts;
+      this->least_common_time_step         = Int64BaseTime::to_base_time( lcts );
    }
+}
+
+void ExecutionControl::refresh_least_common_time_step()
+{
+   // Refresh the LCTS by setting the value again, which will calculate a new
+   // LCTS using the HLA base time units.
+   set_least_common_time_step( this->least_common_time_step_seconds );
 }
 
 void ExecutionControl::set_time_padding( double t )
 {
-   int64_t time_in_micros = Int64Interval::to_microseconds( t );
+   int64_t base_time = Int64BaseTime::to_base_time( t );
 
    // Need to check that time padding is valid.
-   if ( ( time_in_micros % this->least_common_time_step ) != 0 ) {
+   if ( ( base_time % this->least_common_time_step ) != 0 ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::set_time_padding():" << __LINE__
-             << " Time padding value (" << t
+             << " ERROR: Time padding value (" << t
              << " seconds) must be an integer multiple of the Least Common Time Step ("
-             << this->least_common_time_step << " microseconds)!" << THLA_NEWLINE;
+             << this->least_common_time_step << " "
+             << Int64BaseTime::get_units() << ")!" << THLA_NEWLINE;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -477,17 +486,18 @@ void ExecutionControl::set_time_padding( double t )
    // more times the Least Common Time Step (LCTS). This will give commands
    // time to propagate through the system and still have time for mode
    // transitions.
-   if ( time_in_micros < ( 3 * this->least_common_time_step ) ) {
+   if ( base_time < ( 3 * this->least_common_time_step ) ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::set_time_padding():" << __LINE__
-             << " ERROR: Mode transition padding time (" << time_in_micros
-             << " microseconds) is not a multiple of 3 or more of the ExCO"
+             << " ERROR: Mode transition padding time (" << base_time
+             << " " << Int64BaseTime::get_units()
+             << ") is not a multiple of 3 or more of the ExCO"
              << " Least Common Time Step (" << this->least_common_time_step
-             << " microseconds)!" << THLA_ENDL;
+             << " " << Int64BaseTime::get_units() << ")!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   this->time_padding = Int64Interval::to_seconds( time_in_micros );
+   this->time_padding = Int64BaseTime::to_seconds( base_time );
 }
 
 void ExecutionControl::start_federation_save_at_scenario_time(

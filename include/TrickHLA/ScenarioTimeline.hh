@@ -104,13 +104,13 @@ class ScenarioTimeline : public Timeline
    virtual double time_from_simulation_time( double sim_time );
 
    /*! @brief Compute a HLA Logical Time (HLT) from a given scenario time.
-    *  @return HLT in microseconds.
+    *  @return HLT in the base HLA Logical Time representation.
     *  @param scenario_time Desired scenario time. */
    virtual Int64Time compute_HLT( double scenario_time );
 
    /*! @brief Compute a scenario time from and given HLA Logical Time (HLT).
     *  @return Scenario time in seconds.
-    *  @param hlt Desired HLT in microseconds. */
+    *  @param hlt Desired HLT in the base HLA Logical Time representation. */
    virtual double time_from_HLT( Int64Time hlt );
 
    // Accessor functions.
@@ -132,7 +132,7 @@ class ScenarioTimeline : public Timeline
 
    /*! @brief Get the offset of the HLA Logical Time (HLT) timeline from the
     * scenario timeline.
-    *  @return Offset in microseconds. */
+    *  @return Offset in the base HLA Logical Time representation. */
    virtual Int64Time get_HLT_offset()
    {
       return this->hlt_offset;
@@ -140,7 +140,7 @@ class ScenarioTimeline : public Timeline
 
    /*! @brief Set the offset of the HLA Logical Time (HLT) timeline from the
     * scenario timeline.
-    *  @param hlt0 Desired offset in microseconds. */
+    *  @param hlt0 Desired offset in the base HLA Logical Time representation. */
    virtual void set_HTL_offset( Int64Time hlt0 )
    {
       this->hlt_offset = hlt0;

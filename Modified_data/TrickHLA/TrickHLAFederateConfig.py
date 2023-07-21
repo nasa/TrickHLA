@@ -11,8 +11,10 @@
 #
 # PROGRAMMERS:
 #    (((Edwin Z. Crues) (NASA) (Jan 2019) (--) (SpaceFOM support and testing.))
-#     ((Dan Dexter) (NASA) (June 2021) (--) (Added set_wait_status_time.)))
+#     ((Dan Dexter) (NASA) (June 2021) (--) (Added set_wait_status_time.))
+#     ((Dan Dexter) (NASA) (July 2023) (--) (Added support for HLA base time units.)))
 ##############################################################################
+import sys
 import trick
 
 class TrickHLAFederateConfig( object ):
@@ -26,10 +28,10 @@ class TrickHLAFederateConfig( object ):
    sim_config  = None
    initialized = False
    
-   # Least Common Time Step
+   # Least Common Time Step, in seconds.
    lcts = 1.0
    
-   # Time padding for mode transitions.
+   # Time padding for mode transitions, in seconds.
    time_padding = 3.0
    
    # S_define name for the ExecutionConfiguration object.
@@ -68,11 +70,11 @@ class TrickHLAFederateConfig( object ):
       self.control  = thla_control
       self.config   = thla_config
 
-      self.set_federation_name(thla_federation_name)
-      self.set_federate_name(thla_federate_name)
+      self.set_federation_name( thla_federation_name )
+      self.set_federate_name( thla_federate_name )
 
       # Set up the default HLA time management policy.
-      self.setup_HLA_time_management( )
+      self.setup_HLA_time_management()
 
       return
 
@@ -81,17 +83,17 @@ class TrickHLAFederateConfig( object ):
       
       # You can only initialize once.
       if self.initialized :
-         print('TrickHLAFederateConfig.initialize(): Warning: Already initialized! Ignoring!')
+         print( 'TrickHLAFederateConfig.initialize(): Warning: Already initialized! Ignoring!' )
          return
 
       # Loop through the FOM modules appending them as a single comma
       # separated string.
       foms_string = ''
-      for i in range(len(self.fom_modules)):
+      for i in range( len( self.fom_modules ) ):
          if i == 0:
-            foms_string = str(self.fom_modules[0])
+            foms_string = str( self.fom_modules[0] )
          else:
-            foms_string += ', ' + str(self.fom_modules[i])
+            foms_string += ', ' + str( self.fom_modules[i] )
       self.federate.FOM_modules = foms_string
 
       # Note: The federate objects are added to a list in a simulation
@@ -103,10 +105,10 @@ class TrickHLAFederateConfig( object ):
       # without having to manage array size.
 
       # Allocate the federate's federation object list.
-      self.manager.obj_count = len(self.fed_objects)
+      self.manager.obj_count = len( self.fed_objects )
       if self.manager.obj_count:
          self.manager.objects = trick.alloc_type( self.manager.obj_count,
-                                                  'TrickHLA::Object'      )
+                                                  'TrickHLA::Object' )
 
       # Loop through the federation objects and initialize them.
       for indx in range( 0, self.manager.obj_count ):
@@ -122,24 +124,24 @@ class TrickHLAFederateConfig( object ):
       # array size.
 
       # Allocate the federate's federation interactions list.
-      self.manager.inter_count = len(self.fed_interactions)
+      self.manager.inter_count = len( self.fed_interactions )
       if self.manager.inter_count:
          self.manager.interactions = trick.alloc_type( self.manager.inter_count,
-                                                       'TrickHLA::Interaction'   )
+                                                       'TrickHLA::Interaction' )
 
       # Loop through the federation interactions and initialize them.
       for indx in range( 0, self.manager.inter_count ):
          self.fed_interactions[indx].initialize( self.manager.interactions[indx] )
 
       # Loop through the known federates and add them.
-      if len(self.known_federates) :
+      if len( self.known_federates ):
          self.federate.enable_known_feds = True
-         self.federate.known_feds_count  = len(self.known_federates)
+         self.federate.known_feds_count  = len( self.known_federates )
          self.federate.known_feds = trick.sim_services.alloc_type( self.federate.known_feds_count,
                                                                    "TrickHLA::KnownFederate" )
          indx = 0
          for known_federate in self.known_federates:
-            self.federate.known_feds[indx].name     = str(known_federate[1])
+            self.federate.known_feds[indx].name     = str( known_federate[1] )
             self.federate.known_feds[indx].required = known_federate[0]
             indx += 1
             
@@ -150,11 +152,11 @@ class TrickHLAFederateConfig( object ):
       # Loop through the multi-phase initialization sync points appending them
       # as a single comma separated string.
       sync_point_string = ''
-      for i in range(len(self.init_sync_points)):
+      for i in range( len( self. init_sync_points ) ):
          if i == 0:
-            sync_point_string = str(self.init_sync_points[0])
+            sync_point_string = str( self.init_sync_points[0] )
          else:
-            sync_point_string += ', ' + str(self.init_sync_points[i])
+            sync_point_string += ', ' + str( self.init_sync_points[i] )
       self.control.multiphase_init_sync_points = sync_point_string
 
       # Marks this as initialized.
@@ -171,9 +173,9 @@ class TrickHLAFederateConfig( object ):
 
       # You can only set federation name before initialize method is called.
       if self.initialized :
-         print('TrickHLAFederateConfig.set_federation_name(): Warning, already initialized, function ignored!')
+         print( 'TrickHLAFederateConfig.set_federation_name(): Warning, already initialized, function ignored!' )
       else:
-         self.federate.federation_name = str(name)
+         self.federate.federation_name = str( name )
 
       return
 
@@ -182,93 +184,128 @@ class TrickHLAFederateConfig( object ):
 
       # You can only set federate name before initialize method is called.
       if self.initialized :
-         print('TrickHLAFederateConfig.set_federate_name(): Warning, already initialized, function ignored!')
+         print( 'TrickHLAFederateConfig.set_federate_name(): Warning, already initialized, function ignored!' )
       else:
-         self.federate.name = str(name)
+         self.federate.name = str( name )
 
       return
 
 
-   def set_lookahead_time( self, lookahead_time ) :
+   def set_HLA_base_time_units( self, new_base_time_units ):
+
+      # You can only set HLA base time units before initialize method is called.
+      if self.initialized :
+         print( 'TrickHLAFederateConfig.set_HLA_base_time_units(): Warning, already initialized, function ignored!' )
+      else:
+         self.federate.set_HLA_base_time_units( new_base_time_units )
+
+      return
+
+
+   def scale_trick_tics_to_base_time_units( self ):
+
+      # You can only adjust the Trick Tick value before initialize method is called.
+      if self.initialized :
+         print( 'TrickHLAFederateConfig.scale_trick_tics_to_base_time_units(): Warning, already initialized, function ignored!' )
+      else:
+         self.federate.scale_trick_tics_to_base_time_units()
+
+      return
+
+
+   def set_lookahead_time( self, lookahead_time: float ):
       
       # You can only set lookahead time before initialize method is called.
       if self.initialized :
-         print('TrickHLAFederateConfig.set_lookahead_time(): Warning, already initialized, function ignored!')
+         print( 'TrickHLAFederateConfig.set_lookahead_time(): Warning, already initialized, function ignored!' )
       else:
+         if not isinstance( lookahead_time, float ):
+            sys.exit( 'TrickHLAFederateConfig.set_lookahead_time(): ERROR: The lookahead time specified (lookahead_time:' + str( lookahead_time ) + ' ) must be a float representing seconds! ' )
+
          self.federate.set_lookahead( lookahead_time )
-         
+
       return
 
 
-   def set_least_common_time_step( self, new_lcts ):
+   def set_least_common_time_step( self, new_lcts: float ):
       
-      # You can only set sim_config path before initialize method is called.
+      # You can only set LCTS before initialize method is called.
       if self.initialized :
-         print('TrickHLAFederateConfig.set_least_common_time_step(): Warning, already initialized, function ignored!')
+         print( 'TrickHLAFederateConfig.set_least_common_time_step(): Warning, already initialized, function ignored!' )
          return
 
+      # To protect against the previous API that took time in microseconds, make
+      # sure the user specifies floating-point time in seconds.
+      if not isinstance( new_lcts, float ):
+         sys.exit( 'TrickHLAFederateConfig.set_least_common_time_step(): ERROR: The Least Common Time Step specified (new_lcts:' + str( new_lcts ) + ' ) must be a float representing seconds! ' )
+
       # Set the new Least Common Time Step value.
-      self.lcts = int(new_lcts)
+      self.lcts = new_lcts
       self.control.set_least_common_time_step( self.lcts )
 
       return
 
 
-   def set_time_padding( self, new_padding ):
+   def set_time_padding( self, new_padding: float ):
       
-      # You can only set sim_config path before initialize method is called.
+      # You can only set passing before initialize method is called.
       if self.initialized :
-         print('TrickHLAFederateConfig.set_time_padding(): Warning, already initialized, function ignored!')
+         print( 'TrickHLAFederateConfig.set_time_padding(): Warning, already initialized, function ignored!' )
          return
-      
+
+      if not isinstance( new_padding, float ):
+         sys.exit( 'TrickHLAFederateConfig.set_time_padding(): ERROR: The time padding specified (new_padding:' + str( new_padding ) + ' ) must be a float representing seconds! ' )
+
       # Set the new time padding value.
-      self.time_padding = float(new_padding)
+      self.time_padding = new_padding
       self.control.set_time_padding( self.time_padding )
 
       return
 
 
-   def set_time_constrained( self, time_constrained ) :
+   def set_time_constrained( self, time_constrained ):
       
       # You can only set time constrained before initialize method is called.
       if self.initialized :
-         print('TrickHLAFederateConfig.set_time_constrained() Warning, already initialized, function ignored!')
+         print( 'TrickHLAFederateConfig.set_time_constrained(): Warning, already initialized, function ignored!' )
       else:
          self.federate.time_constrained = time_constrained
-         
+
       return
 
 
-   def set_time_regulating( self, time_regulating ) :
+   def set_time_regulating( self, time_regulating ):
       
       # You can only set time regulating before initialize method is called.
       if self.initialized :
-         print('TrickHLAFederateConfig.set_time_regulating(): Warning, already initialized, function ignored!')
+         print( 'TrickHLAFederateConfig.set_time_regulating(): Warning, already initialized, function ignored!' )
       else:
          self.federate.time_regulating = time_regulating
 
       return
 
-   def set_time_management( self, time_management ) :
+   def set_time_management( self, time_management ):
       
       # You can only set time management before initialize method is called.
       if self.initialized :
-         print('TrickHLAFederateConfig.set_time_management(): Warning, already initialized, function ignored!')
+         print( 'TrickHLAFederateConfig.set_time_management(): Warning, already initialized, function ignored!' )
       else:
          self.federate.time_management = time_management
 
       return
 
    def setup_HLA_time_management( self,
-      lookahead    = 1.0,
-      constrained  = True,
-      regulating   = True,
-      time_managed = True ):
+      lookahead       = 1.0,
+      constrained     = True,
+      regulating      = True,
+      time_managed    = True,
+      base_time_units = trick.HLA_BASE_TIME_MICROSECONDS ):
 
-      # You can only setup HLA time management before initialize method is called.
+      # You can only setup parameters before initialize method is called.
       if self.initialized :
-         print('TrickHLAFederateConfig.setup_HLA_time_management(): Warning, already initialized, function ignored!')
+         print( 'TrickHLAFederateConfig.setup_HLA_time_management(): Warning, already initialized, function ignored!' )
       else:
+         self.set_HLA_base_time_units( base_time_units )
          self.set_lookahead_time( lookahead )
          self.set_time_constrained( constrained )
          self.set_time_regulating( regulating )
@@ -281,7 +318,7 @@ class TrickHLAFederateConfig( object ):
 
       # You can only add simulation objects before initialize method is called.
       if self.initialized :
-         print('TrickHLAFederateConfig.add_sim_object(): Warning, already initialized, function ignored!')
+         print( 'TrickHLAFederateConfig.add_sim_object(): Warning, already initialized, function ignored!' )
       else:
          self.sim_objects.append( sim_object )
 
@@ -292,7 +329,7 @@ class TrickHLAFederateConfig( object ):
 
       # You can only add federation objects before initialize method is called.
       if self.initialized :
-         print('TrickHLAFederateConfig.add_fed_object(): Warning, already initialized, function ignored!')
+         print( 'TrickHLAFederateConfig.add_fed_object(): Warning, already initialized, function ignored!' )
       else:
          self.fed_objects.append( fed_object )
 
@@ -303,7 +340,7 @@ class TrickHLAFederateConfig( object ):
 
       # You can only add federation interactions before initialize method is called.
       if self.initialized :
-         print('TrickHLAFederateConfig.add_fed_interaction(): Warning, already initialized, function ignored!')
+         print( 'TrickHLAFederateConfig.add_fed_interaction(): Warning, already initialized, function ignored!' )
       else:
          self.fed_interactions.append( fed_interaction )
 
@@ -339,7 +376,7 @@ class TrickHLAFederateConfig( object ):
       return
 
 
-   def set_wait_status_time( self, wait_status_time ):
+   def set_wait_status_time( self, wait_status_time: float ):
 
       # Set the time in seconds TrickHLA will wait in a any spin-lock
       # before it will print a status message to the console.
@@ -352,9 +389,9 @@ class TrickHLAFederateConfig( object ):
 
       # You can only add known federates before initialize method is called.
       if self.initialized :
-         print('TrickHLAFederateConfig.add_known_fededrate(): Warning, already initialized, function ignored!')
+         print( 'TrickHLAFederateConfig.add_known_fededrate(): Warning, already initialized, function ignored!' )
       else:
-         self.known_federates.append( (is_required, str(name)) )
+         self.known_federates.append( ( is_required, str( name ) ) )
 
       return
 
@@ -363,9 +400,9 @@ class TrickHLAFederateConfig( object ):
 
       # You can only add FOM modules before initialize method is called.
       if self.initialized :
-         print('TrickHLAFederateConfig.add_FOM_module(): Warning, already initialized, function ignored!')
+         print( 'TrickHLAFederateConfig.add_FOM_module(): Warning, already initialized, function ignored!' )
       else:
-         self.fom_modules.append( str(name) )
+         self.fom_modules.append( str( name ) )
 
       return
 
@@ -374,9 +411,9 @@ class TrickHLAFederateConfig( object ):
 
       # You can only add sync points before initialize method is called.
       if self.initialized :
-         print('TrickHLAFederateConfig.add_multiphase_init_sync_point(): Warning, already initialized, function ignored!')
+         print( 'TrickHLAFederateConfig.add_multiphase_init_sync_point(): Warning, already initialized, function ignored!' )
       else:
-         self.init_sync_points( str(sync_point) )
+         self.init_sync_points( str( sync_point ) )
 
       return
 

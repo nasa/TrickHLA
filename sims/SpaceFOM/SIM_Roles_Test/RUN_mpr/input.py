@@ -167,17 +167,23 @@ THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 #THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
 
 #--------------------------------------------------------------------------
-# Set up federate related time related parameters.
+# Set up federate time related parameters.
 #--------------------------------------------------------------------------
 # Compute TT for 04 Jan 2019 12:00 PM. = 18487.75(days) + 37.0(s) + 32.184(s)
 federate.set_scenario_timeline_epoch( float((18487.75*24.0*60.0*60.0) + 37.0 + 32.184) )
+
+# Specify the HLA base time units (default: trick.HLA_BASE_TIME_MICROSECONDS).
+federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_MICROSECONDS )
+
+# Scale the Trick Time Tic value based on the HLA base time units.
+federate.scale_trick_tics_to_base_time_units()
 
 # Must specify a federate HLA lookahead value in seconds.
 federate.set_lookahead_time( 0.250 )
 
 # Must specify the Least Common Time Step for all federates in the
 # federation execution.
-federate.set_least_common_time_step( 250000 )
+federate.set_least_common_time_step( 0.250 )
 
 # Set the amount of seconds used to 'pad' mode transitions.
 federate.set_time_padding( 2.0 )

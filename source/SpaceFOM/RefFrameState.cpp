@@ -67,7 +67,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 RefFrameState::RefFrameState()
-   : ref_frame_data( NULL)
+   : ref_frame_data( NULL )
 {
    return;
 }

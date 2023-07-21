@@ -19,7 +19,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../TrickHLA/ExecutionControlBase.cpp}
 @trick_link_dependency{../TrickHLA/Federate.cpp}
-@trick_link_dependency{../TrickHLA/Int64Interval.cpp}
+@trick_link_dependency{../TrickHLA/Int64BaseTime.cpp}
 @trick_link_dependency{../TrickHLA/InteractionHandler.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
 @trick_link_dependency{MTRInteractionHandler.cpp}
@@ -51,7 +51,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/Int64Interval.hh"
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/InteractionHandler.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
@@ -121,7 +121,7 @@ void MTRInteractionHandler::send_interaction(
    if ( this->interaction == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::send_interaction():" << __LINE__
-             << " Unexpected NULL Interaction!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL Interaction!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -170,7 +170,8 @@ void MTRInteractionHandler::send_interaction(
             cout << "  CTE time: " << cte_time << endl;
          }
          cout << "  HLA grant time: " << granted_time << " ("
-              << Int64Interval::to_microseconds( granted_time ) << " microseconds)" << endl
+              << Int64BaseTime::to_base_time( granted_time ) << " "
+              << Int64BaseTime::get_units() << ")" << endl
               << "  send_cnt:" << ( send_cnt + 1 ) << endl;
       }
 
@@ -178,7 +179,7 @@ void MTRInteractionHandler::send_interaction(
       send_cnt++;
    } else {
       // Use the inherited debug-handler to allow debug comments to be turned
-      // on and off from a setting in the input file. Use a higher debug level.
+      // on and off from a setting in the input.py file. Use a higher debug level.
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
 
          // Get the current time line values.
@@ -199,7 +200,8 @@ void MTRInteractionHandler::send_interaction(
             cout << "  CTE time: " << cte_time << endl;
          }
          cout << "  HLA grant time: " << granted_time << " ("
-              << Int64Interval::to_microseconds( granted_time ) << " microseconds)" << endl;
+              << Int64BaseTime::to_base_time( granted_time ) << " "
+              << Int64BaseTime::get_units() << ")" << endl;
       }
    }
 }
@@ -211,7 +213,7 @@ void MTRInteractionHandler::receive_interaction(
    if ( this->interaction == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::receive_interaction():" << __LINE__
-             << " Unexpected NULL Interaction!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL Interaction!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -220,7 +222,7 @@ void MTRInteractionHandler::receive_interaction(
    if ( exco == static_cast< ExecutionControl * >( NULL ) ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::receive_interaction():" << __LINE__
-             << "  Unexpected NULL SpaceFOM::ExecutionControl!" << THLA_ENDL;
+             << "  ERROR: Unexpected NULL SpaceFOM::ExecutionControl!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
       exit( 1 );
    }
@@ -249,7 +251,7 @@ void MTRInteractionHandler::receive_interaction(
    this->granted_time = interaction->get_federate()->get_granted_time().get_time_in_seconds();
 
    // Use the inherited debug-handler to allow debug comments to be turned
-   // on and off from a setting in the input file.
+   // on and off from a setting in the input.py file.
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
 
       string user_supplied_tag_string;
@@ -266,7 +268,8 @@ void MTRInteractionHandler::receive_interaction(
          cout << "  CTE time: " << this->cte_time << endl;
       }
       cout << "  HLA grant time: " << this->granted_time << " ("
-           << Int64Interval::to_microseconds( this->granted_time ) << " microseconds)" << endl
+           << Int64BaseTime::to_base_time( this->granted_time ) << " "
+           << Int64BaseTime::get_units() << ")" << endl
            << "  receive_cnt:" << ( receive_cnt + 1 ) << endl;
    }
 

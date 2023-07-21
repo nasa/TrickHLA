@@ -20,6 +20,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../source/TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../source/TrickHLA/Int64BaseTime.cpp}
 @trick_link_dependency{../source/TrickHLA/Int64Interval.cpp}
 @trick_link_dependency{../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../source/TrickHLA/Types.cpp}
@@ -45,8 +46,8 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h" // for send_hs
 
 // TrickHLA include files.
-#include "TrickHLA/Constants.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
@@ -63,7 +64,7 @@ using namespace TrickHLAModel;
  */
 SimpleSimConfig::SimpleSimConfig()
    : run_duration( 0.0 ),
-     run_duration_microsec( 0L ),
+     run_duration_base_time( 0L ),
      num_federates( 0 ),
      required_federates( NULL ),
      owner( NULL )
@@ -157,15 +158,16 @@ void SimpleSimConfig::pack()
       }
    }
 
-   // Encode the run duration into a 64 bit integer in microseconds.
-   this->run_duration_microsec = Int64Interval::to_microseconds( this->run_duration );
+   // Encode the run duration into a 64 bit integer in the base time.
+   this->run_duration_base_time = Int64BaseTime::to_base_time( this->run_duration );
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
       cout << "SimpleSimConfig::pack():" << __LINE__ << endl
            << "\t Object-Name:'" << this->object->get_name() << "'" << endl
            << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'" << endl
            << "\t run_duration:" << run_duration << " seconds" << endl
-           << "\t run_duration_microsec:" << run_duration_microsec << " microseconds" << endl
+           << "\t run_duration_base_time:" << run_duration_base_time << " "
+           << Int64BaseTime::get_units() << endl
            << "\t num_federates:" << num_federates << endl
            << "\t required_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'" << endl
            << "===================================================" << endl;
@@ -178,8 +180,8 @@ void SimpleSimConfig::unpack()
       cout << "===================================================" << endl;
    }
 
-   // Decode the run duration from a 64 bit integer in microseconds.
-   this->run_duration = Int64Interval::to_seconds( this->run_duration_microsec );
+   // Decode the run duration from a 64 bit integer in the base time.
+   this->run_duration = Int64BaseTime::to_seconds( this->run_duration_base_time );
 
    // Set the stop/termination time of the Trick simulation based on the
    // run_duration setting.
@@ -197,7 +199,8 @@ void SimpleSimConfig::unpack()
            << "\t Object-Name:'" << this->object->get_name() << "'" << endl
            << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'" << endl
            << "\t run_duration:" << run_duration << " seconds" << endl
-           << "\t run_duration_microsec:" << run_duration_microsec << " microseconds" << endl
+           << "\t run_duration_base_time:" << run_duration_base_time << " "
+           << Int64BaseTime::get_units() << endl
            << "\t num_federates:" << num_federates << endl
            << "\t required_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'" << endl
            << "===================================================" << endl;

@@ -120,7 +120,7 @@ void FedAmb::initialize()
    if ( federate == NULL ) {
       ostringstream errmsg;
       errmsg << "FedAmb::initialize():" << __LINE__
-             << " Unexpected NULL TrickHLA::Federate." << THLA_ENDL;
+             << " ERROR: Unexpected NULL TrickHLA::Federate." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -128,7 +128,7 @@ void FedAmb::initialize()
    if ( manager == NULL ) {
       ostringstream errmsg;
       errmsg << "FedAmb::initialize():" << __LINE__
-             << " Unexpected NULL TrickHLA::Manager." << THLA_ENDL;
+             << " ERROR: Unexpected NULL TrickHLA::Manager." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -143,7 +143,7 @@ void FedAmb::initialize()
    if ( ( fed_name == NULL ) || ( *fed_name == '\0' ) ) {
       ostringstream errmsg;
       errmsg << "FedAmb::initialize():" << __LINE__
-             << " Unexpected NULL federate name." << THLA_ENDL;
+             << " ERROR: Unexpected NULL federate name." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -167,7 +167,7 @@ void FedAmb::connectionLost(
    StringUtilities::to_string( faultMsg, faultDescription );
    ostringstream errmsg;
    errmsg << "FedAmb::connectionLost():" << __LINE__
-          << " Lost the connection to the Central RTI Component (CRC)."
+          << " ERROR: Lost the connection to the Central RTI Component (CRC)."
           << " Reason:'" << faultMsg << "'."
           << " Terminating the simulation!" << THLA_ENDL;
    DebugHandler::terminate_with_message( errmsg.str() );
@@ -1461,8 +1461,7 @@ void FedAmb::timeConstrainedEnabled(
    RTI1516_NAMESPACE::LogicalTime const &theFederateTime ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::timeConstrainedEnabled():%d Federate \
-\"%s\" Time granted to: %.12G %c",
+      send_hs( stdout, "FedAmb::timeConstrainedEnabled():%d Federate \"%s\" Time granted to: %.12G %c",
                __LINE__, federate->get_federate_name(),
                federate->get_granted_time().get_time_in_seconds(), THLA_NEWLINE );
    }
@@ -1472,25 +1471,7 @@ void FedAmb::timeConstrainedEnabled(
 void FedAmb::timeAdvanceGrant(
    RTI1516_NAMESPACE::LogicalTime const &theTime ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   Int64Time int64Time( theTime );
-
-   // Ignore any granted time less than the requested time otherwise it will
-   // break our concept of HLA time since we are using scheduled jobs for
-   // processing HLA data sends, receives, etc and expected the next granted
-   // time to match our requested time. Dan Dexter, 2/12/2007
-   if ( int64Time >= federate->get_requested_time() ) {
-
-      federate->set_time_advance_granted( theTime );
-
-   } else {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-         send_hs( stdout, "FedAmb::timeAdvanceGrant():%d\nWARNING: Federate \"%s\" \
-IGNORING GRANTED TIME %.12G because it is less then requested time %.12G %c",
-                  __LINE__, federate->get_federate_name(),
-                  int64Time.get_time_in_seconds(),
-                  federate->get_requested_time().get_time_in_seconds(), THLA_NEWLINE );
-      }
-   }
+   federate->set_time_advance_granted( theTime );
 }
 
 void FedAmb::requestRetraction(
