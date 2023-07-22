@@ -511,7 +511,7 @@ void Federate::initialize()
    }
 
    // Initialize the TrickHLA::FedAmb object instance.
-   federate_ambassador->initialize();
+   federate_ambassador->initialize(); // cppcheck-suppress [nullPointerRedundantCheck]
 
    // Check to make sure we have a reference to the TrickHLA::Manager.
    if ( manager == NULL ) {

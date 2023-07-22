@@ -125,6 +125,7 @@ ExecutionControlBase::ExecutionControlBase(
      master( false ),
      multiphase_init_sync_points( NULL ),
      time_padding( 5.0 ),
+     least_common_time_step_seconds( -1.0 ),
      least_common_time_step( -1 ),
      execution_configuration( &exec_config ),
      multiphase_init_sync_pnt_list(),
@@ -258,7 +259,7 @@ Trick simulation time as the default scenario-timeline.%c",
 
       // Use the simulation timeline as the default scenario timeline.
       scenario_timeline = &def_scenario_timeline;
-      if ( scenario_timeline == static_cast< ScenarioTimeline * >( NULL ) ) {
+      if ( scenario_timeline == static_cast< ScenarioTimeline * >( NULL ) ) { // cppcheck-suppress [knownConditionTrueFalse]
          ostringstream errmsg;
          errmsg << "TrickHLA::ExecutionControlBase::initialize():" << __LINE__
                 << " FAILED to allocate enough memory for ScenarioTimeline class!"
