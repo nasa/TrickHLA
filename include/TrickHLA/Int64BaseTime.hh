@@ -65,7 +65,7 @@ class Int64BaseTime
 
    /*! @brief Constructor with base units_string specified.
     *  @param units The base time units to use. */
-   Int64BaseTime( HLABaseTimeEnum const units );
+   explicit Int64BaseTime( HLABaseTimeEnum const units );
 
    /*! @brief Destructor for the TrickHLA Int64BaseTime class. */
    virtual ~Int64BaseTime();

@@ -509,6 +509,7 @@ void Federate::initialize()
       errmsg << "Federate::initialize():" << __LINE__
              << " ERROR: Unexpected NULL TrickHLA::FedAmb." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // Initialize the TrickHLA::FedAmb object instance.
