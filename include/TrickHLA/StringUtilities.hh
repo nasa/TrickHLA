@@ -296,7 +296,7 @@ class StringUtilities
    static void tokenize(
       std::string const          &str,
       std::vector< std::string > &tokens,
-      std::string const          &delimiters = "," )
+      std::string const          &delimiters )
    {
       // Skip delimiters at the beginning.
       std::string::size_type lastPos = str.find_first_not_of( delimiters, 0 );
@@ -332,7 +332,7 @@ class StringUtilities
    static void tokenize(
       std::string const           &str,
       std::vector< std::wstring > &tokens,
-      std::string const           &delimiters = "," )
+      std::string const           &delimiters )
    {
       // Skip delimiters at the beginning.
       std::string::size_type lastPos = str.find_first_not_of( delimiters, 0 );
