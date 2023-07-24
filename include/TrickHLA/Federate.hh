@@ -1297,6 +1297,9 @@ class Federate
    /*! @brief Make the HLA time-advance request using the current requested_time value. */
    void perform_time_advance_request();
 
+   /*! @brief Make time-advance request available and wait for time advance grant with zero lookahead. */
+   void wait_for_zero_lookahead_TARA_TAG();
+
    //
    // Federation freeze management functions.
    //

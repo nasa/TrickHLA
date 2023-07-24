@@ -4772,6 +4772,155 @@ void Federate::perform_time_advance_request()
 }
 
 /*!
+ * @job_class{scheduled}
+ */
+void Federate::wait_for_zero_lookahead_TARA_TAG()
+{
+   // Skip requesting time-advancement if we are not time-regulating and
+   // not time-constrained (i.e. not using time management).
+   if ( !this->time_management ) {
+      return;
+   }
+
+   // Macro to save the FPU Control Word register value.
+   TRICKHLA_SAVE_FPU_CONTROL_WORD;
+
+   // Time Advance Request Available (TARA)
+   try {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks
+      // the mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+
+      // Clear the TAR flag before we make our request.
+      this->time_adv_state = TIME_ADVANCE_RESET;
+
+      // Request that time be advanced to the new time, but still allow
+      // TSO data for Treq = Tgrant
+      RTI_ambassador->timeAdvanceRequestAvailable( requested_time.get() );
+
+      // Indicate we issued a TAR since we successfully made the request
+      // without an exception.
+      this->time_adv_state = TIME_ADVANCE_REQUESTED;
+
+   } catch ( InvalidLogicalTime const &e ) {
+      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: InvalidLogicalTime%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( LogicalTimeAlreadyPassed const &e ) {
+      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: LogicalTimeAlreadyPassed%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( InTimeAdvancingState const &e ) {
+      // A time advance request is still being processed by the RTI so show
+      // a message and treat this as a successful time advance request.
+      {
+         // When auto_unlock_mutex goes out of scope it automatically unlocks
+         // the mutex even if there is an exception.
+         MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+
+         // Only indicate we are in the time advance reqeusted state if we
+         // are still in the time advance reset state (i.e. not granted yet).
+         if ( this->time_adv_state == TIME_ADVANCE_RESET ) {
+            this->time_adv_state = TIME_ADVANCE_REQUESTED;
+         }
+      }
+      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d WARNING: Ignoring InTimeAdvancingState HLA Exception.%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( RequestForTimeRegulationPending const &e ) {
+      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: RequestForTimeRegulationPending%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( RequestForTimeConstrainedPending const &e ) {
+      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: RequestForTimeConstrainedPending%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( FederateNotExecutionMember const &e ) {
+      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: FederateNotExecutionMember%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( SaveInProgress const &e ) {
+      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: SaveInProgress%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( RestoreInProgress const &e ) {
+      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: RestoreInProgress%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( NotConnected const &e ) {
+      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: NotConnected%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( RTIinternalError const &e ) {
+      string rti_err_msg;
+      StringUtilities::to_string( rti_err_msg, e.what() );
+      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d \"%s\": Unexpected RTI exception!\n RTI Exception: RTIinternalError: '%s'%c",
+               __LINE__, get_federation_name(), rti_err_msg.c_str(), THLA_NEWLINE );
+   }
+
+   // Macro to restore the saved FPU Control Word register value.
+   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+   unsigned short state;
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+      state = this->time_adv_state;
+   }
+
+   if ( state == TIME_ADVANCE_RESET ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         send_hs( stdout, "Federate::wait_for_zero_lookahead_TARA_TAG():%d WARNING: No Time Advance Requested!%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      return;
+   }
+
+   // Wait for Time Advance Grant (TAG)
+   if ( state != TIME_ADVANCE_GRANTED ) {
+
+      int64_t      wallclock_time;
+      SleepTimeout print_timer( this->wait_status_time );
+      SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
+
+      // This spin lock waits for the time advance grant from the RTI.
+      do {
+         // Check for shutdown.
+         check_for_shutdown_with_termination();
+
+         (void)sleep_timer.sleep();
+
+         {
+            // When auto_unlock_mutex goes out of scope it automatically unlocks
+            // the mutex even if there is an exception.
+            MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+            state = this->time_adv_state;
+         }
+
+         if ( state != TIME_ADVANCE_GRANTED ) {
+
+            // To be more efficient, we get the time once and share it.
+            wallclock_time = sleep_timer.time();
+
+            if ( sleep_timer.timeout( wallclock_time ) ) {
+               sleep_timer.reset();
+               if ( !is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "Federate::wait_for_zero_lookahead_TARA_TAG():" << __LINE__
+                         << " ERROR: Unexpectedly the Federate is no longer an execution"
+                         << " member. This means we are either not connected to the"
+                         << " RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation at"
+                         << " the Central RTI Component (CRC) level!"
+                         << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
+               }
+            }
+
+            if ( print_timer.timeout( wallclock_time ) ) {
+               print_timer.reset();
+               send_hs( stdout, "Federate::wait_for_zero_lookahead_TARA_TAG():%d Waiting...%c",
+                        __LINE__, THLA_NEWLINE );
+            }
+         }
+      } while ( state != TIME_ADVANCE_GRANTED );
+   }
+}
+
+/*!
  * @brief Associate a Trick child thread with TrickHLA.
  */
 void Federate::associate_to_trick_child_thread(
@@ -4882,9 +5031,10 @@ void Federate::send_zero_lookahead_data(
    if ( obj == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::send_zero_lookahead_data():" << __LINE__
-             << " ERROR: Could not find the object instance name specified:"
+             << " ERROR: Could not find the object instance for the name specified:"
              << obj_instance_name << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // TODO: Only send this on the same Trick child thread that this object
@@ -4900,23 +5050,67 @@ void Federate::wait_to_receive_zero_lookahead_data(
    if ( obj == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::wait_to_receive_zero_lookahead_data():" << __LINE__
-             << " ERROR: Could not find the object instance name specified:"
+             << " ERROR: Could not find the object instance for the name specified:"
              << obj_instance_name << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   // We can only receive data if we subscribe to at least one attribute that
+   // is remotely owned, otherwise just return.
+   if ( ! obj->any_remotely_owned_subscribed_cyclic_attribute() ) {
+      return;
+   }
+
+   wait_for_zero_lookahead_TARA_TAG();
+
+   // Block waiting for the named object instance data by repeatedly doing a
+   // TARA and wait for TAG with a zero lookahead.
+   if ( !obj->is_changed() && obj->any_remotely_owned_subscribed_cyclic_attribute() ) {
+
+      int64_t      wallclock_time;
+      SleepTimeout print_timer( this->wait_status_time );
+      SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
+
+      do {
+         // Check for shutdown.
+         check_for_shutdown_with_termination();
+
+         (void)sleep_timer.sleep();
+
+         // To be more efficient, we get the time once and share it.
+         wallclock_time = sleep_timer.time();
+
+         if ( sleep_timer.timeout( wallclock_time ) ) {
+            sleep_timer.reset();
+            if ( !is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "Federate::wait_to_receive_zero_lookahead_data():" << __LINE__
+                      << " ERROR: Unexpectedly the Federate is no longer an execution"
+                      << " member. This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!"
+                      << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+
+         if ( print_timer.timeout( wallclock_time ) ) {
+            print_timer.reset();
+            send_hs( stdout, "Federate::wait_to_receive_zero_lookahead_data():%d Waiting...%c",
+                     __LINE__, THLA_NEWLINE );
+         }
+
+         wait_for_zero_lookahead_TARA_TAG();
+
+      } while ( !obj->is_changed() && obj->any_remotely_owned_subscribed_cyclic_attribute() );
    }
 
    // TODO: Only receive on the same Trick child thread that this object
    // instance was associated to to ensure data coherency.
 
-   while ( !obj->is_changed() && obj->any_remotely_owned_subscribed_cyclic_attribute() ) {
-
-      // TODO: wait_for_zero_lookahead_TAR_TAG();
-
-      perform_time_advance_request(); // TODO: Disable Debug comments.
-      wait_for_time_advance_grant();  // TODO: Disable Debug comments.
-
-      // TODO: Do the typical loop error detection code here.
-   }
+   obj->receive_cyclic_data();
 }
 
 /*!
