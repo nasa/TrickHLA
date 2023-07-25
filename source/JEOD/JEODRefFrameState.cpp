@@ -68,7 +68,6 @@ using namespace SpaceFOM;
  */
 JEODRefFrameState::JEODRefFrameState()
    : RefFrameBase(),
-     time(0.0),
      time_tt(NULL),
      ref_frame_state(NULL)
 {

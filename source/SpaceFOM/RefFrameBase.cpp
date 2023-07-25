@@ -71,8 +71,10 @@ RefFrameBase::RefFrameBase()
    : debug( false ),
      initialized( false ),
      ref_frame_attr( NULL ),
+     time( 0.0 ),
      name( NULL ),
      parent_name( NULL ),
+     parent_frame( NULL ),
      stc_encoder(),
      stc_data( stc_encoder.get_data() )
 {
@@ -284,11 +286,45 @@ void RefFrameBase::set_parent_name( char const *name )
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   // Check for NULL parent_name.
+   // Set the parent frame name appropriately.
    if ( this->parent_name != NULL ) {
       trick_MM->delete_var( (void *)this->parent_name );
    }
-   this->parent_name = trick_MM->mm_strdup( name );
+   if ( name != NULL ) {
+      this->parent_name = trick_MM->mm_strdup( name );
+   }
+   else {
+      this->parent_name = NULL;
+   }
+
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void RefFrameBase::set_parent_frame( RefFrameBase * pframe_ptr )
+{
+   ostringstream errmsg;
+
+   // Check for initialization.
+   if ( initialized ) {
+      errmsg << "SpaceFOM::RefFrameBase::set_parent_frame():" << __LINE__
+             << " ERROR: The initialize() function has already been called" << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Set the parent frame reference pointer.
+   this->parent_frame = pframe_ptr;
+
+   // Set the parent frame name.
+   if ( this->parent_frame != NULL ){
+      this->set_parent_name( this->parent_frame->name );
+   }
+   else {
+      this->set_parent_name( NULL );
+   }
 
    return;
 }

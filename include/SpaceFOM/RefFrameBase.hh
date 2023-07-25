@@ -72,6 +72,8 @@ class ExecutionControl;
 class RefFrameBase : public TrickHLA::Packing
 {
 
+   friend class RefFrameTree;
+
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
    // exists - at least yet). This friend statement just tells Trick
@@ -136,6 +138,17 @@ class RefFrameBase : public TrickHLA::Packing
       return parent_name;
    }
 
+   /*! @brief Access function to set the pointer to the parent reference frame.
+    *  @param pframe_ptr Pointer to the parent reference frame. */
+   virtual void set_parent_frame( RefFrameBase * pframe_ptr );
+
+   /*! @brief Access function to get the pointer to the parent reference frame.
+    *  @return Pointer to the parent reference frame. */
+   virtual RefFrameBase *get_parent_frame()
+   {
+      return parent_frame;
+   }
+
    /*! @brief Access function to set the appropriate publish flags. */
    virtual void publish();
 
@@ -166,8 +179,10 @@ class RefFrameBase : public TrickHLA::Packing
    bool                 initialized;    ///< @trick_units{--} Initialization indication flag.
    TrickHLA::Attribute *ref_frame_attr; ///< @trick_io{**} Reference Frame Attribute.
 
-   char *name;        ///< @trick_units{--} Name of the reference frame.
-   char *parent_name; ///< @trick_units{--} Name of this frames parent frame.
+   double         time;         ///< trick_units{s}   Truncated Julian date in TT time scale.
+   char         * name;         ///< @trick_units{--} Name of the reference frame.
+   char         * parent_name;  ///< @trick_units{--} Name of this frames parent frame.
+   RefFrameBase * parent_frame; ///< @trick_units{--} Pointer to this frames parent frame.
 
    // Instantiate the Space/Time Coordinate encoder
    SpaceTimeCoordinateEncoder stc_encoder; ///< @trick_units{--} Encoder.

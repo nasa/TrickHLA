@@ -98,7 +98,6 @@ class JEODRefFrameState : public SpaceFOM::RefFrameBase
    virtual void unpack();
 
   protected:
-   double               time;            ///< trick_units{s}   Truncated Julian date in TT time scale.
    jeod::TimeTT        *time_tt;         ///< trick_units{--}  JEOD TT time standard.
    jeod::RefFrameState *ref_frame_state; ///< @trick_units{--} JEOD reference frame state.
 

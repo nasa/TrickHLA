@@ -132,7 +132,8 @@ void RefFrameState::pack()
    }
    // Time tag for this state data.
    // stc_data.time = ref_frame->state.time;
-   stc_data.time = ref_frame_data->state.time = get_scenario_time();
+   this->time = get_scenario_time();
+   stc_data.time = ref_frame_data->state.time = this->time;
 
    // Print out debug information if desired.
    if ( debug ) {
@@ -204,6 +205,7 @@ void RefFrameState::unpack()
          ref_frame_data->state.ang_vel[iinc]     = stc_data.ang_vel[iinc];
       }
       // Time tag for this state data.
+      this->time = stc_data.time;
       ref_frame_data->state.time = stc_data.time;
 
       // Set the frame name and parent name.

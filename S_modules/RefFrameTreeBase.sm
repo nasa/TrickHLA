@@ -1,0 +1,87 @@
+/*****************************************************************************
+ * General TrickHLA Space Reference Federation Object Model (SpaceFOM)
+ * Simulation Definition Object base SM for reference frame tree simulation
+ * objects.  This is intended to be extended and NOT used as is.
+ *---------------------------------------------------------------------------*
+ * This is a Simulation Definition (S_define) module that defines the
+ * standard SpaceFOM reference frame tree base simulation object.
+ ****************************************************************************/
+/*****************************************************************************
+ *       Author: Edwin Z. Crues
+ *         Date: July 2023
+ *       E-Mail: Edwin.Z.Crues@nasa.gov
+ *        Phone: 281-483-2902
+ * Organization: Mail Code ER7
+ *               Simulation & Graphics Branch
+ *               Software, Robotics & Simulation Division
+ *               2101 NASA Parkway
+ *               Houston, Texas 77058
+ *---------------------------------------------------------------------------*
+ * Modified By: 
+ *        Date: 
+ * Description: 
+ ****************************************************************************/
+ 
+
+//==========================================================================
+// SIM_OBJECT: RefFrameTreeBaseSimObject - An JEOD reference frame tree
+// simulation object definition.
+//==========================================================================
+##include <iostream>
+##include "SpaceFOM/RefFrameTree.hh"
+##include "SpaceFOM/RefFrameBase.hh"
+class RefFrameTreeBaseSimObject : public Trick::SimObject {
+
+  public:
+
+   // Declare the working SpaceFOM reference frame tree.
+   SpaceFOM::RefFrameTree frame_tree;
+
+   // References to working SpaceFOM reference frames. For example . . .
+   // SpaceFOM::RefFrameBase * root_ref_frame;
+   // SpaceFOM::RefFrameBase * ref_frame_A;
+
+   // SpaceFOM Reference Frame Tree Base constructor.
+   RefFrameTreeBaseSimObject( TrickHLA::Manager          & thla_manager_in,
+                              SpaceFOM::ExecutionControl & exec_cntrl_in,
+                              unsigned short               _ADD   = 59,
+                              unsigned short               _BUILD = 60 )
+   : thla_manager(thla_manager_in),
+     exec_cntrl( exec_cntrl_in )
+   {
+      //
+      // Default data jobs
+      //
+ #ifdef DEFAULT_DATA_CONFIG
+      ("default_data") configure_tree();
+ #endif
+
+      // Place the frames into the tree.  For example . . .
+      //P_ADD ("initialization") frame_tree.add_frame( &(root_ref_frame->frame_packing) );
+      //P_ADD ("initialization") frame_tree.add_frame( &(ref_frame_A->frame_packing) );
+      
+      // Build the reference frame tree.
+      P_BUILD ("initialization") frame_tree.build_tree();
+      P_BUILD ("initialization") frame_tree.check_tree();
+
+   }
+
+
+  protected:
+   
+   // This is an abstract class
+   // Define the interface to configure the reference frame tree.
+   virtual void configure_tree() = 0;
+
+   // Need for scheduled job persitence.
+   TrickHLA::Manager          & thla_manager;
+   SpaceFOM::ExecutionControl & exec_cntrl;
+
+
+  private:
+
+   // This object is not copyable
+   RefFrameTreeBaseSimObject( const RefFrameTreeBaseSimObject & );
+   RefFrameTreeBaseSimObject & operator=( const RefFrameTreeBaseSimObject & );
+
+};

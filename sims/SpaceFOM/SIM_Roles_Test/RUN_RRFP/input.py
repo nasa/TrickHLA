@@ -190,42 +190,42 @@ federate.set_time_constrained( True )
 root_frame_name = 'RootFrame'
 parent_frame_name = ''
 
-ref_frame_tree.root_frame_data.name = root_frame_name
-ref_frame_tree.root_frame_data.parent_name = parent_frame_name
+root_ref_frame.frame_data.name = root_frame_name
+root_ref_frame.frame_data.parent_name = parent_frame_name
                                         
-ref_frame_tree.root_frame_data.state.pos[0] = 0.0
-ref_frame_tree.root_frame_data.state.pos[1] = 0.0
-ref_frame_tree.root_frame_data.state.pos[2] = 0.0
-ref_frame_tree.root_frame_data.state.vel[0] = 0.0
-ref_frame_tree.root_frame_data.state.vel[1] = 0.0
-ref_frame_tree.root_frame_data.state.vel[2] = 0.0
-ref_frame_tree.root_frame_data.state.quat_scalar  = 1.0
-ref_frame_tree.root_frame_data.state.quat_vector[0] = 0.0
-ref_frame_tree.root_frame_data.state.quat_vector[1] = 0.0
-ref_frame_tree.root_frame_data.state.quat_vector[2] = 0.0
-ref_frame_tree.root_frame_data.state.ang_vel[0] = 0.0
-ref_frame_tree.root_frame_data.state.ang_vel[1] = 0.0
-ref_frame_tree.root_frame_data.state.ang_vel[2] = 0.0
-ref_frame_tree.root_frame_data.state.time = 0.0
+root_ref_frame.frame_data.state.pos[0] = 0.0
+root_ref_frame.frame_data.state.pos[1] = 0.0
+root_ref_frame.frame_data.state.pos[2] = 0.0
+root_ref_frame.frame_data.state.vel[0] = 0.0
+root_ref_frame.frame_data.state.vel[1] = 0.0
+root_ref_frame.frame_data.state.vel[2] = 0.0
+root_ref_frame.frame_data.state.quat_scalar  = 1.0
+root_ref_frame.frame_data.state.quat_vector[0] = 0.0
+root_ref_frame.frame_data.state.quat_vector[1] = 0.0
+root_ref_frame.frame_data.state.quat_vector[2] = 0.0
+root_ref_frame.frame_data.state.ang_vel[0] = 0.0
+root_ref_frame.frame_data.state.ang_vel[1] = 0.0
+root_ref_frame.frame_data.state.ang_vel[2] = 0.0
+root_ref_frame.frame_data.state.time = 0.0
 
 
-ref_frame_tree.frame_A_data.name = 'FrameA'
-ref_frame_tree.frame_A_data.parent_name = root_frame_name
+ref_frame_A.frame_data.name = 'FrameA'
+ref_frame_A.frame_data.parent_name = root_frame_name
                                         
-ref_frame_tree.frame_A_data.state.pos[0] = 10.0
-ref_frame_tree.frame_A_data.state.pos[1] = 10.0
-ref_frame_tree.frame_A_data.state.pos[2] = 10.0
-ref_frame_tree.frame_A_data.state.vel[0] = 0.0
-ref_frame_tree.frame_A_data.state.vel[1] = 0.0
-ref_frame_tree.frame_A_data.state.vel[2] = 0.0
-ref_frame_tree.frame_A_data.state.quat_scalar  = 1.0
-ref_frame_tree.frame_A_data.state.quat_vector[0] = 0.0
-ref_frame_tree.frame_A_data.state.quat_vector[1] = 0.0
-ref_frame_tree.frame_A_data.state.quat_vector[2] = 0.0
-ref_frame_tree.frame_A_data.state.ang_vel[0] = 0.0
-ref_frame_tree.frame_A_data.state.ang_vel[1] = 0.0
-ref_frame_tree.frame_A_data.state.ang_vel[2] = 0.0
-ref_frame_tree.frame_A_data.state.time = 0.0
+ref_frame_A.frame_data.state.pos[0] = 10.0
+ref_frame_A.frame_data.state.pos[1] = 10.0
+ref_frame_A.frame_data.state.pos[2] = 10.0
+ref_frame_A.frame_data.state.vel[0] = 0.0
+ref_frame_A.frame_data.state.vel[1] = 0.0
+ref_frame_A.frame_data.state.vel[2] = 0.0
+ref_frame_A.frame_data.state.quat_scalar  = 1.0
+ref_frame_A.frame_data.state.quat_vector[0] = 0.0
+ref_frame_A.frame_data.state.quat_vector[1] = 0.0
+ref_frame_A.frame_data.state.quat_vector[2] = 0.0
+ref_frame_A.frame_data.state.ang_vel[0] = 0.0
+ref_frame_A.frame_data.state.ang_vel[1] = 0.0
+ref_frame_A.frame_data.state.ang_vel[2] = 0.0
+ref_frame_A.frame_data.state.time = 0.0
 
 
 #---------------------------------------------------------------------------
