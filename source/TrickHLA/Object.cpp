@@ -2087,6 +2087,255 @@ exception for '%s' with error message '%s'.%c",
 }
 
 /*!
+ * @job_class{scheduled}
+ */
+void Object::send_zero_lookahead_and_requested_data(
+   Int64Time const &update_time )
+{
+   // Make sure we clear the attribute update request flag because we only
+   // want to send data once per request.
+   this->attr_update_requested = false;
+
+   // We can only send zero-lookahead attribute updates for the attributes we
+   // own, are configured to publish.
+   if ( !any_locally_owned_published_zero_lookahead_or_requested_attribute() ) {
+      return;
+   }
+
+   // Macro to save the FPU Control Word register value.
+   TRICKHLA_SAVE_FPU_CONTROL_WORD;
+
+   // Do send side lag compensation.
+   if ( ( lag_comp_type == LAG_COMPENSATION_SEND_SIDE ) && ( lag_comp != NULL ) ) {
+      lag_comp->send_lag_compensation();
+   }
+
+   // If we have a data packing object then pack the data now.
+   if ( packing != NULL ) {
+      packing->pack();
+   }
+
+   // Buffer the attribute values for the object.
+   pack_zero_lookahead_and_requested_attribute_buffers();
+
+   try {
+      // Create the map of "zero lookahead" and requested attribute values we
+      // will be updating.
+      create_attribute_set( CONFIG_ZERO_LOOKAHEAD, true );
+   } catch ( RTI1516_EXCEPTION const &e ) {
+      string rti_err_msg;
+      StringUtilities::to_string( rti_err_msg, e.what() );
+      send_hs( stderr, "Object::send_zero_lookahead_and_requested_data():%d For object '%s', cannot create attribute value/pair set: '%s'%c",
+               __LINE__, get_name(), rti_err_msg.c_str(), THLA_NEWLINE );
+   }
+
+   // Make sure we don't send an empty attribute map to the other federates.
+   if ( attribute_values_map->empty() ) {
+      // Macro to restore the saved FPU Control Word register value.
+      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+      // Just return because we have no data to send.
+      return;
+   }
+
+   Federate *federate = get_federate();
+
+   // The message will only be sent as TSO if our Federate is in the HLA Time
+   // Regulating state and we have at least one attribute with a preferred
+   // timestamp order. Assumes the FOM specified order is TSO.
+   // See IEEE-1516.1-2000, Sections 6.6 and 8.1.1.
+   bool const send_with_timestamp = federate->in_time_regulating_state()
+                                    && ( this->any_attribute_timestamp_order
+                                         || this->any_attribute_FOM_specified_order );
+
+   try {
+      // Do not send any data if federate save or restore has begun (see
+      // IEEE-1516.1-2000 sections 4.12, 4.20)
+      if ( federate->should_publish_data() ) {
+
+         RTIambassador *rti_amb = get_RTI_ambassador();
+
+         if ( send_with_timestamp ) {
+
+            if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+               send_hs( stdout, "Object::send_zero_lookahead_and_requested_data():%d \
+Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds.%c",
+                        __LINE__, get_name(), update_time.get_time_in_seconds(),
+                        THLA_NEWLINE );
+            }
+
+            // Send as Timestamp Order
+            (void)rti_amb->updateAttributeValues( this->instance_handle,
+                                                  *attribute_values_map,
+                                                  RTI1516_USERDATA( 0, 0 ),
+                                                  update_time.get() );
+         } else {
+            if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+               send_hs( stdout, "Object::send_zero_lookahead_and_requested_data():%d \
+Object '%s', Receive Order (RO) Attribute update.%c",
+                        __LINE__, get_name(), THLA_NEWLINE );
+            }
+
+            // Send as Receive Order (i.e. with no timestamp).
+            (void)rti_amb->updateAttributeValues( this->instance_handle,
+                                                  *attribute_values_map,
+                                                  RTI1516_USERDATA( 0, 0 ) );
+         }
+#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+         ++send_count;
+#endif
+      }
+   } catch ( InvalidLogicalTime const &e ) {
+      string id_str;
+      StringUtilities::to_string( id_str, instance_handle );
+      string rti_err_msg;
+      StringUtilities::to_string( rti_err_msg, e.what() );
+      send_hs( stderr, "Object::send_zero_lookahead_and_requested_data():%d invalid logical time \
+exception for '%s' with error message '%s'.%c",
+               __LINE__, get_name(), rti_err_msg.c_str(), THLA_NEWLINE );
+
+      ostringstream errmsg;
+      errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
+             << " Exception: InvalidLogicalTime" << endl
+             << "  instance_id=" << id_str << endl
+             << "  granted=" << get_granted_time().get_time_in_seconds() << " ("
+             << get_granted_time().get_base_time() << " " << Int64BaseTime::get_units()
+             << ")" << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << " ("
+             << get_lookahead().get_base_time() << " " << Int64BaseTime::get_units()
+             << ")" << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << " ("
+             << update_time.get_base_time() << " " << Int64BaseTime::get_units()
+             << ")" << endl;
+      send_hs( stderr, (char *)errmsg.str().c_str() );
+   } catch ( AttributeNotOwned const &e ) {
+      string id_str;
+      StringUtilities::to_string( id_str, instance_handle );
+      send_hs( stderr, "Object::send_zero_lookahead_and_requested_data():%d detected remote ownership for '%s'%c",
+               __LINE__, get_name(), THLA_NEWLINE );
+      ostringstream errmsg;
+      errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
+             << " Exception: AttributeNotOwned" << endl
+             << "  instance_id=" << id_str << endl
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
+      send_hs( stderr, (char *)errmsg.str().c_str() );
+   } catch ( ObjectInstanceNotKnown const &e ) {
+      string id_str;
+      StringUtilities::to_string( id_str, instance_handle );
+      send_hs( stderr, "Object::send_zero_lookahead_and_requested_data():%d object instance not known for '%s'%c",
+               __LINE__, get_name(), THLA_NEWLINE );
+      ostringstream errmsg;
+      errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
+             << " Exception: ObjectInstanceNotKnown" << endl
+             << "  instance_id=" << id_str << endl
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
+      send_hs( stderr, (char *)errmsg.str().c_str() );
+   } catch ( AttributeNotDefined const &e ) {
+      string id_str;
+      StringUtilities::to_string( id_str, instance_handle );
+      send_hs( stderr, "Object::send_zero_lookahead_and_requested_data():%d attribute not defined for '%s'%c",
+               __LINE__, get_name(), THLA_NEWLINE );
+      ostringstream errmsg;
+      errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
+             << " Exception: AttributeNotDefined" << endl
+             << "  instance_id=" << id_str << endl
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
+      send_hs( stderr, (char *)errmsg.str().c_str() );
+   } catch ( FederateNotExecutionMember const &e ) {
+      string id_str;
+      StringUtilities::to_string( id_str, instance_handle );
+      send_hs( stderr, "Object::send_zero_lookahead_and_requested_data():%d federation not execution member for '%s'%c",
+               __LINE__, get_name(), THLA_NEWLINE );
+      ostringstream errmsg;
+      errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
+             << " Exception: FederateNotExecutionMember" << endl
+             << "  instance_id=" << id_str << endl
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
+      send_hs( stderr, (char *)errmsg.str().c_str() );
+   } catch ( SaveInProgress const &e ) {
+      string id_str;
+      StringUtilities::to_string( id_str, instance_handle );
+      send_hs( stderr, "Object::send_zero_lookahead_and_requested_data():%d save in progress for '%s'%c",
+               __LINE__, get_name(), THLA_NEWLINE );
+      ostringstream errmsg;
+      errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
+             << " Exception: SaveInProgress" << endl
+             << "  instance_id=" << id_str << endl
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
+      send_hs( stderr, (char *)errmsg.str().c_str() );
+   } catch ( RestoreInProgress const &e ) {
+      string id_str;
+      StringUtilities::to_string( id_str, instance_handle );
+      send_hs( stderr, "Object::send_zero_lookahead_and_requested_data():%d restore in progress for '%s'%c",
+               __LINE__, get_name(), THLA_NEWLINE );
+      ostringstream errmsg;
+      errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
+             << " Exception: RestoreInProgress" << endl
+             << "  instance_id=" << id_str << endl
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
+      send_hs( stderr, (char *)errmsg.str().c_str() );
+   } catch ( NotConnected const &e ) {
+      string id_str;
+      StringUtilities::to_string( id_str, instance_handle );
+      send_hs( stderr, "Object::send_zero_lookahead_and_requested_data():%d not connected for '%s'%c",
+               __LINE__, get_name(), THLA_NEWLINE );
+      ostringstream errmsg;
+      errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
+             << " Exception: NotConnected" << endl
+             << "  instance_id=" << id_str << endl
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
+      send_hs( stderr, (char *)errmsg.str().c_str() );
+   } catch ( RTIinternalError const &e ) {
+      string id_str;
+      StringUtilities::to_string( id_str, instance_handle );
+      send_hs( stderr, "Object::send_zero_lookahead_and_requested_data():%d RTI internal error for '%s'%c",
+               __LINE__, get_name(), THLA_NEWLINE );
+      ostringstream errmsg;
+      errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
+             << " Exception: RTIinternalError" << endl
+             << "  instance_id=" << id_str << endl
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
+      send_hs( stderr, (char *)errmsg.str().c_str() );
+   } catch ( RTI1516_EXCEPTION const &e ) {
+      string id_str;
+      StringUtilities::to_string( id_str, instance_handle );
+      string rti_err_msg;
+      StringUtilities::to_string( rti_err_msg, e.what() );
+      send_hs( stderr, "Object.send_zero_lookahead_and_requested_data():%d Exception: '%s'%c",
+               __LINE__, rti_err_msg.c_str(), THLA_NEWLINE );
+      ostringstream errmsg;
+      errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
+             << " RTI1516_EXCEPTION" << endl
+             << "  instance_id=" << id_str << endl
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
+             << "  update_time=" << update_time.get_time_in_seconds() << endl;
+      send_hs( stderr, (char *)errmsg.str().c_str() );
+   }
+
+   // Macro to restore the saved FPU Control Word register value.
+   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+}
+
+/*!
  * @details If the object is owned remotely, this function copies its internal
  * data into simulation object and marks the object as "unchanged". This data
  * was deposited by the reflect callback and marked as "changed". By marking it
@@ -2205,6 +2454,70 @@ void Object::receive_cyclic_data()
 #if THLA_OBJ_DEBUG_RECEIVE
    else {
       send_hs( stdout, "Object::receive_cyclic_data():%d NO new data for '%s' at HLA-logical-time=%G%c",
+               __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds(),
+               THLA_NEWLINE );
+   }
+#endif
+}
+
+/*!
+ * @details If the object is owned remotely, this function copies its internal
+ * data into simulation object and marks the object as "unchanged". This data
+ * was deposited by the reflect callback and marked as "changed". By marking it
+ * as unchanged, we avoid copying the same data over and over. If the object
+ * is locally owned, we shouldn't be receiving any remote data anyway and if
+ * we were to -- bogusly -- copy it to the internal byte buffer, we'd
+ * continually reset our local simulation.
+ * @job_class{scheduled}
+ */
+void Object::receive_zero_lookahead_data()
+{
+   // There must be some remotely owned attribute that we subscribe to in
+   // order for us to receive it.
+   if ( !any_remotely_owned_subscribed_zero_lookahead_attribute() ) {
+      return;
+   }
+
+   // Process the data now that it has been received (i.e. changed).
+   if ( is_changed() ) {
+
+      do {
+#if THLA_OBJ_DEBUG_RECEIVE
+         send_hs( stdout, "Object::receive_zero_lookahead_data():%d for '%s' at HLA-logical-time=%G%c",
+                  __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds(),
+                  THLA_NEWLINE );
+#endif
+
+         // Unpack the buffer and copy the values to the object attributes.
+         unpack_zero_lookahead_attribute_buffers();
+
+         // Unpack the data for the object if we have a packing object.
+         if ( packing != NULL ) {
+            packing->unpack();
+         }
+
+         // Do receive side lag compensation.
+         if ( ( lag_comp_type == LAG_COMPENSATION_RECEIVE_SIDE ) && ( lag_comp != NULL ) ) {
+            lag_comp->receive_lag_compensation();
+         }
+
+         // Mark this data as unchanged now that we have processed it from the buffer.
+         mark_unchanged();
+
+         // Check for more object attribute data in the buffer/queue for this
+         // object instance, which will show up as still being changed.
+      } while ( is_changed() );
+   }
+#if THLA_OBJ_DEBUG_VALID_OBJECT_RECEIVE
+   else if ( is_instance_handle_valid() && ( exec_get_sim_time() > 0.0 ) ) {
+      send_hs( stdout, "Object::receive_zero_lookahead_data():%d NO new data for valid object '%s' at HLA-logical-time=%G%c",
+               __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds(),
+               THLA_NEWLINE );
+   }
+#endif
+#if THLA_OBJ_DEBUG_RECEIVE
+   else {
+      send_hs( stdout, "Object::receive_zero_lookahead_data():%d NO new data for '%s' at HLA-logical-time=%G%c",
                __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds(),
                THLA_NEWLINE );
    }
@@ -2503,6 +2816,39 @@ void Object::create_attribute_set(
               && ( ( include_requested && attributes[i].is_update_requested() )
                    || ( attributes[i].is_data_cycle_ready()
                         && ( ( attributes[i].get_configuration() & required_config ) == required_config ) ) ) ) {
+
+            // If there is no sub-classed TrickHLA-Conditional object for this
+            // attribute or if the sub-classed Conditional object indicates that
+            // it should be sent, then add this attribute into the attribute
+            // map. NOTE: Override the Conditional if the attribute has been
+            // requested by another Federate to make sure it is sent.
+            if ( !attributes[i].has_conditional()
+                 || attributes[i].get_conditional()->should_send( &attributes[i] )
+                 || ( include_requested && attributes[i].is_update_requested() ) ) {
+
+               // If there was a requested update for this attribute make sure
+               // we clear the request flag now since we are handling it here.
+               attributes[i].set_update_requested( false );
+
+               if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+                  send_hs( stdout, "Object::create_attribute_set():%d For cyclic object '%s', adding '%s' to attribute map.%c",
+                           __LINE__, get_name(), attributes[i].get_FOM_name(), THLA_NEWLINE );
+               }
+               // Create the Attribute-Value from the buffered data.
+               ( *attribute_values_map )[attributes[i].get_attribute_handle()] =
+                  attributes[i].get_attribute_value();
+            }
+         }
+      }
+   } else if ( ( required_config & CONFIG_ZERO_LOOKAHEAD ) == CONFIG_ZERO_LOOKAHEAD ) {
+      for ( unsigned int i = 0; i < attr_count; ++i ) {
+
+         // Only include attributes that have the required configuration,
+         // we own, we publish, or the attribute has been requested.
+         if ( attributes[i].is_locally_owned()
+              && attributes[i].is_publish()
+              && ( ( include_requested && attributes[i].is_update_requested() )
+                   || ( ( attributes[i].get_configuration() & required_config ) == required_config ) ) ) {
 
             // If there is no sub-classed TrickHLA-Conditional object for this
             // attribute or if the sub-classed Conditional object indicates that
@@ -3686,6 +4032,20 @@ bool Object::any_locally_owned_published_cyclic_data_ready_or_requested_attribut
       }
    }
    return any_ready;
+}
+
+bool Object::any_locally_owned_published_zero_lookahead_or_requested_attribute()
+{
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
+
+      if ( attributes[i].is_locally_owned()
+           && attributes[i].is_publish()
+           && ( attributes[i].is_update_requested()
+                || ( ( attributes[i].get_configuration() & CONFIG_ZERO_LOOKAHEAD ) == CONFIG_ZERO_LOOKAHEAD ) ) ) {
+         return true;
+      }
+   }
+   return false;
 }
 
 // WARNING: Only call this function once per data cycle because of how the

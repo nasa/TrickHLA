@@ -89,14 +89,16 @@ typedef enum {
 */
 typedef enum {
 
-   CONFIG_NONE         = 0x0001, ///< No configuration.
-   CONFIG_INITIALIZE   = 0x0002, ///< Dynamic simulation initialization.
-   CONFIG_INTERMITTENT = 0x0004, ///< Intermittent updates.
-   CONFIG_CYCLIC       = 0x0008, ///< Cyclic updates.
-   CONFIG_MAX_VALUE    = ( CONFIG_NONE
+   CONFIG_NONE           = 0x0001, ///< No configuration.
+   CONFIG_INITIALIZE     = 0x0002, ///< Dynamic simulation initialization.
+   CONFIG_INTERMITTENT   = 0x0004, ///< Intermittent updates.
+   CONFIG_CYCLIC         = 0x0008, ///< Cyclic updates.
+   CONFIG_ZERO_LOOKAHEAD = 0x0010, ///< Zero lookahead data updates.
+   CONFIG_MAX_VALUE      = ( CONFIG_NONE
                         + CONFIG_INITIALIZE
                         + CONFIG_INTERMITTENT
-                        + CONFIG_CYCLIC ) ///< Maximum configuration value.
+                        + CONFIG_CYCLIC
+                        + CONFIG_ZERO_LOOKAHEAD ) ///< Maximum configuration value.
 
 } DataUpdateEnum;
 

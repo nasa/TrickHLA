@@ -5037,10 +5037,18 @@ void Federate::send_zero_lookahead_data(
       return;
    }
 
-   // TODO: Only send this on the same Trick child thread that this object
-   // instance was associated to to ensure data coherency.
+   // We can only send zero-lookahead attribute updates for the attributes we
+   // own and are configured to publish.
+   if ( !obj->any_locally_owned_published_zero_lookahead_or_requested_attribute() ) {
+      return;
+   }
 
-   obj->send_cyclic_and_requested_data( this->granted_time );
+   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      send_hs( stdout, "Federate::send_zero_lookahead_data():%d Object:'%s' %c",
+               __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
+   }
+
+   obj->send_zero_lookahead_and_requested_data( this->granted_time );
 }
 
 void Federate::wait_to_receive_zero_lookahead_data(
@@ -5058,15 +5066,21 @@ void Federate::wait_to_receive_zero_lookahead_data(
 
    // We can only receive data if we subscribe to at least one attribute that
    // is remotely owned, otherwise just return.
-   if ( ! obj->any_remotely_owned_subscribed_cyclic_attribute() ) {
+   if ( !obj->any_remotely_owned_subscribed_zero_lookahead_attribute() ) {
       return;
    }
 
+   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      send_hs( stdout, "Federate::wait_to_receive_zero_lookahead_data():%d Object:'%s' %c",
+               __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
+   }
+
+   // The TARA will cause zero-lookahead data to be reflected before the TAG.
    wait_for_zero_lookahead_TARA_TAG();
 
    // Block waiting for the named object instance data by repeatedly doing a
    // TARA and wait for TAG with a zero lookahead.
-   if ( !obj->is_changed() && obj->any_remotely_owned_subscribed_cyclic_attribute() ) {
+   if ( !obj->is_changed() && obj->any_remotely_owned_subscribed_zero_lookahead_attribute() ) {
 
       int64_t      wallclock_time;
       SleepTimeout print_timer( this->wait_status_time );
@@ -5102,15 +5116,13 @@ void Federate::wait_to_receive_zero_lookahead_data(
                      __LINE__, THLA_NEWLINE );
          }
 
+         // The TARA will cause zero-lookahead data to be reflected before the TAG.
          wait_for_zero_lookahead_TARA_TAG();
 
-      } while ( !obj->is_changed() && obj->any_remotely_owned_subscribed_cyclic_attribute() );
+      } while ( !obj->is_changed() && obj->any_remotely_owned_subscribed_zero_lookahead_attribute() );
    }
 
-   // TODO: Only receive on the same Trick child thread that this object
-   // instance was associated to to ensure data coherency.
-
-   obj->receive_cyclic_data();
+   obj->receive_zero_lookahead_data();
 }
 
 /*!
