@@ -5084,7 +5084,6 @@ void Federate::wait_to_receive_zero_lookahead_data(
    // TARA and wait for TAG with a zero lookahead.
    if ( !obj->is_changed() && obj->any_remotely_owned_subscribed_zero_lookahead_attribute() ) {
 
-      int64_t      wallclock_time;
       SleepTimeout print_timer( this->wait_status_time );
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
@@ -5095,7 +5094,7 @@ void Federate::wait_to_receive_zero_lookahead_data(
          (void)sleep_timer.sleep();
 
          // To be more efficient, we get the time once and share it.
-         wallclock_time = sleep_timer.time();
+         int64_t wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
