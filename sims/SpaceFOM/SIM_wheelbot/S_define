@@ -1,0 +1,210 @@
+/************************TRICK HEADER*************************
+PURPOSE:
+    ( Simulate a two-wheeled robot which travels to predetermined waypoints. )
+LIBRARY DEPENDENCIES:
+    ((Vehicle/src/vehicleOne.cpp)
+    (Control/src/PIDController.cpp))
+*************************************************************/
+//==========================================================================
+// Description:
+// This is a simulation definition file (S_define) that provides an example
+// of an SpaceFOM compliant wheelbot federate.
+//==========================================================================
+
+//==========================================================================
+// Define the Trick executive and services simulation object instances:
+// Use the "standard" Trick executive simulation object. This simulation
+// object provides the traditional Trick executive capabilities but can be
+// tailored to provide facility or project unique executive behavior. See
+// the Trick documentation for more on usage and available options.
+//==========================================================================
+#include "../../../../trick/share/trick/sim_objects/default_trick_sys.sm"
+
+//==========================================================================
+// Define the Trick HLA job cycle times.
+//==========================================================================
+#define THLA_DATA_CYCLE_TIME        0.250 // HLA data communication cycle time.
+#define THLA_INTERACTION_CYCLE_TIME 0.050 // HLA Interaction cycle time.
+
+//==========================================================================
+// Define the HLA phase initialization priorities.
+//==========================================================================
+#define P_HLA_INIT   60    // HLA initialization phase.
+#define P_HLA_EARLY  1     // HLA early job phase.
+#define P_HLA_LATE   65534 // HLA late job phase.
+
+##include "Vehicle/include/vehicleOne.hh"
+##include "trick/integrator_c_intf.h"
+
+##include "TrickHLA/Manager.hh"
+##include "TrickHLA/KnownFederate.hh"
+##include "TrickHLA/SimTimeline.hh"
+##include "TrickHLA/ScenarioTimeline.hh"
+
+##include "simconfig/include/SimpleSimConfig.hh"
+//==========================================================================
+// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+//==========================================================================
+#include "../../../S_modules/SpaceFOM.sm"
+
+%header{
+ using namespace TrickHLA;
+ using namespace SpaceFOM;
+%}
+
+SpaceFOMSimObject THLA(THLA_DATA_CYCLE_TIME,
+                        THLA_INTERACTION_CYCLE_TIME,
+                        P_HLA_EARLY, P_HLA_INIT, P_HLA_LATE);
+
+
+//==========================================================================
+// SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
+// initialization SimObject.
+//==========================================================================
+class THLAInitSimObject : public Trick::SimObject {
+
+ public:
+
+   THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
+                      TrickHLA::Federate & thla_fed   ) 
+      : thla_manager( thla_mngr ),
+        thla_federate( thla_fed )
+   {
+
+      //--------------------------------------------------------------------
+      // NOTE: Initialization phase numbers must be greater than P60 
+      // (i.e. P_HLA_INIT) so that the initialization jobs run after the
+      // P60 THLA.manager->initialize() job.
+      //--------------------------------------------------------------------
+
+      // Alternative method: Send and receive all the initialization data.
+
+      // Send all the initialization data.
+      P100 ("initialization") thla_manager.send_init_data();
+      
+      // Wait to receive all the initialization data.
+      P100 ("initialization") thla_manager.receive_init_data();
+      
+      // Do some processing here if needed...
+      
+      // Clear remaining initialization sync-points.
+      P100 ("initialization") thla_manager.clear_init_sync_points();
+   }
+
+ private:
+   TrickHLA::Manager  & thla_manager;
+   TrickHLA::Federate & thla_federate;
+	
+   // Do not allow the implicit copy constructor or assignment operator.
+   THLAInitSimObject( THLAInitSimObject const & rhs );
+   THLAInitSimObject & operator=( THLAInitSimObject const & rhs );
+	
+   // Do not allow the default constructor.
+   THLAInitSimObject();
+
+};
+THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate);
+
+
+
+class VehicleSimObject : public Trick::SimObject {
+
+    public:
+    TrickHLAModel::VehicleOne vehicle;
+
+
+    VehicleSimObject() {
+
+        ("default_data")     vehicle.default_data() ;
+        ("initialization")   vehicle.state_init() ;
+        (0.10, "scheduled")  vehicle.control();
+        (1.2, "scheduled")  vehicle.addWaypointFromSTCS();
+        ("derivative")       vehicle.state_deriv() ;
+        ("integration") trick_ret = vehicle.state_integ() ;
+      
+    }
+    private:
+   // Do not allow the implicit copy constructor or assignment operator.
+   VehicleSimObject( VehicleSimObject const & rhs );
+   VehicleSimObject & operator=( VehicleSimObject const & rhs );
+};
+
+//==========================================================================
+// SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An example reference frame tree
+// simulation object definition.
+//==========================================================================
+class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
+
+  public:
+   /* Reference frame data. */
+   RefFrameData root_frame_data;
+   RefFrameData frame_A_data;
+
+   SpaceFOMRefFrameTreeSimObject( )
+   {
+   }
+
+  private:
+
+   // This object is not copyable
+   SpaceFOMRefFrameTreeSimObject( SpaceFOMRefFrameTreeSimObject const & );
+   SpaceFOMRefFrameTreeSimObject & operator=( SpaceFOMRefFrameTreeSimObject const & );
+
+
+};
+
+
+//==========================================================================
+// SIM_OBJECT: SpaceFOMRefFrameSimObject - An example reference frame
+// simulation object definition. This can be used for SpaceFOM ReferenceFrame
+// object discovery and data exchange.
+//==========================================================================
+##include "SpaceFOM/RefFrameState.hh"
+class SpaceFOMRefFrameSimObject : public Trick::SimObject {
+
+  public:
+   
+   /* HLA associated reference frames packing object. */
+   SpaceFOM::RefFrameState frame_packing;
+
+   SpaceFOMRefFrameSimObject( RefFrameData & frame_data_ptr,
+                              unsigned short _INIT = 59  )
+   {
+      // Set the reference to the reference frame.
+      this->ref_frame_data_ptr = &frame_data_ptr;
+      
+      //
+      // Initialization jobs
+      //
+      P_INIT ("initialization") frame_packing.initialize( ref_frame_data_ptr );
+
+   }
+
+  private:
+   RefFrameData * ref_frame_data_ptr;
+
+   // This object is not copyable
+   SpaceFOMRefFrameSimObject( SpaceFOMRefFrameSimObject const & );
+   SpaceFOMRefFrameSimObject & operator=( SpaceFOMRefFrameSimObject const & );
+
+};
+
+
+// SimObject used for root reference frame discovery.
+SpaceFOMRefFrameTreeSimObject ref_frame_tree;
+SpaceFOMRefFrameSimObject root_ref_frame( ref_frame_tree.root_frame_data );
+SpaceFOMRefFrameSimObject ref_frame_A( ref_frame_tree.frame_A_data );
+
+VehicleSimObject veh ;
+
+IntegLoop veh_integloop (0.10) veh;
+
+// All code listed in the create_connections routine is copied into S_source.cpp
+// and is executed directly after sim-object instantiations. This routine may be
+// used to connect data structures between SimObjects.
+void create_connections() {
+
+   // Assign a default integrator, which can be overridden in the input file.
+   veh_integloop.getIntegrator( Runge_Kutta_4, 6 );
+
+}
