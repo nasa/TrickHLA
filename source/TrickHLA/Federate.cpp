@@ -5045,7 +5045,7 @@ void Federate::send_zero_lookahead_and_requested_data(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::send_zero_lookahead_data():%d Object:'%s' %c",
+      send_hs( stdout, "Federate::send_zero_lookahead_data():%d Object:'%s'%c",
                __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
    }
 
@@ -5073,7 +5073,7 @@ void Federate::wait_to_receive_zero_lookahead_data(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::wait_to_receive_zero_lookahead_data():%d Object:'%s' %c",
+      send_hs( stdout, "Federate::wait_to_receive_zero_lookahead_data():%d Object:'%s'%c",
                __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
    }
 
