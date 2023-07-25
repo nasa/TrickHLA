@@ -686,7 +686,10 @@ class Federate
    bool const on_data_cycle_boundary_for_obj( unsigned int const obj_index,
                                               int64_t const      sim_time_in_base_time ) const;
 
-   void send_zero_lookahead_data( std::string const &obj_instance_name );
+   /*! @brief Send zero lookahead or requested data for the specified object instance. */
+   void send_zero_lookahead_and_requested_data( std::string const &obj_instance_name );
+
+   /*! @brief Wait to received the zero lookahead data for the specified object instance. */
    void wait_to_receive_zero_lookahead_data( std::string const &obj_instance_name );
 
    /*! @brief Set federate execution startup state.

@@ -81,7 +81,7 @@ class AnalyticSineSimObj : public THLAFedSimObject {
       (THLA_DATA_CYCLE_TIME, "scheduled") sim_data.adjust_phase( THLA.execution_control.get_scenario_time() );
       
       // HLA Data will only be sent if this federate owns it.
-      (THLA_DATA_CYCLE_TIME, "scheduled") federate.send_zero_lookahead_data( "A-side-Federate.Test" );
+      (THLA_DATA_CYCLE_TIME, "scheduled") federate.send_zero_lookahead_and_requested_data( "A-side-Federate.Test" );
    }
    
  private:
@@ -129,7 +129,7 @@ class PropagatedSineSimObj : public THLAFedSimObject {
       (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.execution_control.get_scenario_time() );
 
 		// HLA Data will only be sent if this federate owns it.
-      (THLA_DATA_CYCLE_TIME, "scheduled") federate.send_zero_lookahead_data( "P-side-Federate.Test" );
+      (THLA_DATA_CYCLE_TIME, "scheduled") federate.send_zero_lookahead_and_requested_data( "P-side-Federate.Test" );
 
       /*
        * -- Numerically propagate the simulated sine state

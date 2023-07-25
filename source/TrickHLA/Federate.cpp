@@ -5024,7 +5024,8 @@ bool const Federate::on_data_cycle_boundary_for_obj(
    return this->thread_coordinator.on_data_cycle_boundary_for_obj( obj_index, sim_time_in_base_time );
 }
 
-void Federate::send_zero_lookahead_data(
+/*! @brief Send zero lookahead or requested data for the specified object instance. */
+void Federate::send_zero_lookahead_and_requested_data(
    string const &obj_instance_name )
 {
    TrickHLA::Object *obj = manager->get_trickhla_object( obj_instance_name );
@@ -5051,6 +5052,7 @@ void Federate::send_zero_lookahead_data(
    obj->send_zero_lookahead_and_requested_data( this->granted_time );
 }
 
+/*! @brief Wait to received the zero lookahead data for the specified object instance. */
 void Federate::wait_to_receive_zero_lookahead_data(
    string const &obj_instance_name )
 {
