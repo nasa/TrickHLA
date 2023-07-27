@@ -18,7 +18,7 @@ LIBRARY DEPENDENCIES:
 // tailored to provide facility or project unique executive behavior. See
 // the Trick documentation for more on usage and available options.
 //==========================================================================
-#include "../../../../trick/share/trick/sim_objects/default_trick_sys.sm"
+#include "sim_objects/default_trick_sys.sm"
 
 //==========================================================================
 // Define the Trick HLA job cycle times.
@@ -45,7 +45,7 @@ LIBRARY DEPENDENCIES:
 //==========================================================================
 // SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
 //==========================================================================
-#include "../../../S_modules/SpaceFOM.sm"
+#include "S_modules/SpaceFOM.sm"
 
 %header{
  using namespace TrickHLA;

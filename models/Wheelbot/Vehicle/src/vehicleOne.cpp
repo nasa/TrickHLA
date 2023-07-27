@@ -12,7 +12,7 @@ PROGRAMMERS:
 *******************************************************************************/
 #include "Vehicle/include/vehicleOne.hh"
 #include "Guidance/include/navigator.hh"
-#include "../../../../trick/include/trick/MemoryManager.hh"
+#include "trick/MemoryManager.hh"
 #include <iostream>
 #include <math.h>
 #include <chrono>
