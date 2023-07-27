@@ -218,7 +218,7 @@ veh.vehicle.subscriber = True
 # Start the display VarServer Client
 #==========================================
 varServerPort = trick.var_server_get_port();
-EVDisplay_path = "../../../models/Graphics/dist/EVDisplay.jar"
+EVDisplay_path = "models/Graphics/dist/EVDisplay.jar"
 
 if (os.path.isfile(EVDisplay_path)) :
     EVDisplay_cmd = "java -jar " \
@@ -237,7 +237,7 @@ else :
 # Start the display VarServer Client
 #==========================================
 varServerPort = trick.var_server_get_port();
-HomeDisplay_path = "../../../models/GUIControl1/dist/HomeDisplay.jar"
+HomeDisplay_path = "models/GUIControl1/dist/HomeDisplay.jar"
 
 if (os.path.isfile(HomeDisplay_path)) :
     HomeDisplay_cmd = "java -jar " \

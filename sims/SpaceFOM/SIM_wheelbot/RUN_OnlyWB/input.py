@@ -212,7 +212,7 @@ federate.set_lookahead_time( 0.250 )
 
 # Must specify the Least Common Time Step for all federates in the
 # federation execution.
-federate.set_least_common_time_step( 250000 )
+federate.set_least_common_time_step( 0.25 )
 
 # Set the amount of seconds used to 'pad' mode transitions.
 federate.set_time_padding( 2.0 )
@@ -332,7 +332,7 @@ except Exception as e:
 # Subscribing wheelbot generates a display showing both vehicles.
 #==========================================
 """ varServerPort = trick.var_server_get_port();
-EVDisplay_path = "../../../models/Graphics/dist/EVDisplay.jar"
+EVDisplay_path = "models/Graphics/dist/EVDisplay.jar"
 
 if (os.path.isfile(EVDisplay_path)) :
     EVDisplay_cmd = "java -jar " \
@@ -351,7 +351,7 @@ else :
 # Start the display VarServer Client
 #==========================================
 varServerPort = trick.var_server_get_port();
-HomeDisplay_path = "../../../models/GUIControl1/dist/HomeDisplay.jar"
+HomeDisplay_path = "models/GUIControl1/dist/HomeDisplay.jar"
 
 if (os.path.isfile(HomeDisplay_path)) :
     HomeDisplay_cmd = "java -jar " \

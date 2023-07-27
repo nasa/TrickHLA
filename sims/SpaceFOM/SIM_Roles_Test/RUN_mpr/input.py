@@ -206,7 +206,7 @@ federate.set_lookahead_time( 0.250 )
 
 # Must specify the Least Common Time Step for all federates in the
 # federation execution.
-federate.set_least_common_time_step( 250000 )
+federate.set_least_common_time_step( 0.25 )
 
 # Set the amount of seconds used to 'pad' mode transitions.
 federate.set_time_padding( 2.0 )

@@ -17,5 +17,7 @@ endif
 
 TRICK_CFLAGS    += -Wno-deprecated-declarations
 TRICK_CFLAGS    += -I.
+TRICK_CFLAGS    += -I${TRICKHLA_HOME}/models/Wheelbot
 TRICK_CXXFLAGS  += -Wno-deprecated-declarations
 TRICK_CXXFLAGS  += -I.
+TRICK_CXXFLAGS  += -I${TRICKHLA_HOME}/models/Wheelbot
