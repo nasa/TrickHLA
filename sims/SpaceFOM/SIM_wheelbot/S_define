@@ -55,7 +55,7 @@ class VehicleSimObject : public Trick::SimObject {
 };
 
 //=============================================================================
-#define HLA
+//#define HLA
 // Uncomment the above line to build the sim with HLA.
 // * Note dependencies and other considerations detailed in the included file.
 // * Note there are also lines to include in the S_overrides.mk file.
