@@ -175,8 +175,8 @@ federate.add_known_fededrate( True, 'Wheelbot-1' )
 # Configure the CRC.
 #==========================================================================
 # Pitch specific local settings designator:
-THLA.federate.local_settings = 'crcHost = js-er7-rti.jsc.nasa.gov\n crcPort = 8989'
-#THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
+#THLA.federate.local_settings = 'crcHost = js-er7-rti.jsc.nasa.gov\n crcPort = 8989'
+THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 #THLA.federate.local_settings = 'crcHost = 10.8.0.161\n crcPort = 8989'
 # Make specific local settings designator, which is anything from the rid.mtl file:
 #THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
