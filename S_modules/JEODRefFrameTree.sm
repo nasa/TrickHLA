@@ -28,7 +28,8 @@
 //==========================================================================
 ##include <iostream>
 ##include "utils/ref_frames/include/ref_frame_state.hh"
-class JEODRefFrameTreeSimObject : public Trick::SimObject {
+#include "RefFrameTreeBase.sm"
+class JEODRefFrameTreeSimObject : public RefFrameTreeBaseSimObject {
 
   public:
 
@@ -40,9 +41,10 @@ class JEODRefFrameTreeSimObject : public Trick::SimObject {
                               jeod::Planet               & sun_in,
                               jeod::Planet               & earth_in,
                               jeod::Planet               & moon_in,
-                              jeod::Planet               & mars_in )
-   : thla_manager(thla_manager_in),
-     exec_cntrl( exec_cntrl_in ),
+                              jeod::Planet               & mars_in,
+                              unsigned short               _ADD   = 59,
+                              unsigned short               _BUILD = 60 )
+   : RefFrameTreeBaseSimObject(thla_manager_in,exec_cntrl_in,_ADD,_BUILD),
      time_tt(time_tt_in),
      dyn_manager(dyn_manager_in),
      sun(sun_in),
@@ -53,9 +55,7 @@ class JEODRefFrameTreeSimObject : public Trick::SimObject {
       //
       // Default data jobs
       //
- #ifdef DEFAULT_DATA_CONFIG
-      ("default_data") configure_tree();
- #endif
+      
 
       // We need to subscribe to the desired reference frames to insure that
       // JEOD updates them.
@@ -69,6 +69,17 @@ class JEODRefFrameTreeSimObject : public Trick::SimObject {
       P_EPH ("initialization") earth_centered_fixed.set_frames( &earth.inertial, &earth.pfix );
       P_EPH ("initialization") moon_centered_fixed.set_frames( &moon.inertial, &moon.pfix );
       P_EPH ("initialization") mars_centered_fixed.set_frames( &mars.inertial, &mars.pfix );
+      
+      // Place the frames into the tree.  For example . . .
+      P_ADD ("initialization") frame_tree.add_frame( &(solar_system_barycenter.frame_packing) );
+      P_ADD ("initialization") frame_tree.add_frame( &(sun_inertial.frame_packing) );
+      P_ADD ("initialization") frame_tree.add_frame( &(earth_moon_barycenter.frame_packing) );
+      P_ADD ("initialization") frame_tree.add_frame( &(earth_centered_inertial.frame_packing) );
+      P_ADD ("initialization") frame_tree.add_frame( &(moon_centered_inertial.frame_packing) );
+      P_ADD ("initialization") frame_tree.add_frame( &(mars_centered_inertial.frame_packing) );
+      P_ADD ("initialization") frame_tree.add_frame( &(earth_centered_fixed.frame_packing) );
+      P_ADD ("initialization") frame_tree.add_frame( &(moon_centered_fixed.frame_packing) );
+      P_ADD ("initialization") frame_tree.add_frame( &(mars_centered_fixed.frame_packing) );
 
    }
 
@@ -126,7 +137,7 @@ class JEODRefFrameTreeSimObject : public Trick::SimObject {
    SpaceFOM::JEODRefFrameState * mars_pfix_frame_ptr;
 
 
-  private:
+  protected:
 
    // Configure the reference frame tree.
    void configure_tree()
@@ -209,8 +220,6 @@ class JEODRefFrameTreeSimObject : public Trick::SimObject {
    }
 
     // Need for scheduled job persitence.
-   TrickHLA::Manager & thla_manager;
-   SpaceFOM::ExecutionControl & exec_cntrl;
    jeod::TimeTT & time_tt;
    jeod::DynManager & dyn_manager;
    jeod::Planet & sun;
@@ -223,6 +232,8 @@ class JEODRefFrameTreeSimObject : public Trick::SimObject {
    // the solar system (SSBary) and the Earth-Moon (EMBary)
    jeod::RefFrame * ssbary_ptr; ///< @trick_units{--} Solar system barycenter.
    jeod::RefFrame * embary_ptr; ///< @trick_units{--} Earth-Moon system barycenter.
+   
+  private:
 
    // This object is not copyable
    JEODRefFrameTreeSimObject( const JEODRefFrameTreeSimObject & );
