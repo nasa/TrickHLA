@@ -57,6 +57,7 @@ def parse_command_line( ) :
    global print_usage
    global run_duration
    global verbose
+   global hla
    
    # Get the Trick command line arguments.
    argc = trick.command_line_args_get_argc()
@@ -80,6 +81,9 @@ def parse_command_line( ) :
          
       elif ((str(argv[index]) == '-h') | (str(argv[index]) == '-help')) :
          print_usage = True
+
+      elif ((str(argv[index]) == '-HLA-off')) :
+         hla = False
       
       elif (str(argv[index]) == '-verbose') :
          index = index + 1
@@ -111,6 +115,9 @@ run_duration = 70.0
 # Default is to show verbose messages.
 verbose = True
 
+# Default to run sim with HLA.
+hla = True
+
 parse_command_line()
 
 if (print_usage == True) :
@@ -131,54 +138,63 @@ trick.exec_set_freeze_command(True)
 trick.sim_control_panel_set_enabled(True)
 trick.exec_set_stack_trace(True)
 
+if hla:
+   # =========================================================================
+   # Set up the HLA interfaces.
+   # =========================================================================
+   # Instantiate the Python SpaceFOM configuration object.
+   federate = SpaceFOMFederateConfig( THLA.federate,
+                                    THLA.manager,
+                                    THLA.execution_control,
+                                    THLA.ExCO,
+                                    'Wheelbot_Test',
+                                    'Wheelbot-1',
+                                    True )
 
-# =========================================================================
-# Set up the HLA interfaces.
-# =========================================================================
-# Instantiate the Python SpaceFOM configuration object.
-federate = SpaceFOMFederateConfig( THLA.federate,
-                                   THLA.manager,
-                                   THLA.execution_control,
-                                   THLA.ExCO,
-                                   'Wheelbot_Test',
-                                   'Wheelbot-1',
-                                   True )
-
-# Set the name of the ExCO S_define instance.
-# We do not need to do this since we're using the ExCO default_data job
-# to configure the ExCO. This is only needed for input file configuration.
-#federate.set_ExCO_S_define_name( 'THLA_INIT.ExCO' )
+   # Set the name of the ExCO S_define instance.
+   # We do not need to do this since we're using the ExCO default_data job
+   # to configure the ExCO. This is only needed for input file configuration.
+   #federate.set_ExCO_S_define_name( 'THLA_INIT.ExCO' )
 
 
-# Set the debug output level.
-if (verbose == True) : 
-   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_11_TRACE )
-else :
-   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
+   # Set the debug output level.
+   if (verbose == True) : 
+      federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_11_TRACE )
+   else :
+      federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
 
-#--------------------------------------------------------------------------
-# Configure this federate SpaceFOM roles for this federate.
-#--------------------------------------------------------------------------
-federate.set_master_role( False )  # This is NOT the Master federate.
-federate.set_pacing_role( False ) # This is NOT the Pacing federate.
-federate.set_RRFP_role( False )   # This is NOT the Root Reference Frame Publisher.
+   #--------------------------------------------------------------------------
+   # Configure this federate SpaceFOM roles for this federate.
+   #--------------------------------------------------------------------------
+   federate.set_master_role( True )  # This is NOT the Master federate.
+   federate.set_pacing_role( True ) # This is NOT the Pacing federate.
+   federate.set_RRFP_role( True )   # This is NOT the Root Reference Frame Publisher.
 
-#--------------------------------------------------------------------------
-# Add in known required federates.
-#--------------------------------------------------------------------------
-federate.add_known_fededrate( True, str(federate.federate.name) )
-federate.add_known_fededrate( True, 'MPR' )
-federate.add_known_fededrate( False, 'Wheelbot-2' )
+   #--------------------------------------------------------------------------
+   # Add in known required federates.
+   #--------------------------------------------------------------------------
+   federate.add_known_fededrate( True, str(federate.federate.name) )
+   federate.add_known_fededrate( False, 'MPR' )
+   federate.add_known_fededrate( False, 'Wheelbot-2' )
 
-#==========================================================================
-# Configure the CRC.
-#==========================================================================
-# Pitch specific local settings designator:
-THLA.federate.local_settings = 'crcHost = js-er7-rti.jsc.nasa.gov\n crcPort = 8989'
-#THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
-# Make specific local settings designator, which is anything from the rid.mtl file:
-#THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
-THLA.federate.lookahead_time = 0.25 # this is THLA_DATA_CYCLE_TIME
+   #==========================================================================
+   # Configure the CRC.
+   #==========================================================================
+   # Pitch specific local settings designator:
+   THLA.federate.local_settings = 'crcHost = js-er7-rti.jsc.nasa.gov\n crcPort = 8989'
+   #THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
+   # Make specific local settings designator, which is anything from the rid.mtl file:
+   #THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
+   THLA.federate.lookahead_time = 0.25 # this is THLA_DATA_CYCLE_TIME
+
+   # Publish TrickHLA Object 'Wheelbot_hla_entity' with attribute 'state.'
+   obj = TrickHLAObjectConfig(True,'Wheelbot_hla_entity','PhysicalEntity',None,None,None,None,False)
+
+   att0 = TrickHLAAttributeConfig('state','veh.vehicle.position',True,False,True,trick.CONFIG_CYCLIC,trick.ENCODING_LITTLE_ENDIAN)
+
+   obj.add_attribute(att0)
+
+   federate.add_fed_object(obj)
 
 #==========================================================================
 #Wheelbot Object Config
@@ -187,15 +203,6 @@ THLA.federate.lookahead_time = 0.25 # this is THLA_DATA_CYCLE_TIME
 #Set initial position of publishing wheelbot.
 veh.vehicle.position[0] = 0.0
 veh.vehicle.position[1] = 0.0
-
-# Publish TrickHLA Object 'Wheelbot_hla_entity' with attribute 'state.'
-obj = TrickHLAObjectConfig(True,'Wheelbot_hla_entity','PhysicalEntity',None,None,None,None,False)
-
-att0 = TrickHLAAttributeConfig('state','veh.vehicle.position',True,False,True,trick.CONFIG_CYCLIC,trick.ENCODING_LITTLE_ENDIAN)
-
-obj.add_attribute(att0)
-
-federate.add_fed_object(obj)
 
 
 
@@ -225,7 +232,7 @@ except Exception as e:
 #==========================================
 # Start the display VarServer Client
 #==========================================
-""" var_server_port = trick.var_server_get_port();
+var_server_port = trick.var_server_get_port();
 EVDisplay_path = "../../../models/Wheelbot/Graphics/dist/EVDisplay.jar"
 
 if (os.path.isfile(EVDisplay_path)) :
@@ -239,7 +246,7 @@ if (os.path.isfile(EVDisplay_path)) :
 else :
     print('==================================================================================')
     print('EVDisplay needs to be built. Please \"cd\" into models/Wheelbot/Graphics and type \"make\".')
-    print('==================================================================================') """
+    print('==================================================================================')
 
 #==========================================
 # Start the display VarServer Client
@@ -257,26 +264,30 @@ else :
     print('==================================================================================')
     print('HomeDisplay needs to be built. Please \"cd\" into models/Wheelbot/GUIControl1 and type \"make\".')
     print('==================================================================================')
-#---------------------------------------------------------------------------
-# Add the HLA SimObjects associated with this federate.
-# This is really only useful for turning on and off HLA objects.
-# This doesn't really apply to these example simulations which are only HLA.
-#---------------------------------------------------------------------------
-federate.add_sim_object( THLA )
-federate.add_sim_object( THLA_INIT )
-federate.add_sim_object( root_ref_frame )
-#federate.add_sim_object( ref_frame_A )
+
+if hla:
+   #---------------------------------------------------------------------------
+   # Add the HLA SimObjects associated with this federate.
+   # This is really only useful for turning on and off HLA objects.
+   # This doesn't really apply to these example simulations which are only HLA.
+   #---------------------------------------------------------------------------
+   federate.add_sim_object( THLA )
+   federate.add_sim_object( THLA_INIT )
+   federate.add_sim_object( root_ref_frame )
+   #federate.add_sim_object( ref_frame_A )
 
 
-#---------------------------------------------------------------------------
-# Make sure that the Python federate configuration object is initialized.
-#---------------------------------------------------------------------------
-#federate.disable()
-federate.initialize()
+   #---------------------------------------------------------------------------
+   # Make sure that the Python federate configuration object is initialized.
+   #---------------------------------------------------------------------------
+   #federate.disable()
+   federate.initialize()
 
 
-#---------------------------------------------------------------------------
-# Set up simulation termination time.
-#---------------------------------------------------------------------------
-if run_duration:
-   trick.sim_services.exec_set_terminate_time( run_duration )
+   #---------------------------------------------------------------------------
+   # Set up simulation termination time.
+   #---------------------------------------------------------------------------
+   if run_duration:
+      trick.sim_services.exec_set_terminate_time( run_duration )
+else:
+   trick.stop(80)

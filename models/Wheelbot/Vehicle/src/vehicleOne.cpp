@@ -149,7 +149,6 @@ int VehicleOne::state_init() {
 void VehicleOne::add_waypoint(double x, double y) {
     Point waypoint(x, y);
     waypoint_queue.push_back(waypoint);
-    print_waypoints();
     
 }
 

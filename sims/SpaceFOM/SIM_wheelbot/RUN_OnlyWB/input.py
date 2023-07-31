@@ -15,6 +15,7 @@
 #
 # PROGRAMMERS:
 #    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.)))
+#    (((Andrew W. Young) (NASA/ER7) (July 2023) (--) (TrickHLA familiarization project.)))
 ##############################################################################
 import sys
 sys.path.append('../../../')
