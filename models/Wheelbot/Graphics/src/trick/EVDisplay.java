@@ -299,8 +299,8 @@ public class EVDisplay extends JFrame {
         Feature vehicle = new Feature(0, 0, Math.toRadians(0), vehicleImageFile);
         featureList.add(vehicle);
 
-        Feature vehicle2 = new Feature(0, 0, Math.toRadians(0), vehicleImageFile);
-        featureList.add(vehicle2);
+        /* Feature vehicle2 = new Feature(0, 0, Math.toRadians(0), vehicleImageFile);
+        featureList.add(vehicle2); */
 
         double mapScale = 0.005; // 5 millimeters per pixel
         EVDisplay evd = new EVDisplay( new ArenaMap( featureList, mapScale));
@@ -342,7 +342,7 @@ public class EVDisplay extends JFrame {
                 double H2 = Double.parseDouble( field[6] );
                 // Update vehicle 2's position based on veh.vehicle.stcs data.
                 // Veh.vehicle.stcs is the position data received from the publishing vehicle.
-                vehicle2.setState(N2,W2,H2);
+                //vehicle2.setState(N2,W2,H2);
 
                 //Find the index of the reached waypoint
                 int reachedWaypointIndex =-1;

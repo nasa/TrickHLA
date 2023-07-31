@@ -124,24 +124,25 @@ if (print_usage == True) :
    print_usage_message()
 
 
-#---------------------------------------------
-# Set up Trick executive parameters.
-#---------------------------------------------
-#instruments.echo_jobs.echo_jobs_on()
-trick.exec_set_trap_sigfpe(True)
-#trick.checkpoint_pre_init(1)
-trick.checkpoint_post_init(1)
-#trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
-
-trick.exec_set_enable_freeze(True)
-trick.exec_set_freeze_command(True)
-trick.sim_control_panel_set_enabled(True)
-trick.exec_set_stack_trace(True)
-
 if hla:
    # =========================================================================
    # Set up the HLA interfaces.
    # =========================================================================
+
+   #---------------------------------------------
+   # Set up Trick executive parameters.
+   #---------------------------------------------
+   #instruments.echo_jobs.echo_jobs_on()
+   trick.exec_set_trap_sigfpe(True)
+   #trick.checkpoint_pre_init(1)
+   trick.checkpoint_post_init(1)
+   #trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
+
+   trick.exec_set_enable_freeze(True)
+   trick.exec_set_freeze_command(True)
+   trick.sim_control_panel_set_enabled(True)
+   trick.exec_set_stack_trace(True)
+
    # Instantiate the Python SpaceFOM configuration object.
    federate = SpaceFOMFederateConfig( THLA.federate,
                                     THLA.manager,
@@ -195,7 +196,134 @@ if hla:
    obj.add_attribute(att0)
 
    federate.add_fed_object(obj)
+   #--------------------------------------------------------------------------
+   # Set up federate related time related parameters.
+   #--------------------------------------------------------------------------
+   # Compute TT for 04 Jan 2019 12:00 PM. = 18487.75(days) + 37.0(s) + 32.184(s)
+   federate.set_scenario_timeline_epoch( float((18487.75*24.0*60.0*60.0) + 37.0 + 32.184) )
 
+   # Must specify a federate HLA lookahead value in seconds.
+   federate.set_lookahead_time( 0.250 )
+
+   # Must specify the Least Common Time Step for all federates in the
+   # federation execution.
+   federate.set_least_common_time_step( 250000 )
+
+   # Set the amount of seconds used to 'pad' mode transitions.
+   federate.set_time_padding( 2.0 )
+
+   # Setup Time Management parameters.
+   federate.set_time_regulating( True )
+   federate.set_time_constrained( True )
+
+   #--------------------------------------------------------------------------
+   # Set up CTE time line.
+   #--------------------------------------------------------------------------
+   # By setting this we are specifying the use of Common Timing Equipment (CTE)
+   # for controlling the Mode Transitions for all federates using CTE.
+   # Don't really need CTE for RRFP.
+   THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::CTETimelineBase' )
+
+   #---------------------------------------------------------------------------
+   # Set up for Root Reference Frame data.
+   #---------------------------------------------------------------------------
+   root_frame_name = 'RootFrame'
+   parent_frame_name = ''
+
+   ref_frame_tree.root_frame_data.name = root_frame_name
+   ref_frame_tree.root_frame_data.parent_name = parent_frame_name
+                                          
+   ref_frame_tree.root_frame_data.state.pos[0] = 0.0
+   ref_frame_tree.root_frame_data.state.pos[1] = 0.0
+   ref_frame_tree.root_frame_data.state.pos[2] = 0.0
+   ref_frame_tree.root_frame_data.state.vel[0] = 0.0
+   ref_frame_tree.root_frame_data.state.vel[1] = 0.0
+   ref_frame_tree.root_frame_data.state.vel[2] = 0.0
+   ref_frame_tree.root_frame_data.state.quat_scalar  = 1.0
+   ref_frame_tree.root_frame_data.state.quat_vector[0] = 0.0
+   ref_frame_tree.root_frame_data.state.quat_vector[1] = 0.0
+   ref_frame_tree.root_frame_data.state.quat_vector[2] = 0.0
+   ref_frame_tree.root_frame_data.state.ang_vel[0] = 0.0
+   ref_frame_tree.root_frame_data.state.ang_vel[1] = 0.0
+   ref_frame_tree.root_frame_data.state.ang_vel[2] = 0.0
+   ref_frame_tree.root_frame_data.state.time = 0.0
+
+
+   ref_frame_tree.frame_A_data.name = 'FrameA'
+   ref_frame_tree.frame_A_data.parent_name = root_frame_name
+                                          
+   ref_frame_tree.frame_A_data.state.pos[0] = 10.0
+   ref_frame_tree.frame_A_data.state.pos[1] = 10.0
+   ref_frame_tree.frame_A_data.state.pos[2] = 10.0
+   ref_frame_tree.frame_A_data.state.vel[0] = 0.0
+   ref_frame_tree.frame_A_data.state.vel[1] = 0.0
+   ref_frame_tree.frame_A_data.state.vel[2] = 0.0
+   ref_frame_tree.frame_A_data.state.quat_scalar  = 1.0
+   ref_frame_tree.frame_A_data.state.quat_vector[0] = 0.0
+   ref_frame_tree.frame_A_data.state.quat_vector[1] = 0.0
+   ref_frame_tree.frame_A_data.state.quat_vector[2] = 0.0
+   ref_frame_tree.frame_A_data.state.ang_vel[0] = 0.0
+   ref_frame_tree.frame_A_data.state.ang_vel[1] = 0.0
+   ref_frame_tree.frame_A_data.state.ang_vel[2] = 0.0
+   ref_frame_tree.frame_A_data.state.time = 0.0
+
+
+   #---------------------------------------------------------------------------
+   # Set up the Root Reference Frame object for discovery.
+   # If it is the RRFP, it will publish the frame.
+   # If it is NOT the RRFP, it will subscribe to the frame.
+   #---------------------------------------------------------------------------
+   root_frame = SpaceFOMRefFrameObject( federate.is_RRFP,
+                                       'RootFrame',
+                                       root_ref_frame.frame_packing,
+                                       'root_ref_frame.frame_packing' )
+
+   # Set the debug flag for the root reference frame.
+   root_ref_frame.frame_packing.debug = verbose
+
+   # Set the root frame for the federate.
+   federate.set_root_frame( root_frame )
+
+   #---------------------------------------------------------------------------
+   # Set up the Root Reference Frame object for discovery.
+   # If it is the RRFP, it will publish the frame.
+   # If it is NOT the RRFP, it will subscribe to the frame.
+   #---------------------------------------------------------------------------
+   frame_A = SpaceFOMRefFrameObject( True,
+                                    'FrameA',
+                                    ref_frame_A.frame_packing,
+                                    'ref_frame_A.frame_packing' )
+
+   # Set the debug flag for the root reference frame.
+   ref_frame_A.frame_packing.debug = verbose
+
+   # Add this reference frame to the list of managed object.
+   federate.add_fed_object( frame_A )
+   #---------------------------------------------------------------------------
+   # Add the HLA SimObjects associated with this federate.
+   # This is really only useful for turning on and off HLA objects.
+   # This doesn't really apply to these example simulations which are only HLA.
+   #---------------------------------------------------------------------------
+   federate.add_sim_object( THLA )
+   federate.add_sim_object( THLA_INIT )
+   federate.add_sim_object( root_ref_frame )
+   #federate.add_sim_object( ref_frame_A )
+
+
+   #---------------------------------------------------------------------------
+   # Make sure that the Python federate configuration object is initialized.
+   #---------------------------------------------------------------------------
+   #federate.disable()
+   federate.initialize()
+
+
+   #---------------------------------------------------------------------------
+   # Set up simulation termination time.
+   #---------------------------------------------------------------------------
+   if run_duration:
+      trick.sim_services.exec_set_terminate_time( run_duration )
+else:
+   trick.stop(80)
 #==========================================================================
 #Wheelbot Object Config
 #==========================================================================
@@ -219,10 +347,10 @@ try:
             fields = line.split(",")
             latitude = float(fields[0])
             longitude = float(fields[1])
-            print(f"Adding waypoint: Latitude={latitude}, Longitude={longitude}")
+            #print(f"Adding waypoint: Latitude={latitude}, Longitude={longitude}")
             veh.vehicle.add_waypoint(latitude, longitude)
-            print(f"Added waypoint: Latitude={latitude}, Longitude={longitude}")
-    print("Waypoints added successfully.")
+            #Sprint(f"Added waypoint: Latitude={latitude}, Longitude={longitude}")
+    #print("Waypoints added successfully.")
 except FileNotFoundError:
     print(f"File not found: {waypoints_path}")
 except Exception as e:
@@ -264,30 +392,3 @@ else :
     print('==================================================================================')
     print('HomeDisplay needs to be built. Please \"cd\" into models/Wheelbot/GUIControl1 and type \"make\".')
     print('==================================================================================')
-
-if hla:
-   #---------------------------------------------------------------------------
-   # Add the HLA SimObjects associated with this federate.
-   # This is really only useful for turning on and off HLA objects.
-   # This doesn't really apply to these example simulations which are only HLA.
-   #---------------------------------------------------------------------------
-   federate.add_sim_object( THLA )
-   federate.add_sim_object( THLA_INIT )
-   federate.add_sim_object( root_ref_frame )
-   #federate.add_sim_object( ref_frame_A )
-
-
-   #---------------------------------------------------------------------------
-   # Make sure that the Python federate configuration object is initialized.
-   #---------------------------------------------------------------------------
-   #federate.disable()
-   federate.initialize()
-
-
-   #---------------------------------------------------------------------------
-   # Set up simulation termination time.
-   #---------------------------------------------------------------------------
-   if run_duration:
-      trick.sim_services.exec_set_terminate_time( run_duration )
-else:
-   trick.stop(80)

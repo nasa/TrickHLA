@@ -149,6 +149,7 @@ int VehicleOne::state_init() {
 void VehicleOne::add_waypoint(double x, double y) {
     Point waypoint(x, y);
     waypoint_queue.push_back(waypoint);
+
     
 }
 
@@ -334,5 +335,4 @@ void VehicleOne::add_waypoint_from_stcs() {
         // Add the waypoint using the new STCS values
         add_waypoint(last_stcs[0], last_stcs[1]);
     }
-    print_stcs();
 }
