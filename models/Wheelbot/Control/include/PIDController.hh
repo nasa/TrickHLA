@@ -21,7 +21,7 @@ public:
   bool integration_enabled;
 
   PIDController(double kp, double ki, double kd, double omax, double omin, double dt, double tc);
-  double getOutput(double setpoint_value, double measured_value);
+  double get_output(double setpoint_value, double measured_value);
 };
 
 #endif

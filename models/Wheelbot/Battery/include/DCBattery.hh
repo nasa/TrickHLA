@@ -7,14 +7,14 @@
 class DCBattery
 {
 public:
-    DCBattery(double initialIdealVoltage, double initialInternalResistance);
+    DCBattery(double initial_ideal_voltage, double initial_internal_resistance);
     void update ();
-    double getActualVoltage();
-    void setCurrent(double current);
+    double get_actual_voltage();
+    void set_current(double current);
 private:
-    double idealVoltage;
-    double internalResistance;
-    double actualVoltage;
+    double ideal_voltage;
+    double internal_resistance;
+    double actual_voltage;
     double current;
 };
 #endif

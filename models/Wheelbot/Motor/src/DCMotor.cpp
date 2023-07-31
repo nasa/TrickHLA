@@ -3,33 +3,33 @@
 #include <cmath>
 
 
-DCMotor::DCMotor (const double initialInternalResistance,
-                  const double initialMotorTorqueConstant)
-                : motorTorque(0.0),
-                  motorCurrent(0.0),
-                  currentLoad(0.0),
-                  internalResistance(initialInternalResistance),
-                  motorTorqueConstant(initialMotorTorqueConstant)
+DCMotor::DCMotor (const double initial_internal_resistance,
+                  const double initial_motor_torque_constant)
+                : motor_torque(0.0),
+                  motor_current(0.0),
+                  current_load(0.0),
+                  internal_resistance(initial_internal_resistance),
+                  motor_torque_constant(initial_motor_torque_constant)
 { }
 
-void DCMotor :: update (const double motorVoltage)
+void DCMotor :: update (const double motor_voltage)
 {
-    motorCurrent = motorVoltage / internalResistance ;
-    motorTorque = motorCurrent * motorTorqueConstant;
-    currentLoad = std :: abs (motorCurrent);
+    motor_current = motor_voltage / internal_resistance ;
+    motor_torque = motor_current * motor_torque_constant;
+    current_load = std :: abs (motor_current);
 }
 
-void DCMotor::update (const PWM& PulseWidth)
+void DCMotor::update (const PWM& pulse_width)
 {
-    update(PulseWidth.getAverageVoltage());
+    update(pulse_width.get_average_voltage());
 }
 
-double DCMotor :: getTorque()
+double DCMotor :: get_torque()
 {
-    return motorTorque;
+    return motor_torque;
 }
 
-double DCMotor :: getCurrentLoad()
+double DCMotor :: get_current_load()
 {
-    return currentLoad;
+    return current_load;
 }

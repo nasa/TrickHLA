@@ -204,48 +204,39 @@ federate.add_fed_object(obj)
 
 
 #==========================================
-# Add the waypoints to the SIM. For the subscriber, no
-# waypoints are necessary, just set veh.vehicle.subscriber to true.
-# Set a home point by adding it as the last waypoint.
+# Start the display VarServer Client
 #==========================================
-waypoints_path = "Modified_data/cross.snackpoints"
-veh.vehicle.subscriber = True
-
-#==========================================
-# Start the display VarServer Client - this display will show both
-# publishing and subscribing vehicles.
-#==========================================
-varServerPort = trick.var_server_get_port();
-EVDisplay_path = "models/Graphics/dist/EVDisplay.jar"
+var_server_port = trick.var_server_get_port();
+EVDisplay_path = "../../../models/Wheelbot/Graphics/dist/EVDisplay.jar"
 
 if (os.path.isfile(EVDisplay_path)) :
     EVDisplay_cmd = "java -jar " \
                   + EVDisplay_path \
-                  + " -v images/mouse_128x128.png" \
+                  + " -v images/twoWheelRover.png" \
                   + " -w " + waypoints_path \
-                  + " " + str(varServerPort) + " &" ;
+                  + " " + str(var_server_port) + " &" ;
     print(EVDisplay_cmd)
     os.system( EVDisplay_cmd);
 else :
     print('==================================================================================')
-    print('EVDisplay needs to be built. Please \"cd\" into models/Graphics and type \"make\".')
+    print('EVDisplay needs to be built. Please \"cd\" into models/Wheelbot/Graphics and type \"make\".')
     print('==================================================================================')
 
 #==========================================
-# Start the display VarServer Client - this is the gui to command the vehicle to go home.
+# Start the display VarServer Client
 #==========================================
-varServerPort = trick.var_server_get_port();
-HomeDisplay_path = "models/GUIControl1/dist/HomeDisplay.jar"
+var_server_port = trick.var_server_get_port();
+home_display_path = "../../../models/Wheelbot/GUIControl1/dist/HomeDisplay.jar"
 
-if (os.path.isfile(HomeDisplay_path)) :
-    HomeDisplay_cmd = "java -jar " \
-                  + HomeDisplay_path \
-                  + " " + str(varServerPort) + " &" ;
-    print(HomeDisplay_cmd)
-    os.system( HomeDisplay_cmd);
+if (os.path.isfile(home_display_path)) :
+    home_display_cmd = "java -jar " \
+                  + home_display_path \
+                  + " " + str(var_server_port) + " &" ;
+    print(home_display_cmd)
+    os.system( home_display_cmd);
 else :
     print('==================================================================================')
-    print('HomeDisplay needs to be built. Please \"cd\" into models/GUIControl1 and type \"make\".')
+    print('HomeDisplay needs to be built. Please \"cd\" into models/Wheelbot/GUIControl1 and type \"make\".')
     print('==================================================================================')
 
 #---------------------------------------------------------------------------

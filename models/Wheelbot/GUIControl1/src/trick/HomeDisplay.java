@@ -164,10 +164,10 @@ public class HomeDisplay extends JFrame {
         displayGUI.out.writeBytes("trick.var_set_client_tag(\"Home Button\") \n");
         displayGUI.out.flush();
 
-        // Cycically read the simulation mode and the homeCommanded value
+        // Cycically read the simulation mode and the home_commanded value
         displayGUI.out.writeBytes("trick.var_pause() \n" +
                            "trick.var_add(\"trick_sys.sched.mode\")\n" +
-                           "trick.var_add(\"veh.vehicle.homeCommanded\") \n" +
+                           "trick.var_add(\"veh.vehicle.home_commanded\") \n" +
                            "trick.var_ascii() \n" +
                            "trick.var_cycle(0.1) \n" +
                            "trick.var_unpause() \n" );
@@ -187,10 +187,10 @@ public class HomeDisplay extends JFrame {
               go = false;
           }
 
-          // Check if homeCommanded is true (button pressed) and update veh.vehicle.homeCommanded
+          // Check if homeCommanded is true (button pressed) and update veh.vehicle.home_commanded
           if (simMode == TrickSimMode.RUN) {
               if (displayGUI.getHomeCommand()) {
-                  displayGUI.out.writeBytes("veh.vehicle.homeCommanded = 1 ;\n");
+                  displayGUI.out.writeBytes("veh.vehicle.home_commanded = 1 ;\n");
                   displayGUI.out.flush();
                   displayGUI.resetHomeCommand();
               }

@@ -9,13 +9,13 @@ class MotorSpeedController {
     public:
     virtual ~MotorSpeedController() {}
 
-    virtual void setCommandedSpeed( double commanded_speed ) {
-        commandedSpeed = commanded_speed;
+    virtual void set_commanded_speed( double commanded_speed ) {
+        commanded_speed = commanded_speed;
     }
-    double getCommandedSpeed() { return commandedSpeed; }
+    double get_commanded_speed() { return commanded_speed; }
 
     protected:
-    double commandedSpeed;
+    double commanded_speed;
 };
 
 #endif

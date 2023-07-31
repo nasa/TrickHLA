@@ -2,28 +2,28 @@
 #include <iostream>
 #include <cmath>
 
-PWM::PWM ( double HighVoltage,
-           double LowVoltage,
-           double DutyCycle) {
+PWM::PWM ( double high_voltage_,
+           double low_voltage_,
+           double duty_cycle_) {
 
-   highVoltage = HighVoltage;
-   lowVoltage  = LowVoltage;
-   setDutyCycle( DutyCycle);
+   high_voltage = high_voltage_;
+   low_voltage  = low_voltage_;
+   set_duty_cycle( duty_cycle_);
 }
 
-void PWM::setDutyCycle( double DutyCycle) {
-   if (( DutyCycle >= 0.0 ) && ( DutyCycle <= 1.0 )) {
-       dutyCycle = DutyCycle;
+void PWM::set_duty_cycle( double duty_cycle_) {
+   if (( duty_cycle_ >= 0.0 ) && ( duty_cycle_ <= 1.0 )) {
+       duty_cycle = duty_cycle_;
    } else {
        throw std::logic_error("PWM::PWM(): DutyCycle must be between 0.0 .. 1.0.");
    }
 }
 
-double PWM :: getDutyCycle() const {
-    return dutyCycle;
+double PWM :: get_duty_cycle() const {
+    return duty_cycle;
 }
 
-double PWM::getAverageVoltage() const {
+double PWM::get_average_voltage() const {
 
-    return ( (highVoltage * dutyCycle + lowVoltage * (1 - dutyCycle)) / 2);
+    return ( (high_voltage * duty_cycle + low_voltage * (1 - duty_cycle)) / 2);
 }

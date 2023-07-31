@@ -2,8 +2,8 @@
 #define ARENA_H
 #include <iostream>
 #include <vector>
-#include "gridSquare.hh"
-#include "point.hh"
+#include "GridSquare.hh"
+#include "Point.hh"
 
 class Arena {
     public:
@@ -13,13 +13,13 @@ class Arena {
         void block(unsigned int x, unsigned int y);
         void unblock(unsigned int x, unsigned int y);
         void mark(unsigned int x, unsigned int y, char c);
-        std::vector<GridSquare*> getNeighbors(GridSquare* gridSquarePointer);
-        GridSquare* getGridSquare(unsigned int x, unsigned int y);
-        int getGridSquareCoordinates(GridSquare* gridSquarePointer, Point& coords);
-        int movementCostEstimate(GridSquare* orig, GridSquare* dest, int& cost);
-        int distanceBetween(GridSquare* orig, GridSquare* dest, int& distance);
-        int getHeight(){return height;}
-        int getWidth(){return width;}
+        std::vector<GridSquare*> get_neighbors(GridSquare* grid_square_pointer);
+        GridSquare* get_grid_square(unsigned int x, unsigned int y);
+        int get_grid_square_coordinates(GridSquare* grid_square_pointer, Point& coords);
+        int movement_cost_estimate(GridSquare* orig, GridSquare* dest, int& cost);
+        int distance_between(GridSquare* orig, GridSquare* dest, int& distance);
+        int get_height(){return height;}
+        int get_width(){return width;}
 
         friend std::ostream& operator<< (std::ostream& s, const Arena& arena);
 
@@ -27,7 +27,7 @@ class Arena {
         int height;
         int width;
         GridSquare *grid;
-        int calcOffset(unsigned int x, unsigned int y, size_t& offset);
-        int calcOffset(GridSquare* gridSquare, size_t& offset);
+        int calc_offset(unsigned int x, unsigned int y, size_t& offset);
+        int calc_offset(GridSquare* grid_square, size_t& offset);
 };
 #endif

@@ -5,9 +5,9 @@
 #define VEHICLE_CONTROLLER_HH
 
 #include <vector>
-#include "Guidance/include/point.hh"
-#include "Guidance/include/navigator.hh"
-#include "Control/include/differentialDriveController.hh"
+#include "Guidance/include/Point.hh"
+#include "Guidance/include/Navigator.hh"
+#include "Control/include/DifferentialDriveController.hh"
 
 #ifndef PI
 #define PI 3.141592653589793
@@ -15,39 +15,39 @@
 
 class VehicleController {
     public:
-    VehicleController(std::vector<Point>* waypointQueue,
+    VehicleController(std::vector<Point>* waypoint_queue,
                       Navigator& navigator,
-                      DifferentialDriveController& driveController,
+                      DifferentialDriveController& drive_controller,
                       double arrival_distance);
 
-    int getCurrentDestination(Point& currentDestination);
-    void setWayPointQueue( std::vector<Point>* waypointQueue );
-    void printDestination();
+    int get_current_destination(Point& current_destination);
+    void set_waypoint_queue( std::vector<Point>* waypoint_queue );
+    void print_destination();
     void update();
     void follow();
 
     // Homing Functions
     // Commands wheelbot to navigate to home
-    void gohome();
+    void go_home();
     // Returns the value of the variable endofWaypoints
-    bool getStatus();
+    bool get_status();
 
     private:
     // Do not allow the default constructor to be used.
     VehicleController();
 
-    std::vector<Point>* waypointQueue;
+    std::vector<Point>* waypoint_queue;
     std::vector<Point>::iterator destination;
     Point departure;
     Navigator& navigator;
-    DifferentialDriveController& driveController;
+    DifferentialDriveController& drive_controller;
 
     // Homing variables
     // Records if end of simulation
-    bool endofWaypoints;
+    bool end_of_waypoints;
     // Records if told to go home
-    bool homeCommanded;
+    bool home_commanded;
 
-    double arrivalDistance;
+    double arrival_distance;
 };
 #endif

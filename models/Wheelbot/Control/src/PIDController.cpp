@@ -15,7 +15,7 @@ PIDController::PIDController(double kp, double ki, double kd, double omax, doubl
   integration_enabled = true;
 }
 
-double PIDController::getOutput(double setpoint_value, double measured_value) {
+double PIDController::get_output(double setpoint_value, double measured_value) {
 
   double error_unfiltered = setpoint_value - measured_value;
 

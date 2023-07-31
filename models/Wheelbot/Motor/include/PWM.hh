@@ -12,23 +12,23 @@ class PWM {
 
   public:
 
-    double highVoltage;
-    double lowVoltage;
+    double high_voltage;
+    double low_voltage;
 
-    PWM( double HighVoltage,
-         double LowVoltage,
-         double DutyCycle);
+    PWM( double high_voltage,
+         double low_voltage,
+         double duty_cycle);
 
     ~PWM() {}
 
-    void   setDutyCycle( double DutyCycle);
-    double getDutyCycle() const;
-    double getAverageVoltage() const;
+    void   set_duty_cycle( double duty_cycle);
+    double get_duty_cycle() const;
+    double get_average_voltage() const;
 
   private:
 
     PWM(){};
-    double dutyCycle;
+    double duty_cycle;
 };
 
 #endif

@@ -1,60 +1,60 @@
 #include <math.h> // for: sqrt(), atan2(), cos(), and sin()
-#include "navigator.hh"
+#include "Navigator.hh"
 #include <iostream>
 
-void Navigator::setHeading(double h) {
+void Navigator::set_heading(double h) {
     heading = h;
 }
 
-void Navigator::setLocation(double x, double y) {
+void Navigator::set_location(double x, double y) {
     location.setX(x);
     location.setY(y);
 }
 
-double Navigator::distanceTo(Point& mapPoint ) {
+double Navigator::distance_to(Point& map_point ) {
 
-    double deltaX = location.getX() - mapPoint.getX();
-    double deltaY = location.getY() - mapPoint.getY();
+    double deltaX = location.getX() - map_point.getX();
+    double deltaY = location.getY() - map_point.getY();
     double distance = sqrt( deltaX * deltaX + deltaY * deltaY );
     return (distance) ;
 }
 
-double Navigator::bearingTo(Point& mapPoint ) {
+double Navigator::bearing_to(Point& map_point ) {
 
-    Point platformPoint = convertMapToPlatform(mapPoint);
-    Point bodyPoint = convertPlatformToBody(platformPoint);
-    double head2 = asin(bodyPoint.getY()/distanceTo(mapPoint) );
+    Point platform_point = convert_map_to_platform(map_point);
+    Point body_point = convert_platform_to_body(platform_point);
+    double head2 = asin(body_point.getY()/distance_to(map_point) );
     return head2;
 }
 
-Point Navigator::convertMapToPlatform(Point& mapPoint ) {
+Point Navigator::convert_map_to_platform(Point& map_point ) {
 
-    Point platformPoint;
-    platformPoint.setX(mapPoint.getX() - location.getX());
-    platformPoint.setY(mapPoint.getY() - location.getY());
-    return (platformPoint);
+    Point platform_point;
+    platform_point.setX(map_point.getX() - location.getX());
+    platform_point.setY(map_point.getY() - location.getY());
+    return (platform_point);
 }
 
-Point Navigator::convertPlatformToMap( Point& platformPoint ) {
+Point Navigator::convert_platform_to_map( Point& platform_point ) {
 
-    Point mapPoint;
-    mapPoint.setX(platformPoint.getX() + location.getX());
-    mapPoint.setY(platformPoint.getY() + location.getY());
-    return (mapPoint);
+    Point map_point;
+    map_point.setX(platform_point.getX() + location.getX());
+    map_point.setY(platform_point.getY() + location.getY());
+    return (map_point);
 }
 
-Point Navigator::convertPlatformToBody( Point& platformPoint ) {
+Point Navigator::convert_platform_to_body( Point& platform_point ) {
 
-    Point bodyPoint;
-    bodyPoint.setX(cos(heading) * platformPoint.getX() + sin(heading) * platformPoint.getY());
-    bodyPoint.setY(-sin(heading) * platformPoint.getX() + cos(heading) * platformPoint.getY());
-    return (bodyPoint);
+    Point body_point;
+    body_point.setX(cos(heading) * platform_point.getX() + sin(heading) * platform_point.getY());
+    body_point.setY(-sin(heading) * platform_point.getX() + cos(heading) * platform_point.getY());
+    return (body_point);
 }
 
-Point Navigator::convertBodyToPlatform( Point& bodyPoint ) {
+Point Navigator::convert_body_to_platform( Point& body_point ) {
 
-    Point platformPoint;
-    platformPoint.setX(cos(heading) * bodyPoint.getX() - sin(heading) * bodyPoint.getY());
-    platformPoint.setY(sin(heading) * bodyPoint.getX() + cos(heading) * bodyPoint.getY());
-    return (platformPoint);
+    Point platform_point;
+    platform_point.setX(cos(heading) * body_point.getX() - sin(heading) * body_point.getY());
+    platform_point.setY(sin(heading) * body_point.getX() + cos(heading) * body_point.getY());
+    return (platform_point);
 }

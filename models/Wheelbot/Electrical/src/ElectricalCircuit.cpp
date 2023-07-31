@@ -4,7 +4,7 @@
 #include "../../Battery/include/DCBattery.hh"
 
 ElectricalCircuit::ElectricalCircuit ()
-: motorsCurrent(0), motor1(0), motor2(0), battery(0) {
+: motors_current(0), motor1(0), motor2(0), battery(0) {
 
 }
 
@@ -17,7 +17,7 @@ void ElectricalCircuit :: init (DCMotor* motorOne, DCMotor* motorTwo, DCBattery*
 
 void ElectricalCircuit :: update ()
 {
-    motorsCurrent = motor1 -> getCurrentLoad() + motor2 -> getCurrentLoad();
-    battery->setCurrent(motorsCurrent);
+    motors_current = motor1 -> get_current_load() + motor2 -> get_current_load();
+    battery->set_current(motors_current);
 
 }

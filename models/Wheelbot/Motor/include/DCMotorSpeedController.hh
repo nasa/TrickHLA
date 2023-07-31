@@ -4,7 +4,7 @@
 #ifndef DC_MOTOR_SPEED_CONTROLLER_HH
 #define DC_MOTOR_SPEED_CONTROLLER_HH
 
-#include "motorSpeedController.hh"
+#include "MotorSpeedController.hh"
 #include "DCMotor.hh"
 
 class DCMotorSpeedController : public MotorSpeedController {
@@ -17,16 +17,16 @@ class DCMotorSpeedController : public MotorSpeedController {
 
     ~DCMotorSpeedController() {}
 
-    void setCommandedSpeed( double commandedSpeed );
-    double getMotorVoltage();
+    void set_commanded_speed( double commanded_speed );
+    double get_motor_voltage();
 
     private:
 
-    double motorVoltage;
+    double motor_voltage;
     DCMotor& motor;
     double gain;
-    const double& actualSpeed;
-    const double& supplyVoltage;
+    const double& actual_speed;
+    const double& supply_voltage;
 
     // Don't Allow the default constructor to be used.
     DCMotorSpeedController();

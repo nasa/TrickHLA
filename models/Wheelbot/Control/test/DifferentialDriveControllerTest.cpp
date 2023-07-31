@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #define private public
-#include "Control/include/testMotorController.hh"
-#include "Control/include/differentialDriveController.hh"
+#include "Control/include/TestMotorController.hh"
+#include "Control/include/DifferentialDriveController.hh"
 #include <algorithm>
 
 #ifndef PI
@@ -12,85 +12,85 @@
 /*
     Test Fixture.
 */
-class differentialDriveControllerTest : public ::testing::Test {
+class DifferentialDriveControllerTest : public ::testing::Test {
     protected:
 
-    TestMotorController* rightMotorController;
-    TestMotorController* leftMotorController;
-    DifferentialDriveController* driveController;
+    TestMotorController* right_motor_controller;
+    TestMotorController* left_motor_controller;
+    DifferentialDriveController* drive_controller;
 
-    differentialDriveControllerTest() {
-    rightMotorController =
+    DifferentialDriveControllerTest() {
+    right_motor_controller =
         new TestMotorController();
-    leftMotorController =
+    left_motor_controller =
         new TestMotorController();
-    driveController =
+    drive_controller =
         new DifferentialDriveController(0.183, 0.045, 8.880, 0.200,
-                *rightMotorController, *leftMotorController);
+                *right_motor_controller, *left_motor_controller);
     }
 
-    ~differentialDriveControllerTest() {
-        delete driveController;
-        delete rightMotorController;
-        delete leftMotorController;
+    ~DifferentialDriveControllerTest() {
+        delete drive_controller;
+        delete right_motor_controller;
+        delete left_motor_controller;
     }
 };
 
 TEST_F( differentialDriveControllerTest , constructor) {
 
-    EXPECT_NEAR(0.045, driveController->wheelRadius, FLOAT_TOLERANCE);
-    EXPECT_NEAR(0.183, driveController->distanceBetweenWheels, FLOAT_TOLERANCE);
-    EXPECT_NEAR(8.880, driveController->wheelRotationRateLimit, FLOAT_TOLERANCE);
-    EXPECT_NEAR(0.200, driveController->slowDownDistance, FLOAT_TOLERANCE);
+    EXPECT_NEAR(0.045, drive_controller->wheel_radius, FLOAT_TOLERANCE);
+    EXPECT_NEAR(0.183, drive_controller->distance_between_wheels, FLOAT_TOLERANCE);
+    EXPECT_NEAR(8.880, drive_controller->wheel_rotation_rate_limit, FLOAT_TOLERANCE);
+    EXPECT_NEAR(0.200, drive_controller->slow_down_distance, FLOAT_TOLERANCE);
 }
 
 TEST_F( differentialDriveControllerTest , setDistanceBetweenWheels ) {
 
     int result;
 
-    result = driveController->setDistanceBetweenWheels(0.1);
+    result = drive_controller->set_distance_between_wheels(0.1);
     EXPECT_EQ(0,result);
-    EXPECT_NEAR(0.1, driveController->distanceBetweenWheels, FLOAT_TOLERANCE);
+    EXPECT_NEAR(0.1, drive_controller->distance_between_wheels, FLOAT_TOLERANCE);
 
-    result = driveController->setDistanceBetweenWheels(0.2);
+    result = drive_controller->set_distance_between_wheels(0.2);
     EXPECT_EQ(0,result);
-    EXPECT_NEAR(0.2, driveController->distanceBetweenWheels, FLOAT_TOLERANCE);
+    EXPECT_NEAR(0.2, drive_controller->distance_between_wheels, FLOAT_TOLERANCE);
 
-    result = driveController->setDistanceBetweenWheels(-0.3);
+    result = drive_controller->set_distance_between_wheels(-0.3);
     EXPECT_EQ(1,result);
-    EXPECT_NEAR(0.2, driveController->distanceBetweenWheels, FLOAT_TOLERANCE);
+    EXPECT_NEAR(0.2, drive_controller->distance_between_wheels, FLOAT_TOLERANCE);
 }
 
 TEST_F( differentialDriveControllerTest , setWheelRadius ) {
 
     int result;
-    result = driveController->setWheelRadius(0.059);
+    result = drive_controller->set_wheel_radius(0.059);
     EXPECT_EQ(0,result);
-    EXPECT_NEAR(0.059, driveController->wheelRadius, FLOAT_TOLERANCE);
+    EXPECT_NEAR(0.059, drive_controller->wheel_radius, FLOAT_TOLERANCE);
 
-    result = driveController->setWheelRadius(0.083);
+    result = drive_controller->set_wheel_radius(0.083);
     EXPECT_EQ(0,result);
-    EXPECT_NEAR(0.083, driveController->wheelRadius, FLOAT_TOLERANCE);
+    EXPECT_NEAR(0.083, drive_controller->wheel_radius, FLOAT_TOLERANCE);
 
-    result = driveController->setWheelRadius(-0.075);
+    result = drive_controller->set_wheel_radius(-0.075);
     EXPECT_EQ(1,result);
-    EXPECT_NEAR(0.083, driveController->wheelRadius, FLOAT_TOLERANCE);
+    EXPECT_NEAR(0.083, drive_controller->wheel_radius, FLOAT_TOLERANCE);
 }
 
 TEST_F( differentialDriveControllerTest , setWheelRotationRateLimit ) {
 
     int result;
-    result = driveController->setWheelRotationRateLimit(7.123);
+    result = drive_controller->set_wheel_rotation_rate_limit(7.123);
     EXPECT_EQ(0,result);
-    EXPECT_NEAR(7.123, driveController->wheelRotationRateLimit, FLOAT_TOLERANCE);
+    EXPECT_NEAR(7.123, drive_Controller->wheel_rotation_rate_limit, FLOAT_TOLERANCE);
 
-    result = driveController->setWheelRotationRateLimit(5.234);
+    result = drive_controller->set_wheel_rotation_rate_limit(5.234);
     EXPECT_EQ(0,result);
-    EXPECT_NEAR(5.234, driveController->wheelRotationRateLimit, FLOAT_TOLERANCE);
+    EXPECT_NEAR(5.234, drive_controller->wheel_rotation_rate_limit, FLOAT_TOLERANCE);
 
-    result = driveController->setWheelRotationRateLimit(-4.987);
+    result = drive_controller->set_wheel_rotation_rate_limit(-4.987);
     EXPECT_EQ(1,result);
-    EXPECT_NEAR(5.234, driveController->wheelRotationRateLimit, FLOAT_TOLERANCE);
+    EXPECT_NEAR(5.234, drive_controller->wheel_rotation_rate_limit, FLOAT_TOLERANCE);
 }
 
 TEST_F( differentialDriveControllerTest , PositiveRangeErrorOnly) {
@@ -100,15 +100,15 @@ TEST_F( differentialDriveControllerTest , PositiveRangeErrorOnly) {
 
     double distance_err = 1.0;
     double heading_err  = 0.0;
-    driveController->update(distance_err, heading_err);
+    drive_controller->update(distance_err, heading_err);
 
-    double rightMotorSpeedCommand, leftMotorSpeedCommand;
-    driveController->getCommandedMotorSpeeds(leftMotorSpeedCommand, rightMotorSpeedCommand);
+    double right_motor_speed_command, left_motor_speed_command;
+    drive_controller->get_commanded_motor_speeds(left_motor_speed_command, right_motor_speed_command);
 
     // the speeds should be the same
-    EXPECT_NEAR(rightMotorSpeedCommand, leftMotorSpeedCommand, FLOAT_TOLERANCE);
+    EXPECT_NEAR(right_motor_speed_command, left_motor_speed_command, FLOAT_TOLERANCE);
     // and equal to the setWheelRotationRateLimit.
-    EXPECT_NEAR(rightMotorSpeedCommand, 8.880, FLOAT_TOLERANCE);
+    EXPECT_NEAR(right_motor_speed_command, 8.880, FLOAT_TOLERANCE);
 }
 
 TEST_F( differentialDriveControllerTest , positiveHeadingError ) {
@@ -116,43 +116,43 @@ TEST_F( differentialDriveControllerTest , positiveHeadingError ) {
     // If the heading error is positive, then we should turn to the right,
     // meaning that the left wheel should move faster than the right wheel.
 
-    double rightMotorSpeedCommand, leftMotorSpeedCommand;
+    double right_motor_speed_command, left_motor_speed_command;
 
-    driveController->update(0.0, 0.1*(PI/180.0));
-    driveController->getCommandedMotorSpeeds(leftMotorSpeedCommand, rightMotorSpeedCommand);
-    EXPECT_GT(leftMotorSpeedCommand, rightMotorSpeedCommand);
+    drive_controller->update(0.0, 0.1*(PI/180.0));
+    drive_controller->get_commanded_motor_speeds(left_motor_speed_command, right_motor_speed_command);
+    EXPECT_GT(left_motor_speed_command, right_motor_speed_command);
 
-    driveController->update(50.0, 30*(PI/180.0));
-    driveController->getCommandedMotorSpeeds(leftMotorSpeedCommand, rightMotorSpeedCommand);
-    EXPECT_GT(leftMotorSpeedCommand, rightMotorSpeedCommand);
+    drive_controller->update(50.0, 30*(PI/180.0));
+    drive_controller->get_commanded_motor_speeds(left_motor_speed_command, right_motor_speed_command);
+    EXPECT_GT(left_motor_speed_command, right_motor_speed_command);
 
-    driveController->update(100.0, 60*(PI/180.0));
-    driveController->getCommandedMotorSpeeds(leftMotorSpeedCommand, rightMotorSpeedCommand);
-    EXPECT_GT(leftMotorSpeedCommand, rightMotorSpeedCommand);
+    drive_controller->update(100.0, 60*(PI/180.0));
+    drive_controller->get_commanded_motor_speeds(left_motor_speed_command, right_motor_speed_command);
+    EXPECT_GT(left_motor_speed_command, right_motor_speed_command);
 
-    driveController->update(0.0, 89*(PI/180.0));
-    driveController->getCommandedMotorSpeeds(leftMotorSpeedCommand, rightMotorSpeedCommand);
-    EXPECT_GT(leftMotorSpeedCommand, rightMotorSpeedCommand);
+    drive_controller->update(0.0, 89*(PI/180.0));
+    drive_controller->get_commanded_motor_speeds(left_motor_speed_command, right_motor_speed_command);
+    EXPECT_GT(left_motor_speed_command, right_motor_speed_command);
 
-    driveController->update(0.0, 90*(PI/180.0));
-    driveController->getCommandedMotorSpeeds(leftMotorSpeedCommand, rightMotorSpeedCommand);
-    EXPECT_GT(leftMotorSpeedCommand, rightMotorSpeedCommand);
+    drive_controller->update(0.0, 90*(PI/180.0));
+    drive_controller->get_commanded_motor_speeds(left_motor_speed_command, right_motor_speed_command);
+    EXPECT_GT(left_motor_speed_command, right_motor_speed_command);
 
-    driveController->update(50.0, 91*(PI/180.0));
-    driveController->getCommandedMotorSpeeds(leftMotorSpeedCommand, rightMotorSpeedCommand);
-    EXPECT_GT(leftMotorSpeedCommand, rightMotorSpeedCommand);
+    drive_controller->update(50.0, 91*(PI/180.0));
+    drive_controller->get_commanded_motor_speeds(left_motor_speed_command, right_motor_speed_command);
+    EXPECT_GT(left_motor_speed_command, right_motor_speed_command);
 
-    driveController->update(100.0, 120*(PI/180.0));
-    driveController->getCommandedMotorSpeeds(leftMotorSpeedCommand, rightMotorSpeedCommand);
-    EXPECT_GT(leftMotorSpeedCommand, rightMotorSpeedCommand);
+    drive_controller->update(100.0, 120*(PI/180.0));
+    drive_controller->get_commanded_motor_speeds(left_motor_speed_command, right_motor_speed_command);
+    EXPECT_GT(left_motor_speed_command, right_motor_speed_command);
 
-    driveController->update(0.0, 150*(PI/180.0));
-    driveController->getCommandedMotorSpeeds(leftMotorSpeedCommand, rightMotorSpeedCommand);
-    EXPECT_GT(leftMotorSpeedCommand, rightMotorSpeedCommand);
+    drive_controller->update(0.0, 150*(PI/180.0));
+    drive_controller->get_commanded_motor_speeds(left_motor_speed_command, right_motor_speed_command);
+    EXPECT_GT(left_motor_speed_command, right_motor_speed_command);
 
-    driveController->update(50.0, 179*(PI/180.0));
-    driveController->getCommandedMotorSpeeds(leftMotorSpeedCommand, rightMotorSpeedCommand);
-    EXPECT_GT(leftMotorSpeedCommand, rightMotorSpeedCommand);
+    drive_controller->update(50.0, 179*(PI/180.0));
+    drive_controller->get_commanded_motor_speeds(left_motor_speed_command, right_motor_speed_command);
+    EXPECT_GT(left_motor_speed_command, right_motor_speed_command);
 }
 
 TEST_F( differentialDriveControllerTest, negativeHeadingError ) {
@@ -162,11 +162,11 @@ TEST_F( differentialDriveControllerTest, negativeHeadingError ) {
 
     double distance_err = 0.0;
     double heading_err  = -30*(PI/180.0);
-    driveController->update(distance_err, heading_err);
+    drive_controller->update(distance_err, heading_err);
 
-    double rightMotorSpeedCommand, leftMotorSpeedCommand;
-    driveController->getCommandedMotorSpeeds(leftMotorSpeedCommand, rightMotorSpeedCommand);
-    EXPECT_GT(rightMotorSpeedCommand, leftMotorSpeedCommand);
+    double right_motor_speed_command, left_motor_speed_command;
+    drive_controller->get_commanded_motor_speeds(left_motor_speed_command, right_motor_speed_command);
+    EXPECT_GT(right_motor_speed_command, left_motor_speed_command);
 }
 
 

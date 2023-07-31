@@ -2,4 +2,4 @@
 
 Motor::Motor () {}
 Motor::~Motor() {}
-double Motor::getActualSpeed() {return 0;}
+double Motor::get_actual_speed() {return 0;}

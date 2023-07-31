@@ -3,69 +3,68 @@
 /*************************************************************************
 PURPOSE: ()
 **************************************************************************/
-#include "Guidance/include/point.hh"
-#include "Control/include/vehicleController.hh"
-#include "Control/include/differentialDriveController.hh"
+#include "Guidance/include/Point.hh"
+#include "Control/include/VehicleController.hh"
+#include "Control/include/DifferentialDriveController.hh"
 #include "Motor/include/DCMotorSpeedController.hh"
 #include <chrono>
 namespace TrickHLAModel
 {
 class VehicleOne {
     public:
-    std::vector<Point> waypointQueue;
+    std::vector<Point> waypoint_queue;
     Navigator *navigator;
-    MotorSpeedController* rightMotorController;
-    MotorSpeedController* leftMotorController;
-    DCMotor* rightDCMotor;
-    DCMotor* leftDCMotor;
+    MotorSpeedController* right_motor_controller;
+    MotorSpeedController* left_motor_controller;
+    DCMotor* right_DC_motor;
+    DCMotor* left_DC_motor;
 
-    DifferentialDriveController* driveController;
-    VehicleController* vehicleController;
+    DifferentialDriveController* drive_controller;
+    VehicleController* vehicle_controller;
     bool subscriber;
-    double distanceBetweenWheels;     /* m */
-    double wheelRadius;               /* m */
-    double vehicleMass;               /* kg */
-    double ZAxisMomentofInertia;
+    double distance_between_wheels;     /* m */
+    double wheel_radius;               /* m */
+    double vehicle_mass;               /* kg */
+    double z_axis_moment_of_inertia;
 
     // Vehicle Controller Parameters
-    double slowDownDistance;          /* m */
-    double arrivalDistance;           /* m */
-    double wheelSpeedLimit;           /* rad/s */
-    double headingRateLimit;          /* rad/s */
-    double wheelDragConstant;         /* -- */
-    double corningStiffness;          /* -- */
+    double slow_down_distance;          /* m */
+    double arrival_distance;           /* m */
+    double wheel_speed_limit;           /* rad/s */
+    double heading_rate_limit;          /* rad/s */
+    double wheel_drag_constant;         /* -- */
+    double corning_stiffness;          /* -- */
 
     // DCMotor Parameters
-    double DCMotorInternalResistance; /* ohm */
-    double DCMotorTorqueConstant;     /* N*m/amp */
+    double DC_motor_internal_resistance; /* ohm */
+    double DC_motor_torque_constant;     /* N*m/amp */
 
     double position[7];              /* m */
     double stcs[7];                  /* m */
-    double tracker[7];               /* m */
     double velocity[2];              /* m/s */
     double acceleration[2];          /* m/s2 */
 
     double heading;                  /* rad */
-    double headingRate;              /* rad/s */
-    double headingAccel;             /* rad/s2 */
+    double heading_rate;              /* rad/s */
+    double heading_accel;             /* rad/s2 */
 
-    double rightMotorSpeed;          /* rad/s */
-    double leftMotorSpeed;           /* rad/s */
+    double right_motor_speed;          /* rad/s */
+    double left_motor_speed;           /* rad/s */
 
     // Forces
-    double driveForce[2];            /* N */
-    double lateralTireForce[2];      /* N */
-    double rollingResistForce[2];    /* N */
-    double forceTotal[2];            /* N */
-    double vehicleZTorque;           /* N*m */
+    double drive_force[2];            /* N */
+    double lateral_tire_force[2];      /* N */
+    double rolling_resist_force[2];    /* N */
+    double force_total[2];            /* N */
+    double vehicle_Z_torque;           /* N*m */
 
-    double batteryVoltage;
+    double battery_voltage;
 
     // Homing Button Variables
     // Get input from Trick server client for homing
-    int homeCommanded;
+    int home_commanded;
     // If Wheelbot was homed and end of simulation
-    bool endofHoming;
+    bool end_of_homing;
 
     void add_waypoint(double x, double y);
 
@@ -74,9 +73,9 @@ class VehicleOne {
     void control();
     int state_deriv();
     int state_integ();
-    void printWaypoints();
-    void addWaypointFromSTCS();
-    void printStcs();
+    void print_waypoints();
+    void add_waypoint_from_stcs();
+    void print_stcs();
 
     };
 } // namespace TrickHLAModel

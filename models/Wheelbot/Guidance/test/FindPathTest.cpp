@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include "findpath.hh"
-#include "arena.hh"
+#include "FindPath.hh"
+#include "Arena.hh"
 #include <algorithm>
 #include <vector>
 
@@ -12,8 +12,8 @@ TEST(FindPathTest, FindPath_one)
  Arena* testarena;
  testarena = &arena;
 
- GridSquare *origin = arena.getGridSquare(2,1);
- GridSquare *goal = arena.getGridSquare(7,5);
+ GridSquare *origin = arena.get_grid_square(2,1);
+ GridSquare *goal = arena.get_grid_square(7,5);
 
  arena.block(7,4);
  arena.block(6,4);
@@ -41,8 +41,8 @@ TEST(FindPathTest, FindPath_two)
  Arena* testarena;
  testarena = &arena;
 
- GridSquare *origin = arena.getGridSquare(2,1);
- GridSquare *goal = arena.getGridSquare(7,5);
+ GridSquare *origin = arena.get_grid_square(2,1);
+ GridSquare *goal = arena.get_grid_square(7,5);
 
 
  arena.block(2,0);
@@ -75,8 +75,8 @@ TEST(FindPathTest, FindPath_three)
  Arena* testarena;
  testarena = &arena;
 
- GridSquare *origin = arena.getGridSquare(2,1);
- GridSquare *goal = arena.getGridSquare(2,1);
+ GridSquare *origin = arena.get_grid_square(2,1);
+ GridSquare *goal = arena.get_grid_square(2,1);
 
 
  arena.block(2,0);
@@ -109,8 +109,8 @@ TEST(FindPathTest, FindPath_four)
  Arena* testarena;
  testarena = &arena;
 
- GridSquare *origin = arena.getGridSquare(11,13);
- GridSquare *goal = arena.getGridSquare(2,1);
+ GridSquare *origin = arena.get_grid_square(11,13);
+ GridSquare *goal = arena.get_grid_square(2,1);
 
 
 
@@ -147,8 +147,8 @@ TEST(FindPathTest, FindPath_five)
  Arena* testarena;
  testarena = &arena;
 
- GridSquare *origin = arena.getGridSquare(2,1);
- GridSquare *goal = arena.getGridSquare(11,12);
+ GridSquare *origin = arena.get_grid_square(2,1);
+ GridSquare *goal = arena.get_grid_square(11,12);
 
 
  arena.block(2,0);

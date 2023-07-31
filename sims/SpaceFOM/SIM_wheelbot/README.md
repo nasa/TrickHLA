@@ -13,7 +13,7 @@ In the SIM\_wheelbot directory, type **trick-CP** to build the simulation execut
 === Trick build process complete ===
 ```
 
-Now **cd** into models/Graphics/ and type **make**. This builds the display client for the simulation. Then **cd** into models/guicontrol1 and type **make**. This builds the gui control that allows user to command the wheelbot to go to home point.
+Now **cd** into models/Wheelbot/Graphics/ and type **make**. This builds the display client for the simulation. Then **cd** into models/Wheelbot/guicontrol1 and type **make**. This builds the gui control that allows user to command the wheelbot to go to home point.
 
 ### Running the Simulation
 In the SIM_wheelbot directory:

@@ -61,7 +61,12 @@ class Feature {
 
     public boolean isReached(double N, double W){
         // Assuming a tolerance of 0.1 for comparison
-        double tolerance = 0.4;
+        //double tolerance = 0.1;
+
+        // Run_mouse2 is following RUN_mouse1, and so might not arrive 
+        // exactly at the waypoint, but very close. Increasing the tolerance
+        // helps the waypoint images disappear.
+        double tolerance = 0.4; 
 
         // Check if the distance between the given N and W values
         // and the current north and west values of the waypoint
@@ -311,7 +316,7 @@ public class EVDisplay extends JFrame {
                            "trick.var_add(\"veh.vehicle.heading\") \n" + 
                            "trick.var_add(\"veh.vehicle.stcs[0]\") \n" +
                            "trick.var_add(\"veh.vehicle.stcs[1]\") \n" +
-                           "trick.var_add(\"veh.vehicle.stcs[2]\") \n" + 
+                           "trick.var_add(\"veh.vehicle.stcs[3]\") \n" + 
                            "trick.var_ascii() \n" +
                            "trick.var_cycle(0.1) \n" +
                            "trick.var_unpause() \n" );

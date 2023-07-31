@@ -12,9 +12,9 @@ class Motor
 
     Motor ();
 
-    virtual void update (const PWM& PulseWidth) = 0;
+    virtual void update (const PWM& pulse_width) = 0;
     virtual ~Motor();
 
-    virtual double getActualSpeed ();
+    virtual double get_actual_speed ();
 };
 #endif

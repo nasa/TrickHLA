@@ -17,7 +17,7 @@ public:
     void init (DCMotor* motor1, DCMotor* motor2, DCBattery* battery);
     void update();
 private:
-    double motorsCurrent;
+    double motors_current;
 
 };
 

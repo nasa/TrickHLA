@@ -2,7 +2,7 @@
 PURPOSE:
     ( Simulate a two-wheeled robot which travels to predetermined waypoints. )
 LIBRARY DEPENDENCIES:
-    ((Vehicle/src/vehicleOne.cpp)
+    ((Vehicle/src/VehicleOne.cpp)
     (Control/src/PIDController.cpp))
 *************************************************************/
 //==========================================================================
@@ -33,7 +33,7 @@ LIBRARY DEPENDENCIES:
 #define P_HLA_EARLY  1     // HLA early job phase.
 #define P_HLA_LATE   65534 // HLA late job phase.
 
-##include "Vehicle/include/vehicleOne.hh"
+##include "Vehicle/include/VehicleOne.hh"
 ##include "trick/integrator_c_intf.h"
 
 ##include "TrickHLA/Manager.hh"
@@ -45,7 +45,7 @@ LIBRARY DEPENDENCIES:
 //==========================================================================
 // SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
 //==========================================================================
-#include "S_modules/SpaceFOM.sm"
+#include "SpaceFOM.sm"
 
 %header{
  using namespace TrickHLA;
@@ -118,7 +118,7 @@ class VehicleSimObject : public Trick::SimObject {
         ("default_data")     vehicle.default_data() ;
         ("initialization")   vehicle.state_init() ;
         (0.10, "scheduled")  vehicle.control();
-        (1.2, "scheduled")  vehicle.addWaypointFromSTCS();
+        (1.2, "scheduled")  vehicle.add_waypoint_from_stcs();
         ("derivative")       vehicle.state_deriv() ;
         ("integration") trick_ret = vehicle.state_integ() ;
       

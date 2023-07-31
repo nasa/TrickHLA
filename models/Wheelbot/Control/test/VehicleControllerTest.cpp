@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #define private public
-#include "Control/include/testMotorController.hh"
-#include "Control/include/vehicleController.hh"
+#include "Control/include/TestMotorController.hh"
+#include "Control/include/VehicleController.hh"
 #include <algorithm>
 
 #ifndef PI
@@ -12,32 +12,32 @@
 /*
 Test Fixture.
 */
-class vehicleControllerTest : public ::testing::Test {
+class VehicleControllerTest : public ::testing::Test {
     protected:
-    std::vector<Point> waypointQueue;
+    std::vector<Point> waypoint_queue;
     Navigator *navigator;
-    TestMotorController* rightMotorController;
-    TestMotorController* leftMotorController;
-    DifferentialDriveController* driveController;
-    VehicleController* vehicleController;
+    TestMotorController* right_motor_controller;
+    TestMotorController* left_motor_controller;
+    DifferentialDriveController* drive_controller;
+    VehicleController* vehicle_controller;
 
-    vehicleControllerTest() {
+    VehicleControllerTest() {
 
         Point waypoint(1.0, 3.0);
-        waypointQueue.push_back( waypoint);
+        waypoint_queue.push_back( waypoint);
 
-        Point initLocation(0.0, 0.0);
-        rightMotorController = new TestMotorController();
-        leftMotorController  = new TestMotorController();
-        driveController = new DifferentialDriveController(0.183, 0.045, 8.880, 0.200,
-                                                          *rightMotorController,
-                                                          *leftMotorController);
-        navigator = new Navigator(0.0, initLocation);
-        vehicleController = new VehicleController( &waypointQueue, *navigator, *driveController, 0.02);
+        Point init_location(0.0, 0.0);
+        right_motor_controller = new TestMotorController();
+        left_motor_controller  = new TestMotorController();
+        drive_controller = new DifferentialDriveController(0.183, 0.045, 8.880, 0.200,
+                                                          *right_motor_controller,
+                                                          *left_motor_controller);
+        navigator = new Navigator(0.0, init_location);
+        vehicle_controller = new VehicleController( &waypoint_queue, *navigator, *drive_controller, 0.02);
 
     }
 
-    ~vehicleControllerTest() {
+    ~VehicleControllerTest() {
         delete navigator;
         delete driveController;
     }
@@ -47,10 +47,10 @@ class vehicleControllerTest : public ::testing::Test {
 };
 
 
-TEST_F( vehicleControllerTest , one ) {
+TEST_F( VehicleControllerTest , one ) {
 
     Point current_destination;
-    int result = vehicleController->getCurrentDestination(current_destination);
+    int result = vehicle_controller->get_current_destination(current_destination);
     EXPECT_EQ(result, 0);
     EXPECT_EQ(current_destination.x, 1);
     EXPECT_EQ(current_destination.y, 3);

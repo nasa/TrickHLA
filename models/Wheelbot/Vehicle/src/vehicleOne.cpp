@@ -1,17 +1,17 @@
 /********************************* TRICK HEADER *******************************
 PURPOSE: ( Simulate a two wheeled robotic vehicle.)
 LIBRARY DEPENDENCY:
-    ((vehicleOne.o)
-     (Control/src/vehicleController.o)
-     (Control/src/differentialDriveController.o)
+    ((VehicleOne.o)
+     (Control/src/VehicleController.o)
+     (Control/src/DifferentialDriveController.o)
      (Motor/src/DCMotorSpeedController.o)
      (Motor/src/DCMotor.o))
 PROGRAMMERS:
     (((John M. Penn) (L3 Communications) (June 2015) (Trick Refresher Project)))
     (((Andrew W. Young) (NASA/ER7) (July 2023) (--) (TrickHLA familiarization project.)))
 *******************************************************************************/
-#include "Vehicle/include/vehicleOne.hh"
-#include "Guidance/include/navigator.hh"
+#include "Vehicle/include/VehicleOne.hh"
+#include "Guidance/include/Navigator.hh"
 #include "trick/MemoryManager.hh"
 #include <iostream>
 #include <math.h>
@@ -22,35 +22,35 @@ extern Trick::MemoryManager* trick_MM;
 
 int VehicleOne::default_data() {
 
-    distanceBetweenWheels = 0.183;
-    wheelRadius = 0.045;
-    vehicleMass  = 2.0;
-    double axelRadius = 0.5 * distanceBetweenWheels;
-    ZAxisMomentofInertia = 0.5 * vehicleMass * axelRadius * axelRadius;
+    distance_between_wheels = 0.183;
+    wheel_radius = 0.045;
+    vehicle_mass  = 2.0;
+    double axel_radius = 0.5 * distance_between_wheels;
+    z_axis_moment_of_inertia = 0.5 * vehicle_mass * axel_radius * axel_radius;
 
     // Vehicle Controller Parameters
-    slowDownDistance = 0.75;
+    slow_down_distance = 0.75;
     if(subscriber){
-        arrivalDistance = 0.4;
+        arrival_distance = 0.4;
     }else{
-        arrivalDistance  = 0.1;
+        arrival_distance  = 0.1;
     }
-    wheelSpeedLimit = 8.880;
-    headingRateLimit = M_PI/4;
+    wheel_speed_limit = 8.880;
+    heading_rate_limit = M_PI/4;
 
     // DCMotor Parameters
     // At 5v the following parameters will result in a current of
     // 0.5 amperes, and a torque of 0.5 x 0.15 = 0.075 Newton-meters.
-    DCMotorInternalResistance = 10.0; // Ohms
-    DCMotorTorqueConstant     = 0.15; // Newton-meters / Ampere
+    DC_motor_internal_resistance = 10.0; // Ohms
+    DC_motor_torque_constant     = 0.15; // Newton-meters / Ampere
 
    // Assuming torque = 0.075 Nm, then the wheel force due to
    // torque = 0.075 Nm / 0.045 = 1.67N. If we want the wheel force
    // to be 0 when wheel speed = 0.4 m/s
    // 0.075 = wheelDragConstant * 0.4
    // wheelDragConstant = 0.075/0.4 = 1.875
-    wheelDragConstant  = 1.875;
-    corningStiffness = 10.0;
+    wheel_drag_constant  = 1.875;
+    corning_stiffness = 10.0;
 
     // SpaceTimeCoordinateState - 3 dimenstions of translational, 3 of rotational, and 1 of time. 
     // Really only using first two dimensions (x,y coordinates) for Wheelbot sim.
@@ -62,8 +62,8 @@ if(!subscriber){
     position[0] = 1.0;
     position[1] = -1.5;
 }
-    position[2] = 0.0; // z-coordinate, in this sim, using this to share heading across RTI.
-    position[3] = 0.0; // rotational
+    position[2] = 0.0; // z-coordinate 
+    position[3] = 0.0; // rotational , using this to share heading across RTI.
     position[4] = 0.0; // rotational
     position[5] = 0.0; // rotational
     position[6] = 0.0; // time
@@ -81,16 +81,6 @@ if(!subscriber){
     stcs[5] = 0.0; // rotational
     stcs[6] = 0.0; // time
 
-    // Place for publisher to store other wheelbot's location to be used for updating the graphics 
-    // display.
-    tracker[0] = 0.0;
-    tracker[1] = 0.0;
-    tracker[2] = 0.0;
-    tracker[3] = 0.0;
-    tracker[4] = 0.0;
-    tracker[5] = 0.0;
-    tracker[6] = 0.0;
-
     velocity[0] = 0.0;
     velocity[1] = 0.0;
 
@@ -98,18 +88,18 @@ if(!subscriber){
     acceleration[1] = 0.0;
 
     heading     = 0.0;
-    headingRate = 0.0;
-    headingAccel = 0.0;
+    heading_rate = 0.0;
+    heading_accel = 0.0;
 
     // Feedback to Motors
-    rightMotorSpeed = 0.0;
-    leftMotorSpeed  = 0.0;
+    right_motor_speed = 0.0;
+    left_motor_speed  = 0.0;
 
-    batteryVoltage  = 5.0;
+    battery_voltage  = 5.0;
 
     // Initialize homing variables
-    homeCommanded = 0;
-    endofHoming = false;
+    home_commanded = 0;
+    end_of_homing = false;
 
     return 0;
 }
@@ -117,49 +107,49 @@ if(!subscriber){
 int VehicleOne::state_init() {
 
 
-    Point initLocation( position[0],
+    Point init_location( position[0],
                         position[1]);
 
-    rightDCMotor = new DCMotor( DCMotorInternalResistance, DCMotorTorqueConstant );
-    leftDCMotor  = new DCMotor( DCMotorInternalResistance, DCMotorTorqueConstant );
+    right_DC_motor = new DCMotor( DC_motor_internal_resistance, DC_motor_torque_constant );
+    left_DC_motor  = new DCMotor( DC_motor_internal_resistance, DC_motor_torque_constant );
 
     // Note that right and left motor speeds are passed by reference.
-    rightMotorController = new DCMotorSpeedController(*rightDCMotor, .3, rightMotorSpeed, batteryVoltage );
-    leftMotorController  = new DCMotorSpeedController(*leftDCMotor,  .3, leftMotorSpeed,  batteryVoltage);
+    right_motor_controller = new DCMotorSpeedController(*right_DC_motor, .3, right_motor_speed, battery_voltage );
+    left_motor_controller  = new DCMotorSpeedController(*left_DC_motor,  .3, left_motor_speed,  battery_voltage);
 
-    driveController =
-        new DifferentialDriveController(distanceBetweenWheels,
-                                        wheelRadius,
-                                        wheelSpeedLimit,
-                                        headingRateLimit,
-                                        slowDownDistance,
-                                        *rightMotorController,
-                                        *leftMotorController);
+    drive_controller =
+        new DifferentialDriveController(distance_between_wheels,
+                                        wheel_radius,
+                                        wheel_speed_limit,
+                                        heading_rate_limit,
+                                        slow_down_distance,
+                                        *right_motor_controller,
+                                        *left_motor_controller);
 
     navigator =
-        new Navigator(heading, initLocation);
+        new Navigator(heading, init_location);
     
 
-    vehicleController =
-        new VehicleController( &waypointQueue, *navigator, *driveController, arrivalDistance);
+    vehicle_controller =
+        new VehicleController( &waypoint_queue, *navigator, *drive_controller, arrival_distance);
 
     // Register pointers with Trick Memory Manager
     trick_MM->declare_extern_var(navigator, "Navigator");
-    trick_MM->declare_extern_var(rightDCMotor, "DCMotor");
-    trick_MM->declare_extern_var(leftDCMotor, "DCMotor");
-    trick_MM->declare_extern_var(rightMotorController, "DCMotorSpeedController");
-    trick_MM->declare_extern_var(leftMotorController, "DCMotorSpeedController");
-    trick_MM->declare_extern_var(driveController, "DifferentialDriveController");
-    trick_MM->declare_extern_var(vehicleController, "VehicleController");
+    trick_MM->declare_extern_var(right_DC_motor, "DCMotor");
+    trick_MM->declare_extern_var(left_DC_motor, "DCMotor");
+    trick_MM->declare_extern_var(right_motor_controller, "DCMotorSpeedController");
+    trick_MM->declare_extern_var(left_motor_controller, "DCMotorSpeedController");
+    trick_MM->declare_extern_var(drive_controller, "DifferentialDriveController");
+    trick_MM->declare_extern_var(vehicle_controller, "VehicleController");
 
     return (0);
 }
 
 // Add waypoints to the waypoint queue
 void VehicleOne::add_waypoint(double x, double y) {
-    Point wayPoint(x, y);
-    waypointQueue.push_back(wayPoint);
-    printWaypoints();
+    Point waypoint(x, y);
+    waypoint_queue.push_back(waypoint);
+    print_waypoints();
     
 }
 
@@ -168,21 +158,21 @@ void VehicleOne::add_waypoint(double x, double y) {
 void VehicleOne::control() {
 
     // Perfect Sensors for now.
-    navigator->setHeading(heading);
-    navigator->setLocation(position[0], position[1]);
+    navigator->set_heading(heading);
+    navigator->set_location(position[0], position[1]);
 
-    position[2] = heading;
+    position[3] = heading;
 
     // Check to see if the variable server client input for homeCommanded has been activated
     // if so, go home and declare end of simulation
-    if (homeCommanded && !endofHoming) {
-        vehicleController->gohome();
-        endofHoming = true;
+    if (home_commanded && !end_of_homing) {
+        vehicle_controller->go_home();
+        end_of_homing = true;
     }
     if(!subscriber){
-        vehicleController->update();
+        vehicle_controller->update();
     }else{
-        vehicleController->follow();
+        vehicle_controller->follow();
     }
     
 }
@@ -203,64 +193,64 @@ int VehicleOne::state_deriv() {
    heading_unit[1] =  sin(heading);
 
    // Meters/second, positive forward
-   double turningSpeed = 0.5 * distanceBetweenWheels * headingRate;
+   double turning_speed = 0.5 * distance_between_wheels * heading_rate;
 
    // Motorspeed: (radians/second), positive counter-clockwise.
    // Feedback to the motor controllers.
-   rightMotorSpeed = -(speed + turningSpeed) / wheelRadius;
-   leftMotorSpeed  =  (speed - turningSpeed) / wheelRadius;
+   right_motor_speed = -(speed + turning_speed) / wheel_radius;
+   left_motor_speed  =  (speed - turning_speed) / wheel_radius;
 
 
    // Traction Force: Newtons positive forward
-   double leftWheelTractionForce  =  leftDCMotor->getTorque()  / wheelRadius;
-   double rightWheelTractionForce = -rightDCMotor->getTorque() / wheelRadius;
-   double driveForceMag = leftWheelTractionForce + rightWheelTractionForce;
+   double left_wheel_traction_force  =  left_DC_motor->get_torque()  / wheel_radius;
+   double right_wheel_traction_force = -right_DC_motor->get_torque() / wheel_radius;
+   double drive_force_mag = left_wheel_traction_force + right_wheel_traction_force;
 
    // Traction Torque
-   vehicleZTorque = (rightWheelTractionForce - leftWheelTractionForce) * (0.5 * distanceBetweenWheels) ;
+   vehicle_Z_torque = (right_wheel_traction_force - left_wheel_traction_force) * (0.5 * distance_between_wheels) ;
 
-   driveForce[0] = cos(heading) * driveForceMag;
-   driveForce[1] = sin(heading) * driveForceMag;
+   drive_force[0] = cos(heading) * drive_force_mag;
+   drive_force[1] = sin(heading) * drive_force_mag;
 
    // Lateral Tire (Turning) Force
    if (speed == 0.0) {
-       lateralTireForce[0] = 0.0;
-       lateralTireForce[1] = 0.0;
+       lateral_tire_force[0] = 0.0;
+       lateral_tire_force[1] = 0.0;
    } else {
-       double tireSlip[2];
-       tireSlip[0] = heading_unit[0] - velocity_unit[0];
-       tireSlip[1] = heading_unit[1] - velocity_unit[1];
+       double tire_slip[2];
+       tire_slip[0] = heading_unit[0] - velocity_unit[0];
+       tire_slip[1] = heading_unit[1] - velocity_unit[1];
 
-       lateralTireForce[0] = corningStiffness * tireSlip[0];
-       lateralTireForce[1] = corningStiffness * tireSlip[1];
+       lateral_tire_force[0] = corning_stiffness * tire_slip[0];
+       lateral_tire_force[1] = corning_stiffness * tire_slip[1];
    }
 
    // Rolling Tire Resistance Force
-   rollingResistForce[0] = -velocity[0] * wheelDragConstant;
-   rollingResistForce[1] = -velocity[1] * wheelDragConstant;
+   rolling_resist_force[0] = -velocity[0] * wheel_drag_constant;
+   rolling_resist_force[1] = -velocity[1] * wheel_drag_constant;
 
    // Total Body Force
-   forceTotal[0] = driveForce[0] + lateralTireForce[0] + rollingResistForce[0];
-   forceTotal[1] = driveForce[1] + lateralTireForce[1] + rollingResistForce[1];
+   force_total[0] = drive_force[0] + lateral_tire_force[0] + rolling_resist_force[0];
+   force_total[1] = drive_force[1] + lateral_tire_force[1] + rolling_resist_force[1];
 
    // Body Rotational Acceleration
-   headingAccel = vehicleZTorque / ZAxisMomentofInertia;
+   heading_accel = vehicle_Z_torque / z_axis_moment_of_inertia;
 
    // If the simulation is at the end, the vehicle stops moving
-   if (vehicleController->getStatus() == true) {
-      forceTotal[0] = 0;
-      forceTotal[1] = 0;
-      rightMotorSpeed = 0;
-      leftMotorSpeed = 0;
+   if (vehicle_controller->get_status() == true) {
+      force_total[0] = 0;
+      force_total[1] = 0;
+      right_motor_speed = 0;
+      left_motor_speed = 0;
       velocity[0] = 0;
       velocity[1] = 0;
-      headingRate = 0;
-      headingAccel = 0;
+      heading_rate = 0;
+      heading_accel = 0;
    }
 
    // Body Linear Acceleration
-   acceleration[0] = forceTotal[0] / vehicleMass;
-   acceleration[1] = forceTotal[1] / vehicleMass;
+   acceleration[0] = force_total[0] / vehicle_mass;
+   acceleration[1] = force_total[1] / vehicle_mass;
 
    return 0;
 }
@@ -272,7 +262,7 @@ int VehicleOne::state_integ() {
 
     load_state(
                 &heading,
-                &headingRate,
+                &heading_rate,
                 &position[0],
                 &position[1],
                 &velocity[0],
@@ -281,8 +271,8 @@ int VehicleOne::state_integ() {
               );
 
     load_deriv(
-                &headingRate,
-                &headingAccel,
+                &heading_rate,
+                &heading_accel,
                 &velocity[0],
                 &velocity[1],
                 &acceleration[0],
@@ -294,7 +284,7 @@ int VehicleOne::state_integ() {
 
     unload_state(
                 &heading,
-                &headingRate,
+                &heading_rate,
                 &position[0],
                 &position[1],
                 &velocity[0],
@@ -312,16 +302,16 @@ int VehicleOne::state_integ() {
 }
 
 // Prints out waypoint queue - useful for debugging.
-void VehicleOne::printWaypoints() {
+void VehicleOne::print_waypoints() {
     std::cout << "Waypoints:" << std::endl;
-    for (std::vector<Point>::iterator it = waypointQueue.begin(); it != waypointQueue.end(); ++it) {
+    for (std::vector<Point>::iterator it = waypoint_queue.begin(); it != waypoint_queue.end(); ++it) {
         Point& waypoint = *it;
         std::cout << "(" << waypoint.getX() << ", " << waypoint.getY() << ")" << std::endl;
     }
 }
 
 // Prints out STCS array - useful for debugging.
-void VehicleOne::printStcs(){
+void VehicleOne::print_stcs(){
     std::cout << "STCS Array:" << std::endl;
     for (int i = 0; i < 7; i++) {
         std::cout << "STCS[" << i << "]: " << stcs[i] << std::endl;
@@ -329,21 +319,21 @@ void VehicleOne::printStcs(){
 }
 
 // Adds waypoint to queue using position data received from publishing vehicle.
-void VehicleOne::addWaypointFromSTCS() {
-    double lastSTCS[2] = { 0.0, 0.0 };
+void VehicleOne::add_waypoint_from_stcs() {
+    double last_stcs[2] = { 0.0, 0.0 };
     // Read the first two elements of stcs
-    double currentSTCS[2];
-    currentSTCS[0] = stcs[0];
-    currentSTCS[1] = stcs[1];
+    double current_stcs[2];
+    current_stcs[0] = stcs[0];
+    current_stcs[1] = stcs[1];
 
     // Check if the current STCS values are new
-    if (currentSTCS[0] != lastSTCS[0] || currentSTCS[1] != lastSTCS[1]) {
+    if (current_stcs[0] != last_stcs[0] || current_stcs[1] != last_stcs[1]) {
         // Update the last stored STCS values
-        lastSTCS[0] = currentSTCS[0];
-        lastSTCS[1] = currentSTCS[1];
+        last_stcs[0] = current_stcs[0];
+        last_stcs[1] = current_stcs[1];
     
         // Add the waypoint using the new STCS values
-        add_waypoint(lastSTCS[0], lastSTCS[1]);
+        add_waypoint(last_stcs[0], last_stcs[1]);
     }
-    printStcs();
+    print_stcs();
 }

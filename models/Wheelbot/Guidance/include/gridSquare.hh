@@ -3,7 +3,7 @@
 
 class GridSquare {
     public:
-    bool isBlocked;
+    bool is_blocked;
     char mark;
     GridSquare* parent;
     int g_score;

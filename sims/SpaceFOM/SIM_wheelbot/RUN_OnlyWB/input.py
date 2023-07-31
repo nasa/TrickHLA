@@ -212,7 +212,7 @@ federate.set_lookahead_time( 0.250 )
 
 # Must specify the Least Common Time Step for all federates in the
 # federation execution.
-federate.set_least_common_time_step( 0.25 )
+federate.set_least_common_time_step( 250000 )
 
 # Set the amount of seconds used to 'pad' mode transitions.
 federate.set_time_padding( 2.0 )
@@ -328,40 +328,39 @@ except Exception as e:
 
 
 #==========================================
-# Start the display VarServer Client - commented out for HLA Version. 
-# Subscribing wheelbot generates a display showing both vehicles.
+# Start the display VarServer Client
 #==========================================
-""" varServerPort = trick.var_server_get_port();
-EVDisplay_path = "models/Graphics/dist/EVDisplay.jar"
+""" var_server_port = trick.var_server_get_port();
+EVDisplay_path = "../../../models/Wheelbot/Graphics/dist/EVDisplay.jar"
 
 if (os.path.isfile(EVDisplay_path)) :
     EVDisplay_cmd = "java -jar " \
                   + EVDisplay_path \
                   + " -v images/twoWheelRover.png" \
                   + " -w " + waypoints_path \
-                  + " " + str(varServerPort) + " &" ;
+                  + " " + str(var_server_port) + " &" ;
     print(EVDisplay_cmd)
     os.system( EVDisplay_cmd);
 else :
     print('==================================================================================')
-    print('EVDisplay needs to be built. Please \"cd\" into models/Graphics and type \"make\".')
+    print('EVDisplay needs to be built. Please \"cd\" into models/Wheelbot/Graphics and type \"make\".')
     print('==================================================================================') """
 
 #==========================================
 # Start the display VarServer Client
 #==========================================
-varServerPort = trick.var_server_get_port();
-HomeDisplay_path = "models/GUIControl1/dist/HomeDisplay.jar"
+var_server_port = trick.var_server_get_port();
+home_display_path = "../../../models/Wheelbot/GUIControl1/dist/HomeDisplay.jar"
 
-if (os.path.isfile(HomeDisplay_path)) :
-    HomeDisplay_cmd = "java -jar " \
-                  + HomeDisplay_path \
-                  + " " + str(varServerPort) + " &" ;
-    print(HomeDisplay_cmd)
-    os.system( HomeDisplay_cmd);
+if (os.path.isfile(home_display_path)) :
+    home_display_cmd = "java -jar " \
+                  + home_display_path \
+                  + " " + str(var_server_port) + " &" ;
+    print(home_display_cmd)
+    os.system( home_display_cmd);
 else :
     print('==================================================================================')
-    print('HomeDisplay needs to be built. Please \"cd\" into models/GUIControl1 and type \"make\".')
+    print('HomeDisplay needs to be built. Please \"cd\" into models/Wheelbot/GUIControl1 and type \"make\".')
     print('==================================================================================')
 
 #---------------------------------------------------------------------------

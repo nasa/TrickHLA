@@ -5,55 +5,55 @@ ServoSpeedController::ServoSpeedController(ServoMotor& Servo_Motor, char side):
 					  servo(Servo_Motor), _side(side)
 {};
 
-void ServoSpeedController::setCommandedSpeed (double commandedSpeed)
+void ServoSpeedController::set_commanded_speed (double commandedSpeed)
 {
-  double PulseWidth;
+  double pulse_width;
 
   if (_side == 'L')
   {
-    std::cout <<"The left wheel desired speed is: " << desiredspeed << std::endl;
+    std::cout <<"The left wheel desired speed is: " << desired_speed << std::endl;
 
-    PulseWidth = 9.1296697267545980e+001 * pow(desiredspeed,0)
-		+  1.3551549019843796e+000 * pow(desiredspeed,1)
-		+ -2.5748263162935388e-002 * pow(desiredspeed,2)
-		+ -3.7691759514032080e-003 * pow(desiredspeed,3)
-		+  3.8490572015823302e-004 * pow(desiredspeed,4)
-		+  4.5526955758039407e-005 * pow(desiredspeed,5)
-		+ -6.7622608926425730e-007 * pow(desiredspeed,6);
-    std::cout << "The pulse width for the side above is " << PulseWidth << std::endl;
+    pulse_width = 9.1296697267545980e+001 * pow(desired_speed,0)
+		+  1.3551549019843796e+000 * pow(desired_speed,1)
+		+ -2.5748263162935388e-002 * pow(desired_speed,2)
+		+ -3.7691759514032080e-003 * pow(desired_speed,3)
+		+  3.8490572015823302e-004 * pow(desired_speed,4)
+		+  4.5526955758039407e-005 * pow(desired_speed,5)
+		+ -6.7622608926425730e-007 * pow(desired_speed,6);
+    std::cout << "The pulse width for the side above is " << pulse_width << std::endl;
 
-    _PulseWidth = (int)PulseWidth;
+    _pulse_width = (int)pulse_width;
   }
   else if(_side == 'R')
   {
 
-    std::cout <<"The right wheel desired speed is: " << desiredspeed << std::endl;
+    std::cout <<"The right wheel desired speed is: " << desired_speed << std::endl;
 
-    PulseWidth = 9.1296697267545980e+001 * pow(desiredspeed,0)
-		  + -1.3551549019843796e+000 * pow(desiredspeed,1)
-		  + -2.5748263162935388e-002 * pow(desiredspeed,2)
-		  +  3.7691759514032080e-003 * pow(desiredspeed,3)
-		  +  3.8490572015823302e-004 * pow(desiredspeed,4)
-		  + -4.5526955758039407e-005 * pow(desiredspeed,5)
-		  + -6.7622608926425730e-007 * pow(desiredspeed,6);
-    std::cout << "The pulse width for the side above is " << PulseWidth << std::endl;
+    pulse_width = 9.1296697267545980e+001 * pow(desired_speed,0)
+		  + -1.3551549019843796e+000 * pow(desired_speed,1)
+		  + -2.5748263162935388e-002 * pow(desired_speed,2)
+		  +  3.7691759514032080e-003 * pow(desired_speed,3)
+		  +  3.8490572015823302e-004 * pow(desired_speed,4)
+		  + -4.5526955758039407e-005 * pow(desired_speed,5)
+		  + -6.7622608926425730e-007 * pow(desired_speed,6);
+    std::cout << "The pulse width for the side above is " << pulse_width << std::endl;
 
-    _PulseWidth = (int)PulseWidth;
+    _pulse_width = (int)pulse_width;
   }
 
-  if (_PulseWidth > 180)
+  if (_pulse_width > 180)
   {
-    _PulseWidth = 180;
+    _pulse_width = 180;
   }
-  else if (_PulseWidth < 0)
+  else if (_pulse_width < 0)
   {
-    _PulseWidth = 0;
+    _pulse_width = 0;
   }
 
   if (_side == 'L')
-    std::cout<<"Left Servo angle is: " << _PulseWidth <<std::endl;
+    std::cout<<"Left Servo angle is: " << _pulse_width <<std::endl;
   else if (_side == 'R')
-    std::cout<<"Right Servo angle is: "<< _PulseWidth <<std::endl;
+    std::cout<<"Right Servo angle is: "<< _pulse_width <<std::endl;
 
-  //return _PulseWidth;
+  //return _pulse_width;
 }
