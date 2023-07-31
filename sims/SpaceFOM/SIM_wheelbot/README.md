@@ -26,7 +26,9 @@ In the SIM_wheelbot directory:
 In order to run a federation, the user must have PitchRTI installed, as well as the latest version  of the NASA/TrickHLA repository from GitHub.com.
 Once you have the required software installed, you can test the simulation. 
 In the S_define file:
+
 Uncomment the line which says #define HLA.
+
 In the SIM_wheelbot directory, first type **make spotless** and then **trick-CP** again. Then:
 
 ```
@@ -38,6 +40,7 @@ After running a single wheelbot using HLA (RUN_test), we can now move on to buil
 
 ### Running the Wheelbot-Test Federation
 The SIM_Roles_Test RUN_mpr serves as the Master, Pacing, and Root Reference Frame Publisher (MPR) for the federation. Wheelbot-1 (RUN_wb1) publishes its location to the RTI as it navigates to its waypoints. Wheelbot-2 (RUN_wb2) creates its waypoints by subscribing to this location data, and follows Wheelbot-1 around. The graphics need to be rebuilt with the following lines uncommented:
+
 Feature vehicle2 = new Feature(0, 0, Math.toRadians(0), vehicleImageFile);
 featureList.add(vehicle2); 
 
