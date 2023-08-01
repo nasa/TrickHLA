@@ -191,6 +191,11 @@ THLA.federate.lookahead_time = 0.25 # this is THLA_DATA_CYCLE_TIME
 veh.vehicle.position[0] = -0.8
 veh.vehicle.position[1] = 0.0
 
+# Set the following wheelbot to move slightly slower than the leader, and slow down further away from waypoints.
+# This should prevent collision of the wheelbots.
+veh.vehicle.slow_down_distance = 1.0
+veh.vehicle.wheel_speed_limit = 8.0
+
 # Subscribe to TrickHLA Object 'Wheelbot_hla_entity' attribute 'state.'
 obj = TrickHLAObjectConfig(False,'Wheelbot_hla_entity','PhysicalEntity',None,None,None,None,False)
 

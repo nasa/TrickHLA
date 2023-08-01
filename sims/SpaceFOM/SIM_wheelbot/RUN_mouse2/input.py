@@ -129,7 +129,7 @@ trick.checkpoint_post_init(1)
 
 trick.exec_set_enable_freeze(True)
 trick.exec_set_freeze_command(True)
-trick.sim_control_panel_set_enabled(True)
+trick.sim_control_panel_set_enabled(False)
 trick.exec_set_stack_trace(True)
 
 
@@ -192,6 +192,11 @@ THLA.federate.lookahead_time = 0.25 # this is THLA_DATA_CYCLE_TIME
 veh.vehicle.position[0] = -0.8
 veh.vehicle.position[1] = 0.0
 
+# Set the following wheelbot to move slightly slower than the leader, and slow down further away from waypoints.
+# This should prevent collision of the wheelbots.
+veh.vehicle.slow_down_distance = 1.0
+veh.vehicle.wheel_speed_limit = 8.0
+
 # Subscribe to TrickHLA Object 'Wheelbot_hla_entity' attribute 'state.'
 obj = TrickHLAObjectConfig(False,'Wheelbot_hla_entity','PhysicalEntity',None,None,None,None,False)
 
@@ -200,6 +205,15 @@ att0 = TrickHLAAttributeConfig('state','veh.vehicle.stcs',False,True,False,trick
 obj.add_attribute(att0)
 
 federate.add_fed_object(obj)
+
+#==========================================
+# Add the waypoints to the SIM. For the subscriber, no
+# waypoints are necessary, just set veh.vehicle.subscriber to true.
+# Set a home point by adding it as the last waypoint.
+#==========================================
+waypoints_path = "Modified_data/cross.snackpoints"
+
+veh.vehicle.subscriber = True
 
 
 
@@ -212,7 +226,7 @@ EVDisplay_path = "../../../models/Wheelbot/Graphics/dist/EVDisplay.jar"
 if (os.path.isfile(EVDisplay_path)) :
     EVDisplay_cmd = "java -jar " \
                   + EVDisplay_path \
-                  + " -v images/twoWheelRover.png" \
+                  + " -v images/mouse_128x128.png" \
                   + " -w " + waypoints_path \
                   + " " + str(var_server_port) + " &" ;
     print(EVDisplay_cmd)

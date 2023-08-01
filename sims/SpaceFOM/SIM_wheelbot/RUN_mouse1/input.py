@@ -129,7 +129,7 @@ trick.checkpoint_post_init(1)
 
 trick.exec_set_enable_freeze(True)
 trick.exec_set_freeze_command(True)
-trick.sim_control_panel_set_enabled(True)
+trick.sim_control_panel_set_enabled(False)
 trick.exec_set_stack_trace(True)
 
 
@@ -222,7 +222,7 @@ EVDisplay_path = "../../../models/Wheelbot/Graphics/dist/EVDisplay.jar"
 if (os.path.isfile(EVDisplay_path)) :
     EVDisplay_cmd = "java -jar " \
                   + EVDisplay_path \
-                  + " -v images/twoWheelRover.png" \
+                  + " -v images/mouse_128x128.png" \
                   + " -w " + waypoints_path \
                   + " " + str(var_server_port) + " &" ;
     print(EVDisplay_cmd)

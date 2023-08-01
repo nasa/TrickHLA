@@ -30,11 +30,7 @@ int VehicleOne::default_data() {
 
     // Vehicle Controller Parameters
     slow_down_distance = 0.75;
-    if(subscriber){
-        arrival_distance = 0.4;
-    }else{
-        arrival_distance  = 0.1;
-    }
+    arrival_distance = 0.1;
     wheel_speed_limit = 8.880;
     heading_rate_limit = M_PI/4;
 
@@ -55,13 +51,9 @@ int VehicleOne::default_data() {
     // SpaceTimeCoordinateState - 3 dimenstions of translational, 3 of rotational, and 1 of time. 
     // Really only using first two dimensions (x,y coordinates) for Wheelbot sim.
     // These are needed to publish/subscribe the position data using TrickHLA.
-if(!subscriber){
+
     position[0] = 0.0; // x-coordinate
     position[1] = 0.0; // y-coordinate
-}else{
-    position[0] = 1.0;
-    position[1] = -1.5;
-}
     position[2] = 0.0; // z-coordinate 
     position[3] = 0.0; // rotational , using this to share heading across RTI.
     position[4] = 0.0; // rotational
@@ -149,8 +141,6 @@ int VehicleOne::state_init() {
 void VehicleOne::add_waypoint(double x, double y) {
     Point waypoint(x, y);
     waypoint_queue.push_back(waypoint);
-
-    
 }
 
 // Controls the vehicle. If the vehicle is the subscriber, it will follow the vehicle publishing its
