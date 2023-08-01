@@ -150,7 +150,8 @@ void VehicleOne::control() {
     // Perfect Sensors for now.
     navigator->set_heading(heading);
     navigator->set_location(position[0], position[1]);
-
+    
+    // Store heading in position array so it is published to the RTI.
     position[3] = heading;
 
     // Check to see if the variable server client input for homeCommanded has been activated
