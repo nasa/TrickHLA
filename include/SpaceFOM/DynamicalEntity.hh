@@ -71,10 +71,14 @@ class DynamicalEntity : public SpaceFOM::PhysicalEntity, public SpaceFOM::Dynami
    virtual ~DynamicalEntity(); // Destructor.
 
    // Initialize the packing object.
+   /*! @brief Set the reference to the physical entity data. */
+   virtual void initialize( );
+
+   // Initialize the packing object.
    /*! @brief Set the reference to the physical entity data.
     *  @param ref_frame_data_ptr Pointer to the RefFrameData instance. */
-   void initialize( PhysicalEntityData  * physical_data_ptr,
-                    DynamicalEntityData * dynamics_data_ptr );
+   virtual void initialize( PhysicalEntityData  * physical_data_ptr,
+                            DynamicalEntityData * dynamics_data_ptr );
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to pack the data before the data is sent to the RTI. */
@@ -89,6 +93,8 @@ class DynamicalEntity : public SpaceFOM::PhysicalEntity, public SpaceFOM::Dynami
    DynamicalEntityData *dynamical_data; ///< @trick_units{--} Dynamical entity data.
 
   private:
+   using PhysicalEntity::initialize; // Tell compiler we want all initialize functions.
+
    // This object is not copyable
    /*! @brief Copy constructor for DynamicalEntity class.
     *  @details This constructor is private to prevent inadvertent copies. */

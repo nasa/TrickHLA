@@ -70,9 +70,13 @@ class PhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
    virtual ~PhysicalEntity(); // Destructor.
 
    // Initialize the packing object.
+   /*! @brief Set the reference to the physical entity data. */
+   virtual void initialize( );
+
+   // Initialize the packing object.
    /*! @brief Set the reference to the physical entity data.
-    *  @param ref_frame_data_ptr Pointer to the RefFrameData instance. */
-   void initialize( PhysicalEntityData *physical_data_ptr );
+    *  @param physical_data_ptr Pointer to the PhysicalEntity data instance. */
+   virtual void initialize( PhysicalEntityData *physical_data_ptr );
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to pack the data before the data is sent to the RTI. */
@@ -81,6 +85,21 @@ class PhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
    // From the TrickHLA::Packing class.
    /*! @brief Called to unpack the data after data is received from the RTI. */
    virtual void unpack();
+
+   /*! @brief Set the reference to the physical entity data.
+    *  @param physical_data_ptr Pointer to the PhysicalEntity data instance. */
+   virtual void set_data( PhysicalEntityData *physical_data_ptr )
+   {
+      physical_data = physical_data_ptr;
+      return;
+   }
+
+   /*! @brief Get the reference to the physical entity data.
+    *  @return Pointer to the PhysicalEntity data. */
+   virtual PhysicalEntityData * get_data()
+   {
+      return( physical_data );
+   }
 
 
   protected:

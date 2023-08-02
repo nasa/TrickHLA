@@ -146,12 +146,12 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    double rot_accel[3];     ///< @trick_units{rad/s2} Angular body accels, body referenced (optional).
    double cm[3];            ///< @trick_units{m} Center of mass location in vehicle structural frame (required).
 
-   SpaceTimeCoordinateData &state;           ///< @trick_units{--} SpaceTimeCoordinate from encoder (required).
-   QuaternionData          &body_wrt_struct; ///< @trick_units{--} Attitude quaternion for body frame w.r.t. structural frame.(optional)
-
    // Instantiate the Space/Time Coordinate encoder
    SpaceTimeCoordinateEncoder stc_encoder;  ///< @trick_units{--} Entity state encoder.
    QuaternionEncoder          quat_encoder; ///< @trick_units{--} Attitude quaternion encoder.
+
+   SpaceTimeCoordinateData &state;           ///< @trick_units{--} SpaceTimeCoordinate from encoder (required).
+   QuaternionData          &body_wrt_struct; ///< @trick_units{--} Attitude quaternion for body frame w.r.t. structural frame.(optional)
 
   private:
    // This object is not copyable

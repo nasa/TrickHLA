@@ -1,7 +1,7 @@
 /*!
 @file SpaceFOM/PhysicalEntity.cpp
 @ingroup SpaceFOM
-@brief This class provides data packing for the SpaceFOM Reference Frames.
+@brief This class provides data packing for the SpaceFOM PhysicalEntities.
 
 @copyright Copyright 2019 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
@@ -15,7 +15,6 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{../TrickHLA/CompileConfig.cpp}
 @trick_link_dependency{../TrickHLA/Packing.cpp}
 @trick_link_dependency{PhysicalEntity.cpp}
 
@@ -76,13 +75,34 @@ PhysicalEntity::~PhysicalEntity() // RETURN: -- None.
 /*!
  * @job_class{initialization}
  */
-void PhysicalEntity::initialize(
-      PhysicalEntityData *physical_data_ptr )
+void PhysicalEntity::initialize()
 {
    ostringstream errmsg;
 
-   // Set the reference to the reference frame.
+   // Check to make sure the PhysicalEntity data is set.
    if ( physical_data == NULL ) {
+      errmsg << "SpaceFOM::PhysicalEntity::initialize():" << __LINE__
+             << " ERROR: Unexpected NULL PhysicalEntityData: " << this->name << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Mark this as initialized.
+   PhysicalEntityBase::initialize();
+
+   // Return to calling routine.
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void PhysicalEntity::initialize( PhysicalEntityData *physical_data_ptr )
+{
+   ostringstream errmsg;
+
+   // Set the reference to the PhysicalEntity data.
+   if ( physical_data_ptr == NULL ) {
       errmsg << "SpaceFOM::PhysicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL PhysicalEntityData: " << this->name << THLA_ENDL;
       // Print message and terminate.
@@ -91,7 +111,7 @@ void PhysicalEntity::initialize(
    this->physical_data = physical_data_ptr;
 
    // Mark this as initialized.
-   PhysicalEntityBase::initialize();
+   this->initialize();
 
    // Return to calling routine.
    return;
@@ -128,8 +148,6 @@ void PhysicalEntity::pack()
    }
 
    // Time tag for this state data.
-   // state.time = ref_frame->state.time;
-   //FIXME: Need to check if get_scenario_time is really what we want here?
    state.time = get_scenario_time();
 
    // Pack the body to structural reference frame attitude quaternion.
@@ -144,8 +162,8 @@ void PhysicalEntity::pack()
       cout << "PhysicalEntity::pack():" << __LINE__ << endl
            << "\tObject-Name: '" << object->get_name() << "'" << endl
            << "\tname:   '" << ( this->name != NULL ? this->name : "" ) << "'" << endl
-           << "\type:    '" << ( this->type != NULL ? this->type : "" ) << "'" << endl
-           << "\status:  '" << ( this->status != NULL ? this->status : "" ) << "'" << endl
+           << "\ttype:   '" << ( this->type != NULL ? this->type : "" ) << "'" << endl
+           << "\tstatus: '" << ( this->status != NULL ? this->status : "" ) << "'" << endl
            << "\tparent: '" << ( this->parent_ref_frame != NULL ? this->parent_ref_frame : "" ) << "'" << endl
            << "\ttime: " << state.time << endl
            << "\tposition: " << endl
@@ -160,7 +178,7 @@ void PhysicalEntity::pack()
            << endl;
    }
 
-   // Encode the data into the reference frame buffer.
+   // Encode the data into the buffer.
    stc_encoder.encode();
    quat_encoder.encode();
 
@@ -178,7 +196,7 @@ void PhysicalEntity::unpack()
            << " ERROR: The initialize() function has not been called!" << endl;
    }
 
-   // Use the HLA encoder helpers to decode the reference frame fixed record.
+   // Use the HLA encoder helpers to decode the PhysicalEntity fixed record.
    stc_encoder.decode();
    quat_encoder.decode();
 
@@ -198,7 +216,7 @@ void PhysicalEntity::unpack()
               << "\tObject-Name: '" << object->get_name() << "'" << endl
               << "\tname:   '" << ( this->name != NULL ? this->name : "" ) << "'" << endl
               << "\type:    '" << ( this->type != NULL ? this->type : "" ) << "'" << endl
-              << "\status:  '" << ( this->status != NULL ? this->status : "" ) << "'" << endl
+              << "\tstatus: '" << ( this->status != NULL ? this->status : "" ) << "'" << endl
               << "\tparent: '" << ( this->parent_ref_frame != NULL ? this->parent_ref_frame : "" ) << "'" << endl
               << "\ttime: " << state.time << endl
               << "\tposition: " << endl

@@ -15,7 +15,6 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{../TrickHLA/CompileConfig.cpp}
 @trick_link_dependency{../TrickHLA/Packing.cpp}
 @trick_link_dependency{PhysicalEntityBase.cpp}
 
@@ -70,6 +69,8 @@ PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
      type( NULL ),
      status( NULL ),
      parent_ref_frame( NULL ),
+     stc_encoder(),
+     quat_encoder(),
      state( stc_encoder.get_data() ),
      body_wrt_struct( quat_encoder.get_data() )
 {

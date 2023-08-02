@@ -15,7 +15,6 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{../TrickHLA/CompileConfig.cpp}
 @trick_link_dependency{../TrickHLA/Packing.cpp}
 @trick_link_dependency{DynamicalEntity.cpp}
 
@@ -76,6 +75,28 @@ DynamicalEntity::~DynamicalEntity() // RETURN: -- None.
 /*!
  * @job_class{initialization}
  */
+void DynamicalEntity::initialize()
+{
+   ostringstream errmsg;
+
+   // Check to make sure the DynamicalEntity data is set.
+   if ( dynamical_data == NULL ) {
+      errmsg << "SpaceFOM::DynamicalEntity::initialize():" << __LINE__
+             << " ERROR: Unexpected NULL DynamicalEntityData: " << this->name << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Mark this as initialized.
+   DynamicalEntityBase::initialize();
+
+   // Return to calling routine.
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
 void DynamicalEntity::initialize(
    PhysicalEntityData  * physical_data_ptr,
    DynamicalEntityData * dynamics_data_ptr  )
@@ -89,6 +110,7 @@ void DynamicalEntity::initialize(
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
+   this->dynamical_data = dynamics_data_ptr;
 
    // Mark this as initialized.
    PhysicalEntity::initialize(physical_data_ptr);
@@ -108,8 +130,8 @@ void DynamicalEntity::pack()
    if ( debug ) {
       cout.precision( 15 );
       cout << "DynamicalEntity::pack():" << __LINE__ << endl
-           << "\mass: " << mass << endl
-           << "\mass_rate: " << mass_rate << endl
+           << "\tmass: " << mass << endl
+           << "\tmass_rate: " << mass_rate << endl
            << "\tforce: " << endl
            << "\t\t" << force[0] << endl
            << "\t\t" << force[1] << endl
@@ -150,8 +172,8 @@ void DynamicalEntity::unpack()
       if ( debug ) {
          cout.precision( 15 );
          cout << "DynamicalEntity::pack():" << __LINE__ << endl
-              << "\mass: " << mass << endl
-              << "\mass_rate: " << mass_rate << endl
+              << "\tmass: " << mass << endl
+              << "\tmass_rate: " << mass_rate << endl
               << "\tforce: " << endl
               << "\t\t" << force[0] << endl
               << "\t\t" << force[1] << endl
