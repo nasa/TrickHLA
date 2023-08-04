@@ -294,25 +294,7 @@ void PhysicalEntity::unpack()
    // the state.  We always need to do this check because ownership transfers
    // could happen at any time or the data could be at a different rate.
 
-
-   if ( body_frame_attr->is_received() ) {
-
-      // Body to structure frame orientation.
-      physical_data->body_wrt_struct.scalar = body_wrt_struct.scalar;
-      for ( int iinc = 0; iinc < 3; ++iinc ) {
-         physical_data->body_wrt_struct.vector[iinc] = body_wrt_struct.vector[iinc];
-      }
-
-   }
-
-   // If the HLA attribute has changed and is remotely owned (i.e. is
-   // coming from another federate) then override our simulation state with the
-   // incoming value.  If we locally own the attribute then we do not want to
-   // override it's value.  If we did not do this check then we would be
-   // overriding state of something we own and publish with whatever value
-   // happen to be in the local variable, which would cause data corruption of
-   // the state.  We always need to do this check because ownership transfers
-   // could happen at any time or the data could be at a different rate.
+   // Unpack the space-time coordinate state data.
    if ( state_attr->is_received() ) {
 
       // Unpack the data.
@@ -385,20 +367,18 @@ void PhysicalEntity::unpack()
          if ( parent_frame[0] != '\0' ) {
             physical_data->parent_frame = trick_MM->mm_strdup( parent_frame );
          }
-         else{
-            physical_data->parent_frame = NULL;
-         }
       }
    }
 
-   if ( physical_data->parent_frame != NULL ) {
-      trick_MM->delete_var( (void *)physical_data->parent_frame );
-      physical_data->parent_frame = NULL;
-   }
-   if ( parent_frame != NULL ) {
-      if ( parent_frame[0] != '\0' ) {
-         physical_data->parent_frame = trick_MM->mm_strdup( parent_frame );
+   // Unpack the body to structural attitude data.
+   if ( body_frame_attr->is_received() ) {
+
+      // Body to structure frame orientation.
+      physical_data->body_wrt_struct.scalar = body_wrt_struct.scalar;
+      for ( int iinc = 0; iinc < 3; ++iinc ) {
+         physical_data->body_wrt_struct.vector[iinc] = body_wrt_struct.vector[iinc];
       }
+
    }
 
    // Print out debug information if desired.

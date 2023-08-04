@@ -105,6 +105,7 @@ void RefFrameState::initialize(
 
 void RefFrameState::pack()
 {
+   ostringstream errmsg;
    int iinc;
 
    // Check for initialization.
@@ -117,6 +118,41 @@ void RefFrameState::pack()
    // we do not need to check the ownership status of them here like we do
    // in the unpack() function, since we don't run the risk of corrupting our
    // state.
+
+   // Check for name change.
+   if ( ref_frame_data->name != NULL ) {
+      if ( strcmp(ref_frame_data->name, name) ){
+         trick_MM->delete_var( (void *)name );
+         name = trick_MM->mm_strdup( ref_frame_data->name  );
+      }
+   }
+   else {
+      errmsg << "SpaceFOM::RefFrameState::pack():" << __LINE__
+             << " ERROR: Unexpected NULL name for ReferenceFrame!" << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Check for parent frame change.
+   if ( ref_frame_data->parent_name != NULL ) {
+      if( parent_name != NULL ){
+         // We have a parent frame; so, check to see if frame names are different.
+         if ( strcmp(ref_frame_data->parent_name, parent_name) ){
+            // Frames are different, so reassign the new frame string.
+            trick_MM->delete_var( (void *)parent_name );
+            parent_name = trick_MM->mm_strdup( ref_frame_data->parent_name  );
+         }
+      }
+      else{
+         parent_name = trick_MM->mm_strdup( ref_frame_data->parent_name  );
+      }
+   }
+   else {
+      if( parent_name != NULL ){
+         trick_MM->delete_var( (void *)parent_name );
+         parent_name = NULL;
+      }
+   }
 
    // Pack the data.
    // Position and velocity vectors.
@@ -176,21 +212,41 @@ void RefFrameState::unpack()
    // happen to be in the local variable, which would cause data corruption of
    // the state.  We always need to do this check because ownership transfers
    // could happen at any time or the data could be at a different rate.
-   if ( ref_frame_attr->is_received() ) {
-      // Print out debug information if desired.
-      if ( debug ) {
-         cout.precision( 15 );
-         cout << "RefFrameState::unpack():" << __LINE__ << endl
-              << "\tObject-Name: '" << object->get_name() << "'" << endl
-              << "\tname: '" << ( this->name != NULL ? this->name : "" ) << "'" << endl
-              << "\tparent_name: '" << ( this->parent_name != NULL ? this->parent_name : "" ) << "'" << endl
-              << "\ttime: " << stc_data.time << endl
-              << "\tposition: " << endl
-              << "\t\t" << stc_data.pos[0] << endl
-              << "\t\t" << stc_data.pos[1] << endl
-              << "\t\t" << stc_data.pos[2] << endl
-              << endl;
+
+   // Set the reference frame name and parent frame name.
+   if ( name_attr->is_received() ) {
+      if ( ref_frame_data->name != NULL ) {
+         if ( !strcmp(ref_frame_data->name, name ) ){
+            trick_MM->delete_var( (void *)ref_frame_data->name );
+            ref_frame_data->name = trick_MM->mm_strdup( name );
+         }
       }
+      else {
+         ref_frame_data->name = trick_MM->mm_strdup( name );
+      }
+   }
+
+   if ( parent_name_attr->is_received() ) {
+      if ( ref_frame_data->parent_name != NULL ) {
+         if ( !strcmp(ref_frame_data->parent_name, parent_name ) ){
+            trick_MM->delete_var( (void *)ref_frame_data->parent_name );
+            if ( parent_name[0] != '\0' ) {
+               ref_frame_data->parent_name = trick_MM->mm_strdup( parent_name );
+            }
+            else{
+               ref_frame_data->parent_name = NULL;
+            }
+         }
+      }
+      else {
+         if ( parent_name[0] != '\0' ) {
+            ref_frame_data->parent_name = trick_MM->mm_strdup( parent_name );
+         }
+      }
+   }
+
+   // Unpack the s[ac
+   if ( state_attr->is_received() ) {
 
       // Unpack the data.
       // Position and velocity vectors.
@@ -208,22 +264,21 @@ void RefFrameState::unpack()
       this->time = stc_data.time;
       ref_frame_data->state.time = stc_data.time;
 
-      // Set the frame name and parent name.
-      if ( ref_frame_data->name != NULL ) {
-         free( ref_frame_data->name );
-         ref_frame_data->name = NULL;
-      }
-      ref_frame_data->name = strdup( this->name );
+   }
 
-      if ( ref_frame_data->parent_name != NULL ) {
-         free( ref_frame_data->parent_name );
-         ref_frame_data->parent_name = NULL;
-      }
-      if ( this->parent_name != NULL ) {
-         if ( this->parent_name[0] != '\0' ) {
-            ref_frame_data->parent_name = strdup( this->parent_name );
-         }
-      }
+   // Print out debug information if desired.
+   if ( debug ) {
+      cout.precision( 15 );
+      cout << "RefFrameState::unpack():" << __LINE__ << endl
+           << "\tObject-Name: '" << object->get_name() << "'" << endl
+           << "\tname: '" << ( this->name != NULL ? this->name : "" ) << "'" << endl
+           << "\tparent_name: '" << ( this->parent_name != NULL ? this->parent_name : "" ) << "'" << endl
+           << "\ttime: " << stc_data.time << endl
+           << "\tposition: " << endl
+           << "\t\t" << stc_data.pos[0] << endl
+           << "\t\t" << stc_data.pos[1] << endl
+           << "\t\t" << stc_data.pos[2] << endl
+           << endl;
    }
 
    return;

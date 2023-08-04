@@ -70,7 +70,9 @@ using namespace SpaceFOM;
 RefFrameBase::RefFrameBase()
    : debug( false ),
      initialized( false ),
-     ref_frame_attr( NULL ),
+     name_attr( NULL ),
+     parent_name_attr( NULL ),
+     state_attr( NULL ),
      time( 0.0 ),
      name( NULL ),
      parent_name( NULL ),
@@ -253,10 +255,14 @@ void RefFrameBase::initialize_callback(
    // We must call the original function so that the callback is initialized.
    this->TrickHLA::Packing::initialize_callback( obj );
 
-   // Get a reference to the TrickHLA::Attribute for the "state" FOM attribute.
+   // Get references to all the TrickHLA::Attribute for this object type.
    // We do this here so that we only do the attribute lookup once instead of
    // looking it up every time the unpack function is called.
-   ref_frame_attr = get_attribute_and_validate( "state" );
+   name_attr        = get_attribute_and_validate( "name" );
+   parent_name_attr = get_attribute_and_validate( "parent_name" );
+   state_attr       = get_attribute_and_validate( "state" );
+
+   return;
 }
 
 /*!

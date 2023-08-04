@@ -64,19 +64,8 @@ def parse_command_line( ) :
    # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
    index = 2
    while (index < argc) :
-      
-      if (str(argv[index]) == '--stop') :
-         index = index + 1
-         if (index < argc) :
-            run_duration = float(str(argv[index]))
-         else :
-            print('ERROR: Missing -stop [time] argument.')
-            print_usage = True
-            
-      elif (str(argv[index]) == '--nostop') :
-         run_duration = None
          
-      elif ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')) :
+      if ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')) :
          print_usage = True
       
       elif ((str(argv[index]) == '-de')) :
@@ -110,6 +99,17 @@ def parse_command_line( ) :
          else :
             print('ERROR: Missing -pe [name] argument.')
             print_usage = True
+      
+      elif ((str(argv[index]) == '-s') | (str(argv[index]) == '--stop')) :
+         index = index + 1
+         if (index < argc) :
+            run_duration = float(str(argv[index]))
+         else :
+            print('ERROR: Missing -stop [time] argument.')
+            print_usage = True
+            
+      elif (str(argv[index]) == '--nostop') :
+         run_duration = None
       
       elif (str(argv[index]) == '--verbose') :
          index = index + 1

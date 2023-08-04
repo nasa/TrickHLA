@@ -23,11 +23,14 @@ from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
 def print_usage_message( ):
 
    print(' ')
-   print('TrickHLA SpaceFOM Master/Pacing/Root-Reference-Frame Simulation Command Line Configuration Options:')
-   print('  -h -help         : Print this help message.')
-   print('  -stop [time]     : Time to stop simulation, default is 10.0 seconds.')
-   print('  -nostop          : Set no stop time on simulation.')
-   print('  -verbose [on|off]: on: Show verbose messages (Default), off: disable messages.')
+   print('TrickHLA SpaceFOM Roles Test Simulation Command Line Configuration Options:')
+   print('  -h --help             : Print this help message.')
+   print('  -f --fed_name [name]  : Name of the Federate, default is PhysicalEntity.')
+   print('  -fe --fex_name [name] : Name of the Federation Execution, default is SpaceFOM_Roles_Test.')
+   print('  --nostop              : Set no stop time on simulation.')
+   print('  -r --root_frame [name]: Name of the DynamicalEntity, default is Voyager.')
+   print('  -s --stop [time]      : Time to stop simulation, default is 10.0 seconds.')
+   print('  --verbose [on|off]    : on: Show verbose messages (Default), off: disable messages.')
    print(' ')
 
    trick.exec_terminate_with_return( -1,
@@ -42,6 +45,9 @@ def parse_command_line( ) :
    global print_usage
    global run_duration
    global verbose
+   global federate_name
+   global federation_name
+   global root_frame_name
    
    # Get the Trick command line arguments.
    argc = trick.command_line_args_get_argc()
@@ -52,21 +58,45 @@ def parse_command_line( ) :
    index = 2
    while (index < argc) :
       
-      if (str(argv[index]) == '-stop') :
+      if ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')) :
+         print_usage = True
+      
+      elif ((str(argv[index]) == '-f') | (str(argv[index]) == '--fed_name')) :
+         index = index + 1
+         if (index < argc) :
+            federate_name = str(argv[index])
+         else :
+            print('ERROR: Missing --fed_name [name] argument.')
+            print_usage = True
+      
+      elif ((str(argv[index]) == '-fe') | (str(argv[index]) == '--fex_name')) :
+         index = index + 1
+         if (index < argc) :
+            federation_name = str(argv[index])
+         else :
+            print('ERROR: Missing --fex_name [name] argument.')
+            print_usage = True
+      
+      elif ((str(argv[index]) == '-r') | (str(argv[index]) == '--root_frame')) :
+         index = index + 1
+         if (index < argc) :
+            root_frame_name = str(argv[index])
+         else :
+            print('ERROR: Missing --root_frame [name] argument.')
+            print_usage = True
+            
+      elif (str(argv[index]) == '--nostop') :
+         run_duration = None
+      
+      elif ((str(argv[index]) == '-s') | (str(argv[index]) == '--stop')) :
          index = index + 1
          if (index < argc) :
             run_duration = float(str(argv[index]))
          else :
             print('ERROR: Missing -stop [time] argument.')
             print_usage = True
-            
-      elif (str(argv[index]) == '-nostop') :
-         run_duration = None
-         
-      elif ((str(argv[index]) == '-h') | (str(argv[index]) == '-help')) :
-         print_usage = True
       
-      elif (str(argv[index]) == '-verbose') :
+      elif (str(argv[index]) == '--verbose') :
          index = index + 1
          if (index < argc) :
             if (str(argv[index]) == 'on') :
@@ -74,11 +104,15 @@ def parse_command_line( ) :
             elif (str(argv[index]) == 'off') :
                verbose = False
             else :
-               print('ERROR: Unknown -verbose argument: ' + str(argv[index]))
+               print('ERROR: Unknown --verbose argument: ' + str(argv[index]))
                print_usage = True
          else :
-            print('ERROR: Missing -verbose [on|off] argument.')
+            print('ERROR: Missing --verbose [on|off] argument.')
             print_usage = True
+         
+      elif ((str(argv[index]) == '-d')) :
+         # Pass this on to Trick.
+         break
             
       else :
          print('ERROR: Unknown command line argument ' + str(argv[index]))
@@ -95,6 +129,16 @@ run_duration = 10.0
 
 # Default is to show verbose messages.
 verbose = True
+
+# Set the default Federate name.
+federate_name = 'MPR'
+
+# Set the default Federation Execution name.
+federation_name = 'SpaceFOM_Roles_Test'
+
+# Set the default Root Reference Frame name.
+root_frame_name = 'RootFrame'
+
 
 parse_command_line()
 
@@ -127,8 +171,8 @@ federate = SpaceFOMFederateConfig( THLA.federate,
                                    THLA.manager,
                                    THLA.execution_control,
                                    THLA.ExCO,
-                                   'SpaceFOM_Roles_Test',
-                                   'MPR',
+                                   federation_name,
+                                   federate_name,
                                    True )
 
 # Set the name of the ExCO S_define instance.
@@ -200,11 +244,8 @@ federate.set_time_constrained( True )
 #---------------------------------------------------------------------------
 # Set up for Root Reference Frame data.
 #---------------------------------------------------------------------------
-root_frame_name = 'RootFrame'
-parent_frame_name = ''
-
 root_ref_frame.frame_data.name = root_frame_name
-root_ref_frame.frame_data.parent_name = parent_frame_name
+root_ref_frame.frame_data.parent_name = ''
                                         
 root_ref_frame.frame_data.state.pos[0] = 0.0
 root_ref_frame.frame_data.state.pos[1] = 0.0
@@ -247,7 +288,7 @@ ref_frame_A.frame_data.state.time = 0.0
 # If it is NOT the RRFP, it will subscribe to the frame.
 #---------------------------------------------------------------------------
 root_frame = SpaceFOMRefFrameObject( federate.is_RRFP,
-                                     'RootFrame',
+                                     root_frame_name,
                                      root_ref_frame.frame_packing,
                                      'root_ref_frame.frame_packing' )
 

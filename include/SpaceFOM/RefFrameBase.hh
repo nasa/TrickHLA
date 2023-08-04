@@ -176,8 +176,11 @@ class RefFrameBase : public TrickHLA::Packing
    bool debug; ///< @trick_units{--} Debug output flag.
 
   protected:
-   bool                 initialized;    ///< @trick_units{--} Initialization indication flag.
-   TrickHLA::Attribute *ref_frame_attr; ///< @trick_io{**} Reference Frame Attribute.
+   bool initialized; ///< @trick_units{--} Initialization indication flag.
+
+   TrickHLA::Attribute *name_attr;        ///< @trick_io{**} Reference frame name Attribute.
+   TrickHLA::Attribute *parent_name_attr; ///< @trick_io{**} Parent reference frame name Attribute.
+   TrickHLA::Attribute *state_attr;       ///< @trick_io{**} Reference frame state Attribute.
 
    double         time;         ///< trick_units{s}   Truncated Julian date in TT time scale.
    char         * name;         ///< @trick_units{--} Name of the reference frame.

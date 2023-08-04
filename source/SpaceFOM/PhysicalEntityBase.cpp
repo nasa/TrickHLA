@@ -329,6 +329,8 @@ void PhysicalEntityBase::initialize_callback(
    rot_accel_attr    = get_attribute_and_validate( "rotational_acceleration" );
    cm_attr           = get_attribute_and_validate( "center_of_mass" );
    body_frame_attr   = get_attribute_and_validate( "body_wrt_structural" );
+
+   return;
 }
 
 /*!
