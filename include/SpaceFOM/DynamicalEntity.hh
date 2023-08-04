@@ -6,7 +6,7 @@
 This is the base implementation for the Space Reference FOM (SpaceFOM) interface
 to the DynamicalEntity object.
 
-@copyright Copyright 2019 United States Government as represented by the
+@copyright Copyright 2023 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17, U.S. Code.
 All Other Rights Reserved.

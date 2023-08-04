@@ -6,7 +6,7 @@
 This is the base implementation for the Space Reference FOM (SpaceFOM) interface
 to the PhysicalEntity object.
 
-@copyright Copyright 2019 United States Government as represented by the
+@copyright Copyright 2023 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17, U.S. Code.
 All Other Rights Reserved.
@@ -90,34 +90,61 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
                               char const       *parent_ref_frame_name,
                               bool              publishes );
 
-   // Initialization routines.
+   /*! @brief Entity instance initialization routine. */
    virtual void initialize();
 
+   /*! @brief Initialization callback as part of the TrickHLA::Packing functions.
+    *  @param obj Object associated with this packing class. */
+   virtual void initialize_callback( TrickHLA::Object *obj );
+
    // Access functions.
-   virtual void        set_name( char const *name );
+   /*! @brief Set the name of the PhysicalEntity object instance.
+    *  @param name Name of the PhysicalEntity object instance. */
+   virtual void set_name( char const *name );
+
+   /*! @brief Get the name of the PhysicalEntity object instance.
+    *  @return Name of the PhysicalEntity object instance. */
    virtual char const *get_name()
    {
       return name;
    }
 
-   virtual void        set_type( char const *type );
+   /*! @brief Set the type string of the PhysicalEntity.
+    *  @param type Type string associated with the PhysicalEntity. */
+   virtual void set_type( char const *type );
+
+   /*! @brief Get the type string associated with the PhysicalEntity.
+    *  @return Type string associated with the PhysicalEntity. */
    virtual char const *get_type()
    {
       return type;
    }
 
-   virtual void        set_status( char const *status );
+   /*! @brief Set the status string of the PhysicalEntity.
+    *  @param status Status string associated with the PhysicalEntity. */
+   virtual void set_status( char const *status );
+
+   /*! @brief Get the status string associated with the PhysicalEntity.
+    *  @return Status string associated with the PhysicalEntity. */
    virtual char const *get_status()
    {
       return status;
    }
 
-   virtual void        set_parent_ref_frame( char const *parent_ref_frame );
+   /*! @brief Set the name of the parent reference frame for the PhysicalEntity.
+    *  @param parent_ref_frame The name of the parent reference frame associated
+    *  with the PhysicalEntity. */
+   virtual void set_parent_ref_frame( char const *parent_ref_frame );
+
+   /*! @brief Get the name of the parent reference frame associated with the PhysicalEntity.
+    *  @return Name of the parent reference frame associated with the PhysicalEntity. */
    virtual char const *get_parent_ref_frame()
    {
-      return parent_ref_frame;
+      return parent_frame;
    }
 
+   /*! @brief Get the current scenario time associated with the PhysicalEntity.
+    *  @return Name of the parent reference frame associated with the PhysicalEntity. */
    double const get_time()
    {
       return state.time;
@@ -135,23 +162,36 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    bool debug; ///< @trick_units{--} Debug output flag.
 
   protected:
-   bool                 initialized; ///< @trick_units{--} Initialization indication flag.
-   TrickHLA::Attribute *entity_attr; ///< @trick_io{**} TrickHLA entity Attribute.
+   bool initialized; ///< @trick_units{--} Initialization indication flag.
 
-   char  *name;             ///< @trick_units{--} Name of this entity(required).
-   char  *type;             ///< @trick_units{--} True underlying type for this entity(optional).
-   char  *status;           ///< @trick_units{--} Status string for this entity (optional).
-   char  *parent_ref_frame; ///< @trick_units{--} Name of this entity's parent frame(required).
-   double accel[3];         ///< @trick_units{m/s2} Vehicle inertial acceleration (optional).
-   double rot_accel[3];     ///< @trick_units{rad/s2} Angular body accels, body referenced (optional).
-   double cm[3];            ///< @trick_units{m} Center of mass location in vehicle structural frame (required).
+   // Setup Object Attribute references. These are set in initialize_callback
+   // routine and used for efficiency and ownership transfer in unpack routines.
+   TrickHLA::Attribute *name_attr;         ///< @trick_io{**} Name Attribute.
+   TrickHLA::Attribute *type_attr;         ///< @trick_io{**} Type type Attribute.
+   TrickHLA::Attribute *status_attr;       ///< @trick_io{**} Status Attribute.
+   TrickHLA::Attribute *parent_frame_attr; ///< @trick_io{**} Parent reference frame Attribute.
+   TrickHLA::Attribute *state_attr;        ///< @trick_io{**} State Attribute.
+   TrickHLA::Attribute *accel_attr;        ///< @trick_io{**} Acceleration Attribute.
+   TrickHLA::Attribute *rot_accel_attr;    ///< @trick_io{**} Rotational acceleration Attribute.
+   TrickHLA::Attribute *cm_attr;           ///< @trick_io{**} Center of mass Attribute.
+   TrickHLA::Attribute *body_frame_attr;   ///< @trick_io{**} Body frame orientation Attribute.
 
    // Instantiate the Space/Time Coordinate encoder
    SpaceTimeCoordinateEncoder stc_encoder;  ///< @trick_units{--} Entity state encoder.
    QuaternionEncoder          quat_encoder; ///< @trick_units{--} Attitude quaternion encoder.
 
-   SpaceTimeCoordinateData &state;           ///< @trick_units{--} SpaceTimeCoordinate from encoder (required).
-   QuaternionData          &body_wrt_struct; ///< @trick_units{--} Attitude quaternion for body frame w.r.t. structural frame.(optional)
+   char *name;         ///< @trick_units{--} Name of the physical entity.
+   char *type;         ///< @trick_units{--} String use to define entity type.
+   char *status;       ///< @trick_units{--} String use to define entity status.
+   char *parent_frame; ///< @trick_units{--} Parent frame for state representation.
+
+   SpaceTimeCoordinateData &state; ///< @trick_units{--} Space time coordinate state.
+
+   double accel[3];     ///< @trick_units{m/s2} Entity acceleration vector.
+   double rot_accel[3]; ///< @trick_units{rad/s2} Entity rotational acceleration vector.
+   double cm[3];        ///< @trick_units{m} Position of the entity center of mass in the structural frame.
+
+   QuaternionData &body_wrt_struct; ///< @trick_units{--} Orientation of the body frame wrt. the structural frame.
 
   private:
    // This object is not copyable

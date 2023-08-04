@@ -1,9 +1,9 @@
 /*!
 @file SpaceFOM/PhysicalEntityBase.cpp
 @ingroup SpaceFOM
-@brief This class provides data packing for the SpaceFOM Reference Frames.
+@brief This class provides data packing for the SpaceFOM PhysicalEntities.
 
-@copyright Copyright 2019 United States Government as represented by the
+@copyright Copyright 2023 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17, U.S. Code.
 All Other Rights Reserved.
@@ -24,6 +24,7 @@ NASA, Johnson Space Center\n
 @rev_entry{Dan Dexter, L3 Titan Group, DSES, Sept 2006, --, Initial implementation.}
 @rev_entry{Edwin Z. Crues, NASA ER7, SISO, Sept 2010, --, Smackdown implementation.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, July 2023, --, Cleaned up and filled out.}
 @revs_end
 
 */
@@ -64,15 +65,23 @@ using namespace SpaceFOM;
 PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
    : debug(false),
      initialized(false),
-     entity_attr(NULL),
-     name( NULL ),
-     type( NULL ),
-     status( NULL ),
-     parent_ref_frame( NULL ),
+     name_attr(NULL),
+     type_attr(NULL),
+     status_attr(NULL),
+     parent_frame_attr(NULL),
+     state_attr(NULL),
+     accel_attr(NULL),
+     rot_accel_attr(NULL),
+     cm_attr(NULL),
+     body_frame_attr(NULL),
      stc_encoder(),
      quat_encoder(),
-     state( stc_encoder.get_data() ),
-     body_wrt_struct( quat_encoder.get_data() )
+     name(NULL),
+     type(NULL),
+     status(NULL),
+     parent_frame(NULL),
+     state(stc_encoder.get_data()),
+     body_wrt_struct(quat_encoder.get_data())
 {
    V_INIT( accel );
    V_INIT( rot_accel );
@@ -84,24 +93,26 @@ PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
  */
 PhysicalEntityBase::~PhysicalEntityBase() // RETURN: -- None.
 {
-   if ( this->name != (char *)NULL ) {
-      trick_MM->delete_var( (void *)this->name );
-      this->name = (char *)NULL;
+   if ( name != (char *)NULL ) {
+      trick_MM->delete_var( (void *)name );
+      name = (char *)NULL;
    }
-   if ( this->type != (char *)NULL ) {
-      trick_MM->delete_var( (void *)this->type );
-      this->type = (char *)NULL;
+   if ( type != (char *)NULL ) {
+      trick_MM->delete_var( (void *)type );
+      type = (char *)NULL;
    }
-   if ( this->status != (char *)NULL ) {
-      trick_MM->delete_var( (void *)this->status );
-      this->status = (char *)NULL;
+   if ( status != (char *)NULL ) {
+      trick_MM->delete_var( (void *)status );
+      status = (char *)NULL;
    }
-   if ( this->parent_ref_frame != (char *)NULL ) {
-      trick_MM->delete_var( (void *)this->parent_ref_frame );
-      this->parent_ref_frame = (char *)NULL;
+   if ( parent_frame != (char *)NULL ) {
+      trick_MM->delete_var( (void *)parent_frame );
+      parent_frame = (char *)NULL;
    }
    initialized = false;
-   entity_attr = NULL;
+   name_attr = NULL;
+   state_attr = NULL;
+   body_frame_attr = NULL;
 }
 
 /*!
@@ -124,13 +135,13 @@ void PhysicalEntityBase::default_data(
 
    // Set the frame name and parent frame name.
    if( parent_entity_name != NULL ){
-      this->parent_ref_frame = trick_MM->mm_strdup( parent_entity_name );
+      parent_frame = trick_MM->mm_strdup( parent_entity_name );
    }
    else{
-      this->parent_ref_frame = trick_MM->mm_strdup( "" );
+      parent_frame = trick_MM->mm_strdup( "" );
    }
    if( entity_name != NULL ){
-      this->name = trick_MM->mm_strdup( entity_name );
+      name = trick_MM->mm_strdup( entity_name );
    }
    else{
       ostringstream errmsg;
@@ -182,7 +193,7 @@ void PhysicalEntityBase::default_data(
    object->attributes[2].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
    object->attributes[3].FOM_name      = allocate_input_string( "parent_reference_frame" );
-   trick_name_str                      = entity_name_str + string( ".parent_ref_frame" );
+   trick_name_str                      = entity_name_str + string( ".parent_frame" );
    object->attributes[3].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[3].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[3].publish       = publishes;
@@ -246,39 +257,39 @@ void PhysicalEntityBase::initialize()
    ostringstream errmsg;
 
    // Must have federation instance name.
-   if ( this->name == NULL ) {
+   if ( name == NULL ) {
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity name!"
              << "  Setting frame name to empty string." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
-      this->name = trick_MM->mm_strdup( "" );
+      name = trick_MM->mm_strdup( "" );
    }
 
    // Must have federation instance type.
-   if ( this->type == NULL ) {
+   if ( type == NULL ) {
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity type!"
              << "  Setting type to empty string." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
-      this->type = trick_MM->mm_strdup( "" );
+      type = trick_MM->mm_strdup( "" );
    }
 
    // Must have federation instance status.
-   if ( this->status == NULL ) {
+   if ( status == NULL ) {
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity status!"
              << "  Setting status to empty string." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
-      this->status = trick_MM->mm_strdup( "" );
+      status = trick_MM->mm_strdup( "" );
    }
 
    // Must have federation instance parent_ref_frame.
-   if ( this->parent_ref_frame == NULL ) {
+   if ( parent_frame == NULL ) {
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity parent_ref_frame!"
              << "  Setting parent_ref_frame to empty string." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
-      this->parent_ref_frame = trick_MM->mm_strdup( "" );
+      parent_frame = trick_MM->mm_strdup( "" );
    }
 
    // Mark this as initialized.
@@ -288,39 +299,83 @@ void PhysicalEntityBase::initialize()
    return;
 }
 
+/*!
+ * @details From the TrickHLA::Packing class. We override this function so
+ * that we can initialize references to the TrickHLA::Attribute's that are
+ * used in the unpack function to handle attribute ownership and different
+ * attribute data rates.
+ *
+ * Use the initialize callback function as a way to setup TrickHLA::Attribute
+ * references which are use to determine ownership or if data for an attribute
+ * was received.
+ *
+ * @job_class{initialization}
+ */
+void PhysicalEntityBase::initialize_callback(
+   TrickHLA::Object *obj )
+{
+   // We must call the original function so that the callback is initialized.
+   this->TrickHLA::Packing::initialize_callback( obj );
+
+   // Get references to all the TrickHLA::Attribute for this object type.
+   // We do this here so that we only do the attribute lookup once instead of
+   // looking it up every time the unpack function is called.
+   name_attr         = get_attribute_and_validate( "name" );
+   type_attr         = get_attribute_and_validate( "type" );
+   status_attr       = get_attribute_and_validate( "status" );
+   parent_frame_attr = get_attribute_and_validate( "parent_reference_frame" );
+   state_attr        = get_attribute_and_validate( "state" );
+   accel_attr        = get_attribute_and_validate( "acceleration" );
+   rot_accel_attr    = get_attribute_and_validate( "rotational_acceleration" );
+   cm_attr           = get_attribute_and_validate( "center_of_mass" );
+   body_frame_attr   = get_attribute_and_validate( "body_wrt_structural" );
+}
+
+/*!
+ * @job_class{initialization}
+ */
 void PhysicalEntityBase::set_name( char const *new_name )
 {
-   if ( this->name != NULL ) {
-      trick_MM->delete_var( (void *)this->name );
+   if ( name != NULL ) {
+      trick_MM->delete_var( (void *)name );
    }
-   this->name = trick_MM->mm_strdup( new_name );
+   name = trick_MM->mm_strdup( new_name );
    return;
 }
 
+/*!
+ * @job_class{initialization}
+ */
 void PhysicalEntityBase::set_type( char const *new_name )
 {
-   if ( this->type != NULL ) {
-      trick_MM->delete_var( (void *)this->type );
+   if ( type != NULL ) {
+      trick_MM->delete_var( (void *)type );
    }
-   this->type = trick_MM->mm_strdup( new_name );
+   type = trick_MM->mm_strdup( new_name );
    return;
 }
 
+/*!
+ * @job_class{initialization}
+ */
 void PhysicalEntityBase::set_status( char const *new_name )
 {
-   if ( this->status != NULL ) {
-      trick_MM->delete_var( (void *)this->status );
+   if ( status != NULL ) {
+      trick_MM->delete_var( (void *)status );
    }
-   this->status = trick_MM->mm_strdup( new_name );
+   status = trick_MM->mm_strdup( new_name );
    return;
 }
 
+/*!
+ * @job_class{initialization}
+ */
 void PhysicalEntityBase::set_parent_ref_frame( char const *new_name )
 {
-   if ( this->parent_ref_frame != NULL ) {
-      trick_MM->delete_var( (void *)this->parent_ref_frame );
+   if ( parent_frame != NULL ) {
+      trick_MM->delete_var( (void *)parent_frame );
    }
-   this->parent_ref_frame = trick_MM->mm_strdup( new_name );
+   parent_frame = trick_MM->mm_strdup( new_name );
 
    return;
 }

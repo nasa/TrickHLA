@@ -1,13 +1,14 @@
 ##############################################################################
 # PURPOSE:
-#    (This is a python input file class to set up the general parameters that
-#     describe an Space Reference FOM PhysicalEntity object.)
+#    (This is a Python input file class to set up the general parameters that
+#     describe an Space Reference FOM DynamicalEntity object.  This is built
+#     off the SpaceFOMPhysicalEntityObject base class.)
 #
 # REFERENCE:
-#    (Trick 16 documentation.)
+#    (Trick documentation.)
 #
 # ASSUMPTIONS AND LIMITATIONS:
-#    ((Inherits from the base TrickHLAObjectConfig class)
+#    ((Inherits from the base SpaceFOMPhysicalEntityObject class)
 #     (Assumes that trick is available globally.))
 #
 # PROGRAMMERS:
@@ -30,7 +31,8 @@ class SpaceFOMDynamicalEntityObject(SpaceFOMPhysicalEntityObject):
                  entity_thla_manager_object = None ):
 
 
-      # The PhysicalEntity FOM name is fixed for the SpaceFOM.
+      # The DynamicalEntity FOM name is fixed for the SpaceFOM and
+      # needs to be overridden before calling the DynamicalEntity constructor.
       self.entity_FOM_name = 'PhysicalEntity.DynamicalEntity'
 
       # Call the base class constructor.
@@ -62,10 +64,10 @@ class SpaceFOMDynamicalEntityObject(SpaceFOMPhysicalEntityObject):
       # Add the PhysicalEntity attributes.
       SpaceFOMPhysicalEntityObject.add_attributes(self)
 
-      # Short cut the sim_object name for the PhysicalEntity data.
+      # Short cut the sim_object name for the DynamicalEntity data.
       entity_instance_name = self.trick_entity_sim_obj_name
 
-      ## Set up the map to the PhysicalEntity's force.
+      ## Set up the map to the DynamicalEntity's force.
       trick_data_name = str(entity_instance_name) + '.force'
       attribute = TrickHLAAttributeConfig( 'force',
                                            trick_data_name,
@@ -76,7 +78,7 @@ class SpaceFOMDynamicalEntityObject(SpaceFOMPhysicalEntityObject):
                                            trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_attribute( attribute )
 
-      ## Set up the map to the PhysicalEntity's torque.
+      ## Set up the map to the DynamicalEntity's torque.
       trick_data_name = str(entity_instance_name) + '.torque'
       attribute = TrickHLAAttributeConfig( 'torque',
                                            trick_data_name,
@@ -87,7 +89,7 @@ class SpaceFOMDynamicalEntityObject(SpaceFOMPhysicalEntityObject):
                                            trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_attribute( attribute )
 
-      ## Set up the map to the PhysicalEntity's mass.
+      ## Set up the map to the DynamicalEntity's mass.
       trick_data_name = str(entity_instance_name) + '.mass'
       attribute = TrickHLAAttributeConfig( 'mass',
                                            trick_data_name,
@@ -98,7 +100,7 @@ class SpaceFOMDynamicalEntityObject(SpaceFOMPhysicalEntityObject):
                                            trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_attribute( attribute )
 
-      ## Set up the map to the PhysicalEntity's mass rate.
+      ## Set up the map to the DynamicalEntity's mass rate.
       trick_data_name = str(entity_instance_name) + '.mass_rate'
       attribute = TrickHLAAttributeConfig( 'mass_rate',
                                            trick_data_name,
@@ -109,7 +111,7 @@ class SpaceFOMDynamicalEntityObject(SpaceFOMPhysicalEntityObject):
                                            trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_attribute( attribute )
 
-      ## Set up the map to the PhysicalEntity's inertia tensor.
+      ## Set up the map to the DynamicalEntity's inertia tensor.
       trick_data_name = str(entity_instance_name) + '.inertia'
       attribute = TrickHLAAttributeConfig( 'inertia',
                                            trick_data_name,
@@ -120,7 +122,7 @@ class SpaceFOMDynamicalEntityObject(SpaceFOMPhysicalEntityObject):
                                            trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_attribute( attribute )
 
-      ## Set up the map to the PhysicalEntity's inertia rate.
+      ## Set up the map to the DynamicalEntity's inertia rate.
       trick_data_name = str(entity_instance_name) + '.inertia_rate'
       attribute = TrickHLAAttributeConfig( 'inertia_rate',
                                            trick_data_name,

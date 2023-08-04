@@ -35,6 +35,7 @@ def print_usage_message( ):
    print('  -de [name]           : Name of the DynamicalEntity, default is Voyager.')
    print('  --nostop             : Set no stop time on simulation.')
    print('  -pe [name]           : Name of the PhysicalEntity, default is Enterprise.')
+   print('  --phy_fed [name]     : Name of the PhysicalEntity federate, default is PhysicalEntity.')
    print('  -s --stop [time]     : Time to stop simulation, default is 10.0 seconds.')
    print('  --verbose [on|off]   : on: Show verbose messages (Default), off: disable messages.')
    print(' ')
@@ -55,6 +56,7 @@ def parse_command_line( ) :
    global federation_name
    global dyn_entity_name
    global phy_entity_name
+   global phy_federate_name
    
    # Get the Trick command line arguments.
    argc = trick.command_line_args_get_argc()
@@ -111,6 +113,14 @@ def parse_command_line( ) :
             print('ERROR: Missing -pe [name] argument.')
             print_usage = True
       
+      elif ((str(argv[index]) == '--phy_fed')) :
+         index = index + 1
+         if (index < argc) :
+            phy_federate_name = str(argv[index])
+         else :
+            print('ERROR: Missing --phy_fed [name] argument.')
+            print_usage = True
+      
       elif (str(argv[index]) == '--verbose') :
          index = index + 1
          if (index < argc) :
@@ -146,7 +156,7 @@ run_duration = 10.0
 verbose = True
 
 # Set the default Federate name.
-federate_name = 'EntityTest'
+federate_name = 'DynamicalEntity'
 
 # Set the default Federation Execution name.
 federation_name = 'SpaceFOM_Roles_Test'
@@ -156,6 +166,9 @@ dyn_entity_name = 'Voyager'
 
 # Set the default PhysicalEntity instance name.
 phy_entity_name = 'Enterprise'
+
+# Set the default PhysicalEntity federate name.
+phy_federate_name = 'PhysicalEntity'
 
 
 parse_command_line()
@@ -216,6 +229,7 @@ federate.set_RRFP_role( False )   # This is NOT the Root Reference Frame Publish
 # It doesn't really need to know about any other federates.
 federate.add_known_fededrate( True, str(federate.federate.name) )
 federate.add_known_fededrate( True, 'MPR' )
+federate.add_known_fededrate( True, phy_federate_name )
 
 #--------------------------------------------------------------------------
 # Configure the CRC.
@@ -284,7 +298,7 @@ federate.add_fed_object( frame_A )
 #---------------------------------------------------------------------------
 # Set up the PhysicalEntity object for discovery.
 #---------------------------------------------------------------------------
-phy_entity = SpaceFOMPhysicalEntityObject( True,
+phy_entity = SpaceFOMPhysicalEntityObject( False,
                                            phy_entity_name,
                                            physical_entity.entity_packing,
                                            'physical_entity.entity_packing' )
@@ -294,27 +308,6 @@ physical_entity.entity_packing.debug = verbose
 
 # Add this Entity to the list of managed object.
 federate.add_fed_object( phy_entity )
-
-# Let's give the PhysicalEntity some non-zero values.
-physical_entity.pe_data.name         = phy_entity_name
-physical_entity.pe_data.type         = 'Constellation-class Starship'
-physical_entity.pe_data.status       = 'Mothballed'
-physical_entity.pe_data.parent_frame = 'RootFrame'
-
-physical_entity.pe_data.state.pos[0] = 1.0
-physical_entity.pe_data.state.pos[1] = 2.0
-physical_entity.pe_data.state.pos[2] = 3.0
-physical_entity.pe_data.state.vel[0] = 0.1
-physical_entity.pe_data.state.vel[1] = 0.2
-physical_entity.pe_data.state.vel[2] = 0.3
-
-physical_entity.pe_data.state.quat_scalar = 1.0
-physical_entity.pe_data.state.quat_vector[0] = 0.0
-physical_entity.pe_data.state.quat_vector[1] = 0.0
-physical_entity.pe_data.state.quat_vector[2] = 0.0
-physical_entity.pe_data.state.ang_vel[0] = 0.0
-physical_entity.pe_data.state.ang_vel[1] = 0.0
-physical_entity.pe_data.state.ang_vel[2] = 0.0
 
 
 #---------------------------------------------------------------------------

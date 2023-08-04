@@ -1,10 +1,10 @@
 ##############################################################################
 # PURPOSE:
-#    (This is a python input file class to set up the general parameters that
+#    (This is a Python input file class to set up the general parameters that
 #     describe an Space Reference FOM PhysicalEntity object.)
 #
 # REFERENCE:
-#    (Trick 16 documentation.)
+#    (Trick documentation.)
 #
 # ASSUMPTIONS AND LIMITATIONS:
 #    ((Inherits from the base TrickHLAObjectConfig class)
@@ -110,7 +110,7 @@ class SpaceFOMPhysicalEntityObject(TrickHLAObjectConfig):
       self.add_attribute( attribute )
 
       ## Set up the map to the name of the PhysicalEntity's parent reference frame.
-      trick_data_name = str(entity_instance_name) + '.parent_ref_frame'
+      trick_data_name = str(entity_instance_name) + '.parent_frame'
       attribute = TrickHLAAttributeConfig( 'parent_reference_frame',
                                            trick_data_name,
                                            self.hla_create,

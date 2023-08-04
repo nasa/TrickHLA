@@ -33,6 +33,7 @@ def print_usage_message( ):
    print('  -f --fed_name [name] : Name of the Federate, default is PhysicalEntity.')
    print('  -fe --fex_name [name]: Name of the Federation Execution, default is SpaceFOM_Roles_Test.')
    print('  -de [name]           : Name of the DynamicalEntity, default is Voyager.')
+   print('  --dyn_fed [name]     : Name of the DynamicalEntity federate, default is DynamicalEntity.')
    print('  --nostop             : Set no stop time on simulation.')
    print('  -pe [name]           : Name of the PhysicalEntity, default is Enterprise.')
    print('  -s --stop [time]     : Time to stop simulation, default is 10.0 seconds.')
@@ -54,6 +55,7 @@ def parse_command_line( ) :
    global federate_name
    global federation_name
    global dyn_entity_name
+   global dyn_federate_name
    global phy_entity_name
    
    # Get the Trick command line arguments.
@@ -85,6 +87,14 @@ def parse_command_line( ) :
             dyn_entity_name = str(argv[index])
          else :
             print('ERROR: Missing -de [name] argument.')
+            print_usage = True
+      
+      elif ((str(argv[index]) == '--dyn_fed')) :
+         index = index + 1
+         if (index < argc) :
+            dyn_federate_name = str(argv[index])
+         else :
+            print('ERROR: Missing --dyn_fed [name] argument.')
             print_usage = True
       
       elif ((str(argv[index]) == '-f') | (str(argv[index]) == '--fed_name')) :
@@ -146,13 +156,16 @@ run_duration = 10.0
 verbose = True
 
 # Set the default Federate name.
-federate_name = 'EntityTest'
+federate_name = 'PhysicalEntity'
 
 # Set the default Federation Execution name.
 federation_name = 'SpaceFOM_Roles_Test'
 
 # Set the default DynamicalEntity instance name.
 dyn_entity_name = 'Voyager'
+
+# Set the default DynamicalEntity federate name.
+dyn_federate_name = 'DynamicalEntity'
 
 # Set the default PhysicalEntity instance name.
 phy_entity_name = 'Enterprise'
@@ -216,6 +229,7 @@ federate.set_RRFP_role( False )   # This is NOT the Root Reference Frame Publish
 # It doesn't really need to know about any other federates.
 federate.add_known_fededrate( True, str(federate.federate.name) )
 federate.add_known_fededrate( True, 'MPR' )
+federate.add_known_fededrate( True, dyn_federate_name )
 
 #--------------------------------------------------------------------------
 # Configure the CRC.
@@ -320,7 +334,7 @@ physical_entity.pe_data.state.ang_vel[2] = 0.0
 #---------------------------------------------------------------------------
 # Set up the DynamicalEntity object for discovery.
 #---------------------------------------------------------------------------
-dyn_entity = SpaceFOMDynamicalEntityObject( True,
+dyn_entity = SpaceFOMDynamicalEntityObject( False,
                                             dyn_entity_name,
                                             dynamical_entity.entity_packing,
                                             'dynamical_entity.entity_packing' )
@@ -330,39 +344,6 @@ dynamical_entity.entity_packing.debug = verbose
 
 # Add this Entity to the list of managed object.
 federate.add_fed_object( dyn_entity )
-
-# Let's give the PhysicalEntity some non-zero values.
-dynamical_entity.pe_data.name         = dyn_entity_name
-dynamical_entity.pe_data.name         = dyn_entity.hla_instance_name
-dynamical_entity.pe_data.type         = 'Intrepid-class Starship'
-dynamical_entity.pe_data.status       = 'Lost'
-dynamical_entity.pe_data.parent_frame = 'FrameA'
-
-dynamical_entity.pe_data.state.pos[0] = 3.0
-dynamical_entity.pe_data.state.pos[1] = 2.0
-dynamical_entity.pe_data.state.pos[2] = 1.0
-dynamical_entity.pe_data.state.vel[0] = 0.3
-dynamical_entity.pe_data.state.vel[1] = 0.2
-dynamical_entity.pe_data.state.vel[2] = 0.1
-
-dynamical_entity.pe_data.state.quat_scalar = 1.0
-dynamical_entity.pe_data.state.quat_vector[0] = 0.0
-dynamical_entity.pe_data.state.quat_vector[1] = 0.0
-dynamical_entity.pe_data.state.quat_vector[2] = 0.0
-dynamical_entity.pe_data.state.ang_vel[0] = 0.0
-dynamical_entity.pe_data.state.ang_vel[1] = 0.0
-dynamical_entity.pe_data.state.ang_vel[2] = 0.0
-
-dynamical_entity.de_data.force[0] = 0.4
-dynamical_entity.de_data.force[1] = 0.5
-dynamical_entity.de_data.force[2] = 0.6
-
-dynamical_entity.de_data.torque[0] = 0.01
-dynamical_entity.de_data.torque[1] = 0.02
-dynamical_entity.de_data.torque[2] = 0.03
-
-dynamical_entity.de_data.mass = 100.0
-dynamical_entity.de_data.mass_rate = -0.01
 
 
 #---------------------------------------------------------------------------

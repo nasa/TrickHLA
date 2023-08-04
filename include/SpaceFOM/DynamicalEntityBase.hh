@@ -1,12 +1,12 @@
 /*!
 @file SpaceFOM/DynamicalEntityBase.hh
 @ingroup SpaceFOM
-@brief Definition of the TrickHLA SpaceFOM Dynamical entity type.
+@brief Definition of the TrickHLA SpaceFOM DynamicalEntity type.
 
 This is the base implementation for the Space Reference FOM (SpaceFOM) interface
 to the DynamicalEntity object.
 
-@copyright Copyright 2019 United States Government as represented by the
+@copyright Copyright 2023 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17, U.S. Code.
 All Other Rights Reserved.
@@ -74,8 +74,12 @@ class DynamicalEntityBase : virtual public SpaceFOM::PhysicalEntityBase
                               char const       *parent_ref_frame_name,
                               bool              publishes );
 
-   // Initialization routines.
+   /*! @brief Entity instance initialization routine. */
    virtual void initialize();
+
+   /*! @brief Initialization callback as part of the TrickHLA::Packing functions.
+    *  @param obj Object associated with this packing class. */
+   virtual void initialize_callback( TrickHLA::Object *obj );
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to pack the data before the data is sent to the RTI. */
@@ -86,15 +90,22 @@ class DynamicalEntityBase : virtual public SpaceFOM::PhysicalEntityBase
    virtual void unpack() = 0;
 
   protected:
-   double force[3];           ///< @trick_units{N} Total external force on vehicle applied
-                              ///       through the vehicle center of mass.
-                              ///       Expressed in the vehicle struct frame.
-   double torque[3];          ///< @trick_units{N*m} Total external torques on vehicle.
-                              ///       Expressed in the vehicle struct frame.
-   double mass;               ///< @trick_units{kg} Vehicle mass.
-   double mass_rate;          ///< @trick_units{kg/s} Vehicle mass flow rate.
-   double inertia[3][3];      ///< @trick_units{kg*m2} Inertia matrix in element body frame.
-   double inertia_rate[3][3]; ///< @trick_units{kg*m2/s} Inertia matrix in element body frame.
+   // Setup Object Attribute references. These are set in initialize_callback
+   // routine and used for efficiency and ownership transfer in unpack routines.
+   TrickHLA::Attribute *force_attr;        ///< @trick_io{**} Force Attribute.
+   TrickHLA::Attribute *torque_attr;       ///< @trick_io{**} Torque Attribute.
+   TrickHLA::Attribute *mass_attr;         ///< @trick_io{**} Mass Attribute.
+   TrickHLA::Attribute *mass_rate_attr;    ///< @trick_io{**} Mass rate Attribute.
+   TrickHLA::Attribute *inertia_attr;      ///< @trick_io{**} Inertia matrix Attribute.
+   TrickHLA::Attribute *inertia_rate_attr; ///< @trick_io{**} Inertia rate Attribute.
+
+   double force[3];  ///< @trick_units{N} Entity force vector.
+   double torque[3]; ///< @trick_units{N*m} Entity torque vector.
+   double mass;      ///< @trick_units{kg} Entity mass.
+   double mass_rate; ///< @trick_units{kg/s} Entity mass rate.
+
+   double inertia[3][3];      ///< @trick_units{kg*m2} Entity inertia matrix.
+   double inertia_rate[3][3]; ///< @trick_units{kg*m2/s} Entity inertia rate matrix.
 
   private:
    // This object is not copyable

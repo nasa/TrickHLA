@@ -1,9 +1,9 @@
 /*!
 @file SpaceFOM/DynamicalEntityBase.cpp
 @ingroup SpaceFOM
-@brief This class provides data packing for the SpaceFOM Reference Frames.
+@brief This class provides data packing for the SpaceFOM DynamicalEntities.
 
-@copyright Copyright 2019 United States Government as represented by the
+@copyright Copyright 2023 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17, U.S. Code.
 All Other Rights Reserved.
@@ -23,6 +23,7 @@ NASA, Johnson Space Center\n
 @rev_entry{Dan Dexter, L3 Titan Group, DSES, Sept 2006, --, Initial implementation.}
 @rev_entry{Edwin Z. Crues, NASA ER7, SISO, Sept 2010, --, Smackdown implementation.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, July 2023, --, Cleaned up and filled out.}
 @revs_end
 
 */
@@ -38,7 +39,6 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/exec_proto.hh"
 #include "trick/matrix_macros.h"
-//#include "trick/message_proto.h"
 #include "trick/vector_macros.h"
 #include "trick/MemoryManager.hh"
 
@@ -62,9 +62,15 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 DynamicalEntityBase::DynamicalEntityBase() // RETURN: -- None.
-   : mass( 0.0 ),
-     mass_rate( 0.0 )
+: force_attr(NULL),
+  torque_attr(NULL),
+  mass_attr(NULL),
+  mass_rate_attr(NULL),
+  inertia_attr(NULL),
+  inertia_rate_attr(NULL)
 {
+   mass = 0.0;
+   mass_rate = 0.0;
    V_INIT( force );
    V_INIT( torque );
    M_IDENT( inertia );
@@ -99,13 +105,13 @@ void DynamicalEntityBase::default_data(
 
    // Set the frame name and parent frame name.
    if( parent_entity_name != NULL ){
-      this->parent_ref_frame = trick_MM->mm_strdup( parent_entity_name );
+      parent_frame = trick_MM->mm_strdup( parent_entity_name );
    }
    else{
-      this->parent_ref_frame = trick_MM->mm_strdup( "" );
+      parent_frame = trick_MM->mm_strdup( "" );
    }
    if( entity_name != NULL ){
-      this->name = trick_MM->mm_strdup( entity_name );
+      name = trick_MM->mm_strdup( entity_name );
    }
    else{
       ostringstream errmsg;
@@ -166,7 +172,7 @@ void DynamicalEntityBase::default_data(
    object->attributes[3].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
    object->attributes[4].FOM_name      = allocate_input_string( "state" );
-   trick_name_str                      = entity_name_str + string( ".stc_encoder.buffer" );
+   trick_name_str                      = entity_name_str + string( "stc_encoder.buffer" );
    object->attributes[4].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[4].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[4].publish       = publishes;
@@ -220,7 +226,7 @@ void DynamicalEntityBase::default_data(
    object->attributes[9].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    object->attributes[10].FOM_name      = allocate_input_string( "torque" );
-   trick_name_str                      = entity_name_str + string( ".torque" );
+   trick_name_str                       = entity_name_str + string( ".torque" );
    object->attributes[10].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[10].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[10].publish       = publishes;
@@ -229,7 +235,7 @@ void DynamicalEntityBase::default_data(
    object->attributes[10].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    object->attributes[11].FOM_name      = allocate_input_string( "mass" );
-   trick_name_str                      = entity_name_str + string( ".mass" );
+   trick_name_str                       = entity_name_str + string( ".mass" );
    object->attributes[11].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[11].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[11].publish       = publishes;
@@ -238,7 +244,7 @@ void DynamicalEntityBase::default_data(
    object->attributes[11].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    object->attributes[12].FOM_name      = allocate_input_string( "mass_rate" );
-   trick_name_str                      = entity_name_str + string( ".mass_rate" );
+   trick_name_str                       = entity_name_str + string( ".mass_rate" );
    object->attributes[12].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[12].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[12].publish       = publishes;
@@ -247,7 +253,7 @@ void DynamicalEntityBase::default_data(
    object->attributes[12].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    object->attributes[13].FOM_name      = allocate_input_string( "inertia" );
-   trick_name_str                      = entity_name_str + string( ".inertia" );
+   trick_name_str                       = entity_name_str + string( ".inertia" );
    object->attributes[13].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[13].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[13].publish       = publishes;
@@ -256,7 +262,7 @@ void DynamicalEntityBase::default_data(
    object->attributes[13].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    object->attributes[14].FOM_name      = allocate_input_string( "inertia_rate" );
-   trick_name_str                      = entity_name_str + string( ".inertia_rate" );
+   trick_name_str                       = entity_name_str + string( ".inertia_rate" );
    object->attributes[14].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[14].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[14].publish       = publishes;
@@ -275,4 +281,34 @@ void DynamicalEntityBase::initialize()
 {
    PhysicalEntityBase::initialize();
    return;
+}
+
+
+/*!
+ * @details From the TrickHLA::Packing class. We override this function so
+ * that we can initialize references to the TrickHLA::Attribute's that are
+ * used in the unpack function to handle attribute ownership and different
+ * attribute data rates.
+ *
+ * Use the initialize callback function as a way to setup TrickHLA::Attribute
+ * references which are use to determine ownership or if data for an attribute
+ * was received.
+ *
+ * @job_class{initialization}
+ */
+void DynamicalEntityBase::initialize_callback(
+   TrickHLA::Object *obj )
+{
+   // We must call the original function so that the callback is initialized.
+   PhysicalEntityBase::initialize_callback( obj );
+
+   // Get references to all the TrickHLA::Attribute for this object type.
+   // We do this here so that we only do the attribute lookup once instead of
+   // looking it up every time the unpack function is called.
+   force_attr        = get_attribute_and_validate( "force" );
+   torque_attr       = get_attribute_and_validate( "torque" );
+   mass_attr         = get_attribute_and_validate( "mass" );
+   mass_rate_attr    = get_attribute_and_validate( "mass_rate" );
+   inertia_attr      = get_attribute_and_validate( "inertia" );
+   inertia_rate_attr = get_attribute_and_validate( "inertia_rate" );
 }
