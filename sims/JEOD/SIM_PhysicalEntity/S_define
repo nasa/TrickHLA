@@ -292,6 +292,7 @@ JEODHLAInitSimObject THLA_INIT( jeod_time.time_manager,
 // SIM_OBJECT: JEODRefFrameTreeSimObject - An JEOD reference frame tree
 // simulation object definition.
 //==========================================================================
+//#define DEFAULT_DATA_CONFIG // Configure the tree in default data.
 #include "JEODRefFrameTree.sm"
 
 

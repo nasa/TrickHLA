@@ -215,47 +215,52 @@ void JEODRefFrameState::unpack()
    // Use the HLA encoder helpers to decode the reference frame fixed record.
    stc_encoder.decode();
 
-   // If the HLA phase attribute has changed and is remotely owned (i.e. is
+   // If the HLA attribute has changed and is remotely owned (i.e. is
    // coming from another federate) then override our simulation state with the
-   // incoming value. If we locally own the "Phase" attribute then we do not
-   // want to override it's value. If we did not do this check then we would be
+   // incoming value.  If we locally own the attribute then we do not want to
+   // override it's value.  If we did not do this check then we would be
    // overriding state of something we own and publish with whatever value
-   // happen to be in the "phase_deg" local variable, which would cause data
-   // corruption of the state. We always need to do this check because
-   // ownership transfers could happen at any time or the data could be at a
-   // different rate.
-   if ( ref_frame_attr->is_received() ) {
-      // Print out debug information if desired.
-      if ( debug ) {
-         cout.precision( 15 );
-         cout << "JEODRefFrameState::unpack():" << __LINE__ << endl
-              << "\tObject-Name: '" << object->get_name() << "'" << endl
-              << "\tname: '" << ( this->name != NULL ? this->name : "" ) << "'" << endl
-              << "\tparent_name: '" << ( this->parent_name != NULL ? this->parent_name : "" ) << "'" << endl
-              << "\ttime: " << stc_data.time << endl
-              << "\tposition: " << endl
-              << "\t\t" << stc_data.pos[0] << endl
-              << "\t\t" << stc_data.pos[1] << endl
-              << "\t\t" << stc_data.pos[2] << endl
-              << "\tattitude (quaternion:s,v): " << endl
-              << "\t\t" << stc_data.quat_scalar << endl
-              << "\t\t" << stc_data.quat_vector[0] << endl
-              << "\t\t" << stc_data.quat_vector[1] << endl
-              << "\t\t" << stc_data.quat_vector[2] << endl
-              << endl;
+   // happen to be in the local variable, which would cause data corruption of
+   // the state.  We always need to do this check because ownership transfers
+   // could happen at any time or the data could be at a different rate.
+
+   // Set the reference frame name and parent frame name.
+   if ( name_attr->is_received() ) {
+      /*
+      if ( ref_frame_data->name != NULL ) {
+         if ( !strcmp(ref_frame_data->name, name ) ){
+            trick_MM->delete_var( (void *)ref_frame_data->name );
+            ref_frame_data->name = trick_MM->mm_strdup( name );
+         }
       }
-      if ( debug ) {
-         cout << "JEODRefFrameState::unpack():" << __LINE__ << endl
-              << "\tSim Sec: " << exec_get_sim_time()  << endl
-              << "\tSeconds: " << (time_tt->trunc_julian_time * 86400.0) << endl
-              << "\tDate: " << time_tt->calendar_year
-              << "-" << time_tt->calendar_month
-              << "-" << time_tt->calendar_day
-              << "::" << time_tt->calendar_hour
-              << ":" << time_tt->calendar_minute
-              << ":" << time_tt->calendar_second << endl
-              << endl;
+      else {
+         ref_frame_data->name = trick_MM->mm_strdup( name );
       }
+      */
+   }
+
+   if ( parent_name_attr->is_received() ) {
+      /*
+      if ( ref_frame_data->parent_name != NULL ) {
+         if ( !strcmp(ref_frame_data->parent_name, parent_name ) ){
+            trick_MM->delete_var( (void *)ref_frame_data->parent_name );
+            if ( parent_name[0] != '\0' ) {
+               ref_frame_data->parent_name = trick_MM->mm_strdup( parent_name );
+            }
+            else{
+               ref_frame_data->parent_name = NULL;
+            }
+         }
+      }
+      else {
+         if ( parent_name[0] != '\0' ) {
+            ref_frame_data->parent_name = trick_MM->mm_strdup( parent_name );
+         }
+      }
+      */
+   }
+
+   if ( state_attr->is_received() ) {
 
       // Unpack the data.
       // Position and velocity vectors.
@@ -272,8 +277,39 @@ void JEODRefFrameState::unpack()
       // Time tag for this state data.
       this->time = stc_data.time;
 
-      // The frame name and parent name are already 'unpacked'.
+   }
 
+   // The frame name and parent name are already 'unpacked'.
+   // Print out debug information if desired.
+   if ( debug ) {
+      cout.precision( 15 );
+      cout << "JEODRefFrameState::unpack():" << __LINE__ << endl
+           << "\tObject-Name: '" << object->get_name() << "'" << endl
+           << "\tname: '" << ( this->name != NULL ? this->name : "" ) << "'" << endl
+           << "\tparent_name: '" << ( this->parent_name != NULL ? this->parent_name : "" ) << "'" << endl
+           << "\ttime: " << stc_data.time << endl
+           << "\tposition: " << endl
+           << "\t\t" << stc_data.pos[0] << endl
+           << "\t\t" << stc_data.pos[1] << endl
+           << "\t\t" << stc_data.pos[2] << endl
+           << "\tattitude (quaternion:s,v): " << endl
+           << "\t\t" << stc_data.quat_scalar << endl
+           << "\t\t" << stc_data.quat_vector[0] << endl
+           << "\t\t" << stc_data.quat_vector[1] << endl
+           << "\t\t" << stc_data.quat_vector[2] << endl
+           << endl;
+   }
+   if ( debug ) {
+      cout << "JEODRefFrameState::unpack():" << __LINE__ << endl
+           << "\tSim Sec: " << exec_get_sim_time()  << endl
+           << "\tSeconds: " << (time_tt->trunc_julian_time * 86400.0) << endl
+           << "\tDate: " << time_tt->calendar_year
+           << "-" << time_tt->calendar_month
+           << "-" << time_tt->calendar_day
+           << "::" << time_tt->calendar_hour
+           << ":" << time_tt->calendar_minute
+           << ":" << time_tt->calendar_second << endl
+           << endl;
    }
 
    return;
