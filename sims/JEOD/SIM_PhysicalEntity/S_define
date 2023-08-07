@@ -313,6 +313,38 @@ JEODRefFrameTreeSimObject ref_frame_tree( THLA.manager,
                                           moon.planet,
                                           mars.planet );
 
+
+//==========================================================================
+// SIM_OBJECT: JEODPhysicalEntiySimObject - An example PhysicalEntity
+// simulation object definition. This can be used for SpaceFOM
+// PhysicalEntity object discovery and data exchange.
+//==========================================================================
+##include "JEOD/JEODPhysicalEntity.hh"
+class JEODPhysicalEntiySimObject : public Trick::SimObject {
+
+  public:
+
+   /* HLA associated reference frames packing object. */
+   SpaceFOM::JEODPhysicalEntity entity_packing;
+
+   JEODPhysicalEntiySimObject( unsigned short _INIT = 59 )
+   {
+
+      //
+      // Initialization jobs
+      //
+      P_INIT ("initialization") entity_packing.initialize( &vehicle.dyn_body );
+
+   }
+
+  private:
+
+   // This object is not copyable
+   JEODPhysicalEntiySimObject( JEODPhysicalEntiySimObject const & );
+   JEODPhysicalEntiySimObject & operator=( JEODPhysicalEntiySimObject const & );
+
+};
+
 // Instantiate the standard JEOD/SpaceFOM reference frames for the tree.
 JEODRefFrameSimObject solar_system_barycenter( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
 JEODRefFrameSimObject sun_inertial( jeod_time.time_tt, (P_HLA_INIT-1), 40 );

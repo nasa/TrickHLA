@@ -245,7 +245,7 @@ void RefFrameState::unpack()
       }
    }
 
-   // Unpack the s[ac
+   // Unpack the ReferenceFrame space-time coordinate state.
    if ( state_attr->is_received() ) {
 
       // Unpack the data.

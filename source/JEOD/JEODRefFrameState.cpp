@@ -226,40 +226,18 @@ void JEODRefFrameState::unpack()
 
    // Set the reference frame name and parent frame name.
    if ( name_attr->is_received() ) {
-      /*
-      if ( ref_frame_data->name != NULL ) {
-         if ( !strcmp(ref_frame_data->name, name ) ){
-            trick_MM->delete_var( (void *)ref_frame_data->name );
-            ref_frame_data->name = trick_MM->mm_strdup( name );
-         }
-      }
-      else {
-         ref_frame_data->name = trick_MM->mm_strdup( name );
-      }
-      */
+      // NOTE: We don't currently support renaming a ReferenceFrame for JEOD
+      // based applications.  The changed name is updated in the RefFrameBase
+      // name attribute but we do not do anything with it now.
    }
 
    if ( parent_name_attr->is_received() ) {
-      /*
-      if ( ref_frame_data->parent_name != NULL ) {
-         if ( !strcmp(ref_frame_data->parent_name, parent_name ) ){
-            trick_MM->delete_var( (void *)ref_frame_data->parent_name );
-            if ( parent_name[0] != '\0' ) {
-               ref_frame_data->parent_name = trick_MM->mm_strdup( parent_name );
-            }
-            else{
-               ref_frame_data->parent_name = NULL;
-            }
-         }
-      }
-      else {
-         if ( parent_name[0] != '\0' ) {
-            ref_frame_data->parent_name = trick_MM->mm_strdup( parent_name );
-         }
-      }
-      */
+      // NOTE: We don't currently support reparenting a ReferenceFrame for JEOD
+      // based applications.  The changed the ReferencFrame parent name is
+      // ignored for now.
    }
 
+   // Unpack the ReferenceFrame space-time coordinate state.
    if ( state_attr->is_received() ) {
 
       // Unpack the data.
