@@ -431,8 +431,8 @@ the documented ENUM values.%c",
    // Set the debug level and code section in the global DebugHandler.
    DebugHandler::set( this->debug_level, this->code_section );
 
-   // Set the default HLA Logical time base units in the global Int64BaseTime.
-   set_HLA_base_time_units( HLA_BASE_TIME_MICROSECONDS );
+   // TODO: Set the default HLA Logical time base units in the global Int64BaseTime.
+   set_HLA_base_time_units( Int64BaseTime::get_base_units() );
 
    // Print the current TrickHLA version string.
    print_version();
