@@ -235,7 +235,7 @@ THLA.manager.objects[1].attributes[0].rti_encoding    = trick.ENCODING_LITTLE_EN
 
 THLA.manager.objects[1].attributes[1].FOM_name        = 'Value'
 THLA.manager.objects[1].attributes[1].trick_name      = 'P.sim_data.value'
-THLA.manager.objects[1].attributes[1].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_ZERO_LOOKAHEAD
+THLA.manager.objects[1].attributes[1].config          = trick.CONFIG_ZERO_LOOKAHEAD
 THLA.manager.objects[1].attributes[1].publish         = True
 THLA.manager.objects[1].attributes[1].subscribe       = True
 THLA.manager.objects[1].attributes[1].locally_owned   = True
@@ -278,7 +278,7 @@ THLA.manager.objects[1].attributes[6].rti_encoding    = trick.ENCODING_LITTLE_EN
 
 THLA.manager.objects[1].attributes[7].FOM_name        = 'Name'
 THLA.manager.objects[1].attributes[7].trick_name      = 'P.sim_data.name'
-THLA.manager.objects[1].attributes[7].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_ZERO_LOOKAHEAD
+THLA.manager.objects[1].attributes[7].config          = trick.CONFIG_ZERO_LOOKAHEAD
 THLA.manager.objects[1].attributes[7].publish         = True
 THLA.manager.objects[1].attributes[7].locally_owned   = True
 THLA.manager.objects[1].attributes[7].rti_encoding    = trick.ENCODING_UNICODE_STRING

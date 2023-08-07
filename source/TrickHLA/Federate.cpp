@@ -5032,8 +5032,8 @@ void Federate::send_zero_lookahead_and_requested_data(
    if ( obj == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::send_zero_lookahead_data():" << __LINE__
-             << " ERROR: Could not find the object instance for the name specified:"
-             << obj_instance_name << THLA_ENDL;
+             << " ERROR: Could not find the object instance for the name specified:'"
+             << obj_instance_name << "'" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -5044,7 +5044,7 @@ void Federate::send_zero_lookahead_and_requested_data(
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::send_zero_lookahead_data():%d Object:'%s'%c",
                __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
    }
@@ -5060,8 +5060,8 @@ void Federate::wait_to_receive_zero_lookahead_data(
    if ( obj == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::wait_to_receive_zero_lookahead_data():" << __LINE__
-             << " ERROR: Could not find the object instance for the name specified:"
-             << obj_instance_name << THLA_ENDL;
+             << " ERROR: Could not find the object instance for the name specified:'"
+             << obj_instance_name << "'" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -5072,7 +5072,7 @@ void Federate::wait_to_receive_zero_lookahead_data(
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::wait_to_receive_zero_lookahead_data():%d Object:'%s'%c",
                __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
    }
