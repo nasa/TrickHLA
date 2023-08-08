@@ -99,16 +99,16 @@ class TrickThreadCoordinator
 
    /*! @brief On boundary if sim-time is an integer multiple of a valid cycle-time. */
    bool const on_data_cycle_boundary_for_thread( unsigned int const thread_id,
-                                                 int64_t const      sim_time_micros ) const;
+                                                 int64_t const      sim_time_in_base_time ) const;
 
    /*! @brief On boundary if sim-time is an integer multiple of a valid cycle-time. */
    bool const on_data_cycle_boundary_for_obj( unsigned int const obj_index,
-                                              int64_t const      sim_time_micros ) const;
+                                              int64_t const      sim_time_in_base_time ) const;
 
    /*! @brief Get the data cycle time for the configured object index or return
     * the default data cycle time. */
-   int64_t const get_data_cycle_time_micros_for_obj( unsigned int const obj_index,
-                                                     int64_t const      default_data_cycle_micros ) const;
+   int64_t const get_data_cycle_base_time_for_obj( unsigned int const obj_index,
+                                                   int64_t const      default_data_cycle_base_time ) const;
 
   protected:
    /*! @brief Wait to send data for Trick main thread. */
@@ -126,12 +126,12 @@ class TrickThreadCoordinator
    unsigned int *thread_state;     ///< @trick_units{--} TrickHLA state of trick child threads being used.
    unsigned int  thread_state_cnt; ///< @trick_units{--} TrickHLA state of trick child threads being used count.
 
-   long long *data_cycle_micros_per_thread; ///< @trick_units{--} Data cycle times per thread in microseconds.
-   long long *data_cycle_micros_per_obj;    ///< @trick_units{--} Data cycle times per object instance in microseconds.
+   long long *data_cycle_base_time_per_thread; ///< @trick_units{--} Data cycle times per thread in the base HLA Logical Time representation.
+   long long *data_cycle_base_time_per_obj;    ///< @trick_units{--} Data cycle times per object instance in the base HLA Logical Time representation.
 
    bool any_child_thread_associated; ///< @trick_units{--} True if at least one Trick Child thread is associated to TrickHLA.
 
-   long long main_thread_data_cycle_micros; ///< @trick_units{--} Trick main thread data cycle time in microseconds.
+   long long main_thread_data_cycle_base_time; ///< @trick_units{--} Trick main thread data cycle time in the HLA Logical Time base.
 };
 
 } // namespace TrickHLA

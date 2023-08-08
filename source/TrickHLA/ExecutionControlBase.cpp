@@ -20,6 +20,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{ExecutionConfigurationBase.cpp}
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
+@trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Manager.cpp}
 @trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{Types.cpp}
@@ -52,6 +53,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StandardsSupport.hh"
@@ -89,6 +91,7 @@ ExecutionControlBase::ExecutionControlBase()
      master( false ),
      multiphase_init_sync_points( NULL ),
      time_padding( 5.0 ),
+     least_common_time_step_seconds( -1.0 ),
      least_common_time_step( -1 ),
      execution_configuration( NULL ),
      multiphase_init_sync_pnt_list(),
@@ -122,6 +125,7 @@ ExecutionControlBase::ExecutionControlBase(
      master( false ),
      multiphase_init_sync_points( NULL ),
      time_padding( 5.0 ),
+     least_common_time_step_seconds( -1.0 ),
      least_common_time_step( -1 ),
      execution_configuration( &exec_config ),
      multiphase_init_sync_pnt_list(),
@@ -248,14 +252,14 @@ void ExecutionControlBase::initialize()
    if ( !does_scenario_timeline_exist() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "TrickHLA::ExecutionControlBase::initialize():%d WARNING: \
-ExecutionControl 'scenario_timeline' not specified in the input file. Using the \
+ExecutionControl 'scenario_timeline' not specified in the input.py file. Using the \
 Trick simulation time as the default scenario-timeline.%c",
                   __LINE__, THLA_NEWLINE );
       }
 
       // Use the simulation timeline as the default scenario timeline.
       scenario_timeline = &def_scenario_timeline;
-      if ( scenario_timeline == static_cast< ScenarioTimeline * >( NULL ) ) {
+      if ( scenario_timeline == static_cast< ScenarioTimeline * >( NULL ) ) { // cppcheck-suppress [knownConditionTrueFalse]
          ostringstream errmsg;
          errmsg << "TrickHLA::ExecutionControlBase::initialize():" << __LINE__
                 << " FAILED to allocate enough memory for ScenarioTimeline class!"
@@ -366,7 +370,7 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
       } else { // If this is the designated preset Master federate, then this is an ERROR.
          ostringstream errmsg;
          errmsg << "TrickHLA::ExecutionControlBase::object_instance_name_reservation_failed:" << __LINE__
-                << " Failed to reserve the ExecutionConfiguration object instance name: '"
+                << " FAILED to reserve the ExecutionConfiguration object instance name: '"
                 << execution_configuration->get_name()
                 << "'! This conflicts with this being the designated Master federate!" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
@@ -626,7 +630,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "TrickHLA::ExecutionControlBase::receive_execution_configuration():" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution member."
+                         << " ERROR: Unexpectedly the Federate is no longer an execution member."
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
@@ -925,7 +929,7 @@ void ExecutionControlBase::check_pause_at_init( double const check_pause_delta )
 void ExecutionControlBase::set_master( bool master_flag )
 {
    // Don't change the master flag setting if the user has preset a value
-   // in the input file.
+   // in the input.py file.
    if ( !is_master_preset() ) {
       this->master = master_flag;
       // Make sure that the Execution Configuration object is set properly.
@@ -964,16 +968,24 @@ void ExecutionControlBase::remove_execution_configuration()
  * @details WARNING: Only the Master federate should ever set this.
  */
 void ExecutionControlBase::set_least_common_time_step(
-   int64_t lcts )
+   double const lcts )
 {
    // TODO: Need more checking here.
    // WARNING: Only the Master federate should ever set this.
    if ( this->is_master() ) {
-      this->least_common_time_step = lcts;
+      this->least_common_time_step_seconds = lcts;
+      this->least_common_time_step         = Int64BaseTime::to_base_time( lcts );
    }
 }
 
-void ExecutionControlBase::set_time_padding( double t )
+void ExecutionControlBase::refresh_least_common_time_step()
+{
+   // Refresh the LCTS by setting the value again, which will calculate a new
+   // LCTS using the HLA base time units.
+   set_least_common_time_step( this->least_common_time_step_seconds );
+}
+
+void ExecutionControlBase::set_time_padding( double const t )
 {
    this->time_padding = t;
 }

@@ -677,14 +677,14 @@ class Federate
    /*! @brief Wait to receive data when the Trick main thread is ready. */
    void wait_to_receive_data();
 
-   /*! @brief Get the data cycle time in microseconds for the configured object
-    * index or return the default data cycle time in microseconds otherwise. */
-   int64_t const get_data_cycle_time_micros_for_obj( unsigned int const obj_index,
-                                                     int64_t const      default_data_cycle_micros ) const;
+   /*! @brief Get the data cycle time in the base HLA Logical Time representation for the configured object
+    * index or return the default data cycle time in base time otherwise. */
+   int64_t const get_data_cycle_base_time_for_obj( unsigned int const obj_index,
+                                                   int64_t const      default_data_cycle_base_time ) const;
 
    /*! @brief Is the object for the given index on a data cycle boundary. */
    bool const on_data_cycle_boundary_for_obj( unsigned int const obj_index,
-                                              int64_t const      sim_time_micros ) const;
+                                              int64_t const      sim_time_in_base_time ) const;
 
    /*! @brief Set federate execution startup state.
     *  @param flag True for federate started; False otherwise. */
@@ -881,11 +881,11 @@ class Federate
       return this->granted_time;
    }
 
-   /*! @brief Get the current granted HLA federation execution time in microseconds.
+   /*! @brief Get the current granted HLA federation execution time in the base HLA Logical Time representation.
     *  @return Reference to current granted HLA federation execution time. */
-   double const get_granted_time_in_micros() const
+   double const get_granted_base_time() const
    {
-      return this->granted_time.get_time_in_micros();
+      return this->granted_time.get_base_time();
    }
 
    /*! @brief Get the requested HLA federation execution time.
@@ -903,17 +903,17 @@ class Federate
    }
 
    /*! @brief Get the current federate lookahead time in seconds.
-    *  @return Current federate lookahead time in microseconds. */
-   int64_t const get_lookahead_time_in_micros() const
+    *  @return Current federate lookahead time in the base time. */
+   int64_t const get_lookahead_in_base_time() const
    {
-      return this->lookahead.get_time_in_micros();
+      return this->lookahead.get_base_time();
    }
 
    /*! @brief Query of federate has a zero lookahead time.
     *  @return True if lookahead time is zero; Flase otherwise. */
    bool const is_zero_lookahead_time() const
    {
-      return ( this->lookahead.get_time_in_micros() <= 0LL );
+      return ( this->lookahead.get_base_time() <= 0LL );
    }
 
    /*! @brief Set the name of the save.
@@ -969,7 +969,7 @@ class Federate
 
    /*! @brief Sets the granted time from the specified double.
     *  @param time Granted time in seconds. */
-   void set_granted_time( double time );
+   void set_granted_time( double const time );
 
    /*! @brief Sets the granted time from the specified LogicalTime.
     *  @param time Granted time in HLA logical time. */
@@ -1001,40 +1001,54 @@ class Federate
 
    /*! @brief Sets the requested time from the specified double.
     *  @param time Requested time in seconds. */
-   void set_requested_time( double time );
+   void set_requested_time( double const time );
 
    /*! @brief Sets the requested time from the specified LogicalTime.
     *  @param time Requested time in HLA logical time. */
    void set_requested_time( RTI1516_NAMESPACE::LogicalTime const &time );
 
+   /*! @brief Sets the HLA base time units.
+    *  @param base_time_units HLA base time units. */
+   HLABaseTimeEnum get_HLA_base_time_units() const;
+
+   /*! @brief Sets the HLA base time units.
+    *  @param base_time_units HLA base time units. */
+   void set_HLA_base_time_units( HLABaseTimeEnum const base_time_units );
+
+   /*! @brief Scale the Trick Time Tic value given the HLA base time units. */
+   void scale_trick_tics_to_base_time_units();
+
    /*! @brief Sets the HLA lookahead time.
     *  @param value HLA lookahead time in seconds. */
-   void set_lookahead( double value );
+   void set_lookahead( double const value );
+
+   /*! @brief Refresh the HLA lookahead base time, which needs to be done if the HLA base time units change. */
+   void refresh_lookahead();
 
    /*! @brief Set start to save flag.
     *  @param save_flag True if save started; False otherwise. */
-   void set_start_to_save( bool save_flag )
+   void set_start_to_save( bool const save_flag )
    {
       this->start_to_save = save_flag;
    }
 
    /*! @brief Set start to restore flag.
     *  @param restore_flag True if restore started; False otherwise. */
-   void set_start_to_restore( bool restore_flag )
+   void set_start_to_restore( bool const restore_flag )
    {
       this->start_to_restore = restore_flag;
    }
 
    /*! @brief Set restart flag.
     *  @param restart_now True for federate restart; False otherwise. */
-   void set_restart( bool restart_now )
+   void set_restart( bool const restart_now )
    {
       this->restart_flag = restart_now;
    }
 
    /*! @brief Set restart configuration flag.
     *  @param restart_cfg_now True for configuring restart; False otherwise. */
-   void set_restart_cfg( bool restart_cfg_now )
+   void set_restart_cfg( bool const restart_cfg_now )
    {
       this->restart_cfg_flag = restart_cfg_now;
    }

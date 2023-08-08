@@ -109,7 +109,7 @@ class RefFrameBase : public TrickHLA::Packing
 
    // Initialize the packing object.
    /*! @brief Set the reference to the reference frame data. */
-   void initialize( );
+   void initialize();
 
    /*! @brief Initialization callback as part of the TrickHLA::Packing functions.
     *  @param obj Object associated with this packing class. */

@@ -76,8 +76,8 @@ void SleepTimeout::set(
    // Do a bounds check on the timeout in seconds and convert it to microseconds.
    if ( timeout_seconds <= 0.0 ) {
       this->timeout_time = 0;
-   } else if ( timeout_seconds >= ( std::numeric_limits< long long >::max() / 1000000 ) ) {
-      this->timeout_time = std::numeric_limits< long long >::max();
+   } else if ( timeout_seconds >= ( INT64_MAX / 1000000 ) ) {
+      this->timeout_time = INT64_MAX;
    } else {
       this->timeout_time = timeout_seconds * 1000000; // in microseconds
    }
@@ -123,9 +123,9 @@ bool const SleepTimeout::timeout(
 void SleepTimeout::reset()
 {
    int64_t t = time();
-   if ( t < ( std::numeric_limits< long long >::max() - this->timeout_time ) ) {
+   if ( t < ( INT64_MAX - this->timeout_time ) ) {
       this->timeout_clock_time = t + this->timeout_time;
    } else {
-      this->timeout_clock_time = std::numeric_limits< long long >::max();
+      this->timeout_clock_time = INT64_MAX;
    }
 }

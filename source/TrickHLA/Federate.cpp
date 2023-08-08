@@ -19,7 +19,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{FedAmb.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{Int64Interval.cpp}
+@trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Manager.cpp}
 @trick_link_dependency{MutexLock.cpp}
 @trick_link_dependency{MutexProtection.cpp}
@@ -47,6 +47,7 @@ NASA, Johnson Space Center\n
 #include <cstdlib> // for atof
 #include <float.h>
 #include <fstream> // for ifstream
+#include <iomanip>
 #include <iostream>
 #include <limits>
 #include <memory> // for auto_ptr
@@ -75,7 +76,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/FedAmb.hh"
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/Int64Interval.hh"
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
@@ -409,11 +410,11 @@ void Federate::setup(
 void Federate::initialize_debug()
 {
    // Verify the debug level is correct just in case the user specifies it in
-   // the input file as an integer instead of using the ENUM values...
+   // the input.py file as an integer instead of using the ENUM values...
    if ( ( this->debug_level < DEBUG_LEVEL_NO_TRACE ) || ( this->debug_level > DEBUG_LEVEL_FULL_TRACE ) ) {
       send_hs( stderr, "Federate::initialize():%d You specified an \
-invalid debug level '%d' in the input file using an integer value instead of \
-an ENUM. Please double check the value you specified in the input file against \
+invalid debug level '%d' in the input.py file using an integer value instead of \
+an ENUM. Please double check the value you specified in the input.py file against \
 the documented ENUM values.%c",
                __LINE__, (int)this->debug_level, THLA_NEWLINE );
       if ( this->debug_level < DEBUG_LEVEL_NO_TRACE ) {
@@ -429,6 +430,9 @@ the documented ENUM values.%c",
 
    // Set the debug level and code section in the global DebugHandler.
    DebugHandler::set( this->debug_level, this->code_section );
+
+   // TODO: Set the default HLA Logical time base units in the global Int64BaseTime.
+   set_HLA_base_time_units( Int64BaseTime::get_base_units() );
 
    // Print the current TrickHLA version string.
    print_version();
@@ -468,7 +472,7 @@ void Federate::initialize()
    if ( ( name == NULL ) || ( *name == '\0' ) ) {
       ostringstream errmsg;
       errmsg << "Federate::initialize():" << __LINE__
-             << " Unexpected NULL federate name." << THLA_ENDL;
+             << " ERROR: Unexpected NULL federate name." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -483,11 +487,26 @@ void Federate::initialize()
                __LINE__, name, type, THLA_NEWLINE );
    }
 
+   // Determine if the Trick time Tic resolution can support the HLA base time.
+   if ( exec_get_time_tic_value() < Int64BaseTime::get_base_time_multiplier() ) {
+      ostringstream errmsg;
+      errmsg << "Federate::initialize():" << __LINE__
+             << " ERROR: The Trick time tic value (" << exec_get_time_tic_value()
+             << ") cannot support the HLA base time resolution ("
+             << Int64BaseTime::get_units()
+             << ") corresponding to THLA.federate.set_HLA_base_time_unit("
+             << Int64BaseTime::get_base_units()
+             << "). Please update the Trick time tic value in your input.py file"
+             << " (i.e. by calling 'trick.exec_set_time_tic_value()')."
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    // Check to make sure we have a reference to the TrickHLA::FedAmb.
    if ( federate_ambassador == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::initialize():" << __LINE__
-             << " Unexpected NULL TrickHLA::FedAmb." << THLA_ENDL;
+             << " ERROR: Unexpected NULL TrickHLA::FedAmb." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -499,7 +518,7 @@ void Federate::initialize()
    if ( manager == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::initialize():" << __LINE__
-             << " Unexpected NULL TrickHLA::Manager." << THLA_ENDL;
+             << " ERROR: Unexpected NULL TrickHLA::Manager." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -508,7 +527,7 @@ void Federate::initialize()
    if ( execution_control == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::initialize():" << __LINE__
-             << " Unexpected NULL TrickHLA::ExecutionControlBase." << THLA_ENDL;
+             << " ERROR: Unexpected NULL TrickHLA::ExecutionControlBase." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -540,7 +559,7 @@ void Federate::restart_initialization()
    if ( federate_ambassador == static_cast< FedAmb * >( NULL ) ) {
       ostringstream errmsg;
       errmsg << "Federate::restart_initialization():" << __LINE__
-             << " NULL pointer to FederateAmbassador!" << THLA_ENDL;
+             << " ERROR: NULL pointer to FederateAmbassador!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -548,7 +567,7 @@ void Federate::restart_initialization()
    if ( ( name == NULL ) || ( *name == '\0' ) ) {
       ostringstream errmsg;
       errmsg << "Federate::restart_initialization():" << __LINE__
-             << " NULL or zero length Federate Name." << THLA_ENDL;
+             << " ERROR: NULL or zero length Federate Name." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -557,10 +576,10 @@ void Federate::restart_initialization()
    if ( lookahead_time < 0.0 ) {
       ostringstream errmsg;
       errmsg << "Federate::restart_initialization():" << __LINE__
-             << " Invalid HLA lookahead time!"
+             << " ERROR: Invalid HLA lookahead time!"
              << " Lookahead time (" << lookahead_time << " seconds)"
              << " must be greater than or equal to zero and not negative. Make"
-             << " sure 'lookahead_time' in your input or modified-data file is"
+             << " sure 'lookahead_time' in your input.py or modified-data file is"
              << " not a negative number." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -569,8 +588,8 @@ void Federate::restart_initialization()
    if ( ( FOM_modules == NULL ) || ( *FOM_modules == '\0' ) ) {
       ostringstream errmsg;
       errmsg << "Federate::restart_initialization():" << __LINE__
-             << " Invalid FOM-modules."
-             << " Please check your input or modified-data files to make sure"
+             << " ERROR: Invalid FOM-modules."
+             << " Please check your input.py or modified-data files to make sure"
              << " 'FOM_modules' is correctly specified, where 'FOM_modules' is";
       errmsg << " a comma separated list of FOM-module filenames.";
       errmsg << THLA_ENDL;
@@ -581,8 +600,8 @@ void Federate::restart_initialization()
    if ( ( federation_name == NULL ) || ( *federation_name == '\0' ) ) {
       ostringstream errmsg;
       errmsg << "Federate::restart_initialization():" << __LINE__
-             << " Invalid Federate Execution Name."
-             << " Please check your input or modified-data files to make sure"
+             << " ERROR: Invalid Federate Execution Name."
+             << " Please check your input.py or modified-data files to make sure"
              << " the 'federation_name' is correctly specified." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -599,7 +618,7 @@ void Federate::restart_initialization()
          // If we are enabling known federates, then there probably should be some.
          ostringstream errmsg;
          errmsg << "Federate::restart_initialization():" << __LINE__
-                << " No Known Federates Specified for the Federation."
+                << " ERROR: No Known Federates Specified for the Federation."
                 << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -611,7 +630,7 @@ void Federate::restart_initialization()
          if ( ( known_feds[i].name == static_cast< char * >( NULL ) ) || ( *known_feds[i].name == '\0' ) ) {
             ostringstream errmsg;
             errmsg << "Federate::restart_initialization():" << __LINE__
-                   << " Invalid name of known Federate at array index: "
+                   << " ERROR: Invalid name of known Federate at array index: "
                    << i << THLA_ENDL;
             DebugHandler::terminate_with_message( errmsg.str() );
          }
@@ -645,7 +664,7 @@ void Federate::pre_multiphase_initialization()
    if ( manager == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::initialize():" << __LINE__
-             << " Unexpected NULL TrickHLA::Manager." << THLA_ENDL;
+             << " ERROR: Unexpected NULL TrickHLA::Manager." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -711,7 +730,7 @@ void Federate::create_RTI_ambassador_and_connect()
          msg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
              << " WARNING: Local settings designator 'THLA.federate.local_settings'"
              << " for the RTI-Ambassador connection was not specified in the"
-             << " input file, using HLA-Evolved vendor defaults." << THLA_ENDL;
+             << " input.py file, using HLA-Evolved vendor defaults." << THLA_ENDL;
          send_hs( stdout, (char *)msg.str().c_str() );
       } else {
          ostringstream msg;
@@ -756,7 +775,7 @@ void Federate::create_RTI_ambassador_and_connect()
 
       ostringstream errmsg;
       errmsg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
-             << " For Federate: '" << name
+             << " ERROR: For Federate: '" << name
              << "' of Federation: '" << federation_name
              << "' with local_settings: '" << ( ( local_settings != NULL ) ? local_settings : "" )
              << "' with EXCEPTION: ConnectionFailed: '" << rti_err_msg << "'."
@@ -769,7 +788,7 @@ void Federate::create_RTI_ambassador_and_connect()
 
       ostringstream errmsg;
       errmsg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
-             << " For Federate: '" << name
+             << " ERROR: For Federate: '" << name
              << "' of Federation: '" << federation_name
              << "' with local_settings: '" << ( ( local_settings != NULL ) ? local_settings : "" )
              << "' with EXCEPTION: InvalidLocalSettingsDesignator" << THLA_ENDL;
@@ -793,7 +812,7 @@ void Federate::create_RTI_ambassador_and_connect()
 
       ostringstream errmsg;
       errmsg << "Federate::create_RTI_ambassador_and_connect()"
-             << " For Federate: '" << name
+             << " ERROR: For Federate: '" << name
              << "' of Federation: '" << federation_name
              << "' with local_settings: '" << ( ( local_settings != NULL ) ? local_settings : "" )
              << "' with EXCEPTION: AlreadyConnected" << THLA_ENDL;
@@ -805,7 +824,7 @@ void Federate::create_RTI_ambassador_and_connect()
 
       ostringstream errmsg;
       errmsg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
-             << " For Federate: '" << name
+             << " ERROR: For Federate: '" << name
              << "' of Federation: '" << federation_name
              << "' with local_settings: '" << ( ( local_settings != NULL ) ? local_settings : "" )
              << "' with EXCEPTION: CallNotAllowedFromWithinCallback" << THLA_ENDL;
@@ -820,7 +839,7 @@ void Federate::create_RTI_ambassador_and_connect()
 
       ostringstream errmsg;
       errmsg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
-             << " For Federate: '" << name
+             << " ERROR: For Federate: '" << name
              << "' of Federation: '" << federation_name
              << "' with local_settings: '" << ( ( local_settings != NULL ) ? local_settings : "" )
              << "' with RTIinternalError: '" << rti_err_msg
@@ -929,7 +948,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       if ( attr_iter->second.size() != 8 ) {
          ostringstream errmsg;
          errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():"
-                << __LINE__ << " Unexpected number of bytes in the"
+                << __LINE__ << " ERROR: Unexpected number of bytes in the"
                 << " Encoded FederateHandle because the byte count is "
                 << attr_iter->second.size()
                 << " but we expected 8!" << THLA_ENDL;
@@ -953,7 +972,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       if ( size != 4 ) {
          ostringstream errmsg;
          errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():"
-                << __LINE__ << " FederateHandle size is "
+                << __LINE__ << " ERROR: FederateHandle size is "
                 << size << " but expected it to be 4!" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
          exit( 1 );
@@ -979,7 +998,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
 
          ostringstream errmsg;
          errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():" << __LINE__
-                << "when decoding 'FederateHandle': EXCEPTION: CouldNotDecode"
+                << " ERROR: When decoding 'FederateHandle': EXCEPTION: CouldNotDecode"
                 << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
          exit( 1 );
@@ -990,7 +1009,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
 
          ostringstream errmsg;
          errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():" << __LINE__
-                << "when decoding 'FederateHandle': EXCEPTION: FederateNotExecutionMember"
+                << " ERROR: When decoding 'FederateHandle': EXCEPTION: FederateNotExecutionMember"
                 << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
          exit( 1 );
@@ -1001,7 +1020,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
 
          ostringstream errmsg;
          errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():" << __LINE__
-                << "when decoding 'FederateHandle': EXCEPTION: NotConnected"
+                << " ERROR: When decoding 'FederateHandle': EXCEPTION: NotConnected"
                 << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
          exit( 1 );
@@ -1015,7 +1034,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
 
          ostringstream errmsg;
          errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():" << __LINE__
-                << "when decoding 'FederateHandle': EXCEPTION: "
+                << " ERROR: When decoding 'FederateHandle': EXCEPTION: "
                 << "RTIinternalError: %s" << rti_err_msg << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
          exit( 1 );
@@ -1105,7 +1124,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
    if ( rti_amb == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::set_all_federate_MOM_instance_handles_by_name():" << __LINE__
-             << " Unexpected NULL RTIambassador." << THLA_ENDL;
+             << " ERROR: Unexpected NULL RTIambassador." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -1221,7 +1240,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
       ostringstream errmsg;
       errmsg << "Federate::set_all_federate_MOM_instance_handles_by_name():" << __LINE__
-             << " RTI1516_EXCEPTION for '" << rti_err_msg << "'" << THLA_ENDL;
+             << " ERROR: RTI1516_EXCEPTION for '" << rti_err_msg << "'" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    // Macro to restore the saved FPU Control Word register value.
@@ -1311,7 +1330,7 @@ void Federate::determine_federate_MOM_object_instance_names()
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
       errmsg << "Object::register_object_with_RTI():" << __LINE__
-             << " Exception getting MOM instance name for '"
+             << " ERROR: Exception getting MOM instance name for '"
              << fed_name_str << "' ID:" << id_str
              << " '" << rti_err_msg << "'." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -1541,7 +1560,7 @@ string Federate::wait_for_required_federates_to_join()
             if ( !is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "Federate::wait_for_required_federates_to_join():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
@@ -2340,8 +2359,8 @@ void Federate::register_generic_sync_point(
          // no time specified
          RTI_ambassador->registerFederationSynchronizationPoint( label, RTI1516_USERDATA( 0, 0 ) );
       } else {
-         // DANNY2.7 convert time to microseconds and encode in a buffer to send to RTI
-         int64_t       _value = Int64Interval::to_microseconds( time );
+         // DANNY2.7 convert time and encode in a buffer to send to RTI
+         int64_t       _value = Int64BaseTime::to_base_time( time );
          unsigned char buf[8];
          buf[0] = (unsigned char)( ( _value >> 56 ) & 0xFF );
          buf[1] = (unsigned char)( ( _value >> 48 ) & 0xFF );
@@ -2570,7 +2589,7 @@ void Federate::enter_freeze()
 {
 
    // Initiate a federation freeze when a Trick freeze is commanded. (If we're
-   // here at time 0, set_exec_freeze_command was called in input file.)
+   // here at time 0, set_exec_freeze_command was called in input.py file.)
    // Otherwise get out now.
    if ( execution_control->get_sim_time() > 0.0 ) {
       if ( exec_get_exec_command() != FreezeCmd ) {
@@ -2807,7 +2826,7 @@ void Federate::setup_checkpoint()
                   if ( !is_execution_member() ) {
                      ostringstream errmsg;
                      errmsg << "Federate::setup_checkpoint():" << __LINE__
-                            << " Unexpectedly the Federate is no longer an execution"
+                            << " ERROR: Unexpectedly the Federate is no longer an execution"
                             << " member. This means we are either not connected to the"
                             << " RTI or we are no longer joined to the federation"
                             << " execution because someone forced our resignation at"
@@ -3035,7 +3054,7 @@ void Federate::setup_restore()
          return_string += THLA_NEWLINE;
          ostringstream errmsg;
          errmsg << "Federate::setup_restore():" << __LINE__ << THLA_ENDL
-                << return_string;
+                << "ERROR: " << return_string;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
       // set the federate restore_name to filename (without the federation name)- this gets announced to other feds
@@ -3063,7 +3082,7 @@ void Federate::setup_restore()
                if ( !is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "Federate::setup_restore():" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution"
+                         << " ERROR: Unexpectedly the Federate is no longer an execution"
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
@@ -3120,7 +3139,7 @@ void Federate::post_restore()
          wait_for_federation_restore_failed_callback_to_complete();
          ostringstream errmsg;
          errmsg << "TrickFederate::post_restore():" << __LINE__
-                << " " << tStr << THLA_ENDL;
+                << " ERROR: " << tStr << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -3206,21 +3225,43 @@ void Federate::post_restore()
 void Federate::set_time_advance_granted(
    RTI1516_NAMESPACE::LogicalTime const &time )
 {
+   Int64Time int64_time( time );
+
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
 
-   this->granted_time.set( time );
+   // Ignore any granted time less than the requested time otherwise it will
+   // break our concept of HLA time since we are using scheduled jobs for
+   // processing HLA data sends, receives, etc and expected the next granted
+   // time to match our requested time. Dan Dexter, 2/12/2007
+   if ( int64_time >= this->requested_time ) {
 
-   // Record the granted time in the HLA_time variable, so we can plot it
-   // in Trick data products.
-   this->HLA_time = this->granted_time.get_time_in_seconds();
+      this->granted_time.set( int64_time );
 
-   this->time_adv_state = TIME_ADVANCE_GRANTED;
+      // Record the granted time in the HLA_time variable, so we can plot it
+      // in Trick data products.
+      this->HLA_time = this->granted_time.get_time_in_seconds();
+
+      this->time_adv_state = TIME_ADVANCE_GRANTED;
+
+      if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         send_hs( stdout, "Federate::set_time_advance_granted():%d Granted-time:%f, Requested-time:%f.%c",
+                  __LINE__, this->HLA_time, this->requested_time.get_time_in_seconds(),
+                  THLA_NEWLINE );
+      }
+   } else {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         send_hs( stdout, "Federate::set_time_advance_granted():%d WARNING: Federate \"%s\" \
+IGNORING GRANTED TIME %.12G because it is less then requested time %.12G.%c",
+                  __LINE__, get_federate_name(), int64_time.get_time_in_seconds(),
+                  this->requested_time.get_time_in_seconds(), THLA_NEWLINE );
+      }
+   }
 }
 
 void Federate::set_granted_time(
-   double time )
+   double const time )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -3248,12 +3289,12 @@ void Federate::set_granted_time(
 }
 
 void Federate::set_requested_time(
-   double time )
+   double const time )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-   requested_time.set( time );
+   this->requested_time.set( time );
 }
 
 void Federate::set_requested_time(
@@ -3262,17 +3303,115 @@ void Federate::set_requested_time(
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-   requested_time.set( time );
+   this->requested_time.set( time );
+}
+
+HLABaseTimeEnum Federate::get_HLA_base_time_units() const
+{
+   return Int64BaseTime::get_base_units();
+}
+
+void Federate::set_HLA_base_time_units(
+   HLABaseTimeEnum const base_time_units )
+{
+   // Set the HLA Logical time base units in the global Int64BaseTime.
+   Int64BaseTime::set( base_time_units );
+
+   // Refresh the lookahead time given the new HLA base time units.
+   refresh_lookahead();
+
+   // Refresh the LCTS given the new HLA base time units.
+   execution_control->refresh_least_common_time_step();
+}
+
+void Federate::scale_trick_tics_to_base_time_units()
+{
+   long long time_res  = Int64BaseTime::get_base_time_multiplier();
+   long long tic_value = exec_get_time_tic_value();
+
+   // Scale up the Trick time Tic value to support the HLA base time units.
+   // Trick Time Tics is limited to a value of 2^31.
+   while ( ( tic_value < time_res ) && ( tic_value < std::numeric_limits< int >::max() ) ) {
+      tic_value *= 10;
+   }
+
+   if ( tic_value <= std::numeric_limits< int >::max() ) {
+      // Update the Trick Time Tic value only if we are increasing the resolution.
+      if ( tic_value > exec_get_time_tic_value() ) {
+         exec_set_time_tic_value( tic_value );
+
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+            send_hs( stdout, "Federate::scale_trick_tics_to_base_time_units():%d New Trick time tics:%d.%c",
+                     __LINE__, tic_value, THLA_NEWLINE );
+         }
+      }
+   } else {
+      ostringstream errmsg;
+      errmsg << "Federate::scale_trick_tics_to_base_time_units():" << __LINE__
+             << " ERROR: Trick cannot represent the required time Tic value "
+             << setprecision( 18 ) << time_res
+             << " in order to support the HLA base units of '"
+             << Int64BaseTime::get_units()
+             << "'." << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
 }
 
 void Federate::set_lookahead(
-   double value )
+   double const value )
 {
+   // Determine if the lookahead time needs a resolution that exceeds the
+   // configured HLA base time.
+   if ( Int64BaseTime::exceeds_base_time_resolution( value ) ) {
+      ostringstream errmsg;
+      errmsg << "Federate::set_lookahead():" << __LINE__
+             << " ERROR: The lookahead time specified (" << setprecision( 18 ) << value
+             << " seconds) requires more resolution than whole "
+             << Int64BaseTime::get_units()
+             << ". The HLA Logical Time is a 64-bit integer"
+             << " representing " << Int64BaseTime::get_units()
+             << " and cannot represent a lookahead time of "
+             << setprecision( 18 ) << ( value * Int64BaseTime::get_base_time_multiplier() )
+             << " " << Int64BaseTime::get_units() << ". You can adjust the"
+             << " base HLA Logical Time resolution by setting"
+             << " 'THLA.federate.HLA_time_base_units = trick."
+             << Int64BaseTime::get_units_string( Int64BaseTime::best_base_time_resolution( value ) )
+             << "' or 'federate.set_HLA_base_time_units( "
+             << Int64BaseTime::get_units_string( Int64BaseTime::best_base_time_resolution( value ) )
+             << " )' in your input.py file. The current HLA base time resolution is "
+             << Int64BaseTime::get_units_string( Int64BaseTime::get_base_units() )
+             << ". You also need to update both the Federation Execution"
+             << " Specific Federation Agreement (FESFA) and Federate Compliance"
+             << " Declaration (FCD) documents for your Federation to document"
+             << " the change in timing class resolution." << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Determine if the Trick time Tic can represent the lookahead time.
+   if ( Int64BaseTime::exceeds_base_time_resolution( value, exec_get_time_tic_value() ) ) {
+      ostringstream errmsg;
+      errmsg << "Federate::set_lookahead():" << __LINE__
+             << " ERROR: The Trick time tic value (" << exec_get_time_tic_value()
+             << ") does not have enough resolution to represent the HLA lookahead time ("
+             << setprecision( 18 ) << value
+             << " seconds). Please update the Trick time tic value in your"
+             << " input.py file (i.e. by calling 'trick.exec_set_time_tic_value()')."
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-   lookahead.set( value );
-   lookahead_time = value;
+   this->lookahead.set( value );
+   this->lookahead_time = value;
+}
+
+/*! @brief Update the HLA lookahead base time. */
+void Federate::refresh_lookahead()
+{
+   // Recalculate the lookahead HLA time in base time units.
+   set_lookahead( this->lookahead_time );
 }
 
 void Federate::time_advance_request_to_GALT()
@@ -3289,7 +3428,7 @@ void Federate::time_advance_request_to_GALT()
    try {
       HLAinteger64Time time;
       if ( RTI_ambassador->queryGALT( time ) ) {
-         int64_t L = lookahead.get_time_in_micros();
+         int64_t L = lookahead.get_base_time();
          if ( L > 0 ) {
             int64_t GALT = time.getTime();
 
@@ -3339,7 +3478,7 @@ void Federate::time_advance_request_to_GALT_LCTS_multiple()
    // Setup the Least-Common-Time-Step time value.
    int64_t LCTS = execution_control->get_least_common_time_step();
    if ( LCTS <= 0 ) {
-      LCTS = lookahead.get_time_in_micros();
+      LCTS = lookahead.get_base_time();
    }
 
    // Macro to save the FPU Control Word register value.
@@ -3471,7 +3610,7 @@ void Federate::create_federation()
 
       ostringstream errmsg;
       errmsg << "Federate::create_federation():" << __LINE__
-             << " Could not open FOM-modules: '"
+             << " ERROR: Could not open FOM-modules: '"
              << FOM_modules << "'";
       if ( MIM_module != NULL ) {
          errmsg << " or MIM-module: '" << MIM_module << "'";
@@ -3488,7 +3627,7 @@ void Federate::create_federation()
 
       ostringstream errmsg;
       errmsg << "Federate::create_federation():" << __LINE__
-             << " Error reading FOM-modules: '"
+             << " ERROR: Problem reading FOM-modules: '"
              << FOM_modules << "'";
       if ( MIM_module != NULL ) {
          errmsg << " or MIM-module: '" << MIM_module << "'";
@@ -3505,7 +3644,7 @@ void Federate::create_federation()
 
       ostringstream errmsg;
       errmsg << "Federate::create_federation():" << __LINE__
-             << " Could not create logical time factory 'HLAinteger64Time"
+             << " ERROR: Could not create logical time factory 'HLAinteger64Time"
              << "', RTI Exception: " << rti_err_msg << "\n  Make sure that you "
              << "are using a IEEE_1516_2010-compliant RTI version which "
              << "supplies the 'HLAinteger64Time' class." << THLA_ENDL;
@@ -3542,7 +3681,7 @@ void Federate::create_federation()
       // This is an error so show out an informative message and terminate.
       ostringstream errmsg;
       errmsg << "Federate::create_federation():" << __LINE__
-             << " Unrecoverable error in federation '" << get_federation_name()
+             << " ERROR: Unrecoverable error in federation '" << get_federation_name()
              << "' creation, RTI Exception: " << rti_err_msg << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -3565,13 +3704,13 @@ void Federate::join_federation(
    if ( RTI_ambassador.get() == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::join_federation():" << __LINE__
-             << " NULL pointer to RTIambassador!" << THLA_ENDL;
+             << " ERROR: NULL pointer to RTIambassador!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    if ( federate_ambassador == static_cast< FedAmb * >( NULL ) ) {
       ostringstream errmsg;
       errmsg << "Federate::join_federation():" << __LINE__
-             << " NULL pointer to FederateAmbassador!" << THLA_ENDL;
+             << " ERROR: NULL pointer to FederateAmbassador!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    if ( this->federation_joined ) {
@@ -3589,7 +3728,7 @@ void Federate::join_federation(
    if ( ( federate_name == NULL ) || ( *federate_name == '\0' ) ) {
       ostringstream errmsg;
       errmsg << "Federate::join_federation():" << __LINE__
-             << " Unexpected NULL federate name." << THLA_ENDL;
+             << " ERROR: Unexpected NULL federate name." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
       return;
    }
@@ -3704,7 +3843,7 @@ void Federate::join_federation(
 
       ostringstream errmsg;
       errmsg << "Federate::join_federation():" << __LINE__
-             << " The Federate '" << get_federate_name()
+             << " ERROR: The Federate '" << get_federate_name()
              << "' is already a member of the '"
              << get_federation_name() << "' Federation." << THLA_ENDL;
 
@@ -3749,7 +3888,7 @@ void Federate::join_federation(
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
       errmsg << "Federate::join_federation():" << __LINE__
-             << " Federate '" << get_federate_name() << "' for Federation '"
+             << " ERROR: Federate '" << get_federate_name() << "' for Federation '"
              << get_federation_name() << "' encountered RTI Internal Error: "
              << rti_err_msg << THLA_ENDL;
 
@@ -3799,7 +3938,7 @@ void Federate::create_and_join_federation()
    if ( !this->federation_joined ) {
       ostringstream errmsg;
       errmsg << "Federate::create_and_join_federation():" << __LINE__
-             << " Federate '" << get_federate_name() << "' FAILED TO JOIN the '"
+             << " ERROR: Federate '" << get_federate_name() << "' FAILED TO JOIN the '"
              << get_federation_name() << "' Federation." << THLA_ENDL;
 
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -4065,7 +4204,7 @@ void Federate::setup_time_constrained()
                if ( !is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "Federate::setup_time_constrained():" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution"
+                         << " ERROR: Unexpectedly the Federate is no longer an execution"
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
@@ -4265,7 +4404,7 @@ void Federate::setup_time_regulation()
                if ( !is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "Federate::setup_time_regulation():" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution"
+                         << " ERROR: Unexpectedly the Federate is no longer an execution"
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
@@ -4563,7 +4702,7 @@ void Federate::perform_time_advance_request()
    if ( any_error ) {
       ostringstream errmsg;
       errmsg << "Federate::perform_time_advance_request():" << __LINE__
-             << " For federation '" << get_federation_name()
+             << " ERROR: For federation '" << get_federation_name()
              << "', unrecoverable RTI Error, exiting!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -4644,21 +4783,21 @@ void Federate::wait_to_receive_data()
 
 /*! @brief Get the data cycle time for the configured object index or return
  * the default data cycle time otherwise. */
-int64_t const Federate::get_data_cycle_time_micros_for_obj(
+int64_t const Federate::get_data_cycle_base_time_for_obj(
    unsigned int const obj_index,
-   int64_t const      default_data_cycle_micros ) const
+   int64_t const      default_data_cycle_base_time ) const
 {
    // Delegate to the Trick child thread coordinator.
-   return this->thread_coordinator.get_data_cycle_time_micros_for_obj( obj_index, default_data_cycle_micros );
+   return this->thread_coordinator.get_data_cycle_base_time_for_obj( obj_index, default_data_cycle_base_time );
 }
 
 /*! @brief Is the object for the given index on a data cycle boundary. */
 bool const Federate::on_data_cycle_boundary_for_obj(
    unsigned int const obj_index,
-   int64_t const      sim_time_micros ) const
+   int64_t const      sim_time_in_base_time ) const
 {
    // Delegate to the Trick child thread coordinator.
-   return this->thread_coordinator.on_data_cycle_boundary_for_obj( obj_index, sim_time_micros );
+   return this->thread_coordinator.on_data_cycle_boundary_for_obj( obj_index, sim_time_in_base_time );
 }
 
 /*!
@@ -4731,7 +4870,7 @@ void Federate::wait_for_time_advance_grant()
                if ( !is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "Federate::wait_for_time_advance_grant():" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution"
+                         << " ERROR: Unexpectedly the Federate is no longer an execution"
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
@@ -5055,7 +5194,7 @@ void Federate::resign()
 
       ostringstream errmsg;
       errmsg << "Federate::resign():" << __LINE__
-             << " Failed to resign Federate from the '"
+             << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because it received an EXCEPTION: "
              << "InvalidResignAction" << THLA_ENDL;
@@ -5068,7 +5207,7 @@ void Federate::resign()
 
       ostringstream errmsg;
       errmsg << "Federate::resign():" << __LINE__
-             << " Failed to resign Federate from the '"
+             << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because it received an EXCEPTION: "
              << "OwnershipAcquisitionPending" << THLA_ENDL;
@@ -5081,7 +5220,7 @@ void Federate::resign()
 
       ostringstream errmsg;
       errmsg << "Federate::resign():" << __LINE__
-             << " Failed to resign Federate from the '"
+             << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because it received an EXCEPTION: "
              << "FederateOwnsAttributes";
@@ -5125,7 +5264,7 @@ void Federate::resign()
 
       ostringstream errmsg;
       errmsg << "Federate::resign():" << __LINE__
-             << " Failed to resign Federate from the '"
+             << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because it received an EXCEPTION: "
              << "CallNotAllowedFromWithinCallback" << THLA_ENDL;
@@ -5140,7 +5279,7 @@ void Federate::resign()
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
       errmsg << "Federate::resign():" << __LINE__
-             << " Failed to resign Federate from the '"
+             << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because of the RTIinternalError: "
              << rti_err_msg << THLA_ENDL;
@@ -5155,7 +5294,7 @@ void Federate::resign()
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
       errmsg << "Federate::resign():" << __LINE__
-             << " Failed to resign Federate from the '"
+             << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because of the RTI Exception: "
              << rti_err_msg << THLA_ENDL;
@@ -5203,7 +5342,7 @@ Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federat
 
       ostringstream errmsg;
       errmsg << "Federate::resign_so_we_can_rejoin():" << __LINE__
-             << " Failed to resign Federate from the '"
+             << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because it received an EXCEPTION: "
              << "InvalidResignAction" << THLA_ENDL;
@@ -5216,7 +5355,7 @@ Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federat
 
       ostringstream errmsg;
       errmsg << "Federate::resign_so_we_can_rejoin():" << __LINE__
-             << " Failed to resign Federate from the '"
+             << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because it received an EXCEPTION: "
              << "OwnershipAcquisitionPending" << THLA_ENDL;
@@ -5238,7 +5377,7 @@ Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federat
 
       ostringstream errmsg;
       errmsg << "Federate::resign_so_we_can_rejoin():" << __LINE__
-             << " Failed to resign Federate from the '"
+             << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because it received an EXCEPTION: "
              << "FederateNotExecutionMember" << THLA_ENDL;
@@ -5251,7 +5390,7 @@ Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federat
 
       ostringstream errmsg;
       errmsg << "Federate::resign_so_we_can_rejoin():" << __LINE__
-             << " Failed to resign Federate from the '"
+             << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because it received an EXCEPTION: "
              << "NotConnected" << THLA_ENDL;
@@ -5264,7 +5403,7 @@ Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federat
 
       ostringstream errmsg;
       errmsg << "Federate::resign_so_we_can_rejoin():" << __LINE__
-             << " Failed to resign Federate from the '"
+             << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because it received an EXCEPTION: "
              << "CallNotAllowedFromWithinCallback" << THLA_ENDL;
@@ -5279,7 +5418,7 @@ Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federat
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
       errmsg << "Federate::resign_so_we_can_rejoin():" << __LINE__
-             << " Failed to resign Federate from the '"
+             << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because of the RTIinternalError: "
              << rti_err_msg << THLA_ENDL;
@@ -5294,7 +5433,7 @@ Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federat
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
       errmsg << "Federate::resign_so_we_can_rejoin():" << __LINE__
-             << " Failed to resign Federate from the '"
+             << " ERROR: Failed to resign Federate from the '"
              << get_federation_name()
              << "' Federation because of the RTI Exception: "
              << rti_err_msg << THLA_ENDL;
@@ -5309,7 +5448,7 @@ Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federat
    // TODO: Do we really want to terminate here! DDexter 9/27/2010
    ostringstream errmsg;
    errmsg << "Federate::resign_so_we_can_rejoin():" << __LINE__
-          << " Federate '" << get_federate_name()
+          << " ERROR: Federate '" << get_federate_name()
           << "' resigned from Federation '" << get_federation_name() << "'"
           << THLA_ENDL;
    DebugHandler::terminate_with_message( errmsg.str() );
@@ -5400,7 +5539,7 @@ void Federate::destroy()
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
       errmsg << "Federate::destroy():" << __LINE__
-             << " Federation '" << get_federation_name()
+             << " ERROR: Federation '" << get_federation_name()
              << "': Unexpected RTI exception when destroying federation!\n"
              << "RTI Exception: RTIinternalError: '"
              << rti_err_msg << "'" << THLA_ENDL;
@@ -5441,7 +5580,7 @@ void Federate::destroy()
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
       errmsg << "Federate::destroy():" << __LINE__
-             << " Unexpected RTI exception when disconnecting from RTI!\n"
+             << " ERROR: Unexpected RTI exception when disconnecting from RTI!\n"
              << "RTI Exception: RTIinternalError: '"
              << rti_err_msg << "'" << THLA_ENDL;
 
@@ -5465,7 +5604,7 @@ void Federate::destroy_orphaned_federation()
    if ( RTI_ambassador.get() == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::destroy_orphaned_federation():" << __LINE__
-             << " Unexpected NULL RTIambassador." << THLA_ENDL;
+             << " ERROR: Unexpected NULL RTIambassador." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -5575,7 +5714,7 @@ void Federate::ask_MOM_for_auto_provide_setting()
             if ( !is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "Federate::ask_MOM_for_auto_provide_setting():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
@@ -5716,7 +5855,7 @@ void Federate::load_and_print_running_federate_names()
             if ( !is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "Federate::load_and_print_running_federate_names():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
@@ -5780,7 +5919,7 @@ MOM just informed us that there are %d federates currently running in the federa
             if ( !is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "Federate::load_and_print_running_federate_names():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
@@ -5819,7 +5958,7 @@ MOM just informed us that there are %d federates currently running in the federa
             if ( !is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "Federate::load_and_print_running_federate_names():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
@@ -5909,7 +6048,7 @@ void Federate::update_running_feds()
    if ( running_feds == static_cast< KnownFederate * >( NULL ) ) {
       ostringstream errmsg;
       errmsg << "Federate::update_running_feds():" << __LINE__
-             << " Could not allocate memory for running_feds!" << THLA_ENDL;
+             << " ERROR: Could not allocate memory for running_feds!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -5970,7 +6109,7 @@ void Federate::add_a_single_entry_into_running_feds()
    if ( temp_feds == static_cast< KnownFederate * >( NULL ) ) {
       ostringstream errmsg;
       errmsg << "Federate::add_a_single_entry_into_running_feds():" << __LINE__
-             << " Could not allocate memory for temp_feds when attempting to add"
+             << " ERROR: Could not allocate memory for temp_feds when attempting to add"
              << " an entry into running_feds!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
 
@@ -6069,7 +6208,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    if ( tmp_feds == static_cast< KnownFederate * >( NULL ) ) {
       ostringstream errmsg;
       errmsg << "Federate::remove_discovered_object_federate_instance_id():" << __LINE__
-             << " Could not allocate memory for tmp_feds!" << THLA_ENDL;
+             << " ERROR: Could not allocate memory for tmp_feds!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
    // now, copy everything minus the requested name from the original list...
@@ -6149,7 +6288,7 @@ void Federate::write_running_feds_file(
    } else {
       ostringstream errmsg;
       errmsg << "Federate::write_running_feds_file():" << __LINE__
-             << " Failed to open file '" << full_path << "' for writing!" << THLA_ENDL;
+             << " ERROR: Failed to open file '" << full_path << "' for writing!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -6221,9 +6360,9 @@ void Federate::restore_checkpoint(
 
    load_checkpoint_job();
 
-   // If exec_set_freeze_command(true) is in master fed's input file when
+   // If exec_set_freeze_command(true) is in master fed's input.py file when
    // check-pointed, then restore starts up in freeze.
-   // DANNY2.7 Clear non-master fed's freeze command so it doesnt cause
+   // DANNY2.7 Clear non-master fed's freeze command so it does not cause
    // unnecessary freeze interaction to be sent.
    if ( !execution_control->is_master() ) {
       exec_set_freeze_command( false );
@@ -6357,7 +6496,7 @@ void Federate::read_running_feds_file(
       if ( this->known_feds == static_cast< KnownFederate * >( NULL ) ) {
          ostringstream errmsg;
          errmsg << "Federate::read_running_feds_file():" << __LINE__
-                << " Could not allocate memory for known_feds!" << THLA_ENDL;
+                << " ERROR: Could not allocate memory for known_feds!" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
@@ -6377,7 +6516,7 @@ void Federate::read_running_feds_file(
    } else {
       ostringstream errmsg;
       errmsg << "Federate::read_running_feds_file()" << __LINE__
-             << " Failed to open file '" << full_path << "'!" << THLA_ENDL;
+             << " ERROR: Failed to open file '" << full_path << "'!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
@@ -6408,7 +6547,7 @@ void Federate::copy_running_feds_into_known_feds()
    if ( this->known_feds == static_cast< KnownFederate * >( NULL ) ) {
       ostringstream errmsg;
       errmsg << "Federate::copy_running_feds_into_known_feds():" << __LINE__
-             << " Could not allocate memory for known_feds!" << THLA_ENDL;
+             << " ERROR: Could not allocate memory for known_feds!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -6545,7 +6684,7 @@ void Federate::wait_for_federation_restore_begun()
             if ( !is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "Federate::wait_for_federation_restore_begun():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
@@ -6596,7 +6735,7 @@ void Federate::wait_until_federation_is_ready_to_restore()
             if ( !is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "Federate::wait_until_federation_is_ready_to_restore():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
@@ -6682,7 +6821,7 @@ string Federate::wait_for_federation_restore_to_complete()
                if ( !is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "Federate::wait_for_federation_restore_to_complete():" << __LINE__
-                         << " Unexpectedly the Federate is no longer an execution member."
+                         << " ERROR: Unexpectedly the Federate is no longer an execution member."
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
@@ -6749,7 +6888,7 @@ void Federate::wait_for_restore_request_callback()
             if ( !is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "Federate::wait_for_restore_request_callback():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
@@ -6800,7 +6939,7 @@ void Federate::wait_for_restore_status_to_complete()
             if ( !is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "Federate::wait_for_restore_status_to_complete():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
@@ -6851,7 +6990,7 @@ void Federate::wait_for_save_status_to_complete()
             if ( !is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "Federate::wait_for_save_status_to_complete():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
@@ -6911,7 +7050,7 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
             if ( !is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "Federate::wait_for_federation_restore_failed_callback_to_complete():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
@@ -7514,7 +7653,7 @@ void Federate::restore_federate_handles_from_MOM()
             if ( !is_execution_member() ) {
                ostringstream errmsg;
                errmsg << "Federate::restore_federate_handles_from_MOM():" << __LINE__
-                      << " Unexpectedly the Federate is no longer an execution member."
+                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
@@ -7552,7 +7691,7 @@ void Federate::rebuild_federate_handles(
       if ( attr_iter->second.size() != 8 ) {
          ostringstream errmsg;
          errmsg << "Federate::rebuild_federate_handles():"
-                << __LINE__ << " Unexpected number of bytes in the"
+                << __LINE__ << " ERROR: Unexpected number of bytes in the"
                 << " Encoded FederateHandle because the byte count is "
                 << attr_iter->second.size()
                 << " but we expected 8!" << THLA_ENDL;
@@ -7575,7 +7714,7 @@ void Federate::rebuild_federate_handles(
       if ( size != 4 ) {
          ostringstream errmsg;
          errmsg << "Federate::rebuild_federate_handles():"
-                << __LINE__ << "FederateHandle size is "
+                << __LINE__ << " ERROR: FederateHandle size is "
                 << size << " but expected it to be 4!" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }

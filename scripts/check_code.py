@@ -335,6 +335,7 @@ Examples:\n  check_code -s -o -v --cstyle_casts\n  check_code -i -o -v\n  check_
    elif args.check_all:
       # Check for everything except unused functions.
       cppcheck_args.append( '--enable=warning,style,performance,portability,information,missingInclude' )
+      cppcheck_args.append( '--suppress=missingIncludeSystem' )
    elif args.autogen:
       # Check for everything including unused functions for the auto-generated
       # suppression list.

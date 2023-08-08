@@ -20,6 +20,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../source/TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../source/TrickHLA/Int64BaseTime.cpp}
 @trick_link_dependency{../source/TrickHLA/Types.cpp}
 @trick_link_dependency{sine/src/SineInteractionHandler.cpp}
 
@@ -47,6 +48,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
@@ -141,13 +143,13 @@ void SineInteractionHandler::send_sine_interaction(
               << "  user-supplied-tag:'" << user_supplied_tag_string << "'" << endl
               << "  user-supplied-tag-size:" << user_supplied_tag.size() << endl
               << "  hla_granted_time:" << send_time << " ("
-              << Int64Interval::to_microseconds( hla_granted_time ) << " microseconds)" << endl
+              << Int64BaseTime::to_base_time( hla_granted_time ) << " " << Int64BaseTime::get_units() << ")" << endl
               << "  send_time:" << send_time << " ("
-              << Int64Interval::to_microseconds( send_time ) << " microseconds)" << endl
+              << Int64BaseTime::to_base_time( send_time ) << " " << Int64BaseTime::get_units() << ")" << endl
               << "  lookahead_time:" << lookahead_time << " ("
-              << Int64Interval::to_microseconds( lookahead_time ) << " microseconds)" << endl
+              << Int64BaseTime::to_base_time( lookahead_time ) << " " << Int64BaseTime::get_units() << ")" << endl
               << "  timestamp:" << timestamp << " ("
-              << Int64Interval::to_microseconds( timestamp ) << " microseconds)" << endl
+              << Int64BaseTime::to_base_time( timestamp ) << " " << Int64BaseTime::get_units() << ")" << endl
               << "  time:" << time << endl
               << "  year:" << year << endl
               << "  send_cnt:" << ( send_cnt + 1 ) << endl;

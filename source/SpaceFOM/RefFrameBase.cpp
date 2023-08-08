@@ -204,7 +204,7 @@ void RefFrameBase::default_data(
 /*!
  * @job_class{initialization}
  */
-void RefFrameBase::initialize( )
+void RefFrameBase::initialize()
 {
    // Must have federation instance name.
    if ( this->name == NULL ) {

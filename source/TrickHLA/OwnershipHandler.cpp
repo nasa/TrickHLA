@@ -20,6 +20,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
+@trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Int64Interval.cpp}
 @trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{MutexLock.cpp}
@@ -50,10 +51,10 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
-#include "TrickHLA/Constants.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/MutexLock.hh"
@@ -125,7 +126,7 @@ void OwnershipHandler::setup_checkpoint_requests()
       if ( pull_items == static_cast< OwnershipItem * >( NULL ) ) {
          ostringstream errmsg;
          errmsg << "OwnershipHandler::setup_checkpoint_requests():" << __LINE__
-                << " Could not allocate memory for pull_items (array of OwnershipItem type)!"
+                << " CERROR: ould not allocate memory for pull_items (array of OwnershipItem type)!"
                 << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -162,7 +163,7 @@ void OwnershipHandler::setup_checkpoint_requests()
       if ( push_items == static_cast< OwnershipItem * >( NULL ) ) {
          ostringstream errmsg;
          errmsg << "OwnershipHandler::setup_checkpoint_requests():" << __LINE__
-                << " Could not allocate memory for push_items (array of OwnershipItem type)!"
+                << "ERROR:  Could not allocate memory for push_items (array of OwnershipItem type)!"
                 << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -554,15 +555,15 @@ Int64Interval OwnershipHandler::get_lookahead() const
 }
 
 /*!
- *  @details If the object does not exist, MAX_LOGICAL_TIME_SECONDS is
- *  assigned to the returned object. */
+ *  @details If the object does not exist, Int64BaseTime::get_max_logical_time_in_seconds()
+ *  is assigned to the returned object. */
 Int64Time OwnershipHandler::get_granted_time() const
 {
    Int64Time dt;
    if ( object != NULL ) {
       dt = object->get_granted_time();
    } else {
-      dt = Int64Time( MAX_LOGICAL_TIME_SECONDS );
+      dt = Int64Time( Int64BaseTime::get_max_logical_time_in_seconds() );
    }
    return dt;
 }

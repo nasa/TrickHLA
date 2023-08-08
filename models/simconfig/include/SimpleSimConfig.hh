@@ -56,8 +56,8 @@ class SimpleSimConfig : public TrickHLA::Packing
    friend void init_attrTrickHLAModel__SimpleSimConfig();
 
   public:
-   double  run_duration;          ///< @trick_units{s}  The run duration of the simulation in seconds.
-   int64_t run_duration_microsec; ///< @trick_units{us} The run duration in microseconds.
+   double  run_duration;           ///< @trick_units{s}  The run duration of the simulation in seconds.
+   int64_t run_duration_base_time; ///< @trick_units{us} The run duration in the HLA Logical Time base.
 
    int   num_federates;      ///< @trick_units{--} Number of required federates.
    char *required_federates; ///< @trick_units{--} Comma-separated list of required federates.

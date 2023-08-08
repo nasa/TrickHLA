@@ -20,6 +20,9 @@ docs/doxygen/*Err.txt
 *.swp
 *~
 
+# MacOS files
+.DS_Store
+
 # ctags tags files
 tags
 
