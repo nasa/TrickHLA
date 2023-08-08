@@ -64,6 +64,11 @@ trick.add_read(12.0 , '''A.interaction_handler.send_sine_interaction( THLA_INIT.
 THLA.federate.debug_level  = trick.DEBUG_LEVEL_4_TRACE
 #THLA.federate.code_section = trick.DEBUG_SOURCE_FED_AMB + trick.DEBUG_SOURCE_FEDERATE 
 
+# Specify the HLA base time units (default: trick.HLA_BASE_TIME_MICROSECONDS).
+THLA.federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_MICROSECONDS )
+
+# Scale the Trick Time Tic value based on the HLA base time units.
+THLA.federate.scale_trick_tics_to_base_time_units()
 
 # Configure the CRC.
 # Pitch specific local settings designator:

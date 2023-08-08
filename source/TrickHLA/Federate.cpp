@@ -432,8 +432,9 @@ the documented ENUM values.%c",
    // Set the debug level and code section in the global DebugHandler.
    DebugHandler::set( this->debug_level, this->code_section );
 
-   // TODO: Set the default HLA Logical time base units in the global Int64BaseTime.
-   set_HLA_base_time_units( Int64BaseTime::get_base_units() );
+   // TODO: Set the default HLA Logical time base units in the global Int64BaseTime
+   // before refreshing the HLA time constants.
+   refresh_HLA_time_constants();
 
    // Print the current TrickHLA version string.
    print_version();
@@ -3318,10 +3319,16 @@ void Federate::set_HLA_base_time_units(
    // Set the HLA Logical time base units in the global Int64BaseTime.
    Int64BaseTime::set( base_time_units );
 
-   // Refresh the lookahead time given the new HLA base time units.
+   // Refresh the HLA time constants based on the updated base time.
+   refresh_HLA_time_constants();
+}
+
+void Federate::refresh_HLA_time_constants()
+{
+   // Refresh the lookahead time given the HLA base time units.
    refresh_lookahead();
 
-   // Refresh the LCTS given the new HLA base time units.
+   // Refresh the LCTS given the HLA base time units.
    execution_control->refresh_least_common_time_step();
 }
 

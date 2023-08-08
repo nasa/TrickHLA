@@ -69,6 +69,11 @@ P.interaction_handler.message = 'P-side: P.interaction_hdlr.message'
 THLA.federate.debug_level  = trick.DEBUG_LEVEL_4_TRACE
 #THLA.federate.code_section = trick.DEBUG_SOURCE_FED_AMB + trick.DEBUG_SOURCE_FEDERATE 
 
+# Specify the HLA base time units (default: trick.HLA_BASE_TIME_MICROSECONDS).
+THLA.federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_MICROSECONDS )
+
+# Scale the Trick Time Tic value based on the HLA base time units.
+THLA.federate.scale_trick_tics_to_base_time_units()
 
 # Configure the CRC.
 # Pitch specific local settings designator:

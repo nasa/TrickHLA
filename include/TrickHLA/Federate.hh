@@ -1021,6 +1021,9 @@ class Federate
     *  @param base_time_units HLA base time units. */
    void set_HLA_base_time_units( HLABaseTimeEnum const base_time_units );
 
+   /*! @brief Refresh the HLA time constants for the current base time units. */
+   void refresh_HLA_time_constants();
+
    /*! @brief Scale the Trick Time Tic value given the HLA base time units. */
    void scale_trick_tics_to_base_time_units();
 
