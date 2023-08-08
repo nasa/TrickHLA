@@ -244,17 +244,17 @@ class Object
     *  @param update_time The time to HLA Logical Time to update the atributes to. */
    void send_zero_lookahead_and_requested_data( Int64Time const &update_time );
 
-   /*! @brief Handle the received cyclic data. */
-   void receive_cyclic_data();
-
-   /*! @brief Handle the received zero-lookaehad data. */
-   void receive_zero_lookahead_data();
-
    /*! @brief Send initialization data to remote HLA federates. */
    void send_init_data();
 
    /*! @brief Receive initialization data from remote Federates. */
    void receive_init_data();
+
+   /*! @brief Handle the received cyclic data. */
+   void receive_cyclic_data();
+
+   /*! @brief Handle the received zero-lookaehad data. */
+   void receive_zero_lookahead_data();
 
    /*! @brief Request an update to the attributes for this object. */
    void request_attribute_value_update();
@@ -744,8 +744,9 @@ class Object
     * @param include_requested True to also included requeted attributes */
    void create_attribute_set( DataUpdateEnum const required_config, bool const include_requested );
 
-   MutexLock mutex;           ///< @trick_io{**} Mutex to lock thread over critical code sections.
+   MutexLock push_mutex;      ///< @trick_io{**} Mutex to lock thread over push attribute ownership sections.
    MutexLock ownership_mutex; ///< @trick_io{**} Mutex to lock thread over attribute ownership code sections.
+   MutexLock send_mutex;      ///< @trick_io{**} Mutex to lock thread over send data sections.
 
   protected:
    /*! @brief Gets the RTI Ambassador.

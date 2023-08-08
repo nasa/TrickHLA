@@ -66,8 +66,7 @@ P.interaction_handler.message = 'P-side: P.interaction_hdlr.message'
 # =========================================================================
 # Show or hide the TrickHLA debug messages.
 # Use Level-3 to show the ownership transfer debug messages.
-THLA.federate.debug_level  = trick.DEBUG_LEVEL_4_TRACE
-#THLA.federate.code_section = trick.DEBUG_SOURCE_FED_AMB + trick.DEBUG_SOURCE_FEDERATE 
+THLA.federate.debug_level = trick.DEBUG_LEVEL_4_TRACE
 
 # Specify the HLA base time units (default: trick.HLA_BASE_TIME_MICROSECONDS).
 THLA.federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_MICROSECONDS )

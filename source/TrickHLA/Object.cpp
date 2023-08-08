@@ -124,8 +124,9 @@ Object::Object()
      deleted( NULL ),
      process_object_deleted_from_RTI( false ),
      object_deleted_from_RTI( false ),
-     mutex(),
+     push_mutex(),
      ownership_mutex(),
+     send_mutex(),
      clock(),
      name_registered( false ),
      changed( false ),
@@ -182,9 +183,10 @@ Object::~Object()
 
       thla_attribute_map.clear();
 
-      // Make sure we destroy the mutex.
-      (void)mutex.unlock();
+      // Make sure we destroy the mutexs.
+      (void)push_mutex.unlock();
       (void)ownership_mutex.unlock();
+      (void)send_mutex.unlock();
 
       removed_instance = true;
    }
@@ -1617,6 +1619,10 @@ void Object::send_requested_data(
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &send_mutex );
+
    // Do send side lag compensation.
    if ( ( lag_comp_type == LAG_COMPENSATION_SEND_SIDE ) && ( lag_comp != NULL ) ) {
       lag_comp->send_lag_compensation();
@@ -1857,6 +1863,10 @@ void Object::send_cyclic_and_requested_data(
 
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
+
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &send_mutex );
 
    // Do send side lag compensation.
    if ( ( lag_comp_type == LAG_COMPENSATION_SEND_SIDE ) && ( lag_comp != NULL ) ) {
@@ -2104,6 +2114,10 @@ void Object::send_zero_lookahead_and_requested_data(
 
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
+
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &send_mutex );
 
    // Do send side lag compensation.
    if ( ( lag_comp_type == LAG_COMPENSATION_SEND_SIDE ) && ( lag_comp != NULL ) ) {
@@ -2540,6 +2554,10 @@ void Object::send_init_data()
 
    Federate      *federate = get_federate();
    RTIambassador *rti_amb  = get_RTI_ambassador();
+
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &send_mutex );
 
    // If we have a data packing object then pack the data now.
    if ( packing != NULL ) {
@@ -3498,7 +3516,7 @@ void Object::grant_push_request()
       {
          // When auto_unlock_mutex goes out of scope it automatically unlocks the
          // mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &mutex );
+         MutexProtection auto_unlock_mutex( &push_mutex );
 
          // Another federate is trying to push the attribute ownership to us so
          // determine which attributes we will take ownership of.
