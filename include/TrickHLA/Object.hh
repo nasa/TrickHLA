@@ -240,14 +240,21 @@ class Object
     *  @param update_time The time to HLA Logical Time to update the atributes to. */
    void send_cyclic_and_requested_data( Int64Time const &update_time );
 
-   /*! @brief Handle the received cyclic data. */
-   void receive_cyclic_data();
+   /*! @brief Send the zero-lookahead attribute value updates.
+    *  @param update_time The time to HLA Logical Time to update the atributes to. */
+   void send_zero_lookahead_and_requested_data( Int64Time const &update_time );
 
    /*! @brief Send initialization data to remote HLA federates. */
    void send_init_data();
 
    /*! @brief Receive initialization data from remote Federates. */
    void receive_init_data();
+
+   /*! @brief Handle the received cyclic data. */
+   void receive_cyclic_data();
+
+   /*! @brief Handle the received zero-lookaehad data. */
+   void receive_zero_lookahead_data();
 
    /*! @brief Request an update to the attributes for this object. */
    void request_attribute_value_update();
@@ -475,8 +482,13 @@ class Object
 
    /*! @brief Determines if any attribute is locally owned, published, has
     * a cycle-time that is ready for a cyclic send or is requested for update.
-    *  @return True for any locally owned, published attribute with a sub-rate that is ready or reuqested for update. */
+    *  @return True for any locally owned, published attribute with a sub-rate that is ready or requested for update. */
    bool any_locally_owned_published_cyclic_data_ready_or_requested_attribute();
+
+   /*! @brief Determines if any attribute is locally owned, published, has
+    * a zero-lookahead that is ready for a cyclic send or is requested for update.
+    *  @return True for any locally owned, published attribute or is requested for update. */
+   bool any_locally_owned_published_zero_lookahead_or_requested_attribute();
 
    /*! @brief Determines if any attribute is locally owned, published, and has
     * a cycle-time that is ready for a cyclic send.
@@ -513,6 +525,15 @@ class Object
    bool any_remotely_owned_subscribed_cyclic_attribute()
    {
       return any_remotely_owned_subscribed_attribute( CONFIG_CYCLIC );
+   }
+
+   /*! @brief Determines if any zero-lookahead updated attributes are remotely
+    * owned and subscribed.
+    *  @return True if there are any remotely owned, subscribed zero-lookahead
+    *  updated attributes. */
+   bool any_remotely_owned_subscribed_zero_lookahead_attribute()
+   {
+      return any_remotely_owned_subscribed_attribute( CONFIG_ZERO_LOOKAHEAD );
    }
 
    /*! @brief Determines if any initialization updated attributes are remotely
@@ -665,6 +686,12 @@ class Object
       pack_attribute_buffers( CONFIG_CYCLIC, true );
    }
 
+   /*! @brief Copy the zero lookahead and requested attribute values to the buffer for each attribute. */
+   void pack_zero_lookahead_and_requested_attribute_buffers()
+   {
+      pack_attribute_buffers( CONFIG_ZERO_LOOKAHEAD, true );
+   }
+
    /*! @brief Copy the cyclic attribute values to the buffer for each attribute. */
    void pack_cyclic_attribute_buffers()
    {
@@ -675,6 +702,12 @@ class Object
    void unpack_cyclic_attribute_buffers()
    {
       unpack_attribute_buffers( CONFIG_CYCLIC );
+   }
+
+   /*! @brief Copy the packed buffer contents back to each zero-lookhead attribute. */
+   void unpack_zero_lookahead_attribute_buffers()
+   {
+      unpack_attribute_buffers( CONFIG_ZERO_LOOKAHEAD );
    }
 
    /*! @brief Copy the dynamic initialization attribute values to the buffer for each attribute. */
@@ -711,8 +744,9 @@ class Object
     * @param include_requested True to also included requeted attributes */
    void create_attribute_set( DataUpdateEnum const required_config, bool const include_requested );
 
-   MutexLock mutex;           ///< @trick_io{**} Mutex to lock thread over critical code sections.
+   MutexLock push_mutex;      ///< @trick_io{**} Mutex to lock thread over push attribute ownership sections.
    MutexLock ownership_mutex; ///< @trick_io{**} Mutex to lock thread over attribute ownership code sections.
+   MutexLock send_mutex;      ///< @trick_io{**} Mutex to lock thread over send data sections.
 
   protected:
    /*! @brief Gets the RTI Ambassador.

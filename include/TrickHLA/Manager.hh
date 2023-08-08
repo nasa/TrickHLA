@@ -219,6 +219,11 @@ class Manager
    /*! @brief Gets the TrickHLA Object for the specified RTI Object Instance Name.
     *  @return TrickHLA Object.
     *  @param obj_instance_name Object instance name. */
+   Object *get_trickhla_object( std::string const &obj_instance_name );
+
+   /*! @brief Gets the TrickHLA Object for the specified RTI Object Instance Name.
+    *  @return TrickHLA Object.
+    *  @param obj_instance_name Object instance name. */
    Object *get_trickhla_object( std::wstring const &obj_instance_name );
 
    /*! @brief The object instance name reservation succeeded for the given name.

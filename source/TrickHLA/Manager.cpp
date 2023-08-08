@@ -2260,11 +2260,6 @@ void Manager::determine_job_cycle_time()
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::determine_job_cycle_time():%d%c",
-               __LINE__, THLA_NEWLINE );
-   }
-
    // Get the lookahead time.
    int64_t const lookahead_time_base_time = federate->get_lookahead_in_base_time();
 
@@ -2280,12 +2275,17 @@ void Manager::determine_job_cycle_time()
              << " lookahead time! The HLA Lookahead time ("
              << Int64BaseTime::to_seconds( lookahead_time_base_time )
              << " seconds) must be less than or equal to the job cycle time ("
-             << cycle_time << " seconds). Make sure 'lookahead_time' in"
+             << cycle_time << " seconds). Make sure the 'lookahead_time' in"
              << " your input or modified-data file is less than or equal to the"
              << " 'THLA_DATA_CYCLE_TIME' time specified in the S_define file for"
              << " the send_cyclic_and_requested_data() and"
              << " receive_cyclic_data() jobs." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      send_hs( stdout, "Manager::determine_job_cycle_time():%d cycle-time:%f seconds%c",
+               __LINE__, cycle_time, THLA_NEWLINE );
    }
 
    // Set the core job cycle time now that we know what it is so that the
@@ -2360,6 +2360,11 @@ void Manager::send_cyclic_and_requested_data()
             update_time.set( granted_plus_lookahead );
          }
       }
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      send_hs( stdout, "Manager::send_cyclic_and_requested_data():%d HLA-time:%.12G seconds.%c",
+               __LINE__, update_time.get_time_in_seconds(), THLA_NEWLINE );
    }
 
    // Send any ExecutionControl data requested.
@@ -2570,6 +2575,24 @@ Object *Manager::get_trickhla_object(
    // We use a map with the key being the ObjectIntanceHandle for fast lookups.
    ObjectInstanceMap::const_iterator iter = object_map.find( instance_id );
    return ( ( iter != object_map.end() ) ? iter->second : static_cast< Object * >( NULL ) );
+}
+
+/*!
+ * @job_class{scheduled}
+ */
+Object *Manager::get_trickhla_object(
+   string const &obj_instance_name )
+{
+   // Search the data objects first.
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
+      if ( objects[n].get_name_string() == obj_instance_name ) {
+         return ( &objects[n] );
+      }
+   }
+
+   // Check for a match with the ExecutionConfiguration object associated with
+   // ExecutionControl. Returns NULL if match not found.
+   return ( this->execution_control->get_trickhla_object( obj_instance_name ) );
 }
 
 /*!
