@@ -432,8 +432,8 @@ the documented ENUM values.%c",
    // Set the debug level and code section in the global DebugHandler.
    DebugHandler::set( this->debug_level, this->code_section );
 
-   // TODO: Set the default HLA Logical time base units in the global Int64BaseTime
-   // before refreshing the HLA time constants.
+   // Refresh the HLA time constants since the base time units may have changed
+   // from a setting in the input file.
    refresh_HLA_time_constants();
 
    // Print the current TrickHLA version string.
@@ -3325,10 +3325,10 @@ void Federate::set_HLA_base_time_units(
 
 void Federate::refresh_HLA_time_constants()
 {
-   // Refresh the lookahead time given the HLA base time units.
+   // Refresh the lookahead time given a possible new HLA base time units.
    refresh_lookahead();
 
-   // Refresh the LCTS given the HLA base time units.
+   // Refresh the LCTS given a possible new HLA base time units.
    execution_control->refresh_least_common_time_step();
 }
 
@@ -6692,6 +6692,12 @@ void Federate::restore_checkpoint(
    load_checkpoint( ( this->HLA_save_directory + "/" + trick_filename ).c_str() );
 
    load_checkpoint_job();
+
+   // TODO: Load the checkpoint base time units into the Int64BaseTime class
+   // so that all the HLA time representations use the correct base time.
+   //
+   // Refresh the HLA time constants given the HLA base time from the checkpoint.
+   refresh_HLA_time_constants();
 
    // If exec_set_freeze_command(true) is in master fed's input.py file when
    // check-pointed, then restore starts up in freeze.
