@@ -254,8 +254,10 @@ void FedAmb::initiateFederateSave(
    RTI1516_NAMESPACE::LogicalTime const &theTime ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::initiateFederateSave():%d %c",
-               __LINE__, THLA_NEWLINE );
+      Int64Time time;
+      time.set( theTime );
+      send_hs( stdout, "FedAmb::initiateFederateSave():%d HLA-time:%.12G seconds.%c",
+               __LINE__, time.get_time_in_seconds(), THLA_NEWLINE );
    }
    federate->set_save_name( label );
    federate->set_start_to_save( true );
@@ -630,7 +632,7 @@ void FedAmb::reflectAttributeValues(
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          Int64Time time;
          time.set( theTime );
-         send_hs( stdout, "FedAmb:reflectAttributeValues():%d '%s' time:%f %c",
+         send_hs( stdout, "FedAmb:reflectAttributeValues():%d '%s' HLA-time:%.12G seconds.%c",
                   __LINE__, trickhla_obj->get_name(), time.get_time_in_seconds(),
                   THLA_NEWLINE );
       }
@@ -673,7 +675,7 @@ void FedAmb::reflectAttributeValues(
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          Int64Time time;
          time.set( theTime );
-         send_hs( stdout, "FedAmb:reflectAttributeValues():%d '%s' time:%f %c",
+         send_hs( stdout, "FedAmb:reflectAttributeValues():%d '%s' HLA-time:%.12G seconds.%c",
                   __LINE__, trickhla_obj->get_name(), time.get_time_in_seconds(), THLA_NEWLINE );
       }
 
@@ -740,8 +742,10 @@ void FedAmb::receiveInteraction(
    } else {
       // Process the interaction.
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-         send_hs( stderr, "FedAmb::receiveInteraction():%d %c",
-                  __LINE__, THLA_NEWLINE );
+         Int64Time time;
+         time.set( theTime );
+         send_hs( stderr, "FedAmb::receiveInteraction():%d HLA-time:%.12G seconds.%c",
+                  __LINE__, time.get_time_in_seconds(), THLA_NEWLINE );
       }
 
       manager->receive_interaction( theInteraction,
@@ -768,8 +772,10 @@ void FedAmb::receiveInteraction(
                __LINE__, THLA_NEWLINE );
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-         send_hs( stderr, "FedAmb::receiveInteraction():%d %c",
-                  __LINE__, THLA_NEWLINE );
+         Int64Time time;
+         time.set( theTime );
+         send_hs( stderr, "FedAmb::receiveInteraction():%d HLA-time:%.12G seconds.%c",
+                  __LINE__, time.get_time_in_seconds(), THLA_NEWLINE );
       }
 
       // Process the interaction.
@@ -824,14 +830,16 @@ void FedAmb::removeObjectInstance(
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string id_str;
       StringUtilities::to_string( id_str, theObject );
+      Int64Time time;
+      time.set( theTime );
 
       if ( theUserSuppliedTag.size() > 0 ) {
          char const *tag = (char const *)theUserSuppliedTag.data();
-         send_hs( stdout, "FedAmb::removeObjectInstance():%d tag='%s' Instance ID:%s%c",
-                  __LINE__, tag, id_str.c_str(), THLA_NEWLINE );
+         send_hs( stdout, "FedAmb::removeObjectInstance():%d tag='%s' Instance-ID:%s HLA-time:%.12G seconds.%c",
+                  __LINE__, tag, id_str.c_str(), time.get_time_in_seconds(), THLA_NEWLINE );
       } else {
-         send_hs( stdout, "FedAmb::removeObjectInstance():%d Instance ID:%s%c",
-                  __LINE__, id_str.c_str(), THLA_NEWLINE );
+         send_hs( stdout, "FedAmb::removeObjectInstance():%d Instance-ID:%s HLA-time:%.12G seconds.%c",
+                  __LINE__, id_str.c_str(), time.get_time_in_seconds(), THLA_NEWLINE );
       }
    }
 
@@ -855,13 +863,16 @@ void FedAmb::removeObjectInstance(
       string id_str;
       StringUtilities::to_string( id_str, theObject );
 
+      Int64Time time;
+      time.set( theTime );
+
       if ( theUserSuppliedTag.size() > 0 ) {
          char const *tag = (char const *)theUserSuppliedTag.data();
-         send_hs( stdout, "FedAmb::removeObjectInstance():%d tag='%s' Instance ID:%s%c",
-                  __LINE__, tag, id_str.c_str(), THLA_NEWLINE );
+         send_hs( stdout, "FedAmb::removeObjectInstance():%d tag='%s' Instance-ID:%s HLA-time:%.12G seconds.%c",
+                  __LINE__, tag, id_str.c_str(), time.get_time_in_seconds(), THLA_NEWLINE );
       } else {
-         send_hs( stdout, "FedAmb::removeObjectInstance():%d Instance ID:%s%c",
-                  __LINE__, id_str.c_str(), THLA_NEWLINE );
+         send_hs( stdout, "FedAmb::removeObjectInstance():%d Instance-ID:%s HLA-time:%.12G seconds.%c",
+                  __LINE__, id_str.c_str(), time.get_time_in_seconds(), THLA_NEWLINE );
       }
    }
 
@@ -999,7 +1010,7 @@ void FedAmb::requestAttributeOwnershipAssumption(
       {
          // When auto_unlock_mutex goes out of scope it automatically unlocks the
          // mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &trickhla_obj->mutex );
+         MutexProtection auto_unlock_mutex( &trickhla_obj->push_mutex );
 
          // Mark which attributes we can accept ownership of.
          for ( iter = offeredAttributes.begin(); iter != offeredAttributes.end(); ++iter ) {

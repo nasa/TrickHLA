@@ -1,0 +1,70 @@
+/*****************************************************************************
+ * General TrickHLA Federate Interface Simulation Object
+ *---------------------------------------------------------------------------*
+ * This is a Simulation Definition (S_define) module that defines a general
+ * HLA interface using TrickHLA for Trick based simulations.
+ ****************************************************************************/
+/*****************************************************************************
+ *       Author: Dan E. Dexter
+ *         Date: June 2023
+ *       E-Mail: Dan.E.Dexter@nasa.gov
+ *        Phone: 281-483-1142
+ * Organization: Mail Code ER6
+ *               Software, Robotics & Simulation Division
+ *               2101 NASA Parkway
+ *               Houston, Texas 77058
+ *---------------------------------------------------------------------------*
+ * Modified By: Dan Dexter
+ *        Date: June 2023
+ * Description: Modified THLABase.sm to work with THLAThread.sm to support
+ *              TrickHLA working with HLA data processed across different
+ *              Trick child threads.
+ ****************************************************************************/
+
+// Trick include files.
+##include "trick/exec_proto.h"
+
+// TrickHLA include files.
+##include "TrickHLA/Attribute.hh"
+##include "TrickHLA/Conditional.hh"
+##include "TrickHLA/Parameter.hh"
+##include "TrickHLA/ParameterItem.hh"
+##include "TrickHLA/Interaction.hh"
+##include "TrickHLA/InteractionItem.hh"
+##include "TrickHLA/LagCompensation.hh"
+##include "TrickHLA/OwnershipItem.hh"
+##include "TrickHLA/OwnershipHandler.hh"
+##include "TrickHLA/Object.hh"
+##include "TrickHLA/ObjectDeleted.hh"
+##include "TrickHLA/Manager.hh"
+##include "TrickHLA/FedAmb.hh"
+##include "TrickHLA/Federate.hh"
+
+//============================================================================
+// SIM_OBJECT: THLAFedSimObject - TrickHLA Multi-Thread interface routines.
+//============================================================================
+
+class THLAFedSimObject : public Trick::SimObject {
+
+ public:
+
+   //----- DATA STRUCTURE DECLARATIONS -----
+
+   THLAFedSimObject( TrickHLA::Federate & thla_fed )
+      : federate( thla_fed )
+   {
+      // No jobs at the time.
+   }
+
+ protected:
+   TrickHLA::Federate & federate;
+ 
+ private:
+   // Do not allow the implicit copy constructor or assignment operator.
+   THLAFedSimObject( THLAFedSimObject const & rhs );
+   THLAFedSimObject & operator=( THLAFedSimObject const & rhs );
+
+   // Do not allow the default constructor.
+   THLAFedSimObject();
+};
+

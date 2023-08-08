@@ -149,6 +149,7 @@ Federate::Federate()
      federation_joined( false ),
      all_federates_joined( false ),
      lookahead( 0.0 ),
+     TAR_job_cycle_base_time( 0LL ),
      shutdown_called( false ),
      HLA_save_directory( "" ),
      initiate_save_flag( false ),
@@ -431,8 +432,9 @@ the documented ENUM values.%c",
    // Set the debug level and code section in the global DebugHandler.
    DebugHandler::set( this->debug_level, this->code_section );
 
-   // TODO: Set the default HLA Logical time base units in the global Int64BaseTime.
-   set_HLA_base_time_units( Int64BaseTime::get_base_units() );
+   // Refresh the HLA time constants since the base time units may have changed
+   // from a setting in the input file.
+   refresh_HLA_time_constants();
 
    // Print the current TrickHLA version string.
    print_version();
@@ -3317,10 +3319,16 @@ void Federate::set_HLA_base_time_units(
    // Set the HLA Logical time base units in the global Int64BaseTime.
    Int64BaseTime::set( base_time_units );
 
-   // Refresh the lookahead time given the new HLA base time units.
+   // Refresh the HLA time constants based on the updated base time.
+   refresh_HLA_time_constants();
+}
+
+void Federate::refresh_HLA_time_constants()
+{
+   // Refresh the lookahead time given a possible new HLA base time units.
    refresh_lookahead();
 
-   // Refresh the LCTS given the new HLA base time units.
+   // Refresh the LCTS given a possible new HLA base time units.
    execution_control->refresh_least_common_time_step();
 }
 
@@ -4523,6 +4531,45 @@ void Federate::setup_time_regulation()
 /*!
  * @job_class{scheduled}
  */
+void Federate::determine_TAR_job_cycle_time()
+{
+   if ( this->TAR_job_cycle_base_time > 0LL ) {
+      return;
+   }
+
+   // Get the lookahead in the base time units.
+   int64_t const lookahead_base_time = get_lookahead_in_base_time();
+
+   // Get the cycle time.
+   double const cycle_time       = exec_get_job_cycle( NULL );
+   this->TAR_job_cycle_base_time = Int64BaseTime::to_base_time( cycle_time );
+
+   // Verify the job cycle time against the HLA lookahead time.
+   if ( ( this->TAR_job_cycle_base_time <= 0LL )
+        || ( this->TAR_job_cycle_base_time < lookahead_base_time ) ) {
+      ostringstream errmsg;
+      errmsg << "Federate::determine_TAR_job_cycle_time():" << __LINE__
+             << " ERROR: The cycle time for this job is less than the HLA"
+             << " lookahead time! The HLA Lookahead time ("
+             << setprecision( 18 ) << Int64BaseTime::to_seconds( lookahead_base_time )
+             << " seconds) must be less than or equal to the job cycle time ("
+             << setprecision( 18 ) << cycle_time
+             << " seconds). Make sure the 'lookahead_time' in"
+             << " your input.py or modified-data file is less than or equal to"
+             << " the 'THLA_DATA_CYCLE_TIME' time specified in the S_define file"
+             << " for the time_advance_request() job." << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
+      send_hs( stdout, "Federate::determine_TAR_job_cycle_time():%d cycle-time:%f seconds %c",
+               __LINE__, cycle_time, THLA_NEWLINE );
+   }
+}
+
+/*!
+ * @job_class{scheduled}
+ */
 void Federate::time_advance_request()
 {
    // Skip requesting time-advancement if we are not time-regulating and
@@ -4540,6 +4587,11 @@ void Federate::time_advance_request()
       return;
    }
 
+   // Determine the TAR job cycle time if the value is not set.
+   if ( this->TAR_job_cycle_base_time <= 0LL ) {
+      determine_TAR_job_cycle_time();
+   }
+
    // -- start of checkpoint additions --
    this->save_completed = false; // reset ONLY at the bottom of the frame...
    // -- end of checkpoint additions --
@@ -4549,8 +4601,15 @@ void Federate::time_advance_request()
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
 
-      // Build a request time.
-      this->requested_time += this->lookahead_time;
+      // Build the requested HLA logical time for the next time step.
+      if ( is_zero_lookahead_time() ) {
+         // Use the TAR job cycle time for the time-step.
+         this->requested_time += this->TAR_job_cycle_base_time;
+      } else {
+         // Use the lookahead time for the time-step.
+         // Requested time = granted time + lookahead
+         this->requested_time += this->lookahead;
+      }
    }
 
    // Perform the time-advance request to go to the requested time.
@@ -4596,8 +4655,13 @@ void Federate::perform_time_advance_request()
       check_for_shutdown_with_termination();
 
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         send_hs( stdout, "Federate::perform_time_advance_request():%d Time Advance Request (TAR) to %.12G seconds.%c",
-                  __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
+         if ( is_zero_lookahead_time() ) {
+            send_hs( stdout, "Federate::perform_time_advance_request():%d Time Advance Request Available (TARA) to %.12G seconds.%c",
+                     __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
+         } else {
+            send_hs( stdout, "Federate::perform_time_advance_request():%d Time Advance Request (TAR) to %.12G seconds.%c",
+                     __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
+         }
       }
 
       try {
@@ -4605,8 +4669,14 @@ void Federate::perform_time_advance_request()
          // the mutex even if there is an exception.
          MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
 
-         // Request that time be advanced to the new time.
-         RTI_ambassador->timeAdvanceRequest( requested_time.get() );
+         if ( is_zero_lookahead_time() ) {
+            // Request that time be advanced to the new time, but still allow
+            // TSO data for Treq = Tgrant
+            RTI_ambassador->timeAdvanceRequestAvailable( requested_time.get() );
+         } else {
+            // Request that time be advanced to the new time.
+            RTI_ambassador->timeAdvanceRequest( requested_time.get() );
+         }
 
          // Indicate we issued a TAR since we successfully made the request
          // without an exception.
@@ -4709,6 +4779,155 @@ void Federate::perform_time_advance_request()
 }
 
 /*!
+ * @job_class{scheduled}
+ */
+void Federate::wait_for_zero_lookahead_TARA_TAG()
+{
+   // Skip requesting time-advancement if we are not time-regulating and
+   // not time-constrained (i.e. not using time management).
+   if ( !this->time_management ) {
+      return;
+   }
+
+   // Macro to save the FPU Control Word register value.
+   TRICKHLA_SAVE_FPU_CONTROL_WORD;
+
+   // Time Advance Request Available (TARA)
+   try {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks
+      // the mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+
+      // Clear the TAR flag before we make our request.
+      this->time_adv_state = TIME_ADVANCE_RESET;
+
+      // Request that time be advanced to the new time, but still allow
+      // TSO data for Treq = Tgrant
+      RTI_ambassador->timeAdvanceRequestAvailable( requested_time.get() );
+
+      // Indicate we issued a TAR since we successfully made the request
+      // without an exception.
+      this->time_adv_state = TIME_ADVANCE_REQUESTED;
+
+   } catch ( InvalidLogicalTime const &e ) {
+      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: InvalidLogicalTime%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( LogicalTimeAlreadyPassed const &e ) {
+      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: LogicalTimeAlreadyPassed%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( InTimeAdvancingState const &e ) {
+      // A time advance request is still being processed by the RTI so show
+      // a message and treat this as a successful time advance request.
+      {
+         // When auto_unlock_mutex goes out of scope it automatically unlocks
+         // the mutex even if there is an exception.
+         MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+
+         // Only indicate we are in the time advance reqeusted state if we
+         // are still in the time advance reset state (i.e. not granted yet).
+         if ( this->time_adv_state == TIME_ADVANCE_RESET ) {
+            this->time_adv_state = TIME_ADVANCE_REQUESTED;
+         }
+      }
+      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d WARNING: Ignoring InTimeAdvancingState HLA Exception.%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( RequestForTimeRegulationPending const &e ) {
+      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: RequestForTimeRegulationPending%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( RequestForTimeConstrainedPending const &e ) {
+      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: RequestForTimeConstrainedPending%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( FederateNotExecutionMember const &e ) {
+      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: FederateNotExecutionMember%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( SaveInProgress const &e ) {
+      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: SaveInProgress%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( RestoreInProgress const &e ) {
+      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: RestoreInProgress%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( NotConnected const &e ) {
+      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: NotConnected%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( RTIinternalError const &e ) {
+      string rti_err_msg;
+      StringUtilities::to_string( rti_err_msg, e.what() );
+      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d \"%s\": Unexpected RTI exception!\n RTI Exception: RTIinternalError: '%s'%c",
+               __LINE__, get_federation_name(), rti_err_msg.c_str(), THLA_NEWLINE );
+   }
+
+   // Macro to restore the saved FPU Control Word register value.
+   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+   unsigned short state;
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+      state = this->time_adv_state;
+   }
+
+   if ( state == TIME_ADVANCE_RESET ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         send_hs( stdout, "Federate::wait_for_zero_lookahead_TARA_TAG():%d WARNING: No Time Advance Requested!%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      return;
+   }
+
+   // Wait for Time Advance Grant (TAG)
+   if ( state != TIME_ADVANCE_GRANTED ) {
+
+      int64_t      wallclock_time;
+      SleepTimeout print_timer( this->wait_status_time );
+      SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
+
+      // This spin lock waits for the time advance grant from the RTI.
+      do {
+         // Check for shutdown.
+         check_for_shutdown_with_termination();
+
+         (void)sleep_timer.sleep();
+
+         {
+            // When auto_unlock_mutex goes out of scope it automatically unlocks
+            // the mutex even if there is an exception.
+            MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+            state = this->time_adv_state;
+         }
+
+         if ( state != TIME_ADVANCE_GRANTED ) {
+
+            // To be more efficient, we get the time once and share it.
+            wallclock_time = sleep_timer.time();
+
+            if ( sleep_timer.timeout( wallclock_time ) ) {
+               sleep_timer.reset();
+               if ( !is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "Federate::wait_for_zero_lookahead_TARA_TAG():" << __LINE__
+                         << " ERROR: Unexpectedly the Federate is no longer an execution"
+                         << " member. This means we are either not connected to the"
+                         << " RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation at"
+                         << " the Central RTI Component (CRC) level!"
+                         << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
+               }
+            }
+
+            if ( print_timer.timeout( wallclock_time ) ) {
+               print_timer.reset();
+               send_hs( stdout, "Federate::wait_for_zero_lookahead_TARA_TAG():%d Waiting...%c",
+                        __LINE__, THLA_NEWLINE );
+            }
+         }
+      } while ( state != TIME_ADVANCE_GRANTED );
+   }
+}
+
+/*!
  * @brief Associate a Trick child thread with TrickHLA.
  */
 void Federate::associate_to_trick_child_thread(
@@ -4719,6 +4938,17 @@ void Federate::associate_to_trick_child_thread(
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::associate_to_trick_child_thread():%d Trick child thread (id:%d, data_cycle:%.3f).%c",
                __LINE__, thread_id, data_cycle, THLA_NEWLINE );
+   }
+
+   // For now, do not allow Trick child threads for a zero lookahead time
+   // because the API's to assist with getting zero lookahead cyclic data are
+   // not thread safe at this point.
+   if ( ( this->lookahead_time <= 0.0 ) && ( thread_id != 0 ) ) {
+      ostringstream errmsg;
+      errmsg << "Federate::associate_to_trick_child_thread():" << __LINE__
+             << " ERROR: Associated Trick child threads are not supported when"
+             << " a zero-lookahead time is used." << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Delegate to the Trick child thread coordinator.
@@ -4745,8 +4975,9 @@ void Federate::announce_data_available()
 void Federate::announce_data_sent()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::announce_data_sent():%d Thread:%d%c",
-               __LINE__, exec_get_process_id(), THLA_NEWLINE );
+      send_hs( stdout, "Federate::announce_data_sent():%d Thread:%d Granted HLA-time:%.12G seconds.%c",
+               __LINE__, exec_get_process_id(), granted_time.get_time_in_seconds(),
+               THLA_NEWLINE );
    }
 
    // Delegate to the Trick child thread coordinator.
@@ -4798,6 +5029,108 @@ bool const Federate::on_data_cycle_boundary_for_obj(
 {
    // Delegate to the Trick child thread coordinator.
    return this->thread_coordinator.on_data_cycle_boundary_for_obj( obj_index, sim_time_in_base_time );
+}
+
+/*! @brief Send zero lookahead or requested data for the specified object instance. */
+void Federate::send_zero_lookahead_and_requested_data(
+   string const &obj_instance_name )
+{
+   TrickHLA::Object *obj = manager->get_trickhla_object( obj_instance_name );
+   if ( obj == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Federate::send_zero_lookahead_data():" << __LINE__
+             << " ERROR: Could not find the object instance for the name specified:'"
+             << obj_instance_name << "'" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   // We can only send zero-lookahead attribute updates for the attributes we
+   // own and are configured to publish.
+   if ( !obj->any_locally_owned_published_zero_lookahead_or_requested_attribute() ) {
+      return;
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      send_hs( stdout, "Federate::send_zero_lookahead_data():%d Object:'%s'%c",
+               __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
+   }
+
+   obj->send_zero_lookahead_and_requested_data( this->granted_time );
+}
+
+/*! @brief Wait to received the zero lookahead data for the specified object instance. */
+void Federate::wait_to_receive_zero_lookahead_data(
+   string const &obj_instance_name )
+{
+   TrickHLA::Object *obj = manager->get_trickhla_object( obj_instance_name );
+   if ( obj == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Federate::wait_to_receive_zero_lookahead_data():" << __LINE__
+             << " ERROR: Could not find the object instance for the name specified:'"
+             << obj_instance_name << "'" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   // We can only receive data if we subscribe to at least one attribute that
+   // is remotely owned, otherwise just return.
+   if ( !obj->any_remotely_owned_subscribed_zero_lookahead_attribute() ) {
+      return;
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      send_hs( stdout, "Federate::wait_to_receive_zero_lookahead_data():%d Object:'%s'%c",
+               __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
+   }
+
+   // The TARA will cause zero-lookahead data to be reflected before the TAG.
+   wait_for_zero_lookahead_TARA_TAG();
+
+   // Block waiting for the named object instance data by repeatedly doing a
+   // TARA and wait for TAG with a zero lookahead.
+   if ( !obj->is_changed() && obj->any_remotely_owned_subscribed_zero_lookahead_attribute() ) {
+
+      SleepTimeout print_timer( this->wait_status_time );
+      SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
+
+      do {
+         // Check for shutdown.
+         check_for_shutdown_with_termination();
+
+         (void)sleep_timer.sleep();
+
+         // To be more efficient, we get the time once and share it.
+         int64_t wallclock_time = sleep_timer.time();
+
+         if ( sleep_timer.timeout( wallclock_time ) ) {
+            sleep_timer.reset();
+            if ( !is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "Federate::wait_to_receive_zero_lookahead_data():" << __LINE__
+                      << " ERROR: Unexpectedly the Federate is no longer an execution"
+                      << " member. This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!"
+                      << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+
+         if ( print_timer.timeout( wallclock_time ) ) {
+            print_timer.reset();
+            send_hs( stdout, "Federate::wait_to_receive_zero_lookahead_data():%d Waiting...%c",
+                     __LINE__, THLA_NEWLINE );
+         }
+
+         // The TARA will cause zero-lookahead data to be reflected before the TAG.
+         wait_for_zero_lookahead_TARA_TAG();
+
+      } while ( !obj->is_changed() && obj->any_remotely_owned_subscribed_zero_lookahead_attribute() );
+   }
+
+   obj->receive_zero_lookahead_data();
 }
 
 /*!
@@ -6359,6 +6692,12 @@ void Federate::restore_checkpoint(
    load_checkpoint( ( this->HLA_save_directory + "/" + trick_filename ).c_str() );
 
    load_checkpoint_job();
+
+   // TODO: Load the checkpoint base time units into the Int64BaseTime class
+   // so that all the HLA time representations use the correct base time.
+   //
+   // Refresh the HLA time constants given the HLA base time from the checkpoint.
+   refresh_HLA_time_constants();
 
    // If exec_set_freeze_command(true) is in master fed's input.py file when
    // check-pointed, then restore starts up in freeze.

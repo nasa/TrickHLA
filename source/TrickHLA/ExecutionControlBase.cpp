@@ -717,6 +717,25 @@ void ExecutionControlBase::provide_attribute_update(
  * @job_class{scheduled}
  */
 Object *ExecutionControlBase::get_trickhla_object(
+   string const &obj_instance_name )
+{
+   // Check to see if there is and ExecutionConfiguration object.
+   if ( execution_configuration != NULL ) {
+
+      // Execution Configuration object.
+      if ( obj_instance_name == get_execution_configuration()->get_name_string() ) {
+         return ( execution_configuration );
+      }
+   }
+
+   // Default return if we don't have an ExecutionConfiguration match.
+   return ( static_cast< Object * >( NULL ) );
+}
+
+/*!
+ * @job_class{scheduled}
+ */
+Object *ExecutionControlBase::get_trickhla_object(
    wstring const &obj_instance_name )
 {
    // Check to see if there is and ExecutionConfiguration object.
