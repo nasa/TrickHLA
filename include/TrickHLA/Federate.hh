@@ -686,6 +686,12 @@ class Federate
    bool const on_data_cycle_boundary_for_obj( unsigned int const obj_index,
                                               int64_t const      sim_time_in_base_time ) const;
 
+   /*! @brief Send zero lookahead or requested data for the specified object instance. */
+   void send_zero_lookahead_and_requested_data( std::string const &obj_instance_name );
+
+   /*! @brief Wait to received the zero lookahead data for the specified object instance. */
+   void wait_to_receive_zero_lookahead_data( std::string const &obj_instance_name );
+
    /*! @brief Set federate execution startup state.
     *  @param flag True for federate started; False otherwise. */
    void set_startup( bool const flag )
@@ -910,7 +916,7 @@ class Federate
    }
 
    /*! @brief Query of federate has a zero lookahead time.
-    *  @return True if lookahead time is zero; Flase otherwise. */
+    *  @return True if lookahead time is zero; False otherwise. */
    bool const is_zero_lookahead_time() const
    {
       return ( this->lookahead.get_base_time() <= 0LL );
@@ -1015,6 +1021,9 @@ class Federate
     *  @param base_time_units HLA base time units. */
    void set_HLA_base_time_units( HLABaseTimeEnum const base_time_units );
 
+   /*! @brief Refresh the HLA time constants for the current base time units. */
+   void refresh_HLA_time_constants();
+
    /*! @brief Scale the Trick Time Tic value given the HLA base time units. */
    void scale_trick_tics_to_base_time_units();
 
@@ -1117,6 +1126,8 @@ class Federate
    bool                              all_federates_joined;           ///< @trick_units{--} Master check for all federates joined.
 
    Int64Interval lookahead; ///< @trick_units{--} Lookahead time for data.
+
+   int64_t TAR_job_cycle_base_time; ///< @trick_io{**}  Cycle time for the time_advance_request job in base time units.
 
    bool shutdown_called; ///< @trick_units{--} Flag to indicate shutdown has been called.
 
@@ -1286,8 +1297,14 @@ class Federate
     *  @param federate_name Federate name to test. */
    bool is_joined_federate( std::wstring const &federate_name );
 
+   /*! @brief Determine the job cycle-time of the time_advance_request() job. */
+   void determine_TAR_job_cycle_time();
+
    /*! @brief Make the HLA time-advance request using the current requested_time value. */
    void perform_time_advance_request();
+
+   /*! @brief Make time-advance request available and wait for time advance grant with zero lookahead. */
+   void wait_for_zero_lookahead_TARA_TAG();
 
    //
    // Federation freeze management functions.

@@ -285,9 +285,9 @@ int64_t Int64BaseTime::to_base_time(
    int64_t const fractional = (int64_t)round( modf( value, &seconds ) * base_time_multiplier );
    return ( ( (int64_t)seconds * base_time_multiplier ) + fractional );
 
-   // TODO: Benchmark the new code agaisnt this previous implementation to see
+   // TODO: Benchmark the new code against this previous implementation to see
    // which is faster.
-   // int64_t const seconds   = (int64_t)trunc( value );
+   // int64_t const seconds    = (int64_t)trunc( value );
    // int64_t const fractional = ( seconds >= 0 ) ? (int64_t)( fmod( value * MICROS_MULTIPLIER, MICROS_MULTIPLIER ) + 0.5 )
    //                                             : (int64_t)( fmod( value * MICROS_MULTIPLIER, MICROS_MULTIPLIER ) - 0.5 );
    // return ( ( seconds * MICROS_MULTIPLIER ) + fractional );

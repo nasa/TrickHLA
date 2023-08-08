@@ -37,15 +37,15 @@
 ##include "simconfig/include/SimpleSimConfig.hh"
 
 
-// TrickHLA support for Trick Child Thread.
-#include "THLAThread.sm"
+// THLAFed simulation object support for zero lookahead data exchanges.
+#include "THLAFed.sm"
 
 
 //=============================================================================
 // SIM_OBJECT: AnalyticSineSimObj
 // Sim-object for an analytic solution of a sine wave.
 //=============================================================================
-class AnalyticSineSimObj : public Trick::SimObject {
+class AnalyticSineSimObj : public THLAFedSimObject {
 
  public:
    TrickHLAModel::SineData truth_data;
@@ -62,18 +62,26 @@ class AnalyticSineSimObj : public Trick::SimObject {
 
    TrickHLAModel::SineObjectDeleted      obj_deleted_callback;
    
-   AnalyticSineSimObj() {
+   AnalyticSineSimObj( TrickHLA::Federate & thla_fed ) 
+  		: THLAFedSimObject( thla_fed )
+   {
       P50 ("initialization") packing.initialize( &sim_data );
 
       P50 ("initialization") lag_compensation.initialize( &sim_data, &lag_comp_data );
       
-      C1 (DYN_RATE, "scheduled") truth_data.compute_value( THLA.execution_control.get_scenario_time() );
-      C1 (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.execution_control.get_scenario_time() );
+      // HLA Data will only be received if it is remotely owned by another federate.
+  		(THLA_DATA_CYCLE_TIME, "scheduled") federate.wait_to_receive_zero_lookahead_data( "A-side-Federate.Test" );
+      
+      (DYN_RATE, "scheduled") truth_data.compute_value( THLA.execution_control.get_scenario_time() );
+      (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.execution_control.get_scenario_time() );
 
-      C1 (DYN_RATE, "scheduled") sim_data.compute_value( THLA.execution_control.get_scenario_time() );
-      C1 (DYN_RATE, "scheduled") sim_data.compute_derivative( THLA.execution_control.get_scenario_time() );
+      (DYN_RATE, "scheduled") sim_data.compute_value( THLA.execution_control.get_scenario_time() );
+      (DYN_RATE, "scheduled") sim_data.compute_derivative( THLA.execution_control.get_scenario_time() );
 
-      C1 (THLA_DATA_CYCLE_TIME, "scheduled") sim_data.adjust_phase( THLA.execution_control.get_scenario_time() );
+      (THLA_DATA_CYCLE_TIME, "scheduled") sim_data.adjust_phase( THLA.execution_control.get_scenario_time() );
+      
+      // HLA Data will only be sent if this federate owns it.
+      (THLA_DATA_CYCLE_TIME, "scheduled") federate.send_zero_lookahead_and_requested_data( "A-side-Federate.Test" );
    }
    
  private:
@@ -87,7 +95,7 @@ class AnalyticSineSimObj : public Trick::SimObject {
 // SIM_OBJECT: PropagatedSineSimObj
 // Sim-object for an propagated solution of a sine wave.
 //=============================================================================
-class PropagatedSineSimObj : public THLAThreadSimObject {
+class PropagatedSineSimObj : public THLAFedSimObject {
 
  public:
    TrickHLAModel::SineData truth_data;
@@ -102,13 +110,8 @@ class PropagatedSineSimObj : public THLAThreadSimObject {
 
    TrickHLAModel::SineObjectDeleted      obj_deleted_callback;
 
-   PropagatedSineSimObj( TrickHLA::Federate & thla_fed,
-                         double data_cycle,
-                         unsigned short _THREAD_ID,
-                         std::string object_instance_names = "",
-                         unsigned short _1ST  = 1,
-                         unsigned short _LAST = 65534 ) 
-      : THLAThreadSimObject( thla_fed, data_cycle, _THREAD_ID, object_instance_names, _1ST, _LAST )
+   PropagatedSineSimObj( TrickHLA::Federate & thla_fed ) 
+  		: THLAFedSimObject( thla_fed )
    {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
@@ -116,17 +119,23 @@ class PropagatedSineSimObj : public THLAThreadSimObject {
 
       P50 ("initialization") lag_compensation.initialize( &sim_data, &lag_comp_data );
 
+		// HLA Data will only be received if it is remotely owned by another federate.
+  		(THLA_DATA_CYCLE_TIME, "scheduled") federate.wait_to_receive_zero_lookahead_data( "P-side-Federate.Test" );
+
       /*
        * -- Propagate the true sine state.
        */
-      C_THREAD_ID (DYN_RATE, "scheduled") truth_data.compute_value( THLA.execution_control.get_scenario_time() );
-      C_THREAD_ID (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.execution_control.get_scenario_time() );
+      (DYN_RATE, "scheduled") truth_data.compute_value( THLA.execution_control.get_scenario_time() );
+      (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.execution_control.get_scenario_time() );
+
+		// HLA Data will only be sent if this federate owns it.
+      (THLA_DATA_CYCLE_TIME, "scheduled") federate.send_zero_lookahead_and_requested_data( "P-side-Federate.Test" );
 
       /*
        * -- Numerically propagate the simulated sine state
        */
-      C_THREAD_ID ("derivative") sim_data.compute_derivative( get_integ_time() );
-      C_THREAD_ID ("integration") trick_ret = sim_data.integration();
+      ("derivative") sim_data.compute_derivative( get_integ_time() );
+      ("integration") trick_ret = sim_data.integration();
 
       /*
        * The time is off by 0.005 seconds (DYN_RATE / 2) because the derivative
@@ -134,7 +143,7 @@ class PropagatedSineSimObj : public THLAThreadSimObject {
        * integration being used), so we fix it by setting the correct time as a
        * post integration job.
        */
-      C_THREAD_ID ("post_integration") sim_data.set_time( THLA.execution_control.get_scenario_time() );
+      ("post_integration") sim_data.set_time( THLA.execution_control.get_scenario_time() );
    }
 
  private:
@@ -142,6 +151,18 @@ class PropagatedSineSimObj : public THLAThreadSimObject {
    PropagatedSineSimObj( PropagatedSineSimObj const & rhs );
    PropagatedSineSimObj & operator=( PropagatedSineSimObj const & rhs );
 };
+
+
+//=============================================================================
+// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+//=============================================================================
+#include "THLA.sm"
+THLASimObject THLA( THLA_DATA_CYCLE_TIME,
+                    THLA_INTERACTION_CYCLE_TIME,
+                    P_HLA_EARLY,
+                    P_HLA_INIT,
+                    P_HLA_LATE );
+
 
 //=============================================================================
 // SIM_OBJECT: THLA_INIT  (TrickHLA multi-phase initialization sim-object)
@@ -159,7 +180,6 @@ class THLAInitSimObj : public Trick::SimObject {
         thla_manager( thla_mngr ),
         thla_federate( thla_fed )
    {
-      
       //------------------------------------------------------------------------
       // NOTE: Initialization phase numbers must be greater than P60 
       // (i.e. P_HLA_INIT) so that the initialization jobs run after the
@@ -170,7 +190,7 @@ class THLAInitSimObj : public Trick::SimObject {
       P100 ("initialization") thla_manager.send_init_data( "A-side-Federate.Test" );
       
       // Data will only be received if it is remotely owned by another federate.
-      P100 ("initialization") thla_manager.receive_init_data( "A-side-Federate.Test" );
+  //    P100 ("initialization") thla_manager.receive_init_data( "A-side-Federate.Test" );
       
       // Do some processing here if needed...
       
@@ -182,7 +202,7 @@ class THLAInitSimObj : public Trick::SimObject {
       P200 ("initialization") thla_manager.send_init_data( "P-side-Federate.Test" );
       
       // Data will only be received if it is remotely owned by another federate.
-      P200 ("initialization") thla_manager.receive_init_data( "P-side-Federate.Test" );
+  //    P200 ("initialization") thla_manager.receive_init_data( "P-side-Federate.Test" );
       
       // Do some processing here if needed...
       
@@ -217,37 +237,11 @@ class THLAInitSimObj : public Trick::SimObject {
    THLAInitSimObj();
 };
 
-//=============================================================================
-// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
-//=============================================================================
-#include "THLA.sm"
-THLASimObject THLA( THLA_DATA_CYCLE_TIME,
-                    THLA_INTERACTION_CYCLE_TIME,
-                    P_HLA_EARLY,
-                    P_HLA_INIT,
-                    P_HLA_LATE );
 
 // Instantiations
-AnalyticSineSimObj A;
-
-// Example 1 showing a THLAThread sim-object created to associate the Trick child
-// thread (i.e. 1) used by the 'A' sim-object to TrickHLA with the specified
-// HLA data cycle time.
-THLAThreadSimObject THLAThread1( THLA.federate,
-                                 THLA_DATA_CYCLE_TIME,     // Data cycle time for this thread.
-                                 1,                        // Trick child thread 1 (i.e. C1).
-                                 "A-side-Federate.Test" ); // Object-instance names associated to this thread.
-
-// Example 2 showing a 'P' sim-object that extends the TrickHLAThread sim-object
-// to associate a Trick child thread (i.e. 2) to TrickHLA with the specified
-// HLA data cycle time.
-PropagatedSineSimObj P( THLA.federate,
-                        THLA_DATA_CYCLE_TIME,     // Data cycle time for this thread.
-                        2,                        // Trick child thread 2 (i.e. C2)
-                        "P-side-Federate.Test" ); // Object-instance names associated to this thread.
-
-THLAInitSimObj THLA_INIT( THLA.manager, THLA.federate );
-
+AnalyticSineSimObj   A( THLA.federate );
+PropagatedSineSimObj P( THLA.federate );
+THLAInitSimObj 		THLA_INIT( THLA.manager, THLA.federate );
 
 // Define the simulation objects that have routines involved in integration.
 IntegLoop sim_integ_loop (DYN_RATE) P;
