@@ -1005,11 +1005,11 @@ void FedAmb::requestAttributeOwnershipAssumption(
       bool any_attribute_not_published  = false;
 
       // To make the state of the attribute push_requested flag thread safe lock
-      // the push_mutex now. This allows us to handle multiple simultaneous requests
+      // the mutex now. This allows us to handle multiple simultaneous requests
       // to push attributes to our federate.
       {
          // When auto_unlock_mutex goes out of scope it automatically unlocks the
-         // push_mutex even if there is an exception.
+         // mutex even if there is an exception.
          MutexProtection auto_unlock_mutex( &trickhla_obj->push_mutex );
 
          // Mark which attributes we can accept ownership of.
@@ -1073,7 +1073,7 @@ Attribute Not Published ERROR: Object '%s' with attribute '%s'->'%s'!%c",
             }
          }
 
-         // Unlock the push_mutex when auto_unlock_mutex goes out of scope.
+         // Unlock the mutex when auto_unlock_mutex goes out of scope.
       }
 
       // Start the thread to service the grant of the push request.
