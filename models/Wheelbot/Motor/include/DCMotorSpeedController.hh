@@ -4,32 +4,32 @@
 #ifndef DC_MOTOR_SPEED_CONTROLLER_HH
 #define DC_MOTOR_SPEED_CONTROLLER_HH
 
-#include "MotorSpeedController.hh"
 #include "DCMotor.hh"
+#include "motorSpeedController.hh"
 
-class DCMotorSpeedController : public MotorSpeedController {
+class DCMotorSpeedController : public MotorSpeedController
+{
 
-    public:
-    DCMotorSpeedController( DCMotor& dc_motor,
-                            double gain,
-                            const double& actual_speed,
-                            const double& supply_voltage);
+  public:
+   DCMotorSpeedController( DCMotor      &dc_motor,
+                           double        gain,
+                           const double &actual_speed,
+                           const double &supply_voltage );
 
-    ~DCMotorSpeedController() {}
+   ~DCMotorSpeedController() {}
 
-    void set_commanded_speed( double commanded_speed );
-    double get_motor_voltage();
+   void   set_commanded_speed( double commanded_speed );
+   double get_motor_voltage();
 
-    private:
+  private:
+   double        motor_voltage;
+   DCMotor      &motor;
+   double        gain;
+   const double &actual_speed;
+   const double &supply_voltage;
 
-    double motor_voltage;
-    DCMotor& motor;
-    double gain;
-    const double& actual_speed;
-    const double& supply_voltage;
-
-    // Don't Allow the default constructor to be used.
-    DCMotorSpeedController();
+   // Don't Allow the default constructor to be used.
+   DCMotorSpeedController();
 };
 
 #endif

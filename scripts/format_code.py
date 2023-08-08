@@ -336,11 +336,11 @@ def format_file(
    # First, let's check to see that the file exists.
    if os.path.isfile( file_path ):
       if os.path.islink( file_path ):
-         TrickHLAMessage.error( 'File is a link: ' + file_path )
+         TrickHLAMessage.failure( 'File is a link: ' + file_path )
          error = True
          return error
    else:
-      TrickHLAMessage.error( 'File does not exist: ' + file_path )
+      TrickHLAMessage.failure( 'File does not exist: ' + file_path )
       error = True
       return error
 

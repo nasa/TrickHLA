@@ -2,7 +2,7 @@
 PURPOSE:
     ( Simulate a two-wheeled robot which travels to predetermined waypoints. )
 LIBRARY DEPENDENCIES:
-    ((Vehicle/src/VehicleOne.cpp)
+    ((Vehicle/src/vehicleOne.cpp)
     (Control/src/PIDController.cpp))
 *************************************************************/
 //==========================================================================
@@ -22,7 +22,7 @@ LIBRARY DEPENDENCIES:
 
 
 
-##include "Vehicle/include/VehicleOne.hh"
+##include "Vehicle/include/vehicleOne.hh"
 ##include "trick/integrator_c_intf.h"
 
 ##include "TrickHLA/Manager.hh"
@@ -55,7 +55,7 @@ class VehicleSimObject : public Trick::SimObject {
 };
 
 //=============================================================================
-//#define HLA
+#define HLA
 // Uncomment the above line to build the sim with HLA.
 // * Note dependencies and other considerations detailed in the included file.
 // * Note there are also lines to include in the S_overrides.mk file.

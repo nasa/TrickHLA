@@ -10,26 +10,27 @@ PROGRAMMERS:
 #ifndef NAVIGATOR_HH
 #define NAVIGATOR_HH
 
-#include "Point.hh"
+#include "point.hh"
 
-    class Navigator {
-        public:
-        Navigator(double initial_heading, Point initial_location):
-         heading(initial_heading), location(initial_location)
-        { }
-        void set_heading(double heading);
-        void set_location(double north, double west);
+class Navigator
+{
+  public:
+   Navigator( double initial_heading, Point initial_location ) : heading( initial_heading ), location( initial_location )
+   {
+   }
+   void set_heading( double heading );
+   void set_location( double north, double west );
 
-        double distance_to(Point& map_point);
-        double bearing_to(Point& map_point);
+   double distance_to( Point &map_point );
+   double bearing_to( Point &map_point );
 
-        Point convert_map_to_platform(Point& map_point);
-        Point convert_platform_to_map(Point& platform_point);
-        Point convert_platform_to_body(Point& platform_point);
-        Point convert_body_to_platform(Point& body_point);
+   Point convert_map_to_platform( Point &map_point );
+   Point convert_platform_to_map( Point &platform_point );
+   Point convert_platform_to_body( Point &platform_point );
+   Point convert_body_to_platform( Point &body_point );
 
-        private:
-        double heading;
-        Point  location;
-    };
+  private:
+   double heading;
+   Point  location;
+};
 #endif
