@@ -424,8 +424,8 @@ federate = SpaceFOMFederateConfig( THLA.federate,
 
 # Set the debug output level.
 if (verbose == True) : 
-#   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
-   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_9_TRACE )
+   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
+#   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_9_TRACE )
 else :
 #   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_1_TRACE )
@@ -512,12 +512,10 @@ active_phyical_entity.entity_packing.debug = verbose
 # Add this vehicle to the list of managed object.
 federate.add_fed_object( lander )
 
-# FIXME: FOr now, let's add the data tags.  Later this will come from the DynBody.
-#active_phyical_entity.entity_packing.name         = active_entity_name
-active_phyical_entity.entity_packing.name         = 'BARFOO'
-#active_phyical_entity.entity_packing.type         = 'NASA Lander'
-#active_phyical_entity.entity_packing.status       = 'Approach'
-#active_phyical_entity.entity_packing.parent_frame = 'MoonCentricInertial'
+# FIXME: For now, let's add the data tags.  Later this will come from the DynBody.
+active_phyical_entity.entity_packing.set_type( 'NASA Lander' )
+active_phyical_entity.entity_packing.set_status( 'Approach' )
+active_phyical_entity.entity_packing.set_parent_ref_frame( 'MoonCentricInertial' )
 
 
 #---------------------------------------------------------------------------
@@ -534,12 +532,10 @@ passive_phyical_entity.entity_packing.debug = verbose
 # Add this vehicle to the list of managed object.
 federate.add_fed_object( station )
 
-# FIXME: FOr now, let's add the data tags.  Later this will come from the DynBody.
-#passive_phyical_entity.entity_packing.name         = passive_entity_name
-passive_phyical_entity.entity_packing.name         = 'FOOBAR'
-#passive_phyical_entity.entity_packing.type         = 'Gateway'
-#passive_phyical_entity.entity_packing.status       = 'NRHO'
-#passive_phyical_entity.entity_packing.parent_frame = 'MoonCentricInertial'
+# FIXME: For now, let's add the data tags.  Later this will come from the DynBody.
+passive_phyical_entity.entity_packing.set_type( 'Gateway' )
+passive_phyical_entity.entity_packing.set_status( 'NRHO' )
+passive_phyical_entity.entity_packing.set_parent_ref_frame( 'MoonCentricInertial' )
 
 
 #---------------------------------------------------------------------------
