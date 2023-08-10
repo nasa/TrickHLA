@@ -373,10 +373,10 @@ class JEODPhysicalEntiySimObject : public Trick::SimObject {
 };
 
 // Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
-JEODPhysicalEntiySimObject active_phyical_entity(&(active_vehicle.dyn_body), P_HLA_INIT);
+JEODPhysicalEntiySimObject active_phyical_entity(&(active_vehicle.dyn_body), (P_HLA_INIT-1));
 
 // Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
-JEODPhysicalEntiySimObject passive_phyical_entity(&(passive_vehicle.dyn_body), P_HLA_INIT);
+JEODPhysicalEntiySimObject passive_phyical_entity(&(passive_vehicle.dyn_body), (P_HLA_INIT-1));
 
 // Setup the integration loop.
 IntegLoop sim_integ_loop  (DYNAMICS) earth, moon, mars, active_vehicle, passive_vehicle, dynamics;
