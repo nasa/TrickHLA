@@ -23,15 +23,22 @@ from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
 from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
 # Load the SpaceFOM/JEOD specific reference frame tree configuration object.
 from Modified_data.JEOD.JEODRefFrameTreeObject import *
+# Load the SpaceFOM vehicle PhysicalEntity configuration object.
+from Modified_data.SpaceFOM.SpaceFOMPhysicalEntityObject import *
 
 def print_usage_message( ):
 
    print(' ')
    print('TrickHLA SpaceFOM JEOD Master Simulation Command Line Configuration Options:')
-   print('  -h -help         : Print this help message.')
-   print('  -stop [time]     : Time to stop simulation, default is 10.0 seconds.')
-   print('  -nostop          : Set no stop time on simulation.')
-   print('  -verbose [on|off]: on: Show verbose messages (Default), off: disable messages.')
+   print('  -a --active [name]   : Name of the active vehicle, default is Lander.')
+   print('  -h --help            : Print this help message.')
+   print('  -f --fed_name [name] : Name of the Federate, default is EntityTest.')
+   print('  -fe --fex_name [name]: Name of the Federation Execution, default is SpaceFOM_JEOD_Test.')
+   print('  -m --master [name]   : Name of the Master federate, default is Master.')
+   print('  --nostop             : Set no stop time on simulation.')
+   print('  -p --passive[name]   : Name of the passive vehicle, default is Station.')
+   print('  -s --stop [time]     : Time to stop simulation, default is 10.0 seconds.')
+   print('  --verbose [on|off]   : on: Show verbose messages (Default), off: disable messages.')
    print(' ')
 
    trick.exec_terminate_with_return( -1,
@@ -46,6 +53,11 @@ def parse_command_line( ) :
    global print_usage
    global run_duration
    global verbose
+   global federation_name
+   global federate_name
+   global master_name
+   global active_entity_name
+   global passive_entity_name
    
    # Get the Trick command line arguments.
    argc = trick.command_line_args_get_argc()
@@ -55,8 +67,51 @@ def parse_command_line( ) :
    # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
    index = 2
    while (index < argc) :
+         
+      if ((str(argv[index]) == '-a') | (str(argv[index]) == '--active')) :
+         index = index + 1
+         if (index < argc) :
+            active_entity_name = str(argv[index])
+         else :
+            print('ERROR: Missing --active [name] argument.')
+            print_usage = True
+            
+      elif ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')) :
+         print_usage = True
       
-      if (str(argv[index]) == '-stop') :
+      elif ((str(argv[index]) == '-f') | (str(argv[index]) == '--fed_name')) :
+         index = index + 1
+         if (index < argc) :
+            federate_name = str(argv[index])
+         else :
+            print('ERROR: Missing --fed_name [name] argument.')
+            print_usage = True
+      
+      elif ((str(argv[index]) == '-fe') | (str(argv[index]) == '--fex_name')) :
+         index = index + 1
+         if (index < argc) :
+            federation_name = str(argv[index])
+         else :
+            print('ERROR: Missing --fex_name [name] argument.')
+            print_usage = True
+      
+      elif ((str(argv[index]) == '-m') | (str(argv[index]) == '--master')) :
+         index = index + 1
+         if (index < argc) :
+            master_name = str(argv[index])
+         else :
+            print('ERROR: Missing --master [name] argument.')
+            print_usage = True
+      
+      elif ((str(argv[index]) == '-p') | (str(argv[index]) == '--passive')) :
+         index = index + 1
+         if (index < argc) :
+            passive_entity_name = str(argv[index])
+         else :
+            print('ERROR: Missing --passive [name] argument.')
+            print_usage = True
+      
+      elif ((str(argv[index]) == '-s') | (str(argv[index]) == '--stop')) :
          index = index + 1
          if (index < argc) :
             run_duration = float(str(argv[index]))
@@ -64,13 +119,10 @@ def parse_command_line( ) :
             print('ERROR: Missing -stop [time] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '-nostop') :
+      elif (str(argv[index]) == '--nostop') :
          run_duration = None
-         
-      elif ((str(argv[index]) == '-h') | (str(argv[index]) == '-help')) :
-         print_usage = True
       
-      elif (str(argv[index]) == '-verbose') :
+      elif (str(argv[index]) == '--verbose') :
          index = index + 1
          if (index < argc) :
             if (str(argv[index]) == 'on') :
@@ -78,10 +130,10 @@ def parse_command_line( ) :
             elif (str(argv[index]) == 'off') :
                verbose = False
             else :
-               print('ERROR: Unknown -verbose argument: ' + str(argv[index]))
+               print('ERROR: Unknown --verbose argument: ' + str(argv[index]))
                print_usage = True
          else :
-            print('ERROR: Missing -verbose [on|off] argument.')
+            print('ERROR: Missing --verbose [on|off] argument.')
             print_usage = True
       
       elif (str(argv[index]) == '-d') :
@@ -103,6 +155,21 @@ run_duration = 2.0
 
 # Default is to NOT show verbose messages.
 verbose = False
+
+# Set the default Federation Execution name.
+federation_name = 'SpaceFOM_JEOD_Test'
+
+# Set the default Federate name.
+federate_name = 'EntityTest'
+
+# Set the default Master federate name.
+master_name = 'Master'
+
+# Set the default DynamicalEntity instance name.
+active_entity_name = 'Lander'
+
+# Set the default PhysicalEntity instance name.
+passive_entity_name = 'Station'
 
 parse_command_line()
 
@@ -154,95 +221,187 @@ env.de4xx.set_model_number(440)
 earth.rnp.rnp_type = trick.PlanetRNP.RotationOnly
 earth.rnp.enable_polar = False
 
-# Setup radiation pressure.
-vehicle.rad_surface.albedo = 1.0
-vehicle.rad_surface.diffuse = .27
-vehicle.rad_surface.temperature = 0.0
-vehicle.rad_surface.thermal.active = False
-vehicle.rad_surface.thermal.thermal_power_dump = 0.0
-vehicle.rad_surface.thermal.emissivity = 1.0e-12
-vehicle.rad_surface.thermal.heat_capacity = 0.0
-vehicle.rad_surface.cx_area  = trick.attach_units( "m2",2.1432)
-
-# Setup atmosphere model.
-# No atmosphere for this problem.
-vehicle.aero_drag.active = False
-vehicle.atmos_state.active = False
-
-# Setup gravity model.
-vehicle.sun_grav_control.source_name = "Sun"
-vehicle.sun_grav_control.active      = True
-vehicle.sun_grav_control.spherical   = True
-vehicle.sun_grav_control.gradient    = False
-
-vehicle.earth_grav_control.source_name = "Earth"
-vehicle.earth_grav_control.active      = True
-vehicle.earth_grav_control.spherical   = True
-vehicle.earth_grav_control.gradient    = False
-
-vehicle.moon_grav_control.source_name = "Moon"
-vehicle.moon_grav_control.active      = True
-vehicle.moon_grav_control.spherical   = False
-vehicle.moon_grav_control.gradient    = False
-vehicle.moon_grav_control.degree      = 60
-vehicle.moon_grav_control.order       = 60
-
-vehicle.mars_grav_control.source_name = "Mars"
-vehicle.mars_grav_control.active      = False
-vehicle.mars_grav_control.spherical   = True
-vehicle.mars_grav_control.gradient    = False
-
-vehicle.dyn_body.grav_interaction.add_control(vehicle.sun_grav_control)
-vehicle.dyn_body.grav_interaction.add_control(vehicle.earth_grav_control)
-vehicle.dyn_body.grav_interaction.add_control(vehicle.moon_grav_control)
-vehicle.dyn_body.grav_interaction.add_control(vehicle.mars_grav_control)
-
-# Setup mass properties.
-#defaults units are SI unless otherwise stated.
-vehicle.mass_init.set_subject_body( vehicle.dyn_body.mass )
-vehicle.mass_init.properties.mass = 424.0
-vehicle.mass_init.properties.pt_orientation.data_source =    trick.Orientation.InputEigenRotation
-vehicle.mass_init.properties.pt_orientation.eigen_angle = 0.0
-vehicle.mass_init.properties.pt_orientation.eigen_axis  = [ 0.0, 1.0, 0.0]
-vehicle.mass_init.properties.position    = [ 0.0, 0.0, 0.0]
-vehicle.mass_init.properties.inertia[0]  = [ 1.0, 0.0, 0.0]
-vehicle.mass_init.properties.inertia[1]  = [ 0.0, 1.0, 0.0]
-vehicle.mass_init.properties.inertia[2]  = [ 0.0, 0.0, 1.0]
-
-# Set initial state.
-vehicle.pfix.reference_name     = "Moon"
-vehicle.lvlh.reference_name     = "Moon"
-vehicle.orb_elem.reference_name = "Moon"
-
-vehicle.trans_init.set_subject_body( vehicle.dyn_body )
-vehicle.trans_init.reference_ref_frame_name = "Moon.inertial"
-vehicle.trans_init.body_frame_id            = "composite_body"
-
-vehicle.lvlh_init.set_subject_body( vehicle.dyn_body )
-vehicle.lvlh_init.planet_name                = "Moon"
-vehicle.lvlh_init.body_frame_id              = "composite_body"
-vehicle.lvlh_init.orientation.data_source    = trick.Orientation.InputEulerRotation
-vehicle.lvlh_init.orientation.euler_sequence = trick.Orientation.Yaw_Pitch_Roll
-vehicle.lvlh_init.orientation.euler_angles   = [ 0.0, 0.0, 0.0]
-vehicle.lvlh_init.ang_velocity               = [ 0.0, 0.0, 0.0]
-
-vehicle.trans_init.position  = trick.attach_units( "km",[  1296.944012, -1060.824450, 2522.289146])
-vehicle.trans_init.velocity  = trick.attach_units( "km/s",[ -.930578, -.439312, .862075])
-
-# Setup Dynamics Manager info.
-dynamics.dyn_manager.add_body_action(vehicle.mass_init)
-dynamics.dyn_manager.add_body_action(vehicle.trans_init)
-dynamics.dyn_manager.add_body_action(vehicle.lvlh_init)
-
-# Configure vehicle integration information.
-vehicle.dyn_body.set_name( "PhysicalEntity" )
-vehicle.dyn_body.integ_frame_name       = "Moon.inertial"
-vehicle.dyn_body.translational_dynamics = True
-vehicle.dyn_body.rotational_dynamics    = True
-
 # Setup the integrator.
 dynamics.dyn_manager_init.sim_integ_opt = trick.sim_services.Runge_Kutta_4
 dynamics.dyn_manager.deriv_ephem_update = True
+
+#
+# Setup the active vehicle.
+#
+# Setup radiation pressure.
+active_vehicle.rad_surface.albedo = 1.0
+active_vehicle.rad_surface.diffuse = .27
+active_vehicle.rad_surface.temperature = 0.0
+active_vehicle.rad_surface.thermal.active = False
+active_vehicle.rad_surface.thermal.thermal_power_dump = 0.0
+active_vehicle.rad_surface.thermal.emissivity = 1.0e-12
+active_vehicle.rad_surface.thermal.heat_capacity = 0.0
+active_vehicle.rad_surface.cx_area = trick.attach_units( "m2",2.1432)
+
+# Setup atmosphere model.
+# No atmosphere for this problem.
+active_vehicle.aero_drag.active = False
+active_vehicle.atmos_state.active = False
+
+# Setup gravity model.
+active_vehicle.sun_grav_control.source_name = "Sun"
+active_vehicle.sun_grav_control.active      = True
+active_vehicle.sun_grav_control.spherical   = True
+active_vehicle.sun_grav_control.gradient    = False
+
+active_vehicle.earth_grav_control.source_name = "Earth"
+active_vehicle.earth_grav_control.active      = True
+active_vehicle.earth_grav_control.spherical   = True
+active_vehicle.earth_grav_control.gradient    = False
+
+active_vehicle.moon_grav_control.source_name = "Moon"
+active_vehicle.moon_grav_control.active      = True
+active_vehicle.moon_grav_control.spherical   = False
+active_vehicle.moon_grav_control.gradient    = False
+active_vehicle.moon_grav_control.degree      = 60
+active_vehicle.moon_grav_control.order       = 60
+
+active_vehicle.mars_grav_control.source_name = "Mars"
+active_vehicle.mars_grav_control.active      = False
+active_vehicle.mars_grav_control.spherical   = True
+active_vehicle.mars_grav_control.gradient    = False
+
+active_vehicle.dyn_body.grav_interaction.add_control(active_vehicle.sun_grav_control)
+active_vehicle.dyn_body.grav_interaction.add_control(active_vehicle.earth_grav_control)
+active_vehicle.dyn_body.grav_interaction.add_control(active_vehicle.moon_grav_control)
+active_vehicle.dyn_body.grav_interaction.add_control(active_vehicle.mars_grav_control)
+
+# Setup mass properties.
+#defaults units are SI unless otherwise stated.
+active_vehicle.mass_init.set_subject_body( active_vehicle.dyn_body.mass )
+active_vehicle.mass_init.properties.mass = 424.0
+active_vehicle.mass_init.properties.pt_orientation.data_source =    trick.Orientation.InputEigenRotation
+active_vehicle.mass_init.properties.pt_orientation.eigen_angle = 0.0
+active_vehicle.mass_init.properties.pt_orientation.eigen_axis  = [ 0.0, 1.0, 0.0]
+active_vehicle.mass_init.properties.position    = [ 0.0, 0.0, 0.0]
+active_vehicle.mass_init.properties.inertia[0]  = [ 1.0, 0.0, 0.0]
+active_vehicle.mass_init.properties.inertia[1]  = [ 0.0, 1.0, 0.0]
+active_vehicle.mass_init.properties.inertia[2]  = [ 0.0, 0.0, 1.0]
+
+# Set initial state.
+active_vehicle.pfix.reference_name     = "Moon"
+active_vehicle.lvlh.reference_name     = "Moon"
+active_vehicle.orb_elem.reference_name = "Moon"
+
+active_vehicle.trans_init.set_subject_body( active_vehicle.dyn_body )
+active_vehicle.trans_init.reference_ref_frame_name = "Moon.inertial"
+active_vehicle.trans_init.body_frame_id            = "composite_body"
+
+active_vehicle.trans_init.position = trick.attach_units( "km",[  1296.944012, -1060.824450, 2522.289146])
+active_vehicle.trans_init.velocity = trick.attach_units( "km/s",[ -.930578, -.439312, .862075])
+
+active_vehicle.lvlh_init.set_subject_body( active_vehicle.dyn_body )
+active_vehicle.lvlh_init.planet_name                = "Moon"
+active_vehicle.lvlh_init.body_frame_id              = "composite_body"
+active_vehicle.lvlh_init.orientation.data_source    = trick.Orientation.InputEulerRotation
+active_vehicle.lvlh_init.orientation.euler_sequence = trick.Orientation.Yaw_Pitch_Roll
+active_vehicle.lvlh_init.orientation.euler_angles   = [ 0.0, 0.0, 0.0]
+active_vehicle.lvlh_init.ang_velocity               = [ 0.0, 0.0, 0.0]
+
+# Configure vehicle integration information.
+active_vehicle.dyn_body.set_name( active_entity_name )
+active_vehicle.dyn_body.integ_frame_name       = "Moon.inertial"
+active_vehicle.dyn_body.translational_dynamics = True
+active_vehicle.dyn_body.rotational_dynamics    = True
+
+# Setup Dynamics Manager info.
+dynamics.dyn_manager.add_body_action(active_vehicle.mass_init)
+dynamics.dyn_manager.add_body_action(active_vehicle.trans_init)
+dynamics.dyn_manager.add_body_action(active_vehicle.lvlh_init)
+
+#
+# Setup the passive vehicle.
+#
+# Setup radiation pressure.
+passive_vehicle.rad_surface.albedo = 1.0
+passive_vehicle.rad_surface.diffuse = .27
+passive_vehicle.rad_surface.temperature = 0.0
+passive_vehicle.rad_surface.thermal.active = False
+passive_vehicle.rad_surface.thermal.thermal_power_dump = 0.0
+passive_vehicle.rad_surface.thermal.emissivity = 1.0e-12
+passive_vehicle.rad_surface.thermal.heat_capacity = 0.0
+passive_vehicle.rad_surface.cx_area  = trick.attach_units( "m2",2.1432)
+
+# Setup atmosphere model.
+# No atmosphere for this problem.
+passive_vehicle.aero_drag.active = False
+passive_vehicle.atmos_state.active = False
+
+# Setup gravity model.
+passive_vehicle.sun_grav_control.source_name = "Sun"
+passive_vehicle.sun_grav_control.active      = True
+passive_vehicle.sun_grav_control.spherical   = True
+passive_vehicle.sun_grav_control.gradient    = False
+
+passive_vehicle.earth_grav_control.source_name = "Earth"
+passive_vehicle.earth_grav_control.active      = True
+passive_vehicle.earth_grav_control.spherical   = True
+passive_vehicle.earth_grav_control.gradient    = False
+
+passive_vehicle.moon_grav_control.source_name = "Moon"
+passive_vehicle.moon_grav_control.active      = True
+passive_vehicle.moon_grav_control.spherical   = False
+passive_vehicle.moon_grav_control.gradient    = False
+passive_vehicle.moon_grav_control.degree      = 60
+passive_vehicle.moon_grav_control.order       = 60
+
+passive_vehicle.mars_grav_control.source_name = "Mars"
+passive_vehicle.mars_grav_control.active      = False
+passive_vehicle.mars_grav_control.spherical   = True
+passive_vehicle.mars_grav_control.gradient    = False
+
+passive_vehicle.dyn_body.grav_interaction.add_control(passive_vehicle.sun_grav_control)
+passive_vehicle.dyn_body.grav_interaction.add_control(passive_vehicle.earth_grav_control)
+passive_vehicle.dyn_body.grav_interaction.add_control(passive_vehicle.moon_grav_control)
+passive_vehicle.dyn_body.grav_interaction.add_control(passive_vehicle.mars_grav_control)
+
+# Setup mass properties.
+#defaults units are SI unless otherwise stated.
+passive_vehicle.mass_init.set_subject_body( passive_vehicle.dyn_body.mass )
+passive_vehicle.mass_init.properties.mass = 424.0
+passive_vehicle.mass_init.properties.pt_orientation.data_source =    trick.Orientation.InputEigenRotation
+passive_vehicle.mass_init.properties.pt_orientation.eigen_angle = 0.0
+passive_vehicle.mass_init.properties.pt_orientation.eigen_axis  = [ 0.0, 1.0, 0.0]
+passive_vehicle.mass_init.properties.position    = [ 0.0, 0.0, 0.0]
+passive_vehicle.mass_init.properties.inertia[0]  = [ 1.0, 0.0, 0.0]
+passive_vehicle.mass_init.properties.inertia[1]  = [ 0.0, 1.0, 0.0]
+passive_vehicle.mass_init.properties.inertia[2]  = [ 0.0, 0.0, 1.0]
+
+# Set initial state.
+passive_vehicle.pfix.reference_name     = "Moon"
+passive_vehicle.lvlh.reference_name     = "Moon"
+passive_vehicle.orb_elem.reference_name = "Moon"
+
+passive_vehicle.trans_init.set_subject_body( passive_vehicle.dyn_body )
+passive_vehicle.trans_init.reference_ref_frame_name = "Moon.inertial"
+passive_vehicle.trans_init.body_frame_id            = "composite_body"
+
+passive_vehicle.lvlh_init.set_subject_body( passive_vehicle.dyn_body )
+passive_vehicle.lvlh_init.planet_name                = "Moon"
+passive_vehicle.lvlh_init.body_frame_id              = "composite_body"
+passive_vehicle.lvlh_init.orientation.data_source    = trick.Orientation.InputEulerRotation
+passive_vehicle.lvlh_init.orientation.euler_sequence = trick.Orientation.Yaw_Pitch_Roll
+passive_vehicle.lvlh_init.orientation.euler_angles   = [ 0.0, 0.0, 0.0]
+passive_vehicle.lvlh_init.ang_velocity               = [ 0.0, 0.0, 0.0]
+
+passive_vehicle.trans_init.position = trick.attach_units( "km",[  1296.944012, -1060.824450, 2522.289146])
+passive_vehicle.trans_init.velocity = trick.attach_units( "km/s",[ -.930578, -.439312, .862075])
+
+# Configure vehicle integration information.
+passive_vehicle.dyn_body.set_name( passive_entity_name )
+passive_vehicle.dyn_body.integ_frame_name       = "Moon.inertial"
+passive_vehicle.dyn_body.translational_dynamics = True
+passive_vehicle.dyn_body.rotational_dynamics    = True
+
+# Setup Dynamics Manager info.
+dynamics.dyn_manager.add_body_action(passive_vehicle.mass_init)
+dynamics.dyn_manager.add_body_action(passive_vehicle.trans_init)
+dynamics.dyn_manager.add_body_action(passive_vehicle.lvlh_init)
 
 
 # =========================================================================
@@ -253,8 +412,8 @@ federate = SpaceFOMFederateConfig( THLA.federate,
                                    THLA.manager,
                                    THLA.execution_control,
                                    THLA.ExCO,
-                                   'SpaceFOM_JEOD_Test',
-                                   'Vehicle',
+                                   federation_name,
+                                   federate_name,
                                    True )
 
 # Set the name of the ExCO S_define instance.
@@ -265,8 +424,8 @@ federate = SpaceFOMFederateConfig( THLA.federate,
 
 # Set the debug output level.
 if (verbose == True) : 
-   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
-#   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_9_TRACE )
+#   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
+   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_9_TRACE )
 else :
 #   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_1_TRACE )
@@ -282,8 +441,7 @@ federate.set_RRFP_role( False )   # This is NOT the Root Reference Frame Publish
 # Add in known required federates.
 #--------------------------------------------------------------------------
 federate.add_known_fededrate( True, str(federate.federate.name) )
-federate.add_known_fededrate( True, 'Master' )
-federate.add_known_fededrate( True, 'JEODRefFrames' )
+federate.add_known_fededrate( True, master_name )
 
 #--------------------------------------------------------------------------
 # Configure the CRC.
@@ -305,7 +463,7 @@ federate.set_lookahead_time( 0.250 )
 
 # Must specify the Least Common Time Step for all federates in the
 # federation execution.
-federate.set_least_common_time_step( 250000 )
+federate.set_least_common_time_step( 0.250 )
 
 # Set the amount of seconds used to 'pad' mode transitions.
 federate.set_time_padding( 1.0 )
@@ -329,15 +487,59 @@ THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHL
 frame_tree = JEODRefFrameTreeObject( federate, ref_frame_tree )
 
 # Set the debug flag for the reference frames.
-solar_system_barycenter.frame_packing.debug = True
-sun_inertial.frame_packing.debug = verbose
-earth_moon_barycenter.frame_packing.debug = verbose
-earth_centered_inertial.frame_packing.debug = True
-moon_centered_inertial.frame_packing.debug = verbose
-mars_centered_inertial.frame_packing.debug = verbose
-earth_centered_fixed.frame_packing.debug = True
-moon_centered_fixed.frame_packing.debug = verbose
-mars_centered_fixed.frame_packing.debug = verbose
+solar_system_barycenter.frame_packing.debug = False
+sun_inertial.frame_packing.debug = False
+earth_moon_barycenter.frame_packing.debug = False
+earth_centered_inertial.frame_packing.debug = False
+moon_centered_inertial.frame_packing.debug = False
+mars_centered_inertial.frame_packing.debug = False
+earth_centered_fixed.frame_packing.debug = False
+moon_centered_fixed.frame_packing.debug = False
+mars_centered_fixed.frame_packing.debug = False
+
+
+#---------------------------------------------------------------------------
+# Set up the lander PhysicalEntity object.
+#---------------------------------------------------------------------------
+lander = SpaceFOMPhysicalEntityObject( True,
+                                       active_entity_name,
+                                       active_phyical_entity.entity_packing,
+                                       'active_phyical_entity.entity_packing' )
+
+# Set the debug flag for the active vehicle.
+active_phyical_entity.entity_packing.debug = verbose
+
+# Add this vehicle to the list of managed object.
+federate.add_fed_object( lander )
+
+# FIXME: FOr now, let's add the data tags.  Later this will come from the DynBody.
+#active_phyical_entity.entity_packing.name         = active_entity_name
+active_phyical_entity.entity_packing.name         = 'BARFOO'
+#active_phyical_entity.entity_packing.type         = 'NASA Lander'
+#active_phyical_entity.entity_packing.status       = 'Approach'
+#active_phyical_entity.entity_packing.parent_frame = 'MoonCentricInertial'
+
+
+#---------------------------------------------------------------------------
+# Set up the station PhysicalEntity object.
+#---------------------------------------------------------------------------
+station = SpaceFOMPhysicalEntityObject( True,
+                                        passive_entity_name,
+                                        passive_phyical_entity.entity_packing,
+                                        'passive_phyical_entity.entity_packing' )
+
+# Set the debug flag for the passive vehicle.
+passive_phyical_entity.entity_packing.debug = verbose
+
+# Add this vehicle to the list of managed object.
+federate.add_fed_object( station )
+
+# FIXME: FOr now, let's add the data tags.  Later this will come from the DynBody.
+#passive_phyical_entity.entity_packing.name         = passive_entity_name
+passive_phyical_entity.entity_packing.name         = 'FOOBAR'
+#passive_phyical_entity.entity_packing.type         = 'Gateway'
+#passive_phyical_entity.entity_packing.status       = 'NRHO'
+#passive_phyical_entity.entity_packing.parent_frame = 'MoonCentricInertial'
 
 
 #---------------------------------------------------------------------------
@@ -356,6 +558,8 @@ federate.add_sim_object( mars_centered_inertial )
 federate.add_sim_object( earth_centered_fixed )
 federate.add_sim_object( moon_centered_fixed )
 federate.add_sim_object( mars_centered_fixed )
+federate.add_sim_object( active_phyical_entity )
+federate.add_sim_object( passive_phyical_entity )
 
 
 #---------------------------------------------------------------------------

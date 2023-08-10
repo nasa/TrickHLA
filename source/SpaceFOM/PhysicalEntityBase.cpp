@@ -124,7 +124,7 @@ void PhysicalEntityBase::default_data(
    char const       *sim_obj_name,
    char const       *entity_obj_name,
    char const       *entity_name,
-   char const       *parent_entity_name,
+   char const       *parent_ref_frame_name,
    bool              publishes )
 {
    string entity_name_str = string( sim_obj_name ) + "." + string( entity_obj_name );
@@ -133,9 +133,9 @@ void PhysicalEntityBase::default_data(
    // Associate the instantiated Manager object with this packing object.
    this->object = mngr_object;
 
-   // Set the frame name and parent frame name.
-   if( parent_entity_name != NULL ){
-      parent_frame = trick_MM->mm_strdup( parent_entity_name );
+   // Set the parent frame name.
+   if( parent_ref_frame_name != NULL ){
+      parent_frame = trick_MM->mm_strdup( parent_ref_frame_name );
    }
    else{
       parent_frame = trick_MM->mm_strdup( "" );
@@ -378,6 +378,27 @@ void PhysicalEntityBase::set_parent_ref_frame( char const *new_name )
       trick_MM->delete_var( (void *)parent_frame );
    }
    parent_frame = trick_MM->mm_strdup( new_name );
+
+   return;
+}
+
+/*!
+ * @job_class{default_data}
+ */
+void PhysicalEntityBase::set_object( TrickHLA::Object * mngr_obj )
+{
+   ostringstream errmsg;
+
+   // Check for initialization.
+   if ( initialized ) {
+      errmsg << "SpaceFOM::PhysicalEntityBase::set_object():" << __LINE__
+             << " ERROR: The initialize() function has already been called" << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Assign the object.
+   this->object = mngr_obj;
 
    return;
 }

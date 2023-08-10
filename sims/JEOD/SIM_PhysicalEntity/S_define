@@ -240,15 +240,26 @@ class VehicleSimObject: public VehicleAtmSimObject
 
 };
 
-VehicleSimObject vehicle ( dynamics.dyn_manager,
-                           earth.atmos,
-                           earth.wind_velocity,
-                           jeod_time.time_manager.dyn_time );
+// Instantiate the active JEOD DynBody.
+VehicleSimObject active_vehicle( dynamics.dyn_manager,
+                                 earth.atmos,
+                                 earth.wind_velocity,
+                                 jeod_time.time_manager.dyn_time );
 
+vcollect active_vehicle.dyn_body.collect.collect_no_xmit_forc jeod::CollectForce::create {
+   active_vehicle.aero_drag.aero_force,
+   active_vehicle.rad_pressure.force
+};
 
-vcollect vehicle.dyn_body.collect.collect_no_xmit_forc jeod::CollectForce::create {
-   vehicle.aero_drag.aero_force,
-   vehicle.rad_pressure.force
+// Instantiate the passive JEOD DynBody.
+VehicleSimObject passive_vehicle( dynamics.dyn_manager,
+                                  earth.atmos,
+                                  earth.wind_velocity,
+                                  jeod_time.time_manager.dyn_time );
+
+vcollect passive_vehicle.dyn_body.collect.collect_no_xmit_forc jeod::CollectForce::create {
+   passive_vehicle.aero_drag.aero_force,
+   passive_vehicle.rad_pressure.force
 };
 
 
@@ -313,6 +324,17 @@ JEODRefFrameTreeSimObject ref_frame_tree( THLA.manager,
                                           moon.planet,
                                           mars.planet );
 
+// Instantiate the standard JEOD/SpaceFOM reference frames for the tree.
+JEODRefFrameSimObject solar_system_barycenter( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
+JEODRefFrameSimObject sun_inertial( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
+JEODRefFrameSimObject earth_moon_barycenter( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
+JEODRefFrameSimObject earth_centered_inertial( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
+JEODRefFrameSimObject moon_centered_inertial( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
+JEODRefFrameSimObject mars_centered_inertial( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
+JEODRefFrameSimObject earth_centered_fixed( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
+JEODRefFrameSimObject moon_centered_fixed( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
+JEODRefFrameSimObject mars_centered_fixed( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
+
 
 //==========================================================================
 // SIM_OBJECT: JEODPhysicalEntiySimObject - An example PhysicalEntity
@@ -327,15 +349,20 @@ class JEODPhysicalEntiySimObject : public Trick::SimObject {
    /* HLA associated reference frames packing object. */
    SpaceFOM::JEODPhysicalEntity entity_packing;
 
-   JEODPhysicalEntiySimObject( unsigned short _INIT = 59 )
+   JEODPhysicalEntiySimObject( jeod::DynBody *dyn_body_data_ptr,
+                               unsigned short _INIT = 59 )
+   : dyn_body_ptr(dyn_body_data_ptr)
    {
 
       //
       // Initialization jobs
       //
-      P_INIT ("initialization") entity_packing.initialize( &vehicle.dyn_body );
+      P_INIT ("initialization") entity_packing.initialize( dyn_body_ptr );
 
    }
+
+  protected:
+   jeod::DynBody * dyn_body_ptr;
 
   private:
 
@@ -345,20 +372,14 @@ class JEODPhysicalEntiySimObject : public Trick::SimObject {
 
 };
 
-// Instantiate the standard JEOD/SpaceFOM reference frames for the tree.
-JEODRefFrameSimObject solar_system_barycenter( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
-JEODRefFrameSimObject sun_inertial( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
-JEODRefFrameSimObject earth_moon_barycenter( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
-JEODRefFrameSimObject earth_centered_inertial( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
-JEODRefFrameSimObject moon_centered_inertial( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
-JEODRefFrameSimObject mars_centered_inertial( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
-JEODRefFrameSimObject earth_centered_fixed( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
-JEODRefFrameSimObject moon_centered_fixed( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
-JEODRefFrameSimObject mars_centered_fixed( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
+// Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
+JEODPhysicalEntiySimObject active_phyical_entity(&(active_vehicle.dyn_body), P_HLA_INIT);
 
+// Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
+JEODPhysicalEntiySimObject passive_phyical_entity(&(passive_vehicle.dyn_body), P_HLA_INIT);
 
 // Setup the integration loop.
-IntegLoop sim_integ_loop  (DYNAMICS) earth, moon, mars, vehicle, dynamics;
+IntegLoop sim_integ_loop  (DYNAMICS) earth, moon, mars, active_vehicle, passive_vehicle, dynamics;
 
 
 //==========================================================================
@@ -372,7 +393,7 @@ void create_connections() {
    // frame tree using default data instead of in the input file.
    //
    // Allocate the HLA objects for the Reference Frame tree.
-   THLA.manager.obj_count = 9;
+   THLA.manager.obj_count = 11;
    THLA.manager.objects = (TrickHLA::Object*)trick_MM->declare_var( "TrickHLA::Object",
                                                                     THLA.manager.obj_count );
    // Assign the HLA objects to the associated frame.
@@ -385,6 +406,24 @@ void create_connections() {
    earth_centered_fixed.frame_packing.set_object(&(THLA.manager.objects[6]));
    moon_centered_fixed.frame_packing.set_object(&(THLA.manager.objects[7]));
    mars_centered_fixed.frame_packing.set_object(&(THLA.manager.objects[8]));
+
+   // Assign the HLA object(s) to the associates vehicle(s).
+   // FIXME: This is NOT the correct location to call default data.
+   // We need to pass through the input processor to allow the user to
+   // establish the publish/subscribe relationships.
+   active_phyical_entity.entity_packing.default_data( &(THLA.manager.objects[9]),
+                                                      "active_phyical_entity",
+                                                      "entity_packing",
+                                                      "Lander",
+                                                      "MoonCentricInertial",
+                                                      true );
+   passive_phyical_entity.entity_packing.default_data( &(THLA.manager.objects[10]),
+                                                       "active_phyical_entity",
+                                                       "entity_packing",
+                                                       "Station",
+                                                       "MoonCentricInertial",
+                                                       false );
+
 #endif
 
    // Make the connections for the Sun, Earth, Moon, Mars reference frame tree.

@@ -158,6 +158,15 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    /*! @brief Called to unpack the data after data is received from the RTI. */
    virtual void unpack() = 0;
 
+   // Access to protected data.
+   virtual void set_object( TrickHLA::Object * mngr_obj );
+
+   // Access to protected data.
+   virtual TrickHLA::Object *get_object()
+   {
+      return object;
+   }
+
   public:
    bool debug; ///< @trick_units{--} Debug output flag.
 
