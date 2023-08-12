@@ -122,8 +122,8 @@ Available here https://github.com/terryyin/lizard' )
          time.sleep( 0.1 )
 
    except subprocess.CalledProcessError:
-      TrickHLAMessage.error( subprocess.CalledProcessError.message )
-      TrickHLAMessage.failure( '\'lizard\' command failed!' )
+      TrickHLAMessage.failure( '\'lizard\' command failed! '
+                               + subprocess.CalledProcessError.message )
 
    # Let the user know that we are done.
    TrickHLAMessage.success( 'Finished processing TrickHLA source code.' )
@@ -190,7 +190,7 @@ def find_lizard( lizard_bin, verbose = True ):
       TrickHLAMessage.failure( 'Could not find the lizard command!' )
    else:
       if not os.path.isfile( lizard_command ):
-         TrickHLAMessage.failure( 'Could not find the lizard command!: '\
+         TrickHLAMessage.failure( 'Could not find the lizard command!: '
                                   + lizard_command )
       else:
          if verbose:
@@ -203,9 +203,9 @@ def find_lizard( lizard_bin, verbose = True ):
       lizard_version = subprocess.check_output( [lizard_command, '--version'],
                                                 stderr = subprocess.STDOUT ).decode('utf8', errors='strict').strip()
    except subprocess.CalledProcessError:
-      TrickHLAMessage.error( subprocess.CalledProcessError.message )
       TrickHLAMessage.failure( '\'lizard --version\' command failed!: '
-                               + lizard_command )
+                               + lizard_command + ', '
+                               + subprocess.CalledProcessError.message )
 
    return lizard_command, lizard_version
 

@@ -255,18 +255,18 @@ Examples:\n  check_code -s -o -v --cstyle_casts\n  check_code -i -o -v\n  check_
       if args.overwrite_files:
          if args.very_verbose:
             TrickHLAMessage.status( 'Directory \'' + trickhla_home + '/'
-                                    +cppcheck_output_dir + '\' exists!' )
+                                    + cppcheck_output_dir + '\' exists!' )
       else:
          TrickHLAMessage.failure( 'Directory \'' + trickhla_home + '/'
-                                  +cppcheck_output_dir + '\' exists!' )
+                                  + cppcheck_output_dir + '\' exists!' )
    else:
       if args.test_only:
          TrickHLAMessage.status( 'Would create the \'' + trickhla_home + '/'
-                                 +cppcheck_output_dir + '\' directory.' )
+                                 + cppcheck_output_dir + '\' directory.' )
       else:
          if args.very_verbose:
             TrickHLAMessage.status( 'Creating \'' + trickhla_home + '/'
-                                    +cppcheck_output_dir + '\' directory.' )
+                                    + cppcheck_output_dir + '\' directory.' )
          # Create the cppcheck output directory.
          os.mkdir( cppcheck_output_dir )
 
@@ -275,18 +275,18 @@ Examples:\n  check_code -s -o -v --cstyle_casts\n  check_code -i -o -v\n  check_
       if args.overwrite_files:
          if args.very_verbose:
             TrickHLAMessage.status( 'Directory \'' + trickhla_home + '/'
-                                    +cppcheck_build_dir + '\' exists!' )
+                                    + cppcheck_build_dir + '\' exists!' )
       else:
          TrickHLAMessage.failure( 'Directory \'' + trickhla_home + '/'
-                                  +cppcheck_build_dir + '\' exists!' )
+                                  + cppcheck_build_dir + '\' exists!' )
    else:
       if args.test_only:
          TrickHLAMessage.status( 'Would create the \'' + trickhla_home + '/'
-                                 +cppcheck_build_dir + '\' directory.' )
+                                 + cppcheck_build_dir + '\' directory.' )
       else:
          if args.very_verbose:
             TrickHLAMessage.status( 'Creating \'' + trickhla_home + '/'
-                                    +cppcheck_build_dir + '\' directory.' )
+                                    + cppcheck_build_dir + '\' directory.' )
          # Create the cppcheck build directory.
          os.mkdir( cppcheck_build_dir )
 
@@ -481,8 +481,8 @@ Examples:\n  check_code -s -o -v --cstyle_casts\n  check_code -i -o -v\n  check_
          sys.stdout.write( '\b' )
 
       except subprocess.CalledProcessError:
-         TrickHLAMessage.error( subprocess.CalledProcessError.message )
-         TrickHLAMessage.failure( '\'cppcheck\' command failed!' )
+         TrickHLAMessage.failure( '\'cppcheck\' command failed! '
+                                  + subprocess.CalledProcessError.message )
 
    # Let the user know that we are done.
    TrickHLAMessage.success( 'Finished checking TrickHLA source code.' )
@@ -550,7 +550,7 @@ def find_cppcheck( cppcheck_bin, verbose = True ):
       TrickHLAMessage.failure( 'Could not find the cppcheck command!' )
    else:
       if not os.path.isfile( cppcheck_command ):
-         TrickHLAMessage.failure( 'Could not find the cppcheck command!: '\
+         TrickHLAMessage.failure( 'Could not find the cppcheck command!: '
                                   + cppcheck_command )
       else:
          if verbose:
@@ -562,9 +562,9 @@ def find_cppcheck( cppcheck_bin, verbose = True ):
    try:
       cppcheck_version = subprocess.check_output( [cppcheck_command, '--version'] ).decode('utf8', errors='strict').strip()
    except subprocess.CalledProcessError:
-      TrickHLAMessage.error( subprocess.CalledProcessError.message )
       TrickHLAMessage.failure( '\'cppcheck --version\' command failed!: '
-                               + cppcheck_command )
+                               + cppcheck_command + ', '
+                               + subprocess.CalledProcessError.message )
 
    return cppcheck_command, cppcheck_version
 
@@ -614,8 +614,9 @@ def find_trick( trick_path = None, verbose = True ):
             trick_home = subprocess.check_output( trick_gte_cmd ).decode('utf8', errors='strict').strip()
 
          except subprocess.CalledProcessError:
-            TrickHLAMessage.error( subprocess.CalledProcessError.message )
-            TrickHLAMessage.failure( '\'trick-gte\' command failed!: ' + trick_gte_cmd )
+            TrickHLAMessage.failure( '\'trick-gte\' command failed!: '
+                                     + trick_gte_cmd + ', '
+                                     + subprocess.CalledProcessError.message )
 
          # Look in other possible locations.
          if trick_home == '':
@@ -632,7 +633,7 @@ def find_trick( trick_path = None, verbose = True ):
       TrickHLAMessage.failure( 'Could not find the Trick home directory!' )
    else:
       if os.path.isdir( trick_home ) is False:
-         TrickHLAMessage.failure( 'Could not find the Trick home directory: '\
+         TrickHLAMessage.failure( 'Could not find the Trick home directory: '
                                   + trick_home )
       else:
          if verbose:
@@ -644,7 +645,7 @@ def find_trick( trick_path = None, verbose = True ):
    # Form the trick-version command based on TRICK_HOME.
    trick_version_cmd = trick_home + '/bin/trick-version'
    if os.path.isfile( trick_version_cmd ) is False:
-      TrickHLAMessage.failure( 'The \'trick-version\' command not found!: '\
+      TrickHLAMessage.failure( 'The \'trick-version\' command not found!: '
                                + trick_version_cmd )
 
    # Capture the output from the 'trick-version -version' command.
@@ -652,18 +653,18 @@ def find_trick( trick_path = None, verbose = True ):
    try:
       trick_version = subprocess.check_output( trick_ver_number_cmd ).decode('utf8', errors='strict').strip()
    except subprocess.CalledProcessError:
-      TrickHLAMessage.error( subprocess.CalledProcessError.message )
-      TrickHLAMessage.failure( '\'trick-version -version\' command failed!: '\
-                               + trick_ver_number_cmd )
+      TrickHLAMessage.failure( '\'trick-version -version\' command failed!: '
+                               + trick_ver_number_cmd + ', '
+                               + subprocess.CalledProcessError.message )
 
    # Capture the output from the 'trick-version -year' command.
    trick_ver_yr_cmd = [trick_version_cmd, '-year']
    try:
       trick_version_year = subprocess.check_output( trick_ver_yr_cmd ).decode('utf8', errors='strict').strip()
    except subprocess.CalledProcessError:
-      TrickHLAMessage.error( subprocess.CalledProcessError.message )
-      TrickHLAMessage.failure( '\'trick-version -year\' command failed!: '\
-                               + trick_ver_yr_cmd )
+      TrickHLAMessage.failure( '\'trick-version -year\' command failed!: '
+                               + trick_ver_yr_cmd + ', '
+                               + subprocess.CalledProcessError.message )
 
    # Return what we found.
    return trick_home, trick_version, trick_version_year
@@ -746,7 +747,7 @@ def get_number_of_cpus():
       try:
          system_type = subprocess.check_output( ['/usr/bin/uname', '-s'] ).decode('utf8', errors='strict').strip()
       except subprocess.CalledProcessError:
-         TrickHLAMessage.error( subprocess.CalledProcessError.message )
+         TrickHLAMessage.failure( subprocess.CalledProcessError.message )
 
       if 'Darwin' in system_type:
          num_cpus = int( subprocess.check_output( ['/usr/sbin/sysctl', '-n', 'hw.ncpu'] ) )

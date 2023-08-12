@@ -112,8 +112,9 @@ def main():
    # Format only a specific file if specified.
    if args.file:
 
-      format_file( args.file, clang_format_cmd, trickhla_scripts,
-                   args.in_place, args.test, args.verbose )
+      if format_file( args.file, clang_format_cmd, trickhla_scripts,
+                      args.in_place, args.test, args.verbose ):
+         TrickHLAMessage.failure( 'Could not format file: ' + args.file )
 
    else:
       for src_path in trickhla_src_paths:
@@ -134,8 +135,9 @@ def main():
             if args.clean:
                cleanup_directory( dir_entry, args.test, args.verbose )
             else:
-               format_directory( dir_entry, clang_format_cmd, trickhla_scripts,
-                                 args.in_place, args.test, args.verbose )
+               if format_directory( dir_entry, clang_format_cmd, trickhla_scripts,
+                                    args.in_place, args.test, args.verbose ):
+                  TrickHLAMessage.failure( 'Could not format directory: ' + dir_entry )
          # End: for dir_entry in dir_list :
    # End: args.file :
 
@@ -264,12 +266,11 @@ def find_clang_format( llvm_bin, verbose = True ):
       TrickHLAMessage.failure( 'Could not find the clang-format command!' )
    else:
       if not os.path.isfile( command_path ):
-         TrickHLAMessage.failure( 'Could not find the clang-format command: '\
+         TrickHLAMessage.failure( 'Could not find the clang-format command: '
                                   + command_path )
       else:
          if verbose:
-            TrickHLAMessage.status( 'Using CLANG format command: '\
-                                     + command_path )
+            TrickHLAMessage.status( 'Using CLANG format command: ' + command_path )
 
    return command_path
 
@@ -296,12 +297,12 @@ def link_clang_format( thla_scripts, test_only = False, verbose = True ):
          TrickHLAMessage.status( 'Found existing format specification link: .clang-format' )
    else:
       if test_only:
-         TrickHLAMessage.status( 'Would link format specification: '\
+         TrickHLAMessage.status( 'Would link format specification: '
                                  + thla_clang_format )
       else:
          os.symlink( thla_clang_format, '.clang-format' )
          if verbose:
-            TrickHLAMessage.status( 'Linking to format specification: '\
+            TrickHLAMessage.status( 'Linking to format specification: '
                                     + thla_clang_format )
 
    return
@@ -315,7 +316,7 @@ def link_clang_format( thla_scripts, test_only = False, verbose = True ):
 # error condition. If the file exists, this routine runs the clang-format
 # command on the specified file.
 #
-# @return error             The error status for the directory formatting.
+# @return error_state       The error status for the file formatting.
 # @param  file_path         The path to the file to format.
 # @param  clang_format_cmd  The path to the CLANG format command.
 # @param  thla_scripts      The path to the TrickHLA scripts directory.
@@ -331,18 +332,18 @@ def format_file(
    test_only = False,
    verbose = True ):
 
-   error = False  # No error yet.
+   error_state = False  # No error yet.
 
    # First, let's check to see that the file exists.
    if os.path.isfile( file_path ):
       if os.path.islink( file_path ):
-         TrickHLAMessage.failure( 'File is a link: ' + file_path )
-         error = True
-         return error
+         TrickHLAMessage.warning( 'File is a link: ' + file_path )
+         error_state = True
+         return error_state
    else:
-      TrickHLAMessage.failure( 'File does not exist: ' + file_path )
-      error = True
-      return error
+      TrickHLAMessage.warning( 'File does not exist: ' + file_path )
+      error_state = True
+      return error_state
 
    # Extract the directory path to the file and the file base name.
    dir_path = os.path.dirname( file_path )
@@ -418,7 +419,7 @@ def format_file(
    # Move back to the original directory.
    os.chdir( original_dir )
 
-   return
+   return error_state
 
 
 # Function to format all the identifiable source files in a directory.
@@ -430,7 +431,7 @@ def format_file(
 # runs the clang-format command on all identifiable source files in the
 # directory.
 #
-# @return error             The error status for the directory formatting.
+# @return error_state       The error status for the directory formatting.
 # @param  dir_path          The path to directory to format.
 # @param  clang_format_cmd  The path to the CLANG format command.
 # @param  thla_scripts      The path to the TrickHLA scripts directory.
@@ -446,7 +447,7 @@ def format_directory(
    test_only = False,
    verbose = True ):
 
-   error = False  # No error yet.
+   error_state = False  # No error yet.
 
    # Move into the directory.
    if verbose:
@@ -473,7 +474,6 @@ def format_directory(
       # else :
          # We should probably clean out the directory if it exists
          # but we are not going to do that.
-
    # End: if not in_place :
 
    # Now format recognized files in the directory.
@@ -534,7 +534,7 @@ def format_directory(
    # Move back to the original directory.
    os.chdir( original_dir )
 
-   return error
+   return error_state
 
 
 # Function to cleans up all the formatting artifacts in a directory.

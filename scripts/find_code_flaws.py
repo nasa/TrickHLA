@@ -173,8 +173,8 @@ def main():
          time.sleep( 0.1 )
 
    except subprocess.CalledProcessError:
-      TrickHLAMessage.error( subprocess.CalledProcessError.message )
-      TrickHLAMessage.failure( '\'flawfinder\' command failed!' )
+      TrickHLAMessage.failure( '\'flawfinder\' command failed! '
+                               + subprocess.CalledProcessError.message )
 
    # Let the user know that we are done.
    TrickHLAMessage.success( 'Finished checking TrickHLA source code.' )
@@ -253,9 +253,9 @@ def find_flawfinder( flawfinder_bin, verbose = True ):
    try:
       flawfinder_version = subprocess.check_output( [flawfinder_command, '--version'] ).decode('utf8', errors='strict').strip()
    except subprocess.CalledProcessError:
-      TrickHLAMessage.error( subprocess.CalledProcessError.message )
       TrickHLAMessage.failure( '\'flawfinder --version\' command failed!: '
-                               + flawfinder_command )
+                               + flawfinder_command + ', '
+                               + subprocess.CalledProcessError.message )
 
    return flawfinder_command, flawfinder_version
 
