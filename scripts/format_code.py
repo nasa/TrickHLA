@@ -87,10 +87,8 @@ def main():
       trickhla_src_paths.append( os.path.join( trickhla_home, 'models/Wheelbot/Battery' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/Wheelbot/Control' ) ):
       trickhla_src_paths.append( os.path.join( trickhla_home, 'models/Wheelbot/Control' ) )
-   if os.path.isdir( os.path.join( trickhla_home, 'models/Wheelbot/Graphics' ) ):
-      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/Wheelbot/Graphics' ) )
-   if os.path.isdir( os.path.join( trickhla_home, 'models/Wheelbot/GUIControl1' ) ):
-      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/Wheelbot/GUIControl1' ) )
+   if os.path.isdir( os.path.join( trickhla_home, 'models/Wheelbot/Electrical' ) ):
+      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/Wheelbot/Electrical' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/Wheelbot/Guidance' ) ):
       trickhla_src_paths.append( os.path.join( trickhla_home, 'models/Wheelbot/Guidance' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/Wheelbot/Motor' ) ):
