@@ -5,54 +5,55 @@
 #include <algorithm>
 
 #ifndef PI
-#define PI 3.1415926535
+#   define PI 3.1415926535
 #endif
 #define FLOAT_TOLERANCE 0.000001
 
 /*
 Test Fixture.
 */
-class VehicleControllerTest : public ::testing::Test {
-    protected:
-    std::vector<Point> waypoint_queue;
-    Navigator *navigator;
-    TestMotorController* right_motor_controller;
-    TestMotorController* left_motor_controller;
-    DifferentialDriveController* drive_controller;
-    VehicleController* vehicle_controller;
+class VehicleControllerTest : public ::testing::Test
+{
+  protected:
+   std::vector< Point >         waypoint_queue;
+   Navigator                   *navigator;
+   TestMotorController         *right_motor_controller;
+   TestMotorController         *left_motor_controller;
+   DifferentialDriveController *drive_controller;
+   VehicleController           *vehicle_controller;
 
-    VehicleControllerTest() {
+   VehicleControllerTest()
+   {
 
-        Point waypoint(1.0, 3.0);
-        waypoint_queue.push_back( waypoint);
+      Point waypoint( 1.0, 3.0 );
+      waypoint_queue.push_back( waypoint );
 
-        Point init_location(0.0, 0.0);
-        right_motor_controller = new TestMotorController();
-        left_motor_controller  = new TestMotorController();
-        drive_controller = new DifferentialDriveController(0.183, 0.045, 8.880, 0.200,
-                                                          *right_motor_controller,
-                                                          *left_motor_controller);
-        navigator = new Navigator(0.0, init_location);
-        vehicle_controller = new VehicleController( &waypoint_queue, *navigator, *drive_controller, 0.02);
+      Point init_location( 0.0, 0.0 );
+      right_motor_controller = new TestMotorController();
+      left_motor_controller  = new TestMotorController();
+      drive_controller       = new DifferentialDriveController( 0.183, 0.045, 8.880, 0.200,
+                                                                *right_motor_controller,
+                                                                *left_motor_controller );
+      navigator              = new Navigator( 0.0, init_location );
+      vehicle_controller     = new VehicleController( &waypoint_queue, *navigator, *drive_controller, 0.02 );
+   }
 
-    }
+   ~VehicleControllerTest()
+   {
+      delete navigator;
+      delete driveController;
+   }
 
-    ~VehicleControllerTest() {
-        delete navigator;
-        delete driveController;
-    }
-
-    void SetUp() {}
-    void TearDown() {}
+   void SetUp() {}
+   void TearDown() {}
 };
 
+TEST_F( VehicleControllerTest, one )
+{
 
-TEST_F( VehicleControllerTest , one ) {
-
-    Point current_destination;
-    int result = vehicle_controller->get_current_destination(current_destination);
-    EXPECT_EQ(result, 0);
-    EXPECT_EQ(current_destination.x, 1);
-    EXPECT_EQ(current_destination.y, 3);
+   Point current_destination;
+   int   result = vehicle_controller->get_current_destination( current_destination );
+   EXPECT_EQ( result, 0 );
+   EXPECT_EQ( current_destination.x, 1 );
+   EXPECT_EQ( current_destination.y, 3 );
 }
-
