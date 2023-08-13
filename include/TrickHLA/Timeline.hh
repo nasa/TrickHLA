@@ -78,7 +78,7 @@ class Timeline
 
    /*! @brief Set the epoch for this timeline in seconds.
     *  @param time New time value for epoch in seconds. */
-   virtual void set_epoch( double time )
+   virtual void set_epoch( double const time )
    {
       this->epoch = time;
    }

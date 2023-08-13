@@ -1303,7 +1303,7 @@ void Parameter::decode_boolean_from_buffer() const
       bool_dest = (bool *)address;
    }
 
-   unsigned int *int_src = (unsigned int *)buffer;
+   unsigned int const *int_src = (unsigned int *)buffer;
 
    if ( num_items == 1 ) {
       bool_dest[0] = ( int_src[0] != 0 );
@@ -1321,53 +1321,53 @@ void Parameter::encode_logical_time() const
 
    switch ( attr->type ) {
       case TRICK_DOUBLE: {
-         double *d_src = static_cast< double * >( address );
-         logical_time  = Int64BaseTime::to_base_time( d_src[0] );
+         double const *d_src = static_cast< double * >( address );
+         logical_time        = Int64BaseTime::to_base_time( d_src[0] );
          break;
       }
       case TRICK_FLOAT: {
-         float *f_src = static_cast< float * >( address );
-         logical_time = Int64BaseTime::to_base_time( (double)f_src[0] );
+         float const *f_src = static_cast< float * >( address );
+         logical_time       = Int64BaseTime::to_base_time( (double)f_src[0] );
          break;
       }
       case TRICK_SHORT: {
-         short *s_src = (short *)address;
-         logical_time = (int64_t)( Int64BaseTime::get_base_time_multiplier() * s_src[0] );
+         short const *s_src = (short *)address;
+         logical_time       = (int64_t)( Int64BaseTime::get_base_time_multiplier() * s_src[0] );
          break;
       }
       case TRICK_UNSIGNED_SHORT: {
-         unsigned short *us_src = (unsigned short *)address;
-         logical_time           = (int64_t)( Int64BaseTime::get_base_time_multiplier() * us_src[0] );
+         unsigned short const *us_src = (unsigned short *)address;
+         logical_time                 = (int64_t)( Int64BaseTime::get_base_time_multiplier() * us_src[0] );
          break;
       }
       case TRICK_INTEGER: {
-         int *i_src   = (int *)address;
-         logical_time = (int64_t)( Int64BaseTime::get_base_time_multiplier() * i_src[0] );
+         int const *i_src = (int *)address;
+         logical_time     = (int64_t)( Int64BaseTime::get_base_time_multiplier() * i_src[0] );
          break;
       }
       case TRICK_UNSIGNED_INTEGER: {
-         unsigned int *ui_src = (unsigned int *)address;
-         logical_time         = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ui_src[0] );
+         unsigned int const *ui_src = (unsigned int *)address;
+         logical_time               = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ui_src[0] );
          break;
       }
       case TRICK_LONG: {
-         long *l_src  = (long *)address;
-         logical_time = (int64_t)( Int64BaseTime::get_base_time_multiplier() * l_src[0] );
+         long const *l_src = (long *)address;
+         logical_time      = (int64_t)( Int64BaseTime::get_base_time_multiplier() * l_src[0] );
          break;
       }
       case TRICK_UNSIGNED_LONG: {
-         unsigned long *ul_src = (unsigned long *)address;
-         logical_time          = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ul_src[0] );
+         unsigned long const *ul_src = (unsigned long *)address;
+         logical_time                = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ul_src[0] );
          break;
       }
       case TRICK_LONG_LONG: {
-         long long *ll_src = (long long *)address;
-         logical_time      = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ll_src[0] );
+         long long const *ll_src = (long long *)address;
+         logical_time            = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ll_src[0] );
          break;
       }
       case TRICK_UNSIGNED_LONG_LONG: {
-         unsigned long long *ull_src = (unsigned long long *)address;
-         logical_time                = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ull_src[0] );
+         unsigned long long const *ull_src = (unsigned long long *)address;
+         logical_time                      = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ull_src[0] );
          break;
       }
       default: {
@@ -1398,8 +1398,8 @@ void Parameter::encode_logical_time() const
 void Parameter::decode_logical_time()
 {
    // Integer representing time in the base HLA Logical Time representation.
-   int64_t        logical_time = 0;
-   unsigned char *src          = buffer;
+   int64_t              logical_time = 0;
+   unsigned char const *src          = buffer;
 
    logical_time = ( logical_time << 8 ) | src[0]; // cppcheck-suppress [badBitmaskCheck]
    logical_time = ( logical_time << 8 ) | src[1];
@@ -3072,11 +3072,11 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
  * for now.
  */
 void Parameter::byteswap_buffer_copy(
-   void  *dest,
-   void  *src,
-   int    type,
-   size_t length,
-   size_t num_bytes ) const
+   void        *dest,
+   void const  *src,
+   int const    type,
+   size_t const length,
+   size_t const num_bytes ) const
 {
    if ( num_bytes == 0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
@@ -3104,8 +3104,8 @@ void Parameter::byteswap_buffer_copy(
       // Do the byteswap based on the type.
       switch ( type ) {
          case TRICK_DOUBLE: {
-            double *d_src  = static_cast< double  *>( src );
-            double *d_dest = static_cast< double * >( dest );
+            double const *d_src  = static_cast< double const  *>( src );
+            double       *d_dest = static_cast< double       *>( dest );
             if ( length == 1 ) {
                d_dest[0] = Utilities::byteswap_double( d_src[0] );
             } else {
@@ -3116,8 +3116,8 @@ void Parameter::byteswap_buffer_copy(
             break;
          }
          case TRICK_FLOAT: {
-            float *f_src  = static_cast< float  *>( src );
-            float *f_dest = static_cast< float * >( dest );
+            float const *f_src  = static_cast< float const  *>( src );
+            float       *f_dest = static_cast< float       *>( dest );
             if ( length == 1 ) {
                f_dest[0] = Utilities::byteswap_float( f_src[0] );
             } else {
@@ -3135,8 +3135,8 @@ void Parameter::byteswap_buffer_copy(
             break;
          }
          case TRICK_SHORT: {
-            short *s_src  = (short *)src;
-            short *s_dest = (short *)dest;
+            short const *s_src  = (short *)src;
+            short       *s_dest = (short *)dest;
             if ( length == 1 ) {
                s_dest[0] = Utilities::byteswap_short( s_src[0] );
             } else {
@@ -3147,8 +3147,8 @@ void Parameter::byteswap_buffer_copy(
             break;
          }
          case TRICK_UNSIGNED_SHORT: {
-            unsigned short *us_src  = (unsigned short *)src;
-            unsigned short *us_dest = (unsigned short *)dest;
+            unsigned short const *us_src  = (unsigned short *)src;
+            unsigned short       *us_dest = (unsigned short *)dest;
             if ( length == 1 ) {
                us_dest[0] = Utilities::byteswap_unsigned_short( us_src[0] );
             } else {
@@ -3159,8 +3159,8 @@ void Parameter::byteswap_buffer_copy(
             break;
          }
          case TRICK_INTEGER: {
-            int *i_src  = (int *)src;
-            int *i_dest = (int *)dest;
+            int const *i_src  = (int *)src;
+            int       *i_dest = (int *)dest;
             if ( length == 1 ) {
                i_dest[0] = Utilities::byteswap_int( i_src[0] );
             } else {
@@ -3171,8 +3171,8 @@ void Parameter::byteswap_buffer_copy(
             break;
          }
          case TRICK_UNSIGNED_INTEGER: {
-            unsigned int *ui_src  = (unsigned int *)src;
-            unsigned int *ui_dest = (unsigned int *)dest;
+            unsigned int const *ui_src  = (unsigned int *)src;
+            unsigned int       *ui_dest = (unsigned int *)dest;
             if ( length == 1 ) {
                ui_dest[0] = Utilities::byteswap_unsigned_int( ui_src[0] );
             } else {
@@ -3183,8 +3183,8 @@ void Parameter::byteswap_buffer_copy(
             break;
          }
          case TRICK_LONG: {
-            long *l_src  = (long *)src;
-            long *l_dest = (long *)dest;
+            long const *l_src  = (long *)src;
+            long       *l_dest = (long *)dest;
             if ( length == 1 ) {
                l_dest[0] = Utilities::byteswap_long( l_src[0] );
             } else {
@@ -3195,8 +3195,8 @@ void Parameter::byteswap_buffer_copy(
             break;
          }
          case TRICK_UNSIGNED_LONG: {
-            unsigned long *ul_src  = (unsigned long *)src;
-            unsigned long *ul_dest = (unsigned long *)dest;
+            unsigned long const *ul_src  = (unsigned long *)src;
+            unsigned long       *ul_dest = (unsigned long *)dest;
             if ( length == 1 ) {
                ul_dest[0] = Utilities::byteswap_unsigned_long( ul_src[0] );
             } else {
@@ -3207,8 +3207,8 @@ void Parameter::byteswap_buffer_copy(
             break;
          }
          case TRICK_LONG_LONG: {
-            long long *ll_src  = (long long *)src;
-            long long *ll_dest = (long long *)dest;
+            long long const *ll_src  = (long long *)src;
+            long long       *ll_dest = (long long *)dest;
             if ( length == 1 ) {
                ll_dest[0] = Utilities::byteswap_long_long( ll_src[0] );
             } else {
@@ -3219,8 +3219,8 @@ void Parameter::byteswap_buffer_copy(
             break;
          }
          case TRICK_UNSIGNED_LONG_LONG: {
-            unsigned long long *ull_src  = (unsigned long long *)src;
-            unsigned long long *ull_dest = (unsigned long long *)dest;
+            unsigned long long const *ull_src  = (unsigned long long *)src;
+            unsigned long long       *ull_dest = (unsigned long long *)dest;
             if ( length == 1 ) {
                ull_dest[0] = Utilities::byteswap_unsigned_long_long( ull_src[0] );
             } else {
@@ -3346,7 +3346,7 @@ void Parameter::print_buffer() const
    // For now we only support an parameter of type double for printing. DDexter
    if ( attr->type == TRICK_DOUBLE ) {
 
-      double *dbl_array = reinterpret_cast< double * >( (void *)buffer );
+      double const *dbl_array = reinterpret_cast< double * >( (void *)buffer );
 
       if ( is_byteswap() ) {
          for ( size_t i = 0; i < num_items; ++i ) {
@@ -3364,7 +3364,7 @@ void Parameter::print_buffer() const
    } else {
 
       // Else just treat the buffer as an array of characters.
-      char *char_array = reinterpret_cast< char * >( buffer );
+      char const *char_array = reinterpret_cast< char * >( buffer );
 
       msg << "\tAttribute size:" << size << endl
           << "\tIndex\tValue\tCharacter" << endl;

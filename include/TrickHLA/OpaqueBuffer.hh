@@ -67,7 +67,7 @@ class OpaqueBuffer
 
    /*! @brief Set the byte alignment to use for the data in the buffer.
     *  @param size Byte alignment size. */
-   void set_byte_alignment( unsigned int size );
+   void set_byte_alignment( unsigned int const size );
 
    /*! @brief Get the current buffer byte alignment.
     *  @return Buffer byte alignment. */
@@ -85,7 +85,7 @@ class OpaqueBuffer
 
    /*! @brief Ensure the buffer has at least the specified capacity.
     *  @param size Requested buffer capacity. */
-   void ensure_buffer_capacity( size_t size );
+   void ensure_buffer_capacity( size_t const size );
 
    /*! @brief Reset the push buffer position. */
    void reset_push_position()
@@ -109,7 +109,7 @@ class OpaqueBuffer
    /*! @brief Push the specified data into the buffer with no encoding.
     *  @param src  Source of data to push into buffer.
     *  @param size Size of data in bytes. */
-   void push_to_buffer( void *src, size_t size )
+   void push_to_buffer( void const *src, size_t const size )
    {
       push_to_buffer( src, size, ENCODING_NONE );
    }
@@ -119,13 +119,13 @@ class OpaqueBuffer
     *  @param src      Source of data to push into buffer.
     *  @param size     Size of data in bytes.
     *  @param encoding One of ENCODING_TYPE_LITTLE_ENDIAN, ENCODING_TYPE_BIG_ENDIAN, or ENCODING_TYPE_NO_ENCODING. */
-   void push_to_buffer( void *src, size_t size, EncodingEnum encoding );
+   void push_to_buffer( void const *src, size_t const size, EncodingEnum const encoding );
 
    /*! @brief Pull the specified number of data bytes from the buffer into the
     * specified destination with no encoding.
     *  @param dest Destination to pull data into from buffer.
     *  @param size Size of data in bytes. */
-   void pull_from_buffer( void *dest, size_t size )
+   void pull_from_buffer( void *dest, size_t const size )
    {
       pull_from_buffer( dest, size, ENCODING_NONE );
    }
@@ -136,16 +136,16 @@ class OpaqueBuffer
     *  @param dest     Destination to pull data into from buffer.
     *  @param size     Size of data in bytes.
     *  @param encoding One of ENCODING_TYPE_LITTLE_ENDIAN, ENCODING_TYPE_BIG_ENDIAN, or ENCODING_TYPE_NO_ENCODING. */
-   void pull_from_buffer( void *dest, size_t size, EncodingEnum encoding );
+   void pull_from_buffer( void *dest, size_t const size, EncodingEnum const encoding );
 
   protected:
    /*! @brief Push the specified number of pad bytes to the buffer.
     *  @param pad_size Size of data in bytes. */
-   void push_pad_to_buffer( size_t pad_size );
+   void push_pad_to_buffer( size_t const pad_size );
 
    /*! @brief Pull the specified number of pad bytes from the buffer.
     *  @param pad_size Size of data in bytes. */
-   void pull_pad_from_buffer( size_t pad_size );
+   void pull_pad_from_buffer( size_t const pad_size );
 
    /*! @brief Copy the data from the source to the destination and byteswap
     * if needed.
@@ -153,8 +153,8 @@ class OpaqueBuffer
     *  @param src      Source data.
     *  @param size     Number of bytes to copy.
     *  @param encoding One of ENCODING_TYPE_LITTLE_ENDIAN, ENCODING_TYPE_BIG_ENDIAN, or ENCODING_TYPE_NO_ENCODING. */
-   void byteswap_buffer_copy( void *dest, void *src,
-                              size_t size, EncodingEnum encoding );
+   void byteswap_buffer_copy( void *dest, void const *src,
+                              size_t const size, EncodingEnum const encoding );
 
   public:
    unsigned int alignment; ///< @trick_units{--} The byte alignment to use for the buffer.

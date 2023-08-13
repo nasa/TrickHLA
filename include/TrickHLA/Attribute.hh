@@ -152,7 +152,7 @@ class Attribute
 
    /*! @brief Extract the data out of the HLA Attribute Value.
     *  @param attr_value The variable length data buffer containing the attribute value. */
-   void extract_data( RTI1516_NAMESPACE::VariableLengthData *attr_value );
+   void extract_data( RTI1516_NAMESPACE::VariableLengthData const *attr_value );
 
    /*! @brief Determine if an attribute was received from another federate.
     *  @return True if new attribute value has been received. */
@@ -495,11 +495,11 @@ class Attribute
     *  @param length    The length/number of entries in the source array.
     *  @param num_bytes The number of bytes in the source array.
     *  */
-   void byteswap_buffer_copy( void  *dest,
-                              void  *src,
-                              int    type,
-                              size_t length,
-                              size_t num_bytes ) const;
+   void byteswap_buffer_copy( void        *dest,
+                              void const  *src,
+                              int const    type,
+                              size_t const length,
+                              size_t const num_bytes ) const;
 
    unsigned char *buffer;          ///< @trick_units{--} Byte buffer for the attribute value bytes.
    size_t         buffer_capacity; ///< @trick_units{count} The capacity of the buffer.

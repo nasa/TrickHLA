@@ -59,7 +59,7 @@ ParameterItem::ParameterItem()
 @job_class{initialization}
 */
 ParameterItem::ParameterItem(
-   int                                          parameter_index,
+   int const                                    parameter_index,
    RTI1516_NAMESPACE::VariableLengthData const *param_value )
    : index( parameter_index ),
      size( 0 ),

@@ -545,7 +545,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    // instance variables.
 
    // Allocate the Trick REF2 data structure.
-   REF2 *exco_ref2 = reinterpret_cast< REF2 * >( malloc( sizeof( REF2 ) ) );
+   REF2 const *exco_ref2 = reinterpret_cast< REF2 * >( malloc( sizeof( REF2 ) ) );
    if ( exco_ref2 == static_cast< REF2 * >( NULL ) ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionConfiguration::setup_ref_attributes():" << __LINE__

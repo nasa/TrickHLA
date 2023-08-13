@@ -74,7 +74,7 @@ class ParameterItem : public Item
    /*! @brief Initialization constructor for the TrickHLA ParameterItem class.
     *  @param parameter_index Parameter index.
     *  @param param_value HLA RTI Parameter value. */
-   ParameterItem( int                                          parameter_index,
+   ParameterItem( int const                                    parameter_index,
                   RTI1516_NAMESPACE::VariableLengthData const *param_value );
 
    /*! @brief Destructor for the TrickHLA ParameterItem class. */

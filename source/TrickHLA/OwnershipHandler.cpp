@@ -309,28 +309,28 @@ Attribute *OwnershipHandler::get_attribute(
 bool OwnershipHandler::is_locally_owned(
    char const *attribute_FOM_name )
 {
-   Attribute *attribute = get_attribute( attribute_FOM_name );
+   Attribute const *attribute = get_attribute( attribute_FOM_name );
    return ( ( attribute != NULL ) ? attribute->is_locally_owned() : false );
 }
 
 bool OwnershipHandler::is_remotely_owned(
    char const *attribute_FOM_name )
 {
-   Attribute *attribute = get_attribute( attribute_FOM_name );
+   Attribute const *attribute = get_attribute( attribute_FOM_name );
    return ( ( attribute != NULL ) ? attribute->is_remotely_owned() : false );
 }
 
 bool OwnershipHandler::is_published(
    char const *attribute_FOM_name )
 {
-   Attribute *attribute = get_attribute( attribute_FOM_name );
+   Attribute const *attribute = get_attribute( attribute_FOM_name );
    return ( ( attribute != NULL ) ? attribute->is_publish() : false );
 }
 
 bool OwnershipHandler::is_subscribed(
    char const *attribute_FOM_name )
 {
-   Attribute *attribute = get_attribute( attribute_FOM_name );
+   Attribute const *attribute = get_attribute( attribute_FOM_name );
    return ( ( attribute != NULL ) ? attribute->is_subscribe() : false );
 }
 
@@ -443,7 +443,7 @@ void OwnershipHandler::push_ownership()
 }
 
 void OwnershipHandler::push_ownership(
-   double time )
+   double const time )
 {
    if ( this->object == NULL ) {
       return;

@@ -494,7 +494,7 @@ SyncPtStateEnum SyncPntListBase::get_sync_point_state(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPnt *sp = get_sync_point( label );
+   SyncPnt const *sp = get_sync_point( label );
    if ( sp != NULL ) {
       return sp->get_state();
    }
@@ -563,7 +563,7 @@ bool SyncPntListBase::contains(
    if ( !sync_point_list.empty() ) {
       vector< SyncPnt * >::const_iterator i;
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-         SyncPnt *sp = ( *i );
+         SyncPnt const *sp = ( *i );
          if ( ( sp != NULL ) && ( sp->get_label().compare( label ) == 0 ) ) {
             return true;
          }

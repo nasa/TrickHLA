@@ -573,7 +573,7 @@ bool ExecutionControl::set_pending_mtr(
 bool ExecutionControl::is_mtr_valid(
    MTREnum mtr_value )
 {
-   ExecutionConfiguration *ExCO = get_execution_configuration();
+   ExecutionConfiguration const *ExCO = get_execution_configuration();
 
    switch ( mtr_value ) {
       case MTR_GOTO_RUN: {
