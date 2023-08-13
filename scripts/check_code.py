@@ -242,6 +242,10 @@ Examples:\n  check_code -s -o -v --cstyle_casts\n  check_code -i -o -v\n  check_
    if os.path.isdir( './models/sine/src' ):
       trickhla_source_dirs.extend ( ['./models/sine/src'] )
 
+   # Add usr local include path if it exists.
+   if os.path.isdir( '/usr/local/include' ):
+      trickhla_include_dirs.extend( ['-I', '/usr/local/include'] )
+
    # Check to see if we are just cleaning up.
    if args.clean_gen_files:
       if cleanup_output_directory( cppcheck_output_dir, args.test_only, args.very_verbose ):
