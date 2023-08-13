@@ -119,28 +119,28 @@ class SyncPnt
     *  @return The synchronization point label. */
    virtual std::wstring const &get_label() const
    {
-      return label;
+      return this->label;
    }
 
    /*! @brief Get the synchronization point state.
     *  @return The current state for this synchronization point. */
    virtual SyncPtStateEnum const get_state() const
    {
-      return state;
+      return this->state;
    }
 
    /*! @brief Set the synchronization point label.
     *  @param l The synchronization point label. */
    virtual void set_label( std::wstring const &l )
    {
-      label = l;
+      this->label = l;
    }
 
    /*! @brief Set the current state of the synchronization point.
     *  @param s Current synchronization point state. */
-   virtual void set_state( SyncPtStateEnum s )
+   virtual void set_state( SyncPtStateEnum const s )
    {
-      state = s;
+      this->state = s;
    }
 
    // Utility functions.

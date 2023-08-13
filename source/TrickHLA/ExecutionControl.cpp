@@ -446,7 +446,7 @@ void ExecutionControl::set_least_common_time_step(
    // WARNING: Only the Master federate should ever set this.
    if ( this->is_master() ) {
 
-      ExecutionConfiguration *ExCO = dynamic_cast< ExecutionConfiguration * >( execution_configuration );
+      ExecutionConfiguration const *ExCO = dynamic_cast< ExecutionConfiguration * >( execution_configuration );
       if ( ExCO == NULL ) {
          ostringstream errmsg;
          errmsg << "TrickHLA::ExecutionControl::set_least_common_time_step():" << __LINE__

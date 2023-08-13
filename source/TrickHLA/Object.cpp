@@ -1646,7 +1646,7 @@ void Object::send_requested_data(
                __LINE__, rti_err_msg.c_str(), THLA_NEWLINE );
    }
 
-   Federate *federate = get_federate();
+   Federate const *federate = get_federate();
 
    // The message will only be sent as TSO if our Federate is in the HLA Time
    // Regulating state and we have at least one attribute with a preferred
@@ -1901,7 +1901,7 @@ void Object::send_cyclic_and_requested_data(
       return;
    }
 
-   Federate *federate = get_federate();
+   Federate const *federate = get_federate();
 
    // The message will only be sent as TSO if our Federate is in the HLA Time
    // Regulating state and we have at least one attribute with a preferred
@@ -2153,7 +2153,7 @@ void Object::send_zero_lookahead_and_requested_data(
       return;
    }
 
-   Federate *federate = get_federate();
+   Federate const *federate = get_federate();
 
    // The message will only be sent as TSO if our Federate is in the HLA Time
    // Regulating state and we have at least one attribute with a preferred
@@ -2552,8 +2552,8 @@ void Object::send_init_data()
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-   Federate      *federate = get_federate();
-   RTIambassador *rti_amb  = get_RTI_ambassador();
+   Federate const *federate = get_federate();
+   RTIambassador  *rti_amb  = get_RTI_ambassador();
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -3264,7 +3264,7 @@ void Object::pull_ownership()
             for ( attr_map_iter = attr_map->begin();
                   attr_map_iter != attr_map->end(); ++attr_map_iter ) {
 
-               Attribute *attr = attr_map_iter->second;
+               Attribute const *attr = attr_map_iter->second;
 
                // Determine if attribute ownership can be pulled.
                if ( attr->is_remotely_owned() && attr->is_publish() ) {
@@ -3777,7 +3777,7 @@ void Object::push_ownership()
             for ( attr_map_iter = attr_map->begin();
                   attr_map_iter != attr_map->end(); ++attr_map_iter ) {
 
-               Attribute *attr = attr_map_iter->second;
+               Attribute const *attr = attr_map_iter->second;
 
                // Determine if attribute ownership can be pushed.
                if ( attr->is_locally_owned() ) {

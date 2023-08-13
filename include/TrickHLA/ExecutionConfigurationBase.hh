@@ -124,7 +124,7 @@ class ExecutionConfigurationBase : public Object, public Packing
    /*! @brief The Execution Configuration is published by the master federate
     * and subscribed to by the non-master federates.
     *  @param is_master True if the master, false otherwise. */
-   virtual void set_master( bool is_master );
+   virtual void set_master( bool const is_master );
 
    // Execution configuration specific functions.
    /*! @brief Setup the Trick Ref Attributes for the ExecutionConfiguration object.

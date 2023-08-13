@@ -130,7 +130,7 @@ bool TimedSyncPntList::check_sync_points(
       vector< SyncPnt * >::const_iterator i;
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
          // Cast the SyncPnt pointer to a TimedSyncPnt pointer.
-         TimedSyncPnt *timed_i = dynamic_cast< TimedSyncPnt * >( *i );
+         TimedSyncPnt const *timed_i = dynamic_cast< TimedSyncPnt * >( *i );
          if ( ( timed_i->get_state() == SYNC_PT_STATE_EXISTS )
               && ( timed_i->get_time() <= checkTime ) ) {
             return true;
@@ -190,7 +190,7 @@ void TimedSyncPntList::print_sync_points()
 
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
       // Cast the SyncPnt pointer to a TimedSyncPnt pointer.
-      TimedSyncPnt *timed_i = dynamic_cast< TimedSyncPnt * >( *i );
+      TimedSyncPnt const *timed_i = dynamic_cast< TimedSyncPnt * >( *i );
       sync_point_label.assign( ( *i )->get_label().begin(), ( *i )->get_label().end() );
       msg << sync_point_label << " "
           << timed_i->get_time().get_time_in_seconds() << " "

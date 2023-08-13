@@ -96,7 +96,7 @@ class CTETimelineBase : public Trick::Clock, public Timeline
    virtual int clock_stop();
 
    /*! @brief Sets the clock ID (system clock type). */
-   virtual void set_clock_ID( clockid_t id );
+   virtual void set_clock_ID( clockid_t const id );
 
    /*! @brief Gets the current clock ID (system clock type).
     *  @return The system clock type in use. */

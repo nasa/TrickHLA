@@ -87,7 +87,7 @@ OpaqueBuffer::~OpaqueBuffer() // RETURN: -- None.
 /*!
  * @job_class{initialization}
  */
-void OpaqueBuffer::set_byte_alignment( unsigned int size )
+void OpaqueBuffer::set_byte_alignment( unsigned int const size )
 {
    switch ( size ) {
       case 1:
@@ -112,18 +112,20 @@ void OpaqueBuffer::set_byte_alignment( unsigned int size )
  * @job_class{initialization}
  */
 void OpaqueBuffer::ensure_buffer_capacity(
-   size_t size )
+   size_t const size )
 {
+   size_t requested_size = size;
+
    // Make sure the requested capacity is a multiple of the byte alignment.
    if ( alignment > 1 ) {
-      size_t pad_size = size % alignment;
+      size_t pad_size = requested_size % alignment;
       if ( pad_size > 0 ) {
-         size += pad_size;
+         requested_size += pad_size;
       }
    }
 
-   if ( size > capacity ) {
-      capacity = size;
+   if ( requested_size > capacity ) {
+      capacity = requested_size;
       if ( buffer == NULL ) {
          buffer = (unsigned char *)TMM_declare_var_1d( "unsigned char", (int)capacity );
       } else {
@@ -134,7 +136,7 @@ void OpaqueBuffer::ensure_buffer_capacity(
       // might have an invalid user capacity specified.
 
       // Make sure the capacity is at least the same size as the byte alignment.
-      capacity = ( size >= alignment ) ? size : alignment;
+      capacity = ( requested_size >= alignment ) ? requested_size : alignment;
       buffer   = (unsigned char *)TMM_declare_var_1d( "unsigned char", (int)capacity );
    }
 
@@ -148,9 +150,9 @@ void OpaqueBuffer::ensure_buffer_capacity(
 }
 
 void OpaqueBuffer::push_to_buffer(
-   void        *src,
-   size_t       size,
-   EncodingEnum encoding )
+   void const        *src,
+   size_t const       size,
+   EncodingEnum const encoding )
 {
    if ( size == 0 ) {
       send_hs( stderr, "OpaqueBuffer::push_to_buffer():%d WARNING: Unexpected zero number of bytes to push into buffer!%c",
@@ -202,9 +204,9 @@ void OpaqueBuffer::push_to_buffer(
  * - The destination must be large enough to hold size bytes of data.
  */
 void OpaqueBuffer::pull_from_buffer(
-   void        *dest,
-   size_t       size,
-   EncodingEnum encoding )
+   void              *dest,
+   size_t const       size,
+   EncodingEnum const encoding )
 {
    if ( size == 0 ) {
       send_hs( stderr, "OpaqueBuffer::pull_from_buffer():%d WARNING: Unexpected zero number of bytes to pull from buffer!%c",
@@ -251,7 +253,7 @@ void OpaqueBuffer::pull_from_buffer(
 }
 
 void OpaqueBuffer::push_pad_to_buffer(
-   size_t pad_size )
+   size_t const pad_size )
 {
    if ( pad_size == 0 ) {
       return;
@@ -277,7 +279,7 @@ void OpaqueBuffer::push_pad_to_buffer(
 }
 
 void OpaqueBuffer::pull_pad_from_buffer(
-   size_t pad_size )
+   size_t const pad_size )
 {
    if ( pad_size == 0 ) {
       return;
@@ -303,10 +305,10 @@ void OpaqueBuffer::pull_pad_from_buffer(
  * - The destination must be large enough to hold size bytes of data.
  */
 void OpaqueBuffer::byteswap_buffer_copy(
-   void        *dest,
-   void        *src,
-   size_t       size,
-   EncodingEnum encoding )
+   void              *dest,
+   void const        *src,
+   size_t const       size,
+   EncodingEnum const encoding )
 {
    // Determine if we need to byteswap the data.
    if ( Utilities::is_transmission_byteswap( encoding ) ) {
@@ -318,38 +320,38 @@ void OpaqueBuffer::byteswap_buffer_copy(
             break;
          }
          case 2: {
-            unsigned short *us_src  = (unsigned short *)src;
-            unsigned short *us_dest = (unsigned short *)dest;
-            us_dest[0]              = Utilities::byteswap_unsigned_short( us_src[0] );
+            unsigned short const *us_src  = (unsigned short *)src;
+            unsigned short       *us_dest = (unsigned short *)dest;
+            us_dest[0]                    = Utilities::byteswap_unsigned_short( us_src[0] );
             break;
          }
          case 4: {
-            unsigned int *ui_src  = (unsigned int *)src;
-            unsigned int *ui_dest = (unsigned int *)dest;
-            ui_dest[0]            = Utilities::byteswap_unsigned_int( ui_src[0] );
+            unsigned int const *ui_src  = (unsigned int *)src;
+            unsigned int       *ui_dest = (unsigned int *)dest;
+            ui_dest[0]                  = Utilities::byteswap_unsigned_int( ui_src[0] );
             break;
          }
          case 8: {
             // The "unsigned long long" type is at least 64 bits.
             if ( size == sizeof( unsigned long long ) ) {
-               unsigned long long *ull_src  = (unsigned long long *)src;
-               unsigned long long *ull_dest = (unsigned long long *)dest;
-               ull_dest[0]                  = Utilities::byteswap_unsigned_long_long( ull_src[0] );
+               unsigned long long const *ull_src  = (unsigned long long *)src;
+               unsigned long long       *ull_dest = (unsigned long long *)dest;
+               ull_dest[0]                        = Utilities::byteswap_unsigned_long_long( ull_src[0] );
             } else {
                // Try doing the byteswap as a 64 bit double as a last resort if
                // the unsigned long long on this computer is not 64 bits.
-               double *d_src  = (double *)src;
-               double *d_dest = (double *)dest;
-               d_dest[0]      = Utilities::byteswap_double( d_src[0] );
+               double const *d_src  = (double *)src;
+               double       *d_dest = (double *)dest;
+               d_dest[0]            = Utilities::byteswap_double( d_src[0] );
             }
             break;
          }
          default: {
             // The "unsigned long long" type is at least 64 bits.
             if ( size == sizeof( unsigned long long ) ) {
-               unsigned long long *ull_src  = (unsigned long long *)src;
-               unsigned long long *ull_dest = (unsigned long long *)dest;
-               ull_dest[0]                  = Utilities::byteswap_unsigned_long_long( ull_src[0] );
+               unsigned long long const *ull_src  = (unsigned long long *)src;
+               unsigned long long       *ull_dest = (unsigned long long *)dest;
+               ull_dest[0]                        = Utilities::byteswap_unsigned_long_long( ull_src[0] );
             } else {
                ostringstream errmsg;
                errmsg << "OpaqueBuffer::byteswap_buffer_copy():"

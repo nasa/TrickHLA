@@ -329,49 +329,49 @@ typedef std::vector< std::wstring > VectorOfWstrings;
 /*! @brief Convert an ExecutionModeEnum value into a printable string.
  *  @return Execution control mode as a printable string.
  *  @param mode Execution configuration run mode enumeration value. */
-std::string execution_control_enum_to_string( ExecutionControlEnum mode );
+std::string execution_control_enum_to_string( ExecutionControlEnum const mode );
 
 /*! @brief Convert an ExecutionModeEnum value into a 16 bit integer.
  *  @return Execution control mode as a 16 bit integer representation.
  *  @param mode Execution control mode enumeration value. */
-int16_t execution_control_enum_to_int16( ExecutionControlEnum mode );
+int16_t execution_control_enum_to_int16( ExecutionControlEnum const mode );
 
 /*! @brief Convert a 16 bit integer to an ExecutionModeEnum value.
  *  @return Execution control mode as enumeration value.
  *  @param int_mode Execution control mode as integer. */
-ExecutionControlEnum execution_control_int16_to_enum( int16_t int_mode );
+ExecutionControlEnum execution_control_int16_to_enum( int16_t const int_mode );
 
 // TrickHLA::ModeTransitionEnum methods.
 /*! @brief Convert an ModeTransitionEnum value into a printable string.
  *  @return Mode transition as a printable string.
  *  @param mode Mode transition enumeration value. */
-std::string mode_transition_enum_to_string( ModeTransitionEnum mode );
+std::string mode_transition_enum_to_string( ModeTransitionEnum const mode );
 
 /*! @brief Convert an ModeTransitionEnum value into a 16 bit integer.
  *  @return Mode transition as a 16 bit integer representation.
  *  @param mode Mode transition enumeration value. */
-int16_t mode_transition_enum_to_int16( ModeTransitionEnum mode );
+int16_t mode_transition_enum_to_int16( ModeTransitionEnum const mode );
 
 /*! @brief Convert a 16 bit integer to an ModeTransitionEnum value.
  *  @return Mode transition as enumeration value.
  *  @param int_mode Mode transition as integer. */
-ModeTransitionEnum mode_transition_int16_to_enum( int16_t int_mode );
+ModeTransitionEnum mode_transition_int16_to_enum( int16_t const int_mode );
 
 // TrickHLA::SyncPtStateEnum methods
 /*! @brief Convert a Synchronization Point State enum value into a printable string.
  *  @return TrickHLA sync point state as a printable string.
  *  @param state Sync point state enumeration value to convert. */
-std::string sync_point_state_enum_to_string( SyncPtStateEnum state );
+std::string sync_point_state_enum_to_string( SyncPtStateEnum const state );
 
 /*! @brief Convert a Synchronization Point State enum value into a 16 bit integer.
  *  @return TrickHLA sync point state as a 16 bit integer.
  *  @param state Sync point state enumeration value to convert. */
-int16_t sync_point_state_enum_to_int16( SyncPtStateEnum state );
+int16_t sync_point_state_enum_to_int16( SyncPtStateEnum const state );
 
 /*! @brief Convert an integer value to a Synchronization Point State enumeration value.
  *  @return TrickHLA Synchronization Point State enum value.
  *  @param int_state Sync point state value as a 16 bit integer. */
-SyncPtStateEnum sync_point_state_int16_to_enum( int16_t int_state );
+SyncPtStateEnum sync_point_state_int16_to_enum( int16_t const int_state );
 
 } // namespace TrickHLA
 

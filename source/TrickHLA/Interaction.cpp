@@ -842,7 +842,7 @@ bool Interaction::send(
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    // Get the Trick-Federate.
-   Federate *federate = get_federate();
+   Federate const *federate = get_federate();
 
    // Get the RTI-Ambassador.
    RTIambassador *rti_amb = get_RTI_ambassador();
@@ -949,7 +949,7 @@ bool Interaction::send(
    time.set( send_HLA_time );
 
    // Get the Trick-Federate.
-   Federate *federate = get_federate();
+   Federate const *federate = get_federate();
 
    // Determine if the interaction should be sent with a timestamp.
    // See IEEE 1516.1-2010 Section 6.12.
@@ -1130,7 +1130,7 @@ void Interaction::extract_data(
    // Process all the parameter-items in the queue.
    while ( !interaction_item->parameter_queue.empty() ) {
 
-      ParameterItem *param_item = static_cast< ParameterItem * >( interaction_item->parameter_queue.front() );
+      ParameterItem const *param_item = static_cast< ParameterItem * >( interaction_item->parameter_queue.front() );
 
       // Determine if we have a valid parameter-item.
       if ( ( param_item != NULL ) && ( param_item->index >= 0 ) && ( param_item->index < param_count ) ) {
