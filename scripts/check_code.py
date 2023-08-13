@@ -234,6 +234,18 @@ Examples:\n  check_code -s -o -v --cstyle_casts\n  check_code -i -o -v\n  check_
       trickhla_include_dirs.extend( ['-I', './models/simconfig/include'] )
    if os.path.isdir( './models/sine/include' ):
       trickhla_include_dirs.extend( ['-I', './models/sine/include'] )
+   if os.path.isdir( './models/Wheelbot/Battery/include' ):
+      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Battery/include'] )
+   if os.path.isdir( './models/Wheelbot/Control/include' ):
+      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Control/include'] )
+   if os.path.isdir( './models/Wheelbot/Electrical/include' ):
+      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Electrical/include'] )
+   if os.path.isdir( './models/Wheelbot/Guidance/include' ):
+      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Guidance/include'] )
+   if os.path.isdir( './models/Wheelbot/Motor/include' ):
+      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Motor/include'] )
+   if os.path.isdir( './models/Wheelbot/Vehicle/include' ):
+      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Vehicle/include'] )
 
    # Form relative paths to all the source directories used by TrickHLA.
    trickhla_source_dirs.extend ( ['./source'] )
@@ -241,6 +253,28 @@ Examples:\n  check_code -s -o -v --cstyle_casts\n  check_code -i -o -v\n  check_
       trickhla_source_dirs.extend ( ['./models/simconfig/src'] )
    if os.path.isdir( './models/sine/src' ):
       trickhla_source_dirs.extend ( ['./models/sine/src'] )
+   if os.path.isdir( './models/Wheelbot/Battery/src' ):
+      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Battery/src'] )
+   if os.path.isdir( './models/Wheelbot/Battery/test' ):
+      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Battery/test'] )
+   if os.path.isdir( './models/Wheelbot/Control/src' ):
+      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Control/src'] )
+   if os.path.isdir( './models/Wheelbot/Control/test' ):
+      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Control/test'] )
+   if os.path.isdir( './models/Wheelbot/Electrical/src' ):
+      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Electrical/src'] )
+   if os.path.isdir( './models/Wheelbot/Electrical/test' ):
+      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Electrical/test'] )
+   if os.path.isdir( './models/Wheelbot/Guidance/src' ):
+      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Guidance/src'] )
+   if os.path.isdir( './models/Wheelbot/Guidance/test' ):
+      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Guidance/test'] )
+   if os.path.isdir( './models/Wheelbot/Motor/src' ):
+      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Motor/src'] )
+   if os.path.isdir( './models/Wheelbot/Motor/test' ):
+      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Motor/test'] )
+   if os.path.isdir( './models/Wheelbot/Vehicle/src' ):
+      trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Vehicle/src'] )
 
    # Add usr local include path if it exists.
    if os.path.isdir( '/usr/local/include' ):

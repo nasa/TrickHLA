@@ -79,8 +79,22 @@ def main():
    trickhla_src_paths = []
    trickhla_src_paths.append( os.path.join( trickhla_home, 'include' ) )
    trickhla_src_paths.append( os.path.join( trickhla_home, 'source' ) )
-   trickhla_src_paths.append( os.path.join( trickhla_home, 'models/simconfig' ) )
-   trickhla_src_paths.append( os.path.join( trickhla_home, 'models/sine' ) )
+   if os.path.isdir( os.path.join( trickhla_home, 'models/simconfig' ) ):
+      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/simconfig' ) )
+   if os.path.isdir( os.path.join( trickhla_home, 'models/sine' ) ):
+      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/sine' ) )
+   if os.path.isdir( os.path.join( trickhla_home, 'models/Wheelbot/Battery' ) ):
+      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/Wheelbot/Battery' ) )
+   if os.path.isdir( os.path.join( trickhla_home, 'models/Wheelbot/Control' ) ):
+      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/Wheelbot/Control' ) )
+   if os.path.isdir( os.path.join( trickhla_home, 'models/Wheelbot/Electrical' ) ):
+      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/Wheelbot/Electrical' ) )
+   if os.path.isdir( os.path.join( trickhla_home, 'models/Wheelbot/Guidance' ) ):
+      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/Wheelbot/Guidance' ) )
+   if os.path.isdir( os.path.join( trickhla_home, 'models/Wheelbot/Motor' ) ):
+      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/Wheelbot/Motor' ) )
+   if os.path.isdir( os.path.join( trickhla_home, 'models/Wheelbot/Vehicle' ) ):
+      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/Wheelbot/Vehicle' ) )
 
    # Find the CLANG format command.
    clang_format_cmd = find_clang_format( args.llvm_bin, args.verbose )
