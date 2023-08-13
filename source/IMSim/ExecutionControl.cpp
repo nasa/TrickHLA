@@ -17,6 +17,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../TrickHLA/Int64BaseTime.cpp}
 @trick_link_dependency{../TrickHLA/SyncPntListBase.cpp}
 @trick_link_dependency{../TrickHLA/SleepTimeout.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
@@ -47,7 +48,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/Int64Interval.hh"
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/SleepTimeout.hh"
@@ -166,7 +167,7 @@ void ExecutionControl::initialize()
       // The software frame is set from the ExCO Least Common Time Step.
       // For the Master federate the Trick simulation software frame must
       // match the Least Common Time Step (LCTS).
-      double software_frame_time = Int64Interval::to_seconds( this->least_common_time_step );
+      double software_frame_time = Int64BaseTime::to_seconds( this->least_common_time_step );
       exec_set_software_frame( software_frame_time );
    }
 
@@ -1627,6 +1628,11 @@ bool ExecutionControl::check_mode_transition_request()
    }
 
    return true;
+}
+
+bool ExecutionControl::process_mode_interaction()
+{
+   return process_mode_transition_request();
 }
 
 bool ExecutionControl::process_mode_transition_request()

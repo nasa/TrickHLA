@@ -50,7 +50,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/SyncPnt.hh"
 #include "TrickHLA/TimedSyncPnt.hh"
 
-// IMSim include files.
+// DIS include files.
 #include "DIS/PausePointList.hh"
 #include "DIS/Types.hh"
 
