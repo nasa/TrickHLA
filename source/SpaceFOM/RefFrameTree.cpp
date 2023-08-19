@@ -79,7 +79,7 @@ bool RefFrameTree::check_tree()
    return ( true );
 }
 
-bool RefFrameTree::has_frame( const char *name )
+bool RefFrameTree::has_frame( char const *name )
 {
    map< string, RefFrameBase * >::iterator map_iter;
 
@@ -91,7 +91,7 @@ bool RefFrameTree::has_frame( const char *name )
    return ( false );
 }
 
-bool RefFrameTree::has_frame( const string name )
+bool RefFrameTree::has_frame( string const name )
 {
    map< string, RefFrameBase * >::iterator map_iter;
 
@@ -108,7 +108,7 @@ bool RefFrameTree::has_frame( RefFrameBase *frame )
    return ( has_frame( frame->name ) );
 }
 
-RefFrameBase *RefFrameTree::find_frame( const char *name )
+RefFrameBase *RefFrameTree::find_frame( char const *name )
 {
    map< string, RefFrameBase * >::iterator map_iter;
 
@@ -120,7 +120,7 @@ RefFrameBase *RefFrameTree::find_frame( const char *name )
    return ( NULL );
 }
 
-RefFrameBase *RefFrameTree::find_frame( const string name )
+RefFrameBase *RefFrameTree::find_frame( string const name )
 {
    map< string, RefFrameBase * >::iterator map_iter;
 
@@ -133,15 +133,15 @@ RefFrameBase *RefFrameTree::find_frame( const string name )
 }
 
 RefFrameBase *RefFrameTree::find_common_base(
-   const char *child_1,
-   const char *child_2 )
+   char const *child_1,
+   char const *child_2 )
 {
    return ( NULL );
 }
 
 RefFrameBase *RefFrameTree::find_common_base(
-   const string child_1,
-   const string child_2 )
+   string const child_1,
+   string const child_2 )
 {
    return ( NULL );
 }
