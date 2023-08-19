@@ -78,10 +78,9 @@ DynamicalEntity::~DynamicalEntity() // RETURN: -- None.
  */
 void DynamicalEntity::initialize()
 {
-   ostringstream errmsg;
-
    // Check to make sure the DynamicalEntity data is set.
    if ( dynamical_data == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::DynamicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL DynamicalEntityData: " << name << THLA_ENDL;
       // Print message and terminate.
@@ -102,10 +101,9 @@ void DynamicalEntity::initialize(
    PhysicalEntityData  *physical_data_ptr,
    DynamicalEntityData *dynamics_data_ptr )
 {
-   ostringstream errmsg;
-
    // Set the reference to the reference frame.
    if ( dynamics_data_ptr == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::DynamicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL DynamicalEntityData: " << name << THLA_ENDL;
       // Print message and terminate.
