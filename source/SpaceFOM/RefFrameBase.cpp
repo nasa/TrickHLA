@@ -123,13 +123,11 @@ void RefFrameBase::default_data(
          DebugHandler::terminate_with_message( errmsg.str() );
       }
       // If the mngr_object is not set but the object is, use that.
-   }
-   else {
+   } else {
       if ( this->object == NULL ) {
          // If the object is not already set, use the passed in mngr_object.
          this->object = mngr_object;
-      }
-      else{
+      } else {
          ostringstream errmsg;
          errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
                 << " WARNING: THLAManager object for ReferenceFrame \""
@@ -138,18 +136,15 @@ void RefFrameBase::default_data(
       }
    }
 
-
    // Set the frame name and parent frame name.
-   if( ref_frame_parent_name != NULL ){
+   if ( ref_frame_parent_name != NULL ) {
       this->parent_name = trick_MM->mm_strdup( ref_frame_parent_name );
-   }
-   else{
+   } else {
       this->parent_name = trick_MM->mm_strdup( "" );
    }
-   if( ref_frame_name != NULL ){
+   if ( ref_frame_name != NULL ) {
       this->name = trick_MM->mm_strdup( ref_frame_name );
-   }
-   else{
+   } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
              << " WARNING: Unexpected NULL federation instance frame name!" << THLA_ENDL;
@@ -298,8 +293,7 @@ void RefFrameBase::set_parent_name( char const *name )
    }
    if ( name != NULL ) {
       this->parent_name = trick_MM->mm_strdup( name );
-   }
-   else {
+   } else {
       this->parent_name = NULL;
    }
 
@@ -309,7 +303,7 @@ void RefFrameBase::set_parent_name( char const *name )
 /*!
  * @job_class{initialization}
  */
-void RefFrameBase::set_parent_frame( RefFrameBase * pframe_ptr )
+void RefFrameBase::set_parent_frame( RefFrameBase *pframe_ptr )
 {
    ostringstream errmsg;
 
@@ -325,10 +319,9 @@ void RefFrameBase::set_parent_frame( RefFrameBase * pframe_ptr )
    this->parent_frame = pframe_ptr;
 
    // Set the parent frame name.
-   if ( this->parent_frame != NULL ){
+   if ( this->parent_frame != NULL ) {
       this->set_parent_name( this->parent_frame->name );
-   }
-   else {
+   } else {
       this->set_parent_name( NULL );
    }
 
@@ -342,13 +335,12 @@ void RefFrameBase::publish()
 {
    ostringstream errmsg;
 
-   if ( this->initialized ){
+   if ( this->initialized ) {
       ostringstream errmsg;
       errmsg << "RefFrameBase::publish():" << __LINE__
              << " WARNING: Ignoring, reference frame already initialized!" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
-   }
-   else {
+   } else {
       object->create_HLA_instance         = true;
       object->attributes[0].publish       = true;
       object->attributes[0].subscribe     = false;
@@ -371,13 +363,12 @@ void RefFrameBase::subscribe()
 {
    ostringstream errmsg;
 
-   if ( this->initialized ){
+   if ( this->initialized ) {
       ostringstream errmsg;
       errmsg << "RefFrameBase::publish():" << __LINE__
              << " WARNING: Ignoring, reference frame already initialized!" << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
-   }
-   else {
+   } else {
       object->create_HLA_instance         = false;
       object->attributes[0].publish       = false;
       object->attributes[0].subscribe     = true;
@@ -396,7 +387,7 @@ void RefFrameBase::subscribe()
 /*!
  * @job_class{default_data}
  */
-void RefFrameBase::set_object( TrickHLA::Object * mngr_obj )
+void RefFrameBase::set_object( TrickHLA::Object *mngr_obj )
 {
    ostringstream errmsg;
 
@@ -413,4 +404,3 @@ void RefFrameBase::set_object( TrickHLA::Object * mngr_obj )
 
    return;
 }
-

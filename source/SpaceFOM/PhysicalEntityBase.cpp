@@ -45,8 +45,8 @@ NASA, Johnson Space Center\n
 #include "trick/vector_macros.h"
 
 // TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Packing.hh"
@@ -63,25 +63,25 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
-   : debug(false),
-     initialized(false),
-     name_attr(NULL),
-     type_attr(NULL),
-     status_attr(NULL),
-     parent_frame_attr(NULL),
-     state_attr(NULL),
-     accel_attr(NULL),
-     rot_accel_attr(NULL),
-     cm_attr(NULL),
-     body_frame_attr(NULL),
+   : debug( false ),
+     initialized( false ),
+     name_attr( NULL ),
+     type_attr( NULL ),
+     status_attr( NULL ),
+     parent_frame_attr( NULL ),
+     state_attr( NULL ),
+     accel_attr( NULL ),
+     rot_accel_attr( NULL ),
+     cm_attr( NULL ),
+     body_frame_attr( NULL ),
      stc_encoder(),
      quat_encoder(),
-     name(NULL),
-     type(NULL),
-     status(NULL),
-     parent_frame(NULL),
-     state(stc_encoder.get_data()),
-     body_wrt_struct(quat_encoder.get_data())
+     name( NULL ),
+     type( NULL ),
+     status( NULL ),
+     parent_frame( NULL ),
+     state( stc_encoder.get_data() ),
+     body_wrt_struct( quat_encoder.get_data() )
 {
    V_INIT( accel );
    V_INIT( rot_accel );
@@ -109,9 +109,9 @@ PhysicalEntityBase::~PhysicalEntityBase() // RETURN: -- None.
       trick_MM->delete_var( (void *)parent_frame );
       parent_frame = (char *)NULL;
    }
-   initialized = false;
-   name_attr = NULL;
-   state_attr = NULL;
+   initialized     = false;
+   name_attr       = NULL;
+   state_attr      = NULL;
    body_frame_attr = NULL;
 }
 
@@ -134,16 +134,14 @@ void PhysicalEntityBase::default_data(
    this->object = mngr_object;
 
    // Set the parent frame name.
-   if( parent_ref_frame_name != NULL ){
+   if ( parent_ref_frame_name != NULL ) {
       parent_frame = trick_MM->mm_strdup( parent_ref_frame_name );
-   }
-   else{
+   } else {
       parent_frame = trick_MM->mm_strdup( "" );
    }
-   if( entity_name != NULL ){
+   if ( entity_name != NULL ) {
       name = trick_MM->mm_strdup( entity_name );
-   }
-   else{
+   } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::default_data():" << __LINE__
              << " WARNING: Unexpected NULL federation instance PhysicalEntity name!" << THLA_ENDL;
@@ -385,7 +383,7 @@ void PhysicalEntityBase::set_parent_ref_frame( char const *new_name )
 /*!
  * @job_class{default_data}
  */
-void PhysicalEntityBase::set_object( TrickHLA::Object * mngr_obj )
+void PhysicalEntityBase::set_object( TrickHLA::Object *mngr_obj )
 {
    ostringstream errmsg;
 
@@ -402,4 +400,3 @@ void PhysicalEntityBase::set_object( TrickHLA::Object * mngr_obj )
 
    return;
 }
-

@@ -67,7 +67,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 RefFrameState::RefFrameState()
-   : ref_frame_data(NULL)
+   : ref_frame_data( NULL )
 {
    return;
 }
@@ -106,7 +106,7 @@ void RefFrameState::initialize(
 void RefFrameState::pack()
 {
    ostringstream errmsg;
-   int iinc;
+   int           iinc;
 
    // Check for initialization.
    if ( !initialized ) {
@@ -121,12 +121,11 @@ void RefFrameState::pack()
 
    // Check for name change.
    if ( ref_frame_data->name != NULL ) {
-      if ( strcmp(ref_frame_data->name, name) ){
+      if ( strcmp( ref_frame_data->name, name ) ) {
          trick_MM->delete_var( (void *)name );
-         name = trick_MM->mm_strdup( ref_frame_data->name  );
+         name = trick_MM->mm_strdup( ref_frame_data->name );
       }
-   }
-   else {
+   } else {
       errmsg << "SpaceFOM::RefFrameState::pack():" << __LINE__
              << " ERROR: Unexpected NULL name for ReferenceFrame!" << THLA_ENDL;
       // Print message and terminate.
@@ -135,20 +134,18 @@ void RefFrameState::pack()
 
    // Check for parent frame change.
    if ( ref_frame_data->parent_name != NULL ) {
-      if( parent_name != NULL ){
+      if ( parent_name != NULL ) {
          // We have a parent frame; so, check to see if frame names are different.
-         if ( strcmp(ref_frame_data->parent_name, parent_name) ){
+         if ( strcmp( ref_frame_data->parent_name, parent_name ) ) {
             // Frames are different, so reassign the new frame string.
             trick_MM->delete_var( (void *)parent_name );
-            parent_name = trick_MM->mm_strdup( ref_frame_data->parent_name  );
+            parent_name = trick_MM->mm_strdup( ref_frame_data->parent_name );
          }
+      } else {
+         parent_name = trick_MM->mm_strdup( ref_frame_data->parent_name );
       }
-      else{
-         parent_name = trick_MM->mm_strdup( ref_frame_data->parent_name  );
-      }
-   }
-   else {
-      if( parent_name != NULL ){
+   } else {
+      if ( parent_name != NULL ) {
          trick_MM->delete_var( (void *)parent_name );
          parent_name = NULL;
       }
@@ -168,7 +165,7 @@ void RefFrameState::pack()
    }
    // Time tag for this state data.
    // stc_data.time = ref_frame->state.time;
-   this->time = get_scenario_time();
+   this->time    = get_scenario_time();
    stc_data.time = ref_frame_data->state.time = this->time;
 
    // Print out debug information if desired.
@@ -216,29 +213,26 @@ void RefFrameState::unpack()
    // Set the reference frame name and parent frame name.
    if ( name_attr->is_received() ) {
       if ( ref_frame_data->name != NULL ) {
-         if ( !strcmp(ref_frame_data->name, name ) ){
+         if ( !strcmp( ref_frame_data->name, name ) ) {
             trick_MM->delete_var( (void *)ref_frame_data->name );
             ref_frame_data->name = trick_MM->mm_strdup( name );
          }
-      }
-      else {
+      } else {
          ref_frame_data->name = trick_MM->mm_strdup( name );
       }
    }
 
    if ( parent_name_attr->is_received() ) {
       if ( ref_frame_data->parent_name != NULL ) {
-         if ( !strcmp(ref_frame_data->parent_name, parent_name ) ){
+         if ( !strcmp( ref_frame_data->parent_name, parent_name ) ) {
             trick_MM->delete_var( (void *)ref_frame_data->parent_name );
             if ( parent_name[0] != '\0' ) {
                ref_frame_data->parent_name = trick_MM->mm_strdup( parent_name );
-            }
-            else{
+            } else {
                ref_frame_data->parent_name = NULL;
             }
          }
-      }
-      else {
+      } else {
          if ( parent_name[0] != '\0' ) {
             ref_frame_data->parent_name = trick_MM->mm_strdup( parent_name );
          }
@@ -261,9 +255,8 @@ void RefFrameState::unpack()
          ref_frame_data->state.ang_vel[iinc]     = stc_data.ang_vel[iinc];
       }
       // Time tag for this state data.
-      this->time = stc_data.time;
+      this->time                 = stc_data.time;
       ref_frame_data->state.time = stc_data.time;
-
    }
 
    // Print out debug information if desired.

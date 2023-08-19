@@ -28,8 +28,8 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_PYHSICAL_ENTITY_DATA_H
 #define SPACEFOM_PYHSICAL_ENTITY_DATA_H
 
-#include "SpaceFOM/SpaceTimeCoordinateData.h"
 #include "SpaceFOM/QuaternionData.h"
+#include "SpaceFOM/SpaceTimeCoordinateData.h"
 
 #ifdef __cplusplus
 // Place the struct in a namespace when C++.

@@ -40,8 +40,8 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 
 // SpaceFOM include files.
-#include "SpaceFOM/DynamicalEntityData.h"
 #include "SpaceFOM/DynamicalEntityBase.hh"
+#include "SpaceFOM/DynamicalEntityData.h"
 #include "SpaceFOM/PhysicalEntity.hh"
 
 namespace TrickHLA
@@ -72,13 +72,13 @@ class DynamicalEntity : public SpaceFOM::PhysicalEntity, public SpaceFOM::Dynami
 
    // Initialize the packing object.
    /*! @brief Set the reference to the physical entity data. */
-   virtual void initialize( );
+   virtual void initialize();
 
    // Initialize the packing object.
    /*! @brief Set the reference to the physical entity data.
     *  @param ref_frame_data_ptr Pointer to the RefFrameData instance. */
-   virtual void initialize( PhysicalEntityData  * physical_data_ptr,
-                            DynamicalEntityData * dynamics_data_ptr );
+   virtual void initialize( PhysicalEntityData  *physical_data_ptr,
+                            DynamicalEntityData *dynamics_data_ptr );
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to pack the data before the data is sent to the RTI. */
@@ -87,7 +87,6 @@ class DynamicalEntity : public SpaceFOM::PhysicalEntity, public SpaceFOM::Dynami
    // From the TrickHLA::Packing class.
    /*! @brief Called to unpack the data after data is received from the RTI. */
    virtual void unpack();
-
 
   protected:
    DynamicalEntityData *dynamical_data; ///< @trick_units{--} Dynamical entity data.
@@ -102,7 +101,6 @@ class DynamicalEntity : public SpaceFOM::PhysicalEntity, public SpaceFOM::Dynami
    /*! @brief Assignment operator for DynamicalEntity class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
    DynamicalEntity &operator=( DynamicalEntity const &rhs );
-
 };
 
 } // namespace SpaceFOM

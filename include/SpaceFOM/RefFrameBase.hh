@@ -105,7 +105,7 @@ class RefFrameBase : public TrickHLA::Packing
                               char const       *ref_frame_parent_name,
                               char const       *ref_frame_name,
                               bool              publishes,
-                              TrickHLA::Object *mngr_object = NULL);
+                              TrickHLA::Object *mngr_object = NULL );
 
    // Initialize the packing object.
    /*! @brief Set the reference to the reference frame data. */
@@ -140,7 +140,7 @@ class RefFrameBase : public TrickHLA::Packing
 
    /*! @brief Access function to set the pointer to the parent reference frame.
     *  @param pframe_ptr Pointer to the parent reference frame. */
-   virtual void set_parent_frame( RefFrameBase * pframe_ptr );
+   virtual void set_parent_frame( RefFrameBase *pframe_ptr );
 
    /*! @brief Access function to get the pointer to the parent reference frame.
     *  @return Pointer to the parent reference frame. */
@@ -164,7 +164,7 @@ class RefFrameBase : public TrickHLA::Packing
    virtual void unpack() = 0;
 
    // Access to protected data.
-   virtual void set_object( TrickHLA::Object * mngr_obj );
+   virtual void set_object( TrickHLA::Object *mngr_obj );
 
    // Access to protected data.
    virtual TrickHLA::Object *get_object()
@@ -182,10 +182,10 @@ class RefFrameBase : public TrickHLA::Packing
    TrickHLA::Attribute *parent_name_attr; ///< @trick_io{**} Parent reference frame name Attribute.
    TrickHLA::Attribute *state_attr;       ///< @trick_io{**} Reference frame state Attribute.
 
-   double         time;         ///< trick_units{s}   Truncated Julian date in TT time scale.
-   char         * name;         ///< @trick_units{--} Name of the reference frame.
-   char         * parent_name;  ///< @trick_units{--} Name of this frames parent frame.
-   RefFrameBase * parent_frame; ///< @trick_units{--} Pointer to this frames parent frame.
+   double        time;         ///< trick_units{s}   Truncated Julian date in TT time scale.
+   char         *name;         ///< @trick_units{--} Name of the reference frame.
+   char         *parent_name;  ///< @trick_units{--} Name of this frames parent frame.
+   RefFrameBase *parent_frame; ///< @trick_units{--} Pointer to this frames parent frame.
 
    // Instantiate the Space/Time Coordinate encoder
    SpaceTimeCoordinateEncoder stc_encoder; ///< @trick_units{--} Encoder.
@@ -199,7 +199,6 @@ class RefFrameBase : public TrickHLA::Packing
    /*! @brief Assignment operator for RefFrameBase class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
    RefFrameBase &operator=( RefFrameBase const &rhs );
-
 };
 
 } // namespace SpaceFOM

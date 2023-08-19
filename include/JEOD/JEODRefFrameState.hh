@@ -78,7 +78,8 @@ class JEODRefFrameState : public SpaceFOM::RefFrameBase
 
    /*! @brief Access function to set the HLA federation scenario time.
     *  @param new_time Associated federation scenario time. */
-   virtual void set_time( double new_time ){
+   virtual void set_time( double new_time )
+   {
       time = new_time;
    }
 

@@ -37,14 +37,14 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.hh"
 #include "trick/matrix_macros.h"
 #include "trick/vector_macros.h"
-#include "trick/MemoryManager.hh"
 
 // TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Packing.hh"
@@ -53,7 +53,7 @@ NASA, Johnson Space Center\n
 // SpaceFOM include files.
 #include "SpaceFOM/DynamicalEntityBase.hh"
 
-//using namespace std;
+// using namespace std;
 using namespace std;
 using namespace TrickHLA;
 using namespace SpaceFOM;
@@ -62,14 +62,14 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 DynamicalEntityBase::DynamicalEntityBase() // RETURN: -- None.
-: force_attr(NULL),
-  torque_attr(NULL),
-  mass_attr(NULL),
-  mass_rate_attr(NULL),
-  inertia_attr(NULL),
-  inertia_rate_attr(NULL)
+   : force_attr( NULL ),
+     torque_attr( NULL ),
+     mass_attr( NULL ),
+     mass_rate_attr( NULL ),
+     inertia_attr( NULL ),
+     inertia_rate_attr( NULL )
 {
-   mass = 0.0;
+   mass      = 0.0;
    mass_rate = 0.0;
    V_INIT( force );
    V_INIT( torque );
@@ -104,16 +104,14 @@ void DynamicalEntityBase::default_data(
    this->object = mngr_object;
 
    // Set the frame name and parent frame name.
-   if( parent_entity_name != NULL ){
+   if ( parent_entity_name != NULL ) {
       parent_frame = trick_MM->mm_strdup( parent_entity_name );
-   }
-   else{
+   } else {
       parent_frame = trick_MM->mm_strdup( "" );
    }
-   if( entity_name != NULL ){
+   if ( entity_name != NULL ) {
       name = trick_MM->mm_strdup( entity_name );
-   }
-   else{
+   } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::DynamicalEntityBase::default_data():" << __LINE__
              << " WARNING: Unexpected NULL federation instance DymamicalEntity name!" << THLA_ENDL;
@@ -273,7 +271,6 @@ void DynamicalEntityBase::default_data(
    return;
 }
 
-
 /*!
  * @job_class{initialization}
  */
@@ -282,7 +279,6 @@ void DynamicalEntityBase::initialize()
    PhysicalEntityBase::initialize();
    return;
 }
-
 
 /*!
  * @details From the TrickHLA::Packing class. We override this function so

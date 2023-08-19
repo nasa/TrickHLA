@@ -68,8 +68,8 @@ using namespace SpaceFOM;
  */
 JEODRefFrameState::JEODRefFrameState()
    : RefFrameBase(),
-     time_tt(NULL),
-     ref_frame_state(NULL)
+     time_tt( NULL ),
+     ref_frame_state( NULL )
 {
    return;
 }
@@ -132,7 +132,6 @@ void JEODRefFrameState::initialize(
    return;
 }
 
-
 void JEODRefFrameState::pack()
 {
    int iinc;
@@ -162,7 +161,7 @@ void JEODRefFrameState::pack()
    }
    // Time tag for this state data.
    // stc_data.time = ref_frame->state.time;
-   //FIXME: Need to check if get_scenario_time is really what we want here?
+   // FIXME: Need to check if get_scenario_time is really what we want here?
    stc_data.time = this->time = get_scenario_time();
 
    // Print out debug information if desired.
@@ -186,8 +185,8 @@ void JEODRefFrameState::pack()
    }
    if ( debug ) {
       cout << "JEODRefFrameState::pack():" << __LINE__ << endl
-           << "\tSim Sec: " << exec_get_sim_time()  << endl
-           << "\tSeconds: " << (time_tt->trunc_julian_time * 86400.0) << endl
+           << "\tSim Sec: " << exec_get_sim_time() << endl
+           << "\tSeconds: " << ( time_tt->trunc_julian_time * 86400.0 ) << endl
            << "\tDate: " << time_tt->calendar_year
            << "-" << time_tt->calendar_month
            << "-" << time_tt->calendar_day
@@ -250,11 +249,10 @@ void JEODRefFrameState::unpack()
       ref_frame_state->rot.Q_parent_this.scalar = stc_data.quat_scalar;
       for ( int iinc = 0; iinc < 3; ++iinc ) {
          ref_frame_state->rot.Q_parent_this.vector[iinc] = stc_data.quat_vector[iinc];
-         ref_frame_state->rot.ang_vel_this[iinc]     = stc_data.ang_vel[iinc];
+         ref_frame_state->rot.ang_vel_this[iinc]         = stc_data.ang_vel[iinc];
       }
       // Time tag for this state data.
       this->time = stc_data.time;
-
    }
 
    // The frame name and parent name are already 'unpacked'.
@@ -279,8 +277,8 @@ void JEODRefFrameState::unpack()
    }
    if ( debug ) {
       cout << "JEODRefFrameState::unpack():" << __LINE__ << endl
-           << "\tSim Sec: " << exec_get_sim_time()  << endl
-           << "\tSeconds: " << (time_tt->trunc_julian_time * 86400.0) << endl
+           << "\tSim Sec: " << exec_get_sim_time() << endl
+           << "\tSeconds: " << ( time_tt->trunc_julian_time * 86400.0 ) << endl
            << "\tDate: " << time_tt->calendar_year
            << "-" << time_tt->calendar_month
            << "-" << time_tt->calendar_day

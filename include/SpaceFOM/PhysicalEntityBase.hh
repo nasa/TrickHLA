@@ -159,7 +159,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    virtual void unpack() = 0;
 
    // Access to protected data.
-   virtual void set_object( TrickHLA::Object * mngr_obj );
+   virtual void set_object( TrickHLA::Object *mngr_obj );
 
    // Access to protected data.
    virtual TrickHLA::Object *get_object()
@@ -210,7 +210,6 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    /*! @brief Assignment operator for PhysicalEntityBase class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
    PhysicalEntityBase &operator=( PhysicalEntityBase const &rhs );
-
 };
 
 } // namespace SpaceFOM

@@ -43,8 +43,8 @@ NASA, Johnson Space Center\n
 #include "trick/vector_macros.h"
 
 // TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Packing.hh"
@@ -118,11 +118,10 @@ void PhysicalEntity::initialize( PhysicalEntityData *physical_data_ptr )
    return;
 }
 
-
 void PhysicalEntity::pack()
 {
    ostringstream errmsg;
-   int iinc;
+   int           iinc;
 
    // Check for initialization.
    if ( !initialized ) {
@@ -137,12 +136,11 @@ void PhysicalEntity::pack()
 
    // Check for name change.
    if ( physical_data->name != NULL ) {
-      if ( strcmp(physical_data->name, name) ){
+      if ( strcmp( physical_data->name, name ) ) {
          trick_MM->delete_var( (void *)name );
-         name = trick_MM->mm_strdup( physical_data->name  );
+         name = trick_MM->mm_strdup( physical_data->name );
       }
-   }
-   else {
+   } else {
       errmsg << "SpaceFOM::PhysicalEntity::pack():" << __LINE__
              << " ERROR: Unexpected NULL name for PhysicalEntity!" << THLA_ENDL;
       // Print message and terminate.
@@ -151,18 +149,16 @@ void PhysicalEntity::pack()
 
    // Check for type change.
    if ( physical_data->type != NULL ) {
-      if( type != NULL ){
-         if ( strcmp(physical_data->type, type) ){
+      if ( type != NULL ) {
+         if ( strcmp( physical_data->type, type ) ) {
             trick_MM->delete_var( (void *)type );
-            type = trick_MM->mm_strdup( physical_data->type  );
+            type = trick_MM->mm_strdup( physical_data->type );
          }
+      } else {
+         type = trick_MM->mm_strdup( physical_data->type );
       }
-      else{
-         type = trick_MM->mm_strdup( physical_data->type  );
-      }
-   }
-   else {
-      if( type != NULL ){
+   } else {
+      if ( type != NULL ) {
          trick_MM->delete_var( (void *)type );
          type = NULL;
       }
@@ -170,18 +166,16 @@ void PhysicalEntity::pack()
 
    // Check for status change.
    if ( physical_data->status != NULL ) {
-      if( status != NULL ){
-         if ( strcmp(physical_data->status, status) ){
+      if ( status != NULL ) {
+         if ( strcmp( physical_data->status, status ) ) {
             trick_MM->delete_var( (void *)status );
-            status = trick_MM->mm_strdup( physical_data->status  );
+            status = trick_MM->mm_strdup( physical_data->status );
          }
+      } else {
+         status = trick_MM->mm_strdup( physical_data->status );
       }
-      else{
-         status = trick_MM->mm_strdup( physical_data->status  );
-      }
-   }
-   else {
-      if( status != NULL ){
+   } else {
+      if ( status != NULL ) {
          trick_MM->delete_var( (void *)status );
          status = NULL;
       }
@@ -190,13 +184,12 @@ void PhysicalEntity::pack()
    // Check for parent frame change.
    if ( physical_data->parent_frame != NULL ) {
       // We have a parent frame; so, check to see if frame names are different.
-      if ( strcmp(physical_data->parent_frame, parent_frame) ){
+      if ( strcmp( physical_data->parent_frame, parent_frame ) ) {
          // Frames are different, so reassign the new frame string.
          trick_MM->delete_var( (void *)parent_frame );
-         parent_frame = trick_MM->mm_strdup( physical_data->parent_frame  );
+         parent_frame = trick_MM->mm_strdup( physical_data->parent_frame );
       }
-   }
-   else {
+   } else {
       errmsg << "SpaceFOM::PhysicalEntity::pack():" << __LINE__
              << " ERROR: Unexpected NULL parent frame for PhysicalEntity: "
              << physical_data->name << THLA_ENDL;
@@ -270,8 +263,6 @@ void PhysicalEntity::pack()
    return;
 }
 
-
-
 void PhysicalEntity::unpack()
 {
    // double dt; // Local vs. remote time difference.
@@ -311,59 +302,53 @@ void PhysicalEntity::unpack()
       }
       // Time tag for this state data.
       physical_data->state.time = state.time;
-
    }
 
    // Set the entity name, type, status, and parent frame name.
    if ( name_attr->is_received() ) {
       if ( physical_data->name != NULL ) {
-         if ( !strcmp(physical_data->name, name ) ){
+         if ( !strcmp( physical_data->name, name ) ) {
             trick_MM->delete_var( (void *)physical_data->name );
             physical_data->name = trick_MM->mm_strdup( name );
          }
-      }
-      else {
+      } else {
          physical_data->name = trick_MM->mm_strdup( name );
       }
    }
 
    if ( type_attr->is_received() ) {
       if ( physical_data->type != NULL ) {
-         if ( !strcmp(physical_data->type, type ) ){
+         if ( !strcmp( physical_data->type, type ) ) {
             trick_MM->delete_var( (void *)physical_data->type );
             physical_data->type = trick_MM->mm_strdup( type );
          }
-      }
-      else {
+      } else {
          physical_data->type = trick_MM->mm_strdup( type );
       }
    }
 
    if ( status_attr->is_received() ) {
       if ( physical_data->status != NULL ) {
-         if ( !strcmp(physical_data->status, status ) ){
+         if ( !strcmp( physical_data->status, status ) ) {
             trick_MM->delete_var( (void *)physical_data->status );
             physical_data->status = trick_MM->mm_strdup( status );
          }
-      }
-      else {
+      } else {
          physical_data->status = trick_MM->mm_strdup( status );
       }
    }
 
    if ( parent_frame_attr->is_received() ) {
       if ( physical_data->parent_frame != NULL ) {
-         if ( !strcmp(physical_data->parent_frame, parent_frame ) ){
+         if ( !strcmp( physical_data->parent_frame, parent_frame ) ) {
             trick_MM->delete_var( (void *)physical_data->parent_frame );
             if ( parent_frame[0] != '\0' ) {
                physical_data->parent_frame = trick_MM->mm_strdup( parent_frame );
-            }
-            else{
+            } else {
                physical_data->parent_frame = NULL;
             }
          }
-      }
-      else {
+      } else {
          if ( parent_frame[0] != '\0' ) {
             physical_data->parent_frame = trick_MM->mm_strdup( parent_frame );
          }
@@ -378,7 +363,6 @@ void PhysicalEntity::unpack()
       for ( int iinc = 0; iinc < 3; ++iinc ) {
          physical_data->body_wrt_struct.vector[iinc] = body_wrt_struct.vector[iinc];
       }
-
    }
 
    // Print out debug information if desired.
@@ -405,4 +389,3 @@ void PhysicalEntity::unpack()
 
    return;
 }
-

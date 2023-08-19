@@ -39,14 +39,13 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_REF_FRAME_TREE_HH
 
 // System include files.
-#include <string>
 #include <map>
+#include <string>
 
 // TrickHLA include files.
 
 // SpaceFOM include files.
 #include "SpaceFOM/RefFrameBase.hh"
-
 
 namespace SpaceFOM
 {
@@ -76,30 +75,28 @@ class RefFrameTree
     *  the reference frame tree.
     *  @param frame_ptr Pointer to the reference frame to add.
     *  @return Success or failure of the add. */
-   bool add_frame( RefFrameBase * frame_ptr );
+   bool add_frame( RefFrameBase *frame_ptr );
 
    bool build_tree();
    bool check_tree();
 
-   bool has_frame( const char * name );
+   bool has_frame( const char *name );
    bool has_frame( const std::string name );
-   bool has_frame( RefFrameBase * frame );
+   bool has_frame( RefFrameBase *frame );
 
-   RefFrameBase * find_frame( const char * name );
-   RefFrameBase * find_frame( const std::string name );
+   RefFrameBase *find_frame( const char *name );
+   RefFrameBase *find_frame( const std::string name );
 
-   RefFrameBase * find_common_base( const char * child_1,
-                                    const char * child_2 );
-   RefFrameBase * find_common_base( const std::string child_1,
-                                    const std::string child_2 );
-   RefFrameBase * find_common_base( RefFrameBase * child_1,
-                                    RefFrameBase * child_2 );
-
+   RefFrameBase *find_common_base( const char *child_1,
+                                   const char *child_2 );
+   RefFrameBase *find_common_base( const std::string child_1,
+                                   const std::string child_2 );
+   RefFrameBase *find_common_base( RefFrameBase *child_1,
+                                   RefFrameBase *child_2 );
 
   protected:
    // Map used to build and manage the reference frame tree.
-   std::map<std::string, RefFrameBase *> ref_frame_map;
-
+   std::map< std::string, RefFrameBase * > ref_frame_map;
 
   private:
    // This object is not copyable
@@ -109,7 +106,6 @@ class RefFrameTree
    /*! @brief Assignment operator for RefFrameTree class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
    RefFrameTree &operator=( RefFrameTree const &rhs );
-
 };
 
 } // namespace SpaceFOM

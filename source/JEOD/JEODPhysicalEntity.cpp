@@ -43,8 +43,8 @@ NASA, Johnson Space Center\n
 #include "trick/vector_macros.h"
 
 // TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Packing.hh"
@@ -118,11 +118,10 @@ void JEODPhysicalEntity::initialize( jeod::DynBody *dyn_body_data_ptr )
    return;
 }
 
-
 void JEODPhysicalEntity::pack()
 {
    ostringstream errmsg;
-   int iinc;
+   int           iinc;
 
    // Check for initialization.
    if ( !initialized ) {
@@ -205,8 +204,6 @@ void JEODPhysicalEntity::pack()
    return;
 }
 
-
-
 void JEODPhysicalEntity::unpack()
 {
    // double dt; // Local vs. remote time difference.
@@ -242,11 +239,10 @@ void JEODPhysicalEntity::unpack()
       dyn_body_data->composite_body.state.rot.Q_parent_this.scalar = state.quat_scalar;
       for ( int iinc = 0; iinc < 3; ++iinc ) {
          dyn_body_data->composite_body.state.rot.Q_parent_this.vector[iinc] = state.quat_vector[iinc];
-         dyn_body_data->composite_body.state.rot.ang_vel_this[iinc] = state.ang_vel[iinc];
+         dyn_body_data->composite_body.state.rot.ang_vel_this[iinc]         = state.ang_vel[iinc];
       }
       // Time tag for this state data.
-      //dyn_body_data->state.time = state.time;
-
+      // dyn_body_data->state.time = state.time;
    }
 
    // Set the reference frame name and parent frame name.
@@ -280,7 +276,6 @@ void JEODPhysicalEntity::unpack()
       for ( int iinc = 0; iinc < 3; ++iinc ) {
          dyn_body_data->mass.composite_properties.Q_parent_this.vector[iinc] = body_wrt_struct.vector[iinc];
       }
-
    }
 
    // Print out debug information if desired.
@@ -307,4 +302,3 @@ void JEODPhysicalEntity::unpack()
 
    return;
 }
-

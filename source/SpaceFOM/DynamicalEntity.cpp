@@ -43,8 +43,8 @@ NASA, Johnson Space Center\n
 #include "trick/vector_macros.h"
 
 // TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Packing.hh"
@@ -99,8 +99,8 @@ void DynamicalEntity::initialize()
  * @job_class{initialization}
  */
 void DynamicalEntity::initialize(
-   PhysicalEntityData  * physical_data_ptr,
-   DynamicalEntityData * dynamics_data_ptr  )
+   PhysicalEntityData  *physical_data_ptr,
+   DynamicalEntityData *dynamics_data_ptr )
 {
    ostringstream errmsg;
 
@@ -114,12 +114,11 @@ void DynamicalEntity::initialize(
    this->dynamical_data = dynamics_data_ptr;
 
    // Mark this as initialized.
-   PhysicalEntity::initialize(physical_data_ptr);
+   PhysicalEntity::initialize( physical_data_ptr );
 
    // Return to calling routine.
    return;
 }
-
 
 void DynamicalEntity::pack()
 {
@@ -169,8 +168,6 @@ void DynamicalEntity::pack()
 
    return;
 }
-
-
 
 void DynamicalEntity::unpack()
 {
@@ -234,19 +231,18 @@ void DynamicalEntity::unpack()
    if ( debug ) {
       cout.precision( 15 );
       cout << "DynamicalEntity::unpack():" << __LINE__ << endl
-            << "\tmass: " << mass << endl
-            << "\tmass_rate: " << mass_rate << endl
-            << "\tforce: " << endl
-            << "\t\t" << force[0] << endl
-            << "\t\t" << force[1] << endl
-            << "\t\t" << force[2] << endl
-            << "\ttorque: " << endl
-            << "\t\t" << torque[0] << endl
-            << "\t\t" << torque[1] << endl
-            << "\t\t" << torque[2] << endl
-            << endl;
+           << "\tmass: " << mass << endl
+           << "\tmass_rate: " << mass_rate << endl
+           << "\tforce: " << endl
+           << "\t\t" << force[0] << endl
+           << "\t\t" << force[1] << endl
+           << "\t\t" << force[2] << endl
+           << "\ttorque: " << endl
+           << "\t\t" << torque[0] << endl
+           << "\t\t" << torque[1] << endl
+           << "\t\t" << torque[2] << endl
+           << endl;
    }
 
    return;
 }
-

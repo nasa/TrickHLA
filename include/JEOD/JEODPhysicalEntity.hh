@@ -76,7 +76,7 @@ class JEODPhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
 
    // Initialize the packing object.
    /*! @brief Set the reference to the physical entity data. */
-   virtual void initialize( );
+   virtual void initialize();
 
    // Initialize the packing object.
    /*! @brief Set the reference to the physical entity data.
@@ -101,11 +101,10 @@ class JEODPhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
 
    /*! @brief Get the reference to the physical entity data.
     *  @return Pointer to the PhysicalEntity data. */
-   virtual jeod::DynBody * get_data()
+   virtual jeod::DynBody *get_data()
    {
-      return( dyn_body_data );
+      return ( dyn_body_data );
    }
-
 
   protected:
    jeod::DynBody *dyn_body_data; ///< @trick_units{--} JEOD DynBody data.
@@ -118,7 +117,6 @@ class JEODPhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
    /*! @brief Assignment operator for JEODPhysicalEntity class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
    JEODPhysicalEntity &operator=( JEODPhysicalEntity const &rhs );
-
 };
 
 } // namespace SpaceFOM

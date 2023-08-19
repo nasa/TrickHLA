@@ -55,112 +55,100 @@ RefFrameTree::~RefFrameTree()
    return;
 }
 
-
 /*! @brief Add a reference frame to the tree.
  *  @details This function is used to add a SpaceFOM reference frame into
  *  the reference frame tree.
  *  @param frame_ptr Pointer to the reference frame to add.
  *  @return Success or failure of the add. */
-bool RefFrameTree::add_frame( RefFrameBase * frame_ptr )
+bool RefFrameTree::add_frame( RefFrameBase *frame_ptr )
 {
    if ( frame_ptr != NULL ) {
-      ref_frame_map.insert( pair<string, RefFrameBase*>( frame_ptr->name, frame_ptr ) );
-      return( true );
+      ref_frame_map.insert( pair< string, RefFrameBase * >( frame_ptr->name, frame_ptr ) );
+      return ( true );
    }
-   return( true );
+   return ( true );
 }
-
 
 bool RefFrameTree::build_tree()
 {
-   return( true );
+   return ( true );
 }
-
 
 bool RefFrameTree::check_tree()
 {
-   return( true );
+   return ( true );
 }
 
-
-bool RefFrameTree::has_frame( const char * name )
+bool RefFrameTree::has_frame( const char *name )
 {
-   map<string, RefFrameBase*>::iterator map_iter;
+   map< string, RefFrameBase * >::iterator map_iter;
 
    // Find the frame in the map.
-   map_iter = ref_frame_map.find( string(name) );
+   map_iter = ref_frame_map.find( string( name ) );
    if ( map_iter != ref_frame_map.end() ) {
-      return( true );
+      return ( true );
    }
-   return(false);
+   return ( false );
 }
-
 
 bool RefFrameTree::has_frame( const string name )
 {
-   map<string, RefFrameBase*>::iterator map_iter;
+   map< string, RefFrameBase * >::iterator map_iter;
 
    // Find the frame in the map.
    map_iter = ref_frame_map.find( name );
    if ( map_iter != ref_frame_map.end() ) {
-      return( true );
+      return ( true );
    }
-   return(false);
+   return ( false );
 }
 
-
-bool RefFrameTree::has_frame( RefFrameBase * frame )
+bool RefFrameTree::has_frame( RefFrameBase *frame )
 {
-   return( has_frame(frame->name) );
+   return ( has_frame( frame->name ) );
 }
 
-
-RefFrameBase * RefFrameTree::find_frame( const char * name )
+RefFrameBase *RefFrameTree::find_frame( const char *name )
 {
-   map<string, RefFrameBase*>::iterator map_iter;
+   map< string, RefFrameBase * >::iterator map_iter;
 
    // Find the frame in the map.
-   map_iter = ref_frame_map.find( string(name) );
+   map_iter = ref_frame_map.find( string( name ) );
    if ( map_iter != ref_frame_map.end() ) {
-      return( ref_frame_map[string(name)] );
+      return ( ref_frame_map[string( name )] );
    }
-   return(NULL);
+   return ( NULL );
 }
 
-
-RefFrameBase * RefFrameTree::find_frame( const string name )
+RefFrameBase *RefFrameTree::find_frame( const string name )
 {
-   map<string, RefFrameBase*>::iterator map_iter;
+   map< string, RefFrameBase * >::iterator map_iter;
 
    // Find the frame in the map.
    map_iter = ref_frame_map.find( name );
    if ( map_iter != ref_frame_map.end() ) {
-      return( ref_frame_map[name] );
+      return ( ref_frame_map[name] );
    }
-   return(NULL);
+   return ( NULL );
 }
 
-
-RefFrameBase * RefFrameTree::find_common_base(
-   const char * child_1,
-   const char * child_2 )
+RefFrameBase *RefFrameTree::find_common_base(
+   const char *child_1,
+   const char *child_2 )
 {
-   return(NULL);
+   return ( NULL );
 }
 
-
-RefFrameBase * RefFrameTree::find_common_base(
+RefFrameBase *RefFrameTree::find_common_base(
    const string child_1,
    const string child_2 )
 {
-   return(NULL);
+   return ( NULL );
 }
 
-
-RefFrameBase * RefFrameTree::find_common_base(
-   RefFrameBase * child_1,
-   RefFrameBase * child_2 )
+RefFrameBase *RefFrameTree::find_common_base(
+   RefFrameBase *child_1,
+   RefFrameBase *child_2 )
 {
-   return(NULL);
+   return ( NULL );
 }
-

@@ -40,8 +40,8 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 
 // SpaceFOM include files.
-#include "SpaceFOM/PhysicalEntityData.h"
 #include "SpaceFOM/PhysicalEntityBase.hh"
+#include "SpaceFOM/PhysicalEntityData.h"
 
 namespace TrickHLA
 {
@@ -71,7 +71,7 @@ class PhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
 
    // Initialize the packing object.
    /*! @brief Set the reference to the physical entity data. */
-   virtual void initialize( );
+   virtual void initialize();
 
    // Initialize the packing object.
    /*! @brief Set the reference to the physical entity data.
@@ -96,11 +96,10 @@ class PhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
 
    /*! @brief Get the reference to the physical entity data.
     *  @return Pointer to the PhysicalEntity data. */
-   virtual PhysicalEntityData * get_data()
+   virtual PhysicalEntityData *get_data()
    {
-      return( physical_data );
+      return ( physical_data );
    }
-
 
   protected:
    PhysicalEntityData *physical_data; ///< @trick_units{--} Physical entity data.
@@ -113,7 +112,6 @@ class PhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
    /*! @brief Assignment operator for PhysicalEntity class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
    PhysicalEntity &operator=( PhysicalEntity const &rhs );
-
 };
 
 } // namespace SpaceFOM
