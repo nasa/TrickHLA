@@ -118,7 +118,7 @@ class OpaqueBuffer
     *  encoding.
     *  @param src      Source of data to push into buffer.
     *  @param size     Size of data in bytes.
-    *  @param encoding One of ENCODING_TYPE_LITTLE_ENDIAN, ENCODING_TYPE_BIG_ENDIAN, or ENCODING_TYPE_NO_ENCODING. */
+    *  @param encoding One of ENCODING_LITTLE_ENDIAN, ENCODING_BIG_ENDIAN, or ENCODING_NO_ENCODING. */
    void push_to_buffer( void const *src, size_t const size, EncodingEnum const encoding );
 
    /*! @brief Pull the specified number of data bytes from the buffer into the
@@ -135,7 +135,7 @@ class OpaqueBuffer
     * buffer.
     *  @param dest     Destination to pull data into from buffer.
     *  @param size     Size of data in bytes.
-    *  @param encoding One of ENCODING_TYPE_LITTLE_ENDIAN, ENCODING_TYPE_BIG_ENDIAN, or ENCODING_TYPE_NO_ENCODING. */
+    *  @param encoding One of ENCODING_LITTLE_ENDIAN, ENCODING_BIG_ENDIAN, or ENCODING_NO_ENCODING. */
    void pull_from_buffer( void *dest, size_t const size, EncodingEnum const encoding );
 
   protected:
@@ -152,7 +152,7 @@ class OpaqueBuffer
     *  @param dest     Destination to put data.
     *  @param src      Source data.
     *  @param size     Number of bytes to copy.
-    *  @param encoding One of ENCODING_TYPE_LITTLE_ENDIAN, ENCODING_TYPE_BIG_ENDIAN, or ENCODING_TYPE_NO_ENCODING. */
+    *  @param encoding One of ENCODING_LITTLE_ENDIAN, ENCODING_BIG_ENDIAN, or ENCODING_NO_ENCODING. */
    void byteswap_buffer_copy( void *dest, void const *src,
                               size_t const size, EncodingEnum const encoding );
 
