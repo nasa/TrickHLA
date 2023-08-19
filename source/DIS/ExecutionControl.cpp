@@ -18,7 +18,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../TrickHLA/Federate.cpp}
-@trick_link_dependency{../TrickHLA/Int64Interval.cpp}
+@trick_link_dependency{../TrickHLA/Int64BaseTime.cpp}
 @trick_link_dependency{../TrickHLA/ExecutionControlBase.cpp}
 @trick_link_dependency{../TrickHLA/Manager.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
@@ -44,13 +44,11 @@ NASA, Johnson Space Center\n
 #include "trick/exec_proto.hh"
 #include "trick/message_proto.h"
 
-// HLA include files.
-
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/Int64Interval.hh"
+#include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
@@ -156,7 +154,7 @@ void ExecutionControl::initialize()
       // The software frame is set from the ExCO Least Common Time Step.
       // For the Master federate the Trick simulation software frame must
       // match the Least Common Time Step (LCTS).
-      double software_frame_time = Int64Interval::to_seconds( least_common_time_step );
+      double software_frame_time = Int64BaseTime::to_seconds( least_common_time_step );
       exec_set_software_frame( software_frame_time );
    }
 
@@ -575,7 +573,7 @@ bool ExecutionControl::set_pending_mtr(
 bool ExecutionControl::is_mtr_valid(
    MTREnum mtr_value )
 {
-   ExecutionConfiguration *ExCO = get_execution_configuration();
+   ExecutionConfiguration const *ExCO = get_execution_configuration();
 
    switch ( mtr_value ) {
       case MTR_GOTO_RUN: {

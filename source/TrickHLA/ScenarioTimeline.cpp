@@ -48,8 +48,8 @@ using namespace TrickHLA;
  */
 ScenarioTimeline::ScenarioTimeline(
    SimTimeline &sim_timeline,
-   double       tt0,
-   double       st0 )
+   double const tt0,
+   double const st0 )
    : Timeline( tt0 ),
      sim_timeline( sim_timeline ),
      sim_offset( st0 ),
@@ -67,26 +67,26 @@ ScenarioTimeline::~ScenarioTimeline()
 }
 
 double ScenarioTimeline::compute_simulation_time(
-   double scenario_time )
+   double const scenario_time )
 {
    return ( scenario_time - ( epoch + sim_offset ) );
 }
 
 double ScenarioTimeline::time_from_simulation_time(
-   double sim_time )
+   double const sim_time )
 {
    return ( sim_time + ( epoch + sim_offset ) );
 }
 
 Int64Time ScenarioTimeline::compute_HLT(
-   double scenario_time )
+   double const scenario_time )
 {
    Int64Time elapsed_time( scenario_time - epoch );
    return ( elapsed_time - hlt_offset );
 }
 
 double ScenarioTimeline::time_from_HLT(
-   Int64Time hlt )
+   Int64Time const hlt )
 {
    return ( hlt.get_time_in_seconds() + hlt_offset.get_time_in_seconds() + epoch );
 }

@@ -126,7 +126,7 @@ void MTRInteractionHandler::send_interaction(
    }
 
    // Get the ExecutionControl object and cast it to an SpaceFOM::ExecutionControl.
-   ExecutionControlBase *exco_base = interaction->get_federate()->get_execution_control();
+   ExecutionControlBase const *exco_base = interaction->get_federate()->get_execution_control();
 
    // Set the requested mode.
    mtr_mode     = mode_request;

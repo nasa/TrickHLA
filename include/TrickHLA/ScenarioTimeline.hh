@@ -77,8 +77,8 @@ class ScenarioTimeline : public Timeline
     *  @param tt0 Scenario time epoch in TT seconds TJD format.
     *  @param st0 Simulation starting time offset from epoch. */
    explicit ScenarioTimeline( SimTimeline &sim_timeline,
-                              double       tt0 = 0.0,
-                              double       st0 = 0.0 );
+                              double const tt0 = 0.0,
+                              double const st0 = 0.0 );
 
    /*! @brief Destructor for the TrickHLA ScenarioTimeline class. */
    virtual ~ScenarioTimeline();
@@ -96,22 +96,22 @@ class ScenarioTimeline : public Timeline
    /*! @brief Compute a simulation time from a given scenario time.
     *  @return Simulation time in seconds.
     *  @param scenario_time Desired scenario time in seconds. */
-   virtual double compute_simulation_time( double scenario_time );
+   virtual double compute_simulation_time( double const scenario_time );
 
    /*! @brief Compute a scenario time from a given simulation time.
     *  @return Scenario time in seconds.
     *  @param sim_time Desired simulation time. */
-   virtual double time_from_simulation_time( double sim_time );
+   virtual double time_from_simulation_time( double const sim_time );
 
    /*! @brief Compute a HLA Logical Time (HLT) from a given scenario time.
     *  @return HLT in the base HLA Logical Time representation.
     *  @param scenario_time Desired scenario time. */
-   virtual Int64Time compute_HLT( double scenario_time );
+   virtual Int64Time compute_HLT( double const scenario_time );
 
    /*! @brief Compute a scenario time from and given HLA Logical Time (HLT).
     *  @return Scenario time in seconds.
     *  @param hlt Desired HLT in the base HLA Logical Time representation. */
-   virtual double time_from_HLT( Int64Time hlt );
+   virtual double time_from_HLT( Int64Time const hlt );
 
    // Accessor functions.
    /*! @brief Get the offset of the simulation time line from the scenario
@@ -125,7 +125,7 @@ class ScenarioTimeline : public Timeline
    /*! @brief Set the offset of the simulation time line from the scenario
     * timeline epoch.
     *  @param st0 The offset time in seconds. */
-   virtual void set_sim_offset( double st0 )
+   virtual void set_sim_offset( double const st0 )
    {
       this->sim_offset = st0;
    }
@@ -141,7 +141,7 @@ class ScenarioTimeline : public Timeline
    /*! @brief Set the offset of the HLA Logical Time (HLT) timeline from the
     * scenario timeline.
     *  @param hlt0 Desired offset in the base HLA Logical Time representation. */
-   virtual void set_HTL_offset( Int64Time hlt0 )
+   virtual void set_HTL_offset( Int64Time const hlt0 )
    {
       this->hlt_offset = hlt0;
    }

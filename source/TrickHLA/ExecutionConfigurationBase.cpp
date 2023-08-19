@@ -203,7 +203,7 @@ void ExecutionConfigurationBase::reset_ownership_states()
 }
 
 void ExecutionConfigurationBase::set_master(
-   bool is_master )
+   bool const is_master )
 {
    if ( is_master ) {
       // We are the Master so we will create the sim-config HLA instance.

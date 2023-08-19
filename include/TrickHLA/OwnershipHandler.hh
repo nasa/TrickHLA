@@ -164,7 +164,7 @@ class OwnershipHandler
 
    /*! @brief Push ownership of all the object attributes at the specified time.
     *  @param time Requested time to push ownership. */
-   void push_ownership( double time );
+   void push_ownership( double const time );
 
    /*! @brief Push ownership of the specified attribute as soon as possible.
     *  @param attribute_FOM_name Attribute FOM name. */

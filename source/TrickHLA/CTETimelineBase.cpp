@@ -103,7 +103,7 @@ int CTETimelineBase::clock_stop()
    return 0;
 }
 
-void CTETimelineBase::set_clock_ID( clockid_t id )
+void CTETimelineBase::set_clock_ID( clockid_t const id )
 {
    switch ( id ) {
       case CLOCK_REALTIME:

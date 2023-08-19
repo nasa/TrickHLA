@@ -50,7 +50,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/SyncPnt.hh"
 #include "TrickHLA/TimedSyncPnt.hh"
 
-// IMSim include files.
+// DIS include files.
 #include "DIS/PausePointList.hh"
 #include "DIS/Types.hh"
 
@@ -212,7 +212,7 @@ void PausePointList::print_sync_points()
 
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
       // Cast the SyncPnt pointer to a TimedSyncPnt pointer.
-      TimedSyncPnt *timed_i = dynamic_cast< TimedSyncPnt * >( *i );
+      TimedSyncPnt const *timed_i = dynamic_cast< TimedSyncPnt * >( *i );
       sync_point_label.assign( ( *i )->get_label().begin(), ( *i )->get_label().end() );
       msg << sync_point_label << " "
           << timed_i->get_time().get_time_in_seconds() << " "

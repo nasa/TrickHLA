@@ -313,11 +313,11 @@ class Parameter
     *  @param type      The type of the data.
     *  @param length    The length/number of entries in the source array.
     *  @param num_bytes The number of bytes in the source array. */
-   void byteswap_buffer_copy( void  *dest,
-                              void  *src,
-                              int    type,
-                              size_t length,
-                              size_t num_bytes ) const;
+   void byteswap_buffer_copy( void        *dest,
+                              void const  *src,
+                              int const    type,
+                              size_t const length,
+                              size_t const num_bytes ) const;
 
   private:
    // Do not allow the copy constructor or assignment operator.

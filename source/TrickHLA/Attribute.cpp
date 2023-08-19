@@ -265,9 +265,9 @@ void Attribute::initialize(
             errmsg << "Attribute::initialize():" << __LINE__
                    << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
-                   << trick_name << "' must use either the ENCODING_TYPE_BIG_ENDIAN, "
-                   << "ENCODING_TYPE_LITTLE_ENDIAN, ENCODING_TYPE_BOOLEAN, ENCODING_TYPE_NO_ENCODING, or "
-                   << "ENCODING_TYPE_UNKNOWN value for the 'rti_encoding' when the "
+                   << trick_name << "' must use either the ENCODING_BIG_ENDIAN, "
+                   << "ENCODING_LITTLE_ENDIAN, ENCODING_BOOLEAN, ENCODING_NO_ENCODING, or "
+                   << "ENCODING_UNKNOWN value for the 'rti_encoding' when the "
                    << "attribute represents a 'bool' type. Please check your input "
                    << "or modified-data files to make sure the value for the 'rti_"
                    << "encoding' is correctly specified." << THLA_ENDL;
@@ -288,9 +288,9 @@ void Attribute::initialize(
             errmsg << "Attribute::initialize():" << __LINE__
                    << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
-                   << trick_name << "' must use either the ENCODING_TYPE_BIG_ENDIAN,"
-                   << " ENCODING_TYPE_LITTLE_ENDIAN, ENCODING_TYPE_NO_ENCODING, ENCODING_TYPE_UNICODE_STRING,"
-                   << " ENCODING_TYPE_OPAQUE_DATA, or ENCODING_TYPE_UNKNOWN value for the"
+                   << trick_name << "' must use either the ENCODING_BIG_ENDIAN,"
+                   << " ENCODING_LITTLE_ENDIAN, ENCODING_NO_ENCODING, ENCODING_UNICODE_STRING,"
+                   << " ENCODING_OPAQUE_DATA, or ENCODING_UNKNOWN value for the"
                    << " 'rti_encoding' when the attribute represents a 'char' or"
                    << " 'unsigned char' type. Please check  your input or"
                    << " modified-data files to make sure the value for the"
@@ -298,7 +298,7 @@ void Attribute::initialize(
             DebugHandler::terminate_with_message( errmsg.str() );
          }
 
-         // For the ENCODING_TYPE_UNICODE_STRING encoding, we only support a 1-D dynamic
+         // For the ENCODING_UNICODE_STRING encoding, we only support a 1-D dynamic
          // array of characters.
          if ( ( rti_encoding == ENCODING_UNICODE_STRING )
               && ( ( ref2->attr->num_index != 1 ) || ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 ) ) ) {
@@ -306,7 +306,7 @@ void Attribute::initialize(
             errmsg << "Attribute::initialize():" << __LINE__
                    << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
-                   << trick_name << "' and 'rti_encoding' of ENCODING_TYPE_UNICODE_STRING must"
+                   << trick_name << "' and 'rti_encoding' of ENCODING_UNICODE_STRING must"
                    << " represent a one-dimensional array of characters (i.e."
                    << " 'char *' or 'unsigned char *'). Please check your input or"
                    << " modified-data files to make sure the value for the"
@@ -314,7 +314,7 @@ void Attribute::initialize(
             DebugHandler::terminate_with_message( errmsg.str() );
          }
 
-         // For the ENCODING_TYPE_OPAQUE_DATA encoding, we only support a
+         // For the ENCODING_OPAQUE_DATA encoding, we only support a
          // 1-D dynamic array of characters.
          if ( ( rti_encoding == ENCODING_OPAQUE_DATA )
               && ( ( ref2->attr->num_index != 1 ) || ( ref2->attr->index[ref2->attr->num_index - 1].size != 0 ) ) ) {
@@ -322,7 +322,7 @@ void Attribute::initialize(
             errmsg << "Attribute::initialize():" << __LINE__
                    << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
-                   << trick_name << "' and 'rti_encoding' of ENCODING_TYPE_OPAQUE_DATA must"
+                   << trick_name << "' and 'rti_encoding' of ENCODING_OPAQUE_DATA must"
                    << " represent a one-dimensional array of characters (i.e."
                    << " 'char *' or 'unsigned char *'). Please check your input or"
                    << " modified-data files to make sure the value for the"
@@ -351,9 +351,9 @@ void Attribute::initialize(
             errmsg << "Attribute::initialize():" << __LINE__
                    << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
-                   << trick_name << "' must use either the ENCODING_TYPE_LOGICAL_TIME, "
-                   << "ENCODING_TYPE_BIG_ENDIAN, ENCODING_TYPE_LITTLE_ENDIAN, ENCODING_TYPE_NO_ENCODING, or "
-                   << "ENCODING_TYPE_UNKNOWN value for the 'rti_encoding' when the "
+                   << trick_name << "' must use either the ENCODING_LOGICAL_TIME, "
+                   << "ENCODING_BIG_ENDIAN, ENCODING_LITTLE_ENDIAN, ENCODING_NO_ENCODING, or "
+                   << "ENCODING_UNKNOWN value for the 'rti_encoding' when the "
                    << "attribute represents a primitive type. Please check your "
                    << "input or modified-data files to make sure the value for the "
                    << "'rti_encoding' is correctly specified." << THLA_ENDL;
@@ -373,9 +373,9 @@ void Attribute::initialize(
             errmsg << "Attribute::initialize():" << __LINE__
                    << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
-                   << trick_name << "' must use either the ENCODING_TYPE_C_STRING, "
-                   << "ENCODING_TYPE_UNICODE_STRING, ENCODING_TYPE_ASCII_STRING, ENCODING_TYPE_OPAQUE_DATA, "
-                   << "ENCODING_TYPE_NO_ENCODING, or ENCODING_TYPE_UNKNOWN value for the "
+                   << trick_name << "' must use either the ENCODING_C_STRING, "
+                   << "ENCODING_UNICODE_STRING, ENCODING_ASCII_STRING, ENCODING_OPAQUE_DATA, "
+                   << "ENCODING_NO_ENCODING, or ENCODING_UNKNOWN value for the "
                    << "'rti_encoding' when the attribute represents a String type "
                    << "(i.e. char *). Please check your input or modified-data "
                    << "files to make sure the value for the 'rti_encoding' is "
@@ -383,13 +383,13 @@ void Attribute::initialize(
             DebugHandler::terminate_with_message( errmsg.str() );
          }
 
-         // Only support an array of characters (i.e. char *) for ENCODING_TYPE_NO_ENCODING.
+         // Only support an array of characters (i.e. char *) for ENCODING_NO_ENCODING.
          if ( ( rti_encoding == ENCODING_NONE ) && ( ref2->attr->num_index != 0 ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
                    << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
-                   << trick_name << "' and 'rti_encoding' of ENCODING_TYPE_NO_ENCODING must"
+                   << trick_name << "' and 'rti_encoding' of ENCODING_NO_ENCODING must"
                    << " represent a one-dimensional array of characters (i.e."
                    << " 'char *'). Please check your input or modified-data"
                    << " files to make sure the value for the 'rti_encoding' is"
@@ -463,21 +463,21 @@ void Attribute::initialize(
       errmsg << "Attribute::initialize():" << __LINE__
              << " ERROR: FOM Object Attribute '"
              << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
-             << trick_name << "' can not be an array when using ENCODING_TYPE_LOGICAL_TIME"
+             << trick_name << "' can not be an array when using ENCODING_LOGICAL_TIME"
              << " for the 'rti_encoding'. Please check your input or modified-data"
              << " files to make sure the value for the 'rti_encoding' is"
              << " correctly specified." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   // The units must be in seconds if the ENCODING_TYPE_LOGICAL_TIME is used.
+   // The units must be in seconds if the ENCODING_LOGICAL_TIME is used.
    if ( ( rti_encoding == ENCODING_LOGICAL_TIME ) && ( strcmp( "s", ref2->attr->units ) != 0 ) ) {
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
              << " ERROR: FOM Object Attribute '"
              << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
              << trick_name << "' must have the units of 'seconds' when the"
-             << " 'rti_encoding' is set to ENCODING_TYPE_LOGICAL_TIME. Please check your"
+             << " 'rti_encoding' is set to ENCODING_LOGICAL_TIME. Please check your"
              << " input or modified-data files to make sure the value for the"
              << " 'rti_encoding' is correctly specified." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -639,8 +639,8 @@ VariableLengthData Attribute::get_attribute_value()
    return VariableLengthData( buffer, size );
 }
 
-void Attribute::extract_data(       // RETURN: -- None
-   VariableLengthData *attr_value ) // IN: ** HLA attribute-value to get data from.
+void Attribute::extract_data(             // RETURN: -- None
+   VariableLengthData const *attr_value ) // IN: ** HLA attribute-value to get data from.
 {
    if ( attr_value == NULL ) {
       return;
@@ -661,7 +661,7 @@ void Attribute::extract_data(       // RETURN: -- None
                    << trick_name << "', the received FOM data size (" << attr_size
                    << " bytes) != Expected Trick simulation variable memory size ("
                    << ( 4 * expected_byte_count ) << " bytes) for 'rti_encoding' of"
-                   << " ENCODING_TYPE_BOOLEAN. Make sure your simulation variable is the same"
+                   << " ENCODING_BOOLEAN. Make sure your simulation variable is the same"
                    << " size and type as what is defined in the FOM. If you are"
                    << " using Lag Compensation one possible cause of this problem"
                    << " is that your lag compensation variables are not the correct"
@@ -684,7 +684,7 @@ void Attribute::extract_data(       // RETURN: -- None
       }
       case ENCODING_NONE: {
          // The byte counts must match between the received attribute and
-         // the Trick simulation variable for ENCODING_TYPE_NO_ENCODING since this
+         // the Trick simulation variable for ENCODING_NO_ENCODING since this
          // RTI encoding only supports a fixed length array of characters.
          if ( attr_size != expected_byte_count ) {
             ostringstream errmsg;
@@ -693,7 +693,7 @@ void Attribute::extract_data(       // RETURN: -- None
                    << trick_name << "', the received FOM data size (" << attr_size
                    << " bytes) != Expected Trick simulation variable memory size ("
                    << expected_byte_count << " bytes) for the rti_encoding of"
-                   << " ENCODING_TYPE_NO_ENCODING. The ENCODING_TYPE_NO_ENCODING only supports a fixed"
+                   << " ENCODING_NO_ENCODING. The ENCODING_NO_ENCODING only supports a fixed"
                    << " length array of characters. Make sure your simulation"
                    << " variable is the same size and type as what is defined in the"
                    << " FOM. If you are using Lag Compensation one possible cause of"
@@ -734,7 +734,7 @@ void Attribute::extract_data(       // RETURN: -- None
                    << " ERROR: For Attribute '" << FOM_name << "' with Trick name '"
                    << trick_name << "', the received FOM data size (" << attr_size
                    << " bytes) != Expected Trick simulation variable memory size (8 bytes) for"
-                   << " the ENCODING_TYPE_LOGICAL_TIME rti_encoding. Make sure your"
+                   << " the ENCODING_LOGICAL_TIME rti_encoding. Make sure your"
                    << " simulation variable is the same size and type as what is"
                    << " defined in the FOM. If you are using Lag Compensation one"
                    << " possible cause of this problem is that your lag compensation"
@@ -759,7 +759,7 @@ void Attribute::extract_data(       // RETURN: -- None
                    << trick_name << "', the received FOM data size (" << attr_size
                    << " bytes) != Expected Trick simulation variable memory size ("
                    << expected_byte_count << " bytes) for the rti_encoding of"
-                   << " ENCODING_TYPE_OPAQUE_DATA. Your simulation variable is static in size"
+                   << " ENCODING_OPAQUE_DATA. Your simulation variable is static in size"
                    << " and can not take variable length data. Make sure your"
                    << " simulation variable is the same size and type as what is"
                    << " defined in the FOM. If you are using Lag Compensation one"
@@ -885,8 +885,8 @@ void Attribute::calculate_size_and_number_of_items()
             break;
          }
          default: {
-            // For the ENCODING_TYPE_C_STRING, ENCODING_TYPE_UNICODE_STRING,
-            // and ENCODING_TYPE_ASCII_STRING encodings assume the string is
+            // For the ENCODING_C_STRING, ENCODING_UNICODE_STRING,
+            // and ENCODING_ASCII_STRING encodings assume the string is
             // terminated with a null character and determine the number of
             // characters using strlen().
             for ( size_t i = 0; i < num_items; ++i ) {
@@ -1442,7 +1442,7 @@ void Attribute::decode_boolean_from_buffer() const // RETURN: -- None.
       bool_dest = (bool *)ref2->address;
    }
 
-   unsigned int *int_src = reinterpret_cast< unsigned int * >( buffer );
+   unsigned int const *int_src = reinterpret_cast< unsigned int * >( buffer );
 
    if ( num_items == 1 ) {
       bool_dest[0] = ( int_src[0] != 0 );
@@ -1460,53 +1460,53 @@ void Attribute::encode_logical_time() const // RETURN: -- None.
 
    switch ( ref2->attr->type ) {
       case TRICK_DOUBLE: {
-         double *d_src = reinterpret_cast< double * >( (void *)ref2->address );
-         logical_time  = Int64BaseTime::to_base_time( d_src[0] );
+         double const *d_src = reinterpret_cast< double * >( (void *)ref2->address );
+         logical_time        = Int64BaseTime::to_base_time( d_src[0] );
          break;
       }
       case TRICK_FLOAT: {
-         float *f_src = reinterpret_cast< float * >( (void *)ref2->address );
-         logical_time = Int64BaseTime::to_base_time( (double)f_src[0] );
+         float const *f_src = reinterpret_cast< float * >( (void *)ref2->address );
+         logical_time       = Int64BaseTime::to_base_time( (double)f_src[0] );
          break;
       }
       case TRICK_SHORT: {
-         short *s_src = (short *)ref2->address;
-         logical_time = (int64_t)( Int64BaseTime::get_base_time_multiplier() * s_src[0] );
+         short const *s_src = (short *)ref2->address;
+         logical_time       = (int64_t)( Int64BaseTime::get_base_time_multiplier() * s_src[0] );
          break;
       }
       case TRICK_UNSIGNED_SHORT: {
-         unsigned short *us_src = (unsigned short *)ref2->address;
-         logical_time           = (int64_t)( Int64BaseTime::get_base_time_multiplier() * us_src[0] );
+         unsigned short const *us_src = (unsigned short *)ref2->address;
+         logical_time                 = (int64_t)( Int64BaseTime::get_base_time_multiplier() * us_src[0] );
          break;
       }
       case TRICK_INTEGER: {
-         int *i_src   = (int *)ref2->address;
-         logical_time = (int64_t)( Int64BaseTime::get_base_time_multiplier() * i_src[0] );
+         int const *i_src = (int *)ref2->address;
+         logical_time     = (int64_t)( Int64BaseTime::get_base_time_multiplier() * i_src[0] );
          break;
       }
       case TRICK_UNSIGNED_INTEGER: {
-         unsigned int *ui_src = (unsigned int *)ref2->address;
-         logical_time         = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ui_src[0] );
+         unsigned int const *ui_src = (unsigned int *)ref2->address;
+         logical_time               = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ui_src[0] );
          break;
       }
       case TRICK_LONG: {
-         long *l_src  = (long *)ref2->address;
-         logical_time = (int64_t)( Int64BaseTime::get_base_time_multiplier() * l_src[0] );
+         long const *l_src = (long *)ref2->address;
+         logical_time      = (int64_t)( Int64BaseTime::get_base_time_multiplier() * l_src[0] );
          break;
       }
       case TRICK_UNSIGNED_LONG: {
-         unsigned long *ul_src = (unsigned long *)ref2->address;
-         logical_time          = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ul_src[0] );
+         unsigned long const *ul_src = (unsigned long *)ref2->address;
+         logical_time                = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ul_src[0] );
          break;
       }
       case TRICK_LONG_LONG: {
-         long long *ll_src = (long long *)ref2->address;
-         logical_time      = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ll_src[0] );
+         long long const *ll_src = (long long *)ref2->address;
+         logical_time            = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ll_src[0] );
          break;
       }
       case TRICK_UNSIGNED_LONG_LONG: {
-         unsigned long long *ull_src = (unsigned long long *)ref2->address;
-         logical_time                = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ull_src[0] );
+         unsigned long long const *ull_src = (unsigned long long *)ref2->address;
+         logical_time                      = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ull_src[0] );
          break;
       }
       default: {
@@ -1514,7 +1514,7 @@ void Attribute::encode_logical_time() const // RETURN: -- None.
          errmsg << "Attribute::encode_logical_time():" << __LINE__
                 << " ERROR: For Attribute '" << FOM_name << "' with Trick name '"
                 << trick_name << "' the type is not supported for the"
-                << " ENCODING_TYPE_LOGICAL_TIME encoding." << THLA_ENDL;
+                << " ENCODING_LOGICAL_TIME encoding." << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -1537,8 +1537,8 @@ void Attribute::encode_logical_time() const // RETURN: -- None.
 void Attribute::decode_logical_time() // RETURN: -- None.
 {
    // Integer representing time in the HLA Logical Time base.
-   int64_t        logical_time = 0;
-   unsigned char *src          = buffer;
+   int64_t              logical_time = 0;
+   unsigned char const *src          = buffer;
 
    logical_time = ( logical_time << 8 ) | src[0]; // cppcheck-suppress [badBitmaskCheck]
    logical_time = ( logical_time << 8 ) | src[1];
@@ -1617,7 +1617,7 @@ void Attribute::decode_logical_time() // RETURN: -- None.
          errmsg << "Attribute::decode_logical_time():" << __LINE__
                 << " ERROR: For Attribute '" << FOM_name << "' with Trick name '"
                 << trick_name << "' the type is not supported for the"
-                << " ENCODING_TYPE_LOGICAL_TIME encoding." << THLA_ENDL;
+                << " ENCODING_LOGICAL_TIME encoding." << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
          break;
       }
@@ -1723,7 +1723,7 @@ void Attribute::decode_opaque_data_from_buffer() // RETURN: -- None.
       // Do a sanity check on the decoded length, it should not be negative.
       if ( decoded_length < 0 ) {
          send_hs( stderr, "Attribute::decode_opaque_data_from_buffer():%d \
-WARNING: For ENCODING_TYPE_OPAQUE_DATA attribute '%s', decoded length %d < 0, will use 0 instead.%c",
+WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will use 0 instead.%c",
                   __LINE__, FOM_name, decoded_length, THLA_NEWLINE );
          decoded_length = 0;
       }
@@ -1738,7 +1738,7 @@ WARNING: For ENCODING_TYPE_OPAQUE_DATA attribute '%s', decoded length %d < 0, wi
       }
       if ( (size_t)decoded_length > data_buff_size ) {
          send_hs( stderr, "Attribute::decode_opaque_data_from_buffer():%d \
-WARNING: For ENCODING_TYPE_OPAQUE_DATA attribute '%s', decoded length %d > data buffer \
+WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d > data buffer \
 size %d, will use the data buffer size instead.%c",
                   __LINE__, FOM_name, decoded_length, data_buff_size, THLA_NEWLINE );
          decoded_length = (int)data_buff_size;
@@ -1791,7 +1791,7 @@ size %d, will use the data buffer size instead.%c",
       if ( output == NULL ) {
          ostringstream errmsg;
          errmsg << "Attribute::decode_opaque_data_from_buffer():" << __LINE__
-                << " ERROR: Could not allocate memory for ENCODING_TYPE_OPAQUE_DATA Attribute '"
+                << " ERROR: Could not allocate memory for ENCODING_OPAQUE_DATA Attribute '"
                 << FOM_name << "' with Trick name '" << trick_name << "' and length "
                 << decoded_length << "!" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
@@ -2297,7 +2297,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
          if ( byte_count != size ) {
             ostringstream errmsg;
             errmsg << "Attribute::encode_string_to_buffer():" << __LINE__
-                   << " ERROR: For ENCODING_TYPE_NO_ENCODING, Attribute '" << FOM_name
+                   << " ERROR: For ENCODING_NO_ENCODING, Attribute '" << FOM_name
                    << "' with Trick name '" << trick_name << "', actual data size"
                    << " (" << byte_count << ") != expected Trick simulation variable"
                    << " size (" << size << ")!" << THLA_ENDL;
@@ -2384,7 +2384,7 @@ void Attribute::decode_string_from_buffer() // RETURN: -- None.
             size_t length;
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: For ENCODING_TYPE_UNICODE_STRING attribute '%s' (trick_name: '%s'), decoded length %d < 0, will use 0 instead.%c",
+WARNING: For ENCODING_UNICODE_STRING attribute '%s' (trick_name: '%s'), decoded length %d < 0, will use 0 instead.%c",
                         __LINE__, FOM_name, ( ( trick_name != NULL ) ? trick_name : "NULL" ),
                         decoded_count, THLA_NEWLINE );
                length = 0;
@@ -2410,7 +2410,7 @@ WARNING: For ENCODING_TYPE_UNICODE_STRING attribute '%s' (trick_name: '%s'), dec
                }
                if ( length > data_buff_size ) {
                   send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: For ENCODING_TYPE_UNICODE_STRING parameter '%s', decoded length %d > data buffer \
+WARNING: For ENCODING_UNICODE_STRING parameter '%s', decoded length %d > data buffer \
 size %d, will use the data buffer size instead.%c",
                            __LINE__, FOM_name, length, data_buff_size, THLA_NEWLINE );
                   length = data_buff_size;
@@ -2451,7 +2451,7 @@ size %d, will use the data buffer size instead.%c",
             if ( output == NULL ) {
                ostringstream errmsg;
                errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
-                      << " ERROR: Could not allocate memory for ENCODING_TYPE_UNICODE_STRING Attribute '"
+                      << " ERROR: Could not allocate memory for ENCODING_UNICODE_STRING Attribute '"
                       << FOM_name << "' with Trick name '" << trick_name
                       << "' and length " << Utilities::next_positive_multiple_of_8( length )
                       << "!" << THLA_ENDL;
@@ -2487,7 +2487,7 @@ size %d, will use the data buffer size instead.%c",
             // Sanity check, we should not get a negative element count.
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: For ENCODING_TYPE_UNICODE_STRING attribute '%s', decoded element count %d < 0, will use 0 instead.%c",
+WARNING: For ENCODING_UNICODE_STRING attribute '%s', decoded element count %d < 0, will use 0 instead.%c",
                         __LINE__, FOM_name, decoded_count, THLA_NEWLINE );
                num_elements = 0;
             } else {
@@ -2498,7 +2498,7 @@ WARNING: For ENCODING_TYPE_UNICODE_STRING attribute '%s', decoded element count 
             // than what exist in the ref-attributes.
             if ( (size_t)num_elements > num_items ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: Truncating array of ENCODING_TYPE_UNICODE_STRING from %d to %d elements for attribute '%s'!%c",
+WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for attribute '%s'!%c",
                         __LINE__, num_elements, num_items, FOM_name, THLA_NEWLINE );
                num_elements = num_items;
             }
@@ -2539,7 +2539,7 @@ WARNING: Truncating array of ENCODING_TYPE_UNICODE_STRING from %d to %d elements
                size_t length;
                if ( decoded_count < 0 ) {
                   send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: For ENCODING_TYPE_UNICODE_STRING array element %d, attribute '%s', the decoded \
+WARNING: For ENCODING_UNICODE_STRING array element %d, attribute '%s', the decoded \
 length %d < 0, will use 0 instead.%c",
                            __LINE__, i, FOM_name, decoded_count, THLA_NEWLINE );
                   length = 0;
@@ -2551,7 +2551,7 @@ length %d < 0, will use 0 instead.%c",
                // data remains in the buffer.
                if ( length > data_buff_size ) {
                   send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: For ENCODING_TYPE_UNICODE_STRING array element %d, attribute '%s', the decoded \
+WARNING: For ENCODING_UNICODE_STRING array element %d, attribute '%s', the decoded \
 length %d > data buffer size %d, will use the data buffer size instead.%c",
                            __LINE__, i, FOM_name, length, data_buff_size,
                            THLA_NEWLINE );
@@ -2596,7 +2596,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                if ( output == NULL ) {
                   ostringstream errmsg;
                   errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
-                         << " ERROR: Could not allocate memory for ENCODING_TYPE_UNICODE_STRING"
+                         << " ERROR: Could not allocate memory for ENCODING_UNICODE_STRING"
                          << " Attribute '" << FOM_name << "' with Trick name '"
                          << trick_name << "' and length "
                          << Utilities::next_positive_multiple_of_8( length )
@@ -2657,7 +2657,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
             size_t length;
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: For ENCODING_TYPE_ASCII_STRING attribute '%s', decoded length %d < 0, will use 0 instead.%c",
+WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded length %d < 0, will use 0 instead.%c",
                         __LINE__, FOM_name, decoded_count, THLA_NEWLINE );
                length = 0;
             } else {
@@ -2675,7 +2675,7 @@ WARNING: For ENCODING_TYPE_ASCII_STRING attribute '%s', decoded length %d < 0, w
 
             if ( length > data_buff_size ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: For ENCODING_TYPE_ASCII_STRING attribute '%s', decoded length %d > data buffer size \
+WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded length %d > data buffer size \
 %d, will use the data buffer size instead.%c",
                         __LINE__, FOM_name, length,
                         data_buff_size, THLA_NEWLINE );
@@ -2713,7 +2713,7 @@ WARNING: For ENCODING_TYPE_ASCII_STRING attribute '%s', decoded length %d > data
             if ( output == NULL ) {
                ostringstream errmsg;
                errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
-                      << " ERROR: Could not allocate memory for ENCODING_TYPE_ASCII_STRING Attribute '"
+                      << " ERROR: Could not allocate memory for ENCODING_ASCII_STRING Attribute '"
                       << FOM_name << "' with Trick name '" << trick_name
                       << "' and length " << Utilities::next_positive_multiple_of_8( length )
                       << "!" << THLA_ENDL;
@@ -2748,7 +2748,7 @@ WARNING: For ENCODING_TYPE_ASCII_STRING attribute '%s', decoded length %d > data
             // Sanity check, we should not get a negative element count.
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: For ENCODING_TYPE_ASCII_STRING attribute '%s', decoded element count %d < 0, will use 0 instead.%c",
+WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded element count %d < 0, will use 0 instead.%c",
                         __LINE__, FOM_name, decoded_count, THLA_NEWLINE );
                num_elements = 0;
             } else {
@@ -2759,7 +2759,7 @@ WARNING: For ENCODING_TYPE_ASCII_STRING attribute '%s', decoded element count %d
             // than what exist in the ref-attributes.
             if ( num_elements > num_items ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: Truncating array of ENCODING_TYPE_ASCII_STRING from %d to %d elements for attribute '%s'!%c",
+WARNING: Truncating array of ENCODING_ASCII_STRING from %d to %d elements for attribute '%s'!%c",
                         __LINE__, num_elements, num_items, FOM_name, THLA_NEWLINE );
                num_elements = num_items;
             }
@@ -2793,7 +2793,7 @@ WARNING: Truncating array of ENCODING_TYPE_ASCII_STRING from %d to %d elements f
                size_t length;
                if ( decoded_count < 0 ) {
                   send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: For ENCODING_TYPE_ASCII_STRING array element %d, attribute '%s', the decoded \
+WARNING: For ENCODING_ASCII_STRING array element %d, attribute '%s', the decoded \
 length %d < 0, will use 0 instead.%c",
                            __LINE__, i, FOM_name, decoded_count, THLA_NEWLINE );
                   length = 0;
@@ -2805,7 +2805,7 @@ length %d < 0, will use 0 instead.%c",
                // data remains in the buffer.
                if ( length > data_buff_size ) {
                   send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: For ENCODING_TYPE_ASCII_STRING array element %d, attribute '%s', the decoded \
+WARNING: For ENCODING_ASCII_STRING array element %d, attribute '%s', the decoded \
 length %d > data buffer size %d, will use the data buffer size instead.%c",
                            __LINE__, i, FOM_name, length, data_buff_size,
                            THLA_NEWLINE );
@@ -2848,7 +2848,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                if ( output == NULL ) {
                   ostringstream errmsg;
                   errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
-                         << " ERROR: Could not allocate memory for ENCODING_TYPE_ASCII_STRING"
+                         << " ERROR: Could not allocate memory for ENCODING_ASCII_STRING"
                          << " Attribute '" << FOM_name << "' with Trick name '"
                          << trick_name << "' and length "
                          << Utilities::next_positive_multiple_of_8( length )
@@ -2909,7 +2909,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
             size_t length;
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: For ENCODING_TYPE_OPAQUE_DATA attribute '%s', decoded length %d < 0, will use 0 instead.%c",
+WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will use 0 instead.%c",
                         __LINE__, FOM_name, decoded_count, THLA_NEWLINE );
                length = 0;
             } else {
@@ -2926,7 +2926,7 @@ WARNING: For ENCODING_TYPE_OPAQUE_DATA attribute '%s', decoded length %d < 0, wi
             }
             if ( length > data_buff_size ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: For ENCODING_TYPE_OPAQUE_DATA attribute '%s', decoded length %d > data buffer size \
+WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d > data buffer size \
 %d, will use the data buffer size instead.%c",
                         __LINE__, FOM_name, length, data_buff_size, THLA_NEWLINE );
                length = data_buff_size;
@@ -2960,7 +2960,7 @@ WARNING: For ENCODING_TYPE_OPAQUE_DATA attribute '%s', decoded length %d > data 
             if ( output == NULL ) {
                ostringstream errmsg;
                errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
-                      << " ERROR: Could not allocate memory for ENCODING_TYPE_OPAQUE_DATA Attribute '"
+                      << " ERROR: Could not allocate memory for ENCODING_OPAQUE_DATA Attribute '"
                       << FOM_name << "' with Trick name '" << trick_name
                       << "' and length " << length << "!" << THLA_ENDL;
                DebugHandler::terminate_with_message( errmsg.str() );
@@ -2991,7 +2991,7 @@ WARNING: For ENCODING_TYPE_OPAQUE_DATA attribute '%s', decoded length %d > data 
             // Sanity check, we should not get a negative element count.
             if ( decoded_count < 0 ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: For ENCODING_TYPE_OPAQUE_DATA attribute '%s', decoded element count %d < 0, will use 0 instead.%c",
+WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded element count %d < 0, will use 0 instead.%c",
                         __LINE__, FOM_name, decoded_count, THLA_NEWLINE );
                num_elements = 0;
             } else {
@@ -3002,7 +3002,7 @@ WARNING: For ENCODING_TYPE_OPAQUE_DATA attribute '%s', decoded element count %d 
             // than what exist in the ref-attributes.
             if ( num_elements > num_items ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: Truncating array of ENCODING_TYPE_OPAQUE_DATA from %d to %d elements for attribute '%s'!%c",
+WARNING: Truncating array of ENCODING_OPAQUE_DATA from %d to %d elements for attribute '%s'!%c",
                         __LINE__, num_elements, num_items, FOM_name, THLA_NEWLINE );
                num_elements = num_items;
             }
@@ -3036,7 +3036,7 @@ WARNING: Truncating array of ENCODING_TYPE_OPAQUE_DATA from %d to %d elements fo
                size_t length;
                if ( decoded_count < 0 ) {
                   send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: For ENCODING_TYPE_OPAQUE_DATA array element %d, attribute '%s', the decoded \
+WARNING: For ENCODING_OPAQUE_DATA array element %d, attribute '%s', the decoded \
 length %d < 0, will use 0 instead.%c",
                            __LINE__, i, FOM_name, decoded_count, THLA_NEWLINE );
                   length = 0;
@@ -3048,7 +3048,7 @@ length %d < 0, will use 0 instead.%c",
                // data remains in the buffer.
                if ( length > data_buff_size ) {
                   send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
-WARNING: For ENCODING_TYPE_OPAQUE_DATA array element %d, attribute '%s', the decoded \
+WARNING: For ENCODING_OPAQUE_DATA array element %d, attribute '%s', the decoded \
 length %d > data buffer size %d, will use the data buffer size instead.%c",
                            __LINE__, i, FOM_name, length, data_buff_size, THLA_NEWLINE );
                   length = data_buff_size;
@@ -3089,7 +3089,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                if ( output == NULL ) {
                   ostringstream errmsg;
                   errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
-                         << " ERROR: Could not allocate memory for ENCODING_TYPE_OPAQUE_DATA"
+                         << " ERROR: Could not allocate memory for ENCODING_OPAQUE_DATA"
                          << " Attribute '" << FOM_name << "' with Trick name '"
                          << trick_name << "' and length " << length << "!" << THLA_ENDL;
                   DebugHandler::terminate_with_message( errmsg.str() );
@@ -3128,7 +3128,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
          if ( output == NULL ) {
             ostringstream errmsg;
             errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
-                   << " ERROR: For ENCODING_TYPE_NO_ENCODING, Attribute '" << FOM_name
+                   << " ERROR: For ENCODING_NO_ENCODING, Attribute '" << FOM_name
                    << "' with Trick name '" << trick_name << "' is NULL!" << THLA_ENDL;
             DebugHandler::terminate_with_message( errmsg.str() );
          }
@@ -3138,7 +3138,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
          if ( (int)size != get_size( (char *)output ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
-                   << " ERROR: For ENCODING_TYPE_NO_ENCODING, Attribute '" << FOM_name
+                   << " ERROR: For ENCODING_NO_ENCODING, Attribute '" << FOM_name
                    << "' with Trick name '" << trick_name << "', received data"
                    << " size (" << size << ") != Trick simulation variable size ("
                    << get_size( (char *)output ) << ")!" << THLA_ENDL;
@@ -3192,7 +3192,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
             if ( output == NULL ) {
                ostringstream errmsg;
                errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
-                      << " ERROR: Could not allocate memory for ENCODING_TYPE_C_STRING attribute '"
+                      << " ERROR: Could not allocate memory for ENCODING_C_STRING attribute '"
                       << FOM_name << "' with Trick name '" << trick_name
                       << "' and length " << Utilities::next_positive_multiple_of_8( length )
                       << "!" << THLA_ENDL;
@@ -3217,11 +3217,11 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
  * - Only primitive types and static arrays of primitive type are supported for now.
  */
 void Attribute::byteswap_buffer_copy( // RETURN: -- None.
-   void  *dest,                       // IN: -- Destination to copy data to.
-   void  *src,                        // IN: -- Source of the data to byteswap and copy from.
-   int    type,                       // IN: -- The type of the data.
-   size_t length,                     // IN: -- The length/number of entries in the source array.
-   size_t num_bytes ) const           // IN: -- The number of bytes in the source array.
+   void        *dest,                 // IN: -- Destination to copy data to.
+   void const  *src,                  // IN: -- Source of the data to byteswap and copy from.
+   int const    type,                 // IN: -- The type of the data.
+   size_t const length,               // IN: -- The length/number of entries in the source array.
+   size_t const num_bytes ) const     // IN: -- The number of bytes in the source array.
 {
    if ( num_bytes == 0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
@@ -3249,8 +3249,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
       // Do the byteswap based on the type.
       switch ( type ) {
          case TRICK_DOUBLE: {
-            double *d_src  = static_cast< double  *>( src );
-            double *d_dest = static_cast< double * >( dest );
+            double const *d_src  = static_cast< double const  *>( src );
+            double       *d_dest = static_cast< double       *>( dest );
             if ( length == 1 ) {
                d_dest[0] = Utilities::byteswap_double( d_src[0] );
             } else {
@@ -3261,8 +3261,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_FLOAT: {
-            float *f_src  = static_cast< float  *>( src );
-            float *f_dest = static_cast< float * >( dest );
+            float const *f_src  = static_cast< float const  *>( src );
+            float       *f_dest = static_cast< float       *>( dest );
             if ( length == 1 ) {
                f_dest[0] = Utilities::byteswap_float( f_src[0] );
             } else {
@@ -3280,8 +3280,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_SHORT: {
-            short *s_src  = (short *)src;
-            short *s_dest = (short *)dest;
+            short const *s_src  = (short *)src;
+            short       *s_dest = (short *)dest;
             if ( length == 1 ) {
                s_dest[0] = Utilities::byteswap_short( s_src[0] );
             } else {
@@ -3292,8 +3292,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_UNSIGNED_SHORT: {
-            unsigned short *us_src  = (unsigned short *)src;
-            unsigned short *us_dest = (unsigned short *)dest;
+            unsigned short const *us_src  = (unsigned short *)src;
+            unsigned short       *us_dest = (unsigned short *)dest;
             if ( length == 1 ) {
                us_dest[0] = Utilities::byteswap_unsigned_short( us_src[0] );
             } else {
@@ -3304,8 +3304,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_INTEGER: {
-            int *i_src  = (int *)src;
-            int *i_dest = (int *)dest;
+            int const *i_src  = (int *)src;
+            int       *i_dest = (int *)dest;
             if ( length == 1 ) {
                i_dest[0] = Utilities::byteswap_int( i_src[0] );
             } else {
@@ -3316,8 +3316,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_UNSIGNED_INTEGER: {
-            unsigned int *ui_src  = (unsigned int *)src;
-            unsigned int *ui_dest = (unsigned int *)dest;
+            unsigned int const *ui_src  = (unsigned int *)src;
+            unsigned int       *ui_dest = (unsigned int *)dest;
             if ( length == 1 ) {
                ui_dest[0] = Utilities::byteswap_unsigned_int( ui_src[0] );
             } else {
@@ -3328,8 +3328,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_LONG: {
-            long *l_src  = (long *)src;
-            long *l_dest = (long *)dest;
+            long const *l_src  = (long *)src;
+            long       *l_dest = (long *)dest;
             if ( length == 1 ) {
                l_dest[0] = Utilities::byteswap_long( l_src[0] );
             } else {
@@ -3340,8 +3340,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_UNSIGNED_LONG: {
-            unsigned long *ul_src  = (unsigned long *)src;
-            unsigned long *ul_dest = (unsigned long *)dest;
+            unsigned long const *ul_src  = (unsigned long *)src;
+            unsigned long       *ul_dest = (unsigned long *)dest;
             if ( length == 1 ) {
                ul_dest[0] = Utilities::byteswap_unsigned_long( ul_src[0] );
             } else {
@@ -3352,8 +3352,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_LONG_LONG: {
-            long long *ll_src  = (long long *)src;
-            long long *ll_dest = (long long *)dest;
+            long long const *ll_src  = (long long *)src;
+            long long       *ll_dest = (long long *)dest;
             if ( length == 1 ) {
                ll_dest[0] = Utilities::byteswap_long_long( ll_src[0] );
             } else {
@@ -3364,8 +3364,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_UNSIGNED_LONG_LONG: {
-            unsigned long long *ull_src  = (unsigned long long *)src;
-            unsigned long long *ull_dest = (unsigned long long *)dest;
+            unsigned long long const *ull_src  = (unsigned long long *)src;
+            unsigned long long       *ull_dest = (unsigned long long *)dest;
             if ( length == 1 ) {
                ull_dest[0] = Utilities::byteswap_unsigned_long_long( ull_src[0] );
             } else {
@@ -3437,7 +3437,7 @@ bool Attribute::is_supported_attribute_type() const // RETURN: -- True if suppor
                   || ( rti_encoding == ENCODING_NONE ) );
       }
       case TRICK_STRING: {
-         // Only support an 1-D array of characters (char *) for ENCODING_TYPE_NO_ENCODING.
+         // Only support an 1-D array of characters (char *) for ENCODING_NO_ENCODING.
          if ( ( rti_encoding == ENCODING_NONE ) && ( ref2->attr->num_index != 0 ) ) {
             return false;
          }
@@ -3490,7 +3490,7 @@ void Attribute::print_buffer() const
    // For now we only support an attribute of type double for printing. DDexter
    if ( ref2->attr->type == TRICK_DOUBLE ) {
 
-      double *dbl_array = reinterpret_cast< double * >( (void *)buffer );
+      double const *dbl_array = reinterpret_cast< double * >( (void *)buffer );
 
       if ( is_byteswap() ) {
          for ( size_t i = 0; i < num_items; ++i ) {
@@ -3508,7 +3508,7 @@ void Attribute::print_buffer() const
    } else {
 
       // Else just treat the buffer as an array of characters.
-      char *char_array = reinterpret_cast< char * >( buffer );
+      char const *char_array = reinterpret_cast< char * >( buffer );
 
       msg << "\tAttribute size:" << size << endl
           << "\tIndex\tValue\tCharacter" << endl;

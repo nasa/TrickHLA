@@ -36,7 +36,7 @@ using namespace std;
 using namespace TrickHLA;
 
 string TrickHLA::execution_control_enum_to_string(
-   ExecutionControlEnum mode )
+   ExecutionControlEnum const mode )
 {
    switch ( mode ) {
 
@@ -77,14 +77,14 @@ string TrickHLA::execution_control_enum_to_string(
 }
 
 int16_t TrickHLA::execution_control_enum_to_int16(
-   ExecutionControlEnum mode )
+   ExecutionControlEnum const mode )
 {
 
    return (int16_t)mode;
 }
 
 ExecutionControlEnum TrickHLA::execution_control_int16_to_enum(
-   int16_t int_mode )
+   int16_t const int_mode )
 {
    switch ( int_mode ) {
 
@@ -125,7 +125,7 @@ ExecutionControlEnum TrickHLA::execution_control_int16_to_enum(
 }
 
 string TrickHLA::mode_transition_enum_to_string(
-   ModeTransitionEnum mode )
+   ModeTransitionEnum const mode )
 {
    switch ( mode ) {
 
@@ -166,14 +166,14 @@ string TrickHLA::mode_transition_enum_to_string(
 }
 
 int16_t TrickHLA::mode_transition_enum_to_int16(
-   ModeTransitionEnum mode )
+   ModeTransitionEnum const mode )
 {
 
    return (int16_t)mode;
 }
 
 ModeTransitionEnum TrickHLA::mode_transition_int16_to_enum(
-   int16_t int_mode )
+   int16_t const int_mode )
 {
    switch ( int_mode ) {
 
@@ -214,7 +214,7 @@ ModeTransitionEnum TrickHLA::mode_transition_int16_to_enum(
 }
 
 string TrickHLA::sync_point_state_enum_to_string(
-   SyncPtStateEnum state )
+   SyncPtStateEnum const state )
 {
 
    switch ( state ) {
@@ -252,13 +252,13 @@ string TrickHLA::sync_point_state_enum_to_string(
 }
 
 int16_t TrickHLA::sync_point_state_enum_to_int16(
-   SyncPtStateEnum state )
+   SyncPtStateEnum const state )
 {
    return (int16_t)state;
 }
 
 SyncPtStateEnum TrickHLA::sync_point_state_int16_to_enum(
-   int16_t int_state )
+   int16_t const int_state )
 {
 
    switch ( int_state ) {

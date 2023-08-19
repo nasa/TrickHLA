@@ -42,10 +42,6 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <string>
 
-// Trick include files.
-
-// HLA include files.
-
 // TrickHLA include files.
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Int64Time.hh"
@@ -174,9 +170,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Send a mode transition request to the Master federate.
     *  @param requested_mode Requested mode. */
    virtual void send_mode_transition_interaction( TrickHLA::ModeTransitionEnum requested_mode );
-   /*! @brief Process a new mode interaction.
-    *  @return True if new mode interaction is successfully processed. */
-   virtual bool process_mode_interaction();
    /*! @brief Sets the next ExecutionControl run mode.
     *  @param exec_control Next ExecutionControl run mode. */
    virtual void set_next_execution_control_mode( TrickHLA::ExecutionControlEnum exec_control );
@@ -190,10 +183,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual bool check_mode_transition_request();
    /*! @brief Process a new mode interaction.
     *  @return True if new mode interaction is successfully processed. */
-   virtual bool process_mode_interaction()
-   {
-      return process_mode_transition_request();
-   };
+   virtual bool process_mode_interaction();
    /*! @brief Process a new Mode Transition Request (MTR).
     *  @return True if new MTR is successfully processed. */
    virtual bool process_mode_transition_request();
@@ -278,14 +268,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Checks for scenario freeze times.
     *  @return True is time to go to freeze; False otherwise. */
    virtual bool check_scenario_freeze_time();
-
-   /*! @brief Check if we hit a pause sync point and need to go to freeze.
-    *  @param check_pause_delta Check pause job delta time in seconds. */
-   virtual void check_pause( double const check_pause_delta );
-
-   /*! @brief Checking if we started in freeze.
-    *  @param check_pause_delta Check pause job delta time in seconds. */
-   virtual void check_pause_at_init( double const check_pause_delta );
 
    /*! @brief Add pause time.
     *  @param time Pause time.
