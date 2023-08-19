@@ -277,10 +277,9 @@ void RefFrameBase::set_name( char const *new_name )
  */
 void RefFrameBase::set_parent_name( char const *name )
 {
-   ostringstream errmsg;
-
    // Check for initialization.
    if ( initialized ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::set_parent_name():" << __LINE__
              << " ERROR: The initialize() function has already been called" << THLA_ENDL;
       // Print message and terminate.
@@ -305,10 +304,9 @@ void RefFrameBase::set_parent_name( char const *name )
  */
 void RefFrameBase::set_parent_frame( RefFrameBase *pframe_ptr )
 {
-   ostringstream errmsg;
-
    // Check for initialization.
    if ( initialized ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::set_parent_frame():" << __LINE__
              << " ERROR: The initialize() function has already been called" << THLA_ENDL;
       // Print message and terminate.
@@ -333,8 +331,6 @@ void RefFrameBase::set_parent_frame( RefFrameBase *pframe_ptr )
  */
 void RefFrameBase::publish()
 {
-   ostringstream errmsg;
-
    if ( this->initialized ) {
       ostringstream errmsg;
       errmsg << "RefFrameBase::publish():" << __LINE__
@@ -361,8 +357,6 @@ void RefFrameBase::publish()
  */
 void RefFrameBase::subscribe()
 {
-   ostringstream errmsg;
-
    if ( this->initialized ) {
       ostringstream errmsg;
       errmsg << "RefFrameBase::publish():" << __LINE__
@@ -389,10 +383,9 @@ void RefFrameBase::subscribe()
  */
 void RefFrameBase::set_object( TrickHLA::Object *mngr_obj )
 {
-   ostringstream errmsg;
-
    // Check for initialization.
    if ( initialized ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::set_object():" << __LINE__
              << " ERROR: The initialize() function has already been called" << THLA_ENDL;
       // Print message and terminate.

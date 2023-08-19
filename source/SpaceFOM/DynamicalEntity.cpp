@@ -187,14 +187,14 @@ void DynamicalEntity::unpack()
 
    // Check for force data.
    if ( force_attr->is_received() ) {
-      for ( int iinc = 0; iinc < 3; ++iinc ) {
+      for ( iinc = 0; iinc < 3; ++iinc ) {
          dynamical_data->force[iinc] = force[iinc];
       }
    }
 
    // Check for torque data.
    if ( torque_attr->is_received() ) {
-      for ( int iinc = 0; iinc < 3; ++iinc ) {
+      for ( iinc = 0; iinc < 3; ++iinc ) {
          dynamical_data->torque[iinc] = torque[iinc];
       }
    }
