@@ -81,16 +81,16 @@ class RefFrameTree
    bool check_tree();
 
    bool has_frame( char const *name );
-   bool has_frame( std::string const name );
-   bool has_frame( RefFrameBase *frame );
+   bool has_frame( std::string const &name );
+   bool has_frame( RefFrameBase const *frame );
 
    RefFrameBase *find_frame( char const *name );
-   RefFrameBase *find_frame( std::string const name );
+   RefFrameBase *find_frame( std::string const &name );
 
    RefFrameBase *find_common_base( char const *child_1,
                                    char const *child_2 );
-   RefFrameBase *find_common_base( std::string const child_1,
-                                   std::string const child_2 );
+   RefFrameBase *find_common_base( std::string const &child_1,
+                                   std::string const &child_2 );
    RefFrameBase *find_common_base( RefFrameBase *child_1,
                                    RefFrameBase *child_2 );
 
