@@ -78,10 +78,9 @@ JEODPhysicalEntity::~JEODPhysicalEntity() // RETURN: -- None.
  */
 void JEODPhysicalEntity::initialize()
 {
-   ostringstream errmsg;
-
    // Check to make sure the JEODPhysicalEntity data is set.
    if ( dyn_body_data == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL dyn_body_data: " << name << THLA_ENDL;
       // Print message and terminate.
@@ -100,10 +99,9 @@ void JEODPhysicalEntity::initialize()
  */
 void JEODPhysicalEntity::initialize( jeod::DynBody *dyn_body_data_ptr )
 {
-   ostringstream errmsg;
-
    // Set the reference to the JEODPhysicalEntity data.
    if ( dyn_body_data_ptr == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL JEODPhysicalEntityData: " << name << THLA_ENDL;
       // Print message and terminate.
@@ -120,8 +118,7 @@ void JEODPhysicalEntity::initialize( jeod::DynBody *dyn_body_data_ptr )
 
 void JEODPhysicalEntity::pack()
 {
-   ostringstream errmsg;
-   int           iinc;
+   int iinc;
 
    // Check for initialization.
    if ( !initialized ) {
