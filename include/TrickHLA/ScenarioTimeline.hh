@@ -111,7 +111,7 @@ class ScenarioTimeline : public Timeline
    /*! @brief Compute a scenario time from and given HLA Logical Time (HLT).
     *  @return Scenario time in seconds.
     *  @param hlt Desired HLT in the base HLA Logical Time representation. */
-   virtual double time_from_HLT( Int64Time const hlt );
+   virtual double time_from_HLT( Int64Time const &hlt );
 
    // Accessor functions.
    /*! @brief Get the offset of the simulation time line from the scenario

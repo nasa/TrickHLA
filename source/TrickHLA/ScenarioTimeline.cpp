@@ -32,8 +32,8 @@ NASA, Johnson Space Center\n
 #include <cstdint>
 
 // Trick include files.
-
-// HLA include files.
+#include "trick/Executive.hh"
+#include "trick/exec_proto.h"
 
 // TrickHLA include files.
 #include "TrickHLA/Int64Time.hh"
@@ -69,7 +69,14 @@ ScenarioTimeline::~ScenarioTimeline()
 double ScenarioTimeline::compute_simulation_time(
    double const scenario_time )
 {
-   return ( scenario_time - ( epoch + sim_offset ) );
+   // The Trick simulation time resolution is dictated by the Trick tic value.
+   int const tic_value = exec_get_time_tic_value();
+
+   // Calculate simulation time in tics, which truncates to a fixed-point number.
+   long long const sim_time_tics = ( scenario_time - ( epoch + sim_offset ) ) * tic_value;
+
+   // Convert to a simulation time in seconds but with the resolution used by Trick.
+   return ( (double)sim_time_tics / tic_value );
 }
 
 double ScenarioTimeline::time_from_simulation_time(
@@ -86,7 +93,7 @@ Int64Time ScenarioTimeline::compute_HLT(
 }
 
 double ScenarioTimeline::time_from_HLT(
-   Int64Time const hlt )
+   Int64Time const &hlt )
 {
    return ( hlt.get_time_in_seconds() + hlt_offset.get_time_in_seconds() + epoch );
 }
