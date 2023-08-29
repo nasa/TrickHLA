@@ -69,6 +69,11 @@ class SimTimeline : public Timeline
     *  @return Returns the current timeline time in seconds. */
    virtual double get_time();
 
+   /*! Get the minimum time resolution which is the smallest nonzero
+    *  time for the given timeline.
+    *  @return Returns the minmum time resolution in seconds. */
+   virtual double const get_min_resolution();
+
    //
    // Additional function specific to this implementation.
    //

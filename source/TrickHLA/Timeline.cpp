@@ -22,12 +22,7 @@ NASA, Johnson Space Center\n
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, April 2016, --, Initial version.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
 @revs_end
-
 */
-
-// System include files.
-
-// Trick include files.
 
 // TrickHLA include files.
 #include "TrickHLA/Timeline.hh"

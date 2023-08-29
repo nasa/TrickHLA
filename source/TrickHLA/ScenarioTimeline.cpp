@@ -29,6 +29,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cfloat>
 #include <cstdint>
 
 // Trick include files.
@@ -66,17 +67,14 @@ ScenarioTimeline::~ScenarioTimeline()
    return;
 }
 
+/*! @brief Compute a simulation time from a given scenario time.
+ *  @return Simulation time in seconds.
+ *  @param scenario_time Desired scenario time in seconds. */
 double ScenarioTimeline::compute_simulation_time(
    double const scenario_time )
 {
-   // The Trick simulation time resolution is dictated by the Trick tic value.
-   int const tic_value = exec_get_time_tic_value();
-
-   // Calculate simulation time in tics, which truncates to a fixed-point number.
-   long long const sim_time_tics = ( scenario_time - ( epoch + sim_offset ) ) * tic_value;
-
-   // Convert to a simulation time in seconds but with the resolution used by Trick.
-   return ( (double)sim_time_tics / tic_value );
+   // Make sure to convert to a time on the sim-timeline for the minimum resolution.
+   return ( this->sim_timeline.convert( scenario_time - ( epoch + sim_offset ) ) );
 }
 
 double ScenarioTimeline::time_from_simulation_time(
@@ -98,7 +96,19 @@ double ScenarioTimeline::time_from_HLT(
    return ( hlt.get_time_in_seconds() + hlt_offset.get_time_in_seconds() + epoch );
 }
 
+/*!
+ * @details Get the current scenario time.
+ */
 double ScenarioTimeline::get_time()
 {
    return ( epoch + sim_offset + sim_timeline.get_time() );
+}
+
+/*!
+ * @details Get the minimum time resolution, which is the smallest time
+ * representation for this timeline.
+ */
+double const ScenarioTimeline::get_min_resolution()
+{
+   return ( DBL_MIN ); // Full double floating point resolution.
 }

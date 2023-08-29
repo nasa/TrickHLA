@@ -54,9 +54,21 @@ TimeOfDayTimeline::~TimeOfDayTimeline()
    return;
 }
 
+/*!
+ * @details Get the current time of day for this timeline.
+ */
 double TimeOfDayTimeline::get_time()
 {
    struct timespec ts;
    clock_gettime( CLOCK_REALTIME, &ts );
    return ( (double)ts.tv_sec + ( (double)ts.tv_nsec * 0.000000001 ) );
+}
+
+/*!
+ * @details Get the minimum time resolution, which is the smallest time
+ * representation for this timeline.
+ */
+double const TimeOfDayTimeline::get_min_resolution()
+{
+   return ( 0.000000001 );
 }

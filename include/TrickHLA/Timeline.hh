@@ -33,6 +33,9 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_TIMELINE_HH
 #define TRICKHLA_TIMELINE_HH
 
+// System include files.
+#include <cfloat>
+
 namespace TrickHLA
 {
 
@@ -66,8 +69,13 @@ class Timeline
     *  @return Returns the current timeline time in seconds. */
    virtual double get_time() = 0;
 
+   /*! @brief Get the minimum time resolution which is the smallest nonzero
+    *  time for the given timeline.
+    *  @return Returns the minmum time resolution in seconds. */
+   virtual double const get_min_resolution() = 0;
+
    //-----------------------------------------------------------------
-   // These are virtual function for class.
+   // These are virtual functions for the class.
    //-----------------------------------------------------------------
    /*! @brief Get the elapsed time for this timeline in seconds from epoch.
     *  @return Returns the elapsed time from epoch in seconds. */
@@ -88,6 +96,22 @@ class Timeline
    virtual double get_epoch()
    {
       return ( this->epoch );
+   }
+
+   /*! @brief Convert value to a time on the timeline with the minimum time resolution.
+    *  @return Returns the time in seconds on the timeline with the minimum resolution.
+    *  @param value The time value to convert. */
+   virtual double const convert( double const value )
+   {
+      double const min_resolution = get_min_resolution();
+      if ( min_resolution > DBL_MIN ) {
+         // Compute the time in tics, which truncates to a fixed-point number.
+         long long const time_tics = value / min_resolution;
+
+         // Convert to a time in seconds with the minimum time resolution.
+         return ( (double)time_tics * min_resolution );
+      }
+      return ( value );
    }
 
   protected:
