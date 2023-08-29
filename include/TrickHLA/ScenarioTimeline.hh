@@ -90,6 +90,11 @@ class ScenarioTimeline : public Timeline
     *  @return Current scenario time in seconds. */
    virtual double get_time();
 
+   /*! Get the minimum time resolution which is the smallest nonzero
+    *  time for the given timeline.
+    *  @return Returns the minmum time resolution in seconds. */
+   virtual double const get_min_resolution();
+
    //
    // Additional function specific to this implementation.
    //
@@ -111,7 +116,7 @@ class ScenarioTimeline : public Timeline
    /*! @brief Compute a scenario time from and given HLA Logical Time (HLT).
     *  @return Scenario time in seconds.
     *  @param hlt Desired HLT in the base HLA Logical Time representation. */
-   virtual double time_from_HLT( Int64Time const hlt );
+   virtual double time_from_HLT( Int64Time const &hlt );
 
    // Accessor functions.
    /*! @brief Get the offset of the simulation time line from the scenario
