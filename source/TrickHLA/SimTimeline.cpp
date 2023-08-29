@@ -51,7 +51,20 @@ SimTimeline::~SimTimeline()
    return;
 }
 
+/*!
+ * @details Get the current simulation time.
+ */
 double SimTimeline::get_time()
 {
    return exec_get_sim_time();
+}
+
+/*!
+ * @details Get the minimum time resolution, which is the smallest time
+ * representation for this timeline.
+ */
+double const SimTimeline::get_min_resolution()
+{
+   // Minimum time resolution for the Trick Simulation Environment.
+   return ( (double)1.0 / exec_get_time_tic_value() );
 }

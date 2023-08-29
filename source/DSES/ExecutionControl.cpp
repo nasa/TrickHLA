@@ -710,7 +710,6 @@ void ExecutionControl::set_next_execution_control_mode(
          // Set the ExecutionControl freeze times.
          this->scenario_freeze_time   = this->next_mode_scenario_time;
          this->simulation_freeze_time = this->scenario_timeline->compute_simulation_time( this->next_mode_scenario_time );
-
          break;
 
       case EXECUTION_CONTROL_SHUTDOWN:
