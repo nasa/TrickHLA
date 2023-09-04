@@ -148,7 +148,7 @@ void SpaceTimeCoordinateEncoder::encode()
              << " Warning: Encoded data size does not match buffer!"
              << "    Encoded size: " << encoded_data.size()
              << " but Expected size: " << get_capacity();
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    }
 
    return;

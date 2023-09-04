@@ -82,7 +82,7 @@ SinePacking::SinePacking()
 SinePacking::~SinePacking()
 {
    if ( buff != static_cast< unsigned char * >( NULL ) ) {
-      if ( TMM_is_alloced( (char *)buff ) ) {
+      if ( TMM_is_alloced( reinterpret_cast< char * >( buff ) ) ) {
          TMM_delete_var_a( buff );
       }
       buff      = NULL;
@@ -228,7 +228,7 @@ void SinePacking::pack()
       if ( attr != NULL ) {
 
          // Get the address of the "name" simulation data variable.
-         char *name_sim_var = (char *)attr->get_sim_variable_address();
+         char *name_sim_var = static_cast< char * >( attr->get_sim_variable_address() );
 
          // Make a little change to the name and show it.
          if ( name_sim_var != NULL ) {
@@ -350,7 +350,7 @@ void SinePacking::unpack()
       if ( attr != NULL ) {
 
          // Get the address of the "name" simulation data variable.
-         char *name_sim_var = (char *)attr->get_sim_variable_address();
+         char *name_sim_var = static_cast< char * >( attr->get_sim_variable_address() );
 
          // Display the name.
          if ( name_sim_var != NULL ) {

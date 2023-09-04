@@ -106,7 +106,7 @@ Attribute::Attribute()
 Attribute::~Attribute()
 {
    if ( buffer != NULL ) {
-      if ( TMM_is_alloced( (char *)buffer ) ) {
+      if ( TMM_is_alloced( reinterpret_cast< char * >( buffer ) ) ) {
          TMM_delete_var_a( buffer );
       }
       buffer          = NULL;
@@ -215,7 +215,7 @@ void Attribute::initialize(
                 << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                 << trick_name << "' has a 'config' value of CONFIG_TYPE_NONE."
                 << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
+         send_hs( stderr, errmsg.str().c_str() );
       }
    }
 
@@ -514,7 +514,7 @@ void Attribute::initialize(
              << "' has an unexpected size of zero bytes! Make sure your simulation"
              << " variable is properly initialized before the initialize()"
              << " function is called." << THLA_ENDL;
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       }
    }
 
@@ -546,9 +546,9 @@ void Attribute::initialize(
            || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( ref2->attr->num_index > 0 )
                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
-         msg << "  value:\"" << ( *(char **)ref2->address ) << "\"" << endl;
+         msg << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"" << endl;
       }
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 }
@@ -592,7 +592,7 @@ void Attribute::determine_cycle_ratio(
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
-      this->cycle_ratio = (int)round( this->cycle_time / core_job_cycle_time );
+      this->cycle_ratio = round( this->cycle_time / core_job_cycle_time );
 
       // Make sure we are ready to send the data on the first check.
       this->cycle_cnt = this->cycle_ratio;
@@ -623,7 +623,7 @@ void Attribute::determine_cycle_ratio(
              << "  core_job_cycle_time:" << core_job_cycle_time << " seconds" << endl
              << "  cyle_time:" << this->cycle_time << " seconds" << endl
              << "  cycle_ratio:" << this->cycle_ratio << THLA_ENDL;
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       }
    }
 }
@@ -666,7 +666,7 @@ void Attribute::extract_data(             // RETURN: -- None
                    << " using Lag Compensation one possible cause of this problem"
                    << " is that your lag compensation variables are not the correct"
                    << " size or type." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
+            send_hs( stderr, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here. DDexter
             return;
@@ -700,7 +700,7 @@ void Attribute::extract_data(             // RETURN: -- None
                    << " this problem is that your lag compensation variables are not"
                    << " the correct size or type." << THLA_ENDL;
 #if 1
-            send_hs( stderr, (char *)errmsg.str().c_str() );
+            send_hs( stderr, errmsg.str().c_str() );
 
             // For now just return if we have a data size mismatch. This will
             // allow us to continue to run even though the other federate is
@@ -765,7 +765,7 @@ void Attribute::extract_data(             // RETURN: -- None
                    << " defined in the FOM. If you are using Lag Compensation one"
                    << " possible cause of this problem is that your lag compensation"
                    << " variables are not the correct size or type." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
+            send_hs( stderr, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here. DDexter
             return;
@@ -796,7 +796,7 @@ void Attribute::extract_data(             // RETURN: -- None
                    << " you are using Lag Compensation one possible cause of this"
                    << " problem is that your lag compensation variables are not the"
                    << " correct size or type." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
+            send_hs( stderr, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here. DDexter
             return;
@@ -832,9 +832,9 @@ void Attribute::ensure_buffer_capacity(
    if ( capacity > buffer_capacity ) {
       buffer_capacity = capacity;
       if ( buffer == NULL ) {
-         buffer = (unsigned char *)TMM_declare_var_1d( "unsigned char", (int)buffer_capacity );
+         buffer = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", buffer_capacity ) );
       } else {
-         buffer = (unsigned char *)TMM_resize_array_1d_a( buffer, (int)buffer_capacity );
+         buffer = static_cast< unsigned char * >( TMM_resize_array_1d_a( buffer, buffer_capacity ) );
       }
    } else if ( buffer == NULL ) {
       // Handle the case where the buffer has not been created yet and we
@@ -842,7 +842,8 @@ void Attribute::ensure_buffer_capacity(
 
       // Make sure the capacity is at least 1.
       buffer_capacity = ( capacity > 0 ) ? capacity : 1;
-      buffer          = (unsigned char *)TMM_declare_var_1d( "unsigned char", (int)buffer_capacity );
+
+      buffer = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", buffer_capacity ) );
    }
 
    if ( buffer == NULL ) {
@@ -874,11 +875,11 @@ void Attribute::calculate_size_and_number_of_items()
             // variable, and the data can be binary and not just the printable
             // ASCII characters.
             for ( size_t i = 0; i < num_items; ++i ) {
-               char *s = *( (char **)ref2->address + i );
+               char *s = *( static_cast< char ** >( ref2->address ) + i );
                if ( s != NULL ) {
                   int length = get_size( s );
                   if ( length > 0 ) {
-                     num_bytes += (size_t)length;
+                     num_bytes += length;
                   }
                }
             }
@@ -890,7 +891,7 @@ void Attribute::calculate_size_and_number_of_items()
             // terminated with a null character and determine the number of
             // characters using strlen().
             for ( size_t i = 0; i < num_items; ++i ) {
-               char *s = *( (char **)ref2->address + i );
+               char *s = *( static_cast< char ** >( ref2->address ) + i );
                if ( s != NULL ) {
                   num_bytes += strlen( s );
                }
@@ -910,13 +911,13 @@ void Attribute::calculate_size_and_number_of_items()
          // NOTE: For now we assume 1-D array.
 
          // get_size returns the number of elements in the array.
-         int trick_size = get_size( *(char **)ref2->address ) * ref2->attr->size;
-         num_bytes      = ( trick_size >= 0 ) ? (size_t)trick_size : 0;
+         int trick_size = get_size( *static_cast< char ** >( ref2->address ) ) * ref2->attr->size;
+         num_bytes      = ( trick_size >= 0 ) ? trick_size : 0;
 
          // Since the users variable is a pointer, we need to recalculate
          // the number of items based on the item size.
          if ( ref2->attr->size > 0 ) {
-            this->num_items = num_bytes / (size_t)ref2->attr->size;
+            this->num_items = num_bytes / ref2->attr->size;
          } else {
             // Punt and set the number of items equal to the number of bytes.
             this->num_items = num_bytes;
@@ -930,7 +931,7 @@ void Attribute::calculate_size_and_number_of_items()
          // num_bytes = get_size_from_attributes( ref2->attr, ref2->attr->name );
 
          calculate_static_number_of_items();
-         num_bytes = num_items * (size_t)ref2->attr->size;
+         num_bytes = num_items * ref2->attr->size;
       }
    }
 
@@ -964,9 +965,9 @@ void Attribute::calculate_size_and_number_of_items()
            || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( ref2->attr->num_index > 0 )
                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
-         msg << "  value:\"" << ( *(char **)ref2->address ) << "\"" << endl;
+         msg << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"" << endl;
       }
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    return;
@@ -1015,7 +1016,7 @@ void Attribute::calculate_static_number_of_items()
    if ( ref2->attr->num_index > 0 ) {
       for ( unsigned int i = 0; i < ref2->attr->num_index; ++i ) {
          if ( ref2->attr->index[i].size > 0 ) {
-            length *= (size_t)ref2->attr->index[i].size;
+            length *= ref2->attr->index[i].size;
          }
       }
    }
@@ -1053,9 +1054,9 @@ void Attribute::pack_attribute_buffer()
            || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( ref2->attr->num_index > 0 )
                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
-         msg << "  value:\"" << ( *(char **)ref2->address ) << "\"" << endl;
+         msg << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"" << endl;
       }
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // Don't pack the buffer if the attribute is not locally owned. Otherwise this will
@@ -1067,7 +1068,7 @@ void Attribute::pack_attribute_buffer()
              << " FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
              << " trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
              << " Skipping pack because attribute is not locally owned!" << endl;
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       }
       return;
    }
@@ -1102,7 +1103,7 @@ void Attribute::pack_attribute_buffer()
                 << "================== ATTRIBUTE ENCODE ==================================" << endl
                 << " attribute '" << FOM_name << "' (trick name '" << trick_name
                 << "')" << endl;
-            send_hs( stdout, (char *)msg.str().c_str() );
+            send_hs( stdout, msg.str().c_str() );
             print_buffer();
          }
          break;
@@ -1123,7 +1124,7 @@ void Attribute::pack_attribute_buffer()
                 << "================== ATTRIBUTE ENCODE ==================================" << endl
                 << " attribute '" << FOM_name << "' (trick name '" << trick_name
                 << "')" << endl;
-            send_hs( stdout, (char *)msg.str().c_str() );
+            send_hs( stdout, msg.str().c_str() );
             print_buffer();
          }
          break;
@@ -1149,7 +1150,7 @@ void Attribute::pack_attribute_buffer()
                    << "================== ATTRIBUTE ENCODE ==================================" << endl
                    << " attribute '" << FOM_name << "' (trick name '" << trick_name
                    << "')" << endl;
-               send_hs( stdout, (char *)msg.str().c_str() );
+               send_hs( stdout, msg.str().c_str() );
                print_buffer();
             }
          } else {
@@ -1169,7 +1170,7 @@ void Attribute::pack_attribute_buffer()
 
                // Byteswap if needed and copy the attribute to the buffer.
                byteswap_buffer_copy( buffer,
-                                     *(char **)ref2->address,
+                                     *static_cast< char ** >( ref2->address ),
                                      ref2->attr->type,
                                      num_items,
                                      size );
@@ -1190,7 +1191,7 @@ void Attribute::pack_attribute_buffer()
                    << "================== ATTRIBUTE ENCODE ==================================" << endl
                    << " attribute '" << FOM_name << "' (trick name '" << trick_name
                    << "')" << endl;
-               send_hs( stdout, (char *)msg.str().c_str() );
+               send_hs( stdout, msg.str().c_str() );
                print_buffer();
             }
          }
@@ -1226,9 +1227,9 @@ void Attribute::pack_attribute_buffer()
            || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( ref2->attr->num_index > 0 )
                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
-         msg2 << "  value:\"" << ( *(char **)ref2->address ) << "\"" << endl;
+         msg2 << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"" << endl;
       }
-      send_hs( stdout, (char *)msg2.str().c_str() );
+      send_hs( stdout, msg2.str().c_str() );
    }
 }
 
@@ -1243,7 +1244,7 @@ void Attribute::unpack_attribute_buffer()
              << " FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
              << " trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
              << " Skipping unpack of attribute buffer because the attribute is locally owned." << endl;
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       }
       return;
    }
@@ -1274,7 +1275,7 @@ void Attribute::unpack_attribute_buffer()
                 << "================== ATTRIBUTE DECODE ==================================" << endl
                 << " attribute '" << FOM_name << "' (trick name '" << trick_name
                 << "')" << endl;
-            send_hs( stdout, (char *)msg.str().c_str() );
+            send_hs( stdout, msg.str().c_str() );
             print_buffer();
          }
          break;
@@ -1293,7 +1294,7 @@ void Attribute::unpack_attribute_buffer()
                 << "================== ATTRIBUTE DECODE =============================" << endl
                 << " attribute '" << FOM_name << "' (trick name '" << trick_name
                 << "')" << endl;
-            send_hs( stdout, (char *)msg.str().c_str() );
+            send_hs( stdout, msg.str().c_str() );
             print_buffer();
          }
          break;
@@ -1320,8 +1321,8 @@ void Attribute::unpack_attribute_buffer()
                msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << endl
                    << "================== ATTRIBUTE DECODE ==================================" << endl
                    << " attribute '" << FOM_name << "' (trick name '" << trick_name << "')"
-                   << " value:\"" << ( *(char **)ref2->address ) << "\"" << endl;
-               send_hs( stdout, (char *)msg.str().c_str() );
+                   << " value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"" << endl;
+               send_hs( stdout, msg.str().c_str() );
                print_buffer();
             }
 
@@ -1337,7 +1338,7 @@ void Attribute::unpack_attribute_buffer()
                // It's a pointer
 
                // Byteswap if needed and copy the buffer over to the attribute.
-               byteswap_buffer_copy( *(char **)ref2->address,
+               byteswap_buffer_copy( *static_cast< char ** >( ref2->address ),
                                      buffer,
                                      ref2->attr->type,
                                      num_items,
@@ -1358,7 +1359,7 @@ void Attribute::unpack_attribute_buffer()
                       << "================== ATTRIBUTE DECODE ==================================" << endl
                       << " attribute '" << FOM_name << "' (trick name '" << trick_name
                       << "')" << endl;
-                  send_hs( stdout, (char *)msg.str().c_str() );
+                  send_hs( stdout, msg.str().c_str() );
                   print_buffer();
                }
             }
@@ -1395,9 +1396,9 @@ void Attribute::unpack_attribute_buffer()
            || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( ref2->attr->num_index > 0 )
                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
-         msg << "  value:\"" << ( *(char **)ref2->address ) << "\"" << endl;
+         msg << "  value:\"" << ( *static_cast< char ** >( ref2->address ) ) << "\"" << endl;
       }
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 }
 
@@ -1408,11 +1409,11 @@ void Attribute::encode_boolean_to_buffer() // RETURN: -- None.
    // Determine if the users variable is a pointer.
    if ( ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) {
       // It's a pointer
-      bool_src = (bool *)( *(char **)ref2->address );
+      bool_src = reinterpret_cast< bool * >( *static_cast< char ** >( ref2->address ) );
 
    } else {
       // It's either a primitive type or a static array.
-      bool_src = (bool *)ref2->address;
+      bool_src = static_cast< bool * >( ref2->address );
    }
 
    // Encoded size is the number of (32 bit Big Endian) elements.
@@ -1436,10 +1437,10 @@ void Attribute::decode_boolean_from_buffer() const // RETURN: -- None.
    // Determine if the users variable is a pointer.
    if ( ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) {
       // It's a pointer
-      bool_dest = (bool *)( *(char **)ref2->address );
+      bool_dest = reinterpret_cast< bool * >( ( *static_cast< char ** >( ref2->address ) ) );
    } else {
       // It's either a primitive type or a static array.
-      bool_dest = (bool *)ref2->address;
+      bool_dest = static_cast< bool * >( ref2->address );
    }
 
    unsigned int const *int_src = reinterpret_cast< unsigned int * >( buffer );
@@ -1460,52 +1461,52 @@ void Attribute::encode_logical_time() const // RETURN: -- None.
 
    switch ( ref2->attr->type ) {
       case TRICK_DOUBLE: {
-         double const *d_src = reinterpret_cast< double * >( (void *)ref2->address );
+         double const *d_src = reinterpret_cast< double * >( ref2->address );
          logical_time        = Int64BaseTime::to_base_time( d_src[0] );
          break;
       }
       case TRICK_FLOAT: {
-         float const *f_src = reinterpret_cast< float * >( (void *)ref2->address );
+         float const *f_src = reinterpret_cast< float * >( ref2->address );
          logical_time       = Int64BaseTime::to_base_time( (double)f_src[0] );
          break;
       }
       case TRICK_SHORT: {
-         short const *s_src = (short *)ref2->address;
+         short const *s_src = static_cast< short * >( ref2->address );
          logical_time       = (int64_t)( Int64BaseTime::get_base_time_multiplier() * s_src[0] );
          break;
       }
       case TRICK_UNSIGNED_SHORT: {
-         unsigned short const *us_src = (unsigned short *)ref2->address;
+         unsigned short const *us_src = static_cast< unsigned short * >( ref2->address );
          logical_time                 = (int64_t)( Int64BaseTime::get_base_time_multiplier() * us_src[0] );
          break;
       }
       case TRICK_INTEGER: {
-         int const *i_src = (int *)ref2->address;
+         int const *i_src = static_cast< int * >( ref2->address );
          logical_time     = (int64_t)( Int64BaseTime::get_base_time_multiplier() * i_src[0] );
          break;
       }
       case TRICK_UNSIGNED_INTEGER: {
-         unsigned int const *ui_src = (unsigned int *)ref2->address;
+         unsigned int const *ui_src = static_cast< unsigned int * >( ref2->address );
          logical_time               = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ui_src[0] );
          break;
       }
       case TRICK_LONG: {
-         long const *l_src = (long *)ref2->address;
+         long const *l_src = static_cast< long * >( ref2->address );
          logical_time      = (int64_t)( Int64BaseTime::get_base_time_multiplier() * l_src[0] );
          break;
       }
       case TRICK_UNSIGNED_LONG: {
-         unsigned long const *ul_src = (unsigned long *)ref2->address;
+         unsigned long const *ul_src = static_cast< unsigned long * >( ref2->address );
          logical_time                = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ul_src[0] );
          break;
       }
       case TRICK_LONG_LONG: {
-         long long const *ll_src = (long long *)ref2->address;
+         long long const *ll_src = static_cast< long long * >( ref2->address );
          logical_time            = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ll_src[0] );
          break;
       }
       case TRICK_UNSIGNED_LONG_LONG: {
-         unsigned long long const *ull_src = (unsigned long long *)ref2->address;
+         unsigned long long const *ull_src = static_cast< unsigned long long * >( ref2->address );
          logical_time                      = (int64_t)( Int64BaseTime::get_base_time_multiplier() * ull_src[0] );
          break;
       }
@@ -1551,59 +1552,59 @@ void Attribute::decode_logical_time() // RETURN: -- None.
 
    switch ( ref2->attr->type ) {
       case TRICK_DOUBLE: {
-         double *d_dest = reinterpret_cast< double * >( (void *)ref2->address );
+         double *d_dest = reinterpret_cast< double * >( ref2->address );
          d_dest[0]      = Int64BaseTime::to_seconds( logical_time );
          break;
       }
       case TRICK_FLOAT: {
-         float *f_dest = reinterpret_cast< float * >( (void *)ref2->address );
+         float *f_dest = reinterpret_cast< float * >( ref2->address );
          f_dest[0]     = (float)Int64BaseTime::to_seconds( logical_time );
          break;
       }
       case TRICK_SHORT: {
-         short  *s_dest = (short *)ref2->address;
+         short  *s_dest = static_cast< short  *>( ref2->address );
          int64_t value  = logical_time / Int64BaseTime::get_base_time_multiplier();
          s_dest[0]      = ( value > SHRT_MAX ) ? SHRT_MAX : (short)value;
          break;
       }
       case TRICK_UNSIGNED_SHORT: {
-         unsigned short *us_dest = (unsigned short *)ref2->address;
+         unsigned short *us_dest = static_cast< unsigned short * >( ref2->address );
          int64_t         value   = logical_time / Int64BaseTime::get_base_time_multiplier();
          us_dest[0]              = ( value > USHRT_MAX ) ? USHRT_MAX : (unsigned short)value;
          break;
       }
       case TRICK_INTEGER: {
-         int    *i_dest = (int *)ref2->address;
+         int    *i_dest = static_cast< int    *>( ref2->address );
          int64_t value  = logical_time / Int64BaseTime::get_base_time_multiplier();
-         i_dest[0]      = ( value > INT_MAX ) ? INT_MAX : (int)value;
+         i_dest[0]      = ( value > INT_MAX ) ? INT_MAX : value;
          break;
       }
       case TRICK_UNSIGNED_INTEGER: {
-         unsigned int *ui_dest = (unsigned int *)ref2->address;
+         unsigned int *ui_dest = static_cast< unsigned int * >( ref2->address );
          int64_t       value   = logical_time / Int64BaseTime::get_base_time_multiplier();
          ui_dest[0]            = ( value > UINT_MAX ) ? UINT_MAX : (unsigned int)value;
          break;
       }
       case TRICK_LONG: {
-         long   *l_dest = (long *)ref2->address;
+         long   *l_dest = static_cast< long   *>( ref2->address );
          int64_t value  = logical_time / Int64BaseTime::get_base_time_multiplier();
          l_dest[0]      = ( value > LONG_MAX ) ? LONG_MAX : (long)value;
          break;
       }
       case TRICK_UNSIGNED_LONG: {
-         unsigned long *ul_dest = (unsigned long *)ref2->address;
+         unsigned long *ul_dest = static_cast< unsigned long * >( ref2->address );
          int64_t        value   = logical_time / Int64BaseTime::get_base_time_multiplier();
          ul_dest[0]             = ( value > (int64_t)ULONG_MAX ) ? ULONG_MAX : (unsigned long)value;
          break;
       }
       case TRICK_LONG_LONG: {
-         long long *ll_dest = (long long *)ref2->address;
+         long long *ll_dest = static_cast< long long * >( ref2->address );
          int64_t    value   = logical_time / Int64BaseTime::get_base_time_multiplier();
          ll_dest[0]         = ( value > Int64BaseTime::get_max_base_time() ) ? Int64BaseTime::get_max_base_time() : (long long)value;
          break;
       }
       case TRICK_UNSIGNED_LONG_LONG: {
-         unsigned long long *ull_dest = (unsigned long long *)ref2->address;
+         unsigned long long *ull_dest = static_cast< unsigned long long * >( ref2->address );
 
          int64_t value = logical_time / Int64BaseTime::get_base_time_multiplier();
 
@@ -1641,10 +1642,10 @@ void Attribute::encode_opaque_data_to_buffer() // RETURN: -- None.
       // Determine if the users variable is a pointer.
       if ( ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) {
          // It's a pointer
-         s = *( (char **)ref2->address );
+         s = *( static_cast< char ** >( ref2->address ) );
       } else {
          // It's either a primitive type or a static array.
-         s = (char *)ref2->address;
+         s = static_cast< char * >( ref2->address );
       }
 
       if ( s != NULL ) {
@@ -1661,7 +1662,7 @@ void Attribute::encode_opaque_data_to_buffer() // RETURN: -- None.
       // Encoded size is the number of elements (32 bit Big Endian)
       // followed by the data characters. Make sure we can hold the
       // encoded data.
-      ensure_buffer_capacity( 4 + (size_t)num_elements );
+      ensure_buffer_capacity( 4 + num_elements );
 
       // Now that the buffer has been possibly resized, cast it to
       // something a little easier to use.
@@ -1669,22 +1670,22 @@ void Attribute::encode_opaque_data_to_buffer() // RETURN: -- None.
 
       // Store the number of elements as an HLAinteger32BE (Big Endian).
       if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
-         *( output++ ) = *( ( (unsigned char *)&num_elements ) + 0 );
-         *( output++ ) = *( ( (unsigned char *)&num_elements ) + 1 );
-         *( output++ ) = *( ( (unsigned char *)&num_elements ) + 2 );
-         *( output++ ) = *( ( (unsigned char *)&num_elements ) + 3 );
+         *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_elements ) ) + 0 );
+         *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_elements ) ) + 1 );
+         *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_elements ) ) + 2 );
+         *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_elements ) ) + 3 );
       } else {
-         *( output++ ) = *( ( (unsigned char *)&num_elements ) + 3 );
-         *( output++ ) = *( ( (unsigned char *)&num_elements ) + 2 );
-         *( output++ ) = *( ( (unsigned char *)&num_elements ) + 1 );
-         *( output++ ) = *( ( (unsigned char *)&num_elements ) + 0 );
+         *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_elements ) ) + 3 );
+         *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_elements ) ) + 2 );
+         *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_elements ) ) + 1 );
+         *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_elements ) ) + 0 );
       }
       size_t byte_count = 4;
 
       // Copy the data to the output buffer.
       if ( ( s != NULL ) && ( num_elements > 0 ) ) {
-         memcpy( output, s, (size_t)num_elements );
-         byte_count += (size_t)num_elements;
+         memcpy( output, s, num_elements );
+         byte_count += num_elements;
       }
 
       // The amount of data in the buffer (i.e. size) is the encoded size.
@@ -1709,15 +1710,15 @@ void Attribute::decode_opaque_data_from_buffer() // RETURN: -- None.
 
       // Decode the number of elements which is an HLAinteger32BE (Big Endian).
       if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
-         *( ( (unsigned char *)&decoded_length ) + 0 ) = *( (unsigned char *)input++ );
-         *( ( (unsigned char *)&decoded_length ) + 1 ) = *( (unsigned char *)input++ );
-         *( ( (unsigned char *)&decoded_length ) + 2 ) = *( (unsigned char *)input++ );
-         *( ( (unsigned char *)&decoded_length ) + 3 ) = *( (unsigned char *)input++ );
+         *( ( reinterpret_cast< unsigned char * >( &decoded_length ) ) + 0 ) = *( static_cast< unsigned char * >( input++ ) );
+         *( ( reinterpret_cast< unsigned char * >( &decoded_length ) ) + 1 ) = *( static_cast< unsigned char * >( input++ ) );
+         *( ( reinterpret_cast< unsigned char * >( &decoded_length ) ) + 2 ) = *( static_cast< unsigned char * >( input++ ) );
+         *( ( reinterpret_cast< unsigned char * >( &decoded_length ) ) + 3 ) = *( static_cast< unsigned char * >( input++ ) );
       } else {
-         *( ( (unsigned char *)&decoded_length ) + 3 ) = *( (unsigned char *)input++ );
-         *( ( (unsigned char *)&decoded_length ) + 2 ) = *( (unsigned char *)input++ );
-         *( ( (unsigned char *)&decoded_length ) + 1 ) = *( (unsigned char *)input++ );
-         *( ( (unsigned char *)&decoded_length ) + 0 ) = *( (unsigned char *)input++ );
+         *( ( reinterpret_cast< unsigned char * >( &decoded_length ) ) + 3 ) = *( static_cast< unsigned char * >( input++ ) );
+         *( ( reinterpret_cast< unsigned char * >( &decoded_length ) ) + 2 ) = *( static_cast< unsigned char * >( input++ ) );
+         *( ( reinterpret_cast< unsigned char * >( &decoded_length ) ) + 1 ) = *( static_cast< unsigned char * >( input++ ) );
+         *( ( reinterpret_cast< unsigned char * >( &decoded_length ) ) + 0 ) = *( static_cast< unsigned char * >( input++ ) );
       }
 
       // Do a sanity check on the decoded length, it should not be negative.
@@ -1736,55 +1737,60 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will us
       } else {
          data_buff_size = 0;
       }
-      if ( (size_t)decoded_length > data_buff_size ) {
+      if ( decoded_length > data_buff_size ) {
          send_hs( stderr, "Attribute::decode_opaque_data_from_buffer():%d \
 WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d > data buffer \
 size %d, will use the data buffer size instead.%c",
                   __LINE__, FOM_name, decoded_length, data_buff_size, THLA_NEWLINE );
-         decoded_length = (int)data_buff_size;
+         decoded_length = data_buff_size;
       }
 
       // Determine if the users variable is a pointer.
       if ( ( ref2->attr->num_index > 0 ) && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) {
          // It's a pointer
-         output = *( (unsigned char **)ref2->address );
+         output = *( static_cast< unsigned char ** >( ref2->address ) );
 
          if ( output != NULL ) {
             // The output array size must exactly match the incoming data size for opaque data.
-            if ( decoded_length != get_size( (char *)output ) ) {
-               *( (char **)ref2->address ) = (char *)TMM_resize_array_1d_a( *( (char **)ref2->address ),
-                                                                            ( ( decoded_length > 0 ) ? decoded_length : 1 ) );
+            if ( decoded_length != get_size( output ) ) {
+               *( static_cast< char ** >( ref2->address ) ) =
+                  static_cast< char * >( TMM_resize_array_1d_a(
+                     *( static_cast< char ** >( ref2->address ) ),
+                     ( ( decoded_length > 0 ) ? decoded_length : 1 ) ) );
 
-               output = *( (unsigned char **)ref2->address );
+               output = *( static_cast< unsigned char ** >( ref2->address ) );
             }
          } else {
             // Allocate memory for the output array.
-            *( (char **)ref2->address ) = (char *)TMM_declare_var_1d( "char", ( ( decoded_length > 0 ) ? decoded_length : 1 ) );
+            *( static_cast< char ** >( ref2->address ) ) =
+               static_cast< char * >( TMM_declare_var_1d(
+                  "char", ( ( decoded_length > 0 ) ? decoded_length : 1 ) ) );
 
-            output = *( (unsigned char **)ref2->address );
+            output = *( static_cast< unsigned char ** >( ref2->address ) );
          }
       } else {
          // It's either a primitive type or a static array.
-         output = (unsigned char *)ref2->address;
+         output = static_cast< unsigned char * >( ref2->address );
 
          if ( output != NULL ) {
             // The output array size must exactly match the incoming data
             // size for opaque data.
-            if ( decoded_length != get_size( (char *)output ) ) {
+            if ( decoded_length != get_size( output ) ) {
                // WORKAROUND: Trick 10 can't handle a length of zero so to
                // workaround the memory manager problem use a size of 1 in
                // the allocation.
-               ref2->address = (char *)TMM_resize_array_1d_a( (char *)ref2->address,
-                                                              ( ( decoded_length > 0 ) ? decoded_length : 1 ) );
-               output        = (unsigned char *)ref2->address;
+               ref2->address = static_cast< char * >( TMM_resize_array_1d_a(
+                  static_cast< char * >( ref2->address ),
+                  ( ( decoded_length > 0 ) ? decoded_length : 1 ) ) );
+               output        = static_cast< unsigned char        *>( ref2->address );
             }
          } else {
             // Allocate memory for the output array.
             // WORKAROUND: Trick 10 can't handle a length of zero so to
             // workaround the memory manager problem use a size of 1 in
             // the allocation.
-            ref2->address = (char *)TMM_declare_var_1d( "char", ( ( decoded_length > 0 ) ? decoded_length : 1 ) );
-            output        = (unsigned char *)ref2->address;
+            ref2->address = static_cast< char * >( TMM_declare_var_1d( "char", ( ( decoded_length > 0 ) ? decoded_length : 1 ) ) );
+            output        = static_cast< unsigned char        *>( ref2->address );
          }
       }
 
@@ -1799,7 +1805,7 @@ size %d, will use the data buffer size instead.%c",
 
       // Copy the characters over.
       if ( decoded_length > 0 ) {
-         memcpy( output, input, (size_t)decoded_length );
+         memcpy( output, input, decoded_length );
       }
    }
 }
@@ -1817,7 +1823,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
          if ( num_items == 1 ) {
 
             // Get a reference to the users string that is easier to use.
-            s = *( (char **)ref2->address );
+            s = *( static_cast< char ** >( ref2->address ) );
 
             // Number of elements to be encoded (number of characters).
             num_elements = ( ( size > 0 ) && ( s != NULL ) ) ? size : 0;
@@ -1832,21 +1838,21 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             output = buffer;
 
             // The encoded size is an HLAinteger32BE.
-            int encoded_size = ( num_elements <= (size_t)std::numeric_limits< int >::max() )
-                                  ? (int)num_elements
+            int encoded_size = ( num_elements <= std::numeric_limits< int >::max() )
+                                  ? num_elements
                                   : std::numeric_limits< int >::max();
 
             // Store the number of elements as an HLAinteger32BE (Big Endian).
             if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 0 );
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 1 );
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 2 );
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 3 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 0 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 1 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 2 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 3 );
             } else {
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 3 );
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 2 );
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 1 );
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 0 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 3 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 2 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 1 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 0 );
             }
             size_t byte_count = 4;
 
@@ -1870,8 +1876,8 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
 
             // Number of HLAASCIIstring elements to be encoded in the
             // HLAvariableArray. The encoded size is an HLAinteger32BE.
-            int num_outer_elements = ( num_items <= (size_t)std::numeric_limits< int >::max() )
-                                        ? (int)num_items
+            int num_outer_elements = ( num_items <= std::numeric_limits< int >::max() )
+                                        ? num_items
                                         : std::numeric_limits< int >::max();
 
             // Encoded size is the number of outer elements (HLAuncodeString)
@@ -1894,15 +1900,15 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
 
             // Store the number of outer elements as an HLAinteger32BE (Big Endian).
             if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 0 );
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 1 );
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 2 );
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 3 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 0 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 1 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 2 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 3 );
             } else {
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 3 );
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 2 );
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 1 );
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 0 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 3 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 2 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 1 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 0 );
             }
             size_t byte_count = 4;
 
@@ -1911,26 +1917,26 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             // boundary to keep to the standard.
             for ( size_t i = 0; i < num_items; ++i ) {
 
-               s = *( (char **)ref2->address + i );
+               s = *( static_cast< char ** >( ref2->address ) + i );
 
                size_t length = ( s != NULL ) ? strlen( s ) : 0;
 
                // The encoded size is an HLAinteger32BE.
-               int encoded_size = ( length <= (size_t)std::numeric_limits< int >::max() )
-                                     ? (int)length
+               int encoded_size = ( length <= std::numeric_limits< int >::max() )
+                                     ? length
                                      : std::numeric_limits< int >::max();
 
                // Store the number of elements as an HLAinteger32BE (Big Endian).
                if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 0 );
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 1 );
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 2 );
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 3 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 0 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 1 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 2 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 3 );
                } else {
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 3 );
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 2 );
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 1 );
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 0 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 3 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 2 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 1 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 0 );
                }
                byte_count += 4;
 
@@ -1940,7 +1946,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
                      *( output++ ) = '\0';
                      *( output++ ) = (unsigned char)*( s++ );
                   }
-                  byte_count += (size_t)( 2 * length );
+                  byte_count += ( 2 * length );
                }
 
                // Separate the strings by a null UTF-16 character if padding
@@ -1965,7 +1971,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
          if ( num_items == 1 ) {
 
             // ASCII character encoding of the string.
-            s = *( (char **)ref2->address );
+            s = *( static_cast< char ** >( ref2->address ) );
 
             // Number of elements to be encoded (number of characters).
             num_elements = ( ( size > 0 ) && ( s != NULL ) ) ? size : 0;
@@ -1973,28 +1979,28 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             // Encoded size is the number of elements (32 bit Big Endian)
             // followed by the ASCII characters.
             // Make sure we can hold the encoded data.
-            ensure_buffer_capacity( 4 + (size_t)num_elements );
+            ensure_buffer_capacity( 4 + num_elements );
 
             // Now that the buffer has been possibly resized, cast it to
             // something a little easier to use.
             output = buffer;
 
             // The encoded size is an HLAinteger32BE.
-            int encoded_size = ( num_elements <= (size_t)std::numeric_limits< int >::max() )
-                                  ? (int)num_elements
+            int encoded_size = ( num_elements <= std::numeric_limits< int >::max() )
+                                  ? num_elements
                                   : std::numeric_limits< int >::max();
 
             // Store the number of elements as an HLAinteger32BE (Big Endian).
             if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 0 );
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 1 );
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 2 );
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 3 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 0 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 1 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 2 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 3 );
             } else {
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 3 );
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 2 );
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 1 );
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 0 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 3 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 2 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 1 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 0 );
             }
             size_t byte_count = 4;
 
@@ -2017,8 +2023,8 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
 
             // Number of HLAASCIIstring elements to be encoded in the
             // HLAvariableArray. The encoded size is an HLAinteger32BE.
-            int num_outer_elements = ( num_items <= (size_t)std::numeric_limits< int >::max() )
-                                        ? (int)num_items
+            int num_outer_elements = ( num_items <= std::numeric_limits< int >::max() )
+                                        ? num_items
                                         : std::numeric_limits< int >::max();
 
             // Encoded size is the number of outer elements (HLAASCIIstring)
@@ -2041,15 +2047,15 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
 
             // Store the number of outer elements as an HLAinteger32BE (Big Endian).
             if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 0 );
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 1 );
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 2 );
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 3 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 0 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 1 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 2 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 3 );
             } else {
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 3 );
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 2 );
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 1 );
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 0 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 3 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 2 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 1 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 0 );
             }
             size_t byte_count = 4;
 
@@ -2058,26 +2064,26 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             // boundary to keep to the standard.
             for ( size_t i = 0; i < num_items; ++i ) {
 
-               s = *( (char **)ref2->address + i );
+               s = *( static_cast< char ** >( ref2->address ) + i );
 
                size_t length = ( s != NULL ) ? strlen( s ) : 0;
 
                // The encoded size is an HLAinteger32BE.
-               int encoded_size = ( length <= (size_t)std::numeric_limits< int >::max() )
-                                     ? (int)length
+               int encoded_size = ( length <= std::numeric_limits< int >::max() )
+                                     ? length
                                      : std::numeric_limits< int >::max();
 
                // Store the number of elements as an HLAinteger32BE (Big Endian).
                if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 0 );
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 1 );
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 2 );
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 3 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 0 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 1 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 2 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 3 );
                } else {
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 3 );
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 2 );
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 1 );
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 0 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 3 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 2 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 1 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 0 );
                }
                byte_count += 4;
 
@@ -2112,12 +2118,12 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
 
          if ( num_items == 1 ) {
 
-            s = *( (char **)ref2->address );
+            s = *( static_cast< char ** >( ref2->address ) );
 
             if ( s != NULL ) {
                // Get the number of bytes allocated to this variable by Trick.
                int trick_size = get_size( s );
-               num_elements   = ( trick_size >= 0 ) ? (size_t)trick_size : 0;
+               num_elements   = ( trick_size >= 0 ) ? trick_size : 0;
             } else {
                num_elements = 0;
             }
@@ -2125,28 +2131,28 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             // Encoded size is the number of elements (32 bit Big Endian)
             // followed by the data characters. Make sure we can hold the
             // encoded data.
-            ensure_buffer_capacity( 4 + (size_t)num_elements );
+            ensure_buffer_capacity( 4 + num_elements );
 
             // Now that the buffer has been possibly resized, cast it to
             // something a little easier to use.
             output = buffer;
 
             // The encoded size is an HLAinteger32BE.
-            int encoded_size = ( num_elements <= (size_t)std::numeric_limits< int >::max() )
-                                  ? (int)num_elements
+            int encoded_size = ( num_elements <= std::numeric_limits< int >::max() )
+                                  ? num_elements
                                   : std::numeric_limits< int >::max();
 
             // Store the number of elements as an HLAinteger32BE (Big Endian).
             if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 0 );
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 1 );
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 2 );
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 3 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 0 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 1 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 2 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 3 );
             } else {
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 3 );
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 2 );
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 1 );
-               *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 0 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 3 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 2 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 1 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 0 );
             }
             size_t byte_count = 4;
 
@@ -2164,18 +2170,18 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
 
             // Number of HLAASCIIstring elements to be encoded in the
             // HLAvariableArray. The encoded size is an HLAinteger32BE.
-            int num_outer_elements = ( num_items <= (size_t)std::numeric_limits< int >::max() )
-                                        ? (int)num_items
+            int num_outer_elements = ( num_items <= std::numeric_limits< int >::max() )
+                                        ? num_items
                                         : std::numeric_limits< int >::max();
 
             // We need to determine the total number of bytes of data.
             num_elements = 0;
             for ( size_t i = 0; i < num_items; ++i ) {
-               s = *( (char **)ref2->address + i );
+               s = *( static_cast< char ** >( ref2->address ) + i );
                if ( s != NULL ) {
                   int trick_size = get_size( s );
                   if ( trick_size > 0 ) {
-                     num_elements += (size_t)trick_size;
+                     num_elements += trick_size;
                   }
                }
             }
@@ -2192,7 +2198,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             // 7 * num_items: 3 pad + 4 bytes for character count per element
             // encoded_size = 4 + (num_elements + num_items) + 7 * num_items
             // Make sure we can hold the encoded data.
-            ensure_buffer_capacity( 4 + (size_t)num_elements + 8 * num_items );
+            ensure_buffer_capacity( 4 + num_elements + 8 * num_items );
 
             // Now that the buffer has been possibly resized, cast it to
             // something a little easier to use.
@@ -2200,15 +2206,15 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
 
             // Store the number of outer elements as an HLAinteger32BE (Big Endian).
             if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 0 );
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 1 );
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 2 );
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 3 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 0 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 1 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 2 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 3 );
             } else {
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 3 );
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 2 );
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 1 );
-               *( output++ ) = *( ( (unsigned char *)&num_outer_elements ) + 0 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 3 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 2 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 1 );
+               *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &num_outer_elements ) ) + 0 );
             }
             size_t byte_count = 4;
 
@@ -2218,26 +2224,26 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             for ( size_t i = 0; i < num_items; ++i ) {
 
                // Determine the length of the "char *" for the given array index.
-               s                 = *( (char **)ref2->address + i );
+               s                 = *( static_cast< char                 **>( ref2->address ) + i );
                int    trick_size = ( s != NULL ) ? get_size( s ) : 0;
-               size_t length     = ( trick_size >= 0 ) ? (size_t)trick_size : 0;
+               size_t length     = ( trick_size >= 0 ) ? trick_size : 0;
 
                // The encoded size is an HLAinteger32BE.
-               int encoded_size = ( length <= (size_t)std::numeric_limits< int >::max() )
-                                     ? (int)length
+               int encoded_size = ( length <= std::numeric_limits< int >::max() )
+                                     ? length
                                      : std::numeric_limits< int >::max();
 
                // Store the number of elements as an HLAinteger32BE (Big Endian).
                if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 0 );
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 1 );
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 2 );
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 3 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 0 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 1 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 2 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 3 );
                } else {
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 3 );
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 2 );
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 1 );
-                  *( output++ ) = *( ( (unsigned char *)&encoded_size ) + 0 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 3 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 2 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 1 );
+                  *( output++ ) = *( ( reinterpret_cast< unsigned char * >( &encoded_size ) ) + 0 );
                }
                byte_count += 4;
 
@@ -2282,13 +2288,13 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
          // Send the data bytes as is.
          for ( size_t i = 0; i < num_items; ++i ) {
 
-            s = *( (char **)ref2->address + i );
+            s = *( static_cast< char ** >( ref2->address ) + i );
 
             if ( s != NULL ) {
                int length = get_size( s );
                if ( length > 0 ) {
-                  memcpy( output + byte_count, s, (size_t)length );
-                  byte_count += (size_t)length;
+                  memcpy( output + byte_count, s, length );
+                  byte_count += length;
                }
             }
          }
@@ -2327,7 +2333,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
          // Box-car encode the strings.
          for ( size_t i = 0; i < num_items; ++i ) {
 
-            s = *( (char **)ref2->address + i );
+            s = *( static_cast< char ** >( ref2->address ) + i );
 
             if ( s != NULL ) {
                // Include the null character as well.
@@ -2369,15 +2375,15 @@ void Attribute::decode_string_from_buffer() // RETURN: -- None.
             // Decode the number of elements which is an HLAinteger32BE (Big Endian).
             int decoded_count = 0;
             if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
-               *( ( (unsigned char *)&decoded_count ) + 0 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 1 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 2 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 3 ) = *( (unsigned char *)input++ );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 0 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 1 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 2 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 3 ) = *( static_cast< unsigned char * >( input++ ) );
             } else {
-               *( ( (unsigned char *)&decoded_count ) + 3 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 2 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 1 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 0 ) = *( (unsigned char *)input++ );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 3 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 2 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 1 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 0 ) = *( static_cast< unsigned char * >( input++ ) );
             }
 
             // Do a sanity check on the decoded length, it should not be negative.
@@ -2389,7 +2395,7 @@ WARNING: For ENCODING_UNICODE_STRING attribute '%s' (trick_name: '%s'), decoded 
                         decoded_count, THLA_NEWLINE );
                length = 0;
             } else {
-               length = (size_t)decoded_count;
+               length = decoded_count;
             }
 
             // If the users Trick simulation variable is static in size then we
@@ -2418,7 +2424,7 @@ size %d, will use the data buffer size instead.%c",
             }
 
             // UTF-16 character encoding of the string.
-            output = *( (unsigned char **)ref2->address );
+            output = *( static_cast< unsigned char ** >( ref2->address ) );
 
             if ( output != NULL ) {
 
@@ -2428,24 +2434,29 @@ size %d, will use the data buffer size instead.%c",
                // Determine if we need to allocate more memory for the sim string.
                // If it is larger than the existing string and larger than the
                // memory allocated for the string then reallocate more memory.
-               if ( (int)length >= get_size( (char *)output ) ) {
+               if ( length >= get_size( output ) ) {
 
                   // Make sure to make room for the terminating null character,
                   // and add a few more bytes to give us a little more space
                   // for next time.
-                  int array_size              = Utilities::next_positive_multiple_of_8( length );
-                  *( (char **)ref2->address ) = (char *)TMM_resize_array_1d_a( *( (char **)ref2->address ), array_size );
+                  int array_size = Utilities::next_positive_multiple_of_8( length );
 
-                  output = *( (unsigned char **)ref2->address );
+                  *( static_cast< char ** >( ref2->address ) ) =
+                     static_cast< char * >( TMM_resize_array_1d_a(
+                        *( static_cast< char ** >( ref2->address ) ), array_size ) );
+
+                  output = *( static_cast< unsigned char ** >( ref2->address ) );
                }
             } else {
                // Allocate memory for the sim string and include room for the
                // terminating null character and add a few more bytes to give
                // us a little more space for next time.
-               int array_size              = Utilities::next_positive_multiple_of_8( length );
-               *( (char **)ref2->address ) = (char *)TMM_declare_var_1d( "char", array_size );
+               int array_size = Utilities::next_positive_multiple_of_8( length );
 
-               output = *( (unsigned char **)ref2->address );
+               *( static_cast< char ** >( ref2->address ) ) =
+                  static_cast< char * >( TMM_declare_var_1d( "char", array_size ) );
+
+               output = *( static_cast< unsigned char ** >( ref2->address ) );
             }
 
             if ( output == NULL ) {
@@ -2473,15 +2484,15 @@ size %d, will use the data buffer size instead.%c",
             // Decode the number of elements which is an HLAinteger32BE (Big Endian).
             int decoded_count = 0;
             if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
-               *( ( (unsigned char *)&decoded_count ) + 0 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 1 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 2 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 3 ) = *( (unsigned char *)input++ );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 0 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 1 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 2 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 3 ) = *( static_cast< unsigned char * >( input++ ) );
             } else {
-               *( ( (unsigned char *)&decoded_count ) + 3 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 2 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 1 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 0 ) = *( (unsigned char *)input++ );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 3 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 2 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 1 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 0 ) = *( static_cast< unsigned char * >( input++ ) );
             }
 
             // Sanity check, we should not get a negative element count.
@@ -2491,12 +2502,12 @@ WARNING: For ENCODING_UNICODE_STRING attribute '%s', decoded element count %d < 
                         __LINE__, FOM_name, decoded_count, THLA_NEWLINE );
                num_elements = 0;
             } else {
-               num_elements = (size_t)decoded_count;
+               num_elements = decoded_count;
             }
 
             // Handle the situation where more strings are in the input encoding
             // than what exist in the ref-attributes.
-            if ( (size_t)num_elements > num_items ) {
+            if ( num_elements > num_items ) {
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for attribute '%s'!%c",
                         __LINE__, num_elements, num_items, FOM_name, THLA_NEWLINE );
@@ -2508,8 +2519,8 @@ WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for 
             // data_buff_size = (size - 4 - 4 * num_elements)/2
             size_t data_buff_size;
             if ( ref2->attr->type == TRICK_STRING ) {
-               if ( size > (size_t)( 4 * ( num_elements + 1 ) ) ) {
-                  data_buff_size = ( size - ( 4 * ( (size_t)num_elements + 1 ) ) ) / 2;
+               if ( size > ( 4 * ( num_elements + 1 ) ) ) {
+                  data_buff_size = ( size - ( 4 * ( num_elements + 1 ) ) ) / 2;
                } else {
                   data_buff_size = 0;
                }
@@ -2524,15 +2535,15 @@ WARNING: Truncating array of ENCODING_UNICODE_STRING from %d to %d elements for 
 
                // Decode the length of the string which is an HLAinteger32BE (Big Endian).
                if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
-                  *( ( (unsigned char *)&decoded_count ) + 0 ) = *( (unsigned char *)input++ );
-                  *( ( (unsigned char *)&decoded_count ) + 1 ) = *( (unsigned char *)input++ );
-                  *( ( (unsigned char *)&decoded_count ) + 2 ) = *( (unsigned char *)input++ );
-                  *( ( (unsigned char *)&decoded_count ) + 3 ) = *( (unsigned char *)input++ );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 0 ) = *( static_cast< unsigned char * >( input++ ) );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 1 ) = *( static_cast< unsigned char * >( input++ ) );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 2 ) = *( static_cast< unsigned char * >( input++ ) );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 3 ) = *( static_cast< unsigned char * >( input++ ) );
                } else {
-                  *( ( (unsigned char *)&decoded_count ) + 3 ) = *( (unsigned char *)input++ );
-                  *( ( (unsigned char *)&decoded_count ) + 2 ) = *( (unsigned char *)input++ );
-                  *( ( (unsigned char *)&decoded_count ) + 1 ) = *( (unsigned char *)input++ );
-                  *( ( (unsigned char *)&decoded_count ) + 0 ) = *( (unsigned char *)input++ );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 3 ) = *( static_cast< unsigned char * >( input++ ) );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 2 ) = *( static_cast< unsigned char * >( input++ ) );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 1 ) = *( static_cast< unsigned char * >( input++ ) );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 0 ) = *( static_cast< unsigned char * >( input++ ) );
                }
 
                // Do a sanity check on the decoded length, it should not be negative.
@@ -2544,7 +2555,7 @@ length %d < 0, will use 0 instead.%c",
                            __LINE__, i, FOM_name, decoded_count, THLA_NEWLINE );
                   length = 0;
                } else {
-                  length = (size_t)decoded_count;
+                  length = decoded_count;
                }
 
                // Do a sanity check on the decoded length as compared to how much
@@ -2566,31 +2577,36 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                }
 
                // UTF-16 character encoding of the string.
-               output = *( (unsigned char **)ref2->address + i );
+               output = *( static_cast< unsigned char ** >( ref2->address ) + i );
 
                if ( output != NULL ) {
 
                   // Determine if we need to allocate more memory for the sim string.
                   // If it is larger than the existing string and larger than the
                   // memory allocated for the string then reallocate more memory.
-                  if ( (int)length >= get_size( (char *)output ) ) {
+                  if ( length >= get_size( output ) ) {
 
                      // Make sure to make room for the terminating null character,
                      // and add a few more bytes to give us a little more space
                      // for next time.
-                     int array_size                  = Utilities::next_positive_multiple_of_8( length );
-                     *( (char **)ref2->address + i ) = (char *)TMM_resize_array_1d_a( *( (char **)ref2->address + i ), array_size );
+                     int array_size = Utilities::next_positive_multiple_of_8( length );
 
-                     output = *( (unsigned char **)ref2->address + i );
+                     *( static_cast< char ** >( ref2->address ) + i ) =
+                        static_cast< char * >( TMM_resize_array_1d_a(
+                           *( static_cast< char ** >( ref2->address ) + i ), array_size ) );
+
+                     output = *( static_cast< unsigned char ** >( ref2->address ) + i );
                   }
                } else {
                   // Allocate memory for the sim string and include room for the
                   // terminating null character and add a few more bytes to give
                   // us a little more space for next time.
-                  int array_size                  = Utilities::next_positive_multiple_of_8( length );
-                  *( (char **)ref2->address + i ) = (char *)TMM_declare_var_1d( "char", array_size );
+                  int array_size = Utilities::next_positive_multiple_of_8( length );
 
-                  output = *( (unsigned char **)ref2->address + i );
+                  *( static_cast< char ** >( ref2->address ) + i ) =
+                     static_cast< char * >( TMM_declare_var_1d( "char", array_size ) );
+
+                  output = *( static_cast< unsigned char ** >( ref2->address ) + i );
                }
 
                if ( output == NULL ) {
@@ -2642,15 +2658,15 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
             // Decode the number of elements which is an HLAinteger32BE (Big Endian).
             int decoded_count = 0;
             if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
-               *( ( (unsigned char *)&decoded_count ) + 0 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 1 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 2 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 3 ) = *( (unsigned char *)input++ );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 0 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 1 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 2 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 3 ) = *( static_cast< unsigned char * >( input++ ) );
             } else {
-               *( ( (unsigned char *)&decoded_count ) + 3 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 2 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 1 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 0 ) = *( (unsigned char *)input++ );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 3 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 2 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 1 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 0 ) = *( static_cast< unsigned char * >( input++ ) );
             }
 
             // Do a sanity check on the decoded length, it should not be negative.
@@ -2661,7 +2677,7 @@ WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded length %d < 0, will u
                         __LINE__, FOM_name, decoded_count, THLA_NEWLINE );
                length = 0;
             } else {
-               length = (size_t)decoded_count;
+               length = decoded_count;
             }
 
             // Do a sanity check on the decoded length as compared to how much
@@ -2677,37 +2693,41 @@ WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded length %d < 0, will u
                send_hs( stderr, "Attribute::decode_string_from_buffer():%d \
 WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded length %d > data buffer size \
 %d, will use the data buffer size instead.%c",
-                        __LINE__, FOM_name, length,
-                        data_buff_size, THLA_NEWLINE );
+                        __LINE__, FOM_name, length, data_buff_size, THLA_NEWLINE );
                length = data_buff_size;
             }
 
             // ASCII character encoding of the string.
-            output = *( (unsigned char **)ref2->address );
+            output = *( static_cast< unsigned char ** >( ref2->address ) );
 
             if ( output != NULL ) {
 
                // Determine if we need to allocate more memory for the sim string.
                // If it is larger than the existing string and larger than the
                // memory allocated for the string then reallocate more memory.
-               if ( (int)length >= get_size( (char *)output ) ) {
+               if ( length >= get_size( output ) ) {
 
                   // Make sure to make room for the terminating null character,
                   // and add a few more bytes to give us a little more space
                   // for next time.
-                  int array_size              = Utilities::next_positive_multiple_of_8( length );
-                  *( (char **)ref2->address ) = (char *)TMM_resize_array_1d_a( *( (char **)ref2->address ), array_size );
+                  int array_size = Utilities::next_positive_multiple_of_8( length );
 
-                  output = *( (unsigned char **)ref2->address );
+                  *( static_cast< char ** >( ref2->address ) ) =
+                     static_cast< char * >( TMM_resize_array_1d_a(
+                        *( static_cast< char ** >( ref2->address ) ), array_size ) );
+
+                  output = *( static_cast< unsigned char ** >( ref2->address ) );
                }
             } else {
                // Allocate memory for the sim string and include room for the
                // terminating null character and add a few more bytes to give
                // us a little more space for next time.
-               int array_size              = Utilities::next_positive_multiple_of_8( length );
-               *( (char **)ref2->address ) = (char *)TMM_declare_var_1d( "char", array_size );
+               int array_size = Utilities::next_positive_multiple_of_8( length );
 
-               output = *( (unsigned char **)ref2->address );
+               *( static_cast< char ** >( ref2->address ) ) =
+                  static_cast< char * >( TMM_declare_var_1d( "char", array_size ) );
+
+               output = *( static_cast< unsigned char ** >( ref2->address ) );
             }
 
             if ( output == NULL ) {
@@ -2722,7 +2742,7 @@ WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded length %d > data buff
 
                // Copy the ASCII characters over.
                if ( length > 0 ) {
-                  memcpy( output, input, (size_t)length );
+                  memcpy( output, input, length );
                }
 
                // Add the terminating null character '\0';
@@ -2734,15 +2754,15 @@ WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded length %d > data buff
             // Decode the number of elements which is an HLAinteger32BE (Big Endian).
             int decoded_count = 0;
             if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
-               *( ( (unsigned char *)&decoded_count ) + 0 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 1 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 2 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 3 ) = *( (unsigned char *)input++ );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 0 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 1 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 2 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 3 ) = *( static_cast< unsigned char * >( input++ ) );
             } else {
-               *( ( (unsigned char *)&decoded_count ) + 3 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 2 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 1 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 0 ) = *( (unsigned char *)input++ );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 3 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 2 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 1 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 0 ) = *( static_cast< unsigned char * >( input++ ) );
             }
 
             // Sanity check, we should not get a negative element count.
@@ -2752,7 +2772,7 @@ WARNING: For ENCODING_ASCII_STRING attribute '%s', decoded element count %d < 0,
                         __LINE__, FOM_name, decoded_count, THLA_NEWLINE );
                num_elements = 0;
             } else {
-               num_elements = (size_t)decoded_count;
+               num_elements = decoded_count;
             }
 
             // Handle the situation where more strings are in the input encoding
@@ -2768,7 +2788,7 @@ WARNING: Truncating array of ENCODING_ASCII_STRING from %d to %d elements for at
             // data_buff_size = size - 4 - 4 * num_elements
             size_t data_buff_size;
             if ( size > ( 4 * ( num_elements + 1 ) ) ) {
-               data_buff_size = size - ( 4 * ( (size_t)num_elements + 1 ) );
+               data_buff_size = size - ( 4 * ( num_elements + 1 ) );
             } else {
                data_buff_size = 0;
             }
@@ -2778,15 +2798,15 @@ WARNING: Truncating array of ENCODING_ASCII_STRING from %d to %d elements for at
 
                // Decode the length of the string which is an HLAinteger32BE (Big Endian).
                if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
-                  *( ( (unsigned char *)&decoded_count ) + 0 ) = *( (unsigned char *)input++ );
-                  *( ( (unsigned char *)&decoded_count ) + 1 ) = *( (unsigned char *)input++ );
-                  *( ( (unsigned char *)&decoded_count ) + 2 ) = *( (unsigned char *)input++ );
-                  *( ( (unsigned char *)&decoded_count ) + 3 ) = *( (unsigned char *)input++ );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 0 ) = *( static_cast< unsigned char * >( input++ ) );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 1 ) = *( static_cast< unsigned char * >( input++ ) );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 2 ) = *( static_cast< unsigned char * >( input++ ) );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 3 ) = *( static_cast< unsigned char * >( input++ ) );
                } else {
-                  *( ( (unsigned char *)&decoded_count ) + 3 ) = *( (unsigned char *)input++ );
-                  *( ( (unsigned char *)&decoded_count ) + 2 ) = *( (unsigned char *)input++ );
-                  *( ( (unsigned char *)&decoded_count ) + 1 ) = *( (unsigned char *)input++ );
-                  *( ( (unsigned char *)&decoded_count ) + 0 ) = *( (unsigned char *)input++ );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 3 ) = *( static_cast< unsigned char * >( input++ ) );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 2 ) = *( static_cast< unsigned char * >( input++ ) );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 1 ) = *( static_cast< unsigned char * >( input++ ) );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 0 ) = *( static_cast< unsigned char * >( input++ ) );
                }
 
                // Do a sanity check on the decoded length, it should not be negative.
@@ -2798,7 +2818,7 @@ length %d < 0, will use 0 instead.%c",
                            __LINE__, i, FOM_name, decoded_count, THLA_NEWLINE );
                   length = 0;
                } else {
-                  length = (size_t)decoded_count;
+                  length = decoded_count;
                }
 
                // Do a sanity check on the decoded length as compared to how much
@@ -2818,31 +2838,36 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                }
 
                // ASCII character encoding of the string.
-               output = *( (unsigned char **)ref2->address + i );
+               output = *( static_cast< unsigned char ** >( ref2->address ) + i );
 
                if ( output != NULL ) {
 
                   // Determine if we need to allocate more memory for the sim string.
                   // If it is larger than the existing string and larger than the
                   // memory allocated for the string then reallocate more memory.
-                  if ( (int)length >= get_size( (char *)output ) ) {
+                  if ( length >= get_size( output ) ) {
 
                      // Make sure to make room for the terminating null character,
                      // and add a few more bytes to give us a little more space
                      // for next time.
-                     int array_size                  = Utilities::next_positive_multiple_of_8( length );
-                     *( (char **)ref2->address + i ) = (char *)TMM_resize_array_1d_a( *( (char **)ref2->address + i ), array_size );
+                     int array_size = Utilities::next_positive_multiple_of_8( length );
 
-                     output = *( (unsigned char **)ref2->address + i );
+                     *( static_cast< char ** >( ref2->address ) + i ) =
+                        static_cast< char * >( TMM_resize_array_1d_a(
+                           *( static_cast< char ** >( ref2->address ) + i ), array_size ) );
+
+                     output = *( static_cast< unsigned char ** >( ref2->address ) + i );
                   }
                } else {
                   // Allocate memory for the sim string and include room for the
                   // terminating null character and add a few more bytes to give
                   // us a little more space for next time.
-                  int array_size                  = Utilities::next_positive_multiple_of_8( length );
-                  *( (char **)ref2->address + i ) = (char *)TMM_declare_var_1d( "char", array_size );
+                  int array_size = Utilities::next_positive_multiple_of_8( length );
 
-                  output = *( (unsigned char **)ref2->address + i );
+                  *( static_cast< char ** >( ref2->address ) + i ) =
+                     static_cast< char * >( TMM_declare_var_1d( "char", array_size ) );
+
+                  output = *( static_cast< unsigned char ** >( ref2->address ) + i );
                }
 
                if ( output == NULL ) {
@@ -2868,11 +2893,11 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
 
                // Skip the padding which was added to keep the data on a 4 byte
                // boundary. The last element gets no padding.
-               if ( ( i < ( num_items - 1 ) ) && ( ( ( 4 + (size_t)length ) % 4 ) != 0 ) ) {
+               if ( ( i < ( num_items - 1 ) ) && ( ( ( 4 + length ) % 4 ) != 0 ) ) {
                   input += ( 4 - ( ( 4 + length ) % 4 ) );
 
                   // Adjust the amount of data left in the buffer.
-                  if ( data_buff_size > ( 4 - ( ( 4 + (size_t)length ) % 4 ) ) ) {
+                  if ( data_buff_size > ( 4 - ( ( 4 + length ) % 4 ) ) ) {
                      data_buff_size -= ( 4 - ( ( 4 + length ) % 4 ) );
                   } else {
                      data_buff_size = 0;
@@ -2894,15 +2919,15 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
             // Decode the number of elements which is an HLAinteger32BE (Big Endian).
             int decoded_count = 0;
             if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
-               *( ( (unsigned char *)&decoded_count ) + 0 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 1 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 2 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 3 ) = *( (unsigned char *)input++ );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 0 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 1 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 2 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 3 ) = *( static_cast< unsigned char * >( input++ ) );
             } else {
-               *( ( (unsigned char *)&decoded_count ) + 3 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 2 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 1 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 0 ) = *( (unsigned char *)input++ );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 3 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 2 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 1 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 0 ) = *( static_cast< unsigned char * >( input++ ) );
             }
 
             // Do a sanity check on the decoded length, it should not be negative.
@@ -2913,7 +2938,7 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d < 0, will us
                         __LINE__, FOM_name, decoded_count, THLA_NEWLINE );
                length = 0;
             } else {
-               length = (size_t)decoded_count;
+               length = decoded_count;
             }
 
             // Do a sanity check on the decoded length as compared to how much
@@ -2933,28 +2958,30 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d > data buffe
             }
 
             // Get a pointer to the output.
-            output = *( (unsigned char **)ref2->address );
+            output = *( static_cast< unsigned char ** >( ref2->address ) );
 
             if ( output != NULL ) {
                // The output array size must exactly match the incoming data
                // size for opaque data.
-               if ( (int)length != get_size( (char *)output ) ) {
+               if ( length != get_size( output ) ) {
                   // WORKAROUND: Trick 10 can't handle a length of zero so to
                   // workaround the memory manager problem use a size of 1 in
                   // the allocation.
-                  *( (char **)ref2->address ) = (char *)TMM_resize_array_1d_a( *( (char **)ref2->address ),
-                                                                               (int)( ( length > 0 ) ? length : 1 ) );
+                  *( static_cast< char ** >( ref2->address ) ) =
+                     static_cast< char * >( TMM_resize_array_1d_a( *( static_cast< char ** >( ref2->address ) ),
+                                                                   ( ( length > 0 ) ? length : 1 ) ) );
 
-                  output = *( (unsigned char **)ref2->address );
+                  output = *( static_cast< unsigned char ** >( ref2->address ) );
                }
             } else {
                // Allocate memory for the output array.
                // WORKAROUND: Trick 10 can't handle a length of zero so to
                // workaround the memory manager problem use a size of 1 in
                // the allocation.
-               *( (char **)ref2->address ) = (char *)TMM_declare_var_1d( "char", (int)( ( length > 0 ) ? length : 1 ) );
+               *( static_cast< char ** >( ref2->address ) ) =
+                  static_cast< char * >( TMM_declare_var_1d( "char", ( ( length > 0 ) ? length : 1 ) ) );
 
-               output = *( (unsigned char **)ref2->address );
+               output = *( static_cast< unsigned char ** >( ref2->address ) );
             }
 
             if ( output == NULL ) {
@@ -2977,15 +3004,15 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded length %d > data buffe
             // Decode the number of elements which is an HLAinteger32BE (Big Endian).
             int decoded_count = 0;
             if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
-               *( ( (unsigned char *)&decoded_count ) + 0 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 1 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 2 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 3 ) = *( (unsigned char *)input++ );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 0 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 1 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 2 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 3 ) = *( static_cast< unsigned char * >( input++ ) );
             } else {
-               *( ( (unsigned char *)&decoded_count ) + 3 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 2 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 1 ) = *( (unsigned char *)input++ );
-               *( ( (unsigned char *)&decoded_count ) + 0 ) = *( (unsigned char *)input++ );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 3 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 2 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 1 ) = *( static_cast< unsigned char * >( input++ ) );
+               *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 0 ) = *( static_cast< unsigned char * >( input++ ) );
             }
 
             // Sanity check, we should not get a negative element count.
@@ -2995,7 +3022,7 @@ WARNING: For ENCODING_OPAQUE_DATA attribute '%s', decoded element count %d < 0, 
                         __LINE__, FOM_name, decoded_count, THLA_NEWLINE );
                num_elements = 0;
             } else {
-               num_elements = (size_t)decoded_count;
+               num_elements = decoded_count;
             }
 
             // Handle the situation where more strings are in the input encoding
@@ -3011,7 +3038,7 @@ WARNING: Truncating array of ENCODING_OPAQUE_DATA from %d to %d elements for att
             // data_buff_size = size - 4 - 4 * num_elements
             size_t data_buff_size;
             if ( size > ( 4 * ( num_elements + 1 ) ) ) {
-               data_buff_size = size - ( 4 * ( (size_t)num_elements + 1 ) );
+               data_buff_size = size - ( 4 * ( num_elements + 1 ) );
             } else {
                data_buff_size = 0;
             }
@@ -3021,15 +3048,15 @@ WARNING: Truncating array of ENCODING_OPAQUE_DATA from %d to %d elements for att
 
                // Decode the length of the string which is an HLAinteger32BE (Big Endian).
                if ( Utilities::get_endianness() == TRICK_BIG_ENDIAN ) {
-                  *( ( (unsigned char *)&decoded_count ) + 0 ) = *( (unsigned char *)input++ );
-                  *( ( (unsigned char *)&decoded_count ) + 1 ) = *( (unsigned char *)input++ );
-                  *( ( (unsigned char *)&decoded_count ) + 2 ) = *( (unsigned char *)input++ );
-                  *( ( (unsigned char *)&decoded_count ) + 3 ) = *( (unsigned char *)input++ );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 0 ) = *( static_cast< unsigned char * >( input++ ) );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 1 ) = *( static_cast< unsigned char * >( input++ ) );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 2 ) = *( static_cast< unsigned char * >( input++ ) );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 3 ) = *( static_cast< unsigned char * >( input++ ) );
                } else {
-                  *( ( (unsigned char *)&decoded_count ) + 3 ) = *( (unsigned char *)input++ );
-                  *( ( (unsigned char *)&decoded_count ) + 2 ) = *( (unsigned char *)input++ );
-                  *( ( (unsigned char *)&decoded_count ) + 1 ) = *( (unsigned char *)input++ );
-                  *( ( (unsigned char *)&decoded_count ) + 0 ) = *( (unsigned char *)input++ );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 3 ) = *( static_cast< unsigned char * >( input++ ) );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 2 ) = *( static_cast< unsigned char * >( input++ ) );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 1 ) = *( static_cast< unsigned char * >( input++ ) );
+                  *( ( reinterpret_cast< unsigned char * >( &decoded_count ) ) + 0 ) = *( static_cast< unsigned char * >( input++ ) );
                }
 
                // Do a sanity check on the decoded length, it should not be negative.
@@ -3041,7 +3068,7 @@ length %d < 0, will use 0 instead.%c",
                            __LINE__, i, FOM_name, decoded_count, THLA_NEWLINE );
                   length = 0;
                } else {
-                  length = (size_t)decoded_count;
+                  length = decoded_count;
                }
 
                // Do a sanity check on the decoded length as compared to how much
@@ -3062,28 +3089,31 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                }
 
                // 8-bit characters
-               output = *( (unsigned char **)ref2->address + i );
+               output = *( static_cast< unsigned char ** >( ref2->address ) + i );
 
                if ( output != NULL ) {
                   // The output array size must exactly match the incoming data
                   // size for opaque data.
-                  if ( (int)length != get_size( (char *)output ) ) {
+                  if ( length != get_size( output ) ) {
                      // WORKAROUND: Trick 10 can't handle a length of zero so to
                      // workaround the memory manager problem use a size of 1 in
                      // the allocation.
-                     *( (char **)ref2->address + i ) = (char *)TMM_resize_array_1d_a( *( (char **)ref2->address + i ),
-                                                                                      (int)( ( length > 0 ) ? length : 1 ) );
+                     *( static_cast< char ** >( ref2->address ) + i ) =
+                        static_cast< char * >( TMM_resize_array_1d_a(
+                           *( static_cast< char ** >( ref2->address ) + i ),
+                           ( ( length > 0 ) ? length : 1 ) ) );
 
-                     output = *( (unsigned char **)ref2->address + i );
+                     output = *( static_cast< unsigned char ** >( ref2->address ) + i );
                   }
                } else {
                   // Allocate memory for the output array.
                   // WORKAROUND: Trick 10 can't handle a length of zero so to
                   // workaround the memory manager problem use a size of 1 in
                   // the allocation.
-                  *( (char **)ref2->address + i ) = (char *)TMM_declare_var_1d( "char", (int)( ( length > 0 ) ? length : 1 ) );
+                  *( static_cast< char ** >( ref2->address ) + i ) = static_cast< char * >(
+                     TMM_declare_var_1d( "char", ( ( length > 0 ) ? length : 1 ) ) );
 
-                  output = *( (unsigned char **)ref2->address + i );
+                  output = *( static_cast< unsigned char ** >( ref2->address ) + i );
                }
 
                if ( output == NULL ) {
@@ -3107,7 +3137,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                   input += ( 4 - ( ( 4 + length ) % 4 ) );
 
                   // Adjust the amount of data left in the buffer.
-                  if ( data_buff_size > ( 4 - ( ( 4 + (size_t)length ) % 4 ) ) ) {
+                  if ( data_buff_size > ( 4 - ( ( 4 + length ) % 4 ) ) ) {
                      data_buff_size -= ( 4 - ( ( 4 + length ) % 4 ) );
                   } else {
                      data_buff_size = 0;
@@ -3123,7 +3153,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
          input = buffer;
 
          // Get a pointer to the output.
-         output = *( (unsigned char **)ref2->address );
+         output = *( static_cast< unsigned char ** >( ref2->address ) );
 
          if ( output == NULL ) {
             ostringstream errmsg;
@@ -3135,13 +3165,13 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
 
          // The existing output "char *" variable size must exactly match the
          // incoming data size for no-encoding of the data.
-         if ( (int)size != get_size( (char *)output ) ) {
+         if ( size != get_size( output ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
                    << " ERROR: For ENCODING_NO_ENCODING, Attribute '" << FOM_name
                    << "' with Trick name '" << trick_name << "', received data"
                    << " size (" << size << ") != Trick simulation variable size ("
-                   << get_size( (char *)output ) << ")!" << THLA_ENDL;
+                   << get_size( output ) << ")!" << THLA_ENDL;
             DebugHandler::terminate_with_message( errmsg.str() );
          }
 
@@ -3168,25 +3198,28 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
 
             int length = ( end_index - start_index ) + 1;
 
-            output = *( (unsigned char **)ref2->address + i );
+            output = *( static_cast< unsigned char ** >( ref2->address ) + i );
 
             if ( output != NULL ) {
 
                // Determine if we need to allocate more memory for the sim string.
                // TODO: Find a more efficient way to determine if we need to
                // reallocate memory for the string.
-               if ( length >= get_size( (char *)output ) ) {
-                  int array_size                  = Utilities::next_positive_multiple_of_8( length );
-                  *( (char **)ref2->address + i ) = (char *)TMM_resize_array_1d_a( *( (char **)ref2->address + i ), array_size );
+               if ( length >= get_size( output ) ) {
+                  int array_size = Utilities::next_positive_multiple_of_8( length );
 
-                  output = *( (unsigned char **)ref2->address + i );
+                  *( static_cast< char ** >( ref2->address ) + i ) = static_cast< char * >( TMM_resize_array_1d_a(
+                     *( static_cast< char ** >( ref2->address ) + i ), array_size ) );
+
+                  output = *( static_cast< unsigned char ** >( ref2->address ) + i );
                }
             } else {
                // Allocate memory for the sim string.
-               int array_size                  = Utilities::next_positive_multiple_of_8( length );
-               *( (char **)ref2->address + i ) = (char *)TMM_declare_var_1d( "char", array_size );
+               int array_size = Utilities::next_positive_multiple_of_8( length );
 
-               output = *( (unsigned char **)ref2->address + i );
+               *( static_cast< char ** >( ref2->address ) + i ) = static_cast< char * >( TMM_declare_var_1d( "char", array_size ) );
+
+               output = *( static_cast< unsigned char ** >( ref2->address ) + i );
             }
 
             if ( output == NULL ) {
@@ -3199,7 +3232,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                DebugHandler::terminate_with_message( errmsg.str() );
             } else {
 
-               memcpy( output, ( input + start_index ), (size_t)length );
+               memcpy( output, ( input + start_index ), length );
 
                // Move to the next encoded string in the input.
                end_index++;
@@ -3231,7 +3264,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
              << trick_name << "' has an unexpected size of zero bytes! Make"
              << " sure your simulation variable is properly initialized before"
              << " this initialize() function is called." << endl;
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       }
       return;
    }
@@ -3280,8 +3313,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_SHORT: {
-            short const *s_src  = (short *)src;
-            short       *s_dest = (short *)dest;
+            short const *s_src  = static_cast< short const  *>( src );
+            short       *s_dest = static_cast< short       *>( dest );
             if ( length == 1 ) {
                s_dest[0] = Utilities::byteswap_short( s_src[0] );
             } else {
@@ -3292,8 +3325,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_UNSIGNED_SHORT: {
-            unsigned short const *us_src  = (unsigned short *)src;
-            unsigned short       *us_dest = (unsigned short *)dest;
+            unsigned short const *us_src  = static_cast< unsigned short const  *>( src );
+            unsigned short       *us_dest = static_cast< unsigned short       *>( dest );
             if ( length == 1 ) {
                us_dest[0] = Utilities::byteswap_unsigned_short( us_src[0] );
             } else {
@@ -3304,8 +3337,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_INTEGER: {
-            int const *i_src  = (int *)src;
-            int       *i_dest = (int *)dest;
+            int const *i_src  = static_cast< int const  *>( src );
+            int       *i_dest = static_cast< int       *>( dest );
             if ( length == 1 ) {
                i_dest[0] = Utilities::byteswap_int( i_src[0] );
             } else {
@@ -3316,8 +3349,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_UNSIGNED_INTEGER: {
-            unsigned int const *ui_src  = (unsigned int *)src;
-            unsigned int       *ui_dest = (unsigned int *)dest;
+            unsigned int const *ui_src  = static_cast< unsigned int const  *>( src );
+            unsigned int       *ui_dest = static_cast< unsigned int       *>( dest );
             if ( length == 1 ) {
                ui_dest[0] = Utilities::byteswap_unsigned_int( ui_src[0] );
             } else {
@@ -3328,8 +3361,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_LONG: {
-            long const *l_src  = (long *)src;
-            long       *l_dest = (long *)dest;
+            long const *l_src  = static_cast< long const  *>( src );
+            long       *l_dest = static_cast< long       *>( dest );
             if ( length == 1 ) {
                l_dest[0] = Utilities::byteswap_long( l_src[0] );
             } else {
@@ -3340,8 +3373,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_UNSIGNED_LONG: {
-            unsigned long const *ul_src  = (unsigned long *)src;
-            unsigned long       *ul_dest = (unsigned long *)dest;
+            unsigned long const *ul_src  = static_cast< unsigned long const  *>( src );
+            unsigned long       *ul_dest = static_cast< unsigned long       *>( dest );
             if ( length == 1 ) {
                ul_dest[0] = Utilities::byteswap_unsigned_long( ul_src[0] );
             } else {
@@ -3352,8 +3385,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_LONG_LONG: {
-            long long const *ll_src  = (long long *)src;
-            long long       *ll_dest = (long long *)dest;
+            long long const *ll_src  = static_cast< long long const  *>( src );
+            long long       *ll_dest = static_cast< long long       *>( dest );
             if ( length == 1 ) {
                ll_dest[0] = Utilities::byteswap_long_long( ll_src[0] );
             } else {
@@ -3364,8 +3397,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_UNSIGNED_LONG_LONG: {
-            unsigned long long const *ull_src  = (unsigned long long *)src;
-            unsigned long long       *ull_dest = (unsigned long long *)dest;
+            unsigned long long const *ull_src  = static_cast< unsigned long long const  *>( src );
+            unsigned long long       *ull_dest = static_cast< unsigned long long       *>( dest );
             if ( length == 1 ) {
                ull_dest[0] = Utilities::byteswap_unsigned_long_long( ull_src[0] );
             } else {
@@ -3490,7 +3523,7 @@ void Attribute::print_buffer() const
    // For now we only support an attribute of type double for printing. DDexter
    if ( ref2->attr->type == TRICK_DOUBLE ) {
 
-      double const *dbl_array = reinterpret_cast< double * >( (void *)buffer );
+      double const *dbl_array = reinterpret_cast< double const * >( buffer ); // cppcheck-suppress [invalidPointerCast]
 
       if ( is_byteswap() ) {
          for ( size_t i = 0; i < num_items; ++i ) {
@@ -3522,5 +3555,5 @@ void Attribute::print_buffer() const
          msg << endl;
       }
    }
-   send_hs( stdout, (char *)msg.str().c_str() );
+   send_hs( stdout, msg.str().c_str() );
 }

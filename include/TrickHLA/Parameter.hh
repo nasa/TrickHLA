@@ -130,7 +130,7 @@ class Parameter
          }
          FOM_name = NULL;
       }
-      FOM_name = TMM_strdup( (char *)in_name );
+      FOM_name = TMM_strdup( const_cast< char * >( in_name ) );
    }
 
    /*! @brief Get the Trick variable name associated with this parameter.

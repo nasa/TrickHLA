@@ -71,7 +71,7 @@ ParameterItem::ParameterItem(
       if ( size == 0 ) {
          data = NULL;
       } else {
-         data = (unsigned char *)TMM_declare_var_1d( "unsigned char", (int)size );
+         data = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", size ) );
          memcpy( data, param_value->data(), size );
       }
    }

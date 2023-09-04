@@ -186,7 +186,7 @@ void ExecutionConfiguration::configure_attributes()
    this->packing  = this;
    // Allocate the attributes for the ExCO HLA object.
    this->attr_count = 7;
-   this->attributes = (Attribute *)TMM_declare_var_1d( "TrickHLA::Attribute", this->attr_count );
+   this->attributes = static_cast< Attribute * >( TMM_declare_var_1d( "TrickHLA::Attribute", this->attr_count ) );
 
    //
    // Specify the ExCO attributes.
@@ -248,7 +248,7 @@ void ExecutionConfiguration::configure()
       }
       name = static_cast< char * >( NULL );
    }
-   name = TMM_strdup( (char *)"ExCO" );
+   name = TMM_strdup( const_cast< char * >( "ExCO" ) );
 
    // Lag compensation is not supported for the Execution Configuration object.
    set_lag_compensation_type( LAG_COMPENSATION_NONE );
@@ -288,7 +288,7 @@ void ExecutionConfiguration::pack()
          msg << "\t simulation_freeze_time:  " << execution_control->get_simulation_freeze_time() << " seconds" << endl;
       }
       msg << "=============================================================" << endl;
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    int64_t fed_lookahead = ( get_federate() != NULL ) ? get_federate()->get_lookahead().get_base_time() : 0;
@@ -346,7 +346,7 @@ void ExecutionConfiguration::unpack()
           << "\t next_execution_mode:    " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
           << "\t least_common_time_step: " << least_common_time_step << " " << Int64BaseTime::get_units() << endl
           << "=============================================================" << endl;
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    int64_t fed_lookahead = ( get_federate() != NULL ) ? get_federate()->get_lookahead().get_base_time() : 0;
@@ -393,7 +393,7 @@ void ExecutionConfiguration::unpack()
                     << ")! Resetting the software frame ("
                     << least_common_time_step << " " << Int64BaseTime::get_units()
                     << ")!!!!" << THLA_ENDL;
-            send_hs( stdout, (char *)message.str().c_str() );
+            send_hs( stdout, message.str().c_str() );
          }
          software_frame_sec = Int64BaseTime::to_seconds( least_common_time_step );
          exec_set_software_frame( software_frame_sec );
@@ -408,7 +408,7 @@ void ExecutionConfiguration::unpack()
                     << "! Resetting the software frame ("
                     << least_common_time_step << " " << Int64BaseTime::get_units()
                     << ")!!!!" << THLA_ENDL;
-            send_hs( stdout, (char *)message.str().c_str() );
+            send_hs( stdout, message.str().c_str() );
          }
          software_frame_sec = Int64BaseTime::to_seconds( least_common_time_step );
          exec_set_software_frame( software_frame_sec );
@@ -438,7 +438,7 @@ void ExecutionConfiguration::set_root_frame_name(
    }
 
    // Allocate and duplicate the new root reference frame name.
-   this->root_frame_name = TMM_strdup( (char *)name );
+   this->root_frame_name = TMM_strdup( const_cast< char * >( name ) );
 }
 
 /*!
@@ -589,7 +589,7 @@ void ExecutionConfiguration::setup_ref_attributes(
 
    // Set up attributes.
    this->attr_count = 7;
-   this->attributes = (Attribute *)trick_MM->declare_var( "Attribute", this->attr_count );
+   this->attributes = static_cast< Attribute * >( trick_MM->declare_var( "Attribute", this->attr_count ) );
    if ( this->attributes == static_cast< Attribute * >( NULL ) ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
@@ -683,7 +683,7 @@ void ExecutionConfiguration::setup_ref_attributes(
           << " FOM-Parameter:'" << this->attributes[0].get_FOM_name() << "'"
           << " NOTE: This is an auto-generated parameter so there is no"
           << " associated 'Trick-Name'." << THLA_NEWLINE;
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
@@ -693,7 +693,7 @@ void ExecutionConfiguration::setup_ref_attributes(
           << "--------------- Trick REF-Attributes ---------------"
           << endl
           << " Object FOM name:'" << this->FOM_name << "'" << THLA_NEWLINE;
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 }
 
@@ -713,7 +713,7 @@ void ExecutionConfiguration::print_execution_configuration()
           << "\t next_execution_mode:     " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( next_execution_mode ) ) << endl
           << "\t least_common_time_step:  " << least_common_time_step << " " << Int64BaseTime::get_units() << endl
           << "=============================================================" << THLA_ENDL;
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 }
 

@@ -91,7 +91,7 @@ ExecutionConfigurationBase::ExecutionConfigurationBase()
      execution_control( NULL )
 {
    // Set the name to an empty string.
-   this->name = trick_MM->mm_strdup( (char *)"" );
+   this->name = trick_MM->mm_strdup( const_cast< char * >( "" ) );
 
    // This is both a TrickHLA::Object and Packing.
    // So, it can safely reference itself.
@@ -107,10 +107,10 @@ ExecutionConfigurationBase::ExecutionConfigurationBase(
      execution_control( NULL )
 {
    // Set the name to an empty string.
-   name = trick_MM->mm_strdup( (char *)"" );
+   name = trick_MM->mm_strdup( const_cast< char * >( "" ) );
 
    // Set the full path S_define name.
-   S_define_name = trick_MM->mm_strdup( (char *)s_define_name );
+   S_define_name = trick_MM->mm_strdup( s_define_name );
 
    // This is both a TrickHLA::Object and Packing.
    // So, it can safely reference itself.
@@ -123,8 +123,8 @@ ExecutionConfigurationBase::ExecutionConfigurationBase(
 ExecutionConfigurationBase::~ExecutionConfigurationBase()
 {
    if ( S_define_name != static_cast< char * >( NULL ) ) {
-      if ( trick_MM->is_alloced( (void *)S_define_name ) ) {
-         trick_MM->delete_var( (void *)S_define_name );
+      if ( TMM_is_alloced( const_cast< char * >( S_define_name ) ) ) {
+         trick_MM->delete_var( S_define_name );
       }
       S_define_name = static_cast< char * >( NULL );
    }
@@ -155,14 +155,14 @@ void ExecutionConfigurationBase::set_S_define_name(
    char const *new_name )
 {
    if ( S_define_name != static_cast< char * >( NULL ) ) {
-      if ( trick_MM->is_alloced( (void *)S_define_name ) ) {
-         trick_MM->delete_var( (void *)S_define_name );
+      if ( TMM_is_alloced( const_cast< char * >( S_define_name ) ) ) {
+         trick_MM->delete_var( S_define_name );
       }
       S_define_name = static_cast< char * >( NULL );
    }
 
    // Set the full path S_define name.
-   S_define_name = trick_MM->mm_strdup( (char *)new_name );
+   S_define_name = trick_MM->mm_strdup( new_name );
 }
 
 void ExecutionConfigurationBase::reset_preferred_order()
@@ -302,7 +302,7 @@ void ExecutionConfigurationBase::wait_for_registration()
                  << ( this->is_instance_handle_valid() ? "REGISTERED" : "Not Registered" )
                  << THLA_ENDL;
          // Display the summary.
-         send_hs( stdout, (char *)summary.str().c_str() );
+         send_hs( stdout, summary.str().c_str() );
       }
 
       // Determine if we have any unregistered objects.

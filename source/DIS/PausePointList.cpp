@@ -219,5 +219,5 @@ void PausePointList::print_sync_points()
           << ( *i )->get_state() << endl;
    }
    msg << "#############################" << endl;
-   send_hs( stdout, (char *)msg.str().c_str() );
+   send_hs( stdout, msg.str().c_str() );
 }

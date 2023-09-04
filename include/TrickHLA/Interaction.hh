@@ -299,7 +299,7 @@ class Interaction
          }
          FOM_name = NULL;
       }
-      FOM_name = TMM_strdup( (char *)in_name );
+      FOM_name = TMM_strdup( in_name );
    }
 
    /*! @brief Set the received user supplied tag.

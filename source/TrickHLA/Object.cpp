@@ -214,7 +214,7 @@ void Object::initialize(
           << " Name:'" << name << "' FOM_name:'" << FOM_name
           << "' create_HLA_instance:"
           << ( is_create_HLA_instance() ? "True" : "False" ) << THLA_ENDL;
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // Make sure we have a valid object instance name if the user has indicated
@@ -637,7 +637,7 @@ void Object::mark_all_attributes_as_nonlocal()
    }
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
       msg << THLA_ENDL;
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 }
 
@@ -1392,7 +1392,7 @@ void Object::setup_preferred_order_with_RTI()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    try {
@@ -1716,7 +1716,7 @@ exception for '%s' with error message '%s'.%c",
              << "  update_time=" << update_time.get_time_in_seconds() << " ("
              << update_time.get_base_time() << " " << Int64BaseTime::get_units()
              << ")" << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( AttributeNotOwned const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -1730,7 +1730,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( ObjectInstanceNotKnown const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -1744,7 +1744,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( AttributeNotDefined const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -1757,7 +1757,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( FederateNotExecutionMember const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -1770,7 +1770,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( SaveInProgress const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -1783,7 +1783,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( RestoreInProgress const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -1796,7 +1796,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( NotConnected const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -1809,7 +1809,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( RTIinternalError const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -1822,7 +1822,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( RTI1516_EXCEPTION const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -1837,7 +1837,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    }
 
    // Macro to restore the saved FPU Control Word register value.
@@ -1969,7 +1969,7 @@ exception for '%s' with error message '%s'.%c",
              << "  update_time=" << update_time.get_time_in_seconds() << " ("
              << update_time.get_base_time() << " " << Int64BaseTime::get_units()
              << ")" << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( AttributeNotOwned const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -1982,7 +1982,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( ObjectInstanceNotKnown const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -1995,7 +1995,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( AttributeNotDefined const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2008,7 +2008,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( FederateNotExecutionMember const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2021,7 +2021,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( SaveInProgress const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2034,7 +2034,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( RestoreInProgress const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2047,7 +2047,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( NotConnected const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2060,7 +2060,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( RTIinternalError const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2073,7 +2073,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( RTI1516_EXCEPTION const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2088,7 +2088,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    }
 
    // Macro to restore the saved FPU Control Word register value.
@@ -2222,7 +2222,7 @@ exception for '%s' with error message '%s'.%c",
              << "  update_time=" << update_time.get_time_in_seconds() << " ("
              << update_time.get_base_time() << " " << Int64BaseTime::get_units()
              << ")" << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( AttributeNotOwned const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2235,7 +2235,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( ObjectInstanceNotKnown const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2248,7 +2248,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( AttributeNotDefined const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2261,7 +2261,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( FederateNotExecutionMember const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2274,7 +2274,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( SaveInProgress const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2287,7 +2287,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( RestoreInProgress const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2300,7 +2300,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( NotConnected const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2313,7 +2313,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( RTIinternalError const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2326,7 +2326,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( RTI1516_EXCEPTION const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2341,7 +2341,7 @@ exception for '%s' with error message '%s'.%c",
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl
              << "  update_time=" << update_time.get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    }
 
    // Macro to restore the saved FPU Control Word register value.
@@ -2615,7 +2615,7 @@ void Object::send_init_data()
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << " ("
              << get_lookahead().get_base_time() << " " << Int64BaseTime::get_units()
              << ")" << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( AttributeNotOwned const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2627,7 +2627,7 @@ void Object::send_init_data()
              << "  instance_id=" << id_str << endl
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( ObjectInstanceNotKnown const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2639,7 +2639,7 @@ void Object::send_init_data()
              << "  instance_id=" << id_str << endl
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( AttributeNotDefined const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2651,7 +2651,7 @@ void Object::send_init_data()
              << "  instance_id=" << id_str << endl
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( FederateNotExecutionMember const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2663,7 +2663,7 @@ void Object::send_init_data()
              << "  instance_id=" << id_str << endl
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( SaveInProgress const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2675,7 +2675,7 @@ void Object::send_init_data()
              << "  instance_id=" << id_str << endl
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( RestoreInProgress const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2687,7 +2687,7 @@ void Object::send_init_data()
              << "  instance_id=" << id_str << endl
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( NotConnected const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2699,7 +2699,7 @@ void Object::send_init_data()
              << "  instance_id=" << id_str << endl
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( RTIinternalError const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2711,7 +2711,7 @@ void Object::send_init_data()
              << "  instance_id=" << id_str << endl
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( RTI1516_EXCEPTION const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
@@ -2725,7 +2725,7 @@ void Object::send_init_data()
              << "  instance_id=" << id_str << endl
              << "  granted=" << get_granted_time().get_time_in_seconds() << endl
              << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    }
 
    // Macro to restore the saved FPU Control Word register value.
@@ -3907,9 +3907,9 @@ void Object::set_name(
 
    // Allocate appropriate size string and copy data.
    if ( new_name != NULL ) {
-      this->name = TMM_strdup( (char *)new_name );
+      this->name = TMM_strdup( const_cast< char * >( new_name ) );
    } else {
-      this->name = TMM_strdup( (char *)"" );
+      this->name = TMM_strdup( const_cast< char * >( "" ) );
    }
 }
 

@@ -95,7 +95,7 @@ void SineInteractionHandler::send_sine_interaction(
    if ( ( message != NULL ) && TMM_is_alloced( message ) ) {
       TMM_delete_var_a( message );
    }
-   message = TMM_strdup( (char *)msg.str().c_str() );
+   message = TMM_strdup( const_cast< char * >( msg.str().c_str() ) );
 
    // Create a User Supplied Tag based off the name in this example.
    RTI1516_USERDATA user_supplied_tag;

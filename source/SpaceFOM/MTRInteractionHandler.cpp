@@ -89,7 +89,7 @@ MTRInteractionHandler::MTRInteractionHandler(
 MTRInteractionHandler::~MTRInteractionHandler() // RETURN: -- None.
 {
    if ( this->name != (char *)NULL ) {
-      trick_MM->delete_var( (void *)this->name );
+      trick_MM->delete_var( this->name );
       this->name = (char *)NULL;
    }
    return;
@@ -103,11 +103,11 @@ void MTRInteractionHandler::set_name(
 {
    if ( this->name != NULL ) {
       if ( trick_MM->is_alloced( this->name ) ) {
-         trick_MM->delete_var( (void *)this->name );
+         trick_MM->delete_var( this->name );
       }
       this->name = NULL;
    }
-   this->name = trick_MM->mm_strdup( (char *)new_name );
+   this->name = trick_MM->mm_strdup( new_name );
 }
 
 /*!

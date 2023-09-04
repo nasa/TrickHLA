@@ -849,7 +849,7 @@ double ExecutionControlBase::get_sim_time()
              << " WARNING: Unexpected NULL 'THLA.federate.get_sim_time'!"
              << " Please make sure you specify a sim-timeline in your input"
              << " file. Returning Trick simulation time instead!" << THLA_ENDL;
-      send_hs( stdout, (char *)errmsg.str().c_str() );
+      send_hs( stdout, errmsg.str().c_str() );
    }
    return exec_get_sim_time();
 }
@@ -866,7 +866,7 @@ double ExecutionControlBase::get_scenario_time()
              << " WARNING: Unexpected NULL 'THLA.federate.scenario_timeline'!"
              << " Please make sure you specify a scenario-timeline in your input"
              << " file. Returning Trick simulation time instead!" << THLA_ENDL;
-      send_hs( stdout, (char *)errmsg.str().c_str() );
+      send_hs( stdout, errmsg.str().c_str() );
    }
 
    return this->get_sim_time();

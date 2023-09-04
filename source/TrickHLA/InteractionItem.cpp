@@ -135,7 +135,7 @@ InteractionItem::InteractionItem(
 InteractionItem::~InteractionItem()
 {
    if ( user_supplied_tag != NULL ) {
-      if ( TMM_is_alloced( (char *)user_supplied_tag ) ) {
+      if ( TMM_is_alloced( reinterpret_cast< char * >( user_supplied_tag ) ) ) {
          TMM_delete_var_a( user_supplied_tag );
       }
       user_supplied_tag      = NULL;
@@ -174,7 +174,7 @@ void InteractionItem::initialize(
 
    // Free the Trick allocated memory for the user supplied tag.
    if ( user_supplied_tag != NULL ) {
-      if ( TMM_is_alloced( (char *)user_supplied_tag ) ) {
+      if ( TMM_is_alloced( reinterpret_cast< char * >( user_supplied_tag ) ) ) {
          TMM_delete_var_a( user_supplied_tag );
       }
       user_supplied_tag = NULL;
@@ -183,7 +183,7 @@ void InteractionItem::initialize(
    // Put the user supplied tag into a buffer.
    user_supplied_tag_size = theUserSuppliedTag.size();
    if ( user_supplied_tag_size != 0 ) {
-      user_supplied_tag = (unsigned char *)TMM_declare_var_1d( "unsigned char", (int)user_supplied_tag_size );
+      user_supplied_tag = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", user_supplied_tag_size ) );
       memcpy( user_supplied_tag, theUserSuppliedTag.data(), user_supplied_tag_size );
    }
 }
@@ -216,7 +216,7 @@ void InteractionItem::checkpoint_queue()
          if ( item->size == 0 ) {
             parm_items[i].data = NULL;
          } else {
-            parm_items[i].data = (unsigned char *)TMM_declare_var_1d( "unsigned char", (int)item->size );
+            parm_items[i].data = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", item->size ) );
             memcpy( parm_items[i].data, item->data, item->size );
          }
 
@@ -254,7 +254,7 @@ void InteractionItem::restore_queue()
          if ( parm_items[i].size == 0 ) {
             item->data = NULL;
          } else {
-            item->data = (unsigned char *)TMM_declare_var_1d( "unsigned char", (int)parm_items[i].size );
+            item->data = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", parm_items[i].size ) );
             memcpy( item->data, parm_items[i].data, parm_items[i].size );
          }
 

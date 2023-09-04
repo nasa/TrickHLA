@@ -168,7 +168,7 @@ void ExecutionConfiguration::configure_attributes()
    this->packing  = this;
    // Allocate the attributes for the ExCO HLA object.
    this->attr_count = 4;
-   this->attributes = (Attribute *)TMM_declare_var_1d( "TrickHLA::Attribute", this->attr_count );
+   this->attributes = static_cast< Attribute * >( TMM_declare_var_1d( "TrickHLA::Attribute", this->attr_count ) );
 
    //
    // Specify the ExCO attributes.
@@ -241,7 +241,7 @@ void ExecutionConfiguration::configure()
    this->num_federates = required_federate_count;
 
    // Make sure we use correct function so that it is Trick managed memory.
-   this->required_federates = TMM_strdup( (char *)federate_list.str().c_str() );
+   this->required_federates = TMM_strdup( const_cast< char * >( federate_list.str().c_str() ) );
 }
 
 /*!
@@ -355,6 +355,6 @@ void ExecutionConfiguration::print_execution_configuration()
           << "\t required_federates:    '" << required_federates << "'" << endl
           << "\t owner:                 '" << owner << "'" << endl
           << "=============================================================" << THLA_ENDL;
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 }
