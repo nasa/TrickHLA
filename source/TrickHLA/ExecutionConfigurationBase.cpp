@@ -107,10 +107,10 @@ ExecutionConfigurationBase::ExecutionConfigurationBase(
      execution_control( NULL )
 {
    // Set the name to an empty string.
-   name = trick_MM->mm_strdup( (char *)"" );
+   this->name = trick_MM->mm_strdup( "" );
 
    // Set the full path S_define name.
-   S_define_name = trick_MM->mm_strdup( (char *)s_define_name );
+   this->S_define_name = trick_MM->mm_strdup( s_define_name );
 
    // This is both a TrickHLA::Object and Packing.
    // So, it can safely reference itself.
