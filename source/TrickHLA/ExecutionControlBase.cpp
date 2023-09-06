@@ -172,7 +172,8 @@ ExecutionControlBase::~ExecutionControlBase()
          loggable_sync_pts[i].clear();
       }
       TMM_delete_var_a( loggable_sync_pts );
-      loggable_sync_pts     = static_cast< LoggableTimedSyncPnt     *>( NULL );
+      loggable_sync_pts = static_cast< LoggableTimedSyncPnt * >( NULL );
+
       logged_sync_pts_count = 0;
    }
 }

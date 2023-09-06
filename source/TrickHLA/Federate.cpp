@@ -292,7 +292,9 @@ Federate::~Federate()
          }
       }
       TMM_delete_var_a( known_feds );
-      known_feds       = static_cast< KnownFederate       *>( NULL );
+      known_feds = static_cast< KnownFederate * >( NULL );
+
+      // Make sure to clear the count.
       known_feds_count = 0;
    }
 
