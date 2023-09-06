@@ -3107,7 +3107,7 @@ restoring check_interactions[%d] into interaction index %d, parm_count=%d%c",
             item->user_supplied_tag = NULL;
          } else {
             item->user_supplied_tag = reinterpret_cast< unsigned char * >(
-               trick_MM->mm_strdup( reinterpret_cast< char * >( check_interactions[i].user_supplied_tag ) ) );
+               trick_MM->mm_strdup( reinterpret_cast< char const * >( check_interactions[i].user_supplied_tag ) ) );
          }
          item->order_is_TSO = check_interactions[i].order_is_TSO;
          item->time         = check_interactions[i].time;
