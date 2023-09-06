@@ -1011,7 +1011,7 @@ Interaction '%s' is time-regulating:%s, preferred-order:%s.%c",
              << "  time=" << time.get_time_in_seconds() << " ("
              << time.get_base_time() << " " << Int64BaseTime::get_units()
              << " error message:'" << rti_err_msg << "'" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( RTI1516_EXCEPTION const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1020,7 +1020,7 @@ Interaction '%s' is time-regulating:%s, preferred-order:%s.%c",
              << ( send_with_timestamp ? "Timestamp Order" : "Receive Order" )
              << ", Interaction '" << get_FOM_name() << "' with exception '"
              << rti_err_msg << "'" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    }
 
    // Macro to restore the saved FPU Control Word register value.

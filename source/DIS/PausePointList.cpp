@@ -199,7 +199,8 @@ wstring PausePointList::to_wstring()
 void PausePointList::print_sync_points()
 {
    vector< SyncPnt * >::const_iterator i;
-   string                              sync_point_label;
+
+   string sync_point_label;
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -219,5 +220,5 @@ void PausePointList::print_sync_points()
           << ( *i )->get_state() << endl;
    }
    msg << "#############################" << endl;
-   send_hs( stdout, (char *)msg.str().c_str() );
+   send_hs( stdout, msg.str().c_str() );
 }

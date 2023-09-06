@@ -136,7 +136,7 @@ class StringUtilities
    {
       std::string s;
       s.assign( input.begin(), input.end() );
-      return TMM_strdup( (char *)s.c_str() );
+      return TMM_strdup( const_cast< char * >( s.c_str() ) );
    }
 
    /*! @brief HLA RTI User Data to printable C++ string conversion routine.

@@ -329,7 +329,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
          msg << " with associated object instances:'" << obj_insance_names
              << "'." << THLA_ENDL;
       }
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // Verify the TrickThreadCoordinator::initialize_thread_state() function was called as

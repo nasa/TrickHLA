@@ -67,5 +67,5 @@ void SineObjectDeleted::deleted(
    std::ostringstream msg;
    msg << "SineObjectDeleted::deleted():" << __LINE__
        << " Object '" << obj->get_name() << "' deleted from the federation.";
-   send_hs( stdout, (char *)msg.str().c_str() );
+   send_hs( stdout, msg.str().c_str() );
 }

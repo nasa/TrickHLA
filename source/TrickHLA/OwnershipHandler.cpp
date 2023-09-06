@@ -138,7 +138,7 @@ void OwnershipHandler::setup_checkpoint_requests()
          THLAAttributeMap *tMap      = owner_map_iter->second;
          for ( attrib_iter = tMap->begin(); attrib_iter != tMap->end(); ++attrib_iter ) {
             pull_items[count].time     = curr_time;
-            pull_items[count].FOM_name = TMM_strdup( (char *)attrib_iter->first.c_str() );
+            pull_items[count].FOM_name = TMM_strdup( const_cast< char * >( attrib_iter->first.c_str() ) );
             count++;
          }
       }
@@ -175,7 +175,7 @@ void OwnershipHandler::setup_checkpoint_requests()
          THLAAttributeMap *tMap      = owner_map_iter->second;
          for ( attrib_iter = tMap->begin(); attrib_iter != tMap->end(); ++attrib_iter ) {
             push_items[count].time     = curr_time;
-            push_items[count].FOM_name = TMM_strdup( (char *)attrib_iter->first.c_str() );
+            push_items[count].FOM_name = TMM_strdup( const_cast< char * >( attrib_iter->first.c_str() ) );
             count++;
          }
       }

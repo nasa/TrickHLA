@@ -145,7 +145,7 @@ void ExecutionControl::initialize()
       msg << "IMSim::ExecutionControl::initialize():" << __LINE__
           << " Initialization-Scheme:'" << get_type()
           << "'" << THLA_ENDL;
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // Set the reference to the TrickHLA::Federate.
@@ -187,7 +187,7 @@ void ExecutionControl::initialize()
              << " 'THLA.federate.use_preset_master = true' in your input.py file."
              << " Setting use_preset_master to true!"
              << THLA_ENDL;
-      send_hs( stdout, (char *)errmsg.str().c_str() );
+      send_hs( stdout, errmsg.str().c_str() );
       this->use_preset_master = true;
    }
 
@@ -999,7 +999,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
            << "--------------- Trick REF-Attributes ---------------" << endl
            << " FOM-Interaction:'" << freeze_interaction->get_FOM_name() << "'"
            << THLA_NEWLINE;
-      send_hs( stdout, (char *)msg2.str().c_str() );
+      send_hs( stdout, msg2.str().c_str() );
    }
 
    // Initialize the TrickHLA Interaction before we use it.
@@ -1011,7 +1011,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
            << " FOM-Parameter:'" << tParm[0].get_FOM_name() << "'"
            << " NOTE: This is an auto-generated parameter so there is no"
            << " associated 'Trick-Name'." << THLA_NEWLINE;
-      send_hs( stdout, (char *)msg2.str().c_str() );
+      send_hs( stdout, msg2.str().c_str() );
    }
 
    // Initialize the TrickHLA Parameter. Since we built the interaction handler
@@ -1592,7 +1592,7 @@ void ExecutionControl::set_next_execution_control_mode(
             errmsg << "IMSim::ExecutionControl::set_next_execution_mode():"
                    << __LINE__ << " WARNING: Unknown execution mode value: " << exec_control
                    << THLA_ENDL;
-            send_hs( stdout, (char *)errmsg.str().c_str() );
+            send_hs( stdout, errmsg.str().c_str() );
          }
          break;
    }
@@ -1612,7 +1612,7 @@ bool ExecutionControl::check_mode_transition_request()
              << __LINE__ << " WARNING: Received Mode Transition Request and not Master: "
              << mtr_enum_to_string( this->pending_mtr )
              << THLA_ENDL;
-      send_hs( stdout, (char *)errmsg.str().c_str() );
+      send_hs( stdout, errmsg.str().c_str() );
       return false;
    }
 
@@ -1623,7 +1623,7 @@ bool ExecutionControl::check_mode_transition_request()
              << __LINE__ << " WARNING: Invalid Mode Transition Request: "
              << mtr_enum_to_string( this->pending_mtr )
              << THLA_ENDL;
-      send_hs( stdout, (char *)errmsg.str().c_str() );
+      send_hs( stdout, errmsg.str().c_str() );
       return false;
    }
 
@@ -1770,7 +1770,7 @@ bool ExecutionControl::process_execution_control_updates()
              << __LINE__ << " WARNING: Master receive an ExCO update: "
              << execution_control_enum_to_string( this->requested_execution_control_mode )
              << THLA_ENDL;
-      send_hs( stdout, (char *)errmsg.str().c_str() );
+      send_hs( stdout, errmsg.str().c_str() );
 
       // Return that no mode changes occurred.
       return false;
@@ -1789,7 +1789,7 @@ bool ExecutionControl::process_execution_control_updates()
              << execution_mode_enum_to_string( exco_cem )
              << ")!"
              << THLA_ENDL;
-      send_hs( stdout, (char *)errmsg.str().c_str() );
+      send_hs( stdout, errmsg.str().c_str() );
    }
 
    // Check for change in execution mode.
@@ -1808,7 +1808,7 @@ bool ExecutionControl::process_execution_control_updates()
                 << __LINE__ << " WARNING: Invalid ExCO next execution mode: "
                 << execution_mode_enum_to_string( exco_nem ) << "!"
                 << THLA_ENDL;
-         send_hs( stdout, (char *)errmsg.str().c_str() );
+         send_hs( stdout, errmsg.str().c_str() );
 
          // Return that no mode changes occurred.
          return false;
@@ -1852,7 +1852,7 @@ bool ExecutionControl::process_execution_control_updates()
                    << execution_control_enum_to_string( this->requested_execution_control_mode )
                    << ")!"
                    << THLA_ENDL;
-            send_hs( stdout, (char *)errmsg.str().c_str() );
+            send_hs( stdout, errmsg.str().c_str() );
 
             // Return that no mode changes occurred.
             return false;
@@ -1913,7 +1913,7 @@ bool ExecutionControl::process_execution_control_updates()
                    << execution_control_enum_to_string( this->requested_execution_control_mode )
                    << ")!"
                    << THLA_ENDL;
-            send_hs( stdout, (char *)errmsg.str().c_str() );
+            send_hs( stdout, errmsg.str().c_str() );
 
             // Return that no mode changes occurred.
             return false;
@@ -1936,7 +1936,7 @@ bool ExecutionControl::process_execution_control_updates()
                    << execution_control_enum_to_string( this->requested_execution_control_mode )
                    << ")!"
                    << THLA_ENDL;
-            send_hs( stdout, (char *)errmsg.str().c_str() );
+            send_hs( stdout, errmsg.str().c_str() );
 
             // Mark the current execution mode as SHUTDOWN.
             this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
@@ -1987,7 +1987,7 @@ bool ExecutionControl::process_execution_control_updates()
                    << execution_control_enum_to_string( this->requested_execution_control_mode )
                    << ")!"
                    << THLA_ENDL;
-            send_hs( stdout, (char *)errmsg.str().c_str() );
+            send_hs( stdout, errmsg.str().c_str() );
 
             // Return that no mode changes occurred.
             return false;
@@ -2028,7 +2028,7 @@ bool ExecutionControl::process_execution_control_updates()
                    << execution_control_enum_to_string( this->requested_execution_control_mode )
                    << ")!"
                    << THLA_ENDL;
-            send_hs( stdout, (char *)errmsg.str().c_str() );
+            send_hs( stdout, errmsg.str().c_str() );
 
             // Return that no mode changes occurred.
             return false;
@@ -2045,7 +2045,7 @@ bool ExecutionControl::process_execution_control_updates()
                 << __LINE__ << " WARNING: Shutting down but received mode transition: "
                 << execution_control_enum_to_string( this->requested_execution_control_mode )
                 << THLA_ENDL;
-         send_hs( stdout, (char *)errmsg.str().c_str() );
+         send_hs( stdout, errmsg.str().c_str() );
 
          // Return that no mode changes occurred.
          return false;
@@ -2617,7 +2617,7 @@ bool ExecutionControl::check_scenario_freeze_time()
                        << "  Freeze sim-time:" << freeze_sim_time << endl
                        << "  Current scenario-time:" << curr_scenario_time << endl
                        << "  Freeze scenario-time:" << freeze_time << THLA_ENDL;
-               send_hs( stdout, (char *)infomsg.str().c_str() );
+               send_hs( stdout, infomsg.str().c_str() );
             }
          }
       }

@@ -171,7 +171,7 @@ void RefFrameBase::initialize()
          errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
                 << " WARNING: Unexpected NULL federation instance frame name!"
                 << "  Setting frame name to empty string." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
+         send_hs( stderr, errmsg.str().c_str() );
       }
       this->name = trick_MM->mm_strdup( "" );
    }
@@ -183,7 +183,7 @@ void RefFrameBase::initialize()
          errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
                 << " WARNING: Unexpected NULL federation instance parent frame name!"
                 << "  Setting parent frame name to empty string." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
+         send_hs( stderr, errmsg.str().c_str() );
       }
       this->parent_name = trick_MM->mm_strdup( "" );
    }
@@ -258,7 +258,7 @@ char *RefFrameBase::allocate_input_string( // RETURN: -- None.
 char *RefFrameBase::allocate_input_string( // RETURN: -- None.
    string const &cpp_string )              // IN: -- String to allocate.
 {
-   char *new_c_str = (char *)TMM_declare_var_1d( "char", cpp_string.length() + 1 );
+   char *new_c_str = static_cast< char * >( TMM_declare_var_1d( "char", cpp_string.length() + 1 ) );
    strncpy( new_c_str, cpp_string.c_str(), cpp_string.length() + 1 );
 
    return new_c_str;

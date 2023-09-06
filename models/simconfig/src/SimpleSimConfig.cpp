@@ -123,7 +123,7 @@ void SimpleSimConfig::initialize(
    this->num_federates = req_fed_cnt;
 
    // Make sure we use correct function so that it is Trick managed memory.
-   this->required_federates = TMM_strdup( (char *)fed_list.str().c_str() );
+   this->required_federates = TMM_strdup( const_cast< char * >( fed_list.str().c_str() ) );
 }
 
 void SimpleSimConfig::pack()

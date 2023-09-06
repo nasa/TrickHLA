@@ -215,7 +215,7 @@ void Attribute::initialize(
                 << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                 << trick_name << "' has a 'config' value of CONFIG_TYPE_NONE."
                 << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
+         send_hs( stderr, errmsg.str().c_str() );
       }
    }
 
@@ -514,7 +514,7 @@ void Attribute::initialize(
              << "' has an unexpected size of zero bytes! Make sure your simulation"
              << " variable is properly initialized before the initialize()"
              << " function is called." << THLA_ENDL;
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       }
    }
 
@@ -548,7 +548,7 @@ void Attribute::initialize(
                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *(char **)ref2->address ) << "\"" << endl;
       }
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 }
@@ -623,7 +623,7 @@ void Attribute::determine_cycle_ratio(
              << "  core_job_cycle_time:" << core_job_cycle_time << " seconds" << endl
              << "  cyle_time:" << this->cycle_time << " seconds" << endl
              << "  cycle_ratio:" << this->cycle_ratio << THLA_ENDL;
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       }
    }
 }
@@ -666,7 +666,7 @@ void Attribute::extract_data(             // RETURN: -- None
                    << " using Lag Compensation one possible cause of this problem"
                    << " is that your lag compensation variables are not the correct"
                    << " size or type." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
+            send_hs( stderr, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here. DDexter
             return;
@@ -700,7 +700,7 @@ void Attribute::extract_data(             // RETURN: -- None
                    << " this problem is that your lag compensation variables are not"
                    << " the correct size or type." << THLA_ENDL;
 #if 1
-            send_hs( stderr, (char *)errmsg.str().c_str() );
+            send_hs( stderr, errmsg.str().c_str() );
 
             // For now just return if we have a data size mismatch. This will
             // allow us to continue to run even though the other federate is
@@ -765,7 +765,7 @@ void Attribute::extract_data(             // RETURN: -- None
                    << " defined in the FOM. If you are using Lag Compensation one"
                    << " possible cause of this problem is that your lag compensation"
                    << " variables are not the correct size or type." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
+            send_hs( stderr, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here. DDexter
             return;
@@ -796,7 +796,7 @@ void Attribute::extract_data(             // RETURN: -- None
                    << " you are using Lag Compensation one possible cause of this"
                    << " problem is that your lag compensation variables are not the"
                    << " correct size or type." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
+            send_hs( stderr, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here. DDexter
             return;
@@ -966,7 +966,7 @@ void Attribute::calculate_size_and_number_of_items()
                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *(char **)ref2->address ) << "\"" << endl;
       }
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    return;
@@ -1055,7 +1055,7 @@ void Attribute::pack_attribute_buffer()
                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *(char **)ref2->address ) << "\"" << endl;
       }
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // Don't pack the buffer if the attribute is not locally owned. Otherwise this will
@@ -1067,7 +1067,7 @@ void Attribute::pack_attribute_buffer()
              << " FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
              << " trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
              << " Skipping pack because attribute is not locally owned!" << endl;
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       }
       return;
    }
@@ -1102,7 +1102,7 @@ void Attribute::pack_attribute_buffer()
                 << "================== ATTRIBUTE ENCODE ==================================" << endl
                 << " attribute '" << FOM_name << "' (trick name '" << trick_name
                 << "')" << endl;
-            send_hs( stdout, (char *)msg.str().c_str() );
+            send_hs( stdout, msg.str().c_str() );
             print_buffer();
          }
          break;
@@ -1123,7 +1123,7 @@ void Attribute::pack_attribute_buffer()
                 << "================== ATTRIBUTE ENCODE ==================================" << endl
                 << " attribute '" << FOM_name << "' (trick name '" << trick_name
                 << "')" << endl;
-            send_hs( stdout, (char *)msg.str().c_str() );
+            send_hs( stdout, msg.str().c_str() );
             print_buffer();
          }
          break;
@@ -1149,7 +1149,7 @@ void Attribute::pack_attribute_buffer()
                    << "================== ATTRIBUTE ENCODE ==================================" << endl
                    << " attribute '" << FOM_name << "' (trick name '" << trick_name
                    << "')" << endl;
-               send_hs( stdout, (char *)msg.str().c_str() );
+               send_hs( stdout, msg.str().c_str() );
                print_buffer();
             }
          } else {
@@ -1190,7 +1190,7 @@ void Attribute::pack_attribute_buffer()
                    << "================== ATTRIBUTE ENCODE ==================================" << endl
                    << " attribute '" << FOM_name << "' (trick name '" << trick_name
                    << "')" << endl;
-               send_hs( stdout, (char *)msg.str().c_str() );
+               send_hs( stdout, msg.str().c_str() );
                print_buffer();
             }
          }
@@ -1228,7 +1228,7 @@ void Attribute::pack_attribute_buffer()
                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
          msg2 << "  value:\"" << ( *(char **)ref2->address ) << "\"" << endl;
       }
-      send_hs( stdout, (char *)msg2.str().c_str() );
+      send_hs( stdout, msg2.str().c_str() );
    }
 }
 
@@ -1243,7 +1243,7 @@ void Attribute::unpack_attribute_buffer()
              << " FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
              << " trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
              << " Skipping unpack of attribute buffer because the attribute is locally owned." << endl;
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       }
       return;
    }
@@ -1274,7 +1274,7 @@ void Attribute::unpack_attribute_buffer()
                 << "================== ATTRIBUTE DECODE ==================================" << endl
                 << " attribute '" << FOM_name << "' (trick name '" << trick_name
                 << "')" << endl;
-            send_hs( stdout, (char *)msg.str().c_str() );
+            send_hs( stdout, msg.str().c_str() );
             print_buffer();
          }
          break;
@@ -1293,7 +1293,7 @@ void Attribute::unpack_attribute_buffer()
                 << "================== ATTRIBUTE DECODE =============================" << endl
                 << " attribute '" << FOM_name << "' (trick name '" << trick_name
                 << "')" << endl;
-            send_hs( stdout, (char *)msg.str().c_str() );
+            send_hs( stdout, msg.str().c_str() );
             print_buffer();
          }
          break;
@@ -1321,7 +1321,7 @@ void Attribute::unpack_attribute_buffer()
                    << "================== ATTRIBUTE DECODE ==================================" << endl
                    << " attribute '" << FOM_name << "' (trick name '" << trick_name << "')"
                    << " value:\"" << ( *(char **)ref2->address ) << "\"" << endl;
-               send_hs( stdout, (char *)msg.str().c_str() );
+               send_hs( stdout, msg.str().c_str() );
                print_buffer();
             }
 
@@ -1358,7 +1358,7 @@ void Attribute::unpack_attribute_buffer()
                       << "================== ATTRIBUTE DECODE ==================================" << endl
                       << " attribute '" << FOM_name << "' (trick name '" << trick_name
                       << "')" << endl;
-                  send_hs( stdout, (char *)msg.str().c_str() );
+                  send_hs( stdout, msg.str().c_str() );
                   print_buffer();
                }
             }
@@ -1397,7 +1397,7 @@ void Attribute::unpack_attribute_buffer()
                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *(char **)ref2->address ) << "\"" << endl;
       }
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 }
 
@@ -3231,7 +3231,7 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
              << trick_name << "' has an unexpected size of zero bytes! Make"
              << " sure your simulation variable is properly initialized before"
              << " this initialize() function is called." << endl;
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       }
       return;
    }
@@ -3524,5 +3524,5 @@ void Attribute::print_buffer() const
          msg << endl;
       }
    }
-   send_hs( stdout, (char *)msg.str().c_str() );
+   send_hs( stdout, msg.str().c_str() );
 }

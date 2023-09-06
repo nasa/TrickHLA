@@ -337,7 +337,7 @@ void ExecutionConfiguration::unpack()
                     << least_common_time_step
                     << " " << Int64BaseTime::get_units()
                     << ")!!!!" << THLA_ENDL;
-            send_hs( stdout, (char *)message.str().c_str() );
+            send_hs( stdout, message.str().c_str() );
          }
          software_frame_sec = Int64BaseTime::to_seconds( least_common_time_step );
          exec_set_software_frame( software_frame_sec );
@@ -354,7 +354,7 @@ void ExecutionConfiguration::unpack()
                     << least_common_time_step
                     << " " << Int64BaseTime::get_units()
                     << ")!!!!" << THLA_ENDL;
-            send_hs( stdout, (char *)message.str().c_str() );
+            send_hs( stdout, message.str().c_str() );
          }
          software_frame_sec = Int64BaseTime::to_seconds( least_common_time_step );
          exec_set_software_frame( software_frame_sec );
@@ -620,7 +620,7 @@ void ExecutionConfiguration::setup_ref_attributes(
           << " FOM-Parameter:'" << this->attributes[0].get_FOM_name() << "'"
           << " NOTE: This is an auto-generated parameter so there is no"
           << " associated 'Trick-Name'." << THLA_NEWLINE;
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
@@ -630,7 +630,7 @@ void ExecutionConfiguration::setup_ref_attributes(
           << "--------------- Trick REF-Attributes ---------------"
           << endl
           << " Object FOM name:'" << this->FOM_name << "'" << THLA_NEWLINE;
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 }
 
@@ -650,7 +650,7 @@ void ExecutionConfiguration::print_execution_configuration()
           << "\t next_execution_mode:     " << DSES::execution_mode_enum_to_string( DSES::execution_mode_int16_to_enum( next_execution_mode ) ) << endl
           << "\t least_common_time_step:  " << least_common_time_step << " " << Int64BaseTime::get_units() << endl
           << "=============================================================" << THLA_ENDL;
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 }
 

@@ -177,7 +177,7 @@ void OpaqueBuffer::push_to_buffer(
              << " position " << push_pos << ", which exceeds the buffer capacity"
              << " by " << ( ( push_pos + size ) - capacity ) << " bytes! Resizing the"
              << " buffer to accommodate the data." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
       ensure_buffer_capacity( push_pos + size );
    }
 
@@ -189,7 +189,7 @@ void OpaqueBuffer::push_to_buffer(
              << " one of ENCODING_LITTLE_ENDIAN:" << ENCODING_LITTLE_ENDIAN
              << ", ENCODING_BIG_ENDIAN:" << ENCODING_BIG_ENDIAN
              << ", or ENCODING_NONE:" << ENCODING_NONE << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    }
 
    // Copy the source data into the buffer and do a byte-swap if needed.
@@ -241,7 +241,7 @@ void OpaqueBuffer::pull_from_buffer(
              << " one of ENCODING_LITTLE_ENDIAN:" << ENCODING_LITTLE_ENDIAN
              << ", ENCODING_BIG_ENDIAN:" << ENCODING_BIG_ENDIAN
              << ", or ENCODING_NONE:" << ENCODING_NONE << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    }
 
    // Copy the data from the buffer into the destination and do a byte-swap
@@ -267,7 +267,7 @@ void OpaqueBuffer::push_pad_to_buffer(
              << " buffer at position " << push_pos << ", which exceeds the buffer"
              << " capacity by " << ( ( push_pos + pad_size ) - capacity ) << " bytes!"
              << " Resizing the buffer to accommodate the data." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
       ensure_buffer_capacity( push_pos + pad_size );
    }
 

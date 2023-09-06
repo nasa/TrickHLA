@@ -341,7 +341,7 @@ void Federate::print_version() const
           << "TrickHLA-release-date:'" << Utilities::get_release_date() << "'" << endl
           << "             RTI-name:'" << rti_name << "'" << endl
           << "          RTI-version:'" << rti_version << "'" << endl;
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 }
 
@@ -735,13 +735,13 @@ void Federate::create_RTI_ambassador_and_connect()
              << " WARNING: Local settings designator 'THLA.federate.local_settings'"
              << " for the RTI-Ambassador connection was not specified in the"
              << " input.py file, using HLA-Evolved vendor defaults." << THLA_ENDL;
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       } else {
          ostringstream msg;
          msg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
              << " Local settings designator for RTI-Ambassador connection:\n'"
              << local_settings << "'" << THLA_ENDL;
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       }
    }
 
@@ -1174,7 +1174,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          summary << THLA_ENDL;
-         send_hs( stdout, (char *)summary.str().c_str() );
+         send_hs( stdout, summary.str().c_str() );
       }
 
       string fed_mom_instance_name;
@@ -1191,7 +1191,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          summary << THLA_ENDL;
-         send_hs( stdout, (char *)summary.str().c_str() );
+         send_hs( stdout, summary.str().c_str() );
       }
 
       ostringstream errmsg;
@@ -1205,7 +1205,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          summary << THLA_ENDL;
-         send_hs( stdout, (char *)summary.str().c_str() );
+         send_hs( stdout, summary.str().c_str() );
       }
 
       ostringstream errmsg;
@@ -1219,7 +1219,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          summary << THLA_ENDL;
-         send_hs( stdout, (char *)summary.str().c_str() );
+         send_hs( stdout, summary.str().c_str() );
       }
 
       string rti_err_msg;
@@ -1236,7 +1236,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          summary << THLA_ENDL;
-         send_hs( stdout, (char *)summary.str().c_str() );
+         send_hs( stdout, summary.str().c_str() );
       }
 
       string rti_err_msg;
@@ -1253,7 +1253,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       summary << THLA_ENDL;
-      send_hs( stdout, (char *)summary.str().c_str() );
+      send_hs( stdout, summary.str().c_str() );
    }
 }
 
@@ -1433,7 +1433,7 @@ string Federate::wait_for_required_federates_to_join()
       required_fed_summary << THLA_ENDL;
 
       // Display a summary of the required federate by name.
-      send_hs( stdout, (char *)required_fed_summary.str().c_str() );
+      send_hs( stdout, required_fed_summary.str().c_str() );
 
       // Display a message that we are requesting the federate names.
       send_hs( stdout, "Federate::wait_for_required_federates_to_join():%d Requesting list of joined federates from CRC.%c",
@@ -1550,7 +1550,7 @@ string Federate::wait_for_required_federates_to_join()
             summary << THLA_ENDL;
 
             // Display the federate summary.
-            send_hs( stdout, (char *)summary.str().c_str() );
+            send_hs( stdout, summary.str().c_str() );
          }
       } // Mutex protection goes out of scope here
 
@@ -3729,7 +3729,7 @@ void Federate::join_federation(
          errmsg << "Federate::join_federation():" << __LINE__
                 << " Federation '" << get_federation_name()
                 << "': ALREADY JOINED FEDERATION EXECUTION" << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
+         send_hs( stderr, errmsg.str().c_str() );
       }
       return;
    }
@@ -3921,7 +3921,7 @@ void Federate::create_and_join_federation()
          errmsg << "Federate::create_and_join_federation():" << __LINE__
                 << " Federation \"" << get_federation_name()
                 << "\": ALREADY JOINED FEDERATION EXECUTION" << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
+         send_hs( stderr, errmsg.str().c_str() );
       }
       return;
    }
@@ -5277,7 +5277,7 @@ void Federate::shutdown()
              << " send_count:" << this->manager->objects[i].send_count
              << " receive_count:" << this->manager->objects[i].receive_count
              << endl;
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       }
 #endif
 
@@ -5288,7 +5288,7 @@ void Federate::shutdown()
              << " Object[" << i << "]:'" << this->manager->objects[i].get_name() << "' "
              << this->manager->objects[i].elapsed_time_stats.to_string()
              << endl;
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       }
 #endif
 
@@ -5575,7 +5575,7 @@ void Federate::resign()
              << "' Federation because it received an EXCEPTION: "
              << "FederateNotExecutionMember" << THLA_ENDL;
 
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( NotConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -5591,7 +5591,7 @@ void Federate::resign()
              << "NotConnected" << THLA_ENDL;
 
       // Just display an error message and don't terminate if we are not connected.
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( CallNotAllowedFromWithinCallback const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -5704,7 +5704,7 @@ Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federat
              << "' Federation received an EXCEPTION: "
              << "FederateOwnsAttributes" << THLA_ENDL;
 
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( FederateNotExecutionMember const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -5991,7 +5991,7 @@ void Federate::set_federation_name(
          }
 
          // Set the federation execution name.
-         this->federation_name = TMM_strdup( (char *)exec_name.c_str() );
+         this->federation_name = TMM_strdup( const_cast< char * >( exec_name.c_str() ) );
       } else {
 
          // Set to a default value if not already set in the input stream.
@@ -6337,7 +6337,7 @@ MOM just informed us that there are %d federates currently running in the federa
       summary << THLA_ENDL;
 
       // Display the federate summary.
-      send_hs( stdout, (char *)summary.str().c_str() );
+      send_hs( stdout, summary.str().c_str() );
    }
 
    // clear the entry since it was absorbed into running_feds...
@@ -6844,10 +6844,10 @@ void Federate::read_running_feds_file(
       string current_line;
       for ( unsigned int i = 0; i < this->known_feds_count; ++i ) {
          file >> current_line;
-         this->known_feds[i].MOM_instance_name = TMM_strdup( (char *)current_line.c_str() );
+         this->known_feds[i].MOM_instance_name = TMM_strdup( const_cast< char * >( current_line.c_str() ) );
 
          file >> current_line;
-         this->known_feds[i].name = TMM_strdup( (char *)current_line.c_str() );
+         this->known_feds[i].name = TMM_strdup( const_cast< char * >( current_line.c_str() ) );
 
          file >> current_line;
          this->known_feds[i].required = atoi( current_line.c_str() );
@@ -7559,7 +7559,7 @@ void Federate::print_requested_federation_restore_status(
       // Load the next element from 'theFederateStatusVector'.
       ++vector_iter;
    }
-   send_hs( stdout, (char *)msg.str().c_str() );
+   send_hs( stdout, msg.str().c_str() );
 }
 
 void Federate::process_requested_federation_restore_status(
@@ -7636,7 +7636,7 @@ void Federate::print_restore_failure_reason(
       msg << "Federate::print_restore_failure_reason():" << __LINE__
           << " failure reason=\"RTI_DETECTED_FAILURE_DURING_RESTORE\"\n";
    }
-   send_hs( stdout, (char *)msg.str().c_str() );
+   send_hs( stdout, msg.str().c_str() );
 
    this->federation_restore_failed_callback_complete = true;
 }
@@ -7667,7 +7667,7 @@ void Federate::print_save_failure_reason(
       msg << "Federate::print_save_failure_reason():" << __LINE__
           << " failure reason=\"SAVE_TIME_CANNOT_BE_HONORED\"\n";
    }
-   send_hs( stdout, (char *)msg.str().c_str() );
+   send_hs( stdout, msg.str().c_str() );
 }
 
 /*!

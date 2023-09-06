@@ -355,7 +355,7 @@ void SyncPntListBase::wait_for_list_synchronization(
                   ostringstream msg;
                   msg << "SyncPntListBase::wait_for_synchronization():" << __LINE__
                       << " Synchronization-Point '" << name << "', waiting..." << THLA_ENDL;
-                  send_hs( stdout, (char *)msg.str().c_str() );
+                  send_hs( stdout, msg.str().c_str() );
                }
             }
          } while ( !achieved );
@@ -405,7 +405,7 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
                    << __LINE__
                    << " Synchronization-Point '" << name
                    << "' has already been achieved with the RTI!";
-            send_hs( stderr, (char *)errmsg.str().c_str() );
+            send_hs( stderr, errmsg.str().c_str() );
          }
 
       } else if ( sp->is_synchronized() ) {
@@ -418,7 +418,7 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
                    << __LINE__
                    << " Synchronization-Point '" << name
                    << "' has already been synchronized with the RTI!";
-            send_hs( stderr, (char *)errmsg.str().c_str() );
+            send_hs( stderr, errmsg.str().c_str() );
          }
          return;
 
@@ -691,7 +691,7 @@ void SyncPntListBase::print_sync_points()
       }
    }
    msg << "#############################" << endl;
-   send_hs( stdout, (char *)msg.str().c_str() );
+   send_hs( stdout, msg.str().c_str() );
 }
 
 void SyncPntListBase::register_sync_point(
@@ -825,7 +825,7 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
             ostringstream message;
             message << "SyncPntListBase::wait_for_sync_point_announcement():" << __LINE__
                     << " Sync-point: " << sp_status << THLA_ENDL;
-            send_hs( stdout, (char *)message.str().c_str() );
+            send_hs( stdout, message.str().c_str() );
          }
 
          // Always check to see is a shutdown was received.
@@ -877,7 +877,7 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
          ostringstream message;
          message << "SyncPntListBase::wait_for_sync_point_announcement():" << __LINE__
                  << " Sync-point announced: " << sp_status << THLA_ENDL;
-         send_hs( stdout, (char *)message.str().c_str() );
+         send_hs( stdout, message.str().c_str() );
       }
 
       return true;
@@ -903,7 +903,7 @@ bool SyncPntListBase::achieve_sync_point(
          ostringstream msg;
          msg << "SyncPntListBase::achieve_sync_point():" << __LINE__
              << " Synchronization-Point '" << name << "'" << THLA_ENDL;
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       }
 
       // Macro to save the FPU Control Word register value.
@@ -963,7 +963,7 @@ bool SyncPntListBase::wait_for_synchronization(
             ostringstream msg;
             msg << "SyncPntListBase::wait_for_synchronization():" << __LINE__
                 << " Synchronization-Point '" << name << "'" << THLA_ENDL;
-            send_hs( stdout, (char *)msg.str().c_str() );
+            send_hs( stdout, msg.str().c_str() );
          }
 
          // Critical code section.

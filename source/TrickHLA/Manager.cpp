@@ -449,7 +449,7 @@ federate so this call will be ignored.%c",
                    << " Initialization Scheme (Type:'"
                    << this->execution_control->get_type()
                    << "') does not support it." << THLA_ENDL;
-               send_hs( stdout, (char *)msg.str().c_str() );
+               send_hs( stdout, msg.str().c_str() );
             }
          }
       } else {
@@ -522,7 +522,7 @@ federate so the data will not be sent for '%s'.%c",
                    << " Initialization Scheme (Type:'"
                    << this->execution_control->get_type()
                    << "') does not support it." << THLA_ENDL;
-               send_hs( stdout, (char *)msg.str().c_str() );
+               send_hs( stdout, msg.str().c_str() );
             }
          }
       } else {
@@ -778,7 +778,7 @@ void Manager::wait_for_init_sync_point(
                 << " Initialization Scheme (Type:'"
                 << this->execution_control->get_type()
                 << "') does not support it." << THLA_ENDL;
-         send_hs( stdout, (char *)errmsg.str().c_str() );
+         send_hs( stdout, errmsg.str().c_str() );
       }
       return;
    }
@@ -1065,7 +1065,7 @@ void Manager::setup_object_ref_attributes(
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       }
    }
 }
@@ -1119,7 +1119,7 @@ void Manager::setup_interaction_ref_attributes()
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       }
    }
 
@@ -1264,7 +1264,7 @@ void Manager::setup_object_RTI_handles(
          data_objects[n].build_attribute_map();
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            send_hs( stdout, (char *)msg.str().c_str() );
+            send_hs( stdout, msg.str().c_str() );
          }
       }
    } catch ( NameNotFound const &e ) {
@@ -1457,7 +1457,7 @@ void Manager::setup_interaction_RTI_handles(
          }
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            send_hs( stdout, (char *)msg.str().c_str() );
+            send_hs( stdout, msg.str().c_str() );
          }
       }
    } catch ( NameNotFound const &e ) {
@@ -1989,7 +1989,7 @@ void Manager::wait_for_registration_of_required_objects()
          summary << THLA_ENDL;
 
          // Display the summary.
-         send_hs( stdout, (char *)summary.str().c_str() );
+         send_hs( stdout, summary.str().c_str() );
 
          // Reset the flags for printing a summary.
          print_summary               = false;
@@ -2231,7 +2231,7 @@ void Manager::set_object_instance_handles_by_name(
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       summary << THLA_ENDL;
-      send_hs( stdout, (char *)summary.str().c_str() );
+      send_hs( stdout, summary.str().c_str() );
    }
 }
 
@@ -3077,7 +3077,7 @@ void Manager::dump_interactions()
              << check_interactions[i].time.get_base_time()
              << endl;
       }
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 }
 

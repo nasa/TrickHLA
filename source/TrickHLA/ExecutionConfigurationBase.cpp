@@ -302,7 +302,7 @@ void ExecutionConfigurationBase::wait_for_registration()
                  << ( this->is_instance_handle_valid() ? "REGISTERED" : "Not Registered" )
                  << THLA_ENDL;
          // Display the summary.
-         send_hs( stdout, (char *)summary.str().c_str() );
+         send_hs( stdout, summary.str().c_str() );
       }
 
       // Determine if we have any unregistered objects.

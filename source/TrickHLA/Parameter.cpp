@@ -490,7 +490,7 @@ void Parameter::complete_initialization()
           << "' has an unexpected size of zero bytes! Make sure your simulation"
           << " variable is properly initialized before the initialize()"
           << " function is called." << THLA_ENDL;
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
@@ -521,7 +521,7 @@ void Parameter::complete_initialization()
                 && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *(char **)address ) << "\"" << endl;
       }
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 }
@@ -566,7 +566,7 @@ void Parameter::extract_data(
                    << " defined in the FOM. If you are using Lag Compensation one"
                    << " possible cause of this problem is that your lag compensation"
                    << " variables are not the correct size or type." << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
+            send_hs( stderr, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here. DDexter
             return;
@@ -601,7 +601,7 @@ void Parameter::extract_data(
                    << " is that your lag compensation variables are not the correct"
                    << " size or type." << THLA_ENDL;
 #if 1
-            send_hs( stderr, (char *)errmsg.str().c_str() );
+            send_hs( stderr, errmsg.str().c_str() );
 
             // For now just return if we have a data size mismatch. This will
             // allow us to continue to run even though the other federate is
@@ -668,7 +668,7 @@ void Parameter::extract_data(
                    << " Compensation one possible cause of this problem is that your"
                    << " lag compensation variables are not the correct size or type."
                    << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
+            send_hs( stderr, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here. DDexter
             return;
@@ -699,7 +699,7 @@ void Parameter::extract_data(
                    << " Compensation one possible cause of this problem is that your"
                    << " lag compensation variables are not the correct size or type."
                    << THLA_ENDL;
-            send_hs( stderr, (char *)errmsg.str().c_str() );
+            send_hs( stderr, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here. DDexter
             return;
@@ -864,7 +864,7 @@ void Parameter::calculate_size_and_number_of_items()
                 && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *(char **)address ) << "\"" << endl;
       }
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 }
 
@@ -950,7 +950,7 @@ void Parameter::pack_parameter_buffer()
                 && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *(char **)address ) << "\"" << endl;
       }
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // TODO: Use a transcoder for each type to encode and decode depending on
@@ -983,7 +983,7 @@ void Parameter::pack_parameter_buffer()
                 << "================== PARAMETER ENCODE ==================================" << endl
                 << " parameter '" << FOM_name << "' (trick name '" << trick_name
                 << "')" << endl;
-            send_hs( stdout, (char *)msg.str().c_str() );
+            send_hs( stdout, msg.str().c_str() );
             print_buffer();
          }
          break;
@@ -1004,7 +1004,7 @@ void Parameter::pack_parameter_buffer()
                 << "================== PARAMETER ENCODE ==================================" << endl
                 << " parameter '" << FOM_name << "' (trick name '" << trick_name
                 << "')" << endl;
-            send_hs( stdout, (char *)msg.str().c_str() );
+            send_hs( stdout, msg.str().c_str() );
             print_buffer();
          }
          break;
@@ -1031,7 +1031,7 @@ void Parameter::pack_parameter_buffer()
                    << "================== PARAMETER ENCODE ==================================" << endl
                    << " parameter '" << FOM_name << "' (trick name '" << trick_name
                    << "')" << endl;
-               send_hs( stdout, (char *)msg.str().c_str() );
+               send_hs( stdout, msg.str().c_str() );
                print_buffer();
             }
          } else {
@@ -1071,7 +1071,7 @@ void Parameter::pack_parameter_buffer()
                    << "================== PARAMETER ENCODE ==================================" << endl
                    << " parameter '" << FOM_name << "' (trick name '" << trick_name
                    << "')" << endl;
-               send_hs( stdout, (char *)msg.str().c_str() );
+               send_hs( stdout, msg.str().c_str() );
                print_buffer();
             }
          }
@@ -1106,7 +1106,7 @@ void Parameter::pack_parameter_buffer()
                 && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *(char **)address ) << "\"" << endl;
       }
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 }
 
@@ -1138,7 +1138,7 @@ void Parameter::unpack_parameter_buffer()
                 << "================== PARAMETER DECODE ==================================" << endl
                 << " parameter '" << FOM_name << "' (trick name '" << trick_name
                 << "')" << endl;
-            send_hs( stdout, (char *)msg.str().c_str() );
+            send_hs( stdout, msg.str().c_str() );
             print_buffer();
          }
          break;
@@ -1157,7 +1157,7 @@ void Parameter::unpack_parameter_buffer()
                 << "================== PARAMETER DECODE ==================================" << endl
                 << " parameter '" << FOM_name << "' (trick name '" << trick_name
                 << "')" << endl;
-            send_hs( stdout, (char *)msg.str().c_str() );
+            send_hs( stdout, msg.str().c_str() );
             print_buffer();
          }
          break;
@@ -1186,7 +1186,7 @@ void Parameter::unpack_parameter_buffer()
                    << "================ PARAMETER DECODE ================================" << endl
                    << " parameter '" << FOM_name << "' (trick name '" << trick_name << "')"
                    << " value:\"" << ( *(char **)address ) << "\"" << endl;
-               send_hs( stdout, (char *)msg.str().c_str() );
+               send_hs( stdout, msg.str().c_str() );
                print_buffer();
             }
          } else {
@@ -1222,7 +1222,7 @@ void Parameter::unpack_parameter_buffer()
                       << "================== PARAMETER DECODE ================================" << endl
                       << " parameter '" << FOM_name << "' (trick name '" << trick_name
                       << "')" << endl;
-                  send_hs( stdout, (char *)msg.str().c_str() );
+                  send_hs( stdout, msg.str().c_str() );
                   print_buffer();
                }
             }
@@ -1258,7 +1258,7 @@ void Parameter::unpack_parameter_buffer()
                 && ( attr->index[attr->num_index - 1].size == 0 ) ) ) {
          msg << "  value:\"" << ( *(char **)address ) << "\"" << endl;
       }
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 }
 
@@ -3086,7 +3086,7 @@ void Parameter::byteswap_buffer_copy(
              << trick_name << "' has an unexpected size of zero bytes! Make"
              << " sure your simulation variable is properly initialized before"
              << " this initialize() function is called." << endl;
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       }
       return;
    }
@@ -3380,5 +3380,5 @@ void Parameter::print_buffer() const
          msg << endl;
       }
    }
-   send_hs( stdout, (char *)msg.str().c_str() );
+   send_hs( stdout, msg.str().c_str() );
 }
