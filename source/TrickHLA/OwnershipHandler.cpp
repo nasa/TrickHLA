@@ -123,7 +123,7 @@ void OwnershipHandler::setup_checkpoint_requests()
                   __LINE__, pull_items_cnt, THLA_NEWLINE );
       }
       pull_items = reinterpret_cast< OwnershipItem * >( alloc_type( (int)pull_items_cnt, "TrickHLA::OwnershipItem" ) );
-      if ( pull_items == static_cast< OwnershipItem * >( NULL ) ) {
+      if ( pull_items == NULL ) {
          ostringstream errmsg;
          errmsg << "OwnershipHandler::setup_checkpoint_requests():" << __LINE__
                 << " CERROR: ould not allocate memory for pull_items (array of OwnershipItem type)!"
@@ -160,7 +160,7 @@ void OwnershipHandler::setup_checkpoint_requests()
                   __LINE__, push_items_cnt, THLA_NEWLINE );
       }
       push_items = reinterpret_cast< OwnershipItem * >( alloc_type( (int)push_items_cnt, "TrickHLA::OwnershipItem" ) );
-      if ( push_items == static_cast< OwnershipItem * >( NULL ) ) {
+      if ( push_items == NULL ) {
          ostringstream errmsg;
          errmsg << "OwnershipHandler::setup_checkpoint_requests():" << __LINE__
                 << "ERROR:  Could not allocate memory for push_items (array of OwnershipItem type)!"

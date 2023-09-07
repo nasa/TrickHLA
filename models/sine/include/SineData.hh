@@ -195,8 +195,7 @@ class SineData
          if ( ( this->name != NULL ) && TMM_is_alloced( this->name ) ) {
             TMM_delete_var_a( this->name );
          }
-         this->name = ( n != NULL ) ? TMM_strdup( const_cast< char * >( n ) )
-                                    : static_cast< char * >( NULL );
+         this->name = ( n != NULL ) ? TMM_strdup( const_cast< char * >( n ) ) : NULL;
       }
    }
 

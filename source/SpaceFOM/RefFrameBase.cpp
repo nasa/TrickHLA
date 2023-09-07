@@ -83,13 +83,13 @@ RefFrameBase::RefFrameBase()
  */
 RefFrameBase::~RefFrameBase()
 {
-   if ( this->name != static_cast< char * >( NULL ) ) {
+   if ( this->name != NULL ) {
       trick_MM->delete_var( static_cast< void * >( this->name ) );
-      this->name = static_cast< char * >( NULL );
+      this->name = NULL;
    }
-   if ( this->parent_name != static_cast< char * >( NULL ) ) {
+   if ( this->parent_name != NULL ) {
       trick_MM->delete_var( static_cast< void * >( this->parent_name ) );
-      this->parent_name = static_cast< char * >( NULL );
+      this->parent_name = NULL;
    }
 }
 

@@ -90,11 +90,11 @@ SineData::SineData(
 SineData::~SineData()
 {
    // Make sure we free the memory used by the name.
-   if ( name != static_cast< char * >( NULL ) ) {
+   if ( name != NULL ) {
       if ( TMM_is_alloced( name ) ) {
          TMM_delete_var_a( name );
       }
-      name = static_cast< char * >( NULL );
+      name = NULL;
    }
 }
 

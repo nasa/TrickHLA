@@ -230,69 +230,69 @@ Federate::Federate()
 Federate::~Federate()
 {
    // Free the memory used for the federate name.
-   if ( name != static_cast< char * >( NULL ) ) {
+   if ( name != NULL ) {
       if ( TMM_is_alloced( name ) ) {
          TMM_delete_var_a( name );
       }
-      name = static_cast< char * >( NULL );
+      name = NULL;
    }
 
    // Free the memory used for the federate type.
-   if ( type != static_cast< char * >( NULL ) ) {
+   if ( type != NULL ) {
       if ( TMM_is_alloced( type ) ) {
          TMM_delete_var_a( type );
       }
-      type = static_cast< char * >( NULL );
+      type = NULL;
    }
 
    // Free the memory used for local-settings
-   if ( local_settings != static_cast< char * >( NULL ) ) {
+   if ( local_settings != NULL ) {
       if ( TMM_is_alloced( local_settings ) ) {
          TMM_delete_var_a( local_settings );
       }
-      local_settings = static_cast< char * >( NULL );
+      local_settings = NULL;
    }
 
    // Free the memory used for the Federation Execution name.
-   if ( federation_name != static_cast< char * >( NULL ) ) {
+   if ( federation_name != NULL ) {
       if ( TMM_is_alloced( federation_name ) ) {
          TMM_delete_var_a( federation_name );
       }
-      federation_name = static_cast< char * >( NULL );
+      federation_name = NULL;
    }
 
    // Free the memory used by the FOM module filenames.
-   if ( FOM_modules != static_cast< char * >( NULL ) ) {
+   if ( FOM_modules != NULL ) {
       if ( TMM_is_alloced( FOM_modules ) ) {
          TMM_delete_var_a( FOM_modules );
       }
-      FOM_modules = static_cast< char * >( NULL );
+      FOM_modules = NULL;
    }
-   if ( MIM_module != static_cast< char * >( NULL ) ) {
+   if ( MIM_module != NULL ) {
       if ( TMM_is_alloced( MIM_module ) ) {
          TMM_delete_var_a( MIM_module );
       }
-      MIM_module = static_cast< char * >( NULL );
+      MIM_module = NULL;
    }
 
    // Free the memory used by the array of known Federates for the Federation.
-   if ( known_feds != static_cast< KnownFederate * >( NULL ) ) {
+   if ( known_feds != NULL ) {
       for ( unsigned int i = 0; i < known_feds_count; ++i ) {
-         if ( known_feds[i].MOM_instance_name != static_cast< char * >( NULL ) ) {
+         if ( known_feds[i].MOM_instance_name != NULL ) {
             if ( TMM_is_alloced( known_feds[i].MOM_instance_name ) ) {
                TMM_delete_var_a( known_feds[i].MOM_instance_name );
             }
-            known_feds[i].MOM_instance_name = static_cast< char * >( NULL );
+            known_feds[i].MOM_instance_name = NULL;
          }
-         if ( known_feds[i].name != static_cast< char * >( NULL ) ) {
+         if ( known_feds[i].name != NULL ) {
             if ( TMM_is_alloced( known_feds[i].name ) ) {
                TMM_delete_var_a( known_feds[i].name );
             }
-            known_feds[i].name = static_cast< char * >( NULL );
+            known_feds[i].name = NULL;
          }
       }
       TMM_delete_var_a( known_feds );
-      known_feds       = static_cast< KnownFederate       *>( NULL );
+      known_feds       = NULL;
       known_feds_count = 0;
    }
 
@@ -315,7 +315,7 @@ Federate::~Federate()
    mom_HLAfederate_inst_name_map.clear();
 
    // Set the references to the ambassadors.
-   federate_ambassador = static_cast< FedAmb * >( NULL );
+   federate_ambassador = NULL;
 
    // Make sure we unlock the mutex.
    (void)time_adv_state_mutex.unlock();
@@ -558,7 +558,7 @@ void Federate::restart_initialization()
    // Update the lookahead time in our HLA time line.
    set_lookahead( lookahead_time );
 
-   if ( federate_ambassador == static_cast< FedAmb * >( NULL ) ) {
+   if ( federate_ambassador == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::restart_initialization():" << __LINE__
              << " ERROR: NULL pointer to FederateAmbassador!" << THLA_ENDL;
@@ -612,7 +612,7 @@ void Federate::restart_initialization()
    if ( enable_known_feds ) {
 
       // Only need to do anything if there are known federates.
-      if ( ( known_feds_count <= 0 ) || ( known_feds == static_cast< KnownFederate * >( NULL ) ) ) {
+      if ( ( known_feds_count <= 0 ) || ( known_feds == NULL ) ) {
 
          // Make sure the count reflects the state of the array.
          known_feds_count = 0;
@@ -629,7 +629,7 @@ void Federate::restart_initialization()
       for ( unsigned int i = 0; i < known_feds_count; ++i ) {
 
          // A NULL or zero length Federate name is not allowed.
-         if ( ( known_feds[i].name == static_cast< char * >( NULL ) ) || ( *known_feds[i].name == '\0' ) ) {
+         if ( ( known_feds[i].name == NULL ) || ( *known_feds[i].name == '\0' ) ) {
             ostringstream errmsg;
             errmsg << "Federate::restart_initialization():" << __LINE__
                    << " ERROR: Invalid name of known Federate at array index: "
@@ -3716,7 +3716,7 @@ void Federate::join_federation(
              << " ERROR: NULL pointer to RTIambassador!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
-   if ( federate_ambassador == static_cast< FedAmb * >( NULL ) ) {
+   if ( federate_ambassador == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::join_federation():" << __LINE__
              << " ERROR: NULL pointer to FederateAmbassador!" << THLA_ENDL;
@@ -5975,18 +5975,17 @@ void Federate::set_federation_name(
    string const &exec_name )
 {
    // Check for a NULL current federatin name or a self assigned name.
-   if ( ( this->federation_name == static_cast< char * >( NULL ) )
-        || ( this->federation_name != exec_name ) ) {
+   if ( ( this->federation_name == NULL ) || ( this->federation_name != exec_name ) ) {
 
       // Check for an empty (i.e. zero length) name.
       if ( !exec_name.empty() ) {
 
          // Reallocate and set the federation execution name.
-         if ( this->federation_name != static_cast< char * >( NULL ) ) {
+         if ( this->federation_name != NULL ) {
             if ( TMM_is_alloced( federation_name ) ) {
                TMM_delete_var_a( federation_name );
             }
-            this->federation_name = static_cast< char * >( NULL );
+            this->federation_name = NULL;
          }
 
          // Set the federation execution name.
@@ -5994,7 +5993,7 @@ void Federate::set_federation_name(
       } else {
 
          // Set to a default value if not already set in the input stream.
-         if ( this->federation_name == static_cast< char * >( NULL ) ) {
+         if ( this->federation_name == NULL ) {
             this->federation_name = TMM_strdup( const_cast< char * >( "TrickHLA Federation" ) );
          }
       }
@@ -6353,23 +6352,23 @@ MOM just informed us that there are %d federates currently running in the federa
 
 void Federate::clear_running_feds()
 {
-   if ( this->running_feds != static_cast< KnownFederate * >( NULL ) ) {
+   if ( this->running_feds != NULL ) {
       for ( unsigned int i = 0; i < running_feds_count; ++i ) {
-         if ( this->running_feds[i].MOM_instance_name != static_cast< char * >( NULL ) ) {
+         if ( this->running_feds[i].MOM_instance_name != NULL ) {
             if ( TMM_is_alloced( this->running_feds[i].MOM_instance_name ) ) {
                TMM_delete_var_a( this->running_feds[i].MOM_instance_name );
             }
-            this->running_feds[i].MOM_instance_name = static_cast< char * >( NULL );
+            this->running_feds[i].MOM_instance_name = NULL;
          }
-         if ( this->running_feds[i].name != static_cast< char * >( NULL ) ) {
+         if ( this->running_feds[i].name != NULL ) {
             if ( TMM_is_alloced( this->running_feds[i].name ) ) {
                TMM_delete_var_a( this->running_feds[i].name );
             }
-            this->running_feds[i].name = static_cast< char * >( NULL );
+            this->running_feds[i].name = NULL;
          }
       }
       TMM_delete_var_a( this->running_feds );
-      this->running_feds = static_cast< KnownFederate * >( NULL );
+      this->running_feds = NULL;
    }
 }
 
@@ -6379,7 +6378,7 @@ void Federate::update_running_feds()
    running_feds = reinterpret_cast< KnownFederate * >(
       alloc_type( running_feds_count, "TrickHLA::KnownFederate" ) );
 
-   if ( running_feds == static_cast< KnownFederate * >( NULL ) ) {
+   if ( running_feds == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::update_running_feds():" << __LINE__
              << " ERROR: Could not allocate memory for running_feds!" << THLA_ENDL;
@@ -6440,7 +6439,7 @@ void Federate::add_a_single_entry_into_running_feds()
    temp_feds = reinterpret_cast< KnownFederate * >(
       alloc_type( running_feds_count + 1, "TrickHLA::KnownFederate" ) );
 
-   if ( temp_feds == static_cast< KnownFederate * >( NULL ) ) {
+   if ( temp_feds == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::add_a_single_entry_into_running_feds():" << __LINE__
              << " ERROR: Could not allocate memory for temp_feds when attempting to add"
@@ -6539,7 +6538,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    // allocate temporary list...
    tmp_feds = reinterpret_cast< KnownFederate * >(
       alloc_type( this->running_feds_count - 1, "TrickHLA::KnownFederate" ) );
-   if ( tmp_feds == static_cast< KnownFederate * >( NULL ) ) {
+   if ( tmp_feds == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::remove_discovered_object_federate_instance_id():" << __LINE__
              << " ERROR: Could not allocate memory for tmp_feds!" << THLA_ENDL;
@@ -6812,17 +6811,17 @@ void Federate::read_running_feds_file(
 
       // clear out the known_feds from memory...
       for ( unsigned int i = 0; i < known_feds_count; ++i ) {
-         if ( this->known_feds[i].MOM_instance_name != static_cast< char * >( NULL ) ) {
+         if ( this->known_feds[i].MOM_instance_name != NULL ) {
             if ( TMM_is_alloced( this->known_feds[i].MOM_instance_name ) ) {
                TMM_delete_var_a( this->known_feds[i].MOM_instance_name );
             }
-            this->known_feds[i].MOM_instance_name = static_cast< char * >( NULL );
+            this->known_feds[i].MOM_instance_name = NULL;
          }
-         if ( this->known_feds[i].name != static_cast< char * >( NULL ) ) {
+         if ( this->known_feds[i].name != NULL ) {
             if ( TMM_is_alloced( this->known_feds[i].name ) ) {
                TMM_delete_var_a( this->known_feds[i].name );
             }
-            this->known_feds[i].name = static_cast< char * >( NULL );
+            this->known_feds[i].name = NULL;
          }
       }
       TMM_delete_var_a( this->known_feds );
@@ -6833,7 +6832,7 @@ void Federate::read_running_feds_file(
       // re-allocate it...
       this->known_feds = reinterpret_cast< KnownFederate * >(
          alloc_type( this->known_feds_count, "TrickHLA::KnownFederate" ) );
-      if ( this->known_feds == static_cast< KnownFederate * >( NULL ) ) {
+      if ( this->known_feds == NULL ) {
          ostringstream errmsg;
          errmsg << "Federate::read_running_feds_file():" << __LINE__
                 << " ERROR: Could not allocate memory for known_feds!" << THLA_ENDL;
@@ -6865,18 +6864,18 @@ void Federate::copy_running_feds_into_known_feds()
 {
    // clear out the known_feds from memory...
    for ( unsigned int i = 0; i < this->known_feds_count; ++i ) {
-      if ( this->known_feds[i].MOM_instance_name != static_cast< char * >( NULL ) ) {
+      if ( this->known_feds[i].MOM_instance_name != NULL ) {
 
          if ( TMM_is_alloced( this->known_feds[i].MOM_instance_name ) ) {
             TMM_delete_var_a( this->known_feds[i].MOM_instance_name );
          }
-         this->known_feds[i].MOM_instance_name = static_cast< char * >( NULL );
+         this->known_feds[i].MOM_instance_name = NULL;
       }
-      if ( this->known_feds[i].name != static_cast< char * >( NULL ) ) {
+      if ( this->known_feds[i].name != NULL ) {
          if ( TMM_is_alloced( this->known_feds[i].name ) ) {
             TMM_delete_var_a( this->known_feds[i].name );
          }
-         this->known_feds[i].name = static_cast< char * >( NULL );
+         this->known_feds[i].name = NULL;
       }
    }
    TMM_delete_var_a( this->known_feds );
@@ -6884,7 +6883,7 @@ void Federate::copy_running_feds_into_known_feds()
    // re-allocate it...
    this->known_feds = reinterpret_cast< KnownFederate * >(
       alloc_type( running_feds_count, "TrickHLA::KnownFederate" ) );
-   if ( this->known_feds == static_cast< KnownFederate * >( NULL ) ) {
+   if ( this->known_feds == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::copy_running_feds_into_known_feds():" << __LINE__
              << " ERROR: Could not allocate memory for known_feds!" << THLA_ENDL;

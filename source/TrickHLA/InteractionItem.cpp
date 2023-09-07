@@ -195,7 +195,7 @@ void InteractionItem::checkpoint_queue()
 
       parm_items = reinterpret_cast< ParameterItem * >(
          alloc_type( parm_items_count, "TrickHLA::ParameterItem" ) );
-      if ( parm_items == static_cast< ParameterItem * >( NULL ) ) {
+      if ( parm_items == NULL ) {
          ostringstream errmsg;
          errmsg << "InteractionItem::checkpoint_queue():" << __LINE__
                 << " ERROR: Failed to allocate enough memory for a parm_items linear"

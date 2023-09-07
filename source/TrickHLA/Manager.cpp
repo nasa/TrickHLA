@@ -2575,7 +2575,7 @@ Object *Manager::get_trickhla_object(
 {
    // We use a map with the key being the ObjectIntanceHandle for fast lookups.
    ObjectInstanceMap::const_iterator iter = object_map.find( instance_id );
-   return ( ( iter != object_map.end() ) ? iter->second : static_cast< Object * >( NULL ) );
+   return ( ( iter != object_map.end() ) ? iter->second : NULL );
 }
 
 /*!
@@ -2986,7 +2986,7 @@ void Manager::setup_checkpoint_interactions()
       check_interactions_count = interactions_queue.size();
       check_interactions       = reinterpret_cast< InteractionItem       *>(
          alloc_type( check_interactions_count, "TrickHLA::InteractionItem" ) );
-      if ( check_interactions == static_cast< InteractionItem * >( NULL ) ) {
+      if ( check_interactions == NULL ) {
          ostringstream errmsg;
          errmsg << "Manager::setup_checkpoint_interactions():" << __LINE__
                 << " ERROR: Failed to allocate enough memory for check_interactions"
@@ -3039,7 +3039,7 @@ void Manager::clear_interactions()
       for ( unsigned int i = 0; i < check_interactions_count; ++i ) {
          check_interactions[i].clear_parm_items();
       }
-      trick_MM->delete_var( check_interactions );
+      trick_MM->delete_var( static_cast< void * >( check_interactions ) );
       check_interactions       = NULL;
       check_interactions_count = 0;
    }
@@ -3268,8 +3268,7 @@ bool Manager::is_this_a_rejoining_federate()
 
 RTIambassador *Manager::get_RTI_ambassador()
 {
-   return ( ( federate != NULL ) ? federate->get_RTI_ambassador()
-                                 : static_cast< RTI1516_NAMESPACE::RTIambassador * >( NULL ) );
+   return ( ( federate != NULL ) ? federate->get_RTI_ambassador() : NULL );
 }
 
 bool Manager::is_shutdown_called() const

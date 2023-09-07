@@ -124,18 +124,18 @@ ExecutionConfiguration::ExecutionConfiguration(
  */
 ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
 {
-   if ( required_federates != static_cast< char * >( NULL ) ) {
+   if ( required_federates != NULL ) {
       if ( TMM_is_alloced( required_federates ) ) {
          TMM_delete_var_a( required_federates );
       }
-      required_federates = static_cast< char * >( NULL );
+      required_federates = NULL;
    }
 
-   if ( owner != static_cast< char * >( NULL ) ) {
+   if ( owner != NULL ) {
       if ( TMM_is_alloced( owner ) ) {
          TMM_delete_var_a( owner );
       }
-      owner = static_cast< char * >( NULL );
+      owner = NULL;
    }
 }
 
@@ -209,9 +209,9 @@ void ExecutionConfiguration::configure()
    }
 
    // Release the memory used by the required_federates c-string.
-   if ( required_federates != static_cast< char * >( NULL ) ) {
+   if ( required_federates != NULL ) {
       TMM_delete_var_a( required_federates );
-      required_federates = static_cast< char * >( NULL );
+      required_federates = NULL;
    }
 
    ostringstream federate_list;

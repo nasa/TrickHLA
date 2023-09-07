@@ -81,7 +81,7 @@ SinePacking::SinePacking()
  */
 SinePacking::~SinePacking()
 {
-   if ( buff != static_cast< unsigned char * >( NULL ) ) {
+   if ( buff != NULL ) {
       if ( TMM_is_alloced( reinterpret_cast< char * >( buff ) ) ) {
          TMM_delete_var_a( buff );
       }

@@ -1201,8 +1201,7 @@ Federate *Interaction::get_federate()
 
 RTIambassador *Interaction::get_RTI_ambassador()
 {
-   return ( ( this->manager != NULL ) ? this->manager->get_RTI_ambassador()
-                                      : static_cast< RTI1516_NAMESPACE::RTIambassador * >( NULL ) );
+   return ( ( this->manager != NULL ) ? this->manager->get_RTI_ambassador() : NULL );
 }
 
 bool Interaction::is_shutdown_called() const

@@ -75,19 +75,19 @@ PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
 PhysicalEntityBase::~PhysicalEntityBase() // RETURN: -- None.
 {
    if ( this->name != (char *)NULL ) {
-      trick_MM->delete_var( reinterpret_cast< void * >( this->name ) );
+      trick_MM->delete_var( static_cast< void * >( this->name ) );
       this->name = (char *)NULL;
    }
    if ( this->type != (char *)NULL ) {
-      trick_MM->delete_var( reinterpret_cast< void * >( this->type ) );
+      trick_MM->delete_var( static_cast< void * >( this->type ) );
       this->type = (char *)NULL;
    }
    if ( this->status != (char *)NULL ) {
-      trick_MM->delete_var( reinterpret_cast< void * >( this->status ) );
+      trick_MM->delete_var( static_cast< void * >( this->status ) );
       this->status = (char *)NULL;
    }
    if ( this->parent_ref_frame != (char *)NULL ) {
-      trick_MM->delete_var( reinterpret_cast< void * >( this->parent_ref_frame ) );
+      trick_MM->delete_var( static_cast< void * >( this->parent_ref_frame ) );
       this->parent_ref_frame = (char *)NULL;
    }
 }
@@ -142,7 +142,7 @@ void PhysicalEntityBase::initialize()
 void PhysicalEntityBase::set_name( char const *new_name )
 {
    if ( this->name != NULL ) {
-      trick_MM->delete_var( reinterpret_cast< void * >( this->name ) );
+      trick_MM->delete_var( static_cast< void * >( this->name ) );
    }
    this->name = trick_MM->mm_strdup( new_name );
    return;
@@ -151,7 +151,7 @@ void PhysicalEntityBase::set_name( char const *new_name )
 void PhysicalEntityBase::set_type( char const *new_name )
 {
    if ( this->type != NULL ) {
-      trick_MM->delete_var( reinterpret_cast< void * >( this->type ) );
+      trick_MM->delete_var( static_cast< void * >( this->type ) );
    }
    this->type = trick_MM->mm_strdup( new_name );
    return;
@@ -160,7 +160,7 @@ void PhysicalEntityBase::set_type( char const *new_name )
 void PhysicalEntityBase::set_status( char const *new_name )
 {
    if ( this->status != NULL ) {
-      trick_MM->delete_var( reinterpret_cast< void * >( this->status ) );
+      trick_MM->delete_var( static_cast< void * >( this->status ) );
    }
    this->status = trick_MM->mm_strdup( new_name );
    return;
@@ -169,7 +169,7 @@ void PhysicalEntityBase::set_status( char const *new_name )
 void PhysicalEntityBase::set_parent_ref_frame( char const *new_name )
 {
    if ( this->parent_ref_frame != NULL ) {
-      trick_MM->delete_var( reinterpret_cast< void * >( this->parent_ref_frame ) );
+      trick_MM->delete_var( static_cast< void * >( this->parent_ref_frame ) );
    }
    this->parent_ref_frame = trick_MM->mm_strdup( new_name );
 

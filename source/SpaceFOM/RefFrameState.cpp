@@ -77,13 +77,13 @@ RefFrameState::RefFrameState()
  */
 RefFrameState::~RefFrameState()
 {
-   if ( this->name != static_cast< char * >( NULL ) ) {
+   if ( this->name != NULL ) {
       trick_MM->delete_var( static_cast< void * >( this->name ) );
-      this->name = (char *)NULL;
+      this->name = NULL;
    }
-   if ( this->parent_name != static_cast< char * >( NULL ) ) {
+   if ( this->parent_name != NULL ) {
       trick_MM->delete_var( static_cast< void * >( this->parent_name ) );
-      this->parent_name = (char *)NULL;
+      this->parent_name = NULL;
    }
 }
 

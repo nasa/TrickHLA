@@ -122,11 +122,11 @@ ExecutionConfigurationBase::ExecutionConfigurationBase(
  */
 ExecutionConfigurationBase::~ExecutionConfigurationBase()
 {
-   if ( this->S_define_name != static_cast< char const * >( NULL ) ) {
+   if ( this->S_define_name != NULL ) {
       if ( TMM_is_alloced( const_cast< char * >( this->S_define_name ) ) ) {
-         trick_MM->delete_var( this->S_define_name );
+         trick_MM->delete_var( static_cast< void * >( const_cast< char * >( this->S_define_name ) ) );
       }
-      this->S_define_name = static_cast< char const * >( NULL );
+      this->S_define_name = NULL;
    }
 }
 
@@ -154,11 +154,11 @@ void ExecutionConfigurationBase::setup(
 void ExecutionConfigurationBase::set_S_define_name(
    char const *new_name )
 {
-   if ( this->S_define_name != static_cast< char const * >( NULL ) ) {
+   if ( this->S_define_name != NULL ) {
       if ( TMM_is_alloced( const_cast< char * >( this->S_define_name ) ) ) {
-         trick_MM->delete_var( this->S_define_name );
+         trick_MM->delete_var( static_cast< void * >( const_cast< char * >( this->S_define_name ) ) );
       }
-      this->S_define_name = static_cast< char const * >( NULL );
+      this->S_define_name = NULL;
    }
 
    // Set the full path S_define name.

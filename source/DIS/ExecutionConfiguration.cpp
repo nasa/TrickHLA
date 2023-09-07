@@ -127,11 +127,11 @@ ExecutionConfiguration::ExecutionConfiguration()
 ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
 {
    // Free the allocated root reference frame name.
-   if ( this->root_frame_name != static_cast< char * >( NULL ) ) {
+   if ( this->root_frame_name != NULL ) {
       if ( TMM_is_alloced( this->root_frame_name ) ) {
          TMM_delete_var_a( this->root_frame_name );
       }
-      this->root_frame_name = static_cast< char * >( NULL );
+      this->root_frame_name = NULL;
    }
 }
 
@@ -366,11 +366,11 @@ void ExecutionConfiguration::set_root_frame_name(
    char const *name )
 {
    // Free the Trick memory if it's already allocated.
-   if ( this->root_frame_name != static_cast< char * >( NULL ) ) {
+   if ( this->root_frame_name != NULL ) {
       if ( TMM_is_alloced( this->root_frame_name ) ) {
          TMM_delete_var_a( this->root_frame_name );
       }
-      this->root_frame_name = static_cast< char * >( NULL );
+      this->root_frame_name = NULL;
    }
 
    // Allocate and duplicate the new root reference frame name.
@@ -513,7 +513,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    // Set up attributes.
    this->attr_count = 7;
    this->attributes = static_cast< Attribute * >( trick_MM->declare_var( "Attribute", this->attr_count ) );
-   if ( this->attributes == static_cast< Attribute * >( NULL ) ) {
+   if ( this->attributes == NULL ) {
       ostringstream errmsg;
       errmsg << "DIS::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for the attributes of the ExCO!"
@@ -552,7 +552,7 @@ void ExecutionConfiguration::setup_ref_attributes(
 
    // Allocate the Trick REF2 data structure.
    REF2 const *exco_ref2 = reinterpret_cast< REF2 * >( malloc( sizeof( REF2 ) ) );
-   if ( exco_ref2 == static_cast< REF2 * >( NULL ) ) {
+   if ( exco_ref2 == NULL ) {
       ostringstream errmsg;
       errmsg << "DIS::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for the REF2 structure for"
@@ -564,7 +564,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    // entries: 1) the 'root_frame_name' parameter and 2) an empty entry
    // marking the end of the structure.
    ATTRIBUTES *exco_attr = reinterpret_cast< ATTRIBUTES * >( malloc( 2 * sizeof( ATTRIBUTES ) ) );
-   if ( exco_attr == static_cast< ATTRIBUTES * >( NULL ) ) {
+   if ( exco_attr == NULL ) {
       ostringstream errmsg;
       errmsg << "DIS::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for the ATTRIBUTES for the"

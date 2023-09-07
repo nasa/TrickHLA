@@ -88,9 +88,9 @@ MTRInteractionHandler::MTRInteractionHandler(
  */
 MTRInteractionHandler::~MTRInteractionHandler() // RETURN: -- None.
 {
-   if ( this->name != (char *)NULL ) {
-      trick_MM->delete_var( this->name );
-      this->name = (char *)NULL;
+   if ( this->name != NULL ) {
+      trick_MM->delete_var( static_cast< void * >( this->name ) );
+      this->name = NULL;
    }
    return;
 }
@@ -103,7 +103,7 @@ void MTRInteractionHandler::set_name(
 {
    if ( this->name != NULL ) {
       if ( trick_MM->is_alloced( this->name ) ) {
-         trick_MM->delete_var( this->name );
+         trick_MM->delete_var( static_cast< void * >( this->name ) );
       }
       this->name = NULL;
    }
@@ -219,7 +219,7 @@ void MTRInteractionHandler::receive_interaction(
 
    // Get the ExecutionControl object and cast it to an SpaceFOM::ExecutionControl.
    SpaceFOM::ExecutionControl *exco = dynamic_cast< ExecutionControl * >( interaction->get_federate()->get_execution_control() );
-   if ( exco == static_cast< ExecutionControl * >( NULL ) ) {
+   if ( exco == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::receive_interaction():" << __LINE__
              << "  ERROR: Unexpected NULL SpaceFOM::ExecutionControl!" << THLA_ENDL;

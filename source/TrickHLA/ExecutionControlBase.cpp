@@ -155,15 +155,15 @@ ExecutionControlBase::~ExecutionControlBase()
    this->clear_mode_values();
 
    // Free the memory used for the multiphase initialization synchronization points.
-   if ( multiphase_init_sync_points != static_cast< char * >( NULL ) ) {
+   if ( multiphase_init_sync_points != NULL ) {
       if ( TMM_is_alloced( multiphase_init_sync_points ) ) {
          TMM_delete_var_a( multiphase_init_sync_points );
       }
-      multiphase_init_sync_points = static_cast< char * >( NULL );
+      multiphase_init_sync_points = NULL;
    }
 
    // Free the memory used by the array of running Federates for the Federation.
-   if ( loggable_sync_pts != static_cast< LoggableTimedSyncPnt * >( NULL ) ) {
+   if ( loggable_sync_pts != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "~TrickHLA::ExecutionControlBase() logged_sync_pts_count=%d %c",
                   logged_sync_pts_count, THLA_NEWLINE );
@@ -172,7 +172,7 @@ ExecutionControlBase::~ExecutionControlBase()
          loggable_sync_pts[i].clear();
       }
       TMM_delete_var_a( loggable_sync_pts );
-      loggable_sync_pts     = static_cast< LoggableTimedSyncPnt     *>( NULL );
+      loggable_sync_pts     = NULL;
       logged_sync_pts_count = 0;
    }
 }
@@ -259,7 +259,7 @@ Trick simulation time as the default scenario-timeline.%c",
 
       // Use the simulation timeline as the default scenario timeline.
       scenario_timeline = &def_scenario_timeline;
-      if ( scenario_timeline == static_cast< ScenarioTimeline * >( NULL ) ) { // cppcheck-suppress [knownConditionTrueFalse]
+      if ( scenario_timeline == NULL ) { // cppcheck-suppress [knownConditionTrueFalse]
          ostringstream errmsg;
          errmsg << "TrickHLA::ExecutionControlBase::initialize():" << __LINE__
                 << " FAILED to allocate enough memory for ScenarioTimeline class!"
@@ -729,7 +729,7 @@ Object *ExecutionControlBase::get_trickhla_object(
    }
 
    // Default return if we don't have an ExecutionConfiguration match.
-   return ( static_cast< Object * >( NULL ) );
+   return ( NULL );
 }
 
 /*!
@@ -750,7 +750,7 @@ Object *ExecutionControlBase::get_trickhla_object(
    }
 
    // Default return if we don't have an ExecutionConfiguration match.
-   return ( static_cast< Object * >( NULL ) );
+   return ( NULL );
 }
 
 /*!
@@ -778,7 +778,7 @@ Object *ExecutionControlBase::get_unregistered_object(
    }
 
    // Default return if we don't have an ExecutionConfiguration match.
-   return ( static_cast< Object * >( NULL ) );
+   return ( NULL );
 }
 
 /*!
@@ -801,7 +801,7 @@ Object *ExecutionControlBase::get_unregistered_remote_object(
    }
 
    // Default return if we don't have an ExecutionConfiguration match.
-   return ( static_cast< Object * >( NULL ) );
+   return ( NULL );
 }
 
 bool ExecutionControlBase::mark_object_as_deleted_from_federation(
