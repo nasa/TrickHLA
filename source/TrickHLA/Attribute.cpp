@@ -3282,8 +3282,9 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
       // Do the byteswap based on the type.
       switch ( type ) {
          case TRICK_DOUBLE: {
-            double const *d_src  = static_cast< double const  *>( src );
-            double       *d_dest = static_cast< double       *>( dest );
+            double const *d_src = static_cast< double const * >( src );
+
+            double *d_dest = static_cast< double * >( dest );
             if ( length == 1 ) {
                d_dest[0] = Utilities::byteswap_double( d_src[0] );
             } else {
@@ -3294,8 +3295,9 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_FLOAT: {
-            float const *f_src  = static_cast< float const  *>( src );
-            float       *f_dest = static_cast< float       *>( dest );
+            float const *f_src = static_cast< float const * >( src );
+
+            float *f_dest = static_cast< float * >( dest );
             if ( length == 1 ) {
                f_dest[0] = Utilities::byteswap_float( f_src[0] );
             } else {

@@ -2983,8 +2983,11 @@ void Manager::setup_checkpoint_interactions()
                   __LINE__, interactions_queue.size(), THLA_NEWLINE );
       }
 
+      // Get the count to use for the check.
       check_interactions_count = interactions_queue.size();
-      check_interactions       = reinterpret_cast< InteractionItem       *>(
+
+      // Allocate the interaction items base don the count.
+      check_interactions = reinterpret_cast< InteractionItem * >(
          alloc_type( check_interactions_count, "TrickHLA::InteractionItem" ) );
       if ( check_interactions == NULL ) {
          ostringstream errmsg;
