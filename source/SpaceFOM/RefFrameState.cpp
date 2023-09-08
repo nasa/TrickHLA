@@ -78,11 +78,17 @@ RefFrameState::RefFrameState()
 RefFrameState::~RefFrameState()
 {
    if ( this->name != NULL ) {
-      trick_MM->delete_var( static_cast< void * >( this->name ) );
+      if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
+         send_hs( stderr, "SpaceFOM::RefFrameState::~RefFrameState():%d ERROR deleting Trick Memory for 'this->name'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
       this->name = NULL;
    }
    if ( this->parent_name != NULL ) {
-      trick_MM->delete_var( static_cast< void * >( this->parent_name ) );
+      if ( trick_MM->delete_var( static_cast< void * >( this->parent_name ) ) ) {
+         send_hs( stderr, "SpaceFOM::RefFrameState::~RefFrameState():%d ERROR deleting Trick Memory for 'this->parent_name'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
       this->parent_name = NULL;
    }
 }

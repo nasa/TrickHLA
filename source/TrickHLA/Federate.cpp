@@ -57,14 +57,14 @@ NASA, Johnson Space Center\n
 #include <time.h>
 
 // Trick include files.
-#include "trick/Clock.hh"
-#include "trick/Executive.hh"
-#include "trick/exec_proto.h"
-
 #include "trick/CheckPointRestart.hh"
 #include "trick/CheckPointRestart_c_intf.hh"
+#include "trick/Clock.hh"
 #include "trick/DataRecordDispatcher.hh" //DANNY2.7 need the_drd to init data recording groups when restoring at init time (IMSIM)
+#include "trick/Executive.hh"
+#include "trick/MemoryManager.hh"
 #include "trick/command_line_protos.h"
+#include "trick/exec_proto.h"
 #include "trick/input_processor_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
@@ -231,46 +231,52 @@ Federate::~Federate()
 {
    // Free the memory used for the federate name.
    if ( name != NULL ) {
-      if ( TMM_is_alloced( name ) ) {
-         TMM_delete_var_a( name );
+      if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
+         send_hs( stderr, "Federate::~Federate():%d ERROR deleting Trick Memory for 'name'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       name = NULL;
    }
 
    // Free the memory used for the federate type.
    if ( type != NULL ) {
-      if ( TMM_is_alloced( type ) ) {
-         TMM_delete_var_a( type );
+      if ( trick_MM->delete_var( static_cast< void * >( type ) ) ) {
+         send_hs( stderr, "Federate::~Federate():%d ERROR deleting Trick Memory for 'type'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       type = NULL;
    }
 
    // Free the memory used for local-settings
    if ( local_settings != NULL ) {
-      if ( TMM_is_alloced( local_settings ) ) {
-         TMM_delete_var_a( local_settings );
+      if ( trick_MM->delete_var( static_cast< void * >( local_settings ) ) ) {
+         send_hs( stderr, "Federate::~Federate():%d ERROR deleting Trick Memory for 'local_settings'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       local_settings = NULL;
    }
 
    // Free the memory used for the Federation Execution name.
    if ( federation_name != NULL ) {
-      if ( TMM_is_alloced( federation_name ) ) {
-         TMM_delete_var_a( federation_name );
+      if ( trick_MM->delete_var( static_cast< void * >( federation_name ) ) ) {
+         send_hs( stderr, "Federate::~Federate():%d ERROR deleting Trick Memory for 'federation_name'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       federation_name = NULL;
    }
 
    // Free the memory used by the FOM module filenames.
    if ( FOM_modules != NULL ) {
-      if ( TMM_is_alloced( FOM_modules ) ) {
-         TMM_delete_var_a( FOM_modules );
+      if ( trick_MM->delete_var( static_cast< void * >( FOM_modules ) ) ) {
+         send_hs( stderr, "Federate::~Federate():%d ERROR deleting Trick Memory for 'FOM_modules'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       FOM_modules = NULL;
    }
    if ( MIM_module != NULL ) {
-      if ( TMM_is_alloced( MIM_module ) ) {
-         TMM_delete_var_a( MIM_module );
+      if ( trick_MM->delete_var( static_cast< void * >( MIM_module ) ) ) {
+         send_hs( stderr, "Federate::~Federate():%d ERROR deleting Trick Memory for 'MIM_module'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       MIM_module = NULL;
    }
@@ -279,19 +285,24 @@ Federate::~Federate()
    if ( known_feds != NULL ) {
       for ( unsigned int i = 0; i < known_feds_count; ++i ) {
          if ( known_feds[i].MOM_instance_name != NULL ) {
-            if ( TMM_is_alloced( known_feds[i].MOM_instance_name ) ) {
-               TMM_delete_var_a( known_feds[i].MOM_instance_name );
+            if ( trick_MM->delete_var( static_cast< void * >( known_feds[i].MOM_instance_name ) ) ) {
+               send_hs( stderr, "Federate::~Federate():%d ERROR deleting Trick Memory for 'known_feds[i].MOM_instance_name'%c",
+                        __LINE__, THLA_NEWLINE );
             }
             known_feds[i].MOM_instance_name = NULL;
          }
          if ( known_feds[i].name != NULL ) {
-            if ( TMM_is_alloced( known_feds[i].name ) ) {
-               TMM_delete_var_a( known_feds[i].name );
+            if ( trick_MM->delete_var( static_cast< void * >( known_feds[i].name ) ) ) {
+               send_hs( stderr, "Federate::~Federate():%d ERROR deleting Trick Memory for 'known_feds[i].name'%c",
+                        __LINE__, THLA_NEWLINE );
             }
             known_feds[i].name = NULL;
          }
       }
-      TMM_delete_var_a( known_feds );
+      if ( trick_MM->delete_var( static_cast< void * >( known_feds ) ) ) {
+         send_hs( stderr, "Federate::~Federate():%d ERROR deleting Trick Memory for 'known_feds'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
       known_feds       = NULL;
       known_feds_count = 0;
    }
@@ -481,7 +492,7 @@ void Federate::initialize()
 
    // If a federate type is not specified make it the same as the federate name.
    if ( ( type == NULL ) || ( *type == '\0' ) ) {
-      type = TMM_strdup( name );
+      type = trick_MM->mm_strdup( name );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -5982,19 +5993,20 @@ void Federate::set_federation_name(
 
          // Reallocate and set the federation execution name.
          if ( this->federation_name != NULL ) {
-            if ( TMM_is_alloced( federation_name ) ) {
-               TMM_delete_var_a( federation_name );
+            if ( trick_MM->delete_var( static_cast< void * >( this->federation_name ) ) ) {
+               send_hs( stderr, "Federate::set_federation_name():%d ERROR deleting Trick Memory for 'federation_name'%c",
+                        __LINE__, THLA_NEWLINE );
             }
             this->federation_name = NULL;
          }
 
          // Set the federation execution name.
-         this->federation_name = TMM_strdup( const_cast< char * >( exec_name.c_str() ) );
+         this->federation_name = trick_MM->mm_strdup( const_cast< char * >( exec_name.c_str() ) );
       } else {
 
          // Set to a default value if not already set in the input stream.
          if ( this->federation_name == NULL ) {
-            this->federation_name = TMM_strdup( const_cast< char * >( "TrickHLA Federation" ) );
+            this->federation_name = trick_MM->mm_strdup( const_cast< char * >( "TrickHLA Federation" ) );
          }
       }
    }
@@ -6355,19 +6367,24 @@ void Federate::clear_running_feds()
    if ( this->running_feds != NULL ) {
       for ( unsigned int i = 0; i < running_feds_count; ++i ) {
          if ( this->running_feds[i].MOM_instance_name != NULL ) {
-            if ( TMM_is_alloced( this->running_feds[i].MOM_instance_name ) ) {
-               TMM_delete_var_a( this->running_feds[i].MOM_instance_name );
+            if ( trick_MM->delete_var( static_cast< void * >( this->running_feds[i].MOM_instance_name ) ) ) {
+               send_hs( stderr, "Federate::clear_running_feds():%d ERROR deleting Trick Memory for 'this->running_feds[i].MOM_instance_name'%c",
+                        __LINE__, THLA_NEWLINE );
             }
             this->running_feds[i].MOM_instance_name = NULL;
          }
          if ( this->running_feds[i].name != NULL ) {
-            if ( TMM_is_alloced( this->running_feds[i].name ) ) {
-               TMM_delete_var_a( this->running_feds[i].name );
+            if ( trick_MM->delete_var( static_cast< void * >( this->running_feds[i].name ) ) ) {
+               send_hs( stderr, "Federate::clear_running_feds():%d ERROR deleting Trick Memory for 'this->running_feds[i].name'%c",
+                        __LINE__, THLA_NEWLINE );
             }
             this->running_feds[i].name = NULL;
          }
       }
-      TMM_delete_var_a( this->running_feds );
+      if ( trick_MM->delete_var( static_cast< void * >( this->running_feds ) ) ) {
+         send_hs( stderr, "Federate::clear_running_feds():%d ERROR deleting Trick Memory for 'this->running_feds'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
       this->running_feds = NULL;
    }
 }
@@ -6450,8 +6467,8 @@ void Federate::add_a_single_entry_into_running_feds()
 
       // copy current running_feds entries into temporary structure...
       for ( unsigned int i = 0; i < running_feds_count; ++i ) {
-         temp_feds[i].MOM_instance_name = TMM_strdup( running_feds[i].MOM_instance_name );
-         temp_feds[i].name              = TMM_strdup( running_feds[i].name );
+         temp_feds[i].MOM_instance_name = trick_MM->mm_strdup( running_feds[i].MOM_instance_name );
+         temp_feds[i].name              = trick_MM->mm_strdup( running_feds[i].name );
          temp_feds[i].required          = running_feds[i].required;
       }
 
@@ -6521,7 +6538,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    for ( unsigned int i = 0; i < running_feds_count; ++i ) {
       if ( !strcmp( running_feds[i].MOM_instance_name, tMOMName ) ) {
          foundName = true;
-         tFedName  = TMM_strdup( running_feds[i].name );
+         tFedName  = trick_MM->mm_strdup( running_feds[i].name );
       }
    }
 
@@ -6550,9 +6567,9 @@ void Federate::remove_MOM_HLAfederate_instance_id(
       // if the name is not the one we are looking for...
       if ( strcmp( this->running_feds[i].name, tFedName ) ) {
          if ( this->running_feds[i].MOM_instance_name != NULL ) {
-            tmp_feds[tmp_feds_cnt].MOM_instance_name = TMM_strdup( this->running_feds[i].MOM_instance_name );
+            tmp_feds[tmp_feds_cnt].MOM_instance_name = trick_MM->mm_strdup( this->running_feds[i].MOM_instance_name );
          }
-         tmp_feds[tmp_feds_cnt].name     = TMM_strdup( this->running_feds[i].name );
+         tmp_feds[tmp_feds_cnt].name     = trick_MM->mm_strdup( this->running_feds[i].name );
          tmp_feds[tmp_feds_cnt].required = this->running_feds[i].required;
          ++tmp_feds_cnt;
       }
@@ -6611,8 +6628,8 @@ void Federate::write_running_feds_file(
 
       // echo the contents of running_feds into file...
       for ( unsigned int i = 0; i < this->running_feds_count; ++i ) {
-         file << TMM_strdup( this->running_feds[i].MOM_instance_name ) << endl;
-         file << TMM_strdup( this->running_feds[i].name ) << endl;
+         file << trick_MM->mm_strdup( this->running_feds[i].MOM_instance_name ) << endl;
+         file << trick_MM->mm_strdup( this->running_feds[i].name ) << endl;
          file << this->running_feds[i].required << endl;
       }
 
@@ -6812,19 +6829,24 @@ void Federate::read_running_feds_file(
       // clear out the known_feds from memory...
       for ( unsigned int i = 0; i < known_feds_count; ++i ) {
          if ( this->known_feds[i].MOM_instance_name != NULL ) {
-            if ( TMM_is_alloced( this->known_feds[i].MOM_instance_name ) ) {
-               TMM_delete_var_a( this->known_feds[i].MOM_instance_name );
+            if ( trick_MM->delete_var( static_cast< void * >( this->known_feds[i].MOM_instance_name ) ) ) {
+               send_hs( stderr, "Federate::read_running_feds_file():%d ERROR deleting Trick Memory for 'this->known_feds[i].MOM_instance_name'%c",
+                        __LINE__, THLA_NEWLINE );
             }
             this->known_feds[i].MOM_instance_name = NULL;
          }
          if ( this->known_feds[i].name != NULL ) {
-            if ( TMM_is_alloced( this->known_feds[i].name ) ) {
-               TMM_delete_var_a( this->known_feds[i].name );
+            if ( trick_MM->delete_var( static_cast< void * >( this->known_feds[i].name ) ) ) {
+               send_hs( stderr, "Federate::read_running_feds_file():%d ERROR deleting Trick Memory for 'this->known_feds[i].name'%c",
+                        __LINE__, THLA_NEWLINE );
             }
             this->known_feds[i].name = NULL;
          }
       }
-      TMM_delete_var_a( this->known_feds );
+      if ( trick_MM->delete_var( static_cast< void * >( this->known_feds ) ) ) {
+         send_hs( stderr, "Federate::read_running_feds_file():%d ERROR deleting Trick Memory for 'this->known_feds'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
       this->known_feds = NULL;
 
       file >> this->known_feds_count;
@@ -6842,10 +6864,10 @@ void Federate::read_running_feds_file(
       string current_line;
       for ( unsigned int i = 0; i < this->known_feds_count; ++i ) {
          file >> current_line;
-         this->known_feds[i].MOM_instance_name = TMM_strdup( const_cast< char * >( current_line.c_str() ) );
+         this->known_feds[i].MOM_instance_name = trick_MM->mm_strdup( const_cast< char * >( current_line.c_str() ) );
 
          file >> current_line;
-         this->known_feds[i].name = TMM_strdup( const_cast< char * >( current_line.c_str() ) );
+         this->known_feds[i].name = trick_MM->mm_strdup( const_cast< char * >( current_line.c_str() ) );
 
          file >> current_line;
          this->known_feds[i].required = atoi( current_line.c_str() );
@@ -6865,20 +6887,24 @@ void Federate::copy_running_feds_into_known_feds()
    // clear out the known_feds from memory...
    for ( unsigned int i = 0; i < this->known_feds_count; ++i ) {
       if ( this->known_feds[i].MOM_instance_name != NULL ) {
-
-         if ( TMM_is_alloced( this->known_feds[i].MOM_instance_name ) ) {
-            TMM_delete_var_a( this->known_feds[i].MOM_instance_name );
+         if ( trick_MM->delete_var( static_cast< void * >( this->known_feds[i].MOM_instance_name ) ) ) {
+            send_hs( stderr, "Federate::copy_running_feds_into_known_feds():%d ERROR deleting Trick Memory for 'this->known_feds[i].MOM_instance_name_name'%c",
+                     __LINE__, THLA_NEWLINE );
          }
          this->known_feds[i].MOM_instance_name = NULL;
       }
       if ( this->known_feds[i].name != NULL ) {
-         if ( TMM_is_alloced( this->known_feds[i].name ) ) {
-            TMM_delete_var_a( this->known_feds[i].name );
+         if ( trick_MM->delete_var( static_cast< void * >( this->known_feds[i].name ) ) ) {
+            send_hs( stderr, "Federate::copy_running_feds_into_known_feds():%d ERROR deleting Trick Memory for 'this->known_feds[i].name'%c",
+                     __LINE__, THLA_NEWLINE );
          }
          this->known_feds[i].name = NULL;
       }
    }
-   TMM_delete_var_a( this->known_feds );
+   if ( trick_MM->delete_var( static_cast< void * >( this->known_feds ) ) ) {
+      send_hs( stderr, "Federate::copy_running_feds_into_known_feds():%d ERROR deleting Trick Memory for 'this->known_feds'%c",
+               __LINE__, THLA_NEWLINE );
+   }
 
    // re-allocate it...
    this->known_feds = reinterpret_cast< KnownFederate * >(
@@ -6893,8 +6919,8 @@ void Federate::copy_running_feds_into_known_feds()
    // now, copy everything from running_feds into known_feds...
    this->known_feds_count = 0;
    for ( unsigned int i = 0; i < this->running_feds_count; ++i ) {
-      this->known_feds[this->known_feds_count].MOM_instance_name = TMM_strdup( running_feds[i].MOM_instance_name );
-      this->known_feds[this->known_feds_count].name              = TMM_strdup( running_feds[i].name );
+      this->known_feds[this->known_feds_count].MOM_instance_name = trick_MM->mm_strdup( running_feds[i].MOM_instance_name );
+      this->known_feds[this->known_feds_count].name              = trick_MM->mm_strdup( running_feds[i].name );
       this->known_feds[this->known_feds_count].required          = running_feds[i].required;
       this->known_feds_count++;
    }

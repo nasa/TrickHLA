@@ -89,7 +89,10 @@ MTRInteractionHandler::MTRInteractionHandler(
 MTRInteractionHandler::~MTRInteractionHandler() // RETURN: -- None.
 {
    if ( this->name != NULL ) {
-      trick_MM->delete_var( static_cast< void * >( this->name ) );
+      if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
+         send_hs( stderr, "SpaceFOM::MTRInteractionHandler::~MTRInteractionHandler():%d ERROR deleting Trick Memory for 'this->name'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
       this->name = NULL;
    }
    return;
@@ -103,7 +106,10 @@ void MTRInteractionHandler::set_name(
 {
    if ( this->name != NULL ) {
       if ( trick_MM->is_alloced( this->name ) ) {
-         trick_MM->delete_var( static_cast< void * >( this->name ) );
+         if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
+            send_hs( stderr, "SpaceFOM::MTRInteractionHandler::set_name():%d ERROR deleting Trick Memory for 'this->name'%c",
+                     __LINE__, THLA_NEWLINE );
+         }
       }
       this->name = NULL;
    }

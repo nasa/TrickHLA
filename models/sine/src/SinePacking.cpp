@@ -37,8 +37,8 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h" // for send_hs
 
 // TrickHLA model include files.
@@ -82,8 +82,9 @@ SinePacking::SinePacking()
 SinePacking::~SinePacking()
 {
    if ( buff != NULL ) {
-      if ( TMM_is_alloced( reinterpret_cast< char * >( buff ) ) ) {
-         TMM_delete_var_a( buff );
+      if ( trick_MM->delete_var( static_cast< void * >( buff ) ) ) {
+         send_hs( stderr, "TrickHLAModel::SinePacking::~SinePacking():%d ERROR deleting Trick Memory for 'buff'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       buff      = NULL;
       buff_size = 0;

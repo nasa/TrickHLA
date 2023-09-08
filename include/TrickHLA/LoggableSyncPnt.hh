@@ -37,7 +37,8 @@ NASA, Johnson Space Center\n
 // System include files.
 
 // Trick include files.
-#include "trick/memorymanager_c_intf.h"
+#include "trick/MemoryManager.hh"
+#include "trick/message_proto.h" // for send_hs
 
 // TrickHLA include files.
 #include "TrickHLA/Types.hh"
@@ -74,8 +75,8 @@ class LoggableSyncPnt
    virtual void clear()
    {
       if ( label != NULL ) {
-         if ( TMM_is_alloced( label ) ) {
-            TMM_delete_var_a( label );
+         if ( trick_MM->delete_var( static_cast< void * >( label ) ) ) {
+            send_hs( stderr, "LoggableSyncPnt::clear():%d ERROR deleting Trick Memory for 'label'\n", __LINE__ );
          }
          label = NULL;
       }

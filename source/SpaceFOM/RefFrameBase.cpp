@@ -84,11 +84,17 @@ RefFrameBase::RefFrameBase()
 RefFrameBase::~RefFrameBase()
 {
    if ( this->name != NULL ) {
-      trick_MM->delete_var( static_cast< void * >( this->name ) );
+      if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
+         send_hs( stderr, "SpaceFOM::RefFrameBase::~RefFrameBase():%d ERROR deleting Trick Memory for 'this->name'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
       this->name = NULL;
    }
    if ( this->parent_name != NULL ) {
-      trick_MM->delete_var( static_cast< void * >( this->parent_name ) );
+      if ( trick_MM->delete_var( static_cast< void * >( this->parent_name ) ) ) {
+         send_hs( stderr, "SpaceFOM::RefFrameBase::~RefFrameBase():%d ERROR deleting Trick Memory for 'this->parent_name'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
       this->parent_name = NULL;
    }
 }
@@ -225,7 +231,10 @@ void RefFrameBase::initialize_callback(
 void RefFrameBase::set_name( char const *new_name )
 {
    if ( this->name != NULL ) {
-      trick_MM->delete_var( static_cast< void * >( this->name ) );
+      if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
+         send_hs( stderr, "SpaceFOM::RefFrameBase::set_name():%d ERROR deleting Trick Memory for 'this->name'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
    }
    this->name = trick_MM->mm_strdup( new_name );
    return;
@@ -237,7 +246,10 @@ void RefFrameBase::set_name( char const *new_name )
 void RefFrameBase::set_parent_name( char const *name )
 {
    if ( this->parent_name != NULL ) {
-      trick_MM->delete_var( static_cast< void * >( this->parent_name ) );
+      if ( trick_MM->delete_var( static_cast< void * >( this->parent_name ) ) ) {
+         send_hs( stderr, "SpaceFOM::RefFrameBase::set_parent_name():%d ERROR deleting Trick Memory for 'this->parent_name'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
    }
    this->parent_name = trick_MM->mm_strdup( name );
    return;

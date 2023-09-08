@@ -45,6 +45,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
@@ -100,16 +101,18 @@ Parameter::Parameter()
 Parameter::~Parameter()
 {
    if ( buffer != NULL ) {
-      if ( TMM_is_alloced( reinterpret_cast< char * >( buffer ) ) ) {
-         TMM_delete_var_a( buffer );
+      if ( trick_MM->delete_var( static_cast< void * >( buffer ) ) ) {
+         send_hs( stderr, "Parameter::~Parameter():%d ERROR deleting Trick Memory for 'buffer'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       buffer          = NULL;
       buffer_capacity = 0;
    }
 
    if ( interaction_FOM_name != NULL ) {
-      if ( TMM_is_alloced( interaction_FOM_name ) ) {
-         TMM_delete_var_a( interaction_FOM_name );
+      if ( trick_MM->delete_var( static_cast< void * >( interaction_FOM_name ) ) ) {
+         send_hs( stderr, "Parameter::~Parameter():%d ERROR deleting Trick Memory for 'interaction_FOM_name'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       interaction_FOM_name = NULL;
    }
@@ -186,7 +189,7 @@ void Parameter::initialize(
 
       address              = ref2->address;
       attr                 = ref2->attr;
-      interaction_FOM_name = TMM_strdup( const_cast< char * >( interaction_fom_name ) );
+      interaction_FOM_name = trick_MM->mm_strdup( const_cast< char * >( interaction_fom_name ) );
 
       // Free the memory used by ref2.
       free( ref2 );
@@ -222,7 +225,7 @@ void Parameter::initialize(
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   interaction_FOM_name = TMM_strdup( const_cast< char * >( interaction_fom_name ) );
+   interaction_FOM_name = trick_MM->mm_strdup( const_cast< char * >( interaction_fom_name ) );
 
    complete_initialization();
 }

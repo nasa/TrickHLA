@@ -51,8 +51,8 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 #include "trick/release.h"
 
@@ -166,8 +166,9 @@ Object::~Object()
       remove();
 
       if ( name != NULL ) {
-         if ( TMM_is_alloced( name ) ) {
-            TMM_delete_var_a( name );
+         if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
+            send_hs( stderr, "Object::~Object():%d ERROR deleting Trick Memory for 'name'%c",
+                     __LINE__, THLA_NEWLINE );
          }
          name = NULL;
       }
@@ -3899,16 +3900,17 @@ void Object::set_name(
 {
    // Delete the existing memory used by the name.
    if ( this->name != NULL ) {
-      if ( TMM_is_alloced( name ) ) {
-         TMM_delete_var_a( name );
+      if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
+         send_hs( stderr, "Object::set_name():%d ERROR deleting Trick Memory for 'name'%c",
+                  __LINE__, THLA_NEWLINE );
       }
    }
 
    // Allocate appropriate size string and copy data.
    if ( new_name != NULL ) {
-      this->name = TMM_strdup( const_cast< char * >( new_name ) );
+      this->name = trick_MM->mm_strdup( new_name );
    } else {
-      this->name = TMM_strdup( const_cast< char * >( "" ) );
+      this->name = trick_MM->mm_strdup( "" );
    }
 }
 

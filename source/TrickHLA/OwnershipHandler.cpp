@@ -45,8 +45,8 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h" // for send_hs
 
 // TrickHLA include files.
@@ -138,7 +138,7 @@ void OwnershipHandler::setup_checkpoint_requests()
          THLAAttributeMap *tMap      = owner_map_iter->second;
          for ( attrib_iter = tMap->begin(); attrib_iter != tMap->end(); ++attrib_iter ) {
             pull_items[count].time     = curr_time;
-            pull_items[count].FOM_name = TMM_strdup( const_cast< char * >( attrib_iter->first.c_str() ) );
+            pull_items[count].FOM_name = trick_MM->mm_strdup( attrib_iter->first.c_str() );
             count++;
          }
       }
@@ -175,7 +175,7 @@ void OwnershipHandler::setup_checkpoint_requests()
          THLAAttributeMap *tMap      = owner_map_iter->second;
          for ( attrib_iter = tMap->begin(); attrib_iter != tMap->end(); ++attrib_iter ) {
             push_items[count].time     = curr_time;
-            push_items[count].FOM_name = TMM_strdup( const_cast< char * >( attrib_iter->first.c_str() ) );
+            push_items[count].FOM_name = trick_MM->mm_strdup( attrib_iter->first.c_str() );
             count++;
          }
       }
@@ -189,7 +189,10 @@ void OwnershipHandler::clear_checkpoint()
       for ( size_t i = 0; i < pull_items_cnt; ++i ) {
          pull_items[i].clear();
       }
-      TMM_delete_var_a( pull_items );
+      if ( trick_MM->delete_var( static_cast< void * >( pull_items ) ) ) {
+         send_hs( stderr, "OwnershipHandler::clear_checkpoint():%d ERROR deleting Trick Memory for 'pull_items'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
       pull_items     = NULL;
       pull_items_cnt = 0;
    }
@@ -199,7 +202,10 @@ void OwnershipHandler::clear_checkpoint()
       for ( size_t i = 0; i < push_items_cnt; ++i ) {
          push_items[i].clear();
       }
-      TMM_delete_var_a( push_items );
+      if ( trick_MM->delete_var( static_cast< void * >( push_items ) ) ) {
+         send_hs( stderr, "OwnershipHandler::clear_checkpoint():%d ERROR deleting Trick Memory for 'push_items'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
       push_items     = NULL;
       push_items_cnt = 0;
    }

@@ -39,8 +39,8 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h" // for send_hs
 
 // Model include files.
@@ -92,10 +92,13 @@ void SineInteractionHandler::send_sine_interaction(
    msg << "Interaction from:\"" << ( ( name != NULL ) ? name : "Unknown" ) << "\" "
        << "Send-count:" << ( send_cnt + 1 );
 
-   if ( ( message != NULL ) && TMM_is_alloced( message ) ) {
-      TMM_delete_var_a( message );
+   if ( message != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( message ) ) ) {
+         send_hs( stderr, "TrickHLAModel::SineInteractionHandler::send_sine_interaction():%d ERROR deleting Trick Memory for 'message'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
    }
-   message = TMM_strdup( const_cast< char * >( msg.str().c_str() ) );
+   message = trick_MM->mm_strdup( msg.str().c_str() );
 
    // Create a User Supplied Tag based off the name in this example.
    RTI1516_USERDATA user_supplied_tag;

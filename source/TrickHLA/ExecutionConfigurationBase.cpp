@@ -123,8 +123,9 @@ ExecutionConfigurationBase::ExecutionConfigurationBase(
 ExecutionConfigurationBase::~ExecutionConfigurationBase()
 {
    if ( this->S_define_name != NULL ) {
-      if ( TMM_is_alloced( const_cast< char * >( this->S_define_name ) ) ) {
-         trick_MM->delete_var( static_cast< void * >( const_cast< char * >( this->S_define_name ) ) );
+      if ( trick_MM->delete_var( static_cast< void * >( const_cast< char * >( this->S_define_name ) ) ) ) {
+         send_hs( stderr, "ExecutionConfigurationBase::~ExecutionConfigurationBase():%d ERROR deleting Trick Memory for 'this->S_define_name'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       this->S_define_name = NULL;
    }
@@ -155,8 +156,9 @@ void ExecutionConfigurationBase::set_S_define_name(
    char const *new_name )
 {
    if ( this->S_define_name != NULL ) {
-      if ( TMM_is_alloced( const_cast< char * >( this->S_define_name ) ) ) {
-         trick_MM->delete_var( static_cast< void * >( const_cast< char * >( this->S_define_name ) ) );
+      if ( trick_MM->delete_var( static_cast< void * >( const_cast< char * >( this->S_define_name ) ) ) ) {
+         send_hs( stderr, "ExecutionConfigurationBase::set_S_define_name():%d ERROR deleting Trick Memory for 'this->S_define_name'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       this->S_define_name = NULL;
    }
@@ -240,7 +242,7 @@ void ExecutionConfigurationBase::set_master(
 void ExecutionConfigurationBase::wait_for_registration()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      send_hs( stdout, "TrickHLA::ExecutionConfigurationBase::wait_for_registration():%d%c",
+      send_hs( stdout, "ExecutionConfigurationBase::wait_for_registration():%d%c",
                __LINE__, THLA_NEWLINE );
    }
 

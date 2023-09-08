@@ -46,7 +46,9 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
+#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
@@ -111,8 +113,9 @@ Interaction::~Interaction()
    remove();
 
    if ( user_supplied_tag != NULL ) {
-      if ( TMM_is_alloced( reinterpret_cast< char * >( user_supplied_tag ) ) ) {
-         TMM_delete_var_a( user_supplied_tag );
+      if ( trick_MM->delete_var( static_cast< void * >( user_supplied_tag ) ) ) {
+         send_hs( stderr, "Interaction::~Interaction():%d ERROR deleting Trick Memory for 'user_supplied_tag'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       user_supplied_tag      = NULL;
       user_supplied_tag_size = 0;

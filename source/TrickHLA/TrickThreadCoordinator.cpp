@@ -45,6 +45,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
@@ -93,20 +94,23 @@ TrickThreadCoordinator::~TrickThreadCoordinator() // RETURN: -- None.
    // Release the arrays.
    if ( this->thread_state != NULL ) {
       this->thread_state_cnt = 0;
-      if ( TMM_is_alloced( reinterpret_cast< char * >( this->thread_state ) ) ) {
-         TMM_delete_var_a( this->thread_state );
+      if ( trick_MM->delete_var( static_cast< void * >( this->thread_state ) ) ) {
+         send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d ERROR deleting Trick Memory for 'this->thread_state'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       this->thread_state = NULL;
    }
    if ( this->data_cycle_base_time_per_thread != NULL ) {
-      if ( TMM_is_alloced( reinterpret_cast< char * >( this->data_cycle_base_time_per_thread ) ) ) {
-         TMM_delete_var_a( this->data_cycle_base_time_per_thread );
+      if ( trick_MM->delete_var( static_cast< void * >( this->data_cycle_base_time_per_thread ) ) ) {
+         send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d ERROR deleting Trick Memory for 'this->data_cycle_base_time_per_thread'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       this->data_cycle_base_time_per_thread = NULL;
    }
    if ( this->data_cycle_base_time_per_obj != NULL ) {
-      if ( TMM_is_alloced( reinterpret_cast< char * >( this->data_cycle_base_time_per_obj ) ) ) {
-         TMM_delete_var_a( this->data_cycle_base_time_per_obj );
+      if ( trick_MM->delete_var( static_cast< void * >( this->data_cycle_base_time_per_obj ) ) ) {
+         send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d ERROR deleting Trick Memory for 'this->data_cycle_base_time_per_obj'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       this->data_cycle_base_time_per_obj = NULL;
    }

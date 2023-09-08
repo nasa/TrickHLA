@@ -34,8 +34,9 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_MODEL_SINE_DATA_HH
 
 // Trick includes.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
-#include "trick/memorymanager_c_intf.h"
+#include "trick/message_proto.h" // for send_hs
 
 namespace TrickHLAModel
 {
@@ -188,14 +189,16 @@ class SineData
    }
 
    /*! @brief Set the name of the sine wave object.
-    *  @param n The name of the sine wave object. */
-   void set_name( char const *n )
+    *  @param new_name The name of the sine wave object. */
+   void set_name( char const *new_name )
    {
-      if ( n != this->name ) {
-         if ( ( this->name != NULL ) && TMM_is_alloced( this->name ) ) {
-            TMM_delete_var_a( this->name );
+      if ( new_name != this->name ) {
+         if ( this->name != NULL ) {
+            if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
+               send_hs( stderr, "TrickHLAModel::SineData::set_name():%d ERROR deleting Trick Memory for 'this->name'\n", __LINE__ );
+            }
          }
-         this->name = ( n != NULL ) ? TMM_strdup( const_cast< char * >( n ) ) : NULL;
+         this->name = ( new_name != NULL ) ? trick_MM->mm_strdup( new_name ) : NULL;
       }
    }
 

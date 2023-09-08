@@ -42,8 +42,8 @@ NASA, Johnson Space Center\n
 #include <vector>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
-#include "trick/memorymanager_c_intf.h"
 
 // TrickHLA Model include files.
 #include "TrickHLA/CompileConfig.hh"
@@ -136,7 +136,7 @@ class StringUtilities
    {
       std::string s;
       s.assign( input.begin(), input.end() );
-      return TMM_strdup( const_cast< char * >( s.c_str() ) );
+      return trick_MM->mm_strdup( const_cast< char * >( s.c_str() ) );
    }
 
    /*! @brief HLA RTI User Data to printable C++ string conversion routine.

@@ -40,6 +40,7 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/Executive.hh"
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.hh"
 #include "trick/message_proto.h"
 
@@ -118,14 +119,17 @@ ExecutionControl::~ExecutionControl()
 
    // Free up the allocated Freeze Interaction.
    if ( freeze_interaction != NULL ) {
-      FreezeInteractionHandler *ptr =
-         static_cast< FreezeInteractionHandler * >(
-            freeze_interaction->get_handler() );
-      if ( ptr != NULL ) {
-         TMM_delete_var_a( ptr );
+      if ( freeze_interaction->get_handler() != NULL ) {
+         if ( trick_MM->delete_var( static_cast< void * >( freeze_interaction->get_handler() ) ) ) {
+            send_hs( stderr, "IMSim::ExecutionControl::~ExecutionControl():%d ERROR deleting Trick Memory for 'freeze_interaction->get_handler()'%c",
+                     __LINE__, THLA_NEWLINE );
+         }
          freeze_interaction->set_handler( NULL );
       }
-      TMM_delete_var_a( freeze_interaction );
+      if ( trick_MM->delete_var( static_cast< void * >( freeze_interaction ) ) ) {
+         send_hs( stderr, "IMSim::ExecutionControl::~ExecutionControl():%d ERROR deleting Trick Memory for 'freeze_interaction'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
       freeze_interaction = NULL;
       freeze_inter_count = 0;
    }

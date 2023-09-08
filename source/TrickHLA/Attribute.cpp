@@ -45,6 +45,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
@@ -106,8 +107,9 @@ Attribute::Attribute()
 Attribute::~Attribute()
 {
    if ( buffer != NULL ) {
-      if ( TMM_is_alloced( reinterpret_cast< char * >( buffer ) ) ) {
-         TMM_delete_var_a( buffer );
+      if ( trick_MM->delete_var( static_cast< void * >( buffer ) ) ) {
+         send_hs( stderr, "Attribute::~Attribute():%d ERROR deleting Trick Memory for 'buffer'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       buffer          = NULL;
       buffer_capacity = 0;

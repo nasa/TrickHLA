@@ -38,6 +38,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
@@ -74,8 +75,9 @@ OpaqueBuffer::OpaqueBuffer()
 OpaqueBuffer::~OpaqueBuffer() // RETURN: -- None.
 {
    if ( buffer != NULL ) {
-      if ( TMM_is_alloced( reinterpret_cast< char * >( buffer ) ) ) {
-         TMM_delete_var_a( buffer );
+      if ( trick_MM->delete_var( static_cast< void * >( buffer ) ) ) {
+         send_hs( stderr, "OpaqueBuffer::~OpaqueBuffer():%d ERROR deleting Trick Memory for 'buffer'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       buffer   = NULL;
       capacity = 0;

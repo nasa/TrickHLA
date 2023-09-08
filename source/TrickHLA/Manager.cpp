@@ -3042,7 +3042,10 @@ void Manager::clear_interactions()
       for ( unsigned int i = 0; i < check_interactions_count; ++i ) {
          check_interactions[i].clear_parm_items();
       }
-      trick_MM->delete_var( static_cast< void * >( check_interactions ) );
+      if ( trick_MM->delete_var( static_cast< void * >( check_interactions ) ) ) {
+         send_hs( stderr, "Manager::clear_interactions():%d ERROR deleting Trick Memory for 'check_interactions'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
       check_interactions       = NULL;
       check_interactions_count = 0;
    }
