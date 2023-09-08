@@ -39,6 +39,7 @@ NASA, Johnson Space Center\n
 #include <sstream>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
@@ -135,8 +136,9 @@ InteractionItem::InteractionItem(
 InteractionItem::~InteractionItem()
 {
    if ( user_supplied_tag != NULL ) {
-      if ( TMM_is_alloced( (char *)user_supplied_tag ) ) {
-         TMM_delete_var_a( user_supplied_tag );
+      if ( trick_MM->delete_var( static_cast< void * >( user_supplied_tag ) ) ) {
+         send_hs( stderr, "InteractionItem::~InteractionItem():%d ERROR deleting Trick Memory for 'user_supplied_tag'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       user_supplied_tag      = NULL;
       user_supplied_tag_size = 0;
@@ -174,8 +176,9 @@ void InteractionItem::initialize(
 
    // Free the Trick allocated memory for the user supplied tag.
    if ( user_supplied_tag != NULL ) {
-      if ( TMM_is_alloced( (char *)user_supplied_tag ) ) {
-         TMM_delete_var_a( user_supplied_tag );
+      if ( trick_MM->delete_var( static_cast< void * >( user_supplied_tag ) ) ) {
+         send_hs( stderr, "InteractionItem::initialize():%d ERROR deleting Trick Memory for 'user_supplied_tag'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       user_supplied_tag = NULL;
    }
@@ -183,7 +186,7 @@ void InteractionItem::initialize(
    // Put the user supplied tag into a buffer.
    user_supplied_tag_size = theUserSuppliedTag.size();
    if ( user_supplied_tag_size != 0 ) {
-      user_supplied_tag = (unsigned char *)TMM_declare_var_1d( "unsigned char", (int)user_supplied_tag_size );
+      user_supplied_tag = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", user_supplied_tag_size ) );
       memcpy( user_supplied_tag, theUserSuppliedTag.data(), user_supplied_tag_size );
    }
 }
@@ -195,7 +198,7 @@ void InteractionItem::checkpoint_queue()
 
       parm_items = reinterpret_cast< ParameterItem * >(
          alloc_type( parm_items_count, "TrickHLA::ParameterItem" ) );
-      if ( parm_items == static_cast< ParameterItem * >( NULL ) ) {
+      if ( parm_items == NULL ) {
          ostringstream errmsg;
          errmsg << "InteractionItem::checkpoint_queue():" << __LINE__
                 << " ERROR: Failed to allocate enough memory for a parm_items linear"
@@ -216,7 +219,7 @@ void InteractionItem::checkpoint_queue()
          if ( item->size == 0 ) {
             parm_items[i].data = NULL;
          } else {
-            parm_items[i].data = (unsigned char *)TMM_declare_var_1d( "unsigned char", (int)item->size );
+            parm_items[i].data = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", item->size ) );
             memcpy( parm_items[i].data, item->data, item->size );
          }
 
@@ -235,7 +238,10 @@ void InteractionItem::clear_parm_items()
       for ( int i = 0; i < parm_items_count; ++i ) {
          parm_items[i].clear();
       }
-      TMM_delete_var_a( parm_items );
+      if ( trick_MM->delete_var( static_cast< void * >( parm_items ) ) ) {
+         send_hs( stderr, "InteractionItem::clear_parm_items():%d ERROR deleting Trick Memory for 'parm_items'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
       parm_items       = NULL;
       parm_items_count = 0;
    }
@@ -254,7 +260,7 @@ void InteractionItem::restore_queue()
          if ( parm_items[i].size == 0 ) {
             item->data = NULL;
          } else {
-            item->data = (unsigned char *)TMM_declare_var_1d( "unsigned char", (int)parm_items[i].size );
+            item->data = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", parm_items[i].size ) );
             memcpy( item->data, parm_items[i].data, parm_items[i].size );
          }
 

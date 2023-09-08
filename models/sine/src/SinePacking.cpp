@@ -37,8 +37,8 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h" // for send_hs
 
 // TrickHLA model include files.
@@ -81,9 +81,10 @@ SinePacking::SinePacking()
  */
 SinePacking::~SinePacking()
 {
-   if ( buff != static_cast< unsigned char * >( NULL ) ) {
-      if ( TMM_is_alloced( (char *)buff ) ) {
-         TMM_delete_var_a( buff );
+   if ( buff != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( buff ) ) ) {
+         send_hs( stderr, "TrickHLAModel::SinePacking::~SinePacking():%d ERROR deleting Trick Memory for 'buff'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       buff      = NULL;
       buff_size = 0;
@@ -228,7 +229,7 @@ void SinePacking::pack()
       if ( attr != NULL ) {
 
          // Get the address of the "name" simulation data variable.
-         char *name_sim_var = (char *)attr->get_sim_variable_address();
+         char *name_sim_var = static_cast< char * >( attr->get_sim_variable_address() );
 
          // Make a little change to the name and show it.
          if ( name_sim_var != NULL ) {
@@ -350,7 +351,7 @@ void SinePacking::unpack()
       if ( attr != NULL ) {
 
          // Get the address of the "name" simulation data variable.
-         char *name_sim_var = (char *)attr->get_sim_variable_address();
+         char *name_sim_var = static_cast< char * >( attr->get_sim_variable_address() );
 
          // Display the name.
          if ( name_sim_var != NULL ) {

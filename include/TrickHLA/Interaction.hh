@@ -45,7 +45,8 @@ NASA, Johnson Space Center\n
 // System include files.
 
 // Trick include files.
-#include "trick/memorymanager_c_intf.h"
+#include "trick/MemoryManager.hh"
+#include "trick/message_proto.h" // for send_hs
 
 // TrickHLA include files
 #include "TrickHLA/Int64Interval.hh"
@@ -291,19 +292,19 @@ class Interaction
 
    /*! @brief Set the FOM name for this interaction.
     *  @param in_name The FOM name for this interaction. */
-   void set_FOM_name( char *in_name )
+   void set_FOM_name( char const *in_name )
    {
-      if ( FOM_name != NULL ) {
-         if ( TMM_is_alloced( FOM_name ) ) {
-            TMM_delete_var_a( FOM_name );
+      if ( this->FOM_name != NULL ) {
+         if ( trick_MM->delete_var( static_cast< void * >( this->FOM_name ) ) ) {
+            send_hs( stderr, "Interaction::set_FOM_name():%d ERROR deleting Trick Memory for 'this->FOM_name'\n", __LINE__ );
          }
-         FOM_name = NULL;
+         this->FOM_name = NULL;
       }
-      FOM_name = TMM_strdup( (char *)in_name );
+      this->FOM_name = trick_MM->mm_strdup( in_name );
    }
 
    /*! @brief Set the received user supplied tag.
-    *  @param tag      The user supplied tag.
+    *  @param tag The user supplied tag.
     *  @param tag_size Size of the user supplied tag. */
    void set_user_supplied_tag( unsigned char *tag, size_t tag_size );
 

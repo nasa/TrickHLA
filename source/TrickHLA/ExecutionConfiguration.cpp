@@ -50,6 +50,7 @@ NASA, Johnson Space Center\n
 #include "trick/Executive.hh"
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
+#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
@@ -124,18 +125,20 @@ ExecutionConfiguration::ExecutionConfiguration(
  */
 ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
 {
-   if ( required_federates != static_cast< char * >( NULL ) ) {
-      if ( TMM_is_alloced( required_federates ) ) {
-         TMM_delete_var_a( required_federates );
+   if ( required_federates != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( required_federates ) ) ) {
+         send_hs( stderr, "ExecutionConfiguration::~ExecutionConfiguration():%d ERROR deleting Trick Memory for 'required_federates'%c",
+                  __LINE__, THLA_NEWLINE );
       }
-      required_federates = static_cast< char * >( NULL );
+      required_federates = NULL;
    }
 
-   if ( owner != static_cast< char * >( NULL ) ) {
-      if ( TMM_is_alloced( owner ) ) {
-         TMM_delete_var_a( owner );
+   if ( owner != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( owner ) ) ) {
+         send_hs( stderr, "ExecutionConfiguration::~ExecutionConfiguration():%d ERROR deleting Trick Memory for 'owner'%c",
+                  __LINE__, THLA_NEWLINE );
       }
-      owner = static_cast< char * >( NULL );
+      owner = NULL;
    }
 }
 
@@ -168,7 +171,7 @@ void ExecutionConfiguration::configure_attributes()
    this->packing  = this;
    // Allocate the attributes for the ExCO HLA object.
    this->attr_count = 4;
-   this->attributes = (Attribute *)TMM_declare_var_1d( "TrickHLA::Attribute", this->attr_count );
+   this->attributes = static_cast< Attribute * >( TMM_declare_var_1d( "TrickHLA::Attribute", this->attr_count ) );
 
    //
    // Specify the ExCO attributes.
@@ -203,15 +206,18 @@ void ExecutionConfiguration::configure()
    // Check the manager.
    if ( this->manager == NULL ) {
       ostringstream errmsg;
-      errmsg << "TrickHLA::ExecutionConfiguration::initialize():" << __LINE__
+      errmsg << "TrickHLA::ExecutionConfiguration::configure():" << __LINE__
              << " ERROR: Null TrickHLA::Manager passed in!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Release the memory used by the required_federates c-string.
-   if ( required_federates != static_cast< char * >( NULL ) ) {
-      TMM_delete_var_a( required_federates );
-      required_federates = static_cast< char * >( NULL );
+   if ( required_federates != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( required_federates ) ) ) {
+         send_hs( stderr, "ExecutionConfiguration::configure():%d ERROR deleting Trick Memory for 'required_federates'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      required_federates = NULL;
    }
 
    ostringstream federate_list;
@@ -220,7 +226,7 @@ void ExecutionConfiguration::configure()
    Federate *federate = this->manager->get_federate();
    if ( federate == NULL ) {
       ostringstream errmsg;
-      errmsg << "TrickHLA::ExecutionConfiguration::initialize():" << __LINE__
+      errmsg << "TrickHLA::ExecutionConfiguration::configure():" << __LINE__
              << " ERROR: Null TrickHLA-Federate pointer!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
@@ -241,7 +247,7 @@ void ExecutionConfiguration::configure()
    this->num_federates = required_federate_count;
 
    // Make sure we use correct function so that it is Trick managed memory.
-   this->required_federates = TMM_strdup( const_cast< char * >( federate_list.str().c_str() ) );
+   this->required_federates = trick_MM->mm_strdup( const_cast< char * >( federate_list.str().c_str() ) );
 }
 
 /*!

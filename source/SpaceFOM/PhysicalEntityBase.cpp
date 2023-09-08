@@ -74,21 +74,33 @@ PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
  */
 PhysicalEntityBase::~PhysicalEntityBase() // RETURN: -- None.
 {
-   if ( this->name != (char *)NULL ) {
-      trick_MM->delete_var( (void *)this->name );
-      this->name = (char *)NULL;
+   if ( this->name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
+         send_hs( stderr, "SpaceFOM::PhysicalEntityBase::~PhysicalEntityBase():%d ERROR deleting Trick Memory for 'this->name'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      this->name = NULL;
    }
-   if ( this->type != (char *)NULL ) {
-      trick_MM->delete_var( (void *)this->type );
-      this->type = (char *)NULL;
+   if ( this->type != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->type ) ) ) {
+         send_hs( stderr, "SpaceFOM::PhysicalEntityBase::~PhysicalEntityBase():%d ERROR deleting Trick Memory for 'this->type'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      this->type = NULL;
    }
-   if ( this->status != (char *)NULL ) {
-      trick_MM->delete_var( (void *)this->status );
-      this->status = (char *)NULL;
+   if ( this->status != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->status ) ) ) {
+         send_hs( stderr, "SpaceFOM::PhysicalEntityBase::~PhysicalEntityBase():%d ERROR deleting Trick Memory for 'this->status'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      this->status = NULL;
    }
    if ( this->parent_ref_frame != (char *)NULL ) {
-      trick_MM->delete_var( (void *)this->parent_ref_frame );
-      this->parent_ref_frame = (char *)NULL;
+      if ( trick_MM->delete_var( static_cast< void * >( this->parent_ref_frame ) ) ) {
+         send_hs( stderr, "SpaceFOM::PhysicalEntityBase::~PhysicalEntityBase():%d ERROR deleting Trick Memory for 'this->parent_ref_frame'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      this->parent_ref_frame = NULL;
    }
 }
 
@@ -142,34 +154,46 @@ void PhysicalEntityBase::initialize()
 void PhysicalEntityBase::set_name( char const *new_name )
 {
    if ( this->name != NULL ) {
-      trick_MM->delete_var( (void *)this->name );
+      if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
+         send_hs( stderr, "SpaceFOM::PhysicalEntityBase::set_name():%d ERROR deleting Trick Memory for 'this->name'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
    }
    this->name = trick_MM->mm_strdup( new_name );
    return;
 }
 
-void PhysicalEntityBase::set_type( char const *new_name )
+void PhysicalEntityBase::set_type( char const *new_type )
 {
    if ( this->type != NULL ) {
-      trick_MM->delete_var( (void *)this->type );
+      if ( trick_MM->delete_var( static_cast< void * >( this->type ) ) ) {
+         send_hs( stderr, "SpaceFOM::PhysicalEntityBase::set_type():%d ERROR deleting Trick Memory for 'this->type'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
    }
-   this->type = trick_MM->mm_strdup( new_name );
+   this->type = trick_MM->mm_strdup( new_type );
    return;
 }
 
-void PhysicalEntityBase::set_status( char const *new_name )
+void PhysicalEntityBase::set_status( char const *new_status )
 {
    if ( this->status != NULL ) {
-      trick_MM->delete_var( (void *)this->status );
+      if ( trick_MM->delete_var( static_cast< void * >( this->status ) ) ) {
+         send_hs( stderr, "SpaceFOM::PhysicalEntityBase::set_status():%d ERROR deleting Trick Memory for 'this->status'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
    }
-   this->status = trick_MM->mm_strdup( new_name );
+   this->status = trick_MM->mm_strdup( new_status );
    return;
 }
 
 void PhysicalEntityBase::set_parent_ref_frame( char const *new_name )
 {
    if ( this->parent_ref_frame != NULL ) {
-      trick_MM->delete_var( (void *)this->parent_ref_frame );
+      if ( trick_MM->delete_var( static_cast< void * >( this->parent_ref_frame ) ) ) {
+         send_hs( stderr, "SpaceFOM::PhysicalEntityBase::set_parent_ref_frame():%d ERROR deleting Trick Memory for 'this->parent_ref_frame'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
    }
    this->parent_ref_frame = trick_MM->mm_strdup( new_name );
 

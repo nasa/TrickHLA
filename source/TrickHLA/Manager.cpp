@@ -2138,7 +2138,7 @@ void Manager::set_object_instance_handles_by_name(
       for ( unsigned int n = 0; n < data_obj_count; ++n ) {
 
          // Create the wide-string version of the instance name.
-         char *instance_name = (char *)data_objects[n].get_name();
+         char const *instance_name = data_objects[n].get_name();
          StringUtilities::to_wstring( ws_instance_name, instance_name );
 
          try {
@@ -2173,7 +2173,8 @@ void Manager::set_object_instance_handles_by_name(
                ostringstream errmsg;
                errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
                       << " ERROR: Object Instance Not Known for '"
-                      << ( instance_name != NULL ? instance_name : "" ) << "'" << THLA_ENDL;
+                      << ( instance_name != NULL ? instance_name : "" ) << "'"
+                      << THLA_ENDL;
                DebugHandler::terminate_with_message( errmsg.str() );
             } else {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -2574,7 +2575,7 @@ Object *Manager::get_trickhla_object(
 {
    // We use a map with the key being the ObjectIntanceHandle for fast lookups.
    ObjectInstanceMap::const_iterator iter = object_map.find( instance_id );
-   return ( ( iter != object_map.end() ) ? iter->second : static_cast< Object * >( NULL ) );
+   return ( ( iter != object_map.end() ) ? iter->second : NULL );
 }
 
 /*!
@@ -2988,8 +2989,7 @@ void Manager::setup_checkpoint_interactions()
       // Allocate the interaction items base don the count.
       check_interactions = reinterpret_cast< InteractionItem * >(
          alloc_type( check_interactions_count, "TrickHLA::InteractionItem" ) );
-
-      if ( check_interactions == static_cast< InteractionItem * >( NULL ) ) {
+      if ( check_interactions == NULL ) {
          ostringstream errmsg;
          errmsg << "Manager::setup_checkpoint_interactions():" << __LINE__
                 << " ERROR: Failed to allocate enough memory for check_interactions"
@@ -3019,7 +3019,8 @@ Checkpointing into check_interactions[%d] from interaction index %d.%c",
             check_interactions[i].user_supplied_tag = NULL;
          } else {
             check_interactions[i].user_supplied_tag =
-               (unsigned char *)trick_MM->declare_var( "unsigned char", (int)item->user_supplied_tag_size );
+               static_cast< unsigned char * >( trick_MM->declare_var( "unsigned char", item->user_supplied_tag_size ) );
+
             memcpy( check_interactions[i].user_supplied_tag, item->user_supplied_tag, item->user_supplied_tag_size );
          }
          check_interactions[i].order_is_TSO = item->order_is_TSO;
@@ -3041,7 +3042,10 @@ void Manager::clear_interactions()
       for ( unsigned int i = 0; i < check_interactions_count; ++i ) {
          check_interactions[i].clear_parm_items();
       }
-      trick_MM->delete_var( check_interactions );
+      if ( trick_MM->delete_var( static_cast< void * >( check_interactions ) ) ) {
+         send_hs( stderr, "Manager::clear_interactions():%d ERROR deleting Trick Memory for 'check_interactions'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
       check_interactions       = NULL;
       check_interactions_count = 0;
    }
@@ -3108,7 +3112,8 @@ restoring check_interactions[%d] into interaction index %d, parm_count=%d%c",
          if ( check_interactions[i].user_supplied_tag_size == 0 ) {
             item->user_supplied_tag = NULL;
          } else {
-            item->user_supplied_tag = (unsigned char *)trick_MM->mm_strdup( (char const *)check_interactions[i].user_supplied_tag );
+            item->user_supplied_tag = reinterpret_cast< unsigned char * >(
+               trick_MM->mm_strdup( reinterpret_cast< char const * >( check_interactions[i].user_supplied_tag ) ) );
          }
          item->order_is_TSO = check_interactions[i].order_is_TSO;
          item->time         = check_interactions[i].time;
@@ -3269,8 +3274,7 @@ bool Manager::is_this_a_rejoining_federate()
 
 RTIambassador *Manager::get_RTI_ambassador()
 {
-   return ( ( federate != NULL ) ? federate->get_RTI_ambassador()
-                                 : static_cast< RTI1516_NAMESPACE::RTIambassador * >( NULL ) );
+   return ( ( federate != NULL ) ? federate->get_RTI_ambassador() : NULL );
 }
 
 bool Manager::is_shutdown_called() const

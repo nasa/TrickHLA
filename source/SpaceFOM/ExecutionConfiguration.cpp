@@ -54,6 +54,7 @@ NASA, Johnson Space Center\n
 #include "trick/Executive.hh"
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
+#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
@@ -141,11 +142,12 @@ ExecutionConfiguration::ExecutionConfiguration(
 ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
 {
    // Free the allocated root reference frame name.
-   if ( this->root_frame_name != static_cast< char * >( NULL ) ) {
-      if ( TMM_is_alloced( this->root_frame_name ) ) {
-         TMM_delete_var_a( this->root_frame_name );
+   if ( this->root_frame_name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->root_frame_name ) ) ) {
+         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::~ExecutionConfiguration():%d ERROR deleting Trick Memory for 'this->root_frame_name'%c",
+                  __LINE__, THLA_NEWLINE );
       }
-      this->root_frame_name = static_cast< char * >( NULL );
+      this->root_frame_name = NULL;
    }
 }
 
@@ -186,7 +188,7 @@ void ExecutionConfiguration::configure_attributes()
    this->packing  = this;
    // Allocate the attributes for the ExCO HLA object.
    this->attr_count = 7;
-   this->attributes = (Attribute *)TMM_declare_var_1d( "TrickHLA::Attribute", this->attr_count );
+   this->attributes = static_cast< Attribute * >( TMM_declare_var_1d( "TrickHLA::Attribute", this->attr_count ) );
 
    //
    // Specify the ExCO attributes.
@@ -243,12 +245,13 @@ void ExecutionConfiguration::configure()
    // Clear out the existing object instance name, because we are going to
    // make sure it is ExCO regardless of what the user set it to be.
    if ( name != NULL ) {
-      if ( TMM_is_alloced( name ) ) {
-         TMM_delete_var_a( name );
+      if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
+         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::configure():%d ERROR deleting Trick Memory for 'name'%c",
+                  __LINE__, THLA_NEWLINE );
       }
-      name = static_cast< char * >( NULL );
+      name = NULL;
    }
-   name = TMM_strdup( (char *)"ExCO" );
+   name = trick_MM->mm_strdup( const_cast< char * >( "ExCO" ) );
 
    // Lag compensation is not supported for the Execution Configuration object.
    set_lag_compensation_type( LAG_COMPENSATION_NONE );
@@ -430,15 +433,16 @@ void ExecutionConfiguration::set_root_frame_name(
    char const *name )
 {
    // Free the Trick memory if it's already allocated.
-   if ( this->root_frame_name != static_cast< char * >( NULL ) ) {
-      if ( TMM_is_alloced( this->root_frame_name ) ) {
-         TMM_delete_var_a( this->root_frame_name );
+   if ( this->root_frame_name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->root_frame_name ) ) ) {
+         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::set_root_frame_name():%d ERROR deleting Trick Memory for 'this->root_frame_name'%c",
+                  __LINE__, THLA_NEWLINE );
       }
-      this->root_frame_name = static_cast< char * >( NULL );
+      this->root_frame_name = NULL;
    }
 
    // Allocate and duplicate the new root reference frame name.
-   this->root_frame_name = TMM_strdup( (char *)name );
+   this->root_frame_name = trick_MM->mm_strdup( const_cast< char * >( name ) );
 }
 
 /*!
@@ -589,8 +593,8 @@ void ExecutionConfiguration::setup_ref_attributes(
 
    // Set up attributes.
    this->attr_count = 7;
-   this->attributes = (Attribute *)trick_MM->declare_var( "Attribute", this->attr_count );
-   if ( this->attributes == static_cast< Attribute * >( NULL ) ) {
+   this->attributes = static_cast< Attribute * >( trick_MM->declare_var( "Attribute", this->attr_count ) );
+   if ( this->attributes == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for the attributes of the ExCO!"
@@ -629,7 +633,7 @@ void ExecutionConfiguration::setup_ref_attributes(
 
    // Allocate the Trick REF2 data structure.
    REF2 const *exco_ref2 = reinterpret_cast< REF2 * >( malloc( sizeof( REF2 ) ) );
-   if ( exco_ref2 == static_cast< REF2 * >( NULL ) ) {
+   if ( exco_ref2 == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for the REF2 structure for"
@@ -641,7 +645,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    // entries: 1) the 'root_frame_name' parameter and 2) an empty entry
    // marking the end of the structure.
    ATTRIBUTES *exco_attr = reinterpret_cast< ATTRIBUTES * >( malloc( 2 * sizeof( ATTRIBUTES ) ) );
-   if ( exco_attr == static_cast< ATTRIBUTES * >( NULL ) ) {
+   if ( exco_attr == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for the ATTRIBUTES for the"

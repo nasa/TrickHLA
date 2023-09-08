@@ -377,7 +377,7 @@ class Attribute
            || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( ref2->attr->num_index > 0 )
                 && ( ref2->attr->index[ref2->attr->num_index - 1].size == 0 ) ) ) {
-         return ( *( (void **)( ref2->address ) ) );
+         return ( *( static_cast< void ** >( ref2->address ) ) );
       } else {
          return ( ref2->address );
       }

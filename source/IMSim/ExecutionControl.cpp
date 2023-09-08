@@ -40,6 +40,7 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/Executive.hh"
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.hh"
 #include "trick/message_proto.h"
 
@@ -117,15 +118,18 @@ ExecutionControl::~ExecutionControl()
    this->clear_mode_values();
 
    // Free up the allocated Freeze Interaction.
-   if ( freeze_interaction != static_cast< Interaction * >( NULL ) ) {
-      FreezeInteractionHandler *ptr =
-         static_cast< FreezeInteractionHandler * >(
-            freeze_interaction->get_handler() );
-      if ( ptr != static_cast< FreezeInteractionHandler * >( NULL ) ) {
-         TMM_delete_var_a( ptr );
+   if ( freeze_interaction != NULL ) {
+      if ( freeze_interaction->get_handler() != NULL ) {
+         if ( trick_MM->delete_var( static_cast< void * >( freeze_interaction->get_handler() ) ) ) {
+            send_hs( stderr, "IMSim::ExecutionControl::~ExecutionControl():%d ERROR deleting Trick Memory for 'freeze_interaction->get_handler()'%c",
+                     __LINE__, THLA_NEWLINE );
+         }
          freeze_interaction->set_handler( NULL );
       }
-      TMM_delete_var_a( freeze_interaction );
+      if ( trick_MM->delete_var( static_cast< void * >( freeze_interaction ) ) ) {
+         send_hs( stderr, "IMSim::ExecutionControl::~ExecutionControl():%d ERROR deleting Trick Memory for 'freeze_interaction'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
       freeze_interaction = NULL;
       freeze_inter_count = 0;
    }
@@ -911,7 +915,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    freeze_inter_count = 1;
    freeze_interaction = reinterpret_cast< Interaction * >(
       alloc_type( freeze_inter_count, "TrickHLA::Interaction" ) );
-   if ( freeze_interaction == static_cast< Interaction * >( NULL ) ) {
+   if ( freeze_interaction == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for Interaction specialized"
@@ -921,7 +925,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    FreezeInteractionHandler *fiHandler =
       reinterpret_cast< FreezeInteractionHandler * >(
          alloc_type( 1, "TrickHLA::FreezeInteractionHandler" ) );
-   if ( fiHandler == static_cast< FreezeInteractionHandler * >( NULL ) ) {
+   if ( fiHandler == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for FreezeInteractionHandler!"
@@ -930,7 +934,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    }
 
    freeze_interaction->set_handler( fiHandler );
-   freeze_interaction->set_FOM_name( (char *)"Freeze" );
+   freeze_interaction->set_FOM_name( const_cast< char * >( "Freeze" ) );
    // pass the debug flag into the interaction object so that we see its messages
    // in case the user turns our messages on...
    freeze_interaction->set_publish();
@@ -939,7 +943,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    Parameter *tParm = reinterpret_cast< Parameter * >(
       alloc_type( freeze_interaction->get_parameter_count(),
                   "TrickHLA::Parameter" ) );
-   if ( tParm == static_cast< Parameter * >( NULL ) ) {
+   if ( tParm == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for the parameters of the"
@@ -963,8 +967,8 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // entries: 1) the 'time' parameter and 2) an empty entry marking the end
    // of the structure.
    ATTRIBUTES *time_attr;
-   time_attr = (ATTRIBUTES *)malloc( 2 * sizeof( ATTRIBUTES ) );
-   if ( time_attr == static_cast< ATTRIBUTES * >( NULL ) ) {
+   time_attr = static_cast< ATTRIBUTES * >( malloc( 2 * sizeof( ATTRIBUTES ) ) );
+   if ( time_attr == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for the ATTRIBUTES for the"
@@ -1018,10 +1022,10 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // in-line, and not via the trick input.py file, use the alternate version of
    // the initialize routine which does not resolve the fully-qualified trick
    // name to access the ATTRIBUTES if the trick variable...
-   if ( tParm != static_cast< Parameter * >( NULL ) ) {
+   if ( tParm != NULL ) {
       tParm[0].initialize( freeze_interaction->get_FOM_name(),
-                           (void *)fiHandler->get_address_of_interaction_time(),
-                           (ATTRIBUTES *)time_attr );
+                           static_cast< void * >( fiHandler->get_address_of_interaction_time() ),
+                           static_cast< ATTRIBUTES * >( time_attr ) );
    }
 }
 
@@ -2699,7 +2703,7 @@ void ExecutionControl::convert_loggable_sync_pts()
    if ( this->logged_sync_pts_count > 0 ) {
       this->loggable_sync_pts = reinterpret_cast< LoggableTimedSyncPnt * >(
          alloc_type( (int)this->logged_sync_pts_count, "TrickHLA::LoggableSyncPts" ) );
-      if ( this->loggable_sync_pts == static_cast< LoggableTimedSyncPnt * >( NULL ) ) {
+      if ( this->loggable_sync_pts == NULL ) {
          ostringstream errmsg;
          errmsg << "IMSim::ExecutionControl::convert_sync_pts():" << __LINE__
                 << " FAILED to allocate enough memory for the loggable sync points!"

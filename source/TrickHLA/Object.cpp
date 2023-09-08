@@ -51,8 +51,8 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 #include "trick/release.h"
 
@@ -165,11 +165,12 @@ Object::~Object()
       // Remove this object from the federation execution.
       remove();
 
-      if ( name != static_cast< char * >( NULL ) ) {
-         if ( TMM_is_alloced( name ) ) {
-            TMM_delete_var_a( name );
+      if ( name != NULL ) {
+         if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
+            send_hs( stderr, "Object::~Object():%d ERROR deleting Trick Memory for 'name'%c",
+                     __LINE__, THLA_NEWLINE );
          }
-         name = static_cast< char * >( NULL );
+         name = NULL;
       }
 
       // FIXME: There is a problem with deleting attribute_values_map?
@@ -421,8 +422,7 @@ RTI1516_NAMESPACE::RTIambassador *Object::get_RTI_ambassador()
       Federate *federate = get_federate();
 
       // Get the RTI-Ambassador.
-      rti_ambassador = ( federate != NULL ) ? federate->get_RTI_ambassador()
-                                            : static_cast< RTI1516_NAMESPACE::RTIambassador * >( NULL );
+      rti_ambassador = ( federate != NULL ) ? federate->get_RTI_ambassador() : NULL;
 
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -3867,7 +3867,7 @@ for Attributes of object '%s'.%c",
 
 void Object::setup_ownership_transfer_checkpointed_data()
 {
-   if ( ownership != static_cast< OwnershipHandler * >( NULL ) ) {
+   if ( ownership != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          send_hs( stdout, "Object::setup_ownership_transfer_checkpointed_data():%d Object: %s.%c",
                   __LINE__, get_name(), THLA_NEWLINE );
@@ -3878,7 +3878,7 @@ void Object::setup_ownership_transfer_checkpointed_data()
 
 void Object::restore_ownership_transfer_checkpointed_data()
 {
-   if ( ownership != static_cast< OwnershipHandler * >( NULL ) ) {
+   if ( ownership != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          send_hs( stdout, "Object::restore_ownership_transfer_checkpointed_data():%d Object: %s.%c",
                   __LINE__, get_name(), THLA_NEWLINE );
@@ -3899,17 +3899,18 @@ void Object::set_name(
    char const *new_name )
 {
    // Delete the existing memory used by the name.
-   if ( this->name != static_cast< char * >( NULL ) ) {
-      if ( TMM_is_alloced( name ) ) {
-         TMM_delete_var_a( name );
+   if ( this->name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
+         send_hs( stderr, "Object::set_name():%d ERROR deleting Trick Memory for 'name'%c",
+                  __LINE__, THLA_NEWLINE );
       }
    }
 
    // Allocate appropriate size string and copy data.
    if ( new_name != NULL ) {
-      this->name = TMM_strdup( (char *)new_name );
+      this->name = trick_MM->mm_strdup( new_name );
    } else {
-      this->name = TMM_strdup( (char *)"" );
+      this->name = trick_MM->mm_strdup( "" );
    }
 }
 
@@ -3940,7 +3941,7 @@ Attribute *Object::get_attribute(
 {
    // We use a map with the key being the AttributeHandle for fast lookups.
    AttributeMap::const_iterator iter = thla_attribute_map.find( attr_handle );
-   return ( ( iter != thla_attribute_map.end() ) ? iter->second : static_cast< Attribute * >( NULL ) );
+   return ( ( iter != thla_attribute_map.end() ) ? iter->second : NULL );
 }
 
 Attribute *Object::get_attribute(

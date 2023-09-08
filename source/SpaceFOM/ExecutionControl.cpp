@@ -241,7 +241,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
 {
    // Allocate the Mode Transition Request Interaction.
    mtr_interaction = reinterpret_cast< Interaction * >( alloc_type( 1, "TrickHLA::Interaction" ) );
-   if ( mtr_interaction == static_cast< Interaction * >( NULL ) ) {
+   if ( mtr_interaction == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_MTR_interaction_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for Interaction specialized"
@@ -250,8 +250,8 @@ void ExecutionControl::setup_interaction_ref_attributes()
    }
 
    // Set up name, handler, publish and subscribe.
-   mtr_interaction->set_FOM_name( (char *)"ModeTransitionRequest" ); // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
-   mtr_interaction->set_handler( &mtr_interaction_handler );         // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
+   mtr_interaction->set_FOM_name( const_cast< char * >( "ModeTransitionRequest" ) ); // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
+   mtr_interaction->set_handler( &mtr_interaction_handler );                         // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
    mtr_interaction_handler.set_name( "ModeTransitionRequest" );
    if ( this->is_master() ) {
       mtr_interaction->set_subscribe();
@@ -264,7 +264,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    Parameter *tParm = reinterpret_cast< Parameter * >(
       alloc_type( mtr_interaction->get_parameter_count(),
                   "TrickHLA::Parameter" ) );
-   if ( tParm == static_cast< Parameter * >( NULL ) ) {
+   if ( tParm == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for the parameters of the"
@@ -288,8 +288,8 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // entries: 1) the 'execution_mode' parameter and 2) an empty entry
    // marking the end of the structure.
    ATTRIBUTES *mode_attr;
-   mode_attr = (ATTRIBUTES *)malloc( 2 * sizeof( ATTRIBUTES ) );
-   if ( mode_attr == static_cast< ATTRIBUTES * >( NULL ) ) {
+   mode_attr = static_cast< ATTRIBUTES * >( malloc( 2 * sizeof( ATTRIBUTES ) ) );
+   if ( mode_attr == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
              << " FAILED to aallocate enough memory for the ATTRIBUTES for the"
@@ -343,10 +343,10 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // in-line, and not via the Trick input.py file, use the alternate version of
    // the initialize routine which does not resolve the fully-qualified Trick
    // name to access the ATTRIBUTES if the trick variable...
-   if ( tParm != static_cast< Parameter * >( NULL ) ) {
+   if ( tParm != NULL ) {
       tParm[0].initialize( mtr_interaction->get_FOM_name(),
                            mtr_interaction_handler.get_address_of_interaction_mode(),
-                           (ATTRIBUTES *)mode_attr );
+                           static_cast< ATTRIBUTES * >( mode_attr ) );
    }
 }
 
@@ -372,7 +372,7 @@ void ExecutionControl::setup_object_RTI_handles()
 void ExecutionControl::setup_interaction_RTI_handles()
 {
    // Setup the RTI handles for the SpaceFOM MTR Interaction.
-   if ( mtr_interaction != static_cast< Interaction * >( NULL ) ) {
+   if ( mtr_interaction != NULL ) {
       // SpaceFOM Mode Transition Request (MTR) Interaction.
       this->manager->setup_interaction_RTI_handles( 1, mtr_interaction );
    }

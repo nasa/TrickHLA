@@ -46,7 +46,9 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
+#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
@@ -111,8 +113,9 @@ Interaction::~Interaction()
    remove();
 
    if ( user_supplied_tag != NULL ) {
-      if ( TMM_is_alloced( (char *)user_supplied_tag ) ) {
-         TMM_delete_var_a( user_supplied_tag );
+      if ( trick_MM->delete_var( static_cast< void * >( user_supplied_tag ) ) ) {
+         send_hs( stderr, "Interaction::~Interaction():%d ERROR deleting Trick Memory for 'user_supplied_tag'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       user_supplied_tag      = NULL;
       user_supplied_tag_size = 0;
@@ -220,9 +223,9 @@ void Interaction::set_user_supplied_tag(
    if ( tag_size > user_supplied_tag_capacity ) {
       user_supplied_tag_capacity = tag_size;
       if ( user_supplied_tag == NULL ) {
-         user_supplied_tag = (unsigned char *)TMM_declare_var_1d( "char", (int)user_supplied_tag_capacity );
+         user_supplied_tag = static_cast< unsigned char * >( TMM_declare_var_1d( "char", user_supplied_tag_capacity ) );
       } else {
-         user_supplied_tag = (unsigned char *)TMM_resize_array_1d_a( user_supplied_tag, (int)user_supplied_tag_capacity );
+         user_supplied_tag = static_cast< unsigned char * >( TMM_resize_array_1d_a( user_supplied_tag, user_supplied_tag_capacity ) );
       }
    }
    user_supplied_tag_size = tag_size;
@@ -1201,8 +1204,7 @@ Federate *Interaction::get_federate()
 
 RTIambassador *Interaction::get_RTI_ambassador()
 {
-   return ( ( this->manager != NULL ) ? this->manager->get_RTI_ambassador()
-                                      : static_cast< RTI1516_NAMESPACE::RTIambassador * >( NULL ) );
+   return ( ( this->manager != NULL ) ? this->manager->get_RTI_ambassador() : NULL );
 }
 
 bool Interaction::is_shutdown_called() const

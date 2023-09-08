@@ -42,8 +42,8 @@ NASA, Johnson Space Center\n
 #include <vector>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
-#include "trick/memorymanager_c_intf.h"
 
 // TrickHLA Model include files.
 #include "TrickHLA/CompileConfig.hh"
@@ -136,7 +136,7 @@ class StringUtilities
    {
       std::string s;
       s.assign( input.begin(), input.end() );
-      return TMM_strdup( const_cast< char * >( s.c_str() ) );
+      return trick_MM->mm_strdup( const_cast< char * >( s.c_str() ) );
    }
 
    /*! @brief HLA RTI User Data to printable C++ string conversion routine.
@@ -146,7 +146,7 @@ class StringUtilities
       std::string            &output,
       RTI1516_USERDATA const &data )
    {
-      output.assign( (char const *)data.data(), data.size() );
+      output.assign( static_cast< char const * >( data.data() ), data.size() );
       for ( size_t i = 0; i < output.size(); ++i ) {
          if ( !isprint( output[i] ) ) {
             output.replace( i, 1, 1, ' ' );
@@ -161,7 +161,7 @@ class StringUtilities
       std::string            &output,
       RTI1516_USERDATA const &data )
    {
-      output.assign( (char const *)data.data(), data.size() );
+      output.assign( static_cast< char const * >( data.data() ), data.size() );
    }
 
    /*! @brief Convert a federate handle to a C string representation.

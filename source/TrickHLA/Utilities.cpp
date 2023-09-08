@@ -62,8 +62,8 @@ short Utilities::byteswap_short(
 {
    short                output;
    size_t const         size = sizeof( output );
-   unsigned char       *out  = (unsigned char *)&output;
-   unsigned char const *in   = (unsigned char *)&input;
+   unsigned char       *out  = reinterpret_cast< unsigned char        *>( &output );
+   unsigned char const *in   = reinterpret_cast< unsigned char const   *>( &input );
 
    // sizeof(char) <= sizeof(short) <= sizeof(int)
    switch ( size ) {
@@ -92,8 +92,8 @@ unsigned short Utilities::byteswap_unsigned_short(
 {
    unsigned short       output;
    size_t const         size = sizeof( output );
-   unsigned char       *out  = (unsigned char *)&output;
-   unsigned char const *in   = (unsigned char *)&input;
+   unsigned char       *out  = reinterpret_cast< unsigned char        *>( &output );
+   unsigned char const *in   = reinterpret_cast< unsigned char const   *>( &input );
 
    // sizeof(char) <= sizeof(short) <= sizeof(int)
    switch ( size ) {
@@ -122,8 +122,8 @@ int Utilities::byteswap_int( // RETURN: -- Byteswap value.
 {
    int                  output;
    size_t const         size = sizeof( output );
-   unsigned char       *out  = (unsigned char *)&output;
-   unsigned char const *in   = (unsigned char *)&input;
+   unsigned char       *out  = reinterpret_cast< unsigned char        *>( &output );
+   unsigned char const *in   = reinterpret_cast< unsigned char const   *>( &input );
 
    // sizeof(short) <= sizeof(int) <= sizeof(long)
    switch ( size ) {
@@ -148,8 +148,8 @@ unsigned int Utilities::byteswap_unsigned_int(
 {
    unsigned int         output;
    size_t const         size = sizeof( output );
-   unsigned char       *out  = (unsigned char *)&output;
-   unsigned char const *in   = (unsigned char *)&input;
+   unsigned char       *out  = reinterpret_cast< unsigned char        *>( &output );
+   unsigned char const *in   = reinterpret_cast< unsigned char const   *>( &input );
 
    // sizeof(short) <= sizeof(int) <= sizeof(long)
    switch ( size ) {
@@ -174,8 +174,8 @@ long Utilities::byteswap_long(
 {
    long                 output;
    size_t const         size = sizeof( output );
-   unsigned char       *out  = (unsigned char *)&output;
-   unsigned char const *in   = (unsigned char *)&input;
+   unsigned char       *out  = reinterpret_cast< unsigned char        *>( &output );
+   unsigned char const *in   = reinterpret_cast< unsigned char const   *>( &input );
 
    // sizeof(long) >= sizeof(int)
    switch ( size ) {
@@ -210,8 +210,8 @@ unsigned long Utilities::byteswap_unsigned_long(
 {
    unsigned long        output;
    size_t const         size = sizeof( output );
-   unsigned char       *out  = (unsigned char *)&output;
-   unsigned char const *in   = (unsigned char *)&input;
+   unsigned char       *out  = reinterpret_cast< unsigned char        *>( &output );
+   unsigned char const *in   = reinterpret_cast< unsigned char const   *>( &input );
 
    // sizeof(long) >= sizeof(int)
    switch ( size ) {
@@ -246,8 +246,8 @@ long long Utilities::byteswap_long_long(
 {
    long long            output;
    size_t const         size = sizeof( output );
-   unsigned char       *out  = (unsigned char *)&output;
-   unsigned char const *in   = (unsigned char *)&input;
+   unsigned char       *out  = reinterpret_cast< unsigned char        *>( &output );
+   unsigned char const *in   = reinterpret_cast< unsigned char const   *>( &input );
 
    // Specified in the C99 standard, a long long is at least 64 bits.
    // sizeof(long long) >= sizeof(long)
@@ -277,8 +277,8 @@ unsigned long long Utilities::byteswap_unsigned_long_long(
 {
    unsigned long long   output;
    size_t const         size = sizeof( output );
-   unsigned char       *out  = (unsigned char *)&output;
-   unsigned char const *in   = (unsigned char *)&input;
+   unsigned char       *out  = reinterpret_cast< unsigned char        *>( &output );
+   unsigned char const *in   = reinterpret_cast< unsigned char const   *>( &input );
 
    // Specified in the C99 standard, a long long is at least 64 bits.
    // sizeof(long long) >= sizeof(long)
@@ -308,8 +308,8 @@ float Utilities::byteswap_float(
 {
    float                output;
    size_t const         size = sizeof( output );
-   unsigned char       *out  = (unsigned char *)&output;
-   unsigned char const *in   = (unsigned char *)&input;
+   unsigned char       *out  = reinterpret_cast< unsigned char        *>( &output );
+   unsigned char const *in   = reinterpret_cast< unsigned char const   *>( &input );
 
    switch ( size ) {
       case 4:
@@ -343,8 +343,8 @@ double Utilities::byteswap_double(
 {
    double               output;
    size_t const         size = sizeof( output );
-   unsigned char       *out  = (unsigned char *)&output;
-   unsigned char const *in   = (unsigned char *)&input;
+   unsigned char       *out  = reinterpret_cast< unsigned char        *>( &output );
+   unsigned char const *in   = reinterpret_cast< unsigned char const   *>( &input );
 
    switch ( size ) {
       case 8:

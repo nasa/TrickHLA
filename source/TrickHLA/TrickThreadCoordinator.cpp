@@ -45,6 +45,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
@@ -93,20 +94,23 @@ TrickThreadCoordinator::~TrickThreadCoordinator() // RETURN: -- None.
    // Release the arrays.
    if ( this->thread_state != NULL ) {
       this->thread_state_cnt = 0;
-      if ( TMM_is_alloced( (char *)this->thread_state ) ) {
-         TMM_delete_var_a( this->thread_state );
+      if ( trick_MM->delete_var( static_cast< void * >( this->thread_state ) ) ) {
+         send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d ERROR deleting Trick Memory for 'this->thread_state'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       this->thread_state = NULL;
    }
    if ( this->data_cycle_base_time_per_thread != NULL ) {
-      if ( TMM_is_alloced( (char *)this->data_cycle_base_time_per_thread ) ) {
-         TMM_delete_var_a( this->data_cycle_base_time_per_thread );
+      if ( trick_MM->delete_var( static_cast< void * >( this->data_cycle_base_time_per_thread ) ) ) {
+         send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d ERROR deleting Trick Memory for 'this->data_cycle_base_time_per_thread'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       this->data_cycle_base_time_per_thread = NULL;
    }
    if ( this->data_cycle_base_time_per_obj != NULL ) {
-      if ( TMM_is_alloced( (char *)this->data_cycle_base_time_per_obj ) ) {
-         TMM_delete_var_a( this->data_cycle_base_time_per_obj );
+      if ( trick_MM->delete_var( static_cast< void * >( this->data_cycle_base_time_per_obj ) ) ) {
+         send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d ERROR deleting Trick Memory for 'this->data_cycle_base_time_per_obj'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       this->data_cycle_base_time_per_obj = NULL;
    }
@@ -203,7 +207,7 @@ void TrickThreadCoordinator::initialize_thread_state(
    }
 
    // Allocate the thread state array for all the Trick threads (main + child).
-   this->thread_state = (unsigned int *)TMM_declare_var_1d( "unsigned int", this->thread_state_cnt );
+   this->thread_state = static_cast< unsigned int * >( TMM_declare_var_1d( "unsigned int", this->thread_state_cnt ) );
    if ( this->thread_state == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize_thread_state():" << __LINE__
@@ -221,7 +225,7 @@ void TrickThreadCoordinator::initialize_thread_state(
    }
 
    // Allocate memory for the data cycle times per each thread.
-   this->data_cycle_base_time_per_thread = (long long *)TMM_declare_var_1d( "long long", this->thread_state_cnt );
+   this->data_cycle_base_time_per_thread = static_cast< long long * >( TMM_declare_var_1d( "long long", this->thread_state_cnt ) );
    if ( this->data_cycle_base_time_per_thread == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize_thread_state():" << __LINE__
@@ -237,7 +241,7 @@ void TrickThreadCoordinator::initialize_thread_state(
 
    // Allocate memory for the data cycle times per each object instance.
    if ( this->manager->obj_count > 0 ) {
-      this->data_cycle_base_time_per_obj = (long long *)TMM_declare_var_1d( "long long", this->manager->obj_count );
+      this->data_cycle_base_time_per_obj = static_cast< long long * >( TMM_declare_var_1d( "long long", this->manager->obj_count ) );
       if ( this->data_cycle_base_time_per_obj == NULL ) {
          ostringstream errmsg;
          errmsg << "TrickThreadCoordinator::initialize_thread_state():" << __LINE__
