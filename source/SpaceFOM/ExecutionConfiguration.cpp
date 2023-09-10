@@ -310,15 +310,17 @@ void ExecutionConfiguration::pack()
 
    // The least-common-time-step time must be an integer multiple of
    // the federate's lookahead time.
-   if ( least_common_time_step % fed_lookahead != 0 ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionConfiguration::pack():" << __LINE__
-             << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-             << " " << Int64BaseTime::get_units()
-             << ") is not an integer multiple of the federate lookahead time ("
-             << fed_lookahead << " " << Int64BaseTime::get_units()
-             << ")!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
+   if ( fed_lookahead > 0 ) {
+      if ( least_common_time_step % fed_lookahead != 0 ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionConfiguration::pack():" << __LINE__
+                << " ERROR: ExCO least_common_time_step (" << least_common_time_step
+                << " " << Int64BaseTime::get_units()
+                << ") is not an integer multiple of the federate lookahead time ("
+                << fed_lookahead << " " << Int64BaseTime::get_units()
+                << ")!" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
    }
 }
 
@@ -368,15 +370,17 @@ void ExecutionConfiguration::unpack()
 
    // Our federates lookahead time must be an integer multiple of the
    // least-common-time-step time.
-   if ( least_common_time_step % fed_lookahead != 0 ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
-             << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-             << " " << Int64BaseTime::get_units()
-             << ") is not an integer multiple of the federate lookahead time ("
-             << fed_lookahead << " " << Int64BaseTime::get_units()
-             << ")!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
+   if ( fed_lookahead > 0 ) {
+      if ( least_common_time_step % fed_lookahead != 0 ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
+                << " ERROR: ExCO least_common_time_step (" << least_common_time_step
+                << " " << Int64BaseTime::get_units()
+                << ") is not an integer multiple of the federate lookahead time ("
+                << fed_lookahead << " " << Int64BaseTime::get_units()
+                << ")!" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
    }
 
    // Check the Trick executive software frame.
