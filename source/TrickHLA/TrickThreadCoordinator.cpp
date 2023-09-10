@@ -494,8 +494,11 @@ void TrickThreadCoordinator::verify_trick_child_thread_associations()
       ostringstream summary;
       summary << "TrickThreadCoordinator::verify_trick_child_thread_associations():" << __LINE__;
 
-      if ( this->any_child_thread_associated ) {
-         summary << " Object instance and thread association input file summary:" << THLA_ENDL;
+      if ( !this->any_child_thread_associated ) {
+         summary << " No Trick child threads associated." << THLA_ENDL;
+      } else {
+         summary << " Summary of object instance and thread associations from the input file:"
+                 << THLA_ENDL;
 
          // Summary of the Object-instances per thread-ID.
          summary << "ThreadID  Cycle  Object-Instances" << THLA_ENDL;
@@ -512,7 +515,7 @@ void TrickThreadCoordinator::verify_trick_child_thread_associations()
          }
 
          // Summary of the thread-ID's per object instance.
-         summary << "Object-Instance   ThreadID's" << THLA_ENDL;
+         summary << "Object-Instance   ThreadIDs" << THLA_ENDL;
          for ( unsigned int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
             summary << "'" << this->manager->objects[obj_index].get_name() << "'\t  ";
             bool printed_thread_id = false;
@@ -527,8 +530,6 @@ void TrickThreadCoordinator::verify_trick_child_thread_associations()
             }
             summary << THLA_ENDL;
          }
-      } else {
-         summary << " No Trick child threads associated." << THLA_ENDL;
       }
       send_hs( stdout, summary.str().c_str() );
    }
