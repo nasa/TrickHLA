@@ -47,14 +47,12 @@ class THLASimObject : public THLABaseSimObject {
                   double main_thread_interaction_cycle,
                   unsigned short _1ST  = 1,
                   unsigned short _INIT = 60,
-                  unsigned short _LAST = 65534,
-                  std::string object_instance_names = "" )
+                  unsigned short _LAST = 65534 )
      : THLABaseSimObject( main_thread_data_cycle,
                           main_thread_interaction_cycle,
                           _1ST,
                           _INIT,
-                          _LAST,
-                          object_instance_names ),
+                          _LAST ),
        simple_sim_config( "THLA.simple_sim_config" ),
        execution_control( simple_sim_config )
    {

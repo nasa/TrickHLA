@@ -115,6 +115,7 @@ Object::Object()
      create_HLA_instance( false ),
      required( true ),
      blocking_cyclic_read( false ),
+     thread_ids( NULL ),
      attr_count( 0 ),
      attributes( NULL ),
      lag_comp( NULL ),
@@ -122,6 +123,8 @@ Object::Object()
      packing( NULL ),
      ownership( NULL ),
      deleted( NULL ),
+     thread_ids_array_count( 0 ),
+     thread_ids_array( NULL ),
      process_object_deleted_from_RTI( false ),
      object_deleted_from_RTI( false ),
      push_mutex(),
@@ -171,6 +174,15 @@ Object::~Object()
                      __LINE__, THLA_NEWLINE );
          }
          name = NULL;
+      }
+
+      if ( this->thread_ids_array != NULL ) {
+         if ( trick_MM->delete_var( static_cast< void * >( this->thread_ids_array ) ) ) {
+            send_hs( stderr, "Object::~Object():%d ERROR deleting Trick Memory for 'this->thread_ids_array'%c",
+                     __LINE__, THLA_NEWLINE );
+         }
+         this->thread_ids_array       = NULL;
+         this->thread_ids_array_count = 0;
       }
 
       // FIXME: There is a problem with deleting attribute_values_map?
@@ -4395,4 +4407,98 @@ for Attributes of object '%s', waiting...%c",
 bool Object::is_shutdown_called() const
 {
    return ( ( this->manager != NULL ) ? this->manager->is_shutdown_called() : false );
+}
+
+void Object::initialize_thread_ID_array()
+{
+   // If the list of thread IDs was not specified in the input file then clear
+   // out the array if it exists and return.
+   if ( this->thread_ids == NULL ) {
+      if ( this->thread_ids_array != NULL ) {
+         if ( trick_MM->delete_var( static_cast< void * >( this->thread_ids_array ) ) ) {
+            send_hs( stderr, "Object::initialize_thread_ID_array():%d ERROR deleting Trick Memory for 'this->thread_ids_array'%c",
+                     __LINE__, THLA_NEWLINE );
+         }
+         this->thread_ids_array       = NULL;
+         this->thread_ids_array_count = 0;
+      }
+      return;
+   }
+
+   // Determine the total number of Trick threads (main + child).
+   this->thread_ids_array_count = exec_get_num_threads();
+
+   // Protect against the thread count being unexpectedly zero and should be
+   // at least 1 for the Trick main thread.
+   if ( this->thread_ids_array_count == 0 ) {
+      this->thread_ids_array_count = 1;
+   }
+
+   // Allocate memory for the data cycle times per each thread.
+   this->thread_ids_array = static_cast< bool * >( TMM_declare_var_1d( "bool", this->thread_ids_array_count ) );
+   if ( this->thread_ids_array == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Object::initialize_thread_ID_array():" << __LINE__
+             << " ERROR: Could not allocate memory for 'thread_ids_array'"
+             << " for requested size " << this->thread_ids_array_count
+             << "!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   for ( unsigned int id = 0; id < this->thread_ids_array_count; ++id ) {
+      this->thread_ids_array[id] = false;
+   }
+
+   // Break up the comma separated thread-IDs list into a vector.
+   std::vector< std::string > thread_id_vec;
+   StringUtilities::tokenize( this->thread_ids, thread_id_vec, "," );
+
+   if ( thread_id_vec.empty() ) {
+
+      // If no thread-IDs was specified for this object then default to the
+      // Trick main thread.
+      this->thread_ids_array[0] = true;
+
+   } else {
+      // Process each of the thread-ID's associated to this object and convert
+      // from a string to an integer.
+      for ( unsigned int k = 0; k < thread_id_vec.size(); ++k ) {
+
+         string thread_id_str = thread_id_vec.at( k );
+
+         // Convert the string to an integer.
+         stringstream sstream;
+         sstream << thread_id_str;
+         long long id;
+         sstream >> id;
+
+         if ( ( id >= 0 ) && ( id < this->thread_ids_array_count ) ) {
+            this->thread_ids_array[id] = true;
+         } else {
+            ostringstream errmsg;
+            errmsg << "Object::initialize_thread_ID_array():" << __LINE__
+                   << " ERROR: For object '" << get_name()
+                   << "', the Trick child thread-ID '" << thread_id_str
+                   << "' specified in the input file is not valid! Valid range"
+                   << " is 0 to " << ( this->thread_ids_array_count - 1 )
+                   << "!" << THLA_ENDL;
+            DebugHandler::terminate_with_message( errmsg.str() );
+         }
+      }
+   }
+}
+
+/*! @brief Determine if this object is associated to the specified thread ID.
+ * @return True associated to this thread ID.
+ * @param thread_id Trick thread ID. */
+bool Object::is_thread_associated(
+   unsigned int const thread_id )
+{
+   if ( ( this->thread_ids_array_count == 0 ) && ( this->thread_ids != NULL ) ) {
+      // Initialize the array of thread IDs associated to this object.
+      initialize_thread_ID_array();
+   }
+   if ( thread_id >= this->thread_ids_array_count ) {
+      return ( false );
+   }
+   return ( this->thread_ids_array[thread_id] );
 }

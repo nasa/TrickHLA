@@ -133,6 +133,8 @@ class Object
 
    bool blocking_cyclic_read; ///< @trick_units{--} True to block in receive_cyclic_data() for data to be received.
 
+   char *thread_ids; ///< @trick_units{--} Comma separated list of Trick child thread IDs associated to this object.
+
    int        attr_count; ///< @trick_units{--} Number of object attributes.
    Attribute *attributes; ///< @trick_units{--} Array of object attributes.
 
@@ -143,9 +145,7 @@ class Object
 
    OwnershipHandler *ownership; ///< @trick_units{--} Manages attribute ownership.
 
-   ObjectDeleted *deleted;                         ///< @trick_units{--} Object Deleted callback object.
-   bool           process_object_deleted_from_RTI; ///< @trick_units{--} Flag that is true when to process the object has been deleted from the RTI.
-   bool           object_deleted_from_RTI;         ///< @trick_units{--} Flag that is true when this object has been deleted from the RTI.
+   ObjectDeleted *deleted; ///< @trick_units{--} Object Deleted callback object.
 
   public:
    //
@@ -743,6 +743,20 @@ class Object
     * @param required_config Attribute configuration required in order to send data
     * @param include_requested True to also included requeted attributes */
    void create_attribute_set( DataUpdateEnum const required_config, bool const include_requested );
+
+   /*! @brief Initialize the thread ID array based on the users 'thread_ids' input.*/
+   void initialize_thread_ID_array();
+
+   /*! @brief Determine if this object is associated to the specified thread ID.
+    * @return True associated to this thread ID.
+    * @param thread_id Trick thread ID. */
+   bool is_thread_associated( unsigned int const thread_id );
+
+   unsigned int thread_ids_array_count; ///< @trick_units{--} Size of the thread IDs array.
+   bool        *thread_ids_array;       ///< @trick_units{--} Array index is the thread ID and the value is true if the thread is associated to this object.
+
+   bool process_object_deleted_from_RTI; ///< @trick_units{--} Flag that is true when to process the object has been deleted from the RTI.
+   bool object_deleted_from_RTI;         ///< @trick_units{--} Flag that is true when this object has been deleted from the RTI.
 
    MutexLock push_mutex;      ///< @trick_io{**} Mutex to lock thread over push attribute ownership sections.
    MutexLock ownership_mutex; ///< @trick_io{**} Mutex to lock thread over attribute ownership code sections.
