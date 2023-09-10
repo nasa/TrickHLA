@@ -134,11 +134,11 @@ class SpaceFOMRefFrameSimObject : public THLAThreadSimObject {
    SpaceFOM::RefFrameState frame_packing;
 
    SpaceFOMRefFrameSimObject( RefFrameData & frame_data_ptr,
-   								   TrickHLA::Federate & thla_fed,
-   								   double data_cycle,
-   									unsigned short _THREAD_ID,
+                              TrickHLA::Federate & thla_fed,
+                              double data_cycle,
+                              unsigned short _THREAD_ID,
                               unsigned short _INIT = 59  )
-   	: THLAThreadSimObject( thla_fed, data_cycle, _THREAD_ID )
+      : THLAThreadSimObject( thla_fed, data_cycle, _THREAD_ID )
    {
       // Set the reference to the reference frame.
       this->ref_frame_data_ptr = &frame_data_ptr;
