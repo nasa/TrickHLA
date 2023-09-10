@@ -176,11 +176,11 @@ THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
 SpaceFOMRefFrameTreeSimObject ref_frame_tree;
 
 SpaceFOMRefFrameSimObject root_ref_frame( ref_frame_tree.root_frame_data,
-														THLA.federate,
-														THLA_DATA_CYCLE_TIME,
-														1 ); 	// Trick child thread 1 (i.e. C1).
+                                          THLA.federate,
+                                          THLA_DATA_CYCLE_TIME,
+                                          1 );   // Trick child thread 1 (i.e. C1).
 														
 SpaceFOMRefFrameSimObject ref_frame_A( ref_frame_tree.frame_A_data,
-													THLA.federate,
-													THLA_DATA_CYCLE_TIME,
-													2 );		// Trick child thread 2 (i.e. C2).
+                                       THLA.federate,
+                                       THLA_DATA_CYCLE_TIME,
+                                       2 );   // Trick child thread 2 (i.e. C2).
