@@ -1072,7 +1072,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       if ( is_federate_executing() ) {
          bool found = false;
          for ( int loop = 0; loop < running_feds_count; ++loop ) {
-            char *tName = StringUtilities::ip_strdup_wstring( federate_name_ws );
+            char const *tName = StringUtilities::ip_strdup_wstring( federate_name_ws );
             if ( !strcmp( running_feds[loop].name, tName ) ) {
                found = true;
                break;

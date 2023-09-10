@@ -797,7 +797,7 @@ void Parameter::calculate_size_and_number_of_items()
             // encodings assume the string is NULL terminated and determine the
             // number of characters using strlen().
             for ( size_t i = 0; i < num_items; ++i ) {
-               char *s = *( static_cast< char ** >( address ) + i );
+               char const *s = *( static_cast< char ** >( address ) + i );
                if ( s != NULL ) {
                   num_bytes += strlen( s );
                }

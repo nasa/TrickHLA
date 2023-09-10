@@ -90,7 +90,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @param federate The associated TrickHLA::Federate. */
    virtual void initialize();
    /*! @brief Join federation execution process. */
-   virtual void join_federation_process();
+   virtual void join_federation_process(); // cppcheck-suppress [uselessOverride]
    /*! @brief Process run before the multi-phase initialization begins. */
    virtual void pre_multi_phase_init_processes();
    /*! @brief Process run after the multi-phase initialization ends. */
@@ -216,7 +216,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     * freeze, tell other federates to run. */
    virtual void exit_freeze();
    /*! @brief Routine to handle ExecutionControl specific action needed to un-freeze. */
-   virtual void un_freeze()
+   virtual void un_freeze() // cppcheck-suppress [uselessOverride]
    {
       return;
    }
@@ -297,7 +297,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual bool is_save_initiated();
    /*! @brief Federates that did not announce the save, perform a save.
     * @return True if Save can proceed, False if not. */
-   virtual bool perform_save()
+   virtual bool perform_save() // cppcheck-suppress [uselessOverride]
    {
       return ( false );
    }

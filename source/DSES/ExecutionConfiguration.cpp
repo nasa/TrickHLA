@@ -248,18 +248,22 @@ void ExecutionConfiguration::pack()
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   // The least-common-time-step time must be an integer multiple of
-   // the federate's lookahead time.
-   if ( least_common_time_step % fed_lookahead != 0 ) {
-      ostringstream errmsg;
-      errmsg << "DSES::ExecutionConfiguration::pack():" << __LINE__
-             << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-             << " " << Int64BaseTime::get_units()
-             << ") is not an integer multiple of the federate lookahead time ("
-             << fed_lookahead
-             << " " << Int64BaseTime::get_units()
-             << ")!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
+   // Skip for a zero lookahead time.
+   if ( fed_lookahead != 0 ) {
+
+      // The least-common-time-step time must be an integer multiple of
+      // the federate's lookahead time.
+      if ( ( least_common_time_step % fed_lookahead ) != 0 ) {
+         ostringstream errmsg;
+         errmsg << "DSES::ExecutionConfiguration::pack():" << __LINE__
+                << " ERROR: ExCO least_common_time_step (" << least_common_time_step
+                << " " << Int64BaseTime::get_units()
+                << ") is not an integer multiple of the federate lookahead time ("
+                << fed_lookahead
+                << " " << Int64BaseTime::get_units()
+                << ")!" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
    }
 }
 
@@ -306,18 +310,22 @@ void ExecutionConfiguration::unpack()
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   // Our federates lookahead time must be an integer multiple of the
-   // least-common-time-step time.
-   if ( least_common_time_step % fed_lookahead != 0 ) {
-      ostringstream errmsg;
-      errmsg << "DSES::ExecutionConfiguration::unpack():" << __LINE__
-             << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-             << " " << Int64BaseTime::get_units()
-             << ") is not an integer multiple of the federate lookahead time ("
-             << fed_lookahead
-             << " " << Int64BaseTime::get_units()
-             << ")!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
+   // Skip for a zero lookahead time.
+   if ( fed_lookahead != 0 ) {
+
+      // Our federates lookahead time must be an integer multiple of the
+      // least-common-time-step time.
+      if ( ( least_common_time_step % fed_lookahead ) != 0 ) {
+         ostringstream errmsg;
+         errmsg << "DSES::ExecutionConfiguration::unpack():" << __LINE__
+                << " ERROR: ExCO least_common_time_step (" << least_common_time_step
+                << " " << Int64BaseTime::get_units()
+                << ") is not an integer multiple of the federate lookahead time ("
+                << fed_lookahead
+                << " " << Int64BaseTime::get_units()
+                << ")!" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
    }
 
    // Check the Trick executive software frame.

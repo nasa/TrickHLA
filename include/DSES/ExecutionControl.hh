@@ -88,7 +88,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual void initialize();
    /*! Setup the Trick Ref ATTRIBUTES for ExecutionControl. */
    /*! @brief Join federation execution process. */
-   virtual void join_federation_process();
+   virtual void join_federation_process(); // cppcheck-suppress [uselessOverride]
    /*! @brief Process run before the multi-phase initialization begins. */
    virtual void pre_multi_phase_init_processes();
    /*! @brief Process run after the multi-phase initialization ends. */

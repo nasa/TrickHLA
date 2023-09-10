@@ -308,10 +308,12 @@ void ExecutionConfiguration::pack()
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   // The least-common-time-step time must be an integer multiple of
-   // the federate's lookahead time.
-   if ( fed_lookahead > 0 ) {
-      if ( least_common_time_step % fed_lookahead != 0 ) {
+   // Skip for a zero lookahead time.
+   if ( fed_lookahead != 0 ) {
+
+      // The least-common-time-step time must be an integer multiple of
+      // the federate's lookahead time.
+      if ( ( least_common_time_step % fed_lookahead ) != 0 ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionConfiguration::pack():" << __LINE__
                 << " ERROR: ExCO least_common_time_step (" << least_common_time_step
@@ -368,10 +370,12 @@ void ExecutionConfiguration::unpack()
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   // Our federates lookahead time must be an integer multiple of the
-   // least-common-time-step time.
-   if ( fed_lookahead > 0 ) {
-      if ( least_common_time_step % fed_lookahead != 0 ) {
+   // Skip for a zero lookahead time.
+   if ( fed_lookahead != 0 ) {
+
+      // Our federates lookahead time must be an integer multiple of the
+      // least-common-time-step time.
+      if ( ( least_common_time_step % fed_lookahead ) != 0 ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
                 << " ERROR: ExCO least_common_time_step (" << least_common_time_step
@@ -389,6 +393,7 @@ void ExecutionConfiguration::unpack()
    software_frame_sec       = exec_get_software_frame();
    software_frame_base_time = Int64BaseTime::to_base_time( software_frame_sec );
    if ( software_frame_base_time != least_common_time_step ) {
+
       if ( software_frame_base_time > least_common_time_step ) {
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
             ostringstream message;
@@ -404,7 +409,8 @@ void ExecutionConfiguration::unpack()
          }
          software_frame_sec = Int64BaseTime::to_seconds( least_common_time_step );
          exec_set_software_frame( software_frame_sec );
-      } else if ( least_common_time_step % software_frame_base_time != 0 ) {
+
+      } else if ( ( least_common_time_step % software_frame_base_time ) != 0 ) {
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
             ostringstream message;
             message << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
@@ -419,6 +425,7 @@ void ExecutionConfiguration::unpack()
          }
          software_frame_sec = Int64BaseTime::to_seconds( least_common_time_step );
          exec_set_software_frame( software_frame_sec );
+
       } else {
          // This must mean that the ExCO Least Common Time Step (LCTS) is
          // an integer multiple of the federates software frame. So,

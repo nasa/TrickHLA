@@ -893,7 +893,7 @@ void Attribute::calculate_size_and_number_of_items()
             // terminated with a null character and determine the number of
             // characters using strlen().
             for ( size_t i = 0; i < num_items; ++i ) {
-               char *s = *( static_cast< char ** >( ref2->address ) + i );
+               char const *s = *( static_cast< char ** >( ref2->address ) + i );
                if ( s != NULL ) {
                   num_bytes += strlen( s );
                }

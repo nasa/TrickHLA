@@ -61,8 +61,8 @@ class DynamicalEntity : public SpaceFOM::PhysicalEntityBase
    virtual ~DynamicalEntity(); // Destructor.
 
    // Data pack and unpack routines.
-   virtual void pack();
-   virtual void unpack();
+   virtual void pack();   // cppcheck-suppress [uselessOverride]
+   virtual void unpack(); // cppcheck-suppress [uselessOverride]
 
   protected:
    double force[3];           ///< @trick_units{N} Total external force on vehicle applied

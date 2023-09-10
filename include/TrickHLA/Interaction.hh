@@ -306,7 +306,7 @@ class Interaction
    /*! @brief Set the received user supplied tag.
     *  @param tag The user supplied tag.
     *  @param tag_size Size of the user supplied tag. */
-   void set_user_supplied_tag( unsigned char *tag, size_t tag_size );
+   void set_user_supplied_tag( unsigned char const *tag, size_t tag_size );
 
    /*! @brief Mark this interaction as published. */
    void set_publish()

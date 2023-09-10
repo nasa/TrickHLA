@@ -91,7 +91,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @param fed The associated TrickHLA::Federate. */
    virtual void initialize();
    /*! @brief Join federation execution process. */
-   virtual void join_federation_process();
+   virtual void join_federation_process(); // cppcheck-suppress [uselessOverride]
    /*! @brief Process run before the multi-phase initialization begins. */
    virtual void pre_multi_phase_init_processes();
    /*! @brief Process run after the multi-phase initialization ends. */
