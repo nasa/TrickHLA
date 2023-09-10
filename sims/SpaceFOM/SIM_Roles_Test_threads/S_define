@@ -31,10 +31,13 @@
 
 //==========================================================================
 // Trick HLA and SpaceFOM include files used in SimObject definitions or
-// for inputfile instantiations.
+// for input file instantiations.
 //==========================================================================
 // This is needed for CTE timeline instantiation in the input file.
 ##include "TrickHLA/CTETimelineBase.hh"
+
+// TrickHLA support for Trick Child Threads.
+#include "THLAThread.sm"
 
 
 //==========================================================================
@@ -46,6 +49,7 @@
  using namespace TrickHLA;
  using namespace SpaceFOM;
 %}
+
 
 //==========================================================================
 // SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
@@ -122,7 +126,7 @@ class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
 // object discovery and data exchange.
 //==========================================================================
 ##include "SpaceFOM/RefFrameState.hh"
-class SpaceFOMRefFrameSimObject : public Trick::SimObject {
+class SpaceFOMRefFrameSimObject : public THLAThreadSimObject {
 
   public:
 
@@ -130,7 +134,11 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
    SpaceFOM::RefFrameState frame_packing;
 
    SpaceFOMRefFrameSimObject( RefFrameData & frame_data_ptr,
+                              TrickHLA::Federate & thla_fed,
+                              double data_cycle,
+                              unsigned short _THREAD_ID,
                               unsigned short _INIT = 59  )
+      : THLAThreadSimObject( thla_fed, data_cycle, _THREAD_ID )
    {
       // Set the reference to the reference frame.
       this->ref_frame_data_ptr = &frame_data_ptr;
@@ -139,6 +147,10 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
       // Initialization jobs
       //
       P_INIT ("initialization") frame_packing.initialize( ref_frame_data_ptr );
+
+      // Example job running as a child thread with the thread-ID passed in
+      // from the sim-object constructor.
+      // C_THREAD_ID (DYN_RATE, "scheduled") example_job.compute_value();
    }
 
   private:
@@ -162,5 +174,13 @@ THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
 
 // SimObject used for root reference frame discovery.
 SpaceFOMRefFrameTreeSimObject ref_frame_tree;
-SpaceFOMRefFrameSimObject root_ref_frame( ref_frame_tree.root_frame_data );
-SpaceFOMRefFrameSimObject ref_frame_A( ref_frame_tree.frame_A_data );
+
+SpaceFOMRefFrameSimObject root_ref_frame( ref_frame_tree.root_frame_data,
+                                          THLA.federate,
+                                          THLA_DATA_CYCLE_TIME,
+                                          1 );   // Trick child thread 1 (i.e. C1).
+														
+SpaceFOMRefFrameSimObject ref_frame_A( ref_frame_tree.frame_A_data,
+                                       THLA.federate,
+                                       THLA_DATA_CYCLE_TIME,
+                                       2 );   // Trick child thread 2 (i.e. C2).

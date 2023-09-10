@@ -4944,8 +4944,7 @@ void Federate::wait_for_zero_lookahead_TARA_TAG()
  */
 void Federate::associate_to_trick_child_thread(
    unsigned int const thread_id,
-   double const       data_cycle,
-   string const      &obj_insance_names )
+   double const       data_cycle )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::associate_to_trick_child_thread():%d Trick child thread (id:%d, data_cycle:%.3f).%c",
@@ -4964,7 +4963,16 @@ void Federate::associate_to_trick_child_thread(
    }
 
    // Delegate to the Trick child thread coordinator.
-   this->thread_coordinator.associate_to_trick_child_thread( thread_id, data_cycle, obj_insance_names );
+   this->thread_coordinator.associate_to_trick_child_thread( thread_id, data_cycle );
+}
+
+/*!
+ * @brief Verify the thread IDs assoicated to the objects.
+ * */
+void Federate::verify_trick_child_thread_associations()
+{
+   // Delegate to the Trick child thread coordinator.
+   this->thread_coordinator.verify_trick_child_thread_associations();
 }
 
 /*!

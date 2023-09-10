@@ -54,13 +54,11 @@ class THLAThreadSimObject : public Trick::SimObject {
    THLAThreadSimObject( TrickHLA::Federate & thla_fed,
                         double data_cycle,
                         unsigned int _THREAD_ID,
-                        std::string object_instance_names = "",
                         unsigned short _1ST  = 1,
                         unsigned short _LAST = 65534 )
       : federate( thla_fed ),
         data_cycle_time( data_cycle ),
-        thread_id( _THREAD_ID ),
-        obj_instance_names( object_instance_names )
+        thread_id( _THREAD_ID )
    {
       // Do a sanity check on the data cycle time.
       if ( data_cycle <= 0.0 ) {
@@ -74,7 +72,9 @@ class THLAThreadSimObject : public Trick::SimObject {
       // instance names, as a comma seperated string, that are associated with
       // this Trick child thread. TrickHLA will maintain data choherancy for the
       // HLA object instances specified over the data cycle time specified.
-      P2 ("initialization") federate.associate_to_trick_child_thread( thread_id, data_cycle_time, obj_instance_names );
+      // Also, there is a P3 job that will verify all the Trick child thread
+      // associations to object instances.
+      P2 ("initialization") federate.associate_to_trick_child_thread( thread_id, data_cycle_time );
 
       // Wait for the HLA data to be received.
       C_THREAD_ID P_1ST (data_cycle, "environment") federate.wait_to_receive_data();
@@ -87,7 +87,6 @@ class THLAThreadSimObject : public Trick::SimObject {
    TrickHLA::Federate & federate;
    double               data_cycle_time;
    unsigned int         thread_id;
-   std::string          obj_instance_names; ///< @trick_units{--} HLA object instance names, comma seperated string, associated with this thread.
 
  private:
    // Do not allow the implicit copy constructor or assignment operator.

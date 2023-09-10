@@ -46,9 +46,9 @@ class AnalyticSineSimObj : public Trick::SimObject {
    TrickHLAModel::SineData truth_data;
    TrickHLAModel::SineData sim_data;
    TrickHLAModel::SineData lag_comp_data;
-   
+
    TrickHLAModel::SineOwnershipHandler   ownership_handler;
-   
+
    TrickHLAModel::SinePacking            packing;
 
    TrickHLAModel::SineLagCompensation    lag_compensation;
@@ -56,12 +56,12 @@ class AnalyticSineSimObj : public Trick::SimObject {
    TrickHLAModel::SineInteractionHandler interaction_handler;
 
    TrickHLAModel::SineObjectDeleted      obj_deleted_callback;
-   
+
    AnalyticSineSimObj() {
       P50 ("initialization") packing.initialize( &sim_data );
 
       P50 ("initialization") lag_compensation.initialize( &sim_data, &lag_comp_data );
-      
+
       (DYN_RATE, "scheduled") truth_data.compute_value( THLA.execution_control.get_scenario_time() );
       (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.execution_control.get_scenario_time() );
 
@@ -70,7 +70,7 @@ class AnalyticSineSimObj : public Trick::SimObject {
 
       (THLA_DATA_CYCLE_TIME, "scheduled") sim_data.adjust_phase( THLA.execution_control.get_scenario_time() );
    }
-   
+
  private:
    // Do not allow the implicit copy constructor or assignment operator.
    AnalyticSineSimObj( AnalyticSineSimObj const & rhs );
@@ -159,47 +159,46 @@ class THLAInitSimObj : public Trick::SimObject {
         thla_manager( thla_mngr ),
         thla_federate( thla_fed )
    {
-      
       //------------------------------------------------------------------------
       // NOTE: Initialization phase numbers must be greater than P60 
       // (i.e. P_HLA_INIT) so that the initialization jobs run after the
       // P60 THLA.manager->initialize() job.
       //------------------------------------------------------------------------
-      
+
       // Data will only be sent if this federate owns it.
       P100 ("initialization") thla_manager.send_init_data( "A-side-Federate.Test" );
-      
+
       // Data will only be received if it is remotely owned by another federate.
       P100 ("initialization") thla_manager.receive_init_data( "A-side-Federate.Test" );
-      
+
       // Do some processing here if needed...
-      
+
       // Wait for all federates to reach this sync-point.
       P100 ("initialization") thla_manager.wait_for_init_sync_point( "Phase1" );
-      
-      
+
+
       // Data will only be sent if this federate owns it.
       P200 ("initialization") thla_manager.send_init_data( "P-side-Federate.Test" );
-      
+
       // Data will only be received if it is remotely owned by another federate.
       P200 ("initialization") thla_manager.receive_init_data( "P-side-Federate.Test" );
-      
+
       // Do some processing here if needed...
-      
+
       // Wait for all federates to reach this sync-point.
       P200 ("initialization") thla_manager.wait_for_init_sync_point( "Phase2" );
-      
-      
+
+
       // Alternative method: Send and receive all the initialization data.
 /*
       // Send all the initialization data.
       P100 ("initialization") thla_manager.send_init_data();
-      
+
       // Wait to receive all the initialization data.
       P100 ("initialization") thla_manager.receive_init_data();
-      
+
       // Do some processing here if needed...
-      
+
       // Clear remaining initialization sync-points.
       P100 ("initialization") thla_manager.clear_init_sync_points();
 */
@@ -208,11 +207,11 @@ class THLAInitSimObj : public Trick::SimObject {
  private:
    TrickHLA::Manager  & thla_manager;
    TrickHLA::Federate & thla_federate;
- 
+
    // Do not allow the implicit copy constructor or assignment operator.
    THLAInitSimObj( THLAInitSimObj const & rhs );
    THLAInitSimObj & operator=( THLAInitSimObj const & rhs );
-   
+
    // Do not allow the default constructor.
    THLAInitSimObj();
 };
