@@ -4412,7 +4412,7 @@ bool Object::is_shutdown_called() const
 void Object::initialize_thread_ID_array()
 {
    // If the list of thread IDs was not specified in the input file then clear
-   // out the array if it exists and return.
+   // out the thread ID array if it exists and return.
    if ( this->thread_ids == NULL ) {
       if ( this->thread_ids_array != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->thread_ids_array ) ) ) {
@@ -4435,7 +4435,8 @@ void Object::initialize_thread_ID_array()
    }
 
    // Allocate memory for the data cycle times per each thread.
-   this->thread_ids_array = static_cast< bool * >( TMM_declare_var_1d( "bool", this->thread_ids_array_count ) );
+   this->thread_ids_array = static_cast< bool * >(
+      TMM_declare_var_1d( "bool", this->thread_ids_array_count ) );
    if ( this->thread_ids_array == NULL ) {
       ostringstream errmsg;
       errmsg << "Object::initialize_thread_ID_array():" << __LINE__
@@ -4480,7 +4481,8 @@ void Object::initialize_thread_ID_array()
                    << "', the Trick child thread-ID '" << thread_id_str
                    << "' specified in the input file is not valid because this"
                    << " Trick child thread does not exist in the S_define file!"
-                   << " Valid range is 0 to " << ( this->thread_ids_array_count - 1 )
+                   << " Valid Trick child thread-ID range is 0 to "
+                   << ( this->thread_ids_array_count - 1 )
                    << "!" << THLA_ENDL;
             DebugHandler::terminate_with_message( errmsg.str() );
          }
@@ -4497,6 +4499,11 @@ bool Object::is_thread_associated(
    if ( ( this->thread_ids_array_count == 0 ) && ( this->thread_ids != NULL ) ) {
       // Initialize the array of thread IDs associated to this object.
       initialize_thread_ID_array();
+   }
+   if ( this->thread_ids_array_count == 0 ) {
+      // If no threads were associated in the input file for this object then
+      // by default associate to the main Trick thread.
+      return ( thread_id == 0 );
    }
    if ( thread_id >= this->thread_ids_array_count ) {
       return ( false );

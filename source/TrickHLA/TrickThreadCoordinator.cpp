@@ -448,7 +448,11 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
       }
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
+   if ( !any_valid_thread_id_found ) {
+      summary << "  (No objects explicitly associated to thread-id:"
+              << thread_id << ")" << THLA_ENDL;
+   }
+   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       send_hs( stdout, summary.str().c_str() );
    }
 
@@ -492,13 +496,15 @@ void TrickThreadCoordinator::verify_trick_child_thread_associations()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       ostringstream summary;
-      summary << "TrickThreadCoordinator::verify_trick_child_thread_associations():" << __LINE__;
+      summary << "TrickThreadCoordinator::verify_trick_child_thread_associations():"
+              << __LINE__;
 
       if ( !this->any_child_thread_associated ) {
-         summary << " No Trick child threads associated." << THLA_ENDL;
+         summary << " Detected there are no Trick child threads associated to any"
+                 << " object instances in the input file." << THLA_ENDL;
       } else {
-         summary << " Summary of object instance and thread associations from the input file:"
-                 << THLA_ENDL;
+         summary << " Summary of object instance and thread associations from"
+                 << " the input file:" << THLA_ENDL;
 
          // Summary of the Object-instances per thread-ID.
          summary << "ThreadID  Cycle  Object-Instances" << THLA_ENDL;
