@@ -913,14 +913,23 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
 void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
    unsigned int const thread_id )
 {
+   // Just return if this thread association is disabled.
+   if ( this->thread_state[thread_id] == THREAD_STATE_DISABLED ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
+         send_hs( stdout, "TrickThreadCoordinator::wait_to_send_data_for_child_thread():%d Child Thread:%d, Disabled, Done%c",
+                  __LINE__, thread_id, THLA_NEWLINE );
+      }
+      return;
+   }
+
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-      send_hs( stdout, "TrickThreadCoordinator::wait_to_send_data_for_child_thread():%d Child thread:%d, waiting...%c",
+      send_hs( stdout, "TrickThreadCoordinator::wait_to_send_data_for_child_thread():%d Child Thread:%d, waiting...%c",
                __LINE__, thread_id, THLA_NEWLINE );
    }
 
    // Trick Child Threads associated to TrickHLA need to wait for the Trick
    // main thread to send all the HLA data.
-
+   //
    // Do a quick look to determine if the Trick main thread has sent all
    // the HLA data.
    bool sent_data;
@@ -928,11 +937,6 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
       // When auto_unlock_mutex goes out of scope it automatically unlocks
       // the mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &mutex );
-
-      // Just return if this thread association is disabled.
-      if ( this->thread_state[thread_id] == THREAD_STATE_DISABLED ) {
-         return;
-      }
 
       // Mark this child thread as ready to send.
       this->thread_state[thread_id] = THREAD_STATE_READY_TO_SEND;
@@ -987,7 +991,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               send_hs( stdout, "TrickThreadCoordinator::wait_to_send_data_for_child_thread():%d Child thread: %d, waiting...%c",
+               send_hs( stdout, "TrickThreadCoordinator::wait_to_send_data_for_child_thread():%d Child Thread:%d, waiting...%c",
                         __LINE__, thread_id, THLA_NEWLINE );
             }
          }
@@ -1006,7 +1010,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
    // Don't process Trick child thread states associated to TrickHLA if none exist.
    if ( !this->any_child_thread_associated ) {
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-         send_hs( stdout, "TrickThreadCoordinator::wait_to_receive_data():%d%c",
+         send_hs( stdout, "TrickThreadCoordinator::wait_to_receive_data():%d Done%c",
                   __LINE__, THLA_NEWLINE );
       }
       return;
@@ -1014,6 +1018,16 @@ void TrickThreadCoordinator::wait_to_receive_data()
 
    // Get the ID of the thread that called this function.
    unsigned int const thread_id = exec_get_process_id();
+
+   // Just return if this thread association is disabled.
+   if ( this->thread_state[thread_id] == THREAD_STATE_DISABLED ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
+         send_hs( stdout, "TrickThreadCoordinator::wait_to_receive_data():%d %s Thread:%d, Disabled, Done%c",
+                  __LINE__, ( ( thread_id == 0 ) ? "Main" : "Child" ),
+                  thread_id, THLA_NEWLINE );
+      }
+      return;
+   }
 
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       send_hs( stdout, "TrickThreadCoordinator::wait_to_receive_data():%d %s Thread:%d, waiting...%c",
