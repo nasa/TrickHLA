@@ -208,7 +208,8 @@ void TrickThreadCoordinator::initialize_thread_state(
    }
 
    // Allocate the thread state array for all the Trick threads (main + child).
-   this->thread_state = static_cast< unsigned int * >( TMM_declare_var_1d( "unsigned int", this->thread_state_cnt ) );
+   this->thread_state = static_cast< unsigned int * >(
+      TMM_declare_var_1d( "unsigned int", this->thread_state_cnt ) );
    if ( this->thread_state == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize_thread_state():" << __LINE__
@@ -226,7 +227,8 @@ void TrickThreadCoordinator::initialize_thread_state(
    }
 
    // Allocate memory for the data cycle times per each thread.
-   this->data_cycle_base_time_per_thread = static_cast< long long * >( TMM_declare_var_1d( "long long", this->thread_state_cnt ) );
+   this->data_cycle_base_time_per_thread = static_cast< long long * >(
+      TMM_declare_var_1d( "long long", this->thread_state_cnt ) );
    if ( this->data_cycle_base_time_per_thread == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize_thread_state():" << __LINE__
@@ -242,7 +244,8 @@ void TrickThreadCoordinator::initialize_thread_state(
 
    // Allocate memory for the data cycle times per each object instance.
    if ( this->manager->obj_count > 0 ) {
-      this->data_cycle_base_time_per_obj = static_cast< long long * >( TMM_declare_var_1d( "long long", this->manager->obj_count ) );
+      this->data_cycle_base_time_per_obj = static_cast< long long * >(
+         TMM_declare_var_1d( "long long", this->manager->obj_count ) );
       if ( this->data_cycle_base_time_per_obj == NULL ) {
          ostringstream errmsg;
          errmsg << "TrickThreadCoordinator::initialize_thread_state():" << __LINE__
@@ -523,12 +526,18 @@ void TrickThreadCoordinator::verify_trick_child_thread_associations()
          // Summary of the Object-instances per thread-ID.
          summary << "ThreadID  Cycle  Object-Instances" << THLA_ENDL;
          for ( unsigned int id = 0; id < this->thread_state_cnt; ++id ) {
-            summary << id << "\t  " << setprecision( 18 )
-                    << Int64BaseTime::to_seconds( this->data_cycle_base_time_per_thread[id] )
-                    << "\t ";
-            for ( unsigned int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
-               if ( this->manager->objects[obj_index].is_thread_associated( id ) ) {
-                  summary << "'" << this->manager->objects[obj_index].get_name() << "' ";
+            summary << id << "\t  ";
+
+            if ( this->thread_state[id] == THREAD_STATE_NOT_ASSOCIATED ) {
+               summary << "(Thread not associated to TrickHLA)";
+            } else {
+               summary << setprecision( 18 )
+                       << Int64BaseTime::to_seconds( this->data_cycle_base_time_per_thread[id] )
+                       << "\t ";
+               for ( unsigned int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
+                  if ( this->manager->objects[obj_index].is_thread_associated( id ) ) {
+                     summary << "'" << this->manager->objects[obj_index].get_name() << "' ";
+                  }
                }
             }
             summary << THLA_ENDL;
