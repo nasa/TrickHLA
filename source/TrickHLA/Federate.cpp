@@ -467,7 +467,7 @@ void Federate::initialize_thread_state(
    }
 
    // Delegate to the Trick thread coordinator.
-   this->thread_coordinator.initialize_thread_state( main_thread_data_cycle_time );
+   this->thread_coordinator.initialize( main_thread_data_cycle_time );
 }
 
 /*!
@@ -4967,12 +4967,22 @@ void Federate::associate_to_trick_child_thread(
 }
 
 /*!
- * @brief Verify the thread IDs assoicated to the objects.
- * */
-void Federate::verify_trick_child_thread_associations()
+ * @brief Disable the comma separated list of Trick child thread IDs associated to TrickHLA.
+ */
+void Federate::disable_trick_child_thread_associations(
+   char const *thread_ids )
 {
    // Delegate to the Trick child thread coordinator.
-   this->thread_coordinator.verify_trick_child_thread_associations();
+   this->thread_coordinator.disable_trick_thread_associations( thread_ids );
+}
+
+/*!
+ * @brief Verify the thread IDs associated to the objects.
+ */
+void Federate::verify_trick_child_thread_associations()
+{
+   // Delegate to the Trick thread coordinator.
+   this->thread_coordinator.verify_trick_thread_associations();
 }
 
 /*!

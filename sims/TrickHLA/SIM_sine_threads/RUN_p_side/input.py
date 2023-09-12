@@ -89,6 +89,11 @@ THLA.federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_100_NANOSECONDS )
 THLA.federate.scale_trick_tics_to_base_time_units()
 
 
+# Disable Trick child thread IDs associated to TrickHLA in the S_define file
+# as a comma separated list.
+#THLA.federate.disable_trick_child_thread_associations( '1, 2' )
+
+
 # Configure the federate.
 THLA.federate.name             = 'P-side-Federate'
 THLA.federate.FOM_modules      = 'FOMs/S_FOMfile.xml,FOMs/TrickHLAFreezeInteraction.xml'

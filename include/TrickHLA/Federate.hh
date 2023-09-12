@@ -664,7 +664,10 @@ class Federate
    void associate_to_trick_child_thread( unsigned int const thread_id,
                                          double const       data_cycle );
 
-   /*! @brief Verify the thread IDs assoicated to the objects. */
+   /*! @brief Disable the comma separated list of Trick child thread IDs associated to TrickHLA. */
+   void disable_trick_child_thread_associations( char const *thread_ids );
+
+   /*! @brief Verify the thread IDs associated to the objects. */
    void verify_trick_child_thread_associations();
 
    /*! @brief Announce to all the child threads the main thread has data available. */

@@ -78,14 +78,17 @@ class TrickThreadCoordinator
                Manager  &manager );
 
    /*! @brief Initialize the thread memory associated with the Trick child threads. */
-   void initialize_thread_state( double const main_thread_data_cycle_time );
+   void initialize( double const main_thread_data_cycle_time );
 
    /*! @brief Associate a Trick child thread with TrickHLA. */
    void associate_to_trick_child_thread( unsigned int const thread_id,
                                          double const       data_cycle );
 
+   /*! @brief Disable the comma separated list of Trick child thread IDs associated to TrickHLA. */
+   void disable_trick_thread_associations( char const *thread_ids );
+
    /*! @brief Verify the threads IDs associated to objects in the input file. */
-   void verify_trick_child_thread_associations();
+   void verify_trick_thread_associations();
 
    /*! @brief Announce to all the child threads the main thread has data available. */
    void announce_data_available();
@@ -124,6 +127,8 @@ class TrickThreadCoordinator
    Manager  *manager;  ///< @trick_units{--} Associated TrickHLA::Manager.
 
    MutexLock mutex; ///< @trick_units{--} TrickHLA thread state mutex.
+
+   char *disable_thread_ids; ///< @trick_units{--} Comma separated list of thread ID's to disable association to TrickHLA.
 
    unsigned int *thread_state;     ///< @trick_units{--} TrickHLA state of trick child threads being used.
    unsigned int  thread_state_cnt; ///< @trick_units{--} TrickHLA state of trick child threads being used count.
