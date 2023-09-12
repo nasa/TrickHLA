@@ -148,7 +148,8 @@ void TrickThreadCoordinator::initialize_thread_state(
              << ". The HLA Logical Time is a 64-bit integer"
              << " representing " << Int64BaseTime::get_units()
              << " and cannot represent the Trick main thread data-cycle time of "
-             << setprecision( 18 ) << ( main_thread_data_cycle_time * Int64BaseTime::get_base_time_multiplier() )
+             << setprecision( 18 )
+             << ( main_thread_data_cycle_time * Int64BaseTime::get_base_time_multiplier() )
              << " " << Int64BaseTime::get_units() << ". You can adjust the"
              << " base HLA Logical Time resolution by setting"
              << " 'THLA.federate.HLA_time_base_units = trick."
@@ -192,7 +193,7 @@ void TrickThreadCoordinator::initialize_thread_state(
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize_thread_state():" << __LINE__
              << " ERROR: main_thread_data_cycle_time time ("
-             << main_thread_data_cycle_time
+             << setprecision( 18 ) << main_thread_data_cycle_time
              << ") must be > 0.0!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -257,7 +258,7 @@ void TrickThreadCoordinator::initialize_thread_state(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-      send_hs( stdout, "TrickThreadCoordinator::initialize_thread_state():%d Trick main thread (id:0, data_cycle:%.3f).%c",
+      send_hs( stdout, "TrickThreadCoordinator::initialize_thread_state():%d Trick main thread (id:0, data_cycle:%.9f).%c",
                __LINE__, main_thread_data_cycle_time, THLA_NEWLINE );
    }
 }
@@ -281,7 +282,8 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
              << ". The HLA Logical Time is a 64-bit integer"
              << " representing " << Int64BaseTime::get_units()
              << " and cannot represent the Trick child thread data-cycle time of "
-             << setprecision( 18 ) << ( data_cycle * Int64BaseTime::get_base_time_multiplier() )
+             << setprecision( 18 )
+             << ( data_cycle * Int64BaseTime::get_base_time_multiplier() )
              << " " << Int64BaseTime::get_units() << ". You can adjust the"
              << " base HLA Logical Time resolution by setting"
              << " 'THLA.federate.HLA_time_base_units = trick."
@@ -303,7 +305,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
              << " ERROR: The data_cycle specified (thread-id:0, "
              << setprecision( 18 ) << data_cycle
              << " seconds) requires more resolution than the Trick time Tic value ("
-             << exec_get_time_tic_value()
+             << setprecision( 18 ) << exec_get_time_tic_value()
              << "). Please update the Trick time tic value in your input"
              << " file (i.e. by calling 'trick.exec_set_time_tic_value()')."
              << THLA_ENDL;
@@ -368,9 +370,9 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
       errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
              << " ERROR: The data cycle time for the Trick "
              << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread (thread-id:"
-             << thread_id << ", data_cycle:" << data_cycle
+             << thread_id << ", data_cycle:" << setprecision( 18 ) << data_cycle
              << ") cannot be less than the Trick main thread data cycle"
-             << " time (data_cycle:"
+             << " time (data_cycle:" << setprecision( 18 )
              << Int64BaseTime::to_seconds( this->main_thread_data_cycle_base_time )
              << ")!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -383,9 +385,9 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
       errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
              << " ERROR: The data cycle time for the Trick "
              << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread (thread-id:"
-             << thread_id << ", data_cycle:" << data_cycle
+             << thread_id << ", data_cycle:" << setprecision( 18 ) << data_cycle
              << ") must be an integer multiple of the Trick main thread data"
-             << " cycle time (data_cycle:"
+             << " cycle time (data_cycle:" << setprecision( 18 )
              << Int64BaseTime::to_seconds( this->main_thread_data_cycle_base_time )
              << ")!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -410,9 +412,11 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
                    << this->manager->objects[obj_index].get_name() << "', the Trick "
                    << ( ( thread_id == 0 ) ? "main" : "child" )
                    << " thread (thread-id:" << thread_id << ", data_cycle:"
+                   << setprecision( 18 )
                    << Int64BaseTime::to_seconds( this->data_cycle_base_time_per_thread[thread_id] )
                    << ") does not match the data cycle time specified:"
-                   << data_cycle << ". A Trick " << ( ( thread_id == 0 ) ? "" : "child" )
+                   << setprecision( 18 ) << data_cycle << ". A Trick "
+                   << ( ( thread_id == 0 ) ? "" : "child" )
                    << " thread must use the same data cycle time across all"
                    << " associated objects so that TrickHLA can properly"
                    << " ensure data coherency." << THLA_ENDL;
@@ -426,6 +430,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
                    << this->manager->objects[obj_index].get_name()
                    << "', an existing entry for this"
                    << " object (thread-id:" << thread_id << ", data_cycle:"
+                   << setprecision( 18 )
                    << Int64BaseTime::to_seconds( this->data_cycle_base_time_per_thread[thread_id] )
                    << ") has a data cycle time that does not match the"
                    << " data cycle time specified:" << data_cycle
@@ -456,6 +461,12 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
       send_hs( stdout, summary.str().c_str() );
    }
 
+   /*
+   TODO: There is a use case where a child thread runs at a different rate
+   than the main thread but does not have any object instances associated with
+   it. Need to figure  out how to better handle that case. For now, just disable
+   the check.
+
    // If the data cycle time for this child thread does not match the
    // main thread data cycle time then the user must specify all the valid
    // HLA object instance names associated to this child thread.
@@ -466,8 +477,10 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
              << " ERROR: For the Trick " << ( ( thread_id == 0 ) ? "main" : "child" )
              << " thread (thread-id:" << thread_id
              << ") specified, you have specified a data cycle time ("
-             << data_cycle << ") that differs from the Trick main thread data"
+             << setprecision( 18 ) << data_cycle
+             << ") that differs from the Trick main thread data"
              << " cycle time ("
+             << setprecision( 18 )
              << Int64BaseTime::to_seconds( this->main_thread_data_cycle_base_time )
              << "). This requires you to specify all the HLA object instance"
              << " names associated with this Trick "
@@ -475,6 +488,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
              << " can properly ensure data coherency." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
+   */
 
    // Make sure we mark the thread state as reset now that we associated to it.
    this->thread_state[thread_id] = THREAD_STATE_RESET;
