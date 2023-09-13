@@ -149,6 +149,12 @@ federate.set_master_role( True ) # This is the Master federate.
 federate.set_pacing_role( True ) # This is the Pacing federate.
 federate.set_RRFP_role( True )   # This is the Root Reference Frame Publisher.
 
+
+# Disable Trick child thread IDs associated to TrickHLA in the S_define file
+# as a comma separated list.
+#federate.disable_trick_child_thread_associations( '1, 2' )
+
+
 #--------------------------------------------------------------------------
 # Add in known required federates.
 #--------------------------------------------------------------------------

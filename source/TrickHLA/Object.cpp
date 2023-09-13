@@ -4481,7 +4481,7 @@ void Object::initialize_thread_ID_array()
                    << "', the Trick child thread-ID '" << thread_id_str
                    << "' specified in the input file is not valid because this"
                    << " Trick child thread does not exist in the S_define file!"
-                   << " Valid Trick child thread-ID range is 0 to "
+                   << " Valid Trick thread-ID range is 0 to "
                    << ( this->thread_ids_array_count - 1 )
                    << "!" << THLA_ENDL;
             DebugHandler::terminate_with_message( errmsg.str() );

@@ -181,6 +181,17 @@ class TrickHLAFederateConfig( object ):
       return
 
 
+   def disable_trick_child_thread_associations( self, disable_thread_ids ):
+
+      # You can only disable thread IDS before initialize method is called.
+      if self.initialized :
+         print( 'TrickHLAFederateConfig.disable_trick_child_thread_associations(): Warning, already initialized, function ignored!' )
+      else:
+         self.federate.disable_trick_child_thread_associations( str( disable_thread_ids ) )
+
+      return
+
+
    def set_federation_name( self, name ):
 
       # You can only set federation name before initialize method is called.
