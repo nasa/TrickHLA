@@ -618,7 +618,7 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
 
             switch ( this->thread_state[id] ) {
                case THREAD_STATE_DISABLED:
-                  summary << "(Disabled thread association to TrickHLA)";
+                  summary << "(Disabled thread associated to TrickHLA)";
                   break;
 
                case THREAD_STATE_NOT_ASSOCIATED:
@@ -835,7 +835,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
       do {
 
          // Check for shutdown.
-         this->federate->check_for_shutdown_with_termination();
+         (void)this->federate->check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 
@@ -957,7 +957,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
       // Wait for the main thread to have sent the data.
       do {
          // Check for shutdown.
-         this->federate->check_for_shutdown_with_termination();
+         (void)this->federate->check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 
@@ -1054,7 +1054,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
       // Wait for the main thread to receive data.
       do {
          // Check for shutdown.
-         this->federate->check_for_shutdown_with_termination();
+         (void)this->federate->check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 

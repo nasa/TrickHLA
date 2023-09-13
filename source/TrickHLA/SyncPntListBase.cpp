@@ -323,7 +323,7 @@ void SyncPntListBase::wait_for_list_synchronization(
 
             if ( !achieved ) {
                // Always check to see is a shutdown was received.
-               federate->check_for_shutdown_with_termination();
+               (void)federate->check_for_shutdown_with_termination();
 
                // Pause and release the processor for short sleep value.
                (void)sleep_timer.sleep();
@@ -829,7 +829,7 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
          }
 
          // Always check to see is a shutdown was received.
-         federate->check_for_shutdown_with_termination();
+         (void)federate->check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 
@@ -983,7 +983,7 @@ bool SyncPntListBase::wait_for_synchronization(
          if ( !synchronized ) {
 
             // Always check to see is a shutdown was received.
-            federate->check_for_shutdown_with_termination();
+            (void)federate->check_for_shutdown_with_termination();
 
             (void)sleep_timer.sleep();
 

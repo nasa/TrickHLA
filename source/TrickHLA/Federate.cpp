@@ -1470,7 +1470,7 @@ string Federate::wait_for_required_federates_to_join()
    while ( !this->all_federates_joined ) {
 
       // Check for shutdown.
-      check_for_shutdown_with_termination();
+      (void)check_for_shutdown_with_termination();
 
       // Sleep a little while to wait for more federates to join.
       (void)sleep_timer.sleep();
@@ -2643,7 +2643,7 @@ void Federate::exit_freeze()
 void Federate::check_freeze()
 {
    // Check to see if we should shutdown.
-   check_for_shutdown_with_termination();
+   (void)check_for_shutdown_with_termination();
 
    // Check to see if the ExecutionControl should exit freeze.
    if ( execution_control->check_freeze_exit() ) {
@@ -2826,7 +2826,7 @@ void Federate::setup_checkpoint()
          while ( !start_to_save ) {
 
             // Check for shutdown.
-            check_for_shutdown_with_termination();
+            (void)check_for_shutdown_with_termination();
 
             (void)sleep_timer.sleep();
 
@@ -3082,7 +3082,7 @@ void Federate::setup_restore()
       while ( !this->start_to_restore ) {
 
          // Check for shutdown.
-         check_for_shutdown_with_termination();
+         (void)check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 
@@ -4210,7 +4210,7 @@ void Federate::setup_time_constrained()
       while ( !this->time_constrained_state ) {
 
          // Check for shutdown.
-         check_for_shutdown_with_termination();
+         (void)check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 
@@ -4410,7 +4410,7 @@ void Federate::setup_time_regulation()
       while ( !this->time_regulating_state ) {
 
          // Check for shutdown.
-         check_for_shutdown_with_termination();
+         (void)check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 
@@ -4664,7 +4664,7 @@ void Federate::perform_time_advance_request()
       recoverable_error = false;
 
       // Check for shutdown.
-      check_for_shutdown_with_termination();
+      (void)check_for_shutdown_with_termination();
 
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          if ( is_zero_lookahead_time() ) {
@@ -4898,7 +4898,7 @@ void Federate::wait_for_zero_lookahead_TARA_TAG()
       // This spin lock waits for the time advance grant from the RTI.
       do {
          // Check for shutdown.
-         check_for_shutdown_with_termination();
+         (void)check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 
@@ -5114,24 +5114,30 @@ void Federate::wait_to_receive_zero_lookahead_data(
                __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
    }
 
-   // The TARA will cause zero-lookahead data to be reflected before the TAG.
-   wait_for_zero_lookahead_TARA_TAG();
-
-   // Block waiting for the named object instance data by repeatedly doing a
-   // TARA and wait for TAG with a zero lookahead.
+   // See if we already have data without the overhead of calling TARA/TAG. This
+   // is most likely the case if multiple data sends happen at the same time and
+   // subsequent calls to wait_to_receive_zero_lookahead_data() will have data
+   // for other objects.
    if ( !obj->is_changed() && obj->any_remotely_owned_subscribed_zero_lookahead_attribute() ) {
 
+      // The TARA will cause zero-lookahead data to be reflected before the TAG.
+      wait_for_zero_lookahead_TARA_TAG();
+
+      int64_t      wallclock_time; // cppcheck-suppress [variableScope]
       SleepTimeout print_timer( this->wait_status_time );
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
-      do {
+      // Block waiting for the named object instance data by repeatedly doing a
+      // TARA and wait for TAG with a zero lookahead.
+      while ( !obj->is_changed() && obj->any_remotely_owned_subscribed_zero_lookahead_attribute() ) {
+
          // Check for shutdown.
-         check_for_shutdown_with_termination();
+         (void)check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 
          // To be more efficient, we get the time once and share it.
-         int64_t wallclock_time = sleep_timer.time();
+         wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -5156,8 +5162,7 @@ void Federate::wait_to_receive_zero_lookahead_data(
 
          // The TARA will cause zero-lookahead data to be reflected before the TAG.
          wait_for_zero_lookahead_TARA_TAG();
-
-      } while ( !obj->is_changed() && obj->any_remotely_owned_subscribed_zero_lookahead_attribute() );
+      }
    }
 
    obj->receive_zero_lookahead_data();
@@ -5212,7 +5217,7 @@ void Federate::wait_for_time_advance_grant()
       // This spin lock waits for the time advance grant from the RTI.
       do {
          // Check for shutdown.
-         check_for_shutdown_with_termination();
+         (void)check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 
@@ -6062,7 +6067,7 @@ void Federate::ask_MOM_for_auto_provide_setting()
    while ( this->auto_provide_setting < 0 ) {
 
       // Check for shutdown.
-      check_for_shutdown_with_termination();
+      (void)check_for_shutdown_with_termination();
 
       // Sleep a little while to wait for the information to update.
       (void)sleep_timer.sleep();
@@ -6203,7 +6208,7 @@ void Federate::load_and_print_running_federate_names()
    while ( this->running_feds_count <= 0 ) {
 
       // Check for shutdown.
-      check_for_shutdown_with_termination();
+      (void)check_for_shutdown_with_termination();
 
       // Sleep a little while to wait for the information to update.
       (void)sleep_timer.sleep();
@@ -6258,7 +6263,7 @@ MOM just informed us that there are %d federates currently running in the federa
    while ( !this->all_federates_joined ) {
 
       // Check for shutdown.
-      check_for_shutdown_with_termination();
+      (void)check_for_shutdown_with_termination();
 
       // Sleep a little while to wait for more federates to join.
       (void)sleep_timer.sleep();
@@ -6307,7 +6312,7 @@ MOM just informed us that there are %d federates currently running in the federa
    while ( joined_federate_names.size() < (unsigned int)running_feds_count ) {
 
       // Check for shutdown.
-      check_for_shutdown_with_termination();
+      (void)check_for_shutdown_with_termination();
 
       (void)sleep_timer.sleep();
 
@@ -7053,7 +7058,7 @@ void Federate::wait_for_federation_restore_begun()
    while ( !this->restore_begun ) {
 
       // Check for shutdown.
-      check_for_shutdown_with_termination();
+      (void)check_for_shutdown_with_termination();
 
       (void)sleep_timer.sleep(); // sleep until RTI responds...
 
@@ -7104,7 +7109,7 @@ void Federate::wait_until_federation_is_ready_to_restore()
    while ( !this->start_to_restore ) {
 
       // Check for shutdown.
-      check_for_shutdown_with_termination();
+      (void)check_for_shutdown_with_termination();
 
       (void)sleep_timer.sleep(); // sleep until RTI responds...
 
@@ -7181,7 +7186,7 @@ string Federate::wait_for_federation_restore_to_complete()
    while ( !this->restore_completed ) {
 
       // Check for shutdown.
-      check_for_shutdown_with_termination();
+      (void)check_for_shutdown_with_termination();
 
       if ( this->running_feds_count_at_time_of_restore > this->running_feds_count ) {
          // someone has resigned since the federation restore has been initiated.
@@ -7256,7 +7261,7 @@ void Federate::wait_for_restore_request_callback()
            && !has_restore_process_restore_request_succeeded() ) {
 
       // Check for shutdown.
-      check_for_shutdown_with_termination();
+      (void)check_for_shutdown_with_termination();
 
       (void)sleep_timer.sleep(); // sleep until RTI responds...
 
@@ -7308,7 +7313,7 @@ void Federate::wait_for_restore_status_to_complete()
    while ( !this->restore_request_complete ) {
 
       // Check for shutdown.
-      check_for_shutdown_with_termination();
+      (void)check_for_shutdown_with_termination();
 
       (void)sleep_timer.sleep(); // sleep until RTI responds...
 
@@ -7359,7 +7364,7 @@ void Federate::wait_for_save_status_to_complete()
    while ( !this->save_request_complete ) {
 
       // Check for shutdown.
-      check_for_shutdown_with_termination();
+      (void)check_for_shutdown_with_termination();
 
       (void)sleep_timer.sleep(); // sleep until RTI responds...
 
@@ -7410,7 +7415,7 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
    while ( !this->federation_restore_failed_callback_complete ) {
 
       // Check for shutdown.
-      check_for_shutdown_with_termination();
+      (void)check_for_shutdown_with_termination();
 
       // if the federate has already been restored, do not wait for a signal
       // from the RTI that the federation restore failed, you'll never get it!
@@ -8029,7 +8034,7 @@ void Federate::restore_federate_handles_from_MOM()
       if ( !all_found ) {
 
          // Check for shutdown.
-         check_for_shutdown_with_termination();
+         (void)check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 

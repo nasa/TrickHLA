@@ -624,7 +624,7 @@ void ExecutionControl::role_determination_process()
       while ( !this->late_joiner_determined ) {
 
          // Check for shutdown.
-         federate->check_for_shutdown_with_termination();
+         (void)federate->check_for_shutdown_with_termination();
 
          // We are not a late joiner if we received the announce for the
          // 'initialization started' sync-point. (Nominal Initialization)
@@ -645,7 +645,7 @@ void ExecutionControl::role_determination_process()
          if ( !this->late_joiner_determined ) {
 
             // Check for shutdown.
-            federate->check_for_shutdown_with_termination();
+            (void)federate->check_for_shutdown_with_termination();
 
             // Short sleep to release process and not hog CPU.
             (void)sleep_timer.sleep();
@@ -2066,7 +2066,7 @@ bool ExecutionControl::run_mode_transition()
          while ( this->get_cte_time() < go_to_run_time ) {
 
             // Check for shutdown.
-            federate->check_for_shutdown_with_termination();
+            (void)federate->check_for_shutdown_with_termination();
 
             diff = go_to_run_time - this->get_cte_time();
             if ( fmod( diff, 1.0 ) == 0.0 ) {
@@ -2655,7 +2655,7 @@ void ExecutionControl::receive_root_ref_frame()
       while ( !rrf_object->is_changed() ) {
 
          // Check for shutdown.
-         federate->check_for_shutdown_with_termination();
+         (void)federate->check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 

@@ -130,6 +130,7 @@ Object::Object()
      push_mutex(),
      ownership_mutex(),
      send_mutex(),
+     receive_mutex(),
      clock(),
      name_registered( false ),
      changed( false ),
@@ -200,6 +201,7 @@ Object::~Object()
       (void)push_mutex.unlock();
       (void)ownership_mutex.unlock();
       (void)send_mutex.unlock();
+      (void)receive_mutex.unlock();
 
       removed_instance = true;
    }
@@ -349,6 +351,30 @@ void Object::initialize(
    // are no attributes.
    if ( ( this->attr_count < 0 ) || ( attributes == NULL ) ) {
       this->attr_count = 0;
+   }
+
+   // Check for the case where attributes are a mix of Zero Lookahead and Cyclic
+   // since this can result in deadlock.
+   bool any_cyclic_attr         = false;
+   bool any_zero_lookahead_attr = false;
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
+      if ( ( attributes[i].get_configuration() & CONFIG_CYCLIC ) == CONFIG_CYCLIC ) {
+         any_cyclic_attr = true;
+      }
+      if ( ( attributes[i].get_configuration() & CONFIG_ZERO_LOOKAHEAD ) == CONFIG_ZERO_LOOKAHEAD ) {
+         any_zero_lookahead_attr = true;
+      }
+      if ( any_cyclic_attr && any_zero_lookahead_attr ) {
+         ostringstream errmsg;
+         errmsg << "Object::initialize():" << __LINE__
+                << " ERROR: For object '" << name << "', detected Attributes"
+                << " with a mix of CONFIG_CYCLIC and CONFIG_ZERO_LOOKAHEAD for"
+                << " the 'config' setting, which can lead to deadlock. Please"
+                << " configure all the Attributes of this object to use one of"
+                << " CONFIG_CYCLIC or CONFIG_ZERO_LOOKAHEAD for the Attribute"
+                << " 'config' setting." << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
    }
 
    // TODO: Get the preferred order by parsing the FOM.
@@ -1093,7 +1119,7 @@ Waiting on reservation of Object Instance Name '%s'.%c",
    while ( !name_registered ) {
 
       // Check for shutdown.
-      federate->check_for_shutdown_with_termination();
+      (void)federate->check_for_shutdown_with_termination();
 
       (void)sleep_timer.sleep();
 
@@ -1299,7 +1325,7 @@ void Object::wait_for_object_registration()
    while ( !is_instance_handle_valid() ) {
 
       // Check for shutdown.
-      federate->check_for_shutdown_with_termination();
+      (void)federate->check_for_shutdown_with_termination();
 
       (void)sleep_timer.sleep();
 
@@ -2932,6 +2958,10 @@ void Object::create_attribute_set(
 void Object::enqueue_data(
    AttributeHandleValueMap const &theAttributes )
 {
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &receive_mutex );
+
    thla_reflected_attributes_queue.push( theAttributes );
 }
 #endif // THLA_QUEUE_REFLECTED_ATTRIBUTES
@@ -4180,11 +4210,19 @@ void Object::notify_attribute_ownership_changed()
 
 void Object::mark_changed()
 {
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &receive_mutex );
+
    this->changed = true;
 }
 
 void Object::mark_unchanged()
 {
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &receive_mutex );
+
    this->changed = false;
 
    // Clear the change flag for each of the attributes as well.
@@ -4363,7 +4401,7 @@ rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generate
          } // end of 'for' loop
 
          // Check for shutdown.
-         federate->check_for_shutdown_with_termination();
+         (void)federate->check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 

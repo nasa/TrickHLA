@@ -679,7 +679,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
       while ( !this->is_changed() ) {
 
          // Check for shutdown.
-         federate->check_for_shutdown_with_termination();
+         (void)federate->check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 

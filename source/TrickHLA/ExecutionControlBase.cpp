@@ -309,7 +309,7 @@ void ExecutionControlBase::join_federation_process()
       send_hs( stdout, "ExecutionControl::join_federation_process():%d Checking for shutdown %c",
                __LINE__, THLA_NEWLINE );
    }
-   fed->check_for_shutdown_with_termination();
+   (void)fed->check_for_shutdown_with_termination();
 }
 
 /*!
@@ -621,7 +621,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
       while ( !execution_configuration->is_changed() ) {
 
          // Check for shutdown.
-         federate->check_for_shutdown_with_termination();
+         (void)federate->check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 

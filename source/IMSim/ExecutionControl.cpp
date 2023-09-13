@@ -761,7 +761,7 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
    while ( !late_joiner_determined && !get_manager()->restore_determined ) {
 
       // Check for shutdown.
-      federate->check_for_shutdown_with_termination();
+      (void)federate->check_for_shutdown_with_termination();
 
       // We are not a late joiner if the Sim-Config sync-point exists are we
       // are a member for it.
@@ -790,7 +790,7 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
       if ( !late_joiner_determined && !get_manager()->restore_determined ) {
 
          // Check for shutdown.
-         federate->check_for_shutdown_with_termination();
+         (void)federate->check_for_shutdown_with_termination();
 
          (void)sleep_timer.sleep();
 
@@ -1205,7 +1205,7 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_points()
          while ( !sp->is_achieved() ) {
 
             // Always check to see is a shutdown was received.
-            federate->check_for_shutdown_with_termination();
+            (void)federate->check_for_shutdown_with_termination();
 
             // Pause and release the processor for short sleep value.
             (void)sleep_timer.sleep();
@@ -2126,7 +2126,7 @@ bool ExecutionControl::run_mode_transition()
          while ( this->get_cte_time() < go_to_run_time ) {
 
             // Check for shutdown.
-            federate->check_for_shutdown_with_termination();
+            (void)federate->check_for_shutdown_with_termination();
 
             diff = go_to_run_time - this->get_cte_time();
             if ( fmod( diff, 1.0 ) == 0.0 ) {

@@ -575,7 +575,7 @@ federate so this call will be ignored.%c",
             while ( !objects[n].is_changed() ) {
 
                // Check for shutdown.
-               federate->check_for_shutdown_with_termination();
+               (void)federate->check_for_shutdown_with_termination();
 
                (void)sleep_timer.sleep();
 
@@ -694,7 +694,7 @@ void Manager::receive_init_data(
             while ( !obj->is_changed() ) {
 
                // Check for shutdown.
-               federate->check_for_shutdown_with_termination();
+               (void)federate->check_for_shutdown_with_termination();
 
                (void)sleep_timer.sleep();
 
@@ -1866,7 +1866,7 @@ void Manager::wait_for_registration_of_required_objects()
    do {
 
       // Check for shutdown.
-      federate->check_for_shutdown_with_termination();
+      (void)federate->check_for_shutdown_with_termination();
 
       // Data objects.
       if ( current_required_obj_cnt < total_required_obj_cnt ) {
@@ -3191,7 +3191,7 @@ void Manager::wait_for_discovery_of_objects()
          do {
 
             // Check for shutdown.
-            federate->check_for_shutdown_with_termination();
+            (void)federate->check_for_shutdown_with_termination();
 
             // Sleep for a little while to allow the RTI to trigger the object
             // discovery callbacks.
