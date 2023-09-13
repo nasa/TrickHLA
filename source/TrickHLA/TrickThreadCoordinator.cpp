@@ -45,6 +45,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
@@ -93,20 +94,23 @@ TrickThreadCoordinator::~TrickThreadCoordinator() // RETURN: -- None.
    // Release the arrays.
    if ( this->thread_state != NULL ) {
       this->thread_state_cnt = 0;
-      if ( TMM_is_alloced( (char *)this->thread_state ) ) {
-         TMM_delete_var_a( this->thread_state );
+      if ( trick_MM->delete_var( static_cast< void * >( this->thread_state ) ) ) {
+         send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d ERROR deleting Trick Memory for 'this->thread_state'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       this->thread_state = NULL;
    }
    if ( this->data_cycle_base_time_per_thread != NULL ) {
-      if ( TMM_is_alloced( (char *)this->data_cycle_base_time_per_thread ) ) {
-         TMM_delete_var_a( this->data_cycle_base_time_per_thread );
+      if ( trick_MM->delete_var( static_cast< void * >( this->data_cycle_base_time_per_thread ) ) ) {
+         send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d ERROR deleting Trick Memory for 'this->data_cycle_base_time_per_thread'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       this->data_cycle_base_time_per_thread = NULL;
    }
    if ( this->data_cycle_base_time_per_obj != NULL ) {
-      if ( TMM_is_alloced( (char *)this->data_cycle_base_time_per_obj ) ) {
-         TMM_delete_var_a( this->data_cycle_base_time_per_obj );
+      if ( trick_MM->delete_var( static_cast< void * >( this->data_cycle_base_time_per_obj ) ) ) {
+         send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d ERROR deleting Trick Memory for 'this->data_cycle_base_time_per_obj'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       this->data_cycle_base_time_per_obj = NULL;
    }
@@ -144,7 +148,8 @@ void TrickThreadCoordinator::initialize_thread_state(
              << ". The HLA Logical Time is a 64-bit integer"
              << " representing " << Int64BaseTime::get_units()
              << " and cannot represent the Trick main thread data-cycle time of "
-             << setprecision( 18 ) << ( main_thread_data_cycle_time * Int64BaseTime::get_base_time_multiplier() )
+             << setprecision( 18 )
+             << ( main_thread_data_cycle_time * Int64BaseTime::get_base_time_multiplier() )
              << " " << Int64BaseTime::get_units() << ". You can adjust the"
              << " base HLA Logical Time resolution by setting"
              << " 'THLA.federate.HLA_time_base_units = trick."
@@ -188,7 +193,7 @@ void TrickThreadCoordinator::initialize_thread_state(
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize_thread_state():" << __LINE__
              << " ERROR: main_thread_data_cycle_time time ("
-             << main_thread_data_cycle_time
+             << setprecision( 18 ) << main_thread_data_cycle_time
              << ") must be > 0.0!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -203,13 +208,14 @@ void TrickThreadCoordinator::initialize_thread_state(
    }
 
    // Allocate the thread state array for all the Trick threads (main + child).
-   this->thread_state = (unsigned int *)TMM_declare_var_1d( "unsigned int", this->thread_state_cnt );
+   this->thread_state = static_cast< unsigned int * >(
+      TMM_declare_var_1d( "unsigned int", this->thread_state_cnt ) );
    if ( this->thread_state == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize_thread_state():" << __LINE__
              << " ERROR: Could not allocate memory for 'thread_state'"
              << " for requested size " << this->thread_state_cnt
-             << "'!" << THLA_ENDL;
+             << "!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
       exit( 1 );
    }
@@ -221,13 +227,14 @@ void TrickThreadCoordinator::initialize_thread_state(
    }
 
    // Allocate memory for the data cycle times per each thread.
-   this->data_cycle_base_time_per_thread = (long long *)TMM_declare_var_1d( "long long", this->thread_state_cnt );
+   this->data_cycle_base_time_per_thread = static_cast< long long * >(
+      TMM_declare_var_1d( "long long", this->thread_state_cnt ) );
    if ( this->data_cycle_base_time_per_thread == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize_thread_state():" << __LINE__
              << " ERROR: Could not allocate memory for 'data_cycle_base_time_per_thread'"
              << " for requested size " << this->thread_state_cnt
-             << "'!" << THLA_ENDL;
+             << "!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
       exit( 1 );
    }
@@ -237,7 +244,8 @@ void TrickThreadCoordinator::initialize_thread_state(
 
    // Allocate memory for the data cycle times per each object instance.
    if ( this->manager->obj_count > 0 ) {
-      this->data_cycle_base_time_per_obj = (long long *)TMM_declare_var_1d( "long long", this->manager->obj_count );
+      this->data_cycle_base_time_per_obj = static_cast< long long * >(
+         TMM_declare_var_1d( "long long", this->manager->obj_count ) );
       if ( this->data_cycle_base_time_per_obj == NULL ) {
          ostringstream errmsg;
          errmsg << "TrickThreadCoordinator::initialize_thread_state():" << __LINE__
@@ -253,7 +261,7 @@ void TrickThreadCoordinator::initialize_thread_state(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-      send_hs( stdout, "TrickThreadCoordinator::initialize_thread_state():%d Trick main thread (id:0, data_cycle:%.3f).%c",
+      send_hs( stdout, "TrickThreadCoordinator::initialize_thread_state():%d Trick main thread (id:0, data_cycle:%.9f).%c",
                __LINE__, main_thread_data_cycle_time, THLA_NEWLINE );
    }
 }
@@ -263,8 +271,7 @@ void TrickThreadCoordinator::initialize_thread_state(
  */
 void TrickThreadCoordinator::associate_to_trick_child_thread(
    unsigned int const thread_id,
-   double const       data_cycle,
-   string const      &obj_insance_names )
+   double const       data_cycle )
 {
    // Determine if the data_cycle time needs a resolution that exceeds the
    // configured base time.
@@ -278,7 +285,8 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
              << ". The HLA Logical Time is a 64-bit integer"
              << " representing " << Int64BaseTime::get_units()
              << " and cannot represent the Trick child thread data-cycle time of "
-             << setprecision( 18 ) << ( data_cycle * Int64BaseTime::get_base_time_multiplier() )
+             << setprecision( 18 )
+             << ( data_cycle * Int64BaseTime::get_base_time_multiplier() )
              << " " << Int64BaseTime::get_units() << ". You can adjust the"
              << " base HLA Logical Time resolution by setting"
              << " 'THLA.federate.HLA_time_base_units = trick."
@@ -300,37 +308,18 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
              << " ERROR: The data_cycle specified (thread-id:0, "
              << setprecision( 18 ) << data_cycle
              << " seconds) requires more resolution than the Trick time Tic value ("
-             << exec_get_time_tic_value()
+             << setprecision( 18 ) << exec_get_time_tic_value()
              << "). Please update the Trick time tic value in your input"
              << " file (i.e. by calling 'trick.exec_set_time_tic_value()')."
              << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   int64_t data_cycle_base_time = Int64BaseTime::to_base_time( data_cycle );
-
-   // Break up the comma separated name list into a vector.
-   std::vector< std::string > obj_instance_names_vec;
-   StringUtilities::tokenize( obj_insance_names, obj_instance_names_vec, "," );
+   int64_t const data_cycle_base_time = Int64BaseTime::to_base_time( data_cycle );
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
-
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-      ostringstream msg;
-      msg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-          << " Trick " << ( ( thread_id == 0 ) ? "main" : "child" )
-          << " thread (thread-id:" << thread_id
-          << ", data_cycle:" << data_cycle << ")";
-      if ( obj_instance_names_vec.empty() ) {
-         msg << ", no object instance names specified." << THLA_ENDL;
-      } else {
-         msg << " with associated object instances:'" << obj_insance_names
-             << "'." << THLA_ENDL;
-      }
-      send_hs( stdout, (char *)msg.str().c_str() );
-   }
 
    // Verify the TrickThreadCoordinator::initialize_thread_state() function was called as
    // required before this function is called by checking if the thread count
@@ -384,9 +373,9 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
       errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
              << " ERROR: The data cycle time for the Trick "
              << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread (thread-id:"
-             << thread_id << ", data_cycle:" << data_cycle
+             << thread_id << ", data_cycle:" << setprecision( 18 ) << data_cycle
              << ") cannot be less than the Trick main thread data cycle"
-             << " time (data_cycle:"
+             << " time (data_cycle:" << setprecision( 18 )
              << Int64BaseTime::to_seconds( this->main_thread_data_cycle_base_time )
              << ")!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -399,95 +388,102 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
       errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
              << " ERROR: The data cycle time for the Trick "
              << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread (thread-id:"
-             << thread_id << ", data_cycle:" << data_cycle
+             << thread_id << ", data_cycle:" << setprecision( 18 ) << data_cycle
              << ") must be an integer multiple of the Trick main thread data"
-             << " cycle time (data_cycle:"
+             << " cycle time (data_cycle:" << setprecision( 18 )
              << Int64BaseTime::to_seconds( this->main_thread_data_cycle_base_time )
              << ")!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   // Parse the HLA object instance names (as a comma separated list) that are
-   // associated with this Trick child thread index.
-   bool any_valid_instance_name = false;
-   for ( unsigned int i = 0; i < obj_instance_names_vec.size(); ++i ) {
+   ostringstream summary;
+   summary << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
+           << " Summary:" << THLA_ENDL;
 
-      string obj_instance_name = obj_instance_names_vec.at( i );
+   // Search all the objects for a thread ID match and configure data arrays.
+   bool any_valid_thread_id_found = false;
+   for ( unsigned int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
 
-      // Search all the objects for an instance name match.
-      bool found_object = false;
-      for ( unsigned int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
+      // Is this thread associated to this object.
+      if ( this->manager->objects[obj_index].is_thread_associated( thread_id ) ) {
 
-         if ( obj_instance_name == this->manager->objects[obj_index].get_name_string() ) {
+         if ( ( this->data_cycle_base_time_per_thread[thread_id] > 0LL )
+              && ( this->data_cycle_base_time_per_thread[thread_id] != data_cycle_base_time ) ) {
+            ostringstream errmsg;
+            errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
+                   << " ERROR: For the object instance name '"
+                   << this->manager->objects[obj_index].get_name() << "', the Trick "
+                   << ( ( thread_id == 0 ) ? "main" : "child" )
+                   << " thread (thread-id:" << thread_id << ", data_cycle:"
+                   << setprecision( 18 )
+                   << Int64BaseTime::to_seconds( this->data_cycle_base_time_per_thread[thread_id] )
+                   << ") does not match the data cycle time specified:"
+                   << setprecision( 18 ) << data_cycle << ". A Trick "
+                   << ( ( thread_id == 0 ) ? "" : "child" )
+                   << " thread must use the same data cycle time across all"
+                   << " associated objects so that TrickHLA can properly"
+                   << " ensure data coherency." << THLA_ENDL;
+            DebugHandler::terminate_with_message( errmsg.str() );
 
-            if ( ( this->data_cycle_base_time_per_thread[thread_id] > 0LL )
-                 && ( this->data_cycle_base_time_per_thread[thread_id] != data_cycle_base_time ) ) {
-               ostringstream errmsg;
-               errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-                      << " ERROR: For the object instance name specified:'"
-                      << obj_instance_name << "', the Trick "
-                      << ( ( thread_id == 0 ) ? "main" : "child" )
-                      << " thread (thread-id:" << thread_id << ", data_cycle:"
-                      << Int64BaseTime::to_seconds( this->data_cycle_base_time_per_thread[thread_id] )
-                      << ") does not match the data cycle time specified:"
-                      << data_cycle << ". A Trick " << ( ( thread_id == 0 ) ? "" : "child" )
-                      << " thread must use the same data cycle time across all"
-                      << " associated objects so that TrickHLA can properly"
-                      << " ensure data coherency." << THLA_ENDL;
-               DebugHandler::terminate_with_message( errmsg.str() );
+         } else if ( ( this->data_cycle_base_time_per_obj[obj_index] > 0LL )
+                     && ( this->data_cycle_base_time_per_obj[obj_index] != data_cycle_base_time ) ) {
+            ostringstream errmsg;
+            errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
+                   << " ERROR: For the object instance name '"
+                   << this->manager->objects[obj_index].get_name()
+                   << "', an existing entry for this"
+                   << " object (thread-id:" << thread_id << ", data_cycle:"
+                   << setprecision( 18 )
+                   << Int64BaseTime::to_seconds( this->data_cycle_base_time_per_thread[thread_id] )
+                   << ") has a data cycle time that does not match the"
+                   << " data cycle time specified:" << data_cycle
+                   << ". An object instance must use the same data cycle"
+                   << " time across all threads so that TrickHLA can properly"
+                   << " ensure data coherency." << THLA_ENDL;
+            DebugHandler::terminate_with_message( errmsg.str() );
 
-            } else if ( ( this->data_cycle_base_time_per_obj[obj_index] > 0LL )
-                        && ( this->data_cycle_base_time_per_obj[obj_index] != data_cycle_base_time ) ) {
-               ostringstream errmsg;
-               errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-                      << " ERROR: For the object instance name specified:'"
-                      << obj_instance_name << "' an existing entry for this"
-                      << " object (thread-id:" << thread_id
-                      << ", data_cycle:"
-                      << Int64BaseTime::to_seconds( this->data_cycle_base_time_per_thread[thread_id] )
-                      << ") has a data cycle time that does not match the"
-                      << " data cycle time specified:" << data_cycle
-                      << ". An object instance must use the same data cycle"
-                      << " time across all threads so that TrickHLA can properly"
-                      << " ensure data coherency." << THLA_ENDL;
-               DebugHandler::terminate_with_message( errmsg.str() );
+         } else {
+            summary << "  thread-id:" << thread_id
+                    << "  data_cycle:" << setprecision( 18 ) << data_cycle
+                    << "  obj-instance:'" << this->manager->objects[obj_index].get_name()
+                    << "'" << THLA_ENDL;
 
-            } else {
-               found_object            = true;
-               any_valid_instance_name = true;
+            any_valid_thread_id_found = true;
 
-               this->data_cycle_base_time_per_thread[thread_id] = data_cycle_base_time;
-               this->data_cycle_base_time_per_obj[obj_index]    = data_cycle_base_time;
-            }
+            this->data_cycle_base_time_per_thread[thread_id] = data_cycle_base_time;
+            this->data_cycle_base_time_per_obj[obj_index]    = data_cycle_base_time;
          }
       }
-
-      if ( !found_object ) {
-         ostringstream errmsg;
-         errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-                << " ERROR: For the Trick "
-                << ( ( thread_id == 0 ) ? "main" : "child" )
-                << " thread (thread-id:" << thread_id
-                << ") specified, the object instance name provided \""
-                << obj_instance_name
-                << "\" does not have a corresponding TrickHLA-Object configured."
-                << THLA_ENDL;
-         DebugHandler::terminate_with_message( errmsg.str() );
-      }
    }
+
+   if ( !any_valid_thread_id_found ) {
+      summary << "  (No objects explicitly associated to thread-id:"
+              << thread_id << ")" << THLA_ENDL;
+   }
+   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
+      send_hs( stdout, summary.str().c_str() );
+   }
+
+   /*
+   TODO: There is a use case where a child thread runs at a different rate
+   than the main thread but does not have any object instances associated with
+   it. Need to figure  out how to better handle that case. For now, just disable
+   the check.
 
    // If the data cycle time for this child thread does not match the
    // main thread data cycle time then the user must specify all the valid
    // HLA object instance names associated to this child thread.
    if ( ( data_cycle_base_time != this->main_thread_data_cycle_base_time )
-        && !any_valid_instance_name ) {
+        && !any_valid_thread_id_found ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
              << " ERROR: For the Trick " << ( ( thread_id == 0 ) ? "main" : "child" )
              << " thread (thread-id:" << thread_id
              << ") specified, you have specified a data cycle time ("
-             << data_cycle << ") that differs from the Trick main thread data"
+             << setprecision( 18 ) << data_cycle
+             << ") that differs from the Trick main thread data"
              << " cycle time ("
+             << setprecision( 18 )
              << Int64BaseTime::to_seconds( this->main_thread_data_cycle_base_time )
              << "). This requires you to specify all the HLA object instance"
              << " names associated with this Trick "
@@ -495,6 +491,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
              << " can properly ensure data coherency." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
+   */
 
    // Make sure we mark the thread state as reset now that we associated to it.
    this->thread_state[thread_id] = THREAD_STATE_RESET;
@@ -506,6 +503,82 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    } else {
       // We now have at least one Trick child thread associated to TrickHLA.
       this->any_child_thread_associated = true;
+   }
+}
+
+/*!
+ * @brief Verify the threads IDs associated to objects in the input file.
+ * */
+void TrickThreadCoordinator::verify_trick_child_thread_associations()
+{
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
+      ostringstream summary;
+      summary << "TrickThreadCoordinator::verify_trick_child_thread_associations():"
+              << __LINE__;
+
+      if ( !this->any_child_thread_associated ) {
+         summary << " Detected there are no Trick child threads associated to any"
+                 << " object instances in the input file." << THLA_ENDL;
+      } else {
+         summary << " Summary of object instance and thread associations from"
+                 << " the input file:" << THLA_ENDL;
+
+         // Summary of the Object-instances per thread-ID.
+         summary << "ThreadID  Cycle  Object-Instances" << THLA_ENDL;
+         for ( unsigned int id = 0; id < this->thread_state_cnt; ++id ) {
+            summary << id << "\t  ";
+
+            if ( this->thread_state[id] == THREAD_STATE_NOT_ASSOCIATED ) {
+               summary << "(Thread not associated to TrickHLA)";
+            } else {
+               summary << setprecision( 18 )
+                       << Int64BaseTime::to_seconds( this->data_cycle_base_time_per_thread[id] )
+                       << "\t ";
+               for ( unsigned int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
+                  if ( this->manager->objects[obj_index].is_thread_associated( id ) ) {
+                     summary << "'" << this->manager->objects[obj_index].get_name() << "' ";
+                  }
+               }
+            }
+            summary << THLA_ENDL;
+         }
+
+         // Summary of the thread-ID's per object instance.
+         summary << "Object-Instance   ThreadIDs" << THLA_ENDL;
+         for ( unsigned int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
+            summary << "'" << this->manager->objects[obj_index].get_name() << "'\t  ";
+            bool printed_thread_id = false;
+            for ( unsigned int id = 0; id < this->manager->objects[obj_index].thread_ids_array_count; ++id ) {
+               if ( this->manager->objects[obj_index].thread_ids_array[id] ) {
+                  if ( printed_thread_id ) {
+                     summary << ", ";
+                  }
+                  summary << id;
+                  printed_thread_id = true;
+               }
+            }
+            summary << THLA_ENDL;
+         }
+      }
+      send_hs( stdout, summary.str().c_str() );
+   }
+
+   // Verify every thread ID specified in the input file for each object has a
+   // Trick child thread association made in the S_define file.
+   for ( unsigned int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
+      for ( unsigned int id = 0; id < this->manager->objects[obj_index].thread_ids_array_count; ++id ) {
+
+         if ( this->manager->objects[obj_index].thread_ids_array[id]
+              && ( this->data_cycle_base_time_per_thread[id] == 0LL ) ) {
+            ostringstream errmsg;
+            errmsg << "TrickThreadCoordinator::verify_trick_child_thread_associations():" << __LINE__
+                   << " Object instance '" << this->manager->objects[obj_index].get_name()
+                   << "' specified a Trick thread-ID:" << id << ", but no thread"
+                   << " with this ID was associated in the S_define file!"
+                   << THLA_ENDL;
+            DebugHandler::terminate_with_message( errmsg.str() );
+         }
+      }
    }
 }
 

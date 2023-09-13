@@ -151,7 +151,7 @@ void TimedSyncPntList::convert_sync_points( LoggableSyncPnt *sync_points )
       errmsg << "TimedSyncPntList::convert_sync_pts():" << __LINE__
              << ": Could not cast synchronization points to timed synchronization points!"
              << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
       SyncPntListBase::convert_sync_points( sync_points );
    } else {
       int                                 loop = 0;
@@ -197,5 +197,5 @@ void TimedSyncPntList::print_sync_points()
           << ( *i )->get_state() << endl;
    }
    msg << "#############################" << endl;
-   send_hs( stdout, (char *)msg.str().c_str() );
+   send_hs( stdout, msg.str().c_str() );
 }

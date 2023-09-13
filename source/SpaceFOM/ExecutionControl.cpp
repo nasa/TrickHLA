@@ -165,7 +165,7 @@ void ExecutionControl::initialize()
       msg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
           << " Initialization-Scheme:'" << get_type()
           << "'" << THLA_ENDL;
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // There are things that must me set for the SpaceFOM initialization.
@@ -203,7 +203,7 @@ void ExecutionControl::initialize()
              << " 'THLA.federate.use_preset_master = true' in your input.py file."
              << " Setting use_preset_master to true!"
              << THLA_ENDL;
-      send_hs( stdout, (char *)errmsg.str().c_str() );
+      send_hs( stdout, errmsg.str().c_str() );
       this->use_preset_master = true;
    }
 
@@ -241,7 +241,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
 {
    // Allocate the Mode Transition Request Interaction.
    mtr_interaction = reinterpret_cast< Interaction * >( alloc_type( 1, "TrickHLA::Interaction" ) );
-   if ( mtr_interaction == static_cast< Interaction * >( NULL ) ) {
+   if ( mtr_interaction == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_MTR_interaction_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for Interaction specialized"
@@ -250,8 +250,8 @@ void ExecutionControl::setup_interaction_ref_attributes()
    }
 
    // Set up name, handler, publish and subscribe.
-   mtr_interaction->set_FOM_name( (char *)"ModeTransitionRequest" ); // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
-   mtr_interaction->set_handler( &mtr_interaction_handler );         // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
+   mtr_interaction->set_FOM_name( const_cast< char * >( "ModeTransitionRequest" ) ); // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
+   mtr_interaction->set_handler( &mtr_interaction_handler );                         // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
    mtr_interaction_handler.set_name( "ModeTransitionRequest" );
    if ( this->is_master() ) {
       mtr_interaction->set_subscribe();
@@ -264,7 +264,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    Parameter *tParm = reinterpret_cast< Parameter * >(
       alloc_type( mtr_interaction->get_parameter_count(),
                   "TrickHLA::Parameter" ) );
-   if ( tParm == static_cast< Parameter * >( NULL ) ) {
+   if ( tParm == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for the parameters of the"
@@ -288,8 +288,8 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // entries: 1) the 'execution_mode' parameter and 2) an empty entry
    // marking the end of the structure.
    ATTRIBUTES *mode_attr;
-   mode_attr = (ATTRIBUTES *)malloc( 2 * sizeof( ATTRIBUTES ) );
-   if ( mode_attr == static_cast< ATTRIBUTES * >( NULL ) ) {
+   mode_attr = static_cast< ATTRIBUTES * >( malloc( 2 * sizeof( ATTRIBUTES ) ) );
+   if ( mode_attr == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
              << " FAILED to aallocate enough memory for the ATTRIBUTES for the"
@@ -324,7 +324,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
            << "--------------- Trick REF-Attributes ---------------" << endl
            << " FOM-Interaction:'" << mtr_interaction->get_FOM_name() << "'"
            << THLA_NEWLINE;
-      send_hs( stdout, (char *)msg2.str().c_str() );
+      send_hs( stdout, msg2.str().c_str() );
    }
 
    // Initialize the TrickHLA Interaction before we use it.
@@ -336,17 +336,17 @@ void ExecutionControl::setup_interaction_ref_attributes()
            << " FOM-Parameter:'" << tParm[0].get_FOM_name() << "'"
            << " NOTE: This is an auto-generated parameter so there is no"
            << " associated 'Trick-Name'." << THLA_NEWLINE;
-      send_hs( stdout, (char *)msg2.str().c_str() );
+      send_hs( stdout, msg2.str().c_str() );
    }
 
    // Initialize the TrickHLA Parameter. Since we built the interaction handler
    // in-line, and not via the Trick input.py file, use the alternate version of
    // the initialize routine which does not resolve the fully-qualified Trick
    // name to access the ATTRIBUTES if the trick variable...
-   if ( tParm != static_cast< Parameter * >( NULL ) ) {
+   if ( tParm != NULL ) {
       tParm[0].initialize( mtr_interaction->get_FOM_name(),
                            mtr_interaction_handler.get_address_of_interaction_mode(),
-                           (ATTRIBUTES *)mode_attr );
+                           static_cast< ATTRIBUTES * >( mode_attr ) );
    }
 }
 
@@ -372,7 +372,7 @@ void ExecutionControl::setup_object_RTI_handles()
 void ExecutionControl::setup_interaction_RTI_handles()
 {
    // Setup the RTI handles for the SpaceFOM MTR Interaction.
-   if ( mtr_interaction != static_cast< Interaction * >( NULL ) ) {
+   if ( mtr_interaction != NULL ) {
       // SpaceFOM Mode Transition Request (MTR) Interaction.
       this->manager->setup_interaction_RTI_handles( 1, mtr_interaction );
    }
@@ -703,7 +703,7 @@ void ExecutionControl::role_determination_process()
                     << ( this->does_init_complete_sync_point_exist() ? "Yes" : "No" );
 
             message << ", Still waiting..." << THLA_ENDL;
-            send_hs( stdout, (char *)message.str().c_str() );
+            send_hs( stdout, message.str().c_str() );
          }
       }
 
@@ -1469,7 +1469,7 @@ void ExecutionControl::set_next_execution_control_mode(
             errmsg << "SpaceFOM::ExecutionControl::set_next_execution_mode():" << __LINE__
                    << " WARNING: Unknown execution mode value: " << exec_control
                    << THLA_ENDL;
-            send_hs( stdout, (char *)errmsg.str().c_str() );
+            send_hs( stdout, errmsg.str().c_str() );
          }
          break;
    }
@@ -1489,7 +1489,7 @@ bool ExecutionControl::check_mode_transition_request()
              << " WARNING: Received Mode Transition Request and not Master: "
              << mtr_enum_to_string( this->pending_mtr )
              << THLA_ENDL;
-      send_hs( stdout, (char *)errmsg.str().c_str() );
+      send_hs( stdout, errmsg.str().c_str() );
       return false;
    }
 
@@ -1499,7 +1499,7 @@ bool ExecutionControl::check_mode_transition_request()
       errmsg << "SpaceFOM::ExecutionControl::check_mode_transition_request():" << __LINE__
              << " WARNING: Invalid Mode Transition Request: "
              << mtr_enum_to_string( this->pending_mtr ) << THLA_ENDL;
-      send_hs( stdout, (char *)errmsg.str().c_str() );
+      send_hs( stdout, errmsg.str().c_str() );
       return false;
    }
 
@@ -1649,7 +1649,7 @@ bool ExecutionControl::process_execution_control_updates()
              << " WARNING: Master Federate received an unexpected ExCO update: "
              << execution_control_enum_to_string( this->requested_execution_control_mode )
              << THLA_ENDL;
-      send_hs( stdout, (char *)errmsg.str().c_str() );
+      send_hs( stdout, errmsg.str().c_str() );
 
       // Return that no mode changes occurred.
       return false;
@@ -1669,7 +1669,7 @@ bool ExecutionControl::process_execution_control_updates()
              << ") and the ExCO current execution mode ("
              << execution_mode_enum_to_string( exco_cem )
              << ")!" << THLA_ENDL;
-      send_hs( stdout, (char *)errmsg.str().c_str() );
+      send_hs( stdout, errmsg.str().c_str() );
    }
 
    // Check for change in execution mode.
@@ -1696,7 +1696,7 @@ bool ExecutionControl::process_execution_control_updates()
             errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
                    << " WARNING: Invalid ExCO next execution mode: "
                    << execution_mode_enum_to_string( exco_nem ) << "!" << THLA_ENDL;
-            send_hs( stdout, (char *)errmsg.str().c_str() );
+            send_hs( stdout, errmsg.str().c_str() );
 
             // Return that no mode changes occurred.
             return false;
@@ -1743,7 +1743,7 @@ bool ExecutionControl::process_execution_control_updates()
                       << ") and the requested execution mode ("
                       << execution_control_enum_to_string( this->requested_execution_control_mode )
                       << ")!" << THLA_ENDL;
-               send_hs( stdout, (char *)errmsg.str().c_str() );
+               send_hs( stdout, errmsg.str().c_str() );
 
                // Return that no mode changes occurred.
                return false;
@@ -1808,7 +1808,7 @@ bool ExecutionControl::process_execution_control_updates()
                       << ") and the requested execution mode ("
                       << execution_control_enum_to_string( this->requested_execution_control_mode )
                       << ")!" << THLA_ENDL;
-               send_hs( stdout, (char *)errmsg.str().c_str() );
+               send_hs( stdout, errmsg.str().c_str() );
 
                // Return that no mode changes occurred.
                return false;
@@ -1831,7 +1831,7 @@ bool ExecutionControl::process_execution_control_updates()
                          << ") and the requested execution mode ("
                          << execution_control_enum_to_string( this->requested_execution_control_mode )
                          << ")!" << THLA_ENDL;
-                  send_hs( stdout, (char *)errmsg.str().c_str() );
+                  send_hs( stdout, errmsg.str().c_str() );
                }
 
                // Mark the current execution mode as SHUTDOWN.
@@ -1890,7 +1890,7 @@ bool ExecutionControl::process_execution_control_updates()
                          << ") and the requested execution mode ("
                          << execution_control_enum_to_string( this->requested_execution_control_mode )
                          << ")!" << THLA_ENDL;
-                  send_hs( stdout, (char *)errmsg.str().c_str() );
+                  send_hs( stdout, errmsg.str().c_str() );
                }
                // Return that no mode changes occurred.
                return false;
@@ -1936,7 +1936,7 @@ bool ExecutionControl::process_execution_control_updates()
                          << ") and the requested execution mode ("
                          << execution_control_enum_to_string( this->requested_execution_control_mode )
                          << ")!" << THLA_ENDL;
-                  send_hs( stdout, (char *)errmsg.str().c_str() );
+                  send_hs( stdout, errmsg.str().c_str() );
                }
                // Return that no mode changes occurred.
                return false;
@@ -1955,7 +1955,7 @@ bool ExecutionControl::process_execution_control_updates()
                    << " WARNING: Shutting down but received mode transition: "
                    << execution_control_enum_to_string( this->requested_execution_control_mode )
                    << THLA_ENDL;
-            send_hs( stdout, (char *)errmsg.str().c_str() );
+            send_hs( stdout, errmsg.str().c_str() );
          }
          // Return that no mode changes occurred.
          return false;
@@ -2227,7 +2227,7 @@ bool ExecutionControl::check_for_shutdown_with_termination()
              << "' Federation." << THLA_ENDL;
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stderr, (char *)errmsg.str().c_str() );
+         send_hs( stderr, errmsg.str().c_str() );
       }
 
       // Tell the federate to shutdown.
@@ -2301,7 +2301,7 @@ void ExecutionControl::enter_freeze()
           << "   Freeze-announced:" << ( federate->get_freeze_announced() ? "Yes" : "No" )
           << "   Freeze-pending:" << ( federate->get_freeze_pending() ? "Yes" : "No" )
           << THLA_NEWLINE;
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    // Determine if we are already processing a freeze command.

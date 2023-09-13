@@ -88,13 +88,19 @@ RefFrameBase::RefFrameBase()
  */
 RefFrameBase::~RefFrameBase()
 {
-   if ( this->name != (char *)NULL ) {
-      trick_MM->delete_var( (void *)this->name );
-      this->name = (char *)NULL;
+   if ( this->name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
+         send_hs( stderr, "SpaceFOM::RefFrameBase::~RefFrameBase():%d ERROR deleting Trick Memory for 'this->name'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      this->name = NULL;
    }
-   if ( this->parent_name != (char *)NULL ) {
-      trick_MM->delete_var( (void *)this->parent_name );
-      this->parent_name = (char *)NULL;
+   if ( this->parent_name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->parent_name ) ) ) {
+         send_hs( stderr, "SpaceFOM::RefFrameBase::~RefFrameBase():%d ERROR deleting Trick Memory for 'this->parent_name'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      this->parent_name = NULL;
    }
 }
 
@@ -208,7 +214,7 @@ void RefFrameBase::initialize()
          errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
                 << " WARNING: Unexpected NULL federation instance frame name!"
                 << "  Setting frame name to empty string." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
+         send_hs( stderr, errmsg.str().c_str() );
       }
       this->name = trick_MM->mm_strdup( "" );
    }
@@ -220,7 +226,7 @@ void RefFrameBase::initialize()
          errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
                 << " WARNING: Unexpected NULL federation instance parent frame name!"
                 << "  Setting parent frame name to empty string." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
+         send_hs( stderr, errmsg.str().c_str() );
       }
       this->parent_name = trick_MM->mm_strdup( "" );
    }
@@ -266,7 +272,10 @@ void RefFrameBase::initialize_callback(
 void RefFrameBase::set_name( char const *new_name )
 {
    if ( this->name != NULL ) {
-      trick_MM->delete_var( (void *)this->name );
+      if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
+         send_hs( stderr, "SpaceFOM::RefFrameBase::set_name():%d ERROR deleting Trick Memory for 'this->name'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
    }
    this->name = trick_MM->mm_strdup( new_name );
    return;
@@ -288,7 +297,10 @@ void RefFrameBase::set_parent_name( char const *name )
 
    // Set the parent frame name appropriately.
    if ( this->parent_name != NULL ) {
-      trick_MM->delete_var( (void *)this->parent_name );
+      if ( trick_MM->delete_var( static_cast< void * >( this->parent_name ) ) ) {
+         send_hs( stderr, "SpaceFOM::RefFrameBase::set_parent_name():%d ERROR deleting Trick Memory for 'this->parent_name'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
    }
    if ( name != NULL ) {
       this->parent_name = trick_MM->mm_strdup( name );

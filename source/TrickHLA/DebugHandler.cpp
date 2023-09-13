@@ -92,7 +92,7 @@ void DebugHandler::set(
 void DebugHandler::terminate_with_message(
    string const &message )
 {
-   send_hs( stderr, (char *)message.c_str() );
-   exec_terminate( __FILE__, (char *)message.c_str() );
+   send_hs( stderr, message.c_str() );
+   exec_terminate( __FILE__, message.c_str() );
    exit( 1 );
 }

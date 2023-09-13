@@ -122,7 +122,7 @@ THLA.simple_sim_config.run_duration = run_duration
 
 # TrickHLA Interactions and Parameters.
 THLA.manager.inter_count  = 1
-THLA.manager.interactions = trick.alloc_type( THLA.manager.inter_count, 'TrickHLA::Interaction' )
+THLA.manager.interactions = trick.sim_services.alloc_type( THLA.manager.inter_count, 'TrickHLA::Interaction' )
 
 THLA.manager.interactions[0].FOM_name    = 'Communication'
 THLA.manager.interactions[0].publish     = True
@@ -153,6 +153,7 @@ THLA.manager.objects   = trick.sim_services.alloc_type( THLA.manager.obj_count, 
 THLA.manager.objects[0].FOM_name            = 'Test'
 THLA.manager.objects[0].name                = 'A-side-Federate.Test'
 THLA.manager.objects[0].create_HLA_instance = True
+THLA.manager.objects[0].thread_ids          = "1"
 THLA.manager.objects[0].packing             = A.packing
 THLA.manager.objects[0].ownership           = A.ownership_handler
 THLA.manager.objects[0].deleted             = A.obj_deleted_callback
@@ -221,6 +222,7 @@ THLA.manager.objects[0].attributes[7].rti_encoding    = trick.ENCODING_UNICODE_S
 THLA.manager.objects[1].FOM_name            = 'Test'
 THLA.manager.objects[1].name                = 'P-side-Federate.Test'
 THLA.manager.objects[1].create_HLA_instance = False
+THLA.manager.objects[1].thread_ids          = "2"
 THLA.manager.objects[1].packing             = P.packing
 THLA.manager.objects[1].deleted             = P.obj_deleted_callback
 THLA.manager.objects[1].attr_count          = 8

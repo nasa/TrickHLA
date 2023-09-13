@@ -26,6 +26,7 @@ class SpaceFOMRefFrameObject(TrickHLAObjectConfig):
                  frame_instance_name,
                  frame_S_define_instance,
                  frame_S_define_instance_name,
+                 frame_thread_IDs = None,
                  frame_lag_comp = None,
                  frame_ownership = None,
                  frame_thla_manager_object = None ):
@@ -55,7 +56,8 @@ class SpaceFOMRefFrameObject(TrickHLAObjectConfig):
                                      frame_lag_comp,
                                      frame_ownership,
                                      frame_S_define_instance,
-                                     frame_thla_manager_object )
+                                     frame_thla_manager_object,
+                                     frame_thread_IDs )
 
       # Build the object attribute list.
       self.add_attributes()

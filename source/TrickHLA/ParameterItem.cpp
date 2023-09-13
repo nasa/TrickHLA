@@ -34,8 +34,10 @@ NASA, Johnson Space Center\n
 #include <sstream>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
+#include "trick/message_proto.h"
 
 // TrickHLA include files.
 #include "TrickHLA/Item.hh"
@@ -71,7 +73,7 @@ ParameterItem::ParameterItem(
       if ( size == 0 ) {
          data = NULL;
       } else {
-         data = (unsigned char *)TMM_declare_var_1d( "unsigned char", (int)size );
+         data = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", size ) );
          memcpy( data, param_value->data(), size );
       }
    }
@@ -88,7 +90,9 @@ ParameterItem::~ParameterItem()
 void ParameterItem::clear()
 {
    if ( data != NULL ) {
-      TMM_delete_var_a( data );
+      if ( trick_MM->delete_var( static_cast< void * >( data ) ) ) {
+         send_hs( stderr, "ParameterItem::clear():%d ERROR deleting Trick Memory for 'data'\n", __LINE__ );
+      }
       data  = NULL;
       size  = 0;
       index = -1;

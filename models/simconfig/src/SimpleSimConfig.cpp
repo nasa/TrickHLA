@@ -41,8 +41,8 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h" // for send_hs
 
 // TrickHLA include files.
@@ -77,18 +77,20 @@ SimpleSimConfig::SimpleSimConfig()
  */
 SimpleSimConfig::~SimpleSimConfig()
 {
-   if ( required_federates != static_cast< char * >( NULL ) ) {
-      if ( TMM_is_alloced( required_federates ) ) {
-         TMM_delete_var_a( required_federates );
+   if ( required_federates != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( required_federates ) ) ) {
+         send_hs( stderr, "TrickHLAModel::SimpleSimConfig::~SimpleSimConfig():%d ERROR deleting Trick Memory for 'required_federates'%c",
+                  __LINE__, THLA_NEWLINE );
       }
-      required_federates = static_cast< char * >( NULL );
+      required_federates = NULL;
    }
 
-   if ( owner != static_cast< char * >( NULL ) ) {
-      if ( TMM_is_alloced( owner ) ) {
-         TMM_delete_var_a( owner );
+   if ( owner != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( owner ) ) ) {
+         send_hs( stderr, "TrickHLAModel::SimpleSimConfig::~SimpleSimConfig():%d ERROR deleting Trick Memory for 'owner'%c",
+                  __LINE__, THLA_NEWLINE );
       }
-      owner = static_cast< char * >( NULL );
+      owner = NULL;
    }
 }
 
@@ -100,9 +102,12 @@ void SimpleSimConfig::initialize(
    TrickHLA::KnownFederate *known_feds )
 {
    // Release the memory used by the required_federates c-string.
-   if ( required_federates != static_cast< char * >( NULL ) ) {
-      TMM_delete_var_a( required_federates );
-      required_federates = static_cast< char * >( NULL );
+   if ( required_federates != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( required_federates ) ) ) {
+         send_hs( stderr, "TrickHLAModel::SimpleSimConfig::initialize():%d ERROR deleting Trick Memory for 'required_federates'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      required_federates = NULL;
    }
 
    ostringstream fed_list;
@@ -123,7 +128,7 @@ void SimpleSimConfig::initialize(
    this->num_federates = req_fed_cnt;
 
    // Make sure we use correct function so that it is Trick managed memory.
-   this->required_federates = TMM_strdup( (char *)fed_list.str().c_str() );
+   this->required_federates = trick_MM->mm_strdup( fed_list.str().c_str() );
 }
 
 void SimpleSimConfig::pack()

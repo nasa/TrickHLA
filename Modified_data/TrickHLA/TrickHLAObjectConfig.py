@@ -26,6 +26,7 @@ class TrickHLAObjectConfig( object ):
    hla_ownership_instance   = None
    hla_packing_instance     = None
    hla_manager_object       = None
+   hla_thread_IDs           = None
    hla_blocking_cyclic_read = False
 
    # List of TrickHLA object attributes.
@@ -39,6 +40,7 @@ class TrickHLAObjectConfig( object ):
                  thla_ownership_instance   = None,
                  thla_packing_instance     = None,
                  thla_manager_object       = None,
+                 thla_thread_IDs           = None,
                  thla_blocking_cyclic_read = False ):
 
       # Allocate and empty attribute list.
@@ -72,6 +74,10 @@ class TrickHLAObjectConfig( object ):
       if thla_FOM_name != None :
          self.set_FOM_name( thla_FOM_name )
 
+      # Set the Trick thread-IDs associated with this object.
+      if thla_thread_IDs != None :
+         self.set_thread_IDs( thla_thread_IDs )
+
       # Specify if this object will block on cyclic reads.
       self.set_blocking_cyclic_read( thla_blocking_cyclic_read )
 
@@ -97,6 +103,7 @@ class TrickHLAObjectConfig( object ):
       self.set_FOM_name( self.hla_FOM_name )
       self.set_packing_instance( self.hla_packing_instance )
       self.set_create( self.hla_create )
+      self.set_thread_IDs( self.hla_thread_IDs )
       self.set_blocking_cyclic_read( self.hla_blocking_cyclic_read )
 
       if self.hla_lag_comp_instance != None :
@@ -157,6 +164,20 @@ class TrickHLAObjectConfig( object ):
    def get_FOM_name( self ):
 
       return str( self.hla_FOM_name )
+
+
+   def set_thread_IDs( self, threadIDs ):
+
+      self.hla_thread_IDs = str(threadIDs)
+      if self.hla_manager_object != None :
+         self.hla_manager_object.thread_ids = str(threadIDs)
+
+      return
+
+
+   def get_thread_IDs( self ):
+
+      return str( self.hla_thread_IDs )
 
 
    def set_lag_comp_instance( self, obj_lag_comp):

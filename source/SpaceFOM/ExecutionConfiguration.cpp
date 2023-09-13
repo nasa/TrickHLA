@@ -54,6 +54,7 @@ NASA, Johnson Space Center\n
 #include "trick/Executive.hh"
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
+#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
@@ -141,11 +142,12 @@ ExecutionConfiguration::ExecutionConfiguration(
 ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
 {
    // Free the allocated root reference frame name.
-   if ( this->root_frame_name != static_cast< char * >( NULL ) ) {
-      if ( TMM_is_alloced( this->root_frame_name ) ) {
-         TMM_delete_var_a( this->root_frame_name );
+   if ( this->root_frame_name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->root_frame_name ) ) ) {
+         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::~ExecutionConfiguration():%d ERROR deleting Trick Memory for 'this->root_frame_name'%c",
+                  __LINE__, THLA_NEWLINE );
       }
-      this->root_frame_name = static_cast< char * >( NULL );
+      this->root_frame_name = NULL;
    }
 }
 
@@ -186,7 +188,7 @@ void ExecutionConfiguration::configure_attributes()
    this->packing  = this;
    // Allocate the attributes for the ExCO HLA object.
    this->attr_count = 7;
-   this->attributes = (Attribute *)TMM_declare_var_1d( "TrickHLA::Attribute", this->attr_count );
+   this->attributes = static_cast< Attribute * >( TMM_declare_var_1d( "TrickHLA::Attribute", this->attr_count ) );
 
    //
    // Specify the ExCO attributes.
@@ -243,12 +245,13 @@ void ExecutionConfiguration::configure()
    // Clear out the existing object instance name, because we are going to
    // make sure it is ExCO regardless of what the user set it to be.
    if ( name != NULL ) {
-      if ( TMM_is_alloced( name ) ) {
-         TMM_delete_var_a( name );
+      if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
+         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::configure():%d ERROR deleting Trick Memory for 'name'%c",
+                  __LINE__, THLA_NEWLINE );
       }
-      name = static_cast< char * >( NULL );
+      name = NULL;
    }
-   name = TMM_strdup( (char *)"ExCO" );
+   name = trick_MM->mm_strdup( const_cast< char * >( "ExCO" ) );
 
    // Lag compensation is not supported for the Execution Configuration object.
    set_lag_compensation_type( LAG_COMPENSATION_NONE );
@@ -288,7 +291,7 @@ void ExecutionConfiguration::pack()
          msg << "\t simulation_freeze_time:  " << execution_control->get_simulation_freeze_time() << " seconds" << endl;
       }
       msg << "=============================================================" << endl;
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    int64_t fed_lookahead = ( get_federate() != NULL ) ? get_federate()->get_lookahead().get_base_time() : 0;
@@ -305,17 +308,21 @@ void ExecutionConfiguration::pack()
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   // The least-common-time-step time must be an integer multiple of
-   // the federate's lookahead time.
-   if ( least_common_time_step % fed_lookahead != 0 ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionConfiguration::pack():" << __LINE__
-             << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-             << " " << Int64BaseTime::get_units()
-             << ") is not an integer multiple of the federate lookahead time ("
-             << fed_lookahead << " " << Int64BaseTime::get_units()
-             << ")!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
+   // Skip for a zero lookahead time.
+   if ( fed_lookahead != 0 ) {
+
+      // The least-common-time-step time must be an integer multiple of
+      // the federate's lookahead time.
+      if ( ( least_common_time_step % fed_lookahead ) != 0 ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionConfiguration::pack():" << __LINE__
+                << " ERROR: ExCO least_common_time_step (" << least_common_time_step
+                << " " << Int64BaseTime::get_units()
+                << ") is not an integer multiple of the federate lookahead time ("
+                << fed_lookahead << " " << Int64BaseTime::get_units()
+                << ")!" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
    }
 }
 
@@ -346,7 +353,7 @@ void ExecutionConfiguration::unpack()
           << "\t next_execution_mode:    " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
           << "\t least_common_time_step: " << least_common_time_step << " " << Int64BaseTime::get_units() << endl
           << "=============================================================" << endl;
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    int64_t fed_lookahead = ( get_federate() != NULL ) ? get_federate()->get_lookahead().get_base_time() : 0;
@@ -363,17 +370,21 @@ void ExecutionConfiguration::unpack()
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   // Our federates lookahead time must be an integer multiple of the
-   // least-common-time-step time.
-   if ( least_common_time_step % fed_lookahead != 0 ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
-             << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-             << " " << Int64BaseTime::get_units()
-             << ") is not an integer multiple of the federate lookahead time ("
-             << fed_lookahead << " " << Int64BaseTime::get_units()
-             << ")!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
+   // Skip for a zero lookahead time.
+   if ( fed_lookahead != 0 ) {
+
+      // Our federates lookahead time must be an integer multiple of the
+      // least-common-time-step time.
+      if ( ( least_common_time_step % fed_lookahead ) != 0 ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
+                << " ERROR: ExCO least_common_time_step (" << least_common_time_step
+                << " " << Int64BaseTime::get_units()
+                << ") is not an integer multiple of the federate lookahead time ("
+                << fed_lookahead << " " << Int64BaseTime::get_units()
+                << ")!" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
    }
 
    // Check the Trick executive software frame.
@@ -382,6 +393,7 @@ void ExecutionConfiguration::unpack()
    software_frame_sec       = exec_get_software_frame();
    software_frame_base_time = Int64BaseTime::to_base_time( software_frame_sec );
    if ( software_frame_base_time != least_common_time_step ) {
+
       if ( software_frame_base_time > least_common_time_step ) {
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
             ostringstream message;
@@ -393,11 +405,12 @@ void ExecutionConfiguration::unpack()
                     << ")! Resetting the software frame ("
                     << least_common_time_step << " " << Int64BaseTime::get_units()
                     << ")!!!!" << THLA_ENDL;
-            send_hs( stdout, (char *)message.str().c_str() );
+            send_hs( stdout, message.str().c_str() );
          }
          software_frame_sec = Int64BaseTime::to_seconds( least_common_time_step );
          exec_set_software_frame( software_frame_sec );
-      } else if ( least_common_time_step % software_frame_base_time != 0 ) {
+
+      } else if ( ( least_common_time_step % software_frame_base_time ) != 0 ) {
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
             ostringstream message;
             message << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
@@ -408,10 +421,11 @@ void ExecutionConfiguration::unpack()
                     << "! Resetting the software frame ("
                     << least_common_time_step << " " << Int64BaseTime::get_units()
                     << ")!!!!" << THLA_ENDL;
-            send_hs( stdout, (char *)message.str().c_str() );
+            send_hs( stdout, message.str().c_str() );
          }
          software_frame_sec = Int64BaseTime::to_seconds( least_common_time_step );
          exec_set_software_frame( software_frame_sec );
+
       } else {
          // This must mean that the ExCO Least Common Time Step (LCTS) is
          // an integer multiple of the federates software frame. So,
@@ -430,15 +444,16 @@ void ExecutionConfiguration::set_root_frame_name(
    char const *name )
 {
    // Free the Trick memory if it's already allocated.
-   if ( this->root_frame_name != static_cast< char * >( NULL ) ) {
-      if ( TMM_is_alloced( this->root_frame_name ) ) {
-         TMM_delete_var_a( this->root_frame_name );
+   if ( this->root_frame_name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->root_frame_name ) ) ) {
+         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::set_root_frame_name():%d ERROR deleting Trick Memory for 'this->root_frame_name'%c",
+                  __LINE__, THLA_NEWLINE );
       }
-      this->root_frame_name = static_cast< char * >( NULL );
+      this->root_frame_name = NULL;
    }
 
    // Allocate and duplicate the new root reference frame name.
-   this->root_frame_name = TMM_strdup( (char *)name );
+   this->root_frame_name = trick_MM->mm_strdup( const_cast< char * >( name ) );
 }
 
 /*!
@@ -589,8 +604,8 @@ void ExecutionConfiguration::setup_ref_attributes(
 
    // Set up attributes.
    this->attr_count = 7;
-   this->attributes = (Attribute *)trick_MM->declare_var( "Attribute", this->attr_count );
-   if ( this->attributes == static_cast< Attribute * >( NULL ) ) {
+   this->attributes = static_cast< Attribute * >( trick_MM->declare_var( "Attribute", this->attr_count ) );
+   if ( this->attributes == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for the attributes of the ExCO!"
@@ -629,7 +644,7 @@ void ExecutionConfiguration::setup_ref_attributes(
 
    // Allocate the Trick REF2 data structure.
    REF2 const *exco_ref2 = reinterpret_cast< REF2 * >( malloc( sizeof( REF2 ) ) );
-   if ( exco_ref2 == static_cast< REF2 * >( NULL ) ) {
+   if ( exco_ref2 == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for the REF2 structure for"
@@ -641,7 +656,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    // entries: 1) the 'root_frame_name' parameter and 2) an empty entry
    // marking the end of the structure.
    ATTRIBUTES *exco_attr = reinterpret_cast< ATTRIBUTES * >( malloc( 2 * sizeof( ATTRIBUTES ) ) );
-   if ( exco_attr == static_cast< ATTRIBUTES * >( NULL ) ) {
+   if ( exco_attr == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for the ATTRIBUTES for the"
@@ -683,7 +698,7 @@ void ExecutionConfiguration::setup_ref_attributes(
           << " FOM-Parameter:'" << this->attributes[0].get_FOM_name() << "'"
           << " NOTE: This is an auto-generated parameter so there is no"
           << " associated 'Trick-Name'." << THLA_NEWLINE;
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
@@ -693,7 +708,7 @@ void ExecutionConfiguration::setup_ref_attributes(
           << "--------------- Trick REF-Attributes ---------------"
           << endl
           << " Object FOM name:'" << this->FOM_name << "'" << THLA_NEWLINE;
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 }
 
@@ -713,7 +728,7 @@ void ExecutionConfiguration::print_execution_configuration()
           << "\t next_execution_mode:     " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( next_execution_mode ) ) << endl
           << "\t least_common_time_step:  " << least_common_time_step << " " << Int64BaseTime::get_units() << endl
           << "=============================================================" << THLA_ENDL;
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 }
 

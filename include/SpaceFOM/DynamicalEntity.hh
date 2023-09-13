@@ -82,11 +82,11 @@ class DynamicalEntity : public SpaceFOM::PhysicalEntity, public SpaceFOM::Dynami
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to pack the data before the data is sent to the RTI. */
-   virtual void pack();
+   virtual void pack(); // cppcheck-suppress [uselessOverride]
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to unpack the data after data is received from the RTI. */
-   virtual void unpack();
+   virtual void unpack(); // cppcheck-suppress [uselessOverride]
 
   protected:
    DynamicalEntityData *dynamical_data; ///< @trick_units{--} Dynamical entity data.

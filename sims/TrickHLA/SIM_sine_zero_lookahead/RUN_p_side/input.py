@@ -118,7 +118,7 @@ THLA.simple_sim_config.run_duration = run_duration
 
 # TrickHLA Interactions and Parameters.
 THLA.manager.inter_count  = 1
-THLA.manager.interactions = trick.alloc_type( THLA.manager.inter_count, 'TrickHLA::Interaction' )
+THLA.manager.interactions = trick.sim_services.alloc_type( THLA.manager.inter_count, 'TrickHLA::Interaction' )
 
 THLA.manager.interactions[0].FOM_name    = 'Communication'
 THLA.manager.interactions[0].publish     = False

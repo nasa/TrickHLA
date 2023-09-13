@@ -123,7 +123,7 @@ void TimedSyncPnt::convert( LoggableSyncPnt &log_sync_pnt )
       errmsg
          << "TimedSyncPnt::convert():" << __LINE__
          << ": Could not cast synchronization point to timed synchronization point!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
       log_sync_pnt.label = StringUtilities::ip_strdup_wstring( this->label );
       log_sync_pnt.state = this->state;
    } else {

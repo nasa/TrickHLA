@@ -31,7 +31,7 @@
 
 //==========================================================================
 // Trick HLA and SpaceFOM include files used in SimObject definitions or
-// for inputfile instantiations.
+// for input file instantiations.
 //==========================================================================
 // This is needed for CTE timeline instantiation in the input file.
 ##include "TrickHLA/CTETimelineBase.hh"
@@ -47,6 +47,7 @@
  using namespace SpaceFOM;
 %}
 
+
 //==========================================================================
 // SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
 // initialization SimObject.
@@ -60,7 +61,6 @@ class THLAInitSimObject : public Trick::SimObject {
       : thla_manager( thla_mngr ),
         thla_federate( thla_fed )
    {
-
       //--------------------------------------------------------------------
       // NOTE: Initialization phase numbers must be greater than P60 
       // (i.e. P_HLA_INIT) so that the initialization jobs run after the
@@ -71,12 +71,12 @@ class THLAInitSimObject : public Trick::SimObject {
 
       // Send all the initialization data.
       P100 ("initialization") thla_manager.send_init_data();
-      
+
       // Wait to receive all the initialization data.
       P100 ("initialization") thla_manager.receive_init_data();
-      
+
       // Do some processing here if needed...
-      
+
       // Clear remaining initialization sync-points.
       P100 ("initialization") thla_manager.clear_init_sync_points();
    }
@@ -84,14 +84,13 @@ class THLAInitSimObject : public Trick::SimObject {
  private:
    TrickHLA::Manager  & thla_manager;
    TrickHLA::Federate & thla_federate;
-	
+
    // Do not allow the implicit copy constructor or assignment operator.
    THLAInitSimObject( THLAInitSimObject const & rhs );
    THLAInitSimObject & operator=( THLAInitSimObject const & rhs );
-	
+
    // Do not allow the default constructor.
    THLAInitSimObject();
-
 };
 
 
@@ -161,8 +160,6 @@ class SpaceFOMRefFrameTreeSimObject : public RefFrameTreeBaseSimObject {
    // This object is not copyable
    SpaceFOMRefFrameTreeSimObject( SpaceFOMRefFrameTreeSimObject const & );
    SpaceFOMRefFrameTreeSimObject & operator=( SpaceFOMRefFrameTreeSimObject const & );
-
-
 };
 
 
@@ -175,7 +172,7 @@ class SpaceFOMRefFrameTreeSimObject : public RefFrameTreeBaseSimObject {
 class SpaceFOMRefFrameSimObject : public Trick::SimObject {
 
   public:
-   
+
    /* HLA associated reference frames packing object. */
    SpaceFOM::RefFrameState frame_packing;
 
@@ -197,7 +194,6 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
    // This object is not copyable
    SpaceFOMRefFrameSimObject( SpaceFOMRefFrameSimObject const & );
    SpaceFOMRefFrameSimObject & operator=( SpaceFOMRefFrameSimObject const & );
-
 };
 
 

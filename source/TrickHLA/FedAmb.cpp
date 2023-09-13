@@ -798,7 +798,7 @@ void FedAmb::removeObjectInstance(
       StringUtilities::to_string( id_str, theObject );
 
       if ( theUserSuppliedTag.size() > 0 ) {
-         char const *tag = (char const *)theUserSuppliedTag.data();
+         char const *tag = static_cast< char const * >( theUserSuppliedTag.data() );
          send_hs( stdout, "FedAmb::removeObjectInstance():%d User-Supplied-Tag='%s' Instance-ID:%s Valid-ID:%s %c",
                   __LINE__, tag, id_str.c_str(),
                   ( theObject.isValid() ? "Yes" : "No" ), THLA_NEWLINE );
@@ -834,7 +834,7 @@ void FedAmb::removeObjectInstance(
       time.set( theTime );
 
       if ( theUserSuppliedTag.size() > 0 ) {
-         char const *tag = (char const *)theUserSuppliedTag.data();
+         char const *tag = static_cast< char const * >( theUserSuppliedTag.data() );
          send_hs( stdout, "FedAmb::removeObjectInstance():%d tag='%s' Instance-ID:%s HLA-time:%.12G seconds.%c",
                   __LINE__, tag, id_str.c_str(), time.get_time_in_seconds(), THLA_NEWLINE );
       } else {
@@ -867,7 +867,7 @@ void FedAmb::removeObjectInstance(
       time.set( theTime );
 
       if ( theUserSuppliedTag.size() > 0 ) {
-         char const *tag = (char const *)theUserSuppliedTag.data();
+         char const *tag = static_cast< char const * >( theUserSuppliedTag.data() );
          send_hs( stdout, "FedAmb::removeObjectInstance():%d tag='%s' Instance-ID:%s HLA-time:%.12G seconds.%c",
                   __LINE__, tag, id_str.c_str(), time.get_time_in_seconds(), THLA_NEWLINE );
       } else {
@@ -988,7 +988,7 @@ void FedAmb::requestAttributeOwnershipAssumption(
    RTI1516_NAMESPACE::AttributeHandleSet const &offeredAttributes,
    RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   char const *tag = (char const *)theUserSuppliedTag.data();
+   char const *tag = static_cast< char const * >( theUserSuppliedTag.data() );
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       send_hs( stdout, "FedAmb::requestAttributeOwnershipAssumption():%d push request received, tag='%s'%c",
                __LINE__, tag, THLA_NEWLINE );
@@ -1324,7 +1324,7 @@ void FedAmb::requestAttributeOwnershipRelease(
    RTI1516_NAMESPACE::AttributeHandleSet const &candidateAttributes,
    RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
-   char const *tag = (char const *)theUserSuppliedTag.data();
+   char const *tag = static_cast< char const * >( theUserSuppliedTag.data() );
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       send_hs( stdout, "FedAmb::requestAttributeOwnershipRelease():%d pull request received, tag='%s'%c",
                __LINE__, tag, THLA_NEWLINE );

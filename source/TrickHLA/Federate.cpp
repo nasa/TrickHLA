@@ -57,14 +57,14 @@ NASA, Johnson Space Center\n
 #include <time.h>
 
 // Trick include files.
-#include "trick/Clock.hh"
-#include "trick/Executive.hh"
-#include "trick/exec_proto.h"
-
 #include "trick/CheckPointRestart.hh"
 #include "trick/CheckPointRestart_c_intf.hh"
+#include "trick/Clock.hh"
 #include "trick/DataRecordDispatcher.hh" //DANNY2.7 need the_drd to init data recording groups when restoring at init time (IMSIM)
+#include "trick/Executive.hh"
+#include "trick/MemoryManager.hh"
 #include "trick/command_line_protos.h"
+#include "trick/exec_proto.h"
 #include "trick/input_processor_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
@@ -230,69 +230,80 @@ Federate::Federate()
 Federate::~Federate()
 {
    // Free the memory used for the federate name.
-   if ( name != static_cast< char * >( NULL ) ) {
-      if ( TMM_is_alloced( name ) ) {
-         TMM_delete_var_a( name );
+   if ( name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
+         send_hs( stderr, "Federate::~Federate():%d ERROR deleting Trick Memory for 'name'%c",
+                  __LINE__, THLA_NEWLINE );
       }
-      name = static_cast< char * >( NULL );
+      name = NULL;
    }
 
    // Free the memory used for the federate type.
-   if ( type != static_cast< char * >( NULL ) ) {
-      if ( TMM_is_alloced( type ) ) {
-         TMM_delete_var_a( type );
+   if ( type != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( type ) ) ) {
+         send_hs( stderr, "Federate::~Federate():%d ERROR deleting Trick Memory for 'type'%c",
+                  __LINE__, THLA_NEWLINE );
       }
-      type = static_cast< char * >( NULL );
+      type = NULL;
    }
 
    // Free the memory used for local-settings
-   if ( local_settings != static_cast< char * >( NULL ) ) {
-      if ( TMM_is_alloced( local_settings ) ) {
-         TMM_delete_var_a( local_settings );
+   if ( local_settings != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( local_settings ) ) ) {
+         send_hs( stderr, "Federate::~Federate():%d ERROR deleting Trick Memory for 'local_settings'%c",
+                  __LINE__, THLA_NEWLINE );
       }
-      local_settings = static_cast< char * >( NULL );
+      local_settings = NULL;
    }
 
    // Free the memory used for the Federation Execution name.
-   if ( federation_name != static_cast< char * >( NULL ) ) {
-      if ( TMM_is_alloced( federation_name ) ) {
-         TMM_delete_var_a( federation_name );
+   if ( federation_name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( federation_name ) ) ) {
+         send_hs( stderr, "Federate::~Federate():%d ERROR deleting Trick Memory for 'federation_name'%c",
+                  __LINE__, THLA_NEWLINE );
       }
-      federation_name = static_cast< char * >( NULL );
+      federation_name = NULL;
    }
 
    // Free the memory used by the FOM module filenames.
-   if ( FOM_modules != static_cast< char * >( NULL ) ) {
-      if ( TMM_is_alloced( FOM_modules ) ) {
-         TMM_delete_var_a( FOM_modules );
+   if ( FOM_modules != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( FOM_modules ) ) ) {
+         send_hs( stderr, "Federate::~Federate():%d ERROR deleting Trick Memory for 'FOM_modules'%c",
+                  __LINE__, THLA_NEWLINE );
       }
-      FOM_modules = static_cast< char * >( NULL );
+      FOM_modules = NULL;
    }
-   if ( MIM_module != static_cast< char * >( NULL ) ) {
-      if ( TMM_is_alloced( MIM_module ) ) {
-         TMM_delete_var_a( MIM_module );
+   if ( MIM_module != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( MIM_module ) ) ) {
+         send_hs( stderr, "Federate::~Federate():%d ERROR deleting Trick Memory for 'MIM_module'%c",
+                  __LINE__, THLA_NEWLINE );
       }
-      MIM_module = static_cast< char * >( NULL );
+      MIM_module = NULL;
    }
 
    // Free the memory used by the array of known Federates for the Federation.
-   if ( known_feds != static_cast< KnownFederate * >( NULL ) ) {
+   if ( known_feds != NULL ) {
       for ( unsigned int i = 0; i < known_feds_count; ++i ) {
-         if ( known_feds[i].MOM_instance_name != static_cast< char * >( NULL ) ) {
-            if ( TMM_is_alloced( known_feds[i].MOM_instance_name ) ) {
-               TMM_delete_var_a( known_feds[i].MOM_instance_name );
+         if ( known_feds[i].MOM_instance_name != NULL ) {
+            if ( trick_MM->delete_var( static_cast< void * >( known_feds[i].MOM_instance_name ) ) ) {
+               send_hs( stderr, "Federate::~Federate():%d ERROR deleting Trick Memory for 'known_feds[i].MOM_instance_name'%c",
+                        __LINE__, THLA_NEWLINE );
             }
-            known_feds[i].MOM_instance_name = static_cast< char * >( NULL );
+            known_feds[i].MOM_instance_name = NULL;
          }
-         if ( known_feds[i].name != static_cast< char * >( NULL ) ) {
-            if ( TMM_is_alloced( known_feds[i].name ) ) {
-               TMM_delete_var_a( known_feds[i].name );
+         if ( known_feds[i].name != NULL ) {
+            if ( trick_MM->delete_var( static_cast< void * >( known_feds[i].name ) ) ) {
+               send_hs( stderr, "Federate::~Federate():%d ERROR deleting Trick Memory for 'known_feds[i].name'%c",
+                        __LINE__, THLA_NEWLINE );
             }
-            known_feds[i].name = static_cast< char * >( NULL );
+            known_feds[i].name = NULL;
          }
       }
-      TMM_delete_var_a( known_feds );
-      known_feds       = static_cast< KnownFederate       *>( NULL );
+      if ( trick_MM->delete_var( static_cast< void * >( known_feds ) ) ) {
+         send_hs( stderr, "Federate::~Federate():%d ERROR deleting Trick Memory for 'known_feds'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      known_feds       = NULL;
       known_feds_count = 0;
    }
 
@@ -315,7 +326,7 @@ Federate::~Federate()
    mom_HLAfederate_inst_name_map.clear();
 
    // Set the references to the ambassadors.
-   federate_ambassador = static_cast< FedAmb * >( NULL );
+   federate_ambassador = NULL;
 
    // Make sure we unlock the mutex.
    (void)time_adv_state_mutex.unlock();
@@ -339,7 +350,7 @@ void Federate::print_version() const
           << "TrickHLA-release-date:'" << Utilities::get_release_date() << "'" << endl
           << "             RTI-name:'" << rti_name << "'" << endl
           << "          RTI-version:'" << rti_version << "'" << endl;
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 }
 
@@ -481,7 +492,7 @@ void Federate::initialize()
 
    // If a federate type is not specified make it the same as the federate name.
    if ( ( type == NULL ) || ( *type == '\0' ) ) {
-      type = TMM_strdup( name );
+      type = trick_MM->mm_strdup( name );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -558,7 +569,7 @@ void Federate::restart_initialization()
    // Update the lookahead time in our HLA time line.
    set_lookahead( lookahead_time );
 
-   if ( federate_ambassador == static_cast< FedAmb * >( NULL ) ) {
+   if ( federate_ambassador == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::restart_initialization():" << __LINE__
              << " ERROR: NULL pointer to FederateAmbassador!" << THLA_ENDL;
@@ -612,7 +623,7 @@ void Federate::restart_initialization()
    if ( enable_known_feds ) {
 
       // Only need to do anything if there are known federates.
-      if ( ( known_feds_count <= 0 ) || ( known_feds == static_cast< KnownFederate * >( NULL ) ) ) {
+      if ( ( known_feds_count <= 0 ) || ( known_feds == NULL ) ) {
 
          // Make sure the count reflects the state of the array.
          known_feds_count = 0;
@@ -629,7 +640,7 @@ void Federate::restart_initialization()
       for ( unsigned int i = 0; i < known_feds_count; ++i ) {
 
          // A NULL or zero length Federate name is not allowed.
-         if ( ( known_feds[i].name == static_cast< char * >( NULL ) ) || ( *known_feds[i].name == '\0' ) ) {
+         if ( ( known_feds[i].name == NULL ) || ( *known_feds[i].name == '\0' ) ) {
             ostringstream errmsg;
             errmsg << "Federate::restart_initialization():" << __LINE__
                    << " ERROR: Invalid name of known Federate at array index: "
@@ -733,13 +744,13 @@ void Federate::create_RTI_ambassador_and_connect()
              << " WARNING: Local settings designator 'THLA.federate.local_settings'"
              << " for the RTI-Ambassador connection was not specified in the"
              << " input.py file, using HLA-Evolved vendor defaults." << THLA_ENDL;
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       } else {
          ostringstream msg;
          msg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
              << " Local settings designator for RTI-Ambassador connection:\n'"
              << local_settings << "'" << THLA_ENDL;
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       }
    }
 
@@ -967,10 +978,11 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       //
       // First 4 bytes (first 32-bit integer) is the number of elements.
       // Decode size from Big Endian encoded integer.
-      unsigned char *data = (unsigned char *)attr_iter->second.data();
-      size_t         size = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN )
-                               ? (size_t)Utilities::byteswap_int( *(int *)data )
-                               : ( size_t ) * (int *)data;
+      unsigned char const *data = static_cast< unsigned char const * >( attr_iter->second.data() );
+
+      size_t size = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN )
+                       ? Utilities::byteswap_int( *reinterpret_cast< int const * >( data ) )
+                       : *reinterpret_cast< int const * >( data );
       if ( size != 4 ) {
          ostringstream errmsg;
          errmsg << "Federate::set_MOM_HLAfederate_instance_attributes():"
@@ -1060,7 +1072,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       if ( is_federate_executing() ) {
          bool found = false;
          for ( int loop = 0; loop < running_feds_count; ++loop ) {
-            char *tName = StringUtilities::ip_strdup_wstring( federate_name_ws );
+            char const *tName = StringUtilities::ip_strdup_wstring( federate_name_ws );
             if ( !strcmp( running_feds[loop].name, tName ) ) {
                found = true;
                break;
@@ -1172,7 +1184,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          summary << THLA_ENDL;
-         send_hs( stdout, (char *)summary.str().c_str() );
+         send_hs( stdout, summary.str().c_str() );
       }
 
       string fed_mom_instance_name;
@@ -1189,7 +1201,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          summary << THLA_ENDL;
-         send_hs( stdout, (char *)summary.str().c_str() );
+         send_hs( stdout, summary.str().c_str() );
       }
 
       ostringstream errmsg;
@@ -1203,7 +1215,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          summary << THLA_ENDL;
-         send_hs( stdout, (char *)summary.str().c_str() );
+         send_hs( stdout, summary.str().c_str() );
       }
 
       ostringstream errmsg;
@@ -1217,7 +1229,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          summary << THLA_ENDL;
-         send_hs( stdout, (char *)summary.str().c_str() );
+         send_hs( stdout, summary.str().c_str() );
       }
 
       string rti_err_msg;
@@ -1234,7 +1246,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          summary << THLA_ENDL;
-         send_hs( stdout, (char *)summary.str().c_str() );
+         send_hs( stdout, summary.str().c_str() );
       }
 
       string rti_err_msg;
@@ -1251,7 +1263,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       summary << THLA_ENDL;
-      send_hs( stdout, (char *)summary.str().c_str() );
+      send_hs( stdout, summary.str().c_str() );
    }
 }
 
@@ -1431,7 +1443,7 @@ string Federate::wait_for_required_federates_to_join()
       required_fed_summary << THLA_ENDL;
 
       // Display a summary of the required federate by name.
-      send_hs( stdout, (char *)required_fed_summary.str().c_str() );
+      send_hs( stdout, required_fed_summary.str().c_str() );
 
       // Display a message that we are requesting the federate names.
       send_hs( stdout, "Federate::wait_for_required_federates_to_join():%d Requesting list of joined federates from CRC.%c",
@@ -1548,7 +1560,7 @@ string Federate::wait_for_required_federates_to_join()
             summary << THLA_ENDL;
 
             // Display the federate summary.
-            send_hs( stdout, (char *)summary.str().c_str() );
+            send_hs( stdout, summary.str().c_str() );
          }
       } // Mutex protection goes out of scope here
 
@@ -3715,7 +3727,7 @@ void Federate::join_federation(
              << " ERROR: NULL pointer to RTIambassador!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
-   if ( federate_ambassador == static_cast< FedAmb * >( NULL ) ) {
+   if ( federate_ambassador == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::join_federation():" << __LINE__
              << " ERROR: NULL pointer to FederateAmbassador!" << THLA_ENDL;
@@ -3727,7 +3739,7 @@ void Federate::join_federation(
          errmsg << "Federate::join_federation():" << __LINE__
                 << " Federation '" << get_federation_name()
                 << "': ALREADY JOINED FEDERATION EXECUTION" << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
+         send_hs( stderr, errmsg.str().c_str() );
       }
       return;
    }
@@ -3919,7 +3931,7 @@ void Federate::create_and_join_federation()
          errmsg << "Federate::create_and_join_federation():" << __LINE__
                 << " Federation \"" << get_federation_name()
                 << "\": ALREADY JOINED FEDERATION EXECUTION" << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
+         send_hs( stderr, errmsg.str().c_str() );
       }
       return;
    }
@@ -4932,8 +4944,7 @@ void Federate::wait_for_zero_lookahead_TARA_TAG()
  */
 void Federate::associate_to_trick_child_thread(
    unsigned int const thread_id,
-   double const       data_cycle,
-   string const      &obj_insance_names )
+   double const       data_cycle )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::associate_to_trick_child_thread():%d Trick child thread (id:%d, data_cycle:%.3f).%c",
@@ -4952,7 +4963,16 @@ void Federate::associate_to_trick_child_thread(
    }
 
    // Delegate to the Trick child thread coordinator.
-   this->thread_coordinator.associate_to_trick_child_thread( thread_id, data_cycle, obj_insance_names );
+   this->thread_coordinator.associate_to_trick_child_thread( thread_id, data_cycle );
+}
+
+/*!
+ * @brief Verify the thread IDs assoicated to the objects.
+ * */
+void Federate::verify_trick_child_thread_associations()
+{
+   // Delegate to the Trick child thread coordinator.
+   this->thread_coordinator.verify_trick_child_thread_associations();
 }
 
 /*!
@@ -5275,7 +5295,7 @@ void Federate::shutdown()
              << " send_count:" << this->manager->objects[i].send_count
              << " receive_count:" << this->manager->objects[i].receive_count
              << endl;
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       }
 #endif
 
@@ -5286,7 +5306,7 @@ void Federate::shutdown()
              << " Object[" << i << "]:'" << this->manager->objects[i].get_name() << "' "
              << this->manager->objects[i].elapsed_time_stats.to_string()
              << endl;
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       }
 #endif
 
@@ -5573,7 +5593,7 @@ void Federate::resign()
              << "' Federation because it received an EXCEPTION: "
              << "FederateNotExecutionMember" << THLA_ENDL;
 
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( NotConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -5589,7 +5609,7 @@ void Federate::resign()
              << "NotConnected" << THLA_ENDL;
 
       // Just display an error message and don't terminate if we are not connected.
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( CallNotAllowedFromWithinCallback const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -5702,7 +5722,7 @@ Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federat
              << "' Federation received an EXCEPTION: "
              << "FederateOwnsAttributes" << THLA_ENDL;
 
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( FederateNotExecutionMember const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -5974,27 +5994,27 @@ void Federate::set_federation_name(
    string const &exec_name )
 {
    // Check for a NULL current federatin name or a self assigned name.
-   if ( ( this->federation_name == static_cast< char * >( NULL ) )
-        || ( this->federation_name != exec_name ) ) {
+   if ( ( this->federation_name == NULL ) || ( this->federation_name != exec_name ) ) {
 
       // Check for an empty (i.e. zero length) name.
       if ( !exec_name.empty() ) {
 
          // Reallocate and set the federation execution name.
-         if ( this->federation_name != static_cast< char * >( NULL ) ) {
-            if ( TMM_is_alloced( federation_name ) ) {
-               TMM_delete_var_a( federation_name );
+         if ( this->federation_name != NULL ) {
+            if ( trick_MM->delete_var( static_cast< void * >( this->federation_name ) ) ) {
+               send_hs( stderr, "Federate::set_federation_name():%d ERROR deleting Trick Memory for 'federation_name'%c",
+                        __LINE__, THLA_NEWLINE );
             }
-            this->federation_name = static_cast< char * >( NULL );
+            this->federation_name = NULL;
          }
 
          // Set the federation execution name.
-         this->federation_name = TMM_strdup( (char *)exec_name.c_str() );
+         this->federation_name = trick_MM->mm_strdup( const_cast< char * >( exec_name.c_str() ) );
       } else {
 
          // Set to a default value if not already set in the input stream.
-         if ( this->federation_name == static_cast< char * >( NULL ) ) {
-            this->federation_name = TMM_strdup( (char *)"TrickHLA Federation" );
+         if ( this->federation_name == NULL ) {
+            this->federation_name = trick_MM->mm_strdup( const_cast< char * >( "TrickHLA Federation" ) );
          }
       }
    }
@@ -6335,7 +6355,7 @@ MOM just informed us that there are %d federates currently running in the federa
       summary << THLA_ENDL;
 
       // Display the federate summary.
-      send_hs( stdout, (char *)summary.str().c_str() );
+      send_hs( stdout, summary.str().c_str() );
    }
 
    // clear the entry since it was absorbed into running_feds...
@@ -6352,23 +6372,28 @@ MOM just informed us that there are %d federates currently running in the federa
 
 void Federate::clear_running_feds()
 {
-   if ( this->running_feds != static_cast< KnownFederate * >( NULL ) ) {
+   if ( this->running_feds != NULL ) {
       for ( unsigned int i = 0; i < running_feds_count; ++i ) {
-         if ( this->running_feds[i].MOM_instance_name != static_cast< char * >( NULL ) ) {
-            if ( TMM_is_alloced( this->running_feds[i].MOM_instance_name ) ) {
-               TMM_delete_var_a( this->running_feds[i].MOM_instance_name );
+         if ( this->running_feds[i].MOM_instance_name != NULL ) {
+            if ( trick_MM->delete_var( static_cast< void * >( this->running_feds[i].MOM_instance_name ) ) ) {
+               send_hs( stderr, "Federate::clear_running_feds():%d ERROR deleting Trick Memory for 'this->running_feds[i].MOM_instance_name'%c",
+                        __LINE__, THLA_NEWLINE );
             }
-            this->running_feds[i].MOM_instance_name = static_cast< char * >( NULL );
+            this->running_feds[i].MOM_instance_name = NULL;
          }
-         if ( this->running_feds[i].name != static_cast< char * >( NULL ) ) {
-            if ( TMM_is_alloced( this->running_feds[i].name ) ) {
-               TMM_delete_var_a( this->running_feds[i].name );
+         if ( this->running_feds[i].name != NULL ) {
+            if ( trick_MM->delete_var( static_cast< void * >( this->running_feds[i].name ) ) ) {
+               send_hs( stderr, "Federate::clear_running_feds():%d ERROR deleting Trick Memory for 'this->running_feds[i].name'%c",
+                        __LINE__, THLA_NEWLINE );
             }
-            this->running_feds[i].name = static_cast< char * >( NULL );
+            this->running_feds[i].name = NULL;
          }
       }
-      TMM_delete_var_a( this->running_feds );
-      this->running_feds = static_cast< KnownFederate * >( NULL );
+      if ( trick_MM->delete_var( static_cast< void * >( this->running_feds ) ) ) {
+         send_hs( stderr, "Federate::clear_running_feds():%d ERROR deleting Trick Memory for 'this->running_feds'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      this->running_feds = NULL;
    }
 }
 
@@ -6378,7 +6403,7 @@ void Federate::update_running_feds()
    running_feds = reinterpret_cast< KnownFederate * >(
       alloc_type( running_feds_count, "TrickHLA::KnownFederate" ) );
 
-   if ( running_feds == static_cast< KnownFederate * >( NULL ) ) {
+   if ( running_feds == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::update_running_feds():" << __LINE__
              << " ERROR: Could not allocate memory for running_feds!" << THLA_ENDL;
@@ -6439,7 +6464,7 @@ void Federate::add_a_single_entry_into_running_feds()
    temp_feds = reinterpret_cast< KnownFederate * >(
       alloc_type( running_feds_count + 1, "TrickHLA::KnownFederate" ) );
 
-   if ( temp_feds == static_cast< KnownFederate * >( NULL ) ) {
+   if ( temp_feds == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::add_a_single_entry_into_running_feds():" << __LINE__
              << " ERROR: Could not allocate memory for temp_feds when attempting to add"
@@ -6450,8 +6475,8 @@ void Federate::add_a_single_entry_into_running_feds()
 
       // copy current running_feds entries into temporary structure...
       for ( unsigned int i = 0; i < running_feds_count; ++i ) {
-         temp_feds[i].MOM_instance_name = TMM_strdup( running_feds[i].MOM_instance_name );
-         temp_feds[i].name              = TMM_strdup( running_feds[i].name );
+         temp_feds[i].MOM_instance_name = trick_MM->mm_strdup( running_feds[i].MOM_instance_name );
+         temp_feds[i].name              = trick_MM->mm_strdup( running_feds[i].name );
          temp_feds[i].required          = running_feds[i].required;
       }
 
@@ -6521,7 +6546,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    for ( unsigned int i = 0; i < running_feds_count; ++i ) {
       if ( !strcmp( running_feds[i].MOM_instance_name, tMOMName ) ) {
          foundName = true;
-         tFedName  = TMM_strdup( running_feds[i].name );
+         tFedName  = trick_MM->mm_strdup( running_feds[i].name );
       }
    }
 
@@ -6538,7 +6563,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    // allocate temporary list...
    tmp_feds = reinterpret_cast< KnownFederate * >(
       alloc_type( this->running_feds_count - 1, "TrickHLA::KnownFederate" ) );
-   if ( tmp_feds == static_cast< KnownFederate * >( NULL ) ) {
+   if ( tmp_feds == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::remove_discovered_object_federate_instance_id():" << __LINE__
              << " ERROR: Could not allocate memory for tmp_feds!" << THLA_ENDL;
@@ -6550,9 +6575,9 @@ void Federate::remove_MOM_HLAfederate_instance_id(
       // if the name is not the one we are looking for...
       if ( strcmp( this->running_feds[i].name, tFedName ) ) {
          if ( this->running_feds[i].MOM_instance_name != NULL ) {
-            tmp_feds[tmp_feds_cnt].MOM_instance_name = TMM_strdup( this->running_feds[i].MOM_instance_name );
+            tmp_feds[tmp_feds_cnt].MOM_instance_name = trick_MM->mm_strdup( this->running_feds[i].MOM_instance_name );
          }
-         tmp_feds[tmp_feds_cnt].name     = TMM_strdup( this->running_feds[i].name );
+         tmp_feds[tmp_feds_cnt].name     = trick_MM->mm_strdup( this->running_feds[i].name );
          tmp_feds[tmp_feds_cnt].required = this->running_feds[i].required;
          ++tmp_feds_cnt;
       }
@@ -6611,8 +6636,8 @@ void Federate::write_running_feds_file(
 
       // echo the contents of running_feds into file...
       for ( unsigned int i = 0; i < this->running_feds_count; ++i ) {
-         file << TMM_strdup( this->running_feds[i].MOM_instance_name ) << endl;
-         file << TMM_strdup( this->running_feds[i].name ) << endl;
+         file << trick_MM->mm_strdup( this->running_feds[i].MOM_instance_name ) << endl;
+         file << trick_MM->mm_strdup( this->running_feds[i].name ) << endl;
          file << this->running_feds[i].required << endl;
       }
 
@@ -6811,20 +6836,25 @@ void Federate::read_running_feds_file(
 
       // clear out the known_feds from memory...
       for ( unsigned int i = 0; i < known_feds_count; ++i ) {
-         if ( this->known_feds[i].MOM_instance_name != static_cast< char * >( NULL ) ) {
-            if ( TMM_is_alloced( this->known_feds[i].MOM_instance_name ) ) {
-               TMM_delete_var_a( this->known_feds[i].MOM_instance_name );
+         if ( this->known_feds[i].MOM_instance_name != NULL ) {
+            if ( trick_MM->delete_var( static_cast< void * >( this->known_feds[i].MOM_instance_name ) ) ) {
+               send_hs( stderr, "Federate::read_running_feds_file():%d ERROR deleting Trick Memory for 'this->known_feds[i].MOM_instance_name'%c",
+                        __LINE__, THLA_NEWLINE );
             }
-            this->known_feds[i].MOM_instance_name = static_cast< char * >( NULL );
+            this->known_feds[i].MOM_instance_name = NULL;
          }
-         if ( this->known_feds[i].name != static_cast< char * >( NULL ) ) {
-            if ( TMM_is_alloced( this->known_feds[i].name ) ) {
-               TMM_delete_var_a( this->known_feds[i].name );
+         if ( this->known_feds[i].name != NULL ) {
+            if ( trick_MM->delete_var( static_cast< void * >( this->known_feds[i].name ) ) ) {
+               send_hs( stderr, "Federate::read_running_feds_file():%d ERROR deleting Trick Memory for 'this->known_feds[i].name'%c",
+                        __LINE__, THLA_NEWLINE );
             }
-            this->known_feds[i].name = static_cast< char * >( NULL );
+            this->known_feds[i].name = NULL;
          }
       }
-      TMM_delete_var_a( this->known_feds );
+      if ( trick_MM->delete_var( static_cast< void * >( this->known_feds ) ) ) {
+         send_hs( stderr, "Federate::read_running_feds_file():%d ERROR deleting Trick Memory for 'this->known_feds'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
       this->known_feds = NULL;
 
       file >> this->known_feds_count;
@@ -6832,7 +6862,7 @@ void Federate::read_running_feds_file(
       // re-allocate it...
       this->known_feds = reinterpret_cast< KnownFederate * >(
          alloc_type( this->known_feds_count, "TrickHLA::KnownFederate" ) );
-      if ( this->known_feds == static_cast< KnownFederate * >( NULL ) ) {
+      if ( this->known_feds == NULL ) {
          ostringstream errmsg;
          errmsg << "Federate::read_running_feds_file():" << __LINE__
                 << " ERROR: Could not allocate memory for known_feds!" << THLA_ENDL;
@@ -6842,10 +6872,10 @@ void Federate::read_running_feds_file(
       string current_line;
       for ( unsigned int i = 0; i < this->known_feds_count; ++i ) {
          file >> current_line;
-         this->known_feds[i].MOM_instance_name = TMM_strdup( (char *)current_line.c_str() );
+         this->known_feds[i].MOM_instance_name = trick_MM->mm_strdup( const_cast< char * >( current_line.c_str() ) );
 
          file >> current_line;
-         this->known_feds[i].name = TMM_strdup( (char *)current_line.c_str() );
+         this->known_feds[i].name = trick_MM->mm_strdup( const_cast< char * >( current_line.c_str() ) );
 
          file >> current_line;
          this->known_feds[i].required = atoi( current_line.c_str() );
@@ -6864,26 +6894,30 @@ void Federate::copy_running_feds_into_known_feds()
 {
    // clear out the known_feds from memory...
    for ( unsigned int i = 0; i < this->known_feds_count; ++i ) {
-      if ( this->known_feds[i].MOM_instance_name != static_cast< char * >( NULL ) ) {
-
-         if ( TMM_is_alloced( this->known_feds[i].MOM_instance_name ) ) {
-            TMM_delete_var_a( this->known_feds[i].MOM_instance_name );
+      if ( this->known_feds[i].MOM_instance_name != NULL ) {
+         if ( trick_MM->delete_var( static_cast< void * >( this->known_feds[i].MOM_instance_name ) ) ) {
+            send_hs( stderr, "Federate::copy_running_feds_into_known_feds():%d ERROR deleting Trick Memory for 'this->known_feds[i].MOM_instance_name_name'%c",
+                     __LINE__, THLA_NEWLINE );
          }
-         this->known_feds[i].MOM_instance_name = static_cast< char * >( NULL );
+         this->known_feds[i].MOM_instance_name = NULL;
       }
-      if ( this->known_feds[i].name != static_cast< char * >( NULL ) ) {
-         if ( TMM_is_alloced( this->known_feds[i].name ) ) {
-            TMM_delete_var_a( this->known_feds[i].name );
+      if ( this->known_feds[i].name != NULL ) {
+         if ( trick_MM->delete_var( static_cast< void * >( this->known_feds[i].name ) ) ) {
+            send_hs( stderr, "Federate::copy_running_feds_into_known_feds():%d ERROR deleting Trick Memory for 'this->known_feds[i].name'%c",
+                     __LINE__, THLA_NEWLINE );
          }
-         this->known_feds[i].name = static_cast< char * >( NULL );
+         this->known_feds[i].name = NULL;
       }
    }
-   TMM_delete_var_a( this->known_feds );
+   if ( trick_MM->delete_var( static_cast< void * >( this->known_feds ) ) ) {
+      send_hs( stderr, "Federate::copy_running_feds_into_known_feds():%d ERROR deleting Trick Memory for 'this->known_feds'%c",
+               __LINE__, THLA_NEWLINE );
+   }
 
    // re-allocate it...
    this->known_feds = reinterpret_cast< KnownFederate * >(
       alloc_type( running_feds_count, "TrickHLA::KnownFederate" ) );
-   if ( this->known_feds == static_cast< KnownFederate * >( NULL ) ) {
+   if ( this->known_feds == NULL ) {
       ostringstream errmsg;
       errmsg << "Federate::copy_running_feds_into_known_feds():" << __LINE__
              << " ERROR: Could not allocate memory for known_feds!" << THLA_ENDL;
@@ -6893,8 +6927,8 @@ void Federate::copy_running_feds_into_known_feds()
    // now, copy everything from running_feds into known_feds...
    this->known_feds_count = 0;
    for ( unsigned int i = 0; i < this->running_feds_count; ++i ) {
-      this->known_feds[this->known_feds_count].MOM_instance_name = TMM_strdup( running_feds[i].MOM_instance_name );
-      this->known_feds[this->known_feds_count].name              = TMM_strdup( running_feds[i].name );
+      this->known_feds[this->known_feds_count].MOM_instance_name = trick_MM->mm_strdup( running_feds[i].MOM_instance_name );
+      this->known_feds[this->known_feds_count].name              = trick_MM->mm_strdup( running_feds[i].name );
       this->known_feds[this->known_feds_count].required          = running_feds[i].required;
       this->known_feds_count++;
    }
@@ -7557,7 +7591,7 @@ void Federate::print_requested_federation_restore_status(
       // Load the next element from 'theFederateStatusVector'.
       ++vector_iter;
    }
-   send_hs( stdout, (char *)msg.str().c_str() );
+   send_hs( stdout, msg.str().c_str() );
 }
 
 void Federate::process_requested_federation_restore_status(
@@ -7634,7 +7668,7 @@ void Federate::print_restore_failure_reason(
       msg << "Federate::print_restore_failure_reason():" << __LINE__
           << " failure reason=\"RTI_DETECTED_FAILURE_DURING_RESTORE\"\n";
    }
-   send_hs( stdout, (char *)msg.str().c_str() );
+   send_hs( stdout, msg.str().c_str() );
 
    this->federation_restore_failed_callback_complete = true;
 }
@@ -7665,7 +7699,7 @@ void Federate::print_save_failure_reason(
       msg << "Federate::print_save_failure_reason():" << __LINE__
           << " failure reason=\"SAVE_TIME_CANNOT_BE_HONORED\"\n";
    }
-   send_hs( stdout, (char *)msg.str().c_str() );
+   send_hs( stdout, msg.str().c_str() );
 }
 
 /*!
@@ -7838,8 +7872,11 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
 
       if ( attr_iter->first == MOM_HLAautoProvide_handle ) {
          // HLAautoProvide attribute is an HLAswitch, which is an HLAinteger32BE.
-         int *data               = (int *)attr_iter->second.data();
-         int  auto_provide_state = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN ) ? Utilities::byteswap_int( data[0] ) : data[0];
+         int const *data = static_cast< int const * >( attr_iter->second.data() );
+
+         int auto_provide_state = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN )
+                                     ? Utilities::byteswap_int( data[0] )
+                                     : data[0];
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             send_hs( stdout, "Federate::set_federation_instance_attributes():%d Auto-Provide:%s value:%d%c",
@@ -7852,7 +7889,7 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
       } else if ( attr_iter->first == MOM_HLAfederatesInFederation_handle ) {
 
          // Extract the size of the data and the data bytes.
-         int *data = (int *)attr_iter->second.data();
+         int const *data = static_cast< int const * >( attr_iter->second.data() );
 
          // The HLAfederatesInFederation has the HLAhandle datatype which has
          // the HLAvariableArray encoding with an HLAbyte element type. The
@@ -7869,7 +7906,9 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
          // Determine if we need to byteswap or not since the FederateHandle
          // is in Big Endian. First 4 bytes (first 32-bit integer) is the number
          // of elements.
-         int num_elements = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN ) ? Utilities::byteswap_int( data[0] ) : data[0];
+         int num_elements = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN )
+                               ? Utilities::byteswap_int( data[0] )
+                               : data[0];
 
          // save the count into running_feds_count
          this->running_feds_count = num_elements;
@@ -8046,10 +8085,12 @@ void Federate::rebuild_federate_handles(
       //
       // First 4 bytes (first 32-bit integer) is the number of elements.
       // Decode size from Big Endian encoded integer.
-      unsigned char *dataPtr = (unsigned char *)attr_iter->second.data();
-      size_t         size    = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN )
-                                  ? (size_t)Utilities::byteswap_int( *(int *)dataPtr )
-                                  : ( size_t ) * (int *)dataPtr;
+      unsigned char const *dataPtr = reinterpret_cast< unsigned char const * >( attr_iter->second.data() );
+
+      size_t size = Utilities::is_transmission_byteswap( ENCODING_BIG_ENDIAN )
+                       ? Utilities::byteswap_int( *reinterpret_cast< int const * >( dataPtr ) )
+                       : *reinterpret_cast< int const * >( dataPtr );
+
       if ( size != 4 ) {
          ostringstream errmsg;
          errmsg << "Federate::rebuild_federate_handles():"

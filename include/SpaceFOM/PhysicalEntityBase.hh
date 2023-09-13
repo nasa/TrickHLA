@@ -100,7 +100,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    // Access functions.
    /*! @brief Set the name of the PhysicalEntity object instance.
     *  @param name Name of the PhysicalEntity object instance. */
-   virtual void set_name( char const *name );
+   virtual void set_name( char const *new_name );
 
    /*! @brief Get the name of the PhysicalEntity object instance.
     *  @return Name of the PhysicalEntity object instance. */
@@ -111,7 +111,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
 
    /*! @brief Set the type string of the PhysicalEntity.
     *  @param type Type string associated with the PhysicalEntity. */
-   virtual void set_type( char const *type );
+   virtual void set_type( char const *new_type );
 
    /*! @brief Get the type string associated with the PhysicalEntity.
     *  @return Type string associated with the PhysicalEntity. */
@@ -122,7 +122,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
 
    /*! @brief Set the status string of the PhysicalEntity.
     *  @param status Status string associated with the PhysicalEntity. */
-   virtual void set_status( char const *status );
+   virtual void set_status( char const *new_status );
 
    /*! @brief Get the status string associated with the PhysicalEntity.
     *  @return Status string associated with the PhysicalEntity. */
@@ -134,11 +134,11 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    /*! @brief Set the name of the parent reference frame for the PhysicalEntity.
     *  @param parent_ref_frame The name of the parent reference frame associated
     *  with the PhysicalEntity. */
-   virtual void set_parent_ref_frame( char const *parent_ref_frame );
+   virtual void set_parent_frame( char const *new_frame );
 
    /*! @brief Get the name of the parent reference frame associated with the PhysicalEntity.
     *  @return Name of the parent reference frame associated with the PhysicalEntity. */
-   virtual char const *get_parent_ref_frame()
+   virtual char const *get_parent_frame()
    {
       return parent_frame;
    }

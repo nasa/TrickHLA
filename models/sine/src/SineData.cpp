@@ -30,9 +30,9 @@ NASA, Johnson Space Center\n
 #include <iostream>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
 #include "trick/integrator_c_intf.h"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h" // for send_hs
 #include "trick/trick_math.h"
 
@@ -90,11 +90,11 @@ SineData::SineData(
 SineData::~SineData()
 {
    // Make sure we free the memory used by the name.
-   if ( name != static_cast< char * >( NULL ) ) {
-      if ( TMM_is_alloced( name ) ) {
-         TMM_delete_var_a( name );
+   if ( name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
+         send_hs( stderr, "TrickHLAModel::SineData::~SineData():%d ERROR deleting Trick Memory for 'name'\n", __LINE__ );
       }
-      name = static_cast< char * >( NULL );
+      name = NULL;
    }
 }
 

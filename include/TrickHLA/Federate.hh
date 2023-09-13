@@ -662,8 +662,10 @@ class Federate
 
    /*! @brief Associate a Trick child thread with TrickHLA. */
    void associate_to_trick_child_thread( unsigned int const thread_id,
-                                         double const       data_cycle,
-                                         std::string const &obj_isntance_names );
+                                         double const       data_cycle );
+
+   /*! @brief Verify the thread IDs assoicated to the objects. */
+   void verify_trick_child_thread_associations();
 
    /*! @brief Announce to all the child threads the main thread has data available. */
    void announce_data_available();
