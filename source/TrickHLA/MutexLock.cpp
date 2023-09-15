@@ -38,10 +38,7 @@ using namespace TrickHLA;
  */
 MutexLock::MutexLock()
 {
-   pthread_mutexattr_t attr;
-   pthread_mutexattr_init( &attr );
-   pthread_mutexattr_settype( &attr, PTHREAD_MUTEX_RECURSIVE );
-   pthread_mutex_init( &mutex, &attr );
+   initialize();
 }
 
 /*!
@@ -50,10 +47,19 @@ MutexLock::MutexLock()
  */
 MutexLock::~MutexLock()
 {
-   while ( unlock() == 0 ) {
-      // Recursive mutex so keep releasing the lock.
-   }
-   pthread_mutex_destroy( &mutex );
+   destroy();
+}
+
+/*!
+ * @brief Initialize the mutex.
+ * @return Integer value of 0 for success, otherwise non-zero for an error.
+ */
+int const MutexLock::initialize()
+{
+   pthread_mutexattr_t attr;
+   pthread_mutexattr_init( &attr );
+   pthread_mutexattr_settype( &attr, PTHREAD_MUTEX_RECURSIVE );
+   return ( pthread_mutex_init( &mutex, &attr ) );
 }
 
 /*!
@@ -62,7 +68,7 @@ MutexLock::~MutexLock()
  */
 int const MutexLock::lock()
 {
-   return pthread_mutex_lock( &mutex );
+   return ( pthread_mutex_lock( &mutex ) );
 }
 
 /*!
@@ -71,5 +77,17 @@ int const MutexLock::lock()
  */
 int const MutexLock::unlock()
 {
-   return pthread_mutex_unlock( &mutex );
+   return ( pthread_mutex_unlock( &mutex ) );
+}
+
+/*!
+ * @brief Destroy the mutex lock.
+ * @return Integer value of 0 for success, otherwise non-zero for an error.
+ */
+int const MutexLock::destroy()
+{
+   while ( unlock() == 0 ) {
+      // Recursive mutex so keep releasing the lock.
+   }
+   return ( pthread_mutex_destroy( &mutex ) );
 }

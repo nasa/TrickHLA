@@ -122,9 +122,7 @@ Interaction::~Interaction()
    }
 
    // Make sure we destroy the mutex.
-   while ( mutex.unlock() == 0 ) {
-      // Recursive mutex so keep releasing the lock.
-   }
+   mutex.destroy();
 }
 
 /*!

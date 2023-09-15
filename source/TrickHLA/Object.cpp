@@ -198,18 +198,10 @@ Object::~Object()
       thla_attribute_map.clear();
 
       // Make sure we destroy the mutexs.
-      while ( push_mutex.unlock() == 0 ) {
-         // Recursive mutex so keep releasing the lock.
-      }
-      while ( ownership_mutex.unlock() == 0 ) {
-         // Recursive mutex so keep releasing the lock.
-      }
-      while ( send_mutex.unlock() == 0 ) {
-         // Recursive mutex so keep releasing the lock.
-      }
-      while ( receive_mutex.unlock() == 0 ) {
-         // Recursive mutex so keep releasing the lock.
-      }
+      push_mutex.destroy();
+      ownership_mutex.destroy();
+      send_mutex.destroy();
+      receive_mutex.destroy();
 
       removed_instance = true;
    }

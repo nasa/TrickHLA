@@ -89,11 +89,6 @@ TrickThreadCoordinator::TrickThreadCoordinator() // RETURN: -- None.
  */
 TrickThreadCoordinator::~TrickThreadCoordinator() // RETURN: -- None.
 {
-   // Make sure we unlock the mutex.
-   while ( this->mutex.unlock() == 0 ) {
-      // Recursive mutex so keep releasing the lock.
-   }
-
    if ( this->disable_thread_ids != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->disable_thread_ids ) ) ) {
          send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d ERROR deleting Trick Memory for 'this->disable_thread_ids'%c",
@@ -125,6 +120,9 @@ TrickThreadCoordinator::~TrickThreadCoordinator() // RETURN: -- None.
       }
       this->data_cycle_base_time_per_obj = NULL;
    }
+
+   // Make sure we destroy the mutex.
+   this->mutex.destroy();
 }
 
 /*!

@@ -328,13 +328,9 @@ Federate::~Federate()
    // Set the references to the ambassadors.
    federate_ambassador = NULL;
 
-   // Make sure we unlock the mutex.
-   while ( time_adv_state_mutex.unlock() == 0 ) {
-      // Recursive mutex so keep releasing the lock.
-   }
-   while ( joined_federate_mutex.unlock() == 0 ) {
-      // Recursive mutex so keep releasing the lock.
-   }
+   // Make sure we destroy the mutex.
+   time_adv_state_mutex.destroy();
+   joined_federate_mutex.destroy();
 }
 
 /*!
