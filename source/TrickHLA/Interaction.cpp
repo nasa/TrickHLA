@@ -122,7 +122,7 @@ Interaction::~Interaction()
    }
 
    // Make sure we destroy the mutex.
-   mutex.unlock();
+   mutex.destroy();
 }
 
 /*!

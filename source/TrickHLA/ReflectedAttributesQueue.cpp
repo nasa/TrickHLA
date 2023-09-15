@@ -60,7 +60,7 @@ ReflectedAttributesQueue::~ReflectedAttributesQueue()
    }
 
    // Make sure we destroy the queue_mutex.
-   queue_mutex.unlock();
+   queue_mutex.destroy();
 }
 
 bool ReflectedAttributesQueue::empty()

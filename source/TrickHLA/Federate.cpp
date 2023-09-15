@@ -328,9 +328,9 @@ Federate::~Federate()
    // Set the references to the ambassadors.
    federate_ambassador = NULL;
 
-   // Make sure we unlock the mutex.
-   time_adv_state_mutex.unlock();
-   joined_federate_mutex.unlock();
+   // Make sure we destroy the mutex.
+   time_adv_state_mutex.destroy();
+   joined_federate_mutex.destroy();
 }
 
 /*!

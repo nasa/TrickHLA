@@ -26,7 +26,6 @@ NASA, Johnson Space Center\n
 @revs_begin
 @rev_entry{Dan Dexter, NASA/ER6, TrickHLA, July 2020, --, Initial implementation.}
 @revs_end
-
 */
 
 #ifndef TRICKHLA_MUTEX_PROTECTION_HH

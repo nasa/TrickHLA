@@ -77,8 +77,9 @@ SyncPntListBase::SyncPntListBase()
 SyncPntListBase::~SyncPntListBase()
 {
    this->reset();
-   // Make sure we unlock the mutex.
-   mutex.unlock();
+
+   // Make sure we destroy the mutex.
+   mutex.destroy();
 }
 
 void SyncPntListBase::add_sync_point(

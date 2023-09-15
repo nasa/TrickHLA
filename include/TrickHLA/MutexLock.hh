@@ -25,7 +25,6 @@ NASA, Johnson Space Center\n
 @revs_begin
 @rev_entry{Dan Dexter, NASA/ER6, TrickHLA, July 2020, --, Initial implementation.}
 @revs_end
-
 */
 
 #ifndef TRICKHLA_MUTEX_LOCK_HH
@@ -59,6 +58,10 @@ class MutexLock
    /*! @brief Destructor for the TrickHLA MutexLock class. */
    virtual ~MutexLock();
 
+   /*! @brief Initialize the mutex.
+    *  @return Integer value of 0 for success, otherwise non-zero for an error. */
+   int const initialize();
+
    /*! @brief Lock the mutex.
     *  @return Integer value of 0 for success, otherwise non-zero for an error. */
    int const lock();
@@ -66,6 +69,10 @@ class MutexLock
    /*! @brief Unlock the mutex.
     *  @return Integer value of 0 for success, otherwise non-zero for an error. */
    int const unlock();
+
+   /*! @brief Destroy the mutex lock.
+    *  @return Integer value of 0 for success, otherwise non-zero for an error. */
+   int const destroy();
 
    pthread_mutex_t mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
 

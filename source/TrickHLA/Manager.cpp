@@ -143,8 +143,8 @@ Manager::~Manager()
    object_map.clear();
    clear_interactions();
 
-   // Make sure we unlock the mutex.
-   obj_discovery_mutex.unlock();
+   // Make sure we destroy the mutex.
+   obj_discovery_mutex.destroy();
 }
 
 /*!

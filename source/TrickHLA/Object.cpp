@@ -198,10 +198,10 @@ Object::~Object()
       thla_attribute_map.clear();
 
       // Make sure we destroy the mutexs.
-      push_mutex.unlock();
-      ownership_mutex.unlock();
-      send_mutex.unlock();
-      receive_mutex.unlock();
+      push_mutex.destroy();
+      ownership_mutex.destroy();
+      send_mutex.destroy();
+      receive_mutex.destroy();
 
       removed_instance = true;
    }

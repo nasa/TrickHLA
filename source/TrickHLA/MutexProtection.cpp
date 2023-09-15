@@ -22,12 +22,18 @@ NASA, Johnson Space Center\n
 @revs_begin
 @rev_entry{Dan Dexter, NASA/ER6, TrickHLA, July 2020, --, Initial implementation.}
 @revs_end
-
 */
 
+// System include files.
+#include <cstdio>
+
+// Trick include files.
+#include "trick/message_proto.h"
+
 // TrickHLA include files.
-#include "TrickHLA/MutexProtection.hh"
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/MutexProtection.hh"
 
 using namespace TrickHLA;
 
@@ -38,7 +44,10 @@ MutexProtection::MutexProtection(
    TrickHLA::MutexLock *mutex_lock )
    : mutex( mutex_lock )
 {
-   mutex->lock();
+   if ( this->mutex->lock() != 0 ) {
+      send_hs( stderr, "MutexProtection::MutexProtection():%d ERROR Locking the MutexLock!%c",
+               __LINE__, THLA_NEWLINE );
+   }
 }
 
 /*!
@@ -47,6 +56,10 @@ MutexProtection::MutexProtection(
  */
 MutexProtection::~MutexProtection()
 {
-   mutex->unlock();
-   mutex = NULL;
+   // Only unlock once because the code creating instances of MutexProtection
+   // could be recursive and we must only unlock once per constructor call.
+   this->mutex->unlock();
+
+   // Make sure to NULL the pointer so this class can be reclaimed.
+   this->mutex = NULL;
 }
