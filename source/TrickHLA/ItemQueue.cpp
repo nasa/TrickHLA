@@ -68,21 +68,26 @@ ItemQueue::~ItemQueue()
    }
 
    // Make sure we destroy the mutex.
-   (void)mutex.unlock();
+   mutex.unlock();
 }
 
 /*!
- * @job_class{initialization}
- */
+ * @brief Prints the 'head' pointers for all elements in the queue.
+ * @param name Name of the caller.
+ * */
 void ItemQueue::dump_head_pointers(
    char const *name )
 {
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
+
    Item *temp = head->next;
 
    send_hs( stdout, "ItemQueue::dump_head_pointers(%s):%d Current element is %p %c",
             name, __LINE__, head, THLA_NEWLINE );
 
-   // adjust to the next item off the stack in a thread-safe way.
+   // Adjust to the next item off the stack in a thread-safe way.
    while ( temp != NULL ) { // while there are any more elements
       send_hs( stdout, "ItemQueue::dump_head_pointers(%s):%d Current element points to %p %c",
                name, __LINE__, temp, THLA_NEWLINE );
@@ -93,15 +98,20 @@ void ItemQueue::dump_head_pointers(
 }
 
 /*!
- * @job_class{initialization}
+ * @brief Sets head to the passed-in element's next value.
+ * @param item Item to extract the 'next' data pointer.
  */
 void ItemQueue::next(
    Item *item )
 {
-   // adjust to the next item off the stack in a thread-safe way.
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
+
+   // Adjust to the next item off the stack in a thread-safe way.
    if ( item->next != NULL ) { // is this not the end of the queue
 
-      // if this is the first call to the routine, capture the head pointer so
+      // If this is the first call to the routine, capture the head pointer so
       // it can be restored once we are done with walking the queue...
       if ( original_head == NULL ) {
          original_head = head;
@@ -113,12 +123,12 @@ void ItemQueue::next(
 }
 
 /*!
- * @job_class{initialization}
+ * @brief Pop an item off the queue.
  */
 void ItemQueue::pop()
 {
    // Pop the item off the stack in a thread-safe way.
-   //
+
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
@@ -134,20 +144,21 @@ void ItemQueue::pop()
          head = item->next;
       }
 
-      // Make sure we delete the Item we created when we pushed it on the queue.
+      // Make sure we delete the Item we created when it was pushed on the queue.
       delete item;
-
-      count--;
+      --count;
    }
 }
 
 /*!
- * @job_class{initialization}
+ * @brief Push the item onto the queue.
+ * @param item Item to put into the queue.
  */
 void ItemQueue::push( // RETURN: -- None.
    Item *item )       // IN: -- Item to put into the queue.
 {
    // Add the item to the queue in a thread-safe way.
+
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
@@ -160,16 +171,20 @@ void ItemQueue::push( // RETURN: -- None.
       tail->next = item;
       tail       = item;
    }
-
-   count++;
+   ++count;
 }
 
 /*!
- * @job_class{initialization}
+ * @brief Re-established original 'head' queue pointer after the queue has
+ *  been walked.
  */
 void ItemQueue::rewind()
 {
-   // if the next() routine was ever executed to walk thru the queue without
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
+
+   // If the next() routine was ever executed to walk thru the queue without
    // popping, restore the queue's original 'head' pointer.
    if ( original_head != NULL ) {
       head          = original_head;

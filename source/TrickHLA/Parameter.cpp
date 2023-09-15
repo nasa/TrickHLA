@@ -2217,7 +2217,7 @@ void Parameter::encode_string_to_buffer()
             } else {
                // For a NULL string, encode it as a zero length string.
                *( output + byte_count ) = '\0';
-               byte_count++;
+               ++byte_count;
             }
          }
 
@@ -2504,7 +2504,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                   // the data buff size is the number of two-byte elements so
                   // subtract one since we removed one pad element.
                   if ( data_buff_size > 0 ) {
-                     data_buff_size--;
+                     --data_buff_size;
                   }
                }
             }
@@ -3066,7 +3066,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
 
             // Find the end of the encoded string which is the null character.
             while ( *( input + end_index ) != '\0' ) {
-               end_index++;
+               ++end_index;
             }
 
             size_t length = ( end_index - start_index ) + 1;
@@ -3102,7 +3102,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
                     length );
 
             // Move to the next encoded string in the input.
-            end_index++;
+            ++end_index;
             start_index = end_index;
          }
          break;

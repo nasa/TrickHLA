@@ -69,7 +69,7 @@ class SinePacking : public TrickHLA::Packing
 
    double phase_deg; ///< @trick_units{degree} Phase offset in degrees.
 
-   int pack_count; ///< @trick_units{count} The number of times the pack routine has been called.
+   unsigned int pack_count; ///< @trick_units{count} The number of times the pack routine has been called.
 
    bool initialized; ///< @trick_units{--} Flag to indicate this class has been initialized.
 

@@ -90,7 +90,7 @@ TrickThreadCoordinator::TrickThreadCoordinator() // RETURN: -- None.
 TrickThreadCoordinator::~TrickThreadCoordinator() // RETURN: -- None.
 {
    // Make sure we unlock the mutex.
-   (void)this->mutex.unlock();
+   this->mutex.unlock();
 
    if ( this->disable_thread_ids != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->disable_thread_ids ) ) ) {
@@ -618,7 +618,7 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
 
             switch ( this->thread_state[id] ) {
                case THREAD_STATE_DISABLED:
-                  summary << "(Disabled thread association to TrickHLA)";
+                  summary << "(Disabled thread associated to TrickHLA)";
                   break;
 
                case THREAD_STATE_NOT_ASSOCIATED:
@@ -837,7 +837,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
          // Check for shutdown.
          this->federate->check_for_shutdown_with_termination();
 
-         (void)sleep_timer.sleep();
+         sleep_timer.sleep();
 
          // Determine if all the Trick child threads are ready to send data.
          all_ready_to_send = true;
@@ -959,7 +959,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
          // Check for shutdown.
          this->federate->check_for_shutdown_with_termination();
 
-         (void)sleep_timer.sleep();
+         sleep_timer.sleep();
 
          {
             // When auto_unlock_mutex goes out of scope it automatically
@@ -1056,7 +1056,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
          // Check for shutdown.
          this->federate->check_for_shutdown_with_termination();
 
-         (void)sleep_timer.sleep();
+         sleep_timer.sleep();
 
          {
             // When auto_unlock_mutex goes out of scope it automatically

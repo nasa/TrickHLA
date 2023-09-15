@@ -130,6 +130,7 @@ Object::Object()
      push_mutex(),
      ownership_mutex(),
      send_mutex(),
+     receive_mutex(),
      clock(),
      name_registered( false ),
      changed( false ),
@@ -197,9 +198,10 @@ Object::~Object()
       thla_attribute_map.clear();
 
       // Make sure we destroy the mutexs.
-      (void)push_mutex.unlock();
-      (void)ownership_mutex.unlock();
-      (void)send_mutex.unlock();
+      push_mutex.unlock();
+      ownership_mutex.unlock();
+      send_mutex.unlock();
+      receive_mutex.unlock();
 
       removed_instance = true;
    }
@@ -351,6 +353,30 @@ void Object::initialize(
       this->attr_count = 0;
    }
 
+   // Check for the case where attributes are a mix of Zero Lookahead and Cyclic
+   // since this can result in deadlock.
+   bool any_cyclic_attr         = false;
+   bool any_zero_lookahead_attr = false;
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
+      if ( ( attributes[i].get_configuration() & CONFIG_CYCLIC ) == CONFIG_CYCLIC ) {
+         any_cyclic_attr = true;
+      }
+      if ( ( attributes[i].get_configuration() & CONFIG_ZERO_LOOKAHEAD ) == CONFIG_ZERO_LOOKAHEAD ) {
+         any_zero_lookahead_attr = true;
+      }
+      if ( any_cyclic_attr && any_zero_lookahead_attr ) {
+         ostringstream errmsg;
+         errmsg << "Object::initialize():" << __LINE__
+                << " ERROR: For object '" << name << "', detected Attributes"
+                << " with a mix of CONFIG_CYCLIC and CONFIG_ZERO_LOOKAHEAD for"
+                << " the 'config' setting, which can lead to deadlock. Please"
+                << " configure all the Attributes of this object to use one of"
+                << " CONFIG_CYCLIC or CONFIG_ZERO_LOOKAHEAD for the Attribute"
+                << " 'config' setting." << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+   }
+
    // TODO: Get the preferred order by parsing the FOM.
    //
    // Determine if any attribute is the FOM specified order.
@@ -475,12 +501,12 @@ void Object::remove()
                   // time-regulating.
                   if ( federate->in_time_regulating_state() ) {
                      Int64Time update_time( get_granted_time() + get_lookahead() );
-                     (void)rti_amb->deleteObjectInstance( instance_handle,
-                                                          RTI1516_USERDATA( 0, 0 ),
-                                                          update_time.get() );
+                     rti_amb->deleteObjectInstance( instance_handle,
+                                                    RTI1516_USERDATA( 0, 0 ),
+                                                    update_time.get() );
                   } else {
-                     (void)rti_amb->deleteObjectInstance( instance_handle,
-                                                          RTI1516_USERDATA( 0, 0 ) );
+                     rti_amb->deleteObjectInstance( instance_handle,
+                                                    RTI1516_USERDATA( 0, 0 ) );
                   }
                }
             }
@@ -1095,7 +1121,7 @@ Waiting on reservation of Object Instance Name '%s'.%c",
       // Check for shutdown.
       federate->check_for_shutdown_with_termination();
 
-      (void)sleep_timer.sleep();
+      sleep_timer.sleep();
 
       if ( !name_registered ) { // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
 
@@ -1301,7 +1327,7 @@ void Object::wait_for_object_registration()
       // Check for shutdown.
       federate->check_for_shutdown_with_termination();
 
-      (void)sleep_timer.sleep();
+      sleep_timer.sleep();
 
       if ( !is_instance_handle_valid() ) { // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
 
@@ -1409,17 +1435,17 @@ void Object::setup_preferred_order_with_RTI()
 
    try {
       if ( !TSO_attr_handle_set.empty() ) {
-         (void)rti_amb->changeAttributeOrderType( this->instance_handle,
-                                                  TSO_attr_handle_set,
-                                                  RTI1516_NAMESPACE::TIMESTAMP );
+         rti_amb->changeAttributeOrderType( this->instance_handle,
+                                            TSO_attr_handle_set,
+                                            RTI1516_NAMESPACE::TIMESTAMP );
       }
       // Must free the memory
       TSO_attr_handle_set.clear();
 
       if ( !RO_attr_handle_set.empty() ) {
-         (void)rti_amb->changeAttributeOrderType( this->instance_handle,
-                                                  RO_attr_handle_set,
-                                                  RTI1516_NAMESPACE::RECEIVE );
+         rti_amb->changeAttributeOrderType( this->instance_handle,
+                                            RO_attr_handle_set,
+                                            RTI1516_NAMESPACE::RECEIVE );
       }
       // Must free the memory
       RO_attr_handle_set.clear();
@@ -1503,9 +1529,9 @@ void Object::request_attribute_value_update()
    }
 
    try {
-      (void)rti_amb->requestAttributeValueUpdate( this->instance_handle,
-                                                  attr_handle_set,
-                                                  RTI1516_USERDATA( 0, 0 ) );
+      rti_amb->requestAttributeValueUpdate( this->instance_handle,
+                                            attr_handle_set,
+                                            RTI1516_USERDATA( 0, 0 ) );
       // Must free the memory
       attr_handle_set.clear();
 
@@ -1688,10 +1714,10 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
                         THLA_NEWLINE );
             }
             // Send as Timestamp Order
-            (void)rti_amb->updateAttributeValues( this->instance_handle,
-                                                  *attribute_values_map,
-                                                  RTI1516_USERDATA( 0, 0 ),
-                                                  update_time.get() );
+            rti_amb->updateAttributeValues( this->instance_handle,
+                                            *attribute_values_map,
+                                            RTI1516_USERDATA( 0, 0 ),
+                                            update_time.get() );
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                send_hs( stdout, "Object::send_requested_data():%d Object '%s', Receive Order (RO) Attribute update.%c",
@@ -1699,9 +1725,9 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
             }
 
             // Send as Receive Order
-            (void)rti_amb->updateAttributeValues( this->instance_handle,
-                                                  *attribute_values_map,
-                                                  RTI1516_USERDATA( 0, 0 ) );
+            rti_amb->updateAttributeValues( this->instance_handle,
+                                            *attribute_values_map,
+                                            RTI1516_USERDATA( 0, 0 ) );
          }
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
          ++send_count;
@@ -1940,10 +1966,10 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
             }
 
             // Send as Timestamp Order
-            (void)rti_amb->updateAttributeValues( this->instance_handle,
-                                                  *attribute_values_map,
-                                                  RTI1516_USERDATA( 0, 0 ),
-                                                  update_time.get() );
+            rti_amb->updateAttributeValues( this->instance_handle,
+                                            *attribute_values_map,
+                                            RTI1516_USERDATA( 0, 0 ),
+                                            update_time.get() );
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                send_hs( stdout, "Object::send_cyclic_and_requested_data():%d Object '%s', Receive Order (RO) Attribute update.%c",
@@ -1951,9 +1977,9 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
             }
 
             // Send as Receive Order (i.e. with no timestamp).
-            (void)rti_amb->updateAttributeValues( this->instance_handle,
-                                                  *attribute_values_map,
-                                                  RTI1516_USERDATA( 0, 0 ) );
+            rti_amb->updateAttributeValues( this->instance_handle,
+                                            *attribute_values_map,
+                                            RTI1516_USERDATA( 0, 0 ) );
          }
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
          ++send_count;
@@ -2192,10 +2218,10 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
             }
 
             // Send as Timestamp Order
-            (void)rti_amb->updateAttributeValues( this->instance_handle,
-                                                  *attribute_values_map,
-                                                  RTI1516_USERDATA( 0, 0 ),
-                                                  update_time.get() );
+            rti_amb->updateAttributeValues( this->instance_handle,
+                                            *attribute_values_map,
+                                            RTI1516_USERDATA( 0, 0 ),
+                                            update_time.get() );
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                send_hs( stdout, "Object::send_zero_lookahead_and_requested_data():%d \
@@ -2204,9 +2230,9 @@ Object '%s', Receive Order (RO) Attribute update.%c",
             }
 
             // Send as Receive Order (i.e. with no timestamp).
-            (void)rti_amb->updateAttributeValues( this->instance_handle,
-                                                  *attribute_values_map,
-                                                  RTI1516_USERDATA( 0, 0 ) );
+            rti_amb->updateAttributeValues( this->instance_handle,
+                                            *attribute_values_map,
+                                            RTI1516_USERDATA( 0, 0 ) );
          }
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
          ++send_count;
@@ -2420,7 +2446,7 @@ void Object::receive_cyclic_data()
                  && any_remotely_owned_subscribed_cyclic_attribute() ) {
 
             // Yield the processor.
-            (void)sleep_timer.sleep();
+            sleep_timer.sleep();
          }
 
          // Display a warning message if we timed out.
@@ -2602,9 +2628,9 @@ void Object::send_init_data()
          // Send the Attributes to the federation. This call returns an
          // event retraction handle but we don't support event retraction
          // so no need to store it.
-         (void)rti_amb->updateAttributeValues( this->instance_handle,
-                                               *attribute_values_map,
-                                               RTI1516_USERDATA( 0, 0 ) );
+         rti_amb->updateAttributeValues( this->instance_handle,
+                                         *attribute_values_map,
+                                         RTI1516_USERDATA( 0, 0 ) );
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
          ++send_count;
 #endif
@@ -2932,6 +2958,10 @@ void Object::create_attribute_set(
 void Object::enqueue_data(
    AttributeHandleValueMap const &theAttributes )
 {
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &receive_mutex );
+
    thla_reflected_attributes_queue.push( theAttributes );
 }
 #endif // THLA_QUEUE_REFLECTED_ATTRIBUTES
@@ -4180,11 +4210,19 @@ void Object::notify_attribute_ownership_changed()
 
 void Object::mark_changed()
 {
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &receive_mutex );
+
    this->changed = true;
 }
 
 void Object::mark_unchanged()
 {
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &receive_mutex );
+
    this->changed = false;
 
    // Clear the change flag for each of the attributes as well.
@@ -4330,7 +4368,7 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
                if ( attributes[i].is_publish()
                     && attributes[i].is_locally_owned()
                     && rti_amb->isAttributeOwnedByFederate( this->instance_handle, attributes[i].get_attribute_handle() ) ) {
-                  ownership_counter++;
+                  ++ownership_counter;
                }
             } catch ( ObjectInstanceNotKnown const &e ) {
                send_hs( stderr, "Object::pull_ownership_upon_rejoin():%d \
@@ -4365,7 +4403,7 @@ rti_amb->isAttributeOwnedByFederate() call for published attribute '%s' generate
          // Check for shutdown.
          federate->check_for_shutdown_with_termination();
 
-         (void)sleep_timer.sleep();
+         sleep_timer.sleep();
 
          if ( ownership_counter < attr_hdl_set.size() ) {
 

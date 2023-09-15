@@ -159,7 +159,7 @@ void SineInteractionHandler::send_sine_interaction(
       }
 
       // Update the send count, which is just used for the message in this example.
-      send_cnt++;
+      ++send_cnt;
    } else {
       // Use the inherited debug-handler to allow debug comments to be turned
       // on and off from a setting in the input file. Use a higher debug level.
@@ -175,7 +175,7 @@ void SineInteractionHandler::send_sine_interaction(
 void SineInteractionHandler::receive_interaction(
    RTI1516_USERDATA const &the_user_supplied_tag )
 {
-   receive_cnt++;
+   ++receive_cnt;
 
    // Convert the HLA User Supplied Tag back into a string we can use.
    string user_tag_string;

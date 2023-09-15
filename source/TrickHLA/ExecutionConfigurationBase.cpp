@@ -312,7 +312,7 @@ void ExecutionConfigurationBase::wait_for_registration()
 
       // Wait a little while to allow the objects to be registered.
       if ( any_unregistered_obj ) {
-         (void)sleep_timer.sleep();
+         sleep_timer.sleep();
 
          // Check again to determine if we have any unregistered objects.
          any_unregistered_obj = ( obj_reg_cnt < total_obj_cnt ); // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
@@ -373,7 +373,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
          // Check for shutdown.
          federate->check_for_shutdown_with_termination();
 
-         (void)sleep_timer.sleep();
+         sleep_timer.sleep();
 
          if ( !this->is_changed() ) {
 

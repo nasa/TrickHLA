@@ -593,7 +593,7 @@ void ExecutionConfiguration::setup_ref_attributes(
       if ( strcmp( attrDIS__ExecutionConfiguration[attr_index].name, "root_frame_name" ) == 0 ) {
          memcpy( &exco_attr[0], &attrDIS__ExecutionConfiguration[attr_index], sizeof( ATTRIBUTES ) );
       }
-      attr_index++;
+      ++attr_index;
    }
 
    // Now that we have hit the end of the ATTRIBUTES array, copy the last
@@ -681,7 +681,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
          // Check for shutdown.
          federate->check_for_shutdown_with_termination();
 
-         (void)sleep_timer.sleep();
+         sleep_timer.sleep();
 
          if ( !this->is_changed() ) {
 

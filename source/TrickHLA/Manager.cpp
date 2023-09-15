@@ -144,7 +144,7 @@ Manager::~Manager()
    clear_interactions();
 
    // Make sure we unlock the mutex.
-   (void)obj_discovery_mutex.unlock();
+   obj_discovery_mutex.unlock();
 }
 
 /*!
@@ -394,7 +394,7 @@ void Manager::restart_initialization()
       federate->set_all_federate_MOM_instance_handles_by_name();
 
       // Make sure all required federates have joined the federation.
-      (void)federate->wait_for_required_federates_to_join();
+      federate->wait_for_required_federates_to_join();
    }
 
    // Restore ownership_transfer data for all objects.
@@ -577,7 +577,7 @@ federate so this call will be ignored.%c",
                // Check for shutdown.
                federate->check_for_shutdown_with_termination();
 
-               (void)sleep_timer.sleep();
+               sleep_timer.sleep();
 
                if ( !objects[n].is_changed() ) {
 
@@ -696,7 +696,7 @@ void Manager::receive_init_data(
                // Check for shutdown.
                federate->check_for_shutdown_with_termination();
 
-               (void)sleep_timer.sleep();
+               sleep_timer.sleep();
 
                if ( !obj->is_changed() ) {
 
@@ -2001,7 +2001,7 @@ void Manager::wait_for_registration_of_required_objects()
 
       // Wait a little while to allow the objects to be registered.
       if ( any_unregistered_required_obj ) {
-         (void)sleep_timer.sleep();
+         sleep_timer.sleep();
 
          // Check again to see if we have any unregistered objects.
          any_unregistered_required_obj = ( current_required_obj_cnt < total_required_obj_cnt ); // cppcheck-suppress [knownConditionTrueFalse]
@@ -3156,10 +3156,10 @@ void Manager::wait_for_discovery_of_objects()
       bool create_HLA_instance_object_found = false;
       for ( unsigned int n = 0; n < obj_count; ++n ) {
          if ( objects[n].is_required() ) {
-            required_count++;
+            ++required_count;
          }
          if ( objects[n].is_instance_handle_valid() ) {
-            discovery_count++;
+            ++discovery_count;
             if ( objects[n].is_create_HLA_instance() ) {
                create_HLA_instance_object_found = true;
             }
@@ -3195,7 +3195,7 @@ void Manager::wait_for_discovery_of_objects()
 
             // Sleep for a little while to allow the RTI to trigger the object
             // discovery callbacks.
-            (void)sleep_timer.sleep();
+            sleep_timer.sleep();
 
             // To be more efficient, we get the time once and share it.
             wallclock_time = sleep_timer.time();

@@ -78,7 +78,7 @@ SyncPntListBase::~SyncPntListBase()
 {
    this->reset();
    // Make sure we unlock the mutex.
-   (void)mutex.unlock();
+   mutex.unlock();
 }
 
 void SyncPntListBase::add_sync_point(
@@ -282,7 +282,7 @@ void SyncPntListBase::announce_sync_point(
 
       // Unknown synchronization point so achieve it but don't wait for the
       // federation to be synchronized on it.
-      (void)achieve_sync_point( RTI_amb, label );
+      achieve_sync_point( RTI_amb, label );
    }
 }
 
@@ -326,7 +326,7 @@ void SyncPntListBase::wait_for_list_synchronization(
                federate->check_for_shutdown_with_termination();
 
                // Pause and release the processor for short sleep value.
-               (void)sleep_timer.sleep();
+               sleep_timer.sleep();
 
                // To be more efficient, we get the time once and share it.
                wallclock_time = sleep_timer.time();
@@ -393,7 +393,7 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
       if ( sp->is_announced() ) {
 
          // Achieve the synchronization point.
-         (void)achieve_sync_point( RTI_amb, sp );
+         achieve_sync_point( RTI_amb, sp );
 
       } else if ( sp->is_achieved() ) {
 
@@ -831,7 +831,7 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
          // Always check to see is a shutdown was received.
          federate->check_for_shutdown_with_termination();
 
-         (void)sleep_timer.sleep();
+         sleep_timer.sleep();
 
          // Critical code section.
          {
@@ -985,7 +985,7 @@ bool SyncPntListBase::wait_for_synchronization(
             // Always check to see is a shutdown was received.
             federate->check_for_shutdown_with_termination();
 
-            (void)sleep_timer.sleep();
+            sleep_timer.sleep();
 
             // To be more efficient, we get the time once and share it.
             wallclock_time = sleep_timer.time();

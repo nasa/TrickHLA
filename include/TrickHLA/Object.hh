@@ -27,6 +27,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../source/TrickHLA/LagCompensation.cpp}
 @trick_link_dependency{../source/TrickHLA/Manager.cpp}
 @trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
+@trick_link_dependency{../source/TrickHLA/MutexProtection.cpp}
 @trick_link_dependency{../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../source/TrickHLA/OwnershipHandler.cpp}
 @trick_link_dependency{../source/TrickHLA/Packing.cpp}
@@ -60,6 +61,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/ReflectedAttributesQueue.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
@@ -553,6 +555,10 @@ class Object
    bool is_changed()
    {
 #if defined( THLA_QUEUE_REFLECTED_ATTRIBUTES )
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &receive_mutex );
+
       if ( !changed ) {
          if ( !thla_reflected_attributes_queue.empty() ) {
             // The 'changed' flag is set when the data is extracted.
@@ -761,6 +767,7 @@ class Object
    MutexLock push_mutex;      ///< @trick_io{**} Mutex to lock thread over push attribute ownership sections.
    MutexLock ownership_mutex; ///< @trick_io{**} Mutex to lock thread over attribute ownership code sections.
    MutexLock send_mutex;      ///< @trick_io{**} Mutex to lock thread over send data sections.
+   MutexLock receive_mutex;   ///< @trick_io{**} Mutex to lock thread over receive data sections.
 
   protected:
    /*! @brief Gets the RTI Ambassador.

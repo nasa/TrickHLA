@@ -120,7 +120,7 @@ void SimpleSimConfig::initialize(
             fed_list << ",";
          }
          fed_list << known_feds[i].name;
-         req_fed_cnt++;
+         ++req_fed_cnt;
       }
    }
 

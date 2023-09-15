@@ -307,7 +307,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
       if ( this->is_master() ) {
 
          // Make sure all required federates have joined the federation.
-         (void)federate->wait_for_required_federates_to_join();
+         federate->wait_for_required_federates_to_join();
 
          // DANNY2.7 when master is started in freeze, create a pause sync point
          //  so other feds will start in freeze

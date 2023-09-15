@@ -60,7 +60,7 @@ ReflectedAttributesQueue::~ReflectedAttributesQueue()
    }
 
    // Make sure we destroy the queue_mutex.
-   (void)queue_mutex.unlock();
+   queue_mutex.unlock();
 }
 
 bool ReflectedAttributesQueue::empty()
@@ -69,8 +69,7 @@ bool ReflectedAttributesQueue::empty()
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &queue_mutex );
 
-   bool queue_is_empty = attribute_map_queue.empty();
-   return queue_is_empty;
+   return attribute_map_queue.empty();
 }
 
 void ReflectedAttributesQueue::push(

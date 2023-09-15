@@ -623,7 +623,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
          // Check for shutdown.
          federate->check_for_shutdown_with_termination();
 
-         (void)sleep_timer.sleep();
+         sleep_timer.sleep();
 
          if ( !execution_configuration->is_changed() ) {
 

@@ -81,8 +81,8 @@ class SineInteractionHandler : public TrickHLA::InteractionHandler
    double time; ///< @trick_units{s}  Example of floating-point data.
    int    year; ///< @trick_units{--} Example of integer data.
 
-   int send_cnt;    ///< @trick_units{--} The number of times an interaction is sent.
-   int receive_cnt; ///< @trick_units{--} The number of times an interaction was received.
+   unsigned int send_cnt;    ///< @trick_units{--} The number of times an interaction is sent.
+   unsigned int receive_cnt; ///< @trick_units{--} The number of times an interaction was received.
 
   private:
    // Do not allow the copy constructor or assignment operator.
