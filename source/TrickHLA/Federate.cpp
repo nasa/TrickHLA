@@ -329,8 +329,12 @@ Federate::~Federate()
    federate_ambassador = NULL;
 
    // Make sure we unlock the mutex.
-   time_adv_state_mutex.unlock();
-   joined_federate_mutex.unlock();
+   while ( time_adv_state_mutex.unlock() == 0 ) {
+      // Recursive mutex so keep releasing the lock.
+   }
+   while ( joined_federate_mutex.unlock() == 0 ) {
+      // Recursive mutex so keep releasing the lock.
+   }
 }
 
 /*!

@@ -144,7 +144,9 @@ Manager::~Manager()
    clear_interactions();
 
    // Make sure we unlock the mutex.
-   obj_discovery_mutex.unlock();
+   while ( obj_discovery_mutex.unlock() == 0 ) {
+      // Recursive mutex so keep releasing the lock.
+   }
 }
 
 /*!

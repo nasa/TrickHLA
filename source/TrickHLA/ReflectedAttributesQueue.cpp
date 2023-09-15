@@ -60,7 +60,9 @@ ReflectedAttributesQueue::~ReflectedAttributesQueue()
    }
 
    // Make sure we destroy the queue_mutex.
-   queue_mutex.unlock();
+   while ( queue_mutex.unlock() == 0 ) {
+      // Recursive mutex so keep releasing the lock.
+   }
 }
 
 bool ReflectedAttributesQueue::empty()

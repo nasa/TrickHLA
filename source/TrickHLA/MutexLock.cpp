@@ -21,7 +21,6 @@ NASA, Johnson Space Center\n
 @revs_begin
 @rev_entry{Dan Dexter, NASA/ER6, TrickHLA, July 2020, --, Initial implementation.}
 @revs_end
-
 */
 
 // System include files.
@@ -51,7 +50,9 @@ MutexLock::MutexLock()
  */
 MutexLock::~MutexLock()
 {
-   unlock();
+   while ( unlock() == 0 ) {
+      // Recursive mutex so keep releasing the lock.
+   }
    pthread_mutex_destroy( &mutex );
 }
 

@@ -90,7 +90,9 @@ TrickThreadCoordinator::TrickThreadCoordinator() // RETURN: -- None.
 TrickThreadCoordinator::~TrickThreadCoordinator() // RETURN: -- None.
 {
    // Make sure we unlock the mutex.
-   this->mutex.unlock();
+   while ( this->mutex.unlock() == 0 ) {
+      // Recursive mutex so keep releasing the lock.
+   }
 
    if ( this->disable_thread_ids != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->disable_thread_ids ) ) ) {

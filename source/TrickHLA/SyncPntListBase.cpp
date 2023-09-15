@@ -77,8 +77,11 @@ SyncPntListBase::SyncPntListBase()
 SyncPntListBase::~SyncPntListBase()
 {
    this->reset();
+
    // Make sure we unlock the mutex.
-   mutex.unlock();
+   while ( mutex.unlock() == 0 ) {
+      // Recursive mutex so keep releasing the lock.
+   }
 }
 
 void SyncPntListBase::add_sync_point(
