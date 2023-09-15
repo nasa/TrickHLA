@@ -399,7 +399,7 @@ void PhysicalEntityBase::set_parent_frame( char const *new_frame )
 {
    if ( this->parent_frame != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->parent_frame ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalEntityBase::set_parent_ref_frame():%d ERROR deleting Trick Memory for 'this->parent_frame'%c",
+         send_hs( stderr, "SpaceFOM::PhysicalEntityBase::set_parent_frame():%d ERROR deleting Trick Memory for 'this->parent_frame'%c",
                   __LINE__, THLA_NEWLINE );
       }
    }

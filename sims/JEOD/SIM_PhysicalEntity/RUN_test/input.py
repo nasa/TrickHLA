@@ -515,7 +515,7 @@ federate.add_fed_object( lander )
 # FIXME: For now, let's add the data tags.  Later this will come from the DynBody.
 active_phyical_entity.entity_packing.set_type( 'NASA Lander' )
 active_phyical_entity.entity_packing.set_status( 'Approach' )
-active_phyical_entity.entity_packing.set_parent_ref_frame( 'MoonCentricInertial' )
+active_phyical_entity.entity_packing.set_parent_frame( 'MoonCentricInertial' )
 
 
 #---------------------------------------------------------------------------
@@ -535,7 +535,7 @@ federate.add_fed_object( station )
 # FIXME: For now, let's add the data tags.  Later this will come from the DynBody.
 passive_phyical_entity.entity_packing.set_type( 'Gateway' )
 passive_phyical_entity.entity_packing.set_status( 'NRHO' )
-passive_phyical_entity.entity_packing.set_parent_ref_frame( 'MoonCentricInertial' )
+passive_phyical_entity.entity_packing.set_parent_frame( 'MoonCentricInertial' )
 
 
 #---------------------------------------------------------------------------
