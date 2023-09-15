@@ -38,7 +38,7 @@ MutexProtection::MutexProtection(
    TrickHLA::MutexLock *mutex_lock )
    : mutex( mutex_lock )
 {
-   (void)mutex->lock();
+   mutex->lock();
 }
 
 /*!
@@ -47,6 +47,6 @@ MutexProtection::MutexProtection(
  */
 MutexProtection::~MutexProtection()
 {
-   (void)mutex->unlock();
+   mutex->unlock();
    mutex = NULL;
 }

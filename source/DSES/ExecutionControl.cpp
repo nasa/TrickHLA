@@ -278,7 +278,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
    // Perform the next few steps if we are the Master federate.
    if ( this->is_master() ) {
       // Make sure all required federates have joined the federation.
-      (void)federate->wait_for_required_federates_to_join();
+      federate->wait_for_required_federates_to_join();
 
       // Register the Multi-phase initialization sync-points.
       this->register_all_sync_points( *federate->get_RTI_ambassador() );
@@ -435,10 +435,10 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_points()
          while ( !sp->is_achieved() ) {
 
             // Always check to see is a shutdown was received.
-            (void)federate->check_for_shutdown_with_termination();
+            federate->check_for_shutdown_with_termination();
 
             // Pause and release the processor for short sleep value.
-            (void)sleep_timer.sleep();
+            sleep_timer.sleep();
 
             // Periodically check to make sure the federate is still part of
             // the federation exectuion.
@@ -1257,7 +1257,7 @@ bool ExecutionControl::run_mode_transition()
          while ( this->get_cte_time() < go_to_run_time ) {
 
             // Check for shutdown.
-            (void)federate->check_for_shutdown_with_termination();
+            federate->check_for_shutdown_with_termination();
 
             diff = go_to_run_time - this->get_cte_time();
             if ( fmod( diff, 1.0 ) == 0.0 ) {

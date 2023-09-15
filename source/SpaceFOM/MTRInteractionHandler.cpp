@@ -182,7 +182,7 @@ void MTRInteractionHandler::send_interaction(
       }
 
       // Update the send count, which is just used for the message in this example.
-      send_cnt++;
+      ++send_cnt;
    } else {
       // Use the inherited debug-handler to allow debug comments to be turned
       // on and off from a setting in the input.py file. Use a higher debug level.
@@ -279,5 +279,5 @@ void MTRInteractionHandler::receive_interaction(
            << "  receive_cnt:" << ( receive_cnt + 1 ) << endl;
    }
 
-   receive_cnt++;
+   ++receive_cnt;
 }

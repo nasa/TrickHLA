@@ -139,7 +139,7 @@ void OwnershipHandler::setup_checkpoint_requests()
          for ( attrib_iter = tMap->begin(); attrib_iter != tMap->end(); ++attrib_iter ) {
             pull_items[count].time     = curr_time;
             pull_items[count].FOM_name = trick_MM->mm_strdup( attrib_iter->first.c_str() );
-            count++;
+            ++count;
          }
       }
    }
@@ -176,7 +176,7 @@ void OwnershipHandler::setup_checkpoint_requests()
          for ( attrib_iter = tMap->begin(); attrib_iter != tMap->end(); ++attrib_iter ) {
             push_items[count].time     = curr_time;
             push_items[count].FOM_name = trick_MM->mm_strdup( attrib_iter->first.c_str() );
-            count++;
+            ++count;
          }
       }
    }

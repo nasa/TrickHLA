@@ -329,8 +329,8 @@ Federate::~Federate()
    federate_ambassador = NULL;
 
    // Make sure we unlock the mutex.
-   (void)time_adv_state_mutex.unlock();
-   (void)joined_federate_mutex.unlock();
+   time_adv_state_mutex.unlock();
+   joined_federate_mutex.unlock();
 }
 
 /*!
@@ -1470,10 +1470,10 @@ string Federate::wait_for_required_federates_to_join()
    while ( !this->all_federates_joined ) {
 
       // Check for shutdown.
-      (void)check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
       // Sleep a little while to wait for more federates to join.
-      (void)sleep_timer.sleep();
+      sleep_timer.sleep();
 
       // Concurrency critical code section because joined-federate state is changed
       // by FedAmb callback to the Federate::set_MOM_HLAfederate_instance_attributes()
@@ -2316,7 +2316,7 @@ void Federate::send_interaction(
 
    bool error_flag = false;
    try {
-      (void)RTI_ambassador->sendInteraction( class_handle, parameter_list, RTI1516_USERDATA( 0, 0 ) );
+      RTI_ambassador->sendInteraction( class_handle, parameter_list, RTI1516_USERDATA( 0, 0 ) );
    } catch ( InteractionClassNotPublished const &e ) {
       error_flag = true;
       send_hs( stderr, "Federate::send_interaction():%d InteractionClassNotPublished: Send interaction FAILED!%c",
@@ -2643,7 +2643,7 @@ void Federate::exit_freeze()
 void Federate::check_freeze()
 {
    // Check to see if we should shutdown.
-   (void)check_for_shutdown_with_termination();
+   check_for_shutdown_with_termination();
 
    // Check to see if the ExecutionControl should exit freeze.
    if ( execution_control->check_freeze_exit() ) {
@@ -2826,9 +2826,9 @@ void Federate::setup_checkpoint()
          while ( !start_to_save ) {
 
             // Check for shutdown.
-            (void)check_for_shutdown_with_termination();
+            check_for_shutdown_with_termination();
 
-            (void)sleep_timer.sleep();
+            sleep_timer.sleep();
 
             if ( !this->start_to_save ) {
 
@@ -3082,9 +3082,9 @@ void Federate::setup_restore()
       while ( !this->start_to_restore ) {
 
          // Check for shutdown.
-         (void)check_for_shutdown_with_termination();
+         check_for_shutdown_with_termination();
 
-         (void)sleep_timer.sleep();
+         sleep_timer.sleep();
 
          if ( !this->start_to_restore ) {
 
@@ -3951,7 +3951,7 @@ void Federate::create_and_join_federation()
       if ( !this->federation_joined ) {
          send_hs( stderr, "Federate::create_and_join_federation():%d Failed to join federation \"%s\" on attempt %d of %d!%c",
                   __LINE__, get_federation_name(), k, max_retries, THLA_NEWLINE );
-         (void)Utilities::micro_sleep( 100000 );
+         Utilities::micro_sleep( 100000 );
       }
    }
 
@@ -4210,9 +4210,9 @@ void Federate::setup_time_constrained()
       while ( !this->time_constrained_state ) {
 
          // Check for shutdown.
-         (void)check_for_shutdown_with_termination();
+         check_for_shutdown_with_termination();
 
-         (void)sleep_timer.sleep();
+         sleep_timer.sleep();
 
          if ( !this->time_constrained_state ) {
 
@@ -4410,9 +4410,9 @@ void Federate::setup_time_regulation()
       while ( !this->time_regulating_state ) {
 
          // Check for shutdown.
-         (void)check_for_shutdown_with_termination();
+         check_for_shutdown_with_termination();
 
-         (void)sleep_timer.sleep();
+         sleep_timer.sleep();
 
          if ( !this->time_regulating_state ) {
 
@@ -4664,7 +4664,7 @@ void Federate::perform_time_advance_request()
       recoverable_error = false;
 
       // Check for shutdown.
-      (void)check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          if ( is_zero_lookahead_time() ) {
@@ -4770,7 +4770,7 @@ void Federate::perform_time_advance_request()
          send_hs( stderr, "Federate::perform_time_advance_request():%d Recoverable RTI error, retry attempt: %d%c",
                   __LINE__, error_recovery_cnt, THLA_NEWLINE );
 
-         (void)Utilities::micro_sleep( 1000 );
+         Utilities::micro_sleep( 1000 );
       }
 
    } while ( any_error && recoverable_error && ( error_recovery_cnt < 1000 ) );
@@ -4898,9 +4898,9 @@ void Federate::wait_for_zero_lookahead_TARA_TAG()
       // This spin lock waits for the time advance grant from the RTI.
       do {
          // Check for shutdown.
-         (void)check_for_shutdown_with_termination();
+         check_for_shutdown_with_termination();
 
-         (void)sleep_timer.sleep();
+         sleep_timer.sleep();
 
          {
             // When auto_unlock_mutex goes out of scope it automatically unlocks
@@ -5132,9 +5132,9 @@ void Federate::wait_to_receive_zero_lookahead_data(
       while ( !obj->is_changed() && obj->any_remotely_owned_subscribed_zero_lookahead_attribute() ) {
 
          // Check for shutdown.
-         (void)check_for_shutdown_with_termination();
+         check_for_shutdown_with_termination();
 
-         (void)sleep_timer.sleep();
+         sleep_timer.sleep();
 
          // To be more efficient, we get the time once and share it.
          wallclock_time = sleep_timer.time();
@@ -5217,9 +5217,9 @@ void Federate::wait_for_time_advance_grant()
       // This spin lock waits for the time advance grant from the RTI.
       do {
          // Check for shutdown.
-         (void)check_for_shutdown_with_termination();
+         check_for_shutdown_with_termination();
 
-         (void)sleep_timer.sleep();
+         sleep_timer.sleep();
 
          {
             // When auto_unlock_mutex goes out of scope it automatically unlocks
@@ -6067,10 +6067,10 @@ void Federate::ask_MOM_for_auto_provide_setting()
    while ( this->auto_provide_setting < 0 ) {
 
       // Check for shutdown.
-      (void)check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
       // Sleep a little while to wait for the information to update.
-      (void)sleep_timer.sleep();
+      sleep_timer.sleep();
 
       if ( this->auto_provide_setting < 0 ) {
 
@@ -6208,10 +6208,10 @@ void Federate::load_and_print_running_federate_names()
    while ( this->running_feds_count <= 0 ) {
 
       // Check for shutdown.
-      (void)check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
       // Sleep a little while to wait for the information to update.
-      (void)sleep_timer.sleep();
+      sleep_timer.sleep();
 
       if ( this->running_feds_count <= 0 ) {
 
@@ -6263,10 +6263,10 @@ MOM just informed us that there are %d federates currently running in the federa
    while ( !this->all_federates_joined ) {
 
       // Check for shutdown.
-      (void)check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
       // Sleep a little while to wait for more federates to join.
-      (void)sleep_timer.sleep();
+      sleep_timer.sleep();
 
       // Determine what federates have joined only if the joined federate
       // count has changed.
@@ -6312,9 +6312,9 @@ MOM just informed us that there are %d federates currently running in the federa
    while ( joined_federate_names.size() < (unsigned int)running_feds_count ) {
 
       // Check for shutdown.
-      (void)check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
-      (void)sleep_timer.sleep();
+      sleep_timer.sleep();
 
       if ( joined_federate_names.size() < (unsigned int)running_feds_count ) {
 
@@ -6836,20 +6836,20 @@ void Federate::read_running_feds_file(
    string   full_path;
    ifstream file;
 
-   // DANNY2.7 prepend federation name to the filename (if it's not already prepended)
+   // DANNY2.7 Prepend federation name to the filename (if it's not already prepended)
    string federation_name_str = string( get_federation_name() );
    if ( file_name.compare( 0, federation_name_str.length(), federation_name_str ) == 0 ) {
-      // already prepended
+      // Already prepended
       full_path = this->HLA_save_directory + "/" + file_name + ".running_feds";
    } else {
-      // prepend it here
+      // Prepend it here
       full_path = this->HLA_save_directory + "/" + federation_name_str + "_" + file_name + ".running_feds";
    }
 
    file.open( full_path.c_str(), ios::in );
    if ( file.is_open() ) {
 
-      // clear out the known_feds from memory...
+      // Clear out the known_feds from memory...
       for ( unsigned int i = 0; i < known_feds_count; ++i ) {
          if ( this->known_feds[i].MOM_instance_name != NULL ) {
             if ( trick_MM->delete_var( static_cast< void * >( this->known_feds[i].MOM_instance_name ) ) ) {
@@ -6874,7 +6874,7 @@ void Federate::read_running_feds_file(
 
       file >> this->known_feds_count;
 
-      // re-allocate it...
+      // Re-allocate it...
       this->known_feds = reinterpret_cast< KnownFederate * >(
          alloc_type( this->known_feds_count, "TrickHLA::KnownFederate" ) );
       if ( this->known_feds == NULL ) {
@@ -6893,10 +6893,10 @@ void Federate::read_running_feds_file(
          this->known_feds[i].name = trick_MM->mm_strdup( const_cast< char * >( current_line.c_str() ) );
 
          file >> current_line;
-         this->known_feds[i].required = atoi( current_line.c_str() );
+         this->known_feds[i].required = ( atoi( current_line.c_str() ) != 0 );
       }
 
-      file.close(); // close the file before exitting
+      file.close(); // Close the file before exiting
    } else {
       ostringstream errmsg;
       errmsg << "Federate::read_running_feds_file()" << __LINE__
@@ -6907,7 +6907,7 @@ void Federate::read_running_feds_file(
 
 void Federate::copy_running_feds_into_known_feds()
 {
-   // clear out the known_feds from memory...
+   // Clear out the known_feds from memory...
    for ( unsigned int i = 0; i < this->known_feds_count; ++i ) {
       if ( this->known_feds[i].MOM_instance_name != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->known_feds[i].MOM_instance_name ) ) ) {
@@ -6929,7 +6929,7 @@ void Federate::copy_running_feds_into_known_feds()
                __LINE__, THLA_NEWLINE );
    }
 
-   // re-allocate it...
+   // Re-allocate it...
    this->known_feds = reinterpret_cast< KnownFederate * >(
       alloc_type( running_feds_count, "TrickHLA::KnownFederate" ) );
    if ( this->known_feds == NULL ) {
@@ -6939,7 +6939,7 @@ void Federate::copy_running_feds_into_known_feds()
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   // now, copy everything from running_feds into known_feds...
+   // Copy everything from running_feds into known_feds...
    this->known_feds_count = 0;
    for ( unsigned int i = 0; i < this->running_feds_count; ++i ) {
       this->known_feds[this->known_feds_count].MOM_instance_name = trick_MM->mm_strdup( running_feds[i].MOM_instance_name );
@@ -7058,9 +7058,9 @@ void Federate::wait_for_federation_restore_begun()
    while ( !this->restore_begun ) {
 
       // Check for shutdown.
-      (void)check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
-      (void)sleep_timer.sleep(); // sleep until RTI responds...
+      sleep_timer.sleep(); // sleep until RTI responds...
 
       if ( !this->restore_begun ) {
 
@@ -7109,9 +7109,9 @@ void Federate::wait_until_federation_is_ready_to_restore()
    while ( !this->start_to_restore ) {
 
       // Check for shutdown.
-      (void)check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
-      (void)sleep_timer.sleep(); // sleep until RTI responds...
+      sleep_timer.sleep(); // sleep until RTI responds...
 
       if ( !this->start_to_restore ) {
 
@@ -7186,7 +7186,7 @@ string Federate::wait_for_federation_restore_to_complete()
    while ( !this->restore_completed ) {
 
       // Check for shutdown.
-      (void)check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
       if ( this->running_feds_count_at_time_of_restore > this->running_feds_count ) {
          // someone has resigned since the federation restore has been initiated.
@@ -7197,7 +7197,7 @@ string Federate::wait_for_federation_restore_to_complete()
                          "completed!\nTERMINATING SIMULATION!";
          return return_string;
       } else {
-         (void)sleep_timer.sleep(); // sleep until RTI responds...
+         sleep_timer.sleep(); // sleep until RTI responds...
 
          if ( !this->restore_completed ) {
 
@@ -7261,9 +7261,9 @@ void Federate::wait_for_restore_request_callback()
            && !has_restore_process_restore_request_succeeded() ) {
 
       // Check for shutdown.
-      (void)check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
-      (void)sleep_timer.sleep(); // sleep until RTI responds...
+      sleep_timer.sleep(); // sleep until RTI responds...
 
       if ( !has_restore_process_restore_request_failed()
            && !has_restore_process_restore_request_succeeded() ) {
@@ -7313,9 +7313,9 @@ void Federate::wait_for_restore_status_to_complete()
    while ( !this->restore_request_complete ) {
 
       // Check for shutdown.
-      (void)check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
-      (void)sleep_timer.sleep(); // sleep until RTI responds...
+      sleep_timer.sleep(); // sleep until RTI responds...
 
       if ( !this->restore_request_complete ) {
 
@@ -7364,9 +7364,9 @@ void Federate::wait_for_save_status_to_complete()
    while ( !this->save_request_complete ) {
 
       // Check for shutdown.
-      (void)check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
-      (void)sleep_timer.sleep(); // sleep until RTI responds...
+      sleep_timer.sleep(); // sleep until RTI responds...
 
       if ( !this->save_request_complete ) {
 
@@ -7415,7 +7415,7 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
    while ( !this->federation_restore_failed_callback_complete ) {
 
       // Check for shutdown.
-      (void)check_for_shutdown_with_termination();
+      check_for_shutdown_with_termination();
 
       // if the federate has already been restored, do not wait for a signal
       // from the RTI that the federation restore failed, you'll never get it!
@@ -7426,7 +7426,7 @@ void Federate::wait_for_federation_restore_failed_callback_to_complete()
          }
          return;
       }
-      (void)sleep_timer.sleep(); // sleep until RTI responds...
+      sleep_timer.sleep(); // sleep until RTI responds...
 
       if ( !this->federation_restore_failed_callback_complete ) {
 
@@ -8034,9 +8034,9 @@ void Federate::restore_federate_handles_from_MOM()
       if ( !all_found ) {
 
          // Check for shutdown.
-         (void)check_for_shutdown_with_termination();
+         check_for_shutdown_with_termination();
 
-         (void)sleep_timer.sleep();
+         sleep_timer.sleep();
 
          // To be more efficient, we get the time once and share it.
          wallclock_time = sleep_timer.time();

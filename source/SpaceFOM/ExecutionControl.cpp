@@ -309,7 +309,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
                  &attrSpaceFOM__MTRInteractionHandler[attr_index],
                  sizeof( ATTRIBUTES ) );
       }
-      attr_index++;
+      ++attr_index;
    }
 
    // Now that we have hit the end of the ATTRIBUTES array, copy the last
@@ -624,7 +624,7 @@ void ExecutionControl::role_determination_process()
       while ( !this->late_joiner_determined ) {
 
          // Check for shutdown.
-         (void)federate->check_for_shutdown_with_termination();
+         federate->check_for_shutdown_with_termination();
 
          // We are not a late joiner if we received the announce for the
          // 'initialization started' sync-point. (Nominal Initialization)
@@ -645,10 +645,10 @@ void ExecutionControl::role_determination_process()
          if ( !this->late_joiner_determined ) {
 
             // Check for shutdown.
-            (void)federate->check_for_shutdown_with_termination();
+            federate->check_for_shutdown_with_termination();
 
             // Short sleep to release process and not hog CPU.
-            (void)sleep_timer.sleep();
+            sleep_timer.sleep();
 
             // Periodically check if we are still an execution member and
             // display sync-point status if needed as well.
@@ -1298,7 +1298,7 @@ void ExecutionControl::shutdown()
             send_hs( stdout, "SpaceFOM::ExecutionControl::shutdown():%d: sleep for %d %s.%c",
                      __LINE__, sleep_pad_base_time, Int64BaseTime::get_units().c_str(), THLA_NEWLINE );
          }
-         (void)Utilities::micro_sleep( sleep_pad_base_time );
+         Utilities::micro_sleep( sleep_pad_base_time );
       }
 
       // Tell the SpaceFOM execution control to transition to shutdown.
@@ -2066,7 +2066,7 @@ bool ExecutionControl::run_mode_transition()
          while ( this->get_cte_time() < go_to_run_time ) {
 
             // Check for shutdown.
-            (void)federate->check_for_shutdown_with_termination();
+            federate->check_for_shutdown_with_termination();
 
             diff = go_to_run_time - this->get_cte_time();
             if ( fmod( diff, 1.0 ) == 0.0 ) {
@@ -2235,7 +2235,7 @@ bool ExecutionControl::check_for_shutdown_with_termination()
 
       // Wait a little while for the Federate HLA interface to shutdown before
       // we terminate.
-      (void)Utilities::micro_sleep( 500000 );
+      Utilities::micro_sleep( 500000 );
       DebugHandler::terminate_with_message( errmsg.str() );
 
       return true;
@@ -2655,9 +2655,9 @@ void ExecutionControl::receive_root_ref_frame()
       while ( !rrf_object->is_changed() ) {
 
          // Check for shutdown.
-         (void)federate->check_for_shutdown_with_termination();
+         federate->check_for_shutdown_with_termination();
 
-         (void)sleep_timer.sleep();
+         sleep_timer.sleep();
 
          if ( !rrf_object->is_changed() ) {
 

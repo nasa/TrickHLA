@@ -138,7 +138,7 @@ void SinePacking::pack()
    }
 
    // Just count the number of times the pack() function gets called.
-   pack_count++;
+   ++pack_count;
 
    // NOTE: Because TrickHLA handles the bundling of locally owned attributes
    // we do not need to check the ownership status of them here like we do

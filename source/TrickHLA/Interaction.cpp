@@ -122,7 +122,7 @@ Interaction::~Interaction()
    }
 
    // Make sure we destroy the mutex.
-   (void)mutex.unlock();
+   mutex.unlock();
 }
 
 /*!
@@ -886,9 +886,9 @@ bool Interaction::send(
       if ( federate->should_publish_data() ) {
          // This call returns an event retraction handle but we
          // don't support event retraction so no need to store it.
-         (void)rti_amb->sendInteraction( this->class_handle,
-                                         param_values_map,
-                                         the_user_supplied_tag );
+         rti_amb->sendInteraction( this->class_handle,
+                                   param_values_map,
+                                   the_user_supplied_tag );
          successfuly_sent = true;
       }
    } catch ( RTI1516_EXCEPTION const &e ) {
@@ -978,10 +978,10 @@ bool Interaction::send(
             // This call returns an event retraction handle but we
             // don't support event retraction so no need to store it.
             // Send in Timestamp Order.
-            (void)rti_amb->sendInteraction( this->class_handle,
-                                            param_values_map,
-                                            the_user_supplied_tag,
-                                            time.get() );
+            rti_amb->sendInteraction( this->class_handle,
+                                      param_values_map,
+                                      the_user_supplied_tag,
+                                      time.get() );
             successfuly_sent = true;
 
          } else {
@@ -995,9 +995,9 @@ Interaction '%s' is time-regulating:%s, preferred-order:%s.%c",
             }
 
             // Send in Receive Order (i.e. with no timestamp).
-            (void)rti_amb->sendInteraction( this->class_handle,
-                                            param_values_map,
-                                            the_user_supplied_tag );
+            rti_amb->sendInteraction( this->class_handle,
+                                      param_values_map,
+                                      the_user_supplied_tag );
             successfuly_sent = true;
          }
       }
@@ -1105,6 +1105,12 @@ void Interaction::extract_data(
                __LINE__, handle_str.c_str(), get_FOM_name(), THLA_NEWLINE );
    }
 
+   // For thread safety, lock here to avoid corrupting the parameters.
+
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
+
    if ( interaction_item->is_timestamp_order() ) {
       // Update the timestamp.
       time.set( interaction_item->time );
@@ -1115,12 +1121,6 @@ void Interaction::extract_data(
       // Receive Order (RO), not Timestamp Order (TSO).
       received_as_TSO = false;
    }
-
-   // For thread safety, lock here to avoid corrupting the parameters.
-
-   // When auto_unlock_mutex goes out of scope it automatically unlocks the
-   // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &mutex );
 
    // Extract the user supplied tag.
    if ( interaction_item->user_supplied_tag_size > 0 ) {

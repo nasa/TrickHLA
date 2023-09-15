@@ -752,7 +752,7 @@ void FedAmb::receiveInteraction(
                                     (ParameterHandleValueMap &)theParameterValues,
                                     theUserSuppliedTag,
                                     theTime,
-                                    receivedOrder == RTI1516_NAMESPACE::TIMESTAMP );
+                                    ( receivedOrder == RTI1516_NAMESPACE::TIMESTAMP ) );
    }
 }
 
@@ -783,7 +783,7 @@ void FedAmb::receiveInteraction(
                                     (ParameterHandleValueMap &)theParameterValues,
                                     theUserSuppliedTag,
                                     theTime,
-                                    receivedOrder == RTI1516_NAMESPACE::TIMESTAMP );
+                                    ( receivedOrder == RTI1516_NAMESPACE::TIMESTAMP ) );
    }
 }
 

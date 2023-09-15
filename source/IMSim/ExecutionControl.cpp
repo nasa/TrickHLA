@@ -761,7 +761,7 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
    while ( !late_joiner_determined && !get_manager()->restore_determined ) {
 
       // Check for shutdown.
-      (void)federate->check_for_shutdown_with_termination();
+      federate->check_for_shutdown_with_termination();
 
       // We are not a late joiner if the Sim-Config sync-point exists are we
       // are a member for it.
@@ -790,9 +790,9 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
       if ( !late_joiner_determined && !get_manager()->restore_determined ) {
 
          // Check for shutdown.
-         (void)federate->check_for_shutdown_with_termination();
+         federate->check_for_shutdown_with_termination();
 
-         (void)sleep_timer.sleep();
+         sleep_timer.sleep();
 
          if ( !late_joiner_determined && !get_manager()->restore_determined ) {
 
@@ -988,7 +988,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
                  &attrTrickHLA__FreezeInteractionHandler[attr_index],
                  sizeof( ATTRIBUTES ) );
       }
-      attr_index++;
+      ++attr_index;
    }
 
    // now that we have hit the end of the ATTRIBUTES array, copy the last
@@ -1205,10 +1205,10 @@ void ExecutionControl::wait_for_all_multiphase_init_sync_points()
          while ( !sp->is_achieved() ) {
 
             // Always check to see is a shutdown was received.
-            (void)federate->check_for_shutdown_with_termination();
+            federate->check_for_shutdown_with_termination();
 
             // Pause and release the processor for short sleep value.
-            (void)sleep_timer.sleep();
+            sleep_timer.sleep();
 
             // Periodically check to make sure the federate is still part of
             // the federation execution.
@@ -2126,7 +2126,7 @@ bool ExecutionControl::run_mode_transition()
          while ( this->get_cte_time() < go_to_run_time ) {
 
             // Check for shutdown.
-            (void)federate->check_for_shutdown_with_termination();
+            federate->check_for_shutdown_with_termination();
 
             diff = go_to_run_time - this->get_cte_time();
             if ( fmod( diff, 1.0 ) == 0.0 ) {
@@ -2341,7 +2341,7 @@ void ExecutionControl::exit_freeze()
 
          while ( !this->pause_sync_pts.check_sync_points( this->checktime ) ) {
             // wait for it to be announced
-            (void)sleep_timer.sleep();
+            sleep_timer.sleep();
 
             if ( !this->pause_sync_pts.check_sync_points( this->checktime ) ) {
 
@@ -2649,7 +2649,7 @@ bool ExecutionControl::is_save_initiated()
 
       while ( !federate->initiate_save_flag ) { // wait for federation to be synced
          this->pause_sync_pts.achieve_all_sync_points( *federate->get_RTI_ambassador(), this->checktime );
-         (void)sleep_timer.sleep();
+         sleep_timer.sleep();
 
          if ( !federate->initiate_save_flag ) {
 

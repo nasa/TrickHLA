@@ -33,7 +33,8 @@ NASA, Johnson Space Center\n
 using namespace TrickHLA;
 
 /*!
- * @details Default constructor for the TrickHLA MutexLock class with mutex attribute PTHREAD_MUTEX_RECURSIVE.
+ * @details Default constructor for the TrickHLA MutexLock class with mutex
+ * attribute PTHREAD_MUTEX_RECURSIVE.
  * @job_class{initialization}
  */
 MutexLock::MutexLock()
@@ -50,7 +51,7 @@ MutexLock::MutexLock()
  */
 MutexLock::~MutexLock()
 {
-   (void)unlock();
+   unlock();
    pthread_mutex_destroy( &mutex );
 }
 
