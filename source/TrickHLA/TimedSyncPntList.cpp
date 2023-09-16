@@ -16,9 +16,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{Federate.cpp}
 @trick_link_dependency{Int64Time.cpp}
-@trick_link_dependency{Manager.cpp}
 @trick_link_dependency{MutexLock.cpp}
 @trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{SyncPnt.cpp}
@@ -46,14 +44,11 @@ NASA, Johnson Space Center\n
 
 // HLA include files.
 #include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/LoggableSyncPnt.hh"
 #include "TrickHLA/LoggableTimedSyncPnt.hh"
-#include "TrickHLA/Manager.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
-#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPnt.hh"
 #include "TrickHLA/SyncPntListBase.hh"
 #include "TrickHLA/TimedSyncPnt.hh"

@@ -24,9 +24,6 @@ NASA, Johnson Space Center\n
 @python_module{SpaceFOM}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
-@trick_link_dependency{../../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../../source/TrickHLA/Manager.cpp}
 @trick_link_dependency{../../source/TrickHLA/Packing.cpp}
 @trick_link_dependency{../../source/SpaceFOM/RefFrameBase.cpp}
 @trick_link_dependency{../../source/SpaceFOM/RefFrameState.cpp}
@@ -54,23 +51,8 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/RefFrameData.h"
 #include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
 
-// Forward Declared Classes:  Since these classes are only used as references
-// through pointers, these classes are included as forward declarations. This
-// helps to limit issues with recursive includes.
-namespace TrickHLA
-{
-class Attribute;
-class Object;
-class Manager;
-} // namespace TrickHLA
-
 namespace SpaceFOM
 {
-
-// Forward Declared Classes:  Since these classes are only used as references
-// through pointers, these classes are included as forward declarations. This
-// helps to limit issues with recursive includes.
-class ExecutionControl;
 
 class RefFrameState : public SpaceFOM::RefFrameBase
 {

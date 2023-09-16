@@ -24,6 +24,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../source/DIS/ExecutionControl.cpp}
+@trick_link_dependency{../../source/DIS/ExecutionConfiguration.cpp}
 @trick_link_dependency{../../source/DIS/PausePointList.cpp}
 @trick_link_dependency{../../source/DIS/Types.cpp}
 

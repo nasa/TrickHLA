@@ -19,8 +19,8 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../source/TrickHLA/ReflectedAttributesQueue.cpp}
+@trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../source/TrickHLA/Types.cpp}
 
 @revs_title

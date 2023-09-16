@@ -7602,7 +7602,7 @@ void Federate::print_requested_federation_restore_status(
           << ( vector_iter->status == FEDERATE_RESTORING )
           << "\n   FEDERATE_WAITING_FOR_FEDERATION_TO_RESTORE="
           << ( vector_iter->status == FEDERATE_WAITING_FOR_FEDERATION_TO_RESTORE )
-          << endl;
+          << THLA_NEWLINE;
       // Load the next element from 'theFederateStatusVector'.
       ++vector_iter;
    }

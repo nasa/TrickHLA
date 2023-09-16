@@ -22,9 +22,9 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
+@trick_link_dependency{../source/TrickHLA/Packing.cpp}
 @trick_link_dependency{../source/TrickHLA/Attribute.cpp}
 @trick_link_dependency{../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../source/TrickHLA/Packing.cpp}
 
 @revs_title
 @revs_begin

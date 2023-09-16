@@ -27,8 +27,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/OpaqueBuffer.cpp}
 @trick_link_dependency{../../source/TrickHLA/Packing.cpp}
 @trick_link_dependency{../../source/SpaceFOM/PhysicalEntityBase.cpp}
-@trick_link_dependency{../../source/SpaceFOM/SpaceTimeCoordinateEncoder.cpp}
 @trick_link_dependency{../../source/SpaceFOM/QuaternionEncoder.cpp}
+@trick_link_dependency{../../source/SpaceFOM/SpaceTimeCoordinateEncoder.cpp}
 
 @revs_title
 @revs_begin
@@ -49,12 +49,6 @@ NASA, Johnson Space Center\n
 // SpaceFOM include files.
 #include "SpaceFOM/QuaternionEncoder.hh"
 #include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
-
-namespace TrickHLA
-{
-class Packing;
-class OpaqueBuffer;
-} // namespace TrickHLA
 
 namespace SpaceFOM
 {

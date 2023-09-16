@@ -36,6 +36,7 @@ NASA, Johnson Space Center\n
 #include "trick/exec_proto.h"
 
 // TrickHLA include files.
+#include "TrickHLA/Attribute.hh"
 #include "TrickHLA/Conditional.hh"
 
 using namespace std;

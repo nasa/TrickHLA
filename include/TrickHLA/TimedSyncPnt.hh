@@ -20,9 +20,9 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
+@trick_link_dependency{../source/TrickHLA/TimedSyncPnt.cpp}
 @trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../source/TrickHLA/SyncPnt.cpp}
-@trick_link_dependency{../source/TrickHLA/TimedSyncPnt.cpp}
 @trick_link_dependency{../source/TrickHLA/Types.cpp}
 
 @revs_title
@@ -57,9 +57,6 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-// Forward declaration.
-class Federate;
-
 class TimedSyncPnt : public TrickHLA::SyncPnt
 {
    // Let the Trick input processor access protected and private data.
@@ -80,13 +77,13 @@ class TimedSyncPnt : public TrickHLA::SyncPnt
    TimedSyncPnt();
 
    /*! @brief Initialization constructor.
-    *  @param l Synchronization point label. */
-   explicit TimedSyncPnt( std::wstring const &l );
+    *  @param label Synchronization point label. */
+   explicit TimedSyncPnt( std::wstring const &label );
 
    /*! @brief Initialization constructor.
     *  @param t Synchronization point action time.
-    *  @param l Synchronization point label. */
-   TimedSyncPnt( Int64Time const &t, std::wstring const &l );
+    *  @param label Synchronization point label. */
+   TimedSyncPnt( Int64Time const &t, std::wstring const &label );
 
    /*! @brief Destructor for the TrickHLA TimedSyncPnt class. */
    virtual ~TimedSyncPnt();

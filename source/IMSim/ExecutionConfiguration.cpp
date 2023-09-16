@@ -28,6 +28,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/SleepTimeout.cpp}
 @trick_link_dependency{../TrickHLA/ExecutionConfigurationBase.cpp}
 @trick_link_dependency{ExecutionConfiguration.cpp}
+@trick_link_dependency{ExecutionControl.cpp}
 
 @revs_title
 @revs_begin

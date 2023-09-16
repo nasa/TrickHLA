@@ -28,11 +28,11 @@ execution.
 @python_module{TrickHLA}
 
 @tldh
+@trick_link_dependency{../../source/TrickHLA/ExecutionConfigurationBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/Manager.cpp}
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../../source/TrickHLA/Packing.cpp}
-@trick_link_dependency{../../source/TrickHLA/ExecutionConfigurationBase.cpp}
-@trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
 
 @revs_title
 @revs_begin
@@ -43,8 +43,6 @@ execution.
 
 #ifndef TRICKHLA_EXECUTION_CONFIGURATION_BASE_HH
 #define TRICKHLA_EXECUTION_CONFIGURATION_BASE_HH
-
-// System include files.
 
 // TrickHLA include files.
 #include "TrickHLA/Object.hh"

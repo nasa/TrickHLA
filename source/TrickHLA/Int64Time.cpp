@@ -17,7 +17,6 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Int64Time.cpp}
-@trick_link_dependency{Int64Interval.cpp}
 @trick_link_dependency{Types.cpp}
 
 @revs_title

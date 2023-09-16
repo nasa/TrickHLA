@@ -57,8 +57,8 @@ TimedSyncPnt::TimedSyncPnt()
 /*!
  * @job_class{initialization}
  */
-TimedSyncPnt::TimedSyncPnt( std::wstring const &l )
-   : SyncPnt( l ), time( 0.0 )
+TimedSyncPnt::TimedSyncPnt( std::wstring const &label )
+   : SyncPnt( label ), time( 0.0 )
 {
    return;
 }
@@ -66,8 +66,8 @@ TimedSyncPnt::TimedSyncPnt( std::wstring const &l )
 /*!
  * @job_class{initialization}
  */
-TimedSyncPnt::TimedSyncPnt( Int64Time const &t, std::wstring const &l )
-   : SyncPnt( l ), time( t )
+TimedSyncPnt::TimedSyncPnt( Int64Time const &t, std::wstring const &label )
+   : SyncPnt( label ), time( t )
 {
    return;
 }

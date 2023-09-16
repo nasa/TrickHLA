@@ -19,6 +19,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
+@trick_link_dependency{../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../source/TrickHLA/Manager.cpp}
 
 @revs_title

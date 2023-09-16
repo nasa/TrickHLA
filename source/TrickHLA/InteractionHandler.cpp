@@ -80,26 +80,30 @@ void InteractionHandler::initialize_callback(
 
 bool InteractionHandler::send_interaction()
 {
-   return ( ( interaction != NULL ) ? interaction->send( RTI1516_USERDATA( 0, 0 ) ) : false );
+   return ( ( interaction != NULL ) ? interaction->send( RTI1516_USERDATA( 0, 0 ) )
+                                    : false );
 }
 
 bool InteractionHandler::send_interaction(
    RTI1516_USERDATA const &the_user_supplied_tag )
 {
-   return ( ( interaction != NULL ) ? interaction->send( the_user_supplied_tag ) : false );
+   return ( ( interaction != NULL ) ? interaction->send( the_user_supplied_tag )
+                                    : false );
 }
 
 bool InteractionHandler::send_interaction(
    double send_HLA_time )
 {
-   return ( ( interaction != NULL ) ? interaction->send( send_HLA_time, RTI1516_USERDATA( 0, 0 ) ) : false );
+   return ( ( interaction != NULL ) ? interaction->send( send_HLA_time, RTI1516_USERDATA( 0, 0 ) )
+                                    : false );
 }
 
 bool InteractionHandler::send_interaction(
    double                  send_HLA_time,
    RTI1516_USERDATA const &the_user_supplied_tag )
 {
-   return ( ( interaction != NULL ) ? interaction->send( send_HLA_time, the_user_supplied_tag ) : false );
+   return ( ( interaction != NULL ) ? interaction->send( send_HLA_time, the_user_supplied_tag )
+                                    : false );
 }
 
 void InteractionHandler::receive_interaction(
