@@ -54,9 +54,6 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-// Forward declaration.
-class Federate;
-
 class SyncPnt
 {
    // Let the Trick input processor access protected and private data.

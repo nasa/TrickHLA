@@ -19,8 +19,8 @@ NASA, Johnson Space Center\n
 @python_module{DIS}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/Packing.cpp}
 @trick_link_dependency{../../source/TrickHLA/ExecutionConfigurationBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/Packing.cpp}
 @trick_link_dependency{../../source/DIS/ExecutionConfiguration.cpp}
 @trick_link_dependency{../../source/DIS/Types.cpp}
 

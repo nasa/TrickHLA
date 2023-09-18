@@ -22,8 +22,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/Int64BaseTime.cpp}
 @trick_link_dependency{../TrickHLA/InteractionHandler.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
-@trick_link_dependency{MTRInteractionHandler.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
+@trick_link_dependency{MTRInteractionHandler.cpp}
 @trick_link_dependency{Types.cpp}
 
 @revs_title

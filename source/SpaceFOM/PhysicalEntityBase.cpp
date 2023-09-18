@@ -16,6 +16,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../TrickHLA/Packing.cpp}
+@trick_link_dependency{../TrickHLA/CompileConfig.cpp}
 @trick_link_dependency{PhysicalEntityBase.cpp}
 
 

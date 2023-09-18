@@ -20,12 +20,12 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
+@trick_link_dependency{../source/TrickHLA/InteractionItem.cpp}
 @trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../source/TrickHLA/Item.cpp}
 @trick_link_dependency{../source/TrickHLA/ItemQueue.cpp}
 @trick_link_dependency{../source/TrickHLA/Parameter.cpp}
 @trick_link_dependency{../source/TrickHLA/ParameterItem.cpp}
-@trick_link_dependency{../source/TrickHLA/InteractionItem.cpp}
 
 @revs_title
 @revs_begin

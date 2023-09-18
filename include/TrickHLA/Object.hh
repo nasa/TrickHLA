@@ -19,6 +19,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
+@trick_link_dependency{../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../source/TrickHLA/Attribute.cpp}
 @trick_link_dependency{../source/TrickHLA/ElapsedTimeStats.cpp}
 @trick_link_dependency{../source/TrickHLA/Federate.cpp}
@@ -28,7 +29,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../source/TrickHLA/Manager.cpp}
 @trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../source/TrickHLA/MutexProtection.cpp}
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../source/TrickHLA/OwnershipHandler.cpp}
 @trick_link_dependency{../source/TrickHLA/Packing.cpp}
 @trick_link_dependency{../source/TrickHLA/ReflectedAttributesQueue.cpp}

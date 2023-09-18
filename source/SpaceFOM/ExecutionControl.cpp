@@ -25,7 +25,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/Manager.cpp}
 @trick_link_dependency{../TrickHLA/Parameter.cpp}
 @trick_link_dependency{../TrickHLA/SleepTimeout.cpp}
-@trick_link_dependency{../TrickHLA/SyncPntListBase.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
 @trick_link_dependency{ExecutionConfiguration.cpp}
 @trick_link_dependency{ExecutionControl.cpp}

@@ -41,6 +41,9 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <time.h>
 
+// Trick include files.
+#include "trick/Clock.hh"
+
 // TrickHLA include files.
 #include "TrickHLA/CTETimelineBase.hh"
 

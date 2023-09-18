@@ -26,9 +26,9 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../../source/TrickHLA/Manager.cpp}
 @trick_link_dependency{../../source/TrickHLA/Packing.cpp}
 @trick_link_dependency{../../source/SpaceFOM/RefFrameBase.cpp}
+@trick_link_dependency{../../source/SpaceFOM/ExecutionControl.cpp}
 @trick_link_dependency{../../source/SpaceFOM/SpaceTimeCoordinateEncoder.cpp}
 
 @revs_title
@@ -58,7 +58,6 @@ namespace TrickHLA
 {
 class Attribute;
 class Object;
-class Manager;
 } // namespace TrickHLA
 
 namespace SpaceFOM

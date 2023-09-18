@@ -23,6 +23,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../source/DIS/ExecutionControl.cpp}
+@trick_link_dependency{../../source/DIS/ExecutionConfiguration.cpp}
 @trick_link_dependency{../../source/DIS/Types.cpp}
 
 @revs_title

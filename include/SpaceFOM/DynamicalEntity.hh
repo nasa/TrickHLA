@@ -22,6 +22,7 @@ NASA, Johnson Space Center\n
 @python_module{SpaceFOM}
 
 @tldh
+@trick_link_dependency{../../source/SpaceFOM/PhysicalEntity.cpp}
 @trick_link_dependency{../../source/SpaceFOM/DynamicalEntityBase.cpp}
 @trick_link_dependency{../../source/SpaceFOM/DynamicalEntity.cpp}
 

@@ -21,6 +21,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/InteractionHandler.cpp}
+@trick_link_dependency{../../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../../source/SpaceFOM/MTRInteractionHandler.cpp}
 @trick_link_dependency{../../source/SpaceFOM/Types.cpp}
 

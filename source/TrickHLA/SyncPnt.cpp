@@ -16,10 +16,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{Federate.cpp}
-@trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{SyncPnt.cpp}
-@trick_link_dependency{Utilities.cpp}
 
 @revs_title
 @revs_begin
@@ -36,11 +33,9 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA includes.
-#include "TrickHLA/Federate.hh"
-#include "TrickHLA/SleepTimeout.hh"
+#include "TrickHLA/LoggableSyncPnt.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPnt.hh"
-#include "TrickHLA/Utilities.hh"
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;

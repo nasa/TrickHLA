@@ -55,6 +55,7 @@ NASA, Johnson Space Center\n
 
 // SpaceFOM include files.
 #include "SpaceFOM/ExecutionControl.hh"
+#include "SpaceFOM/RefFrameBase.hh"
 #include "SpaceFOM/RefFrameState.hh"
 
 using namespace std;

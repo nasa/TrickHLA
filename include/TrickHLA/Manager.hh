@@ -19,13 +19,13 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
+@trick_link_dependency{../source/TrickHLA/Manager.cpp}
 @trick_link_dependency{../source/TrickHLA/ExecutionConfigurationBase.cpp}
 @trick_link_dependency{../source/TrickHLA/ExecutionControlBase.cpp}
 @trick_link_dependency{../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../source/TrickHLA/ItemQueue.cpp}
 @trick_link_dependency{../source/TrickHLA/Interaction.cpp}
 @trick_link_dependency{../source/TrickHLA/InteractionItem.cpp}
-@trick_link_dependency{../source/TrickHLA/Manager.cpp}
 @trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../source/TrickHLA/Types.cpp}
