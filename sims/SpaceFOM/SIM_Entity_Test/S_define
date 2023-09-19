@@ -193,9 +193,9 @@ class SpaceFOMPhysicalEntitySimObject : public Trick::SimObject {
 
 
 //==========================================================================
-// SIM_OBJECT: SpaceFOMPhysicalEntiySimObject - An example PhysicalEntity
+// SIM_OBJECT: SpaceFOMDynamicalEntiySimObject - An example DynamicalEntity
 // simulation object definition. This can be used for SpaceFOM
-// PhysicalEntity object discovery and data exchange.
+// DynamicalEntity object discovery and data exchange.
 //==========================================================================
 ##include "SpaceFOM/DynamicalEntity.hh"
 class SpaceFOMDynamicalEntitySimObject : public Trick::SimObject {
@@ -229,6 +229,40 @@ class SpaceFOMDynamicalEntitySimObject : public Trick::SimObject {
 
 
 //==========================================================================
+// SIM_OBJECT: SpaceFOMPhysicalInterfaceSimObject - An example
+// PhysicalInterface simulation object definition. This can be used for
+// SpaceFOM PhysicalInterface object discovery and data exchange.
+//==========================================================================
+##include "SpaceFOM/PhysicalInterface.hh"
+class SpaceFOMPhysicalInterfaceSimObject : public Trick::SimObject {
+
+  public:
+   // DynamicalEntity data.
+   PhysicalInterfaceData  interface_data;
+
+   /* HLA associated reference frames packing object. */
+   SpaceFOM::PhysicalInterface interface_packing;
+
+   SpaceFOMPhysicalInterfaceSimObject( unsigned short _INIT = 59 )
+   {
+
+      //
+      // Initialization jobs
+      //
+      P_INIT ("initialization") interface_packing.initialize( &interface_data );
+
+   }
+
+  private:
+
+   // This object is not copyable
+   SpaceFOMPhysicalInterfaceSimObject( SpaceFOMPhysicalInterfaceSimObject const & );
+   SpaceFOMPhysicalInterfaceSimObject & operator=( SpaceFOMPhysicalInterfaceSimObject const & );
+
+};
+
+
+//==========================================================================
 // SimObject instantiations.
 //==========================================================================
 // Main TrickHLA SimObject.
@@ -248,3 +282,6 @@ SpaceFOMPhysicalEntitySimObject physical_entity;
 
 // DynamicalEntity instance.
 SpaceFOMDynamicalEntitySimObject dynamical_entity;
+
+// PhysicalInterface instance.
+SpaceFOMPhysicalInterfaceSimObject physical_interface;

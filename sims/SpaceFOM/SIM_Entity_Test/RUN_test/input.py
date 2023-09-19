@@ -23,6 +23,7 @@ from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
 from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
 # Load the SpaceFOM specific entity configuration objects.
 from Modified_data.SpaceFOM.SpaceFOMPhysicalEntityObject import *
+from Modified_data.SpaceFOM.SpaceFOMPhysicalInterfaceObject import *
 from Modified_data.SpaceFOM.SpaceFOMDynamicalEntityObject import *
 
 def print_usage_message( ):
@@ -35,6 +36,7 @@ def print_usage_message( ):
    print('  -de [name]           : Name of the DynamicalEntity, default is Voyager.')
    print('  --nostop             : Set no stop time on simulation.')
    print('  -pe [name]           : Name of the PhysicalEntity, default is Enterprise.')
+   print('  -pi [name]           : Name of the PhysicalInterface, default is Enterprise.dockingport.')
    print('  -s --stop [time]     : Time to stop simulation, default is 10.0 seconds.')
    print('  --verbose [on|off]   : on: Show verbose messages (Default), off: disable messages.')
    print(' ')
@@ -55,6 +57,7 @@ def parse_command_line( ) :
    global federation_name
    global dyn_entity_name
    global phy_entity_name
+   global phy_interface_name
    
    # Get the Trick command line arguments.
    argc = trick.command_line_args_get_argc()
@@ -98,6 +101,14 @@ def parse_command_line( ) :
             phy_entity_name = str(argv[index])
          else :
             print('ERROR: Missing -pe [name] argument.')
+            print_usage = True
+      
+      elif ((str(argv[index]) == '-pi')) :
+         index = index + 1
+         if (index < argc) :
+            phy_interface_name = str(argv[index])
+         else :
+            print('ERROR: Missing -pi [name] argument.')
             print_usage = True
       
       elif ((str(argv[index]) == '-s') | (str(argv[index]) == '--stop')) :
@@ -156,6 +167,9 @@ dyn_entity_name = 'Voyager'
 
 # Set the default PhysicalEntity instance name.
 phy_entity_name = 'Enterprise'
+
+# Set the default PhysicalInterface instance name.
+phy_interface_name = phy_entity_name + '.dockingport'
 
 
 parse_command_line()
@@ -315,6 +329,34 @@ physical_entity.pe_data.state.quat_vector[2] = 0.0
 physical_entity.pe_data.state.ang_vel[0] = 0.0
 physical_entity.pe_data.state.ang_vel[1] = 0.0
 physical_entity.pe_data.state.ang_vel[2] = 0.0
+
+
+#---------------------------------------------------------------------------
+# Set up the PhysicalInterface object for discovery.
+#---------------------------------------------------------------------------
+phy_interface = SpaceFOMPhysicalInterfaceObject( True,
+                                                 phy_interface_name,
+                                                 physical_interface.interface_packing,
+                                                 'physical_interface.interface_packing' )
+
+# Set the debug flag for the Entity.
+physical_interface.interface_packing.debug = verbose
+
+# Add this Entity to the list of managed object.
+federate.add_fed_object( phy_interface )
+
+# Let's give the PhysicalEntity some non-zero values.
+physical_interface.interface_data.name        = phy_interface_name
+physical_interface.interface_data.parent_name = phy_entity_name
+
+physical_interface.interface_data.position[0] = 0.0
+physical_interface.interface_data.position[1] = 1.0
+physical_interface.interface_data.position[2] = 2.0
+
+physical_interface.interface_data.attitude.scalar = 1.0
+physical_interface.interface_data.attitude.vector[0] = 0.0
+physical_interface.interface_data.attitude.vector[1] = 0.0
+physical_interface.interface_data.attitude.vector[2] = 0.0
 
 
 #---------------------------------------------------------------------------

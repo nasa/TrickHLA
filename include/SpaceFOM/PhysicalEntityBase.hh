@@ -72,7 +72,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    /*! @brief Sets up the attributes for a PhysicalEntity using default values.
     *  @param object TrickHLA::Object associated with this PhysicalEntity.
     *  @param sim_obj_name Name of SimObject containing this PhysicalEntity.
-    *  @param entity_obj_name Name of the ReferenceFrame object in the SimObject.
+    *  @param entity_obj_name Name of the PhysicalEntity object in the SimObject.
     *  @param entity_name Name of the PhysicalEntity instance.
     *  @param parent_ref_frame_name Name of the parent ReferenceFrame for this PhysicalEntity instance.
     *  @param publishes Does this federate publish this PhysicalEntity.
@@ -188,12 +188,13 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    char *status;       ///< @trick_units{--} String use to define entity status.
    char *parent_frame; ///< @trick_units{--} Parent frame for state representation.
 
-   SpaceTimeCoordinateData &state; ///< @trick_units{--} Space time coordinate state.
-
    double accel[3];     ///< @trick_units{m/s2} Entity acceleration vector.
    double rot_accel[3]; ///< @trick_units{rad/s2} Entity rotational acceleration vector.
    double cm[3];        ///< @trick_units{m} Position of the entity center of mass in the structural frame.
 
+   // Note: These are references that get its assignment from the encoders
+   // in the initialization list of the class constructor.
+   SpaceTimeCoordinateData &state; ///< @trick_units{--} Space time coordinate state.
    QuaternionData &body_wrt_struct; ///< @trick_units{--} Orientation of the body frame wrt. the structural frame.
 
   private:

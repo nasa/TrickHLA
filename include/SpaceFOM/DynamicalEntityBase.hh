@@ -62,7 +62,7 @@ class DynamicalEntityBase : virtual public SpaceFOM::PhysicalEntityBase
    /*! @brief Sets up the attributes for a DynamicalEntity using default values.
     *  @param object TrickHLA::Object associated with this DynamicalEntity.
     *  @param sim_obj_name Name of SimObject containing this DynamicalEntity.
-    *  @param entity_obj_name Name of the ReferenceFrame object in the SimObject.
+    *  @param entity_obj_name Name of the DynamicalEntity object in the SimObject.
     *  @param entity_name Name of the DynamicalEntity instance.
     *  @param parent_ref_frame_name Name of the parent ReferenceFrame for this DynamicalEntity instance.
     *  @param publishes Does this federate publish this DynamicalEntity.
