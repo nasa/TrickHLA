@@ -200,8 +200,6 @@ void PhysicalInterface::pack()
 
 void PhysicalInterface::unpack()
 {
-   ostringstream errmsg;
-   int           iinc;
 
    // double dt; // Local vs. remote time difference.
 
@@ -253,7 +251,7 @@ void PhysicalInterface::unpack()
 
    // Unpack the interface position data.
    if ( position_attr->is_received() ) {
-      for ( iinc = 0; iinc < 3; ++iinc ) {
+      for ( int iinc = 0; iinc < 3; ++iinc ) {
           interface_data->position[iinc] = position[iinc];
       }
    }

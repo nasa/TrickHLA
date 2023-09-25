@@ -179,10 +179,6 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    TrickHLA::Attribute *cm_attr;           ///< @trick_io{**} Center of mass Attribute.
    TrickHLA::Attribute *body_frame_attr;   ///< @trick_io{**} Body frame orientation Attribute.
 
-   // Instantiate the Space/Time Coordinate encoder
-   SpaceTimeCoordinateEncoder stc_encoder;  ///< @trick_units{--} Entity state encoder.
-   QuaternionEncoder          quat_encoder; ///< @trick_units{--} Attitude quaternion encoder.
-
    char *name;         ///< @trick_units{--} Name of the physical entity.
    char *type;         ///< @trick_units{--} String use to define entity type.
    char *status;       ///< @trick_units{--} String use to define entity status.
@@ -192,8 +188,12 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    double rot_accel[3]; ///< @trick_units{rad/s2} Entity rotational acceleration vector.
    double cm[3];        ///< @trick_units{m} Position of the entity center of mass in the structural frame.
 
-   // Note: These are references that get its assignment from the encoders
-   // in the initialization list of the class constructor.
+   // Instantiate the aggregate data encoders
+   SpaceTimeCoordinateEncoder stc_encoder;  ///< @trick_units{--} Entity state encoder.
+   QuaternionEncoder          quat_encoder; ///< @trick_units{--} Attitude quaternion encoder.
+
+   // Note: These are references that get assignment from the encoders in the
+   // initialization list of the class constructor.  Essentially these are short cuts.
    SpaceTimeCoordinateData &state; ///< @trick_units{--} Space time coordinate state.
    QuaternionData &body_wrt_struct; ///< @trick_units{--} Orientation of the body frame wrt. the structural frame.
 

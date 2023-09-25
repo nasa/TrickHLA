@@ -372,11 +372,56 @@ class JEODPhysicalEntiySimObject : public Trick::SimObject {
 
 };
 
-// Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
-JEODPhysicalEntiySimObject active_phyical_entity(&(active_vehicle.dyn_body), (P_HLA_INIT-1));
+
+//==========================================================================
+// SIM_OBJECT: JEODPhysicalInterfaceSimObject - An example PhysicalInterface
+// simulation object definition. This can be used for SpaceFOM
+// PhysicalInterface object discovery and data exchange.
+//==========================================================================
+##include "JEOD/JEODPhysicalInterface.hh"
+class JEODPhysicalInterfaceSimObject : public Trick::SimObject {
+
+  public:
+
+   /* HLA associated reference frames packing object. */
+   SpaceFOM::JEODPhysicalInterface interface_packing;
+
+   JEODPhysicalInterfaceSimObject( jeod::DynBody  *dyn_body_data_ptr,
+                                   unsigned short _INIT = 59 )
+   : dyn_body_ptr(dyn_body_data_ptr)
+   {
+
+      //
+      // Initialization jobs
+      //
+      P_INIT ("initialization") interface_packing.initialize( dyn_body_ptr );
+
+   }
+
+  protected:
+   jeod::DynBody * dyn_body_ptr;
+
+  private:
+
+   // This object is not copyable
+   JEODPhysicalInterfaceSimObject( JEODPhysicalInterfaceSimObject const & );
+   JEODPhysicalInterfaceSimObject & operator=( JEODPhysicalInterfaceSimObject const & );
+
+};
 
 // Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
-JEODPhysicalEntiySimObject passive_phyical_entity(&(passive_vehicle.dyn_body), (P_HLA_INIT-1));
+//JEODPhysicalEntiySimObject active_physical_entity(&(active_vehicle.dyn_body), (P_HLA_INIT-1));
+JEODPhysicalEntiySimObject active_physical_entity(&(active_vehicle.dyn_body));
+
+// Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
+JEODPhysicalInterfaceSimObject active_physical_interface(&(active_vehicle.dyn_body));
+
+// Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
+//JEODPhysicalEntiySimObject passive_physical_entity(&(passive_vehicle.dyn_body), (P_HLA_INIT-1));
+JEODPhysicalEntiySimObject passive_physical_entity(&(passive_vehicle.dyn_body));
+
+// Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
+JEODPhysicalInterfaceSimObject passive_physical_interface(&(passive_vehicle.dyn_body));
 
 // Setup the integration loop.
 IntegLoop sim_integ_loop  (DYNAMICS) earth, moon, mars, active_vehicle, passive_vehicle, dynamics;

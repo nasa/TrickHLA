@@ -75,12 +75,12 @@ PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
      rot_accel_attr( NULL ),
      cm_attr( NULL ),
      body_frame_attr( NULL ),
-     stc_encoder(),
-     quat_encoder(),
      name( NULL ),
      type( NULL ),
      status( NULL ),
      parent_frame( NULL ),
+     stc_encoder(),
+     quat_encoder(),
      state( stc_encoder.get_data() ),
      body_wrt_struct( quat_encoder.get_data() )
 {

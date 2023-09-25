@@ -144,16 +144,16 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
    TrickHLA::Attribute *position_attr; ///< @trick_io{**} Position Attribute.
    TrickHLA::Attribute *attitude_attr; ///< @trick_io{**} Attitude Attribute.
 
+   char   *name;        ///< @trick_units{--}   Name of the physical interface.
+   char   *parent_name; ///< @trick_units{--}   Parent PhysicalEntity or PhysicalInterface.
+   double  position[3]; ///< @trick_units{m/s2} Interface position vector.
+
    // Instantiate the attitude quaternion encoder.
-   QuaternionEncoder quat_encoder; ///< @trick_units{--} Attitude quaternion encoder.
+   QuaternionEncoder quat_encoder; ///< @trick_units{--} Interface attitude quaternion encoder.
 
-   char           *name;        ///< @trick_units{--}   Name of the physical interface.
-   char           *parent_name; ///< @trick_units{--}   Parent PhysicalEntity or PhysicalInterface.
-   double          position[3]; ///< @trick_units{m/s2} Interface position vector.
-
-   // Note: This is a reference that get its assignment from the quat_encoder
-   // in the initialization list of the class constructor.
-   QuaternionData &attitude;    ///< @trick_units{--}   Orientation of the interface wrt. the parent.
+   // Note: This is a reference that gets assignment from the encoder in the
+   // initialization list of the class constructor.  Essentially this is a short cut.
+   QuaternionData &attitude; ///< @trick_units{--} Orientation of the interface wrt. the parent.
 
   private:
    // This object is not copyable

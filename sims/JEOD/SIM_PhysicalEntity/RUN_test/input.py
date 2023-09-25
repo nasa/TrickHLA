@@ -25,6 +25,8 @@ from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
 from Modified_data.JEOD.JEODRefFrameTreeObject import *
 # Load the SpaceFOM vehicle PhysicalEntity configuration object.
 from Modified_data.SpaceFOM.SpaceFOMPhysicalEntityObject import *
+# Load the SpaceFOM vehicle PhysicalInterface configuration object.
+from Modified_data.SpaceFOM.SpaceFOMPhysicalInterfaceObject import *
 
 def print_usage_message( ):
 
@@ -57,7 +59,9 @@ def parse_command_line( ) :
    global federate_name
    global master_name
    global active_entity_name
+   global active_interface_name
    global passive_entity_name
+   global passive_interface_name
    
    # Get the Trick command line arguments.
    argc = trick.command_line_args_get_argc()
@@ -168,8 +172,14 @@ master_name = 'Master'
 # Set the default DynamicalEntity instance name.
 active_entity_name = 'Lander'
 
+# Set the active interface name.
+active_interface_name = active_entity_name + '.docking_port'
+
 # Set the default PhysicalEntity instance name.
 passive_entity_name = 'Station'
+
+# Set the passive interface name.
+passive_interface_name = passive_entity_name + '.docking_port'
 
 parse_command_line()
 
@@ -283,6 +293,19 @@ active_vehicle.mass_init.properties.inertia[0]  = [ 1.0, 0.0, 0.0]
 active_vehicle.mass_init.properties.inertia[1]  = [ 0.0, 1.0, 0.0]
 active_vehicle.mass_init.properties.inertia[2]  = [ 0.0, 0.0, 1.0]
 
+# Create the docking port mass point interface.
+active_vehicle.mass_init.set_subject_body( active_vehicle.dyn_body.mass )
+active_vehicle.mass_init.num_points = 1
+active_vehicle.mass_init.points = trick.sim_services.alloc_type( active_vehicle.mass_init.num_points, "jeod::MassPointInit")
+
+active_vehicle.mass_init.points[0].set_name("Active docking port")
+active_vehicle.mass_init.points[0].pt_frame_spec              = trick.MassPointInit.StructToBody
+active_vehicle.mass_init.points[0].position                   = trick.attach_units( "m",[ 1.0, 0.0, 0.0])
+active_vehicle.mass_init.points[0].pt_orientation.data_source = trick.Orientation.InputEigenRotation
+
+active_vehicle.mass_init.points[0].pt_orientation.eigen_angle = trick.attach_units( "degree",0.0)
+active_vehicle.mass_init.points[0].pt_orientation.eigen_axis  = [ 0.0, 0.0, 1.0]
+
 # Set initial state.
 active_vehicle.pfix.reference_name     = "Moon"
 active_vehicle.lvlh.reference_name     = "Moon"
@@ -371,6 +394,19 @@ passive_vehicle.mass_init.properties.position    = [ 0.0, 0.0, 0.0]
 passive_vehicle.mass_init.properties.inertia[0]  = [ 1.0, 0.0, 0.0]
 passive_vehicle.mass_init.properties.inertia[1]  = [ 0.0, 1.0, 0.0]
 passive_vehicle.mass_init.properties.inertia[2]  = [ 0.0, 0.0, 1.0]
+
+# Create the docking port mass point interface.
+passive_vehicle.mass_init.set_subject_body( passive_vehicle.dyn_body.mass )
+passive_vehicle.mass_init.num_points = 1
+passive_vehicle.mass_init.points = trick.sim_services.alloc_type( passive_vehicle.mass_init.num_points, "jeod::MassPointInit")
+
+passive_vehicle.mass_init.points[0].set_name("Passive docking port")
+passive_vehicle.mass_init.points[0].pt_frame_spec              = trick.MassPointInit.StructToBody
+passive_vehicle.mass_init.points[0].position                   = trick.attach_units( "m",[ 0.0, 1.0, 0.0])
+passive_vehicle.mass_init.points[0].pt_orientation.data_source = trick.Orientation.InputEigenRotation
+
+passive_vehicle.mass_init.points[0].pt_orientation.eigen_angle = trick.attach_units( "degree",0.0)
+passive_vehicle.mass_init.points[0].pt_orientation.eigen_axis  = [ 0.0, 1.0, 0.0]
 
 # Set initial state.
 passive_vehicle.pfix.reference_name     = "Moon"
@@ -487,15 +523,15 @@ THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHL
 frame_tree = JEODRefFrameTreeObject( federate, ref_frame_tree )
 
 # Set the debug flag for the reference frames.
-solar_system_barycenter.frame_packing.debug = False
-sun_inertial.frame_packing.debug = False
-earth_moon_barycenter.frame_packing.debug = False
-earth_centered_inertial.frame_packing.debug = False
-moon_centered_inertial.frame_packing.debug = False
-mars_centered_inertial.frame_packing.debug = False
-earth_centered_fixed.frame_packing.debug = False
-moon_centered_fixed.frame_packing.debug = False
-mars_centered_fixed.frame_packing.debug = False
+solar_system_barycenter.frame_packing.debug = verbose
+sun_inertial.frame_packing.debug            = verbose
+earth_moon_barycenter.frame_packing.debug   = verbose
+earth_centered_inertial.frame_packing.debug = verbose
+moon_centered_inertial.frame_packing.debug  = verbose
+mars_centered_inertial.frame_packing.debug  = verbose
+earth_centered_fixed.frame_packing.debug    = verbose
+moon_centered_fixed.frame_packing.debug     = verbose
+mars_centered_fixed.frame_packing.debug     = verbose
 
 
 #---------------------------------------------------------------------------
@@ -503,19 +539,42 @@ mars_centered_fixed.frame_packing.debug = False
 #---------------------------------------------------------------------------
 lander = SpaceFOMPhysicalEntityObject( True,
                                        active_entity_name,
-                                       active_phyical_entity.entity_packing,
-                                       'active_phyical_entity.entity_packing' )
+                                       active_physical_entity.entity_packing,
+                                       'active_physical_entity.entity_packing' )
 
 # Set the debug flag for the active vehicle.
-active_phyical_entity.entity_packing.debug = verbose
+active_physical_entity.entity_packing.debug = verbose
 
 # Add this vehicle to the list of managed object.
 federate.add_fed_object( lander )
 
 # FIXME: For now, let's add the data tags.  Later this will come from the DynBody.
-active_phyical_entity.entity_packing.set_type( 'NASA Lander' )
-active_phyical_entity.entity_packing.set_status( 'Approach' )
-active_phyical_entity.entity_packing.set_parent_frame( 'MoonCentricInertial' )
+active_physical_entity.entity_packing.set_type( 'NASA Lander' )
+active_physical_entity.entity_packing.set_status( 'Approach' )
+active_physical_entity.entity_packing.set_parent_frame( 'MoonCentricInertial' )
+
+
+#---------------------------------------------------------------------------
+# Set up the lander PhysicalInterface object.
+#---------------------------------------------------------------------------
+lander_dockport = SpaceFOMPhysicalInterfaceObject( True,
+                                                   active_interface_name,
+                                                   active_physical_interface.interface_packing,
+                                                   'active_physical_interface.interface_packing' )
+
+# Set the JEOD vehicle point ID associated with this interface.
+#active_physical_interface.interface_packing.vehicle_point_id = active_interface_name
+#active_physical_interface.interface_packing.vehicle_point_id = trick.trick_MM.mm_strdup(active_vehicle.mass_init.points[0].name)
+active_physical_interface.interface_packing.vehicle_point_id = active_physical_interface.interface_packing.set_vehicle_point_id('Lander.Active docking port')
+
+# Set the debug flag for the active vehicle.
+active_physical_interface.interface_packing.debug = verbose
+
+# Add this vehicle to the list of managed object.
+federate.add_fed_object( lander_dockport )
+
+# FIXME: For now, let's add the data tags.  Later this will come from the vehicle point.
+active_physical_interface.interface_packing.set_parent( active_entity_name )
 
 
 #---------------------------------------------------------------------------
@@ -523,19 +582,40 @@ active_phyical_entity.entity_packing.set_parent_frame( 'MoonCentricInertial' )
 #---------------------------------------------------------------------------
 station = SpaceFOMPhysicalEntityObject( True,
                                         passive_entity_name,
-                                        passive_phyical_entity.entity_packing,
-                                        'passive_phyical_entity.entity_packing' )
+                                        passive_physical_entity.entity_packing,
+                                        'passive_physical_entity.entity_packing' )
 
 # Set the debug flag for the passive vehicle.
-passive_phyical_entity.entity_packing.debug = verbose
+passive_physical_entity.entity_packing.debug = verbose
 
 # Add this vehicle to the list of managed object.
 federate.add_fed_object( station )
 
 # FIXME: For now, let's add the data tags.  Later this will come from the DynBody.
-passive_phyical_entity.entity_packing.set_type( 'Gateway' )
-passive_phyical_entity.entity_packing.set_status( 'NRHO' )
-passive_phyical_entity.entity_packing.set_parent_frame( 'MoonCentricInertial' )
+passive_physical_entity.entity_packing.set_type( 'Gateway' )
+passive_physical_entity.entity_packing.set_status( 'NRHO' )
+passive_physical_entity.entity_packing.set_parent_frame( 'MoonCentricInertial' )
+
+
+#---------------------------------------------------------------------------
+# Set up the station PhysicalInterface object.
+#---------------------------------------------------------------------------
+station_dockport = SpaceFOMPhysicalInterfaceObject( True,
+                                                    passive_interface_name,
+                                                    passive_physical_interface.interface_packing,
+                                                    'passive_physical_interface.interface_packing' )
+
+# Set the JEOD vehicle point ID associated with this interface.
+passive_physical_interface.interface_packing.vehicle_point_id = passive_physical_interface.interface_packing.set_vehicle_point_id('Station.Passive docking port')
+
+# Set the debug flag for the active vehicle.
+passive_physical_interface.interface_packing.debug = verbose
+
+# Add this vehicle to the list of managed object.
+federate.add_fed_object( station_dockport )
+
+# FIXME: For now, let's add the data tags.  Later this will come from the vehicle point.
+passive_physical_interface.interface_packing.set_parent( passive_entity_name )
 
 
 #---------------------------------------------------------------------------
@@ -554,8 +634,8 @@ federate.add_sim_object( mars_centered_inertial )
 federate.add_sim_object( earth_centered_fixed )
 federate.add_sim_object( moon_centered_fixed )
 federate.add_sim_object( mars_centered_fixed )
-federate.add_sim_object( active_phyical_entity )
-federate.add_sim_object( passive_phyical_entity )
+federate.add_sim_object( active_physical_entity )
+federate.add_sim_object( passive_physical_entity )
 
 
 #---------------------------------------------------------------------------

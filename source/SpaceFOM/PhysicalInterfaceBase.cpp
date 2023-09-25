@@ -67,9 +67,9 @@ PhysicalInterfaceBase::PhysicalInterfaceBase() // RETURN: -- None.
      parent_attr( NULL ),
      position_attr( NULL ),
      attitude_attr( NULL ),
-     quat_encoder(),
      name( NULL ),
      parent_name( NULL ),
+     quat_encoder(),
      attitude( quat_encoder.get_data() )
 {
    V_INIT( position );
