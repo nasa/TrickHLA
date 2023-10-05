@@ -763,13 +763,15 @@ void Federate::create_RTI_ambassador_and_connect()
 
       if ( ( local_settings == NULL ) || ( *local_settings == '\0' ) ) {
          // Use default vendor local settings.
-         RTI_ambassador->connect( *federate_ambassador, HLA_IMMEDIATE );
-
+         RTI_ambassador->connect( *federate_ambassador,
+                                  RTI1516_NAMESPACE::HLA_IMMEDIATE );
       } else {
          wstring local_settings_ws;
          StringUtilities::to_wstring( local_settings_ws, local_settings );
 
-         RTI_ambassador->connect( *federate_ambassador, HLA_IMMEDIATE, local_settings_ws );
+         RTI_ambassador->connect( *federate_ambassador,
+                                  RTI1516_NAMESPACE::HLA_IMMEDIATE,
+                                  local_settings_ws );
       }
 
       // Reset the Federate shutdown-called flag now that we are connected.
@@ -799,48 +801,64 @@ void Federate::create_RTI_ambassador_and_connect()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
+      string rti_err_msg;
+      StringUtilities::to_string( rti_err_msg, e.what() );
+
       ostringstream errmsg;
       errmsg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
              << " ERROR: For Federate: '" << name
              << "' of Federation: '" << federation_name
              << "' with local_settings: '" << ( ( local_settings != NULL ) ? local_settings : "" )
-             << "' with EXCEPTION: InvalidLocalSettingsDesignator" << THLA_ENDL;
+             << "' with EXCEPTION: InvalidLocalSettingsDesignator: '"
+             << rti_err_msg << "'." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( UnsupportedCallbackModel const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
+      string rti_err_msg;
+      StringUtilities::to_string( rti_err_msg, e.what() );
+
       ostringstream errmsg;
       errmsg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
              << " For Federate: '" << name
              << "' of Federation: '" << federation_name
              << "' with local_settings: '" << ( ( local_settings != NULL ) ? local_settings : "" )
-             << "' with EXCEPTION: UnsupportedCallbackModel" << THLA_ENDL;
+             << "' with EXCEPTION: UnsupportedCallbackModel: '"
+             << rti_err_msg << "'." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( AlreadyConnected const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
+      string rti_err_msg;
+      StringUtilities::to_string( rti_err_msg, e.what() );
+
       ostringstream errmsg;
       errmsg << "Federate::create_RTI_ambassador_and_connect()"
              << " ERROR: For Federate: '" << name
              << "' of Federation: '" << federation_name
              << "' with local_settings: '" << ( ( local_settings != NULL ) ? local_settings : "" )
-             << "' with EXCEPTION: AlreadyConnected" << THLA_ENDL;
+             << "' with EXCEPTION: AlreadyConnected: '"
+             << rti_err_msg << "'." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( CallNotAllowedFromWithinCallback const &e ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
+      string rti_err_msg;
+      StringUtilities::to_string( rti_err_msg, e.what() );
+
       ostringstream errmsg;
       errmsg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
              << " ERROR: For Federate: '" << name
              << "' of Federation: '" << federation_name
              << "' with local_settings: '" << ( ( local_settings != NULL ) ? local_settings : "" )
-             << "' with EXCEPTION: CallNotAllowedFromWithinCallback" << THLA_ENDL;
+             << "' with EXCEPTION: CallNotAllowedFromWithinCallback: '"
+             << rti_err_msg << "'." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    } catch ( RTIinternalError const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1674,17 +1692,17 @@ void Federate::initialize_MOM_handles()
    } catch ( RTI1516_NAMESPACE::NameNotFound const &e ) {
       error_flag = true;
       send_hs( stderr, "Federate::initialize_MOM_handles():%d \
-NameNotFound ERROR for RTI_amb->getObjectClassHandle('HLAmanager.HLAfederation'%c",
+NameNotFound ERROR for RTI_amb->getObjectClassHandle('HLAmanager.HLAfederation')%c",
                __LINE__, THLA_NEWLINE );
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       error_flag = true;
       send_hs( stderr, "Federate::initialize_MOM_handles():%d \
-FederateNotExecutionMember ERROR for RTI_amb->getObjectClassHandle('HLAmanager.HLAfederation'%c",
+FederateNotExecutionMember ERROR for RTI_amb->getObjectClassHandle('HLAmanager.HLAfederation')%c",
                __LINE__, THLA_NEWLINE );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       error_flag = true;
       send_hs( stderr, "Federate::initialize_MOM_handles():%d \
-NotConnected ERROR for RTI_amb->getObjectClassHandle('HLAmanager.HLAfederation'%c",
+NotConnected ERROR for RTI_amb->getObjectClassHandle('HLAmanager.HLAfederation')%c",
                __LINE__, THLA_NEWLINE );
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
@@ -1697,35 +1715,30 @@ RTIinternalError for RTI_amb->getObjectClassHandle('HLAmanager.HLAfederation')%c
    try {
       this->MOM_HLAfederatesInFederation_handle = RTI_ambassador->getAttributeHandle( MOM_HLAfederation_class_handle,
                                                                                       L"HLAfederatesInFederation" );
-   } catch ( RTI1516_NAMESPACE::InvalidObjectClassHandle const &e ) {
-      error_flag = true;
-      send_hs( stderr, "Federate::initialize_MOM_handles():%d \
-InvalidObjectClassHandle ERROR for RTI_amb->getAttributrHandle( MOM_federation_class_handle, \
-'HLAfederatesInFederation'%c",
-               __LINE__, THLA_NEWLINE );
    } catch ( RTI1516_NAMESPACE::NameNotFound const &e ) {
       error_flag = true;
       send_hs( stderr, "Federate::initialize_MOM_handles():%d \
-NameNotFound ERROR for RTI_amb->getAttributrHandle( MOM_federation_class_handle, \
-'HLAfederatesInFederation'%c",
+NameNotFound ERROR for RTI_amb->getAttributrHandle( MOM_federation_class_handle, 'HLAfederatesInFederation')%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( RTI1516_NAMESPACE::InvalidObjectClassHandle const &e ) {
+      error_flag = true;
+      send_hs( stderr, "Federate::initialize_MOM_handles():%d \
+InvalidObjectClassHandle ERROR for RTI_amb->getAttributrHandle( MOM_federation_class_handle, 'HLAfederatesInFederation')%c",
                __LINE__, THLA_NEWLINE );
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       error_flag = true;
       send_hs( stderr, "Federate::initialize_MOM_handles():%d \
-FederateNotExecutionMember ERROR for RTI_amb->getAttributrHandle(MOM_federation_class_handle, \
-'HLAfederatesInFederation'%c",
+FederateNotExecutionMember ERROR for RTI_amb->getAttributrHandle(MOM_federation_class_handle, 'HLAfederatesInFederation')%c",
                __LINE__, THLA_NEWLINE );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       error_flag = true;
       send_hs( stderr, "Federate::initialize_MOM_handles():%d \
-NotConnected ERROR for RTI_amb->getAttributrHandle(MOM_federation_class_handle, \
-'HLAfederatesInFederation'%c",
+NotConnected ERROR for RTI_amb->getAttributrHandle(MOM_federation_class_handle, 'HLAfederatesInFederation')%c",
                __LINE__, THLA_NEWLINE );
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
       send_hs( stderr, "Federate::initialize_MOM_handles():%d \
-RTIinternalError for RTI_amb->getAttributrHandle( MOM_federation_class_handle, \
-'HLAfederatesInFederation'%c",
+RTIinternalError for RTI_amb->getAttributrHandle( MOM_federation_class_handle, 'HLAfederatesInFederation')%c",
                __LINE__, THLA_NEWLINE );
    }
 
@@ -1733,35 +1746,30 @@ RTIinternalError for RTI_amb->getAttributrHandle( MOM_federation_class_handle, \
    try {
       this->MOM_HLAautoProvide_handle = RTI_ambassador->getAttributeHandle( MOM_HLAfederation_class_handle,
                                                                             L"HLAautoProvide" );
-   } catch ( RTI1516_NAMESPACE::InvalidObjectClassHandle const &e ) {
-      error_flag = true;
-      send_hs( stderr, "Federate::initialize_MOM_handles():%d \
-InvalidObjectClassHandle ERROR for RTI_amb->getAttributrHandle( MOM_federation_class_handle, \
-'HLAautoProvide'%c",
-               __LINE__, THLA_NEWLINE );
    } catch ( RTI1516_NAMESPACE::NameNotFound const &e ) {
       error_flag = true;
       send_hs( stderr, "Federate::initialize_MOM_handles():%d \
-NameNotFound ERROR for RTI_amb->getAttributrHandle( MOM_federation_class_handle, \
-'HLAautoProvide'%c",
+NameNotFound ERROR for RTI_amb->getAttributrHandle( MOM_federation_class_handle, 'HLAautoProvide')%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( RTI1516_NAMESPACE::InvalidObjectClassHandle const &e ) {
+      error_flag = true;
+      send_hs( stderr, "Federate::initialize_MOM_handles():%d \
+InvalidObjectClassHandle ERROR for RTI_amb->getAttributrHandle( MOM_federation_class_handle, 'HLAautoProvide')%c",
                __LINE__, THLA_NEWLINE );
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       error_flag = true;
       send_hs( stderr, "Federate::initialize_MOM_handles():%d \
-FederateNotExecutionMember ERROR for RTI_amb->getAttributrHandle(MOM_federation_class_handle, \
-'HLAautoProvide'%c",
+FederateNotExecutionMember ERROR for RTI_amb->getAttributrHandle(MOM_federation_class_handle, 'HLAautoProvide')%c",
                __LINE__, THLA_NEWLINE );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       error_flag = true;
       send_hs( stderr, "Federate::initialize_MOM_handles():%d \
-NotConnected ERROR for RTI_amb->getAttributrHandle(MOM_federation_class_handle, \
-'HLAautoProvide'%c",
+NotConnected ERROR for RTI_amb->getAttributrHandle(MOM_federation_class_handle, 'HLAautoProvide')%c",
                __LINE__, THLA_NEWLINE );
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
       send_hs( stderr, "Federate::initialize_MOM_handles():%d \
-RTIinternalError for RTI_amb->getAttributrHandle( MOM_federation_class_handle, \
-'HLAautoProvide'%c",
+RTIinternalError for RTI_amb->getAttributrHandle( MOM_federation_class_handle, 'HLAautoProvide')%c",
                __LINE__, THLA_NEWLINE );
    }
 
@@ -1793,15 +1801,15 @@ RTIinternalError for RTI_amb->getObjectClassHandle('HLAobjectRoot.HLAmanager.HLA
    // Get the MOM Federate Name Attribute handle.
    try {
       this->MOM_HLAfederateName_handle = RTI_ambassador->getAttributeHandle( MOM_HLAfederate_class_handle, L"HLAfederateName" );
-   } catch ( RTI1516_NAMESPACE::InvalidObjectClassHandle const &e ) {
-      error_flag = true;
-      send_hs( stderr, "Federate::initialize_MOM_handles():%d \
-InvalidObjectClassHandle ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateName')%c",
-               __LINE__, THLA_NEWLINE );
    } catch ( RTI1516_NAMESPACE::NameNotFound const &e ) {
       error_flag = true;
       send_hs( stderr, "Federate::initialize_MOM_handles():%d \
 NameNotFound ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateName')%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( RTI1516_NAMESPACE::InvalidObjectClassHandle const &e ) {
+      error_flag = true;
+      send_hs( stderr, "Federate::initialize_MOM_handles():%d \
+InvalidObjectClassHandle ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateName')%c",
                __LINE__, THLA_NEWLINE );
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       error_flag = true;
@@ -1811,8 +1819,7 @@ FederateNotExecutionMember ERROR for RTI_amb->getAttributrHandle(MOM_federate_cl
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       error_flag = true;
       send_hs( stderr, "Federate::initialize_MOM_handles():%d \
-NotConnected ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, \
-'HLAfederateName'%c",
+NotConnected ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateName')%c",
                __LINE__, THLA_NEWLINE );
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
@@ -1824,15 +1831,15 @@ RTIinternalError for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLA
    // Get the MOM Federate Type Attribute handle.
    try {
       this->MOM_HLAfederateType_handle = RTI_ambassador->getAttributeHandle( MOM_HLAfederate_class_handle, L"HLAfederateType" );
-   } catch ( RTI1516_NAMESPACE::InvalidObjectClassHandle const &e ) {
-      error_flag = true;
-      send_hs( stderr, "Federate::initialize_MOM_handles():%d \
-InvalidObjectClassHandle ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateType')%c",
-               __LINE__, THLA_NEWLINE );
    } catch ( RTI1516_NAMESPACE::NameNotFound const &e ) {
       error_flag = true;
       send_hs( stderr, "Federate::initialize_MOM_handles():%d \
 NameNotFound ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateType')%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( RTI1516_NAMESPACE::InvalidObjectClassHandle const &e ) {
+      error_flag = true;
+      send_hs( stderr, "Federate::initialize_MOM_handles():%d \
+InvalidObjectClassHandle ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateType')%c",
                __LINE__, THLA_NEWLINE );
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       error_flag = true;
@@ -1842,8 +1849,7 @@ FederateNotExecutionMember ERROR for RTI_amb->getAttributrHandle(MOM_federate_cl
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       error_flag = true;
       send_hs( stderr, "Federate::initialize_MOM_handles():%d \
-NotConnected ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, \
-'HLAfederateType'%c",
+NotConnected ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateType')%c",
                __LINE__, THLA_NEWLINE );
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
       error_flag = true;
@@ -1855,15 +1861,15 @@ RTIinternalError for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLA
    // Get the MOM Federate Attribute handle.
    try {
       this->MOM_HLAfederate_handle = RTI_ambassador->getAttributeHandle( MOM_HLAfederate_class_handle, L"HLAfederateHandle" );
-   } catch ( RTI1516_NAMESPACE::InvalidObjectClassHandle const &e ) {
-      error_flag = true;
-      send_hs( stderr, "Federate::initialize_MOM_handles():%d \
-InvalidObjectClassHandle ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateHandle')%c",
-               __LINE__, THLA_NEWLINE );
    } catch ( RTI1516_NAMESPACE::NameNotFound const &e ) {
       error_flag = true;
       send_hs( stderr, "Federate::initialize_MOM_handles():%d \
 NameNotFound ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateHandle')%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( RTI1516_NAMESPACE::InvalidObjectClassHandle const &e ) {
+      error_flag = true;
+      send_hs( stderr, "Federate::initialize_MOM_handles():%d \
+InvalidObjectClassHandle ERROR for RTI_amb->getAttributrHandle(MOM_federate_class_handle, 'HLAfederateHandle')%c",
                __LINE__, THLA_NEWLINE );
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       error_flag = true;
@@ -1914,6 +1920,11 @@ RTIinternalError for RTI_amb->getInteractionClassHandle('HLAmanager.HLAfederatio
       error_flag = true;
       send_hs( stderr, "Federate::initialize_MOM_handles():%d \
 NameNotFound ERROR for RTI_amb->getParameterHandle(MOM_HLAsetSwitches_class_handle, 'HLAautoProvide')%c",
+               __LINE__, THLA_NEWLINE );
+   } catch ( RTI1516_NAMESPACE::InvalidInteractionClassHandle const &e ) {
+      error_flag = true;
+      send_hs( stderr, "Federate::initialize_MOM_handles():%d \
+InvalidInteractionClassHandle ERROR for RTI_amb->getParameterHandle(MOM_HLAsetSwitches_class_handle, 'HLAautoProvide')%c",
                __LINE__, THLA_NEWLINE );
    } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
       error_flag = true;
@@ -5272,7 +5283,7 @@ bool Federate::is_execution_member()
    if ( RTI_ambassador.get() != NULL ) {
       bool is_exec_member = true;
       try {
-         RTI_ambassador->getOrderName( TIMESTAMP );
+         RTI_ambassador->getOrderName( RTI1516_NAMESPACE::TIMESTAMP );
       } catch ( RTI1516_NAMESPACE::InvalidOrderType const &e ) {
          // Do nothing
       } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
