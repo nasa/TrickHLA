@@ -34,7 +34,7 @@ else ifeq ($(RTI_VENDOR),Mak_HLA_Evolved)
    TRICK_CFLAGS   += -DRTI_VENDOR=Mak_HLA_Evolved -I${RTI_HOME}/include/HLA1516E
    TRICK_CXXFLAGS += -DRTI_VENDOR=Mak_HLA_Evolved -I${RTI_HOME}/include/HLA1516E
 else
-   $(error "Must specify an RTI vendor: Pitch_HLA_Evolved, Mak or Mak_HLA_Evolved.")
+   $(error "Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify one of Pitch_HLA_Evolved, Mak, or Mak_HLA_Evolved.")
 endif
 
 ifeq ($(TRICK_HOST_TYPE),Darwin)
@@ -85,15 +85,27 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
             COMPILER_GTE_12 = 0
          endif
          ifeq ($(COMPILER_GTE_12),1)
-            export DYLD_LIBRARY_PATH += :${RTI_HOME}/lib/clang12
+            ifdef DYLD_LIBRARY_PATH
+               export DYLD_LIBRARY_PATH += :${RTI_HOME}/lib/clang12
+            else
+               export DYLD_LIBRARY_PATH = ${RTI_HOME}/lib/clang12
+            endif
             TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib -L${RTI_HOME}/lib/clang12 -v -Wl,-rpath,${RTI_HOME}/lib/clang12 -lrti1516e -lfedtime1516e -L${RTI_JAVA_LIB_PATH} -v -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljvm
          else
-            export DYLD_LIBRARY_PATH += :${RTI_HOME}/lib/clang5
+            ifdef DYLD_LIBRARY_PATH
+               export DYLD_LIBRARY_PATH += :${RTI_HOME}/lib/clang5
+            else
+               export DYLD_LIBRARY_PATH = ${RTI_HOME}/lib/clang5
+            endif
             TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib -L${RTI_HOME}/lib/clang5 -v -Wl,-rpath,${RTI_HOME}/lib/clang5 -lrti1516e -lfedtime1516e -L${RTI_JAVA_LIB_PATH} -v -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljvm
          endif
       else
          # Using gcc compiler instead of clang.
-         export DYLD_LIBRARY_PATH += :${RTI_HOME}/lib/gcc42
+         ifdef DYLD_LIBRARY_PATH
+            export DYLD_LIBRARY_PATH += :${RTI_HOME}/lib/gcc42
+         else
+            export DYLD_LIBRARY_PATH = ${RTI_HOME}/lib/gcc42
+         endif
          TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib/gcc42 -lrti1516e -lfedtime1516e
       endif
       # Add the CLASSPATH and DYLD_LIBRARY_PATH environment variables to the 
@@ -101,7 +113,7 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
       export CLASSPATH += ${RTI_HOME}/lib/prti1516e.jar
       export TRICK_GTE_EXT += CLASSPATH DYLD_LIBRARY_PATH
    else
-      $(error "Only Pitch has support for Mac OS!")
+      $(error "Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify Pitch_HLA_Evolved.")
    endif
 
 else
@@ -191,7 +203,7 @@ else
    else ifeq ($(RTI_VENDOR),Mak_HLA_Evolved)
       TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib -lrti1516e64 -lfedtime1516e64
    else
-      $(error "Must specify an RTI vendor: Pitch_HLA_Evolved, Mak, or Mak_HLA_Evolved")
+      $(error "Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify one of Pitch_HLA_Evolved, Mak, or Mak_HLA_Evolved.")
    endif
 
 endif
