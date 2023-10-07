@@ -190,17 +190,7 @@ class SineData
 
    /*! @brief Set the name of the sine wave object.
     *  @param new_name The name of the sine wave object. */
-   void set_name( char const *new_name )
-   {
-      if ( new_name != this->name ) {
-         if ( this->name != NULL ) {
-            if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-               send_hs( stderr, "TrickHLAModel::SineData::set_name():%d ERROR deleting Trick Memory for 'this->name'\n", __LINE__ );
-            }
-         }
-         this->name = ( new_name != NULL ) ? trick_MM->mm_strdup( new_name ) : NULL;
-      }
-   }
+   void set_name( char const *new_name );
 
    //
    // Public utility functions.

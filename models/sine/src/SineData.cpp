@@ -54,6 +54,9 @@ SineData::SineData()
      tol( 0.001 ),
      name( NULL )
 {
+   // We don't want a NULL name by default (Trick Memory Manager allocated).
+   this->set_name( "" );
+
    // Compute the value.
    this->compute_value( time );
 
@@ -77,6 +80,9 @@ SineData::SineData(
      tol( 0.001 ),
      name( NULL )
 {
+   // We don't want a NULL name by default (Trick Memory Manager allocated).
+   this->set_name( "" );
+
    // Compute the value.
    this->compute_value( time );
 
@@ -99,13 +105,53 @@ SineData::~SineData()
 }
 
 /*!
+ * @brief Set the name of the sine wave object.
+ * @param new_name The name of the sine wave object.
+ */
+void SineData::set_name( char const *new_name )
+{
+   if ( new_name != this->name ) {
+      if ( this->name != NULL ) {
+         if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
+            send_hs( stderr, "TrickHLAModel::SineData::set_name():%d ERROR deleting Trick Memory for 'this->name'\n", __LINE__ );
+            exit( -1 );
+         }
+      }
+      if ( new_name != NULL ) {
+         this->name = trick_MM->mm_strdup( new_name );
+         if ( this->name == NULL ) {
+            send_hs( stderr, "TrickHLAModel::SineData::set_name():%d ERROR cannot allocate Trick Memory for 'this->name'\n", __LINE__ );
+            exit( -1 );
+         }
+      } else {
+         this->name = NULL;
+      }
+   }
+
+   // We don't want a NULL name by default (Trick Memory Manager allocated).
+   if ( this->name == NULL ) {
+      this->name = trick_MM->mm_strdup( "" );
+      if ( this->name == NULL ) {
+         send_hs( stderr, "TrickHLAModel::SineData::set_name():%d ERROR cannot allocate Trick Memory for 'this->name'\n", __LINE__ );
+         exit( -1 );
+      }
+   }
+}
+
+/*!
  * @job_class{scheduled}
  */
 void SineData::copy_data(
-   SineData const *orig ) // IN: -- Orginal source data to copy.
+   SineData const *orig ) // IN: -- Original source data to copy from.
 {
-   // Use the default assignment operator to copy.
-   *this = *orig;
+   this->set_name( orig->get_name() );
+   this->set_time( orig->get_time() );
+   this->set_value( orig->get_value() );
+   this->set_derivative( orig->get_derivative() );
+   this->set_phase( orig->get_phase() );
+   this->set_frequency( orig->get_frequency() );
+   this->set_amplitude( orig->get_amplitude() );
+   this->set_tolerance( orig->get_tolerance() );
 }
 
 /*!

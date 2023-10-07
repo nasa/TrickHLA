@@ -31,6 +31,7 @@ NASA, Johnson Space Center\n
 @rev_entry{Dan Dexter, L3 Titan Group, DSES, June 2006, --, DSES Initial Lag Compensation.}
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, March 2019, --, Version 2 origin.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, October 2023, --, Added lag-comp bypass functions.}
 @revs_end
 
 */
@@ -114,10 +115,18 @@ class LagCompensation
    //-----------------------------------------------------------------
 
    /*! @brief Send side lag compensation callback. */
-   virtual void send_lag_compensation();
+   virtual void send_lag_compensation() = 0;
+
+   /*! @brief When lag compensation is disabled, this function is called to
+    * bypass the send side lag compensation so data state can be copied over. */
+   virtual void bypass_send_lag_compensation() = 0;
 
    /*! @brief Receive side lag compensation callback. */
-   virtual void receive_lag_compensation();
+   virtual void receive_lag_compensation() = 0;
+
+   /*! @brief When lag compensation is disabled, this function is called to
+    * bypass the receive side lag compensation so data state can be copied over. */
+   virtual void bypass_receive_lag_compensation() = 0;
 
   protected:
    Object *object; ///< @trick_io{**} Object associated with this lag-comp class.

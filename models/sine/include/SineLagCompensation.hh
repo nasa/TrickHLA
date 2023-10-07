@@ -29,6 +29,7 @@ NASA, Johnson Space Center\n
 @revs_begin
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, June 2006, --, Version 2 origin.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2020, --, Version 3 rewrite.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, October 2023, --, Added lag-comp bypass functions.}
 @revs_end
 
 */
@@ -89,9 +90,17 @@ class SineLagCompensation : public TrickHLA::LagCompensation
     *  head by dt to predict the value at the next data cycle. */
    virtual void send_lag_compensation();
 
+   /*! @brief When lag compensation is disabled, this function is called to
+    * bypass the send side lag compensation so data state can be copied over. */
+   virtual void bypass_send_lag_compensation();
+
    /*! @brief Receive side lag-compensation where we propagate the sine wave
     *  state ahead by dt to predict the value at the next data cycle. */
    virtual void receive_lag_compensation();
+
+   /*! @brief When lag compensation is disabled, this function is called to
+    * bypass the receive side lag compensation so data state can be copied over. */
+   virtual void bypass_receive_lag_compensation();
 
   private:
    SineData *sim_data;      ///< @trick_units{--} Simulation data.

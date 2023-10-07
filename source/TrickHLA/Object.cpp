@@ -1661,9 +1661,24 @@ void Object::send_requested_data(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &send_mutex );
 
-   // Do send side lag compensation.
-   if ( ( lag_comp_type == LAG_COMPENSATION_SEND_SIDE ) && ( lag_comp != NULL ) ) {
-      lag_comp->send_lag_compensation();
+   // Do lag compensation.
+   if ( lag_comp != NULL ) {
+      switch ( lag_comp_type ) {
+         case LAG_COMPENSATION_SEND_SIDE:
+            lag_comp->send_lag_compensation();
+            break;
+         case LAG_COMPENSATION_RECEIVE_SIDE:
+            // There are locally owned attributes that are published by this
+            // federate that we need to send even tough Received-side lag
+            // compensation has been configured. Maybe a result of attribute
+            // ownership transfer.
+            lag_comp->bypass_send_lag_compensation();
+            break;
+         case LAG_COMPENSATION_NONE:
+         default:
+            lag_comp->bypass_send_lag_compensation();
+            break;
+      }
    }
 
    // If we have a data packing object then pack the data now.
@@ -1906,9 +1921,24 @@ void Object::send_cyclic_and_requested_data(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &send_mutex );
 
-   // Do send side lag compensation.
-   if ( ( lag_comp_type == LAG_COMPENSATION_SEND_SIDE ) && ( lag_comp != NULL ) ) {
-      lag_comp->send_lag_compensation();
+   // Do lag compensation.
+   if ( lag_comp != NULL ) {
+      switch ( lag_comp_type ) {
+         case LAG_COMPENSATION_SEND_SIDE:
+            lag_comp->send_lag_compensation();
+            break;
+         case LAG_COMPENSATION_RECEIVE_SIDE:
+            // There are locally owned attributes that are published by this
+            // federate that we need to send even tough Received-side lag
+            // compensation has been configured. Maybe a result of attribute
+            // ownership transfer.
+            lag_comp->bypass_send_lag_compensation();
+            break;
+         case LAG_COMPENSATION_NONE:
+         default:
+            lag_comp->bypass_send_lag_compensation();
+            break;
+      }
    }
 
    // If we have a data packing object then pack the data now.
@@ -2157,9 +2187,24 @@ void Object::send_zero_lookahead_and_requested_data(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &send_mutex );
 
-   // Do send side lag compensation.
-   if ( ( lag_comp_type == LAG_COMPENSATION_SEND_SIDE ) && ( lag_comp != NULL ) ) {
-      lag_comp->send_lag_compensation();
+   // Do lag compensation.
+   if ( lag_comp != NULL ) {
+      switch ( lag_comp_type ) {
+         case LAG_COMPENSATION_SEND_SIDE:
+            lag_comp->send_lag_compensation();
+            break;
+         case LAG_COMPENSATION_RECEIVE_SIDE:
+            // There are locally owned attributes that are published by this
+            // federate that we need to send even tough Received-side lag
+            // compensation has been configured. Maybe a result of attribute
+            // ownership transfer.
+            lag_comp->bypass_send_lag_compensation();
+            break;
+         case LAG_COMPENSATION_NONE:
+         default:
+            lag_comp->bypass_send_lag_compensation();
+            break;
+      }
    }
 
    // If we have a data packing object then pack the data now.
@@ -2484,9 +2529,24 @@ void Object::receive_cyclic_data()
             packing->unpack();
          }
 
-         // Do receive side lag compensation.
-         if ( ( lag_comp_type == LAG_COMPENSATION_RECEIVE_SIDE ) && ( lag_comp != NULL ) ) {
-            lag_comp->receive_lag_compensation();
+         // Do lag compensation.
+         if ( lag_comp != NULL ) {
+            switch ( lag_comp_type ) {
+               case LAG_COMPENSATION_RECEIVE_SIDE:
+                  lag_comp->receive_lag_compensation();
+                  break;
+               case LAG_COMPENSATION_SEND_SIDE:
+                  // There are remotely owned attributes that are subscribed by
+                  // this federate that we need to receive even tough Send-side
+                  // lag compensation has been configured. Maybe a result of
+                  // attribute ownership transfer.
+                  lag_comp->bypass_receive_lag_compensation();
+                  break;
+               case LAG_COMPENSATION_NONE:
+               default:
+                  lag_comp->bypass_receive_lag_compensation();
+                  break;
+            }
          }
 
          // Mark this data as unchanged now that we have processed it from the buffer.
@@ -2549,8 +2609,23 @@ void Object::receive_zero_lookahead_data()
          }
 
          // Do receive side lag compensation.
-         if ( ( lag_comp_type == LAG_COMPENSATION_RECEIVE_SIDE ) && ( lag_comp != NULL ) ) {
-            lag_comp->receive_lag_compensation();
+         if ( lag_comp != NULL ) {
+            switch ( lag_comp_type ) {
+               case LAG_COMPENSATION_RECEIVE_SIDE:
+                  lag_comp->receive_lag_compensation();
+                  break;
+               case LAG_COMPENSATION_SEND_SIDE:
+                  // There are remotely owned attributes that are subscribed by
+                  // this federate that we need to receive even tough Send-side
+                  // lag compensation has been configured. Maybe a result of
+                  // attribute ownership transfer.
+                  lag_comp->bypass_receive_lag_compensation();
+                  break;
+               case LAG_COMPENSATION_NONE:
+               default:
+                  lag_comp->bypass_receive_lag_compensation();
+                  break;
+            }
          }
 
          // Mark this data as unchanged now that we have processed it from the buffer.

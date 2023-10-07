@@ -52,7 +52,7 @@ class Object;
 namespace TrickHLAModel
 {
 
-class SinePacking : public TrickHLA::Packing
+class SinePacking : public SineData, public TrickHLA::Packing
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really

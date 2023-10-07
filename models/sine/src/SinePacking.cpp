@@ -120,6 +120,7 @@ void SinePacking::initialize_callback(
    // Get a reference to the TrickHL-AAttribute for all the FOM attributes
    // names. We do this here so that we only do the attribute lookup once
    // instead of looking it up every time the unpack function is called.
+   name_attr  = get_attribute_and_validate( "Name" );
    time_attr  = get_attribute_and_validate( "Time" );
    value_attr = get_attribute_and_validate( "Value" );
    dvdt_attr  = get_attribute_and_validate( "dvdt" );
@@ -127,7 +128,6 @@ void SinePacking::initialize_callback(
    freq_attr  = get_attribute_and_validate( "Frequency" );
    amp_attr   = get_attribute_and_validate( "Amplitude" );
    tol_attr   = get_attribute_and_validate( "Tolerance" );
-   name_attr  = get_attribute_and_validate( "Name" );
 }
 
 void SinePacking::pack()
@@ -145,6 +145,16 @@ void SinePacking::pack()
    // in the unpack() function, since we don't run the risk of corrupting our
    // state.
 
+   // Copy over the sim-data over to the packing data as a starting point.
+   this->set_name( sim_data->get_name() );
+   this->set_time( sim_data->get_time() );
+   this->set_value( sim_data->get_value() );
+   this->set_derivative( sim_data->get_derivative() );
+   this->set_phase( sim_data->get_phase() );
+   this->set_frequency( sim_data->get_frequency() );
+   this->set_amplitude( sim_data->get_amplitude() );
+   this->set_tolerance( sim_data->get_tolerance() );
+
    // For this example to show how to use the Packing API's, we will assume
    // that the phase shared between federates is in degrees so covert it from
    // radians to degrees.
@@ -159,43 +169,43 @@ void SinePacking::pack()
            << "\t Object-Name:'" << obj_name << "'" << endl
 
            << "\t sim_data->name:'" << sim_data->get_name()
-           << "', Send-as-HLA-Data:"
+           << "', Send-HLA-Data:"
            << ( ( name_attr->is_publish() && name_attr->is_locally_owned() ) ? "Yes" : "No" )
            << endl
 
            << "\t sim_data->time:" << sim_data->get_time() << " seconds"
-           << ", Send-as-HLA-Data:"
+           << ", Send-HLA-Data:"
            << ( ( time_attr->is_publish() && time_attr->is_locally_owned() ) ? "Yes" : "No" )
            << endl
 
            << "\t sim_data->value:" << sim_data->get_value()
-           << ", Send-as-HLA-Data:"
+           << ", Send-HLA-Data:"
            << ( ( value_attr->is_publish() && value_attr->is_locally_owned() ) ? "Yes" : "No" )
            << endl
 
            << "\t sim_data->dvdt:" << sim_data->get_derivative()
-           << ", Send-as-HLA-Data:"
+           << ", Send-HLA-Data:"
            << ( ( dvdt_attr->is_publish() && dvdt_attr->is_locally_owned() ) ? "Yes" : "No" )
            << endl
 
            << "\t sim_data->phase:" << sim_data->get_phase() << " radians"
            << " ==> packing-phase:" << phase_deg << " degrees"
-           << ", Send-as-HLA-Data:"
+           << ", Send-HLA-Data:"
            << ( ( phase_attr->is_publish() && phase_attr->is_locally_owned() ) ? "Yes" : "No" )
            << endl
 
            << "\t sim_data->amp:" << sim_data->get_amplitude()
-           << ", Send-as-HLA-Data:"
+           << ", Send-HLA-Data:"
            << ( ( amp_attr->is_publish() && amp_attr->is_locally_owned() ) ? "Yes" : "No" )
            << endl
 
            << "\t sim_data->freq:" << sim_data->get_frequency()
-           << ", Send-as-HLA-Data:"
+           << ", Send-HLA-Data:"
            << ( ( freq_attr->is_publish() && freq_attr->is_locally_owned() ) ? "Yes" : "No" )
            << endl
 
            << "\t sim_data->tol:" << sim_data->get_tolerance()
-           << ", Send-as-HLA-Data:"
+           << ", Send-HLA-Data:"
            << ( ( tol_attr->is_publish() && tol_attr->is_locally_owned() ) ? "Yes" : "No" )
            << endl;
    }
@@ -275,6 +285,33 @@ void SinePacking::unpack()
    // corruption of the state. We always need to do this check because
    // ownership transfers could happen at any time or the data could be at a
    // different rate.
+
+   // Make sure to copy over the packing data over to the sim-data.
+   if ( name_attr->is_received() ) {
+      sim_data->set_name( this->get_name() );
+   }
+   if ( time_attr->is_received() ) {
+      sim_data->set_time( this->get_time() );
+   }
+   if ( value_attr->is_received() ) {
+      sim_data->set_value( this->get_value() );
+   }
+   if ( dvdt_attr->is_received() ) {
+      sim_data->set_derivative( this->get_derivative() );
+   }
+   if ( phase_attr->is_received() ) {
+      sim_data->set_phase( this->get_phase() );
+   }
+   if ( freq_attr->is_received() ) {
+      sim_data->set_frequency( this->get_frequency() );
+   }
+   if ( amp_attr->is_received() ) {
+      sim_data->set_amplitude( this->get_amplitude() );
+   }
+   if ( tol_attr->is_received() ) {
+      sim_data->set_tolerance( this->get_tolerance() );
+   }
+
    if ( phase_attr->is_received() ) {
       // For this example to show how to use the Packing API's, we will
       // assume that the phase shared between federates is in degrees so

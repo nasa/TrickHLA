@@ -30,6 +30,7 @@ NASA, Johnson Space Center\n
 @rev_entry{Dan Dexter, L3 Titan Group, DSES, June 2006, --, DSES Initial Lag Compensation.}
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, March 2019, --, Version 2 origin.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, October 2023, --, Added lag-comp bypass functions.}
 @revs_end
 
 */
@@ -64,26 +65,6 @@ void LagCompensation::initialize_callback(
    Object *obj )
 {
    this->object = obj;
-}
-
-void LagCompensation::send_lag_compensation()
-{
-   ostringstream errmsg;
-   errmsg << "LagCompensation::send_lag_compensation():" << __LINE__
-          << " ERROR: Your class that extends LagCompensation must implement"
-          << " the 'virtual void send_lag_compensation()' function!"
-          << THLA_ENDL;
-   DebugHandler::terminate_with_message( errmsg.str() );
-}
-
-void LagCompensation::receive_lag_compensation()
-{
-   ostringstream errmsg;
-   errmsg << "LagCompensation::receive_lag_compensation():" << __LINE__
-          << " ERROR: Your class that extends LagCompensation must implement"
-          << " the 'virtual void receive_lag_compensation()' function!"
-          << THLA_ENDL;
-   DebugHandler::terminate_with_message( errmsg.str() );
 }
 
 Attribute *LagCompensation::get_attribute(
@@ -130,20 +111,18 @@ Int64Interval LagCompensation::get_lookahead() const
 {
    if ( object != NULL ) {
       return object->get_lookahead();
-   } else {
-      Int64Interval di( -1.0 );
-      return di;
    }
+   Int64Interval di( -1.0 );
+   return di;
 }
 
 Int64Time LagCompensation::get_granted_time() const
 {
    if ( object != NULL ) {
       return object->get_granted_time();
-   } else {
-      Int64Time dt( Int64BaseTime::get_max_logical_time_in_seconds() );
-      return dt;
    }
+   Int64Time dt( Int64BaseTime::get_max_logical_time_in_seconds() );
+   return dt;
 }
 
 double LagCompensation::get_scenario_time()
