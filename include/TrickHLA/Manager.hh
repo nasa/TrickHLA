@@ -476,6 +476,8 @@ class Manager
 
    ObjectInstanceMap object_map; ///< @trick_io{**} Map of all the Objects this federate uses, the Key is the object instance-handle.
 
+   TrickHLAObjInstanceNameIndexMap obj_name_index_map; ///< @trick_io{**} Map of object instance names to array index.
+
    bool federate_has_been_restored; ///< @trick_io{**} Federate has been restored. do not reserve the object names again!
 
    Federate *federate; ///< @trick_units{--} Associated TrickHLA Federate.
