@@ -127,6 +127,7 @@ Manager::Manager()
      mgr_initialized( false ),
      obj_discovery_mutex(),
      object_map(),
+     obj_name_index_map(),
      federate_has_been_restored( false ),
      federate( NULL ),
      execution_control( NULL )
@@ -141,6 +142,7 @@ Manager::Manager()
 Manager::~Manager()
 {
    object_map.clear();
+   obj_name_index_map.clear();
    clear_interactions();
 
    // Make sure we destroy the mutex.
@@ -970,8 +972,8 @@ void Manager::add_object_to_map(
    // Add the registered ExecutionConfiguration object instance to the map
    // only if it is not already in it.
    if ( ( object->is_instance_handle_valid() )
-        && ( this->object_map.find( object->get_instance_handle() ) == this->object_map.end() ) ) {
-      this->object_map[object->get_instance_handle()] = object;
+        && ( object_map.find( object->get_instance_handle() ) == object_map.end() ) ) {
+      object_map[object->get_instance_handle()] = object;
    }
 }
 
@@ -983,6 +985,12 @@ void Manager::setup_all_ref_attributes()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::setup_all_ref_attributes():%d%c",
                __LINE__, THLA_NEWLINE );
+   }
+
+   // Create the map of object instance names to object array indexes.
+   obj_name_index_map.clear();
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
+      obj_name_index_map[objects[n].get_name_string()] = n;
    }
 
    // Make sure the object-map is empty/clear before we continue.
@@ -2585,10 +2593,10 @@ Object *Manager::get_trickhla_object(
    string const &obj_instance_name )
 {
    // Search the data objects first.
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
-      if ( objects[n].get_name_string() == obj_instance_name ) {
-         return ( &objects[n] );
-      }
+   TrickHLAObjInstanceNameIndexMap::const_iterator iter;
+   iter = obj_name_index_map.find( obj_instance_name );
+   if ( iter != obj_name_index_map.end() ) {
+      return ( &objects[iter->second] );
    }
 
    // Check for a match with the ExecutionConfiguration object associated with
@@ -2602,19 +2610,10 @@ Object *Manager::get_trickhla_object(
 Object *Manager::get_trickhla_object(
    wstring const &obj_instance_name )
 {
-   wstring ws_obj_name;
+   string obj_instance_name_str;
+   StringUtilities::to_string( obj_instance_name_str, obj_instance_name );
 
-   // Search the data objects first.
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
-      StringUtilities::to_wstring( ws_obj_name, objects[n].get_name() );
-      if ( ws_obj_name == obj_instance_name ) {
-         return ( &objects[n] );
-      }
-   }
-
-   // Check for a match with the ExecutionConfiguration object associated with
-   // ExecutionControl. Returns NULL if match not found.
-   return ( this->execution_control->get_trickhla_object( obj_instance_name ) );
+   return ( get_trickhla_object( obj_instance_name_str ) );
 }
 
 /*!

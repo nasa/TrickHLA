@@ -319,6 +319,8 @@ typedef std::queue< RTI1516_NAMESPACE::AttributeHandleValueMap > HLAAttributeMap
 
 typedef std::map< RTI1516_NAMESPACE::ObjectInstanceHandle, std::wstring > TrickHLAObjInstanceNameMap;
 
+typedef std::map< std::string, unsigned int > TrickHLAObjInstanceNameIndexMap;
+
 typedef std::vector< std::string > VectorOfStrings;
 
 typedef std::vector< std::wstring > VectorOfWstrings;
