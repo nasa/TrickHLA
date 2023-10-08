@@ -226,7 +226,8 @@ federate = SpaceFOMFederateConfig( THLA.federate,
 
 # Set the debug output level.
 if (verbose == True) : 
-   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
+   #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
+   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_6_TRACE )
 else :
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
 
@@ -316,13 +317,19 @@ federate.add_fed_object( frame_A )
 phy_entity = SpaceFOMPhysicalEntityObject( False,
                                            phy_entity_name,
                                            physical_entity.entity_packing,
-                                           'physical_entity.entity_packing' )
+                                           'physical_entity.entity_packing',
+                                           physical_entity.lag_compensation )
 
 # Set the debug flag for the Entity.
 physical_entity.entity_packing.debug = verbose
 
 # Add this Entity to the list of managed object.
 federate.add_fed_object( phy_entity )
+
+# Set the lag compensation paratmeters.
+physical_entity.lag_compensation.debug = True
+#physical_entity.lag_compensation.integ_tol = 1.0e-6
+physical_entity.lag_compensation.set_tolerance( 1.0e-6 )
 
 
 #---------------------------------------------------------------------------

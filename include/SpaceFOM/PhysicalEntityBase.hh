@@ -63,6 +63,9 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrSpaceFOM__PhysicalEntityBase();
 
+   // Make the Lag Compensation class a friend.
+   friend class PhysicalEntityLagCompBase;
+
   public:
    // Public constructors and destructors.
    PhysicalEntityBase();          // Default constructor.
@@ -138,7 +141,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    }
 
    /*! @brief Get the current scenario time associated with the PhysicalEntity.
-    *  @return Name of the parent reference frame associated with the PhysicalEntity. */
+    *  @return Current time associated with the PhysicalEntity. */
    double const get_time()
    {
       return state.time;

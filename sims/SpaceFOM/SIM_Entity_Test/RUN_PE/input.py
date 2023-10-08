@@ -315,7 +315,8 @@ federate.add_fed_object( frame_A )
 phy_entity = SpaceFOMPhysicalEntityObject( True,
                                            phy_entity_name,
                                            physical_entity.entity_packing,
-                                           'physical_entity.entity_packing' )
+                                           'physical_entity.entity_packing',
+                                           physical_entity.lag_compensation )
 
 # Set the debug flag for the Entity.
 physical_entity.entity_packing.debug = verbose
@@ -341,7 +342,7 @@ physical_entity.pe_data.state.quat_vector[0] = 0.0
 physical_entity.pe_data.state.quat_vector[1] = 0.0
 physical_entity.pe_data.state.quat_vector[2] = 0.0
 physical_entity.pe_data.state.ang_vel[0] = 0.0
-physical_entity.pe_data.state.ang_vel[1] = 0.0
+physical_entity.pe_data.state.ang_vel[1] = 0.1
 physical_entity.pe_data.state.ang_vel[2] = 0.0
 
 

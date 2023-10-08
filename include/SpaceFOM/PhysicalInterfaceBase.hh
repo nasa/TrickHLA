@@ -80,7 +80,7 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
                               char const       *sim_obj_name,
                               char const       *interface_obj_name,
                               char const       *interface_name,
-                              char const       *parent_name,
+                              char const       *interface_parent_name,
                               bool              publishes );
 
    /*! @brief interface instance initialization routine. */

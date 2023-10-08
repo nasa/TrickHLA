@@ -410,14 +410,12 @@ class JEODPhysicalInterfaceSimObject : public Trick::SimObject {
 };
 
 // Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
-//JEODPhysicalEntiySimObject active_physical_entity(&(active_vehicle.dyn_body), (P_HLA_INIT-1));
 JEODPhysicalEntiySimObject active_physical_entity(&(active_vehicle.dyn_body));
 
 // Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
 JEODPhysicalInterfaceSimObject active_physical_interface(&(active_vehicle.dyn_body));
 
 // Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
-//JEODPhysicalEntiySimObject passive_physical_entity(&(passive_vehicle.dyn_body), (P_HLA_INIT-1));
 JEODPhysicalEntiySimObject passive_physical_entity(&(passive_vehicle.dyn_body));
 
 // Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
@@ -434,11 +432,11 @@ void create_connections() {
 
 #ifdef DEFAULT_DATA_CONFIG
    //
-   // This code will only be executed when we want to configure the reference
-   // frame tree using default data instead of in the input file.
+   // This code will only be executed when we want to configure the THLA
+   // objects using default data instead of in the input file.
    //
    // Allocate the HLA objects for the Reference Frame tree.
-   THLA.manager.obj_count = 11;
+   THLA.manager.obj_count = 13;
    THLA.manager.objects = (TrickHLA::Object*)trick_MM->declare_var( "TrickHLA::Object",
                                                                     THLA.manager.obj_count );
    // Assign the HLA objects to the associated frame.
@@ -456,18 +454,30 @@ void create_connections() {
    // FIXME: This is NOT the correct location to call default data.
    // We need to pass through the input processor to allow the user to
    // establish the publish/subscribe relationships.
-   active_phyical_entity.entity_packing.default_data( &(THLA.manager.objects[9]),
-                                                      "active_phyical_entity",
-                                                      "entity_packing",
-                                                      "Lander",
-                                                      "MoonCentricInertial",
-                                                      true );
-   passive_phyical_entity.entity_packing.default_data( &(THLA.manager.objects[10]),
-                                                       "active_phyical_entity",
+   active_physical_entity.entity_packing.default_data( &(THLA.manager.objects[9]),
+                                                       "active_physical_entity",
                                                        "entity_packing",
-                                                       "Station",
+                                                       "Lander",
                                                        "MoonCentricInertial",
-                                                       false );
+                                                       true );
+   active_physical_interface.interface_packing.default_data( &(THLA.manager.objects[10]),
+                                                             "active_physical_interface",
+                                                             "interface_packing",
+                                                             "Lander.docking_port",
+                                                             "Lander",
+                                                             true );
+   passive_physical_entity.entity_packing.default_data( &(THLA.manager.objects[11]),
+                                                        "active_physical_entity",
+                                                        "entity_packing",
+                                                        "Station",
+                                                        "MoonCentricInertial",
+                                                        false );
+   passive_physical_interface.interface_packing.default_data( &(THLA.manager.objects[12]),
+                                                              "passive_physical_interface",
+                                                              "interface_packing",
+                                                              "Station.docking_port",
+                                                              "Station",
+                                                              true );
 
 #endif
 

@@ -484,9 +484,6 @@ federate.add_known_fededrate( True, master_name )
 #--------------------------------------------------------------------------
 # Pitch specific local settings designator:
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
-#THLA.federate.local_settings = 'crcHost = 10.8.0.161\n crcPort = 8989'
-# Mak specific local settings designator, which is anything from the rid.mtl file:
-#THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
 
 #--------------------------------------------------------------------------
 # Set up federate related time related parameters.
@@ -563,9 +560,7 @@ lander_dockport = SpaceFOMPhysicalInterfaceObject( True,
                                                    'active_physical_interface.interface_packing' )
 
 # Set the JEOD vehicle point ID associated with this interface.
-#active_physical_interface.interface_packing.vehicle_point_id = active_interface_name
-#active_physical_interface.interface_packing.vehicle_point_id = trick.trick_MM.mm_strdup(active_vehicle.mass_init.points[0].name)
-active_physical_interface.interface_packing.vehicle_point_id = active_physical_interface.interface_packing.set_vehicle_point_id('Lander.Active docking port')
+active_physical_interface.interface_packing.vehicle_point_id = active_physical_interface.interface_packing.set_vehicle_point_id('Active docking port')
 
 # Set the debug flag for the active vehicle.
 active_physical_interface.interface_packing.debug = verbose
@@ -606,7 +601,7 @@ station_dockport = SpaceFOMPhysicalInterfaceObject( True,
                                                     'passive_physical_interface.interface_packing' )
 
 # Set the JEOD vehicle point ID associated with this interface.
-passive_physical_interface.interface_packing.vehicle_point_id = passive_physical_interface.interface_packing.set_vehicle_point_id('Station.Passive docking port')
+passive_physical_interface.interface_packing.vehicle_point_id = passive_physical_interface.interface_packing.set_vehicle_point_id('Passive docking port')
 
 # Set the debug flag for the active vehicle.
 passive_physical_interface.interface_packing.debug = verbose
@@ -635,7 +630,9 @@ federate.add_sim_object( earth_centered_fixed )
 federate.add_sim_object( moon_centered_fixed )
 federate.add_sim_object( mars_centered_fixed )
 federate.add_sim_object( active_physical_entity )
+federate.add_sim_object( active_physical_interface )
 federate.add_sim_object( passive_physical_entity )
+federate.add_sim_object( passive_physical_interface )
 
 
 #---------------------------------------------------------------------------

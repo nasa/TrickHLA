@@ -164,6 +164,7 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
 // PhysicalEntity object discovery and data exchange.
 //==========================================================================
 ##include "SpaceFOM/PhysicalEntity.hh"
+##include "SpaceFOM/PhysicalEntityLagCompSA.hh"
 class SpaceFOMPhysicalEntitySimObject : public Trick::SimObject {
 
   public:
@@ -173,13 +174,19 @@ class SpaceFOMPhysicalEntitySimObject : public Trick::SimObject {
    /* HLA associated reference frames packing object. */
    SpaceFOM::PhysicalEntity entity_packing;
 
+   /* HLA lag compensation object. */
+   PhysicalEntityLagCompSA lag_compensation;
+
    SpaceFOMPhysicalEntitySimObject( unsigned short _INIT = 59 )
+   : entity_packing(),
+     lag_compensation( entity_packing )
    {
 
       //
       // Initialization jobs
       //
       P_INIT ("initialization") entity_packing.initialize( &pe_data );
+      P50 ("initialization") lag_compensation.initialize();
 
    }
 

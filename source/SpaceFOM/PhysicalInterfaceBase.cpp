@@ -16,7 +16,6 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../TrickHLA/Packing.cpp}
-@trick_link_dependency{../TrickHLA/CompileConfig.cpp}
 @trick_link_dependency{PhysicalInterfaceBase.cpp}
 
 
@@ -112,7 +111,7 @@ void PhysicalInterfaceBase::default_data(
    char const       *sim_obj_name,
    char const       *interface_obj_name,
    char const       *interface_name,
-   char const       *parent_ref_frame_name,
+   char const       *interface_parent_name,
    bool              publishes )
 {
    string interface_name_str = string( sim_obj_name ) + "." + string( interface_obj_name );
@@ -122,10 +121,10 @@ void PhysicalInterfaceBase::default_data(
    this->object = mngr_object;
 
    // Set the parent frame name.
-   if ( parent_ref_frame_name != NULL ) {
-      parent_name = trick_MM->mm_strdup( parent_ref_frame_name );
+   if ( interface_parent_name != NULL ) {
+      this->parent_name = trick_MM->mm_strdup( interface_parent_name );
    } else {
-      parent_name = trick_MM->mm_strdup( "" );
+      this->parent_name = trick_MM->mm_strdup( "" );
    }
    if ( interface_name != NULL ) {
       name = trick_MM->mm_strdup( interface_name );
