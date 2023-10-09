@@ -299,9 +299,6 @@ void SinePacking::unpack()
    if ( dvdt_attr->is_received() ) {
       sim_data->set_derivative( this->get_derivative() );
    }
-   if ( phase_attr->is_received() ) {
-      sim_data->set_phase( this->get_phase() );
-   }
    if ( freq_attr->is_received() ) {
       sim_data->set_frequency( this->get_frequency() );
    }
