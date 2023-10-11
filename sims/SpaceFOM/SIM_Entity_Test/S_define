@@ -163,8 +163,13 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
 // simulation object definition. This can be used for SpaceFOM
 // PhysicalEntity object discovery and data exchange.
 //==========================================================================
+//#define USE_SA_INTEGRATOR
 ##include "SpaceFOM/PhysicalEntity.hh"
+#ifdef USE_SA_INTEGRATOR
 ##include "SpaceFOM/PhysicalEntityLagCompSA.hh"
+#else
+##include "SpaceFOM/PhysicalEntityLagComp.hh"
+#endif
 class SpaceFOMPhysicalEntitySimObject : public Trick::SimObject {
 
   public:
@@ -175,7 +180,11 @@ class SpaceFOMPhysicalEntitySimObject : public Trick::SimObject {
    SpaceFOM::PhysicalEntity entity_packing;
 
    /* HLA lag compensation object. */
+#ifdef USE_SA_INTEGRATOR
    PhysicalEntityLagCompSA lag_compensation;
+#else
+   PhysicalEntityLagComp lag_compensation;
+#endif
 
    SpaceFOMPhysicalEntitySimObject( unsigned short _INIT = 59 )
    : entity_packing(),

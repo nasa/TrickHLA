@@ -38,6 +38,7 @@ NASA, Johnson Space Center\n
 #include "trick/MemoryManager.hh"
 #include "trick/message_proto.h" // for send_hs
 #include "trick/trick_math.h"
+#include "trick/trick_math_proto.h"
 
 // TrickHLA include files.
 #include "TrickHLA/CompileConfig.hh"
@@ -216,6 +217,12 @@ void PhysicalEntityLagCompBase::copy_state_from_entity()
  */
 void PhysicalEntityLagCompBase::print_lag_comp_data()
 {
+   double euler_angles[3];
+   double * quat = &(lag_comp_data.quat_scalar);
+
+   // Compute the attitude Euler angles.
+   euler_quat( euler_angles, quat, 1, Pitch_Yaw_Roll );
+
    cout << "\ttime: " << this->lag_comp_data.time << endl;
    cout << "\tposition: "
         << "\t\t" << this->lag_comp_data.pos[0] << ", "
@@ -234,6 +241,10 @@ void PhysicalEntityLagCompBase::print_lag_comp_data()
         << "\t\t" << this->lag_comp_data.quat_vector[0] << ", "
         << "\t\t" << this->lag_comp_data.quat_vector[1] << ", "
         << "\t\t" << this->lag_comp_data.quat_vector[2] << endl;
+   cout << "\tattitude (PYR): "
+        << "\t\t" << euler_angles[0] << ", "
+        << "\t\t" << euler_angles[1] << ", "
+        << "\t\t" << euler_angles[2] << endl;
    cout << "\tangular velocity: "
         << "\t\t" << this->lag_comp_data.ang_vel[0] << ", "
         << "\t\t" << this->lag_comp_data.ang_vel[1] << ", "

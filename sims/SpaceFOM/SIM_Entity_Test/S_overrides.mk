@@ -20,4 +20,6 @@ TRICK_CFLAGS    += -I.
 TRICK_CXXFLAGS  += -Wno-deprecated-declarations
 TRICK_CXXFLAGS  += -I.
 
-TRICK_USER_LINK_LIBS += -L${TRICK_HOME}/trick_source/trick_utils/SAIntegrator/lib -lSAInteg
+# Uncomment the following line if you want to use the Trick Stand-Alone Integrators.
+# NOTE: You will also have to build the Trick SAInteg library.
+#TRICK_USER_LINK_LIBS += -L${TRICK_HOME}/trick_source/trick_utils/SAIntegrator/lib -lSAInteg

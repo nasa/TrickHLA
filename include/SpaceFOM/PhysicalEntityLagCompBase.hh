@@ -129,13 +129,13 @@ class PhysicalEntityLagCompBase : public TrickHLA::LagCompensation
       const double t_end   ) = 0;
 
    /*! @brief Copy the lag compensation state into the entity state. */
-   void copy_state_to_entity();
+   virtual void copy_state_to_entity();
 
    /*! @brief Copy the entity state into the lag compensation state. */
-   void copy_state_from_entity();
+   virtual void copy_state_from_entity();
 
    /*! @brief Print out the lag compensation data values. */
-   void print_lag_comp_data();
+   virtual void print_lag_comp_data();
 
   private:
    // This object is not copyable
