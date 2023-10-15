@@ -45,7 +45,6 @@ class AnalyticSineSimObj : public Trick::SimObject {
  public:
    TrickHLAModel::SineData truth_data;
    TrickHLAModel::SineData sim_data;
-   TrickHLAModel::SineData lag_comp_data;
 
    TrickHLAModel::SineOwnershipHandler   ownership_handler;
 
@@ -58,9 +57,9 @@ class AnalyticSineSimObj : public Trick::SimObject {
    TrickHLAModel::SineObjectDeleted      obj_deleted_callback;
 
    AnalyticSineSimObj() {
-      P50 ("initialization") lag_compensation.initialize( &sim_data, &lag_comp_data );
+      P50 ("initialization") lag_compensation.initialize( &sim_data );
 
-      P50 ("initialization") packing.initialize( &lag_comp_data );
+      P50 ("initialization") packing.initialize( &lag_compensation );
 
       (DYN_RATE, "scheduled") truth_data.compute_value( THLA.execution_control.get_scenario_time() );
       (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.execution_control.get_scenario_time() );
@@ -87,7 +86,6 @@ class PropagatedSineSimObj : public Trick::SimObject {
  public:
    TrickHLAModel::SineData truth_data;
    TrickHLAModel::SineData sim_data;
-   TrickHLAModel::SineData lag_comp_data;
 
    TrickHLAModel::SinePacking            packing;
 
@@ -100,9 +98,9 @@ class PropagatedSineSimObj : public Trick::SimObject {
    PropagatedSineSimObj() {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
-      P50 ("initialization") lag_compensation.initialize( &sim_data, &lag_comp_data );
+      P50 ("initialization") lag_compensation.initialize( &sim_data );
 
-      P50 ("initialization") packing.initialize( &lag_comp_data );
+      P50 ("initialization") packing.initialize( &lag_compensation );
 
       /*
        * -- Propagate the true sine state.

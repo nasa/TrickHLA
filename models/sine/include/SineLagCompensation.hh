@@ -53,7 +53,7 @@ class Object;
 namespace TrickHLAModel
 {
 
-class SineLagCompensation : public TrickHLA::LagCompensation
+class SineLagCompensation : public SineData, public TrickHLA::LagCompensation
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -75,9 +75,8 @@ class SineLagCompensation : public TrickHLA::LagCompensation
    virtual ~SineLagCompensation();
 
    /*! @brief Initialize the LagCompensation object.
-    *  @param sim_data      The sine wave data object.
-    *  @param lag_comp_data The sine wave lag compensation data. */
-   void initialize( SineData *sim_data, SineData *lag_comp_data );
+    *  @param sim_data The sine wave data object. */
+   void initialize( SineData *sim_data );
 
    //
    // From the TrickHLALag::Compensation class.
@@ -103,8 +102,7 @@ class SineLagCompensation : public TrickHLA::LagCompensation
    virtual void bypass_receive_lag_compensation();
 
   private:
-   SineData *sim_data;      ///< @trick_units{--} Simulation data.
-   SineData *lag_comp_data; ///< @trick_units{--} Lag compensation data.
+   SineData *sim_data; ///< @trick_units{--} Simulation data.
 
    TrickHLA::Attribute *time_attr;  ///< @trick_io{**} Reference to the "Time" TrickHLA::Attribute.
    TrickHLA::Attribute *value_attr; ///< @trick_io{**} Reference to the "Value" TrickHLA::Attribute.

@@ -44,6 +44,7 @@ using namespace TrickHLAModel;
  * @job_class{initialization}
  */
 SineOwnershipHandler::SineOwnershipHandler()
+   : TrickHLA::OwnershipHandler()
 {
    return;
 } // Default constructor.

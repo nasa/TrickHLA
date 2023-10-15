@@ -58,7 +58,9 @@ using namespace TrickHLAModel;
  * @job_class{initialization}
  */
 SinePacking::SinePacking()
-   : sim_data( NULL ),
+   : SineData(),
+     TrickHLA::Packing(),
+     sim_data( NULL ),
      phase_deg( 0.0 ),
      pack_count( 0 ),
      initialized( false ),

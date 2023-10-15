@@ -29,7 +29,6 @@
 
 ##include "sine/include/SineData.hh"
 ##include "sine/include/SinePacking.hh"
-##include "sine/include/SineOwnershipHandler.hh"
 ##include "sine/include/SineInteractionHandler.hh"
 ##include "sine/include/SineObjectDeleted.hh"
 
@@ -49,9 +48,6 @@ class AnalyticSineSimObj : public THLAFedSimObject {
  public:
    TrickHLAModel::SineData truth_data;
    TrickHLAModel::SineData sim_data;
-   TrickHLAModel::SineData lag_comp_data;
-
-   TrickHLAModel::SineOwnershipHandler   ownership_handler;
 
    TrickHLAModel::SinePacking            packing;
 
@@ -95,7 +91,6 @@ class PropagatedSineSimObj : public THLAFedSimObject {
  public:
    TrickHLAModel::SineData truth_data;
    TrickHLAModel::SineData sim_data;
-   TrickHLAModel::SineData lag_comp_data;
 
    TrickHLAModel::SinePacking            packing;
 

@@ -64,7 +64,8 @@ using namespace TrickHLAModel;
  * @job_class{initialization}
  */
 SineInteractionHandler::SineInteractionHandler()
-   : name( NULL ),
+   : TrickHLA::InteractionHandler(),
+     name( NULL ),
      message( NULL ),
      time( 0.0 ),
      year( 2007 ),

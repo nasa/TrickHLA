@@ -54,8 +54,9 @@ using namespace TrickHLAModel;
  * @job_class{initialization}
  */
 SineLagCompensation::SineLagCompensation()
-   : sim_data( NULL ),
-     lag_comp_data( NULL ),
+   : SineData(),
+     TrickHLA::LagCompensation(),
+     sim_data( NULL ),
      time_attr( NULL ),
      value_attr( NULL ),
      dvdt_attr( NULL ),
@@ -80,11 +81,9 @@ SineLagCompensation::~SineLagCompensation()
  * @job_class{initialization}
  */
 void SineLagCompensation::initialize(
-   SineData *sim_data,
-   SineData *lag_comp_data )
+   SineData *sim_data )
 {
-   this->sim_data      = sim_data;
-   this->lag_comp_data = lag_comp_data;
+   this->sim_data = sim_data;
 }
 
 /*!
@@ -128,21 +127,21 @@ void SineLagCompensation::send_lag_compensation()
    }
 
    // Copy the data if the pointers are not the same.
-   if ( lag_comp_data != sim_data ) {
+   if ( this != sim_data ) {
       // Copy the current sine state over to the predicted sine state.
-      lag_comp_data->set_name( sim_data->get_name() );
-      lag_comp_data->set_value( sim_data->get_value() );
-      lag_comp_data->set_derivative( sim_data->get_derivative() );
-      lag_comp_data->set_phase( sim_data->get_phase() );
-      lag_comp_data->set_frequency( sim_data->get_frequency() );
-      lag_comp_data->set_amplitude( sim_data->get_amplitude() );
-      lag_comp_data->set_tolerance( sim_data->get_tolerance() );
+      this->set_name( sim_data->get_name() );
+      this->set_value( sim_data->get_value() );
+      this->set_derivative( sim_data->get_derivative() );
+      this->set_phase( sim_data->get_phase() );
+      this->set_frequency( sim_data->get_frequency() );
+      this->set_amplitude( sim_data->get_amplitude() );
+      this->set_tolerance( sim_data->get_tolerance() );
    }
 
-   lag_comp_data->set_time( time );
+   this->set_time( time );
 
-   lag_comp_data->compute_value( time );
-   lag_comp_data->compute_derivative( time );
+   this->compute_value( time );
+   this->compute_derivative( time );
 }
 
 void SineLagCompensation::bypass_send_lag_compensation()
@@ -158,54 +157,54 @@ void SineLagCompensation::bypass_send_lag_compensation()
    // Bypass send lag compensation by copying the current sim-data to the
    // lag-comp data structure. We need to ensure the lac-comp data structure
    // is updated to ensure any downstream calculations still get data.
-   if ( lag_comp_data != sim_data ) {
-      lag_comp_data->set_name( sim_data->get_name() );
-      lag_comp_data->set_time( sim_data->get_time() );
-      lag_comp_data->set_value( sim_data->get_value() );
-      lag_comp_data->set_derivative( sim_data->get_derivative() );
-      lag_comp_data->set_phase( sim_data->get_phase() );
-      lag_comp_data->set_frequency( sim_data->get_frequency() );
-      lag_comp_data->set_amplitude( sim_data->get_amplitude() );
-      lag_comp_data->set_tolerance( sim_data->get_tolerance() );
+   if ( this != sim_data ) {
+      this->set_name( sim_data->get_name() );
+      this->set_time( sim_data->get_time() );
+      this->set_value( sim_data->get_value() );
+      this->set_derivative( sim_data->get_derivative() );
+      this->set_phase( sim_data->get_phase() );
+      this->set_frequency( sim_data->get_frequency() );
+      this->set_amplitude( sim_data->get_amplitude() );
+      this->set_tolerance( sim_data->get_tolerance() );
    }
 }
 
 void SineLagCompensation::receive_lag_compensation()
 {
    double const time = get_scenario_time();
-   double const dt   = time - lag_comp_data->get_time();
+   double const dt   = time - this->get_time();
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       cout << "******* SineLagCompensation::receive_lag_compensation():" << __LINE__ << endl
            << " scenario-time:" << get_scenario_time() << endl
-           << "     data-time:" << lag_comp_data->get_time() << endl
+           << "     data-time:" << this->get_time() << endl
            << "            dt:" << dt << endl
            << " adjusted-time:" << time << endl
            << " BEFORE Lag Compensation:" << endl
-           << "\t Name  lag_comp_data: '" << lag_comp_data->get_name()
+           << "\t Name  this: '" << this->get_name()
            << "', received update:" << ( name_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Time  lag_comp_data: " << lag_comp_data->get_time()
+           << "\t Time  this: " << this->get_time()
            << ", received update:" << ( time_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Value lag_comp_data: " << lag_comp_data->get_value()
+           << "\t Value this: " << this->get_value()
            << ", received update:" << ( value_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t dvdt  lag_comp_data: " << lag_comp_data->get_derivative()
+           << "\t dvdt  this: " << this->get_derivative()
            << ", received update:" << ( dvdt_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Phase lag_comp_data: " << lag_comp_data->get_phase()
+           << "\t Phase this: " << this->get_phase()
            << ", received update:" << ( phase_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Amp   lag_comp_data: " << lag_comp_data->get_amplitude()
+           << "\t Amp   this: " << this->get_amplitude()
            << ", received update:" << ( amp_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Freq  lag_comp_data: " << lag_comp_data->get_frequency()
+           << "\t Freq  this: " << this->get_frequency()
            << ", received update:" << ( freq_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Tol   lag_comp_data: " << lag_comp_data->get_tolerance()
+           << "\t Tol   this: " << this->get_tolerance()
            << ", received update:" << ( tol_attr->is_received() ? "Yes" : "No" ) << endl;
    }
 
@@ -220,25 +219,25 @@ void SineLagCompensation::receive_lag_compensation()
    // Because of ownership transfers and attributes being sent at different
    // rates we need to check to see if we received data for each attribute.
    if ( name_attr->is_received() ) {
-      sim_data->set_name( lag_comp_data->get_name() );
+      sim_data->set_name( this->get_name() );
    }
    if ( value_attr->is_received() ) {
-      sim_data->set_value( lag_comp_data->get_value() );
+      sim_data->set_value( this->get_value() );
    }
    if ( dvdt_attr->is_received() ) {
-      sim_data->set_derivative( lag_comp_data->get_derivative() );
+      sim_data->set_derivative( this->get_derivative() );
    }
    if ( phase_attr->is_received() ) {
-      sim_data->set_phase( lag_comp_data->get_phase() );
+      sim_data->set_phase( this->get_phase() );
    }
    if ( freq_attr->is_received() ) {
-      sim_data->set_frequency( lag_comp_data->get_frequency() );
+      sim_data->set_frequency( this->get_frequency() );
    }
    if ( amp_attr->is_received() ) {
-      sim_data->set_amplitude( lag_comp_data->get_amplitude() );
+      sim_data->set_amplitude( this->get_amplitude() );
    }
    if ( tol_attr->is_received() ) {
-      sim_data->set_tolerance( lag_comp_data->get_tolerance() );
+      sim_data->set_tolerance( this->get_tolerance() );
    }
 
    sim_data->set_time( time );
@@ -268,39 +267,39 @@ void SineLagCompensation::receive_lag_compensation()
 void SineLagCompensation::bypass_receive_lag_compensation()
 {
    double const time = get_scenario_time();
-   double const dt   = time - lag_comp_data->get_time();
+   double const dt   = time - this->get_time();
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       cout << "******* SineLagCompensation::bypass_receive_lag_compensation():" << __LINE__ << endl
            << " scenario-time:" << get_scenario_time() << endl
-           << "     data-time:" << lag_comp_data->get_time() << endl
+           << "     data-time:" << this->get_time() << endl
            << "            dt:" << dt << endl
            << " adjusted-time:" << time << endl
            << " BEFORE Bypassing Lag Compensation:" << endl
-           << "\t Name  lag_comp_data: '" << lag_comp_data->get_name()
+           << "\t Name  this: '" << this->get_name()
            << "', received update:" << ( name_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Time  lag_comp_data: " << lag_comp_data->get_time()
+           << "\t Time  this: " << this->get_time()
            << ", received update:" << ( time_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Value lag_comp_data: " << lag_comp_data->get_value()
+           << "\t Value this: " << this->get_value()
            << ", received update:" << ( value_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t dvdt  lag_comp_data: " << lag_comp_data->get_derivative()
+           << "\t dvdt  this: " << this->get_derivative()
            << ", received update:" << ( dvdt_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Phase lag_comp_data: " << lag_comp_data->get_phase()
+           << "\t Phase this: " << this->get_phase()
            << ", received update:" << ( phase_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Amp   lag_comp_data: " << lag_comp_data->get_amplitude()
+           << "\t Amp   this: " << this->get_amplitude()
            << ", received update:" << ( amp_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Freq  lag_comp_data: " << lag_comp_data->get_frequency()
+           << "\t Freq  this: " << this->get_frequency()
            << ", received update:" << ( freq_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Tol   lag_comp_data: " << lag_comp_data->get_tolerance()
+           << "\t Tol   this: " << this->get_tolerance()
            << ", received update:" << ( tol_attr->is_received() ? "Yes" : "No" ) << endl;
    }
 
@@ -317,28 +316,28 @@ void SineLagCompensation::bypass_receive_lag_compensation()
 
    // Bypass receive lag compensation by copying lag-comp data to sim-data.
    if ( name_attr->is_received() ) {
-      sim_data->set_name( lag_comp_data->get_name() );
+      sim_data->set_name( this->get_name() );
    }
    if ( time_attr->is_received() ) {
-      sim_data->set_time( lag_comp_data->get_time() );
+      sim_data->set_time( this->get_time() );
    }
    if ( value_attr->is_received() ) {
-      sim_data->set_value( lag_comp_data->get_value() );
+      sim_data->set_value( this->get_value() );
    }
    if ( dvdt_attr->is_received() ) {
-      sim_data->set_derivative( lag_comp_data->get_derivative() );
+      sim_data->set_derivative( this->get_derivative() );
    }
    if ( phase_attr->is_received() ) {
-      sim_data->set_phase( lag_comp_data->get_phase() );
+      sim_data->set_phase( this->get_phase() );
    }
    if ( freq_attr->is_received() ) {
-      sim_data->set_frequency( lag_comp_data->get_frequency() );
+      sim_data->set_frequency( this->get_frequency() );
    }
    if ( amp_attr->is_received() ) {
-      sim_data->set_amplitude( lag_comp_data->get_amplitude() );
+      sim_data->set_amplitude( this->get_amplitude() );
    }
    if ( tol_attr->is_received() ) {
-      sim_data->set_tolerance( lag_comp_data->get_tolerance() );
+      sim_data->set_tolerance( this->get_tolerance() );
    }
 
    // Use the inherited debug-handler to allow debug comments to be turned
