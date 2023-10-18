@@ -22,9 +22,10 @@ NASA, Johnson Space Center\n
 
 @python_module{SpaceFOM}
 
-@tldh:q
+@tldh
 @trick_link_dependency{../../source/TrickHLA/LagCompensation.cpp}
 @trick_link_dependency{../../source/SpaceFOM/PhysicalEntityLagCompBase.cpp}
+@trick_link_dependency{QuaternionData.c}
 
 @revs_title
 @revs_begin
@@ -44,6 +45,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/LagCompensation.hh"
 
 // SpaceFOM include files.
+#include "SpaceFOM/QuaternionData.h"
 #include "SpaceFOM/PhysicalEntityBase.hh"
 #include "SpaceFOM/SpaceTimeCoordinateData.h"
 
@@ -110,16 +112,6 @@ class PhysicalEntityLagCompBase : public TrickHLA::LagCompensation
    QuaternionData          Q_dot;         ///< @trick_units{--} Computed attitude quaternion rate.
    double accel[3];     ///< @trick_units{m/s2} Entity acceleration vector.
    double rot_accel[3]; ///< @trick_units{rad/s2} Entity rotational acceleration vector.
-
-   /*! @brief Computer the rate of the attitude quaterion.
-    *  @param stc Space time coordinate state data.
-    *  @param Q_dot Reference to the quaternion rate. */
-   static void compute_Q_dot(
-      const double   quat_scalar,
-      const double   quat_vector[3],
-      const double   omega[3],
-            double & qdot_scalar,
-            double   qdot_vector[3] );
 
    /*! @brief Compensate the state data from the data time to the current scenario time.
     *  @param t_begin Scenario time at the start of the compensation step.

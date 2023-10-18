@@ -22,8 +22,8 @@ NASA, Johnson Space Center\n
 
 @python_module{SpaceFOM}
 
-@tldh:q
-@trick_link_dependency{../../source/SpaceFOM/PhysicalEntityLagCompBase.cpp}
+@tldh
+@trick_link_dependency{../../source/SpaceFOM/PhysicalEntityLagCompInteg.cpp}
 @trick_link_dependency{../../source/SpaceFOM/PhysicalEntityLagCompSA.cpp}
 
 @revs_title
@@ -44,12 +44,12 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 
 // SpaceFOM include files.
-#include "SpaceFOM/PhysicalEntityLagCompBase.hh"
+#include "SpaceFOM/PhysicalEntityLagCompInteg.hh"
 
 namespace SpaceFOM
 {
 
-class PhysicalEntityLagCompSA : public PhysicalEntityLagCompBase
+class PhysicalEntityLagCompSA : public PhysicalEntityLagCompInteg
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -69,22 +69,7 @@ class PhysicalEntityLagCompSA : public PhysicalEntityLagCompBase
    /*! @brief Entity instance initialization routine. */
    virtual void initialize();
 
-   /*! @brief Sending side latency compensation callback interface from the
-    *  TrickHLALagCompensation class. */
-   virtual void send_lag_compensation();
-
-   /*! @brief Receive side latency compensation callback interface from the
-    *  TrickHLALagCompensation class. */
-   virtual void receive_lag_compensation();
-
-   void set_tolerance( double tol ){
-      integ_tol = tol;
-   }
-
   protected:
-   double integ_t;   ///< @trick_units{s} Current compensation propagation time.
-   double integ_dt;  ///< @trick_units{s} Default integration time steps.
-   double integ_tol; ///< @trick_units{s} Tolerance for terminating a compensation step.
 
    double * integ_states[13]; ///< @trick_units{--} @trick_io{**} Integration states.
    SA::EulerIntegrator integrator;

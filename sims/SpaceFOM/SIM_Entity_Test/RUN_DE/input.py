@@ -329,7 +329,7 @@ federate.add_fed_object( phy_entity )
 # Set the lag compensation paratmeters.
 physical_entity.lag_compensation.debug = True
 #physical_entity.lag_compensation.integ_tol = 1.0e-6
-physical_entity.lag_compensation.set_tolerance( 1.0e-6 )
+physical_entity.lag_compensation.set_integ_tolerance( 1.0e-6 )
 
 
 #---------------------------------------------------------------------------

@@ -1,8 +1,8 @@
 /*!
-@file SpaceFOM/PhysicalEntityLagComp.hh
+@file SpaceFOM/PhysicalEntityLagCompSA2.hh
 @ingroup SpaceFOM
 @brief Definition of the TrickHLA SpaceFOM physical entity latency/lag
-compensation class that uses the Trick integrators.
+compensation class that uses the Trick Stand-Alone (SA) integrators.
 
 This is the base implementation for the Space Reference FOM (SpaceFOM) interface
 to the PhysicalEntity latency compensation object.
@@ -24,7 +24,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/SpaceFOM/PhysicalEntityLagCompInteg.cpp}
-@trick_link_dependency{../../source/SpaceFOM/PhysicalEntityLagComp.cpp}
+@trick_link_dependency{../../source/SpaceFOM/PhysicalEntityLagCompSA2.cpp}
 
 @revs_title
 @revs_begin
@@ -33,13 +33,13 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef SPACEFOM_PHYSICAL_ENTITY_LAG_COMP_HH
-#define SPACEFOM_PHYSICAL_ENTITY_LAG_COMP_HH
+#ifndef SPACEFOM_PHYSICAL_ENTITY_LAG_COMP_SA2_HH
+#define SPACEFOM_PHYSICAL_ENTITY_LAG_COMP_SA2_HH
 
 // System include files.
 
 // Trick includes.
-#include "trick/Integrator.hh"
+#include "trick_utils/SAIntegrator/include/SAIntegrator.hh"
 
 // TrickHLA include files.
 
@@ -49,7 +49,7 @@ NASA, Johnson Space Center\n
 namespace SpaceFOM
 {
 
-class PhysicalEntityLagComp : public PhysicalEntityLagCompInteg
+class PhysicalEntityLagCompSA2 : public PhysicalEntityLagCompInteg
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -59,20 +59,29 @@ class PhysicalEntityLagComp : public PhysicalEntityLagCompInteg
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrSpaceFOM__PhysicalEntityLagComp();
+   friend void init_attrSpaceFOM__PhysicalEntityLagCompSA2();
 
   public:
    // Public constructors and destructors.
-   PhysicalEntityLagComp( PhysicalEntityBase & entity_ref ); // Initialization constructor.
-   virtual ~PhysicalEntityLagComp(); // Destructor.
+   PhysicalEntityLagCompSA2( PhysicalEntityBase & entity_ref ); // Initialization constructor.
+   virtual ~PhysicalEntityLagCompSA2(); // Destructor.
 
    /*! @brief Entity instance initialization routine. */
    virtual void initialize();
 
   protected:
 
-   double * integ_states[13]; ///< @trick_units{--} @trick_io{**} Integration states.
-   Trick::Integrator * integrator; ///< @trick_units{--} Reference to a specific Trick integration method.
+   double * integ_states[7]; ///< @trick_units{--} @trick_io{**} Integrator state vector.
+   double * integ_derivs[7]; ///< @trick_units{--} @trick_io{**} Integrator derivative vector.
+   SA::EulerCromerIntegrator integrator;
+
+   /*! @brief Derivative routine used by the compensation integrator.
+    *  @param t      Integration time (IN).
+    *  @param states Integration states (IN).
+    *  @param derivs Derivatives of the integration states (OUT).
+    *  @param udate  Additional user data needed to compute the derivatives (IN).
+    */
+   static void derivatives( double t, double pos[], double vel[], double accel[], void* udata);
 
    /*! @brief Compensate the state data from the data time to the current scenario time.
     *  @param t_begin Scenario time at the start of the compensation step.
@@ -81,22 +90,16 @@ class PhysicalEntityLagComp : public PhysicalEntityLagCompInteg
       const double t_begin,
       const double t_end   );
 
-   /*! @brief Load the integration state into the integrator. */
-   virtual void load();
-
-   /*! @brief Load the integration state into the integrator. */
-   virtual void unload();
-
   private:
    // This object is not copyable
-   /*! @brief Copy constructor for PhysicalEntityLagComp class.
+   /*! @brief Copy constructor for PhysicalEntityLagCompSA2 class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   PhysicalEntityLagComp( PhysicalEntityLagComp const &rhs );
-   /*! @brief Assignment operator for PhysicalEntityLagComp class.
+   PhysicalEntityLagCompSA2( PhysicalEntityLagCompSA2 const &rhs );
+   /*! @brief Assignment operator for PhysicalEntityLagCompSA2 class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   PhysicalEntityLagComp &operator=( PhysicalEntityLagComp const &rhs );
+   PhysicalEntityLagCompSA2 &operator=( PhysicalEntityLagCompSA2 const &rhs );
 };
 
 } // namespace SpaceFOM
 
-#endif // SPACEFOM_PHYSICAL_ENTITY_LAG_COMP_HH: Do NOT put anything after this line!
+#endif // SPACEFOM_PHYSICAL_ENTITY_LAG_COMP_SA2_HH: Do NOT put anything after this line!

@@ -17,7 +17,6 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/DebugHandler.cpp}
-@trick_link_dependency{../../source/TrickHLA/LagCompensation.cpp}
 @trick_link_dependency{PhysicalEntityLagComp.cpp}
 
 
@@ -57,17 +56,9 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 PhysicalEntityLagComp::PhysicalEntityLagComp( PhysicalEntityBase & entity_ref ) // RETURN: -- None.
-   : PhysicalEntityLagCompBase( entity_ref ),
-     integ_t( 0.0 ),
-     integ_dt( 0.05 ),
-     integ_tol( 1.0e-8 ),
+   : PhysicalEntityLagCompInteg( entity_ref ),
      integrator(NULL)
 {
-   // Initialize the acceleration values.
-   for( int iinc = 0 ; iinc < 3 ; iinc++ ){
-      this->accel[iinc]     = 0.0;
-      this->rot_accel[iinc] = 0.0;
-   }
 
    // Assign the integrator state references.
    // Translational position
@@ -126,75 +117,8 @@ void PhysicalEntityLagComp::initialize()
 
    }
 
-   // Return to calling routine.
-   return;
-}
-
-
-/*! @brief Sending side latency compensation callback interface from the
- *  TrickHLALagCompensation class. */
-void PhysicalEntityLagComp::send_lag_compensation()
-{
-   double begin_t = get_scenario_time();
-   double end_t;
-
-   // Save the compensation time step.
-   this->compensate_dt = get_lookahead().get_time_in_seconds();
-   end_t = begin_t + this->compensate_dt;
-
-   // Use the inherited debug-handler to allow debug comments to be turned
-   // on and off from a setting in the input file.
-   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
-      cout << "******* PhysicalEntityLagComp::send_lag_compensation():" << __LINE__ << endl
-           << " scenario-time:" << get_scenario_time() << endl
-           << "     lookahead:" << this->compensate_dt << endl
-           << " adjusted-time:" << end_t << endl;
-   }
-
-   // Compensate the data
-   this->compensate( begin_t, end_t );
-
-   // Copy the compensated state to the PhysicalEntity state data.
-   // NOTE: You do not want to do this if the PhysicalEntity state is the
-   // simulation working state.  This only works if using buffered values
-   // of the working state.
-   this->copy_state_to_entity();
-
-   // Return to calling routine.
-   return;
-}
-
-
-/*! @brief Receive side latency compensation callback interface from the
- *  TrickHLALagCompensation class. */
-void PhysicalEntityLagComp::receive_lag_compensation()
-{
-   double end_t  = get_scenario_time();
-   double data_t = entity.get_time();
-
-   // Save the compensation time step.
-   this->compensate_dt = end_t - data_t;
-
-   // Use the inherited debug-handler to allow debug comments to be turned
-   // on and off from a setting in the input file.
-   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
-      cout << "******* PhysicalEntityLagComp::receive_lag_compensation():" << __LINE__ << endl
-           << "  scenario-time:" << end_t  << endl
-           << "      data-time:" << data_t << endl
-           << " comp-time-step:" << this->compensate_dt  << endl;
-   }
-
-   // Because of ownership transfers and attributes being sent at different
-   // rates we need to check to see if we received attribute data.
-   if ( this->state_attr->is_received() ) {
-      // Compensate the data
-      this->compensate( data_t, end_t );
-   }
-
-   // Copy the compensated state to the PhysicalEntity state data.
-   // NOTE: If you are using a buffered working state, then you will also
-   // need to provide code to copy into the working state.
-   this->copy_state_to_entity();
+   // Call the base class initialize function.l
+   PhysicalEntityLagCompInteg::initialize();
 
    // Return to calling routine.
    return;
@@ -202,7 +126,7 @@ void PhysicalEntityLagComp::receive_lag_compensation()
 
 
 /*!
- * @job_class{derivative}
+ * @job_class{integration}
  */
 int PhysicalEntityLagComp::compensate(
    const double t_begin,
@@ -211,13 +135,18 @@ int PhysicalEntityLagComp::compensate(
    int ipass;
    double dt_go  = t_end - t_begin;
 
+   if ( debug ) {
+      cout<< "Compensate: t_begin, t_end, dt_go: " << t_begin << ", " << t_end
+          << ", " << dt_go << endl;
+   }
+
    // Copy the current PhysicalEntity state over to the lag compensated state.
    this->copy_state_from_entity();
-   compute_Q_dot( this->lag_comp_data.quat_scalar,
-                  this->lag_comp_data.quat_vector,
-                  this->lag_comp_data.ang_vel,
-                  this->Q_dot.scalar,
-                  this->Q_dot.vector );
+   compute_quat_dot( this->lag_comp_data.quat_scalar,
+                     this->lag_comp_data.quat_vector,
+                     this->lag_comp_data.ang_vel,
+                     &(this->Q_dot.scalar),
+                     this->Q_dot.vector );
 
    // Print out debug information if desired.
    if ( debug ) {
@@ -234,6 +163,12 @@ int PhysicalEntityLagComp::compensate(
 
    // Loop through integrating the state forward to the current scenario time.
    while( (dt_go >= 0.0) && (fabs(dt_go) > this->integ_tol) ) {
+
+      // Print out debug information if requested.
+      if ( debug ) {
+         cout << "Integ dt, tol, t, dt_go: " << this->integ_dt << ", "
+              << this->integ_tol << ", " << integ_t << ", " << dt_go << endl;
+      }
 
       // Integration inner loop.
       // Step through the integrator's integration steps.
@@ -262,8 +197,8 @@ int PhysicalEntityLagComp::compensate(
          this->unload();
 
          // Normalize the propagated attitude quaternion.
-         //this->normalize_quaternion( &(this->lag_comp_data.quat_scalar),
-         //                            this->lag_comp_data.quat_vector     );
+         normalize_quaternion( &(this->lag_comp_data.quat_scalar),
+                               this->lag_comp_data.quat_vector     );
 
       } while ( ipass );
 
@@ -273,21 +208,17 @@ int PhysicalEntityLagComp::compensate(
       // Compute the remaining time in the compensation step.
       dt_go = t_end - this->integ_t;
 
-      if ( debug ) {
-         cout<< "Integ t, dt_go: " << integ_t << ", " << dt_go << endl;
-      }
-
    }
 
    // Update the lag compensated time,
    lag_comp_data.time = integ_t;
 
    // Compute the lag compensated value for the attitude quaternion rate.
-   compute_Q_dot( this->lag_comp_data.quat_scalar,
-                  this->lag_comp_data.quat_vector,
-                  this->lag_comp_data.ang_vel,
-                  this->Q_dot.scalar,
-                  this->Q_dot.vector );
+   compute_quat_dot( this->lag_comp_data.quat_scalar,
+                     this->lag_comp_data.quat_vector,
+                     this->lag_comp_data.ang_vel,
+                     &(this->Q_dot.scalar),
+                     this->Q_dot.vector );
 
    // Print out debug information if desired.
    if ( debug ) {
@@ -313,11 +244,11 @@ void PhysicalEntityLagComp::load()
 
    // Compute the derivative of the attitude quaternion from the
    // angular velocity vector.
-   compute_Q_dot( this->integrator->state[6],
-                  &(this->integrator->state[7]),
-                  &(this->integrator->state[10]),
-                  this->Q_dot.scalar,
-                  this->Q_dot.vector );
+   compute_quat_dot( this->integrator->state[6],
+                     &(this->integrator->state[7]),
+                     &(this->integrator->state[10]),
+                     &(this->Q_dot.scalar),
+                     this->Q_dot.vector );
 
    // Load the integrator derivative references.
    // Translational position
@@ -357,11 +288,11 @@ void PhysicalEntityLagComp::unload()
 
    // Compute the derivative of the attitude quaternion from the
    // angular velocity vector.
-   compute_Q_dot( *(integ_states[6]),
-                  integ_states[7],
-                  integ_states[10],
-                  this->Q_dot.scalar,
-                  this->Q_dot.vector );
+   compute_quat_dot( *(integ_states[6]),
+                     integ_states[7],
+                     integ_states[10],
+                     &(this->Q_dot.scalar),
+                     this->Q_dot.vector );
 
    // Return to calling routine.
    return;

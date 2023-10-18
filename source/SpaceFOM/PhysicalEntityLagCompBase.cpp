@@ -17,7 +17,6 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/DebugHandler.cpp}
-@trick_link_dependency{../../source/TrickHLA/LagCompensation.cpp}
 @trick_link_dependency{PhysicalEntityLagCompBase.cpp}
 
 
@@ -143,37 +142,11 @@ void PhysicalEntityLagCompBase::initialize_states()
       this->accel[iinc]     = this->entity.accel[iinc];
       this->rot_accel[iinc] = this->entity.rot_accel[iinc];
    }
-   compute_Q_dot( this->lag_comp_data.quat_scalar,
-                  this->lag_comp_data.quat_vector,
-                  this->lag_comp_data.ang_vel,
-                  this->Q_dot.scalar,
-                  this->Q_dot.vector );
-
-   // Return to calling routine.
-   return;
-}
-
-
-/*!
- * @job_class{scheduled}
- */
-void PhysicalEntityLagCompBase::compute_Q_dot(
-      const double   quat_scalar,
-      const double   quat_vector[3],
-      const double   omega[3],
-            double & qdot_scalar,
-            double   qdot_vector[3] )
-{
-   double minus_half_omega[3];
-
-   V_SCALE( minus_half_omega, omega, -0.5 );
-
-   qdot_scalar = - (V_DOT( quat_vector, minus_half_omega ));
-
-   V_SCALE( qdot_vector, minus_half_omega, quat_scalar );
-   qdot_vector[0] += (minus_half_omega[1] * quat_vector[2]) - (minus_half_omega[2] * quat_vector[1]);
-   qdot_vector[1] += (minus_half_omega[2] * quat_vector[0]) - (minus_half_omega[0] * quat_vector[2]);
-   qdot_vector[2] += (minus_half_omega[0] * quat_vector[1]) - (minus_half_omega[1] * quat_vector[0]);
+   compute_quat_dot( this->lag_comp_data.quat_scalar,
+                     this->lag_comp_data.quat_vector,
+                     this->lag_comp_data.ang_vel,
+                     &(this->Q_dot.scalar),
+                     this->Q_dot.vector );
 
    // Return to calling routine.
    return;
