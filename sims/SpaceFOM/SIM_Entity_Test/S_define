@@ -127,6 +127,7 @@ class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
 // object discovery and data exchange.
 //==========================================================================
 ##include "SpaceFOM/RefFrameState.hh"
+##include "SpaceFOM/RefFrameLagComp.hh"
 
 class SpaceFOMRefFrameSimObject : public Trick::SimObject {
 
@@ -135,8 +136,12 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
    /* HLA associated reference frames packing object. */
    SpaceFOM::RefFrameState frame_packing;
 
+   /* HLA lag compensation object. */
+   RefFrameLagComp lag_compensation;
+
    SpaceFOMRefFrameSimObject( RefFrameData & frame_data_ptr,
                               unsigned short _INIT = 59  )
+   : lag_compensation( frame_packing )
    {
       // Set the reference to the reference frame.
       this->ref_frame_data_ptr = &frame_data_ptr;
@@ -145,6 +150,7 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
       // Initialization jobs
       //
       P_INIT ("initialization") frame_packing.initialize( ref_frame_data_ptr );
+      P50 ("initialization") lag_compensation.initialize();
 
    }
 
@@ -163,10 +169,10 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
 // simulation object definition. This can be used for SpaceFOM
 // PhysicalEntity object discovery and data exchange.
 //==========================================================================
-#define USE_SA_INTEGRATOR
+//#define USE_SA_INTEGRATOR
 ##include "SpaceFOM/PhysicalEntity.hh"
 #ifdef USE_SA_INTEGRATOR
-##include "SpaceFOM/PhysicalEntityLagCompSA2.hh"
+##include "SpaceFOM/PhysicalEntityLagCompSA.hh"
 #else
 ##include "SpaceFOM/PhysicalEntityLagComp.hh"
 #endif
@@ -181,7 +187,7 @@ class SpaceFOMPhysicalEntitySimObject : public Trick::SimObject {
 
    /* HLA lag compensation object. */
 #ifdef USE_SA_INTEGRATOR
-   PhysicalEntityLagCompSA2 lag_compensation;
+   PhysicalEntityLagCompSA lag_compensation;
 #else
    PhysicalEntityLagComp lag_compensation;
 #endif

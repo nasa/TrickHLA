@@ -19,6 +19,9 @@ NASA, Johnson Space Center\n
 
 @python_module{SpaceFOM}
 
+@tldh
+@trick_link_dependency{QuaternionData.cpp}
+
 @revs_begin
 @rev_entry{ Edwin Z. Crues, NASA ER7, NExSyS, Jan 2019, --, SpaceFOM support and testing. }
 @revs_end
@@ -28,18 +31,20 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_SPACE_TIME_COORDINATE_DATA_H
 #define SPACEFOM_SPACE_TIME_COORDINATE_DATA_H
 
+#include "SpaceFOM/QuaternionData.h"
+
 #ifdef __cplusplus
 // Place the struct in a namespace when C++.
-namespace SpaceFOM
-{
+namespace SpaceFOM {
 #endif
 
 typedef struct {
 
    double pos[3];         ///< trick_units{m}     Position in parent frame.
    double vel[3];         ///< trick_units{m/s}   Velocity wrt. parent frame.
-   double quat_scalar;    ///< trick_units{--}    Attitude quaternion scalar.
-   double quat_vector[3]; ///< trick_units{--}    Attitude quaternion vector.
+   QuaternionData quat;   ///< trick_units{--}    Attitude quaternion.
+//   double quat_scalar;    ///< trick_units{--}    Attitude quaternion scalar.
+//   double quat_vector[3]; ///< trick_units{--}    Attitude quaternion vector.
    double ang_vel[3];     ///< trick_units{rad/s} Angular velocity vector.
    double time;           ///< trick_units{s}     Truncated Julian date in TT time scale.
 

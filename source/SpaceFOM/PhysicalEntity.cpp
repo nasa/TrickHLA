@@ -83,7 +83,7 @@ void PhysicalEntity::initialize()
    // Check to make sure the PhysicalEntity data is set.
    if ( physical_data == NULL ) {
       errmsg << "SpaceFOM::PhysicalEntity::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL PhysicalEntityData: " << name << THLA_ENDL;
+             << " ERROR: Unexpected NULL PhysicalEntityData: " << pe_packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -105,7 +105,7 @@ void PhysicalEntity::initialize( PhysicalEntityData *physical_data_ptr )
    // Set the reference to the PhysicalEntity data.
    if ( physical_data_ptr == NULL ) {
       errmsg << "SpaceFOM::PhysicalEntity::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL PhysicalEntityData: " << name << THLA_ENDL;
+             << " ERROR: Unexpected NULL PhysicalEntityData: " << pe_packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -136,9 +136,9 @@ void PhysicalEntity::pack()
 
    // Check for name change.
    if ( physical_data->name != NULL ) {
-      if ( strcmp( physical_data->name, name ) ) {
-         trick_MM->delete_var( (void *)name );
-         name = trick_MM->mm_strdup( physical_data->name );
+      if ( strcmp( physical_data->name, pe_packing_data.name ) ) {
+         trick_MM->delete_var( (void *)pe_packing_data.name );
+         pe_packing_data.name = trick_MM->mm_strdup( physical_data->name );
       }
    } else {
       errmsg << "SpaceFOM::PhysicalEntity::pack():" << __LINE__
@@ -149,45 +149,45 @@ void PhysicalEntity::pack()
 
    // Check for type change.
    if ( physical_data->type != NULL ) {
-      if ( type != NULL ) {
-         if ( strcmp( physical_data->type, type ) ) {
-            trick_MM->delete_var( (void *)type );
-            type = trick_MM->mm_strdup( physical_data->type );
+      if ( pe_packing_data.type != NULL ) {
+         if ( strcmp( physical_data->type, pe_packing_data.type ) ) {
+            trick_MM->delete_var( (void *)pe_packing_data.type );
+            pe_packing_data.type = trick_MM->mm_strdup( physical_data->type );
          }
       } else {
-         type = trick_MM->mm_strdup( physical_data->type );
+         pe_packing_data.type = trick_MM->mm_strdup( physical_data->type );
       }
    } else {
-      if ( type != NULL ) {
-         trick_MM->delete_var( (void *)type );
-         type = NULL;
+      if ( pe_packing_data.type != NULL ) {
+         trick_MM->delete_var( (void *)pe_packing_data.type );
+         pe_packing_data.type = NULL;
       }
    }
 
    // Check for status change.
    if ( physical_data->status != NULL ) {
-      if ( status != NULL ) {
-         if ( strcmp( physical_data->status, status ) ) {
-            trick_MM->delete_var( (void *)status );
-            status = trick_MM->mm_strdup( physical_data->status );
+      if ( pe_packing_data.status != NULL ) {
+         if ( strcmp( physical_data->status, pe_packing_data.status ) ) {
+            trick_MM->delete_var( (void *)pe_packing_data.status );
+            pe_packing_data.status = trick_MM->mm_strdup( physical_data->status );
          }
       } else {
-         status = trick_MM->mm_strdup( physical_data->status );
+         pe_packing_data.status = trick_MM->mm_strdup( physical_data->status );
       }
    } else {
-      if ( status != NULL ) {
-         trick_MM->delete_var( (void *)status );
-         status = NULL;
+      if ( pe_packing_data.status != NULL ) {
+         trick_MM->delete_var( (void *)pe_packing_data.status );
+         pe_packing_data.status = NULL;
       }
    }
 
    // Check for parent frame change.
    if ( physical_data->parent_frame != NULL ) {
       // We have a parent frame; so, check to see if frame names are different.
-      if ( strcmp( physical_data->parent_frame, parent_frame ) ) {
+      if ( strcmp( physical_data->parent_frame, pe_packing_data.parent_frame ) ) {
          // Frames are different, so reassign the new frame string.
-         trick_MM->delete_var( (void *)parent_frame );
-         parent_frame = trick_MM->mm_strdup( physical_data->parent_frame );
+         trick_MM->delete_var( (void *)pe_packing_data.parent_frame );
+         pe_packing_data.parent_frame = trick_MM->mm_strdup( physical_data->parent_frame );
       }
    } else {
       errmsg << "SpaceFOM::PhysicalEntity::pack():" << __LINE__
@@ -215,17 +215,17 @@ void PhysicalEntity::pack()
 
    // Set the acceleration data.
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      accel[iinc] = physical_data->accel[iinc];
+      pe_packing_data.accel[iinc] = physical_data->accel[iinc];
    }
 
    // Set the rotational acceleration data.
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      rot_accel[iinc] = physical_data->rot_accel[iinc];
+      pe_packing_data.rot_accel[iinc] = physical_data->rot_accel[iinc];
    }
 
    // Set the center of mass location.
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      cm[iinc] = physical_data->cm[iinc];
+      pe_packing_data.cm[iinc] = physical_data->cm[iinc];
    }
 
    // Pack the body to structural reference frame attitude quaternion.
@@ -239,10 +239,10 @@ void PhysicalEntity::pack()
       cout.precision( 15 );
       cout << "PhysicalEntity::pack():" << __LINE__ << endl
            << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname:   '" << ( name != NULL ? name : "" ) << "'" << endl
-           << "\ttype:   '" << ( type != NULL ? type : "" ) << "'" << endl
-           << "\tstatus: '" << ( status != NULL ? status : "" ) << "'" << endl
-           << "\tparent: '" << ( parent_frame != NULL ? parent_frame : "" ) << "'" << endl
+           << "\tname:   '" << ( pe_packing_data.name != NULL ? pe_packing_data.name : "" ) << "'" << endl
+           << "\ttype:   '" << ( pe_packing_data.type != NULL ? pe_packing_data.type : "" ) << "'" << endl
+           << "\tstatus: '" << ( pe_packing_data.status != NULL ? pe_packing_data.status : "" ) << "'" << endl
+           << "\tparent: '" << ( pe_packing_data.parent_frame != NULL ? pe_packing_data.parent_frame : "" ) << "'" << endl
            << "\ttime: " << state.time << endl
            << "\tposition: " << endl
            << "\t\t" << state.pos[0] << endl
@@ -307,50 +307,50 @@ void PhysicalEntity::unpack()
    // Set the entity name, type, status, and parent frame name.
    if ( name_attr->is_received() ) {
       if ( physical_data->name != NULL ) {
-         if ( !strcmp( physical_data->name, name ) ) {
+         if ( !strcmp( physical_data->name, pe_packing_data.name ) ) {
             trick_MM->delete_var( (void *)physical_data->name );
-            physical_data->name = trick_MM->mm_strdup( name );
+            physical_data->name = trick_MM->mm_strdup( pe_packing_data.name );
          }
       } else {
-         physical_data->name = trick_MM->mm_strdup( name );
+         physical_data->name = trick_MM->mm_strdup( pe_packing_data.name );
       }
    }
 
    if ( type_attr->is_received() ) {
       if ( physical_data->type != NULL ) {
-         if ( !strcmp( physical_data->type, type ) ) {
+         if ( !strcmp( physical_data->type, pe_packing_data.type ) ) {
             trick_MM->delete_var( (void *)physical_data->type );
-            physical_data->type = trick_MM->mm_strdup( type );
+            physical_data->type = trick_MM->mm_strdup( pe_packing_data.type );
          }
       } else {
-         physical_data->type = trick_MM->mm_strdup( type );
+         physical_data->type = trick_MM->mm_strdup( pe_packing_data.type );
       }
    }
 
    if ( status_attr->is_received() ) {
       if ( physical_data->status != NULL ) {
-         if ( !strcmp( physical_data->status, status ) ) {
+         if ( !strcmp( physical_data->status, pe_packing_data.status ) ) {
             trick_MM->delete_var( (void *)physical_data->status );
-            physical_data->status = trick_MM->mm_strdup( status );
+            physical_data->status = trick_MM->mm_strdup( pe_packing_data.status );
          }
       } else {
-         physical_data->status = trick_MM->mm_strdup( status );
+         physical_data->status = trick_MM->mm_strdup( pe_packing_data.status );
       }
    }
 
    if ( parent_frame_attr->is_received() ) {
       if ( physical_data->parent_frame != NULL ) {
-         if ( !strcmp( physical_data->parent_frame, parent_frame ) ) {
+         if ( !strcmp( physical_data->parent_frame, pe_packing_data.parent_frame ) ) {
             trick_MM->delete_var( (void *)physical_data->parent_frame );
-            if ( parent_frame[0] != '\0' ) {
-               physical_data->parent_frame = trick_MM->mm_strdup( parent_frame );
+            if ( pe_packing_data.parent_frame[0] != '\0' ) {
+               physical_data->parent_frame = trick_MM->mm_strdup( pe_packing_data.parent_frame );
             } else {
                physical_data->parent_frame = NULL;
             }
          }
       } else {
-         if ( parent_frame[0] != '\0' ) {
-            physical_data->parent_frame = trick_MM->mm_strdup( parent_frame );
+         if ( pe_packing_data.parent_frame[0] != '\0' ) {
+            physical_data->parent_frame = trick_MM->mm_strdup( pe_packing_data.parent_frame );
          }
       }
    }
@@ -370,10 +370,10 @@ void PhysicalEntity::unpack()
       cout.precision( 15 );
       cout << "PhysicalEntity::unpack():" << __LINE__ << endl
            << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname:   '" << ( name != NULL ? name : "" ) << "'" << endl
-           << "\ttype:   '" << ( type != NULL ? type : "" ) << "'" << endl
-           << "\tstatus: '" << ( status != NULL ? status : "" ) << "'" << endl
-           << "\tparent: '" << ( parent_frame != NULL ? parent_frame : "" ) << "'" << endl
+           << "\tname:   '" << ( pe_packing_data.name != NULL ? pe_packing_data.name : "" ) << "'" << endl
+           << "\ttype:   '" << ( pe_packing_data.type != NULL ? pe_packing_data.type : "" ) << "'" << endl
+           << "\tstatus: '" << ( pe_packing_data.status != NULL ? pe_packing_data.status : "" ) << "'" << endl
+           << "\tparent: '" << ( pe_packing_data.parent_frame != NULL ? pe_packing_data.parent_frame : "" ) << "'" << endl
            << "\ttime: " << state.time << endl
            << "\tposition: " << endl
            << "\t\t" << state.pos[0] << endl

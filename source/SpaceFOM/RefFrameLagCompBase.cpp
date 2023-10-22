@@ -1,8 +1,8 @@
 /*!
-@file SpaceFOM/PhysicalEntityLagCompBase.cpp
+@file SpaceFOM/RefFrameLagCompBase.cpp
 @ingroup SpaceFOM
 @brief This class provides the implementation for a TrickHLA SpaceFOM
-PhysicalEntity latency/lag compensation class.
+RefFrame latency/lag compensation class.
 
 @copyright Copyright 2023 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
@@ -17,7 +17,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/DebugHandler.cpp}
-@trick_link_dependency{PhysicalEntityLagCompBase.cpp}
+@trick_link_dependency{RefFrameLagCompBase.cpp}
 
 
 @revs_title
@@ -46,7 +46,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Attribute.hh"
 
 // SpaceFOM include files.
-#include "SpaceFOM/PhysicalEntityLagCompBase.hh"
+#include "SpaceFOM/RefFrameLagCompBase.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -55,25 +55,12 @@ using namespace SpaceFOM;
 /*!
  * @job_class{initialization}
  */
-PhysicalEntityLagCompBase::PhysicalEntityLagCompBase( PhysicalEntityBase & entity_ref ) // RETURN: -- None.
+RefFrameLagCompBase::RefFrameLagCompBase( RefFrameBase & ref_frame_ref ) // RETURN: -- None.
    : debug( false ),
-     entity( entity_ref ),
-     name_attr(NULL),
-     type_attr(NULL),
-     status_attr(NULL),
-     parent_frame_attr(NULL),
+     ref_frame( ref_frame_ref ),
      state_attr(NULL),
-     accel_attr(NULL),
-     rot_accel_attr(NULL),
-     cm_attr(NULL),
-     body_frame_attr(NULL),
      compensate_dt( 0.0 )
 {
-   // Initialize the acceleration values.
-   for( int iinc = 0 ; iinc < 3 ; iinc++ ){
-      this->accel[iinc]     = 0.0;
-      this->rot_accel[iinc] = 0.0;
-   }
 
 }
 
@@ -81,7 +68,7 @@ PhysicalEntityLagCompBase::PhysicalEntityLagCompBase( PhysicalEntityBase & entit
 /*!
  * @job_class{shutdown}
  */
-PhysicalEntityLagCompBase::~PhysicalEntityLagCompBase() // RETURN: -- None.
+RefFrameLagCompBase::~RefFrameLagCompBase() // RETURN: -- None.
 {
 
 }
@@ -90,7 +77,7 @@ PhysicalEntityLagCompBase::~PhysicalEntityLagCompBase() // RETURN: -- None.
 /*!
  * @job_class{initialization}
  */
-void PhysicalEntityLagCompBase::initialize()
+void RefFrameLagCompBase::initialize()
 {
 
    // Return to calling routine.
@@ -109,7 +96,7 @@ void PhysicalEntityLagCompBase::initialize()
  *
  * @job_class{initialization}
  */
-void PhysicalEntityLagCompBase::initialize_callback(
+void RefFrameLagCompBase::initialize_callback(
    TrickHLA::Object *obj )
 {
    // We must call the original function so that the callback is initialized.
@@ -118,30 +105,18 @@ void PhysicalEntityLagCompBase::initialize_callback(
    // Get references to all the TrickHLA::Attribute for this object type.
    // We do this here so that we only do the attribute lookup once instead of
    // looking it up every time the unpack function is called.
-   name_attr         = entity.name_attr;
-   type_attr         = entity.type_attr;
-   status_attr       = entity.status_attr;
-   parent_frame_attr = entity.parent_frame_attr;
-   state_attr        = entity.state_attr;
-   accel_attr        = entity.accel_attr;
-   rot_accel_attr    = entity.rot_accel_attr;
-   cm_attr           = entity.cm_attr;
-   body_frame_attr   = entity.body_frame_attr;
+   state_attr = ref_frame.state_attr;
 
    return;
 }
 
 
 /*! @brief Initialization integration states. */
-void PhysicalEntityLagCompBase::initialize_states()
+void RefFrameLagCompBase::initialize_states()
 {
 
-   // Copy the current PhysicalEntity state over to the lag compensated state.
-   this->lag_comp_data = this->entity.state;
-   for ( int iinc = 0 ; iinc < 3 ; iinc++ ){
-      this->accel[iinc]     = this->entity.pe_packing_data.accel[iinc];
-      this->rot_accel[iinc] = this->entity.pe_packing_data.rot_accel[iinc];
-   }
+   // Copy the current RefFrameLag state over to the lag compensated state.
+   this->lag_comp_data = this->ref_frame.stc_data;
    compute_quat_dot( this->lag_comp_data.quat_scalar,
                      this->lag_comp_data.quat_vector,
                      this->lag_comp_data.ang_vel,
@@ -156,14 +131,10 @@ void PhysicalEntityLagCompBase::initialize_states()
 /*!
  * @job_class{scheduled}
  */
-void PhysicalEntityLagCompBase::copy_state_to_entity()
+void RefFrameLagCompBase::copy_state_to_frame()
 {
-   // Copy the current PhysicalEntity state over to the lag compensated state.
-   this->entity.state = this->lag_comp_data;
-   for ( int iinc = 0 ; iinc < 3 ; iinc++ ){
-      this->entity.pe_packing_data.accel[iinc]     = this->accel[iinc];
-      this->entity.pe_packing_data.rot_accel[iinc] = this->rot_accel[iinc];
-   }
+   // Copy the current RefFrameLag state over to the lag compensated state.
+   this->ref_frame.stc_data = this->lag_comp_data;
 
    return;
 }
@@ -172,14 +143,10 @@ void PhysicalEntityLagCompBase::copy_state_to_entity()
 /*!
  * @job_class{scheduled}
  */
-void PhysicalEntityLagCompBase::copy_state_from_entity()
+void RefFrameLagCompBase::copy_state_from_frame()
 {
-   // Copy the current PhysicalEntity state over to the lag compensated state.
-   this->lag_comp_data = this->entity.state;
-   for ( int iinc = 0 ; iinc < 3 ; iinc++ ){
-      this->accel[iinc]     = this->entity.pe_packing_data.accel[iinc];
-      this->rot_accel[iinc] = this->entity.pe_packing_data.rot_accel[iinc];
-   }
+   // Copy the current RefFrameLag state over to the lag compensated state.
+   this->lag_comp_data = this->ref_frame.stc_data;
 
    return;
 }
@@ -188,7 +155,7 @@ void PhysicalEntityLagCompBase::copy_state_from_entity()
 /*!
  * @job_class{scheduled}
  */
-void PhysicalEntityLagCompBase::print_lag_comp_data()
+void RefFrameLagCompBase::print_lag_comp_data()
 {
    double euler_angles[3];
    double * quat = &(lag_comp_data.quat_scalar);
@@ -206,10 +173,6 @@ void PhysicalEntityLagCompBase::print_lag_comp_data()
         << "\t\t" << this->lag_comp_data.vel[0] << ", "
         << "\t\t" << this->lag_comp_data.vel[1] << ", "
         << "\t\t" << this->lag_comp_data.vel[2] << endl;
-   cout << "\tacceleration: "
-        << "\t\t" << this->accel[0] << ", "
-        << "\t\t" << this->accel[1] << ", "
-        << "\t\t" << this->accel[2] << endl;
    cout << "\tattitude (s;v): "
         << "\t\t" << this->lag_comp_data.quat_scalar << "; "
         << "\t\t" << this->lag_comp_data.quat_vector[0] << ", "
@@ -228,10 +191,6 @@ void PhysicalEntityLagCompBase::print_lag_comp_data()
         << "\t\t" << this->Q_dot.vector[0] << ", "
         << "\t\t" << this->Q_dot.vector[1] << ", "
         << "\t\t" << this->Q_dot.vector[2] << endl;
-   cout << "\tangular acceleration: "
-        << "\t\t" << this->rot_accel[0] << ", "
-        << "\t\t" << this->rot_accel[1] << ", "
-        << "\t\t" << this->rot_accel[2] << endl;
 
    // Return to the calling routine.
    return;

@@ -32,9 +32,7 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/SpaceTimeCoordinateData.h"
 
 #ifdef __cplusplus
-// Place the struct in a namespace when C++.
-namespace SpaceFOM
-{
+namespace SpaceFOM {
 #endif
 
 typedef struct {
@@ -44,13 +42,13 @@ typedef struct {
    char *status;       ///< @trick_units{--} String use to define entity status.
    char *parent_frame; ///< @trick_units{--} Parent frame for state representation.
 
-   SpaceTimeCoordinateData state; ///< @trick_units{--} Space time coordinate state.
+   SpaceFOM::SpaceTimeCoordinateData state; ///< @trick_units{--} Space time coordinate state.
 
    double accel[3];     ///< @trick_units{m/s2} Entity acceleration vector.
    double rot_accel[3]; ///< @trick_units{rad/s2} Entity rotational acceleration vector.
    double cm[3];        ///< @trick_units{m} Position of the entity center of mass in the structural frame.
 
-   QuaternionData body_wrt_struct; ///< @trick_units{--} Orientation of the body frame wrt. the structural frame.
+   SpaceFOM::QuaternionData body_wrt_struct; ///< @trick_units{--} Orientation of the body frame wrt. the structural frame.
 
 } PhysicalEntityData;
 

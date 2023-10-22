@@ -37,6 +37,7 @@ NASA, Johnson Space Center\n
 
 // SpaceFOM include files.
 #include "SpaceFOM/PhysicalEntityBase.hh"
+#include "SpaceFOM/DynamicalEntityData.h"
 
 namespace SpaceFOM
 {
@@ -99,13 +100,9 @@ class DynamicalEntityBase : virtual public SpaceFOM::PhysicalEntityBase
    TrickHLA::Attribute *inertia_attr;      ///< @trick_io{**} Inertia matrix Attribute.
    TrickHLA::Attribute *inertia_rate_attr; ///< @trick_io{**} Inertia rate Attribute.
 
-   double force[3];  ///< @trick_units{N} Entity force vector.
-   double torque[3]; ///< @trick_units{N*m} Entity torque vector.
-   double mass;      ///< @trick_units{kg} Entity mass.
-   double mass_rate; ///< @trick_units{kg/s} Entity mass rate.
-
-   double inertia[3][3];      ///< @trick_units{kg*m2} Entity inertia matrix.
-   double inertia_rate[3][3]; ///< @trick_units{kg*m2/s} Entity inertia rate matrix.
+   // Assign to these parameters when setting up the additional data
+   // associations for the SpaceFOM TrickHLAObject data for the DynamicalEntity.
+   DynamicalEntityData de_packing_data; ///< @trick_units{--} Additional dynamical entity packing data.
 
   private:
    // This object is not copyable

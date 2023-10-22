@@ -165,14 +165,6 @@ int PhysicalEntityLagCompSA::compensate(
    // FIXME: Test
    double omega[3];
 
-   // Copy the current PhysicalEntity state over to the lag compensated state.
-   this->copy_state_from_entity();
-   compute_quat_dot( this->lag_comp_data.quat_scalar,
-                     this->lag_comp_data.quat_vector,
-                     this->lag_comp_data.ang_vel,
-                     &(this->Q_dot.scalar),
-                     this->Q_dot.vector );
-
    compute_omega( this->Q_dot.scalar,
                   this->Q_dot.vector,
                   this->lag_comp_data.quat_scalar,
@@ -181,9 +173,6 @@ int PhysicalEntityLagCompSA::compensate(
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "Receive data before compensation: " << endl;
-      this->print_lag_comp_data();
-
       cout << "\tOmega: "
            << "\t\t" << omega[0] << ", "
            << "\t\t" << omega[1] << ", "
@@ -252,9 +241,6 @@ int PhysicalEntityLagCompSA::compensate(
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "Receive data after compensation: " << endl;
-      this->print_lag_comp_data();
-
       cout << "\tOmega: "
            << "\t\t" << omega[0] << ", "
            << "\t\t" << omega[1] << ", "

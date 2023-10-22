@@ -47,6 +47,7 @@ NASA, Johnson Space Center\n
 // SpaceFOM include files.
 #include "SpaceFOM/QuaternionEncoder.hh"
 #include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
+#include "SpaceFOM/PhysicalEntityData.h"
 
 namespace SpaceFOM
 {
@@ -103,7 +104,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
     *  @return Name of the PhysicalEntity object instance. */
    virtual char const *get_name()
    {
-      return name;
+      return pe_packing_data.name;
    }
 
    /*! @brief Set the type string of the PhysicalEntity.
@@ -114,7 +115,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
     *  @return Type string associated with the PhysicalEntity. */
    virtual char const *get_type()
    {
-      return type;
+      return pe_packing_data.type;
    }
 
    /*! @brief Set the status string of the PhysicalEntity.
@@ -125,7 +126,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
     *  @return Status string associated with the PhysicalEntity. */
    virtual char const *get_status()
    {
-      return status;
+      return pe_packing_data.status;
    }
 
    /*! @brief Set the name of the parent reference frame for the PhysicalEntity.
@@ -137,7 +138,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
     *  @return Name of the parent reference frame associated with the PhysicalEntity. */
    virtual char const *get_parent_frame()
    {
-      return parent_frame;
+      return pe_packing_data.parent_frame;
    }
 
    /*! @brief Get the current scenario time associated with the PhysicalEntity.
@@ -155,10 +156,12 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    /*! @brief Called to unpack the data after data is received from the RTI. */
    virtual void unpack() = 0;
 
-   // Access to protected data.
+   /*! @brief Set the TrickHLA Object association.  Needed when defining the
+    *  objects associations in the S_define file.
+    *  @param mngr_obj Pointer to the associated allocated TrickHLA::Object. */
    virtual void set_object( TrickHLA::Object *mngr_obj );
 
-   // Access to protected data.
+   /*! @brief Get the TrickHLA Object association. */
    virtual TrickHLA::Object *get_object()
    {
       return object;
@@ -182,14 +185,9 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    TrickHLA::Attribute *cm_attr;           ///< @trick_io{**} Center of mass Attribute.
    TrickHLA::Attribute *body_frame_attr;   ///< @trick_io{**} Body frame orientation Attribute.
 
-   char *name;         ///< @trick_units{--} Name of the physical entity.
-   char *type;         ///< @trick_units{--} String use to define entity type.
-   char *status;       ///< @trick_units{--} String use to define entity status.
-   char *parent_frame; ///< @trick_units{--} Parent frame for state representation.
-
-   double accel[3];     ///< @trick_units{m/s2} Entity acceleration vector.
-   double rot_accel[3]; ///< @trick_units{rad/s2} Entity rotational acceleration vector.
-   double cm[3];        ///< @trick_units{m} Position of the entity center of mass in the structural frame.
+   // Assign to these parameters when setting up the data associations for the
+   // SpaceFOM TrickHLAObject data for the PhysicalEntity.
+   PhysicalEntityData pe_packing_data; ///< @trick_units{--} Physical entity packing data.
 
    // Instantiate the aggregate data encoders
    SpaceTimeCoordinateEncoder stc_encoder;  ///< @trick_units{--} Entity state encoder.

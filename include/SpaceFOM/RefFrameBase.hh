@@ -83,6 +83,9 @@ class RefFrameBase : public TrickHLA::Packing
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrSpaceFOM__RefFrameBase();
 
+   // Make the Lag Compensation class a friend.
+   friend class RefFrameLagCompBase;
+
   public:
    // Public constructors and destructors.
    /*! @brief Default constructor for the SpaceFOM RefFrameBase class. */
@@ -146,6 +149,13 @@ class RefFrameBase : public TrickHLA::Packing
    virtual RefFrameBase *get_parent_frame()
    {
       return parent_frame;
+   }
+
+   /*! @brief Get the current scenario time associated with the PhysicalEntity.
+    *  @return Current time associated with the PhysicalEntity. */
+   double const get_time()
+   {
+      return stc_data.time;
    }
 
    /*! @brief Access function to set the appropriate publish flags. */

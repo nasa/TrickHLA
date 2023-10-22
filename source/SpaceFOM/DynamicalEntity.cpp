@@ -82,7 +82,7 @@ void DynamicalEntity::initialize()
    if ( dynamical_data == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::DynamicalEntity::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL DynamicalEntityData: " << name << THLA_ENDL;
+             << " ERROR: Unexpected NULL DynamicalEntityData: " << pe_packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -105,7 +105,7 @@ void DynamicalEntity::initialize(
    if ( dynamics_data_ptr == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::DynamicalEntity::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL DynamicalEntityData: " << name << THLA_ENDL;
+             << " ERROR: Unexpected NULL DynamicalEntityData: " << pe_packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -127,23 +127,23 @@ void DynamicalEntity::pack()
 
    // Set the force data.
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      force[iinc] = dynamical_data->force[iinc];
+      de_packing_data.force[iinc] = dynamical_data->force[iinc];
    }
 
    // Set the torque data.
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      torque[iinc] = dynamical_data->torque[iinc];
+      de_packing_data.torque[iinc] = dynamical_data->torque[iinc];
    }
 
    // Set the mass and mass rate values.
-   mass      = dynamical_data->mass;
-   mass_rate = dynamical_data->mass_rate;
+   de_packing_data.mass      = dynamical_data->mass;
+   de_packing_data.mass_rate = dynamical_data->mass_rate;
 
    // Set the inertia matrix and inertia rate data.
    for ( iinc = 0; iinc < 3; ++iinc ) {
       for ( jinc = 0; jinc < 3; ++jinc ) {
-         inertia[iinc][jinc]      = dynamical_data->inertia[iinc][jinc];
-         inertia_rate[iinc][jinc] = dynamical_data->inertia_rate[iinc][jinc];
+         de_packing_data.inertia[iinc][jinc]      = dynamical_data->inertia[iinc][jinc];
+         de_packing_data.inertia_rate[iinc][jinc] = dynamical_data->inertia_rate[iinc][jinc];
       }
    }
 
@@ -151,16 +151,16 @@ void DynamicalEntity::pack()
    if ( debug ) {
       cout.precision( 15 );
       cout << "DynamicalEntity::pack():" << __LINE__ << endl
-           << "\tmass: " << mass << endl
-           << "\tmass_rate: " << mass_rate << endl
+           << "\tmass: " << de_packing_data.mass << endl
+           << "\tmass_rate: " << de_packing_data.mass_rate << endl
            << "\tforce: " << endl
-           << "\t\t" << force[0] << endl
-           << "\t\t" << force[1] << endl
-           << "\t\t" << force[2] << endl
+           << "\t\t" << de_packing_data.force[0] << endl
+           << "\t\t" << de_packing_data.force[1] << endl
+           << "\t\t" << de_packing_data.force[2] << endl
            << "\ttorque: " << endl
-           << "\t\t" << torque[0] << endl
-           << "\t\t" << torque[1] << endl
-           << "\t\t" << torque[2] << endl
+           << "\t\t" << de_packing_data.torque[0] << endl
+           << "\t\t" << de_packing_data.torque[1] << endl
+           << "\t\t" << de_packing_data.torque[2] << endl
            << endl;
    }
 
@@ -186,32 +186,32 @@ void DynamicalEntity::unpack()
    // Check for force data.
    if ( force_attr->is_received() ) {
       for ( iinc = 0; iinc < 3; ++iinc ) {
-         dynamical_data->force[iinc] = force[iinc];
+         dynamical_data->force[iinc] = de_packing_data.force[iinc];
       }
    }
 
    // Check for torque data.
    if ( torque_attr->is_received() ) {
       for ( iinc = 0; iinc < 3; ++iinc ) {
-         dynamical_data->torque[iinc] = torque[iinc];
+         dynamical_data->torque[iinc] = de_packing_data.torque[iinc];
       }
    }
 
    // Check for mass data.
    if ( mass_attr->is_received() ) {
-      dynamical_data->mass = mass;
+      dynamical_data->mass = de_packing_data.mass;
    }
 
    // Check for mass rate data.
    if ( mass_rate_attr->is_received() ) {
-      dynamical_data->mass_rate = mass_rate;
+      dynamical_data->mass_rate = de_packing_data.mass_rate;
    }
 
    // Check for inertia data.
    if ( inertia_attr->is_received() ) {
       for ( iinc = 0; iinc < 3; ++iinc ) {
          for ( jinc = 0; jinc < 3; ++jinc ) {
-            dynamical_data->inertia[iinc][jinc] = inertia[iinc][jinc];
+            dynamical_data->inertia[iinc][jinc] = de_packing_data.inertia[iinc][jinc];
          }
       }
    }
@@ -220,7 +220,7 @@ void DynamicalEntity::unpack()
    if ( inertia_rate_attr->is_received() ) {
       for ( iinc = 0; iinc < 3; ++iinc ) {
          for ( jinc = 0; jinc < 3; ++jinc ) {
-            dynamical_data->inertia_rate[iinc][jinc] = inertia_rate[iinc][jinc];
+            dynamical_data->inertia_rate[iinc][jinc] = de_packing_data.inertia_rate[iinc][jinc];
          }
       }
    }
@@ -229,16 +229,16 @@ void DynamicalEntity::unpack()
    if ( debug ) {
       cout.precision( 15 );
       cout << "DynamicalEntity::unpack():" << __LINE__ << endl
-           << "\tmass: " << mass << endl
-           << "\tmass_rate: " << mass_rate << endl
+           << "\tmass: " << de_packing_data.mass << endl
+           << "\tmass_rate: " << de_packing_data.mass_rate << endl
            << "\tforce: " << endl
-           << "\t\t" << force[0] << endl
-           << "\t\t" << force[1] << endl
-           << "\t\t" << force[2] << endl
+           << "\t\t" << de_packing_data.force[0] << endl
+           << "\t\t" << de_packing_data.force[1] << endl
+           << "\t\t" << de_packing_data.force[2] << endl
            << "\ttorque: " << endl
-           << "\t\t" << torque[0] << endl
-           << "\t\t" << torque[1] << endl
-           << "\t\t" << torque[2] << endl
+           << "\t\t" << de_packing_data.torque[0] << endl
+           << "\t\t" << de_packing_data.torque[1] << endl
+           << "\t\t" << de_packing_data.torque[2] << endl
            << endl;
    }
 

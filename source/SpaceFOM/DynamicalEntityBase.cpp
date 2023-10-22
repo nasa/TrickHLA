@@ -69,12 +69,15 @@ DynamicalEntityBase::DynamicalEntityBase() // RETURN: -- None.
      inertia_attr( NULL ),
      inertia_rate_attr( NULL )
 {
-   mass      = 0.0;
-   mass_rate = 0.0;
-   V_INIT( force );
-   V_INIT( torque );
-   M_IDENT( inertia );
-   M_INIT( inertia_rate );
+   //
+   // Initialize the additional DynamicalEntity packing data structure.
+   //
+   de_packing_data.mass      = 0.0;
+   de_packing_data.mass_rate = 0.0;
+   V_INIT( de_packing_data.force );
+   V_INIT( de_packing_data.torque );
+   M_IDENT( de_packing_data.inertia );
+   M_INIT( de_packing_data.inertia_rate );
 }
 
 /*!
@@ -105,12 +108,12 @@ void DynamicalEntityBase::default_data(
 
    // Set the frame name and parent frame name.
    if ( parent_entity_name != NULL ) {
-      parent_frame = trick_MM->mm_strdup( parent_entity_name );
+      pe_packing_data.parent_frame = trick_MM->mm_strdup( parent_entity_name );
    } else {
-      parent_frame = trick_MM->mm_strdup( "" );
+      pe_packing_data.parent_frame = trick_MM->mm_strdup( "" );
    }
    if ( entity_name != NULL ) {
-      name = trick_MM->mm_strdup( entity_name );
+      pe_packing_data.name = trick_MM->mm_strdup( entity_name );
    } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::DynamicalEntityBase::default_data():" << __LINE__
@@ -134,7 +137,7 @@ void DynamicalEntityBase::default_data(
    // Specify the Reference Frame attributes.
    //
    object->attributes[0].FOM_name      = allocate_input_string( "name" );
-   trick_name_str                      = entity_name_str + string( ".name" );
+   trick_name_str                      = entity_name_str + string( ".pe_packing_data.name" );
    object->attributes[0].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[0].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[0].publish       = publishes;
@@ -143,7 +146,7 @@ void DynamicalEntityBase::default_data(
    object->attributes[0].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
    object->attributes[1].FOM_name      = allocate_input_string( "type" );
-   trick_name_str                      = entity_name_str + string( ".type" );
+   trick_name_str                      = entity_name_str + string( ".pe_packing_data.type" );
    object->attributes[1].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[1].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[1].publish       = publishes;
@@ -152,7 +155,7 @@ void DynamicalEntityBase::default_data(
    object->attributes[1].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
    object->attributes[2].FOM_name      = allocate_input_string( "status" );
-   trick_name_str                      = entity_name_str + string( ".status" );
+   trick_name_str                      = entity_name_str + string( ".pe_packing_data.status" );
    object->attributes[2].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[2].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[2].publish       = publishes;
@@ -161,7 +164,7 @@ void DynamicalEntityBase::default_data(
    object->attributes[2].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
    object->attributes[3].FOM_name      = allocate_input_string( "parent_reference_frame" );
-   trick_name_str                      = entity_name_str + string( ".parent_ref_frame" );
+   trick_name_str                      = entity_name_str + string( ".pe_packing_data.parent_ref_frame" );
    object->attributes[3].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[3].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[3].publish       = publishes;
@@ -188,7 +191,7 @@ void DynamicalEntityBase::default_data(
    object->attributes[5].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    object->attributes[6].FOM_name      = allocate_input_string( "rotational_acceleration" );
-   trick_name_str                      = entity_name_str + string( ".rot_accel" );
+   trick_name_str                      = entity_name_str + string( ".pe_packing_data.rot_accel" );
    object->attributes[6].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[6].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[6].publish       = publishes;
@@ -197,7 +200,7 @@ void DynamicalEntityBase::default_data(
    object->attributes[6].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    object->attributes[7].FOM_name      = allocate_input_string( "center_of_mass" );
-   trick_name_str                      = entity_name_str + string( ".cm" );
+   trick_name_str                      = entity_name_str + string( ".pe_packing_data.cm" );
    object->attributes[7].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[7].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[7].publish       = publishes;
@@ -215,7 +218,7 @@ void DynamicalEntityBase::default_data(
    object->attributes[8].rti_encoding  = TrickHLA::ENCODING_OPAQUE_DATA;
 
    object->attributes[9].FOM_name      = allocate_input_string( "force" );
-   trick_name_str                      = entity_name_str + string( ".force" );
+   trick_name_str                      = entity_name_str + string( ".de_packing_data.force" );
    object->attributes[9].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[9].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[9].publish       = publishes;
@@ -224,7 +227,7 @@ void DynamicalEntityBase::default_data(
    object->attributes[9].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    object->attributes[10].FOM_name      = allocate_input_string( "torque" );
-   trick_name_str                       = entity_name_str + string( ".torque" );
+   trick_name_str                       = entity_name_str + string( ".de_packing_data.torque" );
    object->attributes[10].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[10].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[10].publish       = publishes;
@@ -233,7 +236,7 @@ void DynamicalEntityBase::default_data(
    object->attributes[10].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    object->attributes[11].FOM_name      = allocate_input_string( "mass" );
-   trick_name_str                       = entity_name_str + string( ".mass" );
+   trick_name_str                       = entity_name_str + string( ".de_packing_data.mass" );
    object->attributes[11].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[11].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[11].publish       = publishes;
@@ -242,7 +245,7 @@ void DynamicalEntityBase::default_data(
    object->attributes[11].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    object->attributes[12].FOM_name      = allocate_input_string( "mass_rate" );
-   trick_name_str                       = entity_name_str + string( ".mass_rate" );
+   trick_name_str                       = entity_name_str + string( ".de_packing_data.mass_rate" );
    object->attributes[12].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[12].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[12].publish       = publishes;
@@ -251,7 +254,7 @@ void DynamicalEntityBase::default_data(
    object->attributes[12].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    object->attributes[13].FOM_name      = allocate_input_string( "inertia" );
-   trick_name_str                       = entity_name_str + string( ".inertia" );
+   trick_name_str                       = entity_name_str + string( ".de_packing_data.inertia" );
    object->attributes[13].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[13].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[13].publish       = publishes;
@@ -260,7 +263,7 @@ void DynamicalEntityBase::default_data(
    object->attributes[13].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    object->attributes[14].FOM_name      = allocate_input_string( "inertia_rate" );
-   trick_name_str                       = entity_name_str + string( ".inertia_rate" );
+   trick_name_str                       = entity_name_str + string( ".de_packing_data.inertia_rate" );
    object->attributes[14].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[14].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[14].publish       = publishes;

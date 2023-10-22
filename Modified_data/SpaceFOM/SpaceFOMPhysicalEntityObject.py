@@ -70,7 +70,6 @@ class SpaceFOMPhysicalEntityObject(TrickHLAObjectConfig):
 
       return
 
-
    def add_attributes( self ):
 
       # Short cut the sim_object name for the PhysicalEntity data.

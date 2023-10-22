@@ -188,6 +188,15 @@ class TrickHLAObjectConfig( object ):
          self.hla_manager_object.lag_comp_type = trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE 
 
       return
+   
+   def set_lag_comp_type(self, lag_comp_type ):
+      
+      # FIXME: Need to check for initialization.
+
+      if self.hla_manager_object != None :
+         self.hla_manager_object.lag_comp_type = lag_comp_type
+
+      return
 
    def set_ownership_instance( self, obj_ownership_handler):
  

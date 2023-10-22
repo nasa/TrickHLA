@@ -44,6 +44,7 @@ typedef struct {
 } QuaternionData;
 
 #ifdef __cplusplus
+// Mark this as a C compatible data structure.
 extern "C" {
 #endif
 

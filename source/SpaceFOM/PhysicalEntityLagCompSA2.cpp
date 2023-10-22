@@ -158,15 +158,14 @@ void PhysicalEntityLagCompSA2::derivatives(
                         &(accel[3]),
                         &(accel[4]) );
 
-   int debug = 0;
-   if ( debug ) {
-      cout << "Q_dotdot: " << endl;
-      cout << "\tScalar: " << accel[3] << endl;
-      cout << "\tVector: "
-           << "\t\t" << accel[4] << ", "
-           << "\t\t" << accel[5] << ", "
-           << "\t\t" << accel[6] << endl;
-   }
+#ifdef DEBUG
+   cout << "Q_dotdot: " << endl;
+   cout << "\tScalar: " << accel[3] << endl;
+   cout << "\tVector: "
+        << "\t\t" << accel[4] << ", "
+        << "\t\t" << accel[5] << ", "
+        << "\t\t" << accel[6] << endl;
+#endif
 
    // Return to calling routine.
    return;
@@ -181,20 +180,6 @@ int PhysicalEntityLagCompSA2::compensate(
    const double t_end   )
 {
    double dt_go  = t_end - t_begin;
-
-   // Copy the current PhysicalEntity state over to the lag compensated state.
-   this->copy_state_from_entity();
-   compute_quat_dot( this->lag_comp_data.quat_scalar,
-                     this->lag_comp_data.quat_vector,
-                     this->lag_comp_data.ang_vel,
-                     &(this->Q_dot.scalar),
-                     this->Q_dot.vector );
-
-   // Print out debug information if desired.
-   if ( debug ) {
-      cout << "Receive data before compensation: " << endl;
-      this->print_lag_comp_data();
-   }
 
    // Propagate the current PhysicalEntity state to the desired time.
    // Set the current integration time for the integrator.
@@ -253,9 +238,6 @@ int PhysicalEntityLagCompSA2::compensate(
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "Receive data after compensation: " << endl;
-      this->print_lag_comp_data();
-
       cout << "\tOmega: "
            << "\t\t" << this->lag_comp_data.ang_vel[0] << ", "
            << "\t\t" << this->lag_comp_data.ang_vel[1] << ", "

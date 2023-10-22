@@ -74,18 +74,37 @@ PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
      rot_accel_attr( NULL ),
      cm_attr( NULL ),
      body_frame_attr( NULL ),
-     name( NULL ),
-     type( NULL ),
-     status( NULL ),
-     parent_frame( NULL ),
      stc_encoder(),
      quat_encoder(),
      state( stc_encoder.get_data() ),
      body_wrt_struct( quat_encoder.get_data() )
 {
-   V_INIT( accel );
-   V_INIT( rot_accel );
-   V_INIT( cm );
+   //
+   // Initialize the PhysicalEntity packing data structure.
+   //
+   // String name parameters.
+   pe_packing_data.name = NULL;
+   pe_packing_data.type = NULL;
+   pe_packing_data.status = NULL;
+   pe_packing_data.parent_frame = NULL;
+
+   // Setup the Space-Time-Coordinate data.
+   V_INIT( pe_packing_data.state.pos );
+   V_INIT( pe_packing_data.state.vel );
+   pe_packing_data.state.quat_scalar = 1.0;
+   V_INIT( pe_packing_data.state.quat_vector );
+   V_INIT( pe_packing_data.state.ang_vel );
+   pe_packing_data.state.time = 0.0;
+
+   // Non-STC data.
+   V_INIT( pe_packing_data.accel );
+   V_INIT( pe_packing_data.rot_accel );
+   V_INIT( pe_packing_data.cm );
+
+   // The body to structural orientation quaternion.
+   pe_packing_data.body_wrt_struct.scalar = 1.0;
+   V_INIT( pe_packing_data.body_wrt_struct.vector );
+
 }
 
 /*!
@@ -95,33 +114,33 @@ PhysicalEntityBase::~PhysicalEntityBase() // RETURN: -- None.
 {
 
 
-   if ( this->name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
+   if ( this->pe_packing_data.name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.name ) ) ) {
          send_hs( stderr, "SpaceFOM::PhysicalEntityBase::~PhysicalEntityBase():%d ERROR deleting Trick Memory for 'this->name'%c",
                   __LINE__, THLA_NEWLINE );
       }
-      this->name = NULL;
+      this->pe_packing_data.name = NULL;
    }
-   if ( this->type != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->type ) ) ) {
+   if ( this->pe_packing_data.type != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.type ) ) ) {
          send_hs( stderr, "SpaceFOM::PhysicalEntityBase::~PhysicalEntityBase():%d ERROR deleting Trick Memory for 'this->type'%c",
                   __LINE__, THLA_NEWLINE );
       }
-      this->type = NULL;
+      this->pe_packing_data.type = NULL;
    }
-   if ( this->status != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->status ) ) ) {
+   if ( this->pe_packing_data.status != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.status ) ) ) {
          send_hs( stderr, "SpaceFOM::PhysicalEntityBase::~PhysicalEntityBase():%d ERROR deleting Trick Memory for 'this->status'%c",
                   __LINE__, THLA_NEWLINE );
       }
-      this->status = NULL;
+      this->pe_packing_data.status = NULL;
    }
-   if ( this->parent_frame != (char *)NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->parent_frame ) ) ) {
+   if ( this->pe_packing_data.parent_frame != (char *)NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.parent_frame ) ) ) {
          send_hs( stderr, "SpaceFOM::PhysicalEntityBase::~PhysicalEntityBase():%d ERROR deleting Trick Memory for 'this->parent_frame'%c",
                   __LINE__, THLA_NEWLINE );
       }
-      this->parent_frame = NULL;
+      this->pe_packing_data.parent_frame = NULL;
 
    }
    initialized     = false;
@@ -150,12 +169,12 @@ void PhysicalEntityBase::default_data(
 
    // Set the parent frame name.
    if ( parent_ref_frame_name != NULL ) {
-      parent_frame = trick_MM->mm_strdup( parent_ref_frame_name );
+      pe_packing_data.parent_frame = trick_MM->mm_strdup( parent_ref_frame_name );
    } else {
-      parent_frame = trick_MM->mm_strdup( "" );
+      pe_packing_data.parent_frame = trick_MM->mm_strdup( "" );
    }
    if ( entity_name != NULL ) {
-      name = trick_MM->mm_strdup( entity_name );
+      pe_packing_data.name = trick_MM->mm_strdup( entity_name );
    } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::default_data():" << __LINE__
@@ -179,7 +198,7 @@ void PhysicalEntityBase::default_data(
    // Specify the Reference Frame attributes.
    //
    object->attributes[0].FOM_name      = allocate_input_string( "name" );
-   trick_name_str                      = entity_name_str + string( ".name" );
+   trick_name_str                      = entity_name_str + string( ".pe_packing_data.name" );
    object->attributes[0].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[0].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[0].publish       = publishes;
@@ -188,7 +207,7 @@ void PhysicalEntityBase::default_data(
    object->attributes[0].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
    object->attributes[1].FOM_name      = allocate_input_string( "type" );
-   trick_name_str                      = entity_name_str + string( ".type" );
+   trick_name_str                      = entity_name_str + string( ".pe_packing_data.type" );
    object->attributes[1].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[1].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[1].publish       = publishes;
@@ -197,7 +216,7 @@ void PhysicalEntityBase::default_data(
    object->attributes[1].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
    object->attributes[2].FOM_name      = allocate_input_string( "status" );
-   trick_name_str                      = entity_name_str + string( ".status" );
+   trick_name_str                      = entity_name_str + string( ".pe_packing_data.status" );
    object->attributes[2].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[2].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[2].publish       = publishes;
@@ -206,7 +225,7 @@ void PhysicalEntityBase::default_data(
    object->attributes[2].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
    object->attributes[3].FOM_name      = allocate_input_string( "parent_reference_frame" );
-   trick_name_str                      = entity_name_str + string( ".parent_frame" );
+   trick_name_str                      = entity_name_str + string( ".pe_packing_data.parent_frame" );
    object->attributes[3].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[3].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[3].publish       = publishes;
@@ -224,7 +243,7 @@ void PhysicalEntityBase::default_data(
    object->attributes[4].rti_encoding  = TrickHLA::ENCODING_OPAQUE_DATA;
 
    object->attributes[5].FOM_name      = allocate_input_string( "acceleration" );
-   trick_name_str                      = entity_name_str + string( ".accel" );
+   trick_name_str                      = entity_name_str + string( ".pe_packing_data.accel" );
    object->attributes[5].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[5].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[5].publish       = publishes;
@@ -233,7 +252,7 @@ void PhysicalEntityBase::default_data(
    object->attributes[5].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    object->attributes[6].FOM_name      = allocate_input_string( "rotational_acceleration" );
-   trick_name_str                      = entity_name_str + string( ".rot_accel" );
+   trick_name_str                      = entity_name_str + string( ".pe_packing_data.rot_accel" );
    object->attributes[6].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[6].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[6].publish       = publishes;
@@ -242,7 +261,7 @@ void PhysicalEntityBase::default_data(
    object->attributes[6].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    object->attributes[7].FOM_name      = allocate_input_string( "center_of_mass" );
-   trick_name_str                      = entity_name_str + string( ".cm" );
+   trick_name_str                      = entity_name_str + string( ".pe_packing_data.cm" );
    object->attributes[7].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[7].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[7].publish       = publishes;
@@ -270,39 +289,39 @@ void PhysicalEntityBase::initialize()
    ostringstream errmsg;
 
    // Must have federation instance name.
-   if ( name == NULL ) {
+   if ( pe_packing_data.name == NULL ) {
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity name!"
              << "  Setting frame name to empty string." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
-      this->name = trick_MM->mm_strdup( "" );
+      this->pe_packing_data.name = trick_MM->mm_strdup( "" );
    }
 
    // Must have federation instance type.
-   if ( type == NULL ) {
+   if ( pe_packing_data.type == NULL ) {
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity type!"
              << "  Setting type to empty string." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
-      this->type = trick_MM->mm_strdup( "" );
+      this->pe_packing_data.type = trick_MM->mm_strdup( "" );
    }
 
    // Must have federation instance status.
-   if ( status == NULL ) {
+   if ( pe_packing_data.status == NULL ) {
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity status!"
              << "  Setting status to empty string." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
-      this->status = trick_MM->mm_strdup( "" );
+      this->pe_packing_data.status = trick_MM->mm_strdup( "" );
    }
 
    // Must have federation instance parent_ref_frame.
-   if ( parent_frame == NULL ) {
+   if ( pe_packing_data.parent_frame == NULL ) {
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity parent_ref_frame!"
              << "  Setting parent_ref_frame to empty string." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
-      this->parent_frame = trick_MM->mm_strdup( "" );
+      this->pe_packing_data.parent_frame = trick_MM->mm_strdup( "" );
    }
 
    // Mark this as initialized.
@@ -351,13 +370,13 @@ void PhysicalEntityBase::initialize_callback(
  */
 void PhysicalEntityBase::set_name( char const *new_name )
 {
-   if ( this->name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
+   if ( this->pe_packing_data.name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.name ) ) ) {
          send_hs( stderr, "SpaceFOM::PhysicalEntityBase::set_name():%d ERROR deleting Trick Memory for 'this->name'%c",
                   __LINE__, THLA_NEWLINE );
       }
    }
-   name = trick_MM->mm_strdup( new_name );
+   pe_packing_data.name = trick_MM->mm_strdup( new_name );
    return;
 }
 
@@ -366,14 +385,14 @@ void PhysicalEntityBase::set_name( char const *new_name )
  */
 void PhysicalEntityBase::set_type( char const *new_type )
 {
-   if ( this->type != NULL ) {
-      trick_MM->delete_var( (void *)this->type );
-      if ( trick_MM->delete_var( static_cast< void * >( this->type ) ) ) {
+   if ( this->pe_packing_data.type != NULL ) {
+      trick_MM->delete_var( (void *)this->pe_packing_data.type );
+      if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.type ) ) ) {
          send_hs( stderr, "SpaceFOM::PhysicalEntityBase::set_type():%d ERROR deleting Trick Memory for 'this->type'%c",
                   __LINE__, THLA_NEWLINE );
       }
    }
-   type = trick_MM->mm_strdup( new_type );
+   pe_packing_data.type = trick_MM->mm_strdup( new_type );
    return;
 }
 
@@ -382,13 +401,13 @@ void PhysicalEntityBase::set_type( char const *new_type )
  */
 void PhysicalEntityBase::set_status( char const *new_status )
 {
-   if ( this->status != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->status ) ) ) {
+   if ( this->pe_packing_data.status != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.status ) ) ) {
          send_hs( stderr, "SpaceFOM::PhysicalEntityBase::set_status():%d ERROR deleting Trick Memory for 'this->status'%c",
                   __LINE__, THLA_NEWLINE );
       }
    }
-   this->status = trick_MM->mm_strdup( new_status );
+   this->pe_packing_data.status = trick_MM->mm_strdup( new_status );
    return;
 }
 
@@ -397,13 +416,13 @@ void PhysicalEntityBase::set_status( char const *new_status )
  */
 void PhysicalEntityBase::set_parent_frame( char const *new_frame )
 {
-   if ( this->parent_frame != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->parent_frame ) ) ) {
+   if ( this->pe_packing_data.parent_frame != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.parent_frame ) ) ) {
          send_hs( stderr, "SpaceFOM::PhysicalEntityBase::set_parent_frame():%d ERROR deleting Trick Memory for 'this->parent_frame'%c",
                   __LINE__, THLA_NEWLINE );
       }
    }
-   parent_frame = trick_MM->mm_strdup( new_frame );
+   pe_packing_data.parent_frame = trick_MM->mm_strdup( new_frame );
 
    return;
 }

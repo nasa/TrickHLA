@@ -283,13 +283,19 @@ federate.set_time_constrained( True )
 root_frame = SpaceFOMRefFrameObject( federate.is_RRFP,
                                      'RootFrame',
                                      root_ref_frame.frame_packing,
-                                     'root_ref_frame.frame_packing' )
+                                     'root_ref_frame.frame_packing',
+                                     frame_lag_comp = root_ref_frame.lag_compensation )
 
 # Set the debug flag for the root reference frame.
 root_ref_frame.frame_packing.debug = verbose
 
 # Set the root frame for the federate.
 federate.set_root_frame( root_frame )
+
+# Set the lag compensation paratmeters.
+root_ref_frame.lag_compensation.debug = True
+root_ref_frame.lag_compensation.set_integ_tolerance( 1.0e-6 )
+root_ref_frame.lag_compensation.set_integ_dt( 0.05 )
 
 
 #---------------------------------------------------------------------------
@@ -300,13 +306,20 @@ federate.set_root_frame( root_frame )
 frame_A = SpaceFOMRefFrameObject( False,
                                   'FrameA',
                                   ref_frame_A.frame_packing,
-                                  'ref_frame_A.frame_packing' )
+                                  'ref_frame_A.frame_packing',
+                                  frame_lag_comp = ref_frame_A.lag_compensation )
 
 # Set the debug flag for the root reference frame.
 ref_frame_A.frame_packing.debug = verbose
 
 # Add this reference frame to the list of managed object.
 federate.add_fed_object( frame_A )
+
+# Set the lag compensation paratmeters.
+# The reality is that the ROOT REFERENCE FRAME never needs to be compensated!
+ref_frame_A.lag_compensation.debug = True
+ref_frame_A.lag_compensation.set_integ_tolerance( 1.0e-6 )
+ref_frame_A.lag_compensation.set_integ_dt( 0.05 )
 
 
 #---------------------------------------------------------------------------
@@ -316,7 +329,7 @@ phy_entity = SpaceFOMPhysicalEntityObject( True,
                                            phy_entity_name,
                                            physical_entity.entity_packing,
                                            'physical_entity.entity_packing',
-                                           physical_entity.lag_compensation )
+                                           entity_lag_comp = physical_entity.lag_compensation )
 
 # Set the debug flag for the Entity.
 physical_entity.entity_packing.debug = verbose
@@ -344,6 +357,11 @@ physical_entity.pe_data.state.quat_vector[2] = 0.0
 physical_entity.pe_data.state.ang_vel[0] = 0.0
 physical_entity.pe_data.state.ang_vel[1] = 0.1
 physical_entity.pe_data.state.ang_vel[2] = 0.0
+
+# Set the lag compensation paratmeters.
+physical_entity.lag_compensation.debug = True
+physical_entity.lag_compensation.set_integ_tolerance( 1.0e-6 )
+physical_entity.lag_compensation.set_integ_dt( 0.05 )
 
 
 #---------------------------------------------------------------------------
@@ -407,6 +425,16 @@ federate.add_sim_object( dynamical_entity )
 #---------------------------------------------------------------------------
 #federate.disable()
 federate.initialize()
+
+# These MUST BE called after initialize.
+# Configure reference frame lag compensation.
+root_frame.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
+frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
+
+# Configure entity lag compensation.
+#phy_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
+phy_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_SEND_SIDE )
+#phy_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 
 #---------------------------------------------------------------------------
