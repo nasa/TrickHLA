@@ -77,6 +77,18 @@ class RefFrameLagCompInteg : public RefFrameLagCompBase
     *  TrickHLALagCompensation class. */
    virtual void receive_lag_compensation();
 
+   /*! @brief When lag compensation is disabled, this function is called to
+    * bypass the send side lag compensation and your implementation must copy
+    * the sim-data to the lag-comp data to effect the bypass. */
+   virtual void bypass_send_lag_compensation() = 0;
+
+   /*! @brief When lag compensation is disabled, this function is called to
+    * bypass the receive side lag compensation and your implementation must
+    * copy the lag-comp data to the sim-data to effect the bypass. You must
+    * make sure to check the lag-comp data was received before copying to
+    * the sim-data otherwise you will be copying stale data. */
+   virtual void bypass_receive_lag_compensation() = 0;
+
    /*! @brief Set the lag compentation integration time step.
     *  @param dt Integration step time. */
    void set_integ_dt( double dt ){

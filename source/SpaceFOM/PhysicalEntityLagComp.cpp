@@ -126,6 +126,24 @@ void PhysicalEntityLagComp::initialize()
 
 
 /*!
+ * @job_class{scheduled}
+ */
+void PhysicalEntityLagComp::bypass_send_lag_compensation()
+{
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void PhysicalEntityLagComp::bypass_receive_lag_compensation()
+{
+   return;
+}
+
+
+/*!
  * @job_class{integration}
  */
 int PhysicalEntityLagComp::compensate(
