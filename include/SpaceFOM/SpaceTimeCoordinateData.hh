@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 @python_module{SpaceFOM}
 
 @tldh
-@trick_link_dependency{QuaternionData.cpp}
+@trick_link_dependency{../../source/SpaceFOM/QuaternionData.cpp}
 
 @revs_begin
 @rev_entry{ Edwin Z. Crues, NASA ER7, NExSyS, Jan 2019, --, SpaceFOM support and testing. }
@@ -35,7 +35,7 @@ NASA, Johnson Space Center\n
 
 namespace SpaceFOM {
 
-typedef struct {
+typedef struct SpaceTimeCoordinateData{
 
    double         pos[3];     ///< trick_units{m}     Position in parent frame.
    double         vel[3];     ///< trick_units{m/s}   Velocity wrt. parent frame.

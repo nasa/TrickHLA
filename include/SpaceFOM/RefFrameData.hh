@@ -33,7 +33,7 @@ NASA, Johnson Space Center\n
 namespace SpaceFOM
 {
 
-typedef struct {
+typedef struct RefFrameData{
 
    char *name;        ///< @trick_units{--} Name of the reference frame.
    char *parent_name; ///< @trick_units{--} Name of this frames parent frame.

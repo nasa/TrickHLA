@@ -33,7 +33,7 @@ NASA, Johnson Space Center\n
 
 namespace SpaceFOM {
 
-struct QuaternionData{
+typedef struct QuaternionData{
 
    double scalar;    ///< @trick_units{--} Attitude quaternion scalar.
    double vector[3]; ///< @trick_units{--} Attitude quaternion vector.
@@ -147,7 +147,7 @@ struct QuaternionData{
       double       * scalar,
       double         vector[3] );
 
-};
+} QuaternionData;
 
 } // namespace SpaceFOM
 

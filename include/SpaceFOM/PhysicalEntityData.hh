@@ -33,7 +33,7 @@ NASA, Johnson Space Center\n
 
 namespace SpaceFOM {
 
-typedef struct {
+typedef struct PhysicalEntityData{
 
    char *name;         ///< @trick_units{--} Name of the physical entity.
    char *type;         ///< @trick_units{--} String use to define entity type.

@@ -31,7 +31,7 @@ NASA, Johnson Space Center\n
 
 namespace SpaceFOM {
 
-typedef struct {
+typedef struct DynamicalEntityData{
 
    double force[3];  ///< @trick_units{N} Entity force vector.
    double torque[3]; ///< @trick_units{N*m} Entity torque vector.

@@ -25,7 +25,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../source/TrickHLA/LagCompensation.cpp}
 @trick_link_dependency{../../source/SpaceFOM/RefFrameLagCompBase.cpp}
-@trick_link_dependency{QuaternionData.c}
+@trick_link_dependency{../../source/SpaceFOM/QuaternionData.cpp}
 
 @revs_title
 @revs_begin
