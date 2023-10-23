@@ -181,6 +181,11 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
 
    def set_FOMs_path( self, FOMs_path ):
       
+      # You can only initialize once.
+      if self.initialized :
+         print('SpaceFOMFederateConfig.set_FOMs_path(): Warning, already initialized! Ignoring!')
+         return
+      
       for item in self.fom_modules:
          if item.find('SISO_SpaceFOM_switches.xml') != -1:
             indx = self.fom_modules.index( item )
