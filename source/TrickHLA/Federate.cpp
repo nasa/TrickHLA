@@ -3586,12 +3586,12 @@ void Federate::create_federation()
       this->federation_exists              = false;
 
       wstring          MIM_module_ws = L"";
-      VectorOfWstrings fomModulesVector;
+      VectorOfWstrings FOM_modules_vector;
 
       // Add the user specified FOM-modules to the vector by parsing the comma
       // separated list of modules.
       if ( FOM_modules != NULL ) {
-         StringUtilities::tokenize( FOM_modules, fomModulesVector, "," );
+         StringUtilities::tokenize( FOM_modules, FOM_modules_vector, "," );
       }
 
       // Determine if the user specified a MIM-module, which determines how
@@ -3603,12 +3603,12 @@ void Federate::create_federation()
       if ( MIM_module_ws.empty() ) {
          // Create the Federation execution.
          RTI_ambassador->createFederationExecution( federation_name_ws,
-                                                    fomModulesVector,
+                                                    FOM_modules_vector,
                                                     L"HLAinteger64Time" );
       } else {
          // Create the Federation execution with a user specified MIM.
          RTI_ambassador->createFederationExecutionWithMIM( federation_name_ws,
-                                                           fomModulesVector,
+                                                           FOM_modules_vector,
                                                            MIM_module_ws,
                                                            L"HLAinteger64Time" );
       }
@@ -4960,17 +4960,6 @@ void Federate::associate_to_trick_child_thread(
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::associate_to_trick_child_thread():%d Trick child thread (id:%d, data_cycle:%.3f).%c",
                __LINE__, thread_id, data_cycle, THLA_NEWLINE );
-   }
-
-   // For now, do not allow Trick child threads for a zero lookahead time
-   // because the API's to assist with getting zero lookahead cyclic data are
-   // not thread safe at this point.
-   if ( ( this->lookahead_time <= 0.0 ) && ( thread_id != 0 ) ) {
-      ostringstream errmsg;
-      errmsg << "Federate::associate_to_trick_child_thread():" << __LINE__
-             << " ERROR: Associated Trick child threads are not supported when"
-             << " a zero-lookahead time is used." << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Delegate to the Trick child thread coordinator.

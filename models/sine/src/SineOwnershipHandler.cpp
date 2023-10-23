@@ -17,6 +17,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../source/TrickHLA/OwnershipHandler.cpp}
+@trick_link_dependency{../source/TrickHLA/Types.cpp}
 @trick_link_dependency{sine/src/SineOwnershipHandler.cpp}
 
 @revs_title
@@ -33,6 +34,11 @@ NASA, Johnson Space Center\n
 #include <stdlib.h>
 #include <string>
 
+// TrickHLA include files.
+#include "TrickHLA/Object.hh"
+#include "TrickHLA/OwnershipHandler.hh"
+#include "TrickHLA/Types.hh"
+
 // Model include files.
 #include "../include/SineOwnershipHandler.hh"
 
@@ -44,6 +50,7 @@ using namespace TrickHLAModel;
  * @job_class{initialization}
  */
 SineOwnershipHandler::SineOwnershipHandler()
+   : TrickHLA::OwnershipHandler()
 {
    return;
 } // Default constructor.

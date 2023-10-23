@@ -21,6 +21,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../source/TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../source/TrickHLA/Int64BaseTime.cpp}
+@trick_link_dependency{../source/TrickHLA/InteractionHandler.cpp}
 @trick_link_dependency{../source/TrickHLA/Types.cpp}
 @trick_link_dependency{sine/src/SineInteractionHandler.cpp}
 
@@ -49,6 +50,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Int64BaseTime.hh"
+#include "TrickHLA/InteractionHandler.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
@@ -64,7 +66,8 @@ using namespace TrickHLAModel;
  * @job_class{initialization}
  */
 SineInteractionHandler::SineInteractionHandler()
-   : name( NULL ),
+   : TrickHLA::InteractionHandler(),
+     name( NULL ),
      message( NULL ),
      time( 0.0 ),
      year( 2007 ),

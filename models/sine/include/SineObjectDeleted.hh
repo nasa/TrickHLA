@@ -34,13 +34,8 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_MODLE_SINE_OBJECT_DELETED_HH
 #define TRICKHLA_MODLE_SINE_OBJECT_DELETED_HH
 
-// Forward declarations.
-namespace TrickHLA
-{
-class Object;
-}
-
 // Trick include files.
+#include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectDeleted.hh"
 
 namespace TrickHLAModel

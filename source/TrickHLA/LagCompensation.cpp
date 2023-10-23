@@ -30,6 +30,7 @@ NASA, Johnson Space Center\n
 @rev_entry{Dan Dexter, L3 Titan Group, DSES, June 2006, --, DSES Initial Lag Compensation.}
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, March 2019, --, Version 2 origin.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, October 2023, --, Added lag-comp bypass functions.}
 @revs_end
 
 */
@@ -66,6 +67,9 @@ void LagCompensation::initialize_callback(
    this->object = obj;
 }
 
+/*!
+ * @brief Send side lag compensation callback.
+ */
 void LagCompensation::send_lag_compensation()
 {
    ostringstream errmsg;
@@ -76,6 +80,9 @@ void LagCompensation::send_lag_compensation()
    DebugHandler::terminate_with_message( errmsg.str() );
 }
 
+/*!
+ * @brief Receive side lag compensation callback.
+ */
 void LagCompensation::receive_lag_compensation()
 {
    ostringstream errmsg;
@@ -86,6 +93,10 @@ void LagCompensation::receive_lag_compensation()
    DebugHandler::terminate_with_message( errmsg.str() );
 }
 
+/*! @brief Get the Attribute by FOM name.
+ *  @return Attribute for the given name.
+ *  @param attr_FOM_name Attribute FOM name.
+ */
 Attribute *LagCompensation::get_attribute(
    char const *attr_FOM_name )
 {
@@ -126,26 +137,33 @@ Attribute *LagCompensation::get_attribute_and_validate(
    return attr;
 }
 
+/*! @brief Returns a copy of the object's lookahead time.
+ *  @return A copy of the federate's lookahead time.
+ */
 Int64Interval LagCompensation::get_lookahead() const
 {
    if ( object != NULL ) {
       return object->get_lookahead();
-   } else {
-      Int64Interval di( -1.0 );
-      return di;
    }
+   Int64Interval di( -1.0 );
+   return di;
 }
 
+/*! @brief Returns a copy of the object's granted federation time.
+ *  @return A copy of the federate's current granted time.
+ */
 Int64Time LagCompensation::get_granted_time() const
 {
    if ( object != NULL ) {
       return object->get_granted_time();
-   } else {
-      Int64Time dt( Int64BaseTime::get_max_logical_time_in_seconds() );
-      return dt;
    }
+   Int64Time dt( Int64BaseTime::get_max_logical_time_in_seconds() );
+   return dt;
 }
 
+/*! @brief Returns the current scenario time.
+ *  @return Current scenario time.
+ */
 double LagCompensation::get_scenario_time()
 {
    if ( ( object != NULL ) && ( object->get_federate() != NULL ) ) {
@@ -155,6 +173,9 @@ double LagCompensation::get_scenario_time()
    return -std::numeric_limits< double >::max();
 }
 
+/*! @brief Returns the current Central Timing Equipment (CTE) time.
+ *  @return Current CTE time.
+ */
 double LagCompensation::get_cte_time()
 {
    if ( ( object != NULL ) && ( object->get_federate() != NULL ) ) {
