@@ -156,6 +156,17 @@ void PhysicalEntityLagCompInteg::send_lag_compensation()
 }
 
 
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void PhysicalEntityLagCompInteg::bypass_send_lag_compensation()
+{
+   return;
+}
+
+
 /*! @brief Receive side latency compensation callback interface from the
  *  TrickHLALagCompensation class. */
 void PhysicalEntityLagCompInteg::receive_lag_compensation()
@@ -213,3 +224,12 @@ void PhysicalEntityLagCompInteg::receive_lag_compensation()
    return;
 }
 
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void PhysicalEntityLagCompInteg::bypass_receive_lag_compensation()
+{
+   return;
+}

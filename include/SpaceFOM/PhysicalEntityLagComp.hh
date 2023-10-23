@@ -69,6 +69,18 @@ class PhysicalEntityLagComp : public PhysicalEntityLagCompInteg
    /*! @brief Entity instance initialization routine. */
    virtual void initialize();
 
+   /*! @brief When lag compensation is disabled, this function is called to
+    * bypass the send side lag compensation and your implementation must copy
+    * the sim-data to the lag-comp data to effect the bypass. */
+   virtual void bypass_send_lag_compensation();
+
+   /*! @brief When lag compensation is disabled, this function is called to
+    * bypass the receive side lag compensation and your implementation must
+    * copy the lag-comp data to the sim-data to effect the bypass. You must
+    * make sure to check the lag-comp data was received before copying to
+    * the sim-data otherwise you will be copying stale data. */
+   virtual void bypass_receive_lag_compensation();
+
   protected:
 
    double * integ_states[13]; ///< @trick_units{--} @trick_io{**} Integration states.
