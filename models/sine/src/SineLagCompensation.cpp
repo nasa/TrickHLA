@@ -147,7 +147,10 @@ void SineLagCompensation::send_lag_compensation()
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+      string obj_name = ( this->object != NULL ) ? this->object->get_name_string() : "";
+
       cout << "******* SineLagCompensation::send_lag_compensation():" << __LINE__ << endl
+           << "    object-name:'" << obj_name << "'" << endl
            << " lag-comp-type:" << lag_comp_type_str << endl
            << " scenario-time:" << setprecision( 18 ) << get_scenario_time() << endl
            << "     data-time:" << setprecision( 18 ) << sim_data->get_time() << endl
@@ -180,7 +183,10 @@ void SineLagCompensation::bypass_send_lag_compensation()
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+      string obj_name = ( this->object != NULL ) ? this->object->get_name_string() : "";
+
       cout << "******* SineLagCompensation::bypass_send_lag_compensation():" << __LINE__ << endl
+           << "   object-name:'" << obj_name << "'" << endl
            << " lag-comp-type:" << lag_comp_type_str << endl
            << " scenario-time:" << setprecision( 18 ) << get_scenario_time() << endl
            << "     data-time:" << setprecision( 18 ) << sim_data->get_time() << endl;
@@ -210,7 +216,10 @@ void SineLagCompensation::receive_lag_compensation()
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+      string obj_name = ( this->object != NULL ) ? this->object->get_name_string() : "";
+
       cout << "******* SineLagCompensation::receive_lag_compensation():" << __LINE__ << endl
+           << "   object-name:'" << obj_name << "'" << endl
            << " lag-comp-type:" << lag_comp_type_str << endl
            << " scenario-time:" << setprecision( 18 ) << get_scenario_time() << endl;
       if ( time_attr->is_received() ) {
@@ -318,7 +327,10 @@ void SineLagCompensation::bypass_receive_lag_compensation()
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+      string obj_name = ( this->object != NULL ) ? this->object->get_name_string() : "";
+
       cout << "******* SineLagCompensation::bypass_receive_lag_compensation():" << __LINE__ << endl
+           << "   object-name:'" << obj_name << "'" << endl
            << " lag-comp-type:" << lag_comp_type_str << endl
            << " scenario-time:" << setprecision( 18 ) << get_scenario_time() << endl;
       if ( time_attr->is_received() ) {
