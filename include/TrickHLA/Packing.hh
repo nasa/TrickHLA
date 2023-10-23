@@ -71,6 +71,24 @@ class Packing
    /*! @brief Destructor for the TrickHLA Packing class. */
    virtual ~Packing();
 
+   //-----------------------------------------------------------------
+   // These are virtual functions and must be defined by a full class.
+   //-----------------------------------------------------------------
+
+   /*! @brief Pack the data before being sent. */
+   virtual void pack() = 0;
+
+   /*! @brief Unpack the received data. */
+   virtual void unpack() = 0;
+
+   //-----------------------------------------------------------------
+   // Helper functions.
+   //-----------------------------------------------------------------
+
+   /*! @brief Initialize the callback object to the supplied Object pointer.
+    *  @param obj Associated object for this class. */
+   virtual void initialize_callback( Object *obj );
+
    /*! @brief Get the Attribute by FOM name.
     *  @return Attribute for the given name.
     *  @param attr_FOM_name Attribute FOM name. */
@@ -88,20 +106,6 @@ class Packing
    /*! @brief Get the current Central Timing Equipment (CTE) time.
     *  @return Returns the current CTE time. */
    double get_cte_time();
-
-   /*! @brief Initialize the callback object to the supplied Object pointer.
-    *  @param obj Associated object for this class. */
-   virtual void initialize_callback( Object *obj );
-
-   //-----------------------------------------------------------------
-   // These are virtual functions and must be defined by a full class.
-   //-----------------------------------------------------------------
-
-   /*! @brief Pack the data before being sent. */
-   virtual void pack() = 0;
-
-   /*! @brief Unpack the received data. The default */
-   virtual void unpack() = 0;
 
   protected:
    Object *object; ///< @trick_io{**} Object associated with this packing class.

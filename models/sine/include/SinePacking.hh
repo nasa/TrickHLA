@@ -36,14 +36,9 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_MODEL_SINE_PACKING_HH
 #define TRICKHLA_MODEL_SINE_PACKING_HH
 
-// Forward declarations.
-namespace TrickHLA
-{
-class Object;
-}
-
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/Object.hh"
 #include "TrickHLA/Packing.hh"
 
 // Model include files.
@@ -52,7 +47,7 @@ class Object;
 namespace TrickHLAModel
 {
 
-class SinePacking : public TrickHLA::Packing
+class SinePacking : public SineData, public TrickHLA::Packing
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really

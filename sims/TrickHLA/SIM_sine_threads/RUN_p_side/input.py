@@ -5,7 +5,7 @@
 trick.exec_set_trap_sigfpe(True)
 #trick.checkpoint_pre_init(1)
 trick.checkpoint_post_init(1)
-#trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
+#trick.add_read(0.0 , '''trick.checkpoint('checkpoint')''')
 
 # NOTE: You must set this to be the same as the master federate's frame for IMSim freezing
 trick.exec_set_software_frame(0.25)
@@ -165,12 +165,14 @@ THLA.manager.objects[0].name                = 'A-side-Federate.Test'
 THLA.manager.objects[0].create_HLA_instance = False
 THLA.manager.objects[0].thread_ids          = "1"
 THLA.manager.objects[0].packing             = A.packing
+THLA.manager.objects[0].lag_comp            = A.lag_compensation
+THLA.manager.objects[0].lag_comp_type       = trick.LAG_COMPENSATION_NONE
 THLA.manager.objects[0].deleted             = A.obj_deleted_callback
 THLA.manager.objects[0].attr_count          = 8
 THLA.manager.objects[0].attributes          = trick.sim_services.alloc_type( THLA.manager.objects[0].attr_count, 'TrickHLA::Attribute' )
 
 THLA.manager.objects[0].attributes[0].FOM_name        = 'Time'
-THLA.manager.objects[0].attributes[0].trick_name      = 'A.sim_data.time'
+THLA.manager.objects[0].attributes[0].trick_name      = 'A.packing.time'
 THLA.manager.objects[0].attributes[0].config          = trick.CONFIG_CYCLIC
 THLA.manager.objects[0].attributes[0].publish         = True
 THLA.manager.objects[0].attributes[0].subscribe       = True
@@ -178,7 +180,7 @@ THLA.manager.objects[0].attributes[0].locally_owned   = False
 THLA.manager.objects[0].attributes[0].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.manager.objects[0].attributes[1].FOM_name        = 'Value'
-THLA.manager.objects[0].attributes[1].trick_name      = 'A.sim_data.value'
+THLA.manager.objects[0].attributes[1].trick_name      = 'A.packing.value'
 THLA.manager.objects[0].attributes[1].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
 THLA.manager.objects[0].attributes[1].publish         = True
 THLA.manager.objects[0].attributes[1].subscribe       = True
@@ -186,7 +188,7 @@ THLA.manager.objects[0].attributes[1].locally_owned   = False
 THLA.manager.objects[0].attributes[1].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.manager.objects[0].attributes[2].FOM_name        = 'dvdt'
-THLA.manager.objects[0].attributes[2].trick_name      = 'A.sim_data.dvdt'
+THLA.manager.objects[0].attributes[2].trick_name      = 'A.packing.dvdt'
 THLA.manager.objects[0].attributes[2].config          = trick.CONFIG_CYCLIC
 THLA.manager.objects[0].attributes[2].publish         = True
 THLA.manager.objects[0].attributes[2].subscribe       = True
@@ -202,7 +204,7 @@ THLA.manager.objects[0].attributes[3].locally_owned   = False
 THLA.manager.objects[0].attributes[3].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.manager.objects[0].attributes[4].FOM_name        = 'Frequency'
-THLA.manager.objects[0].attributes[4].trick_name      = 'A.sim_data.freq'
+THLA.manager.objects[0].attributes[4].trick_name      = 'A.packing.freq'
 THLA.manager.objects[0].attributes[4].config          = trick.CONFIG_CYCLIC
 THLA.manager.objects[0].attributes[4].publish         = True
 THLA.manager.objects[0].attributes[4].subscribe       = True
@@ -210,7 +212,7 @@ THLA.manager.objects[0].attributes[4].locally_owned   = False
 THLA.manager.objects[0].attributes[4].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.manager.objects[0].attributes[5].FOM_name        = 'Amplitude'
-THLA.manager.objects[0].attributes[5].trick_name      = 'A.sim_data.amp'
+THLA.manager.objects[0].attributes[5].trick_name      = 'A.packing.amp'
 THLA.manager.objects[0].attributes[5].config          = trick.CONFIG_CYCLIC
 THLA.manager.objects[0].attributes[5].publish         = True
 THLA.manager.objects[0].attributes[5].subscribe       = True
@@ -218,7 +220,7 @@ THLA.manager.objects[0].attributes[5].locally_owned   = False
 THLA.manager.objects[0].attributes[5].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.manager.objects[0].attributes[6].FOM_name        = 'Tolerance'
-THLA.manager.objects[0].attributes[6].trick_name      = 'A.sim_data.tol'
+THLA.manager.objects[0].attributes[6].trick_name      = 'A.packing.tol'
 THLA.manager.objects[0].attributes[6].config          = trick.CONFIG_CYCLIC
 THLA.manager.objects[0].attributes[6].publish         = True
 THLA.manager.objects[0].attributes[6].subscribe       = True
@@ -226,7 +228,7 @@ THLA.manager.objects[0].attributes[6].locally_owned   = False
 THLA.manager.objects[0].attributes[6].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.manager.objects[0].attributes[7].FOM_name        = 'Name'
-THLA.manager.objects[0].attributes[7].trick_name      = 'A.sim_data.name'
+THLA.manager.objects[0].attributes[7].trick_name      = 'A.packing.name'
 THLA.manager.objects[0].attributes[7].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
 THLA.manager.objects[0].attributes[7].publish         = True
 THLA.manager.objects[0].attributes[7].subscribe       = True
@@ -241,19 +243,21 @@ THLA.manager.objects[1].name                = 'P-side-Federate.Test'
 THLA.manager.objects[1].create_HLA_instance = True
 THLA.manager.objects[1].thread_ids          = "2"
 THLA.manager.objects[1].packing             = P.packing
+THLA.manager.objects[1].lag_comp            = P.lag_compensation
+THLA.manager.objects[1].lag_comp_type       = trick.LAG_COMPENSATION_NONE
 THLA.manager.objects[1].deleted             = P.obj_deleted_callback
 THLA.manager.objects[1].attr_count          = 8
 THLA.manager.objects[1].attributes          = trick.sim_services.alloc_type( THLA.manager.objects[1].attr_count, 'TrickHLA::Attribute' )
 
 THLA.manager.objects[1].attributes[0].FOM_name        = 'Time'
-THLA.manager.objects[1].attributes[0].trick_name      = 'P.sim_data.time'
+THLA.manager.objects[1].attributes[0].trick_name      = 'P.packing.time'
 THLA.manager.objects[1].attributes[0].config          = trick.CONFIG_CYCLIC
 THLA.manager.objects[1].attributes[0].publish         = True
 THLA.manager.objects[1].attributes[0].locally_owned   = True
 THLA.manager.objects[1].attributes[0].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.manager.objects[1].attributes[1].FOM_name        = 'Value'
-THLA.manager.objects[1].attributes[1].trick_name      = 'P.sim_data.value'
+THLA.manager.objects[1].attributes[1].trick_name      = 'P.packing.value'
 THLA.manager.objects[1].attributes[1].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
 THLA.manager.objects[1].attributes[1].publish         = True
 THLA.manager.objects[1].attributes[1].subscribe       = True
@@ -261,7 +265,7 @@ THLA.manager.objects[1].attributes[1].locally_owned   = True
 THLA.manager.objects[1].attributes[1].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.manager.objects[1].attributes[2].FOM_name        = 'dvdt'
-THLA.manager.objects[1].attributes[2].trick_name      = 'P.sim_data.dvdt'
+THLA.manager.objects[1].attributes[2].trick_name      = 'P.packing.dvdt'
 THLA.manager.objects[1].attributes[2].config          = trick.CONFIG_CYCLIC
 THLA.manager.objects[1].attributes[2].publish         = True
 THLA.manager.objects[1].attributes[2].locally_owned   = True
@@ -275,28 +279,28 @@ THLA.manager.objects[1].attributes[3].locally_owned   = True
 THLA.manager.objects[1].attributes[3].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.manager.objects[1].attributes[4].FOM_name        = 'Frequency'
-THLA.manager.objects[1].attributes[4].trick_name      = 'P.sim_data.freq'
+THLA.manager.objects[1].attributes[4].trick_name      = 'P.packing.freq'
 THLA.manager.objects[1].attributes[4].config          = trick.CONFIG_CYCLIC
 THLA.manager.objects[1].attributes[4].publish         = True
 THLA.manager.objects[1].attributes[4].locally_owned   = True
 THLA.manager.objects[1].attributes[4].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.manager.objects[1].attributes[5].FOM_name        = 'Amplitude'
-THLA.manager.objects[1].attributes[5].trick_name      = 'P.sim_data.amp'
+THLA.manager.objects[1].attributes[5].trick_name      = 'P.packing.amp'
 THLA.manager.objects[1].attributes[5].config          = trick.CONFIG_CYCLIC
 THLA.manager.objects[1].attributes[5].publish         = True
 THLA.manager.objects[1].attributes[5].locally_owned   = True
 THLA.manager.objects[1].attributes[5].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.manager.objects[1].attributes[6].FOM_name        = 'Tolerance'
-THLA.manager.objects[1].attributes[6].trick_name      = 'P.sim_data.tol'
+THLA.manager.objects[1].attributes[6].trick_name      = 'P.packing.tol'
 THLA.manager.objects[1].attributes[6].config          = trick.CONFIG_CYCLIC
 THLA.manager.objects[1].attributes[6].publish         = True
 THLA.manager.objects[1].attributes[6].locally_owned   = True
 THLA.manager.objects[1].attributes[6].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.manager.objects[1].attributes[7].FOM_name        = 'Name'
-THLA.manager.objects[1].attributes[7].trick_name      = 'P.sim_data.name'
+THLA.manager.objects[1].attributes[7].trick_name      = 'P.packing.name'
 THLA.manager.objects[1].attributes[7].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
 THLA.manager.objects[1].attributes[7].publish         = True
 THLA.manager.objects[1].attributes[7].locally_owned   = True

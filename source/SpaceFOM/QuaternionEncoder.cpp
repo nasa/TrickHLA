@@ -43,7 +43,7 @@ NASA, Johnson Space Center\n
 #include "RTI/VariableLengthData.h"
 #pragma GCC diagnostic pop
 
-using namespace rti1516e;
+using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace SpaceFOM;
 

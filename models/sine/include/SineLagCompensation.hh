@@ -22,6 +22,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../source/TrickHLA/Attribute.cpp}
 @trick_link_dependency{../source/TrickHLA/LagCompensation.cpp}
 @trick_link_dependency{../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../source/TrickHLA/Types.cpp}
 @trick_link_dependency{sine/src/SineData.cpp}
 @trick_link_dependency{sine/src/SineLagCompensation.cpp}
 
@@ -29,6 +30,7 @@ NASA, Johnson Space Center\n
 @revs_begin
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, June 2006, --, Version 2 origin.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2020, --, Version 3 rewrite.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, October 2023, --, Added lag-comp bypass functions.}
 @revs_end
 
 */
@@ -36,15 +38,14 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_MODLE_SINE_LAG_COMPENSATION_HH
 #define TRICKHLA_MODLE_SINE_LAG_COMPENSATION_HH
 
-// Forward declarations.
-namespace TrickHLA
-{
-class Object;
-}
+// System include files.
+#include <string>
 
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/LagCompensation.hh"
+#include "TrickHLA/Object.hh"
+#include "TrickHLA/Types.hh"
 
 // Model include files.
 #include "SineData.hh"
@@ -52,7 +53,7 @@ class Object;
 namespace TrickHLAModel
 {
 
-class SineLagCompensation : public TrickHLA::LagCompensation
+class SineLagCompensation : public SineData, public TrickHLA::LagCompensation
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -74,9 +75,8 @@ class SineLagCompensation : public TrickHLA::LagCompensation
    virtual ~SineLagCompensation();
 
    /*! @brief Initialize the LagCompensation object.
-    *  @param sim_data      The sine wave data object.
-    *  @param lag_comp_data The sine wave lag compensation data. */
-   void initialize( SineData *sim_data, SineData *lag_comp_data );
+    *  @param sim_data The sine wave data object. */
+   void initialize( SineData *sim_data );
 
    //
    // From the TrickHLALag::Compensation class.
@@ -89,13 +89,22 @@ class SineLagCompensation : public TrickHLA::LagCompensation
     *  head by dt to predict the value at the next data cycle. */
    virtual void send_lag_compensation();
 
+   /*! @brief When lag compensation is disabled, this function is called to
+    * bypass the send side lag compensation and your implementation must copy
+    * the sim-data to the lag-comp data to effect the bypass. */
+   virtual void bypass_send_lag_compensation();
+
    /*! @brief Receive side lag-compensation where we propagate the sine wave
     *  state ahead by dt to predict the value at the next data cycle. */
    virtual void receive_lag_compensation();
 
+   /*! @brief When lag compensation is disabled, this function is called to
+    * bypass the receive side lag compensation and your implementation must
+    * copy the lag-comp data to the sim-data to effect the bypass. */
+   virtual void bypass_receive_lag_compensation();
+
   private:
-   SineData *sim_data;      ///< @trick_units{--} Simulation data.
-   SineData *lag_comp_data; ///< @trick_units{--} Lag compensation data.
+   SineData *sim_data; ///< @trick_units{--} Simulation data.
 
    TrickHLA::Attribute *time_attr;  ///< @trick_io{**} Reference to the "Time" TrickHLA::Attribute.
    TrickHLA::Attribute *value_attr; ///< @trick_io{**} Reference to the "Value" TrickHLA::Attribute.
@@ -105,6 +114,8 @@ class SineLagCompensation : public TrickHLA::LagCompensation
    TrickHLA::Attribute *amp_attr;   ///< @trick_io{**} Reference to the "Amplitude" TrickHLA::Attribute.
    TrickHLA::Attribute *tol_attr;   ///< @trick_io{**} Reference to the "Tolerance" TrickHLA::Attribute.
    TrickHLA::Attribute *name_attr;  ///< @trick_io{**} Reference to the "Name" TrickHLA::Attribute.
+
+   std::string lag_comp_type_str; ///< @trick_units{--} Type of lag compensation as a string.
 
   private:
    // Do not allow the copy constructor or assignment operator.

@@ -21,7 +21,6 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../source/TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../source/TrickHLA/Int64BaseTime.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64Interval.cpp}
 @trick_link_dependency{../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../source/TrickHLA/Types.cpp}
 @trick_link_dependency{simconfig/src/SimpleSimConfig.cpp}
@@ -48,7 +47,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/Int64Interval.hh"
+#include "TrickHLA/KnownFederate.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
 

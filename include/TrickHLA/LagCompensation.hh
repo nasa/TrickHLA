@@ -31,6 +31,7 @@ NASA, Johnson Space Center\n
 @rev_entry{Dan Dexter, L3 Titan Group, DSES, June 2006, --, DSES Initial Lag Compensation.}
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, March 2019, --, Version 2 origin.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, October 2023, --, Added lag-comp bypass functions.}
 @revs_end
 
 */
@@ -77,7 +78,32 @@ class LagCompensation
       return;
    }
 
-  public:
+   //-----------------------------------------------------------------
+   // These are virtual functions and must be defined by a full class.
+   //-----------------------------------------------------------------
+
+   /*! @brief Send side lag compensation callback. */
+   virtual void send_lag_compensation();
+
+   /*! @brief When lag compensation is disabled, this function is called to
+    * bypass the send side lag compensation and your implementation must copy
+    * the sim-data to the lag-comp data to effect the bypass. */
+   virtual void bypass_send_lag_compensation() = 0;
+
+   /*! @brief Receive side lag compensation callback. */
+   virtual void receive_lag_compensation();
+
+   /*! @brief When lag compensation is disabled, this function is called to
+    * bypass the receive side lag compensation and your implementation must
+    * copy the lag-comp data to the sim-data to effect the bypass. You must
+    * make sure to check the lag-comp data was received before copying to
+    * the sim-data otherwise you will be copying stale data. */
+   virtual void bypass_receive_lag_compensation() = 0;
+
+   //-----------------------------------------------------------------
+   // Helper functions.
+   //-----------------------------------------------------------------
+
    /*! @brief Get the Attribute by FOM name.
     *  @return Attribute for the given name.
     *  @param attr_FOM_name Attribute FOM name. */
@@ -108,16 +134,6 @@ class LagCompensation
    /*! @brief Initialize the callback object to the supplied Object pointer.
     *  @param obj Associated object for this class. */
    virtual void initialize_callback( Object *obj );
-
-   //-----------------------------------------------------------------
-   // These are virtual functions and must be defined by a full class.
-   //-----------------------------------------------------------------
-
-   /*! @brief Send side lag compensation callback. */
-   virtual void send_lag_compensation();
-
-   /*! @brief Receive side lag compensation callback. */
-   virtual void receive_lag_compensation();
 
   protected:
    Object *object; ///< @trick_io{**} Object associated with this lag-comp class.
