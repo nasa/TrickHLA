@@ -3586,12 +3586,12 @@ void Federate::create_federation()
       this->federation_exists              = false;
 
       wstring          MIM_module_ws = L"";
-      VectorOfWstrings fomModulesVector;
+      VectorOfWstrings FOM_modules_vector;
 
       // Add the user specified FOM-modules to the vector by parsing the comma
       // separated list of modules.
       if ( FOM_modules != NULL ) {
-         StringUtilities::tokenize( FOM_modules, fomModulesVector, "," );
+         StringUtilities::tokenize( FOM_modules, FOM_modules_vector, "," );
       }
 
       // Determine if the user specified a MIM-module, which determines how
@@ -3603,12 +3603,12 @@ void Federate::create_federation()
       if ( MIM_module_ws.empty() ) {
          // Create the Federation execution.
          RTI_ambassador->createFederationExecution( federation_name_ws,
-                                                    fomModulesVector,
+                                                    FOM_modules_vector,
                                                     L"HLAinteger64Time" );
       } else {
          // Create the Federation execution with a user specified MIM.
          RTI_ambassador->createFederationExecutionWithMIM( federation_name_ws,
-                                                           fomModulesVector,
+                                                           FOM_modules_vector,
                                                            MIM_module_ws,
                                                            L"HLAinteger64Time" );
       }
