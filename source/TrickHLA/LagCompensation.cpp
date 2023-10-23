@@ -67,6 +67,36 @@ void LagCompensation::initialize_callback(
    this->object = obj;
 }
 
+/*!
+ * @brief Send side lag compensation callback.
+ */
+void LagCompensation::send_lag_compensation()
+{
+   ostringstream errmsg;
+   errmsg << "LagCompensation::send_lag_compensation():" << __LINE__
+          << " ERROR: Your class that extends LagCompensation must implement"
+          << " the 'virtual void send_lag_compensation()' function!"
+          << THLA_ENDL;
+   DebugHandler::terminate_with_message( errmsg.str() );
+}
+
+/*!
+ * @brief Receive side lag compensation callback.
+ */
+void LagCompensation::receive_lag_compensation()
+{
+   ostringstream errmsg;
+   errmsg << "LagCompensation::receive_lag_compensation():" << __LINE__
+          << " ERROR: Your class that extends LagCompensation must implement"
+          << " the 'virtual void receive_lag_compensation()' function!"
+          << THLA_ENDL;
+   DebugHandler::terminate_with_message( errmsg.str() );
+}
+
+/*! @brief Get the Attribute by FOM name.
+ *  @return Attribute for the given name.
+ *  @param attr_FOM_name Attribute FOM name.
+ */
 Attribute *LagCompensation::get_attribute(
    char const *attr_FOM_name )
 {
@@ -107,6 +137,9 @@ Attribute *LagCompensation::get_attribute_and_validate(
    return attr;
 }
 
+/*! @brief Returns a copy of the object's lookahead time.
+ *  @return A copy of the federate's lookahead time.
+ */
 Int64Interval LagCompensation::get_lookahead() const
 {
    if ( object != NULL ) {
@@ -116,6 +149,9 @@ Int64Interval LagCompensation::get_lookahead() const
    return di;
 }
 
+/*! @brief Returns a copy of the object's granted federation time.
+ *  @return A copy of the federate's current granted time.
+ */
 Int64Time LagCompensation::get_granted_time() const
 {
    if ( object != NULL ) {
@@ -125,6 +161,9 @@ Int64Time LagCompensation::get_granted_time() const
    return dt;
 }
 
+/*! @brief Returns the current scenario time.
+ *  @return Current scenario time.
+ */
 double LagCompensation::get_scenario_time()
 {
    if ( ( object != NULL ) && ( object->get_federate() != NULL ) ) {
@@ -134,6 +173,9 @@ double LagCompensation::get_scenario_time()
    return -std::numeric_limits< double >::max();
 }
 
+/*! @brief Returns the current Central Timing Equipment (CTE) time.
+ *  @return Current CTE time.
+ */
 double LagCompensation::get_cte_time()
 {
    if ( ( object != NULL ) && ( object->get_federate() != NULL ) ) {

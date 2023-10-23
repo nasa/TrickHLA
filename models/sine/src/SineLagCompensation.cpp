@@ -15,8 +15,11 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{../source/TrickHLA/Attribute.cpp}
 @trick_link_dependency{../source/TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{sine/src/SineData.cpp}
 @trick_link_dependency{sine/src/SineLagCompensation.cpp}
 
 @revs_title
@@ -29,6 +32,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <iomanip>
 #include <iostream>
 #include <stdlib.h>
 #include <string>
@@ -39,7 +43,9 @@ NASA, Johnson Space Center\n
 #include "trick/trick_math.h"
 
 // TrickHLA include files.
+#include "TrickHLA/Attribute.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
 
 // Model include files.
@@ -64,7 +70,8 @@ SineLagCompensation::SineLagCompensation()
      freq_attr( NULL ),
      amp_attr( NULL ),
      tol_attr( NULL ),
-     name_attr( NULL )
+     name_attr( NULL ),
+     lag_comp_type_str( "Unknown" )
 {
    return;
 }
@@ -109,8 +116,29 @@ void SineLagCompensation::initialize_callback(
    freq_attr  = get_attribute_and_validate( "Frequency" );
    amp_attr   = get_attribute_and_validate( "Amplitude" );
    tol_attr   = get_attribute_and_validate( "Tolerance" );
+
+   // To show the effects of ownership transfers on lag-compenstion, get the
+   // lag-comp type so that we can display it in the debug messages.
+   switch ( obj->lag_comp_type ) {
+      case LAG_COMPENSATION_NONE:
+         lag_comp_type_str = "LAG_COMPENSATION_NONE";
+         break;
+      case LAG_COMPENSATION_SEND_SIDE:
+         lag_comp_type_str = "LAG_COMPENSATION_SEND_SIDE";
+         break;
+      case LAG_COMPENSATION_RECEIVE_SIDE:
+         lag_comp_type_str = "LAG_COMPENSATION_RECEIVE_SIDE";
+         break;
+      default:
+         lag_comp_type_str = "Unknown";
+         break;
+   }
 }
 
+/*!
+ * @brief Send side lag-compensation where we propagate the sine wave state
+ *  head by dt to predict the value at the next data cycle.
+ */
 void SineLagCompensation::send_lag_compensation()
 {
    double const dt   = get_lookahead().get_time_in_seconds();
@@ -120,23 +148,21 @@ void SineLagCompensation::send_lag_compensation()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       cout << "******* SineLagCompensation::send_lag_compensation():" << __LINE__ << endl
-           << " scenario-time:" << get_scenario_time() << endl
-           << "     data-time:" << sim_data->get_time() << endl
-           << "            dt:" << dt << endl
-           << " adjusted-time:" << time << endl;
+           << " lag-comp-type:" << lag_comp_type_str << endl
+           << " scenario-time:" << setprecision( 18 ) << get_scenario_time() << endl
+           << "     data-time:" << setprecision( 18 ) << sim_data->get_time() << endl
+           << "            dt:" << setprecision( 18 ) << dt << endl
+           << " adjusted-time:" << setprecision( 18 ) << time << endl;
    }
 
-   // Copy the data if the pointers are not the same.
-   if ( this != sim_data ) {
-      // Copy the current sine state over to the predicted sine state.
-      this->set_name( sim_data->get_name() );
-      this->set_value( sim_data->get_value() );
-      this->set_derivative( sim_data->get_derivative() );
-      this->set_phase( sim_data->get_phase() );
-      this->set_frequency( sim_data->get_frequency() );
-      this->set_amplitude( sim_data->get_amplitude() );
-      this->set_tolerance( sim_data->get_tolerance() );
-   }
+   // Copy the current sine state over to the predicted sine state.
+   this->set_name( sim_data->get_name() );
+   this->set_value( sim_data->get_value() );
+   this->set_derivative( sim_data->get_derivative() );
+   this->set_phase( sim_data->get_phase() );
+   this->set_frequency( sim_data->get_frequency() );
+   this->set_amplitude( sim_data->get_amplitude() );
+   this->set_tolerance( sim_data->get_tolerance() );
 
    this->set_time( time );
 
@@ -144,67 +170,81 @@ void SineLagCompensation::send_lag_compensation()
    this->compute_derivative( time );
 }
 
+/*!
+ * @brief When lag compensation is disabled, this function is called to
+ * bypass the send side lag compensation and your implementation must copy
+ * the sim-data to the lag-comp data to effect the bypass.
+ */
 void SineLagCompensation::bypass_send_lag_compensation()
 {
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       cout << "******* SineLagCompensation::bypass_send_lag_compensation():" << __LINE__ << endl
-           << " scenario-time:" << get_scenario_time() << endl
-           << "     data-time:" << sim_data->get_time() << endl;
+           << " lag-comp-type:" << lag_comp_type_str << endl
+           << " scenario-time:" << setprecision( 18 ) << get_scenario_time() << endl
+           << "     data-time:" << setprecision( 18 ) << sim_data->get_time() << endl;
    }
 
    // Bypass send lag compensation by copying the current sim-data to the
    // lag-comp data structure. We need to ensure the lac-comp data structure
    // is updated to ensure any downstream calculations still get data.
-   if ( this != sim_data ) {
-      this->set_name( sim_data->get_name() );
-      this->set_time( sim_data->get_time() );
-      this->set_value( sim_data->get_value() );
-      this->set_derivative( sim_data->get_derivative() );
-      this->set_phase( sim_data->get_phase() );
-      this->set_frequency( sim_data->get_frequency() );
-      this->set_amplitude( sim_data->get_amplitude() );
-      this->set_tolerance( sim_data->get_tolerance() );
-   }
+   this->set_name( sim_data->get_name() );
+   this->set_time( sim_data->get_time() );
+   this->set_value( sim_data->get_value() );
+   this->set_derivative( sim_data->get_derivative() );
+   this->set_phase( sim_data->get_phase() );
+   this->set_frequency( sim_data->get_frequency() );
+   this->set_amplitude( sim_data->get_amplitude() );
+   this->set_tolerance( sim_data->get_tolerance() );
 }
 
+/*!
+ * @brief Receive side lag-compensation where we propagate the sine wave
+ * state ahead by dt to predict the value at the next data cycle.
+ */
 void SineLagCompensation::receive_lag_compensation()
 {
    double const time = get_scenario_time();
-   double const dt   = time - this->get_time();
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       cout << "******* SineLagCompensation::receive_lag_compensation():" << __LINE__ << endl
-           << " scenario-time:" << get_scenario_time() << endl
-           << "     data-time:" << this->get_time() << endl
-           << "            dt:" << dt << endl
-           << " adjusted-time:" << time << endl
+           << " lag-comp-type:" << lag_comp_type_str << endl
+           << " scenario-time:" << setprecision( 18 ) << get_scenario_time() << endl;
+      if ( time_attr->is_received() ) {
+         double const dt = time - this->get_time();
+         cout << "     data-time:" << setprecision( 18 ) << this->get_time() << " Received Update" << endl
+              << "            dt:" << setprecision( 18 ) << dt << endl;
+      } else {
+         cout << "     data-time:" << setprecision( 18 ) << this->get_time() << " Stale: No Update Received!" << endl
+              << "            dt: Invalid - No Time Received!" << endl;
+      }
+      cout << " adjusted-time:" << setprecision( 18 ) << time << endl
            << " BEFORE Lag Compensation:" << endl
-           << "\t Name  this: '" << this->get_name()
+           << "\t Name  lag-comp: '" << this->get_name()
            << "', received update:" << ( name_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Time  this: " << this->get_time()
+           << "\t Time  lag-comp: " << setprecision( 18 ) << this->get_time()
            << ", received update:" << ( time_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Value this: " << this->get_value()
+           << "\t Value lag-comp: " << this->get_value()
            << ", received update:" << ( value_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t dvdt  this: " << this->get_derivative()
+           << "\t dvdt  lag-comp: " << this->get_derivative()
            << ", received update:" << ( dvdt_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Phase this: " << this->get_phase()
+           << "\t Phase lag-comp: " << this->get_phase()
            << ", received update:" << ( phase_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Amp   this: " << this->get_amplitude()
+           << "\t Amp   lag-comp: " << this->get_amplitude()
            << ", received update:" << ( amp_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Freq  this: " << this->get_frequency()
+           << "\t Freq  lag-comp: " << this->get_frequency()
            << ", received update:" << ( freq_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Tol   this: " << this->get_tolerance()
+           << "\t Tol   lag-comp: " << this->get_tolerance()
            << ", received update:" << ( tol_attr->is_received() ? "Yes" : "No" ) << endl;
    }
 
@@ -254,7 +294,7 @@ void SineLagCompensation::receive_lag_compensation()
       cout << "SineLagCompensation::receive_lag_compensation():" << __LINE__ << endl
            << " AFTER LAG COMPENSATION:" << endl
            << "\t Name  sim_data: '" << sim_data->get_name() << "'" << endl
-           << "\t Time  sim_data: " << sim_data->get_time() << endl
+           << "\t Time  sim_data: " << setprecision( 18 ) << sim_data->get_time() << endl
            << "\t Value sim_data: " << sim_data->get_value() << endl
            << "\t dvdt  sim_data: " << sim_data->get_derivative() << endl
            << "\t Phase sim_data: " << sim_data->get_phase() << endl
@@ -264,42 +304,54 @@ void SineLagCompensation::receive_lag_compensation()
    }
 }
 
+/*!
+ * @brief When lag compensation is disabled, this function is called to
+ * bypass the receive side lag compensation and your implementation must
+ * copy the lag-comp data to the sim-data to effect the bypass. You must
+ * make sure to check the lag-comp data was received before copying to
+ * the sim-data otherwise you will be copying stale data.
+ */
 void SineLagCompensation::bypass_receive_lag_compensation()
 {
    double const time = get_scenario_time();
-   double const dt   = time - this->get_time();
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       cout << "******* SineLagCompensation::bypass_receive_lag_compensation():" << __LINE__ << endl
-           << " scenario-time:" << get_scenario_time() << endl
-           << "     data-time:" << this->get_time() << endl
-           << "            dt:" << dt << endl
-           << " adjusted-time:" << time << endl
-           << " BEFORE Bypassing Lag Compensation:" << endl
-           << "\t Name  this: '" << this->get_name()
+           << " lag-comp-type:" << lag_comp_type_str << endl
+           << " scenario-time:" << setprecision( 18 ) << get_scenario_time() << endl;
+      if ( time_attr->is_received() ) {
+         double const dt = time - this->get_time();
+         cout << "     data-time:" << setprecision( 18 ) << this->get_time() << " Received Update" << endl
+              << "            dt:" << setprecision( 18 ) << dt << endl;
+      } else {
+         cout << "     data-time:" << setprecision( 18 ) << this->get_time() << " Stale: No Update Received!" << endl
+              << "            dt: Invalid - No Time Received!" << endl;
+      }
+      cout << " BEFORE Bypassing Lag Compensation:" << endl
+           << "\t Name  lag-comp: '" << this->get_name()
            << "', received update:" << ( name_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Time  this: " << this->get_time()
+           << "\t Time  lag-comp: " << setprecision( 18 ) << this->get_time()
            << ", received update:" << ( time_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Value this: " << this->get_value()
+           << "\t Value lag-comp: " << this->get_value()
            << ", received update:" << ( value_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t dvdt  this: " << this->get_derivative()
+           << "\t dvdt  lag-comp: " << this->get_derivative()
            << ", received update:" << ( dvdt_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Phase this: " << this->get_phase()
+           << "\t Phase lag-comp: " << this->get_phase()
            << ", received update:" << ( phase_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Amp   this: " << this->get_amplitude()
+           << "\t Amp   lag-comp: " << this->get_amplitude()
            << ", received update:" << ( amp_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Freq  this: " << this->get_frequency()
+           << "\t Freq  lag-comp: " << this->get_frequency()
            << ", received update:" << ( freq_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t Tol   this: " << this->get_tolerance()
+           << "\t Tol   lag-comp: " << this->get_tolerance()
            << ", received update:" << ( tol_attr->is_received() ? "Yes" : "No" ) << endl;
    }
 
@@ -346,7 +398,7 @@ void SineLagCompensation::bypass_receive_lag_compensation()
       cout << "SineLagCompensation::bypass_receive_lag_compensation():" << __LINE__ << endl
            << " AFTER BYPASSING LAG COMPENSATION:" << endl
            << "\t Name  sim_data: '" << sim_data->get_name() << "'" << endl
-           << "\t Time  sim_data: " << sim_data->get_time() << endl
+           << "\t Time  sim_data: " << setprecision( 18 ) << sim_data->get_time() << endl
            << "\t Value sim_data: " << sim_data->get_value() << endl
            << "\t dvdt  sim_data: " << sim_data->get_derivative() << endl
            << "\t Phase sim_data: " << sim_data->get_phase() << endl

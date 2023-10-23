@@ -34,13 +34,8 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_MODEL_SINE_OWNERSHIP_HANDLER_HH
 #define TRICKHLA_MODEL_SINE_OWNERSHIP_HANDLER_HH
 
-// Forward declarations.
-namespace TrickHLA
-{
-class Object;
-}
-
 // TrickHLA include files.
+#include "TrickHLA/Object.hh"
 #include "TrickHLA/OwnershipHandler.hh"
 
 namespace TrickHLAModel

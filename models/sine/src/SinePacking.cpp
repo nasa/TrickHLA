@@ -19,6 +19,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../source/TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{sine/src/SineData.cpp}
 @trick_link_dependency{sine/src/SinePacking.cpp}
 
 @revs_title
@@ -31,6 +32,7 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <algorithm>
+#include <iomanip>
 #include <iostream>
 #include <math.h>
 #include <stdlib.h>
@@ -48,6 +50,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Types.hh"
 
 // Model include files.
+#include "../include/SineData.hh"
 #include "../include/SinePacking.hh"
 
 using namespace std;
@@ -175,7 +178,7 @@ void SinePacking::pack()
            << ( ( name_attr->is_publish() && name_attr->is_locally_owned() ) ? "Yes" : "No" )
            << endl
 
-           << "\t sim_data->time:" << sim_data->get_time() << " seconds"
+           << "\t sim_data->time:" << setprecision( 18 ) << sim_data->get_time() << " seconds"
            << ", Send-HLA-Data:"
            << ( ( time_attr->is_publish() && time_attr->is_locally_owned() ) ? "Yes" : "No" )
            << endl
@@ -331,7 +334,7 @@ void SinePacking::unpack()
            << "', Received-HLA-Data:"
            << ( name_attr->is_received() ? "Yes" : "No" ) << endl
 
-           << "\t sim_data->time:" << sim_data->get_time()
+           << "\t sim_data->time:" << setprecision( 18 ) << sim_data->get_time()
            << " seconds, Received-HLA-Data:"
            << ( time_attr->is_received() ? "Yes" : "No" ) << endl
 

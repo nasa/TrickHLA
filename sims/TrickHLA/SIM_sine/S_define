@@ -57,6 +57,11 @@ class AnalyticSineSimObj : public Trick::SimObject {
    TrickHLAModel::SineObjectDeleted      obj_deleted_callback;
 
    AnalyticSineSimObj() {
+      // Note: Make sure to initialize the data before it gets sent in
+      // the THLA_INIT simulation object.
+      //
+      // TrickHLA API data flow, sending data:   sim-data --> lag-comp-data --> packing-data
+      // TrickHLA API data flow, receiving data: packing-data --> lag-comp-data --> sim-data
       P50 ("initialization") lag_compensation.initialize( &sim_data );
 
       P50 ("initialization") packing.initialize( &lag_compensation );
@@ -98,6 +103,9 @@ class PropagatedSineSimObj : public Trick::SimObject {
    PropagatedSineSimObj() {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
+      //
+      // TrickHLA API data flow, sending data:   sim-data --> lag-comp-data --> packing-data
+      // TrickHLA API data flow, receiving data: packing-data --> lag-comp-data --> sim-data
       P50 ("initialization") lag_compensation.initialize( &sim_data );
 
       P50 ("initialization") packing.initialize( &lag_compensation );

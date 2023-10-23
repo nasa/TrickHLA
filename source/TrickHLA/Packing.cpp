@@ -69,12 +69,21 @@ Packing::~Packing()
    return;
 }
 
+/*!
+ * @brief Initialize the callback object to the supplied Object pointer.
+ * @param obj Associated object for this class.
+ */
 void Packing::initialize_callback(
    Object *obj )
 {
    this->object = obj;
 }
 
+/*!
+ * @brief Get the Attribute by FOM name.
+ * @return Attribute for the given name.
+ * @param attr_FOM_name Attribute FOM name.
+ */
 Attribute *Packing::get_attribute(
    char const *attr_FOM_name )
 {
@@ -82,8 +91,9 @@ Attribute *Packing::get_attribute(
 }
 
 /*!
- *  @details If the attribute is not found then an error message is displayed
- *  then exec-terminate is called.
+ * @brief This function returns the Attribute for the given attribute FOM name.
+ * @return Attribute for the given name.
+ * @param attr_FOM_name Attribute FOM name.
  */
 Attribute *Packing::get_attribute_and_validate(
    char const *attr_FOM_name )
@@ -115,6 +125,10 @@ Attribute *Packing::get_attribute_and_validate(
    return attr;
 }
 
+/*!
+ * @brief Get the current scenario time.
+ * @return Returns the current scenario time.
+ */
 double Packing::get_scenario_time()
 {
    if ( ( object != NULL ) && ( object->get_federate() != NULL ) ) {
@@ -124,6 +138,10 @@ double Packing::get_scenario_time()
    return -std::numeric_limits< double >::max();
 }
 
+/*!
+ * @brief Get the current Central Timing Equipment (CTE) time.
+ * @return Returns the current CTE time.
+ */
 double Packing::get_cte_time()
 {
    if ( ( object != NULL ) && ( object->get_federate() != NULL ) ) {

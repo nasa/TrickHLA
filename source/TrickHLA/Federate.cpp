@@ -4962,17 +4962,6 @@ void Federate::associate_to_trick_child_thread(
                __LINE__, thread_id, data_cycle, THLA_NEWLINE );
    }
 
-   // For now, do not allow Trick child threads for a zero lookahead time
-   // because the API's to assist with getting zero lookahead cyclic data are
-   // not thread safe at this point.
-   if ( ( this->lookahead_time <= 0.0 ) && ( thread_id != 0 ) ) {
-      ostringstream errmsg;
-      errmsg << "Federate::associate_to_trick_child_thread():" << __LINE__
-             << " ERROR: Associated Trick child threads are not supported when"
-             << " a zero-lookahead time is used." << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
    // Delegate to the Trick child thread coordinator.
    this->thread_coordinator.associate_to_trick_child_thread( thread_id, data_cycle );
 }

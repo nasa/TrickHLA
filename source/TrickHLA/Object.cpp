@@ -377,6 +377,23 @@ void Object::initialize(
       }
    }
 
+   // If any attribute is configured for zero-lookahead then lag compensation
+   // cannot be specified because zero-lookahead avoids any latency in the data
+   // transfer (i.e. intra-frame).
+   if ( any_zero_lookahead_attr && ( lag_comp != NULL ) && ( lag_comp_type != LAG_COMPENSATION_NONE ) ) {
+      ostringstream errmsg;
+      errmsg << "Object::initialize():" << __LINE__
+             << " ERROR: For object '" << name << "', detected Attributes"
+             << " with a 'config' setting of CONFIG_ZERO_LOOKAHEAD but a"
+             << " Lag-Compensation 'lag_comp' callback has also been specified"
+             << " with a 'lag_comp_type' setting that is not LAG_COMPENSATION_NONE!"
+             << " Please check your input or modified-data files to make sure"
+             << " the Lag-Compensation type 'lag_comp_type' is set to"
+             << " LAG_COMPENSATION_NONE to disable Lag-Compensation when using"
+             << " zero-lookahead configured object attributes." << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    // TODO: Get the preferred order by parsing the FOM.
    //
    // Determine if any attribute is the FOM specified order.
@@ -2187,22 +2204,27 @@ void Object::send_zero_lookahead_and_requested_data(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &send_mutex );
 
-   // Do lag compensation.
+   // Lag-compensation is not supported for zero-lookahead, but if specified
+   // we call the bypass function.
    if ( lag_comp != NULL ) {
       switch ( lag_comp_type ) {
-         case LAG_COMPENSATION_SEND_SIDE:
-            lag_comp->send_lag_compensation();
-            break;
-         case LAG_COMPENSATION_RECEIVE_SIDE:
-            // There are locally owned attributes that are published by this
-            // federate that we need to send even tough Received-side lag
-            // compensation has been configured. Maybe a result of attribute
-            // ownership transfer.
-            lag_comp->bypass_send_lag_compensation();
-            break;
          case LAG_COMPENSATION_NONE:
-         default:
             lag_comp->bypass_send_lag_compensation();
+            break;
+         case LAG_COMPENSATION_SEND_SIDE:
+         case LAG_COMPENSATION_RECEIVE_SIDE:
+         default:
+            ostringstream errmsg;
+            errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
+                   << " ERROR: For object '" << name << "', detected a"
+                   << " Lag-Compensation 'lag_comp' callback has also been"
+                   << " specified with a 'lag_comp_type' setting that is not"
+                   << " LAG_COMPENSATION_NONE! Please check your input or"
+                   << " modified-data files to make sure the Lag-Compensation"
+                   << " type 'lag_comp_type' is set to LAG_COMPENSATION_NONE"
+                   << " to disable Lag-Compensation when sending zero-lookahead"
+                   << " configured object attributes." << THLA_ENDL;
+            DebugHandler::terminate_with_message( errmsg.str() );
             break;
       }
    }
@@ -2608,22 +2630,27 @@ void Object::receive_zero_lookahead_data()
             packing->unpack();
          }
 
-         // Do receive side lag compensation.
+         // Lag-compensation is not supported for zero-lookahead, but if
+         // specified we call the bypass function.
          if ( lag_comp != NULL ) {
             switch ( lag_comp_type ) {
-               case LAG_COMPENSATION_RECEIVE_SIDE:
-                  lag_comp->receive_lag_compensation();
+               case LAG_COMPENSATION_NONE:
+                  lag_comp->bypass_receive_lag_compensation();
                   break;
                case LAG_COMPENSATION_SEND_SIDE:
-                  // There are remotely owned attributes that are subscribed by
-                  // this federate that we need to receive even tough Send-side
-                  // lag compensation has been configured. Maybe a result of
-                  // attribute ownership transfer.
-                  lag_comp->bypass_receive_lag_compensation();
-                  break;
-               case LAG_COMPENSATION_NONE:
+               case LAG_COMPENSATION_RECEIVE_SIDE:
                default:
-                  lag_comp->bypass_receive_lag_compensation();
+                  ostringstream errmsg;
+                  errmsg << "Object::receive_zero_lookahead_data():" << __LINE__
+                         << " ERROR: For object '" << name << "', detected a"
+                         << " Lag-Compensation 'lag_comp' callback has also been"
+                         << " specified with a 'lag_comp_type' setting that is not"
+                         << " LAG_COMPENSATION_NONE! Please check your input or"
+                         << " modified-data files to make sure the Lag-Compensation"
+                         << " type 'lag_comp_type' is set to LAG_COMPENSATION_NONE"
+                         << " to disable Lag-Compensation when sending zero-lookahead"
+                         << " configured object attributes." << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
                   break;
             }
          }
