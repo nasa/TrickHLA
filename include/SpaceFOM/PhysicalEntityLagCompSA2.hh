@@ -73,7 +73,7 @@ class PhysicalEntityLagCompSA2 : public PhysicalEntityLagCompInteg
 
    double * integ_states[7]; ///< @trick_units{--} @trick_io{**} Integrator state vector.
    double * integ_derivs[7]; ///< @trick_units{--} @trick_io{**} Integrator derivative vector.
-   SA::EulerCromerIntegrator integrator;
+   SA::EulerCromerIntegrator integrator;  ///< @trick_io{**} Integrator.
 
    /*! @brief Derivative routine used by the compensation integrator.
     *  @param t      Integration time (IN).

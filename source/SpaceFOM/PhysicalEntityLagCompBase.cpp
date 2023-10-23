@@ -69,6 +69,7 @@ PhysicalEntityLagCompBase::PhysicalEntityLagCompBase( PhysicalEntityBase & entit
      body_frame_attr(NULL),
      compensate_dt( 0.0 )
 {
+
    // Initialize the acceleration values.
    for( int iinc = 0 ; iinc < 3 ; iinc++ ){
       this->accel[iinc]     = 0.0;

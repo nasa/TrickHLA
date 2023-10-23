@@ -216,7 +216,8 @@ federate = SpaceFOMFederateConfig( THLA.federate,
                                    THLA.ExCO,
                                    federation_name,
                                    federate_name,
-                                   True )
+                                   True,
+                                   '/Users/ecrues/Trick/pkgs/hla/TrickHLA/FOMs/SpaceFOM/' )
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job

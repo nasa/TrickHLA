@@ -28,7 +28,7 @@ NASA, Johnson Space Center\n
 */
 
 // C includes.
-#include "math.h"
+#include <math.h>
 
 // Trick includes.
 #include "trick/trick_math.h"
@@ -37,6 +37,27 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/QuaternionData.hh"
 
 using namespace SpaceFOM;
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::initialize ()
+{
+   this->scalar = 0.0;
+   this->vector[0] = 0.0;
+   this->vector[1] = 0.0;
+   this->vector[2] = 0.0;
+   return;
+}
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::normalize ()
+{
+   normalize_quaternion( &scalar, vector );
+   return;
+}
 
 /*!
  * @job_class{scheduled}
@@ -76,7 +97,7 @@ void QuaternionData::normalize_quaternion (
 
    // Scale the quaternion by the above normalization factor.
    *qs *= norm_fact;
-   for ( int iinc = 0; iinc < 4; ++iinc ) {
+   for ( int iinc = 0; iinc < 3; ++iinc ) {
       qv[iinc] *= norm_fact;
    }
 

@@ -38,6 +38,17 @@ typedef struct QuaternionData{
    double scalar;    ///< @trick_units{--} Attitude quaternion scalar.
    double vector[3]; ///< @trick_units{--} Attitude quaternion vector.
 
+   // Default constructor.
+   QuaternionData(){ this->initialize(); }
+
+   /*! @brief Initialize the attitude quaternion. */
+   void initialize ();
+
+   /*! @brief Normalize the attitude quaternion.
+    *  @param quat_scalar Pointer to the attitude quaternion scalar.
+    *  @param quat_vector Attitude quaternion vector. */
+   void normalize ();
+
    /*! @brief Normalize the attitude quaternion.
     *  @param quat_scalar Pointer to the attitude quaternion scalar.
     *  @param quat_vector Attitude quaternion vector. */

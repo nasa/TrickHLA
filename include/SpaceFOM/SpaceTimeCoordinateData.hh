@@ -31,6 +31,10 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_SPACE_TIME_COORDINATE_DATA_HH
 #define SPACEFOM_SPACE_TIME_COORDINATE_DATA_HH
 
+// Trick includes.
+#include "trick/vector_macros.h"
+
+// SpaceFOM includes.
 #include "SpaceFOM/QuaternionData.hh"
 
 namespace SpaceFOM {
@@ -42,6 +46,13 @@ typedef struct SpaceTimeCoordinateData{
    QuaternionData quat;       ///< trick_units{--}    Attitude quaternion.
    double         ang_vel[3]; ///< trick_units{rad/s} Angular velocity vector.
    double         time;       ///< trick_units{s}     Truncated Julian date in TT time scale.
+
+   // Default constructor.
+   SpaceTimeCoordinateData(): time(0.0){
+      V_INIT( pos);
+      V_INIT( vel);
+      V_INIT( ang_vel );
+   }
 
 } SpaceTimeCoordinateData;
 

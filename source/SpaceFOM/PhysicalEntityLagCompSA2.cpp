@@ -66,10 +66,10 @@ PhysicalEntityLagCompSA2::PhysicalEntityLagCompSA2( PhysicalEntityBase & entity_
    integ_states[1] = &(this->lag_comp_data.pos[1]);
    integ_states[2] = &(this->lag_comp_data.pos[2]);
    // Rotational position
-   integ_states[3] = &(this->lag_comp_data.quat_scalar);
-   integ_states[4] = &(this->lag_comp_data.quat_vector[0]);
-   integ_states[5] = &(this->lag_comp_data.quat_vector[1]);
-   integ_states[6] = &(this->lag_comp_data.quat_vector[2]);
+   integ_states[3] = &(this->lag_comp_data.quat.scalar);
+   integ_states[4] = &(this->lag_comp_data.quat.vector[0]);
+   integ_states[5] = &(this->lag_comp_data.quat.vector[1]);
+   integ_states[6] = &(this->lag_comp_data.quat.vector[2]);
 
    // Translational velocity
    integ_derivs[0] = &(this->lag_comp_data.vel[0]);
@@ -140,18 +140,18 @@ void PhysicalEntityLagCompSA2::derivatives(
    quat_vector[1] = pos[5];
    quat_vector[2] = pos[6];
    qdot_vector[0] = vel[4];
-   qdot_vector[0] = vel[5];
-   qdot_vector[0] = vel[6];
+   qdot_vector[1] = vel[5];
+   qdot_vector[2] = vel[6];
 
    // Compute the angular velocity vector.
-   compute_omega( qdot_scalar,
+   QuaternionData::compute_omega( qdot_scalar,
                   qdot_vector,
                   quat_scalar,
                   quat_vector,
                   omega );
 
    // Compute the second derivative of the attitude quaternion.
-   compute_quat_dotdot( quat_scalar,
+   QuaternionData::compute_quat_dotdot( quat_scalar,
                         quat_vector,
                         omega,
                         lag_comp_data_ptr->rot_accel,
@@ -214,8 +214,8 @@ int PhysicalEntityLagCompSA2::compensate(
       this->integrator.unload();
 
       // Normalize the propagated attitude quaternion.
-      normalize_quaternion( &(this->lag_comp_data.quat_scalar),
-                            this->lag_comp_data.quat_vector     );
+      QuaternionData::normalize_quaternion( &(this->lag_comp_data.quat.scalar),
+                            this->lag_comp_data.quat.vector     );
 
       // Update the integration time.
       this->integ_t = this->integrator.getIndyVar();
@@ -230,10 +230,10 @@ int PhysicalEntityLagCompSA2::compensate(
 
    // Compute the angular velocity vector from the propagated attitude
    // quaternion and its derivative.
-   compute_omega( this->Q_dot.scalar,
+   QuaternionData::compute_omega( this->Q_dot.scalar,
                   this->Q_dot.vector,
-                  this->lag_comp_data.quat_scalar,
-                  this->lag_comp_data.quat_vector,
+                  this->lag_comp_data.quat.scalar,
+                  this->lag_comp_data.quat.vector,
                   this->lag_comp_data.ang_vel );
 
    // Print out debug information if desired.

@@ -172,7 +172,7 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
 //#define USE_SA_INTEGRATOR
 ##include "SpaceFOM/PhysicalEntity.hh"
 #ifdef USE_SA_INTEGRATOR
-##include "SpaceFOM/PhysicalEntityLagCompSA.hh"
+##include "SpaceFOM/PhysicalEntityLagCompSA2.hh"
 #else
 ##include "SpaceFOM/PhysicalEntityLagComp.hh"
 #endif
@@ -187,7 +187,7 @@ class SpaceFOMPhysicalEntitySimObject : public Trick::SimObject {
 
    /* HLA lag compensation object. */
 #ifdef USE_SA_INTEGRATOR
-   PhysicalEntityLagCompSA lag_compensation;
+   PhysicalEntityLagCompSA2 lag_compensation;
 #else
    PhysicalEntityLagComp lag_compensation;
 #endif
