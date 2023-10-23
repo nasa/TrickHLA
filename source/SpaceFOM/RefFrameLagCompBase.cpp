@@ -117,11 +117,11 @@ void RefFrameLagCompBase::initialize_states()
 
    // Copy the current RefFrameLag state over to the lag compensated state.
    this->lag_comp_data = this->ref_frame.stc_data;
-   compute_quat_dot( this->lag_comp_data.quat_scalar,
-                     this->lag_comp_data.quat_vector,
-                     this->lag_comp_data.ang_vel,
-                     &(this->Q_dot.scalar),
-                     this->Q_dot.vector );
+   QuaternionData::compute_quat_dot( this->lag_comp_data.quat.scalar,
+                                     this->lag_comp_data.quat.vector,
+                                     this->lag_comp_data.ang_vel,
+                                     &(this->Q_dot.scalar),
+                                     this->Q_dot.vector );
 
    // Return to calling routine.
    return;
@@ -158,7 +158,7 @@ void RefFrameLagCompBase::copy_state_from_frame()
 void RefFrameLagCompBase::print_lag_comp_data()
 {
    double euler_angles[3];
-   double * quat = &(lag_comp_data.quat_scalar);
+   double * quat = &(lag_comp_data.quat.scalar);
 
    // Compute the attitude Euler angles.
    euler_quat( euler_angles, quat, 1, Pitch_Yaw_Roll );
@@ -174,10 +174,10 @@ void RefFrameLagCompBase::print_lag_comp_data()
         << "\t\t" << this->lag_comp_data.vel[1] << ", "
         << "\t\t" << this->lag_comp_data.vel[2] << endl;
    cout << "\tattitude (s;v): "
-        << "\t\t" << this->lag_comp_data.quat_scalar << "; "
-        << "\t\t" << this->lag_comp_data.quat_vector[0] << ", "
-        << "\t\t" << this->lag_comp_data.quat_vector[1] << ", "
-        << "\t\t" << this->lag_comp_data.quat_vector[2] << endl;
+        << "\t\t" << this->lag_comp_data.quat.scalar << "; "
+        << "\t\t" << this->lag_comp_data.quat.vector[0] << ", "
+        << "\t\t" << this->lag_comp_data.quat.vector[1] << ", "
+        << "\t\t" << this->lag_comp_data.quat.vector[2] << endl;
    cout << "\tattitude (PYR): "
         << "\t\t" << euler_angles[0] << ", "
         << "\t\t" << euler_angles[1] << ", "

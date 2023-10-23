@@ -350,10 +350,10 @@ physical_entity.pe_data.state.vel[0] = 0.1
 physical_entity.pe_data.state.vel[1] = 0.2
 physical_entity.pe_data.state.vel[2] = 0.3
 
-physical_entity.pe_data.state.quat_scalar = 1.0
-physical_entity.pe_data.state.quat_vector[0] = 0.0
-physical_entity.pe_data.state.quat_vector[1] = 0.0
-physical_entity.pe_data.state.quat_vector[2] = 0.0
+physical_entity.pe_data.state.quat.scalar = 1.0
+physical_entity.pe_data.state.quat.vector[0] = 0.0
+physical_entity.pe_data.state.quat.vector[1] = 0.0
+physical_entity.pe_data.state.quat.vector[2] = 0.0
 physical_entity.pe_data.state.ang_vel[0] = 0.0
 physical_entity.pe_data.state.ang_vel[1] = 0.1
 physical_entity.pe_data.state.ang_vel[2] = 0.0

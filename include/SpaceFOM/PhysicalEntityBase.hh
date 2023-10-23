@@ -47,7 +47,7 @@ NASA, Johnson Space Center\n
 // SpaceFOM include files.
 #include "SpaceFOM/QuaternionEncoder.hh"
 #include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
-#include "SpaceFOM/PhysicalEntityData.h"
+#include "SpaceFOM/PhysicalEntityData.hh"
 
 namespace SpaceFOM
 {

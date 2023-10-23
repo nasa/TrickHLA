@@ -48,7 +48,7 @@ NASA, Johnson Space Center\n
 
 // SpaceFOM include files.
 #include "SpaceFOM/RefFrameBase.hh"
-#include "SpaceFOM/RefFrameData.h"
+#include "SpaceFOM/RefFrameData.hh"
 #include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
 
 namespace SpaceFOM

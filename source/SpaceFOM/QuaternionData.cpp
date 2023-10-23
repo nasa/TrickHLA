@@ -19,7 +19,7 @@ NASA, Johnson Space Center\n
 @python_module{SpaceFOM}
 
 @tldh
-@trick_link_dependency{QuaternionData.c}
+@trick_link_dependency{QuaternionData.cpp}
 
 @revs_begin
 @rev_entry{ Edwin Z. Crues, NASA ER7, NExSyS, October 2023, --, Initial version }
@@ -34,13 +34,14 @@ NASA, Johnson Space Center\n
 #include "trick/trick_math.h"
 
 // SpaceFOM includes.
-#include "SpaceFOM/QuaternionData.h"
+#include "SpaceFOM/QuaternionData.hh"
 
+using namespace SpaceFOM;
 
 /*!
  * @job_class{scheduled}
  */
-void normalize_quaternion (
+void QuaternionData::normalize_quaternion (
    double * qs,
    double   qv[3])
 {
@@ -87,7 +88,7 @@ void normalize_quaternion (
 /*!
  * @job_class{scheduled}
  */
-void compute_quat_dot (
+void QuaternionData::compute_quat_dot (
    double const   quat_scalar,
    double const   quat_vector[3],
    double const   omega[3],
@@ -113,7 +114,7 @@ void compute_quat_dot (
 /*!
  * @job_class{scheduled}
  */
-void compute_Q_dot(
+void QuaternionData::compute_Q_dot(
    QuaternionData const * q,
    double const           omega[3],
    QuaternionData       * q_dot )
@@ -126,7 +127,7 @@ void compute_Q_dot(
 /*!
  * @job_class{scheduled}
  */
-void compute_omega (
+void QuaternionData::compute_omega (
    double const qdot_scalar,
    double const qdot_vector[3],
    double const quat_scalar,
@@ -155,7 +156,7 @@ void compute_omega (
    return;
 }
 
-void compute_omega_Q (
+void QuaternionData::compute_omega_Q (
    QuaternionData const * q_dot,
    QuaternionData const * q,
    double                 omega[3] )
@@ -172,7 +173,7 @@ void compute_omega_Q (
 /*!
  * @job_class{scheduled}
  */
-void compute_quat_dotdot (
+void QuaternionData::compute_quat_dotdot (
    double const   quat_scalar,
    double const   quat_vector[3],
    double const   omega[3],
@@ -204,13 +205,13 @@ void compute_quat_dotdot (
 /*!
  * @job_class{scheduled}
  */
-void compute_Q_dotdot(
+void QuaternionData::compute_Q_dotdot(
    QuaternionData const * q,
    double const           omega[3],
    double const           omega_dot[3],
    QuaternionData       * q_dotdot )
 {
-   compute_quat_dotdot( q->scalar, q->vector, omega, omega_dot, &(q_dotdot->scalar), q_dotdot->vector );
+   QuaternionData::compute_quat_dotdot( q->scalar, q->vector, omega, omega_dot, &(q_dotdot->scalar), q_dotdot->vector );
    return;
 }
 
@@ -219,7 +220,7 @@ void compute_Q_dotdot(
  * @job_class{scheduled}
  * @brief Pre-multiply a quaternion by another's conjugate: prod = conj(lq) * rq.
  */
-void conjugate_multiply(
+void QuaternionData::conjugate_multiply(
    double const   lq_scalar,
    double const   lq_vector[3],
    double const   rq_scalar,
@@ -256,7 +257,7 @@ void conjugate_multiply(
  * @job_class{scheduled}
  * @brief Post-multiply a quaternion by another's conjugate: prod = lq * conj(rq).
  */
-void multiply_conjugate(
+void QuaternionData::multiply_conjugate(
    double const   lq_scalar,
    double const   lq_vector[3],
    double const   rq_scalar,

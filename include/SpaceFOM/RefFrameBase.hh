@@ -48,7 +48,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Packing.hh"
 
 // SpaceFOM include files.
-#include "SpaceFOM/RefFrameData.h"
+#include "SpaceFOM/RefFrameData.hh"
 #include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
 
 // Forward Declared Classes:  Since these classes are only used as references

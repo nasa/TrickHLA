@@ -28,30 +28,23 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef SPACEFOM_SPACE_TIME_COORDINATE_DATA_H
-#define SPACEFOM_SPACE_TIME_COORDINATE_DATA_H
+#ifndef SPACEFOM_SPACE_TIME_COORDINATE_DATA_HH
+#define SPACEFOM_SPACE_TIME_COORDINATE_DATA_HH
 
-#include "SpaceFOM/QuaternionData.h"
+#include "SpaceFOM/QuaternionData.hh"
 
-#ifdef __cplusplus
-// Place the struct in a namespace when C++.
 namespace SpaceFOM {
-#endif
 
 typedef struct {
 
-   double pos[3];         ///< trick_units{m}     Position in parent frame.
-   double vel[3];         ///< trick_units{m/s}   Velocity wrt. parent frame.
-   QuaternionData quat;   ///< trick_units{--}    Attitude quaternion.
-//   double quat_scalar;    ///< trick_units{--}    Attitude quaternion scalar.
-//   double quat_vector[3]; ///< trick_units{--}    Attitude quaternion vector.
-   double ang_vel[3];     ///< trick_units{rad/s} Angular velocity vector.
-   double time;           ///< trick_units{s}     Truncated Julian date in TT time scale.
+   double         pos[3];     ///< trick_units{m}     Position in parent frame.
+   double         vel[3];     ///< trick_units{m/s}   Velocity wrt. parent frame.
+   QuaternionData quat;       ///< trick_units{--}    Attitude quaternion.
+   double         ang_vel[3]; ///< trick_units{rad/s} Angular velocity vector.
+   double         time;       ///< trick_units{s}     Truncated Julian date in TT time scale.
 
 } SpaceTimeCoordinateData;
 
-#ifdef __cplusplus
-} // namespace SpaceFOM
-#endif
+} // namespace SpaceFOMh
 
-#endif // SPACEFOM_SPACE_TIME_COORDINATE_DATA_H: Do NOT put anything after this line!
+#endif // SPACEFOM_SPACE_TIME_COORDINATE_DATA_HH: Do NOT put anything after this line!

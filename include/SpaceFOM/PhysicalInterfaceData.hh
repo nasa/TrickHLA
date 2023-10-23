@@ -25,16 +25,12 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef SPACEFOM_PYHSICAL_INTERFACE_DATA_H
-#define SPACEFOM_PYHSICAL_INTERFACE_DATA_H
+#ifndef SPACEFOM_PYHSICAL_INTERFACE_DATA_HH
+#define SPACEFOM_PYHSICAL_INTERFACE_DATA_HH
 
-#include "SpaceFOM/QuaternionData.h"
+#include "SpaceFOM/QuaternionData.hh"
 
-#ifdef __cplusplus
-// Place the struct in a namespace when C++.
-namespace SpaceFOM
-{
-#endif
+namespace SpaceFOM {
 
 typedef struct {
 
@@ -45,8 +41,6 @@ typedef struct {
 
 } PhysicalInterfaceData;
 
-#ifdef __cplusplus
 } // namespace SpaceFOM
-#endif
 
-#endif // SPACEFOM_PYHSICAL_INTERFACE_DATA_H: Do NOT put anything after this line!
+#endif // SPACEFOM_PYHSICAL_INTERFACE_DATA_HH: Do NOT put anything after this line!

@@ -159,9 +159,9 @@ void RefFrameState::pack()
       stc_data.vel[iinc] = ref_frame_data->state.vel[iinc];
    }
    // Attitude quaternion.
-   stc_data.quat_scalar = ref_frame_data->state.quat_scalar;
+   stc_data.quat.scalar = ref_frame_data->state.quat.scalar;
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      stc_data.quat_vector[iinc] = ref_frame_data->state.quat_vector[iinc];
+      stc_data.quat.vector[iinc] = ref_frame_data->state.quat.vector[iinc];
       stc_data.ang_vel[iinc]     = ref_frame_data->state.ang_vel[iinc];
    }
    // Time tag for this state data.
@@ -250,9 +250,9 @@ void RefFrameState::unpack()
          ref_frame_data->state.vel[iinc] = stc_data.vel[iinc];
       }
       // Attitude quaternion.
-      ref_frame_data->state.quat_scalar = stc_data.quat_scalar;
+      ref_frame_data->state.quat.scalar = stc_data.quat.scalar;
       for ( int iinc = 0; iinc < 3; ++iinc ) {
-         ref_frame_data->state.quat_vector[iinc] = stc_data.quat_vector[iinc];
+         ref_frame_data->state.quat.vector[iinc] = stc_data.quat.vector[iinc];
          ref_frame_data->state.ang_vel[iinc]     = stc_data.ang_vel[iinc];
       }
       // Time tag for this state data.

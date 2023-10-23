@@ -49,7 +49,7 @@ v@trick_link_dependency{../../source/TrickHLA/OpaqueBuffer.cpp}
 #pragma GCC diagnostic pop
 
 // SpaceFOM include files.
-#include "SpaceFOM/SpaceTimeCoordinateData.h"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 namespace SpaceFOM
 {

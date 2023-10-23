@@ -45,8 +45,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/LagCompensation.hh"
 
 // SpaceFOM include files.
-#include "SpaceFOM/QuaternionData.h"
-#include "SpaceFOM/SpaceTimeCoordinateData.h"
+#include "SpaceFOM/QuaternionData.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 #include "SpaceFOM/RefFrameBase.hh"
 
 namespace SpaceFOM

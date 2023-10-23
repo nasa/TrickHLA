@@ -142,11 +142,11 @@ void PhysicalEntityLagCompBase::initialize_states()
       this->accel[iinc]     = this->entity.pe_packing_data.accel[iinc];
       this->rot_accel[iinc] = this->entity.pe_packing_data.rot_accel[iinc];
    }
-   compute_quat_dot( this->lag_comp_data.quat_scalar,
-                     this->lag_comp_data.quat_vector,
-                     this->lag_comp_data.ang_vel,
-                     &(this->Q_dot.scalar),
-                     this->Q_dot.vector );
+   QuaternionData::compute_quat_dot( this->lag_comp_data.quat.scalar,
+                                     this->lag_comp_data.quat.vector,
+                                     this->lag_comp_data.ang_vel,
+                                     &(this->Q_dot.scalar),
+                                     this->Q_dot.vector );
 
    // Return to calling routine.
    return;
@@ -191,7 +191,7 @@ void PhysicalEntityLagCompBase::copy_state_from_entity()
 void PhysicalEntityLagCompBase::print_lag_comp_data()
 {
    double euler_angles[3];
-   double * quat = &(lag_comp_data.quat_scalar);
+   double * quat = &(lag_comp_data.quat.scalar);
 
    // Compute the attitude Euler angles.
    euler_quat( euler_angles, quat, 1, Pitch_Yaw_Roll );
@@ -211,10 +211,10 @@ void PhysicalEntityLagCompBase::print_lag_comp_data()
         << "\t\t" << this->accel[1] << ", "
         << "\t\t" << this->accel[2] << endl;
    cout << "\tattitude (s;v): "
-        << "\t\t" << this->lag_comp_data.quat_scalar << "; "
-        << "\t\t" << this->lag_comp_data.quat_vector[0] << ", "
-        << "\t\t" << this->lag_comp_data.quat_vector[1] << ", "
-        << "\t\t" << this->lag_comp_data.quat_vector[2] << endl;
+        << "\t\t" << this->lag_comp_data.quat.scalar << "; "
+        << "\t\t" << this->lag_comp_data.quat.vector[0] << ", "
+        << "\t\t" << this->lag_comp_data.quat.vector[1] << ", "
+        << "\t\t" << this->lag_comp_data.quat.vector[2] << endl;
    cout << "\tattitude (PYR): "
         << "\t\t" << euler_angles[0] << ", "
         << "\t\t" << euler_angles[1] << ", "

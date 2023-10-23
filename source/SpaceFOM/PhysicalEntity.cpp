@@ -204,9 +204,9 @@ void PhysicalEntity::pack()
       state.vel[iinc] = physical_data->state.vel[iinc];
    }
    // Attitude quaternion.
-   state.quat_scalar = physical_data->state.quat_scalar;
+   state.quat.scalar = physical_data->state.quat.scalar;
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      state.quat_vector[iinc] = physical_data->state.quat_vector[iinc];
+      state.quat.vector[iinc] = physical_data->state.quat.vector[iinc];
       state.ang_vel[iinc]     = physical_data->state.ang_vel[iinc];
    }
 
@@ -249,10 +249,10 @@ void PhysicalEntity::pack()
            << "\t\t" << state.pos[1] << endl
            << "\t\t" << state.pos[2] << endl
            << "\tattitude (quaternion:s,v): " << endl
-           << "\t\t" << state.quat_scalar << endl
-           << "\t\t" << state.quat_vector[0] << endl
-           << "\t\t" << state.quat_vector[1] << endl
-           << "\t\t" << state.quat_vector[2] << endl
+           << "\t\t" << state.quat.scalar << endl
+           << "\t\t" << state.quat.vector[0] << endl
+           << "\t\t" << state.quat.vector[1] << endl
+           << "\t\t" << state.quat.vector[2] << endl
            << endl;
    }
 
@@ -295,9 +295,9 @@ void PhysicalEntity::unpack()
          physical_data->state.vel[iinc] = state.vel[iinc];
       }
       // Attitude quaternion.
-      physical_data->state.quat_scalar = state.quat_scalar;
+      physical_data->state.quat.scalar = state.quat.scalar;
       for ( int iinc = 0; iinc < 3; ++iinc ) {
-         physical_data->state.quat_vector[iinc] = state.quat_vector[iinc];
+         physical_data->state.quat.vector[iinc] = state.quat.vector[iinc];
          physical_data->state.ang_vel[iinc]     = state.ang_vel[iinc];
       }
       // Time tag for this state data.
@@ -380,10 +380,10 @@ void PhysicalEntity::unpack()
            << "\t\t" << state.pos[1] << endl
            << "\t\t" << state.pos[2] << endl
            << "\tattitude (quaternion:s,v): " << endl
-           << "\t\t" << state.quat_scalar << endl
-           << "\t\t" << state.quat_vector[0] << endl
-           << "\t\t" << state.quat_vector[1] << endl
-           << "\t\t" << state.quat_vector[2] << endl
+           << "\t\t" << state.quat.scalar << endl
+           << "\t\t" << state.quat.vector[0] << endl
+           << "\t\t" << state.quat.vector[1] << endl
+           << "\t\t" << state.quat.vector[2] << endl
            << endl;
    }
 

@@ -42,7 +42,7 @@ NASA, Johnson Space Center\n
 
 // SpaceFOM include files.
 #include "SpaceFOM/DynamicalEntityBase.hh"
-#include "SpaceFOM/DynamicalEntityData.h"
+#include "SpaceFOM/DynamicalEntityData.hh"
 #include "SpaceFOM/PhysicalEntity.hh"
 
 namespace TrickHLA

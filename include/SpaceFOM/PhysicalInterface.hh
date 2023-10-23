@@ -41,7 +41,7 @@ NASA, Johnson Space Center\n
 
 // SpaceFOM include files.
 #include "SpaceFOM/PhysicalInterfaceBase.hh"
-#include "SpaceFOM/PhysicalInterfaceData.h"
+#include "SpaceFOM/PhysicalInterfaceData.hh"
 
 namespace TrickHLA
 {

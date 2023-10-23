@@ -76,7 +76,7 @@ class SpaceFOMPhysicalEntityObject(TrickHLAObjectConfig):
       entity_instance_name = self.trick_entity_sim_obj_name
 
       ## Set up the map to the reference PhysicalEntity's name.
-      trick_data_name = str(entity_instance_name) + '.name'
+      trick_data_name = str(entity_instance_name) + '.pe_packing_data.name'
       attribute = TrickHLAAttributeConfig( 'name',
                                            trick_data_name,
                                            self.hla_create,
@@ -87,7 +87,7 @@ class SpaceFOMPhysicalEntityObject(TrickHLAObjectConfig):
       self.add_attribute( attribute )
 
       ## Set up the map to the reference PhysicalEntity's type.
-      trick_data_name = str(entity_instance_name) + '.type'
+      trick_data_name = str(entity_instance_name) + '.pe_packing_data.type'
       attribute = TrickHLAAttributeConfig( 'type',
                                            trick_data_name,
                                            self.hla_create,
@@ -98,7 +98,7 @@ class SpaceFOMPhysicalEntityObject(TrickHLAObjectConfig):
       self.add_attribute( attribute )
 
       ## Set up the map to the reference PhysicalEntity's status.
-      trick_data_name = str(entity_instance_name) + '.status'
+      trick_data_name = str(entity_instance_name) + '.pe_packing_data.status'
       attribute = TrickHLAAttributeConfig( 'status',
                                            trick_data_name,
                                            self.hla_create,
@@ -109,7 +109,7 @@ class SpaceFOMPhysicalEntityObject(TrickHLAObjectConfig):
       self.add_attribute( attribute )
 
       ## Set up the map to the name of the PhysicalEntity's parent reference frame.
-      trick_data_name = str(entity_instance_name) + '.parent_frame'
+      trick_data_name = str(entity_instance_name) + '.pe_packing_data.parent_frame'
       attribute = TrickHLAAttributeConfig( 'parent_reference_frame',
                                            trick_data_name,
                                            self.hla_create,
@@ -131,7 +131,7 @@ class SpaceFOMPhysicalEntityObject(TrickHLAObjectConfig):
       self.add_attribute( attribute )
 
       ## Set up the map to the PhysicalEntity's translational acceleration.
-      trick_data_name = str(entity_instance_name) + '.accel'
+      trick_data_name = str(entity_instance_name) + '.pe_packing_data.accel'
       attribute = TrickHLAAttributeConfig( 'acceleration',
                                            trick_data_name,
                                            self.hla_create,
@@ -142,7 +142,7 @@ class SpaceFOMPhysicalEntityObject(TrickHLAObjectConfig):
       self.add_attribute( attribute )
 
       ## Set up the map to the PhysicalEntity's rotational acceleration.
-      trick_data_name = str(entity_instance_name) + '.rot_accel'
+      trick_data_name = str(entity_instance_name) + '.pe_packing_data.rot_accel'
       attribute = TrickHLAAttributeConfig( 'rotational_acceleration',
                                            trick_data_name,
                                            self.hla_create,
@@ -153,7 +153,7 @@ class SpaceFOMPhysicalEntityObject(TrickHLAObjectConfig):
       self.add_attribute( attribute )
 
       ## Set up the map to the PhysicalEntity's center of mass.
-      trick_data_name = str(entity_instance_name) + '.cm'
+      trick_data_name = str(entity_instance_name) + '.pe_packing_data.cm'
       attribute = TrickHLAAttributeConfig( 'center_of_mass',
                                            trick_data_name,
                                            self.hla_create,

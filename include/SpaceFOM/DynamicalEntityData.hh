@@ -29,14 +29,7 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_DYNAMICAL_ENTITY_FRAME_DATA_H
 #define SPACEFOM_DYNAMICAL_ENTITY_FRAME_DATA_H
 
-#ifdef __cplusplus
-// Place the struct in a namespace when C++.
-#ifndef SWIG
-//namespace SpaceFOM {
-#endif
-// Mark this as a C compatible data structure.
-extern "C" {
-#endif
+namespace SpaceFOM {
 
 typedef struct {
 
@@ -50,11 +43,6 @@ typedef struct {
 
 } DynamicalEntityData;
 
-#ifdef __cplusplus
-} // extern "C"
-#ifndef SWIG
-//} // namespace SpaceFOM
-#endif
-#endif
+} // namespace SpaceFOM
 
 #endif // SPACEFOM_DYNAMICAL_ENTITY_FRAME_DATA_H: Do NOT put anything after this line!

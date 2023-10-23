@@ -91,8 +91,8 @@ PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
    // Setup the Space-Time-Coordinate data.
    V_INIT( pe_packing_data.state.pos );
    V_INIT( pe_packing_data.state.vel );
-   pe_packing_data.state.quat_scalar = 1.0;
-   V_INIT( pe_packing_data.state.quat_vector );
+   pe_packing_data.state.quat.scalar = 1.0;
+   V_INIT( pe_packing_data.state.quat.vector );
    V_INIT( pe_packing_data.state.ang_vel );
    pe_packing_data.state.time = 0.0;
 
