@@ -280,11 +280,15 @@ federate.set_time_constrained( True )
 # If it is the RRFP, it will publish the frame.
 # If it is NOT the RRFP, it will subscribe to the frame.
 #---------------------------------------------------------------------------
+#root_frame = SpaceFOMRefFrameObject( federate.is_RRFP,
+#                                     'RootFrame',
+#                                     root_ref_frame.frame_packing,
+#                                     'root_ref_frame.frame_packing',
+#                                     frame_lag_comp = root_ref_frame.lag_compensation )
 root_frame = SpaceFOMRefFrameObject( federate.is_RRFP,
                                      'RootFrame',
                                      root_ref_frame.frame_packing,
-                                     'root_ref_frame.frame_packing',
-                                     frame_lag_comp = root_ref_frame.lag_compensation )
+                                     'root_ref_frame.frame_packing' )
 
 # Set the debug flag for the root reference frame.
 root_ref_frame.frame_packing.debug = verbose
@@ -303,11 +307,15 @@ root_ref_frame.lag_compensation.set_integ_dt( 0.05 )
 # If it is the RRFP, it will publish the frame.
 # If it is NOT the RRFP, it will subscribe to the frame.
 #---------------------------------------------------------------------------
+#frame_A = SpaceFOMRefFrameObject( False,
+#                                  'FrameA',
+#                                  ref_frame_A.frame_packing,
+#                                  'ref_frame_A.frame_packing',
+#                                  frame_lag_comp = ref_frame_A.lag_compensation )
 frame_A = SpaceFOMRefFrameObject( False,
                                   'FrameA',
                                   ref_frame_A.frame_packing,
-                                  'ref_frame_A.frame_packing',
-                                  frame_lag_comp = ref_frame_A.lag_compensation )
+                                  'ref_frame_A.frame_packing' )
 
 # Set the debug flag for the root reference frame.
 ref_frame_A.frame_packing.debug = verbose
@@ -428,13 +436,13 @@ federate.initialize()
 
 # These MUST BE called after initialize.
 # Configure reference frame lag compensation.
-root_frame.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
-frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
+#root_frame.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
+#frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 # Configure entity lag compensation.
 #phy_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
-phy_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_SEND_SIDE )
-#phy_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
+#phy_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_SEND_SIDE )
+phy_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 
 #---------------------------------------------------------------------------

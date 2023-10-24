@@ -118,16 +118,14 @@ void PhysicalEntity::initialize( PhysicalEntityData *physical_data_ptr )
    return;
 }
 
-void PhysicalEntity::pack()
+
+/*!
+ * @job_class{scheduled}
+ */
+void PhysicalEntity::pack_from_working_data()
 {
    ostringstream errmsg;
    int           iinc;
-
-   // Check for initialization.
-   if ( !initialized ) {
-      cout << "JEODPhysicalEntity::pack() ERROR: The initialize() function has not"
-           << " been called!" << endl;
-   }
 
    // NOTE: Because TrickHLA handles the bundling of locally owned attributes
    // we do not need to check the ownership status of them here like we do
@@ -141,7 +139,7 @@ void PhysicalEntity::pack()
          pe_packing_data.name = trick_MM->mm_strdup( physical_data->name );
       }
    } else {
-      errmsg << "SpaceFOM::PhysicalEntity::pack():" << __LINE__
+      errmsg << "SpaceFOM::PhysicalEntity::copy_working_data():" << __LINE__
              << " ERROR: Unexpected NULL name for PhysicalEntity!" << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
@@ -190,7 +188,7 @@ void PhysicalEntity::pack()
          pe_packing_data.parent_frame = trick_MM->mm_strdup( physical_data->parent_frame );
       }
    } else {
-      errmsg << "SpaceFOM::PhysicalEntity::pack():" << __LINE__
+      errmsg << "SpaceFOM::PhysicalEntity::copy_working_data():" << __LINE__
              << " ERROR: Unexpected NULL parent frame for PhysicalEntity: "
              << physical_data->name << THLA_ENDL;
       // Print message and terminate.
@@ -234,47 +232,18 @@ void PhysicalEntity::pack()
       body_wrt_struct.vector[iinc] = physical_data->body_wrt_struct.vector[iinc];
    }
 
-   // Print out debug information if desired.
-   if ( debug ) {
-      cout.precision( 15 );
-      cout << "PhysicalEntity::pack():" << __LINE__ << endl
-           << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname:   '" << ( pe_packing_data.name != NULL ? pe_packing_data.name : "" ) << "'" << endl
-           << "\ttype:   '" << ( pe_packing_data.type != NULL ? pe_packing_data.type : "" ) << "'" << endl
-           << "\tstatus: '" << ( pe_packing_data.status != NULL ? pe_packing_data.status : "" ) << "'" << endl
-           << "\tparent: '" << ( pe_packing_data.parent_frame != NULL ? pe_packing_data.parent_frame : "" ) << "'" << endl
-           << "\ttime: " << state.time << endl
-           << "\tposition: " << endl
-           << "\t\t" << state.pos[0] << endl
-           << "\t\t" << state.pos[1] << endl
-           << "\t\t" << state.pos[2] << endl
-           << "\tattitude (quaternion:s,v): " << endl
-           << "\t\t" << state.quat.scalar << endl
-           << "\t\t" << state.quat.vector[0] << endl
-           << "\t\t" << state.quat.vector[1] << endl
-           << "\t\t" << state.quat.vector[2] << endl
-           << endl;
-   }
-
-   // Encode the data into the buffer.
-   stc_encoder.encode();
-   quat_encoder.encode();
-
+   // Return to the calling routine.
    return;
+
 }
 
-void PhysicalEntity::unpack()
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void PhysicalEntity::unpack_into_working_data()
 {
-   // double dt; // Local vs. remote time difference.
-
-   if ( !initialized ) {
-      cout << "PhysicalEntity::unpack():" << __LINE__
-           << " ERROR: The initialize() function has not been called!" << endl;
-   }
-
-   // Use the HLA encoder helpers to decode the PhysicalEntity fixed record.
-   stc_encoder.decode();
-   quat_encoder.decode();
 
    // If the HLA attribute has changed and is remotely owned (i.e. is
    // coming from another federate) then override our simulation state with the
@@ -363,28 +332,6 @@ void PhysicalEntity::unpack()
       for ( int iinc = 0; iinc < 3; ++iinc ) {
          physical_data->body_wrt_struct.vector[iinc] = body_wrt_struct.vector[iinc];
       }
-   }
-
-   // Print out debug information if desired.
-   if ( debug ) {
-      cout.precision( 15 );
-      cout << "PhysicalEntity::unpack():" << __LINE__ << endl
-           << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname:   '" << ( pe_packing_data.name != NULL ? pe_packing_data.name : "" ) << "'" << endl
-           << "\ttype:   '" << ( pe_packing_data.type != NULL ? pe_packing_data.type : "" ) << "'" << endl
-           << "\tstatus: '" << ( pe_packing_data.status != NULL ? pe_packing_data.status : "" ) << "'" << endl
-           << "\tparent: '" << ( pe_packing_data.parent_frame != NULL ? pe_packing_data.parent_frame : "" ) << "'" << endl
-           << "\ttime: " << state.time << endl
-           << "\tposition: " << endl
-           << "\t\t" << state.pos[0] << endl
-           << "\t\t" << state.pos[1] << endl
-           << "\t\t" << state.pos[2] << endl
-           << "\tattitude (quaternion:s,v): " << endl
-           << "\t\t" << state.quat.scalar << endl
-           << "\t\t" << state.quat.vector[0] << endl
-           << "\t\t" << state.quat.vector[1] << endl
-           << "\t\t" << state.quat.vector[2] << endl
-           << endl;
    }
 
    return;

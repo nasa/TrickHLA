@@ -427,6 +427,99 @@ void PhysicalEntityBase::set_parent_frame( char const *new_frame )
    return;
 }
 
+
+/*!
+ * @job_class{scheduled}
+ */
+void PhysicalEntityBase::pack()
+{
+
+   // Check for initialization.
+   if ( !initialized ) {
+      cout << "JEODPhysicalEntity::pack() ERROR: The initialize() function has not"
+           << " been called!" << endl;
+   }
+
+   // Check for latency/lag compensation.
+   if ( this->object->lag_comp == NULL ) {
+      this->pack_from_working_data();
+   }
+
+   // Print out debug information if desired.
+   if ( debug ) {
+      cout.precision( 15 );
+      cout << "PhysicalEntity::pack():" << __LINE__ << endl
+           << "\tObject-Name: '" << object->get_name() << "'" << endl
+           << "\tname:   '" << ( pe_packing_data.name != NULL ? pe_packing_data.name : "" ) << "'" << endl
+           << "\ttype:   '" << ( pe_packing_data.type != NULL ? pe_packing_data.type : "" ) << "'" << endl
+           << "\tstatus: '" << ( pe_packing_data.status != NULL ? pe_packing_data.status : "" ) << "'" << endl
+           << "\tparent: '" << ( pe_packing_data.parent_frame != NULL ? pe_packing_data.parent_frame : "" ) << "'" << endl
+           << "\ttime: " << state.time << endl
+           << "\tposition: " << endl
+           << "\t\t" << state.pos[0] << endl
+           << "\t\t" << state.pos[1] << endl
+           << "\t\t" << state.pos[2] << endl
+           << "\tattitude (quaternion:s,v): " << endl
+           << "\t\t" << state.quat.scalar << endl
+           << "\t\t" << state.quat.vector[0] << endl
+           << "\t\t" << state.quat.vector[1] << endl
+           << "\t\t" << state.quat.vector[2] << endl
+           << endl;
+   }
+
+   // Encode the data into the buffer.
+   stc_encoder.encode();
+   quat_encoder.encode();
+
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void PhysicalEntityBase::unpack()
+{
+   // double dt; // Local vs. remote time difference.
+
+   if ( !initialized ) {
+      cout << "PhysicalEntity::unpack():" << __LINE__
+           << " ERROR: The initialize() function has not been called!" << endl;
+   }
+
+   // Use the HLA encoder helpers to decode the PhysicalEntity fixed record.
+   stc_encoder.decode();
+   quat_encoder.decode();
+
+   // Transfer the packing data into the working data.
+   this->unpack_into_working_data();
+
+   // Print out debug information if desired.
+   if ( debug ) {
+      cout.precision( 15 );
+      cout << "PhysicalEntity::unpack():" << __LINE__ << endl
+           << "\tObject-Name: '" << object->get_name() << "'" << endl
+           << "\tname:   '" << ( pe_packing_data.name != NULL ? pe_packing_data.name : "" ) << "'" << endl
+           << "\ttype:   '" << ( pe_packing_data.type != NULL ? pe_packing_data.type : "" ) << "'" << endl
+           << "\tstatus: '" << ( pe_packing_data.status != NULL ? pe_packing_data.status : "" ) << "'" << endl
+           << "\tparent: '" << ( pe_packing_data.parent_frame != NULL ? pe_packing_data.parent_frame : "" ) << "'" << endl
+           << "\ttime: " << state.time << endl
+           << "\tposition: " << endl
+           << "\t\t" << state.pos[0] << endl
+           << "\t\t" << state.pos[1] << endl
+           << "\t\t" << state.pos[2] << endl
+           << "\tattitude (quaternion:s,v): " << endl
+           << "\t\t" << state.quat.scalar << endl
+           << "\t\t" << state.quat.vector[0] << endl
+           << "\t\t" << state.quat.vector[1] << endl
+           << "\t\t" << state.quat.vector[2] << endl
+           << endl;
+   }
+
+   return;
+}
+
+
 /*!
  * @job_class{default_data}
  */

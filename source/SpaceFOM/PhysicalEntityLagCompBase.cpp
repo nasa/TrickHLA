@@ -157,7 +157,33 @@ void PhysicalEntityLagCompBase::initialize_states()
 /*!
  * @job_class{scheduled}
  */
-void PhysicalEntityLagCompBase::copy_state_to_entity()
+void PhysicalEntityLagCompBase::bypass_send_lag_compensation()
+{
+   // When lag compensation is present but disabled, we still need to copy
+   // the working data into the packing data.  This makes sure that the
+   // current working state is packed.
+   this->entity.pack_from_working_data();
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void PhysicalEntityLagCompBase::bypass_receive_lag_compensation()
+{
+   // When lag compensation is present but disabled, we still need to copy
+   // the packing data back into the working data.  This makes sure that the
+   // working state is updated from the received packing data.
+   this->entity.unpack_into_working_data();
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void PhysicalEntityLagCompBase::unload_lag_comp_data()
 {
    // Copy the current PhysicalEntity state over to the lag compensated state.
    this->entity.state = this->lag_comp_data;
@@ -173,7 +199,7 @@ void PhysicalEntityLagCompBase::copy_state_to_entity()
 /*!
  * @job_class{scheduled}
  */
-void PhysicalEntityLagCompBase::copy_state_from_entity()
+void PhysicalEntityLagCompBase::load_lag_comp_data()
 {
    // Copy the current PhysicalEntity state over to the lag compensated state.
    this->lag_comp_data = this->entity.state;
