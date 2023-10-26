@@ -90,14 +90,14 @@ class RefFrameLagCompBase : public TrickHLA::LagCompensation
    /*! @brief When lag compensation is disabled, this function is called to
     * bypass the send side lag compensation and your implementation must copy
     * the sim-data to the lag-comp data to effect the bypass. */
-   virtual void bypass_send_lag_compensation() = 0;
+   virtual void bypass_send_lag_compensation();
 
    /*! @brief When lag compensation is disabled, this function is called to
     * bypass the receive side lag compensation and your implementation must
     * copy the lag-comp data to the sim-data to effect the bypass. You must
     * make sure to check the lag-comp data was received before copying to
     * the sim-data otherwise you will be copying stale data. */
-   virtual void bypass_receive_lag_compensation() = 0;
+   virtual void bypass_receive_lag_compensation();
 
   public:
    bool debug; ///< @trick_units{--} Debug output flag.
@@ -122,11 +122,11 @@ class RefFrameLagCompBase : public TrickHLA::LagCompensation
       const double t_begin,
       const double t_end   ) = 0;
 
-   /*! @brief Copy the lag compensation state into the reference frame state. */
-   virtual void copy_state_to_frame();
+   /*! @brief Load the lag compensation state into the packing data. */
+   virtual void unload_lag_comp_data();
 
-   /*! @brief Copy the reference frame state into the lag compensation state. */
-   virtual void copy_state_from_frame();
+   /*! @brief Unload the lag compensation state into the packing data. */
+   virtual void load_lag_comp_data();
 
    /*! @brief Print out the lag compensation data values. */
    virtual void print_lag_comp_data();

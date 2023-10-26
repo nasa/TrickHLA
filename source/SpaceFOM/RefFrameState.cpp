@@ -104,34 +104,13 @@ void RefFrameState::initialize(
    return;
 }
 
-void RefFrameState::pack()
+
+/*!
+ * @job_class{scheduled}
+ */
+void RefFrameState::pack_from_working_data()
 {
-   ostringstream errmsg;
-   int           iinc;
-
-   // Check for initialization.
-   if ( !initialized ) {
-      cout << "RefFrameState::pack() ERROR: The initialize() function has not"
-           << " been called!" << endl;
-   }
-
-   // NOTE: Because TrickHLA handles the bundling of locally owned attributes
-   // we do not need to check the ownership status of them here like we do
-   // in the unpack() function, since we don't run the risk of corrupting our
-   // state.
-
-   // Check for name change.
-   if ( ref_frame_data->name != NULL ) {
-      if ( strcmp( ref_frame_data->name, packing_data.name ) ) {
-         trick_MM->delete_var( (void *)packing_data.name );
-         packing_data.name = trick_MM->mm_strdup( ref_frame_data->name );
-      }
-   } else {
-      errmsg << "SpaceFOM::RefFrameState::pack():" << __LINE__
-             << " ERROR: Unexpected NULL name for ReferenceFrame!" << THLA_ENDL;
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-   }
+   int iinc;
 
    // Check for parent frame change.
    if ( ref_frame_data->parent_name != NULL ) {
@@ -167,38 +146,15 @@ void RefFrameState::pack()
    // Time tag for this state data.
    packing_data.state.time = ref_frame_data->state.time = get_scenario_time();
 
-   // Print out debug information if desired.
-   if ( debug ) {
-      cout.precision( 15 );
-      cout << "RefFrameState::pack():" << __LINE__ << endl
-           << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname: '" << ( this->packing_data.name != NULL ? this->packing_data.name : "" ) << "'" << endl
-           << "\tparent_name: '" << ( this->packing_data.parent_name != NULL ? this->packing_data.parent_name : "" ) << "'" << endl
-           << "\ttime: " << packing_data.state.time << endl
-           << "\tposition: " << endl
-           << "\t\t" << packing_data.state.pos[0] << endl
-           << "\t\t" << packing_data.state.pos[1] << endl
-           << "\t\t" << packing_data.state.pos[2] << endl
-           << endl;
-   }
-
-   // Encode the data into the reference frame buffer.
-   stc_encoder.encode();
-
    return;
 }
 
-void RefFrameState::unpack()
+
+/*!
+ * @job_class{scheduled}
+ */
+void RefFrameState::unpack_into_working_data()
 {
-   // double dt; // Local vs. remote time difference.
-
-   if ( !initialized ) {
-      cout << "RefFrameState::unpack():" << __LINE__
-           << " ERROR: The initialize() function has not been called!" << endl;
-   }
-
-   // Use the HLA encoder helpers to decode the reference frame fixed record.
-   stc_encoder.decode();
 
    // If the HLA attribute has changed and is remotely owned (i.e. is
    // coming from another federate) then override our simulation state with the
@@ -255,21 +211,6 @@ void RefFrameState::unpack()
       }
       // Time tag for this state data.
       ref_frame_data->state.time = packing_data.state.time;
-   }
-
-   // Print out debug information if desired.
-   if ( debug ) {
-      cout.precision( 15 );
-      cout << "RefFrameState::unpack():" << __LINE__ << endl
-           << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname: '" << ( this->packing_data.name != NULL ? this->packing_data.name : "" ) << "'" << endl
-           << "\tparent_name: '" << ( this->packing_data.parent_name != NULL ? this->packing_data.parent_name : "" ) << "'" << endl
-           << "\ttime: " << packing_data.state.time << endl
-           << "\tposition: " << endl
-           << "\t\t" << packing_data.state.pos[0] << endl
-           << "\t\t" << packing_data.state.pos[1] << endl
-           << "\t\t" << packing_data.state.pos[2] << endl
-           << endl;
    }
 
    return;

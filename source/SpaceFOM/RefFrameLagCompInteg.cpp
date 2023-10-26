@@ -114,7 +114,8 @@ void RefFrameLagCompInteg::send_lag_compensation()
    }
 
    // Copy the current RefFrame state over to the lag compensated state.
-   this->copy_state_from_frame();
+   this->ref_frame.pack_from_working_data();
+   this->load_lag_comp_data();
    QuaternionData::compute_quat_dot( this->lag_comp_data.quat.scalar,
                                      this->lag_comp_data.quat.vector,
                                      this->lag_comp_data.ang_vel,
@@ -136,11 +137,8 @@ void RefFrameLagCompInteg::send_lag_compensation()
       this->print_lag_comp_data();
    }
 
-   // Copy the compensated state to the RefFrame state data.
-   // NOTE: You do not want to do this if the RefFrame state is the
-   // simulation working state.  This only works if using buffered values
-   // of the working state.
-   this->copy_state_to_frame();
+   // Copy the compensated state to the packing data.
+   this->unload_lag_comp_data();
 
    // Return to calling routine.
    return;
@@ -171,7 +169,7 @@ void RefFrameLagCompInteg::receive_lag_compensation()
    if ( this->state_attr->is_received() ) {
 
       // Copy the current RefFrame state over to the lag compensated state.
-      this->copy_state_from_frame();
+      this->load_lag_comp_data();
       QuaternionData::compute_quat_dot( this->lag_comp_data.quat.scalar,
                                         this->lag_comp_data.quat.vector,
                                         this->lag_comp_data.ang_vel,
@@ -195,10 +193,11 @@ void RefFrameLagCompInteg::receive_lag_compensation()
 
    }
 
-   // Copy the compensated state to the RefFrame state data.
-   // NOTE: If you are using a buffered working state, then you will also
-   // need to provide code to copy into the working state.
-   this->copy_state_to_frame();
+   // Copy the compensated state to the packing data.
+   this->unload_lag_comp_data();
+
+   // Move the unpacked data into the working data.
+   this->ref_frame.unpack_into_working_data();
 
    // Return to calling routine.
    return;

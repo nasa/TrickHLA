@@ -131,7 +131,33 @@ void RefFrameLagCompBase::initialize_states()
 /*!
  * @job_class{scheduled}
  */
-void RefFrameLagCompBase::copy_state_to_frame()
+void RefFrameLagCompBase::bypass_send_lag_compensation()
+{
+   // When lag compensation is present but disabled, we still need to copy
+   // the working data into the packing data.  This makes sure that the
+   // current working state is packed.
+   this->ref_frame.pack_from_working_data();
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void RefFrameLagCompBase::bypass_receive_lag_compensation()
+{
+   // When lag compensation is present but disabled, we still need to copy
+   // the packing data back into the working data.  This makes sure that the
+   // working state is updated from the received packing data.
+   this->ref_frame.unpack_into_working_data();
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void RefFrameLagCompBase::unload_lag_comp_data()
 {
    // Copy the current RefFrameLag state over to the lag compensated state.
    this->ref_frame.packing_data.state = this->lag_comp_data;
@@ -143,7 +169,7 @@ void RefFrameLagCompBase::copy_state_to_frame()
 /*!
  * @job_class{scheduled}
  */
-void RefFrameLagCompBase::copy_state_from_frame()
+void RefFrameLagCompBase::load_lag_comp_data()
 {
    // Copy the current RefFrameLag state over to the lag compensated state.
    this->lag_comp_data = this->ref_frame.packing_data.state;

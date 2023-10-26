@@ -166,11 +166,21 @@ class RefFrameBase : public TrickHLA::Packing
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to pack the data before the data is sent to the RTI. */
-   virtual void pack() = 0;
+   virtual void pack();
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to unpack the data after data is received from the RTI. */
-   virtual void unpack() = 0;
+   virtual void unpack();
+
+   /*! @brief Packs the packing data object from the working data object(s),
+    *  @detail Called from the pack() function to pack the data from the working
+    *  data objects(s) into the pe_packing_data object.  */
+   virtual void pack_from_working_data() = 0;
+
+   /*! @brief Unpacks the packing data object into the working data object(s),
+    *  @detail Called from the unpack() function to unpack the data in the
+    *  pe_packing_data object into the working data object(s). */
+   virtual void unpack_into_working_data() = 0;
 
    // Access to protected data.
    virtual void set_object( TrickHLA::Object *mngr_obj );

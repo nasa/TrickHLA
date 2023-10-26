@@ -126,24 +126,6 @@ void RefFrameLagComp::initialize()
 
 
 /*!
- * @job_class{scheduled}
- */
-void RefFrameLagComp::bypass_send_lag_compensation()
-{
-   return;
-}
-
-
-/*!
- * @job_class{scheduled}
- */
-void RefFrameLagComp::bypass_receive_lag_compensation()
-{
-   return;
-}
-
-
-/*!
  * @job_class{integration}
  */
 int RefFrameLagComp::compensate(

@@ -434,7 +434,7 @@ void PhysicalEntityBase::pack()
 
    // Check for initialization.
    if ( !initialized ) {
-      cout << "JEODPhysicalEntity::pack() ERROR: The initialize() function has not"
+      cout << "PhysicalEntity::pack() ERROR: The initialize() function has not"
            << " been called!" << endl;
    }
 
