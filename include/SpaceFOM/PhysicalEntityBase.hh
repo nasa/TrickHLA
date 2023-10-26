@@ -145,7 +145,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
     *  @return Current time associated with the PhysicalEntity. */
    double const get_time()
    {
-      return state.time;
+      return pe_packing_data.state.time;
    }
 
    // From the TrickHLA::Packing class.
@@ -202,11 +202,6 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    // Instantiate the aggregate data encoders
    SpaceTimeCoordinateEncoder stc_encoder;  ///< @trick_units{--} Entity state encoder.
    QuaternionEncoder          quat_encoder; ///< @trick_units{--} Attitude quaternion encoder.
-
-   // Note: These are references that get assignment from the encoders in the
-   // initialization list of the class constructor.  Essentially these are short cuts.
-   SpaceTimeCoordinateData &state; ///< @trick_units{--} Space time coordinate state.
-   QuaternionData &body_wrt_struct; ///< @trick_units{--} Orientation of the body frame wrt. the structural frame.
 
   private:
    // This object is not copyable

@@ -63,7 +63,7 @@ RefFrameTree::~RefFrameTree()
 bool RefFrameTree::add_frame( RefFrameBase *frame_ptr )
 {
    if ( frame_ptr != NULL ) {
-      ref_frame_map.insert( pair< string, RefFrameBase * >( frame_ptr->name, frame_ptr ) );
+      ref_frame_map.insert( pair< string, RefFrameBase * >( frame_ptr->packing_data.name, frame_ptr ) );
       return ( true );
    }
    return ( true );
@@ -105,7 +105,7 @@ bool RefFrameTree::has_frame( string const &name )
 
 bool RefFrameTree::has_frame( RefFrameBase const *frame )
 {
-   return ( has_frame( frame->name ) );
+   return ( has_frame( frame->packing_data.name ) );
 }
 
 RefFrameBase *RefFrameTree::find_frame( char const *name )

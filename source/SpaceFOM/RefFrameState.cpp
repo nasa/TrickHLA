@@ -91,7 +91,7 @@ void RefFrameState::initialize(
    if ( ref_frame_data_ptr == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameState::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL reference frame: " << this->name << THLA_ENDL;
+             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -122,9 +122,9 @@ void RefFrameState::pack()
 
    // Check for name change.
    if ( ref_frame_data->name != NULL ) {
-      if ( strcmp( ref_frame_data->name, name ) ) {
-         trick_MM->delete_var( (void *)name );
-         name = trick_MM->mm_strdup( ref_frame_data->name );
+      if ( strcmp( ref_frame_data->name, packing_data.name ) ) {
+         trick_MM->delete_var( (void *)packing_data.name );
+         packing_data.name = trick_MM->mm_strdup( ref_frame_data->name );
       }
    } else {
       errmsg << "SpaceFOM::RefFrameState::pack():" << __LINE__
@@ -135,52 +135,50 @@ void RefFrameState::pack()
 
    // Check for parent frame change.
    if ( ref_frame_data->parent_name != NULL ) {
-      if ( parent_name != NULL ) {
+      if ( packing_data.parent_name != NULL ) {
          // We have a parent frame; so, check to see if frame names are different.
-         if ( strcmp( ref_frame_data->parent_name, parent_name ) ) {
+         if ( strcmp( ref_frame_data->parent_name, packing_data.parent_name ) ) {
             // Frames are different, so reassign the new frame string.
-            trick_MM->delete_var( (void *)parent_name );
-            parent_name = trick_MM->mm_strdup( ref_frame_data->parent_name );
+            trick_MM->delete_var( (void *)packing_data.parent_name );
+            packing_data.parent_name = trick_MM->mm_strdup( ref_frame_data->parent_name );
          }
       } else {
-         parent_name = trick_MM->mm_strdup( ref_frame_data->parent_name );
+         packing_data.parent_name = trick_MM->mm_strdup( ref_frame_data->parent_name );
       }
    } else {
-      if ( parent_name != NULL ) {
-         trick_MM->delete_var( (void *)parent_name );
-         parent_name = NULL;
+      if ( packing_data.parent_name != NULL ) {
+         trick_MM->delete_var( (void *)packing_data.parent_name );
+         packing_data.parent_name = NULL;
       }
    }
 
    // Pack the data.
    // Position and velocity vectors.
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      stc_data.pos[iinc] = ref_frame_data->state.pos[iinc];
-      stc_data.vel[iinc] = ref_frame_data->state.vel[iinc];
+      packing_data.state.pos[iinc] = ref_frame_data->state.pos[iinc];
+      packing_data.state.vel[iinc] = ref_frame_data->state.vel[iinc];
    }
    // Attitude quaternion.
-   stc_data.quat.scalar = ref_frame_data->state.quat.scalar;
+   packing_data.state.quat.scalar = ref_frame_data->state.quat.scalar;
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      stc_data.quat.vector[iinc] = ref_frame_data->state.quat.vector[iinc];
-      stc_data.ang_vel[iinc]     = ref_frame_data->state.ang_vel[iinc];
+      packing_data.state.quat.vector[iinc] = ref_frame_data->state.quat.vector[iinc];
+      packing_data.state.ang_vel[iinc]     = ref_frame_data->state.ang_vel[iinc];
    }
    // Time tag for this state data.
-   // stc_data.time = ref_frame->state.time;
-   this->time    = get_scenario_time();
-   stc_data.time = ref_frame_data->state.time = this->time;
+   packing_data.state.time = ref_frame_data->state.time = get_scenario_time();
 
    // Print out debug information if desired.
    if ( debug ) {
       cout.precision( 15 );
       cout << "RefFrameState::pack():" << __LINE__ << endl
            << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname: '" << ( this->name != NULL ? this->name : "" ) << "'" << endl
-           << "\tparent_name: '" << ( this->parent_name != NULL ? this->parent_name : "" ) << "'" << endl
-           << "\ttime: " << stc_data.time << endl
+           << "\tname: '" << ( this->packing_data.name != NULL ? this->packing_data.name : "" ) << "'" << endl
+           << "\tparent_name: '" << ( this->packing_data.parent_name != NULL ? this->packing_data.parent_name : "" ) << "'" << endl
+           << "\ttime: " << packing_data.state.time << endl
            << "\tposition: " << endl
-           << "\t\t" << stc_data.pos[0] << endl
-           << "\t\t" << stc_data.pos[1] << endl
-           << "\t\t" << stc_data.pos[2] << endl
+           << "\t\t" << packing_data.state.pos[0] << endl
+           << "\t\t" << packing_data.state.pos[1] << endl
+           << "\t\t" << packing_data.state.pos[2] << endl
            << endl;
    }
 
@@ -214,28 +212,28 @@ void RefFrameState::unpack()
    // Set the reference frame name and parent frame name.
    if ( name_attr->is_received() ) {
       if ( ref_frame_data->name != NULL ) {
-         if ( !strcmp( ref_frame_data->name, name ) ) {
+         if ( !strcmp( ref_frame_data->name, packing_data.name ) ) {
             trick_MM->delete_var( (void *)ref_frame_data->name );
-            ref_frame_data->name = trick_MM->mm_strdup( name );
+            ref_frame_data->name = trick_MM->mm_strdup( packing_data.name );
          }
       } else {
-         ref_frame_data->name = trick_MM->mm_strdup( name );
+         ref_frame_data->name = trick_MM->mm_strdup( packing_data.name );
       }
    }
 
    if ( parent_name_attr->is_received() ) {
       if ( ref_frame_data->parent_name != NULL ) {
-         if ( !strcmp( ref_frame_data->parent_name, parent_name ) ) {
+         if ( !strcmp( ref_frame_data->parent_name, packing_data.parent_name ) ) {
             trick_MM->delete_var( (void *)ref_frame_data->parent_name );
-            if ( parent_name[0] != '\0' ) {
-               ref_frame_data->parent_name = trick_MM->mm_strdup( parent_name );
+            if ( packing_data.parent_name[0] != '\0' ) {
+               ref_frame_data->parent_name = trick_MM->mm_strdup( packing_data.parent_name );
             } else {
                ref_frame_data->parent_name = NULL;
             }
          }
       } else {
-         if ( parent_name[0] != '\0' ) {
-            ref_frame_data->parent_name = trick_MM->mm_strdup( parent_name );
+         if ( packing_data.parent_name[0] != '\0' ) {
+            ref_frame_data->parent_name = trick_MM->mm_strdup( packing_data.parent_name );
          }
       }
    }
@@ -246,18 +244,17 @@ void RefFrameState::unpack()
       // Unpack the data.
       // Position and velocity vectors.
       for ( int iinc = 0; iinc < 3; ++iinc ) {
-         ref_frame_data->state.pos[iinc] = stc_data.pos[iinc];
-         ref_frame_data->state.vel[iinc] = stc_data.vel[iinc];
+         ref_frame_data->state.pos[iinc] = packing_data.state.pos[iinc];
+         ref_frame_data->state.vel[iinc] = packing_data.state.vel[iinc];
       }
       // Attitude quaternion.
-      ref_frame_data->state.quat.scalar = stc_data.quat.scalar;
+      ref_frame_data->state.quat.scalar = packing_data.state.quat.scalar;
       for ( int iinc = 0; iinc < 3; ++iinc ) {
-         ref_frame_data->state.quat.vector[iinc] = stc_data.quat.vector[iinc];
-         ref_frame_data->state.ang_vel[iinc]     = stc_data.ang_vel[iinc];
+         ref_frame_data->state.quat.vector[iinc] = packing_data.state.quat.vector[iinc];
+         ref_frame_data->state.ang_vel[iinc]     = packing_data.state.ang_vel[iinc];
       }
       // Time tag for this state data.
-      this->time                 = stc_data.time;
-      ref_frame_data->state.time = stc_data.time;
+      ref_frame_data->state.time = packing_data.state.time;
    }
 
    // Print out debug information if desired.
@@ -265,13 +262,13 @@ void RefFrameState::unpack()
       cout.precision( 15 );
       cout << "RefFrameState::unpack():" << __LINE__ << endl
            << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname: '" << ( this->name != NULL ? this->name : "" ) << "'" << endl
-           << "\tparent_name: '" << ( this->parent_name != NULL ? this->parent_name : "" ) << "'" << endl
-           << "\ttime: " << stc_data.time << endl
+           << "\tname: '" << ( this->packing_data.name != NULL ? this->packing_data.name : "" ) << "'" << endl
+           << "\tparent_name: '" << ( this->packing_data.parent_name != NULL ? this->packing_data.parent_name : "" ) << "'" << endl
+           << "\ttime: " << packing_data.state.time << endl
            << "\tposition: " << endl
-           << "\t\t" << stc_data.pos[0] << endl
-           << "\t\t" << stc_data.pos[1] << endl
-           << "\t\t" << stc_data.pos[2] << endl
+           << "\t\t" << packing_data.state.pos[0] << endl
+           << "\t\t" << packing_data.state.pos[1] << endl
+           << "\t\t" << packing_data.state.pos[2] << endl
            << endl;
    }
 

@@ -32,14 +32,15 @@ NASA, Johnson Space Center\n
 
 namespace SpaceFOM {
 
-typedef struct PhysicalInterfaceData{
+class PhysicalInterfaceData{
 
+  public:
    char          *name;        ///< @trick_units{--} Name of the physical interface.
    char          *parent_name; ///< @trick_units{--} Name of the parent entity or interface.
    double         position[3]; ///< @trick_units{m}  Position of the interface in the parent structural frame.
    QuaternionData attitude;    ///< @trick_units{--} Orientation of the interface wrt. the parent structural frame.
 
-} PhysicalInterfaceData;
+};
 
 } // namespace SpaceFOM
 

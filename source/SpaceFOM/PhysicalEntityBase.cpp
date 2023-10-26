@@ -74,10 +74,8 @@ PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
      rot_accel_attr( NULL ),
      cm_attr( NULL ),
      body_frame_attr( NULL ),
-     stc_encoder(),
-     quat_encoder(),
-     state( stc_encoder.get_data() ),
-     body_wrt_struct( quat_encoder.get_data() )
+     stc_encoder(pe_packing_data.state),
+     quat_encoder(pe_packing_data.body_wrt_struct)
 {
    //
    // Initialize the PhysicalEntity packing data structure.
@@ -454,16 +452,16 @@ void PhysicalEntityBase::pack()
            << "\ttype:   '" << ( pe_packing_data.type != NULL ? pe_packing_data.type : "" ) << "'" << endl
            << "\tstatus: '" << ( pe_packing_data.status != NULL ? pe_packing_data.status : "" ) << "'" << endl
            << "\tparent: '" << ( pe_packing_data.parent_frame != NULL ? pe_packing_data.parent_frame : "" ) << "'" << endl
-           << "\ttime: " << state.time << endl
+           << "\ttime: " << pe_packing_data.state.time << endl
            << "\tposition: " << endl
-           << "\t\t" << state.pos[0] << endl
-           << "\t\t" << state.pos[1] << endl
-           << "\t\t" << state.pos[2] << endl
+           << "\t\t" << pe_packing_data.state.pos[0] << endl
+           << "\t\t" << pe_packing_data.state.pos[1] << endl
+           << "\t\t" << pe_packing_data.state.pos[2] << endl
            << "\tattitude (quaternion:s,v): " << endl
-           << "\t\t" << state.quat.scalar << endl
-           << "\t\t" << state.quat.vector[0] << endl
-           << "\t\t" << state.quat.vector[1] << endl
-           << "\t\t" << state.quat.vector[2] << endl
+           << "\t\t" << pe_packing_data.state.quat.scalar << endl
+           << "\t\t" << pe_packing_data.state.quat.vector[0] << endl
+           << "\t\t" << pe_packing_data.state.quat.vector[1] << endl
+           << "\t\t" << pe_packing_data.state.quat.vector[2] << endl
            << endl;
    }
 
@@ -503,16 +501,16 @@ void PhysicalEntityBase::unpack()
            << "\ttype:   '" << ( pe_packing_data.type != NULL ? pe_packing_data.type : "" ) << "'" << endl
            << "\tstatus: '" << ( pe_packing_data.status != NULL ? pe_packing_data.status : "" ) << "'" << endl
            << "\tparent: '" << ( pe_packing_data.parent_frame != NULL ? pe_packing_data.parent_frame : "" ) << "'" << endl
-           << "\ttime: " << state.time << endl
+           << "\ttime: " << pe_packing_data.state.time << endl
            << "\tposition: " << endl
-           << "\t\t" << state.pos[0] << endl
-           << "\t\t" << state.pos[1] << endl
-           << "\t\t" << state.pos[2] << endl
+           << "\t\t" << pe_packing_data.state.pos[0] << endl
+           << "\t\t" << pe_packing_data.state.pos[1] << endl
+           << "\t\t" << pe_packing_data.state.pos[2] << endl
            << "\tattitude (quaternion:s,v): " << endl
-           << "\t\t" << state.quat.scalar << endl
-           << "\t\t" << state.quat.vector[0] << endl
-           << "\t\t" << state.quat.vector[1] << endl
-           << "\t\t" << state.quat.vector[2] << endl
+           << "\t\t" << pe_packing_data.state.quat.scalar << endl
+           << "\t\t" << pe_packing_data.state.quat.vector[0] << endl
+           << "\t\t" << pe_packing_data.state.quat.vector[1] << endl
+           << "\t\t" << pe_packing_data.state.quat.vector[2] << endl
            << endl;
    }
 

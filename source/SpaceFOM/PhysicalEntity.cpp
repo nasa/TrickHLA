@@ -198,18 +198,18 @@ void PhysicalEntity::pack_from_working_data()
    // Pack the state time coordinate data.
    // Position and velocity vectors.
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      state.pos[iinc] = physical_data->state.pos[iinc];
-      state.vel[iinc] = physical_data->state.vel[iinc];
+      pe_packing_data.state.pos[iinc] = physical_data->state.pos[iinc];
+      pe_packing_data.state.vel[iinc] = physical_data->state.vel[iinc];
    }
    // Attitude quaternion.
-   state.quat.scalar = physical_data->state.quat.scalar;
+   pe_packing_data.state.quat.scalar = physical_data->state.quat.scalar;
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      state.quat.vector[iinc] = physical_data->state.quat.vector[iinc];
-      state.ang_vel[iinc]     = physical_data->state.ang_vel[iinc];
+      pe_packing_data.state.quat.vector[iinc] = physical_data->state.quat.vector[iinc];
+      pe_packing_data.state.ang_vel[iinc]     = physical_data->state.ang_vel[iinc];
    }
 
    // Time tag for this state data.
-   state.time = get_scenario_time();
+   pe_packing_data.state.time = get_scenario_time();
 
    // Set the acceleration data.
    for ( iinc = 0; iinc < 3; ++iinc ) {
@@ -227,9 +227,9 @@ void PhysicalEntity::pack_from_working_data()
    }
 
    // Pack the body to structural reference frame attitude quaternion.
-   body_wrt_struct.scalar = physical_data->body_wrt_struct.scalar;
+   pe_packing_data.body_wrt_struct.scalar = physical_data->body_wrt_struct.scalar;
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      body_wrt_struct.vector[iinc] = physical_data->body_wrt_struct.vector[iinc];
+      pe_packing_data.body_wrt_struct.vector[iinc] = physical_data->body_wrt_struct.vector[iinc];
    }
 
    // Return to the calling routine.
@@ -260,17 +260,17 @@ void PhysicalEntity::unpack_into_working_data()
       // Unpack the data.
       // Position and velocity vectors.
       for ( int iinc = 0; iinc < 3; ++iinc ) {
-         physical_data->state.pos[iinc] = state.pos[iinc];
-         physical_data->state.vel[iinc] = state.vel[iinc];
+         physical_data->state.pos[iinc] = pe_packing_data.state.pos[iinc];
+         physical_data->state.vel[iinc] = pe_packing_data.state.vel[iinc];
       }
       // Attitude quaternion.
-      physical_data->state.quat.scalar = state.quat.scalar;
+      physical_data->state.quat.scalar = pe_packing_data.state.quat.scalar;
       for ( int iinc = 0; iinc < 3; ++iinc ) {
-         physical_data->state.quat.vector[iinc] = state.quat.vector[iinc];
-         physical_data->state.ang_vel[iinc]     = state.ang_vel[iinc];
+         physical_data->state.quat.vector[iinc] = pe_packing_data.state.quat.vector[iinc];
+         physical_data->state.ang_vel[iinc]     = pe_packing_data.state.ang_vel[iinc];
       }
       // Time tag for this state data.
-      physical_data->state.time = state.time;
+      physical_data->state.time = pe_packing_data.state.time;
    }
 
    // Set the entity name, type, status, and parent frame name.
@@ -328,9 +328,9 @@ void PhysicalEntity::unpack_into_working_data()
    if ( body_frame_attr->is_received() ) {
 
       // Body to structure frame orientation.
-      physical_data->body_wrt_struct.scalar = body_wrt_struct.scalar;
+      physical_data->body_wrt_struct.scalar = pe_packing_data.body_wrt_struct.scalar;
       for ( int iinc = 0; iinc < 3; ++iinc ) {
-         physical_data->body_wrt_struct.vector[iinc] = body_wrt_struct.vector[iinc];
+         physical_data->body_wrt_struct.vector[iinc] = pe_packing_data.body_wrt_struct.vector[iinc];
       }
    }
 

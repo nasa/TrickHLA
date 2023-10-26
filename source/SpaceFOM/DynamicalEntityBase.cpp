@@ -182,7 +182,7 @@ void DynamicalEntityBase::default_data(
    object->attributes[4].rti_encoding  = TrickHLA::ENCODING_OPAQUE_DATA;
 
    object->attributes[5].FOM_name      = allocate_input_string( "acceleration" );
-   trick_name_str                      = entity_name_str + string( ".accel" );
+   trick_name_str                      = entity_name_str + string( ".pe_packing_data.accel" );
    object->attributes[5].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[5].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[5].publish       = publishes;

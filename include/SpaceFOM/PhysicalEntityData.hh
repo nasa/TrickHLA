@@ -33,8 +33,9 @@ NASA, Johnson Space Center\n
 
 namespace SpaceFOM {
 
-typedef struct PhysicalEntityData{
+class PhysicalEntityData{
 
+  public:
    char *name;         ///< @trick_units{--} Name of the physical entity.
    char *type;         ///< @trick_units{--} String use to define entity type.
    char *status;       ///< @trick_units{--} String use to define entity status.
@@ -48,7 +49,7 @@ typedef struct PhysicalEntityData{
 
    QuaternionData body_wrt_struct; ///< @trick_units{--} Orientation of the body frame wrt. the structural frame.
 
-} PhysicalEntityData;
+};
 
 } // namespace SpaceFOM
 

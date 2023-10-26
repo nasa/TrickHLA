@@ -33,14 +33,15 @@ NASA, Johnson Space Center\n
 namespace SpaceFOM
 {
 
-typedef struct RefFrameData{
+class RefFrameData{
 
+  public:
    char *name;        ///< @trick_units{--} Name of the reference frame.
    char *parent_name; ///< @trick_units{--} Name of this frames parent frame.
 
    SpaceTimeCoordinateData state; ///< @trick_units{--} Space time coordinate state.
 
-} RefFrameData;
+};
 
 } // namespace SpaceFOM
 

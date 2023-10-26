@@ -116,7 +116,7 @@ void RefFrameLagCompBase::initialize_states()
 {
 
    // Copy the current RefFrameLag state over to the lag compensated state.
-   this->lag_comp_data = this->ref_frame.stc_data;
+   this->lag_comp_data = this->ref_frame.packing_data.state;
    QuaternionData::compute_quat_dot( this->lag_comp_data.quat.scalar,
                                      this->lag_comp_data.quat.vector,
                                      this->lag_comp_data.ang_vel,
@@ -134,7 +134,7 @@ void RefFrameLagCompBase::initialize_states()
 void RefFrameLagCompBase::copy_state_to_frame()
 {
    // Copy the current RefFrameLag state over to the lag compensated state.
-   this->ref_frame.stc_data = this->lag_comp_data;
+   this->ref_frame.packing_data.state = this->lag_comp_data;
 
    return;
 }
@@ -146,7 +146,7 @@ void RefFrameLagCompBase::copy_state_to_frame()
 void RefFrameLagCompBase::copy_state_from_frame()
 {
    // Copy the current RefFrameLag state over to the lag compensated state.
-   this->lag_comp_data = this->ref_frame.stc_data;
+   this->lag_comp_data = this->ref_frame.packing_data.state;
 
    return;
 }

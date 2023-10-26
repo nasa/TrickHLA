@@ -126,7 +126,7 @@ class RefFrameBase : public TrickHLA::Packing
     *  @return Object instance name for this reference frame. */
    virtual char const *get_name()
    {
-      return name;
+      return packing_data.name;
    }
 
    /*! @brief Access function to set the HLA federation instance name for the parent reference frame.
@@ -137,7 +137,7 @@ class RefFrameBase : public TrickHLA::Packing
     *  @return Object instance name for the parent reference frame. */
    virtual char const *get_parent_name()
    {
-      return parent_name;
+      return packing_data.parent_name;
    }
 
    /*! @brief Access function to set the pointer to the parent reference frame.
@@ -155,7 +155,7 @@ class RefFrameBase : public TrickHLA::Packing
     *  @return Current time associated with the PhysicalEntity. */
    double const get_time()
    {
-      return stc_data.time;
+      return packing_data.state.time;
    }
 
    /*! @brief Access function to set the appropriate publish flags. */
@@ -187,18 +187,18 @@ class RefFrameBase : public TrickHLA::Packing
   protected:
    bool initialized; ///< @trick_units{--} Initialization indication flag.
 
+   RefFrameBase *parent_frame; ///< @trick_units{--} Pointer to this frame's parent frame.
+
    TrickHLA::Attribute *name_attr;        ///< @trick_io{**} Reference frame name Attribute.
    TrickHLA::Attribute *parent_name_attr; ///< @trick_io{**} Parent reference frame name Attribute.
    TrickHLA::Attribute *state_attr;       ///< @trick_io{**} Reference frame state Attribute.
 
-   double        time;         ///< trick_units{s}   Truncated Julian date in TT time scale.
-   char         *name;         ///< @trick_units{--} Name of the reference frame.
-   char         *parent_name;  ///< @trick_units{--} Name of this frames parent frame.
-   RefFrameBase *parent_frame; ///< @trick_units{--} Pointer to this frames parent frame.
+   // Assign to these parameters when setting up the data associations for the
+   // SpaceFOM TrickHLAObject data for the Reference Frame.
+   RefFrameData packing_data; ///< @trick_units{--} Reference frame packing data.
 
    // Instantiate the Space/Time Coordinate encoder
    SpaceTimeCoordinateEncoder stc_encoder; ///< @trick_units{--} Encoder.
-   SpaceTimeCoordinateData   &stc_data;    ///< @trick_units{--} Encoder data.
 
   private:
    // This object is not copyable

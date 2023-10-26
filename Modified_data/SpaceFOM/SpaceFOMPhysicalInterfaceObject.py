@@ -77,7 +77,7 @@ class SpaceFOMPhysicalInterfaceObject(TrickHLAObjectConfig):
       interface_instance_name = self.trick_interface_sim_obj_name
 
       ## Set up the map to the reference PhysicalInterface's name.
-      trick_data_name = str(interface_instance_name) + '.name'
+      trick_data_name = str(interface_instance_name) + '.packing_data.name'
       attribute = TrickHLAAttributeConfig( 'name',
                                            trick_data_name,
                                            self.hla_create,
@@ -88,7 +88,7 @@ class SpaceFOMPhysicalInterfaceObject(TrickHLAObjectConfig):
       self.add_attribute( attribute )
 
       ## Set up the map to the name of the PhysicalInterface's parent reference frame.
-      trick_data_name = str(interface_instance_name) + '.parent_name'
+      trick_data_name = str(interface_instance_name) + '.packing_data.parent_name'
       attribute = TrickHLAAttributeConfig( 'parent_name',
                                            trick_data_name,
                                            self.hla_create,
@@ -99,7 +99,7 @@ class SpaceFOMPhysicalInterfaceObject(TrickHLAObjectConfig):
       self.add_attribute( attribute )
 
       ## Set up the map to the PhysicalInterface's translational acceleration.
-      trick_data_name = str(interface_instance_name) + '.position'
+      trick_data_name = str(interface_instance_name) + '.packing_data.position'
       attribute = TrickHLAAttributeConfig( 'position',
                                            trick_data_name,
                                            self.hla_create,

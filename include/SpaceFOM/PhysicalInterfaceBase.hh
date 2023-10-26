@@ -45,7 +45,7 @@ NASA, Johnson Space Center\n
 
 // SpaceFOM include files.
 #include "SpaceFOM/QuaternionEncoder.hh"
-#include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
+#include "SpaceFOM/PhysicalInterfaceData.hh"
 
 namespace SpaceFOM
 {
@@ -99,7 +99,7 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
     *  @return Name of the PhysicalInterface object instance. */
    virtual char const *get_name()
    {
-      return name;
+      return packing_data.name;
    }
 
    /*! @brief Set the name of the parent reference frame for the PhysicalInterface.
@@ -111,7 +111,7 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
     *  @return Name of the parent reference frame associated with the PhysicalInterface. */
    virtual char const *get_parent()
    {
-      return parent_name;
+      return packing_data.parent_name;
    }
 
    // From the TrickHLA::Packing class.
@@ -144,16 +144,12 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
    TrickHLA::Attribute *position_attr; ///< @trick_io{**} Position Attribute.
    TrickHLA::Attribute *attitude_attr; ///< @trick_io{**} Attitude Attribute.
 
-   char   *name;        ///< @trick_units{--}   Name of the physical interface.
-   char   *parent_name; ///< @trick_units{--}   Parent PhysicalEntity or PhysicalInterface.
-   double  position[3]; ///< @trick_units{m/s2} Interface position vector.
+   // Assign to these parameters when setting up the data associations for the
+   // SpaceFOM TrickHLAObject data for the PhysicalInterface.
+   PhysicalInterfaceData packing_data; ///< @trick_units{--} Physical interface packing data.
 
    // Instantiate the attitude quaternion encoder.
    QuaternionEncoder quat_encoder; ///< @trick_units{--} Interface attitude quaternion encoder.
-
-   // Note: This is a reference that gets assignment from the encoder in the
-   // initialization list of the class constructor.  Essentially this is a short cut.
-   QuaternionData &attitude; ///< @trick_units{--} Orientation of the interface wrt. the parent.
 
   private:
    // This object is not copyable

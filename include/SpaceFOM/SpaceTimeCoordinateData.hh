@@ -39,8 +39,9 @@ NASA, Johnson Space Center\n
 
 namespace SpaceFOM {
 
-typedef struct SpaceTimeCoordinateData{
+class SpaceTimeCoordinateData{
 
+  public:
    double         pos[3];     ///< trick_units{m}     Position in parent frame.
    double         vel[3];     ///< trick_units{m/s}   Velocity wrt. parent frame.
    QuaternionData quat;       ///< trick_units{--}    Attitude quaternion.
@@ -54,8 +55,8 @@ typedef struct SpaceTimeCoordinateData{
       V_INIT( ang_vel );
    }
 
-} SpaceTimeCoordinateData;
+};
 
-} // namespace SpaceFOMh
+} // namespace SpaceFOM
 
 #endif // SPACEFOM_SPACE_TIME_COORDINATE_DATA_HH: Do NOT put anything after this line!

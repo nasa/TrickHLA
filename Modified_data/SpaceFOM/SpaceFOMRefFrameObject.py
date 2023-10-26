@@ -79,7 +79,7 @@ class SpaceFOMRefFrameObject(TrickHLAObjectConfig):
       frame_instance_name = self.trick_frame_sim_obj_name
 
       ## Set up the map to the reference frame's name.
-      trick_data_name = str(frame_instance_name) + '.name'
+      trick_data_name = str(frame_instance_name) + '.packing_data.name'
       attribute = TrickHLAAttributeConfig( 'name',
                                            trick_data_name,
                                            self.hla_create,
@@ -90,7 +90,7 @@ class SpaceFOMRefFrameObject(TrickHLAObjectConfig):
       self.add_attribute( attribute )
 
       ## Set up the map to the name of the reference frame's parent frame.
-      trick_data_name = str(frame_instance_name) + '.parent_name'
+      trick_data_name = str(frame_instance_name) + '.packing_data.parent_name'
       attribute = TrickHLAAttributeConfig( 'parent_name',
                                            trick_data_name,
                                            self.hla_create,

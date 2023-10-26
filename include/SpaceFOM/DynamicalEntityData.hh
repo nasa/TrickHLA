@@ -31,8 +31,9 @@ NASA, Johnson Space Center\n
 
 namespace SpaceFOM {
 
-typedef struct DynamicalEntityData{
+class DynamicalEntityData{
 
+  public:
    double force[3];  ///< @trick_units{N} Entity force vector.
    double torque[3]; ///< @trick_units{N*m} Entity torque vector.
    double mass;      ///< @trick_units{kg} Entity mass.
@@ -41,7 +42,7 @@ typedef struct DynamicalEntityData{
    double inertia[3][3];      ///< @trick_units{kg*m2} Entity inertia matrix.
    double inertia_rate[3][3]; ///< @trick_units{kg*m2/s} Entity inertia rate matrix.
 
-} DynamicalEntityData;
+};
 
 } // namespace SpaceFOM
 

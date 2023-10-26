@@ -67,8 +67,9 @@ class SpaceTimeCoordinateEncoder : public TrickHLA::OpaqueBuffer
    friend void init_attrSpaceFOM__SpaceTimeCoordinateEncoder();
 
   public:
-   /*! @brief Default constructor for the SpaceFOM SpaceTimeCoordinateEncoder class. */
-   SpaceTimeCoordinateEncoder();
+   /*! @brief Initialization constructor for the SpaceFOM SpaceTimeCoordinateEncoder class.
+    *  @param stc_data Reference to state-time coordinate data instance. */
+   SpaceTimeCoordinateEncoder( SpaceTimeCoordinateData & stc_data );
 
    /*! @brief Encode the space-time coordinate data for sending out. */
    void encode();
@@ -83,7 +84,7 @@ class SpaceTimeCoordinateEncoder : public TrickHLA::OpaqueBuffer
    }
 
   protected:
-   SpaceTimeCoordinateData data; ///< trick_units{--} State-time coordinate transmission data.
+   SpaceTimeCoordinateData & data; ///< trick_units{--} State-time coordinate transmission data.
 
    // Data encoding helpers.
    rti1516e::HLAfloat64LE   position[3];         ///< @trick_io{**} HLAfloat64LE position array

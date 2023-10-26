@@ -138,7 +138,7 @@ void PhysicalEntityLagCompBase::initialize_states()
 {
 
    // Copy the current PhysicalEntity state over to the lag compensated state.
-   this->lag_comp_data = this->entity.state;
+   this->lag_comp_data = this->entity.pe_packing_data.state;
    for ( int iinc = 0 ; iinc < 3 ; iinc++ ){
       this->accel[iinc]     = this->entity.pe_packing_data.accel[iinc];
       this->rot_accel[iinc] = this->entity.pe_packing_data.rot_accel[iinc];
@@ -186,7 +186,7 @@ void PhysicalEntityLagCompBase::bypass_receive_lag_compensation()
 void PhysicalEntityLagCompBase::unload_lag_comp_data()
 {
    // Copy the current PhysicalEntity state over to the lag compensated state.
-   this->entity.state = this->lag_comp_data;
+   this->entity.pe_packing_data.state = this->lag_comp_data;
    for ( int iinc = 0 ; iinc < 3 ; iinc++ ){
       this->entity.pe_packing_data.accel[iinc]     = this->accel[iinc];
       this->entity.pe_packing_data.rot_accel[iinc] = this->rot_accel[iinc];
@@ -202,7 +202,7 @@ void PhysicalEntityLagCompBase::unload_lag_comp_data()
 void PhysicalEntityLagCompBase::load_lag_comp_data()
 {
    // Copy the current PhysicalEntity state over to the lag compensated state.
-   this->lag_comp_data = this->entity.state;
+   this->lag_comp_data = this->entity.pe_packing_data.state;
    for ( int iinc = 0 ; iinc < 3 ; iinc++ ){
       this->accel[iinc]     = this->entity.pe_packing_data.accel[iinc];
       this->rot_accel[iinc] = this->entity.pe_packing_data.rot_accel[iinc];

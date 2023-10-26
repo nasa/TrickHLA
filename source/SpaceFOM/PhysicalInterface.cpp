@@ -82,7 +82,7 @@ void PhysicalInterface::initialize()
    // Check to make sure the PhysicalInterface data is set.
    if ( interface_data == NULL ) {
       errmsg << "SpaceFOM::PhysicalInterface::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL PhysicalInterfaceData: " << name << THLA_ENDL;
+             << " ERROR: Unexpected NULL PhysicalInterfaceData: " << packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -104,7 +104,7 @@ void PhysicalInterface::initialize( PhysicalInterfaceData *interface_data_ptr )
    // Set the reference to the PhysicalInterface data.
    if ( interface_data_ptr == NULL ) {
       errmsg << "SpaceFOM::PhysicalInterface::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL PhysicalInterfaceData: " << name << THLA_ENDL;
+             << " ERROR: Unexpected NULL PhysicalInterfaceData: " << packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -135,9 +135,9 @@ void PhysicalInterface::pack()
 
    // Check for name change.
    if ( interface_data->name != NULL ) {
-      if ( strcmp( interface_data->name, name ) ) {
-         trick_MM->delete_var( (void *)name );
-         name = trick_MM->mm_strdup( interface_data->name );
+      if ( strcmp( interface_data->name, packing_data.name ) ) {
+         trick_MM->delete_var( (void *)packing_data.name );
+         packing_data.name = trick_MM->mm_strdup( interface_data->name );
       }
    } else {
       errmsg << "SpaceFOM::PhysicalInterface::pack():" << __LINE__
@@ -149,10 +149,10 @@ void PhysicalInterface::pack()
    // Check for parent name change.
    if ( interface_data->parent_name != NULL ) {
       // We have a parent name; so, check to see if names are different.
-      if ( strcmp( interface_data->parent_name, parent_name ) ) {
+      if ( strcmp( interface_data->parent_name, packing_data.parent_name ) ) {
          // Names are different, so reassign the new name string.
-         trick_MM->delete_var( (void *)parent_name );
-         parent_name = trick_MM->mm_strdup( interface_data->parent_name );
+         trick_MM->delete_var( (void *)packing_data.parent_name );
+         packing_data.parent_name = trick_MM->mm_strdup( interface_data->parent_name );
       }
    } else {
       errmsg << "SpaceFOM::PhysicalInterface::pack():" << __LINE__
@@ -164,13 +164,13 @@ void PhysicalInterface::pack()
 
    // Set the position data.
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      position[iinc] = interface_data->position[iinc];
+      packing_data.position[iinc] = interface_data->position[iinc];
    }
 
    // Pack the interface attitude quaternion.
-   attitude.scalar = interface_data->attitude.scalar;
+   packing_data.attitude.scalar = interface_data->attitude.scalar;
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      attitude.vector[iinc] = interface_data->attitude.vector[iinc];
+      packing_data.attitude.vector[iinc] = interface_data->attitude.vector[iinc];
    }
 
    // Print out debug information if desired.
@@ -178,17 +178,17 @@ void PhysicalInterface::pack()
       cout.precision( 15 );
       cout << "PhysicalInterface::pack():" << __LINE__ << endl
            << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname:   '" << ( name != NULL ? name : "" ) << "'" << endl
-           << "\tparent: '" << ( parent_name != NULL ? parent_name : "" ) << "'" << endl
+           << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'" << endl
+           << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'" << endl
            << "\tposition: " << endl
-           << "\t\t" << position[0] << endl
-           << "\t\t" << position[1] << endl
-           << "\t\t" << position[2] << endl
+           << "\t\t" << packing_data.position[0] << endl
+           << "\t\t" << packing_data.position[1] << endl
+           << "\t\t" << packing_data.position[2] << endl
            << "\tattitude (quaternion:s,v): " << endl
-           << "\t\t" << attitude.scalar << endl
-           << "\t\t" << attitude.vector[0] << endl
-           << "\t\t" << attitude.vector[1] << endl
-           << "\t\t" << attitude.vector[2] << endl
+           << "\t\t" << packing_data.attitude.scalar << endl
+           << "\t\t" << packing_data.attitude.vector[0] << endl
+           << "\t\t" << packing_data.attitude.vector[1] << endl
+           << "\t\t" << packing_data.attitude.vector[2] << endl
            << endl;
    }
 
@@ -223,28 +223,28 @@ void PhysicalInterface::unpack()
    // Set the interface name and parent name.
    if ( name_attr->is_received() ) {
       if ( interface_data->name != NULL ) {
-         if ( !strcmp( interface_data->name, name ) ) {
+         if ( !strcmp( interface_data->name, packing_data.name ) ) {
             trick_MM->delete_var( (void *)interface_data->name );
-            interface_data->name = trick_MM->mm_strdup( name );
+            interface_data->name = trick_MM->mm_strdup( packing_data.name );
          }
       } else {
-         interface_data->name = trick_MM->mm_strdup( name );
+         interface_data->name = trick_MM->mm_strdup( packing_data.name );
       }
    }
 
    if ( parent_attr->is_received() ) {
       if ( interface_data->parent_name != NULL ) {
-         if ( !strcmp( interface_data->parent_name, parent_name ) ) {
+         if ( !strcmp( interface_data->parent_name, packing_data.parent_name ) ) {
             trick_MM->delete_var( (void *)interface_data->parent_name );
-            if ( parent_name[0] != '\0' ) {
-               interface_data->parent_name = trick_MM->mm_strdup( parent_name );
+            if ( packing_data.parent_name[0] != '\0' ) {
+               interface_data->parent_name = trick_MM->mm_strdup( packing_data.parent_name );
             } else {
                interface_data->parent_name = NULL;
             }
          }
       } else {
-         if ( parent_name[0] != '\0' ) {
-            interface_data->parent_name = trick_MM->mm_strdup( parent_name );
+         if ( packing_data.parent_name[0] != '\0' ) {
+            interface_data->parent_name = trick_MM->mm_strdup( packing_data.parent_name );
          }
       }
    }
@@ -252,7 +252,7 @@ void PhysicalInterface::unpack()
    // Unpack the interface position data.
    if ( position_attr->is_received() ) {
       for ( int iinc = 0; iinc < 3; ++iinc ) {
-          interface_data->position[iinc] = position[iinc];
+          interface_data->position[iinc] = packing_data.position[iinc];
       }
    }
 
@@ -260,9 +260,9 @@ void PhysicalInterface::unpack()
    if ( attitude_attr->is_received() ) {
 
       // Interface frame orientation.
-      interface_data->attitude.scalar = attitude.scalar;
+      interface_data->attitude.scalar = packing_data.attitude.scalar;
       for ( int iinc = 0; iinc < 3; ++iinc ) {
-         interface_data->attitude.vector[iinc] = attitude.vector[iinc];
+         interface_data->attitude.vector[iinc] = packing_data.attitude.vector[iinc];
       }
    }
 
@@ -271,17 +271,17 @@ void PhysicalInterface::unpack()
       cout.precision( 15 );
       cout << "PhysicalInterface::unpack():" << __LINE__ << endl
            << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname:   '" << ( name != NULL ? name : "" ) << "'" << endl
-           << "\tparent: '" << ( parent_name != NULL ? parent_name : "" ) << "'" << endl
+           << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'" << endl
+           << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'" << endl
            << "\tposition: " << endl
-           << "\t\t" << position[0] << endl
-           << "\t\t" << position[1] << endl
-           << "\t\t" << position[2] << endl
+           << "\t\t" << packing_data.position[0] << endl
+           << "\t\t" << packing_data.position[1] << endl
+           << "\t\t" << packing_data.position[2] << endl
            << "\tattitude (quaternion:s,v): " << endl
-           << "\t\t" << attitude.scalar << endl
-           << "\t\t" << attitude.vector[0] << endl
-           << "\t\t" << attitude.vector[1] << endl
-           << "\t\t" << attitude.vector[2] << endl
+           << "\t\t" << packing_data.attitude.scalar << endl
+           << "\t\t" << packing_data.attitude.vector[0] << endl
+           << "\t\t" << packing_data.attitude.vector[1] << endl
+           << "\t\t" << packing_data.attitude.vector[2] << endl
            << endl;
    }
 

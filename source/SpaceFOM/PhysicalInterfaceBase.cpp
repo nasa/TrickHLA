@@ -66,12 +66,9 @@ PhysicalInterfaceBase::PhysicalInterfaceBase() // RETURN: -- None.
      parent_attr( NULL ),
      position_attr( NULL ),
      attitude_attr( NULL ),
-     name( NULL ),
-     parent_name( NULL ),
-     quat_encoder(),
-     attitude( quat_encoder.get_data() )
+     quat_encoder(packing_data.attitude)
 {
-   V_INIT( position );
+   V_INIT( packing_data.position );
 }
 
 /*!
@@ -81,19 +78,19 @@ PhysicalInterfaceBase::~PhysicalInterfaceBase() // RETURN: -- None.
 {
 
 
-   if ( this->name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::~PhysicalInterfaceBase():%d ERROR deleting Trick Memory for 'this->name'%c",
+   if ( this->packing_data.name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.name ) ) ) {
+         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::~PhysicalInterfaceBase():%d ERROR deleting Trick Memory for 'this->packing_data.name'%c",
                   __LINE__, THLA_NEWLINE );
       }
-      this->name = NULL;
+      this->packing_data.name = NULL;
    }
-   if ( this->parent_name != (char *)NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->parent_name ) ) ) {
+   if ( this->packing_data.parent_name != (char *)NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.parent_name ) ) ) {
          send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::~PhysicalInterfaceBase():%d ERROR deleting Trick Memory for 'this->parent'%c",
                   __LINE__, THLA_NEWLINE );
       }
-      this->parent_name = NULL;
+      this->packing_data.parent_name = NULL;
 
    }
    initialized   = false;
@@ -122,12 +119,12 @@ void PhysicalInterfaceBase::default_data(
 
    // Set the parent frame name.
    if ( interface_parent_name != NULL ) {
-      this->parent_name = trick_MM->mm_strdup( interface_parent_name );
+      this->packing_data.parent_name = trick_MM->mm_strdup( interface_parent_name );
    } else {
-      this->parent_name = trick_MM->mm_strdup( "" );
+      this->packing_data.parent_name = trick_MM->mm_strdup( "" );
    }
    if ( interface_name != NULL ) {
-      name = trick_MM->mm_strdup( interface_name );
+      this->packing_data.name = trick_MM->mm_strdup( interface_name );
    } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::default_data():" << __LINE__
@@ -151,7 +148,7 @@ void PhysicalInterfaceBase::default_data(
    // Specify the Reference Frame attributes.
    //
    object->attributes[0].FOM_name      = allocate_input_string( "name" );
-   trick_name_str                      = interface_name_str + string( ".name" );
+   trick_name_str                      = interface_name_str + string( ".packing_data.name" );
    object->attributes[0].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[0].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[0].publish       = publishes;
@@ -160,7 +157,7 @@ void PhysicalInterfaceBase::default_data(
    object->attributes[0].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
    object->attributes[1].FOM_name      = allocate_input_string( "parent_name" );
-   trick_name_str                      = interface_name_str + string( ".parent_name" );
+   trick_name_str                      = interface_name_str + string( ".packing_data.parent_name" );
    object->attributes[1].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[1].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[1].publish       = publishes;
@@ -169,7 +166,7 @@ void PhysicalInterfaceBase::default_data(
    object->attributes[1].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
    object->attributes[2].FOM_name      = allocate_input_string( "position" );
-   trick_name_str                      = interface_name_str + string( ".position" );
+   trick_name_str                      = interface_name_str + string( ".packing_data.position" );
    object->attributes[2].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[2].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[2].publish       = publishes;
@@ -178,7 +175,7 @@ void PhysicalInterfaceBase::default_data(
    object->attributes[2].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    object->attributes[3].FOM_name      = allocate_input_string( "attitude" );
-   trick_name_str                      = interface_name_str + string( ".attitude.buffer" );
+   trick_name_str                      = interface_name_str + string( ".quat_encoder.buffer" );
    object->attributes[3].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[3].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[3].publish       = publishes;
@@ -197,21 +194,21 @@ void PhysicalInterfaceBase::initialize()
    ostringstream errmsg;
 
    // Must have federation instance name.
-   if ( name == NULL ) {
+   if ( this->packing_data.name == NULL ) {
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL interface name!"
              << "  Setting frame name to empty string." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
-      this->name = trick_MM->mm_strdup( "" );
+      this->packing_data.name = trick_MM->mm_strdup( "" );
    }
 
    // Must have federation instance parent_ref_frame.
-   if ( parent_name == NULL ) {
+   if ( this->packing_data.parent_name == NULL ) {
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL interface parent!"
              << "  Setting parent_ref_frame to empty string." << THLA_ENDL;
       send_hs( stderr, (char *)errmsg.str().c_str() );
-      this->parent_name = trick_MM->mm_strdup( "" );
+      this->packing_data.parent_name = trick_MM->mm_strdup( "" );
    }
 
    // Mark this as initialized.
@@ -255,13 +252,13 @@ void PhysicalInterfaceBase::initialize_callback(
  */
 void PhysicalInterfaceBase::set_name( char const *new_name )
 {
-   if ( this->name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::set_name():%d ERROR deleting Trick Memory for 'this->name'%c",
+   if ( this->packing_data.name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.name ) ) ) {
+         send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::set_name():%d ERROR deleting Trick Memory for 'this->packing_data.name'%c",
                   __LINE__, THLA_NEWLINE );
       }
    }
-   name = trick_MM->mm_strdup( new_name );
+   this->packing_data.name = trick_MM->mm_strdup( new_name );
    return;
 }
 
@@ -270,13 +267,13 @@ void PhysicalInterfaceBase::set_name( char const *new_name )
  */
 void PhysicalInterfaceBase::set_parent( char const *new_parent_name )
 {
-   if ( this->parent_name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->parent_name ) ) ) {
+   if ( this->packing_data.parent_name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.parent_name ) ) ) {
          send_hs( stderr, "SpaceFOM::PhysicalInterfaceBase::set_parent():%d ERROR deleting Trick Memory for 'this->parent_frame'%c",
                   __LINE__, THLA_NEWLINE );
       }
    }
-   parent_name = trick_MM->mm_strdup( new_parent_name );
+   this->packing_data.parent_name = trick_MM->mm_strdup( new_parent_name );
 
    return;
 }
