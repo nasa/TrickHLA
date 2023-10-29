@@ -39,9 +39,40 @@ NASA, Johnson Space Center\n
 using namespace SpaceFOM;
 
 /*!
+ * @job_class{initialization}
+ */
+QuaternionData::QuaternionData()
+{
+   this->initialize();
+}
+
+
+/*!
+ * @job_class{initialization}
+ */
+QuaternionData::QuaternionData( const QuaternionData & source )
+{
+   this->copy( source );
+}
+
+/*!
  * @job_class{scheduled}
  */
-void QuaternionData::initialize ()
+QuaternionData & QuaternionData::operator=(
+   const QuaternionData & rhs )
+{
+   this->scalar = rhs.scalar;
+   this->vector[0] = rhs.vector[0];
+   this->vector[1] = rhs.vector[1];
+   this->vector[2] = rhs.vector[2];
+   return( *this );
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::initialize()
 {
    this->scalar = 0.0;
    this->vector[0] = 0.0;
@@ -50,19 +81,71 @@ void QuaternionData::initialize ()
    return;
 }
 
+
 /*!
  * @job_class{scheduled}
  */
-void QuaternionData::normalize ()
+void QuaternionData::copy( const QuaternionData & source )
+{
+   this->scalar = source.scalar;
+   this->vector[0] = source.vector[0];
+   this->vector[1] = source.vector[1];
+   this->vector[2] = source.vector[2];
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::scale( double factor )
+{
+   this->scalar *= factor;
+   this->vector[0] *= factor;
+   this->vector[1] *= factor;
+   this->vector[2] *= factor;
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::set_from_Euler(
+   Euler_Seq sequence,
+   double    angles[3])
+{
+   euler_quat( angles, &(this->scalar), 0, sequence );
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::get_Euler(
+   Euler_Seq sequence,
+   double    angles[3])
+{
+   euler_quat( angles, &(this->scalar), 1, sequence );
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::normalize()
 {
    normalize_quaternion( &scalar, vector );
    return;
 }
 
+
 /*!
  * @job_class{scheduled}
  */
-void QuaternionData::normalize_quaternion (
+void QuaternionData::normalize_quaternion(
    double * qs,
    double   qv[3])
 {

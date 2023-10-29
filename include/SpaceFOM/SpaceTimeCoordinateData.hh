@@ -20,6 +20,7 @@ NASA, Johnson Space Center\n
 @python_module{SpaceFOM}
 
 @tldh
+@trick_link_dependency{../../source/SpaceFOM/SpaceTimeCoordinateData.cpp}
 @trick_link_dependency{../../source/SpaceFOM/QuaternionData.cpp}
 
 @revs_begin
@@ -49,11 +50,23 @@ class SpaceTimeCoordinateData{
    double         time;       ///< trick_units{s}     Truncated Julian date in TT time scale.
 
    // Default constructor.
-   SpaceTimeCoordinateData(): time(0.0){
-      V_INIT( pos);
-      V_INIT( vel);
-      V_INIT( ang_vel );
-   }
+   SpaceTimeCoordinateData();
+
+   // Copy constructor.
+   /*! @brief Copy constructor for SpaceTimeCoordinateData class.
+    *  @param source Source data to copy from. */
+   SpaceTimeCoordinateData( const SpaceTimeCoordinateData & source );
+
+   /*! @brief Assignment operator for SpaceTimeCoordinateData class.
+    *  @param rhs Right had side data to copy from. */
+   SpaceTimeCoordinateData & operator=( const SpaceTimeCoordinateData & rhs );
+
+   /*! @brief Initialize the state-time coordinate data. */
+   void initialize();
+
+   /*! @brief Copy the state-time coordinate data.
+    *  @param stc_data Source to copy from. */
+   void copy( const SpaceTimeCoordinateData & stc_data );
 
 };
 

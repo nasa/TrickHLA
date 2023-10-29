@@ -31,6 +31,9 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_QUATERNION_DATA_HH
 #define SPACEFOM_QUATERNION_DATA_HH
 
+// Trick includes.
+#include "trick/reference_frame.h"
+
 namespace SpaceFOM {
 
 class QuaternionData{
@@ -40,15 +43,44 @@ class QuaternionData{
    double vector[3]; ///< @trick_units{--} Attitude quaternion vector.
 
    // Default constructor.
-   QuaternionData(){ this->initialize(); }
+   QuaternionData();
+
+   // Copy constructor.
+   /*! @brief Copy constructor for SpaceTimeCoordinateData class.
+    *  @param source Source data to copy from. */
+   QuaternionData( const QuaternionData & source );
+
+   /*! @brief Assignment operator for QuaternionData class.
+    *  @param rhs Right had side data to copy from. */
+   QuaternionData & operator=( const QuaternionData & rhs );
 
    /*! @brief Initialize the attitude quaternion. */
-   void initialize ();
+   void initialize();
 
-   /*! @brief Normalize the attitude quaternion.
-    *  @param quat_scalar Pointer to the attitude quaternion scalar.
-    *  @param quat_vector Attitude quaternion vector. */
-   void normalize ();
+   /*! @brief Scale the attitude quaternion.
+    *  @param factor Scale factor. */
+   void scale( double factor );
+
+   /*! @brief Copy the attitude quaternion.
+    *  @param source Source quaternion to copy from. */
+   void copy( const QuaternionData & source );
+
+   /*! @brief Set attitude quaternion from Euler angles.
+    *  @param sequence Euler sequence of angles.
+    *  @param angles   Euler attitude angels. */
+   void set_from_Euler(
+      Euler_Seq sequence,
+      double    angles[3]);
+
+   /*! @brief Get Euler angles from attitude quaternion.
+    *  @param sequence Euler sequence of angles.
+    *  @param angles   Euler attitude angels. */
+   void get_Euler(
+      Euler_Seq sequence,
+      double    angles[3]);
+
+   /*! @brief Normalize the attitude quaternion. */
+   void normalize();
 
    /*! @brief Normalize the attitude quaternion.
     *  @param quat_scalar Pointer to the attitude quaternion scalar.
