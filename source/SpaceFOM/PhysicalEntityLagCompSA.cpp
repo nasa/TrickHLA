@@ -69,10 +69,10 @@ PhysicalEntityLagCompSA::PhysicalEntityLagCompSA( PhysicalEntityBase & entity_re
    integ_states[4] = &(this->lag_comp_data.vel[1]);
    integ_states[5] = &(this->lag_comp_data.vel[2]);
    // Rotational position
-   integ_states[6] = &(this->lag_comp_data.quat.scalar);
-   integ_states[7] = &(this->lag_comp_data.quat.vector[0]);
-   integ_states[8] = &(this->lag_comp_data.quat.vector[1]);
-   integ_states[9] = &(this->lag_comp_data.quat.vector[2]);
+   integ_states[6] = &(this->lag_comp_data.att.scalar);
+   integ_states[7] = &(this->lag_comp_data.att.vector[0]);
+   integ_states[8] = &(this->lag_comp_data.att.vector[1]);
+   integ_states[9] = &(this->lag_comp_data.att.vector[2]);
    // Rotational velocity
    integ_states[10] = &(this->lag_comp_data.ang_vel[0]);
    integ_states[11] = &(this->lag_comp_data.ang_vel[1]);
@@ -167,8 +167,8 @@ int PhysicalEntityLagCompSA::compensate(
 
    QuaternionData::compute_omega( this->Q_dot.scalar,
                   this->Q_dot.vector,
-                  this->lag_comp_data.quat.scalar,
-                  this->lag_comp_data.quat.vector,
+                  this->lag_comp_data.att.scalar,
+                  this->lag_comp_data.att.vector,
                   omega );
 
    // Print out debug information if desired.
@@ -212,8 +212,8 @@ int PhysicalEntityLagCompSA::compensate(
       this->integrator.unload();
 
       // Normalize the propagated attitude quaternion.
-      QuaternionData::normalize_quaternion( &(this->lag_comp_data.quat.scalar),
-                            this->lag_comp_data.quat.vector     );
+      QuaternionData::normalize_quaternion( &(this->lag_comp_data.att.scalar),
+                            this->lag_comp_data.att.vector     );
 
       // Update the integration time.
       this->integ_t = this->integrator.getIndyVar();
@@ -227,16 +227,16 @@ int PhysicalEntityLagCompSA::compensate(
    lag_comp_data.time = integ_t;
 
    // Compute the lag compensated value for the attitude quaternion rate.
-   QuaternionData::compute_quat_dot( this->lag_comp_data.quat.scalar,
-                     this->lag_comp_data.quat.vector,
+   QuaternionData::compute_quat_dot( this->lag_comp_data.att.scalar,
+                     this->lag_comp_data.att.vector,
                      this->lag_comp_data.ang_vel,
                      &(this->Q_dot.scalar),
                      this->Q_dot.vector );
 
    QuaternionData::compute_omega( this->Q_dot.scalar,
                   this->Q_dot.vector,
-                  this->lag_comp_data.quat.scalar,
-                  this->lag_comp_data.quat.vector,
+                  this->lag_comp_data.att.scalar,
+                  this->lag_comp_data.att.vector,
                   omega );
 
    // Print out debug information if desired.

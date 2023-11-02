@@ -117,16 +117,14 @@ void PhysicalInterface::initialize( PhysicalInterfaceData *interface_data_ptr )
    return;
 }
 
-void PhysicalInterface::pack()
+
+/*!
+ * @job_class{scheduled}
+ */
+void PhysicalInterface::pack_from_working_data()
 {
    ostringstream errmsg;
    int           iinc;
-
-   // Check for initialization.
-   if ( !initialized ) {
-      cout << "JEODPhysicalInterface::pack() ERROR: The initialize() function has not"
-           << " been called!" << endl;
-   }
 
    // NOTE: Because TrickHLA handles the bundling of locally owned attributes
    // we do not need to check the ownership status of them here like we do
@@ -173,43 +171,16 @@ void PhysicalInterface::pack()
       packing_data.attitude.vector[iinc] = interface_data->attitude.vector[iinc];
    }
 
-   // Print out debug information if desired.
-   if ( debug ) {
-      cout.precision( 15 );
-      cout << "PhysicalInterface::pack():" << __LINE__ << endl
-           << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'" << endl
-           << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'" << endl
-           << "\tposition: " << endl
-           << "\t\t" << packing_data.position[0] << endl
-           << "\t\t" << packing_data.position[1] << endl
-           << "\t\t" << packing_data.position[2] << endl
-           << "\tattitude (quaternion:s,v): " << endl
-           << "\t\t" << packing_data.attitude.scalar << endl
-           << "\t\t" << packing_data.attitude.vector[0] << endl
-           << "\t\t" << packing_data.attitude.vector[1] << endl
-           << "\t\t" << packing_data.attitude.vector[2] << endl
-           << endl;
-   }
-
-   // Encode the data into the buffer.
-   quat_encoder.encode();
-
    return;
+
 }
 
-void PhysicalInterface::unpack()
+
+/*!
+ * @job_class{scheduled}
+ */
+void PhysicalInterface::unpack_into_working_data()
 {
-
-   // double dt; // Local vs. remote time difference.
-
-   if ( !initialized ) {
-      cout << "PhysicalInterface::unpack():" << __LINE__
-           << " ERROR: The initialize() function has not been called!" << endl;
-   }
-
-   // Use the HLA encoder helpers to decode the PhysicalInterface fixed record.
-   quat_encoder.decode();
 
    // If the HLA attribute has changed and is remotely owned (i.e. is
    // coming from another federate) then override our simulation state with the
@@ -264,25 +235,6 @@ void PhysicalInterface::unpack()
       for ( int iinc = 0; iinc < 3; ++iinc ) {
          interface_data->attitude.vector[iinc] = packing_data.attitude.vector[iinc];
       }
-   }
-
-   // Print out debug information if desired.
-   if ( debug ) {
-      cout.precision( 15 );
-      cout << "PhysicalInterface::unpack():" << __LINE__ << endl
-           << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'" << endl
-           << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'" << endl
-           << "\tposition: " << endl
-           << "\t\t" << packing_data.position[0] << endl
-           << "\t\t" << packing_data.position[1] << endl
-           << "\t\t" << packing_data.position[2] << endl
-           << "\tattitude (quaternion:s,v): " << endl
-           << "\t\t" << packing_data.attitude.scalar << endl
-           << "\t\t" << packing_data.attitude.vector[0] << endl
-           << "\t\t" << packing_data.attitude.vector[1] << endl
-           << "\t\t" << packing_data.attitude.vector[2] << endl
-           << endl;
    }
 
    return;

@@ -23,6 +23,7 @@ NASA, Johnson Space Center\n
 @revs_begin
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, July 2023, --, Initial version.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, July 2023, --, Cleaned up and filled out.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, October 2023, --, Refactored.}
 @revs_end
 
 */
@@ -202,9 +203,9 @@ void PhysicalEntity::pack_from_working_data()
       pe_packing_data.state.vel[iinc] = physical_data->state.vel[iinc];
    }
    // Attitude quaternion.
-   pe_packing_data.state.quat.scalar = physical_data->state.quat.scalar;
+   pe_packing_data.state.att.scalar = physical_data->state.att.scalar;
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      pe_packing_data.state.quat.vector[iinc] = physical_data->state.quat.vector[iinc];
+      pe_packing_data.state.att.vector[iinc] = physical_data->state.att.vector[iinc];
       pe_packing_data.state.ang_vel[iinc]     = physical_data->state.ang_vel[iinc];
    }
 
@@ -238,7 +239,6 @@ void PhysicalEntity::pack_from_working_data()
 }
 
 
-
 /*!
  * @job_class{scheduled}
  */
@@ -264,9 +264,9 @@ void PhysicalEntity::unpack_into_working_data()
          physical_data->state.vel[iinc] = pe_packing_data.state.vel[iinc];
       }
       // Attitude quaternion.
-      physical_data->state.quat.scalar = pe_packing_data.state.quat.scalar;
+      physical_data->state.att.scalar = pe_packing_data.state.att.scalar;
       for ( int iinc = 0; iinc < 3; ++iinc ) {
-         physical_data->state.quat.vector[iinc] = pe_packing_data.state.quat.vector[iinc];
+         physical_data->state.att.vector[iinc] = pe_packing_data.state.att.vector[iinc];
          physical_data->state.ang_vel[iinc]     = pe_packing_data.state.ang_vel[iinc];
       }
       // Time tag for this state data.

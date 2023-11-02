@@ -1,5 +1,5 @@
 /*!
-@file SpaceFOM/QuaternionData.c
+@file SpaceFOM/QuaternionData.cpp
 @ingroup SpaceFOM
 @brief Simple functions that operate on quaternion data.
 
@@ -23,6 +23,7 @@ NASA, Johnson Space Center\n
 
 @revs_begin
 @rev_entry{ Edwin Z. Crues, NASA ER7, NExSyS, October 2023, --, Initial version }
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, October 2023, --, Made into full class.}
 @revs_end
 
 */
@@ -190,7 +191,32 @@ void QuaternionData::normalize_quaternion(
 
 
 /*!
- * @job_class{scheduled}
+ * @job_class{derivative}
+ */
+void QuaternionData::derivative_first(
+   QuaternionData const & quat,
+   double const           omega[3] )
+{
+   compute_quat_dot( quat.scalar, quat.vector, omega, &(this->scalar), this->vector );
+   return;
+}
+
+
+/*!
+ * @job_class{derivative}
+ */
+void QuaternionData::derivative_first(
+   double const quat_scalar,
+   double const quat_vector[3],
+   double const omega[3] )
+{
+   compute_quat_dot( quat_scalar, quat_vector, omega, &(this->scalar), this->vector );
+   return;
+}
+
+
+/*!
+ * @job_class{derivative}
  */
 void QuaternionData::compute_quat_dot (
    double const   quat_scalar,
@@ -199,16 +225,11 @@ void QuaternionData::compute_quat_dot (
    double       * qdot_scalar,
    double         qdot_vector[3] )
 {
-   double minus_half_omega[3];
 
-   V_SCALE( minus_half_omega, omega, -0.5 );
-
-   *(qdot_scalar) = - (V_DOT( quat_vector, minus_half_omega ));
-
-   V_SCALE( qdot_vector, minus_half_omega, quat_scalar );
-   qdot_vector[0] += (minus_half_omega[1] * quat_vector[2]) - (minus_half_omega[2] * quat_vector[1]);
-   qdot_vector[1] += (minus_half_omega[2] * quat_vector[0]) - (minus_half_omega[0] * quat_vector[2]);
-   qdot_vector[2] += (minus_half_omega[0] * quat_vector[1]) - (minus_half_omega[1] * quat_vector[0]);
+   *qdot_scalar   = (( quat_vector[0] * omega[0]) + ( quat_vector[1] * omega[1]) + ( quat_vector[2] * omega[2])) * 0.5;
+   qdot_vector[0] = ((-quat_scalar    * omega[0]) + (-quat_vector[2] * omega[1]) + ( quat_vector[1] * omega[2])) * 0.5;
+   qdot_vector[1] = (( quat_vector[2] * omega[0]) + (-quat_scalar    * omega[1]) + (-quat_vector[0] * omega[2])) * 0.5;
+   qdot_vector[2] = ((-quat_vector[1] * omega[0]) + ( quat_vector[0] * omega[1]) + (-quat_scalar    * omega[2])) * 0.5;
 
    // Return to calling routine.
    return;

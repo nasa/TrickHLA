@@ -247,6 +247,7 @@ void PhysicalInterfaceBase::initialize_callback(
    return;
 }
 
+
 /*!
  * @job_class{initialization}
  */
@@ -261,6 +262,7 @@ void PhysicalInterfaceBase::set_name( char const *new_name )
    this->packing_data.name = trick_MM->mm_strdup( new_name );
    return;
 }
+
 
 /*!
  * @job_class{initialization}
@@ -277,6 +279,86 @@ void PhysicalInterfaceBase::set_parent( char const *new_parent_name )
 
    return;
 }
+
+void PhysicalInterfaceBase::pack()
+{
+
+   // Check for initialization.
+   if ( !initialized ) {
+      cout << "PhysicalInterfaceBase::pack() ERROR: The initialize() function has not"
+           << " been called!" << endl;
+   }
+
+   // Check for latency/lag compensation.
+   if ( this->object->lag_comp == NULL ) {
+      this->pack_from_working_data();
+   }
+
+   // Print out debug information if desired.
+   if ( debug ) {
+      cout.precision( 15 );
+      cout << "PhysicalInterfaceBase::pack():" << __LINE__ << endl
+           << "\tObject-Name: '" << object->get_name() << "'" << endl
+           << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'" << endl
+           << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'" << endl
+           << "\tposition: "
+           << "\t\t" << packing_data.position[0] << ", "
+           << "\t\t" << packing_data.position[1] << ", "
+           << "\t\t" << packing_data.position[2] << endl
+           << "\tattitude (quaternion:s,v): "
+           << "\t\t" << packing_data.attitude.scalar << "; "
+           << "\t\t" << packing_data.attitude.vector[0] << ", "
+           << "\t\t" << packing_data.attitude.vector[1] << ", "
+           << "\t\t" << packing_data.attitude.vector[2] << endl
+           << endl;
+   }
+
+   // Encode the data into the buffer.
+   quat_encoder.encode();
+
+   return;
+
+}
+
+
+void PhysicalInterfaceBase::unpack()
+{
+
+   // double dt; // Local vs. remote time difference.
+
+   if ( !initialized ) {
+      cout << "PhysicalInterfaceBase::unpack():" << __LINE__
+           << " ERROR: The initialize() function has not been called!" << endl;
+   }
+
+   // Use the HLA encoder helpers to decode the PhysicalInterface fixed record.
+   quat_encoder.decode();
+
+   // Transfer the packing data into the working data.
+   this->unpack_into_working_data();
+
+   // Print out debug information if desired.
+   if ( debug ) {
+      cout.precision( 15 );
+      cout << "PhysicalInterfaceBase::unpack():" << __LINE__ << endl
+           << "\tObject-Name: '" << object->get_name() << "'" << endl
+           << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'" << endl
+           << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'" << endl
+           << "\tposition: "
+           << "\t\t" << packing_data.position[0] << ", "
+           << "\t\t" << packing_data.position[1] << ", "
+           << "\t\t" << packing_data.position[2] << endl
+           << "\tattitude (quaternion:s,v): "
+           << "\t\t" << packing_data.attitude.scalar << "; "
+           << "\t\t" << packing_data.attitude.vector[0] << ", "
+           << "\t\t" << packing_data.attitude.vector[1] << ", "
+           << "\t\t" << packing_data.attitude.vector[2] << endl
+           << endl;
+   }
+
+   return;
+}
+
 
 /*!
  * @job_class{default_data}

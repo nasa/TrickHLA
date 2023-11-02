@@ -25,6 +25,7 @@ NASA, Johnson Space Center\n
 @rev_entry{Edwin Z. Crues, NASA ER7, SISO, Sept 2010, --, Smackdown implementation.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, July 2023, --, Cleaned up and filled out.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, October 2023, --, Refactored.}
 @revs_end
 
 */
@@ -89,8 +90,8 @@ PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
    // Setup the Space-Time-Coordinate data.
    V_INIT( pe_packing_data.state.pos );
    V_INIT( pe_packing_data.state.vel );
-   pe_packing_data.state.quat.scalar = 1.0;
-   V_INIT( pe_packing_data.state.quat.vector );
+   pe_packing_data.state.att.scalar = 1.0;
+   V_INIT( pe_packing_data.state.att.vector );
    V_INIT( pe_packing_data.state.ang_vel );
    pe_packing_data.state.time = 0.0;
 
@@ -360,6 +361,9 @@ void PhysicalEntityBase::initialize_callback(
    cm_attr           = get_attribute_and_validate( "center_of_mass" );
    body_frame_attr   = get_attribute_and_validate( "body_wrt_structural" );
 
+   // Initialize with the working data in the packing data.
+   this->pack_from_working_data();
+
    return;
 }
 
@@ -434,7 +438,7 @@ void PhysicalEntityBase::pack()
 
    // Check for initialization.
    if ( !initialized ) {
-      cout << "PhysicalEntity::pack() ERROR: The initialize() function has not"
+      cout << "PhysicalEntityBase::pack() ERROR: The initialize() function has not"
            << " been called!" << endl;
    }
 
@@ -445,24 +449,8 @@ void PhysicalEntityBase::pack()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout.precision( 15 );
-      cout << "PhysicalEntity::pack():" << __LINE__ << endl
-           << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname:   '" << ( pe_packing_data.name != NULL ? pe_packing_data.name : "" ) << "'" << endl
-           << "\ttype:   '" << ( pe_packing_data.type != NULL ? pe_packing_data.type : "" ) << "'" << endl
-           << "\tstatus: '" << ( pe_packing_data.status != NULL ? pe_packing_data.status : "" ) << "'" << endl
-           << "\tparent: '" << ( pe_packing_data.parent_frame != NULL ? pe_packing_data.parent_frame : "" ) << "'" << endl
-           << "\ttime: " << pe_packing_data.state.time << endl
-           << "\tposition: " << endl
-           << "\t\t" << pe_packing_data.state.pos[0] << endl
-           << "\t\t" << pe_packing_data.state.pos[1] << endl
-           << "\t\t" << pe_packing_data.state.pos[2] << endl
-           << "\tattitude (quaternion:s,v): " << endl
-           << "\t\t" << pe_packing_data.state.quat.scalar << endl
-           << "\t\t" << pe_packing_data.state.quat.vector[0] << endl
-           << "\t\t" << pe_packing_data.state.quat.vector[1] << endl
-           << "\t\t" << pe_packing_data.state.quat.vector[2] << endl
-           << endl;
+      cout << "PhysicalEntityBase::pack():" << __LINE__ << endl;
+      this->debug_print( cout );
    }
 
    // Encode the data into the buffer.
@@ -481,7 +469,7 @@ void PhysicalEntityBase::unpack()
    // double dt; // Local vs. remote time difference.
 
    if ( !initialized ) {
-      cout << "PhysicalEntity::unpack():" << __LINE__
+      cout << "PhysicalEntityBase::unpack():" << __LINE__
            << " ERROR: The initialize() function has not been called!" << endl;
    }
 
@@ -494,24 +482,8 @@ void PhysicalEntityBase::unpack()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout.precision( 15 );
-      cout << "PhysicalEntity::unpack():" << __LINE__ << endl
-           << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname:   '" << ( pe_packing_data.name != NULL ? pe_packing_data.name : "" ) << "'" << endl
-           << "\ttype:   '" << ( pe_packing_data.type != NULL ? pe_packing_data.type : "" ) << "'" << endl
-           << "\tstatus: '" << ( pe_packing_data.status != NULL ? pe_packing_data.status : "" ) << "'" << endl
-           << "\tparent: '" << ( pe_packing_data.parent_frame != NULL ? pe_packing_data.parent_frame : "" ) << "'" << endl
-           << "\ttime: " << pe_packing_data.state.time << endl
-           << "\tposition: " << endl
-           << "\t\t" << pe_packing_data.state.pos[0] << endl
-           << "\t\t" << pe_packing_data.state.pos[1] << endl
-           << "\t\t" << pe_packing_data.state.pos[2] << endl
-           << "\tattitude (quaternion:s,v): " << endl
-           << "\t\t" << pe_packing_data.state.quat.scalar << endl
-           << "\t\t" << pe_packing_data.state.quat.vector[0] << endl
-           << "\t\t" << pe_packing_data.state.quat.vector[1] << endl
-           << "\t\t" << pe_packing_data.state.quat.vector[2] << endl
-           << endl;
+      cout << "PhysicalEntityBase::unpack():" << __LINE__ << endl;
+      this->debug_print( cout );
    }
 
    return;
@@ -537,4 +509,60 @@ void PhysicalEntityBase::set_object( TrickHLA::Object *mngr_obj )
    this->object = mngr_obj;
 
    return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void PhysicalEntityBase::debug_print(
+   std::ostream & stream )
+{
+   stream.precision( 15 );
+   double euler_angles[3];
+   pe_packing_data.state.att.get_Euler( Roll_Pitch_Yaw, euler_angles );
+
+   stream << "\tObject-Name: '" << object->get_name() << "'" << endl
+          << "\tname:   '" << ( pe_packing_data.name != NULL ? pe_packing_data.name : "" ) << "'" << endl
+          << "\ttype:   '" << ( pe_packing_data.type != NULL ? pe_packing_data.type : "" ) << "'" << endl
+          << "\tstatus: '" << ( pe_packing_data.status != NULL ? pe_packing_data.status : "" ) << "'" << endl
+          << "\tparent: '" << ( pe_packing_data.parent_frame != NULL ? pe_packing_data.parent_frame : "" ) << "'" << endl
+          << "\ttime: " << pe_packing_data.state.time << endl
+          << "\tposition: "
+                    << pe_packing_data.state.pos[0] << ", "
+                    << pe_packing_data.state.pos[1] << ", "
+                    << pe_packing_data.state.pos[2] << endl
+          << "\tvelocity: "
+                    << pe_packing_data.state.vel[0] << ", "
+                    << pe_packing_data.state.vel[1] << ", "
+                    << pe_packing_data.state.vel[2] << endl
+          << "\tattitude (quaternion:s,v): "
+                    << pe_packing_data.state.att.scalar << "; "
+                    << pe_packing_data.state.att.vector[0] << ", "
+                    << pe_packing_data.state.att.vector[1] << ", "
+                    << pe_packing_data.state.att.vector[2] << endl
+          << "\tattitude (RPY): "
+                    << euler_angles[0] << ", "
+                    << euler_angles[1] << ", "
+                    << euler_angles[2] << endl
+          << "\tangular velocity: "
+                    << pe_packing_data.state.ang_vel[0] << ", "
+                    << pe_packing_data.state.ang_vel[1] << ", "
+                    << pe_packing_data.state.ang_vel[2] << endl
+          << "\taccel: "
+                    << pe_packing_data.accel[0] << ", "
+                    << pe_packing_data.accel[1] << ", "
+                    << pe_packing_data.accel[2] << endl
+          << "\tangular acceleration: "
+                    << pe_packing_data.rot_accel[0] << ", "
+                    << pe_packing_data.rot_accel[1] << ", "
+                    << pe_packing_data.rot_accel[2] << endl
+          << "\tcenter of mass (cm): "
+                    << pe_packing_data.cm[0] << ", "
+                    << pe_packing_data.cm[1] << ", "
+                    << pe_packing_data.cm[2] << endl
+          << endl;
+
+   return;
+
 }

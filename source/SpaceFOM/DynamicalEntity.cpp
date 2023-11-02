@@ -118,12 +118,16 @@ void DynamicalEntity::initialize(
    return;
 }
 
-void DynamicalEntity::pack()
+
+/*!
+ * @job_class{scheduled}
+ */
+void DynamicalEntity::pack_from_working_data()
 {
    int iinc, jinc;
 
-   // Call the PhysicalEntity pack routine.
-   PhysicalEntity::pack();
+   // Call the base class pack from working data function.
+   PhysicalEntity::pack_from_working_data();
 
    // Set the force data.
    for ( iinc = 0; iinc < 3; ++iinc ) {
@@ -147,32 +151,19 @@ void DynamicalEntity::pack()
       }
    }
 
-   // Print out debug information if desired.
-   if ( debug ) {
-      cout.precision( 15 );
-      cout << "DynamicalEntity::pack():" << __LINE__ << endl
-           << "\tmass: " << de_packing_data.mass << endl
-           << "\tmass_rate: " << de_packing_data.mass_rate << endl
-           << "\tforce: " << endl
-           << "\t\t" << de_packing_data.force[0] << endl
-           << "\t\t" << de_packing_data.force[1] << endl
-           << "\t\t" << de_packing_data.force[2] << endl
-           << "\ttorque: " << endl
-           << "\t\t" << de_packing_data.torque[0] << endl
-           << "\t\t" << de_packing_data.torque[1] << endl
-           << "\t\t" << de_packing_data.torque[2] << endl
-           << endl;
-   }
-
    return;
 }
 
-void DynamicalEntity::unpack()
+
+/*!
+ * @job_class{scheduled}
+ */
+void DynamicalEntity::unpack_into_working_data()
 {
    int iinc, jinc;
 
-   // Call the PhysicalEntity pack routine.
-   PhysicalEntity::unpack();
+   // Call the base class unpack into working data function.
+   PhysicalEntity::unpack_into_working_data();
 
    // If the HLA attribute has changed and is remotely owned (i.e. is
    // coming from another federate) then override our simulation state with the
@@ -223,23 +214,6 @@ void DynamicalEntity::unpack()
             dynamical_data->inertia_rate[iinc][jinc] = de_packing_data.inertia_rate[iinc][jinc];
          }
       }
-   }
-
-   // Print out debug information if desired.
-   if ( debug ) {
-      cout.precision( 15 );
-      cout << "DynamicalEntity::unpack():" << __LINE__ << endl
-           << "\tmass: " << de_packing_data.mass << endl
-           << "\tmass_rate: " << de_packing_data.mass_rate << endl
-           << "\tforce: " << endl
-           << "\t\t" << de_packing_data.force[0] << endl
-           << "\t\t" << de_packing_data.force[1] << endl
-           << "\t\t" << de_packing_data.force[2] << endl
-           << "\ttorque: " << endl
-           << "\t\t" << de_packing_data.torque[0] << endl
-           << "\t\t" << de_packing_data.torque[1] << endl
-           << "\t\t" << de_packing_data.torque[2] << endl
-           << endl;
    }
 
    return;

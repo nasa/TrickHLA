@@ -310,4 +310,105 @@ void DynamicalEntityBase::initialize_callback(
    mass_rate_attr    = get_attribute_and_validate( "mass_rate" );
    inertia_attr      = get_attribute_and_validate( "inertia" );
    inertia_rate_attr = get_attribute_and_validate( "inertia_rate" );
+
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void DynamicalEntityBase::pack()
+{
+
+   // Check for initialization.
+   if ( !initialized ) {
+      cout << "DynamicalEntityBase::pack() ERROR: The initialize() function has not"
+           << " been called!" << endl;
+   }
+
+   // Call the PhysicalEntityBase pack routine.
+   PhysicalEntityBase::pack();
+
+   // Print out debug information if desired.
+   if ( debug ) {
+      cout << "DynamicalEntityBase::pack():" << __LINE__ << endl;
+      this->debug_print( cout );
+   }
+
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void DynamicalEntityBase::unpack()
+{
+
+   if ( !initialized ) {
+      cout << "DynamicalEntityBase::unpack():" << __LINE__
+           << " ERROR: The initialize() function has not been called!" << endl;
+   }
+
+   // Call the PhysicalEntityBase unpack routine.
+   PhysicalEntityBase::unpack();
+
+   // Print out debug information if desired.
+   if ( debug ) {
+      cout << "DynamicalEntityBase::unpack():" << __LINE__ << endl;
+      this->debug_print( cout );
+   }
+
+   return;
+
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void DynamicalEntityBase::debug_print(
+   std::ostream & stream )
+{
+
+   // Call the PhysicalEntity print routine first.
+   PhysicalEntityBase::debug_print( stream );
+
+   stream.precision( 15 );
+   stream << "\tObject-Name: '" << object->get_name() << "'" << endl
+          << "\tmass: " << de_packing_data.mass << endl
+          << "\tmass_rate: " << de_packing_data.mass_rate << endl
+          << "\tinertia: " << endl
+          << "\t\t" << de_packing_data.inertia[0][0] << ", "
+                    << de_packing_data.inertia[0][1] << ", "
+                    << de_packing_data.inertia[0][2] << endl
+          << "\t\t" << de_packing_data.inertia[1][0] << ", "
+                    << de_packing_data.inertia[1][1] << ", "
+                    << de_packing_data.inertia[1][2] << endl
+          << "\t\t" << de_packing_data.inertia[2][0] << ", "
+                    << de_packing_data.inertia[2][1] << ", "
+                    << de_packing_data.inertia[2][2] << endl
+          << "\tinertia rate: " << endl
+          << "\t\t" << de_packing_data.inertia_rate[0][0] << ", "
+                    << de_packing_data.inertia_rate[0][1] << ", "
+                    << de_packing_data.inertia_rate[0][2] << endl
+          << "\t\t" << de_packing_data.inertia_rate[1][0] << ", "
+                    << de_packing_data.inertia_rate[1][1] << ", "
+                    << de_packing_data.inertia_rate[1][2] << endl
+          << "\t\t" << de_packing_data.inertia_rate[2][0] << ", "
+                    << de_packing_data.inertia_rate[2][1] << ", "
+                    << de_packing_data.inertia_rate[2][2] << endl
+          << "\tforce: "
+                    << de_packing_data.force[0] << ", "
+                    << de_packing_data.force[1] << ", "
+                    << de_packing_data.force[2] << endl
+          << "\ttorque: "
+                    << de_packing_data.torque[0] << ", "
+                    << de_packing_data.torque[1] << ", "
+                    << de_packing_data.torque[2] << endl
+          << endl;
+
+   return;
+
 }

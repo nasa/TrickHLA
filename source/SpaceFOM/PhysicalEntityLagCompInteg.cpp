@@ -125,8 +125,8 @@ void PhysicalEntityLagCompInteg::send_lag_compensation()
    // Copy the current PhysicalEntity state over to the lag compensated state.
    this->entity.pack_from_working_data();
    this->load_lag_comp_data();
-   QuaternionData::compute_quat_dot( this->lag_comp_data.quat.scalar,
-                                     this->lag_comp_data.quat.vector,
+   QuaternionData::compute_quat_dot( this->lag_comp_data.att.scalar,
+                                     this->lag_comp_data.att.vector,
                                      this->lag_comp_data.ang_vel,
                                      &(this->Q_dot.scalar),
                                      this->Q_dot.vector );
@@ -179,8 +179,8 @@ void PhysicalEntityLagCompInteg::receive_lag_compensation()
 
       // Copy the current PhysicalEntity state over to the lag compensated state.
       this->load_lag_comp_data();
-      QuaternionData::compute_quat_dot( this->lag_comp_data.quat.scalar,
-                                        this->lag_comp_data.quat.vector,
+      QuaternionData::compute_quat_dot( this->lag_comp_data.att.scalar,
+                                        this->lag_comp_data.att.vector,
                                         this->lag_comp_data.ang_vel,
                                         &(this->Q_dot.scalar),
                                         this->Q_dot.vector );

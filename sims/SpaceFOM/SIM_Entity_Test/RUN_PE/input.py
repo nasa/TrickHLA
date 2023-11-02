@@ -198,12 +198,102 @@ if (print_usage == True) :
 trick.exec_set_trap_sigfpe(True)
 #trick.checkpoint_pre_init(1)
 trick.checkpoint_post_init(1)
+trick.checkpoint_end(1)
 #trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
 
 trick.exec_set_enable_freeze(False)
 trick.exec_set_freeze_command(False)
 trick.sim_control_panel_set_enabled(False)
 trick.exec_set_stack_trace(False)
+
+#---------------------------------------------
+# Setup the integrators
+#---------------------------------------------
+pe_integloop.getIntegrator( trick.Runge_Kutta_4, 13 )
+de_integloop.getIntegrator( trick.Runge_Kutta_4, 13 )
+
+#---------------------------------------------------------------------------
+# Set up the dynamics parameters for the PhysicalEntity test entity.
+#---------------------------------------------------------------------------
+pe_dynamics.entity.pe_data.name         = phy_entity_name
+pe_dynamics.entity.pe_data.type         = 'Constellation-class Starship'
+pe_dynamics.entity.pe_data.status       = 'Mothballed'
+pe_dynamics.entity.pe_data.parent_frame = 'RootFrame'
+
+# Initial translational state.
+pe_dynamics.entity.pe_data.state.pos = [ 1.0, 2.0, 3.0 ]
+pe_dynamics.entity.pe_data.state.vel = [ 0.1, 0.1, 0.1 ]
+
+# Initial rotational state.
+pe_dynamics.entity.pe_data.state.att.set_from_Euler( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
+pe_dynamics.entity.pe_data.state.ang_vel = [ 0.0, 0.1, 0.0 ]
+
+# Base propagation parameters.
+pe_dynamics.entity.pe_data.accel     = [0.0, 0.0, 0.0]
+pe_dynamics.entity.pe_data.ang_accel = [0.0, 0.0, 0.0]
+pe_dynamics.entity.pe_data.cm        = [0.0, 0.0, 0.0]
+
+pe_dynamics.entity.pe_data.body_wrt_struct.set_from_Euler( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
+
+pe_dynamics.entity.de_data.force = [ 0.0, 0.0, 0.0 ]
+
+pe_dynamics.entity.de_data.torque = [ 0.0, 0.0, 0.0 ]
+
+# Basic mass properties.
+pe_mass = 100.0
+de_radius = 1.0
+# Principal inertia of a solid sphere.
+Ixx = Iyy = Izz = (2.0 / 5.0) * pe_mass * de_radius * de_radius
+
+pe_dynamics.entity.de_data.mass = pe_mass
+pe_dynamics.entity.de_data.mass_rate = 0.0
+pe_dynamics.entity.de_data.inertia[0] = [ Ixx, 0.0, 0.0 ]
+pe_dynamics.entity.de_data.inertia[1] = [ 0.0, Iyy, 0.0 ]
+pe_dynamics.entity.de_data.inertia[2] = [ 0.0, 0.0, Izz ]
+pe_dynamics.entity.de_data.inertia_rate[0] = [ 0.0, 0.0, 0.0 ]
+pe_dynamics.entity.de_data.inertia_rate[1] = [ 0.0, 0.0, 0.0 ]
+pe_dynamics.entity.de_data.inertia_rate[2] = [ 0.0, 0.0, 0.0 ]
+
+
+#---------------------------------------------------------------------------
+# Set up the dynamics parameters for the DynamicalEntity test entity.
+#---------------------------------------------------------------------------
+de_dynamics.entity.pe_data.name         = dyn_entity_name
+de_dynamics.entity.pe_data.type         = 'Intrepid-class Starship'
+de_dynamics.entity.pe_data.status       = 'Lost'
+de_dynamics.entity.pe_data.parent_frame = 'FrameA'
+
+de_dynamics.entity.pe_data.state.pos = [ 3.0, 2.0, 1.0 ]
+de_dynamics.entity.pe_data.state.vel = [ 0.3, 0.2, 0.1 ]
+
+de_dynamics.entity.pe_data.state.att.set_from_Euler( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
+de_dynamics.entity.pe_data.state.ang_vel = [ 0.0, 0.0, 0.1 ]
+
+# Base propagation parameters.
+de_dynamics.entity.pe_data.accel     = [0.0, 0.0, 0.0]
+de_dynamics.entity.pe_data.ang_accel = [0.0, 0.0, 0.0]
+de_dynamics.entity.pe_data.cm        = [0.0, 0.0, 0.0]
+
+de_dynamics.entity.pe_data.body_wrt_struct.set_from_Euler( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
+
+de_dynamics.entity.de_data.force = [ 0.4, 0.5, 0.6 ]
+
+de_dynamics.entity.de_data.torque = [ 0.01, 0.02, 0.03 ]
+
+# Basic mass properties.
+de_mass = 100.0
+de_radius = 1.0
+# Principal inertia of a solid sphere.
+Ixx = Iyy = Izz = (2.0 / 5.0) * de_mass * de_radius * de_radius
+
+de_dynamics.entity.de_data.mass = de_mass
+de_dynamics.entity.de_data.mass_rate = 0.0
+de_dynamics.entity.de_data.inertia[0] = [ Ixx, 0.0, 0.0 ]
+de_dynamics.entity.de_data.inertia[1] = [ 0.0, Iyy, 0.0 ]
+de_dynamics.entity.de_data.inertia[2] = [ 0.0, 0.0, Izz ]
+de_dynamics.entity.de_data.inertia_rate[0] = [ 0.0, 0.0, 0.0 ]
+de_dynamics.entity.de_data.inertia_rate[1] = [ 0.0, 0.0, 0.0 ]
+de_dynamics.entity.de_data.inertia_rate[2] = [ 0.0, 0.0, 0.0 ]
 
 
 # =========================================================================
@@ -275,6 +365,7 @@ federate.set_time_constrained( True )
 #THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::CTETimelineBase' )
 
 
+
 #---------------------------------------------------------------------------
 # Set up the Root Reference Frame object for discovery.
 # If it is the RRFP, it will publish the frame.
@@ -334,28 +425,6 @@ physical_entity.entity_packing.debug = verbose
 # Add this Entity to the list of managed object.
 federate.add_fed_object( phy_entity )
 
-# Let's give the PhysicalEntity some non-zero values.
-physical_entity.pe_data.name         = phy_entity_name
-physical_entity.pe_data.type         = 'Constellation-class Starship'
-physical_entity.pe_data.status       = 'Mothballed'
-physical_entity.pe_data.parent_frame = 'RootFrame'
-
-physical_entity.pe_data.state.pos[0] = 1.0
-physical_entity.pe_data.state.pos[1] = 2.0
-physical_entity.pe_data.state.pos[2] = 3.0
-physical_entity.pe_data.state.vel[0] = 0.1
-physical_entity.pe_data.state.vel[1] = 0.2
-physical_entity.pe_data.state.vel[2] = 0.3
-
-#physical_entity.pe_data.state.quat.scalar = 1.0
-#physical_entity.pe_data.state.quat.vector[0] = 0.0
-#physical_entity.pe_data.state.quat.vector[1] = 0.0
-#physical_entity.pe_data.state.quat.vector[2] = 0.0
-physical_entity.pe_data.state.quat.set_from_Euler( trick.Pitch_Yaw_Roll, [0.0, 0.0, 0.0] )
-physical_entity.pe_data.state.ang_vel[0] = 0.0
-physical_entity.pe_data.state.ang_vel[1] = 0.1
-physical_entity.pe_data.state.ang_vel[2] = 0.0
-
 # Set the lag compensation paratmeters.
 physical_entity.lag_compensation.debug = True
 physical_entity.lag_compensation.set_integ_tolerance( 1.0e-6 )
@@ -380,14 +449,8 @@ federate.add_fed_object( phy_interface )
 physical_interface.interface_data.name        = phy_interface_name
 physical_interface.interface_data.parent_name = phy_entity_name
 
-physical_interface.interface_data.position[0] = 0.0
-physical_interface.interface_data.position[1] = 1.0
-physical_interface.interface_data.position[2] = 2.0
-
-physical_interface.interface_data.attitude.scalar = 1.0
-physical_interface.interface_data.attitude.vector[0] = 0.0
-physical_interface.interface_data.attitude.vector[1] = 0.0
-physical_interface.interface_data.attitude.vector[2] = 0.0
+physical_interface.interface_data.position = [ 0.0, 1.1, 2.2 ]
+physical_interface.interface_data.attitude.set_from_Euler( trick.Pitch_Yaw_Roll, [0.0, 0.0, 0.0] )
 
 
 #---------------------------------------------------------------------------
@@ -430,6 +493,7 @@ federate.initialize()
 
 # Configure reference frame lag compensation.
 # NOTE: The ROOT REFERENCE FRAME never needs to be compensated!
+#frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
 frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 # Configure entity lag compensation.

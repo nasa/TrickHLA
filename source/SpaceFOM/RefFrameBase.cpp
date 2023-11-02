@@ -423,15 +423,15 @@ void RefFrameBase::pack()
            << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'" << endl
            << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'" << endl
            << "\ttime: " << packing_data.state.time << endl
-           << "\tposition: " << endl
-           << "\t\t" << packing_data.state.pos[0] << endl
-           << "\t\t" << packing_data.state.pos[1] << endl
+           << "\tposition: "
+           << "\t\t" << packing_data.state.pos[0] << ", "
+           << "\t\t" << packing_data.state.pos[1] << ", "
            << "\t\t" << packing_data.state.pos[2] << endl
-           << "\tattitude (quaternion:s,v): " << endl
-           << "\t\t" << packing_data.state.quat.scalar << endl
-           << "\t\t" << packing_data.state.quat.vector[0] << endl
-           << "\t\t" << packing_data.state.quat.vector[1] << endl
-           << "\t\t" << packing_data.state.quat.vector[2] << endl
+           << "\tattitude (quaternion:s,v): "
+           << "\t\t" << packing_data.state.att.scalar << "; "
+           << "\t\t" << packing_data.state.att.vector[0] << ", "
+           << "\t\t" << packing_data.state.att.vector[1] << ", "
+           << "\t\t" << packing_data.state.att.vector[2] << endl
            << endl;
    }
 
@@ -468,15 +468,15 @@ void RefFrameBase::unpack()
            << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'" << endl
            << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'" << endl
            << "\ttime: " << packing_data.state.time << endl
-           << "\tposition: " << endl
-           << "\t\t" << packing_data.state.pos[0] << endl
-           << "\t\t" << packing_data.state.pos[1] << endl
+           << "\tposition: "
+           << "\t\t" << packing_data.state.pos[0] << ", "
+           << "\t\t" << packing_data.state.pos[1] << ", "
            << "\t\t" << packing_data.state.pos[2] << endl
-           << "\tattitude (quaternion:s,v): " << endl
-           << "\t\t" << packing_data.state.quat.scalar << endl
-           << "\t\t" << packing_data.state.quat.vector[0] << endl
-           << "\t\t" << packing_data.state.quat.vector[1] << endl
-           << "\t\t" << packing_data.state.quat.vector[2] << endl
+           << "\tattitude (quaternion:s,v): "
+           << "\t\t" << packing_data.state.att.scalar << "; "
+           << "\t\t" << packing_data.state.att.vector[0] << ", "
+           << "\t\t" << packing_data.state.att.vector[1] << ", "
+           << "\t\t" << packing_data.state.att.vector[2] << endl
            << endl;
    }
 

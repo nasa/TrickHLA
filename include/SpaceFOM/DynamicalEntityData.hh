@@ -1,5 +1,5 @@
 /**
-@file SpaceFOM/DynamicalEntityData.h
+@file SpaceFOM/DynamicalEntityData.hh
 @ingroup SpaceFOM
 @brief A simple structure that contains the date fields required to encode
 and decode a SISO Space Reference FOM DynamicalEntity data type.  Note: this
@@ -22,6 +22,7 @@ NASA, Johnson Space Center\n
 
 @revs_begin
 @rev_entry{ Edwin Z. Crues, NASA ER7, NExSyS, July 2023, --, Initial version }
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, October 2023, --, Made into full class.}
 @revs_end
 
 */

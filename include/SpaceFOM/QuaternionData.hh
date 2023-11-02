@@ -1,5 +1,5 @@
 /*!
-@file SpaceFOM/QuaternionData.h
+@file SpaceFOM/QuaternionData.hh
 @ingroup SpaceFOM
 @brief A simple structure that contains the date fields required to encode
 and decode a SISO Space Reference FOM Quaternion data type.
@@ -24,6 +24,7 @@ NASA, Johnson Space Center\n
 
 @revs_begin
 @rev_entry{ Edwin Z. Crues, NASA ER7, NExSyS, July 2018, --, Initial version }
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, October 2023, --, Made into full class.}
 @revs_end
 
 */
@@ -88,6 +89,22 @@ class QuaternionData{
    static void normalize_quaternion (
       double * quat_scalar,
       double   quat_vector[3]);
+
+   /*! @brief Compute the first time derivative of the attitude quaternion.
+    *  @param quat  Attitude quaternion.
+    *  @param omega Angular velocity vector. */
+   void derivative_first(
+      QuaternionData const & quat,
+      double const           omega[3] );
+
+   /*! @brief Compute the first time derivative of the attitude quaternion.
+    *  @param quat_scalar Scalar part of the attitude quaternion.
+    *  @param quat_vector Vector part of the attitude quaternion.
+    *  @param omega Angular velocity vector. */
+   void derivative_first(
+      double const quat_scalar,
+      double const quat_vector[3],
+      double const omega[3] );
 
    /*! @brief Compute the rate of the attitude quaternion.
     *  @param quat_scalar Scalar part of the attitude quaternion.

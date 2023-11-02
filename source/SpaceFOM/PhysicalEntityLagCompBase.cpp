@@ -143,8 +143,8 @@ void PhysicalEntityLagCompBase::initialize_states()
       this->accel[iinc]     = this->entity.pe_packing_data.accel[iinc];
       this->rot_accel[iinc] = this->entity.pe_packing_data.rot_accel[iinc];
    }
-   QuaternionData::compute_quat_dot( this->lag_comp_data.quat.scalar,
-                                     this->lag_comp_data.quat.vector,
+   QuaternionData::compute_quat_dot( this->lag_comp_data.att.scalar,
+                                     this->lag_comp_data.att.vector,
                                      this->lag_comp_data.ang_vel,
                                      &(this->Q_dot.scalar),
                                      this->Q_dot.vector );
@@ -218,10 +218,9 @@ void PhysicalEntityLagCompBase::load_lag_comp_data()
 void PhysicalEntityLagCompBase::print_lag_comp_data()
 {
    double euler_angles[3];
-   double * quat = &(lag_comp_data.quat.scalar);
 
    // Compute the attitude Euler angles.
-   euler_quat( euler_angles, quat, 1, Pitch_Yaw_Roll );
+   lag_comp_data.att.get_Euler( Roll_Pitch_Yaw, euler_angles );
 
    cout << "\tScenario time: " << this->get_scenario_time() << endl;
    cout << "\tLag comp time: " << this->lag_comp_data.time << endl;
@@ -238,11 +237,11 @@ void PhysicalEntityLagCompBase::print_lag_comp_data()
         << "\t\t" << this->accel[1] << ", "
         << "\t\t" << this->accel[2] << endl;
    cout << "\tattitude (s;v): "
-        << "\t\t" << this->lag_comp_data.quat.scalar << "; "
-        << "\t\t" << this->lag_comp_data.quat.vector[0] << ", "
-        << "\t\t" << this->lag_comp_data.quat.vector[1] << ", "
-        << "\t\t" << this->lag_comp_data.quat.vector[2] << endl;
-   cout << "\tattitude (PYR): "
+        << "\t\t" << this->lag_comp_data.att.scalar << "; "
+        << "\t\t" << this->lag_comp_data.att.vector[0] << ", "
+        << "\t\t" << this->lag_comp_data.att.vector[1] << ", "
+        << "\t\t" << this->lag_comp_data.att.vector[2] << endl;
+   cout << "\tattitude (RPY): "
         << "\t\t" << euler_angles[0] << ", "
         << "\t\t" << euler_angles[1] << ", "
         << "\t\t" << euler_angles[2] << endl;

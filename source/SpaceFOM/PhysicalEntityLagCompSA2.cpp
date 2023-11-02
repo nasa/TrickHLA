@@ -66,10 +66,10 @@ PhysicalEntityLagCompSA2::PhysicalEntityLagCompSA2( PhysicalEntityBase & entity_
    integ_states[1] = &(this->lag_comp_data.pos[1]);
    integ_states[2] = &(this->lag_comp_data.pos[2]);
    // Rotational position
-   integ_states[3] = &(this->lag_comp_data.quat.scalar);
-   integ_states[4] = &(this->lag_comp_data.quat.vector[0]);
-   integ_states[5] = &(this->lag_comp_data.quat.vector[1]);
-   integ_states[6] = &(this->lag_comp_data.quat.vector[2]);
+   integ_states[3] = &(this->lag_comp_data.att.scalar);
+   integ_states[4] = &(this->lag_comp_data.att.vector[0]);
+   integ_states[5] = &(this->lag_comp_data.att.vector[1]);
+   integ_states[6] = &(this->lag_comp_data.att.vector[2]);
 
    // Translational velocity
    integ_derivs[0] = &(this->lag_comp_data.vel[0]);
@@ -214,8 +214,8 @@ int PhysicalEntityLagCompSA2::compensate(
       this->integrator.unload();
 
       // Normalize the propagated attitude quaternion.
-      QuaternionData::normalize_quaternion( &(this->lag_comp_data.quat.scalar),
-                            this->lag_comp_data.quat.vector     );
+      QuaternionData::normalize_quaternion( &(this->lag_comp_data.att.scalar),
+                            this->lag_comp_data.att.vector     );
 
       // Update the integration time.
       this->integ_t = this->integrator.getIndyVar();
@@ -232,8 +232,8 @@ int PhysicalEntityLagCompSA2::compensate(
    // quaternion and its derivative.
    QuaternionData::compute_omega( this->Q_dot.scalar,
                   this->Q_dot.vector,
-                  this->lag_comp_data.quat.scalar,
-                  this->lag_comp_data.quat.vector,
+                  this->lag_comp_data.att.scalar,
+                  this->lag_comp_data.att.vector,
                   this->lag_comp_data.ang_vel );
 
    // Print out debug information if desired.

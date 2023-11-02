@@ -1,5 +1,5 @@
 /**
-@file SpaceFOM/PhysicalEntityData.h
+@file SpaceFOM/PhysicalEntityData.hh
 @ingroup SpaceFOM
 @brief A simple structure that contains the date fields required to encode
 and decode a SISO Space Reference FOM PhysicalEntity data type.
@@ -21,6 +21,7 @@ NASA, Johnson Space Center\n
 
 @revs_begin
 @rev_entry{ Edwin Z. Crues, NASA ER7, NExSyS, July 2023, --, Initial version }
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, October 2023, --, Made into full class.}
 @revs_end
 
 */
@@ -44,7 +45,7 @@ class PhysicalEntityData{
    SpaceTimeCoordinateData state; ///< @trick_units{--} Space time coordinate state.
 
    double accel[3];     ///< @trick_units{m/s2} Entity acceleration vector.
-   double rot_accel[3]; ///< @trick_units{rad/s2} Entity rotational acceleration vector.
+   double rot_accel[3]; ///< @trick_units{rad/s2} Entity angular acceleration vector.
    double cm[3];        ///< @trick_units{m} Position of the entity center of mass in the structural frame.
 
    QuaternionData body_wrt_struct; ///< @trick_units{--} Orientation of the body frame wrt. the structural frame.

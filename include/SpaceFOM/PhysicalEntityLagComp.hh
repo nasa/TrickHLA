@@ -84,7 +84,7 @@ class PhysicalEntityLagComp : public PhysicalEntityLagCompInteg
    /*! @brief Load the integration state into the integrator. */
    virtual void load();
 
-   /*! @brief Load the integration state into the integrator. */
+   /*! @brief Unload the integration state from the integrator. */
    virtual void unload();
 
   private:

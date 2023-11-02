@@ -29,6 +29,25 @@
 #define P_HLA_LATE   65534 // HLA late job phase.
 
 
+
+//==========================================================================
+// Simple 6DOF dynamics for a Physical/Dynamical Entity.
+//==========================================================================
+##include "../../../models/EntityDynamics/include/EntityDynamics.hh"
+class EntityDynamicsSimObject : public Trick::SimObject {
+
+  public:
+   EntityDynamics entity;
+
+  public:
+   EntityDynamicsSimObject(){
+      ("default_data")            entity.default_data();
+      ("initialization")          entity.initialize();
+      ("derivative")              entity.derivative();
+      ("integration") trick_ret = entity.integrate();
+   }
+};
+
 //==========================================================================
 // Trick HLA and SpaceFOM include files used in SimObject definitions or
 // for inputfile instantiations.
@@ -172,7 +191,7 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
 //#define USE_SA_INTEGRATOR
 ##include "SpaceFOM/PhysicalEntity.hh"
 #ifdef USE_SA_INTEGRATOR
-##include "SpaceFOM/PhysicalEntityLagCompSA2.hh"
+##include "SpaceFOM/PhysicalEntityLagCompSA.hh"
 #else
 ##include "SpaceFOM/PhysicalEntityLagComp.hh"
 #endif
@@ -180,20 +199,22 @@ class SpaceFOMPhysicalEntitySimObject : public Trick::SimObject {
 
   public:
    // DynamicalEntity data.
-   PhysicalEntityData  pe_data;
+   PhysicalEntityData & pe_data;
 
    /* HLA associated reference frames packing object. */
    SpaceFOM::PhysicalEntity entity_packing;
 
    /* HLA lag compensation object. */
 #ifdef USE_SA_INTEGRATOR
-   PhysicalEntityLagCompSA2 lag_compensation;
+   PhysicalEntityLagCompSA lag_compensation;
 #else
    PhysicalEntityLagComp lag_compensation;
 #endif
 
-   SpaceFOMPhysicalEntitySimObject( unsigned short _INIT = 59 )
-   : entity_packing(),
+   SpaceFOMPhysicalEntitySimObject( PhysicalEntityData & pe,
+                                    unsigned short       _INIT = 59 )
+   : pe_data(pe),
+     entity_packing(),
      lag_compensation( entity_packing )
    {
 
@@ -225,13 +246,18 @@ class SpaceFOMDynamicalEntitySimObject : public Trick::SimObject {
   public:
 
    // DynamicalEntity data.
-   PhysicalEntityData  pe_data;
-   DynamicalEntityData de_data;
+   PhysicalEntityData  & pe_data;
+   DynamicalEntityData & de_data;
 
    /* HLA associated reference frames packing object. */
    SpaceFOM::DynamicalEntity entity_packing;
 
-   SpaceFOMDynamicalEntitySimObject( unsigned short _INIT = 59 )
+   SpaceFOMDynamicalEntitySimObject( PhysicalEntityData  & pe,
+                                     DynamicalEntityData & de,
+                                     unsigned short        _INIT = 59 )
+   : pe_data(pe),
+     de_data(de),
+     entity_packing()
    {
 
       //
@@ -287,6 +313,9 @@ class SpaceFOMPhysicalInterfaceSimObject : public Trick::SimObject {
 //==========================================================================
 // SimObject instantiations.
 //==========================================================================
+EntityDynamicsSimObject pe_dynamics;
+EntityDynamicsSimObject de_dynamics;
+
 // Main TrickHLA SimObject.
 SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME, THLA_INTERACTION_CYCLE_TIME,
                         P_HLA_EARLY, P_HLA_INIT, P_HLA_LATE );
@@ -300,10 +329,16 @@ SpaceFOMRefFrameSimObject root_ref_frame( ref_frame_tree.root_frame_data );
 SpaceFOMRefFrameSimObject ref_frame_A( ref_frame_tree.vehicle_frame_data );
 
 // PhysicalEntity instance.
-SpaceFOMPhysicalEntitySimObject physical_entity;
+SpaceFOMPhysicalEntitySimObject physical_entity( pe_dynamics.entity.pe_data );
 
 // DynamicalEntity instance.
-SpaceFOMDynamicalEntitySimObject dynamical_entity;
+SpaceFOMDynamicalEntitySimObject dynamical_entity( de_dynamics.entity.pe_data,
+                                                   de_dynamics.entity.de_data );
 
 // PhysicalInterface instance.
 SpaceFOMPhysicalInterfaceSimObject physical_interface;
+
+// Place the entities in the integration loop.
+//IntegLoop dyn_integloop (0.125) pe_dynamics, de_dynamics;
+IntegLoop pe_integloop (0.125) pe_dynamics;
+IntegLoop de_integloop (0.125) de_dynamics;

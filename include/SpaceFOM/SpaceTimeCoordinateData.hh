@@ -1,5 +1,5 @@
 /**
-@file SpaceFOM/SpaceTimeCoordinateData.h
+@file SpaceFOM/SpaceTimeCoordinateData.hh
 @ingroup SpaceFOM
 @brief A simple structure that contains the date fields required to encode
 and decode a SISO Space Reference FOM Space/Time Coordinate data type.
@@ -25,6 +25,7 @@ NASA, Johnson Space Center\n
 
 @revs_begin
 @rev_entry{ Edwin Z. Crues, NASA ER7, NExSyS, Jan 2019, --, SpaceFOM support and testing. }
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, October 2023, --, Made into full class.}
 @revs_end
 
 */
@@ -45,7 +46,7 @@ class SpaceTimeCoordinateData{
   public:
    double         pos[3];     ///< trick_units{m}     Position in parent frame.
    double         vel[3];     ///< trick_units{m/s}   Velocity wrt. parent frame.
-   QuaternionData quat;       ///< trick_units{--}    Attitude quaternion.
+   QuaternionData att;        ///< trick_units{--}    Attitude quaternion.
    double         ang_vel[3]; ///< trick_units{rad/s} Angular velocity vector.
    double         time;       ///< trick_units{s}     Truncated Julian date in TT time scale.
 

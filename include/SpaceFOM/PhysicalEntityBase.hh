@@ -31,6 +31,7 @@ NASA, Johnson Space Center\n
 @revs_title
 @revs_begin
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, October 2023, --, Refactored.}
 @revs_end
 
 */
@@ -202,6 +203,9 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    // Instantiate the aggregate data encoders
    SpaceTimeCoordinateEncoder stc_encoder;  ///< @trick_units{--} Entity state encoder.
    QuaternionEncoder          quat_encoder; ///< @trick_units{--} Attitude quaternion encoder.
+
+   /*! @brief Print out the packing data debug information. */
+   virtual void debug_print( std::ostream & stream );
 
   private:
    // This object is not copyable

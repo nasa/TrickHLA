@@ -132,10 +132,10 @@ class PhysicalEntityLagCompBase : public TrickHLA::LagCompensation
       const double t_begin,
       const double t_end   ) = 0;
 
-   /*! @brief Load the lag compensation state into the packing data. */
+   /*! @brief Unload the lag compensation state into the packing data. */
    virtual void unload_lag_comp_data();
 
-   /*! @brief Unload the lag compensation state into the packing data. */
+   /*! @brief Load the packing data into the lag compensation state. */
    virtual void load_lag_comp_data();
 
    /*! @brief Print out the lag compensation data values. */

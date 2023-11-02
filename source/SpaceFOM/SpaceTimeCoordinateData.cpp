@@ -1,5 +1,5 @@
 /*!
-@file SpaceFOM/SpaceTimeCoordinateData.c
+@file SpaceFOM/SpaceTimeCoordinateData.cpp
 @ingroup SpaceFOM
 @brief Simple functions that operate on space-time coordinate data.
 
@@ -24,6 +24,7 @@ NASA, Johnson Space Center\n
 
 @revs_begin
 @rev_entry{ Edwin Z. Crues, NASA ER7, NExSyS, October 2023, --, Initial version }
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, October 2023, --, Made into full class.}
 @revs_end
 
 */
@@ -44,7 +45,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 SpaceTimeCoordinateData::SpaceTimeCoordinateData()
-   : quat(),
+   : att(),
      time( 0.0 )
 
 {
@@ -59,7 +60,7 @@ SpaceTimeCoordinateData::SpaceTimeCoordinateData()
  */
 SpaceTimeCoordinateData::SpaceTimeCoordinateData(
    const SpaceTimeCoordinateData & source )
-   : quat( source.quat ),
+   : att( source.att ),
      time( source.time )
 {
    V_COPY( this->pos, source.pos );
@@ -75,7 +76,7 @@ void SpaceTimeCoordinateData::initialize()
 {
    V_INIT( pos );
    V_INIT( vel );
-   quat.initialize();
+   att.initialize();
    V_INIT( ang_vel );
    time = 0.0;
    return;
@@ -88,7 +89,7 @@ void SpaceTimeCoordinateData::copy( const SpaceTimeCoordinateData & source )
 {
    V_COPY( this->pos, source.pos );
    V_COPY( this->vel, source.vel );
-   quat.copy( source.quat );
+   att.copy( source.att );
    V_COPY( this->ang_vel, source.ang_vel );
    time = source.time;
    return;
