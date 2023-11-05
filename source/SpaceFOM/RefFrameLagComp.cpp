@@ -183,8 +183,7 @@ int RefFrameLagComp::compensate(
          this->unload();
 
          // Normalize the propagated attitude quaternion.
-         QuaternionData::normalize_quaternion( &(this->lag_comp_data.att.scalar),
-                                               this->lag_comp_data.att.vector     );
+         this->lag_comp_data.att.normalize();
 
       } while ( ipass );
 
@@ -200,11 +199,9 @@ int RefFrameLagComp::compensate(
    lag_comp_data.time = integ_t;
 
    // Compute the lag compensated value for the attitude quaternion rate.
-   QuaternionData::compute_quat_dot( this->lag_comp_data.att.scalar,
-                                     this->lag_comp_data.att.vector,
-                                     this->lag_comp_data.ang_vel,
-                                     &(this->Q_dot.scalar),
-                                     this->Q_dot.vector );
+   this->Q_dot.derivative_first( this->lag_comp_data.att.scalar,
+                                 this->lag_comp_data.att.vector,
+                                 this->lag_comp_data.ang_vel );
 
    return( 0 );
 }
@@ -224,27 +221,25 @@ void RefFrameLagComp::load()
 
    // Compute the derivative of the attitude quaternion from the
    // angular velocity vector.
-   QuaternionData::compute_quat_dot( this->integrator->state[6],
-                                     &(this->integrator->state[7]),
-                                     &(this->integrator->state[10]),
-                                     &(this->Q_dot.scalar),
-                                     this->Q_dot.vector );
+   this->Q_dot.derivative_first( this->integrator->state[6],
+                                 &(this->integrator->state[7]),
+                                 &(this->integrator->state[10]) );
 
    // Load the integrator derivative references.
-   // Translational position
+   // Translational velocity
    this->integrator->deriv[istep][0] = this->integrator->state[3];
    this->integrator->deriv[istep][1] = this->integrator->state[4];
    this->integrator->deriv[istep][2] = this->integrator->state[5];
-   // Translational velocity
+   // Translational acceleration
    this->integrator->deriv[istep][3] = 0.0;
    this->integrator->deriv[istep][4] = 0.0;
    this->integrator->deriv[istep][5] = 0.0;
-   // Rotational position
+   // Rotational velocity
    this->integrator->deriv[istep][6] = this->Q_dot.scalar;
    this->integrator->deriv[istep][7] = this->Q_dot.vector[0];
    this->integrator->deriv[istep][8] = this->Q_dot.vector[1];
    this->integrator->deriv[istep][9] = this->Q_dot.vector[2];
-   // Rotational velocity
+   // Rotational acceleration
    this->integrator->deriv[istep][10] = 0.0;
    this->integrator->deriv[istep][11] = 0.0;
    this->integrator->deriv[istep][12] = 0.0;
@@ -268,11 +263,9 @@ void RefFrameLagComp::unload()
 
    // Compute the derivative of the attitude quaternion from the
    // angular velocity vector.
-   QuaternionData::compute_quat_dot( *(integ_states[6]),
-                                     integ_states[7],
-                                     integ_states[10],
-                                     &(this->Q_dot.scalar),
-                                     this->Q_dot.vector );
+   this->Q_dot.derivative_first( *(integ_states[6]),
+                                 integ_states[7],
+                                 integ_states[10] );
 
    // Return to calling routine.
    return;

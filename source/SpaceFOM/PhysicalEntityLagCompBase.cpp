@@ -143,11 +143,8 @@ void PhysicalEntityLagCompBase::initialize_states()
       this->accel[iinc]     = this->entity.pe_packing_data.accel[iinc];
       this->rot_accel[iinc] = this->entity.pe_packing_data.rot_accel[iinc];
    }
-   QuaternionData::compute_quat_dot( this->lag_comp_data.att.scalar,
-                                     this->lag_comp_data.att.vector,
-                                     this->lag_comp_data.ang_vel,
-                                     &(this->Q_dot.scalar),
-                                     this->Q_dot.vector );
+   this->Q_dot.derivative_first( this->lag_comp_data.att,
+                                 this->lag_comp_data.ang_vel );
 
    // Return to calling routine.
    return;
@@ -220,7 +217,7 @@ void PhysicalEntityLagCompBase::print_lag_comp_data()
    double euler_angles[3];
 
    // Compute the attitude Euler angles.
-   lag_comp_data.att.get_Euler( Roll_Pitch_Yaw, euler_angles );
+   lag_comp_data.att.get_Euler_deg( Roll_Pitch_Yaw, euler_angles );
 
    cout << "\tScenario time: " << this->get_scenario_time() << endl;
    cout << "\tLag comp time: " << this->lag_comp_data.time << endl;

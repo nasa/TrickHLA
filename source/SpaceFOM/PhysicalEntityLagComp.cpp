@@ -183,8 +183,7 @@ int PhysicalEntityLagComp::compensate(
          this->unload();
 
          // Normalize the propagated attitude quaternion.
-         QuaternionData::normalize_quaternion( &(this->lag_comp_data.att.scalar),
-                                               this->lag_comp_data.att.vector     );
+         this->lag_comp_data.att.normalize();
 
       } while ( ipass );
 
@@ -200,11 +199,8 @@ int PhysicalEntityLagComp::compensate(
    lag_comp_data.time = integ_t;
 
    // Compute the lag compensated value for the attitude quaternion rate.
-   QuaternionData::compute_quat_dot( this->lag_comp_data.att.scalar,
-                                     this->lag_comp_data.att.vector,
-                                     this->lag_comp_data.ang_vel,
-                                     &(this->Q_dot.scalar),
-                                     this->Q_dot.vector );
+   this->Q_dot.derivative_first( this->lag_comp_data.att,
+                                 this->lag_comp_data.ang_vel );
 
    return( 0 );
 }
@@ -224,11 +220,9 @@ void PhysicalEntityLagComp::load()
 
    // Compute the derivative of the attitude quaternion from the
    // angular velocity vector.
-   QuaternionData::compute_quat_dot( this->integrator->state[6],
-                                     &(this->integrator->state[7]),
-                                     &(this->integrator->state[10]),
-                                     &(this->Q_dot.scalar),
-                                     this->Q_dot.vector );
+   this->Q_dot.derivative_first( this->integrator->state[6],
+                                 &(this->integrator->state[7]),
+                                 &(this->integrator->state[10]) );
 
    // Load the integrator derivative references.
    // Translational position
@@ -268,11 +262,9 @@ void PhysicalEntityLagComp::unload()
 
    // Compute the derivative of the attitude quaternion from the
    // angular velocity vector.
-   QuaternionData::compute_quat_dot( *(integ_states[6]),
-                                     integ_states[7],
-                                     integ_states[10],
-                                     &(this->Q_dot.scalar),
-                                     this->Q_dot.vector );
+   this->Q_dot.derivative_first( *(integ_states[6]),
+                                 integ_states[7],
+                                 integ_states[10] );
 
    // Return to calling routine.
    return;

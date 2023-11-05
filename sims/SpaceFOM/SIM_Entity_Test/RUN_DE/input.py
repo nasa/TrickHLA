@@ -222,19 +222,19 @@ pe_dynamics.entity.pe_data.status       = 'Mothballed'
 pe_dynamics.entity.pe_data.parent_frame = 'RootFrame'
 
 # Initial translational state.
-pe_dynamics.entity.pe_data.state.pos = [ 1.0, 2.0, 3.0 ]
-pe_dynamics.entity.pe_data.state.vel = [ 0.1, 0.1, 0.1 ]
+pe_dynamics.entity.pe_data.state.pos = [ 0.0, 0.0, 0.0 ]
+pe_dynamics.entity.pe_data.state.vel = [ 0.0, 0.0, 0.0 ]
 
 # Initial rotational state.
-pe_dynamics.entity.pe_data.state.att.set_from_Euler( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
-pe_dynamics.entity.pe_data.state.ang_vel = [ 0.0, 0.1, 0.0 ]
+pe_dynamics.entity.pe_data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
+pe_dynamics.entity.pe_data.state.ang_vel = [ 0.0, 0.0, 0.0 ]
 
 # Base propagation parameters.
 pe_dynamics.entity.pe_data.accel     = [0.0, 0.0, 0.0]
 pe_dynamics.entity.pe_data.ang_accel = [0.0, 0.0, 0.0]
 pe_dynamics.entity.pe_data.cm        = [0.0, 0.0, 0.0]
 
-pe_dynamics.entity.pe_data.body_wrt_struct.set_from_Euler( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
+pe_dynamics.entity.pe_data.body_wrt_struct.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 
 pe_dynamics.entity.de_data.force = [ 0.0, 0.0, 0.0 ]
 
@@ -265,26 +265,23 @@ de_dynamics.entity.pe_data.status       = 'Lost'
 de_dynamics.entity.pe_data.parent_frame = 'FrameA'
 
 # Initial translational state.
-#de_dynamics.entity.pe_data.state.pos = [ 3.0, 2.0, 1.0 ]
-de_dynamics.entity.pe_data.state.pos[0] = 3.0
-de_dynamics.entity.pe_data.state.pos[1] = 2.0
-de_dynamics.entity.pe_data.state.pos[2] = 1.0
-de_dynamics.entity.pe_data.state.vel = [ 0.1, 0.1, 0.1 ]
+de_dynamics.entity.pe_data.state.pos = [ 0.0, 0.0, 0.0 ]
+de_dynamics.entity.pe_data.state.vel = [ 0.0, 0.0, 0.0 ]
 
 # Initial rotational state.
-de_dynamics.entity.pe_data.state.att.set_from_Euler( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
-de_dynamics.entity.pe_data.state.ang_vel = [ 0.0, 0.0, 0.1 ]
+de_dynamics.entity.pe_data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
+de_dynamics.entity.pe_data.state.ang_vel = [ 0.0, 0.0, 0.0 ]
 
 # Base propagation parameters.
 de_dynamics.entity.pe_data.accel     = [0.0, 0.0, 0.0]
 de_dynamics.entity.pe_data.ang_accel = [0.0, 0.0, 0.0]
 de_dynamics.entity.pe_data.cm        = [0.0, 0.0, 0.0]
 
-de_dynamics.entity.pe_data.body_wrt_struct.set_from_Euler( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
+de_dynamics.entity.pe_data.body_wrt_struct.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, -90.0] )
 
-de_dynamics.entity.de_data.force = [ 0.4, 0.5, 0.6 ]
+de_dynamics.entity.de_data.force = [ 0.1, 0.0, 0.0 ]
 
-de_dynamics.entity.de_data.torque = [ 0.01, 0.02, 0.03 ]
+de_dynamics.entity.de_data.torque = [ 0.0, 0.0, 0.0 ]
 
 # Basic mass properties.
 de_mass = 100.0

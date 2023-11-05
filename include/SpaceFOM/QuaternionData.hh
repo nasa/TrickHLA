@@ -66,19 +66,40 @@ class QuaternionData{
     *  @param source Source quaternion to copy from. */
    void copy( const QuaternionData & source );
 
+   /*! @brief Compute the conjugate of the quaternion. */
+   void conjugate( );
+
+   /*! @brief Compute the conjugate of the quaternion.
+    *  @param source Source quaternion to conjugate from. */
+   void conjugate( const QuaternionData & source );
+
    /*! @brief Set attitude quaternion from Euler angles.
     *  @param sequence Euler sequence of angles.
-    *  @param angles   Euler attitude angels. */
+    *  @param angles   Euler attitude angels {rad}. */
    void set_from_Euler(
+      Euler_Seq sequence,
+      double    angles[3]);
+
+   /*! @brief Set attitude quaternion from Euler angles in degrees.
+    *  @param sequence Euler sequence of angles.
+    *  @param angles   Euler attitude angels {deg}. */
+   void set_from_Euler_deg(
+      Euler_Seq sequence,
+      double    angles_deg[3]);
+
+   /*! @brief Get Euler angles from attitude quaternion.
+    *  @param sequence Euler sequence of angles.
+    *  @param angles   Euler attitude angels {rad}. */
+   void get_Euler(
       Euler_Seq sequence,
       double    angles[3]);
 
    /*! @brief Get Euler angles from attitude quaternion.
     *  @param sequence Euler sequence of angles.
-    *  @param angles   Euler attitude angels. */
-   void get_Euler(
+    *  @param angles   Euler attitude angels {deg}. */
+   void get_Euler_deg(
       Euler_Seq sequence,
-      double    angles[3]);
+      double    angles_deg[3]);
 
    /*! @brief Normalize the attitude quaternion. */
    void normalize();
@@ -207,6 +228,20 @@ class QuaternionData{
       double const rq_vector[3],
       double       * scalar,
       double         vector[3] );
+
+   /*! @brief Transform a vector using this quaternion.
+    *  @param v_in  Source vector.
+    *  @param v_out Transformed vector. */
+   void transform_vector(
+      double const v_in[3],
+      double       v_out[3] ) const;
+
+   /*! @brief Conjugate transform a vector using this quaternion.
+    *  @param v_in  Source vector.
+    *  @param v_out Transformed vector. */
+   void conjugate_transform_vector(
+      double const v_in[3],
+      double       v_out[3] ) const;
 
 };
 

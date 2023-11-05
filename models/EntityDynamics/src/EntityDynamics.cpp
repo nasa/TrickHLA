@@ -32,9 +32,16 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <iostream>
+#include <sstream>
 
 // Trick includes.
+#include "trick/trick_math.h"
 #include "trick/Integrator.hh"
+
+// TrickHLA includes.
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/Types.hh"
 
 // Model includes.
 #include "../include/EntityDynamics.hh"
@@ -42,6 +49,8 @@ NASA, Johnson Space Center\n
 /* GLOBAL Integrator. */
 extern Trick::Integrator* trick_curr_integ ;
 
+using namespace std;
+using namespace TrickHLA;
 using namespace SpaceFOM;
 
 void EntityDynamics::default_data()
@@ -52,12 +61,26 @@ void EntityDynamics::default_data()
 
 void EntityDynamics::initialize()
 {
+   ostringstream errmsg;
+
+   // Compute the inverse of the inertia matrix.
+   if ( dm_invert_symm( I_inv, de_data.inertia ) != TM_SUCCESS ) {
+      errmsg << "SpaceFOM::PhysicalEntityBase::set_object():" << __LINE__
+             << " ERROR: The initialize() function has already been called" << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    return;
 }
 
 
 void EntityDynamics::derivative()
 {
+   double accel_str[3];
+   double rot_accel_str[3];
+   double I_omega[3];
+   double omega_X_I_omega[3];
 
    // Compute the derivative of the attitude quaternion from the
    // angular velocity vector.
@@ -65,9 +88,24 @@ void EntityDynamics::derivative()
    std::cout << pe_data.name << ".Q_dot: " << Q_dot.scalar << "; "
          << Q_dot.vector[0] << ", " << Q_dot.vector[1] << ", " << Q_dot.vector[2] << std::endl;
 
-   // Compute the translational acceleration in the integration frame.
+   // Compute the translational acceleration in the structural frame.
+   V_SCALE( accel_str, de_data.force, 1.0/de_data.mass );
 
-   // Compute the rotational acceleration in the body frame.
+   // Transform the translational acceleration into the body frame.
+   pe_data.body_wrt_struct.transform_vector( accel_str, pe_data.accel );
+
+   // Compute the rotational acceleration in the structural frame.
+   // External torque acceleration.
+   MxV( rot_accel_str, I_inv, de_data.torque );
+   // Internal rotational accelerations.
+   MxV( I_omega, de_data.inertia, pe_data.state.ang_vel );
+   V_CROSS( omega_X_I_omega, pe_data.state.ang_vel, I_omega );
+   rot_accel_str[0] += omega_X_I_omega[0];
+   rot_accel_str[1] += omega_X_I_omega[1];
+   rot_accel_str[2] += omega_X_I_omega[2];
+
+   // Transform the rotational acceleration into the body frame.
+   pe_data.body_wrt_struct.transform_vector( rot_accel_str, pe_data.rot_accel );
 
    return;
 }
@@ -85,6 +123,10 @@ int EntityDynamics::integrate()
 
    // Unload the states from the integrator.
    unload();
+
+   // Compute the derivative of the attitude quaternion from the
+   // angular velocity vector.
+   //this->Q_dot.first_derivative( pe_data.state.att, pe_data.state.ang_vel );
 
    // Return the Trick integrator integration step.
    return( ipass );
@@ -166,10 +208,6 @@ void EntityDynamics::unload()
    pe_data.state.ang_vel[0] = trick_curr_integ->state_ws[istep][10];
    pe_data.state.ang_vel[1] = trick_curr_integ->state_ws[istep][11];
    pe_data.state.ang_vel[2] = trick_curr_integ->state_ws[istep][12];
-
-   // Compute the derivative of the attitude quaternion from the
-   // angular velocity vector.
-   //this->Q_dot.first_derivative( pe_data.state.att, pe_data.state.ang_vel );
 
    // Return to calling routine.
    return;

@@ -32,6 +32,7 @@ NASA, Johnson Space Center\n
 #include <math.h>
 
 // Trick includes.
+#include "trick/constant.h"
 #include "trick/trick_math.h"
 
 // SpaceFOM includes.
@@ -112,10 +113,52 @@ void QuaternionData::scale( double factor )
 /*!
  * @job_class{scheduled}
  */
+void QuaternionData::conjugate()
+{
+   this->vector[0] = -this->vector[0];
+   this->vector[1] = -this->vector[1];
+   this->vector[2] = -this->vector[2];
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::conjugate(
+   const QuaternionData & source )
+{
+   this->scalar = source.scalar;
+   this->vector[0] = -source.vector[0];
+   this->vector[1] = -source.vector[1];
+   this->vector[2] = -source.vector[2];
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
 void QuaternionData::set_from_Euler(
    Euler_Seq sequence,
    double    angles[3])
 {
+   euler_quat( angles, &(this->scalar), 0, sequence );
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::set_from_Euler_deg(
+   Euler_Seq sequence,
+   double    angles_deg[3])
+{
+   double angles[3];
+   angles[0] = angles_deg[0] * DTR;
+   angles[1] = angles_deg[1] * DTR;
+   angles[2] = angles_deg[2] * DTR;
    euler_quat( angles, &(this->scalar), 0, sequence );
    return;
 }
@@ -129,6 +172,22 @@ void QuaternionData::get_Euler(
    double    angles[3])
 {
    euler_quat( angles, &(this->scalar), 1, sequence );
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::get_Euler_deg(
+   Euler_Seq sequence,
+   double    angles_deg[3])
+{
+   double angles[3];
+   euler_quat( angles, &(this->scalar), 1, sequence );
+   angles_deg[0] = angles[0] * RTD;
+   angles_deg[1] = angles[1] * RTD;
+   angles_deg[2] = angles[2] * RTD;
    return;
 }
 
@@ -411,5 +470,59 @@ void QuaternionData::multiply_conjugate(
    V_CROSS( qv_cross_qv, lq_vector, rq_vector );
    V_DECR( vector, qv_cross_qv );
 
+   return;
+}
+
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::transform_vector(
+   double const v_in[3],
+   double       v_out[3] ) const
+{
+   double qv_cross_v[3];
+   double qv_cross_qv_cross_v[3];
+   double v_dot;
+
+   v_dot = V_DOT( vector, v_in );
+   V_CROSS( qv_cross_v, vector, v_in);
+   V_CROSS( qv_cross_qv_cross_v, vector, qv_cross_v);
+
+   v_out[0] = qv_cross_v[0] * 2.0;
+   v_out[1] = qv_cross_v[1] * 2.0;
+   v_out[2] = qv_cross_v[2] * 2.0;
+
+   v_out[0] += v_in[0] * scalar;
+   v_out[1] += v_in[1] * scalar;
+   v_out[2] += v_in[2] * scalar;
+
+   v_out[0] *= scalar;
+   v_out[1] *= scalar;
+   v_out[2] *= scalar;
+
+   v_out[0] += vector[0] * v_dot;
+   v_out[1] += vector[1] * v_dot;
+   v_out[2] += vector[2] * v_dot;
+
+   v_out[0] += qv_cross_qv_cross_v[0];
+   v_out[1] += qv_cross_qv_cross_v[1];
+   v_out[2] += qv_cross_qv_cross_v[2];
+
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::conjugate_transform_vector(
+   double const v_in[3],
+   double       v_out[3] ) const
+{
+   QuaternionData q_star( *this );
+   q_star.conjugate();
+   q_star.transform_vector( v_in, v_out );
    return;
 }

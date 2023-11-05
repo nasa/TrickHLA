@@ -520,7 +520,7 @@ void PhysicalEntityBase::debug_print(
 {
    stream.precision( 15 );
    double euler_angles[3];
-   pe_packing_data.state.att.get_Euler( Roll_Pitch_Yaw, euler_angles );
+   pe_packing_data.state.att.get_Euler_deg( Roll_Pitch_Yaw, euler_angles );
 
    stream << "\tObject-Name: '" << object->get_name() << "'" << endl
           << "\tname:   '" << ( pe_packing_data.name != NULL ? pe_packing_data.name : "" ) << "'" << endl

@@ -71,6 +71,8 @@ class EntityDynamics{
 
    QuaternionData Q_dot; ///< @trick_units{--} Derivative of the attitude quaternion.
 
+   double I_inv[3][3];  ///< @trick_units{--} Inverse of the inertia matrix.
+
    /*! @brief Load the integration state into the integrator. */
    void load();
 
