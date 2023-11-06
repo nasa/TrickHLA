@@ -189,7 +189,7 @@ class TrickHLAObjectConfig( object ):
 
       return
    
-   def set_lag_comp_type(self, lag_comp_type ):
+   def set_lag_comp_type( self, lag_comp_type ):
       
       # FIXME: Need to check for initialization.
 

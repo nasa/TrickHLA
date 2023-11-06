@@ -317,7 +317,8 @@ federate = SpaceFOMFederateConfig( THLA.federate,
 
 # Set the debug output level.
 if (verbose == True) : 
-   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
+   #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
+   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_6_TRACE )
 else :
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
 
@@ -461,13 +462,19 @@ physical_interface.interface_data.attitude.set_from_Euler_deg( trick.Pitch_Yaw_R
 dyn_entity = SpaceFOMDynamicalEntityObject( False,
                                             dyn_entity_name,
                                             dynamical_entity.entity_packing,
-                                            'dynamical_entity.entity_packing' )
+                                            'dynamical_entity.entity_packing',
+                                            entity_lag_comp = dynamical_entity.lag_compensation )
 
 # Set the debug flag for the Entity.
 dynamical_entity.entity_packing.debug = verbose
 
 # Add this Entity to the list of managed object.
 federate.add_fed_object( dyn_entity )
+
+# Set the lag compensation paratmeters.
+dynamical_entity.lag_compensation.debug = True
+dynamical_entity.lag_compensation.set_integ_tolerance( 1.0e-6 )
+dynamical_entity.lag_compensation.set_integ_dt( 0.05 )
 
 
 #---------------------------------------------------------------------------
@@ -502,6 +509,7 @@ frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 #phy_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
 #phy_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_SEND_SIDE )
 phy_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
+dyn_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 
 #---------------------------------------------------------------------------

@@ -1,8 +1,8 @@
 /*!
-@file SpaceFOM/PhysicalEntityLagComp.cpp
+@file SpaceFOM/DynamicalEntityLagComp.cpp
 @ingroup SpaceFOM
 @brief This class provides the implementation for a TrickHLA SpaceFOM
-PhysicalEntity latency/lag compensation class.
+DynamicalEntity latency/lag compensation class.
 
 @copyright Copyright 2023 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
@@ -17,12 +17,12 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/DebugHandler.cpp}
-@trick_link_dependency{PhysicalEntityLagComp.cpp}
+@trick_link_dependency{DynamicalEntityLagComp.cpp}
 
 
 @revs_title
 @revs_begin
-@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, September 2023, --, Initial version.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, November 2023, --, Initial version.}
 @revs_end
 
 */
@@ -46,7 +46,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Attribute.hh"
 
 // SpaceFOM include files.
-#include "SpaceFOM/PhysicalEntityLagComp.hh"
+#include "SpaceFOM/DynamicalEntityLagComp.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -55,8 +55,8 @@ using namespace SpaceFOM;
 /*!
  * @job_class{initialization}
  */
-PhysicalEntityLagComp::PhysicalEntityLagComp( PhysicalEntityBase & entity_ref ) // RETURN: -- None.
-   : PhysicalEntityLagCompInteg( entity_ref ),
+DynamicalEntityLagComp::DynamicalEntityLagComp( DynamicalEntityBase & entity_ref ) // RETURN: -- None.
+   : DynamicalEntityLagCompInteg( entity_ref ),
      integrator(NULL)
 {
 
@@ -85,12 +85,12 @@ PhysicalEntityLagComp::PhysicalEntityLagComp( PhysicalEntityBase & entity_ref ) 
 /*!
  * @job_class{shutdown}
  */
-PhysicalEntityLagComp::~PhysicalEntityLagComp() // RETURN: -- None.
+DynamicalEntityLagComp::~DynamicalEntityLagComp() // RETURN: -- None.
 {
    // Free up any allocated intergrator.
    if ( this->integrator != (Trick::Integrator *)NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->integrator ) ) ) {
-         send_hs( stderr, "SpaceFOM::PhysicalEntityBase::~PhysicalEntityBase():%d ERROR deleting Trick Memory for 'this->integrator'%c",
+         send_hs( stderr, "SpaceFOM::DynamicalEntityBase::~DynamicalEntityBase():%d ERROR deleting Trick Memory for 'this->integrator'%c",
                   __LINE__, THLA_NEWLINE );
       }
       this->integrator = NULL;
@@ -101,7 +101,7 @@ PhysicalEntityLagComp::~PhysicalEntityLagComp() // RETURN: -- None.
 /*!
  * @job_class{initialization}
  */
-void PhysicalEntityLagComp::initialize()
+void DynamicalEntityLagComp::initialize()
 {
    ostringstream errmsg;
 
@@ -110,7 +110,7 @@ void PhysicalEntityLagComp::initialize()
 
    if ( this->integrator == (Trick::Integrator *)NULL ) {
 
-      errmsg << "SpaceFOM::PhysicalEntityLagComp::initialize():" << __LINE__
+      errmsg << "SpaceFOM::DynamicalEntityLagComp::initialize():" << __LINE__
              << " ERROR: Unexpected NULL Trick integrator!"<< THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
@@ -118,7 +118,7 @@ void PhysicalEntityLagComp::initialize()
    }
 
    // Call the base class initialize function.l
-   PhysicalEntityLagCompInteg::initialize();
+   DynamicalEntityLagCompInteg::initialize();
 
    // Return to calling routine.
    return;
@@ -128,7 +128,7 @@ void PhysicalEntityLagComp::initialize()
 /*!
  * @job_class{integration}
  */
-int PhysicalEntityLagComp::compensate(
+int DynamicalEntityLagComp::compensate(
    const double t_begin,
    const double t_end   )
 {
@@ -140,7 +140,7 @@ int PhysicalEntityLagComp::compensate(
           << ", " << dt_go << endl;
    }
 
-   // Propagate the current PhysicalEntity state to the desired time.
+   // Propagate the current DynamicalEntity state to the desired time.
    // Set the current integration time for the integrator.
    this->integ_t = t_begin;
    this->integrator->time = this->integ_t;
@@ -209,7 +209,7 @@ int PhysicalEntityLagComp::compensate(
 /*!
  * @job_class(integration)
  */
-void PhysicalEntityLagComp::load()
+void DynamicalEntityLagComp::load()
 {
    int istep = integrator->intermediate_step;
 
@@ -252,7 +252,7 @@ void PhysicalEntityLagComp::load()
 /*!
  * @job_class{integration}
  */
-void PhysicalEntityLagComp::unload()
+void DynamicalEntityLagComp::unload()
 {
 
    // Unload state array: position and velocity.

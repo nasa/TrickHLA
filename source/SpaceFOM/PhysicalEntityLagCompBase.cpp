@@ -1,5 +1,5 @@
 /*!
-@file SpaceFOM/PhysicalEntityLagCompBase.cpp
+@file SpaceFOM/DynamicalEntityLagCompBase.cpp
 @ingroup SpaceFOM
 @brief This class provides the implementation for a TrickHLA SpaceFOM
 PhysicalEntity latency/lag compensation class.
@@ -74,6 +74,7 @@ PhysicalEntityLagCompBase::PhysicalEntityLagCompBase( PhysicalEntityBase & entit
    for( int iinc = 0 ; iinc < 3 ; iinc++ ){
       this->accel[iinc]     = 0.0;
       this->rot_accel[iinc] = 0.0;
+      this->cm[iinc]        = 0.0;
    }
 
 }
@@ -138,10 +139,12 @@ void PhysicalEntityLagCompBase::initialize_states()
 {
 
    // Copy the current PhysicalEntity state over to the lag compensated state.
-   this->lag_comp_data = this->entity.pe_packing_data.state;
+   this->lag_comp_data   = this->entity.pe_packing_data.state;
+   this->body_wrt_struct = this->entity.pe_packing_data.body_wrt_struct;
    for ( int iinc = 0 ; iinc < 3 ; iinc++ ){
       this->accel[iinc]     = this->entity.pe_packing_data.accel[iinc];
       this->rot_accel[iinc] = this->entity.pe_packing_data.rot_accel[iinc];
+      this->cm[iinc]        = this->entity.pe_packing_data.cm[iinc];
    }
    this->Q_dot.derivative_first( this->lag_comp_data.att,
                                  this->lag_comp_data.ang_vel );
@@ -183,11 +186,14 @@ void PhysicalEntityLagCompBase::bypass_receive_lag_compensation()
 void PhysicalEntityLagCompBase::unload_lag_comp_data()
 {
    // Copy the current PhysicalEntity state over to the lag compensated state.
-   this->entity.pe_packing_data.state = this->lag_comp_data;
+   this->entity.pe_packing_data.state           = this->lag_comp_data;
+   this->entity.pe_packing_data.body_wrt_struct = this->body_wrt_struct;
    for ( int iinc = 0 ; iinc < 3 ; iinc++ ){
       this->entity.pe_packing_data.accel[iinc]     = this->accel[iinc];
       this->entity.pe_packing_data.rot_accel[iinc] = this->rot_accel[iinc];
+      this->entity.pe_packing_data.cm[iinc]        = this->cm[iinc];
    }
+   // FIXME: missing cm and body_wrt_struct.
 
    return;
 }
@@ -199,11 +205,14 @@ void PhysicalEntityLagCompBase::unload_lag_comp_data()
 void PhysicalEntityLagCompBase::load_lag_comp_data()
 {
    // Copy the current PhysicalEntity state over to the lag compensated state.
-   this->lag_comp_data = this->entity.pe_packing_data.state;
+   this->lag_comp_data   = this->entity.pe_packing_data.state;
+   this->body_wrt_struct = this->entity.pe_packing_data.body_wrt_struct;
    for ( int iinc = 0 ; iinc < 3 ; iinc++ ){
       this->accel[iinc]     = this->entity.pe_packing_data.accel[iinc];
       this->rot_accel[iinc] = this->entity.pe_packing_data.rot_accel[iinc];
+      this->cm[iinc]        = this->entity.pe_packing_data.cm[iinc];
    }
+   // FIXME: missing cm and body_wrt_struct.
 
    return;
 }
@@ -255,6 +264,15 @@ void PhysicalEntityLagCompBase::print_lag_comp_data()
         << "\t\t" << this->rot_accel[0] << ", "
         << "\t\t" << this->rot_accel[1] << ", "
         << "\t\t" << this->rot_accel[2] << endl;
+   cout << "\tcenter of mass: "
+        << "\t\t" << this->cm[0] << ", "
+        << "\t\t" << this->cm[1] << ", "
+        << "\t\t" << this->cm[2] << endl;
+   cout << "\tbody wrt. struct (s;v): "
+        << "\t\t" << this->body_wrt_struct.scalar << "; "
+        << "\t\t" << this->body_wrt_struct.vector[0] << ", "
+        << "\t\t" << this->body_wrt_struct.vector[1] << ", "
+        << "\t\t" << this->body_wrt_struct.vector[2] << endl;
 
    // Return to the calling routine.
    return;

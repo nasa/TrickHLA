@@ -1,5 +1,5 @@
 /*!
-@file SpaceFOM/PhysicalEntityLagCompBase.hh
+@file SpaceFOM/DynamicalEntityLagCompBase.hh
 @ingroup SpaceFOM
 @brief Definition of the TrickHLA SpaceFOM physical entity latency/lag
 compensation class.
@@ -24,7 +24,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/LagCompensation.cpp}
-@trick_link_dependency{../../source/SpaceFOM/PhysicalEntityLagCompBase.cpp}
+@trick_link_dependency{../../source/SpaceFOM/DynamicalEntityLagCompBase.cpp}
 @trick_link_dependency{../../source/SpaceFOM/QuaternionData.cpp}
 
 @revs_title
@@ -34,8 +34,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef SPACEFOM_PHYSICAL_ENTITY_LAG_COMP_BASE_HH
-#define SPACEFOM_PHYSICAL_ENTITY_LAG_COMP_BASE_HH
+#ifndef SPACEFOM_DYNAMICAL_ENTITY_LAG_COMP_BASE_HH
+#define SPACEFOM_DYNAMICAL_ENTITY_LAG_COMP_BASE_HH
 
 // System include files.
 
@@ -46,13 +46,14 @@ NASA, Johnson Space Center\n
 
 // SpaceFOM include files.
 #include "SpaceFOM/QuaternionData.hh"
-#include "SpaceFOM/PhysicalEntityBase.hh"
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
+#include "SpaceFOM/DynamicalEntityBase.hh"
+#include "SpaceFOM/PhysicalEntityLagCompBase.hh"
 
 namespace SpaceFOM
 {
 
-class PhysicalEntityLagCompBase : public TrickHLA::LagCompensation
+class DynamicalEntityLagCompBase : public PhysicalEntityLagCompBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -62,12 +63,12 @@ class PhysicalEntityLagCompBase : public TrickHLA::LagCompensation
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrSpaceFOM__PhysicalEntityLagCompBase();
+   friend void init_attrSpaceFOM__DynamicalEntityLagCompBase();
 
   public:
    // Public constructors and destructors.
-   PhysicalEntityLagCompBase( PhysicalEntityBase & entity_ref ); // Initialization constructor.
-   virtual ~PhysicalEntityLagCompBase(); // Destructor.
+   DynamicalEntityLagCompBase( DynamicalEntityBase & entity_ref ); // Initialization constructor.
+   virtual ~DynamicalEntityLagCompBase(); // Destructor.
 
    /*! @brief Entity instance initialization routine. */
    virtual void initialize();
@@ -104,29 +105,24 @@ class PhysicalEntityLagCompBase : public TrickHLA::LagCompensation
 
   protected:
 
-   PhysicalEntityBase & entity; ///< @trick_units{--} @trick_io{**}  PhysicalEntity to compensate.
+   DynamicalEntityBase & entity; ///< @trick_units{--} @trick_io{**}  PhysicalEntity to compensate.
 
    // Setup Object Attribute references. These are set in initialize_callback
    // routine and used for efficiency and ownership transfer in unpack routines.
-   TrickHLA::Attribute *name_attr;         ///< @trick_io{**} Name Attribute.
-   TrickHLA::Attribute *type_attr;         ///< @trick_io{**} Type type Attribute.
-   TrickHLA::Attribute *status_attr;       ///< @trick_io{**} Status Attribute.
-   TrickHLA::Attribute *parent_frame_attr; ///< @trick_io{**} Parent reference frame Attribute.
-   TrickHLA::Attribute *state_attr;        ///< @trick_io{**} State Attribute.
-   TrickHLA::Attribute *accel_attr;        ///< @trick_io{**} Acceleration Attribute.
-   TrickHLA::Attribute *rot_accel_attr;    ///< @trick_io{**} Rotational acceleration Attribute.
-   TrickHLA::Attribute *cm_attr;           ///< @trick_io{**} Center of mass Attribute.
-   TrickHLA::Attribute *body_frame_attr;   ///< @trick_io{**} Body frame orientation Attribute.
+   TrickHLA::Attribute *force_attr;        ///< @trick_io{**} Force Attribute.
+   TrickHLA::Attribute *torque_attr;       ///< @trick_io{**} Torque Attribute.
+   TrickHLA::Attribute *mass_attr;         ///< @trick_io{**} Mass Attribute.
+   TrickHLA::Attribute *mass_rate_attr;    ///< @trick_io{**} Mass rate Attribute.
+   TrickHLA::Attribute *inertia_attr;      ///< @trick_io{**} Inertia matrix Attribute.
+   TrickHLA::Attribute *inertia_rate_attr; ///< @trick_io{**} Inertia rate Attribute.
 
-   double compensate_dt; ///< @trick_units{s} Time difference between publish time and receive time.
+   double force[3];  ///< @trick_units{N} Entity force vector.
+   double torque[3]; ///< @trick_units{N*m} Entity torque vector.
+   double mass;      ///< @trick_units{kg} Entity mass.
+   double mass_rate; ///< @trick_units{kg/s} Entity mass rate.
 
-   SpaceTimeCoordinateData lag_comp_data; ///< @trick_units{--} Compensated state data.
-   QuaternionData          Q_dot;         ///< @trick_units{--} Computed attitude quaternion rate.
-   double accel[3];     ///< @trick_units{m/s2} Entity acceleration vector.
-   double rot_accel[3]; ///< @trick_units{rad/s2} Entity rotational acceleration vector.
-   double cm[3];        ///< @trick_units{m} Position of the entity center of mass in the structural frame.
-
-   QuaternionData body_wrt_struct; ///< @trick_units{--} Orientation of the body frame wrt. the structural frame.
+   double inertia[3][3];      ///< @trick_units{kg*m2} Entity inertia matrix.
+   double inertia_rate[3][3]; ///< @trick_units{kg*m2/s} Entity inertia rate matrix.
 
    /*! @brief Compensate the state data from the data time to the current scenario time.
     *  @param t_begin Scenario time at the start of the compensation step.
@@ -146,14 +142,14 @@ class PhysicalEntityLagCompBase : public TrickHLA::LagCompensation
 
   private:
    // This object is not copyable
-   /*! @brief Copy constructor for PhysicalEntityLagCompBase class.
+   /*! @brief Copy constructor for DynamicalEntityLagCompBase class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   PhysicalEntityLagCompBase( PhysicalEntityLagCompBase const &rhs );
-   /*! @brief Assignment operator for PhysicalEntityLagCompBase class.
+   DynamicalEntityLagCompBase( DynamicalEntityLagCompBase const &rhs );
+   /*! @brief Assignment operator for DynamicalEntityLagCompBase class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   PhysicalEntityLagCompBase &operator=( PhysicalEntityLagCompBase const &rhs );
+   DynamicalEntityLagCompBase &operator=( DynamicalEntityLagCompBase const &rhs );
 };
 
 } // namespace SpaceFOM
 
-#endif // SPACEFOM_PHYSICAL_ENTITY_LAG_COMP_BASE_HH: Do NOT put anything after this line!
+#endif // SPACEFOM_DYNAMICAL_ENTITY_LAG_COMP_BASE_HH: Do NOT put anything after this line!

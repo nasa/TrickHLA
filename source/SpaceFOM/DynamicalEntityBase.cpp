@@ -351,14 +351,15 @@ void DynamicalEntityBase::unpack()
            << " ERROR: The initialize() function has not been called!" << endl;
    }
 
-   // Call the PhysicalEntityBase unpack routine.
-   PhysicalEntityBase::unpack();
-
    // Print out debug information if desired.
    if ( debug ) {
+      cout << "DynamicalEntity: lag comp address: " << this->object->lag_comp << endl;
+      cout << "DynamicalEntity: lag comp type: " << this->object->lag_comp_type << endl;
       cout << "DynamicalEntityBase::unpack():" << __LINE__ << endl;
-      this->debug_print( cout );
    }
+
+   // Call the PhysicalEntityBase unpack routine.
+   PhysicalEntityBase::unpack();
 
    return;
 

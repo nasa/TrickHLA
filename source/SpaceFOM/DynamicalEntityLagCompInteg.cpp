@@ -1,5 +1,5 @@
 /*!
-@file SpaceFOM/PhysicalEntityLagCompInteg.cpp
+@file SpaceFOM/DynamicalEntityLagCompInteg.cpp
 @ingroup SpaceFOM
 @brief This class provides the implementation for a TrickHLA SpaceFOM
 physical entity latency/lag compensation class that uses integration to
@@ -18,7 +18,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/DebugHandler.cpp}
-@trick_link_dependency{PhysicalEntityLagCompInteg.cpp}
+@trick_link_dependency{DynamicalEntityLagCompInteg.cpp}
 
 
 @revs_title
@@ -40,7 +40,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Attribute.hh"
 
 // SpaceFOM include files.
-#include "SpaceFOM/PhysicalEntityLagCompInteg.hh"
+#include "SpaceFOM/DynamicalEntityLagCompInteg.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -49,17 +49,12 @@ using namespace SpaceFOM;
 /*!
  * @job_class{initialization}
  */
-PhysicalEntityLagCompInteg::PhysicalEntityLagCompInteg( PhysicalEntityBase & entity_ref ) // RETURN: -- None.
-   : PhysicalEntityLagCompBase( entity_ref ),
+DynamicalEntityLagCompInteg::DynamicalEntityLagCompInteg( DynamicalEntityBase & entity_ref ) // RETURN: -- None.
+   : DynamicalEntityLagCompBase( entity_ref ),
      integ_t( 0.0 ),
      integ_dt( 0.05 ),
      integ_tol( 1.0e-8 )
 {
-   // Initialize the acceleration values.
-   for( int iinc = 0 ; iinc < 3 ; iinc++ ){
-      this->accel[iinc]     = 0.0;
-      this->rot_accel[iinc] = 0.0;
-   }
 
 }
 
@@ -67,7 +62,7 @@ PhysicalEntityLagCompInteg::PhysicalEntityLagCompInteg( PhysicalEntityBase & ent
 /*!
  * @job_class{shutdown}
  */
-PhysicalEntityLagCompInteg::~PhysicalEntityLagCompInteg() // RETURN: -- None.
+DynamicalEntityLagCompInteg::~DynamicalEntityLagCompInteg() // RETURN: -- None.
 {
 }
 
@@ -75,13 +70,13 @@ PhysicalEntityLagCompInteg::~PhysicalEntityLagCompInteg() // RETURN: -- None.
 /*!
  * @job_class{initialization}
  */
-void PhysicalEntityLagCompInteg::initialize()
+void DynamicalEntityLagCompInteg::initialize()
 {
    ostringstream errmsg;
 
    if ( this->integ_dt < this->integ_tol ) {
 
-      errmsg << "SpaceFOM::PhysicalEntityLagCompInteg::initialize():" << __LINE__<< endl
+      errmsg << "SpaceFOM::DynamicalEntityLagCompInteg::initialize():" << __LINE__<< endl
              << " ERROR: Tolerance must be less that the dt!: dt = "
              << this->integ_dt << "; tolerance = " << this->integ_tol << THLA_ENDL;
       // Print message and terminate.
@@ -90,7 +85,7 @@ void PhysicalEntityLagCompInteg::initialize()
    }
 
    // Call the base class initialize routine.
-   PhysicalEntityLagCompBase::initialize();
+   DynamicalEntityLagCompBase::initialize();
 
    // Return to calling routine.
    return;
@@ -99,7 +94,7 @@ void PhysicalEntityLagCompInteg::initialize()
 
 /*! @brief Sending side latency compensation callback interface from the
  *  TrickHLALagCompensation class. */
-void PhysicalEntityLagCompInteg::send_lag_compensation()
+void DynamicalEntityLagCompInteg::send_lag_compensation()
 {
    double begin_t = get_scenario_time();
    double end_t;
@@ -111,13 +106,13 @@ void PhysicalEntityLagCompInteg::send_lag_compensation()
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
-      cout << "******* PhysicalEntityLagCompInteg::send_lag_compensation():" << __LINE__ << endl
+      cout << "******* DynamicalEntityLagCompInteg::send_lag_compensation():" << __LINE__ << endl
            << " scenario-time:" << get_scenario_time() << endl
            << "     lookahead:" << this->compensate_dt << endl
            << " adjusted-time:" << end_t << endl;
    }
 
-   // Copy the current PhysicalEntity state over to the lag compensated state.
+   // Copy the current DynamicalEntity state over to the lag compensated state.
    this->entity.pack_from_working_data();
    this->load_lag_comp_data();
    this->Q_dot.derivative_first( this->lag_comp_data.att,
@@ -148,7 +143,7 @@ void PhysicalEntityLagCompInteg::send_lag_compensation()
 
 /*! @brief Receive side latency compensation callback interface from the
  *  TrickHLALagCompensation class. */
-void PhysicalEntityLagCompInteg::receive_lag_compensation()
+void DynamicalEntityLagCompInteg::receive_lag_compensation()
 {
    double end_t  = get_scenario_time();
    double data_t = entity.get_time();
@@ -159,7 +154,7 @@ void PhysicalEntityLagCompInteg::receive_lag_compensation()
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
-      cout << "******* PhysicalEntityLagCompInteg::receive_lag_compensation():" << __LINE__ << endl
+      cout << "******* DynamicalEntityLagCompInteg::receive_lag_compensation():" << __LINE__ << endl
            << "  scenario-time:" << end_t  << endl
            << "      data-time:" << data_t << endl
            << " comp-time-step:" << this->compensate_dt  << endl;
@@ -169,7 +164,7 @@ void PhysicalEntityLagCompInteg::receive_lag_compensation()
    // rates we need to check to see if we received attribute data.
    if ( this->state_attr->is_received() ) {
 
-      // Copy the current PhysicalEntity state over to the lag compensated state.
+      // Copy the current DynamicalEntity state over to the lag compensated state.
       this->load_lag_comp_data();
       this->Q_dot.derivative_first( this->lag_comp_data.att,
                                     this->lag_comp_data.ang_vel );
@@ -189,6 +184,11 @@ void PhysicalEntityLagCompInteg::receive_lag_compensation()
          this->print_lag_comp_data();
       }
 
+   }
+   else {
+      if ( debug ) {
+         cout << "DynamicalEntityLagCompInteg::receive_lag_compensation(): No state data received." << endl;
+      }
    }
 
    // Copy the compensated state to the packing data.

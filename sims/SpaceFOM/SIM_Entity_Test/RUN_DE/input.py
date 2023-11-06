@@ -454,13 +454,19 @@ federate.add_fed_object( phy_interface )
 dyn_entity = SpaceFOMDynamicalEntityObject( True,
                                             dyn_entity_name,
                                             dynamical_entity.entity_packing,
-                                            'dynamical_entity.entity_packing' )
+                                            'dynamical_entity.entity_packing',
+                                            entity_lag_comp = dynamical_entity.lag_compensation )
 
 # Set the debug flag for the Entity.
 dynamical_entity.entity_packing.debug = verbose
 
 # Add this Entity to the list of managed object.
 federate.add_fed_object( dyn_entity )
+
+# Set the lag compensation paratmeters.
+dynamical_entity.lag_compensation.debug = True
+dynamical_entity.lag_compensation.set_integ_tolerance( 1.0e-6 )
+dynamical_entity.lag_compensation.set_integ_dt( 0.05 )
 
 
 #---------------------------------------------------------------------------
@@ -495,6 +501,7 @@ frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 #phy_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
 #phy_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_SEND_SIDE )
 phy_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
+dyn_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 
 #---------------------------------------------------------------------------

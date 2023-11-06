@@ -85,8 +85,6 @@ void EntityDynamics::derivative()
    // Compute the derivative of the attitude quaternion from the
    // angular velocity vector.
    this->Q_dot.derivative_first( pe_data.state.att, pe_data.state.ang_vel );
-   std::cout << pe_data.name << ".Q_dot: " << Q_dot.scalar << "; "
-         << Q_dot.vector[0] << ", " << Q_dot.vector[1] << ", " << Q_dot.vector[2] << std::endl;
 
    // Compute the translational acceleration in the structural frame.
    V_SCALE( accel_str, de_data.force, 1.0/de_data.mass );
