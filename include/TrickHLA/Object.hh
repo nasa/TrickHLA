@@ -235,16 +235,19 @@ class Object
    void send_requested_data();
 
    /*! @brief Send the requested attribute value updates.
-    *  @param update_time The time to HLA Logical Time to update the atributes to. */
+    *  @param update_time The time to HLA Logical Time to update the attributes to. */
    void send_requested_data( Int64Time const &update_time );
 
    /*! @brief Send the cyclic and requested attribute value updates.
-    *  @param update_time The time to HLA Logical Time to update the atributes to. */
+    *  @param update_time The time to HLA Logical Time to update the attributes to. */
    void send_cyclic_and_requested_data( Int64Time const &update_time );
 
    /*! @brief Send the zero-lookahead attribute value updates.
-    *  @param update_time The time to HLA Logical Time to update the atributes to. */
+    *  @param update_time The time to HLA Logical Time to update the attributes to. */
    void send_zero_lookahead_and_requested_data( Int64Time const &update_time );
+
+   /*! @brief Send the blocking I/O attribute value updates as Receive Order. */
+   void send_blocking_io_data();
 
    /*! @brief Send initialization data to remote HLA federates. */
    void send_init_data();
@@ -257,6 +260,9 @@ class Object
 
    /*! @brief Handle the received zero-lookaehad data. */
    void receive_zero_lookahead_data();
+
+   /*! @brief Handle the received blocking I/O data. */
+   void receive_blocking_io_data();
 
    /*! @brief Request an update to the attributes for this object. */
    void request_attribute_value_update();
@@ -488,9 +494,15 @@ class Object
    bool any_locally_owned_published_cyclic_data_ready_or_requested_attribute();
 
    /*! @brief Determines if any attribute is locally owned, published, has
-    * a zero-lookahead that is ready for a cyclic send or is requested for update.
+    * a zero-lookahead that is ready to be sent or is requested for update.
     *  @return True for any locally owned, published attribute or is requested for update. */
    bool any_locally_owned_published_zero_lookahead_or_requested_attribute();
+
+   /*! @brief Determines if any attribute is locally owned, published, is
+    * configured for blocking I/O and is ready to be sent or is requested for
+    * update.
+    *  @return True for any locally owned, published attribute or is requested for update. */
+   bool any_locally_owned_published_blocking_io_attribute();
 
    /*! @brief Determines if any attribute is locally owned, published, and has
     * a cycle-time that is ready for a cyclic send.
@@ -536,6 +548,15 @@ class Object
    bool any_remotely_owned_subscribed_zero_lookahead_attribute()
    {
       return any_remotely_owned_subscribed_attribute( CONFIG_ZERO_LOOKAHEAD );
+   }
+
+   /*! @brief Determines if any blocking I/O updated attributes are remotely
+    * owned and subscribed.
+    *  @return True if there are any remotely owned, subscribed blocking I/O
+    *  updated attributes. */
+   bool any_remotely_owned_subscribed_blocking_io_attribute()
+   {
+      return any_remotely_owned_subscribed_attribute( CONFIG_BLOCKING_IO );
    }
 
    /*! @brief Determines if any initialization updated attributes are remotely
@@ -698,6 +719,12 @@ class Object
       pack_attribute_buffers( CONFIG_ZERO_LOOKAHEAD, true );
    }
 
+   /*! @brief Copy the blocking I/O attribute values to the buffer for each attribute. */
+   void pack_blocking_io_attribute_buffers()
+   {
+      pack_attribute_buffers( CONFIG_BLOCKING_IO, false );
+   }
+
    /*! @brief Copy the cyclic attribute values to the buffer for each attribute. */
    void pack_cyclic_attribute_buffers()
    {
@@ -714,6 +741,12 @@ class Object
    void unpack_zero_lookahead_attribute_buffers()
    {
       unpack_attribute_buffers( CONFIG_ZERO_LOOKAHEAD );
+   }
+
+   /*! @brief Copy the packed buffer contents back to each blocking I/O attribute. */
+   void unpack_blocking_io_attribute_buffers()
+   {
+      unpack_attribute_buffers( CONFIG_BLOCKING_IO );
    }
 
    /*! @brief Copy the dynamic initialization attribute values to the buffer for each attribute. */

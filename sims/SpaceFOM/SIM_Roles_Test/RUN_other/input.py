@@ -179,7 +179,7 @@ federate.scale_trick_tics_to_base_time_units()
 federate.set_lookahead_time( 0.250 )
 
 # Setup Time Management parameters.
-federate.set_time_regulating( False )
+federate.set_time_regulating( True )
 federate.set_time_constrained( True )
 
 #--------------------------------------------------------------------------

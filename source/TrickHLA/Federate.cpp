@@ -5089,7 +5089,7 @@ void Federate::send_zero_lookahead_and_requested_data(
    obj->send_zero_lookahead_and_requested_data( this->granted_time );
 }
 
-/*! @brief Wait to received the zero lookahead data for the specified object instance. */
+/*! @brief Wait to receive the zero lookahead data for the specified object instance. */
 void Federate::wait_to_receive_zero_lookahead_data(
    string const &obj_instance_name )
 {
@@ -5166,6 +5166,105 @@ void Federate::wait_to_receive_zero_lookahead_data(
    }
 
    obj->receive_zero_lookahead_data();
+}
+
+/*! @brief Send blocking I/O or requested data for the specified object instance. */
+void Federate::send_blocking_io_data(
+   string const &obj_instance_name )
+{
+   TrickHLA::Object *obj = manager->get_trickhla_object( obj_instance_name );
+   if ( obj == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Federate::send_blocking_io_data():" << __LINE__
+             << " ERROR: Could not find the object instance for the name specified:'"
+             << obj_instance_name << "'" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   // We can only send blocking I/O attribute updates for the attributes we
+   // own and are configured to publish.
+   if ( !obj->any_locally_owned_published_blocking_io_attribute() ) {
+      return;
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      send_hs( stdout, "Federate::send_blocking_io_data():%d Object:'%s'%c",
+               __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
+   }
+
+   obj->send_blocking_io_data();
+}
+
+/*! @brief Wait to receive the blocking I/O data for the specified object instance. */
+void Federate::wait_to_receive_blocking_io_data(
+   string const &obj_instance_name )
+{
+   TrickHLA::Object *obj = manager->get_trickhla_object( obj_instance_name );
+   if ( obj == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Federate::wait_to_receive_blocking_io_data():" << __LINE__
+             << " ERROR: Could not find the object instance for the name specified:'"
+             << obj_instance_name << "'" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   // We can only receive data if we subscribe to at least one attribute that
+   // is remotely owned, otherwise just return.
+   if ( !obj->any_remotely_owned_subscribed_blocking_io_attribute() ) {
+      return;
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      send_hs( stdout, "Federate::wait_to_receive_blocking_io_data():%d Object:'%s'%c",
+               __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
+   }
+
+   // See if we already have data. This is most likely the case if multiple data
+   // sends happen at the same time and subsequent calls to
+   // wait_to_receive_blocking_io_data() will have data for other objects.
+   if ( !obj->is_changed() && obj->any_remotely_owned_subscribed_blocking_io_attribute() ) {
+
+      int64_t      wallclock_time; // cppcheck-suppress [variableScope]
+      SleepTimeout print_timer( this->wait_status_time );
+      SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
+
+      // Block waiting for the named object instance data.
+      while ( !obj->is_changed() && obj->any_remotely_owned_subscribed_blocking_io_attribute() ) {
+
+         // Check for shutdown.
+         check_for_shutdown_with_termination();
+
+         sleep_timer.sleep();
+
+         // To be more efficient, we get the time once and share it.
+         wallclock_time = sleep_timer.time();
+
+         if ( sleep_timer.timeout( wallclock_time ) ) {
+            sleep_timer.reset();
+            if ( !is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "Federate::wait_to_receive_blocking_io_data():" << __LINE__
+                      << " ERROR: Unexpectedly the Federate is no longer an execution"
+                      << " member. This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!"
+                      << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+
+         if ( print_timer.timeout( wallclock_time ) ) {
+            print_timer.reset();
+            send_hs( stdout, "Federate::wait_to_receive_blocking_io_data():%d Waiting...%c",
+                     __LINE__, THLA_NEWLINE );
+         }
+      }
+   }
+
+   obj->receive_blocking_io_data();
 }
 
 /*!

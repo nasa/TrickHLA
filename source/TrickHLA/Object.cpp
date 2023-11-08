@@ -357,12 +357,16 @@ void Object::initialize(
    // since this can result in deadlock.
    bool any_cyclic_attr         = false;
    bool any_zero_lookahead_attr = false;
+   bool any_blocking_io_attr    = false;
    for ( unsigned int i = 0; i < attr_count; ++i ) {
       if ( ( attributes[i].get_configuration() & CONFIG_CYCLIC ) == CONFIG_CYCLIC ) {
          any_cyclic_attr = true;
       }
       if ( ( attributes[i].get_configuration() & CONFIG_ZERO_LOOKAHEAD ) == CONFIG_ZERO_LOOKAHEAD ) {
          any_zero_lookahead_attr = true;
+      }
+      if ( ( attributes[i].get_configuration() & CONFIG_BLOCKING_IO ) == CONFIG_BLOCKING_IO ) {
+         any_blocking_io_attr = true;
       }
       if ( any_cyclic_attr && any_zero_lookahead_attr ) {
          ostringstream errmsg;
@@ -371,8 +375,30 @@ void Object::initialize(
                 << " with a mix of CONFIG_CYCLIC and CONFIG_ZERO_LOOKAHEAD for"
                 << " the 'config' setting, which can lead to deadlock. Please"
                 << " configure all the Attributes of this object to use one of"
-                << " CONFIG_CYCLIC or CONFIG_ZERO_LOOKAHEAD for the Attribute"
-                << " 'config' setting." << THLA_ENDL;
+                << " CONFIG_CYCLIC, CONFIG_ZERO_LOOKAHEAD or CONFIG_BLOCKING_IO"
+                << " for the Attribute 'config' setting." << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      if ( any_cyclic_attr && any_blocking_io_attr ) {
+         ostringstream errmsg;
+         errmsg << "Object::initialize():" << __LINE__
+                << " ERROR: For object '" << name << "', detected Attributes"
+                << " with a mix of CONFIG_CYCLIC and CONFIG_BLOCKING_IO for"
+                << " the 'config' setting, which can lead to deadlock. Please"
+                << " configure all the Attributes of this object to use one of"
+                << " CONFIG_CYCLIC, CONFIG_ZERO_LOOKAHEAD or CONFIG_BLOCKING_IO"
+                << " for the Attribute 'config' setting." << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      if ( any_zero_lookahead_attr && any_blocking_io_attr ) {
+         ostringstream errmsg;
+         errmsg << "Object::initialize():" << __LINE__
+                << " ERROR: For object '" << name << "', detected Attributes"
+                << " with a mix of CONFIG_ZERO_LOOKAHEAD and CONFIG_BLOCKING_IO for"
+                << " the 'config' setting, which can lead to deadlock. Please"
+                << " configure all the Attributes of this object to use one of"
+                << " CONFIG_CYCLIC, CONFIG_ZERO_LOOKAHEAD or CONFIG_BLOCKING_IO"
+                << " for the Attribute 'config' setting." << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
@@ -391,6 +417,23 @@ void Object::initialize(
              << " the Lag-Compensation type 'lag_comp_type' is set to"
              << " LAG_COMPENSATION_NONE to disable Lag-Compensation when using"
              << " zero-lookahead configured object attributes." << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // If any attribute is configured for blocking I/O then lag compensation
+   // cannot be specified because blocking I/O avoids any latency in the data
+   // transfer (i.e. intra-frame).
+   if ( any_blocking_io_attr && ( lag_comp != NULL ) && ( lag_comp_type != LAG_COMPENSATION_NONE ) ) {
+      ostringstream errmsg;
+      errmsg << "Object::initialize():" << __LINE__
+             << " ERROR: For object '" << name << "', detected Attributes"
+             << " with a 'config' setting of CONFIG_BLOCKING_IO but a"
+             << " Lag-Compensation 'lag_comp' callback has also been specified"
+             << " with a 'lag_comp_type' setting that is not LAG_COMPENSATION_NONE!"
+             << " Please check your input or modified-data files to make sure"
+             << " the Lag-Compensation type 'lag_comp_type' is set to"
+             << " LAG_COMPENSATION_NONE to disable Lag-Compensation when using"
+             << " blocking I/O configured object attributes." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -2455,6 +2498,243 @@ exception for '%s' with error message '%s'.%c",
 }
 
 /*!
+ * @job_class{scheduled}
+ */
+void Object::send_blocking_io_data()
+{
+   // Make sure we clear the attribute update request flag because we only
+   // want to send data once per request.
+   this->attr_update_requested = false;
+
+   // We can only send blocking I/O attribute updates for the attributes we
+   // own, and are configured to publish.
+   if ( !any_locally_owned_published_blocking_io_attribute() ) {
+      return;
+   }
+
+   // Macro to save the FPU Control Word register value.
+   TRICKHLA_SAVE_FPU_CONTROL_WORD;
+
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &send_mutex );
+
+   // Lag-compensation is not supported for blocking I/O (intraframe), but if
+   // specified we call the bypass function.
+   if ( lag_comp != NULL ) {
+      switch ( lag_comp_type ) {
+         case LAG_COMPENSATION_NONE:
+            lag_comp->bypass_send_lag_compensation();
+            break;
+         case LAG_COMPENSATION_SEND_SIDE:
+         case LAG_COMPENSATION_RECEIVE_SIDE:
+         default:
+            ostringstream errmsg;
+            errmsg << "Object::send_blocking_io_data():" << __LINE__
+                   << " ERROR: For object '" << name << "', detected a"
+                   << " Lag-Compensation 'lag_comp' callback has also been"
+                   << " specified with a 'lag_comp_type' setting that is not"
+                   << " LAG_COMPENSATION_NONE! Please check your input or"
+                   << " modified-data files to make sure the Lag-Compensation"
+                   << " type 'lag_comp_type' is set to LAG_COMPENSATION_NONE"
+                   << " to disable Lag-Compensation when sending blocking I/O"
+                   << " configured object attributes." << THLA_ENDL;
+            DebugHandler::terminate_with_message( errmsg.str() );
+            break;
+      }
+   }
+
+   // If we have a data packing object then pack the data now.
+   if ( packing != NULL ) {
+      packing->pack();
+   }
+
+   // Buffer the attribute values for the object.
+   pack_blocking_io_attribute_buffers();
+
+   try {
+      // Create the map of "blocking I/O" attribute values we will be updating.
+      create_attribute_set( CONFIG_BLOCKING_IO, false );
+   } catch ( RTI1516_EXCEPTION const &e ) {
+      string rti_err_msg;
+      StringUtilities::to_string( rti_err_msg, e.what() );
+      send_hs( stderr, "Object::send_blocking_io_data():%d For object '%s', cannot create attribute value/pair set: '%s'%c",
+               __LINE__, get_name(), rti_err_msg.c_str(), THLA_NEWLINE );
+   }
+
+   // Make sure we don't send an empty attribute map to the other federates.
+   if ( attribute_values_map->empty() ) {
+      // Macro to restore the saved FPU Control Word register value.
+      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+      // Just return because we have no data to send.
+      return;
+   }
+
+   Federate const *federate = get_federate();
+
+   try {
+      // Do not send any data if federate save or restore has begun (see
+      // IEEE-1516.1-2000 sections 4.12, 4.20)
+      if ( federate->should_publish_data() ) {
+
+         RTIambassador *rti_amb = get_RTI_ambassador();
+
+         if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+            send_hs( stdout, "Object::send_blocking_io_data():%d \
+Object '%s', Receive Order (RO) Attribute update.%c",
+                     __LINE__, get_name(), THLA_NEWLINE );
+         }
+
+         // Send as Receive Order (i.e. with no timestamp).
+         rti_amb->updateAttributeValues( this->instance_handle,
+                                         *attribute_values_map,
+                                         RTI1516_USERDATA( 0, 0 ) );
+
+#ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
+         ++send_count;
+#endif
+      }
+   } catch ( InvalidLogicalTime const &e ) {
+      string id_str;
+      StringUtilities::to_string( id_str, instance_handle );
+      string rti_err_msg;
+      StringUtilities::to_string( rti_err_msg, e.what() );
+      send_hs( stderr, "Object::send_blocking_io_data():%d invalid logical time \
+exception for '%s' with error message '%s'.%c",
+               __LINE__, get_name(), rti_err_msg.c_str(), THLA_NEWLINE );
+
+      ostringstream errmsg;
+      errmsg << "Object::send_blocking_io_data():" << __LINE__
+             << " Exception: InvalidLogicalTime" << endl
+             << "  instance_id=" << id_str << endl
+             << "  granted=" << get_granted_time().get_time_in_seconds() << " ("
+             << get_granted_time().get_base_time() << " " << Int64BaseTime::get_units()
+             << ")" << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << " ("
+             << get_lookahead().get_base_time() << " " << Int64BaseTime::get_units()
+             << ")" << endl;
+      ;
+      send_hs( stderr, errmsg.str().c_str() );
+   } catch ( AttributeNotOwned const &e ) {
+      string id_str;
+      StringUtilities::to_string( id_str, instance_handle );
+      send_hs( stderr, "Object::send_blocking_io_data():%d detected remote ownership for '%s'%c",
+               __LINE__, get_name(), THLA_NEWLINE );
+      ostringstream errmsg;
+      errmsg << "Object::send_blocking_io_data():" << __LINE__
+             << " Exception: AttributeNotOwned" << endl
+             << "  instance_id=" << id_str << endl
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
+      send_hs( stderr, errmsg.str().c_str() );
+   } catch ( ObjectInstanceNotKnown const &e ) {
+      string id_str;
+      StringUtilities::to_string( id_str, instance_handle );
+      send_hs( stderr, "Object::send_blocking_io_data():%d object instance not known for '%s'%c",
+               __LINE__, get_name(), THLA_NEWLINE );
+      ostringstream errmsg;
+      errmsg << "Object::send_blocking_io_data():" << __LINE__
+             << " Exception: ObjectInstanceNotKnown" << endl
+             << "  instance_id=" << id_str << endl
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
+      send_hs( stderr, errmsg.str().c_str() );
+   } catch ( AttributeNotDefined const &e ) {
+      string id_str;
+      StringUtilities::to_string( id_str, instance_handle );
+      send_hs( stderr, "Object::send_blocking_io_data():%d attribute not defined for '%s'%c",
+               __LINE__, get_name(), THLA_NEWLINE );
+      ostringstream errmsg;
+      errmsg << "Object::send_blocking_io_data():" << __LINE__
+             << " Exception: AttributeNotDefined" << endl
+             << "  instance_id=" << id_str << endl
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
+      send_hs( stderr, errmsg.str().c_str() );
+   } catch ( FederateNotExecutionMember const &e ) {
+      string id_str;
+      StringUtilities::to_string( id_str, instance_handle );
+      send_hs( stderr, "Object::send_blocking_io_data():%d federation not execution member for '%s'%c",
+               __LINE__, get_name(), THLA_NEWLINE );
+      ostringstream errmsg;
+      errmsg << "Object::send_blocking_io_data():" << __LINE__
+             << " Exception: FederateNotExecutionMember" << endl
+             << "  instance_id=" << id_str << endl
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
+      send_hs( stderr, errmsg.str().c_str() );
+   } catch ( SaveInProgress const &e ) {
+      string id_str;
+      StringUtilities::to_string( id_str, instance_handle );
+      send_hs( stderr, "Object::send_blocking_io_data():%d save in progress for '%s'%c",
+               __LINE__, get_name(), THLA_NEWLINE );
+      ostringstream errmsg;
+      errmsg << "Object::send_blocking_io_data():" << __LINE__
+             << " Exception: SaveInProgress" << endl
+             << "  instance_id=" << id_str << endl
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
+      send_hs( stderr, errmsg.str().c_str() );
+   } catch ( RestoreInProgress const &e ) {
+      string id_str;
+      StringUtilities::to_string( id_str, instance_handle );
+      send_hs( stderr, "Object::send_blocking_io_data():%d restore in progress for '%s'%c",
+               __LINE__, get_name(), THLA_NEWLINE );
+      ostringstream errmsg;
+      errmsg << "Object::send_blocking_io_data():" << __LINE__
+             << " Exception: RestoreInProgress" << endl
+             << "  instance_id=" << id_str << endl
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
+      send_hs( stderr, errmsg.str().c_str() );
+   } catch ( NotConnected const &e ) {
+      string id_str;
+      StringUtilities::to_string( id_str, instance_handle );
+      send_hs( stderr, "Object::send_blocking_io_data():%d not connected for '%s'%c",
+               __LINE__, get_name(), THLA_NEWLINE );
+      ostringstream errmsg;
+      errmsg << "Object::send_blocking_io_data():" << __LINE__
+             << " Exception: NotConnected" << endl
+             << "  instance_id=" << id_str << endl
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
+      send_hs( stderr, errmsg.str().c_str() );
+   } catch ( RTIinternalError const &e ) {
+      string id_str;
+      StringUtilities::to_string( id_str, instance_handle );
+      send_hs( stderr, "Object::send_blocking_io_data():%d RTI internal error for '%s'%c",
+               __LINE__, get_name(), THLA_NEWLINE );
+      ostringstream errmsg;
+      errmsg << "Object::send_blocking_io_data():" << __LINE__
+             << " Exception: RTIinternalError" << endl
+             << "  instance_id=" << id_str << endl
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
+      send_hs( stderr, errmsg.str().c_str() );
+   } catch ( RTI1516_EXCEPTION const &e ) {
+      string id_str;
+      StringUtilities::to_string( id_str, instance_handle );
+      string rti_err_msg;
+      StringUtilities::to_string( rti_err_msg, e.what() );
+      send_hs( stderr, "Object.send_blocking_io_data():%d Exception: '%s'%c",
+               __LINE__, rti_err_msg.c_str(), THLA_NEWLINE );
+      ostringstream errmsg;
+      errmsg << "Object::send_blocking_io_data():" << __LINE__
+             << " RTI1516_EXCEPTION" << endl
+             << "  instance_id=" << id_str << endl
+             << "  granted=" << get_granted_time().get_time_in_seconds() << endl
+             << "  lookahead=" << get_lookahead().get_time_in_seconds() << endl;
+      send_hs( stderr, errmsg.str().c_str() );
+   }
+
+   // Macro to restore the saved FPU Control Word register value.
+   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+}
+
+/*!
  * @details If the object is owned remotely, this function copies its internal
  * data into simulation object and marks the object as "unchanged". This data
  * was deposited by the reflect callback and marked as "changed". By marking it
@@ -2648,7 +2928,7 @@ void Object::receive_zero_lookahead_data()
                          << " LAG_COMPENSATION_NONE! Please check your input or"
                          << " modified-data files to make sure the Lag-Compensation"
                          << " type 'lag_comp_type' is set to LAG_COMPENSATION_NONE"
-                         << " to disable Lag-Compensation when sending zero-lookahead"
+                         << " to disable Lag-Compensation when receiving zero-lookahead"
                          << " configured object attributes." << THLA_ENDL;
                   DebugHandler::terminate_with_message( errmsg.str() );
                   break;
@@ -2672,6 +2952,90 @@ void Object::receive_zero_lookahead_data()
 #if THLA_OBJ_DEBUG_RECEIVE
    else {
       send_hs( stdout, "Object::receive_zero_lookahead_data():%d NO new data for '%s' at HLA-logical-time=%G%c",
+               __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds(),
+               THLA_NEWLINE );
+   }
+#endif
+}
+
+/*!
+ * @details If the object is owned remotely, this function copies its internal
+ * data into simulation object and marks the object as "unchanged". This data
+ * was deposited by the reflect callback and marked as "changed". By marking it
+ * as unchanged, we avoid copying the same data over and over. If the object
+ * is locally owned, we shouldn't be receiving any remote data anyway and if
+ * we were to -- bogusly -- copy it to the internal byte buffer, we'd
+ * continually reset our local simulation.
+ * @job_class{scheduled}
+ */
+void Object::receive_blocking_io_data()
+{
+   // There must be some remotely owned attribute that we subscribe to in
+   // order for us to receive it.
+   if ( !any_remotely_owned_subscribed_blocking_io_attribute() ) {
+      return;
+   }
+
+   // Process the data now that it has been received (i.e. changed).
+   if ( is_changed() ) {
+
+      do {
+#if THLA_OBJ_DEBUG_RECEIVE
+         send_hs( stdout, "Object::receive_blocking_io_data():%d for '%s' at HLA-logical-time=%G%c",
+                  __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds(),
+                  THLA_NEWLINE );
+#endif
+
+         // Unpack the buffer and copy the values to the object attributes.
+         unpack_blocking_io_attribute_buffers();
+
+         // Unpack the data for the object if we have a packing object.
+         if ( packing != NULL ) {
+            packing->unpack();
+         }
+
+         // Lag-compensation is not supported for blocking I/O, but if
+         // specified we call the bypass function.
+         if ( lag_comp != NULL ) {
+            switch ( lag_comp_type ) {
+               case LAG_COMPENSATION_NONE:
+                  lag_comp->bypass_receive_lag_compensation();
+                  break;
+               case LAG_COMPENSATION_SEND_SIDE:
+               case LAG_COMPENSATION_RECEIVE_SIDE:
+               default:
+                  ostringstream errmsg;
+                  errmsg << "Object::receive_blocking_io_data():" << __LINE__
+                         << " ERROR: For object '" << name << "', detected a"
+                         << " Lag-Compensation 'lag_comp' callback has also been"
+                         << " specified with a 'lag_comp_type' setting that is not"
+                         << " LAG_COMPENSATION_NONE! Please check your input or"
+                         << " modified-data files to make sure the Lag-Compensation"
+                         << " type 'lag_comp_type' is set to LAG_COMPENSATION_NONE"
+                         << " to disable Lag-Compensation when receiving blocking I/O"
+                         << " configured object attributes." << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
+                  break;
+            }
+         }
+
+         // Mark this data as unchanged now that we have processed it from the buffer.
+         mark_unchanged();
+
+         // Check for more object attribute data in the buffer/queue for this
+         // object instance, which will show up as still being changed.
+      } while ( is_changed() );
+   }
+#if THLA_OBJ_DEBUG_VALID_OBJECT_RECEIVE
+   else if ( is_instance_handle_valid() && ( exec_get_sim_time() > 0.0 ) ) {
+      send_hs( stdout, "Object::receive_blocking_io_data():%d NO new data for valid object '%s' at HLA-logical-time=%G%c",
+               __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds(),
+               THLA_NEWLINE );
+   }
+#endif
+#if THLA_OBJ_DEBUG_RECEIVE
+   else {
+      send_hs( stdout, "Object::receive_blocking_io_data():%d NO new data for '%s' at HLA-logical-time=%G%c",
                __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds(),
                THLA_NEWLINE );
    }
@@ -4205,6 +4569,19 @@ bool Object::any_locally_owned_published_zero_lookahead_or_requested_attribute()
            && attributes[i].is_publish()
            && ( attributes[i].is_update_requested()
                 || ( ( attributes[i].get_configuration() & CONFIG_ZERO_LOOKAHEAD ) == CONFIG_ZERO_LOOKAHEAD ) ) ) {
+         return true;
+      }
+   }
+   return false;
+}
+
+bool Object::any_locally_owned_published_blocking_io_attribute()
+{
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
+
+      if ( attributes[i].is_locally_owned()
+           && attributes[i].is_publish()
+           && ( ( attributes[i].get_configuration() & CONFIG_BLOCKING_IO ) == CONFIG_BLOCKING_IO ) ) {
          return true;
       }
    }

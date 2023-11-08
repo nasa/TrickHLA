@@ -93,12 +93,14 @@ typedef enum {
    CONFIG_INITIALIZE     = 0x0002, ///< Dynamic simulation initialization.
    CONFIG_INTERMITTENT   = 0x0004, ///< Intermittent updates.
    CONFIG_CYCLIC         = 0x0008, ///< Cyclic updates.
-   CONFIG_ZERO_LOOKAHEAD = 0x0010, ///< Zero lookahead data updates.
+   CONFIG_ZERO_LOOKAHEAD = 0x0010, ///< Zero lookahead with Timestamp Order (TSO) data updates.
+   CONFIG_BLOCKING_IO    = 0x0020, ///< Blocking I/O with Receiver Order (RO) data updates.
    CONFIG_MAX_VALUE      = ( CONFIG_NONE
                         + CONFIG_INITIALIZE
                         + CONFIG_INTERMITTENT
                         + CONFIG_CYCLIC
-                        + CONFIG_ZERO_LOOKAHEAD ) ///< Maximum configuration value.
+                        + CONFIG_ZERO_LOOKAHEAD
+                        + CONFIG_BLOCKING_IO ) ///< Maximum configuration value.
 
 } DataUpdateEnum;
 

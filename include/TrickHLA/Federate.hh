@@ -694,8 +694,14 @@ class Federate
    /*! @brief Send zero lookahead or requested data for the specified object instance. */
    void send_zero_lookahead_and_requested_data( std::string const &obj_instance_name );
 
-   /*! @brief Wait to received the zero lookahead data for the specified object instance. */
+   /*! @brief Wait to receive the zero lookahead data for the specified object instance. */
    void wait_to_receive_zero_lookahead_data( std::string const &obj_instance_name );
+
+   /*! @brief Send blocking I/O or requested data for the specified object instance. */
+   void send_blocking_io_data( std::string const &obj_instance_name );
+
+   /*! @brief Wait to receive the blocking I/O data for the specified object instance. */
+   void wait_to_receive_blocking_io_data( std::string const &obj_instance_name );
 
    /*! @brief Set federate execution startup state.
     *  @param flag True for federate started; False otherwise. */
