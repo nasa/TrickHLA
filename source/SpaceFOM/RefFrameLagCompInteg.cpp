@@ -18,6 +18,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../../source/TrickHLA/LagCompensationInteg.cpp}
 @trick_link_dependency{RefFrameLagCompInteg.cpp}
 
 
@@ -52,9 +53,7 @@ using namespace SpaceFOM;
  */
 RefFrameLagCompInteg::RefFrameLagCompInteg( RefFrameBase & ref_frame_ref ) // RETURN: -- None.
    : RefFrameLagCompBase( ref_frame_ref ),
-     integ_t( 0.0 ),
-     integ_dt( 0.05 ),
-     integ_tol( 1.0e-8 )
+     TrickHLA::LagCompensationInteg()
 {
 
 }
@@ -116,11 +115,8 @@ void RefFrameLagCompInteg::send_lag_compensation()
    // Copy the current RefFrame state over to the lag compensated state.
    this->ref_frame.pack_from_working_data();
    this->load_lag_comp_data();
-   QuaternionData::compute_quat_dot( this->lag_comp_data.att.scalar,
-                                     this->lag_comp_data.att.vector,
-                                     this->lag_comp_data.ang_vel,
-                                     &(this->Q_dot.scalar),
-                                     this->Q_dot.vector );
+   this->Q_dot.derivative_first( this->lag_comp_data.att,
+                                 this->lag_comp_data.ang_vel);
 
    // Print out debug information if desired.
    if ( debug ) {
@@ -170,11 +166,8 @@ void RefFrameLagCompInteg::receive_lag_compensation()
 
       // Copy the current RefFrame state over to the lag compensated state.
       this->load_lag_comp_data();
-      QuaternionData::compute_quat_dot( this->lag_comp_data.att.scalar,
-                                        this->lag_comp_data.att.vector,
-                                        this->lag_comp_data.ang_vel,
-                                        &(this->Q_dot.scalar),
-                                        this->Q_dot.vector );
+      this->Q_dot.derivative_first( this->lag_comp_data.att,
+                                    this->lag_comp_data.ang_vel);
 
       // Print out debug information if desired.
       if ( debug ) {

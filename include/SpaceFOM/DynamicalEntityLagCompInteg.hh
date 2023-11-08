@@ -23,6 +23,7 @@ NASA, Johnson Space Center\n
 @python_module{SpaceFOM}
 
 @tldh
+@trick_link_dependency{../../source/TrickHLA/LagCompensationInteg.cpp}
 @trick_link_dependency{../../source/SpaceFOM/DynamicalEntityLagCompBase.cpp}
 @trick_link_dependency{../../source/SpaceFOM/DynamicalEntityLagCompInteg.cpp}
 
@@ -42,6 +43,7 @@ NASA, Johnson Space Center\n
 #include "trick/Integrator.hh"
 
 // TrickHLA include files.
+#include "TrickHLA/LagCompensationInteg.hh"
 
 // SpaceFOM include files.
 #include "SpaceFOM/DynamicalEntityLagCompBase.hh"
@@ -49,7 +51,7 @@ NASA, Johnson Space Center\n
 namespace SpaceFOM
 {
 
-class DynamicalEntityLagCompInteg : public DynamicalEntityLagCompBase
+class DynamicalEntityLagCompInteg : public DynamicalEntityLagCompBase, public TrickHLA::LagCompensationInteg
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -90,16 +92,16 @@ class DynamicalEntityLagCompInteg : public DynamicalEntityLagCompBase
    }
 
   protected:
-   double integ_t;   ///< @trick_units{s} Current compensation propagation time.
-   double integ_dt;  ///< @trick_units{s} Default integration time steps.
-   double integ_tol; ///< @trick_units{s} Tolerance for terminating a compensation step.
-
    /*! @brief Compensate the state data from the data time to the current scenario time.
     *  @param t_begin Scenario time at the start of the compensation step.
     *  @param t_end   Scenario time at the end of the compensation step. */
-   int compensate(
+   virtual int compensate(
       const double t_begin,
-      const double t_end   ) = 0;
+      const double t_end   )
+   {
+      this->compensate_dt = t_end - t_begin;
+      return( integrate( t_begin, t_end ) );
+   }
 
   private:
    // This object is not copyable

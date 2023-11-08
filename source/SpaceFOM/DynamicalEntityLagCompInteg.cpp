@@ -18,6 +18,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../../source/TrickHLA/LagCompensationInteg.cpp}
 @trick_link_dependency{DynamicalEntityLagCompInteg.cpp}
 
 
@@ -51,9 +52,8 @@ using namespace SpaceFOM;
  */
 DynamicalEntityLagCompInteg::DynamicalEntityLagCompInteg( DynamicalEntityBase & entity_ref ) // RETURN: -- None.
    : DynamicalEntityLagCompBase( entity_ref ),
-     integ_t( 0.0 ),
-     integ_dt( 0.05 ),
-     integ_tol( 1.0e-8 )
+     TrickHLA::LagCompensationInteg()
+
 {
 
 }
@@ -188,6 +188,8 @@ void DynamicalEntityLagCompInteg::receive_lag_compensation()
    else {
       if ( debug ) {
          cout << "DynamicalEntityLagCompInteg::receive_lag_compensation(): No state data received." << endl;
+         cout << "\tvalue_changed: " << this->state_attr->is_changed()
+              << "; locally owned: " << this->state_attr->locally_owned << endl;
       }
    }
 

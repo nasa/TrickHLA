@@ -16,6 +16,11 @@
 #include "sim_objects/default_trick_sys.sm"
 
 //==========================================================================
+// Define the Dynamics job cycle times.
+//==========================================================================
+#define INTEG_STEP_TIME 0.025 // State integration time step.
+
+//==========================================================================
 // Define the Trick HLA job cycle times.
 //==========================================================================
 #define THLA_DATA_CYCLE_TIME        0.250 // HLA data communication cycle time.
@@ -346,5 +351,5 @@ SpaceFOMPhysicalInterfaceSimObject physical_interface;
 
 // Place the entities in the integration loop.
 //IntegLoop dyn_integloop (0.125) pe_dynamics, de_dynamics;
-IntegLoop pe_integloop (0.125) pe_dynamics;
-IntegLoop de_integloop (0.125) de_dynamics;
+IntegLoop pe_integloop (INTEG_STEP_TIME) pe_dynamics;
+IntegLoop de_integloop (INTEG_STEP_TIME) de_dynamics;

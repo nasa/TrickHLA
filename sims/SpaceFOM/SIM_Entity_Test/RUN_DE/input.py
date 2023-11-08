@@ -17,10 +17,13 @@
 ##############################################################################
 import sys
 sys.path.append('../../../')
+
 # Load the SpaceFOM specific federate configuration object.
 from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+
 # Load the SpaceFOM specific reference frame configuration object.
 from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
+
 # Load the SpaceFOM specific entity configuration objects.
 from Modified_data.SpaceFOM.SpaceFOMPhysicalEntityObject import *
 from Modified_data.SpaceFOM.SpaceFOMPhysicalInterfaceObject import *
@@ -210,8 +213,10 @@ trick.exec_set_stack_trace(False)
 #---------------------------------------------
 # Setup the integrators
 #---------------------------------------------
-pe_integloop.getIntegrator( trick.Runge_Kutta_4, 13 )
-de_integloop.getIntegrator( trick.Runge_Kutta_4, 13 )
+pe_integloop.getIntegrator( trick.Euler, 13 )
+#pe_integloop.getIntegrator( trick.Runge_Kutta_4, 13 )
+de_integloop.getIntegrator( trick.Euler, 13 )
+#de_integloop.getIntegrator( trick.Runge_Kutta_4, 13 )
 
 #---------------------------------------------------------------------------
 # Set up the dynamics parameters for the PhysicalEntity test entity.
@@ -409,7 +414,7 @@ federate.add_fed_object( frame_A )
 # Set the lag compensation paratmeters.
 ref_frame_A.lag_compensation.debug = True
 ref_frame_A.lag_compensation.set_integ_tolerance( 1.0e-6 )
-ref_frame_A.lag_compensation.set_integ_dt( 0.05 )
+ref_frame_A.lag_compensation.set_integ_dt( 0.025 )
 
 
 #---------------------------------------------------------------------------
@@ -430,7 +435,7 @@ federate.add_fed_object( phy_entity )
 # Set the lag compensation paratmeters.
 physical_entity.lag_compensation.debug = True
 physical_entity.lag_compensation.set_integ_tolerance( 1.0e-6 )
-physical_entity.lag_compensation.set_integ_dt( 0.05 )
+physical_entity.lag_compensation.set_integ_dt( 0.025 )
 
 
 #---------------------------------------------------------------------------
@@ -466,7 +471,7 @@ federate.add_fed_object( dyn_entity )
 # Set the lag compensation paratmeters.
 dynamical_entity.lag_compensation.debug = True
 dynamical_entity.lag_compensation.set_integ_tolerance( 1.0e-6 )
-dynamical_entity.lag_compensation.set_integ_dt( 0.05 )
+dynamical_entity.lag_compensation.set_integ_dt( 0.025 )
 
 
 #---------------------------------------------------------------------------

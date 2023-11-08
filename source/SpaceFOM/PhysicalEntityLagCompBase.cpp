@@ -193,7 +193,6 @@ void PhysicalEntityLagCompBase::unload_lag_comp_data()
       this->entity.pe_packing_data.rot_accel[iinc] = this->rot_accel[iinc];
       this->entity.pe_packing_data.cm[iinc]        = this->cm[iinc];
    }
-   // FIXME: missing cm and body_wrt_struct.
 
    return;
 }
@@ -212,7 +211,6 @@ void PhysicalEntityLagCompBase::load_lag_comp_data()
       this->rot_accel[iinc] = this->entity.pe_packing_data.rot_accel[iinc];
       this->cm[iinc]        = this->entity.pe_packing_data.cm[iinc];
    }
-   // FIXME: missing cm and body_wrt_struct.
 
    return;
 }

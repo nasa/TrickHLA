@@ -18,6 +18,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../../source/TrickHLA/LagCompensationInteg.cpp}
 @trick_link_dependency{PhysicalEntityLagCompInteg.cpp}
 
 
@@ -51,9 +52,7 @@ using namespace SpaceFOM;
  */
 PhysicalEntityLagCompInteg::PhysicalEntityLagCompInteg( PhysicalEntityBase & entity_ref ) // RETURN: -- None.
    : PhysicalEntityLagCompBase( entity_ref ),
-     integ_t( 0.0 ),
-     integ_dt( 0.05 ),
-     integ_tol( 1.0e-8 )
+     TrickHLA::LagCompensationInteg()
 {
    // Initialize the acceleration values.
    for( int iinc = 0 ; iinc < 3 ; iinc++ ){

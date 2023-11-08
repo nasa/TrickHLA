@@ -472,10 +472,29 @@ void PhysicalEntityBase::unpack()
       cout << "PhysicalEntityBase::unpack():" << __LINE__
            << " ERROR: The initialize() function has not been called!" << endl;
    }
+   // FIXME
+   cout << "Before decode state: "
+        << "value_changed: " << this->state_attr->is_changed()
+        << "; locally owned: " << this->state_attr->locally_owned << endl;
+   cout << "accel: " << this->accel_attr->is_changed() << endl;
+   cout << "rot_accel: " << this->accel_attr->is_changed() << endl;
+   cout << "cm: " << this->accel_attr->is_changed() << endl;
+   cout << "body: " << this->accel_attr->is_changed() << endl;
 
    // Use the HLA encoder helpers to decode the PhysicalEntity fixed record.
    stc_encoder.decode();
    quat_encoder.decode();
+
+   // FIXME
+   cout << "After decode state: "
+        << "value_changed: " << this->state_attr->is_changed()
+        << "; locally owned: " << this->state_attr->locally_owned << endl;
+
+   // FIXME: Test: mark the data as changed.
+   this->state_attr->mark_changed();
+   this->accel_attr->mark_changed();
+   this->rot_accel_attr->mark_changed();
+   this->cm_attr->mark_changed();
 
    // Transfer the packing data into the working data.
    this->unpack_into_working_data();

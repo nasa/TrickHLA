@@ -254,8 +254,17 @@ void PhysicalEntity::unpack_into_working_data()
    // the state.  We always need to do this check because ownership transfers
    // could happen at any time or the data could be at a different rate.
 
+   // FIXME
+   cout << "Before unpack state: "
+        << "value_changed: " << this->state_attr->is_changed()
+        << "; locally owned: " << this->state_attr->locally_owned << endl;
    // Unpack the space-time coordinate state data.
    if ( state_attr->is_received() ) {
+
+      // FIXME
+      cout << "In unpack state: "
+           << "value_changed: " << this->state_attr->is_changed()
+           << "; locally owned: " << this->state_attr->locally_owned << endl;
 
       // Unpack the data.
       // Position and velocity vectors.
@@ -272,6 +281,10 @@ void PhysicalEntity::unpack_into_working_data()
       // Time tag for this state data.
       physical_data->state.time = pe_packing_data.state.time;
    }
+   // FIXME
+   cout << "After unpack state: "
+        << "value_changed: " << this->state_attr->is_changed()
+        << "; locally owned: " << this->state_attr->locally_owned << endl;
 
    // Set the entity name, type, status, and parent frame name.
    if ( name_attr->is_received() ) {

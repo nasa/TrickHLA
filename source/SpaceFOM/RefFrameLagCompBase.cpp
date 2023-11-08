@@ -117,11 +117,8 @@ void RefFrameLagCompBase::initialize_states()
 
    // Copy the current RefFrameLag state over to the lag compensated state.
    this->lag_comp_data = this->ref_frame.packing_data.state;
-   QuaternionData::compute_quat_dot( this->lag_comp_data.att.scalar,
-                                     this->lag_comp_data.att.vector,
-                                     this->lag_comp_data.ang_vel,
-                                     &(this->Q_dot.scalar),
-                                     this->Q_dot.vector );
+   this->Q_dot.derivative_first( this->lag_comp_data.att,
+                                 this->lag_comp_data.ang_vel);
 
    // Return to calling routine.
    return;

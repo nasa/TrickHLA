@@ -72,20 +72,25 @@ class RefFrameLagComp : public RefFrameLagCompInteg
   protected:
 
    double * integ_states[13]; ///< @trick_units{--} @trick_io{**} Integration states.
-   Trick::Integrator * integrator; ///< @trick_units{--} Reference to a specific Trick integration method.
 
-   /*! @brief Compensate the state data from the data time to the current scenario time.
-    *  @param t_begin Scenario time at the start of the compensation step.
-    *  @param t_end   Scenario time at the end of the compensation step. */
-   int compensate(
-      const double t_begin,
-      const double t_end   );
+   /*! @brief Update the latency compensation time from the integrator. */
+   virtual void update_time();
 
    /*! @brief Load the integration state into the integrator. */
    virtual void load();
 
    /*! @brief Unload the integration state from the integrator. */
    virtual void unload();
+
+   /*! @brief Compute the first time derivative of the lag compensation state vector.
+    *  @param user_data Any special user data needed to compute the derivative values. */
+   virtual void derivative_first( void * user_data = NULL );
+
+   /*! @brief Compute the second time derivative of the lag compensation state vector.
+    *  @detail This function is called for second order integrators to compute
+    *  second time derivative of the state vector.
+    *  @param user_data Any special user data needed to compute the derivative values. */
+   virtual void derivative_second( void * user_data ){ return; }
 
   private:
    // This object is not copyable
