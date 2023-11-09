@@ -536,6 +536,9 @@ void Federate::initialize()
       return;
    }
 
+   // Verify the user specified object and interaction arrays and counts.
+   manager->verify_object_and_interaction_arrays();
+
    // Check to make sure we have a reference to the TrickHLA::ExecutionControlBase.
    if ( execution_control == NULL ) {
       ostringstream errmsg;

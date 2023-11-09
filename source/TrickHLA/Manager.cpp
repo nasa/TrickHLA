@@ -205,66 +205,6 @@ void Manager::initialize()
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   // Check for the error condition of a valid object count but a null
-   // objects array.
-   if ( ( obj_count > 0 ) && ( objects == NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL 'objects' array for a non zero"
-             << " obj_count:" << obj_count << ". Please check your input or"
-             << " modified-data files to make sure the 'Manager::objects'"
-             << " array is correctly configured." << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // If we have a non-NULL objects array but the object-count is invalid
-   // then let the user know.
-   if ( ( obj_count <= 0 ) && ( objects != NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::initialize():" << __LINE__
-             << " ERROR: Unexpected " << ( ( obj_count == 0 ) ? "zero" : "negative" )
-             << " obj_count:" << obj_count << " for a non-NULL 'objects' array."
-             << " Please check your input or modified-data files to make sure"
-             << " the 'Manager::objects' array is correctly configured."
-             << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Reset the TrickHLA Object count if negative.
-   if ( obj_count < 0 ) {
-      obj_count = 0;
-   }
-
-   // Check for the error condition of a valid interaction count but a null
-   // interactions array.
-   if ( ( inter_count > 0 ) && ( interactions == NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL 'interactions' array for a non zero"
-             << " inter_count:" << inter_count << ". Please check your input or"
-             << " modified-data files to make sure the 'Manager::interactions'"
-             << " array is correctly configured." << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // If we have a non-NULL interactions array but the interactions-count is
-   // invalid then let the user know.
-   if ( ( inter_count <= 0 ) && ( interactions != NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::initialize():" << __LINE__
-             << " ERROR: Unexpected " << ( ( inter_count == 0 ) ? "zero" : "negative" )
-             << " inter_count:" << inter_count << " for a non-NULL 'interactions'"
-             << " array. Please check your input or modified-data files to make"
-             << " sure the 'Manager::interactions' array is correctly configured."
-             << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Reset the TrickHLA Interaction count if negative.
-   if ( inter_count < 0 ) {
-      inter_count = 0;
-   }
-
    // The manager is now initialized.
    this->mgr_initialized = true;
 
@@ -299,65 +239,8 @@ void Manager::restart_initialization()
    // To allow manager initialization to complete we need to reset the init flag.
    this->mgr_initialized = false;
 
-   // Check for the error condition of a valid object count but a null
-   // objects array.
-   if ( ( obj_count > 0 ) && ( objects == NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::restart_initialization():" << __LINE__
-             << " ERROR: Unexpected NULL 'objects' array for a non zero"
-             << " obj_count:" << obj_count << ". Please check your input or"
-             << " modified-data files to make sure the 'Manager::objects'"
-             << " array is correctly configured." << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // If we have a non-NULL objects array but the object-count is invalid
-   // then let the user know.
-   if ( ( obj_count <= 0 ) && ( objects != NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::restart_initialization():" << __LINE__
-             << " ERROR: Unexpected " << ( ( obj_count == 0 ) ? "zero" : "negative" )
-             << " obj_count:" << obj_count << " for a non-NULL 'objects' array."
-             << " Please check your input or modified-data files to make sure"
-             << " the 'Manager::objects' array is correctly configured."
-             << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Reset the TrickHLA Object count if negative.
-   if ( obj_count < 0 ) {
-      obj_count = 0;
-   }
-
-   // Check for the error condition of a valid interaction count but a null
-   // interactions array.
-   if ( ( inter_count > 0 ) && ( interactions == NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::restart_initialization():" << __LINE__
-             << " ERROR: Unexpected NULL 'interactions' array for a non zero"
-             << " inter_count:" << inter_count << ". Please check your input or"
-             << " modified-data files to make sure the 'Manager::interactions'"
-             << " array is correctly configured." << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // If we have a non-NULL interactions array but the interactions-count is
-   // invalid then let the user know.
-   if ( ( inter_count <= 0 ) && ( interactions != NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::restart_initialization():" << __LINE__
-             << " ERROR: Unexpected " << ( ( inter_count == 0 ) ? "zero" : "negative" )
-             << " inter_count:" << inter_count << " for a non-NULL 'interactions'"
-             << " array. Please check your input or modified-data files to make"
-             << " sure the 'Manager::interactions' array is correctly configured."
-             << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Reset the TrickHLA Interaction count if negative.
-   if ( inter_count < 0 ) {
-      inter_count = 0;
-   }
+   // Verify the user specified object and interaction arrays and counts.
+   verify_object_and_interaction_arrays();
 
    // Setup the Execution Control and Execution Configuration objects now that
    // we know if we are the "Master" federate or not.
@@ -409,6 +292,97 @@ void Manager::restart_initialization()
 
    // The manager is now initialized.
    this->mgr_initialized = true;
+}
+
+/*! @brief Verify the user specified object and interaction arrays and counts. */
+void Manager::verify_object_and_interaction_arrays()
+{
+   // Check for the error condition of a valid object count but a null
+   // objects array.
+   if ( ( obj_count > 0 ) && ( objects == NULL ) ) {
+      ostringstream errmsg;
+      errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+             << " ERROR: Unexpected NULL 'objects' array for a non zero"
+             << " obj_count:" << obj_count << ". Please check your input or"
+             << " modified-data files to make sure the 'Manager::objects'"
+             << " array is correctly configured." << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // If we have a non-NULL objects array but the object-count is invalid
+   // then let the user know.
+   if ( ( obj_count <= 0 ) && ( objects != NULL ) ) {
+      ostringstream errmsg;
+      errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+             << " ERROR: Unexpected " << ( ( obj_count == 0 ) ? "zero" : "negative" )
+             << " obj_count:" << obj_count << " for a non-NULL 'objects' array."
+             << " Please check your input or modified-data files to make sure"
+             << " the 'Manager::objects' array is correctly configured."
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Reset the TrickHLA Object count if negative.
+   if ( obj_count < 0 ) {
+      obj_count = 0;
+   }
+
+   // Object instance names must be unique and can not be a duplicate.
+   for ( int n = 0; n < obj_count; ++n ) {
+
+      if ( ( objects[n].name != NULL ) && ( *objects[n].name != '\0' ) ) {
+         string obj_name1 = objects[n].name;
+
+         for ( int k = n + 1; k < obj_count; ++k ) {
+            if ( ( objects[k].name != NULL ) && ( *objects[k].name != '\0' ) ) {
+               string obj_name2 = objects[k].name;
+
+               if ( obj_name1 == obj_name2 ) {
+                  ostringstream errmsg;
+                  errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+                         << " ERROR: Object instance '" << obj_name1
+                         << "' at array index " << n << " has the same name as"
+                         << " object instance '" << obj_name2
+                         << "' at array index " << k << ". Please check your"
+                         << " input or modified-data files to make sure the"
+                         << " object instance names are unique with no duplicates."
+                         << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
+               }
+            }
+         }
+      }
+   }
+
+   // Check for the error condition of a valid interaction count but a null
+   // interactions array.
+   if ( ( inter_count > 0 ) && ( interactions == NULL ) ) {
+      ostringstream errmsg;
+      errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+             << " ERROR: Unexpected NULL 'interactions' array for a non zero"
+             << " inter_count:" << inter_count << ". Please check your input or"
+             << " modified-data files to make sure the 'Manager::interactions'"
+             << " array is correctly configured." << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // If we have a non-NULL interactions array but the interactions-count is
+   // invalid then let the user know.
+   if ( ( inter_count <= 0 ) && ( interactions != NULL ) ) {
+      ostringstream errmsg;
+      errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+             << " ERROR: Unexpected " << ( ( inter_count == 0 ) ? "zero" : "negative" )
+             << " inter_count:" << inter_count << " for a non-NULL 'interactions'"
+             << " array. Please check your input or modified-data files to make"
+             << " sure the 'Manager::interactions' array is correctly configured."
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Reset the TrickHLA Interaction count if negative.
+   if ( inter_count < 0 ) {
+      inter_count = 0;
+   }
 }
 
 /*!

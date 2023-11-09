@@ -149,6 +149,12 @@ class Manager
     * initialized. */
    void initialize();
 
+   /*! @brief Perform initialization after a checkpoint restart. */
+   void restart_initialization();
+
+   /*! @brief Verify the user specified object and interaction arrays and counts. */
+   void verify_object_and_interaction_arrays();
+
    /*! @brief Checks to make sure the RTI is ready by making sure the
     * TrickHLA::Federate and TrickHLA:FedAmb exist and the RTI handles are
     * initialized.
@@ -298,9 +304,6 @@ class Manager
    /*! @brief Scheduled method used as a callback to identify if any objects
     * were deleted from the RTI. */
    void process_deleted_objects();
-
-   /*! @brief Perform initialization after a checkpoint restart. */
-   void restart_initialization();
 
    /*! @brief Start the federation save as soon as possible.
     *  @param file_name Checkpoint file name. */
