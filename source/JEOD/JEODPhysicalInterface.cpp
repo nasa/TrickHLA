@@ -149,7 +149,9 @@ void JEODPhysicalInterface::initialize(
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
-   this->vehicle_point_data = dyn_body_ptr->find_vehicle_point( vehicle_point_id );
+   else {
+      this->vehicle_point_data = dyn_body_ptr->find_vehicle_point( vehicle_point_id );
+   }
 
    // Make sure that we found the vehicle point.
    if ( this->vehicle_point_data == NULL ) {

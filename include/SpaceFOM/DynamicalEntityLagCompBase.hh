@@ -100,12 +100,9 @@ class DynamicalEntityLagCompBase : public PhysicalEntityLagCompBase
     * the sim-data otherwise you will be copying stale data. */
    virtual void bypass_receive_lag_compensation();
 
-  public:
-   bool debug; ///< @trick_units{--} Debug output flag.
-
   protected:
 
-   DynamicalEntityBase & entity; ///< @trick_units{--} @trick_io{**}  PhysicalEntity to compensate.
+   DynamicalEntityBase & de_entity; ///< @trick_units{--} @trick_io{**}  PhysicalEntity to compensate.
 
    // Setup Object Attribute references. These are set in initialize_callback
    // routine and used for efficiency and ownership transfer in unpack routines.

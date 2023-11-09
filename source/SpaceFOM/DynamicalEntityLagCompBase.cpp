@@ -57,8 +57,7 @@ using namespace SpaceFOM;
  */
 DynamicalEntityLagCompBase::DynamicalEntityLagCompBase( DynamicalEntityBase & entity_ref ) // RETURN: -- None.
    : PhysicalEntityLagCompBase(entity_ref),
-     debug( false ),
-     entity( entity_ref ),
+     de_entity( entity_ref ),
      force_attr(NULL),
      torque_attr(NULL),
      mass_attr(NULL),
@@ -122,12 +121,12 @@ void DynamicalEntityLagCompBase::initialize_callback(
    // Get references to all the TrickHLA::Attribute for this object type.
    // We do this here so that we only do the attribute lookup once instead of
    // looking it up every time the unpack function is called.
-   force_attr        = entity.force_attr;
-   torque_attr       = entity.torque_attr;
-   mass_attr         = entity.mass_attr;
-   mass_rate_attr    = entity.mass_rate_attr;
-   inertia_attr      = entity.inertia_attr;
-   inertia_rate_attr = entity.inertia_rate_attr;
+   force_attr        = this->de_entity.force_attr;
+   torque_attr       = this->de_entity.torque_attr;
+   mass_attr         = this->de_entity.mass_attr;
+   mass_rate_attr    = this->de_entity.mass_rate_attr;
+   inertia_attr      = this->de_entity.inertia_attr;
+   inertia_rate_attr = this->de_entity.inertia_rate_attr;
 
    return;
 }
@@ -152,7 +151,7 @@ void DynamicalEntityLagCompBase::bypass_send_lag_compensation()
    // When lag compensation is present but disabled, we still need to copy
    // the working data into the packing data.  This makes sure that the
    // current working state is packed.
-   this->entity.pack_from_working_data();
+   this->de_entity.pack_from_working_data();
    return;
 }
 
@@ -165,7 +164,7 @@ void DynamicalEntityLagCompBase::bypass_receive_lag_compensation()
    // When lag compensation is present but disabled, we still need to copy
    // the packing data back into the working data.  This makes sure that the
    // working state is updated from the received packing data.
-   this->entity.unpack_into_working_data();
+   this->de_entity.unpack_into_working_data();
    return;
 }
 
@@ -180,14 +179,14 @@ void DynamicalEntityLagCompBase::unload_lag_comp_data()
    PhysicalEntityLagCompBase::unload_lag_comp_data();
 
    // Copy the current DynamicalEntity state over to the lag compensated state.
-   this->entity.de_packing_data.mass      = this->mass;
-   this->entity.de_packing_data.mass_rate = this->mass_rate;
+   this->de_entity.de_packing_data.mass      = this->mass;
+   this->de_entity.de_packing_data.mass_rate = this->mass_rate;
    for ( int iinc = 0 ; iinc < 3 ; iinc++ ){
-      this->entity.de_packing_data.force[iinc]  = this->force[iinc];
-      this->entity.de_packing_data.torque[iinc] = this->torque[iinc];
+      this->de_entity.de_packing_data.force[iinc]  = this->force[iinc];
+      this->de_entity.de_packing_data.torque[iinc] = this->torque[iinc];
       for ( int jinc = 0 ; jinc < 3 ; jinc++ ) {
-         this->entity.de_packing_data.inertia[iinc][jinc] = this->inertia[iinc][jinc];
-         this->entity.de_packing_data.inertia_rate[iinc][jinc] = this->inertia_rate[iinc][jinc];
+         this->de_entity.de_packing_data.inertia[iinc][jinc] = this->inertia[iinc][jinc];
+         this->de_entity.de_packing_data.inertia_rate[iinc][jinc] = this->inertia_rate[iinc][jinc];
       }
    }
 
@@ -204,14 +203,14 @@ void DynamicalEntityLagCompBase::load_lag_comp_data()
    PhysicalEntityLagCompBase::load_lag_comp_data();
 
    // Copy the current DynamicalEntity state over to the lag compensated state.
-   this->mass      = this->entity.de_packing_data.mass;
-   this->mass_rate = this->entity.de_packing_data.mass_rate;
+   this->mass      = this->de_entity.de_packing_data.mass;
+   this->mass_rate = this->de_entity.de_packing_data.mass_rate;
    for ( int iinc = 0 ; iinc < 3 ; iinc++ ){
-      this->force[iinc]  = this->entity.de_packing_data.force[iinc];
-      this->torque[iinc] = this->entity.de_packing_data.torque[iinc];
+      this->force[iinc]  = this->de_entity.de_packing_data.force[iinc];
+      this->torque[iinc] = this->de_entity.de_packing_data.torque[iinc];
       for ( int jinc = 0 ; jinc < 3 ; jinc++ ) {
-         this->inertia[iinc][jinc]      = this->entity.de_packing_data.inertia[iinc][jinc];
-         this->inertia_rate[iinc][jinc] = this->entity.de_packing_data.inertia_rate[iinc][jinc];
+         this->inertia[iinc][jinc]      = this->de_entity.de_packing_data.inertia[iinc][jinc];
+         this->inertia_rate[iinc][jinc] = this->de_entity.de_packing_data.inertia_rate[iinc][jinc];
       }
    }
 

@@ -162,7 +162,8 @@ void JEODRefFrameState::pack()
    // Time tag for this state data.
    // stc_data.time = ref_frame->state.time;
    // FIXME: Need to check if get_scenario_time is really what we want here?
-   stc_data.time = this->time = get_scenario_time();
+   this->time = get_scenario_time();
+   stc_data.time = this->time;
 
    // Print out debug information if desired.
    if ( debug ) {
