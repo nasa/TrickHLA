@@ -79,18 +79,6 @@ class DynamicalEntityLagCompInteg : public DynamicalEntityLagCompBase, public Tr
     *  TrickHLALagCompensation class. */
    virtual void receive_lag_compensation();
 
-   /*! @brief Set the lag compentation integration time step.
-    *  @param dt Integration step time. */
-   void set_integ_dt( double dt ){
-      integ_dt = dt;
-   }
-
-   /*! @brief Set the lag compentation integration tolerance.
-    *  @param dt Integration step time. */
-   void set_integ_tolerance( double tol ){
-      integ_tol = tol;
-   }
-
   protected:
    /*! @brief Compensate the state data from the data time to the current scenario time.
     *  @param t_begin Scenario time at the start of the compensation step.

@@ -74,6 +74,7 @@ RefFrameBase::RefFrameBase()
      name_attr( NULL ),
      parent_name_attr( NULL ),
      state_attr( NULL ),
+     packing_data(),
      stc_encoder( packing_data.state )
 {
    return;
