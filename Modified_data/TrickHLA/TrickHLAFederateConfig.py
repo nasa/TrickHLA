@@ -399,6 +399,13 @@ class TrickHLAFederateConfig( object ):
       return
 
 
+   def set_debug_source( self, debug_source ):
+
+      self.federate.code_section = debug_source
+
+      return
+
+
    def set_wait_status_time( self, wait_status_time: float ):
 
       # Set the time in seconds TrickHLA will wait in a any spin-lock

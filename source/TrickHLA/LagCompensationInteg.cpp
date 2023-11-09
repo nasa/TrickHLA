@@ -30,8 +30,11 @@ NASA, Johnson Space Center\n
 #include <iostream>
 
 // Trick include files.
+#include "trick/message_proto.h" // for send_hs
 
 // TrickHLA include files.
+#include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/LagCompensationInteg.hh"
 
 // Uncomment this define if you want additional debug information.
@@ -72,10 +75,14 @@ int LagCompensationInteg::integrate(
    double compensate_dt = t_end - t_begin;
    double dt_go = compensate_dt;
 
-#ifdef TRICK_HLA_DEBUG_INTEG
-   cout<< "Compensate: t_begin, t_end, dt_go: " << t_begin << ", " << t_end
-       << ", " << dt_go << endl;
-#endif
+
+   // Use the inherited debug-handler to allow debug comments to be turned
+   // on and off from a setting in the input file.
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+      cout << "**** LagCompensationInteg::integrate(): "
+           << "Compensate: t_begin, t_end, dt_go: "
+           << t_begin << ", " << t_end << ", " << dt_go << endl;
+   }
 
    // Propagate the current RefFrame state to the desired time.
    // Set the current integration time for the integrator.
@@ -85,11 +92,14 @@ int LagCompensationInteg::integrate(
    // Loop through integrating the state forward to the current scenario time.
    while( (dt_go >= 0.0) && (fabs(dt_go) > this->integ_tol) ) {
 
-      // Print out debug information if requested.
-#ifdef TRICK_HLA_DEBUG_INTEG
-      cout << "Integ dt, tol, t, dt_go: " << this->integ_dt << ", "
-           << this->integ_tol << ", " << integ_t << ", " << dt_go << endl;
-#endif
+      // Use the inherited debug-handler to allow debug comments to be turned
+      // on and off from a setting in the input file.
+      if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+         cout << "****** LagCompensationInteg::integrate(): "
+              << "Integ dt, tol, t, dt_go: "
+              << this->integ_dt << ", " << this->integ_tol << ", "
+              << integ_t << "," << dt_go << endl;
+      }
 
       // Integration inner loop.
       // Step through the integrator's integration steps.

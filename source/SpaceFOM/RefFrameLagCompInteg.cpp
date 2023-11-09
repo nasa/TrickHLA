@@ -24,7 +24,7 @@ NASA, Johnson Space Center\n
 
 @revs_title
 @revs_begin
-@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, October 2023, --, Initial version.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, November 2023, --, Initial version.}
 @revs_end
 
 */
@@ -106,7 +106,7 @@ void RefFrameLagCompInteg::send_lag_compensation()
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
-      cout << "******* RefFrameLagCompInteg::send_lag_compensation():" << __LINE__ << endl
+      cout << "****** RefFrameLagCompInteg::send_lag_compensation():" << __LINE__ << endl
            << " scenario-time:" << get_scenario_time() << endl
            << "     lookahead:" << this->compensate_dt << endl
            << " adjusted-time:" << end_t << endl;

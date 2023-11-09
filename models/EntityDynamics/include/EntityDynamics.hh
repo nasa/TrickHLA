@@ -25,7 +25,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../src/EntityDynamics.cpp}
 
 @revs_begin
-@rev_entry{ Edwin Z. Crues, NASA ER7, NExSyS, October 2023, --, SpaceFOM support and testing. }
+@rev_entry{ Edwin Z. Crues, NASA ER7, NExSyS, November 2023, --, SpaceFOM support and testing. }
 @revs_end
 
 */

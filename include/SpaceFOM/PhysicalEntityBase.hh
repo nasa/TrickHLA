@@ -31,7 +31,7 @@ NASA, Johnson Space Center\n
 @revs_title
 @revs_begin
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
-@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, October 2023, --, Refactored.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, November 2023, --, Refactored.}
 @revs_end
 
 */

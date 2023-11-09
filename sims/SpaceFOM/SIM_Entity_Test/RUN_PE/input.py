@@ -227,20 +227,20 @@ pe_dynamics.entity.pe_data.parent_frame = 'RootFrame'
 
 # Initial translational state.
 pe_dynamics.entity.pe_data.state.pos = [ 0.0, 0.0, 0.0 ]
-pe_dynamics.entity.pe_data.state.vel = [ 0.0, 0.0, 0.0 ]
+pe_dynamics.entity.pe_data.state.vel = [ 0.1, 0.2, 0.3 ]
 
 # Initial rotational state.
 pe_dynamics.entity.pe_data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
-pe_dynamics.entity.pe_data.state.ang_vel = [ 0.0, 0.0, 0.0 ]
+pe_dynamics.entity.pe_data.state.ang_vel = [ 0.0, 0.1, 0.0 ]
 
 # Base propagation parameters.
 pe_dynamics.entity.pe_data.accel     = [0.0, 0.0, 0.0]
 pe_dynamics.entity.pe_data.ang_accel = [0.0, 0.0, 0.0]
 pe_dynamics.entity.pe_data.cm        = [0.0, 0.0, 0.0]
 
-pe_dynamics.entity.pe_data.body_wrt_struct.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 90.0] )
+pe_dynamics.entity.pe_data.body_wrt_struct.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 
-pe_dynamics.entity.de_data.force = [ 0.1, 0.0, 0.0 ]
+pe_dynamics.entity.de_data.force = [ 0.0, 0.0, 0.0 ]
 
 pe_dynamics.entity.de_data.torque = [ 0.0, 0.0, 0.0 ]
 
@@ -324,6 +324,8 @@ federate = SpaceFOMFederateConfig( THLA.federate,
 if (verbose == True) : 
    #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_6_TRACE )
+   federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_ALL_MODULES )
+   #federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_LAG_COMPENSATION )
 else :
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
 

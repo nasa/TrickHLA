@@ -29,7 +29,7 @@ NASA, Johnson Space Center\n
 
 @revs_title
 @revs_begin
-@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, September 2023, --, Initial version.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, November 2023, --, Initial version.}
 @revs_end
 
 */
@@ -123,6 +123,7 @@ class DynamicalEntityLagCompBase : public PhysicalEntityLagCompBase
 
    double inertia[3][3];      ///< @trick_units{kg*m2} Entity inertia matrix.
    double inertia_rate[3][3]; ///< @trick_units{kg*m2/s} Entity inertia rate matrix.
+   double inertia_inv[3][3];  ///< @trick_units{--} Inverse of the entity inertia matrix.
 
    /*! @brief Compensate the state data from the data time to the current scenario time.
     *  @param t_begin Scenario time at the start of the compensation step.

@@ -146,6 +146,15 @@ void DynamicalEntityLagComp::load()
       integrator->state[iinc] = *(integ_states[iinc]);
    }
 
+   /*************************************************************************
+    * Note: We are not accounting for the time rate of change of the mass
+    * properties in these equations.  We could add in the equations for both
+    * mass and inertia but, with the exception of launch and ascent cases,
+    * they will probably contribute little to the dynamics.  If these are
+    * needed, the state vector will have to be expanded by at least 7 for
+    * the mass and the symmetric inertia terms, total of 20 (13+7).
+    *************************************************************************/
+
    // Load the integrator derivative references.
    // Translational position
    this->integrator->deriv[istep][0] = this->integrator->state[3];
@@ -202,11 +211,34 @@ void DynamicalEntityLagComp::unload()
 void DynamicalEntityLagComp::derivative_first(
    void * user_data )
 {
+   double accel_str[3];
+   double rot_accel_str[3];
+   double I_omega[3];
+   double omega_X_I_omega[3];
 
    // Compute the derivative of the attitude quaternion from the
    // angular velocity vector.
    this->Q_dot.derivative_first( this->lag_comp_data.att,
                                  this->lag_comp_data.ang_vel );
+
+   // Compute the translational acceleration in the structural frame.
+   V_SCALE( accel_str, this->force, 1.0/this->mass );
+
+   // Transform the translational acceleration into the body frame.
+   this->body_wrt_struct.transform_vector( accel_str, this->accel );
+
+   // Compute the rotational acceleration in the structural frame.
+   // External torque acceleration.
+   MxV( rot_accel_str, this->inertia_inv, this->torque );
+   // Internal rotational accelerations.
+   MxV( I_omega, this->inertia, this->lag_comp_data.ang_vel );
+   V_CROSS( omega_X_I_omega, this->lag_comp_data.ang_vel, I_omega );
+   rot_accel_str[0] += omega_X_I_omega[0];
+   rot_accel_str[1] += omega_X_I_omega[1];
+   rot_accel_str[2] += omega_X_I_omega[2];
+
+   // Transform the rotational acceleration into the body frame.
+   this->body_wrt_struct.transform_vector( rot_accel_str, this->rot_accel );
 
    return;
 }

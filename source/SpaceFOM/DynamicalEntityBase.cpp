@@ -24,6 +24,7 @@ NASA, Johnson Space Center\n
 @rev_entry{Edwin Z. Crues, NASA ER7, SISO, Sept 2010, --, Smackdown implementation.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, July 2023, --, Cleaned up and filled out.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, November 2023, --, Refactored.}
 @revs_end
 
 */
@@ -363,7 +364,7 @@ void DynamicalEntityBase::unpack()
    this->mass_attr->mark_changed();
    this->mass_rate_attr->mark_changed();
    this->inertia_attr->mark_changed();
-   this->inertia_attr->mark_changed();
+   this->inertia_rate_attr->mark_changed();
 
    // Call the PhysicalEntityBase unpack routine.
    PhysicalEntityBase::unpack();

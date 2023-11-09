@@ -25,7 +25,7 @@ NASA, Johnson Space Center\n
 @rev_entry{Edwin Z. Crues, NASA ER7, SISO, Sept 2010, --, Smackdown implementation.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, July 2023, --, Cleaned up and filled out.}
-@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, October 2023, --, Refactored.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, November 2023, --, Refactored.}
 @revs_end
 
 */

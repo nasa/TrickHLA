@@ -24,7 +24,7 @@ NASA, Johnson Space Center\n
 
 @revs_title
 @revs_begin
-@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, October 2023, --, Initial version.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, November 2023, --, Initial version.}
 @revs_end
 
 */
@@ -35,6 +35,8 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/message_proto.h" // for send_hs
+#include "trick/trick_math.h"
 
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
@@ -145,6 +147,7 @@ void DynamicalEntityLagCompInteg::send_lag_compensation()
  *  TrickHLALagCompensation class. */
 void DynamicalEntityLagCompInteg::receive_lag_compensation()
 {
+   ostringstream errmsg;
    double end_t  = get_scenario_time();
    double data_t = entity.get_time();
 
@@ -190,6 +193,17 @@ void DynamicalEntityLagCompInteg::receive_lag_compensation()
          cout << "DynamicalEntityLagCompInteg::receive_lag_compensation(): No state data received." << endl;
          cout << "\tvalue_changed: " << this->state_attr->is_changed()
               << "; locally owned: " << this->state_attr->locally_owned << endl;
+      }
+   }
+   if ( this->inertia_attr->is_received() ) {
+      // Compute the inverse of the inertia matrix.  If this fails, the
+      // inverse matrix will be set to all zeros.  This will zero out any
+      // torque affects in the lag compensation dynamics.
+      if ( dm_invert_symm( this->inertia_inv, this->inertia ) != TM_SUCCESS ) {\
+         send_hs( stderr,
+                  "SpaceFOM::DynamicalEntityLagCompInteg::receive_lag_compensation():%d ERROR: Singular inertia matrix! Inversion failed!%c",
+                  __LINE__, THLA_NEWLINE );
+         M_INIT( this->inertia_inv );
       }
    }
 
