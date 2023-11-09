@@ -1370,6 +1370,9 @@ void Attribute::unpack_attribute_buffer()
       }
    }
 
+   // Mark the attribute as changed now that we unpacked data for it.
+   mark_changed();
+
    if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       ostringstream msg;
       msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << endl
@@ -1393,7 +1396,8 @@ void Attribute::unpack_attribute_buffer()
           << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << endl
           << "  buffer_capacity:" << buffer_capacity << endl
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
-          << "  rti_encoding:" << rti_encoding << endl;
+          << "  rti_encoding:" << rti_encoding << endl
+          << "  changed:" << ( is_changed() ? "Yes" : "No" ) << endl;
       if ( ( ref2->attr->type == TRICK_STRING )
            || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( ref2->attr->num_index > 0 )
