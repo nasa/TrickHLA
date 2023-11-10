@@ -325,8 +325,8 @@ federate = SpaceFOMFederateConfig( THLA.federate,
 if (verbose == True) : 
    #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_6_TRACE )
-   federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_ALL_MODULES )
-   #federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_LAG_COMPENSATION )
+   #federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_ALL_MODULES )
+   federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_OBJECT + trick.TrickHLA.DEBUG_SOURCE_ATTRIBUTE )
 else :
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
 
@@ -414,7 +414,7 @@ ref_frame_A.frame_packing.debug = verbose
 federate.add_fed_object( frame_A )
 
 # Set the lag compensation paratmeters.
-ref_frame_A.lag_compensation.debug = True
+ref_frame_A.lag_compensation.debug = False
 ref_frame_A.lag_compensation.set_integ_tolerance( 1.0e-6 )
 ref_frame_A.lag_compensation.set_integ_dt( 0.025 )
 

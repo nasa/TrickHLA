@@ -47,10 +47,7 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 LagCompensationInteg::LagCompensationInteg()
-   : integ_t( 0.0 ),
-     integ_dt( 0.05 ),
-     integ_tol( 1.0e-8 ),
-     integrator(NULL)
+   : integrator(NULL)
 {
    return;
 }

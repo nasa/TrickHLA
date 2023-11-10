@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/LagCompensationInteg.hh
+@file TrickHLA/LagCompensationIntegBase.hh
 @ingroup TrickHLA
 @brief This class is really just an interface class for TrickHLA lag
 compensation using integration.
@@ -19,9 +19,6 @@ NASA, Johnson Space Center\n
 
 @python_module{TrickHLA}
 
-@tldh
-@trick_link_dependency{../../source/TrickHLA/LagCompensationInteg.cpp}
-
 @revs_title
 @revs_begin
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, November 2023, --, Initial version.}
@@ -29,8 +26,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_LAG_COMPENSATION_INTEG_HH
-#define TRICKHLA_LAG_COMPENSATION_INTEG_HH
+#ifndef TRICKHLA_LAG_COMPENSATION_INTEG_BASE_HH
+#define TRICKHLA_LAG_COMPENSATION_INTEG_BASE_HH
 
 // System include files.
 #include <stddef.h>
@@ -38,13 +35,10 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "trick/Integrator.hh"
 
-// TrickHLA include files.
-#include "TrickHLA/LagCompensationIntegBase.hh"
-
 namespace TrickHLA
 {
 
-class LagCompensationInteg: public LagCompensationIntegBase
+class LagCompensationIntegBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -54,18 +48,34 @@ class LagCompensationInteg: public LagCompensationIntegBase
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__LagCompensationInteg();
+   friend void init_attrTrickHLA__LagCompensationIntegBase();
 
   public:
    //-----------------------------------------------------------------
    // Public constructors and destructors.
    //-----------------------------------------------------------------
-   LagCompensationInteg();
-   virtual ~LagCompensationInteg() = 0;
+   LagCompensationIntegBase()
+      : integ_t( 0.0 ),
+        integ_dt( 0.05 ),
+        integ_tol( 1.0e-8 ){ return; }
+   virtual ~LagCompensationIntegBase(){ return; }
+
+   /*! @brief Set the lag compentation integration time step.
+    *  @param dt Integration step time. */
+   void set_integ_dt( double dt ){
+      integ_dt = dt;
+   }
+
+   /*! @brief Set the lag compentation integration tolerance.
+    *  @param dt Integration step time. */
+   void set_integ_tolerance( double tol ){
+      integ_tol = tol;
+   }
 
   protected:
-
-   Trick::Integrator * integrator; ///< @trick_units{--} Reference to a specific Trick integration method.
+   double integ_t;   ///< @trick_units{s} Current compensation propagation time.
+   double integ_dt;  ///< @trick_units{s} Default integration time steps.
+   double integ_tol; ///< @trick_units{s} Tolerance for terminating a compensation step.
 
    /*! @brief Update the latency compensation time from the integrator. */
    virtual void update_time() = 0;
@@ -91,10 +101,10 @@ class LagCompensationInteg: public LagCompensationIntegBase
     *  @param t_end   Scenario time at the end of the compensation step. */
    virtual int integrate(
       const double t_begin,
-      const double t_end   );
+      const double t_end   ) = 0;
 
 };
 
 } // namespace TrickHLA
 
-#endif // TRICKHLA_LAG_COMPENSATION_INTEG_HH: Do NOT put anything after this line!
+#endif // TRICKHLA_LAG_COMPENSATION_INTEG_BASE_HH: Do NOT put anything after this line!
