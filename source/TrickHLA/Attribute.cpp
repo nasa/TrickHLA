@@ -641,11 +641,11 @@ VariableLengthData Attribute::get_attribute_value()
    return VariableLengthData( buffer, size );
 }
 
-void Attribute::extract_data(             // RETURN: -- None
+bool Attribute::extract_data(             // RETURN: -- True if data successfully extracted, false otherwise.
    VariableLengthData const *attr_value ) // IN: ** HLA attribute-value to get data from.
 {
    if ( attr_value == NULL ) {
-      return;
+      return false;
    }
 
    // Keep track of the attribute FOM size and ensure enough buffer capacity.
@@ -671,7 +671,7 @@ void Attribute::extract_data(             // RETURN: -- None
             send_hs( stderr, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here. DDexter
-            return;
+            return false;
          }
 
          // Ensure enough buffer capacity.
@@ -707,7 +707,7 @@ void Attribute::extract_data(             // RETURN: -- None
             // For now just return if we have a data size mismatch. This will
             // allow us to continue to run even though the other federate is
             // sending us data that is not correct in size.
-            return;
+            return false;
 #else
             DebugHandler::terminate_with_message( errmsg.str() );
 #endif
@@ -770,7 +770,7 @@ void Attribute::extract_data(             // RETURN: -- None
             send_hs( stderr, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here. DDexter
-            return;
+            return false;
          }
 
          // Ensure enough buffer capacity.
@@ -801,7 +801,7 @@ void Attribute::extract_data(             // RETURN: -- None
             send_hs( stderr, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here. DDexter
-            return;
+            return false;
          }
 
          // Ensure enough buffer capacity.
@@ -826,6 +826,8 @@ void Attribute::extract_data(             // RETURN: -- None
 
    // Mark the attribute value as changed.
    mark_changed();
+
+   return true;
 }
 
 void Attribute::ensure_buffer_capacity(
@@ -1370,8 +1372,10 @@ void Attribute::unpack_attribute_buffer()
       }
    }
 
+#ifdef THLA_ADD_GUARD_MARK_CHANGED_CALL
    // Mark the attribute as changed now that we unpacked data for it.
    mark_changed();
+#endif
 
    if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       ostringstream msg;

@@ -1089,13 +1089,13 @@ void Interaction::process_interaction()
    }
 }
 
-void Interaction::extract_data(
+bool Interaction::extract_data(
    InteractionItem *interaction_item )
 {
    // Must be set to subscribe to the interaction and the interaction item
    // is not null, otherwise just return.
    if ( !is_subscribe() || ( interaction_item == NULL ) ) {
-      return;
+      return false;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
@@ -1130,6 +1130,8 @@ void Interaction::extract_data(
       set_user_supplied_tag( (unsigned char *)NULL, 0 );
    }
 
+   bool any_param_received = false;
+
    // Process all the parameter-items in the queue.
    while ( !interaction_item->parameter_queue.empty() ) {
 
@@ -1144,10 +1146,9 @@ void Interaction::extract_data(
                      THLA_NEWLINE );
          }
          // Extract the parameter data for the given parameter-item.
-         parameters[param_item->index].extract_data( param_item->size, param_item->data );
-
-         // Mark the interaction as changed.
-         mark_changed();
+         if ( parameters[param_item->index].extract_data( param_item->size, param_item->data ) ) {
+            any_param_received = true;
+         }
       }
 
       // Now that we extracted the data from the parameter-item remove it
@@ -1155,7 +1156,11 @@ void Interaction::extract_data(
       interaction_item->parameter_queue.pop();
    }
 
-   // Unlock the mutex as auto_unlock_mutex goes out of scope.
+   if ( any_param_received ) {
+      // Mark the interaction as changed.
+      mark_changed();
+   }
+   return any_param_received;
 }
 
 void Interaction::mark_unchanged()

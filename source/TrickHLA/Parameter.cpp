@@ -542,13 +542,13 @@ VariableLengthData Parameter::get_encoded_parameter_value()
    return VariableLengthData( buffer, size );
 }
 
-void Parameter::extract_data(
+bool Parameter::extract_data(
    size_t const         param_size,
    unsigned char const *param_data )
 {
    // Make sure we actually have parameter data to process.
    if ( ( param_size == 0 ) || ( param_data == NULL ) ) {
-      return;
+      return false;
    }
 
    // Determine the number of bytes we expect to receive based on how much
@@ -572,7 +572,7 @@ void Parameter::extract_data(
             send_hs( stderr, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here. DDexter
-            return;
+            return false;
          }
 
          // Ensure enough buffer capacity.
@@ -609,7 +609,7 @@ void Parameter::extract_data(
             // For now just return if we have a data size mismatch. This will
             // allow us to continue to run even though the other federate is
             // sending us data that is not correct in size.
-            return;
+            return false;
 #else
             DebugHandler::terminate_with_message( errmsg.str() );
 #endif
@@ -674,7 +674,7 @@ void Parameter::extract_data(
             send_hs( stderr, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here. DDexter
-            return;
+            return false;
          }
 
          // Ensure enough buffer capacity.
@@ -705,7 +705,7 @@ void Parameter::extract_data(
             send_hs( stderr, errmsg.str().c_str() );
 
             // For now, we ignore this error by just returning here. DDexter
-            return;
+            return false;
          }
 
          // Ensure enough buffer capacity.
@@ -731,6 +731,8 @@ from parameter map, buffer-size:%d, expected-byte-count:%d.%c",
 
    // Mark the parameter value as changed.
    mark_changed();
+
+   return true;
 }
 
 void Parameter::ensure_buffer_capacity(

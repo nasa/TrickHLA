@@ -3073,7 +3073,7 @@ void Object::enqueue_data(
  * attribute values come in for this object.
  * @job_class{scheduled}
  */
-void Object::extract_data(
+bool Object::extract_data(
    AttributeHandleValueMap &theAttributes )
 {
    // We need to iterate through the AttributeHandleValuePairSet
@@ -3082,7 +3082,12 @@ void Object::extract_data(
    // extract the data from the buffer that is returned by
    // getValue().
 
-   bool attr_changed = false;
+   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+      send_hs( stdout, "Object::extract_data():%d '%s' FOM-name:'%s'.%c",
+               __LINE__, get_name(), get_FOM_name(), THLA_NEWLINE );
+   }
+
+   bool any_attr_received = false;
 
    AttributeHandleValueMap::iterator iter;
 
@@ -3097,29 +3102,28 @@ void Object::extract_data(
       if ( attr != NULL ) {
 
          // Place the RTI AttributeValue into the TrickHLA Attribute.
-         attr->extract_data( &( iter->second ) );
-
-         attr_changed = true;
-
+         if ( attr->extract_data( &( iter->second ) ) ) {
+            any_attr_received = true;
+         }
       } else if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          string id_str;
          StringUtilities::to_string( id_str, iter->first );
          send_hs( stderr, "Object::extract_data():%d WARNING: For \
 Object '%s' with FOM name '%s', data was received for Attribute-ID:%s, which \
 has not been configured for this object instance in the input.py file. Ignoring \
-this attribute.%c",
-                  __LINE__, name, FOM_name, id_str.c_str(), THLA_NEWLINE );
+this attribute.%c", __LINE__, name, FOM_name, id_str.c_str(), THLA_NEWLINE );
       }
    }
 
    // Set the change flag once all the attributes have been processed.
-   if ( attr_changed ) {
-      // Mark the data as being changed since the attribute changed.
+   if ( any_attr_received ) {
+      // Mark the data as changed since at least one attribute was received.
       mark_changed();
 
       // Flag for user use to indicate the data changed.
       this->data_changed = true;
    }
+   return any_attr_received;
 }
 
 /*!
@@ -4316,6 +4320,11 @@ void Object::mark_changed()
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &receive_mutex );
 
+#ifdef THLA_EXTRA_CHANGE_FLAG_DEBUG
+   send_hs( stderr, "Object::mark_changed():%d Object:'%s' FOM_name:'%s' Changed(before:%d after:1)%c",
+            __LINE__, name, FOM_name, changed, THLA_NEWLINE ); //TEMP
+#endif
+
    this->changed = true;
 }
 
@@ -4324,6 +4333,11 @@ void Object::mark_unchanged()
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &receive_mutex );
+
+#ifdef THLA_EXTRA_CHANGE_FLAG_DEBUG
+   send_hs( stderr, "Object::mark_unchanged():%d Object:'%s' FOM_name:'%s' Changed(before:%d after:0)%c",
+             __LINE__, name, FOM_name, changed, THLA_NEWLINE ); //TEMP
+#endif
 
    this->changed = false;
 

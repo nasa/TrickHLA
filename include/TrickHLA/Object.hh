@@ -272,8 +272,9 @@ class Object
 #endif
 
    /*! @brief This function extracts the new attribute values.
-    *  @param theAttributes Attributes data. */
-   void extract_data( RTI1516_NAMESPACE::AttributeHandleValueMap &theAttributes );
+    *  @param theAttributes Attributes data.
+    *  @return True if successfully extracted data, false otherwise. */
+   bool extract_data( RTI1516_NAMESPACE::AttributeHandleValueMap &theAttributes );
 
    /*! @brief Remove this object instance from the RTI/Federation. */
    void remove();
@@ -567,6 +568,12 @@ class Object
          }
       }
 #endif
+
+#ifdef THLA_EXTRA_CHANGE_FLAG_DEBUG
+      send_hs( stderr, "Object::is_changed():%d Object:'%s' FOM_name:'%s' Changed:%d%c",
+                __LINE__, name, FOM_name, changed, THLA_NEWLINE ); //TEMP
+#endif
+
       return changed;
    }
 
