@@ -20,6 +20,8 @@ TRICK_CFLAGS    += -I.
 TRICK_CXXFLAGS  += -Wno-deprecated-declarations
 TRICK_CXXFLAGS  += -I.
 
-# Uncomment the following line if you want to use the Trick Stand-Alone Integrators.
+# Use the Trick Stand-Alone Integrators if the SAIntegrator/lib directory exists.
 # NOTE: You will also have to build the Trick SAInteg library.
+ifneq ($(wildcard ${TRICK_HOME}/trick_source/trick_utils/SAIntegrator/lib/.*),)
 TRICK_USER_LINK_LIBS += -L${TRICK_HOME}/trick_source/trick_utils/SAIntegrator/lib -lSAInteg
+endif
