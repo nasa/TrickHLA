@@ -191,8 +191,9 @@ class Parameter
 
    /*! @brief Extract the data out of the HLA Parameter Value.
     *  @param param_size Parameter data size.
-    *  @param param_data Parameter data. */
-   void extract_data( size_t const         param_size,
+    *  @param param_data Parameter data.
+    *  @return True if successfully extracted data, false otherwise. */
+   bool extract_data( size_t const         param_size,
                       unsigned char const *param_data );
 
    /*! @brief Check if a parameter value has changed.

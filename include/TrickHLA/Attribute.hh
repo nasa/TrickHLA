@@ -44,8 +44,10 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 #include "trick/reference.h"
+#include "trick/message_proto.h" //TEMP for send_hs
 
 // TrickHLA include files.
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Conditional.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
@@ -151,8 +153,9 @@ class Attribute
    RTI1516_NAMESPACE::VariableLengthData get_attribute_value();
 
    /*! @brief Extract the data out of the HLA Attribute Value.
-    *  @param attr_value The variable length data buffer containing the attribute value. */
-   void extract_data( RTI1516_NAMESPACE::VariableLengthData const *attr_value );
+    *  @param attr_value The variable length data buffer containing the attribute value.
+    *  @return True if successfully extracted data, false otherwise. */
+   bool extract_data( RTI1516_NAMESPACE::VariableLengthData const *attr_value );
 
    /*! @brief Determine if an attribute was received from another federate.
     *  @return True if new attribute value has been received. */
@@ -165,18 +168,30 @@ class Attribute
     *  @return True if the attribute value is marked as changed. */
    bool is_changed() const
    {
+#ifdef THLA_EXTRA_CHANGE_FLAG_DEBUG
+      send_hs( stderr, "Attribute::is_changed():%d Attribute:'%s' FOM_name:'%s' Changed:%d%c",
+               __LINE__, trick_name, FOM_name, value_changed, THLA_NEWLINE ); //TEMP
+#endif
       return this->value_changed;
    }
 
    /*! @brief Mark the attribute value as changed. */
    void mark_changed()
    {
+#ifdef THLA_EXTRA_CHANGE_FLAG_DEBUG
+      send_hs( stderr, "Attribute::mark_changed():%d Attribute:'%s' FOM_name:'%s' Changed(before:%d after:1)%c",
+               __LINE__, trick_name, FOM_name, value_changed, THLA_NEWLINE ); //TEMP
+#endif
       this->value_changed = true;
    }
 
    /*! @brief Mark the attribute value as unchanged. */
    void mark_unchanged()
    {
+#ifdef THLA_EXTRA_CHANGE_FLAG_DEBUG
+      send_hs( stderr, "Attribute::mark_unchanged():%d Attribute:'%s' FOM_name:'%s' Changed(before:%d after:0)%c",
+                __LINE__, trick_name, FOM_name, value_changed, THLA_NEWLINE ); //TEMP
+#endif
       this->value_changed = false;
    }
 

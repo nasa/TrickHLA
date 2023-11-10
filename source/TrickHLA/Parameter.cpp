@@ -542,13 +542,13 @@ VariableLengthData Parameter::get_encoded_parameter_value()
    return VariableLengthData( buffer, size );
 }
 
-void Parameter::extract_data(
+bool Parameter::extract_data(
    size_t const         param_size,
    unsigned char const *param_data )
 {
    // Make sure we actually have parameter data to process.
    if ( ( param_size == 0 ) || ( param_data == NULL ) ) {
-      return;
+      return false;
    }
 
    // Determine the number of bytes we expect to receive based on how much
@@ -560,7 +560,7 @@ void Parameter::extract_data(
          if ( param_size != ( 4 * expected_byte_count ) ) {
             ostringstream errmsg;
             errmsg << "Parameter::extract_data():" << __LINE__
-                   << " ERROR: For Parameter '" << interaction_FOM_name << "'->'"
+                   << " WARNING: For Parameter '" << interaction_FOM_name << "'->'"
                    << FOM_name << "' with Trick name '" << trick_name << "', the"
                    << " received FOM data size (" << param_size << " bytes) != Expected Trick"
                    << " simulation variable memory size (" << ( 4 * expected_byte_count )
@@ -571,8 +571,8 @@ void Parameter::extract_data(
                    << " variables are not the correct size or type." << THLA_ENDL;
             send_hs( stderr, errmsg.str().c_str() );
 
-            // For now, we ignore this error by just returning here. DDexter
-            return;
+            // For now, we ignore this error by just returning here.
+            return false;
          }
 
          // Ensure enough buffer capacity.
@@ -592,7 +592,7 @@ void Parameter::extract_data(
          if ( param_size != expected_byte_count ) {
             ostringstream errmsg;
             errmsg << "Parameter::extract_data():"
-                   << __LINE__ << " ERROR: For Parameter '" << interaction_FOM_name
+                   << __LINE__ << " WARNING: For Parameter '" << interaction_FOM_name
                    << "'->'" << FOM_name << "' with Trick name '" << trick_name
                    << "', the received FOM data size (" << param_size << " bytes) != Expected"
                    << " Trick simulation variable memory size (" << expected_byte_count
@@ -603,16 +603,12 @@ void Parameter::extract_data(
                    << " using Lag Compensation one possible cause of this problem"
                    << " is that your lag compensation variables are not the correct"
                    << " size or type." << THLA_ENDL;
-#if 1
             send_hs( stderr, errmsg.str().c_str() );
 
-            // For now just return if we have a data size mismatch. This will
-            // allow us to continue to run even though the other federate is
-            // sending us data that is not correct in size.
-            return;
-#else
-            DebugHandler::terminate_with_message( errmsg.str() );
-#endif
+            // Just return if we have a data size mismatch. This will allow us
+            // to continue to run even though the other federate is sending us
+            // data that is not correct in size.
+            return false;
          }
 
          // Ensure enough buffer capacity.
@@ -660,7 +656,7 @@ void Parameter::extract_data(
          if ( size_is_static && ( param_size != expected_byte_count ) ) {
             ostringstream errmsg;
             errmsg << "Parameter::extract_data():"
-                   << __LINE__ << " ERROR: For Parameter '" << interaction_FOM_name
+                   << __LINE__ << " WARNING: For Parameter '" << interaction_FOM_name
                    << "'->'" << FOM_name << "' with Trick name '" << trick_name
                    << "', the received FOM data size (" << param_size << " bytes) != Expected"
                    << " Trick simulation variable memory size (" << expected_byte_count
@@ -673,8 +669,8 @@ void Parameter::extract_data(
                    << THLA_ENDL;
             send_hs( stderr, errmsg.str().c_str() );
 
-            // For now, we ignore this error by just returning here. DDexter
-            return;
+            // For now, we ignore this error by just returning here.
+            return false;
          }
 
          // Ensure enough buffer capacity.
@@ -693,7 +689,7 @@ void Parameter::extract_data(
               && ( rti_encoding != ENCODING_UNICODE_STRING ) ) {
             ostringstream errmsg;
             errmsg << "Parameter::extract_data():"
-                   << __LINE__ << " ERROR: For Parameter '" << interaction_FOM_name
+                   << __LINE__ << " WARNING: For Parameter '" << interaction_FOM_name
                    << "'->'" << FOM_name << "' with Trick name '" << trick_name
                    << "', the received FOM data size (" << param_size << " bytes) != Expected"
                    << " Trick simulation variable memory size (" << expected_byte_count
@@ -704,8 +700,8 @@ void Parameter::extract_data(
                    << THLA_ENDL;
             send_hs( stderr, errmsg.str().c_str() );
 
-            // For now, we ignore this error by just returning here. DDexter
-            return;
+            // For now, we ignore this error by just returning here.
+            return false;
          }
 
          // Ensure enough buffer capacity.
@@ -731,6 +727,8 @@ from parameter map, buffer-size:%d, expected-byte-count:%d.%c",
 
    // Mark the parameter value as changed.
    mark_changed();
+
+   return true;
 }
 
 void Parameter::ensure_buffer_capacity(

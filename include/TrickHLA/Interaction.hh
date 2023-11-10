@@ -176,8 +176,9 @@ class Interaction
    void process_interaction();
 
    /*! @brief Extracts the parameters for the received Interaction.
-    *  @param interaction_item Interaction item. */
-   void extract_data( InteractionItem *interaction_item );
+    *  @param interaction_item Interaction item.
+    *  @return True if successfull extracted data, false otherwise. */
+   bool extract_data( InteractionItem *interaction_item );
 
    // Instance methods
    /*! @brief Get the FOM name for this interaction.

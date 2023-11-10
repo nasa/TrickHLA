@@ -27,6 +27,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cmath>
 #include <iostream>
 
 // Trick include files.
