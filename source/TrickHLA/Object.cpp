@@ -49,6 +49,7 @@ NASA, Johnson Space Center\n
 #include <pthread.h>
 #include <sstream>
 #include <string>
+#include <vector>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
@@ -414,22 +415,45 @@ void Object::initialize(
       }
    }
 
-   // Build the string array of attributes FOM names.
+   // Build the string array of valid attribute FOM names and also check for
+   // duplicate attribute FOM names.
+   string fom_name_str;
    for ( unsigned int i = 0; i < attr_count; ++i ) {
-      // Validate the FOM-name to make sure we don't have a  problem with the
+      // Validate the FOM-name to make sure we don't have a problem with the
       // list of names as well as get a difficult to debug runtime error for
       // the string constructor if we had a null FOM-name.
       if ( ( attributes[i].get_FOM_name() == NULL ) || ( *( attributes[i].get_FOM_name() ) == '\0' ) ) {
          ostringstream errmsg;
          errmsg << "Object::initialize():" << __LINE__
-                << " ERROR: Object with FOM Name '" << name << "' has a missing"
-                << " Attribute FOM Name at array index " << i << ". Please"
-                << " check your input or modified-data files to make sure the"
-                << " object attribute FOM name is correctly specified."
-                << THLA_ENDL;
+                << " ERROR: Object '" << name << "' has a missing Attribute"
+                << " FOM Name at array index " << i << ". Please check your input"
+                << " or modified-data files to make sure the object attribute"
+                << " FOM name is correctly specified." << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
-      attribute_FOM_names.push_back( string( attributes[i].get_FOM_name() ) );
+      fom_name_str = attributes[i].get_FOM_name();
+
+      // Since Object updates are sent as a AttributeHandleValueMap there can be
+      // no duplicate Attributes because the map only allows unique AttributeHandles.
+      for ( unsigned int k = i + 1; k < attr_count; ++k ) {
+         if ( ( attributes[k].get_FOM_name() != NULL ) && ( *( attributes[k].get_FOM_name() ) != '\0' ) ) {
+
+            if ( fom_name_str == string( attributes[k].get_FOM_name() ) ) {
+               ostringstream errmsg;
+               errmsg << "Object::initialize():" << __LINE__
+                      << " ERROR: Object '" << name << "' has Attributes at"
+                      << " array indexes " << i << " and " << k
+                      << " that have the same FOM Name '" << fom_name_str
+                      << "'. Please check your input or modified-data files to"
+                      << " make sure the object attributes do not use duplicate"
+                      << " FOM names." << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+      }
+
+      // Add the unique attribute FOM name.
+      attribute_FOM_names.push_back( fom_name_str );
    }
 
    // Initialize the Packing-Handler.
@@ -4095,20 +4119,23 @@ Attribute *Object::get_attribute(
 Attribute *Object::get_attribute(
    string const &attr_FOM_name )
 {
-   return get_attribute( attr_FOM_name.c_str() );
-}
+   string fom_name_str;
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
+      if ( attributes[i].get_FOM_name() != NULL ) {
+         fom_name_str = attributes[i].get_FOM_name();
 
-Attribute *Object::get_attribute(
-   char const *attr_FOM_name )
-{
-   if ( attr_FOM_name != NULL ) {
-      for ( unsigned int i = 0; i < attr_count; ++i ) {
-         if ( strcmp( attr_FOM_name, attributes[i].get_FOM_name() ) == 0 ) {
+         if ( attr_FOM_name == fom_name_str ) {
             return ( &attributes[i] );
          }
       }
    }
    return NULL;
+}
+
+Attribute *Object::get_attribute(
+   char const *attr_FOM_name )
+{
+   return ( attr_FOM_name != NULL ) ? get_attribute( string( attr_FOM_name ) ) : NULL;
 }
 
 void Object::stop_publishing_attributes()

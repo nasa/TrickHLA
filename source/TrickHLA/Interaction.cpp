@@ -197,6 +197,43 @@ void Interaction::initialize(
       param_count = 0;
    }
 
+   // Verify parameter FOM names and also check for duplicate parameter FOM names.
+   string fom_name_str;
+   for ( unsigned int i = 0; i < param_count; ++i ) {
+      // Validate the FOM-name to make sure we don't have a problem with the
+      // list of names as well as get a difficult to debug runtime error for
+      // the string constructor if we had a null FOM-name.
+      if ( ( parameters[i].get_FOM_name() == NULL ) || ( *( parameters[i].get_FOM_name() ) == '\0' ) ) {
+         ostringstream errmsg;
+         errmsg << "Interaction::initialize():" << __LINE__
+                << " ERROR: Interaction '" << FOM_name << "' has a missing Parameter"
+                << " FOM Name at array index " << i << ". Please check your input"
+                << " or modified-data files to make sure the interaction parameter"
+                << " FOM name is correctly specified." << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      fom_name_str = parameters[i].get_FOM_name();
+
+      // Since Interaction updates are sent as a ParameterHandleValueMap there can be
+      // no duplicate Parameters because the map only allows unique ParameterHandles.
+      for ( unsigned int k = i + 1; k < param_count; ++k ) {
+         if ( ( parameters[k].get_FOM_name() != NULL ) && ( *( parameters[k].get_FOM_name() ) != '\0' ) ) {
+
+            if ( fom_name_str == string( parameters[k].get_FOM_name() ) ) {
+               ostringstream errmsg;
+               errmsg << "Interaction::initialize():" << __LINE__
+                      << " ERROR: Interaction '" << FOM_name << "' has Parameters"
+                      << " at array indexes " << i << " and " << k
+                      << " that have the same FOM Name '" << fom_name_str
+                      << "'. Please check your input or modified-data files to"
+                      << " make sure the interaction parameters do not use"
+                      << " duplicate FOM names." << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+      }
+   }
+
    // We must have an interaction handler specified, otherwise we can not
    // process the interaction.
    if ( handler == NULL ) {
