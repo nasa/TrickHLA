@@ -56,6 +56,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Conditional.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Int64BaseTime.hh"
+#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 
@@ -521,11 +522,14 @@ void Attribute::initialize(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+      string attr_handle_string;
+      StringUtilities::to_string( attr_handle_string, this->attr_handle );
       ostringstream msg;
       msg << "Attribute::initialize():" << __LINE__ << endl
           << "========================================================" << endl
           << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
           << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
+          << "  AttributeHandle:" << attr_handle_string << endl
           << "  ref2->attr->name:'" << ref2->attr->name << "'" << endl
           << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'" << endl
           << "  ref2->attr->type:" << ref2->attr->type << endl
@@ -939,11 +943,14 @@ void Attribute::calculate_size_and_number_of_items()
    this->size = num_bytes;
 
    if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+      string attr_handle_string;
+      StringUtilities::to_string( attr_handle_string, this->attr_handle );
       ostringstream msg;
       msg << "Attribute::calculate_size_and_number_of_items():" << __LINE__ << endl
           << "========================================================" << endl
           << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
           << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
+          << "  AttributeHandle:" << attr_handle_string << endl
           << "  ref2->attr->name:'" << ref2->attr->name << "'" << endl
           << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'" << endl
           << "  ref2->attr->type:" << ref2->attr->type << endl
@@ -1029,11 +1036,14 @@ void Attribute::calculate_static_number_of_items()
 void Attribute::pack_attribute_buffer()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+      string attr_handle_string;
+      StringUtilities::to_string( attr_handle_string, this->attr_handle );
       ostringstream msg;
       msg << "Attribute::pack_attribute_buffer():" << __LINE__ << endl
           << "================== BEFORE PACK ==================================" << endl
           << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
           << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
+          << "  AttributeHandle:" << attr_handle_string << endl
           << "  ref2->attr->name:'" << ref2->attr->name << "'" << endl
           << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'" << endl
           << "  ref2->attr->type:" << ref2->attr->type << endl
@@ -1203,11 +1213,14 @@ void Attribute::pack_attribute_buffer()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+      string attr_handle_string;
+      StringUtilities::to_string( attr_handle_string, this->attr_handle );
       ostringstream msg2;
       msg2 << "Attribute::pack_attribute_buffer():" << __LINE__ << endl
            << "================== AFTER PACK ==================================" << endl
            << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
            << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
+           << "  AttributeHandle:" << attr_handle_string << endl
            << "  ref2->attr->name:'" << ref2->attr->name << "'" << endl
            << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'" << endl
            << "  ref2->attr->type:" << ref2->attr->type << endl
@@ -1378,11 +1391,14 @@ void Attribute::unpack_attribute_buffer()
 #endif
 
    if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+      string attr_handle_string;
+      StringUtilities::to_string( attr_handle_string, this->attr_handle );
       ostringstream msg;
       msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << endl
           << "========================================================" << endl
           << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
           << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
+          << "  AttributeHandle:" << attr_handle_string << endl
           << "  ref2->attr->name:'" << ref2->attr->name << "'" << endl
           << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'" << endl
           << "  ref2->attr->type:" << ref2->attr->type << endl

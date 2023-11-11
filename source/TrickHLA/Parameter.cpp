@@ -55,6 +55,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Parameter.hh"
+#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 
@@ -497,12 +498,15 @@ void Parameter::complete_initialization()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
+      string param_handle_string;
+      StringUtilities::to_string( param_handle_string, this->param_handle );
       ostringstream msg;
       msg << "Parameter::complete_initialization():" << __LINE__ << endl
           << "========================================================" << endl
           << "  interaction_FOM_name:'" << interaction_FOM_name << "'" << endl
           << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
           << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
+          << "  ParameterHandle:" << param_handle_string << endl
           << "  attr->name:'" << attr->name << "'" << endl
           << "  attr->type_name:'" << attr->type_name << "'" << endl
           << "  attr->type:" << attr->type << endl
@@ -842,11 +846,14 @@ void Parameter::calculate_size_and_number_of_items()
    this->size = num_bytes;
 
    if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
+      string param_handle_string;
+      StringUtilities::to_string( param_handle_string, this->param_handle );
       ostringstream msg;
       msg << "Parameter::calculate_size_and_number_of_items():" << __LINE__ << endl
           << "========================================================" << endl
           << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
           << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
+          << "  ParameterHandle:" << param_handle_string << endl
           << "  ref2->attr->name:'" << attr->name << "'" << endl
           << "  ref2->attr->type_name:'" << attr->type_name << "'" << endl
           << "  ref2->attr->type:" << attr->type << endl
@@ -928,11 +935,14 @@ void Parameter::calculate_static_number_of_items()
 void Parameter::pack_parameter_buffer()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
+      string param_handle_string;
+      StringUtilities::to_string( param_handle_string, this->param_handle );
       ostringstream msg;
       msg << "Parameter::pack_parameter_buffer():" << __LINE__ << endl
           << "======================== BEFORE PACK ================================" << endl
           << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
           << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
+          << "  ParameterHandle:" << param_handle_string << endl
           << "  ref2->attr->name:'" << attr->name << "'" << endl
           << "  ref2->attr->type_name:'" << attr->type_name << "'" << endl
           << "  ref2->attr->type:" << attr->type << endl
@@ -1085,11 +1095,14 @@ void Parameter::pack_parameter_buffer()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
+      string param_handle_string;
+      StringUtilities::to_string( param_handle_string, this->param_handle );
       ostringstream msg;
       msg << "Parameter::pack_parameter_buffer():" << __LINE__ << endl
           << "======================== AFTER PACK ================================" << endl
           << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
           << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
+          << "  ParameterHandle:" << param_handle_string << endl
           << "  ref2->attr->name:'" << attr->name << "'" << endl
           << "  ref2->attr->type_name:'" << attr->type_name << "'" << endl
           << "  ref2->attr->type:" << attr->type << endl
@@ -1238,11 +1251,14 @@ void Parameter::unpack_parameter_buffer()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
+      string param_handle_string;
+      StringUtilities::to_string( param_handle_string, this->param_handle );
       ostringstream msg;
       msg << "Parameter::unpack_parameter_buffer():" << __LINE__ << endl
           << "========================================================" << endl
           << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
           << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
+          << "  ParameterHandle:" << param_handle_string << endl
           << "  ref2->attr->name:'" << attr->name << "'" << endl
           << "  ref2->attr->type_name:'" << attr->type_name << "'" << endl
           << "  ref2->attr->type:" << attr->type << endl
