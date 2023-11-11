@@ -543,7 +543,8 @@ void Attribute::initialize(
           << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << endl
           << "  buffer_capacity:" << buffer_capacity << endl
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
-          << "  rti_encoding:" << rti_encoding << endl;
+          << "  rti_encoding:" << rti_encoding << endl
+          << "  changed:" << ( is_changed() ? "Yes" : "No" ) << endl;
       if ( ( ref2->attr->type == TRICK_STRING )
            || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( ref2->attr->num_index > 0 )
@@ -960,7 +961,8 @@ void Attribute::calculate_size_and_number_of_items()
           << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << endl
           << "  buffer_capacity:" << buffer_capacity << endl
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
-          << "  rti_encoding:" << rti_encoding << endl;
+          << "  rti_encoding:" << rti_encoding << endl
+          << "  changed:" << ( is_changed() ? "Yes" : "No" ) << endl;
       if ( ( ref2->attr->type == TRICK_STRING )
            || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( ref2->attr->num_index > 0 )
@@ -1049,7 +1051,8 @@ void Attribute::pack_attribute_buffer()
           << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << endl
           << "  buffer_capacity:" << buffer_capacity << endl
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
-          << "  rti_encoding:" << rti_encoding << endl;
+          << "  rti_encoding:" << rti_encoding << endl
+          << "  changed:" << ( is_changed() ? "Yes" : "No" ) << endl;
       if ( ( ref2->attr->type == TRICK_STRING )
            || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( ref2->attr->num_index > 0 )
@@ -1222,7 +1225,8 @@ void Attribute::pack_attribute_buffer()
            << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << endl
            << "  buffer_capacity:" << buffer_capacity << endl
            << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
-           << "  rti_encoding:" << rti_encoding << endl;
+           << "  rti_encoding:" << rti_encoding << endl
+           << "  changed:" << ( is_changed() ? "Yes" : "No" ) << endl;
       if ( ( ref2->attr->type == TRICK_STRING )
            || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( ref2->attr->num_index > 0 )
