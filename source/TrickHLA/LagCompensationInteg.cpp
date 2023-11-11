@@ -73,7 +73,6 @@ int LagCompensationInteg::integrate(
    double compensate_dt = t_end - t_begin;
    double dt_go = compensate_dt;
 
-
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
@@ -96,7 +95,7 @@ int LagCompensationInteg::integrate(
          cout << "****** LagCompensationInteg::integrate(): "
               << "Integ dt, tol, t, dt_go: "
               << this->integ_dt << ", " << this->integ_tol << ", "
-              << integ_t << "," << dt_go << endl;
+              << integ_t << ", " << dt_go << endl;
       }
 
       // Integration inner loop.

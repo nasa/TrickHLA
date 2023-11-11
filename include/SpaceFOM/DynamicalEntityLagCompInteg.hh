@@ -71,14 +71,6 @@ class DynamicalEntityLagCompInteg : public DynamicalEntityLagCompBase, public Tr
    /*! @brief Entity instance initialization routine. */
    virtual void initialize();
 
-   /*! @brief Sending side latency compensation callback interface from the
-    *  TrickHLALagCompensation class. */
-   virtual void send_lag_compensation();
-
-   /*! @brief Receive side latency compensation callback interface from the
-    *  TrickHLALagCompensation class. */
-   virtual void receive_lag_compensation();
-
   protected:
    /*! @brief Compensate the state data from the data time to the current scenario time.
     *  @param t_begin Scenario time at the start of the compensation step.

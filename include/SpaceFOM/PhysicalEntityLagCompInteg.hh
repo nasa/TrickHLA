@@ -73,11 +73,11 @@ class PhysicalEntityLagCompInteg : public PhysicalEntityLagCompBase, public Tric
 
    /*! @brief Sending side latency compensation callback interface from the
     *  TrickHLALagCompensation class. */
-   virtual void send_lag_compensation();
+   //virtual void send_lag_compensation();
 
    /*! @brief Receive side latency compensation callback interface from the
     *  TrickHLALagCompensation class. */
-   virtual void receive_lag_compensation();
+   //virtual void receive_lag_compensation();
 
 
   protected:

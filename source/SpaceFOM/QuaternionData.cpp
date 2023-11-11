@@ -311,6 +311,18 @@ void QuaternionData::compute_Q_dot(
  * @job_class{scheduled}
  */
 void QuaternionData::compute_omega (
+   QuaternionData const & att_quat,
+   double                 omega[3] )
+{
+   compute_omega( this->scalar, this->vector, att_quat.scalar, att_quat.vector, omega );
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::compute_omega (
    double const qdot_scalar,
    double const qdot_vector[3],
    double const quat_scalar,

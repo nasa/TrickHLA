@@ -82,11 +82,11 @@ class DynamicalEntityLagCompBase : public PhysicalEntityLagCompBase
 
    /*! @brief Sending side latency compensation callback interface from the
     *  TrickHLALagCompensation class. */
-   virtual void send_lag_compensation() = 0;
+   virtual void send_lag_compensation();
 
    /*! @brief Receive side latency compensation callback interface from the
     *  TrickHLALagCompensation class. */
-   virtual void receive_lag_compensation() = 0;
+   virtual void receive_lag_compensation();
 
    /*! @brief When lag compensation is disabled, this function is called to
     * bypass the send side lag compensation and your implementation must copy

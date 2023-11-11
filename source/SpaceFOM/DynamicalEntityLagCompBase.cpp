@@ -74,6 +74,7 @@ DynamicalEntityLagCompBase::DynamicalEntityLagCompBase( DynamicalEntityBase & en
       for ( int jinc = 0 ; jinc < 3 ; jinc++ ) {
          this->inertia[iinc][jinc] = 0.0;
          this->inertia_rate[iinc][jinc] = 0.0;
+         this->inertia_inv[iinc][jinc] = 0.0;
       }
       this->inertia[iinc][iinc] = 1.0;
    }
@@ -137,6 +138,130 @@ void DynamicalEntityLagCompBase::initialize_states()
 {
    // Call the base class implementation.
    PhysicalEntityLagCompBase::initialize_states();
+
+   // Return to calling routine.
+   return;
+}
+
+
+/*! @brief Sending side latency compensation callback interface from the
+ *  TrickHLALagCompensation class. */
+void DynamicalEntityLagCompBase::send_lag_compensation()
+{
+   double begin_t = get_scenario_time();
+   double end_t;
+
+   // Save the compensation time step.
+   this->compensate_dt = get_lookahead().get_time_in_seconds();
+   end_t = begin_t + this->compensate_dt;
+
+   // Use the inherited debug-handler to allow debug comments to be turned
+   // on and off from a setting in the input file.
+   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+      cout << "******* DynamicalEntityLagCompInteg::send_lag_compensation():" << __LINE__ << endl
+           << " scenario-time:" << get_scenario_time() << endl
+           << "     lookahead:" << this->compensate_dt << endl
+           << " adjusted-time:" << end_t << endl;
+   }
+
+   // Copy the current DynamicalEntity state over to the lag compensated state.
+   this->entity.pack_from_working_data();
+   this->load_lag_comp_data();
+   this->Q_dot.derivative_first( this->lag_comp_data.att,
+                                 this->lag_comp_data.ang_vel );
+
+   // Print out debug information if desired.
+   if ( debug ) {
+      cout << "Send data before compensation: " << endl;
+      this->print_lag_comp_data();
+   }
+
+   // Compensate the data
+   this->compensate( begin_t, end_t );
+
+   // Print out debug information if desired.
+   if ( debug ) {
+      cout << "Send data after compensation: " << endl;
+      this->print_lag_comp_data();
+   }
+
+   // Copy the compensated state to the packing data.
+   this->unload_lag_comp_data();
+
+   // Return to calling routine.
+   return;
+}
+
+
+/*! @brief Receive side latency compensation callback interface from the
+ *  TrickHLALagCompensation class. */
+void DynamicalEntityLagCompBase::receive_lag_compensation()
+{
+   ostringstream errmsg;
+   double end_t  = get_scenario_time();
+   double data_t = entity.get_time();
+
+   // Save the compensation time step.
+   this->compensate_dt = end_t - data_t;
+
+   // Use the inherited debug-handler to allow debug comments to be turned
+   // on and off from a setting in the input file.
+   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+      cout << "******* DynamicalEntityLagCompInteg::receive_lag_compensation():" << __LINE__ << endl
+           << "  scenario-time:" << end_t  << endl
+           << "      data-time:" << data_t << endl
+           << " comp-time-step:" << this->compensate_dt  << endl;
+   }
+
+   // Because of ownership transfers and attributes being sent at different
+   // rates we need to check to see if we received attribute data.
+   if ( this->state_attr->is_received() ) {
+
+      // Copy the current DynamicalEntity state over to the lag compensated state.
+      this->load_lag_comp_data();
+      this->Q_dot.derivative_first( this->lag_comp_data.att,
+                                    this->lag_comp_data.ang_vel );
+
+      // Print out debug information if desired.
+      if ( debug ) {
+         cout << "Receive data before compensation: " << endl;
+         this->print_lag_comp_data();
+      }
+
+      // Compensate the data
+      this->compensate( data_t, end_t );
+
+      // Print out debug information if desired.
+      if ( debug ) {
+         cout << "Receive data after compensation: " << endl;
+         this->print_lag_comp_data();
+      }
+
+   }
+   else {
+      if ( debug ) {
+         cout << "DynamicalEntityLagCompInteg::receive_lag_compensation(): No state data received." << endl;
+         cout << "\tvalue_changed: " << this->state_attr->is_changed()
+              << "; locally owned: " << this->state_attr->locally_owned << endl;
+      }
+   }
+   if ( this->inertia_attr->is_received() ) {
+      // Compute the inverse of the inertia matrix.  If this fails, the
+      // inverse matrix will be set to all zeros.  This will zero out any
+      // torque affects in the lag compensation dynamics.
+      if ( dm_invert_symm( this->inertia_inv, this->inertia ) != TM_SUCCESS ) {\
+         send_hs( stderr,
+                  "SpaceFOM::DynamicalEntityLagCompInteg::receive_lag_compensation():%d ERROR: Singular inertia matrix! Inversion failed!%c",
+                  __LINE__, THLA_NEWLINE );
+         M_INIT( this->inertia_inv );
+      }
+   }
+
+   // Copy the compensated state to the packing data.
+   this->unload_lag_comp_data();
+
+   // Move the unpacked data into the working data.
+   this->entity.unpack_into_working_data();
 
    // Return to calling routine.
    return;

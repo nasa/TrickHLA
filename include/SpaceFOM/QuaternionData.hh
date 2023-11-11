@@ -175,7 +175,15 @@ class QuaternionData{
       double const           omega_dot[3],
       QuaternionData       * q_dotdot );
 
-   /*! @brief Compute the angluar rate from the attitude quaternion rate and the
+   /*! @brief Compute the angular rate from the attitude quaternion rate and the
+    *  associated attitude quaternion.
+    *  @param att_quat The associated attitude quaternion.
+    *  @param omega    Angular velocity vector. */
+   void compute_omega (
+      QuaternionData const & att_quat,
+      double                 omega[3] );
+
+   /*! @brief Compute the angular rate from the attitude quaternion rate and the
     *  attitude quaternion.
     *  @param qdot_scalar Scalar part of the quaternion rate.
     *  @param qdot_vector Vector part of the quaternion rate.
@@ -189,7 +197,7 @@ class QuaternionData{
       double const quat_vector[3],
       double       omega[3] );
 
-   /*! @brief Compute the angluar rate from the attitude quaternion rate and the
+   /*! @brief Compute the angular rate from the attitude quaternion rate and the
     *  attitude quaternion.
     *  @param qdot  Pointer to an attitude quaternion rate.
     *  @param q     Pointer to an attitude quaternion.
