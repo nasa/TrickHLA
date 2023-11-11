@@ -292,7 +292,7 @@ void PhysicalEntityBase::initialize()
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity name!"
              << "  Setting frame name to empty string." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
       this->pe_packing_data.name = trick_MM->mm_strdup( "" );
    }
 
@@ -301,7 +301,7 @@ void PhysicalEntityBase::initialize()
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity type!"
              << "  Setting type to empty string." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
       this->pe_packing_data.type = trick_MM->mm_strdup( "" );
    }
 
@@ -310,7 +310,7 @@ void PhysicalEntityBase::initialize()
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity status!"
              << "  Setting status to empty string." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
       this->pe_packing_data.status = trick_MM->mm_strdup( "" );
    }
 
@@ -319,7 +319,7 @@ void PhysicalEntityBase::initialize()
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity parent_ref_frame!"
              << "  Setting parent_ref_frame to empty string." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
       this->pe_packing_data.parent_frame = trick_MM->mm_strdup( "" );
    }
 

@@ -355,7 +355,7 @@ void RefFrameBase::publish()
       ostringstream errmsg;
       errmsg << "RefFrameBase::publish():" << __LINE__
              << " WARNING: Ignoring, reference frame already initialized!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } else {
       object->create_HLA_instance         = true;
       object->attributes[0].publish       = true;
@@ -381,7 +381,7 @@ void RefFrameBase::subscribe()
       ostringstream errmsg;
       errmsg << "RefFrameBase::publish():" << __LINE__
              << " WARNING: Ignoring, reference frame already initialized!" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } else {
       object->create_HLA_instance         = false;
       object->attributes[0].publish       = false;

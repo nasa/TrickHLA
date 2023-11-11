@@ -95,7 +95,7 @@ void JEODRefFrameState::initialize(
          errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
                 << " WARNING: Unexpected NULL federation instance frame name!"
                 << "  Setting frame name to empty string." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
+         send_hs( stderr, errmsg.str().c_str() );
       }
       this->name = trick_MM->mm_strdup( "" );
    }
@@ -107,7 +107,7 @@ void JEODRefFrameState::initialize(
          errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
                 << " WARNING: Unexpected NULL federation instance parent frame name!"
                 << "  Setting parent frame name to empty string." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
+         send_hs( stderr, errmsg.str().c_str() );
       }
       this->parent_name = trick_MM->mm_strdup( "" );
    }

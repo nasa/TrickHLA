@@ -198,7 +198,7 @@ void PhysicalInterfaceBase::initialize()
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL interface name!"
              << "  Setting frame name to empty string." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
       this->packing_data.name = trick_MM->mm_strdup( "" );
    }
 
@@ -207,7 +207,7 @@ void PhysicalInterfaceBase::initialize()
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL interface parent!"
              << "  Setting parent_ref_frame to empty string." << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
       this->packing_data.parent_name = trick_MM->mm_strdup( "" );
    }
 
