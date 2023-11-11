@@ -333,7 +333,6 @@ void JEODPhysicalInterface::unpack()
 void JEODPhysicalInterface::set_vehicle_point_id( char const *new_id )
 {
    if ( this->vehicle_point_id != NULL ) {
-      trick_MM->delete_var( (void *)this->vehicle_point_id );
       if ( trick_MM->delete_var( static_cast< void * >( this->vehicle_point_id ) ) ) {
          send_hs( stderr, "SpaceFOM::JEODPhysicalInterface::set_vehicle_point_id():%d ERROR deleting Trick Memory for 'this->vehicle_point_id'%c",
                   __LINE__, THLA_NEWLINE );

@@ -136,7 +136,10 @@ void PhysicalEntity::pack_from_working_data()
    // Check for name change.
    if ( physical_data->name != NULL ) {
       if ( strcmp( physical_data->name, pe_packing_data.name ) ) {
-         trick_MM->delete_var( (void *)pe_packing_data.name );
+         if ( trick_MM->delete_var( static_cast< void * >( pe_packing_data.name ) ) ) {
+            send_hs( stderr, "PhysicalEntity::pack_from_working_data():%d ERROR deleting Trick Memory for 'pe_packing_data.name'%c",
+                     __LINE__, THLA_NEWLINE );
+         }
          pe_packing_data.name = trick_MM->mm_strdup( physical_data->name );
       }
    } else {
@@ -150,7 +153,10 @@ void PhysicalEntity::pack_from_working_data()
    if ( physical_data->type != NULL ) {
       if ( pe_packing_data.type != NULL ) {
          if ( strcmp( physical_data->type, pe_packing_data.type ) ) {
-            trick_MM->delete_var( (void *)pe_packing_data.type );
+            if ( trick_MM->delete_var( static_cast< void * >( pe_packing_data.type ) ) ) {
+               send_hs( stderr, "PhysicalEntity::copy_working_data():%d ERROR deleting Trick Memory for 'pe_packing_data.type'%c",
+                        __LINE__, THLA_NEWLINE );
+            }
             pe_packing_data.type = trick_MM->mm_strdup( physical_data->type );
          }
       } else {
@@ -158,7 +164,10 @@ void PhysicalEntity::pack_from_working_data()
       }
    } else {
       if ( pe_packing_data.type != NULL ) {
-         trick_MM->delete_var( (void *)pe_packing_data.type );
+         if ( trick_MM->delete_var( static_cast< void * >( pe_packing_data.type ) ) ) {
+            send_hs( stderr, "PhysicalEntity::copy_working_data():%d ERROR deleting Trick Memory for 'pe_packing_data.type'%c",
+                     __LINE__, THLA_NEWLINE );
+         }
          pe_packing_data.type = NULL;
       }
    }
@@ -167,7 +176,10 @@ void PhysicalEntity::pack_from_working_data()
    if ( physical_data->status != NULL ) {
       if ( pe_packing_data.status != NULL ) {
          if ( strcmp( physical_data->status, pe_packing_data.status ) ) {
-            trick_MM->delete_var( (void *)pe_packing_data.status );
+            if ( trick_MM->delete_var( static_cast< void * >( pe_packing_data.status ) ) ) {
+               send_hs( stderr, "PhysicalEntity::copy_working_data():%d ERROR deleting Trick Memory for 'pe_packing_data.status'%c",
+                        __LINE__, THLA_NEWLINE );
+            }
             pe_packing_data.status = trick_MM->mm_strdup( physical_data->status );
          }
       } else {
@@ -175,7 +187,10 @@ void PhysicalEntity::pack_from_working_data()
       }
    } else {
       if ( pe_packing_data.status != NULL ) {
-         trick_MM->delete_var( (void *)pe_packing_data.status );
+         if ( trick_MM->delete_var( static_cast< void * >( pe_packing_data.status ) ) ) {
+            send_hs( stderr, "PhysicalEntity::copy_working_data():%d ERROR deleting Trick Memory for 'pe_packing_data.status'%c",
+                     __LINE__, THLA_NEWLINE );
+         }
          pe_packing_data.status = NULL;
       }
    }
@@ -185,7 +200,10 @@ void PhysicalEntity::pack_from_working_data()
       // We have a parent frame; so, check to see if frame names are different.
       if ( strcmp( physical_data->parent_frame, pe_packing_data.parent_frame ) ) {
          // Frames are different, so reassign the new frame string.
-         trick_MM->delete_var( (void *)pe_packing_data.parent_frame );
+         if ( trick_MM->delete_var( static_cast< void * >( pe_packing_data.parent_frame ) ) ) {
+            send_hs( stderr, "PhysicalEntity::copy_working_data():%d ERROR deleting Trick Memory for 'pe_packing_data.parent_frame'%c",
+                     __LINE__, THLA_NEWLINE );
+         }
          pe_packing_data.parent_frame = trick_MM->mm_strdup( physical_data->parent_frame );
       }
    } else {
@@ -290,7 +308,10 @@ void PhysicalEntity::unpack_into_working_data()
    if ( name_attr->is_received() ) {
       if ( physical_data->name != NULL ) {
          if ( !strcmp( physical_data->name, pe_packing_data.name ) ) {
-            trick_MM->delete_var( (void *)physical_data->name );
+            if ( trick_MM->delete_var( static_cast< void * >( physical_data->name ) ) ) {
+               send_hs( stderr, "PhysicalEntity::unpack_into_working_data():%d ERROR deleting Trick Memory for 'physical_data->name'%c",
+                        __LINE__, THLA_NEWLINE );
+            }
             physical_data->name = trick_MM->mm_strdup( pe_packing_data.name );
          }
       } else {
@@ -301,7 +322,10 @@ void PhysicalEntity::unpack_into_working_data()
    if ( type_attr->is_received() ) {
       if ( physical_data->type != NULL ) {
          if ( !strcmp( physical_data->type, pe_packing_data.type ) ) {
-            trick_MM->delete_var( (void *)physical_data->type );
+            if ( trick_MM->delete_var( static_cast< void * >( physical_data->type ) ) ) {
+               send_hs( stderr, "PhysicalEntity::unpack_into_working_data():%d ERROR deleting Trick Memory for 'physical_data->type'%c",
+                        __LINE__, THLA_NEWLINE );
+            }
             physical_data->type = trick_MM->mm_strdup( pe_packing_data.type );
          }
       } else {
@@ -312,7 +336,10 @@ void PhysicalEntity::unpack_into_working_data()
    if ( status_attr->is_received() ) {
       if ( physical_data->status != NULL ) {
          if ( !strcmp( physical_data->status, pe_packing_data.status ) ) {
-            trick_MM->delete_var( (void *)physical_data->status );
+            if ( trick_MM->delete_var( static_cast< void * >( physical_data->status ) ) ) {
+               send_hs( stderr, "PhysicalEntity::unpack_into_working_data():%d ERROR deleting Trick Memory for 'physical_data->status'%c",
+                        __LINE__, THLA_NEWLINE );
+            }
             physical_data->status = trick_MM->mm_strdup( pe_packing_data.status );
          }
       } else {
@@ -323,7 +350,10 @@ void PhysicalEntity::unpack_into_working_data()
    if ( parent_frame_attr->is_received() ) {
       if ( physical_data->parent_frame != NULL ) {
          if ( !strcmp( physical_data->parent_frame, pe_packing_data.parent_frame ) ) {
-            trick_MM->delete_var( (void *)physical_data->parent_frame );
+            if ( trick_MM->delete_var( static_cast< void * >( physical_data->parent_frame ) ) ) {
+               send_hs( stderr, "PhysicalEntity::unpack_into_working_data():%d ERROR deleting Trick Memory for 'physical_data->parent_frame'%c",
+                        __LINE__, THLA_NEWLINE );
+            }
             if ( pe_packing_data.parent_frame[0] != '\0' ) {
                physical_data->parent_frame = trick_MM->mm_strdup( pe_packing_data.parent_frame );
             } else {

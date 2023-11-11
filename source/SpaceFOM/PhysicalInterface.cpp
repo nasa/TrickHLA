@@ -134,7 +134,10 @@ void PhysicalInterface::pack_from_working_data()
    // Check for name change.
    if ( interface_data->name != NULL ) {
       if ( strcmp( interface_data->name, packing_data.name ) ) {
-         trick_MM->delete_var( (void *)packing_data.name );
+         if ( trick_MM->delete_var( static_cast< void * >( packing_data.name ) ) ) {
+            send_hs( stderr, "PhysicalInterface::pack_from_working_data():%d ERROR deleting Trick Memory for 'packing_data.name'%c",
+                     __LINE__, THLA_NEWLINE );
+         }
          packing_data.name = trick_MM->mm_strdup( interface_data->name );
       }
    } else {
@@ -149,7 +152,10 @@ void PhysicalInterface::pack_from_working_data()
       // We have a parent name; so, check to see if names are different.
       if ( strcmp( interface_data->parent_name, packing_data.parent_name ) ) {
          // Names are different, so reassign the new name string.
-         trick_MM->delete_var( (void *)packing_data.parent_name );
+         if ( trick_MM->delete_var( static_cast< void * >( packing_data.parent_name ) ) ) {
+            send_hs( stderr, "SpaceFOM::PhysicalInterface::pack():%d ERROR deleting Trick Memory for 'packing_data.parent_name'%c",
+                     __LINE__, THLA_NEWLINE );
+         }
          packing_data.parent_name = trick_MM->mm_strdup( interface_data->parent_name );
       }
    } else {
@@ -195,7 +201,10 @@ void PhysicalInterface::unpack_into_working_data()
    if ( name_attr->is_received() ) {
       if ( interface_data->name != NULL ) {
          if ( !strcmp( interface_data->name, packing_data.name ) ) {
-            trick_MM->delete_var( (void *)interface_data->name );
+            if ( trick_MM->delete_var( static_cast< void * >( interface_data->name ) ) ) {
+               send_hs( stderr, "PhysicalInterface::unpack_into_working_data():%d ERROR deleting Trick Memory for 'interface_data->name'%c",
+                        __LINE__, THLA_NEWLINE );
+            }
             interface_data->name = trick_MM->mm_strdup( packing_data.name );
          }
       } else {
@@ -206,7 +215,10 @@ void PhysicalInterface::unpack_into_working_data()
    if ( parent_attr->is_received() ) {
       if ( interface_data->parent_name != NULL ) {
          if ( !strcmp( interface_data->parent_name, packing_data.parent_name ) ) {
-            trick_MM->delete_var( (void *)interface_data->parent_name );
+            if ( trick_MM->delete_var( static_cast< void * >( interface_data->parent_name ) ) ) {
+               send_hs( stderr, "PhysicalInterface::unpack_into_working_data():%d ERROR deleting Trick Memory for 'interface_data->parent_name'%c",
+                        __LINE__, THLA_NEWLINE );
+            }
             if ( packing_data.parent_name[0] != '\0' ) {
                interface_data->parent_name = trick_MM->mm_strdup( packing_data.parent_name );
             } else {
