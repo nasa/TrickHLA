@@ -388,7 +388,6 @@ void PhysicalEntityBase::set_name( char const *new_name )
 void PhysicalEntityBase::set_type( char const *new_type )
 {
    if ( this->pe_packing_data.type != NULL ) {
-      trick_MM->delete_var( (void *)this->pe_packing_data.type );
       if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.type ) ) ) {
          send_hs( stderr, "SpaceFOM::PhysicalEntityBase::set_type():%d ERROR deleting Trick Memory for 'this->type'%c",
                   __LINE__, THLA_NEWLINE );
