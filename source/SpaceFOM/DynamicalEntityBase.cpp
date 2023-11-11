@@ -353,18 +353,9 @@ void DynamicalEntityBase::unpack()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout << "DynamicalEntity: lag comp address: " << this->object->lag_comp << endl;
       cout << "DynamicalEntity: lag comp type: " << this->object->lag_comp_type << endl;
       cout << "DynamicalEntityBase::unpack():" << __LINE__ << endl;
    }
-
-   // FIXME: Test: mark the data as changed.
-   this->force_attr->mark_changed();
-   this->torque_attr->mark_changed();
-   this->mass_attr->mark_changed();
-   this->mass_rate_attr->mark_changed();
-   this->inertia_attr->mark_changed();
-   this->inertia_rate_attr->mark_changed();
 
    // Call the PhysicalEntityBase unpack routine.
    PhysicalEntityBase::unpack();

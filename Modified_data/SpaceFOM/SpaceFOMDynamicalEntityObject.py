@@ -45,8 +45,16 @@ class SpaceFOMDynamicalEntityObject(SpaceFOMPhysicalEntityObject):
                                              entity_ownership,
                                              entity_thla_manager_object )
 
+      #######################################################################
+      # NOTE: We do not need to call add_attributes() here.  This would
+      # duplicate the attributes if we do.  The call to add_attributes() in
+      # the SpaceFOMPhysicalEntityObject.__init__() will bind to the
+      # SpaceFOMDynamicalEntityObject.add_attributes() call below and insure
+      # that both are updated.
+      # The power and beauty of object oriented programming. ;-)
+      #######################################################################
       # Build the object attribute list.
-      self.add_attributes()
+      # self.add_attributes()
 
       return
 

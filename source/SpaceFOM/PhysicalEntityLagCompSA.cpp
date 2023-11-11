@@ -212,8 +212,7 @@ int PhysicalEntityLagCompSA::compensate(
       this->integrator.unload();
 
       // Normalize the propagated attitude quaternion.
-      QuaternionData::normalize_quaternion( &(this->lag_comp_data.att.scalar),
-                            this->lag_comp_data.att.vector     );
+      this->lag_comp_data.att.normalize( );
 
       // Update the integration time.
       this->integ_t = this->integrator.getIndyVar();
