@@ -69,7 +69,7 @@ class SpaceTimeCoordinateEncoder : public TrickHLA::OpaqueBuffer
   public:
    /*! @brief Initialization constructor for the SpaceFOM SpaceTimeCoordinateEncoder class.
     *  @param stc_data Reference to state-time coordinate data instance. */
-   SpaceTimeCoordinateEncoder( SpaceTimeCoordinateData & stc_data );
+   explicit SpaceTimeCoordinateEncoder( SpaceTimeCoordinateData & stc_data );
 
    /*! @brief Encode the space-time coordinate data for sending out. */
    void encode();

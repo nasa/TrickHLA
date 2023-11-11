@@ -66,7 +66,7 @@ class PhysicalEntityLagCompBase : public TrickHLA::LagCompensation
 
   public:
    // Public constructors and destructors.
-   PhysicalEntityLagCompBase( PhysicalEntityBase & entity_ref ); // Initialization constructor.
+   explicit PhysicalEntityLagCompBase( PhysicalEntityBase & entity_ref ); // Initialization constructor.
    virtual ~PhysicalEntityLagCompBase(); // Destructor.
 
    /*! @brief Entity instance initialization routine. */

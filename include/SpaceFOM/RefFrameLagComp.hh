@@ -63,7 +63,7 @@ class RefFrameLagComp : public RefFrameLagCompInteg
 
   public:
    // Public constructors and destructors.
-   RefFrameLagComp( RefFrameBase & ref_frame_ref ); // Initialization constructor.
+   explicit RefFrameLagComp( RefFrameBase & ref_frame_ref ); // Initialization constructor.
    virtual ~RefFrameLagComp(); // Destructor.
 
    /*! @brief Entity instance initialization routine. */

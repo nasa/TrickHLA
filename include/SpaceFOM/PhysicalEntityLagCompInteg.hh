@@ -65,7 +65,7 @@ class PhysicalEntityLagCompInteg : public PhysicalEntityLagCompBase, public Tric
 
   public:
    // Public constructors and destructors.
-   PhysicalEntityLagCompInteg( PhysicalEntityBase & entity_ref ); // Initialization constructor.
+   explicit PhysicalEntityLagCompInteg( PhysicalEntityBase & entity_ref ); // Initialization constructor.
    virtual ~PhysicalEntityLagCompInteg(); // Destructor.
 
    /*! @brief Entity instance initialization routine. */

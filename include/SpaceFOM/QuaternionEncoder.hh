@@ -70,7 +70,7 @@ class QuaternionEncoder : public TrickHLA::OpaqueBuffer
   public:
    /*! @brief Initialization constructor for the SpaceFOM QuaternionEncoder class.
     *  @param stc_data Reference to quaternion data instance. */
-   QuaternionEncoder( QuaternionData & quat_data );
+   explicit QuaternionEncoder( QuaternionData & quat_data );
 
    /*! @brief Encode the quaternion data for sending out. */
    void encode();

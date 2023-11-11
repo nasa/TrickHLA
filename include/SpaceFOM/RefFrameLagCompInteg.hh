@@ -65,7 +65,7 @@ class RefFrameLagCompInteg : public RefFrameLagCompBase, public TrickHLA::LagCom
 
   public:
    // Public constructors and destructors.
-   RefFrameLagCompInteg( RefFrameBase & ref_frame_ref ); // Initialization constructor.
+   explicit RefFrameLagCompInteg( RefFrameBase & ref_frame_ref ); // Initialization constructor.
    virtual ~RefFrameLagCompInteg(); // Destructor.
 
    /*! @brief Entity instance initialization routine. */

@@ -63,7 +63,7 @@ class PhysicalEntityLagComp : public PhysicalEntityLagCompInteg
 
   public:
    // Public constructors and destructors.
-   PhysicalEntityLagComp( PhysicalEntityBase & entity_ref ); // Initialization constructor.
+   explicit PhysicalEntityLagComp( PhysicalEntityBase & entity_ref ); // Initialization constructor.
    virtual ~PhysicalEntityLagComp(); // Destructor.
 
    /*! @brief Entity instance initialization routine. */

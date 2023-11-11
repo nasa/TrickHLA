@@ -65,7 +65,7 @@ class DynamicalEntityLagCompInteg : public DynamicalEntityLagCompBase, public Tr
 
   public:
    // Public constructors and destructors.
-   DynamicalEntityLagCompInteg( DynamicalEntityBase & entity_ref ); // Initialization constructor.
+   explicit DynamicalEntityLagCompInteg( DynamicalEntityBase & entity_ref ); // Initialization constructor.
    virtual ~DynamicalEntityLagCompInteg(); // Destructor.
 
    /*! @brief Entity instance initialization routine. */
