@@ -44,7 +44,6 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 #include "trick/reference.h"
-#include "trick/message_proto.h" //TEMP for send_hs
 
 // TrickHLA include files.
 #include "TrickHLA/CompileConfig.hh"
@@ -168,30 +167,18 @@ class Attribute
     *  @return True if the attribute value is marked as changed. */
    bool is_changed() const
    {
-#ifdef THLA_EXTRA_CHANGE_FLAG_DEBUG
-      send_hs( stderr, "Attribute::is_changed():%d Attribute:'%s' FOM_name:'%s' Changed:%d%c",
-               __LINE__, trick_name, FOM_name, value_changed, THLA_NEWLINE ); //TEMP
-#endif
       return this->value_changed;
    }
 
    /*! @brief Mark the attribute value as changed. */
    void mark_changed()
    {
-#ifdef THLA_EXTRA_CHANGE_FLAG_DEBUG
-      send_hs( stderr, "Attribute::mark_changed():%d Attribute:'%s' FOM_name:'%s' Changed(before:%d after:1)%c",
-               __LINE__, trick_name, FOM_name, value_changed, THLA_NEWLINE ); //TEMP
-#endif
       this->value_changed = true;
    }
 
    /*! @brief Mark the attribute value as unchanged. */
    void mark_unchanged()
    {
-#ifdef THLA_EXTRA_CHANGE_FLAG_DEBUG
-      send_hs( stderr, "Attribute::mark_unchanged():%d Attribute:'%s' FOM_name:'%s' Changed(before:%d after:0)%c",
-                __LINE__, trick_name, FOM_name, value_changed, THLA_NEWLINE ); //TEMP
-#endif
       this->value_changed = false;
    }
 

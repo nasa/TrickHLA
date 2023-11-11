@@ -29,12 +29,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_COMPILE_CONFIG_HH
 #define TRICKHLA_COMPILE_CONFIG_HH
 
-// Debug the change flag by turning on more debug console output.
-#define NO_THLA_EXTRA_CHANGE_FLAG_DEBUG
-
-// Temporarily add a guard mark changed call for the extracted attributes.
-#define NO_THLA_ADD_GUARD_MARK_CHANGED_CALL
-
 // For blocking cyclic reads, do a check on the send and received data counts.
 // Default: NO_THLA_CHECK_SEND_AND_RECEIVE_COUNTS
 #define NO_THLA_CHECK_SEND_AND_RECEIVE_COUNTS

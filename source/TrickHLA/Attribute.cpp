@@ -1385,11 +1385,6 @@ void Attribute::unpack_attribute_buffer()
       }
    }
 
-#ifdef THLA_ADD_GUARD_MARK_CHANGED_CALL
-   // Mark the attribute as changed now that we unpacked data for it.
-   mark_changed();
-#endif
-
    if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       string attr_handle_string;
       StringUtilities::to_string( attr_handle_string, this->attr_handle );

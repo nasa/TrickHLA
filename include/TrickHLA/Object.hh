@@ -568,12 +568,6 @@ class Object
          }
       }
 #endif
-
-#ifdef THLA_EXTRA_CHANGE_FLAG_DEBUG
-      send_hs( stderr, "Object::is_changed():%d Object:'%s' FOM_name:'%s' Changed:%d%c",
-                __LINE__, name, FOM_name, changed, THLA_NEWLINE ); //TEMP
-#endif
-
       return changed;
    }
 

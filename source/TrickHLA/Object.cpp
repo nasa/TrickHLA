@@ -4345,12 +4345,6 @@ void Object::mark_changed()
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &receive_mutex );
-
-#ifdef THLA_EXTRA_CHANGE_FLAG_DEBUG
-   send_hs( stderr, "Object::mark_changed():%d Object:'%s' FOM_name:'%s' Changed(before:%d after:1)%c",
-            __LINE__, name, FOM_name, changed, THLA_NEWLINE ); //TEMP
-#endif
-
    this->changed = true;
 }
 
@@ -4359,12 +4353,6 @@ void Object::mark_unchanged()
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &receive_mutex );
-
-#ifdef THLA_EXTRA_CHANGE_FLAG_DEBUG
-   send_hs( stderr, "Object::mark_unchanged():%d Object:'%s' FOM_name:'%s' Changed(before:%d after:0)%c",
-             __LINE__, name, FOM_name, changed, THLA_NEWLINE ); //TEMP
-#endif
-
    this->changed = false;
 
    // Clear the change flag for each of the attributes as well.
