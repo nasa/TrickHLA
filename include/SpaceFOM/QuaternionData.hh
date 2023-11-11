@@ -84,8 +84,8 @@ class QuaternionData{
     *  @param sequence Euler sequence of angles.
     *  @param angles   Euler attitude angels {deg}. */
    void set_from_Euler_deg(
-      Euler_Seq sequence,
-      double    angles_deg[3]);
+      Euler_Seq    sequence,
+      double const angles_deg[3]);
 
    /*! @brief Get Euler angles from attitude quaternion.
     *  @param sequence Euler sequence of angles.

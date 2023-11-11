@@ -153,7 +153,7 @@ void QuaternionData::set_from_Euler(
  */
 void QuaternionData::set_from_Euler_deg(
    Euler_Seq sequence,
-   double    angles_deg[3])
+   double const angles_deg[3])
 {
    double angles[3];
    angles[0] = angles_deg[0] * DTR;

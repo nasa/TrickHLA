@@ -111,11 +111,11 @@ void PhysicalEntityLagCompSA2::initialize()
  * @job_class{derivative}
  */
 void PhysicalEntityLagCompSA2::derivatives(
-   double   t,
-   double   pos[],
-   double   vel[],
-   double   accel[],
-   void   * udata)
+   double       t,
+   double const pos[],
+   double const vel[],
+   double       accel[],
+   void       * udata)
 {
    double omega[3];
    double quat_scalar = pos[3];

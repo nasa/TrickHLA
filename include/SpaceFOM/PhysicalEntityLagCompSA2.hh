@@ -81,7 +81,11 @@ class PhysicalEntityLagCompSA2 : public PhysicalEntityLagCompInteg
     *  @param derivs Derivatives of the integration states (OUT).
     *  @param udate  Additional user data needed to compute the derivatives (IN).
     */
-   static void derivatives( double t, double pos[], double vel[], double accel[], void* udata);
+   static void derivatives( double t,
+                            double const pos[],
+                            double const vel[],
+                            double accel[],
+                            void* udata);
 
    /*! @brief Compensate the state data from the data time to the current scenario time.
     *  @param t_begin Scenario time at the start of the compensation step.
