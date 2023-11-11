@@ -417,7 +417,6 @@ void Object::initialize(
 
    // Build the string array of valid attribute FOM names and also check for
    // duplicate attribute FOM names.
-   string fom_name_str;
    for ( unsigned int i = 0; i < attr_count; ++i ) {
       // Validate the FOM-name to make sure we don't have a problem with the
       // list of names as well as get a difficult to debug runtime error for
@@ -431,7 +430,7 @@ void Object::initialize(
                 << " FOM name is correctly specified." << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
-      fom_name_str = attributes[i].get_FOM_name();
+      string fom_name_str( attributes[i].get_FOM_name() );
 
       // Since Object updates are sent as a AttributeHandleValueMap there can be
       // no duplicate Attributes because the map only allows unique AttributeHandles.

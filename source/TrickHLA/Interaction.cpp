@@ -198,7 +198,6 @@ void Interaction::initialize(
    }
 
    // Verify parameter FOM names and also check for duplicate parameter FOM names.
-   string fom_name_str;
    for ( unsigned int i = 0; i < param_count; ++i ) {
       // Validate the FOM-name to make sure we don't have a problem with the
       // list of names as well as get a difficult to debug runtime error for
@@ -212,7 +211,7 @@ void Interaction::initialize(
                 << " FOM name is correctly specified." << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
-      fom_name_str = parameters[i].get_FOM_name();
+      string fom_name_str( parameters[i].get_FOM_name() );
 
       // Since Interaction updates are sent as a ParameterHandleValueMap there can be
       // no duplicate Parameters because the map only allows unique ParameterHandles.
