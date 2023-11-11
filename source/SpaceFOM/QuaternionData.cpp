@@ -210,13 +210,12 @@ void QuaternionData::normalize_quaternion(
    double   qv[3])
 {
    double q_mag_sq;
-   double qv_mag_sq;
    double diff1;
    double norm_fact;
 
    // Compute and compare the magnitude of the quaternion wrt. one.
    if ( fabs (*qs) > GSL_SQRT_DBL_MIN ) {
-      qv_mag_sq = qv[0] * qv[0] + qv[1] * qv[1] + qv[2] * qv[2];
+      double qv_mag_sq = qv[0] * qv[0] + qv[1] * qv[1] + qv[2] * qv[2];
       q_mag_sq = (*qs * *qs) + qv_mag_sq;
       diff1 = 1.0 - q_mag_sq;
    }
