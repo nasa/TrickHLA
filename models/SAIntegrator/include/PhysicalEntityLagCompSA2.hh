@@ -23,8 +23,8 @@ NASA, Johnson Space Center\n
 @python_module{SpaceFOM}
 
 @tldh
-@trick_link_dependency{../../source/SpaceFOM/PhysicalEntityLagCompInteg.cpp}
-@trick_link_dependency{../../source/SpaceFOM/PhysicalEntityLagCompSA2.cpp}
+@trick_link_dependency{../../../source/SpaceFOM/PhysicalEntityLagCompBase.cpp}
+@trick_link_dependency{../src/PhysicalEntityLagCompSA2.cpp}
 
 @revs_title
 @revs_begin
@@ -44,12 +44,13 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 
 // SpaceFOM include files.
-#include "SpaceFOM/PhysicalEntityLagCompInteg.hh"
+#include "TrickHLA/LagCompensationIntegBase.hh"
+#include "SpaceFOM/PhysicalEntityLagCompBase.hh"
 
 namespace SpaceFOM
 {
 
-class PhysicalEntityLagCompSA2 : public PhysicalEntityLagCompInteg
+class PhysicalEntityLagCompSA2 : public TrickHLA::LagCompensationIntegBase, public PhysicalEntityLagCompBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -82,15 +83,45 @@ class PhysicalEntityLagCompSA2 : public PhysicalEntityLagCompInteg
     *  @param udate  Additional user data needed to compute the derivatives (IN).
     */
    static void derivatives( double t,
-                            double const pos[],
-                            double const vel[],
+                            double pos[],
+                            double vel[],
                             double accel[],
                             void* udata);
 
    /*! @brief Compensate the state data from the data time to the current scenario time.
     *  @param t_begin Scenario time at the start of the compensation step.
     *  @param t_end   Scenario time at the end of the compensation step. */
-   int compensate(
+   virtual int compensate(
+      const double t_begin,
+      const double t_end   )
+   {
+      this->compensate_dt = t_end - t_begin;
+      return( integrate( t_begin, t_end ) );
+   }
+
+   /*! @brief Update the latency compensation time from the integrator. */
+   virtual void update_time(){ lag_comp_data.time = this->integ_t; }
+
+   /*! @brief Load the integration state into the integrator. */
+   virtual void load();
+
+   /*! @brief Unload the integration state from the integrator. */
+   virtual void unload();
+
+   /*! @brief Compute the first time derivative of the lag compensation state vector.
+    *  @param user_data Any special user data needed to compute the derivative values. */
+   virtual void derivative_first( void * user_data = NULL );
+
+   /*! @brief Compute the second time derivative of the lag compensation state vector.
+    *  @detail This function is called for second order integrators to compute
+    *  second time derivative of the state vector.
+    *  @param user_data Any special user data needed to compute the derivative values. */
+   virtual void derivative_second( void * user_data = NULL ){ return; }
+
+   /*! @brief Compensate the state data from the data time to the current scenario time.
+    *  @param t_begin Scenario time at the start of the compensation step.
+    *  @param t_end   Scenario time at the end of the compensation step. */
+   virtual int integrate(
       const double t_begin,
       const double t_end   );
 

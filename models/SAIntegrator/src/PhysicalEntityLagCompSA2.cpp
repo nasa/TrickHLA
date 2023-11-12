@@ -16,8 +16,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/DebugHandler.cpp}
-@trick_link_dependency{../../source/TrickHLA/LagCompensation.cpp}
+@trick_link_dependency{../../../source/TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{PhysicalEntityLagCompSA2.cpp}
 
 
@@ -46,7 +45,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Attribute.hh"
 
 // SpaceFOM include files.
-#include "SpaceFOM/PhysicalEntityLagCompSA2.hh"
+#include "SAIntegrator/include/PhysicalEntityLagCompSA2.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -56,7 +55,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 PhysicalEntityLagCompSA2::PhysicalEntityLagCompSA2( PhysicalEntityBase & entity_ref ) // RETURN: -- None.
-   : PhysicalEntityLagCompInteg( entity_ref ),
+   : PhysicalEntityLagCompBase( entity_ref ),
      integrator( this->integ_dt, 7, this->integ_states, this->integ_derivs, this->derivatives, this )
 {
 
@@ -100,7 +99,7 @@ void PhysicalEntityLagCompSA2::initialize()
 {
 
    // Call the base class initialize function.l
-   PhysicalEntityLagCompInteg::initialize();
+   PhysicalEntityLagCompBase::initialize();
 
    // Return to calling routine.
    return;
@@ -111,11 +110,11 @@ void PhysicalEntityLagCompSA2::initialize()
  * @job_class{derivative}
  */
 void PhysicalEntityLagCompSA2::derivatives(
-   double       t,
-   double const pos[],
-   double const vel[],
-   double       accel[],
-   void       * udata)
+   double   t,
+   double   pos[],
+   double   vel[],
+   double   accel[],
+   void   * udata)
 {
    double omega[3];
    double quat_scalar = pos[3];
@@ -173,32 +172,81 @@ void PhysicalEntityLagCompSA2::derivatives(
 
 
 /*!
+ * @job_class(integration)
+ */
+void PhysicalEntityLagCompSA2::load()
+{
+
+   // Compute the derivatives of the lag compensation state vector.
+   // Note: The SAIntegrator does not require a pre-integration derivative
+   // evaluation.  The integrator calls the derivative() routine.
+   //this->derivative_first();
+
+   // Load the integration states and derivatives.
+   this->integrator.load();
+   return;
+}
+
+
+/*!
+ * @job_class{integration}
+ */
+void PhysicalEntityLagCompSA2::unload()
+{
+
+   // Unload the integrated states and derivatives.
+   this->integrator.unload();
+
+   // Normalize the propagated attitude quaternion.
+   this->lag_comp_data.att.normalize();
+
+   // Compute the angular velocity vector.
+   this->Q_dot.compute_omega( this->lag_comp_data.att,
+                              this->lag_comp_data.ang_vel );
+
+   // Return to calling routine.
+   return;
+
+}
+
+
+/*!
  * @job_class{derivative}
  */
-int PhysicalEntityLagCompSA2::compensate(
+int PhysicalEntityLagCompSA2::integrate(
    const double t_begin,
    const double t_end   )
 {
-   double dt_go  = t_end - t_begin;
+   double compensate_dt = t_end - t_begin;
+   double dt_go = compensate_dt;
+
+   // Use the inherited debug-handler to allow debug comments to be turned
+   // on and off from a setting in the input file.
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+      cout << "**** PhysicalEntityLagCompSA2::integrate(): "
+           << "Compensate: t_begin, t_end, dt_go: "
+           << t_begin << ", " << t_end << ", " << dt_go << endl;
+   }
 
    // Propagate the current PhysicalEntity state to the desired time.
    // Set the current integration time for the integrator.
    this->integ_t = t_begin;
-   this->integrator.setIndyVar( this->integ_t );
-   // Compute and save the size of this compensation step.
-   this->compensate_dt = dt_go;
+   this->integrator.setIndyVar( 0.0 );
 
    // Loop through integrating the state forward to the current scenario time.
    while( (dt_go >= 0.0) && (fabs(dt_go) > this->integ_tol) ) {
 
-      // Print out debug information if requested.
-      if ( debug ) {
-         cout << "Integ dt, tol, t, dt_go: " << this->integ_dt << ", "
-              << this->integ_tol << ", " << integ_t << ", " << dt_go << endl;
+      // Use the inherited debug-handler to allow debug comments to be turned
+      // on and off from a setting in the input file.
+      if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+         cout << "****** PhysicalEntityLagCompSA2::integrate(): "
+              << "Integ dt, tol, t, dt_go: "
+              << this->integ_dt << ", " << this->integ_tol << ", "
+              << integ_t << ", " << dt_go << endl;
       }
 
       // Load the integration states and derivatives.
-      this->integrator.load();
+      this->load();
 
       // Perform the integration propagation one integration step.
       if ( dt_go > this->integ_dt ){
@@ -211,33 +259,26 @@ int PhysicalEntityLagCompSA2::compensate(
       }
 
       // Unload the integrated states and derivatives.
-      this->integrator.unload();
-
-      // Normalize the propagated attitude quaternion.
-      QuaternionData::normalize_quaternion( &(this->lag_comp_data.att.scalar),
-                            this->lag_comp_data.att.vector     );
+      this->unload();
 
       // Update the integration time.
-      this->integ_t = this->integrator.getIndyVar();
+      this->integ_t = t_begin + this->integrator.getIndyVar();
 
       // Compute the remaining time in the compensation step.
-      dt_go = t_end - this->integ_t;
+      dt_go = compensate_dt - this->integrator.getIndyVar();
 
    }
 
    // Update the lag compensated time,
-   lag_comp_data.time = integ_t;
+   this->update_time();
 
    // Compute the angular velocity vector from the propagated attitude
    // quaternion and its derivative.
-   QuaternionData::compute_omega( this->Q_dot.scalar,
-                  this->Q_dot.vector,
-                  this->lag_comp_data.att.scalar,
-                  this->lag_comp_data.att.vector,
-                  this->lag_comp_data.ang_vel );
+   this->Q_dot.compute_omega( this->lag_comp_data.att,
+                              this->lag_comp_data.ang_vel );
 
    // Print out debug information if desired.
-   if ( debug ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       cout << "\tOmega: "
            << "\t\t" << this->lag_comp_data.ang_vel[0] << ", "
            << "\t\t" << this->lag_comp_data.ang_vel[1] << ", "
@@ -248,4 +289,18 @@ int PhysicalEntityLagCompSA2::compensate(
 }
 
 
+/*! @job_class{derivative}
+ *  @brief Compute the first time derivative of the lag compensation state vector.
+ *  @param user_data Any special user data needed to compute the derivative values. */
+void PhysicalEntityLagCompSA2::derivative_first(
+   void * user_data )
+{
+
+   // Compute the derivative of the attitude quaternion from the
+   // angular velocity vector.
+   this->Q_dot.derivative_first( this->lag_comp_data.att,
+                                 this->lag_comp_data.ang_vel );
+
+   return;
+}
 

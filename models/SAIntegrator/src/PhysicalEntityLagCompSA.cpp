@@ -16,7 +16,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../../../source/TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{PhysicalEntityLagCompSA.cpp}
 
 
@@ -113,28 +113,32 @@ void PhysicalEntityLagCompSA::derivatives(
    double   derivs[],
    void   * udata)
 {
+   QuaternionData qdot;
 
-   // Cast the user data to a PhysicalEntityLagCompSA instance.
+   // Cast the user data to a PhysicalEntityLagCompSA2 instance.
    PhysicalEntityLagCompSA * lag_comp_data_ptr = static_cast<PhysicalEntityLagCompSA *>(udata);
 
-   // We need to compute the quaternion rate (Q_dot) from the current value
-   // of the attitude quaternion and the angular velocity vector.
-   lag_comp_data_ptr->derivative_first();
+   // Copy the time derivative of the attitude quaternion.
+   qdot.derivative_first( states[3], &(states[4]), &(states[10]) );
 
    // Compute the derivatives based on time, state, and user data.
-   // Translational state derivatives.
-   derivs[0] = lag_comp_data_ptr->lag_comp_data.vel[0];
-   derivs[1] = lag_comp_data_ptr->lag_comp_data.vel[1];
-   derivs[2] = lag_comp_data_ptr->lag_comp_data.vel[2];
+   // Translational velocity.
+   derivs[0] = states[7];
+   derivs[1] = states[8];
+   derivs[2] = states[9];
+
+   // Rotational velocity in quaternion form.
+   derivs[3]  = qdot.scalar;
+   derivs[4]  = qdot.vector[0];
+   derivs[5]  = qdot.vector[1];
+   derivs[6]  = qdot.vector[2];
+
+   // Translational acceleration.
    derivs[7] = lag_comp_data_ptr->accel[0];
    derivs[8] = lag_comp_data_ptr->accel[1];
    derivs[9] = lag_comp_data_ptr->accel[2];
 
-   // Rotational state derivatives.
-   derivs[3]  = lag_comp_data_ptr->Q_dot.scalar;
-   derivs[4]  = lag_comp_data_ptr->Q_dot.vector[0];
-   derivs[5]  = lag_comp_data_ptr->Q_dot.vector[1];
-   derivs[6]  = lag_comp_data_ptr->Q_dot.vector[2];
+   // Rotational acceleration.
    derivs[10] = lag_comp_data_ptr->rot_accel[0];
    derivs[11] = lag_comp_data_ptr->rot_accel[1];
    derivs[12] = lag_comp_data_ptr->rot_accel[2];
@@ -149,6 +153,12 @@ void PhysicalEntityLagCompSA::derivatives(
  */
 void PhysicalEntityLagCompSA::load()
 {
+
+   // Compute the derivatives of the lag compensation state vector.
+   // Note: The SAIntegrator does not require a pre-integration derivative
+   // evaluation.  The integrator calls the derivative() routine.
+   //this->derivative_first();
+
    // Load the integration states and derivatives.
    this->integrator.load();
    return;
@@ -191,7 +201,7 @@ int PhysicalEntityLagCompSA::integrate(
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
-      cout << "**** LagCompensationInteg::integrate(): "
+      cout << "**** PhysicalEntityLagCompSA::integrate(): "
            << "Compensate: t_begin, t_end, dt_go: "
            << t_begin << ", " << t_end << ", " << dt_go << endl;
    }
@@ -213,13 +223,8 @@ int PhysicalEntityLagCompSA::integrate(
               << integ_t << ", " << dt_go << endl;
       }
 
-      // Compute the derivatives of the lag compensation state vector.
-      // Note: The SAIntegrator does not require a pre-integration derivative
-      // evaluation.  The integrator calls the derivative() routine.
-      //this->derivative_first();
-
       // Load the integration states and derivatives.
-      this->integrator.load();
+      this->load();
 
       // Perform the integration propagation one integration step.
       if ( dt_go > this->integ_dt ){

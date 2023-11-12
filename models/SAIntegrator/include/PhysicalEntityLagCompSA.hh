@@ -23,7 +23,7 @@ NASA, Johnson Space Center\n
 @python_module{SpaceFOM}
 
 @tldh
-@trick_link_dependency{../../../source/SpaceFOM/PhysicalEntityLagCompInteg.cpp}
+@trick_link_dependency{../../../source/SpaceFOM/PhysicalEntityLagCompBase.cpp}
 @trick_link_dependency{../src/PhysicalEntityLagCompSA.cpp}
 
 @revs_title
