@@ -201,9 +201,9 @@ if (print_usage == True) :
 #instruments.echo_jobs.echo_jobs_on()
 trick.exec_set_trap_sigfpe(True)
 #trick.checkpoint_pre_init(1)
-trick.checkpoint_post_init(1)
-trick.checkpoint_end(1)
+#trick.checkpoint_post_init(1)
 #trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
+#trick.checkpoint_end(1)
 
 trick.exec_set_enable_freeze(False)
 trick.exec_set_freeze_command(False)
@@ -234,31 +234,28 @@ pe_dynamics.entity.pe_data.state.vel = [ 0.0, 0.0, 0.0 ]
 pe_dynamics.entity.pe_data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 pe_dynamics.entity.pe_data.state.ang_vel = [ 0.0, 0.0, 0.0 ]
 
-# Base propagation parameters.
-pe_dynamics.entity.pe_data.accel     = [0.0, 0.0, 0.0]
-pe_dynamics.entity.pe_data.ang_accel = [0.0, 0.0, 0.0]
+#
+# Basic mass properties.
+#
+pe_mass = 100.0
 pe_dynamics.entity.pe_data.cm        = [0.0, 0.0, 0.0]
-
+pe_dynamics.entity.de_data.mass      = pe_mass
+pe_dynamics.entity.de_data.mass_rate = 0.0
 pe_dynamics.entity.pe_data.body_wrt_struct.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 
-pe_dynamics.entity.de_data.force = [ 0.0, 0.0, 0.0 ]
-
-pe_dynamics.entity.de_data.torque = [ 0.0, 0.0, 0.0 ]
-
-# Basic mass properties.
-pe_mass = 100.0
-de_radius = 1.0
 # Principal inertia of a solid sphere.
+de_radius = 1.0
 Ixx = Iyy = Izz = (2.0 / 5.0) * pe_mass * de_radius * de_radius
-
-pe_dynamics.entity.de_data.mass = pe_mass
-pe_dynamics.entity.de_data.mass_rate = 0.0
 pe_dynamics.entity.de_data.inertia[0] = [ Ixx, 0.0, 0.0 ]
 pe_dynamics.entity.de_data.inertia[1] = [ 0.0, Iyy, 0.0 ]
 pe_dynamics.entity.de_data.inertia[2] = [ 0.0, 0.0, Izz ]
 pe_dynamics.entity.de_data.inertia_rate[0] = [ 0.0, 0.0, 0.0 ]
 pe_dynamics.entity.de_data.inertia_rate[1] = [ 0.0, 0.0, 0.0 ]
 pe_dynamics.entity.de_data.inertia_rate[2] = [ 0.0, 0.0, 0.0 ]
+
+# Base propagation parameters.
+pe_dynamics.entity.de_data.force  = [ 0.0, 0.0, 0.0 ]
+pe_dynamics.entity.de_data.torque = [ 0.0, 0.0, 0.0 ]
 
 
 #---------------------------------------------------------------------------
@@ -271,37 +268,34 @@ de_dynamics.entity.pe_data.parent_frame = 'FrameA'
 
 # Initial translational state.
 de_dynamics.entity.pe_data.state.pos = [ 0.0, 0.0, 0.0 ]
-de_dynamics.entity.pe_data.state.vel = [ 0.1, 0.2, 0.3 ]
+de_dynamics.entity.pe_data.state.vel = [ 0.0, 0.0, 0.0 ]
 
 # Initial rotational state.
 de_dynamics.entity.pe_data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
-de_dynamics.entity.pe_data.state.ang_vel = [ 0.0, 0.1, 0.0 ]
+de_dynamics.entity.pe_data.state.ang_vel = [ 0.0, 0.0, 0.0 ]
 
-# Base propagation parameters.
-de_dynamics.entity.pe_data.accel     = [0.0, 0.0, 0.0]
-de_dynamics.entity.pe_data.ang_accel = [0.0, 0.0, 0.0]
+#
+# Basic mass properties.
+#
+de_mass = 100.0
 de_dynamics.entity.pe_data.cm        = [0.0, 0.0, 0.0]
-
+de_dynamics.entity.de_data.mass      = de_mass
+de_dynamics.entity.de_data.mass_rate = 0.0
 de_dynamics.entity.pe_data.body_wrt_struct.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
 
-de_dynamics.entity.de_data.force = [ 0.0, 0.0, 0.0 ]
-
-de_dynamics.entity.de_data.torque = [ 0.0, 0.0, 0.0 ]
-
-# Basic mass properties.
-de_mass = 100.0
-de_radius = 1.0
 # Principal inertia of a solid sphere.
+de_radius = 1.0
 Ixx = Iyy = Izz = (2.0 / 5.0) * de_mass * de_radius * de_radius
-
-de_dynamics.entity.de_data.mass = de_mass
-de_dynamics.entity.de_data.mass_rate = 0.0
 de_dynamics.entity.de_data.inertia[0] = [ Ixx, 0.0, 0.0 ]
 de_dynamics.entity.de_data.inertia[1] = [ 0.0, Iyy, 0.0 ]
 de_dynamics.entity.de_data.inertia[2] = [ 0.0, 0.0, Izz ]
 de_dynamics.entity.de_data.inertia_rate[0] = [ 0.0, 0.0, 0.0 ]
 de_dynamics.entity.de_data.inertia_rate[1] = [ 0.0, 0.0, 0.0 ]
 de_dynamics.entity.de_data.inertia_rate[2] = [ 0.0, 0.0, 0.0 ]
+
+# Base propagation parameters.
+de_dynamics.entity.de_data.force  = [ 0.1, 0.1, 0.1 ]
+de_dynamics.entity.de_data.torque = [ 0.01, 0.01, 0.01 ]
 
 
 # =========================================================================

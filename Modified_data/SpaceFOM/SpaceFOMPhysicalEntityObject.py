@@ -142,7 +142,7 @@ class SpaceFOMPhysicalEntityObject(TrickHLAObjectConfig):
       self.add_attribute( attribute )
 
       ## Set up the map to the PhysicalEntity's rotational acceleration.
-      trick_data_name = str(entity_instance_name) + '.pe_packing_data.rot_accel'
+      trick_data_name = str(entity_instance_name) + '.pe_packing_data.ang_accel'
       attribute = TrickHLAAttributeConfig( 'rotational_acceleration',
                                            trick_data_name,
                                            self.hla_create,

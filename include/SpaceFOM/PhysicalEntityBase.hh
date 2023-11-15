@@ -192,7 +192,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    TrickHLA::Attribute *parent_frame_attr; ///< @trick_io{**} Parent reference frame Attribute.
    TrickHLA::Attribute *state_attr;        ///< @trick_io{**} State Attribute.
    TrickHLA::Attribute *accel_attr;        ///< @trick_io{**} Acceleration Attribute.
-   TrickHLA::Attribute *rot_accel_attr;    ///< @trick_io{**} Rotational acceleration Attribute.
+   TrickHLA::Attribute *ang_accel_attr;    ///< @trick_io{**} Angular acceleration Attribute.
    TrickHLA::Attribute *cm_attr;           ///< @trick_io{**} Center of mass Attribute.
    TrickHLA::Attribute *body_frame_attr;   ///< @trick_io{**} Body frame orientation Attribute.
 

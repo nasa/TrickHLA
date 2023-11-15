@@ -44,8 +44,8 @@ class PhysicalEntityData{
 
    SpaceTimeCoordinateData state; ///< @trick_units{--} Space time coordinate state.
 
-   double accel[3];     ///< @trick_units{m/s2} Entity acceleration vector.
-   double rot_accel[3]; ///< @trick_units{rad/s2} Entity angular acceleration vector.
+   double accel[3];     ///< @trick_units{m/s^2} Entity acceleration vector.
+   double ang_accel[3]; ///< @trick_units{rad/s^2} Entity angular acceleration vector.
    double cm[3];        ///< @trick_units{m} Position of the entity center of mass in the structural frame.
 
    QuaternionData body_wrt_struct; ///< @trick_units{--} Orientation of the body frame wrt. the structural frame.

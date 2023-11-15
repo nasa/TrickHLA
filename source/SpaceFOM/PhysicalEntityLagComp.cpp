@@ -161,9 +161,9 @@ void PhysicalEntityLagComp::load()
    this->integrator->deriv[istep][8] = this->Q_dot.vector[1];
    this->integrator->deriv[istep][9] = this->Q_dot.vector[2];
    // Rotational velocity
-   this->integrator->deriv[istep][10] = this->rot_accel[0];
-   this->integrator->deriv[istep][11] = this->rot_accel[1];
-   this->integrator->deriv[istep][12] = this->rot_accel[2];
+   this->integrator->deriv[istep][10] = this->ang_accel[0];
+   this->integrator->deriv[istep][11] = this->ang_accel[1];
+   this->integrator->deriv[istep][12] = this->ang_accel[2];
 
    // Return to calling routine.
    return;

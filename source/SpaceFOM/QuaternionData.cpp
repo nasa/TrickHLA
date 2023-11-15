@@ -57,6 +57,32 @@ QuaternionData::QuaternionData( const QuaternionData & source )
    this->copy( source );
 }
 
+
+/*!
+ * @job_class{initialization}
+ */
+QuaternionData::QuaternionData(
+   Euler_Seq       sequence,
+   double    const angles[3] )
+{
+   this->set_from_Euler( sequence, angles );
+}
+
+
+/*!
+ * @job_class{initialization}
+ */
+QuaternionData::QuaternionData(
+   double const T[3][3] )
+{
+   this->set_from_transfrom( T );
+}
+
+
+/***********************************************************************
+ * QuaternionData methods.
+ ***********************************************************************/
+
 /*!
  * @job_class{scheduled}
  */
@@ -87,63 +113,11 @@ void QuaternionData::initialize()
 /*!
  * @job_class{scheduled}
  */
-void QuaternionData::copy( const QuaternionData & source )
-{
-   this->scalar = source.scalar;
-   this->vector[0] = source.vector[0];
-   this->vector[1] = source.vector[1];
-   this->vector[2] = source.vector[2];
-   return;
-}
-
-
-/*!
- * @job_class{scheduled}
- */
-void QuaternionData::scale( double factor )
-{
-   this->scalar *= factor;
-   this->vector[0] *= factor;
-   this->vector[1] *= factor;
-   this->vector[2] *= factor;
-   return;
-}
-
-
-/*!
- * @job_class{scheduled}
- */
-void QuaternionData::conjugate()
-{
-   this->vector[0] = -this->vector[0];
-   this->vector[1] = -this->vector[1];
-   this->vector[2] = -this->vector[2];
-   return;
-}
-
-
-/*!
- * @job_class{scheduled}
- */
-void QuaternionData::conjugate(
-   const QuaternionData & source )
-{
-   this->scalar = source.scalar;
-   this->vector[0] = -source.vector[0];
-   this->vector[1] = -source.vector[1];
-   this->vector[2] = -source.vector[2];
-   return;
-}
-
-
-/*!
- * @job_class{scheduled}
- */
 void QuaternionData::set_from_Euler(
-   Euler_Seq sequence,
-   double    angles[3])
+   Euler_Seq    sequence,
+   double const angles[3])
 {
-   euler_quat( angles, &(this->scalar), 0, sequence );
+   euler_quat( (double*)angles, &(this->scalar), 0, sequence );
    return;
 }
 
@@ -152,7 +126,7 @@ void QuaternionData::set_from_Euler(
  * @job_class{scheduled}
  */
 void QuaternionData::set_from_Euler_deg(
-   Euler_Seq sequence,
+   Euler_Seq    sequence,
    double const angles_deg[3])
 {
    double angles[3];
@@ -193,11 +167,23 @@ void QuaternionData::get_Euler_deg(
 
 
 /*!
- * @job_class{scheduled}
+ * @job_class{initialization}
  */
-void QuaternionData::normalize()
+void QuaternionData::set_from_transfrom(
+   double const T[3][3] )
 {
-   normalize_quaternion( &scalar, vector );
+   mat_to_quat( &(this->scalar), (double(*)[3])T );
+   return;
+}
+
+
+/*!
+ * @job_class{initialization}
+ */
+void QuaternionData::get_transfrom(
+   double T[3][3] )
+{
+   quat_to_mat( (double(*)[3])T, &(this->scalar) );
    return;
 }
 
@@ -205,7 +191,347 @@ void QuaternionData::normalize()
 /*!
  * @job_class{scheduled}
  */
-void QuaternionData::normalize_quaternion(
+void QuaternionData::scale( double factor )
+{
+   this->scalar *= factor;
+   this->vector[0] *= factor;
+   this->vector[1] *= factor;
+   this->vector[2] *= factor;
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::copy( const QuaternionData & source )
+{
+   this->scalar = source.scalar;
+   this->vector[0] = source.vector[0];
+   this->vector[1] = source.vector[1];
+   this->vector[2] = source.vector[2];
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::conjugate()
+{
+   this->vector[0] = -this->vector[0];
+   this->vector[1] = -this->vector[1];
+   this->vector[2] = -this->vector[2];
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::conjugate(
+   const QuaternionData & source )
+{
+   this->scalar = source.scalar;
+   this->vector[0] = -source.vector[0];
+   this->vector[1] = -source.vector[1];
+   this->vector[2] = -source.vector[2];
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::normalize()
+{
+   normalize( &scalar, vector );
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::multiply(
+   QuaternionData & l,
+   QuaternionData & r )
+{
+   multiply_sv( l.scalar, l.vector, r.scalar, r.vector, &(this->scalar), this->vector );
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::multiply(
+   QuaternionData & l,
+   double           r[3] )
+{
+   left_multiply_v( l.scalar, l.vector, r, &(this->scalar), this->vector );
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::multiply(
+   double           v[3],
+   QuaternionData & r     )
+{
+   right_multiply_v( v, r.scalar, r.vector, &(this->scalar), this->vector );
+   return;
+}
+
+
+/*!
+ * @job_class{derivative}
+ */
+void QuaternionData::derivative_first(
+   QuaternionData const & quat,
+   double const           omega[3] )
+{
+   compute_derivative( quat.scalar, quat.vector, omega, &(this->scalar), this->vector );
+   return;
+}
+
+
+/*!
+ * @job_class{derivative}
+ */
+void QuaternionData::derivative_first(
+   double const quat_scalar,
+   double const quat_vector[3],
+   double const omega[3] )
+{
+   compute_derivative( quat_scalar, quat_vector, omega, &(this->scalar), this->vector );
+   return;
+}
+
+
+/*!
+ * @job_class{derivative}
+ */
+void QuaternionData::derivative_second(
+   QuaternionData const & quat,
+   double const           omega[3],
+   double const           omega_dot[3] )
+{
+   compute_2nd_derivative( quat.scalar, quat.vector, omega, omega_dot,  &(this->scalar), this->vector );
+   return;
+}
+
+
+/*!
+ * @job_class{derivative}
+ */
+void QuaternionData::derivative_second(
+   double const quat_scalar,
+   double const quat_vector[3],
+   double const omega[3],
+   double const omega_dot[3] )
+{
+   compute_2nd_derivative( quat_scalar, quat_vector, omega, omega_dot,  &(this->scalar), this->vector );
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::compute_omega(
+   QuaternionData const & att_quat,
+   double                 omega[3] )
+{
+   compute_omega( this->scalar, this->vector, att_quat.scalar, att_quat.vector, omega );
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::transform_vector(
+   double const v_in[3],
+   double       v_out[3] ) const
+{
+   double qv_cross_v[3];
+   double qv_cross_qv_cross_v[3];
+   double v_dot;
+
+   v_dot = V_DOT( vector, v_in );
+   V_CROSS( qv_cross_v, vector, v_in);
+   V_CROSS( qv_cross_qv_cross_v, vector, qv_cross_v);
+
+   v_out[0] = qv_cross_v[0] * 2.0;
+   v_out[1] = qv_cross_v[1] * 2.0;
+   v_out[2] = qv_cross_v[2] * 2.0;
+
+   v_out[0] += v_in[0] * scalar;
+   v_out[1] += v_in[1] * scalar;
+   v_out[2] += v_in[2] * scalar;
+
+   v_out[0] *= scalar;
+   v_out[1] *= scalar;
+   v_out[2] *= scalar;
+
+   v_out[0] += vector[0] * v_dot;
+   v_out[1] += vector[1] * v_dot;
+   v_out[2] += vector[2] * v_dot;
+
+   v_out[0] += qv_cross_qv_cross_v[0];
+   v_out[1] += qv_cross_qv_cross_v[1];
+   v_out[2] += qv_cross_qv_cross_v[2];
+
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::conjugate_transform_vector(
+   double const v_in[3],
+   double       v_out[3] ) const
+{
+   QuaternionData q_star( *this );
+   q_star.conjugate();
+   q_star.transform_vector( v_in, v_out );
+   return;
+}
+
+
+/***********************************************************************
+ * Static methods.
+ ***********************************************************************/
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::multiply_sv(
+   double const   ls,
+   double const   lv[3],
+   double const   rs,
+   double const   rv[3],
+   double       * ps,
+   double         pv[3] )
+{
+   // We use a working area because we do not know it the product happens to
+   // refer to either the left or right operands.
+   double ws;
+   double wv[3];
+
+   // Quaternion multiplication:
+   // p[s:v] = l[s:v] * r[s:v]
+   // ps = (ls*rs) - |lv,rv|
+   // pv = (lv X rv) + (ls * rv) + (lv * rs)
+
+   // Compute the scalar component:
+   // ws = (ls*rs) - |lv,rv|
+   ws    = (ls * rs) - ((lv[0]*rv[0]) + (lv[1]*rv[1]) + (lv[2]*rv[2]));
+
+   // Compute the vector component:
+   // wv = (lv X rv) + (ls * rv) + (lv * rs)
+   wv[0] = ((lv[1]*rv[2]) - (lv[2]*rv[1])) + (ls*rv[0]) + (lv[0]*rs);
+   wv[1] = ((lv[2]*rv[0]) - (lv[0]*rv[2])) + (ls*rv[1]) + (lv[1]*rs);
+   wv[2] = ((lv[0]*rv[1]) - (lv[1]*rv[0])) + (ls*rv[2]) + (lv[2]*rs);
+
+   // Place results in the product quaternion.
+   *ps   = ws;
+   pv[0] = wv[0];
+   pv[1] = wv[1];
+   pv[2] = wv[2];
+
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::left_multiply_v(
+   double const   ls,
+   double const   lv[3],
+   double const   rv[3],
+   double       * ps,
+   double         pv[3] )
+{
+   // We use a working area because we do not know it the product happens to
+   // refer to either the left or right operands.
+   double ws;
+   double wv[3];
+
+   // Quaternion multiplication:
+   // p[s:v] = l[s:v] * r[0:v]
+   // ps = - |lv,rv|
+   // pv = (lv X rv) + (ls * rv)
+
+   // Compute the scalar component:
+   // ws = - |lv,rv|
+   ws    = - ((lv[0]*rv[0]) + (lv[1]*rv[1]) + (lv[2]*rv[2]));
+
+   // Compute the vector component:
+   // wv = (lv X rv) + (ls * rv) + (lv * rs)
+   wv[0] = ((lv[1]*rv[2]) - (lv[2]*rv[1])) + (ls*rv[0]);
+   wv[1] = ((lv[2]*rv[0]) - (lv[0]*rv[2])) + (ls*rv[1]);
+   wv[2] = ((lv[0]*rv[1]) - (lv[1]*rv[0])) + (ls*rv[2]);
+
+   // Place results in the product quaternion.
+   *ps   = ws;
+   pv[0] = wv[0];
+   pv[1] = wv[1];
+   pv[2] = wv[2];
+
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::right_multiply_v(
+   double const   lv[3],
+   double const   rs,
+   double const   rv[3],
+   double       * ps,
+   double         pv[3] )
+{
+   // We use a working area because we do not know it the product happens to
+   // refer to either the left or right operands.
+   double ws;
+   double wv[3];
+
+   // Quaternion multiplication:
+   // p[s:v] = l[0:v] * r[s:v]
+   // ps = - |lv,rv|
+   // pv = (lv X rv) + (ls * rv) + (lv * rs)
+
+   // Compute the scalar component:
+   // ws = (ls*rs) - |lv,rv|
+   ws    = - ((lv[0]*rv[0]) + (lv[1]*rv[1]) + (lv[2]*rv[2]));
+
+   // Compute the vector component:
+   // wv = (lv X rv) + (ls * rv) + (lv * rs)
+   wv[0] = ((lv[1]*rv[2]) - (lv[2]*rv[1])) + (lv[0]*rs);
+   wv[1] = ((lv[2]*rv[0]) - (lv[0]*rv[2])) + (lv[1]*rs);
+   wv[2] = ((lv[0]*rv[1]) - (lv[1]*rv[0])) + (lv[2]*rs);
+
+   // Place results in the product quaternion.
+   *ps   = ws;
+   pv[0] = wv[0];
+   pv[1] = wv[1];
+   pv[2] = wv[2];
+
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::normalize(
    double * qs,
    double   qv[3])
 {
@@ -230,7 +556,7 @@ void QuaternionData::normalize_quaternion(
    // The approximation is valid if this error is smaller than numerical
    // precision. A double IEEE floating point number has a 53 bit mantissa plus
    // an implied 1 to the left of the binary point. The validity limit is thus
-   // sqrt(8*2^(-54)) = 2.107342e-08, to the accuracy of the appoximation.
+   // sqrt(8*2^(-54)) = 2.107342e-08, to the accuracy of the approximation.
    if ((diff1 > -2.107342e-08) && (diff1 < 2.107342e-08)) {
       norm_fact = 2.0 / (1.0 + q_mag_sq);
    } else {
@@ -238,10 +564,10 @@ void QuaternionData::normalize_quaternion(
    }
 
    // Scale the quaternion by the above normalization factor.
-   *qs *= norm_fact;
-   for ( int iinc = 0; iinc < 3; ++iinc ) {
-      qv[iinc] *= norm_fact;
-   }
+   *qs   *= norm_fact;
+   qv[0] *= norm_fact;
+   qv[1] *= norm_fact;
+   qv[2] *= norm_fact;
 
    // Return to calling routine.
    return;
@@ -251,32 +577,7 @@ void QuaternionData::normalize_quaternion(
 /*!
  * @job_class{derivative}
  */
-void QuaternionData::derivative_first(
-   QuaternionData const & quat,
-   double const           omega[3] )
-{
-   compute_quat_dot( quat.scalar, quat.vector, omega, &(this->scalar), this->vector );
-   return;
-}
-
-
-/*!
- * @job_class{derivative}
- */
-void QuaternionData::derivative_first(
-   double const quat_scalar,
-   double const quat_vector[3],
-   double const omega[3] )
-{
-   compute_quat_dot( quat_scalar, quat_vector, omega, &(this->scalar), this->vector );
-   return;
-}
-
-
-/*!
- * @job_class{derivative}
- */
-void QuaternionData::compute_quat_dot (
+void QuaternionData::compute_derivative(
    double const   quat_scalar,
    double const   quat_vector[3],
    double const   omega[3],
@@ -297,12 +598,12 @@ void QuaternionData::compute_quat_dot (
 /*!
  * @job_class{scheduled}
  */
-void QuaternionData::compute_Q_dot(
+void QuaternionData::compute_derivative(
    QuaternionData const * q,
    double const           omega[3],
    QuaternionData       * q_dot )
 {
-   compute_quat_dot( q->scalar, q->vector, omega, &(q_dot->scalar), q_dot->vector );
+   compute_derivative( q->scalar, q->vector, omega, &(q_dot->scalar), q_dot->vector );
    return;
 }
 
@@ -310,23 +611,11 @@ void QuaternionData::compute_Q_dot(
 /*!
  * @job_class{scheduled}
  */
-void QuaternionData::compute_omega (
-   QuaternionData const & att_quat,
-   double                 omega[3] )
-{
-   compute_omega( this->scalar, this->vector, att_quat.scalar, att_quat.vector, omega );
-   return;
-}
-
-
-/*!
- * @job_class{scheduled}
- */
-void QuaternionData::compute_omega (
-   double const qdot_scalar,
-   double const qdot_vector[3],
+void QuaternionData::compute_omega(
    double const quat_scalar,
    double const quat_vector[3],
+   double const qdot_scalar,
+   double const qdot_vector[3],
    double       omega[3] )
 {
    double scalar;
@@ -351,15 +640,19 @@ void QuaternionData::compute_omega (
    return;
 }
 
-void QuaternionData::compute_omega_Q (
-   QuaternionData const * q_dot,
+
+/*!
+ * @job_class{scheduled}
+ */
+void QuaternionData::compute_omega(
    QuaternionData const * q,
+   QuaternionData const * q_dot,
    double                 omega[3] )
 {
-   compute_omega( q_dot->scalar,
-                  q_dot->vector,
-                  q->scalar,
+   compute_omega( q->scalar,
                   q->vector,
+                  q_dot->scalar,
+                  q_dot->vector,
                   omega );
    return;
 }
@@ -368,7 +661,7 @@ void QuaternionData::compute_omega_Q (
 /*!
  * @job_class{scheduled}
  */
-void QuaternionData::compute_quat_dotdot (
+void QuaternionData::compute_2nd_derivative(
    double const   quat_scalar,
    double const   quat_vector[3],
    double const   omega[3],
@@ -376,23 +669,24 @@ void QuaternionData::compute_quat_dotdot (
    double       * qdotdot_scalar,
    double         qdotdot_vector[3] )
 {
-   double half_omega_mag = 0.5 * V_MAG( omega );
-   double minus_hom_sq = -half_omega_mag * half_omega_mag;
-   double minus_half_alpha[3];
-   double mhaXqv[3];
+   double omega_mag_sq;
+   double omega_quat_scalar;
+   double omega_quat_vector[3];
 
-   V_SCALE( minus_half_alpha, omega_dot, -0.5 );
-   V_CROSS( mhaXqv, minus_half_alpha, quat_vector );
+   omega_mag_sq = (omega[0]*omega[0]) + (omega[1]*omega[1]) + (omega[2]*omega[2]);
 
-   // Compute the scalar psrt of second derivative of Q.
-   *qdotdot_scalar = (minus_hom_sq * quat_scalar) - (V_DOT( minus_half_alpha, quat_vector ));
+   // Compute the special omega/omega_dot quaternion.
+   omega_quat_scalar = -0.25 * omega_mag_sq;
+   omega_quat_vector[0] = -0.5 * omega_dot[0];
+   omega_quat_vector[1] = -0.5 * omega_dot[1];
+   omega_quat_vector[2] = -0.5 * omega_dot[2];
 
-   // Compute the vector part of second derivative of Q.
-   V_SCALE( qdotdot_vector, quat_vector, minus_hom_sq );
-   VxS_ADD( qdotdot_vector, minus_half_alpha, quat_scalar );
-   V_DECR( qdotdot_vector, mhaXqv );
+   // Multiply the special omega/omega_dot quaternion by the attitude quaternion
+   // to compute the second time derivative of the attitude quaternion.
+   multiply_sv ( omega_quat_scalar, omega_quat_vector,
+                 quat_scalar, quat_vector,
+                 qdotdot_scalar, qdotdot_vector );
 
-   // Return to calling routine.
    return;
 }
 
@@ -400,13 +694,13 @@ void QuaternionData::compute_quat_dotdot (
 /*!
  * @job_class{scheduled}
  */
-void QuaternionData::compute_Q_dotdot(
+void QuaternionData::compute_2nd_derivative(
    QuaternionData const * q,
    double const           omega[3],
    double const           omega_dot[3],
    QuaternionData       * q_dotdot )
 {
-   QuaternionData::compute_quat_dotdot( q->scalar, q->vector, omega, omega_dot, &(q_dotdot->scalar), q_dotdot->vector );
+   QuaternionData::compute_2nd_derivative( q->scalar, q->vector, omega, omega_dot, &(q_dotdot->scalar), q_dotdot->vector );
    return;
 }
 
@@ -481,59 +775,5 @@ void QuaternionData::multiply_conjugate(
    V_CROSS( qv_cross_qv, lq_vector, rq_vector );
    V_DECR( vector, qv_cross_qv );
 
-   return;
-}
-
-
-
-/*!
- * @job_class{scheduled}
- */
-void QuaternionData::transform_vector(
-   double const v_in[3],
-   double       v_out[3] ) const
-{
-   double qv_cross_v[3];
-   double qv_cross_qv_cross_v[3];
-   double v_dot;
-
-   v_dot = V_DOT( vector, v_in );
-   V_CROSS( qv_cross_v, vector, v_in);
-   V_CROSS( qv_cross_qv_cross_v, vector, qv_cross_v);
-
-   v_out[0] = qv_cross_v[0] * 2.0;
-   v_out[1] = qv_cross_v[1] * 2.0;
-   v_out[2] = qv_cross_v[2] * 2.0;
-
-   v_out[0] += v_in[0] * scalar;
-   v_out[1] += v_in[1] * scalar;
-   v_out[2] += v_in[2] * scalar;
-
-   v_out[0] *= scalar;
-   v_out[1] *= scalar;
-   v_out[2] *= scalar;
-
-   v_out[0] += vector[0] * v_dot;
-   v_out[1] += vector[1] * v_dot;
-   v_out[2] += vector[2] * v_dot;
-
-   v_out[0] += qv_cross_qv_cross_v[0];
-   v_out[1] += qv_cross_qv_cross_v[1];
-   v_out[2] += qv_cross_qv_cross_v[2];
-
-   return;
-}
-
-
-/*!
- * @job_class{scheduled}
- */
-void QuaternionData::conjugate_transform_vector(
-   double const v_in[3],
-   double       v_out[3] ) const
-{
-   QuaternionData q_star( *this );
-   q_star.conjugate();
-   q_star.transform_vector( v_in, v_out );
    return;
 }

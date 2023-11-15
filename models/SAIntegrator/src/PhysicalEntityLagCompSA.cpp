@@ -139,9 +139,9 @@ void PhysicalEntityLagCompSA::derivatives(
    derivs[9] = lag_comp_data_ptr->accel[2];
 
    // Rotational acceleration.
-   derivs[10] = lag_comp_data_ptr->rot_accel[0];
-   derivs[11] = lag_comp_data_ptr->rot_accel[1];
-   derivs[12] = lag_comp_data_ptr->rot_accel[2];
+   derivs[10] = lag_comp_data_ptr->ang_accel[0];
+   derivs[11] = lag_comp_data_ptr->ang_accel[1];
+   derivs[12] = lag_comp_data_ptr->ang_accel[2];
 
    // Return to calling routine.
    return;

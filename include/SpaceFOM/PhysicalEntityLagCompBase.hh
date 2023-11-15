@@ -114,7 +114,7 @@ class PhysicalEntityLagCompBase : public TrickHLA::LagCompensation
    TrickHLA::Attribute *parent_frame_attr; ///< @trick_io{**} Parent reference frame Attribute.
    TrickHLA::Attribute *state_attr;        ///< @trick_io{**} State Attribute.
    TrickHLA::Attribute *accel_attr;        ///< @trick_io{**} Acceleration Attribute.
-   TrickHLA::Attribute *rot_accel_attr;    ///< @trick_io{**} Rotational acceleration Attribute.
+   TrickHLA::Attribute *ang_accel_attr;    ///< @trick_io{**} Rotational acceleration Attribute.
    TrickHLA::Attribute *cm_attr;           ///< @trick_io{**} Center of mass Attribute.
    TrickHLA::Attribute *body_frame_attr;   ///< @trick_io{**} Body frame orientation Attribute.
 
@@ -123,7 +123,7 @@ class PhysicalEntityLagCompBase : public TrickHLA::LagCompensation
    SpaceTimeCoordinateData lag_comp_data; ///< @trick_units{--} Compensated state data.
    QuaternionData          Q_dot;         ///< @trick_units{--} Computed attitude quaternion rate.
    double accel[3];     ///< @trick_units{m/s2} Entity acceleration vector.
-   double rot_accel[3]; ///< @trick_units{rad/s2} Entity rotational acceleration vector.
+   double ang_accel[3]; ///< @trick_units{rad/s2} Entity rotational acceleration vector.
    double cm[3];        ///< @trick_units{m} Position of the entity center of mass in the structural frame.
 
    QuaternionData body_wrt_struct; ///< @trick_units{--} Orientation of the body frame wrt. the structural frame.

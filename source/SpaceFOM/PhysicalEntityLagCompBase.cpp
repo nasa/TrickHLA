@@ -64,7 +64,7 @@ PhysicalEntityLagCompBase::PhysicalEntityLagCompBase( PhysicalEntityBase & entit
      parent_frame_attr(NULL),
      state_attr(NULL),
      accel_attr(NULL),
-     rot_accel_attr(NULL),
+     ang_accel_attr(NULL),
      cm_attr(NULL),
      body_frame_attr(NULL),
      compensate_dt( 0.0 )
@@ -73,7 +73,7 @@ PhysicalEntityLagCompBase::PhysicalEntityLagCompBase( PhysicalEntityBase & entit
    // Initialize the acceleration values.
    for( int iinc = 0 ; iinc < 3 ; iinc++ ){
       this->accel[iinc]     = 0.0;
-      this->rot_accel[iinc] = 0.0;
+      this->ang_accel[iinc] = 0.0;
       this->cm[iinc]        = 0.0;
    }
 
@@ -126,7 +126,7 @@ void PhysicalEntityLagCompBase::initialize_callback(
    parent_frame_attr = entity.parent_frame_attr;
    state_attr        = entity.state_attr;
    accel_attr        = entity.accel_attr;
-   rot_accel_attr    = entity.rot_accel_attr;
+   ang_accel_attr    = entity.ang_accel_attr;
    cm_attr           = entity.cm_attr;
    body_frame_attr   = entity.body_frame_attr;
 
@@ -143,7 +143,7 @@ void PhysicalEntityLagCompBase::initialize_states()
    this->body_wrt_struct = this->entity.pe_packing_data.body_wrt_struct;
    for ( int iinc = 0 ; iinc < 3 ; iinc++ ){
       this->accel[iinc]     = this->entity.pe_packing_data.accel[iinc];
-      this->rot_accel[iinc] = this->entity.pe_packing_data.rot_accel[iinc];
+      this->ang_accel[iinc] = this->entity.pe_packing_data.ang_accel[iinc];
       this->cm[iinc]        = this->entity.pe_packing_data.cm[iinc];
    }
    this->Q_dot.derivative_first( this->lag_comp_data.att,
@@ -295,7 +295,7 @@ void PhysicalEntityLagCompBase::unload_lag_comp_data()
    this->entity.pe_packing_data.body_wrt_struct = this->body_wrt_struct;
    for ( int iinc = 0 ; iinc < 3 ; iinc++ ){
       this->entity.pe_packing_data.accel[iinc]     = this->accel[iinc];
-      this->entity.pe_packing_data.rot_accel[iinc] = this->rot_accel[iinc];
+      this->entity.pe_packing_data.ang_accel[iinc] = this->ang_accel[iinc];
       this->entity.pe_packing_data.cm[iinc]        = this->cm[iinc];
    }
 
@@ -313,7 +313,7 @@ void PhysicalEntityLagCompBase::load_lag_comp_data()
    this->body_wrt_struct = this->entity.pe_packing_data.body_wrt_struct;
    for ( int iinc = 0 ; iinc < 3 ; iinc++ ){
       this->accel[iinc]     = this->entity.pe_packing_data.accel[iinc];
-      this->rot_accel[iinc] = this->entity.pe_packing_data.rot_accel[iinc];
+      this->ang_accel[iinc] = this->entity.pe_packing_data.ang_accel[iinc];
       this->cm[iinc]        = this->entity.pe_packing_data.cm[iinc];
    }
 
@@ -350,7 +350,7 @@ void PhysicalEntityLagCompBase::print_lag_comp_data()
         << "\t\t" << this->lag_comp_data.att.vector[0] << ", "
         << "\t\t" << this->lag_comp_data.att.vector[1] << ", "
         << "\t\t" << this->lag_comp_data.att.vector[2] << endl;
-   cout << "\tattitude (RPY): "
+   cout << "\tattitude (RPY){deg}: "
         << "\t\t" << euler_angles[0] << ", "
         << "\t\t" << euler_angles[1] << ", "
         << "\t\t" << euler_angles[2] << endl;
@@ -364,9 +364,9 @@ void PhysicalEntityLagCompBase::print_lag_comp_data()
         << "\t\t" << this->Q_dot.vector[1] << ", "
         << "\t\t" << this->Q_dot.vector[2] << endl;
    cout << "\tangular acceleration: "
-        << "\t\t" << this->rot_accel[0] << ", "
-        << "\t\t" << this->rot_accel[1] << ", "
-        << "\t\t" << this->rot_accel[2] << endl;
+        << "\t\t" << this->ang_accel[0] << ", "
+        << "\t\t" << this->ang_accel[1] << ", "
+        << "\t\t" << this->ang_accel[2] << endl;
    cout << "\tcenter of mass: "
         << "\t\t" << this->cm[0] << ", "
         << "\t\t" << this->cm[1] << ", "

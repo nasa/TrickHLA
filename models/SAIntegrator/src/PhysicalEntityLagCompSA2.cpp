@@ -117,9 +117,9 @@ void PhysicalEntityLagCompSA2::derivatives(
    void   * udata)
 {
    double omega[3];
-   double quat_scalar = pos[3];
+   double quat_scalar;
    double quat_vector[3];
-   double qdot_scalar = vel[3];
+   double qdot_scalar;
    double qdot_vector[3];
 
    // Cast the user data to a PhysicalEntityLagCompSA2 instance.
@@ -135,36 +135,30 @@ void PhysicalEntityLagCompSA2::derivatives(
    //
    // Compute the rotational acceleration.
    //
+   quat_scalar    = pos[3];
    quat_vector[0] = pos[4];
    quat_vector[1] = pos[5];
    quat_vector[2] = pos[6];
+
+   qdot_scalar    = vel[3];
    qdot_vector[0] = vel[4];
    qdot_vector[1] = vel[5];
    qdot_vector[2] = vel[6];
 
    // Compute the angular velocity vector.
-   QuaternionData::compute_omega( qdot_scalar,
-                  qdot_vector,
-                  quat_scalar,
-                  quat_vector,
-                  omega );
+   QuaternionData::compute_omega( quat_scalar,
+                                  quat_vector,
+                                  qdot_scalar,
+                                  qdot_vector,
+                                  omega );
 
    // Compute the second derivative of the attitude quaternion.
-   QuaternionData::compute_quat_dotdot( quat_scalar,
-                        quat_vector,
-                        omega,
-                        lag_comp_data_ptr->rot_accel,
-                        &(accel[3]),
-                        &(accel[4]) );
-
-#ifdef DEBUG
-   cout << "Q_dotdot: " << endl;
-   cout << "\tScalar: " << accel[3] << endl;
-   cout << "\tVector: "
-        << "\t\t" << accel[4] << ", "
-        << "\t\t" << accel[5] << ", "
-        << "\t\t" << accel[6] << endl;
-#endif
+   QuaternionData::compute_2nd_derivative( quat_scalar,
+                                        quat_vector,
+                                        omega,
+                                        lag_comp_data_ptr->ang_accel,
+                                        &(accel[3]),
+                                        &(accel[4]) );
 
    // Return to calling routine.
    return;

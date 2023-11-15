@@ -192,7 +192,7 @@ void DynamicalEntityBase::default_data(
    object->attributes[5].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    object->attributes[6].FOM_name      = allocate_input_string( "rotational_acceleration" );
-   trick_name_str                      = entity_name_str + string( ".pe_packing_data.rot_accel" );
+   trick_name_str                      = entity_name_str + string( ".pe_packing_data.ang_accel" );
    object->attributes[6].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[6].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[6].publish       = publishes;

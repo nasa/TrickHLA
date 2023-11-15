@@ -72,7 +72,7 @@ PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
      parent_frame_attr( NULL ),
      state_attr( NULL ),
      accel_attr( NULL ),
-     rot_accel_attr( NULL ),
+     ang_accel_attr( NULL ),
      cm_attr( NULL ),
      body_frame_attr( NULL ),
      stc_encoder(pe_packing_data.state),
@@ -97,7 +97,7 @@ PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
 
    // Non-STC data.
    V_INIT( pe_packing_data.accel );
-   V_INIT( pe_packing_data.rot_accel );
+   V_INIT( pe_packing_data.ang_accel );
    V_INIT( pe_packing_data.cm );
 
    // The body to structural orientation quaternion.
@@ -251,7 +251,7 @@ void PhysicalEntityBase::default_data(
    object->attributes[5].rti_encoding  = TrickHLA::ENCODING_LITTLE_ENDIAN;
 
    object->attributes[6].FOM_name      = allocate_input_string( "rotational_acceleration" );
-   trick_name_str                      = entity_name_str + string( ".pe_packing_data.rot_accel" );
+   trick_name_str                      = entity_name_str + string( ".pe_packing_data.ang_accel" );
    object->attributes[6].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[6].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[6].publish       = publishes;
@@ -357,7 +357,7 @@ void PhysicalEntityBase::initialize_callback(
    parent_frame_attr = get_attribute_and_validate( "parent_reference_frame" );
    state_attr        = get_attribute_and_validate( "state" );
    accel_attr        = get_attribute_and_validate( "acceleration" );
-   rot_accel_attr    = get_attribute_and_validate( "rotational_acceleration" );
+   ang_accel_attr    = get_attribute_and_validate( "rotational_acceleration" );
    cm_attr           = get_attribute_and_validate( "center_of_mass" );
    body_frame_attr   = get_attribute_and_validate( "body_wrt_structural" );
 
@@ -553,9 +553,9 @@ void PhysicalEntityBase::debug_print(
                     << pe_packing_data.accel[1] << ", "
                     << pe_packing_data.accel[2] << endl
           << "\tangular acceleration: "
-                    << pe_packing_data.rot_accel[0] << ", "
-                    << pe_packing_data.rot_accel[1] << ", "
-                    << pe_packing_data.rot_accel[2] << endl
+                    << pe_packing_data.ang_accel[0] << ", "
+                    << pe_packing_data.ang_accel[1] << ", "
+                    << pe_packing_data.ang_accel[2] << endl
           << "\tcenter of mass (cm): "
                     << pe_packing_data.cm[0] << ", "
                     << pe_packing_data.cm[1] << ", "

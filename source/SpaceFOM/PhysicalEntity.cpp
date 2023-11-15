@@ -237,7 +237,7 @@ void PhysicalEntity::pack_from_working_data()
 
    // Set the rotational acceleration data.
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      pe_packing_data.rot_accel[iinc] = physical_data->rot_accel[iinc];
+      pe_packing_data.ang_accel[iinc] = physical_data->ang_accel[iinc];
    }
 
    // Set the center of mass location.
