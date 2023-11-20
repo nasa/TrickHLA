@@ -410,15 +410,15 @@ class JEODPhysicalInterfaceSimObject : public Trick::SimObject {
 };
 
 // Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
-JEODPhysicalEntiySimObject active_physical_entity(&(active_vehicle.dyn_body));
+JEODPhysicalEntiySimObject active_physical_entity(&(active_vehicle.dyn_body), (P_HLA_INIT-1));
 
-// Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
+// Instantiate the SpaceFOM PhysicalInterface object associated with the JEOD DynBody.
 JEODPhysicalInterfaceSimObject active_physical_interface(&(active_vehicle.dyn_body));
 
 // Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
-JEODPhysicalEntiySimObject passive_physical_entity(&(passive_vehicle.dyn_body));
+JEODPhysicalEntiySimObject passive_physical_entity(&(passive_vehicle.dyn_body), (P_HLA_INIT-1));
 
-// Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
+// Instantiate the SpaceFOM PhysicalInterface object associated with the JEOD DynBody.
 JEODPhysicalInterfaceSimObject passive_physical_interface(&(passive_vehicle.dyn_body));
 
 // Setup the integration loop.

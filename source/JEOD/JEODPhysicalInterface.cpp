@@ -91,7 +91,7 @@ void JEODPhysicalInterface::initialize()
    if ( vehicle_point_data == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL vehicle_point_data: " << name << THLA_ENDL;
+             << " ERROR: Unexpected NULL vehicle_point_data: " << this->packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -112,7 +112,7 @@ void JEODPhysicalInterface::initialize( const jeod::BodyRefFrame *vehicle_point_
    if ( vehicle_point_ptr == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL vehicle_point_ptr: " << name << THLA_ENDL;
+             << " ERROR: Unexpected NULL vehicle_point_ptr: " << this->packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -136,7 +136,7 @@ void JEODPhysicalInterface::initialize(
    if ( this->vehicle_point_id == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL vehicle_point_id for interface " << name << THLA_ENDL;
+             << " ERROR: Unexpected NULL vehicle_point_id for interface " << this->packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -145,7 +145,7 @@ void JEODPhysicalInterface::initialize(
    if ( dyn_body_ptr == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL dyn_body_ptr: for interface " << name << THLA_ENDL;
+             << " ERROR: Unexpected NULL dyn_body_ptr: for interface " << this->packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -169,7 +169,7 @@ void JEODPhysicalInterface::initialize(
    return;
 }
 
-void JEODPhysicalInterface::pack()
+void JEODPhysicalInterface::pack_from_working_data()
 {
    int iinc;
 
@@ -203,69 +203,20 @@ void JEODPhysicalInterface::pack()
    // Pack the state time coordinate data.
    // Position vector.
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      position[iinc] = mass_point_ptr->position[iinc];
+      this->packing_data.position[iinc] = mass_point_ptr->position[iinc];
    }
    // Attitude quaternion.
-   attitude.scalar = mass_point_ptr->Q_parent_this.scalar;
+   this->packing_data.attitude.scalar = mass_point_ptr->Q_parent_this.scalar;
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      attitude.vector[iinc] = mass_point_ptr->Q_parent_this.vector[iinc];
+      this->packing_data.attitude.vector[iinc] = mass_point_ptr->Q_parent_this.vector[iinc];
    }
-
-   // Print out debug information if desired.
-   if ( debug ) {
-      cout.precision( 15 );
-      cout << "JEODPhysicalInterface::pack():" << __LINE__ << endl
-           << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname:   '" << ( name != NULL ? name : "" ) << "'" << endl
-           << "\tparent: '" << ( parent_name != NULL ? parent_name : "" ) << "'" << endl
-           << "\tposition: " << endl
-           << "\t\t" << position[0] << endl
-           << "\t\t" << position[1] << endl
-           << "\t\t" << position[2] << endl
-           << "\tattitude (quaternion:s,v): " << endl
-           << "\t\t" << attitude.scalar << endl
-           << "\t\t" << attitude.vector[0] << endl
-           << "\t\t" << attitude.vector[1] << endl
-           << "\t\t" << attitude.vector[2] << endl
-           << endl;
-   }
-
-   // Encode the data into the buffer.
-   quat_encoder.encode();
 
    return;
 }
 
-void JEODPhysicalInterface::unpack()
+void JEODPhysicalInterface::unpack_into_working_data()
 {
    jeod::MassPoint * mass_point_ptr;
-
-   if ( !initialized ) {
-      cout << "JEODPhysicalInterface::unpack():" << __LINE__
-           << " ERROR: The initialize() function has not been called!" << endl;
-   }
-
-   // Use the HLA encoder helpers to decode the JEODPhysicalInterface fixed record.
-   quat_encoder.decode();
-
-   // Print out unpack debug information if desired.
-   if ( debug ) {
-      cout.precision( 15 );
-      cout << "PhysicalInterface::unpack():" << __LINE__ << endl
-           << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname:   '" << ( name != NULL ? name : "" ) << "'" << endl
-           << "\tparent: '" << ( parent_name != NULL ? parent_name : "" ) << "'" << endl
-           << "\tposition: " << endl
-           << "\t\t" << position[0] << endl
-           << "\t\t" << position[1] << endl
-           << "\t\t" << position[2] << endl
-           << "\tattitude (quaternion:s,v): " << endl
-           << "\t\t" << attitude.scalar << endl
-           << "\t\t" << attitude.vector[0] << endl
-           << "\t\t" << attitude.vector[1] << endl
-           << "\t\t" << attitude.vector[2] << endl
-           << endl;
-   }
 
    // Check for NULL vehicle point.
    // Note: This should never be true, but just in case.
@@ -307,15 +258,15 @@ void JEODPhysicalInterface::unpack()
    // Unpack the position data.
    if ( position_attr->is_received() ) {
       for ( int iinc = 0; iinc < 3; ++iinc ) {
-         mass_point_ptr->position[iinc] = position[iinc];
+         mass_point_ptr->position[iinc] = this->packing_data.position[iinc];
       }
    }
 
    // Unpack the interface attitude data.
    if ( attitude_attr->is_received() ) {
-      mass_point_ptr->Q_parent_this.scalar = attitude.scalar;
+      mass_point_ptr->Q_parent_this.scalar = this->packing_data.attitude.scalar;
       for ( int iinc = 0; iinc < 3; ++iinc ) {
-         mass_point_ptr->Q_parent_this.vector[iinc] = attitude.vector[iinc];
+         mass_point_ptr->Q_parent_this.vector[iinc] = this->packing_data.attitude.vector[iinc];
       }
       // Compute the associated transformation matrix.
       mass_point_ptr->Q_parent_this.left_quat_to_transformation( mass_point_ptr->T_parent_this );

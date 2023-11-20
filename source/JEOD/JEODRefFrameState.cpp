@@ -89,7 +89,7 @@ void JEODRefFrameState::initialize(
    jeod::RefFrameState *ref_frame_state_ptr )
 {
    // Must have federation instance name.
-   if ( this->name == NULL ) {
+   if ( this->packing_data.name == NULL ) {
       if ( debug ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
@@ -97,11 +97,11 @@ void JEODRefFrameState::initialize(
                 << "  Setting frame name to empty string." << THLA_ENDL;
          send_hs( stderr, errmsg.str().c_str() );
       }
-      this->name = trick_MM->mm_strdup( "" );
+      this->packing_data.name = trick_MM->mm_strdup( "" );
    }
 
    // Must have federation instance parent frame name.
-   if ( this->parent_name == NULL ) {
+   if ( this->packing_data.parent_name == NULL ) {
       if ( debug ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
@@ -109,14 +109,14 @@ void JEODRefFrameState::initialize(
                 << "  Setting parent frame name to empty string." << THLA_ENDL;
          send_hs( stderr, errmsg.str().c_str() );
       }
-      this->parent_name = trick_MM->mm_strdup( "" );
+      this->packing_data.parent_name = trick_MM->mm_strdup( "" );
    }
 
    // Set the reference to the reference frame.
    if ( ref_frame_state_ptr == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL reference frame: " << this->name << THLA_ENDL;
+             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -132,60 +132,45 @@ void JEODRefFrameState::initialize(
    return;
 }
 
-void JEODRefFrameState::pack()
+
+/*!
+ * @job_class{scheduled}
+ */
+void JEODRefFrameState::pack_from_working_data()
 {
    int iinc;
 
-   // Check for initialization.
-   if ( !initialized ) {
-      cout << "JEODRefFrameState::pack() ERROR: The initialize() function has not"
-           << " been called!" << endl;
-   }
+   // Set the reference frame name and parent frame name.
+   //if ( packing_data.name != NULL ) {
+      // NOTE: We don't currently support renaming an DynBody for JEOD
+      // based applications.  The changed name is updated in the RefFrameBase
+      // name attribute but we do not do anything with it now.
+   //}
 
-   // NOTE: Because TrickHLA handles the bundling of locally owned attributes
-   // we do not need to check the ownership status of them here like we do
-   // in the unpack() function, since we don't run the risk of corrupting our
-   // state.
+   //if ( packing_data.parent_name != NULL ) {
+      // NOTE: We don't currently support reparenting a ReferenceFrame for JEOD
+      // based applications.  The changed the ReferencFrame parent name is
+      // ignored for now.
+   //}
 
    // Pack the data.
    // Position and velocity vectors.
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      stc_data.pos[iinc] = ref_frame_state->trans.position[iinc];
-      stc_data.vel[iinc] = ref_frame_state->trans.velocity[iinc];
+      packing_data.state.pos[iinc] = ref_frame_state->trans.position[iinc];
+      packing_data.state.vel[iinc] = ref_frame_state->trans.velocity[iinc];
    }
    // Attitude quaternion.
-   stc_data.quat_scalar = ref_frame_state->rot.Q_parent_this.scalar;
+   packing_data.state.att.scalar = ref_frame_state->rot.Q_parent_this.scalar;
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      stc_data.quat_vector[iinc] = ref_frame_state->rot.Q_parent_this.vector[iinc];
-      stc_data.ang_vel[iinc]     = ref_frame_state->rot.ang_vel_this[iinc];
+      packing_data.state.att.vector[iinc] = ref_frame_state->rot.Q_parent_this.vector[iinc];
+      packing_data.state.ang_vel[iinc]    = ref_frame_state->rot.ang_vel_this[iinc];
    }
    // Time tag for this state data.
-   // stc_data.time = ref_frame->state.time;
    // FIXME: Need to check if get_scenario_time is really what we want here?
-   this->time = get_scenario_time();
-   stc_data.time = this->time;
+   packing_data.state.time = get_scenario_time();
 
-   // Print out debug information if desired.
    if ( debug ) {
-      cout.precision( 15 );
-      cout << "JEODRefFrameState::pack():" << __LINE__ << endl
-           << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname: '" << ( this->name != NULL ? this->name : "" ) << "'" << endl
-           << "\tparent_name: '" << ( this->parent_name != NULL ? this->parent_name : "" ) << "'" << endl
-           << "\ttime: " << stc_data.time << endl
-           << "\tposition: " << endl
-           << "\t\t" << stc_data.pos[0] << endl
-           << "\t\t" << stc_data.pos[1] << endl
-           << "\t\t" << stc_data.pos[2] << endl
-           << "\tattitude (quaternion:s,v): " << endl
-           << "\t\t" << stc_data.quat_scalar << endl
-           << "\t\t" << stc_data.quat_vector[0] << endl
-           << "\t\t" << stc_data.quat_vector[1] << endl
-           << "\t\t" << stc_data.quat_vector[2] << endl
-           << endl;
-   }
-   if ( debug ) {
-      cout << "JEODRefFrameState::pack():" << __LINE__ << endl
+      cout << "JEODRefFrameState::pack_from_working_data():" << __LINE__ << endl
            << "\tSim Sec: " << exec_get_sim_time() << endl
            << "\tSeconds: " << ( time_tt->trunc_julian_time * 86400.0 ) << endl
            << "\tDate: " << time_tt->calendar_year
@@ -197,23 +182,15 @@ void JEODRefFrameState::pack()
            << endl;
    }
 
-   // Encode the data into the reference frame buffer.
-   stc_encoder.encode();
-
    return;
 }
 
-void JEODRefFrameState::unpack()
+
+/*!
+ * @job_class{scheduled}
+ */
+void JEODRefFrameState::unpack_into_working_data()
 {
-   // double dt; // Local vs. remote time difference.
-
-   if ( !initialized ) {
-      cout << "JEODRefFrameState::unpack():" << __LINE__
-           << " ERROR: The initialize() function has not been called!" << endl;
-   }
-
-   // Use the HLA encoder helpers to decode the reference frame fixed record.
-   stc_encoder.decode();
 
    // If the HLA attribute has changed and is remotely owned (i.e. is
    // coming from another federate) then override our simulation state with the
@@ -243,41 +220,20 @@ void JEODRefFrameState::unpack()
       // Unpack the data.
       // Position and velocity vectors.
       for ( int iinc = 0; iinc < 3; ++iinc ) {
-         ref_frame_state->trans.position[iinc] = stc_data.pos[iinc];
-         ref_frame_state->trans.velocity[iinc] = stc_data.vel[iinc];
+         ref_frame_state->trans.position[iinc] = packing_data.state.pos[iinc];
+         ref_frame_state->trans.velocity[iinc] = packing_data.state.vel[iinc];
       }
       // Attitude quaternion.
-      ref_frame_state->rot.Q_parent_this.scalar = stc_data.quat_scalar;
+      ref_frame_state->rot.Q_parent_this.scalar = packing_data.state.att.scalar;
       for ( int iinc = 0; iinc < 3; ++iinc ) {
-         ref_frame_state->rot.Q_parent_this.vector[iinc] = stc_data.quat_vector[iinc];
-         ref_frame_state->rot.ang_vel_this[iinc]         = stc_data.ang_vel[iinc];
+         ref_frame_state->rot.Q_parent_this.vector[iinc] = packing_data.state.att.vector[iinc];
+         ref_frame_state->rot.ang_vel_this[iinc]     = packing_data.state.ang_vel[iinc];
       }
-      // Time tag for this state data.
-      this->time = stc_data.time;
+
    }
 
-   // The frame name and parent name are already 'unpacked'.
-   // Print out debug information if desired.
    if ( debug ) {
-      cout.precision( 15 );
-      cout << "JEODRefFrameState::unpack():" << __LINE__ << endl
-           << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname: '" << ( this->name != NULL ? this->name : "" ) << "'" << endl
-           << "\tparent_name: '" << ( this->parent_name != NULL ? this->parent_name : "" ) << "'" << endl
-           << "\ttime: " << stc_data.time << endl
-           << "\tposition: " << endl
-           << "\t\t" << stc_data.pos[0] << endl
-           << "\t\t" << stc_data.pos[1] << endl
-           << "\t\t" << stc_data.pos[2] << endl
-           << "\tattitude (quaternion:s,v): " << endl
-           << "\t\t" << stc_data.quat_scalar << endl
-           << "\t\t" << stc_data.quat_vector[0] << endl
-           << "\t\t" << stc_data.quat_vector[1] << endl
-           << "\t\t" << stc_data.quat_vector[2] << endl
-           << endl;
-   }
-   if ( debug ) {
-      cout << "JEODRefFrameState::unpack():" << __LINE__ << endl
+      cout << "JEODRefFrameState::pack_from_working_data():" << __LINE__ << endl
            << "\tSim Sec: " << exec_get_sim_time() << endl
            << "\tSeconds: " << ( time_tt->trunc_julian_time * 86400.0 ) << endl
            << "\tDate: " << time_tt->calendar_year

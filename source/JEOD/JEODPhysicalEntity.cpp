@@ -82,7 +82,8 @@ void JEODPhysicalEntity::initialize()
    if ( dyn_body_data == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalEntity::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL dyn_body_data: " << name << THLA_ENDL;
+             << " ERROR: Unexpected NULL dyn_body_data: "
+             << this->pe_packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -103,7 +104,8 @@ void JEODPhysicalEntity::initialize( jeod::DynBody *dyn_body_data_ptr )
    if ( dyn_body_data_ptr == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalEntity::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL JEODPhysicalEntityData: " << name << THLA_ENDL;
+             << " ERROR: Unexpected NULL JEODPhysicalEntityData: "
+             << this->pe_packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -116,15 +118,9 @@ void JEODPhysicalEntity::initialize( jeod::DynBody *dyn_body_data_ptr )
    return;
 }
 
-void JEODPhysicalEntity::pack()
+void JEODPhysicalEntity::pack_from_working_data()
 {
    int iinc;
-
-   // Check for initialization.
-   if ( !initialized ) {
-      cout << "JEODPhysicalEntity::pack() ERROR: The initialize() function has not"
-           << " been called!" << endl;
-   }
 
    // NOTE: Because TrickHLA handles the bundling of locally owned attributes
    // we do not need to check the ownership status of them here like we do
@@ -138,81 +134,45 @@ void JEODPhysicalEntity::pack()
    // Pack the state time coordinate data.
    // Position and velocity vectors.
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      state.pos[iinc] = dyn_body_data->composite_body.state.trans.position[iinc];
-      state.vel[iinc] = dyn_body_data->composite_body.state.trans.velocity[iinc];
+      this->pe_packing_data.state.pos[iinc] = dyn_body_data->composite_body.state.trans.position[iinc];
+      this->pe_packing_data.state.vel[iinc] = dyn_body_data->composite_body.state.trans.velocity[iinc];
    }
    // Attitude quaternion.
-   state.quat_scalar = dyn_body_data->composite_body.state.rot.Q_parent_this.scalar;
+   this->pe_packing_data.state.att.scalar = dyn_body_data->composite_body.state.rot.Q_parent_this.scalar;
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      state.quat_vector[iinc] = dyn_body_data->composite_body.state.rot.Q_parent_this.vector[iinc];
-      state.ang_vel[iinc]     = dyn_body_data->composite_body.state.rot.ang_vel_this[iinc];
+      this->pe_packing_data.state.att.vector[iinc] = dyn_body_data->composite_body.state.rot.Q_parent_this.vector[iinc];
+      this->pe_packing_data.state.ang_vel[iinc]     = dyn_body_data->composite_body.state.rot.ang_vel_this[iinc];
    }
 
    // Time tag for this state data.
-   state.time = get_scenario_time();
+   this->pe_packing_data.state.time = get_scenario_time();
 
    // Set the acceleration data.
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      accel[iinc] = dyn_body_data->derivs.trans_accel[iinc];
+      this->pe_packing_data.accel[iinc] = dyn_body_data->derivs.trans_accel[iinc];
    }
 
    // Set the rotational acceleration data.
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      rot_accel[iinc] = dyn_body_data->derivs.rot_accel[iinc];
+      this->pe_packing_data.ang_accel[iinc] = dyn_body_data->derivs.rot_accel[iinc];
    }
 
    // Set the center of mass location.
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      cm[iinc] = dyn_body_data->mass.composite_properties.position[iinc];
+      this->pe_packing_data.cm[iinc] = dyn_body_data->mass.composite_properties.position[iinc];
    }
 
    // Pack the body to structural reference frame attitude quaternion.
-   body_wrt_struct.scalar = dyn_body_data->mass.composite_properties.Q_parent_this.scalar;
+   this->pe_packing_data.body_wrt_struct.scalar = dyn_body_data->mass.composite_properties.Q_parent_this.scalar;
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      body_wrt_struct.vector[iinc] = dyn_body_data->mass.composite_properties.Q_parent_this.vector[iinc];
+      this->pe_packing_data.body_wrt_struct.vector[iinc] = dyn_body_data->mass.composite_properties.Q_parent_this.vector[iinc];
    }
-
-   // Print out debug information if desired.
-   if ( debug ) {
-      cout.precision( 15 );
-      cout << "JEODPhysicalEntity::pack():" << __LINE__ << endl
-           << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname:   '" << ( name != NULL ? name : "" ) << "'" << endl
-           << "\ttype:   '" << ( type != NULL ? type : "" ) << "'" << endl
-           << "\tstatus: '" << ( status != NULL ? status : "" ) << "'" << endl
-           << "\tparent: '" << ( parent_frame != NULL ? parent_frame : "" ) << "'" << endl
-           << "\ttime: " << state.time << endl
-           << "\tposition: " << endl
-           << "\t\t" << state.pos[0] << endl
-           << "\t\t" << state.pos[1] << endl
-           << "\t\t" << state.pos[2] << endl
-           << "\tattitude (quaternion:s,v): " << endl
-           << "\t\t" << state.quat_scalar << endl
-           << "\t\t" << state.quat_vector[0] << endl
-           << "\t\t" << state.quat_vector[1] << endl
-           << "\t\t" << state.quat_vector[2] << endl
-           << endl;
-   }
-
-   // Encode the data into the buffer.
-   stc_encoder.encode();
-   quat_encoder.encode();
 
    return;
 }
 
-void JEODPhysicalEntity::unpack()
+void JEODPhysicalEntity::unpack_into_working_data()
 {
-   // double dt; // Local vs. remote time difference.
-
-   if ( !initialized ) {
-      cout << "JEODPhysicalEntity::unpack():" << __LINE__
-           << " ERROR: The initialize() function has not been called!" << endl;
-   }
-
-   // Use the HLA encoder helpers to decode the JEODPhysicalEntity fixed record.
-   stc_encoder.decode();
-   quat_encoder.decode();
 
    // If the HLA attribute has changed and is remotely owned (i.e. is
    // coming from another federate) then override our simulation state with the
@@ -229,14 +189,14 @@ void JEODPhysicalEntity::unpack()
       // Unpack the data.
       // Position and velocity vectors.
       for ( int iinc = 0; iinc < 3; ++iinc ) {
-         dyn_body_data->composite_body.state.trans.position[iinc] = state.pos[iinc];
-         dyn_body_data->composite_body.state.trans.velocity[iinc] = state.vel[iinc];
+         dyn_body_data->composite_body.state.trans.position[iinc] = this->pe_packing_data.state.pos[iinc];
+         dyn_body_data->composite_body.state.trans.velocity[iinc] = this->pe_packing_data.state.vel[iinc];
       }
       // Attitude quaternion.
-      dyn_body_data->composite_body.state.rot.Q_parent_this.scalar = state.quat_scalar;
+      dyn_body_data->composite_body.state.rot.Q_parent_this.scalar = this->pe_packing_data.state.att.scalar;
       for ( int iinc = 0; iinc < 3; ++iinc ) {
-         dyn_body_data->composite_body.state.rot.Q_parent_this.vector[iinc] = state.quat_vector[iinc];
-         dyn_body_data->composite_body.state.rot.ang_vel_this[iinc]         = state.ang_vel[iinc];
+         dyn_body_data->composite_body.state.rot.Q_parent_this.vector[iinc] = this->pe_packing_data.state.att.vector[iinc];
+         dyn_body_data->composite_body.state.rot.ang_vel_this[iinc]         = this->pe_packing_data.state.ang_vel[iinc];
       }
       // Time tag for this state data.
       // dyn_body_data->state.time = state.time;
@@ -269,32 +229,10 @@ void JEODPhysicalEntity::unpack()
    if ( body_frame_attr->is_received() ) {
 
       // Body to structure frame orientation.
-      dyn_body_data->mass.composite_properties.Q_parent_this.scalar = body_wrt_struct.scalar;
+      dyn_body_data->mass.composite_properties.Q_parent_this.scalar = this->pe_packing_data.body_wrt_struct.scalar;
       for ( int iinc = 0; iinc < 3; ++iinc ) {
-         dyn_body_data->mass.composite_properties.Q_parent_this.vector[iinc] = body_wrt_struct.vector[iinc];
+         dyn_body_data->mass.composite_properties.Q_parent_this.vector[iinc] = this->pe_packing_data.body_wrt_struct.vector[iinc];
       }
-   }
-
-   // Print out debug information if desired.
-   if ( debug ) {
-      cout.precision( 15 );
-      cout << "PhysicalEntity::unpack():" << __LINE__ << endl
-           << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname:   '" << ( name != NULL ? name : "" ) << "'" << endl
-           << "\ttype:   '" << ( type != NULL ? type : "" ) << "'" << endl
-           << "\tstatus: '" << ( status != NULL ? status : "" ) << "'" << endl
-           << "\tparent: '" << ( parent_frame != NULL ? parent_frame : "" ) << "'" << endl
-           << "\ttime: " << state.time << endl
-           << "\tposition: " << endl
-           << "\t\t" << state.pos[0] << endl
-           << "\t\t" << state.pos[1] << endl
-           << "\t\t" << state.pos[2] << endl
-           << "\tattitude (quaternion:s,v): " << endl
-           << "\t\t" << state.quat_scalar << endl
-           << "\t\t" << state.quat_vector[0] << endl
-           << "\t\t" << state.quat_vector[1] << endl
-           << "\t\t" << state.quat_vector[2] << endl
-           << endl;
    }
 
    return;
