@@ -183,25 +183,6 @@ void JEODPhysicalEntity::unpack_into_working_data()
    // the state.  We always need to do this check because ownership transfers
    // could happen at any time or the data could be at a different rate.
 
-   // Unpack the space-time coordinate state data.
-   if ( state_attr->is_received() ) {
-
-      // Unpack the data.
-      // Position and velocity vectors.
-      for ( int iinc = 0; iinc < 3; ++iinc ) {
-         dyn_body_data->composite_body.state.trans.position[iinc] = this->pe_packing_data.state.pos[iinc];
-         dyn_body_data->composite_body.state.trans.velocity[iinc] = this->pe_packing_data.state.vel[iinc];
-      }
-      // Attitude quaternion.
-      dyn_body_data->composite_body.state.rot.Q_parent_this.scalar = this->pe_packing_data.state.att.scalar;
-      for ( int iinc = 0; iinc < 3; ++iinc ) {
-         dyn_body_data->composite_body.state.rot.Q_parent_this.vector[iinc] = this->pe_packing_data.state.att.vector[iinc];
-         dyn_body_data->composite_body.state.rot.ang_vel_this[iinc]         = this->pe_packing_data.state.ang_vel[iinc];
-      }
-      // Time tag for this state data.
-      // dyn_body_data->state.time = state.time;
-   }
-
    // Set the reference frame name and parent frame name.
    if ( name_attr->is_received() ) {
       // NOTE: We don't currently support renaming a ReferenceFrame for JEOD
@@ -223,6 +204,46 @@ void JEODPhysicalEntity::unpack_into_working_data()
       // NOTE: We don't currently support reparenting a ReferenceFrame for JEOD
       // based applications.  The changed the ReferencFrame parent name is
       // ignored for now.
+   }
+
+   // Unpack the space-time coordinate state data.
+   if ( state_attr->is_received() ) {
+
+      // Unpack the data.
+      // Position and velocity vectors.
+      for ( int iinc = 0; iinc < 3; ++iinc ) {
+         dyn_body_data->composite_body.state.trans.position[iinc] = this->pe_packing_data.state.pos[iinc];
+         dyn_body_data->composite_body.state.trans.velocity[iinc] = this->pe_packing_data.state.vel[iinc];
+      }
+      // Attitude quaternion.
+      dyn_body_data->composite_body.state.rot.Q_parent_this.scalar = this->pe_packing_data.state.att.scalar;
+      for ( int iinc = 0; iinc < 3; ++iinc ) {
+         dyn_body_data->composite_body.state.rot.Q_parent_this.vector[iinc] = this->pe_packing_data.state.att.vector[iinc];
+         dyn_body_data->composite_body.state.rot.ang_vel_this[iinc]         = this->pe_packing_data.state.ang_vel[iinc];
+      }
+      // Time tag for this state data.
+      // dyn_body_data->state.time = state.time;
+   }
+
+   // Unpack the translational acceleration data.
+   if ( accel_attr->is_received() ) {
+      for ( int iinc = 0; iinc < 3; ++iinc ) {
+         dyn_body_data->derivs.trans_accel[iinc] = pe_packing_data.accel[iinc];
+      }
+   }
+
+   // Unpack the rotational acceleration data.
+   if ( ang_accel_attr->is_received() ) {
+      for ( int iinc = 0; iinc < 3; ++iinc ) {
+         dyn_body_data->derivs.rot_accel[iinc] = pe_packing_data.ang_accel[iinc];
+      }
+   }
+
+   // Unpack the center of mass data.
+   if ( cm_attr->is_received() ) {
+      for ( int iinc = 0; iinc < 3; ++iinc ) {
+         dyn_body_data->mass.composite_properties.position[iinc] = pe_packing_data.cm[iinc];
+      }
    }
 
    // Unpack the body to structural attitude data.

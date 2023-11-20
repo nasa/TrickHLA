@@ -272,25 +272,6 @@ void PhysicalEntity::unpack_into_working_data()
    // the state.  We always need to do this check because ownership transfers
    // could happen at any time or the data could be at a different rate.
 
-   // Unpack the space-time coordinate state data.
-   if ( state_attr->is_received() ) {
-
-      // Unpack the data.
-      // Position and velocity vectors.
-      for ( int iinc = 0; iinc < 3; ++iinc ) {
-         physical_data->state.pos[iinc] = pe_packing_data.state.pos[iinc];
-         physical_data->state.vel[iinc] = pe_packing_data.state.vel[iinc];
-      }
-      // Attitude quaternion.
-      physical_data->state.att.scalar = pe_packing_data.state.att.scalar;
-      for ( int iinc = 0; iinc < 3; ++iinc ) {
-         physical_data->state.att.vector[iinc] = pe_packing_data.state.att.vector[iinc];
-         physical_data->state.ang_vel[iinc]     = pe_packing_data.state.ang_vel[iinc];
-      }
-      // Time tag for this state data.
-      physical_data->state.time = pe_packing_data.state.time;
-   }
-
    // Set the entity name, type, status, and parent frame name.
    if ( name_attr->is_received() ) {
       if ( physical_data->name != NULL ) {
@@ -354,9 +335,48 @@ void PhysicalEntity::unpack_into_working_data()
       }
    }
 
+   // Unpack the space-time coordinate state data.
+   if ( state_attr->is_received() ) {
+
+      // Unpack the data.
+      // Position and velocity vectors.
+      for ( int iinc = 0; iinc < 3; ++iinc ) {
+         physical_data->state.pos[iinc] = pe_packing_data.state.pos[iinc];
+         physical_data->state.vel[iinc] = pe_packing_data.state.vel[iinc];
+      }
+      // Attitude quaternion.
+      physical_data->state.att.scalar = pe_packing_data.state.att.scalar;
+      for ( int iinc = 0; iinc < 3; ++iinc ) {
+         physical_data->state.att.vector[iinc] = pe_packing_data.state.att.vector[iinc];
+         physical_data->state.ang_vel[iinc]    = pe_packing_data.state.ang_vel[iinc];
+      }
+      // Time tag for this state data.
+      physical_data->state.time = pe_packing_data.state.time;
+   }
+
+   // Unpack the translational acceleration data.
+   if ( accel_attr->is_received() ) {
+      for ( int iinc = 0; iinc < 3; ++iinc ) {
+         physical_data->accel[iinc] = pe_packing_data.accel[iinc];
+      }
+   }
+
+   // Unpack the rotational acceleration data.
+   if ( ang_accel_attr->is_received() ) {
+      for ( int iinc = 0; iinc < 3; ++iinc ) {
+         physical_data->ang_accel[iinc] = pe_packing_data.ang_accel[iinc];
+      }
+   }
+
+   // Unpack the center of mass data.
+   if ( cm_attr->is_received() ) {
+      for ( int iinc = 0; iinc < 3; ++iinc ) {
+         physical_data->cm[iinc] = pe_packing_data.cm[iinc];
+      }
+   }
+
    // Unpack the body to structural attitude data.
    if ( body_frame_attr->is_received() ) {
-
       // Body to structure frame orientation.
       physical_data->body_wrt_struct.scalar = pe_packing_data.body_wrt_struct.scalar;
       for ( int iinc = 0; iinc < 3; ++iinc ) {
