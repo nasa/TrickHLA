@@ -45,7 +45,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Attribute.hh"
 
 // SpaceFOM include files.
-#include "SAIntegrator/include/PhysicalEntityLagCompSA2.hh"
+#include "../include/PhysicalEntityLagCompSA2.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -154,11 +154,11 @@ void PhysicalEntityLagCompSA2::derivatives(
 
    // Compute the second derivative of the attitude quaternion.
    QuaternionData::compute_2nd_derivative( quat_scalar,
-                                        quat_vector,
-                                        omega,
-                                        lag_comp_data_ptr->ang_accel,
-                                        &(accel[3]),
-                                        &(accel[4]) );
+                                           quat_vector,
+                                           omega,
+                                           lag_comp_data_ptr->ang_accel,
+                                           &(accel[3]),
+                                           &(accel[4]) );
 
    // Return to calling routine.
    return;

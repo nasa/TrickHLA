@@ -45,7 +45,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Attribute.hh"
 
 // SpaceFOM include files.
-#include "SAIntegrator/include/PhysicalEntityLagCompSA.hh"
+#include "../include/PhysicalEntityLagCompSA.hh"
 
 using namespace std;
 using namespace TrickHLA;

@@ -193,7 +193,7 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
 // simulation object definition. This can be used for SpaceFOM
 // PhysicalEntity object discovery and data exchange.
 //==========================================================================
-//#define USE_SA_INTEGRATOR
+#define USE_SA_INTEGRATOR
 ##include "SpaceFOM/PhysicalEntity.hh"
 #ifdef USE_SA_INTEGRATOR
 ##include "SAIntegrator/include/PhysicalEntityLagCompSA2.hh"

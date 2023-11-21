@@ -62,7 +62,7 @@ class QuaternionData
    // Initialization constructor.
    /*! @brief Transformation matrix initialization constructor.
     *  @param T Direction cosine transformation matrix. */
-   QuaternionData( double const T[3][3] );
+   explicit QuaternionData( double const T[3][3] );
 
    /*! @brief Assignment operator for QuaternionData class.
     *  @param rhs Right had side data to copy from. */
@@ -133,22 +133,22 @@ class QuaternionData
     *  @param left  Left quaternion operand.
     *  @param right Right quaternion operand. */
    void multiply(
-      QuaternionData &left,
-      QuaternionData &right );
+      QuaternionData const &left,
+      QuaternionData const &right );
 
    /*! @brief Multiply a quaternion and a vector.
     *  @param left  Left quaternion operand.
     *  @param right Right vector operand. */
    void multiply(
-      QuaternionData &left,
-      double          right[3] );
+      QuaternionData const &left,
+      double                right[3] );
 
    /*! @brief Multiply a vector and a quaternion.
     *  @param left  Left vector operand.
     *  @param right Right quaternion operand. */
    void multiply(
-      double          left[3],
-      QuaternionData &right );
+      double                left[3],
+      QuaternionData const &right );
 
    /*! @brief Compute the first time derivative of the attitude quaternion.
     *  @param quat  Attitude quaternion.

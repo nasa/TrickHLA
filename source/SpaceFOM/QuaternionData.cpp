@@ -111,7 +111,7 @@ void QuaternionData::set_from_Euler(
    Euler_Seq    sequence,
    double const angles[3] )
 {
-   euler_quat( (double *)angles, &( this->scalar ), 0, sequence );
+   euler_quat( const_cast<double *>(angles), &( this->scalar ), 0, sequence );
    return;
 }
 
@@ -237,8 +237,8 @@ void QuaternionData::normalize()
  * @job_class{scheduled}
  */
 void QuaternionData::multiply(
-   QuaternionData &left,
-   QuaternionData &right )
+   QuaternionData const &left,
+   QuaternionData const &right )
 {
    multiply_sv( left.scalar, left.vector, right.scalar, right.vector, &( this->scalar ), this->vector );
    return;
@@ -248,8 +248,8 @@ void QuaternionData::multiply(
  * @job_class{scheduled}
  */
 void QuaternionData::multiply(
-   QuaternionData &left,
-   double          right[3] )
+   QuaternionData const &left,
+   double                right[3] )
 {
    left_multiply_v( left.scalar, left.vector, right, &( this->scalar ), this->vector );
    return;
@@ -259,8 +259,8 @@ void QuaternionData::multiply(
  * @job_class{scheduled}
  */
 void QuaternionData::multiply(
-   double          left[3],
-   QuaternionData &right )
+   double                left[3],
+   QuaternionData const &right )
 {
    right_multiply_v( left, right.scalar, right.vector, &( this->scalar ), this->vector );
    return;
