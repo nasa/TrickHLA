@@ -1,5 +1,5 @@
 /*!
-@file SpaceFOM/PhysicalEntityLagCompSA2.cpp
+@file models/SAIntegrator/src/PhysicalEntityLagCompSA2.cpp
 @ingroup SpaceFOM
 @brief This class provides the implementation for a TrickHLA SpaceFOM
 PhysicalEntity latency/lag compensation class.
@@ -166,7 +166,7 @@ void PhysicalEntityLagCompSA2::derivatives(
 
 
 /*!
- * @job_class(integration)
+ * @job_class{integration}
  */
 void PhysicalEntityLagCompSA2::load()
 {
@@ -283,9 +283,7 @@ int PhysicalEntityLagCompSA2::integrate(
 }
 
 
-/*! @job_class{derivative}
- *  @brief Compute the first time derivative of the lag compensation state vector.
- *  @param user_data Any special user data needed to compute the derivative values. */
+/*! @job_class{derivative} */
 void PhysicalEntityLagCompSA2::derivative_first(
    void * user_data )
 {

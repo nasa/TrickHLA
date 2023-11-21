@@ -254,10 +254,10 @@ void QuaternionData::normalize()
  * @job_class{scheduled}
  */
 void QuaternionData::multiply(
-   QuaternionData & l,
-   QuaternionData & r )
+   QuaternionData & left,
+   QuaternionData & right )
 {
-   multiply_sv( l.scalar, l.vector, r.scalar, r.vector, &(this->scalar), this->vector );
+   multiply_sv( left.scalar, left.vector, right.scalar, right.vector, &(this->scalar), this->vector );
    return;
 }
 
@@ -266,10 +266,10 @@ void QuaternionData::multiply(
  * @job_class{scheduled}
  */
 void QuaternionData::multiply(
-   QuaternionData & l,
-   double           r[3] )
+   QuaternionData & left,
+   double           right[3] )
 {
-   left_multiply_v( l.scalar, l.vector, r, &(this->scalar), this->vector );
+   left_multiply_v( left.scalar, left.vector, right, &(this->scalar), this->vector );
    return;
 }
 
@@ -278,10 +278,10 @@ void QuaternionData::multiply(
  * @job_class{scheduled}
  */
 void QuaternionData::multiply(
-   double           v[3],
-   QuaternionData & r     )
+   double           left[3],
+   QuaternionData & right )
 {
-   right_multiply_v( v, r.scalar, r.vector, &(this->scalar), this->vector );
+   right_multiply_v( left, right.scalar, right.vector, &(this->scalar), this->vector );
    return;
 }
 

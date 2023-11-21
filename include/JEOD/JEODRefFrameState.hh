@@ -1,5 +1,5 @@
 /*!
-@file SpaceFOM/JEODRefFrameState.hh
+@file JEOD/JEODRefFrameState.hh
 @ingroup JEOD
 @brief This class provides data packing for the SpaceFOM Reference Frames and
 the interface with a JEOD Reference Frame State instance.
@@ -72,6 +72,7 @@ class JEODRefFrameState : public SpaceFOM::RefFrameBase
 
    // Initialize the packing object.
    /*! @brief Set the reference to the reference frame data.
+    *  @param time_tt_in Reference to the jeod::TimeTT instance.
     *  @param ref_frame_state_ptr Pointer to the jeod::RefFrameState instance. */
    void initialize( jeod::TimeTT        &time_tt_in,
                     jeod::RefFrameState *ref_frame_state_ptr );
@@ -91,12 +92,12 @@ class JEODRefFrameState : public SpaceFOM::RefFrameBase
    }
 
    /*! @brief Packs the packing data object from the working data object(s),
-    *  @detail Called from the pack() function to pack the data from the working
+    *  @details Called from the pack() function to pack the data from the working
     *  data objects(s) into the pe_packing_data object.  */
    virtual void pack_from_working_data();
 
    /*! @brief Unpacks the packing data object into the working data object(s),
-    *  @detail Called from the unpack() function to unpack the data in the
+    *  @details Called from the unpack() function to unpack the data in the
     *  pe_packing_data object into the working data object(s). */
    virtual void unpack_into_working_data();
 

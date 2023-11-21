@@ -80,21 +80,21 @@ class JEODPhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
 
    // Initialize the packing object.
    /*! @brief Set the reference to the physical entity data.
-    *  @param physical_data_ptr Pointer to the PhysicalEntity data instance. */
+    *  @param dyn_body_data_ptr Pointer to the JEOD DynBody instance. */
    virtual void initialize( jeod::DynBody *dyn_body_data_ptr );
 
    /*! @brief Packs the packing data object from the working data object(s),
-    *  @detail Called from the pack() function to pack the data from the working
+    *  @details Called from the pack() function to pack the data from the working
     *  data objects(s) into the pe_packing_data object.  */
    virtual void pack_from_working_data();
 
    /*! @brief Unpacks the packing data object into the working data object(s),
-    *  @detail Called from the unpack() function to unpack the data in the
+    *  @details Called from the unpack() function to unpack the data in the
     *  pe_packing_data object into the working data object(s). */
    virtual void unpack_into_working_data();
 
    /*! @brief Set the reference to the physical entity data.
-    *  @param physical_data_ptr Pointer to the PhysicalEntity data instance. */
+    *  @param dyn_body_data_ptr Pointer to the JEOD Dynbody instance. */
    virtual void set_data( jeod::DynBody *dyn_body_data_ptr )
    {
       dyn_body_data = dyn_body_data_ptr;

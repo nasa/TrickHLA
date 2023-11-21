@@ -78,17 +78,18 @@ class DynamicalEntity : public SpaceFOM::PhysicalEntity, public SpaceFOM::Dynami
 
    // Initialize the packing object.
    /*! @brief Set the reference to the physical entity data.
-    *  @param ref_frame_data_ptr Pointer to the RefFrameData instance. */
+    *  @param physical_data_ptr Pointer to the PhysicalEntityData instance.
+    *  @param dynamics_data_ptr Pointer to the DynamicalEntityData instance. */
    virtual void initialize( PhysicalEntityData  *physical_data_ptr,
                             DynamicalEntityData *dynamics_data_ptr );
 
    /*! @brief Packs the packing data object from the working data object(s),
-    *  @detail Called from the pack() function to pack the data from the working
+    *  @details Called from the pack() function to pack the data from the working
     *  data objects(s) into the pe_packing_data object.  */
    virtual void pack_from_working_data();
 
    /*! @brief Unpacks the packing data object into the working data object(s),
-    *  @detail Called from the unpack() function to unpack the data in the
+    *  @details Called from the unpack() function to unpack the data in the
     *  pe_packing_data object into the working data object(s). */
    virtual void unpack_into_working_data();
 

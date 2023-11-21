@@ -84,8 +84,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    //
    // Execution Control initialization routines.
    // This is called by the TrickHLA::Federate::initialize routine.
-   /*! @brief Execution Control initialization routine.
-    *  @param fed The associated TrickHLA::Federate. */
+   /*! @brief Execution Control initialization routine. */
    virtual void initialize();
    /*! Setup the Trick Ref ATTRIBUTES for ExecutionControl. */
    /*! @brief Join federation execution process. */

@@ -125,7 +125,7 @@ void PhysicalEntityLagComp::initialize()
 
 
 /*!
- * @job_class(integration)
+ * @job_class{integration}
  */
 void PhysicalEntityLagComp::update_time()
 {
@@ -135,7 +135,7 @@ void PhysicalEntityLagComp::update_time()
 
 
 /*!
- * @job_class(integration)
+ * @job_class{integration}
  */
 void PhysicalEntityLagComp::load()
 {
@@ -196,9 +196,7 @@ void PhysicalEntityLagComp::unload()
 }
 
 
-/*! @job_class{derivative}
- *  @brief Compute the first time derivative of the lag compensation state vector.
- *  @param user_data Any special user data needed to compute the derivative values. */
+/*! @job_class{derivative} */
 void PhysicalEntityLagComp::derivative_first(
    void * user_data )
 {

@@ -1,5 +1,5 @@
 /*!
-@file SpaceFOM/PhysicalEntityLagCompSA2.hh
+@file models/SAIntegrator/include/PhysicalEntityLagCompSA2.hh
 @ingroup SpaceFOM
 @brief Definition of the TrickHLA SpaceFOM physical entity latency/lag
 compensation class that uses the Trick Stand-Alone (SA) integrators.
@@ -78,15 +78,16 @@ class PhysicalEntityLagCompSA2 : public TrickHLA::LagCompensationIntegBase, publ
 
    /*! @brief Derivative routine used by the compensation integrator.
     *  @param t      Integration time (IN).
-    *  @param states Integration states (IN).
-    *  @param derivs Derivatives of the integration states (OUT).
-    *  @param udate  Additional user data needed to compute the derivatives (IN).
+    *  @param pos    Integration states - position (IN).
+    *  @param vel    Derivatives of the integration states - velocity (INOUT).
+    *  @param accel  Second derivatives of the integration states - acceleration (INOUT).
+    *  @param udata  Additional user data needed to compute the derivatives (IN).
     */
    static void derivatives( double t,
                             double pos[],
                             double vel[],
                             double accel[],
-                            void* udata);
+                            void*  udata);
 
    /*! @brief Compensate the state data from the data time to the current scenario time.
     *  @param t_begin Scenario time at the start of the compensation step.
@@ -113,7 +114,7 @@ class PhysicalEntityLagCompSA2 : public TrickHLA::LagCompensationIntegBase, publ
    virtual void derivative_first( void * user_data = NULL );
 
    /*! @brief Compute the second time derivative of the lag compensation state vector.
-    *  @detail This function is called for second order integrators to compute
+    *  @details This function is called for second order integrators to compute
     *  second time derivative of the state vector.
     *  @param user_data Any special user data needed to compute the derivative values. */
    virtual void derivative_second( void * user_data = NULL ){ return; }

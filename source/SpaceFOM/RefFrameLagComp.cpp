@@ -125,7 +125,7 @@ void RefFrameLagComp::initialize()
 
 
 /*!
- * @job_class(integration)
+ * @job_class{integration}
  */
 void RefFrameLagComp::update_time()
 {
@@ -135,7 +135,7 @@ void RefFrameLagComp::update_time()
 
 
 /*!
- * @job_class(integration)
+ * @job_class{integration}
  */
 void RefFrameLagComp::load()
 {
@@ -202,9 +202,7 @@ void RefFrameLagComp::unload()
 }
 
 
-/*! @job_class{derivative}
- *  @brief Compute the first time derivative of the lag compensation state vector.
- *  @param user_data Any special user data needed to compute the derivative values. */
+/*! @job_class{derivative} */
 void RefFrameLagComp::derivative_first(
    void * user_data )
 {

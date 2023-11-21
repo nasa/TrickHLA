@@ -1,5 +1,5 @@
 /*!
-@file SpaceFOM/PhysicalEntityLagCompSA.hh
+@file models/SAIntegrator/include/PhysicalEntityLagCompSA.hh
 @ingroup SpaceFOM
 @brief Definition of the TrickHLA SpaceFOM physical entity latency/lag
 compensation class that uses the Trick Stand-Alone (SA) integrators.
@@ -79,7 +79,7 @@ class PhysicalEntityLagCompSA : public TrickHLA::LagCompensationIntegBase, publi
     *  @param t      Integration time (IN).
     *  @param states Integration states (IN).
     *  @param derivs Derivatives of the integration states (OUT).
-    *  @param udate  Additional user data needed to compute the derivatives (IN).
+    *  @param udata  Additional user data needed to compute the derivatives (IN).
     */
    static void derivatives( double t, double states[], double derivs[], void* udata);
 
@@ -108,7 +108,7 @@ class PhysicalEntityLagCompSA : public TrickHLA::LagCompensationIntegBase, publi
    virtual void derivative_first( void * user_data = NULL );
 
    /*! @brief Compute the second time derivative of the lag compensation state vector.
-    *  @detail This function is called for second order integrators to compute
+    *  @details This function is called for second order integrators to compute
     *  second time derivative of the state vector.
     *  @param user_data Any special user data needed to compute the derivative values. */
    virtual void derivative_second( void * user_data = NULL ){ return; }

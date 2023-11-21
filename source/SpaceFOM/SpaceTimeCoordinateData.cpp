@@ -85,13 +85,13 @@ void SpaceTimeCoordinateData::initialize()
 /*!
  * @job_class{scheduled}
  */
-void SpaceTimeCoordinateData::copy( const SpaceTimeCoordinateData & source )
+void SpaceTimeCoordinateData::copy( const SpaceTimeCoordinateData & stc_data )
 {
-   V_COPY( this->pos, source.pos );
-   V_COPY( this->vel, source.vel );
-   att.copy( source.att );
-   V_COPY( this->ang_vel, source.ang_vel );
-   time = source.time;
+   V_COPY( this->pos, stc_data.pos );
+   V_COPY( this->vel, stc_data.vel );
+   att.copy( stc_data.att );
+   V_COPY( this->ang_vel, stc_data.ang_vel );
+   time = stc_data.time;
    return;
 }
 

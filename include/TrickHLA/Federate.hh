@@ -1018,8 +1018,7 @@ class Federate
     *  @param time Requested time in HLA logical time. */
    void set_requested_time( RTI1516_NAMESPACE::LogicalTime const &time );
 
-   /*! @brief Sets the HLA base time units.
-    *  @param base_time_units HLA base time units. */
+   /*! @brief Sets the HLA base time units. */
    HLABaseTimeEnum get_HLA_base_time_units() const;
 
    /*! @brief Sets the HLA base time units.

@@ -80,12 +80,12 @@ class PhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
    virtual void initialize( PhysicalEntityData *physical_data_ptr );
 
    /*! @brief Packs the packing data object from the working data object(s),
-    *  @detail Called from the pack() function to pack the data from the working
+    *  @details Called from the pack() function to pack the data from the working
     *  data objects(s) into the pe_packing_data object.  */
    virtual void pack_from_working_data();
 
    /*! @brief Unpacks the packing data object into the working data object(s),
-    *  @detail Called from the unpack() function to unpack the data in the
+    *  @details Called from the unpack() function to unpack the data in the
     *  pe_packing_data object into the working data object(s). */
    virtual void unpack_into_working_data();
 

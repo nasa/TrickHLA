@@ -125,7 +125,7 @@ void DynamicalEntityLagComp::initialize()
 
 
 /*!
- * @job_class(integration)
+ * @job_class{integration}
  */
 void DynamicalEntityLagComp::update_time()
 {
@@ -135,7 +135,7 @@ void DynamicalEntityLagComp::update_time()
 
 
 /*!
- * @job_class(integration)
+ * @job_class{integration}
  */
 void DynamicalEntityLagComp::load()
 {
@@ -205,9 +205,9 @@ void DynamicalEntityLagComp::unload()
 }
 
 
-/*! @job_class{derivative}
- *  @brief Compute the first time derivative of the lag compensation state vector.
- *  @param user_data Any special user data needed to compute the derivative values. */
+/*!
+ * @job_class{derivative}
+ */
 void DynamicalEntityLagComp::derivative_first(
    void * user_data )
 {

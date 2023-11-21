@@ -98,7 +98,7 @@ void DynamicalEntityBase::default_data(
    char const       *sim_obj_name,
    char const       *entity_obj_name,
    char const       *entity_name,
-   char const       *parent_entity_name,
+   char const       *parent_ref_frame_name,
    bool              publishes )
 {
    string entity_name_str = string( sim_obj_name ) + "." + string( entity_obj_name );
@@ -108,8 +108,8 @@ void DynamicalEntityBase::default_data(
    this->object = mngr_object;
 
    // Set the frame name and parent frame name.
-   if ( parent_entity_name != NULL ) {
-      pe_packing_data.parent_frame = trick_MM->mm_strdup( parent_entity_name );
+   if ( parent_ref_frame_name != NULL ) {
+      pe_packing_data.parent_frame = trick_MM->mm_strdup( parent_ref_frame_name );
    } else {
       pe_packing_data.parent_frame = trick_MM->mm_strdup( "" );
    }

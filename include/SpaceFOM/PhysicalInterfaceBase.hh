@@ -69,12 +69,12 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
 
    // Default data.
    /*! @brief Sets up the attributes for a PhysicalInterface using default values.
-    *  @param object TrickHLA::Object associated with this PhysicalInterface.
-    *  @param sim_obj_name Name of SimObject containing this PhysicalInterface.
-    *  @param interface_obj_name Name of the PhysicalInterface object in the SimObject.
-    *  @param interface_name Name of the PhysicalInterface instance.
-    *  @param parent_name Name of the parent PhysicalEntity or PhysicalInterface for this PhysicalInterface instance.
-    *  @param publishes Does this federate publish this PhysicalInterface.
+    *  @param mngr_object           TrickHLA::Object associated with this PhysicalInterface.
+    *  @param sim_obj_name          Name of SimObject containing this PhysicalInterface.
+    *  @param interface_obj_name    Name of the PhysicalInterface object in the SimObject.
+    *  @param interface_name        Name of the PhysicalInterface instance.
+    *  @param interface_parent_name Name of the parent PhysicalEntity or PhysicalInterface for this PhysicalInterface instance.
+    *  @param publishes             Does this federate publish this PhysicalInterface.
     *  */
    virtual void default_data( TrickHLA::Object *mngr_object,
                               char const       *sim_obj_name,
@@ -92,7 +92,7 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
 
    // Access functions.
    /*! @brief Set the name of the PhysicalInterface object instance.
-    *  @param name Name of the PhysicalInterface object instance. */
+    *  @param new_name Name of the PhysicalInterface object instance. */
    virtual void set_name( char const *new_name );
 
    /*! @brief Get the name of the PhysicalInterface object instance.
@@ -103,7 +103,7 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
    }
 
    /*! @brief Set the name of the parent reference frame for the PhysicalInterface.
-    *  @param parent_ref_frame The name of the parent reference frame associated
+    *  @param new_parent_name The name of the parent reference frame associated
     *  with the PhysicalInterface. */
    virtual void set_parent( char const *new_parent_name );
 
@@ -123,12 +123,12 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
    virtual void unpack();
 
    /*! @brief Packs the packing data object from the working data object(s),
-    *  @detail Called from the pack() function to pack the data from the working
+    *  @details Called from the pack() function to pack the data from the working
     *  data objects(s) into the pe_packing_data object.  */
    virtual void pack_from_working_data() = 0;
 
    /*! @brief Unpacks the packing data object into the working data object(s),
-    *  @detail Called from the unpack() function to unpack the data in the
+    *  @details Called from the unpack() function to unpack the data in the
     *  pe_packing_data object into the working data object(s). */
    virtual void unpack_into_working_data() = 0;
 

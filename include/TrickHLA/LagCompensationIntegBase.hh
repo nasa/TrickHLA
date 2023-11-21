@@ -67,7 +67,7 @@ class LagCompensationIntegBase
    }
 
    /*! @brief Set the lag compentation integration tolerance.
-    *  @param dt Integration step time. */
+    *  @param tol Integration step time. */
    void set_integ_tolerance( double tol ){
       integ_tol = tol;
    }
@@ -91,7 +91,7 @@ class LagCompensationIntegBase
    virtual void derivative_first( void * user_data = NULL ) = 0;
 
    /*! @brief Compute the second time derivative of the lag compensation state vector.
-    *  @detail This function is called for second order integrators to compute
+    *  @details This function is called for second order integrators to compute
     *  second time derivative of the state vector.
     *  @param user_data Any special user data needed to compute the derivative values. */
    virtual void derivative_second( void * user_data = NULL ) = 0;

@@ -173,7 +173,7 @@ class Manager
    void send_init_data();
 
    /*! @brief Sends the initialization data for the specified object instance name.
-    *  @return Name of object instance name to send data for. */
+    *  @param instance_name Name of object instance name to send data for. */
    void send_init_data( char const *instance_name );
 
    /*! @brief Wait to receive all the initialization data that is marked as required. */
@@ -181,7 +181,7 @@ class Manager
 
    /*! @brief Wait to receive the initialization data for the specified object
     * instance name.
-    * @return Name of object instance name to receive data for. */
+    * @param instance_name Name of object instance name to receive data for. */
    void receive_init_data( char const *instance_name );
 
    /*! @brief Clear any remaining initialization sync-points. */
@@ -436,17 +436,19 @@ class Manager
    }
 
    /*! @brief Set the execution configuration object.
-    *  @return Pointer to the associated execution configuration object. */
+    *  @param exec_config Pointer to the associated execution configuration object. */
    void set_execution_configuration( ExecutionConfigurationBase *exec_config )
    {
       this->execution_control->set_execution_configuration( exec_config );
    }
+
    /*! @brief Get the execution configuration object.
     *  @return Pointer to the associated execution configuration object. */
    ExecutionConfigurationBase *get_execution_configuration()
    {
       return this->execution_control->get_execution_configuration();
    }
+
    /*! @brief Test is an execution configuration object is used.
     *  @return True if an execution configuration object is used. */
    bool is_execution_configuration_used()

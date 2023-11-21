@@ -81,8 +81,8 @@ class QuaternionData{
       double const angles[3]);
 
    /*! @brief Set attitude quaternion from Euler angles in degrees.
-    *  @param sequence Euler sequence of angles.
-    *  @param angles   Euler attitude angels {deg}. */
+    *  @param sequence   Euler sequence of angles.
+    *  @param angles_deg Euler attitude angels {deg}. */
    void set_from_Euler_deg(
       Euler_Seq    sequence,
       double const angles_deg[3]);
@@ -95,8 +95,8 @@ class QuaternionData{
       double    angles[3]);
 
    /*! @brief Get Euler angles from attitude quaternion.
-    *  @param sequence Euler sequence of angles.
-    *  @param angles   Euler attitude angels {deg}. */
+    *  @param sequence   Euler sequence of angles.
+    *  @param angles_deg Euler attitude angels {deg}. */
    void get_Euler_deg(
       Euler_Seq sequence,
       double    angles_deg[3]);
@@ -165,9 +165,9 @@ class QuaternionData{
       double const omega[3] );
 
    /*! @brief Compute the second time derivative of the attitude quaternion.
-    *  @param quat  Attitude quaternion.
-    *  @param omega Angular velocity vector.
-    *  @param alpha Angular acceleration vector. */
+    *  @param quat      Attitude quaternion.
+    *  @param omega     Angular velocity vector.
+    *  @param omega_dot Angular acceleration vector. */
    void derivative_second(
       QuaternionData const & quat,
       double const           omega[3],
@@ -176,8 +176,8 @@ class QuaternionData{
    /*! @brief Compute the second time derivative of the attitude quaternion.
     *  @param quat_scalar Scalar part of the attitude quaternion.
     *  @param quat_vector Vector part of the attitude quaternion.
-    *  @param omega Angular velocity vector.
-    *  @param alpha Angular acceleration vector. */
+    *  @param omega       Angular velocity vector.
+    *  @param omega_dot   Angular acceleration vector. */
    void derivative_second(
       double const quat_scalar,
       double const quat_vector[3],
@@ -253,11 +253,11 @@ class QuaternionData{
       double         pv[3] );
 
    /*! @brief Normalize the attitude quaternion.
-    *  @param quat_scalar Pointer to the attitude quaternion scalar.
-    *  @param quat_vector Attitude quaternion vector. */
+    *  @param qs Pointer to the attitude quaternion scalar.
+    *  @param qv Attitude quaternion vector. */
    static void normalize(
-      double * quat_scalar,
-      double   quat_vector[3]);
+      double * qs,
+      double   qv[3]);
 
    /*! @brief Compute the rate of the attitude quaternion.
     *  @param quat_scalar Scalar part of the attitude quaternion.
@@ -275,7 +275,7 @@ class QuaternionData{
    /*! @brief Compute the rate of the attitude quaternion.
     *  @param q     Attitude quaternion.
     *  @param omega Angular velocity vector.
-    *  @param qdot  Attitude quaternion rate. */
+    *  @param q_dot Attitude quaternion rate. */
    static void compute_derivative(
       QuaternionData const * q,
       double const           omega[3],
@@ -324,7 +324,7 @@ class QuaternionData{
    /*! @brief Compute the angular rate from the attitude quaternion rate and the
     *  attitude quaternion.
     *  @param q     Pointer to an attitude quaternion.
-    *  @param qdot  Pointer to an attitude quaternion rate.
+    *  @param q_dot Pointer to an attitude quaternion rate.
     *  @param omega Angular velocity vector. */
    static void compute_omega(
       QuaternionData const * q,

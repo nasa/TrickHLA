@@ -95,12 +95,12 @@ class RefFrameBase : public TrickHLA::Packing
 
    // Default data.
    /*! @brief Sets up the attributes for a reference frame using default values.
-    *  @param object TrickHLA::Object associated with this reference frame.
-    *  @param sim_obj_name Name of SimObject containing this reference frame.
-    *  @param ref_frame_obj_name Name of the ReferenceFrame object in the SimObject.
+    *  @param sim_obj_name          Name of SimObject containing this reference frame.
+    *  @param ref_frame_obj_name    Name of the ReferenceFrame object in the SimObject.
     *  @param ref_frame_parent_name Name of the parent frame for this ReferenceFrame instance.
-    *  @param ref_frame_name Name of the ReferenceFrame instance.
-    *  @param publishes Does this federate publish this reference frame.
+    *  @param ref_frame_name        Name of the ReferenceFrame instance.
+    *  @param publishes             Does this federate publish this reference frame.
+    *  @param mngr_object           TrickHLA::Object associated with this reference frame.
     *  */
    virtual void default_data( char const       *sim_obj_name,
                               char const       *ref_frame_obj_name,
@@ -173,12 +173,12 @@ class RefFrameBase : public TrickHLA::Packing
    virtual void unpack();
 
    /*! @brief Packs the packing data object from the working data object(s),
-    *  @detail Called from the pack() function to pack the data from the working
+    *  @details Called from the pack() function to pack the data from the working
     *  data objects(s) into the pe_packing_data object.  */
    virtual void pack_from_working_data() = 0;
 
    /*! @brief Unpacks the packing data object into the working data object(s),
-    *  @detail Called from the unpack() function to unpack the data in the
+    *  @details Called from the unpack() function to unpack the data in the
     *  pe_packing_data object into the working data object(s). */
    virtual void unpack_into_working_data() = 0;
 

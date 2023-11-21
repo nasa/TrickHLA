@@ -65,7 +65,7 @@ class DynamicalEntityBase : virtual public SpaceFOM::PhysicalEntityBase
 
    // Default data.
    /*! @brief Sets up the attributes for a DynamicalEntity using default values.
-    *  @param object TrickHLA::Object associated with this DynamicalEntity.
+    *  @param mngr_object TrickHLA::Object associated with this DynamicalEntity.
     *  @param sim_obj_name Name of SimObject containing this DynamicalEntity.
     *  @param entity_obj_name Name of the DynamicalEntity object in the SimObject.
     *  @param entity_name Name of the DynamicalEntity instance.
@@ -95,12 +95,12 @@ class DynamicalEntityBase : virtual public SpaceFOM::PhysicalEntityBase
    virtual void unpack();
 
    /*! @brief Packs the packing data object from the working data object(s),
-    *  @detail Called from the pack() function to pack the data from the working
+    *  @details Called from the pack() function to pack the data from the working
     *  data objects(s) into the pe_packing_data object.  */
    virtual void pack_from_working_data() = 0;
 
    /*! @brief Unpacks the packing data object into the working data object(s),
-    *  @detail Called from the unpack() function to unpack the data in the
+    *  @details Called from the unpack() function to unpack the data in the
     *  pe_packing_data object into the working data object(s). */
    virtual void unpack_into_working_data() = 0;
 

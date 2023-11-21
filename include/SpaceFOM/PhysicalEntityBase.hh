@@ -75,7 +75,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
 
    // Default data.
    /*! @brief Sets up the attributes for a PhysicalEntity using default values.
-    *  @param object TrickHLA::Object associated with this PhysicalEntity.
+    *  @param mngr_object TrickHLA::Object associated with this PhysicalEntity.
     *  @param sim_obj_name Name of SimObject containing this PhysicalEntity.
     *  @param entity_obj_name Name of the PhysicalEntity object in the SimObject.
     *  @param entity_name Name of the PhysicalEntity instance.
@@ -98,7 +98,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
 
    // Access functions.
    /*! @brief Set the name of the PhysicalEntity object instance.
-    *  @param name Name of the PhysicalEntity object instance. */
+    *  @param new_name Name of the PhysicalEntity object instance. */
    virtual void set_name( char const *new_name );
 
    /*! @brief Get the name of the PhysicalEntity object instance.
@@ -109,7 +109,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    }
 
    /*! @brief Set the type string of the PhysicalEntity.
-    *  @param type Type string associated with the PhysicalEntity. */
+    *  @param new_type Type string associated with the PhysicalEntity. */
    virtual void set_type( char const *new_type );
 
    /*! @brief Get the type string associated with the PhysicalEntity.
@@ -120,7 +120,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    }
 
    /*! @brief Set the status string of the PhysicalEntity.
-    *  @param status Status string associated with the PhysicalEntity. */
+    *  @param new_status Status string associated with the PhysicalEntity. */
    virtual void set_status( char const *new_status );
 
    /*! @brief Get the status string associated with the PhysicalEntity.
@@ -131,7 +131,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    }
 
    /*! @brief Set the name of the parent reference frame for the PhysicalEntity.
-    *  @param parent_ref_frame The name of the parent reference frame associated
+    *  @param new_frame The name of the parent reference frame associated
     *  with the PhysicalEntity. */
    virtual void set_parent_frame( char const *new_frame );
 
@@ -144,7 +144,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
 
    /*! @brief Get the current scenario time associated with the PhysicalEntity.
     *  @return Current time associated with the PhysicalEntity. */
-   double const get_time()
+   virtual double const get_time()
    {
       return pe_packing_data.state.time;
    }
@@ -158,12 +158,12 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    virtual void unpack();
 
    /*! @brief Packs the packing data object from the working data object(s),
-    *  @detail Called from the pack() function to pack the data from the working
+    *  @details Called from the pack() function to pack the data from the working
     *  data objects(s) into the pe_packing_data object.  */
    virtual void pack_from_working_data() = 0;
 
    /*! @brief Unpacks the packing data object into the working data object(s),
-    *  @detail Called from the unpack() function to unpack the data in the
+    *  @details Called from the unpack() function to unpack the data in the
     *  pe_packing_data object into the working data object(s). */
    virtual void unpack_into_working_data() = 0;
 

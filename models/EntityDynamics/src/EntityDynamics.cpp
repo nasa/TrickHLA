@@ -142,7 +142,7 @@ int EntityDynamics::integrate()
 
 
 /*!
- * @job_class(integration)
+ * @job_class{integration}
  */
 void EntityDynamics::load()
 {
