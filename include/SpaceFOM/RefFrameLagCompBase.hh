@@ -46,8 +46,8 @@ NASA, Johnson Space Center\n
 
 // SpaceFOM include files.
 #include "SpaceFOM/QuaternionData.hh"
-#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 #include "SpaceFOM/RefFrameBase.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 namespace SpaceFOM
 {
@@ -66,8 +66,8 @@ class RefFrameLagCompBase : public TrickHLA::LagCompensation
 
   public:
    // Public constructors and destructors.
-   explicit RefFrameLagCompBase( RefFrameBase & ref_frame_ref ); // Initialization constructor.
-   virtual ~RefFrameLagCompBase(); // Destructor.
+   explicit RefFrameLagCompBase( RefFrameBase &ref_frame_ref ); // Initialization constructor.
+   virtual ~RefFrameLagCompBase();                              // Destructor.
 
    /*! @brief Entity instance initialization routine. */
    virtual void initialize();
@@ -103,8 +103,7 @@ class RefFrameLagCompBase : public TrickHLA::LagCompensation
    bool debug; ///< @trick_units{--} Debug output flag.
 
   protected:
-
-   RefFrameBase & ref_frame; ///< @trick_units{--} @trick_io{**}  RefFrame to compensate.
+   RefFrameBase &ref_frame; ///< @trick_units{--} @trick_io{**}  RefFrame to compensate.
 
    // Setup Object Attribute references. These are set in initialize_callback
    // routine and used for efficiency and ownership transfer in unpack routines.
@@ -120,7 +119,7 @@ class RefFrameLagCompBase : public TrickHLA::LagCompensation
     *  @param t_end   Scenario time at the end of the compensation step. */
    virtual int compensate(
       const double t_begin,
-      const double t_end   ) = 0;
+      const double t_end ) = 0;
 
    /*! @brief Unload the lag compensation state into the packing data. */
    virtual void unload_lag_comp_data();

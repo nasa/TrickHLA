@@ -40,7 +40,6 @@ NASA, Johnson Space Center\n
 
 using namespace SpaceFOM;
 
-
 /*!
  * @job_class{initialization}
  */
@@ -54,12 +53,11 @@ SpaceTimeCoordinateData::SpaceTimeCoordinateData()
    V_INIT( ang_vel );
 }
 
-
 /*!
  * @job_class{initialization}
  */
 SpaceTimeCoordinateData::SpaceTimeCoordinateData(
-   const SpaceTimeCoordinateData & source )
+   const SpaceTimeCoordinateData &source )
    : att( source.att ),
      time( source.time )
 {
@@ -67,7 +65,6 @@ SpaceTimeCoordinateData::SpaceTimeCoordinateData(
    V_COPY( this->vel, source.vel );
    V_COPY( this->ang_vel, source.ang_vel );
 }
-
 
 /*!
  * @job_class{scheduled}
@@ -85,7 +82,7 @@ void SpaceTimeCoordinateData::initialize()
 /*!
  * @job_class{scheduled}
  */
-void SpaceTimeCoordinateData::copy( const SpaceTimeCoordinateData & stc_data )
+void SpaceTimeCoordinateData::copy( const SpaceTimeCoordinateData &stc_data )
 {
    V_COPY( this->pos, stc_data.pos );
    V_COPY( this->vel, stc_data.vel );
@@ -95,14 +92,12 @@ void SpaceTimeCoordinateData::copy( const SpaceTimeCoordinateData & stc_data )
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */
-SpaceTimeCoordinateData & SpaceTimeCoordinateData::operator=(
-   const SpaceTimeCoordinateData & rhs )
+SpaceTimeCoordinateData &SpaceTimeCoordinateData::operator=(
+   const SpaceTimeCoordinateData &rhs )
 {
    this->copy( rhs );
-   return( *this );
+   return ( *this );
 }
-

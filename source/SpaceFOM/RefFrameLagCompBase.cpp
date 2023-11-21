@@ -28,10 +28,10 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <float.h>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <float.h>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
@@ -40,10 +40,10 @@ NASA, Johnson Space Center\n
 #include "trick/trick_math_proto.h"
 
 // TrickHLA include files.
+#include "TrickHLA/Attribute.hh"
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Attribute.hh"
 
 // SpaceFOM include files.
 #include "SpaceFOM/RefFrameLagCompBase.hh"
@@ -55,24 +55,20 @@ using namespace SpaceFOM;
 /*!
  * @job_class{initialization}
  */
-RefFrameLagCompBase::RefFrameLagCompBase( RefFrameBase & ref_frame_ref ) // RETURN: -- None.
+RefFrameLagCompBase::RefFrameLagCompBase( RefFrameBase &ref_frame_ref ) // RETURN: -- None.
    : debug( false ),
      ref_frame( ref_frame_ref ),
-     state_attr(NULL),
+     state_attr( NULL ),
      compensate_dt( 0.0 )
 {
-
 }
-
 
 /*!
  * @job_class{shutdown}
  */
 RefFrameLagCompBase::~RefFrameLagCompBase() // RETURN: -- None.
 {
-
 }
-
 
 /*!
  * @job_class{initialization}
@@ -110,7 +106,6 @@ void RefFrameLagCompBase::initialize_callback(
    return;
 }
 
-
 /*! @brief Initialization integration states. */
 void RefFrameLagCompBase::initialize_states()
 {
@@ -118,12 +113,11 @@ void RefFrameLagCompBase::initialize_states()
    // Copy the current RefFrameLag state over to the lag compensated state.
    this->lag_comp_data = this->ref_frame.packing_data.state;
    this->Q_dot.derivative_first( this->lag_comp_data.att,
-                                 this->lag_comp_data.ang_vel);
+                                 this->lag_comp_data.ang_vel );
 
    // Return to calling routine.
    return;
 }
-
 
 /*!
  * @job_class{scheduled}
@@ -137,7 +131,6 @@ void RefFrameLagCompBase::bypass_send_lag_compensation()
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */
@@ -150,7 +143,6 @@ void RefFrameLagCompBase::bypass_receive_lag_compensation()
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */
@@ -161,7 +153,6 @@ void RefFrameLagCompBase::unload_lag_comp_data()
 
    return;
 }
-
 
 /*!
  * @job_class{scheduled}
@@ -174,14 +165,13 @@ void RefFrameLagCompBase::load_lag_comp_data()
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */
 void RefFrameLagCompBase::print_lag_comp_data()
 {
-   double euler_angles[3];
-   double * quat = &(lag_comp_data.att.scalar);
+   double  euler_angles[3];
+   double *quat = &( lag_comp_data.att.scalar );
 
    // Compute the attitude Euler angles.
    euler_quat( euler_angles, quat, 1, Pitch_Yaw_Roll );

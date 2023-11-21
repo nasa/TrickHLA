@@ -28,10 +28,10 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <float.h>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <float.h>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
@@ -40,10 +40,10 @@ NASA, Johnson Space Center\n
 #include "trick/trick_math_proto.h"
 
 // TrickHLA include files.
+#include "TrickHLA/Attribute.hh"
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Attribute.hh"
 
 // SpaceFOM include files.
 #include "SpaceFOM/DynamicalEntityLagCompBase.hh"
@@ -55,41 +55,37 @@ using namespace SpaceFOM;
 /*!
  * @job_class{initialization}
  */
-DynamicalEntityLagCompBase::DynamicalEntityLagCompBase( DynamicalEntityBase & entity_ref ) // RETURN: -- None.
-   : PhysicalEntityLagCompBase(entity_ref),
+DynamicalEntityLagCompBase::DynamicalEntityLagCompBase( DynamicalEntityBase &entity_ref ) // RETURN: -- None.
+   : PhysicalEntityLagCompBase( entity_ref ),
      de_entity( entity_ref ),
-     force_attr(NULL),
-     torque_attr(NULL),
-     mass_attr(NULL),
-     mass_rate_attr(NULL),
-     inertia_attr(NULL),
-     inertia_rate_attr(NULL),
+     force_attr( NULL ),
+     torque_attr( NULL ),
+     mass_attr( NULL ),
+     mass_rate_attr( NULL ),
+     inertia_attr( NULL ),
+     inertia_rate_attr( NULL ),
      mass( 1.0 ),
      mass_rate( 0.0 )
 {
    // Initialize the working parameters.
-   for ( int iinc = 0 ; iinc < 3 ; iinc++ ){
-      this->force[iinc] = 0.0;
+   for ( int iinc = 0; iinc < 3; iinc++ ) {
+      this->force[iinc]  = 0.0;
       this->torque[iinc] = 0.0;
-      for ( int jinc = 0 ; jinc < 3 ; jinc++ ) {
-         this->inertia[iinc][jinc] = 0.0;
+      for ( int jinc = 0; jinc < 3; jinc++ ) {
+         this->inertia[iinc][jinc]      = 0.0;
          this->inertia_rate[iinc][jinc] = 0.0;
-         this->inertia_inv[iinc][jinc] = 0.0;
+         this->inertia_inv[iinc][jinc]  = 0.0;
       }
       this->inertia[iinc][iinc] = 1.0;
    }
-
 }
-
 
 /*!
  * @job_class{shutdown}
  */
 DynamicalEntityLagCompBase::~DynamicalEntityLagCompBase() // RETURN: -- None.
 {
-
 }
-
 
 /*!
  * @job_class{initialization}
@@ -132,7 +128,6 @@ void DynamicalEntityLagCompBase::initialize_callback(
    return;
 }
 
-
 /*! @brief Initialization integration states. */
 void DynamicalEntityLagCompBase::initialize_states()
 {
@@ -143,7 +138,6 @@ void DynamicalEntityLagCompBase::initialize_states()
    return;
 }
 
-
 /*! @brief Sending side latency compensation callback interface from the
  *  TrickHLALagCompensation class. */
 void DynamicalEntityLagCompBase::send_lag_compensation()
@@ -153,7 +147,7 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
 
    // Save the compensation time step.
    this->compensate_dt = get_lookahead().get_time_in_seconds();
-   end_t = begin_t + this->compensate_dt;
+   end_t               = begin_t + this->compensate_dt;
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
@@ -192,14 +186,13 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
    return;
 }
 
-
 /*! @brief Receive side latency compensation callback interface from the
  *  TrickHLALagCompensation class. */
 void DynamicalEntityLagCompBase::receive_lag_compensation()
 {
    ostringstream errmsg;
-   double end_t  = get_scenario_time();
-   double data_t = entity.get_time();
+   double        end_t  = get_scenario_time();
+   double        data_t = entity.get_time();
 
    // Save the compensation time step.
    this->compensate_dt = end_t - data_t;
@@ -208,9 +201,9 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       cout << "******* DynamicalEntityLagCompInteg::receive_lag_compensation():" << __LINE__ << endl
-           << "  scenario-time:" << end_t  << endl
+           << "  scenario-time:" << end_t << endl
            << "      data-time:" << data_t << endl
-           << " comp-time-step:" << this->compensate_dt  << endl;
+           << " comp-time-step:" << this->compensate_dt << endl;
    }
 
    // Because of ownership transfers and attributes being sent at different
@@ -237,8 +230,7 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
          this->print_lag_comp_data();
       }
 
-   }
-   else {
+   } else {
       if ( debug ) {
          cout << "DynamicalEntityLagCompInteg::receive_lag_compensation(): No state data received." << endl;
          cout << "\tvalue_changed: " << this->state_attr->is_changed()
@@ -249,7 +241,7 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
       // Compute the inverse of the inertia matrix.  If this fails, the
       // inverse matrix will be set to all zeros.  This will zero out any
       // torque affects in the lag compensation dynamics.
-      if ( dm_invert_symm( this->inertia_inv, this->inertia ) != TM_SUCCESS ) {\
+      if ( dm_invert_symm( this->inertia_inv, this->inertia ) != TM_SUCCESS ) {
          send_hs( stderr,
                   "SpaceFOM::DynamicalEntityLagCompInteg::receive_lag_compensation():%d ERROR: Singular inertia matrix! Inversion failed!%c",
                   __LINE__, THLA_NEWLINE );
@@ -267,7 +259,6 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */
@@ -279,7 +270,6 @@ void DynamicalEntityLagCompBase::bypass_send_lag_compensation()
    this->de_entity.pack_from_working_data();
    return;
 }
-
 
 /*!
  * @job_class{scheduled}
@@ -293,7 +283,6 @@ void DynamicalEntityLagCompBase::bypass_receive_lag_compensation()
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */
@@ -306,18 +295,17 @@ void DynamicalEntityLagCompBase::unload_lag_comp_data()
    // Copy the current DynamicalEntity state over to the lag compensated state.
    this->de_entity.de_packing_data.mass      = this->mass;
    this->de_entity.de_packing_data.mass_rate = this->mass_rate;
-   for ( int iinc = 0 ; iinc < 3 ; iinc++ ){
+   for ( int iinc = 0; iinc < 3; iinc++ ) {
       this->de_entity.de_packing_data.force[iinc]  = this->force[iinc];
       this->de_entity.de_packing_data.torque[iinc] = this->torque[iinc];
-      for ( int jinc = 0 ; jinc < 3 ; jinc++ ) {
-         this->de_entity.de_packing_data.inertia[iinc][jinc] = this->inertia[iinc][jinc];
+      for ( int jinc = 0; jinc < 3; jinc++ ) {
+         this->de_entity.de_packing_data.inertia[iinc][jinc]      = this->inertia[iinc][jinc];
          this->de_entity.de_packing_data.inertia_rate[iinc][jinc] = this->inertia_rate[iinc][jinc];
       }
    }
 
    return;
 }
-
 
 /*!
  * @job_class{scheduled}
@@ -330,10 +318,10 @@ void DynamicalEntityLagCompBase::load_lag_comp_data()
    // Copy the current DynamicalEntity state over to the lag compensated state.
    this->mass      = this->de_entity.de_packing_data.mass;
    this->mass_rate = this->de_entity.de_packing_data.mass_rate;
-   for ( int iinc = 0 ; iinc < 3 ; iinc++ ){
+   for ( int iinc = 0; iinc < 3; iinc++ ) {
       this->force[iinc]  = this->de_entity.de_packing_data.force[iinc];
       this->torque[iinc] = this->de_entity.de_packing_data.torque[iinc];
-      for ( int jinc = 0 ; jinc < 3 ; jinc++ ) {
+      for ( int jinc = 0; jinc < 3; jinc++ ) {
          this->inertia[iinc][jinc]      = this->de_entity.de_packing_data.inertia[iinc][jinc];
          this->inertia_rate[iinc][jinc] = this->de_entity.de_packing_data.inertia_rate[iinc][jinc];
       }
@@ -341,7 +329,6 @@ void DynamicalEntityLagCompBase::load_lag_comp_data()
 
    return;
 }
-
 
 /*!
  * @job_class{scheduled}
@@ -356,24 +343,24 @@ void DynamicalEntityLagCompBase::print_lag_comp_data()
    cout << "\tmass_rate: " << this->mass_rate << endl;
    cout << "\tinertia: " << endl
         << "\t\t" << this->inertia[0][0] << ", "
-                  << this->inertia[0][1] << ", "
-                  << this->inertia[0][2] << endl
+        << this->inertia[0][1] << ", "
+        << this->inertia[0][2] << endl
         << "\t\t" << this->inertia[1][0] << ", "
-                  << this->inertia[1][1] << ", "
-                  << this->inertia[1][2] << endl
+        << this->inertia[1][1] << ", "
+        << this->inertia[1][2] << endl
         << "\t\t" << this->inertia[2][0] << ", "
-                  << this->inertia[2][1] << ", "
-                  << this->inertia[2][2] << endl;
+        << this->inertia[2][1] << ", "
+        << this->inertia[2][2] << endl;
    cout << "\tinertia rate: " << endl
         << "\t\t" << this->inertia_rate[0][0] << ", "
-                  << this->inertia_rate[0][1] << ", "
-                  << this->inertia_rate[0][2] << endl
+        << this->inertia_rate[0][1] << ", "
+        << this->inertia_rate[0][2] << endl
         << "\t\t" << this->inertia_rate[1][0] << ", "
-                  << this->inertia_rate[1][1] << ", "
-                  << this->inertia_rate[1][2] << endl
+        << this->inertia_rate[1][1] << ", "
+        << this->inertia_rate[1][2] << endl
         << "\t\t" << this->inertia_rate[2][0] << ", "
-                  << this->inertia_rate[2][1] << ", "
-                  << this->inertia_rate[2][2] << endl;
+        << this->inertia_rate[2][1] << ", "
+        << this->inertia_rate[2][2] << endl;
    cout << "\tforce: "
         << this->force[0] << ", "
         << this->force[1] << ", "

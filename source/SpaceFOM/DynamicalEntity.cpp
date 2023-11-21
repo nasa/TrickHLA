@@ -119,7 +119,6 @@ void DynamicalEntity::initialize(
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */
@@ -154,7 +153,6 @@ void DynamicalEntity::pack_from_working_data()
 
    return;
 }
-
 
 /*!
  * @job_class{scheduled}

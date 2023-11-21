@@ -48,11 +48,10 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 LagCompensationInteg::LagCompensationInteg()
-   : integrator(NULL)
+   : integrator( NULL )
 {
    return;
 }
-
 
 /*!
  * @job_class{shutdown}
@@ -67,11 +66,11 @@ LagCompensationInteg::~LagCompensationInteg()
  */
 int LagCompensationInteg::integrate(
    const double t_begin,
-   const double t_end   )
+   const double t_end )
 {
-   int ipass;
+   int    ipass;
    double compensate_dt = t_end - t_begin;
-   double dt_go = compensate_dt;
+   double dt_go         = compensate_dt;
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
@@ -83,11 +82,11 @@ int LagCompensationInteg::integrate(
 
    // Propagate the current RefFrame state to the desired time.
    // Set the current integration time for the integrator.
-   this->integ_t = t_begin;
+   this->integ_t          = t_begin;
    this->integrator->time = 0.0;
 
    // Loop through integrating the state forward to the current scenario time.
-   while( (dt_go >= 0.0) && (fabs(dt_go) > this->integ_tol) ) {
+   while ( ( dt_go >= 0.0 ) && ( fabs( dt_go ) > this->integ_tol ) ) {
 
       // Use the inherited debug-handler to allow debug comments to be turned
       // on and off from a setting in the input file.
@@ -112,11 +111,10 @@ int LagCompensationInteg::integrate(
          this->load();
 
          // Perform the integration propagation one integration step.
-         if ( dt_go > this->integ_dt ){
+         if ( dt_go > this->integ_dt ) {
             // Not near the end; so, use the defined integration step size.
             this->integrator->dt = this->integ_dt;
-         }
-         else {
+         } else {
             // Near the end; so, use the remainder of the time step.
             this->integrator->dt = dt_go;
          }
@@ -136,7 +134,6 @@ int LagCompensationInteg::integrate(
 
       // Compute the remaining time in the compensation step.
       dt_go = compensate_dt - this->integrator->time;
-
    }
 
    // Update the lag compensated time,
@@ -145,5 +142,5 @@ int LagCompensationInteg::integrate(
    // Compute the derivatives of the lag compensation state vector.
    this->derivative_first();
 
-   return( 0 );
+   return ( 0 );
 }

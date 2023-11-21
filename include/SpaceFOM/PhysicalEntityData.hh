@@ -32,9 +32,11 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/QuaternionData.hh"
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
-namespace SpaceFOM {
+namespace SpaceFOM
+{
 
-class PhysicalEntityData{
+class PhysicalEntityData
+{
 
   public:
    char *name;         ///< @trick_units{--} Name of the physical entity.
@@ -49,7 +51,6 @@ class PhysicalEntityData{
    double cm[3];        ///< @trick_units{m} Position of the entity center of mass in the structural frame.
 
    QuaternionData body_wrt_struct; ///< @trick_units{--} Orientation of the body frame wrt. the structural frame.
-
 };
 
 } // namespace SpaceFOM

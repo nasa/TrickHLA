@@ -37,8 +37,8 @@ NASA, Johnson Space Center\n
 // Trick include files.
 
 // TrickHLA include files.
-#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/DebugHandler.hh"
 
 // SpaceFOM include files.
 #include "SpaceFOM/PhysicalEntityLagCompInteg.hh"
@@ -50,12 +50,11 @@ using namespace SpaceFOM;
 /*!
  * @job_class{initialization}
  */
-PhysicalEntityLagCompInteg::PhysicalEntityLagCompInteg( PhysicalEntityBase & entity_ref ) // RETURN: -- None.
+PhysicalEntityLagCompInteg::PhysicalEntityLagCompInteg( PhysicalEntityBase &entity_ref ) // RETURN: -- None.
    : PhysicalEntityLagCompBase( entity_ref ),
      TrickHLA::LagCompensationInteg()
 {
 }
-
 
 /*!
  * @job_class{shutdown}
@@ -63,7 +62,6 @@ PhysicalEntityLagCompInteg::PhysicalEntityLagCompInteg( PhysicalEntityBase & ent
 PhysicalEntityLagCompInteg::~PhysicalEntityLagCompInteg() // RETURN: -- None.
 {
 }
-
 
 /*!
  * @job_class{initialization}
@@ -74,12 +72,11 @@ void PhysicalEntityLagCompInteg::initialize()
 
    if ( this->integ_dt < this->integ_tol ) {
 
-      errmsg << "SpaceFOM::PhysicalEntityLagCompInteg::initialize():" << __LINE__<< endl
+      errmsg << "SpaceFOM::PhysicalEntityLagCompInteg::initialize():" << __LINE__ << endl
              << " ERROR: Tolerance must be less that the dt!: dt = "
              << this->integ_dt << "; tolerance = " << this->integ_tol << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-
    }
 
    // Call the base class initialize routine.

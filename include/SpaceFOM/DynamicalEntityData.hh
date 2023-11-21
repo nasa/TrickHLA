@@ -30,9 +30,11 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_DYNAMICAL_ENTITY_FRAME_DATA_H
 #define SPACEFOM_DYNAMICAL_ENTITY_FRAME_DATA_H
 
-namespace SpaceFOM {
+namespace SpaceFOM
+{
 
-class DynamicalEntityData{
+class DynamicalEntityData
+{
 
   public:
    double force[3];  ///< @trick_units{N} Entity force vector.
@@ -42,7 +44,6 @@ class DynamicalEntityData{
 
    double inertia[3][3];      ///< @trick_units{kg*m2} Entity inertia matrix.
    double inertia_rate[3][3]; ///< @trick_units{kg*m2/s} Entity inertia rate matrix.
-
 };
 
 } // namespace SpaceFOM

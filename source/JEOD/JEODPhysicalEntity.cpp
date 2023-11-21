@@ -141,7 +141,7 @@ void JEODPhysicalEntity::pack_from_working_data()
    this->pe_packing_data.state.att.scalar = dyn_body_data->composite_body.state.rot.Q_parent_this.scalar;
    for ( iinc = 0; iinc < 3; ++iinc ) {
       this->pe_packing_data.state.att.vector[iinc] = dyn_body_data->composite_body.state.rot.Q_parent_this.vector[iinc];
-      this->pe_packing_data.state.ang_vel[iinc]     = dyn_body_data->composite_body.state.rot.ang_vel_this[iinc];
+      this->pe_packing_data.state.ang_vel[iinc]    = dyn_body_data->composite_body.state.rot.ang_vel_this[iinc];
    }
 
    // Time tag for this state data.

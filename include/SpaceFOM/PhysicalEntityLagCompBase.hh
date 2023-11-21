@@ -45,8 +45,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/LagCompensation.hh"
 
 // SpaceFOM include files.
-#include "SpaceFOM/QuaternionData.hh"
 #include "SpaceFOM/PhysicalEntityBase.hh"
+#include "SpaceFOM/QuaternionData.hh"
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 namespace SpaceFOM
@@ -66,8 +66,8 @@ class PhysicalEntityLagCompBase : public TrickHLA::LagCompensation
 
   public:
    // Public constructors and destructors.
-   explicit PhysicalEntityLagCompBase( PhysicalEntityBase & entity_ref ); // Initialization constructor.
-   virtual ~PhysicalEntityLagCompBase(); // Destructor.
+   explicit PhysicalEntityLagCompBase( PhysicalEntityBase &entity_ref ); // Initialization constructor.
+   virtual ~PhysicalEntityLagCompBase();                                 // Destructor.
 
    /*! @brief Entity instance initialization routine. */
    virtual void initialize();
@@ -103,8 +103,7 @@ class PhysicalEntityLagCompBase : public TrickHLA::LagCompensation
    bool debug; ///< @trick_units{--} Debug output flag.
 
   protected:
-
-   PhysicalEntityBase & entity; ///< @trick_units{--} @trick_io{**}  PhysicalEntity to compensate.
+   PhysicalEntityBase &entity; ///< @trick_units{--} @trick_io{**}  PhysicalEntity to compensate.
 
    // Setup Object Attribute references. These are set in initialize_callback
    // routine and used for efficiency and ownership transfer in unpack routines.
@@ -122,9 +121,9 @@ class PhysicalEntityLagCompBase : public TrickHLA::LagCompensation
 
    SpaceTimeCoordinateData lag_comp_data; ///< @trick_units{--} Compensated state data.
    QuaternionData          Q_dot;         ///< @trick_units{--} Computed attitude quaternion rate.
-   double accel[3];     ///< @trick_units{m/s2} Entity acceleration vector.
-   double ang_accel[3]; ///< @trick_units{rad/s2} Entity rotational acceleration vector.
-   double cm[3];        ///< @trick_units{m} Position of the entity center of mass in the structural frame.
+   double                  accel[3];      ///< @trick_units{m/s2} Entity acceleration vector.
+   double                  ang_accel[3];  ///< @trick_units{rad/s2} Entity rotational acceleration vector.
+   double                  cm[3];         ///< @trick_units{m} Position of the entity center of mass in the structural frame.
 
    QuaternionData body_wrt_struct; ///< @trick_units{--} Orientation of the body frame wrt. the structural frame.
 
@@ -133,7 +132,7 @@ class PhysicalEntityLagCompBase : public TrickHLA::LagCompensation
     *  @param t_end   Scenario time at the end of the compensation step. */
    virtual int compensate(
       const double t_begin,
-      const double t_end   ) = 0;
+      const double t_end ) = 0;
 
    /*! @brief Unload the lag compensation state into the packing data. */
    virtual void unload_lag_comp_data();

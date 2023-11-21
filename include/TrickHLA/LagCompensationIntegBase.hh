@@ -57,18 +57,20 @@ class LagCompensationIntegBase
    LagCompensationIntegBase()
       : integ_t( 0.0 ),
         integ_dt( 0.05 ),
-        integ_tol( 1.0e-8 ){ return; }
-   virtual ~LagCompensationIntegBase(){ return; }
+        integ_tol( 1.0e-8 ) { return; }
+   virtual ~LagCompensationIntegBase() { return; }
 
    /*! @brief Set the lag compentation integration time step.
     *  @param dt Integration step time. */
-   void set_integ_dt( double dt ){
+   void set_integ_dt( double dt )
+   {
       integ_dt = dt;
    }
 
    /*! @brief Set the lag compentation integration tolerance.
     *  @param tol Integration step time. */
-   void set_integ_tolerance( double tol ){
+   void set_integ_tolerance( double tol )
+   {
       integ_tol = tol;
    }
 
@@ -88,21 +90,20 @@ class LagCompensationIntegBase
 
    /*! @brief Compute the first time derivative of the lag compensation state vector.
     *  @param user_data Any special user data needed to compute the derivative values. */
-   virtual void derivative_first( void * user_data = NULL ) = 0;
+   virtual void derivative_first( void *user_data = NULL ) = 0;
 
    /*! @brief Compute the second time derivative of the lag compensation state vector.
     *  @details This function is called for second order integrators to compute
     *  second time derivative of the state vector.
     *  @param user_data Any special user data needed to compute the derivative values. */
-   virtual void derivative_second( void * user_data = NULL ) = 0;
+   virtual void derivative_second( void *user_data = NULL ) = 0;
 
    /*! @brief Compensate the state data from the data time to the current scenario time.
     *  @param t_begin Scenario time at the start of the compensation step.
     *  @param t_end   Scenario time at the end of the compensation step. */
    virtual int integrate(
       const double t_begin,
-      const double t_end   ) = 0;
-
+      const double t_end ) = 0;
 };
 
 } // namespace TrickHLA

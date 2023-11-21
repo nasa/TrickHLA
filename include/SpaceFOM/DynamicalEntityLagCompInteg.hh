@@ -65,8 +65,8 @@ class DynamicalEntityLagCompInteg : public DynamicalEntityLagCompBase, public Tr
 
   public:
    // Public constructors and destructors.
-   explicit DynamicalEntityLagCompInteg( DynamicalEntityBase & entity_ref ); // Initialization constructor.
-   virtual ~DynamicalEntityLagCompInteg(); // Destructor.
+   explicit DynamicalEntityLagCompInteg( DynamicalEntityBase &entity_ref ); // Initialization constructor.
+   virtual ~DynamicalEntityLagCompInteg();                                  // Destructor.
 
    /*! @brief Entity instance initialization routine. */
    virtual void initialize();
@@ -77,10 +77,10 @@ class DynamicalEntityLagCompInteg : public DynamicalEntityLagCompBase, public Tr
     *  @param t_end   Scenario time at the end of the compensation step. */
    virtual int compensate(
       const double t_begin,
-      const double t_end   )
+      const double t_end )
    {
       this->compensate_dt = t_end - t_begin;
-      return( integrate( t_begin, t_end ) );
+      return ( integrate( t_begin, t_end ) );
    }
 
   private:

@@ -28,10 +28,10 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <float.h>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <float.h>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
@@ -40,10 +40,10 @@ NASA, Johnson Space Center\n
 #include "trick/trick_math_proto.h"
 
 // TrickHLA include files.
+#include "TrickHLA/Attribute.hh"
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Attribute.hh"
 
 // SpaceFOM include files.
 #include "SpaceFOM/PhysicalEntityLagCompBase.hh"
@@ -55,39 +55,35 @@ using namespace SpaceFOM;
 /*!
  * @job_class{initialization}
  */
-PhysicalEntityLagCompBase::PhysicalEntityLagCompBase( PhysicalEntityBase & entity_ref ) // RETURN: -- None.
+PhysicalEntityLagCompBase::PhysicalEntityLagCompBase( PhysicalEntityBase &entity_ref ) // RETURN: -- None.
    : debug( false ),
      entity( entity_ref ),
-     name_attr(NULL),
-     type_attr(NULL),
-     status_attr(NULL),
-     parent_frame_attr(NULL),
-     state_attr(NULL),
-     accel_attr(NULL),
-     ang_accel_attr(NULL),
-     cm_attr(NULL),
-     body_frame_attr(NULL),
+     name_attr( NULL ),
+     type_attr( NULL ),
+     status_attr( NULL ),
+     parent_frame_attr( NULL ),
+     state_attr( NULL ),
+     accel_attr( NULL ),
+     ang_accel_attr( NULL ),
+     cm_attr( NULL ),
+     body_frame_attr( NULL ),
      compensate_dt( 0.0 )
 {
 
    // Initialize the acceleration values.
-   for( int iinc = 0 ; iinc < 3 ; iinc++ ){
+   for ( int iinc = 0; iinc < 3; iinc++ ) {
       this->accel[iinc]     = 0.0;
       this->ang_accel[iinc] = 0.0;
       this->cm[iinc]        = 0.0;
    }
-
 }
-
 
 /*!
  * @job_class{shutdown}
  */
 PhysicalEntityLagCompBase::~PhysicalEntityLagCompBase() // RETURN: -- None.
 {
-
 }
-
 
 /*!
  * @job_class{initialization}
@@ -133,7 +129,6 @@ void PhysicalEntityLagCompBase::initialize_callback(
    return;
 }
 
-
 /*! @brief Initialization integration states. */
 void PhysicalEntityLagCompBase::initialize_states()
 {
@@ -141,7 +136,7 @@ void PhysicalEntityLagCompBase::initialize_states()
    // Copy the current PhysicalEntity state over to the lag compensated state.
    this->lag_comp_data   = this->entity.pe_packing_data.state;
    this->body_wrt_struct = this->entity.pe_packing_data.body_wrt_struct;
-   for ( int iinc = 0 ; iinc < 3 ; iinc++ ){
+   for ( int iinc = 0; iinc < 3; iinc++ ) {
       this->accel[iinc]     = this->entity.pe_packing_data.accel[iinc];
       this->ang_accel[iinc] = this->entity.pe_packing_data.ang_accel[iinc];
       this->cm[iinc]        = this->entity.pe_packing_data.cm[iinc];
@@ -153,7 +148,6 @@ void PhysicalEntityLagCompBase::initialize_states()
    return;
 }
 
-
 /*! @brief Sending side latency compensation callback interface from the
  *  TrickHLALagCompensation class. */
 void PhysicalEntityLagCompBase::send_lag_compensation()
@@ -163,7 +157,7 @@ void PhysicalEntityLagCompBase::send_lag_compensation()
 
    // Save the compensation time step.
    this->compensate_dt = get_lookahead().get_time_in_seconds();
-   end_t = begin_t + this->compensate_dt;
+   end_t               = begin_t + this->compensate_dt;
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
@@ -202,7 +196,6 @@ void PhysicalEntityLagCompBase::send_lag_compensation()
    return;
 }
 
-
 /*! @brief Receive side latency compensation callback interface from the
  *  TrickHLALagCompensation class. */
 void PhysicalEntityLagCompBase::receive_lag_compensation()
@@ -217,9 +210,9 @@ void PhysicalEntityLagCompBase::receive_lag_compensation()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       cout << "******* PhysicalEntityLagCompInteg::receive_lag_compensation():" << __LINE__ << endl
-           << "  scenario-time:" << end_t  << endl
+           << "  scenario-time:" << end_t << endl
            << "      data-time:" << data_t << endl
-           << " comp-time-step:" << this->compensate_dt  << endl;
+           << " comp-time-step:" << this->compensate_dt << endl;
    }
 
    // Because of ownership transfers and attributes being sent at different
@@ -245,7 +238,6 @@ void PhysicalEntityLagCompBase::receive_lag_compensation()
          cout << "Receive data after compensation: " << endl;
          this->print_lag_comp_data();
       }
-
    }
 
    // Copy the compensated state to the packing data.
@@ -257,7 +249,6 @@ void PhysicalEntityLagCompBase::receive_lag_compensation()
    // Return to calling routine.
    return;
 }
-
 
 /*!
  * @job_class{scheduled}
@@ -271,7 +262,6 @@ void PhysicalEntityLagCompBase::bypass_send_lag_compensation()
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */
@@ -284,7 +274,6 @@ void PhysicalEntityLagCompBase::bypass_receive_lag_compensation()
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */
@@ -293,7 +282,7 @@ void PhysicalEntityLagCompBase::unload_lag_comp_data()
    // Copy the current PhysicalEntity state over to the lag compensated state.
    this->entity.pe_packing_data.state           = this->lag_comp_data;
    this->entity.pe_packing_data.body_wrt_struct = this->body_wrt_struct;
-   for ( int iinc = 0 ; iinc < 3 ; iinc++ ){
+   for ( int iinc = 0; iinc < 3; iinc++ ) {
       this->entity.pe_packing_data.accel[iinc]     = this->accel[iinc];
       this->entity.pe_packing_data.ang_accel[iinc] = this->ang_accel[iinc];
       this->entity.pe_packing_data.cm[iinc]        = this->cm[iinc];
@@ -301,7 +290,6 @@ void PhysicalEntityLagCompBase::unload_lag_comp_data()
 
    return;
 }
-
 
 /*!
  * @job_class{scheduled}
@@ -311,7 +299,7 @@ void PhysicalEntityLagCompBase::load_lag_comp_data()
    // Copy the current PhysicalEntity state over to the lag compensated state.
    this->lag_comp_data   = this->entity.pe_packing_data.state;
    this->body_wrt_struct = this->entity.pe_packing_data.body_wrt_struct;
-   for ( int iinc = 0 ; iinc < 3 ; iinc++ ){
+   for ( int iinc = 0; iinc < 3; iinc++ ) {
       this->accel[iinc]     = this->entity.pe_packing_data.accel[iinc];
       this->ang_accel[iinc] = this->entity.pe_packing_data.ang_accel[iinc];
       this->cm[iinc]        = this->entity.pe_packing_data.cm[iinc];
@@ -319,7 +307,6 @@ void PhysicalEntityLagCompBase::load_lag_comp_data()
 
    return;
 }
-
 
 /*!
  * @job_class{scheduled}

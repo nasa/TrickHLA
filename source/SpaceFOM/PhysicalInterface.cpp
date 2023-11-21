@@ -117,7 +117,6 @@ void PhysicalInterface::initialize( PhysicalInterfaceData *interface_data_ptr )
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */
@@ -178,9 +177,7 @@ void PhysicalInterface::pack_from_working_data()
    }
 
    return;
-
 }
-
 
 /*!
  * @job_class{scheduled}
@@ -235,7 +232,7 @@ void PhysicalInterface::unpack_into_working_data()
    // Unpack the interface position data.
    if ( position_attr->is_received() ) {
       for ( int iinc = 0; iinc < 3; ++iinc ) {
-          interface_data->position[iinc] = packing_data.position[iinc];
+         interface_data->position[iinc] = packing_data.position[iinc];
       }
    }
 

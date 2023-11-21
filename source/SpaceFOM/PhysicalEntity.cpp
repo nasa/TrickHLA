@@ -119,7 +119,6 @@ void PhysicalEntity::initialize( PhysicalEntityData *physical_data_ptr )
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */
@@ -224,7 +223,7 @@ void PhysicalEntity::pack_from_working_data()
    pe_packing_data.state.att.scalar = physical_data->state.att.scalar;
    for ( iinc = 0; iinc < 3; ++iinc ) {
       pe_packing_data.state.att.vector[iinc] = physical_data->state.att.vector[iinc];
-      pe_packing_data.state.ang_vel[iinc]     = physical_data->state.ang_vel[iinc];
+      pe_packing_data.state.ang_vel[iinc]    = physical_data->state.ang_vel[iinc];
    }
 
    // Time tag for this state data.
@@ -253,9 +252,7 @@ void PhysicalEntity::pack_from_working_data()
 
    // Return to the calling routine.
    return;
-
 }
-
 
 /*!
  * @job_class{scheduled}

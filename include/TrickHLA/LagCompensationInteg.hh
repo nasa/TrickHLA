@@ -44,7 +44,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class LagCompensationInteg: public LagCompensationIntegBase
+class LagCompensationInteg : public LagCompensationIntegBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -64,8 +64,7 @@ class LagCompensationInteg: public LagCompensationIntegBase
    virtual ~LagCompensationInteg() = 0;
 
   protected:
-
-   Trick::Integrator * integrator; ///< @trick_units{--} Reference to a specific Trick integration method.
+   Trick::Integrator *integrator; ///< @trick_units{--} Reference to a specific Trick integration method.
 
    /*! @brief Update the latency compensation time from the integrator. */
    virtual void update_time() = 0;
@@ -78,21 +77,20 @@ class LagCompensationInteg: public LagCompensationIntegBase
 
    /*! @brief Compute the first time derivative of the lag compensation state vector.
     *  @param user_data Any special user data needed to compute the derivative values. */
-   virtual void derivative_first( void * user_data = NULL ) = 0;
+   virtual void derivative_first( void *user_data = NULL ) = 0;
 
    /*! @brief Compute the second time derivative of the lag compensation state vector.
     *  @details This function is called for second order integrators to compute
     *  second time derivative of the state vector.
     *  @param user_data Any special user data needed to compute the derivative values. */
-   virtual void derivative_second( void * user_data = NULL ) = 0;
+   virtual void derivative_second( void *user_data = NULL ) = 0;
 
    /*! @brief Compensate the state data from the data time to the current scenario time.
     *  @param t_begin Scenario time at the start of the compensation step.
     *  @param t_end   Scenario time at the end of the compensation step. */
    virtual int integrate(
       const double t_begin,
-      const double t_end   );
-
+      const double t_end );
 };
 
 } // namespace TrickHLA

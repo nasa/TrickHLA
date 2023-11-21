@@ -132,7 +132,6 @@ void JEODRefFrameState::initialize(
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */
@@ -141,16 +140,16 @@ void JEODRefFrameState::pack_from_working_data()
    int iinc;
 
    // Set the reference frame name and parent frame name.
-   //if ( packing_data.name != NULL ) {
-      // NOTE: We don't currently support renaming an DynBody for JEOD
-      // based applications.  The changed name is updated in the RefFrameBase
-      // name attribute but we do not do anything with it now.
+   // if ( packing_data.name != NULL ) {
+   // NOTE: We don't currently support renaming an DynBody for JEOD
+   // based applications.  The changed name is updated in the RefFrameBase
+   // name attribute but we do not do anything with it now.
    //}
 
-   //if ( packing_data.parent_name != NULL ) {
-      // NOTE: We don't currently support reparenting a ReferenceFrame for JEOD
-      // based applications.  The changed the ReferencFrame parent name is
-      // ignored for now.
+   // if ( packing_data.parent_name != NULL ) {
+   //  NOTE: We don't currently support reparenting a ReferenceFrame for JEOD
+   //  based applications.  The changed the ReferencFrame parent name is
+   //  ignored for now.
    //}
 
    // Pack the data.
@@ -184,7 +183,6 @@ void JEODRefFrameState::pack_from_working_data()
 
    return;
 }
-
 
 /*!
  * @job_class{scheduled}
@@ -227,9 +225,8 @@ void JEODRefFrameState::unpack_into_working_data()
       ref_frame_state->rot.Q_parent_this.scalar = packing_data.state.att.scalar;
       for ( int iinc = 0; iinc < 3; ++iinc ) {
          ref_frame_state->rot.Q_parent_this.vector[iinc] = packing_data.state.att.vector[iinc];
-         ref_frame_state->rot.ang_vel_this[iinc]     = packing_data.state.ang_vel[iinc];
+         ref_frame_state->rot.ang_vel_this[iinc]         = packing_data.state.ang_vel[iinc];
       }
-
    }
 
    if ( debug ) {

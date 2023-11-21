@@ -51,7 +51,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 QuaternionEncoder::QuaternionEncoder(
-   QuaternionData & quat_data )
+   QuaternionData &quat_data )
    : data( quat_data ),
      scalar_encoder( &data.scalar ),
      vector_encoder( HLAfloat64LE(), 3 ),

@@ -63,15 +63,14 @@ class RefFrameLagComp : public RefFrameLagCompInteg
 
   public:
    // Public constructors and destructors.
-   explicit RefFrameLagComp( RefFrameBase & ref_frame_ref ); // Initialization constructor.
-   virtual ~RefFrameLagComp(); // Destructor.
+   explicit RefFrameLagComp( RefFrameBase &ref_frame_ref ); // Initialization constructor.
+   virtual ~RefFrameLagComp();                              // Destructor.
 
    /*! @brief Entity instance initialization routine. */
    virtual void initialize();
 
   protected:
-
-   double * integ_states[13]; ///< @trick_units{--} @trick_io{**} Integration states.
+   double *integ_states[13]; ///< @trick_units{--} @trick_io{**} Integration states.
 
    /*! @brief Update the latency compensation time from the integrator. */
    virtual void update_time();
@@ -84,13 +83,13 @@ class RefFrameLagComp : public RefFrameLagCompInteg
 
    /*! @brief Compute the first time derivative of the lag compensation state vector.
     *  @param user_data Any special user data needed to compute the derivative values. */
-   virtual void derivative_first( void * user_data = NULL );
+   virtual void derivative_first( void *user_data = NULL );
 
    /*! @brief Compute the second time derivative of the lag compensation state vector.
     *  @details This function is called for second order integrators to compute
     *  second time derivative of the state vector.
     *  @param user_data Any special user data needed to compute the derivative values. */
-   virtual void derivative_second( void * user_data ){ return; }
+   virtual void derivative_second( void *user_data ) { return; }
 
   private:
    // This object is not copyable

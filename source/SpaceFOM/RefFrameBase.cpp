@@ -230,7 +230,7 @@ void RefFrameBase::initialize()
 
    // Check to see if the parent reference frame has been set if this frame
    // is NOT the root frame.
-   if ( strcmp(this->packing_data.parent_name, "") && (this->parent_frame == NULL) ) {
+   if ( strcmp( this->packing_data.parent_name, "" ) && ( this->parent_frame == NULL ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_NO_MODULES ) ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
@@ -398,7 +398,6 @@ void RefFrameBase::subscribe()
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */
@@ -442,7 +441,6 @@ void RefFrameBase::pack()
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */
@@ -483,7 +481,6 @@ void RefFrameBase::unpack()
 
    return;
 }
-
 
 /*!
  * @job_class{default_data}

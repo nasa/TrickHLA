@@ -61,7 +61,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 JEODPhysicalInterface::JEODPhysicalInterface() // RETURN: -- None.
-   : vehicle_point_id(NULL),
+   : vehicle_point_id( NULL ),
      vehicle_point_data( NULL )
 {
 }
@@ -129,7 +129,7 @@ void JEODPhysicalInterface::initialize( const jeod::BodyRefFrame *vehicle_point_
  * @job_class{initialization}
  */
 void JEODPhysicalInterface::initialize(
-   jeod::DynBody * dyn_body_ptr )
+   jeod::DynBody *dyn_body_ptr )
 {
 
    // Make sure that we have a vehicle point ID to work with.
@@ -148,8 +148,7 @@ void JEODPhysicalInterface::initialize(
              << " ERROR: Unexpected NULL dyn_body_ptr: for interface " << this->packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-   }
-   else {
+   } else {
       this->vehicle_point_data = dyn_body_ptr->find_vehicle_point( vehicle_point_id );
    }
 
@@ -183,7 +182,7 @@ void JEODPhysicalInterface::pack_from_working_data()
    }
 
    // Short cut to the mass point data.
-   jeod::MassPoint * mass_point_ptr = vehicle_point_data->mass_point;
+   jeod::MassPoint *mass_point_ptr = vehicle_point_data->mass_point;
 
    // Check for initialization.
    if ( !initialized ) {
@@ -216,7 +215,7 @@ void JEODPhysicalInterface::pack_from_working_data()
 
 void JEODPhysicalInterface::unpack_into_working_data()
 {
-   jeod::MassPoint * mass_point_ptr;
+   jeod::MassPoint *mass_point_ptr;
 
    // Check for NULL vehicle point.
    // Note: This should never be true, but just in case.
@@ -238,7 +237,6 @@ void JEODPhysicalInterface::unpack_into_working_data()
    // happen to be in the local variable, which would cause data corruption of
    // the state.  We always need to do this check because ownership transfers
    // could happen at any time or the data could be at a different rate.
-
 
    // Set the reference frame name and parent frame name.
    if ( name_attr->is_received() ) {
@@ -277,7 +275,6 @@ void JEODPhysicalInterface::unpack_into_working_data()
    return;
 }
 
-
 /*!
  * @job_class{initialization}
  */
@@ -292,4 +289,3 @@ void JEODPhysicalInterface::set_vehicle_point_id( char const *new_id )
    vehicle_point_id = trick_MM->mm_strdup( new_id );
    return;
 }
-

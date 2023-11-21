@@ -39,8 +39,8 @@ NASA, Johnson Space Center\n
 #include "trick/trick_math.h"
 
 // TrickHLA include files.
-#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/DebugHandler.hh"
 
 // SpaceFOM include files.
 #include "SpaceFOM/DynamicalEntityLagCompInteg.hh"
@@ -52,14 +52,12 @@ using namespace SpaceFOM;
 /*!
  * @job_class{initialization}
  */
-DynamicalEntityLagCompInteg::DynamicalEntityLagCompInteg( DynamicalEntityBase & entity_ref ) // RETURN: -- None.
+DynamicalEntityLagCompInteg::DynamicalEntityLagCompInteg( DynamicalEntityBase &entity_ref ) // RETURN: -- None.
    : DynamicalEntityLagCompBase( entity_ref ),
      TrickHLA::LagCompensationInteg()
 
 {
-
 }
-
 
 /*!
  * @job_class{shutdown}
@@ -67,7 +65,6 @@ DynamicalEntityLagCompInteg::DynamicalEntityLagCompInteg( DynamicalEntityBase & 
 DynamicalEntityLagCompInteg::~DynamicalEntityLagCompInteg() // RETURN: -- None.
 {
 }
-
 
 /*!
  * @job_class{initialization}
@@ -78,12 +75,11 @@ void DynamicalEntityLagCompInteg::initialize()
 
    if ( this->integ_dt < this->integ_tol ) {
 
-      errmsg << "SpaceFOM::DynamicalEntityLagCompInteg::initialize():" << __LINE__<< endl
+      errmsg << "SpaceFOM::DynamicalEntityLagCompInteg::initialize():" << __LINE__ << endl
              << " ERROR: Tolerance must be less that the dt!: dt = "
              << this->integ_dt << "; tolerance = " << this->integ_tol << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-
    }
 
    // Call the base class initialize routine.

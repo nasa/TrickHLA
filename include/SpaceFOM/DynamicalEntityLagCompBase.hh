@@ -45,10 +45,10 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/LagCompensation.hh"
 
 // SpaceFOM include files.
-#include "SpaceFOM/QuaternionData.hh"
-#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 #include "SpaceFOM/DynamicalEntityBase.hh"
 #include "SpaceFOM/PhysicalEntityLagCompBase.hh"
+#include "SpaceFOM/QuaternionData.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 namespace SpaceFOM
 {
@@ -67,8 +67,8 @@ class DynamicalEntityLagCompBase : public PhysicalEntityLagCompBase
 
   public:
    // Public constructors and destructors.
-   explicit DynamicalEntityLagCompBase( DynamicalEntityBase & entity_ref ); // Initialization constructor.
-   virtual ~DynamicalEntityLagCompBase(); // Destructor.
+   explicit DynamicalEntityLagCompBase( DynamicalEntityBase &entity_ref ); // Initialization constructor.
+   virtual ~DynamicalEntityLagCompBase();                                  // Destructor.
 
    /*! @brief Entity instance initialization routine. */
    virtual void initialize();
@@ -101,8 +101,7 @@ class DynamicalEntityLagCompBase : public PhysicalEntityLagCompBase
    virtual void bypass_receive_lag_compensation();
 
   protected:
-
-   DynamicalEntityBase & de_entity; ///< @trick_units{--} @trick_io{**}  PhysicalEntity to compensate.
+   DynamicalEntityBase &de_entity; ///< @trick_units{--} @trick_io{**}  PhysicalEntity to compensate.
 
    // Setup Object Attribute references. These are set in initialize_callback
    // routine and used for efficiency and ownership transfer in unpack routines.
@@ -127,7 +126,7 @@ class DynamicalEntityLagCompBase : public PhysicalEntityLagCompBase
     *  @param t_end   Scenario time at the end of the compensation step. */
    virtual int compensate(
       const double t_begin,
-      const double t_end   ) = 0;
+      const double t_end ) = 0;
 
    /*! @brief Unload the lag compensation state into the packing data. */
    virtual void unload_lag_comp_data();

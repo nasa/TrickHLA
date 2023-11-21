@@ -66,7 +66,7 @@ PhysicalInterfaceBase::PhysicalInterfaceBase() // RETURN: -- None.
      parent_attr( NULL ),
      position_attr( NULL ),
      attitude_attr( NULL ),
-     quat_encoder(packing_data.attitude)
+     quat_encoder( packing_data.attitude )
 {
    V_INIT( packing_data.position );
 }
@@ -76,7 +76,6 @@ PhysicalInterfaceBase::PhysicalInterfaceBase() // RETURN: -- None.
  */
 PhysicalInterfaceBase::~PhysicalInterfaceBase() // RETURN: -- None.
 {
-
 
    if ( this->packing_data.name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.name ) ) ) {
@@ -91,7 +90,6 @@ PhysicalInterfaceBase::~PhysicalInterfaceBase() // RETURN: -- None.
                   __LINE__, THLA_NEWLINE );
       }
       this->packing_data.parent_name = NULL;
-
    }
    initialized   = false;
    name_attr     = NULL;
@@ -247,7 +245,6 @@ void PhysicalInterfaceBase::initialize_callback(
    return;
 }
 
-
 /*!
  * @job_class{initialization}
  */
@@ -262,7 +259,6 @@ void PhysicalInterfaceBase::set_name( char const *new_name )
    this->packing_data.name = trick_MM->mm_strdup( new_name );
    return;
 }
-
 
 /*!
  * @job_class{initialization}
@@ -317,9 +313,7 @@ void PhysicalInterfaceBase::pack()
    quat_encoder.encode();
 
    return;
-
 }
-
 
 void PhysicalInterfaceBase::unpack()
 {
@@ -358,7 +352,6 @@ void PhysicalInterfaceBase::unpack()
 
    return;
 }
-
 
 /*!
  * @job_class{default_data}

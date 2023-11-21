@@ -28,10 +28,10 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <float.h>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <float.h>
 
 // Trick include files.
 #include "trick/Integrator.hh"
@@ -40,10 +40,10 @@ NASA, Johnson Space Center\n
 #include "trick/trick_math.h"
 
 // TrickHLA include files.
+#include "TrickHLA/Attribute.hh"
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Attribute.hh"
 
 // SpaceFOM include files.
 #include "SpaceFOM/DynamicalEntityLagComp.hh"
@@ -55,31 +55,29 @@ using namespace SpaceFOM;
 /*!
  * @job_class{initialization}
  */
-DynamicalEntityLagComp::DynamicalEntityLagComp( DynamicalEntityBase & entity_ref ) // RETURN: -- None.
+DynamicalEntityLagComp::DynamicalEntityLagComp( DynamicalEntityBase &entity_ref ) // RETURN: -- None.
    : DynamicalEntityLagCompInteg( entity_ref )
 {
 
    // Assign the integrator state references.
    // Translational position
-   integ_states[0] = &(this->lag_comp_data.pos[0]);
-   integ_states[1] = &(this->lag_comp_data.pos[1]);
-   integ_states[2] = &(this->lag_comp_data.pos[2]);
+   integ_states[0] = &( this->lag_comp_data.pos[0] );
+   integ_states[1] = &( this->lag_comp_data.pos[1] );
+   integ_states[2] = &( this->lag_comp_data.pos[2] );
    // Translational velocity
-   integ_states[3] = &(this->lag_comp_data.vel[0]);
-   integ_states[4] = &(this->lag_comp_data.vel[1]);
-   integ_states[5] = &(this->lag_comp_data.vel[2]);
+   integ_states[3] = &( this->lag_comp_data.vel[0] );
+   integ_states[4] = &( this->lag_comp_data.vel[1] );
+   integ_states[5] = &( this->lag_comp_data.vel[2] );
    // Rotational position
-   integ_states[6] = &(this->lag_comp_data.att.scalar);
-   integ_states[7] = &(this->lag_comp_data.att.vector[0]);
-   integ_states[8] = &(this->lag_comp_data.att.vector[1]);
-   integ_states[9] = &(this->lag_comp_data.att.vector[2]);
+   integ_states[6] = &( this->lag_comp_data.att.scalar );
+   integ_states[7] = &( this->lag_comp_data.att.vector[0] );
+   integ_states[8] = &( this->lag_comp_data.att.vector[1] );
+   integ_states[9] = &( this->lag_comp_data.att.vector[2] );
    // Rotational velocity
-   integ_states[10] = &(this->lag_comp_data.ang_vel[0]);
-   integ_states[11] = &(this->lag_comp_data.ang_vel[1]);
-   integ_states[12] = &(this->lag_comp_data.ang_vel[2]);
-
+   integ_states[10] = &( this->lag_comp_data.ang_vel[0] );
+   integ_states[11] = &( this->lag_comp_data.ang_vel[1] );
+   integ_states[12] = &( this->lag_comp_data.ang_vel[2] );
 }
-
 
 /*!
  * @job_class{shutdown}
@@ -96,7 +94,6 @@ DynamicalEntityLagComp::~DynamicalEntityLagComp() // RETURN: -- None.
    }
 }
 
-
 /*!
  * @job_class{initialization}
  */
@@ -105,15 +102,14 @@ void DynamicalEntityLagComp::initialize()
    ostringstream errmsg;
 
    // Create and get a reference to the Trick Euler integrator.
-   this->integrator = Trick::getIntegrator( Euler, 26, this->integ_dt);
+   this->integrator = Trick::getIntegrator( Euler, 26, this->integ_dt );
 
    if ( this->integrator == (Trick::Integrator *)NULL ) {
 
       errmsg << "SpaceFOM::DynamicalEntityLagComp::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL Trick integrator!"<< THLA_ENDL;
+             << " ERROR: Unexpected NULL Trick integrator!" << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-
    }
 
    // Call the base class initialize function.l
@@ -122,7 +118,6 @@ void DynamicalEntityLagComp::initialize()
    // Return to calling routine.
    return;
 }
-
 
 /*!
  * @job_class{integration}
@@ -133,7 +128,6 @@ void DynamicalEntityLagComp::update_time()
    return;
 }
 
-
 /*!
  * @job_class{integration}
  */
@@ -142,8 +136,8 @@ void DynamicalEntityLagComp::load()
    int istep = integrator->intermediate_step;
 
    // Load state array: position and velocity.
-   for( int iinc = 0; iinc < 13; iinc++ ){
-      integrator->state[iinc] = *(integ_states[iinc]);
+   for ( int iinc = 0; iinc < 13; iinc++ ) {
+      integrator->state[iinc] = *( integ_states[iinc] );
    }
 
    /*************************************************************************
@@ -176,9 +170,7 @@ void DynamicalEntityLagComp::load()
 
    // Return to calling routine.
    return;
-
 }
-
 
 /*!
  * @job_class{integration}
@@ -187,8 +179,8 @@ void DynamicalEntityLagComp::unload()
 {
 
    // Unload state array: position and velocity.
-   for( int iinc = 0; iinc < 13; iinc++ ){
-      *(integ_states[iinc]) = integrator->state[iinc];
+   for ( int iinc = 0; iinc < 13; iinc++ ) {
+      *( integ_states[iinc] ) = integrator->state[iinc];
    }
 
    // Normalize the propagated attitude quaternion.
@@ -201,15 +193,13 @@ void DynamicalEntityLagComp::unload()
 
    // Return to calling routine.
    return;
-
 }
-
 
 /*!
  * @job_class{derivative}
  */
 void DynamicalEntityLagComp::derivative_first(
-   void * user_data )
+   void *user_data )
 {
    double accel_str[3];
    double ang_accel_str[3];
@@ -232,7 +222,7 @@ void DynamicalEntityLagComp::derivative_first(
                                  this->lag_comp_data.ang_vel );
 
    // Compute the translational acceleration in the structural frame.
-   V_SCALE( accel_str, this->force, 1.0/this->mass );
+   V_SCALE( accel_str, this->force, 1.0 / this->mass );
 
    // Transform the translational acceleration into the body frame.
    this->body_wrt_struct.transform_vector( accel_str, this->accel );

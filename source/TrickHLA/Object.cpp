@@ -3134,7 +3134,8 @@ bool Object::extract_data(
          send_hs( stderr, "Object::extract_data():%d WARNING: For \
 Object '%s' with FOM name '%s', data was received for Attribute-ID:%s, which \
 has not been configured for this object instance in the input.py file. Ignoring \
-this attribute.%c", __LINE__, name, FOM_name, id_str.c_str(), THLA_NEWLINE );
+this attribute.%c",
+                  __LINE__, name, FOM_name, id_str.c_str(), THLA_NEWLINE );
       }
    }
 

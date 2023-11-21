@@ -104,7 +104,6 @@ void RefFrameState::initialize(
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */
@@ -147,14 +146,13 @@ void RefFrameState::pack_from_working_data()
    packing_data.state.att.scalar = ref_frame_data->state.att.scalar;
    for ( iinc = 0; iinc < 3; ++iinc ) {
       packing_data.state.att.vector[iinc] = ref_frame_data->state.att.vector[iinc];
-      packing_data.state.ang_vel[iinc]     = ref_frame_data->state.ang_vel[iinc];
+      packing_data.state.ang_vel[iinc]    = ref_frame_data->state.ang_vel[iinc];
    }
    // Time tag for this state data.
    packing_data.state.time = ref_frame_data->state.time = get_scenario_time();
 
    return;
 }
-
 
 /*!
  * @job_class{scheduled}
@@ -220,7 +218,7 @@ void RefFrameState::unpack_into_working_data()
       ref_frame_data->state.att.scalar = packing_data.state.att.scalar;
       for ( int iinc = 0; iinc < 3; ++iinc ) {
          ref_frame_data->state.att.vector[iinc] = packing_data.state.att.vector[iinc];
-         ref_frame_data->state.ang_vel[iinc]     = packing_data.state.ang_vel[iinc];
+         ref_frame_data->state.ang_vel[iinc]    = packing_data.state.ang_vel[iinc];
       }
       // Time tag for this state data.
       ref_frame_data->state.time = packing_data.state.time;

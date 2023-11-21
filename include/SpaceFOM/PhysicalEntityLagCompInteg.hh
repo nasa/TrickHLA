@@ -65,32 +65,30 @@ class PhysicalEntityLagCompInteg : public PhysicalEntityLagCompBase, public Tric
 
   public:
    // Public constructors and destructors.
-   explicit PhysicalEntityLagCompInteg( PhysicalEntityBase & entity_ref ); // Initialization constructor.
-   virtual ~PhysicalEntityLagCompInteg(); // Destructor.
+   explicit PhysicalEntityLagCompInteg( PhysicalEntityBase &entity_ref ); // Initialization constructor.
+   virtual ~PhysicalEntityLagCompInteg();                                 // Destructor.
 
    /*! @brief Entity instance initialization routine. */
    virtual void initialize();
 
    /*! @brief Sending side latency compensation callback interface from the
     *  TrickHLALagCompensation class. */
-   //virtual void send_lag_compensation();
+   // virtual void send_lag_compensation();
 
    /*! @brief Receive side latency compensation callback interface from the
     *  TrickHLALagCompensation class. */
-   //virtual void receive_lag_compensation();
-
+   // virtual void receive_lag_compensation();
 
   protected:
-
    /*! @brief Compensate the state data from the data time to the current scenario time.
     *  @param t_begin Scenario time at the start of the compensation step.
     *  @param t_end   Scenario time at the end of the compensation step. */
    virtual int compensate(
       const double t_begin,
-      const double t_end   )
+      const double t_end )
    {
       this->compensate_dt = t_end - t_begin;
-      return( integrate( t_begin, t_end ) );
+      return ( integrate( t_begin, t_end ) );
    }
 
   private:

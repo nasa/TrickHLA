@@ -75,16 +75,16 @@ PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
      ang_accel_attr( NULL ),
      cm_attr( NULL ),
      body_frame_attr( NULL ),
-     stc_encoder(pe_packing_data.state),
-     quat_encoder(pe_packing_data.body_wrt_struct)
+     stc_encoder( pe_packing_data.state ),
+     quat_encoder( pe_packing_data.body_wrt_struct )
 {
    //
    // Initialize the PhysicalEntity packing data structure.
    //
    // String name parameters.
-   pe_packing_data.name = NULL;
-   pe_packing_data.type = NULL;
-   pe_packing_data.status = NULL;
+   pe_packing_data.name         = NULL;
+   pe_packing_data.type         = NULL;
+   pe_packing_data.status       = NULL;
    pe_packing_data.parent_frame = NULL;
 
    // Setup the Space-Time-Coordinate data.
@@ -103,7 +103,6 @@ PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
    // The body to structural orientation quaternion.
    pe_packing_data.body_wrt_struct.scalar = 1.0;
    V_INIT( pe_packing_data.body_wrt_struct.vector );
-
 }
 
 /*!
@@ -111,7 +110,6 @@ PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
  */
 PhysicalEntityBase::~PhysicalEntityBase() // RETURN: -- None.
 {
-
 
    if ( this->pe_packing_data.name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->pe_packing_data.name ) ) ) {
@@ -140,7 +138,6 @@ PhysicalEntityBase::~PhysicalEntityBase() // RETURN: -- None.
                   __LINE__, THLA_NEWLINE );
       }
       this->pe_packing_data.parent_frame = NULL;
-
    }
    initialized     = false;
    name_attr       = NULL;
@@ -428,7 +425,6 @@ void PhysicalEntityBase::set_parent_frame( char const *new_frame )
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */
@@ -459,7 +455,6 @@ void PhysicalEntityBase::pack()
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */
@@ -488,7 +483,6 @@ void PhysicalEntityBase::unpack()
    return;
 }
 
-
 /*!
  * @job_class{default_data}
  */
@@ -510,12 +504,11 @@ void PhysicalEntityBase::set_object( TrickHLA::Object *mngr_obj )
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */
 void PhysicalEntityBase::debug_print(
-   std::ostream & stream )
+   std::ostream &stream )
 {
    stream.precision( 15 );
    double euler_angles[3];
@@ -528,40 +521,39 @@ void PhysicalEntityBase::debug_print(
           << "\tparent: '" << ( pe_packing_data.parent_frame != NULL ? pe_packing_data.parent_frame : "" ) << "'" << endl
           << "\ttime: " << pe_packing_data.state.time << endl
           << "\tposition: "
-                    << pe_packing_data.state.pos[0] << ", "
-                    << pe_packing_data.state.pos[1] << ", "
-                    << pe_packing_data.state.pos[2] << endl
+          << pe_packing_data.state.pos[0] << ", "
+          << pe_packing_data.state.pos[1] << ", "
+          << pe_packing_data.state.pos[2] << endl
           << "\tvelocity: "
-                    << pe_packing_data.state.vel[0] << ", "
-                    << pe_packing_data.state.vel[1] << ", "
-                    << pe_packing_data.state.vel[2] << endl
+          << pe_packing_data.state.vel[0] << ", "
+          << pe_packing_data.state.vel[1] << ", "
+          << pe_packing_data.state.vel[2] << endl
           << "\tattitude (quaternion:s,v): "
-                    << pe_packing_data.state.att.scalar << "; "
-                    << pe_packing_data.state.att.vector[0] << ", "
-                    << pe_packing_data.state.att.vector[1] << ", "
-                    << pe_packing_data.state.att.vector[2] << endl
+          << pe_packing_data.state.att.scalar << "; "
+          << pe_packing_data.state.att.vector[0] << ", "
+          << pe_packing_data.state.att.vector[1] << ", "
+          << pe_packing_data.state.att.vector[2] << endl
           << "\tattitude (RPY): "
-                    << euler_angles[0] << ", "
-                    << euler_angles[1] << ", "
-                    << euler_angles[2] << endl
+          << euler_angles[0] << ", "
+          << euler_angles[1] << ", "
+          << euler_angles[2] << endl
           << "\tangular velocity: "
-                    << pe_packing_data.state.ang_vel[0] << ", "
-                    << pe_packing_data.state.ang_vel[1] << ", "
-                    << pe_packing_data.state.ang_vel[2] << endl
+          << pe_packing_data.state.ang_vel[0] << ", "
+          << pe_packing_data.state.ang_vel[1] << ", "
+          << pe_packing_data.state.ang_vel[2] << endl
           << "\taccel: "
-                    << pe_packing_data.accel[0] << ", "
-                    << pe_packing_data.accel[1] << ", "
-                    << pe_packing_data.accel[2] << endl
+          << pe_packing_data.accel[0] << ", "
+          << pe_packing_data.accel[1] << ", "
+          << pe_packing_data.accel[2] << endl
           << "\tangular acceleration: "
-                    << pe_packing_data.ang_accel[0] << ", "
-                    << pe_packing_data.ang_accel[1] << ", "
-                    << pe_packing_data.ang_accel[2] << endl
+          << pe_packing_data.ang_accel[0] << ", "
+          << pe_packing_data.ang_accel[1] << ", "
+          << pe_packing_data.ang_accel[2] << endl
           << "\tcenter of mass (cm): "
-                    << pe_packing_data.cm[0] << ", "
-                    << pe_packing_data.cm[1] << ", "
-                    << pe_packing_data.cm[2] << endl
+          << pe_packing_data.cm[0] << ", "
+          << pe_packing_data.cm[1] << ", "
+          << pe_packing_data.cm[2] << endl
           << endl;
 
    return;
-
 }

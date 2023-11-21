@@ -70,7 +70,7 @@ class QuaternionEncoder : public TrickHLA::OpaqueBuffer
   public:
    /*! @brief Initialization constructor for the SpaceFOM QuaternionEncoder class.
     *  @param quat_data Reference to quaternion data instance. */
-   explicit QuaternionEncoder( QuaternionData & quat_data );
+   explicit QuaternionEncoder( QuaternionData &quat_data );
 
    /*! @brief Encode the quaternion data for sending out. */
    void encode();
@@ -85,7 +85,7 @@ class QuaternionEncoder : public TrickHLA::OpaqueBuffer
    }
 
   protected:
-   QuaternionData & data; ///< @trick_units{--} Quaternion transmission data.
+   QuaternionData &data; ///< @trick_units{--} Quaternion transmission data.
 
    // Data encoding helpers.
    rti1516e::HLAfloat64LE   scalar_encoder; ///< @trick_io{**} Quaternion scalar encoder

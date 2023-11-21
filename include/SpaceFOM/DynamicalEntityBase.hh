@@ -37,8 +37,8 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_DYNAMICAL_ENTITY_BASE_HH
 
 // SpaceFOM include files.
-#include "SpaceFOM/PhysicalEntityBase.hh"
 #include "SpaceFOM/DynamicalEntityData.hh"
+#include "SpaceFOM/PhysicalEntityBase.hh"
 
 namespace SpaceFOM
 {
@@ -119,7 +119,7 @@ class DynamicalEntityBase : virtual public SpaceFOM::PhysicalEntityBase
    DynamicalEntityData de_packing_data; ///< @trick_units{--} Additional dynamical entity packing data.
 
    /*! @brief Print out the packing data debug information. */
-   virtual void debug_print( std::ostream & stream );
+   virtual void debug_print( std::ostream &stream );
 
   private:
    // This object is not copyable

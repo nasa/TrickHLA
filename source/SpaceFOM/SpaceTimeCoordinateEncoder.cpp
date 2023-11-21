@@ -52,7 +52,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 SpaceTimeCoordinateEncoder::SpaceTimeCoordinateEncoder(
-   SpaceTimeCoordinateData & stc_data )
+   SpaceTimeCoordinateData &stc_data )
    : data( stc_data ),
      position_encoder( HLAfloat64LE(), 3 ),
      velocity_encoder( HLAfloat64LE(), 3 ),

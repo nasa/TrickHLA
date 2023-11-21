@@ -315,7 +315,6 @@ void DynamicalEntityBase::initialize_callback(
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */
@@ -339,7 +338,6 @@ void DynamicalEntityBase::pack()
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */
@@ -361,15 +359,13 @@ void DynamicalEntityBase::unpack()
    PhysicalEntityBase::unpack();
 
    return;
-
 }
-
 
 /*!
  * @job_class{scheduled}
  */
 void DynamicalEntityBase::debug_print(
-   std::ostream & stream )
+   std::ostream &stream )
 {
 
    // Call the PhysicalEntity print routine first.
@@ -381,34 +377,33 @@ void DynamicalEntityBase::debug_print(
           << "\tmass_rate: " << de_packing_data.mass_rate << endl
           << "\tinertia: " << endl
           << "\t\t" << de_packing_data.inertia[0][0] << ", "
-                    << de_packing_data.inertia[0][1] << ", "
-                    << de_packing_data.inertia[0][2] << endl
+          << de_packing_data.inertia[0][1] << ", "
+          << de_packing_data.inertia[0][2] << endl
           << "\t\t" << de_packing_data.inertia[1][0] << ", "
-                    << de_packing_data.inertia[1][1] << ", "
-                    << de_packing_data.inertia[1][2] << endl
+          << de_packing_data.inertia[1][1] << ", "
+          << de_packing_data.inertia[1][2] << endl
           << "\t\t" << de_packing_data.inertia[2][0] << ", "
-                    << de_packing_data.inertia[2][1] << ", "
-                    << de_packing_data.inertia[2][2] << endl
+          << de_packing_data.inertia[2][1] << ", "
+          << de_packing_data.inertia[2][2] << endl
           << "\tinertia rate: " << endl
           << "\t\t" << de_packing_data.inertia_rate[0][0] << ", "
-                    << de_packing_data.inertia_rate[0][1] << ", "
-                    << de_packing_data.inertia_rate[0][2] << endl
+          << de_packing_data.inertia_rate[0][1] << ", "
+          << de_packing_data.inertia_rate[0][2] << endl
           << "\t\t" << de_packing_data.inertia_rate[1][0] << ", "
-                    << de_packing_data.inertia_rate[1][1] << ", "
-                    << de_packing_data.inertia_rate[1][2] << endl
+          << de_packing_data.inertia_rate[1][1] << ", "
+          << de_packing_data.inertia_rate[1][2] << endl
           << "\t\t" << de_packing_data.inertia_rate[2][0] << ", "
-                    << de_packing_data.inertia_rate[2][1] << ", "
-                    << de_packing_data.inertia_rate[2][2] << endl
+          << de_packing_data.inertia_rate[2][1] << ", "
+          << de_packing_data.inertia_rate[2][2] << endl
           << "\tforce: "
-                    << de_packing_data.force[0] << ", "
-                    << de_packing_data.force[1] << ", "
-                    << de_packing_data.force[2] << endl
+          << de_packing_data.force[0] << ", "
+          << de_packing_data.force[1] << ", "
+          << de_packing_data.force[2] << endl
           << "\ttorque: "
-                    << de_packing_data.torque[0] << ", "
-                    << de_packing_data.torque[1] << ", "
-                    << de_packing_data.torque[2] << endl
+          << de_packing_data.torque[0] << ", "
+          << de_packing_data.torque[1] << ", "
+          << de_packing_data.torque[2] << endl
           << endl;
 
    return;
-
 }

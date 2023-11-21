@@ -30,16 +30,16 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <float.h>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <float.h>
 
 // Trick include files.
 
 // TrickHLA include files.
-#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/DebugHandler.hh"
 
 // SpaceFOM include files.
 #include "SpaceFOM/RefFrameLagCompInteg.hh"
@@ -51,13 +51,11 @@ using namespace SpaceFOM;
 /*!
  * @job_class{initialization}
  */
-RefFrameLagCompInteg::RefFrameLagCompInteg( RefFrameBase & ref_frame_ref ) // RETURN: -- None.
+RefFrameLagCompInteg::RefFrameLagCompInteg( RefFrameBase &ref_frame_ref ) // RETURN: -- None.
    : RefFrameLagCompBase( ref_frame_ref ),
      TrickHLA::LagCompensationInteg()
 {
-
 }
-
 
 /*!
  * @job_class{shutdown}
@@ -65,7 +63,6 @@ RefFrameLagCompInteg::RefFrameLagCompInteg( RefFrameBase & ref_frame_ref ) // RE
 RefFrameLagCompInteg::~RefFrameLagCompInteg() // RETURN: -- None.
 {
 }
-
 
 /*!
  * @job_class{initialization}
@@ -76,12 +73,11 @@ void RefFrameLagCompInteg::initialize()
 
    if ( this->integ_dt < this->integ_tol ) {
 
-      errmsg << "SpaceFOM::RefFrameLagCompInteg::initialize():" << __LINE__<< endl
+      errmsg << "SpaceFOM::RefFrameLagCompInteg::initialize():" << __LINE__ << endl
              << " ERROR: Tolerance must be less that the dt!: dt = "
              << this->integ_dt << "; tolerance = " << this->integ_tol << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-
    }
 
    // Call the base class initialize routine.
@@ -90,7 +86,6 @@ void RefFrameLagCompInteg::initialize()
    // Return to calling routine.
    return;
 }
-
 
 /*! @brief Sending side latency compensation callback interface from the
  *  TrickHLALagCompensation class. */
@@ -101,7 +96,7 @@ void RefFrameLagCompInteg::send_lag_compensation()
 
    // Save the compensation time step.
    this->compensate_dt = get_lookahead().get_time_in_seconds();
-   end_t = begin_t + this->compensate_dt;
+   end_t               = begin_t + this->compensate_dt;
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
@@ -116,7 +111,7 @@ void RefFrameLagCompInteg::send_lag_compensation()
    this->ref_frame.pack_from_working_data();
    this->load_lag_comp_data();
    this->Q_dot.derivative_first( this->lag_comp_data.att,
-                                 this->lag_comp_data.ang_vel);
+                                 this->lag_comp_data.ang_vel );
 
    // Print out debug information if desired.
    if ( debug ) {
@@ -140,7 +135,6 @@ void RefFrameLagCompInteg::send_lag_compensation()
    return;
 }
 
-
 /*! @brief Receive side latency compensation callback interface from the
  *  TrickHLALagCompensation class. */
 void RefFrameLagCompInteg::receive_lag_compensation()
@@ -155,9 +149,9 @@ void RefFrameLagCompInteg::receive_lag_compensation()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       cout << "******* RefFrameLagCompInteg::receive_lag_compensation():" << __LINE__ << endl
-           << "  scenario-time:" << end_t  << endl
+           << "  scenario-time:" << end_t << endl
            << "      data-time:" << data_t << endl
-           << " comp-time-step:" << this->compensate_dt  << endl;
+           << " comp-time-step:" << this->compensate_dt << endl;
    }
 
    // Because of ownership transfers and attributes being sent at different
@@ -167,7 +161,7 @@ void RefFrameLagCompInteg::receive_lag_compensation()
       // Copy the current RefFrame state over to the lag compensated state.
       this->load_lag_comp_data();
       this->Q_dot.derivative_first( this->lag_comp_data.att,
-                                    this->lag_comp_data.ang_vel);
+                                    this->lag_comp_data.ang_vel );
 
       // Print out debug information if desired.
       if ( debug ) {
@@ -183,7 +177,6 @@ void RefFrameLagCompInteg::receive_lag_compensation()
          cout << "Receive data after compensation: " << endl;
          this->print_lag_comp_data();
       }
-
    }
 
    // Copy the compensated state to the packing data.
@@ -195,4 +188,3 @@ void RefFrameLagCompInteg::receive_lag_compensation()
    // Return to calling routine.
    return;
 }
-

@@ -46,9 +46,9 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Packing.hh"
 
 // SpaceFOM include files.
+#include "SpaceFOM/PhysicalEntityData.hh"
 #include "SpaceFOM/QuaternionEncoder.hh"
 #include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
-#include "SpaceFOM/PhysicalEntityData.hh"
 
 namespace SpaceFOM
 {
@@ -205,7 +205,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    QuaternionEncoder          quat_encoder; ///< @trick_units{--} Attitude quaternion encoder.
 
    /*! @brief Print out the packing data debug information. */
-   virtual void debug_print( std::ostream & stream );
+   virtual void debug_print( std::ostream &stream );
 
   private:
    // This object is not copyable

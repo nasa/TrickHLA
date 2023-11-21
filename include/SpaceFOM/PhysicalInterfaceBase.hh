@@ -44,8 +44,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Packing.hh"
 
 // SpaceFOM include files.
-#include "SpaceFOM/QuaternionEncoder.hh"
 #include "SpaceFOM/PhysicalInterfaceData.hh"
+#include "SpaceFOM/QuaternionEncoder.hh"
 
 namespace SpaceFOM
 {

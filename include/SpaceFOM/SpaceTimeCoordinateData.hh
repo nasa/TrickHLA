@@ -39,9 +39,11 @@ NASA, Johnson Space Center\n
 // SpaceFOM includes.
 #include "SpaceFOM/QuaternionData.hh"
 
-namespace SpaceFOM {
+namespace SpaceFOM
+{
 
-class SpaceTimeCoordinateData{
+class SpaceTimeCoordinateData
+{
 
   public:
    double         pos[3];     ///< trick_units{m}     Position in parent frame.
@@ -56,19 +58,18 @@ class SpaceTimeCoordinateData{
    // Copy constructor.
    /*! @brief Copy constructor for SpaceTimeCoordinateData class.
     *  @param source Source data to copy from. */
-   SpaceTimeCoordinateData( const SpaceTimeCoordinateData & source );
+   SpaceTimeCoordinateData( const SpaceTimeCoordinateData &source );
 
    /*! @brief Assignment operator for SpaceTimeCoordinateData class.
     *  @param rhs Right had side data to copy from. */
-   SpaceTimeCoordinateData & operator=( const SpaceTimeCoordinateData & rhs );
+   SpaceTimeCoordinateData &operator=( const SpaceTimeCoordinateData &rhs );
 
    /*! @brief Initialize the state-time coordinate data. */
    void initialize();
 
    /*! @brief Copy the state-time coordinate data.
     *  @param stc_data Source to copy from. */
-   void copy( const SpaceTimeCoordinateData & stc_data );
-
+   void copy( const SpaceTimeCoordinateData &stc_data );
 };
 
 } // namespace SpaceFOM
