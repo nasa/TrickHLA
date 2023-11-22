@@ -27,9 +27,10 @@ from trickhla_environment import *
 # Main routine.
 def main():
 
-   # Set defaults for TrickHLA and TRICK_HOME.
+   # Set defaults for TrickHLA, TRICK_HOME and JEOD_HOME
    trickhla_home = '.'
    trick_home = None
+   jeod_home = None
 
    # Initialize the lists that go into the cppcheck command argument list.
    system_includes = []
@@ -84,9 +85,15 @@ Examples:\n  check_code -s -o -v\n  check_code -i -o -v\n  check_code -e -o -v\n
    parser.add_argument( '-t', '--test', \
                         help = 'Do not run cppcheck just show what would be done.', \
                         action = 'store_true', dest = 'test_only' )
+   parser.add_argument( '--rti', \
+                        help = 'Provide a path to the RTI installation directory.', \
+                        dest = 'rti_home' )
    parser.add_argument( '--trick', \
                         help = 'Provide a path to the Trick installation directory.', \
                         dest = 'trick_home' )
+   parser.add_argument( '--jeod', \
+                        help = 'Provide a path to the JEOD installation directory.', \
+                        dest = 'jeod_home' )
    parser.add_argument( '-u', '--unused', \
                         help = 'Check source code for unused functions.',
                         action = 'store_true', dest = 'check_for_unused' )
@@ -210,16 +217,21 @@ Examples:\n  check_code -s -o -v\n  check_code -i -o -v\n  check_code -e -o -v\n
       TrickHLAMessage.failure( 'No cppcheck command found!' )
 
    # Determine the path to Trick HOME and the Trick version ID.
-   trick_home, trick_ver, trick_ver_year = find_trick( verbose = args.very_verbose )
+   trick_home, trick_ver, trick_ver_year = find_trick( args.trick_home, args.very_verbose )
    if args.very_verbose:
       TrickHLAMessage.status( 'Path to Trick: ' + trick_home )
       TrickHLAMessage.status( 'Trick Version: ' + trick_ver )
       TrickHLAMessage.status( 'Trick Version Year: ' + trick_ver_year )
 
    # Determine the path to HLA RTI home directory.
-   rti_home = find_hla_rti( verbose = args.very_verbose )
+   rti_home = find_hla_rti( args.rti_home, args.very_verbose )
    if args.very_verbose:
       TrickHLAMessage.status( 'Path to HLA RTI: ' + rti_home )
+
+   # Determine the path to JEOD home directory.
+   jeod_home = find_jeod( args.jeod_home, args.very_verbose )
+   if args.very_verbose and jeod_home:
+      TrickHLAMessage.status( 'Path to JEOD: ' + jeod_home )
 
    # Define preprocessor symbols we use for TrickHLA and set the TRICK_VER based on the
    # version of the Trick simulation environment we found in our Path.
@@ -229,7 +241,14 @@ Examples:\n  check_code -s -o -v\n  check_code -i -o -v\n  check_code -e -o -v\n
    trickhla_include_dirs.extend( ['-I', './include'] )
    trickhla_include_dirs.extend( ['-I', trick_home + '/include'] )
    trickhla_include_dirs.extend( ['-I', trick_home + '/include/trick/compat'] )
+   trickhla_include_dirs.extend( ['-I', trick_home + '/trick_source'] )
    trickhla_include_dirs.extend( ['-I', rti_home + '/include'] )
+   if jeod_home:
+      trickhla_include_dirs.extend( ['-I', jeod_home + '/models'] )
+   if os.path.isdir( './models/EntityDynamics/include' ):
+      trickhla_include_dirs.extend( ['-I', './models/EntityDynamics/include'] )
+   if os.path.isdir( './models/SAIntegrator/include' ):
+      trickhla_include_dirs.extend( ['-I', './models/SAIntegrator/include'] )
    if os.path.isdir( './models/simconfig/include' ):
       trickhla_include_dirs.extend( ['-I', './models/simconfig/include'] )
    if os.path.isdir( './models/sine/include' ):
@@ -246,13 +265,13 @@ Examples:\n  check_code -s -o -v\n  check_code -i -o -v\n  check_code -e -o -v\n
       trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Motor/include'] )
    if os.path.isdir( './models/Wheelbot/Vehicle/include' ):
       trickhla_include_dirs.extend( ['-I', './models/Wheelbot/Vehicle/include'] )
-   if os.path.isdir( './models/EntityDynamics/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/EntityDynamics/include'] )
-   if os.path.isdir( './models/SAIntegrator/include' ):
-      trickhla_include_dirs.extend( ['-I', './models/SAIntegrator/include'] )
 
    # Form relative paths to all the source directories used by TrickHLA.
    trickhla_source_dirs.extend ( ['./source'] )
+   if os.path.isdir( './models/EntityDynamics/src' ):
+      trickhla_source_dirs.extend( ['./models/EntityDynamics/src'] )
+   if os.path.isdir( './models/SAIntegrator/src' ):
+      trickhla_source_dirs.extend( ['./models/SAIntegrator/src'] )
    if os.path.isdir( './models/simconfig/src' ):
       trickhla_source_dirs.extend ( ['./models/simconfig/src'] )
    if os.path.isdir( './models/sine/src' ):
@@ -279,10 +298,6 @@ Examples:\n  check_code -s -o -v\n  check_code -i -o -v\n  check_code -e -o -v\n
       trickhla_source_dirs.extend( ['./models/Wheelbot/Motor/test'] )
    if os.path.isdir( './models/Wheelbot/Vehicle/src' ):
       trickhla_source_dirs.extend( ['./models/Wheelbot/Vehicle/src'] )
-   if os.path.isdir( './models/EntityDynamics/src' ):
-      trickhla_source_dirs.extend( ['./models/EntityDynamics/src'] )
-   if os.path.isdir( './models/SAIntegrator/src' ):
-      trickhla_source_dirs.extend( ['./models/SAIntegrator/src'] )
 
    # Add usr local include path if it exists.
    if os.path.isdir( '/usr/local/include' ):
@@ -361,7 +376,19 @@ Examples:\n  check_code -s -o -v\n  check_code -i -o -v\n  check_code -e -o -v\n
       trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/ThreadBase.hh' )
       trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/Threads.hh' )
       trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/ThreadTrigger.hh' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/trick_source/er7_utils/integration/core/include/integrator_result.hh' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/trick_source/er7_utils/integration/core/include/integrator_result_merger_container.hh' )
+      trickhla_ignore.append( '--suppress=preprocessorErrorDirective:' + trick_home + '/trick_source/er7_utils/interface/include/er7_class.hh' )
       trickhla_ignore.append( '--suppress=uninitMemberVar:' + trick_home + '/include/trick/SimObject.hh' )
+      # Ignore/suppress the JEOD header file warnings.
+      if jeod_home:
+         trickhla_ignore.append( '--suppress=cstyleCast:' + jeod_home + '/models/utils/math/include/numerical_inline.hh' )
+         trickhla_ignore.append( '--suppress=constParameterPointer:' + jeod_home + '/models/utils/integration/include/restartable_state_integrator.hh' )
+         trickhla_ignore.append( '--suppress=duplInheritedMember:' + jeod_home + '/models/utils/container/include/pointer_container.hh' )
+         trickhla_ignore.append( '--suppress=duplInheritedMember:' + jeod_home + '/models/utils/memory/include/memory_table.hh' )
+         trickhla_ignore.append( '--suppress=noExplicitConstructor:' + jeod_home + '/models/utils/container/include/container.hh' )
+         trickhla_ignore.append( '--suppress=noExplicitConstructor:' + jeod_home + '/models/utils/memory/include/memory_type.hh' )
+         trickhla_ignore.append( '--suppress=noExplicitConstructor:' + jeod_home + '/models/utils/named_item/include/named_item.hh' )
 
    if args.suppress_cstylecasts:
       # Suppress C-style casts.
@@ -627,9 +654,6 @@ def find_cppcheck( cppcheck_bin, verbose = True ):
 #
 def find_trick( trick_path = None, verbose = True ):
 
-   # Initialize the Trick home directory path.
-   trick_home = None
-
    # Check to see if the path to the Trick home directory is already set.
    if trick_path:
 
@@ -681,6 +705,7 @@ def find_trick( trick_path = None, verbose = True ):
       if os.path.isdir( trick_home ) is False:
          TrickHLAMessage.failure( 'Could not find the Trick home directory: '
                                   + trick_home )
+         trick_home = None
       else:
          if verbose:
             TrickHLAMessage.status( 'Using TRICK_HOME: ' + trick_home )
@@ -726,9 +751,6 @@ def find_trick( trick_path = None, verbose = True ):
 #
 def find_hla_rti( rti_path = None, verbose = True ):
 
-   # Initialize the RTI home directory path.
-   rti_home = None
-
    # Check to see if the path to the HLA RTI home directory is already set.
    if rti_path:
 
@@ -740,17 +762,6 @@ def find_hla_rti( rti_path = None, verbose = True ):
 
       # Check to see if the $RTI_HOME environment variable is defined and set.
       rti_home = os.environ.get( 'RTI_HOME' )
-      if rti_home:
-
-         # Check to see if RTI_HOME exists.
-         if os.path.isdir( rti_home ):
-
-            if verbose:
-               # Let the use know that we have CPPCHECK_HOME and where it is.
-               TrickHLAMessage.status( 'RTI_HOME: ' + rti_home )
-
-         else:
-            TrickHLAMessage.failure( 'RTI_HOME not found: ' + rti_home )
 
    # We're finished hunting. Now let's check for the HLA RTI home directory.
    if rti_home is None:
@@ -758,12 +769,50 @@ def find_hla_rti( rti_path = None, verbose = True ):
    else:
       if os.path.isdir( rti_home ) is False:
          TrickHLAMessage.failure( 'Could not find the HLA RTI home directory: ' + rti_home )
+         rti_home = None
       else:
          if verbose:
             TrickHLAMessage.status( 'Using RTI_HOME: ' + rti_home )
 
    # Return what we found.
    return rti_home
+
+
+# Function to find the JEOD home directory.
+#
+# This function searches common locations for the installed JEOD.
+#
+# @return jeod_home  The location of to the JEOD home directory.
+# @param  jeod_path  The path to the JEOD home directory.
+# @param  verbose    Flag to set if verbose outputs are on.
+#
+def find_jeod( jeod_path = None, verbose = True ):
+
+   # Check to see if the path to the JEOD home directory is already set.
+   if jeod_path:
+
+      # Use the value passed in.
+      jeod_home = jeod_path
+
+   # The path to the JEOD home directory was not passed in so lets check other options.
+   else:
+
+      # Check to see if the $JEOD_HOME environment variable is defined and set.
+      jeod_home = os.environ.get( 'JEOD_HOME' )
+
+   # We're finished hunting. Now let's check for the JEOD home directory.
+   if jeod_home is None:
+      TrickHLAMessage.status( 'Could not find the JEOD home directory!' )
+   else:
+      if os.path.isdir( jeod_home ) is False:
+         TrickHLAMessage.status( 'Could not find the JEOD home directory: ' + jeod_home )
+         jeod_home = None
+      else:
+         if verbose:
+            TrickHLAMessage.status( 'Using JEOD_HOME: ' + jeod_home )
+
+   # Return what we found.
+   return jeod_home
 
 
 # Function to get the number of CPUs on the system
