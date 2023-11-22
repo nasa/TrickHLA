@@ -44,8 +44,8 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 
 // SpaceFOM include files.
-#include "TrickHLA/LagCompensationIntegBase.hh"
 #include "SpaceFOM/PhysicalEntityLagCompBase.hh"
+#include "TrickHLA/LagCompensationIntegBase.hh"
 
 namespace SpaceFOM
 {
@@ -64,17 +64,16 @@ class PhysicalEntityLagCompSA2 : public TrickHLA::LagCompensationIntegBase, publ
 
   public:
    // Public constructors and destructors.
-   explicit PhysicalEntityLagCompSA2( PhysicalEntityBase & entity_ref ); // Initialization constructor.
-   virtual ~PhysicalEntityLagCompSA2(); // Destructor.
+   explicit PhysicalEntityLagCompSA2( PhysicalEntityBase &entity_ref ); // Initialization constructor.
+   virtual ~PhysicalEntityLagCompSA2();                                 // Destructor.
 
    /*! @brief Entity instance initialization routine. */
    virtual void initialize();
 
   protected:
-
-   double * integ_states[7]; ///< @trick_units{--} @trick_io{**} Integrator state vector.
-   double * integ_derivs[7]; ///< @trick_units{--} @trick_io{**} Integrator derivative vector.
-   SA::EulerCromerIntegrator integrator;  ///< @trick_io{**} Integrator.
+   double                   *integ_states[7]; ///< @trick_units{--} @trick_io{**} Integrator state vector.
+   double                   *integ_derivs[7]; ///< @trick_units{--} @trick_io{**} Integrator derivative vector.
+   SA::EulerCromerIntegrator integrator;      ///< @trick_io{**} Integrator.
 
    /*! @brief Derivative routine used by the compensation integrator.
     *  @param t      Integration time (IN).
@@ -87,21 +86,21 @@ class PhysicalEntityLagCompSA2 : public TrickHLA::LagCompensationIntegBase, publ
                             double pos[],
                             double vel[],
                             double accel[],
-                            void*  udata);
+                            void  *udata );
 
    /*! @brief Compensate the state data from the data time to the current scenario time.
     *  @param t_begin Scenario time at the start of the compensation step.
     *  @param t_end   Scenario time at the end of the compensation step. */
    virtual int compensate(
       const double t_begin,
-      const double t_end   )
+      const double t_end )
    {
       this->compensate_dt = t_end - t_begin;
-      return( integrate( t_begin, t_end ) );
+      return ( integrate( t_begin, t_end ) );
    }
 
    /*! @brief Update the latency compensation time from the integrator. */
-   virtual void update_time(){ lag_comp_data.time = this->integ_t; }
+   virtual void update_time() { lag_comp_data.time = this->integ_t; }
 
    /*! @brief Load the integration state into the integrator. */
    virtual void load();
@@ -111,20 +110,20 @@ class PhysicalEntityLagCompSA2 : public TrickHLA::LagCompensationIntegBase, publ
 
    /*! @brief Compute the first time derivative of the lag compensation state vector.
     *  @param user_data Any special user data needed to compute the derivative values. */
-   virtual void derivative_first( void * user_data = NULL );
+   virtual void derivative_first( void *user_data = NULL );
 
    /*! @brief Compute the second time derivative of the lag compensation state vector.
     *  @details This function is called for second order integrators to compute
     *  second time derivative of the state vector.
     *  @param user_data Any special user data needed to compute the derivative values. */
-   virtual void derivative_second( void * user_data = NULL ){ return; }
+   virtual void derivative_second( void *user_data = NULL ) { return; }
 
    /*! @brief Compensate the state data from the data time to the current scenario time.
     *  @param t_begin Scenario time at the start of the compensation step.
     *  @param t_end   Scenario time at the end of the compensation step. */
    virtual int integrate(
       const double t_begin,
-      const double t_end   );
+      const double t_end );
 
   private:
    // This object is not copyable

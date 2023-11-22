@@ -28,10 +28,10 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <float.h>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <float.h>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
@@ -39,10 +39,10 @@ NASA, Johnson Space Center\n
 #include "trick/trick_math.h"
 
 // TrickHLA include files.
+#include "TrickHLA/Attribute.hh"
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/Attribute.hh"
 
 // SpaceFOM include files.
 #include "../include/PhysicalEntityLagCompSA.hh"
@@ -54,41 +54,37 @@ using namespace SpaceFOM;
 /*!
  * @job_class{initialization}
  */
-PhysicalEntityLagCompSA::PhysicalEntityLagCompSA( PhysicalEntityBase & entity_ref ) // RETURN: -- None.
+PhysicalEntityLagCompSA::PhysicalEntityLagCompSA( PhysicalEntityBase &entity_ref ) // RETURN: -- None.
    : PhysicalEntityLagCompBase( entity_ref ),
      integrator( this->integ_dt, 13, this->integ_states, this->integ_states, this->derivatives, this )
 {
 
    // Assign the integrator state references.
    // Translational position
-   integ_states[0] = &(this->lag_comp_data.pos[0]);
-   integ_states[1] = &(this->lag_comp_data.pos[1]);
-   integ_states[2] = &(this->lag_comp_data.pos[2]);
+   integ_states[0] = &( this->lag_comp_data.pos[0] );
+   integ_states[1] = &( this->lag_comp_data.pos[1] );
+   integ_states[2] = &( this->lag_comp_data.pos[2] );
    // Rotational position
-   integ_states[3] = &(this->lag_comp_data.att.scalar);
-   integ_states[4] = &(this->lag_comp_data.att.vector[0]);
-   integ_states[5] = &(this->lag_comp_data.att.vector[1]);
-   integ_states[6] = &(this->lag_comp_data.att.vector[2]);
+   integ_states[3] = &( this->lag_comp_data.att.scalar );
+   integ_states[4] = &( this->lag_comp_data.att.vector[0] );
+   integ_states[5] = &( this->lag_comp_data.att.vector[1] );
+   integ_states[6] = &( this->lag_comp_data.att.vector[2] );
    // Translational velocity
-   integ_states[7] = &(this->lag_comp_data.vel[0]);
-   integ_states[8] = &(this->lag_comp_data.vel[1]);
-   integ_states[9] = &(this->lag_comp_data.vel[2]);
+   integ_states[7] = &( this->lag_comp_data.vel[0] );
+   integ_states[8] = &( this->lag_comp_data.vel[1] );
+   integ_states[9] = &( this->lag_comp_data.vel[2] );
    // Rotational velocity
-   integ_states[10] = &(this->lag_comp_data.ang_vel[0]);
-   integ_states[11] = &(this->lag_comp_data.ang_vel[1]);
-   integ_states[12] = &(this->lag_comp_data.ang_vel[2]);
-
+   integ_states[10] = &( this->lag_comp_data.ang_vel[0] );
+   integ_states[11] = &( this->lag_comp_data.ang_vel[1] );
+   integ_states[12] = &( this->lag_comp_data.ang_vel[2] );
 }
-
 
 /*!
  * @job_class{shutdown}
  */
 PhysicalEntityLagCompSA::~PhysicalEntityLagCompSA() // RETURN: -- None.
 {
-
 }
-
 
 /*!
  * @job_class{initialization}
@@ -103,23 +99,22 @@ void PhysicalEntityLagCompSA::initialize()
    return;
 }
 
-
 /*!
  * @job_class{derivative}
  */
 void PhysicalEntityLagCompSA::derivatives(
-   double   t,
-   double   states[],
-   double   derivs[],
-   void   * udata)
+   double t,
+   double states[],
+   double derivs[],
+   void  *udata )
 {
    QuaternionData qdot;
 
    // Cast the user data to a PhysicalEntityLagCompSA2 instance.
-   PhysicalEntityLagCompSA * lag_comp_data_ptr = static_cast<PhysicalEntityLagCompSA *>(udata);
+   PhysicalEntityLagCompSA *lag_comp_data_ptr = static_cast< PhysicalEntityLagCompSA * >( udata );
 
    // Copy the time derivative of the attitude quaternion.
-   qdot.derivative_first( states[3], &(states[4]), &(states[10]) );
+   qdot.derivative_first( states[3], &( states[4] ), &( states[10] ) );
 
    // Compute the derivatives based on time, state, and user data.
    // Translational velocity.
@@ -128,10 +123,10 @@ void PhysicalEntityLagCompSA::derivatives(
    derivs[2] = states[9];
 
    // Rotational velocity in quaternion form.
-   derivs[3]  = qdot.scalar;
-   derivs[4]  = qdot.vector[0];
-   derivs[5]  = qdot.vector[1];
-   derivs[6]  = qdot.vector[2];
+   derivs[3] = qdot.scalar;
+   derivs[4] = qdot.vector[0];
+   derivs[5] = qdot.vector[1];
+   derivs[6] = qdot.vector[2];
 
    // Translational acceleration.
    derivs[7] = lag_comp_data_ptr->accel[0];
@@ -147,7 +142,6 @@ void PhysicalEntityLagCompSA::derivatives(
    return;
 }
 
-
 /*!
  * @job_class{integration}
  */
@@ -157,13 +151,12 @@ void PhysicalEntityLagCompSA::load()
    // Compute the derivatives of the lag compensation state vector.
    // Note: The SAIntegrator does not require a pre-integration derivative
    // evaluation.  The integrator calls the derivative() routine.
-   //this->derivative_first();
+   // this->derivative_first();
 
    // Load the integration states and derivatives.
    this->integrator.load();
    return;
 }
-
 
 /*!
  * @job_class{integration}
@@ -184,19 +177,17 @@ void PhysicalEntityLagCompSA::unload()
 
    // Return to calling routine.
    return;
-
 }
-
 
 /*!
  * @job_class{derivative}
  */
 int PhysicalEntityLagCompSA::integrate(
    const double t_begin,
-   const double t_end   )
+   const double t_end )
 {
    double compensate_dt = t_end - t_begin;
-   double dt_go = compensate_dt;
+   double dt_go         = compensate_dt;
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
@@ -212,7 +203,7 @@ int PhysicalEntityLagCompSA::integrate(
    this->integrator.setIndyVar( 0.0 );
 
    // Loop through integrating the state forward to the current scenario time.
-   while( (dt_go >= 0.0) && (fabs(dt_go) > this->integ_tol) ) {
+   while ( ( dt_go >= 0.0 ) && ( fabs( dt_go ) > this->integ_tol ) ) {
 
       // Use the inherited debug-handler to allow debug comments to be turned
       // on and off from a setting in the input file.
@@ -227,13 +218,12 @@ int PhysicalEntityLagCompSA::integrate(
       this->load();
 
       // Perform the integration propagation one integration step.
-      if ( dt_go > this->integ_dt ){
+      if ( dt_go > this->integ_dt ) {
          // Not near the end; so, use the defined integration step size.
-         this->integrator.variable_step(this->integ_dt);
-      }
-      else {
+         this->integrator.variable_step( this->integ_dt );
+      } else {
          // Near the end; so, integrate to the end of the compensation step.
-         this->integrator.variable_step(dt_go);
+         this->integrator.variable_step( dt_go );
       }
 
       // Unload the integrated states and derivatives.
@@ -244,7 +234,6 @@ int PhysicalEntityLagCompSA::integrate(
 
       // Compute the remaining time in the compensation step.
       dt_go = compensate_dt - this->integrator.getIndyVar();
-
    }
 
    // Update the lag compensated time,
@@ -253,13 +242,12 @@ int PhysicalEntityLagCompSA::integrate(
    // Compute the lag compensated value for the attitude quaternion rate.
    this->derivative_first();
 
-   return( 0 );
+   return ( 0 );
 }
-
 
 /*! @job_class{derivative} */
 void PhysicalEntityLagCompSA::derivative_first(
-   void * user_data )
+   void *user_data )
 {
 
    // Compute the derivative of the attitude quaternion from the
@@ -269,4 +257,3 @@ void PhysicalEntityLagCompSA::derivative_first(
 
    return;
 }
-

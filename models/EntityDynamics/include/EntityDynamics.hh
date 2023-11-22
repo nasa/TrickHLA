@@ -34,12 +34,14 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_ENTITY_DYNAMICS_HH
 
 // SpaceFOM includes.
-#include "SpaceFOM/PhysicalEntityData.hh"
 #include "SpaceFOM/DynamicalEntityData.hh"
+#include "SpaceFOM/PhysicalEntityData.hh"
 
-namespace SpaceFOM {
+namespace SpaceFOM
+{
 
-class EntityDynamics{
+class EntityDynamics
+{
 
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -52,7 +54,6 @@ class EntityDynamics{
    friend void init_attrSpaceFOM__EntityDynamics();
 
   public:
-
    void default_data();
 
    void initialize();
@@ -62,23 +63,20 @@ class EntityDynamics{
    int integrate();
 
   public:
-
    // PhysicalEntity data.
    PhysicalEntityData  pe_data; ///< @trick_units{--} Basic entity propagation data.
    DynamicalEntityData de_data; ///< @trick_units{--} Parameters needed for active entity.
 
   protected:
-
    QuaternionData Q_dot; ///< @trick_units{--} Derivative of the attitude quaternion.
 
-   double I_inv[3][3];  ///< @trick_units{--} Inverse of the inertia matrix.
+   double I_inv[3][3]; ///< @trick_units{--} Inverse of the inertia matrix.
 
    /*! @brief Load the integration state into the integrator. */
    void load();
 
    /*! @brief Unload the integration state into the integrator. */
    void unload();
-
 };
 
 } // namespace SpaceFOM

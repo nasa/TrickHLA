@@ -35,19 +35,19 @@ NASA, Johnson Space Center\n
 #include <sstream>
 
 // Trick includes.
-#include "trick/trick_math.h"
 #include "trick/Integrator.hh"
+#include "trick/trick_math.h"
 
 // TrickHLA includes.
-#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Types.hh"
 
 // Model includes.
 #include "../include/EntityDynamics.hh"
 
 /* GLOBAL Integrator. */
-extern Trick::Integrator* trick_curr_integ ;
+extern Trick::Integrator *trick_curr_integ;
 
 using namespace std;
 using namespace TrickHLA;
@@ -57,7 +57,6 @@ void EntityDynamics::default_data()
 {
    return;
 }
-
 
 void EntityDynamics::initialize()
 {
@@ -73,7 +72,6 @@ void EntityDynamics::initialize()
 
    return;
 }
-
 
 void EntityDynamics::derivative()
 {
@@ -97,7 +95,7 @@ void EntityDynamics::derivative()
    this->Q_dot.derivative_first( pe_data.state.att, pe_data.state.ang_vel );
 
    // Compute the translational acceleration in the structural frame.
-   V_SCALE( accel_str, de_data.force, 1.0/de_data.mass );
+   V_SCALE( accel_str, de_data.force, 1.0 / de_data.mass );
 
    // Transform the translational acceleration into the body frame.
    pe_data.body_wrt_struct.transform_vector( accel_str, pe_data.accel );
@@ -118,7 +116,6 @@ void EntityDynamics::derivative()
    return;
 }
 
-
 int EntityDynamics::integrate()
 {
    int ipass;
@@ -134,12 +131,11 @@ int EntityDynamics::integrate()
 
    // Compute the derivative of the attitude quaternion from the
    // angular velocity vector.
-   //this->Q_dot.first_derivative( pe_data.state.att, pe_data.state.ang_vel );
+   // this->Q_dot.first_derivative( pe_data.state.att, pe_data.state.ang_vel );
 
    // Return the Trick integrator integration step.
-   return( ipass );
+   return ( ipass );
 }
-
 
 /*!
  * @job_class{integration}
@@ -188,9 +184,7 @@ void EntityDynamics::load()
 
    // Return to calling routine.
    return;
-
 }
-
 
 /*!
  * @job_class{integration}
@@ -204,7 +198,7 @@ void EntityDynamics::unload()
    pe_data.state.pos[1] = trick_curr_integ->state_ws[istep][1];
    pe_data.state.pos[2] = trick_curr_integ->state_ws[istep][2];
    // Rotational position
-   pe_data.state.att.scalar = trick_curr_integ->state_ws[istep][3];
+   pe_data.state.att.scalar    = trick_curr_integ->state_ws[istep][3];
    pe_data.state.att.vector[0] = trick_curr_integ->state_ws[istep][4];
    pe_data.state.att.vector[1] = trick_curr_integ->state_ws[istep][5];
    pe_data.state.att.vector[2] = trick_curr_integ->state_ws[istep][6];
@@ -219,5 +213,4 @@ void EntityDynamics::unload()
 
    // Return to calling routine.
    return;
-
 }

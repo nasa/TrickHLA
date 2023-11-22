@@ -111,7 +111,7 @@ void QuaternionData::set_from_Euler(
    Euler_Seq    sequence,
    double const angles[3] )
 {
-   euler_quat( const_cast<double *>(angles), &( this->scalar ), 0, sequence );
+   euler_quat( const_cast< double * >( angles ), &( this->scalar ), 0, sequence );
    return;
 }
 
