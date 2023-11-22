@@ -111,8 +111,8 @@ void PhysicalEntityLagCompSA2::initialize()
  */
 void PhysicalEntityLagCompSA2::derivatives(
    double   t,
-   double   pos[],
-   double   vel[],
+   double   pos[], // cppcheck-suppress [constParameter]
+   double   vel[], // cppcheck-suppress [constParameter]
    double   accel[],
    void   * udata)
 {
