@@ -359,6 +359,7 @@ Examples:\n  check_code -s -o -v\n  check_code -i -o -v\n  check_code -e -o -v\n
       trickhla_ignore.append( '--suppress=unmatchedSuppression' )
       # Ignore/suppress the Trick header file warnings.
       trickhla_ignore.append( '--suppress=missingInclude:' + trick_home + '/include/trick/rand_generator.h' )
+      trickhla_ignore.append( '--suppress=preprocessorErrorDirective:' + trick_home + '/trick_source/er7_utils/interface/include/er7_class.hh' )
    else:
       # Ignore/suppress the HLA Evolved standard header file warnings.
       trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_home + '/include/RTI/Exception.h' )
