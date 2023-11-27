@@ -399,7 +399,9 @@ frame_A = SpaceFOMRefFrameObject( False,
                                   'FrameA',
                                   ref_frame_A.frame_packing,
                                   'ref_frame_A.frame_packing',
-                                  frame_lag_comp = ref_frame_A.lag_compensation )
+                                  frame_lag_comp  = ref_frame_A.lag_compensation,
+                                  frame_ownership = ref_frame_A.ownership_handler,
+                                  frame_deleted   = ref_frame_A.deleted_callback )
 
 # Set the debug flag for the root reference frame.
 ref_frame_A.frame_packing.debug = verbose
@@ -443,7 +445,9 @@ physical_entity.lag_compensation.set_integ_dt( 0.025 )
 phy_interface = SpaceFOMPhysicalInterfaceObject( True,
                                                  phy_interface_name,
                                                  physical_interface.interface_packing,
-                                                 'physical_interface.interface_packing' )
+                                                 'physical_interface.interface_packing',
+                                                 interface_ownership = physical_interface.ownership_handler,
+                                                 interface_deleted   = physical_interface.deleted_callback )
 
 # Set the debug flag for the Entity.
 physical_interface.interface_packing.debug = verbose

@@ -152,6 +152,8 @@ class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
 //==========================================================================
 ##include "SpaceFOM/RefFrameState.hh"
 ##include "SpaceFOM/RefFrameLagComp.hh"
+##include "SpaceFOM/RefFrameOwnershipHandler.hh"
+##include "SpaceFOM/RefFrameDeleted.hh"
 
 class SpaceFOMRefFrameSimObject : public Trick::SimObject {
 
@@ -162,6 +164,12 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
 
    /* HLA lag compensation object. */
    RefFrameLagComp lag_compensation;
+
+   /* HLA Ownership Handler object. */
+   RefFrameOwnershipHandler ownership_handler;
+
+   /* HLA RefFrame deleted object. */
+   RefFrameDeleted deleted_callback;
 
    SpaceFOMRefFrameSimObject( RefFrameData & frame_data_ptr,
                               unsigned short _INIT = 59  )
@@ -310,6 +318,8 @@ class SpaceFOMDynamicalEntitySimObject : public Trick::SimObject {
 // SpaceFOM PhysicalInterface object discovery and data exchange.
 //==========================================================================
 ##include "SpaceFOM/PhysicalInterface.hh"
+##include "SpaceFOM/PhysicalInterfaceOwnershipHandler.hh"
+##include "SpaceFOM/PhysicalInterfaceDeleted.hh"
 class SpaceFOMPhysicalInterfaceSimObject : public Trick::SimObject {
 
   public:
@@ -318,6 +328,12 @@ class SpaceFOMPhysicalInterfaceSimObject : public Trick::SimObject {
 
    /* HLA associated reference frames packing object. */
    SpaceFOM::PhysicalInterface interface_packing;
+
+   /* HLA Ownership Handler object. */
+   PhysicalInterfaceOwnershipHandler ownership_handler;
+
+   /* HLA PhysicalInterface deleted object. */
+   PhysicalInterfaceDeleted deleted_callback;
 
    SpaceFOMPhysicalInterfaceSimObject( unsigned short _INIT = 59 )
    {
