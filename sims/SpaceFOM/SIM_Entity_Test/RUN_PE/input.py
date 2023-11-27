@@ -421,7 +421,9 @@ phy_entity = SpaceFOMPhysicalEntityObject( True,
                                            phy_entity_name,
                                            physical_entity.entity_packing,
                                            'physical_entity.entity_packing',
-                                           entity_lag_comp = physical_entity.lag_compensation )
+                                           entity_lag_comp  = physical_entity.lag_compensation,
+                                           entity_ownership = physical_entity.ownership_handler,
+                                           entity_deleted   = physical_entity.deleted_callback )
 
 # Set the debug flag for the Entity.
 physical_entity.entity_packing.debug = verbose
@@ -464,7 +466,9 @@ dyn_entity = SpaceFOMDynamicalEntityObject( False,
                                             dyn_entity_name,
                                             dynamical_entity.entity_packing,
                                             'dynamical_entity.entity_packing',
-                                            entity_lag_comp = dynamical_entity.lag_compensation )
+                                            entity_lag_comp  = dynamical_entity.lag_compensation,
+                                            entity_ownership = dynamical_entity.ownership_handler,
+                                            entity_deleted   = dynamical_entity.deleted_callback )
 
 # Set the debug flag for the Entity.
 dynamical_entity.entity_packing.debug = verbose

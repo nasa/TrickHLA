@@ -29,6 +29,7 @@ class SpaceFOMRefFrameObject(TrickHLAObjectConfig):
                  frame_thread_IDs = None,
                  frame_lag_comp = None,
                  frame_ownership = None,
+                 frame_deleted = None,
                  frame_thla_manager_object = None ):
 
 
@@ -55,6 +56,7 @@ class SpaceFOMRefFrameObject(TrickHLAObjectConfig):
                                      frame_FOM_name,
                                      frame_lag_comp,
                                      frame_ownership,
+                                     frame_deleted,
                                      frame_S_define_instance,
                                      frame_thla_manager_object,
                                      frame_thread_IDs )

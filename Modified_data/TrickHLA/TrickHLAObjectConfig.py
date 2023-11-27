@@ -24,6 +24,7 @@ class TrickHLAObjectConfig( object ):
    hla_FOM_name             = None
    hla_lag_comp_instance    = None
    hla_ownership_instance   = None
+   hla_deleted_instance     = None
    hla_packing_instance     = None
    hla_manager_object       = None
    hla_thread_IDs           = None
@@ -38,6 +39,7 @@ class TrickHLAObjectConfig( object ):
                  thla_FOM_name             = None,
                  thla_lag_comp_instance    = None,
                  thla_ownership_instance   = None,
+                 thla_deleted_instance     = None,
                  thla_packing_instance     = None,
                  thla_manager_object       = None,
                  thla_thread_IDs           = None,
@@ -61,6 +63,10 @@ class TrickHLAObjectConfig( object ):
       # Set ownership if specified and not None.
       if thla_ownership_instance != None :
          self.set_ownership_instance( thla_ownership_instance )
+
+      # Set ownership if specified and not None.
+      if thla_deleted_instance != None :
+         self.set_deleted_instance( thla_deleted_instance )
 
       # Set packing if specified and not None.
       if thla_packing_instance != None :
@@ -198,6 +204,16 @@ class TrickHLAObjectConfig( object ):
 
       return
 
+
+   def set_deleted_instance( self, obj_deleted):
+ 
+      self.hla_deleted_instance = obj_deleted
+      if self.hla_manager_object != None :
+         self.hla_manager_object.deleted = obj_deleted
+
+      return
+
+
    def set_ownership_instance( self, obj_ownership_handler):
  
       self.hla_ownership_instance = obj_ownership_handler
@@ -205,6 +221,7 @@ class TrickHLAObjectConfig( object ):
          self.hla_manager_object.ownership = obj_ownership_handler
 
       return
+
 
    def set_packing_instance( self, obj_packing ):
  

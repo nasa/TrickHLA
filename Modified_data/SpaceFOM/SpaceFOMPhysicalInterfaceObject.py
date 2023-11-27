@@ -32,6 +32,7 @@ class SpaceFOMPhysicalInterfaceObject(TrickHLAObjectConfig):
                  interface_S_define_instance_name,
                  interface_lag_comp = None,
                  interface_ownership = None,
+                 interface_deleted = None,
                  interface_thla_manager_object = None ):
 
       # Copy the PhysicalInterface federation execution instance name.
@@ -54,6 +55,7 @@ class SpaceFOMPhysicalInterfaceObject(TrickHLAObjectConfig):
                                      self.interface_FOM_name,
                                      interface_lag_comp,
                                      interface_ownership,
+                                     interface_deleted,
                                      interface_S_define_instance,
                                      interface_thla_manager_object )
 

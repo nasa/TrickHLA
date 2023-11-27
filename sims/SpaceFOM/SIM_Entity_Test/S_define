@@ -200,6 +200,9 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
 #else
 ##include "SpaceFOM/PhysicalEntityLagComp.hh"
 #endif
+##include "SpaceFOM/PhysicalEntityOwnershipHandler.hh"
+##include "SpaceFOM/PhysicalEntityDeleted.hh"
+
 class SpaceFOMPhysicalEntitySimObject : public Trick::SimObject {
 
   public:
@@ -215,6 +218,12 @@ class SpaceFOMPhysicalEntitySimObject : public Trick::SimObject {
 #else
    PhysicalEntityLagComp lag_compensation;
 #endif
+
+   /* HLA Ownership Handler object. */
+   PhysicalEntityOwnershipHandler ownership_handler;
+
+   /* HLA PhysicalEntity deleted object. */
+   PhysicalEntityDeleted deleted_callback;
 
    SpaceFOMPhysicalEntitySimObject( PhysicalEntityData & pe,
                                     unsigned short       _INIT = 59 )
@@ -247,6 +256,8 @@ class SpaceFOMPhysicalEntitySimObject : public Trick::SimObject {
 //==========================================================================
 ##include "SpaceFOM/DynamicalEntity.hh"
 ##include "SpaceFOM/DynamicalEntityLagComp.hh"
+##include "SpaceFOM/DynamicalEntityOwnershipHandler.hh"
+##include "SpaceFOM/DynamicalEntityDeleted.hh"
 class SpaceFOMDynamicalEntitySimObject : public Trick::SimObject {
 
   public:
@@ -260,6 +271,12 @@ class SpaceFOMDynamicalEntitySimObject : public Trick::SimObject {
 
    /* HLA lag compensation object. */
    DynamicalEntityLagComp lag_compensation;
+
+   /* HLA Ownership Handler object. */
+   DynamicalEntityOwnershipHandler ownership_handler;
+
+   /* HLA PhysicalEntity deleted object. */
+   DynamicalEntityDeleted deleted_callback;
 
    SpaceFOMDynamicalEntitySimObject( PhysicalEntityData  & pe,
                                      DynamicalEntityData & de,

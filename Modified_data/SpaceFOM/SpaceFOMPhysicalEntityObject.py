@@ -32,6 +32,7 @@ class SpaceFOMPhysicalEntityObject(TrickHLAObjectConfig):
                  entity_S_define_instance_name,
                  entity_lag_comp = None,
                  entity_ownership = None,
+                 entity_deleted = None,
                  entity_thla_manager_object = None ):
 
       # Copy the PhysicalEntity federation execution instance name.
@@ -54,6 +55,7 @@ class SpaceFOMPhysicalEntityObject(TrickHLAObjectConfig):
                                      self.entity_FOM_name,
                                      entity_lag_comp,
                                      entity_ownership,
+                                     entity_deleted,
                                      entity_S_define_instance,
                                      entity_thla_manager_object )
 
