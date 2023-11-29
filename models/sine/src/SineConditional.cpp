@@ -145,10 +145,8 @@ bool SineConditional::should_send(
 
    bool send_attr = false;
 
-   // If there is simulation data to compare to and if the attribute FOM name
-   // has been specified, check the value of the current simulation variable
-   // versus the previous value. Return true if there was a change.
-   //
+   // Check the value of the current simulation variable versus the previous
+   // value and return true if there was a change.
    if ( attr == name_attr ) {
       send_attr = true; // Always send the name.
 
