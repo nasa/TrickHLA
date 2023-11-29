@@ -1,10 +1,9 @@
 /*!
 @file models/sine/include/SineConditional.hh
 @ingroup TrickHLAModel
-@brief Subclass the base class to provide sine wave-specific CONDITIONAL
-attribute.
+@brief Implements the Conditional API to conditionally send attributes.
 
-@copyright Copyright 2020 United States Government as represented by the
+@copyright Copyright 2023 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17, U.S. Code.
 All Other Rights Reserved.
@@ -28,8 +27,7 @@ NASA, Johnson Space Center\n
 
 @revs_title
 @revs_begin
-@rev_entry{Tony Varesic, L3, TrickHLA, Oct 2009, --, Version 2 origin.}
-@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2020, --, Version 3 rewrite.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, November 2023, --, Using updated Conditional API.}
 @revs_end
 
 */
@@ -77,13 +75,14 @@ class SineConditional : public SineData, public TrickHLA::Conditional
     *  @param obj Object associated with this packing class. */
    virtual void initialize_callback( TrickHLA::Object *obj );
 
-   /*! @brief Determines if the attribute has changed and returns the truth of
-    *  that determination.
-    *  @return True if value should be sent.x
+   /*! @brief Determines if the attribute value should be sent.
+    *  @return True if attribute value should be sent.
     *  @param attr Attribute to check. */
    virtual bool should_send( TrickHLA::Attribute *attr );
 
-  public:
+  protected:
+   SineData *sim_data; ///< @trick_units{--} pointer to the data to reflect in this cycle
+
    TrickHLA::Attribute *time_attr;  ///< @trick_io{**} Reference to the "Time" TrickHLA::Attribute.
    TrickHLA::Attribute *value_attr; ///< @trick_io{**} Reference to the "Value" TrickHLA::Attribute.
    TrickHLA::Attribute *dvdt_attr;  ///< @trick_io{**} Reference to the "dvdt" TrickHLA::Attribute.
@@ -92,9 +91,6 @@ class SineConditional : public SineData, public TrickHLA::Conditional
    TrickHLA::Attribute *amp_attr;   ///< @trick_io{**} Reference to the "Amplitude" TrickHLA::Attribute.
    TrickHLA::Attribute *tol_attr;   ///< @trick_io{**} Reference to the "Tolerance" TrickHLA::Attribute.
    TrickHLA::Attribute *name_attr;  ///< @trick_io{**} Reference to the "Name" TrickHLA::Attribute.
-
-  private:
-   SineData *sim_data; ///< @trick_units{--} pointer to the data to reflect in this cycle
 };
 
 } // namespace TrickHLAModel

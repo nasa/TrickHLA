@@ -1,9 +1,9 @@
 /*!
 @file models/sine/src/SineConditional.cpp
 @ingroup TrickHLAModel
-@brief Subclass the base class to provide sine wave-specific CONDITIONAL attribute.
+@brief Implements the Conditional API to conditionally send attributes.
 
-@copyright Copyright 2020 United States Government as represented by the
+@copyright Copyright 2023 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17, U.S. Code.
 All Other Rights Reserved.
@@ -23,8 +23,7 @@ NASA, Johnson Space Center\n
 
 @revs_title
 @revs_begin
-@rev_entry{Tony Varesic, L3, DSES, October 2009, --, Initial implementation.}
-@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2020, --, Version 3 rewrite.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, November 2023, --, Using the updated Conditional API.}
 @revs_end
 
 */
@@ -55,6 +54,7 @@ using namespace TrickHLAModel;
  */
 SineConditional::SineConditional()
    : TrickHLA::Conditional(),
+     sim_data( NULL ),
      time_attr( NULL ),
      value_attr( NULL ),
      dvdt_attr( NULL ),
@@ -62,8 +62,7 @@ SineConditional::SineConditional()
      freq_attr( NULL ),
      amp_attr( NULL ),
      tol_attr( NULL ),
-     name_attr( NULL ),
-     sim_data( NULL )
+     name_attr( NULL )
 {
    return;
 }
@@ -103,12 +102,10 @@ void SineConditional::initialize(
 }
 
 /*!
- * @details From the TrickHLA::Packing class. We override this function so
- * that we can initialize references to the TrickHLA::Attribute's that are
- * used in the unpack function to handle attribute ownership and different
- * attribute data rates. Use the initialize callback function as a way to
- * setup TrickHLA-Attribute references which are used to determine ownership
- * or if data for an attribute was received.
+ * @details From the TrickHLA::Conditional class. We override this function
+ * so that we can initialize references to the TrickHLA::Attribute's that are
+ * used in the should_send function to determine if an attribute value should
+ * be sent.
  *
  * @job_class{initialization}
  */
@@ -132,6 +129,10 @@ void SineConditional::initialize_callback(
 }
 
 /*!
+ * @brief Determines if the attribute value should be sent.
+ * @return True if the attribute value should be sent.
+ * @param attr Attribute to check.
+ *
  * @job_class{scheduled}
  */
 bool SineConditional::should_send(
@@ -153,43 +154,43 @@ bool SineConditional::should_send(
    } else if ( attr == time_attr ) {
       if ( sim_data->get_time() != get_time() ) {
          send_attr = true;
-         set_time( sim_data->get_time() ); // update to the current state
+         set_time( sim_data->get_time() ); // Update to the current state
       }
 
    } else if ( attr == value_attr ) {
       if ( sim_data->get_value() != get_value() ) {
          send_attr = true;
-         set_value( sim_data->get_value() ); // update to the current state
+         set_value( sim_data->get_value() ); // Update to the current state
       }
 
    } else if ( attr == dvdt_attr ) {
       if ( sim_data->get_derivative() != get_derivative() ) {
          send_attr = true;
-         set_derivative( sim_data->get_derivative() ); // update to the current state
+         set_derivative( sim_data->get_derivative() ); // Update to the current state
       }
 
    } else if ( attr == phase_attr ) {
       if ( sim_data->get_phase() != get_phase() ) {
          send_attr = true;
-         set_phase( sim_data->get_phase() ); // update to the current state
+         set_phase( sim_data->get_phase() ); // Update to the current state
       }
 
    } else if ( attr == freq_attr ) {
       if ( sim_data->get_frequency() != get_frequency() ) {
          send_attr = true;
-         set_frequency( sim_data->get_frequency() ); // update to the current state
+         set_frequency( sim_data->get_frequency() ); // Update to the current state
       }
 
    } else if ( attr == amp_attr ) {
       if ( sim_data->get_amplitude() != get_amplitude() ) {
          send_attr = true;
-         set_amplitude( sim_data->get_amplitude() ); // update to the current state
+         set_amplitude( sim_data->get_amplitude() ); // Update to the current state
       }
 
    } else if ( attr == tol_attr ) {
       if ( sim_data->get_tolerance() != get_tolerance() ) {
          send_attr = true;
-         set_tolerance( sim_data->get_tolerance() ); // update to the current state
+         set_tolerance( sim_data->get_tolerance() ); // Update to the current state
       }
 
    } else {
