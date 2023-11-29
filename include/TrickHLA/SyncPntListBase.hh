@@ -20,10 +20,10 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/SyncPntListBase.cpp}
-@trick_link_dependency{../source/TrickHLA/Federate.cpp}
-@trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
-@trick_link_dependency{../source/TrickHLA/SyncPnt.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPntListBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/Federate.cpp}
+@trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPnt.cpp}
 
 @revs_title
 @revs_begin

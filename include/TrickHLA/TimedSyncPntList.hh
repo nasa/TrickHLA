@@ -21,9 +21,9 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/TimedSyncPntList.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
-@trick_link_dependency{../source/TrickHLA/SyncPntListBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/TimedSyncPntList.cpp}
+@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPntListBase.cpp}
 
 @revs_title
 @revs_begin

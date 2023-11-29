@@ -1,7 +1,7 @@
 /*!
 @file TrickHLA/Conditional.hh
 @ingroup TrickHLA
-@brief This class provides a user API for the handling of a CONDITIONAL
+@brief This class provides a user API for the handling of a Condistional
 attribute.
 
 @copyright Copyright 2019 United States Government as represented by the
@@ -20,13 +20,15 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
 @trick_link_dependency{../../source/TrickHLA/Conditional.cpp}
+@trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
+@trick_link_dependency{../../source/TrickHLA/Object.cpp}
 
 @revs_title
 @revs_begin
 @rev_entry{Tony Varesic, L3 Titan Group, IMSim, Oct 2009, --, Initial version.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, November 2023, --, Added initialize_callback().}
 @revs_end
 */
 
@@ -39,6 +41,7 @@ namespace TrickHLA
 // Forward Declared Classes:  Since these classes are only used as references
 // through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
+class Object;
 class Attribute;
 
 class Conditional
@@ -62,12 +65,17 @@ class Conditional
    /*! @brief Destructor for the TrickHLA Conditional class. */
    virtual ~Conditional();
 
-   /*!
-   @brief Default implementation of a virtual function, returning true.
-   @return Always returns boolean true.
-   @param attr Pointer to attribute.
-   */
+   /*! @brief Initialize the callback object to the supplied Object pointer.
+    *  @param obj Associated object for this class. */
+   virtual void initialize_callback( Object *obj );
+
+   /*! @brief Indicate true if the attribute data should be sent, false otherwise.
+    *  @return True if the attribute data should be sent, false otherwise.
+    *  @param attr Pointer to TrickHLA Attribute. */
    virtual bool should_send( Attribute *attr );
+
+  protected:
+   Object *object; ///< @trick_io{**} Object associated with this class.
 };
 
 } // namespace TrickHLA

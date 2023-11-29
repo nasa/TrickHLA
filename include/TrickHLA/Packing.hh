@@ -22,9 +22,9 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Packing.cpp}
-@trick_link_dependency{../source/TrickHLA/Attribute.cpp}
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../source/TrickHLA/Packing.cpp}
+@trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
+@trick_link_dependency{../../source/TrickHLA/Object.cpp}
 
 @revs_title
 @revs_begin
@@ -108,7 +108,7 @@ class Packing
    double get_cte_time();
 
   protected:
-   Object *object; ///< @trick_io{**} Object associated with this packing class.
+   Object *object; ///< @trick_io{**} Object associated with this class.
 
    /*! @brief Uses Trick memory allocation routines to allocate a new string
     *  that is input file compliant. */

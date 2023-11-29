@@ -20,8 +20,8 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLAModel}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Attribute.cpp}
-@trick_link_dependency{../source/TrickHLA/Conditional.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Attribute.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Conditional.cpp}
 @trick_link_dependency{sine/src/SineConditional.cpp}
 @trick_link_dependency{sine/src/SineData.cpp}
 
@@ -68,27 +68,18 @@ class SineConditional : public TrickHLA::Conditional
    virtual ~SineConditional();
 
    /*! @brief Initializes the sim_data to the supplied.
-    *  @param data          External simulation data.
-    *  @param attr_FOM_name FOM name of the attribute to track when changed.
-    */
-   void initialize( SineData *data, char const *attr_FOM_name );
+    *  @param data External simulation data. */
+   void initialize( SineData *data );
 
    /*! @brief Determines if the attribute has changed and returns the truth of
     *  that determination.
-    *  @return True if value should be sent.
+    *  @return True if value should be sent.x
     *  @param attr Attribute to check. */
    virtual bool should_send( TrickHLA::Attribute *attr );
 
   private:
-   /*! @brief Determines the supplied name's position in the SineData structure.
-    *  @return position in SineData.
-    *  @param attr_FOM_name FOM name of the attribute. */
-   int convert_FOM_name_to_pos( char const *attr_FOM_name );
-
    SineData *sim_data;      ///< @trick_units{--} pointer to the data to reflect in this cycle
    SineData  prev_sim_data; ///< @trick_units{--} copy of the data we previously reflected
-
-   int attr_pos; ///< @trick_units{--} attribute position in SineData
 };
 
 } // namespace TrickHLAModel

@@ -16,6 +16,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{Attribute.cpp}
+@trick_link_dependency{Conditional.cpp}
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{ElapsedTimeStats.cpp}
 @trick_link_dependency{Federate.cpp}
@@ -60,6 +61,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/Conditional.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ElapsedTimeStats.hh"
 #include "TrickHLA/Federate.hh"
@@ -124,6 +126,7 @@ Object::Object()
      packing( NULL ),
      ownership( NULL ),
      deleted( NULL ),
+     conditional( NULL ),
      thread_ids_array_count( 0 ),
      thread_ids_array( NULL ),
      process_object_deleted_from_RTI( false ),
@@ -455,16 +458,6 @@ void Object::initialize(
       attribute_FOM_names.push_back( fom_name_str );
    }
 
-   // Initialize the Packing-Handler.
-   if ( packing != NULL ) {
-      packing->initialize_callback( this );
-   }
-
-   // Initialize the Ownership-Handler.
-   if ( ownership != NULL ) {
-      ownership->initialize_callback( this );
-   }
-
    // If the user specified a lag_comp object then make sure it extends the
    // LagCompensation virtual class.
    if ( ( lag_comp != NULL ) && ( dynamic_cast< LagCompensation * >( lag_comp ) == NULL ) ) {
@@ -477,9 +470,29 @@ void Object::initialize(
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
+   // Initialize the Packing-Handler.
+   if ( packing != NULL ) {
+      packing->initialize_callback( this );
+   }
+
    // Initialize the Lag-Compensation.
    if ( lag_comp != NULL ) {
       lag_comp->initialize_callback( this );
+   }
+
+   // Initialize the Conditional-Handler.
+   if ( conditional != NULL ) {
+      conditional->initialize_callback( this );
+   }
+
+   // Initialize the Ownership-Handler.
+   if ( ownership != NULL ) {
+      ownership->initialize_callback( this );
+   }
+
+   // Initialize the deleted object instance handler.
+   if ( deleted != NULL ) {
+      deleted->initialize_callback( this );
    }
 
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -663,7 +676,7 @@ void Object::process_deleted_object()
 
       // If the callback class has been defined, call it...
       if ( ( deleted != NULL ) && ( dynamic_cast< ObjectDeleted * >( deleted ) != NULL ) ) {
-         deleted->deleted( this );
+         deleted->deleted();
       }
    }
 }
@@ -3003,8 +3016,8 @@ void Object::create_attribute_set(
             // it should be sent, then add this attribute into the attribute
             // map. NOTE: Override the Conditional if the attribute has been
             // requested by another Federate to make sure it is sent.
-            if ( !attributes[i].has_conditional()
-                 || attributes[i].get_conditional()->should_send( &attributes[i] )
+            if ( ( conditional == NULL )
+                 || conditional->should_send( &attributes[i] )
                  || ( include_requested && attributes[i].is_update_requested() ) ) {
 
                // If there was a requested update for this attribute make sure
@@ -3036,8 +3049,8 @@ void Object::create_attribute_set(
             // it should be sent, then add this attribute into the attribute
             // map. NOTE: Override the Conditional if the attribute has been
             // requested by another Federate to make sure it is sent.
-            if ( !attributes[i].has_conditional()
-                 || attributes[i].get_conditional()->should_send( &attributes[i] )
+            if ( ( conditional == NULL )
+                 || conditional->should_send( &attributes[i] )
                  || ( include_requested && attributes[i].is_update_requested() ) ) {
 
                // If there was a requested update for this attribute make sure

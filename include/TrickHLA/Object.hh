@@ -19,20 +19,21 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../source/TrickHLA/Attribute.cpp}
-@trick_link_dependency{../source/TrickHLA/ElapsedTimeStats.cpp}
-@trick_link_dependency{../source/TrickHLA/Federate.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64Interval.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
-@trick_link_dependency{../source/TrickHLA/LagCompensation.cpp}
-@trick_link_dependency{../source/TrickHLA/Manager.cpp}
-@trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
-@trick_link_dependency{../source/TrickHLA/MutexProtection.cpp}
-@trick_link_dependency{../source/TrickHLA/OwnershipHandler.cpp}
-@trick_link_dependency{../source/TrickHLA/Packing.cpp}
-@trick_link_dependency{../source/TrickHLA/ReflectedAttributesQueue.cpp}
-@trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
+@trick_link_dependency{../../source/TrickHLA/Conditional.cpp}
+@trick_link_dependency{../../source/TrickHLA/ElapsedTimeStats.cpp}
+@trick_link_dependency{../../source/TrickHLA/Federate.cpp}
+@trick_link_dependency{../../source/TrickHLA/Int64Interval.cpp}
+@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../../source/TrickHLA/LagCompensation.cpp}
+@trick_link_dependency{../../source/TrickHLA/Manager.cpp}
+@trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
+@trick_link_dependency{../../source/TrickHLA/MutexProtection.cpp}
+@trick_link_dependency{../../source/TrickHLA/OwnershipHandler.cpp}
+@trick_link_dependency{../../source/TrickHLA/Packing.cpp}
+@trick_link_dependency{../../source/TrickHLA/ReflectedAttributesQueue.cpp}
+@trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -97,6 +98,7 @@ namespace TrickHLA
 // helps to limit issues with recursive includes.
 class Manager;
 class Federate;
+class Conditional;
 class Packing;
 class OwnershipHandler;
 class ObjectDeleted;
@@ -148,6 +150,8 @@ class Object
    OwnershipHandler *ownership; ///< @trick_units{--} Manages attribute ownership.
 
    ObjectDeleted *deleted; ///< @trick_units{--} Object Deleted callback object.
+
+   Conditional *conditional; ///< @trick_units{--} Handler for a conditional attribute
 
   public:
    //
@@ -316,7 +320,7 @@ class Object
    void setup_ownership_transfer_checkpointed_data();
 
    /*! @brief If an ownership_transfer object has been created by the user,
-    * trigger it's retore() method is re-establish the pull / push
+    * trigger it's restore() method is re-establish the pull / push
     * AttributeOwnershipMaps. */
    void restore_ownership_transfer_checkpointed_data();
 

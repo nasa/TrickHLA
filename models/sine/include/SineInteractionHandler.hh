@@ -19,7 +19,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLAModel}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/InteractionHandler.cpp}
+@trick_link_dependency{../../../source/TrickHLA/InteractionHandler.cpp}
 @trick_link_dependency{sine/src/SineInteractionHandler.cpp}
 
 @revs_title

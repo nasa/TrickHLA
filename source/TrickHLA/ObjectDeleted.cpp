@@ -1,8 +1,8 @@
 /*!
-@file TrickHLA/Conditional.cpp
+@file TrickHLA/ObjectDeleted.cpp
 @ingroup TrickHLA
-@brief This class provides a user API for the handling of a Conditional
-attribute.
+@brief This class is the abstract base class for a callback of identification
+of deleted objects from the RTI.
 
 @copyright Copyright 2019 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
@@ -16,13 +16,13 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{Conditional.cpp}
-@trick_link_dependency{Attribute.cpp}
+@trick_link_dependency{ObjectDeleted.cpp}
 @trick_link_dependency{Object.cpp}
 
 @revs_title
 @revs_begin
-@rev_entry{Tony Varesic, L3, DSES, Oct 2009, --, Initial version.}
+@rev_entry{Tony Varesic, L3-Communications, DSES, June 2008, --, IMSim: report TrickHLA::Object as deleted via a callback.}
+@rev_entry{Dan Dexter, NASA ER7, TrickHLA, March 2019, --, Version 2 origin.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
 @rev_entry{Dan Dexter, NASA ER6, TrickHLA, November 2023, --, Added initialize_callback().}
 @revs_end
@@ -30,8 +30,7 @@ NASA, Johnson Space Center\n
 */
 
 // TrickHLA include files.
-#include "TrickHLA/Conditional.hh"
-#include "TrickHLA/Attribute.hh"
+#include "TrickHLA/ObjectDeleted.hh"
 #include "TrickHLA/Object.hh"
 
 using namespace std;
@@ -40,7 +39,7 @@ using namespace TrickHLA;
 /*!
  * @job_class{initialization}
  */
-Conditional::Conditional() // RETURN: -- None.
+ObjectDeleted::ObjectDeleted() // RETURN: -- None.
    : object( NULL )
 {
    return;
@@ -49,7 +48,7 @@ Conditional::Conditional() // RETURN: -- None.
 /*!
  * @job_class{shutdown}
  */
-Conditional::~Conditional() // RETURN: -- None.
+ObjectDeleted::~ObjectDeleted() // RETURN: -- None.
 {
    return;
 }
@@ -58,19 +57,8 @@ Conditional::~Conditional() // RETURN: -- None.
  * @brief Initialize the callback object to the supplied Object pointer.
  * @param obj Associated object for this class.
  */
-void Conditional::initialize_callback(
+void ObjectDeleted::initialize_callback(
    Object *obj )
 {
    this->object = obj;
-}
-
-/*!
- * @brief Default implementation to always send the attribute.
- * @return Defaults to true.
- * @param attr Pointer to TrickHLA Attribute.
- */
-bool Conditional::should_send( // RETURN: -- None.
-   Attribute *attr )           // IN: ** Attribute data to send
-{
-   return true;
 }

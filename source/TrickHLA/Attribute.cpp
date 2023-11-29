@@ -79,7 +79,6 @@ Attribute::Attribute()
      locally_owned( false ),
      rti_encoding( ENCODING_UNKNOWN ),
      cycle_time( -std::numeric_limits< double >::max() ),
-     conditional( NULL ),
      buffer( NULL ),
      buffer_capacity( 0 ),
      size_is_static( true ),

@@ -96,9 +96,6 @@ class Attribute
 
    double cycle_time; ///< @trick_units{s} Send the cyclic attribute at the specified rate.
 
-   // Added for conditional sending of this attribute
-   Conditional *conditional; ///< @trick_units{--} Handler for a conditional attribute
-
    //--------------------------------------------------------------------------
 
    //--------------------------------------------------------------------------
@@ -388,20 +385,6 @@ class Attribute
    /*! @brief Prints the contents of buffer used to encode/decode the attribute
     *         to the console on standard out. */
    void print_buffer() const;
-
-   /*! @brief Check if attribute is sent conditionally.
-    *  @return True if attribute is to be sent conditionally. */
-   bool has_conditional() const
-   {
-      return ( conditional != NULL );
-   }
-
-   /*! @brief Get the associated conditionality handler.
-    *  @return The conditionality handler class associated with this attribute. */
-   Conditional *get_conditional()
-   {
-      return conditional;
-   }
 
    /*! @brief Get the Trick "Ref Attributes" associated with this attribute.
     *  @return A pointer to the Trick "Ref Attributes" class. */

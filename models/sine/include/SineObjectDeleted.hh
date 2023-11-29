@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLAModel}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{sine/src/SineObjectDeleted.cpp}
 
 @revs_title
@@ -69,7 +69,7 @@ class SineObjectDeleted : public TrickHLA::ObjectDeleted
    /*! @brief Callback routine implementation to report that this object has
     *  been deleted from the RTI.
     *  @param obj Object which was deleted. */
-   void deleted( TrickHLA::Object *obj );
+   void deleted();
 
   private:
    // Do not allow the copy constructor or assignment operator.

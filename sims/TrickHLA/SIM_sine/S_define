@@ -31,6 +31,7 @@
 ##include "sine/include/SinePacking.hh"
 ##include "sine/include/SineLagCompensation.hh"
 ##include "sine/include/SineOwnershipHandler.hh"
+##include "sine/include/SineConditional.hh"
 ##include "sine/include/SineInteractionHandler.hh"
 ##include "sine/include/SineObjectDeleted.hh"
 
@@ -51,10 +52,12 @@ class AnalyticSineSimObj : public Trick::SimObject {
    TrickHLAModel::SinePacking            packing;
 
    TrickHLAModel::SineLagCompensation    lag_compensation;
+   
+   TrickHLAModel::SineConditional        conditional;
 
+   TrickHLAModel::SineObjectDeleted      obj_deleted;
+   
    TrickHLAModel::SineInteractionHandler interaction_handler;
-
-   TrickHLAModel::SineObjectDeleted      obj_deleted_callback;
 
    AnalyticSineSimObj() {
       // Note: Make sure to initialize the data before it gets sent in
@@ -65,6 +68,8 @@ class AnalyticSineSimObj : public Trick::SimObject {
       P50 ("initialization") lag_compensation.initialize( &sim_data );
 
       P50 ("initialization") packing.initialize( &lag_compensation );
+      
+      P50 ("initialization") conditional.initialize( &packing );
 
       (DYN_RATE, "scheduled") truth_data.compute_value( THLA.execution_control.get_scenario_time() );
       (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.execution_control.get_scenario_time() );
@@ -95,10 +100,12 @@ class PropagatedSineSimObj : public Trick::SimObject {
    TrickHLAModel::SinePacking            packing;
 
    TrickHLAModel::SineLagCompensation    lag_compensation;
+   
+   TrickHLAModel::SineConditional        conditional;
 
+   TrickHLAModel::SineObjectDeleted      obj_deleted;
+   
    TrickHLAModel::SineInteractionHandler interaction_handler;
-
-   TrickHLAModel::SineObjectDeleted      obj_deleted_callback;
 
    PropagatedSineSimObj() {
       // Note: Make sure to initialize the data before it gets sent in
@@ -109,6 +116,8 @@ class PropagatedSineSimObj : public Trick::SimObject {
       P50 ("initialization") lag_compensation.initialize( &sim_data );
 
       P50 ("initialization") packing.initialize( &lag_compensation );
+      
+      P50 ("initialization") conditional.initialize( &packing );
 
       /*
        * -- Propagate the true sine state.

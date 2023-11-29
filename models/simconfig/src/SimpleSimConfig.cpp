@@ -19,10 +19,10 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLAModel}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/DebugHandler.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64BaseTime.cpp}
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../../source/TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Int64BaseTime.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{simconfig/src/SimpleSimConfig.cpp}
 
 @revs_title
