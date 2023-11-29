@@ -28,6 +28,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{MutexLock.cpp}
 @trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{Object.cpp}
+@trick_link_dependency{ObjectDeleted.cpp}
 @trick_link_dependency{OwnershipHandler.cpp}
 @trick_link_dependency{Packing.cpp}
 @trick_link_dependency{SleepTimeout.cpp}
@@ -470,22 +471,22 @@ void Object::initialize(
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   // Initialize the Packing-Handler.
+   // Initialize the Packing handler.
    if ( packing != NULL ) {
       packing->initialize_callback( this );
    }
 
-   // Initialize the Lag-Compensation.
+   // Initialize the Lag-Compensation handler.
    if ( lag_comp != NULL ) {
       lag_comp->initialize_callback( this );
    }
 
-   // Initialize the Conditional-Handler.
+   // Initialize the Conditional handler.
    if ( conditional != NULL ) {
       conditional->initialize_callback( this );
    }
 
-   // Initialize the Ownership-Handler.
+   // Initialize the Ownership handler.
    if ( ownership != NULL ) {
       ownership->initialize_callback( this );
    }
