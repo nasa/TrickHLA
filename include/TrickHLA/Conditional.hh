@@ -74,6 +74,16 @@ class Conditional
     *  @param attr Pointer to TrickHLA Attribute. */
    virtual bool should_send( Attribute *attr );
 
+   /*! @brief Get the Attribute by FOM name.
+    *  @return Attribute for the given name.
+    *  @param attr_FOM_name Attribute FOM name. */
+   Attribute *get_attribute( char const *attr_FOM_name );
+
+   /*! @brief This function returns the Attribute for the given attribute FOM name.
+    *  @return Attribute for the given name.
+    *  @param attr_FOM_name Attribute FOM name. */
+   Attribute *get_attribute_and_validate( char const *attr_FOM_name );
+
   protected:
    Object *object; ///< @trick_io{**} Object associated with this class.
 };

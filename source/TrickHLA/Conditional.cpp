@@ -18,6 +18,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{Conditional.cpp}
 @trick_link_dependency{Attribute.cpp}
+@trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{Object.cpp}
 
 @revs_title
@@ -32,6 +33,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Conditional.hh"
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 
 using namespace std;
@@ -73,4 +75,50 @@ bool Conditional::should_send( // RETURN: -- None.
    Attribute *attr )           // IN: ** Attribute data to send
 {
    return true;
+}
+
+/*!
+ * @brief Get the Attribute by FOM name.
+ * @return Attribute for the given name.
+ * @param attr_FOM_name Attribute FOM name.
+ */
+Attribute *Conditional::get_attribute(
+   char const *attr_FOM_name )
+{
+   return object->get_attribute( attr_FOM_name );
+}
+
+/*!
+ * @brief This function returns the Attribute for the given attribute FOM name.
+ * @return Attribute for the given name.
+ * @param attr_FOM_name Attribute FOM name.
+ */
+Attribute *Conditional::get_attribute_and_validate(
+   char const *attr_FOM_name )
+{
+   // Make sure the FOM name is not NULL.
+   if ( attr_FOM_name == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Conditional::get_attribute_and_validate():" << __LINE__
+             << " ERROR: Unexpected NULL attribute FOM name specified."
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Get the attribute by FOM name.
+   Attribute *attr = get_attribute( attr_FOM_name );
+
+   // Make sure we have found the attribute.
+   if ( attr == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Conditional::get_attribute_and_validate():" << __LINE__
+             << " ERROR: For FOM object '" << object->get_FOM_name()
+             << "', failed to find the Attribute for an attribute named"
+             << " '" << attr_FOM_name << "'. Make sure the FOM attribute name is"
+             << " correct, the FOM contains an attribute named '"
+             << attr_FOM_name << "' and that your input.py file is properly"
+             << " configured for this attribute." << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   return attr;
 }

@@ -22,6 +22,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../../source/TrickHLA/Attribute.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Conditional.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{sine/src/SineConditional.cpp}
 @trick_link_dependency{sine/src/SineData.cpp}
 
@@ -39,6 +40,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/Conditional.hh"
+#include "TrickHLA/Object.hh"
 
 // Model include files.
 #include "SineData.hh"
@@ -46,7 +48,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLAModel
 {
 
-class SineConditional : public TrickHLA::Conditional
+class SineConditional : public SineData, public TrickHLA::Conditional
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -71,15 +73,28 @@ class SineConditional : public TrickHLA::Conditional
     *  @param data External simulation data. */
    void initialize( SineData *data );
 
+   /*! @brief Initialization callback as part of the TrickHLA::Conditional functions.
+    *  @param obj Object associated with this packing class. */
+   virtual void initialize_callback( TrickHLA::Object *obj );
+
    /*! @brief Determines if the attribute has changed and returns the truth of
     *  that determination.
     *  @return True if value should be sent.x
     *  @param attr Attribute to check. */
    virtual bool should_send( TrickHLA::Attribute *attr );
 
+  public:
+   TrickHLA::Attribute *time_attr;  ///< @trick_io{**} Reference to the "Time" TrickHLA::Attribute.
+   TrickHLA::Attribute *value_attr; ///< @trick_io{**} Reference to the "Value" TrickHLA::Attribute.
+   TrickHLA::Attribute *dvdt_attr;  ///< @trick_io{**} Reference to the "dvdt" TrickHLA::Attribute.
+   TrickHLA::Attribute *phase_attr; ///< @trick_io{**} Reference to the "Phase" TrickHLA::Attribute.
+   TrickHLA::Attribute *freq_attr;  ///< @trick_io{**} Reference to the "Frequency" TrickHLA::Attribute.
+   TrickHLA::Attribute *amp_attr;   ///< @trick_io{**} Reference to the "Amplitude" TrickHLA::Attribute.
+   TrickHLA::Attribute *tol_attr;   ///< @trick_io{**} Reference to the "Tolerance" TrickHLA::Attribute.
+   TrickHLA::Attribute *name_attr;  ///< @trick_io{**} Reference to the "Name" TrickHLA::Attribute.
+
   private:
-   SineData *sim_data;      ///< @trick_units{--} pointer to the data to reflect in this cycle
-   SineData  prev_sim_data; ///< @trick_units{--} copy of the data we previously reflected
+   SineData *sim_data; ///< @trick_units{--} pointer to the data to reflect in this cycle
 };
 
 } // namespace TrickHLAModel
