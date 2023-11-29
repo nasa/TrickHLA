@@ -60,11 +60,10 @@ PhysicalInterfaceDeleted::~PhysicalInterfaceDeleted()
    return;
 }
 
-void PhysicalInterfaceDeleted::deleted(
-   TrickHLA::Object *obj )
+void PhysicalInterfaceDeleted::deleted()
 {
    std::ostringstream msg;
    msg << "SpaceFOM::PhysicalInterfaceDeleted::deleted():" << __LINE__
-       << " Object '" << obj->get_name() << "' deleted from the federation.";
+       << " Object '" << this->object->get_name() << "' deleted from the federation.";
    send_hs( stdout, msg.str().c_str() );
 }

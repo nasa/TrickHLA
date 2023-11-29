@@ -66,9 +66,8 @@ class RefFrameDeleted : public TrickHLA::ObjectDeleted
    //-----------------------------------------------------------------
 
    /*! @brief Callback routine implementation to report that this object has
-    *  been deleted from the RTI.
-    *  @param obj Object which was deleted. */
-   virtual void deleted( TrickHLA::Object *obj );
+    *  been deleted from the RTI. */
+   virtual void deleted();
 
   private:
    // Do not allow the copy constructor or assignment operator.

@@ -60,16 +60,15 @@ DynamicalEntityDeleted::~DynamicalEntityDeleted()
    return;
 }
 
-void DynamicalEntityDeleted::deleted(
-   TrickHLA::Object *obj )
+void DynamicalEntityDeleted::deleted()
 {
    std::ostringstream msg;
    msg << "SpaceFOM::DynamicalEntityDeleted::deleted():" << __LINE__
-       << " Object '" << obj->get_name() << "' deleted from the federation.";
+       << " Object '" << this->object->get_name() << "' deleted from the federation.";
    send_hs( stdout, msg.str().c_str() );
 
    // Call the PhysicalEntityDeleted base class method.
-   this->PhysicalEntityDeleted::deleted( obj );
+   this->PhysicalEntityDeleted::deleted();
 
    return;
 }
