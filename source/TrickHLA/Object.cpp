@@ -2253,7 +2253,7 @@ void Object::send_zero_lookahead_and_requested_data(
          default:
             ostringstream errmsg;
             errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
-                   << " ERROR: For object '" << name << "', detected a"
+                   << " ERROR: For object '" << this->name << "', detected a"
                    << " Lag-Compensation 'lag_comp' callback has also been"
                    << " specified with a 'lag_comp_type' setting that is not"
                    << " LAG_COMPENSATION_NONE! Please check your input or"
@@ -2290,6 +2290,19 @@ void Object::send_zero_lookahead_and_requested_data(
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+         ostringstream errmsg;
+         errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
+                << " WARNING: For object '" << this->name << "', detected that there"
+                << " are no attributes to send an update for, which can lead to"
+                << " deadlock for another federate waiting to receive zero-lookahead"
+                << " data. Please check your input or modified-data files to make"
+                << " sure at least attribute is configured for zero-lookahead and"
+                << " if you are using the TrickHLA::Conditional API make sure you"
+                << " enable at least one attribute to be sent." << THLA_ENDL;
+         send_hs( stderr, errmsg.str().c_str() );
+      }
 
       // Just return because we have no data to send.
       return;
