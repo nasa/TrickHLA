@@ -54,6 +54,10 @@ class EntityDynamics
    friend void init_attrSpaceFOM__EntityDynamics();
 
   public:
+   // Public constructors and destructors.
+   explicit EntityDynamics(); // Default constructor.
+   virtual ~EntityDynamics(); // Destructor.
+
    void default_data();
 
    void initialize();
@@ -67,6 +71,10 @@ class EntityDynamics
    PhysicalEntityData  pe_data; ///< @trick_units{--} Basic entity propagation data.
    DynamicalEntityData de_data; ///< @trick_units{--} Parameters needed for active entity.
 
+   double accel_env[3];          ///< @trick_units{m/s2} Computed environmental acceleration.
+   double ang_accel_env[3];      ///< @trick_units{rad/s2} Computed environmental rotational acceleration.
+   double ang_accel_inertial[3]; ///< @trick_units{rad/s2} Computed inertial rotational acceleration.
+
   protected:
    QuaternionData Q_dot; ///< @trick_units{--} Derivative of the attitude quaternion.
 
@@ -77,6 +85,15 @@ class EntityDynamics
 
    /*! @brief Unload the integration state into the integrator. */
    void unload();
+
+  private:
+   // This object is not copyable
+   /*! @brief Copy constructor for EntityDynamics class.
+    *  @details This constructor is private to prevent inadvertent copies. */
+   EntityDynamics( EntityDynamics const &rhs );
+   /*! @brief Assignment operator for EntityDynamics class.
+    *  @details This assignment operator is private to prevent inadvertent copies. */
+   EntityDynamics &operator=( EntityDynamics const &rhs );
 };
 
 } // namespace SpaceFOM

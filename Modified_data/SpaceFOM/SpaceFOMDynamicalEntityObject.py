@@ -26,9 +26,10 @@ class SpaceFOMDynamicalEntityObject(SpaceFOMPhysicalEntityObject):
                  entity_instance_name,
                  entity_S_define_instance,
                  entity_S_define_instance_name,
-                 entity_lag_comp = None,
-                 entity_ownership = None,
-                 entity_deleted = None,
+                 entity_conditional         = None,
+                 entity_lag_comp            = None,
+                 entity_ownership           = None,
+                 entity_deleted             = None,
                  entity_thla_manager_object = None ):
 
 
@@ -42,6 +43,7 @@ class SpaceFOMDynamicalEntityObject(SpaceFOMPhysicalEntityObject):
                                              entity_instance_name,
                                              entity_S_define_instance,
                                              entity_S_define_instance_name,
+                                             entity_conditional,
                                              entity_lag_comp,
                                              entity_ownership,
                                              entity_deleted,

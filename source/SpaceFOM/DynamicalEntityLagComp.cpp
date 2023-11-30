@@ -201,8 +201,10 @@ void DynamicalEntityLagComp::unload()
 void DynamicalEntityLagComp::derivative_first(
    void *user_data )
 {
-   double accel_str[3];
-   double ang_accel_str[3];
+   double force_bdy[3];
+   double torque_bdy[3];
+   double accel_force_bdy[3];
+   double ang_accel_torque_bdy[3];
    double I_omega[3];
    double omega_X_I_omega[3];
 
@@ -221,24 +223,35 @@ void DynamicalEntityLagComp::derivative_first(
    this->Q_dot.derivative_first( this->lag_comp_data.att,
                                  this->lag_comp_data.ang_vel );
 
-   // Compute the translational acceleration in the structural frame.
-   V_SCALE( accel_str, this->force, 1.0 / this->mass );
+   //
+   // Compute the translational dynamics.
+   //
+   // Transform the force into the body frame.
+   this->body_wrt_struct.transform_vector( this->force, force_bdy );
 
-   // Transform the translational acceleration into the body frame.
-   this->body_wrt_struct.transform_vector( accel_str, this->accel );
+   // Compute the force contribution to the translational acceleration.
+   V_SCALE( accel_force_bdy, force_bdy, 1.0 / this->mass );
 
-   // Compute the rotational acceleration in the structural frame.
+   // Compute the total acceleration acceleration.
+   V_ADD( this->accel, this->accel_env, accel_force_bdy );
+
+   //
+   // Compute the rotational dynamics.
+   //
+   // Transform the torque into the body frame.
+   this->body_wrt_struct.transform_vector( this->torque, torque_bdy );
+
    // External torque acceleration.
-   MxV( ang_accel_str, this->inertia_inv, this->torque );
-   // Internal rotational accelerations.
+   MxV( ang_accel_torque_bdy, this->inertia_inv, torque_bdy );
+
+   // Inertial rotational accelerations (omega X I omega).
    MxV( I_omega, this->inertia, this->lag_comp_data.ang_vel );
    V_CROSS( omega_X_I_omega, this->lag_comp_data.ang_vel, I_omega );
-   ang_accel_str[0] += omega_X_I_omega[0];
-   ang_accel_str[1] += omega_X_I_omega[1];
-   ang_accel_str[2] += omega_X_I_omega[2];
 
-   // Transform the rotational acceleration into the body frame.
-   this->body_wrt_struct.transform_vector( ang_accel_str, this->ang_accel );
+   // Compute the total angular acceleration.
+   this->ang_accel[0] = this->ang_accel_env[0] + ang_accel_torque_bdy[0] + omega_X_I_omega[0];
+   this->ang_accel[1] = this->ang_accel_env[1] + ang_accel_torque_bdy[1] + omega_X_I_omega[1];
+   this->ang_accel[2] = this->ang_accel_env[2] + ang_accel_torque_bdy[2] + omega_X_I_omega[2];
 
    return;
 }

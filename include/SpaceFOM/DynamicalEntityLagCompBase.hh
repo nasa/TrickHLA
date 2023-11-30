@@ -112,14 +112,18 @@ class DynamicalEntityLagCompBase : public PhysicalEntityLagCompBase
    TrickHLA::Attribute *inertia_attr;      ///< @trick_io{**} Inertia matrix Attribute.
    TrickHLA::Attribute *inertia_rate_attr; ///< @trick_io{**} Inertia rate Attribute.
 
-   double force[3];  ///< @trick_units{N} Entity force vector.
-   double torque[3]; ///< @trick_units{N*m} Entity torque vector.
+   double force[3];  ///< @trick_units{N} Entity force vector in struct frame.
+   double torque[3]; ///< @trick_units{N*m} Entity torque vector in struct frame.
    double mass;      ///< @trick_units{kg} Entity mass.
    double mass_rate; ///< @trick_units{kg/s} Entity mass rate.
 
-   double inertia[3][3];      ///< @trick_units{kg*m2} Entity inertia matrix.
+   double inertia[3][3];      ///< @trick_units{kg*m2} Entity inertia matrix, in body frame.
    double inertia_rate[3][3]; ///< @trick_units{kg*m2/s} Entity inertia rate matrix.
    double inertia_inv[3][3];  ///< @trick_units{--} Inverse of the entity inertia matrix.
+
+   double accel_env[3];          ///< @trick_units{m/s2} Computed environmental acceleration.
+   double ang_accel_env[3];      ///< @trick_units{rad/s2} Computed environmental rotational acceleration.
+   double ang_accel_inertial[3]; ///< @trick_units{rad/s2} Computed inertial rotational acceleration.
 
    /*! @brief Compensate the state data from the data time to the current scenario time.
     *  @param t_begin Scenario time at the start of the compensation step.

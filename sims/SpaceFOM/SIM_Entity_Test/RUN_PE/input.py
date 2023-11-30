@@ -231,7 +231,7 @@ pe_dynamics.entity.pe_data.state.vel = [ 0.0, 0.1, 0.2 ]
 
 # Initial rotational state.
 pe_dynamics.entity.pe_data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
-pe_dynamics.entity.pe_data.state.ang_vel = [ 0.1, 0.2, 0.3 ]
+pe_dynamics.entity.pe_data.state.ang_vel = [ 0.1, 0.0, 0.0 ]
 
 #
 # Basic mass properties.
@@ -254,7 +254,7 @@ pe_dynamics.entity.de_data.inertia_rate[2] = [ 0.0, 0.0, 0.0 ]
 
 # Base propagation parameters.
 pe_dynamics.entity.de_data.force  = [ 0.1, 0.1, 0.1 ]
-pe_dynamics.entity.de_data.torque = [ 0.01, 0.01, 0.01 ]
+pe_dynamics.entity.de_data.torque = [ 0.0, 0.0, 0.0 ]
 
 
 #---------------------------------------------------------------------------
@@ -379,6 +379,7 @@ root_frame = SpaceFOMRefFrameObject( federate.is_RRFP,
                                      'RootFrame',
                                      root_ref_frame.frame_packing,
                                      'root_ref_frame.frame_packing' )
+                                     #frame_conditional = root_ref_frame.conditional )
 
 # Set the debug flag for the root reference frame.
 root_ref_frame.frame_packing.debug = verbose
@@ -399,9 +400,10 @@ frame_A = SpaceFOMRefFrameObject( False,
                                   'FrameA',
                                   ref_frame_A.frame_packing,
                                   'ref_frame_A.frame_packing',
-                                  frame_lag_comp  = ref_frame_A.lag_compensation,
-                                  frame_ownership = ref_frame_A.ownership_handler,
-                                  frame_deleted   = ref_frame_A.deleted_callback )
+                                  #frame_conditional = ref_frame_A.conditional,
+                                  frame_lag_comp    = ref_frame_A.lag_compensation,
+                                  frame_ownership   = ref_frame_A.ownership_handler,
+                                  frame_deleted     = ref_frame_A.deleted_callback )
 
 # Set the debug flag for the root reference frame.
 ref_frame_A.frame_packing.debug = verbose
@@ -423,9 +425,10 @@ phy_entity = SpaceFOMPhysicalEntityObject( True,
                                            phy_entity_name,
                                            physical_entity.entity_packing,
                                            'physical_entity.entity_packing',
-                                           entity_lag_comp  = physical_entity.lag_compensation,
-                                           entity_ownership = physical_entity.ownership_handler,
-                                           entity_deleted   = physical_entity.deleted_callback )
+                                           entity_conditional = physical_entity.conditional,
+                                           entity_lag_comp    = physical_entity.lag_compensation,
+                                           entity_ownership   = physical_entity.ownership_handler,
+                                           entity_deleted     = physical_entity.deleted_callback )
 
 # Set the debug flag for the Entity.
 physical_entity.entity_packing.debug = verbose
@@ -446,8 +449,9 @@ phy_interface = SpaceFOMPhysicalInterfaceObject( True,
                                                  phy_interface_name,
                                                  physical_interface.interface_packing,
                                                  'physical_interface.interface_packing',
-                                                 interface_ownership = physical_interface.ownership_handler,
-                                                 interface_deleted   = physical_interface.deleted_callback )
+                                                 #interface_conditional = physical_interface.conditional,
+                                                 interface_ownership   = physical_interface.ownership_handler,
+                                                 interface_deleted     = physical_interface.deleted_callback )
 
 # Set the debug flag for the Entity.
 physical_interface.interface_packing.debug = verbose
@@ -470,9 +474,10 @@ dyn_entity = SpaceFOMDynamicalEntityObject( False,
                                             dyn_entity_name,
                                             dynamical_entity.entity_packing,
                                             'dynamical_entity.entity_packing',
-                                            entity_lag_comp  = dynamical_entity.lag_compensation,
-                                            entity_ownership = dynamical_entity.ownership_handler,
-                                            entity_deleted   = dynamical_entity.deleted_callback )
+                                            #entity_conditional = dynamical_entity.conditional,
+                                            entity_lag_comp    = dynamical_entity.lag_compensation,
+                                            entity_ownership   = dynamical_entity.ownership_handler,
+                                            entity_deleted     = dynamical_entity.deleted_callback )
 
 # Set the debug flag for the Entity.
 dynamical_entity.entity_packing.debug = verbose

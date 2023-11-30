@@ -62,6 +62,12 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrSpaceFOM__PhysicalInterfaceBase();
 
+   // Make the Conditional class a friend.
+   friend class PhysicalInterfaceConditionalBase;
+
+   // Make the Lag Compensation class a friend.
+   friend class PhysicalInterfaceLagCompBase;
+
   public:
    // Public constructors and destructors.
    PhysicalInterfaceBase();          // Default constructor.

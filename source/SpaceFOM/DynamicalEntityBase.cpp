@@ -374,8 +374,8 @@ void DynamicalEntityBase::debug_print(
    stream.precision( 15 );
    stream << "\tObject-Name: '" << object->get_name() << "'" << endl
           << "\tmass: " << de_packing_data.mass << endl
-          << "\tmass_rate: " << de_packing_data.mass_rate << endl
-          << "\tinertia: " << endl
+          << "\tmass_rate: " << de_packing_data.mass_rate << endl;
+   stream << "\tinertia: " << endl
           << "\t\t" << de_packing_data.inertia[0][0] << ", "
           << de_packing_data.inertia[0][1] << ", "
           << de_packing_data.inertia[0][2] << endl
@@ -384,8 +384,8 @@ void DynamicalEntityBase::debug_print(
           << de_packing_data.inertia[1][2] << endl
           << "\t\t" << de_packing_data.inertia[2][0] << ", "
           << de_packing_data.inertia[2][1] << ", "
-          << de_packing_data.inertia[2][2] << endl
-          << "\tinertia rate: " << endl
+          << de_packing_data.inertia[2][2] << endl;
+   stream << "\tinertia rate: " << endl
           << "\t\t" << de_packing_data.inertia_rate[0][0] << ", "
           << de_packing_data.inertia_rate[0][1] << ", "
           << de_packing_data.inertia_rate[0][2] << endl
@@ -394,16 +394,15 @@ void DynamicalEntityBase::debug_print(
           << de_packing_data.inertia_rate[1][2] << endl
           << "\t\t" << de_packing_data.inertia_rate[2][0] << ", "
           << de_packing_data.inertia_rate[2][1] << ", "
-          << de_packing_data.inertia_rate[2][2] << endl
-          << "\tforce: "
+          << de_packing_data.inertia_rate[2][2] << endl;
+   stream << "\tforce: "
           << de_packing_data.force[0] << ", "
           << de_packing_data.force[1] << ", "
-          << de_packing_data.force[2] << endl
-          << "\ttorque: "
+          << de_packing_data.force[2] << endl;
+   stream << "\ttorque: "
           << de_packing_data.torque[0] << ", "
           << de_packing_data.torque[1] << ", "
-          << de_packing_data.torque[2] << endl
-          << endl;
+          << de_packing_data.torque[2] << endl;
 
    return;
 }

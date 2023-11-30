@@ -30,10 +30,12 @@ class SpaceFOMPhysicalEntityObject(TrickHLAObjectConfig):
                  entity_instance_name,
                  entity_S_define_instance,
                  entity_S_define_instance_name,
-                 entity_lag_comp = None,
-                 entity_ownership = None,
-                 entity_deleted = None,
-                 entity_thla_manager_object = None ):
+                 entity_conditional         = None,
+                 entity_lag_comp            = None,
+                 entity_ownership           = None,
+                 entity_deleted             = None,
+                 entity_thla_manager_object = None,
+                 entity_thread_IDs          = None  ):
 
       # Copy the PhysicalEntity federation execution instance name.
       entity_federation_instance_name = str( entity_instance_name )
@@ -56,8 +58,10 @@ class SpaceFOMPhysicalEntityObject(TrickHLAObjectConfig):
                                      entity_lag_comp,
                                      entity_ownership,
                                      entity_deleted,
+                                     entity_conditional,
                                      entity_S_define_instance,
-                                     entity_thla_manager_object )
+                                     entity_thla_manager_object,
+                                     entity_thread_IDs )
 
       # Build the object attribute list.
       self.add_attributes()

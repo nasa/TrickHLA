@@ -162,6 +162,8 @@ trick.exec_set_freeze_command(True)
 trick.sim_control_panel_set_enabled(True)
 trick.exec_set_stack_trace(False)
 
+trick.var_server_set_port(7000)
+
 
 # =========================================================================
 # Set up the HLA interfaces.

@@ -519,41 +519,45 @@ void PhysicalEntityBase::debug_print(
           << "\ttype:   '" << ( pe_packing_data.type != NULL ? pe_packing_data.type : "" ) << "'" << endl
           << "\tstatus: '" << ( pe_packing_data.status != NULL ? pe_packing_data.status : "" ) << "'" << endl
           << "\tparent: '" << ( pe_packing_data.parent_frame != NULL ? pe_packing_data.parent_frame : "" ) << "'" << endl
-          << "\ttime: " << pe_packing_data.state.time << endl
-          << "\tposition: "
-          << pe_packing_data.state.pos[0] << ", "
-          << pe_packing_data.state.pos[1] << ", "
-          << pe_packing_data.state.pos[2] << endl
-          << "\tvelocity: "
-          << pe_packing_data.state.vel[0] << ", "
-          << pe_packing_data.state.vel[1] << ", "
-          << pe_packing_data.state.vel[2] << endl
-          << "\tattitude (quaternion:s,v): "
-          << pe_packing_data.state.att.scalar << "; "
-          << pe_packing_data.state.att.vector[0] << ", "
-          << pe_packing_data.state.att.vector[1] << ", "
-          << pe_packing_data.state.att.vector[2] << endl
-          << "\tattitude (RPY): "
-          << euler_angles[0] << ", "
-          << euler_angles[1] << ", "
-          << euler_angles[2] << endl
-          << "\tangular velocity: "
-          << pe_packing_data.state.ang_vel[0] << ", "
-          << pe_packing_data.state.ang_vel[1] << ", "
-          << pe_packing_data.state.ang_vel[2] << endl
-          << "\taccel: "
-          << pe_packing_data.accel[0] << ", "
-          << pe_packing_data.accel[1] << ", "
-          << pe_packing_data.accel[2] << endl
-          << "\tangular acceleration: "
-          << pe_packing_data.ang_accel[0] << ", "
-          << pe_packing_data.ang_accel[1] << ", "
-          << pe_packing_data.ang_accel[2] << endl
-          << "\tcenter of mass (cm): "
-          << pe_packing_data.cm[0] << ", "
-          << pe_packing_data.cm[1] << ", "
-          << pe_packing_data.cm[2] << endl
-          << endl;
+          << "\ttime: " << pe_packing_data.state.time << endl;
+   stream << "\tposition: "
+          << "\t\t" << pe_packing_data.state.pos[0] << ", "
+          << "\t\t" << pe_packing_data.state.pos[1] << ", "
+          << "\t\t" << pe_packing_data.state.pos[2] << endl;
+   stream << "\tvelocity: "
+          << "\t\t" << pe_packing_data.state.vel[0] << ", "
+          << "\t\t" << pe_packing_data.state.vel[1] << ", "
+          << "\t\t" << pe_packing_data.state.vel[2] << endl;
+   stream << "\tacceleration: "
+          << "\t\t" << pe_packing_data.accel[0] << ", "
+          << "\t\t" << pe_packing_data.accel[1] << ", "
+          << "\t\t" << pe_packing_data.accel[2] << endl;
+   stream << "\tattitude (s,v): "
+          << "\t\t" << pe_packing_data.state.att.scalar << "; "
+          << "\t\t" << pe_packing_data.state.att.vector[0] << ", "
+          << "\t\t" << pe_packing_data.state.att.vector[1] << ", "
+          << "\t\t" << pe_packing_data.state.att.vector[2] << endl;
+   stream << "\tattitude (RPY): "
+          << "\t\t" << euler_angles[0] << ", "
+          << "\t\t" << euler_angles[1] << ", "
+          << "\t\t" << euler_angles[2] << endl;
+   stream << "\tangular velocity: "
+          << "\t\t" << pe_packing_data.state.ang_vel[0] << ", "
+          << "\t\t" << pe_packing_data.state.ang_vel[1] << ", "
+          << "\t\t" << pe_packing_data.state.ang_vel[2] << endl;
+   stream << "\tangular acceleration: "
+          << "\t\t" << pe_packing_data.ang_accel[0] << ", "
+          << "\t\t" << pe_packing_data.ang_accel[1] << ", "
+          << "\t\t" << pe_packing_data.ang_accel[2] << endl;
+   stream << "\tcenter of mass (cm): "
+          << "\t\t" << pe_packing_data.cm[0] << ", "
+          << "\t\t" << pe_packing_data.cm[1] << ", "
+          << "\t\t" << pe_packing_data.cm[2] << endl;
+   stream << "\tbody wrt. struct (s;v): "
+          << "\t\t" << pe_packing_data.body_wrt_struct.scalar << "; "
+          << "\t\t" << pe_packing_data.body_wrt_struct.vector[0] << ", "
+          << "\t\t" << pe_packing_data.body_wrt_struct.vector[1] << ", "
+          << "\t\t" << pe_packing_data.body_wrt_struct.vector[2] << endl;
 
    return;
 }

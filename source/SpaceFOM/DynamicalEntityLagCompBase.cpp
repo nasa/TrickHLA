@@ -69,14 +69,20 @@ DynamicalEntityLagCompBase::DynamicalEntityLagCompBase( DynamicalEntityBase &ent
 {
    // Initialize the working parameters.
    for ( int iinc = 0; iinc < 3; iinc++ ) {
+
       this->force[iinc]  = 0.0;
       this->torque[iinc] = 0.0;
+
       for ( int jinc = 0; jinc < 3; jinc++ ) {
          this->inertia[iinc][jinc]      = 0.0;
          this->inertia_rate[iinc][jinc] = 0.0;
          this->inertia_inv[iinc][jinc]  = 0.0;
       }
       this->inertia[iinc][iinc] = 1.0;
+
+      this->accel_env[iinc] = 0.0;
+      this->ang_accel_env[iinc] = 0.0;
+      this->ang_accel_inertial[iinc] = 0.0;
    }
 }
 
@@ -312,6 +318,12 @@ void DynamicalEntityLagCompBase::unload_lag_comp_data()
  */
 void DynamicalEntityLagCompBase::load_lag_comp_data()
 {
+   double force_bdy[3];
+   double torque_bdy[3];
+   double accel_force_bdy[3];
+   double ang_accel_torque_bdy[3];
+   double I_omega[3];
+
    // Call the base class implementation.
    PhysicalEntityLagCompBase::load_lag_comp_data();
 
@@ -326,6 +338,36 @@ void DynamicalEntityLagCompBase::load_lag_comp_data()
          this->inertia_rate[iinc][jinc] = this->de_entity.de_packing_data.inertia_rate[iinc][jinc];
       }
    }
+
+   //
+   // Compute the translational dynamics.
+   //
+   // Transform the force into the body frame.
+   this->body_wrt_struct.transform_vector( this->force, force_bdy );
+
+   // Compute the force contribution to the translational acceleration.
+   V_SCALE( accel_force_bdy, force_bdy, 1.0 / this->mass );
+
+   // Compute the residual environmental acceleration.
+   V_SUB( this->accel_env, this->accel, accel_force_bdy );
+
+   //
+   // Compute the rotational dynamics.
+   //
+   // Transform the torque into the body frame.
+   this->body_wrt_struct.transform_vector( this->torque, torque_bdy );
+
+   // External torque acceleration.
+   MxV( ang_accel_torque_bdy, this->inertia_inv, torque_bdy );
+
+   // Inertial rotational accelerations (omega X I omega).
+   MxV( I_omega, this->inertia, this->lag_comp_data.ang_vel );
+   V_CROSS( this->ang_accel_inertial, this->lag_comp_data.ang_vel, I_omega );
+
+   // Compute the residual environmental angular acceleration.
+   this->ang_accel_env[0] = this->ang_accel[0] - ang_accel_torque_bdy[0] - this->ang_accel_inertial[0];
+   this->ang_accel_env[1] = this->ang_accel[1] - ang_accel_torque_bdy[1] - this->ang_accel_inertial[1];
+   this->ang_accel_env[2] = this->ang_accel[2] - ang_accel_torque_bdy[2] - this->ang_accel_inertial[2];
 
    return;
 }

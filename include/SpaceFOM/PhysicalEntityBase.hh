@@ -65,6 +65,9 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrSpaceFOM__PhysicalEntityBase();
 
+   // Make the Conditional class a friend.
+   friend class PhysicalEntityConditionalBase;
+
    // Make the Lag Compensation class a friend.
    friend class PhysicalEntityLagCompBase;
 

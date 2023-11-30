@@ -83,6 +83,9 @@ class RefFrameBase : public TrickHLA::Packing
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrSpaceFOM__RefFrameBase();
 
+   // Make the Conditional class a friend.
+   friend class RefFrameConditionalBase;
+
    // Make the Lag Compensation class a friend.
    friend class RefFrameLagCompBase;
 

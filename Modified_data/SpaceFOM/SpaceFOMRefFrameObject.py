@@ -26,11 +26,12 @@ class SpaceFOMRefFrameObject(TrickHLAObjectConfig):
                  frame_instance_name,
                  frame_S_define_instance,
                  frame_S_define_instance_name,
-                 frame_thread_IDs = None,
-                 frame_lag_comp = None,
-                 frame_ownership = None,
-                 frame_deleted = None,
-                 frame_thla_manager_object = None ):
+                 frame_conditional         = None,
+                 frame_lag_comp            = None,
+                 frame_ownership           = None,
+                 frame_deleted             = None,
+                 frame_thla_manager_object = None,
+                 frame_thread_IDs          = None ):
 
 
       # The Reference Frame FOM name is fixed for the SpaceFOM.
@@ -57,6 +58,7 @@ class SpaceFOMRefFrameObject(TrickHLAObjectConfig):
                                      frame_lag_comp,
                                      frame_ownership,
                                      frame_deleted,
+                                     frame_conditional,
                                      frame_S_define_instance,
                                      frame_thla_manager_object,
                                      frame_thread_IDs )

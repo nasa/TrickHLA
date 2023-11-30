@@ -53,11 +53,37 @@ using namespace std;
 using namespace TrickHLA;
 using namespace SpaceFOM;
 
+/*!
+ * @job_class{initialization}
+ */
+EntityDynamics::EntityDynamics() // RETURN: -- None.
+   : pe_data(),
+     de_data()
+{
+   V_INIT(this->accel_env);
+   V_INIT(this->ang_accel_env);
+   V_INIT(this->ang_accel_inertial);
+   M_INIT(this->I_inv);
+   Q_dot.initialize();
+   return;
+}
+
+/*!
+ * @job_class{shutdown}
+ */
+EntityDynamics::~EntityDynamics() // RETURN: -- None.
+{
+   return;
+}
+
 void EntityDynamics::default_data()
 {
    return;
 }
 
+/*!
+ * @job_class{initialization}
+ */
 void EntityDynamics::initialize()
 {
    ostringstream errmsg;
@@ -73,12 +99,16 @@ void EntityDynamics::initialize()
    return;
 }
 
+/*!
+ * @job_class{derivative}
+ */
 void EntityDynamics::derivative()
 {
-   double accel_str[3];
-   double rot_accel_str[3];
+   double force_bdy[3];
+   double torque_bdy[3];
+   double accel_force_bdy[3];
+   double ang_accel_torque_bdy[3];
    double I_omega[3];
-   double omega_X_I_omega[3];
 
    /*************************************************************************
     * NOTE: While the force and torque values are expressed in the structural
@@ -94,28 +124,42 @@ void EntityDynamics::derivative()
    // angular velocity vector.
    this->Q_dot.derivative_first( pe_data.state.att, pe_data.state.ang_vel );
 
-   // Compute the translational acceleration in the structural frame.
-   V_SCALE( accel_str, de_data.force, 1.0 / de_data.mass );
+   //
+   // Compute the translational dynamics.
+   //
+   // Transform the force into the body frame.
+   pe_data.body_wrt_struct.transform_vector( de_data.force, force_bdy );
 
-   // Transform the translational acceleration into the body frame.
-   pe_data.body_wrt_struct.transform_vector( accel_str, pe_data.accel );
+   // Compute the force contribution to the translational acceleration.
+   V_SCALE( accel_force_bdy, force_bdy, 1.0 / de_data.mass );
 
-   // Compute the rotational acceleration in the structural frame.
+   // Compute the total acceleration acceleration.
+   V_ADD( pe_data.accel, this->accel_env, accel_force_bdy );
+
+   //
+   // Compute the rotational dynamics.
+   //
+   // Transform the torque into the body frame.
+   pe_data.body_wrt_struct.transform_vector( de_data.torque, torque_bdy );
+
    // External torque acceleration.
-   MxV( rot_accel_str, I_inv, de_data.torque );
-   // Internal rotational accelerations.
-   MxV( I_omega, de_data.inertia, pe_data.state.ang_vel );
-   V_CROSS( omega_X_I_omega, pe_data.state.ang_vel, I_omega );
-   rot_accel_str[0] += omega_X_I_omega[0];
-   rot_accel_str[1] += omega_X_I_omega[1];
-   rot_accel_str[2] += omega_X_I_omega[2];
+   MxV( ang_accel_torque_bdy, this->I_inv, torque_bdy );
 
-   // Transform the rotational acceleration into the body frame.
-   pe_data.body_wrt_struct.transform_vector( rot_accel_str, pe_data.ang_accel );
+   // Inertial rotational accelerations (omega X I omega).
+   MxV( I_omega, de_data.inertia, pe_data.state.ang_vel );
+   V_CROSS( this->ang_accel_inertial, pe_data.state.ang_vel, I_omega );
+
+   // Compute the total angular acceleration.
+   pe_data.ang_accel[0] = this->ang_accel_env[0] + ang_accel_torque_bdy[0] + this->ang_accel_inertial[0];
+   pe_data.ang_accel[1] = this->ang_accel_env[1] + ang_accel_torque_bdy[1] + this->ang_accel_inertial[1];
+   pe_data.ang_accel[2] = this->ang_accel_env[2] + ang_accel_torque_bdy[2] + this->ang_accel_inertial[2];
 
    return;
 }
 
+/*!
+ * @job_class{integration}
+ */
 int EntityDynamics::integrate()
 {
    int ipass;

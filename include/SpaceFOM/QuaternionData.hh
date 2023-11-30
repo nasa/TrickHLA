@@ -65,8 +65,16 @@ class QuaternionData
    explicit QuaternionData( double const T[3][3] );
 
    /*! @brief Assignment operator for QuaternionData class.
-    *  @param rhs Right had side data to copy from. */
+    *  @param rhs Right operand data to copy from. */
    QuaternionData &operator=( const QuaternionData &rhs );
+
+   /*! @brief Equal comparison operator for QuaternionData class.
+    *  @param rhs Right operand data to compare to. */
+   bool operator==( const QuaternionData &rhs );
+
+   /*! @brief Not equal comparison operator for QuaternionData class.
+    *  @param rhs Right operand data to compare to. */
+   bool operator!=( const QuaternionData &rhs );
 
    /***********************************************************************
     * QuaternionData methods.
@@ -128,6 +136,11 @@ class QuaternionData
 
    /*! @brief Normalize the attitude quaternion. */
    void normalize();
+
+   /*! @brief Normalize the attitude quaternion.
+    *  @return True if equal and false if not.
+    *  @param source Quaternion to compare to. */
+   bool is_equal( const QuaternionData &source );
 
    /*! @brief Multiply quaternions.
     *  @param left  Left quaternion operand.
@@ -259,6 +272,26 @@ class QuaternionData
    static void normalize(
       double *qs,
       double  qv[3] );
+
+   /*! @brief Compare attitude quaternions.
+    *  @return True if equal and false if not.
+    *  @param lhs Left operand quaternion.
+    *  @param rhs Right operand quaternion. */
+   static bool is_equal(
+      QuaternionData const & lhs,
+      QuaternionData const & rhs );
+
+   /*! @brief Compare attitude quaternions.
+    *  @return True if equal and false if not.
+    *  @param lhs_scalar Left operand quaternion scalar.
+    *  @param lhs_vector Left operand quaternion vector.
+    *  @param rhs_scalar Right operand quaternion scalar.
+    *  @param rhs_vector Right operand quaternion vector. */
+   static bool is_equal(
+      double const lhs_scalar,
+      double const lhs_vector[3],
+      double const rhs_scalar,
+      double const rhs_vector[3] );
 
    /*! @brief Compute the rate of the attitude quaternion.
     *  @param quat_scalar Scalar part of the attitude quaternion.

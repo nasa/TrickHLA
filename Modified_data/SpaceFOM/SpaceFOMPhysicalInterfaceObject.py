@@ -30,10 +30,12 @@ class SpaceFOMPhysicalInterfaceObject(TrickHLAObjectConfig):
                  interface_instance_name,
                  interface_S_define_instance,
                  interface_S_define_instance_name,
-                 interface_lag_comp = None,
-                 interface_ownership = None,
-                 interface_deleted = None,
-                 interface_thla_manager_object = None ):
+                 interface_conditional         = None,
+                 interface_lag_comp            = None,
+                 interface_ownership           = None,
+                 interface_deleted             = None,
+                 interface_thla_manager_object = None,
+                 interface_thread_IDs          = None  ):
 
       # Copy the PhysicalInterface federation execution instance name.
       interface_federation_instance_name = str( interface_instance_name )
@@ -56,8 +58,10 @@ class SpaceFOMPhysicalInterfaceObject(TrickHLAObjectConfig):
                                      interface_lag_comp,
                                      interface_ownership,
                                      interface_deleted,
+                                     interface_conditional,
                                      interface_S_define_instance,
-                                     interface_thla_manager_object )
+                                     interface_thla_manager_object,
+                                     interface_thread_IDs )
 
       # Build the object attribute list.
       self.add_attributes()
