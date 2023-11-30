@@ -48,6 +48,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA model include files.
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Packing.hh"
@@ -207,10 +208,22 @@ void RefFrameBase::initialize()
    // Must have federation instance name.
    if ( this->packing_data.name == NULL ) {
       if ( debug ) {
+         string trick_name = ( name_attr != NULL )
+                                ? ( ( name_attr->get_trick_name() != NULL ) ? name_attr->get_trick_name() : "" )
+                                : "";
+         string fom_name   = ( name_attr != NULL )
+                                ? ( ( name_attr->get_FOM_name() != NULL ) ? name_attr->get_FOM_name() : "" )
+                                : "";
+
          ostringstream errmsg;
          errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
-                << " WARNING: Unexpected NULL federation instance frame name!"
-                << "  Setting frame name to empty string." << THLA_ENDL;
+                << " WARNING: For object '"
+                << ( ( object != NULL ) ? object->get_name_string() : "" )
+                << "' with Attribute Trick name '" << trick_name
+                << "' and FOM name '" << fom_name
+                << "', detected unexpected NULL federation instance frame name!"
+                << " Setting frame name to empty string."
+                << THLA_ENDL;
          send_hs( stderr, errmsg.str().c_str() );
       }
       this->packing_data.name = trick_MM->mm_strdup( "" );
@@ -219,10 +232,22 @@ void RefFrameBase::initialize()
    // Must have federation instance parent frame name.
    if ( this->packing_data.parent_name == NULL ) {
       if ( debug ) {
+         string trick_name = ( name_attr != NULL )
+                                ? ( ( name_attr->get_trick_name() != NULL ) ? name_attr->get_trick_name() : "" )
+                                : "";
+         string fom_name   = ( name_attr != NULL )
+                                ? ( ( name_attr->get_FOM_name() != NULL ) ? name_attr->get_FOM_name() : "" )
+                                : "";
+
          ostringstream errmsg;
          errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
-                << " WARNING: Unexpected NULL federation instance parent frame name!"
-                << "  Setting parent frame name to empty string." << THLA_ENDL;
+                << " WARNING: For object '"
+                << ( ( object != NULL ) ? object->get_name_string() : "" )
+                << "' with Attribute Trick name '" << trick_name
+                << "' and FOM name '" << fom_name
+                << "', detected unexpected NULL federation instance parent frame name!"
+                << " Setting parent frame name to empty string."
+                << THLA_ENDL;
          send_hs( stderr, errmsg.str().c_str() );
       }
       this->packing_data.parent_name = trick_MM->mm_strdup( "" );
@@ -232,9 +257,21 @@ void RefFrameBase::initialize()
    // is NOT the root frame.
    if ( strcmp( this->packing_data.parent_name, "" ) && ( this->parent_frame == NULL ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_NO_MODULES ) ) {
+         string trick_name = ( name_attr != NULL )
+                                ? ( ( name_attr->get_trick_name() != NULL ) ? name_attr->get_trick_name() : "" )
+                                : "";
+         string fom_name   = ( name_attr != NULL )
+                                ? ( ( name_attr->get_FOM_name() != NULL ) ? name_attr->get_FOM_name() : "" )
+                                : "";
+
          ostringstream errmsg;
          errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
-                << " WARNING: Unexpected NULL parent frame reference!" << THLA_ENDL;
+                << " WARNING: For object '"
+                << ( ( object != NULL ) ? object->get_name_string() : "" )
+                << "' with Attribute Trick name '" << trick_name
+                << "' and FOM name '" << fom_name
+                << "', detected unexpected NULL parent frame reference!"
+                << THLA_ENDL;
          send_hs( stderr, errmsg.str().c_str() );
       }
    }
