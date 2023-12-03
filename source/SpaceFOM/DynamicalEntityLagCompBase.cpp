@@ -68,20 +68,20 @@ DynamicalEntityLagCompBase::DynamicalEntityLagCompBase( DynamicalEntityBase &ent
      mass_rate( 0.0 )
 {
    // Initialize the working parameters.
-   for ( int iinc = 0; iinc < 3; iinc++ ) {
+   for ( int iinc = 0; iinc < 3; ++iinc ) {
 
       this->force[iinc]  = 0.0;
       this->torque[iinc] = 0.0;
 
-      for ( int jinc = 0; jinc < 3; jinc++ ) {
+      for ( int jinc = 0; jinc < 3; ++jinc ) {
          this->inertia[iinc][jinc]      = 0.0;
          this->inertia_rate[iinc][jinc] = 0.0;
          this->inertia_inv[iinc][jinc]  = 0.0;
       }
       this->inertia[iinc][iinc] = 1.0;
 
-      this->accel_env[iinc] = 0.0;
-      this->ang_accel_env[iinc] = 0.0;
+      this->accel_env[iinc]          = 0.0;
+      this->ang_accel_env[iinc]      = 0.0;
       this->ang_accel_inertial[iinc] = 0.0;
    }
 }
@@ -91,6 +91,7 @@ DynamicalEntityLagCompBase::DynamicalEntityLagCompBase( DynamicalEntityBase &ent
  */
 DynamicalEntityLagCompBase::~DynamicalEntityLagCompBase() // RETURN: -- None.
 {
+   return;
 }
 
 /*!
@@ -98,7 +99,6 @@ DynamicalEntityLagCompBase::~DynamicalEntityLagCompBase() // RETURN: -- None.
  */
 void DynamicalEntityLagCompBase::initialize()
 {
-
    // Return to calling routine.
    return;
 }
@@ -301,10 +301,10 @@ void DynamicalEntityLagCompBase::unload_lag_comp_data()
    // Copy the current DynamicalEntity state over to the lag compensated state.
    this->de_entity.de_packing_data.mass      = this->mass;
    this->de_entity.de_packing_data.mass_rate = this->mass_rate;
-   for ( int iinc = 0; iinc < 3; iinc++ ) {
+   for ( int iinc = 0; iinc < 3; ++iinc ) {
       this->de_entity.de_packing_data.force[iinc]  = this->force[iinc];
       this->de_entity.de_packing_data.torque[iinc] = this->torque[iinc];
-      for ( int jinc = 0; jinc < 3; jinc++ ) {
+      for ( int jinc = 0; jinc < 3; ++jinc ) {
          this->de_entity.de_packing_data.inertia[iinc][jinc]      = this->inertia[iinc][jinc];
          this->de_entity.de_packing_data.inertia_rate[iinc][jinc] = this->inertia_rate[iinc][jinc];
       }
@@ -330,10 +330,10 @@ void DynamicalEntityLagCompBase::load_lag_comp_data()
    // Copy the current DynamicalEntity state over to the lag compensated state.
    this->mass      = this->de_entity.de_packing_data.mass;
    this->mass_rate = this->de_entity.de_packing_data.mass_rate;
-   for ( int iinc = 0; iinc < 3; iinc++ ) {
+   for ( int iinc = 0; iinc < 3; ++iinc ) {
       this->force[iinc]  = this->de_entity.de_packing_data.force[iinc];
       this->torque[iinc] = this->de_entity.de_packing_data.torque[iinc];
-      for ( int jinc = 0; jinc < 3; jinc++ ) {
+      for ( int jinc = 0; jinc < 3; ++jinc ) {
          this->inertia[iinc][jinc]      = this->de_entity.de_packing_data.inertia[iinc][jinc];
          this->inertia_rate[iinc][jinc] = this->de_entity.de_packing_data.inertia_rate[iinc][jinc];
       }

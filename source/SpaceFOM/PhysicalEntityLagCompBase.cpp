@@ -69,9 +69,8 @@ PhysicalEntityLagCompBase::PhysicalEntityLagCompBase( PhysicalEntityBase &entity
      body_frame_attr( NULL ),
      compensate_dt( 0.0 )
 {
-
    // Initialize the acceleration values.
-   for ( int iinc = 0; iinc < 3; iinc++ ) {
+   for ( int iinc = 0; iinc < 3; ++iinc ) {
       this->accel[iinc]     = 0.0;
       this->ang_accel[iinc] = 0.0;
       this->cm[iinc]        = 0.0;
@@ -90,7 +89,6 @@ PhysicalEntityLagCompBase::~PhysicalEntityLagCompBase() // RETURN: -- None.
  */
 void PhysicalEntityLagCompBase::initialize()
 {
-
    // Return to calling routine.
    return;
 }
@@ -136,7 +134,7 @@ void PhysicalEntityLagCompBase::initialize_states()
    // Copy the current PhysicalEntity state over to the lag compensated state.
    this->lag_comp_data   = this->entity.pe_packing_data.state;
    this->body_wrt_struct = this->entity.pe_packing_data.body_wrt_struct;
-   for ( int iinc = 0; iinc < 3; iinc++ ) {
+   for ( int iinc = 0; iinc < 3; ++iinc ) {
       this->accel[iinc]     = this->entity.pe_packing_data.accel[iinc];
       this->ang_accel[iinc] = this->entity.pe_packing_data.ang_accel[iinc];
       this->cm[iinc]        = this->entity.pe_packing_data.cm[iinc];
@@ -282,7 +280,7 @@ void PhysicalEntityLagCompBase::unload_lag_comp_data()
    // Copy the current PhysicalEntity state over to the lag compensated state.
    this->entity.pe_packing_data.state           = this->lag_comp_data;
    this->entity.pe_packing_data.body_wrt_struct = this->body_wrt_struct;
-   for ( int iinc = 0; iinc < 3; iinc++ ) {
+   for ( int iinc = 0; iinc < 3; ++iinc ) {
       this->entity.pe_packing_data.accel[iinc]     = this->accel[iinc];
       this->entity.pe_packing_data.ang_accel[iinc] = this->ang_accel[iinc];
       this->entity.pe_packing_data.cm[iinc]        = this->cm[iinc];
@@ -299,7 +297,7 @@ void PhysicalEntityLagCompBase::load_lag_comp_data()
    // Copy the current PhysicalEntity state over to the lag compensated state.
    this->lag_comp_data   = this->entity.pe_packing_data.state;
    this->body_wrt_struct = this->entity.pe_packing_data.body_wrt_struct;
-   for ( int iinc = 0; iinc < 3; iinc++ ) {
+   for ( int iinc = 0; iinc < 3; ++iinc ) {
       this->accel[iinc]     = this->entity.pe_packing_data.accel[iinc];
       this->ang_accel[iinc] = this->entity.pe_packing_data.ang_accel[iinc];
       this->cm[iinc]        = this->entity.pe_packing_data.cm[iinc];

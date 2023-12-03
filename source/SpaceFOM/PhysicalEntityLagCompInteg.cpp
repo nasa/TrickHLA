@@ -54,6 +54,7 @@ PhysicalEntityLagCompInteg::PhysicalEntityLagCompInteg( PhysicalEntityBase &enti
    : PhysicalEntityLagCompBase( entity_ref ),
      TrickHLA::LagCompensationInteg()
 {
+   return;
 }
 
 /*!
@@ -61,6 +62,7 @@ PhysicalEntityLagCompInteg::PhysicalEntityLagCompInteg( PhysicalEntityBase &enti
  */
 PhysicalEntityLagCompInteg::~PhysicalEntityLagCompInteg() // RETURN: -- None.
 {
+   return;
 }
 
 /*!

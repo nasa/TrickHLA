@@ -136,7 +136,7 @@ void DynamicalEntityLagComp::load()
    int istep = integrator->intermediate_step;
 
    // Load state array: position and velocity.
-   for ( int iinc = 0; iinc < 13; iinc++ ) {
+   for ( int iinc = 0; iinc < 13; ++iinc ) {
       integrator->state[iinc] = *( integ_states[iinc] );
    }
 
@@ -179,7 +179,7 @@ void DynamicalEntityLagComp::unload()
 {
 
    // Unload state array: position and velocity.
-   for ( int iinc = 0; iinc < 13; iinc++ ) {
+   for ( int iinc = 0; iinc < 13; ++iinc ) {
       *( integ_states[iinc] ) = integrator->state[iinc];
    }
 

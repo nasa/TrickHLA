@@ -107,7 +107,7 @@ bool QuaternionData::operator==(
 bool QuaternionData::operator!=(
    const QuaternionData &rhs )
 {
-   return ( !(this->is_equal( rhs )) );
+   return ( !( this->is_equal( rhs ) ) );
 }
 
 /*!
@@ -257,7 +257,7 @@ void QuaternionData::normalize()
 bool QuaternionData::is_equal(
    const QuaternionData &source )
 {
-   return( is_equal( *this, source ) );
+   return ( is_equal( *this, source ) );
 }
 
 /*!
@@ -573,10 +573,10 @@ void QuaternionData::normalize(
  * @job_class{scheduled}
  */
 bool QuaternionData::is_equal(
-   QuaternionData const & lhs,
-   QuaternionData const & rhs )
+   QuaternionData const &lhs,
+   QuaternionData const &rhs )
 {
-   return( is_equal( lhs.scalar, lhs.vector, rhs.scalar, rhs.vector ) );
+   return ( is_equal( lhs.scalar, lhs.vector, rhs.scalar, rhs.vector ) );
 }
 
 /*!
@@ -588,13 +588,13 @@ bool QuaternionData::is_equal(
    double const rhs_scalar,
    double const rhs_vector[3] )
 {
-   if (    (lhs_scalar != rhs_scalar)
-        || (lhs_vector[0] != rhs_vector[0])
-        || (lhs_vector[1] != rhs_vector[1])
-        || (lhs_vector[2] != rhs_vector[2]) ) {
-      return( false );
+   if ( ( lhs_scalar != rhs_scalar )
+        || ( lhs_vector[0] != rhs_vector[0] )
+        || ( lhs_vector[1] != rhs_vector[1] )
+        || ( lhs_vector[2] != rhs_vector[2] ) ) {
+      return ( false );
    }
-   return( true );
+   return ( true );
 }
 
 /*!

@@ -46,7 +46,6 @@ using namespace SpaceFOM;
 SpaceTimeCoordinateData::SpaceTimeCoordinateData()
    : att(),
      time( 0.0 )
-
 {
    V_INIT( pos );
    V_INIT( vel );
@@ -117,7 +116,7 @@ bool SpaceTimeCoordinateData::operator==(
 bool SpaceTimeCoordinateData::operator!=(
    const SpaceTimeCoordinateData &rhs )
 {
-   return ( !(this->is_equal( rhs )) );
+   return ( !( this->is_equal( rhs ) ) );
 }
 
 /*!
@@ -126,33 +125,36 @@ bool SpaceTimeCoordinateData::operator!=(
 bool SpaceTimeCoordinateData::is_equal(
    const SpaceTimeCoordinateData &rhs )
 {
-
    // Compare position
-   if(    (this->pos[0] != rhs.pos[0])
-       || (this->pos[1] != rhs.pos[1])
-       || (this->pos[2] != rhs.pos[2]) ){
-      return( false );
+   if ( ( this->pos[0] != rhs.pos[0] )
+        || ( this->pos[1] != rhs.pos[1] )
+        || ( this->pos[2] != rhs.pos[2] ) ) {
+      return ( false );
    }
 
    // Compare velocity
-   if(    (this->vel[0] != rhs.vel[0])
-       || (this->vel[1] != rhs.vel[1])
-       || (this->vel[2] != rhs.vel[2]) ){
-      return( false );
+   if ( ( this->vel[0] != rhs.vel[0] )
+        || ( this->vel[1] != rhs.vel[1] )
+        || ( this->vel[2] != rhs.vel[2] ) ) {
+      return ( false );
    }
 
    // Compare attitude
-   if ( !(this->att.is_equal( rhs.att )) ){ return( false ); }
+   if ( !( this->att.is_equal( rhs.att ) ) ) {
+      return ( false );
+   }
 
    // Compare angular velocity
-   if(    (this->ang_vel[0] != rhs.ang_vel[0])
-       || (this->ang_vel[1] != rhs.ang_vel[1])
-       || (this->ang_vel[2] != rhs.ang_vel[2]) ){
-      return( false );
+   if ( ( this->ang_vel[0] != rhs.ang_vel[0] )
+        || ( this->ang_vel[1] != rhs.ang_vel[1] )
+        || ( this->ang_vel[2] != rhs.ang_vel[2] ) ) {
+      return ( false );
    }
 
    // Compare time
-   if ( this->time != rhs.time ){ return( false ); }
+   if ( this->time != rhs.time ) {
+      return ( false );
+   }
 
    return ( true );
 }

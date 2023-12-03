@@ -64,6 +64,7 @@ using namespace SpaceFOM;
 DynamicalEntity::DynamicalEntity() // RETURN: -- None.
    : dynamical_data( NULL )
 {
+   return;
 }
 
 /*!

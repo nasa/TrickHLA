@@ -55,8 +55,8 @@ using namespace SpaceFOM;
 DynamicalEntityLagCompInteg::DynamicalEntityLagCompInteg( DynamicalEntityBase &entity_ref ) // RETURN: -- None.
    : DynamicalEntityLagCompBase( entity_ref ),
      TrickHLA::LagCompensationInteg()
-
 {
+   return;
 }
 
 /*!
@@ -64,6 +64,7 @@ DynamicalEntityLagCompInteg::DynamicalEntityLagCompInteg( DynamicalEntityBase &e
  */
 DynamicalEntityLagCompInteg::~DynamicalEntityLagCompInteg() // RETURN: -- None.
 {
+   return;
 }
 
 /*!

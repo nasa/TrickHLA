@@ -68,7 +68,8 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 RefFrameState::RefFrameState()
-   : ref_frame_data( NULL )
+   : RefFrameBase(),
+     ref_frame_data( NULL )
 {
    return;
 }
@@ -78,6 +79,7 @@ RefFrameState::RefFrameState()
  */
 RefFrameState::~RefFrameState()
 {
+   return;
 }
 
 /*!
@@ -86,7 +88,6 @@ RefFrameState::~RefFrameState()
 void RefFrameState::initialize(
    RefFrameData *ref_frame_data_ptr )
 {
-
    // Set the reference to the reference frame.
    if ( ref_frame_data_ptr == NULL ) {
       ostringstream errmsg;

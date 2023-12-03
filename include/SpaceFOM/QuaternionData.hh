@@ -278,8 +278,8 @@ class QuaternionData
     *  @param lhs Left operand quaternion.
     *  @param rhs Right operand quaternion. */
    static bool is_equal(
-      QuaternionData const & lhs,
-      QuaternionData const & rhs );
+      QuaternionData const &lhs,
+      QuaternionData const &rhs );
 
    /*! @brief Compare attitude quaternions.
     *  @return True if equal and false if not.

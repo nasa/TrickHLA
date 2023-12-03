@@ -136,7 +136,6 @@ SpaceTimeCoordinateEncoder::SpaceTimeCoordinateEncoder(
  */
 void SpaceTimeCoordinateEncoder::encode()
 {
-
    // Encode the data into the reference frame buffer.
    VariableLengthData encoded_data = encoder.encode();
 
@@ -161,7 +160,6 @@ void SpaceTimeCoordinateEncoder::encode()
  */
 void SpaceTimeCoordinateEncoder::decode()
 {
-
    // The Encoder helps operate on VariableLengthData so create one using the
    // buffered HLA data we received through the TrickHLA callback.
    VariableLengthData encoded_data = VariableLengthData( buffer, capacity );

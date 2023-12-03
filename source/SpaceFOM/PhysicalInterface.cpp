@@ -62,6 +62,7 @@ using namespace SpaceFOM;
 PhysicalInterface::PhysicalInterface() // RETURN: -- None.
    : interface_data( NULL )
 {
+   return;
 }
 
 /*!

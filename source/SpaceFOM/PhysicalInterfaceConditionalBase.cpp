@@ -39,8 +39,8 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/Conditional.hh"
-#include "TrickHLA/Object.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/Object.hh"
 
 // Model include files.
 #include "SpaceFOM/PhysicalInterfaceConditionalBase.hh"
@@ -57,6 +57,7 @@ PhysicalInterfaceConditionalBase::PhysicalInterfaceConditionalBase(
    : TrickHLA::Conditional(),
      debug( false ),
      interface( interface_ref ),
+     prev_data(),
      initialized( false ),
      name_attr( NULL ),
      parent_attr( NULL ),
@@ -77,7 +78,7 @@ PhysicalInterfaceConditionalBase::~PhysicalInterfaceConditionalBase()
 /*!
  * @job_class{initialization}
  */
-void PhysicalInterfaceConditionalBase::initialize( )
+void PhysicalInterfaceConditionalBase::initialize()
 {
    // Return to calling routine.
    return;
@@ -120,7 +121,7 @@ bool PhysicalInterfaceConditionalBase::should_send(
    TrickHLA::Attribute *attr )
 {
    ostringstream errmsg;
-   bool send_attr = false;
+   bool          send_attr = false;
 
    // If there is simulation data to compare to and if the attribute FOM name
    // has been specified, check the value of the current simulation variable
@@ -142,8 +143,7 @@ bool PhysicalInterfaceConditionalBase::should_send(
                // Mark to send.
                send_attr = true;
             }
-         }
-         else {
+         } else {
             // Update the previous value.
             prev_data.name = trick_MM->mm_strdup( interface.packing_data.name );
             // Mark to send.
@@ -172,8 +172,7 @@ bool PhysicalInterfaceConditionalBase::should_send(
                // Mark to send.
                send_attr = true;
             }
-         }
-         else {
+         } else {
             // Update the previous value.
             prev_data.parent_name = trick_MM->mm_strdup( interface.packing_data.parent_name );
             // Mark to send.
@@ -189,18 +188,17 @@ bool PhysicalInterfaceConditionalBase::should_send(
    } // Check for change in position.
    else if ( attr == position_attr ) {
 
-      if (    (interface.packing_data.position[0] != prev_data.position[0])
-           || (interface.packing_data.position[1] != prev_data.position[1])
-           || (interface.packing_data.position[2] != prev_data.position[2]) ){
+      if ( ( interface.packing_data.position[0] != prev_data.position[0] )
+           || ( interface.packing_data.position[1] != prev_data.position[1] )
+           || ( interface.packing_data.position[2] != prev_data.position[2] ) ) {
 
          // Update the previous value.
-         for( int iinc = 0 ; iinc < 3 ; iinc++ ){
+         for ( int iinc = 0; iinc < 3; ++iinc ) {
             prev_data.position[iinc] = interface.packing_data.position[iinc];
          }
 
          // Mark to send.
          send_attr = true;
-
       }
 
    } // Check for change in interface attitude.
@@ -213,7 +211,6 @@ bool PhysicalInterfaceConditionalBase::should_send(
 
          // Mark to send.
          send_attr = true;
-
       }
 
    } else {
@@ -224,7 +221,6 @@ bool PhysicalInterfaceConditionalBase::should_send(
              << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-
    }
 
    return send_attr;

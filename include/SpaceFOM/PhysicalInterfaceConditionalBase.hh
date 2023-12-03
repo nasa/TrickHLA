@@ -63,13 +63,13 @@ class PhysicalInterfaceConditionalBase : public TrickHLA::Conditional
    // Public constructors and destructor.
    //
    /*! @brief Initialization constructor to associate with PhysicalInterface instance. */
-   PhysicalInterfaceConditionalBase( PhysicalInterfaceBase &interface_ref );
+   explicit PhysicalInterfaceConditionalBase( PhysicalInterfaceBase &interface_ref );
    /*! @brief Destructor. */
    virtual ~PhysicalInterfaceConditionalBase();
 
    /*! @brief Initializes the sim_data to the supplied.
     *  @param data External simulation data. */
-   void initialize( );
+   void initialize();
 
    /*! @brief Initialization callback as part of the TrickHLA::Conditional functions.
     *  @param obj Object associated with this packing class. */
@@ -105,7 +105,6 @@ class PhysicalInterfaceConditionalBase : public TrickHLA::Conditional
    /*! @brief Assignment operator for PhysicalInterfaceConditionalBase class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
    PhysicalInterfaceConditionalBase &operator=( PhysicalInterfaceConditionalBase const &rhs );
-
 };
 
 } // namespace SpaceFOM

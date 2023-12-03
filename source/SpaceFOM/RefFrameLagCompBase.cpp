@@ -61,6 +61,7 @@ RefFrameLagCompBase::RefFrameLagCompBase( RefFrameBase &ref_frame_ref ) // RETUR
      state_attr( NULL ),
      compensate_dt( 0.0 )
 {
+   return;
 }
 
 /*!
@@ -68,6 +69,7 @@ RefFrameLagCompBase::RefFrameLagCompBase( RefFrameBase &ref_frame_ref ) // RETUR
  */
 RefFrameLagCompBase::~RefFrameLagCompBase() // RETURN: -- None.
 {
+   return;
 }
 
 /*!
@@ -75,7 +77,6 @@ RefFrameLagCompBase::~RefFrameLagCompBase() // RETURN: -- None.
  */
 void RefFrameLagCompBase::initialize()
 {
-
    // Return to calling routine.
    return;
 }

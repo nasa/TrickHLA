@@ -39,8 +39,8 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/Conditional.hh"
-#include "TrickHLA/Object.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/Object.hh"
 
 // Model include files.
 #include "SpaceFOM/PhysicalEntityConditionalBase.hh"
@@ -57,6 +57,7 @@ PhysicalEntityConditionalBase::PhysicalEntityConditionalBase(
    : TrickHLA::Conditional(),
      debug( false ),
      entity( entity_ref ),
+     prev_data(),
      initialized( false ),
      name_attr( NULL ),
      type_attr( NULL ),
@@ -82,7 +83,7 @@ PhysicalEntityConditionalBase::~PhysicalEntityConditionalBase()
 /*!
  * @job_class{initialization}
  */
-void PhysicalEntityConditionalBase::initialize( )
+void PhysicalEntityConditionalBase::initialize()
 {
    // Return to calling routine.
    return;
@@ -130,7 +131,7 @@ bool PhysicalEntityConditionalBase::should_send(
    TrickHLA::Attribute *attr )
 {
    ostringstream errmsg;
-   bool send_attr = false;
+   bool          send_attr = false;
 
    // If there is simulation data to compare to and if the attribute FOM name
    // has been specified, check the value of the current simulation variable
@@ -152,8 +153,7 @@ bool PhysicalEntityConditionalBase::should_send(
                // Mark to send.
                send_attr = true;
             }
-         }
-         else {
+         } else {
             // Update the previous value.
             prev_data.name = trick_MM->mm_strdup( entity.pe_packing_data.name );
             // Mark to send.
@@ -182,8 +182,7 @@ bool PhysicalEntityConditionalBase::should_send(
                // Mark to send.
                send_attr = true;
             }
-         }
-         else {
+         } else {
             // Update the previous value.
             prev_data.type = trick_MM->mm_strdup( entity.pe_packing_data.type );
             // Mark to send.
@@ -212,8 +211,7 @@ bool PhysicalEntityConditionalBase::should_send(
                // Mark to send.
                send_attr = true;
             }
-         }
-         else {
+         } else {
             // Update the previous value.
             prev_data.status = trick_MM->mm_strdup( entity.pe_packing_data.status );
             // Mark to send.
@@ -242,8 +240,7 @@ bool PhysicalEntityConditionalBase::should_send(
                // Mark to send.
                send_attr = true;
             }
-         }
-         else {
+         } else {
             // Update the previous value.
             prev_data.parent_frame = trick_MM->mm_strdup( entity.pe_packing_data.parent_frame );
             // Mark to send.
@@ -259,65 +256,61 @@ bool PhysicalEntityConditionalBase::should_send(
    } // Check for change in state.
    else if ( attr == state_attr ) {
 
-      if ( entity.pe_packing_data.state != prev_data.state ){
+      if ( entity.pe_packing_data.state != prev_data.state ) {
 
          // Update the previous value.
          prev_data.state = entity.pe_packing_data.state;
 
          // Mark to send.
          send_attr = true;
-
       }
 
    } // Check for change in translational acceleration.
    else if ( attr == accel_attr ) {
 
-      if (    (entity.pe_packing_data.accel[0] != prev_data.accel[0])
-           || (entity.pe_packing_data.accel[1] != prev_data.accel[1])
-           || (entity.pe_packing_data.accel[2] != prev_data.accel[2]) ){
+      if ( ( entity.pe_packing_data.accel[0] != prev_data.accel[0] )
+           || ( entity.pe_packing_data.accel[1] != prev_data.accel[1] )
+           || ( entity.pe_packing_data.accel[2] != prev_data.accel[2] ) ) {
 
          // Update the previous value.
-         for( int iinc = 0 ; iinc < 3 ; iinc++ ){
+         for ( int iinc = 0; iinc < 3; ++iinc ) {
             prev_data.accel[iinc] = entity.pe_packing_data.accel[iinc];
          }
 
          // Mark to send.
          send_attr = true;
-
       }
 
    } // Check for change in angular acceleration.
    else if ( attr == ang_accel_attr ) {
 
-      if (    (entity.pe_packing_data.ang_accel[0] != prev_data.ang_accel[0])
-           || (entity.pe_packing_data.ang_accel[1] != prev_data.ang_accel[1])
-           || (entity.pe_packing_data.ang_accel[2] != prev_data.ang_accel[2]) ){
+      if ( ( entity.pe_packing_data.ang_accel[0] != prev_data.ang_accel[0] )
+           || ( entity.pe_packing_data.ang_accel[1] != prev_data.ang_accel[1] )
+           || ( entity.pe_packing_data.ang_accel[2] != prev_data.ang_accel[2] ) ) {
 
          // Update the previous value.
-         for( int iinc = 0 ; iinc < 3 ; iinc++ ){
+         for ( int iinc = 0; iinc < 3; ++iinc ) {
             prev_data.ang_accel[iinc] = entity.pe_packing_data.ang_accel[iinc];
          }
 
          // Mark to send.
          send_attr = true;
-
       }
 
    } // Check for change in center of mass (cm).
    else if ( attr == cm_attr ) {
 
-      if (    (entity.pe_packing_data.cm[0] != prev_data.cm[0])
-           || (entity.pe_packing_data.cm[1] != prev_data.cm[1])
-           || (entity.pe_packing_data.cm[2] != prev_data.cm[2]) ){
+      if ( ( entity.pe_packing_data.cm[0] != prev_data.cm[0] )
+           || ( entity.pe_packing_data.cm[1] != prev_data.cm[1] )
+           || ( entity.pe_packing_data.cm[2] != prev_data.cm[2] ) ) {
 
          // Update the previous value.
-         for( int iinc = 0 ; iinc < 3 ; iinc++ ){
+         for ( int iinc = 0; iinc < 3; ++iinc ) {
             prev_data.cm[iinc] = entity.pe_packing_data.cm[iinc];
          }
 
          // Mark to send.
          send_attr = true;
-
       }
 
    } // Check for change in body frame definition.
@@ -330,7 +323,6 @@ bool PhysicalEntityConditionalBase::should_send(
 
          // Mark to send.
          send_attr = true;
-
       }
 
    } else {
@@ -341,7 +333,6 @@ bool PhysicalEntityConditionalBase::should_send(
              << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-
    }
 
    return send_attr;

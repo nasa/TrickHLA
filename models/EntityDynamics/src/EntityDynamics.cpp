@@ -60,10 +60,10 @@ EntityDynamics::EntityDynamics() // RETURN: -- None.
    : pe_data(),
      de_data()
 {
-   V_INIT(this->accel_env);
-   V_INIT(this->ang_accel_env);
-   V_INIT(this->ang_accel_inertial);
-   M_INIT(this->I_inv);
+   V_INIT( this->accel_env );
+   V_INIT( this->ang_accel_env );
+   V_INIT( this->ang_accel_inertial );
+   M_INIT( this->I_inv );
    Q_dot.initialize();
    return;
 }

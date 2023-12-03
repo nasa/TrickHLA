@@ -55,6 +55,7 @@ RefFrameLagCompInteg::RefFrameLagCompInteg( RefFrameBase &ref_frame_ref ) // RET
    : RefFrameLagCompBase( ref_frame_ref ),
      TrickHLA::LagCompensationInteg()
 {
+   return;
 }
 
 /*!
@@ -62,6 +63,7 @@ RefFrameLagCompInteg::RefFrameLagCompInteg( RefFrameBase &ref_frame_ref ) // RET
  */
 RefFrameLagCompInteg::~RefFrameLagCompInteg() // RETURN: -- None.
 {
+   return;
 }
 
 /*!

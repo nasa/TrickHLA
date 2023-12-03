@@ -64,6 +64,7 @@ using namespace SpaceFOM;
 PhysicalEntity::PhysicalEntity() // RETURN: -- None.
    : physical_data( NULL )
 {
+   return;
 }
 
 /*!

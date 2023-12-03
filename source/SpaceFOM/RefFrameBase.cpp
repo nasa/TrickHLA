@@ -207,6 +207,8 @@ void RefFrameBase::initialize()
 {
    // Must have federation instance name.
    if ( this->packing_data.name == NULL ) {
+      this->packing_data.name = trick_MM->mm_strdup( "" );
+
       if ( debug ) {
          string trick_name = ( name_attr != NULL )
                                 ? ( ( name_attr->get_trick_name() != NULL ) ? name_attr->get_trick_name() : "" )
@@ -226,11 +228,12 @@ void RefFrameBase::initialize()
                 << THLA_ENDL;
          send_hs( stderr, errmsg.str().c_str() );
       }
-      this->packing_data.name = trick_MM->mm_strdup( "" );
    }
 
    // Must have federation instance parent frame name.
    if ( this->packing_data.parent_name == NULL ) {
+      this->packing_data.parent_name = trick_MM->mm_strdup( "" );
+
       if ( debug ) {
          string trick_name = ( name_attr != NULL )
                                 ? ( ( name_attr->get_trick_name() != NULL ) ? name_attr->get_trick_name() : "" )
@@ -241,8 +244,8 @@ void RefFrameBase::initialize()
 
          ostringstream errmsg;
          errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
-                << " WARNING: For object '"
-                << ( ( object != NULL ) ? object->get_name_string() : "" )
+                << " WARNING: For packing_data.name '" << this->packing_data.name
+                << "' and object '" << ( ( object != NULL ) ? object->get_name_string() : "" )
                 << "' with Attribute Trick name '" << trick_name
                 << "' and FOM name '" << fom_name
                 << "', detected unexpected NULL federation instance parent frame name!"
@@ -250,7 +253,6 @@ void RefFrameBase::initialize()
                 << THLA_ENDL;
          send_hs( stderr, errmsg.str().c_str() );
       }
-      this->packing_data.parent_name = trick_MM->mm_strdup( "" );
    }
 
    // Check to see if the parent reference frame has been set if this frame

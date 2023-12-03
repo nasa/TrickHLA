@@ -83,7 +83,6 @@ class SpaceTimeCoordinateData
    /*! @brief Copy the state-time coordinate data.
     *  @param stc_data Source to copy from. */
    void copy( const SpaceTimeCoordinateData &stc_data );
-
 };
 
 } // namespace SpaceFOM

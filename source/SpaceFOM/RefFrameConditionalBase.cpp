@@ -39,8 +39,8 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/Conditional.hh"
-#include "TrickHLA/Object.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/Object.hh"
 
 // Model include files.
 #include "SpaceFOM/RefFrameConditionalBase.hh"
@@ -57,6 +57,7 @@ RefFrameConditionalBase::RefFrameConditionalBase(
    : TrickHLA::Conditional(),
      debug( false ),
      frame( frame_ref ),
+     prev_data(),
      initialized( false ),
      name_attr( NULL ),
      parent_name_attr( NULL ),
@@ -76,7 +77,7 @@ RefFrameConditionalBase::~RefFrameConditionalBase()
 /*!
  * @job_class{initialization}
  */
-void RefFrameConditionalBase::initialize( )
+void RefFrameConditionalBase::initialize()
 {
    // Return to calling routine.
    return;
@@ -118,7 +119,7 @@ bool RefFrameConditionalBase::should_send(
    TrickHLA::Attribute *attr )
 {
    ostringstream errmsg;
-   bool send_attr = false;
+   bool          send_attr = false;
 
    // If there is simulation data to compare to and if the attribute FOM name
    // has been specified, check the value of the current simulation variable
@@ -140,8 +141,7 @@ bool RefFrameConditionalBase::should_send(
                // Mark to send.
                send_attr = true;
             }
-         }
-         else {
+         } else {
             // Update the previous value.
             prev_data.name = trick_MM->mm_strdup( frame.packing_data.name );
             // Mark to send.
@@ -170,8 +170,7 @@ bool RefFrameConditionalBase::should_send(
                // Mark to send.
                send_attr = true;
             }
-         }
-         else {
+         } else {
             // Update the previous value.
             prev_data.parent_name = trick_MM->mm_strdup( frame.packing_data.parent_name );
             // Mark to send.
@@ -187,14 +186,13 @@ bool RefFrameConditionalBase::should_send(
    } // Check for change in state.
    else if ( attr == state_attr ) {
 
-      if ( frame.packing_data.state != prev_data.state ){
+      if ( frame.packing_data.state != prev_data.state ) {
 
          // Update the previous value.
          prev_data.state = frame.packing_data.state;
 
          // Mark to send.
          send_attr = true;
-
       }
 
    } else {
@@ -205,7 +203,6 @@ bool RefFrameConditionalBase::should_send(
              << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-
    }
 
    return send_attr;

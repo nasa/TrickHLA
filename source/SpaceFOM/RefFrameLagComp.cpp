@@ -58,7 +58,6 @@ using namespace SpaceFOM;
 RefFrameLagComp::RefFrameLagComp( RefFrameBase &entity_ref ) // RETURN: -- None.
    : RefFrameLagCompInteg( entity_ref )
 {
-
    // Assign the integrator state references.
    // Translational position
    integ_states[0] = &( this->lag_comp_data.pos[0] );
@@ -136,7 +135,7 @@ void RefFrameLagComp::load()
    int istep = integrator->intermediate_step;
 
    // Load state array: position and velocity.
-   for ( int iinc = 0; iinc < 13; iinc++ ) {
+   for ( int iinc = 0; iinc < 13; ++iinc ) {
       integrator->state[iinc] = *( integ_states[iinc] );
    }
 
@@ -176,7 +175,7 @@ void RefFrameLagComp::unload()
 {
 
    // Unload state array: position and velocity.
-   for ( int iinc = 0; iinc < 13; iinc++ ) {
+   for ( int iinc = 0; iinc < 13; ++iinc ) {
       *( integ_states[iinc] ) = integrator->state[iinc];
    }
 

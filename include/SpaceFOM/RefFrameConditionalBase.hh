@@ -63,13 +63,13 @@ class RefFrameConditionalBase : public TrickHLA::Conditional
    // Public constructors and destructor.
    //
    /*! @brief Initialization constructor to associate with RefFrame instance. */
-   RefFrameConditionalBase( RefFrameBase &entity_ref );
+   explicit RefFrameConditionalBase( RefFrameBase &entity_ref );
    /*! @brief Destructor. */
    virtual ~RefFrameConditionalBase();
 
    /*! @brief Initializes the sim_data to the supplied.
     *  @param data External simulation data. */
-   void initialize( );
+   void initialize();
 
    /*! @brief Initialization callback as part of the TrickHLA::Conditional functions.
     *  @param obj Object associated with this packing class. */
@@ -102,7 +102,6 @@ class RefFrameConditionalBase : public TrickHLA::Conditional
    /*! @brief Assignment operator for RefFrameConditionalBase class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
    RefFrameConditionalBase &operator=( RefFrameConditionalBase const &rhs );
-
 };
 
 } // namespace SpaceFOM

@@ -63,13 +63,13 @@ class PhysicalEntityConditionalBase : public TrickHLA::Conditional
    // Public constructors and destructor.
    //
    /*! @brief Initialization constructor to associate with PhysicalEntity instance. */
-   PhysicalEntityConditionalBase( PhysicalEntityBase &entity_ref );
+   explicit PhysicalEntityConditionalBase( PhysicalEntityBase &entity_ref );
    /*! @brief Destructor. */
    virtual ~PhysicalEntityConditionalBase();
 
    /*! @brief Initializes the sim_data to the supplied.
     *  @param data External simulation data. */
-   void initialize( );
+   void initialize();
 
    /*! @brief Initialization callback as part of the TrickHLA::Conditional functions.
     *  @param obj Object associated with this packing class. */
@@ -110,7 +110,6 @@ class PhysicalEntityConditionalBase : public TrickHLA::Conditional
    /*! @brief Assignment operator for PhysicalEntityConditionalBase class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
    PhysicalEntityConditionalBase &operator=( PhysicalEntityConditionalBase const &rhs );
-
 };
 
 } // namespace SpaceFOM
