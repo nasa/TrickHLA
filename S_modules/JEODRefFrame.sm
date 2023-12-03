@@ -40,10 +40,11 @@ class JEODRefFrameSimObject : public Trick::SimObject {
    /* JEOD Reference Frame state in SpaceFOM parent frame. */
    jeod::RefFrameState ref_frame_state;
 
-   /* SimObjct constructor. */
-   JEODRefFrameSimObject( jeod::TimeTT   & time_in,
-                          unsigned short   _INIT = 59,
-                          unsigned short   _UPDATE = 99 )
+   // SimObjct constructor.
+   // _INIT phase needs to be less than 60, when TrickHLA is initialized.
+   JEODRefFrameSimObject( jeod::TimeTT & time_in,
+                          unsigned short _INIT = 50,
+                          unsigned short _UPDATE = 99 )
    : time_tt(time_in)
    {    
       //
@@ -59,7 +60,6 @@ class JEODRefFrameSimObject : public Trick::SimObject {
 
       // Update the reference frame state at the environment high rate.
       (HIGH_RATE_ENV, "environment") update();
-
    }
 
    /* Target and parent frame accessor methods. */

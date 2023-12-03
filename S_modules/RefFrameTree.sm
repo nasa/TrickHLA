@@ -29,6 +29,7 @@
 ##include <iostream>
 ##include <map>
 ##include "include/SpaceFOM/ref_frame_state.hh"
+
 class RefFrameTreeSimObject : public Trick::SimObject {
 
   public:
@@ -48,12 +49,14 @@ class RefFrameTreeSimObject : public Trick::SimObject {
    SpaceFOM::RefFrameBase * mars_pfix_frame_ptr;
 
    // SpaceFOM Reference Frame Tree constructor.
+   // _BUILD phase needs to be less than 60, when TrickHLA is initialized.
    RefFrameTreeSimObject( TrickHLA::Manager          & thla_manager_in,
                           SpaceFOM::ExecutionControl & exec_cntrl_in,
-                          double                     & time_tt_in )
-   : thla_manager(thla_manager_in),
+                          double                     & time_tt_in,
+                          unsigned short               _BUILD = 51 )
+   : thla_manager( thla_manager_in ),
      exec_cntrl( exec_cntrl_in ),
-     time_tt(time_tt_in)
+     time_tt( time_tt_in )
    {
       //
       // Default data jobs
@@ -74,8 +77,7 @@ class RefFrameTreeSimObject : public Trick::SimObject {
       P_0 ("initialization") ref_frame_map.insert({ mars_pfix_frame_ptr->name, mars_pfix_frame_ptr });
       
       // Build the reference frame tree.
-      P_INIT ("initialization") rebuild_tree()
-
+      P_BUILD ("initialization") rebuild_tree()
    }
    
    
@@ -100,7 +102,7 @@ class RefFrameTreeSimObject : public Trick::SimObject {
       std::ostringstream errmsg;
 
       // Check for objects allocation.
-      if ( (thla_manager.obj_count == 0) || (thla_manager.objects == NULL) ){
+      if ( (thla_manager.obj_count == 0) || (thla_manager.objects == NULL) ) {
          errmsg << "RefFrameTreeSimObject::configure_tree():" << __LINE__
                 << " ERROR: The TrickHLAManager Object array has not been allocated!" << THLA_ENDL;
          // Print message and terminate.

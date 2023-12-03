@@ -30,6 +30,7 @@ class JEODHLAInitSimObject : public Trick::SimObject {
 
  public:
 
+   // _INIT phase needs to be less than 60, when TrickHLA is initialized.
    JEODHLAInitSimObject( jeod::TimeManager          & time_manager_in,
                          jeod::TimeManagerInit      & time_manager_init_in,
                          jeod::TimeTAI              & time_tai_in,
@@ -37,18 +38,18 @@ class JEODHLAInitSimObject : public Trick::SimObject {
                          TrickHLA::Manager          & thla_mngr,
                          TrickHLA::Federate         & thla_fed,
                          SpaceFOM::ExecutionControl & exec_ctrl,
-                         unsigned short               _INIT = 59 )
-      : time_manager(time_manager_in),
-        time_manager_init(time_manager_init_in),
-        time_tai(time_tai_in),
-        time_tt(time_tt_in),
+                         unsigned short               _INIT = 50 )
+      : time_manager( time_manager_in ),
+        time_manager_init( time_manager_init_in ),
+        time_tai( time_tai_in ),
+        time_tt( time_tt_in ),
         thla_manager( thla_mngr ),
         thla_federate( thla_fed ),
         execution_control( exec_ctrl )
    {
 
       // Initialize the epoch based on the starting JEOD time.
-      P_INIT ("initialization") set_scenario_timeline_epoch(time_tt);
+      P_INIT ("initialization") set_scenario_timeline_epoch( time_tt );
       P_TIME ("initialization") time_tt.calendar_update( exec_get_sim_time() );
 
       //--------------------------------------------------------------------
@@ -80,10 +81,11 @@ class JEODHLAInitSimObject : public Trick::SimObject {
  protected:
 
    // Set the SpaceFOM scenario timeline epoch from the JEOD TT time.
-   void set_scenario_timeline_epoch(jeod::TimeTT & tt_time){
+   void set_scenario_timeline_epoch( jeod::TimeTT & tt_time )
+   {
 
       // Set the epoch if this is the Master federate.
-      if( execution_control.is_master() ){
+      if( execution_control.is_master() ) {
          execution_control.scenario_timeline->set_epoch((tt_time.trunc_julian_time * 86400.0));
          std::cout.precision( 15 );
          std::cout << "JEODHLAInitSimObject::set_scenario_timeline_epoch():" << __LINE__ << std::endl

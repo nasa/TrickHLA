@@ -34,6 +34,7 @@ class JEODRefFrameTreeSimObject : public RefFrameTreeBaseSimObject {
   public:
 
    // SpaceFOM Reference Frame Tree constructor.
+   // _ADD and _BUILD phases need to be less than 60, when TrickHLA is initialized.
    JEODRefFrameTreeSimObject( TrickHLA::Manager          & thla_manager_in,
                               SpaceFOM::ExecutionControl & exec_cntrl_in,
                               jeod::TimeTT               & time_tt_in,
@@ -42,20 +43,19 @@ class JEODRefFrameTreeSimObject : public RefFrameTreeBaseSimObject {
                               jeod::Planet               & earth_in,
                               jeod::Planet               & moon_in,
                               jeod::Planet               & mars_in,
-                              unsigned short               _ADD   = 59,
-                              unsigned short               _BUILD = 60 )
-   : RefFrameTreeBaseSimObject(thla_manager_in,exec_cntrl_in,_ADD,_BUILD),
-     time_tt(time_tt_in),
-     dyn_manager(dyn_manager_in),
-     sun(sun_in),
-     earth(earth_in),
-     moon(moon_in),
-     mars(mars_in)
+                              unsigned short               _ADD   = 50,
+                              unsigned short               _BUILD = 51 )
+   : RefFrameTreeBaseSimObject( thla_manager_in, exec_cntrl_in, _ADD, _BUILD ),
+     time_tt( time_tt_in ),
+     dyn_manager( dyn_manager_in ),
+     sun( sun_in ),
+     earth( earth_in ),
+     moon( moon_in ),
+     mars( mars_in )
    {
       //
       // Default data jobs
       //
-      
 
       // We need to subscribe to the desired reference frames to insure that
       // JEOD updates them.
@@ -80,13 +80,12 @@ class JEODRefFrameTreeSimObject : public RefFrameTreeBaseSimObject {
       P_ADD ("initialization") frame_tree.add_frame( &(earth_centered_fixed.frame_packing) );
       P_ADD ("initialization") frame_tree.add_frame( &(moon_centered_fixed.frame_packing) );
       P_ADD ("initialization") frame_tree.add_frame( &(mars_centered_fixed.frame_packing) );
-
    }
 
 
    // Subscribe to the needed JEOD reference frames.
-   void subscribe_to_frames(){
-
+   void subscribe_to_frames()
+   {
       // We can start with the planetary frames.
       sun.inertial.subscribe();
       earth.inertial.subscribe();
@@ -145,7 +144,7 @@ class JEODRefFrameTreeSimObject : public RefFrameTreeBaseSimObject {
       std::ostringstream errmsg;
 
       // Check for objects allocation.
-      if ( (thla_manager.obj_count == 0) || (thla_manager.objects == NULL) ){
+      if ( (thla_manager.obj_count == 0) || (thla_manager.objects == NULL) ) {
          errmsg << "JEODRefFrameTreeSimObject::configure_tree():" << __LINE__
                 << " ERROR: The TrickHLAManager Object array has not been allocated!" << THLA_ENDL;
          // Print message and terminate.

@@ -108,10 +108,11 @@ class SpaceFOMRefFrameTreeSimObject : public RefFrameTreeBaseSimObject {
    SpaceFOM::RefFrameState * root_frame_ptr;
    SpaceFOM::RefFrameState * frame_A_ptr;
 
+   // _ADD and _BUILD phases need to be less than 60, when TrickHLA is initialized.
    SpaceFOMRefFrameTreeSimObject( TrickHLA::Manager          & thla_manager_in,
                                   SpaceFOM::ExecutionControl & exec_cntrl_in,
-                                  unsigned short               _ADD   = 59,
-                                  unsigned short               _BUILD = 60 )
+                                  unsigned short               _ADD   = 50,
+                                  unsigned short               _BUILD = 51 )
    : RefFrameTreeBaseSimObject(thla_manager_in, exec_cntrl_in, _ADD, _BUILD )
    {
 
@@ -179,7 +180,8 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
    /* Reference Frame state data in parent frame. */
    SpaceFOM::RefFrameData frame_data;
 
-   SpaceFOMRefFrameSimObject( unsigned short _INIT = 59 )
+   // _INIT phase needs to be less than 60, when TrickHLA is initialized.
+   SpaceFOMRefFrameSimObject( unsigned short _INIT = 50 )
    {
 
       //
@@ -230,8 +232,8 @@ void create_connections() {
    THLA.manager.objects = (TrickHLA::Object*)trick_MM->declare_var( "TrickHLA::Object",
                                                                     THLA.manager.obj_count );
    // Assign the HLA objects to the associated frame.
-   root_ref_frame.frame_packing.set_object(&(THLA.manager.objects[0]));
-   ref_frame_A.frame_packing.set_object(&(THLA.manager.objects[1]));
+   root_ref_frame.frame_packing.set_object( &(THLA.manager.objects[0]) );
+   ref_frame_A.frame_packing.set_object( &(THLA.manager.objects[1]) );
 #endif
 
    // Make the connections for the root and child frame in the reference frame tree.
