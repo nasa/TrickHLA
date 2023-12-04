@@ -448,7 +448,7 @@ phy_interface = SpaceFOMPhysicalInterfaceObject( False,
                                                  phy_interface_name,
                                                  physical_interface.interface_packing,
                                                  'physical_interface.interface_packing',
-                                                 #interface_conditional = physical_interface.conditional,
+                                                 interface_conditional = physical_interface.conditional,
                                                  interface_ownership   = physical_interface.ownership_handler,
                                                  interface_deleted     = physical_interface.deleted_callback )
 
@@ -466,7 +466,7 @@ dyn_entity = SpaceFOMDynamicalEntityObject( True,
                                             dyn_entity_name,
                                             dynamical_entity.entity_packing,
                                             'dynamical_entity.entity_packing',
-                                            #entity_conditional = dynamical_entity.conditional,
+                                            entity_conditional = dynamical_entity.conditional,
                                             entity_lag_comp    = dynamical_entity.lag_compensation,
                                             entity_ownership   = dynamical_entity.ownership_handler,
                                             entity_deleted     = dynamical_entity.deleted_callback )
