@@ -378,8 +378,8 @@ federate.set_time_constrained( True )
 root_frame = SpaceFOMRefFrameObject( federate.is_RRFP,
                                      'RootFrame',
                                      root_ref_frame.frame_packing,
-                                     'root_ref_frame.frame_packing' )
-                                     #frame_conditional = root_ref_frame.conditional )
+                                     'root_ref_frame.frame_packing',
+                                     frame_conditional = root_ref_frame.conditional )
 
 # Set the debug flag for the root reference frame.
 root_ref_frame.frame_packing.debug = verbose
@@ -400,7 +400,7 @@ frame_A = SpaceFOMRefFrameObject( False,
                                   'FrameA',
                                   ref_frame_A.frame_packing,
                                   'ref_frame_A.frame_packing',
-                                  #frame_conditional = ref_frame_A.conditional,
+                                  frame_conditional = ref_frame_A.conditional,
                                   frame_lag_comp    = ref_frame_A.lag_compensation,
                                   frame_ownership   = ref_frame_A.ownership_handler,
                                   frame_deleted     = ref_frame_A.deleted_callback )
@@ -449,7 +449,7 @@ phy_interface = SpaceFOMPhysicalInterfaceObject( True,
                                                  phy_interface_name,
                                                  physical_interface.interface_packing,
                                                  'physical_interface.interface_packing',
-                                                 #interface_conditional = physical_interface.conditional,
+                                                 interface_conditional = physical_interface.conditional,
                                                  interface_ownership   = physical_interface.ownership_handler,
                                                  interface_deleted     = physical_interface.deleted_callback )
 
@@ -474,7 +474,7 @@ dyn_entity = SpaceFOMDynamicalEntityObject( False,
                                             dyn_entity_name,
                                             dynamical_entity.entity_packing,
                                             'dynamical_entity.entity_packing',
-                                            #entity_conditional = dynamical_entity.conditional,
+                                            entity_conditional = dynamical_entity.conditional,
                                             entity_lag_comp    = dynamical_entity.lag_compensation,
                                             entity_ownership   = dynamical_entity.ownership_handler,
                                             entity_deleted     = dynamical_entity.deleted_callback )

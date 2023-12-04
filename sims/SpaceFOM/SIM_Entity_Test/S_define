@@ -281,6 +281,7 @@ class SpaceFOMPhysicalEntitySimObject : public Trick::SimObject {
 // DynamicalEntity object discovery and data exchange.
 //==========================================================================
 ##include "SpaceFOM/DynamicalEntity.hh"
+##include "SpaceFOM/DynamicalEntityConditionalBase.hh"
 ##include "SpaceFOM/DynamicalEntityLagComp.hh"
 ##include "SpaceFOM/DynamicalEntityOwnershipHandler.hh"
 ##include "SpaceFOM/DynamicalEntityDeleted.hh"
@@ -294,6 +295,9 @@ class SpaceFOMDynamicalEntitySimObject : public Trick::SimObject {
 
    /* HLA associated reference frames packing object. */
    SpaceFOM::DynamicalEntity entity_packing;
+
+   /* HLA conditional object. */
+   DynamicalEntityConditionalBase conditional;
 
    /* HLA lag compensation object. */
    DynamicalEntityLagComp lag_compensation;
@@ -311,6 +315,7 @@ class SpaceFOMDynamicalEntitySimObject : public Trick::SimObject {
    : pe_data(pe),
      de_data(de),
      entity_packing(),
+     conditional(entity_packing),
      lag_compensation( entity_packing )
    {
 

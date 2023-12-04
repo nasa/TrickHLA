@@ -55,6 +55,9 @@ class DynamicalEntityBase : virtual public SpaceFOM::PhysicalEntityBase
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrSpaceFOM__DynamicalEntityBase();
 
+   // Make the Conditional class a friend.
+   friend class DynamicalEntityConditionalBase;
+
    // Make the Lag Compensation class a friend.
    friend class DynamicalEntityLagCompBase;
 
