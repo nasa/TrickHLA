@@ -113,8 +113,8 @@ class RefFrameBase : public TrickHLA::Packing
                               TrickHLA::Object *mngr_object = NULL );
 
    // Initialize the packing object.
-   /*! @brief Set the reference to the reference frame data. */
-   void initialize();
+   /*! @brief Finish the initialization of the RefFrame. */
+   virtual void initialize();
 
    /*! @brief Initialization callback as part of the TrickHLA::Packing functions.
     *  @param obj Object associated with this packing class. */

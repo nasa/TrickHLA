@@ -59,8 +59,18 @@ using namespace SpaceFOM;
 /*!
  * @job_class{initialization}
  */
-PhysicalInterface::PhysicalInterface() // RETURN: -- None.
+PhysicalInterface::PhysicalInterface()
    : interface_data( NULL )
+{
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+PhysicalInterface::PhysicalInterface(
+   PhysicalInterfaceData &interface_data_ref   )
+   : interface_data( &interface_data_ref )
 {
    return;
 }
@@ -68,9 +78,29 @@ PhysicalInterface::PhysicalInterface() // RETURN: -- None.
 /*!
  * @job_class{shutdown}
  */
-PhysicalInterface::~PhysicalInterface() // RETURN: -- None.
+PhysicalInterface::~PhysicalInterface()
 {
    interface_data = NULL;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void PhysicalInterface::pre_initialize( PhysicalInterfaceData *interface_data_ptr )
+{
+   ostringstream errmsg;
+
+   // Set the reference to the PhysicalInterface data.
+   if ( interface_data_ptr == NULL ) {
+      errmsg << "SpaceFOM::PhysicalInterface::initialize():" << __LINE__
+             << " ERROR: Unexpected NULL PhysicalInterfaceData: " << packing_data.name << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   this->interface_data = interface_data_ptr;
+
+   // Return to calling routine.
+   return;
 }
 
 /*!
@@ -96,29 +126,6 @@ void PhysicalInterface::initialize()
 }
 
 /*!
- * @job_class{initialization}
- */
-void PhysicalInterface::initialize( PhysicalInterfaceData *interface_data_ptr )
-{
-   ostringstream errmsg;
-
-   // Set the reference to the PhysicalInterface data.
-   if ( interface_data_ptr == NULL ) {
-      errmsg << "SpaceFOM::PhysicalInterface::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL PhysicalInterfaceData: " << packing_data.name << THLA_ENDL;
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-   }
-   this->interface_data = interface_data_ptr;
-
-   // Mark this as initialized.
-   this->initialize();
-
-   // Return to calling routine.
-   return;
-}
-
-/*!
  * @job_class{scheduled}
  */
 void PhysicalInterface::pack_from_working_data()
@@ -133,14 +140,27 @@ void PhysicalInterface::pack_from_working_data()
 
    // Check for name change.
    if ( interface_data->name != NULL ) {
-      if ( strcmp( interface_data->name, packing_data.name ) ) {
-         if ( trick_MM->delete_var( static_cast< void * >( packing_data.name ) ) ) {
-            send_hs( stderr, "PhysicalInterface::pack_from_working_data():%d ERROR deleting Trick Memory for 'packing_data.name'%c",
-                     __LINE__, THLA_NEWLINE );
+
+      if ( packing_data.name != NULL ) {
+
+         // Compare names.
+         if ( strcmp( interface_data->name, packing_data.name ) ) {
+            if ( trick_MM->delete_var( static_cast< void * >( packing_data.name ) ) ) {
+               send_hs( stderr, "PhysicalInterface::pack_from_working_data():%d ERROR deleting Trick Memory for 'packing_data.name'%c",
+                        __LINE__, THLA_NEWLINE );
+            }
+            packing_data.name = trick_MM->mm_strdup( interface_data->name );
          }
+
+      } // No name to compare so copy name.
+      else {
+
          packing_data.name = trick_MM->mm_strdup( interface_data->name );
+
       }
-   } else {
+
+   } // This is bad scoobies so just punt.
+   else {
       errmsg << "SpaceFOM::PhysicalInterface::pack():" << __LINE__
              << " ERROR: Unexpected NULL name for PhysicalInterface!" << THLA_ENDL;
       // Print message and terminate.
@@ -149,16 +169,28 @@ void PhysicalInterface::pack_from_working_data()
 
    // Check for parent name change.
    if ( interface_data->parent_name != NULL ) {
-      // We have a parent name; so, check to see if names are different.
-      if ( strcmp( interface_data->parent_name, packing_data.parent_name ) ) {
-         // Names are different, so reassign the new name string.
-         if ( trick_MM->delete_var( static_cast< void * >( packing_data.parent_name ) ) ) {
-            send_hs( stderr, "SpaceFOM::PhysicalInterface::pack():%d ERROR deleting Trick Memory for 'packing_data.parent_name'%c",
-                     __LINE__, THLA_NEWLINE );
+
+      if ( packing_data.parent_name != NULL ) {
+
+         // We have a parent name; so, check to see if names are different.
+         if ( strcmp( interface_data->parent_name, packing_data.parent_name ) ) {
+            // Names are different, so reassign the new name string.
+            if ( trick_MM->delete_var( static_cast< void * >( packing_data.parent_name ) ) ) {
+               send_hs( stderr, "SpaceFOM::PhysicalInterface::pack():%d ERROR deleting Trick Memory for 'packing_data.parent_name'%c",
+                        __LINE__, THLA_NEWLINE );
+            }
+            packing_data.parent_name = trick_MM->mm_strdup( interface_data->parent_name );
          }
+
+      } // No parent frame name to compare so copy name.
+      else {
+
          packing_data.parent_name = trick_MM->mm_strdup( interface_data->parent_name );
+
       }
-   } else {
+
+   } // This is bad scoobies so just punt.
+   else {
       errmsg << "SpaceFOM::PhysicalInterface::pack():" << __LINE__
              << " ERROR: Unexpected NULL parent name for PhysicalInterface: "
              << interface_data->name << THLA_ENDL;

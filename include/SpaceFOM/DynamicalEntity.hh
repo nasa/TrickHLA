@@ -69,19 +69,19 @@ class DynamicalEntity : public SpaceFOM::PhysicalEntity, public SpaceFOM::Dynami
 
   public:
    // Public constructors and destructors.
-   DynamicalEntity();          // Default constructor.
+   DynamicalEntity(); // Default constructor.
+   DynamicalEntity( PhysicalEntityData  &physical_data_ref,
+                    DynamicalEntityData &dynamics_data_ref ); // Initialization constructor.
    virtual ~DynamicalEntity(); // Destructor.
 
-   // Initialize the packing object.
-   /*! @brief Set the reference to the physical entity data. */
-   virtual void initialize();
-
-   // Initialize the packing object.
    /*! @brief Set the reference to the physical entity data.
     *  @param physical_data_ptr Pointer to the PhysicalEntityData instance.
     *  @param dynamics_data_ptr Pointer to the DynamicalEntityData instance. */
-   virtual void initialize( PhysicalEntityData  *physical_data_ptr,
-                            DynamicalEntityData *dynamics_data_ptr );
+   void pre_initialize( PhysicalEntityData  *physical_data_ptr,
+                        DynamicalEntityData *dynamics_data_ptr );
+
+   /*! @brief Initialize the packing object. */
+   virtual void initialize();
 
    /*! @brief Packs the packing data object from the working data object(s),
     *  @details Called from the pack() function to pack the data from the working

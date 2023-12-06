@@ -75,6 +75,17 @@ RefFrameState::RefFrameState()
 }
 
 /*!
+ * @job_class{initialization}
+ */
+RefFrameState::RefFrameState(
+   RefFrameData & ref_frame_data_ref )
+   : RefFrameBase(),
+     ref_frame_data( &ref_frame_data_ref )
+{
+   return;
+}
+
+/*!
  * @job_class{shutdown}
  */
 RefFrameState::~RefFrameState()
@@ -85,18 +96,36 @@ RefFrameState::~RefFrameState()
 /*!
  * @job_class{initialization}
  */
-void RefFrameState::initialize(
+void RefFrameState::pre_initialize(
    RefFrameData *ref_frame_data_ptr )
 {
    // Set the reference to the reference frame.
    if ( ref_frame_data_ptr == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::RefFrameState::pre_initialize():" << __LINE__
+             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   this->ref_frame_data = ref_frame_data_ptr;
+
+   // Return to calling routine.
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void RefFrameState::initialize()
+{
+   // Set the reference to the reference frame.
+   if ( ref_frame_data == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameState::initialize():" << __LINE__
              << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
-   this->ref_frame_data = ref_frame_data_ptr;
 
    // Mark this as initialized.
    RefFrameBase::initialize();

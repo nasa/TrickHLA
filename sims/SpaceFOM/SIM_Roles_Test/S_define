@@ -111,8 +111,8 @@ class SpaceFOMRefFrameTreeSimObject : public RefFrameTreeBaseSimObject {
    // _ADD and _BUILD phases need to be less than 60, when TrickHLA is initialized.
    SpaceFOMRefFrameTreeSimObject( TrickHLA::Manager          & thla_manager_in,
                                   SpaceFOM::ExecutionControl & exec_cntrl_in,
-                                  unsigned short               _ADD   = 50,
-                                  unsigned short               _BUILD = 51 )
+                                  unsigned short               _ADD   = P_HLA_INIT,
+                                  unsigned short               _BUILD = (P_HLA_INIT+1) )
    : RefFrameTreeBaseSimObject(thla_manager_in, exec_cntrl_in, _ADD, _BUILD )
    {
 
@@ -181,13 +181,14 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
    SpaceFOM::RefFrameData frame_data;
 
    // _INIT phase needs to be less than 60, when TrickHLA is initialized.
-   SpaceFOMRefFrameSimObject( unsigned short _INIT = 50 )
+   SpaceFOMRefFrameSimObject( unsigned short _INIT = P_HLA_INIT )
+   : frame_packing( frame_data )
    {
 
       //
       // Initialization jobs
       //
-      P_INIT ("initialization") frame_packing.initialize( &frame_data );
+      P_INIT ("initialization") frame_packing.initialize();
 
    }
 

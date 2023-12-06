@@ -66,17 +66,17 @@ class PhysicalInterface : virtual public SpaceFOM::PhysicalInterfaceBase
 
   public:
    // Public constructors and destructors.
-   PhysicalInterface();          // Default constructor.
+   PhysicalInterface(); // Default constructor.
+   PhysicalInterface( PhysicalInterfaceData &interface_data_ref ); // Initialization constructor.
    virtual ~PhysicalInterface(); // Destructor.
+
+   /*! @brief Set the reference to the physical interface data.
+    *  @param interface_data_ptr Pointer to the PhysicalInterface data instance. */
+   virtual void pre_initialize( PhysicalInterfaceData *interface_data_ptr );
 
    // Initialize the packing object.
    /*! @brief Set the reference to the physical entity data. */
    virtual void initialize();
-
-   // Initialize the packing object.
-   /*! @brief Set the reference to the physical entity data.
-    *  @param interface_data_ptr Pointer to the PhysicalInterface data instance. */
-   virtual void initialize( PhysicalInterfaceData *interface_data_ptr );
 
    /*! @brief Packs the packing data object from the working data object(s),
     *  @details Called from the pack() function to pack the data from the working

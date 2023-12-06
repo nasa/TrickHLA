@@ -68,11 +68,40 @@ PhysicalEntity::PhysicalEntity() // RETURN: -- None.
 }
 
 /*!
+ * @job_class{initialization}
+ */
+PhysicalEntity::PhysicalEntity( PhysicalEntityData & physical_data_ref ) // RETURN: -- None.
+   : physical_data( &physical_data_ref )
+{
+   return;
+}
+
+/*!
  * @job_class{shutdown}
  */
 PhysicalEntity::~PhysicalEntity() // RETURN: -- None.
 {
    physical_data = NULL;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void PhysicalEntity::pre_initialize( PhysicalEntityData *physical_data_ptr )
+{
+   ostringstream errmsg;
+
+   // Set the reference to the PhysicalEntity data.
+   if ( physical_data_ptr == NULL ) {
+      errmsg << "SpaceFOM::PhysicalEntity::initialize():" << __LINE__
+             << " ERROR: Unexpected NULL PhysicalEntityData: " << pe_packing_data.name << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   this->physical_data = physical_data_ptr;
+
+   // Return to calling routine.
+   return;
 }
 
 /*!
@@ -98,29 +127,6 @@ void PhysicalEntity::initialize()
 }
 
 /*!
- * @job_class{initialization}
- */
-void PhysicalEntity::initialize( PhysicalEntityData *physical_data_ptr )
-{
-   ostringstream errmsg;
-
-   // Set the reference to the PhysicalEntity data.
-   if ( physical_data_ptr == NULL ) {
-      errmsg << "SpaceFOM::PhysicalEntity::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL PhysicalEntityData: " << pe_packing_data.name << THLA_ENDL;
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-   }
-   this->physical_data = physical_data_ptr;
-
-   // Mark this as initialized.
-   this->initialize();
-
-   // Return to calling routine.
-   return;
-}
-
-/*!
  * @job_class{scheduled}
  */
 void PhysicalEntity::pack_from_working_data()
@@ -135,14 +141,27 @@ void PhysicalEntity::pack_from_working_data()
 
    // Check for name change.
    if ( physical_data->name != NULL ) {
-      if ( strcmp( physical_data->name, pe_packing_data.name ) ) {
-         if ( trick_MM->delete_var( static_cast< void * >( pe_packing_data.name ) ) ) {
-            send_hs( stderr, "PhysicalEntity::pack_from_working_data():%d ERROR deleting Trick Memory for 'pe_packing_data.name'%c",
-                     __LINE__, THLA_NEWLINE );
+
+      if ( pe_packing_data.name != NULL ) {
+
+         // Compare names.
+         if ( strcmp( physical_data->name, pe_packing_data.name ) ) {
+            if ( trick_MM->delete_var( static_cast< void * >( pe_packing_data.name ) ) ) {
+               send_hs( stderr, "PhysicalEntity::pack_from_working_data():%d ERROR deleting Trick Memory for 'pe_packing_data.name'%c",
+                        __LINE__, THLA_NEWLINE );
+            }
+            pe_packing_data.name = trick_MM->mm_strdup( physical_data->name );
          }
+
+      } // No name to compare so copy name.
+      else {
+
          pe_packing_data.name = trick_MM->mm_strdup( physical_data->name );
+
       }
-   } else {
+
+   } // This is bad scoobies so just punt.
+   else {
       errmsg << "SpaceFOM::PhysicalEntity::copy_working_data():" << __LINE__
              << " ERROR: Unexpected NULL name for PhysicalEntity!" << THLA_ENDL;
       // Print message and terminate.
@@ -197,16 +216,26 @@ void PhysicalEntity::pack_from_working_data()
 
    // Check for parent frame change.
    if ( physical_data->parent_frame != NULL ) {
-      // We have a parent frame; so, check to see if frame names are different.
-      if ( strcmp( physical_data->parent_frame, pe_packing_data.parent_frame ) ) {
-         // Frames are different, so reassign the new frame string.
-         if ( trick_MM->delete_var( static_cast< void * >( pe_packing_data.parent_frame ) ) ) {
-            send_hs( stderr, "PhysicalEntity::copy_working_data():%d ERROR deleting Trick Memory for 'pe_packing_data.parent_frame'%c",
-                     __LINE__, THLA_NEWLINE );
+
+      if ( pe_packing_data.parent_frame != NULL ) {
+
+         // We have a parent frame; so, check to see if frame names are different.
+         if ( strcmp( physical_data->parent_frame, pe_packing_data.parent_frame ) ) {
+            // Frames are different, so reassign the new frame string.
+            if ( trick_MM->delete_var( static_cast< void * >( pe_packing_data.parent_frame ) ) ) {
+               send_hs( stderr, "PhysicalEntity::copy_working_data():%d ERROR deleting Trick Memory for 'pe_packing_data.parent_frame'%c",
+                        __LINE__, THLA_NEWLINE );
+            }
+            pe_packing_data.parent_frame = trick_MM->mm_strdup( physical_data->parent_frame );
          }
+
+      } // No parent frame name to compare so copy name.
+      else {
          pe_packing_data.parent_frame = trick_MM->mm_strdup( physical_data->parent_frame );
       }
-   } else {
+
+   } // This is bad scoobies so just punt.
+   else {
       errmsg << "SpaceFOM::PhysicalEntity::copy_working_data():" << __LINE__
              << " ERROR: Unexpected NULL parent frame for PhysicalEntity: "
              << physical_data->name << THLA_ENDL;

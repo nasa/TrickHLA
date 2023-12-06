@@ -182,18 +182,18 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
    RefFrameDeleted deleted_callback;
 
    // _INIT phase needs to be less than 60, when TrickHLA is initialized.
-   SpaceFOMRefFrameSimObject( RefFrameData & frame_data_ptr,
+   SpaceFOMRefFrameSimObject( RefFrameData & frame_data_ref,
                               unsigned short _INIT = 50  )
-   : conditional(frame_packing),
-     lag_compensation( frame_packing )
+   : frame_packing( frame_data_ref ),
+     conditional( frame_packing ),
+     lag_compensation( frame_packing ),
+     ref_frame_data_ptr( &frame_data_ref )
    {
-      // Set the reference to the reference frame.
-      this->ref_frame_data_ptr = &frame_data_ptr;
       
       //
       // Initialization jobs
       //
-      P_INIT ("initialization") frame_packing.initialize( ref_frame_data_ptr );
+      P_INIT ("initialization") frame_packing.initialize();
       P_INIT ("initialization") lag_compensation.initialize();
 
    }
@@ -251,17 +251,17 @@ class SpaceFOMPhysicalEntitySimObject : public Trick::SimObject {
 
    // _INIT phase needs to be less than 60, when TrickHLA is initialized.
    SpaceFOMPhysicalEntitySimObject( PhysicalEntityData & pe,
-                                    unsigned short       _INIT = 50 )
-   : pe_data(pe),
-     entity_packing(),
-     conditional(entity_packing),
+                                    unsigned short       _INIT = P_HLA_INIT )
+   : pe_data( pe ),
+     entity_packing( pe ),
+     conditional( entity_packing ),
      lag_compensation( entity_packing )
    {
 
       //
       // Initialization jobs
       //
-      P_INIT ("initialization") entity_packing.initialize( &pe_data );
+      P_INIT ("initialization") entity_packing.initialize();
       P_INIT ("initialization") lag_compensation.initialize();
 
    }
@@ -311,10 +311,10 @@ class SpaceFOMDynamicalEntitySimObject : public Trick::SimObject {
    // _INIT phase needs to be less than 60, when TrickHLA is initialized.
    SpaceFOMDynamicalEntitySimObject( PhysicalEntityData  & pe,
                                      DynamicalEntityData & de,
-                                     unsigned short        _INIT = 50 )
+                                     unsigned short        _INIT = P_HLA_INIT )
    : pe_data(pe),
      de_data(de),
-     entity_packing(),
+     entity_packing( pe, de ),
      conditional(entity_packing),
      lag_compensation( entity_packing )
    {
@@ -322,7 +322,7 @@ class SpaceFOMDynamicalEntitySimObject : public Trick::SimObject {
       //
       // Initialization jobs
       //
-      P_INIT ("initialization") entity_packing.initialize( &pe_data, &de_data );
+      P_INIT ("initialization") entity_packing.initialize();
       P_INIT ("initialization") lag_compensation.initialize();
 
    }
@@ -364,14 +364,15 @@ class SpaceFOMPhysicalInterfaceSimObject : public Trick::SimObject {
    PhysicalInterfaceDeleted deleted_callback;
 
    // _INIT phase needs to be less than 60, when TrickHLA is initialized.
-   SpaceFOMPhysicalInterfaceSimObject( unsigned short _INIT = 50 )
-   : conditional(interface_packing)
+   SpaceFOMPhysicalInterfaceSimObject( unsigned short _INIT = P_HLA_INIT )
+   : interface_packing( interface_data ),
+     conditional( interface_packing )
    {
 
       //
       // Initialization jobs
       //
-      P_INIT ("initialization") interface_packing.initialize( &interface_data );
+      P_INIT ("initialization") interface_packing.initialize();
 
    }
 

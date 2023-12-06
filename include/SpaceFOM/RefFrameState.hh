@@ -71,13 +71,18 @@ class RefFrameState : public SpaceFOM::RefFrameBase
    // Public constructors and destructors.
    /*! @brief Default constructor for the SpaceFOM RefFrameState class. */
    RefFrameState();
+   /*! @brief Initialization constructor to set reference to data. */
+   RefFrameState( RefFrameData & ref_frame_data_ref );
    /*! @brief Destructor for the SpaceFOM RefFrameState class. */
    virtual ~RefFrameState();
 
    // Initialize the packing object.
    /*! @brief Set the reference to the reference frame data.
     *  @param ref_frame_data_ptr Pointer to the RefFrameData instance. */
-   void initialize( RefFrameData *ref_frame_data_ptr );
+   void pre_initialize( RefFrameData *ref_frame_data_ptr );
+
+   /*! @brief Finish the initialization of the RefFrame. */
+   virtual void initialize();
 
    /*! @brief Packs the packing data object from the working data object(s),
     *  @details Called from the pack() function to pack the data from the working

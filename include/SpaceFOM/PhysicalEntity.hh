@@ -67,17 +67,16 @@ class PhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
 
   public:
    // Public constructors and destructors.
-   PhysicalEntity();          // Default constructor.
+   PhysicalEntity(); // Default constructor.
+   PhysicalEntity( PhysicalEntityData & physical_data_ref); // Initialization constructor.
    virtual ~PhysicalEntity(); // Destructor.
 
-   // Initialize the packing object.
-   /*! @brief Set the reference to the physical entity data. */
-   virtual void initialize();
-
-   // Initialize the packing object.
    /*! @brief Set the reference to the physical entity data.
     *  @param physical_data_ptr Pointer to the PhysicalEntity data instance. */
-   virtual void initialize( PhysicalEntityData *physical_data_ptr );
+   void pre_initialize( PhysicalEntityData *physical_data_ptr );
+
+   /*! @brief Initialize the packing object. */
+   virtual void initialize();
 
    /*! @brief Packs the packing data object from the working data object(s),
     *  @details Called from the pack() function to pack the data from the working
