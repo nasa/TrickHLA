@@ -183,7 +183,7 @@ class SpaceFOMRefFrameSimObject : public Trick::SimObject {
 
    // _INIT phase needs to be less than 60, when TrickHLA is initialized.
    SpaceFOMRefFrameSimObject( RefFrameData & frame_data_ref,
-                              unsigned short _INIT = 50  )
+                              unsigned short _INIT = P_HLA_INIT  )
    : frame_packing( frame_data_ref ),
      conditional( frame_packing ),
      lag_compensation( frame_packing ),
