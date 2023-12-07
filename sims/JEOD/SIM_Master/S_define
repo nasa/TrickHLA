@@ -60,7 +60,7 @@
 #endif
 #include "environment.sm"
 #include "sun_basic.sm"
-#include "earth_GGM05c.sm"
+#include "earth_GGM05C.sm"
 #include "moon_basic.sm"
 #include "mars_MRO110B2.sm"
 
