@@ -71,7 +71,7 @@ JEODPhysicalInterface::JEODPhysicalInterface()
  * @job_class{initialization}
  */
 JEODPhysicalInterface::JEODPhysicalInterface(
-   jeod::DynBody &dyn_body_ref   )
+   jeod::DynBody &dyn_body_ref )
    : dyn_body( &dyn_body_ref ),
      vehicle_point_id( NULL ),
      vehicle_point_data( NULL )
@@ -83,7 +83,7 @@ JEODPhysicalInterface::JEODPhysicalInterface(
  */
 JEODPhysicalInterface::JEODPhysicalInterface(
    jeod::DynBody      &dyn_body_ref,
-   jeod::BodyRefFrame &vehicle_point_ref)
+   jeod::BodyRefFrame &vehicle_point_ref )
    : dyn_body( &dyn_body_ref ),
      vehicle_point_id( NULL ),
      vehicle_point_data( &vehicle_point_ref )
@@ -95,7 +95,7 @@ JEODPhysicalInterface::JEODPhysicalInterface(
  */
 JEODPhysicalInterface::~JEODPhysicalInterface()
 {
-   dyn_body = NULL;
+   dyn_body           = NULL;
    vehicle_point_data = NULL;
 
    if ( this->vehicle_point_id != NULL ) {
@@ -226,8 +226,7 @@ void JEODPhysicalInterface::configure(
              << " ERROR: Unexpected NULL vehicle_point_ptr: " << this->packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-   }
-   else {
+   } else {
       this->vehicle_point_data = vehicle_point_ptr;
    }
 

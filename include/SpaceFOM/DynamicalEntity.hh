@@ -72,7 +72,7 @@ class DynamicalEntity : public SpaceFOM::PhysicalEntity, public SpaceFOM::Dynami
    DynamicalEntity(); // Default constructor.
    DynamicalEntity( PhysicalEntityData  &physical_data_ref,
                     DynamicalEntityData &dynamics_data_ref ); // Initialization constructor.
-   virtual ~DynamicalEntity(); // Destructor.
+   virtual ~DynamicalEntity();                                // Destructor.
 
    /*! @brief Set the reference to the physical entity data.
     *  @param physical_data_ptr Pointer to the PhysicalEntityData instance.

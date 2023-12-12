@@ -69,7 +69,7 @@ PhysicalInterface::PhysicalInterface()
  * @job_class{initialization}
  */
 PhysicalInterface::PhysicalInterface(
-   PhysicalInterfaceData &interface_data_ref   )
+   PhysicalInterfaceData &interface_data_ref )
    : interface_data( &interface_data_ref )
 {
    return;
@@ -159,7 +159,6 @@ void PhysicalInterface::pack_from_working_data()
       else {
 
          packing_data.name = trick_MM->mm_strdup( interface_data->name );
-
       }
 
    } // This is bad scoobies so just punt.
@@ -189,7 +188,6 @@ void PhysicalInterface::pack_from_working_data()
       else {
 
          packing_data.parent_name = trick_MM->mm_strdup( interface_data->parent_name );
-
       }
 
    } // This is bad scoobies so just punt.

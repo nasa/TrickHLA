@@ -163,7 +163,7 @@ class RefFrameBase : public TrickHLA::Packing
 
    /*! @brief Check to see if this is a root reference frame.
     *  @return True if this is a root reference frame, false otherwise. */
-   virtual bool is_root(){ return( is_root_frame ); }
+   virtual bool is_root() { return ( is_root_frame ); }
 
    /*! @brief Set this reference frame as the root reference frame.
     *  @return True is set succeded, false otherwise. */

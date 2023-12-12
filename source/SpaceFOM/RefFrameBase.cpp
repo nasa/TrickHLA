@@ -144,10 +144,12 @@ void RefFrameBase::default_data(
    // Set the frame name and parent frame name.
    if ( ref_frame_parent_name != NULL ) {
       this->packing_data.parent_name = trick_MM->mm_strdup( ref_frame_parent_name );
-      if ( ref_frame_parent_name[0] == '\0' ){ this->is_root_frame = true; }
+      if ( ref_frame_parent_name[0] == '\0' ) {
+         this->is_root_frame = true;
+      }
    } else {
       this->packing_data.parent_name = trick_MM->mm_strdup( "" );
-      this->is_root_frame = true;
+      this->is_root_frame            = true;
    }
    if ( ref_frame_name != NULL ) {
       this->packing_data.name = trick_MM->mm_strdup( ref_frame_name );
@@ -233,7 +235,6 @@ void RefFrameBase::configure()
    }
 
    return;
-
 }
 
 /*!
@@ -247,11 +248,11 @@ void RefFrameBase::initialize()
    if ( this->packing_data.name == NULL ) {
 
       string trick_name = ( name_attr != NULL )
-                            ? ( ( name_attr->get_trick_name() != NULL ) ? name_attr->get_trick_name() : "" )
-                            : "";
+                             ? ( ( name_attr->get_trick_name() != NULL ) ? name_attr->get_trick_name() : "" )
+                             : "";
       string fom_name   = ( name_attr != NULL )
-                            ? ( ( name_attr->get_FOM_name() != NULL ) ? name_attr->get_FOM_name() : "" )
-                            : "";
+                             ? ( ( name_attr->get_FOM_name() != NULL ) ? name_attr->get_FOM_name() : "" )
+                             : "";
 
       errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
              << " WARNING: For RefFrame object '"
@@ -263,7 +264,6 @@ void RefFrameBase::initialize()
 
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-
    }
 
    // Should have federation instance parent frame name or empty name for root.
@@ -289,7 +289,6 @@ void RefFrameBase::initialize()
                 << THLA_ENDL;
 
          send_hs( stderr, errmsg.str().c_str() );
-
       }
 
       // Set an empty string.
@@ -298,27 +297,25 @@ void RefFrameBase::initialize()
       // Mark as root reference frame.
       this->is_root_frame = true;
 
-   }
-   else if ( this->packing_data.parent_name[0] == '\0' ) {
+   } else if ( this->packing_data.parent_name[0] == '\0' ) {
       // Mark as root reference frame.
       this->is_root_frame = true;
-   }
-   else {
+   } else {
       // Mark as NOT a root reference frame.
       this->is_root_frame = false;
    }
 
    // Check to see if the parent reference frame has been set if this frame
    // is NOT the root frame.
-   if (    (this->packing_data.parent_name[0] != '\0')
-        && (this->parent_frame == NULL)                ) {
+   if ( ( this->packing_data.parent_name[0] != '\0' )
+        && ( this->parent_frame == NULL ) ) {
 
       string trick_name = ( name_attr != NULL )
-                            ? ( ( name_attr->get_trick_name() != NULL ) ? name_attr->get_trick_name() : "" )
-                            : "";
+                             ? ( ( name_attr->get_trick_name() != NULL ) ? name_attr->get_trick_name() : "" )
+                             : "";
       string fom_name   = ( name_attr != NULL )
-                            ? ( ( name_attr->get_FOM_name() != NULL ) ? name_attr->get_FOM_name() : "" )
-                            : "";
+                             ? ( ( name_attr->get_FOM_name() != NULL ) ? name_attr->get_FOM_name() : "" )
+                             : "";
 
       errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
              << " WARNING: For RefFrame object '"
@@ -330,7 +327,6 @@ void RefFrameBase::initialize()
 
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-
    }
 
    // Mark this as initialized.
@@ -422,7 +418,7 @@ void RefFrameBase::set_parent_name( char const *name )
       }
    } else {
       this->packing_data.parent_name = NULL;
-      this->is_root_frame = true;
+      this->is_root_frame            = true;
    }
 
    return;
@@ -467,64 +463,58 @@ bool RefFrameBase::set_root( bool root_status )
       // Check to make sure predicates are satisfied.
       if ( this->parent_frame == NULL ) {
 
-         if ( this->packing_data.parent_name != NULL ){
+         if ( this->packing_data.parent_name != NULL ) {
             if ( this->packing_data.parent_name[0] == '\0' ) {
                // Set the is_root_frame state to true.
                this->is_root_frame = true;
-               return( true );
-            }
-            else {
+               return ( true );
+            } else {
                // Note that we DO NOT change the is_root_frame state.
-               return( false );
+               return ( false );
             }
-         }
-         else {
+         } else {
             // Parent name cannot be NULL but it should be safe to set it empty.
             // Note that this will also set the is_root_frame state to true.
             this->set_parent_name( "" );
-            return( true );
+            return ( true );
          }
 
       } // Parent frame is not null.  Automatic fail.
       else {
 
          // Note that we DO NOT change the is_root_frame state.
-         return( false );
-
+         return ( false );
       }
 
-   }// If setting as NOT a root reference frame.
+   } // If setting as NOT a root reference frame.
    else {
 
       // Check to make sure predicates are satisfied.
       if ( this->parent_frame != NULL ) {
 
          // Check for NULL parent name string.
-         if ( this->packing_data.parent_name == NULL ){
+         if ( this->packing_data.parent_name == NULL ) {
             // Note that we DO NOT change the is_root_frame state.
-            return( false );
+            return ( false );
          } // Check for empty parent name string.
          else if ( this->packing_data.parent_name[0] == '\0' ) {
             // Note that we DO NOT change the is_root_frame state.
-            return( false );
-         }
-         else {
+            return ( false );
+         } else {
             // Set the is_root_frame state to false.
             this->is_root_frame = false;
-            return( true );
+            return ( true );
          }
 
       } // Parent frame is NULL.  Automatic fail.
       else {
 
          // Note that we DO NOT change the is_root_frame state.
-         return( false );
-
+         return ( false );
       }
-
    }
 
-   return( true );
+   return ( true );
 }
 
 /*!

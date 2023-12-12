@@ -78,7 +78,7 @@ RefFrameState::RefFrameState()
  * @job_class{initialization}
  */
 RefFrameState::RefFrameState(
-   RefFrameData & ref_frame_data_ref )
+   RefFrameData &ref_frame_data_ref )
    : RefFrameBase(),
      ref_frame_data( &ref_frame_data_ref )
 {

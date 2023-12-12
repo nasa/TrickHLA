@@ -41,8 +41,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Object.hh"
 
 // SpaceFOM include files.
-#include "SpaceFOM/PhysicalEntityConditionalBase.hh"
 #include "SpaceFOM/DynamicalEntityBase.hh"
+#include "SpaceFOM/PhysicalEntityConditionalBase.hh"
 
 namespace SpaceFOM
 {

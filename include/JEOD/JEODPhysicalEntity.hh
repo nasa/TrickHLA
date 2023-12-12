@@ -71,9 +71,9 @@ class JEODPhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
 
   public:
    // Public constructors and destructors.
-   JEODPhysicalEntity(); // Default constructor.
-   JEODPhysicalEntity(jeod::DynBody &dyn_body_ref); // Initialization constructor.
-   virtual ~JEODPhysicalEntity(); // Destructor.
+   JEODPhysicalEntity();                                       // Default constructor.
+   explicit JEODPhysicalEntity( jeod::DynBody &dyn_body_ref ); // Initialization constructor.
+   virtual ~JEODPhysicalEntity();                              // Destructor.
 
    /*! @brief Set the reference to the physical entity data.
     *  @param dyn_body_data_ptr Pointer to the JEOD DynBody instance. */

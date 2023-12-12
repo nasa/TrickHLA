@@ -70,7 +70,7 @@ PhysicalEntity::PhysicalEntity() // RETURN: -- None.
 /*!
  * @job_class{initialization}
  */
-PhysicalEntity::PhysicalEntity( PhysicalEntityData & physical_data_ref ) // RETURN: -- None.
+PhysicalEntity::PhysicalEntity( PhysicalEntityData &physical_data_ref ) // RETURN: -- None.
    : physical_data( &physical_data_ref )
 {
    return;
@@ -160,7 +160,6 @@ void PhysicalEntity::pack_from_working_data()
       else {
 
          pe_packing_data.name = trick_MM->mm_strdup( physical_data->name );
-
       }
 
    } // This is bad scoobies so just punt.

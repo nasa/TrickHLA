@@ -129,7 +129,7 @@ bool DynamicalEntityConditionalBase::should_send(
    // Check for change in force.
    if ( attr == force_attr ) {
 
-      if (    ( de_entity.de_packing_data.force[0] != prev_de_data.force[0] )
+      if ( ( de_entity.de_packing_data.force[0] != prev_de_data.force[0] )
            || ( de_entity.de_packing_data.force[1] != prev_de_data.force[1] )
            || ( de_entity.de_packing_data.force[2] != prev_de_data.force[2] ) ) {
 
@@ -145,7 +145,7 @@ bool DynamicalEntityConditionalBase::should_send(
    } // Check for change in torque.
    else if ( attr == torque_attr ) {
 
-      if (    ( de_entity.de_packing_data.torque[0] != prev_de_data.torque[0] )
+      if ( ( de_entity.de_packing_data.torque[0] != prev_de_data.torque[0] )
            || ( de_entity.de_packing_data.torque[1] != prev_de_data.torque[1] )
            || ( de_entity.de_packing_data.torque[2] != prev_de_data.torque[2] ) ) {
 
@@ -185,7 +185,7 @@ bool DynamicalEntityConditionalBase::should_send(
    } // Check for change in inertia matrix.
    else if ( attr == inertia_attr ) {
 
-      if (    ( de_entity.de_packing_data.inertia[0][0] != prev_de_data.inertia[0][0] )
+      if ( ( de_entity.de_packing_data.inertia[0][0] != prev_de_data.inertia[0][0] )
            || ( de_entity.de_packing_data.inertia[0][1] != prev_de_data.inertia[0][1] )
            || ( de_entity.de_packing_data.inertia[0][2] != prev_de_data.inertia[0][2] )
            || ( de_entity.de_packing_data.inertia[1][0] != prev_de_data.inertia[1][0] )
@@ -204,13 +204,12 @@ bool DynamicalEntityConditionalBase::should_send(
 
          // Mark to send.
          send_attr = true;
-
       }
 
    } // Check for change in inertia rate matrix.
    else if ( attr == inertia_rate_attr ) {
 
-      if (    ( de_entity.de_packing_data.inertia_rate[0][0] != prev_de_data.inertia_rate[0][0] )
+      if ( ( de_entity.de_packing_data.inertia_rate[0][0] != prev_de_data.inertia_rate[0][0] )
            || ( de_entity.de_packing_data.inertia_rate[0][1] != prev_de_data.inertia_rate[0][1] )
            || ( de_entity.de_packing_data.inertia_rate[0][2] != prev_de_data.inertia_rate[0][2] )
            || ( de_entity.de_packing_data.inertia_rate[1][0] != prev_de_data.inertia_rate[1][0] )
@@ -229,7 +228,6 @@ bool DynamicalEntityConditionalBase::should_send(
 
          // Mark to send.
          send_attr = true;
-
       }
 
    } else {
@@ -241,9 +239,7 @@ bool DynamicalEntityConditionalBase::should_send(
 
          // Mark to send.
          send_attr = true;
-
       }
-
    }
 
    return send_attr;

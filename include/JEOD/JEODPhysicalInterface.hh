@@ -72,11 +72,11 @@ class JEODPhysicalInterface : virtual public SpaceFOM::PhysicalInterfaceBase
 
   public:
    // Public constructors and destructors.
-   JEODPhysicalInterface(); // Default constructor.
-   JEODPhysicalInterface( jeod::DynBody      &dyn_body_ref ); // Initialization constructor.
+   JEODPhysicalInterface();                                       // Default constructor.
+   explicit JEODPhysicalInterface( jeod::DynBody &dyn_body_ref ); // Initialization constructor.
    JEODPhysicalInterface( jeod::DynBody      &dyn_body_ref,
                           jeod::BodyRefFrame &vehicle_point_ref ); // Initialization constructor.
-   virtual ~JEODPhysicalInterface(); // Destructor.
+   virtual ~JEODPhysicalInterface();                               // Destructor.
 
    /*! @brief Make sure that the JEODPhysicalInterface is configured properly. */
    void configure();
@@ -87,7 +87,7 @@ class JEODPhysicalInterface : virtual public SpaceFOM::PhysicalInterfaceBase
 
    /*! @brief Set the Vehicle Point references.
     *  @param dyn_body_ptr Pointer to the associated DynBody. */
-   void configure( jeod::BodyRefFrame *vehicle_point_ptr  );
+   void configure( jeod::BodyRefFrame *vehicle_point_ptr );
 
    /*! @brief Set the DynBody and Vehicle Point references.
     *  @param dyn_body_ptr      Pointer to the associated DynBody.

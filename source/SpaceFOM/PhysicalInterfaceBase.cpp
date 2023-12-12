@@ -210,7 +210,6 @@ void PhysicalInterfaceBase::configure()
    }
 
    return;
-
 }
 
 /*!

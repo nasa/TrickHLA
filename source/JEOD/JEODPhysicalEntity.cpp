@@ -69,7 +69,7 @@ JEODPhysicalEntity::JEODPhysicalEntity()
  * @job_class{initialization}
  */
 JEODPhysicalEntity::JEODPhysicalEntity(
-   jeod::DynBody & dyn_body_ref )
+   jeod::DynBody &dyn_body_ref )
    : dyn_body_data( &dyn_body_ref )
 {
 }

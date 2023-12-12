@@ -72,7 +72,7 @@ class RefFrameState : public SpaceFOM::RefFrameBase
    /*! @brief Default constructor for the SpaceFOM RefFrameState class. */
    RefFrameState();
    /*! @brief Initialization constructor to set reference to data. */
-   RefFrameState( RefFrameData & ref_frame_data_ref );
+   explicit RefFrameState( RefFrameData &ref_frame_data_ref );
    /*! @brief Destructor for the SpaceFOM RefFrameState class. */
    virtual ~RefFrameState();
 
