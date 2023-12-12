@@ -79,7 +79,7 @@ class RefFrameState : public SpaceFOM::RefFrameBase
    // Initialize the packing object.
    /*! @brief Set the reference to the reference frame data.
     *  @param ref_frame_data_ptr Pointer to the RefFrameData instance. */
-   void pre_initialize( RefFrameData *ref_frame_data_ptr );
+   void configure( RefFrameData *ref_frame_data_ptr );
 
    /*! @brief Finish the initialization of the RefFrame. */
    virtual void initialize();

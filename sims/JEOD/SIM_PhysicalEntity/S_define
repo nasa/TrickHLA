@@ -325,15 +325,15 @@ JEODRefFrameTreeSimObject ref_frame_tree( THLA.manager,
                                           mars.planet );
 
 // Instantiate the standard JEOD/SpaceFOM reference frames for the tree.
-JEODRefFrameSimObject solar_system_barycenter( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
-JEODRefFrameSimObject sun_inertial( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
-JEODRefFrameSimObject earth_moon_barycenter( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
-JEODRefFrameSimObject earth_centered_inertial( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
-JEODRefFrameSimObject moon_centered_inertial( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
-JEODRefFrameSimObject mars_centered_inertial( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
-JEODRefFrameSimObject earth_centered_fixed( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
-JEODRefFrameSimObject moon_centered_fixed( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
-JEODRefFrameSimObject mars_centered_fixed( jeod_time.time_tt, (P_HLA_INIT-1), 40 );
+JEODRefFrameSimObject solar_system_barycenter( jeod_time.time_tt, P_HLA_INIT, 40 );
+JEODRefFrameSimObject sun_inertial( jeod_time.time_tt, P_HLA_INIT, 40 );
+JEODRefFrameSimObject earth_moon_barycenter( jeod_time.time_tt, P_HLA_INIT, 40 );
+JEODRefFrameSimObject earth_centered_inertial( jeod_time.time_tt, P_HLA_INIT, 40 );
+JEODRefFrameSimObject moon_centered_inertial( jeod_time.time_tt, P_HLA_INIT, 40 );
+JEODRefFrameSimObject mars_centered_inertial( jeod_time.time_tt, P_HLA_INIT, 40 );
+JEODRefFrameSimObject earth_centered_fixed( jeod_time.time_tt, P_HLA_INIT, 40 );
+JEODRefFrameSimObject moon_centered_fixed( jeod_time.time_tt, P_HLA_INIT, 40 );
+JEODRefFrameSimObject mars_centered_fixed( jeod_time.time_tt, P_HLA_INIT, 40 );
 
 
 //==========================================================================
@@ -349,20 +349,21 @@ class JEODPhysicalEntiySimObject : public Trick::SimObject {
    /* HLA associated reference frames packing object. */
    SpaceFOM::JEODPhysicalEntity entity_packing;
 
-   JEODPhysicalEntiySimObject( jeod::DynBody *dyn_body_data_ptr,
+   JEODPhysicalEntiySimObject( jeod::DynBody & dyn_body_ref,
                                unsigned short _INIT = 59 )
-   : dyn_body_ptr(dyn_body_data_ptr)
+   : entity_packing(dyn_body_ref),
+     dyn_body(dyn_body_ref)
    {
 
       //
       // Initialization jobs
       //
-      P_INIT ("initialization") entity_packing.initialize( dyn_body_ptr );
+      P_INIT ("initialization") entity_packing.initialize();
 
    }
 
   protected:
-   jeod::DynBody * dyn_body_ptr;
+   jeod::DynBody & dyn_body;
 
   private:
 
@@ -386,20 +387,20 @@ class JEODPhysicalInterfaceSimObject : public Trick::SimObject {
    /* HLA associated reference frames packing object. */
    SpaceFOM::JEODPhysicalInterface interface_packing;
 
-   JEODPhysicalInterfaceSimObject( jeod::DynBody  *dyn_body_data_ptr,
+   JEODPhysicalInterfaceSimObject( jeod::DynBody  &dyn_body_ref,
                                    unsigned short _INIT = 59 )
-   : dyn_body_ptr(dyn_body_data_ptr)
+   : dyn_body(dyn_body_ref)
    {
 
       //
       // Initialization jobs
       //
-      P_INIT ("initialization") interface_packing.initialize( dyn_body_ptr );
+      P_INIT ("initialization") interface_packing.initialize();
 
    }
 
   protected:
-   jeod::DynBody * dyn_body_ptr;
+   jeod::DynBody & dyn_body;
 
   private:
 
@@ -410,16 +411,16 @@ class JEODPhysicalInterfaceSimObject : public Trick::SimObject {
 };
 
 // Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
-JEODPhysicalEntiySimObject active_physical_entity(&(active_vehicle.dyn_body), (P_HLA_INIT-1));
+JEODPhysicalEntiySimObject active_physical_entity(active_vehicle.dyn_body, (P_HLA_INIT-1));
 
 // Instantiate the SpaceFOM PhysicalInterface object associated with the JEOD DynBody.
-JEODPhysicalInterfaceSimObject active_physical_interface(&(active_vehicle.dyn_body));
+JEODPhysicalInterfaceSimObject active_physical_interfac(active_vehicle.dyn_body);
 
 // Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
-JEODPhysicalEntiySimObject passive_physical_entity(&(passive_vehicle.dyn_body), (P_HLA_INIT-1));
+JEODPhysicalEntiySimObject passive_physical_entity(passive_vehicle.dyn_body, (P_HLA_INIT-1));
 
 // Instantiate the SpaceFOM PhysicalInterface object associated with the JEOD DynBody.
-JEODPhysicalInterfaceSimObject passive_physical_interface(&(passive_vehicle.dyn_body));
+JEODPhysicalInterfaceSimObject passive_physical_interface(passive_vehicle.dyn_body);
 
 // Setup the integration loop.
 IntegLoop sim_integ_loop  (DYNAMICS) earth, moon, mars, active_vehicle, passive_vehicle, dynamics;

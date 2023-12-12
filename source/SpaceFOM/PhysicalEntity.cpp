@@ -87,9 +87,12 @@ PhysicalEntity::~PhysicalEntity() // RETURN: -- None.
 /*!
  * @job_class{initialization}
  */
-void PhysicalEntity::pre_initialize( PhysicalEntityData *physical_data_ptr )
+void PhysicalEntity::configure( PhysicalEntityData *physical_data_ptr )
 {
    ostringstream errmsg;
+
+   // First call the base class pre_initialize function.
+   PhysicalEntityBase::configure();
 
    // Set the reference to the PhysicalEntity data.
    if ( physical_data_ptr == NULL ) {

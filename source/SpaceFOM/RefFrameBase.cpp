@@ -70,6 +70,7 @@ using namespace SpaceFOM;
  */
 RefFrameBase::RefFrameBase()
    : debug( false ),
+     is_root_frame( false ),
      initialized( false ),
      parent_frame( NULL ),
      name_attr( NULL ),
@@ -143,8 +144,10 @@ void RefFrameBase::default_data(
    // Set the frame name and parent frame name.
    if ( ref_frame_parent_name != NULL ) {
       this->packing_data.parent_name = trick_MM->mm_strdup( ref_frame_parent_name );
+      if ( ref_frame_parent_name[0] == '\0' ){ this->is_root_frame = true; }
    } else {
       this->packing_data.parent_name = trick_MM->mm_strdup( "" );
+      this->is_root_frame = true;
    }
    if ( ref_frame_name != NULL ) {
       this->packing_data.name = trick_MM->mm_strdup( ref_frame_name );
@@ -203,38 +206,72 @@ void RefFrameBase::default_data(
 /*!
  * @job_class{initialization}
  */
-void RefFrameBase::initialize()
+void RefFrameBase::configure()
 {
+   ostringstream errmsg;
+
    // Must have federation instance name.
    if ( this->packing_data.name == NULL ) {
-      this->packing_data.name = trick_MM->mm_strdup( "" );
-
       if ( debug ) {
-         string trick_name = ( name_attr != NULL )
-                                ? ( ( name_attr->get_trick_name() != NULL ) ? name_attr->get_trick_name() : "" )
-                                : "";
-         string fom_name   = ( name_attr != NULL )
-                                ? ( ( name_attr->get_FOM_name() != NULL ) ? name_attr->get_FOM_name() : "" )
-                                : "";
-
-         ostringstream errmsg;
-         errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
-                << " WARNING: For object '"
-                << ( ( object != NULL ) ? object->get_name_string() : "" )
-                << "' with Attribute Trick name '" << trick_name
-                << "' and FOM name '" << fom_name
-                << "', detected unexpected NULL federation instance frame name!"
-                << " Setting frame name to empty string."
-                << THLA_ENDL;
+         errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
+                << " WARNING: Unexpected NULL federation instance frame name!"
+                << "  Setting frame name to empty string." << THLA_ENDL;
          send_hs( stderr, errmsg.str().c_str() );
       }
+      this->packing_data.name = trick_MM->mm_strdup( "" );
    }
 
    // Must have federation instance parent frame name.
    if ( this->packing_data.parent_name == NULL ) {
-      this->packing_data.parent_name = trick_MM->mm_strdup( "" );
-
       if ( debug ) {
+         errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
+                << " WARNING: Unexpected NULL federation instance parent frame name!"
+                << "  Setting parent frame name to empty string." << THLA_ENDL;
+         send_hs( stderr, errmsg.str().c_str() );
+      }
+      this->packing_data.parent_name = trick_MM->mm_strdup( "" );
+   }
+
+   return;
+
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void RefFrameBase::initialize()
+{
+   ostringstream errmsg;
+
+   // Must have federation instance name.
+   if ( this->packing_data.name == NULL ) {
+
+      string trick_name = ( name_attr != NULL )
+                            ? ( ( name_attr->get_trick_name() != NULL ) ? name_attr->get_trick_name() : "" )
+                            : "";
+      string fom_name   = ( name_attr != NULL )
+                            ? ( ( name_attr->get_FOM_name() != NULL ) ? name_attr->get_FOM_name() : "" )
+                            : "";
+
+      errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
+             << " WARNING: For RefFrame object '"
+             << ( ( object != NULL ) ? object->get_name_string() : "" )
+             << "' with Attribute Trick name '" << trick_name
+             << "' and FOM name '" << fom_name
+             << "', detected unexpected NULL federation instance name!"
+             << THLA_ENDL;
+
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+
+   }
+
+   // Should have federation instance parent frame name or empty name for root.
+   if ( this->packing_data.parent_name == NULL ) {
+
+      // Print message.
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_NO_MODULES ) ) {
+
          string trick_name = ( name_attr != NULL )
                                 ? ( ( name_attr->get_trick_name() != NULL ) ? name_attr->get_trick_name() : "" )
                                 : "";
@@ -242,40 +279,58 @@ void RefFrameBase::initialize()
                                 ? ( ( name_attr->get_FOM_name() != NULL ) ? name_attr->get_FOM_name() : "" )
                                 : "";
 
-         ostringstream errmsg;
          errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
-                << " WARNING: For packing_data.name '" << this->packing_data.name
+                << " WARNING: For RefFrame '" << this->packing_data.name
                 << "' and object '" << ( ( object != NULL ) ? object->get_name_string() : "" )
                 << "' with Attribute Trick name '" << trick_name
                 << "' and FOM name '" << fom_name
                 << "', detected unexpected NULL federation instance parent frame name!"
                 << " Setting parent frame name to empty string."
                 << THLA_ENDL;
+
          send_hs( stderr, errmsg.str().c_str() );
+
       }
+
+      // Set an empty string.
+      this->packing_data.parent_name = trick_MM->mm_strdup( "" );
+
+      // Mark as root reference frame.
+      this->is_root_frame = true;
+
+   }
+   else if ( this->packing_data.parent_name[0] == '\0' ) {
+      // Mark as root reference frame.
+      this->is_root_frame = true;
+   }
+   else {
+      // Mark as NOT a root reference frame.
+      this->is_root_frame = false;
    }
 
    // Check to see if the parent reference frame has been set if this frame
    // is NOT the root frame.
-   if ( strcmp( this->packing_data.parent_name, "" ) && ( this->parent_frame == NULL ) ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_NO_MODULES ) ) {
-         string trick_name = ( name_attr != NULL )
-                                ? ( ( name_attr->get_trick_name() != NULL ) ? name_attr->get_trick_name() : "" )
-                                : "";
-         string fom_name   = ( name_attr != NULL )
-                                ? ( ( name_attr->get_FOM_name() != NULL ) ? name_attr->get_FOM_name() : "" )
-                                : "";
+   if (    (this->packing_data.parent_name[0] != '\0')
+        && (this->parent_frame == NULL)                ) {
 
-         ostringstream errmsg;
-         errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
-                << " WARNING: For object '"
-                << ( ( object != NULL ) ? object->get_name_string() : "" )
-                << "' with Attribute Trick name '" << trick_name
-                << "' and FOM name '" << fom_name
-                << "', detected unexpected NULL parent frame reference!"
-                << THLA_ENDL;
-         send_hs( stderr, errmsg.str().c_str() );
-      }
+      string trick_name = ( name_attr != NULL )
+                            ? ( ( name_attr->get_trick_name() != NULL ) ? name_attr->get_trick_name() : "" )
+                            : "";
+      string fom_name   = ( name_attr != NULL )
+                            ? ( ( name_attr->get_FOM_name() != NULL ) ? name_attr->get_FOM_name() : "" )
+                            : "";
+
+      errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
+             << " WARNING: For RefFrame object '"
+             << ( ( object != NULL ) ? object->get_name_string() : "" )
+             << "' with Attribute Trick name '" << trick_name
+             << "' and FOM name '" << fom_name
+             << "', detected unexpected NULL parent frame reference!"
+             << THLA_ENDL;
+
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+
    }
 
    // Mark this as initialized.
@@ -318,6 +373,15 @@ void RefFrameBase::initialize_callback(
  */
 void RefFrameBase::set_name( char const *new_name )
 {
+   // Check for initialization.
+   if ( initialized ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::RefFrameBase::set_name():" << __LINE__
+             << " ERROR: The initialize() function has already been called" << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    if ( this->packing_data.name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.name ) ) ) {
          send_hs( stderr, "SpaceFOM::RefFrameBase::set_name():%d ERROR deleting Trick Memory for 'this->name'%c",
@@ -351,8 +415,14 @@ void RefFrameBase::set_parent_name( char const *name )
    }
    if ( name != NULL ) {
       this->packing_data.parent_name = trick_MM->mm_strdup( name );
+      if ( name[0] == '\0' ) {
+         this->is_root_frame = true;
+      } else {
+         this->is_root_frame = false;
+      }
    } else {
       this->packing_data.parent_name = NULL;
+      this->is_root_frame = true;
    }
 
    return;
@@ -383,6 +453,78 @@ void RefFrameBase::set_parent_frame( RefFrameBase *pframe_ptr )
    }
 
    return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+bool RefFrameBase::set_root( bool root_status )
+{
+
+   // If setting as root reference frame.
+   if ( root_status ) {
+
+      // Check to make sure predicates are satisfied.
+      if ( this->parent_frame == NULL ) {
+
+         if ( this->packing_data.parent_name != NULL ){
+            if ( this->packing_data.parent_name[0] == '\0' ) {
+               // Set the is_root_frame state to true.
+               this->is_root_frame = true;
+               return( true );
+            }
+            else {
+               // Note that we DO NOT change the is_root_frame state.
+               return( false );
+            }
+         }
+         else {
+            // Parent name cannot be NULL but it should be safe to set it empty.
+            // Note that this will also set the is_root_frame state to true.
+            this->set_parent_name( "" );
+            return( true );
+         }
+
+      } // Parent frame is not null.  Automatic fail.
+      else {
+
+         // Note that we DO NOT change the is_root_frame state.
+         return( false );
+
+      }
+
+   }// If setting as NOT a root reference frame.
+   else {
+
+      // Check to make sure predicates are satisfied.
+      if ( this->parent_frame != NULL ) {
+
+         // Check for NULL parent name string.
+         if ( this->packing_data.parent_name == NULL ){
+            // Note that we DO NOT change the is_root_frame state.
+            return( false );
+         } // Check for empty parent name string.
+         else if ( this->packing_data.parent_name[0] == '\0' ) {
+            // Note that we DO NOT change the is_root_frame state.
+            return( false );
+         }
+         else {
+            // Set the is_root_frame state to false.
+            this->is_root_frame = false;
+            return( true );
+         }
+
+      } // Parent frame is NULL.  Automatic fail.
+      else {
+
+         // Note that we DO NOT change the is_root_frame state.
+         return( false );
+
+      }
+
+   }
+
+   return( true );
 }
 
 /*!

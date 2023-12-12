@@ -43,16 +43,17 @@ class JEODRefFrameSimObject : public Trick::SimObject {
    // SimObjct constructor.
    // _INIT phase needs to be less than 60, when TrickHLA is initialized.
    JEODRefFrameSimObject( jeod::TimeTT & time_in,
-                          unsigned short _INIT = 50,
-                          unsigned short _UPDATE = 99 )
-   : time_tt(time_in)
+                          unsigned short _INIT    = 60,
+                          unsigned short _UPDATE  = 99 )
+   : frame_packing( time_in, ref_frame_state ),
+     time_tt(time_in)
    {    
       //
       // Initialization jobs
       //
       // Initialize the reference frame packing object.  This needs to run
       // before the HLA initialization jobs run.
-      P_INIT ("initialization") frame_packing.initialize( time_tt, &ref_frame_state );
+      P_INIT ("initialization") frame_packing.initialize();
       
       // This needs to run after the JEOD dynamics manager initializes the
       // simulation and before the federate sends the initialization data.

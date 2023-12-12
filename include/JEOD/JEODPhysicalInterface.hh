@@ -72,22 +72,32 @@ class JEODPhysicalInterface : virtual public SpaceFOM::PhysicalInterfaceBase
 
   public:
    // Public constructors and destructors.
-   JEODPhysicalInterface();          // Default constructor.
+   JEODPhysicalInterface(); // Default constructor.
+   JEODPhysicalInterface( jeod::DynBody      &dyn_body_ref ); // Initialization constructor.
+   JEODPhysicalInterface( jeod::DynBody      &dyn_body_ref,
+                          jeod::BodyRefFrame &vehicle_point_ref ); // Initialization constructor.
    virtual ~JEODPhysicalInterface(); // Destructor.
+
+   /*! @brief Make sure that the JEODPhysicalInterface is configured properly. */
+   void configure();
+
+   /*! @brief Set the DynBody references.
+    *  @param dyn_body_ptr Pointer to the associated DynBody. */
+   void configure( jeod::DynBody *dyn_body_ptr );
+
+   /*! @brief Set the Vehicle Point references.
+    *  @param dyn_body_ptr Pointer to the associated DynBody. */
+   void configure( jeod::BodyRefFrame *vehicle_point_ptr  );
+
+   /*! @brief Set the DynBody and Vehicle Point references.
+    *  @param dyn_body_ptr      Pointer to the associated DynBody.
+    *  @param vehicle_point_ptr Pointer to the associated BodyRefFrame. */
+   void configure( jeod::DynBody      *dyn_body_ptr,
+                   jeod::BodyRefFrame *vehicle_point_ptr );
 
    // Initialize the packing object.
    /*! @brief Initialize the class assuming that the vehicle point data is set. */
    virtual void initialize();
-
-   // Initialize the packing object.
-   /*! @brief Initialize the class to reference to the JEOD vehicle point data.
-    *  @param vehicle_point_ptr Pointer to the vehicle point data instance. */
-   virtual void initialize( const jeod::BodyRefFrame *vehicle_point_ptr );
-
-   // Initialize the packing object.
-   /*! @brief Initialize the class using the JEOD vehicle point ID.
-    *  @param dyn_body_ptr Pointer to the vehicle JEOD DynBody instance. */
-   virtual void initialize( jeod::DynBody *dyn_body_ptr );
 
    /*! @brief Packs the packing data object from the working data object(s),
     *  @details Called from the pack() function to pack the data from the working
@@ -120,6 +130,7 @@ class JEODPhysicalInterface : virtual public SpaceFOM::PhysicalInterfaceBase
    }
 
   protected:
+   jeod::DynBody            *dyn_body;           ///< @trick_units{--} JEOD DynBody..
    char                     *vehicle_point_id;   ///< @trick_units{--} JEOD vehicle point ID.
    const jeod::BodyRefFrame *vehicle_point_data; ///< @trick_units{--} JEOD vehicle point data.
 

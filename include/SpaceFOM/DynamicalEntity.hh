@@ -77,8 +77,8 @@ class DynamicalEntity : public SpaceFOM::PhysicalEntity, public SpaceFOM::Dynami
    /*! @brief Set the reference to the physical entity data.
     *  @param physical_data_ptr Pointer to the PhysicalEntityData instance.
     *  @param dynamics_data_ptr Pointer to the DynamicalEntityData instance. */
-   void pre_initialize( PhysicalEntityData  *physical_data_ptr,
-                        DynamicalEntityData *dynamics_data_ptr );
+   void configure( PhysicalEntityData  *physical_data_ptr,
+                   DynamicalEntityData *dynamics_data_ptr );
 
    /*! @brief Initialize the packing object. */
    virtual void initialize();

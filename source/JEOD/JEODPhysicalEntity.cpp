@@ -60,15 +60,24 @@ using namespace SpaceFOM;
 /*!
  * @job_class{initialization}
  */
-JEODPhysicalEntity::JEODPhysicalEntity() // RETURN: -- None.
+JEODPhysicalEntity::JEODPhysicalEntity()
    : dyn_body_data( NULL )
+{
+}
+
+/*!
+ * @job_class{initialization}
+ */
+JEODPhysicalEntity::JEODPhysicalEntity(
+   jeod::DynBody & dyn_body_ref )
+   : dyn_body_data( &dyn_body_ref )
 {
 }
 
 /*!
  * @job_class{shutdown}
  */
-JEODPhysicalEntity::~JEODPhysicalEntity() // RETURN: -- None.
+JEODPhysicalEntity::~JEODPhysicalEntity()
 {
    dyn_body_data = NULL;
 }
@@ -76,11 +85,35 @@ JEODPhysicalEntity::~JEODPhysicalEntity() // RETURN: -- None.
 /*!
  * @job_class{initialization}
  */
+void JEODPhysicalEntity::configure( jeod::DynBody *dyn_body_ptr )
+{
+   ostringstream errmsg;
+
+   // First call the base class pre_initialize function.
+   PhysicalEntityBase::configure();
+
+   // Set the reference to the JEODPhysicalEntity data.
+   if ( dyn_body_ptr == NULL ) {
+      errmsg << "SpaceFOM::JEODPhysicalEntity::initialize():" << __LINE__
+             << " ERROR: Unexpected NULL JEODPhysicalEntityData: "
+             << this->pe_packing_data.name << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   this->dyn_body_data = dyn_body_ptr;
+
+   // Return to calling routine.
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
 void JEODPhysicalEntity::initialize()
 {
+   ostringstream errmsg;
    // Check to make sure the JEODPhysicalEntity data is set.
    if ( dyn_body_data == NULL ) {
-      ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL dyn_body_data: "
              << this->pe_packing_data.name << THLA_ENDL;
@@ -90,29 +123,6 @@ void JEODPhysicalEntity::initialize()
 
    // Mark this as initialized.
    PhysicalEntityBase::initialize();
-
-   // Return to calling routine.
-   return;
-}
-
-/*!
- * @job_class{initialization}
- */
-void JEODPhysicalEntity::initialize( jeod::DynBody *dyn_body_data_ptr )
-{
-   // Set the reference to the JEODPhysicalEntity data.
-   if ( dyn_body_data_ptr == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::JEODPhysicalEntity::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL JEODPhysicalEntityData: "
-             << this->pe_packing_data.name << THLA_ENDL;
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-   }
-   this->dyn_body_data = dyn_body_data_ptr;
-
-   // Mark this as initialized.
-   this->initialize();
 
    // Return to calling routine.
    return;

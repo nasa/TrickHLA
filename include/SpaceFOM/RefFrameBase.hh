@@ -112,6 +112,13 @@ class RefFrameBase : public TrickHLA::Packing
                               bool              publishes,
                               TrickHLA::Object *mngr_object = NULL );
 
+   // Pre-initialize the packing object.
+   /*! @brief Function to begin the configuration/initialization of the RefFrame.
+    *  This function needs to be called prior to TrickHLA initialization if
+    *  the RefFrame object is not being configured with an initialization
+    *  constructor. */
+   void configure();
+
    // Initialize the packing object.
    /*! @brief Finish the initialization of the RefFrame. */
    virtual void initialize();
@@ -153,6 +160,14 @@ class RefFrameBase : public TrickHLA::Packing
    {
       return parent_frame;
    }
+
+   /*! @brief Check to see if this is a root reference frame.
+    *  @return True if this is a root reference frame, false otherwise. */
+   virtual bool is_root(){ return( is_root_frame ); }
+
+   /*! @brief Set this reference frame as the root reference frame.
+    *  @return True is set succeded, false otherwise. */
+   virtual bool set_root( bool root_state );
 
    /*! @brief Get the current scenario time associated with the PhysicalEntity.
     *  @return Current time associated with the PhysicalEntity. */
@@ -198,7 +213,8 @@ class RefFrameBase : public TrickHLA::Packing
    bool debug; ///< @trick_units{--} Debug output flag.
 
   protected:
-   bool initialized; ///< @trick_units{--} Initialization indication flag.
+   bool is_root_frame; ///< @trick_units{--} Indicator that this is a root reference frame.
+   bool initialized;   ///< @trick_units{--} Initialization indication flag.
 
    RefFrameBase *parent_frame; ///< @trick_units{--} Pointer to this frame's parent frame.
 

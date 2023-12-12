@@ -280,6 +280,53 @@ void PhysicalEntityBase::default_data(
 /*!
  * @job_class{initialization}
  */
+void PhysicalEntityBase::configure()
+{
+   ostringstream errmsg;
+
+   // Must have federation instance name.
+   if ( pe_packing_data.name == NULL ) {
+      errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
+             << " WARNING: Unexpected NULL entity name!"
+             << " Setting frame name to empty string." << THLA_ENDL;
+      send_hs( stderr, errmsg.str().c_str() );
+      this->pe_packing_data.name = trick_MM->mm_strdup( "" );
+   }
+
+   // Must have federation instance type.
+   if ( pe_packing_data.type == NULL ) {
+      errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
+             << " WARNING: Unexpected NULL entity type!"
+             << " Setting type to empty string." << THLA_ENDL;
+      send_hs( stderr, errmsg.str().c_str() );
+      this->pe_packing_data.type = trick_MM->mm_strdup( "" );
+   }
+
+   // Must have federation instance status.
+   if ( pe_packing_data.status == NULL ) {
+      errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
+             << " WARNING: Unexpected NULL entity status!"
+             << " Setting status to empty string." << THLA_ENDL;
+      send_hs( stderr, errmsg.str().c_str() );
+      this->pe_packing_data.status = trick_MM->mm_strdup( "" );
+   }
+
+   // Must have federation instance parent_ref_frame.
+   if ( pe_packing_data.parent_frame == NULL ) {
+      errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
+             << " WARNING: Unexpected NULL entity parent_ref_frame!"
+             << " Setting parent_ref_frame to empty string." << THLA_ENDL;
+      send_hs( stderr, errmsg.str().c_str() );
+      this->pe_packing_data.parent_frame = trick_MM->mm_strdup( "" );
+   }
+
+   // Return to calling routine.
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
 void PhysicalEntityBase::initialize()
 {
    ostringstream errmsg;

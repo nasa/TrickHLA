@@ -89,6 +89,14 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
                               char const       *interface_parent_name,
                               bool              publishes );
 
+   // Pre-initialize the packing object.
+   /*! @brief Function to begin the initialization/configuration of the
+    *  PhysicalInterface.
+    *  This function needs to be called prior to TrickHLA initialization if
+    *  the PhysicalInterface object is not being configured with an
+    *  initialization constructor. */
+   void configure();
+
    /*! @brief interface instance initialization routine. */
    virtual void initialize();
 

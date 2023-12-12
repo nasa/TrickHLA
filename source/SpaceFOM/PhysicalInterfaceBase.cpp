@@ -187,6 +187,35 @@ void PhysicalInterfaceBase::default_data(
 /*!
  * @job_class{initialization}
  */
+void PhysicalInterfaceBase::configure()
+{
+   ostringstream errmsg;
+
+   // Must have federation instance name.
+   if ( this->packing_data.name == NULL ) {
+      errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
+             << " WARNING: Unexpected NULL interface name!"
+             << "  Setting frame name to empty string." << THLA_ENDL;
+      send_hs( stderr, errmsg.str().c_str() );
+      this->packing_data.name = trick_MM->mm_strdup( "" );
+   }
+
+   // Must have federation instance parent_ref_frame.
+   if ( this->packing_data.parent_name == NULL ) {
+      errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
+             << " WARNING: Unexpected NULL interface parent!"
+             << "  Setting parent_ref_frame to empty string." << THLA_ENDL;
+      send_hs( stderr, errmsg.str().c_str() );
+      this->packing_data.parent_name = trick_MM->mm_strdup( "" );
+   }
+
+   return;
+
+}
+
+/*!
+ * @job_class{initialization}
+ */
 void PhysicalInterfaceBase::initialize()
 {
    ostringstream errmsg;

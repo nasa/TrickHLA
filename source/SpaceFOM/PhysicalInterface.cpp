@@ -86,9 +86,12 @@ PhysicalInterface::~PhysicalInterface()
 /*!
  * @job_class{initialization}
  */
-void PhysicalInterface::pre_initialize( PhysicalInterfaceData *interface_data_ptr )
+void PhysicalInterface::configure( PhysicalInterfaceData *interface_data_ptr )
 {
    ostringstream errmsg;
+
+   // First call the base class pre_initialize function.
+   PhysicalInterfaceBase::configure();
 
    // Set the reference to the PhysicalInterface data.
    if ( interface_data_ptr == NULL ) {

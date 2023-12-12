@@ -75,6 +75,19 @@ JEODRefFrameState::JEODRefFrameState()
 }
 
 /*!
+ * @job_class{initialization}
+ */
+JEODRefFrameState::JEODRefFrameState(
+   jeod::TimeTT        &time_tt_in,
+   jeod::RefFrameState &ref_frame_state_ref )
+   : RefFrameBase(),
+     time_tt( &time_tt_in ),
+     ref_frame_state( &ref_frame_state_ref )
+{
+   return;
+}
+
+/*!
  * @job_class{shutdown}
  */
 JEODRefFrameState::~JEODRefFrameState()
@@ -84,38 +97,18 @@ JEODRefFrameState::~JEODRefFrameState()
 /*!
  * @job_class{initialization}
  */
-void JEODRefFrameState::initialize(
-   jeod::TimeTT        &time_tt_in,
+void JEODRefFrameState::configure(
+   jeod::TimeTT        *time_tt_ptr,
    jeod::RefFrameState *ref_frame_state_ptr )
 {
-   // Must have federation instance name.
-   if ( this->packing_data.name == NULL ) {
-      if ( debug ) {
-         ostringstream errmsg;
-         errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
-                << " WARNING: Unexpected NULL federation instance frame name!"
-                << "  Setting frame name to empty string." << THLA_ENDL;
-         send_hs( stderr, errmsg.str().c_str() );
-      }
-      this->packing_data.name = trick_MM->mm_strdup( "" );
-   }
+   ostringstream errmsg;
 
-   // Must have federation instance parent frame name.
-   if ( this->packing_data.parent_name == NULL ) {
-      if ( debug ) {
-         ostringstream errmsg;
-         errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
-                << " WARNING: Unexpected NULL federation instance parent frame name!"
-                << "  Setting parent frame name to empty string." << THLA_ENDL;
-         send_hs( stderr, errmsg.str().c_str() );
-      }
-      this->packing_data.parent_name = trick_MM->mm_strdup( "" );
-   }
+   // First call the base class pre_initialize function.
+   RefFrameBase::configure();
 
    // Set the reference to the reference frame.
    if ( ref_frame_state_ptr == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
+      errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
              << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
@@ -123,7 +116,40 @@ void JEODRefFrameState::initialize(
    this->ref_frame_state = ref_frame_state_ptr;
 
    // Set the JEOD time reference.
-   time_tt = &time_tt_in;
+   if ( time_tt_ptr == NULL ) {
+      errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
+             << " ERROR: Unexpected NULL time reference: " << this->packing_data.name << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   time_tt = time_tt_ptr;
+
+   // Return to calling routine.
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void JEODRefFrameState::initialize()
+{
+   ostringstream errmsg;
+
+   // Check for the reference frame data.
+   if ( this->ref_frame_state == NULL ) {
+      errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
+             << " ERROR: Unexpected NULL reference frame data: " << this->packing_data.name << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Check for the JEOD time reference.
+   if ( this->time_tt == NULL ) {
+      errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
+             << " ERROR: Unexpected NULL time reference: " << this->packing_data.name << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
 
    // Mark this as initialized.
    RefFrameBase::initialize();
@@ -141,15 +167,15 @@ void JEODRefFrameState::pack_from_working_data()
 
    // Set the reference frame name and parent frame name.
    // if ( packing_data.name != NULL ) {
-   // NOTE: We don't currently support renaming an DynBody for JEOD
+   // NOTE: We don't currently support renaming an ReferenceFrame for JEOD
    // based applications.  The changed name is updated in the RefFrameBase
    // name attribute but we do not do anything with it now.
    //}
 
    // if ( packing_data.parent_name != NULL ) {
-   //  NOTE: We don't currently support reparenting a ReferenceFrame for JEOD
-   //  based applications.  The changed the ReferencFrame parent name is
-   //  ignored for now.
+   // NOTE: We don't currently support reparenting a ReferenceFrame for JEOD
+   // based applications.  The changed the ReferencFrame parent name is
+   // ignored for now.
    //}
 
    // Pack the data.

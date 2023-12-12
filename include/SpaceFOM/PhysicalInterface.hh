@@ -72,7 +72,7 @@ class PhysicalInterface : virtual public SpaceFOM::PhysicalInterfaceBase
 
    /*! @brief Set the reference to the physical interface data.
     *  @param interface_data_ptr Pointer to the PhysicalInterface data instance. */
-   virtual void pre_initialize( PhysicalInterfaceData *interface_data_ptr );
+   virtual void configure( PhysicalInterfaceData *interface_data_ptr );
 
    // Initialize the packing object.
    /*! @brief Set the reference to the physical entity data. */

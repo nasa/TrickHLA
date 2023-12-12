@@ -278,9 +278,22 @@ void DynamicalEntityBase::default_data(
 /*!
  * @job_class{initialization}
  */
+void DynamicalEntityBase::configure()
+{
+   // First call the base class pre_initialize function.
+   PhysicalEntityBase::configure();
+
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
 void DynamicalEntityBase::initialize()
 {
+   // Only need to call the PhysicalEntityBase initialization function.
    PhysicalEntityBase::initialize();
+
    return;
 }
 

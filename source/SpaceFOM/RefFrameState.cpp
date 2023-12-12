@@ -96,12 +96,16 @@ RefFrameState::~RefFrameState()
 /*!
  * @job_class{initialization}
  */
-void RefFrameState::pre_initialize(
+void RefFrameState::configure(
    RefFrameData *ref_frame_data_ptr )
 {
+   ostringstream errmsg;
+
+   // First call the base class pre_initialize function.
+   RefFrameBase::configure();
+
    // Set the reference to the reference frame.
    if ( ref_frame_data_ptr == NULL ) {
-      ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameState::pre_initialize():" << __LINE__
              << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << THLA_ENDL;
       // Print message and terminate.
@@ -118,9 +122,10 @@ void RefFrameState::pre_initialize(
  */
 void RefFrameState::initialize()
 {
+   ostringstream errmsg;
+
    // Set the reference to the reference frame.
    if ( ref_frame_data == NULL ) {
-      ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameState::initialize():" << __LINE__
              << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << THLA_ENDL;
       // Print message and terminate.

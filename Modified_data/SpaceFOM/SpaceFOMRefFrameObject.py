@@ -63,6 +63,9 @@ class SpaceFOMRefFrameObject(TrickHLAObjectConfig):
                                      frame_thla_manager_object,
                                      frame_thread_IDs )
 
+      # Set the frame instance name.
+      frame_S_define_instance.set_name( frame_instance_name )
+      
       # Build the object attribute list.
       self.add_attributes()
 

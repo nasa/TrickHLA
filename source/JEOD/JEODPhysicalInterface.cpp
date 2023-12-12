@@ -60,17 +60,42 @@ using namespace SpaceFOM;
 /*!
  * @job_class{initialization}
  */
-JEODPhysicalInterface::JEODPhysicalInterface() // RETURN: -- None.
-   : vehicle_point_id( NULL ),
+JEODPhysicalInterface::JEODPhysicalInterface()
+   : dyn_body( NULL ),
+     vehicle_point_id( NULL ),
      vehicle_point_data( NULL )
+{
+}
+
+/*!
+ * @job_class{initialization}
+ */
+JEODPhysicalInterface::JEODPhysicalInterface(
+   jeod::DynBody &dyn_body_ref   )
+   : dyn_body( &dyn_body_ref ),
+     vehicle_point_id( NULL ),
+     vehicle_point_data( NULL )
+{
+}
+
+/*!
+ * @job_class{initialization}
+ */
+JEODPhysicalInterface::JEODPhysicalInterface(
+   jeod::DynBody      &dyn_body_ref,
+   jeod::BodyRefFrame &vehicle_point_ref)
+   : dyn_body( &dyn_body_ref ),
+     vehicle_point_id( NULL ),
+     vehicle_point_data( &vehicle_point_ref )
 {
 }
 
 /*!
  * @job_class{shutdown}
  */
-JEODPhysicalInterface::~JEODPhysicalInterface() // RETURN: -- None.
+JEODPhysicalInterface::~JEODPhysicalInterface()
 {
+   dyn_body = NULL;
    vehicle_point_data = NULL;
 
    if ( this->vehicle_point_id != NULL ) {
@@ -85,57 +110,44 @@ JEODPhysicalInterface::~JEODPhysicalInterface() // RETURN: -- None.
 /*!
  * @job_class{initialization}
  */
-void JEODPhysicalInterface::initialize()
+void JEODPhysicalInterface::configure()
 {
-   // Check to make sure the JEODPhysicalInterface data is set.
-   if ( vehicle_point_data == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL vehicle_point_data: " << this->packing_data.name << THLA_ENDL;
+   ostringstream errmsg;
+
+   // First call the base class pre_initialize function.
+   PhysicalInterfaceBase::configure();
+
+   // Make sure that we have an associated JEOD::DynBody.
+   if ( dyn_body == NULL ) {
+      errmsg << "SpaceFOM::JEODPhysicalInterface::configure():" << __LINE__
+             << " ERROR: Unexpected NULL dyn_body_ptr: for interface " << this->packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
-
-   // Mark this as initialized.
-   PhysicalInterfaceBase::initialize();
-
-   // Return to calling routine.
-   return;
-}
-
-/*!
- * @job_class{initialization}
- */
-void JEODPhysicalInterface::initialize( const jeod::BodyRefFrame *vehicle_point_ptr )
-{
-   // Set the reference to the JEODPhysicalInterface data.
-   if ( vehicle_point_ptr == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL vehicle_point_ptr: " << this->packing_data.name << THLA_ENDL;
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-   }
-   this->vehicle_point_data = vehicle_point_ptr;
-
-   // Mark this as initialized.
-   this->initialize();
-
-   // Return to calling routine.
-   return;
-}
-
-/*!
- * @job_class{initialization}
- */
-void JEODPhysicalInterface::initialize(
-   jeod::DynBody *dyn_body_ptr )
-{
 
    // Make sure that we have a vehicle point ID to work with.
    if ( this->vehicle_point_id == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
+      errmsg << "SpaceFOM::JEODPhysicalInterface::configure():" << __LINE__
+             << " ERROR: Unexpected NULL vehicle_point_id for interface " << this->packing_data.name << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Postpone looking up the actual VehiclePoint until initialization.
+
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void JEODPhysicalInterface::configure( jeod::DynBody *dyn_body_ptr )
+{
+   ostringstream errmsg;
+
+   // Make sure that we have a vehicle point ID to work with.
+   if ( this->vehicle_point_id == NULL ) {
+      errmsg << "SpaceFOM::JEODPhysicalInterface::configure():" << __LINE__
              << " ERROR: Unexpected NULL vehicle_point_id for interface " << this->packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
@@ -143,8 +155,7 @@ void JEODPhysicalInterface::initialize(
 
    // Look up the vehicle point by name.
    if ( dyn_body_ptr == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
+      errmsg << "SpaceFOM::JEODPhysicalInterface::configure():" << __LINE__
              << " ERROR: Unexpected NULL dyn_body_ptr: for interface " << this->packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
@@ -154,15 +165,117 @@ void JEODPhysicalInterface::initialize(
 
    // Make sure that we found the vehicle point.
    if ( this->vehicle_point_data == NULL ) {
-      ostringstream errmsg;
+      errmsg << "SpaceFOM::JEODPhysicalInterface::configure():" << __LINE__
+             << " ERROR: Unexpected NULL vehicle_point_data for interface " << vehicle_point_id << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Call the final configuration check.
+   this->configure();
+
+   // Return to calling routine.
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void JEODPhysicalInterface::configure( jeod::BodyRefFrame *vehicle_point_ptr )
+{
+   ostringstream errmsg;
+
+   // Set the reference to the JEODPhysicalInterface data.
+   if ( vehicle_point_ptr == NULL ) {
+      errmsg << "SpaceFOM::JEODPhysicalInterface::configure():" << __LINE__
+             << " ERROR: Unexpected NULL vehicle_point_ptr: " << this->packing_data.name << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   this->vehicle_point_data = vehicle_point_ptr;
+
+   // Call the final configuration check.
+   this->configure();
+
+   // Return to calling routine.
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void JEODPhysicalInterface::configure(
+   jeod::DynBody      *dyn_body_ptr,
+   jeod::BodyRefFrame *vehicle_point_ptr )
+{
+   ostringstream errmsg;
+
+   // Make sure that we have a dyn_body pointer to assign.
+   if ( dyn_body_ptr == NULL ) {
+      errmsg << "SpaceFOM::JEODPhysicalInterface::configure():" << __LINE__
+             << " ERROR: Unexpected NULL dyn_body_ptr: for interface " << this->packing_data.name << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   } else {
+      this->dyn_body = dyn_body_ptr;
+   }
+
+   // Set the reference to the JEODPhysicalInterface data.
+   if ( vehicle_point_ptr == NULL ) {
+      errmsg << "SpaceFOM::JEODPhysicalInterface::configure():" << __LINE__
+             << " ERROR: Unexpected NULL vehicle_point_ptr: " << this->packing_data.name << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   else {
+      this->vehicle_point_data = vehicle_point_ptr;
+   }
+
+   // Call the final configuration check.
+   this->configure();
+
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void JEODPhysicalInterface::initialize()
+{
+   ostringstream errmsg;
+
+   // Check if the DynBody is set.
+   if ( dyn_body == NULL ) {
+      errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
+             << " ERROR: Unexpected NULL dyn_body_ptr: for interface " << this->packing_data.name << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Make sure that we have a vehicle point ID to work with.
+   if ( this->vehicle_point_id == NULL ) {
+      errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
+             << " ERROR: Unexpected NULL vehicle_point_id for interface " << this->packing_data.name << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Check to make sure the JEODPhysicalInterface data is set.
+   if ( vehicle_point_data == NULL ) {
+      // It is not already set; so, let's try to look it up.
+      this->vehicle_point_data = dyn_body->find_vehicle_point( vehicle_point_id );
+   }
+
+   // Make sure that we found the vehicle point.
+   if ( this->vehicle_point_data == NULL ) {
       errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
              << " ERROR: Unexpected NULL vehicle_point_data for interface " << vehicle_point_id << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   // Call the BodyRefFrame (Vehicle Point) initializer.
-   this->initialize( this->vehicle_point_data );
+   // Mark this as initialized.
+   PhysicalInterfaceBase::initialize();
 
    // Return to calling routine.
    return;

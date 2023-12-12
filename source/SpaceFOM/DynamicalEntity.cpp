@@ -90,10 +90,14 @@ DynamicalEntity::~DynamicalEntity() // RETURN: -- None.
 /*!
  * @job_class{initialization}
  */
-void DynamicalEntity::pre_initialize(
+void DynamicalEntity::configure(
    PhysicalEntityData  *physical_data_ptr,
    DynamicalEntityData *dynamics_data_ptr )
 {
+
+   // First call the base class pre_initialize function.
+   DynamicalEntityBase::configure();
+
    // Set the reference to the reference frame.
    if ( dynamics_data_ptr == NULL ) {
       ostringstream errmsg;
@@ -105,7 +109,7 @@ void DynamicalEntity::pre_initialize(
    this->dynamical_data = dynamics_data_ptr;
 
    // Mark this as initialized.
-   PhysicalEntity::pre_initialize( physical_data_ptr );
+   PhysicalEntity::configure( physical_data_ptr );
 
    // Return to calling routine.
    return;
