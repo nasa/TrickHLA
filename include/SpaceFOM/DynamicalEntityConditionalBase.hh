@@ -70,7 +70,7 @@ class DynamicalEntityConditionalBase : public SpaceFOM::PhysicalEntityConditiona
 
    /*! @brief Initializes the sim_data to the supplied.
     *  @param data External simulation data. */
-   void initialize();
+   virtual void initialize();
 
    /*! @brief Initialization callback as part of the TrickHLA::Conditional functions.
     *  @param obj Object associated with this packing class. */
