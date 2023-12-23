@@ -40,6 +40,7 @@ log_*.csv
 _init_log*.csv
 chkpnt_*_init
 chkpnt_end
+chkpnt_point
 /sims/**/makefile
 Makefile_deps
 Makefile_temp_depends
