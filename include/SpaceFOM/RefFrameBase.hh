@@ -98,19 +98,21 @@ class RefFrameBase : public TrickHLA::Packing
 
    // Default data.
    /*! @brief Sets up the attributes for a reference frame using default values.
+    *  @param publishes             Does this federate publish this reference frame.
     *  @param sim_obj_name          Name of SimObject containing this reference frame.
     *  @param ref_frame_obj_name    Name of the ReferenceFrame object in the SimObject.
-    *  @param ref_frame_parent_name Name of the parent frame for this ReferenceFrame instance.
     *  @param ref_frame_name        Name of the ReferenceFrame instance.
-    *  @param publishes             Does this federate publish this reference frame.
+    *  @param ref_frame_parent_name Name of the parent frame for this ReferenceFrame instance.
+    *  @param ref_frame_parent      Reference to parent frame for this ReferenceFrame instance.
     *  @param mngr_object           TrickHLA::Object associated with this reference frame.
     *  */
-   virtual void default_data( char const       *sim_obj_name,
-                              char const       *ref_frame_obj_name,
-                              char const       *ref_frame_parent_name,
-                              char const       *ref_frame_name,
-                              bool              publishes,
-                              TrickHLA::Object *mngr_object = NULL );
+   virtual void base_config( bool              publishes,
+                             char const       *sim_obj_name,
+                             char const       *ref_frame_obj_name,
+                             char const       *ref_frame_name,
+                             char const       *ref_frame_parent_name = NULL,
+                             RefFrameBase     *ref_frame_parent = NULL,
+                             TrickHLA::Object *mngr_object = NULL );
 
    // Pre-initialize the packing object.
    /*! @brief Function to begin the configuration/initialization of the RefFrame.

@@ -98,27 +98,32 @@ class THLAInitSimObject : public Trick::SimObject {
 // SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An example reference frame tree
 // simulation object definition.
 //==========================================================================
-//#define DEFAULT_DATA_CONFIG // Configure the tree in create_connections and default data.
 #include "RefFrameTreeBase.sm"
 class SpaceFOMRefFrameTreeSimObject : public RefFrameTreeBaseSimObject {
 
   public:
 
+   // Working SpaceFOM reference frames.
+   SpaceFOM::RefFrameData root_frame_data;
+   SpaceFOM::RefFrameData vehicle_frame_data;
+
    // References to working SpaceFOM reference frames.
-   SpaceFOM::RefFrameState * root_frame_ptr;
-   SpaceFOM::RefFrameState * frame_A_ptr;
+   SpaceFOM::RefFrameBase * root_frame_ptr;
+   SpaceFOM::RefFrameBase * vehicle_frame_ptr;
 
    // _ADD and _BUILD phases need to be less than 60, when TrickHLA is initialized.
    SpaceFOMRefFrameTreeSimObject( TrickHLA::Manager          & thla_manager_in,
                                   SpaceFOM::ExecutionControl & exec_cntrl_in,
                                   unsigned short               _ADD   = P_HLA_INIT,
                                   unsigned short               _BUILD = (P_HLA_INIT+1) )
-   : RefFrameTreeBaseSimObject(thla_manager_in, exec_cntrl_in, _ADD, _BUILD )
+   : RefFrameTreeBaseSimObject(thla_manager_in, exec_cntrl_in, _ADD, _BUILD ),
+     root_frame_ptr( NULL ),
+     vehicle_frame_ptr( NULL )
    {
 
       // Place the frames into the tree.  For example . . .
-      P_ADD ("initialization") frame_tree.add_frame( &(root_ref_frame.frame_packing) );
-      P_ADD ("initialization") frame_tree.add_frame( &(ref_frame_A.frame_packing) );
+      P_ADD ("initialization") frame_tree.add_frame( root_frame_ptr );
+      P_ADD ("initialization") frame_tree.add_frame( vehicle_frame_ptr );
 
    }
 
@@ -137,21 +142,21 @@ class SpaceFOMRefFrameTreeSimObject : public RefFrameTreeBaseSimObject {
       }
 
       // Setup the root reference frame.
-      root_frame_ptr->default_data( "root_ref_frame",
-                                    "frame_packing",
-                                    NULL,
-                                    "RootFrame",
-                                    false );
+      root_frame_ptr->base_config( false,
+                                   "root_ref_frame",
+                                   "frame_packing",
+                                   "RootFrame"      );
 
       // Set the root reference frame in the ExCO.
       exec_cntrl.root_ref_frame = root_frame_ptr;
 
       // Setup the Sun inertial reference frame.
-      frame_A_ptr->default_data( "ref_frame_A",
-                                 "frame_packing",
-                                 "RootFrame",
-                                 "FrameA",
-                                 false );
+      root_frame_ptr->base_config( false,
+                                   "vehicle_frame",
+                                   "frame_packing",
+                                   "FrameA",
+                                   "RootFrame",
+                                   root_frame_ptr );
 
       return;
    }
@@ -163,42 +168,12 @@ class SpaceFOMRefFrameTreeSimObject : public RefFrameTreeBaseSimObject {
    SpaceFOMRefFrameTreeSimObject & operator=( SpaceFOMRefFrameTreeSimObject const & );
 };
 
-
 //==========================================================================
 // SIM_OBJECT: SpaceFOMRefFrameSimObject - An example reference frame
 // simulation object definition. This can be used for SpaceFOM ReferenceFrame
 // object discovery and data exchange.
 //==========================================================================
-##include "SpaceFOM/RefFrameState.hh"
-class SpaceFOMRefFrameSimObject : public Trick::SimObject {
-
-  public:
-
-   /* HLA associated reference frames packing object. */
-   SpaceFOM::RefFrameState frame_packing;
-
-   /* Reference Frame state data in parent frame. */
-   SpaceFOM::RefFrameData frame_data;
-
-   // _INIT phase needs to be less than 60, when TrickHLA is initialized.
-   SpaceFOMRefFrameSimObject( unsigned short _INIT = P_HLA_INIT )
-   : frame_packing( frame_data )
-   {
-
-      //
-      // Initialization jobs
-      //
-      P_INIT ("initialization") frame_packing.initialize();
-
-   }
-
-  private:
-
-   // This object is not copyable
-   SpaceFOMRefFrameSimObject( SpaceFOMRefFrameSimObject const & );
-   SpaceFOMRefFrameSimObject & operator=( SpaceFOMRefFrameSimObject const & );
-};
-
+#include "SpaceFOMRefFrame.sm"
 
 //==========================================================================
 // SimObject instantiations.
@@ -213,8 +188,8 @@ THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
 // SimObject used for root reference frame discovery.
 SpaceFOMRefFrameTreeSimObject ref_frame_tree( THLA.manager,
                                               THLA.execution_control );
-SpaceFOMRefFrameSimObject root_ref_frame;
-SpaceFOMRefFrameSimObject ref_frame_A;
+SpaceFOMRefFrameSimObject root_ref_frame( ref_frame_tree.root_frame_data );
+SpaceFOMRefFrameSimObject ref_frame_A( ref_frame_tree.vehicle_frame_data );
 
 
 
@@ -223,22 +198,8 @@ SpaceFOMRefFrameSimObject ref_frame_A;
 //==========================================================================
 void create_connections() {
 
-#ifdef DEFAULT_DATA_CONFIG
-   //
-   // This code will only be executed when we want to configure the reference
-   // frame tree using default data instead of in the input file.
-   //
-   // Allocate the HLA objects for the Reference Frame tree.
-   THLA.manager.obj_count = 2;
-   THLA.manager.objects = (TrickHLA::Object*)trick_MM->declare_var( "TrickHLA::Object",
-                                                                    THLA.manager.obj_count );
-   // Assign the HLA objects to the associated frame.
-   root_ref_frame.frame_packing.set_object( &(THLA.manager.objects[0]) );
-   ref_frame_A.frame_packing.set_object( &(THLA.manager.objects[1]) );
-#endif
-
    // Make the connections for the root and child frame in the reference frame tree.
    ref_frame_tree.root_frame_ptr = &root_ref_frame.frame_packing;
-   ref_frame_tree.frame_A_ptr = &ref_frame_A.frame_packing;
+   ref_frame_tree.vehicle_frame_ptr = &ref_frame_A.frame_packing;
 
 }

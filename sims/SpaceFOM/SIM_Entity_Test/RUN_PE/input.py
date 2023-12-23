@@ -199,10 +199,10 @@ if (print_usage == True) :
 #---------------------------------------------
 #instruments.echo_jobs.echo_jobs_on()
 trick.exec_set_trap_sigfpe(True)
-#trick.checkpoint_pre_init(1)
-#trick.checkpoint_post_init(1)
-#trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
-#trick.checkpoint_end(1)
+trick.checkpoint_pre_init(1)
+trick.checkpoint_post_init(1)
+trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
+trick.checkpoint_end(1)
 
 trick.exec_set_enable_freeze(False)
 trick.exec_set_freeze_command(False)
@@ -400,12 +400,14 @@ frame_A = SpaceFOMRefFrameObject( False,
                                   'FrameA',
                                   ref_frame_A.frame_packing,
                                   'ref_frame_A.frame_packing',
+                                  root_ref_frame.frame_packing,
+                                  'RootFrame',
                                   frame_conditional = ref_frame_A.conditional,
                                   frame_lag_comp    = ref_frame_A.lag_compensation,
                                   frame_ownership   = ref_frame_A.ownership_handler,
                                   frame_deleted     = ref_frame_A.deleted_callback )
 
-# Set the debug flag for the root reference frame.
+# Set the debug flag for this reference frame.
 ref_frame_A.frame_packing.debug = verbose
 
 # Add this reference frame to the list of managed object.

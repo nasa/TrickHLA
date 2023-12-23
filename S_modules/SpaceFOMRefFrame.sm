@@ -1,0 +1,66 @@
+/*****************************************************************************
+ * General TrickHLA Space Reference Federation Object Model (SpaceFOM)
+ * Simulation Definition Object for the standard reference frames.
+ *---------------------------------------------------------------------------*
+ * This is a Simulation Definition (S_define) module that defines the
+ * standard SpaceFOM reference frame base simulation object instance.
+ ****************************************************************************/
+/*****************************************************************************
+ *       Author: Edwin Z. Crues
+ *         Date: July 2023
+ *       E-Mail: Edwin.Z.Crues@nasa.gov
+ *        Phone: 281-483-2902
+ * Organization: Mail Code ER7
+ *               Simulation & Graphics Branch
+ *               Software, Robotics & Simulation Division
+ *               2101 NASA Parkway
+ *               Houston, Texas 77058
+ *---------------------------------------------------------------------------*
+ * Modified By: 
+ *        Date: 
+ * Description: 
+ ****************************************************************************/
+ 
+
+//==========================================================================
+// SIM_OBJECT: SpaceFOMRefFrameBaseSimObject - A SpaceFOM reference frame
+// instance base simulation object definition.
+//==========================================================================
+// Include SpaceFOM base reference frame sim object.
+#include "SpaceFOMRefFrameBase.sm"
+
+// SpaceFOM include files.
+##include "SpaceFOM/RefFrameState.hh"
+##include "SpaceFOM/RefFrameLagComp.hh"
+
+
+class SpaceFOMRefFrameSimObject : public SpaceFOMRefFrameBaseSimObject {
+
+  public:
+   
+   /* HLA associated reference frames packing object. */
+   SpaceFOM::RefFrameState frame_packing;
+
+   /* HLA lag compensation object. */
+   SpaceFOM::RefFrameLagComp lag_compensation;
+
+   // SimObject constructor.
+   SpaceFOMRefFrameSimObject( SpaceFOM::RefFrameData  & frame_data_ref,   
+                              unsigned short            _INIT = P_HLA_INIT  )
+   : SpaceFOMRefFrameBaseSimObject( frame_packing, lag_compensation, _INIT ),
+     frame_packing(frame_data_ref),
+     lag_compensation(frame_packing),
+     ref_frame_data_ptr( &frame_data_ref )
+   {
+
+   }
+
+  private:
+   // Reference to frame working data.
+   SpaceFOM::RefFrameData * ref_frame_data_ptr;
+
+   // This object is not copyable
+   SpaceFOMRefFrameSimObject( SpaceFOMRefFrameSimObject const & );
+   SpaceFOMRefFrameSimObject & operator=( SpaceFOMRefFrameSimObject const & );
+
+};

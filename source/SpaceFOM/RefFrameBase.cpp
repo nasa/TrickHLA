@@ -105,14 +105,15 @@ RefFrameBase::~RefFrameBase()
 
 /*!
  * @details These can be overridden in the input file.
- * @job_class{default_data}
+ * @job_class{initialization}
  */
-void RefFrameBase::default_data(
+void RefFrameBase::base_config(
+   bool              publishes,
    char const       *sim_obj_name,
    char const       *ref_frame_obj_name,
-   char const       *ref_frame_parent_name,
    char const       *ref_frame_name,
-   bool              publishes,
+   char const       *ref_frame_parent_name,
+   RefFrameBase     *ref_frame_parent,
    TrickHLA::Object *mngr_object )
 {
    string ref_frame_name_str = string( sim_obj_name ) + "." + string( ref_frame_obj_name );
@@ -141,7 +142,17 @@ void RefFrameBase::default_data(
       }
    }
 
-   // Set the frame name and parent frame name.
+   // Set the frame name.
+   if ( ref_frame_name != NULL ) {
+      this->packing_data.name = trick_MM->mm_strdup( ref_frame_name );
+   } else {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
+             << " WARNING: Unexpected NULL federation instance frame name!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Set the parent information.
    if ( ref_frame_parent_name != NULL ) {
       this->packing_data.parent_name = trick_MM->mm_strdup( ref_frame_parent_name );
       if ( ref_frame_parent_name[0] == '\0' ) {
@@ -151,13 +162,8 @@ void RefFrameBase::default_data(
       this->packing_data.parent_name = trick_MM->mm_strdup( "" );
       this->is_root_frame            = true;
    }
-   if ( ref_frame_name != NULL ) {
-      this->packing_data.name = trick_MM->mm_strdup( ref_frame_name );
-   } else {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
-             << " WARNING: Unexpected NULL federation instance frame name!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
+   if ( ref_frame_parent != NULL ) {
+      this->parent_frame = ref_frame_parent;
    }
 
    //---------------------------------------------------------

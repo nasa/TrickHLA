@@ -99,15 +99,15 @@ PhysicalInterfaceBase::~PhysicalInterfaceBase() // RETURN: -- None.
 
 /*!
  * @details These can be overridden in the input file.
- * @job_class{default_data}
+ * @job_class{initialization}
  */
-void PhysicalInterfaceBase::default_data(
-   TrickHLA::Object *mngr_object,
+void PhysicalInterfaceBase::base_config(
    char const       *sim_obj_name,
    char const       *interface_obj_name,
    char const       *interface_name,
    char const       *interface_parent_name,
-   bool              publishes )
+   bool              publishes,
+   TrickHLA::Object *mngr_object )
 {
    string interface_name_str = string( sim_obj_name ) + "." + string( interface_obj_name );
    string trick_name_str;

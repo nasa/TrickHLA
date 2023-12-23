@@ -152,7 +152,7 @@ if (print_usage == True) :
 trick.exec_set_trap_sigfpe(True)
 trick.checkpoint_pre_init(1)
 trick.checkpoint_post_init(1)
-#trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
+trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
 trick.checkpoint_end(1)
 
 # Setup for Trick real time execution. This is the "Pacing" function.
@@ -253,42 +253,42 @@ federate.set_time_constrained( True )
 #---------------------------------------------------------------------------
 # Set up for Root Reference Frame data.
 #---------------------------------------------------------------------------
-root_ref_frame.frame_data.name = root_frame_name
-root_ref_frame.frame_data.parent_name = ''
+ref_frame_tree.root_frame_data.name = root_frame_name
+ref_frame_tree.root_frame_data.parent_name = ''
                                         
-root_ref_frame.frame_data.state.pos[0] = 0.0
-root_ref_frame.frame_data.state.pos[1] = 0.0
-root_ref_frame.frame_data.state.pos[2] = 0.0
-root_ref_frame.frame_data.state.vel[0] = 0.0
-root_ref_frame.frame_data.state.vel[1] = 0.0
-root_ref_frame.frame_data.state.vel[2] = 0.0
-root_ref_frame.frame_data.state.att.scalar  = 1.0
-root_ref_frame.frame_data.state.att.vector[0] = 0.0
-root_ref_frame.frame_data.state.att.vector[1] = 0.0
-root_ref_frame.frame_data.state.att.vector[2] = 0.0
-root_ref_frame.frame_data.state.ang_vel[0] = 0.0
-root_ref_frame.frame_data.state.ang_vel[1] = 0.0
-root_ref_frame.frame_data.state.ang_vel[2] = 0.0
-root_ref_frame.frame_data.state.time = 0.0
+ref_frame_tree.root_frame_data.state.pos[0] = 0.0
+ref_frame_tree.root_frame_data.state.pos[1] = 0.0
+ref_frame_tree.root_frame_data.state.pos[2] = 0.0
+ref_frame_tree.root_frame_data.state.vel[0] = 0.0
+ref_frame_tree.root_frame_data.state.vel[1] = 0.0
+ref_frame_tree.root_frame_data.state.vel[2] = 0.0
+ref_frame_tree.root_frame_data.state.att.scalar  = 1.0
+ref_frame_tree.root_frame_data.state.att.vector[0] = 0.0
+ref_frame_tree.root_frame_data.state.att.vector[1] = 0.0
+ref_frame_tree.root_frame_data.state.att.vector[2] = 0.0
+ref_frame_tree.root_frame_data.state.ang_vel[0] = 0.0
+ref_frame_tree.root_frame_data.state.ang_vel[1] = 0.0
+ref_frame_tree.root_frame_data.state.ang_vel[2] = 0.0
+ref_frame_tree.root_frame_data.state.time = 0.0
 
 
-ref_frame_A.frame_data.name = 'FrameA'
-ref_frame_A.frame_data.parent_name = root_frame_name
+ref_frame_tree.vehicle_frame_data.name = 'FrameA'
+ref_frame_tree.vehicle_frame_data.parent_name = root_frame_name
                                         
-ref_frame_A.frame_data.state.pos[0] = 10.0
-ref_frame_A.frame_data.state.pos[1] = 10.0
-ref_frame_A.frame_data.state.pos[2] = 10.0
-ref_frame_A.frame_data.state.vel[0] = 0.0
-ref_frame_A.frame_data.state.vel[1] = 0.1
-ref_frame_A.frame_data.state.vel[2] = 0.0
-ref_frame_A.frame_data.state.att.scalar  = 1.0
-ref_frame_A.frame_data.state.att.vector[0] = 0.0
-ref_frame_A.frame_data.state.att.vector[1] = 0.0
-ref_frame_A.frame_data.state.att.vector[2] = 0.0
-ref_frame_A.frame_data.state.ang_vel[0] = 0.0
-ref_frame_A.frame_data.state.ang_vel[1] = 0.1
-ref_frame_A.frame_data.state.ang_vel[2] = 0.0
-ref_frame_A.frame_data.state.time = 0.0
+ref_frame_tree.vehicle_frame_data.state.pos[0] = 10.0
+ref_frame_tree.vehicle_frame_data.state.pos[1] = 10.0
+ref_frame_tree.vehicle_frame_data.state.pos[2] = 10.0
+ref_frame_tree.vehicle_frame_data.state.vel[0] = 0.0
+ref_frame_tree.vehicle_frame_data.state.vel[1] = 0.1
+ref_frame_tree.vehicle_frame_data.state.vel[2] = 0.0
+ref_frame_tree.vehicle_frame_data.state.att.scalar  = 1.0
+ref_frame_tree.vehicle_frame_data.state.att.vector[0] = 0.0
+ref_frame_tree.vehicle_frame_data.state.att.vector[1] = 0.0
+ref_frame_tree.vehicle_frame_data.state.att.vector[2] = 0.0
+ref_frame_tree.vehicle_frame_data.state.ang_vel[0] = 0.0
+ref_frame_tree.vehicle_frame_data.state.ang_vel[1] = 0.1
+ref_frame_tree.vehicle_frame_data.state.ang_vel[2] = 0.0
+ref_frame_tree.vehicle_frame_data.state.time = 0.0
 
 
 #---------------------------------------------------------------------------
@@ -299,13 +299,17 @@ ref_frame_A.frame_data.state.time = 0.0
 root_frame = SpaceFOMRefFrameObject( federate.is_RRFP,
                                      root_frame_name,
                                      root_ref_frame.frame_packing,
-                                     'root_ref_frame.frame_packing' )
+                                     'root_ref_frame.frame_packing',
+                                     frame_conditional = root_ref_frame.conditional )
 
 # Set the debug flag for the root reference frame.
 root_ref_frame.frame_packing.debug = verbose
 
 # Set the root frame for the federate.
 federate.set_root_frame( root_frame )
+
+# Set the lag compensation paratmeters.
+# NOTE: The ROOT REFERENCE FRAME never needs to be compensated!
 
 #---------------------------------------------------------------------------
 # Set up the Root Reference Frame object for discovery.
@@ -315,13 +319,25 @@ federate.set_root_frame( root_frame )
 frame_A = SpaceFOMRefFrameObject( True,
                                   'FrameA',
                                   ref_frame_A.frame_packing,
-                                  'ref_frame_A.frame_packing' )
+                                  'ref_frame_A.frame_packing',
+                                  root_ref_frame.frame_packing,
+                                  root_frame_name,
+                                  frame_conditional = ref_frame_A.conditional,
+                                  frame_lag_comp    = ref_frame_A.lag_compensation,
+                                  frame_ownership   = ref_frame_A.ownership_handler,
+                                  frame_deleted     = ref_frame_A.deleted_callback )
 
 # Set the debug flag for the root reference frame.
 ref_frame_A.frame_packing.debug = verbose
 
 # Add this reference frame to the list of managed object.
 federate.add_fed_object( frame_A )
+
+# Set the lag compensation paratmeters.
+# The reality is that the ROOT REFERENCE FRAME never needs to be compensated!
+ref_frame_A.lag_compensation.debug = False
+ref_frame_A.lag_compensation.set_integ_tolerance( 1.0e-6 )
+ref_frame_A.lag_compensation.set_integ_dt( 0.025 )
 
 #---------------------------------------------------------------------------
 # Add the HLA SimObjects associated with this federate.

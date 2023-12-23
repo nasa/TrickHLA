@@ -246,7 +246,7 @@ void JEODPhysicalInterface::initialize()
    // Check if the DynBody is set.
    if ( dyn_body == NULL ) {
       errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL dyn_body_ptr: for interface " << this->packing_data.name << THLA_ENDL;
+             << " ERROR: Unexpected NULL dyn_body reference: for interface " << this->packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }

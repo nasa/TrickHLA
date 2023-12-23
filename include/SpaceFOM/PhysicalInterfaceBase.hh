@@ -75,19 +75,19 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
 
    // Default data.
    /*! @brief Sets up the attributes for a PhysicalInterface using default values.
-    *  @param mngr_object           TrickHLA::Object associated with this PhysicalInterface.
     *  @param sim_obj_name          Name of SimObject containing this PhysicalInterface.
     *  @param interface_obj_name    Name of the PhysicalInterface object in the SimObject.
     *  @param interface_name        Name of the PhysicalInterface instance.
     *  @param interface_parent_name Name of the parent PhysicalEntity or PhysicalInterface for this PhysicalInterface instance.
     *  @param publishes             Does this federate publish this PhysicalInterface.
+    *  @param mngr_object           TrickHLA::Object associated with this PhysicalInterface.
     *  */
-   virtual void default_data( TrickHLA::Object *mngr_object,
-                              char const       *sim_obj_name,
-                              char const       *interface_obj_name,
-                              char const       *interface_name,
-                              char const       *interface_parent_name,
-                              bool              publishes );
+   virtual void base_config( char const       *sim_obj_name,
+                             char const       *interface_obj_name,
+                             char const       *interface_name,
+                             char const       *interface_parent_name,
+                             bool              publishes,
+                             TrickHLA::Object *mngr_object = NULL );
 
    // Pre-initialize the packing object.
    /*! @brief Function to begin the initialization/configuration of the

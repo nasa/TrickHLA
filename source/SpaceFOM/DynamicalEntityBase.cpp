@@ -91,15 +91,15 @@ DynamicalEntityBase::~DynamicalEntityBase() // RETURN: -- None.
 
 /*!
  * @details These can be overridden in the input file.
- * @job_class{default_data}
+ * @job_class{initialization}
  */
-void DynamicalEntityBase::default_data(
-   TrickHLA::Object *mngr_object,
+void DynamicalEntityBase::base_config(
    char const       *sim_obj_name,
    char const       *entity_obj_name,
    char const       *entity_name,
    char const       *parent_ref_frame_name,
-   bool              publishes )
+   bool              publishes,
+   TrickHLA::Object *mngr_object )
 {
    string entity_name_str = string( sim_obj_name ) + "." + string( entity_obj_name );
    string trick_name_str;

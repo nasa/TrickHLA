@@ -78,19 +78,19 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
 
    // Default data.
    /*! @brief Sets up the attributes for a PhysicalEntity using default values.
-    *  @param mngr_object TrickHLA::Object associated with this PhysicalEntity.
     *  @param sim_obj_name Name of SimObject containing this PhysicalEntity.
     *  @param entity_obj_name Name of the PhysicalEntity object in the SimObject.
     *  @param entity_name Name of the PhysicalEntity instance.
     *  @param parent_ref_frame_name Name of the parent ReferenceFrame for this PhysicalEntity instance.
     *  @param publishes Does this federate publish this PhysicalEntity.
+    *  @param mngr_object TrickHLA::Object associated with this PhysicalEntity.
     *  */
-   virtual void default_data( TrickHLA::Object *mngr_object,
-                              char const       *sim_obj_name,
-                              char const       *entity_obj_name,
-                              char const       *entity_name,
-                              char const       *parent_ref_frame_name,
-                              bool              publishes );
+   virtual void base_config( char const       *sim_obj_name,
+                             char const       *entity_obj_name,
+                             char const       *entity_name,
+                             char const       *parent_ref_frame_name,
+                             bool              publishes,
+                             TrickHLA::Object *mngr_object = NULL );
 
    /*! @brief Function to begin the configuration/initialization of the
     *  PhysicalEntity.

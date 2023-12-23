@@ -71,56 +71,72 @@ class JEODRefFrameTreeObject(TrickHLAObjectConfig):
       sun_frame_obj = SpaceFOMRefFrameObject( create_frame_objects,
                                               'SunCentricInertial',
                                               sun_frame,
-                                              'sun_inertial.frame_packing' )
+                                              'sun_inertial.frame_packing',
+                                              solar_system_barycenter.frame_packing,
+                                              'SolarSystemBarycentricInertial' )
       federate.add_fed_object( sun_frame_obj )
 
       # Setup the Earth-Moon barycenter inertial frame.
       embary_frame_obj = SpaceFOMRefFrameObject( create_frame_objects,
                                                  'EarthMoonBarycentricInertial',
                                                  embary_frame,
-                                                 'earth_moon_barycenter.frame_packing' )
+                                                 'earth_moon_barycenter.frame_packing',
+                                                 solar_system_barycenter.frame_packing,
+                                                 'SolarSystemBarycentricInertial' )
       federate.add_fed_object( embary_frame_obj )
 
       # Setup the Earth inertial frame.
       earth_frame_obj = SpaceFOMRefFrameObject( create_frame_objects,
                                                 'EarthMJ2000Eq',
                                                 earth_frame,
-                                                'earth_centered_inertial.frame_packing' )
+                                                'earth_centered_inertial.frame_packing',
+                                                earth_moon_barycenter.frame_packing,
+                                                'EarthMoonBarycentricInertial' )
       federate.add_fed_object( earth_frame_obj )
 
       # Setup the Moon inertial frame.
       moon_frame_obj = SpaceFOMRefFrameObject( create_frame_objects,
                                                'MoonCentricInertial',
                                                moon_frame,
-                                               'moon_centered_inertial.frame_packing' )
+                                               'moon_centered_inertial.frame_packing',
+                                               earth_moon_barycenter.frame_packing,
+                                               'EarthMoonBarycentricInertial' )
       # Add the frame to federate.
       federate.add_fed_object( moon_frame_obj )
 
       mars_frame_obj = SpaceFOMRefFrameObject( create_frame_objects,
                                                'MarsCentricInertial',
                                                mars_frame,
-                                               'mars_centered_inertial.frame_packing' )
+                                               'mars_centered_inertial.frame_packing',
+                                               solar_system_barycenter.frame_packing,
+                                               'SolarSystemBarycentricInertial' )
       federate.add_fed_object( mars_frame_obj )
 
       # Setup the Earth planet fixed frame.
       earth_pfix_frame_obj = SpaceFOMRefFrameObject( create_frame_objects,
                                                      'EarthCentricFixed',
                                                      earth_pfix_frame,
-                                                     'earth_centered_fixed.frame_packing' )
+                                                     'earth_centered_fixed.frame_packing',
+                                                     earth_centered_inertial.frame_packing,
+                                                     'EarthMJ2000Eq' )
       federate.add_fed_object( earth_pfix_frame_obj )
 
       # Setup the Moon planet fixed frame.
       moon_pfix_frame_obj = SpaceFOMRefFrameObject( create_frame_objects,
                                                     'MoonCentricFixed',
                                                     moon_pfix_frame,
-                                                    'moon_centered_fixed.frame_packing' )
+                                                    'moon_centered_fixed.frame_packing',
+                                                    moon_centered_inertial.frame_packing,
+                                                    'MoonCentricInertial' )
       federate.add_fed_object( moon_pfix_frame_obj )
 
       # Setup the Mars planet fixed frame.
       mars_pfix_frame_obj = SpaceFOMRefFrameObject( create_frame_objects,
                                                     'MarsCentricFixed',
                                                     mars_pfix_frame,
-                                                    'mars_centered_fixed.frame_packing' )
+                                                    'mars_centered_fixed.frame_packing',
+                                                    mars_centered_inertial.frame_packing,
+                                                    'MarsCentricInertial' )
       federate.add_fed_object( mars_pfix_frame_obj )
 
       return

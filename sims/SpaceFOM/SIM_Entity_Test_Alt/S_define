@@ -129,67 +129,15 @@ class THLAInitSimObject : public Trick::SimObject {
 // SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An example reference frame tree
 // simulation object definition.
 //==========================================================================
-#include "RefFrameTreeBase.sm"
-class SpaceFOMRefFrameTreeSimObject : public RefFrameTreeBaseSimObject {
+##include "SpaceFOM/RefFrameTree.hh"
+class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
 
   public:
+   /* Reference frame data. */
+   RefFrameData root_frame_data;
+   RefFrameData vehicle_frame_data;
 
-   // Working SpaceFOM reference frames.
-   SpaceFOM::RefFrameData root_frame_data;
-   SpaceFOM::RefFrameData vehicle_frame_data;
-
-   // References to working SpaceFOM reference frames.
-   SpaceFOM::RefFrameBase * root_frame_ptr;
-   SpaceFOM::RefFrameBase * vehicle_frame_ptr;
-
-   // _ADD and _BUILD phases need to be less than 60, when TrickHLA is initialized.
-   SpaceFOMRefFrameTreeSimObject( TrickHLA::Manager          & thla_manager_in,
-                                  SpaceFOM::ExecutionControl & exec_cntrl_in,
-                                  unsigned short               _ADD   = P_HLA_INIT,
-                                  unsigned short               _BUILD = (P_HLA_INIT+1) )
-   : RefFrameTreeBaseSimObject(thla_manager_in, exec_cntrl_in, _ADD, _BUILD ),
-     root_frame_ptr( NULL ),
-     vehicle_frame_ptr( NULL )
-   {
-
-      // Place the frames into the tree.  For example . . .
-      P_ADD ("initialization") frame_tree.add_frame( root_frame_ptr );
-      P_ADD ("initialization") frame_tree.add_frame( vehicle_frame_ptr );
-
-   }
-
-  private:
-   // Define the interface to configure the reference frame tree.
-   void configure_tree()
-   {
-      std::ostringstream errmsg;
-
-      // Check for objects allocation.
-      if ( (thla_manager.obj_count == 0) || (thla_manager.objects == NULL) ){
-         errmsg << "SpaceFOMRefFrameTreeSimObject::configure_tree():" << __LINE__
-                << " ERROR: The TrickHLAManager Object array has not been allocated!" << THLA_ENDL;
-         // Print message and terminate.
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-      }
-
-      // Setup the root reference frame.
-      root_frame_ptr->base_config( false,
-                                   "root_ref_frame",
-                                   "frame_packing",
-                                   "RootFrame"      );
-
-      // Set the root reference frame in the ExCO.
-      exec_cntrl.root_ref_frame = root_frame_ptr;
-
-      // Setup the Sun inertial reference frame.
-      root_frame_ptr->base_config( false,
-                                   "vehicle_frame",
-                                   "frame_packing",
-                                   "FrameA",
-                                   "RootFrame",
-                                   root_frame_ptr );
-
-      return;
+   SpaceFOMRefFrameTreeSimObject( ){
    }
 
   private:
@@ -197,6 +145,8 @@ class SpaceFOMRefFrameTreeSimObject : public RefFrameTreeBaseSimObject {
    // This object is not copyable
    SpaceFOMRefFrameTreeSimObject( SpaceFOMRefFrameTreeSimObject const & );
    SpaceFOMRefFrameTreeSimObject & operator=( SpaceFOMRefFrameTreeSimObject const & );
+
+
 };
 
 
@@ -205,7 +155,59 @@ class SpaceFOMRefFrameTreeSimObject : public RefFrameTreeBaseSimObject {
 // simulation object definition. This can be used for SpaceFOM ReferenceFrame
 // object discovery and data exchange.
 //==========================================================================
-#include "SpaceFOMRefFrame.sm"
+##include "SpaceFOM/RefFrameState.hh"
+##include "SpaceFOM/RefFrameConditionalBase.hh"
+##include "SpaceFOM/RefFrameLagComp.hh"
+##include "SpaceFOM/RefFrameOwnershipHandler.hh"
+##include "SpaceFOM/RefFrameDeleted.hh"
+
+class SpaceFOMRefFrameSimObject : public Trick::SimObject {
+
+  public:
+   
+   /* HLA associated reference frames packing object. */
+   SpaceFOM::RefFrameState frame_packing;
+
+   /* HLA conditional object. */
+   RefFrameConditionalBase conditional;
+
+   /* HLA lag compensation object. */
+   RefFrameLagComp lag_compensation;
+
+   /* HLA Ownership Handler object. */
+   RefFrameOwnershipHandler ownership_handler;
+
+   /* HLA RefFrame deleted object. */
+   RefFrameDeleted deleted_callback;
+
+   // _INIT phase needs to be less than 60, when TrickHLA is initialized.
+   SpaceFOMRefFrameSimObject( RefFrameData & frame_data_ref,
+                              unsigned short _INIT = P_HLA_INIT  )
+   : frame_packing( frame_data_ref ),
+     conditional( frame_packing ),
+     lag_compensation( frame_packing ),
+     ref_frame_data_ptr( &frame_data_ref )
+   {
+      //
+      // Default data jobs
+      //
+      
+      //
+      // Initialization jobs
+      //
+      P_INIT ("initialization") frame_packing.initialize();
+      P_INIT ("initialization") lag_compensation.initialize();
+
+   }
+
+  private:
+   RefFrameData * ref_frame_data_ptr;
+
+   // This object is not copyable
+   SpaceFOMRefFrameSimObject( SpaceFOMRefFrameSimObject const & );
+   SpaceFOMRefFrameSimObject & operator=( SpaceFOMRefFrameSimObject const & );
+
+};
 
 
 //==========================================================================
@@ -248,6 +250,9 @@ class SpaceFOMPhysicalEntitySimObject : public Trick::SimObject {
      conditional( entity_packing ),
      lag_compensation( entity_packing )
    {
+      //
+      // Default data jobs
+      //
 
       //
       // Initialization jobs
@@ -309,6 +314,9 @@ class SpaceFOMDynamicalEntitySimObject : public Trick::SimObject {
      conditional(entity_packing),
      lag_compensation( entity_packing )
    {
+      //
+      // Default data jobs
+      //
 
       //
       // Initialization jobs
@@ -359,6 +367,9 @@ class SpaceFOMPhysicalInterfaceSimObject : public Trick::SimObject {
    : interface_packing( interface_data ),
      conditional( interface_packing )
    {
+      //
+      // Default data jobs
+      //
 
       //
       // Initialization jobs
@@ -390,8 +401,7 @@ SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME, THLA_INTERACTION_CYCLE_TIME,
 THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
 
 // SimObject used for root reference frame discovery.
-SpaceFOMRefFrameTreeSimObject ref_frame_tree( THLA.manager,
-                                              THLA.execution_control );
+SpaceFOMRefFrameTreeSimObject ref_frame_tree;
 SpaceFOMRefFrameSimObject root_ref_frame( ref_frame_tree.root_frame_data );
 SpaceFOMRefFrameSimObject ref_frame_A( ref_frame_tree.vehicle_frame_data );
 
@@ -415,9 +425,48 @@ IntegLoop de_integloop (INTEG_STEP_TIME) de_dynamics;
 // Create the THLA connections for the SpaceFOM Reference Frame Tree.
 //==========================================================================
 void create_connections() {
+   //
+   // This code will only be executed when we want to configure the reference
+   // frame tree using default data instead of in the input file.
+   //
+   // Allocate the HLA objects for the Reference Frame tree.
+   THLA.manager.obj_count = 5;
+   THLA.manager.objects = (TrickHLA::Object*)trick_MM->declare_var( "TrickHLA::Object",
+                                                                    THLA.manager.obj_count );
+   // Assign the HLA objects to the associated frame.
+   root_ref_frame.frame_packing.base_config( "root_ref_frame",
+                                             "frame_packing",
+                                             NULL,
+                                             "RootFrame",
+                                             false,
+                                             &(THLA.manager.objects[0]) );
 
-   // Make the connections for the root and child frame in the reference frame tree.
-   ref_frame_tree.root_frame_ptr = &root_ref_frame.frame_packing;
-   ref_frame_tree.vehicle_frame_ptr = &ref_frame_A.frame_packing;
+   ref_frame_A.frame_packing.base_config( "ref_frame_A",
+                                          "frame_packing",
+                                          "RootFrame",
+                                          "FrameA",
+                                          false,
+                                          &(THLA.manager.objects[1]) );
+
+   physical_entity.entity_packing.base_config( "physical_entity",
+                                               "entity_packing",
+                                               "Enterprise",
+                                               ref_frame_tree.root_frame_data.name,
+                                               false,
+                                               &(THLA.manager.objects[2]));
+
+   dynamical_entity.entity_packing.base_config( "dynamical_entity",
+                                                "entity_packing",
+                                                "Voyager",
+                                                ref_frame_tree.vehicle_frame_data.name,
+                                                false,
+                                                &(THLA.manager.objects[3]));
+
+   physical_interface.interface_packing.base_config( "physical_interface",
+                                                     "interface_packing",
+                                                     "Enterprise.dockingport",
+                                                     "Enterprise",
+                                                     false,
+                                                     &(THLA.manager.objects[4]));
 
 }

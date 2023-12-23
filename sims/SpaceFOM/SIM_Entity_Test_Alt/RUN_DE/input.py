@@ -200,9 +200,9 @@ if (print_usage == True) :
 #---------------------------------------------
 #instruments.echo_jobs.echo_jobs_on()
 trick.exec_set_trap_sigfpe(True)
-trick.checkpoint_pre_init(1)
-trick.checkpoint_post_init(1)
-trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
+#trick.checkpoint_pre_init(1)
+#trick.checkpoint_post_init(1)
+#trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
 #trick.checkpoint_end(1)
 
 trick.exec_set_enable_freeze(False)
@@ -400,8 +400,6 @@ frame_A = SpaceFOMRefFrameObject( False,
                                   'FrameA',
                                   ref_frame_A.frame_packing,
                                   'ref_frame_A.frame_packing',
-                                  root_ref_frame.frame_packing,
-                                  'RootFrame',
                                   frame_conditional = ref_frame_A.conditional,
                                   frame_lag_comp    = ref_frame_A.lag_compensation,
                                   frame_ownership   = ref_frame_A.ownership_handler,

@@ -563,7 +563,7 @@ lander_dockport = SpaceFOMPhysicalInterfaceObject( True,
                                                    'active_physical_interface.interface_packing' )
 
 # Set the JEOD vehicle point ID associated with this interface.
-active_physical_interface.interface_packing.vehicle_point_id = active_physical_interface.interface_packing.set_vehicle_point_id('Active docking port')
+active_physical_interface.interface_packing.set_vehicle_point_id('Active docking port')
 
 # Set the debug flag for the active vehicle.
 active_physical_interface.interface_packing.debug = True
@@ -604,7 +604,7 @@ station_dockport = SpaceFOMPhysicalInterfaceObject( True,
                                                     'passive_physical_interface.interface_packing' )
 
 # Set the JEOD vehicle point ID associated with this interface.
-passive_physical_interface.interface_packing.vehicle_point_id = passive_physical_interface.interface_packing.set_vehicle_point_id('Passive docking port')
+passive_physical_interface.interface_packing.set_vehicle_point_id('Passive docking port')
 
 # Set the debug flag for the active vehicle.
 passive_physical_interface.interface_packing.debug = True

@@ -37,10 +37,10 @@ def print_usage_message( ):
    print('  -f --fed_name [name] : Name of the Federate, default is PhysicalEntity.')
    print('  -fe --fex_name [name]: Name of the Federation Execution, default is SpaceFOM_Roles_Test.')
    print('  -de [name]           : Name of the DynamicalEntity, default is Voyager.')
+   print('  --dyn_fed [name]     : Name of the DynamicalEntity federate, default is DynamicalEntity.')
    print('  --nostop             : Set no stop time on simulation.')
    print('  -pe [name]           : Name of the PhysicalEntity, default is Enterprise.')
    print('  -pi [name]           : Name of the PhysicalInterface, default is Enterprise.dockingport.')
-   print('  --phy_fed [name]     : Name of the PhysicalEntity federate, default is PhysicalEntity.')
    print('  -s --stop [time]     : Time to stop simulation, default is 10.0 seconds.')
    print('  --verbose [on|off]   : on: Show verbose messages (Default), off: disable messages.')
    print(' ')
@@ -60,10 +60,9 @@ def parse_command_line( ) :
    global federate_name
    global federation_name
    global dyn_entity_name
+   global dyn_federate_name
    global phy_entity_name
    global phy_interface_name
-   global phy_interface_name
-   global phy_federate_name
    
    # Get the Trick command line arguments.
    argc = trick.command_line_args_get_argc()
@@ -96,6 +95,14 @@ def parse_command_line( ) :
             print('ERROR: Missing -de [name] argument.')
             print_usage = True
       
+      elif ((str(argv[index]) == '--dyn_fed')) :
+         index = index + 1
+         if (index < argc) :
+            dyn_federate_name = str(argv[index])
+         else :
+            print('ERROR: Missing --dyn_fed [name] argument.')
+            print_usage = True
+      
       elif ((str(argv[index]) == '-f') | (str(argv[index]) == '--fed_name')) :
          index = index + 1
          if (index < argc) :
@@ -126,14 +133,6 @@ def parse_command_line( ) :
             phy_interface_name = str(argv[index])
          else :
             print('ERROR: Missing -pi [name] argument.')
-            print_usage = True
-      
-      elif ((str(argv[index]) == '--phy_fed')) :
-         index = index + 1
-         if (index < argc) :
-            phy_federate_name = str(argv[index])
-         else :
-            print('ERROR: Missing --phy_fed [name] argument.')
             print_usage = True
       
       elif (str(argv[index]) == '--verbose') :
@@ -171,7 +170,7 @@ run_duration = 10.0
 verbose = True
 
 # Set the default Federate name.
-federate_name = 'DynamicalEntity'
+federate_name = 'PhysicalEntity'
 
 # Set the default Federation Execution name.
 federation_name = 'SpaceFOM_Roles_Test'
@@ -179,14 +178,14 @@ federation_name = 'SpaceFOM_Roles_Test'
 # Set the default DynamicalEntity instance name.
 dyn_entity_name = 'Voyager'
 
+# Set the default DynamicalEntity federate name.
+dyn_federate_name = 'DynamicalEntity'
+
 # Set the default PhysicalEntity instance name.
 phy_entity_name = 'Enterprise'
 
 # Set the default PhysicalInterface instance name.
 phy_interface_name = phy_entity_name + '.dockingport'
-
-# Set the default PhysicalEntity federate name.
-phy_federate_name = 'PhysicalEntity'
 
 
 parse_command_line()
@@ -200,9 +199,9 @@ if (print_usage == True) :
 #---------------------------------------------
 #instruments.echo_jobs.echo_jobs_on()
 trick.exec_set_trap_sigfpe(True)
-trick.checkpoint_pre_init(1)
-trick.checkpoint_post_init(1)
-trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
+#trick.checkpoint_pre_init(1)
+#trick.checkpoint_post_init(1)
+#trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
 #trick.checkpoint_end(1)
 
 trick.exec_set_enable_freeze(False)
@@ -227,12 +226,12 @@ pe_dynamics.entity.pe_data.status       = 'Mothballed'
 pe_dynamics.entity.pe_data.parent_frame = 'RootFrame'
 
 # Initial translational state.
-pe_dynamics.entity.pe_data.state.pos = [ 0.0, 0.0, 0.0 ]
-pe_dynamics.entity.pe_data.state.vel = [ 0.0, 0.0, 0.0 ]
+pe_dynamics.entity.pe_data.state.pos = [ 0.0, 1.0, 2.0 ]
+pe_dynamics.entity.pe_data.state.vel = [ 0.0, 0.1, 0.2 ]
 
 # Initial rotational state.
 pe_dynamics.entity.pe_data.state.att.set_from_Euler_deg( trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0] )
-pe_dynamics.entity.pe_data.state.ang_vel = [ 0.0, 0.0, 0.0 ]
+pe_dynamics.entity.pe_data.state.ang_vel = [ 0.1, 0.0, 0.0 ]
 
 #
 # Basic mass properties.
@@ -254,7 +253,7 @@ pe_dynamics.entity.de_data.inertia_rate[1] = [ 0.0, 0.0, 0.0 ]
 pe_dynamics.entity.de_data.inertia_rate[2] = [ 0.0, 0.0, 0.0 ]
 
 # Base propagation parameters.
-pe_dynamics.entity.de_data.force  = [ 0.0, 0.0, 0.0 ]
+pe_dynamics.entity.de_data.force  = [ 0.1, 0.1, 0.1 ]
 pe_dynamics.entity.de_data.torque = [ 0.0, 0.0, 0.0 ]
 
 
@@ -294,8 +293,8 @@ de_dynamics.entity.de_data.inertia_rate[1] = [ 0.0, 0.0, 0.0 ]
 de_dynamics.entity.de_data.inertia_rate[2] = [ 0.0, 0.0, 0.0 ]
 
 # Base propagation parameters.
-de_dynamics.entity.de_data.force  = [ 0.1, 0.1, 0.1 ]
-de_dynamics.entity.de_data.torque = [ 0.01, 0.01, 0.01 ]
+de_dynamics.entity.de_data.force  = [ 0.0, 0.0, 0.0 ]
+de_dynamics.entity.de_data.torque = [ 0.0, 0.0, 0.0 ]
 
 
 # =========================================================================
@@ -338,7 +337,7 @@ federate.set_RRFP_role( False )   # This is NOT the Root Reference Frame Publish
 # It doesn't really need to know about any other federates.
 federate.add_known_fededrate( True, str(federate.federate.name) )
 federate.add_known_fededrate( True, 'MPR' )
-federate.add_known_fededrate( True, phy_federate_name )
+federate.add_known_fededrate( True, dyn_federate_name )
 
 #--------------------------------------------------------------------------
 # Configure the CRC.
@@ -368,6 +367,7 @@ federate.set_time_constrained( True )
 # for controlling the Mode Transitions for all federates using CTE.
 # Don't really need CTE for RRFP.
 #THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::CTETimelineBase' )
+
 
 
 #---------------------------------------------------------------------------
@@ -400,8 +400,6 @@ frame_A = SpaceFOMRefFrameObject( False,
                                   'FrameA',
                                   ref_frame_A.frame_packing,
                                   'ref_frame_A.frame_packing',
-                                  root_ref_frame.frame_packing,
-                                  'RootFrame',
                                   frame_conditional = ref_frame_A.conditional,
                                   frame_lag_comp    = ref_frame_A.lag_compensation,
                                   frame_ownership   = ref_frame_A.ownership_handler,
@@ -414,6 +412,7 @@ ref_frame_A.frame_packing.debug = verbose
 federate.add_fed_object( frame_A )
 
 # Set the lag compensation paratmeters.
+# The reality is that the ROOT REFERENCE FRAME never needs to be compensated!
 ref_frame_A.lag_compensation.debug = False
 ref_frame_A.lag_compensation.set_integ_tolerance( 1.0e-6 )
 ref_frame_A.lag_compensation.set_integ_dt( 0.025 )
@@ -422,7 +421,7 @@ ref_frame_A.lag_compensation.set_integ_dt( 0.025 )
 #---------------------------------------------------------------------------
 # Set up the PhysicalEntity object for discovery.
 #---------------------------------------------------------------------------
-phy_entity = SpaceFOMPhysicalEntityObject( False,
+phy_entity = SpaceFOMPhysicalEntityObject( True,
                                            phy_entity_name,
                                            physical_entity.entity_packing,
                                            'physical_entity.entity_packing',
@@ -446,7 +445,7 @@ physical_entity.lag_compensation.set_integ_dt( 0.025 )
 #---------------------------------------------------------------------------
 # Set up the PhysicalInterface object for discovery.
 #---------------------------------------------------------------------------
-phy_interface = SpaceFOMPhysicalInterfaceObject( False,
+phy_interface = SpaceFOMPhysicalInterfaceObject( True,
                                                  phy_interface_name,
                                                  physical_interface.interface_packing,
                                                  'physical_interface.interface_packing',
@@ -460,11 +459,18 @@ physical_interface.interface_packing.debug = verbose
 # Add this Entity to the list of managed object.
 federate.add_fed_object( phy_interface )
 
+# Let's give the PhysicalEntity some non-zero values.
+physical_interface.interface_data.name        = phy_interface_name
+physical_interface.interface_data.parent_name = phy_entity_name
+
+physical_interface.interface_data.position = [ 0.0, 1.1, 2.2 ]
+physical_interface.interface_data.attitude.set_from_Euler_deg( trick.Pitch_Yaw_Roll, [0.0, 0.0, 0.0] )
+
 
 #---------------------------------------------------------------------------
 # Set up the DynamicalEntity object for discovery.
 #---------------------------------------------------------------------------
-dyn_entity = SpaceFOMDynamicalEntityObject( True,
+dyn_entity = SpaceFOMDynamicalEntityObject( False,
                                             dyn_entity_name,
                                             dynamical_entity.entity_packing,
                                             'dynamical_entity.entity_packing',

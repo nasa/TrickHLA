@@ -26,11 +26,18 @@
 // simulation object definition. This can be used for SpaceFOM ReferenceFrame
 // object discovery and data exchange.
 //==========================================================================
+// Include SpaceFOM base reference frame sim object.
+#include "SpaceFOMRefFrameBase.sm"
+
+// JEOD includes.
 ##include "environment/time/include/time_tt.hh"
 ##include "utils/ref_frames/include/ref_frame.hh"
 ##include "JEOD/JEODRefFrameState.hh"
 
-class JEODRefFrameSimObject : public Trick::SimObject {
+// SpaceFOM include files.
+##include "SpaceFOM/RefFrameLagComp.hh"
+
+class JEODRefFrameSimObject : public SpaceFOMRefFrameBaseSimObject {
 
   public:
 
@@ -40,20 +47,26 @@ class JEODRefFrameSimObject : public Trick::SimObject {
    /* JEOD Reference Frame state in SpaceFOM parent frame. */
    jeod::RefFrameState ref_frame_state;
 
+   /* HLA lag compensation object. */
+   SpaceFOM::RefFrameLagComp lag_compensation;
+
    // SimObjct constructor.
    // _INIT phase needs to be less than 60, when TrickHLA is initialized.
    JEODRefFrameSimObject( jeod::TimeTT & time_in,
-                          unsigned short _INIT    = 60,
+                          unsigned short _INIT    = P_HLA_INIT,
                           unsigned short _UPDATE  = 99 )
-   : frame_packing( time_in, ref_frame_state ),
+   : SpaceFOMRefFrameBaseSimObject( frame_packing, lag_compensation, _INIT ),
+     frame_packing( time_in, ref_frame_state ),
+     lag_compensation(frame_packing),
      time_tt(time_in)
    {    
       //
+      // Default data jobs
+      //
+      
+      //
       // Initialization jobs
       //
-      // Initialize the reference frame packing object.  This needs to run
-      // before the HLA initialization jobs run.
-      P_INIT ("initialization") frame_packing.initialize();
       
       // This needs to run after the JEOD dynamics manager initializes the
       // simulation and before the federate sends the initialization data.

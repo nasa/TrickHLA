@@ -152,70 +152,77 @@ class JEODRefFrameTreeSimObject : public RefFrameTreeBaseSimObject {
       }
 
       // Setup the Solar System barycenter frame as the root reference frame.
-      ssbary_frame_ptr->default_data( "solar_system_barycenter",
-                                      "frame_packing",
-                                      NULL,
-                                      "SolarSystemBarycentricInertial",
-                                      false );
+      ssbary_frame_ptr->base_config( false,
+                                     "solar_system_barycenter",
+                                     "frame_packing",
+                                     "SolarSystemBarycentricInertial" );
 
       // Set the Solar System barycenter frame as the root reference frame.
       exec_cntrl.root_ref_frame = ssbary_frame_ptr;
 
       // Setup the Sun inertial reference frame.
-      sun_frame_ptr->default_data( "sun_inertial",
-                                   "frame_packing",
-                                   "SolarSystemBarycentricInertial",
-                                   "SunCentricInertial",
-                                   false );
+      sun_frame_ptr->base_config( false,
+                                  "sun_inertial",
+                                  "frame_packing",
+                                  "SunCentricInertial",
+                                  "SolarSystemBarycentricInertial",
+                                  ssbary_frame_ptr );
 
       // Setup the Earth-Moon barycentric inertial reference frame.
-      embary_frame_ptr->default_data( "earth_moon_barycenter",
-                                      "frame_packing",
-                                      "SolarSystemBarycentricInertial",
-                                      "EarthMoonBarycentricInertial",
-                                      false );
-
-      // Setup the Earth inertial reference frame.
-      earth_frame_ptr->default_data( "earth_centered_inertial",
+      embary_frame_ptr->base_config( false,
+                                     "earth_moon_barycenter",
                                      "frame_packing",
                                      "EarthMoonBarycentricInertial",
-                                     "EarthMJ2000Eq",
-                                     false );
+                                     "SolarSystemBarycentricInertial",
+                                     ssbary_frame_ptr );
+
+      // Setup the Earth inertial reference frame.
+      earth_frame_ptr->base_config( false,
+                                    "earth_centered_inertial",
+                                    "frame_packing",
+                                    "EarthMJ2000Eq",
+                                    "EarthMoonBarycentricInertial",
+                                    embary_frame_ptr );
 
       // Setup the Moon inertial reference frame.
-      moon_frame_ptr->default_data( "moon_centered_inertial",
-                                    "frame_packing",
-                                    "EarthMoonBarycentricInertial",
-                                    "MoonCentricInertial",
-                                    false );
+      moon_frame_ptr->base_config( false,
+                                   "moon_centered_inertial",
+                                   "frame_packing",
+                                   "MoonCentricInertial",
+                                   "EarthMoonBarycentricInertial",
+                                   embary_frame_ptr );
 
       // Setup the Mars inertial reference frame.
-      mars_frame_ptr->default_data( "mars_centered_inertial",
-                                    "frame_packing",
-                                    "SolarSystemBarycentricInertial",
-                                    "MarsCentricInertial",
-                                    false );
+      mars_frame_ptr->base_config( false,
+                                   "mars_centered_inertial",
+                                   "frame_packing",
+                                   "MarsCentricInertial",
+                                   "SolarSystemBarycentricInertial",
+                                   ssbary_frame_ptr );
 
       // Setup the Earth fixed reference frame.
-      earth_pfix_frame_ptr->default_data( "earth_centered_fixed",
-                                          "frame_packing",
-                                          "EarthMJ2000Eq",
-                                          "EarthCentricFixed",
-                                          false );
+      earth_pfix_frame_ptr->base_config( false,
+                                         "earth_centered_fixed",
+                                         "frame_packing",
+                                         "EarthCentricFixed",
+                                         "EarthMJ2000Eq",
+                                         earth_frame_ptr );
 
       // Setup the Moon fixed reference frame.
-      moon_pfix_frame_ptr->default_data( "moon_centered_fixed",
-                                         "frame_packing",
-                                         "MoonCentricInertial",
-                                         "MoonCentricFixed",
-                                         false );
+      moon_pfix_frame_ptr->base_config( false,
+                                        "moon_centered_fixed",
+                                        "frame_packing",
+                                        "MoonCentricFixed",
+                                        "MoonCentricInertial",
+                                        moon_frame_ptr );
 
       // Setup the Mars fixed reference frame.
-      mars_pfix_frame_ptr->default_data( "mars_centered_fixed",
-                                         "frame_packing",
-                                         "MarsCentricInertial",
-                                         "MarsCentricFixed",
-                                         false );
+      mars_pfix_frame_ptr->base_config( false,
+                                        "mars_centered_fixed",
+                                        "frame_packing",
+                                        "MarsCentricFixed",
+                                        "MarsCentricInertial",
+                                        mars_frame_ptr );
    }
 
     // Need for scheduled job persitence.

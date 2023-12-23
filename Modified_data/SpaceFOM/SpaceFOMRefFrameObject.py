@@ -26,13 +26,14 @@ class SpaceFOMRefFrameObject(TrickHLAObjectConfig):
                  frame_instance_name,
                  frame_S_define_instance,
                  frame_S_define_instance_name,
+                 parent_S_define_instance  = None,
+                 parent_name               = None,
                  frame_conditional         = None,
                  frame_lag_comp            = None,
                  frame_ownership           = None,
                  frame_deleted             = None,
                  frame_thla_manager_object = None,
                  frame_thread_IDs          = None ):
-
 
       # The Reference Frame FOM name is fixed for the SpaceFOM.
       frame_FOM_name = 'ReferenceFrame'
@@ -65,6 +66,16 @@ class SpaceFOMRefFrameObject(TrickHLAObjectConfig):
 
       # Set the frame instance name.
       frame_S_define_instance.set_name( frame_instance_name )
+
+      # Set the frame parent instance name.
+      if ( parent_name ) :
+         frame_S_define_instance.set_parent_name( parent_name )
+      else:
+         frame_S_define_instance.set_parent_name( '' )
+
+      # Set the frame parent instance name.
+      if ( parent_S_define_instance != None ) :
+         frame_S_define_instance.set_parent_frame( parent_S_define_instance )
       
       # Build the object attribute list.
       self.add_attributes()
