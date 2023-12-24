@@ -36,6 +36,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/message_proto.h"
 
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
@@ -93,6 +94,7 @@ void RefFrameLagCompInteg::initialize()
  *  TrickHLALagCompensation class. */
 void RefFrameLagCompInteg::send_lag_compensation()
 {
+   ostringstream errmsg;
    double begin_t = get_scenario_time();
    double end_t;
 
@@ -103,10 +105,11 @@ void RefFrameLagCompInteg::send_lag_compensation()
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
-      cout << "****** RefFrameLagCompInteg::send_lag_compensation():" << __LINE__ << endl
-           << " scenario-time:" << get_scenario_time() << endl
-           << "     lookahead:" << this->compensate_dt << endl
-           << " adjusted-time:" << end_t << endl;
+      errmsg << "****** RefFrameLagCompInteg::send_lag_compensation():" << __LINE__ << endl
+             << " scenario-time:" << get_scenario_time() << endl
+             << "     lookahead:" << this->compensate_dt << endl
+             << " adjusted-time:" << end_t << endl;
+      send_hs( stderr, errmsg.str().c_str() );
    }
 
    // Copy the current RefFrame state over to the lag compensated state.
@@ -141,6 +144,7 @@ void RefFrameLagCompInteg::send_lag_compensation()
  *  TrickHLALagCompensation class. */
 void RefFrameLagCompInteg::receive_lag_compensation()
 {
+   ostringstream errmsg;
    double end_t  = get_scenario_time();
    double data_t = ref_frame.get_time();
 
@@ -150,10 +154,11 @@ void RefFrameLagCompInteg::receive_lag_compensation()
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
-      cout << "******* RefFrameLagCompInteg::receive_lag_compensation():" << __LINE__ << endl
-           << "  scenario-time:" << end_t << endl
-           << "      data-time:" << data_t << endl
-           << " comp-time-step:" << this->compensate_dt << endl;
+      errmsg << "******* RefFrameLagCompInteg::receive_lag_compensation():" << __LINE__ << endl
+             << "  scenario-time:" << end_t << endl
+             << "      data-time:" << data_t << endl
+             << " comp-time-step:" << this->compensate_dt << endl;
+      send_hs( stderr, errmsg.str().c_str() );
    }
 
    // Because of ownership transfers and attributes being sent at different

@@ -148,6 +148,7 @@ void DynamicalEntityLagCompBase::initialize_states()
  *  TrickHLALagCompensation class. */
 void DynamicalEntityLagCompBase::send_lag_compensation()
 {
+   ostringstream errmsg;
    double begin_t = get_scenario_time();
    double end_t;
 
@@ -158,10 +159,11 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
-      cout << "******* DynamicalEntityLagCompInteg::send_lag_compensation():" << __LINE__ << endl
-           << " scenario-time:" << get_scenario_time() << endl
-           << "     lookahead:" << this->compensate_dt << endl
-           << " adjusted-time:" << end_t << endl;
+      errmsg << "******* DynamicalEntityLagCompInteg::send_lag_compensation():" << __LINE__ << endl
+             << " scenario-time:" << get_scenario_time() << endl
+             << "     lookahead:" << this->compensate_dt << endl
+             << " adjusted-time:" << end_t << endl;
+      send_hs( stderr, errmsg.str().c_str() );
    }
 
    // Copy the current DynamicalEntity state over to the lag compensated state.
@@ -206,10 +208,11 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
-      cout << "******* DynamicalEntityLagCompInteg::receive_lag_compensation():" << __LINE__ << endl
-           << "  scenario-time:" << end_t << endl
-           << "      data-time:" << data_t << endl
-           << " comp-time-step:" << this->compensate_dt << endl;
+      errmsg << "******* DynamicalEntityLagCompInteg::receive_lag_compensation():" << __LINE__ << endl
+             << "  scenario-time:" << end_t << endl
+             << "      data-time:" << data_t << endl
+             << " comp-time-step:" << this->compensate_dt << endl;
+      send_hs( stderr, errmsg.str().c_str() );
    }
 
    // Because of ownership transfers and attributes being sent at different
@@ -238,9 +241,10 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
 
    } else {
       if ( debug ) {
-         cout << "DynamicalEntityLagCompInteg::receive_lag_compensation(): No state data received." << endl;
-         cout << "\tvalue_changed: " << this->state_attr->is_changed()
-              << "; locally owned: " << this->state_attr->locally_owned << endl;
+         errmsg << "DynamicalEntityLagCompInteg::receive_lag_compensation(): No state data received." << endl
+                << "\tvalue_changed: " << this->state_attr->is_changed()
+                << "; locally owned: " << this->state_attr->locally_owned << endl;
+         send_hs( stderr, errmsg.str().c_str() );
       }
    }
    if ( this->inertia_attr->is_received() ) {
@@ -375,42 +379,45 @@ void DynamicalEntityLagCompBase::load_lag_comp_data()
 /*!
  * @job_class{scheduled}
  */
-void DynamicalEntityLagCompBase::print_lag_comp_data()
+void DynamicalEntityLagCompBase::print_lag_comp_data( std::ostream &stream )
 {
 
-   PhysicalEntityLagCompBase::print_lag_comp_data();
+   PhysicalEntityLagCompBase::print_lag_comp_data( stream );
+
+   // Set the print precision.
+   stream.precision( 15 );
 
    // Print out the DynamicalEntity data.
-   cout << "\tmass: " << this->mass << endl;
-   cout << "\tmass_rate: " << this->mass_rate << endl;
-   cout << "\tinertia: " << endl
-        << "\t\t" << this->inertia[0][0] << ", "
-        << this->inertia[0][1] << ", "
-        << this->inertia[0][2] << endl
-        << "\t\t" << this->inertia[1][0] << ", "
-        << this->inertia[1][1] << ", "
-        << this->inertia[1][2] << endl
-        << "\t\t" << this->inertia[2][0] << ", "
-        << this->inertia[2][1] << ", "
-        << this->inertia[2][2] << endl;
-   cout << "\tinertia rate: " << endl
-        << "\t\t" << this->inertia_rate[0][0] << ", "
-        << this->inertia_rate[0][1] << ", "
-        << this->inertia_rate[0][2] << endl
-        << "\t\t" << this->inertia_rate[1][0] << ", "
-        << this->inertia_rate[1][1] << ", "
-        << this->inertia_rate[1][2] << endl
-        << "\t\t" << this->inertia_rate[2][0] << ", "
-        << this->inertia_rate[2][1] << ", "
-        << this->inertia_rate[2][2] << endl;
-   cout << "\tforce: "
-        << this->force[0] << ", "
-        << this->force[1] << ", "
-        << this->force[2] << endl;
-   cout << "\ttorque: "
-        << this->torque[0] << ", "
-        << this->torque[1] << ", "
-        << this->torque[2] << endl;
+   stream << "\tmass: " << this->mass << endl;
+   stream << "\tmass_rate: " << this->mass_rate << endl;
+   stream << "\tinertia: " << endl
+          << "\t\t" << this->inertia[0][0] << ", "
+          << this->inertia[0][1] << ", "
+          << this->inertia[0][2] << endl
+          << "\t\t" << this->inertia[1][0] << ", "
+          << this->inertia[1][1] << ", "
+          << this->inertia[1][2] << endl
+          << "\t\t" << this->inertia[2][0] << ", "
+          << this->inertia[2][1] << ", "
+          << this->inertia[2][2] << endl;
+   stream << "\tinertia rate: " << endl
+          << "\t\t" << this->inertia_rate[0][0] << ", "
+          << this->inertia_rate[0][1] << ", "
+          << this->inertia_rate[0][2] << endl
+          << "\t\t" << this->inertia_rate[1][0] << ", "
+          << this->inertia_rate[1][1] << ", "
+          << this->inertia_rate[1][2] << endl
+          << "\t\t" << this->inertia_rate[2][0] << ", "
+          << this->inertia_rate[2][1] << ", "
+          << this->inertia_rate[2][2] << endl;
+   stream << "\tforce: "
+          << this->force[0] << ", "
+          << this->force[1] << ", "
+          << this->force[2] << endl;
+   stream << "\ttorque: "
+          << this->torque[0] << ", "
+          << this->torque[1] << ", "
+          << this->torque[2] << endl;
 
    // Return to the calling routine.
    return;

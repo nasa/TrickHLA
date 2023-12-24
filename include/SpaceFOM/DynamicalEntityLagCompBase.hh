@@ -38,6 +38,7 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_DYNAMICAL_ENTITY_LAG_COMP_BASE_HH
 
 // System include files.
+#include <iostream>
 
 // Trick includes.
 
@@ -138,8 +139,9 @@ class DynamicalEntityLagCompBase : public PhysicalEntityLagCompBase
    /*! @brief Load the packing data into the lag compensation state. */
    virtual void load_lag_comp_data();
 
-   /*! @brief Print out the lag compensation data values. */
-   virtual void print_lag_comp_data();
+   /*! @brief Print out the lag compensation data values.
+    *  @param stream Output stream. */
+   virtual void print_lag_comp_data( std::ostream &stream = std::cout );
 
   private:
    // This object is not copyable

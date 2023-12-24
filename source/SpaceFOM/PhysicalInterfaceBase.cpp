@@ -306,11 +306,13 @@ void PhysicalInterfaceBase::set_parent( char const *new_parent_name )
 
 void PhysicalInterfaceBase::pack()
 {
+   ostringstream errmsg;
 
    // Check for initialization.
    if ( !initialized ) {
-      cout << "PhysicalInterfaceBase::pack() ERROR: The initialize() function has not"
-           << " been called!" << endl;
+      errmsg << "PhysicalInterfaceBase::pack() ERROR: The initialize() function has not"
+             << " been called!" << endl;
+      send_hs( stderr, errmsg.str().c_str() );
    }
 
    // Check for latency/lag compensation.
@@ -320,21 +322,8 @@ void PhysicalInterfaceBase::pack()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout.precision( 15 );
-      cout << "PhysicalInterfaceBase::pack():" << __LINE__ << endl
-           << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'" << endl
-           << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'" << endl
-           << "\tposition: "
-           << "\t\t" << packing_data.position[0] << ", "
-           << "\t\t" << packing_data.position[1] << ", "
-           << "\t\t" << packing_data.position[2] << endl
-           << "\tattitude (quaternion:s,v): "
-           << "\t\t" << packing_data.attitude.scalar << "; "
-           << "\t\t" << packing_data.attitude.vector[0] << ", "
-           << "\t\t" << packing_data.attitude.vector[1] << ", "
-           << "\t\t" << packing_data.attitude.vector[2] << endl
-           << endl;
+      cout << "PhysicalInterfaceBase::pack():" << __LINE__ << endl;
+      this->print_data();
    }
 
    // Encode the data into the buffer.
@@ -361,21 +350,8 @@ void PhysicalInterfaceBase::unpack()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout.precision( 15 );
-      cout << "PhysicalInterfaceBase::unpack():" << __LINE__ << endl
-           << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'" << endl
-           << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'" << endl
-           << "\tposition: "
-           << "\t\t" << packing_data.position[0] << ", "
-           << "\t\t" << packing_data.position[1] << ", "
-           << "\t\t" << packing_data.position[2] << endl
-           << "\tattitude (quaternion:s,v): "
-           << "\t\t" << packing_data.attitude.scalar << "; "
-           << "\t\t" << packing_data.attitude.vector[0] << ", "
-           << "\t\t" << packing_data.attitude.vector[1] << ", "
-           << "\t\t" << packing_data.attitude.vector[2] << endl
-           << endl;
+      cout << "PhysicalInterfaceBase::unpack():" << __LINE__ << endl;
+      this->print_data();
    }
 
    return;
@@ -398,6 +374,41 @@ void PhysicalInterfaceBase::set_object( TrickHLA::Object *mngr_obj )
 
    // Assign the object.
    this->object = mngr_obj;
+
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void PhysicalInterfaceBase::print_data( std::ostream &stream )
+{
+   double euler_angles[3];
+
+   // Compute the attitude Euler angles.
+   packing_data.attitude.get_Euler_deg( Roll_Pitch_Yaw, euler_angles );
+
+   // Set the print precision.
+   stream.precision( 15 );
+
+   stream << "\tObject-Name: '" << object->get_name() << "'" << endl
+          << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'" << endl
+          << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'" << endl;
+   stream << "\tposition: "
+          << "\t\t" << packing_data.position[0] << ", "
+          << "\t\t" << packing_data.position[1] << ", "
+          << "\t\t" << packing_data.position[2] << endl;
+   stream << "\tattitude (s,v): "
+          << "\t\t" << packing_data.attitude.scalar << "; "
+          << "\t\t" << packing_data.attitude.vector[0] << ", "
+          << "\t\t" << packing_data.attitude.vector[1] << ", "
+          << "\t\t" << packing_data.attitude.vector[2] << endl;
+   stream << "\tattitude (RPY){deg}: "
+          << "\t\t" << euler_angles[0] << ", "
+          << "\t\t" << euler_angles[1] << ", "
+          << "\t\t" << euler_angles[2] << endl;
+   stream << endl;
 
    return;
 }

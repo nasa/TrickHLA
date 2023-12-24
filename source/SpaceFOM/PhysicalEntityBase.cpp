@@ -553,12 +553,13 @@ void PhysicalEntityBase::set_object( TrickHLA::Object *mngr_obj )
 /*!
  * @job_class{scheduled}
  */
-void PhysicalEntityBase::debug_print(
-   std::ostream &stream )
+void PhysicalEntityBase::debug_print( std::ostream &stream )
 {
-   stream.precision( 15 );
    double euler_angles[3];
    pe_packing_data.state.att.get_Euler_deg( Roll_Pitch_Yaw, euler_angles );
+
+   // Set the print precision.
+   stream.precision( 15 );
 
    stream << "\tObject-Name: '" << object->get_name() << "'" << endl
           << "\tname:   '" << ( pe_packing_data.name != NULL ? pe_packing_data.name : "" ) << "'" << endl

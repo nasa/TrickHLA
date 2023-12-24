@@ -282,6 +282,7 @@ void JEODPhysicalInterface::initialize()
 
 void JEODPhysicalInterface::pack_from_working_data()
 {
+   ostringstream errmsg;
    int iinc;
 
    // Check for NULL vehicle point.
@@ -298,8 +299,9 @@ void JEODPhysicalInterface::pack_from_working_data()
 
    // Check for initialization.
    if ( !initialized ) {
-      cout << "JEODPhysicalInterface::pack() ERROR: The initialize() function has not"
-           << " been called!" << endl;
+      errmsg << "JEODPhysicalInterface::pack() ERROR: The initialize() function has not"
+             << " been called!" << endl;
+      send_hs( stderr, errmsg.str().c_str() );
    }
 
    // NOTE: Because TrickHLA handles the bundling of locally owned attributes

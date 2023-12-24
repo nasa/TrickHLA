@@ -29,6 +29,7 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <cmath>
 #include <iostream>
+#include <sstream>
 
 // Trick include files.
 #include "trick/message_proto.h" // for send_hs
@@ -68,6 +69,7 @@ int LagCompensationInteg::integrate(
    const double t_begin,
    const double t_end )
 {
+   ostringstream errmsg;
    int    ipass;
    double compensate_dt = t_end - t_begin;
    double dt_go         = compensate_dt;
@@ -75,9 +77,10 @@ int LagCompensationInteg::integrate(
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
-      cout << "**** LagCompensationInteg::integrate(): "
-           << "Compensate: t_begin, t_end, dt_go: "
-           << t_begin << ", " << t_end << ", " << dt_go << endl;
+      errmsg << "**** LagCompensationInteg::integrate(): "
+             << "Compensate: t_begin, t_end, dt_go: "
+             << t_begin << ", " << t_end << ", " << dt_go << endl;
+      send_hs( stderr, errmsg.str().c_str() );
    }
 
    // Propagate the current RefFrame state to the desired time.
@@ -91,10 +94,11 @@ int LagCompensationInteg::integrate(
       // Use the inherited debug-handler to allow debug comments to be turned
       // on and off from a setting in the input file.
       if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
-         cout << "****** LagCompensationInteg::integrate(): "
-              << "Integ dt, tol, t, dt_go: "
-              << this->integ_dt << ", " << this->integ_tol << ", "
-              << integ_t << ", " << dt_go << endl;
+         errmsg << "****** LagCompensationInteg::integrate(): "
+                << "Integ dt, tol, t, dt_go: "
+                << this->integ_dt << ", " << this->integ_tol << ", "
+                << integ_t << ", " << dt_go << endl;
+         send_hs( stderr, errmsg.str().c_str() );
       }
 
       // Integration inner loop.

@@ -40,6 +40,7 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_PHYSICAL_ENTITY_BASE_HH
 
 // System include files.
+#include <iostream>
 
 // TrickHLA include files.
 #include "TrickHLA/OpaqueBuffer.hh"
@@ -214,8 +215,9 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    SpaceTimeCoordinateEncoder stc_encoder;  ///< @trick_units{--} Entity state encoder.
    QuaternionEncoder          quat_encoder; ///< @trick_units{--} Attitude quaternion encoder.
 
-   /*! @brief Print out the packing data debug information. */
-   virtual void debug_print( std::ostream &stream );
+   /*! @brief Print out the packing data debug information.
+    *  @param stream Output stream. */
+   virtual void debug_print( std::ostream &stream = std::cout );
 
   private:
    // This object is not copyable

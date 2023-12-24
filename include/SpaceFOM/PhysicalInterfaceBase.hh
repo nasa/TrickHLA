@@ -175,6 +175,10 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
    // Instantiate the attitude quaternion encoder.
    QuaternionEncoder quat_encoder; ///< @trick_units{--} Interface attitude quaternion encoder.
 
+   /*! @brief Print out the interface data values.
+    *  @param stream Output stream. */
+   virtual void print_data( std::ostream &stream = std::cout );
+
   private:
    // This object is not copyable
    /*! @brief Copy constructor for PhysicalInterfaceBase class.

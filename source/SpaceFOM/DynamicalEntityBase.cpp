@@ -40,6 +40,7 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.hh"
+#include "trick/message_proto.h"
 #include "trick/matrix_macros.h"
 #include "trick/vector_macros.h"
 
@@ -333,11 +334,13 @@ void DynamicalEntityBase::initialize_callback(
  */
 void DynamicalEntityBase::pack()
 {
+   ostringstream errmsg;
 
    // Check for initialization.
    if ( !initialized ) {
-      cout << "DynamicalEntityBase::pack() ERROR: The initialize() function has not"
-           << " been called!" << endl;
+      errmsg << "DynamicalEntityBase::pack() ERROR: The initialize() function has not"
+             << " been called!" << endl;
+      send_hs( stderr, errmsg.str().c_str() );
    }
 
    // Print out debug information if desired.
@@ -356,10 +359,12 @@ void DynamicalEntityBase::pack()
  */
 void DynamicalEntityBase::unpack()
 {
+   ostringstream errmsg;
 
    if ( !initialized ) {
-      cout << "DynamicalEntityBase::unpack():" << __LINE__
-           << " ERROR: The initialize() function has not been called!" << endl;
+      errmsg << "DynamicalEntityBase::unpack():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      send_hs( stderr, errmsg.str().c_str() );
    }
 
    // Print out debug information if desired.

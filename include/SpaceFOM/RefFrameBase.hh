@@ -43,6 +43,7 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <string>
+#include <iostream>
 
 // TrickHLA include files.
 #include "TrickHLA/Packing.hh"
@@ -230,6 +231,10 @@ class RefFrameBase : public TrickHLA::Packing
 
    // Instantiate the Space/Time Coordinate encoder
    SpaceTimeCoordinateEncoder stc_encoder; ///< @trick_units{--} Encoder.
+
+   /*! @brief Print out the reference frame data values.
+    *  @param stream Output stream. */
+   virtual void print_data( std::ostream &stream = std::cout );
 
   private:
    // This object is not copyable

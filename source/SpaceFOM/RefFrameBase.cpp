@@ -580,11 +580,13 @@ void RefFrameBase::subscribe()
  */
 void RefFrameBase::pack()
 {
+   ostringstream errmsg;
 
    // Check for initialization.
    if ( !initialized ) {
-      cout << "RefFrameBase::pack() ERROR: The initialize() function has not"
-           << " been called!" << endl;
+      errmsg << "RefFrameBase::pack() ERROR: The initialize() function has not"
+             << " been called!" << endl;
+      send_hs( stderr, errmsg.str().c_str() );
    }
 
    // Check for latency/lag compensation.
@@ -594,22 +596,8 @@ void RefFrameBase::pack()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout.precision( 15 );
-      cout << "RefFrameBase::pack():" << __LINE__ << endl
-           << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'" << endl
-           << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'" << endl
-           << "\ttime: " << packing_data.state.time << endl
-           << "\tposition: "
-           << "\t\t" << packing_data.state.pos[0] << ", "
-           << "\t\t" << packing_data.state.pos[1] << ", "
-           << "\t\t" << packing_data.state.pos[2] << endl
-           << "\tattitude (quaternion:s,v): "
-           << "\t\t" << packing_data.state.att.scalar << "; "
-           << "\t\t" << packing_data.state.att.vector[0] << ", "
-           << "\t\t" << packing_data.state.att.vector[1] << ", "
-           << "\t\t" << packing_data.state.att.vector[2] << endl
-           << endl;
+      cout << "RefFrameBase::pack():" << __LINE__ << endl;
+      this->print_data();
    }
 
    // Encode the data into the buffer.
@@ -623,11 +611,12 @@ void RefFrameBase::pack()
  */
 void RefFrameBase::unpack()
 {
-   // double dt; // Local vs. remote time difference.
+   ostringstream errmsg;
 
    if ( !initialized ) {
-      cout << "RefFrameBase::unpack():" << __LINE__
-           << " ERROR: The initialize() function has not been called!" << endl;
+      errmsg << "RefFrameBase::unpack():" << __LINE__
+             << " ERROR: The initialize() function has not been called!" << endl;
+      send_hs( stderr, errmsg.str().c_str() );
    }
 
    // Use the HLA encoder helpers to decode the PhysicalEntity fixed record.
@@ -638,22 +627,8 @@ void RefFrameBase::unpack()
 
    // Print out debug information if desired.
    if ( debug ) {
-      cout.precision( 15 );
-      cout << "RefFrameBase::unpack():" << __LINE__ << endl
-           << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'" << endl
-           << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'" << endl
-           << "\ttime: " << packing_data.state.time << endl
-           << "\tposition: "
-           << "\t\t" << packing_data.state.pos[0] << ", "
-           << "\t\t" << packing_data.state.pos[1] << ", "
-           << "\t\t" << packing_data.state.pos[2] << endl
-           << "\tattitude (quaternion:s,v): "
-           << "\t\t" << packing_data.state.att.scalar << "; "
-           << "\t\t" << packing_data.state.att.vector[0] << ", "
-           << "\t\t" << packing_data.state.att.vector[1] << ", "
-           << "\t\t" << packing_data.state.att.vector[2] << endl
-           << endl;
+      cout << "RefFrameBase::unpack():" << __LINE__ << endl;
+      this->print_data();
    }
 
    return;
@@ -675,6 +650,49 @@ void RefFrameBase::set_object( TrickHLA::Object *mngr_obj )
 
    // Assign the object.
    this->object = mngr_obj;
+
+   return;
+}
+
+/*!
+ * @job_class{scheduled}
+ */
+void RefFrameBase::print_data( std::ostream &stream )
+{
+   double euler_angles[3];
+
+   // Compute the attitude Euler angles.
+   packing_data.state.att.get_Euler_deg( Roll_Pitch_Yaw, euler_angles );
+
+   // Set the print precision.
+   stream.precision( 15 );
+
+   stream << "\tObject-Name: '" << object->get_name() << "'" << endl
+          << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'" << endl
+          << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'" << endl
+          << "\ttime:   " << packing_data.state.time << endl;
+   stream << "\tposition: "
+          << "\t\t" << packing_data.state.pos[0] << ", "
+          << "\t\t" << packing_data.state.pos[1] << ", "
+          << "\t\t" << packing_data.state.pos[2] << endl;
+   stream << "\tvolocity: "
+          << "\t\t" << packing_data.state.vel[0] << ", "
+          << "\t\t" << packing_data.state.vel[1] << ", "
+          << "\t\t" << packing_data.state.vel[2] << endl;
+   stream << "\tattitude (s,v): "
+          << "\t\t" << packing_data.state.att.scalar << "; "
+          << "\t\t" << packing_data.state.att.vector[0] << ", "
+          << "\t\t" << packing_data.state.att.vector[1] << ", "
+          << "\t\t" << packing_data.state.att.vector[2] << endl;
+   stream << "\tattitude (RPY){deg}: "
+          << "\t\t" << euler_angles[0] << ", "
+          << "\t\t" << euler_angles[1] << ", "
+          << "\t\t" << euler_angles[2] << endl;
+   stream << "\tangular velocity: "
+          << "\t\t" << packing_data.state.ang_vel[0] << ", "
+          << "\t\t" << packing_data.state.ang_vel[1] << ", "
+          << "\t\t" << packing_data.state.ang_vel[2] << endl;
+   stream << endl;
 
    return;
 }

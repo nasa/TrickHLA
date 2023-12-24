@@ -38,6 +38,7 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_REF_FRAME_LAG_COMP_BASE_HH
 
 // System include files.
+#include <iostream>
 
 // Trick includes.
 
@@ -127,8 +128,9 @@ class RefFrameLagCompBase : public TrickHLA::LagCompensation
    /*! @brief Load the packing data into the lag compensation state. */
    virtual void load_lag_comp_data();
 
-   /*! @brief Print out the lag compensation data values. */
-   virtual void print_lag_comp_data();
+   /*! @brief Print out the lag compensation data values.
+    *  @param stream Output stream. */
+   virtual void print_lag_comp_data( std::ostream &stream = std::cout );
 
   private:
    // This object is not copyable
