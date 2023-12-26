@@ -40,7 +40,7 @@
 //==========================================================================
 // SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
 //==========================================================================
-#include "SpaceFOM.sm"
+#include "SpaceFOM/SpaceFOM.sm"
 
 %header{
  using namespace TrickHLA;
@@ -97,23 +97,7 @@ class THLAInitSimObject : public Trick::SimObject {
 // SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An example reference frame tree
 // simulation object definition.
 //==========================================================================
-class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
-
-  public:
-   /* Reference frame data. */
-   RefFrameData root_frame_data;
-   RefFrameData frame_A_data;
-
-   SpaceFOMRefFrameTreeSimObject( )
-   {
-   }
-
-  private:
-
-   // This object is not copyable
-   SpaceFOMRefFrameTreeSimObject( SpaceFOMRefFrameTreeSimObject const & );
-   SpaceFOMRefFrameTreeSimObject & operator=( SpaceFOMRefFrameTreeSimObject const & );
-};
+#include "SpaceFOM/TestRefFrameTree.sm"
 
 
 //==========================================================================
@@ -121,33 +105,7 @@ class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
 // simulation object definition. This can be used for SpaceFOM ReferenceFrame
 // object discovery and data exchange.
 //==========================================================================
-##include "SpaceFOM/RefFrameState.hh"
-class SpaceFOMRefFrameSimObject : public Trick::SimObject {
-
-  public:
-
-   /* HLA associated reference frames packing object. */
-   SpaceFOM::RefFrameState frame_packing;
-
-   SpaceFOMRefFrameSimObject( RefFrameData & frame_data_ptr,
-                              unsigned short _INIT = 59  )
-   {
-      // Set the reference to the reference frame.
-      this->ref_frame_data_ptr = &frame_data_ptr;
-
-      //
-      // Initialization jobs
-      //
-      P_INIT ("initialization") frame_packing.initialize( ref_frame_data_ptr );
-   }
-
-  private:
-   RefFrameData * ref_frame_data_ptr;
-
-   // This object is not copyable
-   SpaceFOMRefFrameSimObject( SpaceFOMRefFrameSimObject const & );
-   SpaceFOMRefFrameSimObject & operator=( SpaceFOMRefFrameSimObject const & );
-};
+#include "SpaceFOM/RefFrame.sm"
 
 
 //==========================================================================
@@ -161,6 +119,19 @@ SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME, THLA_INTERACTION_CYCLE_TIME,
 THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
 
 // SimObject used for root reference frame discovery.
-SpaceFOMRefFrameTreeSimObject ref_frame_tree;
+SpaceFOMTestRefFrameTreeSimObject ref_frame_tree( THLA.manager,
+                                                  THLA.execution_control );
 SpaceFOMRefFrameSimObject root_ref_frame( ref_frame_tree.root_frame_data );
-SpaceFOMRefFrameSimObject ref_frame_A( ref_frame_tree.frame_A_data );
+SpaceFOMRefFrameSimObject ref_frame_A( ref_frame_tree.vehicle_frame_data );
+
+
+//==========================================================================
+// Create the THLA connections for the SpaceFOM Reference Frame Tree.
+//==========================================================================
+void create_connections() {
+
+   // Make the connections for the root and child frame in the reference frame tree.
+   ref_frame_tree.root_frame_ptr = &root_ref_frame.frame_packing;
+   ref_frame_tree.vehicle_frame_ptr = &ref_frame_A.frame_packing;
+
+}

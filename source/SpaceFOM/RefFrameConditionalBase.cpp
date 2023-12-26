@@ -118,7 +118,6 @@ void RefFrameConditionalBase::initialize_callback(
 bool RefFrameConditionalBase::should_send(
    TrickHLA::Attribute *attr )
 {
-   ostringstream errmsg;
    bool          send_attr = false;
 
    // If there is simulation data to compare to and if the attribute FOM name
@@ -148,6 +147,7 @@ bool RefFrameConditionalBase::should_send(
             send_attr = true;
          }
       } else {
+         ostringstream errmsg;
          errmsg << "RefFrameConditionalBase::should_send():" << __LINE__
                 << " ERROR: Unexpected NULL Name for RefFrame!" << THLA_ENDL;
          // Print message and terminate.
@@ -177,6 +177,7 @@ bool RefFrameConditionalBase::should_send(
             send_attr = true;
          }
       } else {
+         ostringstream errmsg;
          errmsg << "RefFrameConditionalBase::should_send():" << __LINE__
                 << " ERROR: Unexpected NULL Parent Frame for RefFrame!" << THLA_ENDL;
          // Print message and terminate.
@@ -197,6 +198,7 @@ bool RefFrameConditionalBase::should_send(
 
    } else {
 
+      ostringstream errmsg;
       errmsg << "RefFrameConditionalBase::should_send("
              << attr->get_FOM_name() << "):" << __LINE__
              << "ERROR: Could not find the data for the specified FOM attribute!"

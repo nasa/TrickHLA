@@ -334,10 +334,10 @@ void DynamicalEntityBase::initialize_callback(
  */
 void DynamicalEntityBase::pack()
 {
-   ostringstream errmsg;
 
    // Check for initialization.
    if ( !initialized ) {
+      ostringstream errmsg;
       errmsg << "DynamicalEntityBase::pack() ERROR: The initialize() function has not"
              << " been called!" << endl;
       send_hs( stderr, errmsg.str().c_str() );
@@ -359,9 +359,9 @@ void DynamicalEntityBase::pack()
  */
 void DynamicalEntityBase::unpack()
 {
-   ostringstream errmsg;
 
    if ( !initialized ) {
+      ostringstream errmsg;
       errmsg << "DynamicalEntityBase::unpack():" << __LINE__
              << " ERROR: The initialize() function has not been called!" << endl;
       send_hs( stderr, errmsg.str().c_str() );

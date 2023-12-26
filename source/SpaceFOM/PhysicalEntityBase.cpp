@@ -282,10 +282,10 @@ void PhysicalEntityBase::base_config(
  */
 void PhysicalEntityBase::configure()
 {
-   ostringstream errmsg;
 
    // Must have federation instance name.
    if ( pe_packing_data.name == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity name!"
              << " Setting frame name to empty string." << THLA_ENDL;
@@ -295,6 +295,7 @@ void PhysicalEntityBase::configure()
 
    // Must have federation instance type.
    if ( pe_packing_data.type == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity type!"
              << " Setting type to empty string." << THLA_ENDL;
@@ -304,6 +305,7 @@ void PhysicalEntityBase::configure()
 
    // Must have federation instance status.
    if ( pe_packing_data.status == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity status!"
              << " Setting status to empty string." << THLA_ENDL;
@@ -313,6 +315,7 @@ void PhysicalEntityBase::configure()
 
    // Must have federation instance parent_ref_frame.
    if ( pe_packing_data.parent_frame == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity parent_ref_frame!"
              << " Setting parent_ref_frame to empty string." << THLA_ENDL;
@@ -329,10 +332,10 @@ void PhysicalEntityBase::configure()
  */
 void PhysicalEntityBase::initialize()
 {
-   ostringstream errmsg;
 
    // Must have federation instance name.
    if ( pe_packing_data.name == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity name!"
              << " Setting frame name to empty string." << THLA_ENDL;
@@ -342,6 +345,7 @@ void PhysicalEntityBase::initialize()
 
    // Must have federation instance type.
    if ( pe_packing_data.type == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity type!"
              << " Setting type to empty string." << THLA_ENDL;
@@ -351,6 +355,7 @@ void PhysicalEntityBase::initialize()
 
    // Must have federation instance status.
    if ( pe_packing_data.status == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity status!"
              << " Setting status to empty string." << THLA_ENDL;
@@ -360,6 +365,7 @@ void PhysicalEntityBase::initialize()
 
    // Must have federation instance parent_ref_frame.
    if ( pe_packing_data.parent_frame == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL entity parent_ref_frame!"
              << " Setting parent_ref_frame to empty string." << THLA_ENDL;
@@ -534,10 +540,10 @@ void PhysicalEntityBase::unpack()
  */
 void PhysicalEntityBase::set_object( TrickHLA::Object *mngr_obj )
 {
-   ostringstream errmsg;
 
    // Check for initialization.
    if ( initialized ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::set_object():" << __LINE__
              << " ERROR: The initialize() function has already been called" << THLA_ENDL;
       // Print message and terminate.

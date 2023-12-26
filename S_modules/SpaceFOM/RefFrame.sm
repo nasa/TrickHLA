@@ -27,7 +27,7 @@
 // instance base simulation object definition.
 //==========================================================================
 // Include SpaceFOM base reference frame sim object.
-#include "SpaceFOMRefFrameBase.sm"
+#include "SpaceFOM/RefFrameBase.sm"
 
 // SpaceFOM include files.
 ##include "SpaceFOM/RefFrameState.hh"

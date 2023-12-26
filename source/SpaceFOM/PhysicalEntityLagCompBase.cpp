@@ -150,7 +150,6 @@ void PhysicalEntityLagCompBase::initialize_states()
  *  TrickHLALagCompensation class. */
 void PhysicalEntityLagCompBase::send_lag_compensation()
 {
-   ostringstream errmsg;
    double begin_t = get_scenario_time();
    double end_t;
 
@@ -161,6 +160,7 @@ void PhysicalEntityLagCompBase::send_lag_compensation()
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+      ostringstream errmsg;
       errmsg << "******* PhysicalEntityLagCompInteg::send_lag_compensation():" << __LINE__ << endl
              << " scenario-time:" << get_scenario_time() << endl
              << "     lookahead:" << this->compensate_dt << endl
@@ -200,7 +200,6 @@ void PhysicalEntityLagCompBase::send_lag_compensation()
  *  TrickHLALagCompensation class. */
 void PhysicalEntityLagCompBase::receive_lag_compensation()
 {
-   ostringstream errmsg;
    double end_t  = get_scenario_time();
    double data_t = entity.get_time();
 
@@ -210,6 +209,7 @@ void PhysicalEntityLagCompBase::receive_lag_compensation()
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+      ostringstream errmsg;
       errmsg << "******* PhysicalEntityLagCompInteg::receive_lag_compensation():" << __LINE__ << endl
              << "  scenario-time:" << end_t << endl
              << "      data-time:" << data_t << endl

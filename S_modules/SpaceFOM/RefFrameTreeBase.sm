@@ -29,9 +29,8 @@
 //==========================================================================
 ##include <iostream>
 ##include "SpaceFOM/RefFrameTree.hh"
-##include "SpaceFOM/RefFrameBase.hh"
 
-class RefFrameTreeBaseSimObject : public Trick::SimObject {
+class SpaceFOMRefFrameTreeBaseSimObject : public Trick::SimObject {
 
   public:
 
@@ -44,10 +43,10 @@ class RefFrameTreeBaseSimObject : public Trick::SimObject {
 
    // SpaceFOM Reference Frame Tree Base constructor.
    // _ADD and _BUILD phases need to be less than 60, when TrickHLA is initialized.
-   RefFrameTreeBaseSimObject( TrickHLA::Manager          & thla_manager_in,
-                              SpaceFOM::ExecutionControl & exec_cntrl_in,
-                              unsigned short               _ADD   = 50,
-                              unsigned short               _BUILD = 51 )
+   SpaceFOMRefFrameTreeBaseSimObject( TrickHLA::Manager          & thla_manager_in,
+                                      SpaceFOM::ExecutionControl & exec_cntrl_in,
+                                      unsigned short               _ADD   = 50,
+                                      unsigned short               _BUILD = 51 )
    : thla_manager( thla_manager_in ),
      exec_cntrl( exec_cntrl_in )
    {
@@ -82,7 +81,7 @@ class RefFrameTreeBaseSimObject : public Trick::SimObject {
   private:
 
    // This object is not copyable
-   RefFrameTreeBaseSimObject( const RefFrameTreeBaseSimObject & );
-   RefFrameTreeBaseSimObject & operator=( const RefFrameTreeBaseSimObject & );
+   SpaceFOMRefFrameTreeBaseSimObject( const SpaceFOMRefFrameTreeBaseSimObject & );
+   SpaceFOMRefFrameTreeBaseSimObject & operator=( const SpaceFOMRefFrameTreeBaseSimObject & );
 
 };

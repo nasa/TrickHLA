@@ -28,8 +28,8 @@
 //==========================================================================
 ##include <iostream>
 ##include "utils/ref_frames/include/ref_frame_state.hh"
-#include "RefFrameTreeBase.sm"
-class JEODRefFrameTreeSimObject : public RefFrameTreeBaseSimObject {
+#include "SpaceFOM/RefFrameTreeBase.sm"
+class JEODRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
 
   public:
 
@@ -45,7 +45,7 @@ class JEODRefFrameTreeSimObject : public RefFrameTreeBaseSimObject {
                               jeod::Planet               & mars_in,
                               unsigned short               _ADD   = 50,
                               unsigned short               _BUILD = 51 )
-   : RefFrameTreeBaseSimObject( thla_manager_in, exec_cntrl_in, _ADD, _BUILD ),
+   : SpaceFOMRefFrameTreeBaseSimObject( thla_manager_in, exec_cntrl_in, _ADD, _BUILD ),
      time_tt( time_tt_in ),
      dyn_manager( dyn_manager_in ),
      sun( sun_in ),

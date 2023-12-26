@@ -414,7 +414,7 @@ ref_frame_A.frame_packing.debug = verbose
 federate.add_fed_object( frame_A )
 
 # Set the lag compensation paratmeters.
-ref_frame_A.lag_compensation.debug = False
+ref_frame_A.lag_compensation.debug = True
 ref_frame_A.lag_compensation.set_integ_tolerance( 1.0e-6 )
 ref_frame_A.lag_compensation.set_integ_dt( 0.025 )
 

@@ -275,7 +275,7 @@ vcollect passive_vehicle.dyn_body.collect.collect_no_xmit_forc jeod::CollectForc
 //==========================================================================
 // SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
 //==========================================================================
-#include "SpaceFOM.sm"
+#include "SpaceFOM/SpaceFOM.sm"
 
 // Main TrickHLA SimObject.
 SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME, THLA_INTERACTION_CYCLE_TIME,
@@ -286,7 +286,7 @@ SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME, THLA_INTERACTION_CYCLE_TIME,
 // SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
 // initialization SimObject.
 //==========================================================================
-#include "JEODHLAInit.sm"
+#include "JEOD/JEODHLAInit.sm"
 
 // SimObject used capture simulation specific initialization.
 JEODHLAInitSimObject THLA_INIT( jeod_time.time_manager,
@@ -304,7 +304,7 @@ JEODHLAInitSimObject THLA_INIT( jeod_time.time_manager,
 // simulation object definition.
 //==========================================================================
 //#define DEFAULT_DATA_CONFIG // Configure the tree in default data.
-#include "JEODRefFrameTree.sm"
+#include "JEOD/JEODRefFrameTree.sm"
 
 
 //==========================================================================
@@ -312,7 +312,7 @@ JEODHLAInitSimObject THLA_INIT( jeod_time.time_manager,
 // simulation object definition. This can be used for SpaceFOM ReferenceFrame
 // object discovery and data exchange.
 //==========================================================================
-#include "JEODRefFrame.sm"
+#include "JEOD/JEODRefFrame.sm"
 
 // Build the SpaceFOM Reference Frame Tree using JEOD reference frames.
 JEODRefFrameTreeSimObject ref_frame_tree( THLA.manager,

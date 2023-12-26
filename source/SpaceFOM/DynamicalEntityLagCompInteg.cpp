@@ -72,9 +72,9 @@ DynamicalEntityLagCompInteg::~DynamicalEntityLagCompInteg() // RETURN: -- None.
  */
 void DynamicalEntityLagCompInteg::initialize()
 {
-   ostringstream errmsg;
 
    if ( this->integ_dt < this->integ_tol ) {
+      ostringstream errmsg;
 
       errmsg << "SpaceFOM::DynamicalEntityLagCompInteg::initialize():" << __LINE__ << endl
              << " ERROR: Tolerance must be less that the dt!: dt = "

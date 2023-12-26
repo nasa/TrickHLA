@@ -98,13 +98,12 @@ RefFrameLagComp::~RefFrameLagComp() // RETURN: -- None.
  */
 void RefFrameLagComp::initialize()
 {
-   ostringstream errmsg;
 
    // Create and get a reference to the Trick Euler integrator.
    this->integrator = Trick::getIntegrator( Euler, 26, this->integ_dt );
 
    if ( this->integrator == (Trick::Integrator *)NULL ) {
-
+      ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameLagComp::initialize():" << __LINE__
              << " ERROR: Unexpected NULL Trick integrator!" << THLA_ENDL;
       // Print message and terminate.

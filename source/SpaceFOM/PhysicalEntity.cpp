@@ -89,13 +89,13 @@ PhysicalEntity::~PhysicalEntity() // RETURN: -- None.
  */
 void PhysicalEntity::configure( PhysicalEntityData *physical_data_ptr )
 {
-   ostringstream errmsg;
 
    // First call the base class pre_initialize function.
    PhysicalEntityBase::configure();
 
    // Set the reference to the PhysicalEntity data.
    if ( physical_data_ptr == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL PhysicalEntityData: " << pe_packing_data.name << THLA_ENDL;
       // Print message and terminate.
@@ -112,10 +112,10 @@ void PhysicalEntity::configure( PhysicalEntityData *physical_data_ptr )
  */
 void PhysicalEntity::initialize()
 {
-   ostringstream errmsg;
 
    // Check to make sure the PhysicalEntity data is set.
    if ( physical_data == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL PhysicalEntityData: " << pe_packing_data.name << THLA_ENDL;
       // Print message and terminate.
@@ -134,7 +134,6 @@ void PhysicalEntity::initialize()
  */
 void PhysicalEntity::pack_from_working_data()
 {
-   ostringstream errmsg;
    int           iinc;
 
    // NOTE: Because TrickHLA handles the bundling of locally owned attributes
@@ -164,6 +163,7 @@ void PhysicalEntity::pack_from_working_data()
 
    } // This is bad scoobies so just punt.
    else {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntity::copy_working_data():" << __LINE__
              << " ERROR: Unexpected NULL name for PhysicalEntity!" << THLA_ENDL;
       // Print message and terminate.
@@ -238,6 +238,7 @@ void PhysicalEntity::pack_from_working_data()
 
    } // This is bad scoobies so just punt.
    else {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntity::copy_working_data():" << __LINE__
              << " ERROR: Unexpected NULL parent frame for PhysicalEntity: "
              << physical_data->name << THLA_ENDL;

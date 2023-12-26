@@ -120,7 +120,6 @@ void PhysicalInterfaceConditionalBase::initialize_callback(
 bool PhysicalInterfaceConditionalBase::should_send(
    TrickHLA::Attribute *attr )
 {
-   ostringstream errmsg;
    bool          send_attr = false;
 
    // If there is simulation data to compare to and if the attribute FOM name
@@ -150,6 +149,7 @@ bool PhysicalInterfaceConditionalBase::should_send(
             send_attr = true;
          }
       } else {
+         ostringstream errmsg;
          errmsg << "PhysicalInterfaceConditionalBase::should_send():" << __LINE__
                 << " ERROR: Unexpected NULL Name for PhysicalInterface!" << THLA_ENDL;
          // Print message and terminate.
@@ -179,6 +179,7 @@ bool PhysicalInterfaceConditionalBase::should_send(
             send_attr = true;
          }
       } else {
+         ostringstream errmsg;
          errmsg << "PhysicalInterfaceConditionalBase::should_send():" << __LINE__
                 << " ERROR: Unexpected NULL Parent Frame for PhysicalInterface!" << THLA_ENDL;
          // Print message and terminate.
@@ -214,7 +215,7 @@ bool PhysicalInterfaceConditionalBase::should_send(
       }
 
    } else {
-
+      ostringstream errmsg;
       errmsg << "PhysicalInterfaceConditionalBase::should_send("
              << attr->get_FOM_name() << "):" << __LINE__
              << "ERROR: Could not find the data for the specified FOM attribute!"

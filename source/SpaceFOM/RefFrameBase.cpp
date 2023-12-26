@@ -216,11 +216,11 @@ void RefFrameBase::base_config(
  */
 void RefFrameBase::configure()
 {
-   ostringstream errmsg;
 
    // Must have federation instance name.
    if ( this->packing_data.name == NULL ) {
       if ( debug ) {
+         ostringstream errmsg;
          errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
                 << " WARNING: Unexpected NULL federation instance frame name!"
                 << "  Setting frame name to empty string." << THLA_ENDL;
@@ -232,6 +232,7 @@ void RefFrameBase::configure()
    // Must have federation instance parent frame name.
    if ( this->packing_data.parent_name == NULL ) {
       if ( debug ) {
+         ostringstream errmsg;
          errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
                 << " WARNING: Unexpected NULL federation instance parent frame name!"
                 << "  Setting parent frame name to empty string." << THLA_ENDL;
@@ -248,10 +249,10 @@ void RefFrameBase::configure()
  */
 void RefFrameBase::initialize()
 {
-   ostringstream errmsg;
 
    // Must have federation instance name.
    if ( this->packing_data.name == NULL ) {
+      ostringstream errmsg;
 
       string trick_name = ( name_attr != NULL )
                              ? ( ( name_attr->get_trick_name() != NULL ) ? name_attr->get_trick_name() : "" )
@@ -277,6 +278,8 @@ void RefFrameBase::initialize()
 
       // Print message.
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_NO_MODULES ) ) {
+
+         ostringstream errmsg;
 
          string trick_name = ( name_attr != NULL )
                                 ? ( ( name_attr->get_trick_name() != NULL ) ? name_attr->get_trick_name() : "" )
@@ -315,6 +318,7 @@ void RefFrameBase::initialize()
    // is NOT the root frame.
    if ( ( this->packing_data.parent_name[0] != '\0' )
         && ( this->parent_frame == NULL ) ) {
+      ostringstream errmsg;
 
       string trick_name = ( name_attr != NULL )
                              ? ( ( name_attr->get_trick_name() != NULL ) ? name_attr->get_trick_name() : "" )
@@ -580,10 +584,10 @@ void RefFrameBase::subscribe()
  */
 void RefFrameBase::pack()
 {
-   ostringstream errmsg;
 
    // Check for initialization.
    if ( !initialized ) {
+      ostringstream errmsg;
       errmsg << "RefFrameBase::pack() ERROR: The initialize() function has not"
              << " been called!" << endl;
       send_hs( stderr, errmsg.str().c_str() );
@@ -611,9 +615,9 @@ void RefFrameBase::pack()
  */
 void RefFrameBase::unpack()
 {
-   ostringstream errmsg;
 
    if ( !initialized ) {
+      ostringstream errmsg;
       errmsg << "RefFrameBase::unpack():" << __LINE__
              << " ERROR: The initialize() function has not been called!" << endl;
       send_hs( stderr, errmsg.str().c_str() );

@@ -27,7 +27,7 @@
 // object discovery and data exchange.
 //==========================================================================
 // Include SpaceFOM base reference frame sim object.
-#include "SpaceFOMRefFrameBase.sm"
+#include "SpaceFOM/RefFrameBase.sm"
 
 // JEOD includes.
 ##include "environment/time/include/time_tt.hh"

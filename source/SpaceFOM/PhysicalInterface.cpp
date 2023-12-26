@@ -88,13 +88,13 @@ PhysicalInterface::~PhysicalInterface()
  */
 void PhysicalInterface::configure( PhysicalInterfaceData *interface_data_ptr )
 {
-   ostringstream errmsg;
 
    // First call the base class pre_initialize function.
    PhysicalInterfaceBase::configure();
 
    // Set the reference to the PhysicalInterface data.
    if ( interface_data_ptr == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterface::initialize():" << __LINE__
              << " ERROR: Unexpected NULL PhysicalInterfaceData: " << packing_data.name << THLA_ENDL;
       // Print message and terminate.
@@ -111,10 +111,10 @@ void PhysicalInterface::configure( PhysicalInterfaceData *interface_data_ptr )
  */
 void PhysicalInterface::initialize()
 {
-   ostringstream errmsg;
 
    // Check to make sure the PhysicalInterface data is set.
    if ( interface_data == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterface::initialize():" << __LINE__
              << " ERROR: Unexpected NULL PhysicalInterfaceData: " << packing_data.name << THLA_ENDL;
       // Print message and terminate.
@@ -133,7 +133,6 @@ void PhysicalInterface::initialize()
  */
 void PhysicalInterface::pack_from_working_data()
 {
-   ostringstream errmsg;
    int           iinc;
 
    // NOTE: Because TrickHLA handles the bundling of locally owned attributes
@@ -163,6 +162,7 @@ void PhysicalInterface::pack_from_working_data()
 
    } // This is bad scoobies so just punt.
    else {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterface::pack():" << __LINE__
              << " ERROR: Unexpected NULL name for PhysicalInterface!" << THLA_ENDL;
       // Print message and terminate.
@@ -192,6 +192,7 @@ void PhysicalInterface::pack_from_working_data()
 
    } // This is bad scoobies so just punt.
    else {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterface::pack():" << __LINE__
              << " ERROR: Unexpected NULL parent name for PhysicalInterface: "
              << interface_data->name << THLA_ENDL;

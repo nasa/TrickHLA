@@ -189,10 +189,10 @@ void PhysicalInterfaceBase::base_config(
  */
 void PhysicalInterfaceBase::configure()
 {
-   ostringstream errmsg;
 
    // Must have federation instance name.
    if ( this->packing_data.name == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL interface name!"
              << "  Setting frame name to empty string." << THLA_ENDL;
@@ -202,6 +202,7 @@ void PhysicalInterfaceBase::configure()
 
    // Must have federation instance parent_ref_frame.
    if ( this->packing_data.parent_name == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL interface parent!"
              << "  Setting parent_ref_frame to empty string." << THLA_ENDL;
@@ -217,10 +218,10 @@ void PhysicalInterfaceBase::configure()
  */
 void PhysicalInterfaceBase::initialize()
 {
-   ostringstream errmsg;
 
    // Must have federation instance name.
    if ( this->packing_data.name == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL interface name!"
              << "  Setting frame name to empty string." << THLA_ENDL;
@@ -230,6 +231,7 @@ void PhysicalInterfaceBase::initialize()
 
    // Must have federation instance parent_ref_frame.
    if ( this->packing_data.parent_name == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL interface parent!"
              << "  Setting parent_ref_frame to empty string." << THLA_ENDL;
@@ -306,10 +308,10 @@ void PhysicalInterfaceBase::set_parent( char const *new_parent_name )
 
 void PhysicalInterfaceBase::pack()
 {
-   ostringstream errmsg;
 
    // Check for initialization.
    if ( !initialized ) {
+      ostringstream errmsg;
       errmsg << "PhysicalInterfaceBase::pack() ERROR: The initialize() function has not"
              << " been called!" << endl;
       send_hs( stderr, errmsg.str().c_str() );
@@ -362,10 +364,10 @@ void PhysicalInterfaceBase::unpack()
  */
 void PhysicalInterfaceBase::set_object( TrickHLA::Object *mngr_obj )
 {
-   ostringstream errmsg;
 
    // Check for initialization.
    if ( initialized ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::set_object():" << __LINE__
              << " ERROR: The initialize() function has already been called" << THLA_ENDL;
       // Print message and terminate.

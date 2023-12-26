@@ -87,13 +87,13 @@ JEODPhysicalEntity::~JEODPhysicalEntity()
  */
 void JEODPhysicalEntity::configure( jeod::DynBody *dyn_body_ptr )
 {
-   ostringstream errmsg;
 
    // First call the base class pre_initialize function.
    PhysicalEntityBase::configure();
 
    // Set the reference to the JEODPhysicalEntity data.
    if ( dyn_body_ptr == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL JEODPhysicalEntityData: "
              << this->pe_packing_data.name << THLA_ENDL;
@@ -111,9 +111,9 @@ void JEODPhysicalEntity::configure( jeod::DynBody *dyn_body_ptr )
  */
 void JEODPhysicalEntity::initialize()
 {
-   ostringstream errmsg;
    // Check to make sure the JEODPhysicalEntity data is set.
    if ( dyn_body_data == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL dyn_body_data: "
              << this->pe_packing_data.name << THLA_ENDL;

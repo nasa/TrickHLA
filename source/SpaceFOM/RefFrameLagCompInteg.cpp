@@ -72,9 +72,9 @@ RefFrameLagCompInteg::~RefFrameLagCompInteg() // RETURN: -- None.
  */
 void RefFrameLagCompInteg::initialize()
 {
-   ostringstream errmsg;
 
    if ( this->integ_dt < this->integ_tol ) {
+      ostringstream errmsg;
 
       errmsg << "SpaceFOM::RefFrameLagCompInteg::initialize():" << __LINE__ << endl
              << " ERROR: Tolerance must be less that the dt!: dt = "
@@ -94,7 +94,6 @@ void RefFrameLagCompInteg::initialize()
  *  TrickHLALagCompensation class. */
 void RefFrameLagCompInteg::send_lag_compensation()
 {
-   ostringstream errmsg;
    double begin_t = get_scenario_time();
    double end_t;
 
@@ -105,6 +104,7 @@ void RefFrameLagCompInteg::send_lag_compensation()
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+      ostringstream errmsg;
       errmsg << "****** RefFrameLagCompInteg::send_lag_compensation():" << __LINE__ << endl
              << " scenario-time:" << get_scenario_time() << endl
              << "     lookahead:" << this->compensate_dt << endl
@@ -144,7 +144,6 @@ void RefFrameLagCompInteg::send_lag_compensation()
  *  TrickHLALagCompensation class. */
 void RefFrameLagCompInteg::receive_lag_compensation()
 {
-   ostringstream errmsg;
    double end_t  = get_scenario_time();
    double data_t = ref_frame.get_time();
 
@@ -154,6 +153,7 @@ void RefFrameLagCompInteg::receive_lag_compensation()
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+      ostringstream errmsg;
       errmsg << "******* RefFrameLagCompInteg::receive_lag_compensation():" << __LINE__ << endl
              << "  scenario-time:" << end_t << endl
              << "      data-time:" << data_t << endl

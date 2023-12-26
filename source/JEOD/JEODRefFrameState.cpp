@@ -101,13 +101,13 @@ void JEODRefFrameState::configure(
    jeod::TimeTT        *time_tt_ptr,
    jeod::RefFrameState *ref_frame_state_ptr )
 {
-   ostringstream errmsg;
 
    // First call the base class pre_initialize function.
    RefFrameBase::configure();
 
    // Set the reference to the reference frame.
    if ( ref_frame_state_ptr == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
              << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << THLA_ENDL;
       // Print message and terminate.
@@ -117,6 +117,7 @@ void JEODRefFrameState::configure(
 
    // Set the JEOD time reference.
    if ( time_tt_ptr == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
              << " ERROR: Unexpected NULL time reference: " << this->packing_data.name << THLA_ENDL;
       // Print message and terminate.
@@ -133,10 +134,10 @@ void JEODRefFrameState::configure(
  */
 void JEODRefFrameState::initialize()
 {
-   ostringstream errmsg;
 
    // Check for the reference frame data.
    if ( this->ref_frame_state == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
              << " ERROR: Unexpected NULL reference frame data: " << this->packing_data.name << THLA_ENDL;
       // Print message and terminate.
@@ -145,6 +146,7 @@ void JEODRefFrameState::initialize()
 
    // Check for the JEOD time reference.
    if ( this->time_tt == NULL ) {
+      ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
              << " ERROR: Unexpected NULL time reference: " << this->packing_data.name << THLA_ENDL;
       // Print message and terminate.
