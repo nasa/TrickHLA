@@ -63,6 +63,10 @@ class SpaceFOMRefFrameBaseSimObject : public Trick::SimObject {
      lag_comp_base_ptr( &lag_comp_ref ),
      conditional( frame_packing_ref )
    {
+      //
+      // Desfault data jobs
+      //
+      ("default_data") default_config();
       
       //
       // Initialization jobs
@@ -70,6 +74,30 @@ class SpaceFOMRefFrameBaseSimObject : public Trick::SimObject {
       P_INIT ("initialization") frame_base_ptr->initialize();
       P_INIT ("initialization") lag_comp_base_ptr->initialize();
 
+   }
+   
+  protected:
+   virtual int default_config()
+   {
+      // Get the associated TrickHLA manager object.
+      TrickHLA::Object * mngr_obj_ptr = frame_base_ptr->get_object();
+      
+      // If the manager object is set, then configure the auxiliary services.
+      // This will probably only be true for configuring with defualt data.
+      if ( mngr_obj_ptr != NULL ) {
+      
+         // Setup lag compensation.
+         mngr_obj_ptr->lag_comp      = lag_comp_base_ptr;
+         mngr_obj_ptr->lag_comp_type = TrickHLA::LAG_COMPENSATION_NONE;
+      
+         // Setup the auxiliary object management services.
+         mngr_obj_ptr->conditional = &conditional;
+         mngr_obj_ptr->ownership   = &ownership_handler;
+         mngr_obj_ptr->deleted     = &deleted_callback;
+      
+      }
+      
+      return( 0 );
    }
 
   private:

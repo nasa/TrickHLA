@@ -117,7 +117,7 @@ JEODHLAInitSimObject THLA_INIT( jeod_time.time_manager,
                                 THLA.manager,
                                 THLA.federate,
                                 THLA.execution_control,
-                                (P_HLA_INIT-1) );
+                                P_HLA_INIT );
 
 // Build the SpaceFOM Reference Frame Tree using JEOD reference frames.
 JEODRefFrameTreeSimObject ref_frame_tree( THLA.manager,

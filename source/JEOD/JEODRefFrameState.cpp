@@ -258,7 +258,7 @@ void JEODRefFrameState::unpack_into_working_data()
    }
 
    if ( debug ) {
-      cout << "JEODRefFrameState::pack_from_working_data():" << __LINE__ << endl
+      cout << "JEODRefFrameState::unpack_into_working_data():" << __LINE__ << endl
            << "\tSim Sec: " << exec_get_sim_time() << endl
            << "\tSeconds: " << ( time_tt->trunc_julian_time * 86400.0 ) << endl
            << "\tDate: " << time_tt->calendar_year

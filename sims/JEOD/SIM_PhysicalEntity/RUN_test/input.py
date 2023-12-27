@@ -517,10 +517,10 @@ THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHL
 #---------------------------------------------------------------------------
 # Set up the Reference Frame objects.
 #---------------------------------------------------------------------------
-frame_tree = JEODRefFrameTreeObject( federate, ref_frame_tree )
-
-# FIXME: Test code
-#solar_system_barycenter.name = 'SolarSystemBarycentricInertial'
+frame_tree = JEODRefFrameTreeObject( federate,
+                                     ref_frame_tree,
+                                     False,
+                                     trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 # Set the debug flag for the reference frames.
 solar_system_barycenter.frame_packing.debug = verbose

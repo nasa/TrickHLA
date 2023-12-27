@@ -271,13 +271,17 @@ federate.set_time_constrained( True )
 root_frame = SpaceFOMRefFrameObject( federate.is_RRFP,
                                      'RootFrame',
                                      root_ref_frame.frame_packing,
-                                     'root_ref_frame.frame_packing' )
+                                     'root_ref_frame.frame_packing',
+                                     frame_conditional = root_ref_frame.conditional )
 
 # Set the debug flag for the root reference frame.
 root_ref_frame.frame_packing.debug = verbose
 
 # Set the root frame for the federate.
 federate.set_root_frame( root_frame )
+
+# Set the lag compensation paratmeters.
+# NOTE: The ROOT REFERENCE FRAME never needs to be compensated!
 
 #---------------------------------------------------------------------------
 # Set up the Root Reference Frame object for discovery.
@@ -287,13 +291,28 @@ federate.set_root_frame( root_frame )
 frame_A = SpaceFOMRefFrameObject( False,
                                   'FrameA',
                                   ref_frame_A.frame_packing,
-                                  'ref_frame_A.frame_packing' )
+                                  'ref_frame_A.frame_packing',
+                                  root_ref_frame.frame_packing,
+                                  'RootFrame',
+                                  frame_conditional = ref_frame_A.conditional,
+                                  frame_lag_comp    = ref_frame_A.lag_compensation,
+                                  frame_ownership   = ref_frame_A.ownership_handler,
+                                  frame_deleted     = ref_frame_A.deleted_callback )
 
 # Set the debug flag for the root reference frame.
 ref_frame_A.frame_packing.debug = verbose
 
 # Add this reference frame to the list of managed object.
 federate.add_fed_object( frame_A )
+
+# Set the lag compensation paratmeters.
+# The reality is that the ROOT REFERENCE FRAME never needs to be compensated!
+ref_frame_A.lag_compensation.debug = False
+ref_frame_A.lag_compensation.set_integ_tolerance( 1.0e-6 )
+ref_frame_A.lag_compensation.set_integ_dt( 0.025 )
+
+#frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
+frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 #---------------------------------------------------------------------------
 # Add the HLA SimObjects associated with this federate.

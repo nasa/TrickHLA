@@ -26,6 +26,7 @@ class TrickHLAObjectConfig( object ):
    hla_packing_instance     = None
    hla_conditional_instance = None
    hla_lag_comp_instance    = None
+   hla_lag_comp_type        = trick.TrickHLA.LAG_COMPENSATION_NONE
    hla_ownership_instance   = None
    hla_deleted_instance     = None
    hla_thread_IDs           = None
@@ -39,6 +40,7 @@ class TrickHLAObjectConfig( object ):
                  thla_instance_name        = None,
                  thla_FOM_name             = None,
                  thla_lag_comp_instance    = None,
+                 thla_lag_comp_type        = trick.TrickHLA.LAG_COMPENSATION_NONE,
                  thla_ownership_instance   = None,
                  thla_deleted_instance     = None,
                  thla_conditional_instance = None,
@@ -69,6 +71,10 @@ class TrickHLAObjectConfig( object ):
       # Set lag compensation if specified and not None.
       if thla_lag_comp_instance != None :
          self.set_lag_comp_instance( thla_lag_comp_instance )
+
+      # Set lag compensation type if different than default.
+      if thla_lag_comp_type != self.hla_lag_comp_type :
+         self.set_lag_comp_type( thla_lag_comp_type )
 
       # Set ownership if specified and not None.
       if thla_ownership_instance != None :
@@ -120,6 +126,7 @@ class TrickHLAObjectConfig( object ):
 
       if self.hla_lag_comp_instance != None :
          self.set_lag_comp_instance( self.hla_lag_comp_instance )
+         self.set_lag_comp_type( self.hla_lag_comp_type )
 
       if self.hla_ownership_instance != None :
          self.set_ownership_instance( self.hla_ownership_instance )
@@ -203,9 +210,8 @@ class TrickHLAObjectConfig( object ):
    
    
    def set_lag_comp_type( self, lag_comp_type ):
-      
-      # FIXME: Need to check for initialization.
 
+      self.hla_lag_comp_type = lag_comp_type
       if self.hla_manager_object != None :
          self.hla_manager_object.lag_comp_type = lag_comp_type
 

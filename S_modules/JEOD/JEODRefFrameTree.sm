@@ -166,7 +166,7 @@ class JEODRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
                                   "frame_packing",
                                   "SunCentricInertial",
                                   "SolarSystemBarycentricInertial",
-                                  ssbary_frame_ptr );
+                                  ssbary_frame_ptr ); 
 
       // Setup the Earth-Moon barycentric inertial reference frame.
       embary_frame_ptr->base_config( false,

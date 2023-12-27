@@ -414,10 +414,12 @@ ref_frame_A.frame_packing.debug = verbose
 federate.add_fed_object( frame_A )
 
 # Set the lag compensation paratmeters.
-# The reality is that the ROOT REFERENCE FRAME never needs to be compensated!
 ref_frame_A.lag_compensation.debug = True
 ref_frame_A.lag_compensation.set_integ_tolerance( 1.0e-6 )
 ref_frame_A.lag_compensation.set_integ_dt( 0.025 )
+
+#frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
+frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 
 #---------------------------------------------------------------------------
@@ -442,6 +444,9 @@ federate.add_fed_object( phy_entity )
 physical_entity.lag_compensation.debug = True
 physical_entity.lag_compensation.set_integ_tolerance( 1.0e-6 )
 physical_entity.lag_compensation.set_integ_dt( 0.025 )
+
+#phy_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
+phy_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 
 #---------------------------------------------------------------------------
@@ -492,6 +497,9 @@ dynamical_entity.lag_compensation.debug = True
 dynamical_entity.lag_compensation.set_integ_tolerance( 1.0e-6 )
 dynamical_entity.lag_compensation.set_integ_dt( 0.025 )
 
+#phy_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_SEND_SIDE )
+dyn_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
+
 
 #---------------------------------------------------------------------------
 # Add the HLA SimObjects associated with this federate.
@@ -511,21 +519,6 @@ federate.add_sim_object( dynamical_entity )
 #---------------------------------------------------------------------------
 #federate.disable()
 federate.initialize()
-
-#
-# These MUST BE called after federate initialize.
-#
-
-# Configure reference frame lag compensation.
-# NOTE: The ROOT REFERENCE FRAME never needs to be compensated!
-#frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
-frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
-
-# Configure entity lag compensation.
-#phy_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
-#phy_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_SEND_SIDE )
-phy_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
-dyn_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 
 #---------------------------------------------------------------------------
