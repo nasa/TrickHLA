@@ -45,9 +45,10 @@ class SpaceFOMRefFrameSimObject : public SpaceFOMRefFrameBaseSimObject {
    SpaceFOM::RefFrameLagComp lag_compensation;
 
    // SimObject constructor.
-   SpaceFOMRefFrameSimObject( SpaceFOM::RefFrameData  & frame_data_ref,   
+   SpaceFOMRefFrameSimObject( SpaceFOM::RefFrameTree & frame_tree_ref,
+                              SpaceFOM::RefFrameData & frame_data_ref,   
                               unsigned short            _INIT = P_HLA_INIT  )
-   : SpaceFOMRefFrameBaseSimObject( frame_packing, lag_compensation, _INIT ),
+   : SpaceFOMRefFrameBaseSimObject( frame_tree_ref, frame_packing, lag_compensation, _INIT ),
      frame_packing(frame_data_ref),
      lag_compensation(frame_packing),
      ref_frame_data_ptr( &frame_data_ref )
@@ -56,6 +57,7 @@ class SpaceFOMRefFrameSimObject : public SpaceFOMRefFrameBaseSimObject {
    }
 
   private:
+   
    // Reference to frame working data.
    SpaceFOM::RefFrameData * ref_frame_data_ptr;
 

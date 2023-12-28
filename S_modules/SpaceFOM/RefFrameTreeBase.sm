@@ -37,15 +37,10 @@ class SpaceFOMRefFrameTreeBaseSimObject : public Trick::SimObject {
    // Declare the working SpaceFOM reference frame tree.
    SpaceFOM::RefFrameTree frame_tree;
 
-   // References to working SpaceFOM reference frames. For example . . .
-   // SpaceFOM::RefFrameBase * root_ref_frame;
-   // SpaceFOM::RefFrameBase * ref_frame_A;
-
    // SpaceFOM Reference Frame Tree Base constructor.
    // _ADD and _BUILD phases need to be less than 60, when TrickHLA is initialized.
    SpaceFOMRefFrameTreeBaseSimObject( TrickHLA::Manager          & thla_manager_in,
                                       SpaceFOM::ExecutionControl & exec_cntrl_in,
-                                      unsigned short               _ADD   = 50,
                                       unsigned short               _BUILD = 51 )
    : thla_manager( thla_manager_in ),
      exec_cntrl( exec_cntrl_in )
@@ -56,10 +51,6 @@ class SpaceFOMRefFrameTreeBaseSimObject : public Trick::SimObject {
  #ifdef DEFAULT_DATA_CONFIG
       ("default_data") configure_tree();
  #endif
-
-      // Place the frames into the tree. For example . . .
-      //P_ADD ("initialization") frame_tree.add_frame( &(root_ref_frame->frame_packing) );
-      //P_ADD ("initialization") frame_tree.add_frame( &(ref_frame_A->frame_packing) );
       
       // Build the reference frame tree.
       P_BUILD ("initialization") frame_tree.build_tree();

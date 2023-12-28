@@ -31,6 +31,7 @@
 
 // SpaceFOM include files.
 ##include "SpaceFOM/RefFrameBase.hh"
+##include "SpaceFOM/RefFrameTree.hh"
 ##include "SpaceFOM/RefFrameLagCompBase.hh"
 ##include "SpaceFOM/RefFrameConditionalBase.hh"
 ##include "SpaceFOM/RefFrameOwnershipHandler.hh"
@@ -56,12 +57,14 @@ class SpaceFOMRefFrameBaseSimObject : public Trick::SimObject {
    SpaceFOM::RefFrameDeleted deleted_callback;
 
    // _INIT phase needs to be less than 60, when TrickHLA is initialized.
-   SpaceFOMRefFrameBaseSimObject( SpaceFOM::RefFrameBase    & frame_packing_ref,
+   SpaceFOMRefFrameBaseSimObject( SpaceFOM::RefFrameTree    & frame_tree_ref,
+                                  SpaceFOM::RefFrameBase    & frame_packing_ref,
                                   SpaceFOM::RefFrameLagComp & lag_comp_ref,
                                   unsigned short              _INIT = P_HLA_INIT  )
-   : frame_base_ptr( &frame_packing_ref ),
+   :  frame_base_ptr( &frame_packing_ref ),
      lag_comp_base_ptr( &lag_comp_ref ),
-     conditional( frame_packing_ref )
+     conditional( frame_packing_ref ),
+     frame_tree( frame_tree_ref )
    {
       //
       // Desfault data jobs
@@ -73,6 +76,7 @@ class SpaceFOMRefFrameBaseSimObject : public Trick::SimObject {
       //
       P_INIT ("initialization") frame_base_ptr->initialize();
       P_INIT ("initialization") lag_comp_base_ptr->initialize();
+      P_INIT ("initialization") frame_tree.add_frame( frame_base_ptr );
 
    }
    
@@ -101,8 +105,12 @@ class SpaceFOMRefFrameBaseSimObject : public Trick::SimObject {
    }
 
   private:
+   
    // Add you reference frame working data reference here.
    // SpaceFOM::RefFrameData * ref_frame_data_ptr;
+   
+   // Reference to the frame tree manager.
+   SpaceFOM::RefFrameTree & frame_tree;
 
    // This object is not copyable
    SpaceFOMRefFrameBaseSimObject( SpaceFOMRefFrameBaseSimObject const & );

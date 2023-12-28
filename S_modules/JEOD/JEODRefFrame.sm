@@ -41,21 +41,22 @@ class JEODRefFrameSimObject : public SpaceFOMRefFrameBaseSimObject {
 
   public:
 
-   /* HLA associated reference frames packing object. */
-   SpaceFOM::JEODRefFrameState frame_packing;
-
    /* JEOD Reference Frame state in SpaceFOM parent frame. */
    jeod::RefFrameState ref_frame_state;
+
+   /* HLA associated reference frames packing object. */
+   SpaceFOM::JEODRefFrameState frame_packing;
 
    /* HLA lag compensation object. */
    SpaceFOM::RefFrameLagComp lag_compensation;
 
    // SimObjct constructor.
    // _INIT phase needs to be less than 60, when TrickHLA is initialized.
-   JEODRefFrameSimObject( jeod::TimeTT & time_in,
+   JEODRefFrameSimObject( jeod::TimeTT            & time_in,
+                          SpaceFOM::RefFrameTree  & frame_tree_ref,
                           unsigned short _INIT    = P_HLA_INIT,
                           unsigned short _UPDATE  = 99 )
-   : SpaceFOMRefFrameBaseSimObject( frame_packing, lag_compensation, _INIT ),
+   : SpaceFOMRefFrameBaseSimObject( frame_tree_ref, frame_packing, lag_compensation, _INIT ),
      frame_packing( time_in, ref_frame_state ),
      lag_compensation(frame_packing),
      time_tt(time_in)
@@ -109,9 +110,13 @@ class JEODRefFrameSimObject : public SpaceFOMRefFrameBaseSimObject {
 
    /* Update the SpaceFOM reference frame wrt. the specified parent frame. */
    void update () {
-
-      // Compute the target reference frame wrt. the specified parent frame.
-      target_frame_ptr->compute_relative_state( *parent_frame_ptr, ref_frame_state );
+      
+      // Check to see if this is a root reference frame.
+      // If so, no update is necessary or even possible.
+      if ( parent_frame_ptr != NULL ) {
+         // Compute the target reference frame wrt. the specified parent frame.
+         target_frame_ptr->compute_relative_state( *parent_frame_ptr, ref_frame_state );
+      }
 
       // Set the time tag for this reference frame state.
       frame_packing.set_time((time_tt.trunc_julian_time * 86400.0));

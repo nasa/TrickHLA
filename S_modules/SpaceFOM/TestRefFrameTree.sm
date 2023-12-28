@@ -53,16 +53,11 @@ class SpaceFOMTestRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObje
    // _ADD and _BUILD phases need to be less than 60, when TrickHLA is initialized.
    SpaceFOMTestRefFrameTreeSimObject( TrickHLA::Manager          & thla_manager_in,
                                       SpaceFOM::ExecutionControl & exec_cntrl_in,
-                                      unsigned short               _ADD   = P_HLA_INIT,
                                       unsigned short               _BUILD = (P_HLA_INIT+1) )
-   : SpaceFOMRefFrameTreeBaseSimObject(thla_manager_in, exec_cntrl_in, _ADD, _BUILD ),
+   : SpaceFOMRefFrameTreeBaseSimObject(thla_manager_in, exec_cntrl_in, _BUILD ),
      root_frame_ptr( NULL ),
      vehicle_frame_ptr( NULL )
    {
-
-      // Place the frames into the tree.  For example . . .
-      P_ADD ("initialization") frame_tree.add_frame( root_frame_ptr );
-      P_ADD ("initialization") frame_tree.add_frame( vehicle_frame_ptr );
 
    }
 
@@ -106,3 +101,34 @@ class SpaceFOMTestRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObje
    SpaceFOMTestRefFrameTreeSimObject( SpaceFOMTestRefFrameTreeSimObject const & );
    SpaceFOMTestRefFrameTreeSimObject & operator=( SpaceFOMTestRefFrameTreeSimObject const & );
 };
+
+
+//==========================================================================
+// SIM_OBJECT: SpaceFOMRefFrameSimObject - An example reference frame
+// simulation object definition. This can be used for SpaceFOM ReferenceFrame
+// object discovery and data exchange.
+//==========================================================================
+#include "SpaceFOM/RefFrame.sm"
+
+
+//==========================================================================
+// Instantiate the reference frame tree and constituent frames.
+//==========================================================================
+
+// SimObject used for root reference frame discovery.
+SpaceFOMTestRefFrameTreeSimObject ref_frame_tree( THLA.manager,
+                                                  THLA.execution_control );
+SpaceFOMRefFrameSimObject root_ref_frame( ref_frame_tree.frame_tree, ref_frame_tree.root_frame_data );
+SpaceFOMRefFrameSimObject ref_frame_A( ref_frame_tree.frame_tree, ref_frame_tree.vehicle_frame_data );
+
+
+//==========================================================================
+// Create the THLA connections for the SpaceFOM Reference Frame Tree.
+//==========================================================================
+void create_connections() {
+
+   // Make the connections for the root and child frame in the reference frame tree.
+   ref_frame_tree.root_frame_ptr = &root_ref_frame.frame_packing;
+   ref_frame_tree.vehicle_frame_ptr = &ref_frame_A.frame_packing;
+
+}
