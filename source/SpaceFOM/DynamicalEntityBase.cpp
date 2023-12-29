@@ -40,8 +40,8 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.hh"
-#include "trick/message_proto.h"
 #include "trick/matrix_macros.h"
+#include "trick/message_proto.h"
 #include "trick/vector_macros.h"
 
 // TrickHLA include files.

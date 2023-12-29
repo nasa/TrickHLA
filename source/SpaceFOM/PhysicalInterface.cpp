@@ -133,7 +133,7 @@ void PhysicalInterface::initialize()
  */
 void PhysicalInterface::pack_from_working_data()
 {
-   int           iinc;
+   int iinc;
 
    // NOTE: Because TrickHLA handles the bundling of locally owned attributes
    // we do not need to check the ownership status of them here like we do

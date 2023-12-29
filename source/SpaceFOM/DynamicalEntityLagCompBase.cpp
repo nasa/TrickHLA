@@ -198,8 +198,8 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
  *  TrickHLALagCompensation class. */
 void DynamicalEntityLagCompBase::receive_lag_compensation()
 {
-   double        end_t  = get_scenario_time();
-   double        data_t = entity.get_time();
+   double end_t  = get_scenario_time();
+   double data_t = entity.get_time();
 
    // Save the compensation time step.
    this->compensate_dt = end_t - data_t;

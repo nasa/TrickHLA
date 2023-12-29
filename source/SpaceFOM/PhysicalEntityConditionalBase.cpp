@@ -130,7 +130,7 @@ void PhysicalEntityConditionalBase::initialize_callback(
 bool PhysicalEntityConditionalBase::should_send(
    TrickHLA::Attribute *attr )
 {
-   bool          send_attr = false;
+   bool send_attr = false;
 
    // If there is simulation data to compare to and if the attribute FOM name
    // has been specified, check the value of the current simulation variable

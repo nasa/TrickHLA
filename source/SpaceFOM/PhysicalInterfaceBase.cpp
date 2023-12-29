@@ -380,7 +380,6 @@ void PhysicalInterfaceBase::set_object( TrickHLA::Object *mngr_obj )
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */

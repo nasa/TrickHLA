@@ -42,8 +42,8 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_REF_FRAME_BASE_HH
 
 // System include files.
-#include <string>
 #include <iostream>
+#include <string>
 
 // TrickHLA include files.
 #include "TrickHLA/Packing.hh"
@@ -112,8 +112,8 @@ class RefFrameBase : public TrickHLA::Packing
                              char const       *ref_frame_obj_name,
                              char const       *ref_frame_name,
                              char const       *ref_frame_parent_name = NULL,
-                             RefFrameBase     *ref_frame_parent = NULL,
-                             TrickHLA::Object *mngr_object = NULL );
+                             RefFrameBase     *ref_frame_parent      = NULL,
+                             TrickHLA::Object *mngr_object           = NULL );
 
    // Pre-initialize the packing object.
    /*! @brief Function to begin the configuration/initialization of the RefFrame.
