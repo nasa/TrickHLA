@@ -98,7 +98,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
     *  This function needs to be called prior to TrickHLA initialization if
     *  the PhysicalEntity object is not being configured with an
     *  initialization constructor. */
-   void configure();
+   void configure(); // cppcheck-suppress [duplInheritedMember]
 
    /*! @brief Entity instance initialization routine. */
    virtual void initialize();

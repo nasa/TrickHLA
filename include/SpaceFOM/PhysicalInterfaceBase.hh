@@ -95,7 +95,7 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
     *  This function needs to be called prior to TrickHLA initialization if
     *  the PhysicalInterface object is not being configured with an
     *  initialization constructor. */
-   void configure();
+   void configure();  // cppcheck-suppress [duplInheritedMember]
 
    /*! @brief interface instance initialization routine. */
    virtual void initialize();

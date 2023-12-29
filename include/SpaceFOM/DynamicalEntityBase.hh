@@ -87,7 +87,7 @@ class DynamicalEntityBase : virtual public SpaceFOM::PhysicalEntityBase
     *  This function needs to be called prior to TrickHLA initialization if
     *  the DynamicalEntity object is not being configured with an
     *  initialization constructor. */
-   void configure();
+   void configure(); // cppcheck-suppress [duplInheritedMember]
 
    /*! @brief Entity instance initialization routine. */
    virtual void initialize();

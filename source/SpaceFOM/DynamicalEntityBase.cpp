@@ -279,7 +279,7 @@ void DynamicalEntityBase::base_config(
 /*!
  * @job_class{initialization}
  */
-void DynamicalEntityBase::configure()
+void DynamicalEntityBase::configure() // cppcheck-suppress [duplInheritedMember]
 {
    // First call the base class pre_initialize function.
    PhysicalEntityBase::configure();

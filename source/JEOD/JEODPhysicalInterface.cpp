@@ -110,7 +110,7 @@ JEODPhysicalInterface::~JEODPhysicalInterface()
 /*!
  * @job_class{initialization}
  */
-void JEODPhysicalInterface::configure()
+void JEODPhysicalInterface::configure() // cppcheck-suppress [duplInheritedMember]
 {
 
    // First call the base class pre_initialize function.
@@ -142,7 +142,7 @@ void JEODPhysicalInterface::configure()
 /*!
  * @job_class{initialization}
  */
-void JEODPhysicalInterface::configure( jeod::DynBody *dyn_body_ptr )
+void JEODPhysicalInterface::configure( jeod::DynBody *dyn_body_ptr ) // cppcheck-suppress [constParameterPointer]
 {
 
    // Make sure that we have a vehicle point ID to work with.
