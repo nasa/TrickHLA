@@ -6542,12 +6542,11 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    remove_federate_instance_id( instance_hndl );
    remove_MOM_HLAfederation_instance_id( instance_hndl );
 
-   char                                *tMOMName  = NULL;
-   char                                *tFedName  = NULL;
-   bool                                 foundName = false;
-   TrickHLAObjInstanceNameMap::iterator iter;
+   char const *tMOMName  = NULL;
+   char const *tFedName  = NULL;
+   bool        foundName = false;
 
-   iter = mom_HLAfederate_inst_name_map.find( instance_hndl );
+   TrickHLAObjInstanceNameMap::iterator iter = mom_HLAfederate_inst_name_map.find( instance_hndl );
    if ( iter != mom_HLAfederate_inst_name_map.end() ) {
       tMOMName  = StringUtilities::ip_strdup_wstring( iter->second.c_str() );
       foundName = true;

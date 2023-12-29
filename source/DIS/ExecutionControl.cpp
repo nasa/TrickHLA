@@ -1461,9 +1461,7 @@ void ExecutionControl::add_pause(
 
 ExecutionConfiguration *ExecutionControl::get_execution_configuration()
 {
-   ExecutionConfiguration *ExCO;
-
-   ExCO = dynamic_cast< ExecutionConfiguration * >( this->get_execution_configuration() );
+   ExecutionConfiguration const *ExCO = dynamic_cast< ExecutionConfiguration * >( this->get_execution_configuration() );
    if ( ExCO == NULL ) {
       ostringstream errmsg;
       errmsg << "DIS::ExecutionControl::epoch_and_root_frame_discovery_process():" << __LINE__

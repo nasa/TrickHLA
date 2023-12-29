@@ -2471,9 +2471,7 @@ void ExecutionControl::clear_pause(
 
 ExecutionConfiguration *ExecutionControl::get_execution_configuration()
 {
-   ExecutionConfiguration *ExCO;
-
-   ExCO = dynamic_cast< ExecutionConfiguration * >( this->get_execution_configuration() );
+   ExecutionConfiguration const *ExCO = dynamic_cast< ExecutionConfiguration * >( this->get_execution_configuration() );
    if ( ExCO == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::epoch_and_root_frame_discovery_process():" << __LINE__
@@ -2487,7 +2485,6 @@ void ExecutionControl::start_federation_save_at_scenario_time(
    double      freeze_scenario_time,
    char const *file_name )
 {
-
    if ( freeze_interaction->get_handler() != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "IMSim::ExecutionControl::start_federation_save_at_scenario_time(%g, '%s'):%d%c",
