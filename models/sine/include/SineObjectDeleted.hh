@@ -67,8 +67,7 @@ class SineObjectDeleted : public TrickHLA::ObjectDeleted
    //-----------------------------------------------------------------
 
    /*! @brief Callback routine implementation to report that this object has
-    *  been deleted from the RTI.
-    *  @param obj Object which was deleted. */
+    *  been deleted from the RTI. */
    void deleted();
 
   private:

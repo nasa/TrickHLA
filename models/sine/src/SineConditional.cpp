@@ -130,10 +130,6 @@ void SineConditional::initialize_callback(
 }
 
 /*!
- * @brief Determines if the attribute value should be sent.
- * @return True if the attribute value should be sent.
- * @param attr Attribute to check.
- *
  * @job_class{scheduled}
  */
 bool SineConditional::should_send(

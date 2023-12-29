@@ -67,7 +67,9 @@ class JEODRefFrameState : public SpaceFOM::RefFrameBase
    // Public constructors and destructors.
    /*! @brief Default constructor for the SpaceFOM JEODRefFrameState class. */
    JEODRefFrameState();
-   /*! @brief Initialization constructor to set reference to data. */
+   /*! @brief Initialization constructor to set reference to data.
+    *  @param time_tt_in Pointer to the jeod::TimeTT instance.
+    *  @param ref_frame_state_ref Reference to the RefFrameState instance. */
    JEODRefFrameState( jeod::TimeTT        &time_tt_in,
                       jeod::RefFrameState &ref_frame_state_ref );
    /*! @brief Destructor for the SpaceFOM JEODRefFrameState class. */
@@ -80,9 +82,7 @@ class JEODRefFrameState : public SpaceFOM::RefFrameBase
                    jeod::RefFrameState *ref_frame_state_ptr );
 
    // Initialize the packing object.
-   /*! @brief Set the reference to the reference frame data.
-    *  @param time_tt_in Reference to the jeod::TimeTT instance.
-    *  @param ref_frame_state_ptr Pointer to the jeod::RefFrameState instance. */
+   /*! @brief Set the reference to the reference frame data. */
    virtual void initialize();
 
    /*! @brief Access function to set the HLA federation scenario time.

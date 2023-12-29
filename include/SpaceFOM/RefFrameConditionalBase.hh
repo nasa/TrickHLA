@@ -67,8 +67,7 @@ class RefFrameConditionalBase : public TrickHLA::Conditional
    /*! @brief Destructor. */
    virtual ~RefFrameConditionalBase();
 
-   /*! @brief Initializes the sim_data to the supplied.
-    *  @param data External simulation data. */
+   /*! @brief Initializes the conditional. */
    virtual void initialize();
 
    /*! @brief Initialization callback as part of the TrickHLA::Conditional functions.

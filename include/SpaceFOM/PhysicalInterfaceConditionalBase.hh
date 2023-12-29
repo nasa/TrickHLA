@@ -67,8 +67,7 @@ class PhysicalInterfaceConditionalBase : public TrickHLA::Conditional
    /*! @brief Destructor. */
    virtual ~PhysicalInterfaceConditionalBase();
 
-   /*! @brief Initializes the sim_data to the supplied.
-    *  @param data External simulation data. */
+   /*! @brief Initializes the conditional data. */
    virtual void initialize();
 
    /*! @brief Initialization callback as part of the TrickHLA::Conditional functions.

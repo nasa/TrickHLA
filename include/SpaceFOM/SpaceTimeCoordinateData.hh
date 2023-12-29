@@ -77,7 +77,7 @@ class SpaceTimeCoordinateData
 
    /*! @brief Compare a SpaceTimeCoordinateData instance to another.
     *  @return True if instances are the exactly the same, false otherwise.
-    *  @param  src SpaceTimeCoordinateData to compare against. */
+    *  @param  rhs SpaceTimeCoordinateData to compare against. */
    bool is_equal( const SpaceTimeCoordinateData &rhs );
 
    /*! @brief Copy the state-time coordinate data.

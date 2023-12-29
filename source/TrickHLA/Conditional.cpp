@@ -57,8 +57,7 @@ Conditional::~Conditional() // RETURN: -- None.
 }
 
 /*!
- * @brief Initialize the callback object to the supplied Object pointer.
- * @param obj Associated object for this class.
+ * @job_class{initialization}
  */
 void Conditional::initialize_callback(
    Object *obj )
@@ -67,9 +66,7 @@ void Conditional::initialize_callback(
 }
 
 /*!
- * @brief Default implementation to always send the attribute.
- * @return Defaults to true.
- * @param attr Pointer to TrickHLA Attribute.
+ * @job_class{scheduled}
  */
 bool Conditional::should_send( // RETURN: -- None.
    Attribute *attr )           // IN: ** Attribute data to send
@@ -78,9 +75,7 @@ bool Conditional::should_send( // RETURN: -- None.
 }
 
 /*!
- * @brief Get the Attribute by FOM name.
- * @return Attribute for the given name.
- * @param attr_FOM_name Attribute FOM name.
+ * @job_class{scheduled}
  */
 Attribute *Conditional::get_attribute(
    char const *attr_FOM_name )
@@ -89,9 +84,7 @@ Attribute *Conditional::get_attribute(
 }
 
 /*!
- * @brief This function returns the Attribute for the given attribute FOM name.
- * @return Attribute for the given name.
- * @param attr_FOM_name Attribute FOM name.
+ * @job_class{scheduled}
  */
 Attribute *Conditional::get_attribute_and_validate(
    char const *attr_FOM_name )

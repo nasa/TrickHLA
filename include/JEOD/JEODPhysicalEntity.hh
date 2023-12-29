@@ -76,7 +76,7 @@ class JEODPhysicalEntity : virtual public SpaceFOM::PhysicalEntityBase
    virtual ~JEODPhysicalEntity();                              // Destructor.
 
    /*! @brief Set the reference to the physical entity data.
-    *  @param dyn_body_data_ptr Pointer to the JEOD DynBody instance. */
+    *  @param dyn_body_ptr Pointer to the JEOD DynBody instance. */
    virtual void configure( jeod::DynBody *dyn_body_ptr );
 
    /*! @brief Initialize the packing object. */

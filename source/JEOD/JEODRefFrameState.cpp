@@ -98,7 +98,7 @@ JEODRefFrameState::~JEODRefFrameState()
  * @job_class{initialization}
  */
 void JEODRefFrameState::configure(
-   jeod::TimeTT        *time_tt_ptr,
+   jeod::TimeTT        *time_tt_in,
    jeod::RefFrameState *ref_frame_state_ptr )
 {
 
@@ -116,14 +116,14 @@ void JEODRefFrameState::configure(
    this->ref_frame_state = ref_frame_state_ptr;
 
    // Set the JEOD time reference.
-   if ( time_tt_ptr == NULL ) {
+   if ( time_tt_in == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
              << " ERROR: Unexpected NULL time reference: " << this->packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
-   time_tt = time_tt_ptr;
+   time_tt = time_tt_in;
 
    // Return to calling routine.
    return;
