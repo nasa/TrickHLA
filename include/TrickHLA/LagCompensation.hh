@@ -68,19 +68,16 @@ class LagCompensation
    // Constructors / destructors
    //-----------------------------------------------------------------
    /*! @brief Default constructor for the TrickHLA LagCompensation class. */
-   LagCompensation() : object( NULL )
-   {
-      return;
-   }
+   LagCompensation() : initialized( false ), object( NULL ){ return; }
    /*! @brief Destructor for the TrickHLA LagCompensation class. */
-   virtual ~LagCompensation()
-   {
-      return;
-   }
+   virtual ~LagCompensation() { return; }
 
    //-----------------------------------------------------------------
    // These are virtual functions and must be defined by a full class.
    //-----------------------------------------------------------------
+
+   /*! @brief Finish the initialization of the TrickHLA LAgCompensation object. */
+   virtual void initialize(){ initialized = true; }
 
    /*! @brief Send side lag compensation callback. */
    virtual void send_lag_compensation();
@@ -136,6 +133,7 @@ class LagCompensation
    virtual void initialize_callback( Object *obj );
 
   protected:
+   bool    initialized; ///< @trick_units{--} Initialization status flag.
    Object *object; ///< @trick_io{**} Object associated with this lag-comp class.
 
   private:

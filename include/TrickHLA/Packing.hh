@@ -85,9 +85,21 @@ class Packing
    // Helper functions.
    //-----------------------------------------------------------------
 
+   // Initialize the packing object.
+   /*! @brief Finish the initialization of the TrickHLA Packing object. */
+   virtual void initialize(){ initialized = true; }
+
    /*! @brief Initialize the callback object to the supplied Object pointer.
     *  @param obj Associated object for this class. */
    virtual void initialize_callback( Object *obj );
+
+   /*! @brief Set the TrickHLA managed object associated with this Packing object.
+    *  @param mngr_obj Pointer to the associated TrickHLA managed Object. */
+   virtual void set_object( TrickHLA::Object *mngr_obj );
+
+   /*! @brief Get the TrickHLA managed Object associated with this Packing object.
+    *  @return Pointer to the associated TrickHLA managed Object. */
+   virtual TrickHLA::Object *get_object(){ return object; }
 
    /*! @brief Get the Attribute by FOM name.
     *  @return Attribute for the given name.
@@ -108,7 +120,8 @@ class Packing
    double get_cte_time();
 
   protected:
-   Object *object; ///< @trick_io{**} Object associated with this class.
+   bool    initialized; ///< @trick_units{--} Initialization status flag.
+   Object *object;      ///< @trick_io{**} Object associated with this class.
 
    /*! @brief Uses Trick memory allocation routines to allocate a new string
     *  that is input file compliant. */

@@ -71,7 +71,6 @@ using namespace SpaceFOM;
 RefFrameBase::RefFrameBase()
    : debug( false ),
      is_root_frame( false ),
-     initialized( false ),
      parent_frame( NULL ),
      name_attr( NULL ),
      parent_name_attr( NULL ),
@@ -340,7 +339,7 @@ void RefFrameBase::initialize()
    }
 
    // Mark this as initialized.
-   this->initialized = true;
+   TrickHLA::Packing::initialize();
 
    // Return to calling routine.
    return;
@@ -634,26 +633,6 @@ void RefFrameBase::unpack()
       cout << "RefFrameBase::unpack():" << __LINE__ << endl;
       this->print_data();
    }
-
-   return;
-}
-
-/*!
- * @job_class{default_data}
- */
-void RefFrameBase::set_object( TrickHLA::Object *mngr_obj )
-{
-   // Check for initialization.
-   if ( initialized ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameBase::set_object():" << __LINE__
-             << " ERROR: The initialize() function has already been called" << THLA_ENDL;
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Assign the object.
-   this->object = mngr_obj;
 
    return;
 }

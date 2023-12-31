@@ -43,7 +43,8 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 Conditional::Conditional() // RETURN: -- None.
-   : object( NULL )
+   : initialized( false ),
+     object( NULL )
 {
    return;
 }

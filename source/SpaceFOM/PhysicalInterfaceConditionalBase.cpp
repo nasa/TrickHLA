@@ -58,7 +58,6 @@ PhysicalInterfaceConditionalBase::PhysicalInterfaceConditionalBase(
      debug( false ),
      interface( interface_ref ),
      prev_data(),
-     initialized( false ),
      name_attr( NULL ),
      parent_attr( NULL ),
      position_attr( NULL ),

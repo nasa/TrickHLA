@@ -56,7 +56,8 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 Packing::Packing()
-   : object( NULL )
+   : initialized( false ),
+     object( NULL )
 {
    return;
 }
@@ -77,6 +78,26 @@ void Packing::initialize_callback(
    Object *obj )
 {
    this->object = obj;
+}
+
+/*!
+ * @job_class{default_data}
+ */
+void Packing::set_object( TrickHLA::Object *mngr_obj )
+{
+   // Check for initialization.
+   if ( initialized ) {
+      ostringstream errmsg;
+      errmsg << "TrickHLA::Packing::set_object():" << __LINE__
+             << " ERROR: The initialize() function has already been called" << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Assign the object.
+   this->object = mngr_obj;
+
+   return;
 }
 
 /*!

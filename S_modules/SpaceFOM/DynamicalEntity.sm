@@ -1,9 +1,9 @@
 /*****************************************************************************
  * General TrickHLA Space Reference Federation Object Model (SpaceFOM)
- * Simulation Definition Object for the standard reference frames.
+ * Simulation Definition Object for the standard physical entity.
  *---------------------------------------------------------------------------*
  * This is a Simulation Definition (S_define) module that defines the
- * standard SpaceFOM reference frame simulation object instance.
+ * standard SpaceFOM PhysicalEntity base simulation object instance.
  ****************************************************************************/
 /*****************************************************************************
  *       Author: Edwin Z. Crues
@@ -23,72 +23,67 @@
  
 
 //==========================================================================
-// SIM_OBJECT: SpaceFOMRefFrameSimObject - A SpaceFOM reference frame
+// SIM_OBJECT: SpaceFOMPhysicalEntitySimObject - A SpaceFOM PhysicalEntity
 // instance simulation object definition.
 //==========================================================================
 
 // SpaceFOM include files.
-##include "SpaceFOM/RefFrameTree.hh"
-##include "SpaceFOM/RefFrameState.hh"
-##include "SpaceFOM/RefFrameLagComp.hh"
-##include "SpaceFOM/RefFrameConditionalBase.hh"
-##include "SpaceFOM/RefFrameOwnershipHandler.hh"
-##include "SpaceFOM/RefFrameDeleted.hh"
+##include "SpaceFOM/DynamicalEntity.hh"
+##include "SpaceFOM/DynamicalEntityConditionalBase.hh"
+##include "SpaceFOM/DynamicalEntityLagComp.hh"
+##include "SpaceFOM/DynamicalEntityOwnershipHandler.hh"
+##include "SpaceFOM/DynamicalEntityDeleted.hh"
 
 // Include TrickHLA Packing object base simulation definition module.
 #include "THLAPackingBase.sm"
 
-
-class SpaceFOMRefFrameSimObject : public TrickHLAPackingBaseSimObject {
+class SpaceFOMDynamicalEntitySimObject : public TrickHLAPackingBaseSimObject {
 
   public:
-   
-   /* HLA associated reference frames packing object. */
-   SpaceFOM::RefFrameState frame_packing;
 
-   /* HLA lag compensation object. */
-   SpaceFOM::RefFrameLagComp lag_compensation;
+   // DynamicalEntity data.
+   PhysicalEntityData  & pe_data;
+   DynamicalEntityData & de_data;
+
+   /* HLA associated reference frames packing object. */
+   SpaceFOM::DynamicalEntity entity_packing;
 
    /* HLA conditional object. */
-   SpaceFOM::RefFrameConditionalBase conditional;
+   DynamicalEntityConditionalBase conditional;
+
+   /* HLA lag compensation object. */
+   DynamicalEntityLagComp lag_compensation;
 
    /* HLA Ownership Handler object. */
-   SpaceFOM::RefFrameOwnershipHandler ownership_handler;
+   DynamicalEntityOwnershipHandler ownership_handler;
 
-   /* HLA RefFrame deleted object. */
-   SpaceFOM::RefFrameDeleted deleted_callback;
+   /* HLA PhysicalEntity deleted object. */
+   DynamicalEntityDeleted deleted_callback;
 
    // SimObject constructor.
-   SpaceFOMRefFrameSimObject( SpaceFOM::RefFrameTree & frame_tree_ref,
-                              SpaceFOM::RefFrameData & frame_data_ref,   
-                              unsigned short           _INIT = P_HLA_INIT  )
+   SpaceFOMDynamicalEntitySimObject( PhysicalEntityData  & pe,
+                                     DynamicalEntityData & de,
+                                     unsigned short        _INIT = P_HLA_INIT  )
    : TrickHLAPackingBaseSimObject( _INIT ),
-     frame_packing( frame_data_ref ),
-     lag_compensation( frame_packing ),
-     conditional( frame_packing ),
-     frame_tree( frame_tree_ref )
+     pe_data(pe),
+     de_data(de),
+     entity_packing( pe, de ),
+     conditional(entity_packing),
+     lag_compensation( entity_packing )
    {
       // Set the service references for the base class.
-      packing_base_ptr     = &frame_packing;
+      packing_base_ptr     = &entity_packing;
       lag_comp_base_ptr    = &lag_compensation;
       conditional_base_ptr = &conditional;
       ownership_base_ptr   = &ownership_handler;
       deleted_base_ptr     = &deleted_callback;
-      
-      //
-      // Initialization jobs
-      //
-      P_INIT ("initialization") frame_tree.add_frame( &frame_packing );
 
    }
 
   private:
-   
-   // Reference to the frame tree manager.
-   SpaceFOM::RefFrameTree & frame_tree;
 
    // This object is not copyable
-   SpaceFOMRefFrameSimObject( SpaceFOMRefFrameSimObject const & );
-   SpaceFOMRefFrameSimObject & operator=( SpaceFOMRefFrameSimObject const & );
+   SpaceFOMDynamicalEntitySimObject( SpaceFOMDynamicalEntitySimObject const & );
+   SpaceFOMDynamicalEntitySimObject & operator=( SpaceFOMDynamicalEntitySimObject const & );
 
 };

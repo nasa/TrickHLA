@@ -203,21 +203,11 @@ class RefFrameBase : public TrickHLA::Packing
     *  pe_packing_data object into the working data object(s). */
    virtual void unpack_into_working_data() = 0;
 
-   // Access to protected data.
-   virtual void set_object( TrickHLA::Object *mngr_obj );
-
-   // Access to protected data.
-   virtual TrickHLA::Object *get_object()
-   {
-      return object;
-   }
-
   public:
    bool debug; ///< @trick_units{--} Debug output flag.
 
   protected:
    bool is_root_frame; ///< @trick_units{--} Indicator that this is a root reference frame.
-   bool initialized;   ///< @trick_units{--} Initialization indication flag.
 
    RefFrameBase *parent_frame; ///< @trick_units{--} Pointer to this frame's parent frame.
 

@@ -87,8 +87,6 @@ class RefFrameConditionalBase : public TrickHLA::Conditional
    RefFrameBase &frame;     ///< @trick_units{--} @trick_io{**} Associated RefFrame.
    RefFrameData  prev_data; ///< @trick_units{--} @trick_io{**} Previous comparison data.
 
-   bool initialized; ///< @trick_units{--} Initialization indication flag.
-
    TrickHLA::Attribute *name_attr;        ///< @trick_io{**} Reference frame name Attribute.
    TrickHLA::Attribute *parent_name_attr; ///< @trick_io{**} Parent reference frame name Attribute.
    TrickHLA::Attribute *state_attr;       ///< @trick_io{**} Reference frame state Attribute.

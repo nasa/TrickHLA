@@ -65,7 +65,6 @@ using namespace SpaceFOM;
  */
 PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
    : debug( false ),
-     initialized( false ),
      name_attr( NULL ),
      type_attr( NULL ),
      status_attr( NULL ),
@@ -374,7 +373,7 @@ void PhysicalEntityBase::initialize()
    }
 
    // Mark this as initialized.
-   this->initialized = true;
+   TrickHLA::Packing::initialize();
 
    // Return to calling routine.
    return;
@@ -531,27 +530,6 @@ void PhysicalEntityBase::unpack()
       send_hs( stdout, "PhysicalEntityBase::unpack():%d%c", __LINE__, THLA_NEWLINE );
       this->debug_print( cout );
    }
-
-   return;
-}
-
-/*!
- * @job_class{default_data}
- */
-void PhysicalEntityBase::set_object( TrickHLA::Object *mngr_obj )
-{
-
-   // Check for initialization.
-   if ( initialized ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalEntityBase::set_object():" << __LINE__
-             << " ERROR: The initialize() function has already been called" << THLA_ENDL;
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Assign the object.
-   this->object = mngr_obj;
 
    return;
 }

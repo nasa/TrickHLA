@@ -61,7 +61,6 @@ using namespace SpaceFOM;
  */
 PhysicalInterfaceBase::PhysicalInterfaceBase() // RETURN: -- None.
    : debug( false ),
-     initialized( false ),
      name_attr( NULL ),
      parent_attr( NULL ),
      position_attr( NULL ),
@@ -240,7 +239,7 @@ void PhysicalInterfaceBase::initialize()
    }
 
    // Mark this as initialized.
-   this->initialized = true;
+   TrickHLA::Packing::initialize();
 
    // Return to calling routine.
    return;
@@ -355,27 +354,6 @@ void PhysicalInterfaceBase::unpack()
       cout << "PhysicalInterfaceBase::unpack():" << __LINE__ << endl;
       this->print_data();
    }
-
-   return;
-}
-
-/*!
- * @job_class{default_data}
- */
-void PhysicalInterfaceBase::set_object( TrickHLA::Object *mngr_obj )
-{
-
-   // Check for initialization.
-   if ( initialized ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalInterfaceBase::set_object():" << __LINE__
-             << " ERROR: The initialize() function has already been called" << THLA_ENDL;
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Assign the object.
-   this->object = mngr_obj;
 
    return;
 }

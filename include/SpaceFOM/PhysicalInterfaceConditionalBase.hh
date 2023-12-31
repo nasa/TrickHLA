@@ -87,8 +87,6 @@ class PhysicalInterfaceConditionalBase : public TrickHLA::Conditional
    PhysicalInterfaceBase &interface; ///< @trick_units{--} @trick_io{**} Associated PhysicalInterface.
    PhysicalInterfaceData  prev_data; ///< @trick_units{--} @trick_io{**} Previous comparison data.
 
-   bool initialized; ///< @trick_units{--} Initialization indication flag.
-
    // Setup Object Attribute references. These are set in initialize_callback
    // routine and used for efficiency and ownership transfer in unpack routines.
    TrickHLA::Attribute *name_attr;     ///< @trick_io{**} Name Attribute.

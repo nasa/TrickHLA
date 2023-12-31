@@ -178,22 +178,10 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
     *  pe_packing_data object into the working data object(s). */
    virtual void unpack_into_working_data() = 0;
 
-   /*! @brief Set the TrickHLA Object association.  Needed when defining the
-    *  objects associations in the S_define file.
-    *  @param mngr_obj Pointer to the associated allocated TrickHLA::Object. */
-   virtual void set_object( TrickHLA::Object *mngr_obj );
-
-   /*! @brief Get the TrickHLA Object association. */
-   virtual TrickHLA::Object *get_object()
-   {
-      return object;
-   }
-
   public:
    bool debug; ///< @trick_units{--} Debug output flag.
 
   protected:
-   bool initialized; ///< @trick_units{--} Initialization indication flag.
 
    // Setup Object Attribute references. These are set in initialize_callback
    // routine and used for efficiency and ownership transfer in unpack routines.

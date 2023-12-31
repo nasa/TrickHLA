@@ -65,6 +65,9 @@ class Conditional
    /*! @brief Destructor for the TrickHLA Conditional class. */
    virtual ~Conditional();
 
+   /*! @brief Finish the initialization of the TrickHLA Conditional object. */
+   virtual void initialize(){ initialized = true; }
+
    /*! @brief Initialize the callback object to the supplied Object pointer.
     *  @param obj Associated object for this class. */
    virtual void initialize_callback( Object *obj );
@@ -85,7 +88,8 @@ class Conditional
    Attribute *get_attribute_and_validate( char const *attr_FOM_name );
 
   protected:
-   Object *object; ///< @trick_io{**} Object associated with this class.
+   bool    initialized; ///< @trick_units{--} Initialization status flag.
+   Object *object;      ///< @trick_io{**} Object associated with this class.
 };
 
 } // namespace TrickHLA

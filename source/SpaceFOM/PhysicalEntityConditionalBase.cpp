@@ -58,7 +58,6 @@ PhysicalEntityConditionalBase::PhysicalEntityConditionalBase(
      debug( false ),
      entity( entity_ref ),
      prev_data(),
-     initialized( false ),
      name_attr( NULL ),
      type_attr( NULL ),
      status_attr( NULL ),
@@ -85,6 +84,9 @@ PhysicalEntityConditionalBase::~PhysicalEntityConditionalBase()
  */
 void PhysicalEntityConditionalBase::initialize()
 {
+   // Call the base class function.
+   TrickHLA::Conditional::initialize();
+
    // Return to calling routine.
    return;
 }
