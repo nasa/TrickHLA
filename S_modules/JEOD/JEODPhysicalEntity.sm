@@ -1,13 +1,13 @@
 /*****************************************************************************
  * General TrickHLA Space Reference Federation Object Model (SpaceFOM)
- * Simulation Definition Object for the standard reference frames.
+ * Simulation Definition Object for a JEOD-based physical entity.
  *---------------------------------------------------------------------------*
  * This is a Simulation Definition (S_define) module that defines the
- * standard SpaceFOM reference frame simulation object instance.
+ * SpaceFOM JEOD-based PhysicalEntity simulation object instance.
  ****************************************************************************/
 /*****************************************************************************
  *       Author: Edwin Z. Crues
- *         Date: December 2023
+ *         Date: January 2024
  *       E-Mail: Edwin.Z.Crues@nasa.gov
  *        Phone: 281-483-2902
  * Organization: Mail Code ER7
@@ -23,74 +23,67 @@
  
 
 //==========================================================================
-// SIM_OBJECT: SpaceFOMRefFrameSimObject - A SpaceFOM reference frame
-// instance simulation object definition.
+// SIM_OBJECT: JEODPhysicalEntitySimObject - A SpaceFOM JEOD-based
+// PhysicalEntity instance simulation object definition.
 //==========================================================================
-
-// SpaceFOM include files.
-##include "SpaceFOM/RefFrameTree.hh"
-##include "SpaceFOM/RefFrameState.hh"
-##include "SpaceFOM/RefFrameLagComp.hh"
-##include "SpaceFOM/RefFrameConditionalBase.hh"
-##include "SpaceFOM/RefFrameOwnershipHandler.hh"
-##include "SpaceFOM/RefFrameDeleted.hh"
 
 // Include TrickHLA Packing object base simulation definition module.
 #include "THLAPackingBase.sm"
 
+// SpaceFOM includes.
+##include "JEOD/JEODPhysicalEntity.hh"
+##include "SpaceFOM/PhysicalEntityLagComp.hh"
+##include "SpaceFOM/PhysicalEntityConditionalBase.hh"
+##include "SpaceFOM/PhysicalEntityOwnershipHandler.hh"
+##include "SpaceFOM/PhysicalEntityDeleted.hh"
 
-class SpaceFOMRefFrameSimObject : public TrickHLAPackingBaseSimObject {
+class JEODPhysicalEntiySimObject : public TrickHLAPackingBaseSimObject {
 
   public:
-   
+
    /* HLA associated reference frames packing object. */
-   SpaceFOM::RefFrameState frame_packing;
+   SpaceFOM::JEODPhysicalEntity entity_packing;
 
    /* HLA lag compensation object. */
-   SpaceFOM::RefFrameLagComp lag_compensation;
+   SpaceFOM::PhysicalEntityLagComp lag_compensation;
 
    /* HLA conditional object. */
-   SpaceFOM::RefFrameConditionalBase conditional;
+   SpaceFOM::PhysicalEntityConditionalBase conditional;
 
    /* HLA Ownership Handler object. */
-   SpaceFOM::RefFrameOwnershipHandler ownership_handler;
+   SpaceFOM::PhysicalEntityOwnershipHandler ownership_handler;
 
-   /* HLA RefFrame deleted object. */
-   SpaceFOM::RefFrameDeleted deleted_callback;
+   /* HLA Deleted object. */
+   SpaceFOM::PhysicalEntityDeleted deleted_callback;
 
-   // SimObject constructor.
-   SpaceFOMRefFrameSimObject( SpaceFOM::RefFrameTree & frame_tree_ref,
-                              SpaceFOM::RefFrameData & frame_data_ref,   
-                              unsigned short           _INIT = P_HLA_INIT  )
+   JEODPhysicalEntiySimObject( jeod::DynBody & dyn_body_ref,
+                               unsigned short _INIT = 59 )
    : TrickHLAPackingBaseSimObject( _INIT ),
-     frame_packing( frame_data_ref ),
-     lag_compensation( frame_packing ),
-     conditional( frame_packing ),
-     frame_tree( frame_tree_ref )
+     entity_packing(dyn_body_ref),
+     lag_compensation( entity_packing ),
+     conditional( entity_packing ),
+     dyn_body(dyn_body_ref)
    {
       // Set the service references for the base class.
-      packing_base_ptr     = &frame_packing;
+      packing_base_ptr     = &entity_packing;
       lag_comp_base_ptr    = &lag_compensation;
       conditional_base_ptr = &conditional;
       ownership_base_ptr   = &ownership_handler;
       deleted_base_ptr     = &deleted_callback;
-      
+
       //
       // Initialization jobs
       //
-      P_INIT ("initialization") frame_tree.add_frame( &frame_packing );
 
    }
 
   protected:
-   
-   // Reference to the frame tree manager.
-   SpaceFOM::RefFrameTree & frame_tree;
+   jeod::DynBody & dyn_body;
 
   private:
 
    // This object is not copyable
-   SpaceFOMRefFrameSimObject( SpaceFOMRefFrameSimObject const & );
-   SpaceFOMRefFrameSimObject & operator=( SpaceFOMRefFrameSimObject const & );
+   JEODPhysicalEntiySimObject( JEODPhysicalEntiySimObject const & );
+   JEODPhysicalEntiySimObject & operator=( JEODPhysicalEntiySimObject const & );
 
 };

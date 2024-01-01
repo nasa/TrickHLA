@@ -26,8 +26,9 @@
 // simulation object definition. This can be used for SpaceFOM ReferenceFrame
 // object discovery and data exchange.
 //==========================================================================
-// Include SpaceFOM base reference frame sim object.
-#include "SpaceFOM/RefFrameBase.sm"
+
+// Include TrickHLA Packing object base simulation definition module.
+#include "THLAPackingBase.sm"
 
 // JEOD includes.
 ##include "environment/time/include/time_tt.hh"
@@ -36,8 +37,11 @@
 
 // SpaceFOM include files.
 ##include "SpaceFOM/RefFrameLagComp.hh"
+##include "SpaceFOM/RefFrameConditionalBase.hh"
+##include "SpaceFOM/RefFrameOwnershipHandler.hh"
+##include "SpaceFOM/RefFrameDeleted.hh"
 
-class JEODRefFrameSimObject : public SpaceFOMRefFrameBaseSimObject {
+class JEODRefFrameSimObject : public TrickHLAPackingBaseSimObject {
 
   public:
 
@@ -50,17 +54,35 @@ class JEODRefFrameSimObject : public SpaceFOMRefFrameBaseSimObject {
    /* HLA lag compensation object. */
    SpaceFOM::RefFrameLagComp lag_compensation;
 
+   /* HLA conditional object. */
+   SpaceFOM::RefFrameConditionalBase conditional;
+
+   /* HLA Ownership Handler object. */
+   SpaceFOM::RefFrameOwnershipHandler ownership_handler;
+
+   /* HLA RefFrame deleted object. */
+   SpaceFOM::RefFrameDeleted deleted_callback;
+
    // SimObjct constructor.
    // _INIT phase needs to be less than 60, when TrickHLA is initialized.
-   JEODRefFrameSimObject( jeod::TimeTT            & time_in,
-                          SpaceFOM::RefFrameTree  & frame_tree_ref,
-                          unsigned short _INIT    = P_HLA_INIT,
-                          unsigned short _UPDATE  = 99 )
-   : SpaceFOMRefFrameBaseSimObject( frame_tree_ref, frame_packing, lag_compensation, _INIT ),
+   JEODRefFrameSimObject( jeod::TimeTT           & time_in,
+                          SpaceFOM::RefFrameTree & frame_tree_ref,
+                          unsigned short           _INIT   = P_HLA_INIT,
+                          unsigned short           _UPDATE = 99 )
+   : TrickHLAPackingBaseSimObject( _INIT ),
      frame_packing( time_in, ref_frame_state ),
-     lag_compensation(frame_packing),
+     lag_compensation( frame_packing ),
+     conditional( frame_packing ),
+     frame_tree( frame_tree_ref ),
      time_tt(time_in)
    {    
+      // Set the service references for the base class.
+      packing_base_ptr     = &frame_packing;
+      lag_comp_base_ptr    = &lag_compensation;
+      conditional_base_ptr = &conditional;
+      ownership_base_ptr   = &ownership_handler;
+      deleted_base_ptr     = &deleted_callback;
+
       //
       // Default data jobs
       //
@@ -68,6 +90,7 @@ class JEODRefFrameSimObject : public SpaceFOMRefFrameBaseSimObject {
       //
       // Initialization jobs
       //
+      P_INIT ("initialization") frame_tree.add_frame( &frame_packing );
       
       // This needs to run after the JEOD dynamics manager initializes the
       // simulation and before the federate sends the initialization data.
@@ -123,6 +146,11 @@ class JEODRefFrameSimObject : public SpaceFOMRefFrameBaseSimObject {
 
       return;
    }
+
+  protected:
+   
+   // Reference to the frame tree manager.
+   SpaceFOM::RefFrameTree & frame_tree;
 
 
   private:

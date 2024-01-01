@@ -1,13 +1,13 @@
 /*****************************************************************************
  * General TrickHLA Space Reference Federation Object Model (SpaceFOM)
- * Simulation Definition Object for the standard physical entity.
+ * Simulation Definition Object for the JEOD-based Physical Interface.
  *---------------------------------------------------------------------------*
- * This is a Simulation Definition (S_define) module that defines the
- * standard SpaceFOM PhysicalEntity base simulation object instance.
+ * This is a Simulation Definition (S_define) module that defines a JEOD-based
+ * Physical Interface simulation object instance.
  ****************************************************************************/
 /*****************************************************************************
  *       Author: Edwin Z. Crues
- *         Date: December 2023
+ *         Date: January 2024
  *       E-Mail: Edwin.Z.Crues@nasa.gov
  *        Phone: 281-483-2902
  * Organization: Mail Code ER7
@@ -23,60 +23,58 @@
  
 
 //==========================================================================
-// SIM_OBJECT: SpaceFOMPhysicalEntitySimObject - A SpaceFOM PhysicalEntity
-// instance simulation object definition.
+// SIM_OBJECT: JEODPhysicalInterfaceSimObject - A JEOD-based SpaceFOM
+// Physical Interface instance simulation object definition.
 //==========================================================================
 
-// SpaceFOM include files.
-##include "SpaceFOM/PhysicalEntity.hh"
-##include "SpaceFOM/PhysicalEntityLagComp.hh"
-##include "SpaceFOM/PhysicalEntityConditionalBase.hh"
-##include "SpaceFOM/PhysicalEntityOwnershipHandler.hh"
-##include "SpaceFOM/PhysicalEntityDeleted.hh"
 
 // Include TrickHLA Packing object base simulation definition module.
 #include "THLAPackingBase.sm"
 
-class SpaceFOMPhysicalEntitySimObject : public TrickHLAPackingBaseSimObject {
+// SpaceFOM include files.
+##include "JEOD/JEODPhysicalInterface.hh"
+##include "SpaceFOM/PhysicalInterfaceConditionalBase.hh"
+##include "SpaceFOM/PhysicalInterfaceOwnershipHandler.hh"
+##include "SpaceFOM/PhysicalInterfaceDeleted.hh"
+
+class JEODPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
 
   public:
 
    /* HLA associated reference frames packing object. */
-   SpaceFOM::PhysicalEntity entity_packing;
-
-   /* HLA lag compensation object. */
-   SpaceFOM::PhysicalEntityLagComp lag_compensation;
+   SpaceFOM::JEODPhysicalInterface interface_packing;
 
    /* HLA conditional object. */
-   SpaceFOM::PhysicalEntityConditionalBase conditional;
+   SpaceFOM::PhysicalInterfaceConditionalBase conditional;
 
    /* HLA Ownership Handler object. */
-   SpaceFOM::PhysicalEntityOwnershipHandler ownership_handler;
+   SpaceFOM::PhysicalInterfaceOwnershipHandler ownership_handler;
 
-   /* HLA Deleted object. */
-   SpaceFOM::PhysicalEntityDeleted deleted_callback;
+   /* HLA PhysicalInterface deleted object. */
+   SpaceFOM::PhysicalInterfaceDeleted deleted_callback;
 
-   // SimObject constructor.
-   SpaceFOMPhysicalEntitySimObject( SpaceFOM::PhysicalEntityData & pe,
-                                    unsigned short                 _INIT = P_HLA_INIT  )
+   JEODPhysicalInterfaceSimObject( jeod::DynBody  &dyn_body_ref,
+                                   unsigned short _INIT = P_HLA_INIT )
    : TrickHLAPackingBaseSimObject( _INIT ),
-     entity_packing( pe ),
-     lag_compensation( entity_packing ),
-     conditional( entity_packing )
+     interface_packing( dyn_body_ref ),
+     conditional( interface_packing ),
+     dyn_body(dyn_body_ref)
    {
       // Set the service references for the base class.
-      packing_base_ptr     = &entity_packing;
-      lag_comp_base_ptr    = &lag_compensation;
+      packing_base_ptr     = &interface_packing;
       conditional_base_ptr = &conditional;
       ownership_base_ptr   = &ownership_handler;
       deleted_base_ptr     = &deleted_callback;
 
    }
 
+  protected:
+   jeod::DynBody & dyn_body;
+
   private:
 
    // This object is not copyable
-   SpaceFOMPhysicalEntitySimObject( SpaceFOMPhysicalEntitySimObject const & );
-   SpaceFOMPhysicalEntitySimObject & operator=( SpaceFOMPhysicalEntitySimObject const & );
+   JEODPhysicalInterfaceSimObject( JEODPhysicalInterfaceSimObject const & );
+   JEODPhysicalInterfaceSimObject & operator=( JEODPhysicalInterfaceSimObject const & );
 
 };
