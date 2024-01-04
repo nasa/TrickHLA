@@ -167,8 +167,8 @@ print_usage = False
 # Set the default run duration.
 run_duration = 10.0
 
-# Default is to show verbose messages.
-verbose = True
+# Default is to NOT show verbose messages.
+verbose = False
 
 # Set the default Federate name.
 federate_name = 'DynamicalEntity'
@@ -202,7 +202,7 @@ if (print_usage == True) :
 trick.exec_set_trap_sigfpe(True)
 trick.checkpoint_pre_init(1)
 trick.checkpoint_post_init(1)
-trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
+#trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
 #trick.checkpoint_end(1)
 
 trick.exec_set_enable_freeze(False)
@@ -358,7 +358,7 @@ THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 federate.set_lookahead_time( 0.250 )
 
 # Setup Time Management parameters.
-federate.set_time_regulating( False )
+federate.set_time_regulating( True )
 federate.set_time_constrained( True )
 
 #--------------------------------------------------------------------------
@@ -412,7 +412,7 @@ ref_frame_A.frame_packing.debug = verbose
 federate.add_fed_object( frame_A )
 
 # Set the lag compensation paratmeters.
-ref_frame_A.lag_compensation.debug = True
+ref_frame_A.lag_compensation.debug = verbose
 ref_frame_A.lag_compensation.set_integ_tolerance( 1.0e-6 )
 ref_frame_A.lag_compensation.set_integ_dt( 0.025 )
 
@@ -439,7 +439,7 @@ physical_entity.entity_packing.debug = verbose
 federate.add_fed_object( phy_entity )
 
 # Set the lag compensation paratmeters.
-physical_entity.lag_compensation.debug = True
+physical_entity.lag_compensation.debug = verbose
 physical_entity.lag_compensation.set_integ_tolerance( 1.0e-6 )
 physical_entity.lag_compensation.set_integ_dt( 0.025 )
 
@@ -459,7 +459,7 @@ phy_interface = SpaceFOMPhysicalInterfaceObject( False,
                                                  interface_deleted     = physical_interface.deleted_callback )
 
 # Set the debug flag for the Entity.
-physical_interface.interface_packing.debug = verbose
+physical_interface.interface_packing.debug = True
 
 # Add this Entity to the list of managed object.
 federate.add_fed_object( phy_interface )
@@ -484,7 +484,7 @@ dynamical_entity.entity_packing.debug = verbose
 federate.add_fed_object( dyn_entity )
 
 # Set the lag compensation paratmeters.
-dynamical_entity.lag_compensation.debug = True
+dynamical_entity.lag_compensation.debug = verbose
 dynamical_entity.lag_compensation.set_integ_tolerance( 1.0e-6 )
 dynamical_entity.lag_compensation.set_integ_dt( 0.025 )
 

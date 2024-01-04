@@ -495,7 +495,7 @@ bool RefFrameBase::set_root( bool root_status )
          return ( false );
       }
 
-   } // If setting as NOT a root reference frame.
+   } // If setting is NOT a root reference frame.
    else {
 
       // Check to make sure predicates are satisfied.
@@ -586,10 +586,12 @@ void RefFrameBase::pack()
 
    // Check for initialization.
    if ( !initialized ) {
-      ostringstream errmsg;
-      errmsg << "RefFrameBase::pack() ERROR: The initialize() function has not"
-             << " been called!" << endl;
-      send_hs( stderr, errmsg.str().c_str() );
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_PACKING ) ) {
+         ostringstream errmsg;
+         errmsg << "RefFrameBase::pack() Warning: The initialize() function has not"
+                << " been called!" << endl;
+         send_hs( stderr, errmsg.str().c_str() );
+      }
    }
 
    // Check for latency/lag compensation.
@@ -616,10 +618,12 @@ void RefFrameBase::unpack()
 {
 
    if ( !initialized ) {
-      ostringstream errmsg;
-      errmsg << "RefFrameBase::unpack():" << __LINE__
-             << " ERROR: The initialize() function has not been called!" << endl;
-      send_hs( stderr, errmsg.str().c_str() );
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_PACKING ) ) {
+         ostringstream errmsg;
+         errmsg << "RefFrameBase::unpack():" << __LINE__
+                << " Warning: The initialize() function has not been called!" << endl;
+         send_hs( stderr, errmsg.str().c_str() );
+      }
    }
 
    // Use the HLA encoder helpers to decode the PhysicalEntity fixed record.

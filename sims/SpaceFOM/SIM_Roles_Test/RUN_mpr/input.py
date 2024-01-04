@@ -129,8 +129,8 @@ print_usage = False
 # Set the default run duration.
 run_duration = 10.0
 
-# Default is to show verbose messages.
-verbose = True
+# Default is to NOT show verbose messages.
+verbose = False
 
 # Set the default Federate name.
 federate_name = 'MPR'
@@ -152,10 +152,10 @@ if (print_usage == True) :
 #---------------------------------------------
 #instruments.echo_jobs.echo_jobs_on()
 trick.exec_set_trap_sigfpe(True)
-trick.checkpoint_pre_init(1)
-trick.checkpoint_post_init(1)
-trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
-trick.checkpoint_end(1)
+#trick.checkpoint_pre_init(1)
+#trick.checkpoint_post_init(1)
+#trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
+#trick.checkpoint_end(1)
 
 # Setup for Trick real time execution. This is the "Pacing" function.
 exec(open( "Modified_data/trick/realtime.py" ).read())
