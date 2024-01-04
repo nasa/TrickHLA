@@ -2749,6 +2749,12 @@ void Object::send_init_data()
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &send_mutex );
 
+   // Lag-compensation is not supported for init-data, but if
+   // specified we call the bypass function.
+   if ( lag_comp != NULL ) {
+      lag_comp->bypass_send_lag_compensation();
+   }
+
    // If we have a data packing object then pack the data now.
    if ( packing != NULL ) {
       packing->pack();
@@ -2954,6 +2960,12 @@ void Object::receive_init_data()
       // Unpack the data for the object if we have a packing object.
       if ( packing != NULL ) {
          packing->unpack();
+      }
+
+      // Lag-compensation is not supported for init-data, but if
+      // specified we call the bypass function.
+      if ( lag_comp != NULL ) {
+         lag_comp->bypass_receive_lag_compensation();
       }
 
       // Mark the data as unchanged now that we have unpacked the buffer.
