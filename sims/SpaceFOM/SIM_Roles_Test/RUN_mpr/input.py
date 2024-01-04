@@ -15,8 +15,10 @@
 ##############################################################################
 import sys
 sys.path.append('../../../')
+
 # Load the SpaceFOM specific federate configuration object.
 from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+
 # Load the SpaceFOM specific reference frame configuration object.
 from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
@@ -160,9 +162,9 @@ exec(open( "Modified_data/trick/realtime.py" ).read())
 
 trick.exec_set_enable_freeze(True)
 trick.exec_set_freeze_command(True)
-trick.sim_control_panel_set_enabled(True)
 trick.exec_set_stack_trace(False)
 
+trick.sim_control_panel_set_enabled(True)
 trick.var_server_set_port(7000)
 
 
@@ -210,10 +212,6 @@ federate.add_known_fededrate( True, 'Other' )
 # Pitch specific local settings designator:
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 #THLA.federate.local_settings = 'crcHost = js-er7-rti-dev.jsc.nasa.gov\n crcPort = 8989'
-#THLA.federate.local_settings = 'crcHost = mobius.jsc.nasa.gov\n crcPort = 8989'
-#THLA.federate.local_settings = 'crcHost = 10.8.0.161\n crcPort = 8989'
-# Mak specific local settings designator, which is anything from the rid.mtl file:
-#THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
 
 #--------------------------------------------------------------------------
 # Set up federate time related parameters.
@@ -312,9 +310,7 @@ federate.set_root_frame( root_frame )
 # NOTE: The ROOT REFERENCE FRAME never needs to be compensated!
 
 #---------------------------------------------------------------------------
-# Set up the Root Reference Frame object for discovery.
-# If it is the RRFP, it will publish the frame.
-# If it is NOT the RRFP, it will subscribe to the frame.
+# Set up an alternate vehicle reference frame object for discovery.
 #---------------------------------------------------------------------------
 frame_A = SpaceFOMRefFrameObject( True,
                                   'FrameA',
@@ -338,6 +334,9 @@ federate.add_fed_object( frame_A )
 ref_frame_A.lag_compensation.debug = False
 ref_frame_A.lag_compensation.set_integ_tolerance( 1.0e-6 )
 ref_frame_A.lag_compensation.set_integ_dt( 0.025 )
+
+#frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
+frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 #---------------------------------------------------------------------------
 # Add the HLA SimObjects associated with this federate.

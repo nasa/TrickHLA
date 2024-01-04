@@ -17,8 +17,10 @@
 ##############################################################################
 import sys
 sys.path.append('../../../')
+
 # Load the SpaceFOM specific federate configuration object.
 from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+
 # Load the SpaceFOM specific reference frame configuration object.
 from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
@@ -168,8 +170,10 @@ trick.checkpoint_post_init(1)
 
 trick.exec_set_enable_freeze(True)
 trick.exec_set_freeze_command(True)
-trick.sim_control_panel_set_enabled(True)
 trick.exec_set_stack_trace(True)
+
+trick.sim_control_panel_set_enabled(True)
+trick.var_server_set_port(7000)
 
 
 # =========================================================================
@@ -215,9 +219,7 @@ federate.add_known_fededrate( True, rrfp_name )
 #--------------------------------------------------------------------------
 # Pitch specific local settings designator:
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
-#THLA.federate.local_settings = 'crcHost = 10.8.0.161\n crcPort = 8989'
-# Mak specific local settings designator, which is anything from the rid.mtl file:
-#THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
+#THLA.federate.local_settings = 'crcHost = js-er7-rti-dev.jsc.nasa.gov\n crcPort = 8989'
 
 #--------------------------------------------------------------------------
 # Set up federate related time related parameters.
@@ -262,7 +264,8 @@ THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHL
 root_frame = SpaceFOMRefFrameObject( federate.is_RRFP,
                                      'RootFrame',
                                      root_ref_frame.frame_packing,
-                                     'root_ref_frame.frame_packing' )
+                                     'root_ref_frame.frame_packing',
+                                     frame_conditional = root_ref_frame.conditional )
 
 # Set the debug flag for the root reference frame.
 root_ref_frame.frame_packing.debug = verbose
@@ -270,19 +273,37 @@ root_ref_frame.frame_packing.debug = verbose
 # Set the root frame for the federate.
 federate.set_root_frame( root_frame )
 
+# Set the lag compensation paratmeters.
+# NOTE: The ROOT REFERENCE FRAME never needs to be compensated!
+
+
 #---------------------------------------------------------------------------
-# Set up other Reference Frame objects for discovery.
+# Set up an alternate vehicle reference frame object for discovery.
 #---------------------------------------------------------------------------
 frame_A = SpaceFOMRefFrameObject( False,
                                   'FrameA',
                                   ref_frame_A.frame_packing,
-                                  'ref_frame_A.frame_packing' )
+                                  'ref_frame_A.frame_packing',
+                                  root_ref_frame.frame_packing,
+                                  '',
+                                  frame_conditional = ref_frame_A.conditional,
+                                  frame_lag_comp    = ref_frame_A.lag_compensation,
+                                  frame_ownership   = ref_frame_A.ownership_handler,
+                                  frame_deleted     = ref_frame_A.deleted_callback )
 
-# Set the debug flag for the root reference frame.
+# Set the debug flag for this reference frame.
 ref_frame_A.frame_packing.debug = verbose
 
 # Add this reference frame to the list of managed object.
-#federate.add_fed_object( frame_A )
+federate.add_fed_object( frame_A )
+
+# Set the lag compensation paratmeters.
+ref_frame_A.lag_compensation.debug = True
+ref_frame_A.lag_compensation.set_integ_tolerance( 1.0e-6 )
+ref_frame_A.lag_compensation.set_integ_dt( 0.025 )
+
+frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
+#frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 
 #---------------------------------------------------------------------------

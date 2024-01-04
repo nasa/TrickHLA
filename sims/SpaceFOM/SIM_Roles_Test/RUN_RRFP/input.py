@@ -15,8 +15,10 @@
 ##############################################################################
 import sys
 sys.path.append('../../../')
+
 # Load the SpaceFOM specific federate configuration object.
 from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+
 # Load the SpaceFOM specific reference frame configuration object.
 from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
@@ -99,6 +101,14 @@ def parse_command_line( ) :
       elif (str(argv[index]) == '-nostop') :
          run_duration = None
       
+      elif ((str(argv[index]) == '-r') | (str(argv[index]) == '--root_frame')) :
+         index = index + 1
+         if (index < argc) :
+            root_frame_name = str(argv[index])
+         else :
+            print('ERROR: Missing --root_frame [name] argument.')
+            print_usage = True
+      
       elif ((str(argv[index]) == '-s') | (str(argv[index]) == '--stop')) :
          index = index + 1
          if (index < argc) :
@@ -153,6 +163,9 @@ master_name = 'Master'
 # Set the default Paceing Federate name.
 pacing_name = 'Pacing'
 
+# Set the default Root Reference Frame name.
+root_frame_name = 'RootFrame'
+
 
 parse_command_line()
 
@@ -166,13 +179,14 @@ if (print_usage == True) :
 #instruments.echo_jobs.echo_jobs_on()
 trick.exec_set_trap_sigfpe(True)
 #trick.checkpoint_pre_init(1)
-trick.checkpoint_post_init(1)
+#trick.checkpoint_post_init(1)
 #trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
 
 trick.exec_set_enable_freeze(False)
 trick.exec_set_freeze_command(False)
-trick.sim_control_panel_set_enabled(False)
 trick.exec_set_stack_trace(False)
+
+trick.sim_control_panel_set_enabled(False)
 
 
 # =========================================================================
@@ -219,9 +233,7 @@ federate.set_RRFP_role( True )    # This is the Root Reference Frame Publisher.
 #--------------------------------------------------------------------------
 # Pitch specific local settings designator:
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
-#THLA.federate.local_settings = 'crcHost = 10.8.0.161\n crcPort = 8989'
-# Mak specific local settings designator, which is anything from the rid.mtl file:
-#THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
+#THLA.federate.local_settings = 'crcHost = js-er7-rti-dev.jsc.nasa.gov\n crcPort = 8989'
 
 #--------------------------------------------------------------------------
 # Set up federate related time related parameters.
@@ -251,45 +263,42 @@ federate.set_time_constrained( True )
 #---------------------------------------------------------------------------
 # Set up for Root Reference Frame data.
 #---------------------------------------------------------------------------
-root_frame_name = 'RootFrame'
-parent_frame_name = ''
-
-root_ref_frame.frame_data.name = root_frame_name
-root_ref_frame.frame_data.parent_name = parent_frame_name
+ref_frame_tree.root_frame_data.name = root_frame_name
+ref_frame_tree.root_frame_data.parent_name = ''
                                         
-root_ref_frame.frame_data.state.pos[0] = 0.0
-root_ref_frame.frame_data.state.pos[1] = 0.0
-root_ref_frame.frame_data.state.pos[2] = 0.0
-root_ref_frame.frame_data.state.vel[0] = 0.0
-root_ref_frame.frame_data.state.vel[1] = 0.0
-root_ref_frame.frame_data.state.vel[2] = 0.0
-root_ref_frame.frame_data.state.att.scalar  = 1.0
-root_ref_frame.frame_data.state.att.vector[0] = 0.0
-root_ref_frame.frame_data.state.att.vector[1] = 0.0
-root_ref_frame.frame_data.state.att.vector[2] = 0.0
-root_ref_frame.frame_data.state.ang_vel[0] = 0.0
-root_ref_frame.frame_data.state.ang_vel[1] = 0.0
-root_ref_frame.frame_data.state.ang_vel[2] = 0.0
-root_ref_frame.frame_data.state.time = 0.0
+ref_frame_tree.root_frame_data.state.pos[0] = 0.0
+ref_frame_tree.root_frame_data.state.pos[1] = 0.0
+ref_frame_tree.root_frame_data.state.pos[2] = 0.0
+ref_frame_tree.root_frame_data.state.vel[0] = 0.0
+ref_frame_tree.root_frame_data.state.vel[1] = 0.0
+ref_frame_tree.root_frame_data.state.vel[2] = 0.0
+ref_frame_tree.root_frame_data.state.att.scalar  = 1.0
+ref_frame_tree.root_frame_data.state.att.vector[0] = 0.0
+ref_frame_tree.root_frame_data.state.att.vector[1] = 0.0
+ref_frame_tree.root_frame_data.state.att.vector[2] = 0.0
+ref_frame_tree.root_frame_data.state.ang_vel[0] = 0.0
+ref_frame_tree.root_frame_data.state.ang_vel[1] = 0.0
+ref_frame_tree.root_frame_data.state.ang_vel[2] = 0.0
+ref_frame_tree.root_frame_data.state.time = 0.0
 
 
-ref_frame_A.frame_data.name = 'FrameA'
-ref_frame_A.frame_data.parent_name = root_frame_name
+ref_frame_tree.vehicle_frame_data.name = 'FrameA'
+ref_frame_tree.vehicle_frame_data.parent_name = root_frame_name
                                         
-ref_frame_A.frame_data.state.pos[0] = 10.0
-ref_frame_A.frame_data.state.pos[1] = 10.0
-ref_frame_A.frame_data.state.pos[2] = 10.0
-ref_frame_A.frame_data.state.vel[0] = 0.0
-ref_frame_A.frame_data.state.vel[1] = 0.0
-ref_frame_A.frame_data.state.vel[2] = 0.0
-ref_frame_A.frame_data.state.att.scalar  = 1.0
-ref_frame_A.frame_data.state.att.vector[0] = 0.0
-ref_frame_A.frame_data.state.att.vector[1] = 0.0
-ref_frame_A.frame_data.state.att.vector[2] = 0.0
-ref_frame_A.frame_data.state.ang_vel[0] = 0.0
-ref_frame_A.frame_data.state.ang_vel[1] = 0.0
-ref_frame_A.frame_data.state.ang_vel[2] = 0.0
-ref_frame_A.frame_data.state.time = 0.0
+ref_frame_tree.vehicle_frame_data.state.pos[0] = 10.0
+ref_frame_tree.vehicle_frame_data.state.pos[1] = 10.0
+ref_frame_tree.vehicle_frame_data.state.pos[2] = 10.0
+ref_frame_tree.vehicle_frame_data.state.vel[0] = 0.0
+ref_frame_tree.vehicle_frame_data.state.vel[1] = 0.1
+ref_frame_tree.vehicle_frame_data.state.vel[2] = 0.0
+ref_frame_tree.vehicle_frame_data.state.att.scalar  = 1.0
+ref_frame_tree.vehicle_frame_data.state.att.vector[0] = 0.0
+ref_frame_tree.vehicle_frame_data.state.att.vector[1] = 0.0
+ref_frame_tree.vehicle_frame_data.state.att.vector[2] = 0.0
+ref_frame_tree.vehicle_frame_data.state.ang_vel[0] = 0.0
+ref_frame_tree.vehicle_frame_data.state.ang_vel[1] = 0.1
+ref_frame_tree.vehicle_frame_data.state.ang_vel[2] = 0.0
+ref_frame_tree.vehicle_frame_data.state.time = 0.0
 
 
 #---------------------------------------------------------------------------
@@ -309,20 +318,33 @@ root_ref_frame.frame_packing.debug = verbose
 federate.set_root_frame( root_frame )
 
 #---------------------------------------------------------------------------
-# Set up the Root Reference Frame object for discovery.
-# If it is the RRFP, it will publish the frame.
-# If it is NOT the RRFP, it will subscribe to the frame.
+# Set up an alternate vehicle reference frame object for discovery.
 #---------------------------------------------------------------------------
 frame_A = SpaceFOMRefFrameObject( True,
                                   'FrameA',
                                   ref_frame_A.frame_packing,
-                                  'ref_frame_A.frame_packing' )
+                                  'ref_frame_A.frame_packing',
+                                  root_ref_frame.frame_packing,
+                                  root_frame_name,
+                                  frame_conditional = ref_frame_A.conditional,
+                                  frame_lag_comp    = ref_frame_A.lag_compensation,
+                                  frame_ownership   = ref_frame_A.ownership_handler,
+                                  frame_deleted     = ref_frame_A.deleted_callback )
 
 # Set the debug flag for the root reference frame.
 ref_frame_A.frame_packing.debug = verbose
 
 # Add this reference frame to the list of managed object.
 federate.add_fed_object( frame_A )
+
+# Set the lag compensation paratmeters.
+# The reality is that the ROOT REFERENCE FRAME never needs to be compensated!
+ref_frame_A.lag_compensation.debug = False
+ref_frame_A.lag_compensation.set_integ_tolerance( 1.0e-6 )
+ref_frame_A.lag_compensation.set_integ_dt( 0.025 )
+
+#frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
+frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 #---------------------------------------------------------------------------
 # Add the HLA SimObjects associated with this federate.

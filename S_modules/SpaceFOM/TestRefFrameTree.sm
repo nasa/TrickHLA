@@ -85,12 +85,12 @@ class SpaceFOMTestRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObje
       exec_cntrl.root_ref_frame = root_frame_ptr;
 
       // Setup the Sun inertial reference frame.
-      root_frame_ptr->base_config( false,
-                                   "vehicle_frame",
-                                   "frame_packing",
-                                   "FrameA",
-                                   "RootFrame",
-                                   root_frame_ptr );
+      vehicle_frame_ptr->base_config( false,
+                                      "vehicle_frame",
+                                      "frame_packing",
+                                      "FrameA",
+                                      "RootFrame",
+                                      root_frame_ptr );
 
       return;
    }
