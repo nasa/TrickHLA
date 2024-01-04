@@ -95,7 +95,7 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
     *  This function needs to be called prior to TrickHLA initialization if
     *  the PhysicalInterface object is not being configured with an
     *  initialization constructor. */
-   void configure();  // cppcheck-suppress [duplInheritedMember]
+   void configure(); // cppcheck-suppress [duplInheritedMember]
 
    /*! @brief Interface instance initialization routine. */
    virtual void initialize();
@@ -150,7 +150,6 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
    bool debug; ///< @trick_units{--} Debug output flag.
 
   protected:
-
    // Setup Object Attribute references. These are set in initialize_callback
    // routine and used for efficiency and ownership transfer in unpack routines.
    TrickHLA::Attribute *name_attr;     ///< @trick_io{**} Name Attribute.

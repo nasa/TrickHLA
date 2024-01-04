@@ -87,7 +87,7 @@ class Packing
 
    // Initialize the packing object.
    /*! @brief Finish the initialization of the TrickHLA Packing object. */
-   virtual void initialize(){ initialized = true; }
+   virtual void initialize() { initialized = true; }
 
    /*! @brief Initialize the callback object to the supplied Object pointer.
     *  @param obj Associated object for this class. */
@@ -99,7 +99,7 @@ class Packing
 
    /*! @brief Get the TrickHLA managed Object associated with this Packing object.
     *  @return Pointer to the associated TrickHLA managed Object. */
-   virtual TrickHLA::Object *get_object(){ return object; }
+   virtual TrickHLA::Object *get_object() { return object; }
 
    /*! @brief Get the Attribute by FOM name.
     *  @return Attribute for the given name.

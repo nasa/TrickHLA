@@ -66,7 +66,7 @@ class Conditional
    virtual ~Conditional();
 
    /*! @brief Finish the initialization of the TrickHLA Conditional object. */
-   virtual void initialize(){ initialized = true; }
+   virtual void initialize() { initialized = true; }
 
    /*! @brief Initialize the callback object to the supplied Object pointer.
     *  @param obj Associated object for this class. */

@@ -182,7 +182,6 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    bool debug; ///< @trick_units{--} Debug output flag.
 
   protected:
-
    // Setup Object Attribute references. These are set in initialize_callback
    // routine and used for efficiency and ownership transfer in unpack routines.
    TrickHLA::Attribute *name_attr;         ///< @trick_io{**} Name Attribute.
