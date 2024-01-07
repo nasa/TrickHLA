@@ -32,8 +32,6 @@
 ##include "sine/include/SineInteractionHandler.hh"
 ##include "sine/include/SineObjectDeleted.hh"
 
-##include "simconfig/include/SimpleSimConfig.hh"
-
 
 // THLAFed simulation object support for zero lookahead data exchanges.
 #include "THLAFed.sm"
@@ -58,7 +56,8 @@ class AnalyticSineSimObj : public THLAFedSimObject {
    AnalyticSineSimObj( TrickHLA::Federate & thla_fed ) 
       : THLAFedSimObject( thla_fed )
    {
-      P50 ("initialization") packing.initialize( &sim_data );
+      P50 ("initialization") packing.configure( &sim_data );
+      P50 ("initialization") packing.initialize();
 
       // HLA Data will only be received if it is remotely owned by another federate.
       (THLA_DATA_CYCLE_TIME, "scheduled") federate.wait_to_receive_zero_lookahead_data( "A-side-Federate.Test" );
@@ -103,7 +102,8 @@ class PropagatedSineSimObj : public THLAFedSimObject {
    {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
-      P50 ("initialization") packing.initialize( &sim_data );
+      P50 ("initialization") packing.configure( &sim_data );
+      P50 ("initialization") packing.initialize();
 
       // HLA Data will only be received if it is remotely owned by another federate.
       (THLA_DATA_CYCLE_TIME, "scheduled") federate.wait_to_receive_zero_lookahead_data( "P-side-Federate.Test" );

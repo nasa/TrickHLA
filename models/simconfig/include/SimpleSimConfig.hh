@@ -72,11 +72,17 @@ class SimpleSimConfig : public TrickHLA::Packing
    /*! @brief Destructor for the TrickHLAModel SimpleSimConfig class. */
    virtual ~SimpleSimConfig();
 
+   /*! @brief Configure the simulation configuration and build the list of
+    * federates based on the known federates.
+    *  @param known_feds_count Number of known federates.
+    *  @param known_feds       Array of known federates. */
+   virtual void configure( int const known_feds_count, TrickHLA::KnownFederate *known_feds );
+
    /*! @brief Initialize the simulation configuration and build the list of
     * federates based on the known federates.
     *  @param known_feds_count Number of known federates.
     *  @param known_feds       Array of known federates. */
-   void initialize( int const known_feds_count, TrickHLA::KnownFederate *known_feds );
+   virtual void initialize();
 
    // From the TrickHLA::Packing class.
    /*! @brief Called to pack the data before the data is sent to the RTI. */

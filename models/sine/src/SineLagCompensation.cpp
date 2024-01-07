@@ -87,10 +87,24 @@ SineLagCompensation::~SineLagCompensation()
 /*!
  * @job_class{initialization}
  */
-void SineLagCompensation::initialize(
+void SineLagCompensation::configure(
    SineData *sim_data )
 {
    this->sim_data = sim_data;
+
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void SineLagCompensation::initialize()
+{
+
+   // Call the base class initialize function.l
+   TrickHLA::LagCompensation::initialize();
+
+   return;
 }
 
 /*!

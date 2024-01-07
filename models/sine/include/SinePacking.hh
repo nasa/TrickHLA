@@ -66,8 +66,6 @@ class SinePacking : public SineData, public TrickHLA::Packing
 
    unsigned int pack_count; ///< @trick_units{count} The number of times the pack routine has been called.
 
-   bool initialized; ///< @trick_units{--} Flag to indicate this class has been initialized.
-
    int buff_size; ///< @trick_units{--} Size of the byte buffer.
 
    unsigned char *buff; ///< @trick_units{--} Byte buffer.
@@ -90,9 +88,12 @@ class SinePacking : public SineData, public TrickHLA::Packing
    /*! @brief Destructor for the TrickHLAModel SinePacking class. */
    virtual ~SinePacking();
 
-   /*! @brief Initialize the packing object.
+   /*! @brief Configure the packing object.
     *  @param sim_data The sine wave data object for packing and unpacking. */
-   void initialize( SineData *sim_data );
+   void configure( SineData *sim_data );
+
+   /*! @brief Initialize the packing object. */
+   virtual void initialize();
 
    /*! @brief Initialization callback as part of the TrickHLA::Packing functions.
     *  @param obj Object associated with this packing class. */

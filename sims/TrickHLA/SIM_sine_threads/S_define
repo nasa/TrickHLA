@@ -34,8 +34,6 @@
 ##include "sine/include/SineInteractionHandler.hh"
 ##include "sine/include/SineObjectDeleted.hh"
 
-##include "simconfig/include/SimpleSimConfig.hh"
-
 
 // TrickHLA support for Trick Child Threads.
 #include "THLAThread.sm"
@@ -62,9 +60,11 @@ class AnalyticSineSimObj : public Trick::SimObject {
    TrickHLAModel::SineObjectDeleted      obj_deleted_callback;
 
    AnalyticSineSimObj() {
-      P50 ("initialization") lag_compensation.initialize( &sim_data );
+      P50 ("initialization") lag_compensation.configure( &sim_data );
+      P50 ("initialization") lag_compensation.initialize();
 
-      P50 ("initialization") packing.initialize( &lag_compensation );
+      P50 ("initialization") packing.configure( &lag_compensation );
+      P50 ("initialization") packing.initialize();
 
       C1 (DYN_RATE, "scheduled") truth_data.compute_value( THLA.execution_control.get_scenario_time() );
       C1 (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.execution_control.get_scenario_time() );
@@ -109,9 +109,11 @@ class PropagatedSineSimObj : public THLAThreadSimObject {
    {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
-      P50 ("initialization") lag_compensation.initialize( &sim_data );
+      P50 ("initialization") lag_compensation.configure( &sim_data );
+      P50 ("initialization") lag_compensation.initialize();
 
-      P50 ("initialization") packing.initialize( &lag_compensation );
+      P50 ("initialization") packing.configure( &lag_compensation );
+      P50 ("initialization") packing.initialize();
 
       /*
        * -- Propagate the true sine state.

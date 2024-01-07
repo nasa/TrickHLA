@@ -66,7 +66,6 @@ SinePacking::SinePacking()
      sim_data( NULL ),
      phase_deg( 0.0 ),
      pack_count( 0 ),
-     initialized( false ),
      buff_size( 0 ),
      buff( NULL ),
      time_attr( NULL ),
@@ -99,11 +98,24 @@ SinePacking::~SinePacking()
 /*!
  * @job_class{initialization}
  */
-void SinePacking::initialize(
+void SinePacking::configure(
    SineData *sim_data )
 {
-   this->sim_data    = sim_data;
-   this->initialized = true;
+   this->sim_data = sim_data;
+
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void SinePacking::initialize()
+{
+
+   // Mark this as initialized.
+   TrickHLA::Packing::initialize();
+
+   return;
 }
 
 /*!

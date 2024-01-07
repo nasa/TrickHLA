@@ -79,10 +79,24 @@ SineConditional::~SineConditional()
 /*!
  * @job_class{initialization}
  */
-void SineConditional::initialize(
+void SineConditional::configure(
    SineData *data )
 {
    this->sim_data = data;
+
+   if ( this->sim_data == NULL ) {
+      send_hs( stderr, "SineConditional::initialize():%d ERROR: Unexpected NULL sim_data!",
+               __LINE__ );
+      exit( -1 );
+   }
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void SineConditional::initialize()
+{
 
    if ( this->sim_data == NULL ) {
       send_hs( stderr, "SineConditional::initialize():%d ERROR: Unexpected NULL sim_data!",
@@ -100,6 +114,8 @@ void SineConditional::initialize(
    set_frequency( sim_data->get_frequency() );
    set_amplitude( sim_data->get_amplitude() );
    set_tolerance( sim_data->get_tolerance() );
+
+   return;
 }
 
 /*!

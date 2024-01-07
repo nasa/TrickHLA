@@ -67,9 +67,12 @@ class SineConditional : public SineData, public TrickHLA::Conditional
    /*! @brief Destructor for the TrickHLAModel SineConditional class. */
    virtual ~SineConditional();
 
-   /*! @brief Initializes the sim_data to the supplied.
+   /*! @brief Configure the sim_data to the supplied.
     *  @param data External simulation data. */
-   void initialize( SineData *data );
+   void configure( SineData *data );
+
+   /*! @brief Initializes conditional object. */
+   void initialize();
 
    /*! @brief Initialization callback as part of the TrickHLA::Conditional functions.
     *  @param obj Object associated with this packing class. */

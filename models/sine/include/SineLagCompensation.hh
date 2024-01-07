@@ -74,9 +74,12 @@ class SineLagCompensation : public SineData, public TrickHLA::LagCompensation
    /*! @brief Destructor for the TrickHLAModel SineLagCompensation class. */
    virtual ~SineLagCompensation();
 
-   /*! @brief Initialize the LagCompensation object.
+   /*! @brief Configure the LagCompensation object.
     *  @param sim_data The sine wave data object. */
-   void initialize( SineData *sim_data );
+   void configure( SineData *sim_data );
+
+   /*! @brief Initialize the LagCompensation object. */
+   void initialize();
 
    //
    // From the TrickHLALag::Compensation class.
