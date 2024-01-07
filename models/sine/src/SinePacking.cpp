@@ -111,7 +111,6 @@ void SinePacking::configure(
  */
 void SinePacking::initialize()
 {
-
    // Mark this as initialized.
    TrickHLA::Packing::initialize();
 

@@ -100,8 +100,7 @@ void SineLagCompensation::configure(
  */
 void SineLagCompensation::initialize()
 {
-
-   // Call the base class initialize function.l
+   // Call the base class initialize function.
    TrickHLA::LagCompensation::initialize();
 
    return;
