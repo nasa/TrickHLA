@@ -81,9 +81,12 @@
 //==========================================================================
 // Define the HLA phase initialization priorities.
 //==========================================================================
-#define P_HLA_EARLY  1     // HLA early job phase.
-#define P_HLA_INIT   9     // HLA initialization phase. (Before JEOD time.)
-#define P_HLA_LATE   65534 // HLA late job phase.
+#define P_HLA_EARLY         1     // HLA early job phase.
+#define P_SF_INIT_EPOCH_RRF 9     // SpaceFOM ExCO epoch and root reference frame phase.
+#define P_HLA_INIT          9     // HLA initialization phase.
+#define P_SF_INIT_PRE_MPI   65    // SpaceFOM Pre-Multi Phase initialization phase.
+#define P_SF_INIT_POST_MPI  500   // SpaceFOM Post-Multi Phase initialization phase.
+#define P_HLA_LATE          65534 // HLA late job phase.
 
 //==========================================================================
 // JEOD include files used in SimObject definitions or for input file
@@ -296,6 +299,8 @@ JEODHLAInitSimObject THLA_INIT( jeod_time.time_manager,
                                 THLA.manager,
                                 THLA.federate,
                                 THLA.execution_control,
+                                P_SF_INIT_EPOCH_RRF,
+                                10,
                                 P_HLA_INIT );
 
 

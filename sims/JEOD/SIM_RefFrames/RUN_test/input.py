@@ -114,8 +114,9 @@ if (print_usage == True) :
 #instruments.echo_jobs.echo_jobs_on()
 trick.exec_set_trap_sigfpe(True)
 #trick.checkpoint_pre_init(1)
-trick.checkpoint_post_init(1)
+#trick.checkpoint_post_init(1)
 #trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
+#trick.checkpoint_end(1)
 
 trick.exec_set_software_frame(0.250)
 trick.exec_set_enable_freeze(True)
@@ -166,10 +167,12 @@ federate = SpaceFOMFederateConfig( THLA.federate,
 
 # Set the debug output level.
 if (verbose == True) : 
-   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
-#   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_9_TRACE )
+   #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
+   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_6_TRACE )
+   federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_ALL_MODULES )
+   #federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_OBJECT + trick.TrickHLA.DEBUG_SOURCE_ATTRIBUTE )
 else :
-#   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
+   #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_1_TRACE )
 
 #--------------------------------------------------------------------------
@@ -227,15 +230,15 @@ federate.set_time_constrained( True )
 #---------------------------------------------------------------------------
 
 # Set the debug flag for the reference frames.
-solar_system_barycenter.frame_packing.debug = True
-sun_inertial.frame_packing.debug = verbose
-earth_moon_barycenter.frame_packing.debug = verbose
-earth_centered_inertial.frame_packing.debug = True
-moon_centered_inertial.frame_packing.debug = verbose
-mars_centered_inertial.frame_packing.debug = verbose
-earth_centered_fixed.frame_packing.debug = True
-moon_centered_fixed.frame_packing.debug = verbose
-mars_centered_fixed.frame_packing.debug = verbose
+solar_system_barycenter.frame_packing.debug = verbose
+sun_inertial.frame_packing.debug            = verbose
+earth_moon_barycenter.frame_packing.debug   = verbose
+earth_centered_inertial.frame_packing.debug = verbose
+moon_centered_inertial.frame_packing.debug  = verbose
+mars_centered_inertial.frame_packing.debug  = verbose
+earth_centered_fixed.frame_packing.debug    = verbose
+moon_centered_fixed.frame_packing.debug     = verbose
+mars_centered_fixed.frame_packing.debug     = verbose
 
 # Mark the frames as published.
 solar_system_barycenter.frame_packing.publish();

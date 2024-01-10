@@ -1,0 +1,132 @@
+/*****************************************************************************
+ * General TrickHLA Simulation Base Class Definition Object
+ *---------------------------------------------------------------------------*
+ * This is a Simulation Definition (S_define) module that defines a general
+ * HLA interface using TrickHLA for Trick based simulations.
+ ****************************************************************************/
+/*****************************************************************************
+ *       Author: Dan E. Dexter
+ *         Date: August 2010
+ *       E-Mail: Dan.E.Dexter@nasa.gov
+ *        Phone: 281-483-1142
+ * Organization: Mail Code ER7
+ *               Simulation & Graphics Branch
+ *               Software, Robotics & Simulation Division
+ *               2101 NASA Parkway
+ *               Houston, Texas 77058
+ *---------------------------------------------------------------------------*
+ * Modified By: Edwin Z. Crues
+ *        Date: January 2024
+ * Description: Modified IMSim simulation module to support new TrickHLA
+ * THLABaseSimObject extension design.
+ ****************************************************************************/
+
+// TrickHLA SimObject base class.
+#include "THLABase.sm"
+
+// IMSim Execution Control class definition.
+##include "IMSim/ExecutionControl.hh"
+
+// IMSim Execution Configuration (ExCO) class definition.
+##include "IMSim/ExecutionConfiguration.hh"
+
+//=========================================================================
+// SIM_OBJECT: IMSim - Generalized TrickHLA interface routines.
+//=========================================================================
+
+class IMSimSimObject : public THLABaseSimObject {
+
+ public:
+
+   // The IMSim Execution Configuration Object (ExCO).
+   IMSim::ExecutionConfiguration ExCO;
+
+   // The IMSim Execution Control object.
+   IMSim::ExecutionControl execution_control;
+
+   double       checkpoint_time;
+   char const * checkpoint_label;
+
+   double       check_pause_job_offset;
+   double const CHECK_PAUSE_DELTA;
+
+   IMSimSimObject( double main_thread_data_cycle,
+                   double main_thread_interaction_cycle,
+                   unsigned short _1ST  = 1,
+                   unsigned short _INIT = 60,
+                   unsigned short _LAST = 65534 ) 
+      : THLABaseSimObject( main_thread_data_cycle,
+                           main_thread_interaction_cycle,
+                           _1ST,
+                           _INIT,
+                           _LAST ),
+        ExCO( "THLA.ExCO" ),
+        execution_control( ExCO ),
+        CHECK_PAUSE_DELTA( 0.000001 )
+        
+   {
+
+      // The Space Reference FOM (SpaceFOM) Execution Configuration Object (ExCO).
+      IMSim::ExecutionConfiguration ExCO;
+
+      // The Space Reference FOM (SpaceFOM) Execution Control object.
+      IMSim::ExecutionControl execution_control;
+
+      // Calculate and validate the check-pause job offset time.
+      if ( main_thread_data_cycle <= CHECK_PAUSE_DELTA ) {
+         exec_terminate( __FILE__, "IMSimSimObject() main_thread_data_cycle must be > CHECK_PAUSE_DELTA!" );
+      }
+      check_pause_job_offset = main_thread_data_cycle - CHECK_PAUSE_DELTA;
+
+
+      //-----------------------
+      //-- DEFAULT DATA JOBS --
+      //-----------------------
+      ("default_data") federate.setup( federate_amb,
+                                       manager,
+                                       execution_control );
+
+      //-------------------------
+      //-- INITIALIZATION JOBS --
+      //-------------------------
+
+      // FIXME: This is for IMSim and DIS only. Needs to be moved into ExecutionControl.
+      // Check to see if fed master started in freeze mode.
+      //P_LAST ("initialization") federate.check_pause_at_init( CHECK_PAUSE_DELTA );
+
+      // Coordinate Central Timing Equipment (CTE) go to run.
+      //P_LAST ("initialization") federate.coordinate_CTE_go_to_run();
+
+      //------------------------------
+      //-- FREEZE / CHECKPOINT JOBS --
+      //------------------------------
+
+
+      //--------------------
+      //-- SCHEDULED JOBS --
+      //--------------------
+
+      // FIXME: This is for IMSim only. Needs to be moved into ExecutionControl.
+      // Check to see if an interaction informed us that we are to
+      // FREEZE the sim before entering the next logical frame.
+      //P_LAST (main_thread_data_cycle, "logging") federate.check_freeze_time();
+
+      // FIXME: This is for DIS only. Needs to be moved into ExecutionControl.
+      // For DIS, check to see if federate master clicked freeze
+      //P_LAST (main_thread_data_cycle, check_pause_job_offset, "logging") federate.check_pause( CHECK_PAUSE_DELTA );
+
+
+      //-------------------
+      //-- SHUTDOWN JOBS --
+      //-------------------
+      
+   }
+ 
+ private:
+   // Do not allow the implicit copy constructor or assignment operator.
+   IMSimSimObject( IMSimSimObject const & rhs );
+   IMSimSimObject & operator=( IMSimSimObject const & rhs );
+
+   // Do not allow the default constructor.
+   IMSimSimObject();
+};

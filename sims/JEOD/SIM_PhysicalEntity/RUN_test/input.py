@@ -198,8 +198,9 @@ if (print_usage == True) :
 #instruments.echo_jobs.echo_jobs_on()
 trick.exec_set_trap_sigfpe(True)
 #trick.checkpoint_pre_init(1)
-trick.checkpoint_post_init(1)
+#trick.checkpoint_post_init(1)
 #trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
+#trick.checkpoint_end(1)
 
 trick.real_time_enable()
 trick.exec_set_software_frame(0.250)
@@ -465,10 +466,12 @@ federate = SpaceFOMFederateConfig( THLA.federate,
 
 # Set the debug output level.
 if (verbose == True) : 
-   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
-#   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_9_TRACE )
+   #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
+   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_6_TRACE )
+   federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_ALL_MODULES )
+   #federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_OBJECT + trick.TrickHLA.DEBUG_SOURCE_ATTRIBUTE )
 else :
-#   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
+   #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_1_TRACE )
 
 #--------------------------------------------------------------------------
@@ -548,7 +551,7 @@ lander = SpaceFOMPhysicalEntityObject( True,
                                        'active_physical_entity.entity_packing' )
 
 # Set the debug flag for the active vehicle.
-active_physical_entity.entity_packing.debug = True
+active_physical_entity.entity_packing.debug = verbose
 
 # Add this vehicle to the list of managed object.
 federate.add_fed_object( lander )
@@ -571,7 +574,7 @@ lander_dockport = SpaceFOMPhysicalInterfaceObject( True,
 active_physical_interface.interface_packing.set_vehicle_point_id('Active docking port')
 
 # Set the debug flag for the active vehicle.
-active_physical_interface.interface_packing.debug = True
+active_physical_interface.interface_packing.debug = verbose
 
 # Add this vehicle to the list of managed object.
 federate.add_fed_object( lander_dockport )
@@ -589,7 +592,7 @@ station = SpaceFOMPhysicalEntityObject( True,
                                         'passive_physical_entity.entity_packing' )
 
 # Set the debug flag for the passive vehicle.
-passive_physical_entity.entity_packing.debug = True
+passive_physical_entity.entity_packing.debug = verbose
 
 # Add this vehicle to the list of managed object.
 federate.add_fed_object( station )
@@ -612,7 +615,7 @@ station_dockport = SpaceFOMPhysicalInterfaceObject( True,
 passive_physical_interface.interface_packing.set_vehicle_point_id('Passive docking port')
 
 # Set the debug flag for the active vehicle.
-passive_physical_interface.interface_packing.debug = True
+passive_physical_interface.interface_packing.debug = verbose
 
 # Add this vehicle to the list of managed object.
 federate.add_fed_object( station_dockport )

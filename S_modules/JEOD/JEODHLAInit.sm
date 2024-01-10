@@ -38,7 +38,9 @@ class JEODHLAInitSimObject : public Trick::SimObject {
                          TrickHLA::Manager          & thla_mngr,
                          TrickHLA::Federate         & thla_fed,
                          SpaceFOM::ExecutionControl & exec_ctrl,
-                         unsigned short               _INIT = 50 )
+                         unsigned short               _PRE_INIT  = 9,
+                         unsigned short               _TIME_INIT = 10,
+                         unsigned short               _INIT      = 60 )
       : time_manager( time_manager_in ),
         time_manager_init( time_manager_init_in ),
         time_tai( time_tai_in ),
@@ -49,8 +51,9 @@ class JEODHLAInitSimObject : public Trick::SimObject {
    {
 
       // Initialize the epoch based on the starting JEOD time.
-      P_INIT ("initialization") set_scenario_timeline_epoch( time_tt );
-      P_TIME ("initialization") time_tt.calendar_update( exec_get_sim_time() );
+      P_PRE_INIT  ("initialization") master_set_scenario_timeline_epoch( time_tt );
+      P_TIME_INIT ("initialization") time_tt.calendar_update( exec_get_sim_time() );
+      P_INIT      ("initialization") set_scenario_timeline_epoch();
 
       //--------------------------------------------------------------------
       // NOTE: Initialization phase numbers must be greater than P60 
@@ -81,25 +84,12 @@ class JEODHLAInitSimObject : public Trick::SimObject {
  protected:
 
    // Set the SpaceFOM scenario timeline epoch from the JEOD TT time.
-   void set_scenario_timeline_epoch( jeod::TimeTT & tt_time )
+   void set_scenario_timeline_epoch()
    {
 
-      // Set the epoch if this is the Master federate.
-      if( execution_control.is_master() ) {
-         execution_control.scenario_timeline->set_epoch((tt_time.trunc_julian_time * 86400.0));
-         std::cout.precision( 15 );
-         std::cout << "JEODHLAInitSimObject::set_scenario_timeline_epoch():" << __LINE__ << std::endl
-                   << "\tSeconds: " << (time_tt.trunc_julian_time * 86400.0) << std::endl
-                   << "\tDate: " << time_tt.calendar_year
-                   << "-" << time_tt.calendar_month
-                   << "-" << time_tt.calendar_day
-                   << "::" << time_tt.calendar_hour
-                   << ":" << time_tt.calendar_minute
-                   << ":" << time_tt.calendar_second << std::endl
-                   << std::endl;
-      }
-      // Otherwise, it will be set through the ExCO.
-      else {
+      // The scenario timeline epoch will be set through the ExCO as part of
+      // the epoch_and_root_frame_discovery_process() call.
+      if( !execution_control.is_master() ) {
 
          // Set the JEOD TAI initialization time.
          // This will override the value set in the input file before JEOD
@@ -119,6 +109,30 @@ class JEODHLAInitSimObject : public Trick::SimObject {
          std::cout << "JEODHLAInitSimObject::set_scenario_timeline_epoch():" << __LINE__ << std::endl
                    << "\tSeconds: " << (time_tai.trunc_julian_time * 86400.0) << std::endl;
       }
+      
+      return;
+   }
+   
+   // Set the SpaceFOM scenario timeline epoch from the JEOD TT time if Master federate.
+   void master_set_scenario_timeline_epoch( jeod::TimeTT & tt_time )
+   {
+
+      // Set the epoch if this is the Master federate.
+      if( execution_control.is_master() ) {
+         execution_control.scenario_timeline->set_epoch((tt_time.trunc_julian_time * 86400.0));
+         std::cout.precision( 15 );
+         std::cout << "JEODHLAInitSimObject::set_scenario_timeline_epoch():" << __LINE__ << std::endl
+                   << "\tSeconds: " << (time_tt.trunc_julian_time * 86400.0) << std::endl
+                   << "\tDate: " << time_tt.calendar_year
+                   << "-" << time_tt.calendar_month
+                   << "-" << time_tt.calendar_day
+                   << "::" << time_tt.calendar_hour
+                   << ":" << time_tt.calendar_minute
+                   << ":" << time_tt.calendar_second << std::endl
+                   << std::endl;
+      }
+      
+      return;
    }
 
  private:
