@@ -459,7 +459,7 @@ phy_interface = SpaceFOMPhysicalInterfaceObject( False,
                                                  interface_deleted     = physical_interface.deleted_callback )
 
 # Set the debug flag for the Entity.
-physical_interface.interface_packing.debug = True
+physical_interface.interface_packing.debug = verbose
 
 # Add this Entity to the list of managed object.
 federate.add_fed_object( phy_interface )

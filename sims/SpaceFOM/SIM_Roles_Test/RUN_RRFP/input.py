@@ -339,7 +339,6 @@ ref_frame_A.frame_packing.debug = verbose
 federate.add_fed_object( frame_A )
 
 # Set the lag compensation paratmeters.
-# The reality is that the ROOT REFERENCE FRAME never needs to be compensated!
 ref_frame_A.lag_compensation.debug = False
 ref_frame_A.lag_compensation.set_integ_tolerance( 1.0e-6 )
 ref_frame_A.lag_compensation.set_integ_dt( 0.025 )

@@ -27,7 +27,6 @@
 // SIM_OBJECT: RefFrameTreeBaseSimObject - An JEOD reference frame tree
 // simulation object definition.
 //==========================================================================
-##include <iostream>
 ##include "SpaceFOM/RefFrameTree.hh"
 
 class SpaceFOMRefFrameTreeBaseSimObject : public Trick::SimObject {

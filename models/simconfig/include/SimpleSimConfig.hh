@@ -79,9 +79,7 @@ class SimpleSimConfig : public TrickHLA::Packing
    virtual void configure( int const known_feds_count, TrickHLA::KnownFederate *known_feds );
 
    /*! @brief Initialize the simulation configuration and build the list of
-    * federates based on the known federates.
-    *  @param known_feds_count Number of known federates.
-    *  @param known_feds       Array of known federates. */
+    * federates based on the known federates. */
    virtual void initialize();
 
    // From the TrickHLA::Packing class.

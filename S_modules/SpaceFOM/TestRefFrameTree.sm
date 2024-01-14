@@ -26,8 +26,6 @@
 // SIM_OBJECT: RefFrameTreeSimObject - An JEOD reference frame tree
 // simulation object definition.
 //==========================================================================
-##include <iostream>
-##include <map>
 ##include "SpaceFOM/RefFrameData.hh"
 ##include "SpaceFOM/RefFrameBase.hh"
 

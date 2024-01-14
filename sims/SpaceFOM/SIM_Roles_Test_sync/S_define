@@ -24,9 +24,12 @@
 //==========================================================================
 // Define the HLA phase initialization priorities.
 //==========================================================================
-#define P_HLA_INIT   60    // HLA initialization phase.
-#define P_HLA_EARLY  1     // HLA early job phase.
-#define P_HLA_LATE   65534 // HLA late job phase.
+#define P_HLA_EARLY         1     // HLA early job phase.
+#define P_SF_INIT_EPOCH_RRF 55    // SpaceFOM ExCO epoch and root reference frame phase.
+#define P_HLA_INIT          60    // HLA initialization phase.
+#define P_SF_INIT_PRE_MPI   65    // SpaceFOM Pre-Multi Phase initialization phase.
+#define P_SF_INIT_POST_MPI  500   // SpaceFOM Post-Multi Phase initialization phase.
+#define P_HLA_LATE          65534 // HLA late job phase.
 
 
 //==========================================================================
@@ -56,7 +59,9 @@ class THLAInitSimObject : public Trick::SimObject {
  public:
 
    THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
-                      TrickHLA::Federate & thla_fed   ) 
+                      TrickHLA::Federate & thla_fed,
+                      unsigned int         _MPI_1   = 100,
+                      unsigned int         _MPI_END = P_SF_INIT_POST_MPI )
       : thla_manager( thla_mngr ),
         thla_federate( thla_fed )
    {
@@ -69,15 +74,15 @@ class THLAInitSimObject : public Trick::SimObject {
       // Alternative method: Send and receive all the initialization data.
 
       // Send all the initialization data.
-      P100 ("initialization") thla_manager.send_init_data();
+      P_MPI_1 ("initialization") thla_manager.send_init_data();
 
       // Wait to receive all the initialization data.
-      P100 ("initialization") thla_manager.receive_init_data();
+      P_MPI_1 ("initialization") thla_manager.receive_init_data();
 
       // Do some processing here if needed...
 
       // Clear remaining initialization sync-points.
-      P100 ("initialization") thla_manager.clear_init_sync_points();
+      P_MPI_END ("initialization") thla_manager.clear_init_sync_points();
    }
 
  private:
@@ -94,21 +99,6 @@ class THLAInitSimObject : public Trick::SimObject {
 
 
 //==========================================================================
-// SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An example reference frame tree
-// simulation object definition.
-//==========================================================================
-#include "SpaceFOM/TestRefFrameTree.sm"
-
-
-//==========================================================================
-// SIM_OBJECT: SpaceFOMRefFrameSimObject - An example reference frame
-// simulation object definition. This can be used for SpaceFOM ReferenceFrame
-// object discovery and data exchange.
-//==========================================================================
-#include "SpaceFOM/RefFrame.sm"
-
-
-//==========================================================================
 // SimObject instantiations.
 //==========================================================================
 // Main TrickHLA SimObject.
@@ -118,20 +108,10 @@ SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME, THLA_INTERACTION_CYCLE_TIME,
 // SimObject used capture simulation specific initialization.
 THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
 
-// SimObject used for root reference frame discovery.
-SpaceFOMTestRefFrameTreeSimObject ref_frame_tree( THLA.manager,
-                                                  THLA.execution_control );
-SpaceFOMRefFrameSimObject root_ref_frame( ref_frame_tree.root_frame_data );
-SpaceFOMRefFrameSimObject ref_frame_A( ref_frame_tree.vehicle_frame_data );
-
 
 //==========================================================================
-// Create the THLA connections for the SpaceFOM Reference Frame Tree.
+// SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An example reference frame tree
+// simulation object definition.
 //==========================================================================
-void create_connections() {
+#include "SpaceFOM/TestRefFrameTree.sm"
 
-   // Make the connections for the root and child frame in the reference frame tree.
-   ref_frame_tree.root_frame_ptr = &root_ref_frame.frame_packing;
-   ref_frame_tree.vehicle_frame_ptr = &ref_frame_A.frame_packing;
-
-}

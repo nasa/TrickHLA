@@ -24,9 +24,12 @@
 //==========================================================================
 // Define the HLA phase initialization priorities.
 //==========================================================================
-#define P_HLA_INIT   60    // HLA initialization phase.
-#define P_HLA_EARLY  1     // HLA early job phase.
-#define P_HLA_LATE   65534 // HLA late job phase.
+#define P_HLA_EARLY         1     // HLA early job phase.
+#define P_SF_INIT_EPOCH_RRF 55    // SpaceFOM ExCO epoch and root reference frame phase.
+#define P_HLA_INIT          60    // HLA initialization phase.
+#define P_SF_INIT_PRE_MPI   65    // SpaceFOM Pre-Multi Phase initialization phase.
+#define P_SF_INIT_POST_MPI  500   // SpaceFOM Post-Multi Phase initialization phase.
+#define P_HLA_LATE          65534 // HLA late job phase.
 
 
 //==========================================================================
@@ -57,7 +60,9 @@ class THLAInitSimObject : public Trick::SimObject {
  public:
 
    THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
-                      TrickHLA::Federate & thla_fed   ) 
+                      TrickHLA::Federate & thla_fed,
+                      unsigned int         _MPI_1   = 100,
+                      unsigned int         _MPI_END = P_SF_INIT_POST_MPI )
       : thla_manager( thla_mngr ),
         thla_federate( thla_fed )
    {
@@ -70,15 +75,15 @@ class THLAInitSimObject : public Trick::SimObject {
       // Alternative method: Send and receive all the initialization data.
 
       // Send all the initialization data.
-      P100 ("initialization") thla_manager.send_init_data();
+      P_MPI_1 ("initialization") thla_manager.send_init_data();
 
       // Wait to receive all the initialization data.
-      P100 ("initialization") thla_manager.receive_init_data();
+      P_MPI_1 ("initialization") thla_manager.receive_init_data();
 
       // Do some processing here if needed...
 
       // Clear remaining initialization sync-points.
-      P100 ("initialization") thla_manager.clear_init_sync_points();
+      P_MPI_END ("initialization") thla_manager.clear_init_sync_points();
    }
 
  private:

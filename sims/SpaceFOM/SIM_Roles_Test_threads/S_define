@@ -101,7 +101,70 @@ class THLAInitSimObject : public Trick::SimObject {
 // SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An example reference frame tree
 // simulation object definition.
 //==========================================================================
-#include "SpaceFOM/TestRefFrameTree.sm"
+#include "SpaceFOM/RefFrameTreeBase.sm"
+class SpaceFOMTestRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
+
+  public:
+
+   // Working SpaceFOM reference frames.
+   SpaceFOM::RefFrameData root_frame_data;
+   SpaceFOM::RefFrameData vehicle_frame_data;
+
+   // References to working SpaceFOM reference frames.
+   SpaceFOM::RefFrameBase * root_frame_ptr;
+   SpaceFOM::RefFrameBase * vehicle_frame_ptr;
+
+   // _ADD and _BUILD phases need to be less than 60, when TrickHLA is initialized.
+   SpaceFOMTestRefFrameTreeSimObject( TrickHLA::Manager          & thla_manager_in,
+                                      SpaceFOM::ExecutionControl & exec_cntrl_in,
+                                      unsigned short               _BUILD = (P_HLA_INIT+1) )
+   : SpaceFOMRefFrameTreeBaseSimObject(thla_manager_in, exec_cntrl_in, _BUILD ),
+     root_frame_ptr( NULL ),
+     vehicle_frame_ptr( NULL )
+   {
+
+   }
+
+  private:
+   // Define the interface to configure the reference frame tree.
+   void configure_tree()
+   {
+      std::ostringstream errmsg;
+
+      // Check for objects allocation.
+      if ( (thla_manager.obj_count == 0) || (thla_manager.objects == NULL) ){
+         errmsg << "SpaceFOMRefFrameTreeSimObject::configure_tree():" << __LINE__
+                << " ERROR: The TrickHLAManager Object array has not been allocated!" << THLA_ENDL;
+         // Print message and terminate.
+         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      }
+
+      // Setup the root reference frame.
+      root_frame_ptr->base_config( false,
+                                   "root_ref_frame",
+                                   "frame_packing",
+                                   "RootFrame"      );
+
+      // Set the root reference frame in the ExCO.
+      exec_cntrl.root_ref_frame = root_frame_ptr;
+
+      // Setup the Sun inertial reference frame.
+      vehicle_frame_ptr->base_config( false,
+                                      "vehicle_frame",
+                                      "frame_packing",
+                                      "FrameA",
+                                      "RootFrame",
+                                      root_frame_ptr );
+
+      return;
+   }
+
+  private:
+
+   // This object is not copyable
+   SpaceFOMTestRefFrameTreeSimObject( SpaceFOMTestRefFrameTreeSimObject const & );
+   SpaceFOMTestRefFrameTreeSimObject & operator=( SpaceFOMTestRefFrameTreeSimObject const & );
+};
 
 
 //==========================================================================

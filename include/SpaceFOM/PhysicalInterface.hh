@@ -78,6 +78,16 @@ class PhysicalInterface : virtual public SpaceFOM::PhysicalInterfaceBase
    /*! @brief Set the reference to the physical entity data. */
    virtual void initialize();
 
+   // Access functions.
+   /*! @brief Set the name of the PhysicalInterface object instance.
+    *  @param new_name Name of the PhysicalInterface object instance. */
+   virtual void set_name( char const *new_name );
+
+   /*! @brief Set the name of the parent reference frame for the PhysicalInterface.
+    *  @param new_parent_name The name of the parent reference frame associated
+    *  with the PhysicalInterface. */
+   virtual void set_parent( char const *new_parent_name );
+
    /*! @brief Packs the packing data object from the working data object(s),
     *  @details Called from the pack() function to pack the data from the working
     *  data objects(s) into the pe_packing_data object.  */

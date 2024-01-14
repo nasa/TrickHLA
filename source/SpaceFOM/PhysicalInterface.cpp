@@ -283,3 +283,63 @@ void PhysicalInterface::unpack_into_working_data()
 
    return;
 }
+
+/*!
+ * @job_class{initialization}
+ */
+void PhysicalInterface::set_name( char const *new_name )
+{
+
+   // Call the base class method.
+   PhysicalInterfaceBase::set_name( new_name );
+
+   // Make sure that the interface data is also set.
+   if ( this->interface_data != NULL ) {
+      if ( this->interface_data->name != NULL ) {
+         if ( trick_MM->delete_var( static_cast< void * >( this->interface_data->name ) ) ) {
+            send_hs( stderr, "SpaceFOM::PhysicalInterface::set_name():%d ERROR deleting Trick Memory for 'this->name'%c",
+                  __LINE__, THLA_NEWLINE );
+         }
+      }
+      this->interface_data->name = trick_MM->mm_strdup( new_name );
+   }
+   else {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::PhysicalInterface::set_name():" << __LINE__
+             << " ERROR: Unexpected NULL interface_data for PhysicalInterface!" << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void PhysicalInterface::set_parent( char const *new_parent_name )
+{
+
+   // Call the base class method.
+   PhysicalInterfaceBase::set_parent( new_parent_name );
+
+   // Make sure that the interface data is also set.
+   if ( this->interface_data != NULL ) {
+      if ( this->interface_data->parent_name != NULL ) {
+         if ( trick_MM->delete_var( static_cast< void * >( this->interface_data->parent_name ) ) ) {
+            send_hs( stderr, "SpaceFOM::PhysicalInterface::set_parent():%d ERROR deleting Trick Memory for 'this->parent_name'%c",
+                  __LINE__, THLA_NEWLINE );
+         }
+      }
+      this->interface_data->parent_name = trick_MM->mm_strdup( new_parent_name );
+   }
+   else {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::PhysicalInterface::set_parent():" << __LINE__
+             << " ERROR: Unexpected NULL interface_data for PhysicalInterface!" << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   return;
+}

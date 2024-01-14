@@ -459,15 +459,13 @@ phy_interface = SpaceFOMPhysicalInterfaceObject( True,
                                                  interface_deleted     = physical_interface.deleted_callback )
 
 # Set the debug flag for the Entity.
-physical_interface.interface_packing.debug = True
+physical_interface.interface_packing.debug = verbose
 
 # Add this Entity to the list of managed object.
 federate.add_fed_object( phy_interface )
 
 # Let's give the PhysicalEntity some non-zero values.
-physical_interface.interface_data.name        = phy_interface_name
-physical_interface.interface_data.parent_name = phy_entity_name
-
+physical_interface.interface_packing.set_parent( phy_entity_name )
 physical_interface.interface_data.position = [ 0.0, 1.1, 2.2 ]
 physical_interface.interface_data.attitude.set_from_Euler_deg( trick.Pitch_Yaw_Roll, [0.0, 0.0, 0.0] )
 

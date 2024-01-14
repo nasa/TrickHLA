@@ -218,7 +218,7 @@ void PhysicalInterfaceBase::configure()
 void PhysicalInterfaceBase::initialize()
 {
 
-   // Must have federation instance name.
+   // Must have interface instance name.
    if ( this->packing_data.name == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
@@ -228,8 +228,9 @@ void PhysicalInterfaceBase::initialize()
       this->packing_data.name = trick_MM->mm_strdup( "" );
    }
 
-   // Must have federation instance parent_ref_frame.
-   if ( this->packing_data.parent_name == NULL ) {
+   // Should have interface parent specified if creating this interface.
+   if (    this->object->create_HLA_instance
+        && this->packing_data.parent_name == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " WARNING: Unexpected NULL interface parent!"
