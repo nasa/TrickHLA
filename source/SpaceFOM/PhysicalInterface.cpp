@@ -298,12 +298,11 @@ void PhysicalInterface::set_name( char const *new_name )
       if ( this->interface_data->name != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->interface_data->name ) ) ) {
             send_hs( stderr, "SpaceFOM::PhysicalInterface::set_name():%d ERROR deleting Trick Memory for 'this->name'%c",
-                  __LINE__, THLA_NEWLINE );
+                     __LINE__, THLA_NEWLINE );
          }
       }
       this->interface_data->name = trick_MM->mm_strdup( new_name );
-   }
-   else {
+   } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterface::set_name():" << __LINE__
              << " ERROR: Unexpected NULL interface_data for PhysicalInterface!" << THLA_ENDL;
@@ -328,12 +327,11 @@ void PhysicalInterface::set_parent( char const *new_parent_name )
       if ( this->interface_data->parent_name != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->interface_data->parent_name ) ) ) {
             send_hs( stderr, "SpaceFOM::PhysicalInterface::set_parent():%d ERROR deleting Trick Memory for 'this->parent_name'%c",
-                  __LINE__, THLA_NEWLINE );
+                     __LINE__, THLA_NEWLINE );
          }
       }
       this->interface_data->parent_name = trick_MM->mm_strdup( new_parent_name );
-   }
-   else {
+   } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterface::set_parent():" << __LINE__
              << " ERROR: Unexpected NULL interface_data for PhysicalInterface!" << THLA_ENDL;
