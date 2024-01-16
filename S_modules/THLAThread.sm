@@ -70,7 +70,7 @@ class THLAThreadSimObject : public Trick::SimObject {
       // a phase 1 (i.e. P1) initialization class job, the earliest we can
       // associate the Trick child thread is phase 2 (i.e. P2). The HLA object
       // instance names, as a comma seperated string, that are associated with
-      // this Trick child thread. TrickHLA will maintain data choherancy for the
+      // this Trick child thread. TrickHLA will maintain data coherancy for the
       // HLA object instances specified over the data cycle time specified.
       // Also, there is a P3 job that will verify all the Trick child thread
       // associations to object instances.

@@ -97,7 +97,7 @@ class IMSimSimObject : public Trick::SimObject {
       P1 ("initialization") federate.initialize_thread_state( data_cycle_time, obj_instance_names );
 
       // Associate the Trick main thread the the specified object instance names.
-      // TrickHLA will maintain data choherancy for the HLA object instances
+      // TrickHLA will maintain data coherancy for the HLA object instances
       // specified over the data cycle time specified.
       P1 ("initialization") federate.associate_to_trick_child_thread( 0, data_cycle_time );
 
