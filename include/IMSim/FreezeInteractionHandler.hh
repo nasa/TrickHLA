@@ -63,7 +63,7 @@ class FreezeInteractionHandler : public TrickHLA::InteractionHandler
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__FreezeInteractionHandler();
+   friend void init_attrIMSim__FreezeInteractionHandler();
 
   public:
    //-----------------------------------------------------------------

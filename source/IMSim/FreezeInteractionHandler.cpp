@@ -48,6 +48,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/Manager.hh"
+#include "TrickHLA/Interaction.hh"
 
 // IMSim include files.
 #include "IMSim/FreezeInteractionHandler.hh"
@@ -156,7 +158,7 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
    Int64Time     granted                = interaction->get_granted_time();
    Int64Time     granted_plus_lookahead = granted + lookahead;
 
-   double curr_scenario_time   = interaction->get_federate()->get_scenario_time();
+   double curr_scenario_time   = interaction->get_manager()->get_execution_control()->get_scenario_time();
    double freeze_scenario_time = freeze_time;
    double freeze_hla_time      = granted.get_time_in_seconds() + ( freeze_scenario_time - curr_scenario_time );
 
@@ -249,7 +251,7 @@ new freeze HLA time:%lf %c",
       send_hs( stdout, infomsg.str().c_str() );
 
       // Inform the Federate the scenario time to freeze the simulation on.
-      interaction->get_federate()->add_freeze_scenario_time( time );
+      interaction->get_manager()->get_execution_control()->add_freeze_scenario_time( time );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction()%d: Federation freeze scenario time:%lf %c",
@@ -293,7 +295,7 @@ void FreezeInteractionHandler::receive_interaction(
       send_hs( stdout, errmsg.str().c_str() );
    } else {
       // Inform the Federate the scenario time to freeze the simulation on.
-      interaction->get_federate()->add_freeze_scenario_time( time );
+      interaction->get_manager()->get_execution_control()->add_freeze_scenario_time( time );
 
 #if THLA_FREEZE_INTERACTION_DEBUG
       ostringstream infomsg;

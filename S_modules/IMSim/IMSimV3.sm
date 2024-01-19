@@ -27,7 +27,7 @@
 // IMSim Execution Control class definition.
 ##include "IMSim/ExecutionControl.hh"
 
-// IMSim Execution Configuration (ExCO) class definition.
+// IMSim Simulation Configuration (Execution Configuration) class definition.
 ##include "IMSim/ExecutionConfiguration.hh"
 
 //=========================================================================
@@ -38,8 +38,8 @@ class IMSimSimObject : public THLABaseSimObject {
 
  public:
 
-   // The IMSim Execution Configuration Object (ExCO).
-   IMSim::ExecutionConfiguration ExCO;
+   // The IMSim Simulation Configuration Object.
+   IMSim::ExecutionConfiguration SimConfig;
 
    // The IMSim Execution Control object.
    IMSim::ExecutionControl execution_control;
@@ -60,17 +60,10 @@ class IMSimSimObject : public THLABaseSimObject {
                            _1ST,
                            _INIT,
                            _LAST ),
-        ExCO( "THLA.ExCO" ),
-        execution_control( ExCO ),
+        SimConfig( "THLA.SimConfig" ),
         CHECK_PAUSE_DELTA( 0.000001 )
         
    {
-
-      // The Space Reference FOM (SpaceFOM) Execution Configuration Object (ExCO).
-      IMSim::ExecutionConfiguration ExCO;
-
-      // The Space Reference FOM (SpaceFOM) Execution Control object.
-      IMSim::ExecutionControl execution_control;
 
       // Calculate and validate the check-pause job offset time.
       if ( main_thread_data_cycle <= CHECK_PAUSE_DELTA ) {

@@ -155,12 +155,6 @@ void ExecutionControl::initialize()
       send_hs( stdout, msg.str().c_str() );
    }
 
-   // Set the reference to the TrickHLA::Federate.
-   this->federate = &federate;
-
-   // Initialize the ExCO so that it knows about the manager.
-   this->execution_configuration->initialize( this->get_manager() );
-
    // There are things that must me set for the IMSim initialization.
    this->use_preset_master = true;
 
@@ -752,6 +746,20 @@ Simulation has started and is now running...%c",
 }
 
 /*!
+@details This routine implements the TrickHLA post multi-phase initialization process.
+
+@job_class{initialization}
+*/
+void ExecutionControl::post_multi_phase_init_processes()
+{
+   // Make sure we setup time constrained and time regulating with the RTI.
+   federate->setup_time_management();
+
+   // Jump to the GALT that is a multiple of the lookahead time.
+   federate->time_advance_request_to_GALT();
+}
+
+/*!
  * @job_class{initialization}
  */
 FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federate()
@@ -1046,6 +1054,19 @@ void ExecutionControl::setup_object_RTI_handles()
 void ExecutionControl::setup_interaction_RTI_handles()
 {
    return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void ExecutionControl::add_initialization_sync_points()
+{
+
+   // Add the initialization synchronization points used for startup regulation.
+   // This version of ExecutionControl does not have any.
+
+   // Add the multiphase initialization synchronization points.
+   this->add_multiphase_init_sync_points();
 }
 
 /*!

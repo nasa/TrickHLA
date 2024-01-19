@@ -1,7 +1,7 @@
 /*!
 @file IMSim/ExecutionConfiguration.cpp
 @ingroup IMSim
-@brief Implementation of the TrickHLA IMSim Execution Configuration Object (ExCO).
+@brief Implementation of the TrickHLA IMSim Simulation Configuration Object.
 
 \par<b>Assumptions and Limitations:</b>
 - One and only one ExecutionConfiguration object should exist in an federation
@@ -34,7 +34,7 @@ NASA, Johnson Space Center\n
 @revs_begin
 @rev_entry{Dan Dexter, L3 Titan Group, IMSim, June 2007, --, Initial version.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, Jan 2019, --, IMSim support and testing.}
-@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, January 2024, --, Version 3 rewrite.}
 @revs_end
 
 */
@@ -97,21 +97,59 @@ extern ATTRIBUTES attrIMSim__ExecutionConfiguration[];
  * @job_class{initialization}
  */
 ExecutionConfiguration::ExecutionConfiguration()
-   : root_frame_name( NULL ),
-     scenario_time_epoch( -std::numeric_limits< double >::max() ),
-     next_mode_scenario_time( -std::numeric_limits< double >::max() ),
-     next_mode_cte_time( -std::numeric_limits< double >::max() ),
-     current_execution_mode( IMSim::MTR_UNINITIALIZED ),
-     next_execution_mode( IMSim::MTR_UNINITIALIZED ),
-     least_common_time_step( -1 ),
-     pending_update( false )
+   : owner( NULL ),
+     scenario( NULL ),
+     mode( NULL ),
+     run_duration( -1 ),
+     number_of_federates( 0 ),
+     required_federates( NULL ),
+     start_year( 2024 ),
+     start_seconds( 1517932 ),
+     DUT1(0.0),
+     deltaAT(37)
 {
-   // Set a default empty name string.
-   name = trick_MM->mm_strdup( const_cast< char * >( "" ) );
+   // Set default empty strings.
+   owner              = trick_MM->mm_strdup( const_cast< char * >( "" ) );
+   scenario           = trick_MM->mm_strdup( const_cast< char * >( "" ) );
+   mode               = trick_MM->mm_strdup( const_cast< char * >( "" ) );
+   required_federates = trick_MM->mm_strdup( const_cast< char * >( "" ) );
+
+   // Note that the default start time is 18 January 2024, 13:38;52 UTC.
 
    // This is both a TrickHLA::Object and Packing.
    // So, it can safely reference itself.
    this->packing = this;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+ExecutionConfiguration::ExecutionConfiguration(
+   char const *s_define_name )
+   : ExecutionConfigurationBase( s_define_name ),
+     owner( NULL ),
+     scenario( NULL ),
+     mode( NULL ),
+     run_duration( -1 ),
+     number_of_federates( 0 ),
+     required_federates( NULL ),
+     start_year( 2024 ),
+     start_seconds( 1517932 ),
+     DUT1(0.0),
+     deltaAT(37)
+{
+   // Set default empty strings.
+   owner              = trick_MM->mm_strdup( const_cast< char * >( "" ) );
+   scenario           = trick_MM->mm_strdup( const_cast< char * >( "" ) );
+   mode               = trick_MM->mm_strdup( const_cast< char * >( "" ) );
+   required_federates = trick_MM->mm_strdup( const_cast< char * >( "" ) );
+
+   // Note that the default start time is 18 January 2024, 13:38;52 UTC.
+
+   // This is both a TrickHLA::Object and Packing.
+   // So, it can safely reference itself.
+   this->packing = this;
+
 }
 
 /*!
@@ -121,13 +159,34 @@ ExecutionConfiguration::ExecutionConfiguration()
  */
 ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
 {
-   // Free the allocated root reference frame name.
-   if ( this->root_frame_name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->root_frame_name ) ) ) {
-         send_hs( stderr, "IMSim::ExecutionConfiguration::~ExecutionConfiguration():%d ERROR deleting Trick Memory for 'this->root_frame_name'%c",
+   // Free the allocated strings.
+   if ( this->owner != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->owner ) ) ) {
+         send_hs( stderr, "IMSim::ExecutionConfiguration::~ExecutionConfiguration():%d ERROR deleting Trick Memory for 'this->owner'%c",
                   __LINE__, THLA_NEWLINE );
       }
-      this->root_frame_name = NULL;
+      this->owner = NULL;
+   }
+   if ( this->scenario != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->scenario ) ) ) {
+         send_hs( stderr, "IMSim::ExecutionConfiguration::~ExecutionConfiguration():%d ERROR deleting Trick Memory for 'this->scenario'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      this->scenario = NULL;
+   }
+   if ( this->mode != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->mode ) ) ) {
+         send_hs( stderr, "IMSim::ExecutionConfiguration::~ExecutionConfiguration():%d ERROR deleting Trick Memory for 'this->mode'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      this->mode = NULL;
+   }
+   if ( this->required_federates != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->required_federates ) ) ) {
+         send_hs( stderr, "IMSim::ExecutionConfiguration::~ExecutionConfiguration():%d ERROR deleting Trick Memory for 'this->required_federates'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      this->owner = required_federates;
    }
 }
 
@@ -136,69 +195,151 @@ ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
  * @job_class{default_data}
  */
 void ExecutionConfiguration::configure_attributes(
-   char const *exco_name )
+   char const *sim_config_name )
 {
-   string exco_name_str = string( exco_name );
-   string trick_name_str;
 
-   //
-   // Assign an empty root frame name to start with.
-   // This will be reset at root frame discovery. It can
-   // also be specified in the input.py file for the Root Reference
-   // Frame Publisher (RRFP).
-   //
-   this->root_frame_name = trick_MM->mm_strdup( "" );
+   // Check to make sure we have a reference to the TrickHLA::FedAmb.
+   if ( sim_config_name == NULL ) {
+      ostringstream errmsg;
+      errmsg << "IMSim::ExecutionConfiguration::configure_attributes():" << __LINE__
+             << " ERROR: Unexpected NULL S_define_name." << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Set the S_define instance name.
+   if ( this->S_define_name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( const_cast< char * >( this->S_define_name ) ) ) ) {
+         send_hs( stderr, "IMSim::ExecutionConfiguration::configure_attributes():%d ERROR deleting Trick Memory for 'this->S_define_name'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      this->S_define_name = trick_MM->mm_strdup( sim_config_name );
+   }
+
+   // Now call the default configure_attributes function.
+   this->configure_attributes();
+
+   return;
+}
+
+/*!
+ * @details These can be overridden in the input.py file.
+ * @job_class{default_data}
+ */
+void ExecutionConfiguration::configure_attributes()
+{
+
+   // Check to make sure we have an S_define name for this simulation configuration instance.
+   if ( S_define_name == NULL ) {
+      ostringstream errmsg;
+      errmsg << "IMSim::ExecutionConfiguration::configure_attributes():" << __LINE__
+             << " ERROR: Unexpected NULL S_define_name." << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   string simconfig_name_str = string( S_define_name );
+   string trick_name_str;
 
    //---------------------------------------------------------
    // Set up the execution configuration HLA object mappings.
    //---------------------------------------------------------
-   // Set the FOM name of the ExCO object.
-   this->FOM_name = trick_MM->mm_strdup( "IMSim::ExecutionConfiguration" );
-   this->name     = trick_MM->mm_strdup( "ExCO" );
+   // Set the FOM name of the SimulationConfiguration object.
+   this->FOM_name = trick_MM->mm_strdup( "SimulationConfiguration" );
+   this->name     = trick_MM->mm_strdup( "sim_config_v2" );
    // this->create_HLA_instance = is_master;
    this->packing = this;
-   // Allocate the attributes for the ExCO HLA object.
-   this->attr_count = 7;
+   // Allocate the attributes for the SimulationConfiguration HLA object.
+   this->attr_count = 10;
    this->attributes = static_cast< Attribute * >( TMM_declare_var_1d( "TrickHLA::Attribute", this->attr_count ) );
 
    //
-   // Specify the ExCO attributes.
+   // Specify the SimulationConfiguration attributes.
    //
    // Setup the "root_frame_name" attribute.
-   this->attributes[0].FOM_name     = trick_MM->mm_strdup( "root_frame_name" );
-   trick_name_str                   = exco_name_str + string( ".root_frame_name" );
+   this->attributes[0].FOM_name     = trick_MM->mm_strdup( "owner" );
+   trick_name_str                   = simconfig_name_str + string( ".owner" );
    this->attributes[0].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
    this->attributes[0].rti_encoding = ENCODING_UNICODE_STRING;
 
-   this->attributes[1].FOM_name     = trick_MM->mm_strdup( "scenario_time_epoch" );
-   trick_name_str                   = exco_name_str + string( ".scenario_time_epoch" );
+   this->attributes[1].FOM_name     = trick_MM->mm_strdup( "scenario" );
+   trick_name_str                   = simconfig_name_str + string( ".scenario" );
    this->attributes[1].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
-   this->attributes[1].rti_encoding = ENCODING_LITTLE_ENDIAN;
+   this->attributes[1].rti_encoding = ENCODING_UNICODE_STRING;
 
-   this->attributes[2].FOM_name     = trick_MM->mm_strdup( "next_mode_scenario_time" );
-   trick_name_str                   = exco_name_str + string( ".next_mode_scenario_time" );
+   this->attributes[2].FOM_name     = trick_MM->mm_strdup( "mode" );
+   trick_name_str                   = simconfig_name_str + string( ".mode" );
    this->attributes[2].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
-   this->attributes[2].rti_encoding = ENCODING_LITTLE_ENDIAN;
+   this->attributes[2].rti_encoding = ENCODING_UNICODE_STRING;
 
-   this->attributes[3].FOM_name     = trick_MM->mm_strdup( "next_mode_cte_time" );
-   trick_name_str                   = exco_name_str + string( ".next_mode_cte_time" );
+   this->attributes[3].FOM_name     = trick_MM->mm_strdup( "run_duration" );
+   trick_name_str                   = simconfig_name_str + string( ".run_duration" );
    this->attributes[3].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
    this->attributes[3].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
-   this->attributes[4].FOM_name     = trick_MM->mm_strdup( "current_execution_mode" );
-   trick_name_str                   = exco_name_str + string( ".current_execution_mode" );
+   this->attributes[4].FOM_name     = trick_MM->mm_strdup( "number_of_federates" );
+   trick_name_str                   = simconfig_name_str + string( ".number_of_federates" );
    this->attributes[4].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
    this->attributes[4].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
-   this->attributes[5].FOM_name     = trick_MM->mm_strdup( "next_execution_mode" );
-   trick_name_str                   = exco_name_str + string( ".next_execution_mode" );
+   this->attributes[5].FOM_name     = trick_MM->mm_strdup( "required_federates" );
+   trick_name_str                   = simconfig_name_str + string( ".required_federates" );
    this->attributes[5].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
-   this->attributes[5].rti_encoding = ENCODING_LITTLE_ENDIAN;
+   this->attributes[5].rti_encoding = ENCODING_UNICODE_STRING;
 
-   this->attributes[6].FOM_name     = trick_MM->mm_strdup( "least_common_time_step" );
-   trick_name_str                   = exco_name_str + string( ".least_common_time_step" );
+   this->attributes[6].FOM_name     = trick_MM->mm_strdup( "start_year" );
+   trick_name_str                   = simconfig_name_str + string( ".start_year" );
    this->attributes[6].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
    this->attributes[6].rti_encoding = ENCODING_LITTLE_ENDIAN;
+
+   this->attributes[7].FOM_name     = trick_MM->mm_strdup( "start_seconds" );
+   trick_name_str                   = simconfig_name_str + string( ".start_seconds" );
+   this->attributes[7].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[7].rti_encoding = ENCODING_LITTLE_ENDIAN;
+
+   this->attributes[8].FOM_name     = trick_MM->mm_strdup( "DUT1" );
+   trick_name_str                   = simconfig_name_str + string( ".DUT1" );
+   this->attributes[8].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[8].rti_encoding = ENCODING_LITTLE_ENDIAN;
+
+   this->attributes[9].FOM_name     = trick_MM->mm_strdup( "deltaAT" );
+   trick_name_str                   = simconfig_name_str + string( ".deltaAT" );
+   this->attributes[9].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[9].rti_encoding = ENCODING_LITTLE_ENDIAN;
+
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void ExecutionConfiguration::configure()
+{
+   // Check to make sure we have a reference to the TrickHLA::FedAmb.
+   if ( manager == NULL ) {
+      ostringstream errmsg;
+      errmsg << "IMSim::ExecutionConfiguration::configure():" << __LINE__
+             << " ERROR: Unexpected NULL TrickHLA::Manager." << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // The Simulation Configuration object must have a name.
+   if ( name == NULL ) {
+      ostringstream errmsg;
+      errmsg << "IMSim::ExecutionConfiguration::configure():" << __LINE__
+             << " ERROR: Simulation configuration must have a name!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Lag compensation is not supported for the Execution Configuration object.
+   set_lag_compensation_type( LAG_COMPENSATION_NONE );
+
+   // Ownership transfer will not be used for the Execution Configuration object.
+   ownership = NULL;
+
+   // Make sure the ExecutionConfiguration attributes go out in
+   // Receive-Order so that a late joining federate can get them.
+   reset_preferred_order();
+
+   return;
 }
 
 /*!
@@ -213,48 +354,12 @@ void ExecutionConfiguration::pack()
            << "\t Current Simulation Time: " << the_exec->get_sim_time() << endl
            << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << endl
            << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << endl
-           << "............................................................." << endl
-           << "\t Object-Name:             " << this->get_name() << "'" << endl
-           << "\t root_frame_name:         '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'" << endl
-           << "\t scenario_time_epoch:     " << setprecision( 18 ) << scenario_time_epoch << endl
-           << "\t next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << endl
-           << "\t next_mode_cte_time:      " << setprecision( 18 ) << next_mode_cte_time << endl
-           << "\t current_execution_mode:  " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << endl
-           << "\t next_execution_mode:     " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
-           << "\t least_common_time_step:  " << least_common_time_step << " " << Int64BaseTime::get_units() << endl
-           << "=============================================================" << endl;
+           << "............................................................." << endl;
+      this->print_simconfig( cout );
+      cout << "=============================================================" << endl;
    }
 
-   int64_t fed_lookahead = ( get_federate() != NULL ) ? get_federate()->get_lookahead().get_base_time() : 0;
-
-   // Do a bounds check on the least-common-time-step.
-   if ( least_common_time_step < fed_lookahead ) {
-      ostringstream errmsg;
-      errmsg << "IMSim::ExecutionConfiguration::pack():" << __LINE__
-             << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-             << " " << Int64BaseTime::get_units()
-             << ") is not greater than or equal to this federates lookahead time ("
-             << fed_lookahead << " " << Int64BaseTime::get_units()
-             << ")!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Skip for a zero lookahead time.
-   if ( fed_lookahead != 0 ) {
-
-      // The least-common-time-step time must be an integer multiple of
-      // the federate's lookahead time.
-      if ( ( least_common_time_step % fed_lookahead ) != 0 ) {
-         ostringstream errmsg;
-         errmsg << "IMSim::ExecutionConfiguration::pack():" << __LINE__
-                << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-                << " " << Int64BaseTime::get_units()
-                << ") is not an integer multiple of the federate lookahead time ("
-                << fed_lookahead << " " << Int64BaseTime::get_units()
-                << ")!" << THLA_ENDL;
-         DebugHandler::terminate_with_message( errmsg.str() );
-      }
-   }
+   return;
 }
 
 /*!
@@ -262,8 +367,6 @@ void ExecutionConfiguration::pack()
 */
 void ExecutionConfiguration::unpack()
 {
-   int64_t software_frame_base_time;
-   double  software_frame_sec;
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       cout << "=============================================================" << endl
@@ -272,196 +375,77 @@ void ExecutionConfiguration::unpack()
            << "\t Current Simulation Time: " << the_exec->get_sim_time() << endl
            << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << endl
            << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << endl
-           << "............................................................." << endl
-           << "\t Object-Name:            '" << this->get_name() << "'" << endl
-           << "\t root_frame_name:        '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'" << endl
-           << "\t scenario_time_epoch:    " << setprecision( 18 ) << scenario_time_epoch << endl
-           << "\t next_mode_scenario_time:" << setprecision( 18 ) << next_mode_scenario_time << endl
-           << "\t next_mode_cte_time:     " << setprecision( 18 ) << next_mode_cte_time << endl
-           << "\t current_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( current_execution_mode ) ) << endl
-           << "\t next_execution_mode:    " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << endl
-           << "\t least_common_time_step: " << least_common_time_step << " " << Int64BaseTime::get_units() << endl
-           << "=============================================================" << endl;
+           << "............................................................." << endl;
+      this->print_simconfig( cout );
+      cout << "=============================================================" << endl;
    }
 
-   int64_t fed_lookahead = ( get_federate() != NULL ) ? get_federate()->get_lookahead().get_base_time() : 0;
-
-   // Do a bounds check on the least-common-time-step.
-   if ( least_common_time_step < fed_lookahead ) {
-      ostringstream errmsg;
-      errmsg << "IMSim::ExecutionConfiguration::unpack():" << __LINE__
-             << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-             << " " << Int64BaseTime::get_units()
-             << ") is not greater than or equal to this federates lookahead time ("
-             << fed_lookahead << " " << Int64BaseTime::get_units()
-             << ")!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Skip for a zero lookahead time.
-   if ( fed_lookahead != 0 ) {
-
-      // Our federates lookahead time must be an integer multiple of the
-      // least-common-time-step time.
-      if ( ( least_common_time_step % fed_lookahead ) != 0 ) {
-         ostringstream errmsg;
-         errmsg << "IMSim::ExecutionConfiguration::unpack():" << __LINE__
-                << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-                << " " << Int64BaseTime::get_units()
-                << ") is not an integer multiple of the federate lookahead time ("
-                << fed_lookahead << " " << Int64BaseTime::get_units()
-                << ")!" << THLA_ENDL;
-         DebugHandler::terminate_with_message( errmsg.str() );
-      }
-   }
-
-   // Check the Trick executive software frame.
-   // It must be smaller than the ExCO LCTS or moding won't work properly.
-   // It must also be an integer multiple of the ExCO LCTS.
-   software_frame_sec       = exec_get_software_frame();
-   software_frame_base_time = Int64BaseTime::to_base_time( software_frame_sec );
-
-   if ( software_frame_base_time != least_common_time_step ) {
-      if ( software_frame_base_time > least_common_time_step ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-            ostringstream message;
-            message << "IMSim::ExecutionConfiguration::unpack():" << __LINE__
-                    << " WARNING: ExCO least_common_time_step (" << least_common_time_step
-                    << " " << Int64BaseTime::get_units()
-                    << ") is less than the federate software frame ("
-                    << software_frame_base_time << " " << Int64BaseTime::get_units()
-                    << ")!  Resetting the software frame ("
-                    << least_common_time_step << " " << Int64BaseTime::get_units()
-                    << ")!!!!" << THLA_ENDL;
-            send_hs( stdout, message.str().c_str() );
-         }
-         software_frame_sec = Int64BaseTime::to_seconds( least_common_time_step );
-         exec_set_software_frame( software_frame_sec );
-      } else if ( least_common_time_step % software_frame_base_time != 0 ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-            ostringstream message;
-            message << "IMSim::ExecutionConfiguration::unpack():" << __LINE__
-                    << " WARNING: ExCO least_common_time_step (" << least_common_time_step
-                    << " " << Int64BaseTime::get_units()
-                    << ") is not an integer multiple of the federate software frame ("
-                    << software_frame_base_time << " " << Int64BaseTime::get_units()
-                    << ")!  Resetting the software frame ("
-                    << least_common_time_step << " " << Int64BaseTime::get_units()
-                    << ")!!!!" << THLA_ENDL;
-            send_hs( stdout, message.str().c_str() );
-         }
-         software_frame_sec = Int64BaseTime::to_seconds( least_common_time_step );
-         exec_set_software_frame( software_frame_sec );
-      } else {
-         // This must mean that the ExCO Least Common Time Step (LCTS) is
-         // an integer multiple of the federates software frame. So,
-         // nothing really needs to be done. It's okay for the ExCO LTCS
-         // to be less than the software frame as long as it is an
-         // integer multiple. This will still line up with the Master
-         // federate mode control timing.
-      }
-   }
-
-   // Mark that we have an ExCO update with pending changes.
+   // Mark that we have a Simulation Configuration update with pending changes.
    this->pending_update = true;
 }
 
-void ExecutionConfiguration::set_root_frame_name(
-   char const *name )
+void ExecutionConfiguration::set_owner(
+   char const *owner_name )
 {
    // Free the Trick memory if it's already allocated.
-   if ( this->root_frame_name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->root_frame_name ) ) ) {
-         send_hs( stderr, "IMSim::ExecutionConfiguration::set_root_frame_name():%d ERROR deleting Trick Memory for 'this->root_frame_name'%c",
+   if ( this->owner != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->owner ) ) ) {
+         send_hs( stderr, "IMSim::ExecutionConfiguration::set_owner():%d ERROR deleting Trick Memory for 'this->owner'%c",
                   __LINE__, THLA_NEWLINE );
       }
-      this->root_frame_name = NULL;
+      this->owner = NULL;
    }
 
    // Allocate and duplicate the new root reference frame name.
-   this->root_frame_name = trick_MM->mm_strdup( const_cast< char * >( name ) );
+   this->owner = trick_MM->mm_strdup( const_cast< char * >( owner_name ) );
 }
 
-/*!
- * @details WARNING: Only the Master federate should ever set this.
- */
-void ExecutionConfiguration::set_scenario_time_epoch(
-   double scenario_time )
+void ExecutionConfiguration::set_scenario(
+   char const *scenario_id )
 {
-   // WARNING: Only the Master federate should ever set this.
-   if ( this->execution_control->is_master() ) {
-      this->scenario_time_epoch = scenario_time;
+   // Free the Trick memory if it's already allocated.
+   if ( this->scenario != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->scenario ) ) ) {
+         send_hs( stderr, "IMSim::ExecutionConfiguration::set_scenario():%d ERROR deleting Trick Memory for 'this->scenario'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      this->scenario = NULL;
    }
+
+   // Allocate and duplicate the new root reference frame name.
+   this->scenario = trick_MM->mm_strdup( const_cast< char * >( scenario_id ) );
 }
 
-/*!
- * @details WARNING: Only the Master federate should ever set this.
- */
-void ExecutionConfiguration::set_next_mode_scenario_time(
-   double next_mode_time )
+void ExecutionConfiguration::set_mode(
+   char const *mode_id )
 {
-   // TODO: Need more checking here.
-   // WARNING: Only the Master federate should ever set this.
-   if ( this->execution_control->is_master() ) {
-      this->next_mode_scenario_time = next_mode_time;
+   // Free the Trick memory if it's already allocated.
+   if ( this->mode != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->mode ) ) ) {
+         send_hs( stderr, "IMSim::ExecutionConfiguration::set_mode():%d ERROR deleting Trick Memory for 'this->mode'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      this->mode = NULL;
    }
+
+   // Allocate and duplicate the new root reference frame name.
+   this->mode = trick_MM->mm_strdup( const_cast< char * >( mode_id ) );
 }
 
-/*!
- * @details WARNING: Only the Master federate should ever set this.
- */
-void ExecutionConfiguration::set_next_mode_cte_time(
-   double cte_time )
+void ExecutionConfiguration::set_required_federates(
+   char const *federates )
 {
-   // TODO: Need more checking here.
-   // WARNING: Only the Master federate should ever set this.
-   if ( this->execution_control->is_master() ) {
-      this->next_mode_cte_time = cte_time;
+   // Free the Trick memory if it's already allocated.
+   if ( this->required_federates != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->required_federates ) ) ) {
+         send_hs( stderr, "IMSim::ExecutionConfiguration::set_required_federates():%d ERROR deleting Trick Memory for 'this->required_federates'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      this->required_federates = NULL;
    }
-}
 
-/*!
- * @details WARNING: Only the Master federate should ever set this.
- */
-void ExecutionConfiguration::set_current_execution_mode(
-   short mode )
-{
-   // WARNING: Only the Master federate should ever set this.
-   if ( this->execution_control->is_master() ) {
-      this->current_execution_mode = mode;
-   }
-}
-
-/*!
- * @details WARNING: Only the Master federate should ever set this.
- */
-void ExecutionConfiguration::set_current_execution_mode(
-   IMSim::ExecutionModeEnum mode )
-{
-   // WARNING: Only the Master federate should ever set this.
-   set_current_execution_mode( IMSim::execution_mode_enum_to_int16( mode ) );
-}
-
-/*!
- * @details WARNING: Only the Master federate should ever set this.
- */
-void ExecutionConfiguration::set_next_execution_mode(
-   short mode )
-{
-   // WARNING: Only the Master federate should ever set this.
-   if ( this->execution_control->is_master() ) {
-      this->next_execution_mode = mode;
-   }
-}
-
-/*!
- * @details WARNING: Only the Master federate should ever set this.
- */
-void ExecutionConfiguration::set_next_execution_mode(
-   IMSim::ExecutionModeEnum mode )
-{
-   // WARNING: Only the Master federate should ever set this.
-   set_next_execution_mode( IMSim::execution_mode_enum_to_int16( mode ) );
+   // Allocate and duplicate the new root reference frame name.
+   this->required_federates = trick_MM->mm_strdup( const_cast< char * >( federates ) );
 }
 
 /*!
@@ -475,179 +459,36 @@ void ExecutionConfiguration::setup_ref_attributes(
             << " ERROR: This routine does NOT work and should not be called!"
             << THLA_ENDL;
    DebugHandler::terminate_with_message( errormsg.str() );
-
-   //
-   // Set up object properties specifically for the ExCO.
-   //
-   // Set original data changed flag to false.
-   this->data_changed = false;
-
-   // Set up the fixed ExCO naming.
-   this->name          = trick_MM->mm_strdup( "ExCO" );
-   this->name_required = true;
-   this->FOM_name      = trick_MM->mm_strdup( "IMSim::ExecutionConfiguration" );
-
-   // Create the ExCO instance only if the IMSim Master federate.
-   if ( this->execution_control->is_master() ) {
-      this->create_HLA_instance = true;
-   } else {
-      this->create_HLA_instance = false;
-   }
-
-   // All IMSim compliant federates MUST have an ExCO
-   this->required = true;
-
-   // Do not block waiting for an ExCO update in normal cyclic data reads.
-   this->blocking_cyclic_read = false;
-
-   // There's no Lag Compensation with the ExCO.
-   this->lag_comp      = (LagCompensation *)NULL;
-   this->lag_comp_type = LAG_COMPENSATION_NONE;
-
-   // Need to set the packing object.
-   this->packing = packing_obj;
-
-   // No ownership transfer of the ExCO. Only the master can own this.
-   this->ownership = (OwnershipHandler *)NULL;
-
-   // No Object Deleted callback.
-   this->deleted                         = (ObjectDeleted *)NULL;
-   this->process_object_deleted_from_RTI = false;
-   this->object_deleted_from_RTI         = false;
-
-   // Set up attributes.
-   this->attr_count = 7;
-   this->attributes = static_cast< Attribute * >( trick_MM->declare_var(
-      "Attribute", this->attr_count ) );
-   if ( this->attributes == NULL ) {
-      ostringstream errmsg;
-      errmsg << "IMSim::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
-             << " FAILED to allocate enough memory for the attributes of the ExCO!"
-             << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   //
-   // Specify the ExCO attributes.
-   //
-   // Setup the "root_frame_name" attribute.
-   this->attributes[0].FOM_name = trick_MM->mm_strdup( "root_frame_name" ); // cppcheck-suppress [nullPointerRedundantCheck]
-   if ( this->execution_control->is_master() ) {
-      this->attributes[0].publish       = true;
-      this->attributes[0].subscribe     = false;
-      this->attributes[0].locally_owned = true;
-   } else {
-      this->attributes[0].publish       = false;
-      this->attributes[0].subscribe     = true;
-      this->attributes[0].locally_owned = false;
-   }
-   this->attributes[0].config       = CONFIG_INTERMITTENT;
-   this->attributes[0].rti_encoding = ENCODING_UNICODE_STRING;
-
-   // Normally, we would specify the Trick 'name' of the simulation
-   // variable. However, T=this will be replaced with a direct construction
-   // of the Trick REF2 ATTRIBUTES for the associated variable in memory.
-   // trick_name_str = exco_name_str + string( ".root_frame_name" );
-   // this->attributes[0].trick_name = trick_MM->mm_strdup( trick_name_str.c_str() );
-
-   // Normally we would use the Trick variable to resolve to at run time,
-   // which is supplied by the input.py file. Instead, we must build the
-   // Trick REF2 data structures with sufficient information for the
-   // Attribute class to link itself into Execution Configuration
-   // instance variables.
-
-   // Allocate the Trick REF2 data structure.
-   REF2 const *exco_ref2 = reinterpret_cast< REF2 * >( malloc( sizeof( REF2 ) ) );
-   if ( exco_ref2 == NULL ) {
-      ostringstream errmsg;
-      errmsg << "IMSim::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
-             << " FAILED to allocate enough memory for the REF2 structure for"
-             << " the 'root_frame_name' value of the ExCO!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Allocate the Trick ATTRIBUTES data structure with room for two
-   // entries: 1) the 'root_frame_name' parameter and 2) an empty entry
-   // marking the end of the structure.
-   ATTRIBUTES *exco_attr = reinterpret_cast< ATTRIBUTES * >( malloc( 2 * sizeof( ATTRIBUTES ) ) );
-   if ( exco_attr == NULL ) {
-      ostringstream errmsg;
-      errmsg << "IMSim::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
-             << " FAILED to allocate enough memory for the ATTRIBUTES for"
-             << " the 'root_frame_name' value of the ExCO!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Find the 'root_frame_name' value in the ExCO ATTRIBUTES.
-   // since we may not know the total # of elements, we look for an empty
-   // element as an ending marker of the ATTRIBUTES.
-   int attr_index = 0;
-
-   // Loop until the current ATTRIBUTES name is a NULL string
-   while ( strcmp( attrIMSim__ExecutionConfiguration[attr_index].name, "" ) != 0 ) {
-      if ( strcmp( attrIMSim__ExecutionConfiguration[attr_index].name, "root_frame_name" ) == 0 ) {
-         memcpy( &exco_attr[0], &attrIMSim__ExecutionConfiguration[attr_index], sizeof( ATTRIBUTES ) );
-      }
-      ++attr_index;
-   }
-
-   // Now that we have hit the end of the ATTRIBUTES array, copy the last
-   // entry into my exco_attr array to make it a valid ATTRIBUTE array.
-   memcpy( &exco_attr[1], &attrIMSim__ExecutionConfiguration[attr_index], sizeof( ATTRIBUTES ) );
-
-   // Initialize the attribute.
-   this->attributes[0].initialize( this->FOM_name, 0, 0 );
-
-   // Initialize the TrickHLA Attribute. Since we built the attributes
-   // in-line, and not via the Trick input.py file, use the alternate version of
-   // the initialize routine which does not resolve the fully-qualified Trick
-   // name to access the ATTRIBUTES if the trick variable...
-   // this->attributes[0].initialize( this->FOM_name,
-   //                                &(this->root_frame_name),
-   //                                (ATTRIBUTES *) exco_attr );
-
-   // Initialize the TrickHLA Object before we use it.
-   this->initialize( this->get_federate()->get_manager() );
-
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      ostringstream msg;
-      msg << "IMSim::ExecutionConfiguration::setup_interaction_ref_attributes():" << __LINE__
-          << " FOM-Parameter:'" << this->attributes[0].get_FOM_name() << "'"
-          << " NOTE: This is an auto-generated parameter so there is no"
-          << " associated 'Trick-Name'." << THLA_NEWLINE;
-      send_hs( stdout, msg.str().c_str() );
-   }
-
-   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      ostringstream msg;
-      msg << "IMSim::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
-          << endl
-          << "--------------- Trick REF-Attributes ---------------"
-          << endl
-          << " Object FOM name:'" << this->FOM_name << "'" << THLA_NEWLINE;
-      send_hs( stdout, msg.str().c_str() );
-   }
+   return;
 }
+
 
 void ExecutionConfiguration::print_execution_configuration()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      ostringstream msg;
-      msg << endl
-          << "=============================================================" << endl
-          << "IMSim::ExecutionConfiguration::print_exec_config():" << __LINE__ << endl
-          << "\t Object-Name:             '" << this->get_name() << "'" << endl
-          << "\t root_frame_name:         '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'" << endl
-          << "\t scenario_time_epoch:     " << setprecision( 18 ) << scenario_time_epoch << endl
-          << "\t next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << endl
-          << "\t next_mode_cte_time:      " << setprecision( 18 ) << next_mode_cte_time << endl
-          << "\t current_execution_mode:  " << IMSim::execution_mode_enum_to_string( IMSim::execution_mode_int16_to_enum( current_execution_mode ) ) << endl
-          << "\t next_execution_mode:     " << IMSim::execution_mode_enum_to_string( IMSim::execution_mode_int16_to_enum( next_execution_mode ) ) << endl
-          << "\t least_common_time_step:  " << least_common_time_step << " " << Int64BaseTime::get_units() << endl
-          << "=============================================================" << THLA_ENDL;
-      send_hs( stdout, msg.str().c_str() );
-   }
+   cout << "=============================================================" << endl
+        << "IMSim::ExecutionConfiguration::print_execution_configuration():" << __LINE__ << endl;
+   this->print_simconfig( cout );
+   cout << "=============================================================" << endl;
+   return;
 }
+
+
+void ExecutionConfiguration::print_simconfig( std::ostream &stream )
+{
+   stream << "\t Object-Name:         '" << this->get_name() << "'" << endl
+          << "\t owner:               '" << owner << endl
+          << "\t scenario:            "  << scenario << endl
+          << "\t mode:                "  << mode << endl
+          << "\t run duration:        "  << run_duration << endl
+          << "\t number of federates: "  << number_of_federates << endl
+          << "\t required federates:  "  << required_federates << endl
+          << "\t start year:          '" << start_year << endl
+          << "\t start seconds:       "  << start_seconds << " (s)" << endl
+          << "\t DUT1:                "  << DUT1 << " (s)" << endl
+          << "\t delta AT:            "  << deltaAT << " (s)" << endl;
+   return;
+}
+
 
 bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
 {

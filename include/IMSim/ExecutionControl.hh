@@ -94,7 +94,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Process run before the multi-phase initialization begins. */
    virtual void pre_multi_phase_init_processes();
    /*! @brief Process run after the multi-phase initialization ends. */
-   virtual void post_multi_phase_init_process();
+   virtual void post_multi_phase_init_processes();
    /*! @brief Execution control specific shutdown process. */
    virtual void shutdown();
 
@@ -119,6 +119,8 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! Setup the ExecutionControl interaction HLA RTI handles. */
    virtual void setup_interaction_RTI_handles();
    /*! Add initialization synchronization points to regulate startup. */
+   /*! Add initialization synchronization points to regulate startup. */
+   virtual void add_initialization_sync_points();
    virtual void add_multiphase_init_sync_points();
    /*! @brief The RTI has announced the existence of a synchronization point.
     *  @param rti_ambassador    Reference to the HLA RTI Ambassador instance.
@@ -211,7 +213,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual void enter_freeze();
    /*! @brief Check for exit from freeze.
     *  @return True if should exit from freeze. */
-   virtual virtual bool check_freeze_exit();
+   virtual bool check_freeze_exit();
    /*! @brief Routine to handle going from freeze to run; if we announced the
     * freeze, tell other federates to run. */
    virtual void exit_freeze();
