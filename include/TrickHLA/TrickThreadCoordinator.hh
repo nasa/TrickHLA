@@ -103,10 +103,6 @@ class TrickThreadCoordinator
    void wait_to_receive_data();
 
    /*! @brief On boundary if sim-time is an integer multiple of a valid cycle-time. */
-   bool const on_data_cycle_boundary_for_thread( unsigned int const thread_id,
-                                                 int64_t const      sim_time_in_base_time ) const;
-
-   /*! @brief On boundary if sim-time is an integer multiple of a valid cycle-time. */
    bool const on_data_cycle_boundary_for_obj( unsigned int const obj_index,
                                               int64_t const      sim_time_in_base_time ) const;
 
@@ -116,6 +112,10 @@ class TrickThreadCoordinator
                                                    int64_t const      default_data_cycle_base_time ) const;
 
   protected:
+   /*! @brief On boundary if sim-time is an integer multiple of a valid cycle-time. */
+   bool const on_data_cycle_boundary_for_thread( unsigned int const thread_id,
+                                                 int64_t const      sim_time_in_base_time ) const;
+
    /*! @brief Wait to send data for Trick main thread. */
    void wait_to_send_data_for_main_thread();
 
@@ -128,17 +128,21 @@ class TrickThreadCoordinator
 
    MutexLock mutex; ///< @trick_units{--} TrickHLA thread state mutex.
 
+   bool any_child_thread_associated; ///< @trick_units{--} True if at least one Trick Child thread is associated to TrickHLA.
+
    char *disable_thread_ids; ///< @trick_units{--} Comma separated list of thread ID's to disable association to TrickHLA.
 
-   unsigned int *thread_state;     ///< @trick_units{--} TrickHLA state of trick child threads being used.
-   unsigned int  thread_state_cnt; ///< @trick_units{--} TrickHLA state of trick child threads being used count.
+   unsigned int thread_cnt; ///< @trick_units{--} Number of Trick child threads used for array sizes.
+
+   unsigned int *thread_state; ///< @trick_units{--} TrickHLA state of trick child threads being used.
 
    long long *data_cycle_base_time_per_thread; ///< @trick_units{--} Data cycle times per thread in the base HLA Logical Time representation.
    long long *data_cycle_base_time_per_obj;    ///< @trick_units{--} Data cycle times per object instance in the base HLA Logical Time representation.
 
-   bool any_child_thread_associated; ///< @trick_units{--} True if at least one Trick Child thread is associated to TrickHLA.
+   long long main_thread_data_cycle_base_time; ///< @trick_units{--} Trick main thread data cycle time in the base HLA Logical Time representation.
 
-   long long main_thread_data_cycle_base_time; ///< @trick_units{--} Trick main thread data cycle time in the HLA Logical Time base.
+   long long *cycle_count; ///< @trick_units{--} The frame cycle count for each thread.
+   long long *frame_size;  ///< @trick_units{--} Per thread frame size relative to main thread.
 };
 
 } // namespace TrickHLA
