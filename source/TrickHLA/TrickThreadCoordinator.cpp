@@ -1187,10 +1187,19 @@ bool const TrickThreadCoordinator::on_data_cycle_boundary_for_thread(
    unsigned int const thread_id,
    int64_t const      sim_time_in_base_time ) const
 {
+#if 0
    // On boundary if the thread frame count corresponds to the sim-time.
    return ( ( this->any_child_thread_associated
               && ( thread_id < this->thread_cnt )
               && ( this->data_cycle_base_time_per_thread[thread_id] > 0LL ) )
                ? ( ( this->cycle_count[thread_id] * this->frame_size[thread_id] ) == sim_time_in_base_time )
                : true );
+#else
+   // On boundary if sim-time is an integer multiple of a valid cycle-time.
+   return ( ( this->any_child_thread_associated
+              && ( thread_id < this->thread_cnt )
+              && ( this->data_cycle_base_time_per_thread[thread_id] > 0LL ) )
+               ? ( ( sim_time_in_base_time % this->data_cycle_base_time_per_thread[thread_id] ) == 0LL )
+               : true );
+#endif
 }
