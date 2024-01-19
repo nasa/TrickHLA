@@ -206,7 +206,10 @@ root_frame = SpaceFOMRefFrameObject( federate.is_RRFP,
                                      'RootFrame',
                                      root_ref_frame.frame_packing,
                                      'root_ref_frame.frame_packing',
-                                     '1' )   # Trick child thread 1.
+                                     frame_thread_IDs = '1' ) # Trick child thread 1.
+
+trick.exec_set_thread_process_type( 1 , trick.PROCESS_TYPE_AMF_CHILD )
+trick.exec_set_thread_amf_cycle_time( 1 , 0.250 )
 
 # Set the debug flag for the root reference frame.
 root_ref_frame.frame_packing.debug = verbose
@@ -223,7 +226,10 @@ frame_A = SpaceFOMRefFrameObject( False,
                                   'FrameA',
                                   ref_frame_A.frame_packing,
                                   'ref_frame_A.frame_packing',
-                                  '2' )   # Trick child thread 2.
+                                  frame_thread_IDs = '2' ) # Trick child thread 2.
+
+trick.exec_set_thread_process_type( 2 , trick.PROCESS_TYPE_AMF_CHILD )
+trick.exec_set_thread_amf_cycle_time( 2 , 0.250 )
 
 # Set the debug flag for the root reference frame.
 ref_frame_A.frame_packing.debug = verbose

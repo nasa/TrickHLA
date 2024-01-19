@@ -387,7 +387,7 @@ root_ref_frame.frame_packing.debug = verbose
 # Set the root frame for the federate.
 federate.set_root_frame( root_frame )
 
-# Set the lag compensation paratmeters.
+# Set the lag compensation parameters.
 # NOTE: The ROOT REFERENCE FRAME never needs to be compensated!
 
 
@@ -398,12 +398,12 @@ frame_A = SpaceFOMRefFrameObject( False,
                                   'FrameA',
                                   ref_frame_A.frame_packing,
                                   'ref_frame_A.frame_packing',
-                                  root_ref_frame.frame_packing,
-                                  'RootFrame',
-                                  frame_conditional = ref_frame_A.conditional,
-                                  frame_lag_comp    = ref_frame_A.lag_compensation,
-                                  frame_ownership   = ref_frame_A.ownership_handler,
-                                  frame_deleted     = ref_frame_A.deleted_callback )
+                                  parent_S_define_instance = root_ref_frame.frame_packing,
+                                  parent_name              = 'RootFrame',
+                                  frame_conditional        = ref_frame_A.conditional,
+                                  frame_lag_comp           = ref_frame_A.lag_compensation,
+                                  frame_ownership          = ref_frame_A.ownership_handler,
+                                  frame_deleted            = ref_frame_A.deleted_callback )
 
 # Set the debug flag for this reference frame.
 ref_frame_A.frame_packing.debug = verbose
@@ -411,7 +411,7 @@ ref_frame_A.frame_packing.debug = verbose
 # Add this reference frame to the list of managed object.
 federate.add_fed_object( frame_A )
 
-# Set the lag compensation paratmeters.
+# Set the lag compensation parameters.
 ref_frame_A.lag_compensation.debug = verbose
 ref_frame_A.lag_compensation.set_integ_tolerance( 1.0e-6 )
 ref_frame_A.lag_compensation.set_integ_dt( 0.025 )
@@ -438,7 +438,7 @@ physical_entity.entity_packing.debug = verbose
 # Add this Entity to the list of managed object.
 federate.add_fed_object( phy_entity )
 
-# Set the lag compensation paratmeters.
+# Set the lag compensation parameters.
 physical_entity.lag_compensation.debug = verbose
 physical_entity.lag_compensation.set_integ_tolerance( 1.0e-6 )
 physical_entity.lag_compensation.set_integ_dt( 0.025 )
@@ -488,7 +488,7 @@ dynamical_entity.entity_packing.debug = verbose
 # Add this Entity to the list of managed object.
 federate.add_fed_object( dyn_entity )
 
-# Set the lag compensation paratmeters.
+# Set the lag compensation parameters.
 dynamical_entity.lag_compensation.debug = verbose
 dynamical_entity.lag_compensation.set_integ_tolerance( 1.0e-6 )
 dynamical_entity.lag_compensation.set_integ_dt( 0.025 )

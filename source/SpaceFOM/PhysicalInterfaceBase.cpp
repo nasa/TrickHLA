@@ -229,7 +229,7 @@ void PhysicalInterfaceBase::initialize()
    }
 
    // Should have interface parent specified if creating this interface.
-   if (    this->object->create_HLA_instance
+   if ( this->object->create_HLA_instance
         && this->packing_data.parent_name == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
