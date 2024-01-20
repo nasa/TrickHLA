@@ -60,12 +60,12 @@ class THLAInitSimObject : public Trick::SimObject {
  public:
 
    THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
-                      TrickHLA::Federate & thla_fed   ) 
+                      TrickHLA::Federate & thla_fed   )
       : thla_manager( thla_mngr ),
         thla_federate( thla_fed )
    {
       //--------------------------------------------------------------------
-      // NOTE: Initialization phase numbers must be greater than P60 
+      // NOTE: Initialization phase numbers must be greater than P60
       // (i.e. P_HLA_INIT) so that the initialization jobs run after the
       // P60 THLA.manager->initialize() job.
       //--------------------------------------------------------------------
@@ -201,10 +201,14 @@ class SpaceFOMRefFrameSimObject : public THLAThreadSimObject {
 
    SpaceFOMRefFrameSimObject( RefFrameData       & frame_data_ref,
                               TrickHLA::Federate & thla_fed,
-                              double               data_cycle,
-                              unsigned short      _THREAD_ID,
-                              unsigned short      _INIT = 59  )
-      : THLAThreadSimObject( thla_fed, data_cycle, _THREAD_ID ),
+                              double               main_thread_data_cycle,
+                              double               child_thread_data_cycle,
+                              unsigned short       _THREAD_ID,
+                              unsigned short       _INIT = 59  )
+      : THLAThreadSimObject( thla_fed,
+                             main_thread_data_cycle,
+                             child_thread_data_cycle,
+                             _THREAD_ID ),
         frame_packing(frame_data_ref),
         lag_compensation(frame_packing),
         conditional( frame_packing ),
@@ -246,13 +250,15 @@ SpaceFOMTestRefFrameTreeSimObject ref_frame_tree( THLA.manager,
 
 SpaceFOMRefFrameSimObject root_ref_frame( ref_frame_tree.root_frame_data,
                                           THLA.federate,
-                                          THLA_DATA_CYCLE_TIME,
-                                          1 );   // Trick child thread 1 (i.e. C1).
-														
+                                          THLA_DATA_CYCLE_TIME, // Main thread data cycle time.
+                                          THLA_DATA_CYCLE_TIME, // Child thread data cycle time.
+                                          1 );                  // Trick child thread 1 (i.e. C1).
+
 SpaceFOMRefFrameSimObject ref_frame_A( ref_frame_tree.vehicle_frame_data,
                                        THLA.federate,
-                                       THLA_DATA_CYCLE_TIME,
-                                       2 );   // Trick child thread 2 (i.e. C2).
+                                       THLA_DATA_CYCLE_TIME, // Main thread data cycle time.
+                                       THLA_DATA_CYCLE_TIME, // Child thread data cycle time.
+                                       2 );                  // Trick child thread 2 (i.e. C2).
 
 
 //==========================================================================
