@@ -5061,7 +5061,7 @@ bool const Federate::on_data_cycle_boundary_for_obj(
    int64_t const      sim_time_in_base_time ) const
 {
    // Delegate to the Trick child thread coordinator.
-   return this->thread_coordinator.on_data_cycle_boundary_for_obj( obj_index, sim_time_in_base_time );
+   return this->thread_coordinator.on_receive_data_cycle_boundary_for_obj( obj_index, sim_time_in_base_time );
 }
 
 /*! @brief Send zero lookahead or requested data for the specified object instance. */

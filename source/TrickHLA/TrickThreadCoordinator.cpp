@@ -31,6 +31,8 @@ NASA, Johnson Space Center\n
 @revs_title
 @revs_begin
 @rev_entry{Dan Dexter, NASA ER6, TrickHLA, March 2023, --, Initial implementation.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, January 2024, --, Added support for child \
+thread data cycle time being longer than the main thread data cycle time.}
 @revs_end
 */
 
@@ -79,9 +81,7 @@ TrickThreadCoordinator::TrickThreadCoordinator() // RETURN: -- None.
      thread_state( NULL ),
      data_cycle_base_time_per_thread( NULL ),
      data_cycle_base_time_per_obj( NULL ),
-     main_thread_data_cycle_base_time( 0LL ),
-     cycle_count( NULL ),
-     frame_size( NULL )
+     main_thread_data_cycle_base_time( 0LL )
 {
    return;
 }
@@ -121,20 +121,6 @@ TrickThreadCoordinator::~TrickThreadCoordinator() // RETURN: -- None.
                   __LINE__, THLA_NEWLINE );
       }
       this->data_cycle_base_time_per_obj = NULL;
-   }
-   if ( this->cycle_count != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->cycle_count ) ) ) {
-         send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d ERROR deleting Trick Memory for 'this->cycle_count'%c",
-                  __LINE__, THLA_NEWLINE );
-      }
-      this->cycle_count = NULL;
-   }
-   if ( this->frame_size != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->frame_size ) ) ) {
-         send_hs( stderr, "TrickThreadCoordinator::~TrickThreadCoordinator():%d ERROR deleting Trick Memory for 'this->frame_size'%c",
-                  __LINE__, THLA_NEWLINE );
-      }
-      this->frame_size = NULL;
    }
 
    // Make sure we destroy the mutex.
@@ -338,32 +324,6 @@ void TrickThreadCoordinator::initialize(
       for ( unsigned int obj_index = 0; obj_index < this->manager->obj_count; ++obj_index ) {
          this->data_cycle_base_time_per_obj[obj_index] = 0LL;
       }
-   }
-
-   // Allocate memory for the data cycle counts thread frame sizes.
-   this->cycle_count = static_cast< long long * >( TMM_declare_var_1d( "long long", this->thread_cnt ) );
-   if ( this->cycle_count == NULL ) {
-      ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
-             << " ERROR: Could not allocate memory for 'cycle_count'"
-             << " for requested size " << this->thread_cnt
-             << "!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-      exit( 1 );
-   }
-   this->frame_size = static_cast< long long * >( TMM_declare_var_1d( "long long", this->thread_cnt ) );
-   if ( this->frame_size == NULL ) {
-      ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::initialize():" << __LINE__
-             << " ERROR: Could not allocate memory for 'frame_size'"
-             << " for requested size " << this->thread_cnt
-             << "!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-      exit( 1 );
-   }
-   for ( unsigned int thread_id = 0; thread_id < this->thread_cnt; ++thread_id ) {
-      this->cycle_count[thread_id] = 0LL;
-      this->frame_size[thread_id]  = 1LL;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
@@ -582,10 +542,6 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
 
             this->data_cycle_base_time_per_thread[thread_id] = data_cycle_base_time;
             this->data_cycle_base_time_per_obj[obj_index]    = data_cycle_base_time;
-
-            // The Thread frame size is the ratio of the main thread cycle time
-            // to the thread cycle time and will be >= 1.
-            this->frame_size[thread_id] = data_cycle_base_time / this->main_thread_data_cycle_base_time;
          }
       }
    }
@@ -747,7 +703,7 @@ void TrickThreadCoordinator::announce_data_available()
       for ( unsigned int thread_id = 1; thread_id < this->thread_cnt; ++thread_id ) {
          if ( ( this->thread_state[thread_id] != THREAD_STATE_DISABLED )
               && ( this->thread_state[thread_id] != THREAD_STATE_NOT_ASSOCIATED )
-              && on_data_cycle_boundary_for_thread( thread_id, sim_time_base_time ) ) {
+              && on_receive_data_cycle_boundary_for_thread( thread_id, sim_time_base_time ) ) {
 
             this->thread_state[thread_id] = THREAD_STATE_READY_TO_RECEIVE;
          }
@@ -787,6 +743,7 @@ void TrickThreadCoordinator::announce_data_sent()
  */
 void TrickThreadCoordinator::wait_to_send_data()
 {
+
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       send_hs( stdout, "TrickThreadCoordinator::wait_to_send_data():%d%c",
                __LINE__, THLA_NEWLINE );
@@ -824,6 +781,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
    // The main thread will wait for all the child threads to be ready to send
    // before returning.
 
+   // Simulation time of the main thread.
    int64_t const sim_time_in_base_time = Int64BaseTime::to_base_time( exec_get_sim_time() );
 
    // Don't check the Trick main thread (id = 0), only check child threads.
@@ -854,7 +812,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
          if ( ( this->thread_state[thread_id] == THREAD_STATE_READY_TO_SEND )
               || ( this->thread_state[thread_id] == THREAD_STATE_DISABLED )
               || ( this->thread_state[thread_id] == THREAD_STATE_NOT_ASSOCIATED )
-              || !on_data_cycle_boundary_for_thread( thread_id, sim_time_in_base_time ) ) {
+              || !on_send_data_cycle_boundary_for_thread( thread_id, sim_time_in_base_time ) ) {
             // Move to the next thread-id because the current ID is
             // ready. This results in checking all the ID's just once.
             ++thread_id;
@@ -904,7 +862,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
                if ( ( this->thread_state[thread_id] == THREAD_STATE_READY_TO_SEND )
                     || ( this->thread_state[thread_id] == THREAD_STATE_DISABLED )
                     || ( this->thread_state[thread_id] == THREAD_STATE_NOT_ASSOCIATED )
-                    || !on_data_cycle_boundary_for_thread( thread_id, sim_time_in_base_time ) ) {
+                    || !on_send_data_cycle_boundary_for_thread( thread_id, sim_time_in_base_time ) ) {
                   // Move to the next thread-id because the current ID is
                   // ready. This results in checking all the ID's just once.
                   ++thread_id;
@@ -1041,15 +999,6 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
       } while ( !sent_data );
    }
 
-   {
-      // When auto_unlock_mutex goes out of scope it automatically
-      // unlocks the mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &mutex );
-
-      // Count that this thread is on the next frame.
-      ++cycle_count[thread_id];
-   }
-
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       send_hs( stdout, "TrickThreadCoordinator::wait_to_send_data_for_child_thread():%d Child Thread:%d, Done%c",
                __LINE__, thread_id, THLA_NEWLINE );
@@ -1147,6 +1096,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
          }
       } while ( !ready_to_receive );
    }
+
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       send_hs( stdout, "TrickThreadCoordinator::wait_to_receive_data():%d %s Thread:%d, Done%c",
                __LINE__, ( ( thread_id == 0 ) ? "Main" : "Child" ),
@@ -1155,7 +1105,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
 }
 
 /*! @brief On boundary if sim-time is an integer multiple of a valid cycle-time. */
-bool const TrickThreadCoordinator::on_data_cycle_boundary_for_obj(
+bool const TrickThreadCoordinator::on_receive_data_cycle_boundary_for_obj(
    unsigned int const obj_index,
    int64_t const      sim_time_in_base_time ) const
 {
@@ -1180,17 +1130,45 @@ int64_t const TrickThreadCoordinator::get_data_cycle_base_time_for_obj(
              : default_data_cycle_base_time;
 }
 
-/*! @brief On boundary if the thread frame count corresponds to the sim-time.
+/*!
+ * @brief On receive boundary if the main thread simulation-time is an integer
+ * multiple of a valid thread cycle-time.
  * Note: This is thread safe because this function is only local to this class
  * and it is called from a locked mutex critical section. */
-bool const TrickThreadCoordinator::on_data_cycle_boundary_for_thread(
+bool const TrickThreadCoordinator::on_receive_data_cycle_boundary_for_thread(
    unsigned int const thread_id,
    int64_t const      sim_time_in_base_time ) const
 {
-   // On boundary if the thread frame count corresponds to the sim-time.
+   // On boundary if main thread sim-time is an integer multiple of a valid cycle-time.
    return ( ( this->any_child_thread_associated
               && ( thread_id < this->thread_cnt )
               && ( this->data_cycle_base_time_per_thread[thread_id] > 0LL ) )
-               ? ( ( this->cycle_count[thread_id] * this->frame_size[thread_id] ) == sim_time_in_base_time )
+               ? ( ( sim_time_in_base_time % this->data_cycle_base_time_per_thread[thread_id] ) == 0LL )
+               : true );
+}
+
+/*!
+ * @brief On send boundary if the main thread simulation-time is an integer
+ * multiple of a valid thread cycle-time for the send frame.
+ * Note: This is thread safe because this function is only local to this class
+ * and it is called from a locked mutex critical section. */
+bool const TrickThreadCoordinator::on_send_data_cycle_boundary_for_thread(
+   unsigned int const thread_id,
+   int64_t const      sim_time_in_base_time ) const
+{
+   // Data from the child thread should be sent on the main thread frame that
+   // corresponds to the end of the child thread frame.
+   // Child |              |   child thread data cycle: 3
+   //  Main |    |    |    |   main thread data cycle:  1
+   //  Time 0    1    2    3
+   //                   ^-- Check for child thread sending in main thread frame here.
+   //                 ^-- (child_cycle - main_cycle) = ( 3 - 1 )
+   //
+   return ( ( this->any_child_thread_associated
+              && ( thread_id < this->thread_cnt )
+              && ( this->data_cycle_base_time_per_thread[thread_id] > 0LL ) )
+               ? ( ( ( sim_time_in_base_time - ( this->data_cycle_base_time_per_thread[thread_id] - this->main_thread_data_cycle_base_time ) )
+                     % this->data_cycle_base_time_per_thread[thread_id] )
+                   == 0LL )
                : true );
 }

@@ -28,6 +28,8 @@ NASA, Johnson Space Center\n
 @revs_title
 @revs_begin
 @rev_entry{Dan Dexter, NASA ER6, TrickHLA, March 2023, --, Initial implementation.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, January 2024, --, Added support for child \
+thread data cycle time being longer than the main thread data cycle time.}
 @revs_end
 */
 
@@ -102,9 +104,9 @@ class TrickThreadCoordinator
    /*! @brief Wait to receive data when the Trick main thread is ready. */
    void wait_to_receive_data();
 
-   /*! @brief On boundary if sim-time is an integer multiple of a valid cycle-time. */
-   bool const on_data_cycle_boundary_for_obj( unsigned int const obj_index,
-                                              int64_t const      sim_time_in_base_time ) const;
+   /*! @brief On receive boundary if sim-time is an integer multiple of a valid cycle-time. */
+   bool const on_receive_data_cycle_boundary_for_obj( unsigned int const obj_index,
+                                                      int64_t const      sim_time_in_base_time ) const;
 
    /*! @brief Get the data cycle time for the configured object index or return
     * the default data cycle time. */
@@ -112,9 +114,13 @@ class TrickThreadCoordinator
                                                    int64_t const      default_data_cycle_base_time ) const;
 
   protected:
-   /*! @brief On boundary if sim-time is an integer multiple of a valid cycle-time. */
-   bool const on_data_cycle_boundary_for_thread( unsigned int const thread_id,
-                                                 int64_t const      sim_time_in_base_time ) const;
+   /*! @brief On receive boundary if sim-time is an integer multiple of a valid cycle-time. */
+   bool const on_receive_data_cycle_boundary_for_thread( unsigned int const thread_id,
+                                                         int64_t const      sim_time_in_base_time ) const;
+
+   /*! @brief On send boundary if sim-time is an integer multiple of a valid cycle-time. */
+   bool const on_send_data_cycle_boundary_for_thread( unsigned int const thread_id,
+                                                      int64_t const      sim_time_in_base_time ) const;
 
    /*! @brief Wait to send data for Trick main thread. */
    void wait_to_send_data_for_main_thread();
@@ -140,9 +146,6 @@ class TrickThreadCoordinator
    long long *data_cycle_base_time_per_obj;    ///< @trick_units{--} Data cycle times per object instance in the base HLA Logical Time representation.
 
    long long main_thread_data_cycle_base_time; ///< @trick_units{--} Trick main thread data cycle time in the base HLA Logical Time representation.
-
-   long long *cycle_count; ///< @trick_units{--} The frame cycle count for each thread.
-   long long *frame_size;  ///< @trick_units{--} Per thread frame size relative to main thread.
 };
 
 } // namespace TrickHLA
