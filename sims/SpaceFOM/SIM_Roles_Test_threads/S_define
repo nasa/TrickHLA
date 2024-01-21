@@ -118,11 +118,11 @@ class SpaceFOMTestRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObje
    SpaceFOMTestRefFrameTreeSimObject( TrickHLA::Manager          & thla_manager_in,
                                       SpaceFOM::ExecutionControl & exec_cntrl_in,
                                       unsigned short               _BUILD = (P_HLA_INIT+1) )
-   : SpaceFOMRefFrameTreeBaseSimObject(thla_manager_in, exec_cntrl_in, _BUILD ),
-     root_frame_ptr( NULL ),
-     vehicle_frame_ptr( NULL )
+      : SpaceFOMRefFrameTreeBaseSimObject( thla_manager_in, exec_cntrl_in, _BUILD ),
+        root_frame_ptr( NULL ),
+        vehicle_frame_ptr( NULL )
    {
-
+      return;
    }
 
   private:

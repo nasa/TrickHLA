@@ -46,8 +46,8 @@
 class AnalyticSineSimObj : public Trick::SimObject {
 
  public:
-   TrickHLAModel::SineData truth_data;
-   TrickHLAModel::SineData sim_data;
+   TrickHLAModel::SineData               truth_data;
+   TrickHLAModel::SineData               sim_data;
 
    TrickHLAModel::SineOwnershipHandler   ownership_handler;
 
@@ -89,8 +89,8 @@ class AnalyticSineSimObj : public Trick::SimObject {
 class PropagatedSineSimObj : public THLAThreadSimObject {
 
  public:
-   TrickHLAModel::SineData truth_data;
-   TrickHLAModel::SineData sim_data;
+   TrickHLAModel::SineData               truth_data;
+   TrickHLAModel::SineData               sim_data;
 
    TrickHLAModel::SinePacking            packing;
 
