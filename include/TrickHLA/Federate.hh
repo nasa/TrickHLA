@@ -442,6 +442,13 @@ class Federate
       return ( restore_process == Restore_Request_Succeeded );
    }
 
+   /*! @brief Get the announce save flag.
+    *  @return The state of the announce save flag. */
+   bool get_announce_save()
+   {
+      return( announce_save );
+   }
+
    /*! @brief Set the announce save flag. */
    void set_announce_save()
    {
@@ -546,6 +553,14 @@ class Federate
    /*! @brief Save the supplied checkpoint file name.
     * @param name Checkpoint file name. */
    void set_checkpoint_file_name( std::string const &name );
+
+   /*! @brief Set the initiate save flag.
+    *  @param state The initiate save flag state. */
+   void set_initiate_save_flag( bool state )
+   {
+      initiate_save_flag = state;
+      return;
+   }
 
    /*! @brief Sets the Save filename and flag. */
    void initiate_save_announce();

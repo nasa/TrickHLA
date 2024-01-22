@@ -495,16 +495,40 @@ class Manager
    //
    // Private member functions.
    //
-  private:
+  public:
    /*! @brief Initializes the federation execution control scheme, which must
     * occur after the TrickHLA::Federate and TrickHLA::FedAmb has been
     * initialized. */
    // void initialize_execution_control();
 
-   /*! @brief Check to see if this is a restored federate. */
+   /*! @brief Check to see if this federate is to be restored.
+    *  @return federate restore state. */
+   bool is_restore_determined() const
+   {
+      return restore_determined;
+   }
+
+   /*! @brief Set the federate to be restored state.
+    *  @param state Restore state of the federate. */
+   void set_restore_determined( bool state )
+   {
+      restore_determined = state;
+      return;
+   }
+
+   /*! @brief Check to see if this is a restored federate.
+    *  @return True is this is a restored federate, false otherwise. */
    bool is_restore_federate() const
    {
       return restore_federate;
+   }
+
+   /*! @brief Mark if this is a restored federate.
+    *  @param state True is federate is restored, false otherwise. */
+   void set_restore_federate( bool state )
+   {
+      restore_federate = state;
+      return;
    }
 
    /*! @brief Set up the Trick ref-attributes for the user specified objects
