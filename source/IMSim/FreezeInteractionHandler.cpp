@@ -52,6 +52,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Interaction.hh"
 
 // IMSim include files.
+#include "IMSim/ExecutionControl.hh"
 #include "IMSim/FreezeInteractionHandler.hh"
 
 using namespace std;
@@ -64,7 +65,8 @@ using namespace IMSim;
  * @job_class{initialization}
  */
 FreezeInteractionHandler::FreezeInteractionHandler() // RETURN: -- None.
-   : time( 0.0 )
+   : execution_control( NULL ),
+     time( 0.0 )
 {
    return;
 }
@@ -251,7 +253,7 @@ new freeze HLA time:%lf %c",
       send_hs( stdout, infomsg.str().c_str() );
 
       // Inform the Federate the scenario time to freeze the simulation on.
-      interaction->get_manager()->get_execution_control()->add_freeze_scenario_time( time );
+      execution_control->add_freeze_scenario_time( time );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          send_hs( stdout, "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction()%d: Federation freeze scenario time:%lf %c",
@@ -295,7 +297,7 @@ void FreezeInteractionHandler::receive_interaction(
       send_hs( stdout, errmsg.str().c_str() );
    } else {
       // Inform the Federate the scenario time to freeze the simulation on.
-      interaction->get_manager()->get_execution_control()->add_freeze_scenario_time( time );
+      execution_control->add_freeze_scenario_time( time );
 
 #if THLA_FREEZE_INTERACTION_DEBUG
       ostringstream infomsg;

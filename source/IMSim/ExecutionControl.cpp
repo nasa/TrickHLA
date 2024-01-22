@@ -92,7 +92,7 @@ static std::wstring const MTR_SHUTDOWN_SYNC_POINT = L"mtr_shutdown";
 extern "C" {
 #endif
 // C based model includes.
-extern ATTRIBUTES attrTrickHLA__FreezeInteractionHandler[];
+extern ATTRIBUTES attrIMSim__FreezeInteractionHandler[];
 #ifdef __cplusplus
 }
 #endif
@@ -935,13 +935,18 @@ void ExecutionControl::setup_interaction_ref_attributes()
    }
    FreezeInteractionHandler *fiHandler =
       reinterpret_cast< FreezeInteractionHandler * >(
-         alloc_type( 1, "TrickHLA::FreezeInteractionHandler" ) );
+         alloc_type( 1, "IMSim::FreezeInteractionHandler" ) );
    if ( fiHandler == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for FreezeInteractionHandler!"
              << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   else {
+      // Set the reference to this ExecutionControl instance in the
+      // IMSim::FreezeIntrationHandler.
+      fiHandler->execution_control = this;
    }
 
    freeze_interaction->set_handler( fiHandler );
@@ -993,10 +998,10 @@ void ExecutionControl::setup_interaction_ref_attributes()
    int attr_index = 0;
 
    // loop until the current ATTRIBUTES name is a NULL string
-   while ( strcmp( attrTrickHLA__FreezeInteractionHandler[attr_index].name, "" ) != 0 ) {
-      if ( strcmp( attrTrickHLA__FreezeInteractionHandler[attr_index].name, "time" ) == 0 ) {
+   while ( strcmp( attrIMSim__FreezeInteractionHandler[attr_index].name, "" ) != 0 ) {
+      if ( strcmp( attrIMSim__FreezeInteractionHandler[attr_index].name, "time" ) == 0 ) {
          memcpy( &time_attr[0],
-                 &attrTrickHLA__FreezeInteractionHandler[attr_index],
+                 &attrIMSim__FreezeInteractionHandler[attr_index],
                  sizeof( ATTRIBUTES ) );
       }
       ++attr_index;
@@ -1005,7 +1010,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // now that we have hit the end of the ATTRIBUTES array, copy the last
    // entry into my time_attr array to make it a valid ATTRIBUTE array.
    memcpy( &time_attr[1],
-           &attrTrickHLA__FreezeInteractionHandler[attr_index],
+           &attrIMSim__FreezeInteractionHandler[attr_index],
            sizeof( ATTRIBUTES ) );
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {

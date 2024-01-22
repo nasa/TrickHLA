@@ -41,6 +41,8 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/InteractionHandler.hh"
 
+// IMSim include files.
+
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
@@ -53,6 +55,11 @@ NASA, Johnson Space Center\n
 namespace IMSim
 {
 
+// Forward Declared Classes:  Since these classes are only used as references
+// through pointers, these classes are included as forward declarations. This
+// helps to limit issues with recursive includes.
+class ExecutionControl;
+
 class FreezeInteractionHandler : public TrickHLA::InteractionHandler
 {
    // Let the Trick input processor access protected and private data.
@@ -64,6 +71,9 @@ class FreezeInteractionHandler : public TrickHLA::InteractionHandler
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrIMSim__FreezeInteractionHandler();
+
+   // Mark the IMSim ExecutionControl class as a friend.
+   friend class ExecutionControl;
 
   public:
    //-----------------------------------------------------------------
@@ -91,6 +101,25 @@ class FreezeInteractionHandler : public TrickHLA::InteractionHandler
    {
       return ( &time );
    }
+
+   /*! @brief Set the associated IMSim::ExecutionControl.
+    *  @param exec_cntrl_ptr Pointer to the associated IMSim::ExecutionControl. */
+   void set_exection_control( IMSim::ExecutionControl * exec_cntrl_ptr )
+   {
+      execution_control = exec_cntrl_ptr;
+      return;
+   }
+
+   /*! @brief Set the associated IMSim::ExecutionControl.
+    *  @param exec_cntrl_ptr Pointer to the associated IMSim::ExecutionControl. */
+   IMSim::ExecutionControl * get_exection_control()
+   {
+      return( execution_control );
+   }
+
+  protected:
+   IMSim::ExecutionControl * execution_control; /**<< @trick_io{**} Pointer
+      to IMSim execution control instance. */
 
   private:
    //
