@@ -42,26 +42,26 @@ NASA, Johnson Space Center\n
 // Default: THLA_QUEUE_REFLECTED_ATTRIBUTES
 #define THLA_QUEUE_REFLECTED_ATTRIBUTES
 
-// Insert a compile time error if an unsupported version of Trick 17 is used.
-// Minimum supported Trick 17 version: 17.5.0
-#define MIN_TRICK_VER 17  // Set to the minimum supported Trick Major version.
-#define MIN_TRICK_MINOR 5 // Set to the minimum supported Trick Minor version.
+// Insert a compile time error if an unsupported version of Trick 19 is used.
+// Minimum supported Trick 19 version: 19.0.0
+#define MIN_TRICK_VER 19  // Set to the minimum supported Trick Major version.
+#define MIN_TRICK_MINOR 0 // Set to the minimum supported Trick Minor version.
 #define MIN_TRICK_PATCH 0 // Set to the minimum supported Trick Patch version.
 // Make sure the TRICK_VER compiler define is set.
 #if ( !defined( TRICK_VER ) )
 #   error "The Trick version variable \"TRICK_VER\" is not set!"
-#   error "The minimum acceptable version of Trick is 17.5.0!"
+#   error "The minimum acceptable version of Trick is 19.0.0!"
 #endif
 // Check for the minimum major version of Trick.
 #if ( TRICK_VER < MIN_TRICK_VER )
-#   error "The minimum acceptable version of Trick is 17.5.0!"
+#   error "The minimum acceptable version of Trick is 19.0.0!"
 #else // Check the minor version if set.
 #   if ( TRICK_VER == MIN_TRICK_VER )
 #      if ( defined( TRICK_MINOR ) && ( TRICK_MINOR < MIN_TRICK_MINOR ) )
-#         error "The minimum acceptable version of Trick is 17.5.0!"
+#         error "The minimum acceptable version of Trick is 19.0.0!"
 #      else // Check the patch version if set.
 #         if ( TRICK_MINOR == MIN_TRICK_MINOR ) && ( defined( TRICK_PATCH ) && ( TRICK_PATCH < MIN_TRICK_PATCH ) )
-#            error "The minimum acceptable version of Trick is 17.5.0!"
+#            error "The minimum acceptable version of Trick is 19.0.0!"
 #         endif
 #      endif
 #   endif
