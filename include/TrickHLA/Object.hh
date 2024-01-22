@@ -269,11 +269,9 @@ class Object
     *  @param theAttributes The specified attributes. */
    void provide_attribute_update( RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes );
 
-#if defined( THLA_QUEUE_REFLECTED_ATTRIBUTES )
    /*! @brief Enqueue the reflected attributes.
     *  @param theAttributes Attributes data. */
    void enqueue_data( RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributes );
-#endif
 
    /*! @brief This function extracts the new attribute values.
     *  @param theAttributes Attributes data.
@@ -559,7 +557,6 @@ class Object
     *  @return True if object data has changed. */
    bool is_changed()
    {
-#if defined( THLA_QUEUE_REFLECTED_ATTRIBUTES )
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &receive_mutex );
@@ -571,7 +568,6 @@ class Object
             thla_reflected_attributes_queue.pop();
          }
       }
-#endif
       return changed;
    }
 
