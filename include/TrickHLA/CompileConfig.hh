@@ -37,11 +37,6 @@ NASA, Johnson Space Center\n
 // Default: NO_THLA_CYCLIC_READ_TIME_STATS
 #define NO_THLA_CYCLIC_READ_TIME_STATS
 
-// Set to THLA_QUEUE_REFLECTED_ATTRIBUTES to enable the queue of the reflected
-// attributes values.
-// Default: THLA_QUEUE_REFLECTED_ATTRIBUTES
-#define THLA_QUEUE_REFLECTED_ATTRIBUTES
-
 // Insert a compile time error if an unsupported version of Trick 19 is used.
 // Minimum supported Trick 19 version: 19.0.0
 #define MIN_TRICK_VER 19  // Set to the minimum supported Trick Major version.

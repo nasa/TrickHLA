@@ -566,12 +566,8 @@ void FedAmb::reflectAttributeValues(
                   __LINE__, trickhla_obj->get_name(), THLA_NEWLINE );
       }
 
-      // Pass the attribute values off to the object.
-#if defined( THLA_QUEUE_REFLECTED_ATTRIBUTES )
       trickhla_obj->enqueue_data( (AttributeHandleValueMap &)theAttributeValues );
-#else
-      trickhla_obj->extract_data( (AttributeHandleValueMap &)theAttributeValues );
-#endif
+
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
       ++trickhla_obj->receive_count;
 #endif
@@ -637,12 +633,8 @@ void FedAmb::reflectAttributeValues(
                   THLA_NEWLINE );
       }
 
-      // Pass the attribute values off to the object.
-#if defined( THLA_QUEUE_REFLECTED_ATTRIBUTES )
       trickhla_obj->enqueue_data( (AttributeHandleValueMap &)theAttributeValues );
-#else
-      trickhla_obj->extract_data( (AttributeHandleValueMap &)theAttributeValues );
-#endif
+
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
       ++trickhla_obj->receive_count;
 #endif
@@ -679,12 +671,8 @@ void FedAmb::reflectAttributeValues(
                   __LINE__, trickhla_obj->get_name(), time.get_time_in_seconds(), THLA_NEWLINE );
       }
 
-      // Pass the attribute values off to the object.
-#if defined( THLA_QUEUE_REFLECTED_ATTRIBUTES )
       trickhla_obj->enqueue_data( (AttributeHandleValueMap &)theAttributeValues );
-#else
-      trickhla_obj->extract_data( (AttributeHandleValueMap &)theAttributeValues );
-#endif
+
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
       ++trickhla_obj->receive_count;
 #endif
