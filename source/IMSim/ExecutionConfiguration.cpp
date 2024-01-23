@@ -188,6 +188,7 @@ ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
       }
       this->owner = required_federates;
    }
+   this->execution_control = NULL;
 }
 
 /*!
@@ -343,6 +344,33 @@ void ExecutionConfiguration::configure()
 }
 
 /*!
+ * @job_class{scheduled}
+ */
+void ExecutionConfiguration::set_imsim_control( IMSim::ExecutionControl *exec_control )
+{
+   execution_control = static_cast<TrickHLA::ExecutionControlBase*>(exec_control);
+   return;
+}
+
+/*!
+ * @job_class{scheduled}
+ */
+IMSim::ExecutionControl *ExecutionConfiguration::get_imsim_control()
+{
+   IMSim::ExecutionControl * imsim_exec_cntrl;
+
+   imsim_exec_cntrl = dynamic_cast<IMSim::ExecutionControl*>(execution_control);
+   if ( imsim_exec_cntrl == NULL ){
+      ostringstream errmsg;
+      errmsg << "IMSim::ExecutionConfiguration::get_imsim_control():" << __LINE__
+             << " ERROR: Dynamic cast error from base class reference to IMSim reference!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   return imsim_exec_cntrl;
+}
+
+/*!
 @details This function is called before the data is sent to the RTI.
 */
 void ExecutionConfiguration::pack()
@@ -452,7 +480,7 @@ void ExecutionConfiguration::set_required_federates(
  * @details WARNING: This function is BROKEN!
  */
 void ExecutionConfiguration::setup_ref_attributes(
-   Packing *packing_obj )
+   TrickHLA::Packing *packing_obj )
 {
    ostringstream errormsg;
    errormsg << "IMSim::ExecutionConfiguration::setup_ref_attributes():" << __LINE__

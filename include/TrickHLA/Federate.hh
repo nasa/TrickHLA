@@ -455,12 +455,27 @@ class Federate
       announce_save = true;
    }
 
+   /*! @brief Set the announce save flag.
+    *  @param flag State to set flag. */
+   void set_announce_save( bool flag )
+   {
+      announce_save = flag;
+      return;
+   }
+
    /*! @brief Set the save completed state. */
    void set_save_completed()
    {
       save_completed = true;
       start_to_save  = false;
       publish_data   = true;
+   }
+
+   /*! @brief Get save completed flag state.
+    *  @return True if flag set, false otherwise. */
+   bool get_save_completed()
+   {
+      return( save_completed );
    }
 
    /*! @brief Set the restore begun state. */
@@ -560,6 +575,13 @@ class Federate
    {
       initiate_save_flag = state;
       return;
+   }
+
+   /*! @brief Get the state of the save initiated flag.
+    *  @return True if save has been initiated, false otherwise. */
+   bool get_initiate_save_flag()
+   {
+      return( initiate_save_flag );
    }
 
    /*! @brief Sets the Save filename and flag. */
@@ -733,6 +755,14 @@ class Federate
    bool get_freeze_announced()
    {
       return this->announce_freeze;
+   }
+
+   /*! @brief Set that federation execution freeze is pending flag.
+    *  @param flag True for federate freeze pending; False otherwise. */
+   void set_freeze_pending( bool const flag )
+   {
+      this->freeze_the_federation = flag;
+      return;
    }
 
    /*! @brief Get that federation execution freeze pending flag state.
@@ -1058,6 +1088,14 @@ class Federate
    void set_start_to_save( bool const save_flag )
    {
       this->start_to_save = save_flag;
+   }
+
+   /*! @brief Get the state of the start-to-save flag.
+    *  @return True is save is started, false otherwise.
+    */
+   bool get_start_to_save()
+   {
+      return( this->start_to_save );
    }
 
    /*! @brief Set start to restore flag.

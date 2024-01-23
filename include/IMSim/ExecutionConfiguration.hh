@@ -45,9 +45,12 @@ NASA, Johnson Space Center\n
 
 // IMSim include files.
 #include "Types.hh"
+//#include "IMSim/ExecutionControl.hh"
 
 namespace IMSim
 {
+
+class ExecutionControl;
 
 class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
 {
@@ -61,6 +64,9 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrIMSim__ExecutionConfiguration();
+
+   // Set up friend classes for controlled access.
+   friend class IMSim::ExecutionControl;
 
   public:
    // The members below are part of the FOM data IMSim simulation configuration exchange.
@@ -119,6 +125,14 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
 
    /*! @brief Configure the execution configuration object. */
    virtual void configure();
+
+   /*! @brief Get the reference to the associated IMSim::ExecutionControl object.
+    *  @param exec_control Pointer to the associated IMSim::ExecutionControl object. */
+   virtual void set_imsim_control( IMSim::ExecutionControl *exec_control );
+
+   /*! @brief Get the reference to the associated IMSim::ExecutionControl object.
+    *  @return Pointer to the associated IMSim::ExecutionControl object. */
+   virtual IMSim::ExecutionControl *get_imsim_control();
 
    // From the TrickHLA::Packing class.
    virtual void pack();
@@ -247,7 +261,7 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    // IMSim Simulation Configuration specific functions.
    /*! @brief Setup the Trick Ref Attributes for the ExecutionConfiguration object.
     *  @param packing_obj Associated packing object. */
-   virtual void setup_ref_attributes( Packing *packing_obj );
+   virtual void setup_ref_attributes( TrickHLA::Packing *packing_obj );
 
    /*! @brief Print the current Execution Configuration object to the console. */
    virtual void print_execution_configuration();
@@ -258,6 +272,8 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    /*! @brief Wait on an ExCO update.
     *  @return True for successful wait. */
    virtual bool wait_for_update();
+
+  protected:
 
   private:
    // Do not allow the copy constructor or assignment operator.

@@ -169,12 +169,15 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
       RTI1516_USERDATA const                           &theUserSuppliedTag,
       RTI1516_NAMESPACE::LogicalTime const             &theTime,
       bool const                                        received_as_TSO );
+
    /*! @brief Send a mode transition request to the Master federate.
     *  @param requested_mode Requested mode. */
    virtual void send_mode_transition_interaction( TrickHLA::ModeTransitionEnum requested_mode );
+
    /*! @brief Sets the next ExecutionControl run mode.
     *  @param exec_control Next ExecutionControl run mode. */
    virtual void set_next_execution_control_mode( TrickHLA::ExecutionControlEnum exec_control );
+
    /*! @brief Process changes from any received Execution Control Objects (ExCOs).
     *  @return True if mode change occurred. */
    virtual bool process_execution_control_updates();
@@ -183,25 +186,29 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Check to see if a new MTR is valid.
     *  @return True if new MTR is valid. */
    virtual bool check_mode_transition_request();
+
    /*! @brief Process a new mode interaction.
     *  @return True if new mode interaction is successfully processed. */
    virtual bool process_mode_interaction();
+
    /*! @brief Process a new Mode Transition Request (MTR).
     *  @return True if new MTR is successfully processed. */
    virtual bool process_mode_transition_request();
-   /*! @brief Clear the Mode Transition Request flag, the requested execution
-    * mode, and the current execution mode. */
-   virtual void clear_mode_values();
+
    /*! @brief The run mode transition routine.
     *  @return Currently always returns True. */
    virtual bool run_mode_transition();
+
    /*! @brief Announce the pending freeze mode transition with an 'mtr_freeze' sync-point. */
    virtual void freeze_mode_announce();
+
    /*! @brief The freeze mode transition routine.
     *  @return Currently always returns False. */
    virtual bool freeze_mode_transition();
+
    /*! @brief Announce to the federation execution that a shutdown is occurring. */
    virtual void shutdown_mode_announce();
+
    /*! @brief The shutdown mode transition routine. */
    virtual void shutdown_mode_transition();
 
@@ -211,17 +218,17 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Check if a Trick freeze was commanded; if we announced freeze,
     *  tell other federates to freeze. */
    virtual void enter_freeze();
+
    /*! @brief Check for exit from freeze.
     *  @return True if should exit from freeze. */
    virtual bool check_freeze_exit();
+
    /*! @brief Routine to handle going from freeze to run; if we announced the
     * freeze, tell other federates to run. */
    virtual void exit_freeze();
+
    /*! @brief Routine to handle ExecutionControl specific action needed to un-freeze. */
-   virtual void un_freeze() // cppcheck-suppress [uselessOverride]
-   {
-      return;
-   }
+   virtual void un_freeze();
 
    //
    // FIXME: These pause functions should be worked into the general freeze
@@ -239,6 +246,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @return True if valid, false otherwise.
     *  @param mtr_value Mode transition request. */
    virtual bool is_mtr_valid( MTREnum mtr_value );
+
    /*! @brief Translate MTR into a pending execution mode transition.
     *  @param mtr_value MTR value for next execution mode. */
    virtual void set_mode_request_from_mtr( MTREnum mtr_value );
@@ -259,14 +267,17 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Adds a freeze interaction time into freeze scenario time collection.
     *  @param t Scenario time to freeze the simulation in seconds. */
    virtual void add_freeze_scenario_time( double t );
+
    /*! @brief Trigger a FREEZE interaction from the FreezeInteractionHandler
     * and updated the supplied time with the time computed by the
     * FreezeInteractionHandler.
     *  @param freeze_scenario_time Scenario freeze time. */
    virtual void trigger_freeze_interaction( double &freeze_scenario_time );
+
    /*! @brief Checks for a freeze interaction time from the freeze sim time collection.
     *  @return True if freeze time found; False otherwise. */
    virtual bool check_freeze_time();
+
    /*! @brief Checks for scenario freeze times.
     *  @return True is time to go to freeze; False otherwise. */
    virtual bool check_scenario_freeze_time();
@@ -280,11 +291,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @param label Pause label (Synchronization point). */
    virtual void clear_pause( std::wstring const &label );
 
-   // Freeze time management functions.
-   /*! @brief Set the time-padding used to offset the go to run time.
-    *  @param t Time in seconds to pad for time based mode transitions. */
-   virtual void set_time_padding( double t );
-
    //
    // Save and Restore
    /* @brief Determines if Save and Restore is supported by this ExecutionControl method.
@@ -293,18 +299,19 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    {
       return ( true );
    }
+
    /*! @brief Checks if Save has been initiated by this ExecutionControl method.
     * @return True if Save is initiated and synchronized with the federation,
     * False if Save not supported. */
    virtual bool is_save_initiated();
+
    /*! @brief Federates that did not announce the save, perform a save.
     * @return True if Save can proceed, False if not. */
-   virtual bool perform_save() // cppcheck-suppress [uselessOverride]
-   {
-      return ( false );
-   }
+   virtual bool perform_save();
+
    /*! @brief Converts HLA sync points into something Trick can save in a checkpoint. */
    void convert_loggable_sync_pts();
+
    /*! @brief Converts checkpointed sync points into HLA sync points. */
    void reinstate_logged_sync_pts();
 
@@ -325,6 +332,47 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Return the relevant IMSim::ExecutionConfiguration object.
     *  @return Pointer to the relevant IMSim::ExecutionConfiguration object. */
    ExecutionConfiguration *get_execution_configuration();
+
+   double scenario_time_epoch; /**<  @trick_units{s}
+      Federation execution scenario time epoch. This is the beginning epoch
+      expressed in Terrestrial Time (TT) that corresponds to HLA logical time 0.
+      All joining federates shall use this time to coordinate the offset between
+      their local simulation scenario times, their local simulation execution
+      times and the HLA logical time. */
+
+   double next_mode_scenario_time; /**<  @trick_units{s}
+      The time for the next federation execution mode change expressed as a
+      federation scenario time reference. Note: this is value is only
+      meaningful for going into freeze; exiting freeze is coordinated through
+      a sync point mechanism. */
+
+   double next_mode_cte_time; /**<  @trick_units{s}
+      The time for the next federation execution mode change expressed as a
+      Central Timing Equipment (CTE) time reference. The standard for this
+      reference shall be defined in the federation agreement when CTE is used. */
+
+   short current_execution_mode; /**< @trick_units{--}
+      Defines the current running state of the federation execution in terms
+      of a finite set of states expressed in the RunMode enumeration.*/
+
+   short next_execution_mode; /**< @trick_units{--}
+      Defines the next running state of the federation execution in terms of
+      a finite set of states expressed in the RunMode enumeration. This is
+      used in conjunction with the cte_mode_time, sim_mode_time and
+      associated sync point mechanisms to coordinate federation execution
+      mode transitions.*/
+
+   int64_t least_common_time_step; /**< @trick_units{--}
+      A 64 bit integer time that represents the base time for the least common
+      value of all the time step values in the federation execution (LCTS).
+      This value is set by the Master Federate and does not change during the
+      federation execution. This is used in the computation to find the next
+      HLA Logical Time Boundary (HLTB) available to all federates in the
+      federation execution. The basic equation is
+            HLTB = ( floor(GALT/LCTS) + 1 ) * LCTS,
+      where GALT is the greatest available logical time. This is used to
+      synchronize the federates in a federation execution to be on a common
+      logical time boundary. */
 
   private:
    // Do not allow the copy constructor.

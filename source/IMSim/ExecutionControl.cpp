@@ -1450,6 +1450,12 @@ void ExecutionControl::receive_interaction(
    }
 }
 
+void ExecutionControl::send_mode_transition_interaction(
+   ModeTransitionEnum requested_mode )
+{
+   return;
+}
+
 bool ExecutionControl::set_pending_mtr(
    MTREnum mtr_value )
 {
@@ -1518,8 +1524,6 @@ void ExecutionControl::set_mode_request_from_mtr(
 void ExecutionControl::set_next_execution_control_mode(
    TrickHLA::ExecutionControlEnum exec_control )
 {
-   // Reference the IMSim Execution Configuration Object (ExCO)
-   ExecutionConfiguration *ExCO = get_execution_configuration();
 
    // This should only be called by the Master federate.
    if ( !this->is_master() ) {
@@ -1534,12 +1538,11 @@ void ExecutionControl::set_next_execution_control_mode(
 
          // Set the next execution mode.
          this->requested_execution_control_mode = TrickHLA::EXECUTION_CONTROL_UNINITIALIZED;
-         ExCO->set_next_execution_mode( EXECUTION_MODE_UNINITIALIZED );
+         this->next_execution_mode = EXECUTION_MODE_UNINITIALIZED;
 
          // Set the next mode times.
-         this->next_mode_scenario_time = this->get_scenario_time();      // Immediate
-         ExCO->set_next_mode_scenario_time( this->get_scenario_time() ); // Immediate
-         ExCO->set_next_mode_cte_time( this->get_cte_time() );           // Immediate
+         this->next_mode_scenario_time = this->get_scenario_time(); // Immediate
+         this->next_mode_cte_time = this->get_cte_time();           // Immediate
 
          break;
 
@@ -1547,13 +1550,12 @@ void ExecutionControl::set_next_execution_control_mode(
 
          // Set the next execution mode.
          this->requested_execution_control_mode = TrickHLA::EXECUTION_CONTROL_INITIALIZING;
-         ExCO->set_next_execution_mode( EXECUTION_MODE_INITIALIZING );
+         this->next_execution_mode = EXECUTION_MODE_INITIALIZING;
 
          // Set the next mode times.
-         ExCO->set_scenario_time_epoch( this->get_scenario_time() );     // Now.
-         this->next_mode_scenario_time = this->get_scenario_time();      // Immediate
-         ExCO->set_next_mode_scenario_time( this->get_scenario_time() ); // Immediate
-         ExCO->set_next_mode_cte_time( this->get_cte_time() );           // Immediate
+         this->scenario_time_epoch = this->get_scenario_time();     // Now.
+         this->next_mode_scenario_time = this->get_scenario_time(); // Immediate
+         this->next_mode_cte_time = this->get_cte_time();           // Immediate
 
          break;
 
@@ -1561,14 +1563,13 @@ void ExecutionControl::set_next_execution_control_mode(
 
          // Set the next execution mode.
          this->requested_execution_control_mode = TrickHLA::EXECUTION_CONTROL_RUNNING;
-         ExCO->set_next_execution_mode( EXECUTION_MODE_RUNNING );
+         this->next_execution_mode = EXECUTION_MODE_RUNNING;
 
          // Set the next mode times.
          this->next_mode_scenario_time = this->get_scenario_time();          // Immediate
-         ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time ); // immediate
-         ExCO->set_next_mode_cte_time( this->get_cte_time() );
-         if ( ExCO->get_next_mode_cte_time() > -std::numeric_limits< double >::max() ) {
-            ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + this->time_padding ); // Some time in the future.
+         this->next_mode_cte_time = this->get_cte_time();
+         if ( this->next_mode_cte_time > -std::numeric_limits< double >::max() ) {
+            this->next_mode_cte_time = this->next_mode_cte_time + this->time_padding; // Some time in the future.
          }
 
          break;
@@ -1577,14 +1578,13 @@ void ExecutionControl::set_next_execution_control_mode(
 
          // Set the next execution mode.
          this->requested_execution_control_mode = TrickHLA::EXECUTION_CONTROL_FREEZE;
-         ExCO->set_next_execution_mode( EXECUTION_MODE_FREEZE );
+         this->next_execution_mode = EXECUTION_MODE_FREEZE;
 
          // Set the next mode times.
          this->next_mode_scenario_time = this->get_scenario_time() + this->time_padding; // Some time in the future.
-         ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time );
-         ExCO->set_next_mode_cte_time( this->get_cte_time() );
-         if ( ExCO->get_next_mode_cte_time() > -std::numeric_limits< double >::max() ) {
-            ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + this->time_padding ); // Some time in the future.
+         this->next_mode_cte_time = this->get_cte_time();
+         if ( this->next_mode_cte_time > -std::numeric_limits< double >::max() ) {
+            this->next_mode_cte_time = this->next_mode_cte_time + this->time_padding; // Some time in the future.
          }
 
          // Set the ExecutionControl freeze times.
@@ -1597,12 +1597,11 @@ void ExecutionControl::set_next_execution_control_mode(
 
          // Set the next execution mode.
          this->requested_execution_control_mode = TrickHLA::EXECUTION_CONTROL_SHUTDOWN;
-         ExCO->set_next_execution_mode( EXECUTION_MODE_SHUTDOWN );
+         this->next_execution_mode = EXECUTION_MODE_SHUTDOWN;
 
          // Set the next mode times.
-         this->next_mode_scenario_time = this->get_scenario_time();          // Immediate.
-         ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time ); // Immediate.
-         ExCO->set_next_mode_cte_time( this->get_cte_time() );               // Immediate
+         this->next_mode_scenario_time = this->get_scenario_time(); // Immediate.
+         this->next_mode_cte_time = this->get_cte_time();           // Immediate
 
          break;
 
@@ -1675,7 +1674,7 @@ bool ExecutionControl::process_mode_transition_request()
            << "ExecutionControl::process_mode_transition_request()" << endl
            << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << endl
            << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
-           << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
+           << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << this->scenario_time_epoch << endl
            << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << this->scenario_timeline->get_sim_offset() << endl
            << "\t Current HLA grant time:    " << federate->get_granted_time().get_time_in_seconds() << endl
            << "\t Current HLA request time:  " << federate->get_requested_time().get_time_in_seconds() << endl
@@ -1685,8 +1684,8 @@ bool ExecutionControl::process_mode_transition_request()
          cout << "\t current_CTE_time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << endl
               << "\t CTE_time_epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << endl;
       }
-      cout << "\t next_mode_scenario_time:   " << setprecision( 18 ) << ExCO->next_mode_scenario_time << endl
-           << "\t next_mode_cte_time:        " << setprecision( 18 ) << ExCO->next_mode_cte_time << endl
+      cout << "\t next_mode_scenario_time:   " << setprecision( 18 ) << this->next_mode_scenario_time << endl
+           << "\t next_mode_cte_time:        " << setprecision( 18 ) << this->next_mode_cte_time << endl
            << "\t scenario_freeze_time:      " << setprecision( 18 ) << this->scenario_freeze_time << endl
            << "\t simulation_freeze_time:    " << setprecision( 18 ) << this->simulation_freeze_time << endl
            << "=============================================================" << endl;
@@ -1798,11 +1797,11 @@ bool ExecutionControl::process_execution_control_updates()
    }
 
    // Translate the native ExCO mode values into ExecutionModeEnum.
-   ExecutionModeEnum exco_cem = execution_mode_int16_to_enum( ExCO->current_execution_mode );
-   ExecutionModeEnum exco_nem = execution_mode_int16_to_enum( ExCO->next_execution_mode );
+   ExecutionModeEnum exco_cem = execution_mode_int16_to_enum( this->current_execution_mode );
+   ExecutionModeEnum exco_nem = execution_mode_int16_to_enum( this->next_execution_mode );
 
    // Check for consistency between ExecutionControl and ExCO.
-   if ( exco_cem != this->current_execution_control_mode ) {
+   if ( exco_cem != execution_control_enum_to_int16(this->current_execution_control_mode) ) {
       errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
              << __LINE__ << " WARNING: Current execution mode mismatch between ExecutionControl ("
              << execution_control_enum_to_string( this->current_execution_control_mode )
@@ -1822,7 +1821,7 @@ bool ExecutionControl::process_execution_control_updates()
          this->requested_execution_control_mode = EXECUTION_CONTROL_RUNNING;
       } else if ( exco_nem == EXECUTION_MODE_FREEZE ) {
          this->requested_execution_control_mode = EXECUTION_CONTROL_FREEZE;
-         this->scenario_freeze_time             = ExCO->next_mode_scenario_time;
+         this->scenario_freeze_time             = this->next_mode_scenario_time;
          this->simulation_freeze_time           = this->scenario_timeline->compute_simulation_time( this->scenario_freeze_time );
       } else {
          errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
@@ -1837,8 +1836,9 @@ bool ExecutionControl::process_execution_control_updates()
    }
 
    // Check for CTE mode time update.
-   if ( ExCO->next_mode_cte_time != this->next_mode_cte_time ) {
-      this->next_mode_cte_time = ExCO->next_mode_cte_time;
+   if ( this->next_mode_cte_time != this->next_mode_cte_time ) {
+      // FIXME:
+      //this->next_mode_cte_time = this->next_mode_cte_time;
    }
 
    // Check for mode changes.
@@ -1857,7 +1857,7 @@ bool ExecutionControl::process_execution_control_updates()
 
             // Mark the current execution mode as SHUTDOWN.
             this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
-            ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
+            this->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
 
             // Tell the TrickHLA::Federate to shutdown.
             // The IMSim ExecutionControl shutdown transition will be made from
@@ -1890,7 +1890,7 @@ bool ExecutionControl::process_execution_control_updates()
 
             // Mark the current execution mode as SHUTDOWN.
             this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
-            ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
+            this->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
 
             // Tell the TrickHLA::Federate to shutdown.
             // The IMSim ExecutionControl shutdown transition will be made from
@@ -1961,7 +1961,7 @@ bool ExecutionControl::process_execution_control_updates()
 
             // Mark the current execution mode as SHUTDOWN.
             this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
-            ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
+            this->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
 
             // Tell the TrickHLA::Federate to shutdown.
             // The IMSim ExecutionControl shutdown transition will be made from
@@ -1974,7 +1974,7 @@ bool ExecutionControl::process_execution_control_updates()
                cout << "ExecutionControl::process_execution_control_updates():" << __LINE__ << endl
                     << "\t current_scenario_time:     " << setprecision( 18 ) << this->scenario_timeline->get_time() << endl
                     << "\t scenario_time_epoch:       " << setprecision( 18 ) << this->scenario_timeline->get_epoch() << endl
-                    << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << ExCO->scenario_time_epoch << endl
+                    << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << this->scenario_time_epoch << endl
                     << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << this->scenario_timeline->get_sim_offset() << endl
                     << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << endl
                     << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << endl;
@@ -1982,8 +1982,8 @@ bool ExecutionControl::process_execution_control_updates()
                   cout << "\t current_CTE_time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << endl
                        << "\t CTE_time_epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << endl;
                }
-               cout << "\t next_mode_scenario_time:   " << setprecision( 18 ) << ExCO->next_mode_scenario_time << endl
-                    << "\t next_mode_cte_time:        " << setprecision( 18 ) << ExCO->next_mode_cte_time << endl
+               cout << "\t next_mode_scenario_time:   " << setprecision( 18 ) << this->next_mode_scenario_time << endl
+                    << "\t next_mode_cte_time:        " << setprecision( 18 ) << this->next_mode_cte_time << endl
                     << "\t scenario_freeze_time:      " << setprecision( 18 ) << this->scenario_freeze_time << endl
                     << "\t simulation_freeze_time:    " << setprecision( 18 ) << this->simulation_freeze_time << endl
                     << "=============================================================" << endl;
@@ -2025,7 +2025,7 @@ bool ExecutionControl::process_execution_control_updates()
 
             // Mark the current execution mode as SHUTDOWN.
             this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
-            ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
+            this->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
 
             // Shutdown the federate now.
             exec_get_exec_cpp()->stop();
@@ -2112,7 +2112,7 @@ bool ExecutionControl::run_mode_transition()
 
       // Set the current execution mode to running.
       this->current_execution_control_mode = EXECUTION_CONTROL_RUNNING;
-      ExCO->set_current_execution_mode( EXECUTION_MODE_RUNNING );
+      this->current_execution_mode = EXECUTION_MODE_RUNNING;
 
       // Check for CTE.
       if ( this->does_cte_timeline_exist() ) {
@@ -2122,7 +2122,7 @@ bool ExecutionControl::run_mode_transition()
          // The Master federate updates the ExCO with the CTE got-to-run time.
          if ( this->is_master() ) {
 
-            go_to_run_time = ExCO->get_next_mode_cte_time();
+            go_to_run_time = this->next_mode_cte_time;
             ExCO->send_init_data();
 
          } // Other federates wait on the ExCO update with the CTE go-to-run time.
@@ -2135,7 +2135,7 @@ bool ExecutionControl::run_mode_transition()
             this->process_execution_control_updates();
 
             // Set the CTE time to go to run.
-            go_to_run_time = ExCO->get_next_mode_cte_time();
+            go_to_run_time = this->next_mode_cte_time;
          }
 
          // Wait for the CTE go-to-run time.
@@ -2176,9 +2176,8 @@ void ExecutionControl::freeze_mode_announce()
 
 bool ExecutionControl::freeze_mode_transition()
 {
-   RTIambassador          *RTI_amb  = federate->get_RTI_ambassador();
-   ExecutionConfiguration *ExCO     = get_execution_configuration();
-   TrickHLA::SyncPnt      *sync_pnt = NULL;
+   RTIambassador     *RTI_amb  = federate->get_RTI_ambassador();
+   TrickHLA::SyncPnt *sync_pnt = NULL;
 
    // Get the 'mtr_freeze' sync-point.
    sync_pnt = this->get_sync_point( MTR_FREEZE_SYNC_POINT );
@@ -2202,7 +2201,7 @@ bool ExecutionControl::freeze_mode_transition()
 
       // Set the current execution mode to freeze.
       this->current_execution_control_mode = EXECUTION_CONTROL_FREEZE;
-      ExCO->set_current_execution_mode( EXECUTION_MODE_FREEZE );
+      this->current_execution_mode = EXECUTION_MODE_FREEZE;
    }
    return false;
 }
@@ -2257,27 +2256,27 @@ void ExecutionControl::enter_freeze()
    // DANNY2.7 send a freeze interaction when master hits Sim Control Panel
    //  Freeze button. Determine if I am the federate that clicked Freeze
    if ( this->get_sim_time() <= 0.0 ) {
-      federate->announce_freeze = this->is_master();
-   } else if ( !federate->freeze_the_federation ) {
-      federate->announce_freeze = true;
+      federate->set_freeze_announced( this->is_master() );
+   } else if ( !federate->get_freeze_pending() ) {
+      federate->set_freeze_announced( true );
    }
 
-   if ( federate->announce_freeze ) {
+   if ( federate->get_freeze_announced() ) {
       // Send interaction unless: we are here because we are at the freeze
       // interaction time, or we are here because we started in freeze
-      if ( ( !federate->freeze_the_federation ) && ( this->get_sim_time() > 0.0 ) ) {
+      if ( ( !federate->get_freeze_pending() ) && ( this->get_sim_time() > 0.0 ) ) {
          double freeze_scenario_time = -DBL_MAX; // freeze immediately
 
          if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             send_hs( stdout,
                      "IMSim::ExecutionControl::enter_freeze():%d announce_freeze:%s, freeze_federation:%s, freeze_scenario_time:%g %c",
-                     __LINE__, ( federate->announce_freeze ? "Yes" : "No" ),
-                     ( federate->freeze_the_federation ? "Yes" : "No" ),
+                     __LINE__, ( federate->get_freeze_announced() ? "Yes" : "No" ),
+                     ( federate->get_freeze_pending() ? "Yes" : "No" ),
                      freeze_scenario_time, THLA_NEWLINE );
          }
 
          this->trigger_freeze_interaction( freeze_scenario_time );
-         federate->un_freeze(); // will freeze again for real when we hit the freeze interaction time
+         federate->unfreeze(); // will freeze again for real when we hit the freeze interaction time
       }
    }
 }
@@ -2285,7 +2284,7 @@ void ExecutionControl::enter_freeze()
 bool ExecutionControl::check_freeze_exit()
 {
    // If freeze has been announced and we are not in initialization then return true.
-   if ( federate->announce_freeze && ( this->get_sim_time() <= 0.0 ) ) {
+   if ( federate->get_freeze_announced() && ( this->get_sim_time() <= 0.0 ) ) {
       return ( true );
    }
 
@@ -2340,7 +2339,7 @@ bool ExecutionControl::check_freeze_exit()
          send_hs( stdout, "IMSim::ExecutionControl::check_freeze():%d DOING UNFREEZE NOW!%c",
                   __LINE__, THLA_NEWLINE );
       }
-      federate->un_freeze();
+      federate->unfreeze();
    }
 
    return ( false );
@@ -2348,9 +2347,9 @@ bool ExecutionControl::check_freeze_exit()
 
 void ExecutionControl::exit_freeze()
 {
-   if ( federate->announce_freeze ) {                                            // DANNY2.7
-      if ( federate->freeze_the_federation && ( this->get_sim_time() > 0.0 ) ) { // coming out of freeze due to freeze interaction
-         federate->register_generic_sync_point( IMSim::FEDRUN_SYNC_POINT );      // this tells federates to go to run
+   if ( federate->get_freeze_announced() ) {                                    // DANNY2.7
+      if ( federate->get_freeze_pending() && ( this->get_sim_time() > 0.0 ) ) { // coming out of freeze due to freeze interaction
+         federate->register_generic_sync_point( IMSim::FEDRUN_SYNC_POINT );     // this tells federates to go to run
 
          int64_t      wallclock_time;
          SleepTimeout print_timer( federate->wait_status_time );
@@ -2388,8 +2387,8 @@ void ExecutionControl::exit_freeze()
             }
          }
       }
-      if ( federate->freeze_the_federation ) { // coming out of freeze due to interaction OR sync point at init time
-         federate->announce_freeze = false;    // reset for the next time we freeze
+      if ( federate->get_freeze_pending() ) {     // coming out of freeze due to interaction OR sync point at init time
+         federate->set_freeze_announced( false ); // reset for the next time we freeze
       }
       try {
          this->pause_sync_pts.achieve_all_sync_points( *federate->get_RTI_ambassador(), this->checktime );
@@ -2432,16 +2431,16 @@ void ExecutionControl::check_pause( double const check_pause_delta )
    this->checktime.set( this->get_sim_time() + check_pause_delta );
 
    if ( this->pause_sync_pts.check_sync_points( this->checktime ) ) {
-      federate->freeze_the_federation = true;
+      federate->set_freeze_pending( true );
    } else if ( this->get_manager()->is_late_joining_federate() ) {
       // check if the requested time has a sync-point.
-      this->checktime = federate->requested_time;
+      this->checktime = federate->get_requested_time();
       if ( this->pause_sync_pts.check_sync_points( this->checktime ) ) {
-         federate->freeze_the_federation = true;
+         federate->set_freeze_pending( true );
       }
    }
 
-   if ( federate->freeze_the_federation ) {
+   if ( federate->get_freeze_pending() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "IMSim::ExecutionControl::check_pause():%d Commanding Trick Executive to FREEZE.%c",
                   __LINE__, THLA_NEWLINE );
@@ -2485,14 +2484,14 @@ void ExecutionControl::clear_pause(
 
 ExecutionConfiguration *ExecutionControl::get_execution_configuration()
 {
-   ExecutionConfiguration const *ExCO = dynamic_cast< ExecutionConfiguration * >( this->get_execution_configuration() );
+   ExecutionConfiguration *ExCO = dynamic_cast< ExecutionConfiguration * >( ExecutionControlBase::get_execution_configuration() );
    if ( ExCO == NULL ) {
       ostringstream errmsg;
-      errmsg << "IMSim::ExecutionControl::epoch_and_root_frame_discovery_process():" << __LINE__
-             << " ERROR: Execution Configureation is not an IMSim ExCO." << THLA_ENDL;
+      errmsg << "IMSim::ExecutionControl::get_execution_configuration():" << __LINE__
+             << " ERROR: Execution Configuration base is not an IMSim::ExecutionConfiguration instance." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
-   return ( this->get_execution_configuration() );
+   return ( ExCO );
 }
 
 void ExecutionControl::start_federation_save_at_scenario_time(
@@ -2525,7 +2524,7 @@ void ExecutionControl::add_freeze_scenario_time(
 {
    if ( this->get_manager()->is_late_joining_federate() ) {
 
-      if ( federate->announce_save ) {
+      if ( federate->get_announce_save() ) {
          freeze_scenario_times.insert( t );
       } else {
          // If we received the interaction, save on the current frame.
@@ -2567,9 +2566,9 @@ bool ExecutionControl::check_freeze_time()
       exec_freeze(); // go to freeze at top of next frame (other federates MUST have their software frame set in input.py file!)
       // If we are to initiate the federation save, register a sync point
       // which must be acknowledged only in freeze mode!!!
-      if ( federate->announce_save ) {
+      if ( federate->get_announce_save() ) {
          federate->register_generic_sync_point( IMSim::FEDSAVE_SYNC_POINT );
-         federate->announce_freeze = true;
+         federate->set_freeze_announced( true );
       }
    }
    return do_immediate_freeze;
@@ -2622,14 +2621,14 @@ bool ExecutionControl::check_scenario_freeze_time()
             found_valid_freeze_time = true;
             do_immediate_freeze     = true;
             freeze_scenario_times.erase( iter );
-            federate->freeze_the_federation = true;
+            federate->set_freeze_pending( true );
 
             if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                ostringstream infomsg;
                infomsg << "IMSim::ExecutionControl::check_scenario_freeze_time():" << __LINE__
                        << " Going to Trick FREEZE mode immediately:" << endl;
                if ( federate->time_management ) {
-                  infomsg << "  Granted HLA-time:" << federate->granted_time.get_time_in_seconds() << endl;
+                  infomsg << "  Granted HLA-time:" << federate->get_granted_time().get_time_in_seconds() << endl;
                }
                infomsg << "  Trick sim-time:" << curr_sim_time << endl
                        << "  Freeze sim-time:" << freeze_sim_time << endl
@@ -2654,18 +2653,20 @@ bool ExecutionControl::is_save_initiated()
    // set in federation_synchronized when feds sync to FEDSAVE_v2 sync point
    // if it's not set, we are here because Dump Chkpnt was clicked, so we
    // need to register sync point
-   if ( federate->announce_save && !federate->initiate_save_flag && !federate->save_completed ) {
+   if (    federate->get_announce_save()
+        && !federate->get_initiate_save_flag()
+        && !federate->get_save_completed() ) {
       federate->register_generic_sync_point( IMSim::FEDSAVE_SYNC_POINT );
 
       int64_t      wallclock_time;
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
-      while ( !federate->initiate_save_flag ) { // wait for federation to be synced
+      while ( !federate->get_initiate_save_flag() ) { // wait for federation to be synced
          this->pause_sync_pts.achieve_all_sync_points( *federate->get_RTI_ambassador(), this->checktime );
          sleep_timer.sleep();
 
-         if ( !federate->initiate_save_flag ) {
+         if ( !federate->get_initiate_save_flag() ) {
 
             // To be more efficient, we get the time once and share it.
             wallclock_time = sleep_timer.time();
@@ -2698,10 +2699,12 @@ bool ExecutionControl::is_save_initiated()
 
 bool ExecutionControl::perform_save()
 {
-   if ( federate->announce_save && federate->initiate_save_flag && !federate->start_to_save ) {
+   if (    federate->get_announce_save()
+        && federate->get_initiate_save_flag()
+        && !federate->get_start_to_save() ) {
       // We are here because user called start_federation_save, so
       // must force the perform_checkpoint code to execute.
-      federate->announce_save = false;
+      federate->set_announce_save( false );
       return ( true );
    }
 
