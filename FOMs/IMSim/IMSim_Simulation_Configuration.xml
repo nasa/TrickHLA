@@ -169,6 +169,18 @@ Multiphase Initialization Design with Late Joiners, Rejoiners and Federation Sav
     <interactions>
         <interactionClass>
             <name>HLAinteractionRoot</name>
+            <interactionClass>
+                <name>Freeze</name>
+                <sharing>PublishSubscribe</sharing>
+                <transportation>HLAreliable</transportation>
+                <order>TimeStamp</order>
+                <semantics></semantics>
+                <parameter>
+                    <name>time</name>
+                    <dataType>HLAinteger64BE</dataType>
+                    <semantics></semantics>
+                </parameter>
+            </interactionClass>
         </interactionClass>
     </interactions>
     <synchronizations>

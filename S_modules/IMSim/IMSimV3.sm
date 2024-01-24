@@ -61,6 +61,7 @@ class IMSimSimObject : public THLABaseSimObject {
                            _INIT,
                            _LAST ),
         imsim_config( "THLA.imsim_config" ),
+        imsim_exec_control( imsim_config ),
         CHECK_PAUSE_DELTA( 0.000001 )
         
    {

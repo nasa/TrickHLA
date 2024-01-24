@@ -106,10 +106,18 @@ using namespace IMSim;
 /*!
  * @job_class{initialization}
  */
-ExecutionControl::ExecutionControl()
-   : pending_mtr( IMSim::MTR_UNINITIALIZED ),
+ExecutionControl::ExecutionControl(
+   IMSim::ExecutionConfiguration & imsim_config )
+   : TrickHLA::ExecutionControlBase( imsim_config ),
+     pending_mtr( IMSim::MTR_UNINITIALIZED ),
      freeze_inter_count( 0 ),
-     freeze_interaction( NULL )
+     freeze_interaction( NULL ),
+     scenario_time_epoch( 0.0 ),
+     next_mode_scenario_time( 0.0 ),
+     next_mode_cte_time( 0.0 ),
+     current_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED ),
+     next_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED ),
+     least_common_time_step( 0 )
 {
    return;
 }

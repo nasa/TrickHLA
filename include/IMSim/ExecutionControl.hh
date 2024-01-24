@@ -71,8 +71,8 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    friend void init_attrIMSim__ExecutionControl();
 
   public:
-   /*! @brief Default constructor for the IMSim ExecutionControl class. */
-   ExecutionControl();
+   /*! @brief Initialization constructor for the IMSim ExecutionControl class. */
+   ExecutionControl( IMSim::ExecutionConfiguration & imsim_config );
    /*! @brief Destructor for the IMSim ExecutionControl class. */
    virtual ~ExecutionControl();
 
