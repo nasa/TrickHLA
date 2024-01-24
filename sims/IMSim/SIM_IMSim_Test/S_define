@@ -72,13 +72,13 @@ class AnalyticSineSimObj : public Trick::SimObject {
       P50 ("initialization") conditional.configure( &packing );
       P50 ("initialization") conditional.initialize();
 
-      (DYN_RATE, "scheduled") truth_data.compute_value( THLA.execution_control.get_scenario_time() );
-      (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.execution_control.get_scenario_time() );
+      (DYN_RATE, "scheduled") truth_data.compute_value( THLA.imsim_exec_control.get_scenario_time() );
+      (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.imsim_exec_control.get_scenario_time() );
 
-      (DYN_RATE, "scheduled") sim_data.compute_value( THLA.execution_control.get_scenario_time() );
-      (DYN_RATE, "scheduled") sim_data.compute_derivative( THLA.execution_control.get_scenario_time() );
+      (DYN_RATE, "scheduled") sim_data.compute_value( THLA.imsim_exec_control.get_scenario_time() );
+      (DYN_RATE, "scheduled") sim_data.compute_derivative( THLA.imsim_exec_control.get_scenario_time() );
 
-      (THLA_DATA_CYCLE_TIME, "scheduled") sim_data.adjust_phase( THLA.execution_control.get_scenario_time() );
+      (THLA_DATA_CYCLE_TIME, "scheduled") sim_data.adjust_phase( THLA.imsim_exec_control.get_scenario_time() );
    }
 
  private:
@@ -126,8 +126,8 @@ class PropagatedSineSimObj : public Trick::SimObject {
       /*
        * -- Propagate the true sine state.
        */
-      (DYN_RATE, "scheduled") truth_data.compute_value( THLA.execution_control.get_scenario_time() );
-      (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.execution_control.get_scenario_time() );
+      (DYN_RATE, "scheduled") truth_data.compute_value( THLA.imsim_exec_control.get_scenario_time() );
+      (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.imsim_exec_control.get_scenario_time() );
 
       /*
        * -- Numerically propagate the simulated sine state
@@ -141,7 +141,7 @@ class PropagatedSineSimObj : public Trick::SimObject {
        * integration being used), so we fix it by setting the correct time as a
        * post integration job.
        */
-      ("post_integration") sim_data.set_time( THLA.execution_control.get_scenario_time() );
+      ("post_integration") sim_data.set_time( THLA.imsim_exec_control.get_scenario_time() );
    }
 
  private:

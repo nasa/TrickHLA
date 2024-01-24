@@ -39,10 +39,10 @@ class IMSimSimObject : public THLABaseSimObject {
  public:
 
    // The IMSim Simulation Configuration Object.
-   IMSim::ExecutionConfiguration SimConfig;
+   IMSim::ExecutionConfiguration imsim_config;
 
    // The IMSim Execution Control object.
-   IMSim::ExecutionControl execution_control;
+   IMSim::ExecutionControl imsim_exec_control;
 
    double       checkpoint_time;
    char const * checkpoint_label;
@@ -60,7 +60,7 @@ class IMSimSimObject : public THLABaseSimObject {
                            _1ST,
                            _INIT,
                            _LAST ),
-        SimConfig( "THLA.SimConfig" ),
+        imsim_config( "THLA.imsim_config" ),
         CHECK_PAUSE_DELTA( 0.000001 )
         
    {
@@ -77,7 +77,7 @@ class IMSimSimObject : public THLABaseSimObject {
       //-----------------------
       ("default_data") federate.setup( federate_amb,
                                        manager,
-                                       execution_control );
+                                       imsim_exec_control );
 
       //-------------------------
       //-- INITIALIZATION JOBS --
