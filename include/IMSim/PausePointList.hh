@@ -140,7 +140,7 @@ class PausePointList : public TrickHLA::TimedSyncPntList
   private:
    PausePointStateEnum state; ///< @trick_units{--} State of the pause points.
 
-   static bool is_sync_point_state_achieved( TrickHLA::SyncPnt const * sync_pnt );
+   static bool is_sync_point_state_achieved( TrickHLA::SyncPnt const *sync_pnt );
 
   private:
    // Do not allow the copy constructor or assignment operator.

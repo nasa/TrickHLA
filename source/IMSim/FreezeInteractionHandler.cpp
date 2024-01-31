@@ -47,9 +47,9 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Int64Time.hh"
-#include "TrickHLA/Types.hh"
-#include "TrickHLA/Manager.hh"
 #include "TrickHLA/Interaction.hh"
+#include "TrickHLA/Manager.hh"
+#include "TrickHLA/Types.hh"
 
 // IMSim include files.
 #include "IMSim/ExecutionControl.hh"

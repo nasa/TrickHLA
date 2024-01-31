@@ -105,14 +105,17 @@ ExecutionConfiguration::ExecutionConfiguration()
      required_federates( NULL ),
      start_year( 2024 ),
      start_seconds( 1517932 ),
-     DUT1(0.0),
-     deltaAT(37)
+     DUT1( 0.0 ),
+     deltaAT( 37 )
 {
    // Set default empty strings.
-   owner              = trick_MM->mm_strdup( const_cast< char * >( "" ) );
-   scenario           = trick_MM->mm_strdup( const_cast< char * >( "" ) );
-   mode               = trick_MM->mm_strdup( const_cast< char * >( "" ) );
-   required_federates = trick_MM->mm_strdup( const_cast< char * >( "" ) );
+   this->owner = trick_MM->mm_strdup( const_cast< char * >( "" ) );
+
+   this->scenario = trick_MM->mm_strdup( const_cast< char * >( "" ) );
+
+   this->mode = trick_MM->mm_strdup( const_cast< char * >( "" ) );
+
+   this->required_federates = trick_MM->mm_strdup( const_cast< char * >( "" ) );
 
    // Note that the default start time is 18 January 2024, 13:38;52 UTC.
 
@@ -135,21 +138,23 @@ ExecutionConfiguration::ExecutionConfiguration(
      required_federates( NULL ),
      start_year( 2024 ),
      start_seconds( 1517932 ),
-     DUT1(0.0),
-     deltaAT(37)
+     DUT1( 0.0 ),
+     deltaAT( 37 )
 {
    // Set default empty strings.
-   owner              = trick_MM->mm_strdup( const_cast< char * >( "" ) );
-   scenario           = trick_MM->mm_strdup( const_cast< char * >( "" ) );
-   mode               = trick_MM->mm_strdup( const_cast< char * >( "" ) );
-   required_federates = trick_MM->mm_strdup( const_cast< char * >( "" ) );
+   this->owner = trick_MM->mm_strdup( const_cast< char * >( "" ) );
+
+   this->scenario = trick_MM->mm_strdup( const_cast< char * >( "" ) );
+
+   this->mode = trick_MM->mm_strdup( const_cast< char * >( "" ) );
+
+   this->required_federates = trick_MM->mm_strdup( const_cast< char * >( "" ) );
 
    // Note that the default start time is 18 January 2024, 13:38;52 UTC.
 
    // This is both a TrickHLA::Object and Packing.
    // So, it can safely reference itself.
    this->packing = this;
-
 }
 
 /*!
@@ -348,7 +353,7 @@ void ExecutionConfiguration::configure()
  */
 void ExecutionConfiguration::set_imsim_control( IMSim::ExecutionControl *exec_control )
 {
-   execution_control = static_cast<TrickHLA::ExecutionControlBase*>(exec_control);
+   execution_control = static_cast< TrickHLA::ExecutionControlBase * >( exec_control );
    return;
 }
 
@@ -357,10 +362,10 @@ void ExecutionConfiguration::set_imsim_control( IMSim::ExecutionControl *exec_co
  */
 IMSim::ExecutionControl *ExecutionConfiguration::get_imsim_control()
 {
-   IMSim::ExecutionControl * imsim_exec_cntrl;
+   IMSim::ExecutionControl *imsim_exec_cntrl;
 
-   imsim_exec_cntrl = dynamic_cast<IMSim::ExecutionControl*>(execution_control);
-   if ( imsim_exec_cntrl == NULL ){
+   imsim_exec_cntrl = dynamic_cast< IMSim::ExecutionControl * >( execution_control );
+   if ( imsim_exec_cntrl == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionConfiguration::get_imsim_control():" << __LINE__
              << " ERROR: Dynamic cast error from base class reference to IMSim reference!" << THLA_ENDL;
@@ -490,7 +495,6 @@ void ExecutionConfiguration::setup_ref_attributes(
    return;
 }
 
-
 void ExecutionConfiguration::print_execution_configuration()
 {
    cout << "=============================================================" << endl
@@ -500,23 +504,21 @@ void ExecutionConfiguration::print_execution_configuration()
    return;
 }
 
-
 void ExecutionConfiguration::print_simconfig( std::ostream &stream )
 {
    stream << "\t Object-Name:         '" << this->get_name() << "'" << endl
           << "\t owner:               '" << owner << endl
-          << "\t scenario:            "  << scenario << endl
-          << "\t mode:                "  << mode << endl
-          << "\t run duration:        "  << run_duration << endl
-          << "\t number of federates: "  << number_of_federates << endl
-          << "\t required federates:  "  << required_federates << endl
+          << "\t scenario:            " << scenario << endl
+          << "\t mode:                " << mode << endl
+          << "\t run duration:        " << run_duration << endl
+          << "\t number of federates: " << number_of_federates << endl
+          << "\t required federates:  " << required_federates << endl
           << "\t start year:          '" << start_year << endl
-          << "\t start seconds:       "  << start_seconds << " (s)" << endl
-          << "\t DUT1:                "  << DUT1 << " (s)" << endl
-          << "\t delta AT:            "  << deltaAT << " (s)" << endl;
+          << "\t start seconds:       " << start_seconds << " (s)" << endl
+          << "\t DUT1:                " << DUT1 << " (s)" << endl
+          << "\t delta AT:            " << deltaAT << " (s)" << endl;
    return;
 }
-
 
 bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
 {

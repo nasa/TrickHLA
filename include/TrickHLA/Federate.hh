@@ -446,7 +446,7 @@ class Federate
     *  @return The state of the announce save flag. */
    bool get_announce_save()
    {
-      return( announce_save );
+      return ( announce_save );
    }
 
    /*! @brief Set the announce save flag. */
@@ -475,7 +475,7 @@ class Federate
     *  @return True if flag set, false otherwise. */
    bool get_save_completed()
    {
-      return( save_completed );
+      return ( save_completed );
    }
 
    /*! @brief Set the restore begun state. */
@@ -581,7 +581,7 @@ class Federate
     *  @return True if save has been initiated, false otherwise. */
    bool get_initiate_save_flag()
    {
-      return( initiate_save_flag );
+      return ( initiate_save_flag );
    }
 
    /*! @brief Sets the Save filename and flag. */
@@ -1095,7 +1095,7 @@ class Federate
     */
    bool get_start_to_save()
    {
-      return( this->start_to_save );
+      return ( this->start_to_save );
    }
 
    /*! @brief Set start to restore flag.

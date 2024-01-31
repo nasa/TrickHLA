@@ -38,8 +38,8 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <algorithm>
-#include <string>
 #include <sstream>
+#include <string>
 
 // Trick include files.
 #include "trick/exec_proto.h"
@@ -106,8 +106,9 @@ bool PausePointList::clear_sync_point(
    return false;
 }
 
-bool PausePointList::is_sync_point_state_achieved( SyncPnt const * sync_pnt ){
-   return( sync_pnt->get_state() == SYNC_PT_STATE_ACHIEVED );
+bool PausePointList::is_sync_point_state_achieved( SyncPnt const *sync_pnt )
+{
+   return ( sync_pnt->get_state() == SYNC_PT_STATE_ACHIEVED );
 }
 
 void PausePointList::check_state()

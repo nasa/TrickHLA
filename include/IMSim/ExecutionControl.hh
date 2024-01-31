@@ -72,7 +72,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
 
   public:
    /*! @brief Initialization constructor for the IMSim ExecutionControl class. */
-   ExecutionControl( IMSim::ExecutionConfiguration & imsim_config );
+   ExecutionControl( IMSim::ExecutionConfiguration &imsim_config );
    /*! @brief Destructor for the IMSim ExecutionControl class. */
    virtual ~ExecutionControl();
 
