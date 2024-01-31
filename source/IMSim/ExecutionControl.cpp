@@ -1055,6 +1055,9 @@ void ExecutionControl::setup_object_RTI_handles()
  */
 void ExecutionControl::setup_interaction_RTI_handles()
 {
+   // Ask the manager to setup the Freeze interaction RTI handles.
+   this->manager->setup_interaction_RTI_handles( 1, freeze_interaction );
+
    return;
 }
 

@@ -3,9 +3,9 @@
 #---------------------------------------------
 #instruments.echo_jobs.echo_jobs_on()
 trick.exec_set_trap_sigfpe(True)
-#trick.checkpoint_pre_init(1)
+trick.checkpoint_pre_init(1)
 trick.checkpoint_post_init(1)
-#trick.add_read(0.0 , '''trick.checkpoint('checkpoint')''')
+trick.add_read(0.0 , '''trick.checkpoint('checkpoint')''')
 
 # Realtime setup
 exec(open( "Modified_data/trick/realtime.py" ).read())
@@ -61,7 +61,8 @@ trick.add_read(12.0 , '''A.interaction_handler.send_sine_interaction( THLA_INIT.
 # =========================================================================
 # Show or hide the TrickHLA debug messages.
 # Use Level-3 to show the ownership transfer debug messages.
-THLA.federate.debug_level = trick.DEBUG_LEVEL_6_TRACE
+#THLA.federate.debug_level = trick.DEBUG_LEVEL_6_TRACE
+THLA.federate.debug_level = trick.DEBUG_LEVEL_9_TRACE
 
 
 # Configure the CRC.
