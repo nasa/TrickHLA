@@ -274,7 +274,6 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
     *  @return True for successful wait. */
    virtual bool wait_for_update();
 
-  protected:
   private:
    // Do not allow the copy constructor or assignment operator.
    ExecutionConfiguration( ExecutionConfiguration const &rhs );
