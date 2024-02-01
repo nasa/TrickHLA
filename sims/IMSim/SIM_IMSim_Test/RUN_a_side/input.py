@@ -87,6 +87,9 @@ THLA.imsim_exec_control.sim_timeline = THLA_INIT.sim_timeline
 # Set the scenario timeline to be used for configuring federation freeze times.
 THLA.imsim_exec_control.scenario_timeline = THLA_INIT.scenario_timeline
 
+# FIXME: This should not be required.
+# Set this as the 'pre-set' master.
+#THLA.imsim_exec_control.master = True
 
 # The list of Federates known to be in our Federation. The simulation will
 # wait for all Federates marked as required to join the Federation before

@@ -188,7 +188,7 @@ void Manager::initialize()
       send_hs( stdout, "Manager::initialize():%d%c", __LINE__, THLA_NEWLINE );
    }
 
-   // Check to make sure we have a reference to the TrickHLA::Manager.
+   // Check to make sure we have a reference to the TrickHLA::Federate.
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::initialize():" << __LINE__
