@@ -983,7 +983,7 @@ bool SyncPntListBase::wait_for_synchronization(
 
          if ( !synchronized ) {
 
-            // Always check to see is a shutdown was received.
+            // Always check to see if a shutdown was received.
             federate->check_for_shutdown_with_termination();
 
             sleep_timer.sleep();

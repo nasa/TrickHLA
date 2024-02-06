@@ -492,6 +492,11 @@ Simulation has started and is now running...%c",
          this->register_all_sync_points( *federate->get_RTI_ambassador(),
                                          federate->get_joined_federate_handles() );
 
+         // Register all the user defined multiphase initialization
+         // synchronization points just for the joined federates.
+         multiphase_init_sync_pnt_list.register_all_sync_points( *( federate->get_RTI_ambassador() ),
+                                                                 federate->get_joined_federate_handles() );
+
          // Call publish_and_subscribe AFTER we've initialized the manager,
          // federate, and FedAmb.
          manager->publish_and_subscribe();
@@ -881,6 +886,7 @@ void ExecutionControl::post_multi_phase_init_processes()
    // When we join the federation, setup the list of current federates.
    // When a federate joins / resigns, this list will be automatically
    // updated by each federate.
+// FIXME: This call does not seem to work for the master!?
    federate->load_and_print_running_federate_names();
 
    // Setup HLA time management.
@@ -1164,6 +1170,15 @@ void ExecutionControl::announce_sync_point(
       // Mark init sync-point as existing/announced.
       if ( this->mark_announced( label ) ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+            send_hs( stdout, "IMSim::ExecutionControl::announce_sync_point():%d IMSim Initialization Sync-Point:'%ls'%c",
+                     __LINE__, label.c_str(), THLA_NEWLINE );
+         }
+      }
+
+   } else if ( multiphase_init_sync_pnt_list.contains( label ) ) {
+      // Mark init sync-point as existing/announced.
+      if ( multiphase_init_sync_pnt_list.mark_announced( label ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             send_hs( stdout, "IMSim::ExecutionControl::announce_sync_point():%d IMSim Multiphase Init Sync-Point:'%ls'%c",
                      __LINE__, label.c_str(), THLA_NEWLINE );
          }
@@ -1418,7 +1433,113 @@ bool ExecutionControl::mark_synchronized( std::wstring const &label )
       federate->unfreeze();
    }
 
-   return ( false );
+   // First check the multi-phase initialization synchronization point list.
+   if ( multiphase_init_sync_pnt_list.contains( label ) ) {
+      return( multiphase_init_sync_pnt_list.mark_synchronized( label ) );
+   }
+
+   // Next check the general synchronization point list.
+   if ( SyncPntListBase::contains( label ) ) {
+      TrickHLA::SyncPntListBase::mark_synchronized( label );
+   }
+
+   // Evidently the label was not found.
+   return( false );
+
+}
+
+/*!
+ * @job_class{initialization}
+ */
+bool ExecutionControl::mark_announced(
+   wstring const &label )
+{
+   // First check the multi-phase initialization synchronization point list.
+   if ( multiphase_init_sync_pnt_list.contains( label ) ) {
+      multiphase_init_sync_pnt_list.mark_announced( label );
+   }
+
+   // Next check the general synchronization point list.
+   if ( SyncPntListBase::contains( label ) ) {
+      SyncPntListBase::mark_announced( label );
+   }
+
+   return false;
+}
+
+void ExecutionControl::sync_point_registration_succeeded(
+   wstring const &label )
+{
+
+   // First check the multi-phase initialization synchronization point list.
+   if ( multiphase_init_sync_pnt_list.contains( label ) ) {
+      if ( multiphase_init_sync_pnt_list.mark_registered( label ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+            send_hs( stdout, "IMSim::ExecutionControl::sync_point_registration_succeeded():%d Label:'%ls'%c",
+                     __LINE__, label.c_str(), THLA_NEWLINE );
+         }
+      }
+   }
+
+   // Next check the general synchronization point list.
+   if ( SyncPntListBase::contains( label ) ) {
+      if ( this->mark_registered( label ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+            send_hs( stdout, "IMSim::ExecutionControl::sync_point_registration_succeeded():%d Label:'%ls'%c",
+                     __LINE__, label.c_str(), THLA_NEWLINE );
+         }
+      }
+   }
+}
+
+void ExecutionControl::achieve_and_wait_for_synchronization(
+   RTI1516_NAMESPACE::RTIambassador &RTI_amb,
+   Federate                         *federate,
+   std::wstring const               &label )
+{
+
+   // First check the multi-phase initialization synchronization point list.
+   if ( multiphase_init_sync_pnt_list.contains( label ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         send_hs( stdout, "IMSim::ExecutionControl::achieve_and_wait_for_synchronization():%d '%ls'!%c",
+                  __LINE__, label.c_str(), THLA_NEWLINE );
+      }
+      multiphase_init_sync_pnt_list.achieve_and_wait_for_synchronization( RTI_amb, federate, label );
+      return;
+   }
+
+   // Next check the general synchronization point list.
+   if ( SyncPntListBase::contains( label ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         send_hs( stdout, "IMSim::ExecutionControl::achieve_and_wait_for_synchronization():%d '%ls'!%c",
+                  __LINE__, label.c_str(), THLA_NEWLINE );
+      }
+      SyncPntListBase::achieve_and_wait_for_synchronization( RTI_amb, federate, label );
+      return;
+   }
+
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+bool ExecutionControl::contains(
+   wstring const &label )
+{
+
+   // First check the multi-phase initialization synchronization point list.
+   if ( multiphase_init_sync_pnt_list.contains( label ) ) {
+      return true;
+   }
+
+   // Next check the general synchronization point list.
+   if ( SyncPntListBase::contains( label ) ) {
+      return true;
+   }
+
+   return false;
+
 }
 
 /*!

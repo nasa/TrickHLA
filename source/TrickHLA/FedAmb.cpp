@@ -210,6 +210,10 @@ void FedAmb::announceSynchronizationPoint(
    wstring const                               &label,
    RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
+      send_hs( stdout, "FedAmb::announceSynchronizationPoint():%d Label:'%ls'%c",
+               __LINE__, label.c_str(), THLA_NEWLINE );
+   }
    federate->announce_sync_point( label, theUserSuppliedTag );
 }
 

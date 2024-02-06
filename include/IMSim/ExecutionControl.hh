@@ -119,8 +119,8 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! Setup the ExecutionControl interaction HLA RTI handles. */
    virtual void setup_interaction_RTI_handles();
    /*! Add initialization synchronization points to regulate startup. */
-   /*! Add initialization synchronization points to regulate startup. */
    virtual void add_initialization_sync_points();
+   /*! Add mulit-phase initialization synchronization points to support initialization. */
    virtual void add_multiphase_init_sync_points();
    /*! @brief The RTI has announced the existence of a synchronization point.
     *  @param rti_ambassador    Reference to the HLA RTI Ambassador instance.
@@ -153,6 +153,33 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @return True if synchronization point label is valid.
     *  @param label The synchronization point label. */
    virtual bool mark_synchronized( std::wstring const &label );
+
+   /*! @brief Mark the given synchronization point as existing in the federation.
+    *  @return True if synchronization point label is valid.
+    *  @param label The synchronization point label. */
+   virtual bool mark_announced( std::wstring const &label );
+
+   /*! @brief Callback from TrickHLA::FedAmb through TrickHLA::Federate for
+    *  when registration of a synchronization point success.
+    *  and is one of the sync-points created.
+    *  @param label      Sync-point label. */
+   virtual void sync_point_registration_succeeded( std::wstring const &label );
+
+   /*! @brief Achieve the specified sync-point and wait for the federation to
+    *  be synchronized on it.
+    *  @param RTI_amb Reference to RTI Ambassador.
+    *  @param federate       Associated federate.
+    *  @param label          Synchronization point label. */
+   virtual void achieve_and_wait_for_synchronization(
+      RTI1516_NAMESPACE::RTIambassador &RTI_amb,
+      TrickHLA::Federate               *federate,
+      std::wstring const               &label );
+
+   /*! @brief Determine if the synchronization point is known to be in the list
+    * of known synchronization points.
+    *  @return True if the label is a known synchronization point.
+    *  @param label The synchronization point label. */
+   virtual bool contains( std::wstring const &label );
 
    //
    // ExecutionControl runtime routines.
