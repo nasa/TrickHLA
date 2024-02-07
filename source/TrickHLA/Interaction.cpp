@@ -279,7 +279,7 @@ void Interaction::set_user_supplied_tag(
 void Interaction::remove() // RETURN: -- None.
 {
    // Only remove the Interaction if the manager has not been shutdown.
-   if ( is_shutdown_called() ) {
+   if ( !is_shutdown_called() ) {
 
       // Get the RTI-Ambassador and check for NULL.
       RTIambassador *rti_amb = get_RTI_ambassador();

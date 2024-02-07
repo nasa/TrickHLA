@@ -887,7 +887,7 @@ void ExecutionControl::post_multi_phase_init_processes()
    // When a federate joins / resigns, this list will be automatically
    // updated by each federate.
 // FIXME: This call does not seem to work for the master!?
-   federate->load_and_print_running_federate_names();
+//   federate->load_and_print_running_federate_names();
 
    // Setup HLA time management.
    federate->setup_time_management();

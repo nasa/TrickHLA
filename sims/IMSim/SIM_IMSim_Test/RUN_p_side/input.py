@@ -6,7 +6,7 @@
 trick.exec_set_trap_sigfpe(True)
 trick.checkpoint_pre_init(1)
 trick.checkpoint_post_init(1)
-trick.add_read(0.0 , '''trick.checkpoint('checkpoint')''')
+#trick.add_read(0.0 , '''trick.checkpoint('checkpoint')''')
 
 # NOTE: You must set this to be the same as the master federate's frame for IMSim freezing
 trick.exec_set_software_frame(0.25)
@@ -67,7 +67,8 @@ P.interaction_handler.message = 'P-side: P.interaction_hdlr.message'
 # Show or hide the TrickHLA debug messages.
 # Use Level-3 to show the ownership transfer debug messages.
 #THLA.federate.debug_level = trick.DEBUG_LEVEL_6_TRACE
-THLA.federate.debug_level = trick.DEBUG_LEVEL_9_TRACE
+#THLA.federate.debug_level = trick.DEBUG_LEVEL_9_TRACE
+THLA.federate.debug_level = trick.DEBUG_LEVEL_2_TRACE
 
 
 # Configure the CRC.

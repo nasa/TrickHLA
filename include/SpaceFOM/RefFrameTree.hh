@@ -5,9 +5,12 @@
 reference frame tree.
 
 This is the base implementation for the Space Reference FOM (SpaceFOM)
-interface to a  Reference Frame object. This needs to be available
+interface to a Reference Frame tree object. This needs to be available
 to the SpaceFOM initialization process for the root reference frame
 discovery step in the initialization process.
+
+The reference frame tree takes the form of a Directed Acyclic Graph (DAG).
+A node in the tree is a SpaceFOM::RefFrameBase object.
 
 @copyright Copyright 2019 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
