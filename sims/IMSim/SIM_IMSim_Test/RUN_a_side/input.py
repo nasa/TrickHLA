@@ -75,7 +75,7 @@ THLA.federate.lookahead_time = 0.250
 
 # Configure the federate.
 THLA.federate.name             = 'A-side-Federate'
-THLA.federate.FOM_modules      = 'FOMs/IMSim/IMSim_Simulation_Configuration.xml,FOMs/SineWave.xml'
+THLA.federate.FOM_modules      = 'FOMs/IMSim/IMSim_management.xml,FOMs/SineWave.xml'
 THLA.federate.federation_name  = 'SineWaveSim'
 THLA.federate.time_regulating  = True
 THLA.federate.time_constrained = True

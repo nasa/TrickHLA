@@ -74,8 +74,7 @@ class RefFrameTree
    virtual ~RefFrameTree();
 
    /*! @brief Add a reference frame to the tree.
-    *  @details This function is used to add a SpaceFOM reference frame into
-    *  the reference frame tree.
+    *  @details Add a SpaceFOM reference frame into the reference frame tree.
     *  @param frame_ptr Pointer to the reference frame to add.
     *  @return Success or failure of the add. */
    bool add_frame( RefFrameBase *frame_ptr );
