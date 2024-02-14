@@ -68,9 +68,15 @@ Examples:\n  check_code -s -o -v\n  check_code -i -o -v\n  check_code -e -o -v\n
    parser.add_argument( '-c', '--clean', \
                         help = 'Clean all generated files.', \
                         action = 'store_true', dest = 'clean_gen_files' )
+   parser.add_argument( '--cstyle_casts', \
+                        help = 'Suppress C-style casts.', \
+                        action = 'store_true', dest = 'suppress_cstylecasts' )
    parser.add_argument( '-e', '--errors', \
                         help = 'Check source code for errors only.', \
                         action = 'store_true', dest = 'check_errors_only' )
+   parser.add_argument( '--exhaustive', \
+                        help = 'Exhaustive checking, and it will take a while to complete.', \
+                        action = 'store_true', dest = 'exhaustive' )
    parser.add_argument( '-i', '--includes', help = 'Check the #include\'s.', \
                         action = 'store_true', dest = 'check_includes' )
    parser.add_argument( '-n', '--inconclusive', help = 'Allow cppcheck to report even though the analysis is inconclusive. Caution, there are false positives with this option.', \
@@ -106,9 +112,6 @@ Examples:\n  check_code -s -o -v\n  check_code -i -o -v\n  check_code -e -o -v\n
    parser.add_argument( '-x', '--xml_output', \
                         help = 'Same as -s but the output is XML.', \
                         action = 'store_true', dest = 'generate_xml' )
-   parser.add_argument( '--cstyle_casts', \
-                        help = 'Suppress C-style casts.', \
-                        action = 'store_true', dest = 'suppress_cstylecasts' )
 
    # Parse the command line arguments.
    args = parser.parse_args()
@@ -433,6 +436,15 @@ Examples:\n  check_code -s -o -v\n  check_code -i -o -v\n  check_code -e -o -v\n
 
    # Configure cppcheck to use an output directory to cache build results.
    cppcheck_args.append( '--cppcheck-build-dir=' + cppcheck_build_dir )
+   
+   # Configure the checkers-report located in the output directory.
+   cppcheck_args.append( '--checkers-report=' + cppcheck_build_dir + '/checkers-report.txt' )
+
+   # --exhaustive Check level
+   if args.exhaustive:
+      cppcheck_args.append( '--check-level=exhaustive' )
+   else:
+      cppcheck_args.append( '--check-level=normal' )
 
    # If the -s, -e or -x options are specified use the parallel processing -j option.
    if args.check_all or args.check_errors_only or args.generate_xml:
