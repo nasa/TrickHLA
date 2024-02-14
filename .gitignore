@@ -38,11 +38,11 @@ log_*.header
 log_*.trk
 log_*.csv
 _init_log*.csv
-*_checkpoint
-*_checkpoint.running_feds
 chkpnt_*_init
 chkpnt_end
 chkpnt_point
+/sims/**/*_checkpoint
+/sims/**/*_checkpoint.running_feds
 /sims/**/makefile
 Makefile_deps
 Makefile_temp_depends
