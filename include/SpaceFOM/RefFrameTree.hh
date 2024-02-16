@@ -28,6 +28,8 @@ NASA, Johnson Space Center\n
 @python_module{SpaceFOM}
 
 @tldh
+@trick_link_dependency{../../source/SpaceFOM/LRTreeNodeBase.cpp}
+@trick_link_dependency{../../source/SpaceFOM/LRTreeBase.cpp}
 @trick_link_dependency{../../source/SpaceFOM/RefFrameBase.cpp}
 @trick_link_dependency{../../source/SpaceFOM/RefFrameTree.cpp}
 
@@ -48,12 +50,13 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 
 // SpaceFOM include files.
+#include "SpaceFOM/LRTreeBase.hh"
 #include "SpaceFOM/RefFrameBase.hh"
 
 namespace SpaceFOM
 {
 
-class RefFrameTree
+class RefFrameTree: public SpaceFOM::LRTreeBase
 {
 
    // Let the Trick input processor access protected and private data.
@@ -77,28 +80,28 @@ class RefFrameTree
     *  @details Add a SpaceFOM reference frame into the reference frame tree.
     *  @param frame_ptr Pointer to the reference frame to add.
     *  @return Success or failure of the add. */
-   bool add_frame( RefFrameBase *frame_ptr );
+   virtual bool add_frame( RefFrameBase *frame_ptr );
 
-   bool build_tree();
-   bool check_tree();
+   virtual bool build_tree();
+   virtual bool check_tree();
 
-   bool has_frame( char const *name );
-   bool has_frame( std::string const &name );
-   bool has_frame( RefFrameBase const *frame );
+   virtual bool has_frame( char const *name );
+   virtual bool has_frame( std::string const &name );
+   virtual bool has_frame( RefFrameBase const *frame );
 
-   RefFrameBase *find_frame( char const *name );
-   RefFrameBase *find_frame( std::string const &name );
+   virtual RefFrameBase *find_frame( char const *name );
+   virtual RefFrameBase *find_frame( std::string const &name );
 
-   RefFrameBase *find_common_base( char const *child_1,
-                                   char const *child_2 );
-   RefFrameBase *find_common_base( std::string const &child_1,
-                                   std::string const &child_2 );
-   RefFrameBase *find_common_base( RefFrameBase *child_1,
-                                   RefFrameBase *child_2 );
+   virtual RefFrameBase *find_common_base( char const *child_1,
+                                           char const *child_2 );
+   virtual RefFrameBase *find_common_base( std::string const &child_1,
+                                           std::string const &child_2 );
+   virtual RefFrameBase *find_common_base( RefFrameBase *child_1,
+                                           RefFrameBase *child_2 );
 
-  protected:
-   // Map used to build and manage the reference frame tree.
-   std::map< std::string, RefFrameBase * > ref_frame_map;
+   /*! @brief Print out the Reference Frame Tree nodes.
+    *  @param stream Output stream. */
+   virtual void print_tree( std::ostream &stream = std::cout );
 
   private:
    // This object is not copyable

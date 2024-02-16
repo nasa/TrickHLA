@@ -16,6 +16,8 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{LRTreeNodeBase.cpp}
+@trick_link_dependency{LRTreeBase.cpp}
 @trick_link_dependency{RefFrameBase.cpp}
 @trick_link_dependency{RefFrameTree.cpp}
 
@@ -29,8 +31,11 @@ NASA, Johnson Space Center\n
 // System include files.
 
 // Trick include files.
+#include "trick/message_proto.h"
 
 // TrickHLA model include files.
+#include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/DebugHandler.hh"
 
 // SpaceFOM include files.
 #include "SpaceFOM/RefFrameTree.hh"
@@ -62,74 +67,56 @@ RefFrameTree::~RefFrameTree()
  *  @return Success or failure of the add. */
 bool RefFrameTree::add_frame( RefFrameBase *frame_ptr )
 {
-   if ( frame_ptr != NULL ) {
-      ref_frame_map.insert( pair< string, RefFrameBase * >( frame_ptr->packing_data.name, frame_ptr ) );
-      return ( true );
-   }
-   return ( true );
+   return( this->add_node( frame_ptr ));
 }
 
 bool RefFrameTree::build_tree()
 {
-   return ( true );
+   return ( LRTreeBase::build_tree() );
 }
 
 bool RefFrameTree::check_tree()
 {
-   return ( true );
+   return ( LRTreeBase::check_tree() );
+}
+
+/*!
+ * @job_class{scheduled}
+ */
+void RefFrameTree::print_tree( std::ostream &stream )
+{
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+      send_hs( stdout,
+               "RefFrameTree::print_tree():%d\n",
+               __LINE__, THLA_NEWLINE );
+      print_nodes( stream );
+   }
+   return;
 }
 
 bool RefFrameTree::has_frame( char const *name )
 {
-   map< string, RefFrameBase * >::iterator map_iter;
-
-   // Find the frame in the map.
-   map_iter = ref_frame_map.find( string( name ) );
-   if ( map_iter != ref_frame_map.end() ) {
-      return ( true );
-   }
-   return ( false );
+   return ( this->has_node( name ) );
 }
 
 bool RefFrameTree::has_frame( string const &name )
 {
-   map< string, RefFrameBase * >::iterator map_iter;
-
-   // Find the frame in the map.
-   map_iter = ref_frame_map.find( name );
-   if ( map_iter != ref_frame_map.end() ) {
-      return ( true );
-   }
-   return ( false );
+   return ( this->has_node( name ) );
 }
 
 bool RefFrameTree::has_frame( RefFrameBase const *frame )
 {
-   return ( has_frame( frame->packing_data.name ) );
+   return ( has_node( frame ) );
 }
 
 RefFrameBase *RefFrameTree::find_frame( char const *name )
 {
-   map< string, RefFrameBase * >::iterator map_iter;
-
-   // Find the frame in the map.
-   map_iter = ref_frame_map.find( string( name ) );
-   if ( map_iter != ref_frame_map.end() ) {
-      return ( ref_frame_map[string( name )] );
-   }
-   return ( NULL );
+   return ( static_cast<RefFrameBase*>( find_node( name ) ) );
 }
 
 RefFrameBase *RefFrameTree::find_frame( string const &name )
 {
-   map< string, RefFrameBase * >::iterator map_iter;
-
-   // Find the frame in the map.
-   map_iter = ref_frame_map.find( name );
-   if ( map_iter != ref_frame_map.end() ) {
-      return ( ref_frame_map[name] );
-   }
-   return ( NULL );
+   return ( static_cast<RefFrameBase*>( find_node( name ) ) );
 }
 
 RefFrameBase *RefFrameTree::find_common_base(
