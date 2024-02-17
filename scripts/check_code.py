@@ -437,7 +437,7 @@ Examples:\n  check_code -s -o -v\n  check_code -i -o -v\n  check_code -e -o -v\n
    # Configure cppcheck to use an output directory to cache build results.
    cppcheck_args.append( '--cppcheck-build-dir=' + cppcheck_build_dir )
    
-   # Configure the checkers-report located in the output directory.
+   # Configure the checkers-report located in the build directory.
    cppcheck_args.append( '--checkers-report=' + cppcheck_build_dir + '/checkers-report.txt' )
 
    # --exhaustive Check level
