@@ -114,13 +114,34 @@ ExecutionControl::ExecutionControl(
      freeze_inter_count( 0 ),
      freeze_interaction( NULL ),
      scenario_time_epoch( 0.0 ),
-     next_mode_scenario_time( 0.0 ),
-     next_mode_cte_time( 0.0 ),
      current_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED ),
-     next_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED ),
-     least_common_time_step( 0 )
+     next_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED )
 {
-   return;
+   // The next_mode_scenario_time time for the next federation execution mode
+   // change expressed as a federation scenario time reference. Note: this is
+   // value is only meaningful for going into freeze; exiting freeze is
+   // coordinated through a sync point mechanism.
+   // Inherited from ExecutionControlBase, and for IMSim the default is 0.0;
+   this->next_mode_scenario_time = 0.0;
+
+   // The time for the next federation execution mode change expressed as a
+   // Central Timing Equipment (CTE) time reference. The standard for this
+   // reference shall be defined in the federation agreement when CTE is used.
+   // Inherited from ExecutionControlBase, and for IMSim the default is 0.0;
+   this->next_mode_cte_time = 0.0;
+
+   // A 64 bit integer time that represents the base time for the least common
+   // value of all the time step values in the federation execution (LCTS).
+   // This value is set by the Master Federate and does not change during the
+   // federation execution. This is used in the computation to find the next
+   // HLA Logical Time Boundary (HLTB) available to all federates in the
+   // federation execution. The basic equation is
+   //     HLTB = ( floor(GALT/LCTS) + 1 ) * LCTS,
+   // where GALT is the greatest available logical time. This is used to
+   // synchronize the federates in a federation execution to be on a common
+   // logical time boundary.
+   // Inherited from ExecutionControlBase, and for IMSim the default is 0;
+   this->least_common_time_step = 0;
 }
 
 /*!

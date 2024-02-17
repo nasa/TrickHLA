@@ -72,7 +72,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
 
   public:
    /*! @brief Initialization constructor for the IMSim ExecutionControl class. */
-   ExecutionControl( IMSim::ExecutionConfiguration &imsim_config );
+   explicit ExecutionControl( IMSim::ExecutionConfiguration &imsim_config );
    /*! @brief Destructor for the IMSim ExecutionControl class. */
    virtual ~ExecutionControl();
 
@@ -367,17 +367,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
       their local simulation scenario times, their local simulation execution
       times and the HLA logical time. */
 
-   double next_mode_scenario_time; /**<  @trick_units{s}
-      The time for the next federation execution mode change expressed as a
-      federation scenario time reference. Note: this is value is only
-      meaningful for going into freeze; exiting freeze is coordinated through
-      a sync point mechanism. */
-
-   double next_mode_cte_time; /**<  @trick_units{s}
-      The time for the next federation execution mode change expressed as a
-      Central Timing Equipment (CTE) time reference. The standard for this
-      reference shall be defined in the federation agreement when CTE is used. */
-
    short current_execution_mode; /**< @trick_units{--}
       Defines the current running state of the federation execution in terms
       of a finite set of states expressed in the RunMode enumeration.*/
@@ -388,18 +377,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
       used in conjunction with the cte_mode_time, sim_mode_time and
       associated sync point mechanisms to coordinate federation execution
       mode transitions.*/
-
-   int64_t least_common_time_step; /**< @trick_units{--}
-      A 64 bit integer time that represents the base time for the least common
-      value of all the time step values in the federation execution (LCTS).
-      This value is set by the Master Federate and does not change during the
-      federation execution. This is used in the computation to find the next
-      HLA Logical Time Boundary (HLTB) available to all federates in the
-      federation execution. The basic equation is
-            HLTB = ( floor(GALT/LCTS) + 1 ) * LCTS,
-      where GALT is the greatest available logical time. This is used to
-      synchronize the federates in a federation execution to be on a common
-      logical time boundary. */
 
   private:
    // Do not allow the copy constructor.
