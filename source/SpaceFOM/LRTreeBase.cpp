@@ -91,8 +91,7 @@ bool LRTreeBase::add_node( LRTreeNodeBase *node_ptr )
       // Make sure that the node is not already in the tree.
       if ( has_node( node_ptr ) ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-            send_hs( stdout,
-                     "LRTreeBase::add_node():%d WARNING: Node \'%s\' is already in the tree.\n",
+            send_hs( stdout, "LRTreeBase::add_node():%d WARNING: Node \'%s\' is already in the tree.\n",
                      __LINE__, node_ptr->name, THLA_NEWLINE );
          }
          return ( false );
@@ -100,8 +99,7 @@ bool LRTreeBase::add_node( LRTreeNodeBase *node_ptr )
 
       // Check for NULL node name.  The node must have a name.
       if ( node_ptr->name == NULL ) {
-         send_hs( stdout,
-                  "LRTreeBase::add_node():%d ERROR: NULL node name.\n",
+         send_hs( stdout, "LRTreeBase::add_node():%d ERROR: NULL node name.\n",
                   __LINE__, THLA_NEWLINE );
          return ( false );
       }
@@ -141,18 +139,14 @@ bool LRTreeBase::check_tree()
 
 bool LRTreeBase::has_node( unsigned int node_id )
 {
-   if ( node_id >= 0 && node_id < this->nodes.size() ) {
-      return ( true );
-   }
-   return ( false );
+   return ( node_id < this->nodes.size() );
 }
 
 bool LRTreeBase::has_node( char const *name )
 {
    if ( name == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-         send_hs( stdout,
-                  "LRTreeBase::has_node():%d ERROR: NULL node name.\n",
+         send_hs( stdout, "LRTreeBase::has_node():%d ERROR: NULL node name.\n",
                   __LINE__, THLA_NEWLINE );
       }
       return ( false );
@@ -162,16 +156,8 @@ bool LRTreeBase::has_node( char const *name )
 
 bool LRTreeBase::has_node( string const &name )
 {
-   map< string, LRTreeNodeBase * >::iterator map_iter;
-
-   // Find the node in the map.
-   map_iter = node_map.find( name );
-   if ( map_iter != node_map.end() ) {
-      // The node was found.
-      return ( true );
-   }
-   // The node was not found.
-   return ( false );
+   // Returns true if the node was found, false otherwise.
+   return ( node_map.find( name ) != node_map.end() );
 }
 
 bool LRTreeBase::has_node( LRTreeNodeBase const *node )
@@ -195,8 +181,7 @@ LRTreeNodeBase *LRTreeBase::find_node( unsigned int node_id )
 LRTreeNodeBase *LRTreeBase::find_node( char const *name )
 {
    if ( name == NULL ) {
-      send_hs( stdout,
-               "LRTreeBase::has_node():%d ERROR: NULL node name.\n",
+      send_hs( stdout, "LRTreeBase::has_node():%d ERROR: NULL node name.\n",
                __LINE__, THLA_NEWLINE );
       return ( NULL );
    }
@@ -267,8 +252,7 @@ bool LRTreeBase::allocate_paths()
    if ( this->paths == NULL ) {
 
       // Allocation failed.
-      send_hs( stdout,
-               "LRTreeBase::allocate_paths():%d Error: Failed allocation of paths matrix rows.\n",
+      send_hs( stdout, "LRTreeBase::allocate_paths():%d Error: Failed allocation of paths matrix rows.\n",
                __LINE__, THLA_NEWLINE );
       return ( false );
 
@@ -283,8 +267,7 @@ bool LRTreeBase::allocate_paths()
 
          // Check for column allocation failure.
          if ( this->paths[iinc] == NULL ) {
-            send_hs( stdout,
-                     "LRTreeBase::allocate_paths():%d Error: Failed allocation of paths matrix columns for row %d.\n",
+            send_hs( stdout, "LRTreeBase::allocate_paths():%d Error: Failed allocation of paths matrix columns for row %d.\n",
                      __LINE__, iinc, THLA_NEWLINE );
             return ( false );
          }
@@ -299,13 +282,11 @@ bool LRTreeBase::allocate_paths()
  */
 void LRTreeBase::free_paths()
 {
-   int num_nodes;
-
    // Check to see if a paths matrix has been allocated.
    if ( paths != NULL ) {
 
       // Size the path matrix.
-      num_nodes = this->nodes.size();
+      int num_nodes = this->nodes.size();
 
       // Iterate through and free the path matrix.
       // Iterate through the rows.
