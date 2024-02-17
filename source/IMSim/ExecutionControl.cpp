@@ -141,7 +141,8 @@ ExecutionControl::ExecutionControl(
    // synchronize the federates in a federation execution to be on a common
    // logical time boundary.
    // Inherited from ExecutionControlBase, and for IMSim the default is 0;
-   this->least_common_time_step = 0;
+   this->least_common_time_step         = 0;
+   this->least_common_time_step_seconds = 0.0;
 }
 
 /*!
