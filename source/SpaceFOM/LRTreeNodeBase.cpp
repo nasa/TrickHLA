@@ -40,6 +40,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cstring>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
