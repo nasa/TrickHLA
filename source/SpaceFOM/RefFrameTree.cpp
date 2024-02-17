@@ -67,7 +67,7 @@ RefFrameTree::~RefFrameTree()
  *  @return Success or failure of the add. */
 bool RefFrameTree::add_frame( RefFrameBase *frame_ptr )
 {
-   return( this->add_node( frame_ptr ));
+   return ( this->add_node( frame_ptr ) );
 }
 
 bool RefFrameTree::build_tree()
@@ -111,12 +111,12 @@ bool RefFrameTree::has_frame( RefFrameBase const *frame )
 
 RefFrameBase *RefFrameTree::find_frame( char const *name )
 {
-   return ( static_cast<RefFrameBase*>( find_node( name ) ) );
+   return ( static_cast< RefFrameBase * >( find_node( name ) ) );
 }
 
 RefFrameBase *RefFrameTree::find_frame( string const &name )
 {
-   return ( static_cast<RefFrameBase*>( find_node( name ) ) );
+   return ( static_cast< RefFrameBase * >( find_node( name ) ) );
 }
 
 RefFrameBase *RefFrameTree::find_common_base(

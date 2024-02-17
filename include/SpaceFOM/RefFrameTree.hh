@@ -56,7 +56,7 @@ NASA, Johnson Space Center\n
 namespace SpaceFOM
 {
 
-class RefFrameTree: public SpaceFOM::LRTreeBase
+class RefFrameTree : public SpaceFOM::LRTreeBase
 {
 
    // Let the Trick input processor access protected and private data.

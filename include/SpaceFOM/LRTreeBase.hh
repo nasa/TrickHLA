@@ -49,9 +49,9 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <iostream>
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
 // TrickHLA include files.
 
@@ -61,8 +61,8 @@ NASA, Johnson Space Center\n
 namespace SpaceFOM
 {
 
-typedef std::vector< LRTreeNodeBase * > LRTreeNodeVector;
-typedef std::map< std::string, LRTreeNodeBase* > LRTreeNodeMap;
+typedef std::vector< LRTreeNodeBase * >           LRTreeNodeVector;
+typedef std::map< std::string, LRTreeNodeBase * > LRTreeNodeMap;
 
 class LRTreeBase
 {
@@ -119,12 +119,12 @@ class LRTreeBase
    LRTreeNodeVector nodes;    ///< @trick_io{**} Node vector used to build and manage the tree.
    LRTreeNodeMap    node_map; ///< @trick_io{**} Map used to build and manage the tree.
 
-   LRTreeNodeVector ** paths; ///< @trick_io{**} Path matrix used to store and retrieve node-to-node paths.
+   LRTreeNodeVector **paths; ///< @trick_io{**} Path matrix used to store and retrieve node-to-node paths.
 
    virtual bool allocate_paths();
    virtual void free_paths();
 
-private:
+  private:
    // This object is not copyable
    /*! @brief Copy constructor for LRTreeBase class.
     *  @details This constructor is private to prevent inadvertent copies. */
@@ -132,7 +132,6 @@ private:
    /*! @brief Assignment operator for LRTreeBase class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
    LRTreeBase &operator=( LRTreeBase const &rhs );
-
 };
 
 } // namespace SpaceFOM

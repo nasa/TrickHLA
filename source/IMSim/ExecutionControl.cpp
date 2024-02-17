@@ -167,7 +167,7 @@ void ExecutionControl::initialize()
 
    // FIXME: This is not consistent with the IMSim design document.
    // There are things that must me set for the IMSim initialization.
-   //this->use_preset_master = true;
+   // this->use_preset_master = true;
    this->use_preset_master = false;
 
    // FIXME: We won't know this until we try to create the federation execution.
@@ -195,31 +195,30 @@ void ExecutionControl::initialize()
 
    // FIXME: This is not consistent with the IMSim design document.
    // Must use a preset master.
-/*
-   if ( !this->is_master_preset() ) {
-      ostringstream errmsg;
-      errmsg << "IMSim::ExecutionControl::initialize():" << __LINE__
-             << " WARNING: Only a preset master is supported. Make sure to set"
-             << " 'THLA.federate.use_preset_master = true' in your input.py file."
-             << " Setting use_preset_master to true!"
-             << THLA_ENDL;
-      send_hs( stdout, errmsg.str().c_str() );
-      this->use_preset_master = true;
-   }
-
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      if ( this->is_master() ) {
-         send_hs( stdout, "IMSim::ExecutionControl::initialize():%d\n    I AM THE PRESET MASTER%c",
-                  __LINE__, THLA_NEWLINE );
-      } else {
-         send_hs( stdout, "IMSim::ExecutionControl::initialize():%d\n    I AM NOT THE PRESET MASTER%c",
-                  __LINE__, THLA_NEWLINE );
+   /*
+      if ( !this->is_master_preset() ) {
+         ostringstream errmsg;
+         errmsg << "IMSim::ExecutionControl::initialize():" << __LINE__
+                << " WARNING: Only a preset master is supported. Make sure to set"
+                << " 'THLA.federate.use_preset_master = true' in your input.py file."
+                << " Setting use_preset_master to true!"
+                << THLA_ENDL;
+         send_hs( stdout, errmsg.str().c_str() );
+         this->use_preset_master = true;
       }
-   }
-*/
+
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         if ( this->is_master() ) {
+            send_hs( stdout, "IMSim::ExecutionControl::initialize():%d\n    I AM THE PRESET MASTER%c",
+                     __LINE__, THLA_NEWLINE );
+         } else {
+            send_hs( stdout, "IMSim::ExecutionControl::initialize():%d\n    I AM NOT THE PRESET MASTER%c",
+                     __LINE__, THLA_NEWLINE );
+         }
+      }
+   */
 
    return;
-
 }
 
 /*!
@@ -886,8 +885,8 @@ void ExecutionControl::post_multi_phase_init_processes()
    // When we join the federation, setup the list of current federates.
    // When a federate joins / resigns, this list will be automatically
    // updated by each federate.
-// FIXME: This call does not seem to work for the master!?
-//   federate->load_and_print_running_federate_names();
+   // FIXME: This call does not seem to work for the master!?
+   //   federate->load_and_print_running_federate_names();
 
    // Setup HLA time management.
    federate->setup_time_management();
@@ -1435,7 +1434,7 @@ bool ExecutionControl::mark_synchronized( std::wstring const &label )
 
    // First check the multi-phase initialization synchronization point list.
    if ( multiphase_init_sync_pnt_list.contains( label ) ) {
-      return( multiphase_init_sync_pnt_list.mark_synchronized( label ) );
+      return ( multiphase_init_sync_pnt_list.mark_synchronized( label ) );
    }
 
    // Next check the general synchronization point list.
@@ -1444,8 +1443,7 @@ bool ExecutionControl::mark_synchronized( std::wstring const &label )
    }
 
    // Evidently the label was not found.
-   return( false );
-
+   return ( false );
 }
 
 /*!
@@ -1539,7 +1537,6 @@ bool ExecutionControl::contains(
    }
 
    return false;
-
 }
 
 /*!
