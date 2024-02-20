@@ -251,6 +251,46 @@ void LRTreeBase::print_nodes( std::ostream &stream )
 }
 
 /*!
+ * @job_class{scheduled}
+ */
+void LRTreeBase::print_paths( std::ostream &stream )
+{
+
+   int num_nodes;
+
+   //Check to see if a paths matrix has been allocated.
+   if ( paths != NULL ) {
+
+      // Get the size of the path matrix.
+      num_nodes = this->nodes.size();
+
+      // Iterate through the rows.
+      for ( int iinc = 0 ; iinc < num_nodes ; iinc++ ) {
+
+         // Check that the columns have be allocated.
+         if ( paths[iinc] != NULL ) {
+
+            // Iterate through the columns.
+            for ( int jinc = 0 ; jinc < num_nodes ; jinc++ ) {
+
+               // Iterate across the node path vector.
+               vector< LRTreeNodeBase * >::iterator node_iter;
+               for ( node_iter = nodes.begin() ; node_iter < nodes.end() ; node_iter++ ) {
+                  stream << node_iter->node_id;
+               }
+
+            } // End column iteration.
+
+         }
+
+      } // End row iteration.
+
+   }
+
+   return;
+}
+
+/*!
  * @job_class{shutdown}
  */
 bool LRTreeBase::allocate_paths()
@@ -312,13 +352,16 @@ void LRTreeBase::free_paths()
       // Iterate through the rows.
       for ( int iinc = 0 ; iinc < num_nodes ; iinc++ ) {
 
-         // Iterate through the columns.
+         // Check that the columns have been allocated.
          if ( paths[iinc] != NULL ) {
 
+            // Iterate through the columns.
             for ( int jinc = 0 ; jinc < num_nodes ; jinc++ ){
+
                // Clear the path vector.
                paths[iinc][jinc].clear();
-            }
+
+            } // End column iteration.
 
             // Free the allocated path column.
             // Delete the memory.
@@ -326,7 +369,7 @@ void LRTreeBase::free_paths()
             // Set the path column to NULL.
             this->paths[iinc] = NULL;
 
-         } // End column iteration.
+         }
 
       } // End row iteration.
 

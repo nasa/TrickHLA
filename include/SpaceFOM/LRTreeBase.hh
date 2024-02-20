@@ -123,6 +123,7 @@ class LRTreeBase
 
    virtual bool allocate_paths();
    virtual void free_paths();
+   virtual void print_paths( std::ostream &stream = std::cout );
 
 private:
    // This object is not copyable

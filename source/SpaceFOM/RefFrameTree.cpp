@@ -91,6 +91,9 @@ void RefFrameTree::print_tree( std::ostream &stream )
                __LINE__, THLA_NEWLINE );
       print_nodes( stream );
    }
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+      print_paths( stream );
+   }
    return;
 }
 
