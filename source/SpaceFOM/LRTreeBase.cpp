@@ -258,10 +258,9 @@ void LRTreeBase::print_paths( std::ostream &stream )
             // Iterate through the columns.
             for ( int jinc = 0 ; jinc < num_nodes ; jinc++ ) {
 
-               // Iterate across the node path vector.
-               vector< LRTreeNodeBase * >::iterator node_iter;
-               for ( node_iter = nodes.begin() ; node_iter < nodes.end() ; node_iter++ ) {
-                  stream << node_iter->node_id;
+               // Loop through the node path vector.
+               for ( int kinc = 0 ; kinc < nodes.size() ; kinc++ ){
+                  stream << nodes[ kinc ]->node_id;
                }
 
             } // End column iteration.
