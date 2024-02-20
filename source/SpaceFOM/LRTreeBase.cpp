@@ -63,7 +63,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 LRTreeBase::LRTreeBase()
-: paths( NULL )
+   : paths( NULL )
 {
    return;
 }
@@ -91,19 +91,17 @@ bool LRTreeBase::add_node( LRTreeNodeBase *node_ptr )
       // Make sure that the node is not already in the tree.
       if ( has_node( node_ptr ) ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-            send_hs( stdout,
-                     "LRTreeBase::add_node():%d WARNING: Node \'%s\' is already in the tree.\n",
+            send_hs( stdout, "LRTreeBase::add_node():%d WARNING: Node \'%s\' is already in the tree.\n",
                      __LINE__, node_ptr->name, THLA_NEWLINE );
          }
-         return( false );
+         return ( false );
       }
 
       // Check for NULL node name.  The node must have a name.
       if ( node_ptr->name == NULL ) {
-         send_hs( stdout,
-                  "LRTreeBase::add_node():%d ERROR: NULL node name.\n",
+         send_hs( stdout, "LRTreeBase::add_node():%d ERROR: NULL node name.\n",
                   __LINE__, THLA_NEWLINE );
-         return( false );
+         return ( false );
       }
 
       // The node ID for this node is now the node's position in the vector.
@@ -141,37 +139,25 @@ bool LRTreeBase::check_tree()
 
 bool LRTreeBase::has_node( unsigned int node_id )
 {
-   if ( node_id >= 0 && node_id < this->nodes.size() ) {
-      return( true );
-   }
-   return ( false );
+   return ( node_id < this->nodes.size() );
 }
 
-bool LRTreeBase::has_node( char const * name )
+bool LRTreeBase::has_node( char const *name )
 {
    if ( name == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-         send_hs( stdout,
-                  "LRTreeBase::has_node():%d ERROR: NULL node name.\n",
+         send_hs( stdout, "LRTreeBase::has_node():%d ERROR: NULL node name.\n",
                   __LINE__, THLA_NEWLINE );
       }
-      return( false );
+      return ( false );
    }
    return ( has_node( string( name ) ) );
 }
 
 bool LRTreeBase::has_node( string const &name )
 {
-   map< string, LRTreeNodeBase * >::iterator map_iter;
-
-   // Find the node in the map.
-   map_iter = node_map.find( name );
-   if ( map_iter != node_map.end() ) {
-      // The node was found.
-      return ( true );
-   }
-   // The node was not found.
-   return ( false );
+   // Returns true if the node was found, false otherwise.
+   return ( node_map.find( name ) != node_map.end() );
 }
 
 bool LRTreeBase::has_node( LRTreeNodeBase const *node )
@@ -179,8 +165,8 @@ bool LRTreeBase::has_node( LRTreeNodeBase const *node )
    vector< LRTreeNodeBase * >::iterator node_iter;
 
    // Find the node in the vector.
-   for ( node_iter = nodes.begin() ; node_iter < nodes.end() ; node_iter++ ) {
-      if ( *node_iter == node ){
+   for ( node_iter = nodes.begin(); node_iter < nodes.end(); ++node_iter ) {
+      if ( *node_iter == node ) {
          return ( true );
       }
    }
@@ -189,16 +175,15 @@ bool LRTreeBase::has_node( LRTreeNodeBase const *node )
 
 LRTreeNodeBase *LRTreeBase::find_node( unsigned int node_id )
 {
-   return( this->nodes[ node_id ] );
+   return ( this->nodes[node_id] );
 }
 
 LRTreeNodeBase *LRTreeBase::find_node( char const *name )
 {
    if ( name == NULL ) {
-      send_hs( stdout,
-               "LRTreeBase::has_node():%d ERROR: NULL node name.\n",
+      send_hs( stdout, "LRTreeBase::has_node():%d ERROR: NULL node name.\n",
                __LINE__, THLA_NEWLINE );
-      return( NULL );
+      return ( NULL );
    }
    return ( find_node( string( name ) ) );
 }
@@ -244,7 +229,7 @@ LRTreeNodeBase *LRTreeBase::find_common_base(
  */
 void LRTreeBase::print_nodes( std::ostream &stream )
 {
-   for ( int iinc = 0 ; iinc < nodes.size() ; iinc++ ){
+   for ( int iinc = 0; iinc < nodes.size(); ++iinc ) {
       nodes[iinc]->print_node( stream );
    }
    return;
@@ -307,32 +292,29 @@ bool LRTreeBase::allocate_paths()
    if ( this->paths == NULL ) {
 
       // Allocation failed.
-      send_hs( stdout,
-               "LRTreeBase::allocate_paths():%d Error: Failed allocation of paths matrix rows.\n",
+      send_hs( stdout, "LRTreeBase::allocate_paths():%d Error: Failed allocation of paths matrix rows.\n",
                __LINE__, THLA_NEWLINE );
-      return( false );
+      return ( false );
 
-   }
-   else { // Row allocation succeeded.
+   } else { // Row allocation succeeded.
 
       // Allocate the columns of the path matrix.
       // Note that this is always a square matrix.
-      for ( int iinc = 0 ; iinc < num_nodes ; iinc++ ) {
+      for ( int iinc = 0; iinc < num_nodes; ++iinc ) {
 
          // Allocate the columns of the matrix.
          this->paths[iinc] = new LRTreeNodeVector[num_nodes];
 
          // Check for column allocation failure.
-         if ( this->paths[iinc] == NULL ){
-            send_hs( stdout,
-                     "LRTreeBase::allocate_paths():%d Error: Failed allocation of paths matrix columns for row %d.\n",
+         if ( this->paths[iinc] == NULL ) {
+            send_hs( stdout, "LRTreeBase::allocate_paths():%d Error: Failed allocation of paths matrix columns for row %d.\n",
                      __LINE__, iinc, THLA_NEWLINE );
-            return( false );
+            return ( false );
          }
       }
    }
 
-   return( true );
+   return ( true );
 }
 
 /*!
@@ -340,23 +322,20 @@ bool LRTreeBase::allocate_paths()
  */
 void LRTreeBase::free_paths()
 {
-   int num_nodes;
-
-   //Check to see if a paths matrix has been allocated.
+   // Check to see if a paths matrix has been allocated.
    if ( paths != NULL ) {
 
       // Size the path matrix.
-      num_nodes = this->nodes.size();
+      int num_nodes = this->nodes.size();
 
       // Iterate through and free the path matrix.
       // Iterate through the rows.
-      for ( int iinc = 0 ; iinc < num_nodes ; iinc++ ) {
+      for ( int iinc = 0; iinc < num_nodes; ++iinc ) {
 
          // Check that the columns have been allocated.
          if ( paths[iinc] != NULL ) {
 
-            // Iterate through the columns.
-            for ( int jinc = 0 ; jinc < num_nodes ; jinc++ ){
+            for ( int jinc = 0; jinc < num_nodes; ++jinc ) {
 
                // Clear the path vector.
                paths[iinc][jinc].clear();
@@ -365,7 +344,7 @@ void LRTreeBase::free_paths()
 
             // Free the allocated path column.
             // Delete the memory.
-            delete [] this->paths[iinc];
+            delete[] this->paths[iinc];
             // Set the path column to NULL.
             this->paths[iinc] = NULL;
 
@@ -374,11 +353,10 @@ void LRTreeBase::free_paths()
       } // End row iteration.
 
       // Free the allocated path rows.
-      delete [] paths;
+      delete[] paths;
 
       // Mark as NULL.
       paths = NULL;
-
    }
    return;
 }

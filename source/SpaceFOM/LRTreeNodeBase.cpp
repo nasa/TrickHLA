@@ -40,13 +40,14 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cstring>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
 #include "trick/message_proto.h"
 
 /* Global singleton pointer to the memory manager. */
-extern Trick::MemoryManager* trick_MM;
+extern Trick::MemoryManager *trick_MM;
 
 // TrickHLA model include files.
 #include "TrickHLA/CompileConfig.hh"
@@ -63,10 +64,10 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 LRTreeNodeBase::LRTreeNodeBase()
-: name( NULL ),
-  parent( NULL),
-  is_root_node( false ),
-  node_id( 0 )
+   : name( NULL ),
+     parent( NULL ),
+     is_root_node( false ),
+     node_id( 0 )
 {
    return;
 }
@@ -75,17 +76,17 @@ LRTreeNodeBase::LRTreeNodeBase()
  * @job_class{initialization}
  */
 LRTreeNodeBase::LRTreeNodeBase(
-   const char     * node_name,
-   LRTreeNodeBase * node_parent )
-: name( NULL ),
-  parent( NULL),
-  is_root_node( false ),
-  node_id( 0 )
+   const char     *node_name,
+   LRTreeNodeBase *node_parent )
+   : name( NULL ),
+     parent( NULL ),
+     is_root_node( false ),
+     node_id( 0 )
 {
 
    // Copy the name.
-   if (trick_MM != NULL) {
-      name   = trick_MM->mm_strdup( node_name );
+   if ( trick_MM != NULL ) {
+      name = trick_MM->mm_strdup( node_name );
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          send_hs( stdout,
@@ -100,8 +101,7 @@ LRTreeNodeBase::LRTreeNodeBase(
    // Determine root node status.
    if ( node_parent == NULL ) {
       is_root_node = true;
-   }
-   else {
+   } else {
       is_root_node = false;
    }
 
@@ -130,7 +130,7 @@ LRTreeNodeBase::~LRTreeNodeBase()
 /*!
  * @job_class{scheduled}
  */
-void LRTreeNodeBase::set_name( const char * node_name )
+void LRTreeNodeBase::set_name( const char *node_name )
 {
 
    // Check to see if a node name has already been set.
@@ -152,12 +152,11 @@ void LRTreeNodeBase::set_name( const char * node_name )
          // Free the existing name.
          if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
             send_hs( stderr, "SpaceFOM::LRTreeNodeBase::set_name():%d ERROR deleting Trick Memory for 'this->name'%c",
-                  __LINE__, THLA_NEWLINE );
+                     __LINE__, THLA_NEWLINE );
          }
 
          // Copy the new node name.
          name = trick_MM->mm_strdup( node_name );
-
       }
 
    } // The new node name is NULL; so, reset the node name.
@@ -166,12 +165,11 @@ void LRTreeNodeBase::set_name( const char * node_name )
       // Free the existing name.
       if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
          send_hs( stderr, "SpaceFOM::LRTreeNodeBase::set_name():%d ERROR deleting Trick Memory for 'this->name'%c",
-               __LINE__, THLA_NEWLINE );
+                  __LINE__, THLA_NEWLINE );
       }
 
       // Set the node name to NULL.
       name = NULL;
-
    }
 
    return;
@@ -191,8 +189,7 @@ bool LRTreeNodeBase::set_root( bool root_status )
          // Parent frame is NULL so set the root state.
          this->is_root_node = true;
          return ( true );
-      }
-      else {
+      } else {
          // Parent frame is not null.  Automatic fail.
          // Note that we DO NOT change the is_root_node state.
          return ( false );
@@ -208,20 +205,16 @@ bool LRTreeNodeBase::set_root( bool root_status )
          this->is_root_node = false;
          return ( true );
 
-      }
-      else {
+      } else {
 
          // Parent frame is NULL.  Automatic fail.
          // Note that we DO NOT change the is_root_node state.
          return ( false );
-
       }
-
    }
 
    return ( true );
 }
-
 
 /*!
  * @job_class{scheduled}
@@ -230,18 +223,16 @@ void LRTreeNodeBase::print_node( std::ostream &stream )
 {
 
    stream << "Node Name: '" << this->name << "'" << endl
-              << "\tID: " << this->node_id << endl;
+          << "\tID: " << this->node_id << endl;
 
    if ( parent == NULL ) {
-      stream  << "\tParent: <NULL>" << endl;
-   }
-   else {
-      stream  << "\tParent: '" << this->parent->name << "'" << endl;
+      stream << "\tParent: <NULL>" << endl;
+   } else {
+      stream << "\tParent: '" << this->parent->name << "'" << endl;
    }
    if ( is_root_node ) {
       stream << "\tIs Root: True" << endl;
-   }
-   else {
+   } else {
       stream << "\tIs Root: False" << endl;
    }
 

@@ -142,7 +142,7 @@ void RefFrameBase::base_config(
 
    // Set the frame name.
    if ( ref_frame_name != NULL ) {
-      this->set_name(ref_frame_name);
+      this->set_name( ref_frame_name );
    } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
@@ -161,7 +161,7 @@ void RefFrameBase::base_config(
       this->is_root_node             = true;
    }
    if ( ref_frame_parent != NULL ) {
-      this->set_parent_frame(ref_frame_parent);
+      this->set_parent_frame( ref_frame_parent );
    }
 
    //---------------------------------------------------------
@@ -456,7 +456,7 @@ void RefFrameBase::set_parent_frame( RefFrameBase *pframe_ptr )
 
    // Set the parent frame reference pointer.
    this->parent_frame = pframe_ptr;
-   this->parent = pframe_ptr;
+   this->parent       = pframe_ptr;
 
    // Set the parent frame name.
    if ( this->parent_frame != NULL ) {

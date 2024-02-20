@@ -71,8 +71,8 @@ class LRTreeNodeBase
    friend class LRTreeBase;
 
   public:
-   char           * name;   ///< @trick_units{--} Node name.
-   LRTreeNodeBase * parent; ///< @trick_units{--} Pointer to parent node.
+   char           *name;   ///< @trick_units{--} Node name.
+   LRTreeNodeBase *parent; ///< @trick_units{--} Pointer to parent node.
 
   public:
    // Public constructors and destructors.
@@ -82,8 +82,8 @@ class LRTreeNodeBase
    /*! @brief Initialization constructor.
     *  @param name The name of the node to be constructed.
     *  @param parent The parent node in the tree for the constructed node. */
-   LRTreeNodeBase( const char     * node_name,
-                   LRTreeNodeBase * node_parent );
+   LRTreeNodeBase( const char     *node_name,
+                   LRTreeNodeBase *node_parent );
 
    /*! @brief Destructor. */
    virtual ~LRTreeNodeBase();
@@ -92,12 +92,12 @@ class LRTreeNodeBase
     *  @return LRTree node's path index/ID. */
    inline virtual unsigned int get_id()
    {
-      return( node_id );
+      return ( node_id );
    }
 
    /*! @brief Set the name of the node.
     *  @param node_name Name of the node. */
-   virtual void set_name( const char * node_name );
+   virtual void set_name( const char *node_name );
 
    /*! @brief Check to see if this is a root node for the tree.
     *  @return True if this is the root node, false otherwise. */
@@ -117,7 +117,7 @@ class LRTreeNodeBase
    unsigned int node_id; /**< @trick_units{--} Index into the path matrix that is
       assigned by the LRTreeBase class when a node is added. */
 
-private:
+  private:
    // This object is not copyable
    /*! @brief Copy constructor for LRTreeNodeBase class.
     *  @details This constructor is private to prevent inadvertent copies. */
@@ -125,7 +125,6 @@ private:
    /*! @brief Assignment operator for LRTreeNodeBase class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
    LRTreeNodeBase &operator=( LRTreeNodeBase const &rhs );
-
 };
 
 } // namespace SpaceFOM

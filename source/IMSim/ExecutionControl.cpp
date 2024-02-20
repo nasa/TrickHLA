@@ -114,13 +114,35 @@ ExecutionControl::ExecutionControl(
      freeze_inter_count( 0 ),
      freeze_interaction( NULL ),
      scenario_time_epoch( 0.0 ),
-     next_mode_scenario_time( 0.0 ),
-     next_mode_cte_time( 0.0 ),
      current_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED ),
-     next_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED ),
-     least_common_time_step( 0 )
+     next_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED )
 {
-   return;
+   // The next_mode_scenario_time time for the next federation execution mode
+   // change expressed as a federation scenario time reference. Note: this is
+   // value is only meaningful for going into freeze; exiting freeze is
+   // coordinated through a sync point mechanism.
+   // Inherited from ExecutionControlBase, and for IMSim the default is 0.0;
+   this->next_mode_scenario_time = 0.0;
+
+   // The time for the next federation execution mode change expressed as a
+   // Central Timing Equipment (CTE) time reference. The standard for this
+   // reference shall be defined in the federation agreement when CTE is used.
+   // Inherited from ExecutionControlBase, and for IMSim the default is 0.0;
+   this->next_mode_cte_time = 0.0;
+
+   // A 64 bit integer time that represents the base time for the least common
+   // value of all the time step values in the federation execution (LCTS).
+   // This value is set by the Master Federate and does not change during the
+   // federation execution. This is used in the computation to find the next
+   // HLA Logical Time Boundary (HLTB) available to all federates in the
+   // federation execution. The basic equation is
+   //     HLTB = ( floor(GALT/LCTS) + 1 ) * LCTS,
+   // where GALT is the greatest available logical time. This is used to
+   // synchronize the federates in a federation execution to be on a common
+   // logical time boundary.
+   // Inherited from ExecutionControlBase, and for IMSim the default is 0;
+   this->least_common_time_step         = 0;
+   this->least_common_time_step_seconds = 0.0;
 }
 
 /*!
@@ -167,7 +189,7 @@ void ExecutionControl::initialize()
 
    // FIXME: This is not consistent with the IMSim design document.
    // There are things that must me set for the IMSim initialization.
-   //this->use_preset_master = true;
+   // this->use_preset_master = true;
    this->use_preset_master = false;
 
    // FIXME: We won't know this until we try to create the federation execution.
@@ -195,31 +217,30 @@ void ExecutionControl::initialize()
 
    // FIXME: This is not consistent with the IMSim design document.
    // Must use a preset master.
-/*
-   if ( !this->is_master_preset() ) {
-      ostringstream errmsg;
-      errmsg << "IMSim::ExecutionControl::initialize():" << __LINE__
-             << " WARNING: Only a preset master is supported. Make sure to set"
-             << " 'THLA.federate.use_preset_master = true' in your input.py file."
-             << " Setting use_preset_master to true!"
-             << THLA_ENDL;
-      send_hs( stdout, errmsg.str().c_str() );
-      this->use_preset_master = true;
-   }
-
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      if ( this->is_master() ) {
-         send_hs( stdout, "IMSim::ExecutionControl::initialize():%d\n    I AM THE PRESET MASTER%c",
-                  __LINE__, THLA_NEWLINE );
-      } else {
-         send_hs( stdout, "IMSim::ExecutionControl::initialize():%d\n    I AM NOT THE PRESET MASTER%c",
-                  __LINE__, THLA_NEWLINE );
+   /*
+      if ( !this->is_master_preset() ) {
+         ostringstream errmsg;
+         errmsg << "IMSim::ExecutionControl::initialize():" << __LINE__
+                << " WARNING: Only a preset master is supported. Make sure to set"
+                << " 'THLA.federate.use_preset_master = true' in your input.py file."
+                << " Setting use_preset_master to true!"
+                << THLA_ENDL;
+         send_hs( stdout, errmsg.str().c_str() );
+         this->use_preset_master = true;
       }
-   }
-*/
+
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         if ( this->is_master() ) {
+            send_hs( stdout, "IMSim::ExecutionControl::initialize():%d\n    I AM THE PRESET MASTER%c",
+                     __LINE__, THLA_NEWLINE );
+         } else {
+            send_hs( stdout, "IMSim::ExecutionControl::initialize():%d\n    I AM NOT THE PRESET MASTER%c",
+                     __LINE__, THLA_NEWLINE );
+         }
+      }
+   */
 
    return;
-
 }
 
 /*!
@@ -886,8 +907,8 @@ void ExecutionControl::post_multi_phase_init_processes()
    // When we join the federation, setup the list of current federates.
    // When a federate joins / resigns, this list will be automatically
    // updated by each federate.
-// FIXME: This call does not seem to work for the master!?
-//   federate->load_and_print_running_federate_names();
+   // FIXME: This call does not seem to work for the master!?
+   //   federate->load_and_print_running_federate_names();
 
    // Setup HLA time management.
    federate->setup_time_management();
@@ -1435,7 +1456,7 @@ bool ExecutionControl::mark_synchronized( std::wstring const &label )
 
    // First check the multi-phase initialization synchronization point list.
    if ( multiphase_init_sync_pnt_list.contains( label ) ) {
-      return( multiphase_init_sync_pnt_list.mark_synchronized( label ) );
+      return ( multiphase_init_sync_pnt_list.mark_synchronized( label ) );
    }
 
    // Next check the general synchronization point list.
@@ -1444,8 +1465,7 @@ bool ExecutionControl::mark_synchronized( std::wstring const &label )
    }
 
    // Evidently the label was not found.
-   return( false );
-
+   return ( false );
 }
 
 /*!
@@ -1539,7 +1559,6 @@ bool ExecutionControl::contains(
    }
 
    return false;
-
 }
 
 /*!

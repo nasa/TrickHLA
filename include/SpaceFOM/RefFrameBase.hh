@@ -205,7 +205,6 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
    bool debug; ///< @trick_units{--} Debug output flag.
 
   protected:
-
    RefFrameBase *parent_frame; ///< @trick_units{--} Pointer to this frame's parent frame.
 
    TrickHLA::Attribute *name_attr;        ///< @trick_io{**} Reference frame name Attribute.
