@@ -2202,7 +2202,7 @@ void Federate::ask_MOM_for_federate_names()
       MutexProtection auto_unlock_mutex( &joined_federate_mutex );
 
       // NOTE: Do not clear the joined_federate_name_map because it will cause
-      // reflections to fail because lookup will not find the descovered instance.
+      // reflections to fail because lookup will not find the discovered instance.
 
       // Clear the set of federate handles for the joined federates.
       joined_federate_handles.clear();
