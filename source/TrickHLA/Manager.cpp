@@ -2642,7 +2642,7 @@ bool Manager::discover_object_instance(
       federate->add_federate_instance_id( theObject );
       return_value = true;
 
-      // save into my federate's discovered federate storage area
+      // Save into my federate's discovered federate storage area
       federate->add_MOM_HLAfederate_instance_id( theObject, theObjectInstanceName );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {

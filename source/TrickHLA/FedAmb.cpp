@@ -606,10 +606,22 @@ void FedAmb::reflectAttributeValues(
       federate->set_MOM_HLAfederation_instance_attributes( theObject, theAttributeValues );
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-         string id_str;
-         StringUtilities::to_string( id_str, theObject );
-         send_hs( stderr, "FedAmb::reflectAttributeValues():%d Received update to Unknown Object Instance, ID:%s%c",
-                  __LINE__, id_str.c_str(), THLA_NEWLINE );
+         string handle_str;
+         StringUtilities::to_string( handle_str, theObject );
+
+         ostringstream summary;
+         summary << "FedAmb::reflectAttributeValues():" << __LINE__
+                 << " Received update to Unknown Object Instance:"
+                 << handle_str << THLA_ENDL;
+
+         AttributeHandleValueMap::const_iterator attr_iter;
+         for ( attr_iter = theAttributeValues.begin();
+               attr_iter != theAttributeValues.end();
+               ++attr_iter ) {
+            StringUtilities::to_string( handle_str, attr_iter->first );
+            summary << "   + Attribute-Handle:" << handle_str << THLA_ENDL;
+         }
+         send_hs( stdout, summary.str().c_str() );
       }
    }
 }

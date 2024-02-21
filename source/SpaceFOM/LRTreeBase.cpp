@@ -240,35 +240,30 @@ void LRTreeBase::print_nodes( std::ostream &stream )
  */
 void LRTreeBase::print_paths( std::ostream &stream )
 {
-
-   int num_nodes;
-
-   //Check to see if a paths matrix has been allocated.
+   // Check to see if a paths matrix has been allocated.
    if ( paths != NULL ) {
 
       // Get the size of the path matrix.
-      num_nodes = this->nodes.size();
+      int num_nodes = this->nodes.size();
 
       // Iterate through the rows.
-      for ( int iinc = 0 ; iinc < num_nodes ; iinc++ ) {
+      for ( int iinc = 0; iinc < num_nodes; ++iinc ) {
 
          // Check that the columns have be allocated.
          if ( paths[iinc] != NULL ) {
 
             // Iterate through the columns.
-            for ( int jinc = 0 ; jinc < num_nodes ; jinc++ ) {
+            for ( int jinc = 0; jinc < num_nodes; ++jinc ) {
 
                // Loop through the node path vector.
-               for ( int kinc = 0 ; kinc < nodes.size() ; kinc++ ){
-                  stream << nodes[ kinc ]->node_id;
+               for ( int kinc = 0; kinc < nodes.size(); ++kinc ) {
+                  stream << nodes[kinc]->node_id;
                }
 
             } // End column iteration.
-
          }
 
       } // End row iteration.
-
    }
 
    return;
@@ -346,7 +341,6 @@ void LRTreeBase::free_paths()
             delete[] this->paths[iinc];
             // Set the path column to NULL.
             this->paths[iinc] = NULL;
-
          }
 
       } // End row iteration.

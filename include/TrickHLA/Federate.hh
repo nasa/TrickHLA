@@ -1257,18 +1257,19 @@ class Federate
    RTI1516_NAMESPACE::ObjectClassHandle MOM_HLAfederation_class_handle;      ///< @trick_io{**} MOM Federation class handle.
    RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederatesInFederation_handle; ///< @trick_io{**} MOM attribute handle to Federate-count.
    RTI1516_NAMESPACE::AttributeHandle   MOM_HLAautoProvide_handle;           ///< @trick_io{**} MOM AutoProvide attribute handle.
-   TrickHLAObjInstanceNameMap           mom_HLAfederation_instance_name_map; ///< @trick_io{**} Map of the MOM HLAfederation instances.
+   TrickHLAObjInstanceNameMap           MOM_HLAfederation_instance_name_map; ///< @trick_io{**} Map of the MOM HLAfederation instances.
    int                                  auto_provide_setting;                ///< @trick_units{--} MOM Federation wide HLAautoProvide setting.
    int                                  orig_auto_provide_setting;           ///< @trick_units{--} Original MOM Federation wide HLAautoProvide setting when we joined the federation.
 
-   RTI1516_NAMESPACE::ObjectClassHandle MOM_HLAfederate_class_handle;  ///< @trick_io{**} MOM Federate class handle.
-   RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederateType_handle;    ///< @trick_io{**} MOM attribute handle to Federate type (a.k.a name in IEEE 1516-2000).
-   RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederateName_handle;    ///< @trick_io{**} MOM attribute handle to Federate name.
-   RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederate_handle;        ///< @trick_io{**} MOM attribute handle to Federate-Handle.
-   TrickHLAObjInstanceNameMap           mom_HLAfederate_inst_name_map; ///< @trick_io{**} Map of the MOM HLAfederate instances name map.
+   RTI1516_NAMESPACE::ObjectClassHandle MOM_HLAfederate_class_handle; ///< @trick_io{**} MOM Federate class handle.
+   RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederateType_handle;   ///< @trick_io{**} MOM attribute handle to Federate type (a.k.a name in IEEE 1516-2000).
+   RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederateName_handle;   ///< @trick_io{**} MOM attribute handle to Federate name.
+   RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederate_handle;       ///< @trick_io{**} MOM attribute handle to Federate-Handle.
+
+   TrickHLAObjInstanceNameMap MOM_HLAfederate_instance_name_map; ///< @trick_io{**} Map of the MOM HLAfederate instances name map.
 
    MutexLock                            joined_federate_mutex;    ///< @trick_io{**} Mutex to lock thread over critical code sections.
-   TrickHLAObjInstanceNameMap           joined_federate_name_map; ///< @trick_io{**} Map of the federate instances.
+   TrickHLAObjInstanceNameMap           joined_federate_name_map; ///< @trick_io{**} Map of the federate instances and corresponding names.
    RTI1516_NAMESPACE::FederateHandleSet joined_federate_handles;  ///< @trick_io{**} FederateHandles of joined federates.
    VectorOfWstrings                     joined_federate_names;    ///< @trick_io{**} Names of the joined federates.
 
