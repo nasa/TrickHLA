@@ -2289,60 +2289,47 @@ void Manager::send_cyclic_and_requested_data()
                __LINE__, THLA_NEWLINE );
    }
 
+   // Current time values.
    int64_t const sim_time_in_base_time = Int64BaseTime::to_base_time( exec_get_sim_time() );
    int64_t const granted_base_time     = get_granted_base_time();
-   bool const    zero_lookahead        = federate->is_zero_lookahead_time();
-
-   // Initial time values.
-   int64_t   dt      = zero_lookahead ? 0LL : federate->get_lookahead_in_base_time();
-   int64_t   prev_dt = dt;
-   Int64Time granted_plus_lookahead( granted_base_time + dt );
-   Int64Time update_time( granted_plus_lookahead );
+   int64_t const lookahead_base_time   = federate->is_zero_lookahead_time()
+                                            ? 0LL
+                                            : federate->get_lookahead_in_base_time();
 
    // Determine the main thread cycle time for this job if it is not yet known.
    if ( this->job_cycle_base_time <= 0LL ) {
       determine_job_cycle_time();
    }
 
-   // Only update the time if time management is enabled.
-   if ( federate->is_time_management_enabled() ) {
+   // The update_time should be the current granted time plus the data cycle
+   // delta time for this job if HLA Time Management is enabled otherwise it
+   // is the simulation time plus the cycle delta time for this job. Also, the
+   // dt value would then be the job cycle delta time for this job for this
+   // function. 11/28/2006 DDexter
+   //
+   // When Tsim+dt == Tgrant+Lookahead
+   // Tgrant          Tgrant + Lookahead
+   // +---------------+---------------
+   // Tsim            Tsim + dt
+   //
+   // When Tsim+dt > Tgrant+Lookahead
+   // Tgrant          Tmin = Tgrant + Lookahead
+   // +---------------+--------+------
+   // Tsim                     Tsim + dt
+   //
+   // Even when using HLA Time Management the simulation time (Tsim) will
+   // not match the Granted time (Tgrant) for some circumstances, which is
+   // the case for a late joining federate. The data cycle time (dt) is how
+   // often we send and receive data, which may or may not match the lookahead.
+   // This is why we prefer to use an updated time of Tupdate = Tgrant + dt.
+   int64_t   dt      = this->job_cycle_base_time;
+   int64_t   prev_dt = dt;
+   Int64Time update_time( granted_base_time + dt );
 
-      // Check for a zero lookahead time, which means the cycle_time (i.e. dt)
-      // should be zero as well.
-      dt = zero_lookahead ? 0LL : this->job_cycle_base_time;
-
-      // Reuse the update_time if the data cycle time (dt) is the same.
-      if ( dt != prev_dt ) {
-         prev_dt = dt;
-
-         // The update_time should be the current granted time plus the data cycle
-         // delta time for this job if HLA Time Management is enabled otherwise it
-         // is the simulation time plus the cycle delta time for this job. Also, the
-         // dt value would then be the job cycle delta time for this job for this
-         // function. 11/28/2006 DDexter
-         //
-         // When Tsim+dt == Tgrant+Lookahead
-         // Tgrant          Tgrant + Lookahead
-         // +---------------+---------------
-         // Tsim            Tsim + dt
-         //
-         // When Tsim+dt > Tgrant+Lookahead
-         // Tgrant          Tmin = Tgrant + Lookahead
-         // +---------------+--------+------
-         // Tsim                     Tsim + dt
-         //
-         // Even when using HLA Time Management the simulation time (Tsim) will
-         // not match the Granted time (Tgrant) for some circumstances, which is
-         // the case for a late joining federate. The data cycle time (dt) is how
-         // often we send and receive data, which may or may not match the lookahead.
-         // This is why we prefer to use an updated time of Tupdate = Tgrant + dt.
-         update_time.set( granted_base_time + dt );
-
-         // Make sure the update time is not less than the granted time + lookahead.
-         if ( update_time < granted_plus_lookahead ) {
-            update_time.set( granted_plus_lookahead );
-         }
-      }
+   // Make sure the update time is not less than the granted time + lookahead,
+   // which happens if the delta-time step is less than the lookahead time.
+   if ( dt < lookahead_base_time ) {
+      update_time.set( granted_base_time + lookahead_base_time );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -2357,31 +2344,24 @@ void Manager::send_cyclic_and_requested_data()
    for ( unsigned int obj_index = 0; obj_index < this->obj_count; ++obj_index ) {
 
       // Only send data if we are on the data cycle time boundary for this object.
-      if ( this->federate->on_data_cycle_boundary_for_obj( obj_index, sim_time_in_base_time ) ) {
+      if ( federate->on_data_cycle_boundary_for_obj( obj_index, sim_time_in_base_time ) ) {
 
-         // Only update the time if time management is enabled.
-         if ( federate->is_time_management_enabled() ) {
+         // Get the cyclic data time for the object.
+         dt = federate->get_data_cycle_base_time_for_obj( obj_index, this->job_cycle_base_time );
 
-            // Check for a zero lookahead time, which means the cycle_time
-            // (i.e. dt) should be zero as well.
-            dt = zero_lookahead ? 0LL
-                                : this->federate->get_data_cycle_base_time_for_obj(
-                                   obj_index, this->job_cycle_base_time );
+         // Reuse the update_time if the data cycle time (dt) is the same.
+         if ( dt != prev_dt ) {
+            prev_dt = dt;
+            update_time.set( granted_base_time + dt );
 
-            // Reuse the update_time if the data cycle time (dt) is the same.
-            if ( dt != prev_dt ) {
-               prev_dt = dt;
-
-               update_time.set( granted_base_time + dt );
-
-               // Make sure the update time is not less than the granted time + lookahead.
-               if ( update_time < granted_plus_lookahead ) {
-                  update_time.set( granted_plus_lookahead );
-               }
+            // Make sure the update time is not less than the granted time + lookahead,
+            // which happens if the delta-time step is less than the lookahead time.
+            if ( dt < lookahead_base_time ) {
+               update_time.set( granted_base_time + lookahead_base_time );
             }
          }
 
-         // Send the data for the object.
+         // Send the data for the object using the cycle time for this object.
          objects[obj_index].send_cyclic_and_requested_data( update_time );
       }
    }
@@ -2413,7 +2393,7 @@ void Manager::receive_cyclic_data()
    for ( unsigned int n = 0; n < obj_count; ++n ) {
 
       // Only receive data if we are on the data cycle time boundary for this object.
-      if ( this->federate->on_data_cycle_boundary_for_obj( n, sim_time_in_base_time ) ) {
+      if ( federate->on_data_cycle_boundary_for_obj( n, sim_time_in_base_time ) ) {
          objects[n].receive_cyclic_data();
       }
    }
@@ -2835,7 +2815,7 @@ void Manager::release_ownership()
  */
 Int64Interval Manager::get_lookahead() const
 {
-   return this->federate->get_lookahead();
+   return federate->get_lookahead();
 }
 
 /*!
@@ -2844,7 +2824,7 @@ Int64Interval Manager::get_lookahead() const
  */
 Int64Time Manager::get_granted_time() const
 {
-   return this->federate->get_granted_time();
+   return federate->get_granted_time();
 }
 
 /*!
@@ -2852,7 +2832,7 @@ Int64Time Manager::get_granted_time() const
  */
 int64_t const Manager::get_granted_base_time() const
 {
-   return this->federate->get_granted_base_time();
+   return federate->get_granted_base_time();
 }
 
 bool Manager::is_RTI_ready(
@@ -3252,5 +3232,5 @@ RTIambassador *Manager::get_RTI_ambassador()
 
 bool Manager::is_shutdown_called() const
 {
-   return ( ( this->federate != NULL ) ? this->federate->is_shutdown_called() : false );
+   return ( ( this->federate != NULL ) ? federate->is_shutdown_called() : false );
 }
