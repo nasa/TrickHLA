@@ -423,7 +423,7 @@ void ExecutionControl::announce_sync_point(
       }
 
    } else {
-      // By default, mark an unrecognized synchronization point is achieved.
+      // By default, achieve unrecognized synchronization points.
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d Unrecognized synchronization point:'%ls', which will be achieved.%c",
@@ -794,6 +794,103 @@ void ExecutionControl::early_joiner_hla_init_process()
 }
 
 /*!
+@details This routine implements the SpaceFOM Mandatory Late Joiner
+initialization process that achieves any unknown announced sync-points and
+waits for the initialization_complete sync-point to be announced.
+
+@job_class{initialization}
+*/
+void ExecutionControl::mandatory_late_joiner_init_process()
+{
+   // Master Federate can not be a mandatory late joiner or if are not
+   // configured by the user to be a mandatory late joiner just return.
+   if ( is_master() || !federate->is_mandatory_late_joiner() ) {
+      return;
+   }
+
+   // Override settings because this is a mandatory late joiner.
+   this->late_joiner            = true;
+   this->late_joiner_determined = true;
+
+   // Print out diagnostic message if appropriate.
+   if ( !this->does_init_complete_sync_point_exist() ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         send_hs( stdout, "SpaceFOM::ExecutionControl::mandatory_late_joiner_init_process():%d Waiting...%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+   }
+
+   bool         print_summary = DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL );
+   int64_t      wallclock_time;
+   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout sleep_timer;
+
+   // Block until we see the intitialization_complete sync-point announced.
+   while ( !this->does_init_complete_sync_point_exist() ) {
+
+      achieve_all_sync_points( *( federate->get_RTI_ambassador() ) );
+
+      // Check for shutdown.
+      federate->check_for_shutdown_with_termination();
+
+      // Short sleep to release process and not hog CPU.
+      sleep_timer.sleep();
+
+      // Periodically check if we are still an execution member and
+      // display sync-point status if needed as well.
+      if ( !this->does_init_complete_sync_point_exist() ) {
+
+         // To be more efficient, we get the time once and share it.
+         wallclock_time = sleep_timer.time();
+
+         if ( sleep_timer.timeout( wallclock_time ) ) {
+            sleep_timer.reset();
+
+            if ( !print_summary ) {
+               print_summary = DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL );
+            }
+
+            // Check that we maintain federation membership.
+            if ( !federate->is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "SpaceFOM::ExecutionControl::mandatory_late_joiner_init_process():" << __LINE__
+                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
+                      << " This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!"
+                      << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+
+         if ( print_timer.timeout( wallclock_time ) ) {
+            print_timer.reset();
+            print_summary = true;
+         }
+      }
+
+      if ( print_summary ) {
+         print_summary = false;
+
+         ostringstream message;
+         message << "SpaceFOM::ExecutionControl::mandatory_late_joiner_init_process():"
+                 << __LINE__
+                 << " Init-Complete sync-point exists:"
+                 << ( this->does_init_complete_sync_point_exist() ? "Yes" : "No, Still waiting..." )
+                 << THLA_ENDL;
+         send_hs( stdout, message.str().c_str() );
+      }
+   }
+
+   // Print out diagnostic message if appropriate.
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      send_hs( stdout, "SpaceFOM::ExecutionControl::mandatory_late_joiner_init_process():%d This is a Mandatory Late Joining Federate.%c",
+               __LINE__, THLA_NEWLINE );
+   }
+}
+
+/*!
 @details This routine implements the SpaceFOM Late Joiner initialization process
 described in section 7.2 and figure 7-9.
 
@@ -1056,7 +1153,17 @@ void ExecutionControl::pre_multi_phase_init_processes()
       // Perform Late Joiner HLA initialization process.
       this->late_joiner_hla_init_process();
 
+   } else if ( !is_master() && federate->is_mandatory_late_joiner() ) {
+      // Early Joiner but this federate is a mandatory late jointer.
+
+      // Wait for initialization_complete sync-point and achieve unkown sync-points.
+      this->mandatory_late_joiner_init_process();
+
+      // Perform Late Joiner HLA initialization process.
+      this->late_joiner_hla_init_process();
+
    } else {
+      // Early Joiners
 
       // Perform Early Joiner HLA initialization process.
       this->early_joiner_hla_init_process();

@@ -470,7 +470,7 @@ bool SyncPntListBase::achieve_all_sync_points(
 {
    bool acknowledged = false;
 
-   // Iterate through ALL the synchronization points.
+   // Iterate through all the synchronization points.
    vector< SyncPnt * >::const_iterator i;
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
       SyncPnt *sp = ( *i );
@@ -479,7 +479,7 @@ bool SyncPntListBase::achieve_all_sync_points(
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &mutex );
 
-      if ( ( sp != NULL ) && sp->is_valid() && !sp->is_achieved() ) {
+      if ( ( sp != NULL ) && sp->is_announced() ) {
          if ( achieve_sync_point( RTI_amb, sp ) ) {
             acknowledged = true;
          }
@@ -897,13 +897,16 @@ bool SyncPntListBase::achieve_sync_point(
    RTI1516_NAMESPACE::RTIambassador &RTI_amb,
    SyncPnt                          *sp )
 {
+   bool achieved = false;
+
    if ( sp != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string name;
          StringUtilities::to_string( name, sp->get_label() );
          ostringstream msg;
          msg << "SyncPntListBase::achieve_sync_point():" << __LINE__
-             << " Synchronization-Point '" << name << "'" << THLA_ENDL;
+             << " Synchronization-Point '" << name << "', state:"
+             << sp->get_state() << THLA_ENDL;
          send_hs( stdout, msg.str().c_str() );
       }
 
@@ -921,27 +924,27 @@ bool SyncPntListBase::achieve_sync_point(
          // Mark the sync-point as achieved.
          sp->set_state( SYNC_PT_STATE_ACHIEVED );
 
+         achieved = true;
+
       } catch ( SynchronizationPointLabelNotAnnounced const &e ) {
-         throw; // Rethrow the exception.
+         // Keep sync-point state the same, and return false.
       } catch ( FederateNotExecutionMember const &e ) {
-         throw; // Rethrow the exception.
+         // Keep sync-point state the same, and return false.
       } catch ( SaveInProgress const &e ) {
-         throw; // Rethrow the exception.
+         // Keep sync-point state the same, and return false.
       } catch ( RestoreInProgress const &e ) {
-         throw; // Rethrow the exception.
+         // Keep sync-point state the same, and return false.
       } catch ( NotConnected const &e ) {
-         throw; // Rethrow the exception.
+         // Keep sync-point state the same, and return false.
       } catch ( RTIinternalError const &e ) {
-         throw; // Rethrow the exception.
+         // Keep sync-point state the same, and return false.
       }
 
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      return true;
    }
-   return false;
+   return achieved;
 }
 
 bool SyncPntListBase::wait_for_synchronization(
