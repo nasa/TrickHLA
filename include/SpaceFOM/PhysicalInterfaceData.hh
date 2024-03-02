@@ -26,8 +26,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef SPACEFOM_PYHSICAL_INTERFACE_DATA_HH
-#define SPACEFOM_PYHSICAL_INTERFACE_DATA_HH
+#ifndef SPACEFOM_PHYSICAL_INTERFACE_DATA_HH
+#define SPACEFOM_PHYSICAL_INTERFACE_DATA_HH
 
 #include "SpaceFOM/QuaternionData.hh"
 
@@ -46,4 +46,4 @@ class PhysicalInterfaceData
 
 } // namespace SpaceFOM
 
-#endif // SPACEFOM_PYHSICAL_INTERFACE_DATA_HH: Do NOT put anything after this line!
+#endif // SPACEFOM_PHYSICAL_INTERFACE_DATA_HH: Do NOT put anything after this line!
