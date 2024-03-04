@@ -26,8 +26,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef SPACEFOM_PYHSICAL_ENTITY_DATA_HH
-#define SPACEFOM_PYHSICAL_ENTITY_DATA_HH
+#ifndef SPACEFOM_PHYSICAL_ENTITY_DATA_HH
+#define SPACEFOM_PHYSICAL_ENTITY_DATA_HH
 
 #include "SpaceFOM/QuaternionData.hh"
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
@@ -55,4 +55,4 @@ class PhysicalEntityData
 
 } // namespace SpaceFOM
 
-#endif // SPACEFOM_PYHSICAL_ENTITY_DATA_HH: Do NOT put anything after this line!
+#endif // SPACEFOM_PHYSICAL_ENTITY_DATA_HH: Do NOT put anything after this line!
