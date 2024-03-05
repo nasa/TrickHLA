@@ -1143,9 +1143,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // Set the ExCO current and next run modes.
    set_current_execution_control_mode( EXECUTION_CONTROL_INITIALIZING );
-   if ( ExCO != NULL ) {
-      ExCO->set_current_execution_mode( EXECUTION_MODE_INITIALIZING );
-   }
+   ExCO->set_current_execution_mode( EXECUTION_MODE_INITIALIZING );
    set_requested_execution_control_mode( EXECUTION_CONTROL_INITIALIZING );
    if ( is_master() ) {
       set_next_execution_control_mode( EXECUTION_CONTROL_INITIALIZING );
