@@ -152,7 +152,7 @@ void ExecutionConfiguration::configure_attributes()
    string exco_name_str;
    string trick_name_str;
 
-   // Check to make sure we have a reference to the TrickHLA::FedAmb.
+   // Check to make sure we have an S_define name for this ExCO instance.
    if ( S_define_name == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionConfiguration::configure_attributes():" << __LINE__

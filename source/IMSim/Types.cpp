@@ -277,8 +277,12 @@ string IMSim::pause_pnt_state_enum_to_string(
          return "PAUSE_POINT_STATE_RUN";
          break;
 
+      case PAUSE_POINT_STATE_FREEZE:
+         return "SYNC_PT_STATE_FREEZE";
+         break;
+
       case PAUSE_POINT_STATE_EXIT:
-         return "SYNC_PT_STATE_ACHIEVED";
+         return "SYNC_PT_STATE_EXIT";
          break;
 
       case PAUSE_POINT_STATE_RESTART:
@@ -287,10 +291,6 @@ string IMSim::pause_pnt_state_enum_to_string(
 
       case PAUSE_POINT_STATE_RECONFIG:
          return "PAUSE_POINT_STATE_RECONFIG";
-         break;
-
-      case PAUSE_POINT_STATE_EXIT:
-         return "SYNC_POINT_STATE_SYNCHRONIZED";
          break;
 
       default:

@@ -3115,7 +3115,6 @@ void Object::create_attribute_set(
    }
 }
 
-#if defined( THLA_QUEUE_REFLECTED_ATTRIBUTES )
 /*!
  * @job_class{scheduled}
  */
@@ -3128,7 +3127,6 @@ void Object::enqueue_data(
 
    thla_reflected_attributes_queue.push( theAttributes );
 }
-#endif // THLA_QUEUE_REFLECTED_ATTRIBUTES
 
 /*!
  * @details This routine is called by the federate ambassador when new

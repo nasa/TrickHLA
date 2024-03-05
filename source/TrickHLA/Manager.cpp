@@ -188,7 +188,7 @@ void Manager::initialize()
       send_hs( stdout, "Manager::initialize():%d%c", __LINE__, THLA_NEWLINE );
    }
 
-   // Check to make sure we have a reference to the TrickHLA::Manager.
+   // Check to make sure we have a reference to the TrickHLA::Federate.
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::initialize():" << __LINE__
@@ -2622,7 +2622,7 @@ bool Manager::discover_object_instance(
       federate->add_federate_instance_id( theObject );
       return_value = true;
 
-      // save into my federate's discovered federate storage area
+      // Save into my federate's discovered federate storage area
       federate->add_MOM_HLAfederate_instance_id( theObject, theObjectInstanceName );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {

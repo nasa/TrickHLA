@@ -199,14 +199,14 @@ Federate::Federate()
      MOM_HLAfederation_class_handle(),
      MOM_HLAfederatesInFederation_handle(),
      MOM_HLAautoProvide_handle(),
-     mom_HLAfederation_instance_name_map(),
+     MOM_HLAfederation_instance_name_map(),
      auto_provide_setting( -1 ),
      orig_auto_provide_setting( -1 ),
      MOM_HLAfederate_class_handle(),
      MOM_HLAfederateType_handle(),
      MOM_HLAfederateName_handle(),
      MOM_HLAfederate_handle(),
-     mom_HLAfederate_inst_name_map(),
+     MOM_HLAfederate_instance_name_map(),
      joined_federate_mutex(),
      joined_federate_name_map(),
      joined_federate_handles(),
@@ -321,10 +321,10 @@ Federate::~Federate()
    clear_running_feds();
 
    // Clear the MOM HLAfederation instance name map.
-   mom_HLAfederation_instance_name_map.clear();
+   MOM_HLAfederation_instance_name_map.clear();
 
    // Clear the list of discovered object federate names.
-   mom_HLAfederate_inst_name_map.clear();
+   MOM_HLAfederate_instance_name_map.clear();
 
    // Set the references to the ambassadors.
    federate_ambassador = NULL;
@@ -906,6 +906,16 @@ void Federate::remove_federate_instance_id(
    iter = joined_federate_name_map.find( instance_hndl );
    if ( iter != joined_federate_name_map.end() ) {
       joined_federate_name_map.erase( iter );
+
+      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string handle_str;
+         StringUtilities::to_string( handle_str, instance_hndl );
+
+         ostringstream summary;
+         summary << "Federate::remove_federate_instance_id():" << __LINE__
+                 << " Object Instance:" << handle_str << THLA_ENDL;
+         send_hs( stdout, summary.str().c_str() );
+      }
    }
 }
 
@@ -1959,8 +1969,25 @@ void Federate::subscribe_attributes(
    AttributeHandleSet const &attribute_list )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::subscribe_attributes():%d%c",
-               __LINE__, THLA_NEWLINE );
+      ostringstream summary;
+      summary << "Federate::subscribe_attributes():" << __LINE__ << THLA_ENDL;
+
+      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string handle_str;
+         StringUtilities::to_string( handle_str, class_handle );
+         summary << "  Class-Handle:" << handle_str << " with "
+                 << attribute_list.size() << " Attributes" << THLA_ENDL;
+
+         AttributeHandleSet::const_iterator attr_iter;
+         for ( attr_iter = attribute_list.begin();
+               attr_iter != attribute_list.end();
+               ++attr_iter ) {
+
+            StringUtilities::to_string( handle_str, *attr_iter );
+            summary << "   + Attribute-Handle:" << handle_str << THLA_ENDL;
+         }
+      }
+      send_hs( stdout, summary.str().c_str() );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -2018,8 +2045,24 @@ void Federate::unsubscribe_attributes(
    AttributeHandleSet const &attribute_list )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::unsubscribe_attributes():%d%c",
-               __LINE__, THLA_NEWLINE );
+      ostringstream summary;
+      summary << "Federate::unsubscribe_attributes():" << __LINE__ << THLA_ENDL;
+
+      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string handle_str;
+         StringUtilities::to_string( handle_str, class_handle );
+         summary << "  Class-Handle:" << handle_str << " with "
+                 << attribute_list.size() << " Attributes" << THLA_ENDL;
+
+         AttributeHandleSet::const_iterator attr_iter;
+         for ( attr_iter = attribute_list.begin();
+               attr_iter != attribute_list.end();
+               ++attr_iter ) {
+            StringUtilities::to_string( handle_str, *attr_iter );
+            summary << "   + Attribute-Handle:" << handle_str << THLA_ENDL;
+         }
+      }
+      send_hs( stdout, summary.str().c_str() );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -2073,8 +2116,24 @@ void Federate::request_attribute_update(
    AttributeHandleSet const &attribute_list )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::request_attribute_update():%d%c",
-               __LINE__, THLA_NEWLINE );
+      ostringstream summary;
+      summary << "Federate::request_attribute_update():" << __LINE__ << THLA_ENDL;
+
+      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string handle_str;
+         StringUtilities::to_string( handle_str, class_handle );
+         summary << "  Class-Handle:" << handle_str << " with "
+                 << attribute_list.size() << " Attributes" << THLA_ENDL;
+
+         AttributeHandleSet::const_iterator attr_iter;
+         for ( attr_iter = attribute_list.begin();
+               attr_iter != attribute_list.end();
+               ++attr_iter ) {
+            StringUtilities::to_string( handle_str, *attr_iter );
+            summary << "   + Attribute-Handle:" << handle_str << THLA_ENDL;
+         }
+      }
+      send_hs( stdout, summary.str().c_str() );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -2141,8 +2200,8 @@ void Federate::ask_MOM_for_federate_names()
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &joined_federate_mutex );
 
-      // Clear the joined federate name map.
-      joined_federate_name_map.clear();
+      // NOTE: Do not clear the joined_federate_name_map because it will cause
+      // reflections to fail because lookup will not find the discovered instance.
 
       // Clear the set of federate handles for the joined federates.
       joined_federate_handles.clear();
@@ -2165,13 +2224,24 @@ void Federate::ask_MOM_for_federate_names()
    requestedAttributes.insert( MOM_HLAfederateName_handle );
    requestedAttributes.insert( MOM_HLAfederate_handle );
    request_attribute_update( MOM_HLAfederate_class_handle, requestedAttributes );
+
+   fedMomAttributes.clear();
+   requestedAttributes.clear();
 }
 
 void Federate::unsubscribe_all_HLAfederate_class_attributes_from_MOM()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::unsubscribe_all_HLAfederate_class_attributes_from_MOM():%d%c",
-               __LINE__, THLA_NEWLINE );
+      ostringstream summary;
+      summary << "Federate::unsubscribe_all_HLAfederate_class_attributes_from_MOM():"
+              << __LINE__ << THLA_ENDL;
+
+      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string handle_str;
+         StringUtilities::to_string( handle_str, MOM_HLAfederate_class_handle );
+         summary << "  Class-Handle:" << handle_str << THLA_ENDL;
+      }
+      send_hs( stdout, summary.str().c_str() );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -6109,6 +6179,9 @@ void Federate::ask_MOM_for_auto_provide_setting()
                __LINE__, ( ( auto_provide_setting != 0 ) ? "Yes" : "No" ),
                auto_provide_setting, THLA_NEWLINE );
    }
+
+   fedMomAttributes.clear();
+   requestedAttributes.clear();
 }
 
 void Federate::enable_MOM_auto_provide_setting(
@@ -6137,7 +6210,8 @@ void Federate::enable_MOM_auto_provide_setting(
 
    ParameterHandleValueMap param_values_map;
    param_values_map[MOM_HLAautoProvide_param_handle] =
-      VariableLengthData( &requested_auto_provide, sizeof( requested_auto_provide ) );
+      VariableLengthData( &requested_auto_provide,
+                          sizeof( requested_auto_provide ) );
 
    send_interaction( MOM_HLAsetSwitches_class_handle, param_values_map );
 
@@ -6164,7 +6238,6 @@ void Federate::backup_auto_provide_setting_from_MOM_then_disable()
 
 void Federate::restore_orig_MOM_auto_provide_setting()
 {
-
    // Only update the auto-provide setting if the original setting does not
    // match the current setting.
    if ( auto_provide_setting != orig_auto_provide_setting ) {
@@ -6374,8 +6447,11 @@ MOM just informed us that there are %d federates currently running in the federa
       send_hs( stdout, summary.str().c_str() );
    }
 
-   // clear the entry since it was absorbed into running_feds...
+   // Clear the entry since it was absorbed into running_feds...
    joined_federate_name_map.clear();
+
+   fedMomAttributes.clear();
+   requestedAttributes.clear();
 
    // Do not un-subscribe to this MOM data; we DO want updates as federates
    // join / resign the federation!
@@ -6433,7 +6509,7 @@ void Federate::update_running_feds()
             map_iter != joined_federate_name_map.end();
             ++map_iter ) {
          send_hs( stdout, "Federate::update_running_feds():%d joined_federate_name_map[%ls]=%ls %c",
-                  __LINE__, mom_HLAfederate_inst_name_map[map_iter->first].c_str(),
+                  __LINE__, MOM_HLAfederate_instance_name_map[map_iter->first].c_str(),
                   map_iter->second.c_str(), THLA_NEWLINE );
       }
 
@@ -6462,7 +6538,7 @@ void Federate::update_running_feds()
       this->running_feds[index].name = StringUtilities::ip_strdup_wstring( map_iter->second.c_str() );
 
       this->running_feds[index].MOM_instance_name = StringUtilities::ip_strdup_wstring(
-         mom_HLAfederate_inst_name_map[map_iter->first].c_str() );
+         MOM_HLAfederate_instance_name_map[map_iter->first].c_str() );
 
       // If the federate was running at the time of the checkpoint, it must be
       // a 'required' federate in the restore, regardless if it is was required
@@ -6498,7 +6574,7 @@ void Federate::add_a_single_entry_into_running_feds()
 
       TrickHLAObjInstanceNameMap::const_iterator map_iter;
       map_iter                                        = joined_federate_name_map.begin();
-      temp_feds[running_feds_count].MOM_instance_name = StringUtilities::ip_strdup_wstring( mom_HLAfederate_inst_name_map[map_iter->first].c_str() );
+      temp_feds[running_feds_count].MOM_instance_name = StringUtilities::ip_strdup_wstring( MOM_HLAfederate_instance_name_map[map_iter->first].c_str() );
       temp_feds[running_feds_count].name              = StringUtilities::ip_strdup_wstring( map_iter->second.c_str() );
       temp_feds[running_feds_count].required          = true;
 
@@ -6531,7 +6607,20 @@ void Federate::add_MOM_HLAfederate_instance_id(
    ObjectInstanceHandle instance_hndl,
    wstring const       &instance_name )
 {
-   mom_HLAfederate_inst_name_map[instance_hndl] = instance_name;
+   this->MOM_HLAfederate_instance_name_map[instance_hndl] = instance_name;
+
+   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      string handle_str;
+      StringUtilities::to_string( handle_str, instance_hndl );
+      string name_str;
+      StringUtilities::to_string( name_str, instance_name );
+
+      ostringstream summary;
+      summary << "Federate::add_MOM_HLAfederate_instance_id():" << __LINE__
+              << " Object '" << name_str << "', with Instance Handle:"
+              << handle_str << THLA_ENDL;
+      send_hs( stdout, summary.str().c_str() );
+   }
 }
 
 void Federate::remove_MOM_HLAfederate_instance_id(
@@ -6544,19 +6633,30 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    char const *tFedName  = NULL;
    bool        foundName = false;
 
-   TrickHLAObjInstanceNameMap::iterator iter = mom_HLAfederate_inst_name_map.find( instance_hndl );
-   if ( iter != mom_HLAfederate_inst_name_map.end() ) {
+   TrickHLAObjInstanceNameMap::iterator iter = MOM_HLAfederate_instance_name_map.find( instance_hndl );
+   if ( iter != MOM_HLAfederate_instance_name_map.end() ) {
       tMOMName  = StringUtilities::ip_strdup_wstring( iter->second.c_str() );
       foundName = true;
-      mom_HLAfederate_inst_name_map.erase( iter );
+      MOM_HLAfederate_instance_name_map.erase( iter );
+
+      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string handle_str;
+         StringUtilities::to_string( handle_str, instance_hndl );
+
+         ostringstream summary;
+         summary << "Federate::remove_MOM_HLAfederate_instance_id():" << __LINE__
+                 << " Object '" << tMOMName << "', with Instance Handle:"
+                 << handle_str << THLA_ENDL;
+         send_hs( stdout, summary.str().c_str() );
+      }
    }
 
-   // if the federate_id was not found, there is nothing else to do so exit the routine...
+   // If the federate_id was not found, there is nothing else to do so exit the routine...
    if ( !foundName ) {
       return;
    }
 
-   // search for the federate information from running_feds...
+   // Search for the federate information from running_feds...
    foundName = false;
    for ( unsigned int i = 0; i < running_feds_count; ++i ) {
       if ( !strcmp( running_feds[i].MOM_instance_name, tMOMName ) ) {
@@ -6580,7 +6680,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
       alloc_type( this->running_feds_count - 1, "TrickHLA::KnownFederate" ) );
    if ( tmp_feds == NULL ) {
       ostringstream errmsg;
-      errmsg << "Federate::remove_discovered_object_federate_instance_id():" << __LINE__
+      errmsg << "Federate::remove_MOM_HLAfederate_instance_id():" << __LINE__
              << " ERROR: Could not allocate memory for tmp_feds!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -6610,7 +6710,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_hndl );
-      send_hs( stderr, "Federate::remove_discovered_object_federate_instance_id():%d \
+      send_hs( stderr, "Federate::remove_MOM_HLAfederate_instance_id():%d \
 Removed Federate '%s' Instance-ID:%s Valid-ID:%s %c",
                __LINE__, tFedName, id_str.c_str(),
                ( instance_hndl.isValid() ? "Yes" : "No" ), THLA_NEWLINE );
@@ -6624,17 +6724,34 @@ void Federate::add_MOM_HLAfederation_instance_id(
    StringUtilities::to_string( id_str, instance_hndl );
    wstring id_ws;
    StringUtilities::to_wstring( id_ws, id_str );
-   mom_HLAfederation_instance_name_map[instance_hndl] = id_ws;
+   MOM_HLAfederation_instance_name_map[instance_hndl] = id_ws;
+
+   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      ostringstream summary;
+      summary << "Federate::add_MOM_HLAfederation_instance_id():" << __LINE__
+              << " Object Instance:" << id_str << THLA_ENDL;
+      send_hs( stdout, summary.str().c_str() );
+   }
 }
 
 void Federate::remove_MOM_HLAfederation_instance_id(
    ObjectInstanceHandle instance_hndl )
 {
    TrickHLAObjInstanceNameMap::iterator iter;
-   iter = mom_HLAfederation_instance_name_map.find( instance_hndl );
+   iter = MOM_HLAfederation_instance_name_map.find( instance_hndl );
 
-   if ( iter != mom_HLAfederation_instance_name_map.end() ) {
-      mom_HLAfederation_instance_name_map.erase( iter );
+   if ( iter != MOM_HLAfederation_instance_name_map.end() ) {
+      MOM_HLAfederation_instance_name_map.erase( iter );
+
+      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string handle_str;
+         StringUtilities::to_string( handle_str, instance_hndl );
+
+         ostringstream summary;
+         summary << "Federate::remove_MOM_HLAfederation_instance_id():" << __LINE__
+                 << " Object Instance:" << handle_str << THLA_ENDL;
+         send_hs( stdout, summary.str().c_str() );
+      }
    }
 }
 
@@ -7866,7 +7983,7 @@ bool Federate::is_federate_executing() const
 bool Federate::is_MOM_HLAfederation_instance_id(
    ObjectInstanceHandle instance_hndl )
 {
-   return ( mom_HLAfederation_instance_name_map.find( instance_hndl ) != mom_HLAfederation_instance_name_map.end() );
+   return ( MOM_HLAfederation_instance_name_map.find( instance_hndl ) != MOM_HLAfederation_instance_name_map.end() );
 }
 
 void Federate::set_MOM_HLAfederation_instance_attributes(
@@ -7989,7 +8106,9 @@ void Federate::restore_federate_handles_from_MOM()
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &joined_federate_mutex );
 
-      // Clear the joined federate name map.
+      // Note: Since we are doing reset we can safely clear the joined federate
+      // name map. If we were not resetting, clearing the map will cause reflections
+      // to fail since the instance lookup will fail.
       joined_federate_name_map.clear();
 
       // Clear the set of federate handles for the joined federates.
@@ -8069,6 +8188,9 @@ void Federate::restore_federate_handles_from_MOM()
 
    // Make sure that we are no longer in federate handle rebuild mode...
    federate_ambassador->reset_federation_restored_rebuild_federate_handle_set();
+
+   fedMomAttributes.clear();
+   requestedAttributes.clear();
 }
 
 void Federate::rebuild_federate_handles(

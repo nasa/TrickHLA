@@ -169,6 +169,18 @@ Multiphase Initialization Design with Late Joiners, Rejoiners and Federation Sav
     <interactions>
         <interactionClass>
             <name>HLAinteractionRoot</name>
+            <interactionClass>
+                <name>Freeze</name>
+                <sharing>PublishSubscribe</sharing>
+                <transportation>HLAreliable</transportation>
+                <order>TimeStamp</order>
+                <semantics></semantics>
+                <parameter>
+                    <name>time</name>
+                    <dataType>HLAinteger64BE</dataType>
+                    <semantics></semantics>
+                </parameter>
+            </interactionClass>
         </interactionClass>
     </interactions>
     <synchronizations>
@@ -201,6 +213,18 @@ Multiphase Initialization Design with Late Joiners, Rejoiners and Federation Sav
             <dataType>NA</dataType>
             <capability>RegisterAchieve</capability>
             <semantics>Used to control the federation execution save processs.</semantics>
+        </synchronizationPoint>
+        <synchronizationPoint>
+            <label>FEDRUN_v2</label>
+            <dataType>NA</dataType>
+            <capability>RegisterAchieve</capability>
+            <semantics>Used to control the federation run mode transition.</semantics>
+        </synchronizationPoint>
+        <synchronizationPoint>
+            <label>pause_0.0</label>
+            <dataType>NA</dataType>
+            <capability>RegisterAchieve</capability>
+            <semantics>Startup in freeze sync point.</semantics>
         </synchronizationPoint>
     </synchronizations>
     <switches>
