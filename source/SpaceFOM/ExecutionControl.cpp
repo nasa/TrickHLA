@@ -2393,8 +2393,7 @@ void ExecutionControl::freeze_init()
    // where this is a late joining federate in initialization. For that
    // one case, do NOT use the SpaceFOM::ExecutionControlBase::freeze_mode_transition()
    // routine. Just proceed to freeze.
-   if ( !is_late_joiner()
-        || ( get_current_execution_control_mode() != EXECUTION_CONTROL_INITIALIZING ) ) {
+   if ( !is_late_joiner() || ( get_current_execution_control_mode() != EXECUTION_CONTROL_INITIALIZING ) ) {
       // Tell Execution Control to transition to Freeze.
       freeze_mode_transition();
    }
