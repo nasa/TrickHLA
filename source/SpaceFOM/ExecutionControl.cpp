@@ -168,11 +168,11 @@ void ExecutionControl::initialize()
    }
 
    // There are things that must me set for the SpaceFOM initialization.
-   this->use_preset_master = true;
+   use_preset_master = true;
 
    // If this is the Master or Pacing federate, then it must support Time
    // Management and be both Time Regulating and Time Constrained.
-   if ( this->is_master() || this->is_pacing() ) {
+   if ( is_master() || is_pacing() ) {
       federate->time_management  = true;
       federate->time_regulating  = true;
       federate->time_constrained = true;
@@ -181,21 +181,21 @@ void ExecutionControl::initialize()
    // The software frame is set from the ExecutionControl Least Common Time Step.
    // For the Master federate the Trick simulation software frame must
    // match the Least Common Time Step (LCTS).
-   if ( this->is_master() ) {
+   if ( is_master() ) {
       double software_frame_time = Int64BaseTime::to_seconds( least_common_time_step );
       exec_set_software_frame( software_frame_time );
    }
 
    // Add the Mode Transition Request synchronization points.
-   this->add_sync_point( MTR_RUN_SYNC_POINT );
-   this->add_sync_point( MTR_FREEZE_SYNC_POINT );
-   this->add_sync_point( MTR_SHUTDOWN_SYNC_POINT );
+   add_sync_point( MTR_RUN_SYNC_POINT );
+   add_sync_point( MTR_FREEZE_SYNC_POINT );
+   add_sync_point( MTR_SHUTDOWN_SYNC_POINT );
 
    // Make sure we initialize the base class.
    TrickHLA::ExecutionControlBase::initialize();
 
    // Must use a preset master.
-   if ( !this->is_master_preset() ) {
+   if ( !is_master_preset() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
              << " WARNING: Only a preset master is supported. Make sure to set"
@@ -207,7 +207,7 @@ void ExecutionControl::initialize()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      if ( this->is_master() ) {
+      if ( is_master() ) {
          send_hs( stdout, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM THE PRESET MASTER%c",
                   __LINE__, THLA_NEWLINE );
       } else {
@@ -252,7 +252,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    mtr_interaction->set_FOM_name( const_cast< char * >( "ModeTransitionRequest" ) ); // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
    mtr_interaction->set_handler( &mtr_interaction_handler );                         // cppcheck-suppress [nullPointerRedundantCheck,unmatchedSuppression]
    mtr_interaction_handler.set_name( "ModeTransitionRequest" );
-   if ( this->is_master() ) {
+   if ( is_master() ) {
       mtr_interaction->set_subscribe();
    } else {
       mtr_interaction->set_publish();
@@ -354,7 +354,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
  */
 void ExecutionControl::setup_object_RTI_handles()
 {
-   ExecutionConfiguration *ExCO = this->get_execution_configuration();
+   ExecutionConfiguration *ExCO = get_execution_configuration();
    if ( ExCO != NULL ) {
       this->manager->setup_object_RTI_handles( 1, ExCO );
    } else {
@@ -383,13 +383,13 @@ void ExecutionControl::setup_interaction_RTI_handles()
 void ExecutionControl::add_initialization_sync_points()
 {
    // Add the initialization synchronization points used for startup regulation.
-   this->add_sync_point( SpaceFOM::OBJECTS_DISCOVERED_SYNC_POINT );
-   this->add_sync_point( SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT );
-   this->add_sync_point( SpaceFOM::INIT_COMPLETED_SYNC_POINT );
-   this->add_sync_point( SpaceFOM::INIT_STARTED_SYNC_POINT );
+   add_sync_point( SpaceFOM::OBJECTS_DISCOVERED_SYNC_POINT );
+   add_sync_point( SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT );
+   add_sync_point( SpaceFOM::INIT_COMPLETED_SYNC_POINT );
+   add_sync_point( SpaceFOM::INIT_STARTED_SYNC_POINT );
 
    // Add the multiphase initialization synchronization points.
-   this->add_multiphase_init_sync_points();
+   add_multiphase_init_sync_points();
 }
 
 void ExecutionControl::announce_sync_point(
@@ -398,10 +398,10 @@ void ExecutionControl::announce_sync_point(
    RTI1516_USERDATA const           &user_supplied_tag )
 {
    // Check to see if the synchronization point is known?
-   if ( this->contains( label ) ) {
+   if ( contains( label ) ) {
 
       // Mark initialization sync-point as existing/announced.
-      if ( this->mark_announced( label ) ) {
+      if ( mark_announced( label ) ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM synchronization point announced:'%ls'%c",
                      __LINE__, label.c_str(), THLA_NEWLINE );
@@ -432,14 +432,14 @@ void ExecutionControl::announce_sync_point(
 
       // Unknown synchronization point so achieve it but don't wait for the
       // federation to be synchronized on it.
-      this->achieve_sync_point( rti_ambassador, label );
+      achieve_sync_point( rti_ambassador, label );
    }
 }
 
 void ExecutionControl::publish()
 {
    // Check to see if we are the Master federate.
-   if ( this->is_master() ) {
+   if ( is_master() ) {
       // Publish the execution configuration if we are the master federate.
       execution_configuration->publish_object_attributes();
    } else {
@@ -451,7 +451,7 @@ void ExecutionControl::publish()
 void ExecutionControl::unpublish()
 {
    // Unpublish the execution configuration object.
-   if ( this->is_master() ) {
+   if ( is_master() ) {
       // Unpublish the execution configuration if we are the master federate.
       execution_configuration->unpublish_all_object_attributes();
    }
@@ -466,7 +466,7 @@ void ExecutionControl::unpublish()
 void ExecutionControl::subscribe()
 {
    // Check to see if we are the Master federate.
-   if ( this->is_master() ) {
+   if ( is_master() ) {
       // Only subscribe to the MTR interaction if this is the Master federate.
       mtr_interaction->subscribe_to_interaction();
    } else {
@@ -478,7 +478,7 @@ void ExecutionControl::subscribe()
 void ExecutionControl::unsubscribe()
 {
    // Check to see if we are the Master federate.
-   if ( !this->is_master() ) {
+   if ( !is_master() ) {
       // Unsubscribe from the execution configuration if we are NOT the Master federate.
       execution_configuration->unsubscribe_all_object_attributes();
    }
@@ -571,7 +571,7 @@ void ExecutionControl::role_determination_process()
    federate->initialize_MOM_handles();
 
    // Check for Master initialization lane.
-   if ( this->is_master() ) {
+   if ( is_master() ) {
 
       // The Master federate MUST be an early joiner.
       this->late_joiner            = false;
@@ -627,7 +627,7 @@ void ExecutionControl::role_determination_process()
 
          // We are not a late joiner if we received the announce for the
          // 'initialization started' sync-point. (Nominal Initialization)
-         SyncPnt *sp = this->get_sync_point( SpaceFOM::INIT_STARTED_SYNC_POINT );
+         SyncPnt *sp = get_sync_point( SpaceFOM::INIT_STARTED_SYNC_POINT );
          if ( ( sp != NULL ) && sp->is_announced() ) {
             this->late_joiner            = false;
             this->late_joiner_determined = true;
@@ -635,7 +635,7 @@ void ExecutionControl::role_determination_process()
 
          // Determine if the Initialization Complete sync-point exists, which
          // means at this point we are a late joining federate.
-         if ( ( !late_joiner_determined ) && this->does_init_complete_sync_point_exist() ) {
+         if ( ( !late_joiner_determined ) && does_init_complete_sync_point_exist() ) {
             this->late_joiner            = true;
             this->late_joiner_determined = true;
          }
@@ -699,7 +699,7 @@ void ExecutionControl::role_determination_process()
                message << " Init-Started sync-point status: NULL";
             }
             message << ", Init-Complete sync-point exists: "
-                    << ( this->does_init_complete_sync_point_exist() ? "Yes" : "No" );
+                    << ( does_init_complete_sync_point_exist() ? "Yes" : "No" );
 
             message << ", Still waiting..." << THLA_ENDL;
             send_hs( stdout, message.str().c_str() );
@@ -728,8 +728,7 @@ initialization process described in section 7.2 and figure 7-5.
 */
 void ExecutionControl::early_joiner_hla_init_process()
 {
-   Manager                    *manager = this->manager;
-   ExecutionConfigurationBase *ExCO    = this->get_execution_configuration();
+   ExecutionConfigurationBase *ExCO = get_execution_configuration();
 
    // Wait for the SpaceFOM initialization ExecutionConrtol synchronization
    // points for Early Joiner: INIT_STARTED_SYNC_POINT,
@@ -737,9 +736,9 @@ void ExecutionControl::early_joiner_hla_init_process()
    // and "startup" sync-points to be registered (i.e. announced).
    // Note: Do NOT register the INIT_COMPLETED_SYNC_POINT synchronization
    // point yet. That marks the successful completion of initialization.
-   this->wait_for_sync_point_announcement( federate, INIT_STARTED_SYNC_POINT );
-   this->wait_for_sync_point_announcement( federate, OBJECTS_DISCOVERED_SYNC_POINT );
-   this->wait_for_sync_point_announcement( federate, ROOT_FRAME_DISCOVERED_SYNC_POINT );
+   wait_for_sync_point_announcement( federate, INIT_STARTED_SYNC_POINT );
+   wait_for_sync_point_announcement( federate, OBJECTS_DISCOVERED_SYNC_POINT );
+   wait_for_sync_point_announcement( federate, ROOT_FRAME_DISCOVERED_SYNC_POINT );
 
    // Setup all the RTI handles for the objects, attributes and interaction
    // parameters.
@@ -750,7 +749,7 @@ void ExecutionControl::early_joiner_hla_init_process()
    manager->publish_and_subscribe();
 
    // If this is the Master federate, then setup the ExCO.
-   if ( this->is_master() ) {
+   if ( is_master() ) {
       // Reserve ExCO object instance name.
       ExCO->reserve_object_name_with_RTI();
 
@@ -788,9 +787,9 @@ void ExecutionControl::early_joiner_hla_init_process()
    // Initialization data could be sent before a federate has even
    // discovered an object instance resulting in the federate not receiving
    // the expected data.
-   this->achieve_and_wait_for_synchronization( *( federate->get_RTI_ambassador() ),
-                                               federate,
-                                               SpaceFOM::OBJECTS_DISCOVERED_SYNC_POINT );
+   achieve_and_wait_for_synchronization( *( federate->get_RTI_ambassador() ),
+                                         federate,
+                                         SpaceFOM::OBJECTS_DISCOVERED_SYNC_POINT );
 }
 
 /*!
@@ -813,22 +812,24 @@ void ExecutionControl::mandatory_late_joiner_init_process()
    this->late_joiner_determined = true;
 
    // Print out diagnostic message if appropriate.
-   if ( !this->does_init_complete_sync_point_exist() ) {
+   if ( !does_init_complete_sync_point_exist() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "SpaceFOM::ExecutionControl::mandatory_late_joiner_init_process():%d Waiting...%c",
                   __LINE__, THLA_NEWLINE );
       }
    }
 
-   bool         print_summary = DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL );
-   int64_t      wallclock_time;
-   SleepTimeout print_timer( federate->wait_status_time );
-   SleepTimeout sleep_timer;
+   bool           print_summary = DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL );
+   int64_t        wallclock_time;
+   SleepTimeout   print_timer( federate->wait_status_time );
+   SleepTimeout   sleep_timer;
+   RTIambassador *RTI_amb = federate->get_RTI_ambassador();
 
    // Block until we see the intitialization_complete sync-point announced.
-   while ( !this->does_init_complete_sync_point_exist() ) {
+   while ( !does_init_complete_sync_point_exist() ) {
 
-      achieve_all_sync_points( *( federate->get_RTI_ambassador() ) );
+      // Make sure we have achieved all sync points.
+      achieve_all_sync_points( *RTI_amb );
 
       // Check for shutdown.
       federate->check_for_shutdown_with_termination();
@@ -838,7 +839,7 @@ void ExecutionControl::mandatory_late_joiner_init_process()
 
       // Periodically check if we are still an execution member and
       // display sync-point status if needed as well.
-      if ( !this->does_init_complete_sync_point_exist() ) {
+      if ( !does_init_complete_sync_point_exist() ) {
 
          // To be more efficient, we get the time once and share it.
          wallclock_time = sleep_timer.time();
@@ -877,11 +878,24 @@ void ExecutionControl::mandatory_late_joiner_init_process()
          message << "SpaceFOM::ExecutionControl::mandatory_late_joiner_init_process():"
                  << __LINE__
                  << " Init-Complete sync-point exists:"
-                 << ( this->does_init_complete_sync_point_exist() ? "Yes" : "No, Still waiting..." )
+                 << ( does_init_complete_sync_point_exist() ? "Yes" : "No, Still waiting..." )
                  << THLA_ENDL;
          send_hs( stdout, message.str().c_str() );
       }
    }
+
+   // Make sure we have achieved all sync points.
+   achieve_all_sync_points( *RTI_amb );
+
+   // Check for Freeze. TEMP
+   //   SyncPnt *sp = get_sync_point( SpaceFOM::MTR_FREEZE_SYNC_POINT );
+   //   if ( ( sp != NULL ) & sp->is_announced() ) {
+   //      // Initiate Freeze
+   //      freeze_mode_transition();
+   //
+   //      // Tell the Trick executive to start up in freeze mode.
+   //      //the_exec->set_freeze_command( true );
+   //   }
 
    // Print out diagnostic message if appropriate.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
@@ -898,8 +912,7 @@ described in section 7.2 and figure 7-9.
 */
 void ExecutionControl::late_joiner_hla_init_process()
 {
-   Manager                *manager = this->manager;
-   ExecutionConfiguration *ExCO    = this->get_execution_configuration();
+   ExecutionConfiguration *ExCO = get_execution_configuration();
 
    // Setup all the RTI handles for the objects, attributes and interaction
    // parameters.
@@ -917,6 +930,12 @@ void ExecutionControl::late_joiner_hla_init_process()
    // block until the ExCO object instances has been registered.
    ExCO->wait_for_registration();
 
+   // Achieve all sync points including MTR related ones because we got
+   // the update ExCO state above.
+   if ( this->late_joiner && federate->is_mandatory_late_joiner() ) {
+      achieve_all_sync_points( *( federate->get_RTI_ambassador() ) ); // TEMP
+   }
+
    // Request a ExCO object update.
    manager->request_data_update( ExCO->get_name() );
 
@@ -924,7 +943,7 @@ void ExecutionControl::late_joiner_hla_init_process()
    ExCO->wait_for_update();
 
    // Set scenario timeline epoch and time.
-   this->scenario_timeline->set_epoch( ExCO->get_scenario_time_epoch() );
+   scenario_timeline->set_epoch( ExCO->get_scenario_time_epoch() );
 
    // Print diagnostic message if appropriate.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
@@ -937,17 +956,17 @@ void ExecutionControl::late_joiner_hla_init_process()
            << "\t Current HLA request time:  " << federate->get_requested_time().get_time_in_seconds() << endl
            << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << endl
            << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << endl;
-      if ( this->does_cte_timeline_exist() ) {
+      if ( does_cte_timeline_exist() ) {
          cout << "\t current_CTE_time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << endl
               << "\t CTE_time_epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << endl;
       }
    }
 
    // Set the requested execution mode from the ExCO.
-   this->set_requested_execution_control_mode( ExCO->next_execution_mode );
+   set_requested_execution_control_mode( ExCO->next_execution_mode );
 
    // Process the just received ExCO update.
-   this->process_execution_control_updates();
+   process_execution_control_updates();
 
    // Call publish_and_subscribe AFTER we've initialized the manager,
    // federate, and FedAmb.
@@ -986,8 +1005,7 @@ process described in section 7.2 figure 7-2.
 */
 void ExecutionControl::pre_multi_phase_init_processes()
 {
-   Manager                *manager = this->manager;
-   ExecutionConfiguration *ExCO    = this->get_execution_configuration();
+   ExecutionConfiguration *ExCO = get_execution_configuration();
 
    // The User Must specify an ExCO.
    if ( ExCO == NULL ) {
@@ -1010,7 +1028,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
    if ( root_ref_frame == NULL ) {
       // The Master federate and the Root Reference Frame Publisher federate
       // must have the root_ref_frame reference set.
-      if ( this->is_master() || this->is_root_frame_publisher() ) {
+      if ( is_master() || is_root_frame_publisher() ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
                 << " ERROR: Unexpected NULL THLA.manager.root_ref_frame object." << THLA_ENDL;
@@ -1025,7 +1043,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // If we are the master federate then validate the Least-Common-Time-Step
    // (LCTS) time.
-   if ( this->is_master() ) {
+   if ( is_master() ) {
       int64_t LCTS = this->least_common_time_step;
 
       // The LCTS has be be > 0.
@@ -1109,13 +1127,13 @@ void ExecutionControl::pre_multi_phase_init_processes()
    }
 
    // Set the ExCO current and next run modes.
-   this->set_current_execution_control_mode( EXECUTION_CONTROL_INITIALIZING );
+   set_current_execution_control_mode( EXECUTION_CONTROL_INITIALIZING );
    if ( ExCO != NULL ) {
       ExCO->set_current_execution_mode( EXECUTION_MODE_INITIALIZING );
    }
-   this->set_requested_execution_control_mode( EXECUTION_CONTROL_INITIALIZING );
-   if ( this->is_master() ) {
-      this->set_next_execution_control_mode( EXECUTION_CONTROL_INITIALIZING );
+   set_requested_execution_control_mode( EXECUTION_CONTROL_INITIALIZING );
+   if ( is_master() ) {
+      set_next_execution_control_mode( EXECUTION_CONTROL_INITIALIZING );
    }
 
    // Reset the ExCO required flag to make it required.
@@ -1130,7 +1148,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
    ExCO->reset_ownership_states();
 
    // Setup the ExCO object now because we use a preset master.
-   ExCO->set_master( this->is_master() );
+   ExCO->set_master( is_master() );
 
    // Setup all the Trick Ref-Attributes for the user specified objects,
    // attributes, interactions and parameters.
@@ -1139,37 +1157,37 @@ void ExecutionControl::pre_multi_phase_init_processes()
    // Add the SpaceFOM ExecutionControl and user defined multiphase
    // initialization synchronization points to the list before we join the
    // federation to avoid a race condition with announces.
-   this->add_initialization_sync_points();
+   add_initialization_sync_points();
 
    // Perform the SpaceFOM join federation process.
-   this->join_federation_process();
+   join_federation_process();
 
    // Perform the SpaceFOM role determination process.
-   this->role_determination_process();
+   role_determination_process();
 
    // Branch off between Early and Late Joiner initialization.
    if ( late_joiner ) {
 
       // Perform Late Joiner HLA initialization process.
-      this->late_joiner_hla_init_process();
+      late_joiner_hla_init_process();
 
    } else if ( !is_master() && federate->is_mandatory_late_joiner() ) {
       // Early Joiner but this federate is a mandatory late jointer.
 
       // Wait for initialization_complete sync-point and achieve unkown sync-points.
-      this->mandatory_late_joiner_init_process();
+      mandatory_late_joiner_init_process();
 
       // Perform Late Joiner HLA initialization process.
-      this->late_joiner_hla_init_process();
+      late_joiner_hla_init_process();
 
    } else {
       // Early Joiners
 
       // Perform Early Joiner HLA initialization process.
-      this->early_joiner_hla_init_process();
+      early_joiner_hla_init_process();
 
       // Perform the scenario epoch and root reference frame discovery process.
-      this->epoch_and_root_frame_discovery_process();
+      epoch_and_root_frame_discovery_process();
    }
 }
 
@@ -1181,13 +1199,13 @@ process described in section 7.2 and figures 7-8 and 7-9.
 */
 void ExecutionControl::post_multi_phase_init_processes()
 {
-   ExecutionConfiguration *ExCO = this->get_execution_configuration();
+   ExecutionConfiguration *ExCO = get_execution_configuration();
 
    // Setup HLA time management.
    federate->setup_time_management();
 
    // Branch between late joining and early joining federates.
-   if ( this->is_late_joiner() ) {
+   if ( is_late_joiner() ) {
 
       //
       // Late Joining Federate (SpaceFOM Fig: 7-9).
@@ -1214,7 +1232,7 @@ void ExecutionControl::post_multi_phase_init_processes()
               << "\t Current HLA request time:  " << federate->get_requested_time().get_time_in_seconds() << endl
               << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << endl
               << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << endl;
-         if ( this->does_cte_timeline_exist() ) {
+         if ( does_cte_timeline_exist() ) {
             cout << "\t current_CTE_time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << endl
                  << "\t CTE_time_epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << endl;
          }
@@ -1281,12 +1299,12 @@ void ExecutionControl::post_multi_phase_init_processes()
 
       // Achieve the "initialization_started" sync-point and wait for the
       // federation to be synchronized on it.
-      this->achieve_and_wait_for_synchronization( *( federate->get_RTI_ambassador() ),
-                                                  federate,
-                                                  SpaceFOM::INIT_STARTED_SYNC_POINT );
+      achieve_and_wait_for_synchronization( *( federate->get_RTI_ambassador() ),
+                                            federate,
+                                            SpaceFOM::INIT_STARTED_SYNC_POINT );
 
       // Check to see if this is the Master federate.
-      if ( this->is_master() ) {
+      if ( is_master() ) {
 
          // Restore the original Auto-Provide state.
          federate->restore_orig_MOM_auto_provide_setting();
@@ -1296,7 +1314,7 @@ void ExecutionControl::post_multi_phase_init_processes()
                               SpaceFOM::INIT_COMPLETED_SYNC_POINT );
 
          // Check for an initialization mode transition request.
-         if ( this->check_mode_transition_request() ) {
+         if ( check_mode_transition_request() ) {
 
             // Since this is a valid MTR, set the next mode from the MTR.
             set_mode_request_from_mtr( this->pending_mtr );
@@ -1316,7 +1334,7 @@ void ExecutionControl::post_multi_phase_init_processes()
                case EXECUTION_CONTROL_SHUTDOWN:
 
                   // Announce the shutdown.
-                  this->shutdown_mode_announce();
+                  shutdown_mode_announce();
 
                   // Tell the TrickHLA::Federate to shutdown.
                   // The SpaceFOM ExecutionControl shutdown transition will be made
@@ -1342,40 +1360,40 @@ void ExecutionControl::post_multi_phase_init_processes()
          if ( the_exec->get_freeze_command() ) {
 
             // Set the next execution mode to freeze.
-            this->set_next_execution_control_mode( EXECUTION_CONTROL_FREEZE );
+            set_next_execution_control_mode( EXECUTION_CONTROL_FREEZE );
 
             // Send the ExCO with the updated run mode.
             ExCO->send_init_data();
 
             // Announce freeze mode.
-            this->freeze_mode_announce();
+            freeze_mode_announce();
 
             // NOTE: This is handled in the freeze_init job.
             // Transition to freeze mode.
-            // this->freeze_mode_transition();
+            // freeze_mode_transition();
 
-         } // Not starting in Freeze.
-         else {
+         } else {
+            // Not starting in Freeze.
 
             // Set the next execution mode to running.
-            this->set_next_execution_control_mode( EXECUTION_CONTROL_RUNNING );
+            set_next_execution_control_mode( EXECUTION_CONTROL_RUNNING );
 
             // Send the ExCO with the updated run mode.
             ExCO->send_init_data();
 
             // Transition to run mode.
-            this->run_mode_transition();
+            run_mode_transition();
 
          } // End of check for starting in Freeze.
 
-      } // This is an early joining but not a Master federate.
-      else {
+      } else {
+         // This is an early joining but not a Master federate.
 
          // Wait on the ExCO update.
          ExCO->wait_for_update();
 
          // Process the just received ExCO update.
-         this->process_execution_control_updates();
+         process_execution_control_updates();
 
       } // End of check for Master federate.
 
@@ -1392,14 +1410,14 @@ void ExecutionControl::shutdown()
    if ( current_execution_control_mode != EXECUTION_CONTROL_SHUTDOWN ) {
 
       // Tell Execution Control to announce the shutdown.
-      if ( this->is_master() ) {
+      if ( is_master() ) {
 
          // Tell the SpaceFOM execution control to announce the shutdown.
-         this->shutdown_mode_announce();
+         shutdown_mode_announce();
 
          // Let's pause for a moment to let things propagate through the
          // federate before tearing things down.
-         long sleep_pad_base_time = Int64BaseTime::to_base_time( this->get_time_padding() );
+         long sleep_pad_base_time = Int64BaseTime::to_base_time( get_time_padding() );
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             send_hs( stdout, "SpaceFOM::ExecutionControl::shutdown():%d: sleep for %d %s.%c",
                      __LINE__, sleep_pad_base_time, Int64BaseTime::get_units().c_str(), THLA_NEWLINE );
@@ -1408,14 +1426,14 @@ void ExecutionControl::shutdown()
       }
 
       // Tell the SpaceFOM execution control to transition to shutdown.
-      this->shutdown_mode_transition();
+      shutdown_mode_transition();
    }
 }
 
 bool ExecutionControl::set_pending_mtr(
    MTREnum mtr_value )
 {
-   if ( this->is_mtr_valid( mtr_value ) ) {
+   if ( is_mtr_valid( mtr_value ) ) {
       this->pending_mtr = mtr_value;
    }
    return false;
@@ -1489,7 +1507,7 @@ void ExecutionControl::set_next_execution_control_mode(
    ExecutionConfiguration *ExCO = get_execution_configuration();
 
    // This should only be called by the Master federate.
-   if ( !this->is_master() ) {
+   if ( !is_master() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::set_next_execution_mode():" << __LINE__
              << " ERROR: This should only be called by the Master federate!" << THLA_ENDL;
@@ -1504,9 +1522,9 @@ void ExecutionControl::set_next_execution_control_mode(
          ExCO->set_next_execution_mode( EXECUTION_MODE_UNINITIALIZED );
 
          // Set the next mode times.
-         this->next_mode_scenario_time = this->get_scenario_time();      // Immediate
-         ExCO->set_next_mode_scenario_time( this->get_scenario_time() ); // Immediate
-         ExCO->set_next_mode_cte_time( this->get_cte_time() );           // Immediate
+         this->next_mode_scenario_time = get_scenario_time();      // Immediate
+         ExCO->set_next_mode_scenario_time( get_scenario_time() ); // Immediate
+         ExCO->set_next_mode_cte_time( get_cte_time() );           // Immediate
          break;
 
       case EXECUTION_CONTROL_INITIALIZING:
@@ -1516,10 +1534,10 @@ void ExecutionControl::set_next_execution_control_mode(
          ExCO->set_next_execution_mode( EXECUTION_MODE_INITIALIZING );
 
          // Set the next mode times.
-         ExCO->set_scenario_time_epoch( this->get_scenario_time() );     // Now.
-         this->next_mode_scenario_time = this->get_scenario_time();      // Immediate
-         ExCO->set_next_mode_scenario_time( this->get_scenario_time() ); // Immediate
-         ExCO->set_next_mode_cte_time( this->get_cte_time() );           // Immediate
+         ExCO->set_scenario_time_epoch( get_scenario_time() );     // Now.
+         this->next_mode_scenario_time = get_scenario_time();      // Immediate
+         ExCO->set_next_mode_scenario_time( get_scenario_time() ); // Immediate
+         ExCO->set_next_mode_cte_time( get_cte_time() );           // Immediate
          break;
 
       case EXECUTION_CONTROL_RUNNING:
@@ -1529,9 +1547,9 @@ void ExecutionControl::set_next_execution_control_mode(
          ExCO->set_next_execution_mode( EXECUTION_MODE_RUNNING );
 
          // Set the next mode times.
-         this->next_mode_scenario_time = this->get_scenario_time();          // Immediate
+         this->next_mode_scenario_time = get_scenario_time();                // Immediate
          ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time ); // immediate
-         ExCO->set_next_mode_cte_time( this->get_cte_time() );
+         ExCO->set_next_mode_cte_time( get_cte_time() );
          if ( ExCO->get_next_mode_cte_time() > -std::numeric_limits< double >::max() ) {
             ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + this->time_padding ); // Some time in the future.
          }
@@ -1544,9 +1562,9 @@ void ExecutionControl::set_next_execution_control_mode(
          ExCO->set_next_execution_mode( EXECUTION_MODE_FREEZE );
 
          // Set the next mode times.
-         this->next_mode_scenario_time = this->get_scenario_time() + this->time_padding; // Some time in the future.
+         this->next_mode_scenario_time = get_scenario_time() + this->time_padding; // Some time in the future.
          ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time );
-         ExCO->set_next_mode_cte_time( this->get_cte_time() );
+         ExCO->set_next_mode_cte_time( get_cte_time() );
          if ( ExCO->get_next_mode_cte_time() > -std::numeric_limits< double >::max() ) {
             ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + this->time_padding ); // Some time in the future.
          }
@@ -1563,9 +1581,9 @@ void ExecutionControl::set_next_execution_control_mode(
          ExCO->set_next_execution_mode( EXECUTION_MODE_SHUTDOWN );
 
          // Set the next mode times.
-         this->next_mode_scenario_time = this->get_scenario_time();          // Immediate.
+         this->next_mode_scenario_time = get_scenario_time();                // Immediate.
          ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time ); // Immediate.
-         ExCO->set_next_mode_cte_time( this->get_cte_time() );               // Immediate
+         ExCO->set_next_mode_cte_time( get_cte_time() );                     // Immediate
          break;
 
       default:
@@ -1584,12 +1602,12 @@ void ExecutionControl::set_next_execution_control_mode(
 bool ExecutionControl::check_mode_transition_request()
 {
    // Just return if false mode change has been requested.
-   if ( !this->is_mode_transition_requested() ) {
+   if ( !is_mode_transition_requested() ) {
       return false;
    }
 
    // Only the Master federate receives and processes Mode Transition Requests.
-   if ( !this->is_master() ) {
+   if ( !is_master() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::check_mode_transition_request():" << __LINE__
              << " WARNING: Received Mode Transition Request and not Master: "
@@ -1614,21 +1632,21 @@ bool ExecutionControl::check_mode_transition_request()
 
 bool ExecutionControl::process_mode_interaction()
 {
-   return ( this->process_mode_transition_request() );
+   return ( process_mode_transition_request() );
 }
 
 bool ExecutionControl::process_mode_transition_request()
 {
    // Just return is no mode change has been requested.
-   if ( !this->check_mode_transition_request() ) {
+   if ( !check_mode_transition_request() ) {
       return false;
    } else {
       // Since this is a valid MTR, set the next mode from the MTR.
-      this->set_mode_request_from_mtr( this->pending_mtr );
+      set_mode_request_from_mtr( this->pending_mtr );
    }
 
    // Reference the SpaceFOM Execution Configuration Object (ExCO)
-   ExecutionConfiguration *ExCO = this->get_execution_configuration();
+   ExecutionConfiguration *ExCO = get_execution_configuration();
 
    // Print diagnostic message if appropriate.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
@@ -1642,7 +1660,7 @@ bool ExecutionControl::process_mode_transition_request()
            << "\t Current HLA request time:  " << federate->get_requested_time().get_time_in_seconds() << endl
            << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << endl
            << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << endl;
-      if ( this->does_cte_timeline_exist() ) {
+      if ( does_cte_timeline_exist() ) {
          cout << "\t current_CTE_time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << endl
               << "\t CTE_time_epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << endl;
       }
@@ -1659,7 +1677,7 @@ bool ExecutionControl::process_mode_transition_request()
       case MTR_GOTO_RUN:
 
          // Clear the mode change request flag.
-         this->clear_mode_transition_requested();
+         clear_mode_transition_requested();
 
          // Transition to run can only happen from initialization or freeze.
          // We don't really need to do anything if we're in initialization.
@@ -1678,7 +1696,7 @@ bool ExecutionControl::process_mode_transition_request()
       case MTR_GOTO_FREEZE:
 
          // Clear the mode change request flag.
-         this->clear_mode_transition_requested();
+         clear_mode_transition_requested();
 
          // Transition to freeze can only happen from initialization or run.
          // We don't really need to do anything if we're in initialization.
@@ -1688,7 +1706,7 @@ bool ExecutionControl::process_mode_transition_request()
             ExCO->send_init_data();
 
             // Announce the pending freeze.
-            this->freeze_mode_announce();
+            freeze_mode_announce();
 
             // Tell Trick to go into freeze at the appointed time.
             the_exec->freeze( this->simulation_freeze_time );
@@ -1703,7 +1721,7 @@ bool ExecutionControl::process_mode_transition_request()
       case MTR_GOTO_SHUTDOWN:
 
          // Announce the shutdown.
-         this->shutdown_mode_announce();
+         shutdown_mode_announce();
 
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             send_hs( stdout, "SpaceFOM::ExecutionControl::process_mode_transition_request():%d MTR_GOTO_SHUTDOWN %c",
@@ -1749,7 +1767,7 @@ bool ExecutionControl::process_execution_control_updates()
    }
 
    // The Master federate should never have to process ExCO updates.
-   if ( this->is_master() ) {
+   if ( is_master() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
              << " WARNING: Master Federate received an unexpected ExCO update: "
@@ -1884,12 +1902,12 @@ bool ExecutionControl::process_execution_control_updates()
 
                // This is an early joining federate in initialization.
                // So, proceed to the run mode transition.
-               this->run_mode_transition();
+               run_mode_transition();
                break;
 
             case EXECUTION_CONTROL_FREEZE:
                // Announce the pending freeze.
-               this->freeze_mode_announce();
+               freeze_mode_announce();
 
                // Tell Trick to go into freeze at startup.
                // the_exec->freeze();
@@ -1965,7 +1983,7 @@ bool ExecutionControl::process_execution_control_updates()
                        << "\t scenario_time_sim_offset:  " << setprecision( 18 ) << this->scenario_timeline->get_sim_offset() << endl
                        << "\t current_sim_time:          " << setprecision( 18 ) << this->sim_timeline->get_time() << endl
                        << "\t simulation_time_epoch:     " << setprecision( 18 ) << this->sim_timeline->get_epoch() << endl;
-                  if ( this->does_cte_timeline_exist() ) {
+                  if ( does_cte_timeline_exist() ) {
                      cout << "\t current_CTE_time:          " << setprecision( 18 ) << this->cte_timeline->get_time() << endl
                           << "\t CTE_time_epoch:            " << setprecision( 18 ) << this->cte_timeline->get_epoch() << endl;
                   }
@@ -1977,7 +1995,7 @@ bool ExecutionControl::process_execution_control_updates()
                }
 
                // Announce the pending freeze.
-               this->freeze_mode_announce();
+               freeze_mode_announce();
 
                // Tell Trick to go into freeze at the appointed time.
                the_exec->freeze( this->simulation_freeze_time );
@@ -2030,7 +2048,7 @@ bool ExecutionControl::process_execution_control_updates()
                // The run transition logic will be done just when exiting
                // Freeze. This is done in the TrickHLA::Federate::exit_freeze()
                // routine called when entering Freeze.
-               // this->run_mode_transition();
+               // run_mode_transition();
                break;
 
             default:
@@ -2089,9 +2107,9 @@ void ExecutionControl::wait_for_root_frame_discovered_synchronization()
                __LINE__, THLA_NEWLINE );
    }
 
-   this->achieve_and_wait_for_synchronization( *( federate->get_RTI_ambassador() ),
-                                               federate,
-                                               SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT );
+   achieve_and_wait_for_synchronization( *( federate->get_RTI_ambassador() ),
+                                         federate,
+                                         SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT );
 }
 
 void ExecutionControl::send_mode_transition_interaction(
@@ -2106,7 +2124,7 @@ void ExecutionControl::send_mode_transition_interaction(
 void ExecutionControl::send_MTR_interaction(
    SpaceFOM::MTREnum requested_mode )
 {
-   this->mtr_interaction_handler.send_interaction( requested_mode );
+   mtr_interaction_handler.send_interaction( requested_mode );
 }
 
 bool ExecutionControl::run_mode_transition()
@@ -2116,10 +2134,10 @@ bool ExecutionControl::run_mode_transition()
    SyncPnt                *sync_pnt = NULL;
 
    // Register the 'mtr_run' sync-point.
-   if ( this->is_master() ) {
-      sync_pnt = this->register_sync_point( *RTI_amb, MTR_RUN_SYNC_POINT );
+   if ( is_master() ) {
+      sync_pnt = register_sync_point( *RTI_amb, MTR_RUN_SYNC_POINT );
    } else {
-      sync_pnt = this->get_sync_point( MTR_RUN_SYNC_POINT );
+      sync_pnt = get_sync_point( MTR_RUN_SYNC_POINT );
    }
 
    // Make sure that we have a valid sync-point.
@@ -2131,25 +2149,25 @@ bool ExecutionControl::run_mode_transition()
    } else {
 
       // Wait for 'mtr_run' sync-point announce.
-      this->wait_for_sync_point_announcement( federate, sync_pnt );
+      wait_for_sync_point_announcement( federate, sync_pnt );
 
       // Achieve the 'mtr-run' sync-point.
-      this->achieve_sync_point( *RTI_amb, sync_pnt );
+      achieve_sync_point( *RTI_amb, sync_pnt );
 
       // Wait for 'mtr_run' sync-point synchronization.
-      this->wait_for_synchronization( federate, sync_pnt );
+      wait_for_synchronization( federate, sync_pnt );
 
       // Set the current execution mode to running.
-      this->current_execution_control_mode = EXECUTION_CONTROL_RUNNING;
+      current_execution_control_mode = EXECUTION_CONTROL_RUNNING;
       ExCO->set_current_execution_mode( EXECUTION_MODE_RUNNING );
 
       // Check for CTE.
-      if ( this->does_cte_timeline_exist() ) {
+      if ( does_cte_timeline_exist() ) {
 
          double go_to_run_time;
 
          // The Master federate updates the ExCO with the CTE got-to-run time.
-         if ( this->is_master() ) {
+         if ( is_master() ) {
 
             go_to_run_time = ExCO->get_next_mode_cte_time();
             ExCO->send_init_data();
@@ -2161,7 +2179,7 @@ bool ExecutionControl::run_mode_transition()
             ExCO->wait_for_update();
 
             // Process the just received ExCO update.
-            this->process_execution_control_updates();
+            process_execution_control_updates();
 
             // Set the CTE time to go to run.
             go_to_run_time = ExCO->get_next_mode_cte_time();
@@ -2169,12 +2187,12 @@ bool ExecutionControl::run_mode_transition()
 
          // Wait for the CTE go-to-run time.
          double diff;
-         while ( this->get_cte_time() < go_to_run_time ) {
+         while ( get_cte_time() < go_to_run_time ) {
 
             // Check for shutdown.
             federate->check_for_shutdown_with_termination();
 
-            diff = go_to_run_time - this->get_cte_time();
+            diff = go_to_run_time - get_cte_time();
             if ( fmod( diff, 1.0 ) == 0.0 ) {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   send_hs( stdout, "SpaceFOM::ExecutionControl::run_mode_transition():%d Going to run in %G seconds.%c",
@@ -2185,7 +2203,7 @@ bool ExecutionControl::run_mode_transition()
 
          // Print debug message if appropriate.
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            double curr_cte_time = this->get_cte_time();
+            double curr_cte_time = get_cte_time();
 
             diff = curr_cte_time - go_to_run_time;
             send_hs( stdout, "SpaceFOM::ExecutionControl::run_mode_transition():%d \n  Going to run at CTE time %.18G seconds. \n  Current CTE time %.18G seconds. \n  Difference: %.9lf seconds.%c",
@@ -2199,19 +2217,15 @@ bool ExecutionControl::run_mode_transition()
 void ExecutionControl::freeze_mode_announce()
 {
    // Register the 'mtr_freeze' sync-point.
-   if ( this->is_master() ) {
-      this->register_sync_point( *( federate->get_RTI_ambassador() ), MTR_FREEZE_SYNC_POINT );
+   if ( is_master() ) {
+      register_sync_point( *( federate->get_RTI_ambassador() ), MTR_FREEZE_SYNC_POINT );
    }
 }
 
 bool ExecutionControl::freeze_mode_transition()
 {
-   RTIambassador          *RTI_amb  = federate->get_RTI_ambassador();
-   ExecutionConfiguration *ExCO     = get_execution_configuration();
-   TrickHLA::SyncPnt      *sync_pnt = NULL;
-
    // Get the 'mtr_freeze' sync-point.
-   sync_pnt = this->get_sync_point( MTR_FREEZE_SYNC_POINT );
+   TrickHLA::SyncPnt *sync_pnt = get_sync_point( MTR_FREEZE_SYNC_POINT );
 
    // Make sure that we have a valid sync-point.
    if ( sync_pnt == (TrickHLA::SyncPnt *)NULL ) {
@@ -2221,14 +2235,17 @@ bool ExecutionControl::freeze_mode_transition()
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
+      RTIambassador          *RTI_amb = federate->get_RTI_ambassador();
+      ExecutionConfiguration *ExCO    = get_execution_configuration();
+
       // Wait for 'mtr_freeze' sync-point announce.
-      this->wait_for_sync_point_announcement( federate, sync_pnt );
+      wait_for_sync_point_announcement( federate, sync_pnt );
 
       // Achieve the 'mtr_freeze' sync-point.
-      this->achieve_sync_point( *RTI_amb, sync_pnt );
+      achieve_sync_point( *RTI_amb, sync_pnt );
 
       // Wait for 'mtr_freeze' sync-point synchronization.
-      this->wait_for_synchronization( federate, sync_pnt );
+      wait_for_synchronization( federate, sync_pnt );
 
       // Set the current execution mode to freeze.
       this->current_execution_control_mode = EXECUTION_CONTROL_FREEZE;
@@ -2240,7 +2257,7 @@ bool ExecutionControl::freeze_mode_transition()
 void ExecutionControl::shutdown_mode_announce()
 {
    // Only the Master federate will ever announce a shutdown.
-   if ( !this->is_master() ) {
+   if ( !is_master() ) {
       return;
    }
 
@@ -2251,13 +2268,13 @@ void ExecutionControl::shutdown_mode_announce()
    }
 
    // Set the next execution mode to shutdown.
-   this->set_next_execution_control_mode( EXECUTION_CONTROL_SHUTDOWN );
+   set_next_execution_control_mode( EXECUTION_CONTROL_SHUTDOWN );
 
    // Send out the updated ExCO.
    this->execution_configuration->send_init_data();
 
    // Clear the mode change request flag.
-   this->clear_mode_transition_requested();
+   clear_mode_transition_requested();
 }
 
 /*!
@@ -2266,7 +2283,7 @@ void ExecutionControl::shutdown_mode_announce()
 void ExecutionControl::shutdown_mode_transition()
 {
    // Only the Master federate has any SpaceFOM tasks for shutdown.
-   if ( !this->is_master() ) {
+   if ( !is_master() ) {
       return;
    }
 
@@ -2281,11 +2298,11 @@ void ExecutionControl::shutdown_mode_transition()
                __LINE__, THLA_NEWLINE );
    }
    // Register the 'mtr_shutdown' sync-point.
-   this->register_sync_point( *( federate->get_RTI_ambassador() ), MTR_SHUTDOWN_SYNC_POINT );
+   register_sync_point( *( federate->get_RTI_ambassador() ), MTR_SHUTDOWN_SYNC_POINT );
 
    // Wait for the 'mtr_shutdown' announcement to make sure it goes through
    // before we shutdown.
-   this->wait_for_sync_point_announcement( federate, MTR_SHUTDOWN_SYNC_POINT );
+   wait_for_sync_point_announcement( federate, MTR_SHUTDOWN_SYNC_POINT );
 }
 
 /*!
@@ -2300,7 +2317,7 @@ bool ExecutionControl::check_for_shutdown()
 
    // Check to see if the mtr_shutdown sync-point has been announced or if the
    // ExCO object has been deleted as indicators to shutdown.
-   return ( this->is_sync_point_announced( MTR_SHUTDOWN_SYNC_POINT )
+   return ( is_sync_point_announced( MTR_SHUTDOWN_SYNC_POINT )
             || this->execution_configuration->object_deleted_from_RTI );
 }
 
@@ -2318,15 +2335,15 @@ bool ExecutionControl::check_for_shutdown_with_termination()
 
    // Check to see if the mtr_shutdown sync-point has been announced.
    // If so, it's time to say good bye.
-   if ( this->check_for_shutdown() ) {
+   if ( check_for_shutdown() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::check_for_shutdown_with_termination():" << __LINE__
              << " WARNING: This Federate '" << this->federate->get_federate_name()
              << "' detected a";
-      if ( this->is_sync_point_announced( MTR_SHUTDOWN_SYNC_POINT ) ) {
+      if ( is_sync_point_announced( MTR_SHUTDOWN_SYNC_POINT ) ) {
          errmsg << " Shutdown sync-point 'mtr_shutdown',";
       }
-      if ( this->execution_configuration->object_deleted_from_RTI ) {
+      if ( execution_configuration->object_deleted_from_RTI ) {
          errmsg << " Execution Configuration Object (ExCO) deleted from the RTI";
       }
       errmsg << " for the '" << federate->get_federation_name()
@@ -2363,14 +2380,14 @@ void ExecutionControl::freeze_init()
    // where this is a late joining federate in initialization. For that
    // one case, do NOT use the SpaceFOM::ExecutionControlBase::freeze_mode_transition()
    // routine. Just proceed to freeze.
-   if ( !this->is_late_joiner()
-        || ( this->get_current_execution_control_mode() != EXECUTION_CONTROL_INITIALIZING ) ) {
+   if ( !is_late_joiner()
+        || ( get_current_execution_control_mode() != EXECUTION_CONTROL_INITIALIZING ) ) {
       // Tell Execution Control to transition to Freeze.
-      this->freeze_mode_transition();
+      freeze_mode_transition();
    }
 
    // Make sure that the current execution mode is set to Freeze.
-   this->set_current_execution_control_mode( EXECUTION_CONTROL_FREEZE );
+   set_current_execution_control_mode( EXECUTION_CONTROL_FREEZE );
 }
 
 void ExecutionControl::enter_freeze()
@@ -2396,14 +2413,14 @@ void ExecutionControl::enter_freeze()
       }
       ostringstream msg;
       msg << "SpaceFOM::ExecutionControl::enter_freeze():" << __LINE__ << THLA_NEWLINE
-          << "   Master-federate:" << ( this->is_master() ? "Yes" : "No" )
+          << "   Master-federate:" << ( is_master() ? "Yes" : "No" )
           << THLA_NEWLINE
-          << "   Requested-ExCO-mode:" << execution_mode_enum_to_string( from_execution_control_enum( this->get_requested_execution_control_mode() ) )
+          << "   Requested-ExCO-mode:" << execution_mode_enum_to_string( from_execution_control_enum( get_requested_execution_control_mode() ) )
           << THLA_NEWLINE
           << "   Trick-sim-time:" << exec_get_sim_time()
           << "   Trick-exec-command:" << exec_cmd_str
           << THLA_NEWLINE
-          << "   Sim-freeze-time:" << this->get_simulation_freeze_time()
+          << "   Sim-freeze-time:" << get_simulation_freeze_time()
           << "   Freeze-announced:" << ( federate->get_freeze_announced() ? "Yes" : "No" )
           << "   Freeze-pending:" << ( federate->get_freeze_pending() ? "Yes" : "No" )
           << THLA_NEWLINE;
@@ -2411,13 +2428,13 @@ void ExecutionControl::enter_freeze()
    }
 
    // Determine if we are already processing a freeze command.
-   if ( this->get_requested_execution_control_mode() == EXECUTION_CONTROL_FREEZE ) {
+   if ( get_requested_execution_control_mode() == EXECUTION_CONTROL_FREEZE ) {
 
       // Determine if the Trick control panel "freeze" button was pressed more
       // than once if the simulation time is less than the current scheduled
       // freeze time for a FreezeCmd.
       if ( ( exec_get_exec_command() == FreezeCmd )
-           && ( exec_get_sim_time() < this->get_simulation_freeze_time() ) ) {
+           && ( exec_get_sim_time() < get_simulation_freeze_time() ) ) {
 
          // The Trick simulation control panel "freeze" button was hit more than
          // once before the scheduled freeze time, so go back to run.
@@ -2440,14 +2457,14 @@ void ExecutionControl::enter_freeze()
    if ( exec_get_exec_command() == FreezeCmd ) {
 
       // Only the Master federate can command freeze.
-      if ( !this->is_master() ) {
+      if ( !is_master() ) {
 
          // Since only the Master federate can command freeze, override
          // the current Trick freeze command.
          // NOTE: This will prevent the SimControl panel freeze button
          // from working.
          // Uncomment the following line if you really want this behavior.
-         // this->unfreeze();
+         // unfreeze();
 
          return;
       }
@@ -2457,17 +2474,17 @@ void ExecutionControl::enter_freeze()
       // future. Then we can go to freeze at that time.
 
       // Set the next execution mode to freeze.
-      this->set_next_execution_control_mode( EXECUTION_CONTROL_FREEZE );
+      set_next_execution_control_mode( EXECUTION_CONTROL_FREEZE );
 
       // Send the ExCO with the updated run mode.
-      this->get_execution_configuration()->send_init_data();
+      get_execution_configuration()->send_init_data();
 
       // Tell Execution Control to announce Freeze.
-      this->freeze_mode_announce();
+      freeze_mode_announce();
 
       // Tell Trick to go into freeze at the appointed time.
       federate->unfreeze();
-      the_exec->freeze( this->get_simulation_freeze_time() );
+      the_exec->freeze( get_simulation_freeze_time() );
 
       // NOTE: The actual freeze transition will be done in the
       // Federate::freeze_init() job.
@@ -2488,7 +2505,7 @@ bool ExecutionControl::check_freeze_exit()
    }
 
    // Check if this is a Master federate.
-   if ( this->is_master() ) {
+   if ( is_master() ) {
 
       // Process and Mode Transition Requests.
       process_mode_transition_request();
@@ -2518,7 +2535,7 @@ bool ExecutionControl::check_freeze_exit()
       this->execution_configuration->receive_init_data();
 
       // Process the ExCO update.
-      this->process_execution_control_updates();
+      process_execution_control_updates();
 
       // Check for shutdown.
       if ( this->current_execution_control_mode == EXECUTION_CONTROL_SHUTDOWN ) {
@@ -2540,15 +2557,15 @@ bool ExecutionControl::check_freeze_exit()
 void ExecutionControl::exit_freeze()
 {
    // If the Master federate, then send out the updated ExCO.
-   if ( this->is_master() ) {
+   if ( is_master() ) {
       // Set the next mode to run.
-      this->set_next_execution_control_mode( EXECUTION_CONTROL_RUNNING );
+      set_next_execution_control_mode( EXECUTION_CONTROL_RUNNING );
       // Send out an ExCO update.
-      this->get_execution_configuration()->send_init_data();
+      get_execution_configuration()->send_init_data();
    }
 
    // Transition to run mode.
-   this->run_mode_transition();
+   run_mode_transition();
 
    // Tell Trick to reset the realtime clock. We need to do this
    // since the exit_freeze job waits an indeterminate amount of time
@@ -2580,14 +2597,14 @@ Discovery initialization process described in section 7.2 and figure 7-6.
 */
 void ExecutionControl::epoch_and_root_frame_discovery_process()
 {
-   ExecutionConfiguration *ExCO = this->get_execution_configuration();
+   ExecutionConfiguration *ExCO = get_execution_configuration();
 
    // Proceed in to the Root Reference Frame discovery process.
    // This is discussed in section 7.2.1.2 of the Space Reference FOM
    // document and diagram in figure 7-6.
 
    // Branch between Master federate and Early Joiner federate behavior.
-   if ( this->is_master() ) {
+   if ( is_master() ) {
 
       // Send the first ExCO with the scenario timeline epoch.
       ExCO->set_scenario_time_epoch( this->scenario_timeline->get_epoch() );
@@ -2599,7 +2616,7 @@ void ExecutionControl::epoch_and_root_frame_discovery_process()
       ExCO->wait_for_update();
 
       // Process the just received ExCO update.
-      this->process_execution_control_updates();
+      process_execution_control_updates();
 
       // Set scenario timeline epoch and time.
       this->scenario_timeline->set_epoch( ExCO->get_scenario_time_epoch() );
@@ -2608,7 +2625,7 @@ void ExecutionControl::epoch_and_root_frame_discovery_process()
    // If the Root Reference Frame Publisher (RRFP) then send out the
    // root reference frame update. Otherwise wait on the delivery of
    // the root reference frame update.
-   if ( this->is_root_frame_publisher() ) {
+   if ( is_root_frame_publisher() ) {
 
       // Set the Root Reference Frame name in the ExCO.
       ExCO->set_root_frame_name( root_ref_frame->get_name() );
@@ -2629,7 +2646,7 @@ void ExecutionControl::epoch_and_root_frame_discovery_process()
    }
 
    // Branch between Master federate and Early Joiner federate behavior.
-   if ( this->is_master() ) {
+   if ( is_master() ) {
 
       // Now send the latest ExCO update with the root reference frame update.
       ExCO->send_init_data();
@@ -2640,11 +2657,11 @@ void ExecutionControl::epoch_and_root_frame_discovery_process()
       ExCO->wait_for_update();
 
       // Process the just received ExCO update.
-      this->process_execution_control_updates();
+      process_execution_control_updates();
    }
 
    // Wait on the root_frame_discovered sync-point
-   this->wait_for_root_frame_discovered_synchronization();
+   wait_for_root_frame_discovered_synchronization();
 }
 
 /*!
@@ -2741,7 +2758,7 @@ void ExecutionControl::receive_root_ref_frame()
    TrickHLA::Object *rrf_object = root_ref_frame->get_object();
 
    // The root reference frame publisher (RRFP) only publishes the root frame.
-   if ( this->is_root_frame_publisher() ) {
+   if ( is_root_frame_publisher() ) {
       return;
    }
 
@@ -2831,7 +2848,7 @@ void ExecutionControl::set_least_common_time_step(
    double const lcts )
 {
    // WARNING: Only the Master federate should ever set this.
-   if ( this->is_master() ) {
+   if ( is_master() ) {
 
       ExecutionConfiguration *ExCO = dynamic_cast< ExecutionConfiguration * >( execution_configuration );
       if ( ExCO == NULL ) {
