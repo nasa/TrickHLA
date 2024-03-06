@@ -445,8 +445,8 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
 
       bool achieved_and_not_synched;
       {
-         // When auto_unlock_mutex goes out of scope it automatically unlocks the
-         // mutex even if there is an exception.
+         // When auto_unlock_mutex goes out of scope it automatically unlocks
+         // the mutex even if there is an exception.
          MutexProtection auto_unlock_mutex( &mutex );
          achieved_and_not_synched = sp->is_achieved() && !sp->is_synchronized();
       }
