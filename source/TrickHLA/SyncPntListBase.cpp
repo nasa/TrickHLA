@@ -82,15 +82,25 @@ SyncPntListBase::~SyncPntListBase()
    mutex.destroy();
 }
 
-void SyncPntListBase::add_sync_point(
+SyncPnt *SyncPntListBase::add_sync_point(
    wstring const &label )
 {
+   if ( contains( label ) ) {
+      ostringstream errmsg;
+      errmsg << "SyncPntListBase::add_sync_point():" << __LINE__
+             << " ERROR: The sync-point label '" << label.c_str()
+             << "' has already been added!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    SyncPnt *sp = new SyncPnt( label );
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
    sync_point_list.push_back( sp );
+
+   return sp;
 }
 
 SyncPnt *SyncPntListBase::get_sync_point(
@@ -153,14 +163,14 @@ SyncPnt *SyncPntListBase::register_sync_point(
 void SyncPntListBase::register_all_sync_points(
    RTI1516_NAMESPACE::RTIambassador &RTI_amb )
 {
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
+
    // Iterate through all the synchronization points that have been added.
    vector< SyncPnt * >::const_iterator i;
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
       SyncPnt *sp = ( *i );
-
-      // When auto_unlock_mutex goes out of scope it automatically unlocks the
-      // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &mutex );
 
       // Only add them if they are not already registered.
       if ( ( sp != NULL ) && !sp->is_registered() ) {
@@ -178,13 +188,13 @@ void SyncPntListBase::register_all_sync_points(
    if ( federate_handle_set.empty() ) {
       register_all_sync_points( RTI_amb );
    } else {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks
+      // the mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &mutex );
+
       vector< SyncPnt * >::const_iterator i;
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
          SyncPnt *sp = ( *i );
-
-         // When auto_unlock_mutex goes out of scope it automatically unlocks
-         // the mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &mutex );
 
          // Only add them if they are not already registered.
          if ( ( sp != NULL ) && !sp->is_registered() ) {
@@ -199,7 +209,7 @@ void SyncPntListBase::register_all_sync_points(
 void SyncPntListBase::sync_point_registration_succeeded(
    wstring const &label )
 {
-   if ( this->mark_registered( label ) ) {
+   if ( mark_registered( label ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          send_hs( stdout, "SyncPntListBase::sync_point_registration_succeeded():%d Label:'%ls'%c",
                   __LINE__, label.c_str(), THLA_NEWLINE );
@@ -212,13 +222,13 @@ void SyncPntListBase::sync_point_registration_failed(
    bool const     not_unique )
 {
    // Only handle the sync-points we know about.
-   if ( this->contains( label ) ) {
+   if ( contains( label ) ) {
 
       // If the reason for the failure is that the label is not unique then
       // this means the sync-point is registered with the RTI it just means
       // we did not do it.
       if ( not_unique ) {
-         this->mark_registered( label );
+         mark_registered( label );
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             send_hs( stdout, "SyncPntListBase::sync_point_registration_failed():%d Label:'%ls' already exists.%c",
                      __LINE__, label.c_str(), THLA_NEWLINE );
@@ -237,24 +247,23 @@ void SyncPntListBase::sync_point_registration_failed(
 void SyncPntListBase::wait_for_all_announcements(
    Federate *fed_ptr )
 {
-   vector< SyncPnt * >::const_iterator i;
-
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "SyncPntListBase::wait_for_all_announcements():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
-      this->print_sync_points();
+      print_sync_points();
    }
 
    // Iterate through the synchronization point list.
+   vector< SyncPnt * >::const_iterator i;
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
       SyncPnt *sp = ( *i );
 
       // Wait for the sync-point announcement.
-      this->wait_for_sync_point_announcement( fed_ptr, sp );
+      wait_for_sync_point_announcement( fed_ptr, sp );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      this->print_sync_points();
+      print_sync_points();
    }
 }
 
@@ -263,11 +272,11 @@ void SyncPntListBase::announce_sync_point(
    wstring const                    &label,
    RTI1516_USERDATA const           &user_supplied_tag )
 {
-   // Check to see if the synchronization point is known?
-   if ( this->contains( label ) ) {
+   // Check to see if the synchronization point is known.
+   if ( contains( label ) ) {
 
       // Mark sync-point as existing/announced.
-      if ( this->mark_announced( label ) ) {
+      if ( mark_announced( label ) ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             send_hs( stdout, "SyncPntListBase::announce_sync_point():%d Synchronization point announced:'%ls'%c",
                      __LINE__, label.c_str(), THLA_NEWLINE );
@@ -385,7 +394,7 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
    StringUtilities::to_string( name, label );
 
    // Check for the synchronization point by label.
-   SyncPnt *sp = this->get_sync_point( label );
+   SyncPnt *sp = get_sync_point( label );
 
    // If the pointer is not NULL then we found it.
    if ( sp != NULL ) {
@@ -436,8 +445,8 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
 
       bool achieved_and_not_synched;
       {
-         // When auto_unlock_mutex goes out of scope it automatically unlocks the
-         // mutex even if there is an exception.
+         // When auto_unlock_mutex goes out of scope it automatically unlocks
+         // the mutex even if there is an exception.
          MutexProtection auto_unlock_mutex( &mutex );
          achieved_and_not_synched = sp->is_achieved() && !sp->is_synchronized();
       }
@@ -470,16 +479,16 @@ bool SyncPntListBase::achieve_all_sync_points(
 {
    bool acknowledged = false;
 
-   // Iterate through ALL the synchronization points.
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
+
+   // Iterate through all the synchronization points.
    vector< SyncPnt * >::const_iterator i;
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
       SyncPnt *sp = ( *i );
 
-      // When auto_unlock_mutex goes out of scope it automatically unlocks the
-      // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &mutex );
-
-      if ( ( sp != NULL ) && sp->is_valid() && !sp->is_achieved() ) {
+      if ( ( sp != NULL ) && sp->is_announced() ) {
          if ( achieve_sync_point( RTI_amb, sp ) ) {
             acknowledged = true;
          }
@@ -777,16 +786,30 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
    Federate           *federate,
    std::wstring const &label )
 {
-   return this->wait_for_sync_point_announcement( federate, get_sync_point( label ) );
+   bool     announced = false;
+   SyncPnt *sp        = get_sync_point( label );
+
+   if ( sp != NULL ) {
+      announced = wait_for_sync_point_announcement( federate, sp );
+   } else {
+      string name;
+      StringUtilities::to_string( name, label );
+      ostringstream errmsg;
+      errmsg << "SyncPntListBase::wait_for_sync_point_announcement():" << __LINE__
+             << " ERROR: Unknown sync-point '" << name
+             << "', which means there is not an internal SyncPnt instance to"
+             << " manage the state against!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   return announced;
 }
 
 bool SyncPntListBase::wait_for_sync_point_announcement(
    Federate *federate,
    SyncPnt  *sp )
 {
+   bool announced = false;
    if ( sp != NULL ) {
-
-      bool announced;
 
       // Critical code section.
       {
@@ -880,37 +903,82 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
                  << " Sync-point announced: " << sp_status << THLA_ENDL;
          send_hs( stdout, message.str().c_str() );
       }
-
-      return true;
    }
-   return false;
+   return announced;
 }
 
 bool SyncPntListBase::achieve_sync_point(
    RTI1516_NAMESPACE::RTIambassador &RTI_amb,
    wstring const                    &label )
 {
-   return achieve_sync_point( RTI_amb, this->get_sync_point( label ) );
-}
+   bool     achieved = false;
+   SyncPnt *sp       = get_sync_point( label );
 
-bool SyncPntListBase::achieve_sync_point(
-   RTI1516_NAMESPACE::RTIambassador &RTI_amb,
-   SyncPnt                          *sp )
-{
    if ( sp != NULL ) {
+
+      // Achieve known sync-point and update its state.
+      achieved = achieve_sync_point( RTI_amb, sp );
+
+   } else {
+
+      // Achieve unknown sync-point and there is no state to update.
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string name;
-         StringUtilities::to_string( name, sp->get_label() );
+         StringUtilities::to_string( name, label );
          ostringstream msg;
          msg << "SyncPntListBase::achieve_sync_point():" << __LINE__
-             << " Synchronization-Point '" << name << "'" << THLA_ENDL;
+             << " Unknown Synchronization-Point '" << name << "'"
+             << THLA_ENDL;
          send_hs( stdout, msg.str().c_str() );
       }
 
       // Macro to save the FPU Control Word register value.
       TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-      // Achieve this synchronization point.
+      try {
+         RTI_amb.synchronizationPointAchieved( label );
+         achieved = true;
+      } catch ( SynchronizationPointLabelNotAnnounced const &e ) {
+         // Error will result in us returning false.
+      } catch ( FederateNotExecutionMember const &e ) {
+         // Error will result in us returning false.
+      } catch ( SaveInProgress const &e ) {
+         // Error will result in us returning false.
+      } catch ( RestoreInProgress const &e ) {
+         // Error will result in us returning false.
+      } catch ( NotConnected const &e ) {
+         // Error will result in us returning false.
+      } catch ( RTIinternalError const &e ) {
+         // Error will result in us returning false.
+      }
+
+      // Macro to restore the saved FPU Control Word register value.
+      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+   }
+   return achieved;
+}
+
+bool SyncPntListBase::achieve_sync_point(
+   RTI1516_NAMESPACE::RTIambassador &RTI_amb,
+   SyncPnt                          *sp )
+{
+   bool achieved = false;
+
+   if ( sp != NULL ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string name;
+         StringUtilities::to_string( name, sp->get_label() );
+         ostringstream msg;
+         msg << "SyncPntListBase::achieve_sync_point():" << __LINE__
+             << " Known Synchronization-Point '" << name << "', state:"
+             << sp->get_state() << THLA_ENDL;
+         send_hs( stdout, msg.str().c_str() );
+      }
+
+      // Macro to save the FPU Control Word register value.
+      TRICKHLA_SAVE_FPU_CONTROL_WORD;
+
       try {
          // When auto_unlock_mutex goes out of scope it automatically unlocks the
          // mutex even if there is an exception.
@@ -921,27 +989,27 @@ bool SyncPntListBase::achieve_sync_point(
          // Mark the sync-point as achieved.
          sp->set_state( SYNC_PT_STATE_ACHIEVED );
 
+         achieved = true;
+
       } catch ( SynchronizationPointLabelNotAnnounced const &e ) {
-         throw; // Rethrow the exception.
+         // Keep sync-point state the same, and return false.
       } catch ( FederateNotExecutionMember const &e ) {
-         throw; // Rethrow the exception.
+         // Keep sync-point state the same, and return false.
       } catch ( SaveInProgress const &e ) {
-         throw; // Rethrow the exception.
+         // Keep sync-point state the same, and return false.
       } catch ( RestoreInProgress const &e ) {
-         throw; // Rethrow the exception.
+         // Keep sync-point state the same, and return false.
       } catch ( NotConnected const &e ) {
-         throw; // Rethrow the exception.
+         // Keep sync-point state the same, and return false.
       } catch ( RTIinternalError const &e ) {
-         throw; // Rethrow the exception.
+         // Keep sync-point state the same, and return false.
       }
 
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      return true;
    }
-   return false;
+   return achieved;
 }
 
 bool SyncPntListBase::wait_for_synchronization(

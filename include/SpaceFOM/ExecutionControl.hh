@@ -121,7 +121,9 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual void role_determination_process();
    /*! @brief Process to join the federation execution early in initialization. */
    virtual void early_joiner_hla_init_process();
-   /*! @brief Process to determine is a federate is joining late in or after initialization. */
+   /*! @brief Mandatory later joiner federate initialization process. */
+   virtual void mandatory_late_joiner_init_process();
+   /*! @brief Late joiner federate HLA initialization process. */
    virtual void late_joiner_hla_init_process();
 
    //

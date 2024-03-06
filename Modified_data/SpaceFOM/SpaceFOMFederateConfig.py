@@ -79,8 +79,19 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
       # self.add_multiphase_init_sync_point( 'sync_point_name' )
 
       return
-   
-   
+
+
+   def set_mandatory_late_joiner( self, mandatory_late_joiner ):
+
+      # You can only adjust the Trick Tick value before initialize method is called.
+      if self.initialized :
+         print( 'SpaceFOMFederateConfig.set_mandatory_late_jointer(): Warning, already initialized, function ignored!' )
+      else:
+         self.federate.mandatory_late_joiner = mandatory_late_joiner
+
+      return
+
+
    def set_master_role( self, master_state = True ):
       
       # You can only change master state before initialize method is called.

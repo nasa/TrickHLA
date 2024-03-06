@@ -279,7 +279,7 @@ void ExecutionConfiguration::pack()
           << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << endl
           << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << endl
           << "............................................................." << endl
-          << "\t Object-Name:             " << this->get_name() << "'" << endl
+          << "\t Object-Name:             " << get_name() << "'" << endl
           << "\t root_frame_name:         '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'" << endl
           << "\t scenario_time_epoch:     " << setprecision( 18 ) << scenario_time_epoch << endl
           << "\t next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << endl
@@ -344,7 +344,7 @@ void ExecutionConfiguration::unpack()
           << "\t Current HLA grant time:  " << get_federate()->get_granted_time().get_time_in_seconds() << endl
           << "\t Current HLA request time:" << get_federate()->get_requested_time().get_time_in_seconds() << endl
           << "............................................................." << endl
-          << "\t Object-Name:            '" << this->get_name() << "'" << endl
+          << "\t Object-Name:            '" << get_name() << "'" << endl
           << "\t root_frame_name:        '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'" << endl
           << "\t scenario_time_epoch:    " << setprecision( 18 ) << scenario_time_epoch << endl
           << "\t next_mode_scenario_time:" << setprecision( 18 ) << next_mode_scenario_time << endl
@@ -719,7 +719,7 @@ void ExecutionConfiguration::print_execution_configuration()
       msg << endl
           << "=============================================================" << endl
           << "SpaceFOM::ExecutionConfiguration::print_exec_config():" << __LINE__ << endl
-          << "\t Object-Name:             '" << this->get_name() << "'" << endl
+          << "\t Object-Name:             '" << get_name() << "'" << endl
           << "\t root_frame_name:         '" << ( root_frame_name != NULL ? root_frame_name : "" ) << "'" << endl
           << "\t scenario_time_epoch:     " << setprecision( 18 ) << scenario_time_epoch << endl
           << "\t next_mode_scenario_time: " << setprecision( 18 ) << next_mode_scenario_time << endl
@@ -747,21 +747,21 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
    }
 
    // Make sure we have at least one piece of exec-config data we can receive.
-   if ( this->any_remotely_owned_subscribed_init_attribute() ) {
+   if ( any_remotely_owned_subscribed_init_attribute() ) {
 
       int64_t      wallclock_time;
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
       // Wait for the data to arrive.
-      while ( !this->is_changed() ) {
+      while ( !is_changed() ) {
 
          // Check for shutdown.
          federate->check_for_shutdown_with_termination();
 
          sleep_timer.sleep();
 
-         if ( !this->is_changed() ) {
+         if ( !is_changed() ) {
 
             // To be more efficient, we get the time once and share it.
             wallclock_time = sleep_timer.time();
@@ -795,7 +795,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
       }
 
       // Receive the exec-config data from the master federate.
-      this->receive_init_data();
+      receive_init_data();
 
    } else {
       ostringstream errmsg;

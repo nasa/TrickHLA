@@ -825,7 +825,6 @@ bool ExecutionControlBase::mark_object_as_deleted_from_federation(
       execution_configuration->remove_object_instance();
       return true;
    }
-
    return false;
 }
 
