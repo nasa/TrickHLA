@@ -799,24 +799,21 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
    SleepTimeout sleep_timer;
 
    // Block until we have determined if we are a late joining federate.
-   while ( !late_joiner_determined && !this->manager->is_restore_determined() ) {
+   while ( !late_joiner_determined && !manager->is_restore_determined() ) {
 
       // Check for shutdown.
       federate->check_for_shutdown_with_termination();
 
       // We are not a late joiner if the Sim-Config sync-point exists are we
       // are a member for it.
-      if ( !this->manager->is_restore_determined()
-           && this->contains( IMSim::SIM_CONFIG_SYNC_POINT ) ) {
+      if ( !manager->is_restore_determined() && contains( IMSim::SIM_CONFIG_SYNC_POINT ) ) { // cppcheck-suppress [knownConditionTrueFalse]
          this->late_joiner            = false;
          this->late_joiner_determined = true;
       }
 
       // Determine if the Initialization Complete sync-point exists, which
       // means at this point we are a late joining federate.
-      if ( !late_joiner_determined
-           && !this->manager->is_restore_determined()
-           && this->does_init_complete_sync_point_exist() ) {
+      if ( !late_joiner_determined && !manager->is_restore_determined() && does_init_complete_sync_point_exist() ) {
          this->late_joiner            = true;
          this->late_joiner_determined = true;
       }
@@ -828,14 +825,14 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
       }
 
       // Wait for a little while to give the sync-points time to come in.
-      if ( !late_joiner_determined && !this->manager->is_restore_determined() ) {
+      if ( !late_joiner_determined && !manager->is_restore_determined() ) {
 
          // Check for shutdown.
          federate->check_for_shutdown_with_termination();
 
          sleep_timer.sleep();
 
-         if ( !late_joiner_determined && !this->manager->is_restore_determined() ) {
+         if ( !late_joiner_determined && !manager->is_restore_determined() ) { // cppcheck-suppress [knownConditionTrueFalse]
 
             // To be more efficient, we get the time once and share it.
             wallclock_time = sleep_timer.time();
