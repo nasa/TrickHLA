@@ -52,6 +52,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/LoggableTimedSyncPnt.hh"
 #include "TrickHLA/ScenarioTimeline.hh"
 #include "TrickHLA/SimTimeline.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/SyncPntList.hh"
 #include "TrickHLA/SyncPntListBase.hh"
 #include "TrickHLA/Types.hh"
@@ -450,18 +451,18 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    /*! @brief Set the mode transition requested flag. */
    virtual void set_mode_transition_requested()
    {
-      mode_transition_requested = true;
+      this->mode_transition_requested = true;
    }
    /*! @brief Clear the mode transition requested flag. */
    virtual void clear_mode_transition_requested()
    {
-      mode_transition_requested = false;
+      this->mode_transition_requested = false;
    }
    /*! @brief Determine if a mode transition has been requested.
     *  @return mode_change_requested True if a mode transition has been requested. */
    virtual bool is_mode_transition_requested()
    {
-      return mode_transition_requested;
+      return this->mode_transition_requested;
    }
 
    // Role determination methods.

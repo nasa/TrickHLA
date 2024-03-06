@@ -135,6 +135,7 @@ Federate::Federate()
      time_regulating( true ),
      time_constrained( true ),
      time_management( true ),
+     mandatory_late_joiner( false ),
      enable_known_feds( true ),
      known_feds_count( 0 ),
      known_feds( NULL ),
@@ -666,7 +667,6 @@ void Federate::restart_initialization()
  */
 void Federate::pre_multiphase_initialization()
 {
-
    // Perform the Execution Control specific pre-multi-phase initialization.
    execution_control->pre_multi_phase_init_processes();
 
@@ -697,7 +697,6 @@ void Federate::pre_multiphase_initialization()
  */
 void Federate::post_multiphase_initialization()
 {
-
    // Perform the Execution Control specific post-multi-phase initialization.
    execution_control->post_multi_phase_init_processes();
 
@@ -2640,7 +2639,6 @@ void Federate::announce_sync_point(
    wstring const          &label,
    RTI1516_USERDATA const &user_supplied_tag )
 {
-
    // Dispatch this to the ExecutionControl process. It will check for
    // any synchronization points that require special handling.
    execution_control->announce_sync_point( *( RTI_ambassador ), label, user_supplied_tag );

@@ -23,6 +23,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../source/TrickHLA/TimedSyncPntList.cpp}
 @trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPnt.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPntListBase.cpp}
 
 @revs_title
@@ -44,6 +45,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/SyncPnt.hh"
 #include "TrickHLA/SyncPntListBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -84,13 +86,15 @@ class TimedSyncPntList : public TrickHLA::SyncPntListBase
    }
 
    /*! @brief Add the given synchronization point label to the list.
-    *  @param label Synchronization point label. */
-   virtual void add_sync_point( std::wstring const &label );
+    *  @param label Synchronization point label.
+    *  @return a pointer to the timed sync-point object added. */
+   virtual SyncPnt *add_sync_point( std::wstring const &label );
 
    /*! @brief Add the given synchronization point label and action time to the list.
     *  @param label Synchronization point label.
-    *  @param time  Action time. */
-   virtual void add_sync_point( std::wstring const &label, Int64Time const &time );
+    *  @param time  Action time.
+    *  @return a pointer to the timed sync-point object added. */
+   virtual SyncPnt *add_sync_point( std::wstring const &label, Int64Time const &time );
 
    /*! @brief Achieve all the synchronization points in the list.
     *  @return True is any synchronization point in the list was achieved.
@@ -105,15 +109,15 @@ class TimedSyncPntList : public TrickHLA::SyncPntListBase
     * the given time.
     *  @return True if acknowledged, false otherwise.
     *  @param rti_ambassador    Reference to RTI Ambassador.
-    *  @param checkTime Time to check. */
+    *  @param check_time Time to check. */
    virtual bool achieve_all_sync_points( RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-                                         Int64Time const                  &checkTime );
+                                         Int64Time const                  &check_time );
 
    /*! @brief Determine if we have any synchronization point that has a action
     * time less than the given time.
     *  @return True if sync-point is ready to be cleared.
-    *  @param checkTime Time to check. */
-   virtual bool check_sync_points( Int64Time const &checkTime );
+    *  @param check_time Time to check. */
+   virtual bool check_sync_points( Int64Time const &check_time );
 
    /*! @brief Converts the vector of synchronization points to a
     *  checkpoint-able class.
