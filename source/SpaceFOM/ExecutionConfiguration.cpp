@@ -400,11 +400,11 @@ void ExecutionConfiguration::unpack()
             message << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
                     << " WARNING: ExCO least_common_time_step (" << least_common_time_step
                     << " " << Int64BaseTime::get_units()
-                    << ") is less than the federate software frame ("
+                    << ") is less than the Trick software frame ("
                     << software_frame_base_time << " " << Int64BaseTime::get_units()
-                    << ")! Resetting the software frame ("
+                    << ")! Resetting the Trick software frame ("
                     << least_common_time_step << " " << Int64BaseTime::get_units()
-                    << ")!!!!" << THLA_ENDL;
+                    << ")!" << THLA_ENDL;
             send_hs( stdout, message.str().c_str() );
          }
          software_frame_sec = Int64BaseTime::to_seconds( least_common_time_step );
@@ -416,11 +416,11 @@ void ExecutionConfiguration::unpack()
             message << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
                     << " WARNING: ExCO least_common_time_step (" << least_common_time_step
                     << " " << Int64BaseTime::get_units()
-                    << ") is not an integer multiple of the federate software frame ("
+                    << ") is not an integer multiple of the Trick software frame ("
                     << software_frame_base_time << " " << Int64BaseTime::get_units()
-                    << "! Resetting the software frame ("
+                    << "! Resetting the Trick software frame ("
                     << least_common_time_step << " " << Int64BaseTime::get_units()
-                    << ")!!!!" << THLA_ENDL;
+                    << ")!" << THLA_ENDL;
             send_hs( stdout, message.str().c_str() );
          }
          software_frame_sec = Int64BaseTime::to_seconds( least_common_time_step );

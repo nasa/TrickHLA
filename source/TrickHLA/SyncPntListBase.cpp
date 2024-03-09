@@ -272,7 +272,7 @@ void SyncPntListBase::announce_sync_point(
    wstring const                    &label,
    RTI1516_USERDATA const           &user_supplied_tag )
 {
-   // Check to see if the synchronization point is known.
+   // Check to see if the synchronization point is known and is in the list.
    if ( contains( label ) ) {
 
       // Mark sync-point as existing/announced.
@@ -916,7 +916,7 @@ bool SyncPntListBase::achieve_sync_point(
 
    if ( sp != NULL ) {
 
-      // Achieve known sync-point and update its state.
+      // Achieve known sync-point, which will also update its state.
       achieved = achieve_sync_point( RTI_amb, sp );
 
    } else {
