@@ -187,9 +187,9 @@ void ExecutionControl::initialize()
    }
 
    // Add the Mode Transition Request synchronization points.
-   add_sync_point( MTR_RUN_SYNC_POINT );
-   add_sync_point( MTR_FREEZE_SYNC_POINT );
-   add_sync_point( MTR_SHUTDOWN_SYNC_POINT );
+   add_sync_point( SpaceFOM::MTR_RUN_SYNC_POINT );
+   add_sync_point( SpaceFOM::MTR_FREEZE_SYNC_POINT );
+   add_sync_point( SpaceFOM::MTR_SHUTDOWN_SYNC_POINT );
 
    // Make sure we initialize the base class.
    TrickHLA::ExecutionControlBase::initialize();
@@ -408,7 +408,7 @@ void ExecutionControl::announce_sync_point(
          // Mark initialization sync-point as existing/announced.
          if ( mark_announced( label ) ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-               send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM synchronization point announced:'%ls'%c",
+               send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM mandatory late jointer, announced sync-point:'%ls'%c",
                         __LINE__, label.c_str(), THLA_NEWLINE );
             }
          }
@@ -421,9 +421,21 @@ void ExecutionControl::announce_sync_point(
          }
          // Mark the initialization process as completed.
          this->init_complete_sp_exists = true;
+
+      } else if ( label.compare( SpaceFOM::MTR_SHUTDOWN_SYNC_POINT ) == 0 ) {
+
+         // Mark MTR shutdown sync-point as announced but don't achieve it
+         // because we need to shutdown.
+         if ( mark_announced( label ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+               send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM mandatory late jointer, announced sync-point:'%ls'%c",
+                        __LINE__, label.c_str(), THLA_NEWLINE );
+            }
+         }
+
       } else {
 
-         // Achieve all the sync-points.
+         // Achieve all other sync-points.
          if ( achieve_sync_point( rti_ambassador, label ) ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM mandatory late jointer, achieved sync-point:'%ls'%c",
@@ -774,9 +786,9 @@ void ExecutionControl::early_joiner_hla_init_process()
    // and "startup" sync-points to be registered (i.e. announced).
    // Note: Do NOT register the INIT_COMPLETED_SYNC_POINT synchronization
    // point yet. That marks the successful completion of initialization.
-   wait_for_sync_point_announcement( federate, INIT_STARTED_SYNC_POINT );
-   wait_for_sync_point_announcement( federate, OBJECTS_DISCOVERED_SYNC_POINT );
-   wait_for_sync_point_announcement( federate, ROOT_FRAME_DISCOVERED_SYNC_POINT );
+   wait_for_sync_point_announcement( federate, SpaceFOM::INIT_STARTED_SYNC_POINT );
+   wait_for_sync_point_announcement( federate, SpaceFOM::OBJECTS_DISCOVERED_SYNC_POINT );
+   wait_for_sync_point_announcement( federate, SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT );
 
    // Setup all the RTI handles for the objects, attributes and interaction
    // parameters.
@@ -1805,6 +1817,8 @@ bool ExecutionControl::process_execution_control_updates()
              << execution_control_enum_to_string( this->current_execution_control_mode )
              << ") and the ExCO current execution mode ("
              << execution_mode_enum_to_string( exco_cem )
+             << ") with ExCO next execution mode being ("
+             << execution_mode_enum_to_string( exco_nem )
              << ")!" << THLA_ENDL;
       send_hs( stdout, errmsg.str().c_str() );
    }
@@ -2148,9 +2162,9 @@ bool ExecutionControl::run_mode_transition()
 
    // Register the 'mtr_run' sync-point.
    if ( is_master() ) {
-      sync_pnt = register_sync_point( *RTI_amb, MTR_RUN_SYNC_POINT );
+      sync_pnt = register_sync_point( *RTI_amb, SpaceFOM::MTR_RUN_SYNC_POINT );
    } else {
-      sync_pnt = get_sync_point( MTR_RUN_SYNC_POINT );
+      sync_pnt = get_sync_point( SpaceFOM::MTR_RUN_SYNC_POINT );
    }
 
    // Make sure that we have a valid sync-point.
@@ -2231,14 +2245,14 @@ void ExecutionControl::freeze_mode_announce()
 {
    // Register the 'mtr_freeze' sync-point.
    if ( is_master() ) {
-      register_sync_point( *( federate->get_RTI_ambassador() ), MTR_FREEZE_SYNC_POINT );
+      register_sync_point( *( federate->get_RTI_ambassador() ), SpaceFOM::MTR_FREEZE_SYNC_POINT );
    }
 }
 
 bool ExecutionControl::freeze_mode_transition()
 {
    // Get the 'mtr_freeze' sync-point.
-   TrickHLA::SyncPnt *sync_pnt = get_sync_point( MTR_FREEZE_SYNC_POINT );
+   TrickHLA::SyncPnt *sync_pnt = get_sync_point( SpaceFOM::MTR_FREEZE_SYNC_POINT );
 
    // Make sure that we have a valid sync-point.
    if ( sync_pnt == (TrickHLA::SyncPnt *)NULL ) {
@@ -2311,11 +2325,11 @@ void ExecutionControl::shutdown_mode_transition()
                __LINE__, THLA_NEWLINE );
    }
    // Register the 'mtr_shutdown' sync-point.
-   register_sync_point( *( federate->get_RTI_ambassador() ), MTR_SHUTDOWN_SYNC_POINT );
+   register_sync_point( *( federate->get_RTI_ambassador() ), SpaceFOM::MTR_SHUTDOWN_SYNC_POINT );
 
    // Wait for the 'mtr_shutdown' announcement to make sure it goes through
    // before we shutdown.
-   wait_for_sync_point_announcement( federate, MTR_SHUTDOWN_SYNC_POINT );
+   wait_for_sync_point_announcement( federate, SpaceFOM::MTR_SHUTDOWN_SYNC_POINT );
 }
 
 /*!
@@ -2330,7 +2344,7 @@ bool ExecutionControl::check_for_shutdown()
 
    // Check to see if the mtr_shutdown sync-point has been announced or if the
    // ExCO object has been deleted as indicators to shutdown.
-   return ( is_sync_point_announced( MTR_SHUTDOWN_SYNC_POINT )
+   return ( is_sync_point_announced( SpaceFOM::MTR_SHUTDOWN_SYNC_POINT )
             || this->execution_configuration->object_deleted_from_RTI );
 }
 
@@ -2353,7 +2367,7 @@ bool ExecutionControl::check_for_shutdown_with_termination()
       errmsg << "SpaceFOM::ExecutionControl::check_for_shutdown_with_termination():" << __LINE__
              << " WARNING: This Federate '" << this->federate->get_federate_name()
              << "' detected a";
-      if ( is_sync_point_announced( MTR_SHUTDOWN_SYNC_POINT ) ) {
+      if ( is_sync_point_announced( SpaceFOM::MTR_SHUTDOWN_SYNC_POINT ) ) {
          errmsg << " Shutdown sync-point 'mtr_shutdown',";
       }
       if ( execution_configuration->object_deleted_from_RTI ) {

@@ -80,6 +80,9 @@ Makefile.trick
 # JEOD specific files
 jeod_chkpnt_post_init
 
+# Visual Studio Code
+.vscode
+
 # Eclipse specific files
 Debug
 .cproject
