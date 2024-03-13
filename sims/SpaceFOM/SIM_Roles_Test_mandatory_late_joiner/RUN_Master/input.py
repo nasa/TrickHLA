@@ -241,6 +241,10 @@ federate.set_lookahead_time( 0.250 )
 # federation execution.
 federate.set_least_common_time_step( 0.250 )
 
+# For this non-Pacing/non-realtime federate, set the Trick software frame
+# to the lookahead time by default.
+trick.exec_set_software_frame( 0.250 )
+
 # Set the amount of seconds used to 'pad' mode transitions.
 federate.set_time_padding( 1.0 )
 

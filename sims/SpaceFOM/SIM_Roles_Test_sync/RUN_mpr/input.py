@@ -199,7 +199,9 @@ if (realtime_clock == True) :
    exec(open( "Modified_data/trick/realtime.py" ).read())
 else :
    print('Realtime Clock Disabled.')
-
+   # For this non-Pacing/non-realtime federate, set the Trick software frame
+   # to the lookahead time by default.
+   trick.exec_set_software_frame( 0.250 )
 
 trick.exec_set_enable_freeze(False)
 trick.exec_set_freeze_command(False)
