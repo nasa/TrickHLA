@@ -121,24 +121,3 @@ RefFrameBase *RefFrameTree::find_frame( string const &name )
 {
    return ( static_cast< RefFrameBase * >( find_node( name ) ) );
 }
-
-RefFrameBase *RefFrameTree::find_common_base(
-   char const *child_1,
-   char const *child_2 )
-{
-   return ( NULL );
-}
-
-RefFrameBase *RefFrameTree::find_common_base(
-   string const &child_1,
-   string const &child_2 )
-{
-   return ( NULL );
-}
-
-RefFrameBase *RefFrameTree::find_common_base(
-   RefFrameBase *child_1,
-   RefFrameBase *child_2 )
-{
-   return ( NULL );
-}
