@@ -23,7 +23,9 @@ NASA, Johnson Space Center\n
 @python_module{SpaceFOM}
 
 @tldh
+@trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
 @trick_link_dependency{../../source/TrickHLA/LagCompensation.cpp}
+@trick_link_dependency{../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../../source/SpaceFOM/RefFrameLagCompBase.cpp}
 @trick_link_dependency{../../source/SpaceFOM/QuaternionData.cpp}
 
@@ -43,7 +45,9 @@ NASA, Johnson Space Center\n
 // Trick includes.
 
 // TrickHLA include files.
+#include "TrickHLA/Attribute.hh"
 #include "TrickHLA/LagCompensation.hh"
+#include "TrickHLA/Object.hh"
 
 // SpaceFOM include files.
 #include "SpaceFOM/QuaternionData.hh"
