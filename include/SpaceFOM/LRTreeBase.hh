@@ -95,15 +95,15 @@ class LRTreeBase
    virtual bool build_tree();
    virtual bool check_tree();
 
-   virtual bool has_node( unsigned int node_id );
+   virtual bool has_node( unsigned int const node_id );
    virtual bool has_node( char const *name );
    virtual bool has_node( std::string const &name );
    virtual bool has_node( LRTreeNodeBase const *node );
 
-   virtual unsigned int get_root_node_id(){ return( root_node_id ); }
-   virtual LRTreeNodeBase *get_root_node(){ return( root_node_ptr ); };
+   virtual unsigned int    get_root_node_id() { return ( root_node_id ); }
+   virtual LRTreeNodeBase *get_root_node() { return ( root_node_ptr ); }
 
-   LRTreeNodeBase *find_node( unsigned int node_id );
+   LRTreeNodeBase *find_node( unsigned int const node_id );
    LRTreeNodeBase *find_node( char const *name );
    LRTreeNodeBase *find_node( std::string const &name );
 
@@ -124,22 +124,22 @@ class LRTreeBase
    virtual void print_paths( std::ostream &stream = std::cout );
 
    virtual LRTreeNodeBase *find_root();
-   virtual bool is_cyclic( LRTreeNodeBase const *node );
+   virtual bool            is_cyclic( LRTreeNodeBase const *node );
 
-   virtual LRTreeNodeVector * get_path_to_root( unsigned int node_id );
-   virtual LRTreeNodeVector * get_path_to_root( LRTreeNodeBase const *node );
+   virtual LRTreeNodeVector *get_path_to_root( unsigned int const node_id );
+   virtual LRTreeNodeVector *get_path_to_root( LRTreeNodeBase const *node );
 
-   virtual LRTreeNodeVector * find_path( unsigned int local,
-                                         unsigned int wrt );
+   virtual LRTreeNodeVector *find_path( unsigned int const local,
+                                        unsigned int const wrt );
 
-   virtual LRTreeNodeVector * find_path( LRTreeNodeBase const *local,
-                                         LRTreeNodeBase const *wrt );
+   virtual LRTreeNodeVector *find_path( LRTreeNodeBase const *local,
+                                        LRTreeNodeBase const *wrt );
 
-   virtual LRTreeNodeBase * find_common_node( unsigned int local,
-                                              unsigned int wrt   );
+   virtual LRTreeNodeBase *find_common_node( unsigned int const local,
+                                             unsigned int const wrt );
 
-   virtual LRTreeNodeBase * find_common_node( LRTreeNodeVector * up_path,
-                                              LRTreeNodeVector * down_path );
+   virtual LRTreeNodeBase *find_common_node( LRTreeNodeVector *up_path,
+                                             LRTreeNodeVector *down_path );
 
   private:
    // This object is not copyable
