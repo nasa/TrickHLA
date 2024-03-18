@@ -87,7 +87,7 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
       if self.initialized :
          print( 'SpaceFOMFederateConfig.set_mandatory_late_jointer(): Warning, already initialized, function ignored!' )
       else:
-         self.federate.mandatory_late_joiner = mandatory_late_joiner
+         self.control.mandatory_late_joiner = mandatory_late_joiner
 
       return
 
