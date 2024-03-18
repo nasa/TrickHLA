@@ -116,7 +116,8 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 ExecutionControl::ExecutionControl()
-   : pacing( false ),
+   : mandatory_late_joiner( false ),
+     pacing( false ),
      root_frame_pub( false ),
      root_ref_frame( NULL ),
      pending_mtr( SpaceFOM::MTR_UNINITIALIZED ),
@@ -132,6 +133,7 @@ ExecutionControl::ExecutionControl()
 ExecutionControl::ExecutionControl(
    ExecutionConfiguration &exec_config )
    : TrickHLA::ExecutionControlBase( exec_config ),
+     mandatory_late_joiner( false ),
      pacing( false ),
      root_frame_pub( false ),
      root_ref_frame( NULL ),
@@ -200,15 +202,29 @@ void ExecutionControl::initialize()
       errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
              << " WARNING: Only a preset master is supported. Make sure to set"
              << " 'THLA.federate.use_preset_master = true' in your input.py file."
-             << " Setting use_preset_master to true!"
-             << THLA_ENDL;
+             << " Setting use_preset_master to true!" << THLA_ENDL;
       send_hs( stdout, errmsg.str().c_str() );
       this->use_preset_master = true;
+   }
+
+   // A mandatory late joiner federate cannot be the preset Master.
+   if ( is_mandatory_late_joiner() && is_master() ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
+             << " ERROR: This federate is configured as both a mandatory late"
+             << " joiner and as the preset Master, which is not allowed. Check"
+             << " your input.py file or Modified data files to make sure this"
+             << " federate is not configured as both the preset master and a"
+             << " mandatory late joiner." << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       if ( is_master() ) {
          send_hs( stdout, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM THE PRESET MASTER%c",
+                  __LINE__, THLA_NEWLINE );
+      } else if ( is_mandatory_late_joiner() ) {
+         send_hs( stdout, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM A MANDATORY LATE JOINER AND NOT THE PRESET MASTER%c",
                   __LINE__, THLA_NEWLINE );
       } else {
          send_hs( stdout, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM NOT THE PRESET MASTER%c",
@@ -397,7 +413,7 @@ void ExecutionControl::announce_sync_point(
    wstring const                    &label,
    RTI1516_USERDATA const           &user_supplied_tag )
 {
-   if ( federate->is_mandatory_late_joiner()
+   if ( is_mandatory_late_joiner()
         && ( ( get_current_execution_control_mode() == EXECUTION_CONTROL_INITIALIZING )
              || ( get_current_execution_control_mode() == EXECUTION_CONTROL_UNINITIALIZED ) ) ) {
       // Achieve sync-points for a mandatory late joiner during initialization.
@@ -754,7 +770,7 @@ void ExecutionControl::role_determination_process()
       // Print out diagnostic message if appropriate.
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          if ( this->late_joiner ) {
-            if ( federate->is_mandatory_late_joiner() ) {
+            if ( is_mandatory_late_joiner() ) {
                send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is a Mandatory Late Joining Federate.%c",
                         __LINE__, THLA_NEWLINE );
             } else {
@@ -853,7 +869,7 @@ void ExecutionControl::mandatory_late_joiner_init_process()
 {
    // Master Federate can not be a mandatory late joiner or if are not
    // configured by the user to be a mandatory late joiner just return.
-   if ( is_master() || !federate->is_mandatory_late_joiner() ) {
+   if ( is_master() || !is_mandatory_late_joiner() ) {
       return;
    }
 
@@ -1196,7 +1212,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
       // Perform Late Joiner HLA initialization process.
       late_joiner_hla_init_process();
 
-   } else if ( !is_master() && federate->is_mandatory_late_joiner() ) {
+   } else if ( !is_master() && is_mandatory_late_joiner() ) {
       // Early Joiner but this federate is a mandatory late jointer.
 
       // Wait for initialization_complete sync-point and achieve unknown sync-points.

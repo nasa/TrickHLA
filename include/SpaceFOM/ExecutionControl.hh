@@ -74,12 +74,16 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    friend void init_attrSpaceFOM__ExecutionControl();
 
   public:
+   bool mandatory_late_joiner; /**< @trick_units{--} Flag set by the user to
+      indicate this federate is a mandatory late joiner, default is false. */
+
    // These are the execution control roles available to a federate.
-   bool pacing;         /**< @trick_units{--}
-      Is true when this federate is the "pacing". (default: false) */
-   bool root_frame_pub; /**< @trick_units{--}
-      Is true when this federate is the "root reference frame publisher"
-      federate for the Multiphase initialization process. (default: false) */
+   bool pacing; /**< @trick_units{--} Is true when this federate is
+                     the "pacing". (default: false) */
+
+   bool root_frame_pub; /**< @trick_units{--} Is true when this federate is
+      the "root reference frame publisher" federate for the Multiphase
+      initialization process. (default: false) */
 
    // The SpaceFOM uses a reference frame tree. This is the root frame.
    RefFrameBase *root_ref_frame; /**< @trick_units{--} Reference to the
@@ -127,7 +131,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual void late_joiner_hla_init_process();
 
    //
-   // Execution Control support routines.routines.
+   // Execution Control support routines.
    /*! @brief Setup the ExecutionControl object Trick ref ATTRIBUTES. */
    virtual void setup_object_ref_attributes();
    /*! @brief Setup the ExecutionControl interaction Trick ref ATTRIBUTES. */
@@ -267,6 +271,12 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    bool is_root_frame_publisher() const
    {
       return this->root_frame_pub;
+   }
+   /*! @brief Is this federate a mandatory late joiner federate.
+    *  @return true if a mandatory later joiner federate. */
+   bool is_mandatory_late_joiner()
+   {
+      return this->mandatory_late_joiner;
    }
 
    //
