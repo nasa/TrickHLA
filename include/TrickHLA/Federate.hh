@@ -135,8 +135,6 @@ class Federate
    bool time_constrained; ///< @trick_units{--} HLA Time Constrained flag (default: true).
    bool time_management;  ///< @trick_units{--} Enable HLA Time Management flag (default: true).
 
-   bool mandatory_late_joiner; ///< @trick_units{--} Flag set by the user to indicate this federate is mandatory to be late joiner, default is false.
-
    // The Federates known to be in the Federation, and specified in the input files.
    // TODO: change this to be an STL Array.
    bool           enable_known_feds; ///< @trick_units{--} Enable use of known Federates list (default: true)
@@ -1084,13 +1082,6 @@ class Federate
 
    /*! @brief Refresh the HLA lookahead base time, which needs to be done if the HLA base time units change. */
    void refresh_lookahead();
-
-   /*! @brief Is this federate a mandatory late joiner federate.
-    *  @return true if a mandatory later joiner federate. */
-   bool is_mandatory_late_joiner()
-   {
-      return this->mandatory_late_joiner;
-   }
 
    /*! @brief Set start to save flag.
     *  @param save_flag True if save started; False otherwise. */
