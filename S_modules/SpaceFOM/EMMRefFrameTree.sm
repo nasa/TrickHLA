@@ -1,0 +1,195 @@
+/*****************************************************************************
+ * General TrickHLA Space Reference Federation Object Model (SpaceFOM)
+ * Simulation Definition Object for the standard reference frames.
+ *---------------------------------------------------------------------------*
+ * This is a Simulation Definition (S_define) module that defines the
+ * standard SpaceFOM reference frame tree.
+ ****************************************************************************/
+/*****************************************************************************
+ *       Author: Edwin Z. Crues
+ *         Date: July 2023
+ *       E-Mail: Edwin.Z.Crues@nasa.gov
+ *        Phone: 281-483-2902
+ * Organization: Mail Code ER7
+ *               Simulation & Graphics Branch
+ *               Software, Robotics & Simulation Division
+ *               2101 NASA Parkway
+ *               Houston, Texas 77058
+ *---------------------------------------------------------------------------*
+ * Modified By: 
+ *        Date: 
+ * Description: 
+ ****************************************************************************/
+ 
+
+//==========================================================================
+// SIM_OBJECT: RefFrameTreeSimObject - An JEOD reference frame tree
+// simulation object definition.
+//==========================================================================
+##include <iostream>
+##include <map>
+##include "SpaceFOM/RefFrameData.hh"
+##include "SpaceFOM/RefFrameBase.hh"
+
+#include "SpaceFOM/RefFrameTreeBase.sm"
+
+class SpaceFOMEMMRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
+
+  public:
+   // Working SpaceFOM reference frames.
+   SpaceFOM::RefFrameData ssbary_frame_data;
+   SpaceFOM::RefFrameData sun_frame_data;
+   SpaceFOM::RefFrameData embary_frame_data;
+   SpaceFOM::RefFrameData earth_frame_data;
+   SpaceFOM::RefFrameData moon_frame_data;
+   SpaceFOM::RefFrameData mars_frame_data;
+   SpaceFOM::RefFrameData earth_pfix_frame_data;
+   SpaceFOM::RefFrameData moon_pfix_frame_data;
+   SpaceFOM::RefFrameData mars_pfix_frame_data;
+
+   // References to working SpaceFOM reference frames.
+   SpaceFOM::RefFrameBase * ssbary_frame_ptr;
+   SpaceFOM::RefFrameBase * sun_frame_ptr;
+   SpaceFOM::RefFrameBase * embary_frame_ptr;
+   SpaceFOM::RefFrameBase * earth_frame_ptr;
+   SpaceFOM::RefFrameBase * moon_frame_ptr;
+   SpaceFOM::RefFrameBase * mars_frame_ptr;
+   SpaceFOM::RefFrameBase * earth_pfix_frame_ptr;
+   SpaceFOM::RefFrameBase * moon_pfix_frame_ptr;
+   SpaceFOM::RefFrameBase * mars_pfix_frame_ptr;
+
+   // SpaceFOM Reference Frame Tree constructor.
+   // _BUILD phase needs to be less than 60, when TrickHLA is initialized.
+   SpaceFOMEMMRefFrameTreeSimObject( TrickHLA::Manager          & thla_manager_in,
+                                     SpaceFOM::ExecutionControl & exec_cntrl_in,
+                                     double                     & time_tt_in,
+                                     unsigned short               _ADD   = 50,
+                                     unsigned short               _BUILD = 51 )
+   : SpaceFOMRefFrameTreeBaseSimObject( thla_manager_in, exec_cntrl_in, _ADD, _BUILD ),
+     ssbary_frame_ptr( NULL ),
+     sun_frame_ptr( NULL ),
+     embary_frame_ptr( NULL ),
+     earth_frame_ptr( NULL ),
+     moon_frame_ptr( NULL ),
+     mars_frame_ptr( NULL ),
+     earth_pfix_frame_ptr( NULL ),
+     moon_pfix_frame_ptr( NULL ),
+     mars_pfix_frame_ptr( NULL ),
+     time_tt( time_tt_in )
+   {
+      //
+      // Default data jobs
+      //
+
+      // Place the frames in the tree map for name lookup.
+      P_ADD ("initialization") frame_tree.add_frame( ssbary_frame_ptr );
+      P_ADD ("initialization") frame_tree.add_frame( sun_frame_ptr );
+      P_ADD ("initialization") frame_tree.add_frame( embary_frame_ptr );
+      P_ADD ("initialization") frame_tree.add_frame( earth_frame_ptr );
+      P_ADD ("initialization") frame_tree.add_frame( moon_frame_ptr );
+      P_ADD ("initialization") frame_tree.add_frame( mars_frame_ptr );
+      P_ADD ("initialization") frame_tree.add_frame( earth_pfix_frame_ptr );
+      P_ADD ("initialization") frame_tree.add_frame( moon_pfix_frame_ptr );
+      P_ADD ("initialization") frame_tree.add_frame( mars_pfix_frame_ptr );
+
+   }
+
+
+  private:
+
+   // Configure the reference frame tree.
+   void configure_tree()
+   {
+      std::ostringstream errmsg;
+
+      // Check for objects allocation.
+      if ( (thla_manager.obj_count == 0) || (thla_manager.objects == NULL) ){
+         errmsg << "SpaceFOMEMMRefFrameTreeSimObject::configure_tree():" << __LINE__
+                << " ERROR: The TrickHLAManager Object array has not been allocated!" << THLA_ENDL;
+         // Print message and terminate.
+         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      }
+
+      // Setup the Solar System barycenter frame as the root reference frame.
+      ssbary_frame_ptr->base_config( false,
+                                     "solar_system_barycenter",,
+                                     "frame_packing",
+                                     "SolarSystemBarycentricInertial"      );
+
+      // Set the Solar System barycenter frame as the root reference frame.
+      exec_cntrl.root_ref_frame = ssbary_frame_ptr;
+
+      // Setup the Sun inertial reference frame.
+      sun_frame_ptr->base_config( false,
+                                  "sun_inertial",
+                                  "frame_packing",
+                                  "SunCentricInertial",
+                                  "SolarSystemBarycentricInertial",
+                                  ssbary_frame_ptr );
+
+      // Setup the Earth-Moon barycentric inertial reference frame.
+      embary_frame_ptr->base_config( false,
+                                     "earth_moon_barycenter",
+                                     "frame_packing",
+                                     "EarthMoonBarycentricInertial",
+                                     "SolarSystemBarycentricInertial",
+                                     ssbary_frame_ptr );
+
+      // Setup the Earth inertial reference frame.
+      earth_frame_ptr->base_config( false,
+                                    "earth_centered_inertial",
+                                    "frame_packing",
+                                    "EarthMoonBarycentricInertial",
+                                    "EarthMJ2000Eq",
+                                    embary_frame_ptr );
+
+      // Setup the Moon inertial reference frame.
+      moon_frame_ptr->base_config( false,
+                                   "moon_centered_inertial",
+                                   "frame_packing",
+                                   "MoonCentricInertial",
+                                   "EarthMoonBarycentricInertial",
+                                   embary_frame_ptr );
+
+      // Setup the Mars inertial reference frame.
+      mars_frame_ptr->base_config( false,
+                                   "mars_centered_inertial",
+                                   "frame_packing",
+                                   "MarsCentricInertial",
+                                   "SolarSystemBarycentricInertial",
+                                   ssbary_frame_ptr );
+
+      // Setup the Earth fixed reference frame.
+      earth_pfix_frame_ptr->base_config( false,
+                                         "earth_centered_fixed",
+                                         "frame_packing",
+                                         "EarthCentricFixed",
+                                         "EarthMJ2000Eq",
+                                         earth_frame_ptr );
+
+      // Setup the Moon fixed reference frame.
+      moon_pfix_frame_ptr->base_config( false,
+                                        "moon_centered_fixed",
+                                        "frame_packing",
+                                        "MoonCentricFixed",
+                                        "MoonCentricInertial",
+                                        moon_frame_ptr );
+
+      // Setup the Mars fixed reference frame.
+      mars_pfix_frame_ptr->base_config( false,
+                                        "mars_centered_fixed",
+                                        "frame_packing",
+                                        "MarsCentricFixed",
+                                        "MarsCentricInertial",
+                                        mars_frame_ptr );
+   }
+
+   // Reference to the Terrestrial Time value.
+   double & time_tt;
+
+
+   // This object is not copyable
+   SpaceFOMEMMRefFrameTreeSimObject( const SpaceFOMEMMRefFrameTreeSimObject & );
+   SpaceFOMEMMRefFrameTreeSimObject & operator=( const SpaceFOMEMMRefFrameTreeSimObject & );
+
+};

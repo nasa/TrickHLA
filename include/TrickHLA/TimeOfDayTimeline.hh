@@ -19,8 +19,8 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/TimeOfDayTimeline.cpp}
-@trick_link_dependency{../source/TrickHLA/Timeline.cpp}
+@trick_link_dependency{../../source/TrickHLA/TimeOfDayTimeline.cpp}
+@trick_link_dependency{../../source/TrickHLA/Timeline.cpp}
 
 @revs_title
 @revs_begin

@@ -106,12 +106,11 @@ ExecutionControl::~ExecutionControl()
 }
 
 /*!
-@details This routine will set a lot of the data in the TrickHLA::Federate that
-is required for this execution control scheme. This should greatly simplify
-input.py files and reduce input.py file setting errors.
-
-@job_class{initialization}
-*/
+ * @details This routine will set a lot of the data in the TrickHLA::Federate that
+ * is required for this execution control scheme. This should greatly simplify
+ * input.py files and reduce input.py file setting errors.
+ * @job_class{initialization}
+ */
 void ExecutionControl::initialize()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {

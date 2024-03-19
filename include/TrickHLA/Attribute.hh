@@ -46,6 +46,7 @@ NASA, Johnson Space Center\n
 #include "trick/reference.h"
 
 // TrickHLA include files.
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Conditional.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
@@ -94,9 +95,6 @@ class Attribute
    EncodingEnum rti_encoding; ///< @trick_units{--} RTI encoding of the data.
 
    double cycle_time; ///< @trick_units{s} Send the cyclic attribute at the specified rate.
-
-   // Added for conditional sending of this attribute
-   Conditional *conditional; ///< @trick_units{--} Handler for a conditional attribute
 
    //--------------------------------------------------------------------------
 
@@ -151,8 +149,9 @@ class Attribute
    RTI1516_NAMESPACE::VariableLengthData get_attribute_value();
 
    /*! @brief Extract the data out of the HLA Attribute Value.
-    *  @param attr_value The variable length data buffer containing the attribute value. */
-   void extract_data( RTI1516_NAMESPACE::VariableLengthData const *attr_value );
+    *  @param attr_value The variable length data buffer containing the attribute value.
+    *  @return True if successfully extracted data, false otherwise. */
+   bool extract_data( RTI1516_NAMESPACE::VariableLengthData const *attr_value );
 
    /*! @brief Determine if an attribute was received from another federate.
     *  @return True if new attribute value has been received. */
@@ -386,20 +385,6 @@ class Attribute
    /*! @brief Prints the contents of buffer used to encode/decode the attribute
     *         to the console on standard out. */
    void print_buffer() const;
-
-   /*! @brief Check if attribute is sent conditionally.
-    *  @return True if attribute is to be sent conditionally. */
-   bool has_conditional() const
-   {
-      return ( conditional != NULL );
-   }
-
-   /*! @brief Get the associated conditionality handler.
-    *  @return The conditionality handler class associated with this attribute. */
-   Conditional *get_conditional()
-   {
-      return conditional;
-   }
 
    /*! @brief Get the Trick "Ref Attributes" associated with this attribute.
     *  @return A pointer to the Trick "Ref Attributes" class. */

@@ -1,0 +1,189 @@
+//==========================================================================
+// Space Reference FOM: Simulation to test the SpaceFOM roles implementation.
+//==========================================================================
+// Description:
+// This is a simulation definition file (S_define) that provides an example
+// of an SpaceFOM compliant federate that services all SpaceFOM roles.
+//==========================================================================
+
+//==========================================================================
+// Define the Trick executive and services simulation object instances:
+// Use the "standard" Trick executive simulation object. This simulation
+// object provides the traditional Trick executive capabilities but can be
+// tailored to provide facility or project unique executive behavior. See
+// the Trick documentation for more on usage and available options.
+//==========================================================================
+#include "sim_objects/default_trick_sys.sm"
+
+//==========================================================================
+// Define the Dynamics job cycle times.
+//==========================================================================
+#define INTEG_STEP_TIME 0.025 // State integration time step.
+
+//==========================================================================
+// Define the Trick HLA job cycle times.
+//==========================================================================
+#define THLA_DATA_CYCLE_TIME        0.250 // HLA data communication cycle time.
+#define THLA_INTERACTION_CYCLE_TIME 0.050 // HLA Interaction cycle time.
+
+//==========================================================================
+// Define the HLA phase initialization priorities.
+//==========================================================================
+#define P_HLA_EARLY         1     // HLA early job phase.
+#define P_SF_INIT_EPOCH_RRF 55    // SpaceFOM ExCO epoch and root reference frame phase.
+#define P_HLA_INIT          60    // HLA initialization phase.
+#define P_SF_INIT_PRE_MPI   65    // SpaceFOM Pre-Multi Phase initialization phase.
+#define P_SF_INIT_POST_MPI  500   // SpaceFOM Post-Multi Phase initialization phase.
+#define P_HLA_LATE          65534 // HLA late job phase.
+
+
+//==========================================================================
+// Simple 6DOF dynamics for a Physical/Dynamical Entity.
+//==========================================================================
+##include "../../../models/EntityDynamics/include/EntityDynamics.hh"
+class EntityDynamicsSimObject : public Trick::SimObject {
+
+  public:
+   EntityDynamics entity;
+
+  public:
+   EntityDynamicsSimObject(){
+      ("default_data")            entity.default_data();
+      ("initialization")          entity.initialize();
+      ("derivative")              entity.derivative();
+      ("integration") trick_ret = entity.integrate();
+   }
+
+  private:
+   // This object is not copyable
+   EntityDynamicsSimObject( EntityDynamicsSimObject const & rhs );
+   EntityDynamicsSimObject & operator=( EntityDynamicsSimObject const & rhs );
+
+};
+
+//==========================================================================
+// Trick HLA and SpaceFOM include files used in SimObject definitions or
+// for inputfile instantiations.
+//==========================================================================
+// This is needed for CTE timeline instantiation in the input file.
+##include "TrickHLA/CTETimelineBase.hh"
+
+
+//==========================================================================
+// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+//==========================================================================
+#include "SpaceFOM/SpaceFOM.sm"
+
+%header{
+ using namespace TrickHLA;
+ using namespace SpaceFOM;
+%}
+
+//==========================================================================
+// SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
+// initialization SimObject.
+//==========================================================================
+class THLAInitSimObject : public Trick::SimObject {
+
+ public:
+
+   THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
+                      TrickHLA::Federate & thla_fed,
+                      unsigned int         _MPI_1   = 100,
+                      unsigned int         _MPI_END = P_SF_INIT_POST_MPI   )
+      : thla_manager( thla_mngr ),
+        thla_federate( thla_fed )
+   {
+
+      //--------------------------------------------------------------------
+      // NOTE: Initialization phase numbers must be greater than P60 
+      // (i.e. P_HLA_INIT) so that the initialization jobs run after the
+      // P60 THLA.manager->initialize() job.
+      //--------------------------------------------------------------------
+
+      // Alternative method: Send and receive all the initialization data.
+
+      // Send all the initialization data.
+      P_MPI_1 ("initialization") thla_manager.send_init_data();
+      
+      // Wait to receive all the initialization data.
+      P_MPI_1 ("initialization") thla_manager.receive_init_data();
+      
+      // Do some processing here if needed...
+      
+      // Clear remaining initialization sync-points.
+      P_MPI_END ("initialization") thla_manager.clear_init_sync_points();
+   }
+
+ private:
+   TrickHLA::Manager  & thla_manager;
+   TrickHLA::Federate & thla_federate;
+	
+   // Do not allow the implicit copy constructor or assignment operator.
+   THLAInitSimObject( THLAInitSimObject const & rhs );
+   THLAInitSimObject & operator=( THLAInitSimObject const & rhs );
+	
+   // Do not allow the default constructor.
+   THLAInitSimObject();
+
+};
+
+
+//==========================================================================
+// SIM_OBJECT: SpaceFOMPhysicalEntiySimObject - An example PhysicalEntity
+// simulation object definition. This can be used for SpaceFOM
+// PhysicalEntity object discovery and data exchange.
+//==========================================================================
+#include "SpaceFOM/PhysicalEntity.sm"
+
+
+//==========================================================================
+// SIM_OBJECT: SpaceFOMDynamicalEntiySimObject - An example DynamicalEntity
+// simulation object definition. This can be used for SpaceFOM
+// DynamicalEntity object discovery and data exchange.
+//==========================================================================
+#include "SpaceFOM/DynamicalEntity.sm"
+
+
+//==========================================================================
+// SIM_OBJECT: SpaceFOMPhysicalInterfaceSimObject - An example
+// PhysicalInterface simulation object definition. This can be used for
+// SpaceFOM PhysicalInterface object discovery and data exchange.
+//==========================================================================
+#include "SpaceFOM/PhysicalInterface.sm"
+
+
+//==========================================================================
+// SimObject instantiations.
+//==========================================================================
+EntityDynamicsSimObject pe_dynamics;
+EntityDynamicsSimObject de_dynamics;
+
+// Main TrickHLA SimObject.
+SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME, THLA_INTERACTION_CYCLE_TIME,
+                        P_HLA_EARLY, P_HLA_INIT, P_HLA_LATE );
+
+// SimObject used capture simulation specific initialization.
+THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
+
+// PhysicalEntity instance.
+SpaceFOMPhysicalEntitySimObject physical_entity( pe_dynamics.entity.pe_data );
+
+// DynamicalEntity instance.
+SpaceFOMDynamicalEntitySimObject dynamical_entity( de_dynamics.entity.pe_data,
+                                                   de_dynamics.entity.de_data );
+
+// PhysicalInterface instance.
+SpaceFOMPhysicalInterfaceSimObject physical_interface;
+
+// Place the entities in the integration loop.
+//IntegLoop dyn_integloop (0.125) pe_dynamics, de_dynamics;
+IntegLoop pe_integloop (INTEG_STEP_TIME) pe_dynamics;
+IntegLoop de_integloop (INTEG_STEP_TIME) de_dynamics;
+
+//==========================================================================
+// SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An example reference frame tree
+// simulation object definition.
+//==========================================================================
+#include "SpaceFOM/TestRefFrameTree.sm"
+

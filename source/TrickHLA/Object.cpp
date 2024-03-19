@@ -16,6 +16,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{Attribute.cpp}
+@trick_link_dependency{Conditional.cpp}
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{ElapsedTimeStats.cpp}
 @trick_link_dependency{Federate.cpp}
@@ -27,6 +28,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{MutexLock.cpp}
 @trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{Object.cpp}
+@trick_link_dependency{ObjectDeleted.cpp}
 @trick_link_dependency{OwnershipHandler.cpp}
 @trick_link_dependency{Packing.cpp}
 @trick_link_dependency{SleepTimeout.cpp}
@@ -49,6 +51,7 @@ NASA, Johnson Space Center\n
 #include <pthread.h>
 #include <sstream>
 #include <string>
+#include <vector>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
@@ -59,6 +62,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/Conditional.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ElapsedTimeStats.hh"
 #include "TrickHLA/Federate.hh"
@@ -123,6 +127,7 @@ Object::Object()
      packing( NULL ),
      ownership( NULL ),
      deleted( NULL ),
+     conditional( NULL ),
      thread_ids_array_count( 0 ),
      thread_ids_array( NULL ),
      process_object_deleted_from_RTI( false ),
@@ -457,32 +462,44 @@ void Object::initialize(
       }
    }
 
-   // Build the string array of attributes FOM names.
+   // Build the string array of valid attribute FOM names and also check for
+   // duplicate attribute FOM names.
    for ( unsigned int i = 0; i < attr_count; ++i ) {
-      // Validate the FOM-name to make sure we don't have a  problem with the
+      // Validate the FOM-name to make sure we don't have a problem with the
       // list of names as well as get a difficult to debug runtime error for
       // the string constructor if we had a null FOM-name.
       if ( ( attributes[i].get_FOM_name() == NULL ) || ( *( attributes[i].get_FOM_name() ) == '\0' ) ) {
          ostringstream errmsg;
          errmsg << "Object::initialize():" << __LINE__
-                << " ERROR: Object with FOM Name '" << name << "' has a missing"
-                << " Attribute FOM Name at array index " << i << ". Please"
-                << " check your input or modified-data files to make sure the"
-                << " object attribute FOM name is correctly specified."
-                << THLA_ENDL;
+                << " ERROR: Object '" << name << "' has a missing Attribute"
+                << " FOM Name at array index " << i << ". Please check your input"
+                << " or modified-data files to make sure the object attribute"
+                << " FOM name is correctly specified." << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
-      attribute_FOM_names.push_back( string( attributes[i].get_FOM_name() ) );
-   }
+      string fom_name_str( attributes[i].get_FOM_name() );
 
-   // Initialize the Packing-Handler.
-   if ( packing != NULL ) {
-      packing->initialize_callback( this );
-   }
+      // Since Object updates are sent as a AttributeHandleValueMap there can be
+      // no duplicate Attributes because the map only allows unique AttributeHandles.
+      for ( unsigned int k = i + 1; k < attr_count; ++k ) {
+         if ( ( attributes[k].get_FOM_name() != NULL ) && ( *( attributes[k].get_FOM_name() ) != '\0' ) ) {
 
-   // Initialize the Ownership-Handler.
-   if ( ownership != NULL ) {
-      ownership->initialize_callback( this );
+            if ( fom_name_str == string( attributes[k].get_FOM_name() ) ) {
+               ostringstream errmsg;
+               errmsg << "Object::initialize():" << __LINE__
+                      << " ERROR: Object '" << name << "' has Attributes at"
+                      << " array indexes " << i << " and " << k
+                      << " that have the same FOM Name '" << fom_name_str
+                      << "'. Please check your input or modified-data files to"
+                      << " make sure the object attributes do not use duplicate"
+                      << " FOM names." << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+      }
+
+      // Add the unique attribute FOM name.
+      attribute_FOM_names.push_back( fom_name_str );
    }
 
    // If the user specified a lag_comp object then make sure it extends the
@@ -497,9 +514,29 @@ void Object::initialize(
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   // Initialize the Lag-Compensation.
+   // Initialize the Packing handler.
+   if ( packing != NULL ) {
+      packing->initialize_callback( this );
+   }
+
+   // Initialize the Lag-Compensation handler.
    if ( lag_comp != NULL ) {
       lag_comp->initialize_callback( this );
+   }
+
+   // Initialize the Conditional handler.
+   if ( conditional != NULL ) {
+      conditional->initialize_callback( this );
+   }
+
+   // Initialize the Ownership handler.
+   if ( ownership != NULL ) {
+      ownership->initialize_callback( this );
+   }
+
+   // Initialize the deleted object instance handler.
+   if ( deleted != NULL ) {
+      deleted->initialize_callback( this );
    }
 
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -683,7 +720,7 @@ void Object::process_deleted_object()
 
       // If the callback class has been defined, call it...
       if ( ( deleted != NULL ) && ( dynamic_cast< ObjectDeleted * >( deleted ) != NULL ) ) {
-         deleted->deleted( this );
+         deleted->deleted();
       }
    }
 }
@@ -2259,7 +2296,7 @@ void Object::send_zero_lookahead_and_requested_data(
          default:
             ostringstream errmsg;
             errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
-                   << " ERROR: For object '" << name << "', detected a"
+                   << " ERROR: For object '" << this->name << "', detected a"
                    << " Lag-Compensation 'lag_comp' callback has also been"
                    << " specified with a 'lag_comp_type' setting that is not"
                    << " LAG_COMPENSATION_NONE! Please check your input or"
@@ -2296,6 +2333,19 @@ void Object::send_zero_lookahead_and_requested_data(
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+         ostringstream errmsg;
+         errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
+                << " WARNING: For object '" << this->name << "', detected that there"
+                << " are no attributes to send an update for, which can lead to"
+                << " deadlock for another federate waiting to receive zero-lookahead"
+                << " data. Please check your input or modified-data files to make"
+                << " sure at least attribute is configured for zero-lookahead and"
+                << " if you are using the TrickHLA::Conditional API make sure you"
+                << " enable at least one attribute to be sent." << THLA_ENDL;
+         send_hs( stderr, errmsg.str().c_str() );
+      }
 
       // Just return because we have no data to send.
       return;
@@ -3063,6 +3113,12 @@ void Object::send_init_data()
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &send_mutex );
 
+   // Lag-compensation is not supported for init-data, but if
+   // specified we call the bypass function.
+   if ( lag_comp != NULL ) {
+      lag_comp->bypass_send_lag_compensation();
+   }
+
    // If we have a data packing object then pack the data now.
    if ( packing != NULL ) {
       packing->pack();
@@ -3270,6 +3326,12 @@ void Object::receive_init_data()
          packing->unpack();
       }
 
+      // Lag-compensation is not supported for init-data, but if
+      // specified we call the bypass function.
+      if ( lag_comp != NULL ) {
+         lag_comp->bypass_receive_lag_compensation();
+      }
+
       // Mark the data as unchanged now that we have unpacked the buffer.
       mark_unchanged();
    }
@@ -3344,8 +3406,8 @@ void Object::create_attribute_set(
             // it should be sent, then add this attribute into the attribute
             // map. NOTE: Override the Conditional if the attribute has been
             // requested by another Federate to make sure it is sent.
-            if ( !attributes[i].has_conditional()
-                 || attributes[i].get_conditional()->should_send( &attributes[i] )
+            if ( ( conditional == NULL )
+                 || conditional->should_send( &attributes[i] )
                  || ( include_requested && attributes[i].is_update_requested() ) ) {
 
                // If there was a requested update for this attribute make sure
@@ -3377,8 +3439,8 @@ void Object::create_attribute_set(
             // it should be sent, then add this attribute into the attribute
             // map. NOTE: Override the Conditional if the attribute has been
             // requested by another Federate to make sure it is sent.
-            if ( !attributes[i].has_conditional()
-                 || attributes[i].get_conditional()->should_send( &attributes[i] )
+            if ( ( conditional == NULL )
+                 || conditional->should_send( &attributes[i] )
                  || ( include_requested && attributes[i].is_update_requested() ) ) {
 
                // If there was a requested update for this attribute make sure
@@ -3417,7 +3479,6 @@ void Object::create_attribute_set(
    }
 }
 
-#if defined( THLA_QUEUE_REFLECTED_ATTRIBUTES )
 /*!
  * @job_class{scheduled}
  */
@@ -3430,14 +3491,13 @@ void Object::enqueue_data(
 
    thla_reflected_attributes_queue.push( theAttributes );
 }
-#endif // THLA_QUEUE_REFLECTED_ATTRIBUTES
 
 /*!
  * @details This routine is called by the federate ambassador when new
  * attribute values come in for this object.
  * @job_class{scheduled}
  */
-void Object::extract_data(
+bool Object::extract_data(
    AttributeHandleValueMap &theAttributes )
 {
    // We need to iterate through the AttributeHandleValuePairSet
@@ -3446,7 +3506,12 @@ void Object::extract_data(
    // extract the data from the buffer that is returned by
    // getValue().
 
-   bool attr_changed = false;
+   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+      send_hs( stdout, "Object::extract_data():%d '%s' FOM-name:'%s'.%c",
+               __LINE__, get_name(), get_FOM_name(), THLA_NEWLINE );
+   }
+
+   bool any_attr_received = false;
 
    AttributeHandleValueMap::iterator iter;
 
@@ -3461,10 +3526,9 @@ void Object::extract_data(
       if ( attr != NULL ) {
 
          // Place the RTI AttributeValue into the TrickHLA Attribute.
-         attr->extract_data( &( iter->second ) );
-
-         attr_changed = true;
-
+         if ( attr->extract_data( &( iter->second ) ) ) {
+            any_attr_received = true;
+         }
       } else if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          string id_str;
          StringUtilities::to_string( id_str, iter->first );
@@ -3477,13 +3541,14 @@ this attribute.%c",
    }
 
    // Set the change flag once all the attributes have been processed.
-   if ( attr_changed ) {
-      // Mark the data as being changed since the attribute changed.
+   if ( any_attr_received ) {
+      // Mark the data as changed since at least one attribute was received.
       mark_changed();
 
       // Flag for user use to indicate the data changed.
       this->data_changed = true;
    }
+   return any_attr_received;
 }
 
 /*!
@@ -4455,20 +4520,23 @@ Attribute *Object::get_attribute(
 Attribute *Object::get_attribute(
    string const &attr_FOM_name )
 {
-   return get_attribute( attr_FOM_name.c_str() );
-}
+   string fom_name_str;
+   for ( unsigned int i = 0; i < attr_count; ++i ) {
+      if ( attributes[i].get_FOM_name() != NULL ) {
+         fom_name_str = attributes[i].get_FOM_name();
 
-Attribute *Object::get_attribute(
-   char const *attr_FOM_name )
-{
-   if ( attr_FOM_name != NULL ) {
-      for ( unsigned int i = 0; i < attr_count; ++i ) {
-         if ( strcmp( attr_FOM_name, attributes[i].get_FOM_name() ) == 0 ) {
+         if ( attr_FOM_name == fom_name_str ) {
             return ( &attributes[i] );
          }
       }
    }
    return NULL;
+}
+
+Attribute *Object::get_attribute(
+   char const *attr_FOM_name )
+{
+   return ( attr_FOM_name != NULL ) ? get_attribute( string( attr_FOM_name ) ) : NULL;
 }
 
 void Object::stop_publishing_attributes()
@@ -4692,7 +4760,6 @@ void Object::mark_changed()
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &receive_mutex );
-
    this->changed = true;
 }
 
@@ -4701,7 +4768,6 @@ void Object::mark_unchanged()
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &receive_mutex );
-
    this->changed = false;
 
    // Clear the change flag for each of the attributes as well.

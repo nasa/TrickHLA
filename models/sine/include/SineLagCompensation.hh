@@ -19,10 +19,10 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLAModel}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Attribute.cpp}
-@trick_link_dependency{../source/TrickHLA/LagCompensation.cpp}
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Attribute.cpp}
+@trick_link_dependency{../../../source/TrickHLA/LagCompensation.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{sine/src/SineData.cpp}
 @trick_link_dependency{sine/src/SineLagCompensation.cpp}
 
@@ -74,9 +74,12 @@ class SineLagCompensation : public SineData, public TrickHLA::LagCompensation
    /*! @brief Destructor for the TrickHLAModel SineLagCompensation class. */
    virtual ~SineLagCompensation();
 
-   /*! @brief Initialize the LagCompensation object.
+   /*! @brief Configure the LagCompensation object.
     *  @param sim_data The sine wave data object. */
-   void initialize( SineData *sim_data );
+   void configure( SineData *sim_data );
+
+   /*! @brief Initialize the LagCompensation object. */
+   void initialize();
 
    //
    // From the TrickHLALag::Compensation class.

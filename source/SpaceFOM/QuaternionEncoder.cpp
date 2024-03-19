@@ -50,8 +50,10 @@ using namespace SpaceFOM;
 /**
  * @job_class{initialization}
  */
-QuaternionEncoder::QuaternionEncoder() // RETURN: -- None.
-   : scalar_encoder( &data.scalar ),
+QuaternionEncoder::QuaternionEncoder(
+   QuaternionData &quat_data )
+   : data( quat_data ),
+     scalar_encoder( &data.scalar ),
      vector_encoder( HLAfloat64LE(), 3 ),
      encoder()
 {

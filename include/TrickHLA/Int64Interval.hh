@@ -19,9 +19,9 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Int64BaseTime.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64Interval.cpp}
+@trick_link_dependency{../../source/TrickHLA/Int64BaseTime.cpp}
+@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../../source/TrickHLA/Int64Interval.cpp}
 
 @revs_title
 @revs_begin

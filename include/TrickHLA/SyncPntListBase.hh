@@ -20,10 +20,10 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/SyncPntListBase.cpp}
-@trick_link_dependency{../source/TrickHLA/Federate.cpp}
-@trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
-@trick_link_dependency{../source/TrickHLA/SyncPnt.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPntListBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/Federate.cpp}
+@trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPnt.cpp}
 
 @revs_title
 @revs_begin
@@ -84,8 +84,9 @@ class SyncPntListBase
 
   public:
    /*! @brief Add the given synchronization point label to the list.
-    *  @param label Synchronization point label. */
-   virtual void add_sync_point( std::wstring const &label );
+    *  @param label Synchronization point label.
+    *  @return The synchronization point associated with the label. */
+   virtual SyncPnt *add_sync_point( std::wstring const &label );
 
    /*! @brief Get the pointer to the synchronization point associated with the
     * given label.

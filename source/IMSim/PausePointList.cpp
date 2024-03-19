@@ -37,6 +37,8 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <algorithm>
+#include <sstream>
 #include <string>
 
 // Trick include files.
@@ -104,6 +106,11 @@ bool PausePointList::clear_sync_point(
    return false;
 }
 
+bool PausePointList::is_sync_point_state_achieved( SyncPnt const *sync_pnt )
+{
+   return ( sync_pnt->get_state() == SYNC_PT_STATE_ACHIEVED );
+}
+
 void PausePointList::check_state()
 {
    if ( ( state == PAUSE_POINT_STATE_EXIT )
@@ -119,7 +126,7 @@ void PausePointList::check_state()
    if ( !sync_point_list.empty() ) {
       if ( std::any_of( sync_point_list.begin(),
                         sync_point_list.end(),
-                        []( SyncPtStateEnum const s ) { return s == SYNC_PT_STATE_ACHIEVED; } ) ) {
+                        is_sync_point_state_achieved ) ) {
          this->state = PAUSE_POINT_STATE_FREEZE;
          return;
       }

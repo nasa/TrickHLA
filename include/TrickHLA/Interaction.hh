@@ -19,16 +19,16 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Federate.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64Interval.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
-@trick_link_dependency{../source/TrickHLA/Interaction.cpp}
-@trick_link_dependency{../source/TrickHLA/InteractionItem.cpp}
-@trick_link_dependency{../source/TrickHLA/InteractionHandler.cpp}
-@trick_link_dependency{../source/TrickHLA/Manager.cpp}
-@trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
-@trick_link_dependency{../source/TrickHLA/Parameter.cpp}
-@trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/Federate.cpp}
+@trick_link_dependency{../../source/TrickHLA/Int64Interval.cpp}
+@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../../source/TrickHLA/Interaction.cpp}
+@trick_link_dependency{../../source/TrickHLA/InteractionItem.cpp}
+@trick_link_dependency{../../source/TrickHLA/InteractionHandler.cpp}
+@trick_link_dependency{../../source/TrickHLA/Manager.cpp}
+@trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
+@trick_link_dependency{../../source/TrickHLA/Parameter.cpp}
+@trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -176,8 +176,9 @@ class Interaction
    void process_interaction();
 
    /*! @brief Extracts the parameters for the received Interaction.
-    *  @param interaction_item Interaction item. */
-   void extract_data( InteractionItem *interaction_item );
+    *  @param interaction_item Interaction item.
+    *  @return True if successfull extracted data, false otherwise. */
+   bool extract_data( InteractionItem *interaction_item );
 
    // Instance methods
    /*! @brief Get the FOM name for this interaction.

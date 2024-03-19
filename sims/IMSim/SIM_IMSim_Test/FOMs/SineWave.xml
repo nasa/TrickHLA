@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<objectModel xsi:schemaLocation="http://standards.ieee.org/IEEE1516-2010 http://standards.ieee.org/downloads/1516/1516.2-2010/IEEE1516-DIF-2010.xsd" xmlns="http://standards.ieee.org/IEEE1516-2010" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelIdentification>
+        <name>SineWave</name>
+        <type>FOM</type>
+        <version>1.0</version>
+        <modificationDate>2024-01-24</modificationDate>
+        <securityClassification>unclassified</securityClassification>
+        <purpose>Provide object and interactions for the SineWave test federates.</purpose>
+        <applicationDomain>Test and Evaluation</applicationDomain>
+        <description>This module contains the SineParameters object class definition and the Communication interaction definition.  These are used in the test simulations that use the sine wave as a test object.  The benifit of the sine wave is that timing issues become readily apparent.</description>
+        <useLimitation></useLimitation>
+        <keyword>
+            <keywordValue>Sine</keywordValue>
+        </keyword>
+        <keyword>
+            <keywordValue>Wave</keywordValue>
+        </keyword>
+        <keyword>
+            <keywordValue>Test</keywordValue>
+        </keyword>
+        <keyword>
+            <keywordValue>Timing</keywordValue>
+        </keyword>
+        <keyword>
+            <keywordValue>Phase</keywordValue>
+        </keyword>
+        <poc>
+            <pocType>Primary author</pocType>
+            <pocName>Edwin Z. Crues</pocName>
+            <pocOrg>NASA Johnson Space Center</pocOrg>
+        </poc>
+        <poc>
+            <pocType>Primary author</pocType>
+            <pocName>Dan Dexter</pocName>
+            <pocOrg>NASA Johnson Space Center</pocOrg>
+        </poc>
+        <other></other>
+    </modelIdentification>
+    <objects>
+        <objectClass>
+            <name>HLAobjectRoot</name>
+            <objectClass>
+                <name>SineParameters</name>
+                <sharing>Neither</sharing>
+                <semantics></semantics>
+                <attribute>
+                    <name>Name</name>
+                    <dataType>HLAunicodeString</dataType>
+                    <updateType>Conditional</updateType>
+                    <updateCondition></updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics></semantics>
+                </attribute>
+                <attribute>
+                    <name>Time</name>
+                    <dataType>HLAfloat64LE</dataType>
+                    <updateType>Conditional</updateType>
+                    <updateCondition></updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics></semantics>
+                </attribute>
+                <attribute>
+                    <name>Value</name>
+                    <dataType>HLAfloat64LE</dataType>
+                    <updateType>Conditional</updateType>
+                    <updateCondition></updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics></semantics>
+                </attribute>
+                <attribute>
+                    <name>dvdt</name>
+                    <dataType>HLAfloat64LE</dataType>
+                    <updateType>Conditional</updateType>
+                    <updateCondition></updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics></semantics>
+                </attribute>
+                <attribute>
+                    <name>Phase</name>
+                    <dataType>HLAfloat64LE</dataType>
+                    <updateType>Conditional</updateType>
+                    <updateCondition></updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics></semantics>
+                </attribute>
+                <attribute>
+                    <name>Frequency</name>
+                    <dataType>HLAfloat64LE</dataType>
+                    <updateType>Conditional</updateType>
+                    <updateCondition></updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics></semantics>
+                </attribute>
+                <attribute>
+                    <name>Amplitude</name>
+                    <dataType>HLAfloat64LE</dataType>
+                    <updateType>Conditional</updateType>
+                    <updateCondition></updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics></semantics>
+                </attribute>
+                <attribute>
+                    <name>Tolerance</name>
+                    <dataType>HLAfloat64LE</dataType>
+                    <updateType>Conditional</updateType>
+                    <updateCondition></updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <semantics></semantics>
+                </attribute>
+            </objectClass>
+        </objectClass>
+    </objects>
+    <interactions>
+        <interactionClass>
+            <name>HLAinteractionRoot</name>
+            <interactionClass>
+                <name>Communication</name>
+                <sharing>PublishSubscribe</sharing>
+                <transportation>HLAreliable</transportation>
+                <order>TimeStamp</order>
+                <semantics></semantics>
+                <parameter>
+                    <name>Message</name>
+                    <dataType>HLAunicodeString</dataType>
+                    <semantics></semantics>
+                </parameter>
+                <parameter>
+                    <name>time</name>
+                    <dataType>HLAfloat64LE</dataType>
+                    <semantics></semantics>
+                </parameter>
+                <parameter>
+                    <name>year</name>
+                    <dataType>HLAinteger32LE</dataType>
+                    <semantics></semantics>
+                </parameter>
+            </interactionClass>
+        </interactionClass>
+    </interactions>
+    <switches>
+        <autoProvide isEnabled="true"/>
+        <conveyRegionDesignatorSets isEnabled="false"/>
+        <conveyProducingFederate isEnabled="false"/>
+        <attributeScopeAdvisory isEnabled="false"/>
+        <attributeRelevanceAdvisory isEnabled="false"/>
+        <objectClassRelevanceAdvisory isEnabled="false"/>
+        <interactionRelevanceAdvisory isEnabled="false"/>
+        <serviceReporting isEnabled="false"/>
+        <exceptionReporting isEnabled="false"/>
+        <delaySubscriptionEvaluation isEnabled="false"/>
+        <automaticResignAction resignAction="CancelThenDeleteThenDivest"/>
+    </switches>
+    <dataTypes>
+        <simpleDataTypes/>
+        <enumeratedDataTypes/>
+        <arrayDataTypes/>
+        <fixedRecordDataTypes/>
+        <variantRecordDataTypes/>
+    </dataTypes>
+    <notes/>
+</objectModel>

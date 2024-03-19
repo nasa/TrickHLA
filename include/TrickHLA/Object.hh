@@ -19,20 +19,21 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../source/TrickHLA/Attribute.cpp}
-@trick_link_dependency{../source/TrickHLA/ElapsedTimeStats.cpp}
-@trick_link_dependency{../source/TrickHLA/Federate.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64Interval.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
-@trick_link_dependency{../source/TrickHLA/LagCompensation.cpp}
-@trick_link_dependency{../source/TrickHLA/Manager.cpp}
-@trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
-@trick_link_dependency{../source/TrickHLA/MutexProtection.cpp}
-@trick_link_dependency{../source/TrickHLA/OwnershipHandler.cpp}
-@trick_link_dependency{../source/TrickHLA/Packing.cpp}
-@trick_link_dependency{../source/TrickHLA/ReflectedAttributesQueue.cpp}
-@trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
+@trick_link_dependency{../../source/TrickHLA/Conditional.cpp}
+@trick_link_dependency{../../source/TrickHLA/ElapsedTimeStats.cpp}
+@trick_link_dependency{../../source/TrickHLA/Federate.cpp}
+@trick_link_dependency{../../source/TrickHLA/Int64Interval.cpp}
+@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../../source/TrickHLA/LagCompensation.cpp}
+@trick_link_dependency{../../source/TrickHLA/Manager.cpp}
+@trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
+@trick_link_dependency{../../source/TrickHLA/MutexProtection.cpp}
+@trick_link_dependency{../../source/TrickHLA/OwnershipHandler.cpp}
+@trick_link_dependency{../../source/TrickHLA/Packing.cpp}
+@trick_link_dependency{../../source/TrickHLA/ReflectedAttributesQueue.cpp}
+@trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -97,6 +98,7 @@ namespace TrickHLA
 // helps to limit issues with recursive includes.
 class Manager;
 class Federate;
+class Conditional;
 class Packing;
 class OwnershipHandler;
 class ObjectDeleted;
@@ -148,6 +150,8 @@ class Object
    OwnershipHandler *ownership; ///< @trick_units{--} Manages attribute ownership.
 
    ObjectDeleted *deleted; ///< @trick_units{--} Object Deleted callback object.
+
+   Conditional *conditional; ///< @trick_units{--} Handler for a conditional attribute
 
   public:
    //
@@ -271,15 +275,14 @@ class Object
     *  @param theAttributes The specified attributes. */
    void provide_attribute_update( RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes );
 
-#if defined( THLA_QUEUE_REFLECTED_ATTRIBUTES )
    /*! @brief Enqueue the reflected attributes.
     *  @param theAttributes Attributes data. */
    void enqueue_data( RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributes );
-#endif
 
    /*! @brief This function extracts the new attribute values.
-    *  @param theAttributes Attributes data. */
-   void extract_data( RTI1516_NAMESPACE::AttributeHandleValueMap &theAttributes );
+    *  @param theAttributes Attributes data.
+    *  @return True if successfully extracted data, false otherwise. */
+   bool extract_data( RTI1516_NAMESPACE::AttributeHandleValueMap &theAttributes );
 
    /*! @brief Remove this object instance from the RTI/Federation. */
    void remove();
@@ -321,7 +324,7 @@ class Object
    void setup_ownership_transfer_checkpointed_data();
 
    /*! @brief If an ownership_transfer object has been created by the user,
-    * trigger it's retore() method is re-establish the pull / push
+    * trigger it's restore() method is re-establish the pull / push
     * AttributeOwnershipMaps. */
    void restore_ownership_transfer_checkpointed_data();
 
@@ -575,7 +578,6 @@ class Object
     *  @return True if object data has changed. */
    bool is_changed()
    {
-#if defined( THLA_QUEUE_REFLECTED_ATTRIBUTES )
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &receive_mutex );
@@ -587,7 +589,6 @@ class Object
             thla_reflected_attributes_queue.pop();
          }
       }
-#endif
       return changed;
    }
 

@@ -1,0 +1,164 @@
+//==========================================================================
+// Space Reference FOM: Simulation to test the SpaceFOM roles implementation.
+//==========================================================================
+// Description:
+// This is a simulation definition file (S_define) that provides an example
+// of an SpaceFOM compliant federate that services all SpaceFOM roles.
+//==========================================================================
+
+//==========================================================================
+// Define the Trick executive and services simulation object instances:
+// Use the "standard" Trick executive simulation object. This simulation
+// object provides the traditional Trick executive capabilities but can be
+// tailored to provide facility or project unique executive behavior. See
+// the Trick documentation for more on usage and available options.
+//==========================================================================
+
+// Define the Trick default system infrastructure.
+#include "sim_objects/default_trick_sys.sm"
+
+//==========================================================================
+// Define the JEOD job cycle times.
+//==========================================================================
+#define LOW_RATE_ENV  60.00    // Low-rate environment update interval
+#define HIGH_RATE_ENV  0.250   // High-rate environment update interval
+#define DYNAMICS       0.03125 // Vehicle and planetary dynamics interval (32Hz)
+
+//==========================================================================
+// Define the Trick HLA job cycle times.
+//==========================================================================
+#define THLA_DATA_CYCLE_TIME        HIGH_RATE_ENV // HLA data communication cycle time.
+#define THLA_INTERACTION_CYCLE_TIME DYNAMICS      // HLA Interaction cycle time.
+
+//==========================================================================
+// Define the HLA phase initialization priorities.
+//==========================================================================
+#define P_HLA_EARLY         1     // HLA early job phase.
+#define P_SF_INIT_EPOCH_RRF 55    // SpaceFOM ExCO epoch and root reference frame phase.
+#define P_HLA_INIT          60    // HLA initialization phase.
+#define P_SF_INIT_PRE_MPI   65    // SpaceFOM Pre-Multi Phase initialization phase.
+#define P_SF_INIT_POST_MPI  500   // SpaceFOM Post-Multi Phase initialization phase.
+#define P_HLA_LATE          65534 // HLA late job phase.
+
+
+//==========================================================================
+// JEOD include files used in SimObject definitions or for input file 
+// instantiations.
+//==========================================================================
+#include "default_priority_settings.sm"
+#include "jeod_sys.sm"
+
+// Set up desired time types and include the JEOD time S_module
+#define TIME_MODEL_UT1
+#define TIME_MODEL_UTC
+#define TIME_MODEL_TT
+#define TIME_MODEL_GMST
+#define TIME_CALENDAR_UPDATE_INTERVAL  DYNAMICS
+#include "jeod_time.sm"
+
+#include "dynamics.sm"
+
+#ifndef EPHEM_DE440
+ #define EPHEM_DE440
+#endif
+#include "environment.sm"
+#include "sun_basic.sm"
+#include "earth_GGM05C.sm"
+#include "moon_basic.sm"
+#include "mars_MRO110B2.sm"
+
+//==========================================================================
+// Trick HLA and SpaceFOM include files used in SimObject definitions or
+// for input file instantiations.
+//==========================================================================
+
+// This is needed for CTE timeline instantiation in the input file.
+##include "TrickHLA/CTETimelineBase.hh"
+
+
+//==========================================================================
+// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+//==========================================================================
+#include "SpaceFOM/SpaceFOM.sm"
+
+
+//==========================================================================
+// SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
+// initialization SimObject.
+//==========================================================================
+#include "JEOD/JEODHLAInit.sm"
+
+
+//==========================================================================
+// SimObject instantiations.
+//==========================================================================
+// Main TrickHLA SimObject.
+SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME, THLA_INTERACTION_CYCLE_TIME,
+                        P_HLA_EARLY, P_HLA_INIT, P_HLA_LATE );
+
+// SimObject used capture simulation specific initialization.
+JEODHLAInitSimObject THLA_INIT( jeod_time.time_manager,
+                                jeod_time.time_manager_init,
+                                jeod_time.time_tai,
+                                jeod_time.time_tt,
+                                THLA.manager,
+                                THLA.federate,
+                                THLA.execution_control,
+                                P_SF_INIT_EPOCH_RRF,
+                                10,
+                                P_HLA_INIT );
+
+
+//==========================================================================
+// SIM_OBJECT: JEODRefFrameTreeSimObject - An JEOD reference frame tree
+// simulation object definition.
+//==========================================================================
+#define DEFAULT_DATA_CONFIG // Configure the tree in default data.
+#include "JEOD/JEODRefFrameTree.sm"
+
+
+// Setup the integration loop.
+IntegLoop sim_integ_loop  (DYNAMICS) earth, moon, mars, dynamics;
+
+
+//==========================================================================
+// Create the THLA connections for the SpaceFOM Reference Frame Tree.
+//==========================================================================
+void create_connections() {
+
+   // Make the connections for the Sun, Earth, Moon, Mars reference frame tree.
+   ref_frame_tree.ssbary_frame_ptr = &solar_system_barycenter.frame_packing;
+   ref_frame_tree.sun_frame_ptr = &sun_inertial.frame_packing;
+   ref_frame_tree.embary_frame_ptr = &earth_moon_barycenter.frame_packing;
+   ref_frame_tree.earth_frame_ptr = &earth_centered_inertial.frame_packing;
+   ref_frame_tree.moon_frame_ptr = &moon_centered_inertial.frame_packing;
+   ref_frame_tree.mars_frame_ptr = &mars_centered_inertial.frame_packing;
+   ref_frame_tree.earth_pfix_frame_ptr = &earth_centered_fixed.frame_packing;
+   ref_frame_tree.moon_pfix_frame_ptr = &moon_centered_fixed.frame_packing;
+   ref_frame_tree.mars_pfix_frame_ptr = &mars_centered_fixed.frame_packing;
+
+#ifdef DEFAULT_DATA_CONFIG
+
+   //
+   // This code will only be executed when we want to configure the reference
+   // frame tree using default data instead of in the input file.
+   //
+   // Allocate the HLA objects for the Reference Frame tree.
+   THLA.manager.obj_count = 9;
+   THLA.manager.objects = (TrickHLA::Object*)trick_MM->declare_var( "TrickHLA::Object",
+                                                                    THLA.manager.obj_count );
+   // Assign the HLA objects to the associated frame.
+   solar_system_barycenter.frame_packing.set_object(&(THLA.manager.objects[0]));
+   sun_inertial.frame_packing.set_object(&(THLA.manager.objects[1]));
+   earth_moon_barycenter.frame_packing.set_object(&(THLA.manager.objects[2]));
+   earth_centered_inertial.frame_packing.set_object(&(THLA.manager.objects[3]));
+   moon_centered_inertial.frame_packing.set_object(&(THLA.manager.objects[4]));
+   mars_centered_inertial.frame_packing.set_object(&(THLA.manager.objects[5]));
+   earth_centered_fixed.frame_packing.set_object(&(THLA.manager.objects[6]));
+   moon_centered_fixed.frame_packing.set_object(&(THLA.manager.objects[7]));
+   mars_centered_fixed.frame_packing.set_object(&(THLA.manager.objects[8]));
+
+#endif
+
+}
+

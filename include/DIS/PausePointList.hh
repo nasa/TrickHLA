@@ -20,10 +20,10 @@ NASA, Johnson Space Center\n
 @python_module{DIS}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/TimedSyncPntList.cpp}
-@trick_link_dependency{../source/TrickHLA/Types.cpp}
-@trick_link_dependency{../source/DIS/PausePointList.cpp}
-@trick_link_dependency{../source/DIS/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/TimedSyncPntList.cpp}
+@trick_link_dependency{../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/DIS/PausePointList.cpp}
+@trick_link_dependency{../../source/DIS/Types.cpp}
 
 @revs_title
 @revs_begin

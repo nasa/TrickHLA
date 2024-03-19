@@ -68,7 +68,19 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 RefFrameState::RefFrameState()
-   : ref_frame_data( NULL )
+   : RefFrameBase(),
+     ref_frame_data( NULL )
+{
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+RefFrameState::RefFrameState(
+   RefFrameData &ref_frame_data_ref )
+   : RefFrameBase(),
+     ref_frame_data( &ref_frame_data_ref )
 {
    return;
 }
@@ -78,38 +90,47 @@ RefFrameState::RefFrameState()
  */
 RefFrameState::~RefFrameState()
 {
-   if ( this->name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-         send_hs( stderr, "SpaceFOM::RefFrameState::~RefFrameState():%d ERROR deleting Trick Memory for 'this->name'%c",
-                  __LINE__, THLA_NEWLINE );
-      }
-      this->name = NULL;
-   }
-   if ( this->parent_name != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->parent_name ) ) ) {
-         send_hs( stderr, "SpaceFOM::RefFrameState::~RefFrameState():%d ERROR deleting Trick Memory for 'this->parent_name'%c",
-                  __LINE__, THLA_NEWLINE );
-      }
-      this->parent_name = NULL;
-   }
+   return;
 }
 
 /*!
  * @job_class{initialization}
  */
-void RefFrameState::initialize(
+void RefFrameState::configure(
    RefFrameData *ref_frame_data_ptr )
 {
+
+   // First call the base class pre_initialize function.
+   RefFrameBase::configure();
 
    // Set the reference to the reference frame.
    if ( ref_frame_data_ptr == NULL ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameState::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL reference frame: " << this->name << THLA_ENDL;
+      errmsg << "SpaceFOM::RefFrameState::pre_initialize():" << __LINE__
+             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << THLA_ENDL;
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
    this->ref_frame_data = ref_frame_data_ptr;
+
+   // Return to calling routine.
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void RefFrameState::initialize()
+{
+
+   // Set the reference to the reference frame.
+   if ( ref_frame_data == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::RefFrameState::initialize():" << __LINE__
+             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
 
    // Mark this as initialized.
    RefFrameBase::initialize();
@@ -118,126 +139,124 @@ void RefFrameState::initialize(
    return;
 }
 
-void RefFrameState::pack()
+/*!
+ * @job_class{scheduled}
+ */
+void RefFrameState::pack_from_working_data()
 {
    int iinc;
 
-   // Check for initialization.
-   if ( !initialized ) {
-      cout << "RefFrameState::pack() ERROR: The initialize() function has not"
-           << " been called!" << endl;
+   // Check for parent frame change.
+   if ( ref_frame_data->parent_name != NULL ) {
+      if ( packing_data.parent_name != NULL ) {
+         // We have a parent frame; so, check to see if frame names are different.
+         if ( strcmp( ref_frame_data->parent_name, packing_data.parent_name ) ) {
+            // Frames are different, so reassign the new frame string.
+            if ( trick_MM->delete_var( static_cast< void * >( packing_data.parent_name ) ) ) {
+               send_hs( stderr, "RefFrameState::pack_from_working_data():%d ERROR deleting Trick Memory for 'packing_data.parent_name'%c",
+                        __LINE__, THLA_NEWLINE );
+            }
+            packing_data.parent_name = trick_MM->mm_strdup( ref_frame_data->parent_name );
+         }
+      } else {
+         packing_data.parent_name = trick_MM->mm_strdup( ref_frame_data->parent_name );
+      }
+   } else {
+      if ( packing_data.parent_name != NULL ) {
+         if ( trick_MM->delete_var( static_cast< void * >( packing_data.parent_name ) ) ) {
+            send_hs( stderr, "RefFrameState::pack_from_working_data():%d ERROR deleting Trick Memory for 'packing_data.parent_name'%c",
+                     __LINE__, THLA_NEWLINE );
+         }
+         packing_data.parent_name = NULL;
+      }
    }
-
-   // NOTE: Because TrickHLA handles the bundling of locally owned attributes
-   // we do not need to check the ownership status of them here like we do
-   // in the unpack() function, since we don't run the risk of corrupting our
-   // state.
 
    // Pack the data.
    // Position and velocity vectors.
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      stc_data.pos[iinc] = ref_frame_data->state.pos[iinc];
-      stc_data.vel[iinc] = ref_frame_data->state.vel[iinc];
+      packing_data.state.pos[iinc] = ref_frame_data->state.pos[iinc];
+      packing_data.state.vel[iinc] = ref_frame_data->state.vel[iinc];
    }
    // Attitude quaternion.
-   stc_data.quat_scalar = ref_frame_data->state.quat_scalar;
+   packing_data.state.att.scalar = ref_frame_data->state.att.scalar;
    for ( iinc = 0; iinc < 3; ++iinc ) {
-      stc_data.quat_vector[iinc] = ref_frame_data->state.quat_vector[iinc];
-      stc_data.ang_vel[iinc]     = ref_frame_data->state.ang_vel[iinc];
+      packing_data.state.att.vector[iinc] = ref_frame_data->state.att.vector[iinc];
+      packing_data.state.ang_vel[iinc]    = ref_frame_data->state.ang_vel[iinc];
    }
    // Time tag for this state data.
-   // stc_data.time = ref_frame->state.time;
-   stc_data.time = ref_frame_data->state.time = get_scenario_time();
-
-   // Print out debug information if desired.
-   if ( debug ) {
-      cout.precision( 15 );
-      cout << "RefFrameState::pack():" << __LINE__ << endl
-           << "\tObject-Name: '" << object->get_name() << "'" << endl
-           << "\tname: '" << ( this->name != NULL ? this->name : "" ) << "'" << endl
-           << "\tparent_name: '" << ( this->parent_name != NULL ? this->parent_name : "" ) << "'" << endl
-           << "\ttime: " << stc_data.time << endl
-           << "\tposition: " << endl
-           << "\t\t" << stc_data.pos[0] << endl
-           << "\t\t" << stc_data.pos[1] << endl
-           << "\t\t" << stc_data.pos[2] << endl
-           << endl;
-   }
-
-   // Encode the data into the reference frame buffer.
-   stc_encoder.encode();
+   packing_data.state.time = ref_frame_data->state.time = get_scenario_time();
 
    return;
 }
 
-void RefFrameState::unpack()
+/*!
+ * @job_class{scheduled}
+ */
+void RefFrameState::unpack_into_working_data()
 {
-   // double dt; // Local vs. remote time difference.
 
-   if ( !initialized ) {
-      cout << "RefFrameState::unpack():" << __LINE__
-           << " ERROR: The initialize() function has not been called!" << endl;
+   // If the HLA attribute has changed and is remotely owned (i.e. is
+   // coming from another federate) then override our simulation state with the
+   // incoming value.  If we locally own the attribute then we do not want to
+   // override it's value.  If we did not do this check then we would be
+   // overriding state of something we own and publish with whatever value
+   // happen to be in the local variable, which would cause data corruption of
+   // the state.  We always need to do this check because ownership transfers
+   // could happen at any time or the data could be at a different rate.
+
+   // Set the reference frame name and parent frame name.
+   if ( name_attr->is_received() ) {
+      if ( ref_frame_data->name != NULL ) {
+         if ( !strcmp( ref_frame_data->name, packing_data.name ) ) {
+            if ( trick_MM->delete_var( static_cast< void * >( ref_frame_data->name ) ) ) {
+               send_hs( stderr, "RefFrameState::unpack_into_working_data():%d ERROR deleting Trick Memory for 'ref_frame_data->name'%c",
+                        __LINE__, THLA_NEWLINE );
+            }
+            ref_frame_data->name = trick_MM->mm_strdup( packing_data.name );
+         }
+      } else {
+         ref_frame_data->name = trick_MM->mm_strdup( packing_data.name );
+      }
    }
 
-   // Use the HLA encoder helpers to decode the reference frame fixed record.
-   stc_encoder.decode();
+   if ( parent_name_attr->is_received() ) {
+      if ( ref_frame_data->parent_name != NULL ) {
+         if ( !strcmp( ref_frame_data->parent_name, packing_data.parent_name ) ) {
+            if ( trick_MM->delete_var( static_cast< void * >( ref_frame_data->parent_name ) ) ) {
+               send_hs( stderr, "RefFrameState::unpack_into_working_data():%d ERROR deleting Trick Memory for 'ref_frame_data->parent_name'%c",
+                        __LINE__, THLA_NEWLINE );
+            }
 
-   // If the HLA phase attribute has changed and is remotely owned (i.e. is
-   // coming from another federate) then override our simulation state with the
-   // incoming value. If we locally own the "Phase" attribute then we do not
-   // want to override it's value. If we did not do this check then we would be
-   // overriding state of something we own and publish with whatever value
-   // happen to be in the "phase_deg" local variable, which would cause data
-   // corruption of the state. We always need to do this check because
-   // ownership transfers could happen at any time or the data could be at a
-   // different rate.
-   if ( ref_frame_attr->is_received() ) {
-      // Print out debug information if desired.
-      if ( debug ) {
-         cout.precision( 15 );
-         cout << "RefFrameState::unpack():" << __LINE__ << endl
-              << "\tObject-Name: '" << object->get_name() << "'" << endl
-              << "\tname: '" << ( this->name != NULL ? this->name : "" ) << "'" << endl
-              << "\tparent_name: '" << ( this->parent_name != NULL ? this->parent_name : "" ) << "'" << endl
-              << "\ttime: " << stc_data.time << endl
-              << "\tposition: " << endl
-              << "\t\t" << stc_data.pos[0] << endl
-              << "\t\t" << stc_data.pos[1] << endl
-              << "\t\t" << stc_data.pos[2] << endl
-              << endl;
+            if ( packing_data.parent_name[0] != '\0' ) {
+               ref_frame_data->parent_name = trick_MM->mm_strdup( packing_data.parent_name );
+            } else {
+               ref_frame_data->parent_name = NULL;
+            }
+         }
+      } else {
+         if ( packing_data.parent_name[0] != '\0' ) {
+            ref_frame_data->parent_name = trick_MM->mm_strdup( packing_data.parent_name );
+         }
       }
+   }
+
+   // Unpack the ReferenceFrame space-time coordinate state.
+   if ( state_attr->is_received() ) {
 
       // Unpack the data.
       // Position and velocity vectors.
       for ( int iinc = 0; iinc < 3; ++iinc ) {
-         ref_frame_data->state.pos[iinc] = stc_data.pos[iinc];
-         ref_frame_data->state.vel[iinc] = stc_data.vel[iinc];
+         ref_frame_data->state.pos[iinc] = packing_data.state.pos[iinc];
+         ref_frame_data->state.vel[iinc] = packing_data.state.vel[iinc];
       }
       // Attitude quaternion.
-      ref_frame_data->state.quat_scalar = stc_data.quat_scalar;
+      ref_frame_data->state.att.scalar = packing_data.state.att.scalar;
       for ( int iinc = 0; iinc < 3; ++iinc ) {
-         ref_frame_data->state.quat_vector[iinc] = stc_data.quat_vector[iinc];
-         ref_frame_data->state.ang_vel[iinc]     = stc_data.ang_vel[iinc];
+         ref_frame_data->state.att.vector[iinc] = packing_data.state.att.vector[iinc];
+         ref_frame_data->state.ang_vel[iinc]    = packing_data.state.ang_vel[iinc];
       }
       // Time tag for this state data.
-      ref_frame_data->state.time = stc_data.time;
-
-      // Set the frame name and parent name.
-      if ( ref_frame_data->name != NULL ) {
-         free( ref_frame_data->name );
-         ref_frame_data->name = NULL;
-      }
-      ref_frame_data->name = strdup( this->name );
-
-      if ( ref_frame_data->parent_name != NULL ) {
-         free( ref_frame_data->parent_name );
-         ref_frame_data->parent_name = NULL;
-      }
-      if ( this->parent_name != NULL ) {
-         if ( this->parent_name[0] != '\0' ) {
-            ref_frame_data->parent_name = strdup( this->parent_name );
-         }
-      }
+      ref_frame_data->state.time = packing_data.state.time;
    }
 
    return;

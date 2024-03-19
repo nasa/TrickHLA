@@ -19,12 +19,12 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/LagCompensation.cpp}
-@trick_link_dependency{../source/TrickHLA/Attribute.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64Interval.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/LagCompensation.cpp}
+@trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
+@trick_link_dependency{../../source/TrickHLA/Int64Interval.cpp}
+@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -68,19 +68,16 @@ class LagCompensation
    // Constructors / destructors
    //-----------------------------------------------------------------
    /*! @brief Default constructor for the TrickHLA LagCompensation class. */
-   LagCompensation() : object( NULL )
-   {
-      return;
-   }
+   LagCompensation() : initialized( false ), object( NULL ) { return; }
    /*! @brief Destructor for the TrickHLA LagCompensation class. */
-   virtual ~LagCompensation()
-   {
-      return;
-   }
+   virtual ~LagCompensation() { return; }
 
    //-----------------------------------------------------------------
    // These are virtual functions and must be defined by a full class.
    //-----------------------------------------------------------------
+
+   /*! @brief Finish the initialization of the TrickHLA LAgCompensation object. */
+   virtual void initialize() { initialized = true; }
 
    /*! @brief Send side lag compensation callback. */
    virtual void send_lag_compensation();
@@ -136,7 +133,8 @@ class LagCompensation
    virtual void initialize_callback( Object *obj );
 
   protected:
-   Object *object; ///< @trick_io{**} Object associated with this lag-comp class.
+   bool    initialized; ///< @trick_units{--} Initialization status flag.
+   Object *object;      ///< @trick_io{**} Object associated with this lag-comp class.
 
   private:
    // Do not allow the copy constructor or assignment operator.

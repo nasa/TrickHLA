@@ -19,10 +19,10 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLAModel}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/DebugHandler.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64BaseTime.cpp}
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../../source/TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Int64BaseTime.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{simconfig/src/SimpleSimConfig.cpp}
 
 @revs_title
@@ -96,7 +96,7 @@ SimpleSimConfig::~SimpleSimConfig()
 /*!
  * @job_class{initialization}
  */
-void SimpleSimConfig::initialize(
+void SimpleSimConfig::configure(
    int const                known_feds_count,
    TrickHLA::KnownFederate *known_feds )
 {
@@ -128,8 +128,25 @@ void SimpleSimConfig::initialize(
 
    // Make sure we use correct function so that it is Trick managed memory.
    this->required_federates = trick_MM->mm_strdup( fed_list.str().c_str() );
+
+   return;
 }
 
+/*!
+ * @job_class{initialization}
+ */
+void SimpleSimConfig::initialize()
+{
+
+   // Mark this as initialized.
+   TrickHLA::Packing::initialize();
+
+   return;
+}
+
+/*!
+ * @job_class{scheduled}
+ */
 void SimpleSimConfig::pack()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {

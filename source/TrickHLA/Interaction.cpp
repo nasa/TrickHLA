@@ -197,6 +197,42 @@ void Interaction::initialize(
       param_count = 0;
    }
 
+   // Verify parameter FOM names and also check for duplicate parameter FOM names.
+   for ( unsigned int i = 0; i < param_count; ++i ) {
+      // Validate the FOM-name to make sure we don't have a problem with the
+      // list of names as well as get a difficult to debug runtime error for
+      // the string constructor if we had a null FOM-name.
+      if ( ( parameters[i].get_FOM_name() == NULL ) || ( *( parameters[i].get_FOM_name() ) == '\0' ) ) {
+         ostringstream errmsg;
+         errmsg << "Interaction::initialize():" << __LINE__
+                << " ERROR: Interaction '" << FOM_name << "' has a missing Parameter"
+                << " FOM Name at array index " << i << ". Please check your input"
+                << " or modified-data files to make sure the interaction parameter"
+                << " FOM name is correctly specified." << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      string fom_name_str( parameters[i].get_FOM_name() );
+
+      // Since Interaction updates are sent as a ParameterHandleValueMap there can be
+      // no duplicate Parameters because the map only allows unique ParameterHandles.
+      for ( unsigned int k = i + 1; k < param_count; ++k ) {
+         if ( ( parameters[k].get_FOM_name() != NULL ) && ( *( parameters[k].get_FOM_name() ) != '\0' ) ) {
+
+            if ( fom_name_str == string( parameters[k].get_FOM_name() ) ) {
+               ostringstream errmsg;
+               errmsg << "Interaction::initialize():" << __LINE__
+                      << " ERROR: Interaction '" << FOM_name << "' has Parameters"
+                      << " at array indexes " << i << " and " << k
+                      << " that have the same FOM Name '" << fom_name_str
+                      << "'. Please check your input or modified-data files to"
+                      << " make sure the interaction parameters do not use"
+                      << " duplicate FOM names." << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+      }
+   }
+
    // We must have an interaction handler specified, otherwise we can not
    // process the interaction.
    if ( handler == NULL ) {
@@ -243,7 +279,7 @@ void Interaction::set_user_supplied_tag(
 void Interaction::remove() // RETURN: -- None.
 {
    // Only remove the Interaction if the manager has not been shutdown.
-   if ( is_shutdown_called() ) {
+   if ( !is_shutdown_called() ) {
 
       // Get the RTI-Ambassador and check for NULL.
       RTIambassador *rti_amb = get_RTI_ambassador();
@@ -1089,13 +1125,13 @@ void Interaction::process_interaction()
    }
 }
 
-void Interaction::extract_data(
+bool Interaction::extract_data(
    InteractionItem *interaction_item )
 {
    // Must be set to subscribe to the interaction and the interaction item
    // is not null, otherwise just return.
    if ( !is_subscribe() || ( interaction_item == NULL ) ) {
-      return;
+      return false;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
@@ -1130,6 +1166,8 @@ void Interaction::extract_data(
       set_user_supplied_tag( (unsigned char *)NULL, 0 );
    }
 
+   bool any_param_received = false;
+
    // Process all the parameter-items in the queue.
    while ( !interaction_item->parameter_queue.empty() ) {
 
@@ -1144,10 +1182,9 @@ void Interaction::extract_data(
                      THLA_NEWLINE );
          }
          // Extract the parameter data for the given parameter-item.
-         parameters[param_item->index].extract_data( param_item->size, param_item->data );
-
-         // Mark the interaction as changed.
-         mark_changed();
+         if ( parameters[param_item->index].extract_data( param_item->size, param_item->data ) ) {
+            any_param_received = true;
+         }
       }
 
       // Now that we extracted the data from the parameter-item remove it
@@ -1155,7 +1192,11 @@ void Interaction::extract_data(
       interaction_item->parameter_queue.pop();
    }
 
-   // Unlock the mutex as auto_unlock_mutex goes out of scope.
+   if ( any_param_received ) {
+      // Mark the interaction as changed.
+      mark_changed();
+   }
+   return any_param_received;
 }
 
 void Interaction::mark_unchanged()

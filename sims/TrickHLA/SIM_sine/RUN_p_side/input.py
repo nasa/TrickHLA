@@ -148,7 +148,8 @@ THLA.manager.objects[0].create_HLA_instance = False
 THLA.manager.objects[0].packing             = A.packing
 THLA.manager.objects[0].lag_comp            = A.lag_compensation
 THLA.manager.objects[0].lag_comp_type       = trick.LAG_COMPENSATION_NONE
-THLA.manager.objects[0].deleted             = A.obj_deleted_callback
+THLA.manager.objects[0].conditional         = A.conditional
+THLA.manager.objects[0].deleted             = A.obj_deleted
 THLA.manager.objects[0].attr_count          = 8
 THLA.manager.objects[0].attributes          = trick.sim_services.alloc_type( THLA.manager.objects[0].attr_count, 'TrickHLA::Attribute' )
 
@@ -225,7 +226,8 @@ THLA.manager.objects[1].create_HLA_instance = True
 THLA.manager.objects[1].packing             = P.packing
 THLA.manager.objects[1].lag_comp            = P.lag_compensation
 THLA.manager.objects[1].lag_comp_type       = trick.LAG_COMPENSATION_NONE
-THLA.manager.objects[1].deleted             = P.obj_deleted_callback
+THLA.manager.objects[1].conditional         = P.conditional
+THLA.manager.objects[1].deleted             = P.obj_deleted
 THLA.manager.objects[1].attr_count          = 8
 THLA.manager.objects[1].attributes          = trick.sim_services.alloc_type( THLA.manager.objects[1].attr_count, 'TrickHLA::Attribute' )
 

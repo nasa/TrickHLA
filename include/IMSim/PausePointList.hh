@@ -69,7 +69,7 @@ class PausePointList : public TrickHLA::TimedSyncPntList
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__PausePointList();
+   friend void init_attrIMSim__PausePointList();
 
   public:
    //
@@ -98,6 +98,7 @@ class PausePointList : public TrickHLA::TimedSyncPntList
    {
       return ( this->state );
    }
+
    void clear_state()
    {
       this->state = IMSim::PAUSE_POINT_STATE_UNKNOWN;
@@ -107,18 +108,22 @@ class PausePointList : public TrickHLA::TimedSyncPntList
    {
       return ( this->state == PAUSE_POINT_STATE_RUN );
    }
+
    bool should_freeze() const
    {
       return ( this->state == PAUSE_POINT_STATE_FREEZE );
    }
+
    bool should_exit() const
    {
       return ( this->state == PAUSE_POINT_STATE_EXIT );
    }
+
    bool should_restart() const
    {
       return ( this->state == PAUSE_POINT_STATE_RESTART );
    }
+
    bool should_reconfig() const
    {
       return ( this->state == PAUSE_POINT_STATE_RECONFIG );
@@ -134,6 +139,8 @@ class PausePointList : public TrickHLA::TimedSyncPntList
 
   private:
    PausePointStateEnum state; ///< @trick_units{--} State of the pause points.
+
+   static bool is_sync_point_state_achieved( TrickHLA::SyncPnt const *sync_pnt );
 
   private:
    // Do not allow the copy constructor or assignment operator.

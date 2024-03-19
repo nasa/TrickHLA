@@ -20,18 +20,18 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/ExecutionControlBase.cpp}
-@trick_link_dependency{../source/TrickHLA/CTETimelineBase.cpp}
-@trick_link_dependency{../source/TrickHLA/ExecutionConfigurationBase.cpp}
-@trick_link_dependency{../source/TrickHLA/Federate.cpp}
-@trick_link_dependency{../source/TrickHLA/Manager.cpp}
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../source/TrickHLA/ScenarioTimeline.cpp}
-@trick_link_dependency{../source/TrickHLA/SimTimeline.cpp}
-@trick_link_dependency{../source/TrickHLA/SyncPntListBase.cpp}
-@trick_link_dependency{../source/TrickHLA/SimTimeline.cpp}
-@trick_link_dependency{../source/TrickHLA/Timeline.cpp}
-@trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/CTETimelineBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/ExecutionConfigurationBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/Federate.cpp}
+@trick_link_dependency{../../source/TrickHLA/Manager.cpp}
+@trick_link_dependency{../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../source/TrickHLA/ScenarioTimeline.cpp}
+@trick_link_dependency{../../source/TrickHLA/SimTimeline.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPntListBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/SimTimeline.cpp}
+@trick_link_dependency{../../source/TrickHLA/Timeline.cpp}
+@trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -52,6 +52,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/LoggableTimedSyncPnt.hh"
 #include "TrickHLA/ScenarioTimeline.hh"
 #include "TrickHLA/SimTimeline.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/SyncPntList.hh"
 #include "TrickHLA/SyncPntListBase.hh"
 #include "TrickHLA/Types.hh"
@@ -450,18 +451,18 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    /*! @brief Set the mode transition requested flag. */
    virtual void set_mode_transition_requested()
    {
-      mode_transition_requested = true;
+      this->mode_transition_requested = true;
    }
    /*! @brief Clear the mode transition requested flag. */
    virtual void clear_mode_transition_requested()
    {
-      mode_transition_requested = false;
+      this->mode_transition_requested = false;
    }
    /*! @brief Determine if a mode transition has been requested.
     *  @return mode_change_requested True if a mode transition has been requested. */
    virtual bool is_mode_transition_requested()
    {
-      return mode_transition_requested;
+      return this->mode_transition_requested;
    }
 
    // Role determination methods.
@@ -586,8 +587,7 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
     *  @param lcts Least Common Time Step time in seconds. */
    virtual void set_least_common_time_step( double const lcts );
 
-   /*! @brief Refresh the least common time step especially if the HLA base time units changed.
-    *  @param lcts Least Common Time Step time in seconds. */
+   /*! @brief Refresh the least common time step especially if the HLA base time units changed. */
    virtual void refresh_least_common_time_step();
 
    /*! @brief Get the value of the least common time step.

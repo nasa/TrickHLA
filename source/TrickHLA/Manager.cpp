@@ -188,7 +188,7 @@ void Manager::initialize()
       send_hs( stdout, "Manager::initialize():%d%c", __LINE__, THLA_NEWLINE );
    }
 
-   // Check to make sure we have a reference to the TrickHLA::Manager.
+   // Check to make sure we have a reference to the TrickHLA::Federate.
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::initialize():" << __LINE__
@@ -203,66 +203,6 @@ void Manager::initialize()
              << " ERROR: Unexpected NULL 'execution_control' pointer!"
              << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Check for the error condition of a valid object count but a null
-   // objects array.
-   if ( ( obj_count > 0 ) && ( objects == NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL 'objects' array for a non zero"
-             << " obj_count:" << obj_count << ". Please check your input or"
-             << " modified-data files to make sure the 'Manager::objects'"
-             << " array is correctly configured." << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // If we have a non-NULL objects array but the object-count is invalid
-   // then let the user know.
-   if ( ( obj_count <= 0 ) && ( objects != NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::initialize():" << __LINE__
-             << " ERROR: Unexpected " << ( ( obj_count == 0 ) ? "zero" : "negative" )
-             << " obj_count:" << obj_count << " for a non-NULL 'objects' array."
-             << " Please check your input or modified-data files to make sure"
-             << " the 'Manager::objects' array is correctly configured."
-             << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Reset the TrickHLA Object count if negative.
-   if ( obj_count < 0 ) {
-      obj_count = 0;
-   }
-
-   // Check for the error condition of a valid interaction count but a null
-   // interactions array.
-   if ( ( inter_count > 0 ) && ( interactions == NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL 'interactions' array for a non zero"
-             << " inter_count:" << inter_count << ". Please check your input or"
-             << " modified-data files to make sure the 'Manager::interactions'"
-             << " array is correctly configured." << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // If we have a non-NULL interactions array but the interactions-count is
-   // invalid then let the user know.
-   if ( ( inter_count <= 0 ) && ( interactions != NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::initialize():" << __LINE__
-             << " ERROR: Unexpected " << ( ( inter_count == 0 ) ? "zero" : "negative" )
-             << " inter_count:" << inter_count << " for a non-NULL 'interactions'"
-             << " array. Please check your input or modified-data files to make"
-             << " sure the 'Manager::interactions' array is correctly configured."
-             << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Reset the TrickHLA Interaction count if negative.
-   if ( inter_count < 0 ) {
-      inter_count = 0;
    }
 
    // The manager is now initialized.
@@ -299,65 +239,8 @@ void Manager::restart_initialization()
    // To allow manager initialization to complete we need to reset the init flag.
    this->mgr_initialized = false;
 
-   // Check for the error condition of a valid object count but a null
-   // objects array.
-   if ( ( obj_count > 0 ) && ( objects == NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::restart_initialization():" << __LINE__
-             << " ERROR: Unexpected NULL 'objects' array for a non zero"
-             << " obj_count:" << obj_count << ". Please check your input or"
-             << " modified-data files to make sure the 'Manager::objects'"
-             << " array is correctly configured." << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // If we have a non-NULL objects array but the object-count is invalid
-   // then let the user know.
-   if ( ( obj_count <= 0 ) && ( objects != NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::restart_initialization():" << __LINE__
-             << " ERROR: Unexpected " << ( ( obj_count == 0 ) ? "zero" : "negative" )
-             << " obj_count:" << obj_count << " for a non-NULL 'objects' array."
-             << " Please check your input or modified-data files to make sure"
-             << " the 'Manager::objects' array is correctly configured."
-             << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Reset the TrickHLA Object count if negative.
-   if ( obj_count < 0 ) {
-      obj_count = 0;
-   }
-
-   // Check for the error condition of a valid interaction count but a null
-   // interactions array.
-   if ( ( inter_count > 0 ) && ( interactions == NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::restart_initialization():" << __LINE__
-             << " ERROR: Unexpected NULL 'interactions' array for a non zero"
-             << " inter_count:" << inter_count << ". Please check your input or"
-             << " modified-data files to make sure the 'Manager::interactions'"
-             << " array is correctly configured." << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // If we have a non-NULL interactions array but the interactions-count is
-   // invalid then let the user know.
-   if ( ( inter_count <= 0 ) && ( interactions != NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::restart_initialization():" << __LINE__
-             << " ERROR: Unexpected " << ( ( inter_count == 0 ) ? "zero" : "negative" )
-             << " inter_count:" << inter_count << " for a non-NULL 'interactions'"
-             << " array. Please check your input or modified-data files to make"
-             << " sure the 'Manager::interactions' array is correctly configured."
-             << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Reset the TrickHLA Interaction count if negative.
-   if ( inter_count < 0 ) {
-      inter_count = 0;
-   }
+   // Verify the user specified object and interaction arrays and counts.
+   verify_object_and_interaction_arrays();
 
    // Setup the Execution Control and Execution Configuration objects now that
    // we know if we are the "Master" federate or not.
@@ -409,6 +292,97 @@ void Manager::restart_initialization()
 
    // The manager is now initialized.
    this->mgr_initialized = true;
+}
+
+/*! @brief Verify the user specified object and interaction arrays and counts. */
+void Manager::verify_object_and_interaction_arrays()
+{
+   // Check for the error condition of a valid object count but a null
+   // objects array.
+   if ( ( obj_count > 0 ) && ( objects == NULL ) ) {
+      ostringstream errmsg;
+      errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+             << " ERROR: Unexpected NULL 'objects' array for a non zero"
+             << " obj_count:" << obj_count << ". Please check your input or"
+             << " modified-data files to make sure the 'Manager::objects'"
+             << " array is correctly configured." << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // If we have a non-NULL objects array but the object-count is invalid
+   // then let the user know.
+   if ( ( obj_count <= 0 ) && ( objects != NULL ) ) {
+      ostringstream errmsg;
+      errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+             << " ERROR: Unexpected " << ( ( obj_count == 0 ) ? "zero" : "negative" )
+             << " obj_count:" << obj_count << " for a non-NULL 'objects' array."
+             << " Please check your input or modified-data files to make sure"
+             << " the 'Manager::objects' array is correctly configured."
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Reset the TrickHLA Object count if negative.
+   if ( obj_count < 0 ) {
+      obj_count = 0;
+   }
+
+   // Object instance names must be unique and can not be a duplicate.
+   for ( int n = 0; n < obj_count; ++n ) {
+
+      if ( ( objects[n].name != NULL ) && ( *objects[n].name != '\0' ) ) {
+         string obj_name1 = objects[n].name;
+
+         for ( int k = n + 1; k < obj_count; ++k ) {
+            if ( ( objects[k].name != NULL ) && ( *objects[k].name != '\0' ) ) {
+               string obj_name2 = objects[k].name;
+
+               if ( obj_name1 == obj_name2 ) {
+                  ostringstream errmsg;
+                  errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+                         << " ERROR: Object instance '" << obj_name1
+                         << "' at array index " << n << " has the same name as"
+                         << " object instance '" << obj_name2
+                         << "' at array index " << k << ". Please check your"
+                         << " input or modified-data files to make sure the"
+                         << " object instance names are unique with no duplicates."
+                         << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
+               }
+            }
+         }
+      }
+   }
+
+   // Check for the error condition of a valid interaction count but a null
+   // interactions array.
+   if ( ( inter_count > 0 ) && ( interactions == NULL ) ) {
+      ostringstream errmsg;
+      errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+             << " ERROR: Unexpected NULL 'interactions' array for a non zero"
+             << " inter_count:" << inter_count << ". Please check your input or"
+             << " modified-data files to make sure the 'Manager::interactions'"
+             << " array is correctly configured." << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // If we have a non-NULL interactions array but the interactions-count is
+   // invalid then let the user know.
+   if ( ( inter_count <= 0 ) && ( interactions != NULL ) ) {
+      ostringstream errmsg;
+      errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+             << " ERROR: Unexpected " << ( ( inter_count == 0 ) ? "zero" : "negative" )
+             << " inter_count:" << inter_count << " for a non-NULL 'interactions'"
+             << " array. Please check your input or modified-data files to make"
+             << " sure the 'Manager::interactions' array is correctly configured."
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Reset the TrickHLA Interaction count if negative.
+   if ( inter_count < 0 ) {
+      inter_count = 0;
+   }
 }
 
 /*!
@@ -2315,60 +2289,47 @@ void Manager::send_cyclic_and_requested_data()
                __LINE__, THLA_NEWLINE );
    }
 
+   // Current time values.
    int64_t const sim_time_in_base_time = Int64BaseTime::to_base_time( exec_get_sim_time() );
    int64_t const granted_base_time     = get_granted_base_time();
-   bool const    zero_lookahead        = federate->is_zero_lookahead_time();
-
-   // Initial time values.
-   int64_t   dt      = zero_lookahead ? 0LL : federate->get_lookahead_in_base_time();
-   int64_t   prev_dt = dt;
-   Int64Time granted_plus_lookahead( granted_base_time + dt );
-   Int64Time update_time( granted_plus_lookahead );
+   int64_t const lookahead_base_time   = federate->is_zero_lookahead_time()
+                                            ? 0LL
+                                            : federate->get_lookahead_in_base_time();
 
    // Determine the main thread cycle time for this job if it is not yet known.
    if ( this->job_cycle_base_time <= 0LL ) {
       determine_job_cycle_time();
    }
 
-   // Only update the time if time management is enabled.
-   if ( federate->is_time_management_enabled() ) {
+   // The update_time should be the current granted time plus the data cycle
+   // delta time for this job if HLA Time Management is enabled otherwise it
+   // is the simulation time plus the cycle delta time for this job. Also, the
+   // dt value would then be the job cycle delta time for this job for this
+   // function. 11/28/2006 DDexter
+   //
+   // When Tsim+dt == Tgrant+Lookahead
+   // Tgrant          Tgrant + Lookahead
+   // +---------------+---------------
+   // Tsim            Tsim + dt
+   //
+   // When Tsim+dt > Tgrant+Lookahead
+   // Tgrant          Tmin = Tgrant + Lookahead
+   // +---------------+--------+------
+   // Tsim                     Tsim + dt
+   //
+   // Even when using HLA Time Management the simulation time (Tsim) will
+   // not match the Granted time (Tgrant) for some circumstances, which is
+   // the case for a late joining federate. The data cycle time (dt) is how
+   // often we send and receive data, which may or may not match the lookahead.
+   // This is why we prefer to use an updated time of Tupdate = Tgrant + dt.
+   int64_t   dt      = this->job_cycle_base_time;
+   int64_t   prev_dt = dt;
+   Int64Time update_time( granted_base_time + dt );
 
-      // Check for a zero lookahead time, which means the cycle_time (i.e. dt)
-      // should be zero as well.
-      dt = zero_lookahead ? 0LL : this->job_cycle_base_time;
-
-      // Reuse the update_time if the data cycle time (dt) is the same.
-      if ( dt != prev_dt ) {
-         prev_dt = dt;
-
-         // The update_time should be the current granted time plus the data cycle
-         // delta time for this job if HLA Time Management is enabled otherwise it
-         // is the simulation time plus the cycle delta time for this job. Also, the
-         // dt value would then be the job cycle delta time for this job for this
-         // function. 11/28/2006 DDexter
-         //
-         // When Tsim+dt == Tgrant+Lookahead
-         // Tgrant          Tgrant + Lookahead
-         // +---------------+---------------
-         // Tsim            Tsim + dt
-         //
-         // When Tsim+dt > Tgrant+Lookahead
-         // Tgrant          Tmin = Tgrant + Lookahead
-         // +---------------+--------+------
-         // Tsim                     Tsim + dt
-         //
-         // Even when using HLA Time Management the simulation time (Tsim) will
-         // not match the Granted time (Tgrant) for some circumstances, which is
-         // the case for a late joining federate. The data cycle time (dt) is how
-         // often we send and receive data, which may or may not match the lookahead.
-         // This is why we prefer to use an updated time of Tupdate = Tgrant + dt.
-         update_time.set( granted_base_time + dt );
-
-         // Make sure the update time is not less than the granted time + lookahead.
-         if ( update_time < granted_plus_lookahead ) {
-            update_time.set( granted_plus_lookahead );
-         }
-      }
+   // Make sure the update time is not less than the granted time + lookahead,
+   // which happens if the delta-time step is less than the lookahead time.
+   if ( dt < lookahead_base_time ) {
+      update_time.set( granted_base_time + lookahead_base_time );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -2383,31 +2344,24 @@ void Manager::send_cyclic_and_requested_data()
    for ( unsigned int obj_index = 0; obj_index < this->obj_count; ++obj_index ) {
 
       // Only send data if we are on the data cycle time boundary for this object.
-      if ( this->federate->on_data_cycle_boundary_for_obj( obj_index, sim_time_in_base_time ) ) {
+      if ( federate->on_data_cycle_boundary_for_obj( obj_index, sim_time_in_base_time ) ) {
 
-         // Only update the time if time management is enabled.
-         if ( federate->is_time_management_enabled() ) {
+         // Get the cyclic data time for the object.
+         dt = federate->get_data_cycle_base_time_for_obj( obj_index, this->job_cycle_base_time );
 
-            // Check for a zero lookahead time, which means the cycle_time
-            // (i.e. dt) should be zero as well.
-            dt = zero_lookahead ? 0LL
-                                : this->federate->get_data_cycle_base_time_for_obj(
-                                   obj_index, this->job_cycle_base_time );
+         // Reuse the update_time if the data cycle time (dt) is the same.
+         if ( dt != prev_dt ) {
+            prev_dt = dt;
+            update_time.set( granted_base_time + dt );
 
-            // Reuse the update_time if the data cycle time (dt) is the same.
-            if ( dt != prev_dt ) {
-               prev_dt = dt;
-
-               update_time.set( granted_base_time + dt );
-
-               // Make sure the update time is not less than the granted time + lookahead.
-               if ( update_time < granted_plus_lookahead ) {
-                  update_time.set( granted_plus_lookahead );
-               }
+            // Make sure the update time is not less than the granted time + lookahead,
+            // which happens if the delta-time step is less than the lookahead time.
+            if ( dt < lookahead_base_time ) {
+               update_time.set( granted_base_time + lookahead_base_time );
             }
          }
 
-         // Send the data for the object.
+         // Send the data for the object using the cycle time for this object.
          objects[obj_index].send_cyclic_and_requested_data( update_time );
       }
    }
@@ -2439,7 +2393,7 @@ void Manager::receive_cyclic_data()
    for ( unsigned int n = 0; n < obj_count; ++n ) {
 
       // Only receive data if we are on the data cycle time boundary for this object.
-      if ( this->federate->on_data_cycle_boundary_for_obj( n, sim_time_in_base_time ) ) {
+      if ( federate->on_data_cycle_boundary_for_obj( n, sim_time_in_base_time ) ) {
          objects[n].receive_cyclic_data();
       }
    }
@@ -2668,7 +2622,7 @@ bool Manager::discover_object_instance(
       federate->add_federate_instance_id( theObject );
       return_value = true;
 
-      // save into my federate's discovered federate storage area
+      // Save into my federate's discovered federate storage area
       federate->add_MOM_HLAfederate_instance_id( theObject, theObjectInstanceName );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -2861,7 +2815,7 @@ void Manager::release_ownership()
  */
 Int64Interval Manager::get_lookahead() const
 {
-   return this->federate->get_lookahead();
+   return federate->get_lookahead();
 }
 
 /*!
@@ -2870,7 +2824,7 @@ Int64Interval Manager::get_lookahead() const
  */
 Int64Time Manager::get_granted_time() const
 {
-   return this->federate->get_granted_time();
+   return federate->get_granted_time();
 }
 
 /*!
@@ -2878,7 +2832,7 @@ Int64Time Manager::get_granted_time() const
  */
 int64_t const Manager::get_granted_base_time() const
 {
-   return this->federate->get_granted_base_time();
+   return federate->get_granted_base_time();
 }
 
 bool Manager::is_RTI_ready(
@@ -3278,5 +3232,5 @@ RTIambassador *Manager::get_RTI_ambassador()
 
 bool Manager::is_shutdown_called() const
 {
-   return ( ( this->federate != NULL ) ? this->federate->is_shutdown_called() : false );
+   return ( ( this->federate != NULL ) ? federate->is_shutdown_called() : false );
 }

@@ -79,6 +79,10 @@ def main():
    trickhla_src_paths = []
    trickhla_src_paths.append( os.path.join( trickhla_home, 'include' ) )
    trickhla_src_paths.append( os.path.join( trickhla_home, 'source' ) )
+   if os.path.isdir( os.path.join( trickhla_home, 'models/EntityDynamics' ) ):
+      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/EntityDynamics' ) )
+   if os.path.isdir( os.path.join( trickhla_home, 'models/SAIntegrator' ) ):
+      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/SAIntegrator' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/simconfig' ) ):
       trickhla_src_paths.append( os.path.join( trickhla_home, 'models/simconfig' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/sine' ) ):

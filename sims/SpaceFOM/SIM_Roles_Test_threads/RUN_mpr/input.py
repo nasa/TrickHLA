@@ -222,33 +222,33 @@ ref_frame_tree.root_frame_data.state.pos[2] = 0.0
 ref_frame_tree.root_frame_data.state.vel[0] = 0.0
 ref_frame_tree.root_frame_data.state.vel[1] = 0.0
 ref_frame_tree.root_frame_data.state.vel[2] = 0.0
-ref_frame_tree.root_frame_data.state.quat_scalar  = 1.0
-ref_frame_tree.root_frame_data.state.quat_vector[0] = 0.0
-ref_frame_tree.root_frame_data.state.quat_vector[1] = 0.0
-ref_frame_tree.root_frame_data.state.quat_vector[2] = 0.0
+ref_frame_tree.root_frame_data.state.att.scalar  = 1.0
+ref_frame_tree.root_frame_data.state.att.vector[0] = 0.0
+ref_frame_tree.root_frame_data.state.att.vector[1] = 0.0
+ref_frame_tree.root_frame_data.state.att.vector[2] = 0.0
 ref_frame_tree.root_frame_data.state.ang_vel[0] = 0.0
 ref_frame_tree.root_frame_data.state.ang_vel[1] = 0.0
 ref_frame_tree.root_frame_data.state.ang_vel[2] = 0.0
 ref_frame_tree.root_frame_data.state.time = 0.0
 
 
-ref_frame_tree.frame_A_data.name = 'FrameA'
-ref_frame_tree.frame_A_data.parent_name = root_frame_name
+ref_frame_tree.vehicle_frame_data.name = 'FrameA'
+ref_frame_tree.vehicle_frame_data.parent_name = root_frame_name
                                         
-ref_frame_tree.frame_A_data.state.pos[0] = 10.0
-ref_frame_tree.frame_A_data.state.pos[1] = 10.0
-ref_frame_tree.frame_A_data.state.pos[2] = 10.0
-ref_frame_tree.frame_A_data.state.vel[0] = 0.0
-ref_frame_tree.frame_A_data.state.vel[1] = 0.0
-ref_frame_tree.frame_A_data.state.vel[2] = 0.0
-ref_frame_tree.frame_A_data.state.quat_scalar  = 1.0
-ref_frame_tree.frame_A_data.state.quat_vector[0] = 0.0
-ref_frame_tree.frame_A_data.state.quat_vector[1] = 0.0
-ref_frame_tree.frame_A_data.state.quat_vector[2] = 0.0
-ref_frame_tree.frame_A_data.state.ang_vel[0] = 0.0
-ref_frame_tree.frame_A_data.state.ang_vel[1] = 0.0
-ref_frame_tree.frame_A_data.state.ang_vel[2] = 0.0
-ref_frame_tree.frame_A_data.state.time = 0.0
+ref_frame_tree.vehicle_frame_data.state.pos[0] = 10.0
+ref_frame_tree.vehicle_frame_data.state.pos[1] = 10.0
+ref_frame_tree.vehicle_frame_data.state.pos[2] = 10.0
+ref_frame_tree.vehicle_frame_data.state.vel[0] = 0.0
+ref_frame_tree.vehicle_frame_data.state.vel[1] = 0.1
+ref_frame_tree.vehicle_frame_data.state.vel[2] = 0.0
+ref_frame_tree.vehicle_frame_data.state.att.scalar  = 1.0
+ref_frame_tree.vehicle_frame_data.state.att.vector[0] = 0.0
+ref_frame_tree.vehicle_frame_data.state.att.vector[1] = 0.0
+ref_frame_tree.vehicle_frame_data.state.att.vector[2] = 0.0
+ref_frame_tree.vehicle_frame_data.state.ang_vel[0] = 0.0
+ref_frame_tree.vehicle_frame_data.state.ang_vel[1] = 0.1
+ref_frame_tree.vehicle_frame_data.state.ang_vel[2] = 0.0
+ref_frame_tree.vehicle_frame_data.state.time = 0.0
 
 
 #---------------------------------------------------------------------------
@@ -260,7 +260,10 @@ root_frame = SpaceFOMRefFrameObject( federate.is_RRFP,
                                      'RootFrame',
                                      root_ref_frame.frame_packing,
                                      'root_ref_frame.frame_packing',
-                                     '1' )   # Trick child thread 1.
+                                     frame_thread_IDs = '1' ) # Trick child thread 1.
+
+trick.exec_set_thread_process_type( 1 , trick.PROCESS_TYPE_AMF_CHILD )
+trick.exec_set_thread_amf_cycle_time( 1 , 0.250 )
 
 # Set the debug flag for the root reference frame.
 root_ref_frame.frame_packing.debug = verbose
@@ -277,7 +280,10 @@ frame_A = SpaceFOMRefFrameObject( True,
                                   'FrameA',
                                   ref_frame_A.frame_packing,
                                   'ref_frame_A.frame_packing',
-                                  '2' )   # Trick child thread 2.
+                                  frame_thread_IDs = '2' ) # Trick child thread 2.
+
+trick.exec_set_thread_process_type( 2 , trick.PROCESS_TYPE_AMF_CHILD )
+trick.exec_set_thread_amf_cycle_time( 2 , 0.250 )
 
 # Set the debug flag for the root reference frame.
 ref_frame_A.frame_packing.debug = verbose

@@ -56,6 +56,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Conditional.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Int64BaseTime.hh"
+#include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 
@@ -78,7 +79,6 @@ Attribute::Attribute()
      locally_owned( false ),
      rti_encoding( ENCODING_UNKNOWN ),
      cycle_time( -std::numeric_limits< double >::max() ),
-     conditional( NULL ),
      buffer( NULL ),
      buffer_capacity( 0 ),
      size_is_static( true ),
@@ -521,11 +521,14 @@ void Attribute::initialize(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+      string attr_handle_string;
+      StringUtilities::to_string( attr_handle_string, this->attr_handle );
       ostringstream msg;
       msg << "Attribute::initialize():" << __LINE__ << endl
           << "========================================================" << endl
           << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
           << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
+          << "  AttributeHandle:" << attr_handle_string << endl
           << "  ref2->attr->name:'" << ref2->attr->name << "'" << endl
           << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'" << endl
           << "  ref2->attr->type:" << ref2->attr->type << endl
@@ -543,7 +546,8 @@ void Attribute::initialize(
           << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << endl
           << "  buffer_capacity:" << buffer_capacity << endl
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
-          << "  rti_encoding:" << rti_encoding << endl;
+          << "  rti_encoding:" << rti_encoding << endl
+          << "  changed:" << ( is_changed() ? "Yes" : "No" ) << endl;
       if ( ( ref2->attr->type == TRICK_STRING )
            || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( ref2->attr->num_index > 0 )
@@ -641,11 +645,11 @@ VariableLengthData Attribute::get_attribute_value()
    return VariableLengthData( buffer, size );
 }
 
-void Attribute::extract_data(             // RETURN: -- None
+bool Attribute::extract_data(             // RETURN: -- True if data successfully extracted, false otherwise.
    VariableLengthData const *attr_value ) // IN: ** HLA attribute-value to get data from.
 {
    if ( attr_value == NULL ) {
-      return;
+      return false;
    }
 
    // Keep track of the attribute FOM size and ensure enough buffer capacity.
@@ -659,7 +663,7 @@ void Attribute::extract_data(             // RETURN: -- None
          if ( attr_size != ( 4 * expected_byte_count ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::extract_data():" << __LINE__
-                   << " ERROR: For Attribute '" << FOM_name << "' with Trick name '"
+                   << " WARNING: For Attribute '" << FOM_name << "' with Trick name '"
                    << trick_name << "', the received FOM data size (" << attr_size
                    << " bytes) != Expected Trick simulation variable memory size ("
                    << ( 4 * expected_byte_count ) << " bytes) for 'rti_encoding' of"
@@ -670,8 +674,8 @@ void Attribute::extract_data(             // RETURN: -- None
                    << " size or type." << THLA_ENDL;
             send_hs( stderr, errmsg.str().c_str() );
 
-            // For now, we ignore this error by just returning here. DDexter
-            return;
+            // For now, we ignore this error by just returning here.
+            return false;
          }
 
          // Ensure enough buffer capacity.
@@ -691,7 +695,7 @@ void Attribute::extract_data(             // RETURN: -- None
          if ( attr_size != expected_byte_count ) {
             ostringstream errmsg;
             errmsg << "Attribute::extract_data():" << __LINE__
-                   << " ERROR: For Attribute '" << FOM_name << "' with Trick name '"
+                   << " WARNING: For Attribute '" << FOM_name << "' with Trick name '"
                    << trick_name << "', the received FOM data size (" << attr_size
                    << " bytes) != Expected Trick simulation variable memory size ("
                    << expected_byte_count << " bytes) for the rti_encoding of"
@@ -701,16 +705,12 @@ void Attribute::extract_data(             // RETURN: -- None
                    << " FOM. If you are using Lag Compensation one possible cause of"
                    << " this problem is that your lag compensation variables are not"
                    << " the correct size or type." << THLA_ENDL;
-#if 1
             send_hs( stderr, errmsg.str().c_str() );
 
-            // For now just return if we have a data size mismatch. This will
-            // allow us to continue to run even though the other federate is
-            // sending us data that is not correct in size.
-            return;
-#else
-            DebugHandler::terminate_with_message( errmsg.str() );
-#endif
+            // Just return if we have a data size mismatch. This will allow us
+            // to continue to run even though the other federate is sending us
+            // data that is not correct in size.
+            return false;
          }
 
          // Ensure enough buffer capacity.
@@ -757,7 +757,7 @@ void Attribute::extract_data(             // RETURN: -- None
          if ( size_is_static && ( attr_size != expected_byte_count ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::extract_data():" << __LINE__
-                   << " ERROR: For Attribute '" << FOM_name << "' with Trick name '"
+                   << " WARNING: For Attribute '" << FOM_name << "' with Trick name '"
                    << trick_name << "', the received FOM data size (" << attr_size
                    << " bytes) != Expected Trick simulation variable memory size ("
                    << expected_byte_count << " bytes) for the rti_encoding of"
@@ -769,8 +769,8 @@ void Attribute::extract_data(             // RETURN: -- None
                    << " variables are not the correct size or type." << THLA_ENDL;
             send_hs( stderr, errmsg.str().c_str() );
 
-            // For now, we ignore this error by just returning here. DDexter
-            return;
+            // For now, we ignore this error by just returning here.
+            return false;
          }
 
          // Ensure enough buffer capacity.
@@ -790,7 +790,7 @@ void Attribute::extract_data(             // RETURN: -- None
 
             ostringstream errmsg;
             errmsg << "Attribute::extract_data():" << __LINE__
-                   << " ERROR: For Attribute '" << FOM_name << "' with Trick name '"
+                   << " WARNING: For Attribute '" << FOM_name << "' with Trick name '"
                    << trick_name << "', the received FOM data size (" << attr_size
                    << " bytes) != Expected Trick simulation variable memory size ("
                    << expected_byte_count << " bytes). Make sure your simulation variable"
@@ -800,8 +800,8 @@ void Attribute::extract_data(             // RETURN: -- None
                    << " correct size or type." << THLA_ENDL;
             send_hs( stderr, errmsg.str().c_str() );
 
-            // For now, we ignore this error by just returning here. DDexter
-            return;
+            // For now, we ignore this error by just returning here.
+            return false;
          }
 
          // Ensure enough buffer capacity.
@@ -826,6 +826,8 @@ void Attribute::extract_data(             // RETURN: -- None
 
    // Mark the attribute value as changed.
    mark_changed();
+
+   return true;
 }
 
 void Attribute::ensure_buffer_capacity(
@@ -940,11 +942,14 @@ void Attribute::calculate_size_and_number_of_items()
    this->size = num_bytes;
 
    if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+      string attr_handle_string;
+      StringUtilities::to_string( attr_handle_string, this->attr_handle );
       ostringstream msg;
       msg << "Attribute::calculate_size_and_number_of_items():" << __LINE__ << endl
           << "========================================================" << endl
           << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
           << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
+          << "  AttributeHandle:" << attr_handle_string << endl
           << "  ref2->attr->name:'" << ref2->attr->name << "'" << endl
           << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'" << endl
           << "  ref2->attr->type:" << ref2->attr->type << endl
@@ -962,7 +967,8 @@ void Attribute::calculate_size_and_number_of_items()
           << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << endl
           << "  buffer_capacity:" << buffer_capacity << endl
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
-          << "  rti_encoding:" << rti_encoding << endl;
+          << "  rti_encoding:" << rti_encoding << endl
+          << "  changed:" << ( is_changed() ? "Yes" : "No" ) << endl;
       if ( ( ref2->attr->type == TRICK_STRING )
            || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( ref2->attr->num_index > 0 )
@@ -1029,11 +1035,14 @@ void Attribute::calculate_static_number_of_items()
 void Attribute::pack_attribute_buffer()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+      string attr_handle_string;
+      StringUtilities::to_string( attr_handle_string, this->attr_handle );
       ostringstream msg;
       msg << "Attribute::pack_attribute_buffer():" << __LINE__ << endl
           << "================== BEFORE PACK ==================================" << endl
           << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
           << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
+          << "  AttributeHandle:" << attr_handle_string << endl
           << "  ref2->attr->name:'" << ref2->attr->name << "'" << endl
           << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'" << endl
           << "  ref2->attr->type:" << ref2->attr->type << endl
@@ -1051,7 +1060,8 @@ void Attribute::pack_attribute_buffer()
           << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << endl
           << "  buffer_capacity:" << buffer_capacity << endl
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
-          << "  rti_encoding:" << rti_encoding << endl;
+          << "  rti_encoding:" << rti_encoding << endl
+          << "  changed:" << ( is_changed() ? "Yes" : "No" ) << endl;
       if ( ( ref2->attr->type == TRICK_STRING )
            || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( ref2->attr->num_index > 0 )
@@ -1202,11 +1212,14 @@ void Attribute::pack_attribute_buffer()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+      string attr_handle_string;
+      StringUtilities::to_string( attr_handle_string, this->attr_handle );
       ostringstream msg2;
       msg2 << "Attribute::pack_attribute_buffer():" << __LINE__ << endl
            << "================== AFTER PACK ==================================" << endl
            << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
            << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
+           << "  AttributeHandle:" << attr_handle_string << endl
            << "  ref2->attr->name:'" << ref2->attr->name << "'" << endl
            << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'" << endl
            << "  ref2->attr->type:" << ref2->attr->type << endl
@@ -1224,7 +1237,8 @@ void Attribute::pack_attribute_buffer()
            << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << endl
            << "  buffer_capacity:" << buffer_capacity << endl
            << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
-           << "  rti_encoding:" << rti_encoding << endl;
+           << "  rti_encoding:" << rti_encoding << endl
+           << "  changed:" << ( is_changed() ? "Yes" : "No" ) << endl;
       if ( ( ref2->attr->type == TRICK_STRING )
            || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( ref2->attr->num_index > 0 )
@@ -1371,11 +1385,14 @@ void Attribute::unpack_attribute_buffer()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
+      string attr_handle_string;
+      StringUtilities::to_string( attr_handle_string, this->attr_handle );
       ostringstream msg;
       msg << "Attribute::unpack_attribute_buffer():" << __LINE__ << endl
           << "========================================================" << endl
           << "  FOM_name:'" << ( ( FOM_name != NULL ) ? FOM_name : "NULL" ) << "'" << endl
           << "  trick_name:'" << ( ( trick_name != NULL ) ? trick_name : "NULL" ) << "'" << endl
+          << "  AttributeHandle:" << attr_handle_string << endl
           << "  ref2->attr->name:'" << ref2->attr->name << "'" << endl
           << "  ref2->attr->type_name:'" << ref2->attr->type_name << "'" << endl
           << "  ref2->attr->type:" << ref2->attr->type << endl
@@ -1393,7 +1410,8 @@ void Attribute::unpack_attribute_buffer()
           << "  byteswap:" << ( is_byteswap() ? "Yes" : "No" ) << endl
           << "  buffer_capacity:" << buffer_capacity << endl
           << "  size_is_static:" << ( size_is_static ? "Yes" : "No" ) << endl
-          << "  rti_encoding:" << rti_encoding << endl;
+          << "  rti_encoding:" << rti_encoding << endl
+          << "  changed:" << ( is_changed() ? "Yes" : "No" ) << endl;
       if ( ( ref2->attr->type == TRICK_STRING )
            || ( ( ( ref2->attr->type == TRICK_CHARACTER ) || ( ref2->attr->type == TRICK_UNSIGNED_CHARACTER ) )
                 && ( ref2->attr->num_index > 0 )

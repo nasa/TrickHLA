@@ -49,7 +49,7 @@ v@trick_link_dependency{../../source/TrickHLA/OpaqueBuffer.cpp}
 #pragma GCC diagnostic pop
 
 // SpaceFOM include files.
-#include "SpaceFOM/SpaceTimeCoordinateData.h"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 namespace SpaceFOM
 {
@@ -67,15 +67,16 @@ class SpaceTimeCoordinateEncoder : public TrickHLA::OpaqueBuffer
    friend void init_attrSpaceFOM__SpaceTimeCoordinateEncoder();
 
   public:
-   /*! @brief Default constructor for the SpaceFOM SpaceTimeCoordinateEncoder class. */
-   SpaceTimeCoordinateEncoder();
+   /*! @brief Initialization constructor for the SpaceFOM SpaceTimeCoordinateEncoder class.
+    *  @param stc_data Reference to state-time coordinate data instance. */
+   explicit SpaceTimeCoordinateEncoder( SpaceTimeCoordinateData &stc_data );
 
-   /*! @brief Encode the spacetime coordinate data for sending out. */
+   /*! @brief Encode the space-time coordinate data for sending out. */
    void encode();
-   /*! @brief Decode the incoming spacetime coordinate data. */
+   /*! @brief Decode the incoming space-time coordinate data. */
    void decode();
 
-   /*! @brief Get the spacetime coordinate data.
+   /*! @brief Get the space-time coordinate data.
     *  @return A reference to the SpaceTimeCoordinateData. */
    SpaceTimeCoordinateData &get_data()
    {
@@ -83,7 +84,7 @@ class SpaceTimeCoordinateEncoder : public TrickHLA::OpaqueBuffer
    }
 
   protected:
-   SpaceTimeCoordinateData data; ///< trick_units{--} Reference frame transmission data.
+   SpaceTimeCoordinateData &data; ///< trick_units{--} State-time coordinate transmission data.
 
    // Data encoding helpers.
    rti1516e::HLAfloat64LE   position[3];         ///< @trick_io{**} HLAfloat64LE position array

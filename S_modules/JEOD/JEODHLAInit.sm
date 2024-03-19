@@ -1,0 +1,154 @@
+/*****************************************************************************
+ * General TrickHLA Space Reference Federation Object Model (SpaceFOM)
+ * Simulation Definition Object that initialized the JEOD HLA interfaces.
+ *---------------------------------------------------------------------------*
+ * This is a Simulation Definition (S_define) module that defines the
+ * initialization interfaces between HLA/SpaceFOM and JEOD.
+ ****************************************************************************/
+/*****************************************************************************
+ *       Author: Edwin Z. Crues
+ *         Date: June 2023
+ *       E-Mail: Edwin.Z.Crues@nasa.gov
+ *        Phone: 281-483-2902
+ * Organization: Mail Code ER7
+ *               Simulation & Graphics Branch
+ *               Software, Robotics & Simulation Division
+ *               2101 NASA Parkway
+ *               Houston, Texas 77058
+ *---------------------------------------------------------------------------*
+ * Modified By: 
+ *        Date: 
+ * Description: 
+ ****************************************************************************/
+
+//==========================================================================
+// SIM_OBJECT: JEODHLAInitSimObject - An example simulation object definition.
+// This can be used for JEOD/SpaceFOM initialization.
+//==========================================================================
+
+class JEODHLAInitSimObject : public Trick::SimObject {
+
+ public:
+
+   // _INIT phase needs to be less than 60, when TrickHLA is initialized.
+   JEODHLAInitSimObject( jeod::TimeManager          & time_manager_in,
+                         jeod::TimeManagerInit      & time_manager_init_in,
+                         jeod::TimeTAI              & time_tai_in,
+                         jeod::TimeTT               & time_tt_in,
+                         TrickHLA::Manager          & thla_mngr,
+                         TrickHLA::Federate         & thla_fed,
+                         SpaceFOM::ExecutionControl & exec_ctrl,
+                         unsigned short               _PRE_INIT  = 9,
+                         unsigned short               _TIME_INIT = 10,
+                         unsigned short               _INIT      = 60 )
+      : time_manager( time_manager_in ),
+        time_manager_init( time_manager_init_in ),
+        time_tai( time_tai_in ),
+        time_tt( time_tt_in ),
+        thla_manager( thla_mngr ),
+        thla_federate( thla_fed ),
+        execution_control( exec_ctrl )
+   {
+
+      // Initialize the epoch based on the starting JEOD time.
+      P_PRE_INIT  ("initialization") master_set_scenario_timeline_epoch( time_tt );
+      P_TIME_INIT ("initialization") time_tt.calendar_update( exec_get_sim_time() );
+      P_INIT      ("initialization") set_scenario_timeline_epoch();
+
+      //--------------------------------------------------------------------
+      // NOTE: Initialization phase numbers must be greater than P60 
+      // (i.e. P_HLA_INIT) so that the initialization jobs run after the
+      // P60 THLA.manager->initialize() job.
+      //--------------------------------------------------------------------
+
+      // Alternative method: Send and receive all the initialization data.
+
+      // Send all the initialization data.
+      P100 ("initialization") thla_manager.send_init_data();
+      
+      // Wait to receive all the initialization data.
+      P100 ("initialization") thla_manager.receive_init_data();
+      
+      // Do some processing here if needed...
+      
+      // Clear remaining initialization sync-points.
+      P100 ("initialization") thla_manager.clear_init_sync_points();
+
+      //
+      // Scheduled jobs.
+      //
+      // Update the TT calendar date.
+      (TIME_CALENDAR_UPDATE_INTERVAL, "environment") time_tt.calendar_update( exec_get_sim_time() );
+   }
+
+ protected:
+
+   // Set the SpaceFOM scenario timeline epoch from the JEOD TT time.
+   void set_scenario_timeline_epoch()
+   {
+
+      // The scenario timeline epoch will be set through the ExCO as part of
+      // the epoch_and_root_frame_discovery_process() call.
+      if( !execution_control.is_master() ) {
+
+         // Set the JEOD TAI initialization time.
+         // This will override the value set in the input file before JEOD
+         // time routines are initialized.
+         time_manager_init.initializer = "TAI";
+         time_manager_init.sim_start_format = jeod::TimeEnum::truncated_julian;
+
+         time_tt.initialize_from_name = "TAI";
+
+         time_tai.update_from_name = "Dyn";
+         time_tt.update_from_name  = "TAI";
+
+         time_tai.initializing_value = ((execution_control.scenario_timeline->get_epoch() - 32.184) / 86400.0);
+         time_tai.trunc_julian_time = time_tai.initializing_value;
+
+         std::cout.precision( 15 );
+         std::cout << "JEODHLAInitSimObject::set_scenario_timeline_epoch():" << __LINE__ << std::endl
+                   << "\tSeconds: " << (time_tai.trunc_julian_time * 86400.0) << std::endl;
+      }
+      
+      return;
+   }
+   
+   // Set the SpaceFOM scenario timeline epoch from the JEOD TT time if Master federate.
+   void master_set_scenario_timeline_epoch( jeod::TimeTT & tt_time )
+   {
+
+      // Set the epoch if this is the Master federate.
+      if( execution_control.is_master() ) {
+         execution_control.scenario_timeline->set_epoch((tt_time.trunc_julian_time * 86400.0));
+         std::cout.precision( 15 );
+         std::cout << "JEODHLAInitSimObject::set_scenario_timeline_epoch():" << __LINE__ << std::endl
+                   << "\tSeconds: " << (time_tt.trunc_julian_time * 86400.0) << std::endl
+                   << "\tDate: " << time_tt.calendar_year
+                   << "-" << time_tt.calendar_month
+                   << "-" << time_tt.calendar_day
+                   << "::" << time_tt.calendar_hour
+                   << ":" << time_tt.calendar_minute
+                   << ":" << time_tt.calendar_second << std::endl
+                   << std::endl;
+      }
+      
+      return;
+   }
+
+ private:
+   jeod::TimeManager          & time_manager;
+   jeod::TimeManagerInit      & time_manager_init;
+   jeod::TimeTAI              & time_tai;
+   jeod::TimeTT               & time_tt;
+   TrickHLA::Manager          & thla_manager;
+   TrickHLA::Federate         & thla_federate;
+   SpaceFOM::ExecutionControl & execution_control;
+   
+   // Do not allow the implicit copy constructor or assignment operator.
+   JEODHLAInitSimObject(const JEODHLAInitSimObject & rhs);
+   JEODHLAInitSimObject & operator=(const JEODHLAInitSimObject & rhs);
+   
+   // Do not allow the default constructor.
+   JEODHLAInitSimObject();
+
+};

@@ -199,7 +199,9 @@ if (realtime_clock == True) :
    exec(open( "Modified_data/trick/realtime.py" ).read())
 else :
    print('Realtime Clock Disabled.')
-
+   # For this non-Pacing/non-realtime federate, set the Trick software frame
+   # to the lookahead time by default.
+   trick.exec_set_software_frame( 0.250 )
 
 trick.exec_set_enable_freeze(False)
 trick.exec_set_freeze_command(False)
@@ -325,33 +327,33 @@ ref_frame_tree.root_frame_data.state.pos[2] = 0.0
 ref_frame_tree.root_frame_data.state.vel[0] = 0.0
 ref_frame_tree.root_frame_data.state.vel[1] = 0.0
 ref_frame_tree.root_frame_data.state.vel[2] = 0.0
-ref_frame_tree.root_frame_data.state.quat_scalar  = 1.0
-ref_frame_tree.root_frame_data.state.quat_vector[0] = 0.0
-ref_frame_tree.root_frame_data.state.quat_vector[1] = 0.0
-ref_frame_tree.root_frame_data.state.quat_vector[2] = 0.0
+ref_frame_tree.root_frame_data.state.att.scalar  = 1.0
+ref_frame_tree.root_frame_data.state.att.vector[0] = 0.0
+ref_frame_tree.root_frame_data.state.att.vector[1] = 0.0
+ref_frame_tree.root_frame_data.state.att.vector[2] = 0.0
 ref_frame_tree.root_frame_data.state.ang_vel[0] = 0.0
 ref_frame_tree.root_frame_data.state.ang_vel[1] = 0.0
 ref_frame_tree.root_frame_data.state.ang_vel[2] = 0.0
 ref_frame_tree.root_frame_data.state.time = 0.0
 
 
-ref_frame_tree.frame_A_data.name = 'FrameA'
-ref_frame_tree.frame_A_data.parent_name = root_frame_name
+ref_frame_tree.vehicle_frame_data.name = 'FrameA'
+ref_frame_tree.vehicle_frame_data.parent_name = root_frame_name
                                         
-ref_frame_tree.frame_A_data.state.pos[0] = 10.0
-ref_frame_tree.frame_A_data.state.pos[1] = 10.0
-ref_frame_tree.frame_A_data.state.pos[2] = 10.0
-ref_frame_tree.frame_A_data.state.vel[0] = 0.0
-ref_frame_tree.frame_A_data.state.vel[1] = 0.0
-ref_frame_tree.frame_A_data.state.vel[2] = 0.0
-ref_frame_tree.frame_A_data.state.quat_scalar  = 1.0
-ref_frame_tree.frame_A_data.state.quat_vector[0] = 0.0
-ref_frame_tree.frame_A_data.state.quat_vector[1] = 0.0
-ref_frame_tree.frame_A_data.state.quat_vector[2] = 0.0
-ref_frame_tree.frame_A_data.state.ang_vel[0] = 0.0
-ref_frame_tree.frame_A_data.state.ang_vel[1] = 0.0
-ref_frame_tree.frame_A_data.state.ang_vel[2] = 0.0
-ref_frame_tree.frame_A_data.state.time = 0.0
+ref_frame_tree.vehicle_frame_data.state.pos[0] = 10.0
+ref_frame_tree.vehicle_frame_data.state.pos[1] = 10.0
+ref_frame_tree.vehicle_frame_data.state.pos[2] = 10.0
+ref_frame_tree.vehicle_frame_data.state.vel[0] = 0.0
+ref_frame_tree.vehicle_frame_data.state.vel[1] = 0.1
+ref_frame_tree.vehicle_frame_data.state.vel[2] = 0.0
+ref_frame_tree.vehicle_frame_data.state.att.scalar  = 1.0
+ref_frame_tree.vehicle_frame_data.state.att.vector[0] = 0.0
+ref_frame_tree.vehicle_frame_data.state.att.vector[1] = 0.0
+ref_frame_tree.vehicle_frame_data.state.att.vector[2] = 0.0
+ref_frame_tree.vehicle_frame_data.state.ang_vel[0] = 0.0
+ref_frame_tree.vehicle_frame_data.state.ang_vel[1] = 0.1
+ref_frame_tree.vehicle_frame_data.state.ang_vel[2] = 0.0
+ref_frame_tree.vehicle_frame_data.state.time = 0.0
 
 
 #---------------------------------------------------------------------------
@@ -375,16 +377,31 @@ federate.set_root_frame( root_frame )
 # If it is the RRFP, it will publish the frame.
 # If it is NOT the RRFP, it will subscribe to the frame.
 #---------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 frame_A = SpaceFOMRefFrameObject( True,
                                   'FrameA',
                                   ref_frame_A.frame_packing,
-                                  'ref_frame_A.frame_packing' )
+                                  'ref_frame_A.frame_packing',
+                                  parent_S_define_instance = root_ref_frame.frame_packing,
+                                  parent_name              = root_frame_name,
+                                  frame_conditional        = ref_frame_A.conditional,
+                                  frame_lag_comp           = ref_frame_A.lag_compensation,
+                                  frame_ownership          = ref_frame_A.ownership_handler,
+                                  frame_deleted            = ref_frame_A.deleted_callback )
 
 # Set the debug flag for the root reference frame.
 ref_frame_A.frame_packing.debug = verbose
 
 # Add this reference frame to the list of managed object.
 federate.add_fed_object( frame_A )
+
+# Set the lag compensation parameters.
+ref_frame_A.lag_compensation.debug = False
+ref_frame_A.lag_compensation.set_integ_tolerance( 1.0e-6 )
+ref_frame_A.lag_compensation.set_integ_dt( 0.025 )
+
+frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
+#frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 #---------------------------------------------------------------------------
 # Add the HLA SimObjects associated with this federate.

@@ -20,10 +20,10 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/ExecutionControl.cpp}
-@trick_link_dependency{../source/TrickHLA/ExecutionConfiguration.cpp}
-@trick_link_dependency{../source/TrickHLA/ExecutionControlBase.cpp}
-@trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/ExecutionControl.cpp}
+@trick_link_dependency{../../source/TrickHLA/ExecutionConfiguration.cpp}
+@trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -196,8 +196,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @param lcts Least Common Time Step time in seconds. */
    virtual void set_least_common_time_step( double const lcts );
 
-   /*! @brief Refresh the least common time step especially if the HLA base time units changed.
-    *  @param lcts Least Common Time Step time in seconds. */
+   /*! @brief Refresh the least common time step especially if the HLA base time units changed. */
    virtual void refresh_least_common_time_step();
 
    /*! @brief Set the time-padding used to offset the go to run time.

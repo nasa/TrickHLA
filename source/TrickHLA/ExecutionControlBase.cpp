@@ -275,7 +275,7 @@ Trick simulation time as the default scenario-timeline.%c",
 
    // Initialize then Configure the ExecutionConfiguration object if present.
    if ( execution_configuration != NULL ) {
-      execution_configuration->initialize( this->manager );
+      execution_configuration->Object::initialize( this->manager );
       execution_configuration->configure();
    }
 }
@@ -825,7 +825,6 @@ bool ExecutionControlBase::mark_object_as_deleted_from_federation(
       execution_configuration->remove_object_instance();
       return true;
    }
-
    return false;
 }
 

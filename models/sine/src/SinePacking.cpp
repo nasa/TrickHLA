@@ -15,10 +15,10 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Attribute.cpp}
-@trick_link_dependency{../source/TrickHLA/DebugHandler.cpp}
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Attribute.cpp}
+@trick_link_dependency{../../../source/TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{sine/src/SineData.cpp}
 @trick_link_dependency{sine/src/SinePacking.cpp}
 
@@ -66,7 +66,6 @@ SinePacking::SinePacking()
      sim_data( NULL ),
      phase_deg( 0.0 ),
      pack_count( 0 ),
-     initialized( false ),
      buff_size( 0 ),
      buff( NULL ),
      time_attr( NULL ),
@@ -99,11 +98,23 @@ SinePacking::~SinePacking()
 /*!
  * @job_class{initialization}
  */
-void SinePacking::initialize(
+void SinePacking::configure(
    SineData *sim_data )
 {
-   this->sim_data    = sim_data;
-   this->initialized = true;
+   this->sim_data = sim_data;
+
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void SinePacking::initialize()
+{
+   // Mark this as initialized.
+   TrickHLA::Packing::initialize();
+
+   return;
 }
 
 /*!

@@ -48,7 +48,7 @@ NASA, Johnson Space Center\n
 
 // SpaceFOM include files.
 #include "SpaceFOM/RefFrameBase.hh"
-#include "SpaceFOM/RefFrameData.h"
+#include "SpaceFOM/RefFrameData.hh"
 #include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
 
 namespace SpaceFOM
@@ -71,21 +71,28 @@ class RefFrameState : public SpaceFOM::RefFrameBase
    // Public constructors and destructors.
    /*! @brief Default constructor for the SpaceFOM RefFrameState class. */
    RefFrameState();
+   /*! @brief Initialization constructor to set reference to data. */
+   explicit RefFrameState( RefFrameData &ref_frame_data_ref );
    /*! @brief Destructor for the SpaceFOM RefFrameState class. */
    virtual ~RefFrameState();
 
    // Initialize the packing object.
    /*! @brief Set the reference to the reference frame data.
     *  @param ref_frame_data_ptr Pointer to the RefFrameData instance. */
-   void initialize( RefFrameData *ref_frame_data_ptr );
+   void configure( RefFrameData *ref_frame_data_ptr );
 
-   // From the TrickHLA::Packing class.
-   /*! @brief Called to pack the data before the data is sent to the RTI. */
-   virtual void pack();
+   /*! @brief Finish the initialization of the RefFrame. */
+   virtual void initialize();
 
-   // From the TrickHLA::Packing class.
-   /*! @brief Called to unpack the data after data is received from the RTI. */
-   virtual void unpack();
+   /*! @brief Packs the packing data object from the working data object(s),
+    *  @details Called from the pack() function to pack the data from the working
+    *  data objects(s) into the pe_packing_data object.  */
+   virtual void pack_from_working_data();
+
+   /*! @brief Unpacks the packing data object into the working data object(s),
+    *  @details Called from the unpack() function to unpack the data in the
+    *  pe_packing_data object into the working data object(s). */
+   virtual void unpack_into_working_data();
 
   protected:
    RefFrameData *ref_frame_data; ///< @trick_units{--} Reference frame data.

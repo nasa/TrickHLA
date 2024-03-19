@@ -37,6 +37,7 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <cstdint>
 #include <iomanip>
+#include <limits>
 #include <math.h>
 #include <string>
 
@@ -1414,9 +1415,7 @@ void ExecutionControl::shutdown_mode_transition()
 
 ExecutionConfiguration *ExecutionControl::get_execution_configuration()
 {
-   ExecutionConfiguration *ExCO;
-
-   ExCO = dynamic_cast< ExecutionConfiguration * >( this->get_execution_configuration() );
+   ExecutionConfiguration const *ExCO = dynamic_cast< ExecutionConfiguration * >( this->get_execution_configuration() );
    if ( ExCO == NULL ) {
       ostringstream errmsg;
       errmsg << "DSES::ExecutionControl::epoch_and_root_frame_discovery_process():" << __LINE__

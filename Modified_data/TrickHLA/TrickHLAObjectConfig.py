@@ -22,10 +22,13 @@ class TrickHLAObjectConfig( object ):
    hla_create               = False
    hla_instance_name        = None
    hla_FOM_name             = None
-   hla_lag_comp_instance    = None
-   hla_ownership_instance   = None
-   hla_packing_instance     = None
    hla_manager_object       = None
+   hla_packing_instance     = None
+   hla_conditional_instance = None
+   hla_lag_comp_instance    = None
+   hla_lag_comp_type        = trick.TrickHLA.LAG_COMPENSATION_NONE
+   hla_ownership_instance   = None
+   hla_deleted_instance     = None
    hla_thread_IDs           = None
    hla_blocking_cyclic_read = False
 
@@ -37,7 +40,10 @@ class TrickHLAObjectConfig( object ):
                  thla_instance_name        = None,
                  thla_FOM_name             = None,
                  thla_lag_comp_instance    = None,
+                 thla_lag_comp_type        = trick.TrickHLA.LAG_COMPENSATION_NONE,
                  thla_ownership_instance   = None,
+                 thla_deleted_instance     = None,
+                 thla_conditional_instance = None,
                  thla_packing_instance     = None,
                  thla_manager_object       = None,
                  thla_thread_IDs           = None,
@@ -54,23 +60,35 @@ class TrickHLAObjectConfig( object ):
       # Specify if this object instance created locally.
       self.set_create( thla_create )
 
+      # Set packing if specified and not None.
+      if thla_packing_instance != None :
+         self.set_packing_instance( thla_packing_instance )
+
+      # Set conditional if specified and not None.
+      if thla_conditional_instance != None :
+         self.set_conditional_instance( thla_conditional_instance )
+
       # Set lag compensation if specified and not None.
       if thla_lag_comp_instance != None :
          self.set_lag_comp_instance( thla_lag_comp_instance )
+
+      # Set lag compensation type if different than default.
+      if thla_lag_comp_type != self.hla_lag_comp_type :
+         self.set_lag_comp_type( thla_lag_comp_type )
 
       # Set ownership if specified and not None.
       if thla_ownership_instance != None :
          self.set_ownership_instance( thla_ownership_instance )
 
-      # Set packing if specified and not None.
-      if thla_packing_instance != None :
-         self.set_packing_instance( thla_packing_instance )
+      # Set deleted callback if specified and not None.
+      if thla_deleted_instance != None :
+         self.set_deleted_instance( thla_deleted_instance )
 
       # Set the object instance name if specified.
       if thla_instance_name != None :
          self.set_instance_name( thla_instance_name )
 
-      # Set the object instance name if specified.
+      # Set the object FOM name if specified.
       if thla_FOM_name != None :
          self.set_FOM_name( thla_FOM_name )
 
@@ -108,6 +126,7 @@ class TrickHLAObjectConfig( object ):
 
       if self.hla_lag_comp_instance != None :
          self.set_lag_comp_instance( self.hla_lag_comp_instance )
+         self.set_lag_comp_type( self.hla_lag_comp_type )
 
       if self.hla_ownership_instance != None :
          self.set_ownership_instance( self.hla_ownership_instance )
@@ -188,14 +207,43 @@ class TrickHLAObjectConfig( object ):
          self.hla_manager_object.lag_comp_type = trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE 
 
       return
+   
+   
+   def set_lag_comp_type( self, lag_comp_type ):
 
-   def set_ownership_instance( self, obj_ownership_handler):
+      self.hla_lag_comp_type = lag_comp_type
+      if self.hla_manager_object != None :
+         self.hla_manager_object.lag_comp_type = lag_comp_type
+
+      return
+
+
+   def set_deleted_instance( self, obj_deleted):
+ 
+      self.hla_deleted_instance = obj_deleted
+      if self.hla_manager_object != None :
+         self.hla_manager_object.deleted = obj_deleted
+
+      return
+
+
+   def set_ownership_instance( self, obj_ownership_handler ):
  
       self.hla_ownership_instance = obj_ownership_handler
       if self.hla_manager_object != None :
          self.hla_manager_object.ownership = obj_ownership_handler
 
       return
+
+
+   def set_conditional_instance( self, obj_conditional ):
+ 
+      self.hla_conditional_instance = obj_conditional
+      if self.hla_manager_object != None :
+         self.hla_manager_object.conditional = obj_conditional
+
+      return
+
 
    def set_packing_instance( self, obj_packing ):
  

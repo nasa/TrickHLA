@@ -19,16 +19,16 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Manager.cpp}
-@trick_link_dependency{../source/TrickHLA/ExecutionConfigurationBase.cpp}
-@trick_link_dependency{../source/TrickHLA/ExecutionControlBase.cpp}
-@trick_link_dependency{../source/TrickHLA/Federate.cpp}
-@trick_link_dependency{../source/TrickHLA/ItemQueue.cpp}
-@trick_link_dependency{../source/TrickHLA/Interaction.cpp}
-@trick_link_dependency{../source/TrickHLA/InteractionItem.cpp}
-@trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/Manager.cpp}
+@trick_link_dependency{../../source/TrickHLA/ExecutionConfigurationBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/Federate.cpp}
+@trick_link_dependency{../../source/TrickHLA/ItemQueue.cpp}
+@trick_link_dependency{../../source/TrickHLA/Interaction.cpp}
+@trick_link_dependency{../../source/TrickHLA/InteractionItem.cpp}
+@trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
+@trick_link_dependency{../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -149,6 +149,12 @@ class Manager
     * initialized. */
    void initialize();
 
+   /*! @brief Perform initialization after a checkpoint restart. */
+   void restart_initialization();
+
+   /*! @brief Verify the user specified object and interaction arrays and counts. */
+   void verify_object_and_interaction_arrays();
+
    /*! @brief Checks to make sure the RTI is ready by making sure the
     * TrickHLA::Federate and TrickHLA:FedAmb exist and the RTI handles are
     * initialized.
@@ -167,7 +173,7 @@ class Manager
    void send_init_data();
 
    /*! @brief Sends the initialization data for the specified object instance name.
-    *  @return Name of object instance name to send data for. */
+    *  @param instance_name Name of object instance name to send data for. */
    void send_init_data( char const *instance_name );
 
    /*! @brief Wait to receive all the initialization data that is marked as required. */
@@ -175,7 +181,7 @@ class Manager
 
    /*! @brief Wait to receive the initialization data for the specified object
     * instance name.
-    * @return Name of object instance name to receive data for. */
+    * @param instance_name Name of object instance name to receive data for. */
    void receive_init_data( char const *instance_name );
 
    /*! @brief Clear any remaining initialization sync-points. */
@@ -298,9 +304,6 @@ class Manager
    /*! @brief Scheduled method used as a callback to identify if any objects
     * were deleted from the RTI. */
    void process_deleted_objects();
-
-   /*! @brief Perform initialization after a checkpoint restart. */
-   void restart_initialization();
 
    /*! @brief Start the federation save as soon as possible.
     *  @param file_name Checkpoint file name. */
@@ -433,17 +436,19 @@ class Manager
    }
 
    /*! @brief Set the execution configuration object.
-    *  @return Pointer to the associated execution configuration object. */
+    *  @param exec_config Pointer to the associated execution configuration object. */
    void set_execution_configuration( ExecutionConfigurationBase *exec_config )
    {
       this->execution_control->set_execution_configuration( exec_config );
    }
+
    /*! @brief Get the execution configuration object.
     *  @return Pointer to the associated execution configuration object. */
    ExecutionConfigurationBase *get_execution_configuration()
    {
       return this->execution_control->get_execution_configuration();
    }
+
    /*! @brief Test is an execution configuration object is used.
     *  @return True if an execution configuration object is used. */
    bool is_execution_configuration_used()
@@ -490,16 +495,40 @@ class Manager
    //
    // Private member functions.
    //
-  private:
+  public:
    /*! @brief Initializes the federation execution control scheme, which must
     * occur after the TrickHLA::Federate and TrickHLA::FedAmb has been
     * initialized. */
    // void initialize_execution_control();
 
-   /*! @brief Check to see if this is a restored federate. */
+   /*! @brief Check to see if this federate is to be restored.
+    *  @return federate restore state. */
+   bool is_restore_determined() const
+   {
+      return restore_determined;
+   }
+
+   /*! @brief Set the federate to be restored state.
+    *  @param state Restore state of the federate. */
+   void set_restore_determined( bool state )
+   {
+      restore_determined = state;
+      return;
+   }
+
+   /*! @brief Check to see if this is a restored federate.
+    *  @return True is this is a restored federate, false otherwise. */
    bool is_restore_federate() const
    {
       return restore_federate;
+   }
+
+   /*! @brief Mark if this is a restored federate.
+    *  @param state True is federate is restored, false otherwise. */
+   void set_restore_federate( bool state )
+   {
+      restore_federate = state;
+      return;
    }
 
    /*! @brief Set up the Trick ref-attributes for the user specified objects

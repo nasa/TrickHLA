@@ -95,43 +95,55 @@ class TrickHLAFederateConfig( object ):
          else:
             foms_string += ', ' + str( self.fom_modules[i] )
       self.federate.FOM_modules = foms_string
+      
+      # Check to see if the objects are pre-configured in default data jobs
+      # or if they are being allocated and configured in the input file.
+      # This is an all-or-nothing choice.  All objects are either configured
+      # in default data or here in the input file.
+      if self.manager.obj_count == 0:
 
-      # Note: The federate objects are added to a list in a simulation
-      # specific routine. This code assumes that everything has been set
-      # in the TrickHLAObjectConfig based objects except the TrickHLAObject
-      # references. This code will create the appropriate number of
-      # TrickHLAObject and then use the TrickHLAObjectConfig instances to
-      # initialize them. This will allow users to add or delete objects
-      # without having to manage array size.
+         # Note: The federate objects are added to a list in a simulation
+         # specific routine. This code assumes that everything has been set
+         # in the TrickHLAObjectConfig based objects except the TrickHLAObject
+         # references. This code will create the appropriate number of
+         # TrickHLAObject and then use the TrickHLAObjectConfig instances to
+         # initialize them. This will allow users to add or delete objects
+         # without having to manage array size.
 
-      # Allocate the federate's federation object list.
-      self.manager.obj_count = len( self.fed_objects )
-      if self.manager.obj_count:
-         self.manager.objects = trick.alloc_type( self.manager.obj_count,
-                                                  'TrickHLA::Object' )
+         # Allocate the federate's federation object list.
+         self.manager.obj_count = len(self.fed_objects)
+         if self.manager.obj_count:
+            self.manager.objects = trick.alloc_type( self.manager.obj_count,
+                                                     'TrickHLA::Object'      )
 
-      # Loop through the federation objects and initialize them.
-      for indx in range( 0, self.manager.obj_count ):
-         self.fed_objects[indx].initialize( self.manager.objects[indx] )
+         # Loop through the federation objects and initialize them.
+         for indx in range( 0, self.manager.obj_count ):
+            self.fed_objects[indx].initialize( self.manager.objects[indx] )
+      
+      # Check to see if the interactions are pre-configured in default data jobs
+      # or if they are being allocated and configured in the input file.
+      # This is an all-or-nothing choice.  All interaction are either configured
+      # in default data or here in the input file.
+      if self.manager.inter_count == 0:
 
-      # Note: The federate interactions are added to a list in a simulation
-      # specific routine. This code assumes that everything has been set
-      # in the TrickHLAInteractionConfig based interactions except the
-      # TrickHLAInteraction references. This code will create the
-      # appropriate number of TrickHLAInteraction and then use the
-      # TrickHLAInitializationConfig instances to initialize them. This
-      # will allow users to add or delete objects without having to manage
-      # array size.
+         # Note: The federate interactions are added to a list in a simulation
+         # specific routine. This code assumes that everything has been set
+         # in the TrickHLAInteractionConfig based interactions except the
+         # TrickHLAInteraction references. This code will create the
+         # appropriate number of TrickHLAInteraction and then use the
+         # TrickHLAInitializationConfig instances to initialize them. This
+         # will allow users to add or delete objects without having to manage
+         # array size.
 
-      # Allocate the federate's federation interactions list.
-      self.manager.inter_count = len( self.fed_interactions )
-      if self.manager.inter_count:
-         self.manager.interactions = trick.alloc_type( self.manager.inter_count,
-                                                       'TrickHLA::Interaction' )
+         # Allocate the federate's federation interactions list.
+         self.manager.inter_count = len(self.fed_interactions)
+         if self.manager.inter_count:
+            self.manager.interactions = trick.alloc_type( self.manager.inter_count,
+                                                          'TrickHLA::Interaction'   )
 
-      # Loop through the federation interactions and initialize them.
-      for indx in range( 0, self.manager.inter_count ):
-         self.fed_interactions[indx].initialize( self.manager.interactions[indx] )
+         # Loop through the federation interactions and initialize them.
+         for indx in range( 0, self.manager.inter_count ):
+            self.fed_interactions[indx].initialize( self.manager.interactions[indx] )
 
       # Loop through the known federates and add them.
       if len( self.known_federates ):
@@ -383,6 +395,13 @@ class TrickHLAFederateConfig( object ):
    def set_debug_level( self, debug_level ):
 
       self.federate.debug_level = debug_level
+
+      return
+
+
+   def set_debug_source( self, debug_source ):
+
+      self.federate.code_section = debug_source
 
       return
 

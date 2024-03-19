@@ -20,6 +20,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/OpaqueBuffer.cpp}
+@trick_link_dependency{../../source/SpaceFOM/QuaternionData.cpp}
 @trick_link_dependency{../../source/SpaceFOM/QuaternionEncoder.cpp}
 
 @revs_title
@@ -36,7 +37,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/OpaqueBuffer.hh"
 
 // SpaceFOM include files.
-#include "SpaceFOM/QuaternionData.h"
+#include "SpaceFOM/QuaternionData.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -67,8 +68,9 @@ class QuaternionEncoder : public TrickHLA::OpaqueBuffer
    friend void init_attrSpaceFOM__QuaternionEncoder();
 
   public:
-   /*! @brief Default constructor for the SpaceFOM QuaternionEncoder class. */
-   QuaternionEncoder();
+   /*! @brief Initialization constructor for the SpaceFOM QuaternionEncoder class.
+    *  @param quat_data Reference to quaternion data instance. */
+   explicit QuaternionEncoder( QuaternionData &quat_data );
 
    /*! @brief Encode the quaternion data for sending out. */
    void encode();
@@ -83,7 +85,7 @@ class QuaternionEncoder : public TrickHLA::OpaqueBuffer
    }
 
   protected:
-   QuaternionData data; ///< @trick_units{--} Reference frame transmission data.
+   QuaternionData &data; ///< @trick_units{--} Quaternion transmission data.
 
    // Data encoding helpers.
    rti1516e::HLAfloat64LE   scalar_encoder; ///< @trick_io{**} Quaternion scalar encoder

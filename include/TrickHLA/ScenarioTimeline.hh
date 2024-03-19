@@ -29,10 +29,10 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/ScenarioTimeline.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
-@trick_link_dependency{../source/TrickHLA/SimTimeline.cpp}
-@trick_link_dependency{../source/TrickHLA/Timeline.cpp}
+@trick_link_dependency{../../source/TrickHLA/ScenarioTimeline.cpp}
+@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../../source/TrickHLA/SimTimeline.cpp}
+@trick_link_dependency{../../source/TrickHLA/Timeline.cpp}
 
 @revs_title
 @revs_begin

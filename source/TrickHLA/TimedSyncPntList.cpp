@@ -66,14 +66,14 @@ TimedSyncPntList::TimedSyncPntList()
    return;
 }
 
-void TimedSyncPntList::add_sync_point(
+SyncPnt *TimedSyncPntList::add_sync_point(
    wstring const &label )
 {
    Int64Time time( 0.0 );
-   add_sync_point( label, time );
+   return add_sync_point( label, time );
 }
 
-void TimedSyncPntList::add_sync_point(
+SyncPnt *TimedSyncPntList::add_sync_point(
    wstring const   &label,
    Int64Time const &time )
 {
@@ -83,13 +83,15 @@ void TimedSyncPntList::add_sync_point(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
    sync_point_list.push_back( sp );
+
+   return sp;
 }
 
 bool TimedSyncPntList::achieve_all_sync_points(
    RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-   Int64Time const                  &checkTime )
+   Int64Time const                  &check_time )
 {
-   bool wasAcknowledged = false;
+   bool achieved = false;
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -102,20 +104,20 @@ bool TimedSyncPntList::achieve_all_sync_points(
          // Cast the SyncPnt pointer to a TimedSyncPnt pointer.
          TimedSyncPnt *sp = dynamic_cast< TimedSyncPnt * >( *i );
 
-         if ( sp != NULL && sp->exists() && !sp->is_achieved() ) {
-            if ( sp->get_time() <= checkTime ) {
-               if ( this->achieve_sync_point( rti_ambassador, sp ) ) {
-                  wasAcknowledged = true;
+         if ( ( sp != NULL ) && !sp->is_achieved() ) {
+            if ( sp->get_time() <= check_time ) {
+               if ( achieve_sync_point( rti_ambassador, sp ) ) {
+                  achieved = true;
                }
             }
          }
       }
    }
-   return wasAcknowledged;
+   return achieved;
 }
 
 bool TimedSyncPntList::check_sync_points(
-   Int64Time const &checkTime )
+   Int64Time const &check_time )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -127,7 +129,7 @@ bool TimedSyncPntList::check_sync_points(
          // Cast the SyncPnt pointer to a TimedSyncPnt pointer.
          TimedSyncPnt const *timed_i = dynamic_cast< TimedSyncPnt * >( *i );
          if ( ( timed_i->get_state() == SYNC_PT_STATE_EXISTS )
-              && ( timed_i->get_time() <= checkTime ) ) {
+              && ( timed_i->get_time() <= check_time ) ) {
             return true;
          }
       }

@@ -20,13 +20,15 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../source/TrickHLA/ObjectDeleted.cpp}
+@trick_link_dependency{../../source/TrickHLA/Object.cpp}
 
 @revs_title
 @revs_begin
 @rev_entry{Tony Varesic, L3-Communications, DSES, June 2008, --, IMSim: report TrickHLA::Object as deleted via a callback.}
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, March 2019, --, Version 2 origin.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, November 2023, --, Added initialize_callback().}
 @revs_end
 
 */
@@ -35,6 +37,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_OBJECT_DELETED_HH
 
 // TrickHLA include files.
+#include "TrickHLA/Object.hh"
 
 namespace TrickHLA
 {
@@ -60,15 +63,9 @@ class ObjectDeleted
    // Constructors / destructors
    //-----------------------------------------------------------------
    /*! @brief Default constructor for the TrickHLA ObjectDeleted class. */
-   ObjectDeleted()
-   {
-      return;
-   }
+   ObjectDeleted();
    /*! @brief Destructor for the TrickHLA ObjectDeleted class. */
-   virtual ~ObjectDeleted()
-   {
-      return;
-   }
+   virtual ~ObjectDeleted();
 
    // Use implicit copy constructor and assignment operator.
 
@@ -76,13 +73,15 @@ class ObjectDeleted
    // These are a virtual functions and must be defined by a full class.
    //-----------------------------------------------------------------
 
-   /*! @brief Mark this specified object as deleted.
-    *  @param theObj Deleted object. */
-   virtual void deleted(
-      Object *theObj )
-   {
-      return;
-   }
+   /*! @brief Initialize the callback object to the supplied Object pointer.
+    *  @param obj Associated object for this class. */
+   virtual void initialize_callback( Object *obj );
+
+   /*! @brief Callback informing that the object instance was deleted. */
+   virtual void deleted() = 0;
+
+  protected:
+   Object *object; ///< @trick_io{**} Object associated with this class.
 };
 
 } // namespace TrickHLA

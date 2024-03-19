@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<objectModel xsi:schemaLocation="http://standards.ieee.org/IEEE1516-2010 http://standards.ieee.org/downloads/1516/1516.2-2010/IEEE1516-DIF-2010.xsd" xmlns="http://standards.ieee.org/IEEE1516-2010" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelIdentification>
+        <name>IMSim_Simulation_Configuration</name>
+        <type>FOM</type>
+        <version>1.0</version>
+        <modificationDate>2024-01-09</modificationDate>
+        <securityClassification>unclassified</securityClassification>
+        <purpose>Define IMSim compliant federation execution configuration.</purpose>
+        <applicationDomain></applicationDomain>
+        <description>Description of New Module</description>
+        <useLimitation>Needed for IMSim compliant executive control federation executions</useLimitation>
+        <keyword>
+            <keywordValue>FOM</keywordValue>
+        </keyword>
+        <keyword>
+            <keywordValue>Configuration</keywordValue>
+        </keyword>
+        <keyword>
+            <keywordValue>Execution</keywordValue>
+        </keyword>
+        <keyword>
+            <keywordValue>Federation</keywordValue>
+        </keyword>
+        <keyword>
+            <keywordValue>IMSim</keywordValue>
+        </keyword>
+        <poc>
+            <pocType>Primary author</pocType>
+            <pocName>Edwin Z. Crues</pocName>
+            <pocOrg>NASA Johnson Space Center</pocOrg>
+            <pocTelephone>+1-281-483-2902</pocTelephone>
+            <pocEmail>edwin.z.crues@nasa.gov</pocEmail>
+        </poc>
+        <poc>
+            <pocType>Contributor</pocType>
+            <pocName>Daniel E. Dexter</pocName>
+            <pocOrg>NASA Johnson Space Center</pocOrg>
+            <pocTelephone>+1-281-483-1142</pocTelephone>
+            <pocEmail>daniel.e.dexter@nasa.gov</pocEmail>
+        </poc>
+        <reference>
+            <type>Composed From</type>
+            <identification>Daniel Dexter and Tony E. Varesic, Integrated Mission Simulation (IMSim)
+Multiphase Initialization Design with Late Joiners, Rejoiners and Federation Save &amp; Restore, NASA white paper.</identification>
+        </reference>
+        <other>Contains the base set of parameters that define an IMSim compliant federation execution and the parameters required for the IMSim Execution Control executive.</other>
+    </modelIdentification>
+    <objects>
+        <objectClass>
+            <name>HLAobjectRoot</name>
+            <objectClass>
+                <name>SimulationConfiguration</name>
+                <sharing>PublishSubscribe</sharing>
+                <semantics>This is the federation Simulation Configuration Object (SimConfig).  This object defines the base set of parameters necessary to coordinate federation and federate execution time lines and execution mode transitions in IMSim compliant federation execution.</semantics>
+                <attribute>
+                    <name>owner</name>
+                    <dataType>HLAunicodeString</dataType>
+                    <updateType>Conditional</updateType>
+                    <updateCondition>NA</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>Receive</order>
+                    <semantics>Federation publishing object</semantics>
+                </attribute>
+                <attribute>
+                    <name>scenario</name>
+                    <dataType>HLAunicodeString</dataType>
+                    <updateType>Conditional</updateType>
+                    <updateCondition>NA</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>Receive</order>
+                    <semantics>Scenario being simulated.</semantics>
+                </attribute>
+                <attribute>
+                    <name>mode</name>
+                    <dataType>HLAunicodeString</dataType>
+                    <updateType>Conditional</updateType>
+                    <updateCondition>NA</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>Receive</order>
+                    <semantics>Mode of simulation run.</semantics>
+                </attribute>
+                <attribute>
+                    <name>run_duration</name>
+                    <dataType>HLAinteger64LE</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition>NA</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>Receive</order>
+                    <semantics>Duration of run in microseconds</semantics>
+                </attribute>
+                <attribute>
+                    <name>number_of_federates</name>
+                    <dataType>HLAinteger32LE</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition>NA</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>Receive</order>
+                    <semantics>Number of required federates for run</semantics>
+                </attribute>
+                <attribute>
+                    <name>required_federates</name>
+                    <dataType>HLAunicodeString</dataType>
+                    <updateType>Conditional</updateType>
+                    <updateCondition>NA</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>Receive</order>
+                    <semantics>Comma-separated list of required federates.</semantics>
+                </attribute>
+                <attribute>
+                    <name>start_year</name>
+                    <dataType>HLAinteger32LE</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition>NA</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>Receive</order>
+                    <semantics>Year at start of run</semantics>
+                </attribute>
+                <attribute>
+                    <name>start_seconds</name>
+                    <dataType>HLAfloat64LE</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition>NA</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>Receive</order>
+                    <semantics>Starting time of run in seconds-of-year in UT1</semantics>
+                </attribute>
+                <attribute>
+                    <name>DUT1</name>
+                    <dataType>HLAfloat64LE</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition>NA</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>Receive</order>
+                    <semantics>Offset of UT1 from UTC</semantics>
+                </attribute>
+                <attribute>
+                    <name>deltaAT</name>
+                    <dataType>HLAinteger32LE</dataType>
+                    <updateType>Static</updateType>
+                    <updateCondition>NA</updateCondition>
+                    <ownership>DivestAcquire</ownership>
+                    <sharing>PublishSubscribe</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>Receive</order>
+                    <semantics>Accumulated leap seconds between UT1 and UTC</semantics>
+                </attribute>
+            </objectClass>
+        </objectClass>
+    </objects>
+    <interactions>
+        <interactionClass>
+            <name>HLAinteractionRoot</name>
+            <interactionClass>
+                <name>Freeze</name>
+                <sharing>PublishSubscribe</sharing>
+                <transportation>HLAreliable</transportation>
+                <order>TimeStamp</order>
+                <semantics></semantics>
+                <parameter>
+                    <name>time</name>
+                    <dataType>HLAinteger64BE</dataType>
+                    <semantics></semantics>
+                </parameter>
+            </interactionClass>
+        </interactionClass>
+    </interactions>
+    <synchronizations>
+        <synchronizationPoint>
+            <label>sim_config_v2</label>
+            <dataType>NA</dataType>
+            <capability>RegisterAchieve</capability>
+            <semantics>Used to indicate that all required federate are joined and all object instanced required for initialization have been created.</semantics>
+        </synchronizationPoint>
+        <synchronizationPoint>
+            <label>initialize_v2</label>
+            <dataType>NA</dataType>
+            <capability>RegisterAchieve</capability>
+            <semantics>Used to indicate that the initialization phase of an IMSim compliant federation execution has been started.  This has to be achieved by all fedeates prior to entering into the mulit-phase initialization cycles.</semantics>
+        </synchronizationPoint>
+        <synchronizationPoint>
+            <label>initialization_complete_v2</label>
+            <dataType>NA</dataType>
+            <capability>Register</capability>
+            <semantics>This synchronization point (sync-point) is registered by the federation execution master federate after all the multi-phase initialization cycles are complete and all the early joining federates have successfully initialized.</semantics>
+        </synchronizationPoint>
+        <synchronizationPoint>
+            <label>startup_v2</label>
+            <dataType>NA</dataType>
+            <capability>RegisterAchieve</capability>
+            <semantics>Indicates the federation startup process has successfuly completed and the federation execution can begin.</semantics>
+        </synchronizationPoint>
+        <synchronizationPoint>
+            <label>FEDSAVE_v2</label>
+            <dataType>NA</dataType>
+            <capability>RegisterAchieve</capability>
+            <semantics>Used to control the federation execution save processs.</semantics>
+        </synchronizationPoint>
+        <synchronizationPoint>
+            <label>FEDRUN_v2</label>
+            <dataType>NA</dataType>
+            <capability>RegisterAchieve</capability>
+            <semantics>Used to control the federation run mode transition.</semantics>
+        </synchronizationPoint>
+        <synchronizationPoint>
+            <label>pause_0.0</label>
+            <dataType>NA</dataType>
+            <capability>RegisterAchieve</capability>
+            <semantics>Startup in freeze sync point.</semantics>
+        </synchronizationPoint>
+    </synchronizations>
+    <switches>
+        <autoProvide isEnabled="true"/>
+        <conveyRegionDesignatorSets isEnabled="false"/>
+        <conveyProducingFederate isEnabled="false"/>
+        <attributeScopeAdvisory isEnabled="false"/>
+        <attributeRelevanceAdvisory isEnabled="false"/>
+        <objectClassRelevanceAdvisory isEnabled="false"/>
+        <interactionRelevanceAdvisory isEnabled="false"/>
+        <serviceReporting isEnabled="false"/>
+        <exceptionReporting isEnabled="false"/>
+        <delaySubscriptionEvaluation isEnabled="false"/>
+        <automaticResignAction resignAction="CancelThenDeleteThenDivest"/>
+    </switches>
+    <dataTypes>
+        <simpleDataTypes/>
+        <enumeratedDataTypes/>
+        <arrayDataTypes/>
+        <fixedRecordDataTypes/>
+        <variantRecordDataTypes/>
+    </dataTypes>
+    <notes/>
+</objectModel>
