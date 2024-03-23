@@ -184,8 +184,9 @@ federate.set_RRFP_role( False )   # This is NOT the Root Reference Frame Publish
 #--------------------------------------------------------------------------
 # This is the RRFP federate.
 # It doesn't really need to know about any other federates.
-federate.add_known_fededrate( True, str(federate.federate.name) )
 federate.add_known_fededrate( True, 'A-side-Federate' )
+federate.add_known_fededrate( True, str(federate.federate.name) )
+federate.add_known_fededrate( False, 'Other' )
 
 #--------------------------------------------------------------------------
 # Configure the FOM modules.
