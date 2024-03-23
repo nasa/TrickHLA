@@ -212,7 +212,7 @@ federate.add_known_fededrate( False, 'Other' )
 #--------------------------------------------------------------------------
 # Configure the FOM modules.
 #--------------------------------------------------------------------------
-federate.add_FOM_module( 'FOMs/S_FOMfile.xml' )
+federate.add_FOM_module( 'FOMs/sine/Sine_FOM.xml' )
 
 #--------------------------------------------------------------------------
 # Configure the multiphase initialization sync-points.
