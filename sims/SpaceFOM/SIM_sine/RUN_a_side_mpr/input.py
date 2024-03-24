@@ -164,14 +164,14 @@ trick.exec_set_trap_sigfpe( True )
 #trick.checkpoint_end( 1 )
 
 # Setup for Trick real time execution. This is the "Pacing" function.
-exec(open( "Modified_data/trick/realtime.py" ).read())
+exec( open( "Modified_data/trick/realtime.py" ).read() )
 
 trick.exec_set_enable_freeze( True )
 trick.exec_set_freeze_command( True )
 trick.exec_set_stack_trace( False )
 
 trick.sim_control_panel_set_enabled( True )
-trick.var_server_set_port( 7000 )
+#trick.var_server_set_port( 7000 )
 
 
 # =========================================================================

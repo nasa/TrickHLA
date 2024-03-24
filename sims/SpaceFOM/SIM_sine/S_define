@@ -217,10 +217,10 @@ class THLAInitSimObject : public Trick::SimObject {
       //--------------------------------------------------------------------
 
       // Data will only be sent if this federate owns it.
-      P_MPI_1 ("initialization") thla_manager.send_init_data( "A-side-Federate.Test" );
+      P_MPI_1 ("initialization") thla_manager.send_init_data( "A-side-Federate.Sine" );
 
       // Data will only be received if it is remotely owned by another federate.
-      P_MPI_1 ("initialization") thla_manager.receive_init_data( "A-side-Federate.Test" );
+      P_MPI_1 ("initialization") thla_manager.receive_init_data( "A-side-Federate.Sine" );
 
       // Do some processing here if needed...
 
@@ -229,10 +229,10 @@ class THLAInitSimObject : public Trick::SimObject {
 
 
       // Data will only be sent if this federate owns it.
-      P_MPI_END ("initialization") thla_manager.send_init_data( "P-side-Federate.Test" );
+      P_MPI_END ("initialization") thla_manager.send_init_data( "P-side-Federate.Sine" );
 
       // Data will only be received if it is remotely owned by another federate.
-      P_MPI_END ("initialization") thla_manager.receive_init_data( "P-side-Federate.Test" );
+      P_MPI_END ("initialization") thla_manager.receive_init_data( "P-side-Federate.Sine" );
 
       // Do some processing here if needed...
 
