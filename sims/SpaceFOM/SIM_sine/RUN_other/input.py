@@ -182,8 +182,6 @@ federate.set_RRFP_role( False )   # This is NOT the Root Reference Frame Publish
 #--------------------------------------------------------------------------
 # Add in known required federates.
 #--------------------------------------------------------------------------
-# This is the RRFP federate.
-# It doesn't really need to know about any other federates.
 federate.add_known_fededrate( True, 'A-side-Federate' )
 federate.add_known_fededrate( True, 'P-side-Federate' )
 federate.add_known_fededrate( True, str(federate.federate.name) )
@@ -230,7 +228,6 @@ federate.set_time_constrained( True )
 #--------------------------------------------------------------------------
 # By setting this we are specifying the use of Common Timing Equipment (CTE)
 # for controlling the Mode Transitions for all federates using CTE.
-# Don't really need CTE for RRFP.
 #THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::CTETimelineBase' )
 
 

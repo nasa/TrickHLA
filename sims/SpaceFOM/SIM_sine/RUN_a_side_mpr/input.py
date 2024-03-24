@@ -24,6 +24,10 @@ from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
 # Load the SpaceFOM specific reference frame configuration object.
 from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
+# Load the sine specific Sine object.
+from Modified_data.sine.SineObject import *
+
+
 def print_usage_message( ):
 
    print(' ')
@@ -203,8 +207,6 @@ federate.set_RRFP_role( True )   # This is the Root Reference Frame Publisher.
 #--------------------------------------------------------------------------
 # Add in known required federates.
 #--------------------------------------------------------------------------
-# This is the RRFP federate.
-# It doesn't really need to know about any other federates.
 federate.add_known_fededrate( True, str(federate.federate.name) )
 federate.add_known_fededrate( True, 'P-side-Federate' )
 federate.add_known_fededrate( False, 'Other' )
@@ -252,13 +254,68 @@ federate.set_time_padding( 2.0 )
 federate.set_time_regulating( True )
 federate.set_time_constrained( True )
 
+
 #--------------------------------------------------------------------------
 # Set up CTE time line.
 #--------------------------------------------------------------------------
 # By setting this we are specifying the use of Common Timing Equipment (CTE)
 # for controlling the Mode Transitions for all federates using CTE.
-# Don't really need CTE for RRFP.
 #THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::CTETimelineBase' )
+
+
+#---------------------------------------------
+# Set up the initial Sine states
+#---------------------------------------------
+exec(open( "Modified_data/sine_init.py" ).read())
+
+# Example of a 1-dimensional dynamic array.
+A.packing.buff_size = 10
+A.packing.buff = trick.sim_services.alloc_type( A.packing.buff_size, 'unsigned char' )
+P.packing.buff_size = 10
+P.packing.buff = trick.sim_services.alloc_type( P.packing.buff_size, 'unsigned char' )
+
+# We are taking advantage of the input file to specify a unique name for the
+# sim-data name field for the A-side federate.
+A.sim_data.name = 'A.sim_data.name.A-side'
+P.sim_data.name = 'P.sim_data.name.A-side'
+
+# We are taking advantage of the input file to specify a unique name and
+# message for the A-side federate interaction handler.
+A.interaction_handler.name = 'A-side: A.interaction_handler.name'
+P.interaction_handler.name = 'A-side: P.interaction_handler.name'
+
+A.interaction_handler.message = 'A-side: A.interaction_handler.message'
+P.interaction_handler.message = 'A-side: P.interaction_handler.message'
+
+
+#---------------------------------------------------------------------------
+# Set up for Sine data.
+#---------------------------------------------------------------------------
+
+sine_A = SineObject( sine_create_object          = True,
+                     sine_instance_name          = 'A-side-Federate.Sine',
+                     sine_S_define_instance      = A.packing,
+                     sine_S_define_instance_name = 'A',
+                     sine_conditional            = A.conditional,
+                     sine_lag_comp               = A.lag_compensation,
+                     sine_lag_comp_type          = trick.TrickHLA.LAG_COMPENSATION_NONE,
+                     sine_ownership              = A.ownership_handler,
+                     sine_deleted                = A.obj_deleted  )
+
+# Add this sine object to the list of managed objects.
+federate.add_fed_object( sine_A )
+
+sine_P = SineObject( sine_create_object          = False,
+                     sine_instance_name          = 'P-side-Federate.Sine',
+                     sine_S_define_instance      = P.packing,
+                     sine_S_define_instance_name = 'P',
+                     sine_conditional            = P.conditional,
+                     sine_lag_comp               = P.lag_compensation,
+                     sine_lag_comp_type          = trick.TrickHLA.LAG_COMPENSATION_NONE,
+                     sine_deleted                = P.obj_deleted  )
+
+# Add this sine object to the list of managed objects.
+federate.add_fed_object( sine_P )
 
 
 #---------------------------------------------------------------------------

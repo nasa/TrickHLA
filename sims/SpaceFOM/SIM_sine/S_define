@@ -60,12 +60,6 @@
 ##include "sine/include/SineInteractionHandler.hh"
 ##include "sine/include/SineObjectDeleted.hh"
 
-
-//==========================================================================
-// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
-//==========================================================================
-#include "SpaceFOM/SpaceFOM.sm"
-
 %header{
  using namespace TrickHLA;
  using namespace SpaceFOM;
@@ -73,91 +67,14 @@
 
 
 //==========================================================================
-// SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
-// initialization SimObject.
+// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
 //==========================================================================
-class THLAInitSimObject : public Trick::SimObject {
-
- public:
-
-   THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
-                      TrickHLA::Federate & thla_fed,
-                      unsigned int         _MPI_1   = 100,
-                      unsigned int         _MPI_END = P_SF_INIT_POST_MPI )
-      : thla_manager( thla_mngr ),
-        thla_federate( thla_fed )
-   {
-      //--------------------------------------------------------------------
-      // NOTE: Initialization phase numbers must be greater than P60
-      // (i.e. P_HLA_INIT) so that the initialization jobs run after the
-      // P60 THLA.manager->initialize() job.
-      //--------------------------------------------------------------------
-
-      // Data will only be sent if this federate owns it.
-      P_MPI_1 ("initialization") thla_manager.send_init_data( "A-side-Federate.Test" );
-
-      // Data will only be received if it is remotely owned by another federate.
-      P_MPI_1 ("initialization") thla_manager.receive_init_data( "A-side-Federate.Test" );
-
-      // Do some processing here if needed...
-
-      // Wait for all federates to reach this sync-point.
-      P_MPI_1 ("initialization") thla_manager.wait_for_init_sync_point( "Analytic_init_phase" );
-
-
-      // Data will only be sent if this federate owns it.
-      P_MPI_END ("initialization") thla_manager.send_init_data( "P-side-Federate.Test" );
-
-      // Data will only be received if it is remotely owned by another federate.
-      P_MPI_END ("initialization") thla_manager.receive_init_data( "P-side-Federate.Test" );
-
-      // Do some processing here if needed...
-
-      // Wait for all federates to reach this sync-point.
-      P_MPI_END ("initialization") thla_manager.wait_for_init_sync_point( "Propagated_init_phase" );
-
-
-      // Alternative method: Send and receive all the initialization data.
-
-      // Send all the initialization data.
-//      P_MPI_1 ("initialization") thla_manager.send_init_data();
-
-      // Wait to receive all the initialization data.
-//      P_MPI_1 ("initialization") thla_manager.receive_init_data();
-
-      // Do some processing here if needed...
-
-      // Clear remaining initialization sync-points.
-//      P_MPI_END ("initialization") thla_manager.clear_init_sync_points();
-   }
-
- private:
-   TrickHLA::Manager  & thla_manager;
-   TrickHLA::Federate & thla_federate;
-
-   // Do not allow the implicit copy constructor or assignment operator.
-   THLAInitSimObject( THLAInitSimObject const & rhs );
-   THLAInitSimObject & operator=( THLAInitSimObject const & rhs );
-
-   // Do not allow the default constructor.
-   THLAInitSimObject();
-};
+#include "SpaceFOM/SpaceFOM.sm"
 
 
 //==========================================================================
-// SimObject instantiations.
-//==========================================================================
-// Main TrickHLA SimObject.
-SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME, THLA_INTERACTION_CYCLE_TIME,
-                        P_HLA_EARLY, P_HLA_INIT, P_HLA_LATE );
-
-// SimObject used capture simulation specific initialization.
-THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
-
-
-//==========================================================================
-// SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An example reference frame tree
-// simulation object definition.
+// SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An example reference frame
+// tree simulation object definition.
 //==========================================================================
 #include "SpaceFOM/TestRefFrameTree.sm"
 
@@ -278,7 +195,89 @@ class PropagatedSineSimObj : public Trick::SimObject {
 };
 
 
-// Instantiations
+//==========================================================================
+// SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
+// initialization SimObject.
+//==========================================================================
+class THLAInitSimObject : public Trick::SimObject {
+
+ public:
+
+   THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
+                      TrickHLA::Federate & thla_fed,
+                      unsigned int         _MPI_1   = 100,
+                      unsigned int         _MPI_END = P_SF_INIT_POST_MPI )
+      : thla_manager( thla_mngr ),
+        thla_federate( thla_fed )
+   {
+      //--------------------------------------------------------------------
+      // NOTE: Initialization phase numbers must be greater than P60
+      // (i.e. P_HLA_INIT) so that the initialization jobs run after the
+      // P60 THLA.manager->initialize() job.
+      //--------------------------------------------------------------------
+
+      // Data will only be sent if this federate owns it.
+      P_MPI_1 ("initialization") thla_manager.send_init_data( "A-side-Federate.Test" );
+
+      // Data will only be received if it is remotely owned by another federate.
+      P_MPI_1 ("initialization") thla_manager.receive_init_data( "A-side-Federate.Test" );
+
+      // Do some processing here if needed...
+
+      // Wait for all federates to reach this sync-point.
+      P_MPI_1 ("initialization") thla_manager.wait_for_init_sync_point( "Analytic_init_phase" );
+
+
+      // Data will only be sent if this federate owns it.
+      P_MPI_END ("initialization") thla_manager.send_init_data( "P-side-Federate.Test" );
+
+      // Data will only be received if it is remotely owned by another federate.
+      P_MPI_END ("initialization") thla_manager.receive_init_data( "P-side-Federate.Test" );
+
+      // Do some processing here if needed...
+
+      // Wait for all federates to reach this sync-point.
+      P_MPI_END ("initialization") thla_manager.wait_for_init_sync_point( "Propagated_init_phase" );
+
+
+      // Alternative method: Send and receive all the initialization data.
+
+      // Send all the initialization data.
+//      P_MPI_1 ("initialization") thla_manager.send_init_data();
+
+      // Wait to receive all the initialization data.
+//      P_MPI_1 ("initialization") thla_manager.receive_init_data();
+
+      // Do some processing here if needed...
+
+      // Clear remaining initialization sync-points.
+//      P_MPI_END ("initialization") thla_manager.clear_init_sync_points();
+   }
+
+ private:
+   TrickHLA::Manager  & thla_manager;
+   TrickHLA::Federate & thla_federate;
+
+   // Do not allow the implicit copy constructor or assignment operator.
+   THLAInitSimObject( THLAInitSimObject const & rhs );
+   THLAInitSimObject & operator=( THLAInitSimObject const & rhs );
+
+   // Do not allow the default constructor.
+   THLAInitSimObject();
+};
+
+
+//==========================================================================
+// SimObject instantiations.
+//==========================================================================
+// Main TrickHLA SimObject that supports SpaceFOM.
+SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME, THLA_INTERACTION_CYCLE_TIME,
+                        P_HLA_EARLY, P_HLA_INIT, P_HLA_LATE );
+
+// Simulation specific multiphase initialization SimObject instance.
+THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
+
+// Sine Instantiations
 AnalyticSineSimObj   A;
 PropagatedSineSimObj P;
 

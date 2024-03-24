@@ -136,7 +136,7 @@ Attribute *Packing::get_attribute_and_validate(
       ostringstream errmsg;
       errmsg << "Packing::get_attribute_and_validate():" << __LINE__
              << " ERROR: For FOM object '" << object->get_FOM_name()
-             << "', failed to find the Attribute for an attribute named"
+             << "', failed to find the TrickHLA Attribute for an attribute named"
              << " '" << attr_FOM_name << "'. Make sure the FOM attribute name is"
              << " correct, the FOM contains an attribute named '"
              << attr_FOM_name << "' and that your input.py file is properly"

@@ -1,7 +1,7 @@
 ##############################################################################
 # PURPOSE:
 #    (This is a Python input file class to set up the general parameters that
-#     describe the sine data object.)
+#     describe the sine data to configure a TrickHLA Object.)
 #
 # REFERENCE:
 #    (Trick documentation.)
@@ -20,14 +20,14 @@ from ..TrickHLA.TrickHLAAttributeConfig import *
 
 class SineObject(TrickHLAObjectConfig):
 
-   # The Sine FOM name.
-   sine_FOM_name = 'PhysicalEntity'
+   # The Sine HLA class FOM name.
+   sine_FOM_name = 'Sine'
    
    # Trick simulation object name (constructed).
    trick_sine_sim_obj_name = None
 
    def __init__( self,
-                 create_sine_object,
+                 sine_create_object,
                  sine_instance_name,
                  sine_S_define_instance,
                  sine_S_define_instance_name,
@@ -36,35 +36,33 @@ class SineObject(TrickHLAObjectConfig):
                  sine_lag_comp_type       = trick.TrickHLA.LAG_COMPENSATION_NONE,
                  sine_ownership           = None,
                  sine_deleted             = None,
-                 sine_thla_manager_object = None,
-                 sine_thread_IDs          = None  ):
+                 sine_thla_object         = None,
+                 sine_thread_IDs          = None ):
 
-      # Copy the PhysicalEntity federation execution instance name.
+      # Copy the federation execution instance name.
       sine_federation_instance_name = str( sine_instance_name )
 
-      # Save the PhysicalEntity name to use for trick_data_name generation.
+      # Save the Sine name to use for trick_data_name generation.
       self.trick_sine_sim_obj_name = str( sine_S_define_instance_name )
-      
-      # By SpaceFOM rule 6-1 the PhysicalEntity instance name must exactly
-      # match the PhysicalEntity name in the data.
-      if ( create_sine_object ) :
+
+      if ( sine_create_object ) :
          sine_S_define_instance.set_name( sine_instance_name )
       else:
          sine_S_define_instance.set_name( '' )
 
       # Call the base class constructor.
       TrickHLAObjectConfig.__init__( self,
-                                     create_sine_object,
-                                     sine_instance_name,
-                                     self.sine_FOM_name,
-                                     sine_lag_comp,
-                                     sine_lag_comp_type,
-                                     sine_ownership,
-                                     sine_deleted,
-                                     sine_conditional,
-                                     sine_S_define_instance,
-                                     sine_thla_manager_object,
-                                     sine_thread_IDs )
+                                     thla_create               = sine_create_object,
+                                     thla_instance_name        = sine_instance_name,
+                                     thla_FOM_name             = self.sine_FOM_name,
+                                     thla_lag_comp_instance    = sine_lag_comp,
+                                     thla_lag_comp_type        = sine_lag_comp_type,
+                                     thla_ownership_instance   = sine_ownership,
+                                     thla_deleted_instance     = sine_deleted,
+                                     thla_conditional_instance = sine_conditional,
+                                     thla_packing_instance     = sine_S_define_instance,
+                                     thla_object               = sine_thla_object,
+                                     thla_thread_IDs           = sine_thread_IDs )
 
       # Build the object attribute list.
       self.add_attributes()
@@ -79,108 +77,98 @@ class SineObject(TrickHLAObjectConfig):
 
       return
 
+
    def add_attributes( self ):
 
-      # Short cut the sim_object name for the PhysicalEntity data.
+      # Short cut the sim_object name for the Sine data.
       sine_instance_name = self.trick_sine_sim_obj_name
 
-      ## Set up the map to the reference PhysicalEntity's name.
-      trick_data_name = str(sine_instance_name) + '.pe_packing_data.name'
-      attribute = TrickHLAAttributeConfig( 'name',
-                                           trick_data_name,
-                                           self.hla_create,
-                                           not self.hla_create,
-                                           self.hla_create,
-                                           trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           trick.TrickHLA.ENCODING_UNICODE_STRING )
+      ## Set up the map to the reference Sine Name.
+      trick_data_name = str(sine_instance_name) + '.packing.name'
+      attribute = TrickHLAAttributeConfig( FOM_name      = 'Name',
+                                           trick_name    = trick_data_name,
+                                           publish       = self.hla_create,
+                                           subscribe     = not self.hla_create,
+                                           locally_owned = self.hla_create,
+                                           config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
+                                           rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING )
       self.add_attribute( attribute )
 
-      ## Set up the map to the reference PhysicalEntity's type.
-      trick_data_name = str(sine_instance_name) + '.pe_packing_data.type'
-      attribute = TrickHLAAttributeConfig( 'type',
-                                           trick_data_name,
-                                           self.hla_create,
-                                           not self.hla_create,
-                                           self.hla_create,
-                                           trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           trick.TrickHLA.ENCODING_UNICODE_STRING )
+      ## Set up the map to the Sine Time.
+      trick_data_name = str(sine_instance_name) + '.packing.time'
+      attribute = TrickHLAAttributeConfig( FOM_name      = 'Time',
+                                           trick_name    = trick_data_name,
+                                           publish       = self.hla_create,
+                                           subscribe     = not self.hla_create,
+                                           locally_owned = self.hla_create,
+                                           config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
+                                           rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_attribute( attribute )
 
-      ## Set up the map to the reference PhysicalEntity's status.
-      trick_data_name = str(sine_instance_name) + '.pe_packing_data.status'
-      attribute = TrickHLAAttributeConfig( 'status',
-                                           trick_data_name,
-                                           self.hla_create,
-                                           not self.hla_create,
-                                           self.hla_create,
-                                           trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           trick.TrickHLA.ENCODING_UNICODE_STRING )
+      ## Set up the map to the reference Sine Value.
+      trick_data_name = str(sine_instance_name) + '.packing.value'
+      attribute = TrickHLAAttributeConfig( FOM_name      = 'Value',
+                                           trick_name    = trick_data_name,
+                                           publish       = self.hla_create,
+                                           subscribe     = not self.hla_create,
+                                           locally_owned = self.hla_create,
+                                           config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
+                                           rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_attribute( attribute )
 
-      ## Set up the map to the name of the PhysicalEntity's parent reference frame.
-      trick_data_name = str(sine_instance_name) + '.pe_packing_data.parent_frame'
-      attribute = TrickHLAAttributeConfig( 'parent_reference_frame',
-                                           trick_data_name,
-                                           self.hla_create,
-                                           not self.hla_create,
-                                           self.hla_create,
-                                           trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           trick.TrickHLA.ENCODING_UNICODE_STRING )
+      ## Set up the map to the name of the Sine dvdt.
+      trick_data_name = str(sine_instance_name) + '.packing.dvdt'
+      attribute = TrickHLAAttributeConfig( FOM_name      = 'dvdt',
+                                           trick_name    = trick_data_name,
+                                           publish       = self.hla_create,
+                                           subscribe     = not self.hla_create,
+                                           locally_owned = self.hla_create,
+                                           config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
+                                           rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_attribute( attribute )
 
-      ## Set up the map to the PhysicalEntity's space/time coordinate state.
-      trick_data_name = str(sine_instance_name) + '.stc_encoder.buffer'
-      attribute = TrickHLAAttributeConfig( 'state',
-                                           trick_data_name,
-                                           self.hla_create,
-                                           not self.hla_create,
-                                           self.hla_create,
-                                           trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           trick.TrickHLA.ENCODING_OPAQUE_DATA )
+      ## Set up the map to the name of the Sine Phase.
+      trick_data_name = str(sine_instance_name) + '.packing.phase_deg'
+      attribute = TrickHLAAttributeConfig( FOM_name      = 'Phase',
+                                           trick_name    = trick_data_name,
+                                           publish       = self.hla_create,
+                                           subscribe     = not self.hla_create,
+                                           locally_owned = self.hla_create,
+                                           config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
+                                           rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_attribute( attribute )
 
-      ## Set up the map to the PhysicalEntity's translational acceleration.
-      trick_data_name = str(sine_instance_name) + '.pe_packing_data.accel'
-      attribute = TrickHLAAttributeConfig( 'acceleration',
-                                           trick_data_name,
-                                           self.hla_create,
-                                           not self.hla_create,
-                                           self.hla_create,
-                                           trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
+      ## Set up the map to the name of the Sine Frequency.
+      trick_data_name = str(sine_instance_name) + '.packing.freq'
+      attribute = TrickHLAAttributeConfig( FOM_name      = 'Frequency',
+                                           trick_name    = trick_data_name,
+                                           publish       = self.hla_create,
+                                           subscribe     = not self.hla_create,
+                                           locally_owned = self.hla_create,
+                                           config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
+                                           rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_attribute( attribute )
 
-      ## Set up the map to the PhysicalEntity's rotational acceleration.
-      trick_data_name = str(sine_instance_name) + '.pe_packing_data.ang_accel'
-      attribute = TrickHLAAttributeConfig( 'rotational_acceleration',
-                                           trick_data_name,
-                                           self.hla_create,
-                                           not self.hla_create,
-                                           self.hla_create,
-                                           trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
+      ## Set up the map to the name of the Sine Amplitude.
+      trick_data_name = str(sine_instance_name) + '.packing.amp'
+      attribute = TrickHLAAttributeConfig( FOM_name      = 'Amplitude',
+                                           trick_name    = trick_data_name,
+                                           publish       = self.hla_create,
+                                           subscribe     = not self.hla_create,
+                                           locally_owned = self.hla_create,
+                                           config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
+                                           rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_attribute( attribute )
 
-      ## Set up the map to the PhysicalEntity's center of mass.
-      trick_data_name = str(sine_instance_name) + '.pe_packing_data.cm'
-      attribute = TrickHLAAttributeConfig( 'center_of_mass',
-                                           trick_data_name,
-                                           self.hla_create,
-                                           not self.hla_create,
-                                           self.hla_create,
-                                           trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
-      self.add_attribute( attribute )
-
-      ## Set up the map to the PhysicalEntity's struct to body attitude quaternion.
-      trick_data_name = str(sine_instance_name) + '.quat_encoder.buffer'
-      attribute = TrickHLAAttributeConfig( 'body_wrt_structural',
-                                           trick_data_name,
-                                           self.hla_create,
-                                           not self.hla_create,
-                                           self.hla_create,
-                                           trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           trick.TrickHLA.ENCODING_OPAQUE_DATA )
+      ## Set up the map to the name of the Sine Tolerance.
+      trick_data_name = str(sine_instance_name) + '.packing.tol'
+      attribute = TrickHLAAttributeConfig( FOM_name      = 'Tolerance',
+                                           trick_name    = trick_data_name,
+                                           publish       = self.hla_create,
+                                           subscribe     = not self.hla_create,
+                                           locally_owned = self.hla_create,
+                                           config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
+                                           rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_attribute( attribute )
 
       return
