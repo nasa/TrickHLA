@@ -446,6 +446,9 @@ void ExecutionControlBase::add_multiphase_init_sync_points()
       wstring ws_label;
       StringUtilities::to_wstring( ws_label, user_sync_pt_labels.at( i ) );
       multiphase_init_sync_pnt_list.add_sync_point( ws_label );
+
+      // Add to the list of known sync-points.
+      add_sync_point( ws_label );
    }
 }
 

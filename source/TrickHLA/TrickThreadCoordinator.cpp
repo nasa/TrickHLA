@@ -604,11 +604,16 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
               << __LINE__;
 
       if ( !this->any_child_thread_associated ) {
-         summary << " Detected there are no Trick child threads associated to any"
-                 << " object instances in the input file." << THLA_ENDL;
+         // This status message only makes sense only if we have simulation
+         // with Trick child threads.
+         if ( this->thread_cnt > 1 ) {
+            summary << " Detected no Trick child threads associated to any"
+                    << " object instances configured in the input file.";
+         }
+         summary << THLA_ENDL;
       } else {
-         summary << " Summary of object instance and thread associations from"
-                 << " the input file:" << THLA_ENDL;
+         summary << " Summary of object instance and thread associations configured"
+                 << " in the input file:" << THLA_ENDL;
 
          // Summary of the Object-instances per thread-ID.
          summary << "ThreadID  Cycle  Object-Instances" << THLA_ENDL;

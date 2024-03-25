@@ -192,7 +192,7 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
 
    def set_FOMs_path( self, FOMs_path ):
       
-      # You can only set SpaceFOM fom module pate before initialize method is called.
+      # You can only set SpaceFOM FOM module path before initialize method is called.
       if self.initialized :
          print('SpaceFOMFederateConfig.set_FOMs_path(): Warning, already initialized! Ignoring!')
          return
