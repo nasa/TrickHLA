@@ -443,7 +443,7 @@ class TrickHLAFederateConfig( object ):
       if self.initialized :
          print( 'TrickHLAFederateConfig.add_multiphase_init_sync_point(): Warning, already initialized, function ignored!' )
       else:
-         self.init_sync_points( str( sync_point ) )
+         self.init_sync_points.append( str( sync_point ) )
 
       return
 
