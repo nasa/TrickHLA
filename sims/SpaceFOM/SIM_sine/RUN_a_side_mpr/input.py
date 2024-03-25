@@ -292,27 +292,27 @@ P.interaction_handler.message = 'A-side: P.interaction_handler.message'
 # Set up for Sine data.
 #---------------------------------------------------------------------------
 
-sine_A = SineObject( sine_create_object          = True,
-                     sine_instance_name          = 'A-side-Federate.Sine',
-                     sine_S_define_instance      = A.packing,
-                     sine_S_define_instance_name = 'A',
-                     sine_conditional            = A.conditional,
-                     sine_lag_comp               = A.lag_compensation,
-                     sine_lag_comp_type          = trick.TrickHLA.LAG_COMPENSATION_NONE,
-                     sine_ownership              = A.ownership_handler,
-                     sine_deleted                = A.obj_deleted  )
+sine_A = SineObject( sine_create_object      = True,
+                     sine_obj_instance_name  = 'A-side-Federate.Sine',
+                     sine_trick_sim_obj_name = 'A',
+                     sine_packing            = A.packing,
+                     sine_conditional        = A.conditional,
+                     sine_lag_comp           = A.lag_compensation,
+                     sine_lag_comp_type      = trick.TrickHLA.LAG_COMPENSATION_NONE,
+                     sine_ownership          = A.ownership_handler,
+                     sine_deleted            = A.obj_deleted  )
 
 # Add this sine object to the list of managed objects.
 federate.add_fed_object( sine_A )
 
-sine_P = SineObject( sine_create_object          = False,
-                     sine_instance_name          = 'P-side-Federate.Sine',
-                     sine_S_define_instance      = P.packing,
-                     sine_S_define_instance_name = 'P',
-                     sine_conditional            = P.conditional,
-                     sine_lag_comp               = P.lag_compensation,
-                     sine_lag_comp_type          = trick.TrickHLA.LAG_COMPENSATION_NONE,
-                     sine_deleted                = P.obj_deleted  )
+sine_P = SineObject( sine_create_object      = False,
+                     sine_obj_instance_name  = 'P-side-Federate.Sine',
+                     sine_trick_sim_obj_name = 'P',
+                     sine_packing            = P.packing,
+                     sine_conditional        = P.conditional,
+                     sine_lag_comp           = P.lag_compensation,
+                     sine_lag_comp_type      = trick.TrickHLA.LAG_COMPENSATION_NONE,
+                     sine_deleted            = P.obj_deleted  )
 
 # Add this sine object to the list of managed objects.
 federate.add_fed_object( sine_P )

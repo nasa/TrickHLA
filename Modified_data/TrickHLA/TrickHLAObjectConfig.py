@@ -30,6 +30,7 @@ class TrickHLAObjectConfig( object ):
    hla_ownership_instance   = None
    hla_deleted_instance     = None
    hla_thread_IDs           = None
+   hla_attribute_config     = None
    hla_blocking_cyclic_read = False
 
    # List of TrickHLA object attributes.
@@ -47,6 +48,7 @@ class TrickHLAObjectConfig( object ):
                  thla_packing_instance     = None,
                  thla_object               = None,
                  thla_thread_IDs           = None,
+                 thla_attribute_config     = None,
                  thla_blocking_cyclic_read = False ):
 
       # Allocate and empty attribute list.
@@ -95,6 +97,10 @@ class TrickHLAObjectConfig( object ):
       # Set the Trick thread-IDs associated with this object.
       if thla_thread_IDs != None :
          self.set_thread_IDs( thla_thread_IDs )
+
+      # Set the TrickHLA Attribute config.
+      if thla_attribute_config != None :
+         self.set_attribute_config( thla_attribute_config )
 
       # Specify if this object will block on cyclic reads.
       self.set_blocking_cyclic_read( thla_blocking_cyclic_read )
@@ -264,6 +270,18 @@ class TrickHLAObjectConfig( object ):
       self.attributes.append( attribute )
 
       return
+
+
+   def set_attribute_config( self, attribute_config ):
+
+      self.hla_attribute_config = attribute_config
+
+      return
+
+
+   def get_attribute_config( self ):
+
+      return self.hla_attribute_config
 
 
    def set_blocking_cyclic_read( self, blocking_cyclic_read ):
