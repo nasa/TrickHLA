@@ -22,7 +22,7 @@ class SineObject(TrickHLAObjectConfig):
 
    # The Sine HLA class FOM name.
    sine_FOM_name = 'Sine'
-   
+
    # Trick simulation object name (constructed).
    trick_sim_obj_name = None
 
@@ -171,4 +171,3 @@ class SineObject(TrickHLAObjectConfig):
       self.add_attribute( attribute )
 
       return
-
