@@ -170,8 +170,12 @@ trick.exec_set_enable_freeze( False ) #TEMP True )
 trick.exec_set_freeze_command( False ) #TEMP True )
 trick.exec_set_stack_trace( False )
 
-trick.sim_control_panel_set_enabled( False ) #TEMP True )
-#trick.var_server_set_port( 7000 )
+trick.var_server_set_port( 7000 )
+trick.sim_control_panel_set_enabled( True )
+
+#simControlPanel = trick.SimControlPanel()
+#simControlPanel.set_host( "localhost" )
+#trick.add_external_application( simControlPanel )
 
 
 # =========================================================================
