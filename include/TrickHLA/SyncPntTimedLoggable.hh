@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/LoggableTimedSyncPnt.hh
+@file TrickHLA/SyncPntTimedLoggable.hh
 @ingroup TrickHLA
 @brief This class provides a mechanism for logging timed synchronization point
 data and retrieving it from the log file.
@@ -28,8 +28,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_LOGGABLE_TIMED_SYNC_PNT_HH
-#define TRICKHLA_LOGGABLE_TIMED_SYNC_PNT_HH
+#ifndef TRICKHLA_SYNC_PNT_TIMED_LOGGABLE_HH
+#define TRICKHLA_SYNC_PNT_TIMED_LOGGABLE_HH
 
 // System include files.
 #include <cstdint>
@@ -38,12 +38,12 @@ NASA, Johnson Space Center\n
 #include "trick/memorymanager_c_intf.h"
 
 // TrickHLA include files.
-#include "TrickHLA/LoggableSyncPnt.hh"
+#include "SyncPntLoggable.hh"
 
 namespace TrickHLA
 {
 
-class LoggableTimedSyncPnt : public TrickHLA::LoggableSyncPnt
+class SyncPntTimedLoggable : public TrickHLA::SyncPntLoggable
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -53,16 +53,16 @@ class LoggableTimedSyncPnt : public TrickHLA::LoggableSyncPnt
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__LoggableTimedSyncPnt();
+   friend void init_attrTrickHLA__SyncPntTimedLoggable();
 
   public:
-   /*! @brief Default constructor for the TrickHLA LoggableTimedSyncPnt class. */
-   LoggableTimedSyncPnt() : time( 0 )
+   /*! @brief Default constructor for the TrickHLA SyncPntTimedLoggable class. */
+   SyncPntTimedLoggable() : time( 0 )
    {
       return;
    }
-   /*! @brief Destructor for the TrickHLA LoggableTimedSyncPnt class. */
-   ~LoggableTimedSyncPnt()
+   /*! @brief Destructor for the TrickHLA SyncPntTimedLoggable class. */
+   ~SyncPntTimedLoggable()
    {
       return;
    }
@@ -72,14 +72,14 @@ class LoggableTimedSyncPnt : public TrickHLA::LoggableSyncPnt
 
   private:
    // Do not allow the copy constructor or assignment operator.
-   /*! @brief Copy constructor for LoggableTimedSyncPnt class.
+   /*! @brief Copy constructor for SyncPntTimedLoggable class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   LoggableTimedSyncPnt( LoggableTimedSyncPnt const &rhs );
-   /*! @brief Assignment operator for LoggableTimedSyncPnt class.
+   SyncPntTimedLoggable( SyncPntTimedLoggable const &rhs );
+   /*! @brief Assignment operator for SyncPntTimedLoggable class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   LoggableTimedSyncPnt &operator=( LoggableTimedSyncPnt const &rhs );
+   SyncPntTimedLoggable &operator=( SyncPntTimedLoggable const &rhs );
 };
 
 } // namespace TrickHLA
 
-#endif /* TRICKHLA_LOGGABLE_TIMED_SYNC_PNT_HH */
+#endif /* TRICKHLA_SYNC_PNT_TIMED_LOGGABLE_HH */

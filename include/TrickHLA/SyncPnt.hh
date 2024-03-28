@@ -37,8 +37,8 @@ NASA, Johnson Space Center\n
 // System includes
 #include <string>
 
+#include "SyncPntLoggable.hh"
 // TrickHLA includes.
-#include "TrickHLA/LoggableSyncPnt.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
 
@@ -149,7 +149,7 @@ class SyncPnt
    /*! @brief Convert the synchronization point into and loggable
     * synchronization point.
     *  @param log_sync_pnt Reference to a loggable synchronization point. */
-   virtual void convert( LoggableSyncPnt &log_sync_pnt );
+   virtual void convert( SyncPntLoggable &log_sync_pnt );
 
   protected:
    std::wstring    label; ///< @trick_io{**} Sync-point name.

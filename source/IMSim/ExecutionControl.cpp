@@ -2889,7 +2889,7 @@ void ExecutionControl::convert_loggable_sync_pts()
 {
 
    if ( this->logged_sync_pts_count > 0 ) {
-      this->loggable_sync_pts = reinterpret_cast< LoggableTimedSyncPnt * >(
+      this->loggable_sync_pts = reinterpret_cast< SyncPntTimedLoggable * >(
          alloc_type( (int)this->logged_sync_pts_count, "TrickHLA::LoggableSyncPts" ) );
       if ( this->loggable_sync_pts == NULL ) {
          ostringstream errmsg;

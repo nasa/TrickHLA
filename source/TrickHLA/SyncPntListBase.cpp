@@ -664,7 +664,7 @@ wstring SyncPntListBase::to_wstring()
 }
 
 void SyncPntListBase::convert_sync_points(
-   LoggableSyncPnt *sync_points )
+   SyncPntLoggable *sync_points )
 {
    int loop = 0;
 

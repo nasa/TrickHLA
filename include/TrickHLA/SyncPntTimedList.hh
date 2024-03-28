@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/TimedSyncPntList.hh
+@file TrickHLA/SyncPntTimedList.hh
 @ingroup TrickHLA
 @brief This class extends the TrickHLA::SyncPntListBase class and provides an
 instantiable implementation for storing and managing HLA synchronization points
@@ -21,7 +21,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/TimedSyncPntList.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPntTimedList.cpp}
 @trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPnt.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPntListBase.cpp}
@@ -34,8 +34,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_TIMED_SYNC_PNT_LIST_HH
-#define TRICKHLA_TIMED_SYNC_PNT_LIST_HH
+#ifndef TRICKHLA_SYNC_PNT_TIMED_LIST_HH
+#define TRICKHLA_SYNC_PNT_TIMED_LIST_HH
 
 // System includes.
 #include <string>
@@ -60,7 +60,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class TimedSyncPntList : public TrickHLA::SyncPntListBase
+class SyncPntTimedList : public TrickHLA::SyncPntListBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -70,17 +70,17 @@ class TimedSyncPntList : public TrickHLA::SyncPntListBase
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__TimedSyncPntList();
+   friend void init_attrTrickHLA__SyncPntTimedList();
 
   public:
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLA TimedSyncPntList class. */
-   TimedSyncPntList();
+   /*! @brief Default constructor for the TrickHLA SyncPntTimedList class. */
+   SyncPntTimedList();
 
-   /*! @brief Pure virtual destructor for the TrickHLA TimedSyncPntList class. */
-   virtual ~TimedSyncPntList()
+   /*! @brief Pure virtual destructor for the TrickHLA SyncPntTimedList class. */
+   virtual ~SyncPntTimedList()
    {
       return;
    }
@@ -122,21 +122,21 @@ class TimedSyncPntList : public TrickHLA::SyncPntListBase
    /*! @brief Converts the vector of synchronization points to a
     *  checkpoint-able class.
     *  @param pts Area to populate. */
-   virtual void convert_sync_points( LoggableSyncPnt *pts );
+   virtual void convert_sync_points( SyncPntLoggable *pts );
 
    /*! @brief Dumps synchronization point information to the screen. */
    virtual void print_sync_points();
 
   private:
    // Do not allow the copy constructor or assignment operator.
-   /*! @brief Copy constructor for TimedSyncPntList class.
+   /*! @brief Copy constructor for SyncPntTimedList class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   TimedSyncPntList( TimedSyncPntList const &rhs );
-   /*! @brief Assignment operator for TimedSyncPntList class.
+   SyncPntTimedList( SyncPntTimedList const &rhs );
+   /*! @brief Assignment operator for SyncPntTimedList class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   TimedSyncPntList &operator=( TimedSyncPntList const &rhs );
+   SyncPntTimedList &operator=( SyncPntTimedList const &rhs );
 };
 
 } // namespace TrickHLA
 
-#endif /* TRICKHLA_TIMED_SYNC_PNT_LIST_HH */
+#endif /* TRICKHLA_SYNC_PNT_TIMED_LIST_HH */

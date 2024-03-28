@@ -1,5 +1,5 @@
 /*!
-@file IMSim/PausePointList.hh
+@file IMSim/SyncPntPauseList.hh
 @ingroup IMSim
 @brief This class provides a mechanism for storing and managing HLA
 synchronization points for Trick.
@@ -20,8 +20,8 @@ NASA, Johnson Space Center\n
 @python_module{IMSim}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/TimedSyncPntList.cpp}
-@trick_link_dependency{../../source/IMSim/PausePointList.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPntTimedList.cpp}
+@trick_link_dependency{../../source/IMSim/SyncPntPauseList.cpp}
 @trick_link_dependency{../../source/IMSim/Types.cpp}
 
 @revs_title
@@ -42,7 +42,7 @@ NASA, Johnson Space Center\n
 // Trick include files.
 
 // TrickHLA include files.
-#include "TrickHLA/TimedSyncPntList.hh"
+#include "../TrickHLA/SyncPntTimedList.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -59,7 +59,7 @@ NASA, Johnson Space Center\n
 namespace IMSim
 {
 
-class PausePointList : public TrickHLA::TimedSyncPntList
+class SyncPntPauseList : public TrickHLA::SyncPntTimedList
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -69,17 +69,17 @@ class PausePointList : public TrickHLA::TimedSyncPntList
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrIMSim__PausePointList();
+   friend void init_attrIMSim__SyncPntPauseList();
 
   public:
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLA PausePointList class. */
-   PausePointList();
+   /*! @brief Default constructor for the TrickHLA SyncPntPauseList class. */
+   SyncPntPauseList();
 
-   /*! @brief Destructor for the TrickHLA PausePointList class. */
-   virtual ~PausePointList()
+   /*! @brief Destructor for the TrickHLA SyncPntPauseList class. */
+   virtual ~SyncPntPauseList()
    {
       return;
    }
@@ -144,12 +144,12 @@ class PausePointList : public TrickHLA::TimedSyncPntList
 
   private:
    // Do not allow the copy constructor or assignment operator.
-   /*! @brief Copy constructor for PausePointList class.
+   /*! @brief Copy constructor for SyncPntPauseList class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   PausePointList( PausePointList const &rhs );
-   /*! @brief Assignment operator for PausePointList class.
+   SyncPntPauseList( SyncPntPauseList const &rhs );
+   /*! @brief Assignment operator for SyncPntPauseList class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   PausePointList &operator=( PausePointList const &rhs );
+   SyncPntPauseList &operator=( SyncPntPauseList const &rhs );
 };
 
 } // namespace IMSim

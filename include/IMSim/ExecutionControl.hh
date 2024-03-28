@@ -27,7 +27,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/IMSim/ExecutionControl.cpp}
 @trick_link_dependency{../../source/IMSim/ExecutionConfiguration.cpp}
 @trick_link_dependency{../../source/IMSim/FreezeInteractionHandler.cpp}
-@trick_link_dependency{../../source/IMSim/PausePointList.cpp}
+@trick_link_dependency{../../source/IMSim/SyncPntPauseList.cpp}
 @trick_link_dependency{../../source/IMSim/Typs.cpp}
 
 @revs_title
@@ -52,8 +52,8 @@ NASA, Johnson Space Center\n
 // IMSim include files.Interaction.hh"
 #include "IMSim/ExecutionConfiguration.hh"
 #include "IMSim/FreezeInteractionHandler.hh"
-#include "IMSim/PausePointList.hh"
 #include "IMSim/Types.hh"
+#include "SyncPntPauseList.hh"
 
 namespace IMSim
 {
@@ -354,7 +354,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    FreezeTimeSet freeze_scenario_times; ///< @trick_io{**} collection of scenario times when we must enter FREEZE mode
 
    TrickHLA::Int64Time checktime;      ///< @trick_units{--} For DIS: Checking time to pause
-   PausePointList      pause_sync_pts; ///< @trick_units{--} Synchronization points used for pausing the sim.
+   SyncPntPauseList      pause_sync_pts; ///< @trick_units{--} Synchronization points used for pausing the sim.
 
    /*! @brief Return the relevant IMSim::ExecutionConfiguration object.
     *  @return Pointer to the relevant IMSim::ExecutionConfiguration object. */

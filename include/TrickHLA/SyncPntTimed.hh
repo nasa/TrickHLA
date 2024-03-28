@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/TimedSyncPnt.hh
+@file TrickHLA/SyncPntTimed.hh
 @ingroup TrickHLA
 @brief This class extends the basis TrickHLA::SyncPnt synchronization point
 implementation to add a time stamp.
@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/TimedSyncPnt.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPntTimed.cpp}
 @trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPnt.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
@@ -33,8 +33,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_TIMED_SYNC_PNT_HH
-#define TRICKHLA_TIMED_SYNC_PNT_HH
+#ifndef TRICKHLA_SYNC_PNT_TIMED_HH
+#define TRICKHLA_SYNC_PNT_TIMED_HH
 
 // System includes
 #include <string>
@@ -57,7 +57,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class TimedSyncPnt : public TrickHLA::SyncPnt
+class SyncPntTimed : public TrickHLA::SyncPnt
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -67,26 +67,26 @@ class TimedSyncPnt : public TrickHLA::SyncPnt
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__TimedSyncPnt();
+   friend void init_attrTrickHLA__SyncPntTimed();
 
   public:
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLA TimedSyncPnt class. */
-   TimedSyncPnt();
+   /*! @brief Default constructor for the TrickHLA SyncPntTimed class. */
+   SyncPntTimed();
 
    /*! @brief Initialization constructor.
     *  @param label Synchronization point label. */
-   explicit TimedSyncPnt( std::wstring const &label );
+   explicit SyncPntTimed( std::wstring const &label );
 
    /*! @brief Initialization constructor.
     *  @param t Synchronization point action time.
     *  @param label Synchronization point label. */
-   TimedSyncPnt( Int64Time const &t, std::wstring const &label );
+   SyncPntTimed( Int64Time const &t, std::wstring const &label );
 
-   /*! @brief Destructor for the TrickHLA TimedSyncPnt class. */
-   virtual ~TimedSyncPnt();
+   /*! @brief Destructor for the TrickHLA SyncPntTimed class. */
+   virtual ~SyncPntTimed();
 
    // Accessor functions.
    /*! @brief Get the synchronization point action time.
@@ -112,7 +112,7 @@ class TimedSyncPnt : public TrickHLA::SyncPnt
    /*! @brief Convert the synchronization point into and loggable
     * synchronization point.
     *  @param log_sync_pnt Reference to a loggable synchronization point. */
-   virtual void convert( LoggableSyncPnt &log_sync_pnt );
+   virtual void convert( SyncPntLoggable &log_sync_pnt );
 
   protected:
    Int64Time time; ///< @trick_units{--} Synchronization point action time.
@@ -120,4 +120,4 @@ class TimedSyncPnt : public TrickHLA::SyncPnt
 
 } // namespace TrickHLA
 
-#endif /* TRICKHLA_TIMED_SYNC_PNT_HH */
+#endif /* TRICKHLA_SYNC_PNT_TIMED_HH */

@@ -1,5 +1,5 @@
 /*!
-@file IMSim/PausePointList.cpp
+@file IMSim/SyncPntPauseList.cpp
 @ingroup IMSim
 @brief Represents an HLA Synchronization Point in Trick.
 
@@ -22,9 +22,9 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../TrickHLA/MutexProtection.cpp}
 @trick_link_dependency{../TrickHLA/SyncPnt.cpp}
-@trick_link_dependency{../TrickHLA/TimedSyncPnt.cpp}
+@trick_link_dependency{../TrickHLA/SyncPntTimed.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
-@trick_link_dependency{PausePointList.cpp}
+@trick_link_dependency{SyncPntPauseList.cpp}
 @trick_link_dependency{Types.cpp}
 
 @revs_title
@@ -46,15 +46,15 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 #include "trick/release.h"
 
+#include "../../include/IMSim/SyncPntPauseList.hh"
 // HLA include files.
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/SyncPnt.hh"
-#include "TrickHLA/TimedSyncPnt.hh"
 #include "TrickHLA/Types.hh"
 
 // IMSim include files.
-#include "IMSim/PausePointList.hh"
+#include "../../include/TrickHLA/SyncPntTimed.hh"
 #include "IMSim/Types.hh"
 
 using namespace std;
@@ -65,13 +65,13 @@ using namespace IMSim;
 /*!
  * @job_class{initialization}
  */
-PausePointList::PausePointList()
+SyncPntPauseList::SyncPntPauseList()
    : state( PAUSE_POINT_STATE_UNKNOWN )
 {
    return;
 }
 
-bool PausePointList::clear_sync_point(
+bool SyncPntPauseList::clear_sync_point(
    wstring const &label )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -106,12 +106,12 @@ bool PausePointList::clear_sync_point(
    return false;
 }
 
-bool PausePointList::is_sync_point_state_achieved( SyncPnt const *sync_pnt )
+bool SyncPntPauseList::is_sync_point_state_achieved( SyncPnt const *sync_pnt )
 {
    return ( sync_pnt->get_state() == SYNC_PT_STATE_ACHIEVED );
 }
 
-void PausePointList::check_state()
+void SyncPntPauseList::check_state()
 {
    if ( ( state == PAUSE_POINT_STATE_EXIT )
         || ( state == PAUSE_POINT_STATE_RESTART )
@@ -148,7 +148,7 @@ void PausePointList::check_state()
    }
 }
 
-wstring PausePointList::to_wstring()
+wstring SyncPntPauseList::to_wstring()
 {
    wstring result;
 
@@ -207,7 +207,7 @@ wstring PausePointList::to_wstring()
    return result;
 }
 
-void PausePointList::print_sync_points()
+void SyncPntPauseList::print_sync_points()
 {
    vector< SyncPnt * >::const_iterator i;
    string                              sync_point_label;
@@ -217,13 +217,13 @@ void PausePointList::print_sync_points()
    MutexProtection auto_unlock_mutex( &mutex );
 
    ostringstream msg;
-   msg << "IMSim::PausePointList::print_sync_points():" << __LINE__ << endl
+   msg << "IMSim::SyncPntPauseList::print_sync_points():" << __LINE__ << endl
        << "#############################" << endl
        << "Pause Point Dump: " << sync_point_list.size() << endl;
 
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-      // Cast the SyncPnt pointer to a TimedSyncPnt pointer.
-      TimedSyncPnt const *timed_i = dynamic_cast< TimedSyncPnt * >( *i );
+      // Cast the SyncPnt pointer to a SyncPntTimed pointer.
+      SyncPntTimed const *timed_i = dynamic_cast< SyncPntTimed * >( *i );
       sync_point_label.assign( ( *i )->get_label().begin(), ( *i )->get_label().end() );
       msg << sync_point_label << " "
           << timed_i->get_time().get_time_in_seconds() << " "

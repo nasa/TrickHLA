@@ -39,11 +39,11 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <string>
 
+#include "SyncPntLoggable.hh"
 // Trick include files.
 
 // TrickHLA include files.
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/LoggableSyncPnt.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/SyncPnt.hh"
@@ -243,7 +243,7 @@ class SyncPntListBase
    /*! @brief Converts the vector of synchronization points to a
     *  checkpoint-able class.
     *  @param sync_points Area to populate. */
-   virtual void convert_sync_points( LoggableSyncPnt *sync_points );
+   virtual void convert_sync_points( SyncPntLoggable *sync_points );
 
    /*! @brief Dumps synchronization point information to the screen. */
    virtual void print_sync_points();

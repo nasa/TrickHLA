@@ -33,9 +33,9 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA includes.
-#include "TrickHLA/LoggableSyncPnt.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPnt.hh"
+#include "../../include/TrickHLA/SyncPntLoggable.hh"
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
@@ -148,7 +148,7 @@ std::wstring SyncPnt::to_wstring()
    return result;
 }
 
-void SyncPnt::convert( LoggableSyncPnt &log_sync_pnt )
+void SyncPnt::convert( SyncPntLoggable &log_sync_pnt )
 {
    log_sync_pnt.label = StringUtilities::ip_strdup_wstring( this->label );
    log_sync_pnt.state = this->state;

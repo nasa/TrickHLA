@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/LoggableSyncPnt.hh
+@file TrickHLA/SyncPntLoggable.hh
 @ingroup TrickHLA
 @brief This class provides a mechanism for logging sync point data and
 retrieving it from the log file.
@@ -31,8 +31,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_LOGGABLE_SYNC_PNT_HH
-#define TRICKHLA_LOGGABLE_SYNC_PNT_HH
+#ifndef TRICKHLA_SYNC_PNT_LOGGABLE_HH
+#define TRICKHLA_SYNC_PNT_LOGGABLE_HH
 
 // System include files.
 
@@ -46,7 +46,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class LoggableSyncPnt
+class SyncPntLoggable
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -56,18 +56,18 @@ class LoggableSyncPnt
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__LoggableSyncPnt();
+   friend void init_attrTrickHLA__SyncPntLoggable();
 
   public:
-   /*! @brief Default constructor for the TrickHLA LoggableSyncPnt class. */
-   LoggableSyncPnt() : label( NULL ), state( SYNC_PT_STATE_UNKNOWN )
+   /*! @brief Default constructor for the TrickHLA SyncPntLoggable class. */
+   SyncPntLoggable() : label( NULL ), state( SYNC_PT_STATE_UNKNOWN )
    {
       return;
    }
-   /*! @brief Destructor for the TrickHLA LoggableSyncPnt class. */
-   virtual ~LoggableSyncPnt()
+   /*! @brief Destructor for the TrickHLA SyncPntLoggable class. */
+   virtual ~SyncPntLoggable()
    {
-      LoggableSyncPnt::clear();
+      SyncPntLoggable::clear();
    }
 
   public:
@@ -76,7 +76,7 @@ class LoggableSyncPnt
    {
       if ( label != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( label ) ) ) {
-            send_hs( stderr, "LoggableSyncPnt::clear():%d ERROR deleting Trick Memory for 'label'\n", __LINE__ );
+            send_hs( stderr, "SyncPntLoggable::clear():%d ERROR deleting Trick Memory for 'label'\n", __LINE__ );
          }
          label = NULL;
       }
@@ -87,14 +87,14 @@ class LoggableSyncPnt
 
   private:
    // Do not allow the copy constructor or assignment operator.
-   /*! @brief Copy constructor for LoggableSyncPnt class.
+   /*! @brief Copy constructor for SyncPntLoggable class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   LoggableSyncPnt( LoggableSyncPnt const &rhs );
-   /*! @brief Assignment operator for LoggableSyncPnt class.
+   SyncPntLoggable( SyncPntLoggable const &rhs );
+   /*! @brief Assignment operator for SyncPntLoggable class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   LoggableSyncPnt &operator=( LoggableSyncPnt const &rhs );
+   SyncPntLoggable &operator=( SyncPntLoggable const &rhs );
 };
 
 } // namespace TrickHLA
 
-#endif /* TRICKHLA_LOGGABLE_SYNC_PNT_HH */
+#endif /* TRICKHLA_SYNC_PNT_LOGGABLE_HH */

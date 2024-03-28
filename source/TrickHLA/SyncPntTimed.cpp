@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/TimedSyncPnt.cpp
+@file TrickHLA/SyncPntTimed.cpp
 @ingroup TrickHLA
 @brief This class provides a sync-point implementation for storing and managing
 TrickHLA synchronization points.
@@ -18,7 +18,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{SyncPnt.cpp}
-@trick_link_dependency{TimedSyncPnt.cpp}
+@trick_link_dependency{SyncPntTimed.cpp}
 
 @revs_title
 @revs_begin
@@ -34,12 +34,12 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/message_proto.h"
 
-// TrickHLA includes.
+#include "../../include/TrickHLA/SyncPntTimed.hh"
+
+#include "../../include/TrickHLA/SyncPntTimedLoggable.hh"
 #include "TrickHLA/Int64Time.hh"
-#include "TrickHLA/LoggableTimedSyncPnt.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPnt.hh"
-#include "TrickHLA/TimedSyncPnt.hh"
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
@@ -48,7 +48,7 @@ using namespace TrickHLA;
 /*!
  * @job_class{initialization}
  */
-TimedSyncPnt::TimedSyncPnt()
+SyncPntTimed::SyncPntTimed()
    : time( 0.0 )
 {
    return;
@@ -57,7 +57,7 @@ TimedSyncPnt::TimedSyncPnt()
 /*!
  * @job_class{initialization}
  */
-TimedSyncPnt::TimedSyncPnt( std::wstring const &label )
+SyncPntTimed::SyncPntTimed( std::wstring const &label )
    : SyncPnt( label ), time( 0.0 )
 {
    return;
@@ -66,7 +66,7 @@ TimedSyncPnt::TimedSyncPnt( std::wstring const &label )
 /*!
  * @job_class{initialization}
  */
-TimedSyncPnt::TimedSyncPnt( Int64Time const &t, std::wstring const &label )
+SyncPntTimed::SyncPntTimed( Int64Time const &t, std::wstring const &label )
    : SyncPnt( label ), time( t )
 {
    return;
@@ -75,12 +75,12 @@ TimedSyncPnt::TimedSyncPnt( Int64Time const &t, std::wstring const &label )
 /*!
  * @job_class{shutdown}
  */
-TimedSyncPnt::~TimedSyncPnt()
+SyncPntTimed::~SyncPntTimed()
 {
    return;
 }
 
-std::wstring TimedSyncPnt::to_wstring()
+std::wstring SyncPntTimed::to_wstring()
 {
    wstring result = L"[" + label + L"/" + time.to_wstring() + L"] -- ";
    switch ( this->state ) {
@@ -112,16 +112,16 @@ std::wstring TimedSyncPnt::to_wstring()
    return result;
 }
 
-void TimedSyncPnt::convert( LoggableSyncPnt &log_sync_pnt )
+void SyncPntTimed::convert( SyncPntLoggable &log_sync_pnt )
 {
-   // Cast the LoggableSyncPnt to a LoggableTimedSyncPnt.
-   LoggableTimedSyncPnt *timed_log_sync_pnt = dynamic_cast< LoggableTimedSyncPnt * >( &log_sync_pnt );
+   // Cast the SyncPntLoggable to a SyncPntTimedLoggable.
+   SyncPntTimedLoggable *timed_log_sync_pnt = dynamic_cast< SyncPntTimedLoggable * >( &log_sync_pnt );
 
    // If the cast failed, then treat it like a regular SyncPnt but warn user.
    if ( timed_log_sync_pnt == NULL ) {
       ostringstream errmsg;
       errmsg
-         << "TimedSyncPnt::convert():" << __LINE__
+         << "SyncPntTimed::convert():" << __LINE__
          << ": Could not cast synchronization point to timed synchronization point!" << THLA_ENDL;
       send_hs( stderr, errmsg.str().c_str() );
       log_sync_pnt.label = StringUtilities::ip_strdup_wstring( this->label );
