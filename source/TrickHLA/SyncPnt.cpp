@@ -33,9 +33,9 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA includes.
+#include "../../include/TrickHLA/SyncPntLoggable.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPnt.hh"
-#include "../../include/TrickHLA/SyncPntLoggable.hh"
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;

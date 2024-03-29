@@ -43,16 +43,16 @@ NASA, Johnson Space Center\n
 #include "trick/release.h"
 
 // HLA include files.
+#include "../../include/TrickHLA/SyncPntLoggable.hh"
+#include "../../include/TrickHLA/SyncPntTimed.hh"
+#include "../../include/TrickHLA/SyncPntTimedList.hh"
+#include "../../include/TrickHLA/SyncPntTimedLoggable.hh"
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/SyncPnt.hh"
 #include "TrickHLA/SyncPntListBase.hh"
-#include "../../include/TrickHLA/SyncPntTimed.hh"
-#include "../../include/TrickHLA/SyncPntTimedList.hh"
-#include "../../include/TrickHLA/SyncPntLoggable.hh"
-#include "../../include/TrickHLA/SyncPntTimedLoggable.hh"
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;

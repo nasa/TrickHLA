@@ -354,7 +354,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    FreezeTimeSet freeze_scenario_times; ///< @trick_io{**} collection of scenario times when we must enter FREEZE mode
 
    TrickHLA::Int64Time checktime;      ///< @trick_units{--} For DIS: Checking time to pause
-   SyncPntPauseList      pause_sync_pts; ///< @trick_units{--} Synchronization points used for pausing the sim.
+   SyncPntPauseList    pause_sync_pts; ///< @trick_units{--} Synchronization points used for pausing the sim.
 
    /*! @brief Return the relevant IMSim::ExecutionConfiguration object.
     *  @return Pointer to the relevant IMSim::ExecutionConfiguration object. */
