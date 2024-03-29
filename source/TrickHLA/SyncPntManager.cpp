@@ -807,7 +807,12 @@ bool SyncPntManager::wait_for_sync_point_synchronized(
 void SyncPntManager::sync_point_registration_succeeded(
    wstring const &label )
 {
-   // TODO: Add implementation.
+   if ( mark_sync_point_registered( label ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         send_hs( stdout, "SyncPntManager::sync_point_registration_succeeded():%d Label:'%ls'%c",
+                  __LINE__, label.c_str(), THLA_NEWLINE );
+      }
+   }
 }
 
 // Callback from FedAmb.
@@ -815,7 +820,27 @@ void SyncPntManager::sync_point_registration_failed(
    wstring const                    &label,
    SynchronizationPointFailureReason reason )
 {
-   // TODO: Add implementation.
+   // Only handle the sync-points we know about.
+   if ( contains_sync_point( label ) ) {
+
+      // If the reason for the failure is that the label is not unique then
+      // this means the sync-point is registered with the RTI it just means
+      // we did not do it.
+      if ( reason == SYNCHRONIZATION_POINT_LABEL_NOT_UNIQUE ) {
+         mark_sync_point_registered( label );
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+            send_hs( stdout, "SyncPntManager::sync_point_registration_failed():%d Label:'%ls' already exists.%c",
+                     __LINE__, label.c_str(), THLA_NEWLINE );
+         }
+      } else {
+         string name;
+         StringUtilities::to_string( name, label );
+         ostringstream errmsg;
+         errmsg << "SyncPntManager::sync_point_registration_failed():" << __LINE__
+                << " ERROR: Sync-point label '" << name << "'" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+   }
 }
 
 // Callback from FedAmb.
@@ -823,12 +848,52 @@ void SyncPntManager::sync_point_announced(
    wstring const            &label,
    VariableLengthData const &user_supplied_tag )
 {
-   // TODO: Add implementation.
+   // Check to see if the synchronization point is known and is in the list.
+   if ( contains_sync_point( label ) ) {
+
+      // Mark sync-point as existing/announced.
+      if ( mark_sync_point_announced( label ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+            string name;
+            StringUtilities::to_string( name, label );
+            send_hs( stdout, "SyncPntManager::sync_point_announced():%d Synchronization point announced:'%s'%c",
+                     __LINE__, name.c_str(), THLA_NEWLINE );
+         }
+      }
+   } else {
+      // By default, achieve unrecognized synchronization point.
+
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string name;
+         StringUtilities::to_string( name, label );
+         send_hs( stdout, "SyncPntManager::sync_point_announced():%d Unrecognized synchronization point:'%s', which will be achieved.%c",
+                  __LINE__, name.c_str(), THLA_NEWLINE );
+      }
+
+      // Unknown synchronization point so achieve it but don't wait for the
+      // federation to be synchronized on it.
+      achieve_sync_point( label );
+   }
 }
 
 // Callback from FedAmb.
 void SyncPntManager::sync_point_federation_synchronized(
    wstring const &label )
 {
-   // TODO: Add implementation.
+   // Mark the sync-point as synchronized.
+   if ( mark_sync_point_synchronized( label ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string name;
+         StringUtilities::to_string( name, label );
+         send_hs( stdout, "SyncPntManager::sync_point_announced():%d Synchronization point synchronized:'%s'%c",
+                  __LINE__, name.c_str(), THLA_NEWLINE );
+      }
+   } else {
+      string name;
+      StringUtilities::to_string( name, label );
+      ostringstream errmsg;
+      errmsg << "SyncPntManager::sync_point_federation_synchronized():" << __LINE__
+             << " ERROR: Unexpected unmanaged sync-point '" << name << "'" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
 }
