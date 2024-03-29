@@ -65,6 +65,8 @@ namespace TrickHLA
 typedef std::vector< SyncPnt * >                SyncPntListVec;
 typedef std::map< std::string, SyncPntListVec > SyncPntListMap;
 
+static std::string const UNKNOWN_SYNC_PNT_LIST = "UNKNOWN_SYNC_PNT_LIST";
+
 class SyncPntManager
 {
    // Let the Trick input processor access protected and private data.
@@ -82,7 +84,7 @@ class SyncPntManager
    // Public constructors and destructor.
    //
    /*! @brief Default constructor for the TrickHLA SyncPntManager class. */
-   SyncPntManager();
+   SyncPntManager( Federate *federate );
 
    /*! @brief Pure virtual destructor for the TrickHLA SyncPntManager class. */
    virtual ~SyncPntManager() = 0;
@@ -110,6 +112,8 @@ class SyncPntManager
 
    bool is_sync_point_registered( std::wstring const &label );
 
+   bool mark_sync_point_registered( std::wstring const &label );
+
    bool register_sync_point( std::wstring const &label );
 
    bool register_sync_point( std::wstring const &label, RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
@@ -123,6 +127,8 @@ class SyncPntManager
    bool register_sync_point( SyncPnt *sp, RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
 
    bool is_sync_point_announced( std::wstring const &label );
+
+   bool mark_sync_point_announced( std::wstring const &label );
 
    bool wait_for_sync_point_announced( std::wstring const &label );
 
@@ -139,6 +145,8 @@ class SyncPntManager
    bool achieve_sync_point( SyncPnt *sp );
 
    bool is_sync_point_synchronized( std::wstring const &label );
+
+   bool mark_sync_point_synchronized( std::wstring const &label );
 
    bool wait_for_sync_point_synchronized( std::wstring const &label );
 
@@ -160,7 +168,12 @@ class SyncPntManager
 
    SyncPntListMap sync_pnt_lists; ///< @trick_io{**} Map of named sync-point lists.
 
+   Federate *federate; ///< @trick_units{--} Associated TrickHLA Federate.
+
   private:
+   /*! @brief Default constructor for the TrickHLA SyncPntManager class. */
+   SyncPntManager();
+
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for SyncPntManager class.
     *  @details This constructor is private to prevent inadvertent copies. */
