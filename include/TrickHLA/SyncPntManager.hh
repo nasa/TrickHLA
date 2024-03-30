@@ -155,13 +155,13 @@ class SyncPntManager
    bool wait_for_sync_point_synchronized( SyncPnt *sp );
 
    // Callbacks from FedAmb.
-   void sync_point_registration_succeeded( std::wstring const &label );
+   virtual void sync_point_registration_succeeded( std::wstring const &label );
 
-   void sync_point_registration_failed( std::wstring const &label, RTI1516_NAMESPACE::SynchronizationPointFailureReason reason );
+   virtual void sync_point_registration_failed( std::wstring const &label, RTI1516_NAMESPACE::SynchronizationPointFailureReason reason );
 
-   void sync_point_announced( std::wstring const &label, RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
+   virtual void sync_point_announced( std::wstring const &label, RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
 
-   void sync_point_federation_synchronized( std::wstring const &label );
+   virtual void sync_point_federation_synchronized( std::wstring const &label );
 
   protected:
    MutexLock mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
