@@ -201,9 +201,6 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
     *  pe_packing_data object into the working data object(s). */
    virtual void unpack_into_working_data() = 0;
 
-  public:
-   bool debug; ///< @trick_units{--} Debug output flag.
-
   protected:
    RefFrameBase *parent_frame; ///< @trick_units{--} Pointer to this frame's parent frame.
 

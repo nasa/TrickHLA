@@ -18,6 +18,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../TrickHLA/Attribute.cpp}
 @trick_link_dependency{../TrickHLA/Conditional.cpp}
+@trick_link_dependency{../TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../TrickHLA/Object.cpp}
 @trick_link_dependency{PhysicalEntityConditionalBase.cpp}
 

@@ -16,6 +16,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{../TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{LRTreeNodeBase.cpp}
 @trick_link_dependency{LRTreeBase.cpp}
 @trick_link_dependency{RefFrameBase.cpp}
@@ -85,13 +86,13 @@ bool RefFrameTree::check_tree()
  */
 void RefFrameTree::print_tree( std::ostream &stream )
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( debug || DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
       send_hs( stdout,
                "RefFrameTree::print_tree():%d\n",
                __LINE__, THLA_NEWLINE );
       print_nodes( stream );
    }
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( debug || DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
       print_paths( stream );
    }
    return;
@@ -120,25 +121,4 @@ RefFrameBase *RefFrameTree::find_frame( char const *name )
 RefFrameBase *RefFrameTree::find_frame( string const &name )
 {
    return ( static_cast< RefFrameBase * >( find_node( name ) ) );
-}
-
-RefFrameBase *RefFrameTree::find_common_base(
-   char const *child_1,
-   char const *child_2 )
-{
-   return ( NULL );
-}
-
-RefFrameBase *RefFrameTree::find_common_base(
-   string const &child_1,
-   string const &child_2 )
-{
-   return ( NULL );
-}
-
-RefFrameBase *RefFrameTree::find_common_base(
-   RefFrameBase *child_1,
-   RefFrameBase *child_2 )
-{
-   return ( NULL );
 }

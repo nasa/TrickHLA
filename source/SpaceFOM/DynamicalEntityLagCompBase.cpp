@@ -16,7 +16,9 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../TrickHLA/Attribute.cpp}
+@trick_link_dependency{../TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../TrickHLA/Types.cpp}
 @trick_link_dependency{DynamicalEntityLagCompBase.cpp}
 
 

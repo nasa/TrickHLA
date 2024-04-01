@@ -21,6 +21,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../source/TrickHLA/ObjectDeleted.cpp}
 @trick_link_dependency{../../source/SpaceFOM/DynamicalEntityDeleted.cpp}
 
 @revs_title

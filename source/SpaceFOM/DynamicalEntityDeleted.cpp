@@ -16,7 +16,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../TrickHLA/Object.cpp}
 @trick_link_dependency{DynamicalEntityDeleted.cpp}
 
 @revs_title

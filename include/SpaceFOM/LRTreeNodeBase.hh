@@ -111,6 +111,9 @@ class LRTreeNodeBase
     *  @param stream Output stream. */
    virtual void print_node( std::ostream &stream = std::cout );
 
+  public:
+   bool debug; ///< @trick_units{--} Debug output flag.
+
   protected:
    bool is_root_node; ///< @trick_units{--} Indicator that this is the root node of the tree.
 
