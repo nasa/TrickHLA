@@ -64,7 +64,8 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 LRTreeBase::LRTreeBase()
-   : nodes(),
+   : debug( false ),
+     nodes(),
      node_map(),
      root_node_id( 0 ),
      root_node_ptr( NULL ),

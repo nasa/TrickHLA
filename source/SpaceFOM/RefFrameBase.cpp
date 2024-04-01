@@ -69,8 +69,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 RefFrameBase::RefFrameBase()
-   : debug( false ),
-     parent_frame( NULL ),
+   : parent_frame( NULL ),
      name_attr( NULL ),
      parent_name_attr( NULL ),
      state_attr( NULL ),

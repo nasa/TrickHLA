@@ -423,6 +423,11 @@ ref_frame_A.lag_compensation.set_integ_dt( 0.025 )
 #frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
 frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
+#---------------------------------------------------------------------------
+# Set up the Reference Frame Tree
+#---------------------------------------------------------------------------
+ref_frame_tree.frame_tree.debug = True
+
 
 #---------------------------------------------------------------------------
 # Set up the PhysicalEntity object for discovery.

@@ -67,6 +67,7 @@ using namespace SpaceFOM;
 LRTreeNodeBase::LRTreeNodeBase()
    : name( NULL ),
      parent( NULL ),
+     debug( false ),
      is_root_node( false ),
      node_id( 0 )
 {
@@ -81,6 +82,7 @@ LRTreeNodeBase::LRTreeNodeBase(
    LRTreeNodeBase *node_parent )
    : name( NULL ),
      parent( NULL ),
+     debug( false ),
      is_root_node( false ),
      node_id( 0 )
 {

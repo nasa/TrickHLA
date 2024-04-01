@@ -111,6 +111,9 @@ class LRTreeBase
     *  @param stream Output stream. */
    virtual void print_nodes( std::ostream &stream = std::cout );
 
+  public:
+   bool debug; ///< @trick_units{--} Debug output flag.
+
   protected:
    LRTreeNodeVector nodes;    ///< @trick_io{**} Node vector used to build and manage the tree.
    LRTreeNodeMap    node_map; ///< @trick_io{**} Map used to build and manage the tree.
