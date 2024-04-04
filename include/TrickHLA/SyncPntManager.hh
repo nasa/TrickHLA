@@ -84,12 +84,19 @@ class SyncPntManager
    // Public constructors and destructor.
    //
    /*! @brief Default constructor for the TrickHLA SyncPntManager class. */
-   SyncPntManager( Federate *federate );
+   SyncPntManager();
+   /*! @brief Default constructor for the TrickHLA SyncPntManager class. */
+   explicit SyncPntManager( Federate *fed );
 
    /*! @brief Pure virtual destructor for the TrickHLA SyncPntManager class. */
    virtual ~SyncPntManager() = 0;
 
   protected:
+   void setup( Federate *fed )
+   {
+      this->federate = fed;
+   }
+
    /*! @brief Add the given synchronization point label to the named list.
     *  @param label Synchronization point label.
     *  @param list_name The name of the list of sync-points to add to.
@@ -171,9 +178,6 @@ class SyncPntManager
    Federate *federate; ///< @trick_units{--} Associated TrickHLA Federate.
 
   private:
-   /*! @brief Default constructor for the TrickHLA SyncPntManager class. */
-   SyncPntManager();
-
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for SyncPntManager class.
     *  @details This constructor is private to prevent inadvertent copies. */

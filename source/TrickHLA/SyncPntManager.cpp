@@ -65,6 +65,17 @@ using namespace TrickHLA;
 /*!
  * @job_class{initialization}
  */
+SyncPntManager::SyncPntManager()
+   : mutex(),
+     sync_pnt_lists(),
+     federate( NULL )
+{
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
 SyncPntManager::SyncPntManager(
    Federate *fed )
    : mutex(),
@@ -183,6 +194,7 @@ bool SyncPntManager::add_sync_point(
              << " ERROR: The sync-point label '" << name
              << "' has already been added!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return false;
    }
 
    if ( !contains_sync_point_list_name( list_name ) ) {
@@ -192,6 +204,7 @@ bool SyncPntManager::add_sync_point(
                 << " ERROR: Could not add the named sync-point list for '"
                 << list_name << "'!" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
+         return false;
       }
    }
 
@@ -220,7 +233,7 @@ bool SyncPntManager::contains_sync_point(
 
       SyncPntListVec::const_iterator i;
       for ( i = iter->second.begin(); i != iter->second.end(); ++i ) {
-         SyncPnt *sp = ( *i );
+         SyncPnt const *sp = ( *i );
          if ( ( sp != NULL ) && ( label.compare( sp->get_label() ) == 0 ) ) {
             return true;
          }
@@ -359,7 +372,7 @@ bool SyncPntManager::register_all_sync_points(
    return status;
 }
 
-bool register_sync_point(
+bool SyncPntManager::register_sync_point(
    SyncPnt *sp )
 {
    if ( sp == NULL ) {
@@ -367,6 +380,14 @@ bool register_sync_point(
       errmsg << "SyncPntManager::register_sync_point():" << __LINE__
              << " ERROR: Unexpected NULL SyncPnt!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return false;
+   }
+   if ( this->federate == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SyncPntManager::register_sync_point():" << __LINE__
+             << " ERROR: Unexpected NULL federate pointer!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return false;
    }
 
    // Macro to save the FPU Control Word register value.
@@ -410,7 +431,7 @@ bool register_sync_point(
    return registered;
 }
 
-bool register_sync_point(
+bool SyncPntManager::register_sync_point(
    SyncPnt                 *sp,
    FederateHandleSet const &handle_set )
 {
@@ -419,6 +440,14 @@ bool register_sync_point(
       errmsg << "SyncPntManager::register_sync_point():" << __LINE__
              << " ERROR: Unexpected NULL SyncPnt!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return false;
+   }
+   if ( this->federate == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SyncPntManager::register_sync_point():" << __LINE__
+             << " ERROR: Unexpected NULL federate pointer!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return false;
    }
 
    // Macro to save the FPU Control Word register value.
@@ -546,6 +575,14 @@ bool SyncPntManager::wait_for_sync_point_announced(
       errmsg << "SyncPntManager::wait_for_sync_point_announced():" << __LINE__
              << " ERROR: Unexpected NULL SyncPnt!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return false;
+   }
+   if ( this->federate == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SyncPntManager::wait_for_sync_point_announced():" << __LINE__
+             << " ERROR: Unexpected NULL federate pointer!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return false;
    }
 
    bool announced = false;
@@ -706,6 +743,14 @@ bool SyncPntManager::achieve_sync_point(
       errmsg << "SyncPntManager::achieve_sync_point():" << __LINE__
              << " ERROR: Unexpected NULL SyncPnt!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return false;
+   }
+   if ( this->federate == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SyncPntManager::achieve_sync_point():" << __LINE__
+             << " ERROR: Unexpected NULL federate pointer!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return false;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -843,6 +888,14 @@ bool SyncPntManager::wait_for_sync_point_synchronized(
       errmsg << "SyncPntManager::wait_for_sync_point_synchronized():" << __LINE__
              << " ERROR: Unexpected NULL SyncPnt!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return false;
+   }
+   if ( this->federate == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SyncPntManager::wait_for_sync_point_synchronized():" << __LINE__
+             << " ERROR: Unexpected NULL federate pointer!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return false;
    }
 
    bool         print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE );

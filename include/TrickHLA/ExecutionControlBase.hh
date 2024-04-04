@@ -541,6 +541,7 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    virtual void set_federate( TrickHLA::Federate *fed )
    {
       this->federate = fed;
+      // TODO: this->SyncPntManager.federate = fed;
    }
    /*! @brief Get the reference to the associated TrickHLA::Federate.
     *  @return Pointer to the associated TrickHLA::Federate. */

@@ -197,6 +197,7 @@ void ExecutionControlBase::setup(
 {
    // Set the TrickHLA::Federate instance reference.
    this->federate = &federate;
+   // TODO: SyncPntManager::setup( &federate );
 
    // Set the TrickHLA::Manager instance reference.
    this->manager = &manager;
@@ -224,6 +225,7 @@ void ExecutionControlBase::setup(
 {
    // Set the TrickHLA::Federate instance reference.
    this->federate = &federate;
+   // TODO: SyncPntManager::setup( &federate );
 
    // Set the TrickHLA::Manager instance reference.
    this->manager = &manager;

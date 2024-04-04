@@ -22,6 +22,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/Interaction.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPntManager.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../source/SpaceFOM/ExecutionConfiguration.cpp}
 @trick_link_dependency{../../source/SpaceFOM/ExecutionControl.cpp}
@@ -50,6 +51,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Interaction.hh"
+#include "TrickHLA/SyncPntManager.hh"
 #include "TrickHLA/Types.hh"
 
 // SpaceFOM include files.
