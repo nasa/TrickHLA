@@ -111,7 +111,7 @@ class FreezeInteractionHandler : public TrickHLA::InteractionHandler
    }
 
    /*! @brief Set the associated IMSim::ExecutionControl.
-    *  @param exec_cntrl_ptr Pointer to the associated IMSim::ExecutionControl. */
+    *  @return exec_cntrl_ptr Pointer to the associated IMSim::ExecutionControl. */
    IMSim::ExecutionControl *get_exection_control()
    {
       return ( execution_control );

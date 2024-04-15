@@ -1,6 +1,6 @@
 /*!
 @file SpaceFOM/RefFrameDeleted.hh
-@ingroup TrickHLAModel
+@ingroup SpaceFOM
 @brief Callback class the user writes to do something once the object has been
 deleted from the RTI.
 
@@ -17,7 +17,7 @@ NASA, Johnson Space Center\n
 
 @trick_parse{everything}
 
-@python_module{TrickHLAModel}
+@python_module{SpaceFOM}
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
@@ -57,9 +57,9 @@ class RefFrameDeleted : public TrickHLA::ObjectDeleted
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLAModel RefFrameDeleted class. */
+   /*! @brief Default constructor for the SpaceFOM RefFrameDeleted class. */
    RefFrameDeleted();
-   /*! @brief Destructor for the TrickHLAModel RefFrameDeleted class. */
+   /*! @brief Destructor for the SpaceFOM RefFrameDeleted class. */
    virtual ~RefFrameDeleted();
 
    //-----------------------------------------------------------------

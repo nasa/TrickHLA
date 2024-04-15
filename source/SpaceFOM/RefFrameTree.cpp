@@ -61,21 +61,25 @@ RefFrameTree::~RefFrameTree()
    return;
 }
 
-/*! @brief Add a reference frame to the tree.
- *  @details This function is used to add a SpaceFOM reference frame into
- *  the reference frame tree.
- *  @param frame_ptr Pointer to the reference frame to add.
- *  @return Success or failure of the add. */
+/*!
+ * @job_class{initialization}
+ */
 bool RefFrameTree::add_frame( RefFrameBase *frame_ptr )
 {
    return ( this->add_node( frame_ptr ) );
 }
 
+/*!
+ * @job_class{initialization}
+ */
 bool RefFrameTree::build_tree()
 {
    return ( LRTreeBase::build_tree() );
 }
 
+/*!
+ * @job_class{initialization}
+ */
 bool RefFrameTree::check_tree()
 {
    return ( LRTreeBase::check_tree() );
@@ -98,26 +102,41 @@ void RefFrameTree::print_tree( std::ostream &stream )
    return;
 }
 
+/*!
+ * @job_class{scheduled}
+ */
 bool RefFrameTree::has_frame( char const *name )
 {
    return ( this->has_node( name ) );
 }
 
+/*!
+ * @job_class{scheduled}
+ */
 bool RefFrameTree::has_frame( string const &name )
 {
    return ( this->has_node( name ) );
 }
 
+/*!
+ * @job_class{scheduled}
+ */
 bool RefFrameTree::has_frame( RefFrameBase const *frame )
 {
    return ( has_node( frame ) );
 }
 
+/*!
+ * @job_class{scheduled}
+ */
 RefFrameBase *RefFrameTree::find_frame( char const *name )
 {
    return ( static_cast< RefFrameBase * >( find_node( name ) ) );
 }
 
+/*!
+ * @job_class{scheduled}
+ */
 RefFrameBase *RefFrameTree::find_frame( string const &name )
 {
    return ( static_cast< RefFrameBase * >( find_node( name ) ) );

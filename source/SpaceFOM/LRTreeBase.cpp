@@ -85,11 +85,9 @@ LRTreeBase::~LRTreeBase()
    return;
 }
 
-/*! @brief Add a reference node to the tree.
- *  @details This function is used to add a SpaceFOM reference node into
- *  the reference node tree.
- *  @param node_ptr Pointer to the reference node to add.
- *  @return Success or failure of the add. */
+/*!
+ * @job_class{initialize}
+ */
 bool LRTreeBase::add_node( LRTreeNodeBase *node_ptr )
 {
    // Check to see if the node pointer is NULL.
@@ -134,6 +132,9 @@ bool LRTreeBase::add_node( LRTreeNodeBase *node_ptr )
    return ( true );
 }
 
+/*!
+ * @job_class{initialize}
+ */
 bool LRTreeBase::build_tree()
 {
    // Start by allocating the paths matrix for the tree.
@@ -192,6 +193,9 @@ bool LRTreeBase::build_tree()
    return ( true );
 }
 
+/*!
+ * @job_class{initialize}
+ */
 bool LRTreeBase::check_tree()
 {
    bool found_root  = false;
@@ -294,11 +298,17 @@ bool LRTreeBase::check_tree()
    return ( check_state );
 }
 
+/*!
+ * @job_class{scheduled}
+ */
 bool LRTreeBase::has_node( unsigned int const node_id )
 {
    return ( node_id < this->nodes.size() );
 }
 
+/*!
+ * @job_class{scheduled}
+ */
 bool LRTreeBase::has_node( char const *name )
 {
    if ( name == NULL ) {
@@ -311,12 +321,18 @@ bool LRTreeBase::has_node( char const *name )
    return ( has_node( string( name ) ) );
 }
 
+/*!
+ * @job_class{scheduled}
+ */
 bool LRTreeBase::has_node( string const &name )
 {
    // Returns true if the node was found, false otherwise.
    return ( node_map.find( name ) != node_map.end() );
 }
 
+/*!
+ * @job_class{scheduled}
+ */
 bool LRTreeBase::has_node( LRTreeNodeBase const *node )
 {
    vector< LRTreeNodeBase * >::iterator node_iter;
@@ -331,11 +347,17 @@ bool LRTreeBase::has_node( LRTreeNodeBase const *node )
    return ( false );
 }
 
+/*!
+ * @job_class{scheduled}
+ */
 LRTreeNodeBase *LRTreeBase::find_node( unsigned int const node_id )
 {
    return ( this->nodes[node_id] );
 }
 
+/*!
+ * @job_class{scheduled}
+ */
 LRTreeNodeBase *LRTreeBase::find_node( char const *name )
 {
    if ( name == NULL ) {
@@ -346,6 +368,9 @@ LRTreeNodeBase *LRTreeBase::find_node( char const *name )
    return ( find_node( string( name ) ) );
 }
 
+/*!
+ * @job_class{scheduled}
+ */
 LRTreeNodeBase *LRTreeBase::find_node( string const &name )
 {
    map< string, LRTreeNodeBase * >::iterator map_iter;
@@ -834,7 +859,7 @@ LRTreeNodeBase *LRTreeBase::find_common_node( LRTreeNodeVector *up_path,
 
    // Climb up the paths looking for a common node.
    for ( up_iter = up_path->begin(); up_iter != up_path->end(); ++up_iter ) {
-      // See if se can find this node in the down_set.
+      // See if we can find this node in the down_set.
       // The first one that we find should be the closest common node.
       for ( down_iter = down_path->begin(); down_iter != down_path->end(); ++down_iter ) {
          if ( *down_iter == *up_iter ) {

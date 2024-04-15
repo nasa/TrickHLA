@@ -1,6 +1,6 @@
 /*!
 @file SpaceFOM/PhysicalEntityDeleted.cpp
-@ingroup TrickHLAModel
+@ingroup SpaceFOM
 @brief Callback class the user writes to do something once the object has been
 deleted from the RTI.
 
