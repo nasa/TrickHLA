@@ -43,12 +43,6 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/PhysicalInterfaceBase.hh"
 #include "SpaceFOM/PhysicalInterfaceData.hh"
 
-namespace TrickHLA
-{
-class Packing;
-class OpaqueBuffer;
-} // namespace TrickHLA
-
 namespace SpaceFOM
 {
 

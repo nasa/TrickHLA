@@ -1,6 +1,6 @@
 /*!
 @file SpaceFOM/DynamicalEntityDeleted.hh
-@ingroup TrickHLAModel
+@ingroup SpaceFOM
 @brief Callback class the user writes to do something once the object has been
 deleted from the RTI.
 
@@ -17,10 +17,11 @@ NASA, Johnson Space Center\n
 
 @trick_parse{everything}
 
-@python_module{TrickHLAModel}
+@python_module{SpaceFOM}
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../source/TrickHLA/ObjectDeleted.cpp}
 @trick_link_dependency{../../source/SpaceFOM/DynamicalEntityDeleted.cpp}
 
 @revs_title
@@ -59,9 +60,9 @@ class DynamicalEntityDeleted : public SpaceFOM::PhysicalEntityDeleted
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLAModel DynamicalEntityDeleted class. */
+   /*! @brief Default constructor for the SpaceFOM DynamicalEntityDeleted class. */
    DynamicalEntityDeleted();
-   /*! @brief Destructor for the TrickHLAModel DynamicalEntityDeleted class. */
+   /*! @brief Destructor for the SpaceFOM DynamicalEntityDeleted class. */
    virtual ~DynamicalEntityDeleted();
 
    //-----------------------------------------------------------------

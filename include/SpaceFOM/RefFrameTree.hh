@@ -92,13 +92,6 @@ class RefFrameTree : public SpaceFOM::LRTreeBase
    virtual RefFrameBase *find_frame( char const *name );
    virtual RefFrameBase *find_frame( std::string const &name );
 
-   virtual RefFrameBase *find_common_base( char const *child_1,
-                                           char const *child_2 );
-   virtual RefFrameBase *find_common_base( std::string const &child_1,
-                                           std::string const &child_2 );
-   virtual RefFrameBase *find_common_base( RefFrameBase *child_1,
-                                           RefFrameBase *child_2 );
-
    /*! @brief Print out the Reference Frame Tree nodes.
     *  @param stream Output stream. */
    virtual void print_tree( std::ostream &stream = std::cout );

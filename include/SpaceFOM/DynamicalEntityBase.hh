@@ -22,6 +22,8 @@ NASA, Johnson Space Center\n
 @python_module{SpaceFOM}
 
 @tldh
+@trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
+@trick_link_dependency{../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../../source/SpaceFOM/PhysicalEntityBase.cpp}
 @trick_link_dependency{../../source/SpaceFOM/DynamicalEntityBase.cpp}
 
@@ -35,6 +37,10 @@ NASA, Johnson Space Center\n
 
 #ifndef SPACEFOM_DYNAMICAL_ENTITY_BASE_HH
 #define SPACEFOM_DYNAMICAL_ENTITY_BASE_HH
+
+// TrickHLA include files.
+#include "TrickHLA/Attribute.hh"
+#include "TrickHLA/Object.hh"
 
 // SpaceFOM include files.
 #include "SpaceFOM/DynamicalEntityData.hh"

@@ -1,6 +1,6 @@
 /*!
 @file SpaceFOM/PhysicalEntityDeleted.cpp
-@ingroup TrickHLAModel
+@ingroup SpaceFOM
 @brief Callback class the user writes to do something once the object has been
 deleted from the RTI.
 
@@ -16,7 +16,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../TrickHLA/Object.cpp}
 @trick_link_dependency{PhysicalEntityDeleted.cpp}
 
 @revs_title
