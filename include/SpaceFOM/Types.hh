@@ -1,6 +1,6 @@
 /*!
 @file SpaceFOM/Types.hh
-@ingroup SpaceFOM
+@addtogroup SpaceFOM
 @brief Definition of the TrickHLA SpaceFOM enumeration types and utilities.
 
 @copyright Copyright 2019 United States Government as represented by the

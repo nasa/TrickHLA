@@ -57,9 +57,9 @@ class PhysicalEntityOwnershipHandler : public TrickHLA::OwnershipHandler
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLAModel PhysicalEntityOwnershipHandler class. */
+   /*! @brief Default constructor for the SpaceFOM PhysicalEntityOwnershipHandler class. */
    PhysicalEntityOwnershipHandler();
-   /*! @brief Destructor for the TrickHLAModel PhysicalEntityOwnershipHandler class. */
+   /*! @brief Destructor for the SpaceFOM PhysicalEntityOwnershipHandler class. */
    virtual ~PhysicalEntityOwnershipHandler();
 
    /*! @brief Initialization callback as part of the TrickHLA::OwnershipHandler functions.

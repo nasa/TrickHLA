@@ -80,8 +80,8 @@ class LRTreeNodeBase
    LRTreeNodeBase();
 
    /*! @brief Initialization constructor.
-    *  @param name The name of the node to be constructed.
-    *  @param parent The parent node in the tree for the constructed node. */
+    *  @param node_name The name of the node to be constructed.
+    *  @param node_parent The parent node in the tree for the constructed node. */
    LRTreeNodeBase( const char     *node_name,
                    LRTreeNodeBase *node_parent );
 
