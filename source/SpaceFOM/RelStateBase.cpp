@@ -15,7 +15,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{SpaceTimeCoordinate.cpp}
+@trick_link_dependency{SpaceTimeCoordinateData.cpp}
 @trick_link_dependency{RefFrameBase.cpp}
 @trick_link_dependency{RefFrameTree.cpp}
 @trick_link_dependency{PhysicalEntityData.cpp}
@@ -128,6 +128,52 @@ bool RelStateBase::set_frame(
 bool RelStateBase::compute_state(
    PhysicalEntityData * source )
 {
+   // Check for NULL frame.
+   if ( source == NULL ){
+      if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+         ostringstream errmsg;
+         errmsg << "RelStateBase::compute_state() Warning: PhysicalEntityData NULL!" << endl;
+         send_hs( stderr, errmsg.str().c_str() );
+      }
+      return( false );
+   }
+
+   // Find the source parent frame in the tree.
+   RefFrameBase * source_parent_frame = frame_tree->find_frame( source->parent_frame );
+   if ( source_parent_frame == NULL ){
+      if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+         ostringstream errmsg;
+         errmsg << "RelStateBase::compute_state() Warning: Could not find parent frame: %s!" << endl;
+         send_hs( stderr, source->parent_frame, errmsg.str().c_str() );
+      }
+      return( false );
+   }
+
+   // Check for trivial transformation.
+   if ( source_parent_frame == express_frame ){
+
+      // Just copy the state and return.
+      strcpy( this->name, source->name );
+
+      return( true );
+   }
+
+   // Now to do some linear algebra.
+   // See SpaceFOM standard p 148.
+   QuaternionData q_c_p;  // The attitude of the child frame with respect to the parent frame.
+   double r_0_p[3]; /* Position vector giving the position of child reference
+                       frame origin with respect to the parent reference frame
+                       origin expressed in parent reference frame coordinates. */
+   double r_p[3];   /* Position vector of the entity expressed in parent
+                       reference frame coordinates. */
+   double r_c_in_p[3]; /* Position vector in the child frame transformed into
+                          parent frame orientation. */
+
+   // Compute position.
+   q_c_p.transform_vector( source->state.pos, r_c_in_p );
+   r_p[0] = r_0_p[0] + r_c_in_p[0];
+   r_p[1] = r_0_p[1] + r_c_in_p[1];
+   r_p[2] = r_0_p[2] + r_c_in_p[2];
 
    return( false );
 }
@@ -140,6 +186,12 @@ bool RelStateBase::compute_state(
    const char * wrt_frame )
 {
 
+   // Set the frame in which to express the state.
+   if ( this->set_frame( wrt_frame ) ) {
+      // Call the base function.
+      return( this->compute_state( source, express_frame ) );
+   }
+
    return( false );
 }
 
@@ -151,6 +203,12 @@ bool RelStateBase::compute_state(
    std::string & wrt_frame )
 {
 
+   // Set the frame in which to express the state.
+   if ( this->set_frame( wrt_frame ) ) {
+      // Call the base function.
+      return( this->compute_state( source, express_frame ) );
+   }
+
    return( false );
 }
 
@@ -161,6 +219,21 @@ bool RelStateBase::compute_state(
    PhysicalEntityData * source,
    RefFrameBase * wrt_frame )
 {
+   // Check for NULL frame.
+   if ( wrt_frame == NULL ){
+      if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+         ostringstream errmsg;
+         errmsg << "RelStateBase::compute_state() Warning: Reference frame NULL!" << endl;
+         send_hs( stderr, errmsg.str().c_str() );
+      }
+      return( false );
+   }
+
+   // Set the frame in which to express the state.
+   if ( this->set_frame( *wrt_frame ) ) {
+      // Call the base function to compute the state.
+      return( this->compute_state( source ) );
+   }
 
    return( false );
 }

@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 @python_module{SpaceFOM}
 
 @tldh
-@trick_link_dependency{../../source/SpaceFOM/SpaceTimeCoordinate.cpp}
+@trick_link_dependency{../../source/SpaceFOM/SpaceTimeCoordinateData.cpp}
 @trick_link_dependency{../../source/SpaceFOM/RefFrameBase.cpp}
 @trick_link_dependency{../../source/SpaceFOM/RefFrameTree.cpp}
 @trick_link_dependency{../../source/SpaceFOM/PhysicalEntityData.cpp}
