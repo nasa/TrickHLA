@@ -20,10 +20,9 @@ NASA, Johnson Space Center\n
 @python_module{SpaceFOM}
 
 @tldh
-@trick_link_dependency{../../source/SpaceFOM/SpaceTimeCoordinate.cpp}
+@trick_link_dependency{../../source/SpaceFOM/SpaceTimeCoordinateData.cpp}
 @trick_link_dependency{../../source/SpaceFOM/RefFrameBase.cpp}
 @trick_link_dependency{../../source/SpaceFOM/RefFrameTree.cpp}
-@trick_link_dependency{../../source/SpaceFOM/PhysicalEntityData.cpp}
 @trick_link_dependency{../../source/SpaceFOM/RelStateBase.cpp}
 
 @revs_begin
@@ -43,15 +42,15 @@ NASA, Johnson Space Center\n
 // TrickHLA model include files.
 
 // SpaceFOM include files.
-#include "SpaceFOM/SpaceTimeCoordinateData.hh"
+#include "SpaceFOM/PhysicalEntityData.hh"
 #include "SpaceFOM/RefFrameBase.hh"
 #include "SpaceFOM/RefFrameTree.hh"
-#include "SpaceFOM/PhysicalEntityData.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 namespace SpaceFOM
 {
 
-class RelStateBase: public SpaceFOM::PhysicalEntityData
+class RelStateBase : public SpaceFOM::PhysicalEntityData
 {
 
    // Let the Trick input processor access protected and private data.
@@ -68,58 +67,59 @@ class RelStateBase: public SpaceFOM::PhysicalEntityData
    /*! @brief Default constructor for the SpaceFOM RelStateBase class.
     *  @param wrt_frame The frame in which to express the source state.
     *  @param tree  The reference frame tree containing all reference frames. */
-   RelStateBase( RefFrameBase & wrt_frame, RefFrameTree & tree );
+   RelStateBase( RefFrameBase &wrt_frame, RefFrameTree &tree );
    /*! @brief Destructor for the SpaceFOM RelStateBase class. */
    virtual ~RelStateBase();
 
    /*! @brief Set the frame in which to express a source state.
     *  @return True if frame is set, false otherwise.
     *  @param wrt_frame Frame in which to express a source state. */
-   bool set_frame( const char * wrt_frame );
+   bool set_frame( char const *wrt_frame );
 
    /*! @brief Set the frame in which to express a source state.
     *  @return True if frame is set, false otherwise.
     *  @param wrt_frame Frame in which to express a source state. */
-   bool set_frame( std::string & wrt_frame );
+   bool set_frame( std::string const &wrt_frame );
 
    /*! @brief Set the frame in which to express a source state.
     *  @return True if frame is set.  In this case always true.
     *  @param wrt_frame Frame in which to express a source state. */
-   bool set_frame( RefFrameBase & wrt_frame ){
+   bool set_frame( RefFrameBase &wrt_frame )
+   {
       express_frame = &wrt_frame;
-      return( true );
+      return ( true );
    }
 
    /*! @brief Get the frame in which a source state will be expressed.
     *  @return Frame in which a source state will be expressed. */
-   RefFrameBase * get_frame(){ return(express_frame); }
+   RefFrameBase *get_frame() { return ( express_frame ); }
 
    /*! @brief Compute the state of the source with respect to a given frame.
     *  @return True is state successfully computed, false otherwise.
     *  @param source The source state to express in a different frame. */
-   bool compute_state( PhysicalEntityData * source );
+   bool compute_state( PhysicalEntityData const *source );
 
    /*! @brief Compute the state of the source with respect to a given frame.
     *  @return True is state successfully computed, false otherwise.
     *  @param source The source state to express in a different frame.
     *  @param wrt_frame The frame in which to express the source state. */
-   bool compute_state( PhysicalEntityData * source, const char * wrt_frame );
+   bool compute_state( PhysicalEntityData const *source, char const *wrt_frame );
 
    /*! @brief Compute the state of the source with respect to a given frame.
     *  @return True is state successfully computed, false otherwise.
     *  @param source The source state to express in a different frame.
     *  @param wrt_frame The frame in which to express the source state. */
-   bool compute_state( PhysicalEntityData * source, std::string & wrt_frame );
+   bool compute_state( PhysicalEntityData const *source, std::string const &wrt_frame );
 
    /*! @brief Compute the state of the source with respect to a given frame.
     *  @return True is state successfully computed, false otherwise.
     *  @param source The source state to express in a different frame.
     *  @param wrt_frame The frame in which to express the source state. */
-   bool compute_state( PhysicalEntityData * source, RefFrameBase * wrt_frame );
+   bool compute_state( PhysicalEntityData const *source, RefFrameBase const *wrt_frame );
 
   protected:
-   RefFrameBase * express_frame;
-   RefFrameTree * frame_tree;
+   RefFrameBase *express_frame;
+   RefFrameTree *frame_tree;
 
   private:
    // This object is not copyable
@@ -129,7 +129,6 @@ class RelStateBase: public SpaceFOM::PhysicalEntityData
    /*! @brief Assignment operator for RelStateBase class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
    RelStateBase &operator=( RelStateBase const &rhs );
-
 };
 
 } // namespace SpaceFOM

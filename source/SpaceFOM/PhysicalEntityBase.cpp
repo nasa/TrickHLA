@@ -191,7 +191,7 @@ void PhysicalEntityBase::base_config(
    object->packing             = this;
    // Allocate the attributes for the PhysicalEntity HLA object.
    object->attr_count = 9;
-   object->attributes = (TrickHLA::Attribute *)trick_MM->declare_var( "TrickHLA::Attribute", object->attr_count );
+   object->attributes = static_cast< TrickHLA::Attribute * >( trick_MM->declare_var( "TrickHLA::Attribute", object->attr_count ) );
 
    //
    // Specify the Reference Frame attributes.

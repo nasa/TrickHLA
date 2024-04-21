@@ -15,10 +15,8 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{SpaceTimeCoordinate.cpp}
 @trick_link_dependency{RefFrameBase.cpp}
 @trick_link_dependency{RefFrameTree.cpp}
-@trick_link_dependency{PhysicalEntityData.cpp}
 @trick_link_dependency{RelStateBase.cpp}
 
 @revs_title
@@ -30,19 +28,22 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cstring>
-#include <string>
 #include <iostream>
 #include <sstream>
+#include <string>
 
 // Trick include files.
 #include "trick/message_proto.h"
 
 // TrickHLA model include files.
-#include "TrickHLA/Types.hh"
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/Types.hh"
 
 // SpaceFOM include files.
+#include "SpaceFOM/PhysicalEntityData.hh"
+#include "SpaceFOM/RefFrameBase.hh"
+#include "SpaceFOM/RefFrameTree.hh"
 #include "SpaceFOM/RelStateBase.hh"
 
 using namespace std;
@@ -53,11 +54,28 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 RelStateBase::RelStateBase(
-   RefFrameBase & wrt_frame,
-   RefFrameTree & tree )
+   RefFrameBase &wrt_frame,
+   RefFrameTree &tree )
    : express_frame( &wrt_frame ),
      frame_tree( &tree )
 {
+   this->name         = NULL;
+   this->type         = NULL;
+   this->status       = NULL;
+   this->parent_frame = NULL;
+
+   this->accel[0] = 0.0;
+   this->accel[1] = 0.0;
+   this->accel[2] = 0.0;
+
+   this->ang_accel[0] = 0.0;
+   this->ang_accel[1] = 0.0;
+   this->ang_accel[2] = 0.0;
+
+   this->cm[0] = 0.0;
+   this->cm[1] = 0.0;
+   this->cm[2] = 0.0;
+
    return;
 }
 
@@ -66,8 +84,8 @@ RelStateBase::RelStateBase(
  */
 RelStateBase::~RelStateBase()
 {
-   express_frame = NULL;
-   frame_tree = NULL;
+   this->express_frame = NULL;
+   this->frame_tree    = NULL;
 
    return;
 }
@@ -76,15 +94,15 @@ RelStateBase::~RelStateBase()
  * @job_class{scheduled}
  */
 bool RelStateBase::set_frame(
-   const char * wrt_frame )
+   char const *wrt_frame )
 {
-   RefFrameBase * lookup_frame;
+   RefFrameBase *lookup_frame;
 
    // Look up the frame by name.
    lookup_frame = frame_tree->find_frame( wrt_frame );
    if ( lookup_frame ) {
       express_frame = lookup_frame;
-      return( true );
+      return ( true );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
@@ -94,22 +112,22 @@ bool RelStateBase::set_frame(
       send_hs( stderr, errmsg.str().c_str() );
    }
 
-   return( false );
+   return ( false );
 }
 
 /*!
  * @job_class{scheduled}
  */
 bool RelStateBase::set_frame(
-   std::string & wrt_frame )
+   std::string const &wrt_frame )
 {
-   RefFrameBase * lookup_frame;
+   RefFrameBase *lookup_frame;
 
    // Look up the frame by name.
    lookup_frame = frame_tree->find_frame( wrt_frame );
    if ( lookup_frame ) {
       express_frame = lookup_frame;
-      return( true );
+      return ( true );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
@@ -119,49 +137,44 @@ bool RelStateBase::set_frame(
       send_hs( stderr, errmsg.str().c_str() );
    }
 
-   return( false );
+   return ( false );
 }
 
 /*!
  * @job_class{scheduled}
  */
 bool RelStateBase::compute_state(
-   PhysicalEntityData * source )
+   PhysicalEntityData const *source )
 {
-
-   return( false );
+   return ( false );
 }
 
 /*!
  * @job_class{scheduled}
  */
 bool RelStateBase::compute_state(
-   PhysicalEntityData * source,
-   const char * wrt_frame )
+   PhysicalEntityData const *source,
+   char const               *wrt_frame )
 {
-
-   return( false );
+   return ( false );
 }
 
 /*!
  * @job_class{scheduled}
  */
 bool RelStateBase::compute_state(
-   PhysicalEntityData * source,
-   std::string & wrt_frame )
+   PhysicalEntityData const *source,
+   std::string const        &wrt_frame )
 {
-
-   return( false );
+   return ( false );
 }
 
 /*!
  * @job_class{scheduled}
  */
 bool RelStateBase::compute_state(
-   PhysicalEntityData * source,
-   RefFrameBase * wrt_frame )
+   PhysicalEntityData const *source,
+   RefFrameBase const       *wrt_frame )
 {
-
-   return( false );
+   return ( false );
 }
-

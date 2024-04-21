@@ -2265,7 +2265,7 @@ bool ExecutionControl::run_mode_transition()
    }
 
    // Make sure that we have a valid sync-point.
-   if ( sync_pnt == (TrickHLA::SyncPnt *)NULL ) {
+   if ( sync_pnt == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::run_mode_transition():" << __LINE__
              << " ERROR: The 'mtr_run' sync-point was not found!" << THLA_ENDL;
@@ -2354,7 +2354,7 @@ bool ExecutionControl::freeze_mode_transition()
    sync_pnt = get_sync_point( IMSim::MTR_FREEZE_SYNC_POINT );
 
    // Make sure that we have a valid sync-point.
-   if ( sync_pnt == (TrickHLA::SyncPnt *)NULL ) {
+   if ( sync_pnt == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::freeze_mode_transition():" << __LINE__
              << " ERROR: The 'mtr_freeze' sync-point was not found!" << THLA_ENDL;
@@ -2782,10 +2782,6 @@ bool ExecutionControl::check_scenario_freeze_time()
          // Get the current scenario-time.
          double curr_scenario_time = get_scenario_time();
 
-         // Determine the freeze simulation-time for the equivalent freeze
-         // scenario-time.
-         double freeze_sim_time = curr_sim_time + ( freeze_time - curr_scenario_time );
-
          // Jump to Trick Freeze mode if the current scenario time is greater
          // than or equal to the requested freeze scenario time.
          if ( curr_scenario_time >= freeze_time ) {
@@ -2795,6 +2791,10 @@ bool ExecutionControl::check_scenario_freeze_time()
             federate->set_freeze_pending( true );
 
             if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+               // Determine the freeze simulation-time for the equivalent freeze
+               // scenario-time.
+               double freeze_sim_time = curr_sim_time + ( freeze_time - curr_scenario_time );
+
                ostringstream infomsg;
                infomsg << "IMSim::ExecutionControl::check_scenario_freeze_time():" << __LINE__
                        << " Going to Trick FREEZE mode immediately:" << endl;
