@@ -92,10 +92,7 @@ class SyncPntManager
    virtual ~SyncPntManager() = 0;
 
   protected:
-   void setup( Federate *fed )
-   {
-      this->federate = fed;
-   }
+   void setup( Federate *fed );
 
    /*! @brief Add the given synchronization point label to the named list.
     *  @param label Synchronization point label.

@@ -109,6 +109,20 @@ SyncPntManager::~SyncPntManager()
    mutex.destroy();
 }
 
+void SyncPntManager::setup(
+   Federate *fed )
+{
+   MutexProtection auto_unlock_mutex( &mutex );
+
+   this->federate = fed;
+
+   SyncPntListMap::const_iterator iter;
+   for ( iter = sync_pnt_lists.begin(); iter != sync_pnt_lists.end(); ++iter ) {
+      SyncPntListVec list = iter->second;
+      // TODO: list.setup( this->federate );
+   }
+}
+
 bool SyncPntManager::add_sync_point_list(
    string const &list_name )
 {
@@ -118,7 +132,8 @@ bool SyncPntManager::add_sync_point_list(
    bool status = false;
    if ( !contains_sync_point_list_name( list_name ) ) {
       sync_pnt_lists[list_name] = SyncPntListVec();
-      status                    = true;
+      // TODO: Instead use sync_pnt_lists[list_name] = SyncPntList( this->federate );
+      status = true;
    }
    return status;
 }
