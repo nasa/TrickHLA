@@ -124,7 +124,7 @@ class LRTreeBase
 
    /*! @brief Get the ID of the root node in the tree.
     *  @return ID of the root node in the tree. */
-   virtual unsigned int    get_root_node_id() { return ( root_node_id ); }
+   virtual unsigned int get_root_node_id() { return ( root_node_id ); }
 
    /*! @brief Get a reference to the instance of the root node in the tree.
     *  @return Reference to the instance of the root node in the tree. */

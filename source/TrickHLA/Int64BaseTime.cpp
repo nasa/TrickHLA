@@ -174,7 +174,7 @@ void Int64BaseTime::set(
  * @param units The base time units.
  * @return A string representing the specified units.
  */
-std::string Int64BaseTime::get_units_string(
+std::string const Int64BaseTime::get_units_string(
    HLABaseTimeEnum const units )
 {
    switch ( units ) {
@@ -225,7 +225,7 @@ std::string Int64BaseTime::get_units_string(
  * @return The best supporting base time enum value.
  * @param value Time value as a floating point double in seconds.
  */
-HLABaseTimeEnum Int64BaseTime::best_base_time_resolution(
+HLABaseTimeEnum const Int64BaseTime::best_base_time_resolution(
    double const value )
 {
    int resolution = (int)HLA_BASE_TIME_SECONDS;
@@ -244,7 +244,7 @@ HLABaseTimeEnum Int64BaseTime::best_base_time_resolution(
  *  @return True if the value exceeds the resolution of the base time.
  * @param value Time value as a floating point double in seconds.
  */
-bool Int64BaseTime::exceeds_base_time_resolution(
+bool const Int64BaseTime::exceeds_base_time_resolution(
    double const value )
 {
    return exceeds_base_time_resolution( value, base_time_multiplier );
@@ -257,7 +257,7 @@ bool Int64BaseTime::exceeds_base_time_resolution(
  * @param value Time value as a floating point double in seconds.
  * @param multiplier Base time multiplier.
  */
-bool Int64BaseTime::exceeds_base_time_resolution(
+bool const Int64BaseTime::exceeds_base_time_resolution(
    double const value,
    long long    multiplier )
 {
@@ -271,7 +271,7 @@ bool Int64BaseTime::exceeds_base_time_resolution(
  * @return Time value in the HLA Logical base time.
  * @param value Time value as a floating point double in seconds.
  */
-int64_t Int64BaseTime::to_base_time(
+int64_t const Int64BaseTime::to_base_time(
    double const value )
 {
    // Do a range check on the double value in seconds.
@@ -299,7 +299,7 @@ int64_t Int64BaseTime::to_base_time(
  * @return Time value in seconds.
  * @param time_in_base_units Time value as a 64-bit integer in the units_string specified for this class.
  */
-double Int64BaseTime::to_seconds(
+double const Int64BaseTime::to_seconds(
    int64_t const time_in_base_units )
 {
    double const seconds    = (double)( time_in_base_units / base_time_multiplier );
@@ -312,7 +312,7 @@ double Int64BaseTime::to_seconds(
  * @return Time value in whole seconds.
  * @param time_in_base_units Time value as a 64-bit integer in the units_string specified for this class.
  */
-int64_t Int64BaseTime::to_whole_seconds(
+int64_t const Int64BaseTime::to_whole_seconds(
    int64_t const time_in_base_units )
 {
    return ( time_in_base_units / base_time_multiplier );

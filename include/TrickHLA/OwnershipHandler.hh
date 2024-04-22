@@ -121,7 +121,7 @@ class OwnershipHandler
 
    /*! @brief Returns the attribute FOM names of the object.
     *  @return Vector of attribut FOM name strings. */
-   VectorOfStrings get_attribute_FOM_names() const;
+   VectorOfStrings const get_attribute_FOM_names() const;
 
    /*! @brief Query if the attribute is locally owned.
     *  @return True if attribute is locally owned; False otherwise.

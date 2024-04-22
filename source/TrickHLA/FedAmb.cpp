@@ -570,7 +570,7 @@ void FedAmb::reflectAttributeValues(
                   __LINE__, trickhla_obj->get_name(), THLA_NEWLINE );
       }
 
-      trickhla_obj->enqueue_data( (AttributeHandleValueMap &)theAttributeValues );
+      trickhla_obj->enqueue_data( const_cast< AttributeHandleValueMap & >( theAttributeValues ) );
 
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
       ++trickhla_obj->receive_count;
@@ -649,7 +649,7 @@ void FedAmb::reflectAttributeValues(
                   THLA_NEWLINE );
       }
 
-      trickhla_obj->enqueue_data( (AttributeHandleValueMap &)theAttributeValues );
+      trickhla_obj->enqueue_data( const_cast< AttributeHandleValueMap & >( theAttributeValues ) );
 
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
       ++trickhla_obj->receive_count;
@@ -687,7 +687,7 @@ void FedAmb::reflectAttributeValues(
                   __LINE__, trickhla_obj->get_name(), time.get_time_in_seconds(), THLA_NEWLINE );
       }
 
-      trickhla_obj->enqueue_data( (AttributeHandleValueMap &)theAttributeValues );
+      trickhla_obj->enqueue_data( const_cast< AttributeHandleValueMap & >( theAttributeValues ) );
 
 #ifdef THLA_CHECK_SEND_AND_RECEIVE_COUNTS
       ++trickhla_obj->receive_count;
@@ -723,7 +723,7 @@ void FedAmb::receiveInteraction(
 
       // Process the interaction.
       manager->receive_interaction( theInteraction,
-                                    (ParameterHandleValueMap &)theParameterValues,
+                                    const_cast< ParameterHandleValueMap & >( theParameterValues ),
                                     theUserSuppliedTag,
                                     dummyTime.get(),
                                     false );
@@ -753,7 +753,7 @@ void FedAmb::receiveInteraction(
       }
 
       manager->receive_interaction( theInteraction,
-                                    (ParameterHandleValueMap &)theParameterValues,
+                                    const_cast< ParameterHandleValueMap & >( theParameterValues ),
                                     theUserSuppliedTag,
                                     theTime,
                                     ( receivedOrder == RTI1516_NAMESPACE::TIMESTAMP ) );
@@ -784,7 +784,7 @@ void FedAmb::receiveInteraction(
 
       // Process the interaction.
       manager->receive_interaction( theInteraction,
-                                    (ParameterHandleValueMap &)theParameterValues,
+                                    const_cast< ParameterHandleValueMap & >( theParameterValues ),
                                     theUserSuppliedTag,
                                     theTime,
                                     ( receivedOrder == RTI1516_NAMESPACE::TIMESTAMP ) );
@@ -911,7 +911,7 @@ void FedAmb::provideAttributeValueUpdate(
 {
    if ( manager != NULL ) {
       manager->provide_attribute_update( theObject,
-                                         (AttributeHandleSet &)theAttributes );
+                                         const_cast< AttributeHandleSet & >( theAttributes ) );
    }
 }
 
