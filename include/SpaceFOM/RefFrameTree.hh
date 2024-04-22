@@ -82,15 +82,46 @@ class RefFrameTree : public SpaceFOM::LRTreeBase
     *  @return Success or failure of the add. */
    virtual bool add_frame( RefFrameBase *frame_ptr );
 
+   /*! @brief Iterate through the frames and build a consistent tree.
+    *  @return True on success, false otherwise. */
    virtual bool build_tree();
+
+   /*! @brief Check for consistency of the tree.
+    *  @return True on success, false otherwise. */
    virtual bool check_tree();
 
+   /*! @brief Check if a frame is in the tree.
+    *  @return True if in the tree, false otherwise.
+    *  @param name Name of the frame to check for. */
    virtual bool has_frame( char const *name );
+
+   /*! @brief Check if a frame is in the tree.
+    *  @return True if in the tree, false otherwise.
+    *  @param name Name of the frame to check for. */
    virtual bool has_frame( std::string const &name );
+
+   /*! @brief Check if a frame is in the tree.
+    *  @return True if in the tree, false otherwise.
+    *  @param name Reference of the frame to check for. */
    virtual bool has_frame( RefFrameBase const *frame );
 
+   /*! @brief Find a frame in the tree.
+    *  @return Tree frame instance if found, NULL otherwise.
+    *  @param name Name of the frame to check for. */
    virtual RefFrameBase *find_frame( char const *name );
+
+   /*! @brief Find a frame in the tree.
+    *  @return Tree frame instance if found, NULL otherwise.
+    *  @param name Name of the frame to check for. */
    virtual RefFrameBase *find_frame( std::string const &name );
+
+
+   /*! @brief Build a composite transform from source to express frame.
+    *  @return Tree frame instance if found, NULL otherwise.
+    *  @param name Name of the frame to check for. */
+   virtual RefFrameData *build_transform( RefFrameBase * source_frame,
+                                          RefFrameBase * express_frame );
+
 
    /*! @brief Print out the Reference Frame Tree nodes.
     *  @param stream Output stream. */

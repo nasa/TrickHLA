@@ -36,6 +36,8 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 #include "trick/message_proto.h"
+#include "trick/constant.h"
+#include "trick/trick_math.h"
 
 // TrickHLA model include files.
 #include "TrickHLA/Types.hh"
@@ -126,10 +128,30 @@ bool RelStateBase::set_frame(
  * @job_class{scheduled}
  */
 bool RelStateBase::compute_state(
-   PhysicalEntityData * source )
+   PhysicalEntityData * entity )
 {
+   RefFrameData * path_transform; /* The reference frame transformation data
+                                     needed to transform from the entity's
+                                     parent frame into a desired express frame. */
+
+   double r_ent_p_exp[3]; /* Position vector of the entity with respect to its
+                             parent frame but expressed in the desired express frame. */
+   double v_ent_p_exp[3]; /* Velocity vector of the entity with respect to its
+                             parent frame but expressed in the desired express frame. */
+   double a_ent_p_exp[3]; /* Acceleration vector of the entity with respect to its
+                             parent frame but expressed in the desired express frame. */
+
+   // Working variables.
+   double wxr_p[3];
+   double v_p[3];
+   double axr_p[3];
+   double two_w_p[3];
+   double two_wxv_p[3];
+   double wxwxr_p[3];
+   double a_p[3];
+
    // Check for NULL frame.
-   if ( source == NULL ){
+   if ( entity == NULL ){
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          ostringstream errmsg;
          errmsg << "RelStateBase::compute_state() Warning: PhysicalEntityData NULL!" << endl;
@@ -138,42 +160,88 @@ bool RelStateBase::compute_state(
       return( false );
    }
 
-   // Find the source parent frame in the tree.
-   RefFrameBase * source_parent_frame = frame_tree->find_frame( source->parent_frame );
-   if ( source_parent_frame == NULL ){
+   // Find the entity parent frame in the tree.
+   RefFrameBase * entity_parent_frame = frame_tree->find_frame( entity->parent_frame );
+   if ( entity_parent_frame == NULL ){
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          ostringstream errmsg;
          errmsg << "RelStateBase::compute_state() Warning: Could not find parent frame: %s!" << endl;
-         send_hs( stderr, source->parent_frame, errmsg.str().c_str() );
+         send_hs( stderr, entity->parent_frame, errmsg.str().c_str() );
       }
       return( false );
    }
 
    // Check for trivial transformation.
-   if ( source_parent_frame == express_frame ){
+   if ( entity_parent_frame == express_frame ){
 
       // Just copy the state and return.
-      strcpy( this->name, source->name );
+      this->copy( *entity );
 
       return( true );
    }
 
-   // Now to do some linear algebra.
-   // See SpaceFOM standard p 148.
-   QuaternionData q_c_p;  // The attitude of the child frame with respect to the parent frame.
-   double r_0_p[3]; /* Position vector giving the position of child reference
-                       frame origin with respect to the parent reference frame
-                       origin expressed in parent reference frame coordinates. */
-   double r_p[3];   /* Position vector of the entity expressed in parent
-                       reference frame coordinates. */
-   double r_c_in_p[3]; /* Position vector in the child frame transformed into
-                          parent frame orientation. */
+   //**************************************************************************
+   // Build the reference frame transformation from the reference frame path.
+   // See the Reference Frame Transformations section of the SpaceFOM
+   // (Appendix E).
+   //**************************************************************************
 
-   // Compute position.
-   q_c_p.transform_vector( source->state.pos, r_c_in_p );
-   r_p[0] = r_0_p[0] + r_c_in_p[0];
-   r_p[1] = r_0_p[1] + r_c_in_p[1];
-   r_p[2] = r_0_p[2] + r_c_in_p[2];
+   // Ask the Reference Frame Tree to build the transformation for the entity
+   // parent reference frame with respect to the desired express frame.
+   path_transform = frame_tree->build_transform( entity_parent_frame, express_frame );
+
+   //
+   // Position computations.
+   //
+   // Transform the entity position vector expressed in its parent frame
+   // into the desired express frame.  This is still a vector from the origin
+   // of the original parent frame to the entity but expressed in the express
+   // frame's orientation.
+   path_transform->state.att.transform_vector( entity->state.pos, r_ent_p_exp );
+
+   // Compute entity position expressed in the express frame.
+   V_ADD( this->state.pos, path_transform->state.pos, r_ent_p_exp )
+
+   // Compute the entity attitude in the express frame.
+   path_transform->state.att.transform_quat( entity->state.att, this->state.att );
+
+   //
+   // Velocity computations.
+   //
+   // Compute the apparent velocity of the entity in a rotating parent frame.
+   V_CROSS( wxr_p, path_transform->state.ang_vel, entity->state.pos );
+
+   // Compute the total velocity of the entity in the rotating parent frame.
+   V_ADD( v_p, entity->state.vel, wxr_p );
+
+   // Transform the entity velocity into the express frame.
+   path_transform->state.att.transform_vector( v_p, v_ent_p_exp );
+
+   // Compute entity velocity expressed in the express frame.
+   V_ADD( this->state.vel, path_transform->state.vel, v_ent_p_exp );
+
+   // Compute the angular velocity in the express frame.
+
+
+   //
+   // Acceleration computations.
+   //
+   // Compute the apparent acceleration of the entity in a rotating parent frame.
+   V_CROSS( axr_p, path_transform->ang_accel, entity->state.pos );
+   V_SCALE( two_w_p, 2.0, path_transform->state.ang_vel );
+   V_CROSS( two_wxv_p, two_w_p, entity->state.vel );
+   V_CROSS( wxwxr_p, path_transform->state.ang_vel, wxr_p );
+
+   // Add up the components of the rotationally induced acceleration.
+   a_p[0] = path_transform->accel[0] + wxwxr_p[0] + two_wxv_p[0] + axr_p[0];
+   a_p[1] = path_transform->accel[1] + wxwxr_p[1] + two_wxv_p[1] + axr_p[1];
+   a_p[2] = path_transform->accel[2] + wxwxr_p[2] + two_wxv_p[2] + axr_p[2];
+
+   // Transform the entity acceleration into the express frame.
+   path_transform->state.att.transform_vector( a_p, a_ent_p_exp );
+
+   // Compute entity acceleration expressed in the express frame.
+   V_ADD( this->accel, path_transform->accel, a_ent_p_exp );
 
    return( false );
 }
@@ -182,14 +250,14 @@ bool RelStateBase::compute_state(
  * @job_class{scheduled}
  */
 bool RelStateBase::compute_state(
-   PhysicalEntityData * source,
+   PhysicalEntityData * entity,
    const char * wrt_frame )
 {
 
    // Set the frame in which to express the state.
    if ( this->set_frame( wrt_frame ) ) {
       // Call the base function.
-      return( this->compute_state( source, express_frame ) );
+      return( this->compute_state( entity, express_frame ) );
    }
 
    return( false );
@@ -199,14 +267,14 @@ bool RelStateBase::compute_state(
  * @job_class{scheduled}
  */
 bool RelStateBase::compute_state(
-   PhysicalEntityData * source,
+   PhysicalEntityData * entity,
    std::string & wrt_frame )
 {
 
    // Set the frame in which to express the state.
    if ( this->set_frame( wrt_frame ) ) {
       // Call the base function.
-      return( this->compute_state( source, express_frame ) );
+      return( this->compute_state( entity, express_frame ) );
    }
 
    return( false );
@@ -216,7 +284,7 @@ bool RelStateBase::compute_state(
  * @job_class{scheduled}
  */
 bool RelStateBase::compute_state(
-   PhysicalEntityData * source,
+   PhysicalEntityData * entity,
    RefFrameBase * wrt_frame )
 {
    // Check for NULL frame.
@@ -232,7 +300,7 @@ bool RelStateBase::compute_state(
    // Set the frame in which to express the state.
    if ( this->set_frame( *wrt_frame ) ) {
       // Call the base function to compute the state.
-      return( this->compute_state( source ) );
+      return( this->compute_state( entity ) );
    }
 
    return( false );

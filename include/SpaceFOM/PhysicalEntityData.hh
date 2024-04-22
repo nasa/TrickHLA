@@ -64,12 +64,16 @@ class PhysicalEntityData
    PhysicalEntityData( const PhysicalEntityData &source );
 
    // Destructor.
-   /*! @brief Destructor for the SpaceFOM RelStateBase class. */
+   /*! @brief Destructor for the SpaceFOM PhysicalEntityData class. */
    virtual ~PhysicalEntityData();
 
    /*! @brief Assignment operator for PhysicalEntityData class.
     *  @param rhs Right operand data to copy from. */
-   PhysicalEntityData &operator=( const PhysicalEntityData &rhs );
+   virtual PhysicalEntityData &operator=( const PhysicalEntityData &rhs );
+
+   /*! @brief Copy the PhysicalEntityData.
+    *  @param source Source PhysicalEntityData to copy from. */
+   virtual void copy( const PhysicalEntityData &source );
 
 };
 

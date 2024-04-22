@@ -91,31 +91,31 @@ class RelStateBase: public SpaceFOM::PhysicalEntityData
    }
 
    /*! @brief Get the frame in which a source state will be expressed.
-    *  @return Frame in which a source state will be expressed. */
+    *  @return Frame in which an entity state will be expressed. */
    RefFrameBase * get_frame(){ return(express_frame); }
 
-   /*! @brief Compute the state of the source with respect to a given frame.
-    *  @return True is state successfully computed, false otherwise.
-    *  @param source The source state to express in a different frame. */
-   bool compute_state( PhysicalEntityData * source );
+   /*! @brief Compute the state of an entity with respect to a given frame.
+    *  @return True if state successfully computed, false otherwise.
+    *  @param entity The entity state to express in a different frame. */
+   bool compute_state( PhysicalEntityData * entity );
 
-   /*! @brief Compute the state of the source with respect to a given frame.
-    *  @return True is state successfully computed, false otherwise.
-    *  @param source The source state to express in a different frame.
+   /*! @brief Compute the state of an entity with respect to a given frame.
+    *  @return True if state successfully computed, false otherwise.
+    *  @param entity The entity state to express in a different frame.
     *  @param wrt_frame The frame in which to express the source state. */
-   bool compute_state( PhysicalEntityData * source, const char * wrt_frame );
+   bool compute_state( PhysicalEntityData * entity, const char * wrt_frame );
 
-   /*! @brief Compute the state of the source with respect to a given frame.
-    *  @return True is state successfully computed, false otherwise.
-    *  @param source The source state to express in a different frame.
+   /*! @brief Compute the state of an entity with respect to a given frame.
+    *  @return True if state successfully computed, false otherwise.
+    *  @param entity The entity state to express in a different frame.
     *  @param wrt_frame The frame in which to express the source state. */
-   bool compute_state( PhysicalEntityData * source, std::string & wrt_frame );
+   bool compute_state( PhysicalEntityData * entity, std::string & wrt_frame );
 
-   /*! @brief Compute the state of the source with respect to a given frame.
-    *  @return True is state successfully computed, false otherwise.
-    *  @param source The source state to express in a different frame.
+   /*! @brief Compute the state of an entity with respect to a given frame.
+    *  @return True if state successfully computed, false otherwise.
+    *  @param entity The entity state to express in a different frame.
     *  @param wrt_frame The frame in which to express the source state. */
-   bool compute_state( PhysicalEntityData * source, RefFrameBase * wrt_frame );
+   bool compute_state( PhysicalEntityData * entity, RefFrameBase * wrt_frame );
 
   protected:
    RefFrameBase * express_frame;

@@ -69,25 +69,7 @@ PhysicalEntityData::PhysicalEntityData( const PhysicalEntityData &source )
   status( NULL ),
   parent_frame( NULL )
 {
-   if ( source.name != NULL ) {
-      this->name = trick_MM->mm_strdup( source.name );
-   }
-   if ( source.type != NULL ) {
-      this->type = trick_MM->mm_strdup( source.type );
-   }
-   if ( source.status != NULL ) {
-      this->status = trick_MM->mm_strdup( source.status );
-   }
-   if ( source.parent_frame != NULL ) {
-      this->parent_frame = trick_MM->mm_strdup( source.parent_frame );
-   }
-   this->state = source.state;
-   for( unsigned int iinc = 0 ; iinc < 3 ; iinc++ ){
-      this->accel[iinc]     = source.accel[iinc];
-      this->ang_accel[iinc] = source.ang_accel[iinc];
-      this->cm[iinc]        = source.cm[iinc];
-   }
-   this->body_wrt_struct = source.body_wrt_struct;
+   this->copy( source );
 }
 
 /*!
@@ -136,25 +118,70 @@ PhysicalEntityData::~PhysicalEntityData()
 PhysicalEntityData &PhysicalEntityData::operator=(
    const PhysicalEntityData &rhs )
 {
-   if ( rhs.name != NULL ) {
-      this->name = trick_MM->mm_strdup( rhs.name );
-   }
-   if ( rhs.type != NULL ) {
-      this->type = trick_MM->mm_strdup( rhs.type );
-   }
-   if ( rhs.status != NULL ) {
-      this->status = trick_MM->mm_strdup( rhs.status );
-   }
-   if ( rhs.parent_frame != NULL ) {
-      this->parent_frame = trick_MM->mm_strdup( rhs.parent_frame );
-   }
-   this->state = rhs.state;
-   for( int iinc = 0 ; iinc < 3 ; iinc++ ){
-      this->accel[iinc]     = rhs.accel[iinc];
-      this->ang_accel[iinc] = rhs.ang_accel[iinc];
-      this->cm[iinc]        = rhs.cm[iinc];
-   }
-   this->body_wrt_struct = rhs.body_wrt_struct;
+
+   this->copy( rhs );
+
    return ( *this );
 }
 
+/*!
+ * @job_class{scheduled}
+ */
+void PhysicalEntityData::copy( const PhysicalEntityData &source )
+{
+   // Copy the string based parameters.
+   if ( this->name != NULL ){
+      trick_MM->delete_var( static_cast< void * >( this->name ) );
+   }
+   if ( source.name != NULL ) {
+      this->name = trick_MM->mm_strdup( source.name );
+   }
+   else{
+      this->name = NULL;
+   }
+
+   if ( this->type != NULL ){
+      trick_MM->delete_var( static_cast< void * >( this->type ) );
+   }
+   if ( source.type != NULL ) {
+      this->type = trick_MM->mm_strdup( source.type );
+   }
+   else{
+      this->type = NULL;
+   }
+
+   if ( this->status != NULL ){
+      trick_MM->delete_var( static_cast< void * >( this->status ) );
+   }
+   if ( source.status != NULL ) {
+      this->status = trick_MM->mm_strdup( source.status );
+   }
+   else{
+      this->status = NULL;
+   }
+
+   if ( this->parent_frame != NULL ){
+      trick_MM->delete_var( static_cast< void * >( this->parent_frame ) );
+   }
+   if ( source.parent_frame != NULL ) {
+      this->parent_frame = trick_MM->mm_strdup( source.parent_frame );
+   }
+   else{
+      this->parent_frame = NULL;
+   }
+
+   // Copy the state.
+   this->state = source.state;
+
+   // Copy the accelerations and CM vectors.
+   for( int iinc = 0 ; iinc < 3 ; iinc++ ){
+      this->accel[iinc]     = source.accel[iinc];
+      this->ang_accel[iinc] = source.ang_accel[iinc];
+      this->cm[iinc]        = source.cm[iinc];
+   }
+
+   // Copy the body attitude quaternion.
+   this->body_wrt_struct = source.body_wrt_struct;
+
+   return;
+}

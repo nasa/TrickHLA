@@ -141,3 +141,20 @@ RefFrameBase *RefFrameTree::find_frame( string const &name )
 {
    return ( static_cast< RefFrameBase * >( find_node( name ) ) );
 }
+
+/*!
+ * @job_class{scheduled}
+ */
+RefFrameData *RefFrameTree::build_transform(
+   RefFrameBase * source_frame,
+   RefFrameBase * express_frame )
+{
+   RefFrameData * transform_data = NULL;
+
+   // First, let's get the transformation path from source to the express frame.
+   LRTreeNodeVector & path = this->paths[source_frame->node_id][express_frame->node_id];
+
+   // Now the work begins . . .
+
+   return( transform_data );
+}
