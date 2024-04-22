@@ -76,14 +76,14 @@ class Int64BaseTime
 
    /*! @brief The base_units of the base time.
     *  @return The base_units of the base time. */
-   static HLABaseTimeEnum get_base_units()
+   static HLABaseTimeEnum const get_base_units()
    {
       return base_units;
    }
 
    /*! @brief The units_string of the base time as a string.
     *  @return The units_string of the base time as a string. */
-   static std::string get_units()
+   static std::string const &get_units()
    {
       return units_string;
    }
@@ -91,25 +91,25 @@ class Int64BaseTime
    /*! @brief A string representing the specified units.
     *  @param units The base time units.
     *  @return A string representing the specified units. */
-   static std::string get_units_string( HLABaseTimeEnum const units );
+   static std::string const get_units_string( HLABaseTimeEnum const units );
 
    /*! @brief The base time multiplier.
     *  @return The base time multiplier. */
-   static int64_t get_base_time_multiplier()
+   static int64_t const get_base_time_multiplier()
    {
       return base_time_multiplier;
    }
 
    /*! @brief The maximum logical time in seconds given the base time.
     *  @return The maximum logical time in seconds given the base time. */
-   static double get_max_logical_time_in_seconds()
+   static double const get_max_logical_time_in_seconds()
    {
       return max_logical_time_seconds;
    }
 
    /*! @brief The maximum base time.
     *  @return The maximum base time. */
-   static int64_t get_max_base_time()
+   static int64_t const get_max_base_time()
    {
       return ( INT64_MAX );
    }
@@ -117,36 +117,36 @@ class Int64BaseTime
    /*! @brief Determine the best supporting base time resolution for the value.
     *  @return The best supporting base time enum value.
     *  @param value Time value as a floating point double in seconds. */
-   static HLABaseTimeEnum best_base_time_resolution( double const value );
+   static HLABaseTimeEnum const best_base_time_resolution( double const value );
 
    /*! @brief Determine if the specified value exceeds the resolution of
     *  the base time (i.e. value is much smaller than base time resolution).
     *  @return True if the value exceeds the resolution of the base time.
     *  @param value Time value as a floating point double in seconds. */
-   static bool exceeds_base_time_resolution( double const value );
+   static bool const exceeds_base_time_resolution( double const value );
 
    /*! @brief Determine if the specified value exceeds the resolution of
     *  a base time with the corresponding multiplier.
     *  @return True if the value exceeds the resolution of the base time.
     *  @param value Time value as a floating point double in seconds.
     *  @param multiplier Base time multiplier. */
-   static bool exceeds_base_time_resolution( double const value, long long multiplier );
+   static bool const exceeds_base_time_resolution( double const value, long long multiplier );
 
    /*! @brief Converts the given floating point time to an integer representing
     *  the time in the HLA Logical base time.
     *  @return Time value in the HLA Logical base time.
     *  @param value Time value as a floating point double in seconds. */
-   static int64_t to_base_time( double const value );
+   static int64_t const to_base_time( double const value );
 
    /*! @brief Converts the given integer time to an floating-point time representing seconds.
     *  @return Time value in seconds.
     *  @param time_in_base_units Time value as a 64-bit integer in the units_string specified for this class. */
-   static double to_seconds( int64_t const time_in_base_units );
+   static double const to_seconds( int64_t const time_in_base_units );
 
    /*! @brief Converts the given integer time to an integer time representing whole seconds.
     *  @return Time value in whole seconds.
     *  @param time_in_base_units Time value as a 64-bit integer in the units_string specified for this class. */
-   static int64_t to_whole_seconds( int64_t const time_in_base_units );
+   static int64_t const to_whole_seconds( int64_t const time_in_base_units );
 
   protected:
    static HLABaseTimeEnum base_units;               ///< @trick_units{--} Base time units.

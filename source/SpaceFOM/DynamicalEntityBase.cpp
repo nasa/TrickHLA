@@ -136,7 +136,7 @@ void DynamicalEntityBase::base_config(
    object->packing             = this;
    // Allocate the attributes for the DymamicalEntity HLA object.
    object->attr_count = 15;
-   object->attributes = (TrickHLA::Attribute *)trick_MM->declare_var( "TrickHLA::Attribute", object->attr_count );
+   object->attributes = static_cast< TrickHLA::Attribute * >( trick_MM->declare_var( "TrickHLA::Attribute", object->attr_count ) );
 
    //
    // Specify the Reference Frame attributes.
