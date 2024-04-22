@@ -301,7 +301,7 @@ int OwnershipHandler::get_attribute_count() const
    return ( ( this->object != NULL ) ? object->get_attribute_count() : 0 );
 }
 
-VectorOfStrings OwnershipHandler::get_attribute_FOM_names() const
+VectorOfStrings const OwnershipHandler::get_attribute_FOM_names() const
 {
    return ( ( this->object != NULL ) ? object->get_attribute_FOM_names() : VectorOfStrings() );
 }

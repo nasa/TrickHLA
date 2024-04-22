@@ -585,7 +585,7 @@ class Object
       if ( !changed ) {
          if ( !thla_reflected_attributes_queue.empty() ) {
             // The 'changed' flag is set when the data is extracted.
-            extract_data( (RTI1516_NAMESPACE::AttributeHandleValueMap &)thla_reflected_attributes_queue.front() );
+            extract_data( const_cast< RTI1516_NAMESPACE::AttributeHandleValueMap & >( thla_reflected_attributes_queue.front() ) );
             thla_reflected_attributes_queue.pop();
          }
       }
@@ -679,7 +679,7 @@ class Object
 
    /*! @brief Get the attribute FOM names.
     *  @return A vector of strings containing the attribute FOM names. */
-   VectorOfStrings get_attribute_FOM_names() const
+   VectorOfStrings const get_attribute_FOM_names() const // cppcheck-suppress [returnByReference]
    {
       return attribute_FOM_names;
    }

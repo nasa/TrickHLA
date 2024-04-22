@@ -57,9 +57,9 @@ class PhysicalInterfaceOwnershipHandler : public TrickHLA::OwnershipHandler
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLAModel PhysicalInterfaceOwnershipHandler class. */
+   /*! @brief Default constructor for the SpaceFOM PhysicalInterfaceOwnershipHandler class. */
    PhysicalInterfaceOwnershipHandler();
-   /*! @brief Destructor for the TrickHLAModel PhysicalInterfaceOwnershipHandler class. */
+   /*! @brief Destructor for the SpaceFOM PhysicalInterfaceOwnershipHandler class. */
    virtual ~PhysicalInterfaceOwnershipHandler();
 
    /*! @brief Initialization callback as part of the TrickHLA::OwnershipHandler functions.

@@ -154,6 +154,30 @@ class THLAInitSimObject : public Trick::SimObject {
 
 
 //==========================================================================
+// Test out the Relative State classes.
+//==========================================================================
+##include "SpaceFOM/RelStateBase.hh"
+class RelStateTestSimObject : public Trick::SimObject {
+
+  public:
+   RelStateBase rel_state;
+
+  public:
+   RelStateTestSimObject( SpaceFOM::RefFrameBase & ref_frame,
+                          SpaceFOM::RefFrameTree & frame_tree )
+   : rel_state( ref_frame , frame_tree )
+   {
+   }
+
+  private:
+   // This object is not copyable
+   RelStateTestSimObject( RelStateTestSimObject const & rhs );
+   RelStateTestSimObject & operator=( RelStateTestSimObject const & rhs );
+
+};
+
+
+//==========================================================================
 // SimObject instantiations.
 //==========================================================================
 EntityDynamicsSimObject pe_dynamics;

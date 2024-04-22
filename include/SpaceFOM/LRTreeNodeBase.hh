@@ -80,8 +80,8 @@ class LRTreeNodeBase
    LRTreeNodeBase();
 
    /*! @brief Initialization constructor.
-    *  @param name The name of the node to be constructed.
-    *  @param parent The parent node in the tree for the constructed node. */
+    *  @param node_name The name of the node to be constructed.
+    *  @param node_parent The parent node in the tree for the constructed node. */
    LRTreeNodeBase( const char     *node_name,
                    LRTreeNodeBase *node_parent );
 
@@ -110,6 +110,9 @@ class LRTreeNodeBase
    /*! @brief Print out the LRTree node.
     *  @param stream Output stream. */
    virtual void print_node( std::ostream &stream = std::cout );
+
+  public:
+   bool debug; ///< @trick_units{--} Debug output flag.
 
   protected:
    bool is_root_node; ///< @trick_units{--} Indicator that this is the root node of the tree.

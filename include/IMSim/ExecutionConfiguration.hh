@@ -234,7 +234,7 @@ class ExecutionConfiguration : public TrickHLA::ExecutionConfigurationBase
    }
 
    /*! @brief Set the offset between UT1 and UTC.
-    *  @param factor The offset between UT1 and UTC. */
+    *  @param offset The offset between UT1 and UTC. */
    virtual void set_DUT1( double offset )
    {
       DUT1 = offset;

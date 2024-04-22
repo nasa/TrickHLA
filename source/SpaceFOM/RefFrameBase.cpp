@@ -69,8 +69,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 RefFrameBase::RefFrameBase()
-   : debug( false ),
-     parent_frame( NULL ),
+   : parent_frame( NULL ),
      name_attr( NULL ),
      parent_name_attr( NULL ),
      state_attr( NULL ),
@@ -174,7 +173,7 @@ void RefFrameBase::base_config(
    object->packing             = this;
    // Allocate the attributes for the RefFrameBase HLA object.
    object->attr_count = 3;
-   object->attributes = (TrickHLA::Attribute *)trick_MM->declare_var( "TrickHLA::Attribute", object->attr_count );
+   object->attributes = static_cast< TrickHLA::Attribute * >( trick_MM->declare_var( "TrickHLA::Attribute", object->attr_count ) );
 
    //
    // Specify the Reference Frame attributes.

@@ -15,7 +15,11 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{../TrickHLA/Attribute.cpp}
+@trick_link_dependency{../TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../TrickHLA/Object.cpp}
 @trick_link_dependency{../TrickHLA/Packing.cpp}
+@trick_link_dependency{../TrickHLA/Types.cpp}
 @trick_link_dependency{PhysicalInterfaceBase.cpp}
 
 
@@ -139,7 +143,7 @@ void PhysicalInterfaceBase::base_config(
    object->packing             = this;
    // Allocate the attributes for the PhysicalInterface HLA object.
    object->attr_count = 9;
-   object->attributes = (TrickHLA::Attribute *)trick_MM->declare_var( "TrickHLA::Attribute", object->attr_count );
+   object->attributes = static_cast< TrickHLA::Attribute * >( trick_MM->declare_var( "TrickHLA::Attribute", object->attr_count ) );
 
    //
    // Specify the Reference Frame attributes.

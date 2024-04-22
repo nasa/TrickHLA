@@ -16,7 +16,9 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../TrickHLA/Attribute.cpp}
+@trick_link_dependency{../TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../TrickHLA/Types.cpp}
 @trick_link_dependency{DynamicalEntityLagComp.cpp}
 
 
@@ -85,7 +87,7 @@ DynamicalEntityLagComp::DynamicalEntityLagComp( DynamicalEntityBase &entity_ref 
 DynamicalEntityLagComp::~DynamicalEntityLagComp() // RETURN: -- None.
 {
    // Free up any allocated intergrator.
-   if ( this->integrator != (Trick::Integrator *)NULL ) {
+   if ( this->integrator != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->integrator ) ) ) {
          send_hs( stderr, "SpaceFOM::DynamicalEntityBase::~DynamicalEntityBase():%d ERROR deleting Trick Memory for 'this->integrator'%c",
                   __LINE__, THLA_NEWLINE );
@@ -103,7 +105,7 @@ void DynamicalEntityLagComp::initialize()
    // Create and get a reference to the Trick Euler integrator.
    this->integrator = Trick::getIntegrator( Euler, 26, this->integ_dt );
 
-   if ( this->integrator == (Trick::Integrator *)NULL ) {
+   if ( this->integrator == NULL ) {
       ostringstream errmsg;
 
       errmsg << "SpaceFOM::DynamicalEntityLagComp::initialize():" << __LINE__

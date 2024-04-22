@@ -2184,7 +2184,7 @@ bool ExecutionControl::run_mode_transition()
    }
 
    // Make sure that we have a valid sync-point.
-   if ( sync_pnt == (TrickHLA::SyncPnt *)NULL ) {
+   if ( sync_pnt == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::run_mode_transition():" << __LINE__
              << " ERROR: The 'mtr_run' sync-point was not found!" << THLA_ENDL;
@@ -2271,7 +2271,7 @@ bool ExecutionControl::freeze_mode_transition()
    TrickHLA::SyncPnt *sync_pnt = get_sync_point( SpaceFOM::MTR_FREEZE_SYNC_POINT );
 
    // Make sure that we have a valid sync-point.
-   if ( sync_pnt == (TrickHLA::SyncPnt *)NULL ) {
+   if ( sync_pnt == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::freeze_mode_transition():" << __LINE__
              << " ERROR: The 'mtr_freeze' sync-point was not found!" << THLA_ENDL;

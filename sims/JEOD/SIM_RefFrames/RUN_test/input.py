@@ -251,6 +251,11 @@ earth_centered_fixed.frame_packing.publish();
 moon_centered_fixed.frame_packing.publish();
 mars_centered_fixed.frame_packing.publish();
 
+#---------------------------------------------------------------------------
+# Set up the Reference Frame Tree
+#---------------------------------------------------------------------------
+ref_frame_tree.frame_tree.debug = True
+
 
 #---------------------------------------------------------------------------
 # Add the HLA SimObjects associated with this federate.
