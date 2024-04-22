@@ -81,7 +81,7 @@ class MTRInteractionHandler : public TrickHLA::InteractionHandler
    // Public constructors and destructors.
    /*! @brief Initialization constructor for the SpaceFOM MTRInteractionHandler class.
     *  @param fed  TrickHLA::Federate associated with this MTRInteractionHandler instance. */
-   explicit MTRInteractionHandler( TrickHLA::Federate *fed );
+   explicit MTRInteractionHandler( TrickHLA::Federate const *fed );
    /*! @brief Destructor for the SpaceFOM MTRInteractionHandler class. */
    virtual ~MTRInteractionHandler(); // Destructor.
 

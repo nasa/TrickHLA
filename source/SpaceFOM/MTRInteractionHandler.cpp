@@ -69,7 +69,7 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 MTRInteractionHandler::MTRInteractionHandler(
-   Federate *fed )
+   Federate const *fed )
    : name( NULL ),
      mtr_mode( MTR_UNINITIALIZED ),
      mtr_mode_int( 0 ),
