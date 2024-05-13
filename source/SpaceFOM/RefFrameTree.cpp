@@ -33,6 +33,7 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 #include "trick/message_proto.h"
+#include "trick/MemoryManager.hh"
 
 // TrickHLA model include files.
 #include "TrickHLA/CompileConfig.hh"
@@ -146,15 +147,38 @@ RefFrameBase *RefFrameTree::find_frame( string const &name )
  * @job_class{scheduled}
  */
 RefFrameData *RefFrameTree::build_transform(
-   RefFrameBase * source_frame,
-   RefFrameBase * express_frame )
+   RefFrameBase const * source_frame,
+   RefFrameBase const * express_frame )
 {
    RefFrameData * transform_data = NULL;
+   LRTreeNodeBase * current_node = NULL;
+   RefFrameBase * current_frame = NULL;
+   LRTreeNodeVector::iterator path_itr;
+
+   // Allocate the frame transformation.
+   transform_data = static_cast< SpaceFOM::RefFrameData * >( trick_MM->declare_var( "SpaceFOM::RefFrameData" ) );
+   // Check for a NULL allocation.
+   if ( transform_data != NULL ){
+      send_hs( stderr, "SpaceFOM::RefFrameTree::build_transform: %d ERROR allocating Trick Memory!",
+               __LINE__, THLA_NEWLINE );
+      return( NULL );
+   }
 
    // First, let's get the transformation path from source to the express frame.
    LRTreeNodeVector & path = this->paths[source_frame->node_id][express_frame->node_id];
 
    // Now the work begins . . .
+
+   // Iterate through the path.
+   for ( path_itr = path.begin(); path_itr != path.end(); ++path_itr ) {
+
+      // Access the Reference Frame data.
+      current_frame = static_cast<RefFrameBase*>(*path_itr);
+
+      // Check if this is a node on the up path or the down path.
+
+
+   }
 
    return( transform_data );
 }

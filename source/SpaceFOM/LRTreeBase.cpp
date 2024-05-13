@@ -748,7 +748,7 @@ LRTreeNodeVector *LRTreeBase::find_path( unsigned int const local,
                }
             }
 
-            // Check for an aberant condition where the common node isn't found.
+            // Check for an aberrant condition where the common node isn't found.
             // This should NEVER happen!
             if ( down_itr == down_path->end() ) {
                send_hs( stdout, "LRTreeBase::find_path():%d Error: Failed to find common node in down path search.\n",

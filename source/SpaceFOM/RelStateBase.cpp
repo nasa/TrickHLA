@@ -40,6 +40,7 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 #include "trick/constant.h"
 #include "trick/trick_math.h"
+#include "trick/MemoryManager.hh"
 
 // TrickHLA model include files.
 #include "TrickHLA/CompileConfig.hh"
@@ -172,6 +173,9 @@ bool RelStateBase::compute_state(
    double wxwxr_p[3];
    double a_p[3];
 
+   double w_ent_p_exp[3];
+   double wdot_ent_p_exp[3];
+
    // Check for NULL frame.
    if ( entity == NULL ){
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
@@ -211,6 +215,15 @@ bool RelStateBase::compute_state(
    // Ask the Reference Frame Tree to build the transformation for the entity
    // parent reference frame with respect to the desired express frame.
    path_transform = frame_tree->build_transform( entity_parent_frame, express_frame );
+   // Check for a NULL transformation.
+   if ( path_transform != NULL ){
+      if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+         ostringstream errmsg;
+         errmsg << "RelStateBase::compute_state() Warning: Could not find frame transformation: %s/%s!" << endl;
+         send_hs( stderr, entity->parent_frame, express_frame->name, errmsg.str().c_str() );
+      }
+      return( false );
+   }
 
    //
    // Position computations.
@@ -225,7 +238,7 @@ bool RelStateBase::compute_state(
    V_ADD( this->state.pos, path_transform->state.pos, r_ent_p_exp )
 
    // Compute the entity attitude in the express frame.
-   path_transform->state.att.transform_quat( entity->state.att, this->state.att );
+   this->state.att.multiply( path_transform->state.att, entity->state.att );
 
    //
    // Velocity computations.
@@ -242,15 +255,19 @@ bool RelStateBase::compute_state(
    // Compute entity velocity expressed in the express frame.
    V_ADD( this->state.vel, path_transform->state.vel, v_ent_p_exp );
 
-   // Compute the angular velocity in the express frame.
-
+   // Compute the entity angular velocity in the express frame.
+   // Transform the entity angular velocity into the express frame.
+   path_transform->state.att.transform_vector( entity->state.ang_vel, w_ent_p_exp );
+   // Add the rotational velocity of the entity parent frame with respect
+   // to the express frame.
+   V_ADD( this->state.ang_vel, w_ent_p_exp, path_transform->state.ang_vel );
 
    //
    // Acceleration computations.
    //
    // Compute the apparent acceleration of the entity in a rotating parent frame.
    V_CROSS( axr_p, path_transform->ang_accel, entity->state.pos );
-   V_SCALE( two_w_p, 2.0, path_transform->state.ang_vel );
+   V_SCALE( two_w_p, path_transform->state.ang_vel, 2.0 );
    V_CROSS( two_wxv_p, two_w_p, entity->state.vel );
    V_CROSS( wxwxr_p, path_transform->state.ang_vel, wxr_p );
 
@@ -265,7 +282,21 @@ bool RelStateBase::compute_state(
    // Compute entity acceleration expressed in the express frame.
    V_ADD( this->accel, path_transform->accel, a_ent_p_exp );
 
-   return( false );
+   // Compute the entity angular acceleration in the express frame.
+   // Transform the entity angular acceleration into the express frame.
+   path_transform->state.att.transform_vector( entity->state.ang_vel, wdot_ent_p_exp );
+   // Add the rotational acceleration of the entity parent frame with respect
+   // to the express frame.
+   V_ADD( this->ang_accel, wdot_ent_p_exp, path_transform->ang_accel );
+
+   // Free the allocated path transformation.
+   if ( trick_MM->delete_var( static_cast< void * >( path_transform ) ) ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::RelStateBase::compute_state() ERROR: Deleting frame transformation: %s/%s!" << endl;
+      send_hs( stderr, entity->parent_frame, express_frame->name, errmsg.str().c_str() );
+   }
+
+   return( true );
 
 }
 

@@ -117,10 +117,13 @@ class RefFrameTree : public SpaceFOM::LRTreeBase
 
 
    /*! @brief Build a composite transform from source to express frame.
-    *  @return Tree frame instance if found, NULL otherwise.
+    *  @detail The frame is constructed by using the pre-computed path from
+    *  source to the express frame.  This is an allocated reference frame
+    *  transformation who's memory is managed by the user.
+    *  @return Reference frame transformation NULL indicates an error.
     *  @param name Name of the frame to check for. */
-   virtual RefFrameData *build_transform( RefFrameBase * source_frame,
-                                          RefFrameBase * express_frame );
+   virtual RefFrameData *build_transform( RefFrameBase const * source_frame,
+                                          RefFrameBase const * express_frame );
 
 
    /*! @brief Print out the Reference Frame Tree nodes.
