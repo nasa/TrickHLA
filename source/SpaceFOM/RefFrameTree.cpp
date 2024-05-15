@@ -153,6 +153,7 @@ RefFrameData *RefFrameTree::build_transform(
    RefFrameData * transform_data = NULL;
    LRTreeNodeBase * current_node = NULL;
    RefFrameBase * current_frame = NULL;
+   RefFrameBase * next_frame = NULL;
    LRTreeNodeVector::iterator path_itr;
 
    // Allocate the frame transformation.
@@ -168,6 +169,21 @@ RefFrameData *RefFrameTree::build_transform(
    LRTreeNodeVector & path = this->paths[source_frame->node_id][express_frame->node_id];
 
    // Now the work begins . . .
+
+   // Get the first node/frame in the path.
+   current_frame = static_cast<RefFrameBase*>(path[0]);
+   next_frame    = static_cast<RefFrameBase*>(path[1]);
+   // Check for parent.
+   if ( current_frame->parent_frame != NULL ){
+      // Check if we are going up the tree.
+      if ( current_frame->parent_frame == next_frame ) {
+
+      }
+      // Check to see if we are going down the tree.
+      else if ( next_frame->parent_frame == current_frame ){
+
+      }
+   }
 
    // Iterate through the path.
    for ( path_itr = path.begin(); path_itr != path.end(); ++path_itr ) {
