@@ -171,6 +171,7 @@ trick.exec_set_freeze_command( False ) #TEMP True )
 trick.exec_set_stack_trace( False )
 
 trick.var_server_set_port( 7000 )
+#trick.var_server_set_source_address( "127.0.0.1" )
 trick.sim_control_panel_set_enabled( True )
 
 #simControlPanel = trick.SimControlPanel()
