@@ -25,8 +25,13 @@ TRICK_ICGFLAGS += --icg-std=c++11
 
 # Needed for the HLA IEEE 1516 header files.
 ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
-   TRICK_CFLAGS   += -I${RTI_HOME}/include
-   TRICK_CXXFLAGS += -I${RTI_HOME}/include
+   ifneq ("$(wildcard ${RTI_HOME}/api/cpp/HLA_1516-2010)","")
+      TRICK_CFLAGS   += -I${RTI_HOME}/api/cpp/HLA_1516-2010
+      TRICK_CXXFLAGS += -I${RTI_HOME}/api/cpp/HLA_1516-2010
+   else
+      TRICK_CFLAGS   += -I${RTI_HOME}/include
+      TRICK_CXXFLAGS += -I${RTI_HOME}/include
+   endif
 else ifeq ($(RTI_VENDOR),Mak)
    TRICK_CFLAGS   += -DRTI_VENDOR=Mak_HLA_Evolved -I${RTI_HOME}/include/HLA1516E
    TRICK_CXXFLAGS += -DRTI_VENDOR=Mak_HLA_Evolved -I${RTI_HOME}/include/HLA1516E
@@ -208,14 +213,10 @@ else
 
 endif
 
-ifdef TRICK_ICG_EXCLUDE
-   TRICK_ICG_EXCLUDE += :${RTI_HOME}/include
+ifneq ("$(wildcard ${RTI_HOME}/api/cpp/HLA_1516-2010)","")
+   TRICK_ICG_EXCLUDE  += :${RTI_HOME}/api/cpp/HLA_1516-2010
+   TRICK_SWIG_EXCLUDE += :${RTI_HOME}/api/cpp/HLA_1516-2010
 else
-   TRICK_ICG_EXCLUDE = ${RTI_HOME}/include
-endif
-
-ifdef TRICK_SWIG_EXCLUDE
+   TRICK_ICG_EXCLUDE  += :${RTI_HOME}/include
    TRICK_SWIG_EXCLUDE += :${RTI_HOME}/include
-else
-   TRICK_SWIG_EXCLUDE = ${RTI_HOME}/include
 endif
