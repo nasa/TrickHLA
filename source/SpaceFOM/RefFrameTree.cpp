@@ -165,6 +165,14 @@ RefFrameData *RefFrameTree::build_transform(
       return( NULL );
    }
 
+   // Set the time stamp.
+   transform_data->set_time( source_frame->packing_data.state.time );
+
+   // Check for the degenerate case.
+   if ( source_frame == express_frame ) {
+      return( transform_data );
+   }
+
    // First, let's get the transformation path from source to the express frame.
    LRTreeNodeVector & path = this->paths[source_frame->node_id][express_frame->node_id];
 

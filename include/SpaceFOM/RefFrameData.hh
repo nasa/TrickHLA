@@ -69,6 +69,15 @@ class RefFrameData
     *  @param source Source RefFrameData to copy from. */
    virtual void copy( const RefFrameData &source );
 
+   /*! @brief Initialize the RefFrameData. */
+   virtual void initialize();
+
+   /*! @brief Set the time stamp associated with the RefFrameData.
+    *  @param time Time stame value. */
+   virtual void set_time( double time ){
+      state.time = time;
+   }
+
 };
 
 } // namespace SpaceFOM

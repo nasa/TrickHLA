@@ -51,10 +51,8 @@ RefFrameData::RefFrameData()
 : name( NULL ),
   parent_name( NULL )
 {
-   for( unsigned int iinc = 0 ; iinc < 3 ; iinc++ ){
-      this->accel[iinc]     = 0.0;
-      this->ang_accel[iinc] = 0.0;
-   }
+   V_INIT( this->accel );
+   V_INIT( this->ang_accel );
 }
 
 /*!
@@ -140,5 +138,17 @@ void RefFrameData::copy( const RefFrameData &source )
       this->ang_accel[iinc] = source.ang_accel[iinc];
    }
 
+   return;
+}
+
+
+/*!
+ * @job_class{scheduled}
+ */
+void RefFrameData::initialize()
+{
+   state.initialize();
+   V_INIT( this->accel );
+   V_INIT( this->ang_accel );
    return;
 }

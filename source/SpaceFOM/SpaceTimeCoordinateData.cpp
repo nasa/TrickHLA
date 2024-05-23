@@ -47,9 +47,7 @@ SpaceTimeCoordinateData::SpaceTimeCoordinateData()
    : att(),
      time( 0.0 )
 {
-   V_INIT( pos );
-   V_INIT( vel );
-   V_INIT( ang_vel );
+   this->initialize();
 }
 
 /*!
