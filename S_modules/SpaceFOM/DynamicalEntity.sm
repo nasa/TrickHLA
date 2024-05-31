@@ -23,7 +23,7 @@
  
 
 //==========================================================================
-// SIM_OBJECT: SpaceFOMPhysicalEntitySimObject - A SpaceFOM PhysicalEntity
+// SIM_OBJECT: SpaceFOMDynamicalEntitySimObject - A SpaceFOM DynamicalEntity
 // instance simulation object definition.
 //==========================================================================
 
