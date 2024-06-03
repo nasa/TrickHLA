@@ -156,6 +156,8 @@ RefFrameData *RefFrameTree::build_transform(
    RefFrameBase * next_frame = NULL;
    LRTreeNodeVector::iterator path_itr;
 
+   RefFrameData * working_frame;
+
    // Allocate the frame transformation.
    transform_data = static_cast< SpaceFOM::RefFrameData * >( trick_MM->declare_var( "SpaceFOM::RefFrameData" ) );
    // Check for a NULL allocation.
@@ -176,7 +178,7 @@ RefFrameData *RefFrameTree::build_transform(
    // First, let's get the transformation path from source to the express frame.
    LRTreeNodeVector & path = this->paths[source_frame->node_id][express_frame->node_id];
 
-   // Now the work begins . . .
+   // FIXME: Now the work begins . . .
 
    // Get the first node/frame in the path.
    current_frame = static_cast<RefFrameBase*>(path[0]);
@@ -185,11 +187,17 @@ RefFrameData *RefFrameTree::build_transform(
    if ( current_frame->parent_frame != NULL ){
       // Check if we are going up the tree.
       if ( current_frame->parent_frame == next_frame ) {
-
+         // Use the standard transformation.
+         if( !current_frame->packing_data.transform_to_parent( *transform_data, working_frame ) ) {
+            return( NULL );
+         }
       }
       // Check to see if we are going down the tree.
       else if ( next_frame->parent_frame == current_frame ){
-
+         // Use the reverse transformation.
+         if( !next_frame->packing_data.transform_to_child( *transform_data, working_frame ) ) {
+            return( NULL );
+         }
       }
    }
 

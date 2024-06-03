@@ -418,7 +418,7 @@ void QuaternionData::multiply_sv(
    double      *ps,
    double       pv[3] )
 {
-   // We use a working area because we do not know it the product happens to
+   // We use a working area because we do not know if the product happens to
    // refer to either the left or right operands.
    double ws;
    double wv[3];

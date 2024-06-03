@@ -157,24 +157,28 @@ bool RelStateBase::compute_state(
                                      needed to transform from the entity's
                                      parent frame into a desired express frame. */
 
-   double r_ent_p_exp[3]; /* Position vector of the entity with respect to its
-                             parent frame but expressed in the desired express frame. */
-   double v_ent_p_exp[3]; /* Velocity vector of the entity with respect to its
-                             parent frame but expressed in the desired express frame. */
-   double a_ent_p_exp[3]; /* Acceleration vector of the entity with respect to its
-                             parent frame but expressed in the desired express frame. */
+   double r_ent_c_p[3]; /* Position vector of the entity with respect to its
+                           current frame (child) but expressed in the desired
+                           parent frame. */
+   double v_ent_c_p[3]; /* Velocity vector of the entity with respect to its
+                           current frame (child) but expressed in the desired
+                           parent frame. */
+   double a_ent_c_p[3]; /* Acceleration vector of the entity with respect to its
+                           current frame (child) but expressed in the desired
+                           parent frame. */
 
    // Working variables.
-   double wxr_p[3];
-   double v_p[3];
-   double axr_p[3];
-   double two_w_p[3];
-   double two_wxv_p[3];
-   double wxwxr_p[3];
-   double a_p[3];
-
-   double w_ent_p_exp[3];
-   double wdot_ent_p_exp[3];
+   // Translation
+   double wxr_c[3];
+   double v_c[3];
+   double axr_c[3];
+   double two_w_c[3];
+   double two_wxv_c[3];
+   double wxwxr_c[3];
+   double a_c[3];
+   // Rotation
+   double w_c_p_bdy[3];
+   double wdot_c_p_bdy[3];
 
    // Check for NULL frame.
    if ( entity == NULL ){
@@ -225,17 +229,22 @@ bool RelStateBase::compute_state(
       return( false );
    }
 
+   //**************************************************************************
+   // Compute the state of the entity with respect to a new express (parent)
+   // frame.
+   //**************************************************************************
+
    //
    // Position computations.
    //
-   // Transform the entity position vector expressed in its parent frame
-   // into the desired express frame.  This is still a vector from the origin
-   // of the original parent frame to the entity but expressed in the express
-   // frame's orientation.
-   path_transform->state.att.transform_vector( entity->state.pos, r_ent_p_exp );
+   // Transform the entity position vector expressed in its current frame
+   // (child) into the desired express frame (parent).  This is still a vector
+   // from the origin of the original child frame to the entity but expressed
+   // in the new parent frame coordinates.
+   path_transform->state.att.transform_vector( entity->state.pos, r_ent_c_p );
 
    // Compute entity position expressed in the express frame.
-   V_ADD( this->state.pos, path_transform->state.pos, r_ent_p_exp )
+   V_ADD( this->state.pos, path_transform->state.pos, r_ent_c_p )
 
    // Compute the entity attitude in the express frame.
    this->state.att.multiply( path_transform->state.att, entity->state.att );
@@ -244,50 +253,54 @@ bool RelStateBase::compute_state(
    // Velocity computations.
    //
    // Compute the apparent velocity of the entity in a rotating parent frame.
-   V_CROSS( wxr_p, path_transform->state.ang_vel, entity->state.pos );
+   V_CROSS( wxr_c, path_transform->state.ang_vel, entity->state.pos );
 
    // Compute the total velocity of the entity in the rotating parent frame.
-   V_ADD( v_p, entity->state.vel, wxr_p );
+   V_ADD( v_c, entity->state.vel, wxr_c );
 
    // Transform the entity velocity into the express frame.
-   path_transform->state.att.transform_vector( v_p, v_ent_p_exp );
+   path_transform->state.att.transform_vector( v_c, v_ent_c_p );
 
    // Compute entity velocity expressed in the express frame.
-   V_ADD( this->state.vel, path_transform->state.vel, v_ent_p_exp );
+   V_ADD( this->state.vel, path_transform->state.vel, v_ent_c_p );
 
-   // Compute the entity angular velocity in the express frame.
-   // Transform the entity angular velocity into the express frame.
-   path_transform->state.att.transform_vector( entity->state.ang_vel, w_ent_p_exp );
-   // Add the rotational velocity of the entity parent frame with respect
-   // to the express frame.
-   V_ADD( this->state.ang_vel, w_ent_p_exp, path_transform->state.ang_vel );
+   // Compute this entity's angular velocity wrt the parent frame.
+   // NOTE: Angular velocity is expressed in the 'body' frame, not the parent frame.
+   // Transform the child frame's angular velocity wrt the parent frame into
+   // this entity's 'body' frame.
+   this->state.att.conjugate_transform_vector( path_transform->state.ang_vel, w_c_p_bdy );
+   // Add the rotational velocity of the entity's current frame (child) with
+   // respect to the new parent frame.
+   V_ADD( this->state.ang_vel, w_c_p_bdy, entity->state.ang_vel );
 
    //
    // Acceleration computations.
    //
    // Compute the apparent acceleration of the entity in a rotating parent frame.
-   V_CROSS( axr_p, path_transform->ang_accel, entity->state.pos );
-   V_SCALE( two_w_p, path_transform->state.ang_vel, 2.0 );
-   V_CROSS( two_wxv_p, two_w_p, entity->state.vel );
-   V_CROSS( wxwxr_p, path_transform->state.ang_vel, wxr_p );
+   V_CROSS( axr_c, path_transform->ang_accel, entity->state.pos );
+   V_SCALE( two_w_c, path_transform->state.ang_vel, 2.0 );
+   V_CROSS( two_wxv_c, two_w_c, entity->state.vel );
+   V_CROSS( wxwxr_c, path_transform->state.ang_vel, wxr_c );
 
    // Add up the components of the rotationally induced acceleration.
-   a_p[0] = path_transform->accel[0] + wxwxr_p[0] + two_wxv_p[0] + axr_p[0];
-   a_p[1] = path_transform->accel[1] + wxwxr_p[1] + two_wxv_p[1] + axr_p[1];
-   a_p[2] = path_transform->accel[2] + wxwxr_p[2] + two_wxv_p[2] + axr_p[2];
+   a_c[0] = entity->accel[0] + wxwxr_c[0] + two_wxv_c[0] + axr_c[0];
+   a_c[1] = entity->accel[1] + wxwxr_c[1] + two_wxv_c[1] + axr_c[1];
+   a_c[2] = entity->accel[2] + wxwxr_c[2] + two_wxv_c[2] + axr_c[2];
 
-   // Transform the entity acceleration into the express frame.
-   path_transform->state.att.transform_vector( a_p, a_ent_p_exp );
+   // Transform the entity acceleration into the parent frame.
+   path_transform->state.att.transform_vector( a_c, a_ent_c_p );
 
-   // Compute entity acceleration expressed in the express frame.
-   V_ADD( this->accel, path_transform->accel, a_ent_p_exp );
+   // Compute entity acceleration expressed in the parent frame.
+   V_ADD( this->accel, path_transform->accel, a_ent_c_p );
 
-   // Compute the entity angular acceleration in the express frame.
-   // Transform the entity angular acceleration into the express frame.
-   path_transform->state.att.transform_vector( entity->state.ang_vel, wdot_ent_p_exp );
-   // Add the rotational acceleration of the entity parent frame with respect
-   // to the express frame.
-   V_ADD( this->ang_accel, wdot_ent_p_exp, path_transform->ang_accel );
+   // Compute this entity's angular acceleration wrt the parent frame.
+   // NOTE: Angular acceleration is expressed in the 'body' frame, not the parent frame.
+   // Transform the current frame's angular acceleration wrt the parent frame
+   // into the entity 'body' frame.
+   entity->state.att.conjugate_transform_vector( path_transform->state.ang_vel, wdot_c_p_bdy );
+   // Add the rotational acceleration of the entity frame with respect
+   // to the parent frame.
+   V_ADD( this->ang_accel, wdot_c_p_bdy, entity->ang_accel );
 
    // Free the allocated path transformation.
    if ( trick_MM->delete_var( static_cast< void * >( path_transform ) ) ) {
