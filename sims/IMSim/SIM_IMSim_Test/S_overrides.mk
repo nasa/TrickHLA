@@ -15,6 +15,6 @@ endif
 # Construct Build Environment
 #=============================================================================
 
-TRICK_CFLAGS    += -Wno-deprecated-declarations -I. -I../../models
-TRICK_CXXFLAGS  += -Wno-deprecated-declarations -I. -I../../models
+TRICK_CFLAGS   += -I. -I../../models
+TRICK_CXXFLAGS += -I. -I../../models
 
