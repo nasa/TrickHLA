@@ -15,10 +15,8 @@ endif
 # Construct Build Environment
 #=============================================================================
 
-TRICK_CFLAGS    += -Wno-deprecated-declarations
-TRICK_CFLAGS    += -I.
-TRICK_CXXFLAGS  += -Wno-deprecated-declarations
-TRICK_CXXFLAGS  += -I.
+TRICK_CFLAGS   += -I.
+TRICK_CXXFLAGS += -I.
 
 # Use the Trick Stand-Alone Integrators if the SAIntegrator/lib directory exists.
 # NOTE: You will also have to build the Trick SAInteg library.

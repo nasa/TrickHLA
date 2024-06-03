@@ -231,6 +231,15 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
    if args.very_verbose:
       TrickHLAMessage.status( 'Path to HLA RTI: ' + rti_home )
 
+   # Determine the path to the HLA RTI include directory.
+   rti_include = rti_home + '/api/cpp/HLA_1516-2010'
+   if os.path.isdir( rti_include ) is False:
+      rti_include = rti_home + '/include'
+      if os.path.isdir( rti_include ) is False:
+         TrickHLAMessage.failure( 'Could not find the HLA RTI include directory: ' + rti_include )
+   if args.very_verbose:
+      TrickHLAMessage.status( 'Path to HLA RTI include directory: ' + rti_include )
+
    # Determine the path to JEOD home directory.
    jeod_home = find_jeod( args.jeod_home, args.very_verbose )
    if args.very_verbose and jeod_home:
@@ -245,7 +254,7 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
    trickhla_include_dirs.extend( ['-I', trick_home + '/include'] )
    trickhla_include_dirs.extend( ['-I', trick_home + '/include/trick/compat'] )
    trickhla_include_dirs.extend( ['-I', trick_home + '/trick_source'] )
-   trickhla_include_dirs.extend( ['-I', rti_home + '/include'] )
+   trickhla_include_dirs.extend( ['-I', rti_include] )
    if jeod_home:
       trickhla_include_dirs.extend( ['-I', jeod_home + '/models'] )
    if os.path.isdir( './models/EntityDynamics/include' ):
@@ -365,14 +374,14 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
       trickhla_ignore.append( '--suppress=preprocessorErrorDirective:' + trick_home + '/trick_source/er7_utils/interface/include/er7_class.hh' )
    else:
       # Ignore/suppress the HLA Evolved standard header file warnings.
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_home + '/include/RTI/Exception.h' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_home + '/include/RTI/Typedefs.h' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_home + '/include/RTI/encoding/EncodingExceptions.h' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_home + '/include/RTI/time/HLAinteger64Interval.h' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_home + '/include/RTI/time/HLAinteger64Time.h' )
-      trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_home + '/include/RTI/encoding/DataElement.h' )
-      trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_home + '/include/RTI/encoding/HLAfixedRecord.h' )
-      trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_home + '/include/RTI/time/HLAinteger64Time.h' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_include + '/RTI/Exception.h' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_include + '/RTI/Typedefs.h' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_include + '/RTI/encoding/EncodingExceptions.h' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_include + '/RTI/time/HLAinteger64Interval.h' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_include + '/RTI/time/HLAinteger64Time.h' )
+      trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_include + '/RTI/encoding/DataElement.h' )
+      trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_include + '/RTI/encoding/HLAfixedRecord.h' )
+      trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_include + '/RTI/time/HLAinteger64Time.h' )
       # Ignore/suppress the Trick header file warnings.
       trickhla_ignore.append( '--suppress=constParameterReference:' + trick_home + '/trick_source/er7_utils/integration/core/include/first_order_ode_integrator.hh' )
       trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/DataRecordGroup.hh' )
