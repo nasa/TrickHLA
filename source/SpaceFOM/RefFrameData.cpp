@@ -186,7 +186,7 @@ bool RefFrameData::transform_to_parent(
    // Check for null reference to transformed frame data.
    if ( frame_p == NULL ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameData::transform() ERROR:%d NULL transformed frame reference!" << std::endl;
+      errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d NULL transformed frame reference!" << std::endl;
       send_hs( stderr, errmsg.str().c_str(), __LINE__ );
       return( false );
    }
@@ -205,19 +205,19 @@ bool RefFrameData::transform_to_parent(
    // frame.
    if ( strcmp( this->name, frame_p->name ) ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameData::transform() ERROR:%d Frame name mismatch: %s/%s!" << std::endl;
+      errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d Frame name mismatch: %s/%s!" << std::endl;
       send_hs( stderr, errmsg.str().c_str(), __LINE__, this->name, frame_p->name );
       return( false );
    }
    if ( strcmp( this->parent_name, transform_c_p.name ) ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameData::transform() ERROR:%d Frame incompatibility: %s/%s!" << std::endl;
+      errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d Frame incompatibility: %s/%s!" << std::endl;
       send_hs( stderr, errmsg.str().c_str(), __LINE__, this->parent_name, transform_c_p.name );
       return( false );
    }
    if ( strcmp( transform_c_p.parent_name, frame_p->parent_name ) ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameData::transform() ERROR:%d Frame parent: %s/%s!" << std::endl;
+      errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d Frame parent: %s/%s!" << std::endl;
       send_hs( stderr, errmsg.str().c_str(), __LINE__, transform_c_p.parent_name, frame_p->parent_name );
       return( false );
    }
@@ -303,7 +303,7 @@ bool RefFrameData::transform_to_child(
    RefFrameData       * frame_c )
 {
 
-   double r_frm_c_p[3]; /* Position vector of this frame with respect to its
+   double r_frm_p_c[3]; /* Position vector of this frame with respect to its
                            child frame but expressed in the desired parent frame. */
    double v_frm_c_p[3]; /* Velocity vector of this frame with respect to its
                            child frame but expressed in the desired parent frame. */
@@ -326,12 +326,61 @@ bool RefFrameData::transform_to_child(
    // Check for null reference to transformed frame data.
    if ( frame_c == NULL ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameData::transform() ERROR:%d NULL transformed frame reference!" << std::endl;
+      errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d NULL transformed frame reference!" << std::endl;
       send_hs( stderr, errmsg.str().c_str(), __LINE__ );
       return( false );
    }
 
+   //**************************************************************************
+   // Transform this frame expressed in its current parent frame into one of
+   // its specified child frames.
+   // See the Reference Frame Transformations section of the SpaceFOM
+   // (Appendix E).
+   //**************************************************************************
+
+   // Check for frame compatibility.
+   if ( strcmp( this->name, frame_c->name ) ) {
+      std::ostringstream errmsg;
+      errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d Frame name mismatch: %s/%s!" << std::endl;
+      send_hs( stderr, errmsg.str().c_str(), __LINE__, this->name, frame_c->name );
+      return( false );
+   }
+   if ( strcmp( this->name, transform_c_p.parent_name ) ) {
+      std::ostringstream errmsg;
+      errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d Frame incompatibility: %s/%s!" << std::endl;
+      send_hs( stderr, errmsg.str().c_str(), __LINE__, this->name, transform_c_p.parent_name );
+      return( false );
+   }
+   if ( strcmp( transform_c_p.name, frame_c->parent_name ) ) {
+      std::ostringstream errmsg;
+      errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d Frame parent: %s/%s!" << std::endl;
+      send_hs( stderr, errmsg.str().c_str(), __LINE__, transform_c_p.name, frame_c->parent_name );
+      return( false );
+   }
+
+   // Compute the conjugate of the child to parent transformation quaternion.
+   // This is the parent to child transformation quaternion.
+   QuaternionData q_p_c;
+   q_p_c.conjugate( transform_c_p.state.att );
+
+   //
+   // Position computations.
+   //
+   // Compute the difference between the parent frame and the child frame
+   // expressed in parent frame coordinates.
+   V_SUB( r_frm_p_c, this->state.pos, transform_c_p.state.pos )
+
+   // Transform the position vector into the child frame coordinates.
+   q_p_c.transform_vector( frame_c->state.pos, r_frm_p_c );
+
+   // Compute the attitude of this frame in the child frame.
+   frame_c->state.att.multiply( q_p_c, this->state.att );
+
    // FIXME: Work to do here.
+
+
+
+
 
    return( false );
 
