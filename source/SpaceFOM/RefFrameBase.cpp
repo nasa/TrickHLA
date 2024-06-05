@@ -669,7 +669,7 @@ void RefFrameBase::print_data( std::ostream &stream )
           << "\t\t" << packing_data.state.pos[0] << ", "
           << "\t\t" << packing_data.state.pos[1] << ", "
           << "\t\t" << packing_data.state.pos[2] << endl;
-   stream << "\tvolocity: "
+   stream << "\tvelocity: "
           << "\t\t" << packing_data.state.vel[0] << ", "
           << "\t\t" << packing_data.state.vel[1] << ", "
           << "\t\t" << packing_data.state.vel[2] << endl;
