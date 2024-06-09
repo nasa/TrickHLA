@@ -121,9 +121,12 @@ class RefFrameTree : public SpaceFOM::LRTreeBase
     *  source to the express frame.  This is an allocated reference frame
     *  transformation who's memory is managed by the user.
     *  @return Reference frame transformation NULL indicates an error.
-    *  @param name Name of the frame to check for. */
+    *  @param source_frame Starting frame in the ReferenceFrameTree.
+    *  @param express_frame Desired express frame in the ReferenceFrameTree.
+    *  @param transform_data Transformation from the source into the express frame. */
    virtual RefFrameData *build_transform( RefFrameBase const * source_frame,
-                                          RefFrameBase const * express_frame );
+                                          RefFrameBase const * express_frame,
+                                          RefFrameData       * transform_data );
 
 
    /*! @brief Print out the Reference Frame Tree nodes.

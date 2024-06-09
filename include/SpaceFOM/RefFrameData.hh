@@ -4,7 +4,7 @@
 @brief A simple class that contains the date fields required to encode
 and decode a SISO Space Reference FOM ReferenceFrame data type.
 
-@copyright Copyright 2019 United States Government as represented by the
+@copyright Copyright 2024 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17, U.S. Code.
 All Other Rights Reserved.
@@ -25,6 +25,7 @@ NASA, Johnson Space Center\n
 @revs_begin
 @rev_entry{ Edwin Z. Crues, NASA ER7, NExSyS, July 2018, --, Initial version }
 @rev_entry{ Edwin Z. Crues, NASA ER7, TrickHLA, October 2023, --, Made into full class. }
+@rev_entry{ Edwin Z. Crues, NASA ER7, TrickHLA, June 2024, --, Refactored to subclass from RefFrameDataState. }
 @revs_end
 
 */
@@ -32,22 +33,17 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_REF_FRAME_DATA_HH
 #define SPACEFOM_REF_FRAME_DATA_HH
 
-#include "SpaceFOM/SpaceTimeCoordinateData.hh"
+#include "SpaceFOM/RefFrameDataState.hh"
 
 namespace SpaceFOM
 {
 
-class RefFrameData
+class RefFrameData : public SpaceFOM::RefFrameDataState
 {
 
   public:
    char *name;        ///< @trick_units{--} Name of the reference frame.
    char *parent_name; ///< @trick_units{--} Name of this frames parent frame.
-
-   SpaceTimeCoordinateData state; ///< @trick_units{--} Space time coordinate state.
-
-   double accel[3];     ///< @trick_units{m/s^2} Entity acceleration vector.
-   double ang_accel[3]; ///< @trick_units{rad/s^2} Entity angular acceleration vector.
 
    // Default constructor.
    RefFrameData();
@@ -69,13 +65,33 @@ class RefFrameData
     *  @param source Source RefFrameData to copy from. */
    virtual void copy( const RefFrameData &source );
 
+   // Tell the compiler that we are also using the RefFrameDataState copy function.
+   using RefFrameDataState::copy;
+
    /*! @brief Initialize the RefFrameData. */
    virtual void initialize();
 
-   /*! @brief Set the time stamp associated with the RefFrameData.
-    *  @param time Time stame value. */
-   virtual void set_time( double time ){
-      state.time = time;
+   // Access functions.
+   /*! @brief Access function to set the name for the reference frame.
+    *  @param new_name Name for this reference frame. */
+   virtual void set_name( char const *new_name );
+
+   /*! @brief Access function to get the name for the reference frame.
+    *  @return Name for this reference frame. */
+   virtual char const *get_name()
+   {
+      return name;
+   }
+
+   /*! @brief Access function to set the name for the parent reference frame.
+    *  @param name Name for the parent reference frame. */
+   virtual void set_parent_name( char const *name );
+
+   /*! @brief Access function to get the name for the parent reference frame.
+    *  @return Name for the parent reference frame. */
+   virtual char const *get_parent_name()
+   {
+      return parent_name;
    }
 
 

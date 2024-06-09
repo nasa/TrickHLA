@@ -218,7 +218,7 @@ bool RelStateBase::compute_state(
 
    // Ask the Reference Frame Tree to build the transformation for the entity
    // parent reference frame with respect to the desired express frame.
-   path_transform = frame_tree->build_transform( entity_parent_frame, express_frame );
+   path_transform = frame_tree->build_transform( entity_parent_frame, express_frame, NULL );
    // Check for a NULL transformation.
    if ( path_transform != NULL ){
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
