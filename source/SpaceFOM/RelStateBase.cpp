@@ -153,9 +153,9 @@ bool RelStateBase::set_frame(
 bool RelStateBase::compute_state(
    PhysicalEntityData const *entity )
 {
-   RefFrameData * path_transform; /* The reference frame transformation data
-                                     needed to transform from the entity's
-                                     parent frame into a desired express frame. */
+   RefFrameData path_transform; /* The reference frame transformation data
+                                   needed to transform from the entity's
+                                   parent frame into a desired express frame. */
 
    double r_ent_c_p[3]; /* Position vector of the entity with respect to its
                            current frame (child) but expressed in the desired
@@ -218,12 +218,10 @@ bool RelStateBase::compute_state(
 
    // Ask the Reference Frame Tree to build the transformation for the entity
    // parent reference frame with respect to the desired express frame.
-   path_transform = frame_tree->build_transform( entity_parent_frame, express_frame, NULL );
-   // Check for a NULL transformation.
-   if ( path_transform != NULL ){
+   if( !frame_tree->build_transform( entity_parent_frame, express_frame, &path_transform ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          ostringstream errmsg;
-         errmsg << "RelStateBase::compute_state() Warning: Could not find frame transformation: %s/%s!" << endl;
+         errmsg << "RelStateBase::compute_state() Warning: Could not build frame transformation: %s/%s!" << endl;
          send_hs( stderr, entity->parent_frame, express_frame->name, errmsg.str().c_str() );
       }
       return( false );
@@ -241,34 +239,34 @@ bool RelStateBase::compute_state(
    // (child) into the desired express frame (parent).  This is still a vector
    // from the origin of the original child frame to the entity but expressed
    // in the new parent frame coordinates.
-   path_transform->state.att.transform_vector( entity->state.pos, r_ent_c_p );
+   path_transform.state.att.transform_vector( entity->state.pos, r_ent_c_p );
 
    // Compute entity position expressed in the express frame.
-   V_ADD( this->state.pos, path_transform->state.pos, r_ent_c_p )
+   V_ADD( this->state.pos, path_transform.state.pos, r_ent_c_p )
 
    // Compute the entity attitude in the express frame.
-   this->state.att.multiply( path_transform->state.att, entity->state.att );
+   this->state.att.multiply( path_transform.state.att, entity->state.att );
 
    //
    // Velocity computations.
    //
    // Compute the apparent velocity of the entity in a rotating parent frame.
-   V_CROSS( wxr_c, path_transform->state.ang_vel, entity->state.pos );
+   V_CROSS( wxr_c, path_transform.state.ang_vel, entity->state.pos );
 
    // Compute the total velocity of the entity in the rotating parent frame.
    V_ADD( v_c, entity->state.vel, wxr_c );
 
    // Transform the entity velocity into the express frame.
-   path_transform->state.att.transform_vector( v_c, v_ent_c_p );
+   path_transform.state.att.transform_vector( v_c, v_ent_c_p );
 
    // Compute entity velocity expressed in the express frame.
-   V_ADD( this->state.vel, path_transform->state.vel, v_ent_c_p );
+   V_ADD( this->state.vel, path_transform.state.vel, v_ent_c_p );
 
    // Compute this entity's angular velocity wrt the parent frame.
    // NOTE: Angular velocity is expressed in the 'body' frame, not the parent frame.
    // Transform the child frame's angular velocity wrt the parent frame into
    // this entity's 'body' frame.
-   this->state.att.conjugate_transform_vector( path_transform->state.ang_vel, w_c_p_bdy );
+   this->state.att.conjugate_transform_vector( path_transform.state.ang_vel, w_c_p_bdy );
    // Add the rotational velocity of the entity's current frame (child) with
    // respect to the new parent frame.
    V_ADD( this->state.ang_vel, w_c_p_bdy, entity->state.ang_vel );
@@ -277,10 +275,10 @@ bool RelStateBase::compute_state(
    // Acceleration computations.
    //
    // Compute the apparent acceleration of the entity in a rotating parent frame.
-   V_CROSS( axr_c, path_transform->ang_accel, entity->state.pos );
-   V_SCALE( two_w_c, path_transform->state.ang_vel, 2.0 );
+   V_CROSS( axr_c, path_transform.ang_accel, entity->state.pos );
+   V_SCALE( two_w_c, path_transform.state.ang_vel, 2.0 );
    V_CROSS( two_wxv_c, two_w_c, entity->state.vel );
-   V_CROSS( wxwxr_c, path_transform->state.ang_vel, wxr_c );
+   V_CROSS( wxwxr_c, path_transform.state.ang_vel, wxr_c );
 
    // Add up the components of the rotationally induced acceleration.
    a_c[0] = entity->accel[0] + wxwxr_c[0] + two_wxv_c[0] + axr_c[0];
@@ -288,26 +286,19 @@ bool RelStateBase::compute_state(
    a_c[2] = entity->accel[2] + wxwxr_c[2] + two_wxv_c[2] + axr_c[2];
 
    // Transform the entity acceleration into the parent frame.
-   path_transform->state.att.transform_vector( a_c, a_ent_c_p );
+   path_transform.state.att.transform_vector( a_c, a_ent_c_p );
 
    // Compute entity acceleration expressed in the parent frame.
-   V_ADD( this->accel, path_transform->accel, a_ent_c_p );
+   V_ADD( this->accel, path_transform.accel, a_ent_c_p );
 
    // Compute this entity's angular acceleration wrt the parent frame.
    // NOTE: Angular acceleration is expressed in the 'body' frame, not the parent frame.
    // Transform the current frame's angular acceleration wrt the parent frame
    // into the entity 'body' frame.
-   entity->state.att.conjugate_transform_vector( path_transform->state.ang_vel, wdot_c_p_bdy );
+   entity->state.att.conjugate_transform_vector( path_transform.state.ang_vel, wdot_c_p_bdy );
    // Add the rotational acceleration of the entity frame with respect
    // to the parent frame.
    V_ADD( this->ang_accel, wdot_c_p_bdy, entity->ang_accel );
-
-   // Free the allocated path transformation.
-   if ( trick_MM->delete_var( static_cast< void * >( path_transform ) ) ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::RelStateBase::compute_state() ERROR: Deleting frame transformation: %s/%s!" << endl;
-      send_hs( stderr, entity->parent_frame, express_frame->name, errmsg.str().c_str() );
-   }
 
    return( true );
 

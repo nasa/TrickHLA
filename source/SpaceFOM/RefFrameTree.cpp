@@ -147,32 +147,24 @@ RefFrameBase *RefFrameTree::find_frame( string const &name )
 /*!
  * @job_class{scheduled}
  */
-RefFrameData *RefFrameTree::build_transform(
+bool RefFrameTree::build_transform(
    RefFrameBase const * source_frame,
    RefFrameBase const * express_frame,
    RefFrameData       * transform_data )
 {
    RefFrameBase * current_frame = NULL;
    RefFrameBase * next_frame    = NULL;
-   RefFrameBase * end_frame     = NULL;
 
    LRTreeNodeVector::iterator path_itr;
 
    RefFrameDataState in_frame_data;
    RefFrameDataState out_frame_data;
 
-   bool allocated = false;
-
-   // Allocate the frame transformation if NULL.
+   // Check for a NULL allocation.
    if ( transform_data == NULL ){
-      transform_data = static_cast< SpaceFOM::RefFrameData * >( trick_MM->declare_var( "SpaceFOM::RefFrameData" ) );
-      // Check for a NULL allocation.
-      if ( transform_data == NULL ){
-         send_hs( stderr, "SpaceFOM::RefFrameTree::build_transform: %d ERROR allocating Trick Memory!",
-               __LINE__, THLA_NEWLINE );
-         return( NULL );
-      }
-      allocated = true;
+      send_hs( stderr, "SpaceFOM::RefFrameTree::build_transform: %d ERROR NULL transform data!",
+            __LINE__, THLA_NEWLINE );
+      return( false );
    }
 
    // Check for the degenerate case.  If the source frame is the express frame
@@ -186,8 +178,8 @@ RefFrameData *RefFrameTree::build_transform(
       // Set the time stamp.
       transform_data->set_time( source_frame->packing_data.state.time );
 
-      // Return the identity transform reference.
-      return( transform_data );
+      // Return success.
+      return( true );
 
    }
 
@@ -199,144 +191,78 @@ RefFrameData *RefFrameTree::build_transform(
       // Copy the source frame data as the transform.
       transform_data->copy( source_frame->packing_data );
 
-      // Return the transform reference.
-      return( transform_data );
+      // Return success.
+      return( true );
 
    }
+
+   //------------------------------------------------------------------------
+   // This is not one of the above trivial cases.  So, proceed with the
+   // general case by iterating through the transform path accumulating
+   // the transformation data from the source to the express frame.
+   //------------------------------------------------------------------------
 
    // Get the transformation path from source to the express frame.
    LRTreeNodeVector & path = this->paths[source_frame->node_id][express_frame->node_id];
 
-   // Set the current frame to the starting frame.
+   // Initialize the transform to an identity transform.
+   out_frame_data.initialize();
+
+   // Set the time stamp.
+   out_frame_data.set_time( source_frame->packing_data.state.time );
+
+   // Initialize the output data frame to cover trivial transformation chains.
+   out_frame_data.copy( in_frame_data );
+
+   // Start with the first element in the path.
    current_frame = static_cast<RefFrameBase*>(*(path_itr = path.begin()));
-   next_frame    = static_cast<RefFrameBase*>(*(++path_itr));
 
-   // Mark the ending frame for termination.
-   end_frame = static_cast<RefFrameBase*>(*(path.end()));
+   // Now iterate through the remainder of the path vector.
+   for ( ++path_itr; path_itr < path.end(); ++path_itr ) {
 
-   // Set the initial frame transformation depending on initial direction, up or down.
-   if ( current_frame->parent_frame == next_frame ) {
-      // When going up the tree we start with the first frame.
-      in_frame_data.copy( current_frame->packing_data );
-   }
-   else {
-      // When going down the tree, we start with an identity transform.
-      // NOTE: This should already be identity but just to make sure ...
-      in_frame_data.initialize();
-   }
+      // Copy the out data transformed into the in data.  This will effectively
+      // chain the transformations together by accumulation on each subsequent
+      // loop.
+      in_frame_data.copy( out_frame_data );
 
-   //
-   // Iterate up the tree.
-   //
-   // Note that when going up the tree we ignore the last node.  This is
-   // because the transform from source to express frame does not include
-   // transformation data for the express frame to its parent.
-   while (    (current_frame->parent_frame == next_frame)
-           && (next_frame != end_frame)
-           && (path_itr < path.end())                     ) {
+      // Get the reference to the next frame
+      next_frame = static_cast<RefFrameBase*>(*(path_itr));
 
-      // Add transformation into the parent frame.
-      if( !in_frame_data.transform_to_parent( next_frame->packing_data, &out_frame_data ) ) {
+      // Check if we are moving up the tree.
+      if ( current_frame->parent_frame == next_frame ) {
 
-         // Print Error message
-         send_hs( stderr, "SpaceFOM::RefFrameTree::build_transform: %d ERROR calling 'transform_to_parent'!",
+         // Add transformation into the current frame's parent frame.
+         if( !in_frame_data.transform_to_parent( current_frame->packing_data, &out_frame_data ) ) {
+
+            // Print Error message
+            send_hs( stderr, "SpaceFOM::RefFrameTree::build_transform: %d ERROR calling 'transform_to_parent'!",
+                     __LINE__, THLA_NEWLINE );
+
+            // Error return.
+            return( false );
+
+         }
+
+      }
+      // Check if we are moving down the tree.
+      else if ( next_frame->parent_frame == current_frame ){
+
+         // Use the reverse transformation to transform into the next frame.
+         if( !in_frame_data.transform_to_child( next_frame->packing_data, &out_frame_data ) ) {
+
+            // Print Error message
+            send_hs( stderr, "SpaceFOM::RefFrameTree::build_transform: %d ERROR calling 'transform_to_child'!",
                   __LINE__, THLA_NEWLINE );
 
-         // Free transform.
-         if( allocated ) {
-            if ( trick_MM->delete_var( static_cast< void * >( transform_data ) ) ) {
-               send_hs( stderr, "SpaceFOM::RefFrameTree::build_transform:%d ERROR deleting Trick Memory for 'transform_data'%c",
-                        __LINE__, THLA_NEWLINE );
-            }
-            transform_data = NULL;
-         }
+            // Error return.
+            return( false );
 
-         // Return NULL pointer to indicate an error occurred.
-         return( NULL );
+         }
 
       }
 
-      // Copy the out data transformed in this loop into the in data for the next.
-      // This effectively chains the transformations together by accumulation.
-      in_frame_data.copy( out_frame_data );
-
-      // Move to the next node in the path.
+      // Make the next frame the current frame.
       current_frame = next_frame;
-      next_frame = static_cast<RefFrameBase*>(*(++path_itr));
-
-   }
-
-   //
-   // Check for NULL intermediate node.
-   //
-   // FIXME: Do we need to do anything here?
-   //if ( current_frame->parent_frame == NULL ) {
-   //
-   //}
-
-   //
-   // Iterate down the tree.
-   //
-   while (    (next_frame != NULL )
-           && (next_frame->parent_frame == current_frame)
-           && (path_itr < path.end())                     ) {
-
-      // Use the reverse transformation.
-      if( !in_frame_data.transform_to_child( next_frame->packing_data, &out_frame_data ) ) {
-
-         // Print Error message
-         send_hs( stderr, "SpaceFOM::RefFrameTree::build_transform: %d ERROR calling 'transform_to_child'!",
-               __LINE__, THLA_NEWLINE );
-
-         // Free transform.
-         if( allocated ) {
-            if ( trick_MM->delete_var( static_cast< void * >( transform_data ) ) ) {
-               send_hs( stderr, "SpaceFOM::RefFrameTree::build_transform:%d ERROR deleting Trick Memory for 'transform_data'%c",
-                        __LINE__, THLA_NEWLINE );
-            }
-            transform_data = NULL;
-         }
-
-         // Return NULL pointer to indicate an error occurred.
-         return( NULL );
-
-      }
-
-      // Copy the out data transformed in this loop into the in data for the next.
-      // This effectively chains the transformations together by accumulation.
-      in_frame_data.copy( out_frame_data );
-
-      // Move to the next node in the path.
-      current_frame = next_frame;
-      if ( next_frame == end_frame ) {
-         next_frame = NULL;
-      }
-      else {
-         next_frame = static_cast<RefFrameBase*>(*(++path_itr));
-      }
-
-   }
-
-   //
-   // Check to make sure we reached the end of the list without error.
-   //
-   if ( path_itr != path.end() ){
-
-      // Print Error message
-      send_hs( stderr, "SpaceFOM::RefFrameTree::build_transform: %d Something is wrong with the transform path!",
-               __LINE__, THLA_NEWLINE );
-
-      // Free transform.
-      if( allocated ) {
-         if ( trick_MM->delete_var( static_cast< void * >( transform_data ) ) ) {
-            send_hs( stderr, "SpaceFOM::RefFrameTree::build_transform:%d ERROR deleting Trick Memory for 'transform_data'%c",
-                     __LINE__, THLA_NEWLINE );
-         }
-         transform_data = NULL;
-      }
-
-      // Return NULL pointer to indicate an error occurred.
-      return( NULL );
 
    }
 
@@ -347,6 +273,7 @@ RefFrameData *RefFrameTree::build_transform(
    transform_data->set_name( source_frame->name );
    transform_data->set_parent_name( express_frame->name );
 
-   return( transform_data );
+   // Return success.
+   return( true );
 
 }
