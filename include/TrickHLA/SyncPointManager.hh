@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/SyncPntManager.hh
+@file TrickHLA/SyncPointManager.hh
 @ingroup TrickHLA
 @brief This class will manage different lists of HLA synchronization points. It
        is intended for this class to be extended by an Execution Control class.
@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/SyncPntManager.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPointManager.cpp}
 @trick_link_dependency{../../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPnt.cpp}
@@ -32,8 +32,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_SYNC_PNT_MANAGER_HH
-#define TRICKHLA_SYNC_PNT_MANAGER_HH
+#ifndef TRICKHLA_SYNC_POINT_MANAGER_HH
+#define TRICKHLA_SYNC_POINT_MANAGER_HH
 
 // System includes.
 #include <map>
@@ -65,9 +65,9 @@ namespace TrickHLA
 typedef std::vector< SyncPnt * >                SyncPntListVec;
 typedef std::map< std::string, SyncPntListVec > SyncPntListMap;
 
-static std::string const UNKNOWN_SYNC_PNT_LIST = "UNKNOWN_SYNC_PNT_LIST";
+static std::string const UNKNOWN_SYNC_POINT_LIST = "UNKNOWN_SYNC_POINT_LIST";
 
-class SyncPntManager
+class SyncPointManager
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -77,19 +77,19 @@ class SyncPntManager
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__SyncPntManager();
+   friend void init_attrTrickHLA__SyncPointManager();
 
   public:
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLA SyncPntManager class. */
-   SyncPntManager();
-   /*! @brief Default constructor for the TrickHLA SyncPntManager class. */
-   explicit SyncPntManager( Federate *fed );
+   /*! @brief Default constructor for the TrickHLA SyncPointManager class. */
+   SyncPointManager();
+   /*! @brief Default constructor for the TrickHLA SyncPointManager class. */
+   explicit SyncPointManager( Federate *fed );
 
-   /*! @brief Pure virtual destructor for the TrickHLA SyncPntManager class. */
-   virtual ~SyncPntManager() = 0;
+   /*! @brief Pure virtual destructor for the TrickHLA SyncPointManager class. */
+   virtual ~SyncPointManager() = 0;
 
   protected:
    void setup( Federate *fed );
@@ -176,14 +176,14 @@ class SyncPntManager
 
   private:
    // Do not allow the copy constructor or assignment operator.
-   /*! @brief Copy constructor for SyncPntManager class.
+   /*! @brief Copy constructor for SyncPointManager class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   SyncPntManager( SyncPntManager const &rhs );
-   /*! @brief Assignment operator for SyncPntManager class.
+   SyncPointManager( SyncPointManager const &rhs );
+   /*! @brief Assignment operator for SyncPointManager class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   SyncPntManager &operator=( SyncPntManager const &rhs );
+   SyncPointManager &operator=( SyncPointManager const &rhs );
 };
 
 } // namespace TrickHLA
 
-#endif /* TRICKHLA_SYNC_PNT_MANAGER_HH */
+#endif /* TRICKHLA_SYNC_POINT_MANAGER_HH */
