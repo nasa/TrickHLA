@@ -23,6 +23,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/SyncPointManager.cpp}
 @trick_link_dependency{../../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPointList.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPnt.cpp}
 
 @revs_title
@@ -49,6 +50,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/SyncPnt.hh"
 #include "TrickHLA/SyncPntLoggable.hh"
+#include "TrickHLA/SyncPointList.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -62,8 +64,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-typedef std::vector< SyncPnt * >                SyncPntListVec;
-typedef std::map< std::string, SyncPntListVec > SyncPntListMap;
+typedef std::vector< SyncPointList * > SyncPointListVector;
 
 static std::string const UNKNOWN_SYNC_POINT_LIST = "UNKNOWN_SYNC_POINT_LIST";
 
@@ -85,7 +86,7 @@ class SyncPointManager
    //
    /*! @brief Default constructor for the TrickHLA SyncPointManager class. */
    SyncPointManager();
-   /*! @brief Default constructor for the TrickHLA SyncPointManager class. */
+   /*! @brief Constructor for the TrickHLA SyncPointManager class. */
    explicit SyncPointManager( Federate *fed );
 
    /*! @brief Pure virtual destructor for the TrickHLA SyncPointManager class. */
@@ -94,17 +95,15 @@ class SyncPointManager
   protected:
    void setup( Federate *fed );
 
+   int const get_list_index_for_sync_point( std::wstring const &label ); // Search all lists for the unique sync-point label.
+
+   int const get_list_index_for_list_name( std::string const &list_name );
+
    /*! @brief Add the given synchronization point label to the named list.
     *  @param label Synchronization point label.
     *  @param list_name The name of the list of sync-points to add to.
     *  @return True if the synchronization point is added, false otherwise. */
    bool add_sync_point_list( std::string const &list_name );
-
-   SyncPnt *get_sync_point( std::wstring const &label ); // Search all lists for the unique sync-point label.
-
-   SyncPntListVec get_sync_point_list( std::string const &list_name );
-
-   bool remove_sync_point_list( std::string const &list_name );
 
    bool add_sync_point( std::wstring const &label, std::string const &list_name );
 
@@ -126,10 +125,6 @@ class SyncPointManager
 
    bool register_all_sync_points( std::string const &list_name, RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
 
-   bool register_sync_point( SyncPnt *sp );
-
-   bool register_sync_point( SyncPnt *sp, RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
-
    bool is_sync_point_announced( std::wstring const &label );
 
    bool mark_sync_point_announced( std::wstring const &label );
@@ -138,15 +133,11 @@ class SyncPointManager
 
    bool wait_for_all_sync_points_announced( std::string const &list_name );
 
-   bool wait_for_sync_point_announced( SyncPnt *sp );
-
    bool is_sync_point_achieved( std::wstring const &label );
 
    bool achieve_sync_point( std::wstring const &label );
 
    bool achieve_all_sync_points( std::string const &list_name );
-
-   bool achieve_sync_point( SyncPnt *sp );
 
    bool is_sync_point_synchronized( std::wstring const &label );
 
@@ -155,8 +146,6 @@ class SyncPointManager
    bool wait_for_sync_point_synchronized( std::wstring const &label );
 
    bool wait_for_all_sync_points_synchronized( std::string const &list_name );
-
-   bool wait_for_sync_point_synchronized( SyncPnt *sp );
 
    // Callbacks from FedAmb.
    virtual void sync_point_registration_succeeded( std::wstring const &label );
@@ -170,7 +159,7 @@ class SyncPointManager
   protected:
    MutexLock mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
 
-   SyncPntListMap sync_pnt_lists; ///< @trick_io{**} Map of named sync-point lists.
+   SyncPointListVector sync_pnt_lists; ///< @trick_io{**} Map of named sync-point lists.
 
    Federate *federate; ///< @trick_units{--} Associated TrickHLA Federate.
 
