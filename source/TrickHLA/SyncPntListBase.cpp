@@ -52,8 +52,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StringUtilities.hh"
-#include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/SyncPntListBase.hh"
+#include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 
@@ -706,7 +706,7 @@ void SyncPntListBase::print_sync_points()
 
 void SyncPntListBase::register_sync_point(
    RTI1516_NAMESPACE::RTIambassador &RTI_amb,
-   SyncPoint                          *sp )
+   SyncPoint                        *sp )
 {
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
@@ -745,7 +745,7 @@ void SyncPntListBase::register_sync_point(
 void SyncPntListBase::register_sync_point(
    RTI1516_NAMESPACE::RTIambassador           &RTI_amb,
    RTI1516_NAMESPACE::FederateHandleSet const &federate_handle_set,
-   SyncPoint                                    *sp )
+   SyncPoint                                  *sp )
 {
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
@@ -786,7 +786,7 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
    Federate           *federate,
    std::wstring const &label )
 {
-   bool     announced = false;
+   bool       announced = false;
    SyncPoint *sp        = get_sync_point( label );
 
    if ( sp != NULL ) {
@@ -805,8 +805,8 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
 }
 
 bool SyncPntListBase::wait_for_sync_point_announcement(
-   Federate *federate,
-   SyncPoint  *sp )
+   Federate  *federate,
+   SyncPoint *sp )
 {
    bool announced = false;
    if ( sp != NULL ) {
@@ -911,7 +911,7 @@ bool SyncPntListBase::achieve_sync_point(
    RTI1516_NAMESPACE::RTIambassador &RTI_amb,
    wstring const                    &label )
 {
-   bool     achieved = false;
+   bool       achieved = false;
    SyncPoint *sp       = get_sync_point( label );
 
    if ( sp != NULL ) {
@@ -961,7 +961,7 @@ bool SyncPntListBase::achieve_sync_point(
 
 bool SyncPntListBase::achieve_sync_point(
    RTI1516_NAMESPACE::RTIambassador &RTI_amb,
-   SyncPoint                          *sp )
+   SyncPoint                        *sp )
 {
    bool achieved = false;
 
@@ -1013,8 +1013,8 @@ bool SyncPntListBase::achieve_sync_point(
 }
 
 bool SyncPntListBase::wait_for_synchronization(
-   Federate *federate,
-   SyncPoint  *sp )
+   Federate  *federate,
+   SyncPoint *sp )
 {
    if ( sp != NULL ) {
       bool         print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE );

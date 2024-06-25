@@ -2174,7 +2174,7 @@ bool ExecutionControl::run_mode_transition()
 {
    RTIambassador          *RTI_amb  = federate->get_RTI_ambassador();
    ExecutionConfiguration *ExCO     = get_execution_configuration();
-   SyncPoint                *sync_pnt = NULL;
+   SyncPoint              *sync_pnt = NULL;
 
    // Register the 'mtr_run' sync-point.
    if ( is_master() ) {

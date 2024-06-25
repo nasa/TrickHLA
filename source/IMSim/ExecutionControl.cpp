@@ -2257,7 +2257,7 @@ bool ExecutionControl::run_mode_transition()
 {
    RTIambassador          *RTI_amb  = federate->get_RTI_ambassador();
    ExecutionConfiguration *ExCO     = get_execution_configuration();
-   SyncPoint                *sync_pnt = NULL;
+   SyncPoint              *sync_pnt = NULL;
 
    // Register the 'mtr_run' sync-point.
    if ( is_master() ) {
@@ -2349,7 +2349,7 @@ void ExecutionControl::freeze_mode_announce()
 
 bool ExecutionControl::freeze_mode_transition()
 {
-   RTIambassador     *RTI_amb  = federate->get_RTI_ambassador();
+   RTIambassador       *RTI_amb  = federate->get_RTI_ambassador();
    TrickHLA::SyncPoint *sync_pnt = NULL;
 
    // Get the 'mtr_freeze' sync-point.

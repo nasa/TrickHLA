@@ -35,10 +35,10 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
-#include "TrickHLA/SyncPntTimed.hh"
-#include "TrickHLA/SyncPntTimedLoggable.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/StringUtilities.hh"
+#include "TrickHLA/SyncPntTimed.hh"
+#include "TrickHLA/SyncPntTimedLoggable.hh"
 #include "TrickHLA/SyncPoint.hh"
 
 using namespace std;

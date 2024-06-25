@@ -45,8 +45,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/SyncPntLoggable.hh"
+#include "TrickHLA/SyncPoint.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -98,7 +98,7 @@ class SyncPntListBase
     *  @param RTI_amb Reference to RTI Ambassador.
     *  @param label  Synchronization point label. */
    virtual SyncPoint *register_sync_point( RTI1516_NAMESPACE::RTIambassador &RTI_amb,
-                                         std::wstring const               &label );
+                                           std::wstring const               &label );
 
    /*! @brief Register a synchronization point associated with the given label.
     *  @return The newly created synchronization point.
@@ -170,7 +170,7 @@ class SyncPntListBase
     *  @param RTI_amb Reference to RTI Ambassador.
     *  @param sync_pnt       Specified synchronization point. */
    virtual bool achieve_sync_point( RTI1516_NAMESPACE::RTIambassador &RTI_amb,
-                                    SyncPoint                          *sync_pnt );
+                                    SyncPoint                        *sync_pnt );
 
    /*! @brief Achieve the specified sync-point and wait for the federation to
     *  be synchronized on it.
@@ -254,7 +254,7 @@ class SyncPntListBase
     *  @param RTI_amb HLA RTI Ambassador.
     *  @param sync_pnt The SyncPoint instance. */
    virtual void register_sync_point( RTI1516_NAMESPACE::RTIambassador &RTI_amb,
-                                     SyncPoint                          *sync_pnt );
+                                     SyncPoint                        *sync_pnt );
 
    /*! @brief Register the synchronization point with the RTI.
     *  @param RTI_amb The HLA RTI Ambassador.
@@ -263,7 +263,7 @@ class SyncPntListBase
    virtual void register_sync_point(
       RTI1516_NAMESPACE::RTIambassador           &RTI_amb,
       RTI1516_NAMESPACE::FederateHandleSet const &federate_handle_set,
-      SyncPoint                                    *sync_pnt );
+      SyncPoint                                  *sync_pnt );
 
    /*! @brief Wait for the announcement of the synchronization point.
     *  @param federate Pointer to TrickHLA::Federate instance.
@@ -274,14 +274,14 @@ class SyncPntListBase
    /*! @brief Wait for the announcement of the synchronization point.
     *  @param federate The TrickHLA::Federate instance.
     *  @param sync_pnt The SyncPoint instance. */
-   virtual bool wait_for_sync_point_announcement( Federate *federate,
-                                                  SyncPoint  *sync_pnt );
+   virtual bool wait_for_sync_point_announcement( Federate  *federate,
+                                                  SyncPoint *sync_pnt );
 
    /*! @brief Wait for this synchronization point to be synchronized.
     *  @param federate The TrickHLA::Federate instance.
     *  @param sync_pnt The SyncPoint instance. */
-   virtual bool wait_for_synchronization( Federate *federate,
-                                          SyncPoint  *sync_pnt );
+   virtual bool wait_for_synchronization( Federate  *federate,
+                                          SyncPoint *sync_pnt );
 
   protected:
    MutexLock mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.

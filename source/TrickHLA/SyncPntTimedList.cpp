@@ -51,8 +51,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
-#include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/SyncPntListBase.hh"
+#include "TrickHLA/SyncPoint.hh"
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
@@ -151,7 +151,7 @@ void SyncPntTimedList::convert_sync_points( SyncPntLoggable *sync_points )
       send_hs( stderr, errmsg.str().c_str() );
       SyncPntListBase::convert_sync_points( sync_points );
    } else {
-      int                                 loop = 0;
+      int                                   loop = 0;
       vector< SyncPoint * >::const_iterator i;
 
       // When auto_unlock_mutex goes out of scope it automatically unlocks the

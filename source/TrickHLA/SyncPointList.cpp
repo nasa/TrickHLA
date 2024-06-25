@@ -324,7 +324,7 @@ bool SyncPointList::register_sync_point(
 }
 
 bool SyncPointList::register_sync_point(
-   SyncPoint                 *sp,
+   SyncPoint               *sp,
    FederateHandleSet const &handle_set )
 {
    if ( sp == NULL ) {
