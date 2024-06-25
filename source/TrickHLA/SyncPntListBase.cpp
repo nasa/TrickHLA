@@ -21,7 +21,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{MutexLock.cpp}
 @trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{SleepTimeout.cpp}
-@trick_link_dependency{SyncPnt.cpp}
+@trick_link_dependency{SyncPoint.cpp}
 @trick_link_dependency{SyncPntListBase.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{Utilities.cpp}
@@ -52,7 +52,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StringUtilities.hh"
-#include "TrickHLA/SyncPnt.hh"
+#include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/SyncPntListBase.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
@@ -82,7 +82,7 @@ SyncPntListBase::~SyncPntListBase()
    mutex.destroy();
 }
 
-SyncPnt *SyncPntListBase::add_sync_point(
+SyncPoint *SyncPntListBase::add_sync_point(
    wstring const &label )
 {
    if ( contains( label ) ) {
@@ -93,7 +93,7 @@ SyncPnt *SyncPntListBase::add_sync_point(
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   SyncPnt *sp = new SyncPnt( label );
+   SyncPoint *sp = new SyncPoint( label );
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -103,7 +103,7 @@ SyncPnt *SyncPntListBase::add_sync_point(
    return sp;
 }
 
-SyncPnt *SyncPntListBase::get_sync_point(
+SyncPoint *SyncPntListBase::get_sync_point(
    std::wstring const &label )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -113,9 +113,9 @@ SyncPnt *SyncPntListBase::get_sync_point(
    if ( !sync_point_list.empty() ) {
 
       // Find the sync-point.
-      vector< SyncPnt * >::const_iterator i;
+      vector< SyncPoint * >::const_iterator i;
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-         SyncPnt *sp = ( *i );
+         SyncPoint *sp = ( *i );
 
          // Check for a match.
          if ( ( sp != NULL ) && ( sp->get_label().compare( label ) == 0 ) ) {
@@ -129,7 +129,7 @@ SyncPnt *SyncPntListBase::get_sync_point(
    return NULL;
 }
 
-SyncPnt *SyncPntListBase::register_sync_point(
+SyncPoint *SyncPntListBase::register_sync_point(
    RTI1516_NAMESPACE::RTIambassador &RTI_amb,
    wstring const                    &label )
 {
@@ -137,14 +137,14 @@ SyncPnt *SyncPntListBase::register_sync_point(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPnt *sp = get_sync_point( label );
+   SyncPoint *sp = get_sync_point( label );
    if ( ( sp != NULL ) && !sp->is_registered() ) {
       register_sync_point( RTI_amb, sp );
    }
    return sp;
 }
 
-SyncPnt *SyncPntListBase::register_sync_point(
+SyncPoint *SyncPntListBase::register_sync_point(
    RTI1516_NAMESPACE::RTIambassador           &RTI_amb,
    RTI1516_NAMESPACE::FederateHandleSet const &federate_handle_set,
    wstring const                              &label )
@@ -153,7 +153,7 @@ SyncPnt *SyncPntListBase::register_sync_point(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPnt *sp = get_sync_point( label );
+   SyncPoint *sp = get_sync_point( label );
    if ( ( sp != NULL ) && !sp->is_registered() ) {
       register_sync_point( RTI_amb, federate_handle_set, sp );
    }
@@ -168,9 +168,9 @@ void SyncPntListBase::register_all_sync_points(
    MutexProtection auto_unlock_mutex( &mutex );
 
    // Iterate through all the synchronization points that have been added.
-   vector< SyncPnt * >::const_iterator i;
+   vector< SyncPoint * >::const_iterator i;
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-      SyncPnt *sp = ( *i );
+      SyncPoint *sp = ( *i );
 
       // Only add them if they are not already registered.
       if ( ( sp != NULL ) && !sp->is_registered() ) {
@@ -192,9 +192,9 @@ void SyncPntListBase::register_all_sync_points(
       // the mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &mutex );
 
-      vector< SyncPnt * >::const_iterator i;
+      vector< SyncPoint * >::const_iterator i;
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-         SyncPnt *sp = ( *i );
+         SyncPoint *sp = ( *i );
 
          // Only add them if they are not already registered.
          if ( ( sp != NULL ) && !sp->is_registered() ) {
@@ -254,9 +254,9 @@ void SyncPntListBase::wait_for_all_announcements(
    }
 
    // Iterate through the synchronization point list.
-   vector< SyncPnt * >::const_iterator i;
+   vector< SyncPoint * >::const_iterator i;
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-      SyncPnt *sp = ( *i );
+      SyncPoint *sp = ( *i );
 
       // Wait for the sync-point announcement.
       wait_for_sync_point_announcement( fed_ptr, sp );
@@ -305,9 +305,9 @@ void SyncPntListBase::wait_for_list_synchronization(
    SleepTimeout sleep_timer;
 
    // Iterate through this SyncPntList's synchronization point list.
-   vector< SyncPnt * >::const_iterator i;
+   vector< SyncPoint * >::const_iterator i;
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-      SyncPnt *sp = ( *i );
+      SyncPoint *sp = ( *i );
 
       // Critical code section with a scope specific mutex lock.
       {
@@ -394,7 +394,7 @@ void SyncPntListBase::achieve_and_wait_for_synchronization(
    StringUtilities::to_string( name, label );
 
    // Check for the synchronization point by label.
-   SyncPnt *sp = get_sync_point( label );
+   SyncPoint *sp = get_sync_point( label );
 
    // If the pointer is not NULL then we found it.
    if ( sp != NULL ) {
@@ -484,9 +484,9 @@ bool SyncPntListBase::achieve_all_sync_points(
    MutexProtection auto_unlock_mutex( &mutex );
 
    // Iterate through all the synchronization points.
-   vector< SyncPnt * >::const_iterator i;
+   vector< SyncPoint * >::const_iterator i;
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-      SyncPnt *sp = ( *i );
+      SyncPoint *sp = ( *i );
 
       if ( ( sp != NULL ) && sp->is_announced() ) {
          if ( achieve_sync_point( RTI_amb, sp ) ) {
@@ -504,7 +504,7 @@ SyncPtStateEnum SyncPntListBase::get_sync_point_state(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPnt const *sp = get_sync_point( label );
+   SyncPoint const *sp = get_sync_point( label );
    if ( sp != NULL ) {
       return sp->get_state();
    }
@@ -527,9 +527,9 @@ bool SyncPntListBase::clear_sync_point(
    MutexProtection auto_unlock_mutex( &mutex );
 
    if ( !sync_point_list.empty() ) {
-      vector< SyncPnt * >::iterator i;
+      vector< SyncPoint * >::iterator i;
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-         SyncPnt *sp = ( *i );
+         SyncPoint *sp = ( *i );
          if ( ( sp != NULL ) && ( sp->is_achieved() ) && ( label.compare( sp->get_label() ) == 0 ) ) {
 
             // Extension class dependent code would go here.
@@ -571,9 +571,9 @@ bool SyncPntListBase::contains(
    MutexProtection auto_unlock_mutex( &mutex );
 
    if ( !sync_point_list.empty() ) {
-      vector< SyncPnt * >::const_iterator i;
+      vector< SyncPoint * >::const_iterator i;
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-         SyncPnt const *sp = ( *i );
+         SyncPoint const *sp = ( *i );
          if ( ( sp != NULL ) && ( sp->get_label().compare( label ) == 0 ) ) {
             return true;
          }
@@ -592,7 +592,7 @@ bool SyncPntListBase::mark_registered(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPnt *sp = get_sync_point( label );
+   SyncPoint *sp = get_sync_point( label );
    if ( sp != NULL ) {
       sp->set_state( SYNC_PT_STATE_REGISTERED );
       return true;
@@ -610,7 +610,7 @@ bool SyncPntListBase::mark_announced(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPnt *sp = get_sync_point( label );
+   SyncPoint *sp = get_sync_point( label );
    if ( sp != NULL ) {
       sp->set_state( SYNC_PT_STATE_ANNOUNCED );
       return true;
@@ -628,7 +628,7 @@ bool SyncPntListBase::mark_synchronized(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPnt *sp = get_sync_point( label );
+   SyncPoint *sp = get_sync_point( label );
    if ( sp != NULL ) {
 
       // Mark the synchronization point at achieved which indicates the
@@ -651,9 +651,9 @@ wstring SyncPntListBase::to_wstring()
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &mutex );
 
-      vector< SyncPnt * >::const_iterator i;
+      vector< SyncPoint * >::const_iterator i;
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-         SyncPnt *sp = ( *i );
+         SyncPoint *sp = ( *i );
          if ( sp != NULL ) {
             result += L"  " + sp->to_wstring() + L"\n";
          }
@@ -672,7 +672,7 @@ void SyncPntListBase::convert_sync_points(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
-   vector< SyncPnt * >::const_iterator i;
+   vector< SyncPoint * >::const_iterator i;
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
       ( *i )->convert( sync_points[loop++] );
    }
@@ -693,7 +693,7 @@ void SyncPntListBase::print_sync_points()
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &mutex );
 
-      vector< SyncPnt * >::const_iterator i;
+      vector< SyncPoint * >::const_iterator i;
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
          wstring spwl = ( *i )->to_wstring();
          sync_point_label.assign( spwl.begin(), spwl.end() );
@@ -706,7 +706,7 @@ void SyncPntListBase::print_sync_points()
 
 void SyncPntListBase::register_sync_point(
    RTI1516_NAMESPACE::RTIambassador &RTI_amb,
-   SyncPnt                          *sp )
+   SyncPoint                          *sp )
 {
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
@@ -745,7 +745,7 @@ void SyncPntListBase::register_sync_point(
 void SyncPntListBase::register_sync_point(
    RTI1516_NAMESPACE::RTIambassador           &RTI_amb,
    RTI1516_NAMESPACE::FederateHandleSet const &federate_handle_set,
-   SyncPnt                                    *sp )
+   SyncPoint                                    *sp )
 {
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
@@ -787,7 +787,7 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
    std::wstring const &label )
 {
    bool     announced = false;
-   SyncPnt *sp        = get_sync_point( label );
+   SyncPoint *sp        = get_sync_point( label );
 
    if ( sp != NULL ) {
       announced = wait_for_sync_point_announcement( federate, sp );
@@ -797,7 +797,7 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
       ostringstream errmsg;
       errmsg << "SyncPntListBase::wait_for_sync_point_announcement():" << __LINE__
              << " ERROR: Unknown sync-point '" << name
-             << "', which means there is not an internal SyncPnt instance to"
+             << "', which means there is not an internal SyncPoint instance to"
              << " manage the state against!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -806,7 +806,7 @@ bool SyncPntListBase::wait_for_sync_point_announcement(
 
 bool SyncPntListBase::wait_for_sync_point_announcement(
    Federate *federate,
-   SyncPnt  *sp )
+   SyncPoint  *sp )
 {
    bool announced = false;
    if ( sp != NULL ) {
@@ -912,7 +912,7 @@ bool SyncPntListBase::achieve_sync_point(
    wstring const                    &label )
 {
    bool     achieved = false;
-   SyncPnt *sp       = get_sync_point( label );
+   SyncPoint *sp       = get_sync_point( label );
 
    if ( sp != NULL ) {
 
@@ -961,7 +961,7 @@ bool SyncPntListBase::achieve_sync_point(
 
 bool SyncPntListBase::achieve_sync_point(
    RTI1516_NAMESPACE::RTIambassador &RTI_amb,
-   SyncPnt                          *sp )
+   SyncPoint                          *sp )
 {
    bool achieved = false;
 
@@ -1014,7 +1014,7 @@ bool SyncPntListBase::achieve_sync_point(
 
 bool SyncPntListBase::wait_for_synchronization(
    Federate *federate,
-   SyncPnt  *sp )
+   SyncPoint  *sp )
 {
    if ( sp != NULL ) {
       bool         print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE );

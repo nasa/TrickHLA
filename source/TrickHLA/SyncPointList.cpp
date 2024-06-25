@@ -22,14 +22,14 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{MutexLock.cpp}
 @trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{SleepTimeout.cpp}
-@trick_link_dependency{SyncPnt.cpp}
+@trick_link_dependency{SyncPoint.cpp}
 @trick_link_dependency{SyncPointList.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{Utilities.cpp}
 
 @revs_title
 @revs_begin
-@rev_entry{Dan Dexter, NASA ER6, TrickHLA, March 2024, --, Initial implementation.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, June 2024, --, Initial implementation.}
 @revs_end
 
 */
@@ -53,7 +53,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StringUtilities.hh"
-#include "TrickHLA/SyncPnt.hh"
+#include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/SyncPointList.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
@@ -110,7 +110,7 @@ void SyncPointList::setup(
    this->federate = fed;
 }
 
-SyncPnt *SyncPointList::get_sync_point(
+SyncPoint *SyncPointList::get_sync_point(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -140,7 +140,7 @@ bool SyncPointList::add(
    }
 
    // Add the sync-point to the corresponding named list.
-   list.push_back( new SyncPnt( label ) );
+   list.push_back( new SyncPoint( label ) );
    return true;
 }
 
@@ -170,7 +170,7 @@ bool SyncPointList::is_registered(
 {
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPnt *sp = get_sync_point( label );
+   SyncPoint *sp = get_sync_point( label );
    return ( ( sp != NULL ) && sp->is_registered() );
 }
 
@@ -184,7 +184,7 @@ bool SyncPointList::mark_registered(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPnt *sp = get_sync_point( label );
+   SyncPoint *sp = get_sync_point( label );
    if ( sp != NULL ) {
       sp->set_state( SYNC_PT_STATE_REGISTERED );
       return true;
@@ -197,7 +197,7 @@ bool SyncPointList::register_sync_point(
 {
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPnt *sp = get_sync_point( label );
+   SyncPoint *sp = get_sync_point( label );
 
    // If the sync-point is null then it is unknown.
    if ( sp == NULL ) {
@@ -219,7 +219,7 @@ bool SyncPointList::register_sync_point(
 {
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPnt *sp = get_sync_point( label );
+   SyncPoint *sp = get_sync_point( label );
 
    // If the sync-point is null then it is unknown.
    if ( sp == NULL ) {
@@ -264,12 +264,12 @@ bool SyncPointList::register_all(
 }
 
 bool SyncPointList::register_sync_point(
-   SyncPnt *sp )
+   SyncPoint *sp )
 {
    if ( sp == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::register_sync_point():" << __LINE__
-             << " ERROR: Unexpected NULL SyncPnt!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL SyncPoint!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -309,7 +309,7 @@ bool SyncPointList::register_sync_point(
       string label_str;
       StringUtilities::to_string( label_str, sp->get_label() );
       ostringstream errmsg;
-      errmsg << "SyncPntListBase::register_sync_point():" << __LINE__
+      errmsg << "SyncPointListBase::register_sync_point():" << __LINE__
              << " ERROR: Failed to register '" << label_str
              << "' synchronization point with RTI!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -324,13 +324,13 @@ bool SyncPointList::register_sync_point(
 }
 
 bool SyncPointList::register_sync_point(
-   SyncPnt                 *sp,
+   SyncPoint                 *sp,
    FederateHandleSet const &handle_set )
 {
    if ( sp == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::register_sync_point():" << __LINE__
-             << " ERROR: Unexpected NULL SyncPnt!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL SyncPoint!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -371,7 +371,7 @@ bool SyncPointList::register_sync_point(
       string label_str;
       StringUtilities::to_string( label_str, sp->get_label() );
       ostringstream errmsg;
-      errmsg << "SyncPntListBase::register_sync_point():" << __LINE__
+      errmsg << "SyncPointListBase::register_sync_point():" << __LINE__
              << " ERROR: Failed to register '" << label_str
              << "' synchronization point with RTI!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -390,7 +390,7 @@ bool SyncPointList::is_announced(
 {
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPnt *sp = get_sync_point( label );
+   SyncPoint *sp = get_sync_point( label );
    return ( ( sp != NULL ) && sp->is_announced() );
 }
 
@@ -404,7 +404,7 @@ bool SyncPointList::mark_announced(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPnt *sp = get_sync_point( label );
+   SyncPoint *sp = get_sync_point( label );
    if ( sp != NULL ) {
       sp->set_state( SYNC_PT_STATE_ANNOUNCED );
       return true;
@@ -415,7 +415,7 @@ bool SyncPointList::mark_announced(
 bool SyncPointList::wait_for_announced(
    wstring const &label )
 {
-   SyncPnt *sp;
+   SyncPoint *sp;
    {
       // Scope this mutex lock because locking over the blocking wait call
       // below will cause deadlock.
@@ -453,12 +453,12 @@ bool SyncPointList::wait_for_all_announced()
 }
 
 bool SyncPointList::wait_for_announced(
-   SyncPnt *sp )
+   SyncPoint *sp )
 {
    if ( sp == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::wait_for_announced():" << __LINE__
-             << " ERROR: Unexpected NULL SyncPnt!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL SyncPoint!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -575,7 +575,7 @@ bool SyncPointList::is_achieved(
 {
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPnt *sp = get_sync_point( label );
+   SyncPoint *sp = get_sync_point( label );
    return ( ( sp != NULL ) && sp->is_achieved() );
 }
 
@@ -584,7 +584,7 @@ bool SyncPointList::achieve(
 {
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPnt *sp = get_sync_point( label );
+   SyncPoint *sp = get_sync_point( label );
 
    // If the sync-point is null then it is unknown.
    if ( sp == NULL ) {
@@ -615,12 +615,12 @@ bool SyncPointList::achieve_all()
 }
 
 bool SyncPointList::achieve_sync_point(
-   SyncPnt *sp )
+   SyncPoint *sp )
 {
    if ( sp == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
-             << " ERROR: Unexpected NULL SyncPnt!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL SyncPoint!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
@@ -686,7 +686,7 @@ bool SyncPointList::is_synchronized(
 {
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPnt *sp = get_sync_point( label );
+   SyncPoint *sp = get_sync_point( label );
    return ( ( sp != NULL ) && sp->is_synchronized() );
 }
 
@@ -700,7 +700,7 @@ bool SyncPointList::mark_synchronized(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPnt *sp = get_sync_point( label );
+   SyncPoint *sp = get_sync_point( label );
    if ( sp != NULL ) {
 
       // Mark the synchronization point at achieved which indicates the
@@ -714,7 +714,7 @@ bool SyncPointList::mark_synchronized(
 bool SyncPointList::wait_for_synchronized(
    wstring const &label )
 {
-   SyncPnt *sp;
+   SyncPoint *sp;
    {
       // Scope this mutex lock because locking over the blocking wait call
       // below will cause deadlock.
@@ -752,12 +752,12 @@ bool SyncPointList::wait_for_all_synchronized()
 }
 
 bool SyncPointList::wait_for_synchronized(
-   SyncPnt *sp )
+   SyncPoint *sp )
 {
    if ( sp == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::wait_for_synchronized():" << __LINE__
-             << " ERROR: Unexpected NULL SyncPnt!" << THLA_ENDL;
+             << " ERROR: Unexpected NULL SyncPoint!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }

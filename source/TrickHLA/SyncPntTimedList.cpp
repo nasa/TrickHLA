@@ -19,7 +19,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{MutexLock.cpp}
 @trick_link_dependency{MutexProtection.cpp}
-@trick_link_dependency{SyncPnt.cpp}
+@trick_link_dependency{SyncPoint.cpp}
 @trick_link_dependency{SyncPntListBase.cpp}
 @trick_link_dependency{SyncPntTimed.cpp}
 @trick_link_dependency{SyncPntTimedList.cpp}
@@ -51,7 +51,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
-#include "TrickHLA/SyncPnt.hh"
+#include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/SyncPntListBase.hh"
 
 using namespace std;
@@ -66,14 +66,14 @@ SyncPntTimedList::SyncPntTimedList()
    return;
 }
 
-SyncPnt *SyncPntTimedList::add_sync_point(
+SyncPoint *SyncPntTimedList::add_sync_point(
    wstring const &label )
 {
    Int64Time time( 0.0 );
    return add_sync_point( label, time );
 }
 
-SyncPnt *SyncPntTimedList::add_sync_point(
+SyncPoint *SyncPntTimedList::add_sync_point(
    wstring const   &label,
    Int64Time const &time )
 {
@@ -98,10 +98,10 @@ bool SyncPntTimedList::achieve_all_sync_points(
    MutexProtection auto_unlock_mutex( &mutex );
 
    if ( !sync_point_list.empty() ) {
-      vector< SyncPnt * >::const_iterator i;
+      vector< SyncPoint * >::const_iterator i;
 
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-         // Cast the SyncPnt pointer to a SyncPntTimed pointer.
+         // Cast the SyncPoint pointer to a SyncPntTimed pointer.
          SyncPntTimed *sp = dynamic_cast< SyncPntTimed * >( *i );
 
          if ( ( sp != NULL ) && !sp->is_achieved() ) {
@@ -124,9 +124,9 @@ bool SyncPntTimedList::check_sync_points(
    MutexProtection auto_unlock_mutex( &mutex );
 
    if ( !sync_point_list.empty() ) {
-      vector< SyncPnt * >::const_iterator i;
+      vector< SyncPoint * >::const_iterator i;
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-         // Cast the SyncPnt pointer to a SyncPntTimed pointer.
+         // Cast the SyncPoint pointer to a SyncPntTimed pointer.
          SyncPntTimed const *timed_i = dynamic_cast< SyncPntTimed * >( *i );
          if ( ( timed_i->get_state() == SYNC_PT_STATE_EXISTS )
               && ( timed_i->get_time() <= check_time ) ) {
@@ -142,7 +142,7 @@ void SyncPntTimedList::convert_sync_points( SyncPntLoggable *sync_points )
    // Cast the SyncPntLoggable pointer to a SyncPntTimedLoggable pointer.
    SyncPntTimedLoggable *timed_sync_points = dynamic_cast< SyncPntTimedLoggable * >( sync_points );
 
-   // If the cast failed, then treat it like a regular SyncPnt but warn user.
+   // If the cast failed, then treat it like a regular SyncPoint but warn user.
    if ( timed_sync_points == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPntTimedList::convert_sync_pts():" << __LINE__
@@ -152,14 +152,14 @@ void SyncPntTimedList::convert_sync_points( SyncPntLoggable *sync_points )
       SyncPntListBase::convert_sync_points( sync_points );
    } else {
       int                                 loop = 0;
-      vector< SyncPnt * >::const_iterator i;
+      vector< SyncPoint * >::const_iterator i;
 
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &mutex );
 
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-         // Cast the SyncPnt pointer to a SyncPntTimed pointer.
+         // Cast the SyncPoint pointer to a SyncPntTimed pointer.
          SyncPntTimed *timed_i = dynamic_cast< SyncPntTimed * >( *i );
          if ( timed_i == NULL ) {
             ( *i )->convert( sync_points[loop++] );
@@ -172,7 +172,7 @@ void SyncPntTimedList::convert_sync_points( SyncPntLoggable *sync_points )
 
 void SyncPntTimedList::print_sync_points()
 {
-   vector< SyncPnt * >::const_iterator i;
+   vector< SyncPoint * >::const_iterator i;
 
    string sync_point_label;
 
@@ -186,7 +186,7 @@ void SyncPntTimedList::print_sync_points()
        << "Sync Point Dump: " << sync_point_list.size() << endl;
 
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-      // Cast the SyncPnt pointer to a SyncPntTimed pointer.
+      // Cast the SyncPoint pointer to a SyncPntTimed pointer.
       SyncPntTimed const *timed_i = dynamic_cast< SyncPntTimed * >( *i );
       sync_point_label.assign( ( *i )->get_label().begin(), ( *i )->get_label().end() );
       msg << sync_point_label << " "

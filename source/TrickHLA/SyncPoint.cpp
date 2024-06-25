@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/SyncPnt.cpp
+@file TrickHLA/SyncPoint.cpp
 @ingroup TrickHLA
 @brief This class provides a sync-point implementation for storing and managing
 TrickHLA synchronization points.
@@ -16,7 +16,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{SyncPnt.cpp}
+@trick_link_dependency{SyncPoint.cpp}
 
 @revs_title
 @revs_begin
@@ -33,9 +33,9 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA includes.
-#include "../../include/TrickHLA/SyncPntLoggable.hh"
+#include "TrickHLA/SyncPntLoggable.hh"
 #include "TrickHLA/StringUtilities.hh"
-#include "TrickHLA/SyncPnt.hh"
+#include "TrickHLA/SyncPoint.hh"
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
@@ -44,7 +44,7 @@ using namespace TrickHLA;
 /*!
  * @job_class{initialization}
  */
-SyncPnt::SyncPnt()
+SyncPoint::SyncPoint()
    : label( L"" ),
      state( SYNC_PT_STATE_EXISTS )
 {
@@ -54,7 +54,7 @@ SyncPnt::SyncPnt()
 /*!
  * @job_class{initialization}
  */
-SyncPnt::SyncPnt(
+SyncPoint::SyncPoint(
    std::wstring const &l )
    : label( l ),
      state( SYNC_PT_STATE_EXISTS )
@@ -65,12 +65,12 @@ SyncPnt::SyncPnt(
 /*!
  * @job_class{shutdown}
  */
-SyncPnt::~SyncPnt()
+SyncPoint::~SyncPoint()
 {
    return;
 }
 
-bool SyncPnt::is_valid()
+bool SyncPoint::is_valid()
 {
    return ( ( this->state == SYNC_PT_STATE_EXISTS )
             || ( this->state == SYNC_PT_STATE_REGISTERED )
@@ -79,32 +79,32 @@ bool SyncPnt::is_valid()
             || ( this->state == SYNC_PT_STATE_SYNCHRONIZED ) );
 }
 
-bool SyncPnt::exists()
+bool SyncPoint::exists()
 {
    return ( this->state == SYNC_PT_STATE_EXISTS );
 }
 
-bool SyncPnt::is_registered()
+bool SyncPoint::is_registered()
 {
    return ( this->state == SYNC_PT_STATE_REGISTERED );
 }
 
-bool SyncPnt::is_announced()
+bool SyncPoint::is_announced()
 {
    return ( this->state == SYNC_PT_STATE_ANNOUNCED );
 }
 
-bool SyncPnt::is_achieved()
+bool SyncPoint::is_achieved()
 {
    return ( this->state == SYNC_PT_STATE_ACHIEVED );
 }
 
-bool SyncPnt::is_synchronized()
+bool SyncPoint::is_synchronized()
 {
    return ( this->state == SYNC_PT_STATE_SYNCHRONIZED );
 }
 
-bool SyncPnt::is_error()
+bool SyncPoint::is_error()
 {
    return ( ( this->state != SYNC_PT_STATE_EXISTS )
             && ( this->state != SYNC_PT_STATE_REGISTERED )
@@ -113,7 +113,7 @@ bool SyncPnt::is_error()
             && ( this->state != SYNC_PT_STATE_SYNCHRONIZED ) );
 }
 
-std::wstring SyncPnt::to_wstring()
+std::wstring SyncPoint::to_wstring()
 {
    wstring result = L"[" + label + L"] -- ";
    switch ( this->state ) {
@@ -148,7 +148,7 @@ std::wstring SyncPnt::to_wstring()
    return result;
 }
 
-void SyncPnt::convert( SyncPntLoggable &log_sync_pnt )
+void SyncPoint::convert( SyncPntLoggable &log_sync_pnt )
 {
    log_sync_pnt.label = StringUtilities::ip_strdup_wstring( this->label );
    log_sync_pnt.state = this->state;

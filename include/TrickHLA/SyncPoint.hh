@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/SyncPnt.hh
+@file TrickHLA/SyncPoint.hh
 @ingroup TrickHLA
 @brief This class provides a sync-point implementation for storing and
 managing TrickHLA synchronization points.
@@ -20,7 +20,8 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/SyncPnt.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPoint.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPntLoggable.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
 @revs_title
@@ -31,15 +32,15 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_SYNC_PNT_HH
-#define TRICKHLA_SYNC_PNT_HH
+#ifndef TRICKHLA_SYNC_POINT_HH
+#define TRICKHLA_SYNC_POINT_HH
 
 // System includes
 #include <string>
 
-#include "SyncPntLoggable.hh"
 // TrickHLA includes.
 #include "TrickHLA/StandardsSupport.hh"
+#include "TrickHLA/SyncPntLoggable.hh"
 #include "TrickHLA/Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -54,7 +55,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class SyncPnt
+class SyncPoint
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -64,21 +65,21 @@ class SyncPnt
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__SyncPnt();
+   friend void init_attrTrickHLA__SyncPoint();
 
   public:
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLA SyncPnt class. */
-   SyncPnt();
+   /*! @brief Default constructor for the TrickHLA SyncPoint class. */
+   SyncPoint();
 
    /*! @brief Initialization constructor.
     *  @param l Synchronization point label. */
-   explicit SyncPnt( std::wstring const &l );
+   explicit SyncPoint( std::wstring const &l );
 
-   /*! @brief Destructor for the TrickHLA SyncPnt class. */
-   virtual ~SyncPnt();
+   /*! @brief Destructor for the TrickHLA SyncPoint class. */
+   virtual ~SyncPoint();
 
    // Functions to check synchronization point state.
    /*! @brief Check if the synchronization point has been created and exists
@@ -158,4 +159,4 @@ class SyncPnt
 
 } // namespace TrickHLA
 
-#endif /* TRICKHLA_SYNC_PNT_HH */
+#endif /* TRICKHLA_SYNC_POINT_HH */

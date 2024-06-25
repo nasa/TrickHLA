@@ -22,7 +22,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{MutexLock.cpp}
 @trick_link_dependency{MutexProtection.cpp}
 @trick_link_dependency{SleepTimeout.cpp}
-@trick_link_dependency{SyncPnt.cpp}
 @trick_link_dependency{SyncPointList.cpp}
 @trick_link_dependency{SyncPointManager.cpp}
 @trick_link_dependency{Types.cpp}
@@ -54,7 +53,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StringUtilities.hh"
-#include "TrickHLA/SyncPnt.hh"
 #include "TrickHLA/SyncPointList.hh"
 #include "TrickHLA/SyncPointManager.hh"
 #include "TrickHLA/Types.hh"

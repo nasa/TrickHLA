@@ -21,7 +21,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../TrickHLA/MutexProtection.cpp}
-@trick_link_dependency{../TrickHLA/SyncPnt.cpp}
+@trick_link_dependency{../TrickHLA/SyncPoint.cpp}
 @trick_link_dependency{../TrickHLA/SyncPntTimed.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
 @trick_link_dependency{SyncPntPauseList.cpp}
@@ -50,7 +50,7 @@ NASA, Johnson Space Center\n
 // HLA include files.
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
-#include "TrickHLA/SyncPnt.hh"
+#include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/Types.hh"
 
 // IMSim include files.
@@ -79,9 +79,9 @@ bool SyncPntPauseList::clear_sync_point(
    MutexProtection auto_unlock_mutex( &mutex );
 
    if ( !sync_point_list.empty() ) {
-      vector< SyncPnt * >::iterator i;
+      vector< SyncPoint * >::iterator i;
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-         SyncPnt *sp = ( *i );
+         SyncPoint *sp = ( *i );
          if ( ( sp != NULL )
               && ( sp->get_state() == SYNC_PT_STATE_ACHIEVED )
               && ( label.compare( sp->get_label() ) == 0 ) ) {
@@ -106,7 +106,7 @@ bool SyncPntPauseList::clear_sync_point(
    return false;
 }
 
-bool SyncPntPauseList::is_sync_point_state_achieved( SyncPnt const *sync_pnt )
+bool SyncPntPauseList::is_sync_point_state_achieved( SyncPoint const *sync_pnt )
 {
    return ( sync_pnt->get_state() == SYNC_PT_STATE_ACHIEVED );
 }
@@ -190,14 +190,14 @@ wstring SyncPntPauseList::to_wstring()
          break;
    }
 
-   vector< SyncPnt * >::const_iterator i;
+   vector< SyncPoint * >::const_iterator i;
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-      SyncPnt *sp = ( *i );
+      SyncPoint *sp = ( *i );
       if ( sp != NULL ) {
          result += L"  " + sp->to_wstring() + L"\n";
       }
@@ -209,7 +209,7 @@ wstring SyncPntPauseList::to_wstring()
 
 void SyncPntPauseList::print_sync_points()
 {
-   vector< SyncPnt * >::const_iterator i;
+   vector< SyncPoint * >::const_iterator i;
    string                              sync_point_label;
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -222,7 +222,7 @@ void SyncPntPauseList::print_sync_points()
        << "Pause Point Dump: " << sync_point_list.size() << endl;
 
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-      // Cast the SyncPnt pointer to a SyncPntTimed pointer.
+      // Cast the SyncPoint pointer to a SyncPntTimed pointer.
       SyncPntTimed const *timed_i = dynamic_cast< SyncPntTimed * >( *i );
       sync_point_label.assign( ( *i )->get_label().begin(), ( *i )->get_label().end() );
       msg << sync_point_label << " "

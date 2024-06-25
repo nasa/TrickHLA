@@ -23,7 +23,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../source/TrickHLA/SyncPntTimedList.cpp}
 @trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
-@trick_link_dependency{../../source/TrickHLA/SyncPnt.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPoint.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPntListBase.cpp}
 
 @revs_title
@@ -45,7 +45,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/SyncPnt.hh"
+#include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/SyncPntListBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -88,13 +88,13 @@ class SyncPntTimedList : public TrickHLA::SyncPntListBase
    /*! @brief Add the given synchronization point label to the list.
     *  @param label Synchronization point label.
     *  @return a pointer to the timed sync-point object added. */
-   virtual SyncPnt *add_sync_point( std::wstring const &label );
+   virtual SyncPoint *add_sync_point( std::wstring const &label );
 
    /*! @brief Add the given synchronization point label and action time to the list.
     *  @param label Synchronization point label.
     *  @param time  Action time.
     *  @return a pointer to the timed sync-point object added. */
-   virtual SyncPnt *add_sync_point( std::wstring const &label, Int64Time const &time );
+   virtual SyncPoint *add_sync_point( std::wstring const &label, Int64Time const &time );
 
    /*! @brief Achieve all the synchronization points in the list.
     *  @return True is any synchronization point in the list was achieved.

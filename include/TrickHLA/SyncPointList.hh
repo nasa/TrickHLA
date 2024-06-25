@@ -23,11 +23,11 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/SyncPointList.cpp}
 @trick_link_dependency{../../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
-@trick_link_dependency{../../source/TrickHLA/SyncPnt.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPoint.cpp}
 
 @revs_title
 @revs_begin
-@rev_entry{Dan Dexter, NASA ER6, TrickHLA, March 2024, --, Initial implementation.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, June 2024, --, Initial implementation.}
 @revs_end
 
 */
@@ -47,8 +47,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/SyncPnt.hh"
-#include "TrickHLA/SyncPntLoggable.hh"
+#include "TrickHLA/SyncPoint.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -62,7 +61,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-typedef std::vector< SyncPnt * > SyncPointVector;
+typedef std::vector< SyncPoint * > SyncPointVector;
 
 class SyncPointList
 {
@@ -95,7 +94,7 @@ class SyncPointList
 
    void clear();
 
-   SyncPnt *get_sync_point( std::wstring const &label ); // Search all lists for the unique sync-point label.
+   SyncPoint *get_sync_point( std::wstring const &label ); // Search all lists for the unique sync-point label.
 
    bool add( std::wstring const &label );
 
@@ -115,9 +114,9 @@ class SyncPointList
 
    bool register_all( RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
 
-   bool register_sync_point( SyncPnt *sp );
+   bool register_sync_point( SyncPoint *sp );
 
-   bool register_sync_point( SyncPnt *sp, RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
+   bool register_sync_point( SyncPoint *sp, RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
 
    bool is_announced( std::wstring const &label );
 
@@ -127,7 +126,7 @@ class SyncPointList
 
    bool wait_for_all_announced();
 
-   bool wait_for_announced( SyncPnt *sp );
+   bool wait_for_announced( SyncPoint *sp );
 
    bool is_achieved( std::wstring const &label );
 
@@ -135,7 +134,7 @@ class SyncPointList
 
    bool achieve_all();
 
-   bool achieve_sync_point( SyncPnt *sp );
+   bool achieve_sync_point( SyncPoint *sp );
 
    bool is_synchronized( std::wstring const &label );
 
@@ -145,7 +144,7 @@ class SyncPointList
 
    bool wait_for_all_synchronized();
 
-   bool wait_for_synchronized( SyncPnt *sp );
+   bool wait_for_synchronized( SyncPoint *sp );
 
   protected:
    SyncPointVector list; ///< @trick_io{**} Vector of sync-points objects.

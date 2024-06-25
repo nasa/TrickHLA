@@ -20,6 +20,7 @@ NASA, Johnson Space Center\n
 @python_module{IMSim}
 
 @tldh
+@trick_link_dependency{../../source/TrickHLA/SyncPoint.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPntTimedList.cpp}
 @trick_link_dependency{../../source/IMSim/SyncPntPauseList.cpp}
 @trick_link_dependency{../../source/IMSim/Types.cpp}
@@ -42,6 +43,7 @@ NASA, Johnson Space Center\n
 // Trick include files.
 
 // TrickHLA include files.
+#include "../TrickHLA/SyncPoint.hh"
 #include "../TrickHLA/SyncPntTimedList.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -140,7 +142,7 @@ class SyncPntPauseList : public TrickHLA::SyncPntTimedList
   private:
    PausePointStateEnum state; ///< @trick_units{--} State of the pause points.
 
-   static bool is_sync_point_state_achieved( TrickHLA::SyncPnt const *sync_pnt );
+   static bool is_sync_point_state_achieved( TrickHLA::SyncPoint const *sync_pnt );
 
   private:
    // Do not allow the copy constructor or assignment operator.

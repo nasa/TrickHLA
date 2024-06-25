@@ -24,7 +24,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPointList.cpp}
-@trick_link_dependency{../../source/TrickHLA/SyncPnt.cpp}
 
 @revs_title
 @revs_begin
@@ -48,7 +47,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/SyncPnt.hh"
 #include "TrickHLA/SyncPntLoggable.hh"
 #include "TrickHLA/SyncPointList.hh"
 

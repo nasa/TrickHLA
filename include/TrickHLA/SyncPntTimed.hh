@@ -22,7 +22,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../source/TrickHLA/SyncPntTimed.cpp}
 @trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
-@trick_link_dependency{../../source/TrickHLA/SyncPnt.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPoint.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
 @revs_title
@@ -42,7 +42,7 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/SyncPnt.hh"
+#include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -57,7 +57,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class SyncPntTimed : public TrickHLA::SyncPnt
+class SyncPntTimed : public TrickHLA::SyncPoint
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really

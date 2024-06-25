@@ -17,7 +17,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{Int64Time.cpp}
-@trick_link_dependency{SyncPnt.cpp}
+@trick_link_dependency{SyncPoint.cpp}
 @trick_link_dependency{SyncPntTimed.cpp}
 
 @revs_title
@@ -34,12 +34,12 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/message_proto.h"
 
-#include "../../include/TrickHLA/SyncPntTimed.hh"
-
-#include "../../include/TrickHLA/SyncPntTimedLoggable.hh"
+// TrickHLA include files.
+#include "TrickHLA/SyncPntTimed.hh"
+#include "TrickHLA/SyncPntTimedLoggable.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/StringUtilities.hh"
-#include "TrickHLA/SyncPnt.hh"
+#include "TrickHLA/SyncPoint.hh"
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
@@ -58,7 +58,7 @@ SyncPntTimed::SyncPntTimed()
  * @job_class{initialization}
  */
 SyncPntTimed::SyncPntTimed( std::wstring const &label )
-   : SyncPnt( label ), time( 0.0 )
+   : SyncPoint( label ), time( 0.0 )
 {
    return;
 }
@@ -67,7 +67,7 @@ SyncPntTimed::SyncPntTimed( std::wstring const &label )
  * @job_class{initialization}
  */
 SyncPntTimed::SyncPntTimed( Int64Time const &t, std::wstring const &label )
-   : SyncPnt( label ), time( t )
+   : SyncPoint( label ), time( t )
 {
    return;
 }
@@ -117,7 +117,7 @@ void SyncPntTimed::convert( SyncPntLoggable &log_sync_pnt )
    // Cast the SyncPntLoggable to a SyncPntTimedLoggable.
    SyncPntTimedLoggable *timed_log_sync_pnt = dynamic_cast< SyncPntTimedLoggable * >( &log_sync_pnt );
 
-   // If the cast failed, then treat it like a regular SyncPnt but warn user.
+   // If the cast failed, then treat it like a regular SyncPoint but warn user.
    if ( timed_log_sync_pnt == NULL ) {
       ostringstream errmsg;
       errmsg

@@ -688,7 +688,7 @@ void ExecutionControl::role_determination_process()
 
          // We are not a late joiner if we received the announce for the
          // 'initialization started' sync-point. (Nominal Initialization)
-         SyncPnt *sp = get_sync_point( SpaceFOM::INIT_STARTED_SYNC_POINT );
+         SyncPoint *sp = get_sync_point( SpaceFOM::INIT_STARTED_SYNC_POINT );
          if ( ( sp != NULL ) && sp->is_announced() ) {
             this->late_joiner            = false;
             this->late_joiner_determined = true;
@@ -2174,7 +2174,7 @@ bool ExecutionControl::run_mode_transition()
 {
    RTIambassador          *RTI_amb  = federate->get_RTI_ambassador();
    ExecutionConfiguration *ExCO     = get_execution_configuration();
-   SyncPnt                *sync_pnt = NULL;
+   SyncPoint                *sync_pnt = NULL;
 
    // Register the 'mtr_run' sync-point.
    if ( is_master() ) {
@@ -2268,7 +2268,7 @@ void ExecutionControl::freeze_mode_announce()
 bool ExecutionControl::freeze_mode_transition()
 {
    // Get the 'mtr_freeze' sync-point.
-   TrickHLA::SyncPnt *sync_pnt = get_sync_point( SpaceFOM::MTR_FREEZE_SYNC_POINT );
+   TrickHLA::SyncPoint *sync_pnt = get_sync_point( SpaceFOM::MTR_FREEZE_SYNC_POINT );
 
    // Make sure that we have a valid sync-point.
    if ( sync_pnt == NULL ) {

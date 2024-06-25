@@ -21,6 +21,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/Int64BaseTime.cpp}
 @trick_link_dependency{../TrickHLA/Manager.cpp}
 @trick_link_dependency{../TrickHLA/SleepTimeout.cpp}
+@trick_link_dependency{../TrickHLA/SyncPoint.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
 @trick_link_dependency{../TrickHLA/Utilities.cpp}
 @trick_link_dependency{ExecutionConfiguration.cpp}
@@ -59,6 +60,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StringUtilities.hh"
+#include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 
@@ -1241,9 +1243,9 @@ void ExecutionControl::achieve_all_multiphase_init_sync_points(
    RTI1516_NAMESPACE::RTIambassador &rti_ambassador )
 {
    // Iterate through this ExecutionControl's synchronization point list.
-   vector< SyncPnt * >::const_iterator i;
+   vector< SyncPoint * >::const_iterator i;
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-      SyncPnt *sp = ( *i );
+      SyncPoint *sp = ( *i );
 
       // Achieve a synchronization point if it is not already achieved and is
       // not one of the predefined ExecutionControl synchronization points.
@@ -1263,9 +1265,9 @@ void ExecutionControl::achieve_all_multiphase_init_sync_points(
 void ExecutionControl::wait_for_all_multiphase_init_sync_points()
 {
    // Iterate through this ExecutionControl's synchronization point list.
-   vector< SyncPnt * >::const_iterator i;
+   vector< SyncPoint * >::const_iterator i;
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-      SyncPnt *sp = ( *i );
+      SyncPoint *sp = ( *i );
 
       // Wait for a synchronization point if it is not already achieved and is
       // not one of the predefined ExecutionControl synchronization points.
@@ -2255,7 +2257,7 @@ bool ExecutionControl::run_mode_transition()
 {
    RTIambassador          *RTI_amb  = federate->get_RTI_ambassador();
    ExecutionConfiguration *ExCO     = get_execution_configuration();
-   SyncPnt                *sync_pnt = NULL;
+   SyncPoint                *sync_pnt = NULL;
 
    // Register the 'mtr_run' sync-point.
    if ( is_master() ) {
@@ -2348,7 +2350,7 @@ void ExecutionControl::freeze_mode_announce()
 bool ExecutionControl::freeze_mode_transition()
 {
    RTIambassador     *RTI_amb  = federate->get_RTI_ambassador();
-   TrickHLA::SyncPnt *sync_pnt = NULL;
+   TrickHLA::SyncPoint *sync_pnt = NULL;
 
    // Get the 'mtr_freeze' sync-point.
    sync_pnt = get_sync_point( IMSim::MTR_FREEZE_SYNC_POINT );
