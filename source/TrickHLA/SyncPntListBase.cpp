@@ -53,6 +53,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPntListBase.hh"
+#include "TrickHLA/SyncPntLoggable.hh"
 #include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
