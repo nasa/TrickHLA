@@ -45,7 +45,6 @@ NASA, Johnson Space Center\n
 
 // IMSim include files.
 #include "IMSim/Types.hh"
-#include "IMSim/ExecutionControl.hh"
 
 namespace IMSim
 {
