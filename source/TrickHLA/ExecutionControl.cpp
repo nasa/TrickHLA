@@ -41,6 +41,7 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/Executive.hh"
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.hh"
 #include "trick/message_proto.h"
 
@@ -83,6 +84,8 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 ExecutionControl::ExecutionControl()
+   : logged_sync_pts_count( 0 ),
+     loggable_sync_pts( NULL )
 {
    return;
 }
@@ -92,7 +95,9 @@ ExecutionControl::ExecutionControl()
  */
 ExecutionControl::ExecutionControl(
    ExecutionConfiguration &exec_config )
-   : ExecutionControlBase( exec_config )
+   : ExecutionControlBase( exec_config ),
+     logged_sync_pts_count( 0 ),
+     loggable_sync_pts( NULL )
 {
    return;
 }
@@ -103,6 +108,23 @@ ExecutionControl::ExecutionControl(
 ExecutionControl::~ExecutionControl()
 {
    clear_mode_values();
+
+   // Free the memory used by the array of running Federates for the Federation.
+   if ( loggable_sync_pts != NULL ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         send_hs( stdout, "ExecutionControl::~ExecutionControl() logged_sync_pts_count=%d %c",
+                  logged_sync_pts_count, THLA_NEWLINE );
+      }
+      for ( size_t i = 0; i < logged_sync_pts_count; ++i ) {
+         loggable_sync_pts[i].clear();
+      }
+      if ( trick_MM->delete_var( static_cast< void * >( loggable_sync_pts ) ) ) {
+         send_hs( stderr, "ExecutionControl::~ExecutionControl():%d ERROR deleting Trick Memory for 'loggable_sync_pts'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      loggable_sync_pts     = NULL;
+      logged_sync_pts_count = 0;
+   }
 }
 
 /*!

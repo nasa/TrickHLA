@@ -44,8 +44,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Packing.hh"
 
 // IMSim include files.
-#include "Types.hh"
-//#include "IMSim/ExecutionControl.hh"
+#include "IMSim/Types.hh"
+#include "IMSim/ExecutionControl.hh"
 
 namespace IMSim
 {

@@ -42,6 +42,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/ExecutionConfiguration.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
+#include "TrickHLA/SyncPntLoggable.hh"
 #include "TrickHLA/Types.hh"
 
 namespace TrickHLA
@@ -213,6 +214,9 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
 
   protected:
    static std::string const type; ///< @trick_units{--} ExecutionControl type string.
+
+   size_t           logged_sync_pts_count; ///< @trick_units{--} number of logged sync pts
+   SyncPntLoggable *loggable_sync_pts;     ///< @trick_units{--} converted Sync Point data that gets checkpointed
 
    /*! @brief Return the relevant TrickHLA::ExecutionConfiguration object.
     *  @return Pointer to the relevant TrickHLA::ExecutionConfiguration object. */

@@ -28,7 +28,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/IMSim/ExecutionConfiguration.cpp}
 @trick_link_dependency{../../source/IMSim/FreezeInteractionHandler.cpp}
 @trick_link_dependency{../../source/IMSim/SyncPntPauseList.cpp}
-@trick_link_dependency{../../source/IMSim/Typs.cpp}
+@trick_link_dependency{../../source/IMSim/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -49,11 +49,12 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/Types.hh"
 
-// IMSim include files.Interaction.hh"
+// IMSim include files.
 #include "IMSim/ExecutionConfiguration.hh"
 #include "IMSim/FreezeInteractionHandler.hh"
+#include "IMSim/SyncPntPauseList.hh"
+#include "IMSim/SyncPntTimedLoggable.hh"
 #include "IMSim/Types.hh"
-#include "SyncPntPauseList.hh"
 
 namespace IMSim
 {
@@ -377,6 +378,9 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
       used in conjunction with the cte_mode_time, sim_mode_time and
       associated sync point mechanisms to coordinate federation execution
       mode transitions.*/
+
+   size_t                logged_sync_pts_count; ///< @trick_units{--} number of logged sync pts
+   SyncPntTimedLoggable *loggable_sync_pts;     ///< @trick_units{--} Converted Sync Point data that gets checkpointed
 
   private:
    // Do not allow the copy constructor.

@@ -46,7 +46,6 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 #include "trick/release.h"
 
-#include "../../include/IMSim/SyncPntPauseList.hh"
 // HLA include files.
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
@@ -54,7 +53,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Types.hh"
 
 // IMSim include files.
-#include "../../include/TrickHLA/SyncPntTimed.hh"
+#include "IMSim/SyncPntPauseList.hh"
+#include "IMSim/SyncPntTimed.hh"
 #include "IMSim/Types.hh"
 
 using namespace std;

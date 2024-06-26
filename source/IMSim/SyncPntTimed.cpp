@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/SyncPntTimed.cpp
+@file IMSim/SyncPntTimed.cpp
 @ingroup TrickHLA
 @brief This class provides a sync-point implementation for storing and managing
 TrickHLA synchronization points.
@@ -16,8 +16,8 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{Int64Time.cpp}
-@trick_link_dependency{SyncPoint.cpp}
+@trick_link_dependency{../TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../TrickHLA/SyncPoint.cpp}
 @trick_link_dependency{SyncPntTimed.cpp}
 
 @revs_title
@@ -37,22 +37,16 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/StringUtilities.hh"
-#include "TrickHLA/SyncPntTimed.hh"
-#include "TrickHLA/SyncPntTimedLoggable.hh"
 #include "TrickHLA/SyncPoint.hh"
+
+// IMSim include files.
+#include "IMSim/SyncPntTimed.hh"
+#include "IMSim/SyncPntTimedLoggable.hh"
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
 using namespace TrickHLA;
-
-/*!
- * @job_class{initialization}
- */
-SyncPntTimed::SyncPntTimed()
-   : time( 0.0 )
-{
-   return;
-}
+using namespace IMSim;
 
 /*!
  * @job_class{initialization}

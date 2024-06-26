@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/SyncPntTimedList.cpp
+@file IMSim/SyncPntTimedList.cpp
 @ingroup TrickHLA
 @brief This class provides and abstract base class as the base implementation
 for storing and managing HLA synchronization points for Trick.
@@ -16,11 +16,11 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{Int64Time.cpp}
-@trick_link_dependency{MutexLock.cpp}
-@trick_link_dependency{MutexProtection.cpp}
-@trick_link_dependency{SyncPoint.cpp}
-@trick_link_dependency{SyncPntListBase.cpp}
+@trick_link_dependency{../TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../TrickHLA/MutexLock.cpp}
+@trick_link_dependency{../TrickHLA/MutexProtection.cpp}
+@trick_link_dependency{../TrickHLA/SyncPoint.cpp}
+@trick_link_dependency{../TrickHLA/SyncPntListBase.cpp}
 @trick_link_dependency{SyncPntTimed.cpp}
 @trick_link_dependency{SyncPntTimedList.cpp}
 
@@ -43,20 +43,23 @@ NASA, Johnson Space Center\n
 #include "trick/release.h"
 
 // HLA include files.
-#include "../../include/TrickHLA/SyncPntLoggable.hh"
-#include "../../include/TrickHLA/SyncPntTimed.hh"
-#include "../../include/TrickHLA/SyncPntTimedList.hh"
-#include "../../include/TrickHLA/SyncPntTimedLoggable.hh"
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/SyncPntListBase.hh"
+#include "TrickHLA/SyncPntLoggable.hh"
 #include "TrickHLA/SyncPoint.hh"
+
+// IMSim include files.
+#include "IMSim/SyncPntTimed.hh"
+#include "IMSim/SyncPntTimedList.hh"
+#include "IMSim/SyncPntTimedLoggable.hh"
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
 using namespace TrickHLA;
+using namespace IMSim;
 
 /*!
  * @job_class{initialization}

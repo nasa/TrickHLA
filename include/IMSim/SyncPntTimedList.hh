@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/SyncPntTimedList.hh
+@file IMSim/SyncPntTimedList.hh
 @ingroup TrickHLA
 @brief This class extends the TrickHLA::SyncPntListBase class and provides an
 instantiable implementation for storing and managing HLA synchronization points
@@ -21,7 +21,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/SyncPntTimedList.cpp}
+@trick_link_dependency{../../source/IMSim/SyncPntTimedList.cpp}
 @trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPoint.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPntListBase.cpp}
@@ -57,7 +57,7 @@ NASA, Johnson Space Center\n
 #include RTI1516_HEADER
 #pragma GCC diagnostic pop
 
-namespace TrickHLA
+namespace IMSim
 {
 
 class SyncPntTimedList : public TrickHLA::SyncPntListBase
@@ -70,7 +70,7 @@ class SyncPntTimedList : public TrickHLA::SyncPntListBase
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__SyncPntTimedList();
+   friend void init_attrIMSim__SyncPntTimedList();
 
   public:
    //
@@ -88,20 +88,20 @@ class SyncPntTimedList : public TrickHLA::SyncPntListBase
    /*! @brief Add the given synchronization point label to the list.
     *  @param label Synchronization point label.
     *  @return a pointer to the timed sync-point object added. */
-   virtual SyncPoint *add_sync_point( std::wstring const &label );
+   virtual TrickHLA::SyncPoint *add_sync_point( std::wstring const &label );
 
    /*! @brief Add the given synchronization point label and action time to the list.
     *  @param label Synchronization point label.
     *  @param time  Action time.
     *  @return a pointer to the timed sync-point object added. */
-   virtual SyncPoint *add_sync_point( std::wstring const &label, Int64Time const &time );
+   virtual TrickHLA::SyncPoint *add_sync_point( std::wstring const &label, TrickHLA::Int64Time const &time );
 
    /*! @brief Achieve all the synchronization points in the list.
     *  @return True is any synchronization point in the list was achieved.
     *  @param rti_ambassador Reference to the HLA RTI Ambassador instance. */
    virtual bool achieve_all_sync_points( RTI1516_NAMESPACE::RTIambassador &rti_ambassador )
    {
-      Int64Time time( 0.0 );
+      TrickHLA::Int64Time time( 0.0 );
       return ( achieve_all_sync_points( rti_ambassador, time ) );
    }
 
@@ -111,18 +111,18 @@ class SyncPntTimedList : public TrickHLA::SyncPntListBase
     *  @param rti_ambassador    Reference to RTI Ambassador.
     *  @param check_time Time to check. */
    virtual bool achieve_all_sync_points( RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-                                         Int64Time const                  &check_time );
+                                         TrickHLA::Int64Time const        &check_time );
 
    /*! @brief Determine if we have any synchronization point that has a action
     * time less than the given time.
     *  @return True if sync-point is ready to be cleared.
     *  @param check_time Time to check. */
-   virtual bool check_sync_points( Int64Time const &check_time );
+   virtual bool check_sync_points( TrickHLA::Int64Time const &check_time );
 
    /*! @brief Converts the vector of synchronization points to a
     *  checkpoint-able class.
     *  @param pts Area to populate. */
-   virtual void convert_sync_points( SyncPntLoggable *pts );
+   virtual void convert_sync_points( TrickHLA::SyncPntLoggable *pts );
 
    /*! @brief Dumps synchronization point information to the screen. */
    virtual void print_sync_points();
@@ -137,6 +137,6 @@ class SyncPntTimedList : public TrickHLA::SyncPntListBase
    SyncPntTimedList &operator=( SyncPntTimedList const &rhs );
 };
 
-} // namespace TrickHLA
+} // namespace IMSim
 
 #endif /* TRICKHLA_SYNC_PNT_TIMED_LIST_HH */

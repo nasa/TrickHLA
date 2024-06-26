@@ -47,7 +47,6 @@ NASA, Johnson Space Center\n
 #include <cstdint>
 #include <string>
 
-#include "SyncPntTimedLoggable.hh"
 #include "TrickHLA/CTETimelineBase.hh"
 #include "TrickHLA/ScenarioTimeline.hh"
 #include "TrickHLA/SimTimeline.hh"
@@ -711,9 +710,6 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    // Shortcuts to associated TrickHLA management and control objects.
    TrickHLA::Federate *federate; ///< @trick_io{**} Associated federate.
    TrickHLA::Manager  *manager;  ///< @trick_io{**} Associated manager.
-
-   size_t                logged_sync_pts_count; ///< @trick_units{--} number of logged sync pts
-   SyncPntTimedLoggable *loggable_sync_pts;     ///< @trick_units{--} converted Sync Point data that gets checkpointed
 
   private:
    // Do not allow the copy constructor.

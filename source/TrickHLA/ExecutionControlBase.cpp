@@ -107,9 +107,7 @@ ExecutionControlBase::ExecutionControlBase()
      late_joiner( false ),
      late_joiner_determined( false ),
      federate( NULL ),
-     manager( NULL ),
-     logged_sync_pts_count( 0 ),
-     loggable_sync_pts( NULL )
+     manager( NULL )
 {
    return;
 }
@@ -141,9 +139,7 @@ ExecutionControlBase::ExecutionControlBase(
      late_joiner( false ),
      late_joiner_determined( false ),
      federate( NULL ),
-     manager( NULL ),
-     logged_sync_pts_count( 0 ),
-     loggable_sync_pts( NULL )
+     manager( NULL )
 {
    return;
 }
@@ -162,23 +158,6 @@ ExecutionControlBase::~ExecutionControlBase()
                   __LINE__, THLA_NEWLINE );
       }
       multiphase_init_sync_points = NULL;
-   }
-
-   // Free the memory used by the array of running Federates for the Federation.
-   if ( loggable_sync_pts != NULL ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "ExecutionControlBase::~ExecutionControlBase() logged_sync_pts_count=%d %c",
-                  logged_sync_pts_count, THLA_NEWLINE );
-      }
-      for ( size_t i = 0; i < logged_sync_pts_count; ++i ) {
-         loggable_sync_pts[i].clear();
-      }
-      if ( trick_MM->delete_var( static_cast< void * >( loggable_sync_pts ) ) ) {
-         send_hs( stderr, "ExecutionControlBase::~ExecutionControlBase():%d ERROR deleting Trick Memory for 'loggable_sync_pts'%c",
-                  __LINE__, THLA_NEWLINE );
-      }
-      loggable_sync_pts     = NULL;
-      logged_sync_pts_count = 0;
    }
 }
 

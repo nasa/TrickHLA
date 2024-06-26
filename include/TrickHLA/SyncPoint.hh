@@ -28,6 +28,7 @@ NASA, Johnson Space Center\n
 @revs_begin
 @rev_entry{Edwin Z. Crues, NASA JSC ER7, TrickHLA, Jan 2019, --, Create from old TrickHLASyncPtsBase class.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, June 2024, --, Adding checkpoint support.}
 @revs_end
 
 */
@@ -71,9 +72,6 @@ class SyncPoint
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLA SyncPoint class. */
-   SyncPoint();
-
    /*! @brief Initialization constructor.
     *  @param l Synchronization point label. */
    explicit SyncPoint( std::wstring const &l );
@@ -147,6 +145,12 @@ class SyncPoint
     *  @return A wide string with the synchronization point label and current state. */
    virtual std::wstring to_wstring();
 
+   /*! @brief Convert the variables to a form Trick can checkpoint. */
+   virtual void convert_to_checkpoint();
+
+   /*! @brief Restore the state of this class from the Trick checkpoint. */
+   virtual void restore_from_checkpoint();
+
    /*! @brief Convert the synchronization point into and loggable
     * synchronization point.
     *  @param log_sync_pnt Reference to a loggable synchronization point. */
@@ -155,6 +159,12 @@ class SyncPoint
   protected:
    std::wstring    label; ///< @trick_io{**} Sync-point name.
    SyncPtStateEnum state; ///< @trick_units{--} Sync-point state.
+
+   char *label_chkpt; ///< @trick_io{**} Trick memory allocated label that is checkpointable.
+
+  private:
+   /*! @brief Don't allowdDefault constructor. */
+   SyncPoint();
 };
 
 } // namespace TrickHLA

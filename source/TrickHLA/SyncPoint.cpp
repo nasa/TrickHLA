@@ -44,20 +44,11 @@ using namespace TrickHLA;
 /*!
  * @job_class{initialization}
  */
-SyncPoint::SyncPoint()
-   : label( L"" ),
-     state( SYNC_PT_STATE_EXISTS )
-{
-   return;
-}
-
-/*!
- * @job_class{initialization}
- */
 SyncPoint::SyncPoint(
    std::wstring const &l )
    : label( l ),
-     state( SYNC_PT_STATE_EXISTS )
+     state( SYNC_PT_STATE_EXISTS ),
+     label_chkpt( NULL )
 {
    return;
 }
@@ -67,7 +58,12 @@ SyncPoint::SyncPoint(
  */
 SyncPoint::~SyncPoint()
 {
-   return;
+   if ( this->label_chkpt != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->label_chkpt ) ) ) {
+         send_hs( stderr, "SyncPoint::~SyncPoint():%d ERROR deleting Trick Memory for 'label_chkpt'\n", __LINE__ );
+      }
+      this->label_chkpt = NULL;
+   }
 }
 
 bool SyncPoint::is_valid()
@@ -115,7 +111,7 @@ bool SyncPoint::is_error()
 
 std::wstring SyncPoint::to_wstring()
 {
-   wstring result = L"[" + label + L"] -- ";
+   wstring result = L"[" + this->label + L"] -- ";
    switch ( this->state ) {
 
       case SYNC_PT_STATE_ERROR:
@@ -148,9 +144,20 @@ std::wstring SyncPoint::to_wstring()
    return result;
 }
 
+void SyncPoint::convert_to_checkpoint()
+{
+   // Checkpointable copy of the label.
+   this->label_chkpt = StringUtilities::ip_strdup_wstring( this->label );
+}
+
+void SyncPoint::restore_from_checkpoint()
+{
+   // Update the label from the checkpointable c-string.
+   StringUtilities::to_wstring( this->label, this->label_chkpt );
+}
+
 void SyncPoint::convert( SyncPntLoggable &log_sync_pnt )
 {
    log_sync_pnt.label = StringUtilities::ip_strdup_wstring( this->label );
    log_sync_pnt.state = this->state;
-   return;
 }

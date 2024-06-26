@@ -21,7 +21,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/SyncPoint.cpp}
-@trick_link_dependency{../../source/TrickHLA/SyncPntTimedList.cpp}
+@trick_link_dependency{../../source/IMSim/SyncPntTimedList.cpp}
 @trick_link_dependency{../../source/IMSim/SyncPntPauseList.cpp}
 @trick_link_dependency{../../source/IMSim/Types.cpp}
 
@@ -43,8 +43,11 @@ NASA, Johnson Space Center\n
 // Trick include files.
 
 // TrickHLA include files.
-#include "../TrickHLA/SyncPntTimedList.hh"
-#include "../TrickHLA/SyncPoint.hh"
+#include "TrickHLA/SyncPoint.hh"
+
+// IMSim include files.
+#include "IMSim/SyncPntTimedList.hh"
+#include "IMSim/Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -55,13 +58,10 @@ NASA, Johnson Space Center\n
 #include RTI1516_HEADER
 #pragma GCC diagnostic pop
 
-// IMSim include files.
-#include "IMSim/Types.hh"
-
 namespace IMSim
 {
 
-class SyncPntPauseList : public TrickHLA::SyncPntTimedList
+class SyncPntPauseList : public IMSim::SyncPntTimedList
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really

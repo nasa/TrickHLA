@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/SyncPntTimedLoggable.hh
+@file IMSim/SyncPntTimedLoggable.hh
 @ingroup TrickHLA
 @brief This class provides a mechanism for logging timed synchronization point
 data and retrieving it from the log file.
@@ -38,9 +38,9 @@ NASA, Johnson Space Center\n
 #include "trick/memorymanager_c_intf.h"
 
 // TrickHLA include files.
-#include "SyncPntLoggable.hh"
+#include "TrickHLA/SyncPntLoggable.hh"
 
-namespace TrickHLA
+namespace IMSim
 {
 
 class SyncPntTimedLoggable : public TrickHLA::SyncPntLoggable
@@ -53,7 +53,7 @@ class SyncPntTimedLoggable : public TrickHLA::SyncPntLoggable
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__SyncPntTimedLoggable();
+   friend void init_attrIMSim__SyncPntTimedLoggable();
 
   public:
    /*! @brief Default constructor for the TrickHLA SyncPntTimedLoggable class. */
@@ -61,6 +61,7 @@ class SyncPntTimedLoggable : public TrickHLA::SyncPntLoggable
    {
       return;
    }
+
    /*! @brief Destructor for the TrickHLA SyncPntTimedLoggable class. */
    ~SyncPntTimedLoggable()
    {
@@ -80,6 +81,6 @@ class SyncPntTimedLoggable : public TrickHLA::SyncPntLoggable
    SyncPntTimedLoggable &operator=( SyncPntTimedLoggable const &rhs );
 };
 
-} // namespace TrickHLA
+} // namespace IMSim
 
 #endif /* TRICKHLA_SYNC_PNT_TIMED_LOGGABLE_HH */
