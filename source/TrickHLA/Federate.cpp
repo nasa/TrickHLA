@@ -2459,7 +2459,7 @@ void Federate::sync_point_registration_succeeded(
 }
 
 void Federate::sync_point_registration_failed(
-   wstring const &label,
+   wstring const                    &label,
    SynchronizationPointFailureReason reason )
 {
    // Delegate to the Execution Control to handle the FedAmb callback.

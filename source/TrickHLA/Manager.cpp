@@ -736,7 +736,7 @@ void Manager::receive_init_data(
  */
 void Manager::clear_init_sync_points()
 {
-   // Clear the multiphase initalization synchronization points associated
+   // Clear the multiphase initialization synchronization points associated
    // with ExecutionControl initialization.
    this->execution_control->clear_multiphase_init_sync_points();
 }

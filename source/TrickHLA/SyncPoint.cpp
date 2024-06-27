@@ -57,10 +57,10 @@ SyncPoint::SyncPoint(
  */
 SyncPoint::~SyncPoint()
 {
-   clear_checkpoint_data_structures();
+   this->clear_checkpoint_data_structures();
 }
 
-bool SyncPoint::is_valid()
+bool const SyncPoint::is_valid() const
 {
    return ( ( this->state == SYNC_PT_STATE_EXISTS )
             || ( this->state == SYNC_PT_STATE_REGISTERED )
@@ -69,32 +69,32 @@ bool SyncPoint::is_valid()
             || ( this->state == SYNC_PT_STATE_SYNCHRONIZED ) );
 }
 
-bool SyncPoint::exists()
+bool const SyncPoint::exists() const
 {
    return ( this->state == SYNC_PT_STATE_EXISTS );
 }
 
-bool SyncPoint::is_registered()
+bool const SyncPoint::is_registered() const
 {
    return ( this->state == SYNC_PT_STATE_REGISTERED );
 }
 
-bool SyncPoint::is_announced()
+bool const SyncPoint::is_announced() const
 {
    return ( this->state == SYNC_PT_STATE_ANNOUNCED );
 }
 
-bool SyncPoint::is_achieved()
+bool const SyncPoint::is_achieved() const
 {
    return ( this->state == SYNC_PT_STATE_ACHIEVED );
 }
 
-bool SyncPoint::is_synchronized()
+bool const SyncPoint::is_synchronized() const
 {
    return ( this->state == SYNC_PT_STATE_SYNCHRONIZED );
 }
 
-bool SyncPoint::is_error()
+bool const SyncPoint::is_error() const
 {
    return ( ( this->state != SYNC_PT_STATE_EXISTS )
             && ( this->state != SYNC_PT_STATE_REGISTERED )

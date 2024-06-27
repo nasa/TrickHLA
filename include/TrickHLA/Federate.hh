@@ -227,7 +227,7 @@ class Federate
     *  and is one of the sync-points created.
     *  @param label  Sync-point label.
     *  @param reason Reason for failure. */
-   void sync_point_registration_failed( std::wstring const &label,
+   void sync_point_registration_failed( std::wstring const                                  &label,
                                         RTI1516_NAMESPACE::SynchronizationPointFailureReason reason );
 
    /*! @brief Marks a synchronization point as synchronized with the federation.

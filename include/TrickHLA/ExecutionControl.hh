@@ -104,6 +104,10 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual void add_initialization_sync_points();
    /*! Add initialization synchronization points to regulate startup. */
    virtual void add_multiphase_init_sync_points();
+   /*! Clear any remaining multiphase initialization synchronization points
+    *  that have not been achieved and wait for the federation to be
+    *  synchronized on it. */
+   virtual void clear_multiphase_init_sync_points();
    /*! @brief The RTI has announced the existence of a synchronization point.
     *  @param rti_ambassador    Reference to the HLA RTI Ambassador instance.
     *  @param label             Sync-point label.
@@ -112,10 +116,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
       RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
       std::wstring const               &label,
       RTI1516_USERDATA const           &user_supplied_tag );
-   /*! Clear any remaining multiphase initialization synchronization points
-    *  that have not been achieved and wait for the federation to be
-    *  synchronized on it. */
-   virtual void clear_multiphase_init_sync_points();
    /*! Publish the ExecutionControl objects and interactions. */
    virtual void publish();
    /*! Unpublish the ExecutionControl objects and interactions. */

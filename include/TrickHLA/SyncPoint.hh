@@ -82,32 +82,32 @@ class SyncPoint : public TrickHLA::CheckpointConversionBase
    /*! @brief Check if the synchronization point has been created and exists
     *  in at least on valid state.
     *  @return True if the synchronization point has a valid state. */
-   virtual bool is_valid();
+   virtual bool const is_valid() const;
 
    // Functions to check synchronization point state.
    /*! @brief Check if the synchronization point exists.
     *  @return True if the synchronization point exists. */
-   virtual bool exists();
+   virtual bool const exists() const;
 
    /*! @brief Check if the synchronization point is registered.
     *  @return True if the synchronization point is registered. */
-   virtual bool is_registered();
+   virtual bool const is_registered() const;
 
    /*! @brief Check if the synchronization point is announced.
     *  @return True if the synchronization point is announced. */
-   virtual bool is_announced();
+   virtual bool const is_announced() const;
 
    /*! @brief Check if the synchronization point is achieved.
     *  @return True if the synchronization point is achieved. */
-   virtual bool is_achieved();
+   virtual bool const is_achieved() const;
 
    /*! @brief Check if the synchronization point is synchronized.
     *  @return True if the synchronization point is synchronized. */
-   virtual bool is_synchronized();
+   virtual bool const is_synchronized() const;
 
    /*! @brief Check if the synchronization point has a bad state.
     *  @return True if the synchronization point has a bad state. */
-   virtual bool is_error();
+   virtual bool const is_error() const;
 
    // Accessor functions.
    /*! @brief Get the synchronization point label.
@@ -139,9 +139,9 @@ class SyncPoint : public TrickHLA::CheckpointConversionBase
    }
 
    // Utility functions.
-   /*! @brief Create a C++ wide string with the synchronization point label and
-    * current state.
-    *  @return A wide string with the synchronization point label and current state. */
+   /*! @brief Create a C++ string with the synchronization point label and
+    *  current state.
+    *  @return A string with the synchronization point label and current state. */
    virtual std::string to_string();
 
    /*! @brief Convert the variables to a form Trick can checkpoint. */

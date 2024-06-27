@@ -98,55 +98,55 @@ class SyncPointList
 
    SyncPoint *get_sync_point( std::wstring const &label ); // Search all lists for the unique sync-point label.
 
-   bool add( std::wstring const &label );
+   bool const add( std::wstring const &label );
 
-   bool add( std::wstring const &label, Int64Time time );
+   bool const add( std::wstring const &label, Int64Time time );
 
-   bool contains( std::wstring const &label );
+   bool const contains( std::wstring const &label );
 
-   bool is_registered( std::wstring const &label );
+   bool const is_registered( std::wstring const &label );
 
-   bool mark_registered( std::wstring const &label );
+   bool const mark_registered( std::wstring const &label );
 
-   bool register_sync_point( std::wstring const &label );
+   bool const register_sync_point( std::wstring const &label );
 
-   bool register_sync_point( std::wstring const &label, RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
+   bool const register_sync_point( std::wstring const &label, RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
 
-   bool register_all();
+   bool const register_all();
 
-   bool register_all( RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
+   bool const register_all( RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
 
-   bool register_sync_point( SyncPoint *sp );
+   bool const register_sync_point( SyncPoint *sp );
 
-   bool register_sync_point( SyncPoint *sp, RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
+   bool const register_sync_point( SyncPoint *sp, RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
 
-   bool is_announced( std::wstring const &label );
+   bool const is_announced( std::wstring const &label );
 
-   bool mark_announced( std::wstring const &label );
+   bool const mark_announced( std::wstring const &label );
 
-   bool wait_for_announced( std::wstring const &label );
+   bool const wait_for_announced( std::wstring const &label );
 
-   bool wait_for_all_announced();
+   bool const wait_for_all_announced();
 
-   bool wait_for_announced( SyncPoint *sp );
+   bool const wait_for_announced( SyncPoint *sp );
 
-   bool is_achieved( std::wstring const &label );
+   bool const is_achieved( std::wstring const &label );
 
-   bool achieve( std::wstring const &label );
+   bool const achieve( std::wstring const &label );
 
-   bool achieve_all();
+   bool const achieve_all();
 
-   bool achieve_sync_point( SyncPoint *sp );
+   bool const achieve_sync_point( SyncPoint *sp );
 
-   bool is_synchronized( std::wstring const &label );
+   bool const is_synchronized( std::wstring const &label );
 
-   bool mark_synchronized( std::wstring const &label );
+   bool const mark_synchronized( std::wstring const &label );
 
-   bool wait_for_synchronized( std::wstring const &label );
+   bool const wait_for_synchronized( std::wstring const &label );
 
-   bool wait_for_all_synchronized();
+   bool const wait_for_all_synchronized();
 
-   bool wait_for_synchronized( SyncPoint *sp );
+   bool const wait_for_synchronized( SyncPoint *sp );
 
    std::string to_string();
 
@@ -162,7 +162,7 @@ class SyncPointList
    Federate *federate; ///< @trick_units{--} Associated TrickHLA Federate.
 
   private:
-   /*! @brief Don't allow the default constructor because the mutex needs to be assigned. */
+   /*! @brief Don't allow the default constructor because the mutex must be set. */
    SyncPointList();
 
    // Do not allow the copy constructor or assignment operator.

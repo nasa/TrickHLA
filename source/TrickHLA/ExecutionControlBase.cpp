@@ -23,6 +23,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Manager.cpp}
 @trick_link_dependency{SleepTimeout.cpp}
+@trick_link_dependency{SyncPointManagerBase.cpp}
 @trick_link_dependency{Types.cpp}
 
 @revs_title
@@ -59,6 +60,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
+#include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -86,7 +88,8 @@ ScenarioTimeline def_scenario_timeline( def_sim_timeline );
  * @job_class{initialization}
  */
 ExecutionControlBase::ExecutionControlBase()
-   : scenario_timeline( &def_scenario_timeline ),
+   : SyncPointManagerBase(),
+     scenario_timeline( &def_scenario_timeline ),
      sim_timeline( &def_sim_timeline ),
      cte_timeline( NULL ),
      use_preset_master( false ),
@@ -106,7 +109,6 @@ ExecutionControlBase::ExecutionControlBase()
      scenario_freeze_time( 0.0 ),
      late_joiner( false ),
      late_joiner_determined( false ),
-     federate( NULL ),
      manager( NULL )
 {
    return;
@@ -117,7 +119,8 @@ ExecutionControlBase::ExecutionControlBase()
  */
 ExecutionControlBase::ExecutionControlBase(
    ExecutionConfigurationBase &exec_config )
-   : scenario_timeline( &def_scenario_timeline ),
+   : SyncPointManagerBase(),
+     scenario_timeline( &def_scenario_timeline ),
      sim_timeline( &def_sim_timeline ),
      cte_timeline( NULL ),
      use_preset_master( false ),
@@ -137,7 +140,6 @@ ExecutionControlBase::ExecutionControlBase(
      scenario_freeze_time( 0.0 ),
      late_joiner( false ),
      late_joiner_determined( false ),
-     federate( NULL ),
      manager( NULL )
 {
    return;
@@ -169,16 +171,16 @@ ExecutionControlBase::~ExecutionControlBase()
  * @job_class{default_data}
  */
 void ExecutionControlBase::setup(
-   TrickHLA::Federate                   &federate,
-   TrickHLA::Manager                    &manager,
+   TrickHLA::Federate                   &fed,
+   TrickHLA::Manager                    &mgr,
    TrickHLA::ExecutionConfigurationBase &exec_config )
 {
-   // Set the TrickHLA::Federate instance reference.
-   this->federate = &federate;
-   // TODO: SyncPointManager::setup( &federate );
+   // Set the TrickHLA::Federate instance reference that exists in the
+   // SyncPointManagerBase subclass we extended.
+   SyncPointManagerBase::setup( &fed );
 
    // Set the TrickHLA::Manager instance reference.
-   this->manager = &manager;
+   this->manager = &mgr;
 
    // Set the TrickHLA::ExecutionConfigurationBase instance reference.
    this->execution_configuration = &exec_config;
@@ -198,18 +200,18 @@ void ExecutionControlBase::setup(
  * @job_class{default_data}
  */
 void ExecutionControlBase::setup(
-   TrickHLA::Federate &federate,
-   TrickHLA::Manager  &manager )
+   TrickHLA::Federate &fed,
+   TrickHLA::Manager  &mgr )
 {
-   // Set the TrickHLA::Federate instance reference.
-   this->federate = &federate;
-   // TODO: SyncPointManager::setup( &federate );
+   // Set the TrickHLA::Federate instance reference that exists in the
+   // SyncPointManagerBase subclass we extended.
+   SyncPointManagerBase::setup( &fed );
 
    // Set the TrickHLA::Manager instance reference.
-   this->manager = &manager;
+   this->manager = &mgr;
 
    // Check to see if the ExecutionConfigurationBase instance is set.
-   if ( execution_configuration != NULL ) {
+   if ( this->execution_configuration != NULL ) {
 
       // Setup the TrickHLA::ExecutionConfigurationBase instance.
       this->execution_configuration->setup( *this );
@@ -225,13 +227,13 @@ void ExecutionControlBase::setup(
 void ExecutionControlBase::initialize()
 {
    // Set Trick's realtime clock to the CTE clock if used.
-   if ( this->does_cte_timeline_exist() ) {
+   if ( does_cte_timeline_exist() ) {
       this->cte_timeline->clock_init();
    }
 
    // Reset the master flag if it is not preset by the user.
-   if ( !this->is_master_preset() ) {
-      this->set_master( false );
+   if ( !is_master_preset() ) {
+      set_master( false );
    }
 
    if ( !does_scenario_timeline_exist() ) {
@@ -417,8 +419,7 @@ void ExecutionControlBase::add_multiphase_init_sync_points()
    // Parse the comma separated list of sync-point labels.
    vector< string > user_sync_pt_labels;
    if ( this->multiphase_init_sync_points != NULL ) {
-      StringUtilities::tokenize( this->multiphase_init_sync_points,
-                                 user_sync_pt_labels, "," );
+      StringUtilities::tokenize( this->multiphase_init_sync_points, user_sync_pt_labels, "," );
    }
 
    // Add the user specified multiphase initialization sync-points to the list.
@@ -434,7 +435,6 @@ void ExecutionControlBase::add_multiphase_init_sync_points()
  */
 void ExecutionControlBase::clear_multiphase_init_sync_points()
 {
-
    // Late joining federates do not get to participate in the multiphase
    // initialization process so just return.
    if ( this->manager->is_late_joining_federate() ) {
@@ -451,53 +451,12 @@ joining federate so this call will be ignored.%c",
                __LINE__, THLA_NEWLINE );
    }
 
-   try {
+   // Achieve all the multiphase initialization synchronization points except.
+   achieve_all_multiphase_init_sync_points();
 
-      // Achieve all the multiphase initialization synchronization points except.
-      this->achieve_all_multiphase_init_sync_points( *federate->get_RTI_ambassador() );
-
-      // Now wait for all the multiphase initialization sync-points to be
-      // synchronized in the federation.
-      this->wait_for_all_multiphase_init_sync_points();
-
-   } catch ( RTI1516_NAMESPACE::SynchronizationPointLabelNotAnnounced const &e ) {
-      ostringstream errmsg;
-      errmsg << "ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
-             << " Exception: SynchronizationPointLabelNotAnnounced" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
-      ostringstream errmsg;
-      errmsg << "ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
-             << " Exception: FederateNotExecutionMember" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
-      ostringstream errmsg;
-      errmsg << "ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
-             << " Exception: SaveInProgress" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
-      ostringstream errmsg;
-      errmsg << "ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
-             << " Exception: RestoreInProgress" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-      ostringstream errmsg;
-      errmsg << "ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
-             << " Exception: NotConnected" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
-      ostringstream errmsg;
-      errmsg << "ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
-             << " Exception: RTIinternalError" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      ostringstream errmsg;
-      errmsg << "ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
-             << " Exception: RTI1516_EXCEPTION " << rti_err_msg << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
+   // Now wait for all the multiphase initialization sync-points to be
+   // synchronized in the federation.
+   wait_for_all_multiphase_init_sync_points();
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       this->print_sync_points();
@@ -507,8 +466,7 @@ joining federate so this call will be ignored.%c",
 /*!
  * @job_class{initialization}
  */
-void ExecutionControlBase::achieve_all_multiphase_init_sync_points(
-   RTI1516_NAMESPACE::RTIambassador &rti_ambassador )
+void ExecutionControlBase::achieve_all_multiphase_init_sync_points()
 {
    // Iterate through this ExecutionControl's user defined multiphase
    // initialization synchronization point list and achieve them.

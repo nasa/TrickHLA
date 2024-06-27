@@ -66,7 +66,7 @@ using namespace IMSim;
  * @job_class{initialization}
  */
 SyncPntPauseList::SyncPntPauseList()
-   : state( PAUSE_POINT_STATE_UNKNOWN )
+   : state( IMSim::PAUSE_POINT_STATE_UNKNOWN )
 {
    return;
 }
@@ -83,16 +83,16 @@ bool SyncPntPauseList::clear_sync_point(
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
          SyncPoint *sp = ( *i );
          if ( ( sp != NULL )
-              && ( sp->get_state() == SYNC_PT_STATE_ACHIEVED )
+              && ( sp->get_state() == TrickHLA::SYNC_PT_STATE_ACHIEVED )
               && ( label.compare( sp->get_label() ) == 0 ) ) {
 
             if ( sp->get_label().find( L"stop", 0 ) == 0 ) {
-               this->state = PAUSE_POINT_STATE_EXIT;
+               this->state = IMSim::PAUSE_POINT_STATE_EXIT;
             } else if ( sp->get_label().find( L"restart", 0 ) == 0 ) {
-               this->state = PAUSE_POINT_STATE_RESTART;
+               this->state = IMSim::PAUSE_POINT_STATE_RESTART;
             } else if ( sp->get_label().find( L"reconfig", 0 ) == 0 ) {
                this->reconfig_name = sp->get_label().substr( 9 );
-               this->state         = PAUSE_POINT_STATE_RECONFIG;
+               this->state         = IMSim::PAUSE_POINT_STATE_RECONFIG;
             }
 
             sync_point_list.erase( i );
@@ -108,14 +108,14 @@ bool SyncPntPauseList::clear_sync_point(
 
 bool SyncPntPauseList::is_sync_point_state_achieved( SyncPoint const *sync_pnt )
 {
-   return ( sync_pnt->get_state() == SYNC_PT_STATE_ACHIEVED );
+   return ( sync_pnt->get_state() == TrickHLA::SYNC_PT_STATE_ACHIEVED );
 }
 
 void SyncPntPauseList::check_state()
 {
-   if ( ( state == PAUSE_POINT_STATE_EXIT )
-        || ( state == PAUSE_POINT_STATE_RESTART )
-        || ( state == PAUSE_POINT_STATE_RECONFIG ) ) {
+   if ( ( state == IMSim::PAUSE_POINT_STATE_EXIT )
+        || ( state == IMSim::PAUSE_POINT_STATE_RESTART )
+        || ( state == IMSim::PAUSE_POINT_STATE_RECONFIG ) ) {
       return;
    }
 
@@ -127,7 +127,7 @@ void SyncPntPauseList::check_state()
       if ( std::any_of( sync_point_list.begin(),
                         sync_point_list.end(),
                         is_sync_point_state_achieved ) ) {
-         this->state = PAUSE_POINT_STATE_FREEZE;
+         this->state = IMSim::PAUSE_POINT_STATE_FREEZE;
          return;
       }
    }
@@ -143,50 +143,50 @@ void SyncPntPauseList::check_state()
    // We can only transition to the Run state if we are not currently in an
    // Unknown state. Also, do not jump into Run state if we are currently in
    // Freeze mode.
-   if ( ( state != PAUSE_POINT_STATE_FREEZE ) && ( state != PAUSE_POINT_STATE_UNKNOWN ) ) {
-      this->state = PAUSE_POINT_STATE_RUN;
+   if ( ( state != IMSim::PAUSE_POINT_STATE_FREEZE ) && ( state != IMSim::PAUSE_POINT_STATE_UNKNOWN ) ) {
+      this->state = IMSim::PAUSE_POINT_STATE_RUN;
    }
 }
 
-wstring SyncPntPauseList::to_wstring()
+string SyncPntPauseList::to_string()
 {
-   wstring result;
+   string result;
 
-   result = L"Pause Points\n  state: ";
+   result = "Pause Points\n  state: ";
 
    switch ( state ) {
 
-      case PAUSE_POINT_STATE_ERROR:
-         result += L"PAUSE_POINT_STATE_ERROR";
+      case IMSim::PAUSE_POINT_STATE_ERROR:
+         result += "PAUSE_POINT_STATE_ERROR";
          break;
 
-      case PAUSE_POINT_STATE_PENDING:
-         result += L"PAUSE_POINT_STATE_PENDING";
+      case IMSim::PAUSE_POINT_STATE_PENDING:
+         result += "PAUSE_POINT_STATE_PENDING";
          break;
 
-      case PAUSE_POINT_STATE_ACKNOWLEDGED:
-         result += L"PAUSE_POINT_STATE_ACKNOWLEDGED";
+      case IMSim::PAUSE_POINT_STATE_ACKNOWLEDGED:
+         result += "PAUSE_POINT_STATE_ACKNOWLEDGED";
          break;
 
-      case PAUSE_POINT_STATE_RUN:
-         result += L"PAUSE_POINT_STATE_RUN";
+      case IMSim::PAUSE_POINT_STATE_RUN:
+         result += "PAUSE_POINT_STATE_RUN";
          break;
 
-      case PAUSE_POINT_STATE_EXIT:
-         result += L"PAUSE_POINT_STATE_EXIT";
+      case IMSim::PAUSE_POINT_STATE_EXIT:
+         result += "PAUSE_POINT_STATE_EXIT";
          break;
 
-      case PAUSE_POINT_STATE_RESTART:
-         result += L"PAUSE_POINT_STATE_RESTART";
+      case IMSim::PAUSE_POINT_STATE_RESTART:
+         result += "PAUSE_POINT_STATE_RESTART";
          break;
 
-      case PAUSE_POINT_STATE_RECONFIG:
-         result += L"PAUSE_POINT_STATE_RECONFIG";
+      case IMSim::PAUSE_POINT_STATE_RECONFIG:
+         result += "PAUSE_POINT_STATE_RECONFIG";
          break;
 
-      case PAUSE_POINT_STATE_UNKNOWN:
+      case IMSim::PAUSE_POINT_STATE_UNKNOWN:
       default:
-         result += L"PAUSE_POINT_STATE_UNKNOWN";
+         result += "PAUSE_POINT_STATE_UNKNOWN";
          break;
    }
 

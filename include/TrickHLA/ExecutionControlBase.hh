@@ -28,8 +28,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../../source/TrickHLA/ScenarioTimeline.cpp}
 @trick_link_dependency{../../source/TrickHLA/SimTimeline.cpp}
-@trick_link_dependency{../../source/TrickHLA/SyncPointManagerBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/SimTimeline.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPointManagerBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/Timeline.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
@@ -115,18 +115,18 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    //
    /*! @brief Setup the federate wide references in the ExecutionControl class
     * instance.
-    * @param federate         Associated federate manager class instance.
-    * @param manager          Associated federate manager class instance.
-    * @param exec_config      Associated Execution Configuration Object (ExCO). */
-   virtual void setup( TrickHLA::Federate                   &federate,
-                       TrickHLA::Manager                    &manager,
+    * @param fed         Associated federate manager class instance.
+    * @param mgr         Associated federate manager class instance.
+    * @param exec_config Associated Execution Configuration Object (ExCO). */
+   virtual void setup( TrickHLA::Federate                   &fed,
+                       TrickHLA::Manager                    &mgr,
                        TrickHLA::ExecutionConfigurationBase &exec_config );
    /*! @brief Setup the federate wide references in the ExecutionControl class
     * instance.
-    * @param federate Associated federate manager class instance.
-    * @param manager  Associated federate manager class instance. */
-   virtual void setup( TrickHLA::Federate &federate,
-                       TrickHLA::Manager  &manager );
+    * @param fed Associated federate manager class instance.
+    * @param mgr  Associated federate manager class instance. */
+   virtual void setup( TrickHLA::Federate &fed,
+                       TrickHLA::Manager  &mgr );
    /*! @brief Initialize the TrickHLA::ExecutionControlBase object instance. */
    virtual void initialize();
    /*! @brief Join federation execution process. */
@@ -182,7 +182,7 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
     *  synchronization points if they are not already achieved and are not
     *  one of the predefined ExecutionControl synchronization points.
     *  @param rti_ambassador Reference to the HLA RTI Ambassador instance. */
-   virtual void achieve_all_multiphase_init_sync_points( RTI1516_NAMESPACE::RTIambassador &rti_ambassador );
+   virtual void achieve_all_multiphase_init_sync_points();
    /*! @brief Wait for all the user defined mulit-phase initialization
     *  synchronization points if they are not already achieved and are not
     *  one of the predefined ExecutionControl synchronization points. */
@@ -704,8 +704,7 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    bool late_joiner_determined; ///< @trick_units{--} Flag for late joiner determination.
 
    // Shortcuts to associated TrickHLA management and control objects.
-   TrickHLA::Federate *federate; ///< @trick_io{**} Associated federate.
-   TrickHLA::Manager  *manager;  ///< @trick_io{**} Associated manager.
+   TrickHLA::Manager *manager; ///< @trick_io{**} Associated manager.
 
   private:
    // Do not allow the copy constructor.

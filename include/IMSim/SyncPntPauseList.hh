@@ -108,33 +108,33 @@ class SyncPntPauseList : public IMSim::SyncPntTimedList
 
    bool should_run() const
    {
-      return ( this->state == PAUSE_POINT_STATE_RUN );
+      return ( this->state == IMSim::PAUSE_POINT_STATE_RUN );
    }
 
    bool should_freeze() const
    {
-      return ( this->state == PAUSE_POINT_STATE_FREEZE );
+      return ( this->state == IMSim::PAUSE_POINT_STATE_FREEZE );
    }
 
    bool should_exit() const
    {
-      return ( this->state == PAUSE_POINT_STATE_EXIT );
+      return ( this->state == IMSim::PAUSE_POINT_STATE_EXIT );
    }
 
    bool should_restart() const
    {
-      return ( this->state == PAUSE_POINT_STATE_RESTART );
+      return ( this->state == IMSim::PAUSE_POINT_STATE_RESTART );
    }
 
    bool should_reconfig() const
    {
-      return ( this->state == PAUSE_POINT_STATE_RECONFIG );
+      return ( this->state == IMSim::PAUSE_POINT_STATE_RECONFIG );
    }
 
    /*! @brief Returns a wide string representing the state of the
     *  synchronization points.
     *  @return String summary of synchronization points. */
-   std::wstring to_wstring();
+   std::string to_string();
 
    /*! @brief Dumps synchronization point information to the screen. */
    virtual void print_sync_points();

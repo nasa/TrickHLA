@@ -94,8 +94,8 @@ string &SyncPointList::get_list_name()
 SyncPtStateEnum const SyncPointList::get_state(
    std::wstring const &label )
 {
-   MutexProtection auto_unlock_mutex( &mutex );
-   SyncPoint      *sp = get_sync_point( label );
+   MutexProtection  auto_unlock_mutex( &mutex );
+   SyncPoint const *sp = get_sync_point( label );
    return ( sp != NULL ) ? sp->get_state() : TrickHLA::SYNC_PT_STATE_UNKNOWN;
 }
 
@@ -131,7 +131,7 @@ SyncPoint *SyncPointList::get_sync_point(
    return NULL;
 }
 
-bool SyncPointList::add(
+bool const SyncPointList::add(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -152,7 +152,7 @@ bool SyncPointList::add(
    return true;
 }
 
-bool SyncPointList::add(
+bool const SyncPointList::add(
    wstring const &label,
    Int64Time      time )
 {
@@ -182,7 +182,7 @@ bool SyncPointList::add(
    return add( label );
 }
 
-bool SyncPointList::contains(
+bool const SyncPointList::contains(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -195,19 +195,19 @@ bool SyncPointList::contains(
    return false;
 }
 
-bool SyncPointList::is_registered(
+bool const SyncPointList::is_registered(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPoint *sp = get_sync_point( label );
+   SyncPoint const *sp = get_sync_point( label );
    return ( ( sp != NULL ) && sp->is_registered() );
 }
 
 /*!
  * @job_class{initialization}
  */
-bool SyncPointList::mark_registered(
+bool const SyncPointList::mark_registered(
    wstring const &label )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -222,7 +222,7 @@ bool SyncPointList::mark_registered(
    return false;
 }
 
-bool SyncPointList::register_sync_point(
+bool const SyncPointList::register_sync_point(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -243,7 +243,7 @@ bool SyncPointList::register_sync_point(
    return register_sync_point( sp );
 }
 
-bool SyncPointList::register_sync_point(
+bool const SyncPointList::register_sync_point(
    wstring const           &label,
    FederateHandleSet const &handle_set )
 {
@@ -266,7 +266,7 @@ bool SyncPointList::register_sync_point(
 }
 
 // True if at least one sync-point is registered.
-bool SyncPointList::register_all()
+bool const SyncPointList::register_all()
 {
    MutexProtection auto_unlock_mutex( &mutex );
 
@@ -279,7 +279,7 @@ bool SyncPointList::register_all()
    return status;
 }
 
-bool SyncPointList::register_all(
+bool const SyncPointList::register_all(
    FederateHandleSet const &handle_set )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -293,7 +293,7 @@ bool SyncPointList::register_all(
    return status;
 }
 
-bool SyncPointList::register_sync_point(
+bool const SyncPointList::register_sync_point(
    SyncPoint *sp )
 {
    if ( sp == NULL ) {
@@ -353,7 +353,7 @@ bool SyncPointList::register_sync_point(
    return registered;
 }
 
-bool SyncPointList::register_sync_point(
+bool const SyncPointList::register_sync_point(
    SyncPoint               *sp,
    FederateHandleSet const &handle_set )
 {
@@ -415,19 +415,19 @@ bool SyncPointList::register_sync_point(
    return registered;
 }
 
-bool SyncPointList::is_announced(
+bool const SyncPointList::is_announced(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPoint *sp = get_sync_point( label );
+   SyncPoint const *sp = get_sync_point( label );
    return ( ( sp != NULL ) && sp->is_announced() );
 }
 
 /*!
  * @job_class{initialization}
  */
-bool SyncPointList::mark_announced(
+bool const SyncPointList::mark_announced(
    wstring const &label )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -442,7 +442,7 @@ bool SyncPointList::mark_announced(
    return false;
 }
 
-bool SyncPointList::wait_for_announced(
+bool const SyncPointList::wait_for_announced(
    wstring const &label )
 {
    SyncPoint *sp;
@@ -469,7 +469,7 @@ bool SyncPointList::wait_for_announced(
    return wait_for_announced( sp );
 }
 
-bool SyncPointList::wait_for_all_announced()
+bool const SyncPointList::wait_for_all_announced()
 {
    // NOTE: Locking the mutex while waiting can cause deadlock for callbacks.
 
@@ -482,7 +482,7 @@ bool SyncPointList::wait_for_all_announced()
    return status;
 }
 
-bool SyncPointList::wait_for_announced(
+bool const SyncPointList::wait_for_announced(
    SyncPoint *sp )
 {
    if ( sp == NULL ) {
@@ -591,16 +591,16 @@ bool SyncPointList::wait_for_announced(
    return announced;
 }
 
-bool SyncPointList::is_achieved(
+bool const SyncPointList::is_achieved(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPoint *sp = get_sync_point( label );
+   SyncPoint const *sp = get_sync_point( label );
    return ( ( sp != NULL ) && sp->is_achieved() );
 }
 
-bool SyncPointList::achieve(
+bool const SyncPointList::achieve(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -622,7 +622,7 @@ bool SyncPointList::achieve(
    return achieve_sync_point( sp );
 }
 
-bool SyncPointList::achieve_all()
+bool const SyncPointList::achieve_all()
 {
    MutexProtection auto_unlock_mutex( &mutex );
 
@@ -635,7 +635,7 @@ bool SyncPointList::achieve_all()
    return status;
 }
 
-bool SyncPointList::achieve_sync_point(
+bool const SyncPointList::achieve_sync_point(
    SyncPoint *sp )
 {
    if ( sp == NULL ) {
@@ -746,19 +746,19 @@ bool SyncPointList::achieve_sync_point(
    return achieved;
 }
 
-bool SyncPointList::is_synchronized(
+bool const SyncPointList::is_synchronized(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( &mutex );
 
-   SyncPoint *sp = get_sync_point( label );
+   SyncPoint const *sp = get_sync_point( label );
    return ( ( sp != NULL ) && sp->is_synchronized() );
 }
 
 /*!
  * @job_class{initialization}
  */
-bool SyncPointList::mark_synchronized(
+bool const SyncPointList::mark_synchronized(
    wstring const &label )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -776,7 +776,7 @@ bool SyncPointList::mark_synchronized(
    return false;
 }
 
-bool SyncPointList::wait_for_synchronized(
+bool const SyncPointList::wait_for_synchronized(
    wstring const &label )
 {
    SyncPoint *sp;
@@ -803,7 +803,7 @@ bool SyncPointList::wait_for_synchronized(
    return wait_for_synchronized( sp );
 }
 
-bool SyncPointList::wait_for_all_synchronized()
+bool const SyncPointList::wait_for_all_synchronized()
 {
    // NOTE: Locking the mutex while waiting can cause deadlock for callbacks.
 
@@ -816,7 +816,7 @@ bool SyncPointList::wait_for_all_synchronized()
    return status;
 }
 
-bool SyncPointList::wait_for_synchronized(
+bool const SyncPointList::wait_for_synchronized(
    SyncPoint *sp )
 {
    if ( sp == NULL ) {

@@ -101,8 +101,6 @@ SyncPointManagerBase::~SyncPointManagerBase()
 void SyncPointManagerBase::setup(
    Federate *fed )
 {
-   MutexProtection auto_unlock_mutex( &mutex );
-
    this->federate = fed;
 
    for ( int index = 0; index < sync_pnt_lists.size(); ++index ) {
@@ -147,7 +145,7 @@ SyncPtStateEnum const SyncPointManagerBase::get_sync_point_state(
    return TrickHLA::SYNC_PT_STATE_UNKNOWN;
 }
 
-bool SyncPointManagerBase::add_sync_point_list(
+bool const SyncPointManagerBase::add_sync_point_list(
    string const &list_name )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -160,7 +158,7 @@ bool SyncPointManagerBase::add_sync_point_list(
    return false;
 }
 
-bool SyncPointManagerBase::add_sync_point(
+bool const SyncPointManagerBase::add_sync_point(
    wstring const &label,
    string const  &list_name )
 {
@@ -207,7 +205,7 @@ bool SyncPointManagerBase::add_sync_point(
    return false;
 }
 
-bool SyncPointManagerBase::add_sync_point(
+bool const SyncPointManagerBase::add_sync_point(
    wstring const &label,
    string const  &list_name,
    Int64Time      time )
@@ -255,7 +253,7 @@ bool SyncPointManagerBase::add_sync_point(
    return false;
 }
 
-bool SyncPointManagerBase::contains_sync_point(
+bool const SyncPointManagerBase::contains_sync_point(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -268,7 +266,7 @@ bool SyncPointManagerBase::contains_sync_point(
    return false;
 }
 
-bool SyncPointManagerBase::contains_sync_point_list_name(
+bool const SyncPointManagerBase::contains_sync_point_list_name(
    string const &list_name )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -276,7 +274,7 @@ bool SyncPointManagerBase::contains_sync_point_list_name(
    return ( get_list_index_for_list_name( list_name ) >= 0 );
 }
 
-bool SyncPointManagerBase::is_sync_point_registered(
+bool const SyncPointManagerBase::is_sync_point_registered(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -288,7 +286,7 @@ bool SyncPointManagerBase::is_sync_point_registered(
 /*!
  * @job_class{initialization}
  */
-bool SyncPointManagerBase::mark_sync_point_registered(
+bool const SyncPointManagerBase::mark_sync_point_registered(
    wstring const &label )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -299,7 +297,7 @@ bool SyncPointManagerBase::mark_sync_point_registered(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->mark_registered( label ) );
 }
 
-bool SyncPointManagerBase::register_sync_point(
+bool const SyncPointManagerBase::register_sync_point(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -309,13 +307,14 @@ bool SyncPointManagerBase::register_sync_point(
    // Unknown sync point if it is not contained in any list.
    if ( index < 0 ) {
       // Add the unknown sync-point to the unknown list so it can be registered.
-      if ( !add_sync_point( label, UNKNOWN_SYNC_POINT_LIST ) ) {
+      if ( !add_sync_point( label, TrickHLA::UNKNOWN_SYNC_POINT_LIST ) ) {
          string label_str;
          StringUtilities::to_string( label_str, label );
          ostringstream errmsg;
          errmsg << "SyncPointManagerBase::register_sync_point():" << __LINE__
                 << " ERROR: Failed to add sync-point '" << label_str
-                << "' to '" << UNKNOWN_SYNC_POINT_LIST << "' list!" << THLA_ENDL;
+                << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!"
+                << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
          return false;
       }
@@ -325,7 +324,7 @@ bool SyncPointManagerBase::register_sync_point(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->register_sync_point( label ) );
 }
 
-bool SyncPointManagerBase::register_sync_point(
+bool const SyncPointManagerBase::register_sync_point(
    wstring const           &label,
    FederateHandleSet const &handle_set )
 {
@@ -336,13 +335,14 @@ bool SyncPointManagerBase::register_sync_point(
    // Unknown sync point if it is not contained in any list.
    if ( index < 0 ) {
       // Add the unknown sync-point to the unknown list so it can be registered.
-      if ( !add_sync_point( label, UNKNOWN_SYNC_POINT_LIST ) ) {
+      if ( !add_sync_point( label, TrickHLA::UNKNOWN_SYNC_POINT_LIST ) ) {
          string label_str;
          StringUtilities::to_string( label_str, label );
          ostringstream errmsg;
          errmsg << "SyncPointManagerBase::register_sync_point():" << __LINE__
                 << " ERROR: Failed to add sync-point '" << label_str
-                << "' to '" << UNKNOWN_SYNC_POINT_LIST << "' list!" << THLA_ENDL;
+                << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!"
+                << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
          return false;
       }
@@ -353,7 +353,7 @@ bool SyncPointManagerBase::register_sync_point(
 }
 
 // True if at least one sync-point is registered.
-bool SyncPointManagerBase::register_all_sync_points(
+bool const SyncPointManagerBase::register_all_sync_points(
    string const &list_name )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -362,7 +362,7 @@ bool SyncPointManagerBase::register_all_sync_points(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->register_all() );
 }
 
-bool SyncPointManagerBase::register_all_sync_points(
+bool const SyncPointManagerBase::register_all_sync_points(
    string const            &list_name,
    FederateHandleSet const &handle_set )
 {
@@ -372,7 +372,7 @@ bool SyncPointManagerBase::register_all_sync_points(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->register_all( handle_set ) );
 }
 
-bool SyncPointManagerBase::is_sync_point_announced(
+bool const SyncPointManagerBase::is_sync_point_announced(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -381,7 +381,7 @@ bool SyncPointManagerBase::is_sync_point_announced(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->is_announced( label ) );
 }
 
-bool SyncPointManagerBase::mark_sync_point_announced(
+bool const SyncPointManagerBase::mark_sync_point_announced(
    wstring const &label )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -392,7 +392,7 @@ bool SyncPointManagerBase::mark_sync_point_announced(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->mark_announced( label ) );
 }
 
-bool SyncPointManagerBase::wait_for_sync_point_announced(
+bool const SyncPointManagerBase::wait_for_sync_point_announced(
    wstring const &label )
 {
    int index;
@@ -406,13 +406,14 @@ bool SyncPointManagerBase::wait_for_sync_point_announced(
       // If the sync-point index is negative it is unknown.
       if ( index < 0 ) {
          // Add the unknown sync-point to the unknown list so it can be tracked.
-         if ( !add_sync_point( label, UNKNOWN_SYNC_POINT_LIST ) ) {
+         if ( !add_sync_point( label, TrickHLA::UNKNOWN_SYNC_POINT_LIST ) ) {
             string label_str;
             StringUtilities::to_string( label_str, label );
             ostringstream errmsg;
             errmsg << "SyncPointManagerBase::wait_for_sync_point_announced():" << __LINE__
                    << " ERROR: Failed to add sync-point '" << label_str
-                   << "' to '" << UNKNOWN_SYNC_POINT_LIST << "' list!" << THLA_ENDL;
+                   << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!"
+                   << THLA_ENDL;
             DebugHandler::terminate_with_message( errmsg.str() );
             return false;
          }
@@ -423,7 +424,7 @@ bool SyncPointManagerBase::wait_for_sync_point_announced(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->wait_for_announced( label ) );
 }
 
-bool SyncPointManagerBase::wait_for_all_sync_points_announced(
+bool const SyncPointManagerBase::wait_for_all_sync_points_announced(
    string const &list_name )
 {
    // NOTE: Locking the mutex while waiting can cause deadlock for callbacks.
@@ -432,7 +433,7 @@ bool SyncPointManagerBase::wait_for_all_sync_points_announced(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->wait_for_all_announced() );
 }
 
-bool SyncPointManagerBase::is_sync_point_achieved(
+bool const SyncPointManagerBase::is_sync_point_achieved(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -441,7 +442,7 @@ bool SyncPointManagerBase::is_sync_point_achieved(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->is_achieved( label ) );
 }
 
-bool SyncPointManagerBase::achieve_sync_point(
+bool const SyncPointManagerBase::achieve_sync_point(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -451,13 +452,14 @@ bool SyncPointManagerBase::achieve_sync_point(
    // If the sync-point index is negative it is unknown.
    if ( index < 0 ) {
       // Add the unknown sync-point to the unknown list so it can be achieved.
-      if ( !add_sync_point( label, UNKNOWN_SYNC_POINT_LIST ) ) {
+      if ( !add_sync_point( label, TrickHLA::UNKNOWN_SYNC_POINT_LIST ) ) {
          string label_str;
          StringUtilities::to_string( label_str, label );
          ostringstream errmsg;
          errmsg << "SyncPointManagerBase::achieve_sync_point():" << __LINE__
                 << " ERROR: Failed to add sync-point '" << label_str
-                << "' to '" << UNKNOWN_SYNC_POINT_LIST << "' list!" << THLA_ENDL;
+                << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!"
+                << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
          return false;
       }
@@ -467,7 +469,7 @@ bool SyncPointManagerBase::achieve_sync_point(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->achieve( label ) );
 }
 
-bool SyncPointManagerBase::achieve_all_sync_points(
+bool const SyncPointManagerBase::achieve_all_sync_points(
    string const &list_name )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -476,7 +478,7 @@ bool SyncPointManagerBase::achieve_all_sync_points(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->achieve_all() );
 }
 
-bool SyncPointManagerBase::is_sync_point_synchronized(
+bool const SyncPointManagerBase::is_sync_point_synchronized(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( &mutex );
@@ -488,7 +490,7 @@ bool SyncPointManagerBase::is_sync_point_synchronized(
 /*!
  * @job_class{initialization}
  */
-bool SyncPointManagerBase::mark_sync_point_synchronized(
+bool const SyncPointManagerBase::mark_sync_point_synchronized(
    wstring const &label )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -499,7 +501,7 @@ bool SyncPointManagerBase::mark_sync_point_synchronized(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->mark_synchronized( label ) );
 }
 
-bool SyncPointManagerBase::wait_for_sync_point_synchronized(
+bool const SyncPointManagerBase::wait_for_sync_point_synchronized(
    wstring const &label )
 {
    int index;
@@ -513,13 +515,14 @@ bool SyncPointManagerBase::wait_for_sync_point_synchronized(
       // If the sync-point is null then it is unknown.
       if ( index < 0 ) {
          // Add the unknown sync-point to the unknown list so it can be tracked.
-         if ( !add_sync_point( label, UNKNOWN_SYNC_POINT_LIST ) ) {
+         if ( !add_sync_point( label, TrickHLA::UNKNOWN_SYNC_POINT_LIST ) ) {
             string label_str;
             StringUtilities::to_string( label_str, label );
             ostringstream errmsg;
             errmsg << "SyncPointManagerBase::wait_for_sync_point_synchronized():" << __LINE__
                    << " ERROR: Failed to add sync-point '" << label_str
-                   << "' to '" << UNKNOWN_SYNC_POINT_LIST << "' list!" << THLA_ENDL;
+                   << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!"
+                   << THLA_ENDL;
             DebugHandler::terminate_with_message( errmsg.str() );
             return false;
          }
@@ -530,7 +533,7 @@ bool SyncPointManagerBase::wait_for_sync_point_synchronized(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->wait_for_synchronized( label ) );
 }
 
-bool SyncPointManagerBase::wait_for_all_sync_points_synchronized(
+bool const SyncPointManagerBase::wait_for_all_sync_points_synchronized(
    string const &list_name )
 {
    // NOTE: Locking the mutex while waiting can cause deadlock for callbacks.
@@ -539,7 +542,7 @@ bool SyncPointManagerBase::wait_for_all_sync_points_synchronized(
    return ( ( index >= 0 ) && sync_pnt_lists[index]->wait_for_all_synchronized() );
 }
 
-bool SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization(
+bool const SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization(
    std::wstring const &label )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -686,13 +689,14 @@ void SyncPointManagerBase::sync_point_registration_failed(
       // The registration failed, which means we should know this sync-point
       // but we don't, so add the unknown sync-point to the unknown sync-point
       // list to track it.
-      if ( !add_sync_point( label, UNKNOWN_SYNC_POINT_LIST ) ) {
+      if ( !add_sync_point( label, TrickHLA::UNKNOWN_SYNC_POINT_LIST ) ) {
          string label_str;
          StringUtilities::to_string( label_str, label );
          ostringstream errmsg;
          errmsg << "SyncPointManagerBase::sync_point_registration_failed():" << __LINE__
                 << " ERROR: Failed to add sync-point '" << label_str
-                << "' to '" << UNKNOWN_SYNC_POINT_LIST << "' list!" << THLA_ENDL;
+                << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!"
+                << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
    }
