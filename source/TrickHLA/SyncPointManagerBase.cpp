@@ -588,8 +588,8 @@ string SyncPointManagerBase::to_string()
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &mutex );
 
-      msg << "SyncPointManagerBase::to_string():" << __LINE__ << endl
-          << "Number of Sync-Point Lists: " << sync_pnt_lists.size() << endl;
+      msg << "SyncPointManagerBase::to_string():" << __LINE__
+          << " Number of Sync-Point Lists:" << sync_pnt_lists.size() << endl;
 
       for ( int index = 0; index < sync_pnt_lists.size(); ++index ) {
          msg << sync_pnt_lists[index]->to_string();
@@ -622,9 +622,7 @@ void SyncPointManagerBase::print_sync_points()
 {
    ostringstream msg;
    msg << "SyncPointManagerBase::print_sync_points():" << __LINE__ << endl
-       << "#############################" << endl
-       << to_string()
-       << "#############################" << endl;
+       << to_string();
    send_hs( stdout, msg.str().c_str() );
 }
 

@@ -79,23 +79,23 @@ std::wstring SyncPntTimed::to_wstring()
    wstring result = L"[" + label + L"/" + time.to_wstring() + L"] -- ";
    switch ( this->state ) {
 
-      case SYNC_PT_STATE_ERROR:
+      case TrickHLA::SYNC_PT_STATE_ERROR:
          result += L"SYNC_PT_STATE_ERROR";
          break;
 
-      case SYNC_PT_STATE_EXISTS:
-         result += L"SYNC_PT_STATE_EXISTS";
+      case TrickHLA::SYNC_PT_STATE_KNOWN:
+         result += L"SYNC_PT_STATE_KNOWN";
          break;
 
-      case SYNC_PT_STATE_REGISTERED:
+      case TrickHLA::SYNC_PT_STATE_REGISTERED:
          result += L"SYNC_PT_STATE_REGISTERED";
          break;
 
-      case SYNC_PT_STATE_ANNOUNCED:
+      case TrickHLA::SYNC_PT_STATE_ANNOUNCED:
          result += L"SYNC_PT_STATE_ANNOUNCED";
          break;
 
-      case SYNC_PT_STATE_ACHIEVED:
+      case TrickHLA::SYNC_PT_STATE_ACHIEVED:
          result += L"SYNC_PT_STATE_ACHIEVED";
          break;
 

@@ -63,7 +63,7 @@ namespace TrickHLA
 
 typedef std::vector< SyncPointList * > SyncPointListVector;
 
-static std::string const UNKNOWN_SYNC_POINT_LIST = "UNKNOWN_SYNC_POINT_LIST";
+static std::string const UNKNOWN_SYNC_POINT_LIST = "Unknown";
 
 class SyncPointManagerBase
 {

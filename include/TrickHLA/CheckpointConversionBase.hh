@@ -64,13 +64,13 @@ class CheckpointConversionBase
    }
 
    /*! @brief Convert the variables to a form Trick can checkpoint. */
-   virtual void convert_to_checkpoint_data_structures() = 0;
+   virtual void encode_checkpoint() = 0;
 
    /*! @brief Restore the state of this class from the Trick checkpoint. */
-   virtual void restore_from_checkpoint_data_structures() = 0;
+   virtual void decode_checkpoint() = 0;
 
    /*! @brief Clear/release the memory used for the checkpoint data structures. */
-   virtual void clear_checkpoint_data_structures() = 0;
+   virtual void free_checkpoint() = 0;
 };
 
 } // namespace TrickHLA

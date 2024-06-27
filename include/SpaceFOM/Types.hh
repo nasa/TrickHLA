@@ -43,7 +43,7 @@ namespace SpaceFOM
 {
 
 // SISO Space Reference FOM sync-point list name.
-static std::string const SPACEFOM_SYNC_POINT_LIST = "SPACEFOM_SYNC_POINT_LIST";
+static std::string const SPACEFOM_SYNC_POINT_LIST = "SpaceFOM";
 
 // SISO Space Reference FOM initialization HLA synchronization-points.
 static std::wstring const INIT_STARTED_SYNC_POINT          = L"initialization_started";

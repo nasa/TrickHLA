@@ -146,7 +146,7 @@ class SyncPointList
 
    bool const wait_for_all_synchronized();
 
-   bool const wait_for_synchronized( SyncPoint *sp );
+   bool const wait_for_synchronized( SyncPoint const *sp );
 
    std::string to_string();
 

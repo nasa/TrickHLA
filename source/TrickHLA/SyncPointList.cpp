@@ -152,31 +152,31 @@ bool const SyncPointList::add(
    return true;
 }
 
+// TODO: Migrate to IMSim timed sync-point.
 bool const SyncPointList::add(
    wstring const &label,
    Int64Time      time )
 {
-   /*
-   if ( time < 0.0 ) {
-      // No time specified
-      execution_control->register_sync_point( label );
-   } else {
-      // DANNY2.7 convert time and encode in a buffer to send to RTI
-      int64_t       _value = Int64BaseTime::to_base_time( time );
-      unsigned char buf[8];
-      buf[0] = (unsigned char)( ( _value >> 56 ) & 0xFF );
-      buf[1] = (unsigned char)( ( _value >> 48 ) & 0xFF );
-      buf[2] = (unsigned char)( ( _value >> 40 ) & 0xFF );
-      buf[3] = (unsigned char)( ( _value >> 32 ) & 0xFF );
-      buf[4] = (unsigned char)( ( _value >> 24 ) & 0xFF );
-      buf[5] = (unsigned char)( ( _value >> 16 ) & 0xFF );
-      buf[6] = (unsigned char)( ( _value >> 8 ) & 0xFF );
-      buf[7] = (unsigned char)( ( _value >> 0 ) & 0xFF );
-      //TODO: RTI_ambassador->registerFederationSynchronizationPoint( label, RTI1516_USERDATA( buf, 8 ) );
 
-      execution_control->register_sync_point( label, time );
-   }
-   */
+   //   if ( time < 0.0 ) {
+   //      // No time specified
+   //      execution_control->register_sync_point( label );
+   //   } else {
+   //      // DANNY2.7 convert time and encode in a buffer to send to RTI
+   //      int64_t       _value = Int64BaseTime::to_base_time( time );
+   //      unsigned char buf[8];
+   //      buf[0] = (unsigned char)( ( _value >> 56 ) & 0xFF );
+   //      buf[1] = (unsigned char)( ( _value >> 48 ) & 0xFF );
+   //      buf[2] = (unsigned char)( ( _value >> 40 ) & 0xFF );
+   //      buf[3] = (unsigned char)( ( _value >> 32 ) & 0xFF );
+   //      buf[4] = (unsigned char)( ( _value >> 24 ) & 0xFF );
+   //      buf[5] = (unsigned char)( ( _value >> 16 ) & 0xFF );
+   //      buf[6] = (unsigned char)( ( _value >> 8 ) & 0xFF );
+   //      buf[7] = (unsigned char)( ( _value >> 0 ) & 0xFF );
+   //      //TODO: RTI_ambassador->registerFederationSynchronizationPoint( label, RTI1516_USERDATA( buf, 8 ) );
+   //
+   //      execution_control->register_sync_point( label, time );
+   //   }
 
    // TODO: Add as a timed sync point.
    return add( label );
@@ -216,7 +216,7 @@ bool const SyncPointList::mark_registered(
 
    SyncPoint *sp = get_sync_point( label );
    if ( sp != NULL ) {
-      sp->set_state( SYNC_PT_STATE_REGISTERED );
+      sp->set_state( TrickHLA::SYNC_PT_STATE_REGISTERED );
       return true;
    }
    return false;
@@ -326,7 +326,7 @@ bool const SyncPointList::register_sync_point(
       RTI_amb->registerFederationSynchronizationPoint( sp->get_label(),
                                                        RTI1516_USERDATA( 0, 0 ) );
       // Mark the sync-point as registered.
-      sp->set_state( SYNC_PT_STATE_REGISTERED );
+      sp->set_state( TrickHLA::SYNC_PT_STATE_REGISTERED );
 
       registered = true;
 
@@ -388,7 +388,7 @@ bool const SyncPointList::register_sync_point(
                                                        RTI1516_USERDATA( 0, 0 ),
                                                        handle_set );
       // Mark the sync-point as registered.
-      sp->set_state( SYNC_PT_STATE_REGISTERED );
+      sp->set_state( TrickHLA::SYNC_PT_STATE_REGISTERED );
 
       registered = true;
 
@@ -436,7 +436,7 @@ bool const SyncPointList::mark_announced(
 
    SyncPoint *sp = get_sync_point( label );
    if ( sp != NULL ) {
-      sp->set_state( SYNC_PT_STATE_ANNOUNCED );
+      sp->set_state( TrickHLA::SYNC_PT_STATE_ANNOUNCED );
       return true;
    }
    return false;
@@ -509,12 +509,11 @@ bool const SyncPointList::wait_for_announced(
       MutexProtection auto_unlock_mutex( &mutex );
       announced = sp->is_announced();
 
-      // The sync-point state must be SYNC_PT_STATE_REGISTERED.
-      if ( !sp->exists() && !sp->is_registered() && !announced ) {
+      if ( !announced && !sp->is_valid() ) {
          ostringstream errmsg;
          errmsg << "SyncPointList::wait_for_announced():" << __LINE__
                 << " ERROR: Bad sync-point state for sync-point!"
-                << " The sync-point state: " << sp->to_string() << THLA_ENDL;
+                << " Sync-point: " << sp->to_string() << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
          return false;
       }
@@ -658,8 +657,7 @@ bool const SyncPointList::achieve_sync_point(
       StringUtilities::to_string( label_str, sp->get_label() );
       ostringstream msg;
       msg << "SyncPointList::achieve_sync_point():" << __LINE__
-          << " Known Synchronization-Point '" << label_str << "', state:"
-          << sp->get_state() << THLA_ENDL;
+          << " Known Sync-point " << sp->to_string() << THLA_ENDL;
       send_hs( stdout, msg.str().c_str() );
    }
 
@@ -680,7 +678,7 @@ bool const SyncPointList::achieve_sync_point(
          RTI_amb->synchronizationPointAchieved( sp->get_label() );
 
          // Mark the sync-point as achieved.
-         sp->set_state( SYNC_PT_STATE_ACHIEVED );
+         sp->set_state( TrickHLA::SYNC_PT_STATE_ACHIEVED );
 
          achieved = true;
 
@@ -712,7 +710,7 @@ bool const SyncPointList::achieve_sync_point(
          ostringstream errmsg;
          errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
                 << " Synchronization-Point '" << label_str
-                << "' has already been achieved with the RTI!";
+                << "' has already been achieved with the RTI!" << THLA_ENDL;
          send_hs( stderr, errmsg.str().c_str() );
       }
 
@@ -727,7 +725,7 @@ bool const SyncPointList::achieve_sync_point(
          ostringstream errmsg;
          errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
                 << " Synchronization-Point '" << label_str
-                << "' has already been synchronized with the RTI!";
+                << "' has already been synchronized with the RTI!" << THLA_ENDL;
          send_hs( stderr, errmsg.str().c_str() );
       }
 
@@ -739,7 +737,7 @@ bool const SyncPointList::achieve_sync_point(
       ostringstream errmsg;
       errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
              << " ERROR: Synchronization-Point '" << label_str
-             << "' has not been announced with the RTI!";
+             << "' has not been announced with the RTI!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -770,7 +768,7 @@ bool const SyncPointList::mark_synchronized(
 
       // Mark the synchronization point at achieved which indicates the
       // federation is synchronized on the synchronization point.
-      sp->set_state( SYNC_PT_STATE_SYNCHRONIZED );
+      sp->set_state( TrickHLA::SYNC_PT_STATE_SYNCHRONIZED );
       return true;
    }
    return false;
@@ -779,7 +777,7 @@ bool const SyncPointList::mark_synchronized(
 bool const SyncPointList::wait_for_synchronized(
    wstring const &label )
 {
-   SyncPoint *sp;
+   SyncPoint const *sp;
    {
       // Scope this mutex lock because locking over the blocking wait call
       // below will cause deadlock.
@@ -817,7 +815,7 @@ bool const SyncPointList::wait_for_all_synchronized()
 }
 
 bool const SyncPointList::wait_for_synchronized(
-   SyncPoint *sp )
+   SyncPoint const *sp )
 {
    if ( sp == NULL ) {
       ostringstream errmsg;
@@ -857,13 +855,7 @@ bool const SyncPointList::wait_for_synchronized(
          // When auto_unlock_mutex goes out of scope it automatically unlocks
          // the mutex even if there is an exception.
          MutexProtection auto_unlock_mutex( &mutex );
-
          synchronized = sp->is_synchronized();
-         if ( synchronized ) {
-            // Now that the federation is synchronized on the synchronization point,
-            // return to SYNC_PT_STATE_EXISTS state.
-            sp->set_state( SYNC_PT_STATE_EXISTS );
-         }
       }
 
       if ( !synchronized ) {
@@ -910,14 +902,13 @@ std::string SyncPointList::to_string()
    MutexProtection auto_unlock_mutex( &mutex );
 
    ostringstream msg;
-   msg << "SyncPointList::to_string():" << __LINE__ << THLA_ENDL
-       << " List-Size:" << list.size() << THLA_ENDL;
-
+   msg << "SyncPointList::to_string():" << __LINE__
+       << " List:'" << get_list_name() << "' List-size:" << list.size() << THLA_ENDL;
    for ( int i = 0; i < list.size(); ++i ) {
       string label_str;
       StringUtilities::to_string( label_str, list[i]->get_label() );
-      msg << i << ": List:'" << get_list_name() << "'"
-          << " Sync-Point Label:'" << label_str << "'" << THLA_ENDL;
+      msg << i << ":'" << get_list_name() << "' Sync-point:"
+          << list[i]->to_string() << THLA_ENDL;
    }
    return msg.str();
 }

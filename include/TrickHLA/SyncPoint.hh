@@ -59,7 +59,7 @@ class SyncPoint : public TrickHLA::CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
-   // exists - at least yet). This friend statement just tells Trick
+   // is_known - at least yet). This friend statement just tells Trick
    // to go ahead and process the protected and private data as well
    // as the usual public data.
    friend class InputProcessor;
@@ -79,15 +79,15 @@ class SyncPoint : public TrickHLA::CheckpointConversionBase
    virtual ~SyncPoint();
 
    // Functions to check synchronization point state.
-   /*! @brief Check if the synchronization point has been created and exists
+   /*! @brief Check if the synchronization point has been created and is_known
     *  in at least on valid state.
     *  @return True if the synchronization point has a valid state. */
    virtual bool const is_valid() const;
 
    // Functions to check synchronization point state.
-   /*! @brief Check if the synchronization point exists.
-    *  @return True if the synchronization point exists. */
-   virtual bool const exists() const;
+   /*! @brief Check if the synchronization point is known.
+    *  @return True if the synchronization point is known. */
+   virtual bool const is_known() const;
 
    /*! @brief Check if the synchronization point is registered.
     *  @return True if the synchronization point is registered. */
@@ -144,14 +144,14 @@ class SyncPoint : public TrickHLA::CheckpointConversionBase
     *  @return A string with the synchronization point label and current state. */
    virtual std::string to_string();
 
-   /*! @brief Convert the variables to a form Trick can checkpoint. */
-   virtual void convert_to_checkpoint_data_structures();
+   /*! @brief Encode the variables to a form Trick can checkpoint. */
+   virtual void encode_checkpoint();
 
-   /*! @brief Restore the state of this class from the Trick checkpoint. */
-   virtual void restore_from_checkpoint_data_structures();
+   /*! @brief Decode the state of this class from the Trick checkpoint. */
+   virtual void decode_checkpoint();
 
-   /*! @brief Clear/release the memory used for the checkpoint data structures. */
-   virtual void clear_checkpoint_data_structures();
+   /*! @brief Free/release the memory used for the checkpoint data structures. */
+   virtual void free_checkpoint();
 
   protected:
    std::wstring    label; ///< @trick_io{**} Sync-point name.

@@ -46,7 +46,7 @@ using namespace TrickHLA;
 SyncPoint::SyncPoint(
    std::wstring const &l )
    : label( l ),
-     state( SYNC_PT_STATE_EXISTS ),
+     state( TrickHLA::SYNC_PT_STATE_KNOWN ),
      label_chkpt( NULL )
 {
    return;
@@ -57,50 +57,50 @@ SyncPoint::SyncPoint(
  */
 SyncPoint::~SyncPoint()
 {
-   this->clear_checkpoint_data_structures();
+   this->free_checkpoint();
 }
 
 bool const SyncPoint::is_valid() const
 {
-   return ( ( this->state == SYNC_PT_STATE_EXISTS )
-            || ( this->state == SYNC_PT_STATE_REGISTERED )
-            || ( this->state == SYNC_PT_STATE_ANNOUNCED )
-            || ( this->state == SYNC_PT_STATE_ACHIEVED )
-            || ( this->state == SYNC_PT_STATE_SYNCHRONIZED ) );
+   return ( ( this->state == TrickHLA::SYNC_PT_STATE_KNOWN )
+            || ( this->state == TrickHLA::SYNC_PT_STATE_REGISTERED )
+            || ( this->state == TrickHLA::SYNC_PT_STATE_ANNOUNCED )
+            || ( this->state == TrickHLA::SYNC_PT_STATE_ACHIEVED )
+            || ( this->state == TrickHLA::SYNC_PT_STATE_SYNCHRONIZED ) );
 }
 
-bool const SyncPoint::exists() const
+bool const SyncPoint::is_known() const
 {
-   return ( this->state == SYNC_PT_STATE_EXISTS );
+   return ( this->state == TrickHLA::SYNC_PT_STATE_KNOWN );
 }
 
 bool const SyncPoint::is_registered() const
 {
-   return ( this->state == SYNC_PT_STATE_REGISTERED );
+   return ( this->state == TrickHLA::SYNC_PT_STATE_REGISTERED );
 }
 
 bool const SyncPoint::is_announced() const
 {
-   return ( this->state == SYNC_PT_STATE_ANNOUNCED );
+   return ( this->state == TrickHLA::SYNC_PT_STATE_ANNOUNCED );
 }
 
 bool const SyncPoint::is_achieved() const
 {
-   return ( this->state == SYNC_PT_STATE_ACHIEVED );
+   return ( this->state == TrickHLA::SYNC_PT_STATE_ACHIEVED );
 }
 
 bool const SyncPoint::is_synchronized() const
 {
-   return ( this->state == SYNC_PT_STATE_SYNCHRONIZED );
+   return ( this->state == TrickHLA::SYNC_PT_STATE_SYNCHRONIZED );
 }
 
 bool const SyncPoint::is_error() const
 {
-   return ( ( this->state != SYNC_PT_STATE_EXISTS )
-            && ( this->state != SYNC_PT_STATE_REGISTERED )
-            && ( this->state != SYNC_PT_STATE_ANNOUNCED )
-            && ( this->state != SYNC_PT_STATE_ACHIEVED )
-            && ( this->state != SYNC_PT_STATE_SYNCHRONIZED ) );
+   return ( ( this->state != TrickHLA::SYNC_PT_STATE_KNOWN )
+            && ( this->state != TrickHLA::SYNC_PT_STATE_REGISTERED )
+            && ( this->state != TrickHLA::SYNC_PT_STATE_ANNOUNCED )
+            && ( this->state != TrickHLA::SYNC_PT_STATE_ACHIEVED )
+            && ( this->state != TrickHLA::SYNC_PT_STATE_SYNCHRONIZED ) );
 }
 
 std::string SyncPoint::to_string()
@@ -111,27 +111,27 @@ std::string SyncPoint::to_string()
    string result = "[" + label_str + "] -- ";
    switch ( this->state ) {
 
-      case SYNC_PT_STATE_ERROR:
+      case TrickHLA::SYNC_PT_STATE_ERROR:
          result += "SYNC_PT_STATE_ERROR";
          break;
 
-      case SYNC_PT_STATE_EXISTS:
-         result += "SYNC_PT_STATE_EXISTS";
+      case TrickHLA::SYNC_PT_STATE_KNOWN:
+         result += "SYNC_PT_STATE_KNOWN";
          break;
 
-      case SYNC_PT_STATE_REGISTERED:
+      case TrickHLA::SYNC_PT_STATE_REGISTERED:
          result += "SYNC_PT_STATE_REGISTERED";
          break;
 
-      case SYNC_PT_STATE_ANNOUNCED:
+      case TrickHLA::SYNC_PT_STATE_ANNOUNCED:
          result += "SYNC_PT_STATE_ANNOUNCED";
          break;
 
-      case SYNC_PT_STATE_ACHIEVED:
+      case TrickHLA::SYNC_PT_STATE_ACHIEVED:
          result += "SYNC_PT_STATE_ACHIEVED";
          break;
 
-      case SYNC_PT_STATE_SYNCHRONIZED:
+      case TrickHLA::SYNC_PT_STATE_SYNCHRONIZED:
          result += "SYNC_PT_STATE_SYNCHRONIZED";
          break;
 
@@ -142,21 +142,21 @@ std::string SyncPoint::to_string()
    return result;
 }
 
-void SyncPoint::convert_to_checkpoint_data_structures()
+void SyncPoint::encode_checkpoint()
 {
-   clear_checkpoint_data_structures();
+   free_checkpoint();
 
    // Checkpointable copy of the label.
    this->label_chkpt = StringUtilities::ip_strdup_wstring( this->label );
 }
 
-void SyncPoint::restore_from_checkpoint_data_structures()
+void SyncPoint::decode_checkpoint()
 {
    // Update the label from the checkpointable c-string.
    StringUtilities::to_wstring( this->label, this->label_chkpt );
 }
 
-void SyncPoint::clear_checkpoint_data_structures()
+void SyncPoint::free_checkpoint()
 {
    if ( this->label_chkpt != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->label_chkpt ) ) ) {

@@ -131,7 +131,7 @@ bool SyncPntTimedList::check_sync_points(
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
          // Cast the SyncPoint pointer to a SyncPntTimed pointer.
          SyncPntTimed const *timed_i = dynamic_cast< SyncPntTimed * >( *i );
-         if ( ( timed_i->get_state() == SYNC_PT_STATE_EXISTS )
+         if ( ( timed_i->get_state() == TrickHLA::SYNC_PT_STATE_EXISTS )
               && ( timed_i->get_time() <= check_time ) ) {
             return true;
          }
