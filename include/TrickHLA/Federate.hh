@@ -212,21 +212,6 @@ class Federate
    //
    // Federation synchronization and synchronization point functions.
    //
-   /*! @brief Register a generic synchronization point; i.e. not a multiphase init sync-point.
-    *  @param label Sync-point label.
-    *  @param time  Optional Sync-point time in seconds. */
-   void register_generic_sync_point( std::wstring const &label, double time = -1.0 );
-
-   /*! @brief Achieve the specified sync-point and wait for the federation to
-    *  be synchronized on it.
-    *  @param label Sync-point label. */
-   void achieve_and_wait_for_synchronization( std::wstring const &label );
-
-   /*! @brief Achieve the specified sync-point and do NOT wait for the
-    *  federation to be synchronized on it.
-    *  @param label Sync-point label. */
-   void achieve_synchronization_point( std::wstring const &label );
-
    /*! @brief The RTI has announced the existence of a synchronization point.
     *  @param label             Sync-point label.
     *  @param user_supplied_tag Use supplied tag.*/
@@ -240,9 +225,10 @@ class Federate
    /*! @brief Callback from TrickHLA::FedAmb through for
     *  when registration of a synchronization point fails.
     *  and is one of the sync-points created.
-    *  @param label      Sync-point label.
-    *  @param not_unique True if not unique label. */
-   void sync_point_registration_failed( std::wstring const &label, bool not_unique );
+    *  @param label  Sync-point label.
+    *  @param reason Reason for failure. */
+   void sync_point_registration_failed( std::wstring const &label,
+                                        RTI1516_NAMESPACE::SynchronizationPointFailureReason reason );
 
    /*! @brief Marks a synchronization point as synchronized with the federation.
     *  @param label Sync-point label. */

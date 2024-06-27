@@ -77,6 +77,7 @@ using namespace TrickHLA;
 // Declare default time lines.
 namespace TrickHLA
 {
+
 SimTimeline      def_sim_timeline;
 ScenarioTimeline def_scenario_timeline( def_sim_timeline );
 } // namespace TrickHLA
@@ -95,7 +96,6 @@ ExecutionControlBase::ExecutionControlBase()
      least_common_time_step_seconds( -1.0 ),
      least_common_time_step( -1 ),
      execution_configuration( NULL ),
-     multiphase_init_sync_pnt_list(),
      init_complete_sp_exists( false ),
      mode_transition_requested( false ),
      requested_execution_control_mode( EXECUTION_CONTROL_UNINITIALIZED ),
@@ -127,7 +127,6 @@ ExecutionControlBase::ExecutionControlBase(
      least_common_time_step_seconds( -1.0 ),
      least_common_time_step( -1 ),
      execution_configuration( &exec_config ),
-     multiphase_init_sync_pnt_list(),
      init_complete_sp_exists( false ),
      mode_transition_requested( false ),
      requested_execution_control_mode( EXECUTION_CONTROL_UNINITIALIZED ),
@@ -426,10 +425,7 @@ void ExecutionControlBase::add_multiphase_init_sync_points()
    for ( unsigned int i = 0; i < user_sync_pt_labels.size(); ++i ) {
       wstring ws_label;
       StringUtilities::to_wstring( ws_label, user_sync_pt_labels.at( i ) );
-      multiphase_init_sync_pnt_list.add_sync_point( ws_label );
-
-      // Add to the list of known sync-points.
-      add_sync_point( ws_label );
+      add_sync_point( ws_label, TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST );
    }
 }
 
@@ -516,7 +512,7 @@ void ExecutionControlBase::achieve_all_multiphase_init_sync_points(
 {
    // Iterate through this ExecutionControl's user defined multiphase
    // initialization synchronization point list and achieve them.
-   multiphase_init_sync_pnt_list.achieve_all_sync_points( rti_ambassador );
+   achieve_all_sync_points( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST );
 }
 
 /*!
@@ -524,9 +520,9 @@ void ExecutionControlBase::achieve_all_multiphase_init_sync_points(
  */
 void ExecutionControlBase::wait_for_all_multiphase_init_sync_points()
 {
-   // Wait for all the user defined multiphase initialization sychronization
+   // Wait for all the user defined multiphase initialization synchronization
    // points to be achieved.
-   multiphase_init_sync_pnt_list.wait_for_list_synchronization( federate );
+   wait_for_all_sync_points_synchronized( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST );
 }
 
 /*!

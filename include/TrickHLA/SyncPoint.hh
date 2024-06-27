@@ -21,7 +21,6 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/SyncPoint.cpp}
-@trick_link_dependency{../../source/TrickHLA/SyncPntLoggable.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
 @revs_title
@@ -40,8 +39,8 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
+#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/SyncPntLoggable.hh"
 #include "TrickHLA/Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -56,7 +55,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class SyncPoint
+class SyncPoint : public TrickHLA::CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -143,18 +142,16 @@ class SyncPoint
    /*! @brief Create a C++ wide string with the synchronization point label and
     * current state.
     *  @return A wide string with the synchronization point label and current state. */
-   virtual std::wstring to_wstring();
+   virtual std::string to_string();
 
    /*! @brief Convert the variables to a form Trick can checkpoint. */
-   virtual void convert_to_checkpoint();
+   virtual void convert_to_checkpoint_data_structures();
 
    /*! @brief Restore the state of this class from the Trick checkpoint. */
-   virtual void restore_from_checkpoint();
+   virtual void restore_from_checkpoint_data_structures();
 
-   /*! @brief Convert the synchronization point into and loggable
-    * synchronization point.
-    *  @param log_sync_pnt Reference to a loggable synchronization point. */
-   virtual void convert( SyncPntLoggable &log_sync_pnt );
+   /*! @brief Clear/release the memory used for the checkpoint data structures. */
+   virtual void clear_checkpoint_data_structures();
 
   protected:
    std::wstring    label; ///< @trick_io{**} Sync-point name.

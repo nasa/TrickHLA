@@ -34,7 +34,6 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/StringUtilities.hh"
-#include "TrickHLA/SyncPntLoggable.hh"
 #include "TrickHLA/SyncPoint.hh"
 
 using namespace std;
@@ -58,12 +57,7 @@ SyncPoint::SyncPoint(
  */
 SyncPoint::~SyncPoint()
 {
-   if ( this->label_chkpt != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->label_chkpt ) ) ) {
-         send_hs( stderr, "SyncPoint::~SyncPoint():%d ERROR deleting Trick Memory for 'label_chkpt'\n", __LINE__ );
-      }
-      this->label_chkpt = NULL;
-   }
+   clear_checkpoint_data_structures();
 }
 
 bool SyncPoint::is_valid()
@@ -109,55 +103,65 @@ bool SyncPoint::is_error()
             && ( this->state != SYNC_PT_STATE_SYNCHRONIZED ) );
 }
 
-std::wstring SyncPoint::to_wstring()
+std::string SyncPoint::to_string()
 {
-   wstring result = L"[" + this->label + L"] -- ";
+   string label_str;
+   StringUtilities::to_string( label_str, this->label );
+
+   string result = "[" + label_str + "] -- ";
    switch ( this->state ) {
 
       case SYNC_PT_STATE_ERROR:
-         result += L"SYNC_PT_STATE_ERROR";
+         result += "SYNC_PT_STATE_ERROR";
          break;
 
       case SYNC_PT_STATE_EXISTS:
-         result += L"SYNC_PT_STATE_EXISTS";
+         result += "SYNC_PT_STATE_EXISTS";
          break;
 
       case SYNC_PT_STATE_REGISTERED:
-         result += L"SYNC_PT_STATE_REGISTERED";
+         result += "SYNC_PT_STATE_REGISTERED";
          break;
 
       case SYNC_PT_STATE_ANNOUNCED:
-         result += L"SYNC_PT_STATE_ANNOUNCED";
+         result += "SYNC_PT_STATE_ANNOUNCED";
          break;
 
       case SYNC_PT_STATE_ACHIEVED:
-         result += L"SYNC_PT_STATE_ACHIEVED";
+         result += "SYNC_PT_STATE_ACHIEVED";
          break;
 
       case SYNC_PT_STATE_SYNCHRONIZED:
-         result += L"SYNC_PT_STATE_SYNCHRONIZED";
+         result += "SYNC_PT_STATE_SYNCHRONIZED";
          break;
 
       default:
-         result += L"SYNC_PT_STATE_UNKNOWN";
+         result += "SYNC_PT_STATE_UNKNOWN";
+         break;
    }
    return result;
 }
 
-void SyncPoint::convert_to_checkpoint()
+void SyncPoint::convert_to_checkpoint_data_structures()
 {
+   clear_checkpoint_data_structures();
+
    // Checkpointable copy of the label.
    this->label_chkpt = StringUtilities::ip_strdup_wstring( this->label );
 }
 
-void SyncPoint::restore_from_checkpoint()
+void SyncPoint::restore_from_checkpoint_data_structures()
 {
    // Update the label from the checkpointable c-string.
    StringUtilities::to_wstring( this->label, this->label_chkpt );
 }
 
-void SyncPoint::convert( SyncPntLoggable &log_sync_pnt )
+void SyncPoint::clear_checkpoint_data_structures()
 {
-   log_sync_pnt.label = StringUtilities::ip_strdup_wstring( this->label );
-   log_sync_pnt.state = this->state;
+   if ( this->label_chkpt != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->label_chkpt ) ) ) {
+         send_hs( stderr, "SyncPoint::clear_checkpoint_data_structures():%d ERROR deleting Trick Memory for 'label_chkpt'\n", __LINE__ );
+      }
+      this->label_chkpt = NULL;
+   }
 }

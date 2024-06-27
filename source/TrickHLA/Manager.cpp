@@ -782,13 +782,11 @@ joining federate so this call will be ignored.%c",
    StringUtilities::to_wstring( ws_syc_point_label, sync_point_label );
 
    // Determine if the sync-point label is valid.
-   if ( this->execution_control->contains( ws_syc_point_label ) ) {
+   if ( execution_control->contains_sync_point( ws_syc_point_label ) ) {
 
       // Achieve the specified sync-point and wait for the federation
       // to be synchronized on it.
-      this->execution_control->achieve_and_wait_for_synchronization( *( this->get_RTI_ambassador() ),
-                                                                     this->federate,
-                                                                     ws_syc_point_label );
+      execution_control->achieve_sync_point_and_wait_for_synchronization( ws_syc_point_label );
 
    } else {
       ostringstream errmsg;

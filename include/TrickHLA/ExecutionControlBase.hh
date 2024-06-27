@@ -28,7 +28,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../../source/TrickHLA/ScenarioTimeline.cpp}
 @trick_link_dependency{../../source/TrickHLA/SimTimeline.cpp}
-@trick_link_dependency{../../source/TrickHLA/SyncPntListBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPointManagerBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/SimTimeline.cpp}
 @trick_link_dependency{../../source/TrickHLA/Timeline.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
@@ -51,8 +51,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ScenarioTimeline.hh"
 #include "TrickHLA/SimTimeline.hh"
 #include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/SyncPntList.hh"
-#include "TrickHLA/SyncPntListBase.hh"
+#include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
 
 namespace TrickHLA
@@ -66,7 +65,7 @@ class Manager;
 class Object;
 class ExecutionConfigurationBase;
 
-class ExecutionControlBase : public TrickHLA::SyncPntListBase
+class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -686,9 +685,6 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
       derived class instance (e.g. SRFOM:ExecutionControl). */
 
   protected:
-   SyncPntList multiphase_init_sync_pnt_list; /**< @trick_units{--}
-      Synchronization points used for multi-phase initialization control. */
-
    bool init_complete_sp_exists; /**< @trick_units{--} Internal flag, for
       Initialization Complete Sync-Point exists. (default: false) */
    // FIXME: This is actually this ExecutionControlBase object.

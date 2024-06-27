@@ -1,6 +1,6 @@
 /*!
 @file IMSim/SyncPntTimed.hh
-@ingroup TrickHLA
+@ingroup IMSim
 @brief This class extends the basis TrickHLA::SyncPnt synchronization point
 implementation to add a time stamp.
 
@@ -17,7 +17,7 @@ NASA, Johnson Space Center\n
 
 @trick_parse{everything}
 
-@python_module{TrickHLA}
+@python_module{IMSim}
 
 @tldh
 @trick_link_dependency{../../source/IMSim/SyncPntTimed.cpp}

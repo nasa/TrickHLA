@@ -2442,227 +2442,35 @@ void Federate::send_interaction(
    }
 }
 
-void Federate::register_generic_sync_point(
-   wstring const &label,
-   double         time )
-{
-   // Macro to save the FPU Control Word register value.
-   TRICKHLA_SAVE_FPU_CONTROL_WORD;
-
-   // Register the sync-point label.
-   try {
-      if ( time < 0.0 ) {
-         // no time specified
-         RTI_ambassador->registerFederationSynchronizationPoint( label, RTI1516_USERDATA( 0, 0 ) );
-      } else {
-         // DANNY2.7 convert time and encode in a buffer to send to RTI
-         int64_t       _value = Int64BaseTime::to_base_time( time );
-         unsigned char buf[8];
-         buf[0] = (unsigned char)( ( _value >> 56 ) & 0xFF );
-         buf[1] = (unsigned char)( ( _value >> 48 ) & 0xFF );
-         buf[2] = (unsigned char)( ( _value >> 40 ) & 0xFF );
-         buf[3] = (unsigned char)( ( _value >> 32 ) & 0xFF );
-         buf[4] = (unsigned char)( ( _value >> 24 ) & 0xFF );
-         buf[5] = (unsigned char)( ( _value >> 16 ) & 0xFF );
-         buf[6] = (unsigned char)( ( _value >> 8 ) & 0xFF );
-         buf[7] = (unsigned char)( ( _value >> 0 ) & 0xFF );
-         RTI_ambassador->registerFederationSynchronizationPoint( label, RTI1516_USERDATA( buf, 8 ) );
-      }
-
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         send_hs( stderr, "Federate::register_generic_sync_point():%d Registered '%ls' synchronization point with RTI.%c",
-                  __LINE__, label.c_str(), THLA_NEWLINE );
-      }
-   } catch ( SaveInProgress const &e ) {
-      send_hs( stderr, "Federate::register_generic_sync_point():%d EXCPETION: SaveInProgress: Failed to register '%ls' synchronization point with RTI!%c",
-               __LINE__, label.c_str(), THLA_NEWLINE );
-   } catch ( RestoreInProgress const &e ) {
-      send_hs( stderr, "Federate::register_generic_sync_point():%d EXCPETION: RestoreInProgress: Failed to register '%ls' synchronization point with RTI!%c",
-               __LINE__, label.c_str(), THLA_NEWLINE );
-   } catch ( FederateNotExecutionMember const &e ) {
-      send_hs( stderr, "Federate::register_generic_sync_point():%d EXCPETION: FederateNotExecutionMember: Failed to register '%ls' synchronization point with RTI!%c",
-               __LINE__, label.c_str(), THLA_NEWLINE );
-   } catch ( NotConnected const &e ) {
-      send_hs( stderr, "Federate::register_generic_sync_point():%d EXCPETION: NotConnected: Failed to register '%ls' synchronization point with RTI!%c",
-               __LINE__, label.c_str(), THLA_NEWLINE );
-   } catch ( RTIinternalError const &e ) {
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      send_hs( stderr, "Federate::register_generic_sync_point():%d EXCPETION: RTIinternalError '%s': Failed to register '%ls' synchronization point with RTI!%c",
-               __LINE__, rti_err_msg.c_str(), label.c_str(), THLA_NEWLINE );
-   } catch ( RTI1516_EXCEPTION const &e ) {
-      send_hs( stderr, "Federate::register_generic_sync_point():%d ERROR: Failed to register '%ls' synchronization point with RTI!%c",
-               __LINE__, label.c_str(), THLA_NEWLINE );
-   }
-
-   // Macro to restore the saved FPU Control Word register value.
-   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-}
-
-void Federate::achieve_and_wait_for_synchronization(
-   wstring const &label )
-{
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::achieve_and_wait_for_synchronization():%d Label:'%ls'%c",
-               __LINE__, label.c_str(), THLA_NEWLINE );
-   }
-
-   try {
-
-      execution_control->achieve_and_wait_for_synchronization( *( RTI_ambassador ), this, label );
-
-   } catch ( RTI1516_NAMESPACE::SynchronizationPointLabelNotAnnounced const &e ) {
-      string s_label;
-      StringUtilities::to_string( s_label, label );
-      ostringstream errmsg;
-      errmsg << "Federate::achieve_and_wait_for_synchronization():" << __LINE__
-             << " Label:'" << s_label << "'"
-             << " Exception: SynchronizationPointLabelNotAnnounced" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
-      string s_label;
-      StringUtilities::to_string( s_label, label );
-      ostringstream errmsg;
-      errmsg << "Federate::achieve_and_wait_for_synchronization():" << __LINE__
-             << " Label:'" << s_label << "'"
-             << " Exception: FederateNotExecutionMember" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
-      string s_label;
-      StringUtilities::to_string( s_label, label );
-      ostringstream errmsg;
-      errmsg << "Federate::achieve_and_wait_for_synchronization():" << __LINE__
-             << " Label:'" << s_label << "'"
-             << " Exception: SaveInProgress" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
-      string s_label;
-      StringUtilities::to_string( s_label, label );
-      ostringstream errmsg;
-      errmsg << "Federate::achieve_and_wait_for_synchronization():" << __LINE__
-             << " Label:'" << s_label << "'"
-             << " Exception: RestoreInProgress" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
-      string s_label;
-      StringUtilities::to_string( s_label, label );
-      ostringstream errmsg;
-      errmsg << "Federate::achieve_and_wait_for_synchronization():" << __LINE__
-             << " Label:'" << s_label << "'"
-             << " Exception: RTIinternalError" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
-      string s_label;
-      StringUtilities::to_string( s_label, label );
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      ostringstream errmsg;
-      errmsg << "Federate::achieve_and_wait_for_synchronization():" << __LINE__
-             << " Label:'" << s_label << "'"
-             << " Exception: RTI1516_EXCEPTION " << rti_err_msg << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      execution_control->print_sync_points();
-   }
-}
-
-void Federate::achieve_synchronization_point(
-   wstring const &label )
-{
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "Federate::achieve_synchronization_point():%d Label:'%ls'%c",
-               __LINE__, label.c_str(), THLA_NEWLINE );
-   }
-
-   try {
-
-      RTI_ambassador->synchronizationPointAchieved( label );
-
-   } catch ( RTI1516_NAMESPACE::SynchronizationPointLabelNotAnnounced const &e ) {
-      string s_label;
-      StringUtilities::to_string( s_label, label );
-      ostringstream errmsg;
-      errmsg << "Federate::achieve_synchronization_point():" << __LINE__
-             << " Label:'" << s_label << "'"
-             << " Exception: SynchronizationPointLabelNotAnnounced" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
-      string s_label;
-      StringUtilities::to_string( s_label, label );
-      ostringstream errmsg;
-      errmsg << "Federate::achieve_synchronization_point():" << __LINE__
-             << " Label:'" << s_label << "'"
-             << " Exception: FederateNotExecutionMember" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
-      string s_label;
-      StringUtilities::to_string( s_label, label );
-      ostringstream errmsg;
-      errmsg << "Federate::achieve_synchronization_point():" << __LINE__
-             << " Label:'" << s_label << "'"
-             << " Exception: SaveInProgress" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
-      string s_label;
-      StringUtilities::to_string( s_label, label );
-      ostringstream errmsg;
-      errmsg << "Federate::achieve_synchronization_point():" << __LINE__
-             << " Label:'" << s_label << "'"
-             << " Exception: RestoreInProgress" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
-      string s_label;
-      StringUtilities::to_string( s_label, label );
-      ostringstream errmsg;
-      errmsg << "Federate::achieve_synchronization_point():" << __LINE__
-             << " Label:'" << s_label << "'"
-             << " Exception: RTIinternalError" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
-      string s_label;
-      StringUtilities::to_string( s_label, label );
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      ostringstream errmsg;
-      errmsg << "Federate::achieve_synchronization_point():" << __LINE__
-             << " Label:'" << s_label << "'"
-             << " Exception: RTI1516_EXCEPTION " << rti_err_msg << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-}
-
 void Federate::announce_sync_point(
    wstring const          &label,
    RTI1516_USERDATA const &user_supplied_tag )
 {
-   // Dispatch this to the ExecutionControl process. It will check for
-   // any synchronization points that require special handling.
-   execution_control->announce_sync_point( *( RTI_ambassador ), label, user_supplied_tag );
+   // Delegate to the Execution Control to handle the FedAmb callback. It will
+   // check for any synchronization points that require special handling.
+   execution_control->sync_point_announced( label, user_supplied_tag );
 }
 
 void Federate::sync_point_registration_succeeded(
    wstring const &label )
 {
-   // Call the ExecutionControl method associated with the TirckHLA::Manager.
+   // Delegate to the Execution Control to handle the FedAmb callback.
    execution_control->sync_point_registration_succeeded( label );
 }
 
 void Federate::sync_point_registration_failed(
    wstring const &label,
-   bool           not_unique )
+   SynchronizationPointFailureReason reason )
 {
-   // Call the ExecutionControl method associated with the TirckHLA::Manager.
-   execution_control->sync_point_registration_failed( label, not_unique );
+   // Delegate to the Execution Control to handle the FedAmb callback.
+   execution_control->sync_point_registration_failed( label, reason );
 }
 
 void Federate::federation_synchronized(
    wstring const &label )
 {
-   // Mark the sync-point and synchronized.
-   execution_control->mark_synchronized( label );
+   // Delegate to the Execution Control to handle the FedAmb callback.
+   execution_control->sync_point_federation_synchronized( label );
 }
 
 /*!
@@ -2672,7 +2480,6 @@ void Federate::federation_synchronized(
  */
 void Federate::freeze_init()
 {
-
    // Dispatch to the ExecutionControl method.
    execution_control->freeze_init();
 }
@@ -2682,7 +2489,6 @@ void Federate::freeze_init()
  */
 void Federate::enter_freeze()
 {
-
    // Initiate a federation freeze when a Trick freeze is commanded. (If we're
    // here at time 0, set_exec_freeze_command was called in input.py file.)
    // Otherwise get out now.

@@ -260,6 +260,8 @@ typedef enum {
 
 } ModeTransitionEnum;
 
+static std::string const MULTIPHASE_INIT_SYNC_POINT_LIST = "MULTIPHASE_INIT_SYNC_POINT_LIST";
+
 /*!
 @enum SyncPtStateEnum
 @brief Define the TrickHLA synchronization point state enumeration values.

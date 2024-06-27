@@ -92,6 +92,8 @@ class SyncPointList
 
    std::string &get_list_name();
 
+   SyncPtStateEnum const get_state( std::wstring const &label );
+
    void clear();
 
    SyncPoint *get_sync_point( std::wstring const &label ); // Search all lists for the unique sync-point label.
@@ -145,6 +147,10 @@ class SyncPointList
    bool wait_for_all_synchronized();
 
    bool wait_for_synchronized( SyncPoint *sp );
+
+   std::string to_string();
+
+   std::string to_string( std::wstring const &label );
 
   protected:
    SyncPointVector list; ///< @trick_io{**} Vector of sync-points objects.

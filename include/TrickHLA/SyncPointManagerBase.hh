@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/SyncPointManager.hh
+@file TrickHLA/SyncPointManagerBase.hh
 @ingroup TrickHLA
 @brief This class will manage different lists of HLA synchronization points. It
        is intended for this class to be extended by an Execution Control class.
@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/SyncPointManager.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPointManagerBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPointList.cpp}
@@ -32,8 +32,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_SYNC_POINT_MANAGER_HH
-#define TRICKHLA_SYNC_POINT_MANAGER_HH
+#ifndef TRICKHLA_SYNC_POINT_MANAGER_BASE_HH
+#define TRICKHLA_SYNC_POINT_MANAGER_BASE_HH
 
 // System includes.
 #include <map>
@@ -47,7 +47,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/SyncPntLoggable.hh"
 #include "TrickHLA/SyncPointList.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -66,7 +65,7 @@ typedef std::vector< SyncPointList * > SyncPointListVector;
 
 static std::string const UNKNOWN_SYNC_POINT_LIST = "UNKNOWN_SYNC_POINT_LIST";
 
-class SyncPointManager
+class SyncPointManagerBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -76,26 +75,28 @@ class SyncPointManager
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__SyncPointManager();
+   friend void init_attrTrickHLA__SyncPointManagerBase();
 
   public:
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLA SyncPointManager class. */
-   SyncPointManager();
-   /*! @brief Constructor for the TrickHLA SyncPointManager class. */
-   explicit SyncPointManager( Federate *fed );
+   /*! @brief Default constructor for the TrickHLA SyncPointManagerBase class. */
+   SyncPointManagerBase();
+   /*! @brief Constructor for the TrickHLA SyncPointManagerBase class. */
+   explicit SyncPointManagerBase( Federate *fed );
 
-   /*! @brief Pure virtual destructor for the TrickHLA SyncPointManager class. */
-   virtual ~SyncPointManager() = 0;
+   /*! @brief Pure virtual destructor for the TrickHLA SyncPointManagerBase class. */
+   virtual ~SyncPointManagerBase() = 0;
 
-  protected:
+  public:
    void setup( Federate *fed );
 
    int const get_list_index_for_sync_point( std::wstring const &label ); // Search all lists for the unique sync-point label.
 
    int const get_list_index_for_list_name( std::string const &list_name );
+
+   SyncPtStateEnum const get_sync_point_state( std::wstring const &label );
 
    /*! @brief Add the given synchronization point label to the named list.
     *  @param label Synchronization point label.
@@ -145,6 +146,14 @@ class SyncPointManager
 
    bool wait_for_all_sync_points_synchronized( std::string const &list_name );
 
+   bool achieve_sync_point_and_wait_for_synchronization( std::wstring const &label );
+
+   std::string to_string();
+
+   std::string to_string( std::wstring const &label );
+
+   void print_sync_points();
+
    // Callbacks from FedAmb.
    virtual void sync_point_registration_succeeded( std::wstring const &label );
 
@@ -163,14 +172,14 @@ class SyncPointManager
 
   private:
    // Do not allow the copy constructor or assignment operator.
-   /*! @brief Copy constructor for SyncPointManager class.
+   /*! @brief Copy constructor for SyncPointManagerBase class.
     *  @details This constructor is private to prevent inadvertent copies. */
-   SyncPointManager( SyncPointManager const &rhs );
-   /*! @brief Assignment operator for SyncPointManager class.
+   SyncPointManagerBase( SyncPointManagerBase const &rhs );
+   /*! @brief Assignment operator for SyncPointManagerBase class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
-   SyncPointManager &operator=( SyncPointManager const &rhs );
+   SyncPointManagerBase &operator=( SyncPointManagerBase const &rhs );
 };
 
 } // namespace TrickHLA
 
-#endif /* TRICKHLA_SYNC_POINT_MANAGER_HH */
+#endif /* TRICKHLA_SYNC_POINT_MANAGER_BASE_HH */

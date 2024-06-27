@@ -1,6 +1,6 @@
 /*!
 @file IMSim/SyncPntTimedLoggable.hh
-@ingroup TrickHLA
+@ingroup IMSim
 @brief This class provides a mechanism for logging timed synchronization point
 data and retrieving it from the log file.
 
@@ -17,7 +17,7 @@ NASA, Johnson Space Center\n
 
 @trick_parse{everything}
 
-@python_module{TrickHLA}
+@python_module{IMSim}
 
 @revs_title
 @revs_begin

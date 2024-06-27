@@ -1,6 +1,6 @@
 /*!
 @file IMSim/SyncPntTimedList.hh
-@ingroup TrickHLA
+@ingroup IMSim
 @brief This class extends the TrickHLA::SyncPntListBase class and provides an
 instantiable implementation for storing and managing HLA synchronization points
 for TrickHLA.
@@ -18,7 +18,7 @@ NASA, Johnson Space Center\n
 
 @trick_parse{everything}
 
-@python_module{TrickHLA}
+@python_module{IMSim}
 
 @tldh
 @trick_link_dependency{../../source/IMSim/SyncPntTimedList.cpp}
