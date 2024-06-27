@@ -237,7 +237,7 @@ class THLAInitSimObject : public Trick::SimObject {
       // Do some processing here if needed...
 
       // Wait for all federates to reach this sync-point.
-//      P_MPI_END ("initialization") thla_manager.wait_for_init_sync_point( "Propagated_init_phase" );
+      P_MPI_END ("initialization") thla_manager.wait_for_init_sync_point( "Propagated_init_phase" );
 
 
       // Alternative method: Send and receive all the initialization data.
@@ -251,7 +251,7 @@ class THLAInitSimObject : public Trick::SimObject {
       // Do some processing here if needed...
 
       // Clear remaining initialization sync-points.
-      P_MPI_END ("initialization") thla_manager.clear_init_sync_points();
+//      P_MPI_END ("initialization") thla_manager.clear_init_sync_points();
    }
 
  private:
