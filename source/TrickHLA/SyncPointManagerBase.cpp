@@ -770,3 +770,29 @@ void SyncPointManagerBase::sync_point_federation_synchronized(
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 }
+
+/*! @brief Encode the variables to a form Trick can checkpoint. */
+void SyncPointManagerBase::encode_checkpoint()
+{
+   free_checkpoint();
+
+   for ( int i = 0; i < sync_pnt_lists.size(); ++i ) {
+      sync_pnt_lists[i]->decode_checkpoint();
+   }
+}
+
+/*! @brief Decode the state of this class from the Trick checkpoint. */
+void SyncPointManagerBase::decode_checkpoint()
+{
+   for ( int i = 0; i < sync_pnt_lists.size(); ++i ) {
+      sync_pnt_lists[i]->decode_checkpoint();
+   }
+}
+
+/*! @brief Free/release the memory used for the checkpoint data structures. */
+void SyncPointManagerBase::free_checkpoint()
+{
+   for ( int i = 0; i < sync_pnt_lists.size(); ++i ) {
+      sync_pnt_lists[i]->free_checkpoint();
+   }
+}

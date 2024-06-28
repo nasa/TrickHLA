@@ -43,6 +43,7 @@ NASA, Johnson Space Center\n
 // Trick include files.
 
 // TrickHLA include files.
+#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/MutexLock.hh"
@@ -58,12 +59,19 @@ NASA, Johnson Space Center\n
 #include RTI1516_HEADER
 #pragma GCC diagnostic pop
 
+#define SYNC_POINT_TMM_ARRAY 1
+#define USE_TRICK_MEMORY_MGR 1
+
 namespace TrickHLA
 {
 
+#if SYNC_POINT_TMM_ARRAY
+// typedef SyncPoint **SyncPoint2DArray;
+#else
 typedef std::vector< SyncPoint * > SyncPointVector;
+#endif
 
-class SyncPointList
+class SyncPointList : public TrickHLA::CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -152,14 +160,30 @@ class SyncPointList
 
    std::string to_string( std::wstring const &label );
 
+   /*! @brief Encode the variables to a form Trick can checkpoint. */
+   virtual void encode_checkpoint();
+
+   /*! @brief Decode the state of this class from the Trick checkpoint. */
+   virtual void decode_checkpoint();
+
+   /*! @brief Free/release the memory used for the checkpoint data structures. */
+   virtual void free_checkpoint();
+
   protected:
-   SyncPointVector list; ///< @trick_io{**} Vector of sync-points objects.
+#if SYNC_POINT_TMM_ARRAY
+   SyncPoint **list;       ///< @trick_units(--) Vector of sync-points objects.
+   int         list_count; ///< @trick_units(--) Number of sync-points objects in the list.
+#else
+   SyncPointVector list; ///< @trick_io(**) Vector of sync-points objects.
+#endif
 
-   std::string list_name; ///< @trick_io{**} Name of this sync-point list.
+   std::string list_name; ///< @trick_io(**) Name of this sync-point list.
 
-   MutexLock &mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
+   MutexLock &mutex; ///< @trick_io(**) Mutex to lock thread over critical code sections.
 
-   Federate *federate; ///< @trick_units{--} Associated TrickHLA Federate.
+   Federate *federate; ///< @trick_units(--) Associated TrickHLA Federate.
+
+   char *list_name_chkpt; ///< @trick_units(--) Trick checkpointable list name.
 
   private:
    /*! @brief Don't allow the default constructor because the mutex must be set. */

@@ -43,6 +43,7 @@ NASA, Johnson Space Center\n
 // Trick include files.
 
 // TrickHLA include files.
+#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/MutexLock.hh"
@@ -65,7 +66,7 @@ typedef std::vector< SyncPointList * > SyncPointListVector;
 
 static std::string const UNKNOWN_SYNC_POINT_LIST = "Unknown";
 
-class SyncPointManagerBase
+class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -163,12 +164,21 @@ class SyncPointManagerBase
 
    virtual void sync_point_federation_synchronized( std::wstring const &label );
 
+   /*! @brief Encode the variables to a form Trick can checkpoint. */
+   virtual void encode_checkpoint();
+
+   /*! @brief Decode the state of this class from the Trick checkpoint. */
+   virtual void decode_checkpoint();
+
+   /*! @brief Free/release the memory used for the checkpoint data structures. */
+   virtual void free_checkpoint();
+
   protected:
    MutexLock mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
 
-   SyncPointListVector sync_pnt_lists; ///< @trick_io{**} Map of named sync-point lists.
+   SyncPointListVector sync_pnt_lists; ///< @trick_units{--} Array of named sync-point lists.
 
-   Federate *federate; ///< @trick_units{--} Associated TrickHLA Federate.
+   Federate *federate; ///< @trick_units{**} Associated TrickHLA Federate.
 
   private:
    // Do not allow the copy constructor or assignment operator.
