@@ -755,7 +755,7 @@ void SyncPointManagerBase::sync_point_federation_synchronized(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string label_str;
          StringUtilities::to_string( label_str, label );
-         send_hs( stdout, "SyncPointManagerBase::sync_point_federation_synchronized():%d Synchronization point synchronized:'%s'%c",
+         send_hs( stdout, "SyncPointManagerBase::sync_point_federation_synchronized():%d Sync-point synchronized:'%s'%c",
                   __LINE__, label_str.c_str(), THLA_NEWLINE );
       }
    } else {

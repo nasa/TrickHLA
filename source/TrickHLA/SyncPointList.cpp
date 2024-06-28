@@ -41,7 +41,9 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
+#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 #include "trick/release.h"
 
@@ -148,7 +150,15 @@ bool const SyncPointList::add(
    }
 
    // Add the sync-point to the corresponding named list.
+#if 1
+   // Use a Trick memory managed allocation so we can checkpoint it.
+   SyncPoint *sp = static_cast< SyncPoint * >( TMM_declare_var_1d( "TrickHLA::SyncPoint", 1 ) );
+   sp->set_label( label );
+   list.push_back( sp );
+#else
    list.push_back( new SyncPoint( label ) );
+#endif
+
    return true;
 }
 
@@ -709,7 +719,7 @@ bool const SyncPointList::achieve_sync_point(
          StringUtilities::to_string( label_str, sp->get_label() );
          ostringstream errmsg;
          errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
-                << " Synchronization-Point '" << label_str
+                << " Sync-point '" << label_str
                 << "' has already been achieved with the RTI!" << THLA_ENDL;
          send_hs( stderr, errmsg.str().c_str() );
       }
@@ -724,7 +734,7 @@ bool const SyncPointList::achieve_sync_point(
          StringUtilities::to_string( label_str, sp->get_label() );
          ostringstream errmsg;
          errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
-                << " Synchronization-Point '" << label_str
+                << " Sync-point '" << label_str
                 << "' has already been synchronized with the RTI!" << THLA_ENDL;
          send_hs( stderr, errmsg.str().c_str() );
       }
@@ -736,7 +746,7 @@ bool const SyncPointList::achieve_sync_point(
       StringUtilities::to_string( label_str, sp->get_label() );
       ostringstream errmsg;
       errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
-             << " ERROR: Synchronization-Point '" << label_str
+             << " ERROR: Sync-point '" << label_str
              << "' has not been announced with the RTI!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -846,7 +856,7 @@ bool const SyncPointList::wait_for_synchronized(
          StringUtilities::to_string( label_str, sp->get_label() );
          ostringstream msg;
          msg << "SyncPointList::wait_for_synchronized():" << __LINE__
-             << " Synchronization-Point '" << label_str << "'" << THLA_ENDL;
+             << " Sync-point '" << label_str << "'" << THLA_ENDL;
          send_hs( stdout, msg.str().c_str() );
       }
 

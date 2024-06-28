@@ -43,9 +43,20 @@ using namespace TrickHLA;
 /*!
  * @job_class{initialization}
  */
+SyncPoint::SyncPoint()
+   : label(),
+     state( TrickHLA::SYNC_PT_STATE_KNOWN ),
+     label_chkpt( NULL )
+{
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
 SyncPoint::SyncPoint(
-   std::wstring const &l )
-   : label( l ),
+   std::wstring const &lbl )
+   : label( lbl ),
      state( TrickHLA::SYNC_PT_STATE_KNOWN ),
      label_chkpt( NULL )
 {
