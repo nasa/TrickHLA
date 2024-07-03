@@ -251,22 +251,25 @@ bool const SyncPointList::add(
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
-   ++list_count; // Adjust the count to match the array size allocation.
 
    // Allocate the new Sync-Point and add it to the end of the list array.
-   list[list_count - 1] = static_cast< SyncPoint * >( TMM_declare_var_1d( "TrickHLA::SyncPoint", 1 ) );
-   if ( list[list_count - 1] == NULL ) {
+   list[list_count] = static_cast< SyncPoint * >( TMM_declare_var_1d( "TrickHLA::SyncPoint", 1 ) );
+   if ( list[list_count] == NULL ) {
       string label_str;
       StringUtilities::to_string( label_str, label );
       ostringstream errmsg;
       errmsg << "SyncPointList::add_sync_point():" << __LINE__
              << " ERROR: Could not allocate memory for the sync-point list at array index:"
-             << ( list_count - 1 ) << " for sync-point label '"
+             << list_count << " for sync-point label '"
              << label_str << "'!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
       return false;
    }
-   list[list_count - 1]->set_label( label );
+   list[list_count]->set_label( label );
+
+   // Update the count to match the successful new array allocation.
+   ++list_count;
+
 #else
    list.push_back( new SyncPoint( label ) );
 #endif

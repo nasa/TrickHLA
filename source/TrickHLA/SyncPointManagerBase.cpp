@@ -233,22 +233,24 @@ bool const SyncPointManagerBase::add_sync_point_list(
          DebugHandler::terminate_with_message( errmsg.str() );
          return false;
       }
-      ++sync_pnt_lists_count; // Adjust the count to match the array size allocation.
 
       // Allocate the new Sync-Point List and add it to the end of the array.
-      sync_pnt_lists[sync_pnt_lists_count - 1] = static_cast< SyncPointList * >( TMM_declare_var_1d( "TrickHLA::SyncPointList", 1 ) );
-      if ( sync_pnt_lists[sync_pnt_lists_count - 1] == NULL ) {
+      sync_pnt_lists[sync_pnt_lists_count] = static_cast< SyncPointList * >( TMM_declare_var_1d( "TrickHLA::SyncPointList", 1 ) );
+      if ( sync_pnt_lists[sync_pnt_lists_count] == NULL ) {
          ostringstream errmsg;
          errmsg << "SyncPointManagerBase::add_sync_point_list():" << __LINE__
                 << " ERROR: Could not allocate memory for the sync-point list at array index:"
-                << ( sync_pnt_lists_count - 1 ) << " for sync-point list '"
+                << sync_pnt_lists_count << " for sync-point list '"
                 << list_name << "'!" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
          return false;
       }
-      sync_pnt_lists[sync_pnt_lists_count - 1]->set_list_name( list_name );
-      sync_pnt_lists[sync_pnt_lists_count - 1]->set_mutex( this->mutex );
-      sync_pnt_lists[sync_pnt_lists_count - 1]->set_federate( this->federate );
+      sync_pnt_lists[sync_pnt_lists_count]->set_list_name( list_name );
+      sync_pnt_lists[sync_pnt_lists_count]->set_mutex( this->mutex );
+      sync_pnt_lists[sync_pnt_lists_count]->set_federate( this->federate );
+
+      // Update the count to match the successful new array allocation.
+      ++sync_pnt_lists_count;
 
 #else
       sync_pnt_lists.push_back( new SyncPointList( list_name, this->mutex, this->federate ) );
