@@ -62,7 +62,13 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
+#define SYNC_POINT_LIST_TMM_ARRAY 1
+
+#if SYNC_POINT_LIST_TMM_ARRAY
+// typedef SyncPointList **SyncPointList2DArray;
+#else
 typedef std::vector< SyncPointList * > SyncPointListVector;
+#endif
 
 static std::string const UNKNOWN_SYNC_POINT_LIST = "Unknown";
 
@@ -92,6 +98,8 @@ class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
 
   public:
    void setup( Federate *fed );
+
+   void clear();
 
    int const get_list_index_for_sync_point( std::wstring const &label ); // Search all lists for the unique sync-point label.
 
@@ -176,9 +184,14 @@ class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
   protected:
    MutexLock mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
 
+#if SYNC_POINT_LIST_TMM_ARRAY
+   SyncPointList **sync_pnt_lists;       ///< @trick_units{--} Array of named sync-point lists.
+   int             sync_pnt_lists_count; ///< @trick_units{--} Size of the sync-point lists.
+#else
    SyncPointListVector sync_pnt_lists; ///< @trick_units{--} Array of named sync-point lists.
+#endif
 
-   Federate *federate; ///< @trick_units{**} Associated TrickHLA Federate.
+   Federate *federate; ///< @trick_units{--} Associated TrickHLA Federate.
 
   private:
    // Do not allow the copy constructor or assignment operator.

@@ -60,7 +60,6 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic pop
 
 #define SYNC_POINT_TMM_ARRAY 1
-#define USE_TRICK_MEMORY_MGR 1
 
 namespace TrickHLA
 {
@@ -87,6 +86,9 @@ class SyncPointList : public TrickHLA::CheckpointConversionBase
    //
    // Public constructors and destructor.
    //
+   /*! @brief Default constructor. */
+   SyncPointList();
+
    /*! @brief Constructor for the TrickHLA SyncPointList class. */
    SyncPointList( std::string const &name,
                   MutexLock         &mtx,
@@ -98,7 +100,13 @@ class SyncPointList : public TrickHLA::CheckpointConversionBase
   public:
    void setup( Federate *fed );
 
+   void set_list_name( std::string const &name );
+
    std::string &get_list_name();
+
+   void set_mutex( MutexLock &mtx );
+
+   void set_federate( Federate *fed );
 
    SyncPtStateEnum const get_state( std::wstring const &label );
 
@@ -179,16 +187,13 @@ class SyncPointList : public TrickHLA::CheckpointConversionBase
 
    std::string list_name; ///< @trick_io(**) Name of this sync-point list.
 
-   MutexLock &mutex; ///< @trick_io(**) Mutex to lock thread over critical code sections.
+   MutexLock *mutex; ///< @trick_io(**) Mutex to lock thread over critical code sections.
 
    Federate *federate; ///< @trick_units(--) Associated TrickHLA Federate.
 
    char *list_name_chkpt; ///< @trick_units(--) Trick checkpointable list name.
 
   private:
-   /*! @brief Don't allow the default constructor because the mutex must be set. */
-   SyncPointList();
-
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for SyncPointList class.
     *  @details This constructor is private to prevent inadvertent copies. */

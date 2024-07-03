@@ -1228,7 +1228,7 @@ class Federate
    MutexLock    time_adv_state_mutex; ///< @trick_units{--} HLA Time advance state mutex lock.
    Int64Time    granted_time;         ///< @trick_units{--} HLA time given by RTI
    Int64Time    requested_time;       ///< @trick_units{--} requested/desired HLA time
-   double       HLA_time;             ///< @trick_units{s}  Current HLA time to allow for plotting.
+   double       HLA_time;             ///< @trick_io{*io} @trick_units{s}  Current HLA time to allow for plotting.
    bool         start_to_save;        ///< @trick_io{**} Save flag
    bool         start_to_restore;     ///< @trick_io{**} Restore flag
    bool         restart_flag;         ///< @trick_io{**} Restart flag

@@ -82,9 +82,9 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
 
   public:
    // Principal timelines for federation execution control.
-   ScenarioTimeline *scenario_timeline; ///< @trick_io{**} The scenario timeline.
-   SimTimeline      *sim_timeline;      ///< @trick_io{**} The simulation timeline.
-   CTETimelineBase  *cte_timeline;      ///< @trick_io{**} The Central Timing Equipment (CTE) timeline.
+   ScenarioTimeline *scenario_timeline; ///< @trick_units{--} The scenario timeline.
+   SimTimeline      *sim_timeline;      ///< @trick_units{--} The simulation timeline.
+   CTETimelineBase  *cte_timeline;      ///< @trick_units{--} The Central Timing Equipment (CTE) timeline.
 
    // These are the execution control roles available to a federate.
    bool use_preset_master; /**< @trick_units{--}
