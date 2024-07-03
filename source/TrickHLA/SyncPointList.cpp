@@ -1102,7 +1102,7 @@ void SyncPointList::encode_checkpoint()
 #else
    for ( int i = 0; i < list.size(); ++i ) {
 #endif
-      list[i]->decode_checkpoint();
+      list[i]->encode_checkpoint();
    }
 }
 

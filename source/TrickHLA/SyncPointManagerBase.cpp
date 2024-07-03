@@ -895,7 +895,7 @@ void SyncPointManagerBase::encode_checkpoint()
 #else
    for ( int index = 0; index < sync_pnt_lists.size(); ++index ) {
 #endif
-      sync_pnt_lists[index]->decode_checkpoint();
+      sync_pnt_lists[index]->encode_checkpoint();
    }
 }
 
