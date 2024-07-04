@@ -59,10 +59,12 @@ NASA, Johnson Space Center\n
 #include RTI1516_HEADER
 #pragma GCC diagnostic pop
 
-namespace TrickHLA
-{
 
 #define SYNC_POINT_LIST_TMM_ARRAY 1
+
+
+namespace TrickHLA
+{
 
 #if SYNC_POINT_LIST_TMM_ARRAY
 // typedef SyncPointList **SyncPointList2DArray;

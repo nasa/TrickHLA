@@ -59,7 +59,9 @@ NASA, Johnson Space Center\n
 #include RTI1516_HEADER
 #pragma GCC diagnostic pop
 
+
 #define SYNC_POINT_TMM_ARRAY 1
+
 
 namespace TrickHLA
 {
