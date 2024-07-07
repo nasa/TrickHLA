@@ -18,6 +18,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../TrickHLA/SyncPoint.cpp}
+@trick_link_dependency{../TrickHLA/Types.cpp}
 @trick_link_dependency{SyncPntTimed.cpp}
 
 @revs_title
@@ -38,6 +39,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPoint.hh"
+#include "TrickHLA/Types.hh"
 
 // IMSim include files.
 #include "IMSim/SyncPntTimed.hh"
@@ -74,39 +76,42 @@ SyncPntTimed::~SyncPntTimed()
    return;
 }
 
-std::wstring SyncPntTimed::to_wstring()
+std::string SyncPntTimed::to_string()
 {
-   wstring result = L"[" + label + L"/" + time.to_wstring() + L"] -- ";
+   string label_str;
+   StringUtilities::to_string( label_str, this->label );
+
+   string result = "[" + label_str + "/" + time.to_string() + "] -- ";
    switch ( this->state ) {
 
       case TrickHLA::SYNC_PT_STATE_ERROR:
-         result += L"SYNC_PT_STATE_ERROR";
+         result += "SYNC_PT_STATE_ERROR";
          break;
 
       case TrickHLA::SYNC_PT_STATE_KNOWN:
-         result += L"SYNC_PT_STATE_KNOWN";
+         result += "SYNC_PT_STATE_KNOWN";
          break;
 
       case TrickHLA::SYNC_PT_STATE_REGISTERED:
-         result += L"SYNC_PT_STATE_REGISTERED";
+         result += "SYNC_PT_STATE_REGISTERED";
          break;
 
       case TrickHLA::SYNC_PT_STATE_ANNOUNCED:
-         result += L"SYNC_PT_STATE_ANNOUNCED";
+         result += "SYNC_PT_STATE_ANNOUNCED";
          break;
 
       case TrickHLA::SYNC_PT_STATE_ACHIEVED:
-         result += L"SYNC_PT_STATE_ACHIEVED";
+         result += "SYNC_PT_STATE_ACHIEVED";
          break;
 
       default:
-         result += L"SYNC_PT_STATE_UNKNOWN";
+         result += "SYNC_PT_STATE_UNKNOWN";
    }
 
    return result;
 }
 
-void SyncPntTimed::convert( SyncPntLoggable &log_sync_pnt )
+void SyncPntTimed::convert( IMSim::SyncPntLoggable &log_sync_pnt )
 {
    // Cast the SyncPntLoggable to a SyncPntTimedLoggable.
    SyncPntTimedLoggable *timed_log_sync_pnt = dynamic_cast< SyncPntTimedLoggable * >( &log_sync_pnt );

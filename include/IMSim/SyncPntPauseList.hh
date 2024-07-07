@@ -20,10 +20,10 @@ NASA, Johnson Space Center\n
 @python_module{IMSim}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/SyncPoint.cpp}
 @trick_link_dependency{../../source/IMSim/SyncPntTimedList.cpp}
 @trick_link_dependency{../../source/IMSim/SyncPntPauseList.cpp}
 @trick_link_dependency{../../source/IMSim/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPoint.cpp}
 
 @revs_title
 @revs_begin

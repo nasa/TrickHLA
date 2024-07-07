@@ -42,6 +42,23 @@ NASA, Johnson Space Center\n
 namespace IMSim
 {
 
+// The IMSim sync-point list.
+static std::string const IMSIM_SYNC_POINT_LIST = "IMSim";
+
+// The IMSim Multiphase initialization HLA synchronization-points (version 2).
+static std::wstring const SIM_CONFIG_SYNC_POINT     = L"sim_config_v2";
+static std::wstring const INITIALIZE_SYNC_POINT     = L"initialize_v2";
+static std::wstring const INIT_COMPLETE_SYNC_POINT  = L"initialization_complete_v2";
+static std::wstring const STARTUP_SYNC_POINT        = L"startup_v2";
+static std::wstring const FEDSAVE_SYNC_POINT        = L"FEDSAVE_v2";
+static std::wstring const FEDRUN_SYNC_POINT         = L"FEDRUN_v2";
+static std::wstring const STARTUP_FREEZE_SYNC_POINT = L"pause_0.0";
+
+// SISO SpaceFOM Mode Transition Request (MTR) synchronization-points.
+static std::wstring const MTR_RUN_SYNC_POINT      = L"mtr_run";
+static std::wstring const MTR_FREEZE_SYNC_POINT   = L"mtr_freeze";
+static std::wstring const MTR_SHUTDOWN_SYNC_POINT = L"mtr_shutdown";
+
 /*!
 @enum ExecutionModeEnum
 @brief Define the TrickHLA IMSim execution mode enumeration values.

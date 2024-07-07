@@ -22,9 +22,9 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/IMSim/SyncPntTimedList.cpp}
+@trick_link_dependency{../../source/IMSim/SyncPntListBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPoint.cpp}
-@trick_link_dependency{../../source/TrickHLA/SyncPntListBase.cpp}
 
 @revs_title
 @revs_begin
@@ -45,8 +45,10 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/SyncPntListBase.hh"
 #include "TrickHLA/SyncPoint.hh"
+
+// IMSim include files.
+#include "IMSim/SyncPntListBase.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -60,7 +62,7 @@ NASA, Johnson Space Center\n
 namespace IMSim
 {
 
-class SyncPntTimedList : public TrickHLA::SyncPntListBase
+class SyncPntTimedList : public IMSim::SyncPntListBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -122,7 +124,7 @@ class SyncPntTimedList : public TrickHLA::SyncPntListBase
    /*! @brief Converts the vector of synchronization points to a
     *  checkpoint-able class.
     *  @param pts Area to populate. */
-   virtual void convert_sync_points( TrickHLA::SyncPntLoggable *pts );
+   virtual void convert_sync_points( IMSim::SyncPntLoggable *pts );
 
    /*! @brief Dumps synchronization point information to the screen. */
    virtual void print_sync_points();

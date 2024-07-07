@@ -20,8 +20,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../TrickHLA/MutexProtection.cpp}
 @trick_link_dependency{../TrickHLA/SyncPoint.cpp}
-@trick_link_dependency{../TrickHLA/SyncPntListBase.cpp}
 @trick_link_dependency{SyncPntTimed.cpp}
+@trick_link_dependency{SyncPntListBase.cpp}
 @trick_link_dependency{SyncPntTimedList.cpp}
 
 @revs_title
@@ -47,11 +47,11 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
-#include "TrickHLA/SyncPntListBase.hh"
-#include "TrickHLA/SyncPntLoggable.hh"
 #include "TrickHLA/SyncPoint.hh"
 
 // IMSim include files.
+#include "IMSim/SyncPntListBase.hh"
+#include "IMSim/SyncPntLoggable.hh"
 #include "IMSim/SyncPntTimed.hh"
 #include "IMSim/SyncPntTimedList.hh"
 #include "IMSim/SyncPntTimedLoggable.hh"
@@ -131,7 +131,7 @@ bool SyncPntTimedList::check_sync_points(
       for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
          // Cast the SyncPoint pointer to a SyncPntTimed pointer.
          SyncPntTimed const *timed_i = dynamic_cast< SyncPntTimed * >( *i );
-         if ( ( timed_i->get_state() == TrickHLA::SYNC_PT_STATE_EXISTS )
+         if ( ( timed_i->get_state() == TrickHLA::SYNC_PT_STATE_KNOWN )
               && ( timed_i->get_time() <= check_time ) ) {
             return true;
          }

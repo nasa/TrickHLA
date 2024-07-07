@@ -45,6 +45,9 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/Types.hh"
 
+// IMSim includes.
+#include "IMSim/SyncPntLoggable.hh"
+
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
@@ -101,15 +104,14 @@ class SyncPntTimed : public TrickHLA::SyncPoint
    }
 
    // Utility functions.
-   /*! @brief Create a C++ wide string with the synchronization point label and
-    * current state.
+   /*! @brief Create a string with the synchronization point label and current state.
     *  @return A string with the synchronization point label and current state. */
-   virtual std::wstring to_wstring();
+   virtual std::string to_string();
 
    /*! @brief Convert the synchronization point into and loggable
     * synchronization point.
     *  @param log_sync_pnt Reference to a loggable synchronization point. */
-   virtual void convert( TrickHLA::SyncPntLoggable &log_sync_pnt );
+   virtual void convert( IMSim::SyncPntLoggable &log_sync_pnt );
 
   protected:
    TrickHLA::Int64Time time; ///< @trick_units{--} Synchronization point action time.

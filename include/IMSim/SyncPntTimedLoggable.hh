@@ -37,13 +37,13 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/memorymanager_c_intf.h"
 
-// TrickHLA include files.
-#include "TrickHLA/SyncPntLoggable.hh"
+// IMSim include files.
+#include "IMSim/SyncPntLoggable.hh"
 
 namespace IMSim
 {
 
-class SyncPntTimedLoggable : public TrickHLA::SyncPntLoggable
+class SyncPntTimedLoggable : public IMSim::SyncPntLoggable
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really

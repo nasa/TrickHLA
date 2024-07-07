@@ -199,10 +199,10 @@ string SyncPntPauseList::to_string()
    for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
       SyncPoint *sp = ( *i );
       if ( sp != NULL ) {
-         result += L"  " + sp->to_wstring() + L"\n";
+         result += "  " + sp->to_string() + "\n";
       }
    }
-   result += L"\n";
+   result += "\n";
 
    return result;
 }

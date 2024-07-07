@@ -26,6 +26,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/Utilities.cpp}
 @trick_link_dependency{ExecutionConfiguration.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
+@trick_link_dependency{Types.cpp}
 
 @revs_title
 @revs_begin
@@ -69,6 +70,7 @@ NASA, Johnson Space Center\n
 #include "IMSim/ExecutionConfiguration.hh"
 #include "IMSim/ExecutionControl.hh"
 #include "IMSim/SyncPntTimedLoggable.hh"
+#include "IMSim/Types.hh"
 
 // IMSim file level declarations.
 namespace IMSim
@@ -76,20 +78,6 @@ namespace IMSim
 
 // ExecutionControl type string.
 std::string const ExecutionControl::type = "IMSim";
-
-// The IMSim Multiphase initialization HLA synchronization-points (version 2).
-static std::wstring const SIM_CONFIG_SYNC_POINT     = L"sim_config_v2";
-static std::wstring const INITIALIZE_SYNC_POINT     = L"initialize_v2";
-static std::wstring const INIT_COMPLETE_SYNC_POINT  = L"initialization_complete_v2";
-static std::wstring const STARTUP_SYNC_POINT        = L"startup_v2";
-static std::wstring const FEDSAVE_SYNC_POINT        = L"FEDSAVE_v2";
-static std::wstring const FEDRUN_SYNC_POINT         = L"FEDRUN_v2";
-static std::wstring const STARTUP_FREEZE_SYNC_POINT = L"pause_0.0";
-
-// SISO SpaceFOM Mode Transition Request (MTR) synchronization-points.
-static std::wstring const MTR_RUN_SYNC_POINT      = L"mtr_run";
-static std::wstring const MTR_FREEZE_SYNC_POINT   = L"mtr_freeze";
-static std::wstring const MTR_SHUTDOWN_SYNC_POINT = L"mtr_shutdown";
 
 } // namespace IMSim
 
@@ -231,9 +219,9 @@ void ExecutionControl::initialize()
    }
 
    // Add the Mode Transition Request synchronization points.
-   add_sync_point( IMSim::MTR_RUN_SYNC_POINT );
-   add_sync_point( IMSim::MTR_FREEZE_SYNC_POINT );
-   add_sync_point( IMSim::MTR_SHUTDOWN_SYNC_POINT );
+   add_sync_point( IMSim::MTR_RUN_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
+   add_sync_point( IMSim::MTR_FREEZE_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
+   add_sync_point( IMSim::MTR_SHUTDOWN_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
 
    // Make sure we initialize the base class.
    TrickHLA::ExecutionControlBase::initialize();
@@ -476,7 +464,7 @@ initiating restore request for '%s' with the RTI.%c",
                send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d Did not add duplicate synchronization point label '%ls'.%c",
                         __LINE__, IMSim::STARTUP_SYNC_POINT.c_str(), THLA_NEWLINE );
             } else {
-               add_sync_point( IMSim::STARTUP_SYNC_POINT );
+               add_sync_point( IMSim::STARTUP_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d Label: '%ls'%c",
                            __LINE__, IMSim::STARTUP_SYNC_POINT.c_str(), THLA_NEWLINE );
@@ -1146,9 +1134,9 @@ void ExecutionControl::add_multiphase_init_sync_points()
    ExecutionControlBase::add_multiphase_init_sync_points();
 
    // Register initialization synchronization points used for startup regulation.
-   add_sync_point( IMSim::STARTUP_SYNC_POINT );
-   add_sync_point( IMSim::INITIALIZE_SYNC_POINT );
-   add_sync_point( IMSim::SIM_CONFIG_SYNC_POINT );
+   add_sync_point( IMSim::STARTUP_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
+   add_sync_point( IMSim::INITIALIZE_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
+   add_sync_point( IMSim::SIM_CONFIG_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
 }
 
 void ExecutionControl::announce_sync_point(
