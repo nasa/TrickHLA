@@ -523,9 +523,9 @@ class Int64Time
     *  @return Time in seconds as a floating point double. */
    double get_time_in_seconds() const;
 
-   /*! @brief Returns a wide string representing the time.
-    *  @return Wide string representing the time. */
-   std::wstring to_wstring() const;
+   /*! @brief Returns a string representing the time.
+    *  @return String representing the time. */
+   std::string to_string() const;
 
    //
    // Mutator methods

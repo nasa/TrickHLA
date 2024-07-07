@@ -131,13 +131,11 @@ double Int64Time::get_time_in_seconds() const
    return ( seconds + fractional );
 }
 
-wstring Int64Time::to_wstring() const
+string Int64Time::to_string() const
 {
    ostringstream msg;
    msg << "Int64Time<" << get_time_in_seconds() << ">";
-   wstring wstr;
-   wstr.assign( msg.str().begin(), msg.str().end() );
-   return wstr;
+   return msg.str();
 }
 
 void Int64Time::set(
