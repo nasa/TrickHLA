@@ -24,6 +24,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{SleepTimeout.cpp}
 @trick_link_dependency{SyncPoint.cpp}
 @trick_link_dependency{SyncPointList.cpp}
+@trick_link_dependency{SyncPointTimed.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{Utilities.cpp}
 
@@ -57,6 +58,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/SyncPointList.hh"
+#include "TrickHLA/SyncPointTimed.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 
@@ -168,7 +170,7 @@ SyncPtStateEnum const SyncPointList::get_state(
    std::wstring const &label )
 {
    MutexProtection  auto_unlock_mutex( mutex );
-   SyncPoint const *sp = get_sync_point( label );
+   SyncPoint const *sp = get( label );
    return ( sp != NULL ) ? sp->get_state() : TrickHLA::SYNC_PT_STATE_UNKNOWN;
 }
 
@@ -199,7 +201,7 @@ void SyncPointList::clear()
 #endif
 }
 
-SyncPoint *SyncPointList::get_sync_point(
+SyncPoint *SyncPointList::get(
    wstring const &label )
 {
    MutexProtection auto_unlock_mutex( mutex );
@@ -225,7 +227,7 @@ bool const SyncPointList::add(
       string label_str;
       StringUtilities::to_string( label_str, label );
       ostringstream errmsg;
-      errmsg << "SyncPointList::add_sync_point():" << __LINE__
+      errmsg << "SyncPointList::add():" << __LINE__
              << " ERROR: The sync-point label '" << label_str
              << "' has already been added!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -233,7 +235,7 @@ bool const SyncPointList::add(
    }
 
    // Add the sync-point to the corresponding named list.
-
+   //
 #if SYNC_POINT_TMM_ARRAY
    // Use a Trick memory managed allocation so we can checkpoint it.
    if ( list == NULL ) {
@@ -245,7 +247,7 @@ bool const SyncPointList::add(
    }
    if ( list == NULL ) {
       ostringstream errmsg;
-      errmsg << "SyncPointList::add_sync_point():" << __LINE__
+      errmsg << "SyncPointList::add():" << __LINE__
              << " ERROR: Could not allocate memory for the sync-point list!"
              << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -258,8 +260,8 @@ bool const SyncPointList::add(
       string label_str;
       StringUtilities::to_string( label_str, label );
       ostringstream errmsg;
-      errmsg << "SyncPointList::add_sync_point():" << __LINE__
-             << " ERROR: Could not allocate memory for the sync-point list at array index:"
+      errmsg << "SyncPointList::add():" << __LINE__
+             << " ERROR: Could not allocate memory for the sync-point list entry at array index:"
              << list_count << " for sync-point label '"
              << label_str << "'!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -277,12 +279,12 @@ bool const SyncPointList::add(
    return true;
 }
 
-// TODO: Migrate to IMSim timed sync-point.
 bool const SyncPointList::add(
-   wstring const &label,
-   Int64Time      time )
+   wstring const   &label,
+   Int64Time const &time )
 {
 
+   // TODO: Move to pause sync-point class.
    //   if ( time < 0.0 ) {
    //      // No time specified
    //      execution_control->register_sync_point( label );
@@ -303,8 +305,64 @@ bool const SyncPointList::add(
    //      execution_control->register_sync_point( label, time );
    //   }
 
-   // TODO: Add as a timed sync point.
-   return add( label );
+   MutexProtection auto_unlock_mutex( mutex );
+
+   if ( contains( label ) ) {
+      string label_str;
+      StringUtilities::to_string( label_str, label );
+      ostringstream errmsg;
+      errmsg << "SyncPointList::add():" << __LINE__
+             << " ERROR: The sync-point label '" << label_str
+             << "' has already been added!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return false;
+   }
+
+   // Add the sync-point to the corresponding named list.
+   //
+#if SYNC_POINT_TMM_ARRAY
+   // Use a Trick memory managed allocation so we can checkpoint it.
+   if ( list == NULL ) {
+      // Allocate the list.
+      list = static_cast< SyncPoint ** >( TMM_declare_var_1d( "TrickHLA::SyncPoint *", 1 ) );
+   } else {
+      // Resize the list.
+      list = static_cast< SyncPoint ** >( TMM_resize_array_1d_a( list, ( list_count + 1 ) ) );
+   }
+   if ( list == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SyncPointList::add():" << __LINE__
+             << " ERROR: Could not allocate memory for the sync-point list!"
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return false;
+   }
+
+   // Allocate the new Sync-Point-Timed and add it to the end of the list array.
+   list[list_count] = static_cast< SyncPoint * >( TMM_declare_var_1d( "TrickHLA::SyncPointTimed", 1 ) );
+   if ( list[list_count] == NULL ) {
+      string label_str;
+      StringUtilities::to_string( label_str, label );
+      ostringstream errmsg;
+      errmsg << "SyncPointList::add():" << __LINE__
+             << " ERROR: Could not allocate memory for the sync-point list entry at array index:"
+             << list_count << " for sync-point-timed label '"
+             << label_str << "' with time " << time.get_time_in_seconds()
+             << " seconds!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return false;
+   }
+   static_cast< SyncPointTimed * >( list[list_count] )->set_label( label );
+   static_cast< SyncPointTimed * >( list[list_count] )->set_time( time );
+
+   // Update the count to match the successful new array allocation.
+   ++list_count;
+
+#else
+   list.push_back( new SyncPointTimed( label, time ) );
+#endif
+
+   return true;
 }
 
 bool const SyncPointList::contains(
@@ -329,7 +387,7 @@ bool const SyncPointList::is_registered(
 {
    MutexProtection auto_unlock_mutex( mutex );
 
-   SyncPoint const *sp = get_sync_point( label );
+   SyncPoint const *sp = get( label );
    return ( ( sp != NULL ) && sp->is_registered() );
 }
 
@@ -343,7 +401,7 @@ bool const SyncPointList::mark_registered(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( mutex );
 
-   SyncPoint *sp = get_sync_point( label );
+   SyncPoint *sp = get( label );
    if ( sp != NULL ) {
       sp->set_state( TrickHLA::SYNC_PT_STATE_REGISTERED );
       return true;
@@ -356,7 +414,7 @@ bool const SyncPointList::register_sync_point(
 {
    MutexProtection auto_unlock_mutex( mutex );
 
-   SyncPoint *sp = get_sync_point( label );
+   SyncPoint *sp = get( label );
 
    // If the sync-point is null then it is unknown.
    if ( sp == NULL ) {
@@ -378,7 +436,7 @@ bool const SyncPointList::register_sync_point(
 {
    MutexProtection auto_unlock_mutex( mutex );
 
-   SyncPoint *sp = get_sync_point( label );
+   SyncPoint *sp = get( label );
 
    // If the sync-point is null then it is unknown.
    if ( sp == NULL ) {
@@ -557,7 +615,7 @@ bool const SyncPointList::is_announced(
 {
    MutexProtection auto_unlock_mutex( mutex );
 
-   SyncPoint const *sp = get_sync_point( label );
+   SyncPoint const *sp = get( label );
    return ( ( sp != NULL ) && sp->is_announced() );
 }
 
@@ -571,7 +629,7 @@ bool const SyncPointList::mark_announced(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( mutex );
 
-   SyncPoint *sp = get_sync_point( label );
+   SyncPoint *sp = get( label );
    if ( sp != NULL ) {
       sp->set_state( TrickHLA::SYNC_PT_STATE_ANNOUNCED );
       return true;
@@ -588,7 +646,7 @@ bool const SyncPointList::wait_for_announced(
       // below will cause deadlock.
       MutexProtection auto_unlock_mutex( mutex );
 
-      sp = get_sync_point( label );
+      sp = get( label );
 
       // If the sync-point is null then it is unknown.
       if ( sp == NULL ) {
@@ -736,7 +794,7 @@ bool const SyncPointList::is_achieved(
 {
    MutexProtection auto_unlock_mutex( mutex );
 
-   SyncPoint const *sp = get_sync_point( label );
+   SyncPoint const *sp = get( label );
    return ( ( sp != NULL ) && sp->is_achieved() );
 }
 
@@ -745,7 +803,7 @@ bool const SyncPointList::achieve(
 {
    MutexProtection auto_unlock_mutex( mutex );
 
-   SyncPoint *sp = get_sync_point( label );
+   SyncPoint *sp = get( label );
 
    // If the sync-point is null then it is unknown.
    if ( sp == NULL ) {
@@ -894,7 +952,7 @@ bool const SyncPointList::is_synchronized(
 {
    MutexProtection auto_unlock_mutex( mutex );
 
-   SyncPoint const *sp = get_sync_point( label );
+   SyncPoint const *sp = get( label );
    return ( ( sp != NULL ) && sp->is_synchronized() );
 }
 
@@ -908,7 +966,7 @@ bool const SyncPointList::mark_synchronized(
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( mutex );
 
-   SyncPoint *sp = get_sync_point( label );
+   SyncPoint *sp = get( label );
    if ( sp != NULL ) {
 
       // Mark the synchronization point at achieved which indicates the
@@ -928,7 +986,7 @@ bool const SyncPointList::wait_for_synchronized(
       // below will cause deadlock.
       MutexProtection auto_unlock_mutex( mutex );
 
-      sp = get_sync_point( label );
+      sp = get( label );
 
       // If the sync-point is null then it is unknown.
       if ( sp == NULL ) {
@@ -1076,7 +1134,7 @@ std::string SyncPointList::to_string(
    // below will cause deadlock.
    MutexProtection auto_unlock_mutex( mutex );
 
-   SyncPoint *sp = get_sync_point( label );
+   SyncPoint *sp = get( label );
    if ( sp != NULL ) {
       return sp->to_string();
    }

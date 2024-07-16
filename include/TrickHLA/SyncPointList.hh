@@ -112,11 +112,11 @@ class SyncPointList : public TrickHLA::CheckpointConversionBase
 
    void clear();
 
-   SyncPoint *get_sync_point( std::wstring const &label ); // Search all lists for the unique sync-point label.
+   SyncPoint *get( std::wstring const &label ); // Search all lists for the unique sync-point label.
 
    bool const add( std::wstring const &label );
 
-   bool const add( std::wstring const &label, Int64Time time );
+   bool const add( std::wstring const &label, Int64Time const &time );
 
    bool const contains( std::wstring const &label );
 

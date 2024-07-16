@@ -46,6 +46,7 @@ using namespace TrickHLA;
 SyncPoint::SyncPoint()
    : label(),
      state( TrickHLA::SYNC_PT_STATE_KNOWN ),
+     type( TrickHLA::SYNC_PT_TYPE_DEFAULT ),
      label_chkpt( NULL )
 {
    return;
@@ -55,9 +56,31 @@ SyncPoint::SyncPoint()
  * @job_class{initialization}
  */
 SyncPoint::SyncPoint(
-   std::wstring const &lbl )
+   wstring const &lbl )
    : label( lbl ),
      state( TrickHLA::SYNC_PT_STATE_KNOWN ),
+     type( TrickHLA::SYNC_PT_TYPE_DEFAULT ),
+     label_chkpt( NULL )
+{
+   return;
+}
+
+SyncPoint::SyncPoint(
+   SyncPtTypeEnum const t )
+   : label(),
+     state( TrickHLA::SYNC_PT_STATE_KNOWN ),
+     type( t ),
+     label_chkpt( NULL )
+{
+   return;
+}
+
+SyncPoint::SyncPoint(
+   wstring const       &lbl,
+   SyncPtTypeEnum const t )
+   : label( lbl ),
+     state( TrickHLA::SYNC_PT_STATE_KNOWN ),
+     type( t ),
      label_chkpt( NULL )
 {
    return;

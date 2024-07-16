@@ -1,8 +1,7 @@
 /*!
-@file IMSim/SyncPntTimed.cpp
+@file TrickHLA/SyncPointTimed.cpp
 @ingroup TrickHLA
-@brief This class provides a sync-point implementation for storing and managing
-TrickHLA synchronization points.
+@brief This class provides a sync-point with a time-stamp.
 
 @copyright Copyright 2019 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
@@ -16,10 +15,10 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{../TrickHLA/Int64Time.cpp}
-@trick_link_dependency{../TrickHLA/SyncPoint.cpp}
-@trick_link_dependency{../TrickHLA/Types.cpp}
-@trick_link_dependency{SyncPntTimed.cpp}
+@trick_link_dependency{Int64Time.cpp}
+@trick_link_dependency{SyncPoint.cpp}
+@trick_link_dependency{SyncPointTimed.cpp}
+@trick_link_dependency{Types.cpp}
 
 @revs_title
 @revs_begin
@@ -39,22 +38,19 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPoint.hh"
+#include "TrickHLA/SyncPointTimed.hh"
 #include "TrickHLA/Types.hh"
-
-// IMSim include files.
-#include "IMSim/SyncPntTimed.hh"
-#include "IMSim/SyncPntTimedLoggable.hh"
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
 using namespace TrickHLA;
-using namespace IMSim;
 
 /*!
  * @job_class{initialization}
  */
-SyncPntTimed::SyncPntTimed( std::wstring const &label )
-   : SyncPoint( label ), time( 0.0 )
+SyncPointTimed::SyncPointTimed()
+   : SyncPoint( TrickHLA::SYNC_PT_TYPE_TIME ),
+     time( 0.0 )
 {
    return;
 }
@@ -62,8 +58,22 @@ SyncPntTimed::SyncPntTimed( std::wstring const &label )
 /*!
  * @job_class{initialization}
  */
-SyncPntTimed::SyncPntTimed( Int64Time const &t, std::wstring const &label )
-   : SyncPoint( label ), time( t )
+SyncPointTimed::SyncPointTimed(
+   wstring const &label )
+   : SyncPoint( label, TrickHLA::SYNC_PT_TYPE_TIME ),
+     time( 0.0 )
+{
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+SyncPointTimed::SyncPointTimed(
+   wstring const   &label,
+   Int64Time const &t )
+   : SyncPoint( label, TrickHLA::SYNC_PT_TYPE_TIME ),
+     time( t )
 {
    return;
 }
@@ -71,12 +81,12 @@ SyncPntTimed::SyncPntTimed( Int64Time const &t, std::wstring const &label )
 /*!
  * @job_class{shutdown}
  */
-SyncPntTimed::~SyncPntTimed()
+SyncPointTimed::~SyncPointTimed()
 {
    return;
 }
 
-std::string SyncPntTimed::to_string()
+std::string SyncPointTimed::to_string()
 {
    string label_str;
    StringUtilities::to_string( label_str, this->label );
@@ -109,27 +119,4 @@ std::string SyncPntTimed::to_string()
    }
 
    return result;
-}
-
-void SyncPntTimed::convert( IMSim::SyncPntLoggable &log_sync_pnt )
-{
-   // Cast the SyncPntLoggable to a SyncPntTimedLoggable.
-   SyncPntTimedLoggable *timed_log_sync_pnt = dynamic_cast< SyncPntTimedLoggable * >( &log_sync_pnt );
-
-   // If the cast failed, then treat it like a regular SyncPoint but warn user.
-   if ( timed_log_sync_pnt == NULL ) {
-      ostringstream errmsg;
-      errmsg
-         << "SyncPntTimed::convert():" << __LINE__
-         << ": Could not cast synchronization point to timed synchronization point!" << THLA_ENDL;
-      send_hs( stderr, errmsg.str().c_str() );
-      log_sync_pnt.label = StringUtilities::ip_strdup_wstring( this->label );
-      log_sync_pnt.state = this->state;
-   } else {
-      timed_log_sync_pnt->time  = this->time.get_base_time();
-      timed_log_sync_pnt->label = StringUtilities::ip_strdup_wstring( this->label );
-      timed_log_sync_pnt->state = this->state;
-   }
-
-   return;
 }

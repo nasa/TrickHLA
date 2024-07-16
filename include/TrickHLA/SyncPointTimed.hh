@@ -1,6 +1,6 @@
 /*!
-@file IMSim/SyncPntTimed.hh
-@ingroup IMSim
+@file TrickHLA/SyncPointTimed.hh
+@ingroup TrickHLA
 @brief This class extends the basis TrickHLA::SyncPnt synchronization point
 implementation to add a time stamp.
 
@@ -17,10 +17,10 @@ NASA, Johnson Space Center\n
 
 @trick_parse{everything}
 
-@python_module{IMSim}
+@python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/IMSim/SyncPntTimed.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPointTimed.cpp}
 @trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPoint.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
@@ -33,8 +33,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_SYNC_PNT_TIMED_HH
-#define TRICKHLA_SYNC_PNT_TIMED_HH
+#ifndef TRICKHLA_SYNC_POINT_TIMED_HH
+#define TRICKHLA_SYNC_POINT_TIMED_HH
 
 // System includes
 #include <string>
@@ -45,9 +45,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/Types.hh"
 
-// IMSim includes.
-#include "IMSim/SyncPntLoggable.hh"
-
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
@@ -57,10 +54,10 @@ NASA, Johnson Space Center\n
 #include RTI1516_HEADER
 #pragma GCC diagnostic pop
 
-namespace IMSim
+namespace TrickHLA
 {
 
-class SyncPntTimed : public TrickHLA::SyncPoint
+class SyncPointTimed : public TrickHLA::SyncPoint
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -70,37 +67,40 @@ class SyncPntTimed : public TrickHLA::SyncPoint
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrIMSim__SyncPntTimed();
+   friend void init_attrTrickHLA__SyncPointTimed();
 
   public:
    //
    // Public constructors and destructor.
    //
+   /*! @brief Default constructor. */
+   SyncPointTimed();
+
    /*! @brief Initialization constructor.
     *  @param label Synchronization point label. */
-   explicit SyncPntTimed( std::wstring const &label );
+   explicit SyncPointTimed( std::wstring const &label );
 
    /*! @brief Initialization constructor.
     *  @param t Synchronization point action time.
     *  @param label Synchronization point label. */
-   SyncPntTimed( TrickHLA::Int64Time const &t, std::wstring const &label );
+   SyncPointTimed( std::wstring const &label, TrickHLA::Int64Time const &t );
 
-   /*! @brief Destructor for the TrickHLA SyncPntTimed class. */
-   virtual ~SyncPntTimed();
+   /*! @brief Destructor for the TrickHLA SyncPointTimed class. */
+   virtual ~SyncPointTimed();
 
    // Accessor functions.
    /*! @brief Get the synchronization point action time.
     *  @return Time for synchronization point action. */
    virtual TrickHLA::Int64Time const &get_time() const
    {
-      return time;
+      return this->time;
    }
 
    /*! @brief Set the synchronization point action time.
     *  @param t The synchronization point action time. */
    virtual void set_time( TrickHLA::Int64Time const &t )
    {
-      time = t;
+      this->time = t;
    }
 
    // Utility functions.
@@ -108,19 +108,10 @@ class SyncPntTimed : public TrickHLA::SyncPoint
     *  @return A string with the synchronization point label and current state. */
    virtual std::string to_string();
 
-   /*! @brief Convert the synchronization point into and loggable
-    * synchronization point.
-    *  @param log_sync_pnt Reference to a loggable synchronization point. */
-   virtual void convert( IMSim::SyncPntLoggable &log_sync_pnt );
-
   protected:
-   TrickHLA::Int64Time time; ///< @trick_units{--} Synchronization point action time.
-
-  private:
-   /*! @brief Default constructor for the TrickHLA SyncPntTimed class. */
-   SyncPntTimed();
+   Int64Time time; ///< @trick_units{--} Synchronization point action time.
 };
 
-} // namespace IMSim
+} // namespace TrickHLA
 
-#endif /* TRICKHLA_SYNC_PNT_TIMED_HH */
+#endif /* TRICKHLA_SYNC_POINT_TIMED_HH */

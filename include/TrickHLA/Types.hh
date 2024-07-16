@@ -285,6 +285,22 @@ typedef enum {
 } SyncPtStateEnum;
 
 /*!
+@enum SyncPtTypeEnum
+@brief Define the TrickHLA synchronization point type enumeration values.
+
+The SyncPtTypeEnum enumeration defines the possible synchronization
+point (sync-point) types for a TrickHLA based federate (i.e. plain, timed).
+*/
+typedef enum {
+
+   SYNC_PT_TYPE_FIRST_VALUE = 0, ///< Set to the First value in the enumeration.
+   SYNC_PT_TYPE_DEFAULT     = 0, ///< Default Sync-point type.
+   SYNC_PT_TYPE_TIME        = 1, ///< Sync-point with an associated time stamp.
+   SYNC_PT_THPE_LAST_VALUE  = 1  ///< Set to the Last value in the enumeration.
+
+} SyncPtTypeEnum;
+
+/*!
 @enum ThreadStateEnum
 @brief Define the Trick child thread state for TrickHLA jobs.
 */

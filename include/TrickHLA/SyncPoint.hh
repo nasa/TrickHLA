@@ -73,9 +73,19 @@ class SyncPoint : public TrickHLA::CheckpointConversionBase
    //
    /*! @brief Default constructor. */
    SyncPoint();
+
    /*! @brief Initialization constructor.
     *  @param lbl Synchronization point label. */
    explicit SyncPoint( std::wstring const &lbl );
+
+   /*! @brief Initialization constructor.
+    *  @param t Synchronization point type. */
+   explicit SyncPoint( SyncPtTypeEnum const t );
+
+   /*! @brief Initialization constructor.
+    *  @param lbl Synchronization point label.
+    *  @param t Synchronization point type.*/
+   SyncPoint( std::wstring const &lbl, SyncPtTypeEnum const t );
 
    /*! @brief Destructor for the TrickHLA SyncPoint class. */
    virtual ~SyncPoint();
@@ -140,6 +150,13 @@ class SyncPoint : public TrickHLA::CheckpointConversionBase
       this->state = s;
    }
 
+   /*! @brief Get the synchronization point type.
+    *  @return The type for this synchronization point. */
+   SyncPtTypeEnum const get_type() const
+   {
+      return this->type;
+   }
+
    // Utility functions.
    /*! @brief Create a C++ string with the synchronization point label and
     *  current state.
@@ -158,6 +175,7 @@ class SyncPoint : public TrickHLA::CheckpointConversionBase
   protected:
    std::wstring    label; ///< @trick_io{**} Sync-point name.
    SyncPtStateEnum state; ///< @trick_units{--} Sync-point state.
+   SyncPtTypeEnum  type;  ///< @trick_units{--} The type of Sync-point.
 
    char *label_chkpt; ///< @trick_io{**} Trick memory allocated label that is checkpointable.
 };
