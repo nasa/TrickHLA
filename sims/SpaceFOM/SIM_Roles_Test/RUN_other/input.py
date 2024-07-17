@@ -223,10 +223,10 @@ federate.set_RRFP_role( False )   # This is NOT the Root Reference Frame Publish
 #--------------------------------------------------------------------------
 # This is the RRFP federate.
 # It doesn't really need to know about any other federates.
-federate.add_known_fededrate( True, str(federate.federate.name) )
-federate.add_known_fededrate( True, master_name )
-federate.add_known_fededrate( True, pacing_name )
-federate.add_known_fededrate( True, rrfp_name )
+federate.add_known_federate( True, str(federate.federate.name) )
+federate.add_known_federate( True, master_name )
+federate.add_known_federate( True, pacing_name )
+federate.add_known_federate( True, rrfp_name )
 
 #--------------------------------------------------------------------------
 # Configure the CRC.

@@ -335,9 +335,9 @@ federate.set_RRFP_role( False )   # This is NOT the Root Reference Frame Publish
 #--------------------------------------------------------------------------
 # This is the PhysicalEntity test federate.
 # It doesn't really need to know about any other federates.
-federate.add_known_fededrate( True, str(federate.federate.name) )
-federate.add_known_fededrate( True, 'MPR' )
-federate.add_known_fededrate( True, dyn_federate_name )
+federate.add_known_federate( True, str(federate.federate.name) )
+federate.add_known_federate( True, 'MPR' )
+federate.add_known_federate( True, dyn_federate_name )
 
 #--------------------------------------------------------------------------
 # Configure the CRC.
