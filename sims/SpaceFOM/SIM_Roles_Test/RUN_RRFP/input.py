@@ -225,9 +225,9 @@ federate.set_RRFP_role( True )    # This is the Root Reference Frame Publisher.
 #--------------------------------------------------------------------------
 # This is the RRFP federate.
 # It doesn't really need to know about any other federates.
-#federate.add_known_fededrate( True, str(federate.federate.name) )
-#federate.add_known_fededrate( True, master_name )
-#federate.add_known_fededrate( True, pacing_name )
+#federate.add_known_federate( True, str(federate.federate.name) )
+#federate.add_known_federate( True, master_name )
+#federate.add_known_federate( True, pacing_name )
 
 #--------------------------------------------------------------------------
 # Configure the CRC.
