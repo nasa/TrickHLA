@@ -191,8 +191,8 @@ federate.set_RRFP_role( False )  # This is NOT the Root Reference Frame Publishe
 #--------------------------------------------------------------------------
 # Add in known required federates.
 #--------------------------------------------------------------------------
-federate.add_known_fededrate( True, str(federate.federate.name) )
-federate.add_known_fededrate( True, 'JEODRefFrames' )
+federate.add_known_federate( True, str(federate.federate.name) )
+federate.add_known_federate( True, 'JEODRefFrames' )
 
 #--------------------------------------------------------------------------
 # Configure the CRC.
