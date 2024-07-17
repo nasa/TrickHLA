@@ -415,11 +415,11 @@ class TrickHLAFederateConfig( object ):
       return
 
 
-   def add_known_fededrate( self, is_required, name ):
+   def add_known_federate( self, is_required, name ):
 
       # You can only add known federates before initialize method is called.
       if self.initialized :
-         print( 'TrickHLAFederateConfig.add_known_fededrate(): Warning, already initialized, function ignored!' )
+         print( 'TrickHLAFederateConfig.add_known_federate(): Warning, already initialized, function ignored!' )
       else:
          self.known_federates.append( ( is_required, str( name ) ) )
 
