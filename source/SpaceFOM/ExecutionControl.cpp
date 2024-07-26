@@ -187,7 +187,7 @@ void ExecutionControl::initialize()
              << " Trick software frame time must be greater than zero. You can"
              << " set the LTrick software frame in the input.py file by using"
              << " this directive with an appropriate time:" << THLA_ENDL
-             << "   trick.exec_set_software_frame( time )" << THLA_ENDL;
+             << "   trick.exec_set_software_frame( t )" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -252,10 +252,8 @@ void ExecutionControl::initialize()
                 << " the Trick software frame (i.e. LCTS % software_frame == 0)!"
                 << " You can set the LCTS and Trick software frame in the input.py"
                 << " file by using these directives with appropriate times:" << THLA_ENDL
-                << "   federate.set_least_common_time_step( "
-                << setprecision( 18 ) << software_frame_sec << " )" << THLA_ENDL
-                << "   trick.exec_set_software_frame( "
-                << setprecision( 18 ) << software_frame_sec << " )" << THLA_ENDL;
+                << "   federate.set_least_common_time_step( t )" << THLA_ENDL
+                << "   trick.exec_set_software_frame( t )" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
       if ( ( least_common_time_step % software_frame_base_time ) != 0 ) {
@@ -271,10 +269,8 @@ void ExecutionControl::initialize()
                 << " the Trick software frame (i.e. LCTS % software_frame == 0)!"
                 << " You can set the LCTS and Trick software frame in the input.py"
                 << " file by using these directives with appropriate times:" << THLA_ENDL
-                << "   federate.set_least_common_time_step( "
-                << setprecision( 18 ) << software_frame_sec << " )" << THLA_ENDL
-                << "   trick.exec_set_software_frame( "
-                << setprecision( 18 ) << software_frame_sec << " )" << THLA_ENDL;
+                << "   federate.set_least_common_time_step( t )" << THLA_ENDL
+                << "   trick.exec_set_software_frame( t )" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 

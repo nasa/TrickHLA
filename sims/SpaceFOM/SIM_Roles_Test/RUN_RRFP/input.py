@@ -248,8 +248,7 @@ federate.scale_trick_tics_to_base_time_units()
 # Must specify a federate HLA lookahead value in seconds.
 federate.set_lookahead_time( 0.250 )
 
-# For this non-Pacing/non-realtime federate, set the Trick software frame
-# to the lookahead time by default.
+# For SpaceFOM, we also need to specify the Trick software frame time.
 trick.exec_set_software_frame( 0.250 )
 
 # Setup Time Management parameters.
