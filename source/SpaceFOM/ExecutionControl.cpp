@@ -277,6 +277,19 @@ void ExecutionControl::initialize()
                 << setprecision( 18 ) << software_frame_sec << " )" << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
+
+      // Verify the time padding is valid.
+      int64_t padding_base_time = Int64BaseTime::to_base_time( get_time_padding() );
+      if ( ( padding_base_time % least_common_time_step ) != 0 ) {
+         ostringstream errmsg;
+         errmsg << "TrickHLA::ExecutionControl::initialize():" << __LINE__
+                << " ERROR: Time padding value ("
+                << setprecision( 18 ) << get_time_padding()
+                << " seconds) must be an integer multiple of the Least Common Time Step ("
+                << this->least_common_time_step << " " << Int64BaseTime::get_units()
+                << ")!" << THLA_NEWLINE;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
    }
 
    // Add the Mode Transition Request synchronization points.
@@ -1220,7 +1233,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
       }
 
       // The Master federate padding time must be an integer multiple of the LCTS.
-      int64_t MPT = Int64BaseTime::to_base_time( this->time_padding );
+      int64_t MPT = Int64BaseTime::to_base_time( get_time_padding() );
       if ( ( LCTS <= 0 ) || ( MPT % LCTS ) != 0 ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
@@ -1668,7 +1681,7 @@ void ExecutionControl::set_next_execution_control_mode(
          ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time ); // immediate
          ExCO->set_next_mode_cte_time( get_cte_time() );
          if ( ExCO->get_next_mode_cte_time() > -std::numeric_limits< double >::max() ) {
-            ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + this->time_padding ); // Some time in the future.
+            ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + get_time_padding() ); // Some time in the future.
          }
          break;
 
@@ -1679,11 +1692,11 @@ void ExecutionControl::set_next_execution_control_mode(
          ExCO->set_next_execution_mode( EXECUTION_MODE_FREEZE );
 
          // Set the next mode times.
-         this->next_mode_scenario_time = get_scenario_time() + this->time_padding; // Some time in the future.
+         this->next_mode_scenario_time = this->get_scenario_time() + get_time_padding(); // Some time in the future.
          ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time );
          ExCO->set_next_mode_cte_time( get_cte_time() );
          if ( ExCO->get_next_mode_cte_time() > -std::numeric_limits< double >::max() ) {
-            ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + this->time_padding ); // Some time in the future.
+            ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + get_time_padding() ); // Some time in the future.
          }
 
          // Set the ExecutionControl freeze times.
@@ -1848,7 +1861,7 @@ bool ExecutionControl::process_mode_transition_request()
          // Tell Trick to shutdown sometime in the future.
          // The SpaceFOM ExecutionControl shutdown transition will be made from
          // the TrickHLA::Federate::shutdown() job.
-         the_exec->stop( the_exec->get_sim_time() + this->time_padding );
+         the_exec->stop( the_exec->get_sim_time() + get_time_padding() );
          return true;
          break;
 
@@ -2976,10 +2989,26 @@ void ExecutionControl::refresh_least_common_time_step()
 
 void ExecutionControl::set_time_padding( double t )
 {
-   int64_t base_time = Int64BaseTime::to_base_time( t );
+   int64_t padding_base_time = Int64BaseTime::to_base_time( t );
+
+   // The Master federate padding time must be an integer multiple of 3 or
+   // more times the Least Common Time Step (LCTS). This will give commands
+   // time to propagate through the system and still have time for mode
+   // transitions.
+   if ( padding_base_time < ( 3 * this->least_common_time_step ) ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
+             << " ERROR: Mode transition padding time (" << padding_base_time
+             << " " << Int64BaseTime::get_units()
+             << ") is not a multiple of 3 or more of the ExCO"
+             << " Least Common Time Step (" << this->least_common_time_step
+             << " " << Int64BaseTime::get_units()
+             << ")!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
 
    // Need to check that time padding is valid.
-   if ( ( base_time % this->least_common_time_step ) != 0 ) {
+   if ( ( padding_base_time % this->least_common_time_step ) != 0 ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
              << " ERROR: Time padding value (" << t
@@ -2989,21 +3018,5 @@ void ExecutionControl::set_time_padding( double t )
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   // The Master federate padding time must be an integer multiple of 3 or
-   // more times the Least Common Time Step (LCTS). This will give commands
-   // time to propagate through the system and still have time for mode
-   // transitions.
-   if ( base_time < ( 3 * this->least_common_time_step ) ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
-             << " ERROR: Mode transition padding time (" << base_time
-             << " " << Int64BaseTime::get_units()
-             << ") is not a multiple of 3 or more of the ExCO"
-             << " Least Common Time Step (" << this->least_common_time_step
-             << " " << Int64BaseTime::get_units()
-             << ")!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   this->time_padding = Int64BaseTime::to_seconds( base_time );
+   this->time_padding = Int64BaseTime::to_seconds( padding_base_time );
 }

@@ -473,10 +473,25 @@ void ExecutionControl::refresh_least_common_time_step()
 
 void ExecutionControl::set_time_padding( double t )
 {
-   int64_t base_time = Int64BaseTime::to_base_time( t );
+   int64_t padding_base_time = Int64BaseTime::to_base_time( t );
+
+   // The Master federate padding time must be an integer multiple of 3 or
+   // more times the Least Common Time Step (LCTS). This will give commands
+   // time to propagate through the system and still have time for mode
+   // transitions.
+   if ( padding_base_time < ( 3 * this->least_common_time_step ) ) {
+      ostringstream errmsg;
+      errmsg << "TrickHLA::ExecutionControl::set_time_padding():" << __LINE__
+             << " ERROR: Mode transition padding time (" << padding_base_time
+             << " " << Int64BaseTime::get_units()
+             << ") is not a multiple of 3 or more of the ExCO"
+             << " Least Common Time Step (" << this->least_common_time_step
+             << " " << Int64BaseTime::get_units() << ")!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
 
    // Need to check that time padding is valid.
-   if ( ( base_time % this->least_common_time_step ) != 0 ) {
+   if ( ( padding_base_time % this->least_common_time_step ) != 0 ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::set_time_padding():" << __LINE__
              << " ERROR: Time padding value (" << t
@@ -486,22 +501,7 @@ void ExecutionControl::set_time_padding( double t )
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   // The Master federate padding time must be an integer multiple of 3 or
-   // more times the Least Common Time Step (LCTS). This will give commands
-   // time to propagate through the system and still have time for mode
-   // transitions.
-   if ( base_time < ( 3 * this->least_common_time_step ) ) {
-      ostringstream errmsg;
-      errmsg << "TrickHLA::ExecutionControl::set_time_padding():" << __LINE__
-             << " ERROR: Mode transition padding time (" << base_time
-             << " " << Int64BaseTime::get_units()
-             << ") is not a multiple of 3 or more of the ExCO"
-             << " Least Common Time Step (" << this->least_common_time_step
-             << " " << Int64BaseTime::get_units() << ")!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   this->time_padding = Int64BaseTime::to_seconds( base_time );
+   this->time_padding = Int64BaseTime::to_seconds( padding_base_time );
 }
 
 void ExecutionControl::start_federation_save_at_scenario_time(

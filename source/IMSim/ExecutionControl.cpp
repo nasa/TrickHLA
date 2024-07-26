@@ -1411,7 +1411,7 @@ void ExecutionControl::set_next_execution_control_mode(
          this->next_mode_scenario_time = get_scenario_time(); // Immediate
          this->next_mode_cte_time      = get_cte_time();
          if ( this->next_mode_cte_time > -std::numeric_limits< double >::max() ) {
-            this->next_mode_cte_time = this->next_mode_cte_time + this->time_padding; // Some time in the future.
+            this->next_mode_cte_time = this->next_mode_cte_time + get_time_padding(); // Some time in the future.
          }
 
          break;
@@ -1426,7 +1426,7 @@ void ExecutionControl::set_next_execution_control_mode(
          this->next_mode_scenario_time = get_scenario_time() + this->time_padding; // Some time in the future.
          this->next_mode_cte_time      = get_cte_time();
          if ( this->next_mode_cte_time > -std::numeric_limits< double >::max() ) {
-            this->next_mode_cte_time = this->next_mode_cte_time + this->time_padding; // Some time in the future.
+            this->next_mode_cte_time = this->next_mode_cte_time + get_time_padding(); // Some time in the future.
          }
 
          // Set the ExecutionControl freeze times.
@@ -1590,7 +1590,7 @@ bool ExecutionControl::process_mode_transition_request()
          // Tell Trick to shutdown sometime in the future.
          // The IMSim ExecutionControl shutdown transition will be made from
          // the TrickHLA::Federate::shutdown() job.
-         the_exec->stop( the_exec->get_sim_time() + this->time_padding );
+         the_exec->stop( the_exec->get_sim_time() + get_time_padding() );
 
          return true;
          break;
