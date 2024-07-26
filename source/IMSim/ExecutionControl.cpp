@@ -22,6 +22,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/Manager.cpp}
 @trick_link_dependency{../TrickHLA/SleepTimeout.cpp}
 @trick_link_dependency{../TrickHLA/SyncPoint.cpp}
+@trick_link_dependency{../TrickHLA/SyncPointTimed.cpp}
+@trick_link_dependency{../TrickHLA/SyncPointManagerBase.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
 @trick_link_dependency{../TrickHLA/Utilities.cpp}
 @trick_link_dependency{ExecutionConfiguration.cpp}
@@ -32,6 +34,7 @@ NASA, Johnson Space Center\n
 @revs_begin
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, Jan 2019, --, IMSim support and testing.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, June 2019, --, Version 3 rewrite.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, July 2024, --, Refactor to use sync-point manager.}
 @revs_end
 
 */
@@ -63,13 +66,13 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPoint.hh"
+#include "TrickHLA/SyncPointTimed.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
 
 // IMSim include files.
 #include "IMSim/ExecutionConfiguration.hh"
 #include "IMSim/ExecutionControl.hh"
-#include "IMSim/SyncPntTimedLoggable.hh"
 #include "IMSim/Types.hh"
 
 // IMSim file level declarations.
@@ -102,14 +105,14 @@ using namespace IMSim;
 ExecutionControl::ExecutionControl(
    IMSim::ExecutionConfiguration &imsim_config )
    : TrickHLA::ExecutionControlBase( imsim_config ),
-     pending_mtr( IMSim::MTR_UNINITIALIZED ),
+     // TODO:remove     pending_mtr( IMSim::MTR_UNINITIALIZED ),
      freeze_inter_count( 0 ),
      freeze_interaction( NULL ),
      scenario_time_epoch( 0.0 ),
      current_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED ),
-     next_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED ),
-     logged_sync_pts_count( 0 ),
-     loggable_sync_pts( NULL )
+     next_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED )
+// TODO:remove     logged_sync_pts_count( 0 ),
+// TODO:remove     loggable_sync_pts( NULL )
 {
    // The next_mode_scenario_time time for the next federation execution mode
    // change expressed as a federation scenario time reference. Note: this is
@@ -163,22 +166,24 @@ ExecutionControl::~ExecutionControl()
       freeze_inter_count = 0;
    }
 
-   // Free the memory used by the array of running Federates for the Federation.
-   if ( loggable_sync_pts != NULL ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "IMSim::ExecutionControl::~ExecutionControl() logged_sync_pts_count=%d %c",
-                  logged_sync_pts_count, THLA_NEWLINE );
+   /*TODO:remove
+      // Free the memory used by the array of running Federates for the Federation.
+      if ( loggable_sync_pts != NULL ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+            send_hs( stdout, "IMSim::ExecutionControl::~ExecutionControl() logged_sync_pts_count=%d %c",
+                     logged_sync_pts_count, THLA_NEWLINE );
+         }
+         for ( size_t i = 0; i < logged_sync_pts_count; ++i ) {
+            loggable_sync_pts[i].clear();
+         }
+         if ( trick_MM->delete_var( static_cast< void * >( loggable_sync_pts ) ) ) {
+            send_hs( stderr, "IMSim::ExecutionControl::~ExecutionControl():%d ERROR deleting Trick Memory for 'loggable_sync_pts'%c",
+                     __LINE__, THLA_NEWLINE );
+         }
+         loggable_sync_pts     = NULL;
+         logged_sync_pts_count = 0;
       }
-      for ( size_t i = 0; i < logged_sync_pts_count; ++i ) {
-         loggable_sync_pts[i].clear();
-      }
-      if ( trick_MM->delete_var( static_cast< void * >( loggable_sync_pts ) ) ) {
-         send_hs( stderr, "IMSim::ExecutionControl::~ExecutionControl():%d ERROR deleting Trick Memory for 'loggable_sync_pts'%c",
-                  __LINE__, THLA_NEWLINE );
-      }
-      loggable_sync_pts     = NULL;
-      logged_sync_pts_count = 0;
-   }
+   */
 }
 
 /*!
@@ -218,10 +223,13 @@ void ExecutionControl::initialize()
       exec_set_software_frame( software_frame_time );
    }
 
-   // Add the Mode Transition Request synchronization points.
-   add_sync_point( IMSim::MTR_RUN_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
-   add_sync_point( IMSim::MTR_FREEZE_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
-   add_sync_point( IMSim::MTR_SHUTDOWN_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
+   // Register initialization synchronization points used for IMSim.
+   add_sync_point( IMSim::SIM_CONFIG_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
+   add_sync_point( IMSim::INITIALIZE_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
+   add_sync_point( IMSim::INIT_COMPLETE_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
+   add_sync_point( IMSim::STARTUP_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
+   add_sync_point( IMSim::FEDSAVE_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
+   add_sync_point( IMSim::FEDRUN_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
 
    // Make sure we initialize the base class.
    TrickHLA::ExecutionControlBase::initialize();
@@ -460,22 +468,17 @@ initiating restore request for '%s' with the RTI.%c",
 
             // Add and register the "STARTUP" sync point with all joined federates
             // so we can achieve it later.
-            if ( contains( IMSim::STARTUP_SYNC_POINT ) ) {
-               send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d Did not add duplicate synchronization point label '%ls'.%c",
-                        __LINE__, IMSim::STARTUP_SYNC_POINT.c_str(), THLA_NEWLINE );
-            } else {
+            if ( !contains_sync_point( IMSim::STARTUP_SYNC_POINT ) ) {
                add_sync_point( IMSim::STARTUP_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d Label: '%ls'%c",
                            __LINE__, IMSim::STARTUP_SYNC_POINT.c_str(), THLA_NEWLINE );
                }
             }
-            register_sync_point( *federate->get_RTI_ambassador(),
-                                 federate->get_joined_federate_handles(),
-                                 IMSim::STARTUP_SYNC_POINT );
+            register_sync_point( IMSim::STARTUP_SYNC_POINT );
 
             // Wait for the announcement of "STARTUP" sync-point before proceeding.
-            wait_for_sync_point_announcement( federate, IMSim::STARTUP_SYNC_POINT );
+            wait_for_sync_point_announced( IMSim::STARTUP_SYNC_POINT );
 
             // Restart myself...
             manager->restart_initialization();
@@ -485,7 +488,7 @@ initiating restore request for '%s' with the RTI.%c",
 
             // Achieve the "STARTUP" sync-point and wait for the
             // federation synchronize on it.
-            federate->achieve_and_wait_for_synchronization( IMSim::STARTUP_SYNC_POINT );
+            achieve_sync_point_and_wait_for_synchronization( IMSim::STARTUP_SYNC_POINT );
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                if ( is_late_joiner() ) {
@@ -519,15 +522,31 @@ Simulation has started and is now running...%c",
          // Make sure all required federates have joined the federation.
          federate->wait_for_required_federates_to_join();
 
-         // Register the Multi-phase intialization sync-points just for the
-         // joined federates.
-         register_all_sync_points( *federate->get_RTI_ambassador(),
-                                   federate->get_joined_federate_handles() );
+         // Register the initialization synchronization points used to control
+         // the IMSim startup process.
+         register_sync_point( IMSim::INIT_STARTED_SYNC_POINT, // TODO: configure all sync-point namess
+                              federate->get_joined_federate_handles() );
+         register_sync_point( IMSim::OBJECTS_DISCOVERED_SYNC_POINT,
+                              federate->get_joined_federate_handles() );
+         register_sync_point( IMSim::ROOT_FRAME_DISCOVERED_SYNC_POINT,
+                              federate->get_joined_federate_handles() );
 
          // Register all the user defined multiphase initialization
          // synchronization points just for the joined federates.
-         multiphase_init_sync_pnt_list.register_all_sync_points( *( federate->get_RTI_ambassador() ),
-                                                                 federate->get_joined_federate_handles() );
+         register_all_sync_points( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST,
+                                   federate->get_joined_federate_handles() );
+
+         /* TODO:remove
+                  // Register the Multi-phase initialization sync-points just for the
+                  // joined federates.
+                  register_all_sync_points( *federate->get_RTI_ambassador(),
+                                            federate->get_joined_federate_handles() );
+
+                  // Register all the user defined multiphase initialization
+                  // synchronization points just for the joined federates.
+                  multiphase_init_sync_pnt_list.register_all_sync_points( *( federate->get_RTI_ambassador() ),
+                                                                          federate->get_joined_federate_handles() );
+         */
 
          // Call publish_and_subscribe AFTER we've initialized the manager,
          // federate, and FedAmb.
@@ -563,24 +582,25 @@ Simulation has started and is now running...%c",
 
          // Wait for the "sim_config", "initialize", and "startup" sync-points
          // to be registered.
-         wait_for_all_announcements( federate );
+         wait_for_all_sync_points_announced( IMSim::IMSIM_SYNC_POINT_LIST );
 
          // Achieve the "sim_config" sync-point and wait for the federation
          // to be synchronized on it.
-         federate->achieve_and_wait_for_synchronization( IMSim::SIM_CONFIG_SYNC_POINT );
+         achieve_sync_point_and_wait_for_synchronization( IMSim::SIM_CONFIG_SYNC_POINT );
 
          // Send the "Simulation Configuration".
          send_execution_configuration();
 
-         // DANNY2.7 When master is started in freeze, create a pause sync point
-         //  so other feds will start in freeze.
-         if ( exec_get_freeze_command() != 0 ) {
-            federate->register_generic_sync_point( IMSim::STARTUP_FREEZE_SYNC_POINT, 0.0 );
-         }
-
+         /*TODO: Double check this is not part of IMSim scheme and remove.
+                  // DANNY2.7 When master is started in freeze, create a pause sync point
+                  //  so other feds will start in freeze.
+                  if ( exec_get_freeze_command() != 0 ) {
+                     register_sync_point( IMSim::STARTUP_FREEZE_SYNC_POINT, 0.0 );
+                  }
+         */
          // Achieve the "initialize" sync-point and wait for the federation
          // to be synchronized on it.
-         federate->achieve_and_wait_for_synchronization( IMSim::INITIALIZE_SYNC_POINT );
+         achieve_sync_point_and_wait_for_synchronization( IMSim::INITIALIZE_SYNC_POINT );
       }
    } else {
 
@@ -649,7 +669,7 @@ loading of the federate from the checkpoint file '%s'.%c",
          }
 
          // Wait for the announcement of "STARTUP" sync-point before proceeding.
-         wait_for_sync_point_announcement( federate, IMSim::STARTUP_SYNC_POINT );
+         wait_for_sync_point_announced( IMSim::STARTUP_SYNC_POINT );
 
          // restart myself...
          manager->restart_initialization();
@@ -659,7 +679,7 @@ loading of the federate from the checkpoint file '%s'.%c",
 
          // Achieve the "STARTUP" sync-point and wait for the federation
          // to be synchronized on it.
-         federate->achieve_and_wait_for_synchronization( IMSim::STARTUP_SYNC_POINT );
+         achieve_sync_point_and_wait_for_synchronization( IMSim::STARTUP_SYNC_POINT );
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             if ( is_late_joiner() ) {
@@ -716,18 +736,18 @@ Simulation has started and is now running...%c",
 
             // Wait for the "sim_config", "initialize", and "startup" sync-points
             // to be registered.
-            wait_for_all_announcements( federate );
+            wait_for_all_sync_points_announced();
 
             // Achieve the "sim_config" sync-point and wait for the federation
             // to be synchronized on it.
-            federate->achieve_and_wait_for_synchronization( IMSim::SIM_CONFIG_SYNC_POINT );
+            achieve_sync_point_and_wait_for_synchronization( IMSim::SIM_CONFIG_SYNC_POINT );
 
             // Wait for the "Simulation Configuration" object attribute reflection.
             receive_execution_configuration();
 
             // Achieve the "initialize" sync-point and wait for the federation
             // to be synchronized on it.
-            federate->achieve_and_wait_for_synchronization( IMSim::INITIALIZE_SYNC_POINT );
+            achieve_sync_point_and_wait_for_synchronization( IMSim::INITIALIZE_SYNC_POINT );
 
          } else {
             //**** Late Joining Federate. ****
@@ -817,7 +837,8 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
 
       // We are not a late joiner if the Sim-Config sync-point exists are we
       // are a member for it.
-      if ( !manager->is_restore_determined() && contains( IMSim::SIM_CONFIG_SYNC_POINT ) ) { // cppcheck-suppress [knownConditionTrueFalse]
+      if ( !manager->is_restore_determined()
+           && contains_sync_point( IMSim::SIM_CONFIG_SYNC_POINT ) ) { // cppcheck-suppress [knownConditionTrueFalse]
          this->late_joiner            = false;
          this->late_joiner_determined = true;
       }
@@ -878,7 +899,7 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
          send_hs( stdout, "IMSim::ExecutionControl::determine_if_late_joining_or_restoring_federate_IMSim():%d Late Joining Federate:%s%c",
                   __LINE__, ( is_late_joiner() ? "Yes" : "No" ), THLA_NEWLINE );
       }
-      return FEDERATE_JOIN_LATE;
+      return TrickHLA::FEDERATE_JOIN_LATE;
 
    } else if ( manager->is_restore_determined() ) {
 
@@ -886,7 +907,7 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
          send_hs( stdout, "IMSim::ExecutionControl::determine_if_late_joining_or_restoring_federate_IMSim():%d Restoring the Federate!%c",
                   __LINE__, THLA_NEWLINE );
       }
-      return FEDERATE_JOIN_RESTORING;
+      return TrickHLA::FEDERATE_JOIN_RESTORING;
 
    } else {
       ostringstream errmsg;
@@ -896,7 +917,7 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   return FEDERATE_JOIN_NOMINAL;
+   return TrickHLA::FEDERATE_JOIN_NOMINAL;
 }
 
 /*!
@@ -909,7 +930,7 @@ void ExecutionControl::post_multi_phase_init_processes()
 
    if ( is_master() ) {
       // Let the late joining federates know that we have completed initialization.
-      federate->register_generic_sync_point( IMSim::INIT_COMPLETE_SYNC_POINT );
+      register_sync_point( IMSim::INIT_COMPLETE_SYNC_POINT );
    }
 
    // When we join the federation, setup the list of current federates.
@@ -927,7 +948,7 @@ void ExecutionControl::post_multi_phase_init_processes()
    } else {
       // Achieve the "startup" sync-point and wait for the federation
       // to be synchronized on it.
-      federate->achieve_and_wait_for_synchronization( IMSim::STARTUP_SYNC_POINT );
+      achieve_sync_point_and_wait_for_synchronization( IMSim::STARTUP_SYNC_POINT );
    }
 }
 
@@ -995,8 +1016,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    freeze_interaction->set_subscribe();
    freeze_interaction->set_parameter_count( 1 );
    Parameter *tParm = reinterpret_cast< Parameter * >(
-      alloc_type( freeze_interaction->get_parameter_count(),
-                  "TrickHLA::Parameter" ) );
+      alloc_type( freeze_interaction->get_parameter_count(), "TrickHLA::Parameter" ) );
    if ( tParm == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
@@ -1088,9 +1108,9 @@ void ExecutionControl::setup_interaction_ref_attributes()
  */
 void ExecutionControl::setup_object_RTI_handles()
 {
-   ExecutionConfiguration *SimConfig = get_execution_configuration();
-   if ( SimConfig != NULL ) {
-      manager->setup_object_RTI_handles( 1, SimConfig );
+   ExecutionConfiguration *ExCO = get_execution_configuration();
+   if ( ExCO != NULL ) {
+      manager->setup_object_RTI_handles( 1, ExCO );
    } else {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::setup_object_RTI_handles():" << __LINE__
@@ -1109,226 +1129,6 @@ void ExecutionControl::setup_interaction_RTI_handles()
    manager->setup_interaction_RTI_handles( 1, freeze_interaction );
 
    return;
-}
-
-/*!
- * @job_class{initialization}
- */
-void ExecutionControl::add_initialization_sync_points()
-{
-
-   // Add the initialization synchronization points used for startup regulation.
-   // This version of ExecutionControl does not have any.
-
-   // Add the multiphase initialization synchronization points.
-   add_multiphase_init_sync_points();
-}
-
-/*!
- * @job_class{initialization}
- */
-void ExecutionControl::add_multiphase_init_sync_points()
-{
-   // Call the base class method to add user defined multi-phase
-   // initialization synchronization points.
-   ExecutionControlBase::add_multiphase_init_sync_points();
-
-   // Register initialization synchronization points used for startup regulation.
-   add_sync_point( IMSim::STARTUP_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
-   add_sync_point( IMSim::INITIALIZE_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
-   add_sync_point( IMSim::SIM_CONFIG_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
-}
-
-void ExecutionControl::announce_sync_point(
-   RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-   wstring const                    &label,
-   RTI1516_USERDATA const           &user_supplied_tag )
-{
-   // Parse the sync-point to see if we have a pause sync-point.
-   string label_str;
-   StringUtilities::to_string( label_str, label );
-   vector< string > pause_label_vec;
-   StringUtilities::tokenize( label_str, pause_label_vec, "_" );
-
-   // Determine if we have a pause sync-point of the form "pause_1.0".
-   if ( !pause_label_vec.empty() && ( pause_label_vec[0] == "pause" ) ) {
-      Int64Time *pauseTime = NULL;
-
-      try {
-         // If we have a user supplied tag it should hold the pause time.
-         if ( user_supplied_tag.size() > 0 ) {
-            pauseTime = new Int64Time;
-            pauseTime->decode( user_supplied_tag );
-         } else if ( pause_label_vec.size() == 2 ) {
-            // We have the second part after the "_" delimiter of the
-            // "pause_1.0" label, which is the pause time so decode it.
-            pauseTime = new Int64Time( atof( pause_label_vec[1].c_str() ) );
-         } else {
-            // We could not extract a pause time so use a default of 0.0.
-            pauseTime = new Int64Time( 0.0 );
-         }
-      } catch ( InternalError &e ) {
-         if ( pauseTime == NULL ) {
-            pauseTime = new Int64Time( 0.0 );
-         } else {
-            pauseTime->set( 0.0 );
-         }
-      } catch ( CouldNotDecode &e ) {
-         if ( pauseTime == NULL ) {
-            pauseTime = new Int64Time( 0.0 );
-         } else {
-            pauseTime->set( 0.0 );
-         }
-      }
-
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "IMSim::ExecutionControl::announce_sync_point():%d IMSim Pause Sync-Point:'%ls' Pause-time:%g %c",
-                  __LINE__, label.c_str(), pauseTime->get_time_in_seconds(), THLA_NEWLINE );
-      }
-      add_pause( pauseTime, label );
-
-   } else if ( label.compare( IMSim::INIT_COMPLETE_SYNC_POINT ) == 0 ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "IMSim::ExecutionControl::announce_sync_point():%d IMSim Sync-Point '%ls' Exists %c",
-                  __LINE__, label.c_str(), THLA_NEWLINE );
-      }
-      this->init_complete_sp_exists = true;
-
-   } else if ( contains( label ) ) {
-      // Mark init sync-point as existing/announced.
-      if ( mark_announced( label ) ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "IMSim::ExecutionControl::announce_sync_point():%d IMSim Initialization Sync-Point:'%ls'%c",
-                     __LINE__, label.c_str(), THLA_NEWLINE );
-         }
-      }
-
-   } else if ( multiphase_init_sync_pnt_list.contains( label ) ) {
-      // Mark init sync-point as existing/announced.
-      if ( multiphase_init_sync_pnt_list.mark_announced( label ) ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "IMSim::ExecutionControl::announce_sync_point():%d IMSim Multiphase Init Sync-Point:'%ls'%c",
-                     __LINE__, label.c_str(), THLA_NEWLINE );
-         }
-      }
-
-   } else if ( ( label.compare( IMSim::FEDSAVE_SYNC_POINT ) == 0 )
-               || ( label.compare( IMSim::FEDRUN_SYNC_POINT ) == 0 ) ) {
-      // TODO: For now these sync-points are treated like a pause sync-point
-      // until we refactor the generic sync-points to not use a time.
-
-      // Process the sync-point as a requested pause.
-      Int64Time *pauseTime = new Int64Time( 0.0 );
-
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         if ( label.compare( IMSim::FEDRUN_SYNC_POINT ) == 0 ) {
-            send_hs( stdout, "IMSim::ExecutionControl::announce_sync_point():%d IMSim Go to Run Sync-Point:'%ls'%c",
-                     __LINE__, label.c_str(), THLA_NEWLINE );
-         } else {
-            send_hs( stdout, "IMSim::ExecutionControl::announce_sync_point():%d IMSim Pause Sync-Point:'%ls' Pause-time:%g %c",
-                     __LINE__, label.c_str(), pauseTime->get_time_in_seconds(), THLA_NEWLINE );
-         }
-      }
-      add_pause( pauseTime, label );
-
-   } // By default, mark an unrecognized synchronization point as achieved.
-   else {
-
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "IMSim::ExecutionControl::announce_sync_point():%d Unrecognized synchronization point:'%ls', which will be achieved.%c",
-                  __LINE__, label.c_str(), THLA_NEWLINE );
-      }
-
-      // Unknown synchronization point so achieve it but don't wait for the
-      // federation to by synchronized on it.
-      achieve_sync_point( rti_ambassador, label );
-   }
-}
-
-/*!
- * @job_class{initialization}
- */
-void ExecutionControl::achieve_all_multiphase_init_sync_points(
-   RTI1516_NAMESPACE::RTIambassador &rti_ambassador )
-{
-   // Iterate through this ExecutionControl's synchronization point list.
-   vector< SyncPoint * >::const_iterator i;
-   for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-      SyncPoint *sp = ( *i );
-
-      // Achieve a synchronization point if it is not already achieved and is
-      // not one of the predefined ExecutionControl synchronization points.
-      if ( ( sp != NULL ) && sp->exists() && !sp->is_achieved()
-           && ( sp->get_label().compare( IMSim::STARTUP_SYNC_POINT ) != 0 )
-           && ( sp->get_label().compare( IMSim::INITIALIZE_SYNC_POINT ) != 0 )
-           && ( sp->get_label().compare( IMSim::SIM_CONFIG_SYNC_POINT ) != 0 ) ) {
-         // Achieve the synchronization point.
-         rti_ambassador.synchronizationPointAchieved( sp->get_label() );
-      }
-   }
-}
-
-/*!
- * @job_class{initialization}
- */
-void ExecutionControl::wait_for_all_multiphase_init_sync_points()
-{
-   // Iterate through this ExecutionControl's synchronization point list.
-   vector< SyncPoint * >::const_iterator i;
-   for ( i = sync_point_list.begin(); i != sync_point_list.end(); ++i ) {
-      SyncPoint *sp = ( *i );
-
-      // Wait for a synchronization point if it is not already achieved and is
-      // not one of the predefined ExecutionControl synchronization points.
-      if ( ( sp != NULL ) && sp->exists() && !sp->is_achieved()
-           && ( sp->get_label().compare( IMSim::STARTUP_SYNC_POINT ) != 0 )
-           && ( sp->get_label().compare( IMSim::INITIALIZE_SYNC_POINT ) != 0 )
-           && ( sp->get_label().compare( IMSim::SIM_CONFIG_SYNC_POINT ) != 0 ) ) {
-
-         int64_t      wallclock_time;
-         SleepTimeout print_timer( federate->wait_status_time );
-         SleepTimeout sleep_timer;
-
-         // Wait for the federation to synchronized on the sync-point.
-         while ( !sp->is_achieved() ) {
-
-            // Always check to see is a shutdown was received.
-            federate->check_for_shutdown_with_termination();
-
-            // Pause and release the processor for short sleep value.
-            sleep_timer.sleep();
-
-            // Periodically check to make sure the federate is still part of
-            // the federation execution.
-            if ( !sp->is_achieved() ) {
-
-               // To be more efficient, we get the time once and share it.
-               wallclock_time = sleep_timer.time();
-
-               if ( sleep_timer.timeout( wallclock_time ) ) {
-                  sleep_timer.reset();
-                  if ( !federate->is_execution_member() ) {
-                     ostringstream errmsg;
-                     errmsg << "IMSim::ExecutionControl::wait_for_all_multiphase_init_sync_points():" << __LINE__
-                            << " ERROR: Unexpectedly the Federate is no longer an execution"
-                            << " member. This means we are either not connected to the"
-                            << " RTI or we are no longer joined to the federation"
-                            << " execution because someone forced our resignation at"
-                            << " the Central RTI Component (CRC) level!"
-                            << THLA_ENDL;
-                     DebugHandler::terminate_with_message( errmsg.str() );
-                  }
-               }
-
-               if ( print_timer.timeout( wallclock_time ) ) {
-                  print_timer.reset();
-                  send_hs( stdout, "ExecutionControl::wait_for_all_multiphase_init_sync_points():%d Waiting...%c",
-                           __LINE__, THLA_NEWLINE );
-               }
-            }
-         }
-      }
-   }
 }
 
 void ExecutionControl::publish()
@@ -1427,147 +1227,6 @@ void ExecutionControl::unsubscribe()
    }
 }
 
-bool ExecutionControl::mark_synchronized( std::wstring const &label )
-{
-
-   // FIXME: Is this really necessary.
-   clear_pause( label );
-
-   size_t found;
-   found = label.find( IMSim::FEDSAVE_SYNC_POINT );
-   if ( found != wstring::npos ) {
-      // If this is the federate which is to initiate the federation save,
-      // set the flag which will signal perform_checkpoint() to do so...
-      if ( federate->get_announce_save() ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "IMSim::ExecutionControl::mark_synchronized():%d '%ls' Synchronization Point, setting initiate_save_flag!%c",
-                     __LINE__, label.c_str(), THLA_NEWLINE );
-         }
-         federate->set_initiate_save_flag( true );
-      }
-   }
-   found = label.find( IMSim::FEDRUN_SYNC_POINT );
-   if ( found != wstring::npos ) {
-      // DANNY2.7 We've been in freeze because master clicked Freeze;
-      // this sync point indicates we clicked Run
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "IMSim::ExecutionControl::mark_synchronized():%d '%ls' UNFREEZING!%c",
-                  __LINE__, label.c_str(), THLA_NEWLINE );
-      }
-      federate->unfreeze();
-   }
-   if ( get_sim_time() <= 0.0 ) {
-      // DANNY.2.7 coming out of freeze at init time
-      federate->unfreeze();
-   }
-
-   // First check the multi-phase initialization synchronization point list.
-   if ( multiphase_init_sync_pnt_list.contains( label ) ) {
-      return ( multiphase_init_sync_pnt_list.mark_synchronized( label ) );
-   }
-
-   // Next check the general synchronization point list.
-   if ( SyncPntListBase::contains( label ) ) {
-      TrickHLA::SyncPntListBase::mark_synchronized( label );
-   }
-
-   // Evidently the label was not found.
-   return ( false );
-}
-
-/*!
- * @job_class{initialization}
- */
-bool ExecutionControl::mark_announced(
-   wstring const &label )
-{
-   // First check the multi-phase initialization synchronization point list.
-   if ( multiphase_init_sync_pnt_list.contains( label ) ) {
-      multiphase_init_sync_pnt_list.mark_announced( label );
-   }
-
-   // Next check the general synchronization point list.
-   if ( SyncPntListBase::contains( label ) ) {
-      SyncPntListBase::mark_announced( label );
-   }
-
-   return false;
-}
-
-void ExecutionControl::sync_point_registration_succeeded(
-   wstring const &label )
-{
-
-   // First check the multi-phase initialization synchronization point list.
-   if ( multiphase_init_sync_pnt_list.contains( label ) ) {
-      if ( multiphase_init_sync_pnt_list.mark_registered( label ) ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-            send_hs( stdout, "IMSim::ExecutionControl::sync_point_registration_succeeded():%d Label:'%ls'%c",
-                     __LINE__, label.c_str(), THLA_NEWLINE );
-         }
-      }
-   }
-
-   // Next check the general synchronization point list.
-   if ( SyncPntListBase::contains( label ) ) {
-      if ( mark_registered( label ) ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-            send_hs( stdout, "IMSim::ExecutionControl::sync_point_registration_succeeded():%d Label:'%ls'%c",
-                     __LINE__, label.c_str(), THLA_NEWLINE );
-         }
-      }
-   }
-}
-
-void ExecutionControl::achieve_and_wait_for_synchronization(
-   RTI1516_NAMESPACE::RTIambassador &RTI_amb,
-   Federate                         *federate,
-   std::wstring const               &label )
-{
-
-   // First check the multi-phase initialization synchronization point list.
-   if ( multiphase_init_sync_pnt_list.contains( label ) ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "IMSim::ExecutionControl::achieve_and_wait_for_synchronization():%d '%ls'!%c",
-                  __LINE__, label.c_str(), THLA_NEWLINE );
-      }
-      multiphase_init_sync_pnt_list.achieve_and_wait_for_synchronization( RTI_amb, federate, label );
-      return;
-   }
-
-   // Next check the general synchronization point list.
-   if ( SyncPntListBase::contains( label ) ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "IMSim::ExecutionControl::achieve_and_wait_for_synchronization():%d '%ls'!%c",
-                  __LINE__, label.c_str(), THLA_NEWLINE );
-      }
-      SyncPntListBase::achieve_and_wait_for_synchronization( RTI_amb, federate, label );
-      return;
-   }
-
-   return;
-}
-
-/*!
- * @job_class{initialization}
- */
-bool ExecutionControl::contains(
-   wstring const &label )
-{
-
-   // First check the multi-phase initialization synchronization point list.
-   if ( multiphase_init_sync_pnt_list.contains( label ) ) {
-      return true;
-   }
-
-   // Next check the general synchronization point list.
-   if ( SyncPntListBase::contains( label ) ) {
-      return true;
-   }
-
-   return false;
-}
-
 /*!
  * @job_class{scheduled}
  */
@@ -1605,7 +1264,7 @@ void ExecutionControl::receive_interaction(
 
          if ( received_as_TSO ) {
             InteractionItem item( i,
-                                  TRICKHLA_MANAGER_BUILTIN_FREEZE_INTERACTION,
+                                  TrickHLA::TRICKHLA_MANAGER_BUILTIN_FREEZE_INTERACTION,
                                   freeze_interaction[i].get_parameter_count(),
                                   freeze_interaction[i].get_parameters(),
                                   theParameterValues,
@@ -1616,7 +1275,7 @@ void ExecutionControl::receive_interaction(
             freeze_interaction[i].process_interaction();
          } else {
             InteractionItem item( i,
-                                  TRICKHLA_MANAGER_BUILTIN_FREEZE_INTERACTION,
+                                  TrickHLA::TRICKHLA_MANAGER_BUILTIN_FREEZE_INTERACTION,
                                   freeze_interaction[i].get_parameter_count(),
                                   freeze_interaction[i].get_parameters(),
                                   theParameterValues,
@@ -1650,15 +1309,16 @@ bool ExecutionControl::set_pending_mtr(
 bool ExecutionControl::is_mtr_valid(
    MTREnum mtr_value )
 {
-
    switch ( mtr_value ) {
-      case MTR_GOTO_RUN: {
-         return ( ( current_execution_control_mode == TrickHLA::EXECUTION_CONTROL_INITIALIZING ) || ( current_execution_control_mode == TrickHLA::EXECUTION_CONTROL_FREEZE ) );
+      case IMSim::MTR_GOTO_RUN: {
+         return ( ( current_execution_control_mode == TrickHLA::EXECUTION_CONTROL_INITIALIZING )
+                  || ( current_execution_control_mode == TrickHLA::EXECUTION_CONTROL_FREEZE ) );
       }
-      case MTR_GOTO_FREEZE: {
-         return ( ( current_execution_control_mode == TrickHLA::EXECUTION_CONTROL_INITIALIZING ) || ( current_execution_control_mode == TrickHLA::EXECUTION_CONTROL_RUNNING ) );
+      case IMSim::MTR_GOTO_FREEZE: {
+         return ( ( current_execution_control_mode == TrickHLA::EXECUTION_CONTROL_INITIALIZING )
+                  || ( current_execution_control_mode == TrickHLA::EXECUTION_CONTROL_RUNNING ) );
       }
-      case MTR_GOTO_SHUTDOWN: {
+      case IMSim::MTR_GOTO_SHUTDOWN: {
          return ( current_execution_control_mode != TrickHLA::EXECUTION_CONTROL_SHUTDOWN );
       }
       default: {
@@ -1672,33 +1332,33 @@ void ExecutionControl::set_mode_request_from_mtr(
    MTREnum mtr_value )
 {
    switch ( mtr_value ) {
-      case MTR_UNINITIALIZED:
-         this->pending_mtr = MTR_UNINITIALIZED;
+      case IMSim::MTR_UNINITIALIZED:
+         this->pending_mtr = IMSim::MTR_UNINITIALIZED;
          set_next_execution_control_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED );
          break;
 
-      case MTR_INITIALIZING:
-         this->pending_mtr = MTR_INITIALIZING;
+      case IMSim::MTR_INITIALIZING:
+         this->pending_mtr = IMSim::MTR_INITIALIZING;
          set_next_execution_control_mode( TrickHLA::EXECUTION_CONTROL_INITIALIZING );
          break;
 
-      case MTR_GOTO_RUN:
-         this->pending_mtr = MTR_GOTO_RUN;
+      case IMSim::MTR_GOTO_RUN:
+         this->pending_mtr = IMSim::MTR_GOTO_RUN;
          set_next_execution_control_mode( TrickHLA::EXECUTION_CONTROL_RUNNING );
          break;
 
-      case MTR_GOTO_FREEZE:
-         this->pending_mtr = MTR_GOTO_FREEZE;
+      case IMSim::MTR_GOTO_FREEZE:
+         this->pending_mtr = IMSim::MTR_GOTO_FREEZE;
          set_next_execution_control_mode( TrickHLA::EXECUTION_CONTROL_FREEZE );
          break;
 
-      case MTR_GOTO_SHUTDOWN:
-         this->pending_mtr = MTR_GOTO_SHUTDOWN;
+      case IMSim::MTR_GOTO_SHUTDOWN:
+         this->pending_mtr = IMSim::MTR_GOTO_SHUTDOWN;
          set_next_execution_control_mode( TrickHLA::EXECUTION_CONTROL_SHUTDOWN );
          break;
 
       default:
-         this->pending_mtr = MTR_UNINITIALIZED;
+         this->pending_mtr = IMSim::MTR_UNINITIALIZED;
          break;
    }
 }
@@ -1720,7 +1380,7 @@ void ExecutionControl::set_next_execution_control_mode(
 
          // Set the next execution mode.
          this->requested_execution_control_mode = TrickHLA::EXECUTION_CONTROL_UNINITIALIZED;
-         this->next_execution_mode              = EXECUTION_MODE_UNINITIALIZED;
+         this->next_execution_mode              = IMSim::EXECUTION_MODE_UNINITIALIZED;
 
          // Set the next mode times.
          this->next_mode_scenario_time = get_scenario_time(); // Immediate
@@ -1732,7 +1392,7 @@ void ExecutionControl::set_next_execution_control_mode(
 
          // Set the next execution mode.
          this->requested_execution_control_mode = TrickHLA::EXECUTION_CONTROL_INITIALIZING;
-         this->next_execution_mode              = EXECUTION_MODE_INITIALIZING;
+         this->next_execution_mode              = IMSim::EXECUTION_MODE_INITIALIZING;
 
          // Set the next mode times.
          this->scenario_time_epoch     = get_scenario_time(); // Now.
@@ -1745,7 +1405,7 @@ void ExecutionControl::set_next_execution_control_mode(
 
          // Set the next execution mode.
          this->requested_execution_control_mode = TrickHLA::EXECUTION_CONTROL_RUNNING;
-         this->next_execution_mode              = EXECUTION_MODE_RUNNING;
+         this->next_execution_mode              = IMSim::EXECUTION_MODE_RUNNING;
 
          // Set the next mode times.
          this->next_mode_scenario_time = get_scenario_time(); // Immediate
@@ -1760,7 +1420,7 @@ void ExecutionControl::set_next_execution_control_mode(
 
          // Set the next execution mode.
          this->requested_execution_control_mode = TrickHLA::EXECUTION_CONTROL_FREEZE;
-         this->next_execution_mode              = EXECUTION_MODE_FREEZE;
+         this->next_execution_mode              = IMSim::EXECUTION_MODE_FREEZE;
 
          // Set the next mode times.
          this->next_mode_scenario_time = get_scenario_time() + this->time_padding; // Some time in the future.
@@ -1779,7 +1439,7 @@ void ExecutionControl::set_next_execution_control_mode(
 
          // Set the next execution mode.
          this->requested_execution_control_mode = TrickHLA::EXECUTION_CONTROL_SHUTDOWN;
-         this->next_execution_mode              = EXECUTION_MODE_SHUTDOWN;
+         this->next_execution_mode              = IMSim::EXECUTION_MODE_SHUTDOWN;
 
          // Set the next mode times.
          this->next_mode_scenario_time = get_scenario_time(); // Immediate.
@@ -1876,14 +1536,14 @@ bool ExecutionControl::process_mode_transition_request()
    // Check Mode Transition Request.
    switch ( this->pending_mtr ) {
 
-      case MTR_GOTO_RUN:
+      case IMSim::MTR_GOTO_RUN:
 
          // Clear the mode change request flag.
          clear_mode_transition_requested();
 
          // Transition to run can only happen from initialization or freeze.
          // We don't really need to do anything if we're in initialization.
-         if ( this->current_execution_control_mode == EXECUTION_CONTROL_FREEZE ) {
+         if ( this->current_execution_control_mode == TrickHLA::EXECUTION_CONTROL_FREEZE ) {
 
             // Tell Trick to exit freeze and go to run.
             the_exec->run();
@@ -1896,14 +1556,14 @@ bool ExecutionControl::process_mode_transition_request()
          return true;
          break;
 
-      case MTR_GOTO_FREEZE:
+      case IMSim::MTR_GOTO_FREEZE:
 
          // Clear the mode change request flag.
          clear_mode_transition_requested();
 
          // Transition to freeze can only happen from initialization or run.
          // We don't really need to do anything if we're in initialization.
-         if ( this->current_execution_control_mode == EXECUTION_CONTROL_RUNNING ) {
+         if ( this->current_execution_control_mode == TrickHLA::EXECUTION_CONTROL_RUNNING ) {
 
             // Send out the updated ExCO.
             ExCO->send_init_data();
@@ -1922,7 +1582,7 @@ bool ExecutionControl::process_mode_transition_request()
          return true;
          break;
 
-      case MTR_GOTO_SHUTDOWN:
+      case IMSim::MTR_GOTO_SHUTDOWN:
 
          // Announce the shutdown.
          shutdown_mode_announce();
@@ -1997,12 +1657,12 @@ bool ExecutionControl::process_execution_control_updates()
    // Check for change in execution mode.
    if ( exco_nem != exco_cem ) {
       mode_change = true;
-      if ( exco_nem == EXECUTION_MODE_SHUTDOWN ) {
-         this->requested_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
-      } else if ( exco_nem == EXECUTION_MODE_RUNNING ) {
-         this->requested_execution_control_mode = EXECUTION_CONTROL_RUNNING;
-      } else if ( exco_nem == EXECUTION_MODE_FREEZE ) {
-         this->requested_execution_control_mode = EXECUTION_CONTROL_FREEZE;
+      if ( exco_nem == IMSim::EXECUTION_MODE_SHUTDOWN ) {
+         this->requested_execution_control_mode = TrickHLA::EXECUTION_CONTROL_SHUTDOWN;
+      } else if ( exco_nem == IMSim::EXECUTION_MODE_RUNNING ) {
+         this->requested_execution_control_mode = TrickHLA::EXECUTION_CONTROL_RUNNING;
+      } else if ( exco_nem == IMSim::EXECUTION_MODE_FREEZE ) {
+         this->requested_execution_control_mode = TrickHLA::EXECUTION_CONTROL_FREEZE;
          this->scenario_freeze_time             = this->next_mode_scenario_time;
          this->simulation_freeze_time           = this->scenario_timeline->compute_simulation_time( this->scenario_freeze_time );
       } else {
@@ -2032,14 +1692,14 @@ bool ExecutionControl::process_execution_control_updates()
    // Process the mode change.
    switch ( this->current_execution_control_mode ) {
 
-      case EXECUTION_CONTROL_UNINITIALIZED:
+      case TrickHLA::EXECUTION_CONTROL_UNINITIALIZED:
 
          // Check for SHUTDOWN.
-         if ( this->requested_execution_control_mode == EXECUTION_CONTROL_SHUTDOWN ) {
+         if ( this->requested_execution_control_mode == TrickHLA::EXECUTION_CONTROL_SHUTDOWN ) {
 
             // Mark the current execution mode as SHUTDOWN.
-            this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
-            this->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
+            this->current_execution_control_mode = TrickHLA::EXECUTION_CONTROL_SHUTDOWN;
+            this->current_execution_mode         = IMSim::EXECUTION_MODE_SHUTDOWN;
 
             // Tell the TrickHLA::Federate to shutdown.
             // The IMSim ExecutionControl shutdown transition will be made from
@@ -2065,21 +1725,21 @@ bool ExecutionControl::process_execution_control_updates()
          return true;
          break;
 
-      case EXECUTION_CONTROL_INITIALIZING:
+      case TrickHLA::EXECUTION_CONTROL_INITIALIZING:
 
          // Check for SHUTDOWN.
-         if ( this->requested_execution_control_mode == EXECUTION_CONTROL_SHUTDOWN ) {
+         if ( this->requested_execution_control_mode == TrickHLA::EXECUTION_CONTROL_SHUTDOWN ) {
 
             // Mark the current execution mode as SHUTDOWN.
-            this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
-            this->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
+            this->current_execution_control_mode = TrickHLA::EXECUTION_CONTROL_SHUTDOWN;
+            this->current_execution_mode         = IMSim::EXECUTION_MODE_SHUTDOWN;
 
             // Tell the TrickHLA::Federate to shutdown.
             // The IMSim ExecutionControl shutdown transition will be made from
             // the TrickHLA::Federate::shutdown() job.
             the_exec->stop();
 
-         } else if ( this->requested_execution_control_mode == EXECUTION_CONTROL_RUNNING ) {
+         } else if ( this->requested_execution_control_mode == TrickHLA::EXECUTION_CONTROL_RUNNING ) {
 
             // Tell Trick to go to in Run at startup.
             the_exec->set_freeze_command( false );
@@ -2088,7 +1748,7 @@ bool ExecutionControl::process_execution_control_updates()
             // So, proceed to the run mode transition.
             run_mode_transition();
 
-         } else if ( this->requested_execution_control_mode == EXECUTION_CONTROL_FREEZE ) {
+         } else if ( this->requested_execution_control_mode == TrickHLA::EXECUTION_CONTROL_FREEZE ) {
 
             // Announce the pending freeze.
             freeze_mode_announce();
@@ -2103,7 +1763,7 @@ bool ExecutionControl::process_execution_control_updates()
             // Freeze. This is done in the TrickHLA::Federate::freeze_init()
             // routine called when entering Freeze.
 
-         } else if ( this->requested_execution_control_mode == EXECUTION_CONTROL_INITIALIZING ) {
+         } else if ( this->requested_execution_control_mode == TrickHLA::EXECUTION_CONTROL_INITIALIZING ) {
 
             // There's really nothing to do here.
 
@@ -2126,7 +1786,7 @@ bool ExecutionControl::process_execution_control_updates()
          return true;
          break;
 
-      case EXECUTION_CONTROL_RUNNING:
+      case TrickHLA::EXECUTION_CONTROL_RUNNING:
 
          // Check for SHUTDOWN.
          if ( this->requested_execution_control_mode == EXECUTION_CONTROL_SHUTDOWN ) {
@@ -2142,14 +1802,14 @@ bool ExecutionControl::process_execution_control_updates()
             send_hs( stdout, errmsg.str().c_str() );
 
             // Mark the current execution mode as SHUTDOWN.
-            this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
-            this->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
+            this->current_execution_control_mode = TrickHLA::EXECUTION_CONTROL_SHUTDOWN;
+            this->current_execution_mode         = IMSim::EXECUTION_MODE_SHUTDOWN;
 
             // Tell the TrickHLA::Federate to shutdown.
             // The IMSim ExecutionControl shutdown transition will be made from
             // the TrickHLA::Federate::shutdown() job.
             the_exec->stop();
-         } else if ( this->requested_execution_control_mode == EXECUTION_CONTROL_FREEZE ) {
+         } else if ( this->requested_execution_control_mode == TrickHLA::EXECUTION_CONTROL_FREEZE ) {
 
             // Print diagnostic message if appropriate.
             if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
@@ -2200,19 +1860,19 @@ bool ExecutionControl::process_execution_control_updates()
          return true;
          break;
 
-      case EXECUTION_CONTROL_FREEZE:
+      case TrickHLA::EXECUTION_CONTROL_FREEZE:
 
          // Check for SHUTDOWN.
-         if ( this->requested_execution_control_mode == EXECUTION_CONTROL_SHUTDOWN ) {
+         if ( this->requested_execution_control_mode == TrickHLA::EXECUTION_CONTROL_SHUTDOWN ) {
 
             // Mark the current execution mode as SHUTDOWN.
-            this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
-            this->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
+            this->current_execution_control_mode = TrickHLA::EXECUTION_CONTROL_SHUTDOWN;
+            this->current_execution_mode         = IMSim::EXECUTION_MODE_SHUTDOWN;
 
             // Shutdown the federate now.
             exec_get_exec_cpp()->stop();
 
-         } else if ( this->requested_execution_control_mode == EXECUTION_CONTROL_RUNNING ) {
+         } else if ( this->requested_execution_control_mode == TrickHLA::EXECUTION_CONTROL_RUNNING ) {
 
             // Tell Trick to exit freeze and go to run.
             the_exec->run();
@@ -2241,7 +1901,7 @@ bool ExecutionControl::process_execution_control_updates()
          return true;
          break;
 
-      case EXECUTION_CONTROL_SHUTDOWN:
+      case TrickHLA::EXECUTION_CONTROL_SHUTDOWN:
 
          // Once in SHUTDOWN, we cannot do anything else.
          errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
@@ -2268,83 +1928,86 @@ bool ExecutionControl::run_mode_transition()
    ExecutionConfiguration *ExCO     = get_execution_configuration();
    SyncPoint              *sync_pnt = NULL;
 
-   // Register the 'mtr_run' sync-point.
-   if ( is_master() ) {
-      sync_pnt = register_sync_point( *RTI_amb, IMSim::MTR_RUN_SYNC_POINT );
-   } else {
-      sync_pnt = get_sync_point( IMSim::MTR_RUN_SYNC_POINT );
-   }
+   /* TODO: Update for IMSim
 
-   // Make sure that we have a valid sync-point.
-   if ( sync_pnt == NULL ) {
-      ostringstream errmsg;
-      errmsg << "IMSim::ExecutionControl::run_mode_transition():" << __LINE__
-             << " ERROR: The 'mtr_run' sync-point was not found!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } else {
+     // Register the 'mtr_run' sync-point.
+     if ( is_master() ) {
+        sync_pnt = register_sync_point( *RTI_amb, IMSim::MTR_RUN_SYNC_POINT );
+     } else {
+        sync_pnt = get_sync_point( IMSim::MTR_RUN_SYNC_POINT );
+     }
 
-      // Wait for 'mtr_run' sync-point announce.
-      wait_for_sync_point_announcement( federate, sync_pnt );
+     // Make sure that we have a valid sync-point.
+     if ( sync_pnt == NULL ) {
+        ostringstream errmsg;
+        errmsg << "IMSim::ExecutionControl::run_mode_transition():" << __LINE__
+               << " ERROR: The 'mtr_run' sync-point was not found!" << THLA_ENDL;
+        DebugHandler::terminate_with_message( errmsg.str() );
+     } else {
 
-      // Achieve the 'mtr-run' sync-point.
-      achieve_sync_point( *RTI_amb, sync_pnt );
+        // Wait for 'mtr_run' sync-point announce.
+        wait_for_sync_point_announcement( federate, sync_pnt );
 
-      // Wait for 'mtr_run' sync-point synchronization.
-      wait_for_synchronization( federate, sync_pnt );
+        // Achieve the 'mtr-run' sync-point.
+        achieve_sync_point( *RTI_amb, sync_pnt );
 
-      // Set the current execution mode to running.
-      this->current_execution_control_mode = EXECUTION_CONTROL_RUNNING;
-      this->current_execution_mode         = EXECUTION_MODE_RUNNING;
+        // Wait for 'mtr_run' sync-point synchronization.
+        wait_for_synchronization( federate, sync_pnt );
 
-      // Check for CTE.
-      if ( does_cte_timeline_exist() ) {
+        // Set the current execution mode to running.
+        this->current_execution_control_mode = EXECUTION_CONTROL_RUNNING;
+        this->current_execution_mode         = EXECUTION_MODE_RUNNING;
 
-         double go_to_run_time;
+        // Check for CTE.
+        if ( does_cte_timeline_exist() ) {
 
-         // The Master federate updates the ExCO with the CTE got-to-run time.
-         if ( is_master() ) {
+           double go_to_run_time;
 
-            go_to_run_time = this->next_mode_cte_time;
-            ExCO->send_init_data();
+           // The Master federate updates the ExCO with the CTE got-to-run time.
+           if ( is_master() ) {
 
-         } // Other federates wait on the ExCO update with the CTE go-to-run time.
-         else {
+              go_to_run_time = this->next_mode_cte_time;
+              ExCO->send_init_data();
 
-            // Wait for the ExCO update with the CTE time.
-            ExCO->wait_for_update();
+           } // Other federates wait on the ExCO update with the CTE go-to-run time.
+           else {
 
-            // Process the just received ExCO update.
-            process_execution_control_updates();
+              // Wait for the ExCO update with the CTE time.
+              ExCO->wait_for_update();
 
-            // Set the CTE time to go to run.
-            go_to_run_time = this->next_mode_cte_time;
-         }
+              // Process the just received ExCO update.
+              process_execution_control_updates();
 
-         // Wait for the CTE go-to-run time.
-         double diff;
-         while ( get_cte_time() < go_to_run_time ) {
+              // Set the CTE time to go to run.
+              go_to_run_time = this->next_mode_cte_time;
+           }
 
-            // Check for shutdown.
-            federate->check_for_shutdown_with_termination();
+           // Wait for the CTE go-to-run time.
+           double diff;
+           while ( get_cte_time() < go_to_run_time ) {
 
-            diff = go_to_run_time - get_cte_time();
-            if ( fmod( diff, 1.0 ) == 0.0 ) {
-               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                  send_hs( stdout, "IMSim::ExecutionControl::run_mode_transition():%d Going to run in %G seconds.%c",
-                           __LINE__, diff, THLA_NEWLINE );
-               }
-            }
-         }
+              // Check for shutdown.
+              federate->check_for_shutdown_with_termination();
 
-         // Print debug message if appropriate.
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            double curr_cte_time = get_cte_time();
-            diff                 = curr_cte_time - go_to_run_time;
-            send_hs( stdout, "IMSim::ExecutionControl::run_mode_transition():%d \n  Going to run at CTE time %.18G seconds. \n  Current CTE time %.18G seconds. \n  Difference: %.9lf seconds.%c",
-                     __LINE__, go_to_run_time, curr_cte_time, diff, THLA_NEWLINE );
-         }
-      }
-   }
+              diff = go_to_run_time - get_cte_time();
+              if ( fmod( diff, 1.0 ) == 0.0 ) {
+                 if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+                    send_hs( stdout, "IMSim::ExecutionControl::run_mode_transition():%d Going to run in %G seconds.%c",
+                             __LINE__, diff, THLA_NEWLINE );
+                 }
+              }
+           }
+
+           // Print debug message if appropriate.
+           if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+              double curr_cte_time = get_cte_time();
+              diff                 = curr_cte_time - go_to_run_time;
+              send_hs( stdout, "IMSim::ExecutionControl::run_mode_transition():%d \n  Going to run at CTE time %.18G seconds. \n  Current CTE time %.18G seconds. \n  Difference: %.9lf seconds.%c",
+                       __LINE__, go_to_run_time, curr_cte_time, diff, THLA_NEWLINE );
+           }
+        }
+     }
+     */
    return true;
 }
 
@@ -2358,32 +2021,23 @@ void ExecutionControl::freeze_mode_announce()
 
 bool ExecutionControl::freeze_mode_transition()
 {
-   RTIambassador       *RTI_amb  = federate->get_RTI_ambassador();
-   TrickHLA::SyncPoint *sync_pnt = NULL;
-
-   // Get the 'mtr_freeze' sync-point.
-   sync_pnt = get_sync_point( IMSim::MTR_FREEZE_SYNC_POINT );
-
    // Make sure that we have a valid sync-point.
-   if ( sync_pnt == NULL ) {
+   if ( !contains_sync_point( SpaceFOM::MTR_FREEZE_SYNC_POINT ) ) {
       ostringstream errmsg;
-      errmsg << "IMSim::ExecutionControl::freeze_mode_transition():" << __LINE__
+      errmsg << "SpaceFOM::ExecutionControl::freeze_mode_transition():" << __LINE__
              << " ERROR: The 'mtr_freeze' sync-point was not found!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
       // Wait for 'mtr_freeze' sync-point announce.
-      wait_for_sync_point_announcement( federate, sync_pnt );
+      wait_for_sync_point_announced( SpaceFOM::MTR_FREEZE_SYNC_POINT );
 
-      // Achieve the 'mtr_freeze' sync-point.
-      achieve_sync_point( *RTI_amb, sync_pnt );
-
-      // Wait for 'mtr_freeze' sync-point synchronization.
-      wait_for_synchronization( federate, sync_pnt );
+      // Achieve the 'mtr_freeze' sync-point and wait for synchronization.
+      achieve_sync_point_and_wait_for_synchronization( SpaceFOM::MTR_FREEZE_SYNC_POINT );
 
       // Set the current execution mode to freeze.
       this->current_execution_control_mode = EXECUTION_CONTROL_FREEZE;
-      this->current_execution_mode         = EXECUTION_MODE_FREEZE;
+      // TODO: remove  get_execution_configuration()->set_current_execution_mode( EXECUTION_MODE_FREEZE );
    }
    return false;
 }
@@ -2469,157 +2123,32 @@ bool ExecutionControl::check_freeze_exit()
    if ( federate->get_freeze_announced() && ( get_sim_time() <= 0.0 ) ) {
       return ( true );
    }
-
-   try {
-      pause_sync_pts.achieve_all_sync_points( *( federate->get_RTI_ambassador() ), checktime );
-   } catch ( SynchronizationPointLabelNotAnnounced &e ) {
-      send_hs( stderr, "IMSim::ExecutionControl::check_freeze():%d EXCEPTION: SynchronizationPointLabelNotAnnounced%c",
-               __LINE__, THLA_NEWLINE );
-   } catch ( FederateNotExecutionMember &e ) {
-      send_hs( stderr, "IMSim::ExecutionControl::check_freeze():%d EXCEPTION: FederateNotExecutionMember%c",
-               __LINE__, THLA_NEWLINE );
-   } catch ( SaveInProgress &e ) {
-      send_hs( stderr, "IMSim::ExecutionControl::check_freeze():%d EXCEPTION: SaveInProgress%c",
-               __LINE__, THLA_NEWLINE );
-   } catch ( RestoreInProgress &e ) {
-      send_hs( stderr, "IMSim::ExecutionControl::check_freeze():%d EXCEPTION: RestoreInProgress%c",
-               __LINE__, THLA_NEWLINE );
-   } catch ( RTIinternalError &e ) {
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      send_hs( stderr, "IMSim::ExecutionControl::check_freeze():%d EXCEPTION: RTIinternalError: '%s'%c",
-               __LINE__, rti_err_msg.c_str(), THLA_NEWLINE );
-   }
-
-   pause_sync_pts.check_state();
-
-   if ( pause_sync_pts.should_exit() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "IMSim::ExecutionControl::check_freeze():%d SHUTDOWN NOW!%c",
-                  __LINE__, THLA_NEWLINE );
-      }
-      federate->set_restart( false );
-      federate->set_restart_cfg( false );
-
-      exec_set_exec_command( ExitCmd );
-   } else if ( pause_sync_pts.should_restart() ) {
-      federate->set_restart( true );
-      exec_set_exec_command( ExitCmd );
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "IMSim::ExecutionControl::check_freeze():%d RESTART NOW!%c",
-                  __LINE__, THLA_NEWLINE );
-      }
-   } else if ( pause_sync_pts.should_reconfig() ) {
-      federate->set_restart_cfg( true );
-      exec_set_exec_command( ExitCmd );
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "IMSim::ExecutionControl::check_freeze():%d RESTART RECONFIG NOW!%c",
-                  __LINE__, THLA_NEWLINE );
-      }
-   } else if ( pause_sync_pts.should_run() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "IMSim::ExecutionControl::check_freeze():%d DOING UNFREEZE NOW!%c",
-                  __LINE__, THLA_NEWLINE );
-      }
-      federate->unfreeze();
-   }
-
    return ( false );
 }
 
 void ExecutionControl::exit_freeze()
 {
-   if ( federate->get_freeze_announced() ) {                                // DANNY2.7
-      if ( federate->get_freeze_pending() && ( get_sim_time() > 0.0 ) ) {   // coming out of freeze due to freeze interaction
-         federate->register_generic_sync_point( IMSim::FEDRUN_SYNC_POINT ); // this tells federates to go to run
+   if ( federate->get_freeze_announced() ) {                              // DANNY2.7
+      if ( federate->get_freeze_pending() && ( get_sim_time() > 0.0 ) ) { // coming out of freeze due to freeze interaction
 
-         int64_t      wallclock_time;
-         SleepTimeout print_timer( federate->wait_status_time );
-         SleepTimeout sleep_timer;
-
-         while ( !pause_sync_pts.check_sync_points( this->checktime ) ) {
-            // wait for it to be announced
-            sleep_timer.sleep();
-
-            if ( !pause_sync_pts.check_sync_points( this->checktime ) ) {
-
-               // To be more efficient, we get the time once and share it.
-               wallclock_time = sleep_timer.time();
-
-               if ( sleep_timer.timeout( wallclock_time ) ) {
-                  sleep_timer.reset();
-                  if ( !federate->is_execution_member() ) {
-                     ostringstream errmsg;
-                     errmsg << "IMSim::ExecutionControl::exit_freeze():" << __LINE__
-                            << " ERROR: Unexpectedly the Federate is no longer an execution"
-                            << " member. This means we are either not connected to the"
-                            << " RTI or we are no longer joined to the federation"
-                            << " execution because someone forced our resignation at"
-                            << " the Central RTI Component (CRC) level!"
-                            << THLA_ENDL;
-                     DebugHandler::terminate_with_message( errmsg.str() );
-                  }
-               }
-
-               if ( print_timer.timeout( wallclock_time ) ) {
-                  print_timer.reset();
-                  send_hs( stderr, "IMSim::ExecutionControl::exit_freeze():%d Waiting...%c",
-                           __LINE__, THLA_NEWLINE );
-               }
-            }
-         }
+         // TODO: remove federate->register_generic_sync_point( IMSim::FEDRUN_SYNC_POINT ); // this tells federates to go to run
       }
       if ( federate->get_freeze_pending() ) {     // coming out of freeze due to interaction OR sync point at init time
          federate->set_freeze_announced( false ); // reset for the next time we freeze
-      }
-      try {
-         pause_sync_pts.achieve_all_sync_points( *federate->get_RTI_ambassador(), this->checktime );
-      } catch ( SynchronizationPointLabelNotAnnounced &e ) {
-         send_hs( stderr, "IMSim::ExecutionControl::exit_freeze():%d EXCEPTION: SynchronizationPointLabelNotAnnounced%c",
-                  __LINE__, THLA_NEWLINE );
-      } catch ( FederateNotExecutionMember &e ) {
-         send_hs( stderr, "IMSim::ExecutionControl::exit_freeze():%d EXCEPTION: FederateNotExecutionMember%c",
-                  __LINE__, THLA_NEWLINE );
-      } catch ( SaveInProgress &e ) {
-         send_hs( stderr, "IMSim::ExecutionControl::exit_freeze():%d EXCEPTION: SaveInProgress%c",
-                  __LINE__, THLA_NEWLINE );
-      } catch ( RestoreInProgress &e ) {
-         send_hs( stderr, "IMSim::ExecutionControl::exit_freeze():%d EXCEPTION: RestoreInProgress%c",
-                  __LINE__, THLA_NEWLINE );
-      } catch ( RTIinternalError &e ) {
-         string rti_err_msg;
-         StringUtilities::to_string( rti_err_msg, e.what() );
-         send_hs( stderr, "IMSim::ExecutionControl::exit_freeze():%d EXCEPTION: RTIinternalError: '%s'%c",
-                  __LINE__, rti_err_msg.c_str(), THLA_NEWLINE );
       }
    }
 }
 
 void ExecutionControl::un_freeze()
 {
-   // Clear the pause sync-point master state so that we don't accidently
-   // go into the run state again.
-   pause_sync_pts.clear_state();
+   return;
 }
 
 void ExecutionControl::check_pause( double const check_pause_delta )
 {
-   // DANNY2.7 for IMSim, check_pause is only used at init time to handle start
-   //  in freeze mode.
+   // For IMSim, check_pause is only used at init time to handle start in freeze mode.
    if ( get_sim_time() > 0.0 ) {
       return;
-   }
-
-   checktime.set( get_sim_time() + check_pause_delta );
-
-   if ( pause_sync_pts.check_sync_points( this->checktime ) ) {
-      federate->set_freeze_pending( true );
-   } else if ( manager->is_late_joining_federate() ) {
-      // check if the requested time has a sync-point.
-      this->checktime = federate->get_requested_time();
-      if ( pause_sync_pts.check_sync_points( this->checktime ) ) {
-         federate->set_freeze_pending( true );
-      }
    }
 
    if ( federate->get_freeze_pending() ) {
@@ -2649,19 +2178,6 @@ void ExecutionControl::check_pause_at_init(
 {
    // Dispatch to the ExecutionControl method.
    manager->get_execution_control()->check_pause_at_init( check_pause_delta );
-}
-
-void ExecutionControl::add_pause(
-   Int64Time     *time,
-   wstring const &label )
-{
-   pause_sync_pts.add_sync_point( label, *time );
-}
-
-void ExecutionControl::clear_pause(
-   wstring const &label )
-{
-   pause_sync_pts.clear_sync_point( label );
 }
 
 ExecutionConfiguration *ExecutionControl::get_execution_configuration()
@@ -2724,8 +2240,7 @@ void ExecutionControl::trigger_freeze_interaction(
    double new_freeze_time = freeze_scenario_time;
 
    FreezeInteractionHandler *freeze_intr =
-      static_cast< FreezeInteractionHandler * >(
-         freeze_interaction->get_handler() );
+      static_cast< FreezeInteractionHandler * >( freeze_interaction->get_handler() );
 
    freeze_intr->send_scenario_freeze_interaction( new_freeze_time, this->is_late_joiner() );
 
@@ -2749,7 +2264,7 @@ bool ExecutionControl::check_freeze_time()
       // If we are to initiate the federation save, register a sync point
       // which must be acknowledged only in freeze mode!!!
       if ( federate->get_announce_save() ) {
-         federate->register_generic_sync_point( IMSim::FEDSAVE_SYNC_POINT );
+         register_sync_point( IMSim::FEDSAVE_SYNC_POINT );
          federate->set_freeze_announced( true );
       }
    }
@@ -2838,14 +2353,15 @@ bool ExecutionControl::is_save_initiated()
    if ( federate->get_announce_save()
         && !federate->get_initiate_save_flag()
         && !federate->get_save_completed() ) {
-      federate->register_generic_sync_point( IMSim::FEDSAVE_SYNC_POINT );
+      register_sync_point( IMSim::FEDSAVE_SYNC_POINT );
 
       int64_t      wallclock_time;
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
 
       while ( !federate->get_initiate_save_flag() ) { // wait for federation to be synced
-         this->pause_sync_pts.achieve_all_sync_points( *federate->get_RTI_ambassador(), this->checktime );
+
+         // TODO: remove        this->pause_sync_pts.achieve_all_sync_points( *federate->get_RTI_ambassador(), this->checktime );
          sleep_timer.sleep();
 
          if ( !federate->get_initiate_save_flag() ) {
@@ -2891,56 +2407,4 @@ bool ExecutionControl::perform_save()
    }
 
    return ( false );
-}
-
-/*!
- *  @job_class{checkpoint}
- */
-void ExecutionControl::convert_loggable_sync_pts()
-{
-
-   if ( this->logged_sync_pts_count > 0 ) {
-      this->loggable_sync_pts = reinterpret_cast< SyncPntTimedLoggable * >(
-         alloc_type( (int)this->logged_sync_pts_count, "TrickHLA::LoggableSyncPts" ) );
-      if ( this->loggable_sync_pts == NULL ) {
-         ostringstream errmsg;
-         errmsg << "IMSim::ExecutionControl::convert_sync_pts():" << __LINE__
-                << " FAILED to allocate enough memory for the loggable sync points!"
-                << THLA_ENDL;
-         DebugHandler::terminate_with_message( errmsg.str() );
-      }
-
-      pause_sync_pts.convert_sync_points( this->loggable_sync_pts );
-   }
-}
-
-void ExecutionControl::reinstate_logged_sync_pts()
-{
-   if ( this->logged_sync_pts_count > 0 ) {
-      Int64Time sync_point_time;
-      wstring   sync_point_label;
-
-      pause_sync_pts.reset();
-
-      for ( size_t i = 0; i < this->logged_sync_pts_count; ++i ) {
-         sync_point_time = Int64Time( this->loggable_sync_pts[i].time );
-
-         if ( this->loggable_sync_pts[i].label != NULL ) {
-            StringUtilities::to_wstring( sync_point_label, this->loggable_sync_pts[i].label );
-            // since the RTI already contains the registered sync points prior
-            // to the checkpoint, we just need to add them back into myself...
-            // pause_sync_pts.add_sync_point( sync_point_label, sync_point_time );
-            /***
-            //DANNY2.7 TODO: you sometimes get an exception for sync point not announced when you restore,
-            //         is that an RTI bug or something we can fix here?
-            if (is_master() && (sync_point_time.get_time_in_seconds() <= get_sim_time()) ) {
-                register_generic_sync_point( sync_point_label, sync_point_time.get_time_in_seconds());
-            }
-            ***/
-         }
-      }
-      // set the checktime to the first of the new entries...
-      sync_point_time = Int64Time( this->loggable_sync_pts[0].time );
-      checktime.set( sync_point_time );
-   }
 }

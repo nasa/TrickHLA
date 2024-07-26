@@ -103,6 +103,14 @@ class SyncPointTimed : public TrickHLA::SyncPoint
       this->time = t;
    }
 
+   /*! @brief Encode the user supplied tag data.
+    *  @return The encoded user supplied tag. */
+   virtual RTI1516_USERDATA const encode_user_supplied_tag();
+
+   /*! @brief Decode the user supplied data.
+    *  @return supplied_tag The supplied tag to decode as the user supplied tag. */
+   virtual void decode_user_supplied_tag( RTI1516_USERDATA const &supplied_tag );
+
    // Utility functions.
    /*! @brief Create a string with the synchronization point label and current state.
     *  @return A string with the synchronization point label and current state. */

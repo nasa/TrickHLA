@@ -38,13 +38,22 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 
-// HLA include files.
-
 // TrickHLA include files.
 #include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Types.hh"
 
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+#include RTI1516_HEADER
+#include "RTI/VariableLengthData.h"
+#include "RTI/encoding/BasicDataElements.h"
+#pragma GCC diagnostic pop
+
+using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
 
@@ -101,6 +110,11 @@ Int64Time::Int64Time(
 Int64Time::~Int64Time()
 {
    return;
+}
+
+RTI1516_USERDATA Int64Time::encode() const
+{
+   return this->hla_time.encode();
 }
 
 void Int64Time::decode(

@@ -413,7 +413,7 @@ void ExecutionControl::announce_sync_point(
       if ( label.compare( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) == 0 ) {
 
          // Mark initialization sync-point as existing/announced.
-         if ( mark_sync_point_announced( label ) ) {
+         if ( mark_sync_point_announced( label, user_supplied_tag ) ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM mandatory late jointer, announced sync-point:'%ls'%c",
                         __LINE__, label.c_str(), THLA_NEWLINE );
@@ -433,7 +433,7 @@ void ExecutionControl::announce_sync_point(
 
          // Mark MTR shutdown sync-point as announced but don't achieve it
          // because we need to shutdown.
-         if ( mark_sync_point_announced( label ) ) {
+         if ( mark_sync_point_announced( label, user_supplied_tag ) ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM mandatory late jointer, announced sync-point:'%ls'%c",
                         __LINE__, label.c_str(), THLA_NEWLINE );
@@ -454,7 +454,7 @@ void ExecutionControl::announce_sync_point(
       // Known synchronization point.
 
       // Mark initialization sync-point as existing/announced.
-      if ( mark_sync_point_announced( label ) ) {
+      if ( mark_sync_point_announced( label, user_supplied_tag ) ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM synchronization point announced:'%ls'%c",
                      __LINE__, label.c_str(), THLA_NEWLINE );

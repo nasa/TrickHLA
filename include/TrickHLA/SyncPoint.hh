@@ -78,15 +78,6 @@ class SyncPoint : public TrickHLA::CheckpointConversionBase
     *  @param lbl Synchronization point label. */
    explicit SyncPoint( std::wstring const &lbl );
 
-   /*! @brief Initialization constructor.
-    *  @param t Synchronization point type. */
-   explicit SyncPoint( SyncPtTypeEnum const t );
-
-   /*! @brief Initialization constructor.
-    *  @param lbl Synchronization point label.
-    *  @param t Synchronization point type.*/
-   SyncPoint( std::wstring const &lbl, SyncPtTypeEnum const t );
-
    /*! @brief Destructor for the TrickHLA SyncPoint class. */
    virtual ~SyncPoint();
 
@@ -150,12 +141,13 @@ class SyncPoint : public TrickHLA::CheckpointConversionBase
       this->state = s;
    }
 
-   /*! @brief Get the synchronization point type.
-    *  @return The type for this synchronization point. */
-   SyncPtTypeEnum const get_type() const
-   {
-      return this->type;
-   }
+   /*! @brief Encode the user supplied tag data.
+    *  @return The encoded user supplied tag. */
+   virtual RTI1516_USERDATA const encode_user_supplied_tag();
+
+   /*! @brief Decode the user supplied data.
+    *  @return supplied_tag The supplied tag to decode as the user supplied tag. */
+   virtual void decode_user_supplied_tag( RTI1516_USERDATA const &supplied_tag );
 
    // Utility functions.
    /*! @brief Create a C++ string with the synchronization point label and
@@ -175,7 +167,8 @@ class SyncPoint : public TrickHLA::CheckpointConversionBase
   protected:
    std::wstring    label; ///< @trick_io{**} Sync-point name.
    SyncPtStateEnum state; ///< @trick_units{--} Sync-point state.
-   SyncPtTypeEnum  type;  ///< @trick_units{--} The type of Sync-point.
+
+   RTI1516_USERDATA user_supplied_tag; ///< @trick_io{**} Sync-point user supplied data.
 
    char *label_chkpt; ///< @trick_io{**} Trick memory allocated label that is checkpointable.
 };

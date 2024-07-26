@@ -138,7 +138,7 @@ class SyncPointList : public TrickHLA::CheckpointConversionBase
 
    bool const is_announced( std::wstring const &label );
 
-   bool const mark_announced( std::wstring const &label );
+   bool const mark_announced( std::wstring const &label, RTI1516_USERDATA const &user_supplied_tag );
 
    bool const wait_for_announced( std::wstring const &label );
 

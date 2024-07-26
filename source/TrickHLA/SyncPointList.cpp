@@ -283,28 +283,6 @@ bool const SyncPointList::add(
    wstring const   &label,
    Int64Time const &time )
 {
-
-   // TODO: Move to pause sync-point class.
-   //   if ( time < 0.0 ) {
-   //      // No time specified
-   //      execution_control->register_sync_point( label );
-   //   } else {
-   //      // DANNY2.7 convert time and encode in a buffer to send to RTI
-   //      int64_t       _value = Int64BaseTime::to_base_time( time );
-   //      unsigned char buf[8];
-   //      buf[0] = (unsigned char)( ( _value >> 56 ) & 0xFF );
-   //      buf[1] = (unsigned char)( ( _value >> 48 ) & 0xFF );
-   //      buf[2] = (unsigned char)( ( _value >> 40 ) & 0xFF );
-   //      buf[3] = (unsigned char)( ( _value >> 32 ) & 0xFF );
-   //      buf[4] = (unsigned char)( ( _value >> 24 ) & 0xFF );
-   //      buf[5] = (unsigned char)( ( _value >> 16 ) & 0xFF );
-   //      buf[6] = (unsigned char)( ( _value >> 8 ) & 0xFF );
-   //      buf[7] = (unsigned char)( ( _value >> 0 ) & 0xFF );
-   //      //TODO: RTI_ambassador->registerFederationSynchronizationPoint( label, RTI1516_USERDATA( buf, 8 ) );
-   //
-   //      execution_control->register_sync_point( label, time );
-   //   }
-
    MutexProtection auto_unlock_mutex( mutex );
 
    if ( contains( label ) ) {
@@ -519,7 +497,7 @@ bool const SyncPointList::register_sync_point(
       MutexProtection auto_unlock_mutex( mutex );
 
       RTI_amb->registerFederationSynchronizationPoint( sp->get_label(),
-                                                       RTI1516_USERDATA( 0, 0 ) );
+                                                       sp->encode_user_supplied_tag() );
       // Mark the sync-point as registered.
       sp->set_state( TrickHLA::SYNC_PT_STATE_REGISTERED );
 
@@ -580,7 +558,7 @@ bool const SyncPointList::register_sync_point(
       MutexProtection auto_unlock_mutex( mutex );
 
       RTI_amb->registerFederationSynchronizationPoint( sp->get_label(),
-                                                       RTI1516_USERDATA( 0, 0 ),
+                                                       sp->encode_user_supplied_tag(),
                                                        handle_set );
       // Mark the sync-point as registered.
       sp->set_state( TrickHLA::SYNC_PT_STATE_REGISTERED );
@@ -623,7 +601,8 @@ bool const SyncPointList::is_announced(
  * @job_class{initialization}
  */
 bool const SyncPointList::mark_announced(
-   wstring const &label )
+   wstring const          &label,
+   RTI1516_USERDATA const &user_supplied_tag )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
@@ -632,6 +611,7 @@ bool const SyncPointList::mark_announced(
    SyncPoint *sp = get( label );
    if ( sp != NULL ) {
       sp->set_state( TrickHLA::SYNC_PT_STATE_ANNOUNCED );
+      sp->decode_user_supplied_tag( user_supplied_tag );
       return true;
    }
    return false;

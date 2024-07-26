@@ -489,14 +489,15 @@ bool const SyncPointManagerBase::is_sync_point_announced(
 }
 
 bool const SyncPointManagerBase::mark_sync_point_announced(
-   wstring const &label )
+   wstring const          &label,
+   RTI1516_USERDATA const &user_supplied_tag )
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &mutex );
 
    int const index = get_list_index_for_sync_point( label );
-   return ( ( index >= 0 ) && sync_pnt_lists[index]->mark_announced( label ) );
+   return ( ( index >= 0 ) && sync_pnt_lists[index]->mark_announced( label, user_supplied_tag ) );
 }
 
 bool const SyncPointManagerBase::wait_for_sync_point_announced(
@@ -816,14 +817,14 @@ void SyncPointManagerBase::sync_point_registration_failed(
 
 // Callback from FedAmb.
 void SyncPointManagerBase::sync_point_announced(
-   wstring const            &label,
-   VariableLengthData const &user_supplied_tag )
+   wstring const          &label,
+   RTI1516_USERDATA const &user_supplied_tag )
 {
    // Check to see if the synchronization point is known and is in the list.
    if ( contains_sync_point( label ) ) {
 
       // Mark sync-point as existing/announced.
-      if ( mark_sync_point_announced( label ) ) {
+      if ( mark_sync_point_announced( label, user_supplied_tag ) ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             string label_str;
             StringUtilities::to_string( label_str, label );

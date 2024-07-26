@@ -506,7 +506,10 @@ class Int64Time
       return ( this->hla_time );
    }
 
-   // decodes the HLA encoded time into encapsulated class
+   /*! @brief Encode the time as an HLAinteger64BE.
+    *  @return Encoded time as an HLAinteger64BE. */
+   RTI1516_USERDATA encode() const;
+
    /*! @brief Saves the incoming HLA encoded LogicalTime into the encapsulated class.
     *  @param user_supplied_tag Time encoded in user supplied tag. */
    void decode( RTI1516_USERDATA const &user_supplied_tag );

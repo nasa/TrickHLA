@@ -46,7 +46,7 @@ using namespace TrickHLA;
 SyncPoint::SyncPoint()
    : label(),
      state( TrickHLA::SYNC_PT_STATE_KNOWN ),
-     type( TrickHLA::SYNC_PT_TYPE_DEFAULT ),
+     user_supplied_tag( NULL, 0 ),
      label_chkpt( NULL )
 {
    return;
@@ -59,28 +59,7 @@ SyncPoint::SyncPoint(
    wstring const &lbl )
    : label( lbl ),
      state( TrickHLA::SYNC_PT_STATE_KNOWN ),
-     type( TrickHLA::SYNC_PT_TYPE_DEFAULT ),
-     label_chkpt( NULL )
-{
-   return;
-}
-
-SyncPoint::SyncPoint(
-   SyncPtTypeEnum const t )
-   : label(),
-     state( TrickHLA::SYNC_PT_STATE_KNOWN ),
-     type( t ),
-     label_chkpt( NULL )
-{
-   return;
-}
-
-SyncPoint::SyncPoint(
-   wstring const       &lbl,
-   SyncPtTypeEnum const t )
-   : label( lbl ),
-     state( TrickHLA::SYNC_PT_STATE_KNOWN ),
-     type( t ),
+     user_supplied_tag( NULL, 0 ),
      label_chkpt( NULL )
 {
    return;
@@ -135,6 +114,17 @@ bool const SyncPoint::is_error() const
             && ( this->state != TrickHLA::SYNC_PT_STATE_ANNOUNCED )
             && ( this->state != TrickHLA::SYNC_PT_STATE_ACHIEVED )
             && ( this->state != TrickHLA::SYNC_PT_STATE_SYNCHRONIZED ) );
+}
+
+RTI1516_USERDATA const SyncPoint::encode_user_supplied_tag()
+{
+   return this->user_supplied_tag;
+}
+
+void SyncPoint::decode_user_supplied_tag(
+   RTI1516_USERDATA const &supplied_tag )
+{
+   this->user_supplied_tag = supplied_tag;
 }
 
 std::string SyncPoint::to_string()

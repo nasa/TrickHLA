@@ -135,7 +135,7 @@ class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
 
    bool const is_sync_point_announced( std::wstring const &label );
 
-   bool const mark_sync_point_announced( std::wstring const &label );
+   bool const mark_sync_point_announced( std::wstring const &label, RTI1516_USERDATA const &user_supplied_tag );
 
    bool const wait_for_sync_point_announced( std::wstring const &label );
 
@@ -168,7 +168,7 @@ class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
 
    virtual void sync_point_registration_failed( std::wstring const &label, RTI1516_NAMESPACE::SynchronizationPointFailureReason reason );
 
-   virtual void sync_point_announced( std::wstring const &label, RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
+   virtual void sync_point_announced( std::wstring const &label, RTI1516_USERDATA const &user_supplied_tag );
 
    virtual void sync_point_federation_synchronized( std::wstring const &label );
 

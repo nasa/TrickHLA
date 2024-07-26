@@ -182,9 +182,9 @@ federate.set_RRFP_role( False )   # This is NOT the Root Reference Frame Publish
 #--------------------------------------------------------------------------
 # Add in known required federates.
 #--------------------------------------------------------------------------
-federate.add_known_fededrate( True, 'A-side-Federate' )
-federate.add_known_fededrate( True, 'P-side-Federate' )
-federate.add_known_fededrate( True, str(federate.federate.name) )
+federate.add_known_federate( True, 'A-side-Federate' )
+federate.add_known_federate( True, 'P-side-Federate' )
+federate.add_known_federate( True, str(federate.federate.name) )
 
 #--------------------------------------------------------------------------
 # Configure the FOM modules.
