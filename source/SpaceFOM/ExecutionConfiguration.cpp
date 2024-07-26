@@ -364,8 +364,9 @@ void ExecutionConfiguration::unpack()
    if ( least_common_time_step == 0 ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
-             << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-             << " " << Int64BaseTime::get_units() << ") must not be zero!"
+             << " ERROR: ExCO least_common_time_step ("
+             << least_common_time_step << " " << Int64BaseTime::get_units()
+             << ") received from the Master federate must not be zero!"
              << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -373,9 +374,10 @@ void ExecutionConfiguration::unpack()
    if ( least_common_time_step < fed_lookahead ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
-             << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-             << " " << Int64BaseTime::get_units()
-             << ") is not greater than or equal to this federates lookahead time ("
+             << " ERROR: ExCO least_common_time_step ("
+             << least_common_time_step << " " << Int64BaseTime::get_units()
+             << ") received from the Master federate is not greater than or"
+             << " equal to this federates lookahead time ("
              << fed_lookahead << " " << Int64BaseTime::get_units()
              << ")!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
@@ -385,11 +387,12 @@ void ExecutionConfiguration::unpack()
    if ( ( fed_lookahead != 0 ) && ( ( least_common_time_step % fed_lookahead ) != 0 ) ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
-             << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-             << " " << Int64BaseTime::get_units()
-             << ") is not an integer multiple of the federate lookahead time ("
-             << fed_lookahead << " " << Int64BaseTime::get_units()
-             << ")!" << THLA_ENDL;
+             << " ERROR: ExCO least_common_time_step ("
+             << least_common_time_step << " " << Int64BaseTime::get_units()
+             << ") received from the Master federate is not an integer multiple"
+             << " of the federate lookahead time ("
+             << fed_lookahead << " " << Int64BaseTime::get_units() << ")!"
+             << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -414,15 +417,15 @@ void ExecutionConfiguration::unpack()
       errmsg << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
              << " ERROR: ExCO Least Common Time Step (LCTS) ("
              << least_common_time_step << " " << Int64BaseTime::get_units()
-             << ") cannot be less than the Trick software frame ("
-             << software_frame_base_time << " " << Int64BaseTime::get_units()
-             << ")! The valid relationship between the LCTS and Trick software"
-             << " frame is the LCTS must be greater or equal to the Trick"
-             << " software frame and the LCTS must be an integer multiple of"
-             << " the Trick software frame (i.e. LCTS % software_frame == 0)!"
-             << " You can set the LCTS and Trick software frame in the input.py"
-             << " file by using these directives with appropriate times:" << THLA_ENDL
-             << "   federate.set_least_common_time_step( t )" << THLA_ENDL
+             << ") received from the Master federate cannot be less than the"
+             << " Trick software frame (" << software_frame_base_time << " "
+             << Int64BaseTime::get_units() << ")! The valid relationship"
+             << " between the LCTS and Trick software frame is the LCTS must"
+             << " be greater or equal to the Trick software frame and the LCTS"
+             << " must be an integer multiple of the Trick software frame"
+             << " (i.e. LCTS % software_frame == 0)! You can set the Trick"
+             << " software frame in the input.py file by using this directive"
+             << " with an appropriate time:" << THLA_ENDL
              << "   trick.exec_set_software_frame( t )" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -431,15 +434,15 @@ void ExecutionConfiguration::unpack()
       errmsg << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
              << " ERROR: ExCO Least Common Time Step (LCTS) ("
              << least_common_time_step << " " << Int64BaseTime::get_units()
-             << ") is not an integer multiple of the Trick software frame ("
-             << software_frame_base_time << " " << Int64BaseTime::get_units()
-             << ")! The valid relationship between the LCTS and Trick software"
-             << " frame is the LCTS must be greater or equal to the Trick"
-             << " software frame and the LCTS must be an integer multiple of"
-             << " the Trick software frame (i.e. LCTS % software_frame == 0)!"
-             << " You can set the LCTS and Trick software frame in the input.py"
-             << " file by using these directives with appropriate times:" << THLA_ENDL
-             << "   federate.set_least_common_time_step( t )" << THLA_ENDL
+             << ") received from the Master federate is not an integer multiple"
+             << " of the Trick software frame (" << software_frame_base_time
+             << " " << Int64BaseTime::get_units() << ")! The valid relationship"
+             << " between the LCTS and Trick software frame is the LCTS must be"
+             << " greater or equal to the Trick software frame and the LCTS must"
+             << " be an integer multiple of the Trick software frame"
+             << " (i.e. LCTS % software_frame == 0)! You can set the Trick"
+             << " software frame in the input.py file by using this directive"
+             << " with an appropriate time:" << THLA_ENDL
              << "   trick.exec_set_software_frame( t )" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }

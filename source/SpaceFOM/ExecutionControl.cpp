@@ -216,8 +216,8 @@ void ExecutionControl::initialize()
       if ( least_common_time_step < fed_lookahead ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
-                << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-                << " " << Int64BaseTime::get_units()
+                << " ERROR: ExCO least_common_time_step ("
+                << least_common_time_step << " " << Int64BaseTime::get_units()
                 << ") is not greater than or equal to this federates lookahead time ("
                 << fed_lookahead << " " << Int64BaseTime::get_units()
                 << ")!" << THLA_ENDL;
@@ -228,8 +228,8 @@ void ExecutionControl::initialize()
       if ( ( fed_lookahead != 0 ) && ( ( least_common_time_step % fed_lookahead ) != 0 ) ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
-                << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-                << " " << Int64BaseTime::get_units()
+                << " ERROR: ExCO least_common_time_step ("
+                << least_common_time_step << " " << Int64BaseTime::get_units()
                 << ") is not an integer multiple of the federate lookahead time ("
                 << fed_lookahead << " " << Int64BaseTime::get_units()
                 << ")!" << THLA_ENDL;
