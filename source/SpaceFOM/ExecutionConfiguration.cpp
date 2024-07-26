@@ -331,9 +331,6 @@ void ExecutionConfiguration::pack()
 */
 void ExecutionConfiguration::unpack()
 {
-   int64_t software_frame_base_time;
-   double  software_frame_sec;
-
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
       msg << endl
@@ -356,9 +353,22 @@ void ExecutionConfiguration::unpack()
       send_hs( stdout, msg.str().c_str() );
    }
 
-   int64_t fed_lookahead = ( get_federate() != NULL ) ? get_federate()->get_lookahead().get_base_time() : 0;
+   // The following relationships between the Trick real-time software-frame,
+   // Least Common Time Step (LCTS), and lookahead times must hold True:
+   // ( software_frame > 0 ) && ( LCTS > 0 ) && ( lookahead >= 0 )
+   // ( LCTS >= software_frame) && ( LCTS % software_frame == 0 )
+   // ( LCTS >= lookahead ) && ( LCTS % lookahead == 0 )
 
-   // Do a bounds check on the least-common-time-step.
+   // Do a bounds check on the least common time step.
+   if ( least_common_time_step == 0 ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
+             << " ERROR: ExCO least_common_time_step (" << least_common_time_step
+             << " " << Int64BaseTime::get_units() << ") must not be zero!"
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   int64_t fed_lookahead = ( get_federate() != NULL ) ? get_federate()->get_lookahead().get_base_time() : 0;
    if ( least_common_time_step < fed_lookahead ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
@@ -369,71 +379,72 @@ void ExecutionConfiguration::unpack()
              << ")!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
-
-   // Skip for a zero lookahead time.
-   if ( fed_lookahead != 0 ) {
-
-      // Our federates lookahead time must be an integer multiple of the
-      // least-common-time-step time.
-      if ( ( least_common_time_step % fed_lookahead ) != 0 ) {
-         ostringstream errmsg;
-         errmsg << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
-                << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-                << " " << Int64BaseTime::get_units()
-                << ") is not an integer multiple of the federate lookahead time ("
-                << fed_lookahead << " " << Int64BaseTime::get_units()
-                << ")!" << THLA_ENDL;
-         DebugHandler::terminate_with_message( errmsg.str() );
-      }
+   // Our federates lookahead time must be an integer multiple of the
+   // least common time step time and only if the lookahead is not zero.
+   if ( ( fed_lookahead != 0 ) && ( ( least_common_time_step % fed_lookahead ) != 0 ) ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
+             << " ERROR: ExCO least_common_time_step (" << least_common_time_step
+             << " " << Int64BaseTime::get_units()
+             << ") is not an integer multiple of the federate lookahead time ("
+             << fed_lookahead << " " << Int64BaseTime::get_units()
+             << ")!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Check the Trick executive software frame.
    // It must be smaller than the ExCO LCTS or moding won't work properly.
    // It must also be an integer multiple of the ExCO LCTS.
-   software_frame_sec       = exec_get_software_frame();
-   software_frame_base_time = Int64BaseTime::to_base_time( software_frame_sec );
-   if ( software_frame_base_time != least_common_time_step ) {
-
-      if ( software_frame_base_time > least_common_time_step ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-            ostringstream message;
-            message << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
-                    << " WARNING: ExCO least_common_time_step (" << least_common_time_step
-                    << " " << Int64BaseTime::get_units()
-                    << ") is less than the federate software frame ("
-                    << software_frame_base_time << " " << Int64BaseTime::get_units()
-                    << ")! Resetting the software frame ("
-                    << least_common_time_step << " " << Int64BaseTime::get_units()
-                    << ")!!!!" << THLA_ENDL;
-            send_hs( stdout, message.str().c_str() );
-         }
-         software_frame_sec = Int64BaseTime::to_seconds( least_common_time_step );
-         exec_set_software_frame( software_frame_sec );
-
-      } else if ( ( least_common_time_step % software_frame_base_time ) != 0 ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-            ostringstream message;
-            message << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
-                    << " WARNING: ExCO least_common_time_step (" << least_common_time_step
-                    << " " << Int64BaseTime::get_units()
-                    << ") is not an integer multiple of the federate software frame ("
-                    << software_frame_base_time << " " << Int64BaseTime::get_units()
-                    << "! Resetting the software frame ("
-                    << least_common_time_step << " " << Int64BaseTime::get_units()
-                    << ")!!!!" << THLA_ENDL;
-            send_hs( stdout, message.str().c_str() );
-         }
-         software_frame_sec = Int64BaseTime::to_seconds( least_common_time_step );
-         exec_set_software_frame( software_frame_sec );
-
-      } else {
-         // This must mean that the ExCO Least Common Time Step (LCTS) is
-         // an integer multiple of the federates software frame. So,
-         // nothing really needs to be done. It's okay for the ExCO LTCS
-         // to be less than the software frame as long as it is an
-         // integer multiple. This will still line up with the Master
-         // federate mode control timing.
-      }
+   double software_frame_sec = exec_get_software_frame();
+   if ( software_frame_sec <= 0.0 ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
+             << " ERROR: Unexpected invalid Trick software frame time ("
+             << setprecision( 18 ) << software_frame_sec << " seconds)! The"
+             << " Trick software frame time must be greater than zero. You can"
+             << " set the LTrick software frame in the input.py file by using"
+             << " this directive with an appropriate time:" << THLA_ENDL
+             << "   trick.exec_set_software_frame( time )" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   int64_t software_frame_base_time = Int64BaseTime::to_base_time( software_frame_sec );
+   if ( least_common_time_step < software_frame_base_time ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
+             << " ERROR: ExCO Least Common Time Step (LCTS) ("
+             << least_common_time_step << " " << Int64BaseTime::get_units()
+             << ") cannot be less than the Trick software frame ("
+             << software_frame_base_time << " " << Int64BaseTime::get_units()
+             << ")! The valid relationship between the LCTS and Trick software"
+             << " frame is the LCTS must be greater or equal to the Trick"
+             << " software frame and the LCTS must be an integer multiple of"
+             << " the Trick software frame (i.e. LCTS % software_frame == 0)!"
+             << " You can set the LCTS and Trick software frame in the input.py"
+             << " file by using these directives with appropriate times:" << THLA_ENDL
+             << "   federate.set_least_common_time_step( "
+             << setprecision( 18 ) << software_frame_sec << " )" << THLA_ENDL
+             << "   trick.exec_set_software_frame( "
+             << setprecision( 18 ) << software_frame_sec << " )" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+   if ( ( least_common_time_step % software_frame_base_time ) != 0 ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
+             << " ERROR: ExCO Least Common Time Step (LCTS) ("
+             << least_common_time_step << " " << Int64BaseTime::get_units()
+             << ") is not an integer multiple of the Trick software frame ("
+             << software_frame_base_time << " " << Int64BaseTime::get_units()
+             << ")! The valid relationship between the LCTS and Trick software"
+             << " frame is the LCTS must be greater or equal to the Trick"
+             << " software frame and the LCTS must be an integer multiple of"
+             << " the Trick software frame (i.e. LCTS % software_frame == 0)!"
+             << " You can set the LCTS and Trick software frame in the input.py"
+             << " file by using these directives with appropriate times:" << THLA_ENDL
+             << "   federate.set_least_common_time_step( "
+             << setprecision( 18 ) << software_frame_sec << " )" << THLA_ENDL
+             << "   trick.exec_set_software_frame( "
+             << setprecision( 18 ) << software_frame_sec << " )" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Mark that we have an ExCO update with pending changes.
