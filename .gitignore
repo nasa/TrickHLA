@@ -41,6 +41,8 @@ _init_log*.csv
 chkpnt_*_init
 chkpnt_end
 chkpnt_point
+/sims/**/*checkpoint
+/sims/**/*.running_feds
 /sims/**/makefile
 Makefile_deps
 Makefile_temp_depends
@@ -77,6 +79,9 @@ Makefile.trick
 
 # JEOD specific files
 jeod_chkpnt_post_init
+
+# Visual Studio Code
+.vscode
 
 # Eclipse specific files
 Debug
