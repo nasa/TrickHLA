@@ -74,7 +74,6 @@ class PhysicalEntityData
    /*! @brief Copy the PhysicalEntityData.
     *  @param source Source PhysicalEntityData to copy from. */
    virtual void copy( const PhysicalEntityData &source );
-
 };
 
 } // namespace SpaceFOM

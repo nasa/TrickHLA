@@ -33,8 +33,8 @@ NASA, Johnson Space Center\n
 #include <string.h>
 
 // Trick include files.
-#include "trick/message_proto.h"
 #include "trick/MemoryManager.hh"
+#include "trick/message_proto.h"
 
 // TrickHLA model include files.
 #include "TrickHLA/CompileConfig.hh"
@@ -148,12 +148,12 @@ RefFrameBase *RefFrameTree::find_frame( string const &name )
  * @job_class{scheduled}
  */
 bool RefFrameTree::build_transform(
-   RefFrameBase const * source_frame,
-   RefFrameBase const * express_frame,
-   RefFrameData       * transform_data )
+   RefFrameBase const *source_frame,
+   RefFrameBase const *express_frame,
+   RefFrameData       *transform_data )
 {
-   RefFrameBase * current_frame = NULL;
-   RefFrameBase * next_frame    = NULL;
+   RefFrameBase *current_frame = NULL;
+   RefFrameBase *next_frame    = NULL;
 
    LRTreeNodeVector::iterator path_itr;
 
@@ -161,10 +161,10 @@ bool RefFrameTree::build_transform(
    RefFrameDataState out_frame_data;
 
    // Check for a NULL allocation.
-   if ( transform_data == NULL ){
+   if ( transform_data == NULL ) {
       send_hs( stderr, "SpaceFOM::RefFrameTree::build_transform: %d ERROR NULL transform data!",
-            __LINE__, THLA_NEWLINE );
-      return( false );
+               __LINE__, THLA_NEWLINE );
+      return ( false );
    }
 
    // Check for the degenerate case.  If the source frame is the express frame
@@ -179,8 +179,7 @@ bool RefFrameTree::build_transform(
       transform_data->set_time( source_frame->packing_data.state.time );
 
       // Return success.
-      return( true );
-
+      return ( true );
    }
 
    // Check for the trivial case where the source frame's parent is already
@@ -192,8 +191,7 @@ bool RefFrameTree::build_transform(
       transform_data->copy( source_frame->packing_data );
 
       // Return success.
-      return( true );
-
+      return ( true );
    }
 
    //------------------------------------------------------------------------
@@ -203,7 +201,7 @@ bool RefFrameTree::build_transform(
    //------------------------------------------------------------------------
 
    // Get the transformation path from source to the express frame.
-   LRTreeNodeVector & path = this->paths[source_frame->node_id][express_frame->node_id];
+   LRTreeNodeVector &path = this->paths[source_frame->node_id][express_frame->node_id];
 
    // Initialize the transform to an identity transform.
    out_frame_data.initialize();
@@ -215,7 +213,7 @@ bool RefFrameTree::build_transform(
    out_frame_data.copy( in_frame_data );
 
    // Start with the first element in the path.
-   current_frame = static_cast<RefFrameBase*>(*(path_itr = path.begin()));
+   current_frame = static_cast< RefFrameBase * >( *( path_itr = path.begin() ) );
 
    // Now iterate through the remainder of the path vector.
    for ( ++path_itr; path_itr < path.end(); ++path_itr ) {
@@ -226,44 +224,40 @@ bool RefFrameTree::build_transform(
       in_frame_data.copy( out_frame_data );
 
       // Get the reference to the next frame
-      next_frame = static_cast<RefFrameBase*>(*(path_itr));
+      next_frame = static_cast< RefFrameBase * >( *( path_itr ) );
 
       // Check if we are moving up the tree.
       if ( current_frame->parent_frame == next_frame ) {
 
          // Add transformation into the current frame's parent frame.
-         if( !in_frame_data.transform_to_parent( current_frame->packing_data, &out_frame_data ) ) {
+         if ( !in_frame_data.transform_to_parent( current_frame->packing_data, &out_frame_data ) ) {
 
             // Print Error message
             send_hs( stderr, "SpaceFOM::RefFrameTree::build_transform: %d ERROR calling 'transform_to_parent'!",
                      __LINE__, THLA_NEWLINE );
 
             // Error return.
-            return( false );
-
+            return ( false );
          }
 
       }
       // Check if we are moving down the tree.
-      else if ( next_frame->parent_frame == current_frame ){
+      else if ( next_frame->parent_frame == current_frame ) {
 
          // Use the reverse transformation to transform into the next frame.
-         if( !in_frame_data.transform_to_child( next_frame->packing_data, &out_frame_data ) ) {
+         if ( !in_frame_data.transform_to_child( next_frame->packing_data, &out_frame_data ) ) {
 
             // Print Error message
             send_hs( stderr, "SpaceFOM::RefFrameTree::build_transform: %d ERROR calling 'transform_to_child'!",
-                  __LINE__, THLA_NEWLINE );
+                     __LINE__, THLA_NEWLINE );
 
             // Error return.
-            return( false );
-
+            return ( false );
          }
-
       }
 
       // Make the next frame the current frame.
       current_frame = next_frame;
-
    }
 
    // Copy the working data into the transform data.
@@ -274,6 +268,5 @@ bool RefFrameTree::build_transform(
    transform_data->set_parent_name( express_frame->name );
 
    // Return success.
-   return( true );
-
+   return ( true );
 }

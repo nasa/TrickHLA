@@ -115,7 +115,6 @@ class RefFrameTree : public SpaceFOM::LRTreeBase
     *  @param name Name of the frame to check for. */
    virtual RefFrameBase *find_frame( std::string const &name );
 
-
    /*! @brief Build a composite transform from source to express frame.
     *  @detail The frame is constructed by using the pre-computed path from
     *  source to the express frame.
@@ -123,10 +122,9 @@ class RefFrameTree : public SpaceFOM::LRTreeBase
     *  @param source_frame Starting frame in the ReferenceFrameTree.
     *  @param express_frame Desired express frame in the ReferenceFrameTree.
     *  @param transform_data Transformation from the source into the express frame. */
-   virtual bool build_transform( RefFrameBase const * source_frame,
-                                 RefFrameBase const * express_frame,
-                                 RefFrameData       * transform_data );
-
+   virtual bool build_transform( RefFrameBase const *source_frame,
+                                 RefFrameBase const *express_frame,
+                                 RefFrameData       *transform_data );
 
    /*! @brief Print out the Reference Frame Tree nodes.
     *  @param stream Output stream. */

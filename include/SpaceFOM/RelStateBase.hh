@@ -92,7 +92,7 @@ class RelStateBase : public SpaceFOM::PhysicalEntityData
 
    /*! @brief Get the frame in which a source state will be expressed.
     *  @return Frame in which an entity state will be expressed. */
-   RefFrameBase const * get_frame(){ return(express_frame); }
+   RefFrameBase const *get_frame() { return ( express_frame ); }
 
    /*! @brief Compute the state of an entity with respect to a given frame.
     *  @return True if state successfully computed, false otherwise.

@@ -49,8 +49,8 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 RefFrameData::RefFrameData()
-: name( NULL ),
-  parent_name( NULL )
+   : name( NULL ),
+     parent_name( NULL )
 {
 }
 
@@ -58,9 +58,9 @@ RefFrameData::RefFrameData()
  * @job_class{initialization}
  */
 RefFrameData::RefFrameData( const RefFrameData &source )
-: RefFrameDataState( source ),
-  name( NULL ),
-  parent_name( NULL )
+   : RefFrameDataState( source ),
+     name( NULL ),
+     parent_name( NULL )
 {
    this->copy( source );
 }
@@ -84,7 +84,6 @@ RefFrameData::~RefFrameData()
       }
       this->parent_name = NULL;
    }
-
 }
 
 /***********************************************************************
@@ -109,23 +108,21 @@ RefFrameData &RefFrameData::operator=(
 void RefFrameData::copy( const RefFrameData &source )
 {
    // Copy the names.
-   if ( this->name != NULL ){
+   if ( this->name != NULL ) {
       trick_MM->delete_var( static_cast< void * >( this->name ) );
    }
    if ( source.name != NULL ) {
       this->name = trick_MM->mm_strdup( source.name );
-   }
-   else{
+   } else {
       this->name = NULL;
    }
 
-   if ( this->parent_name != NULL ){
+   if ( this->parent_name != NULL ) {
       trick_MM->delete_var( static_cast< void * >( this->parent_name ) );
    }
    if ( source.parent_name != NULL ) {
       this->parent_name = trick_MM->mm_strdup( source.parent_name );
-   }
-   else{
+   } else {
       this->parent_name = NULL;
    }
 
@@ -134,7 +131,6 @@ void RefFrameData::copy( const RefFrameData &source )
 
    return;
 }
-
 
 /*!
  * @job_class{scheduled}
@@ -184,13 +180,12 @@ void RefFrameData::set_parent_name( char const *name )
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */
 bool RefFrameData::transform_to_parent(
-   RefFrameData const & transform_c_p,
-   RefFrameData       * frame_p )
+   RefFrameData const &transform_c_p,
+   RefFrameData       *frame_p )
 {
 
    // Check for null reference to transformed frame data.
@@ -198,7 +193,7 @@ bool RefFrameData::transform_to_parent(
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d NULL transformed frame reference!" << std::endl;
       send_hs( stderr, errmsg.str().c_str(), __LINE__ );
-      return( false );
+      return ( false );
    }
 
    //**************************************************************************
@@ -217,33 +212,31 @@ bool RefFrameData::transform_to_parent(
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d Frame name mismatch: %s/%s!" << std::endl;
       send_hs( stderr, errmsg.str().c_str(), __LINE__, this->name, frame_p->name );
-      return( false );
+      return ( false );
    }
    if ( strcmp( this->parent_name, transform_c_p.name ) ) {
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d Frame incompatibility: %s/%s!" << std::endl;
       send_hs( stderr, errmsg.str().c_str(), __LINE__, this->parent_name, transform_c_p.name );
-      return( false );
+      return ( false );
    }
    if ( strcmp( transform_c_p.parent_name, frame_p->parent_name ) ) {
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d Frame parent: %s/%s!" << std::endl;
       send_hs( stderr, errmsg.str().c_str(), __LINE__, transform_c_p.parent_name, frame_p->parent_name );
-      return( false );
+      return ( false );
    }
 
    // Call the reference frame data state version of this function.
-   return( RefFrameDataState::transform_to_parent( transform_c_p, frame_p ) );
-
+   return ( RefFrameDataState::transform_to_parent( transform_c_p, frame_p ) );
 }
-
 
 /*!
  * @job_class{scheduled}
  */
 bool RefFrameData::transform_to_child(
-   RefFrameData const & transform_c_p,
-   RefFrameData       * frame_c )
+   RefFrameData const &transform_c_p,
+   RefFrameData       *frame_c )
 {
 
    // Check for null reference to transformed frame data.
@@ -251,7 +244,7 @@ bool RefFrameData::transform_to_child(
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d NULL transformed frame reference!" << std::endl;
       send_hs( stderr, errmsg.str().c_str(), __LINE__ );
-      return( false );
+      return ( false );
    }
 
    //**************************************************************************
@@ -266,22 +259,21 @@ bool RefFrameData::transform_to_child(
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d Frame name mismatch: %s/%s!" << std::endl;
       send_hs( stderr, errmsg.str().c_str(), __LINE__, this->name, frame_c->name );
-      return( false );
+      return ( false );
    }
    if ( strcmp( this->name, transform_c_p.parent_name ) ) {
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d Frame incompatibility: %s/%s!" << std::endl;
       send_hs( stderr, errmsg.str().c_str(), __LINE__, this->name, transform_c_p.parent_name );
-      return( false );
+      return ( false );
    }
    if ( strcmp( transform_c_p.name, frame_c->parent_name ) ) {
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d Frame parent: %s/%s!" << std::endl;
       send_hs( stderr, errmsg.str().c_str(), __LINE__, transform_c_p.name, frame_c->parent_name );
-      return( false );
+      return ( false );
    }
 
    // Call the reference frame data state version of this function.
-   return( RefFrameDataState::transform_to_child( transform_c_p, frame_c ) );
-
+   return ( RefFrameDataState::transform_to_child( transform_c_p, frame_c ) );
 }

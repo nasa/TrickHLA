@@ -94,14 +94,13 @@ class RefFrameData : public SpaceFOM::RefFrameDataState
       return parent_name;
    }
 
-
    /*! @brief Transform this RefFrameData into a specified parent frame.
     *  @return True on success, False on failure.
     *  @param transform_c_p Frame transformation between current parent (child) and the new parent frame.
     *  @param frame_p This frame state transformed into the new frame (parent). */
    bool transform_to_parent(
-      RefFrameData const & transform_c_p,
-      RefFrameData       * frame_p );
+      RefFrameData const &transform_c_p,
+      RefFrameData       *frame_p );
 
    /*! @brief Transform this RefFrameData into a specified child frame.
     *  @detail This routine is used to transform a state with respect to a child
@@ -110,9 +109,8 @@ class RefFrameData : public SpaceFOM::RefFrameDataState
     *  @param transform_c_p Frame transformation between new parent (child) and the current parent frame.
     *  @param frame_c This frame state transformed into the new frame (child). */
    bool transform_to_child(
-      RefFrameData const & transform_c_p,
-      RefFrameData       * frame_c );
-
+      RefFrameData const &transform_c_p,
+      RefFrameData       *frame_c );
 };
 
 } // namespace SpaceFOM

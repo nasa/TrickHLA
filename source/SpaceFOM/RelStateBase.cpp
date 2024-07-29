@@ -37,10 +37,10 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
-#include "trick/message_proto.h"
-#include "trick/constant.h"
-#include "trick/trick_math.h"
 #include "trick/MemoryManager.hh"
+#include "trick/constant.h"
+#include "trick/message_proto.h"
+#include "trick/trick_math.h"
 
 // TrickHLA model include files.
 #include "TrickHLA/CompileConfig.hh"
@@ -181,33 +181,33 @@ bool RelStateBase::compute_state(
    double wdot_c_p_bdy[3];
 
    // Check for NULL frame.
-   if ( entity == NULL ){
+   if ( entity == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          ostringstream errmsg;
          errmsg << "RelStateBase::compute_state() Warning: PhysicalEntityData NULL!" << endl;
          send_hs( stderr, errmsg.str().c_str() );
       }
-      return( false );
+      return ( false );
    }
 
    // Find the entity parent frame in the tree.
-   RefFrameBase * entity_parent_frame = frame_tree->find_frame( entity->parent_frame );
-   if ( entity_parent_frame == NULL ){
+   RefFrameBase *entity_parent_frame = frame_tree->find_frame( entity->parent_frame );
+   if ( entity_parent_frame == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          ostringstream errmsg;
          errmsg << "RelStateBase::compute_state() Warning: Could not find parent frame: %s!" << endl;
          send_hs( stderr, entity->parent_frame, errmsg.str().c_str() );
       }
-      return( false );
+      return ( false );
    }
 
    // Check for trivial transformation.
-   if ( entity_parent_frame == express_frame ){
+   if ( entity_parent_frame == express_frame ) {
 
       // Just copy the state and return.
       this->copy( *entity );
 
-      return( true );
+      return ( true );
    }
 
    //**************************************************************************
@@ -218,13 +218,13 @@ bool RelStateBase::compute_state(
 
    // Ask the Reference Frame Tree to build the transformation for the entity
    // parent reference frame with respect to the desired express frame.
-   if( !frame_tree->build_transform( entity_parent_frame, express_frame, &path_transform ) ) {
+   if ( !frame_tree->build_transform( entity_parent_frame, express_frame, &path_transform ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          ostringstream errmsg;
          errmsg << "RelStateBase::compute_state() Warning: Could not build frame transformation: %s/%s!" << endl;
          send_hs( stderr, entity->parent_frame, express_frame->name, errmsg.str().c_str() );
       }
-      return( false );
+      return ( false );
    }
 
    //**************************************************************************
@@ -300,8 +300,7 @@ bool RelStateBase::compute_state(
    // to the parent frame.
    V_ADD( this->ang_accel, wdot_c_p_bdy, entity->ang_accel );
 
-   return( true );
-
+   return ( true );
 }
 
 /*!
@@ -315,11 +314,10 @@ bool RelStateBase::compute_state(
    // Set the frame in which to express the state.
    if ( this->set_frame( wrt_frame ) ) {
       // Call the base function.
-      return( this->compute_state( entity, express_frame ) );
+      return ( this->compute_state( entity, express_frame ) );
    }
 
-   return( false );
-
+   return ( false );
 }
 
 /*!
@@ -333,11 +331,10 @@ bool RelStateBase::compute_state(
    // Set the frame in which to express the state.
    if ( this->set_frame( wrt_frame ) ) {
       // Call the base function.
-      return( this->compute_state( entity, express_frame ) );
+      return ( this->compute_state( entity, express_frame ) );
    }
 
-   return( false );
-
+   return ( false );
 }
 
 /*!
@@ -348,21 +345,20 @@ bool RelStateBase::compute_state(
    RefFrameBase const       *wrt_frame )
 {
    // Check for NULL frame.
-   if ( wrt_frame == NULL ){
+   if ( wrt_frame == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          ostringstream errmsg;
          errmsg << "RelStateBase::compute_state() Warning: Reference frame NULL!" << endl;
          send_hs( stderr, errmsg.str().c_str() );
       }
-      return( false );
+      return ( false );
    }
 
    // Set the frame in which to express the state.
    if ( this->set_frame( *wrt_frame ) ) {
       // Call the base function to compute the state.
-      return( this->compute_state( entity ) );
+      return ( this->compute_state( entity ) );
    }
 
-   return( false );
-
+   return ( false );
 }

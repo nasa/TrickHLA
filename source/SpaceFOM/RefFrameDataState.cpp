@@ -67,7 +67,6 @@ RefFrameDataState::RefFrameDataState( const RefFrameDataState &source )
  */
 RefFrameDataState::~RefFrameDataState()
 {
-
 }
 
 /***********************************************************************
@@ -96,14 +95,13 @@ void RefFrameDataState::copy( const RefFrameDataState &source )
    this->state = source.state;
 
    // Copy the accelerations.
-   for( int iinc = 0 ; iinc < 3 ; iinc++ ){
+   for ( int iinc = 0; iinc < 3; iinc++ ) {
       this->accel[iinc]     = source.accel[iinc];
       this->ang_accel[iinc] = source.ang_accel[iinc];
    }
 
    return;
 }
-
 
 /*!
  * @job_class{scheduled}
@@ -116,13 +114,12 @@ void RefFrameDataState::initialize()
    return;
 }
 
-
 /*!
  * @job_class{scheduled}
  */
 bool RefFrameDataState::transform_to_parent(
-   RefFrameDataState const & transform_c_p,
-   RefFrameDataState       * frame_p )
+   RefFrameDataState const &transform_c_p,
+   RefFrameDataState       *frame_p )
 {
 
    double r_frm_c_p[3]; /* Position vector of this frame with respect to its
@@ -153,7 +150,7 @@ bool RefFrameDataState::transform_to_parent(
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d NULL transformed frame reference!" << std::endl;
       send_hs( stderr, errmsg.str().c_str(), __LINE__ );
-      return( false );
+      return ( false );
    }
 
    //**************************************************************************
@@ -231,17 +228,15 @@ bool RefFrameDataState::transform_to_parent(
    // to the parent frame.
    V_ADD( frame_p->ang_accel, wdot_c_p_bdy, this->ang_accel );
 
-   return( true );
-
+   return ( true );
 }
-
 
 /*!
  * @job_class{scheduled}
  */
 bool RefFrameDataState::transform_to_child(
-   RefFrameDataState const & transform_c_p,
-   RefFrameDataState       * frame_c )
+   RefFrameDataState const &transform_c_p,
+   RefFrameDataState       *frame_c )
 {
 
    // Working variables.
@@ -265,7 +260,7 @@ bool RefFrameDataState::transform_to_child(
       std::ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameDataState::transform_to_child() ERROR:%d NULL transformed frame reference!" << std::endl;
       send_hs( stderr, errmsg.str().c_str(), __LINE__ );
-      return( false );
+      return ( false );
    }
 
    //**************************************************************************
@@ -349,7 +344,5 @@ bool RefFrameDataState::transform_to_child(
    // to the parent frame.
    V_ADD( frame_c->ang_accel, wdot_c_bdy, this->ang_accel );
 
-
-   return( false );
-
+   return ( false );
 }

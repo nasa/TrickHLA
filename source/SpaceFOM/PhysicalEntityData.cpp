@@ -48,12 +48,12 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 PhysicalEntityData::PhysicalEntityData()
-: name( NULL ),
-  type( NULL ),
-  status( NULL ),
-  parent_frame( NULL )
+   : name( NULL ),
+     type( NULL ),
+     status( NULL ),
+     parent_frame( NULL )
 {
-   for( unsigned int iinc = 0 ; iinc < 3 ; iinc++ ){
+   for ( unsigned int iinc = 0; iinc < 3; iinc++ ) {
       this->accel[iinc]     = 0.0;
       this->ang_accel[iinc] = 0.0;
       this->cm[iinc]        = 0.0;
@@ -64,10 +64,10 @@ PhysicalEntityData::PhysicalEntityData()
  * @job_class{initialization}
  */
 PhysicalEntityData::PhysicalEntityData( const PhysicalEntityData &source )
-: name( NULL ),
-  type( NULL ),
-  status( NULL ),
-  parent_frame( NULL )
+   : name( NULL ),
+     type( NULL ),
+     status( NULL ),
+     parent_frame( NULL )
 {
    this->copy( source );
 }
@@ -105,7 +105,6 @@ PhysicalEntityData::~PhysicalEntityData()
       }
       this->parent_frame = NULL;
    }
-
 }
 
 /***********************************************************************
@@ -130,43 +129,39 @@ PhysicalEntityData &PhysicalEntityData::operator=(
 void PhysicalEntityData::copy( const PhysicalEntityData &source )
 {
    // Copy the string based parameters.
-   if ( this->name != NULL ){
+   if ( this->name != NULL ) {
       trick_MM->delete_var( static_cast< void * >( this->name ) );
    }
    if ( source.name != NULL ) {
       this->name = trick_MM->mm_strdup( source.name );
-   }
-   else{
+   } else {
       this->name = NULL;
    }
 
-   if ( this->type != NULL ){
+   if ( this->type != NULL ) {
       trick_MM->delete_var( static_cast< void * >( this->type ) );
    }
    if ( source.type != NULL ) {
       this->type = trick_MM->mm_strdup( source.type );
-   }
-   else{
+   } else {
       this->type = NULL;
    }
 
-   if ( this->status != NULL ){
+   if ( this->status != NULL ) {
       trick_MM->delete_var( static_cast< void * >( this->status ) );
    }
    if ( source.status != NULL ) {
       this->status = trick_MM->mm_strdup( source.status );
-   }
-   else{
+   } else {
       this->status = NULL;
    }
 
-   if ( this->parent_frame != NULL ){
+   if ( this->parent_frame != NULL ) {
       trick_MM->delete_var( static_cast< void * >( this->parent_frame ) );
    }
    if ( source.parent_frame != NULL ) {
       this->parent_frame = trick_MM->mm_strdup( source.parent_frame );
-   }
-   else{
+   } else {
       this->parent_frame = NULL;
    }
 
@@ -174,7 +169,7 @@ void PhysicalEntityData::copy( const PhysicalEntityData &source )
    this->state = source.state;
 
    // Copy the accelerations and CM vectors.
-   for( int iinc = 0 ; iinc < 3 ; iinc++ ){
+   for ( int iinc = 0; iinc < 3; iinc++ ) {
       this->accel[iinc]     = source.accel[iinc];
       this->ang_accel[iinc] = source.ang_accel[iinc];
       this->cm[iinc]        = source.cm[iinc];
