@@ -211,11 +211,11 @@ void ExecutionControl::initialize()
       // ( LCTS >= lookahead ) && ( LCTS % lookahead == 0 )
 
       // Do a bounds check on the Least Common Time Step.
-      if ( least_common_time_step == 0 ) {
+      if ( least_common_time_step <= 0 ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
                 << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-                << " " << Int64BaseTime::get_units() << ") must not be zero!"
+                << " " << Int64BaseTime::get_units() << ") must be greater than zero!"
                 << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
