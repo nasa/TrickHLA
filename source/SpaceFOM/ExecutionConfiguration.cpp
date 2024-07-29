@@ -361,12 +361,12 @@ void ExecutionConfiguration::unpack()
    // ( LCTS >= lookahead ) && ( LCTS % lookahead == 0 )
 
    // Do a bounds check on the least common time step.
-   if ( least_common_time_step == 0 ) {
+   if ( least_common_time_step <= 0 ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__
              << " ERROR: ExCO least_common_time_step ("
              << least_common_time_step << " " << Int64BaseTime::get_units()
-             << ") received from the Master federate must not be zero!"
+             << ") received from the Master federate must be greater than zero!"
              << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }

@@ -204,11 +204,11 @@ void ExecutionControl::initialize()
       // ( LCTS >= lookahead ) && ( LCTS % lookahead == 0 )
 
       // Do a bounds check on the Least Common Time Step.
-      if ( least_common_time_step == 0 ) {
+      if ( least_common_time_step <= 0 ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
                 << " ERROR: ExCO least_common_time_step (" << least_common_time_step
-                << " " << Int64BaseTime::get_units() << ") must not be zero!"
+                << " " << Int64BaseTime::get_units() << ") must be greater than zero!"
                 << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
@@ -275,6 +275,15 @@ void ExecutionControl::initialize()
       }
 
       // Verify the time padding is valid.
+      if ( get_time_padding() < 0.0 ) {
+         ostringstream errmsg;
+         errmsg << "TrickHLA::ExecutionControl::initialize():" << __LINE__
+                << " ERROR: Time padding value ("
+                << setprecision( 18 ) << get_time_padding()
+                << " seconds) must be greater than or equal to zero!"
+                << THLA_NEWLINE;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
       int64_t padding_base_time = Int64BaseTime::to_base_time( get_time_padding() );
       if ( ( padding_base_time % least_common_time_step ) != 0 ) {
          ostringstream errmsg;
@@ -2985,6 +2994,15 @@ void ExecutionControl::refresh_least_common_time_step()
 
 void ExecutionControl::set_time_padding( double t )
 {
+   if ( t < 0.0 ) {
+      ostringstream errmsg;
+      errmsg << "TrickHLA::ExecutionControl::set_time_padding():" << __LINE__
+             << " ERROR: Time padding value (" << setprecision( 18 ) << t
+             << " seconds) must be greater than or equal to zero!"
+             << THLA_NEWLINE;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    int64_t padding_base_time = Int64BaseTime::to_base_time( t );
 
    // The Master federate padding time must be an integer multiple of 3 or
@@ -3007,7 +3025,7 @@ void ExecutionControl::set_time_padding( double t )
    if ( ( padding_base_time % this->least_common_time_step ) != 0 ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
-             << " ERROR: Time padding value (" << t
+             << " ERROR: Time padding value (" << setprecision( 18 ) << t
              << " seconds) must be an integer multiple of the Least Common Time Step ("
              << this->least_common_time_step << " " << Int64BaseTime::get_units()
              << ")!" << THLA_NEWLINE;
