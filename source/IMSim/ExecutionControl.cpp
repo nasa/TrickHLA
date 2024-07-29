@@ -1919,7 +1919,7 @@ bool ExecutionControl::process_mode_transition_request()
          // Tell Trick to shutdown sometime in the future.
          // The IMSim ExecutionControl shutdown transition will be made from
          // the TrickHLA::Federate::shutdown() job.
-         the_exec->stop( the_exec->get_sim_time() + this->time_padding );
+         the_exec->stop( the_exec->get_sim_time() + get_time_padding() );
 
          return true;
          break;
