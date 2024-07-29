@@ -282,6 +282,8 @@ federate.set_least_common_time_step( 0.250 )
 # Set the amount of seconds used to 'pad' mode transitions.
 federate.set_time_padding( 2.0 )
 
+# For SpaceFOM, we also need to specify the Trick software frame time.
+trick.exec_set_software_frame( 0.250 )
 
 # Setup Time Management parameters.
 if (hla_time_mgt == False) :
