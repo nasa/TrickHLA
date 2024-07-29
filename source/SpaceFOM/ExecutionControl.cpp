@@ -180,12 +180,130 @@ void ExecutionControl::initialize()
       federate->time_constrained = true;
    }
 
-   // The software frame is set from the ExecutionControl Least Common Time Step.
-   // For the Master federate the Trick simulation software frame must
-   // match the Least Common Time Step (LCTS).
-   if ( is_master() ) {
-      double software_frame_time = Int64BaseTime::to_seconds( least_common_time_step );
-      exec_set_software_frame( software_frame_time );
+   // For SpaceFOM, we must freeze on the Trick software frame boundary because
+   // of the relationship between the Least Common Time Step (LCTS) and the
+   // Trick software frame where the following must be true:
+   // (LCTS >= software_frame) && (LCTS % software_frame == 0)
+   exec_set_freeze_on_frame_boundary( true );
+
+   // Make sure the Trick software frame is valid for all federates.
+   double software_frame_sec = exec_get_software_frame();
+   if ( software_frame_sec <= 0.0 ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
+             << " ERROR: Unexpected invalid Trick software frame time ("
+             << setprecision( 18 ) << software_frame_sec << " seconds)! The"
+             << " Trick software frame time must be greater than zero. You can"
+             << " set the LTrick software frame in the input.py file by using"
+             << " this directive with an appropriate time:" << THLA_ENDL
+             << "   trick.exec_set_software_frame( t )" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // The Trick software frame is set from the ExecutionControl Least Common
+   // Time Step (LCTS). For the Master federate the Trick simulation software
+   // frame must be equal to or less than the LCTS and the LCTS must be an
+   // integer multiple of the Trick software frame.
+   if ( this->is_master() ) {
+
+      // The following relationships between the Trick real-time software-frame,
+      // Least Common Time Step (LCTS), and lookahead times must hold True:
+      // ( software_frame > 0 ) && ( LCTS > 0 ) && ( lookahead >= 0 )
+      // ( LCTS >= software_frame) && ( LCTS % software_frame == 0 )
+      // ( LCTS >= lookahead ) && ( LCTS % lookahead == 0 )
+
+      // Do a bounds check on the Least Common Time Step.
+      if ( least_common_time_step <= 0 ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
+                << " ERROR: ExCO least_common_time_step (" << least_common_time_step
+                << " " << Int64BaseTime::get_units() << ") must be greater than zero!"
+                << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      int64_t fed_lookahead = ( get_federate() != NULL ) ? get_federate()->get_lookahead().get_base_time() : 0;
+      if ( least_common_time_step < fed_lookahead ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
+                << " ERROR: ExCO least_common_time_step ("
+                << least_common_time_step << " " << Int64BaseTime::get_units()
+                << ") is not greater than or equal to this federates lookahead time ("
+                << fed_lookahead << " " << Int64BaseTime::get_units()
+                << ")!" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      // Our federates lookahead time must be an integer multiple of the
+      // least common time step time and only if the lookahead is not zero.
+      if ( ( fed_lookahead != 0 ) && ( ( least_common_time_step % fed_lookahead ) != 0 ) ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
+                << " ERROR: ExCO least_common_time_step ("
+                << least_common_time_step << " " << Int64BaseTime::get_units()
+                << ") is not an integer multiple of the federate lookahead time ("
+                << fed_lookahead << " " << Int64BaseTime::get_units()
+                << ")!" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+
+      // Since only at this point the Master federate has a known LCTS so do
+      // the additional LCTS and software frame checks here.
+      int64_t software_frame_base_time = Int64BaseTime::to_base_time( software_frame_sec );
+      if ( least_common_time_step < software_frame_base_time ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
+                << " ERROR: ExCO Least Common Time Step (LCTS) ("
+                << least_common_time_step << " " << Int64BaseTime::get_units()
+                << ") cannot be less than the Trick software frame ("
+                << software_frame_base_time << " " << Int64BaseTime::get_units()
+                << ")! The valid relationship between the LCTS and Trick software"
+                << " frame is the LCTS must be greater or equal to the Trick"
+                << " software frame and the LCTS must be an integer multiple of"
+                << " the Trick software frame (i.e. LCTS % software_frame == 0)!"
+                << " You can set the LCTS and Trick software frame in the input.py"
+                << " file by using these directives with appropriate times:" << THLA_ENDL
+                << "   federate.set_least_common_time_step( t )" << THLA_ENDL
+                << "   trick.exec_set_software_frame( t )" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      if ( ( least_common_time_step % software_frame_base_time ) != 0 ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
+                << " ERROR: ExCO Least Common Time Step (LCTS) ("
+                << least_common_time_step << " " << Int64BaseTime::get_units()
+                << ") is not an integer multiple of the Trick software frame ("
+                << software_frame_base_time << " " << Int64BaseTime::get_units()
+                << ")! The valid relationship between the LCTS and Trick software"
+                << " frame is the LCTS must be greater or equal to the Trick"
+                << " software frame and the LCTS must be an integer multiple of"
+                << " the Trick software frame (i.e. LCTS % software_frame == 0)!"
+                << " You can set the LCTS and Trick software frame in the input.py"
+                << " file by using these directives with appropriate times:" << THLA_ENDL
+                << "   federate.set_least_common_time_step( t )" << THLA_ENDL
+                << "   trick.exec_set_software_frame( t )" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+
+      // Verify the time padding is valid.
+      if ( get_time_padding() < 0.0 ) {
+         ostringstream errmsg;
+         errmsg << "TrickHLA::ExecutionControl::initialize():" << __LINE__
+                << " ERROR: Time padding value ("
+                << setprecision( 18 ) << get_time_padding()
+                << " seconds) must be greater than or equal to zero!"
+                << THLA_NEWLINE;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      int64_t padding_base_time = Int64BaseTime::to_base_time( get_time_padding() );
+      if ( ( padding_base_time % least_common_time_step ) != 0 ) {
+         ostringstream errmsg;
+         errmsg << "TrickHLA::ExecutionControl::initialize():" << __LINE__
+                << " ERROR: Time padding value ("
+                << setprecision( 18 ) << get_time_padding()
+                << " seconds) must be an integer multiple of the Least Common Time Step ("
+                << this->least_common_time_step << " " << Int64BaseTime::get_units()
+                << ")!" << THLA_NEWLINE;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
    }
 
    // Add the Mode Transition Request synchronization points.
@@ -1141,7 +1259,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
       }
 
       // The Master federate padding time must be an integer multiple of the LCTS.
-      int64_t MPT = Int64BaseTime::to_base_time( this->time_padding );
+      int64_t MPT = Int64BaseTime::to_base_time( get_time_padding() );
       if ( ( LCTS <= 0 ) || ( MPT % LCTS ) != 0 ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
@@ -1592,7 +1710,7 @@ void ExecutionControl::set_next_execution_control_mode(
          ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time ); // immediate
          ExCO->set_next_mode_cte_time( get_cte_time() );
          if ( ExCO->get_next_mode_cte_time() > -std::numeric_limits< double >::max() ) {
-            ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + this->time_padding ); // Some time in the future.
+            ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + get_time_padding() ); // Some time in the future.
          }
          break;
 
@@ -1603,11 +1721,11 @@ void ExecutionControl::set_next_execution_control_mode(
          ExCO->set_next_execution_mode( EXECUTION_MODE_FREEZE );
 
          // Set the next mode times.
-         this->next_mode_scenario_time = get_scenario_time() + this->time_padding; // Some time in the future.
+         this->next_mode_scenario_time = this->get_scenario_time() + get_time_padding(); // Some time in the future.
          ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time );
          ExCO->set_next_mode_cte_time( get_cte_time() );
          if ( ExCO->get_next_mode_cte_time() > -std::numeric_limits< double >::max() ) {
-            ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + this->time_padding ); // Some time in the future.
+            ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + get_time_padding() ); // Some time in the future.
          }
 
          // Set the ExecutionControl freeze times.
@@ -1772,7 +1890,7 @@ bool ExecutionControl::process_mode_transition_request()
          // Tell Trick to shutdown sometime in the future.
          // The SpaceFOM ExecutionControl shutdown transition will be made from
          // the TrickHLA::Federate::shutdown() job.
-         the_exec->stop( the_exec->get_sim_time() + this->time_padding );
+         the_exec->stop( the_exec->get_sim_time() + get_time_padding() );
          return true;
          break;
 
@@ -2918,27 +3036,25 @@ void ExecutionControl::refresh_least_common_time_step()
 
 void ExecutionControl::set_time_padding( double t )
 {
-   int64_t base_time = Int64BaseTime::to_base_time( t );
-
-   // Need to check that time padding is valid.
-   if ( ( base_time % this->least_common_time_step ) != 0 ) {
+   if ( t < 0.0 ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
-             << " ERROR: Time padding value (" << t
-             << " seconds) must be an integer multiple of the Least Common Time Step ("
-             << this->least_common_time_step << " " << Int64BaseTime::get_units()
-             << ")!" << THLA_NEWLINE;
+      errmsg << "TrickHLA::ExecutionControl::set_time_padding():" << __LINE__
+             << " ERROR: Time padding value (" << setprecision( 18 ) << t
+             << " seconds) must be greater than or equal to zero!"
+             << THLA_NEWLINE;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
+
+   int64_t padding_base_time = Int64BaseTime::to_base_time( t );
 
    // The Master federate padding time must be an integer multiple of 3 or
    // more times the Least Common Time Step (LCTS). This will give commands
    // time to propagate through the system and still have time for mode
    // transitions.
-   if ( base_time < ( 3 * this->least_common_time_step ) ) {
+   if ( padding_base_time < ( 3 * this->least_common_time_step ) ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
-             << " ERROR: Mode transition padding time (" << base_time
+             << " ERROR: Mode transition padding time (" << padding_base_time
              << " " << Int64BaseTime::get_units()
              << ") is not a multiple of 3 or more of the ExCO"
              << " Least Common Time Step (" << this->least_common_time_step
@@ -2947,5 +3063,16 @@ void ExecutionControl::set_time_padding( double t )
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   this->time_padding = Int64BaseTime::to_seconds( base_time );
+   // Need to check that time padding is valid.
+   if ( ( padding_base_time % this->least_common_time_step ) != 0 ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
+             << " ERROR: Time padding value (" << setprecision( 18 ) << t
+             << " seconds) must be an integer multiple of the Least Common Time Step ("
+             << this->least_common_time_step << " " << Int64BaseTime::get_units()
+             << ")!" << THLA_NEWLINE;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   this->time_padding = Int64BaseTime::to_seconds( padding_base_time );
 }
