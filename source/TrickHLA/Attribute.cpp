@@ -268,7 +268,7 @@ void Attribute::initialize(
                    << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                    << trick_name << "' must use either the ENCODING_BIG_ENDIAN, "
-                   << "ENCODING_LITTLE_ENDIAN, ENCODING_BOOLEAN, ENCODING_NO_ENCODING, or "
+                   << "ENCODING_LITTLE_ENDIAN, ENCODING_BOOLEAN, ENCODING_NONE, or "
                    << "ENCODING_UNKNOWN value for the 'rti_encoding' when the "
                    << "attribute represents a 'bool' type. Please check your input "
                    << "or modified-data files to make sure the value for the 'rti_"
@@ -291,7 +291,7 @@ void Attribute::initialize(
                    << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                    << trick_name << "' must use either the ENCODING_BIG_ENDIAN,"
-                   << " ENCODING_LITTLE_ENDIAN, ENCODING_NO_ENCODING, ENCODING_UNICODE_STRING,"
+                   << " ENCODING_LITTLE_ENDIAN, ENCODING_NONE, ENCODING_UNICODE_STRING,"
                    << " ENCODING_OPAQUE_DATA, or ENCODING_UNKNOWN value for the"
                    << " 'rti_encoding' when the attribute represents a 'char' or"
                    << " 'unsigned char' type. Please check  your input or"
@@ -354,7 +354,7 @@ void Attribute::initialize(
                    << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                    << trick_name << "' must use either the ENCODING_LOGICAL_TIME, "
-                   << "ENCODING_BIG_ENDIAN, ENCODING_LITTLE_ENDIAN, ENCODING_NO_ENCODING, or "
+                   << "ENCODING_BIG_ENDIAN, ENCODING_LITTLE_ENDIAN, ENCODING_NONE, or "
                    << "ENCODING_UNKNOWN value for the 'rti_encoding' when the "
                    << "attribute represents a primitive type. Please check your "
                    << "input or modified-data files to make sure the value for the "
@@ -377,7 +377,7 @@ void Attribute::initialize(
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                    << trick_name << "' must use either the ENCODING_C_STRING, "
                    << "ENCODING_UNICODE_STRING, ENCODING_ASCII_STRING, ENCODING_OPAQUE_DATA, "
-                   << "ENCODING_NO_ENCODING, or ENCODING_UNKNOWN value for the "
+                   << "ENCODING_NONE, or ENCODING_UNKNOWN value for the "
                    << "'rti_encoding' when the attribute represents a String type "
                    << "(i.e. char *). Please check your input or modified-data "
                    << "files to make sure the value for the 'rti_encoding' is "
@@ -385,13 +385,13 @@ void Attribute::initialize(
             DebugHandler::terminate_with_message( errmsg.str() );
          }
 
-         // Only support an array of characters (i.e. char *) for ENCODING_NO_ENCODING.
+         // Only support an array of characters (i.e. char *) for ENCODING_NONE.
          if ( ( rti_encoding == ENCODING_NONE ) && ( ref2->attr->num_index != 0 ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
                    << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
-                   << trick_name << "' and 'rti_encoding' of ENCODING_NO_ENCODING must"
+                   << trick_name << "' and 'rti_encoding' of ENCODING_NONE must"
                    << " represent a one-dimensional array of characters (i.e."
                    << " 'char *'). Please check your input or modified-data"
                    << " files to make sure the value for the 'rti_encoding' is"
@@ -690,7 +690,7 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
       }
       case ENCODING_NONE: {
          // The byte counts must match between the received attribute and
-         // the Trick simulation variable for ENCODING_NO_ENCODING since this
+         // the Trick simulation variable for ENCODING_NONE since this
          // RTI encoding only supports a fixed length array of characters.
          if ( attr_size != expected_byte_count ) {
             ostringstream errmsg;
@@ -699,7 +699,7 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
                    << trick_name << "', the received FOM data size (" << attr_size
                    << " bytes) != Expected Trick simulation variable memory size ("
                    << expected_byte_count << " bytes) for the rti_encoding of"
-                   << " ENCODING_NO_ENCODING. The ENCODING_NO_ENCODING only supports a fixed"
+                   << " ENCODING_NONE. The ENCODING_NONE only supports a fixed"
                    << " length array of characters. Make sure your simulation"
                    << " variable is the same size and type as what is defined in the"
                    << " FOM. If you are using Lag Compensation one possible cause of"
@@ -2323,7 +2323,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
          if ( byte_count != size ) {
             ostringstream errmsg;
             errmsg << "Attribute::encode_string_to_buffer():" << __LINE__
-                   << " ERROR: For ENCODING_NO_ENCODING, Attribute '" << FOM_name
+                   << " ERROR: For ENCODING_NONE, Attribute '" << FOM_name
                    << "' with Trick name '" << trick_name << "', actual data size"
                    << " (" << byte_count << ") != expected Trick simulation variable"
                    << " size (" << size << ")!" << THLA_ENDL;
@@ -3178,7 +3178,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
          if ( output == NULL ) {
             ostringstream errmsg;
             errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
-                   << " ERROR: For ENCODING_NO_ENCODING, Attribute '" << FOM_name
+                   << " ERROR: For ENCODING_NONE, Attribute '" << FOM_name
                    << "' with Trick name '" << trick_name << "' is NULL!" << THLA_ENDL;
             DebugHandler::terminate_with_message( errmsg.str() );
          }
@@ -3188,7 +3188,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
          if ( size != get_size( output ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
-                   << " ERROR: For ENCODING_NO_ENCODING, Attribute '" << FOM_name
+                   << " ERROR: For ENCODING_NONE, Attribute '" << FOM_name
                    << "' with Trick name '" << trick_name << "', received data"
                    << " size (" << size << ") != Trick simulation variable size ("
                    << get_size( output ) << ")!" << THLA_ENDL;
@@ -3492,7 +3492,7 @@ bool Attribute::is_supported_attribute_type() const // RETURN: -- True if suppor
                   || ( rti_encoding == ENCODING_NONE ) );
       }
       case TRICK_STRING: {
-         // Only support an 1-D array of characters (char *) for ENCODING_NO_ENCODING.
+         // Only support an 1-D array of characters (char *) for ENCODING_NONE.
          if ( ( rti_encoding == ENCODING_NONE ) && ( ref2->attr->num_index != 0 ) ) {
             return false;
          }
