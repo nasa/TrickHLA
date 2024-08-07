@@ -181,7 +181,7 @@ void DynamicalEntityBase::base_config(
    object->attributes[4].publish       = publishes;
    object->attributes[4].subscribe     = !publishes;
    object->attributes[4].locally_owned = publishes;
-   object->attributes[4].rti_encoding  = TrickHLA::ENCODING_OPAQUE_DATA;
+   object->attributes[4].rti_encoding  = TrickHLA::ENCODING_NONE;
 
    object->attributes[5].FOM_name      = allocate_input_string( "acceleration" );
    trick_name_str                      = entity_name_str + string( ".pe_packing_data.accel" );
@@ -217,7 +217,7 @@ void DynamicalEntityBase::base_config(
    object->attributes[8].publish       = publishes;
    object->attributes[8].subscribe     = !publishes;
    object->attributes[8].locally_owned = publishes;
-   object->attributes[8].rti_encoding  = TrickHLA::ENCODING_OPAQUE_DATA;
+   object->attributes[8].rti_encoding  = TrickHLA::ENCODING_NONE;
 
    object->attributes[9].FOM_name      = allocate_input_string( "force" );
    trick_name_str                      = entity_name_str + string( ".de_packing_data.force" );

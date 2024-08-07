@@ -205,7 +205,7 @@ void RefFrameBase::base_config(
    object->attributes[2].publish       = publishes;
    object->attributes[2].subscribe     = !publishes;
    object->attributes[2].locally_owned = publishes;
-   object->attributes[2].rti_encoding  = TrickHLA::ENCODING_OPAQUE_DATA;
+   object->attributes[2].rti_encoding  = TrickHLA::ENCODING_NONE;
 
    return;
 }

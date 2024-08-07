@@ -135,7 +135,7 @@ class SpaceFOMPhysicalEntityObject(TrickHLAObjectConfig):
                                            not self.hla_create,
                                            self.hla_create,
                                            trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           trick.TrickHLA.ENCODING_OPAQUE_DATA )
+                                           trick.TrickHLA.ENCODING_NONE )
       self.add_attribute( attribute )
 
       ## Set up the map to the PhysicalEntity's translational acceleration.
@@ -179,7 +179,7 @@ class SpaceFOMPhysicalEntityObject(TrickHLAObjectConfig):
                                            not self.hla_create,
                                            self.hla_create,
                                            trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           trick.TrickHLA.ENCODING_OPAQUE_DATA )
+                                           trick.TrickHLA.ENCODING_NONE )
       self.add_attribute( attribute )
 
       return

@@ -178,7 +178,7 @@ void PhysicalInterfaceBase::base_config(
    object->attributes[3].publish       = publishes;
    object->attributes[3].subscribe     = !publishes;
    object->attributes[3].locally_owned = publishes;
-   object->attributes[3].rti_encoding  = TrickHLA::ENCODING_OPAQUE_DATA;
+   object->attributes[3].rti_encoding  = TrickHLA::ENCODING_NONE;
 
    return;
 }
