@@ -105,14 +105,12 @@ using namespace IMSim;
 ExecutionControl::ExecutionControl(
    IMSim::ExecutionConfiguration &imsim_config )
    : TrickHLA::ExecutionControlBase( imsim_config ),
-     // TODO:remove     pending_mtr( IMSim::MTR_UNINITIALIZED ),
+     pending_mtr( IMSim::MTR_UNINITIALIZED ),
      freeze_inter_count( 0 ),
      freeze_interaction( NULL ),
      scenario_time_epoch( 0.0 ),
      current_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED ),
      next_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED )
-// TODO:remove     logged_sync_pts_count( 0 ),
-// TODO:remove     loggable_sync_pts( NULL )
 {
    // The next_mode_scenario_time time for the next federation execution mode
    // change expressed as a federation scenario time reference. Note: this is
@@ -165,25 +163,6 @@ ExecutionControl::~ExecutionControl()
       freeze_interaction = NULL;
       freeze_inter_count = 0;
    }
-
-   /*TODO:remove
-      // Free the memory used by the array of running Federates for the Federation.
-      if ( loggable_sync_pts != NULL ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "IMSim::ExecutionControl::~ExecutionControl() logged_sync_pts_count=%d %c",
-                     logged_sync_pts_count, THLA_NEWLINE );
-         }
-         for ( size_t i = 0; i < logged_sync_pts_count; ++i ) {
-            loggable_sync_pts[i].clear();
-         }
-         if ( trick_MM->delete_var( static_cast< void * >( loggable_sync_pts ) ) ) {
-            send_hs( stderr, "IMSim::ExecutionControl::~ExecutionControl():%d ERROR deleting Trick Memory for 'loggable_sync_pts'%c",
-                     __LINE__, THLA_NEWLINE );
-         }
-         loggable_sync_pts     = NULL;
-         logged_sync_pts_count = 0;
-      }
-   */
 }
 
 /*!
@@ -222,14 +201,6 @@ void ExecutionControl::initialize()
       double software_frame_time = Int64BaseTime::to_seconds( this->least_common_time_step );
       exec_set_software_frame( software_frame_time );
    }
-
-   // Register initialization synchronization points used for IMSim.
-   add_sync_point( IMSim::SIM_CONFIG_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
-   add_sync_point( IMSim::INITIALIZE_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
-   add_sync_point( IMSim::INIT_COMPLETE_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
-   add_sync_point( IMSim::STARTUP_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
-   add_sync_point( IMSim::FEDSAVE_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
-   add_sync_point( IMSim::FEDRUN_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
 
    // Make sure we initialize the base class.
    TrickHLA::ExecutionControlBase::initialize();
@@ -300,11 +271,11 @@ void ExecutionControl::pre_multi_phase_init_processes()
    // attributes, interactions and parameters.
    manager->setup_all_ref_attributes();
 
-   // Add the IMSim multiphase initialization sync-points now that the
-   // ExecutionConfiguration has been initialized in the call to
-   // the setup_all_ref_attributes() function. We do this here so
-   // that we can handle the RTI callbacks that use them.
-   add_multiphase_init_sync_points();
+   // Add the IMSim initialization and user multiphase initialization
+   // sync-points now that the ExecutionConfiguration has been initialized
+   // in the call to the setup_all_ref_attributes() function. We do this
+   // here so that we can handle the RTI callbacks that use them.
+   add_initialization_sync_points();
 
    // Create the RTI Ambassador and connect.
    federate->create_RTI_ambassador_and_connect();
@@ -524,29 +495,17 @@ Simulation has started and is now running...%c",
 
          // Register the initialization synchronization points used to control
          // the IMSim startup process.
-         register_sync_point( IMSim::INIT_STARTED_SYNC_POINT, // TODO: configure all sync-point namess
+         register_sync_point( IMSim::SIM_CONFIG_SYNC_POINT,
                               federate->get_joined_federate_handles() );
-         register_sync_point( IMSim::OBJECTS_DISCOVERED_SYNC_POINT,
+         register_sync_point( IMSim::INITIALIZE_SYNC_POINT,
                               federate->get_joined_federate_handles() );
-         register_sync_point( IMSim::ROOT_FRAME_DISCOVERED_SYNC_POINT,
+         register_sync_point( IMSim::STARTUP_SYNC_POINT,
                               federate->get_joined_federate_handles() );
 
          // Register all the user defined multiphase initialization
          // synchronization points just for the joined federates.
          register_all_sync_points( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST,
                                    federate->get_joined_federate_handles() );
-
-         /* TODO:remove
-                  // Register the Multi-phase initialization sync-points just for the
-                  // joined federates.
-                  register_all_sync_points( *federate->get_RTI_ambassador(),
-                                            federate->get_joined_federate_handles() );
-
-                  // Register all the user defined multiphase initialization
-                  // synchronization points just for the joined federates.
-                  multiphase_init_sync_pnt_list.register_all_sync_points( *( federate->get_RTI_ambassador() ),
-                                                                          federate->get_joined_federate_handles() );
-         */
 
          // Call publish_and_subscribe AFTER we've initialized the manager,
          // federate, and FedAmb.
@@ -581,8 +540,10 @@ Simulation has started and is now running...%c",
          manager->wait_for_registration_of_required_objects();
 
          // Wait for the "sim_config", "initialize", and "startup" sync-points
-         // to be registered.
-         wait_for_all_sync_points_announced( IMSim::IMSIM_SYNC_POINT_LIST );
+         // to be announced.
+         wait_for_sync_point_announced( IMSim::SIM_CONFIG_SYNC_POINT );
+         wait_for_sync_point_announced( IMSim::INITIALIZE_SYNC_POINT );
+         wait_for_sync_point_announced( IMSim::STARTUP_SYNC_POINT );
 
          // Achieve the "sim_config" sync-point and wait for the federation
          // to be synchronized on it.
@@ -592,12 +553,13 @@ Simulation has started and is now running...%c",
          send_execution_configuration();
 
          /*TODO: Double check this is not part of IMSim scheme and remove.
-                  // DANNY2.7 When master is started in freeze, create a pause sync point
-                  //  so other feds will start in freeze.
-                  if ( exec_get_freeze_command() != 0 ) {
-                     register_sync_point( IMSim::STARTUP_FREEZE_SYNC_POINT, 0.0 );
-                  }
+         // DANNY2.7 When master is started in freeze, create a pause sync point
+         //  so other feds will start in freeze.
+         if ( exec_get_freeze_command() != 0 ) {
+            register_sync_point( IMSim::STARTUP_FREEZE_SYNC_POINT, 0.0 );
+         }
          */
+
          // Achieve the "initialize" sync-point and wait for the federation
          // to be synchronized on it.
          achieve_sync_point_and_wait_for_synchronization( IMSim::INITIALIZE_SYNC_POINT );
@@ -735,8 +697,10 @@ Simulation has started and is now running...%c",
             manager->wait_for_registration_of_required_objects();
 
             // Wait for the "sim_config", "initialize", and "startup" sync-points
-            // to be registered.
-            wait_for_all_sync_points_announced();
+            // to be announced.
+            wait_for_sync_point_announced( IMSim::SIM_CONFIG_SYNC_POINT );
+            wait_for_sync_point_announced( IMSim::INITIALIZE_SYNC_POINT );
+            wait_for_sync_point_announced( IMSim::STARTUP_SYNC_POINT );
 
             // Achieve the "sim_config" sync-point and wait for the federation
             // to be synchronized on it.
@@ -1131,6 +1095,21 @@ void ExecutionControl::setup_interaction_RTI_handles()
    return;
 }
 
+/*! Add initialization synchronization points to regulate startup. */
+void ExecutionControl::add_initialization_sync_points()
+{
+   // Add the IMSim initialization synchronization points used for startup regulation.
+   add_sync_point( IMSim::SIM_CONFIG_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
+   add_sync_point( IMSim::INITIALIZE_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
+   add_sync_point( IMSim::STARTUP_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
+   add_sync_point( IMSim::INIT_COMPLETE_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
+   add_sync_point( IMSim::FEDSAVE_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
+   add_sync_point( IMSim::FEDRUN_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
+
+   // Add the multiphase initialization synchronization points.
+   add_multiphase_init_sync_points();
+}
+
 void ExecutionControl::publish()
 {
    // Check to see if we are the Master federate.
@@ -1513,7 +1492,7 @@ bool ExecutionControl::process_mode_transition_request()
    // Print diagnostic message if appropriate.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       cout << "=============================================================" << endl
-           << "ExecutionControl::process_mode_transition_request()" << endl
+           << "IMSim::ExecutionControl::process_mode_transition_request()" << endl
            << "\t current_scenario_time:     " << setprecision( 18 ) << scenario_timeline->get_time() << endl
            << "\t scenario_time_epoch:       " << setprecision( 18 ) << scenario_timeline->get_epoch() << endl
            << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << scenario_time_epoch << endl
@@ -1924,11 +1903,11 @@ bool ExecutionControl::process_execution_control_updates()
 
 bool ExecutionControl::run_mode_transition()
 {
+   /* TODO: Update for IMSim
+
    RTIambassador          *RTI_amb  = federate->get_RTI_ambassador();
    ExecutionConfiguration *ExCO     = get_execution_configuration();
    SyncPoint              *sync_pnt = NULL;
-
-   /* TODO: Update for IMSim
 
      // Register the 'mtr_run' sync-point.
      if ( is_master() ) {
@@ -2013,14 +1992,19 @@ bool ExecutionControl::run_mode_transition()
 
 void ExecutionControl::freeze_mode_announce()
 {
+   /*TODO: Implement for IMSim
+
    // Register the 'mtr_freeze' sync-point.
    if ( is_master() ) {
       register_sync_point( *( federate->get_RTI_ambassador() ), IMSim::MTR_FREEZE_SYNC_POINT );
    }
+   */
 }
 
 bool ExecutionControl::freeze_mode_transition()
 {
+   /*TODO: Implement for IMSim
+
    // Make sure that we have a valid sync-point.
    if ( !contains_sync_point( SpaceFOM::MTR_FREEZE_SYNC_POINT ) ) {
       ostringstream errmsg;
@@ -2037,8 +2021,8 @@ bool ExecutionControl::freeze_mode_transition()
 
       // Set the current execution mode to freeze.
       this->current_execution_control_mode = EXECUTION_CONTROL_FREEZE;
-      // TODO: remove  get_execution_configuration()->set_current_execution_mode( EXECUTION_MODE_FREEZE );
-   }
+      get_execution_configuration()->set_current_execution_mode( EXECUTION_MODE_FREEZE );
+   }*/
    return false;
 }
 
@@ -2083,8 +2067,11 @@ void ExecutionControl::shutdown_mode_transition()
       return;
    }
 
+   /*TODO: Implement for IMSim
+
    // Register the 'mtr_shutdown' sync-point.
    register_sync_point( *( federate->get_RTI_ambassador() ), IMSim::MTR_SHUTDOWN_SYNC_POINT );
+   */
 }
 
 void ExecutionControl::enter_freeze()

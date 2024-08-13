@@ -102,30 +102,6 @@ typedef enum {
 
 } MTREnum;
 
-/*!
-@enum PausePointStateEnum
-@brief Define the TrickHLA synchronization point state enumeration values.
-
-The PausePointStateEnum enumeration defines the possible pause point
-(synchronization point) synchronization states for a TrickHLA based federate.
-*/
-/* TODO: remove
-typedef enum {
-
-   PAUSE_POINT_STATE_FIRST_VALUE  = 0,      ///< Set to the First value in the enumeration.
-   PAUSE_POINT_STATE_ERROR        = 0,      ///< Pause point state error.
-   PAUSE_POINT_STATE_PENDING      = 1,      ///< Pause point state pending.
-   PAUSE_POINT_STATE_ACKNOWLEDGED = 2,      ///< Pause point state acknowledged.
-   PAUSE_POINT_STATE_RUN          = 3,      ///< Pause point state run.
-   PAUSE_POINT_STATE_FREEZE       = 4,      ///< Pause point state freeze.
-   PAUSE_POINT_STATE_EXIT         = 5,      ///< Pause point state exit.
-   PAUSE_POINT_STATE_RESTART      = 6,      ///< Pause point state restart.
-   PAUSE_POINT_STATE_RECONFIG     = 7,      ///< Pause point state reconfiguration.
-   PAUSE_POINT_STATE_UNKNOWN      = INT_MAX ///< Unknown state.
-
-} PausePointStateEnum;
-*/
-
 typedef std::set< double > FreezeTimeSet;
 
 // Helper methods for these enumerations.

@@ -55,6 +55,8 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
+static std::string const MULTIPHASE_INIT_SYNC_POINT_LIST = "Multiphase";
+
 /*!
 @enum HLABaseTimeEnum
 @brief Define the HLA Logical Time base units supported.
@@ -259,8 +261,6 @@ typedef enum {
    MODE_TRANSITION_LAST_VALUE    = 6  ///< Same as shutdown.
 
 } ModeTransitionEnum;
-
-static std::string const MULTIPHASE_INIT_SYNC_POINT_LIST = "Multiphase";
 
 /*!
 @enum SyncPtStateEnum

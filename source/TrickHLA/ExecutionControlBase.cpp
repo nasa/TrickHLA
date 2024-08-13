@@ -426,7 +426,15 @@ void ExecutionControlBase::add_multiphase_init_sync_points()
    for ( unsigned int i = 0; i < user_sync_pt_labels.size(); ++i ) {
       wstring ws_label;
       StringUtilities::to_wstring( ws_label, user_sync_pt_labels.at( i ) );
-      add_sync_point( ws_label, TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST );
+      if ( contains_sync_point( ws_label ) ) {
+         ostringstream errmsg;
+         errmsg << "ExecutionControlBase::add_multiphase_init_sync_points:" << __LINE__
+                << " ERROR: User specified multiphase init sync-point label '"
+                << user_sync_pt_labels.at( i ) << "' already added!" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      } else {
+         add_sync_point( ws_label, TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST );
+      }
    }
 }
 

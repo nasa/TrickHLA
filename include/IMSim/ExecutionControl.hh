@@ -118,6 +118,9 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! Setup the ExecutionControl interaction HLA RTI handles. */
    virtual void setup_interaction_RTI_handles();
 
+   /*! Add initialization synchronization points to regulate startup. */
+   virtual void add_initialization_sync_points();
+
    /*! Publish the ExecutionControl objects and interactions. */
    virtual void publish();
    /*! Unpublish the ExecutionControl objects and interactions. */
