@@ -285,15 +285,9 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    int                    freeze_inter_count; ///< @trick_io{**} Number of TrickHLA Freeze Interactions.
    TrickHLA::Interaction *freeze_interaction; ///< @trick_io{**} Interaction to FREEZE the sim at a specified time.
 
-   // TODO:remove MTRInteractionHandler   mtr_interaction_handler; ///< @trick_units{--} SRFOM MTR interaction handler.
-
    IMSim::FreezeInteractionHandler freeze_interaction_handler; ///< @trick_units{--} Freeze interaction handler.
 
    FreezeTimeSet freeze_scenario_times; ///< @trick_io{**} collection of scenario times when we must enter FREEZE mode
-
-   // TODO:remove TrickHLA::Int64Time checktime;      ///< @trick_units{--} For DIS: Checking time to pause
-
-   // TODO:remove   SyncPntPauseList    pause_sync_pts; ///< @trick_units{--} Synchronization points used for pausing the sim.
 
    /*! @brief Return the relevant IMSim::ExecutionConfiguration object.
     *  @return Pointer to the relevant IMSim::ExecutionConfiguration object. */
@@ -316,9 +310,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
       used in conjunction with the cte_mode_time, sim_mode_time and
       associated sync point mechanisms to coordinate federation execution
       mode transitions.*/
-
-   // TODO:remove   size_t                logged_sync_pts_count; ///< @trick_units{--} number of logged sync pts
-   // TODO:remove   SyncPntTimedLoggable *loggable_sync_pts;     ///< @trick_units{--} Converted Sync Point data that gets checkpointed
 
   private:
    // Do not allow the copy constructor.

@@ -53,10 +53,6 @@ static std::wstring const STARTUP_SYNC_POINT       = L"startup_v2";
 static std::wstring const FEDSAVE_SYNC_POINT       = L"FEDSAVE_v2";
 static std::wstring const FEDRUN_SYNC_POINT        = L"FEDRUN_v2";
 
-/*TODO: Double check this is not part of IMSim scheme and remove.
-static std::wstring const STARTUP_FREEZE_SYNC_POINT = L"pause_0.0";
-*/
-
 /*!
 @enum ExecutionModeEnum
 @brief Define the TrickHLA IMSim execution mode enumeration values.

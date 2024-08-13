@@ -108,6 +108,8 @@ ExecutionControl::ExecutionControl(
      pending_mtr( IMSim::MTR_UNINITIALIZED ),
      freeze_inter_count( 0 ),
      freeze_interaction( NULL ),
+     freeze_interaction_handler(),
+     freeze_scenario_times(),
      scenario_time_epoch( 0.0 ),
      current_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED ),
      next_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED )
@@ -552,13 +554,12 @@ Simulation has started and is now running...%c",
          // Send the "Simulation Configuration".
          send_execution_configuration();
 
-         /*TODO: Double check this is not part of IMSim scheme and remove.
+         /* TODO: REMOVE
          // DANNY2.7 When master is started in freeze, create a pause sync point
          //  so other feds will start in freeze.
          if ( exec_get_freeze_command() != 0 ) {
-            register_sync_point( IMSim::STARTUP_FREEZE_SYNC_POINT, 0.0 );
-         }
-         */
+            register_sync_point( IMSim::PAUSE_SYNC_POINT );
+         } */
 
          // Achieve the "initialize" sync-point and wait for the federation
          // to be synchronized on it.
@@ -2242,7 +2243,6 @@ void ExecutionControl::trigger_freeze_interaction(
  */
 bool ExecutionControl::check_freeze_time()
 {
-
    bool do_immediate_freeze = check_scenario_freeze_time();
 
    if ( do_immediate_freeze ) {
@@ -2348,7 +2348,6 @@ bool ExecutionControl::is_save_initiated()
 
       while ( !federate->get_initiate_save_flag() ) { // wait for federation to be synced
 
-         // TODO: remove        this->pause_sync_pts.achieve_all_sync_points( *federate->get_RTI_ambassador(), this->checktime );
          sleep_timer.sleep();
 
          if ( !federate->get_initiate_save_flag() ) {
