@@ -801,8 +801,7 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
 
       // We are not a late joiner if the Sim-Config sync-point exists are we
       // are a member for it.
-      if ( !manager->is_restore_determined()
-           && contains_sync_point( IMSim::SIM_CONFIG_SYNC_POINT ) ) { // cppcheck-suppress [knownConditionTrueFalse]
+      if ( !manager->is_restore_determined() && contains_sync_point( IMSim::SIM_CONFIG_SYNC_POINT ) ) { // cppcheck-suppress [knownConditionTrueFalse]
          this->late_joiner            = false;
          this->late_joiner_determined = true;
       }
@@ -1061,11 +1060,9 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // in-line, and not via the trick input.py file, use the alternate version of
    // the initialize routine which does not resolve the fully-qualified trick
    // name to access the ATTRIBUTES if the trick variable...
-   if ( tParm != NULL ) {
-      tParm[0].initialize( freeze_interaction->get_FOM_name(),
-                           static_cast< void * >( freeze_handler->get_address_of_interaction_time() ),
-                           static_cast< ATTRIBUTES * >( time_attr ) );
-   }
+   tParm[0].initialize( freeze_interaction->get_FOM_name(),
+                        static_cast< void * >( freeze_handler->get_address_of_interaction_time() ),
+                        static_cast< ATTRIBUTES * >( time_attr ) );
 }
 
 /*!

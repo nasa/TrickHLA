@@ -53,6 +53,9 @@ static std::wstring const STARTUP_SYNC_POINT       = L"startup_v2";
 static std::wstring const FEDSAVE_SYNC_POINT       = L"FEDSAVE_v2";
 static std::wstring const FEDRUN_SYNC_POINT        = L"FEDRUN_v2";
 
+// Set of freeze times.
+typedef std::set< double > FreezeTimeSet;
+
 /*!
 @enum ExecutionModeEnum
 @brief Define the TrickHLA IMSim execution mode enumeration values.
@@ -97,8 +100,6 @@ typedef enum {
    MTR_LAST_VALUE    = 4  ///< Same as shutdown.
 
 } MTREnum;
-
-typedef std::set< double > FreezeTimeSet;
 
 // Helper methods for these enumerations.
 /*! @brief Convert an ExecutionModeEnum value into a printable string.

@@ -59,7 +59,6 @@ namespace IMSim
 
 typedef FreezeInteractionHandler *FreezeInteractionHandlerPtr; // Needed so that Trick will ICG FreezeInteractionHandler.
 
-
 class ExecutionControl : public TrickHLA::ExecutionControlBase
 {
    // Let the Trick input processor access protected and private data.
