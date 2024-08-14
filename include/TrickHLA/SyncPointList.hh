@@ -24,6 +24,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPoint.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPointTimed.cpp}
 
 @revs_title
 @revs_begin
@@ -49,6 +50,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/SyncPoint.hh"
+#include "TrickHLA/SyncPointTimed.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -65,7 +67,7 @@ namespace TrickHLA
 {
 
 #if SYNC_POINT_TMM_ARRAY
-// typedef SyncPoint **SyncPoint2DArray;
+typedef SyncPointTimed *SyncPointTimesPtr; // Needed so that Trick will ICG SyncPointTimed.
 #else
 typedef std::vector< SyncPoint * > SyncPointVector;
 #endif

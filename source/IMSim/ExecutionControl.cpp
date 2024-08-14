@@ -28,6 +28,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/Utilities.cpp}
 @trick_link_dependency{ExecutionConfiguration.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
+@trick_link_dependency{FreezeInteractionHandler.cpp}
 @trick_link_dependency{Types.cpp}
 
 @revs_title
@@ -54,8 +55,6 @@ NASA, Johnson Space Center\n
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 
-// HLA include files.
-
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Federate.hh"
@@ -73,6 +72,7 @@ NASA, Johnson Space Center\n
 // IMSim include files.
 #include "IMSim/ExecutionConfiguration.hh"
 #include "IMSim/ExecutionControl.hh"
+#include "IMSim/FreezeInteractionHandler.hh"
 #include "IMSim/Types.hh"
 
 // IMSim file level declarations.
@@ -108,7 +108,6 @@ ExecutionControl::ExecutionControl(
      pending_mtr( IMSim::MTR_UNINITIALIZED ),
      freeze_inter_count( 0 ),
      freeze_interaction( NULL ),
-     freeze_interaction_handler(),
      freeze_scenario_times(),
      scenario_time_epoch( 0.0 ),
      current_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED ),
@@ -957,28 +956,30 @@ void ExecutionControl::setup_interaction_ref_attributes()
              << " FAILED to allocate enough memory for Interaction specialized"
              << " to FREEZE the sim!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
-   FreezeInteractionHandler *fiHandler =
+   FreezeInteractionHandler *freeze_handler =
       reinterpret_cast< FreezeInteractionHandler * >(
          alloc_type( 1, "IMSim::FreezeInteractionHandler" ) );
-   if ( fiHandler == NULL ) {
+   if ( freeze_handler == NULL ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for FreezeInteractionHandler!"
              << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } else {
-      // Set the reference to this ExecutionControl instance in the
-      // IMSim::FreezeIntrationHandler.
-      fiHandler->execution_control = this;
+      return;
    }
+   // Set the reference to this ExecutionControl instance in the
+   // IMSim::FreezeIntrationHandler.
+   freeze_handler->execution_control = this;
 
-   freeze_interaction->set_handler( fiHandler );
-   freeze_interaction->set_FOM_name( const_cast< char * >( "Freeze" ) );
-   // pass the debug flag into the interaction object so that we see its messages
-   // in case the user turns our messages on...
+   // Configure the Freeze interaction handler.
+   freeze_interaction->set_handler( freeze_handler );
+   freeze_interaction->set_FOM_name( "Freeze" );
    freeze_interaction->set_publish();
    freeze_interaction->set_subscribe();
+
+   // Configure the Parameters.
    freeze_interaction->set_parameter_count( 1 );
    Parameter *tParm = reinterpret_cast< Parameter * >(
       alloc_type( freeze_interaction->get_parameter_count(), "TrickHLA::Parameter" ) );
@@ -988,21 +989,19 @@ void ExecutionControl::setup_interaction_ref_attributes()
              << " FAILED to allocate enough memory for the parameters of the"
              << " FREEZE interaction!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   } else {
-
-      tParm[0].set_FOM_name( "time" );
-      tParm[0].set_encoding( ENCODING_LOGICAL_TIME );
-
-      freeze_interaction->set_parameters( tParm );
+      return;
    }
+   tParm[0].set_FOM_name( "time" );
+   tParm[0].set_encoding( ENCODING_LOGICAL_TIME );
+   freeze_interaction->set_parameters( tParm );
 
-   // since this is an interaction handler generated on the fly, there is no
+   // Since this is an interaction handler generated on the fly, there is no
    // trick variable to resolve to at run time, which is supplied by the
    // input.py file. we must build data structures with sufficient information
    // for the Parameter class to link itself into the just generated
    // Freeze Interaction Handler, and its sole parameter ('time').
 
-   // allocate the trick ATTRIBUTES data structure with room for two
+   // Allocate the trick ATTRIBUTES data structure with room for two
    // entries: 1) the 'time' parameter and 2) an empty entry marking the end
    // of the structure.
    ATTRIBUTES *time_attr;
@@ -1013,9 +1012,10 @@ void ExecutionControl::setup_interaction_ref_attributes()
              << " FAILED to allocate enough memory for the ATTRIBUTES for the"
              << " 'time' value of the FREEZE interaction!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
-   // find the 'time' value in the Freeze Interaction Handler's ATTRIBUTES.
+   // Find the 'time' value in the Freeze Interaction Handler's ATTRIBUTES.
    // since we may not know the total # of elements, we look for an empty
    // element as an ending marker of the ATTRIBUTES.
    int attr_index = 0;
@@ -1030,7 +1030,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
       ++attr_index;
    }
 
-   // now that we have hit the end of the ATTRIBUTES array, copy the last
+   // Now that we have hit the end of the ATTRIBUTES array, copy the last
    // entry into my time_attr array to make it a valid ATTRIBUTE array.
    memcpy( &time_attr[1],
            &attrIMSim__FreezeInteractionHandler[attr_index],
@@ -1063,7 +1063,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // name to access the ATTRIBUTES if the trick variable...
    if ( tParm != NULL ) {
       tParm[0].initialize( freeze_interaction->get_FOM_name(),
-                           static_cast< void * >( fiHandler->get_address_of_interaction_time() ),
+                           static_cast< void * >( freeze_handler->get_address_of_interaction_time() ),
                            static_cast< ATTRIBUTES * >( time_attr ) );
    }
 }
@@ -1217,7 +1217,6 @@ void ExecutionControl::receive_interaction(
    RTI1516_NAMESPACE::LogicalTime const             &theTime,
    bool const                                        received_as_TSO )
 {
-
    // Find the TrickHLAFreezeInteraction we have data for.
    for ( int i = 0; i < freeze_inter_count; ++i ) {
       // Process the FREEZE interaction if we subscribed to it and we have the

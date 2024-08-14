@@ -57,6 +57,9 @@ NASA, Johnson Space Center\n
 namespace IMSim
 {
 
+typedef FreezeInteractionHandler *FreezeInteractionHandlerPtr; // Needed so that Trick will ICG FreezeInteractionHandler.
+
+
 class ExecutionControl : public TrickHLA::ExecutionControlBase
 {
    // Let the Trick input processor access protected and private data.
@@ -284,8 +287,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
 
    int                    freeze_inter_count; ///< @trick_io{**} Number of TrickHLA Freeze Interactions.
    TrickHLA::Interaction *freeze_interaction; ///< @trick_io{**} Interaction to FREEZE the sim at a specified time.
-
-   IMSim::FreezeInteractionHandler freeze_interaction_handler; ///< @trick_units{--} Freeze interaction handler.
 
    FreezeTimeSet freeze_scenario_times; ///< @trick_io{**} collection of scenario times when we must enter FREEZE mode
 

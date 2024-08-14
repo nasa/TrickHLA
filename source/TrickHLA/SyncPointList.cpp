@@ -1162,7 +1162,7 @@ void SyncPointList::decode_checkpoint()
 /*! @brief Free/release the memory used for the checkpoint data structures. */
 void SyncPointList::free_checkpoint()
 {
-   if ( this->list_name_chkpt == NULL ) {
+   if ( this->list_name_chkpt != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->list_name_chkpt ) ) ) {
          send_hs( stderr, "SyncPointList::free_checkpoint():%d ERROR deleting Trick Memory for 'list_name_chkpt'\n", __LINE__ );
       }

@@ -66,9 +66,8 @@ P.interaction_handler.message = 'P-side: P.interaction_hdlr.message'
 # =========================================================================
 # Show or hide the TrickHLA debug messages.
 # Use Level-3 to show the ownership transfer debug messages.
-#THLA.federate.debug_level = trick.DEBUG_LEVEL_6_TRACE
+THLA.federate.debug_level = trick.DEBUG_LEVEL_6_TRACE
 #THLA.federate.debug_level = trick.DEBUG_LEVEL_9_TRACE
-THLA.federate.debug_level = trick.DEBUG_LEVEL_2_TRACE
 
 
 # Configure the CRC.
