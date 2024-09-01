@@ -47,7 +47,9 @@ thread data cycle time being longer than the main thread data cycle time.}
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
+#include "trick/Threads.hh"
 #include "trick/exec_proto.h"
+#include "trick/exec_proto.hh"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 
@@ -586,6 +588,79 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    } else {
       // We now have at least one Trick child thread associated to TrickHLA.
       this->any_child_thread_associated = true;
+
+      Trick::Threads const *child_thread = exec_get_exec_cpp()->get_thread( thread_id );
+
+      // TrickHLA only supports certain Trick child thread process-types.
+      switch ( child_thread->process_type ) {
+         case Trick::PROCESS_TYPE_SCHEDULED: {
+            // Supported but may result in unintended overruns depending on
+            // how the users thread job cycle times are configured versus the
+            // data cycle time specified in this thread association. We trust
+            // the user knows what they are doing even though AMF threads may
+            // be a better option.
+            break;
+         }
+         case Trick::PROCESS_TYPE_ASYNC_CHILD: {
+            // TrickHLA does not support Trick Asynchronous child threads
+            // because the job scheduling is not compatible.
+            ostringstream errmsg;
+            errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
+                   << " ERROR: The Trick child thread (thread-id:" << thread_id
+                   << ") specified is configured as an Asynchronous Trick child"
+                   << " thread, which is not compatible with job scheduling needs"
+                   << " of TrickHLA to coordinate HLA data between threads at"
+                   << " cycle boundaries. Consider configuring the Trick child"
+                   << " thread as Asynchronous Must Finish (AMF) instead. Please"
+                   << " add or update directives like the following in your"
+                   << " input.py file to configure the Trick child thread with"
+                   << " an AMF process-type and an AMF cycle time that matches"
+                   << " the data cycle time specified for this thread association:"
+                   << THLA_ENDL
+                   << "trick.exec_set_thread_process_type( " << thread_id
+                   << ", trick.PROCESS_TYPE_AMF_CHILD )" << THLA_ENDL
+                   << "trick.exec_set_thread_amf_cycle_time( " << thread_id << ", "
+                   << setprecision( 18 ) << data_cycle << " )" << THLA_ENDL;
+            DebugHandler::terminate_with_message( errmsg.str() );
+            break;
+         }
+         case Trick::PROCESS_TYPE_AMF_CHILD: {
+            // For Asynchronous Must Finish (AMF) configured threads, the AMF cycle
+            // time needs to match the data cycle time specified in the association.
+            if ( child_thread->amf_cycle != data_cycle ) {
+               ostringstream errmsg;
+               errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
+                      << " ERROR: The Trick child thread (thread-id:" << thread_id
+                      << ") specified is configured as Asynchronous Must Finish"
+                      << " (AMF) with an AMF cycle time of "
+                      << setprecision( 18 ) << child_thread->amf_cycle
+                      << " seconds. However, this Trick child thread was"
+                      << " associated to TrickHLA with a data cycle time of "
+                      << setprecision( 18 ) << data_cycle
+                      << " seconds. Please add or update directives like the"
+                      << " following in your input.py file to configure the"
+                      << " Trick child thread with an AMF process-type and an"
+                      << " AMF cycle time that matches the data cycle time"
+                      << " specified for this thread association:"
+                      << THLA_ENDL
+                      << "trick.exec_set_thread_process_type( " << thread_id
+                      << ", trick.PROCESS_TYPE_AMF_CHILD )" << THLA_ENDL
+                      << "trick.exec_set_thread_amf_cycle_time( " << thread_id << ", "
+                      << setprecision( 18 ) << data_cycle << " )" << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+            break;
+         }
+         default: {
+            ostringstream errmsg;
+            errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
+                   << " ERROR: Unknown Trick child thread type (process_type:"
+                   << child_thread->process_type << ") for (thread-id:"
+                   << thread_id << ")!" << THLA_ENDL;
+            DebugHandler::terminate_with_message( errmsg.str() );
+            break;
+         }
+      }
    }
 }
 

@@ -16,11 +16,11 @@ trick.exec_set_freeze_command(True)
 trick.sim_control_panel_set_enabled(True)
 trick.exec_set_stack_trace(False)
 
-trick.exec_set_thread_process_type( 1 , trick.PROCESS_TYPE_AMF_CHILD )
-trick.exec_set_thread_amf_cycle_time( 1 , 0.250 )
+trick.exec_set_thread_process_type( 1, trick.PROCESS_TYPE_AMF_CHILD )
+trick.exec_set_thread_amf_cycle_time( 1, 0.250 )
 
-trick.exec_set_thread_process_type( 2 , trick.PROCESS_TYPE_AMF_CHILD )
-trick.exec_set_thread_amf_cycle_time( 2 , 0.250 )
+trick.exec_set_thread_process_type( 2, trick.PROCESS_TYPE_AMF_CHILD )
+trick.exec_set_thread_amf_cycle_time( 2, 0.250 )
 
 
 run_duration = 15.0
