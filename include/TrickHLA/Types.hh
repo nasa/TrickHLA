@@ -310,9 +310,7 @@ typedef enum {
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
-
 typedef std::auto_ptr< RTI1516_NAMESPACE::RTIambassador > TrickRTIAmbPtr;
-
 #pragma GCC diagnostic pop
 
 typedef std::queue< RTI1516_NAMESPACE::AttributeHandleValueMap > HLAAttributeMapQueue;
