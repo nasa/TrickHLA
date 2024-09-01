@@ -406,6 +406,7 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
          trickhla_ignore.append( '--suppress=noExplicitConstructor:' + jeod_home + '/models/utils/memory/include/memory_type.hh' )
          trickhla_ignore.append( '--suppress=noExplicitConstructor:' + jeod_home + '/models/utils/named_item/include/named_item.hh' )
          trickhla_ignore.append( '--suppress=uselessOverride:' + jeod_home + '/models/utils/sim_interface/include/jeod_integrator_interface.hh' )
+         trickhla_ignore.append( '--suppress=syntaxError:' + jeod_home + '/models/dynamics/mass/include/mass_point_init.hh' )
 
    if args.suppress_cstylecasts:
       # Suppress C-style casts.
