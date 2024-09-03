@@ -267,15 +267,11 @@ else
 
       # Determine which gcc library version to use.
       ifeq ($(shell echo $(COMPILER_VERSION)\>=7 | bc),1)
-         RTI_LIB_PATH = ${RTI_HOME}/lib/gcc73_64
-      else ifeq ($(shell echo $(COMPILER_VERSION)\>=5 | bc),1)
-         RTI_LIB_PATH = ${RTI_HOME}/lib/gcc52_64
-      else ifeq ($(shell echo $(COMPILER_VERSION)\>=4 | bc),1)
-         RTI_LIB_PATH = ${RTI_HOME}/lib/gcc41_64
+         RTI_LIB_PATH = ${RTI_HOME}/lib
       else
-         RTI_LIB_PATH = ${RTI_HOME}/lib/gcc34_64
+         $(error S_hla.mk:ERROR: Pitch RTI libraries require at least gcc 7 on the Linux.)
       endif
-      TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -lrti1516_202X -lfedtime1516_202X -Wl,-rpath,${RTI_LIB_PATH}
+      TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -lrti1516_202Xgcc7 -lfedtime1516_202Xgcc7 -Wl,-rpath,${RTI_LIB_PATH}
 
       # On Ubuntu, the user needs to add the LD_LIBRARY_PATH shown below to
       # their environment.
