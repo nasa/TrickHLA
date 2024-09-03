@@ -50,7 +50,7 @@ else ifeq ($(RTI_VENDOR),Mak_HLA_Evolved)
    TRICK_CFLAGS   += -DRTI_VENDOR=Mak_HLA_Evolved -I${RTI_INCLUDE}
    TRICK_CXXFLAGS += -DRTI_VENDOR=Mak_HLA_Evolved -I${RTI_INCLUDE}
 else
-   $(error S_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify one of Pitch_HLA_Evolved or Mak_HLA_Evolved.)
+   $(error S_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify one of Pitch_HLA_4, Pitch_HLA_Evolved, or Mak_HLA_Evolved.)
 endif
 
 # Configure the ICG and swig excludes.
@@ -334,7 +334,7 @@ else
    else ifeq ($(RTI_VENDOR),Mak_HLA_Evolved)
       TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib -lrti1516e64 -lfedtime1516e64
    else
-      $(error S_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify one of Pitch_HLA_Evolved or Mak_HLA_Evolved.)
+      $(error S_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify one of Pitch_HLA_4, Pitch_HLA_Evolved, or Mak_HLA_Evolved.)
    endif
 
 endif
