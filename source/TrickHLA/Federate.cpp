@@ -50,7 +50,7 @@ NASA, Johnson Space Center\n
 #include <iomanip>
 #include <iostream>
 #include <limits>
-#include <memory> // for auto_ptr
+#include <memory>
 #include <sstream>
 #include <string>
 #include <sys/time.h>
@@ -94,21 +94,10 @@ extern Trick::CheckPointRestart *the_cpr;
 // This should work for both GCC and Clang.
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
-// Note: This has to follow the Federate include.
-#include <RTI/RTIambassadorFactory.h>
+// HLA include files.
+#include RTI1516_HEADER
 #include <RTI/encoding/BasicDataElements.h>
 #pragma GCC diagnostic pop
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-// C based model includes.
-
-extern pthread_mutex_t ip_mutex;
-
-#ifdef __cplusplus
-}
-#endif
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
@@ -764,15 +753,15 @@ void Federate::create_RTI_ambassador_and_connect()
 
       if ( ( local_settings == NULL ) || ( *local_settings == '\0' ) ) {
          // Use default vendor local settings.
-         RTI_ambassador->connect( *federate_ambassador,
-                                  RTI1516_NAMESPACE::HLA_IMMEDIATE );
+         this->RTI_ambassador->connect( *federate_ambassador,
+                                        RTI1516_NAMESPACE::HLA_IMMEDIATE );
       } else {
          wstring local_settings_ws;
          StringUtilities::to_wstring( local_settings_ws, local_settings );
 
-         RTI_ambassador->connect( *federate_ambassador,
-                                  RTI1516_NAMESPACE::HLA_IMMEDIATE,
-                                  local_settings_ws );
+         this->RTI_ambassador->connect( *federate_ambassador,
+                                        RTI1516_NAMESPACE::HLA_IMMEDIATE,
+                                        local_settings_ws );
       }
 
       // Reset the Federate shutdown-called flag now that we are connected.
