@@ -142,7 +142,7 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
       endif
       # Add the CLASSPATH and DYLD_LIBRARY_PATH environment variables to the 
       # simulation executable.
-      export CLASSPATH += ${RTI_HOME}/lib/prti1516_202X.jar
+      export CLASSPATH     += ${RTI_HOME}/lib/prti1516_202X.jar
       export TRICK_GTE_EXT += CLASSPATH DYLD_LIBRARY_PATH
 
    else ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
@@ -204,7 +204,7 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
       endif
       # Add the CLASSPATH and DYLD_LIBRARY_PATH environment variables to the 
       # simulation executable.
-      export CLASSPATH += ${RTI_HOME}/lib/prti1516e.jar
+      export CLASSPATH     += ${RTI_HOME}/lib/prti1516e.jar
       export TRICK_GTE_EXT += CLASSPATH DYLD_LIBRARY_PATH
    else
       $(error S_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify Pitch_HLA_4 or Pitch_HLA_Evolved.)
