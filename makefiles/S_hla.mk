@@ -7,6 +7,9 @@ TRICKHLA_HOME ?= ${MODEL_PACKAGE_HOME}/TrickHLA
 RTI_VENDOR    ?= Pitch_HLA_Evolved
 RTI_HOME      ?= ${HOME}/rti/pRTI1516e
 
+# Specify either IEEE_1516_202X for HLA Evolved or IEEE_1516_202X for HLA 4.
+HLA_STANDARD = IEEE_1516_2010
+
 # Make sure the critical environment variable paths we depend on are valid.
 ifeq ("$(wildcard ${TRICKHLA_HOME})","")
    $(error S_hla.mk:ERROR: Must specify a valid TRICKHLA_HOME environment variable, which is currently set to invalid path ${TRICKHLA_HOME})
@@ -15,21 +18,40 @@ ifeq ("$(wildcard ${RTI_HOME})","")
    $(error S_hla.mk:ERROR: Must specify a valid RTI_HOME environment variable, which is currently set to invalid path ${RTI_HOME})
 endif
 
+# Make sure either IEEE_1516_2010 or IEEE_1516_202X are specififed.
+ifneq ($(HLA_STANDARD),IEEE_1516_2010)
+   ifneq ($(HLA_STANDARD),IEEE_1516_202X)
+      $(error S_hla.mk:ERROR: Unsupported HLA Standard specififed: ${HLA_STANDARD})
+   endif
+endif
+
 # Needed for TrickHLA.
 TRICK_SFLAGS   += -I${TRICKHLA_HOME}/S_modules
-TRICK_CFLAGS   += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -DIEEE_1516_2010 -Wno-deprecated-declarations
-TRICK_CXXFLAGS += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -DIEEE_1516_2010 -Wno-deprecated-declarations
+TRICK_CFLAGS   += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -D${HLA_STANDARD} -Wno-deprecated-declarations
+TRICK_CXXFLAGS += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -D${HLA_STANDARD} -Wno-deprecated-declarations
 
 # Needed for the HLA IEEE 1516 header files.
 ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
-   # Determine the Pitch RTI include path.
-   RTI_INCLUDE = ${RTI_HOME}/api/cpp/HLA_1516-2010
-   ifeq ("$(wildcard ${RTI_INCLUDE})","")
-      RTI_INCLUDE = ${RTI_HOME}/include
+   # Determine the Pitch RTI include path based on the HLA Standard specififed.
+   ifeq ($(HLA_STANDARD),IEEE_1516_2010)
+      RTI_INCLUDE = ${RTI_HOME}/api/cpp/HLA_1516-2010
+      ifeq ("$(wildcard ${RTI_INCLUDE})","")
+         RTI_INCLUDE = ${RTI_HOME}/include
+      endif
+   else ifeq ($(HLA_STANDARD),IEEE_1516_202X)
+      RTI_INCLUDE = ${RTI_HOME}/api/cpp/HLA_1516-202X
+      ifeq ("$(wildcard ${RTI_INCLUDE})","")
+         RTI_INCLUDE = ${RTI_HOME}/include/HLA4
+      endif
+   else
+      $(error S_hla.mk:ERROR: Unsupported HLA Standard specififed: ${HLA_STANDARD})
    endif
    TRICK_CFLAGS   += -I${RTI_INCLUDE}
    TRICK_CXXFLAGS += -I${RTI_INCLUDE}
 else ifeq ($(RTI_VENDOR),Mak_HLA_Evolved)
+   ifneq ($(HLA_STANDARD),IEEE_1516_2010)
+      $(error S_hla.mk:ERROR: Unsupported HLA Standard specififed: ${HLA_STANDARD})
+   endif
    RTI_INCLUDE    =  ${RTI_HOME}/include/HLA1516E
    TRICK_CFLAGS   += -DRTI_VENDOR=Mak_HLA_Evolved -I${RTI_INCLUDE}
    TRICK_CXXFLAGS += -DRTI_VENDOR=Mak_HLA_Evolved -I${RTI_INCLUDE}
