@@ -269,7 +269,7 @@ else
       ifeq ($(shell echo $(COMPILER_VERSION)\>=7 | bc),1)
          RTI_LIB_PATH = ${RTI_HOME}/lib
       else
-         $(error S_hla.mk:ERROR: Pitch RTI libraries require at least gcc 7 on the Linux.)
+         $(error S_hla.mk:ERROR: Pitch RTI libraries require at least gcc 7 for Linux.)
       endif
       TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -lrti1516_202Xgcc7 -lfedtime1516_202Xgcc7 -Wl,-rpath,${RTI_LIB_PATH}
 
