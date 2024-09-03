@@ -15,7 +15,7 @@ ifeq ("$(wildcard ${RTI_HOME})","")
    $(error S_hla.mk:ERROR: Must specify a valid RTI_HOME environment variable, which is currently set to invalid path ${RTI_HOME})
 endif
 
-# Either IEEE_1516_202X for HLA Evolved or IEEE_1516_202X for HLA 4.
+# Either IEEE_1516_2010 for HLA Evolved or IEEE_1516_202X for HLA 4.
 ifeq ($(RTI_VENDOR),Pitch_HLA_4)
    HLA_STANDARD = IEEE_1516_202X
 else ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
