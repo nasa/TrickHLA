@@ -3606,17 +3606,16 @@ void Object::grant_pull_request()
       }
    } else {
 
+      // List of attributes to divest.
+      AttributeHandleSet *divested_attrs = new AttributeHandleSet();
+
       try {
-         // Divest ownership only if we have attributes we need to do this for.
-         auto_ptr< AttributeHandleSet > divested_attrs( new AttributeHandleSet );
-         AttributeHandleSet::iterator   divested_iter;
-
          // IEEE 1516.1-2000 section 7.12
-         rti_amb->attributeOwnershipDivestitureIfWanted(
-            this->instance_handle,
-            attrs_to_divest,
-            *divested_attrs );
+         rti_amb->attributeOwnershipDivestitureIfWanted( this->instance_handle,
+                                                         attrs_to_divest,
+                                                         *divested_attrs );
 
+         // Divest ownership only if we have attributes we need to do this for.
          if ( divested_attrs->empty() ) {
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                send_hs( stdout, "Object::grant_pull_request():%d \
@@ -3626,6 +3625,7 @@ No attributes Divested since no federate wanted them for object '%s'.%c",
          } else {
             // Process the list of attributes that were divisted by the RTI
             // and set the state of the ownership.
+            AttributeHandleSet::iterator divested_iter;
             for ( divested_iter = divested_attrs->begin();
                   divested_iter != divested_attrs->end(); ++divested_iter ) {
 
@@ -3652,6 +3652,10 @@ No attributes Divested since no federate wanted them for object '%s'.%c",
 pull request for Trick-HLA-Object '%s'%c",
                   __LINE__, get_name(), THLA_NEWLINE );
       }
+
+      // Make sure we delete the attribute divest list.
+      divested_attrs->clear();
+      delete divested_attrs;
 
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
