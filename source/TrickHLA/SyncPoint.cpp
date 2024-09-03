@@ -33,6 +33,7 @@ NASA, Johnson Space Center\n
 #include "trick/message_proto.h"
 
 // TrickHLA includes.
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/SyncPoint.hh"
 

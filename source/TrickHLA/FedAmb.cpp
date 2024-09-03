@@ -63,6 +63,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
 
 using namespace std;

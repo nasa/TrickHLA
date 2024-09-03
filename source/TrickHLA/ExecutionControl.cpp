@@ -53,6 +53,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Manager.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
 
 // Simple TrickHL::ExecutionControl file level declarations.

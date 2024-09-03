@@ -79,6 +79,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/OwnershipHandler.hh"
 #include "TrickHLA/Packing.hh"
 #include "TrickHLA/SleepTimeout.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 
