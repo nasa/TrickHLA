@@ -1120,7 +1120,7 @@ class Federate
     * freeze, tell other federates to run. */
    void exit_freeze();
 
-   /*! @brief Unfreeze simulation. */
+   /*! @brief Unfreeze the simulation. */
    void un_freeze();
 
   private:

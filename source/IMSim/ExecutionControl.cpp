@@ -1219,13 +1219,13 @@ void ExecutionControl::receive_interaction(
 
                string handle;
                StringUtilities::to_string( handle, theInteraction );
-               send_hs( stdout, "Manager::receive_interaction(FREEZE):%d ID:%s, HLA-time:%G%c",
+               send_hs( stdout, "IMSim::ExecutionControl::receive_interaction(FREEZE):%d ID:%s, HLA-time:%G%c",
                         __LINE__, handle.c_str(), _time.get_time_in_seconds(),
                         THLA_NEWLINE );
             } else {
                string handle;
                StringUtilities::to_string( handle, theInteraction );
-               send_hs( stdout, "Manager::receive_interaction(FREEZE):%d ID:%s%c",
+               send_hs( stdout, "IMSim::ExecutionControl::receive_interaction(FREEZE):%d ID:%s%c",
                         __LINE__, handle.c_str(), THLA_NEWLINE );
             }
          }

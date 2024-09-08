@@ -205,9 +205,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     * freeze, tell other federates to run. */
    virtual void exit_freeze();
 
-   /*! @brief Routine to handle ExecutionControl specific action needed to un-freeze. */
-   virtual void un_freeze();
-
    //
    // FIXME: These pause functions should be worked into the general freeze
    // ExecutionControl methodology.

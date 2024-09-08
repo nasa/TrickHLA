@@ -136,7 +136,8 @@ InteractionItem::InteractionItem(
 InteractionItem::~InteractionItem()
 {
    if ( user_supplied_tag != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( user_supplied_tag ) ) ) {
+      if ( trick_MM->is_alloced( static_cast< void * >( user_supplied_tag ) )
+           && trick_MM->delete_var( static_cast< void * >( user_supplied_tag ) ) ) {
          send_hs( stderr, "InteractionItem::~InteractionItem():%d ERROR deleting Trick Memory for 'user_supplied_tag'%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -176,7 +177,8 @@ void InteractionItem::initialize(
 
    // Free the Trick allocated memory for the user supplied tag.
    if ( user_supplied_tag != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( user_supplied_tag ) ) ) {
+      if ( trick_MM->is_alloced( static_cast< void * >( user_supplied_tag ) )
+           && trick_MM->delete_var( static_cast< void * >( user_supplied_tag ) ) ) {
          send_hs( stderr, "InteractionItem::initialize():%d ERROR deleting Trick Memory for 'user_supplied_tag'%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -238,7 +240,8 @@ void InteractionItem::clear_parm_items()
       for ( int i = 0; i < parm_items_count; ++i ) {
          parm_items[i].clear();
       }
-      if ( trick_MM->delete_var( static_cast< void * >( parm_items ) ) ) {
+      if ( trick_MM->is_alloced( static_cast< void * >( parm_items ) )
+           && trick_MM->delete_var( static_cast< void * >( parm_items ) ) ) {
          send_hs( stderr, "InteractionItem::clear_parm_items():%d ERROR deleting Trick Memory for 'parm_items'%c",
                   __LINE__, THLA_NEWLINE );
       }

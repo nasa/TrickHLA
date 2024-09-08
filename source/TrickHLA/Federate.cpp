@@ -2548,6 +2548,9 @@ void Federate::check_freeze()
    }
 }
 
+/*!
+ *  Unfreeze the simulation.
+ */
 void Federate::un_freeze()
 {
    exec_run();
