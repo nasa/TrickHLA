@@ -169,8 +169,6 @@ Federate::Federate()
      running_feds_count_at_time_of_restore( 0 ),
      checkpoint_file_name( "" ),
      checkpoint_rt_itimer( Off ),
-     announce_freeze( false ),
-     freeze_the_federation( false ),
      execution_has_begun( false ),
      time_adv_state( TIME_ADVANCE_RESET ),
      time_adv_state_mutex(),
@@ -2486,9 +2484,13 @@ void Federate::enter_freeze()
       if ( exec_get_exec_command() != FreezeCmd ) {
          return; // Trick freeze has not been commanded.
       }
-      if ( this->freeze_the_federation ) {
+      if ( execution_control->is_freeze_pending() ) {
          return; // freeze already commanded and we will freeze at top of next frame
       }
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      send_hs( stdout, "Federate::enter_freeze():%d%c", __LINE__, THLA_NEWLINE );
    }
 
    // Dispatch to the ExecutionControl method.
@@ -2504,14 +2506,14 @@ void Federate::exit_freeze()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       send_hs( stdout, "Federate::exit_freeze():%d announce_freeze:%s, freeze_federation:%s%c",
-               __LINE__, ( announce_freeze ? "Yes" : "No" ),
-               ( freeze_the_federation ? "Yes" : "No" ), THLA_NEWLINE );
+               __LINE__, ( execution_control->is_freeze_announced() ? "Yes" : "No" ),
+               ( execution_control->is_freeze_pending() ? "Yes" : "No" ), THLA_NEWLINE );
    }
 
    // Dispatch to the ExecutionControl method.
    execution_control->exit_freeze();
 
-   freeze_the_federation = false;
+   execution_control->set_freeze_pending( false );
 }
 
 /*!
@@ -2548,9 +2550,6 @@ void Federate::check_freeze()
 
 void Federate::un_freeze()
 {
-   // Let the ExecutionControl process do what it needs to do to un-freeze.
-   execution_control->un_freeze();
-
    exec_run();
 }
 
@@ -2910,7 +2909,7 @@ void Federate::setup_restore()
    }
    // Determine if I am the federate that clicked Load Chkpnt on sim control panel
    this->announce_restore = !this->start_to_restore;
-   this->announce_freeze  = this->announce_restore;
+   execution_control->set_freeze_announced( this->announce_restore );
 
    // if I announced the restore, must initiate federation restore
    if ( this->announce_restore ) {
@@ -6931,8 +6930,10 @@ void Federate::federation_saved()
    this->checkpoint_file_name  = "";
 
    if ( this->unfreeze_after_save ) {
-      this->announce_freeze = false; // this keeps from generating the RUNFED_v2 sync point since it's not needed
-      // exit freeze mode.
+      // This keeps from generating the RUNFED_v2 sync point since it's not needed
+      execution_control->set_freeze_announced( false );
+
+      // Exit freeze mode.
       un_freeze();
    }
 }

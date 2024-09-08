@@ -70,9 +70,6 @@ NASA, Johnson Space Center\n
 #include RTI1516_HEADER
 #pragma GCC diagnostic pop
 
-// FIXME: What do we do for Trick 10 to get the command-line arguments for the
-// Federate::restart_federate() job? DDexter 11/7/11
-
 namespace TrickHLA
 {
 
@@ -728,42 +725,6 @@ class Federate
    }
 
    //=======================================================================
-   // FIXME: Might consider moving these to ExecutionControl.
-   /*! @brief Set that federation execution freeze has been announced.
-    *  @param flag True for federate freeze announce; False otherwise. */
-   void set_freeze_announced( bool const flag )
-   {
-      this->announce_freeze = flag;
-   }
-
-   /*! @brief Get that federation execution freeze announced flag state.
-    *  @return True for federate freeze announced; False otherwise. */
-   bool get_freeze_announced()
-   {
-      return this->announce_freeze;
-   }
-
-   /*! @brief Set that federation execution freeze is pending flag.
-    *  @param flag True for federate freeze pending; False otherwise. */
-   void set_freeze_pending( bool const flag )
-   {
-      this->freeze_the_federation = flag;
-      return;
-   }
-
-   /*! @brief Get that federation execution freeze pending flag state.
-    *  @return True for federate freeze is pending; False otherwise. */
-   bool get_freeze_pending()
-   {
-      return this->freeze_the_federation;
-   }
-
-   /*! @brief Perform federation execution freeze process. */
-   void unfreeze()
-   {
-      return this->un_freeze();
-   }
-   //=======================================================================
 
    //
    // Clean up / shutdown functions.
@@ -1159,6 +1120,9 @@ class Federate
     * freeze, tell other federates to run. */
    void exit_freeze();
 
+   /*! @brief Unfreeze simulation. */
+   void un_freeze();
+
   private:
    // Federation state variables.
    //
@@ -1215,11 +1179,10 @@ class Federate
    KnownFederate *running_feds;                          ///< @trick_units{--} Checkpoint-able Array of running Federation Federates
    int            running_feds_count_at_time_of_restore; ///< @trick_io{**} Number of running Federates at the time of the restore (default: 0)
 
-   std::string checkpoint_file_name;  ///< @trick_io{*i} @trick_units{--} label to attach to sync point
-   Flag        checkpoint_rt_itimer;  ///< @trick_io{**} loaded checkpoint RT ITIMER
-   bool        announce_freeze;       ///< @trick_io{**} DANNY2.7 flag to indicate that this federate is announcing go to freeze mode
-   bool        freeze_the_federation; ///< @trick_io{**} DANNY2.7 flag to indicate the federation is going into freeze now
-   bool        execution_has_begun;   ///< @trick_units{--} flag to indicate if the federate has begun simulation execution.
+   std::string checkpoint_file_name; ///< @trick_io{*i} @trick_units{--} label to attach to sync point
+   Flag        checkpoint_rt_itimer; ///< @trick_io{**} loaded checkpoint RT ITIMER
+
+   bool execution_has_begun; ///< @trick_units{--} flag to indicate if the federate has begun simulation execution.
    //-- END: checkpoint / restore data --
 
    // Federation time management data.
@@ -1349,12 +1312,6 @@ class Federate
 
    /*! @brief Make time-advance request available and wait for time advance grant with zero lookahead. */
    void wait_for_zero_lookahead_TARA_TAG();
-
-   //
-   // Federation freeze management functions.
-   //
-   /*! @brief Unfreeze simulation. */
-   void un_freeze();
 
   private:
    // Do not allow the copy constructor or assignment operator.

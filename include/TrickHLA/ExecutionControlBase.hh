@@ -77,9 +77,6 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLA__ExecutionControlBase();
 
-   // FIXME: Temporary kludge.
-   friend class Manager;
-
   public:
    // Principal timelines for federation execution control.
    ScenarioTimeline *scenario_timeline; ///< @trick_units{--} The scenario timeline.
@@ -301,7 +298,6 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    void set_scenario_timeline( ScenarioTimeline *timeline )
    {
       this->scenario_timeline = timeline;
-      return;
    }
 
    /*! @brief Check to see if the Scenario Timeline exists.
@@ -429,15 +425,38 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    /*! @brief Routine to handle going from freeze to run; if we announced the
     * freeze, tell other federates to run. */
    virtual void exit_freeze();
-   /*! @brief Routine to handle ExecutionControl specific action needed to un-freeze. */
-   virtual void un_freeze()
+
+   /*! @brief Set that federation execution freeze has been announced.
+    *  @param flag True for federate freeze announce; False otherwise. */
+   void set_freeze_announced( bool const flag )
    {
-      return;
+      this->announce_freeze = flag;
+   }
+
+   /*! @brief Is the federation execution freeze announced.
+    *  @return True for federate freeze announced; False otherwise. */
+   bool is_freeze_announced()
+   {
+      return this->announce_freeze;
+   }
+
+   /*! @brief Set that federation execution freeze is pending flag.
+    *  @param flag True for federate freeze pending; False otherwise. */
+   void set_freeze_pending( bool const flag )
+   {
+      this->freeze_the_federation = flag;
+   }
+
+   /*! @brief Is the federation execution freeze pending.
+    *  @return True for federate freeze is pending; False otherwise. */
+   bool const is_freeze_pending()
+   {
+      return this->freeze_the_federation;
    }
 
    //
-   // FIXME: These pause functions should be worked into the general freeze
-   // ExecutionControl methodology.
+   // Functions for the freeze ExecutionControl methodology.
+   //
    /*! @brief Check if we hit a pause sync point and need to go to freeze.
     *  @param check_pause_delta Check pause job delta time in seconds. */
    virtual void check_pause( double const check_pause_delta );
@@ -687,8 +706,6 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
   protected:
    bool init_complete_sp_exists; /**< @trick_units{--} Internal flag, for
       Initialization Complete Sync-Point exists. (default: false) */
-   // FIXME: This is actually this ExecutionControlBase object.
-   // InitSyncPoints init_sync_pts; ///< @trick_units{--} Multiphase initialization synchronization points.
 
    bool                 mode_transition_requested;        ///< @trick_units{--} Flag to indicate a mode transition has been requested.
    ExecutionControlEnum requested_execution_control_mode; ///< @trick_units{--} The latest mode transition requested.
@@ -699,6 +716,9 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
 
    double simulation_freeze_time; ///< @trick_units{s} Trick simulation time for freeze.
    double scenario_freeze_time;   ///< @trick_units{s} Federation execution scenario time for freeze.
+
+   bool announce_freeze;       ///< @trick_io{**} DANNY2.7 flag to indicate that this federate is announcing go to freeze mode
+   bool freeze_the_federation; ///< @trick_io{**} DANNY2.7 flag to indicate the federation is going into freeze now
 
    bool late_joiner;            ///< @trick_units{--} Flag that this federate is a late joiner.
    bool late_joiner_determined; ///< @trick_units{--} Flag for late joiner determination.

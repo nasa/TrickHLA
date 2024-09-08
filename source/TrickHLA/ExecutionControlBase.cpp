@@ -107,6 +107,8 @@ ExecutionControlBase::ExecutionControlBase()
      next_mode_cte_time( -std::numeric_limits< double >::max() ),
      simulation_freeze_time( 0.0 ),
      scenario_freeze_time( 0.0 ),
+     announce_freeze( false ),
+     freeze_the_federation( false ),
      late_joiner( false ),
      late_joiner_determined( false ),
      manager( NULL )
@@ -138,6 +140,8 @@ ExecutionControlBase::ExecutionControlBase(
      next_mode_cte_time( -std::numeric_limits< double >::max() ),
      simulation_freeze_time( 0.0 ),
      scenario_freeze_time( 0.0 ),
+     announce_freeze( false ),
+     freeze_the_federation( false ),
      late_joiner( false ),
      late_joiner_determined( false ),
      manager( NULL )
@@ -866,8 +870,8 @@ void ExecutionControlBase::enter_freeze()
    // The default is to do nothing.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "ExecutionControlBase::enter_freeze():%d Freeze Announced:%s, Freeze Pending:%s%c",
-               __LINE__, ( federate->get_freeze_announced() ? "Yes" : "No" ),
-               ( federate->get_freeze_pending() ? "Yes" : "No" ), THLA_NEWLINE );
+               __LINE__, ( is_freeze_announced() ? "Yes" : "No" ),
+               ( is_freeze_pending() ? "Yes" : "No" ), THLA_NEWLINE );
    }
 }
 
@@ -892,7 +896,7 @@ void ExecutionControlBase::check_pause_at_init( double const check_pause_delta )
    this->check_pause( check_pause_delta );
 
    // Mark that freeze has been announced in the Federate.
-   federate->set_freeze_announced( this->is_master() );
+   set_freeze_announced( this->is_master() );
 }
 
 void ExecutionControlBase::set_master( bool master_flag )

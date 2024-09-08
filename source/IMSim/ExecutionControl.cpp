@@ -1097,7 +1097,8 @@ void ExecutionControl::setup_interaction_RTI_handles()
 /*! Add initialization synchronization points to regulate startup. */
 void ExecutionControl::add_initialization_sync_points()
 {
-   // Add the IMSim initialization synchronization points used for startup regulation.
+   // Add the IMSim initialization synchronization points used for startup
+   // regulation to the sync-point manager.
    add_sync_point( IMSim::SIM_CONFIG_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
    add_sync_point( IMSim::INITIALIZE_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
    add_sync_point( IMSim::STARTUP_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
@@ -1115,43 +1116,39 @@ void ExecutionControl::publish()
    if ( is_master() ) {
       // Publish the simulation configuration if we are the master federate.
       execution_configuration->publish_object_attributes();
-   }
 
-   // Publish the freeze_interactions.
-   for ( int n = 0; n < freeze_inter_count; ++n ) {
-      freeze_interaction[n].publish_interaction();
+      // Publish the freeze_interactions.
+      for ( int n = 0; n < freeze_inter_count; ++n ) {
+         freeze_interaction[n].publish_interaction();
+      }
    }
-
-   return;
 }
 
 void ExecutionControl::unpublish()
 {
-   bool do_unpublish;
-
    if ( is_master() ) {
       // Unpublish the execution configuration if we are the master federate.
       execution_configuration->unpublish_all_object_attributes();
-   }
 
-   // Unpublish all the freeze_interactions.
-   for ( int i = 0; i < freeze_inter_count; ++i ) {
+      // Unpublish all the freeze_interactions.
+      for ( int i = 0; i < freeze_inter_count; ++i ) {
 
-      // Only unpublish a FREEZE interaction that we publish.
-      if ( freeze_interaction[i].is_publish() ) {
+         // Only unpublish a FREEZE interaction that we publish.
+         if ( freeze_interaction[i].is_publish() ) {
 
-         do_unpublish = true;
-         for ( int k = 0; ( k < i ) && do_unpublish; ++k ) {
-            // Unpublish an interaction Class only once, so see if we have
-            // already unpublished the same interaction class that was published.
-            if ( freeze_interaction[k].is_publish()
-                 && ( freeze_interaction[i].get_class_handle()
-                      == freeze_interaction[k].get_class_handle() ) ) {
-               do_unpublish = false;
+            bool do_unpublish = true;
+            for ( int k = 0; ( k < i ) && do_unpublish; ++k ) {
+               // Unpublish an interaction Class only once, so see if we have
+               // already unpublished the same interaction class that was published.
+               if ( freeze_interaction[k].is_publish()
+                    && ( freeze_interaction[i].get_class_handle()
+                         == freeze_interaction[k].get_class_handle() ) ) {
+                  do_unpublish = false;
+               }
             }
-         }
-         if ( do_unpublish ) {
-            freeze_interaction[i].unpublish_interaction();
+            if ( do_unpublish ) {
+               freeze_interaction[i].unpublish_interaction();
+            }
          }
       }
    }
@@ -1159,47 +1156,41 @@ void ExecutionControl::unpublish()
 
 void ExecutionControl::subscribe()
 {
-   // Check to see if we are the Master federate.
-   if ( is_master() ) {
-      // Only subscribe to the Freeze interactions if this is the Master federate.
+   if ( !is_master() ) {
+      // Subscribe to the execution configuration if we are not the master federate.
+      execution_configuration->subscribe_to_object_attributes();
+
+      // Subscribe to the Freeze interactions if this is not the Master federate.
       for ( int n = 0; n < freeze_inter_count; ++n ) {
          freeze_interaction[n].subscribe_to_interaction();
       }
-   } else {
-      // Subscribe to the execution configuration if we are not the master federate.
-      execution_configuration->subscribe_to_object_attributes();
    }
 }
 
 void ExecutionControl::unsubscribe()
 {
-   bool do_unsubscribe;
-
-   // Check to see if we are the Master federate.
-   if ( is_master() ) {
+   if ( !is_master() ) {
       // Unsubscribe from the execution configuration if we are NOT the Master federate.
       execution_configuration->unsubscribe_all_object_attributes();
-   }
 
-   // Unsubscribe the mtr_interactions.
-   // Only unsubscribe an MTR interaction that we subscribe.
-   // Unsubscribe from all the freeze_interactions.
-   for ( int i = 0; i < freeze_inter_count; ++i ) {
-      // Only unsubscribe from FREEZE interactions that are subscribed to.
-      if ( freeze_interaction[i].is_subscribe() ) {
-         do_unsubscribe = true;
-         for ( int k = 0; ( k < i ) && do_unsubscribe; ++k ) {
-            // Unsubscribe from an interaction Class only once, so see if
-            // we have already unsubscribed from the same interaction class
-            // that was subscribed to.
-            if ( freeze_interaction[k].is_subscribe()
-                 && ( freeze_interaction[i].get_class_handle()
-                      == freeze_interaction[k].get_class_handle() ) ) {
-               do_unsubscribe = false;
+      // Unsubscribe from all the freeze_interactions.
+      for ( int i = 0; i < freeze_inter_count; ++i ) {
+         // Only unsubscribe from FREEZE interactions that are subscribed to.
+         if ( freeze_interaction[i].is_subscribe() ) {
+            bool do_unsubscribe = true;
+            for ( int k = 0; ( k < i ) && do_unsubscribe; ++k ) {
+               // Unsubscribe from an interaction Class only once, so see if
+               // we have already unsubscribed from the same interaction class
+               // that was subscribed to.
+               if ( freeze_interaction[k].is_subscribe()
+                    && ( freeze_interaction[i].get_class_handle()
+                         == freeze_interaction[k].get_class_handle() ) ) {
+                  do_unsubscribe = false;
+               }
             }
-         }
-         if ( do_unsubscribe ) {
-            freeze_interaction[i].unsubscribe_from_interaction();
+            if ( do_unsubscribe ) {
+               freeze_interaction[i].unsubscribe_from_interaction();
+            }
          }
       }
    }
@@ -2060,7 +2051,7 @@ void ExecutionControl::shutdown_mode_transition()
    }
 
    // If the current execution mode is uninitialized then we haven't gotten
-   // far enough in the initialization process to shut anything down.
+   // far enough in the initialization process to shutdown anything.
    if ( this->current_execution_control_mode == EXECUTION_CONTROL_UNINITIALIZED ) {
       return;
    }
@@ -2077,27 +2068,30 @@ void ExecutionControl::enter_freeze()
    // DANNY2.7 send a freeze interaction when master hits Sim Control Panel
    //  Freeze button. Determine if I am the federate that clicked Freeze
    if ( get_sim_time() <= 0.0 ) {
-      federate->set_freeze_announced( is_master() );
-   } else if ( !federate->get_freeze_pending() ) {
-      federate->set_freeze_announced( true );
+      set_freeze_announced( is_master() );
+   } else if ( !is_freeze_pending() ) {
+      set_freeze_announced( true );
    }
 
-   if ( federate->get_freeze_announced() ) {
+   if ( is_freeze_announced() ) {
       // Send interaction unless: we are here because we are at the freeze
       // interaction time, or we are here because we started in freeze
-      if ( ( !federate->get_freeze_pending() ) && ( get_sim_time() > 0.0 ) ) {
+      if ( ( !is_freeze_pending() ) && ( get_sim_time() > 0.0 ) ) {
          double freeze_scenario_time = -DBL_MAX; // freeze immediately
 
          if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             send_hs( stdout,
                      "IMSim::ExecutionControl::enter_freeze():%d announce_freeze:%s, freeze_federation:%s, freeze_scenario_time:%g %c",
-                     __LINE__, ( federate->get_freeze_announced() ? "Yes" : "No" ),
-                     ( federate->get_freeze_pending() ? "Yes" : "No" ),
+                     __LINE__, ( is_freeze_announced() ? "Yes" : "No" ),
+                     ( is_freeze_pending() ? "Yes" : "No" ),
                      freeze_scenario_time, THLA_NEWLINE );
          }
 
          trigger_freeze_interaction( freeze_scenario_time );
-         federate->unfreeze(); // will freeze again for real when we hit the freeze interaction time
+
+         set_freeze_pending( true ); // TEMP
+
+         // TEMP   federate->un_freeze(); // will freeze again for real when we hit the freeze interaction time
       }
    }
 }
@@ -2105,7 +2099,7 @@ void ExecutionControl::enter_freeze()
 bool ExecutionControl::check_freeze_exit()
 {
    // If freeze has been announced and we are not in initialization then return true.
-   if ( federate->get_freeze_announced() && ( get_sim_time() <= 0.0 ) ) {
+   if ( is_freeze_announced() && ( get_sim_time() <= 0.0 ) ) {
       return ( true );
    }
    return ( false );
@@ -2113,20 +2107,15 @@ bool ExecutionControl::check_freeze_exit()
 
 void ExecutionControl::exit_freeze()
 {
-   if ( federate->get_freeze_announced() ) {                              // DANNY2.7
-      if ( federate->get_freeze_pending() && ( get_sim_time() > 0.0 ) ) { // coming out of freeze due to freeze interaction
+   if ( is_freeze_announced() ) {                              // DANNY2.7
+      if ( is_freeze_pending() && ( get_sim_time() > 0.0 ) ) { // coming out of freeze due to freeze interaction
 
          // TODO: remove federate->register_generic_sync_point( IMSim::FEDRUN_SYNC_POINT ); // this tells federates to go to run
       }
-      if ( federate->get_freeze_pending() ) {     // coming out of freeze due to interaction OR sync point at init time
-         federate->set_freeze_announced( false ); // reset for the next time we freeze
+      if ( is_freeze_pending() ) {      // coming out of freeze due to interaction OR sync point at init time
+         set_freeze_announced( false ); // reset for the next time we freeze
       }
    }
-}
-
-void ExecutionControl::un_freeze()
-{
-   return;
 }
 
 void ExecutionControl::check_pause( double const check_pause_delta )
@@ -2136,7 +2125,7 @@ void ExecutionControl::check_pause( double const check_pause_delta )
       return;
    }
 
-   if ( federate->get_freeze_pending() ) {
+   if ( is_freeze_pending() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "IMSim::ExecutionControl::check_pause():%d Commanding Trick Executive to FREEZE.%c",
                   __LINE__, THLA_NEWLINE );
@@ -2221,7 +2210,6 @@ void ExecutionControl::add_freeze_scenario_time(
 void ExecutionControl::trigger_freeze_interaction(
    double &freeze_scenario_time )
 {
-
    double new_freeze_time = freeze_scenario_time;
 
    FreezeInteractionHandler *freeze_intr =
@@ -2249,7 +2237,7 @@ bool ExecutionControl::check_freeze_time()
       // which must be acknowledged only in freeze mode!!!
       if ( federate->get_announce_save() ) {
          register_sync_point( IMSim::FEDSAVE_SYNC_POINT );
-         federate->set_freeze_announced( true );
+         set_freeze_announced( true );
       }
    }
    return do_immediate_freeze;
@@ -2264,10 +2252,6 @@ bool ExecutionControl::check_scenario_freeze_time()
       found_valid_freeze_time = false;
 
       if ( !freeze_scenario_times.empty() ) {
-         FreezeTimeSet::const_iterator iter;
-         iter               = freeze_scenario_times.begin();
-         double freeze_time = *iter;
-
          // We need to find the equivalent simulation-time and HLA-time for a
          // given freeze scenario-time so that we can do the correct time
          // comparisons. Also, if we are a late joining federate the sim-time
@@ -2286,6 +2270,10 @@ bool ExecutionControl::check_scenario_freeze_time()
          // freeze-sim-time = current-sim-time + (freeze-scenario-time - current-scenario-time)
          // freeze-hla-time = granted-hla-time + (freeze-scenario-time - current-scenario-time)
 
+         FreezeTimeSet::const_iterator iter = freeze_scenario_times.begin();
+
+         double freeze_time = *iter;
+
          // Get the current Trick sim-time.
          double curr_sim_time = get_sim_time();
 
@@ -2298,7 +2286,7 @@ bool ExecutionControl::check_scenario_freeze_time()
             found_valid_freeze_time = true;
             do_immediate_freeze     = true;
             freeze_scenario_times.erase( iter );
-            federate->set_freeze_pending( true );
+            set_freeze_pending( true );
 
             if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                // Determine the freeze simulation-time for the equivalent freeze
@@ -2308,7 +2296,7 @@ bool ExecutionControl::check_scenario_freeze_time()
                ostringstream infomsg;
                infomsg << "IMSim::ExecutionControl::check_scenario_freeze_time():" << __LINE__
                        << " Going to Trick FREEZE mode immediately:" << endl;
-               if ( federate->time_management ) {
+               if ( federate->is_time_management_enabled() ) {
                   infomsg << "  Granted HLA-time:" << federate->get_granted_time().get_time_in_seconds() << endl;
                }
                infomsg << "  Trick sim-time:" << curr_sim_time << endl

@@ -2494,7 +2494,7 @@ bool ExecutionControl::check_for_shutdown_with_termination()
 void ExecutionControl::freeze_init()
 {
    // Mark the freeze as announced.
-   federate->set_freeze_announced( true );
+   set_freeze_announced( true );
 
    // Transition to freeze. However, we need to check for special case
    // where this is a late joining federate in initialization. For that
@@ -2540,8 +2540,8 @@ void ExecutionControl::enter_freeze()
           << "   Trick-exec-command:" << exec_cmd_str
           << THLA_NEWLINE
           << "   Sim-freeze-time:" << get_simulation_freeze_time()
-          << "   Freeze-announced:" << ( federate->get_freeze_announced() ? "Yes" : "No" )
-          << "   Freeze-pending:" << ( federate->get_freeze_pending() ? "Yes" : "No" )
+          << "   Freeze-announced:" << ( is_freeze_announced() ? "Yes" : "No" )
+          << "   Freeze-pending:" << ( is_freeze_pending() ? "Yes" : "No" )
           << THLA_NEWLINE;
       send_hs( stdout, msg.str().c_str() );
    }
@@ -2583,7 +2583,7 @@ void ExecutionControl::enter_freeze()
          // NOTE: This will prevent the SimControl panel freeze button
          // from working.
          // Uncomment the following line if you really want this behavior.
-         // unfreeze();
+         // federate->un_freeze();
 
          return;
       }
@@ -2602,7 +2602,7 @@ void ExecutionControl::enter_freeze()
       freeze_mode_announce();
 
       // Tell Trick to go into freeze at the appointed time.
-      federate->unfreeze();
+      federate->un_freeze();
       the_exec->freeze( get_simulation_freeze_time() );
 
       // NOTE: The actual freeze transition will be done in the
@@ -2611,15 +2611,15 @@ void ExecutionControl::enter_freeze()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "SpaceFOM::ExecutionControl::enter_freeze():%d Freeze Announced:%s, Freeze Pending:%s%c",
-               __LINE__, ( federate->get_freeze_announced() ? "Yes" : "No" ),
-               ( federate->get_freeze_pending() ? "Yes" : "No" ), THLA_NEWLINE );
+               __LINE__, ( is_freeze_announced() ? "Yes" : "No" ),
+               ( is_freeze_pending() ? "Yes" : "No" ), THLA_NEWLINE );
    }
 }
 
 bool ExecutionControl::check_freeze_exit()
 {
    // If freeze has not been announced, then return false.
-   if ( !federate->get_freeze_announced() ) {
+   if ( !is_freeze_announced() ) {
       return ( false );
    }
 
