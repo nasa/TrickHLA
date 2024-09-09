@@ -191,7 +191,7 @@ void OwnershipHandler::clear_checkpoint()
          pull_items[i].clear();
       }
       if ( trick_MM->delete_var( static_cast< void * >( pull_items ) ) ) {
-         send_hs( stderr, "OwnershipHandler::clear_checkpoint():%d ERROR deleting Trick Memory for 'pull_items'%c",
+         send_hs( stderr, "OwnershipHandler::clear_checkpoint():%d WARNING failed to delete Trick Memory for 'pull_items'%c",
                   __LINE__, THLA_NEWLINE );
       }
       pull_items     = NULL;
@@ -204,7 +204,7 @@ void OwnershipHandler::clear_checkpoint()
          push_items[i].clear();
       }
       if ( trick_MM->delete_var( static_cast< void * >( push_items ) ) ) {
-         send_hs( stderr, "OwnershipHandler::clear_checkpoint():%d ERROR deleting Trick Memory for 'push_items'%c",
+         send_hs( stderr, "OwnershipHandler::clear_checkpoint():%d WARNING failed to delete Trick Memory for 'push_items'%c",
                   __LINE__, THLA_NEWLINE );
       }
       push_items     = NULL;

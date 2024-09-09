@@ -109,7 +109,7 @@ Attribute::~Attribute()
 {
    if ( buffer != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( buffer ) ) ) {
-         send_hs( stderr, "Attribute::~Attribute():%d ERROR deleting Trick Memory for 'buffer'%c",
+         send_hs( stderr, "Attribute::~Attribute():%d WARNING failed to delete Trick Memory for 'buffer'%c",
                   __LINE__, THLA_NEWLINE );
       }
       buffer          = NULL;

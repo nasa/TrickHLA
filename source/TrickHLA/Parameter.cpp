@@ -104,7 +104,7 @@ Parameter::~Parameter()
 {
    if ( buffer != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( buffer ) ) ) {
-         send_hs( stderr, "Parameter::~Parameter():%d ERROR deleting Trick Memory for 'buffer'%c",
+         send_hs( stderr, "Parameter::~Parameter():%d WARNING failed to delete Trick Memory for 'buffer'%c",
                   __LINE__, THLA_NEWLINE );
       }
       buffer          = NULL;
@@ -113,7 +113,7 @@ Parameter::~Parameter()
 
    if ( interaction_FOM_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( interaction_FOM_name ) ) ) {
-         send_hs( stderr, "Parameter::~Parameter():%d ERROR deleting Trick Memory for 'interaction_FOM_name'%c",
+         send_hs( stderr, "Parameter::~Parameter():%d WARNING failed to delete Trick Memory for 'interaction_FOM_name'%c",
                   __LINE__, THLA_NEWLINE );
       }
       interaction_FOM_name = NULL;

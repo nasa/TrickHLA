@@ -178,7 +178,7 @@ Object::~Object()
 
       if ( name != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
-            send_hs( stderr, "Object::~Object():%d ERROR deleting Trick Memory for 'name'%c",
+            send_hs( stderr, "Object::~Object():%d WARNING failed to delete Trick Memory for 'name'%c",
                      __LINE__, THLA_NEWLINE );
          }
          name = NULL;
@@ -186,7 +186,7 @@ Object::~Object()
 
       if ( this->thread_ids_array != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->thread_ids_array ) ) ) {
-            send_hs( stderr, "Object::~Object():%d ERROR deleting Trick Memory for 'this->thread_ids_array'%c",
+            send_hs( stderr, "Object::~Object():%d WARNING failed to delete Trick Memory for 'this->thread_ids_array'%c",
                      __LINE__, THLA_NEWLINE );
          }
          this->thread_ids_array       = NULL;
@@ -4116,7 +4116,7 @@ void Object::set_name(
    // Delete the existing memory used by the name.
    if ( this->name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
-         send_hs( stderr, "Object::set_name():%d ERROR deleting Trick Memory for 'name'%c",
+         send_hs( stderr, "Object::set_name():%d WARNING failed to delete Trick Memory for 'name'%c",
                   __LINE__, THLA_NEWLINE );
       }
    }
@@ -4628,7 +4628,7 @@ void Object::initialize_thread_ID_array()
    if ( this->thread_ids == NULL ) {
       if ( this->thread_ids_array != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->thread_ids_array ) ) ) {
-            send_hs( stderr, "Object::initialize_thread_ID_array():%d ERROR deleting Trick Memory for 'this->thread_ids_array'%c",
+            send_hs( stderr, "Object::initialize_thread_ID_array():%d WARNING failed to delete Trick Memory for 'this->thread_ids_array'%c",
                      __LINE__, THLA_NEWLINE );
          }
          this->thread_ids_array       = NULL;

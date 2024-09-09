@@ -159,7 +159,7 @@ ExecutionControlBase::~ExecutionControlBase()
    // Free the memory used for the multiphase initialization synchronization points.
    if ( multiphase_init_sync_points != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( multiphase_init_sync_points ) ) ) {
-         send_hs( stderr, "ExecutionControlBase::~ExecutionControlBase():%d ERROR deleting Trick Memory for 'multiphase_init_sync_points'%c",
+         send_hs( stderr, "ExecutionControlBase::~ExecutionControlBase():%d WARNING failed to delete Trick Memory for 'multiphase_init_sync_points'%c",
                   __LINE__, THLA_NEWLINE );
       }
       multiphase_init_sync_points = NULL;

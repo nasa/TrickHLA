@@ -153,13 +153,13 @@ ExecutionControl::~ExecutionControl()
    if ( freeze_interaction != NULL ) {
       if ( freeze_interaction->get_handler() != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( freeze_interaction->get_handler() ) ) ) {
-            send_hs( stderr, "IMSim::ExecutionControl::~ExecutionControl():%d ERROR deleting Trick Memory for 'freeze_interaction->get_handler()'%c",
+            send_hs( stderr, "IMSim::ExecutionControl::~ExecutionControl():%d WARNING failed to delete Trick Memory for 'freeze_interaction->get_handler()'%c",
                      __LINE__, THLA_NEWLINE );
          }
          freeze_interaction->set_handler( NULL );
       }
       if ( trick_MM->delete_var( static_cast< void * >( freeze_interaction ) ) ) {
-         send_hs( stderr, "IMSim::ExecutionControl::~ExecutionControl():%d ERROR deleting Trick Memory for 'freeze_interaction'%c",
+         send_hs( stderr, "IMSim::ExecutionControl::~ExecutionControl():%d WARNING failed to delete Trick Memory for 'freeze_interaction'%c",
                   __LINE__, THLA_NEWLINE );
       }
       freeze_interaction = NULL;

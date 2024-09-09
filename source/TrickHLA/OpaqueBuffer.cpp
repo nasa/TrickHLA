@@ -76,7 +76,7 @@ OpaqueBuffer::~OpaqueBuffer() // RETURN: -- None.
 {
    if ( buffer != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( buffer ) ) ) {
-         send_hs( stderr, "OpaqueBuffer::~OpaqueBuffer():%d ERROR deleting Trick Memory for 'buffer'%c",
+         send_hs( stderr, "OpaqueBuffer::~OpaqueBuffer():%d WARNING failed to delete Trick Memory for 'buffer'%c",
                   __LINE__, THLA_NEWLINE );
       }
       buffer   = NULL;

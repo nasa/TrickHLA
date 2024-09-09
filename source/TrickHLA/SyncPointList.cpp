@@ -1165,7 +1165,7 @@ void SyncPointList::free_checkpoint()
 {
    if ( this->list_name_chkpt != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->list_name_chkpt ) ) ) {
-         send_hs( stderr, "SyncPointList::free_checkpoint():%d ERROR deleting Trick Memory for 'list_name_chkpt'\n", __LINE__ );
+         send_hs( stderr, "SyncPointList::free_checkpoint():%d WARNING failed to delete Trick Memory for 'list_name_chkpt'\n", __LINE__ );
       }
       this->list_name_chkpt = NULL;
    }
