@@ -10,15 +10,16 @@
 # @rev_entry{ Edwin Z. Crues, NASA ER7, TrickHLA, April 2019, --, Initial creation based off of TrickHLA scripts.}
 # @rev_entry{ Dan Dexter, NASA ER6, TrickHLA, June 2020, --, Updated to process TrickHLA models code.}
 # @revs_end
-
-import sys
-import os
+#
 import argparse
+import os
 import shutil
 import subprocess
+import sys
+import textwrap
 
-from trickhla_message import *
 from trickhla_environment import *
+from trickhla_message import *
 
 
 # Main routine.
@@ -26,8 +27,9 @@ def main():
 
    # Setup command line argument parsing.
    parser = argparse.ArgumentParser( prog = 'format_code', \
+                                     formatter_class = argparse.RawDescriptionHelpFormatter, \
                                      description = 'Format the TrickHLA source code.', \
-                                     epilog = '''Example: format_code -i -v''' )
+                                     epilog = textwrap.dedent( '''\nExamples:\n  format_code -i -v\n  format_code -t -v\n''' ) )
 
    parser.add_argument( '-c', '--clean', help = 'Clean up all the TrickHLA code formatting artifacts.', \
                          action = "store_true" )
