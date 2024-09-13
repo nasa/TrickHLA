@@ -297,7 +297,7 @@ class Interaction
    {
       if ( this->FOM_name != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->FOM_name ) ) ) {
-            send_hs( stderr, "Interaction::set_FOM_name():%d ERROR deleting Trick Memory for 'this->FOM_name'\n", __LINE__ );
+            send_hs( stderr, "Interaction::set_FOM_name():%d WARNING failed to delete Trick Memory for 'this->FOM_name'\n", __LINE__ );
          }
          this->FOM_name = NULL;
       }

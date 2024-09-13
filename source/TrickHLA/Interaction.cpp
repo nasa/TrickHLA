@@ -65,6 +65,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 
@@ -114,7 +115,7 @@ Interaction::~Interaction()
 
    if ( user_supplied_tag != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( user_supplied_tag ) ) ) {
-         send_hs( stderr, "Interaction::~Interaction():%d ERROR deleting Trick Memory for 'user_supplied_tag'%c",
+         send_hs( stderr, "Interaction::~Interaction():%d WARNING failed to delete Trick Memory for 'user_supplied_tag'%c",
                   __LINE__, THLA_NEWLINE );
       }
       user_supplied_tag      = NULL;
@@ -259,7 +260,7 @@ void Interaction::set_user_supplied_tag(
    if ( tag_size > user_supplied_tag_capacity ) {
       user_supplied_tag_capacity = tag_size;
       if ( user_supplied_tag == NULL ) {
-         user_supplied_tag = static_cast< unsigned char * >( TMM_declare_var_1d( "char", user_supplied_tag_capacity ) );
+         user_supplied_tag = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", user_supplied_tag_capacity ) );
       } else {
          user_supplied_tag = static_cast< unsigned char * >( TMM_resize_array_1d_a( user_supplied_tag, user_supplied_tag_capacity ) );
       }

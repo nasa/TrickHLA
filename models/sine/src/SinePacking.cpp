@@ -87,7 +87,7 @@ SinePacking::~SinePacking()
 {
    if ( buff != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( buff ) ) ) {
-         send_hs( stderr, "TrickHLAModel::SinePacking::~SinePacking():%d ERROR deleting Trick Memory for 'buff'%c",
+         send_hs( stderr, "TrickHLAModel::SinePacking::~SinePacking():%d WARNING failed to delete Trick Memory for 'buff'%c",
                   __LINE__, THLA_NEWLINE );
       }
       buff      = NULL;

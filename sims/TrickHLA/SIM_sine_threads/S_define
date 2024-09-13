@@ -165,7 +165,7 @@ class THLAInitSimObj : public Trick::SimObject {
       // (i.e. P_HLA_INIT) so that the initialization jobs run after the
       // P60 THLA.manager->initialize() job.
       //------------------------------------------------------------------------
-
+/*
       // Data will only be sent if this federate owns it.
       P100 ("initialization") thla_manager.send_init_data( "A-side-Federate.Test" );
 
@@ -188,10 +188,10 @@ class THLAInitSimObj : public Trick::SimObject {
 
       // Wait for all federates to reach this sync-point.
       P200 ("initialization") thla_manager.wait_for_init_sync_point( "Phase2" );
-
+*/
 
       // Alternative method: Send and receive all the initialization data.
-/*
+
       // Send all the initialization data.
       P100 ("initialization") thla_manager.send_init_data();
 
@@ -202,7 +202,6 @@ class THLAInitSimObj : public Trick::SimObject {
 
       // Clear remaining initialization sync-points.
       P100 ("initialization") thla_manager.clear_init_sync_points();
-*/
    }
 
  private:

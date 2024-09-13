@@ -166,12 +166,17 @@ trick.exec_set_trap_sigfpe( True )
 # Setup for Trick real time execution. This is the "Pacing" function.
 exec( open( "Modified_data/trick/realtime.py" ).read() )
 
-trick.exec_set_enable_freeze( False ) #TEMP True )
-trick.exec_set_freeze_command( False ) #TEMP True )
+trick.exec_set_enable_freeze( True )
+trick.exec_set_freeze_command( True )
 trick.exec_set_stack_trace( False )
 
-trick.sim_control_panel_set_enabled( False ) #TEMP True )
-#trick.var_server_set_port( 7000 )
+trick.var_server_set_port( 7000 )
+#trick.var_server_set_source_address( "127.0.0.1" )
+trick.sim_control_panel_set_enabled( True )
+
+#simControlPanel = trick.SimControlPanel()
+#simControlPanel.set_host( "localhost" )
+#trick.add_external_application( simControlPanel )
 
 
 # =========================================================================
@@ -207,9 +212,9 @@ federate.set_RRFP_role( True )   # This is the Root Reference Frame Publisher.
 #--------------------------------------------------------------------------
 # Add in known required federates.
 #--------------------------------------------------------------------------
-federate.add_known_fededrate( True, str(federate.federate.name) )
-federate.add_known_fededrate( True, 'P-side-Federate' )
-federate.add_known_fededrate( False, 'Other' )
+federate.add_known_federate( True, str(federate.federate.name) )
+federate.add_known_federate( True, 'P-side-Federate' )
+federate.add_known_federate( False, 'Other' )
 
 #--------------------------------------------------------------------------
 # Configure the FOM modules.
@@ -249,6 +254,9 @@ federate.set_least_common_time_step( 0.250 )
 
 # Set the amount of seconds used to 'pad' mode transitions.
 federate.set_time_padding( 2.0 )
+
+# This federate also has the Pacing role. Set the Trick software frame time.
+trick.exec_set_software_frame( 0.250 )
 
 # Setup Time Management parameters.
 federate.set_time_regulating( True )

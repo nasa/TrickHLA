@@ -1,5 +1,5 @@
 /*!
-@file TrickHLA/TimedSyncPnt.hh
+@file TrickHLA/SyncPointTimed.hh
 @ingroup TrickHLA
 @brief This class extends the basis TrickHLA::SyncPnt synchronization point
 implementation to add a time stamp.
@@ -20,9 +20,9 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/TimedSyncPnt.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPointTimed.cpp}
 @trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
-@trick_link_dependency{../../source/TrickHLA/SyncPnt.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPoint.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
 @revs_title
@@ -33,8 +33,8 @@ NASA, Johnson Space Center\n
 
 */
 
-#ifndef TRICKHLA_TIMED_SYNC_PNT_HH
-#define TRICKHLA_TIMED_SYNC_PNT_HH
+#ifndef TRICKHLA_SYNC_POINT_TIMED_HH
+#define TRICKHLA_SYNC_POINT_TIMED_HH
 
 // System includes
 #include <string>
@@ -42,7 +42,7 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/SyncPnt.hh"
+#include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -57,7 +57,7 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-class TimedSyncPnt : public TrickHLA::SyncPnt
+class SyncPointTimed : public TrickHLA::SyncPoint
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -67,52 +67,54 @@ class TimedSyncPnt : public TrickHLA::SyncPnt
    friend class InputProcessor;
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
-   friend void init_attrTrickHLA__TimedSyncPnt();
+   friend void init_attrTrickHLA__SyncPointTimed();
 
   public:
    //
    // Public constructors and destructor.
    //
-   /*! @brief Default constructor for the TrickHLA TimedSyncPnt class. */
-   TimedSyncPnt();
+   /*! @brief Default constructor. */
+   SyncPointTimed();
 
    /*! @brief Initialization constructor.
     *  @param label Synchronization point label. */
-   explicit TimedSyncPnt( std::wstring const &label );
+   explicit SyncPointTimed( std::wstring const &label );
 
    /*! @brief Initialization constructor.
     *  @param t Synchronization point action time.
     *  @param label Synchronization point label. */
-   TimedSyncPnt( Int64Time const &t, std::wstring const &label );
+   SyncPointTimed( std::wstring const &label, TrickHLA::Int64Time const &t );
 
-   /*! @brief Destructor for the TrickHLA TimedSyncPnt class. */
-   virtual ~TimedSyncPnt();
+   /*! @brief Destructor for the TrickHLA SyncPointTimed class. */
+   virtual ~SyncPointTimed();
 
    // Accessor functions.
    /*! @brief Get the synchronization point action time.
     *  @return Time for synchronization point action. */
-   virtual Int64Time const &get_time() const
+   virtual TrickHLA::Int64Time const &get_time() const
    {
-      return time;
+      return this->time;
    }
 
    /*! @brief Set the synchronization point action time.
     *  @param t The synchronization point action time. */
-   virtual void set_time( Int64Time const &t )
+   virtual void set_time( TrickHLA::Int64Time const &t )
    {
-      time = t;
+      this->time = t;
    }
 
-   // Utility functions.
-   /*! @brief Create a C++ wide string with the synchronization point label and
-    * current state.
-    *  @return A string with the synchronization point label and current state. */
-   virtual std::wstring to_wstring();
+   /*! @brief Encode the user supplied tag data.
+    *  @return The encoded user supplied tag. */
+   virtual RTI1516_USERDATA const encode_user_supplied_tag();
 
-   /*! @brief Convert the synchronization point into and loggable
-    * synchronization point.
-    *  @param log_sync_pnt Reference to a loggable synchronization point. */
-   virtual void convert( LoggableSyncPnt &log_sync_pnt );
+   /*! @brief Decode the user supplied data.
+    *  @return supplied_tag The supplied tag to decode as the user supplied tag. */
+   virtual void decode_user_supplied_tag( RTI1516_USERDATA const &supplied_tag );
+
+   // Utility functions.
+   /*! @brief Create a string with the synchronization point label and current state.
+    *  @return A string with the synchronization point label and current state. */
+   virtual std::string to_string();
 
   protected:
    Int64Time time; ///< @trick_units{--} Synchronization point action time.
@@ -120,4 +122,4 @@ class TimedSyncPnt : public TrickHLA::SyncPnt
 
 } // namespace TrickHLA
 
-#endif /* TRICKHLA_TIMED_SYNC_PNT_HH */
+#endif /* TRICKHLA_SYNC_POINT_TIMED_HH */

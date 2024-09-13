@@ -100,7 +100,7 @@ JEODPhysicalInterface::~JEODPhysicalInterface()
 
    if ( this->vehicle_point_id != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->vehicle_point_id ) ) ) {
-         send_hs( stderr, "SpaceFOM::JEODPhysicalInterface::~JEODPhysicalInterface():%d ERROR deleting Trick Memory for 'this->vehicle_point_id'%c",
+         send_hs( stderr, "SpaceFOM::JEODPhysicalInterface::~JEODPhysicalInterface():%d WARNING failed to delete Trick Memory for 'this->vehicle_point_id'%c",
                   __LINE__, THLA_NEWLINE );
       }
       this->vehicle_point_id = NULL;
@@ -402,7 +402,7 @@ void JEODPhysicalInterface::set_vehicle_point_id( char const *new_id )
 {
    if ( this->vehicle_point_id != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->vehicle_point_id ) ) ) {
-         send_hs( stderr, "SpaceFOM::JEODPhysicalInterface::set_vehicle_point_id():%d ERROR deleting Trick Memory for 'this->vehicle_point_id'%c",
+         send_hs( stderr, "SpaceFOM::JEODPhysicalInterface::set_vehicle_point_id():%d WARNING failed to delete Trick Memory for 'this->vehicle_point_id'%c",
                   __LINE__, THLA_NEWLINE );
       }
    }

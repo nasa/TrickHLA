@@ -98,7 +98,7 @@ SineData::~SineData()
    // Make sure we free the memory used by the name.
    if ( name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
-         send_hs( stderr, "TrickHLAModel::SineData::~SineData():%d ERROR deleting Trick Memory for 'name'\n", __LINE__ );
+         send_hs( stderr, "TrickHLAModel::SineData::~SineData():%d WARNING failed to delete Trick Memory for 'name'\n", __LINE__ );
       }
       name = NULL;
    }

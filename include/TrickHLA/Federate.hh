@@ -70,9 +70,6 @@ NASA, Johnson Space Center\n
 #include RTI1516_HEADER
 #pragma GCC diagnostic pop
 
-// FIXME: What do we do for Trick 10 to get the command-line arguments for the
-// Federate::restart_federate() job? DDexter 11/7/11
-
 namespace TrickHLA
 {
 
@@ -212,21 +209,6 @@ class Federate
    //
    // Federation synchronization and synchronization point functions.
    //
-   /*! @brief Register a generic synchronization point; i.e. not a multiphase init sync-point.
-    *  @param label Sync-point label.
-    *  @param time  Optional Sync-point time in seconds. */
-   void register_generic_sync_point( std::wstring const &label, double time = -1.0 );
-
-   /*! @brief Achieve the specified sync-point and wait for the federation to
-    *  be synchronized on it.
-    *  @param label Sync-point label. */
-   void achieve_and_wait_for_synchronization( std::wstring const &label );
-
-   /*! @brief Achieve the specified sync-point and do NOT wait for the
-    *  federation to be synchronized on it.
-    *  @param label Sync-point label. */
-   void achieve_synchronization_point( std::wstring const &label );
-
    /*! @brief The RTI has announced the existence of a synchronization point.
     *  @param label             Sync-point label.
     *  @param user_supplied_tag Use supplied tag.*/
@@ -240,9 +222,10 @@ class Federate
    /*! @brief Callback from TrickHLA::FedAmb through for
     *  when registration of a synchronization point fails.
     *  and is one of the sync-points created.
-    *  @param label      Sync-point label.
-    *  @param not_unique True if not unique label. */
-   void sync_point_registration_failed( std::wstring const &label, bool not_unique );
+    *  @param label  Sync-point label.
+    *  @param reason Reason for failure. */
+   void sync_point_registration_failed( std::wstring const                                  &label,
+                                        RTI1516_NAMESPACE::SynchronizationPointFailureReason reason );
 
    /*! @brief Marks a synchronization point as synchronized with the federation.
     *  @param label Sync-point label. */
@@ -742,42 +725,6 @@ class Federate
    }
 
    //=======================================================================
-   // FIXME: Might consider moving these to ExecutionControl.
-   /*! @brief Set that federation execution freeze has been announced.
-    *  @param flag True for federate freeze announce; False otherwise. */
-   void set_freeze_announced( bool const flag )
-   {
-      this->announce_freeze = flag;
-   }
-
-   /*! @brief Get that federation execution freeze announced flag state.
-    *  @return True for federate freeze announced; False otherwise. */
-   bool get_freeze_announced()
-   {
-      return this->announce_freeze;
-   }
-
-   /*! @brief Set that federation execution freeze is pending flag.
-    *  @param flag True for federate freeze pending; False otherwise. */
-   void set_freeze_pending( bool const flag )
-   {
-      this->freeze_the_federation = flag;
-      return;
-   }
-
-   /*! @brief Get that federation execution freeze pending flag state.
-    *  @return True for federate freeze is pending; False otherwise. */
-   bool get_freeze_pending()
-   {
-      return this->freeze_the_federation;
-   }
-
-   /*! @brief Perform federation execution freeze process. */
-   void unfreeze()
-   {
-      return this->un_freeze();
-   }
-   //=======================================================================
 
    //
    // Clean up / shutdown functions.
@@ -1173,6 +1120,9 @@ class Federate
     * freeze, tell other federates to run. */
    void exit_freeze();
 
+   /*! @brief Unfreeze the simulation. */
+   void un_freeze();
+
   private:
    // Federation state variables.
    //
@@ -1229,11 +1179,10 @@ class Federate
    KnownFederate *running_feds;                          ///< @trick_units{--} Checkpoint-able Array of running Federation Federates
    int            running_feds_count_at_time_of_restore; ///< @trick_io{**} Number of running Federates at the time of the restore (default: 0)
 
-   std::string checkpoint_file_name;  ///< @trick_io{*i} @trick_units{--} label to attach to sync point
-   Flag        checkpoint_rt_itimer;  ///< @trick_io{**} loaded checkpoint RT ITIMER
-   bool        announce_freeze;       ///< @trick_io{**} DANNY2.7 flag to indicate that this federate is announcing go to freeze mode
-   bool        freeze_the_federation; ///< @trick_io{**} DANNY2.7 flag to indicate the federation is going into freeze now
-   bool        execution_has_begun;   ///< @trick_units{--} flag to indicate if the federate has begun simulation execution.
+   std::string checkpoint_file_name; ///< @trick_io{*i} @trick_units{--} label to attach to sync point
+   Flag        checkpoint_rt_itimer; ///< @trick_io{**} loaded checkpoint RT ITIMER
+
+   bool execution_has_begun; ///< @trick_units{--} flag to indicate if the federate has begun simulation execution.
    //-- END: checkpoint / restore data --
 
    // Federation time management data.
@@ -1242,7 +1191,7 @@ class Federate
    MutexLock    time_adv_state_mutex; ///< @trick_units{--} HLA Time advance state mutex lock.
    Int64Time    granted_time;         ///< @trick_units{--} HLA time given by RTI
    Int64Time    requested_time;       ///< @trick_units{--} requested/desired HLA time
-   double       HLA_time;             ///< @trick_units{s}  Current HLA time to allow for plotting.
+   double       HLA_time;             ///< @trick_io{*io} @trick_units{s}  Current HLA time to allow for plotting.
    bool         start_to_save;        ///< @trick_io{**} Save flag
    bool         start_to_restore;     ///< @trick_io{**} Restore flag
    bool         restart_flag;         ///< @trick_io{**} Restart flag
@@ -1363,12 +1312,6 @@ class Federate
 
    /*! @brief Make time-advance request available and wait for time advance grant with zero lookahead. */
    void wait_for_zero_lookahead_TARA_TAG();
-
-   //
-   // Federation freeze management functions.
-   //
-   /*! @brief Unfreeze simulation. */
-   void un_freeze();
 
   private:
    // Do not allow the copy constructor or assignment operator.
