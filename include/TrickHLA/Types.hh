@@ -55,6 +55,8 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
+static std::string const MULTIPHASE_INIT_SYNC_POINT_LIST = "Multiphase";
+
 /*!
 @enum HLABaseTimeEnum
 @brief Define the HLA Logical Time base units supported.
@@ -270,15 +272,15 @@ These sync-point states correspond directly to the sync-point states in HLA.
 */
 typedef enum {
 
-   SYNC_PT_STATE_FIRST_VALUE  = 0,      ///< Set to the First value in the enumeration.
-   SYNC_PT_STATE_ERROR        = 0,      ///< Sync-point error.
-   SYNC_PT_STATE_EXISTS       = 1,      ///< Sync-point exists.
-   SYNC_PT_STATE_REGISTERED   = 2,      ///< Sync-point registered.
-   SYNC_PT_STATE_ANNOUNCED    = 3,      ///< Sync-point announced.
-   SYNC_PT_STATE_ACHIEVED     = 4,      ///< Sync-point achieved.
-   SYNC_PT_STATE_SYNCHRONIZED = 5,      ///< Sync-point synchronized.
-   SYNC_PT_STATE_LAST_VALUE   = 5,      ///< Set to the Last value in the enumeration.
-   SYNC_PT_STATE_UNKNOWN      = INT_MAX ///< Unknown state.
+   SYNC_PT_STATE_FIRST_VALUE  = 0, ///< Set to the First value in the enumeration.
+   SYNC_PT_STATE_ERROR        = 0, ///< Sync-point error.
+   SYNC_PT_STATE_KNOWN        = 1, ///< Sync-point is known.
+   SYNC_PT_STATE_REGISTERED   = 2, ///< Sync-point registered.
+   SYNC_PT_STATE_ANNOUNCED    = 3, ///< Sync-point announced.
+   SYNC_PT_STATE_ACHIEVED     = 4, ///< Sync-point achieved.
+   SYNC_PT_STATE_SYNCHRONIZED = 5, ///< Sync-point synchronized.
+   SYNC_PT_STATE_UNKNOWN      = 6, ///< Unknown state.
+   SYNC_PT_STATE_LAST_VALUE   = 6  ///< Set to the Last value in the enumeration.
 
 } SyncPtStateEnum;
 

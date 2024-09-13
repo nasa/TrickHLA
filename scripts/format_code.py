@@ -26,7 +26,9 @@ def main():
 
    # Setup command line argument parsing.
    parser = argparse.ArgumentParser( prog = 'format_code', \
-                                     description = 'Format the TrickHLA source code.' )
+                                     description = 'Format the TrickHLA source code.', \
+                                     epilog = '''Example: format_code -i -v''' )
+
    parser.add_argument( '-c', '--clean', help = 'Clean up all the TrickHLA code formatting artifacts.', \
                          action = "store_true" )
    parser.add_argument( '-f', '--file', help = 'Process a single file in place.' )

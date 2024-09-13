@@ -52,6 +52,7 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/Executive.hh"
 #include "trick/MemoryManager.hh"
+#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
@@ -73,6 +74,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
 #include "TrickHLA/SleepTimeout.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 
@@ -227,6 +229,7 @@ void Manager::restart_initialization()
       errmsg << "Manager::restart_initialization():" << __LINE__
              << " ERROR: Unexpected NULL 'federate' pointer!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -249,6 +252,7 @@ void Manager::restart_initialization()
       errmsg << "Manager::restart_initialization():" << __LINE__
              << " ERROR: Unexpected NULL 'execution_control' pointer!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // The set_master() function set's additional parameter so call it again to
@@ -735,7 +739,7 @@ void Manager::receive_init_data(
  */
 void Manager::clear_init_sync_points()
 {
-   // Clear the multiphase initalization synchronization points associated
+   // Clear the multiphase initialization synchronization points associated
    // with ExecutionControl initialization.
    this->execution_control->clear_multiphase_init_sync_points();
 }
@@ -781,13 +785,11 @@ joining federate so this call will be ignored.%c",
    StringUtilities::to_wstring( ws_syc_point_label, sync_point_label );
 
    // Determine if the sync-point label is valid.
-   if ( this->execution_control->contains( ws_syc_point_label ) ) {
+   if ( execution_control->contains_sync_point( ws_syc_point_label ) ) {
 
       // Achieve the specified sync-point and wait for the federation
       // to be synchronized on it.
-      this->execution_control->achieve_and_wait_for_synchronization( *( this->get_RTI_ambassador() ),
-                                                                     this->federate,
-                                                                     ws_syc_point_label );
+      execution_control->achieve_sync_point_and_wait_for_synchronization( ws_syc_point_label );
 
    } else {
       ostringstream errmsg;
@@ -2996,7 +2998,7 @@ void Manager::clear_interactions()
          check_interactions[i].clear_parm_items();
       }
       if ( trick_MM->delete_var( static_cast< void * >( check_interactions ) ) ) {
-         send_hs( stderr, "Manager::clear_interactions():%d ERROR deleting Trick Memory for 'check_interactions'%c",
+         send_hs( stderr, "Manager::clear_interactions():%d WARNING failed to delete Trick Memory for 'check_interactions'%c",
                   __LINE__, THLA_NEWLINE );
       }
       check_interactions       = NULL;

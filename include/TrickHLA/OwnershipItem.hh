@@ -92,7 +92,7 @@ class OwnershipItem : public Item
    {
       if ( this->FOM_name != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->FOM_name ) ) ) {
-            send_hs( stderr, "OwnershipItem::clear():%d ERROR deleting Trick Memory for 'this->FOM_name'%c",
+            send_hs( stderr, "OwnershipItem::clear():%d WARNING failed to delete Trick Memory for 'this->FOM_name'%c",
                      __LINE__, THLA_NEWLINE );
          }
          this->FOM_name = NULL;

@@ -126,6 +126,18 @@ class StringUtilities
       output.assign( input.begin(), input.end() );
    }
 
+   /*! @brief C++ string to C (char *) string conversion routine with the
+    * string being placed into Trick memory space.
+    *  @details Make sure to use ip_free() to free the memory otherwise you
+    *  could end up with a memory leak.
+    *  @return C string.
+    *  @param input The input string. */
+   static char *ip_strdup_string(
+      std::string const &input )
+   {
+      return trick_MM->mm_strdup( const_cast< char * >( input.c_str() ) );
+   }
+
    /*! @brief C++ wide string to C (char *) string conversion routine with the
     * string being placed into Trick memory space.
     *  @details Make sure to use ip_free() to free the memory otherwise you

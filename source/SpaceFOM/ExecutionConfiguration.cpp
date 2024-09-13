@@ -145,7 +145,7 @@ ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
    // Free the allocated root reference frame name.
    if ( this->root_frame_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->root_frame_name ) ) ) {
-         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::~ExecutionConfiguration():%d ERROR deleting Trick Memory for 'this->root_frame_name'%c",
+         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::~ExecutionConfiguration():%d WARNING failed to delete Trick Memory for 'this->root_frame_name'%c",
                   __LINE__, THLA_NEWLINE );
       }
       this->root_frame_name = NULL;
@@ -247,7 +247,7 @@ void ExecutionConfiguration::configure()
    // make sure it is ExCO regardless of what the user set it to be.
    if ( name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
-         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::configure():%d ERROR deleting Trick Memory for 'name'%c",
+         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::configure():%d WARNING failed to delete Trick Memory for 'name'%c",
                   __LINE__, THLA_NEWLINE );
       }
       name = NULL;
@@ -457,7 +457,7 @@ void ExecutionConfiguration::set_root_frame_name(
    // Free the Trick memory if it's already allocated.
    if ( this->root_frame_name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->root_frame_name ) ) ) {
-         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::set_root_frame_name():%d ERROR deleting Trick Memory for 'this->root_frame_name'%c",
+         send_hs( stderr, "SpaceFOM::ExecutionConfiguration::set_root_frame_name():%d WARNING failed to delete Trick Memory for 'this->root_frame_name'%c",
                   __LINE__, THLA_NEWLINE );
       }
       this->root_frame_name = NULL;

@@ -28,8 +28,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../../source/TrickHLA/ScenarioTimeline.cpp}
 @trick_link_dependency{../../source/TrickHLA/SimTimeline.cpp}
-@trick_link_dependency{../../source/TrickHLA/SyncPntListBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/SimTimeline.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPointManagerBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/Timeline.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
@@ -47,14 +47,11 @@ NASA, Johnson Space Center\n
 #include <cstdint>
 #include <string>
 
-// TrickHLA include files.
 #include "TrickHLA/CTETimelineBase.hh"
-#include "TrickHLA/LoggableTimedSyncPnt.hh"
 #include "TrickHLA/ScenarioTimeline.hh"
 #include "TrickHLA/SimTimeline.hh"
 #include "TrickHLA/StandardsSupport.hh"
-#include "TrickHLA/SyncPntList.hh"
-#include "TrickHLA/SyncPntListBase.hh"
+#include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
 
 namespace TrickHLA
@@ -68,7 +65,7 @@ class Manager;
 class Object;
 class ExecutionConfigurationBase;
 
-class ExecutionControlBase : public TrickHLA::SyncPntListBase
+class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -80,14 +77,11 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLA__ExecutionControlBase();
 
-   // FIXME: Temporary kludge.
-   friend class Manager;
-
   public:
    // Principal timelines for federation execution control.
-   ScenarioTimeline *scenario_timeline; ///< @trick_io{**} The scenario timeline.
-   SimTimeline      *sim_timeline;      ///< @trick_io{**} The simulation timeline.
-   CTETimelineBase  *cte_timeline;      ///< @trick_io{**} The Central Timing Equipment (CTE) timeline.
+   ScenarioTimeline *scenario_timeline; ///< @trick_units{--} The scenario timeline.
+   SimTimeline      *sim_timeline;      ///< @trick_units{--} The simulation timeline.
+   CTETimelineBase  *cte_timeline;      ///< @trick_units{--} The Central Timing Equipment (CTE) timeline.
 
    // These are the execution control roles available to a federate.
    bool use_preset_master; /**< @trick_units{--}
@@ -118,18 +112,18 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    //
    /*! @brief Setup the federate wide references in the ExecutionControl class
     * instance.
-    * @param federate         Associated federate manager class instance.
-    * @param manager          Associated federate manager class instance.
-    * @param exec_config      Associated Execution Configuration Object (ExCO). */
-   virtual void setup( TrickHLA::Federate                   &federate,
-                       TrickHLA::Manager                    &manager,
+    * @param fed         Associated federate manager class instance.
+    * @param mgr         Associated federate manager class instance.
+    * @param exec_config Associated Execution Configuration Object (ExCO). */
+   virtual void setup( TrickHLA::Federate                   &fed,
+                       TrickHLA::Manager                    &mgr,
                        TrickHLA::ExecutionConfigurationBase &exec_config );
    /*! @brief Setup the federate wide references in the ExecutionControl class
     * instance.
-    * @param federate Associated federate manager class instance.
-    * @param manager  Associated federate manager class instance. */
-   virtual void setup( TrickHLA::Federate &federate,
-                       TrickHLA::Manager  &manager );
+    * @param fed Associated federate manager class instance.
+    * @param mgr  Associated federate manager class instance. */
+   virtual void setup( TrickHLA::Federate &fed,
+                       TrickHLA::Manager  &mgr );
    /*! @brief Initialize the TrickHLA::ExecutionControlBase object instance. */
    virtual void initialize();
    /*! @brief Join federation execution process. */
@@ -185,7 +179,7 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
     *  synchronization points if they are not already achieved and are not
     *  one of the predefined ExecutionControl synchronization points.
     *  @param rti_ambassador Reference to the HLA RTI Ambassador instance. */
-   virtual void achieve_all_multiphase_init_sync_points( RTI1516_NAMESPACE::RTIambassador &rti_ambassador );
+   virtual void achieve_all_multiphase_init_sync_points();
    /*! @brief Wait for all the user defined mulit-phase initialization
     *  synchronization points if they are not already achieved and are not
     *  one of the predefined ExecutionControl synchronization points. */
@@ -304,7 +298,6 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    void set_scenario_timeline( ScenarioTimeline *timeline )
    {
       this->scenario_timeline = timeline;
-      return;
    }
 
    /*! @brief Check to see if the Scenario Timeline exists.
@@ -432,15 +425,38 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    /*! @brief Routine to handle going from freeze to run; if we announced the
     * freeze, tell other federates to run. */
    virtual void exit_freeze();
-   /*! @brief Routine to handle ExecutionControl specific action needed to un-freeze. */
-   virtual void un_freeze()
+
+   /*! @brief Set that federation execution freeze has been announced.
+    *  @param flag True for federate freeze announce; False otherwise. */
+   void set_freeze_announced( bool const flag )
    {
-      return;
+      this->announce_freeze = flag;
+   }
+
+   /*! @brief Is the federation execution freeze announced.
+    *  @return True for federate freeze announced; False otherwise. */
+   bool is_freeze_announced()
+   {
+      return this->announce_freeze;
+   }
+
+   /*! @brief Set that federation execution freeze is pending flag.
+    *  @param flag True for federate freeze pending; False otherwise. */
+   void set_freeze_pending( bool const flag )
+   {
+      this->freeze_the_federation = flag;
+   }
+
+   /*! @brief Is the federation execution freeze pending.
+    *  @return True for federate freeze is pending; False otherwise. */
+   bool const is_freeze_pending()
+   {
+      return this->freeze_the_federation;
    }
 
    //
-   // FIXME: These pause functions should be worked into the general freeze
-   // ExecutionControl methodology.
+   // Functions for the freeze ExecutionControl methodology.
+   //
    /*! @brief Check if we hit a pause sync point and need to go to freeze.
     *  @param check_pause_delta Check pause job delta time in seconds. */
    virtual void check_pause( double const check_pause_delta );
@@ -542,6 +558,7 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    virtual void set_federate( TrickHLA::Federate *fed )
    {
       this->federate = fed;
+      // TODO: this->SyncPointManager.federate = fed;
    }
    /*! @brief Get the reference to the associated TrickHLA::Federate.
     *  @return Pointer to the associated TrickHLA::Federate. */
@@ -687,13 +704,8 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
       derived class instance (e.g. SRFOM:ExecutionControl). */
 
   protected:
-   SyncPntList multiphase_init_sync_pnt_list; /**< @trick_units{--}
-      Synchronization points used for multi-phase initialization control. */
-
    bool init_complete_sp_exists; /**< @trick_units{--} Internal flag, for
       Initialization Complete Sync-Point exists. (default: false) */
-   // FIXME: This is actually this ExecutionControlBase object.
-   // InitSyncPoints init_sync_pts; ///< @trick_units{--} Multiphase initialization synchronization points.
 
    bool                 mode_transition_requested;        ///< @trick_units{--} Flag to indicate a mode transition has been requested.
    ExecutionControlEnum requested_execution_control_mode; ///< @trick_units{--} The latest mode transition requested.
@@ -705,15 +717,14 @@ class ExecutionControlBase : public TrickHLA::SyncPntListBase
    double simulation_freeze_time; ///< @trick_units{s} Trick simulation time for freeze.
    double scenario_freeze_time;   ///< @trick_units{s} Federation execution scenario time for freeze.
 
+   bool announce_freeze;       ///< @trick_io{**} DANNY2.7 flag to indicate that this federate is announcing go to freeze mode
+   bool freeze_the_federation; ///< @trick_io{**} DANNY2.7 flag to indicate the federation is going into freeze now
+
    bool late_joiner;            ///< @trick_units{--} Flag that this federate is a late joiner.
    bool late_joiner_determined; ///< @trick_units{--} Flag for late joiner determination.
 
    // Shortcuts to associated TrickHLA management and control objects.
-   TrickHLA::Federate *federate; ///< @trick_io{**} Associated federate.
-   TrickHLA::Manager  *manager;  ///< @trick_io{**} Associated manager.
-
-   size_t                logged_sync_pts_count; ///< @trick_units{--} number of logged sync pts
-   LoggableTimedSyncPnt *loggable_sync_pts;     ///< @trick_units{--} converted Sync Point data that gets checkpointed
+   TrickHLA::Manager *manager; ///< @trick_io{**} Associated manager.
 
   private:
    // Do not allow the copy constructor.

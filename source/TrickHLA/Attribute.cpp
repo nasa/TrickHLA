@@ -56,6 +56,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Conditional.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Int64BaseTime.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
@@ -108,7 +109,7 @@ Attribute::~Attribute()
 {
    if ( buffer != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( buffer ) ) ) {
-         send_hs( stderr, "Attribute::~Attribute():%d ERROR deleting Trick Memory for 'buffer'%c",
+         send_hs( stderr, "Attribute::~Attribute():%d WARNING failed to delete Trick Memory for 'buffer'%c",
                   __LINE__, THLA_NEWLINE );
       }
       buffer          = NULL;

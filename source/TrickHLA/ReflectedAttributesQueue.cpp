@@ -33,6 +33,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ReflectedAttributesQueue.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
+#include "TrickHLA/StandardsSupport.hh"
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;

@@ -32,6 +32,9 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/message_proto.h"
 
+// TrickHLA include files.
+#include "TrickHLA/StandardsSupport.hh"
+
 // Model include files.
 #include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
 

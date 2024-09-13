@@ -63,6 +63,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
 
 using namespace std;
@@ -200,10 +201,7 @@ void FedAmb::synchronizationPointRegistrationFailed(
       send_hs( stdout, "FedAmb::synchronizationPointRegistrationFailed():%d Label:'%ls'%c",
                __LINE__, label.c_str(), THLA_NEWLINE );
    }
-
-   bool not_unique = ( reason == RTI1516_NAMESPACE::SYNCHRONIZATION_POINT_LABEL_NOT_UNIQUE );
-
-   federate->sync_point_registration_failed( label, not_unique );
+   federate->sync_point_registration_failed( label, reason );
 }
 
 void FedAmb::announceSynchronizationPoint(

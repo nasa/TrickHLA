@@ -56,6 +56,7 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
+#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 #include "trick/release.h"
 
@@ -78,6 +79,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/OwnershipHandler.hh"
 #include "TrickHLA/Packing.hh"
 #include "TrickHLA/SleepTimeout.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 
@@ -176,7 +178,7 @@ Object::~Object()
 
       if ( name != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
-            send_hs( stderr, "Object::~Object():%d ERROR deleting Trick Memory for 'name'%c",
+            send_hs( stderr, "Object::~Object():%d WARNING failed to delete Trick Memory for 'name'%c",
                      __LINE__, THLA_NEWLINE );
          }
          name = NULL;
@@ -184,7 +186,7 @@ Object::~Object()
 
       if ( this->thread_ids_array != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->thread_ids_array ) ) ) {
-            send_hs( stderr, "Object::~Object():%d ERROR deleting Trick Memory for 'this->thread_ids_array'%c",
+            send_hs( stderr, "Object::~Object():%d WARNING failed to delete Trick Memory for 'this->thread_ids_array'%c",
                      __LINE__, THLA_NEWLINE );
          }
          this->thread_ids_array       = NULL;
@@ -3605,17 +3607,16 @@ void Object::grant_pull_request()
       }
    } else {
 
+      // List of attributes to divest.
+      AttributeHandleSet *divested_attrs = new AttributeHandleSet();
+
       try {
-         // Divest ownership only if we have attributes we need to do this for.
-         auto_ptr< AttributeHandleSet > divested_attrs( new AttributeHandleSet );
-         AttributeHandleSet::iterator   divested_iter;
-
          // IEEE 1516.1-2000 section 7.12
-         rti_amb->attributeOwnershipDivestitureIfWanted(
-            this->instance_handle,
-            attrs_to_divest,
-            *divested_attrs );
+         rti_amb->attributeOwnershipDivestitureIfWanted( this->instance_handle,
+                                                         attrs_to_divest,
+                                                         *divested_attrs );
 
+         // Divest ownership only if we have attributes we need to do this for.
          if ( divested_attrs->empty() ) {
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                send_hs( stdout, "Object::grant_pull_request():%d \
@@ -3625,6 +3626,7 @@ No attributes Divested since no federate wanted them for object '%s'.%c",
          } else {
             // Process the list of attributes that were divisted by the RTI
             // and set the state of the ownership.
+            AttributeHandleSet::iterator divested_iter;
             for ( divested_iter = divested_attrs->begin();
                   divested_iter != divested_attrs->end(); ++divested_iter ) {
 
@@ -3651,6 +3653,10 @@ No attributes Divested since no federate wanted them for object '%s'.%c",
 pull request for Trick-HLA-Object '%s'%c",
                   __LINE__, get_name(), THLA_NEWLINE );
       }
+
+      // Make sure we delete the attribute divest list.
+      divested_attrs->clear();
+      delete divested_attrs;
 
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -4110,7 +4116,7 @@ void Object::set_name(
    // Delete the existing memory used by the name.
    if ( this->name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
-         send_hs( stderr, "Object::set_name():%d ERROR deleting Trick Memory for 'name'%c",
+         send_hs( stderr, "Object::set_name():%d WARNING failed to delete Trick Memory for 'name'%c",
                   __LINE__, THLA_NEWLINE );
       }
    }
@@ -4622,7 +4628,7 @@ void Object::initialize_thread_ID_array()
    if ( this->thread_ids == NULL ) {
       if ( this->thread_ids_array != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->thread_ids_array ) ) ) {
-            send_hs( stderr, "Object::initialize_thread_ID_array():%d ERROR deleting Trick Memory for 'this->thread_ids_array'%c",
+            send_hs( stderr, "Object::initialize_thread_ID_array():%d WARNING failed to delete Trick Memory for 'this->thread_ids_array'%c",
                      __LINE__, THLA_NEWLINE );
          }
          this->thread_ids_array       = NULL;

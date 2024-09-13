@@ -1,4 +1,4 @@
-# TrickHLA is an IEEE 1516 High Level Architecture (HLA) Simulation Interoperability Standard Middleware for the Trick Simulation Environment
+# TrickHLA is an IEEE 1516 High Level Architecture (HLA) Simulation Interoperability Middleware for the Trick Simulation Environment
 
 ## Brief Abstract:
 
