@@ -12,16 +12,16 @@
 # @rev_entry{ Dan Dexter, NASA ER6, TrickHLA, June 2021, --, Using a build output directory unique to the check being done for better build artifact caching.}
 # @revs_end
 #
-import sys
-import time
+import argparse
 import os
 import subprocess
-import argparse
-import textwrap
 import shutil
+import sys
+import textwrap
+import time
 
-from trickhla_message import *
 from trickhla_environment import *
+from trickhla_message import *
 
 
 # Main routine.
