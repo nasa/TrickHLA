@@ -145,13 +145,11 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! Add initialization synchronization points to regulate startup. */
    virtual void add_initialization_sync_points();
    /*! @brief The RTI has announced the existence of a synchronization point.
-    *  @param rti_ambassador    Reference to the HLA RTI Ambassador instance.
     *  @param label             Sync-point label.
     *  @param user_supplied_tag Use supplied tag.*/
-   virtual void announce_sync_point(
-      RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-      std::wstring const               &label,
-      RTI1516_USERDATA const           &user_supplied_tag );
+   virtual void sync_point_announced(
+      std::wstring const     &label,
+      RTI1516_USERDATA const &user_supplied_tag );
 
    /*! @brief Publish the ExecutionControl objects and interactions. */
    virtual void publish();

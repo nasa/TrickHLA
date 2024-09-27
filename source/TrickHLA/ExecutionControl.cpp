@@ -329,15 +329,14 @@ void ExecutionControl::clear_multiphase_init_sync_points()
    }
 }
 
-void ExecutionControl::announce_sync_point(
-   RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-   wstring const                    &label,
-   RTI1516_USERDATA const           &user_supplied_tag )
+void ExecutionControl::sync_point_announced(
+   wstring const          &label,
+   RTI1516_USERDATA const &user_supplied_tag )
 {
-   // In this case the default SyncPntListBase::announce_sync_point works.
-   // Strictly speaking, we could just not define this. However, this provides
-   // a place to implement if that changes.
-   sync_point_announced( label, user_supplied_tag );
+   // In this case the default SyncPointManagerBase::sync_point_announced()
+   // function works. Strictly speaking, we could just not define this.
+   // However, this provides a place to implement if that changes.
+   SyncPointManagerBase::sync_point_announced( label, user_supplied_tag );
 }
 
 void ExecutionControl::publish()

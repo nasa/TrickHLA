@@ -913,16 +913,40 @@ bool const SyncPointList::achieve_sync_point(
          send_hs( stderr, errmsg.str().c_str() );
       }
 
-   } else {
+      achieved = true;
 
-      // Something went wrong. Print a message and exit.
-      string label_str;
-      StringUtilities::to_string( label_str, sp->get_label() );
-      ostringstream errmsg;
-      errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
-             << " ERROR: Sync-point '" << label_str
-             << "' has not been announced with the RTI!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
+   } else if ( sp->is_registered() ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string label_str;
+         StringUtilities::to_string( label_str, sp->get_label() );
+         ostringstream errmsg;
+         errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
+                << " WARNING: Sync-point '" << label_str
+                << "' is registered but has not been announced by the RTI!" << THLA_ENDL;
+         send_hs( stderr, errmsg.str().c_str() );
+      }
+   } else if ( sp->is_known() ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string label_str;
+         StringUtilities::to_string( label_str, sp->get_label() );
+         ostringstream errmsg;
+         errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
+                << " WARNING: Sync-point '" << label_str
+                << "' is known but has not been registered or announced!"
+                << THLA_ENDL;
+         send_hs( stderr, errmsg.str().c_str() );
+      }
+   } else {
+      // Sync-point is unknown.
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string label_str;
+         StringUtilities::to_string( label_str, sp->get_label() );
+         ostringstream errmsg;
+         errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
+                << " WARNING: Sync-point '" << label_str
+                << "' is unknown!" << THLA_ENDL;
+         send_hs( stderr, errmsg.str().c_str() );
+      }
    }
 
    return achieved;
