@@ -234,7 +234,7 @@ federate.set_RRFP_role( True )    # This is the Root Reference Frame Publisher.
 #--------------------------------------------------------------------------
 # Pitch specific local settings designator:
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
-#THLA.federate.local_settings = 'crcHost = js-er7-rti-dev.jsc.nasa.gov\n crcPort = 8989'
+
 
 #--------------------------------------------------------------------------
 # Set up federate related time related parameters.
