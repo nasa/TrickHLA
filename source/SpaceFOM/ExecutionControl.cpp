@@ -770,8 +770,8 @@ void ExecutionControl::role_determination_process()
             this->late_joiner_determined = true;
          }
 
-         // Determine if the Initialization Complete sync-point exists, which
-         // means at this point we are a late joining federate.
+         // Determine if the Initialization Complete sync-point is announded,
+         // which means at this point we are a late joining federate.
          if ( ( !late_joiner_determined ) && is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ) {
             this->late_joiner            = true;
             this->late_joiner_determined = true;
@@ -824,15 +824,13 @@ void ExecutionControl::role_determination_process()
          if ( print_summary ) {
             print_summary = false;
 
-            string init_started_label;
             string init_completed_label;
-            StringUtilities::to_string( init_started_label, SpaceFOM::INIT_STARTED_SYNC_POINT );
             StringUtilities::to_string( init_completed_label, SpaceFOM::INIT_COMPLETED_SYNC_POINT );
             ostringstream message;
             message << "SpaceFOM::ExecutionControl::role_determination_process():"
                     << __LINE__ << " Sync-point status: "
                     << to_string( SpaceFOM::INIT_STARTED_SYNC_POINT )
-                    << ", '" << init_completed_label << "' sync-point exists: "
+                    << ", '" << init_completed_label << "' sync-point announced: "
                     << ( is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ? "Yes" : "No" )
                     << ", Still waiting..." << THLA_ENDL;
             send_hs( stdout, message.str().c_str() );
@@ -1017,7 +1015,7 @@ void ExecutionControl::designated_late_joiner_init_process()
          ostringstream message;
          message << "SpaceFOM::ExecutionControl::designated_late_joiner_init_process():"
                  << __LINE__
-                 << " Sync-point '" << sp_label << "' exists:"
+                 << " Sync-point '" << sp_label << "' announced:"
                  << ( is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ? "Yes" : "No, Still waiting..." )
                  << THLA_ENDL;
          send_hs( stdout, message.str().c_str() );
