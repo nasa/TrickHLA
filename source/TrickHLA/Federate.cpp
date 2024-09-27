@@ -4512,54 +4512,43 @@ void Federate::time_advance_request()
  */
 void Federate::perform_time_advance_request()
 {
+   // -- start of checkpoint additions --
+   this->save_completed = false; // reset ONLY at the bottom of the frame...
+   // -- end of checkpoint additions --
+
    // Skip requesting time-advancement if we are not time-regulating and
    // not time-constrained (i.e. not using time management).
    if ( !this->time_management ) {
       return;
    }
 
-   // -- start of checkpoint additions --
-   this->save_completed = false; // reset ONLY at the bottom of the frame...
-   // -- end of checkpoint additions --
-
-   bool any_error, recoverable_error;
-   int  error_recovery_cnt = 0;
-
-   {
-      // When auto_unlock_mutex goes out of scope it automatically unlocks the
-      // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-
-      // Clear the TAR flag before we make our request.
-      this->time_adv_state = TIME_ADVANCE_RESET;
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( is_zero_lookahead_time() ) {
+         send_hs( stdout, "Federate::perform_time_advance_request():%d Time Advance Request Available (TARA) to %.12G seconds.%c",
+                  __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
+      } else {
+         send_hs( stdout, "Federate::perform_time_advance_request():%d Time Advance Request (TAR) to %.12G seconds.%c",
+                  __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
+      }
    }
 
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-   do {
-      // Reset the error flags.
-      any_error         = false;
-      recoverable_error = false;
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks
+      // the mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
 
-      // Check for shutdown.
-      check_for_shutdown_with_termination();
-
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         if ( is_zero_lookahead_time() ) {
-            send_hs( stdout, "Federate::perform_time_advance_request():%d Time Advance Request Available (TARA) to %.12G seconds.%c",
-                     __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
-         } else {
-            send_hs( stdout, "Federate::perform_time_advance_request():%d Time Advance Request (TAR) to %.12G seconds.%c",
-                     __LINE__, requested_time.get_time_in_seconds(), THLA_NEWLINE );
-         }
+      if ( this->time_adv_state == TIME_ADVANCE_REQUESTED ) {
+         send_hs( stdout, "Federate::perform_time_advance_request():%d WARNING: Already in time requested state!%c",
+                  __LINE__, THLA_NEWLINE );
       }
 
-      try {
-         // When auto_unlock_mutex goes out of scope it automatically unlocks
-         // the mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+      // Clear the TAR flag before we make our request.
+      this->time_adv_state = TIME_ADVANCE_RESET;
 
+      try {
          if ( is_zero_lookahead_time() ) {
             // Request that time be advanced to the new time, but still allow
             // TSO data for Treq = Tgrant
@@ -4574,99 +4563,49 @@ void Federate::perform_time_advance_request()
          this->time_adv_state = TIME_ADVANCE_REQUESTED;
 
       } catch ( InvalidLogicalTime const &e ) {
-         any_error         = true;
-         recoverable_error = false;
          send_hs( stderr, "Federate::perform_time_advance_request():%d EXCEPTION: InvalidLogicalTime%c",
                   __LINE__, THLA_NEWLINE );
       } catch ( LogicalTimeAlreadyPassed const &e ) {
-         any_error         = true;
-         recoverable_error = false;
          send_hs( stderr, "Federate::perform_time_advance_request():%d EXCEPTION: LogicalTimeAlreadyPassed%c",
                   __LINE__, THLA_NEWLINE );
       } catch ( InTimeAdvancingState const &e ) {
          // A time advance request is still being processed by the RTI so show
          // a message and treat this as a successful time advance request.
-         any_error         = false;
-         recoverable_error = false;
+         //
+         // Indicate we are in the time advance requested state.
+         this->time_adv_state = TIME_ADVANCE_REQUESTED;
 
-         {
-            // When auto_unlock_mutex goes out of scope it automatically unlocks
-            // the mutex even if there is an exception.
-            MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
-
-            // Only indicate we are in the time advance reqeusted state if we
-            // are still in the time advance reset state (i.e. not granted yet).
-            if ( this->time_adv_state == TIME_ADVANCE_RESET ) {
-               this->time_adv_state = TIME_ADVANCE_REQUESTED;
-            }
-         }
          send_hs( stderr, "Federate::perform_time_advance_request():%d WARNING: Ignoring InTimeAdvancingState HLA Exception.%c",
                   __LINE__, THLA_NEWLINE );
       } catch ( RequestForTimeRegulationPending const &e ) {
-         any_error         = true;
-         recoverable_error = true;
          send_hs( stderr, "Federate::perform_time_advance_request():%d EXCEPTION: RequestForTimeRegulationPending%c",
                   __LINE__, THLA_NEWLINE );
       } catch ( RequestForTimeConstrainedPending const &e ) {
-         any_error         = true;
-         recoverable_error = true;
          send_hs( stderr, "Federate::perform_time_advance_request():%d EXCEPTION: RequestForTimeConstrainedPending%c",
                   __LINE__, THLA_NEWLINE );
       } catch ( FederateNotExecutionMember const &e ) {
-         any_error         = true;
-         recoverable_error = false;
          send_hs( stderr, "Federate::perform_time_advance_request():%d EXCEPTION: FederateNotExecutionMember%c",
                   __LINE__, THLA_NEWLINE );
       } catch ( SaveInProgress const &e ) {
-         any_error         = true;
-         recoverable_error = true;
          send_hs( stderr, "Federate::perform_time_advance_request():%d EXCEPTION: SaveInProgress%c",
                   __LINE__, THLA_NEWLINE );
       } catch ( RestoreInProgress const &e ) {
-         any_error         = true;
-         recoverable_error = true;
          send_hs( stderr, "Federate::perform_time_advance_request():%d EXCEPTION: RestoreInProgress%c",
                   __LINE__, THLA_NEWLINE );
       } catch ( NotConnected const &e ) {
-         any_error         = true;
-         recoverable_error = false;
          send_hs( stderr, "Federate::perform_time_advance_request():%d EXCEPTION: NotConnected%c",
                   __LINE__, THLA_NEWLINE );
       } catch ( RTIinternalError const &e ) {
-         any_error         = true;
-         recoverable_error = false;
-
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
          send_hs( stderr, "Federate::perform_time_advance_request():%d \"%s\": Unexpected RTI exception!\n RTI Exception: RTIinternalError: '%s'%c",
                   __LINE__, get_federation_name(), rti_err_msg.c_str(), THLA_NEWLINE );
       }
-
-      // For any recoverable error, count the error and wait for a little while
-      // before trying again.
-      if ( any_error && recoverable_error ) {
-         ++error_recovery_cnt;
-         send_hs( stderr, "Federate::perform_time_advance_request():%d Recoverable RTI error, retry attempt: %d%c",
-                  __LINE__, error_recovery_cnt, THLA_NEWLINE );
-
-         Utilities::micro_sleep( 1000 );
-      }
-
-   } while ( any_error && recoverable_error && ( error_recovery_cnt < 1000 ) );
+   }
 
    // Macro to restore the saved FPU Control Word register value.
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-   // If we have any errors at this point or exceed the maximum error
-   // recovery attempts then display an error message and exit.
-   if ( any_error ) {
-      ostringstream errmsg;
-      errmsg << "Federate::perform_time_advance_request():" << __LINE__
-             << " ERROR: For federation '" << get_federation_name()
-             << "', unrecoverable RTI Error, exiting!" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
 }
 
 /*!
@@ -4680,91 +4619,93 @@ void Federate::wait_for_zero_lookahead_TARA_TAG()
       return;
    }
 
-   // Macro to save the FPU Control Word register value.
-   TRICKHLA_SAVE_FPU_CONTROL_WORD;
-
-   // Time Advance Request Available (TARA)
-   try {
+   {
       // When auto_unlock_mutex goes out of scope it automatically unlocks
       // the mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
 
-      // Clear the TAR flag before we make our request.
-      this->time_adv_state = TIME_ADVANCE_RESET;
+      if ( this->time_adv_state == TIME_ADVANCE_REQUESTED ) {
+         send_hs( stdout, "Federate::wait_for_zero_lookahead_TARA_TAG():%d WARNING: Already in time requested state!%c",
+                  __LINE__, THLA_NEWLINE );
+      } else {
 
-      // Request that time be advanced to the new time, but still allow
-      // TSO data for Treq = Tgrant
-      RTI_ambassador->timeAdvanceRequestAvailable( requested_time.get() );
+         // Clear the TAR flag before we make our request.
+         this->time_adv_state = TIME_ADVANCE_RESET;
 
-      // Indicate we issued a TAR since we successfully made the request
-      // without an exception.
-      this->time_adv_state = TIME_ADVANCE_REQUESTED;
+         // Macro to save the FPU Control Word register value.
+         TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-   } catch ( InvalidLogicalTime const &e ) {
-      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: InvalidLogicalTime%c",
-               __LINE__, THLA_NEWLINE );
-   } catch ( LogicalTimeAlreadyPassed const &e ) {
-      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: LogicalTimeAlreadyPassed%c",
-               __LINE__, THLA_NEWLINE );
-   } catch ( InTimeAdvancingState const &e ) {
-      // A time advance request is still being processed by the RTI so show
-      // a message and treat this as a successful time advance request.
-      {
-         // When auto_unlock_mutex goes out of scope it automatically unlocks
-         // the mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+         // Time Advance Request Available (TARA)
+         try {
+            // Request that time be advanced to the new time, but still allow
+            // TSO data for Treq = Tgrant
+            RTI_ambassador->timeAdvanceRequestAvailable( requested_time.get() );
 
-         // Only indicate we are in the time advance reqeusted state if we
-         // are still in the time advance reset state (i.e. not granted yet).
-         if ( this->time_adv_state == TIME_ADVANCE_RESET ) {
+            // Indicate we issued a TAR since we successfully made the request
+            // without an exception.
             this->time_adv_state = TIME_ADVANCE_REQUESTED;
+
+         } catch ( InvalidLogicalTime const &e ) {
+            send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: InvalidLogicalTime%c",
+                     __LINE__, THLA_NEWLINE );
+         } catch ( LogicalTimeAlreadyPassed const &e ) {
+            send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: LogicalTimeAlreadyPassed%c",
+                     __LINE__, THLA_NEWLINE );
+         } catch ( InTimeAdvancingState const &e ) {
+            // A time advance request is still being processed by the RTI so show
+            // a message and treat this as a successful time advance request.
+            //
+            // Indicate we are in the time advance requested state.
+            this->time_adv_state = TIME_ADVANCE_REQUESTED;
+
+            send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d WARNING: Ignoring InTimeAdvancingState HLA Exception.%c",
+                     __LINE__, THLA_NEWLINE );
+         } catch ( RequestForTimeRegulationPending const &e ) {
+            send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: RequestForTimeRegulationPending%c",
+                     __LINE__, THLA_NEWLINE );
+         } catch ( RequestForTimeConstrainedPending const &e ) {
+            send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: RequestForTimeConstrainedPending%c",
+                     __LINE__, THLA_NEWLINE );
+         } catch ( FederateNotExecutionMember const &e ) {
+            send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: FederateNotExecutionMember%c",
+                     __LINE__, THLA_NEWLINE );
+         } catch ( SaveInProgress const &e ) {
+            send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: SaveInProgress%c",
+                     __LINE__, THLA_NEWLINE );
+         } catch ( RestoreInProgress const &e ) {
+            send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: RestoreInProgress%c",
+                     __LINE__, THLA_NEWLINE );
+         } catch ( NotConnected const &e ) {
+            send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: NotConnected%c",
+                     __LINE__, THLA_NEWLINE );
+         } catch ( RTIinternalError const &e ) {
+            string rti_err_msg;
+            StringUtilities::to_string( rti_err_msg, e.what() );
+            send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d \"%s\": Unexpected RTI exception!\n RTI Exception: RTIinternalError: '%s'%c",
+                     __LINE__, get_federation_name(), rti_err_msg.c_str(), THLA_NEWLINE );
+         }
+
+         // Macro to restore the saved FPU Control Word register value.
+         TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+         TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+         // We had an error if we are not in the time advance requested state.
+         if ( this->time_adv_state != TIME_ADVANCE_REQUESTED ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+               send_hs( stdout, "Federate::wait_for_zero_lookahead_TARA_TAG():%d WARNING: No Time Advance Request Available call made!%c",
+                        __LINE__, THLA_NEWLINE );
+            }
+            return;
          }
       }
-      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d WARNING: Ignoring InTimeAdvancingState HLA Exception.%c",
-               __LINE__, THLA_NEWLINE );
-   } catch ( RequestForTimeRegulationPending const &e ) {
-      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: RequestForTimeRegulationPending%c",
-               __LINE__, THLA_NEWLINE );
-   } catch ( RequestForTimeConstrainedPending const &e ) {
-      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: RequestForTimeConstrainedPending%c",
-               __LINE__, THLA_NEWLINE );
-   } catch ( FederateNotExecutionMember const &e ) {
-      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: FederateNotExecutionMember%c",
-               __LINE__, THLA_NEWLINE );
-   } catch ( SaveInProgress const &e ) {
-      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: SaveInProgress%c",
-               __LINE__, THLA_NEWLINE );
-   } catch ( RestoreInProgress const &e ) {
-      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: RestoreInProgress%c",
-               __LINE__, THLA_NEWLINE );
-   } catch ( NotConnected const &e ) {
-      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d EXCEPTION: NotConnected%c",
-               __LINE__, THLA_NEWLINE );
-   } catch ( RTIinternalError const &e ) {
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      send_hs( stderr, "Federate::wait_for_zero_lookahead_TARA_TAG():%d \"%s\": Unexpected RTI exception!\n RTI Exception: RTIinternalError: '%s'%c",
-               __LINE__, get_federation_name(), rti_err_msg.c_str(), THLA_NEWLINE );
    }
-
-   // Macro to restore the saved FPU Control Word register value.
-   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    unsigned short state;
    {
-      // When auto_unlock_mutex goes out of scope it automatically unlocks the
-      // mutex even if there is an exception.
+      // When auto_unlock_mutex goes out of scope it automatically unlocks
+      // the mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
       state = this->time_adv_state;
-   }
-
-   if ( state == TIME_ADVANCE_RESET ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         send_hs( stdout, "Federate::wait_for_zero_lookahead_TARA_TAG():%d WARNING: No Time Advance Requested!%c",
-                  __LINE__, THLA_NEWLINE );
-      }
-      return;
    }
 
    // Wait for Time Advance Grant (TAG)
