@@ -518,92 +518,62 @@ void ExecutionControl::add_initialization_sync_points()
    add_multiphase_init_sync_points();
 }
 
-void ExecutionControl::announce_sync_point(
-   RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-   wstring const                    &label,
-   RTI1516_USERDATA const           &user_supplied_tag )
+void ExecutionControl::sync_point_announced(
+   wstring const          &label,
+   RTI1516_USERDATA const &user_supplied_tag )
 {
-   if ( is_designated_late_joiner()
-        && ( ( get_current_execution_control_mode() == EXECUTION_CONTROL_INITIALIZING )
-             || ( get_current_execution_control_mode() == EXECUTION_CONTROL_UNINITIALIZED ) ) ) {
-      // Achieve sync-points for a designated late joiner during initialization.
+   if ( contains_sync_point( label ) ) {
 
-      // Check for the 'initialization_complete' synchronization point.
-      if ( label.compare( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) == 0 ) {
-
-         // Mark initialization sync-point as existing/announced.
-         if ( mark_sync_point_announced( label, user_supplied_tag ) ) {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-               send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM designated late joiner, announced sync-point:'%ls'%c",
-                        __LINE__, label.c_str(), THLA_NEWLINE );
-            }
-         }
-
-         // NOTE: We do recognize that the 'initialization_completed'
-         // synchronization point is announced but should never achieve it!
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM initialization process completed!%c",
-                     __LINE__, THLA_NEWLINE );
-         }
-         // Mark the initialization process as completed.
-         this->init_complete_sp_exists = true;
-
-      } else if ( label.compare( SpaceFOM::MTR_SHUTDOWN_SYNC_POINT ) == 0 ) {
-
-         // Mark MTR shutdown sync-point as announced but don't achieve it
-         // because we need to shutdown.
-         if ( mark_sync_point_announced( label, user_supplied_tag ) ) {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-               send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM designated late joiner, announced sync-point:'%ls'%c",
-                        __LINE__, label.c_str(), THLA_NEWLINE );
-            }
-         }
-
-      } else {
-
-         // Achieve all other sync-points.
-         if ( achieve_sync_point( label ) ) {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-               send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM designated late joiner, achieved sync-point:'%ls'%c",
-                        __LINE__, label.c_str(), THLA_NEWLINE );
-            }
-         }
-      }
-   } else if ( contains_sync_point( label ) ) {
-      // Known synchronization point.
-
-      // Mark initialization sync-point as existing/announced.
+      // Mark known sync-point as announced.
       if ( mark_sync_point_announced( label, user_supplied_tag ) ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM synchronization point announced:'%ls'%c",
+            send_hs( stdout, "SpaceFOM::ExecutionControl::sync_point_announced():%d Marked sync-point announced:'%ls'%c",
                      __LINE__, label.c_str(), THLA_NEWLINE );
          }
+      } else {
+         string label_str;
+         StringUtilities::to_string( label_str, label );
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionControl::sync_point_announced():" << __LINE__
+                << " ERROR: Failed to mark sync-point '" << label_str
+                << "' as announced." << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
       }
 
-      // Check for the 'initialization_complete' synchronization point.
-      if ( label.compare( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) == 0 ) {
+      if ( is_designated_late_joiner()
+           && ( ( get_current_execution_control_mode() == EXECUTION_CONTROL_INITIALIZING )
+                || ( get_current_execution_control_mode() == EXECUTION_CONTROL_UNINITIALIZED ) ) ) {
 
-         // NOTE: We do recognize that the 'initialization_completed'
-         // synchronization point is announced but should never achieve it!
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM initialization process completed!%c",
-                     __LINE__, THLA_NEWLINE );
+         // For a designated late joiner, achieve all sync-points during
+         // initialization except for init-completed and mtr-shutdown.
+         if ( ( label.compare( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) != 0 )
+              && ( label.compare( SpaceFOM::MTR_SHUTDOWN_SYNC_POINT ) != 0 ) ) {
+
+            // Achieve all other sync-points.
+            if ( achieve_sync_point( label ) ) {
+               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+                  send_hs( stdout, "SpaceFOM::ExecutionControl::sync_point_announced():%d SpaceFOM designated late joiner, achieved sync-point:'%ls'%c",
+                           __LINE__, label.c_str(), THLA_NEWLINE );
+               }
+            }
          }
-         // Mark the initialization process as completed.
-         this->init_complete_sp_exists = true;
       }
-
    } else {
-      // By default, achieve unrecognized synchronization points.
+      // Achieve all unrecognized sync-points.
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d Unrecognized synchronization point:'%ls', which will be achieved.%c",
+         send_hs( stdout, "SpaceFOM::ExecutionControl::sync_point_announced():%d Unrecognized sync-point:'%ls', which will be achieved.%c",
                   __LINE__, label.c_str(), THLA_NEWLINE );
       }
 
-      // Unknown synchronization point so achieve it but don't wait for the
+      // Unrecognized sync-point so achieve it but don't wait for the
       // federation to be synchronized on it.
-      achieve_sync_point( label );
+      if ( !achieve_sync_point( label ) ) {
+         string label_str;
+         StringUtilities::to_string( label_str, label );
+         send_hs( stderr, "SpaceFOM::ExecutionControl::sync_point_announced():%d Failed to achieve unrecognized sync-point:'%s'.%c",
+                  __LINE__, label_str.c_str(), THLA_NEWLINE );
+      }
    }
 }
 
@@ -802,7 +772,7 @@ void ExecutionControl::role_determination_process()
 
          // Determine if the Initialization Complete sync-point exists, which
          // means at this point we are a late joining federate.
-         if ( ( !late_joiner_determined ) && does_init_complete_sync_point_exist() ) {
+         if ( ( !late_joiner_determined ) && is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ) {
             this->late_joiner            = true;
             this->late_joiner_determined = true;
          }
@@ -854,19 +824,22 @@ void ExecutionControl::role_determination_process()
          if ( print_summary ) {
             print_summary = false;
 
+            string init_started_label;
+            string init_completed_label;
+            StringUtilities::to_string( init_started_label, SpaceFOM::INIT_STARTED_SYNC_POINT );
+            StringUtilities::to_string( init_completed_label, SpaceFOM::INIT_COMPLETED_SYNC_POINT );
             ostringstream message;
             message << "SpaceFOM::ExecutionControl::role_determination_process():"
-                    << __LINE__
-                    << " Init-Started sync-point status: "
+                    << __LINE__ << " Sync-point status: "
                     << to_string( SpaceFOM::INIT_STARTED_SYNC_POINT )
-                    << ", Init-Complete sync-point exists: "
-                    << ( does_init_complete_sync_point_exist() ? "Yes" : "No" )
+                    << ", '" << init_completed_label << "' sync-point exists: "
+                    << ( is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ? "Yes" : "No" )
                     << ", Still waiting..." << THLA_ENDL;
             send_hs( stdout, message.str().c_str() );
          }
       }
 
-      // Print out diagnostic message if appropriate.
+      // Display a status message for the role of this federate.
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          if ( this->late_joiner ) {
             if ( is_designated_late_joiner() ) {
@@ -877,8 +850,13 @@ void ExecutionControl::role_determination_process()
                         __LINE__, THLA_NEWLINE );
             }
          } else {
-            send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is an Early Joining Federate.%c",
-                     __LINE__, THLA_NEWLINE );
+            if ( is_designated_late_joiner() ) {
+               send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is an Early Joining Federate configured to be a Designated Late Joining Federate.%c",
+                        __LINE__, THLA_NEWLINE );
+            } else {
+               send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is an Early Joining Federate.%c",
+                        __LINE__, THLA_NEWLINE );
+            }
          }
       }
 
@@ -976,7 +954,7 @@ void ExecutionControl::designated_late_joiner_init_process()
    this->late_joiner_determined = true;
 
    // Print out diagnostic message if appropriate.
-   if ( !does_init_complete_sync_point_exist() ) {
+   if ( !is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          send_hs( stdout, "SpaceFOM::ExecutionControl::designated_late_joiner_init_process():%d Waiting...%c",
                   __LINE__, THLA_NEWLINE );
@@ -989,7 +967,7 @@ void ExecutionControl::designated_late_joiner_init_process()
    SleepTimeout sleep_timer;
 
    // Block until we see the intitialization_complete sync-point announced.
-   while ( !does_init_complete_sync_point_exist() ) {
+   while ( !is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ) {
 
       // Check for shutdown.
       federate->check_for_shutdown_with_termination();
@@ -999,7 +977,7 @@ void ExecutionControl::designated_late_joiner_init_process()
 
       // Periodically check if we are still an execution member and
       // display sync-point status if needed as well.
-      if ( !does_init_complete_sync_point_exist() ) { // cppcheck-suppress [knownConditionTrueFalse]
+      if ( !is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ) {
 
          // To be more efficient, we get the time once and share it.
          wallclock_time = sleep_timer.time();
@@ -1034,11 +1012,13 @@ void ExecutionControl::designated_late_joiner_init_process()
       if ( print_summary ) {
          print_summary = false;
 
+         string sp_label;
+         StringUtilities::to_string( sp_label, SpaceFOM::INIT_COMPLETED_SYNC_POINT );
          ostringstream message;
          message << "SpaceFOM::ExecutionControl::designated_late_joiner_init_process():"
                  << __LINE__
-                 << " Init-Complete sync-point exists:"
-                 << ( does_init_complete_sync_point_exist() ? "Yes" : "No, Still waiting..." )
+                 << " Sync-point '" << sp_label << "' exists:"
+                 << ( is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ? "Yes" : "No, Still waiting..." )
                  << THLA_ENDL;
          send_hs( stdout, message.str().c_str() );
       }

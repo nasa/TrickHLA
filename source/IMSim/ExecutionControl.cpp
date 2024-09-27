@@ -809,13 +809,17 @@ FederateJoinEnum ExecutionControl::determine_if_late_joining_or_restoring_federa
 
       // Determine if the Initialization Complete sync-point exists, which
       // means at this point we are a late joining federate.
-      if ( !late_joiner_determined && !manager->is_restore_determined() && does_init_complete_sync_point_exist() ) {
+      if ( !late_joiner_determined
+           && !manager->is_restore_determined()
+           && is_sync_point_announced( IMSim::INIT_COMPLETE_SYNC_POINT ) ) {
          this->late_joiner            = true;
          this->late_joiner_determined = true;
       }
 
       // when we receive the signal to restore, set the flag.
-      if ( !late_joiner_determined && federate->has_restore_been_announced() && federate->is_start_to_restore() ) {
+      if ( !late_joiner_determined
+           && federate->has_restore_been_announced()
+           && federate->is_start_to_restore() ) {
          manager->set_restore_determined( true );
          manager->set_restore_federate( true );
       }
