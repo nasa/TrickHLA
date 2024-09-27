@@ -837,8 +837,6 @@ bool const SyncPointList::achieve_sync_point(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      string label_str;
-      StringUtilities::to_string( label_str, sp->get_label() );
       ostringstream msg;
       msg << "SyncPointList::achieve_sync_point():" << __LINE__
           << " Known Sync-point " << sp->to_string() << THLA_ENDL;
@@ -1124,8 +1122,6 @@ std::string SyncPointList::to_string()
        << " List:'" << get_list_name() << "' List-size:" << list.size() << THLA_ENDL;
    for ( int i = 0; i < list.size(); ++i ) {
 #endif
-      string label_str;
-      StringUtilities::to_string( label_str, list[i]->get_label() );
       msg << i << ":'" << get_list_name() << "' Sync-point:"
           << list[i]->to_string() << THLA_ENDL;
    }
