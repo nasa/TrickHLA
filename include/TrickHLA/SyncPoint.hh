@@ -170,7 +170,7 @@ class SyncPoint : public TrickHLA::CheckpointConversionBase
 
    RTI1516_USERDATA user_supplied_tag; ///< @trick_io{**} Sync-point user supplied data.
 
-   char *label_chkpt; ///< @trick_io{--} Trick memory allocated label that is checkpointable.
+   char *label_chkpt; ///< @trick_units{--} Trick memory allocated label that is checkpointable.
 };
 
 } // namespace TrickHLA

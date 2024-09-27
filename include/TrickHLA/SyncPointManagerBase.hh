@@ -166,9 +166,11 @@ class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
    // Callbacks from FedAmb.
    virtual void sync_point_registration_succeeded( std::wstring const &label );
 
-   virtual void sync_point_registration_failed( std::wstring const &label, RTI1516_NAMESPACE::SynchronizationPointFailureReason reason );
+   virtual void sync_point_registration_failed( std::wstring const                                  &label,
+                                                RTI1516_NAMESPACE::SynchronizationPointFailureReason reason );
 
-   virtual void sync_point_announced( std::wstring const &label, RTI1516_USERDATA const &user_supplied_tag );
+   virtual void sync_point_announced( std::wstring const     &label,
+                                      RTI1516_USERDATA const &user_supplied_tag );
 
    virtual void sync_point_federation_synchronized( std::wstring const &label );
 
