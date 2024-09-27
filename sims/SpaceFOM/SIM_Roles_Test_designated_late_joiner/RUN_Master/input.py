@@ -220,7 +220,7 @@ federate.add_known_federate( True, rrfp_name )
 #--------------------------------------------------------------------------
 # Pitch specific local settings designator:
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
-#THLA.federate.local_settings = 'crcHost = js-er7-rti-dev.jsc.nasa.gov\n crcPort = 8989'
+
 
 #--------------------------------------------------------------------------
 # Set up federate related time related parameters.
