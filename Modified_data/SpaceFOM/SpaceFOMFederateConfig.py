@@ -81,13 +81,13 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
       return
 
 
-   def set_mandatory_late_joiner( self, mandatory_late_joiner ):
+   def set_designated_late_joiner( self, designated_late_joiner ):
 
-      # You can only adjust the Trick Tick value before initialize method is called.
+      # You can only set the designated late joiner state before initialize method is called.
       if self.initialized :
-         print( 'SpaceFOMFederateConfig.set_mandatory_late_jointer(): Warning, already initialized, function ignored!' )
+         print( 'SpaceFOMFederateConfig.set_designated_late_joiner(): Warning, already initialized, function ignored!' )
       else:
-         self.control.mandatory_late_joiner = mandatory_late_joiner
+         self.control.designated_late_joiner = designated_late_joiner
 
       return
 

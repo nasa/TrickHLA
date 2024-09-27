@@ -76,8 +76,8 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    friend void init_attrSpaceFOM__ExecutionControl();
 
   public:
-   bool mandatory_late_joiner; /**< @trick_units{--} Flag set by the user to
-      indicate this federate is a mandatory late joiner, default is false. */
+   bool designated_late_joiner; /**< @trick_units{--} Flag set by the user to
+      indicate this federate is a designated late joiner, default is false. */
 
    // These are the execution control roles available to a federate.
    bool pacing; /**< @trick_units{--} Is true when this federate is
@@ -127,8 +127,8 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual void role_determination_process();
    /*! @brief Process to join the federation execution early in initialization. */
    virtual void early_joiner_hla_init_process();
-   /*! @brief Mandatory later joiner federate initialization process. */
-   virtual void mandatory_late_joiner_init_process();
+   /*! @brief Designated later joiner federate initialization process. */
+   virtual void designated_late_joiner_init_process();
    /*! @brief Late joiner federate HLA initialization process. */
    virtual void late_joiner_hla_init_process();
 
@@ -274,11 +274,11 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    {
       return this->root_frame_pub;
    }
-   /*! @brief Is this federate a mandatory late joiner federate.
-    *  @return true if a mandatory later joiner federate. */
-   bool is_mandatory_late_joiner()
+   /*! @brief Is this federate a designated late joiner federate.
+    *  @return true if a designated later joiner federate. */
+   bool is_designated_late_joiner()
    {
-      return this->mandatory_late_joiner;
+      return this->designated_late_joiner;
    }
 
    //
