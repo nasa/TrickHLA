@@ -221,6 +221,8 @@ def find_clang_format( llvm_bin, verbose = True ):
                command_path = '/usr/bin/clang-format'
             elif os.path.isfile( '/usr/local/bin/clang-format' ):
                command_path = '/usr/local/bin/clang-format'
+            elif os.path.isfile( '/usr/local/opt/llvm/bin/clang-format' ):
+               command_path = '/usr/local/opt/llvm/bin/clang-format'
             elif os.path.isfile( '/opt/homebrew/bin/clang-format' ):
                command_path = '/opt/homebrew/bin/clang-format'
 
