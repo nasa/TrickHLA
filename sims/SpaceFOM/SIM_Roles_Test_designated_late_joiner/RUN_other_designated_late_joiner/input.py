@@ -200,8 +200,8 @@ federate = SpaceFOMFederateConfig( THLA.federate,
                                    federate_name,
                                    True )
 
-# Configure to be a mandatory late jointer federate.
-federate.set_mandatory_late_joiner( True )
+# Configure to be a designated late jointer federate.
+federate.set_designated_late_joiner( True )
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job

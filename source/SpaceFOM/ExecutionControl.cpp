@@ -108,7 +108,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 ExecutionControl::ExecutionControl()
-   : mandatory_late_joiner( false ),
+   : designated_late_joiner( false ),
      pacing( false ),
      root_frame_pub( false ),
      root_ref_frame( NULL ),
@@ -125,7 +125,7 @@ ExecutionControl::ExecutionControl()
 ExecutionControl::ExecutionControl(
    ExecutionConfiguration &exec_config )
    : TrickHLA::ExecutionControlBase( exec_config ),
-     mandatory_late_joiner( false ),
+     designated_late_joiner( false ),
      pacing( false ),
      root_frame_pub( false ),
      root_ref_frame( NULL ),
@@ -317,15 +317,15 @@ void ExecutionControl::initialize()
       this->use_preset_master = true;
    }
 
-   // A mandatory late joiner federate cannot be the preset Master.
-   if ( is_mandatory_late_joiner() && is_master() ) {
+   // A designated late joiner federate cannot be the preset Master.
+   if ( is_designated_late_joiner() && is_master() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
-             << " ERROR: This federate is configured as both a mandatory late"
+             << " ERROR: This federate is configured as both a designated late"
              << " joiner and as the preset Master, which is not allowed. Check"
              << " your input.py file or Modified data files to make sure this"
              << " federate is not configured as both the preset master and a"
-             << " mandatory late joiner." << THLA_ENDL;
+             << " designated late joiner." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -333,8 +333,8 @@ void ExecutionControl::initialize()
       if ( is_master() ) {
          send_hs( stdout, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM THE PRESET MASTER%c",
                   __LINE__, THLA_NEWLINE );
-      } else if ( is_mandatory_late_joiner() ) {
-         send_hs( stdout, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM A MANDATORY LATE JOINER AND NOT THE PRESET MASTER%c",
+      } else if ( is_designated_late_joiner() ) {
+         send_hs( stdout, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM A DESIGNATED LATE JOINER AND NOT THE PRESET MASTER%c",
                   __LINE__, THLA_NEWLINE );
       } else {
          send_hs( stdout, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM NOT THE PRESET MASTER%c",
@@ -523,10 +523,10 @@ void ExecutionControl::announce_sync_point(
    wstring const                    &label,
    RTI1516_USERDATA const           &user_supplied_tag )
 {
-   if ( is_mandatory_late_joiner()
+   if ( is_designated_late_joiner()
         && ( ( get_current_execution_control_mode() == EXECUTION_CONTROL_INITIALIZING )
              || ( get_current_execution_control_mode() == EXECUTION_CONTROL_UNINITIALIZED ) ) ) {
-      // Achieve sync-points for a mandatory late joiner during initialization.
+      // Achieve sync-points for a designated late joiner during initialization.
 
       // Check for the 'initialization_complete' synchronization point.
       if ( label.compare( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) == 0 ) {
@@ -534,7 +534,7 @@ void ExecutionControl::announce_sync_point(
          // Mark initialization sync-point as existing/announced.
          if ( mark_sync_point_announced( label, user_supplied_tag ) ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-               send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM mandatory late jointer, announced sync-point:'%ls'%c",
+               send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM designated late joiner, announced sync-point:'%ls'%c",
                         __LINE__, label.c_str(), THLA_NEWLINE );
             }
          }
@@ -554,7 +554,7 @@ void ExecutionControl::announce_sync_point(
          // because we need to shutdown.
          if ( mark_sync_point_announced( label, user_supplied_tag ) ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-               send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM mandatory late jointer, announced sync-point:'%ls'%c",
+               send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM designated late joiner, announced sync-point:'%ls'%c",
                         __LINE__, label.c_str(), THLA_NEWLINE );
             }
          }
@@ -564,7 +564,7 @@ void ExecutionControl::announce_sync_point(
          // Achieve all other sync-points.
          if ( achieve_sync_point( label ) ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-               send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM mandatory late jointer, achieved sync-point:'%ls'%c",
+               send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM designated late joiner, achieved sync-point:'%ls'%c",
                         __LINE__, label.c_str(), THLA_NEWLINE );
             }
          }
@@ -869,8 +869,8 @@ void ExecutionControl::role_determination_process()
       // Print out diagnostic message if appropriate.
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          if ( this->late_joiner ) {
-            if ( is_mandatory_late_joiner() ) {
-               send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is a Mandatory Late Joining Federate.%c",
+            if ( is_designated_late_joiner() ) {
+               send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is a Designated Late Joining Federate.%c",
                         __LINE__, THLA_NEWLINE );
             } else {
                send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is a Late Joining Federate.%c",
@@ -957,28 +957,28 @@ void ExecutionControl::early_joiner_hla_init_process()
 }
 
 /*!
-@details This routine implements the SpaceFOM Mandatory Late Joiner
+@details This routine implements the SpaceFOM Designated Late Joiner
 initialization process that achieves any unknown announced sync-points and
 waits for the initialization_complete sync-point to be announced.
 
 @job_class{initialization}
 */
-void ExecutionControl::mandatory_late_joiner_init_process()
+void ExecutionControl::designated_late_joiner_init_process()
 {
-   // Master Federate can not be a mandatory late joiner or if are not
-   // configured by the user to be a mandatory late joiner just return.
-   if ( is_master() || !is_mandatory_late_joiner() ) {
+   // Master Federate can not be a designated late joiner or if are not
+   // configured by the user to be a designated late joiner just return.
+   if ( is_master() || !is_designated_late_joiner() ) {
       return;
    }
 
-   // Override settings because this is a mandatory late joiner.
+   // Override settings because this is a designated late joiner.
    this->late_joiner            = true;
    this->late_joiner_determined = true;
 
    // Print out diagnostic message if appropriate.
    if ( !does_init_complete_sync_point_exist() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "SpaceFOM::ExecutionControl::mandatory_late_joiner_init_process():%d Waiting...%c",
+         send_hs( stdout, "SpaceFOM::ExecutionControl::designated_late_joiner_init_process():%d Waiting...%c",
                   __LINE__, THLA_NEWLINE );
       }
    }
@@ -1014,7 +1014,7 @@ void ExecutionControl::mandatory_late_joiner_init_process()
             // Check that we maintain federation membership.
             if ( !federate->is_execution_member() ) {
                ostringstream errmsg;
-               errmsg << "SpaceFOM::ExecutionControl::mandatory_late_joiner_init_process():" << __LINE__
+               errmsg << "SpaceFOM::ExecutionControl::designated_late_joiner_init_process():" << __LINE__
                       << " ERROR: Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
@@ -1035,7 +1035,7 @@ void ExecutionControl::mandatory_late_joiner_init_process()
          print_summary = false;
 
          ostringstream message;
-         message << "SpaceFOM::ExecutionControl::mandatory_late_joiner_init_process():"
+         message << "SpaceFOM::ExecutionControl::designated_late_joiner_init_process():"
                  << __LINE__
                  << " Init-Complete sync-point exists:"
                  << ( does_init_complete_sync_point_exist() ? "Yes" : "No, Still waiting..." )
@@ -1046,7 +1046,7 @@ void ExecutionControl::mandatory_late_joiner_init_process()
 
    // Print out diagnostic message if appropriate.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "SpaceFOM::ExecutionControl::mandatory_late_joiner_init_process():%d This is a Mandatory Late Joining Federate.%c",
+      send_hs( stdout, "SpaceFOM::ExecutionControl::designated_late_joiner_init_process():%d This is a Designated Late Joining Federate.%c",
                __LINE__, THLA_NEWLINE );
    }
 }
@@ -1310,11 +1310,11 @@ void ExecutionControl::pre_multi_phase_init_processes()
       // Perform Late Joiner HLA initialization process.
       late_joiner_hla_init_process();
 
-   } else if ( !is_master() && is_mandatory_late_joiner() ) {
-      // Early Joiner but this federate is a mandatory late jointer.
+   } else if ( !is_master() && is_designated_late_joiner() ) {
+      // Early Joiner but this federate is a designated late joiner.
 
       // Wait for initialization_complete sync-point and achieve unknown sync-points.
-      mandatory_late_joiner_init_process();
+      designated_late_joiner_init_process();
 
       // Perform Late Joiner HLA initialization process.
       late_joiner_hla_init_process();
