@@ -522,13 +522,36 @@ void ExecutionControl::sync_point_announced(
    wstring const          &label,
    RTI1516_USERDATA const &user_supplied_tag )
 {
-   if ( contains_sync_point( label ) ) {
+   // Unrecognized sync-point label if not seen before or if it is in the
+   // Unknown list (i.e. seen before but still unrecognized).
+   if ( !contains_sync_point( label ) || contains_sync_point( label, TrickHLA::UNKNOWN_SYNC_POINT_LIST ) ) {
+
+      // Unrecognized sync-point. Achieve all unrecognized sync-points.
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         string label_str;
+         StringUtilities::to_string( label_str, label );
+         send_hs( stdout, "=========================== SpaceFOM::ExecutionControl::sync_point_announced():%d Unrecognized sync-point:'%ls', which will be achieved.%c",
+                  __LINE__, label_str.c_str(), THLA_NEWLINE );
+      }
+
+      // Achieve all Unrecognized sync-points but don't wait for the
+      // federation to be synchronized on it.
+      if ( !achieve_sync_point( label, user_supplied_tag ) ) {
+         string label_str;
+         StringUtilities::to_string( label_str, label );
+         send_hs( stderr, "SpaceFOM::ExecutionControl::sync_point_announced():%d Failed to achieve unrecognized sync-point:'%s'.%c",
+                  __LINE__, label_str.c_str(), THLA_NEWLINE );
+      }
+   } else {
+      // Known sync-point that is already in one of the sync-point lists.
 
       // Mark known sync-point as announced.
       if ( mark_sync_point_announced( label, user_supplied_tag ) ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+            string label_str;
+            StringUtilities::to_string( label_str, label );
             send_hs( stdout, "SpaceFOM::ExecutionControl::sync_point_announced():%d Marked sync-point announced:'%ls'%c",
-                     __LINE__, label.c_str(), THLA_NEWLINE );
+                     __LINE__, label_str.c_str(), THLA_NEWLINE );
          }
       } else {
          string label_str;
@@ -540,39 +563,26 @@ void ExecutionControl::sync_point_announced(
          DebugHandler::terminate_with_message( errmsg.str() );
       }
 
+      // For a designated late joiner, achieve sync-points during initialization.
       if ( is_designated_late_joiner()
            && ( ( get_current_execution_control_mode() == EXECUTION_CONTROL_INITIALIZING )
                 || ( get_current_execution_control_mode() == EXECUTION_CONTROL_UNINITIALIZED ) ) ) {
 
-         // For a designated late joiner, achieve all sync-points during
-         // initialization except for init-completed and mtr-shutdown.
+         // Achieve all sync-points during initialization except for
+         // init-completed and mtr-shutdown.
          if ( ( label.compare( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) != 0 )
               && ( label.compare( SpaceFOM::MTR_SHUTDOWN_SYNC_POINT ) != 0 ) ) {
 
             // Achieve all other sync-points.
-            if ( achieve_sync_point( label ) ) {
+            if ( achieve_sync_point( label, user_supplied_tag ) ) {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+                  string label_str;
+                  StringUtilities::to_string( label_str, label );
                   send_hs( stdout, "SpaceFOM::ExecutionControl::sync_point_announced():%d SpaceFOM designated late joiner, achieved sync-point:'%ls'%c",
-                           __LINE__, label.c_str(), THLA_NEWLINE );
+                           __LINE__, label_str.c_str(), THLA_NEWLINE );
                }
             }
          }
-      }
-   } else {
-      // Achieve all unrecognized sync-points.
-
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "SpaceFOM::ExecutionControl::sync_point_announced():%d Unrecognized sync-point:'%ls', which will be achieved.%c",
-                  __LINE__, label.c_str(), THLA_NEWLINE );
-      }
-
-      // Unrecognized sync-point so achieve it but don't wait for the
-      // federation to be synchronized on it.
-      if ( !achieve_sync_point( label ) ) {
-         string label_str;
-         StringUtilities::to_string( label_str, label );
-         send_hs( stderr, "SpaceFOM::ExecutionControl::sync_point_announced():%d Failed to achieve unrecognized sync-point:'%s'.%c",
-                  __LINE__, label_str.c_str(), THLA_NEWLINE );
       }
    }
 }

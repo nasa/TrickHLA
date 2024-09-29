@@ -1114,6 +1114,16 @@ void ExecutionControl::add_initialization_sync_points()
    add_multiphase_init_sync_points();
 }
 
+void ExecutionControl::sync_point_announced(
+   wstring const          &label,
+   RTI1516_USERDATA const &user_supplied_tag )
+{
+   // In this case the default SyncPointManagerBase::sync_point_announced()
+   // function works. Strictly speaking, we could just not define this.
+   // However, this provides a place to implement if that changes.
+   SyncPointManagerBase::sync_point_announced( label, user_supplied_tag );
+}
+
 void ExecutionControl::publish()
 {
    // Check to see if we are the Master federate.
@@ -1921,7 +1931,7 @@ bool ExecutionControl::run_mode_transition()
         wait_for_sync_point_announcement( federate, sync_pnt );
 
         // Achieve the 'mtr-run' sync-point.
-        achieve_sync_point( *RTI_amb, sync_pnt );
+        achieve_sync_point( sync_pnt );
 
         // Wait for 'mtr_run' sync-point synchronization.
         wait_for_synchronization( federate, sync_pnt );

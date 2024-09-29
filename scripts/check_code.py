@@ -65,6 +65,9 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
    parser.add_argument( '-b', '--bin', \
                         help = 'Path to cppcheck binaries directory.', \
                         dest = 'bin_path' )
+   parser.add_argument( '--clang', \
+                        help = 'Use clang parser instead of the cppcheck built in parser (experimental).', \
+                        action = 'store_true', dest = 'use_clang_parser' )
    parser.add_argument( '-c', '--clean', \
                         help = 'Clean all generated files.', \
                         action = 'store_true', dest = 'clean_gen_files' )
@@ -445,7 +448,11 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
       # must be carefully investigated before you know if it is good or bad.
       cppcheck_args.append( '--inconclusive' )
 
-   # Use the c++03 standard
+   # Use the experimental clang parser instead of the built in cppcheck parser.
+   if args.use_clang_parser:
+      cppcheck_args.append( '--clang' )
+
+   # Use the c++03 standard.
    cppcheck_args.append( '--std=c++03' )
 
    # Configure cppcheck to use an output directory to cache build results.
