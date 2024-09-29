@@ -374,6 +374,19 @@ bool const SyncPointManagerBase::contains_sync_point(
    return false;
 }
 
+/*
+ * Does the names list contain the sync-point label.
+ */
+bool const SyncPointManagerBase::contains_sync_point(
+   wstring const     &label,
+   std::string const &list_name )
+{
+   MutexProtection auto_unlock_mutex( &mutex );
+
+   int const index = get_list_index_for_list_name( list_name );
+   return ( ( index >= 0 ) && sync_pnt_lists[index]->contains( label ) );
+}
+
 bool const SyncPointManagerBase::contains_sync_point_list_name(
    string const &list_name )
 {
@@ -554,13 +567,20 @@ bool const SyncPointManagerBase::is_sync_point_achieved(
 bool const SyncPointManagerBase::achieve_sync_point(
    wstring const &label )
 {
+   return achieve_sync_point( label, RTI1516_USERDATA( 0, 0 ) );
+}
+
+bool const SyncPointManagerBase::achieve_sync_point(
+   std::wstring const     &label,
+   RTI1516_USERDATA const &user_supplied_tag )
+{
    MutexProtection auto_unlock_mutex( &mutex );
 
    int index = get_list_index_for_sync_point( label );
 
-   // If the sync-point index is negative it is unknown.
+   // If the sync-point list index is negative it is unknown.
    if ( index < 0 ) {
-      // Add the unknown sync-point to the unknown list so it can be achieved.
+      // Add the unknown sync-point to the Unknown list so it will be achieved.
       if ( !add_sync_point( label, TrickHLA::UNKNOWN_SYNC_POINT_LIST ) ) {
          string label_str;
          StringUtilities::to_string( label_str, label );
@@ -575,8 +595,12 @@ bool const SyncPointManagerBase::achieve_sync_point(
       index = get_list_index_for_sync_point( label );
       if ( index >= 0 ) {
          // Mark unknown sync-point as announced otherwise it will not be achieved.
-         sync_pnt_lists[index]->mark_announced( label, RTI1516_USERDATA( 0, 0 ) );
+         sync_pnt_lists[index]->mark_announced( label, user_supplied_tag );
       }
+   } else if ( TrickHLA::UNKNOWN_SYNC_POINT_LIST.compare( sync_pnt_lists[index]->get_list_name() ) ) {
+      // Mark any sync-point already in the Unknown list as announced so that
+      // it will be achieved.
+      sync_pnt_lists[index]->mark_announced( label, user_supplied_tag );
    }
 
    return ( ( index >= 0 ) && sync_pnt_lists[index]->achieve( label ) );
@@ -825,8 +849,28 @@ void SyncPointManagerBase::sync_point_announced(
    wstring const          &label,
    RTI1516_USERDATA const &user_supplied_tag )
 {
-   // Check to see if the synchronization point is known and is in the list.
-   if ( contains_sync_point( label ) ) {
+   // Unrecognized sync-point label if not seen before or if it is in the
+   // Unknown list (i.e. seen before but still unrecognized).
+   if ( !contains_sync_point( label ) || contains_sync_point( label, TrickHLA::UNKNOWN_SYNC_POINT_LIST ) ) {
+
+      // Unrecognized sync-point. Achieve all unrecognized sync-points.
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         string label_str;
+         StringUtilities::to_string( label_str, label );
+         send_hs( stdout, "SyncPointManagerBase::sync_point_announced():%d Unrecognized sync-point:'%ls', which will be achieved.%c",
+                  __LINE__, label_str.c_str(), THLA_NEWLINE );
+      }
+
+      // Achieve all Unrecognized sync-points but don't wait for the
+      // federation to be synchronized on it.
+      if ( !achieve_sync_point( label, user_supplied_tag ) ) {
+         string label_str;
+         StringUtilities::to_string( label_str, label );
+         send_hs( stderr, "SyncPointManagerBase::sync_point_announced():%d Failed to achieve unrecognized sync-point:'%s'.%c",
+                  __LINE__, label_str.c_str(), THLA_NEWLINE );
+      }
+   } else {
+      // Known sync-point that is already in one of the sync-point lists.
 
       // Mark known sync-point as announced.
       if ( mark_sync_point_announced( label, user_supplied_tag ) ) {
@@ -844,24 +888,6 @@ void SyncPointManagerBase::sync_point_announced(
                 << " ERROR: Failed to mark sync-point '" << label_str
                 << "' as announced." << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
-      }
-   } else {
-      // By default, achieve unrecognized synchronization point.
-
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string label_str;
-         StringUtilities::to_string( label_str, label );
-         send_hs( stdout, "SyncPointManagerBase::sync_point_announced():%d Unrecognized sync-point:'%s', which will be achieved.%c",
-                  __LINE__, label_str.c_str(), THLA_NEWLINE );
-      }
-
-      // Unrecognized sync-point so achieve it but don't wait for the
-      // federation to be synchronized on it.
-      if ( !achieve_sync_point( label ) ) {
-         string label_str;
-         StringUtilities::to_string( label_str, label );
-         send_hs( stderr, "SyncPointManagerBase::sync_point_announced():%d Failed to achieve unrecognized sync-point:'%s'.%c",
-                  __LINE__, label_str.c_str(), THLA_NEWLINE );
       }
    }
 }

@@ -207,10 +207,10 @@ class THLAInitSimObj : public Trick::SimObject {
       P100 ("initialization") thla_manager.receive_init_data();
 
       // Do some processing here if needed...
+*/
 
       // Clear remaining initialization sync-points.
       P100 ("initialization") thla_manager.clear_init_sync_points();
-*/
    }
 
  private:

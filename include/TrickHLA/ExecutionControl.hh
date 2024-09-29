@@ -114,6 +114,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual void sync_point_announced(
       std::wstring const     &label,
       RTI1516_USERDATA const &user_supplied_tag );
+
    /*! Publish the ExecutionControl objects and interactions. */
    virtual void publish();
    /*! Unpublish the ExecutionControl objects and interactions. */
