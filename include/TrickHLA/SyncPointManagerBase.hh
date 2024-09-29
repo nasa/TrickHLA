@@ -107,17 +107,19 @@ class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
 
    SyncPtStateEnum const get_sync_point_state( std::wstring const &label );
 
+   bool const add_sync_point_list( std::string const &list_name );
+
    /*! @brief Add the given synchronization point label to the named list.
     *  @param label Synchronization point label.
     *  @param list_name The name of the list of sync-points to add to.
     *  @return True if the synchronization point is added, false otherwise. */
-   bool const add_sync_point_list( std::string const &list_name );
-
    bool const add_sync_point( std::wstring const &label, std::string const &list_name );
 
    bool const add_sync_point( std::wstring const &label, std::string const &list_name, Int64Time time );
 
    bool const contains_sync_point( std::wstring const &label );
+
+   bool const contains_sync_point( std::wstring const &label, std::string const &list_name );
 
    bool const contains_sync_point_list_name( std::string const &list_name );
 
@@ -144,6 +146,8 @@ class SyncPointManagerBase : public TrickHLA::CheckpointConversionBase
    bool const is_sync_point_achieved( std::wstring const &label );
 
    bool const achieve_sync_point( std::wstring const &label );
+
+   bool const achieve_sync_point( std::wstring const &label, RTI1516_USERDATA const &user_supplied_tag );
 
    bool const achieve_all_sync_points( std::string const &list_name );
 
