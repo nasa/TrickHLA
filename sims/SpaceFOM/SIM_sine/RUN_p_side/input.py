@@ -155,6 +155,13 @@ trick.exec_set_freeze_command( False )
 trick.sim_control_panel_set_enabled( False )
 trick.exec_set_stack_trace( False )
 
+#---------------------------------------------
+# Set up data to record.
+#---------------------------------------------
+exec(open( "Log_data/log_sine_states.py" ).read())
+log_sine_states( 'A', 0.250 )
+log_sine_states( 'P', 0.250 )
+
 
 # =========================================================================
 # Set up the HLA interfaces.
@@ -191,7 +198,6 @@ federate.set_RRFP_role( False )   # This is NOT the Root Reference Frame Publish
 #--------------------------------------------------------------------------
 federate.add_known_federate( True, 'A-side-Federate' )
 federate.add_known_federate( True, str(federate.federate.name) )
-federate.add_known_federate( False, 'Other' )
 
 #--------------------------------------------------------------------------
 # Configure the FOM modules.

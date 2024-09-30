@@ -34,7 +34,7 @@
 
 //==========================================================================
 // Trick HLA and SpaceFOM include files used in SimObject definitions or
-// for inputfile instantiations.
+// for input file instantiations.
 //==========================================================================
 // This is needed for CTE timeline instantiation in the input file.
 ##include "TrickHLA/CTETimelineBase.hh"
@@ -49,6 +49,7 @@
  using namespace TrickHLA;
  using namespace SpaceFOM;
 %}
+
 
 //==========================================================================
 // SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
