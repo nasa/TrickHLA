@@ -18,8 +18,10 @@
 ##############################################################################
 import sys
 sys.path.append('../../../')
+
 # Load the SpaceFOM specific federate configuration object.
 from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+
 # Load the SpaceFOM specific reference frame configuration object.
 from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
@@ -179,6 +181,18 @@ run_duration = 10.0
 # Default no verbose messages.
 verbose = False
 
+# Set the default Federate name.
+federate_name = 'Master'
+
+# Set the default Federation Execution name.
+federation_name = 'SpaceFOM_Roles_Test'
+
+# Set the default Pacing Federate name.
+pacing_name = 'Pacing'
+
+# Set the default Root Reference Frame name.
+rrfp_name = 'RRFP'
+
 parse_command_line()
 
 if (print_usage == True) :
@@ -220,8 +234,8 @@ federate = SpaceFOMFederateConfig( THLA.federate,
                                    THLA.manager,
                                    THLA.execution_control,
                                    THLA.ExCO,
-                                   'SpaceFOM_Roles_Test',
-                                   'Master',
+                                   federation_name,
+                                   federate_name,
                                    True )
 
 # Set the name of the ExCO S_define instance.
@@ -248,15 +262,14 @@ federate.set_RRFP_role( False )   # This is NOT the Root Reference Frame Publish
 # Add in known required federates.
 #--------------------------------------------------------------------------
 federate.add_known_federate( True, str(federate.federate.name) )
-federate.add_known_federate( True, 'Pacing' )
-federate.add_known_federate( True, 'RRFP' )
+federate.add_known_federate( True, pacing_name )
+federate.add_known_federate( True, rrfp_name )
 
 #--------------------------------------------------------------------------
 # Configure the CRC.
 #--------------------------------------------------------------------------
 # Pitch specific local settings designator:
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
-#THLA.federate.local_settings = 'crcHost = 10.8.0.161\n crcPort = 8989'
 # Mak specific local settings designator, which is anything from the rid.mtl file:
 #THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
 
@@ -280,7 +293,7 @@ federate.set_lookahead_time( 0.250 )
 federate.set_least_common_time_step( 0.250 )
 
 # Set the amount of seconds used to 'pad' mode transitions.
-federate.set_time_padding( 2.0 )
+federate.set_time_padding( 1.0 )
 
 # For SpaceFOM, we also need to specify the Trick software frame time.
 trick.exec_set_software_frame( 0.250 )

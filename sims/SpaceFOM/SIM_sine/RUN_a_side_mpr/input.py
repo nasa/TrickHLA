@@ -259,7 +259,7 @@ federate.set_lookahead_time( 0.250 )
 federate.set_least_common_time_step( 0.250 )
 
 # Set the amount of seconds used to 'pad' mode transitions.
-federate.set_time_padding( 2.0 )
+federate.set_time_padding( 1.0 )
 
 # This federate also has the Pacing role. Set the Trick software frame time.
 trick.exec_set_software_frame( 0.250 )
