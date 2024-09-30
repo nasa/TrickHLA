@@ -183,6 +183,21 @@ run_duration = 10.0
 # Default no verbose messages.
 verbose = False
 
+# Set the default Federate name.
+federate_name = 'RRFP'
+
+# Set the default Federation Execution name.
+federation_name = 'SpaceFOM_Roles_Test'
+
+# Set the default Master Federate name.
+master_name = 'Master'
+
+# Set the default Paceing Federate name.
+pacing_name = 'Pacing'
+
+# Set the default Root Reference Frame name.
+root_frame_name = 'RootFrame'
+
 
 parse_command_line()
 
@@ -224,8 +239,8 @@ federate = SpaceFOMFederateConfig( THLA.federate,
                                    THLA.manager,
                                    THLA.execution_control,
                                    THLA.ExCO,
-                                   'SpaceFOM_Roles_Test',
-                                   'RRFP',
+                                   federation_name,
+                                   federate_name,
                                    True )
 
 # Set the name of the ExCO S_define instance.
@@ -260,7 +275,6 @@ federate.set_RRFP_role( True )    # This is the Root Reference Frame Publisher.
 #--------------------------------------------------------------------------
 # Pitch specific local settings designator:
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
-#THLA.federate.local_settings = 'crcHost = 10.8.0.161\n crcPort = 8989'
 # Mak specific local settings designator, which is anything from the rid.mtl file:
 #THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
 
@@ -315,11 +329,8 @@ else :
 #---------------------------------------------------------------------------
 # Set up for Root Reference Frame data.
 #---------------------------------------------------------------------------
-root_frame_name = 'RootFrame'
-parent_frame_name = ''
-
 ref_frame_tree.root_frame_data.name = root_frame_name
-ref_frame_tree.root_frame_data.parent_name = parent_frame_name
+ref_frame_tree.root_frame_data.parent_name = ''
                                         
 ref_frame_tree.root_frame_data.state.pos[0] = 0.0
 ref_frame_tree.root_frame_data.state.pos[1] = 0.0
@@ -373,9 +384,7 @@ root_ref_frame.frame_packing.debug = verbose
 federate.set_root_frame( root_frame )
 
 #---------------------------------------------------------------------------
-# Set up the Root Reference Frame object for discovery.
-# If it is the RRFP, it will publish the frame.
-# If it is NOT the RRFP, it will subscribe to the frame.
+# Set up an alternate vehicle reference frame object for discovery.
 #---------------------------------------------------------------------------
 frame_A = SpaceFOMRefFrameObject( True,
                                   'FrameA',
@@ -399,8 +408,8 @@ ref_frame_A.lag_compensation.debug = False
 ref_frame_A.lag_compensation.set_integ_tolerance( 1.0e-6 )
 ref_frame_A.lag_compensation.set_integ_dt( 0.025 )
 
-frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
-#frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
+#frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
+frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 #---------------------------------------------------------------------------
 # Add the HLA SimObjects associated with this federate.

@@ -18,8 +18,10 @@
 ##############################################################################
 import sys
 sys.path.append('../../../')
+
 # Load the SpaceFOM specific federate configuration object.
 from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+
 # Load the SpaceFOM specific reference frame configuration object.
 from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
@@ -179,6 +181,18 @@ run_duration = 10.0
 # Default no verbose messages.
 verbose = False
 
+# Set the default Federate name.
+federate_name = 'Pacing'
+
+# Set the default Federation Execution name.
+federation_name = 'SpaceFOM_Roles_Test'
+
+# Set the default Master Federate name.
+master_name = 'Master'
+
+# Set the default Root Reference Frame name.
+rrfp_name = 'RRFP'
+
 
 parse_command_line()
 
@@ -220,8 +234,8 @@ federate = SpaceFOMFederateConfig( THLA.federate,
                                    THLA.manager,
                                    THLA.execution_control,
                                    THLA.ExCO,
-                                   'SpaceFOM_Roles_Test',
-                                   'Pacing',
+                                   federation_name,
+                                   federate_name,
                                    True )
 
 # Set the name of the ExCO S_define instance.
@@ -256,7 +270,6 @@ federate.set_RRFP_role( False )   # This is NOT the Root Reference Frame Publish
 #--------------------------------------------------------------------------
 # Pitch specific local settings designator:
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
-#THLA.federate.local_settings = 'crcHost = 10.8.0.161\n crcPort = 8989'
 # Mak specific local settings designator, which is anything from the rid.mtl file:
 #THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
 

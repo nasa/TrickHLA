@@ -16,8 +16,10 @@
 ##############################################################################
 import sys
 sys.path.append('../../../')
+
 # Load the SpaceFOM specific federate configuration object.
 from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+
 # Load the SpaceFOM specific reference frame configuration object.
 from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
@@ -196,6 +198,22 @@ run_duration = 10.0
 # Default no verbose messages.
 verbose = False
 
+# Set the default Federate name.
+federate_name = 'Other'
+
+# Set the default Federation Execution name.
+federation_name = 'SpaceFOM_Roles_Test'
+
+# Set the default Master Federate name.
+master_name = 'Master'
+
+# Set the default Paceing Federate name.
+pacing_name = 'Pacing'
+
+# Set the default Root Reference Frame name.
+rrfp_name = 'RRFP'
+
+
 parse_command_line()
 
 if (print_usage == True) :
@@ -238,8 +256,8 @@ federate = SpaceFOMFederateConfig( THLA.federate,
                                    THLA.manager,
                                    THLA.execution_control,
                                    THLA.ExCO,
-                                   'SpaceFOM_Roles_Test',
-                                   'Other',
+                                   federation_name,
+                                   federate_name,
                                    True )
 
 # Set the name of the ExCO S_define instance.
@@ -266,16 +284,15 @@ federate.set_RRFP_role( False )   # This is NOT the Root Reference Frame Publish
 # This is the RRFP federate.
 # It doesn't really need to know about any other federates.
 federate.add_known_federate( True, str(federate.federate.name) )
-federate.add_known_federate( True, 'Master' )
-federate.add_known_federate( True, 'Pacing' )
-federate.add_known_federate( True, 'RRFP' )
+federate.add_known_federate( True, master_name )
+federate.add_known_federate( True, pacing_name )
+federate.add_known_federate( True, rrfp_name )
 
 #--------------------------------------------------------------------------
 # Configure the CRC.
 #--------------------------------------------------------------------------
 # Pitch specific local settings designator:
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
-#THLA.federate.local_settings = 'crcHost = 10.8.0.161\n crcPort = 8989'
 # Mak specific local settings designator, which is anything from the rid.mtl file:
 #THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
 
@@ -335,7 +352,8 @@ else :
 root_frame = SpaceFOMRefFrameObject( federate.is_RRFP,
                                      'RootFrame',
                                      root_ref_frame.frame_packing,
-                                     'root_ref_frame.frame_packing' )
+                                     'root_ref_frame.frame_packing',
+                                     frame_conditional = root_ref_frame.conditional )
 
 # Set the debug flag for the root reference frame.
 root_ref_frame.frame_packing.debug = verbose
@@ -351,15 +369,23 @@ else :
 # Set the root frame for the federate.
 federate.set_root_frame( root_frame )
 
+# Set the lag compensation parameters.
+# NOTE: The ROOT REFERENCE FRAME never needs to be compensated!
+
+
 #---------------------------------------------------------------------------
-# Set up the Root Reference Frame object for discovery.
-# If it is the RRFP, it will publish the frame.
-# If it is NOT the RRFP, it will subscribe to the frame.
+# Set up an alternate vehicle reference frame object for discovery.
 #---------------------------------------------------------------------------
 frame_A = SpaceFOMRefFrameObject( False,
                                   'FrameA',
                                   ref_frame_A.frame_packing,
-                                  'ref_frame_A.frame_packing' )
+                                  'ref_frame_A.frame_packing',
+                                  parent_S_define_instance = root_ref_frame.frame_packing,
+                                  parent_name              = 'RootFrame',
+                                  frame_conditional        = ref_frame_A.conditional,
+                                  frame_lag_comp           = ref_frame_A.lag_compensation,
+                                  frame_ownership          = ref_frame_A.ownership_handler,
+                                  frame_deleted            = ref_frame_A.deleted_callback )
 
 # Set the debug flag for the root reference frame.
 ref_frame_A.frame_packing.debug = verbose
@@ -374,6 +400,15 @@ else :
 
 # Add this reference frame to the list of managed object.
 federate.add_fed_object( frame_A )
+
+# Set the lag compensation parameters.
+# The reality is that the ROOT REFERENCE FRAME never needs to be compensated!
+ref_frame_A.lag_compensation.debug = False
+ref_frame_A.lag_compensation.set_integ_tolerance( 1.0e-6 )
+ref_frame_A.lag_compensation.set_integ_dt( 0.025 )
+
+#frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
+frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 #---------------------------------------------------------------------------
 # Add the HLA SimObjects associated with this federate.

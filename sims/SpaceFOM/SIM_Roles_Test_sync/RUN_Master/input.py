@@ -292,11 +292,11 @@ federate.set_lookahead_time( 0.250 )
 # federation execution.
 federate.set_least_common_time_step( 0.250 )
 
-# Set the amount of seconds used to 'pad' mode transitions.
-federate.set_time_padding( 1.0 )
-
 # For SpaceFOM, we also need to specify the Trick software frame time.
 trick.exec_set_software_frame( 0.250 )
+
+# Set the amount of seconds used to 'pad' mode transitions.
+federate.set_time_padding( 1.0 )
 
 # Setup Time Management parameters.
 if (hla_time_mgt == False) :
@@ -339,7 +339,8 @@ THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHL
 root_frame = SpaceFOMRefFrameObject( federate.is_RRFP,
                                      'RootFrame',
                                      root_ref_frame.frame_packing,
-                                     'root_ref_frame.frame_packing' )
+                                     'root_ref_frame.frame_packing',
+                                     frame_conditional = root_ref_frame.conditional )
 
 # Set the debug flag for the root reference frame.
 root_ref_frame.frame_packing.debug = verbose
@@ -347,19 +348,37 @@ root_ref_frame.frame_packing.debug = verbose
 # Set the root frame for the federate.
 federate.set_root_frame( root_frame )
 
+# Set the lag compensation parameters.
+# NOTE: The ROOT REFERENCE FRAME never needs to be compensated!
+
+
 #---------------------------------------------------------------------------
-# Set up other Reference Frame objects for discovery.
+# Set up an alternate vehicle reference frame object for discovery.
 #---------------------------------------------------------------------------
 frame_A = SpaceFOMRefFrameObject( False,
                                   'FrameA',
                                   ref_frame_A.frame_packing,
-                                  'ref_frame_A.frame_packing' )
+                                  'ref_frame_A.frame_packing',
+                                  parent_S_define_instance = root_ref_frame.frame_packing,
+                                  parent_name              = '',
+                                  frame_conditional        = ref_frame_A.conditional,
+                                  frame_lag_comp           = ref_frame_A.lag_compensation,
+                                  frame_ownership          = ref_frame_A.ownership_handler,
+                                  frame_deleted            = ref_frame_A.deleted_callback )
 
 # Set the debug flag for the root reference frame.
 ref_frame_A.frame_packing.debug = verbose
 
 # Add this reference frame to the list of managed object.
-#federate.add_fed_object( frame_A )
+federate.add_fed_object( frame_A )
+
+# Set the lag compensation parameters.
+ref_frame_A.lag_compensation.debug = True
+ref_frame_A.lag_compensation.set_integ_tolerance( 1.0e-6 )
+ref_frame_A.lag_compensation.set_integ_dt( 0.025 )
+
+frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
+#frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 
 #---------------------------------------------------------------------------
