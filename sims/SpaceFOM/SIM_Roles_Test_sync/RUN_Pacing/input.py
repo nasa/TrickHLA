@@ -30,14 +30,14 @@ def print_usage_message( ) :
 
    print(' ')
    print('TrickHLA SpaceFOM Pacing Simulation Command Line Configuration Options:')
-   print('  -h -help              : Print this help message.')
-   print('  -realtime [on|off]    : on: Turns on realtime clock (Default), off: disables it.')
-   print('  -hla-time-mgt [on|off]: on: Turns on HLA Time Management (Default), off: disables it.')
-   print('  -regulating [on|off]  : on: Turns on HLA Time Regulating (Default), off: disables it.')
-   print('  -constrained [on|off] : on: Turns on HLA Time Constrained (Default), off: disables it.')
-   print('  -stop [time]          : Time to stop simulation, default is 10.0 seconds.')
-   print('  -nostop               : Set no stop time on simulation.')
-   print('  -verbose [on|off]     : on: Show verbose messages, off: disable messages (Default).')
+   print('  -h --help              : Print this help message.')
+   print('  --realtime [on|off]    : on: Turns on realtime clock (Default), off: disables it.')
+   print('  --hla-time-mgt [on|off]: on: Turns on HLA Time Management (Default), off: disables it.')
+   print('  --regulating [on|off]  : on: Turns on HLA Time Regulating (Default), off: disables it.')
+   print('  --constrained [on|off] : on: Turns on HLA Time Constrained (Default), off: disables it.')
+   print('  --stop [time]          : Time to stop simulation, default is 10.0 seconds.')
+   print('  --nostop               : Set no stop time on simulation.')
+   print('  --verbose [on|off]     : on: Show verbose messages, off: disable messages (Default).')
    print(' ')
    
    trick.exec_terminate_with_return( -1,
@@ -66,7 +66,7 @@ def parse_command_line( ) :
    index = 2
    while (index < argc) :
       
-      if (str(argv[index]) == '-realtime') :
+      if (str(argv[index]) == '--realtime') :
          index = index + 1
          if (index < argc) :
             if (str(argv[index]) == 'on') :
@@ -74,13 +74,13 @@ def parse_command_line( ) :
             elif (str(argv[index]) == 'off') :
                realtime_clock = False
             else :
-               print('ERROR: Unknown -realtime argument: ' + str(argv[index]))
+               print('ERROR: Unknown --realtime argument: ' + str(argv[index]))
                print_usage = True
          else :
-            print('ERROR: Missing -realtime [on|off] argument.')
+            print('ERROR: Missing --realtime [on|off] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '-hla-time-mgt') :
+      elif (str(argv[index]) == '--hla-time-mgt') :
          index = index + 1
          if (index < argc) :
             if (str(argv[index]) == 'on') :
@@ -88,13 +88,13 @@ def parse_command_line( ) :
             elif (str(argv[index]) == 'off') :
                hla_time_mgt = False
             else :
-               print('ERROR: Unknown -hla-time-mgt argument: ' + str(argv[index]))
+               print('ERROR: Unknown --hla-time-mgt argument: ' + str(argv[index]))
                print_usage = True
          else :
-            print('ERROR: Missing -hla-time-mgt [on|off] argument.')
+            print('ERROR: Missing --hla-time-mgt [on|off] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '-regulating') :
+      elif (str(argv[index]) == '--regulating') :
          index = index + 1
          if (index < argc) :
             if (str(argv[index]) == 'on') :
@@ -102,13 +102,13 @@ def parse_command_line( ) :
             elif (str(argv[index]) == 'off') :
                time_regulating = False
             else :
-               print('ERROR: Unknown -regulating argument: ' + str(argv[index]))
+               print('ERROR: Unknown --regulating argument: ' + str(argv[index]))
                print_usage = True
          else :
-            print('ERROR: Missing -regulating [on|off] argument.')
+            print('ERROR: Missing --regulating [on|off] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '-constrained') :
+      elif (str(argv[index]) == '--constrained') :
          index = index + 1
          if (index < argc) :
             if (str(argv[index]) == 'on') :
@@ -116,27 +116,27 @@ def parse_command_line( ) :
             elif (str(argv[index]) == 'off') :
                time_constrained = False
             else :
-               print('ERROR: Unknown -constrained argument: ' + str(argv[index]))
+               print('ERROR: Unknown --constrained argument: ' + str(argv[index]))
                print_usage = True
          else :
-            print('ERROR: Missing -constrained [on|off] argument.')
+            print('ERROR: Missing --constrained [on|off] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '-stop') :
+      elif (str(argv[index]) == '--stop') :
          index = index + 1
          if (index < argc) :
             run_duration = float(str(argv[index]))
          else :
-            print('ERROR: Missing -stop [time] argument.')
+            print('ERROR: Missing --stop [time] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '-nostop') :
+      elif (str(argv[index]) == '--nostop') :
          run_duration = None
          
-      elif ((str(argv[index]) == '-h') | (str(argv[index]) == '-help')) :
+      elif ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')) :
          print_usage = True
          
-      elif (str(argv[index]) == '-verbose') :
+      elif (str(argv[index]) == '--verbose') :
          index = index + 1
          if (index < argc) :
             if (str(argv[index]) == 'on') :
@@ -144,10 +144,10 @@ def parse_command_line( ) :
             elif (str(argv[index]) == 'off') :
                verbose = False
             else :
-               print('ERROR: Unknown -verbose argument: ' + str(argv[index]))
+               print('ERROR: Unknown --verbose argument: ' + str(argv[index]))
                print_usage = True
          else :
-            print('ERROR: Missing -verbose [on|off] argument.')
+            print('ERROR: Missing --verbose [on|off] argument.')
             print_usage = True
          
       else :

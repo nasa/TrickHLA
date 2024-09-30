@@ -22,11 +22,13 @@
 
 ##include "trick/integrator_c_intf.h"
 
+// TrickHLA includes.
 ##include "TrickHLA/Manager.hh"
 ##include "TrickHLA/KnownFederate.hh"
 ##include "TrickHLA/SimTimeline.hh"
 ##include "TrickHLA/ScenarioTimeline.hh"
 
+// Sine model includes.
 ##include "sine/include/SineData.hh"
 ##include "sine/include/SinePacking.hh"
 ##include "sine/include/SineLagCompensation.hh"
@@ -34,9 +36,14 @@
 ##include "sine/include/SineInteractionHandler.hh"
 ##include "sine/include/SineObjectDeleted.hh"
 
-
 // TrickHLA support for Trick Child Threads.
 #include "THLAThread.sm"
+
+
+//==========================================================================
+// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+//==========================================================================
+#include "THLA.sm"
 
 
 //=============================================================================
@@ -219,12 +226,14 @@ class THLAInitSimObj : public Trick::SimObject {
 //=============================================================================
 // SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
 //=============================================================================
-#include "THLA.sm"
 THLASimObject THLA( THLA_DATA_CYCLE_TIME,
                     THLA_INTERACTION_CYCLE_TIME,
                     P_HLA_EARLY,
                     P_HLA_INIT,
                     P_HLA_LATE );
+
+// Simulation specific multiphase initialization SimObject instance.
+THLAInitSimObj THLA_INIT( THLA.manager, THLA.federate );
 
 // Instantiations
 AnalyticSineSimObj A;
@@ -244,8 +253,6 @@ PropagatedSineSimObj P( THLA.federate,
                         THLA_DATA_CYCLE_TIME, // Main thread data cycle time.
                         THLA_DATA_CYCLE_TIME, // Child thread data cycle time.
                         2 );                  // Trick child thread 2 (i.e. C2)
-
-THLAInitSimObj THLA_INIT( THLA.manager, THLA.federate );
 
 
 // Define the simulation objects that have routines involved in integration.

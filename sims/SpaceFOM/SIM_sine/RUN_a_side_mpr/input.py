@@ -178,6 +178,13 @@ trick.sim_control_panel_set_enabled( True )
 #simControlPanel.set_host( "localhost" )
 #trick.add_external_application( simControlPanel )
 
+#---------------------------------------------
+# Set up data to record.
+#---------------------------------------------
+exec(open( "Log_data/log_sine_states.py" ).read())
+log_sine_states( 'A', 0.250 )
+log_sine_states( 'P', 0.250 )
+
 
 # =========================================================================
 # Set up the HLA interfaces.
@@ -214,7 +221,6 @@ federate.set_RRFP_role( True )   # This is the Root Reference Frame Publisher.
 #--------------------------------------------------------------------------
 federate.add_known_federate( True, str(federate.federate.name) )
 federate.add_known_federate( True, 'P-side-Federate' )
-federate.add_known_federate( False, 'Other' )
 
 #--------------------------------------------------------------------------
 # Configure the FOM modules.
