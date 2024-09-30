@@ -147,7 +147,7 @@ federate_name = 'Master'
 # Set the default Federation Execution name.
 federation_name = 'SpaceFOM_Roles_Test'
 
-# Set the default Paceing Federate name.
+# Set the default Pacing Federate name.
 pacing_name = 'Pacing'
 
 # Set the default Root Reference Frame name.
