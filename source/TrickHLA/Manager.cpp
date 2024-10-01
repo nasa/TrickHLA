@@ -47,6 +47,7 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <cstdint>
 #include <float.h>
+#include <iterator>
 #include <string>
 
 // Trick include files.

@@ -48,6 +48,7 @@ NASA, Johnson Space Center\n
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
+#include <iterator>
 #include <pthread.h>
 #include <sstream>
 #include <string>

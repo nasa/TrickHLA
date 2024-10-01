@@ -44,6 +44,7 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA Encoder helper includes.
+#include RTI1516_HEADER
 #include "RTI/VariableLengthData.h"
 #pragma GCC diagnostic pop
 
