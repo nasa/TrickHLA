@@ -60,7 +60,7 @@ class AnalyticSineSimObj : public THLAFedSimObject {
       P50 ("initialization") packing.initialize();
 
       // HLA Data will only be received if it is remotely owned by another federate.
-      (THLA_DATA_CYCLE_TIME, "scheduled") federate.wait_to_receive_zero_lookahead_data( "A-side-Federate.Test" );
+      (THLA_DATA_CYCLE_TIME, "scheduled") federate.wait_to_receive_zero_lookahead_data( "A-side-Federate.Sine" );
 
       (DYN_RATE, "scheduled") truth_data.compute_value( THLA.execution_control.get_scenario_time() );
       (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.execution_control.get_scenario_time() );
@@ -71,7 +71,7 @@ class AnalyticSineSimObj : public THLAFedSimObject {
       (THLA_DATA_CYCLE_TIME, "scheduled") sim_data.adjust_phase( THLA.execution_control.get_scenario_time() );
 
       // HLA Data will only be sent if this federate owns it.
-      (THLA_DATA_CYCLE_TIME, "scheduled") federate.send_zero_lookahead_and_requested_data( "A-side-Federate.Test" );
+      (THLA_DATA_CYCLE_TIME, "scheduled") federate.send_zero_lookahead_and_requested_data( "A-side-Federate.Sine" );
    }
 
  private:
@@ -106,7 +106,7 @@ class PropagatedSineSimObj : public THLAFedSimObject {
       P50 ("initialization") packing.initialize();
 
       // HLA Data will only be received if it is remotely owned by another federate.
-      (THLA_DATA_CYCLE_TIME, "scheduled") federate.wait_to_receive_zero_lookahead_data( "P-side-Federate.Test" );
+      (THLA_DATA_CYCLE_TIME, "scheduled") federate.wait_to_receive_zero_lookahead_data( "P-side-Federate.Sine" );
 
       /*
        * -- Propagate the true sine state.
@@ -115,7 +115,7 @@ class PropagatedSineSimObj : public THLAFedSimObject {
       (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.execution_control.get_scenario_time() );
 
       // HLA Data will only be sent if this federate owns it.
-      (THLA_DATA_CYCLE_TIME, "scheduled") federate.send_zero_lookahead_and_requested_data( "P-side-Federate.Test" );
+      (THLA_DATA_CYCLE_TIME, "scheduled") federate.send_zero_lookahead_and_requested_data( "P-side-Federate.Sine" );
 
       /*
        * -- Numerically propagate the simulated sine state
@@ -173,11 +173,11 @@ class THLAInitSimObj : public Trick::SimObject {
       //------------------------------------------------------------------------
 
       // Data will only be sent if this federate owns it.
-      P100 ("initialization") thla_manager.send_init_data( "A-side-Federate.Test" );
-      P100 ("initialization") thla_manager.send_init_data( "A-side-Federate.Test.cyclic" );
+      P100 ("initialization") thla_manager.send_init_data( "A-side-Federate.Sine" );
+      P100 ("initialization") thla_manager.send_init_data( "A-side-Federate.Sine.cyclic" );
 
       // Data will only be received if it is remotely owned by another federate.
-  //    P100 ("initialization") thla_manager.receive_init_data( "A-side-Federate.Test" );
+      P100 ("initialization") thla_manager.receive_init_data( "A-side-Federate.Sine.cyclic" );
 
       // Do some processing here if needed...
 
@@ -186,11 +186,11 @@ class THLAInitSimObj : public Trick::SimObject {
 
 
       // Data will only be sent if this federate owns it.
-      P200 ("initialization") thla_manager.send_init_data( "P-side-Federate.Test" );
-      P200 ("initialization") thla_manager.send_init_data( "P-side-Federate.Test.cyclic" );
+      P200 ("initialization") thla_manager.send_init_data( "P-side-Federate.Sine" );
+      P200 ("initialization") thla_manager.send_init_data( "P-side-Federate.Sine.cyclic" );
 
       // Data will only be received if it is remotely owned by another federate.
-  //    P200 ("initialization") thla_manager.receive_init_data( "P-side-Federate.Test" );
+      P200 ("initialization") thla_manager.receive_init_data( "P-side-Federate.Sine.cyclic" );
 
       // Do some processing here if needed...
 
