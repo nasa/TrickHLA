@@ -47,9 +47,9 @@ A.packing.buff = trick.sim_services.alloc_type( A.packing.buff_size, 'unsigned c
 P.packing.buff_size = 10
 P.packing.buff = trick.sim_services.alloc_type( P.packing.buff_size, 'unsigned char' )
 AC.packing.buff_size = 10
-AC.packing.buff = trick.sim_services.alloc_type( A.packing.buff_size, 'unsigned char' )
+AC.packing.buff = trick.sim_services.alloc_type( AC.packing.buff_size, 'unsigned char' )
 PC.packing.buff_size = 10
-PC.packing.buff = trick.sim_services.alloc_type( P.packing.buff_size, 'unsigned char' )
+PC.packing.buff = trick.sim_services.alloc_type( PC.packing.buff_size, 'unsigned char' )
 
 
 # We are taking advantage of the input file to specify a unique name for the
@@ -155,7 +155,7 @@ THLA.manager.objects   = trick.sim_services.alloc_type( THLA.manager.obj_count, 
 # Configure the object this federate subscribes to but will not create an
 # HLA instance for.
 THLA.manager.objects[0].FOM_name            = 'Test'
-THLA.manager.objects[0].name                = 'A-side-Federate.Test'
+THLA.manager.objects[0].name                = 'A-side-Federate.Sine'
 THLA.manager.objects[0].create_HLA_instance = False
 THLA.manager.objects[0].packing             = A.packing
 THLA.manager.objects[0].deleted             = A.obj_deleted_callback
@@ -230,7 +230,7 @@ THLA.manager.objects[0].attributes[7].rti_encoding    = trick.ENCODING_UNICODE_S
 # Configure the object this federate will create an HLA instance and
 # publish data for.
 THLA.manager.objects[1].FOM_name            = 'Test'
-THLA.manager.objects[1].name                = 'P-side-Federate.Test'
+THLA.manager.objects[1].name                = 'P-side-Federate.Sine'
 THLA.manager.objects[1].create_HLA_instance = True
 THLA.manager.objects[1].packing             = P.packing
 THLA.manager.objects[1].deleted             = P.obj_deleted_callback
@@ -296,7 +296,7 @@ THLA.manager.objects[1].attributes[7].rti_encoding    = trick.ENCODING_UNICODE_S
 
 # Cyclic analytic data.
 THLA.manager.objects[2].FOM_name            = 'Test'
-THLA.manager.objects[2].name                = 'A-side-Federate.Test.cyclic'
+THLA.manager.objects[2].name                = 'A-side-Federate.Sine.cyclic'
 THLA.manager.objects[2].create_HLA_instance = False
 THLA.manager.objects[2].packing             = AC.packing
 THLA.manager.objects[2].deleted             = AC.obj_deleted_callback
@@ -369,7 +369,7 @@ THLA.manager.objects[2].attributes[7].rti_encoding    = trick.ENCODING_UNICODE_S
 
 # Cyclic propagated data.
 THLA.manager.objects[3].FOM_name            = 'Test'
-THLA.manager.objects[3].name                = 'P-side-Federate.Test.cyclic'
+THLA.manager.objects[3].name                = 'P-side-Federate.Sine.cyclic'
 THLA.manager.objects[3].create_HLA_instance = True
 THLA.manager.objects[3].packing             = PC.packing
 THLA.manager.objects[3].deleted             = PC.obj_deleted_callback

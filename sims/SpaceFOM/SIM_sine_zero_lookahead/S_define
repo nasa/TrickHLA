@@ -1,4 +1,18 @@
+//==========================================================================
+// Space Reference FOM: Sine wave simulation to test the TrickHLA APIs.
+//==========================================================================
+// Description:
+// This is a simulation definition file (S_define) that provides an example
+// of an SpaceFOM compliant federate that services all SpaceFOM roles.
+//==========================================================================
 
+//==========================================================================
+// Define the Trick executive and services simulation object instances:
+// Use the "standard" Trick executive simulation object. This simulation
+// object provides the traditional Trick executive capabilities but can be
+// tailored to provide facility or project unique executive behavior. See
+// the Trick documentation for more on usage and available options.
+//==========================================================================
 #include "sim_objects/default_trick_sys.sm"
 
 //=============================================================================
@@ -7,34 +21,62 @@
 #define DYN_RATE  0.250 // The propagation rate of the reference object.
 #define LOG_CYCLE 0.250 // Data Logging Rate.
 
-//=============================================================================
-// Define the HLA job cycle times.
-//=============================================================================
+//==========================================================================
+// Define the Trick HLA job cycle times.
+//==========================================================================
 #define THLA_DATA_CYCLE_TIME        0.250 // HLA data communication cycle time.
 #define THLA_INTERACTION_CYCLE_TIME 0.050 // HLA Interaction cycle time.
 
-//=============================================================================
+//==========================================================================
 // Define the HLA phase initialization priorities.
-//=============================================================================
-#define P_HLA_INIT   60    // HLA initialization phase.
-#define P_HLA_EARLY  1     // HLA early job phase.
-#define P_HLA_LATE   65534 // HLA late job phase.
+//==========================================================================
+#define P_HLA_EARLY         1     // HLA early job phase.
+#define P_SF_INIT_EPOCH_RRF 55    // SpaceFOM ExCO epoch and root reference frame phase.
+#define P_HLA_INIT          60    // HLA initialization phase.
+#define P_SF_INIT_PRE_MPI   65    // SpaceFOM Pre-Multi Phase initialization phase.
+#define P_SF_INIT_POST_MPI  500   // SpaceFOM Post-Multi Phase initialization phase.
+#define P_HLA_LATE          65534 // HLA late job phase.
 
+
+//==========================================================================
+// Trick HLA and SpaceFOM include files used in SimObject definitions or
+// for input file instantiations.
+//==========================================================================
 ##include "trick/integrator_c_intf.h"
 
+// TrickHLA includes.
+##include "TrickHLA/Federate.hh"
 ##include "TrickHLA/Manager.hh"
-##include "TrickHLA/KnownFederate.hh"
-##include "TrickHLA/SimTimeline.hh"
-##include "TrickHLA/ScenarioTimeline.hh"
 
+// This is needed for CTE timeline instantiation in the input file.
+##include "TrickHLA/CTETimelineBase.hh"
+
+// Sine model includes.
 ##include "sine/include/SineData.hh"
 ##include "sine/include/SinePacking.hh"
 ##include "sine/include/SineInteractionHandler.hh"
 ##include "sine/include/SineObjectDeleted.hh"
 
-
 // THLAFed simulation object support for zero lookahead data exchanges.
 #include "THLAFed.sm"
+
+%header{
+ using namespace TrickHLA;
+ using namespace SpaceFOM;
+%}
+
+
+//==========================================================================
+// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+//==========================================================================
+#include "SpaceFOM/SpaceFOM.sm"
+
+
+//==========================================================================
+// SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An example reference frame
+// tree simulation object definition.
+//==========================================================================
+#include "SpaceFOM/TestRefFrameTree.sm"
 
 
 //=============================================================================
@@ -44,18 +86,23 @@
 class AnalyticSineSimObj : public THLAFedSimObject {
 
  public:
-   TrickHLAModel::SineData truth_data;
-   TrickHLAModel::SineData sim_data;
+   TrickHLAModel::SineData               truth_data;
+   TrickHLAModel::SineData               sim_data;
 
    TrickHLAModel::SinePacking            packing;
 
-   TrickHLAModel::SineInteractionHandler interaction_handler;
+   TrickHLAModel::SineObjectDeleted      obj_deleted;
 
-   TrickHLAModel::SineObjectDeleted      obj_deleted_callback;
+   TrickHLAModel::SineInteractionHandler interaction_handler;
 
    AnalyticSineSimObj( TrickHLA::Federate & thla_fed )
       : THLAFedSimObject( thla_fed )
    {
+      // Note: Make sure to initialize the data before it gets sent in
+      // the THLA_INIT simulation object.
+      //
+      // TrickHLA API data flow, sending data:   sim-data --> lag-comp-data --> packing-data
+      // TrickHLA API data flow, receiving data: packing-data --> lag-comp-data --> sim-data
       P50 ("initialization") packing.configure( &sim_data );
       P50 ("initialization") packing.initialize();
 
@@ -88,20 +135,23 @@ class AnalyticSineSimObj : public THLAFedSimObject {
 class PropagatedSineSimObj : public THLAFedSimObject {
 
  public:
-   TrickHLAModel::SineData truth_data;
-   TrickHLAModel::SineData sim_data;
+   TrickHLAModel::SineData               truth_data;
+   TrickHLAModel::SineData               sim_data;
 
    TrickHLAModel::SinePacking            packing;
 
-   TrickHLAModel::SineInteractionHandler interaction_handler;
+   TrickHLAModel::SineObjectDeleted      obj_deleted;
 
-   TrickHLAModel::SineObjectDeleted      obj_deleted_callback;
+   TrickHLAModel::SineInteractionHandler interaction_handler;
 
    PropagatedSineSimObj( TrickHLA::Federate & thla_fed )
       : THLAFedSimObject( thla_fed )
    {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
+      //
+      // TrickHLA API data flow, sending data:   sim-data --> lag-comp-data --> packing-data
+      // TrickHLA API data flow, receiving data: packing-data --> lag-comp-data --> sim-data
       P50 ("initialization") packing.configure( &sim_data );
       P50 ("initialization") packing.initialize();
 
@@ -139,78 +189,64 @@ class PropagatedSineSimObj : public THLAFedSimObject {
 };
 
 
-//=============================================================================
-// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
-//=============================================================================
-#include "THLA.sm"
-THLASimObject THLA( THLA_DATA_CYCLE_TIME,
-                    THLA_INTERACTION_CYCLE_TIME,
-                    P_HLA_EARLY,
-                    P_HLA_INIT,
-                    P_HLA_LATE );
-
-
-//=============================================================================
-// SIM_OBJECT: THLA_INIT  (TrickHLA multi-phase initialization sim-object)
-//=============================================================================
-class THLAInitSimObj : public Trick::SimObject {
+//==========================================================================
+// SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
+// initialization SimObject.
+//==========================================================================
+class THLAInitSimObject : public Trick::SimObject {
 
  public:
 
-   TrickHLA::SimTimeline      sim_timeline;
-   TrickHLA::ScenarioTimeline scenario_timeline;
-
-   THLAInitSimObj( TrickHLA::Manager  & thla_mngr,
-                   TrickHLA::Federate & thla_fed )
-      : scenario_timeline( sim_timeline, 0.0, 0.0 ),
-        thla_manager( thla_mngr ),
+   THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
+                      TrickHLA::Federate & thla_fed,
+                      unsigned int         _MPI_1   = 100,
+                      unsigned int         _MPI_END = P_SF_INIT_POST_MPI )
+      : thla_manager( thla_mngr ),
         thla_federate( thla_fed )
    {
-      //------------------------------------------------------------------------
+      //--------------------------------------------------------------------
       // NOTE: Initialization phase numbers must be greater than P60
       // (i.e. P_HLA_INIT) so that the initialization jobs run after the
       // P60 THLA.manager->initialize() job.
-      //------------------------------------------------------------------------
+      //--------------------------------------------------------------------
 
       // Data will only be sent if this federate owns it.
-      P100 ("initialization") thla_manager.send_init_data( "A-side-Federate.Sine" );
-      P100 ("initialization") thla_manager.send_init_data( "A-side-Federate.Sine.cyclic" );
+      P_MPI_1 ("initialization") thla_manager.send_init_data( "A-side-Federate.Sine" );
+      P_MPI_1 ("initialization") thla_manager.send_init_data( "A-side-Federate.Sine.cyclic" );
 
       // Data will only be received if it is remotely owned by another federate.
-      P100 ("initialization") thla_manager.receive_init_data( "A-side-Federate.Sine.cyclic" );
+      P_MPI_1 ("initialization") thla_manager.receive_init_data( "A-side-Federate.Sine.cyclic" );
 
       // Do some processing here if needed...
 
       // Wait for all federates to reach this sync-point.
-      P100 ("initialization") thla_manager.wait_for_init_sync_point( "Phase1" );
+      P_MPI_1 ("initialization") thla_manager.wait_for_init_sync_point( "Analytic_init_phase" );
 
 
       // Data will only be sent if this federate owns it.
-      P200 ("initialization") thla_manager.send_init_data( "P-side-Federate.Sine" );
-      P200 ("initialization") thla_manager.send_init_data( "P-side-Federate.Sine.cyclic" );
+      P_MPI_END ("initialization") thla_manager.send_init_data( "P-side-Federate.Sine.cyclic" );
 
       // Data will only be received if it is remotely owned by another federate.
-      P200 ("initialization") thla_manager.receive_init_data( "P-side-Federate.Sine.cyclic" );
+      P_MPI_END ("initialization") thla_manager.receive_init_data( "P-side-Federate.Sine.cyclic" );
 
       // Do some processing here if needed...
 
       // Wait for all federates to reach this sync-point.
-      P200 ("initialization") thla_manager.wait_for_init_sync_point( "Phase2" );
+      P_MPI_END ("initialization") thla_manager.wait_for_init_sync_point( "Propagated_init_phase" );
 
 
       // Alternative method: Send and receive all the initialization data.
-/*
+
       // Send all the initialization data.
-      P100 ("initialization") thla_manager.send_init_data();
+//      P_MPI_1 ("initialization") thla_manager.send_init_data();
 
       // Wait to receive all the initialization data.
-      P100 ("initialization") thla_manager.receive_init_data();
+//      P_MPI_1 ("initialization") thla_manager.receive_init_data();
 
       // Do some processing here if needed...
-*/
 
       // Clear remaining initialization sync-points.
-      P100 ("initialization") thla_manager.clear_init_sync_points();
+//      P_MPI_END ("initialization") thla_manager.clear_init_sync_points();
    }
 
  private:
@@ -218,13 +254,26 @@ class THLAInitSimObj : public Trick::SimObject {
    TrickHLA::Federate & thla_federate;
 
    // Do not allow the implicit copy constructor or assignment operator.
-   THLAInitSimObj( THLAInitSimObj const & rhs );
-   THLAInitSimObj & operator=( THLAInitSimObj const & rhs );
+   THLAInitSimObject( THLAInitSimObject const & rhs );
+   THLAInitSimObject & operator=( THLAInitSimObject const & rhs );
 
    // Do not allow the default constructor.
-   THLAInitSimObj();
+   THLAInitSimObject();
 };
 
+
+//==========================================================================
+// SimObject instantiations.
+//==========================================================================
+// Main TrickHLA SimObject that supports SpaceFOM.
+SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
+                        THLA_INTERACTION_CYCLE_TIME,
+                        P_HLA_EARLY,
+                        P_HLA_INIT,
+                        P_HLA_LATE );
+
+// Simulation specific multiphase initialization SimObject instance.
+THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
 
 // Instantiations used for Zero-Lookahead exchanges.
 AnalyticSineSimObj   A( THLA.federate );
@@ -234,11 +283,9 @@ PropagatedSineSimObj P( THLA.federate );
 AnalyticSineSimObj   AC( THLA.federate );
 PropagatedSineSimObj PC( THLA.federate );
 
-// Instantiation of multiphase initialization.
-THLAInitSimObj       THLA_INIT( THLA.manager, THLA.federate );
 
 // Define the simulation objects that have routines involved in integration.
-IntegLoop sim_integ_loop (DYN_RATE)  P;
+IntegLoop sim_integ_loop (DYN_RATE) P;
 IntegLoop sim_integ_loop2 (DYN_RATE) PC;
 
 // All code listed in the create_connections routine is copied into S_source.cpp
@@ -250,4 +297,5 @@ void create_connections() {
    sim_integ_loop.getIntegrator( Runge_Kutta_4, 6 );
    sim_integ_loop2.getIntegrator( Runge_Kutta_4, 6 );
 }
+
 
