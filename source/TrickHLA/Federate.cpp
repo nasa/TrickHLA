@@ -49,6 +49,7 @@ NASA, Johnson Space Center\n
 #include <fstream> // for ifstream
 #include <iomanip>
 #include <iostream>
+#include <iterator>
 #include <limits>
 #include <memory>
 #include <sstream>
