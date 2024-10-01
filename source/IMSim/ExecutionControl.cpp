@@ -444,8 +444,10 @@ initiating restore request for '%s' with the RTI.%c",
             if ( !contains_sync_point( IMSim::STARTUP_SYNC_POINT ) ) {
                add_sync_point( IMSim::STARTUP_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                  send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d Label: '%ls'%c",
-                           __LINE__, IMSim::STARTUP_SYNC_POINT.c_str(), THLA_NEWLINE );
+                  string label_str;
+                  StringUtilities::to_string( label_str, IMSim::STARTUP_SYNC_POINT );
+                  send_hs( stdout, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d Label: '%s'%c",
+                           __LINE__, label_str.c_str(), THLA_NEWLINE );
                }
             }
             register_sync_point( IMSim::STARTUP_SYNC_POINT );
