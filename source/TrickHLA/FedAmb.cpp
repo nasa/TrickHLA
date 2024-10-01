@@ -186,8 +186,10 @@ void FedAmb::synchronizationPointRegistrationSucceeded(
    wstring const &label ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::synchronizationPointRegistrationSucceeded():%d Label:'%ls'%c",
-               __LINE__, label.c_str(), THLA_NEWLINE );
+      string label_str;
+      StringUtilities::to_string( label_str, label );
+      send_hs( stdout, "FedAmb::synchronizationPointRegistrationSucceeded():%d Label:'%s'%c",
+               __LINE__, label_str.c_str(), THLA_NEWLINE );
    }
 
    federate->sync_point_registration_succeeded( label );
@@ -198,8 +200,10 @@ void FedAmb::synchronizationPointRegistrationFailed(
    RTI1516_NAMESPACE::SynchronizationPointFailureReason reason ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::synchronizationPointRegistrationFailed():%d Label:'%ls'%c",
-               __LINE__, label.c_str(), THLA_NEWLINE );
+      string label_str;
+      StringUtilities::to_string( label_str, label );
+      send_hs( stdout, "FedAmb::synchronizationPointRegistrationFailed():%d Label:'%s'%c",
+               __LINE__, label_str.c_str(), THLA_NEWLINE );
    }
    federate->sync_point_registration_failed( label, reason );
 }
@@ -209,8 +213,10 @@ void FedAmb::announceSynchronizationPoint(
    RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::announceSynchronizationPoint():%d Label:'%ls'%c",
-               __LINE__, label.c_str(), THLA_NEWLINE );
+      string label_str;
+      StringUtilities::to_string( label_str, label );
+      send_hs( stdout, "FedAmb::announceSynchronizationPoint():%d Label:'%s'%c",
+               __LINE__, label_str.c_str(), THLA_NEWLINE );
    }
    federate->announce_sync_point( label, theUserSuppliedTag );
 }
@@ -220,8 +226,10 @@ void FedAmb::federationSynchronized(
    RTI1516_NAMESPACE::FederateHandleSet const &failedToSyncSet ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::federationSynchronized():%d Label:'%ls'%c",
-               __LINE__, label.c_str(), THLA_NEWLINE );
+      string label_str;
+      StringUtilities::to_string( label_str, label );
+      send_hs( stdout, "FedAmb::federationSynchronized():%d Label:'%s'%c",
+               __LINE__, label_str.c_str(), THLA_NEWLINE );
    }
 
    federate->federation_synchronized( label );
@@ -234,9 +242,11 @@ void FedAmb::federationSynchronized(
          strIds += id;
          strIds += " ";
       }
+      string label_str;
+      StringUtilities::to_string( label_str, label );
       send_hs( stderr, "FedAmb::federationSynchronized():%d ERROR: These \
-federate handles failed to synchronize on sync-point '%ls': %s%c",
-               __LINE__, label.c_str(), strIds.c_str(), THLA_NEWLINE );
+federate handles failed to synchronize on sync-point '%s': %s%c",
+               __LINE__, label_str.c_str(), strIds.c_str(), THLA_NEWLINE );
    }
 }
 
