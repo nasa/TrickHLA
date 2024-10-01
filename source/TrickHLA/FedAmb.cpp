@@ -48,7 +48,6 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <iostream>
-#include <iterator>
 #include <map>
 #include <sstream>
 #include <string>

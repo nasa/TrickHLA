@@ -48,7 +48,7 @@ NASA, Johnson Space Center\n
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
-#include <iterator>
+#include <map>
 #include <pthread.h>
 #include <sstream>
 #include <string>
@@ -399,6 +399,22 @@ void Object::initialize(
              << " the Lag-Compensation type 'lag_comp_type' is set to"
              << " LAG_COMPENSATION_NONE to disable Lag-Compensation when using"
              << " zero-lookahead configured object attributes." << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // If any attribute is configured for zero-lookahead then the federate must
+   // also be configured for a lookahead time of zero.
+   if ( any_zero_lookahead_attr && !get_federate()->is_zero_lookahead_time() ) {
+      ostringstream errmsg;
+      errmsg << "Object::initialize():" << __LINE__
+             << " ERROR: For object '" << name << "', detected Attributes"
+             << " with a 'config' setting of CONFIG_ZERO_LOOKAHEAD but the"
+             << " federate has been configured with a non-zero lookahead time of "
+             << get_lookahead().get_time_in_seconds() << " seconds ("
+             << get_lookahead().get_base_time() << " "
+             << Int64BaseTime::get_units() << "). The lookahead time must be"
+             << " set to zero to support zero-lookahead data exchanges, which"
+             << " is what this object is configured for." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -2363,14 +2379,15 @@ Object '%s', Receive Order (RO) Attribute update.%c",
       StringUtilities::to_string( id_str, instance_handle );
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      send_hs( stderr, "Object::send_zero_lookahead_and_requested_data():%d invalid logical time \
-exception for '%s' with error message '%s'.%c",
+      send_hs( stderr, "Object::send_zero_lookahead_and_requested_data():%d Exception: \
+Invalid logical time exception for '%s' with error message '%s'.%c",
                __LINE__, get_name(), rti_err_msg.c_str(), THLA_NEWLINE );
 
       ostringstream errmsg;
       errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
              << " Exception: InvalidLogicalTime" << endl
              << "  instance_id=" << id_str << endl
+             << "  send-with-timestamp=" << ( send_with_timestamp ? "True" : "False" ) << endl
              << "  granted=" << get_granted_time().get_time_in_seconds() << " ("
              << get_granted_time().get_base_time() << " " << Int64BaseTime::get_units()
              << ")" << endl
