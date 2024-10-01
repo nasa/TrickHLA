@@ -323,8 +323,10 @@ bool ExecutionControlBase::object_instance_name_reservation_succeeded(
          execution_configuration->set_name_registered();
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "ExecutionControlBase::object_instance_name_reservation_succeeded():%d Name:'%ls'%c",
-                     __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
+            string name_str;
+            StringUtilities::to_string( name_str, obj_instance_name );
+            send_hs( stdout, "ExecutionControlBase::object_instance_name_reservation_succeeded():%d Name:'%s'%c",
+                     __LINE__, name_str.c_str(), THLA_NEWLINE );
          }
 
          return true;
@@ -370,8 +372,10 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
       execution_configuration->set_name_registered();
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "ExecutionControlBase::object_instance_name_reservation_failed():%d Name:'%ls'%c",
-                  __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
+         string name_str;
+         StringUtilities::to_string( name_str, obj_instance_name );
+         send_hs( stdout, "ExecutionControlBase::object_instance_name_reservation_failed():%d Name:'%s'%c",
+                  __LINE__, name_str.c_str(), THLA_NEWLINE );
       }
 
       // We found a match to return 'true'.

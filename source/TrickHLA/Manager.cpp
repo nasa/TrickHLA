@@ -811,8 +811,10 @@ void Manager::request_data_update(
    wstring const &instance_name )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::request_data_update():%d Object:'%ls'%c",
-               __LINE__, instance_name.c_str(), THLA_NEWLINE );
+      string name_str;
+      StringUtilities::to_string( name_str, instance_name );
+      send_hs( stdout, "Manager::request_data_update():%d Object:'%s'%c",
+               __LINE__, name_str.c_str(), THLA_NEWLINE );
    }
 
    bool found = false;
@@ -894,15 +896,18 @@ void Manager::object_instance_name_reservation_failed(
       return;
    }
 
+   string name_str;
+   StringUtilities::to_string( name_str, obj_instance_name );
+
    // Anything beyond this point is fatal.
    send_hs( stderr, "Manager::object_instance_name_reservation_failed():%d \
-Name:'%ls' Please check your input or modified data files to make sure the \
+Name:'%s' Please check your input or modified data files to make sure the \
 object instance name is unique, no duplicates, within the Federation. For \
 example, try using fed_name.object_FOM_name for the object instance name. \
 Also, an object should be owned by only one Federate so one common mistake is \
 to have the 'create_HLA_instance' flag for the same object being set to true \
 for more than one Federate.%c",
-            __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
+            __LINE__, name_str.c_str(), THLA_NEWLINE );
 
    wstring obj_name;
    for ( unsigned int n = 0; n < obj_count; ++n ) {
@@ -1234,8 +1239,7 @@ void Manager::setup_object_RTI_handles(
 
             if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                string id_str;
-               StringUtilities::to_string( id_str,
-                                           attrs[i].get_attribute_handle() );
+               StringUtilities::to_string( id_str, attrs[i].get_attribute_handle() );
                msg << "\t  Result for Attribute '"
                    << data_objects[n].get_FOM_name() << "'->'"
                    << attrs[i].get_FOM_name() << "'"
@@ -1400,8 +1404,7 @@ void Manager::setup_interaction_RTI_handles(
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             string handle_str;
-            StringUtilities::to_string( handle_str,
-                                        in_interactions[n].get_class_handle() );
+            StringUtilities::to_string( handle_str, in_interactions[n].get_class_handle() );
             msg << "  Result for Interaction"
                 << " FOM-Name:'" << inter_FOM_name << "'"
                 << " Interaction-ID:" << handle_str << endl;
@@ -1432,8 +1435,7 @@ void Manager::setup_interaction_RTI_handles(
 
             if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                string handle_str;
-               StringUtilities::to_string( handle_str,
-                                           params[i].get_parameter_handle() );
+               StringUtilities::to_string( handle_str, params[i].get_parameter_handle() );
                msg << "\t  Result for Parameter '"
                    << inter_FOM_name << "'->'" << param_FOM_name << "'"
                    << " Parameter-ID:" << handle_str << endl;
