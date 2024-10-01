@@ -962,7 +962,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string id_str;
          StringUtilities::to_string( id_str, id );
-         send_hs( stdout, "Federate::set_MOM_HLAfederate_instance_attributes():%d Federate OID:%s name:'%ls' size:%d %c",
+         send_hs( stdout, "Federate::set_MOM_HLAfederate_instance_attributes():%d Federate OID:%s name:'%s' size:%d %c",
                   __LINE__, id_str.c_str(), federate_name_ws.c_str(),
                   (int)federate_name_ws.size(), THLA_NEWLINE );
       }
@@ -6246,9 +6246,12 @@ void Federate::update_running_feds()
       for ( map_iter = joined_federate_name_map.begin();
             map_iter != joined_federate_name_map.end();
             ++map_iter ) {
-         send_hs( stdout, "Federate::update_running_feds():%d joined_federate_name_map[%ls]=%ls %c",
-                  __LINE__, MOM_HLAfederate_instance_name_map[map_iter->first].c_str(),
-                  map_iter->second.c_str(), THLA_NEWLINE );
+         string fed_name_str;
+         StringUtilities::to_string( fed_name_str, MOM_HLAfederate_instance_name_map[map_iter->first] );
+         string obj_name_str;
+         StringUtilities::to_string( obj_name_str, map_iter->second );
+         send_hs( stdout, "Federate::update_running_feds():%d joined_federate_name_map[%s]=%s %c",
+                  __LINE__, fed_name_str.c_str(), obj_name_str.c_str(), THLA_NEWLINE );
       }
 
       for ( unsigned int i = 0; i < running_feds_count; ++i ) {
@@ -6537,8 +6540,10 @@ void Federate::request_federation_save()
 
    try {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         send_hs( stdout, "Federate::request_federation_save():%d save_name:%ls %c",
-                  __LINE__, this->save_name.c_str(), THLA_NEWLINE );
+         string name_str;
+         StringUtilities::to_string( name_str, this->save_name );
+         send_hs( stdout, "Federate::request_federation_save():%d save_name:%s %c",
+                  __LINE__, name_str.c_str(), THLA_NEWLINE );
       }
       RTI_ambassador->requestFederationSave( this->save_name );
    } catch ( FederateNotExecutionMember const &e ) {
@@ -7641,10 +7646,12 @@ void Federate::initiate_restore_announce(
 
    if ( this->restore_process == Initiate_Restore ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string name_str;
+         StringUtilities::to_string( name_str, ws_restore_label );
          send_hs( stdout, "Federate::initiate_restore_announce():%d \
 restore_process == Initiate_Restore, Telling RTI to request federation \
-restore with label '%ls'.%c",
-                  __LINE__, ws_restore_label.c_str(), THLA_NEWLINE );
+restore with label '%s'.%c",
+                  __LINE__, name_str.c_str(), THLA_NEWLINE );
       }
       try {
          RTI_ambassador->requestFederationRestore( ws_restore_label );
