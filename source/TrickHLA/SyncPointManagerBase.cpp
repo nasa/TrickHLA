@@ -683,8 +683,10 @@ bool const SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization
    std::wstring const &label )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      send_hs( stdout, "SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization():%d Label:'%ls'%c",
-               __LINE__, label.c_str(), THLA_NEWLINE );
+      string label_str;
+      StringUtilities::to_string( label_str, label );
+      send_hs( stdout, "SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization():%d Label:'%s'%c",
+               __LINE__, label_str.c_str(), THLA_NEWLINE );
    }
 
    if ( achieve_sync_point( label ) ) {
@@ -776,8 +778,10 @@ void SyncPointManagerBase::sync_point_registration_succeeded(
 {
    if ( mark_sync_point_registered( label ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         send_hs( stdout, "SyncPointManagerBase::sync_point_registration_succeeded():%d Label:'%ls'%c",
-                  __LINE__, label.c_str(), THLA_NEWLINE );
+         string label_str;
+         StringUtilities::to_string( label_str, label );
+         send_hs( stdout, "SyncPointManagerBase::sync_point_registration_succeeded():%d Label:'%s'%c",
+                  __LINE__, label_str.c_str(), THLA_NEWLINE );
       }
    } else {
       string label_str;
@@ -857,7 +861,7 @@ void SyncPointManagerBase::sync_point_announced(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          string label_str;
          StringUtilities::to_string( label_str, label );
-         send_hs( stdout, "SyncPointManagerBase::sync_point_announced():%d Unrecognized sync-point:'%ls', which will be achieved.%c",
+         send_hs( stdout, "SyncPointManagerBase::sync_point_announced():%d Unrecognized sync-point:'%s', which will be achieved.%c",
                   __LINE__, label_str.c_str(), THLA_NEWLINE );
       }
 
