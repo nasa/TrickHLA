@@ -82,8 +82,10 @@ THLA.federate.time_constrained = True
 # Configure ExecutionControl.
 # Set the multiphase initialization synchronization points.
 THLA.execution_control.multiphase_init_sync_points = 'Phase1, Phase2'
+
 # Set the simulation timeline to be used for time computations.
 THLA.execution_control.sim_timeline = THLA_INIT.sim_timeline
+
 # Set the scenario timeline to be used for configuring federation freeze times.
 THLA.execution_control.scenario_timeline = THLA_INIT.scenario_timeline
 
