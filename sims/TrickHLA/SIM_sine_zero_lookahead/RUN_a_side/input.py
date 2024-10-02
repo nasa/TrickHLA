@@ -51,18 +51,6 @@ P.sim_data.name  = 'P.sim_data.name.A-side'
 AC.sim_data.name = 'AC.sim_data.name.A-side.cyclic'
 PC.sim_data.name = 'PC.sim_data.name.A-side.cyclic'
 
-# We are taking advantage of the input file to specify a unique name and
-# message for the A-side federate interaction handler.
-A.interaction_handler.name = 'A-side: A.interaction_handler.name'
-P.interaction_handler.name = 'A-side: P.interaction_handler.name'
-
-A.interaction_handler.message = 'A-side: A.interaction_handler.message'
-P.interaction_handler.message = 'A-side: P.interaction_handler.message'
-
-
-# Send an interaction.
-trick.add_read(12.0 , '''A.interaction_handler.send_sine_interaction( THLA_INIT.scenario_timeline.get_time() )''')
-
 
 # =========================================================================
 # Set up HLA interoperability.
@@ -119,30 +107,6 @@ THLA.simple_sim_config.owner        = 'A-side-Federate'
 THLA.simple_sim_config.run_duration = run_duration
 
 
-# TrickHLA Interactions and Parameters.
-THLA.manager.inter_count  = 1
-THLA.manager.interactions = trick.sim_services.alloc_type( THLA.manager.inter_count, 'TrickHLA::Interaction' )
-
-THLA.manager.interactions[0].FOM_name    = 'Communication'
-THLA.manager.interactions[0].publish     = True
-THLA.manager.interactions[0].subscribe   = False
-THLA.manager.interactions[0].handler     = A.interaction_handler
-THLA.manager.interactions[0].param_count = 3
-THLA.manager.interactions[0].parameters  = trick.sim_services.alloc_type( THLA.manager.interactions[0].param_count, 'TrickHLA::Parameter' )
-
-THLA.manager.interactions[0].parameters[0].FOM_name     = 'Message'
-THLA.manager.interactions[0].parameters[0].trick_name   = 'A.interaction_handler.message'
-THLA.manager.interactions[0].parameters[0].rti_encoding = trick.ENCODING_UNICODE_STRING
-
-THLA.manager.interactions[0].parameters[1].FOM_name     = 'time'
-THLA.manager.interactions[0].parameters[1].trick_name   = 'A.interaction_handler.time'
-THLA.manager.interactions[0].parameters[1].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
-
-THLA.manager.interactions[0].parameters[2].FOM_name     = 'year'
-THLA.manager.interactions[0].parameters[2].trick_name   = 'A.interaction_handler.year'
-THLA.manager.interactions[0].parameters[2].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
-
-
 # The Federate has two objects, it publishes one and subscribes to another.
 THLA.manager.obj_count = 4
 THLA.manager.objects   = trick.sim_services.alloc_type( THLA.manager.obj_count, 'TrickHLA::Object' )
@@ -153,7 +117,6 @@ THLA.manager.objects[0].FOM_name            = 'Test'
 THLA.manager.objects[0].name                = 'A-side-Federate.Sine'
 THLA.manager.objects[0].create_HLA_instance = True
 THLA.manager.objects[0].packing             = A.packing
-THLA.manager.objects[0].deleted             = A.obj_deleted_callback
 THLA.manager.objects[0].attr_count          = 8
 THLA.manager.objects[0].attributes          = trick.sim_services.alloc_type( THLA.manager.objects[0].attr_count, 'TrickHLA::Attribute' )
 
@@ -220,7 +183,6 @@ THLA.manager.objects[1].FOM_name            = 'Test'
 THLA.manager.objects[1].name                = 'P-side-Federate.Sine'
 THLA.manager.objects[1].create_HLA_instance = False
 THLA.manager.objects[1].packing             = P.packing
-THLA.manager.objects[1].deleted             = P.obj_deleted_callback
 THLA.manager.objects[1].attr_count          = 8
 THLA.manager.objects[1].attributes          = trick.sim_services.alloc_type( THLA.manager.objects[1].attr_count, 'TrickHLA::Attribute' )
 
@@ -287,7 +249,6 @@ THLA.manager.objects[2].FOM_name            = 'Test'
 THLA.manager.objects[2].name                = 'A-side-Federate.Sine.cyclic'
 THLA.manager.objects[2].create_HLA_instance = True
 THLA.manager.objects[2].packing             = AC.packing
-THLA.manager.objects[2].deleted             = AC.obj_deleted_callback
 THLA.manager.objects[2].attr_count          = 8
 THLA.manager.objects[2].attributes          = trick.sim_services.alloc_type( THLA.manager.objects[2].attr_count, 'TrickHLA::Attribute' )
 
@@ -353,7 +314,6 @@ THLA.manager.objects[3].FOM_name            = 'Test'
 THLA.manager.objects[3].name                = 'P-side-Federate.Sine.cyclic'
 THLA.manager.objects[3].create_HLA_instance = False
 THLA.manager.objects[3].packing             = PC.packing
-THLA.manager.objects[3].deleted             = PC.obj_deleted_callback
 THLA.manager.objects[3].attr_count          = 8
 THLA.manager.objects[3].attributes          = trick.sim_services.alloc_type( THLA.manager.objects[3].attr_count, 'TrickHLA::Attribute' )
 
