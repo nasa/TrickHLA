@@ -224,9 +224,10 @@ class THLAInitSimObj : public Trick::SimObject {
    THLAInitSimObj();
 };
 
-//=============================================================================
+//==========================================================================
+// SimObject instantiations.
+//==========================================================================
 // SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
-//=============================================================================
 THLASimObject THLA( THLA_DATA_CYCLE_TIME,
                     THLA_INTERACTION_CYCLE_TIME,
                     P_HLA_EARLY,

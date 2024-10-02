@@ -60,19 +60,6 @@ def log_sine_states( sim_object_name, log_cycle ) :
    var = sim_object_name + ".sim_data.dvdt"
    dr_group.add_variable(var)
    
-#   var = sim_object_name + ".lag_compensation.value"
-#   dr_group.add_variable(var)
-#   var = sim_object_name + ".lag_compensation.time"
-#   dr_group.add_variable(var)
-#   var = sim_object_name + ".lag_compensation.phase"
-#   dr_group.add_variable(var)
-#   var = sim_object_name + ".lag_compensation.amp"
-#   dr_group.add_variable(var)
-#   var = sim_object_name + ".lag_compensation.freq"
-#   dr_group.add_variable(var)
-#   var = sim_object_name + ".lag_compensation.dvdt"
-#   dr_group.add_variable(var)
-
 
    #########################################################
    # Add the data recording group to Trick's data recording.
