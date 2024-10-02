@@ -301,18 +301,6 @@ P.sim_data.name  = 'P.sim_data.name.A-side'
 AC.sim_data.name = 'AC.sim_data.name.A-side.cyclic'
 PC.sim_data.name = 'PC.sim_data.name.A-side.cyclic'
 
-# We are taking advantage of the input file to specify a unique name and
-# message for the A-side federate interaction handler.
-A.interaction_handler.name  = 'A-side: A.interaction_handler.name'
-P.interaction_handler.name  = 'A-side: P.interaction_handler.name'
-AC.interaction_handler.name = 'A-side: AC.interaction_handler.name.cyclic'
-PC.interaction_handler.name = 'A-side: PC.interaction_handler.name.cyclic'
-
-A.interaction_handler.message  = 'A-side: A.interaction_handler.message'
-P.interaction_handler.message  = 'A-side: P.interaction_handler.message'
-AC.interaction_handler.message = 'A-side: AC.interaction_handler.message.cyclic'
-PC.interaction_handler.message = 'A-side: PC.interaction_handler.message.cyclic'
-
 
 #---------------------------------------------------------------------------
 # Set up for Sine data.
@@ -322,8 +310,7 @@ sine_A = SineObject( sine_create_object      = True,
                      sine_obj_instance_name  = 'A-side-Federate.Sine',
                      sine_trick_sim_obj_name = 'A',
                      sine_packing            = A.packing,
-                     sine_deleted            = A.obj_deleted,
-                     sine_attr_config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.CONFIG_ZERO_LOOKAHEAD )
+                     sine_attr_config        = trick.CONFIG_ZERO_LOOKAHEAD )
 
 # Add this sine object to the list of managed objects.
 federate.add_fed_object( sine_A )
@@ -332,8 +319,7 @@ sine_P = SineObject( sine_create_object      = False,
                      sine_obj_instance_name  = 'P-side-Federate.Sine',
                      sine_trick_sim_obj_name = 'P',
                      sine_packing            = P.packing,
-                     sine_deleted            = P.obj_deleted,
-                     sine_attr_config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.CONFIG_ZERO_LOOKAHEAD )
+                     sine_attr_config        = trick.CONFIG_ZERO_LOOKAHEAD )
 
 # Add this cyclic sine object to the list of managed objects.
 federate.add_fed_object( sine_P )
@@ -341,8 +327,7 @@ federate.add_fed_object( sine_P )
 sine_AC = SineObject( sine_create_object      = True,
                       sine_obj_instance_name  = 'A-side-Federate.Sine.cyclic',
                       sine_trick_sim_obj_name = 'AC',
-                      sine_packing            = AC.packing,
-                      sine_deleted            = AC.obj_deleted )
+                      sine_packing            = AC.packing )
 
 # Add this cyclic sine object to the list of managed objects.
 federate.add_fed_object( sine_AC )
@@ -350,8 +335,7 @@ federate.add_fed_object( sine_AC )
 sine_PC = SineObject( sine_create_object      = False,
                       sine_obj_instance_name  = 'P-side-Federate.Sine.cyclic',
                       sine_trick_sim_obj_name = 'PC',
-                      sine_packing            = PC.packing,
-                      sine_deleted            = PC.obj_deleted )
+                      sine_packing            = PC.packing )
 
 # Add this sine object to the list of managed objects.
 federate.add_fed_object( sine_PC )
