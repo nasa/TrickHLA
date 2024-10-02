@@ -182,8 +182,8 @@ trick.sim_control_panel_set_enabled( True )
 # Set up data to record.
 #---------------------------------------------
 exec(open( "Log_data/log_sine_states.py" ).read())
-log_sine_states( 'A', 0.250 )
-log_sine_states( 'P', 0.250 )
+log_sine_states( 'AZ', 0.250 )
+log_sine_states( 'PZ', 0.250 )
 log_sine_states( 'AC', 0.250 )
 log_sine_states( 'PC', 0.250 )
 
@@ -280,10 +280,10 @@ federate.set_time_constrained( True )
 exec(open( "Modified_data/sine_init.py" ).read())
 
 # Example of a 1-dimensional dynamic array.
-A.packing.buff_size = 10
-A.packing.buff = trick.sim_services.alloc_type( A.packing.buff_size, 'unsigned char' )
-P.packing.buff_size = 10
-P.packing.buff = trick.sim_services.alloc_type( P.packing.buff_size, 'unsigned char' )
+AZ.packing.buff_size = 10
+AZ.packing.buff = trick.sim_services.alloc_type( AZ.packing.buff_size, 'unsigned char' )
+PZ.packing.buff_size = 10
+PZ.packing.buff = trick.sim_services.alloc_type( PZ.packing.buff_size, 'unsigned char' )
 AC.packing.buff_size = 10
 AC.packing.buff = trick.sim_services.alloc_type( AC.packing.buff_size, 'unsigned char' )
 PC.packing.buff_size = 10
@@ -291,8 +291,8 @@ PC.packing.buff = trick.sim_services.alloc_type( PC.packing.buff_size, 'unsigned
 
 # We are taking advantage of the input file to specify a unique name for the
 # sim-data name field for the A-side federate.
-A.sim_data.name  = 'A.sim_data.name.A-side'
-P.sim_data.name  = 'P.sim_data.name.A-side'
+AZ.sim_data.name = 'AZ.sim_data.name.A-side.zero'
+PZ.sim_data.name = 'PZ.sim_data.name.A-side.zero'
 AC.sim_data.name = 'AC.sim_data.name.A-side.cyclic'
 PC.sim_data.name = 'PC.sim_data.name.A-side.cyclic'
 
@@ -301,23 +301,23 @@ PC.sim_data.name = 'PC.sim_data.name.A-side.cyclic'
 # Set up for Sine data.
 #---------------------------------------------------------------------------
 
-sine_A = SineObject( sine_create_object      = True,
-                     sine_obj_instance_name  = 'A-side-Federate.Sine',
-                     sine_trick_sim_obj_name = 'A',
-                     sine_packing            = A.packing,
-                     sine_attr_config        = trick.CONFIG_ZERO_LOOKAHEAD )
+sine_AZ = SineObject( sine_create_object      = True,
+                      sine_obj_instance_name  = 'A-side-Federate.Sine.zero',
+                      sine_trick_sim_obj_name = 'AZ',
+                      sine_packing            = AZ.packing,
+                      sine_attr_config        = trick.CONFIG_ZERO_LOOKAHEAD )
 
 # Add this sine object to the list of managed objects.
-federate.add_fed_object( sine_A )
+federate.add_fed_object( sine_AZ )
 
-sine_P = SineObject( sine_create_object      = False,
-                     sine_obj_instance_name  = 'P-side-Federate.Sine',
-                     sine_trick_sim_obj_name = 'P',
-                     sine_packing            = P.packing,
-                     sine_attr_config        = trick.CONFIG_ZERO_LOOKAHEAD )
+sine_PZ = SineObject( sine_create_object      = False,
+                      sine_obj_instance_name  = 'P-side-Federate.Sine.zero',
+                      sine_trick_sim_obj_name = 'PZ',
+                      sine_packing            = PZ.packing,
+                      sine_attr_config        = trick.CONFIG_ZERO_LOOKAHEAD )
 
 # Add this cyclic sine object to the list of managed objects.
-federate.add_fed_object( sine_P )
+federate.add_fed_object( sine_PZ )
 
 sine_AC = SineObject( sine_create_object      = True,
                       sine_obj_instance_name  = 'A-side-Federate.Sine.cyclic',
@@ -434,8 +434,8 @@ federate.add_sim_object( THLA )
 federate.add_sim_object( THLA_INIT )
 federate.add_sim_object( root_ref_frame )
 federate.add_sim_object( ref_frame_A )
-federate.add_sim_object( A )
-federate.add_sim_object( P )
+federate.add_sim_object( AZ )
+federate.add_sim_object( PZ )
 federate.add_sim_object( AC )
 federate.add_sim_object( PC )
 

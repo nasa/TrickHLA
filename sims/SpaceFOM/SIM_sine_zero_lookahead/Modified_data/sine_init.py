@@ -14,36 +14,36 @@
 ##############################################################################
 
 # Analytic sine data
-A.sim_data.time  = 0.0
-A.sim_data.value = 0.0
-A.sim_data.dvdt  = 0.392699
-A.sim_data.amp   = 2.0
-A.sim_data.phase = 0.0
-A.sim_data.freq  = 0.1963495
+AZ.sim_data.time  = 0.0
+AZ.sim_data.value = 0.0
+AZ.sim_data.dvdt  = 0.392699
+AZ.sim_data.amp   = 2.0
+AZ.sim_data.phase = 0.0
+AZ.sim_data.freq  = 0.1963495
 
 # Analytic sine truth state
-A.truth_data.time  = 0.0
-A.truth_data.value = 0.0
-A.truth_data.dvdt  = 0.392699
-A.truth_data.amp   = 2.0
-A.truth_data.phase = 0.0
-A.truth_data.freq  = 0.1963495
+AZ.truth_data.time  = 0.0
+AZ.truth_data.value = 0.0
+AZ.truth_data.dvdt  = 0.392699
+AZ.truth_data.amp   = 2.0
+AZ.truth_data.phase = 0.0
+AZ.truth_data.freq  = 0.1963495
 
 # Propagated sine data
-P.sim_data.time  = 0.0
-P.sim_data.value = 0.0
-P.sim_data.dvdt  = 0.392699
-P.sim_data.amp   = 1.0
-P.sim_data.phase = 0.0
-P.sim_data.freq  = 0.392699
+PZ.sim_data.time  = 0.0
+PZ.sim_data.value = 0.0
+PZ.sim_data.dvdt  = 0.392699
+PZ.sim_data.amp   = 1.0
+PZ.sim_data.phase = 0.0
+PZ.sim_data.freq  = 0.392699
 
 # Propagated sine truth state
-P.truth_data.time  = 0.0
-P.truth_data.value = 0.0
-P.truth_data.dvdt  = 0.392699
-P.truth_data.amp   = 1.0
-P.truth_data.phase = 0.0
-P.truth_data.freq  = 0.392699
+PZ.truth_data.time  = 0.0
+PZ.truth_data.value = 0.0
+PZ.truth_data.dvdt  = 0.392699
+PZ.truth_data.amp   = 1.0
+PZ.truth_data.phase = 0.0
+PZ.truth_data.freq  = 0.392699
 
 
 # Analytic cyclic sine data
