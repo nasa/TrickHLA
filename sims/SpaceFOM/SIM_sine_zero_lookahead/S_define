@@ -1,5 +1,6 @@
 //==========================================================================
-// Space Reference FOM: Sine wave simulation to test the TrickHLA APIs.
+// SpaceFOM: Sine wave simulation to test the TrickHLA zero lookahead
+// data exchange APIs.
 //==========================================================================
 // Description:
 // This is a simulation definition file (S_define) that provides an example
@@ -39,7 +40,7 @@
 
 
 //==========================================================================
-// Trick HLA and SpaceFOM include files used in SimObject definitions or
+// TrickHLA and SpaceFOM include files used in SimObject definitions or
 // for input file instantiations.
 //==========================================================================
 ##include "trick/integrator_c_intf.h"
@@ -54,9 +55,6 @@
 ##include "sine/include/SineData.hh"
 ##include "sine/include/SinePacking.hh"
 
-// THLAFed simulation object support for zero lookahead data exchanges.
-#include "THLAFed.sm"
-
 %header{
  using namespace TrickHLA;
  using namespace SpaceFOM;
@@ -70,6 +68,12 @@
 
 
 //==========================================================================
+// SIM_OBJECT: THLAFed - Support for zero lookahead data exchanges.
+//==========================================================================
+#include "THLAFed.sm"
+
+
+//==========================================================================
 // SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An example reference frame
 // tree simulation object definition.
 //==========================================================================
@@ -77,18 +81,18 @@
 
 
 //=============================================================================
-// SIM_OBJECT: ZeroAnalyticSineSimObj
+// SIM_OBJECT: ZeroLookaheadAnalyticSineSimObj
 // Sim-object for an analytic solution of a sine wave with Zero-Lookahead
 // data exchanges.
 //=============================================================================
-class ZeroAnalyticSineSimObj : public THLAFedSimObject {
+class ZeroLookaheadAnalyticSineSimObj : public THLAFedSimObject {
 
  public:
    TrickHLAModel::SineData    truth_data;
    TrickHLAModel::SineData    sim_data;
    TrickHLAModel::SinePacking packing;
 
-   ZeroAnalyticSineSimObj( TrickHLA::Federate & thla_fed )
+   ZeroLookaheadAnalyticSineSimObj( TrickHLA::Federate & thla_fed )
       : THLAFedSimObject( thla_fed )
    {
       // Note: Make sure to initialize the data before it gets sent in
@@ -100,7 +104,7 @@ class ZeroAnalyticSineSimObj : public THLAFedSimObject {
       P50 ("initialization") packing.initialize();
 
       // HLA Data will only be received if it is remotely owned by another federate.
-      (THLA_DATA_CYCLE_TIME, "scheduled") federate.wait_to_receive_zero_lookahead_data( "A-side-Federate.Sine" );
+      (THLA_DATA_CYCLE_TIME, "scheduled") federate.wait_to_receive_zero_lookahead_data( "A-side-Federate.Sine.zero" );
 
       (DYN_RATE, "scheduled") truth_data.compute_value( THLA.execution_control.get_scenario_time() );
       (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.execution_control.get_scenario_time() );
@@ -111,29 +115,32 @@ class ZeroAnalyticSineSimObj : public THLAFedSimObject {
       (THLA_DATA_CYCLE_TIME, "scheduled") sim_data.adjust_phase( THLA.execution_control.get_scenario_time() );
 
       // HLA Data will only be sent if this federate owns it.
-      (THLA_DATA_CYCLE_TIME, "scheduled") federate.send_zero_lookahead_and_requested_data( "A-side-Federate.Sine" );
+      (THLA_DATA_CYCLE_TIME, "scheduled") federate.send_zero_lookahead_and_requested_data( "A-side-Federate.Sine.zero" );
    }
 
  private:
    // Do not allow the implicit copy constructor or assignment operator.
-   ZeroAnalyticSineSimObj( ZeroAnalyticSineSimObj const & rhs );
-   ZeroAnalyticSineSimObj & operator=( ZeroAnalyticSineSimObj const & rhs );
+   ZeroLookaheadAnalyticSineSimObj( ZeroLookaheadAnalyticSineSimObj const & rhs );
+   ZeroLookaheadAnalyticSineSimObj & operator=( ZeroLookaheadAnalyticSineSimObj const & rhs );
+
+   // Do not allow the default constructor.
+   ZeroLookaheadAnalyticSineSimObj();
 };
 
 
 //=============================================================================
-// SIM_OBJECT: ZeroPropagatedSineSimObj
+// SIM_OBJECT: ZeroLookaheadPropagatedSineSimObj
 // Sim-object for a propagated solution of a sine wave with Zero-Lookahead
 // data exchanges.
 //=============================================================================
-class ZeroPropagatedSineSimObj : public THLAFedSimObject {
+class ZeroLookaheadPropagatedSineSimObj : public THLAFedSimObject {
 
  public:
    TrickHLAModel::SineData    truth_data;
    TrickHLAModel::SineData    sim_data;
    TrickHLAModel::SinePacking packing;
 
-   ZeroPropagatedSineSimObj( TrickHLA::Federate & thla_fed )
+   ZeroLookaheadPropagatedSineSimObj( TrickHLA::Federate & thla_fed )
       : THLAFedSimObject( thla_fed )
    {
       // Note: Make sure to initialize the data before it gets sent in
@@ -145,7 +152,7 @@ class ZeroPropagatedSineSimObj : public THLAFedSimObject {
       P50 ("initialization") packing.initialize();
 
       // HLA Data will only be received if it is remotely owned by another federate.
-      (THLA_DATA_CYCLE_TIME, "scheduled") federate.wait_to_receive_zero_lookahead_data( "P-side-Federate.Sine" );
+      (THLA_DATA_CYCLE_TIME, "scheduled") federate.wait_to_receive_zero_lookahead_data( "P-side-Federate.Sine.zero" );
 
       /*
        * -- Propagate the true sine state.
@@ -154,7 +161,7 @@ class ZeroPropagatedSineSimObj : public THLAFedSimObject {
       (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.execution_control.get_scenario_time() );
 
       // HLA Data will only be sent if this federate owns it.
-      (THLA_DATA_CYCLE_TIME, "scheduled") federate.send_zero_lookahead_and_requested_data( "P-side-Federate.Sine" );
+      (THLA_DATA_CYCLE_TIME, "scheduled") federate.send_zero_lookahead_and_requested_data( "P-side-Federate.Sine.zero" );
 
       /*
        * -- Numerically propagate the simulated sine state
@@ -173,8 +180,11 @@ class ZeroPropagatedSineSimObj : public THLAFedSimObject {
 
  private:
    // Do not allow the implicit copy constructor or assignment operator.
-   ZeroPropagatedSineSimObj( ZeroPropagatedSineSimObj const & rhs );
-   ZeroPropagatedSineSimObj & operator=( ZeroPropagatedSineSimObj const & rhs );
+   ZeroLookaheadPropagatedSineSimObj( ZeroLookaheadPropagatedSineSimObj const & rhs );
+   ZeroLookaheadPropagatedSineSimObj & operator=( ZeroLookaheadPropagatedSineSimObj const & rhs );
+
+   // Do not allow the default constructor.
+   ZeroLookaheadPropagatedSineSimObj();
 };
 
 
@@ -354,8 +364,8 @@ SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
 THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
 
 // Instantiations used for Zero-Lookahead exchanges.
-ZeroAnalyticSineSimObj   A( THLA.federate );
-ZeroPropagatedSineSimObj P( THLA.federate );
+ZeroLookaheadAnalyticSineSimObj   AZ( THLA.federate );
+ZeroLookaheadPropagatedSineSimObj PZ( THLA.federate );
 
 // Instantiations used for cyclic exchanges.
 AnalyticSineSimObj   AC;
@@ -363,7 +373,7 @@ PropagatedSineSimObj PC;
 
 
 // Define the simulation objects that have routines involved in integration.
-IntegLoop sim_integ_loop  (DYN_RATE) P;
+IntegLoop sim_integ_loopZ (DYN_RATE) PZ;
 IntegLoop sim_integ_loopC (DYN_RATE) PC;
 
 // All code listed in the create_connections routine is copied into S_source.cpp
@@ -372,7 +382,7 @@ IntegLoop sim_integ_loopC (DYN_RATE) PC;
 void create_connections() {
 
    // Assign a default integrator, which can be overridden in the input file.
-   sim_integ_loop.getIntegrator(  Runge_Kutta_4, 6 );
+   sim_integ_loopZ.getIntegrator( Runge_Kutta_4, 6 );
    sim_integ_loopC.getIntegrator( Runge_Kutta_4, 6 );
 }
 
