@@ -47,9 +47,8 @@
 // TrickHLA includes.
 ##include "TrickHLA/Federate.hh"
 ##include "TrickHLA/Manager.hh"
-
-// This is needed for CTE timeline instantiation in the input file.
-##include "TrickHLA/CTETimelineBase.hh"
+##include "TrickHLA/SimTimeline.hh"
+##include "TrickHLA/ScenarioTimeline.hh"
 
 // Sine model includes.
 ##include "sine/include/SineData.hh"
@@ -101,7 +100,8 @@ class AnalyticSineSimObj : public Trick::SimObject {
 
    TrickHLAModel::SineInteractionHandler interaction_handler;
 
-   AnalyticSineSimObj() {
+   AnalyticSineSimObj()
+   {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
       //
@@ -152,7 +152,8 @@ class PropagatedSineSimObj : public Trick::SimObject {
 
    TrickHLAModel::SineInteractionHandler interaction_handler;
 
-   PropagatedSineSimObj() {
+   PropagatedSineSimObj()
+   {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
       //
@@ -203,11 +204,15 @@ class THLAInitSimObject : public Trick::SimObject {
 
  public:
 
+   TrickHLA::SimTimeline      sim_timeline;
+   TrickHLA::ScenarioTimeline scenario_timeline;
+
    THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
                       TrickHLA::Federate & thla_fed,
                       unsigned int         _MPI_1   = 100,
                       unsigned int         _MPI_END = P_SF_INIT_POST_MPI )
-      : thla_manager( thla_mngr ),
+      : scenario_timeline( sim_timeline, 0.0, 0.0 ),
+        thla_manager( thla_mngr ),
         thla_federate( thla_fed )
    {
       //--------------------------------------------------------------------

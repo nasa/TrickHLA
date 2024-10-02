@@ -221,6 +221,12 @@ THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 #--------------------------------------------------------------------------
 # Set up federate related time related parameters.
 #--------------------------------------------------------------------------
+# Set the simulation timeline to be used for time computations.
+THLA.execution_control.sim_timeline = THLA_INIT.sim_timeline
+
+# Set the scenario timeline to be used for configuring federation freeze times.
+THLA.execution_control.scenario_timeline = THLA_INIT.scenario_timeline
+
 # Specify the HLA base time units (default: trick.HLA_BASE_TIME_MICROSECONDS).
 federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_MICROSECONDS )
 
@@ -237,14 +243,6 @@ trick.exec_set_software_frame( 0.250 )
 # Setup Time Management parameters.
 federate.set_time_regulating( True )
 federate.set_time_constrained( True )
-
-
-#--------------------------------------------------------------------------
-# Set up CTE time line.
-#--------------------------------------------------------------------------
-# By setting this we are specifying the use of Common Timing Equipment (CTE)
-# for controlling the Mode Transitions for all federates using CTE.
-#THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::CTETimelineBase' )
 
 
 #---------------------------------------------

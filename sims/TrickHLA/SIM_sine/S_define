@@ -57,7 +57,8 @@ class AnalyticSineSimObj : public Trick::SimObject {
 
    TrickHLAModel::SineInteractionHandler interaction_handler;
 
-   AnalyticSineSimObj() {
+   AnalyticSineSimObj()
+   {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
       //
@@ -108,7 +109,8 @@ class PropagatedSineSimObj : public Trick::SimObject {
 
    TrickHLAModel::SineInteractionHandler interaction_handler;
 
-   PropagatedSineSimObj() {
+   PropagatedSineSimObj()
+   {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
       //

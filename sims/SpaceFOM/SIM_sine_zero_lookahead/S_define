@@ -47,9 +47,8 @@
 // TrickHLA includes.
 ##include "TrickHLA/Federate.hh"
 ##include "TrickHLA/Manager.hh"
-
-// This is needed for CTE timeline instantiation in the input file.
-##include "TrickHLA/CTETimelineBase.hh"
+##include "TrickHLA/SimTimeline.hh"
+##include "TrickHLA/ScenarioTimeline.hh"
 
 // Sine model includes.
 ##include "sine/include/SineData.hh"
@@ -183,15 +182,14 @@ class ZeroPropagatedSineSimObj : public THLAFedSimObject {
 // SIM_OBJECT: AnalyticSineSimObj
 // Sim-object for an analytic solution of a sine wave.
 //=============================================================================
-class AnalyticSineSimObj : public THLAFedSimObject {
+class AnalyticSineSimObj : public Trick::SimObject {
 
  public:
    TrickHLAModel::SineData    truth_data;
    TrickHLAModel::SineData    sim_data;
    TrickHLAModel::SinePacking packing;
 
-   AnalyticSineSimObj( TrickHLA::Federate & thla_fed )
-      : THLAFedSimObject( thla_fed )
+   AnalyticSineSimObj()
    {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
@@ -221,15 +219,14 @@ class AnalyticSineSimObj : public THLAFedSimObject {
 // SIM_OBJECT: PropagatedSineSimObj
 // Sim-object for a propagated solution of a sine wave.
 //=============================================================================
-class PropagatedSineSimObj : public THLAFedSimObject {
+class PropagatedSineSimObj : public Trick::SimObject {
 
  public:
    TrickHLAModel::SineData    truth_data;
    TrickHLAModel::SineData    sim_data;
    TrickHLAModel::SinePacking packing;
 
-   PropagatedSineSimObj( TrickHLA::Federate & thla_fed )
-      : THLAFedSimObject( thla_fed )
+   PropagatedSineSimObj()
    {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
@@ -275,11 +272,15 @@ class THLAInitSimObject : public Trick::SimObject {
 
  public:
 
+   TrickHLA::SimTimeline      sim_timeline;
+   TrickHLA::ScenarioTimeline scenario_timeline;
+
    THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
                       TrickHLA::Federate & thla_fed,
                       unsigned int         _MPI_1   = 100,
                       unsigned int         _MPI_END = P_SF_INIT_POST_MPI )
-      : thla_manager( thla_mngr ),
+      : scenario_timeline( sim_timeline, 0.0, 0.0 ),
+        thla_manager( thla_mngr ),
         thla_federate( thla_fed )
    {
       //--------------------------------------------------------------------
@@ -357,13 +358,13 @@ ZeroAnalyticSineSimObj   A( THLA.federate );
 ZeroPropagatedSineSimObj P( THLA.federate );
 
 // Instantiations used for cyclic exchanges.
-AnalyticSineSimObj   AC( THLA.federate );
-PropagatedSineSimObj PC( THLA.federate );
+AnalyticSineSimObj   AC;
+PropagatedSineSimObj PC;
 
 
 // Define the simulation objects that have routines involved in integration.
-IntegLoop sim_integ_loop (DYN_RATE) P;
-IntegLoop sim_integ_loop2 (DYN_RATE) PC;
+IntegLoop sim_integ_loop  (DYN_RATE) P;
+IntegLoop sim_integ_loopC (DYN_RATE) PC;
 
 // All code listed in the create_connections routine is copied into S_source.cpp
 // and is executed directly after sim-object instantiations. This routine may be
@@ -371,8 +372,8 @@ IntegLoop sim_integ_loop2 (DYN_RATE) PC;
 void create_connections() {
 
    // Assign a default integrator, which can be overridden in the input file.
-   sim_integ_loop.getIntegrator( Runge_Kutta_4, 6 );
-   sim_integ_loop2.getIntegrator( Runge_Kutta_4, 6 );
+   sim_integ_loop.getIntegrator(  Runge_Kutta_4, 6 );
+   sim_integ_loopC.getIntegrator( Runge_Kutta_4, 6 );
 }
 
 
