@@ -289,7 +289,6 @@ THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
 AnalyticSineSimObj   A;
 PropagatedSineSimObj P;
 
-
 // Define the simulation objects that have routines involved in integration.
 IntegLoop sim_integ_loop (DYN_RATE) P;
 
@@ -301,5 +300,3 @@ void create_connections() {
    // Assign a default integrator, which can be overridden in the input file.
    sim_integ_loop.getIntegrator( Runge_Kutta_4, 6 );
 }
-
-

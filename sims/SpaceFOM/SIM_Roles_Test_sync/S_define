@@ -39,16 +39,23 @@
 // This is needed for CTE timeline instantiation in the input file.
 ##include "TrickHLA/CTETimelineBase.hh"
 
+%header{
+ using namespace TrickHLA;
+ using namespace SpaceFOM;
+%}
+
 
 //==========================================================================
 // SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
 //==========================================================================
 #include "SpaceFOM/SpaceFOM.sm"
 
-%header{
- using namespace TrickHLA;
- using namespace SpaceFOM;
-%}
+
+//==========================================================================
+// SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An example reference frame
+// tree simulation object definition.
+//==========================================================================
+#include "SpaceFOM/TestRefFrameTree.sm"
 
 
 //==========================================================================
@@ -67,7 +74,7 @@ class THLAInitSimObject : public Trick::SimObject {
         thla_federate( thla_fed )
    {
       //--------------------------------------------------------------------
-      // NOTE: Initialization phase numbers must be greater than P60 
+      // NOTE: Initialization phase numbers must be greater than P60
       // (i.e. P_HLA_INIT) so that the initialization jobs run after the
       // P60 THLA.manager->initialize() job.
       //--------------------------------------------------------------------
@@ -103,16 +110,11 @@ class THLAInitSimObject : public Trick::SimObject {
 // SimObject instantiations.
 //==========================================================================
 // Main TrickHLA SimObject.
-SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME, THLA_INTERACTION_CYCLE_TIME,
-                        P_HLA_EARLY, P_HLA_INIT, P_HLA_LATE );
+SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
+                        THLA_INTERACTION_CYCLE_TIME,
+                        P_HLA_EARLY,
+                        P_HLA_INIT,
+                        P_HLA_LATE );
 
 // SimObject used capture simulation specific initialization.
 THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
-
-
-//==========================================================================
-// SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An example reference frame tree
-// simulation object definition.
-//==========================================================================
-#include "SpaceFOM/TestRefFrameTree.sm"
-

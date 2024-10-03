@@ -42,7 +42,7 @@
 
 
 //==========================================================================
-// JEOD include files used in SimObject definitions or for input file 
+// JEOD include files used in SimObject definitions or for input file
 // instantiations.
 //==========================================================================
 #include "default_priority_settings.sm"
@@ -90,11 +90,22 @@
 
 
 //==========================================================================
+// SIM_OBJECT: JEODRefFrameTreeSimObject - An JEOD reference frame tree
+// simulation object definition.
+//==========================================================================
+#define DEFAULT_DATA_CONFIG // Configure the tree in default data.
+#include "JEOD/JEODRefFrameTree.sm"
+
+
+//==========================================================================
 // SimObject instantiations.
 //==========================================================================
 // Main TrickHLA SimObject.
-SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME, THLA_INTERACTION_CYCLE_TIME,
-                        P_HLA_EARLY, P_HLA_INIT, P_HLA_LATE );
+SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
+                        THLA_INTERACTION_CYCLE_TIME,
+                        P_HLA_EARLY,
+                        P_HLA_INIT,
+                        P_HLA_LATE );
 
 // SimObject used capture simulation specific initialization.
 JEODHLAInitSimObject THLA_INIT( jeod_time.time_manager,
@@ -107,14 +118,6 @@ JEODHLAInitSimObject THLA_INIT( jeod_time.time_manager,
                                 P_SF_INIT_EPOCH_RRF,
                                 10,
                                 P_HLA_INIT );
-
-
-//==========================================================================
-// SIM_OBJECT: JEODRefFrameTreeSimObject - An JEOD reference frame tree
-// simulation object definition.
-//==========================================================================
-#define DEFAULT_DATA_CONFIG // Configure the tree in default data.
-#include "JEOD/JEODRefFrameTree.sm"
 
 
 // Setup the integration loop.
