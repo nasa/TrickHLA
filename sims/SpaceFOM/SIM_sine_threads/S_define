@@ -60,10 +60,6 @@
 ##include "sine/include/SineInteractionHandler.hh"
 ##include "sine/include/SineObjectDeleted.hh"
 
-// TrickHLA support for Trick Child Threads.
-#include "THLAThread.sm"
-
-
 %header{
  using namespace TrickHLA;
  using namespace SpaceFOM;
@@ -74,6 +70,12 @@
 // SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
 //==========================================================================
 #include "SpaceFOM/SpaceFOM.sm"
+
+
+//==========================================================================
+// SIM_OBJECT: THLAThreadSimObject - TrickHLA support for Trick Child Threads.
+//==========================================================================
+#include "THLAThread.sm"
 
 
 //==========================================================================
@@ -161,10 +163,10 @@ class PropagatedSineSimObj : public THLAThreadSimObject {
                          double               main_thread_data_cycle,
                          double               child_thread_data_cycle,
                          unsigned short       _THREAD_ID )
-         : THLAThreadSimObject( thla_fed,
-                                main_thread_data_cycle,
-                                child_thread_data_cycle,
-                                _THREAD_ID )
+      : THLAThreadSimObject( thla_fed,
+                             main_thread_data_cycle,
+                             child_thread_data_cycle,
+                             _THREAD_ID )
    {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
@@ -205,6 +207,9 @@ class PropagatedSineSimObj : public THLAThreadSimObject {
    // Do not allow the implicit copy constructor or assignment operator.
    PropagatedSineSimObj( PropagatedSineSimObj const & rhs );
    PropagatedSineSimObj & operator=( PropagatedSineSimObj const & rhs );
+
+   // Do not allow the default constructor.
+   PropagatedSineSimObj();
 };
 
 
@@ -298,7 +303,7 @@ SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
 THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
 
 // Sine Instantiations
-AnalyticSineSimObj   A;
+AnalyticSineSimObj A;
 
 // Example 1 showing a THLAThread sim-object created to associate the Trick child
 // thread (i.e. 1) used by the 'A' sim-object to TrickHLA with the specified
@@ -328,5 +333,3 @@ void create_connections() {
    // Assign a default integrator, which can be overridden in the input file.
    sim_integ_loop.getIntegrator( Runge_Kutta_4, 6 );
 }
-
-

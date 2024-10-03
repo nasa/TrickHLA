@@ -4,7 +4,6 @@
 // Copyright © 2023 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration.  All Rights Reserved.
 //
-//
 // Disclaimers:
 //
 // No Warranty: THE SUBJECT SOFTWARE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY OF
@@ -135,6 +134,8 @@ class MoonSimObject : public Moon_LP150Q_SimObject
    // Unimplemented copy constructor and assignment operator
    MoonSimObject (const MoonSimObject&);
    MoonSimObject & operator = (const MoonSimObject&);
+   // Do not allow the default constructor.
+   MoonSimObject();
 };
 MoonSimObject moon (dynamics.dyn_manager, env.gravity_manager, env.de4xx);
 
@@ -188,8 +189,8 @@ class VehicleSimObject: public VehicleAtmSimObject
                      jeod::METAtmosphere  & atmos_,
                      jeod::WindVelocity   & wind_,
                      const jeod::TimeDyn  & dyn_time_)
-   : VehicleAtmSimObject( dyn_mngr_, atmos_, wind_),
-     dyn_time( dyn_time_)
+      : VehicleAtmSimObject( dyn_mngr_, atmos_, wind_),
+        dyn_time( dyn_time_)
    {
       //
       //Default data jobs
@@ -240,7 +241,8 @@ class VehicleSimObject: public VehicleAtmSimObject
   private:
    VehicleSimObject (const VehicleSimObject&);
    VehicleSimObject & operator = (const VehicleSimObject&);
-
+   // Do not allow the default constructor.
+   VehicleSimObject();
 };
 
 // Instantiate the active JEOD DynBody.
@@ -281,15 +283,11 @@ vcollect passive_vehicle.dyn_body.collect.collect_no_xmit_forc jeod::CollectForc
 #include "SpaceFOM/SpaceFOM.sm"
 
 // Main TrickHLA SimObject.
-SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME, THLA_INTERACTION_CYCLE_TIME,
-                        P_HLA_EARLY, P_HLA_INIT, P_HLA_LATE );
-
-
-//==========================================================================
-// SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
-// initialization SimObject.
-//==========================================================================
-#include "JEOD/JEODHLAInit.sm"
+SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
+                        THLA_INTERACTION_CYCLE_TIME,
+                        P_HLA_EARLY,
+                        P_HLA_INIT,
+                        P_HLA_LATE );
 
 // SimObject used capture simulation specific initialization.
 JEODHLAInitSimObject THLA_INIT( jeod_time.time_manager,
@@ -302,6 +300,13 @@ JEODHLAInitSimObject THLA_INIT( jeod_time.time_manager,
                                 P_SF_INIT_EPOCH_RRF,
                                 10,
                                 P_HLA_INIT );
+
+
+//==========================================================================
+// SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
+// initialization SimObject.
+//==========================================================================
+#include "JEOD/JEODHLAInit.sm"
 
 
 //==========================================================================
