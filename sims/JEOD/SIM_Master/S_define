@@ -42,7 +42,7 @@
 
 
 //==========================================================================
-// JEOD include files used in SimObject definitions or for input file 
+// JEOD include files used in SimObject definitions or for input file
 // instantiations.
 //==========================================================================
 #include "default_priority_settings.sm"
@@ -93,8 +93,11 @@
 // SimObject instantiations.
 //==========================================================================
 // Main TrickHLA SimObject.
-SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME, THLA_INTERACTION_CYCLE_TIME,
-                        P_HLA_EARLY, P_HLA_INIT, P_HLA_LATE );
+SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
+                        THLA_INTERACTION_CYCLE_TIME,
+                        P_HLA_EARLY,
+                        P_HLA_INIT,
+                        P_HLA_LATE );
 
 // SimObject used capture simulation specific initialization.
 JEODHLAInitSimObject THLA_INIT( jeod_time.time_manager,

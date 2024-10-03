@@ -38,35 +38,16 @@
 
 
 //==========================================================================
-// Simple 6DOF dynamics for a Physical/Dynamical Entity.
-//==========================================================================
-##include "../../../models/EntityDynamics/include/EntityDynamics.hh"
-class EntityDynamicsSimObject : public Trick::SimObject {
-
-  public:
-   EntityDynamics entity;
-
-  public:
-   EntityDynamicsSimObject(){
-      ("default_data")            entity.default_data();
-      ("initialization")          entity.initialize();
-      ("derivative")              entity.derivative();
-      ("integration") trick_ret = entity.integrate();
-   }
-
-  private:
-   // This object is not copyable
-   EntityDynamicsSimObject( EntityDynamicsSimObject const & rhs );
-   EntityDynamicsSimObject & operator=( EntityDynamicsSimObject const & rhs );
-
-};
-
-//==========================================================================
 // Trick HLA and SpaceFOM include files used in SimObject definitions or
 // for inputfile instantiations.
 //==========================================================================
 // This is needed for CTE timeline instantiation in the input file.
 ##include "TrickHLA/CTETimelineBase.hh"
+
+%header{
+ using namespace TrickHLA;
+ using namespace SpaceFOM;
+%}
 
 
 //==========================================================================
@@ -74,59 +55,12 @@ class EntityDynamicsSimObject : public Trick::SimObject {
 //==========================================================================
 #include "SpaceFOM/SpaceFOM.sm"
 
-%header{
- using namespace TrickHLA;
- using namespace SpaceFOM;
-%}
 
 //==========================================================================
-// SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
-// initialization SimObject.
+// SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An example reference frame tree
+// simulation object definition.
 //==========================================================================
-class THLAInitSimObject : public Trick::SimObject {
-
- public:
-
-   THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
-                      TrickHLA::Federate & thla_fed,
-                      unsigned int         _MPI_1   = 100,
-                      unsigned int         _MPI_END = P_SF_INIT_POST_MPI   )
-      : thla_manager( thla_mngr ),
-        thla_federate( thla_fed )
-   {
-
-      //--------------------------------------------------------------------
-      // NOTE: Initialization phase numbers must be greater than P60 
-      // (i.e. P_HLA_INIT) so that the initialization jobs run after the
-      // P60 THLA.manager->initialize() job.
-      //--------------------------------------------------------------------
-
-      // Alternative method: Send and receive all the initialization data.
-
-      // Send all the initialization data.
-      P_MPI_1 ("initialization") thla_manager.send_init_data();
-      
-      // Wait to receive all the initialization data.
-      P_MPI_1 ("initialization") thla_manager.receive_init_data();
-      
-      // Do some processing here if needed...
-      
-      // Clear remaining initialization sync-points.
-      P_MPI_END ("initialization") thla_manager.clear_init_sync_points();
-   }
-
- private:
-   TrickHLA::Manager  & thla_manager;
-   TrickHLA::Federate & thla_federate;
-	
-   // Do not allow the implicit copy constructor or assignment operator.
-   THLAInitSimObject( THLAInitSimObject const & rhs );
-   THLAInitSimObject & operator=( THLAInitSimObject const & rhs );
-	
-   // Do not allow the default constructor.
-   THLAInitSimObject();
-
-};
+#include "SpaceFOM/TestRefFrameTree.sm"
 
 
 //==========================================================================
@@ -154,6 +88,79 @@ class THLAInitSimObject : public Trick::SimObject {
 
 
 //==========================================================================
+// SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
+// initialization SimObject.
+//==========================================================================
+class THLAInitSimObject : public Trick::SimObject {
+
+ public:
+
+   THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
+                      TrickHLA::Federate & thla_fed,
+                      unsigned int         _MPI_1   = 100,
+                      unsigned int         _MPI_END = P_SF_INIT_POST_MPI   )
+      : thla_manager( thla_mngr ),
+        thla_federate( thla_fed )
+   {
+      //--------------------------------------------------------------------
+      // NOTE: Initialization phase numbers must be greater than P60
+      // (i.e. P_HLA_INIT) so that the initialization jobs run after the
+      // P60 THLA.manager->initialize() job.
+      //--------------------------------------------------------------------
+
+      // Alternative method: Send and receive all the initialization data.
+
+      // Send all the initialization data.
+      P_MPI_1 ("initialization") thla_manager.send_init_data();
+
+      // Wait to receive all the initialization data.
+      P_MPI_1 ("initialization") thla_manager.receive_init_data();
+
+      // Do some processing here if needed...
+
+      // Clear remaining initialization sync-points.
+      P_MPI_END ("initialization") thla_manager.clear_init_sync_points();
+   }
+
+ private:
+   TrickHLA::Manager  & thla_manager;
+   TrickHLA::Federate & thla_federate;
+
+   // Do not allow the implicit copy constructor or assignment operator.
+   THLAInitSimObject( THLAInitSimObject const & rhs );
+   THLAInitSimObject & operator=( THLAInitSimObject const & rhs );
+
+   // Do not allow the default constructor.
+   THLAInitSimObject();
+};
+
+
+//==========================================================================
+// Simple 6DOF dynamics for a Physical/Dynamical Entity.
+//==========================================================================
+##include "../../../models/EntityDynamics/include/EntityDynamics.hh"
+class EntityDynamicsSimObject : public Trick::SimObject {
+
+  public:
+   EntityDynamics entity;
+
+  public:
+   EntityDynamicsSimObject()
+   {
+      ("default_data")            entity.default_data();
+      ("initialization")          entity.initialize();
+      ("derivative")              entity.derivative();
+      ("integration") trick_ret = entity.integrate();
+   }
+
+  private:
+   // This object is not copyable
+   EntityDynamicsSimObject( EntityDynamicsSimObject const & rhs );
+   EntityDynamicsSimObject & operator=( EntityDynamicsSimObject const & rhs );
+};
+
+
+//==========================================================================
 // Test out the Relative State classes.
 //==========================================================================
 ##include "SpaceFOM/RelStateBase.hh"
@@ -165,7 +172,7 @@ class RelStateTestSimObject : public Trick::SimObject {
   public:
    RelStateTestSimObject( SpaceFOM::RefFrameBase & ref_frame,
                           SpaceFOM::RefFrameTree & frame_tree )
-   : rel_state( ref_frame , frame_tree )
+      : rel_state( ref_frame , frame_tree )
    {
    }
 
@@ -174,6 +181,8 @@ class RelStateTestSimObject : public Trick::SimObject {
    RelStateTestSimObject( RelStateTestSimObject const & rhs );
    RelStateTestSimObject & operator=( RelStateTestSimObject const & rhs );
 
+   // Don't allow the default constructor
+   RelStateTestSimObject();
 };
 
 
@@ -184,8 +193,11 @@ EntityDynamicsSimObject pe_dynamics;
 EntityDynamicsSimObject de_dynamics;
 
 // Main TrickHLA SimObject.
-SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME, THLA_INTERACTION_CYCLE_TIME,
-                        P_HLA_EARLY, P_HLA_INIT, P_HLA_LATE );
+SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
+                        THLA_INTERACTION_CYCLE_TIME,
+                        P_HLA_EARLY,
+                        P_HLA_INIT,
+                        P_HLA_LATE );
 
 // SimObject used capture simulation specific initialization.
 THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
@@ -204,10 +216,3 @@ SpaceFOMPhysicalInterfaceSimObject physical_interface;
 //IntegLoop dyn_integloop (0.125) pe_dynamics, de_dynamics;
 IntegLoop pe_integloop (INTEG_STEP_TIME) pe_dynamics;
 IntegLoop de_integloop (INTEG_STEP_TIME) de_dynamics;
-
-//==========================================================================
-// SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An example reference frame tree
-// simulation object definition.
-//==========================================================================
-#include "SpaceFOM/TestRefFrameTree.sm"
-
