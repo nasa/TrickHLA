@@ -403,13 +403,15 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
          trickhla_ignore.append( '--suppress=cstyleCast:' + jeod_home + '/models/utils/math/include/numerical_inline.hh' )
          trickhla_ignore.append( '--suppress=constParameterPointer:' + jeod_home + '/models/utils/memory/include/jeod_alloc_construct_destruct.hh' )
          trickhla_ignore.append( '--suppress=constParameterPointer:' + jeod_home + '/models/utils/integration/include/restartable_state_integrator.hh' )
+         trickhla_ignore.append( '--suppress=duplInheritedMember:' + jeod_home + '/models/utils/container/include/jeod_vector.hh' )
          trickhla_ignore.append( '--suppress=duplInheritedMember:' + jeod_home + '/models/utils/container/include/pointer_container.hh' )
          trickhla_ignore.append( '--suppress=duplInheritedMember:' + jeod_home + '/models/utils/memory/include/memory_table.hh' )
          trickhla_ignore.append( '--suppress=noExplicitConstructor:' + jeod_home + '/models/utils/container/include/container.hh' )
          trickhla_ignore.append( '--suppress=noExplicitConstructor:' + jeod_home + '/models/utils/memory/include/memory_type.hh' )
          trickhla_ignore.append( '--suppress=noExplicitConstructor:' + jeod_home + '/models/utils/named_item/include/named_item.hh' )
-         trickhla_ignore.append( '--suppress=uselessOverride:' + jeod_home + '/models/utils/sim_interface/include/jeod_integrator_interface.hh' )
+         trickhla_ignore.append( '--suppress=returnByReference:' + jeod_home + '/models/utils/named_item/include/named_item.hh' )
          trickhla_ignore.append( '--suppress=syntaxError:' + jeod_home + '/models/dynamics/mass/include/mass_point_init.hh' )
+         trickhla_ignore.append( '--suppress=uselessOverride:' + jeod_home + '/models/utils/sim_interface/include/jeod_integrator_interface.hh' )
 
    if args.suppress_cstylecasts:
       # Suppress C-style casts.

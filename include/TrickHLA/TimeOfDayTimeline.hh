@@ -66,11 +66,11 @@ class TimeOfDayTimeline : public Timeline
    //-----------------------------------------------------------------
    /*! @brief Get the current time for this timeline in seconds.
     *  @return Current Time-Of-Day time in seconds to represent realtime. */
-   virtual double get_time();
+   virtual double const get_time();
 
    /*! @brief Get the minimum time resolution which is the smallest nonzero
     *  time for the given timeline.
-    *  @return Returns the minmum time resolution in seconds. */
+    *  @return Returns the minimum time resolution in seconds. */
    virtual double const get_min_resolution();
 
   private:

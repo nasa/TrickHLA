@@ -54,7 +54,7 @@ SimTimeline::~SimTimeline()
 /*!
  * @details Get the current simulation time.
  */
-double SimTimeline::get_time()
+double const SimTimeline::get_time()
 {
    return exec_get_sim_time();
 }
