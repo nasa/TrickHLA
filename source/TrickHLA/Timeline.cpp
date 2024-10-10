@@ -33,7 +33,7 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 Timeline::Timeline(
-   double t0 )
+   double const t0 )
    : epoch( t0 )
 {
    return;

@@ -57,7 +57,7 @@ TimeOfDayTimeline::~TimeOfDayTimeline()
 /*!
  * @details Get the current time of day for this timeline.
  */
-double TimeOfDayTimeline::get_time()
+double const TimeOfDayTimeline::get_time()
 {
    struct timespec ts;
    clock_gettime( CLOCK_REALTIME, &ts );

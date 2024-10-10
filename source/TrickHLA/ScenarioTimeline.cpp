@@ -70,27 +70,27 @@ ScenarioTimeline::~ScenarioTimeline()
 /*! @brief Compute a simulation time from a given scenario time.
  *  @return Simulation time in seconds.
  *  @param scenario_time Desired scenario time in seconds. */
-double ScenarioTimeline::compute_simulation_time(
+double const ScenarioTimeline::compute_simulation_time(
    double const scenario_time )
 {
    // Make sure to convert to a time on the sim-timeline for the minimum resolution.
    return ( this->sim_timeline.convert( scenario_time - ( epoch + sim_offset ) ) );
 }
 
-double ScenarioTimeline::time_from_simulation_time(
+double const ScenarioTimeline::time_from_simulation_time(
    double const sim_time )
 {
    return ( sim_time + ( epoch + sim_offset ) );
 }
 
-Int64Time ScenarioTimeline::compute_HLT(
+Int64Time const ScenarioTimeline::compute_HLT(
    double const scenario_time )
 {
    Int64Time elapsed_time( scenario_time - epoch );
    return ( elapsed_time - hlt_offset );
 }
 
-double ScenarioTimeline::time_from_HLT(
+double const ScenarioTimeline::time_from_HLT(
    Int64Time const &hlt )
 {
    return ( hlt.get_time_in_seconds() + hlt_offset.get_time_in_seconds() + epoch );
@@ -99,7 +99,7 @@ double ScenarioTimeline::time_from_HLT(
 /*!
  * @details Get the current scenario time.
  */
-double ScenarioTimeline::get_time()
+double const ScenarioTimeline::get_time()
 {
    return ( epoch + sim_offset + sim_timeline.get_time() );
 }
