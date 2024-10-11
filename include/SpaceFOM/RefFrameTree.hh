@@ -84,11 +84,11 @@ class RefFrameTree : public SpaceFOM::LRTreeBase
 
    /*! @brief Iterate through the frames and build a consistent tree.
     *  @return True on success, false otherwise. */
-   virtual bool build_tree();
+   virtual bool build_tree(); // cppcheck-suppress [uselessOverride]
 
    /*! @brief Check for consistency of the tree.
     *  @return True on success, false otherwise. */
-   virtual bool check_tree();
+   virtual bool check_tree(); // cppcheck-suppress [uselessOverride]
 
    /*! @brief Check if a frame is in the tree.
     *  @return True if in the tree, false otherwise.
