@@ -82,8 +82,8 @@ class RefFrameTree : public SpaceFOM::LRTreeBase
     *  @return Success or failure of the add. */
    virtual bool add_frame( RefFrameBase *frame_ptr );
 
-   virtual bool build_tree();
-   virtual bool check_tree();
+   virtual bool build_tree(); // cppcheck-suppress [uselessOverride]
+   virtual bool check_tree(); // cppcheck-suppress [uselessOverride]
 
    virtual bool has_frame( char const *name );
    virtual bool has_frame( std::string const &name );
