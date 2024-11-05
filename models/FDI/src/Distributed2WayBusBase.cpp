@@ -9,7 +9,7 @@ LIBRARY DEPENDENCY:
    ()
 */
 
-#include "Distributed2WayBusBase.hh"
+#include "../include/Distributed2WayBusBase.hh"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @param[in] level   (--) Severity level of the message.
@@ -18,13 +18,12 @@ LIBRARY DEPENDENCY:
 /// @details  Constructs this notification message with the given values.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 Distributed2WayBusNotification::Distributed2WayBusNotification(
-        const NotificationLevel level,
-        const std::string& message)
-    :
-    mLevel(level),
-    mMessage(message)
+   const NotificationLevel level,
+   const std::string      &message )
+   : mLevel( level ),
+     mMessage( message )
 {
-    // nothing to do
+   return;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,7 +31,7 @@ Distributed2WayBusNotification::Distributed2WayBusNotification(
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 Distributed2WayBusNotification::~Distributed2WayBusNotification()
 {
-    // nothing to do
+   return;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -40,12 +39,11 @@ Distributed2WayBusNotification::~Distributed2WayBusNotification()
 ///
 /// @details  Notification message copy constructor.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-Distributed2WayBusNotification::Distributed2WayBusNotification(const Distributed2WayBusNotification& that)
-    :
-    mLevel(that.mLevel),
-    mMessage(that.mMessage)
+Distributed2WayBusNotification::Distributed2WayBusNotification( const Distributed2WayBusNotification &that )
+   : mLevel( that.mLevel ),
+     mMessage( that.mMessage )
 {
-    // nothing to do
+   return;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -53,25 +51,24 @@ Distributed2WayBusNotification::Distributed2WayBusNotification(const Distributed
 ///
 /// @details  Notification message assignment operator.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-Distributed2WayBusNotification& Distributed2WayBusNotification::operator =(const Distributed2WayBusNotification& that)
+Distributed2WayBusNotification &Distributed2WayBusNotification::operator=( const Distributed2WayBusNotification &that )
 {
-    if (this != &that) {
-        this->mLevel   = that.mLevel;
-        this->mMessage = that.mMessage;
-    }
-    return *this;
+   if ( this != &that ) {
+      this->mLevel   = that.mLevel;
+      this->mMessage = that.mMessage;
+   }
+   return *this;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details  Default constructs this Distributed 2-Way Bus Base interface data.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 Distributed2WayBusBaseInterfaceData::Distributed2WayBusBaseInterfaceData()
-    :
-    mFrameCount(0),
-    mFrameLoopback(0),
-    mDemandMode(false)
+   : mFrameCount( 0 ),
+     mFrameLoopback( 0 ),
+     mDemandMode( false )
 {
-    // nothing to do
+   return;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -79,7 +76,7 @@ Distributed2WayBusBaseInterfaceData::Distributed2WayBusBaseInterfaceData()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 Distributed2WayBusBaseInterfaceData::~Distributed2WayBusBaseInterfaceData()
 {
-    // nothing to do
+   return;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -87,14 +84,14 @@ Distributed2WayBusBaseInterfaceData::~Distributed2WayBusBaseInterfaceData()
 ///
 /// @details  Assigns values of this object's attributes to the given object's values.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-Distributed2WayBusBaseInterfaceData& Distributed2WayBusBaseInterfaceData::operator =(const Distributed2WayBusBaseInterfaceData& that)
+Distributed2WayBusBaseInterfaceData &Distributed2WayBusBaseInterfaceData::operator=( const Distributed2WayBusBaseInterfaceData &that )
 {
-    if (this != &that) {
-        mFrameCount    = that.mFrameCount;
-        mFrameLoopback = that.mFrameLoopback;
-        mDemandMode    = that.mDemandMode;
-    }
-    return *this;
+   if ( this != &that ) {
+      mFrameCount    = that.mFrameCount;
+      mFrameLoopback = that.mFrameLoopback;
+      mDemandMode    = that.mDemandMode;
+   }
+   return *this;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -103,19 +100,18 @@ Distributed2WayBusBaseInterfaceData& Distributed2WayBusBaseInterfaceData::operat
 ///
 /// @details  Default constructs this Distributed 2-Way Bus Base Interface.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-Distributed2WayBusBase::Distributed2WayBusBase(Distributed2WayBusBaseInterfaceData* inDataPtr,
-                                               Distributed2WayBusBaseInterfaceData* outDataPtr)
-    :
-    mIsPairMaster          (false),
-    mInDataLastDemandMode  (false),
-    mFramesSinceFlip       (0),
-    mLoopLatency           (0),
-    mForcedRole            (NONE),
-    mNotifications         (),
-    mInDataPtr             (inDataPtr),
-    mOutDataPtr            (outDataPtr)
+Distributed2WayBusBase::Distributed2WayBusBase( Distributed2WayBusBaseInterfaceData *inDataPtr,
+                                                Distributed2WayBusBaseInterfaceData *outDataPtr )
+   : mIsPairMaster( false ),
+     mInDataLastDemandMode( false ),
+     mFramesSinceFlip( 0 ),
+     mLoopLatency( 0 ),
+     mForcedRole( NONE ),
+     mNotifications(),
+     mInDataPtr( inDataPtr ),
+     mOutDataPtr( outDataPtr )
 {
-    // nothing to do
+   return;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -123,7 +119,7 @@ Distributed2WayBusBase::Distributed2WayBusBase(Distributed2WayBusBaseInterfaceDa
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 Distributed2WayBusBase::~Distributed2WayBusBase()
 {
-    // nothing to do
+   return;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -131,18 +127,18 @@ Distributed2WayBusBase::~Distributed2WayBusBase()
 ///
 /// @details  Initializes this Distributed 2-Way Bus Base Interface.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void Distributed2WayBusBase::initialize(const bool isPairMaster)
+void Distributed2WayBusBase::initialize( const bool isPairMaster )
 {
-    /// - Initialize remaining state variables.  mForcedRole is not initialized, assuming the user
-    ///   may have already set it.
-    mIsPairMaster         = isPairMaster;
-    mInDataLastDemandMode = false;
-    mFramesSinceFlip      = 0;
-    mLoopLatency          = 0;
+   /// - Initialize remaining state variables.  mForcedRole is not initialized, assuming the user
+   ///   may have already set it.
+   mIsPairMaster         = isPairMaster;
+   mInDataLastDemandMode = false;
+   mFramesSinceFlip      = 0;
+   mLoopLatency          = 0;
 
-    /// - Both sides start out in Supply mode by default.  Upon going to run, the sides will
-    ///   negotiate one of them taking over the Demand role.
-    mOutDataPtr->mDemandMode = false;
+   /// - Both sides start out in Supply mode by default.  Upon going to run, the sides will
+   ///   negotiate one of them taking over the Demand role.
+   mOutDataPtr->mDemandMode = false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -150,10 +146,10 @@ void Distributed2WayBusBase::initialize(const bool isPairMaster)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void Distributed2WayBusBase::updateFrameCounts()
 {
-    mOutDataPtr->mFrameCount++;
-    mFramesSinceFlip++;
-    mLoopLatency                = mOutDataPtr->mFrameCount - mInDataPtr->mFrameLoopback;
-    mOutDataPtr->mFrameLoopback = mInDataPtr->mFrameCount;
+   mOutDataPtr->mFrameCount++;
+   mFramesSinceFlip++;
+   mLoopLatency                = mOutDataPtr->mFrameCount - mInDataPtr->mFrameLoopback;
+   mOutDataPtr->mFrameLoopback = mInDataPtr->mFrameCount;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -165,14 +161,14 @@ void Distributed2WayBusBase::updateFrameCounts()
 ///           that message off of the queue, reducing the queue size by one.  If the queue size is
 ///           already zero, then returns an empty message.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-unsigned int Distributed2WayBusBase::popNotification(Distributed2WayBusNotification& notification)
+unsigned int Distributed2WayBusBase::popNotification( Distributed2WayBusNotification &notification )
 {
-    if (mNotifications.size() > 0) {
-        notification = mNotifications.back();
-        mNotifications.pop_back();
-    } else {
-        notification.mLevel   = Distributed2WayBusNotification::NONE;
-        notification.mMessage = "";
-    }
-    return mNotifications.size();
+   if ( mNotifications.size() > 0 ) {
+      notification = mNotifications.back();
+      mNotifications.pop_back();
+   } else {
+      notification.mLevel   = Distributed2WayBusNotification::NONE;
+      notification.mMessage = "";
+   }
+   return mNotifications.size();
 }

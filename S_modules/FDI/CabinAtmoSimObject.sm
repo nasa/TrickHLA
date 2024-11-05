@@ -1,9 +1,9 @@
 /* @copyright Copyright 2024 United States Government as represented by the Administrator of the
               National Aeronautics and Space Administration.  All Rights Reserved. */
 
-##include "models/FDI/CabinAtmo.hh"
-##include "models/FDI/CabinAtmoConserveChecks.hh"
-##include "models/FDI/FluidDistributedIfLagBuffer.hh"
+##include "models/FDI/include/CabinAtmo.hh"
+##include "models/FDI/include/CabinAtmoConserveChecks.hh"
+##include "models/FDI/include/FluidDistributedIfLagBuffer.hh"
 
 class CabinAtmoSimObject: public Trick::SimObject
 {

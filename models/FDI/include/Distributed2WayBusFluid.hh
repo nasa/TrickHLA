@@ -40,40 +40,40 @@ PROGRAMMERS:
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class FluidDistributedMixtureData // !!! NOTE this must remain a base class, see above !!!
 {
-    public:
-        double  mEnergy;          /**< (1)         Fluid temperature (K) or specific enthalpy (J/kg). */
-        double* mMoleFractions;   /**< (1) cio(**) Fluid mole fractions. */
-        double* mTcMoleFractions; /**< (1) cio(**) Trace compounds mole fractions. */
-        /// @brief  Default constructs this Fluid Distributed mixture data.
-        FluidDistributedMixtureData();
-        /// @brief  Default destructs this Fluid Distributed mixture data.
-        virtual ~FluidDistributedMixtureData();
-        /// @brief  Assignment operator for this Fluid Distributed mixture data.
-        FluidDistributedMixtureData& operator =(const FluidDistributedMixtureData& that);
-        /// @brief  Allocates dynamic arrays for bulk fluid and trace compounds and mole fractions.
-        virtual void initialize(const unsigned int nBulk,
-                                const unsigned int nTc,
-                                const std::string& name = "");
-        /// @brief  Sets the bulk fluid mole fractions to the given values.
-        void setMoleFractions(const double* fractions, const unsigned int size);
-        /// @brief  Sets the trace compound mole fractions to the given values.
-        void setTcMoleFractions(const double* fractions, const unsigned int size);
-        /// @brief  Sets the given array to the bulk fluid mole fraction values.
-        void getMoleFractions(double* fractions, const unsigned int size) const;
-        /// @brief  Sets the given array to the trace compound mole fraction values.
-        void getTcMoleFractions(double* fractions, const unsigned int size) const;
-        /// @brief  Returns the size of this mixture data bulk fluid mole fractions array.
-        unsigned int getNumFluid() const;
-        /// @brief  Returns the size of this mixture data trace compounds mole fractions array.
-        unsigned int getNumTc() const;
+  public:
+   double  mEnergy;          /**< (1)         Fluid temperature (K) or specific enthalpy (J/kg). */
+   double *mMoleFractions;   /**< (1) cio(**) Fluid mole fractions. */
+   double *mTcMoleFractions; /**< (1) cio(**) Trace compounds mole fractions. */
+   /// @brief  Default constructs this Fluid Distributed mixture data.
+   FluidDistributedMixtureData();
+   /// @brief  Default destructs this Fluid Distributed mixture data.
+   virtual ~FluidDistributedMixtureData();
+   /// @brief  Assignment operator for this Fluid Distributed mixture data.
+   FluidDistributedMixtureData &operator=( const FluidDistributedMixtureData &that );
+   /// @brief  Allocates dynamic arrays for bulk fluid and trace compounds and mole fractions.
+   virtual void initialize( const unsigned int nBulk,
+                            const unsigned int nTc,
+                            const std::string &name = "" );
+   /// @brief  Sets the bulk fluid mole fractions to the given values.
+   void setMoleFractions( const double *fractions, const unsigned int size );
+   /// @brief  Sets the trace compound mole fractions to the given values.
+   void setTcMoleFractions( const double *fractions, const unsigned int size );
+   /// @brief  Sets the given array to the bulk fluid mole fraction values.
+   void getMoleFractions( double *fractions, const unsigned int size ) const;
+   /// @brief  Sets the given array to the trace compound mole fraction values.
+   void getTcMoleFractions( double *fractions, const unsigned int size ) const;
+   /// @brief  Returns the size of this mixture data bulk fluid mole fractions array.
+   unsigned int getNumFluid() const;
+   /// @brief  Returns the size of this mixture data trace compounds mole fractions array.
+   unsigned int getNumTc() const;
 
-    protected:
-        unsigned int mNumFluid; /**< *o (1) cio(**) Number of primary fluid compounds in this mixture. */
-        unsigned int mNumTc;    /**< *o (1) cio(**) Number of trace compounds in this mixture. */
+  protected:
+   unsigned int mNumFluid; /**< *o (1) cio(**) Number of primary fluid compounds in this mixture. */
+   unsigned int mNumTc;    /**< *o (1) cio(**) Number of trace compounds in this mixture. */
 
-    private:
-        /// @brief Copy constructor unavailable since declared private and not implemented.
-        FluidDistributedMixtureData(const FluidDistributedMixtureData&);
+  private:
+   /// @brief Copy constructor unavailable since declared private and not implemented.
+   FluidDistributedMixtureData( const FluidDistributedMixtureData & );
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -85,21 +85,21 @@ class FluidDistributedMixtureData // !!! NOTE this must remain a base class, see
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class Distributed2WayBusFluidInterfaceData : public FluidDistributedMixtureData, public Distributed2WayBusBaseInterfaceData
 {
-    public:
-        double mCapacitance; /**< (mol/Pa) Model capacitance. */
-        double mSource;      /**< (1)      Fluid pressure (Pa) or molar flow (mol/s). */
-        /// @brief  Default constructs this Fluid Distributed 2-Way Bus interface data.
-        Distributed2WayBusFluidInterfaceData();
-        /// @brief  Default destructs this Fluid Distributed 2-Way Bus interface data.
-        virtual ~Distributed2WayBusFluidInterfaceData();
-        /// @brief  Returns whether this object has received valid data.
-        virtual bool hasValidData() const;
-        /// @brief Assignment operator for this Fluid Distributed 2-Way Bus interface data.
-        Distributed2WayBusFluidInterfaceData& operator =(const Distributed2WayBusFluidInterfaceData& that);
+  public:
+   double mCapacitance; /**< (mol/Pa) Model capacitance. */
+   double mSource;      /**< (1)      Fluid pressure (Pa) or molar flow (mol/s). */
+   /// @brief  Default constructs this Fluid Distributed 2-Way Bus interface data.
+   Distributed2WayBusFluidInterfaceData();
+   /// @brief  Default destructs this Fluid Distributed 2-Way Bus interface data.
+   virtual ~Distributed2WayBusFluidInterfaceData();
+   /// @brief  Returns whether this object has received valid data.
+   virtual bool hasValidData() const;
+   /// @brief Assignment operator for this Fluid Distributed 2-Way Bus interface data.
+   Distributed2WayBusFluidInterfaceData &operator=( const Distributed2WayBusFluidInterfaceData &that );
 
-    private:
-        /// @brief Copy constructor unavailable since declared private and not implemented.
-        Distributed2WayBusFluidInterfaceData(const Distributed2WayBusFluidInterfaceData&);
+  private:
+   /// @brief Copy constructor unavailable since declared private and not implemented.
+   Distributed2WayBusFluidInterfaceData( const Distributed2WayBusFluidInterfaceData & );
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,18 +110,18 @@ class Distributed2WayBusFluidInterfaceData : public FluidDistributedMixtureData,
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class Distributed2WayBusFluidFluidState : public FluidDistributedMixtureData
 {
-    public:
-        double mPressure; /**< (Pa) Fluid pressure. */
-        /// @brief Default constructor.
-        Distributed2WayBusFluidFluidState();
-        /// @brief Default destructor.
-        virtual ~Distributed2WayBusFluidFluidState();
-        /// @brief Assignment operator.
-        Distributed2WayBusFluidFluidState& operator =(const Distributed2WayBusFluidFluidState& that);
+  public:
+   double mPressure; /**< (Pa) Fluid pressure. */
+   /// @brief Default constructor.
+   Distributed2WayBusFluidFluidState();
+   /// @brief Default destructor.
+   virtual ~Distributed2WayBusFluidFluidState();
+   /// @brief Assignment operator.
+   Distributed2WayBusFluidFluidState &operator=( const Distributed2WayBusFluidFluidState &that );
 
-    private:
-        /// @brief Copy constructor unavailable since declared private and not implemented.
-        Distributed2WayBusFluidFluidState(const Distributed2WayBusFluidFluidState&);
+  private:
+   /// @brief Copy constructor unavailable since declared private and not implemented.
+   Distributed2WayBusFluidFluidState( const Distributed2WayBusFluidFluidState & );
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -132,18 +132,18 @@ class Distributed2WayBusFluidFluidState : public FluidDistributedMixtureData
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class Distributed2WayBusFluidFlowState : public FluidDistributedMixtureData
 {
-    public:
-        double  mFlowRate; /**< (mol/s) Fluid molar flow rate. */
-        /// @brief Default constructor.
-        Distributed2WayBusFluidFlowState();
-        /// @brief Default destructor.
-        virtual ~Distributed2WayBusFluidFlowState();
-        /// @brief Assignment operator.
-        Distributed2WayBusFluidFlowState& operator =(const Distributed2WayBusFluidFlowState& that);
+  public:
+   double mFlowRate; /**< (mol/s) Fluid molar flow rate. */
+   /// @brief Default constructor.
+   Distributed2WayBusFluidFlowState();
+   /// @brief Default destructor.
+   virtual ~Distributed2WayBusFluidFlowState();
+   /// @brief Assignment operator.
+   Distributed2WayBusFluidFlowState &operator=( const Distributed2WayBusFluidFlowState &that );
 
-    private:
-        /// @brief Copy constructor unavailable since declared private and not implemented.
-        Distributed2WayBusFluidFlowState(const Distributed2WayBusFluidFlowState&);
+  private:
+   /// @brief Copy constructor unavailable since declared private and not implemented.
+   Distributed2WayBusFluidFlowState( const Distributed2WayBusFluidFlowState & );
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -195,54 +195,54 @@ class Distributed2WayBusFluidFlowState : public FluidDistributedMixtureData
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class Distributed2WayBusFluid : public Distributed2WayBusBase
 {
-    public:
-        Distributed2WayBusFluidInterfaceData mInData;  /**< (1) Input data received from the remote side. */
-        Distributed2WayBusFluidInterfaceData mOutData; /**< (1) Output data to transmit to the remote side. */
-        /// @brief Default Constructor.
-        Distributed2WayBusFluid();
-        /// @brief Default Destructor.
-        virtual ~Distributed2WayBusFluid();
-        /// @brief Initializes this Distributed 2-Way Bus Interface.
-        void initialize(const bool         isPairMaster,
-                        const unsigned int nIfBulk,
-                        const unsigned int nIfTc);
-        /// @brief Process received data prior to the model update.
-        void processInputs();
-        /// @brief Returns the limit on max flow between the Demand-side model and the interface volume.
-        double computeDemandLimit(const double timestep, const double demandSidePressure);
-        /// @brief Returns the stability filter gain used in the Demand-side flow rate limit.
-        double getDemandLimitGain() const;
-        /// @brief Special processing of data outputs from the model after the network update.
-        void processOutputs(const double capacitance);
-        /// @brief Sets the outgoing fluid state of the interface volume when in the Supply role.
-        void setFluidState(const Distributed2WayBusFluidFluidState& fluid);
-        /// @brief Gets the incoming fluid state of the interface volume when in the Demand role.
-        bool getFluidState(Distributed2WayBusFluidFluidState& fluid) const;
-        /// @brief Sets the outgoing state of flows to/from the interface volume when in the Demand role.
-        void setFlowState(const Distributed2WayBusFluidFlowState& flow);
-        /// @brief Gets the incoming state of flows to/from the interface volume when in the Supply role.
-        bool getFlowState(Distributed2WayBusFluidFlowState& flow) const;
+  public:
+   Distributed2WayBusFluidInterfaceData mInData;  /**< (1) Input data received from the remote side. */
+   Distributed2WayBusFluidInterfaceData mOutData; /**< (1) Output data to transmit to the remote side. */
+   /// @brief Default Constructor.
+   Distributed2WayBusFluid();
+   /// @brief Default Destructor.
+   virtual ~Distributed2WayBusFluid();
+   /// @brief Initializes this Distributed 2-Way Bus Interface.
+   void initialize( const bool         isPairMaster,
+                    const unsigned int nIfBulk,
+                    const unsigned int nIfTc );
+   /// @brief Process received data prior to the model update.
+   void processInputs();
+   /// @brief Returns the limit on max flow between the Demand-side model and the interface volume.
+   double computeDemandLimit( const double timestep, const double demandSidePressure );
+   /// @brief Returns the stability filter gain used in the Demand-side flow rate limit.
+   double getDemandLimitGain() const;
+   /// @brief Special processing of data outputs from the model after the network update.
+   void processOutputs( const double capacitance );
+   /// @brief Sets the outgoing fluid state of the interface volume when in the Supply role.
+   void setFluidState( const Distributed2WayBusFluidFluidState &fluid );
+   /// @brief Gets the incoming fluid state of the interface volume when in the Demand role.
+   bool getFluidState( Distributed2WayBusFluidFluidState &fluid ) const;
+   /// @brief Sets the outgoing state of flows to/from the interface volume when in the Demand role.
+   void setFlowState( const Distributed2WayBusFluidFlowState &flow );
+   /// @brief Gets the incoming state of flows to/from the interface volume when in the Supply role.
+   bool getFlowState( Distributed2WayBusFluidFlowState &flow ) const;
 
-    protected:
-        double              mDemandLimitGain;        /**<    (1)             The current Demand-side flow rate limit filter gain. */
-        double              mDemandLimitFlowRate;    /**<    (mol/s)         The current Demand-side flow rate limit. */
-        static const double mModingCapacitanceRatio; /**<    (1)     cio(**) Supply over Demand capacitance ratio for triggering mode flip. */
-        static const double mDemandFilterConstA;     /**< ** (1)     cio(**) Demand filter gain constant A. */
-        static const double mDemandFilterConstB;     /**< ** (1)     cio(**) Demand filter gain constant B. */
-        /// @brief Handles several mode flip cases based on input data.
-        void flipModesOnInput();
-        /// @brief Flips to the Demand mode.
-        void flipToDemandMode();
-        /// @brief Flips to the Supply mode.
-        void flipToSupplyMode();
-        /// @brief Flips to the Demand mode based on capacitances.
-        void flipModesOnCapacitance();
+  protected:
+   double              mDemandLimitGain;        /**<    (1)             The current Demand-side flow rate limit filter gain. */
+   double              mDemandLimitFlowRate;    /**<    (mol/s)         The current Demand-side flow rate limit. */
+   static const double mModingCapacitanceRatio; /**<    (1)     cio(**) Supply over Demand capacitance ratio for triggering mode flip. */
+   static const double mDemandFilterConstA;     /**< ** (1)     cio(**) Demand filter gain constant A. */
+   static const double mDemandFilterConstB;     /**< ** (1)     cio(**) Demand filter gain constant B. */
+   /// @brief Handles several mode flip cases based on input data.
+   void flipModesOnInput();
+   /// @brief Flips to the Demand mode.
+   void flipToDemandMode();
+   /// @brief Flips to the Supply mode.
+   void flipToSupplyMode();
+   /// @brief Flips to the Demand mode based on capacitances.
+   void flipModesOnCapacitance();
 
-    private:
-        /// @brief Copy constructor unavailable since declared private and not implemented.
-        Distributed2WayBusFluid(const Distributed2WayBusFluid& that);
-        /// @brief Assignment operator unavailable since declared private and not implemented.
-        Distributed2WayBusFluid& operator =(const Distributed2WayBusFluid& that);
+  private:
+   /// @brief Copy constructor unavailable since declared private and not implemented.
+   Distributed2WayBusFluid( const Distributed2WayBusFluid &that );
+   /// @brief Assignment operator unavailable since declared private and not implemented.
+   Distributed2WayBusFluid &operator=( const Distributed2WayBusFluid &that );
 };
 
 /// @}
@@ -252,7 +252,7 @@ class Distributed2WayBusFluid : public Distributed2WayBusBase
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 inline unsigned int FluidDistributedMixtureData::getNumFluid() const
 {
-    return mNumFluid;
+   return mNumFluid;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -260,7 +260,7 @@ inline unsigned int FluidDistributedMixtureData::getNumFluid() const
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 inline unsigned int FluidDistributedMixtureData::getNumTc() const
 {
-    return mNumTc;
+   return mNumTc;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -268,7 +268,7 @@ inline unsigned int FluidDistributedMixtureData::getNumTc() const
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 inline double Distributed2WayBusFluid::getDemandLimitGain() const
 {
-    return mDemandLimitGain;
+   return mDemandLimitGain;
 }
 
 #endif

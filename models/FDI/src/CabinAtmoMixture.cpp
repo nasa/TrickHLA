@@ -9,26 +9,26 @@ LIBRARY DEPENDENCY:
    ()
 */
 
-#include "CabinAtmoMixture.hh"
 #include <cfloat>
 #include <iostream>
+
+#include "../include/CabinAtmoMixture.hh"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details  Constructs this Simple Cabin Atmosphere Air Mixture Data object.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 CabinAtmoMixture::CabinAtmoMixture()
-    :
-    mCompoundSpecificHeats(0),
-    mMoleFractions(),
-    mTcMoleFractions(),
-    mSpecificHeat(0.0)
+   : mCompoundSpecificHeats( 0 ),
+     mMoleFractions(),
+     mTcMoleFractions(),
+     mSpecificHeat( 0.0 )
 {
-    for (unsigned int i=0; i<NFOMBULK; ++i) {
-        mMoleFractions[i] = 0.0;
-    }
-    for (unsigned int i=0; i<NFOMTC; ++i) {
-        mTcMoleFractions[i] = 0.0;
-    }
+   for ( unsigned int i = 0; i < NFOMBULK; ++i ) {
+      mMoleFractions[i] = 0.0;
+   }
+   for ( unsigned int i = 0; i < NFOMTC; ++i ) {
+      mTcMoleFractions[i] = 0.0;
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ CabinAtmoMixture::CabinAtmoMixture()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 CabinAtmoMixture::~CabinAtmoMixture()
 {
-    // nothing to do
+   return;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -46,18 +46,18 @@ CabinAtmoMixture::~CabinAtmoMixture()
 ///
 /// @details  Assigns the values of this object equal to the values of the given object.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-CabinAtmoMixture& CabinAtmoMixture::operator =(const CabinAtmoMixture& that)
+CabinAtmoMixture &CabinAtmoMixture::operator=( const CabinAtmoMixture &that )
 {
-    if (this != &that) {
-        for (unsigned int i=0; i<NFOMBULK; ++i) {
-            mMoleFractions[i] = that.mMoleFractions[i];
-        }
-        for (unsigned int i=0; i<NFOMTC; ++i) {
-            mTcMoleFractions[i] = that.mTcMoleFractions[i];
-        }
-        mSpecificHeat = that.mSpecificHeat;
-    }
-    return *this;
+   if ( this != &that ) {
+      for ( unsigned int i = 0; i < NFOMBULK; ++i ) {
+         mMoleFractions[i] = that.mMoleFractions[i];
+      }
+      for ( unsigned int i = 0; i < NFOMTC; ++i ) {
+         mTcMoleFractions[i] = that.mTcMoleFractions[i];
+      }
+      mSpecificHeat = that.mSpecificHeat;
+   }
+   return *this;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -66,20 +66,20 @@ CabinAtmoMixture& CabinAtmoMixture::operator =(const CabinAtmoMixture& that)
 ///
 /// @details  Initializes this object with the given initial mole fractions.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void CabinAtmoMixture::initialize(const double* moleFractions, const double* compoundCp)
+void CabinAtmoMixture::initialize( const double *moleFractions, const double *compoundCp )
 {
-    mCompoundSpecificHeats = compoundCp;
-    for (unsigned int i=0; i<NBULK; ++i) {
-        if (mCompoundSpecificHeats[i] < DBL_EPSILON) {
-            std::cout << "ERROR: a compound specific heat constant < DBL_EPSILON!" << std::endl;
-        }
-        mMoleFractions[i] = moleFractions[i];
-    }
-    if (checkMoleFractionsSum()) {
-        std::cout << "WARNING: normalized a CabinAtmoMixture initial mole fractions that did not sum to 1." << std::endl;
-        normalize();
-    }
-    updateSpecificHeat();
+   mCompoundSpecificHeats = compoundCp;
+   for ( unsigned int i = 0; i < NBULK; ++i ) {
+      if ( mCompoundSpecificHeats[i] < DBL_EPSILON ) {
+         std::cout << "ERROR: a compound specific heat constant < DBL_EPSILON!" << std::endl;
+      }
+      mMoleFractions[i] = moleFractions[i];
+   }
+   if ( checkMoleFractionsSum() ) {
+      std::cout << "WARNING: normalized a CabinAtmoMixture initial mole fractions that did not sum to 1." << std::endl;
+      normalize();
+   }
+   updateSpecificHeat();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,11 +90,11 @@ void CabinAtmoMixture::initialize(const double* moleFractions, const double* com
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 bool CabinAtmoMixture::checkMoleFractionsSum() const
 {
-    double sum = 0.0;
-    for (unsigned int i=0; i<NFOMBULK; ++i) {
-        sum += mMoleFractions[i];
-    }
-    return (std::abs(1.0 - sum) > DBL_EPSILON);
+   double sum = 0.0;
+   for ( unsigned int i = 0; i < NFOMBULK; ++i ) {
+      sum += mMoleFractions[i];
+   }
+   return ( std::abs( 1.0 - sum ) > DBL_EPSILON );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -103,11 +103,11 @@ bool CabinAtmoMixture::checkMoleFractionsSum() const
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void CabinAtmoMixture::updateSpecificHeat()
 {
-    double result = 0.0;
-    for (unsigned int i=0; i<NBULK; ++i) {
-        result += mCompoundSpecificHeats[i] * mMoleFractions[i];
-    }
-    mSpecificHeat = result;
+   double result = 0.0;
+   for ( unsigned int i = 0; i < NBULK; ++i ) {
+      result += mCompoundSpecificHeats[i] * mMoleFractions[i];
+   }
+   mSpecificHeat = result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -115,11 +115,11 @@ void CabinAtmoMixture::updateSpecificHeat()
 ///
 /// @details  Write this object's mixture into the given mole fractions array.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void CabinAtmoMixture::writeMoleFractions(double* moleFractions) const
+void CabinAtmoMixture::writeMoleFractions( double *moleFractions ) const
 {
-    for (unsigned int i=0; i<NBULK; ++i) {
-        moleFractions[i] = mMoleFractions[i];
-    }
+   for ( unsigned int i = 0; i < NBULK; ++i ) {
+      moleFractions[i] = mMoleFractions[i];
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -127,28 +127,28 @@ void CabinAtmoMixture::writeMoleFractions(double* moleFractions) const
 ///
 /// @details  Reads the given mole fractions array into this object's mixture.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void CabinAtmoMixture::readMoleFractions(const double* moleFractions)
+void CabinAtmoMixture::readMoleFractions( const double *moleFractions )
 {
-    for (unsigned int i=0; i<NBULK; ++i) {
-        mMoleFractions[i] = moleFractions[i];
-    }
-    for (unsigned int i=NBULK; i<NFOMBULK; ++i) {
-        mMoleFractions[i] = 0.0;
-    }
-    for (unsigned int i=0; i<NFOMTC; ++i) {
-        mTcMoleFractions[i] = 0.0;
-    }
-    if (checkMoleFractionsSum()) {
-        double sum = 0.0;
-        for (unsigned int i=0; i<NFOMBULK; ++i) {
-            sum += mMoleFractions[i];
-        }
-        if (std::abs(sum - 1.0) > 5.0e-16) {
-            std::cout << "WARNING: normalized a CabinAtmoMixture mole fractions that did not sum to 1." << std::endl;
-        }
-        normalize();
-    }
-    updateSpecificHeat();
+   for ( unsigned int i = 0; i < NBULK; ++i ) {
+      mMoleFractions[i] = moleFractions[i];
+   }
+   for ( unsigned int i = NBULK; i < NFOMBULK; ++i ) {
+      mMoleFractions[i] = 0.0;
+   }
+   for ( unsigned int i = 0; i < NFOMTC; ++i ) {
+      mTcMoleFractions[i] = 0.0;
+   }
+   if ( checkMoleFractionsSum() ) {
+      double sum = 0.0;
+      for ( unsigned int i = 0; i < NFOMBULK; ++i ) {
+         sum += mMoleFractions[i];
+      }
+      if ( std::abs( sum - 1.0 ) > 5.0e-16 ) {
+         std::cout << "WARNING: normalized a CabinAtmoMixture mole fractions that did not sum to 1." << std::endl;
+      }
+      normalize();
+   }
+   updateSpecificHeat();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -164,13 +164,13 @@ void CabinAtmoMixture::readMoleFractions(const double* moleFractions)
 /// @note     A negative value of addMoles can be used to removed the specified mixture from the
 ///           previous mixture.  Any negative mole fractions in the resulting mixture are zeroed.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void CabinAtmoMixture::mix(const double oldMoles, const double addMoles, const double* addFractions)
+void CabinAtmoMixture::mix( const double oldMoles, const double addMoles, const double *addFractions )
 {
-    for (unsigned int i=0; i<NBULK; ++i) {
-        mMoleFractions[i] = oldMoles * mMoleFractions[i] + addMoles * addFractions[i];
-    }
-    normalize();
-    updateSpecificHeat();
+   for ( unsigned int i = 0; i < NBULK; ++i ) {
+      mMoleFractions[i] = oldMoles * mMoleFractions[i] + addMoles * addFractions[i];
+   }
+   normalize();
+   updateSpecificHeat();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -180,19 +180,19 @@ void CabinAtmoMixture::mix(const double oldMoles, const double addMoles, const d
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void CabinAtmoMixture::normalize()
 {
-    double total = 0.0;
-    for (unsigned int i=0; i<NBULK; ++i) {
-        mMoleFractions[i] = std::max(0.0, mMoleFractions[i]);
-        total += mMoleFractions[i];
-    }
-    if (total > 0.0) {
-        for (unsigned int i=0; i<NBULK; ++i) {
-            mMoleFractions[i] /= total;
-        }
-    } else {
-        mMoleFractions[0] = 1.0;
-        for (unsigned int i=1; i<NBULK; ++i) {
-            mMoleFractions[i] = 0.0;
-        }
-    }
+   double total = 0.0;
+   for ( unsigned int i = 0; i < NBULK; ++i ) {
+      mMoleFractions[i] = std::max( 0.0, mMoleFractions[i] );
+      total += mMoleFractions[i];
+   }
+   if ( total > 0.0 ) {
+      for ( unsigned int i = 0; i < NBULK; ++i ) {
+         mMoleFractions[i] /= total;
+      }
+   } else {
+      mMoleFractions[0] = 1.0;
+      for ( unsigned int i = 1; i < NBULK; ++i ) {
+         mMoleFractions[i] = 0.0;
+      }
+   }
 }

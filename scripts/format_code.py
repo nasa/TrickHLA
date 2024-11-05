@@ -85,6 +85,8 @@ def main():
    trickhla_src_paths.append( os.path.join( trickhla_home, 'source' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/EntityDynamics' ) ):
       trickhla_src_paths.append( os.path.join( trickhla_home, 'models/EntityDynamics' ) )
+   if os.path.isdir( os.path.join( trickhla_home, 'models/FDI' ) ):
+      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/FDI' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/SAIntegrator' ) ):
       trickhla_src_paths.append( os.path.join( trickhla_home, 'models/SAIntegrator' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/simconfig' ) ):
@@ -152,14 +154,14 @@ def main():
          dir_list = os.listdir( '.' )
          for dir_entry in dir_list:
             # Only interested in directories. There really should not be any files.
-            if os.path.isfile( dir_entry ): continue
-            # Either clean up or format the model directory.
-            if args.clean:
-               cleanup_directory( dir_entry, args.test, args.verbose )
-            else:
-               if format_directory( dir_entry, clang_format_cmd, trickhla_scripts,
-                                    args.in_place, args.test, args.verbose ):
-                  TrickHLAMessage.failure( 'Could not format directory: ' + dir_entry )
+            if os.path.isdir( dir_entry ):
+               # Either clean up or format the directory.
+               if args.clean:
+                  cleanup_directory( dir_entry, args.test, args.verbose )
+               else:
+                  if format_directory( dir_entry, clang_format_cmd, trickhla_scripts,
+                                       args.in_place, args.test, args.verbose ):
+                     TrickHLAMessage.failure( 'Could not format directory: ' + dir_entry )
          # End: for dir_entry in dir_list :
    # End: args.file :
 
