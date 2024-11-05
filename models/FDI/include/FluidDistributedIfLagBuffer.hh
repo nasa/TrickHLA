@@ -54,7 +54,7 @@ class FluidDistributedIfLagBuffer
    /// @brief  Default destructs this FluidDistributedIfLagBuffer.
    virtual ~FluidDistributedIfLagBuffer();
    /// @brief  Initializes this FluidDistributedIfLagBuffer.
-   void initialize( const unsigned int nBulk = 6, const unsigned int nTc = 0 );
+   void initialize( unsigned int const nBulk = 6, unsigned int const nTc = 0 );
    /// @brief  Updates the head and tail indeces for the buffers.
    void step();
 
@@ -66,9 +66,9 @@ class FluidDistributedIfLagBuffer
    /// @brief  Sets the interface Head & Tail data pointers to the correct buffer locations.
    void updatePointers();
    /// @brief  Copy constructor unavailable since declared private and not implemented.
-   FluidDistributedIfLagBuffer( const FluidDistributedIfLagBuffer & );
+   FluidDistributedIfLagBuffer( FluidDistributedIfLagBuffer const & );
    /// @brief  Assignment operator unavailable since declared private and not implemented.
-   FluidDistributedIfLagBuffer &operator=( const FluidDistributedIfLagBuffer & );
+   FluidDistributedIfLagBuffer &operator=( FluidDistributedIfLagBuffer const & );
 };
 
 /// @}

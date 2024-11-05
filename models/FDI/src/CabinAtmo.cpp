@@ -77,7 +77,9 @@ CabinAtmoConfigData::~CabinAtmoConfigData()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details  Default constructs this CabinAtmo.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-CabinAtmo::CabinAtmo( const std::string &name, const CabinAtmoConfigData *config )
+CabinAtmo::CabinAtmo(
+   std::string const         &name,
+   CabinAtmoConfigData const *config )
    : mConfig( config ),
      mCabin( name + ".mCabin" ),
      mVestibule( name + ".mVestibule" ),
@@ -171,7 +173,8 @@ void CabinAtmo::validateConfig() const
 ///
 /// @details  This is the main model step.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void CabinAtmo::step( const double dt )
+void CabinAtmo::step(
+   double const dt )
 {
    if ( not mInitFlag ) {
       std::cout << "ERROR: " << mName << " updated without being initialized." << std::endl;
@@ -395,7 +398,9 @@ void CabinAtmo::invertMatrix()
 ///           operated on directly, so this function can compute alternate solutions for {x} such as
 ///           for modified {b} used to compute capacitances, etc.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void CabinAtmo::solvePressures( double *x, double *b )
+void CabinAtmo::solvePressures(
+   double *x,
+   double *b )
 {
    x[0] = mAinv[0][0] * b[0] + mAinv[0][1] * b[1] + mAinv[0][2] * b[2];
    x[1] = mAinv[1][0] * b[0] + mAinv[1][1] * b[1] + mAinv[1][2] * b[2];
@@ -455,11 +460,11 @@ void CabinAtmo::computeFlows()
    ///   circulation path - this avoids the Demand rate limit from constraining the IMV fan
    ///   circulation flow too much.  In Supply role, subtract the Demand's flow rate from the
    ///   volume inflow.
-   const bool imvCircPath = mGrillValveOpen or ( mImvValveOpen and mHatchOpen );
+   bool const imvCircPath = mGrillValveOpen or ( mImvValveOpen and mHatchOpen );
    if ( mVestibule.mIfDataValid and mVestibule.mIf.isInDemandRole() ) {
       if ( not imvCircPath ) {
          if ( std::abs( mVestibule.mInflowRate ) > mVestibule.mIfDemandLim ) {
-            const double limRatio = mVestibule.mIfDemandLim / std::abs( mVestibule.mInflowRate );
+            double const limRatio = mVestibule.mIfDemandLim / std::abs( mVestibule.mInflowRate );
             mHatchFlow *= limRatio;
             mMpevFlow *= limRatio;
             mGrillValveFlow *= limRatio;
@@ -472,7 +477,7 @@ void CabinAtmo::computeFlows()
    if ( mImvDuct.mIfDataValid and mImvDuct.mIf.isInDemandRole() ) {
       if ( not imvCircPath ) {
          if ( std::abs( mImvDuct.mInflowRate ) > mImvDuct.mIfDemandLim ) {
-            const double limRatio = mImvDuct.mIfDemandLim / std::abs( mImvDuct.mInflowRate );
+            double const limRatio = mImvDuct.mIfDemandLim / std::abs( mImvDuct.mInflowRate );
             mImvFlow *= limRatio;
             mGrillValveFlow *= limRatio;
             mImvDuct.mInflowRate *= limRatio;
@@ -592,8 +597,8 @@ void CabinAtmo::computeCapacitance()
       double pressures[3] = { 0.0, 0.0, 0.0 };
       solvePressures( pressures, sources );
       /// - Compute 1/dP.
-      const double vestCapDp  = pressures[1] - mSolutionVector[1];
-      const double imvCapDp   = pressures[2] - mSolutionVector[2];
+      double const vestCapDp  = pressures[1] - mSolutionVector[1];
+      double const imvCapDp   = pressures[2] - mSolutionVector[2];
       mVestibule.mCapacitance = mTimestep / vestCapDp;
       /// - Subtract the Supplied capacitance when we are in Demand role.
       mVestibule.mCapacitance -= vestSuppliedC;
@@ -601,7 +606,7 @@ void CabinAtmo::computeCapacitance()
       ///   has at the vestibule location when it is in Demand role
       if ( imvSuppliedC > DBL_EPSILON ) { // IMV is in Demand role
          if ( imvCapDp > DBL_EPSILON ) {  // IMV affects vestibule thru conductive paths
-            const double capDpRatio = imvCapDp / vestCapDp;
+            double const capDpRatio = imvCapDp / vestCapDp;
             mVestibule.mCapacitance -= ( imvSuppliedC * capDpRatio );
          }
       }
@@ -613,13 +618,13 @@ void CabinAtmo::computeCapacitance()
       double sources[3]   = { mSourceVector[0], mSourceVector[1], mSourceVector[2] + 1.0 };
       double pressures[3] = { 0.0, 0.0, 0.0 };
       solvePressures( pressures, sources );
-      const double vestCapDp = pressures[1] - mSolutionVector[1];
-      const double imvCapDp  = pressures[2] - mSolutionVector[2];
+      double const vestCapDp = pressures[1] - mSolutionVector[1];
+      double const imvCapDp  = pressures[2] - mSolutionVector[2];
       mImvDuct.mCapacitance  = mTimestep / imvCapDp;
       mImvDuct.mCapacitance -= imvSuppliedC;
       if ( vestSuppliedC > DBL_EPSILON ) { // Vestibule is in Demand role
          if ( vestCapDp > DBL_EPSILON ) {  // Vestibule affects IMV thru conductive paths
-            const double capDpRatio = vestCapDp / imvCapDp;
+            double const capDpRatio = vestCapDp / imvCapDp;
             mImvDuct.mCapacitance -= ( vestSuppliedC * capDpRatio );
          }
       }

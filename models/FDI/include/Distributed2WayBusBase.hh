@@ -52,11 +52,11 @@ class Distributed2WayBusBaseInterfaceData // !!! NOTE this must remain a base cl
    /// @brief  Returns whether this object has received valid data.
    virtual bool hasValidData() const = 0;
    /// @brief Assignment operator for this Distributed 2-Way Bus Base interface data.
-   Distributed2WayBusBaseInterfaceData &operator=( const Distributed2WayBusBaseInterfaceData &that );
+   Distributed2WayBusBaseInterfaceData &operator=( Distributed2WayBusBaseInterfaceData const &that );
 
   private:
    /// @brief Copy constructor unavailable since declared private and not implemented.
-   Distributed2WayBusBaseInterfaceData( const Distributed2WayBusBaseInterfaceData & );
+   Distributed2WayBusBaseInterfaceData( Distributed2WayBusBaseInterfaceData const & );
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,13 +78,13 @@ class Distributed2WayBusNotification
    NotificationLevel mLevel;   /**< (1) The severity level of the notification. */
    std::string       mMessage; /**< (1) the notification message. */
    /// @brief Default constructor.
-   Distributed2WayBusNotification( const NotificationLevel level = NONE, const std::string &message = "" );
+   Distributed2WayBusNotification( NotificationLevel const level = NONE, std::string const &message = "" );
    /// @brief Default destructor.
    virtual ~Distributed2WayBusNotification();
    /// @brief Copy constructor.
-   Distributed2WayBusNotification( const Distributed2WayBusNotification &that );
+   Distributed2WayBusNotification( Distributed2WayBusNotification const &that );
    /// @brief Assignment operator.
-   Distributed2WayBusNotification &operator=( const Distributed2WayBusNotification &that );
+   Distributed2WayBusNotification &operator=( Distributed2WayBusNotification const &that );
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,7 +107,7 @@ class Distributed2WayBusBase
    /// @brief Default Destructor.
    virtual ~Distributed2WayBusBase();
    /// @brief Initializes this Distributed 2-Way Bus Interface.
-   void initialize( const bool isPairMaster );
+   void initialize( bool const isPairMaster );
    /// @brief Forces this interface to remain in Demand role.
    void forceDemandRole();
    /// @brief Forces this interface to remain in Supply role.
@@ -129,16 +129,16 @@ class Distributed2WayBusBase
    /// @brief Updates frame counters and the loop latency measurement.
    void updateFrameCounts();
    /// @brief Adds a notification message to the queue.
-   void pushNotification( const Distributed2WayBusNotification::NotificationLevel level,
-                          const std::string                                      &message );
+   void pushNotification( Distributed2WayBusNotification::NotificationLevel const level,
+                          std::string const                                      &message );
 
   private:
    Distributed2WayBusBaseInterfaceData *mInDataPtr;  /**<    (1) cio(**) Pointer to the derived class incoming data instance. */
    Distributed2WayBusBaseInterfaceData *mOutDataPtr; /**<    (1) cio(**) Pointer to the derived class outgoing data instance. */
    /// @brief Copy constructor unavailable since declared private and not implemented.
-   Distributed2WayBusBase( const Distributed2WayBusBase &that );
+   Distributed2WayBusBase( Distributed2WayBusBase const &that );
    /// @brief Assignment operator unavailable since declared private and not implemented.
-   Distributed2WayBusBase &operator=( const Distributed2WayBusBase &that );
+   Distributed2WayBusBase &operator=( Distributed2WayBusBase const &that );
 };
 
 /// @}
@@ -184,8 +184,8 @@ inline bool Distributed2WayBusBase::isInDemandRole() const
 /// @details  Adds a new notification message object to the message queue.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 inline void Distributed2WayBusBase::pushNotification(
-   const Distributed2WayBusNotification::NotificationLevel level,
-   const std::string                                      &message )
+   Distributed2WayBusNotification::NotificationLevel const level,
+   std::string const                                      &message )
 {
    mNotifications.push_back( Distributed2WayBusNotification( level, message ) );
 }

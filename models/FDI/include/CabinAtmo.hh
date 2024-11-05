@@ -70,9 +70,9 @@ class CabinAtmoConfigData
 
   private:
    /// @brief  Copy constructor unavailable since declared private and not implemented.
-   CabinAtmoConfigData( const CabinAtmoConfigData & );
+   CabinAtmoConfigData( CabinAtmoConfigData const & );
    /// @brief  Assignment operator unavailable since declared private and not implemented.
-   CabinAtmoConfigData &operator=( const CabinAtmoConfigData & );
+   CabinAtmoConfigData &operator=( CabinAtmoConfigData const & );
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -97,7 +97,7 @@ class CabinAtmoConfigData
 class CabinAtmo
 {
   public:
-   const CabinAtmoConfigData  *mConfig;            /**< (1) cio(**) The configuration data. */
+   CabinAtmoConfigData const  *mConfig;            /**< (1) cio(**) The configuration data. */
    CabinAtmoVolume             mCabin;             /**< (1)         The main cabin volume model. */
    CabinAtmoVolume             mVestibule;         /**< (1)         The vestibule volume model. */
    CabinAtmoVolume             mImvDuct;           /**< (1)         The IMV duct volume model. */
@@ -119,13 +119,13 @@ class CabinAtmo
    double                      mSolutionVector[3]; /**< (Pa)       Solution vector of the system of equations. */
    double                      mAinv[3][3];        /**< (Pa*s/mol) Inverse of the admittance matrix. */
    /// @brief  Default constructs this Simple Cabin Atmosphere Model.
-   CabinAtmo( const std::string &name, const CabinAtmoConfigData *config );
+   CabinAtmo( std::string const &name, CabinAtmoConfigData const *config );
    /// @brief  Default destructs this Simple Cabin Atmosphere Model.
    virtual ~CabinAtmo();
    /// @brief  Initializes this Simple Cabin Atmosphere Model.
    void initialize();
    /// @brief  Propagates this Simple Cabin Atmosphere Model by one time step.
-   void step( const double dt );
+   void step( double const dt );
 
   protected:
    std::string mName;     /**< *o (1) cio(**) Sim-unique name of this object for user notifications. */
@@ -153,13 +153,13 @@ class CabinAtmo
    /// @brief  Computes total conserved parameters.
    void updateConservation();
    /// @brief  Limits the given input to the given range.
-   double limitRange( const double min, const double input, const double max ) const;
+   double limitRange( double const min, double const input, double const max ) const;
 
   private:
    /// @brief  Copy constructor unavailable since declared private and not implemented.
-   CabinAtmo( const CabinAtmo & );
+   CabinAtmo( CabinAtmo const & );
    /// @brief  Assignment operator unavailable since declared private and not implemented.
-   CabinAtmo &operator=( const CabinAtmo & );
+   CabinAtmo &operator=( CabinAtmo const & );
 };
 
 /// @}
@@ -173,7 +173,7 @@ class CabinAtmo
 ///
 /// @details  Returns the given input limited to the range [min, max].
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-inline double CabinAtmo::limitRange( const double min, const double input, const double max ) const
+inline double CabinAtmo::limitRange( double const min, double const input, double const max ) const
 {
    return std::max( std::min( input, max ), min );
 }

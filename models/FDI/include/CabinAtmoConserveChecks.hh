@@ -66,11 +66,11 @@ class CabinAtmoConserveParameters
    /// @brief Destruct the conservation parameters object.
    virtual ~CabinAtmoConserveParameters();
    /// @brief Assignment operator for the conservation parameters object.
-   CabinAtmoConserveParameters &operator=( const CabinAtmoConserveParameters &that );
+   CabinAtmoConserveParameters &operator=( CabinAtmoConserveParameters const &that );
 
   private:
    /// @brief Copy constructor unavailable since declared private and not implemented.
-   CabinAtmoConserveParameters( const CabinAtmoConserveParameters & );
+   CabinAtmoConserveParameters( CabinAtmoConserveParameters const & );
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,8 +83,8 @@ class CabinAtmoConserveParameters
 class CabinAtmoConserveChecks
 {
   public:
-   const CabinAtmoConserveParameters &modelA;               /**< (1) Reference to model instance A conservation parameters. */
-   const CabinAtmoConserveParameters &modelB;               /**< (1) Reference to model instance B conservation parameters. */
+   CabinAtmoConserveParameters const &modelA;               /**< (1) Reference to model instance A conservation parameters. */
+   CabinAtmoConserveParameters const &modelB;               /**< (1) Reference to model instance B conservation parameters. */
    CabinAtmoConserveParameters        modelAConserveParams; /**< (1) Conservation parameters input from model instance A. */
    CabinAtmoConserveParameters        modelBConserveParams; /**< (1) Conservation parameters input from model instance B. */
    bool                               isBsideHla;           /**< (1) True if the B side model is across the HLA interface. */
@@ -93,7 +93,7 @@ class CabinAtmoConserveChecks
    CabinAtmoConserveParameters        reference;            /**< (1) Reference total values of the conserved parameters between instance A and B. */
    CabinAtmoConserveParameters        error;                /**< (1) Percent error in the current total values versus the reference. */
    /// @brief Construct the conservation checks object.
-   CabinAtmoConserveChecks( const CabinAtmoConserveParameters &a, const CabinAtmoConserveParameters &b );
+   CabinAtmoConserveChecks( CabinAtmoConserveParameters const &a, CabinAtmoConserveParameters const &b );
    /// @brief Destruct the conservation checks object.
    virtual ~CabinAtmoConserveChecks();
    /// @brief Updates the conservation checks and computes error values.
@@ -101,9 +101,9 @@ class CabinAtmoConserveChecks
 
   private:
    // Copy constructor unavailable since declared private and not implemented.
-   CabinAtmoConserveChecks( const CabinAtmoConserveChecks & );
+   CabinAtmoConserveChecks( CabinAtmoConserveChecks const & );
    // Assignment operator unavailable since declared private and not implemented.
-   CabinAtmoConserveChecks &operator=( const CabinAtmoConserveChecks & );
+   CabinAtmoConserveChecks &operator=( CabinAtmoConserveChecks const & );
 };
 
 /// @}

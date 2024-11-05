@@ -18,8 +18,8 @@ LIBRARY DEPENDENCY:
 /// @details  Constructs this notification message with the given values.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 Distributed2WayBusNotification::Distributed2WayBusNotification(
-   const NotificationLevel level,
-   const std::string      &message )
+   NotificationLevel const level,
+   std::string const      &message )
    : mLevel( level ),
      mMessage( message )
 {
@@ -39,7 +39,8 @@ Distributed2WayBusNotification::~Distributed2WayBusNotification()
 ///
 /// @details  Notification message copy constructor.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-Distributed2WayBusNotification::Distributed2WayBusNotification( const Distributed2WayBusNotification &that )
+Distributed2WayBusNotification::Distributed2WayBusNotification(
+   Distributed2WayBusNotification const &that )
    : mLevel( that.mLevel ),
      mMessage( that.mMessage )
 {
@@ -51,7 +52,8 @@ Distributed2WayBusNotification::Distributed2WayBusNotification( const Distribute
 ///
 /// @details  Notification message assignment operator.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-Distributed2WayBusNotification &Distributed2WayBusNotification::operator=( const Distributed2WayBusNotification &that )
+Distributed2WayBusNotification &Distributed2WayBusNotification::operator=(
+   Distributed2WayBusNotification const &that )
 {
    if ( this != &that ) {
       this->mLevel   = that.mLevel;
@@ -84,7 +86,8 @@ Distributed2WayBusBaseInterfaceData::~Distributed2WayBusBaseInterfaceData()
 ///
 /// @details  Assigns values of this object's attributes to the given object's values.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-Distributed2WayBusBaseInterfaceData &Distributed2WayBusBaseInterfaceData::operator=( const Distributed2WayBusBaseInterfaceData &that )
+Distributed2WayBusBaseInterfaceData &Distributed2WayBusBaseInterfaceData::operator=(
+   Distributed2WayBusBaseInterfaceData const &that )
 {
    if ( this != &that ) {
       mFrameCount    = that.mFrameCount;
@@ -100,8 +103,9 @@ Distributed2WayBusBaseInterfaceData &Distributed2WayBusBaseInterfaceData::operat
 ///
 /// @details  Default constructs this Distributed 2-Way Bus Base Interface.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-Distributed2WayBusBase::Distributed2WayBusBase( Distributed2WayBusBaseInterfaceData *inDataPtr,
-                                                Distributed2WayBusBaseInterfaceData *outDataPtr )
+Distributed2WayBusBase::Distributed2WayBusBase(
+   Distributed2WayBusBaseInterfaceData *inDataPtr,
+   Distributed2WayBusBaseInterfaceData *outDataPtr )
    : mIsPairMaster( false ),
      mInDataLastDemandMode( false ),
      mFramesSinceFlip( 0 ),
@@ -127,7 +131,8 @@ Distributed2WayBusBase::~Distributed2WayBusBase()
 ///
 /// @details  Initializes this Distributed 2-Way Bus Base Interface.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void Distributed2WayBusBase::initialize( const bool isPairMaster )
+void Distributed2WayBusBase::initialize(
+   bool const isPairMaster )
 {
    /// - Initialize remaining state variables.  mForcedRole is not initialized, assuming the user
    ///   may have already set it.
@@ -161,7 +166,8 @@ void Distributed2WayBusBase::updateFrameCounts()
 ///           that message off of the queue, reducing the queue size by one.  If the queue size is
 ///           already zero, then returns an empty message.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-unsigned int Distributed2WayBusBase::popNotification( Distributed2WayBusNotification &notification )
+unsigned int Distributed2WayBusBase::popNotification(
+   Distributed2WayBusNotification &notification )
 {
    if ( mNotifications.size() > 0 ) {
       notification = mNotifications.back();

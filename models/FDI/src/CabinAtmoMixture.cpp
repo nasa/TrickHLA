@@ -46,7 +46,8 @@ CabinAtmoMixture::~CabinAtmoMixture()
 ///
 /// @details  Assigns the values of this object equal to the values of the given object.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-CabinAtmoMixture &CabinAtmoMixture::operator=( const CabinAtmoMixture &that )
+CabinAtmoMixture &CabinAtmoMixture::operator=(
+   CabinAtmoMixture const &that )
 {
    if ( this != &that ) {
       for ( unsigned int i = 0; i < NFOMBULK; ++i ) {
@@ -66,7 +67,9 @@ CabinAtmoMixture &CabinAtmoMixture::operator=( const CabinAtmoMixture &that )
 ///
 /// @details  Initializes this object with the given initial mole fractions.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void CabinAtmoMixture::initialize( const double *moleFractions, const double *compoundCp )
+void CabinAtmoMixture::initialize(
+   double const *moleFractions,
+   double const *compoundCp )
 {
    mCompoundSpecificHeats = compoundCp;
    for ( unsigned int i = 0; i < NBULK; ++i ) {
@@ -115,7 +118,8 @@ void CabinAtmoMixture::updateSpecificHeat()
 ///
 /// @details  Write this object's mixture into the given mole fractions array.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void CabinAtmoMixture::writeMoleFractions( double *moleFractions ) const
+void CabinAtmoMixture::writeMoleFractions(
+   double *moleFractions ) const
 {
    for ( unsigned int i = 0; i < NBULK; ++i ) {
       moleFractions[i] = mMoleFractions[i];
@@ -127,7 +131,8 @@ void CabinAtmoMixture::writeMoleFractions( double *moleFractions ) const
 ///
 /// @details  Reads the given mole fractions array into this object's mixture.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void CabinAtmoMixture::readMoleFractions( const double *moleFractions )
+void CabinAtmoMixture::readMoleFractions(
+   double const *moleFractions )
 {
    for ( unsigned int i = 0; i < NBULK; ++i ) {
       mMoleFractions[i] = moleFractions[i];
@@ -164,7 +169,10 @@ void CabinAtmoMixture::readMoleFractions( const double *moleFractions )
 /// @note     A negative value of addMoles can be used to removed the specified mixture from the
 ///           previous mixture.  Any negative mole fractions in the resulting mixture are zeroed.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void CabinAtmoMixture::mix( const double oldMoles, const double addMoles, const double *addFractions )
+void CabinAtmoMixture::mix(
+   double const  oldMoles,
+   double const  addMoles,
+   double const *addFractions )
 {
    for ( unsigned int i = 0; i < NBULK; ++i ) {
       mMoleFractions[i] = oldMoles * mMoleFractions[i] + addMoles * addFractions[i];

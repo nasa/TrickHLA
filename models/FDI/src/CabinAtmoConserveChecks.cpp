@@ -44,7 +44,8 @@ CabinAtmoConserveParameters::~CabinAtmoConserveParameters()
 /// @details  Assigns the values of this Simple Cabin Atmosphere Conservation Check Parameters
 ///           object equal to the values of the given object.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-CabinAtmoConserveParameters &CabinAtmoConserveParameters::operator=( const CabinAtmoConserveParameters &that )
+CabinAtmoConserveParameters &CabinAtmoConserveParameters::operator=(
+   CabinAtmoConserveParameters const &that )
 {
    if ( this != &that ) {
       energy   = that.energy;
@@ -63,7 +64,9 @@ CabinAtmoConserveParameters &CabinAtmoConserveParameters::operator=( const Cabin
 ///
 /// @details  Constructs this Simple Cabin Atmosphere Conservation Checks object.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-CabinAtmoConserveChecks::CabinAtmoConserveChecks( const CabinAtmoConserveParameters &a, const CabinAtmoConserveParameters &b )
+CabinAtmoConserveChecks::CabinAtmoConserveChecks(
+   CabinAtmoConserveParameters const &a,
+   CabinAtmoConserveParameters const &b )
    : modelA( a ),
      modelB( b ),
      modelAConserveParams(),

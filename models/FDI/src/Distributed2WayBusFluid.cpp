@@ -52,7 +52,8 @@ FluidDistributedMixtureData::~FluidDistributedMixtureData()
 ///           arrays, which are not resized.  This doesn't assume the objects have been initialized,
 ///           so we avoid setting or referencing mixture arrays that haven't been allocated.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-FluidDistributedMixtureData &FluidDistributedMixtureData::operator=( const FluidDistributedMixtureData &that )
+FluidDistributedMixtureData &FluidDistributedMixtureData::operator=(
+   FluidDistributedMixtureData const &that )
 {
    if ( this != &that ) {
       mEnergy = that.mEnergy;
@@ -75,9 +76,10 @@ FluidDistributedMixtureData &FluidDistributedMixtureData::operator=( const Fluid
 ///           virtual and the name argument exists to support derived types needing to allocate the
 ///           mixture arrays using a specific sim memory manager.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void FluidDistributedMixtureData::initialize( const unsigned int nBulk,
-                                              const unsigned int nTc,
-                                              const std::string &name __attribute__( ( unused ) ) )
+void FluidDistributedMixtureData::initialize(
+   unsigned int const nBulk,
+   unsigned int const nTc,
+   std::string const &name __attribute__( ( unused ) ) )
 {
    mNumFluid = nBulk;
    mNumTc    = nTc;
@@ -113,9 +115,11 @@ void FluidDistributedMixtureData::initialize( const unsigned int nBulk,
 ///           array can be larger or smaller than our internal array.  If our array is larger, then
 ///           the remaining values in the our array are filled with zeroes.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void FluidDistributedMixtureData::setMoleFractions( const double *fractions, const unsigned int size )
+void FluidDistributedMixtureData::setMoleFractions(
+   double const      *fractions,
+   unsigned int const size )
 {
-   const unsigned int smallerSize = std::min( mNumFluid, size );
+   unsigned int const smallerSize = std::min( mNumFluid, size );
    for ( unsigned int i = 0; i < smallerSize; ++i ) {
       mMoleFractions[i] = fractions[i];
    }
@@ -132,9 +136,11 @@ void FluidDistributedMixtureData::setMoleFractions( const double *fractions, con
 ///           array can be larger or smaller than our internal array.  If our array is larger, then
 ///           the remaining values in the our array are filled with zeroes.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void FluidDistributedMixtureData::setTcMoleFractions( const double *fractions, const unsigned int size )
+void FluidDistributedMixtureData::setTcMoleFractions(
+   double const      *fractions,
+   unsigned int const size )
 {
-   const unsigned int smallerSize = std::min( mNumTc, size );
+   unsigned int const smallerSize = std::min( mNumTc, size );
    for ( unsigned int i = 0; i < smallerSize; ++i ) {
       mTcMoleFractions[i] = fractions[i];
    }
@@ -151,9 +157,11 @@ void FluidDistributedMixtureData::setTcMoleFractions( const double *fractions, c
 ///           array can be larger or smaller than our internal array.  If our array is smaller, then
 ///           the remaining values in the given array are filled with zeroes.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void FluidDistributedMixtureData::getMoleFractions( double *fractions, const unsigned int size ) const
+void FluidDistributedMixtureData::getMoleFractions(
+   double            *fractions,
+   unsigned int const size ) const
 {
-   const unsigned int smallerSize = std::min( mNumFluid, size );
+   unsigned int const smallerSize = std::min( mNumFluid, size );
    for ( unsigned int i = 0; i < smallerSize; ++i ) {
       fractions[i] = mMoleFractions[i];
    }
@@ -170,9 +178,11 @@ void FluidDistributedMixtureData::getMoleFractions( double *fractions, const uns
 ///           array can be larger or smaller than our internal array.  If our array is smaller, then
 ///           the remaining values in the given array are filled with zeroes.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void FluidDistributedMixtureData::getTcMoleFractions( double *fractions, const unsigned int size ) const
+void FluidDistributedMixtureData::getTcMoleFractions(
+   double            *fractions,
+   unsigned int const size ) const
 {
-   const unsigned int smallerSize = std::min( mNumTc, size );
+   unsigned int const smallerSize = std::min( mNumTc, size );
    for ( unsigned int i = 0; i < smallerSize; ++i ) {
       fractions[i] = mTcMoleFractions[i];
    }
@@ -204,7 +214,8 @@ Distributed2WayBusFluidFluidState::~Distributed2WayBusFluidFluidState()
 ///
 /// @details  Assigns values of this object's attributes to the given object's values.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-Distributed2WayBusFluidFluidState &Distributed2WayBusFluidFluidState::operator=( const Distributed2WayBusFluidFluidState &that )
+Distributed2WayBusFluidFluidState &Distributed2WayBusFluidFluidState::operator=(
+   Distributed2WayBusFluidFluidState const &that )
 {
    if ( this != &that ) {
       FluidDistributedMixtureData::operator=( that );
@@ -236,7 +247,8 @@ Distributed2WayBusFluidFlowState::~Distributed2WayBusFluidFlowState()
 ///
 /// @details  Assigns values of this object's attributes to the given object's values.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-Distributed2WayBusFluidFlowState &Distributed2WayBusFluidFlowState::operator=( const Distributed2WayBusFluidFlowState &that )
+Distributed2WayBusFluidFlowState &Distributed2WayBusFluidFlowState::operator=(
+   Distributed2WayBusFluidFlowState const &that )
 {
    if ( this != &that ) {
       FluidDistributedMixtureData::operator=( that );
@@ -270,7 +282,8 @@ Distributed2WayBusFluidInterfaceData::~Distributed2WayBusFluidInterfaceData()
 ///
 /// @details  Assigns values of this object's attributes to the given object's values.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-Distributed2WayBusFluidInterfaceData &Distributed2WayBusFluidInterfaceData::operator=( const Distributed2WayBusFluidInterfaceData &that )
+Distributed2WayBusFluidInterfaceData &Distributed2WayBusFluidInterfaceData::operator=(
+   Distributed2WayBusFluidInterfaceData const &that )
 {
    if ( this != &that ) {
       Distributed2WayBusBaseInterfaceData::operator=( that );
@@ -307,11 +320,11 @@ bool Distributed2WayBusFluidInterfaceData::hasValidData() const
 
 /// @details  Upper limit of ratio of Supply-side capacitance over Demand-side capacitance, above
 ///           which the stability filter imposes no limit on Demand-side flow rate.
-const double Distributed2WayBusFluid::mModingCapacitanceRatio = 1.25;
+double const Distributed2WayBusFluid::mModingCapacitanceRatio = 1.25;
 /// @details  Constant in the lag gain equation: lag_gain = 1.5 * 0.75^lag_frames
-const double Distributed2WayBusFluid::mDemandFilterConstA = 1.5;
+double const Distributed2WayBusFluid::mDemandFilterConstA = 1.5;
 /// @details  Constant in the lag gain equation: lag_gain = 1.5 * 0.75^lag_frames
-const double Distributed2WayBusFluid::mDemandFilterConstB = 0.75;
+double const Distributed2WayBusFluid::mDemandFilterConstB = 0.75;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details  Default constructs this Fluid Distributed 2-Way Bus Interface.
@@ -341,9 +354,10 @@ Distributed2WayBusFluid::~Distributed2WayBusFluid()
 ///
 /// @details  Initializes this Fluid Distributed 2-Way Bus Interface.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void Distributed2WayBusFluid::initialize( const bool         isPairMaster,
-                                          const unsigned int nIfBulk,
-                                          const unsigned int nIfTc )
+void Distributed2WayBusFluid::initialize(
+   bool const         isPairMaster,
+   unsigned int const nIfBulk,
+   unsigned int const nIfTc )
 {
    /// - Initialize the interface data objects so they can allocate memory.
    mInData.initialize( nIfBulk, nIfTc );
@@ -365,7 +379,8 @@ void Distributed2WayBusFluid::initialize( const bool         isPairMaster,
 /// @note  This should only be called when this interface is in the Supply role, and this will push
 ///        a warning notification if called in the Demand role.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void Distributed2WayBusFluid::setFluidState( const Distributed2WayBusFluidFluidState &fluid )
+void Distributed2WayBusFluid::setFluidState(
+   Distributed2WayBusFluidFluidState const &fluid )
 {
    if ( isInDemandRole() ) {
       pushNotification( Distributed2WayBusNotification::WARN,
@@ -392,7 +407,8 @@ void Distributed2WayBusFluid::setFluidState( const Distributed2WayBusFluidFluidS
 ///        briefly during run start or role swaps.  The returned bool value indicates whether the
 ///        supplied fluid state object was updated.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Distributed2WayBusFluid::getFluidState( Distributed2WayBusFluidFluidState &fluid ) const
+bool Distributed2WayBusFluid::getFluidState(
+   Distributed2WayBusFluidFluidState &fluid ) const
 {
    if ( isInDemandRole() and mInData.hasValidData() and not mInData.mDemandMode ) {
       fluid.mPressure = mInData.mSource;
@@ -417,7 +433,8 @@ bool Distributed2WayBusFluid::getFluidState( Distributed2WayBusFluidFluidState &
 /// @note  This should only be called when this interface is in the Supply role, and this will push
 ///        a warning notification if called in the Demand role.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void Distributed2WayBusFluid::setFlowState( const Distributed2WayBusFluidFlowState &flow )
+void Distributed2WayBusFluid::setFlowState(
+   Distributed2WayBusFluidFlowState const &flow )
 {
    if ( not isInDemandRole() ) {
       pushNotification( Distributed2WayBusNotification::WARN,
@@ -448,7 +465,8 @@ void Distributed2WayBusFluid::setFlowState( const Distributed2WayBusFluidFlowSta
 ///        briefly during run start or role swaps.  The returned bool value indicates whether the
 ///        supplied flow state object was updated.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Distributed2WayBusFluid::getFlowState( Distributed2WayBusFluidFlowState &flow ) const
+bool Distributed2WayBusFluid::getFlowState(
+   Distributed2WayBusFluidFlowState &flow ) const
 {
    if ( not isInDemandRole() and mInData.hasValidData() and mInData.mDemandMode ) {
       flow.mFlowRate = mInData.mSource;
@@ -482,8 +500,9 @@ void Distributed2WayBusFluid::processInputs()
 ///           capacitances of the interfacing sides.  When the Demand-side model limits its flow
 ///           rate to/from the interface volume to this limit, the interface will be stable.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-double Distributed2WayBusFluid::computeDemandLimit( const double timestep,
-                                                    const double demandSidePressure )
+double Distributed2WayBusFluid::computeDemandLimit(
+   double const timestep,
+   double const demandSidePressure )
 {
    double gain      = 0.0;
    double ndotLimit = 0.0;
@@ -491,11 +510,11 @@ double Distributed2WayBusFluid::computeDemandLimit( const double timestep,
       /// - Limit inputs to avoid divide-by-zero.
       if ( timestep > DBL_EPSILON and mOutData.mCapacitance > DBL_EPSILON and mInData.mCapacitance > DBL_EPSILON ) {
          /// - Limited exponent for the lag gain:
-         const int exponent = std::min( 100, std::max( 1, mLoopLatency ) );
+         int const exponent = std::min( 100, std::max( 1, mLoopLatency ) );
          /// - Stability filter 'lag gain' imposes limit on demand flow as latency increases.
-         const double lagGain = std::min( 1.0, mDemandFilterConstA * std::pow( mDemandFilterConstB, exponent ) );
+         double const lagGain = std::min( 1.0, mDemandFilterConstA * std::pow( mDemandFilterConstB, exponent ) );
          /// - Limited capacitance ratio for the gain:
-         const double csOverCd = std::min( mModingCapacitanceRatio, std::max( 1.0, mInData.mCapacitance / mOutData.mCapacitance ) );
+         double const csOverCd = std::min( mModingCapacitanceRatio, std::max( 1.0, mInData.mCapacitance / mOutData.mCapacitance ) );
          /// - Stability filter 'gain' further limits the demand flow as Supply-side capacitance
          ///   approaches Demand-side capacitance.
          gain = lagGain + ( 1.0 - lagGain ) * ( csOverCd - 1.0 ) * 4.0;
@@ -583,7 +602,8 @@ void Distributed2WayBusFluid::flipToSupplyMode()
 ///           capacitance to the given value.  Flips from Supply to Demand role if the new
 ///           capacitance is low enough, and updates the count of frames since the last mode flip.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void Distributed2WayBusFluid::processOutputs( const double capacitance )
+void Distributed2WayBusFluid::processOutputs(
+   double const capacitance )
 {
    mOutData.mCapacitance = capacitance;
    if ( not isInDemandRole() ) {

@@ -47,26 +47,26 @@ class CabinAtmoVolumeConfigData
    double        mVolume;        /**< (m3)      cio(**) Air volume. */
    double        mTemperature;   /**< (K)       cio(**) Air temperature. */
    double        mPressure;      /**< (Pa)      cio(**) Air pressure. */
-   const double *mMoleFractions; /**< (1)       cio(**) Compound mole fractions of the air mixture. */
-   const double *mCompoundCp;    /**< (J/mol/K) cio(**) Specific heats of the chemical compounds in the air mixture.  */
+   double const *mMoleFractions; /**< (1)       cio(**) Compound mole fractions of the air mixture. */
+   double const *mCompoundCp;    /**< (J/mol/K) cio(**) Specific heats of the chemical compounds in the air mixture.  */
    bool          mIsIfMaster;    /**< (1)       cio(**) This is the master side of the Fluid Distributed Interface pairing. */
    bool          mIsIfEnthalpy;  /**< (1)       cio(**) The Fluid Distributed Interface transports energy as specific enthalpy instead of temperature. */
    /// @brief  Default constructs this Simple Cabin Atmosphere Volume Model Configuration Data.
-   CabinAtmoVolumeConfigData( const double  volume        = 0.0,
-                              const double  temperature   = 0.0,
-                              const double  pressure      = 0.0,
-                              const double *moleFractions = 0,
-                              const double *compoundCp    = 0,
-                              const bool    isIfMaster    = false,
-                              const bool    isIfEnthalpy  = false );
+   CabinAtmoVolumeConfigData( double const  volume        = 0.0,
+                              double const  temperature   = 0.0,
+                              double const  pressure      = 0.0,
+                              double const *moleFractions = 0,
+                              double const *compoundCp    = 0,
+                              bool const    isIfMaster    = false,
+                              bool const    isIfEnthalpy  = false );
    /// @brief  Default destructs this Simple Cabin Atmosphere Volume Model Configuration Data.
    virtual ~CabinAtmoVolumeConfigData();
 
   private:
    /// @brief  Copy constructor unavailable since declared private and not implemented.
-   CabinAtmoVolumeConfigData( const CabinAtmoVolumeConfigData & );
+   CabinAtmoVolumeConfigData( CabinAtmoVolumeConfigData const & );
    /// @brief  Assignment operator unavailable since declared private and not implemented.
-   CabinAtmoVolumeConfigData &operator=( const CabinAtmoVolumeConfigData & );
+   CabinAtmoVolumeConfigData &operator=( CabinAtmoVolumeConfigData const & );
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -79,7 +79,7 @@ class CabinAtmoVolumeConfigData
 class CabinAtmoVolume
 {
   public:
-   const CabinAtmoVolumeConfigData  *mConfig;      /**<    (1) cio(**) The configuration data. */
+   CabinAtmoVolumeConfigData const  *mConfig;      /**<    (1) cio(**) The configuration data. */
    double                            mTemperature; /**<    (K)         Air temperature. */
    double                            mPressure;    /**<    (Pa)        Air pressure. */
    double                            mMoles;       /**<    (mol)       Air total moles. */
@@ -96,43 +96,43 @@ class CabinAtmoVolume
    double                            mIfInflowH;   /**<    (J/mol)     Enthalpy of internal flows to the Distributed Interface Demand role. */
    CabinAtmoMixture                  mIfMixIn;     /**<    (1)         Working mixture object for flows from the Distributed Interface into this model. */
    CabinAtmoMixture                  mIfMixOut;    /**<    (1)         Working mixture object for flows from this model out to the Distributed Interface. */
-   static const double               R_UNIV;       /**< ** (J/mol/K)   Universal gas constant. */
+   static double const               R_UNIV;       /**< ** (J/mol/K)   Universal gas constant. */
    /// @brief  Default constructs this Simple Cabin Atmosphere Volume Model.
-   CabinAtmoVolume( const std::string &name = "" );
+   CabinAtmoVolume( std::string const &name = "" );
    /// @brief  Default destructs this Simple Cabin Atmosphere Volume Model.
    virtual ~CabinAtmoVolume();
    /// @brief  Initializes this Simple Cabin Atmosphere Volume Model with its configuration data.
-   void initialize( const CabinAtmoVolumeConfigData &config );
+   void initialize( CabinAtmoVolumeConfigData const &config );
    /// @brief  Updates the total moles of air in this volume.
    void updateMoles();
    /// @brief  Updates the air pressure in this volume.
    void updatePressure();
    /// @brief  Computes the air pressure in this volume for a given moles.
-   double computePressure( const double moles ) const;
+   double computePressure( double const moles ) const;
    /// @brief  Updates the air temperature in this volume.
    void updateTemperature();
    /// @brief  Computes the temperature in this volume for a given specific enthalpy.
-   double computeTemperature( const double enthalpy ) const;
+   double computeTemperature( double const enthalpy ) const;
    /// @brief  Update the air specific enthalpy in this volume.
    void updateEnthalpy();
    /// @brief  Compute the specific enthalpy in this volume for a given temperature.
-   double computeEnthalpy( const double temperature ) const;
+   double computeEnthalpy( double const temperature ) const;
    /// @brief  Compute the local capacitance of this volume.
    double computeCapacitance() const;
    /// @brief  Updates the Fluid Distributed Interface prior to the main model update.
-   void updateIfPre( const double dt, const double demandSideP );
+   void updateIfPre( double const dt, double const demandSideP );
    /// @brief  Updates the Fluid Distributed Interface following the main model update.
    void updateIfPost();
    /// @brief  Adds the given amount of a fluid mixture to the contents in this volume.
-   void addMixture( const double moles, const double enthalpy, const double *moleFractions );
+   void addMixture( double const moles, double const enthalpy, double const *moleFractions );
    /// @brief  Adds the given amount of a fluid mixture to the contents in this volume.
-   void addMixture( const double moles, const double enthalpy, const CabinAtmoMixture &mixture );
+   void addMixture( double const moles, double const enthalpy, CabinAtmoMixture const &mixture );
    /// @brief  Removes the given amount of moles from this volume.
-   void removeMoles( const double moles );
+   void removeMoles( double const moles );
    /// @brief  Returns the specific enthalpy represented in the Fluid Distributed Interface energy field.
-   double computeIfEnthalpy( const double energy, const double specificHeat ) const;
+   double computeIfEnthalpy( double const energy, double const specificHeat ) const;
    /// @brief  Returns the energy represented in the Fluid Distributed Interface energy field.
-   double computeIfEnergy( const double temperature, const double specificHeat ) const;
+   double computeIfEnergy( double const temperature, double const specificHeat ) const;
 
   protected:
    std::string mName; /**< (1) cio(**) Name of this volume object for messages. */
@@ -145,9 +145,9 @@ class CabinAtmoVolume
 
   private:
    /// @brief  Copy constructor unavailable since declared private and not implemented.
-   CabinAtmoVolume( const CabinAtmoVolume & );
+   CabinAtmoVolume( CabinAtmoVolume const & );
    /// @brief  Assignment operator unavailable since declared private and not implemented.
-   CabinAtmoVolume &operator=( const CabinAtmoVolume & );
+   CabinAtmoVolume &operator=( CabinAtmoVolume const & );
 };
 
 #endif

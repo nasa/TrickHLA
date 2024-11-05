@@ -19,7 +19,7 @@ LIBRARY DEPENDENCY:
 #include "sim_services/MemoryManager/include/memorymanager_c_intf.h"
 
 /// @details Universal gas constant, J/mol/K.
-const double CabinAtmoVolume::R_UNIV = 8.314472;
+double const CabinAtmoVolume::R_UNIV = 8.314472;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @param[in] volume        (m3)      Air volume.
@@ -32,13 +32,14 @@ const double CabinAtmoVolume::R_UNIV = 8.314472;
 ///
 /// @details  Default constructs this Simple Cabin Atmosphere Volume Model Configuration Data.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-CabinAtmoVolumeConfigData::CabinAtmoVolumeConfigData( const double  volume,
-                                                      const double  temperature,
-                                                      const double  pressure,
-                                                      const double *moleFractions,
-                                                      const double *compoundCp,
-                                                      const bool    isIfMaster,
-                                                      const bool    isIfEnthalpy )
+CabinAtmoVolumeConfigData::CabinAtmoVolumeConfigData(
+   double const  volume,
+   double const  temperature,
+   double const  pressure,
+   double const *moleFractions,
+   double const *compoundCp,
+   bool const    isIfMaster,
+   bool const    isIfEnthalpy )
    : mVolume( volume ),
      mTemperature( temperature ),
      mPressure( pressure ),
@@ -63,14 +64,15 @@ CabinAtmoVolumeConfigData::~CabinAtmoVolumeConfigData()
 ///
 /// @details  Default constructs this Simple Cabin Atmosphere Volume Model.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-CabinAtmoVolume::CabinAtmoVolume( const std::string &name )
+CabinAtmoVolume::CabinAtmoVolume(
+   std::string const &name )
    : mConfig( 0 ),
      mTemperature( 0.0 ),
      mPressure( 0.0 ),
      mMoles( 0.0 ),
      mMixture(),
-     mCapacitance( 0.0 ),
      mEnthalpy( 0.0 ),
+     mCapacitance( 0.0 ),
      mIf(),
      mIfFluid(),
      mIfFlow(),
@@ -99,7 +101,8 @@ CabinAtmoVolume::~CabinAtmoVolume()
 ///
 /// @details  Initializes this Simple Cabin Atmosphere Volume Model with its configuration data.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void CabinAtmoVolume::initialize( const CabinAtmoVolumeConfigData &config )
+void CabinAtmoVolume::initialize(
+   CabinAtmoVolumeConfigData const &config )
 {
    mConfig = &config;
    validateConfig();
@@ -144,7 +147,8 @@ void CabinAtmoVolume::initialize( const CabinAtmoVolumeConfigData &config )
 /// @details  Replaces any '.' with '__', so the name string can be given to Trick Memory Manager as
 ///           the allocation name.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void CabinAtmoVolume::convertNameForTmm( std::string &name ) const
+void CabinAtmoVolume::convertNameForTmm(
+   std::string &name ) const
 {
    std::string tokFrom;
    std::string tokTo;
@@ -214,7 +218,8 @@ void CabinAtmoVolume::limitMoles()
 /// @details  Computes and returns the air pressure from the given moles and the current volume and
 ///           temperature, by the Ideal Gas Law.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-double CabinAtmoVolume::computePressure( const double moles ) const
+double CabinAtmoVolume::computePressure(
+   double const moles ) const
 {
    return ( moles * R_UNIV * mTemperature / mConfig->mVolume );
 }
@@ -239,7 +244,8 @@ void CabinAtmoVolume::updatePressure()
 /// @details  Computes and returns the air temperature for the given specific enthalpy and the
 ///           current mixture specific heat, by T = h/Cp assuming calorically perfect gas.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-double CabinAtmoVolume::computeTemperature( const double enthalpy ) const
+double CabinAtmoVolume::computeTemperature(
+   double const enthalpy ) const
 {
    return ( enthalpy / mMixture.mSpecificHeat );
 }
@@ -260,7 +266,8 @@ void CabinAtmoVolume::updateTemperature()
 /// @details  Computes and returns the air specific enthalpy for the given temperature and the
 ///           current mixture specific heat, by h = Cp*T assuming calorically perfect gas.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-double CabinAtmoVolume::computeEnthalpy( const double temperature ) const
+double CabinAtmoVolume::computeEnthalpy(
+   double const temperature ) const
 {
    return ( temperature * mMixture.mSpecificHeat );
 }
@@ -294,7 +301,10 @@ double CabinAtmoVolume::computeCapacitance() const
 ///           to this volume's contents when not constrained (Supply role).  A negative value for
 ///           moles causes the given mixture to be removed instead.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void CabinAtmoVolume::addMixture( const double moles, const double enthalpy, const double *moleFractions )
+void CabinAtmoVolume::addMixture(
+   double const  moles,
+   double const  enthalpy,
+   double const *moleFractions )
 {
    double addedEnergy = moles * enthalpy;
 
@@ -321,7 +331,10 @@ void CabinAtmoVolume::addMixture( const double moles, const double enthalpy, con
 /// @details  This overloaded function calls addMixture with the mole fractions array from the given
 ///           mixture data object.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void CabinAtmoVolume::addMixture( const double moles, const double enthalpy, const CabinAtmoMixture &mixture )
+void CabinAtmoVolume::addMixture(
+   double const            moles,
+   double const            enthalpy,
+   CabinAtmoMixture const &mixture )
 {
    addMixture( moles, enthalpy, mixture.mMoleFractions );
 }
@@ -333,7 +346,8 @@ void CabinAtmoVolume::addMixture( const double moles, const double enthalpy, con
 ///           moles when in Demand role because the contents of this volume are constrained to the
 ///           values from the Supply side.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void CabinAtmoVolume::removeMoles( const double moles )
+void CabinAtmoVolume::removeMoles(
+   double const moles )
 {
    if ( not mIf.isInDemandRole() ) {
       mMoles -= moles;
@@ -353,7 +367,9 @@ void CabinAtmoVolume::removeMoles( const double moles )
 ///           energy value represents temperature, and is converted to specific enthalpy by the
 ///           given specific heat.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-double CabinAtmoVolume::computeIfEnthalpy( const double energy, const double specificHeat ) const
+double CabinAtmoVolume::computeIfEnthalpy(
+   double const energy,
+   double const specificHeat ) const
 {
    double result = energy;
    if ( not mConfig->mIsIfEnthalpy ) {
@@ -374,7 +390,9 @@ double CabinAtmoVolume::computeIfEnthalpy( const double energy, const double spe
 ///           value represents specific enthalpy, and is converted from temperature by the given
 ///           specific heat.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-double CabinAtmoVolume::computeIfEnergy( const double temperature, const double specificHeat ) const
+double CabinAtmoVolume::computeIfEnergy(
+   double const temperature,
+   double const specificHeat ) const
 {
    double result = temperature;
    if ( mConfig->mIsIfEnthalpy ) {
@@ -390,7 +408,9 @@ double CabinAtmoVolume::computeIfEnergy( const double temperature, const double 
 /// @details  Updates the Fluid Distributed Interface before the main CabinAtmo model update.
 ///           This does steps 2-6 of the local model interfaces to the Fluid Distributed Interface.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void CabinAtmoVolume::updateIfPre( const double dt, const double demandSideP )
+void CabinAtmoVolume::updateIfPre(
+   double const dt,
+   double const demandSideP )
 {
    /// - Fluid Distributed Interface, local model operations Step 2: model calls the interface to
    ///   process its inputs, the incoming data from the other side of the HLA interface.
@@ -401,7 +421,7 @@ void CabinAtmoVolume::updateIfPre( const double dt, const double demandSideP )
    ///   swap from Demand to Supply role in the processInputs call.  Flipping to Supply role needs
    ///   no response here since our volume still represents the last-pass Supply state from the
    ///   other side.
-   const bool isDemandRole = mIf.isInDemandRole();
+   bool const isDemandRole = mIf.isInDemandRole();
 
    /// - Fluid Distributed Interface, local model operations Step 4: model calls getFluidState() or
    ///   getFlowState() based on role.  In Demand role, we get the state of the fluid contents of

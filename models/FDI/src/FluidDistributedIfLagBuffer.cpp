@@ -36,7 +36,9 @@ FluidDistributedIfLagBuffer::~FluidDistributedIfLagBuffer()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details  Initializes this FluidDistributedIfLagBuffer.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void FluidDistributedIfLagBuffer::initialize( const unsigned int nBulk, const unsigned int nTc )
+void FluidDistributedIfLagBuffer::initialize(
+   unsigned int const nBulk,
+   unsigned int const nTc )
 {
    for ( unsigned int i = 0; i < 10; ++i ) {
       // TODO this creates a lot of duplicate named dynamic array warnings from Trick

@@ -44,11 +44,11 @@ PROGRAMMERS:
 class CabinAtmoMixture
 {
   public:
-   static const unsigned int NBULK    = 4;             /**< ** (1)       Number of modeled bulk compounds in the fluid mixture. */
-   static const unsigned int NTC      = 0;             /**< ** (1)       Number of modeled trace compounds in the fluid mixture. */
-   static const unsigned int NFOMBULK = 6;             /**< ** (1)       Number of mole fractions in the HLA FOM bulk fluid constituents array. */
-   static const unsigned int NFOMTC   = 4;             /**< ** (1)       Number of mole fractions in the HLA FOM trace compound constituents array. */
-   const double             *mCompoundSpecificHeats;   /**<    (J/mol/K) Specific heats of the chemical compounds in the air mixture. */
+   static unsigned int const NBULK    = 4;             /**< ** (1)       Number of modeled bulk compounds in the fluid mixture. */
+   static unsigned int const NTC      = 0;             /**< ** (1)       Number of modeled trace compounds in the fluid mixture. */
+   static unsigned int const NFOMBULK = 6;             /**< ** (1)       Number of mole fractions in the HLA FOM bulk fluid constituents array. */
+   static unsigned int const NFOMTC   = 4;             /**< ** (1)       Number of mole fractions in the HLA FOM trace compound constituents array. */
+   double const             *mCompoundSpecificHeats;   /**<    (J/mol/K) Specific heats of the chemical compounds in the air mixture. */
    double                    mMoleFractions[NFOMBULK]; /**<    (1)       Mole fractions of bulk fluid compounds in the air mixture. */
    double                    mTcMoleFractions[NFOMTC]; /**<    (1)       Mole fractions of trace compounds in the air mixture. */
    double                    mSpecificHeat;            /**<    (J/mol/K) Specific heat of this mixture. */
@@ -57,17 +57,17 @@ class CabinAtmoMixture
    /// @brief  Default destructs this Simple Cabin Atmosphere Air Mixture Data.
    virtual ~CabinAtmoMixture();
    /// @brief  Assigns this Simple Cabin Atmosphere Air Mixture Data.
-   CabinAtmoMixture &operator=( const CabinAtmoMixture &that );
+   CabinAtmoMixture &operator=( CabinAtmoMixture const &that );
    /// @brief  Initializes this Simple Cabin Atmosphere Air Mixture Data with initial mole fractions.
-   void initialize( const double *moleFractions, const double *specificHeats );
+   void initialize( double const *moleFractions, double const *specificHeats );
    /// @brief  Updates the specific heat for the current mixture.
    void updateSpecificHeat();
    /// @brief  Copies these mole fractions to the given mole fraction array.
    void writeMoleFractions( double *moleFractions ) const;
    /// @brief  Copies mole fractions from the given mole fraction array.
-   void readMoleFractions( const double *moleFractions );
+   void readMoleFractions( double const *moleFractions );
    /// @brief  Mixes the given quantity and mole fraction with a relative quantity of the current mixture.
-   void mix( const double oldMoles, const double addMoles, const double *addFractions );
+   void mix( double const oldMoles, double const addMoles, double const *addFractions );
 
   private:
    /// @brief Checks if the mole fractions array sums to 1.
@@ -75,7 +75,7 @@ class CabinAtmoMixture
    /// @brief Normalizes the mole fractions array to sum to 1.
    void normalize();
    /// @brief  Copy constructor unavailable since declared private and not implemented.
-   CabinAtmoMixture( const CabinAtmoMixture & );
+   CabinAtmoMixture( CabinAtmoMixture const & );
 };
 
 /// @}
