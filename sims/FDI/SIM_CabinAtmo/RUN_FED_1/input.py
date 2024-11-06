@@ -6,12 +6,17 @@
 # Define the command line options to configure the simulation.
 #
 def print_usage_message( ):
+   
+   global crc_host
+   global crc_port
+   global local_settings
 
    print(' ')
-   print('TrickHLA SpaceFOM JEOD Master Simulation Command Line Configuration Options:')
-   print('  -h --help            : Print this help message.')
-   print('  -r --crcHost [name]  : Name of RTI CRC Host, currently:', crcHost )
-   print('  -p --crcPort [number]: Port number for the RTI CRC, currently:', crcPort )
+   print('Simulation Command Line Configuration Options:')
+   print('  -h --help             : Print this help message.')
+   print('  -r --crcHost [name]   : Name of RTI CRC Host, currently:', crc_host )
+   print('  -p --crcPort [number] : Port number for the RTI CRC, currently:', crc_port )
+   print('  -s --settings [string]: RTI CRC local settings:', local_settings )
    print(' ')
 
    trick.exec_terminate_with_return( -1,
@@ -28,7 +33,7 @@ def parse_command_line( ) :
    global crc_host
    global crc_port
    global local_settings
-   global run_duration
+   global override_settings
    
    # Get the Trick command line arguments.
    argc = trick.command_line_args_get_argc()
@@ -55,7 +60,16 @@ def parse_command_line( ) :
          if (index < argc) :
             crc_port = int(str(argv[index]))
          else :
-            print('ERROR: Missing -crcPort [port] argument.')
+            print('ERROR: Missing --crcPort [port] argument.')
+            print_usage = True
+      
+      elif ((str(argv[index]) == '-s') | (str(argv[index]) == '--settings')) :
+         index = index + 1
+         if (index < argc) :
+            local_settings = str(argv[index])
+            override_settings = True
+         else :
+            print('ERROR: Missing --settings [string] argument.')
             print_usage = True
          
       else :
@@ -70,20 +84,26 @@ def parse_command_line( ) :
 
 # Global configuration variables
 
-# Default: Don't show usage.
+# Default: Don't show usage:
 print_usage = False
 
-# Default: CRC Host string
+# Default: CRC Host string:
 crc_host = "localhost"
 
 # Default: CRC port value.
 crc_port = 8989
 
+# Default: local settings string:
+override_settings = False
+local_settings = 'crcHost = ' + crc_host + '\n crcPort = ' + str(crc_port)
+
 # Parse the command line.
 parse_command_line()
 
-# Form the RTI local settings string.
-local_settings = 'crcHost = ' + crc_host + '\n crcPort = ' + str(crc_port)
+# Check to see if setting were overridden.
+# If not, then form the local_settings string since host and port may have been set.
+if not override_settings :
+   local_settings = 'crcHost = ' + crc_host + '\n crcPort = ' + str(crc_port)
 
 if (print_usage == True) :
    print_usage_message()
@@ -183,7 +203,7 @@ cabinAtmo.conservation.isBsideHla = True
 #trick.add_read(1.0, """cabinAtmo.conservation.setReference = True""")
 
 # Configure the CRC, the default is the local host but can be overridden
-# with command line arguments --crcHost and --crcPort.
+# with command line arguments --crcHost and --crcPort or --settings.
 #THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 THLA.federate.local_settings = local_settings
 
