@@ -2,15 +2,19 @@
 #            National Aeronautics and Space Administration.  All Rights Reserved. */
 
 MODEL_PACKAGE_HOME  = ${PWD}/../../../
-#TODO update on move to trickhla repo:
-TRICKHLA_HOME      ?= ${PWD}/../../../../trickhla
+TRICKHLA_HOME      ?= ${PWD}/../../../../TrickHLA
 
-# Check for required packages
-ifeq ($(wildcard $(TRICKHLA_HOME)),)
-    $(error This sim requires you to define TRICKHLA_HOME or have it at the default location!)
+# Info and error message text colors.
+RED_TXT   =[31m
+GREEN_TXT =[32m
+RESET_TXT =[00m
+
+# Check for required packages.
+ifeq ("$(wildcard ${TRICKHLA_HOME})","")
+   $(error ${RED_TXT}This sim requires you to define TRICKHLA_HOME or have it installed at the default location!${RESET_TXT})
 endif
 
-# Compile with optimization and debug hooks, point Trick to model code
+# Compile with optimization and debug hooks, point Trick to model code.
 TRICK_CFLAGS   += -g -O2 -I${MODEL_PACKAGE_HOME}
 TRICK_CXXFLAGS += -g -O2 -I${MODEL_PACKAGE_HOME}
 TRICK_SFLAGS   += -I${MODEL_PACKAGE_HOME}/S_modules/FDI
@@ -19,17 +23,17 @@ TRICK_SFLAGS   += -I${MODEL_PACKAGE_HOME}/S_modules/FDI
 # HLA Build Environment
 #============================================================================
 # Define the HLA RTI installation folder.
-# Default Tricklab environment:
-export RTI_HOME ?= /users/hla/prti1516e_5.5.1.0
+# Default environment:
+export RTI_HOME ?= /users/hla/prti1516e_5.5.11.0
 
 # Include the HLA RTI.
 ifneq ("$(wildcard $(RTI_HOME))","")
-    $(info Building the sim with HLA.)
-	include ${TRICKHLA_HOME}/makefiles/S_hla.mk
-	TRICK_GTE_EXT +=  RTI_HOME
-	TRICK_SFLAGS  += -DHLA
+   $(info ${GREEN_TXT}Building the sim with HLA.${RESET_TXT})
+   include ${TRICKHLA_HOME}/makefiles/S_hla.mk
+   TRICK_GTE_EXT += RTI_HOME
+   TRICK_SFLAGS  += -DHLA
 else
-    $(info Building the sim without HLA.)
+   $(info ${GREEN_TXT}Building the sim without HLA.${RESET_TXT})
 endif
 
 # Links to the FOM and Modified_data folders in the sim folder.
@@ -38,21 +42,21 @@ clean: clean_links
 spotless: clean_links
 
 build_links:
-	@ echo "[32mCreating links to FOM and Modified_data folders[00m"
+	@ echo "${GREEN_TXT}Creating links to FOM and Modified_data folders.${RESET_TXT}"
 	ln -s -fn ${MODEL_PACKAGE_HOME}/FOMs/FDI FOMs/FDI
 	ln -s -fn ${MODEL_PACKAGE_HOME}/Modified_data/FDI Modified_data/FDI
 	ln -s -fn ${TRICKHLA_HOME}/Modified_data/TrickHLA Modified_data/TrickHLA
 
 clean_links:
 	@if [ -e FOMs/FDI ] ; then \
-		echo "[32mCleaning link to FOMs/FDI folder[00m" ;\
+		echo "${GREEN_TXT}Cleaning link to FOMs/FDI folder.${RESET_TXT}" ;\
 		rm -r -f FOMs/FDI ;\
 	fi
 	@if [ -e Modified_data/FDI ] ; then \
-		echo "[32mCleaning link to Modified_data/FDI folder[00m" ;\
+		echo "${GREEN_TXT}Cleaning link to Modified_data/FDI folder.${RESET_TXT}" ;\
 		rm -r -f Modified_data/FDI ;\
 	fi
 	@if [ -e Modified_data/TrickHLA ] ; then \
-		echo "[32mCleaning link to Modified_data/TrickHLA folder[00m" ;\
+		echo "${GREEN_TXT}Cleaning link to Modified_data/TrickHLA folder.${RESET_TXT}" ;\
 		rm -r -f Modified_data/TrickHLA ;\
 	fi
