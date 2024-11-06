@@ -38,7 +38,7 @@ clean: clean_links
 spotless: clean_links
 
 build_links:
-	@ echo "[32mCreating links to FOM and Modified_data folders[00m"
+	@ echo "[32mCreating links to FOM and Modified_data folders[00m"
 	ln -s -fn ${MODEL_PACKAGE_HOME}/FOMs/FDI FOMs/FDI
 	ln -s -fn ${MODEL_PACKAGE_HOME}/Modified_data/FDI Modified_data/FDI
 	ln -s -fn ${TRICKHLA_HOME}/Modified_data/TrickHLA Modified_data/TrickHLA
