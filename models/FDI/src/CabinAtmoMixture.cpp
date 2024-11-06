@@ -46,7 +46,7 @@ CabinAtmoMixture::~CabinAtmoMixture()
 ///
 /// @details  Assigns the values of this object equal to the values of the given object.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-CabinAtmoMixture &CabinAtmoMixture::operator=(
+CabinAtmoMixture &CabinAtmoMixture::operator=( // cppcheck-suppress [operatorEqVarError]
    CabinAtmoMixture const &that )
 {
    if ( this != &that ) {
@@ -56,7 +56,6 @@ CabinAtmoMixture &CabinAtmoMixture::operator=(
       for ( unsigned int i = 0; i < NFOMTC; ++i ) {
          mTcMoleFractions[i] = that.mTcMoleFractions[i];
       }
-      // TODO: Does this need to be added?  mCompoundSpecificHeats = that.mCompoundSpecificHeats;
       mSpecificHeat = that.mSpecificHeat;
    }
    return *this;
