@@ -1,6 +1,94 @@
 # @copyright Copyright 2024 United States Government as represented by the Administrator of the
 #            National Aeronautics and Space Administration.  All Rights Reserved. */
 #
+
+#
+# Define the command line options to configure the simulation.
+#
+def print_usage_message( ):
+
+   print(' ')
+   print('TrickHLA SpaceFOM JEOD Master Simulation Command Line Configuration Options:')
+   print('  -h --help            : Print this help message.')
+   print('  -r --crcHost [name]  : Name of RTI CRC Host, currently:', crcHost )
+   print('  -p --crcPort [number]: Port number for the RTI CRC, currently:', crcPort )
+   print(' ')
+
+   trick.exec_terminate_with_return( -1,
+                                     sys._getframe(0).f_code.co_filename,
+                                     sys._getframe(0).f_lineno,
+                                     'Print usage message.')
+   return
+# END: print_usage_message
+
+
+def parse_command_line( ) :
+   
+   global print_usage
+   global crc_host
+   global crc_port
+   global local_settings
+   global run_duration
+   
+   # Get the Trick command line arguments.
+   argc = trick.command_line_args_get_argc()
+   argv = trick.command_line_args_get_argv()
+   
+   # Process the command line arguments.
+   # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
+   index = 2
+   while (index < argc) :
+            
+      if ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')) :
+         print_usage = True
+      
+      elif ((str(argv[index]) == '-r') | (str(argv[index]) == '--crcHost')) :
+         index = index + 1
+         if (index < argc) :
+            crc_host = str(argv[index])
+         else :
+            print('ERROR: Missing --crcHost [name] argument.')
+            print_usage = True
+      
+      elif ((str(argv[index]) == '-p') | (str(argv[index]) == '--crcPort')) :
+         index = index + 1
+         if (index < argc) :
+            crc_port = int(str(argv[index]))
+         else :
+            print('ERROR: Missing -crcPort [port] argument.')
+            print_usage = True
+         
+      else :
+         print('ERROR: Unknown command line argument ' + str(argv[index]))
+         print_usage = True
+   
+      index = index + 1
+   
+   return
+# END: parse_command_line
+
+
+# Global configuration variables
+
+# Default: Don't show usage.
+print_usage = False
+
+# Default: CRC Host string
+crc_host = "localhost"
+
+# Default: CRC port value.
+crc_port = 8989
+
+# Parse the command line.
+parse_command_line()
+
+# Form the RTI local settings string.
+local_settings = 'crcHost = ' + crc_host + '\n crcPort = ' + str(crc_port)
+
+if (print_usage == True) :
+   print_usage_message()
+   
+   
 #trick setup
 trick.sim_services.exec_set_trap_sigfpe(1)
 simControlPanel = trick.SimControlPanel()
@@ -94,8 +182,10 @@ cabinAtmo.conservation.isBsideHla = True
 # not to the modelA in this sim, so the conservation checks model doesn't work.
 #trick.add_read(1.0, """cabinAtmo.conservation.setReference = True""")
 
-# Configure the CRC, assuming we're in the Trick Lab
-THLA.federate.local_settings = "crcHost = js-er7-rti.jsc.nasa.gov\n crcPort = 8989"
+# Configure the CRC, the default is the local host but can be overridden
+# with command line arguments --crcHost and --crcPort.
+#THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
+THLA.federate.local_settings = local_settings
 
 # Configure the federate
 Federation_name = "FLUID_DIST_IF_DEMO"
