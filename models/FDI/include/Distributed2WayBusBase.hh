@@ -78,7 +78,7 @@ class Distributed2WayBusNotification
    NotificationLevel mLevel;   /**< (1) The severity level of the notification. */
    std::string       mMessage; /**< (1) the notification message. */
    /// @brief Default constructor.
-   Distributed2WayBusNotification( NotificationLevel const level = NONE, std::string const &message = "" );
+   explicit Distributed2WayBusNotification( NotificationLevel const level = NONE, std::string const &message = "" );
    /// @brief Default destructor.
    virtual ~Distributed2WayBusNotification();
    /// @brief Copy constructor.

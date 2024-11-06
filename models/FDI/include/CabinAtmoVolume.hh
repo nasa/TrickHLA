@@ -52,13 +52,13 @@ class CabinAtmoVolumeConfigData
    bool          mIsIfMaster;    /**< (1)       cio(**) This is the master side of the Fluid Distributed Interface pairing. */
    bool          mIsIfEnthalpy;  /**< (1)       cio(**) The Fluid Distributed Interface transports energy as specific enthalpy instead of temperature. */
    /// @brief  Default constructs this Simple Cabin Atmosphere Volume Model Configuration Data.
-   CabinAtmoVolumeConfigData( double const  volume        = 0.0,
-                              double const  temperature   = 0.0,
-                              double const  pressure      = 0.0,
-                              double const *moleFractions = 0,
-                              double const *compoundCp    = 0,
-                              bool const    isIfMaster    = false,
-                              bool const    isIfEnthalpy  = false );
+   explicit CabinAtmoVolumeConfigData( double const  volume        = 0.0,
+                                       double const  temperature   = 0.0,
+                                       double const  pressure      = 0.0,
+                                       double const *moleFractions = NULL,
+                                       double const *compoundCp    = NULL,
+                                       bool const    isIfMaster    = false,
+                                       bool const    isIfEnthalpy  = false );
    /// @brief  Default destructs this Simple Cabin Atmosphere Volume Model Configuration Data.
    virtual ~CabinAtmoVolumeConfigData();
 
@@ -98,7 +98,7 @@ class CabinAtmoVolume
    CabinAtmoMixture                  mIfMixOut;    /**<    (1)         Working mixture object for flows from this model out to the Distributed Interface. */
    static double const               R_UNIV;       /**< ** (J/mol/K)   Universal gas constant. */
    /// @brief  Default constructs this Simple Cabin Atmosphere Volume Model.
-   CabinAtmoVolume( std::string const &name = "" );
+   explicit CabinAtmoVolume( std::string const &name = "" );
    /// @brief  Default destructs this Simple Cabin Atmosphere Volume Model.
    virtual ~CabinAtmoVolume();
    /// @brief  Initializes this Simple Cabin Atmosphere Volume Model with its configuration data.

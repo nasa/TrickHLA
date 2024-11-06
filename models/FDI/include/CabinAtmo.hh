@@ -139,7 +139,7 @@ class CabinAtmo
    /// @brief  Computes the inverse of the admittance matrix.
    void invertMatrix();
    /// @brief  Computes the pressure solution for the given source vector.
-   void solvePressures( double *x, double *b );
+   void solvePressures( double *x, double const *b );
    /// @brief  Computes internal flows resulting from the pressure solution.
    void computeFlows();
    /// @brief  Transports fluid flows between the volumes and interfaces.

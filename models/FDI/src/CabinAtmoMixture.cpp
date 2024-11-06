@@ -56,6 +56,7 @@ CabinAtmoMixture &CabinAtmoMixture::operator=(
       for ( unsigned int i = 0; i < NFOMTC; ++i ) {
          mTcMoleFractions[i] = that.mTcMoleFractions[i];
       }
+      // TODO: Does this need to be added?  mCompoundSpecificHeats = that.mCompoundSpecificHeats;
       mSpecificHeat = that.mSpecificHeat;
    }
    return *this;

@@ -127,7 +127,6 @@ void CabinAtmo::initialize()
    mImvDuct.initialize( mConfig->mImvDuct );
    mHatchOpen      = mConfig->mHatchOpen;
    mMpevOpen       = mConfig->mMpevOpen;
-   mHatchOpen      = mConfig->mHatchOpen;
    mImvValveOpen   = mConfig->mImvValveOpen;
    mGrillValveOpen = mConfig->mGrillValveOpen;
    mImvFanOn       = mConfig->mImvFanOn;
@@ -399,8 +398,8 @@ void CabinAtmo::invertMatrix()
 ///           for modified {b} used to compute capacitances, etc.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void CabinAtmo::solvePressures(
-   double *x,
-   double *b )
+   double       *x,
+   double const *b )
 {
    x[0] = mAinv[0][0] * b[0] + mAinv[0][1] * b[1] + mAinv[0][2] * b[2];
    x[1] = mAinv[1][0] * b[0] + mAinv[1][1] * b[1] + mAinv[1][2] * b[2];
@@ -592,7 +591,7 @@ void CabinAtmo::computeCapacitance()
    {
       /// - For the Vestibule:
       /// - Add 1 mol/s to the vestibule's source vector.
-      double sources[3] = { mSourceVector[0], mSourceVector[1] + 1.0, mSourceVector[2] };
+      double const sources[3] = { mSourceVector[0], mSourceVector[1] + 1.0, mSourceVector[2] };
       /// - Solve for new pressures.
       double pressures[3] = { 0.0, 0.0, 0.0 };
       solvePressures( pressures, sources );
@@ -615,8 +614,8 @@ void CabinAtmo::computeCapacitance()
    }
    {
       /// - For the IMV duct, repeat similar calculations as vestibule above.
-      double sources[3]   = { mSourceVector[0], mSourceVector[1], mSourceVector[2] + 1.0 };
-      double pressures[3] = { 0.0, 0.0, 0.0 };
+      double const sources[3]   = { mSourceVector[0], mSourceVector[1], mSourceVector[2] + 1.0 };
+      double       pressures[3] = { 0.0, 0.0, 0.0 };
       solvePressures( pressures, sources );
       double const vestCapDp = pressures[1] - mSolutionVector[1];
       double const imvCapDp  = pressures[2] - mSolutionVector[2];
