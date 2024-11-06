@@ -203,6 +203,7 @@ federate = TrickHLAFederateConfig( THLA.federate,
 
 # Add required federates.
 federate.add_known_federate( True, "FED_1")
+federate.add_known_federate( True, "FED_2")
 
 # Set time management parameters
 federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_10_NANOSECONDS )
