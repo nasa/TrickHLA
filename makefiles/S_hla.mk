@@ -9,10 +9,10 @@ RTI_HOME      ?= ${HOME}/rti/pRTI1516e
 
 # Make sure the critical environment variable paths we depend on are valid.
 ifeq ("$(wildcard ${TRICKHLA_HOME})","")
-   $(error S_hla.mk:ERROR: Must specify a valid TRICKHLA_HOME environment variable, which is currently set to invalid path ${TRICKHLA_HOME})
+   $(error [31mS_hla.mk:ERROR: Must specify a valid TRICKHLA_HOME environment variable, which is currently set to invalid path ${TRICKHLA_HOME}[00m)
 endif
 ifeq ("$(wildcard ${RTI_HOME})","")
-   $(error S_hla.mk:ERROR: Must specify a valid RTI_HOME environment variable, which is currently set to invalid path ${RTI_HOME})
+   $(error [31mS_hla.mk:ERROR: Must specify a valid RTI_HOME environment variable, which is currently set to invalid path ${RTI_HOME}[00m)
 endif
 
 # Either IEEE_1516_2010 for HLA Evolved or IEEE_1516_202X for HLA 4.
@@ -23,7 +23,7 @@ else ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
 else ifeq ($(RTI_VENDOR),Mak_HLA_Evolved)
    HLA_STANDARD = IEEE_1516_2010
 else
-   $(error S_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify one of Pitch_HLA_4, Pitch_HLA_Evolved, or Mak_HLA_Evolved.)
+   $(error [31mS_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify one of Pitch_HLA_4, Pitch_HLA_Evolved, or Mak_HLA_Evolved.[00m)
 endif
 
 # Needed for TrickHLA.
@@ -50,7 +50,7 @@ else ifeq ($(RTI_VENDOR),Mak_HLA_Evolved)
    TRICK_CFLAGS   += -DRTI_VENDOR=Mak_HLA_Evolved -I${RTI_INCLUDE}
    TRICK_CXXFLAGS += -DRTI_VENDOR=Mak_HLA_Evolved -I${RTI_INCLUDE}
 else
-   $(error S_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify one of Pitch_HLA_4, Pitch_HLA_Evolved, or Mak_HLA_Evolved.)
+   $(error [31mS_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify one of Pitch_HLA_4, Pitch_HLA_Evolved, or Mak_HLA_Evolved.[00m)
 endif
 
 # Configure the ICG and swig excludes.
@@ -71,7 +71,7 @@ ifneq (,$(findstring trick-gte, $(shell which trick-gte)))
    ifeq (,$(CPPC_CMD))
       CPPC_CMD = $(shell trick-gte TRICK_CPPC)
       ifeq (,$(CPPC_CMD))
-         $(error S_hla.mk:ERROR: Could not determine compiler from TRICK_CXX or TRICK_CPPC using trick-gte command!)
+         $(error [31mS_hla.mk:ERROR: Could not determine compiler from TRICK_CXX or TRICK_CPPC using trick-gte command![00m)
       endif
    endif
 else
@@ -79,7 +79,7 @@ else
    ifeq (,$(CPPC_CMD))
       CPPC_CMD = $(shell gte TRICK_CPPC)
       ifeq (,$(CPPC_CMD))
-         $(error S_hla.mk:ERROR: Could not determine compiler from TRICK_CXX or TRICK_CPPC using Trick gte command!)
+         $(error [31mS_hla.mk:ERROR: Could not determine compiler from TRICK_CXX or TRICK_CPPC using Trick gte command![00m)
       endif
    endif
 endif
@@ -91,13 +91,13 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
    # ICG because the IEEE 1516-2010 APIs use dynamic exception specifications.
    # Otherwise this will result in compile time errors.
    TRICK_ICGFLAGS += --icg-std=c++14
-   $(info S_hla.mk:INFO: Using C++14 for Trick ICG code.)
+   $(info [32mS_hla.mk:INFO: Using C++14 for Trick ICG code.[00m)
 
    ifeq ($(RTI_VENDOR),Pitch_HLA_4)
       # Allow the user to override RTI_JAVA_HOME or RTI_JAVA_LIB_PATH,
       # otherwise we provide defaults.
       ifdef RTI_JAVA_HOME
-         $(info S_hla.mk:INFO: User defined RTI_JAVA_HOME = ${RTI_JAVA_HOME})
+         $(info [32mS_hla.mk:INFO: User defined RTI_JAVA_HOME = ${RTI_JAVA_HOME}[00m)
       endif
       RTI_JAVA_HOME ?= ${RTI_HOME}/jre
       ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/server)","")
@@ -109,10 +109,10 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
 
       # Verify the RTI Java Home and Lib paths.
       ifeq ("$(wildcard ${RTI_JAVA_HOME})","")
-         $(error S_hla.mk:ERROR: The path specified by RTI_JAVA_HOME is invalid for ${RTI_JAVA_HOME})
+         $(error [31mS_hla.mk:ERROR: The path specified by RTI_JAVA_HOME is invalid for ${RTI_JAVA_HOME}[00m)
       endif
       ifeq ("$(wildcard ${RTI_JAVA_LIB_PATH})","")
-         $(error S_hla.mk:ERROR: The path specified by RTI_JAVA_LIB_PATH is invalid for ${RTI_JAVA_LIB_PATH})
+         $(error [31mS_hla.mk:ERROR: The path specified by RTI_JAVA_LIB_PATH is invalid for ${RTI_JAVA_LIB_PATH}[00m)
       endif
 
       # Determine if the compiler is clang or gcc.
@@ -134,11 +134,11 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
             endif
             TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib -v -Wl,-rpath,${RTI_HOME}/lib -lrti1516_202Xclang12 -lfedtime1516_202Xclang12 -L${RTI_JAVA_LIB_PATH} -v -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljvm
          else
-            $(error S_hla.mk:ERROR: Pitch RTI libraries require at least clang 12 on the Mac.)
+            $(error [31mS_hla.mk:ERROR: Pitch RTI libraries require at least clang 12 on the Mac.[00m)
          endif
       else
          # Using gcc compiler instead of clang.
-         $(error S_hla.mk:ERROR: Pitch RTI only supports clang on the Mac.)
+         $(error [31mS_hla.mk:ERROR: Pitch RTI only supports clang on the Mac.[00m)
       endif
       # Add the CLASSPATH and DYLD_LIBRARY_PATH environment variables to the 
       # simulation executable.
@@ -149,7 +149,7 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
       # Allow the user to override RTI_JAVA_HOME or RTI_JAVA_LIB_PATH,
       # otherwise we provide defaults.
       ifdef RTI_JAVA_HOME
-         $(info S_hla.mk:INFO: User defined RTI_JAVA_HOME = ${RTI_JAVA_HOME})
+         $(info [32mS_hla.mk:INFO: User defined RTI_JAVA_HOME = ${RTI_JAVA_HOME}[00m)
       endif
       RTI_JAVA_HOME ?= ${RTI_HOME}/jre
       ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/server)","")
@@ -161,10 +161,10 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
 
       # Verify the RTI Java Home and Lib paths.
       ifeq ("$(wildcard ${RTI_JAVA_HOME})","")
-         $(error S_hla.mk:ERROR: The path specified by RTI_JAVA_HOME is invalid for ${RTI_JAVA_HOME})
+         $(error [31mS_hla.mk:ERROR: The path specified by RTI_JAVA_HOME is invalid for ${RTI_JAVA_HOME}[00m)
       endif
       ifeq ("$(wildcard ${RTI_JAVA_LIB_PATH})","")
-         $(error S_hla.mk:ERROR: The path specified by RTI_JAVA_LIB_PATH is invalid for ${RTI_JAVA_LIB_PATH})
+         $(error [31mS_hla.mk:ERROR: The path specified by RTI_JAVA_LIB_PATH is invalid for ${RTI_JAVA_LIB_PATH}[00m)
       endif
 
       # Determine if the compiler is clang or gcc.
@@ -207,7 +207,7 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
       export CLASSPATH     += ${RTI_HOME}/lib/prti1516e.jar
       export TRICK_GTE_EXT += CLASSPATH DYLD_LIBRARY_PATH
    else
-      $(error S_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify Pitch_HLA_4 or Pitch_HLA_Evolved.)
+      $(error [31mS_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify Pitch_HLA_4 or Pitch_HLA_Evolved.[00m)
    endif
 
 else
@@ -223,7 +223,7 @@ else
    ifeq ($(shell echo $(COMPILER_VERSION)\>=11 | bc),1)
       TRICK_CFLAGS   += -std=c++14
       TRICK_CXXFLAGS += -std=c++14
-      $(info S_hla.mk:INFO: Falling back to C++14 to compile Trick simulation.)
+      $(info [32mS_hla.mk:INFO: Falling back to C++14 to compile Trick simulation.[00m)
    endif
 
    # ICG code needs to be targeted to either C++14 (gcc versions 6.1 to 10)
@@ -232,14 +232,14 @@ else
    # this will result in compile time errors.
    ifeq ($(shell echo $(COMPILER_VERSION)\>=6 | bc),1)
       TRICK_ICGFLAGS += --icg-std=c++14
-      $(info S_hla.mk:INFO: Using C++14 for Trick ICG code.)
+      $(info [32mS_hla.mk:INFO: Using C++14 for Trick ICG code.[00m)
    endif
 
    ifeq ($(RTI_VENDOR),Pitch_HLA_4)
       # Allow the user to override RTI_JAVA_HOME or RTI_JAVA_LIB_PATH,
       # otherwise we provide defaults.
       ifdef RTI_JAVA_HOME
-         $(info S_hla.mk:INFO: User defined RTI_JAVA_HOME = ${RTI_JAVA_HOME})
+         $(info [32mS_hla.mk:INFO: User defined RTI_JAVA_HOME = ${RTI_JAVA_HOME}[00m)
       endif
       RTI_JAVA_HOME ?= ${RTI_HOME}/jre
       ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/amd64/server)","")
@@ -254,10 +254,10 @@ else
       endif
       # Verify the RTI Java Home and Lib paths.
       ifeq ("$(wildcard ${RTI_JAVA_HOME})","")
-         $(error S_hla.mk:ERROR: The path specified by RTI_JAVA_HOME is invalid for ${RTI_JAVA_HOME})
+         $(error [31mS_hla.mk:ERROR: The path specified by RTI_JAVA_HOME is invalid for ${RTI_JAVA_HOME}[00m)
       endif
       ifeq ("$(wildcard ${RTI_JAVA_LIB_PATH})","")
-         $(error S_hla.mk:ERROR: The path specified by RTI_JAVA_LIB_PATH is invalid for ${RTI_JAVA_LIB_PATH})
+         $(error [31mS_hla.mk:ERROR: The path specified by RTI_JAVA_LIB_PATH is invalid for ${RTI_JAVA_LIB_PATH}[00m)
       endif
       TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PATH}/.. -L${RTI_JAVA_LIB_PATH} -ljava -ljvm -lverify -Wl,-rpath,${RTI_JAVA_LIB_PATH}/.. -Wl,-rpath,${RTI_JAVA_LIB_PATH}
 
@@ -269,21 +269,21 @@ else
       ifeq ($(shell echo $(COMPILER_VERSION)\>=7 | bc),1)
          RTI_LIB_PATH = ${RTI_HOME}/lib
       else
-         $(error S_hla.mk:ERROR: Pitch RTI libraries require at least gcc 7 for Linux.)
+         $(error [31mS_hla.mk:ERROR: Pitch RTI libraries require at least gcc 7 for Linux.[00m)
       endif
       TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -lrti1516_202Xgcc7 -lfedtime1516_202Xgcc7 -Wl,-rpath,${RTI_LIB_PATH}
 
       # On Ubuntu, the user needs to add the LD_LIBRARY_PATH shown below to
       # their environment.
       ifneq ("$(wildcard /etc/lsb-release)","")
-        $(info S_hla.mk:INFO: Add this to your .bashrc file: export LD_LIBRARY_PATH=${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH})
+        $(info [32mS_hla.mk:INFO: Add this to your .bashrc file: export LD_LIBRARY_PATH=${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}[00m)
       endif
 
    else ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
       # Allow the user to override RTI_JAVA_HOME or RTI_JAVA_LIB_PATH,
       # otherwise we provide defaults.
       ifdef RTI_JAVA_HOME
-         $(info S_hla.mk:INFO: User defined RTI_JAVA_HOME = ${RTI_JAVA_HOME})
+         $(info [32mS_hla.mk:INFO: User defined RTI_JAVA_HOME = ${RTI_JAVA_HOME}[00m)
       endif
       RTI_JAVA_HOME ?= ${RTI_HOME}/jre
       ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/amd64/server)","")
@@ -298,10 +298,10 @@ else
       endif
       # Verify the RTI Java Home and Lib paths.
       ifeq ("$(wildcard ${RTI_JAVA_HOME})","")
-         $(error S_hla.mk:ERROR: The path specified by RTI_JAVA_HOME is invalid for ${RTI_JAVA_HOME})
+         $(error [31mS_hla.mk:ERROR: The path specified by RTI_JAVA_HOME is invalid for ${RTI_JAVA_HOME}[00m)
       endif
       ifeq ("$(wildcard ${RTI_JAVA_LIB_PATH})","")
-         $(error S_hla.mk:ERROR: The path specified by RTI_JAVA_LIB_PATH is invalid for ${RTI_JAVA_LIB_PATH})
+         $(error [31mS_hla.mk:ERROR: The path specified by RTI_JAVA_LIB_PATH is invalid for ${RTI_JAVA_LIB_PATH}[00m)
       endif
       TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PATH}/.. -L${RTI_JAVA_LIB_PATH} -ljava -ljvm -lverify -Wl,-rpath,${RTI_JAVA_LIB_PATH}/.. -Wl,-rpath,${RTI_JAVA_LIB_PATH}
 
@@ -324,13 +324,13 @@ else
       # On Ubuntu, the user needs to add the LD_LIBRARY_PATH shown below to
       # their environment.
       ifneq ("$(wildcard /etc/lsb-release)","")
-        $(info S_hla.mk:INFO: Add this to your .bashrc file: export LD_LIBRARY_PATH=${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH})
+        $(info [32mS_hla.mk:INFO: Add this to your .bashrc file: export LD_LIBRARY_PATH=${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}[00m)
       endif
 
    else ifeq ($(RTI_VENDOR),Mak_HLA_Evolved)
       TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib -lrti1516e64 -lfedtime1516e64
    else
-      $(error S_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify one of Pitch_HLA_4, Pitch_HLA_Evolved, or Mak_HLA_Evolved.)
+      $(error [31mS_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify one of Pitch_HLA_4, Pitch_HLA_Evolved, or Mak_HLA_Evolved.[00m)
    endif
 
 endif
