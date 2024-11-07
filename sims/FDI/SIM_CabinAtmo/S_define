@@ -6,6 +6,10 @@
 // Default system classes
 #include "sim_objects/default_trick_sys.sm"
 
+%header{
+ using namespace DistIf;
+%}
+
 // Model sim object.
 #include "CabinAtmoSimObject.sm"
 CabinAtmoSimObject cabinAtmo("cabinAtmo");

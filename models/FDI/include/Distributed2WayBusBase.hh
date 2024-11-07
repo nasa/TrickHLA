@@ -2,33 +2,55 @@
 #define Distributed2WayBusBase_EXISTS
 
 /**
-@file     Distributed2WayBusBase.hh
-@brief    Distributed 2-Way Bus Base Interface declarations
+ * @defgroup Examples Examples
+ * @details The collection of example code for TrickHLA
+ */
 
-@copyright Copyright 2024 United States Government as represented by the Administrator of the
-           National Aeronautics and Space Administration.  All Rights Reserved.
+/**
+ * @defgroup DistIf DistIf
+ * @ingroup Examples
+ * @details A distributed systems interface code example for TrickHLA
+ */
 
-@details
-PURPOSE:
-- (Classes for the Distributed 2-Way Bus Base Interface.)
+/**
+@ingroup DistIf
+@file    Distributed2WayBusBase.hh
+@brief   Distributed 2-Way Bus Base Interface declarations
 
-REFERENCE:
-- ()
+@details Classes for the Distributed 2-Way Bus Base Interface.
 
-ASSUMPTIONS AND LIMITATIONS:
-- ()
+@copyright Copyright 2024 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+No copyright is claimed in the United States under Title 17, U.S. Code.
+All Other Rights Reserved.
 
-LIBRARY DEPENDENCY:
-- ((Distributed2WayBusBase.o))
+\par<b>Responsible Organization</b>
+Simulation and Graphics Branch, Mail Code ER7\n
+Software, Robotics & Simulation Division\n
+NASA, Johnson Space Center\n
+2101 NASA Parkway, Houston, TX  77058
 
-PROGRAMMERS:
-- ((Jason Harvey) (CACI) (2023-05) (Initial))
+@trick_parse{everything}
+
+@python_module{DistIf}
+
+@tldh
+@trick_link_dependency{../src/Distributed2WayBusBase.cpp}
+
+@revs_title
+@revs_begin
+@rev_entry{Jason Harvey, CACI, TrickHLA, November 2024, --, Initial version.}
+@revs_end
 
 @{
+
 */
 
 #include <string>
 #include <vector>
+
+namespace DistIf
+{
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief    Distributed 2-Way Bus Base Interface Data
@@ -141,12 +163,14 @@ class Distributed2WayBusBase
    Distributed2WayBusBase &operator=( Distributed2WayBusBase const &that );
 };
 
+} // namespace DistIf
+
 /// @}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details  Sets the mForcedRole attribute to DEMAND.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-inline void Distributed2WayBusBase::forceDemandRole()
+inline void DistIf::Distributed2WayBusBase::forceDemandRole()
 {
    mForcedRole = DEMAND;
 }
@@ -154,7 +178,7 @@ inline void Distributed2WayBusBase::forceDemandRole()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details  Sets the mForcedRole attribute to SUPPLY.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-inline void Distributed2WayBusBase::forceSupplyRole()
+inline void DistIf::Distributed2WayBusBase::forceSupplyRole()
 {
    mForcedRole = SUPPLY;
 }
@@ -162,7 +186,7 @@ inline void Distributed2WayBusBase::forceSupplyRole()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details  Sets the mForcedRole attribute to NONE.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-inline void Distributed2WayBusBase::resetForceRole()
+inline void DistIf::Distributed2WayBusBase::resetForceRole()
 {
    mForcedRole = NONE;
 }
@@ -172,7 +196,7 @@ inline void Distributed2WayBusBase::resetForceRole()
 ///
 /// @details  Returns the value of mDemandMode from the derived class outgoing data instance.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-inline bool Distributed2WayBusBase::isInDemandRole() const
+inline bool DistIf::Distributed2WayBusBase::isInDemandRole() const
 {
    return mOutDataPtr->mDemandMode;
 }
@@ -183,11 +207,11 @@ inline bool Distributed2WayBusBase::isInDemandRole() const
 ///
 /// @details  Adds a new notification message object to the message queue.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-inline void Distributed2WayBusBase::pushNotification(
-   Distributed2WayBusNotification::NotificationLevel const level,
-   std::string const                                      &message )
+inline void DistIf::Distributed2WayBusBase::pushNotification(
+   DistIf::Distributed2WayBusNotification::NotificationLevel const level,
+   std::string const                                              &message )
 {
-   mNotifications.push_back( Distributed2WayBusNotification( level, message ) );
+   mNotifications.push_back( DistIf::Distributed2WayBusNotification( level, message ) );
 }
 
 #endif

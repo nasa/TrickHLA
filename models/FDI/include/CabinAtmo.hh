@@ -2,31 +2,41 @@
 #define CabinAtmo_EXISTS
 
 /**
-@file     CabinAtmo.hh
-@brief    Simple Cabin Atmosphere Model declarations
+@ingroup DistIf
+@file    CabinAtmo.hh
+@brief   Simple Cabin Atmosphere Model declarations
 
-@copyright Copyright 2024 United States Government as represented by the Administrator of the
-           National Aeronautics and Space Administration.  All Rights Reserved.
+@details This implements a simple cabin atmosphere model for demonstrating the
+Fluid Distributed Interface design.
 
-@details
-PURPOSE:
-- (This implements a simple cabin atmosphere model for demonstrating the
-   Fluid Distributed Interface design.)
+\par<b>Assumptions and Limitations</b>
+- Simplification: valve, hatch & fan flows are linear with pressure.
+- Ideal Gas Law is assumed.
+- All air compounds are assumed calorically perfect with constant specific heat.
+- Specific enthalpy is only a function of temperature, as h = Cp*T
 
-REFERENCE:
-- (TBD)
+@copyright Copyright 2024 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+No copyright is claimed in the United States under Title 17, U.S. Code.
+All Other Rights Reserved.
 
-ASSUMPTIONS AND LIMITATIONS:
-- ((Simplification: valve, hatch & fan flows are linear with pressure.)
-   (Ideal Gas Law is assumed.)
-   (All air compounds are assumed calorically perfect with constant specific heat.)
-   (Specific enthalpy is only a function of temperature, as h = Cp*T))
+\par<b>Responsible Organization</b>
+Simulation and Graphics Branch, Mail Code ER7\n
+Software, Robotics & Simulation Division\n
+NASA, Johnson Space Center\n
+2101 NASA Parkway, Houston, TX  77058
 
-LIBRARY DEPENDENCY:
-- (CabinAtmo.o)
+@trick_parse{everything}
 
-PROGRAMMERS:
-- ((Jason Harvey) (CACI) (Initial) (2024-09))
+@python_module{DistIf}
+
+@tldh
+@trick_link_dependency{../src/CabinAtmo.cpp}
+
+@revs_title
+@revs_begin
+@rev_entry{Jason Harvey, CACI, TrickHLA, November 2024, --, Initial version.}
+@revs_end
 
 @{
 */
@@ -35,6 +45,9 @@ PROGRAMMERS:
 
 #include "CabinAtmoConserveChecks.hh"
 #include "CabinAtmoVolume.hh"
+
+namespace DistIf
+{
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief    Simple Cabin Atmosphere Model Configuration Data
@@ -162,18 +175,20 @@ class CabinAtmo
    CabinAtmo &operator=( CabinAtmo const & );
 };
 
+} // namespace DistIf
+
 /// @}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @param[in] min   (--) The minimum value of the range.
-//  @param[in] input (--) The input value to apply the range limit to.
+/// @param[in] input (--) The input value to apply the range limit to.
 /// @param[in] max   (--) The maximum value of the range.
 ///
 /// @returns  double (--) Input limited to the range.
 ///
 /// @details  Returns the given input limited to the range [min, max].
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-inline double CabinAtmo::limitRange( double const min, double const input, double const max ) const
+inline double DistIf::CabinAtmo::limitRange( double const min, double const input, double const max ) const
 {
    return std::max( std::min( input, max ), min );
 }

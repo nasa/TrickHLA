@@ -1,12 +1,33 @@
 /**
-@copyright Copyright 2024 United States Government as represented by the Administrator of the
-           National Aeronautics and Space Administration.  All Rights Reserved.
+@ingroup DistIf
+@file    FluidDistributedIfLagBuffer.cpp
+@brief   Fluid distributed interface lag buffer
 
-LIBRARY DEPENDENCY:
-   ((Distributed2WayBusFluid.o))
+@copyright Copyright 2024 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+No copyright is claimed in the United States under Title 17, U.S. Code.
+All Other Rights Reserved.
+
+\par<b>Responsible Organization</b>
+Simulation and Graphics Branch, Mail Code ER7\n
+Software, Robotics & Simulation Division\n
+NASA, Johnson Space Center\n
+2101 NASA Parkway, Houston, TX  77058
+
+@tldh
+@trick_link_dependency{Distributed2WayBusFluid.o}
+@trick_link_dependency{FluidDistributedIfLagBuffer.o}
+
+@revs_title
+@revs_begin
+@rev_entry{Jason Harvey, CACI, TrickHLA, November 2024, --, Initial version.}
+@revs_end
+
 */
 
 #include "../include/FluidDistributedIfLagBuffer.hh"
+
+using namespace DistIf;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details  Default constructs this FluidDistributedIfLagBuffer.

@@ -2,30 +2,40 @@
 #define CabinAtmoVolume_EXISTS
 
 /**
-@file     CabinAtmoVolume.hh
-@brief    Simple Cabin Atmosphere Volume Model declarations
+@ingroup DistIf
+@file    CabinAtmoVolume.hh
+@brief   Simple Cabin Atmosphere Volume Model declarations
 
-@copyright Copyright 2024 United States Government as represented by the Administrator of the
-           National Aeronautics and Space Administration.  All Rights Reserved.
+@details This models an air volume within the Simple Cabin Atmosphere model.
+This includes the state of the air, and a Fluid Distributed Interface for
+exchanging air between this volume's counterpart in another distributed model.
 
-@details
-PURPOSE:
-- (This models an air volume within the Simple Cabin Atmosphere model.  This includes the
-   state of the air, and a Fluid Distributed Interface for exchanging air between this
-   volume's counterpart in another distributed model.)
+\par<b>Assumptions and Limitations</b>
+- The air state is assumed to be homogeneous throughout the volume.
+- Ideal Gas Law is assumed.
 
-REFERENCE:
-- (TBD)
+@copyright Copyright 2024 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+No copyright is claimed in the United States under Title 17, U.S. Code.
+All Other Rights Reserved.
 
-ASSUMPTIONS AND LIMITATIONS:
-- ((The air state is assumed to be homogeneous throughout the volume.)
-   (Ideal Gas Law is assumed.))
+\par<b>Responsible Organization</b>
+Simulation and Graphics Branch, Mail Code ER7\n
+Software, Robotics & Simulation Division\n
+NASA, Johnson Space Center\n
+2101 NASA Parkway, Houston, TX  77058
 
-LIBRARY DEPENDENCY:
-- (CabinAtmoVolume.o)
+@trick_parse{everything}
 
-PROGRAMMERS:
-- ((Jason Harvey) (CACI) (Initial) (2024-10))
+@python_module{DistIf}
+
+@tldh
+@trick_link_dependency{../src/CabinAtmoVolume.cpp}
+
+@revs_title
+@revs_begin
+@rev_entry{Jason Harvey, CACI, TrickHLA, November 2024, --, Initial version.}
+@revs_end
 
 @{
 */
@@ -34,6 +44,9 @@ PROGRAMMERS:
 
 #include "CabinAtmoMixture.hh"
 #include "Distributed2WayBusFluid.hh"
+
+namespace DistIf
+{
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief    Simple Cabin Atmosphere Volume Model Configuration Data.
@@ -149,5 +162,9 @@ class CabinAtmoVolume
    /// @brief  Assignment operator unavailable since declared private and not implemented.
    CabinAtmoVolume &operator=( CabinAtmoVolume const & );
 };
+
+} // namespace DistIf
+
+///@}
 
 #endif

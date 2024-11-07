@@ -2,36 +2,51 @@
 #define CabinAtmoMixture_EXISTS
 
 /**
-@file     CabinAtmoMixture.hh
-@brief    Simple Cabin Atmosphere Mixture Data declarations
+@ingroup DistIf
+@file    CabinAtmoMixture.hh
+@brief   Simple Cabin Atmosphere Mixture Data declarations
 
-@copyright Copyright 2024 United States Government as represented by the Administrator of the
-           National Aeronautics and Space Administration.  All Rights Reserved.
+@details This models a mixture of compounds in a volume of the Simple Cabin
+Atmosphere Model, and the mixture's associated specific heat.  This provides a
+function to mix in another mixture and compute the resulting mixture.
 
-@details
-PURPOSE:
-- (This models a mixture of compounds in a volume of the Simple Cabin Atmosphere Model, and the
-   mixture's associated specific heat.  This provides a function to mix in another mixture and
-   compute the resulting mixture.)
+\par<b>Assumptions and Limitations</b>
+- Simplification: all chemical compounds in the air mixture (N2, O2, etc.) are
+assumed calorically perfect with constant specific heat.
+- Simplification: the specific heat of the air mixture is only a function of
+the mixture.
+- Trace compounds are not fully supported yet.  There are some place-holder
+variables, but the interfaces and logic to model trace compounds are not
+complete.
 
-REFERENCE:
-- (TBD)
+@copyright Copyright 2024 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+No copyright is claimed in the United States under Title 17, U.S. Code.
+All Other Rights Reserved.
 
-ASSUMPTIONS AND LIMITATIONS:
-- ((Simplification: all chemical compounds in the air mixture (N2, O2, etc.) are assumed calorically
-    perfect with constant specific heat.)
-   (Simplification: the specific heat of the air mixture is only a function of the mixture.)
-   (Trace compounds are not fully supported yet.  There are some place-holder variables, but the
-    interfaces and logic to model trace compounds are not complete.))
+\par<b>Responsible Organization</b>
+Simulation and Graphics Branch, Mail Code ER7\n
+Software, Robotics & Simulation Division\n
+NASA, Johnson Space Center\n
+2101 NASA Parkway, Houston, TX  77058
 
-LIBRARY DEPENDENCY:
-- (CabinAtmoMixture.o)
+@trick_parse{everything}
 
-PROGRAMMERS:
-- ((Jason Harvey) (CACI) (Initial) (2024-10))
+@python_module{DistIf}
+
+@tldh
+@trick_link_dependency{../src/CabinAtmoMixture.cpp}
+
+@revs_title
+@revs_begin
+@rev_entry{Jason Harvey, CACI, TrickHLA, November 2024, --, Initial version.}
+@revs_end
 
 @{
 */
+
+namespace DistIf
+{
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief  Simple Cabin Atmosphere Mixture Data
@@ -77,6 +92,8 @@ class CabinAtmoMixture
    /// @brief  Copy constructor unavailable since declared private and not implemented.
    CabinAtmoMixture( CabinAtmoMixture const & );
 };
+
+} // namespace DistIf
 
 /// @}
 

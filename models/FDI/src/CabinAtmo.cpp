@@ -1,18 +1,36 @@
 /**
-@file     CabinAtmo.cpp
-@brief    Simple Cabin Atmosphere Model implementation
+@ingroup DistIf
+@file    CabinAtmo.cpp
+@brief   Simple Cabin Atmosphere Model implementation
 
-@copyright Copyright 2024 United States Government as represented by the Administrator of the
-           National Aeronautics and Space Administration.  All Rights Reserved.
+@copyright Copyright 2024 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+No copyright is claimed in the United States under Title 17, U.S. Code.
+All Other Rights Reserved.
 
-LIBRARY DEPENDENCY:
-   ((CabinAtmoVolume.o))
+\par<b>Responsible Organization</b>
+Simulation and Graphics Branch, Mail Code ER7\n
+Software, Robotics & Simulation Division\n
+NASA, Johnson Space Center\n
+2101 NASA Parkway, Houston, TX  77058
+
+@tldh
+@trick_link_dependency{CabinAtmoVolume.o}
+@trick_link_dependency{CabinAtmo.o}
+
+@revs_title
+@revs_begin
+@rev_entry{Jason Harvey, CACI, TrickHLA, November 2024, --, Initial version.}
+@revs_end
+
 */
 
 #include <cfloat>
 #include <iostream>
 
 #include "../include/CabinAtmo.hh"
+
+using namespace DistIf;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details  Default constructs this CabinAtmo Configuration Data.
@@ -589,7 +607,7 @@ void CabinAtmo::computeCapacitance()
    }
 
    {
-      /// - For the Vestibule:
+      /// For the Vestibule:
       /// - Add 1 mol/s to the vestibule's source vector.
       double const sources[3] = { mSourceVector[0], mSourceVector[1] + 1.0, mSourceVector[2] };
       /// - Solve for new pressures.

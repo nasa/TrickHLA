@@ -2,32 +2,45 @@
 #define Distributed2WayBusFluid_EXISTS
 
 /**
+@ingroup  DistIf
 @file     Distributed2WayBusFluid.hh
 @brief    Fluid Distributed 2-Way Bus Interface declarations
 
-@copyright Copyright 2024 United States Government as represented by the Administrator of the
-           National Aeronautics and Space Administration.  All Rights Reserved.
+@details Classes for the Fluid Distributed 2-Way Bus Interface.
 
-@details
-PURPOSE:
-- (Classes for the Fluid Distributed 2-Way Bus Interface.)
+@copyright Copyright 2024 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+No copyright is claimed in the United States under Title 17, U.S. Code.
+All Other Rights Reserved.
 
-REFERENCE:
-- ((https://github.com/nasa/gunns/wiki/Distributed-Bi-Directional-Flow-Fluid-Interface))
+\par<b>Responsible Organization</b>
+Simulation and Graphics Branch, Mail Code ER7\n
+Software, Robotics & Simulation Division\n
+NASA, Johnson Space Center\n
+2101 NASA Parkway, Houston, TX  77058
 
-ASSUMPTIONS AND LIMITATIONS:
-- (TBD)
+\par<b>References</b>
+- https://github.com/nasa/gunns/wiki/Distributed-Bi-Directional-Flow-Fluid-Interface
 
-LIBRARY DEPENDENCY:
-- ((Distributed2WayBusFluid.o))
+@trick_parse{everything}
 
-PROGRAMMERS:
-- ((Jason Harvey) (CACI) (2023-05) (Initial))
+@python_module{DistIf}
+
+@tldh
+@trick_link_dependency{../src/Distributed2WayBusFluid.cpp}
+
+@revs_title
+@revs_begin
+@rev_entry{Jason Harvey, CACI, TrickHLA, November 2024, --, Initial version.}
+@revs_end
 
 @{
 */
 
 #include "Distributed2WayBusBase.hh"
+
+namespace DistIf
+{
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief    Distributed Fluid Mixture Data
@@ -245,12 +258,14 @@ class Distributed2WayBusFluid : public Distributed2WayBusBase
    Distributed2WayBusFluid &operator=( Distributed2WayBusFluid const &that );
 };
 
+} // namespace DistIf
+
 /// @}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details  Returns the value of mNumFluid.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-inline unsigned int FluidDistributedMixtureData::getNumFluid() const
+inline unsigned int DistIf::FluidDistributedMixtureData::getNumFluid() const
 {
    return mNumFluid;
 }
@@ -258,7 +273,7 @@ inline unsigned int FluidDistributedMixtureData::getNumFluid() const
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details  Returns the value of mNumTc.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-inline unsigned int FluidDistributedMixtureData::getNumTc() const
+inline unsigned int DistIf::FluidDistributedMixtureData::getNumTc() const
 {
    return mNumTc;
 }
@@ -266,7 +281,7 @@ inline unsigned int FluidDistributedMixtureData::getNumTc() const
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details  Returns the value of mDemandLimitGain.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-inline double Distributed2WayBusFluid::getDemandLimitGain() const
+inline double DistIf::Distributed2WayBusFluid::getDemandLimitGain() const
 {
    return mDemandLimitGain;
 }

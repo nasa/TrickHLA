@@ -1,13 +1,29 @@
 /**
-@file     CabinAtmoVolume.cpp
-@brief    Simple Cabin Atmosphere Volume Model implementation
+@ingroup DistIf
+@file    CabinAtmoVolume.cpp
+@brief   Simple Cabin Atmosphere Volume Model implementation
 
-@copyright Copyright 2024 United States Government as represented by the Administrator of the
-           National Aeronautics and Space Administration.  All Rights Reserved.
+@copyright Copyright 2024 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+No copyright is claimed in the United States under Title 17, U.S. Code.
+All Other Rights Reserved.
 
-LIBRARY DEPENDENCY:
-   ((CabinAtmoMixture.o)
-    (Distributed2WayBusFluid.o))
+\par<b>Responsible Organization</b>
+Simulation and Graphics Branch, Mail Code ER7\n
+Software, Robotics & Simulation Division\n
+NASA, Johnson Space Center\n
+2101 NASA Parkway, Houston, TX  77058
+
+@tldh
+@trick_link_dependency{CabinAtmoMixture.o}
+@trick_link_dependency{Distributed2WayBusFluid.o}
+@trick_link_dependency{CabinAtmoVolume.o}
+
+@revs_title
+@revs_begin
+@rev_entry{Jason Harvey, CACI, TrickHLA, November 2024, --, Initial version.}
+@revs_end
+
 */
 
 #include <cfloat>
@@ -18,13 +34,15 @@ LIBRARY DEPENDENCY:
 // Trick include for TMM
 #include "sim_services/MemoryManager/include/memorymanager_c_intf.h"
 
+using namespace DistIf;
+
 /// @details Universal gas constant, J/mol/K.
 double const CabinAtmoVolume::R_UNIV = 8.314472;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @param[in] volume        (m3)      Air volume.
 /// @param[in] temperature   (K)       Air temperature.
-/// @param[in] presssure     (Pa)      Air pressure.
+/// @param[in] pressure      (Pa)      Air pressure.
 /// @param[in] moleFractions (--)      Compound mole fractions of the air mixture.
 /// @param[in] compoundCp    (J/mol/K) Specific heats of the chemical compounds in the air mixture.
 /// @param[in] isIfMaster    (--)      This is the master side of the Distributed Fluid Interface pairing.

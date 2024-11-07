@@ -1,15 +1,32 @@
 /**
-@file     Distributed2WayBusBase.cpp
-@brief    Distributed 2-Way Bus Base Interface implementation
+@ingroup DistIf
+@file    Distributed2WayBusBase.cpp
+@brief   Distributed 2-Way Bus Base Interface implementation
 
-@copyright Copyright 2024 United States Government as represented by the Administrator of the
-           National Aeronautics and Space Administration.  All Rights Reserved.
+@copyright Copyright 2024 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+No copyright is claimed in the United States under Title 17, U.S. Code.
+All Other Rights Reserved.
 
-LIBRARY DEPENDENCY:
-   ()
+\par<b>Responsible Organization</b>
+Simulation and Graphics Branch, Mail Code ER7\n
+Software, Robotics & Simulation Division\n
+NASA, Johnson Space Center\n
+2101 NASA Parkway, Houston, TX  77058
+
+@tldh
+@trick_link_dependency{Distributed2WayBusBase.o}
+
+@revs_title
+@revs_begin
+@rev_entry{Jason Harvey, CACI, TrickHLA, November 2024, --, Initial version.}
+@revs_end
+
 */
 
 #include "../include/Distributed2WayBusBase.hh"
+
+using namespace DistIf;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @param[in] level   (--) Severity level of the message.
@@ -158,7 +175,7 @@ void Distributed2WayBusBase::updateFrameCounts()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @param[out] Distributed2WayBusNotification (--) Reference to the caller's message object to copy the message into.
+/// @param[out] notification (--) Reference to the caller's message object to copy the message into.
 ///
 /// @returns  unsigned int (--) Number of notifications remaining in the queue.
 ///

@@ -1,18 +1,36 @@
 /**
-@file     Distributed2WayBusFluid.cpp
-@brief    Fluid Distributed 2-Way Bus Interface implementation
+@ingroup DistIf
+@file    Distributed2WayBusFluid.cpp
+@brief   Fluid Distributed 2-Way Bus Interface implementation
 
-@copyright Copyright 2024 United States Government as represented by the Administrator of the
-           National Aeronautics and Space Administration.  All Rights Reserved.
+@copyright Copyright 2024 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+No copyright is claimed in the United States under Title 17, U.S. Code.
+All Other Rights Reserved.
 
-LIBRARY DEPENDENCY:
-   ((Distributed2WayBusBase.o))
+\par<b>Responsible Organization</b>
+Simulation and Graphics Branch, Mail Code ER7\n
+Software, Robotics & Simulation Division\n
+NASA, Johnson Space Center\n
+2101 NASA Parkway, Houston, TX  77058
+
+@tldh
+@trick_link_dependency{Distributed2WayBusBase.o}
+@trick_link_dependency{Distributed2WayBusFluid.o}
+
+@revs_title
+@revs_begin
+@rev_entry{Jason Harvey, CACI, TrickHLA, November 2024, --, Initial version.}
+@revs_end
+
 */
 
 #include <cfloat>
 #include <cmath>
 
 #include "../include/Distributed2WayBusFluid.hh"
+
+using namespace DistIf;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details  Default constructs this distributed fluid mixture data.

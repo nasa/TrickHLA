@@ -2,29 +2,38 @@
 #define CabinAtmoConserveChecks_EXISTS
 
 /**
-@file     CabinAtmoConserveChecks.hh
-@brief    Simple Cabin Atmosphere Conservation Checks declarations
+@ingroup DistIf
+@file    CabinAtmoConserveChecks.hh
+@brief   Simple Cabin Atmosphere Conservation Checks declarations
+
+@details This tracks conservation of total mass and energy between two CabinAtmo models.
 
 @copyright Copyright 2024 United States Government as represented by the Administrator of the
            National Aeronautics and Space Administration.  All Rights Reserved.
 
-@details
-PURPOSE:
-- (This tracks conservation of total mass and energy between two CabinAtmo models.)
+@copyright Copyright 2024 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+No copyright is claimed in the United States under Title 17, U.S. Code.
+All Other Rights Reserved.
 
-REFERENCE:
-- (TBD)
+\par<b>Responsible Organization</b>
+Simulation and Graphics Branch, Mail Code ER7\n
+Software, Robotics & Simulation Division\n
+NASA, Johnson Space Center\n
+2101 NASA Parkway, Houston, TX  77058
 
-ASSUMPTIONS AND LIMITATIONS:
-- (TBD)
+@trick_parse{everything}
 
-LIBRARY DEPENDENCY:
-- (CabinAtmoConserveChecks.o)
+@python_module{DistIf}
 
-PROGRAMMERS:
-- ((Jason Harvey) (CACI) (Initial) (2024-10))
+@tldh
+@trick_link_dependency{../src/CabinAtmoConserveChecks.cpp}
 
-@{
+@revs_title
+@revs_begin
+@rev_entry{Jason Harvey, CACI, TrickHLA, November 2024, --, Initial version.}
+@revs_end
+
 */
 
 // TODO needed improves:
@@ -45,6 +54,9 @@ PROGRAMMERS:
 //      - when A side is Demand role, can just use specific heat from the A side i/f volume.
 //      - what if B side is Demand role?  No way to get B side specific heat unless we model it
 //        - this is a show-stopper, so maybe just give up on the whole transport ndot inclusion
+
+namespace DistIf
+{
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief  Simple Cabin Atmosphere Conservation Check Parameters
@@ -106,6 +118,7 @@ class CabinAtmoConserveChecks
    CabinAtmoConserveChecks &operator=( CabinAtmoConserveChecks const & );
 };
 
-/// @}
+} // namespace DistIf
+
 
 #endif

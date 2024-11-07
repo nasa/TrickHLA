@@ -1,18 +1,35 @@
 /**
-@file     CabinAtmoMixture.cpp
-@brief    Simple Cabin Atmosphere Mixture Data implementation
+@ingroup DistIf
+@file    CabinAtmoMixture.cpp
+@brief   Simple Cabin Atmosphere Mixture Data implementation
 
-@copyright Copyright 2024 United States Government as represented by the Administrator of the
-           National Aeronautics and Space Administration.  All Rights Reserved.
+@copyright Copyright 2024 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+No copyright is claimed in the United States under Title 17, U.S. Code.
+All Other Rights Reserved.
 
-LIBRARY DEPENDENCY:
-   ()
+\par<b>Responsible Organization</b>
+Simulation and Graphics Branch, Mail Code ER7\n
+Software, Robotics & Simulation Division\n
+NASA, Johnson Space Center\n
+2101 NASA Parkway, Houston, TX  77058
+
+@tldh
+@trick_link_dependency{CabinAtmoMixture.o}
+
+@revs_title
+@revs_begin
+@rev_entry{Jason Harvey, CACI, TrickHLA, November 2024, --, Initial version.}
+@revs_end
+
 */
 
 #include <cfloat>
 #include <iostream>
 
 #include "../include/CabinAtmoMixture.hh"
+
+using namespace DistIf;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details  Constructs this Simple Cabin Atmosphere Air Mixture Data object.
@@ -63,7 +80,7 @@ CabinAtmoMixture &CabinAtmoMixture::operator=( // cppcheck-suppress [operatorEqV
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @param[in] moleFractions (--)      The initial mole fractions array.
-/// @param[in] compundCp     (J/mol/K) Specific heat constants for the compounds in air.
+/// @param[in] compoundCp    (J/mol/K) Specific heat constants for the compounds in air.
 ///
 /// @details  Initializes this object with the given initial mole fractions.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
