@@ -107,15 +107,15 @@ if not override_settings :
 
 if (print_usage == True) :
    print_usage_message()
-
-
+   
+   
 #trick setup
 trick.sim_services.exec_set_trap_sigfpe(1)
 simControlPanel = trick.SimControlPanel()
 trick.add_external_application(simControlPanel)
 trickView = trick.TrickView()
 trick.add_external_application(trickView)
-trickView.set_auto_open_file('TV_HLA_modelA.tv')
+trickView.set_auto_open_file('TV_HLA_modelB.tv')
 trick.real_time_enable()
 trick.sim_services.exec_set_terminate_time(86400)
 trick.exec_set_software_frame(0.1)
@@ -198,8 +198,8 @@ trick.add_read(5.0, """cabinAtmo.conservation.setReference = True""")
 cabinAtmo.exchangeData = False
 cabinAtmo.conservation.isBsideHla = True
 
-# When using HLA, modelA in this sim is tied to modelB in the other federate,
-# not to the modelB in this sim, so the conservation checks model doesn't work.
+# When using HLA, modelB in this sim is tied to modelA in the other federate,
+# not to the modelA in this sim, so the conservation checks model doesn't work.
 #trick.add_read(1.0, """cabinAtmo.conservation.setReference = True""")
 
 # Configure the CRC, the default is the local host but can be overridden
@@ -209,7 +209,7 @@ THLA.federate.local_settings = local_settings
 
 # Configure the federate
 Federation_name = "FLUID_DIST_IF_DEMO"
-Federate_name   = "FED_1"
+Federate_name   = "FED_2"
 
 # THLA configuration
 from Modified_data.TrickHLA.TrickHLAFederateConfig import *
@@ -234,71 +234,71 @@ federate.set_time_regulating( True )
 federate.set_time_constrained( True )
 
 # Add the sim configuration FOM.
-federate.add_FOM_module( 'FOMs/FDI/SimpleSimConfigFOM.xml' )
+federate.add_FOM_module( 'FOMs/DistIf/SimpleSimConfigFOM.xml' )
 
 # Configure the Fluid Distributed Interface messages
-federate.add_FOM_module( 'FOMs/FDI/FluidDistIfFOM.xml' )
-from Modified_data.FDI.FluidDistIfObjectConfig import *
+federate.add_FOM_module( 'FOMs/DistIf/FluidDistIfFOM.xml' )
+from Modified_data.DistIf.FluidDistIfObjectConfig import *
 
-# Interfaces between modelA in this federate (FED_1) to modelB in the other FED_2:
+# Interfaces between modelB in this federate (FED_2) to modelA in the other FED_1:
 data_obj = FluidDistIfAToBObjectConfig('FluidDistIf_Vestibule_1A_to_2B',
-                                       'cabinAtmo.modelA.mVestibule.mIf',
-                                       True,
+                                       'cabinAtmo.modelB.mVestibule.mIf',
+                                       False,
                                        'FluidDistIfDataBase.FluidDistIfData_6_4')
 federate.add_fed_object(data_obj)
 
 data_obj = FluidDistIfAToBObjectConfig('FluidDistIf_Vestibule_2B_to_1A',
+                                       'cabinAtmo.modelB.mVestibule.mIf',
+                                       True,
+                                       'FluidDistIfDataBase.FluidDistIfData_6_4')
+federate.add_fed_object(data_obj)
+
+data_obj = FluidDistIfAToBObjectConfig('FluidDistIf_IMV_1A_to_2B',
+                                       'cabinAtmo.modelB.mImvDuct.mIf',
+                                       False,
+                                       'FluidDistIfDataBase.FluidDistIfData_6_4')
+federate.add_fed_object(data_obj)
+
+data_obj = FluidDistIfAToBObjectConfig('FluidDistIf_IMV_2B_to_1A',
+                                       'cabinAtmo.modelB.mImvDuct.mIf',
+                                       True,
+                                       'FluidDistIfDataBase.FluidDistIfData_6_4')
+federate.add_fed_object(data_obj)
+
+# Interfaces between modelA in this federate (FED_2) to modelB in the other FED_1:
+data_obj = FluidDistIfAToBObjectConfig('FluidDistIf_Vestibule_2A_to_1B',
                                        'cabinAtmo.modelA.mVestibule.mIf',
                                        False,
                                        'FluidDistIfDataBase.FluidDistIfData_6_4')
 federate.add_fed_object(data_obj)
 
-data_obj = FluidDistIfAToBObjectConfig('FluidDistIf_IMV_1A_to_2B',
-                                       'cabinAtmo.modelA.mImvDuct.mIf',
-                                       True,
-                                       'FluidDistIfDataBase.FluidDistIfData_6_4')
-federate.add_fed_object(data_obj)
-
-data_obj = FluidDistIfAToBObjectConfig('FluidDistIf_IMV_2B_to_1A',
-                                       'cabinAtmo.modelA.mImvDuct.mIf',
-                                       False,
-                                       'FluidDistIfDataBase.FluidDistIfData_6_4')
-federate.add_fed_object(data_obj)
-
-# Interfaces between modelB in this federate (FED_1) to modelA in the other FED_2:
-data_obj = FluidDistIfAToBObjectConfig('FluidDistIf_Vestibule_2A_to_1B',
-                                       'cabinAtmo.modelB.mVestibule.mIf',
-                                       True,
-                                       'FluidDistIfDataBase.FluidDistIfData_6_4')
-federate.add_fed_object(data_obj)
-
 data_obj = FluidDistIfAToBObjectConfig('FluidDistIf_Vestibule_1B_to_2A',
-                                       'cabinAtmo.modelB.mVestibule.mIf',
-                                       False,
+                                       'cabinAtmo.modelA.mVestibule.mIf',
+                                       True,
                                        'FluidDistIfDataBase.FluidDistIfData_6_4')
 federate.add_fed_object(data_obj)
 
 data_obj = FluidDistIfAToBObjectConfig('FluidDistIf_IMV_2A_to_1B',
-                                       'cabinAtmo.modelB.mImvDuct.mIf',
-                                       True,
-                                       'FluidDistIfDataBase.FluidDistIfData_6_4')
-federate.add_fed_object(data_obj)
-
-data_obj = FluidDistIfAToBObjectConfig('FluidDistIf_IMV_1B_to_2A',
-                                       'cabinAtmo.modelB.mImvDuct.mIf',
+                                       'cabinAtmo.modelA.mImvDuct.mIf',
                                        False,
                                        'FluidDistIfDataBase.FluidDistIfData_6_4')
 federate.add_fed_object(data_obj)
 
+data_obj = FluidDistIfAToBObjectConfig('FluidDistIf_IMV_1B_to_2A',
+                                       'cabinAtmo.modelA.mImvDuct.mIf',
+                                       True,
+                                       'FluidDistIfDataBase.FluidDistIfData_6_4')
+federate.add_fed_object(data_obj)
+
 # Configure the Conservation parameters HLA data messages
-from Modified_data.FDI.ConserveParamsObjectConfig import *
-data_obj = ConserveParamsObjectConfig('ConservationData_1_to_2',
+from Modified_data.DistIf.ConserveParamsObjectConfig import *
+data_obj = ConserveParamsObjectConfig('ConservationData_2_to_1',
                                       'cabinAtmo.modelB.mConserveParams',
                                       True,
                                       'ConservationParams')
 federate.add_fed_object(data_obj)
 
-data_obj = ConserveParamsObjectConfig('ConservationData_2_to_1',
+data_obj = ConserveParamsObjectConfig('ConservationData_1_to_2',
                                       'cabinAtmo.conservation.modelBConserveParams',
                                       False,
                                       'ConservationParams')

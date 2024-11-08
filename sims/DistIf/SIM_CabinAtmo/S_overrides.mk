@@ -17,7 +17,7 @@ endif
 # Compile with optimization and debug hooks, point Trick to model code.
 TRICK_CFLAGS   += -g -O2 -I${MODEL_PACKAGE_HOME}
 TRICK_CXXFLAGS += -g -O2 -I${MODEL_PACKAGE_HOME}
-TRICK_SFLAGS   += -I${MODEL_PACKAGE_HOME}/S_modules/FDI
+TRICK_SFLAGS   += -I${MODEL_PACKAGE_HOME}/S_modules/DistIf
 
 #============================================================================
 # HLA Build Environment
@@ -43,18 +43,18 @@ spotless: clean_links
 
 build_links:
 	@ echo "${GREEN_TXT}Creating links to FOM and Modified_data folders.${RESET_TXT}"
-	ln -s -fn ${MODEL_PACKAGE_HOME}/FOMs/FDI FOMs/FDI
-	ln -s -fn ${MODEL_PACKAGE_HOME}/Modified_data/FDI Modified_data/FDI
+	ln -s -fn ${MODEL_PACKAGE_HOME}/FOMs/DistIf FOMs/DistIf
+	ln -s -fn ${MODEL_PACKAGE_HOME}/Modified_data/DistIf Modified_data/DistIf
 	ln -s -fn ${TRICKHLA_HOME}/Modified_data/TrickHLA Modified_data/TrickHLA
 
 clean_links:
-	@if [ -e FOMs/FDI ] ; then \
-		echo "${GREEN_TXT}Cleaning link to FOMs/FDI folder.${RESET_TXT}" ;\
-		rm -r -f FOMs/FDI ;\
+	@if [ -e FOMs/DistIf ] ; then \
+		echo "${GREEN_TXT}Cleaning link to FOMs/DistIf folder.${RESET_TXT}" ;\
+		rm -r -f FOMs/DistIf ;\
 	fi
-	@if [ -e Modified_data/FDI ] ; then \
-		echo "${GREEN_TXT}Cleaning link to Modified_data/FDI folder.${RESET_TXT}" ;\
-		rm -r -f Modified_data/FDI ;\
+	@if [ -e Modified_data/DistIf ] ; then \
+		echo "${GREEN_TXT}Cleaning link to Modified_data/DistIf folder.${RESET_TXT}" ;\
+		rm -r -f Modified_data/DistIf ;\
 	fi
 	@if [ -e Modified_data/TrickHLA ] ; then \
 		echo "${GREEN_TXT}Cleaning link to Modified_data/TrickHLA folder.${RESET_TXT}" ;\

@@ -18,7 +18,6 @@ import os
 import subprocess
 import shutil
 import argparse
-import distutils.spawn
 
 from trickhla_message import *
 from trickhla_environment import *
@@ -177,7 +176,7 @@ def main():
       TrickHLAMessage.status( 'Generating documentation for TrickHLA: ' + trickhla_version )
 
    # Check that we can find the Doxygen command.
-   doxygen_cmnd = distutils.spawn.find_executable( 'doxygen' )
+   doxygen_cmnd = shutil.which( 'doxygen' )
    if doxygen_cmnd:
       # Check to see if Doxygen command is executable.
       if os.access( doxygen_cmnd, os.X_OK ):
