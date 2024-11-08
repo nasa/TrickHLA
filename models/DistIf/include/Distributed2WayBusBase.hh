@@ -2,17 +2,6 @@
 #define Distributed2WayBusBase_EXISTS
 
 /**
- * @defgroup Examples Examples
- * @details The collection of example code for TrickHLA
- */
-
-/**
- * @defgroup DistIf DistIf
- * @ingroup Examples
- * @details A distributed systems interface code example for TrickHLA
- */
-
-/**
 @ingroup DistIf
 @file    Distributed2WayBusBase.hh
 @brief   Distributed 2-Way Bus Base Interface declarations
