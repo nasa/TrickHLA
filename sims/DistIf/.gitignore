@@ -1,0 +1,19 @@
+# Ignore Trick sim build & run products
+.trick
+DP_Product
+S_job_execution
+S_run_summary
+_init_log.csv
+send_hs
+varserver_log
+S_main*.exe
+S_sie.resource
+S_source.hh
+build
+makefile
+trick.zip
+hs*.log
+
+# Ignore document backup files
+.$*.bkp
+~$*.xlsx

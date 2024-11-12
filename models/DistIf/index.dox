@@ -1,0 +1,6 @@
+/**
+ * @defgroup DistIf DistIf
+ * A distributed systems interface code example for TrickHLA
+ * @details This is generalized example of how to do subsystem interfaces with HLA.
+ * @ingroup Examples
+ */
