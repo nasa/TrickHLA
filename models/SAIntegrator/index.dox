@@ -1,0 +1,7 @@
+/**
+ * @defgroup SAIntegrator SAIntegrator
+ * An example of how to use different integrators to propagate dynamic states
+ * @details A set of classes that show how to use differnt first and second
+ * order numerical integration routines.
+ * @ingroup Examples
+ */
