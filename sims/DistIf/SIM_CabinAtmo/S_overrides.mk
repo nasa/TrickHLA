@@ -1,7 +1,7 @@
 # @copyright Copyright 2024 United States Government as represented by the Administrator of the
 #            National Aeronautics and Space Administration.  All Rights Reserved. */
 
-MODEL_PACKAGE_HOME  = ${PWD}/../../../
+MODEL_PACKAGE_HOME  = ${PWD}/../../..
 TRICKHLA_HOME      ?= ${PWD}/../../../../TrickHLA
 
 # Info and error message text colors.
