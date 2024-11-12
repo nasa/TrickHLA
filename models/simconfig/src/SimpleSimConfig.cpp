@@ -1,6 +1,6 @@
 /*!
+@ingroup SimConfig
 @file models/simconfig/src/SimpleSimConfig.cpp
-@ingroup TrickHLAModel
 @brief This class contains a basic simulation configuration.
 
 @copyright Copyright 2020 United States Government as represented by the

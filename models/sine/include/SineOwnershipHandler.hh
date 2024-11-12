@@ -1,6 +1,6 @@
 /*!
+@ingroup Sine
 @file models/sine/include/SineOwnershipHandler.hh
-@ingroup TrickHLAModel
 @brief Ownership transfer for the HLA object attributes.
 
 @copyright Copyright 2020 United States Government as represented by the

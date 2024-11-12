@@ -455,8 +455,8 @@ bool const SyncPointManagerBase::register_sync_point(
 }
 
 bool const SyncPointManagerBase::register_sync_point(
-   wstring const           &label,
-   FederateHandleSet const &handle_set )
+   wstring const                              &label,
+   RTI1516_NAMESPACE::FederateHandleSet const &handle_set )
 {
    MutexProtection auto_unlock_mutex( &mutex );
 
@@ -493,8 +493,8 @@ bool const SyncPointManagerBase::register_all_sync_points(
 }
 
 bool const SyncPointManagerBase::register_all_sync_points(
-   string const            &list_name,
-   FederateHandleSet const &handle_set )
+   string const                               &list_name,
+   RTI1516_NAMESPACE::FederateHandleSet const &handle_set )
 {
    MutexProtection auto_unlock_mutex( &mutex );
 
