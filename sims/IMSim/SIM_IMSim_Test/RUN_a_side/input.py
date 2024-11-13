@@ -67,7 +67,7 @@ THLA.federate.debug_level = trick.DEBUG_LEVEL_6_TRACE
 # Configure the CRC.
 # Pitch specific local settings designator:
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
-# Mak specific local settings designator, which is anything from the rid.mtl file:
+# MAK specific local settings designator, which is anything from the rid.mtl file:
 #THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
 THLA.federate.lookahead_time = 0.250
 

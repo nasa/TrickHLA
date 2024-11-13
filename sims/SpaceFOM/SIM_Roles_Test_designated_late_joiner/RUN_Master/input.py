@@ -1,4 +1,4 @@
-##############################################################################
+K##############################################################################
 # PURPOSE:
 #    (This is a Python input file for configuring the Space Reference FOM
 #     example Master federate run.)
