@@ -44,7 +44,7 @@ IEEE 1516-2010 Runtime Infrastructure (RTI) in order to function.
 
 5) Define $RTI_VENDOR to be one of either Pitch_HLA_Evolved or Mak_HLA_Evolved.
 
-6) Optionally define $RTI_JAVA_HOME to override the Java Runtime Environment (JRE) used by the RTI if a JRE is used.
+6) Optionally define $RTI_JAVA_HOME to override the Java Runtime Environment (JRE) used by the RTI if it uses one.
 
 ---
 
