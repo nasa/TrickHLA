@@ -9,7 +9,7 @@ expert. The TrickHLA software is data driven and provides a simple Application
 Programming Interface (API) making it relatively easy to take an existing Trick 
 simulation and make it an HLA distributed simulation.
 
-## Installing
+## Installing and Running:
 
 These instructions will walk you through the process of installing TrickHLA on 
 your computer.
@@ -68,7 +68,7 @@ in this example for execution control.
 
 ---
 
-## License
+## License:
 TrickHLA is released under the [NASA Open Source Agreement Version 1.3](https://github.com/nasa/TrickHLA/blob/master/LICENSE.txt).
 
 ## Copyright:
