@@ -15,12 +15,6 @@ These instructions will walk you through the process of installing TrickHLA on
 your computer. Instructions are also provided for building an example two 
 Federate simulation and then running it.
 
-### Getting TrickHLA
-Clone TrickHLA from the master branch.
-
-git clone https://github.com/nasa/TrickHLA.git
-
-
 ### Dependencies
 
 TrickHLA requires the Trick Simulation Environment and a fully compliant 
@@ -30,6 +24,10 @@ IEEE 1516-2010 Runtime Infrastructure (RTI) in order to function.
 
 2) Install an IEEE 1516-2010 RTI using the installer and instructions provided by the vendor.
 
+### Getting TrickHLA
+Clone TrickHLA from the master branch.
+
+git clone https://github.com/nasa/TrickHLA.git
 
 ### Environment Setup
 
@@ -43,7 +41,7 @@ IEEE 1516-2010 Runtime Infrastructure (RTI) in order to function.
 
 5) Define $RTI_VENDOR to be one of either <i>Pitch_HLA_Evolved</i> or <i>Mak_HLA_Evolved</i> depending on the RTI you installed.
 
-6) Optionally define $RTI_JAVA_HOME to override the Java Runtime Environment (JRE) used by the RTI if it uses one.
+6) Optionally, define $RTI_JAVA_HOME to override the Java Runtime Environment (JRE) used by the RTI if it uses one.
 
 ### Building an Example Simulation
 
