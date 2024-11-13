@@ -1,6 +1,6 @@
 /*!
+@ingroup Sine
 @file models/sine/src/SineOwnershipHandler.cpp
-@ingroup TrickHLAModel
 @brief This class handles the HLA ownership transfer for the sine wave simulation.
 
 @copyright Copyright 2020 United States Government as represented by the

@@ -1,6 +1,6 @@
 /*!
+@ingroup IMSim
 @file IMSim/Types.hh
-@addtogroup IMSim
 @brief Definition of the TrickHLA IMSim enumeration types and utilities.
 
 @copyright Copyright 2019 United States Government as represented by the

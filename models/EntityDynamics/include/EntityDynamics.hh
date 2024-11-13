@@ -1,6 +1,6 @@
 /**
+@ingroup EntityDynamics
 @file models/EntityDynamics/include/EntityDynamics.hh
-@addtogroup TrickHLAModel
 @brief A class to perform a simple propagation of a SpaceFOM PhysicalEntity
 or DynamicalEntity for testing.
 

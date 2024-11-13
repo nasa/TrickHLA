@@ -146,7 +146,7 @@ class SyncPoint : public TrickHLA::CheckpointConversionBase
    virtual RTI1516_USERDATA const encode_user_supplied_tag();
 
    /*! @brief Decode the user supplied data.
-    *  @return supplied_tag The supplied tag to decode as the user supplied tag. */
+    *  @param supplied_tag supplied_tag The supplied tag to decode as the user supplied tag. */
    virtual void decode_user_supplied_tag( RTI1516_USERDATA const &supplied_tag );
 
    // Utility functions.

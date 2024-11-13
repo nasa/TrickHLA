@@ -1,6 +1,6 @@
 /*!
+@ingroup Sine
 @file models/sine/include/SineInteractionHandler.hh
-@ingroup TrickHLAModel
 @brief This class handles the HLA interactions for the sine wave simulation.
 
 @copyright Copyright 2020 United States Government as represented by the

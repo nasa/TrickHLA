@@ -25,10 +25,10 @@ ifeq ($(RTI_VENDOR),Pitch_HLA_4)
    HLA_STANDARD = IEEE_1516_202X
 else ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
    HLA_STANDARD = IEEE_1516_2010
-else ifeq ($(RTI_VENDOR),Mak_HLA_Evolved)
+else ifeq ($(RTI_VENDOR),MAK_HLA_Evolved)
    HLA_STANDARD = IEEE_1516_2010
 else
-   $(error ${RED_TXT}S_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify one of Pitch_HLA_4, Pitch_HLA_Evolved, or Mak_HLA_Evolved.${RESET_TXT})
+   $(error ${RED_TXT}S_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify one of Pitch_HLA_4, Pitch_HLA_Evolved, or MAK_HLA_Evolved.${RESET_TXT})
 endif
 
 # Needed for TrickHLA.
@@ -50,12 +50,12 @@ else ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
    endif
    TRICK_CFLAGS   += -I${RTI_INCLUDE}
    TRICK_CXXFLAGS += -I${RTI_INCLUDE}
-else ifeq ($(RTI_VENDOR),Mak_HLA_Evolved)
+else ifeq ($(RTI_VENDOR),MAK_HLA_Evolved)
    RTI_INCLUDE    =  ${RTI_HOME}/include/HLA1516E
-   TRICK_CFLAGS   += -DRTI_VENDOR=Mak_HLA_Evolved -I${RTI_INCLUDE}
-   TRICK_CXXFLAGS += -DRTI_VENDOR=Mak_HLA_Evolved -I${RTI_INCLUDE}
+   TRICK_CFLAGS   += -DRTI_VENDOR=MAK_HLA_Evolved -I${RTI_INCLUDE}
+   TRICK_CXXFLAGS += -DRTI_VENDOR=MAK_HLA_Evolved -I${RTI_INCLUDE}
 else
-   $(error ${RED_TXT}S_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify one of Pitch_HLA_4, Pitch_HLA_Evolved, or Mak_HLA_Evolved.${RESET_TXT})
+   $(error ${RED_TXT}S_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify one of Pitch_HLA_4, Pitch_HLA_Evolved, or MAK_HLA_Evolved.${RESET_TXT})
 endif
 
 # Configure the ICG and swig excludes.
@@ -332,10 +332,10 @@ else
         $(info ${GREEN_TXT}S_hla.mk:INFO: Add this to your .bashrc file: export LD_LIBRARY_PATH=${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}${RESET_TXT})
       endif
 
-   else ifeq ($(RTI_VENDOR),Mak_HLA_Evolved)
+   else ifeq ($(RTI_VENDOR),MAK_HLA_Evolved)
       TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib -lrti1516e64 -lfedtime1516e64
    else
-      $(error ${RED_TXT}S_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify one of Pitch_HLA_4, Pitch_HLA_Evolved, or Mak_HLA_Evolved.${RESET_TXT})
+      $(error ${RED_TXT}S_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify one of Pitch_HLA_4, Pitch_HLA_Evolved, or MAK_HLA_Evolved.${RESET_TXT})
    endif
 
 endif

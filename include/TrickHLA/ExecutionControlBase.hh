@@ -186,20 +186,19 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
    virtual void clear_multiphase_init_sync_points();
    /*! @brief Achieve all the user defined mulit-phase initialization
     *  synchronization points if they are not already achieved and are not
-    *  one of the predefined ExecutionControl synchronization points.
-    *  @param rti_ambassador Reference to the HLA RTI Ambassador instance. */
+    *  one of the predefined ExecutionControl synchronization points. */
    virtual void achieve_all_multiphase_init_sync_points();
    /*! @brief Wait for all the user defined mulit-phase initialization
     *  synchronization points if they are not already achieved and are not
     *  one of the predefined ExecutionControl synchronization points. */
    virtual void wait_for_all_multiphase_init_sync_points();
 
-   /*! @brief The RTI has announced the existence of a synchronization point.
-    *  @param label             Sync-point label.
-    *  @param user_supplied_tag Use supplied tag.*/
-   /*  virtual void sync_point_announced(
-        std::wstring const     &label,
-        RTI1516_USERDATA const &user_supplied_tag ); */
+   //*! @brief The RTI has announced the existence of a synchronization point.
+   //*  @param label             Sync-point label.
+   //*  @param user_supplied_tag Use supplied tag.*/
+   ///*  virtual void sync_point_announced(
+   //   std::wstring const     &label,
+   //   RTI1516_USERDATA const &user_supplied_tag ); */
 
    /*! Publish the ExecutionControl objects and interactions. */
    virtual void publish() = 0;

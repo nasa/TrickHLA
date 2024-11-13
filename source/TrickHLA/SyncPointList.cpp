@@ -419,8 +419,8 @@ bool const SyncPointList::register_sync_point(
 }
 
 bool const SyncPointList::register_sync_point(
-   wstring const           &label,
-   FederateHandleSet const &handle_set )
+   wstring const                              &label,
+   RTI1516_NAMESPACE::FederateHandleSet const &handle_set )
 {
    MutexProtection auto_unlock_mutex( mutex );
 
@@ -459,7 +459,7 @@ bool const SyncPointList::register_all()
 }
 
 bool const SyncPointList::register_all(
-   FederateHandleSet const &handle_set )
+   RTI1516_NAMESPACE::FederateHandleSet const &handle_set )
 {
    MutexProtection auto_unlock_mutex( mutex );
 
@@ -537,8 +537,8 @@ bool const SyncPointList::register_sync_point(
 }
 
 bool const SyncPointList::register_sync_point(
-   SyncPoint               *sp,
-   FederateHandleSet const &handle_set )
+   SyncPoint                                  *sp,
+   RTI1516_NAMESPACE::FederateHandleSet const &handle_set )
 {
    if ( sp == NULL ) {
       ostringstream errmsg;

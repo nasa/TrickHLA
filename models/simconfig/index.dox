@@ -4,5 +4,5 @@
  * @details This model shows how to create a simple simulation configuration as an
  * extension to the TrickHLA ExecutionControlBase class required for coordinated
  * federation execution.
- * @ingroup Examples
+ * @ingroup TrickHLAModels
  */

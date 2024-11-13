@@ -1,6 +1,6 @@
 /*!
+@ingroup TrickHLA
 @file TrickHLA/Types.hh
-@addtogroup TrickHLA
 @brief Definition of the TrickHLA enumeration types and utilities.
 
 @copyright Copyright 2019 United States Government as represented by the
