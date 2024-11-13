@@ -1,6 +1,6 @@
 /*!
+@ingroup Sine
 @file models/sine/src/SineObjectDeleted.cpp
-@ingroup TrickHLAModel
 @brief Callback class the user writes to do something once the object has been
 deleted from the RTI.
 

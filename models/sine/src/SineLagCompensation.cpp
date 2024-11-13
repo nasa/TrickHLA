@@ -1,6 +1,6 @@
 /*!
+@ingroup Sine
 @file models/sine/src/SineLagCompensation.cpp
-@ingroup TrickHLAModel
 @brief This class provides lag compensation for the sine wave object.
 
 @copyright Copyright 2020 United States Government as represented by the

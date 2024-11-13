@@ -181,19 +181,19 @@ class SyncPointList : public TrickHLA::CheckpointConversionBase
 
   protected:
 #if SYNC_POINT_TMM_ARRAY
-   SyncPoint **list;       ///< @trick_units(--) Vector of sync-points objects.
-   int         list_count; ///< @trick_units(--) Number of sync-points objects in the list.
+   SyncPoint **list;       ///< @trick_units{--} Vector of sync-points objects.
+   int         list_count; ///< @trick_units{--} Number of sync-points objects in the list.
 #else
-   SyncPointVector list; ///< @trick_io(**) Vector of sync-points objects.
+   SyncPointVector list; ///< @trick_io{**} Vector of sync-points objects.
 #endif
 
-   std::string list_name; ///< @trick_io(**) Name of this sync-point list.
+   std::string list_name; ///< @trick_io{**} Name of this sync-point list.
 
-   MutexLock *mutex; ///< @trick_io(**) Mutex to lock thread over critical code sections.
+   MutexLock *mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
 
-   Federate *federate; ///< @trick_units(--) Associated TrickHLA Federate.
+   Federate *federate; ///< @trick_units{--} Associated TrickHLA Federate.
 
-   char *list_name_chkpt; ///< @trick_units(--) Trick checkpointable list name.
+   char *list_name_chkpt; ///< @trick_units{--} Trick checkpointable list name.
 
   private:
    // Do not allow the copy constructor or assignment operator.

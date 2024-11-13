@@ -1,6 +1,6 @@
 /*!
+@ingroup SAIntegrator
 @file models/SAIntegrator/src/PhysicalEntityLagCompSA.cpp
-@ingroup SpaceFOM
 @brief This class provides the implementation for a TrickHLA SpaceFOM
 PhysicalEntity latency/lag compensation class.
 

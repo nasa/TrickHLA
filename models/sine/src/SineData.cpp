@@ -1,6 +1,6 @@
 /*!
+@ingroup Sine
 @file models/sine/src/SineData.cpp
-@ingroup TrickHLAModel
 @brief This class is the working class for the Sine HLA/RTI example problem.
 
 @copyright Copyright 2020 United States Government as represented by the

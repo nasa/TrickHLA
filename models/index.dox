@@ -1,6 +1,6 @@
 /**
- * @defgroup Examples Examples
- * TrickHLA examples
+ * @defgroup TrickHLAModels TrickHLAModels
+ * A collection of TrickHLA example models.
  * @details This is a collection of TrickHLA examples.
  */
-
+ 

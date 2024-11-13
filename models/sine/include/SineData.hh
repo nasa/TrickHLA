@@ -1,6 +1,6 @@
 /*!
+@ingroup Sine
 @file models/sine/include/SineData.hh
-@ingroup TrickHLAModel
 @brief This is a container class for general test data used in the general HLA
 test routines.
 

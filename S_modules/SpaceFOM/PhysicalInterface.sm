@@ -41,19 +41,19 @@ class SpaceFOMPhysicalInterfaceSimObject : public TrickHLAPackingBaseSimObject {
 
   public:
    // DynamicalEntity data.
-   PhysicalInterfaceData  interface_data;
+   SpaceFOM::PhysicalInterfaceData  interface_data;
 
    /* HLA associated reference frames packing object. */
    SpaceFOM::PhysicalInterface interface_packing;
 
    /* HLA conditional object. */
-   PhysicalInterfaceConditionalBase conditional;
+   SpaceFOM::PhysicalInterfaceConditionalBase conditional;
 
    /* HLA Ownership Handler object. */
-   PhysicalInterfaceOwnershipHandler ownership_handler;
+   SpaceFOM::PhysicalInterfaceOwnershipHandler ownership_handler;
 
    /* HLA PhysicalInterface deleted object. */
-   PhysicalInterfaceDeleted deleted_callback;
+   SpaceFOM::PhysicalInterfaceDeleted deleted_callback;
 
    // SimObject constructor.
    SpaceFOMPhysicalInterfaceSimObject( unsigned short _INIT = P_HLA_INIT )

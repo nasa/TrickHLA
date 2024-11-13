@@ -1,6 +1,6 @@
 /*!
+@ingroup Sine
 @file models/sine/src/SinePacking.cpp
-@ingroup TrickHLAModel
 @brief This class provides data packing for the sine wave data.
 
 @copyright Copyright 2020 United States Government as represented by the

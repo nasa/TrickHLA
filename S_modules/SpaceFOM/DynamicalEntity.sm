@@ -42,23 +42,23 @@ class SpaceFOMDynamicalEntitySimObject : public TrickHLAPackingBaseSimObject {
   public:
 
    // DynamicalEntity data.
-   PhysicalEntityData  & pe_data;
-   DynamicalEntityData & de_data;
+   SpaceFOM::PhysicalEntityData  & pe_data;
+   SpaceFOM::DynamicalEntityData & de_data;
 
    /* HLA associated reference frames packing object. */
    SpaceFOM::DynamicalEntity entity_packing;
 
    /* HLA conditional object. */
-   DynamicalEntityConditionalBase conditional;
+   SpaceFOM::DynamicalEntityConditionalBase conditional;
 
    /* HLA lag compensation object. */
-   DynamicalEntityLagComp lag_compensation;
+   SpaceFOM::DynamicalEntityLagComp lag_compensation;
 
    /* HLA Ownership Handler object. */
-   DynamicalEntityOwnershipHandler ownership_handler;
+   SpaceFOM::DynamicalEntityOwnershipHandler ownership_handler;
 
    /* HLA PhysicalEntity deleted object. */
-   DynamicalEntityDeleted deleted_callback;
+   SpaceFOM::DynamicalEntityDeleted deleted_callback;
 
    // SimObject constructor.
    SpaceFOMDynamicalEntitySimObject( PhysicalEntityData  & pe,
