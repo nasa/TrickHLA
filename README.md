@@ -41,7 +41,7 @@ IEEE 1516-2010 Runtime Infrastructure (RTI) in order to function.
 
 4) Define $RTI_HOME to point to your RTI install directory.
 
-5) Define $RTI_VENDOR to be one of either Pitch_HLA_Evolved or Mak_HLA_Evolved depending on the RTI you installed.
+5) Define $RTI_VENDOR to be one of either <i>Pitch_HLA_Evolved</i> or <i>Mak_HLA_Evolved</i> depending on the RTI you installed.
 
 6) Optionally define $RTI_JAVA_HOME to override the Java Runtime Environment (JRE) used by the RTI if it uses one.
 
