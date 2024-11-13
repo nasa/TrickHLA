@@ -9,7 +9,7 @@ expert. The TrickHLA software is data driven and provides a simple Application
 Programming Interface (API) making it relatively easy to take an existing Trick 
 simulation and make it an HLA distributed simulation.
 
-## Installing and Running:
+## Installing, Building, and Running:
 
 These instructions will walk you through the process of installing TrickHLA on 
 your computer.
