@@ -16,13 +16,13 @@ These instructions will walk you through the process of installing TrickHLA on
 your computer.
 
 
-# Getting TrickHLA
+### Getting TrickHLA
 Clone TrickHLA from the master branch.
 
 git clone https://github.com/nasa/TrickHLA.git
 
 
-# Dependencies
+### Dependencies
 
 TrickHLA requires the Trick Simulation Environment and a fully compliant 
 IEEE 1516-2010 Runtime Infrastructure (RTI) in order to function. 
@@ -32,7 +32,7 @@ IEEE 1516-2010 Runtime Infrastructure (RTI) in order to function.
 2) Install an IEEE 1516-2010 RTI using the installer and instructions provided by the vendor.
 
 
-# Environment Setup
+### Environment Setup
 
 1) Define $TRICK_HOME to point to where you installed Trick.
 
