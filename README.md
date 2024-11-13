@@ -1,8 +1,55 @@
 # TrickHLA is an IEEE 1516 High Level Architecture (HLA) Simulation Interoperability Middleware for the Trick Simulation Environment
 
-## Brief Abstract:
+The TrickHLA software supports the IEEE-1516 High Level Architecture (HLA) 
+simulation interoperability standard for the 
+[Trick Simulation Environment](https://github.com/nasa/trick/). The TrickHLA 
+software abstracts away the details of using HLA, allowing the user to 
+concentrate on the simulation and not worry about having to be an HLA 
+distributed simulation expert. The TrickHLA software is data driven and 
+provides a simple Application Programming Interface (API) making it relatively 
+easy to take an existing Trick simulation and make it an HLA distributed 
+simulation.
 
-The TrickHLA software supports the IEEE-1516 High Level Architecture (HLA) simulation interoperability standard for the [Trick Simulation Environment](https://github.com/nasa/trick/). The TrickHLA software abstracts away the details of using HLA, allowing the user to concentrate on the simulation and not worry about having to be an HLA distributed simulation expert. The TrickHLA software is data driven and provides a simple Application Programming Interface (API) making it relatively easy to take an existing Trick simulation and make it a HLA distributed simulation.
+## Installing
+
+These instructions will walk you through the process of installing TrickHLA on 
+your computer.
+
+
+# Getting TrickHLA
+Clone TrickHLA from the master branch.
+
+git clone https://github.com/nasa/TrickHLA.git
+
+
+# Dependencies
+
+TrickHLA requires the Trick Simulation Environment and a fully compliant 
+IEEE 1516-2010 Runtime Infrastructure (RTI) in order to function. 
+
+1) Install the Trick Simulation Environment by following the [Trick Install Guide](https://nasa.github.io/trick/documentation/install_guide/Install-Guide).
+
+2) Install an IEEE 1516-2010 RTI using the installer and instructions provided by the vendor.
+
+
+# Environment Setup
+
+1) Define $TRICK_HOME to point to where you installed Trick.
+
+2) Add $TRICK_HOME/bin to your $PATH.
+
+3) Define $TRICKHLA_HOME to point to the TrickHLA clone folder.
+
+4) Define $RTI_HOME to point to your RTI install folder.
+
+5) Define $RTI_VENDOR to be one of either Pitch_HLA_Evolved or Mak_HLA_Evolved.
+
+6) Optionally define $RTI_JAVA_HOME to override the Java Runtime Environment (JRE) used by the RTI if a JRE is used.
+
+---
+
+## License
+TrickHLA is released under the [NASA Open Source Agreement Version 1.3](https://github.com/nasa/TrickHLA/blob/master/LICENSE.txt).
 
 ## Copyright:
 Copyright 2020 United States Government as represented by the Administrator of the National Aeronautics and Space Administration. No copyright is claimed in the United States under Title 17, U.S. Code. All Other Rights Reserved.
@@ -17,8 +64,4 @@ Simulation and Graphics Branch, Mail Code ER7
 Software, Robotics & Simulation Division  
 NASA, Johnson Space Center  
 2101 NASA Parkway, Houston, TX  77058  
-
----
-
-TrickHLA is released under the [NASA Open Source Agreement Version 1.3](https://github.com/nasa/TrickHLA/blob/master/LICENSE.txt).
 
