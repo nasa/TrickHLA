@@ -58,7 +58,7 @@ in this example for execution control.
 
 1) Make sure a fully compliant IEEE 1516-2010 RTI is running on the local host.
 
-2) From one terminal, run the Analytic solution Federate:<br/>
+2) From a terminal, run the Analytic solution Federate:<br/>
 ./S_main*.exe RUN_a_side_mpr/input.py --verbose on
 
 3) From a second terminal, run the Propagated solution Federate:<br/>
