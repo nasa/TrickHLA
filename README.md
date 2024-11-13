@@ -38,9 +38,9 @@ IEEE 1516-2010 Runtime Infrastructure (RTI) in order to function.
 
 2) Add $TRICK_HOME/bin to your $PATH.
 
-3) Define $TRICKHLA_HOME to point to the TrickHLA clone folder.
+3) Define $TRICKHLA_HOME to point to the TrickHLA clone directory.
 
-4) Define $RTI_HOME to point to your RTI install folder.
+4) Define $RTI_HOME to point to your RTI install directory.
 
 5) Define $RTI_VENDOR to be one of either Pitch_HLA_Evolved or Mak_HLA_Evolved.
 
