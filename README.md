@@ -12,8 +12,8 @@ simulation and make it an HLA distributed simulation.
 ## Installing, Building, and Running:
 
 These instructions will walk you through the process of installing TrickHLA on 
-your computer. Instructions are also provided for building an example sine wave 
-two Federate simulation and then running it.
+your computer. Instructions are also provided for building an example two 
+Federate simulation and then running it.
 
 ### Getting TrickHLA
 Clone TrickHLA from the master branch.
