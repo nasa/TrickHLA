@@ -53,7 +53,7 @@ git clone https://github.com/nasa/TrickHLA.git
 
 The sine wave example simulation is a two federate distributed simulation that 
 solves a sine wave using both an analytic and a propagated solution. 
-The [SISO SpaceFOM Standard](https://cdn.ymaws.com/www.sisostandards.org/resource/resmgr/standards_products/siso-std-018-2020_srfom.pdf) is used
+The [SISO SpaceFOM International Standard](https://cdn.ymaws.com/www.sisostandards.org/resource/resmgr/standards_products/siso-std-018-2020_srfom.pdf) is used
 in this example for execution control.
 
 1) Make sure a fully compliant IEEE 1516-2010 RTI is running on the local host.
