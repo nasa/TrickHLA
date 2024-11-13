@@ -45,6 +45,27 @@ IEEE 1516-2010 Runtime Infrastructure (RTI) in order to function.
 
 6) Optionally define $RTI_JAVA_HOME to override the Java Runtime Environment (JRE) used by the RTI if it uses one.
 
+### Building an Example Simulation
+
+1) cd $TRICKHLA_HOME/sims/SpaceFOM/SIM_sine
+
+2) trick-CP
+
+### Running an Example Simulation
+
+The sine wave example simulation is a two federate distributed simulation that 
+solves a sine wave using both an analytic and a propagated solution. 
+The [SISO SpaceFOM Standard](https://cdn.ymaws.com/www.sisostandards.org/resource/resmgr/standards_products/siso-std-018-2020_srfom.pdf) is used
+in this example for execution control.
+
+1) Make sure a fully compliant IEEE 1516-2010 RTI is running on the local host.
+
+2) From one terminal, run the Analytic solution Federate:
+./S_main*.exe RUN_a_side_mpr/input.py --verbose on
+
+3) From a second terminal, run the Propagated solution Federate:
+./S_main*.exe RUN_p_side/input.py --verbose on
+
 ---
 
 ## License
