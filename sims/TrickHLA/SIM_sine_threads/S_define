@@ -22,11 +22,13 @@
 
 ##include "trick/integrator_c_intf.h"
 
+// TrickHLA includes.
 ##include "TrickHLA/Manager.hh"
 ##include "TrickHLA/KnownFederate.hh"
 ##include "TrickHLA/SimTimeline.hh"
 ##include "TrickHLA/ScenarioTimeline.hh"
 
+// Sine model includes.
 ##include "sine/include/SineData.hh"
 ##include "sine/include/SinePacking.hh"
 ##include "sine/include/SineLagCompensation.hh"
@@ -34,11 +36,14 @@
 ##include "sine/include/SineInteractionHandler.hh"
 ##include "sine/include/SineObjectDeleted.hh"
 
-##include "simconfig/include/SimpleSimConfig.hh"
-
-
-// TrickHLA support for Trick Child Thread.
+// TrickHLA support for Trick Child Threads.
 #include "THLAThread.sm"
+
+
+//==========================================================================
+// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+//==========================================================================
+#include "THLA.sm"
 
 
 //=============================================================================
@@ -48,12 +53,11 @@
 class AnalyticSineSimObj : public Trick::SimObject {
 
  public:
-   TrickHLAModel::SineData truth_data;
-   TrickHLAModel::SineData sim_data;
-   TrickHLAModel::SineData lag_comp_data;
-   
+   TrickHLAModel::SineData               truth_data;
+   TrickHLAModel::SineData               sim_data;
+
    TrickHLAModel::SineOwnershipHandler   ownership_handler;
-   
+
    TrickHLAModel::SinePacking            packing;
 
    TrickHLAModel::SineLagCompensation    lag_compensation;
@@ -61,12 +65,15 @@ class AnalyticSineSimObj : public Trick::SimObject {
    TrickHLAModel::SineInteractionHandler interaction_handler;
 
    TrickHLAModel::SineObjectDeleted      obj_deleted_callback;
-   
-   AnalyticSineSimObj() {
-      P50 ("initialization") packing.initialize( &sim_data );
 
-      P50 ("initialization") lag_compensation.initialize( &sim_data, &lag_comp_data );
-      
+   AnalyticSineSimObj()
+   {
+      P50 ("initialization") lag_compensation.configure( &sim_data );
+      P50 ("initialization") lag_compensation.initialize();
+
+      P50 ("initialization") packing.configure( &lag_compensation );
+      P50 ("initialization") packing.initialize();
+
       C1 (DYN_RATE, "scheduled") truth_data.compute_value( THLA.execution_control.get_scenario_time() );
       C1 (DYN_RATE, "scheduled") truth_data.compute_derivative( THLA.execution_control.get_scenario_time() );
 
@@ -75,7 +82,7 @@ class AnalyticSineSimObj : public Trick::SimObject {
 
       C1 (THLA_DATA_CYCLE_TIME, "scheduled") sim_data.adjust_phase( THLA.execution_control.get_scenario_time() );
    }
-   
+
  private:
    // Do not allow the implicit copy constructor or assignment operator.
    AnalyticSineSimObj( AnalyticSineSimObj const & rhs );
@@ -90,9 +97,8 @@ class AnalyticSineSimObj : public Trick::SimObject {
 class PropagatedSineSimObj : public THLAThreadSimObject {
 
  public:
-   TrickHLAModel::SineData truth_data;
-   TrickHLAModel::SineData sim_data;
-   TrickHLAModel::SineData lag_comp_data;
+   TrickHLAModel::SineData               truth_data;
+   TrickHLAModel::SineData               sim_data;
 
    TrickHLAModel::SinePacking            packing;
 
@@ -103,18 +109,21 @@ class PropagatedSineSimObj : public THLAThreadSimObject {
    TrickHLAModel::SineObjectDeleted      obj_deleted_callback;
 
    PropagatedSineSimObj( TrickHLA::Federate & thla_fed,
-                         double data_cycle,
-                         unsigned short _THREAD_ID,
-                         std::string object_instance_names = "",
-                         unsigned short _1ST  = 1,
-                         unsigned short _LAST = 65534 ) 
-      : THLAThreadSimObject( thla_fed, data_cycle, _THREAD_ID, object_instance_names, _1ST, _LAST )
+                         double               main_thread_data_cycle,
+                         double               child_thread_data_cycle,
+                         unsigned short       _THREAD_ID )
+      : THLAThreadSimObject( thla_fed,
+                             main_thread_data_cycle,
+                             child_thread_data_cycle,
+                             _THREAD_ID )
    {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
-      P50 ("initialization") packing.initialize( &sim_data );
+      P50 ("initialization") lag_compensation.configure( &sim_data );
+      P50 ("initialization") lag_compensation.initialize();
 
-      P50 ("initialization") lag_compensation.initialize( &sim_data, &lag_comp_data );
+      P50 ("initialization") packing.configure( &lag_compensation );
+      P50 ("initialization") packing.initialize();
 
       /*
        * -- Propagate the true sine state.
@@ -154,78 +163,79 @@ class THLAInitSimObj : public Trick::SimObject {
    TrickHLA::ScenarioTimeline scenario_timeline;
 
    THLAInitSimObj( TrickHLA::Manager  & thla_mngr,
-                   TrickHLA::Federate & thla_fed ) 
+                   TrickHLA::Federate & thla_fed )
       : scenario_timeline( sim_timeline, 0.0, 0.0 ),
         thla_manager( thla_mngr ),
         thla_federate( thla_fed )
    {
-      
       //------------------------------------------------------------------------
-      // NOTE: Initialization phase numbers must be greater than P60 
+      // NOTE: Initialization phase numbers must be greater than P60
       // (i.e. P_HLA_INIT) so that the initialization jobs run after the
       // P60 THLA.manager->initialize() job.
       //------------------------------------------------------------------------
-      
+/*
       // Data will only be sent if this federate owns it.
-      P100 ("initialization") thla_manager.send_init_data( "A-side-Federate.Test" );
-      
+      P100 ("initialization") thla_manager.send_init_data( "A-side-Federate.Sine" );
+
       // Data will only be received if it is remotely owned by another federate.
-      P100 ("initialization") thla_manager.receive_init_data( "A-side-Federate.Test" );
-      
+      P100 ("initialization") thla_manager.receive_init_data( "A-side-Federate.Sine" );
+
       // Do some processing here if needed...
-      
+
       // Wait for all federates to reach this sync-point.
       P100 ("initialization") thla_manager.wait_for_init_sync_point( "Phase1" );
-      
-      
+
+
       // Data will only be sent if this federate owns it.
-      P200 ("initialization") thla_manager.send_init_data( "P-side-Federate.Test" );
-      
+      P200 ("initialization") thla_manager.send_init_data( "P-side-Federate.Sine" );
+
       // Data will only be received if it is remotely owned by another federate.
-      P200 ("initialization") thla_manager.receive_init_data( "P-side-Federate.Test" );
-      
+      P200 ("initialization") thla_manager.receive_init_data( "P-side-Federate.Sine" );
+
       // Do some processing here if needed...
-      
+
       // Wait for all federates to reach this sync-point.
       P200 ("initialization") thla_manager.wait_for_init_sync_point( "Phase2" );
-      
-      
+*/
+
       // Alternative method: Send and receive all the initialization data.
-/*
+
       // Send all the initialization data.
       P100 ("initialization") thla_manager.send_init_data();
-      
+
       // Wait to receive all the initialization data.
       P100 ("initialization") thla_manager.receive_init_data();
-      
+
       // Do some processing here if needed...
-      
+
       // Clear remaining initialization sync-points.
       P100 ("initialization") thla_manager.clear_init_sync_points();
-*/
    }
 
  private:
    TrickHLA::Manager  & thla_manager;
    TrickHLA::Federate & thla_federate;
- 
+
    // Do not allow the implicit copy constructor or assignment operator.
    THLAInitSimObj( THLAInitSimObj const & rhs );
    THLAInitSimObj & operator=( THLAInitSimObj const & rhs );
-   
+
    // Do not allow the default constructor.
    THLAInitSimObj();
 };
 
-//=============================================================================
+//==========================================================================
+// SimObject instantiations.
+//==========================================================================
 // SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
-//=============================================================================
-#include "THLA.sm"
 THLASimObject THLA( THLA_DATA_CYCLE_TIME,
                     THLA_INTERACTION_CYCLE_TIME,
                     P_HLA_EARLY,
                     P_HLA_INIT,
                     P_HLA_LATE );
+
+// Simulation specific multiphase initialization SimObject instance.
+THLAInitSimObj THLA_INIT( THLA.manager, THLA.federate );
 
 // Instantiations
 AnalyticSineSimObj A;
@@ -234,19 +244,17 @@ AnalyticSineSimObj A;
 // thread (i.e. 1) used by the 'A' sim-object to TrickHLA with the specified
 // HLA data cycle time.
 THLAThreadSimObject THLAThread1( THLA.federate,
-                                 THLA_DATA_CYCLE_TIME,     // Data cycle time for this thread.
-                                 1,                        // Trick child thread 1 (i.e. C1).
-                                 "A-side-Federate.Test" ); // Object-instance names associated to this thread.
+                                 THLA_DATA_CYCLE_TIME, // Main thread data cycle time.
+                                 THLA_DATA_CYCLE_TIME, // Child thread data cycle time.
+                                 1 );                  // Trick child thread 1 (i.e. C1).
 
 // Example 2 showing a 'P' sim-object that extends the TrickHLAThread sim-object
 // to associate a Trick child thread (i.e. 2) to TrickHLA with the specified
 // HLA data cycle time.
 PropagatedSineSimObj P( THLA.federate,
-                        THLA_DATA_CYCLE_TIME,     // Data cycle time for this thread.
-                        2,                        // Trick child thread 2 (i.e. C2)
-                        "P-side-Federate.Test" ); // Object-instance names associated to this thread.
-
-THLAInitSimObj THLA_INIT( THLA.manager, THLA.federate );
+                        THLA_DATA_CYCLE_TIME, // Main thread data cycle time.
+                        THLA_DATA_CYCLE_TIME, // Child thread data cycle time.
+                        2 );                  // Trick child thread 2 (i.e. C2)
 
 
 // Define the simulation objects that have routines involved in integration.

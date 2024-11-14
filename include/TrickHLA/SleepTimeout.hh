@@ -19,7 +19,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/SleepTimeout.cpp}
+@trick_link_dependency{../../source/TrickHLA/SleepTimeout.cpp}
 
 @revs_title
 @revs_begin

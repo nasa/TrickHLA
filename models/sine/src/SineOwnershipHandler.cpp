@@ -1,6 +1,6 @@
 /*!
+@ingroup Sine
 @file models/sine/src/SineOwnershipHandler.cpp
-@ingroup TrickHLAModel
 @brief This class handles the HLA ownership transfer for the sine wave simulation.
 
 @copyright Copyright 2020 United States Government as represented by the
@@ -15,8 +15,9 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../source/TrickHLA/OwnershipHandler.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../../source/TrickHLA/OwnershipHandler.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{sine/src/SineOwnershipHandler.cpp}
 
 @revs_title
@@ -33,6 +34,11 @@ NASA, Johnson Space Center\n
 #include <stdlib.h>
 #include <string>
 
+// TrickHLA include files.
+#include "TrickHLA/Object.hh"
+#include "TrickHLA/OwnershipHandler.hh"
+#include "TrickHLA/Types.hh"
+
 // Model include files.
 #include "../include/SineOwnershipHandler.hh"
 
@@ -44,6 +50,7 @@ using namespace TrickHLAModel;
  * @job_class{initialization}
  */
 SineOwnershipHandler::SineOwnershipHandler()
+   : TrickHLA::OwnershipHandler()
 {
    return;
 } // Default constructor.

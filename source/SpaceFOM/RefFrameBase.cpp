@@ -48,6 +48,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA model include files.
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Packing.hh"
@@ -58,6 +59,7 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/RefFrameBase.hh"
 
 using namespace std;
+using namespace TrickHLA;
 using namespace SpaceFOM;
 
 #define REF_FRAME_PACKING_DEBUG 0
@@ -67,13 +69,12 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 RefFrameBase::RefFrameBase()
-   : debug( false ),
-     initialized( false ),
-     ref_frame_attr( NULL ),
-     name( NULL ),
-     parent_name( NULL ),
-     stc_encoder(),
-     stc_data( stc_encoder.get_data() )
+   : parent_frame( NULL ),
+     name_attr( NULL ),
+     parent_name_attr( NULL ),
+     state_attr( NULL ),
+     packing_data(),
+     stc_encoder( packing_data.state )
 {
    return;
 }
@@ -83,35 +84,84 @@ RefFrameBase::RefFrameBase()
  */
 RefFrameBase::~RefFrameBase()
 {
-   if ( this->name != (char *)NULL ) {
-      trick_MM->delete_var( (void *)this->name );
-      this->name = (char *)NULL;
+   if ( this->packing_data.name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.name ) ) ) {
+         send_hs( stderr, "SpaceFOM::RefFrameBase::~RefFrameBase():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      this->packing_data.name = NULL;
    }
-   if ( this->parent_name != (char *)NULL ) {
-      trick_MM->delete_var( (void *)this->parent_name );
-      this->parent_name = (char *)NULL;
+   if ( this->packing_data.parent_name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.parent_name ) ) ) {
+         send_hs( stderr, "SpaceFOM::RefFrameBase::~RefFrameBase():%d WARNING failed to delete Trick Memory for 'this->packing_data.parent_name'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      this->packing_data.parent_name = NULL;
    }
 }
 
 /*!
  * @details These can be overridden in the input file.
- * @job_class{default_data}
+ * @job_class{initialization}
  */
-void RefFrameBase::default_data(
-   SpaceFOM::ExecutionControl *execution_control,
-   TrickHLA::Object           *object,
-   char const                 *sim_obj_name,
-   char const                 *ref_frame_obj_name,
-   char const                 *ref_frame_name,
-   bool                        publishes )
+void RefFrameBase::base_config(
+   bool              publishes,
+   char const       *sim_obj_name,
+   char const       *ref_frame_obj_name,
+   char const       *ref_frame_name,
+   char const       *ref_frame_parent_name,
+   RefFrameBase     *ref_frame_parent,
+   TrickHLA::Object *mngr_object )
 {
    string ref_frame_name_str = string( sim_obj_name ) + "." + string( ref_frame_obj_name );
    string trick_name_str;
 
-   //
-   // Assign the reference in the manager to this Reference Frame object.
-   //
-   execution_control->root_ref_frame = this;
+   // Associate the instantiated Manager object with this packing object.
+   if ( mngr_object == NULL ) {
+      if ( this->object == NULL ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
+                << " WARNING: Unexpected NULL THLAManager object for ReferenceFrame \""
+                << ref_frame_name << "\"!" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      // If the mngr_object is not set but the object is, use that.
+   } else {
+      if ( this->object == NULL ) {
+         // If the object is not already set, use the passed in mngr_object.
+         this->object = mngr_object;
+      } else {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
+                << " WARNING: THLAManager object for ReferenceFrame \""
+                << ref_frame_name << "\" is already set!" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+   }
+
+   // Set the frame name.
+   if ( ref_frame_name != NULL ) {
+      this->set_name( ref_frame_name );
+   } else {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::RefFrameBase::default_data():" << __LINE__
+             << " WARNING: Unexpected NULL federation instance frame name!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Set the parent information.
+   if ( ref_frame_parent_name != NULL ) {
+      this->packing_data.parent_name = trick_MM->mm_strdup( ref_frame_parent_name );
+      if ( ref_frame_parent_name[0] == '\0' ) {
+         this->is_root_node = true;
+      }
+   } else {
+      this->packing_data.parent_name = trick_MM->mm_strdup( "" );
+      this->is_root_node             = true;
+   }
+   if ( ref_frame_parent != NULL ) {
+      this->set_parent_frame( ref_frame_parent );
+   }
 
    //---------------------------------------------------------
    // Set up the execution configuration HLA object mappings.
@@ -123,14 +173,13 @@ void RefFrameBase::default_data(
    object->packing             = this;
    // Allocate the attributes for the RefFrameBase HLA object.
    object->attr_count = 3;
-   object->attributes = (TrickHLA::Attribute *)trick_MM->declare_var( "TrickHLA::Attribute", object->attr_count );
+   object->attributes = static_cast< TrickHLA::Attribute * >( trick_MM->declare_var( "TrickHLA::Attribute", object->attr_count ) );
 
    //
    // Specify the Reference Frame attributes.
    //
-   // Setup the "root_frame_name" attribute.
    object->attributes[0].FOM_name      = allocate_input_string( "name" );
-   trick_name_str                      = ref_frame_name_str + string( ".name" );
+   trick_name_str                      = ref_frame_name_str + string( ".packing_data.name" );
    object->attributes[0].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[0].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[0].publish       = publishes;
@@ -139,7 +188,7 @@ void RefFrameBase::default_data(
    object->attributes[0].rti_encoding  = TrickHLA::ENCODING_UNICODE_STRING;
 
    object->attributes[1].FOM_name      = allocate_input_string( "parent_name" );
-   trick_name_str                      = ref_frame_name_str + string( ".parent_name" );
+   trick_name_str                      = ref_frame_name_str + string( ".packing_data.parent_name" );
    object->attributes[1].trick_name    = allocate_input_string( trick_name_str );
    object->attributes[1].config        = ( TrickHLA::DataUpdateEnum )( (int)TrickHLA::CONFIG_INITIALIZE + (int)TrickHLA::CONFIG_CYCLIC );
    object->attributes[1].publish       = publishes;
@@ -154,7 +203,40 @@ void RefFrameBase::default_data(
    object->attributes[2].publish       = publishes;
    object->attributes[2].subscribe     = !publishes;
    object->attributes[2].locally_owned = publishes;
-   object->attributes[2].rti_encoding  = TrickHLA::ENCODING_OPAQUE_DATA;
+   object->attributes[2].rti_encoding  = TrickHLA::ENCODING_NONE;
+
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void RefFrameBase::configure()
+{
+
+   // Must have federation instance name.
+   if ( this->packing_data.name == NULL ) {
+      if ( debug ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
+                << " WARNING: Unexpected NULL federation instance frame name!"
+                << "  Setting frame name to empty string." << THLA_ENDL;
+         send_hs( stderr, errmsg.str().c_str() );
+      }
+      this->packing_data.name = trick_MM->mm_strdup( "" );
+   }
+
+   // Must have federation instance parent frame name.
+   if ( this->packing_data.parent_name == NULL ) {
+      if ( debug ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
+                << " WARNING: Unexpected NULL federation instance parent frame name!"
+                << "  Setting parent frame name to empty string." << THLA_ENDL;
+         send_hs( stderr, errmsg.str().c_str() );
+      }
+      this->packing_data.parent_name = trick_MM->mm_strdup( "" );
+   }
 
    return;
 }
@@ -164,32 +246,98 @@ void RefFrameBase::default_data(
  */
 void RefFrameBase::initialize()
 {
+
    // Must have federation instance name.
-   if ( this->name == NULL ) {
-      if ( debug ) {
-         ostringstream errmsg;
-         errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
-                << " WARNING: Unexpected NULL federation instance frame name!"
-                << "  Setting frame name to empty string." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
-      }
-      this->name = trick_MM->mm_strdup( "" );
+   if ( this->packing_data.name == NULL ) {
+      ostringstream errmsg;
+
+      string trick_name = ( name_attr != NULL )
+                             ? ( ( name_attr->get_trick_name() != NULL ) ? name_attr->get_trick_name() : "" )
+                             : "";
+      string fom_name   = ( name_attr != NULL )
+                             ? ( ( name_attr->get_FOM_name() != NULL ) ? name_attr->get_FOM_name() : "" )
+                             : "";
+
+      errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
+             << " WARNING: For RefFrame object '"
+             << ( ( object != NULL ) ? object->get_name_string() : "" )
+             << "' with Attribute Trick name '" << trick_name
+             << "' and FOM name '" << fom_name
+             << "', detected unexpected NULL federation instance name!"
+             << THLA_ENDL;
+
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   // Must have federation instance parent frame name.
-   if ( this->parent_name == NULL ) {
-      if ( debug ) {
+   // Should have federation instance parent frame name or empty name for root.
+   if ( this->packing_data.parent_name == NULL ) {
+
+      // Print message.
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_NO_MODULES ) ) {
+
          ostringstream errmsg;
+
+         string trick_name = ( name_attr != NULL )
+                                ? ( ( name_attr->get_trick_name() != NULL ) ? name_attr->get_trick_name() : "" )
+                                : "";
+         string fom_name   = ( name_attr != NULL )
+                                ? ( ( name_attr->get_FOM_name() != NULL ) ? name_attr->get_FOM_name() : "" )
+                                : "";
+
          errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
-                << " WARNING: Unexpected NULL federation instance parent frame name!"
-                << "  Setting parent frame name to empty string." << THLA_ENDL;
-         send_hs( stderr, (char *)errmsg.str().c_str() );
+                << " WARNING: For RefFrame '" << this->packing_data.name
+                << "' and object '" << ( ( object != NULL ) ? object->get_name_string() : "" )
+                << "' with Attribute Trick name '" << trick_name
+                << "' and FOM name '" << fom_name
+                << "', detected unexpected NULL federation instance parent frame name!"
+                << " Setting parent frame name to empty string."
+                << THLA_ENDL;
+
+         send_hs( stderr, errmsg.str().c_str() );
       }
-      this->parent_name = trick_MM->mm_strdup( "" );
+
+      // Set an empty string.
+      this->packing_data.parent_name = trick_MM->mm_strdup( "" );
+
+      // Mark as root reference frame.
+      this->is_root_node = true;
+
+   } else if ( this->packing_data.parent_name[0] == '\0' ) {
+      // Mark as root reference frame.
+      this->is_root_node = true;
+   } else {
+      // Mark as NOT a root reference frame.
+      this->is_root_node = false;
+   }
+
+   // Check to see if the parent reference frame has been set if this frame
+   // is NOT the root frame.
+   if ( ( this->packing_data.parent_name[0] != '\0' )
+        && ( this->parent_frame == NULL ) ) {
+      ostringstream errmsg;
+
+      string trick_name = ( name_attr != NULL )
+                             ? ( ( name_attr->get_trick_name() != NULL ) ? name_attr->get_trick_name() : "" )
+                             : "";
+      string fom_name   = ( name_attr != NULL )
+                             ? ( ( name_attr->get_FOM_name() != NULL ) ? name_attr->get_FOM_name() : "" )
+                             : "";
+
+      errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
+             << " WARNING: For RefFrame object '"
+             << ( ( object != NULL ) ? object->get_name_string() : "" )
+             << "' with Attribute Trick name '" << trick_name
+             << "' and FOM name '" << fom_name
+             << "', detected unexpected NULL parent frame reference!"
+             << THLA_ENDL;
+
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Mark this as initialized.
-   this->initialized = true;
+   TrickHLA::Packing::initialize();
 
    // Return to calling routine.
    return;
@@ -213,10 +361,14 @@ void RefFrameBase::initialize_callback(
    // We must call the original function so that the callback is initialized.
    this->TrickHLA::Packing::initialize_callback( obj );
 
-   // Get a reference to the TrickHLA::Attribute for the "state" FOM attribute.
+   // Get references to all the TrickHLA::Attribute for this object type.
    // We do this here so that we only do the attribute lookup once instead of
    // looking it up every time the unpack function is called.
-   ref_frame_attr = get_attribute_and_validate( "state" );
+   name_attr        = get_attribute_and_validate( "name" );
+   parent_name_attr = get_attribute_and_validate( "parent_name" );
+   state_attr       = get_attribute_and_validate( "state" );
+
+   return;
 }
 
 /*!
@@ -224,8 +376,28 @@ void RefFrameBase::initialize_callback(
  */
 void RefFrameBase::set_name( char const *new_name )
 {
+   // Check for initialization.
+   if ( initialized ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::RefFrameBase::set_name():" << __LINE__
+             << " ERROR: The initialize() function has already been called" << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   if ( this->packing_data.name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.name ) ) ) {
+         send_hs( stderr, "SpaceFOM::RefFrameBase::set_name():%d WARNING failed to delete Trick Memory for 'this->packing_data.name'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+   }
+   this->packing_data.name = trick_MM->mm_strdup( new_name );
+
    if ( this->name != NULL ) {
-      trick_MM->delete_var( (void *)this->name );
+      if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
+         send_hs( stderr, "SpaceFOM::RefFrameBase::set_name():%d WARNING failed to delete Trick Memory for 'this->name'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
    }
    this->name = trick_MM->mm_strdup( new_name );
    return;
@@ -236,30 +408,285 @@ void RefFrameBase::set_name( char const *new_name )
  */
 void RefFrameBase::set_parent_name( char const *name )
 {
-   if ( this->parent_name != NULL ) {
-      trick_MM->delete_var( (void *)this->parent_name );
+   // Check for initialization.
+   if ( initialized ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::RefFrameBase::set_parent_name():" << __LINE__
+             << " ERROR: The initialize() function has already been called" << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
    }
-   this->parent_name = trick_MM->mm_strdup( name );
+
+   // Set the parent frame name appropriately.
+   if ( this->packing_data.parent_name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->packing_data.parent_name ) ) ) {
+         send_hs( stderr, "SpaceFOM::RefFrameBase::set_parent_name():%d WARNING failed to delete Trick Memory for 'this->parent_name'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+   }
+   if ( name != NULL ) {
+      this->packing_data.parent_name = trick_MM->mm_strdup( name );
+      if ( name[0] == '\0' ) {
+         this->is_root_node = true;
+      } else {
+         this->is_root_node = false;
+      }
+   } else {
+      this->packing_data.parent_name = NULL;
+      this->is_root_node             = true;
+   }
+
    return;
 }
 
 /*!
- * @job_class{default_data}
+ * @job_class{initialization}
  */
-char *RefFrameBase::allocate_input_string( // RETURN: -- None.
-   char const *c_string )                  // IN: -- String to allocate.
+void RefFrameBase::set_parent_frame( RefFrameBase *pframe_ptr )
 {
-   return allocate_input_string( string( c_string ) );
+   // Check for initialization.
+   if ( initialized ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::RefFrameBase::set_parent_frame():" << __LINE__
+             << " ERROR: The initialize() function has already been called" << THLA_ENDL;
+      // Print message and terminate.
+      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Set the parent frame reference pointer.
+   this->parent_frame = pframe_ptr;
+   this->parent       = pframe_ptr;
+
+   // Set the parent frame name.
+   if ( this->parent_frame != NULL ) {
+      this->set_parent_name( this->parent_frame->packing_data.name );
+   } else {
+      this->set_parent_name( NULL );
+   }
+
+   return;
 }
 
 /*!
- * @job_class{default_data}
+ * @job_class{initialization}
  */
-char *RefFrameBase::allocate_input_string( // RETURN: -- None.
-   string const &cpp_string )              // IN: -- String to allocate.
+bool RefFrameBase::set_root( bool root_status )
 {
-   char *new_c_str = (char *)TMM_declare_var_1d( "char", cpp_string.length() + 1 );
-   strncpy( new_c_str, cpp_string.c_str(), cpp_string.length() + 1 );
 
-   return new_c_str;
+   // If setting as root reference frame.
+   if ( root_status ) {
+
+      // Check to make sure predicates are satisfied.
+      if ( this->parent_frame == NULL ) {
+
+         if ( this->packing_data.parent_name != NULL ) {
+            if ( this->packing_data.parent_name[0] == '\0' ) {
+               // Set the is_root_node state to true.
+               this->is_root_node = true;
+               return ( true );
+            } else {
+               // Note that we DO NOT change the is_root_node state.
+               return ( false );
+            }
+         } else {
+            // Parent name cannot be NULL but it should be safe to set it empty.
+            // Note that this will also set the is_root_node state to true.
+            this->set_parent_name( "" );
+            return ( true );
+         }
+
+      } // Parent frame is not null.  Automatic fail.
+      else {
+
+         // Note that we DO NOT change the is_root_node state.
+         return ( false );
+      }
+
+   } // If setting is NOT a root reference frame.
+   else {
+
+      // Check to make sure predicates are satisfied.
+      if ( this->parent_frame != NULL ) {
+
+         // Check for NULL parent name string.
+         if ( this->packing_data.parent_name == NULL ) {
+            // Note that we DO NOT change the is_root_node state.
+            return ( false );
+         } // Check for empty parent name string.
+         else if ( this->packing_data.parent_name[0] == '\0' ) {
+            // Note that we DO NOT change the is_root_node state.
+            return ( false );
+         } else {
+            // Set the is_root_node state to false.
+            this->is_root_node = false;
+            return ( true );
+         }
+
+      } // Parent frame is NULL.  Automatic fail.
+      else {
+
+         // Note that we DO NOT change the is_root_node state.
+         return ( false );
+      }
+   }
+
+   return ( true );
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void RefFrameBase::publish()
+{
+   if ( this->initialized ) {
+      ostringstream errmsg;
+      errmsg << "RefFrameBase::publish():" << __LINE__
+             << " WARNING: Ignoring, reference frame already initialized!" << THLA_ENDL;
+      send_hs( stderr, errmsg.str().c_str() );
+   } else {
+      object->create_HLA_instance         = true;
+      object->attributes[0].publish       = true;
+      object->attributes[0].subscribe     = false;
+      object->attributes[0].locally_owned = true;
+      object->attributes[1].publish       = true;
+      object->attributes[1].subscribe     = false;
+      object->attributes[1].locally_owned = true;
+      object->attributes[2].publish       = true;
+      object->attributes[2].subscribe     = false;
+      object->attributes[2].locally_owned = true;
+   }
+
+   return;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void RefFrameBase::subscribe()
+{
+   if ( this->initialized ) {
+      ostringstream errmsg;
+      errmsg << "RefFrameBase::publish():" << __LINE__
+             << " WARNING: Ignoring, reference frame already initialized!" << THLA_ENDL;
+      send_hs( stderr, errmsg.str().c_str() );
+   } else {
+      object->create_HLA_instance         = false;
+      object->attributes[0].publish       = false;
+      object->attributes[0].subscribe     = true;
+      object->attributes[0].locally_owned = false;
+      object->attributes[1].publish       = false;
+      object->attributes[1].subscribe     = true;
+      object->attributes[1].locally_owned = false;
+      object->attributes[2].publish       = false;
+      object->attributes[2].subscribe     = true;
+      object->attributes[2].locally_owned = false;
+   }
+
+   return;
+}
+
+/*!
+ * @job_class{scheduled}
+ */
+void RefFrameBase::pack()
+{
+
+   // Check for initialization.
+   if ( !initialized ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_PACKING ) ) {
+         ostringstream errmsg;
+         errmsg << "RefFrameBase::pack() Warning: The initialize() function has not"
+                << " been called!" << endl;
+         send_hs( stderr, errmsg.str().c_str() );
+      }
+   }
+
+   // Check for latency/lag compensation.
+   if ( this->object->lag_comp == NULL ) {
+      this->pack_from_working_data();
+   }
+
+   // Print out debug information if desired.
+   if ( debug ) {
+      cout << "RefFrameBase::pack():" << __LINE__ << endl;
+      this->print_data();
+   }
+
+   // Encode the data into the buffer.
+   stc_encoder.encode();
+
+   return;
+}
+
+/*!
+ * @job_class{scheduled}
+ */
+void RefFrameBase::unpack()
+{
+
+   if ( !initialized ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_PACKING ) ) {
+         ostringstream errmsg;
+         errmsg << "RefFrameBase::unpack():" << __LINE__
+                << " Warning: The initialize() function has not been called!" << endl;
+         send_hs( stderr, errmsg.str().c_str() );
+      }
+   }
+
+   // Use the HLA encoder helpers to decode the PhysicalEntity fixed record.
+   stc_encoder.decode();
+
+   // Transfer the packing data into the working data.
+   this->unpack_into_working_data();
+
+   // Print out debug information if desired.
+   if ( debug ) {
+      cout << "RefFrameBase::unpack():" << __LINE__ << endl;
+      this->print_data();
+   }
+
+   return;
+}
+
+/*!
+ * @job_class{scheduled}
+ */
+void RefFrameBase::print_data( std::ostream &stream )
+{
+   double euler_angles[3];
+
+   // Compute the attitude Euler angles.
+   packing_data.state.att.get_Euler_deg( Roll_Pitch_Yaw, euler_angles );
+
+   // Set the print precision.
+   stream.precision( 15 );
+
+   stream << "\tObject-Name: '" << object->get_name() << "'" << endl
+          << "\tname:   '" << ( packing_data.name != NULL ? packing_data.name : "" ) << "'" << endl
+          << "\tparent: '" << ( packing_data.parent_name != NULL ? packing_data.parent_name : "" ) << "'" << endl
+          << "\ttime:   " << packing_data.state.time << endl;
+   stream << "\tposition: "
+          << "\t\t" << packing_data.state.pos[0] << ", "
+          << "\t\t" << packing_data.state.pos[1] << ", "
+          << "\t\t" << packing_data.state.pos[2] << endl;
+   stream << "\tvelocity: "
+          << "\t\t" << packing_data.state.vel[0] << ", "
+          << "\t\t" << packing_data.state.vel[1] << ", "
+          << "\t\t" << packing_data.state.vel[2] << endl;
+   stream << "\tattitude (s,v): "
+          << "\t\t" << packing_data.state.att.scalar << "; "
+          << "\t\t" << packing_data.state.att.vector[0] << ", "
+          << "\t\t" << packing_data.state.att.vector[1] << ", "
+          << "\t\t" << packing_data.state.att.vector[2] << endl;
+   stream << "\tattitude (RPY){deg}: "
+          << "\t\t" << euler_angles[0] << ", "
+          << "\t\t" << euler_angles[1] << ", "
+          << "\t\t" << euler_angles[2] << endl;
+   stream << "\tangular velocity: "
+          << "\t\t" << packing_data.state.ang_vel[0] << ", "
+          << "\t\t" << packing_data.state.ang_vel[1] << ", "
+          << "\t\t" << packing_data.state.ang_vel[2] << endl;
+   stream << endl;
+
+   return;
 }

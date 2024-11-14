@@ -1,0 +1,420 @@
+//=============================================================================
+// Notices:
+//
+// Copyright © 2023 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration.  All Rights Reserved.
+//
+// Disclaimers:
+//
+// No Warranty: THE SUBJECT SOFTWARE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY OF
+// ANY KIND, EITHER EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED
+// TO, ANY WARRANTY THAT THE SUBJECT SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY
+// IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR
+// FREEDOM FROM INFRINGEMENT, ANY WARRANTY THAT THE SUBJECT SOFTWARE WILL BE ERROR
+// FREE, OR ANY WARRANTY THAT DOCUMENTATION, IF PROVIDED, WILL CONFORM TO THE
+// SUBJECT SOFTWARE. THIS AGREEMENT DOES NOT, IN ANY MANNER, CONSTITUTE AN
+// ENDORSEMENT BY GOVERNMENT AGENCY OR ANY PRIOR RECIPIENT OF ANY RESULTS,
+// RESULTING DESIGNS, HARDWARE, SOFTWARE PRODUCTS OR ANY OTHER APPLICATIONS
+// RESULTING FROM USE OF THE SUBJECT SOFTWARE.  FURTHER, GOVERNMENT AGENCY
+// DISCLAIMS ALL WARRANTIES AND LIABILITIES REGARDING THIRD-PARTY SOFTWARE,
+// IF PRESENT IN THE ORIGINAL SOFTWARE, AND DISTRIBUTES IT "AS IS."
+//
+// Waiver and Indemnity:  RECIPIENT AGREES TO WAIVE ANY AND ALL CLAIMS AGAINST THE
+// UNITED STATES GOVERNMENT, ITS CONTRACTORS AND SUBCONTRACTORS, AS WELL AS ANY
+// PRIOR RECIPIENT.  IF RECIPIENT'S USE OF THE SUBJECT SOFTWARE RESULTS IN ANY
+// LIABILITIES, DEMANDS, DAMAGES, EXPENSES OR LOSSES ARISING FROM SUCH USE,
+// INCLUDING ANY DAMAGES FROM PRODUCTS BASED ON, OR RESULTING FROM, RECIPIENT'S
+// USE OF THE SUBJECT SOFTWARE, RECIPIENT SHALL INDEMNIFY AND HOLD HARMLESS THE
+// UNITED STATES GOVERNMENT, ITS CONTRACTORS AND SUBCONTRACTORS, AS WELL AS ANY
+// PRIOR RECIPIENT, TO THE EXTENT PERMITTED BY LAW.  RECIPIENT'S SOLE REMEDY FOR
+// ANY SUCH MATTER SHALL BE THE IMMEDIATE, UNILATERAL TERMINATION OF THIS
+// AGREEMENT.
+//
+//=============================================================================
+
+//===========================TRICK HEADER=====================
+// PURPOSE:
+//=============================================================================
+// This simulation provides a reference implementation that can be used for
+// comparison to other orbital dynamics implementations.  It is intended to
+// provide a reference set for dynamics comparison.
+//
+// This simulation models a single vehicle in orbit around the Earth.  There
+// are many adjustable configuration parameters that can be used to test out
+// a suite of test cases with specific behavior.  These test cases form the
+// basis for simulation to simulation comparison.
+//
+//          sys - Trick runtime executive and data recording routines
+//     dynamics - Orbital dynamics
+//         time - Universal time
+//          env - Environment: ephemeris, gravity
+//          sun - Sun planetary model
+//        earth - Earth planetary model
+//         moon - Moon planetary model
+//      vehicle - Space vehicle dynamics model
+//
+//=============================================================================
+
+//==========================================================================
+// Define the Trick executive and services simulation object instances:
+// Use the "standard" Trick executive simulation object. This simulation
+// object provides the traditional Trick executive capabilities but can be
+// tailored to provide facility or project unique executive behavior. See
+// the Trick documentation for more on usage and available options.
+//==========================================================================
+#include "sim_objects/default_trick_sys.sm"
+
+//==========================================================================
+// Define the JEOD job cycle times.
+//==========================================================================
+#define LOW_RATE_ENV  60.00    // Low-rate environment update interval
+#define HIGH_RATE_ENV  0.250   // High-rate environment update interval
+#define DYNAMICS       0.03125 // Vehicle and planetary dynamics interval (32Hz)
+
+//==========================================================================
+// Define the Trick HLA job cycle times.
+//==========================================================================
+#define THLA_DATA_CYCLE_TIME        HIGH_RATE_ENV // HLA data communication cycle time.
+#define THLA_INTERACTION_CYCLE_TIME DYNAMICS      // HLA Interaction cycle time.
+
+//==========================================================================
+// Define the HLA phase initialization priorities.
+//==========================================================================
+#define P_HLA_EARLY         1     // HLA early job phase.
+#define P_SF_INIT_EPOCH_RRF 9     // SpaceFOM ExCO epoch and root reference frame phase.
+#define P_HLA_INIT          9     // HLA initialization phase.
+#define P_SF_INIT_PRE_MPI   65    // SpaceFOM Pre-Multi Phase initialization phase.
+#define P_SF_INIT_POST_MPI  500   // SpaceFOM Post-Multi Phase initialization phase.
+#define P_HLA_LATE          65534 // HLA late job phase.
+
+//==========================================================================
+// JEOD include files used in SimObject definitions or for input file
+// instantiations.
+//==========================================================================
+#include "default_priority_settings.sm"
+#include "jeod_sys.sm"
+
+//
+// Setup JEOD to use and maintain the needed time standards.
+#define TIME_CALENDAR_UPDATE_INTERVAL DYNAMICS
+#include "time_TAI_UTC_UT1_TT_GMST.sm"
+
+#include "dynamics.sm"
+
+//
+// Setup the JEOD planetary environment.
+//
+#ifndef EPHEM_DE440
+ #define EPHEM_DE440
+#endif
+#include "environment.sm"
+#include "sun_basic.sm"
+#include "earth_GGM05C_MET_RNP.sm"
+#include "mars_MRO110B2.sm"
+
+
+/*****************************************************************************
+Moon is a copy of the default Moon-with-LP150Q gravity field sim object, but
+this also has a derivative class job to update the lunar orientation.
+*****************************************************************************/
+#include "Base/moon_LP150Q.sm"
+class MoonSimObject : public Moon_LP150Q_SimObject
+{
+  protected:
+   jeod::De4xxEphemeris & de4xx;
+  public:
+   MoonSimObject( jeod::DynManager     & dyn_manager_,
+                  jeod::GravityManager & grav_manager_,
+                  jeod::De4xxEphemeris & de4xx_)
+   : Moon_LP150Q_SimObject( dyn_manager_, grav_manager_), de4xx( de4xx_)
+  {
+     P_ENV ("derivative") de4xx.propagate_lunar_rnp ( );
+  }
+  private:
+   // Unimplemented copy constructor and assignment operator
+   MoonSimObject (const MoonSimObject&);
+   MoonSimObject & operator = (const MoonSimObject&);
+   // Do not allow the default constructor.
+   MoonSimObject();
+};
+MoonSimObject moon (dynamics.dyn_manager, env.gravity_manager, env.de4xx);
+
+
+//***************************************************************
+// CLASS: (VehicleSimObject)
+// PURPOSE:
+//  ( This sim object models a vehicle in space.)
+//***************************************************************
+
+// Include headers for classes that this class contains:
+##include "dynamics/body_action/include/dyn_body_init_lvlh_rot_state.hh"
+##include "dynamics/derived_state/include/euler_derived_state.hh"
+##include "dynamics/derived_state/include/lvlh_derived_state.hh"
+##include "dynamics/derived_state/include/euler_derived_state.hh"
+##include "dynamics/derived_state/include/orb_elem_derived_state.hh"
+##include "interactions/aerodynamics/include/aero_drag.hh"
+##include "interactions/radiation_pressure/include/radiation_pressure.hh"
+##include "interactions/radiation_pressure/include/radiation_default_surface.hh"
+##include "interactions/radiation_pressure/include/radiation_third_body.hh"
+
+// Include default data classes:
+##include "interactions/aerodynamics/data/include/aero_model.hh"
+
+#include "Base/vehicle_atmosphere.sm"
+class VehicleSimObject: public VehicleAtmSimObject
+{
+  protected:
+   const jeod::TimeDyn & dyn_time;
+  public:
+   jeod::DynBodyInitLvlhRotState lvlh_init;
+   jeod::EulerDerivedState       euler;
+   jeod::LvlhDerivedState        lvlh;
+   jeod::EulerDerivedState       lvlh_euler;
+   jeod::OrbElemDerivedState     orb_elem;
+
+   jeod::SphericalHarmonicsGravityControls  sun_grav_control;
+   jeod::SphericalHarmonicsGravityControls  earth_grav_control;
+   jeod::SphericalHarmonicsGravityControls  moon_grav_control;
+   jeod::SphericalHarmonicsGravityControls  mars_grav_control;
+
+   jeod::AerodynamicDrag          aero_drag;
+   jeod::RadiationPressure        rad_pressure;
+   jeod::RadiationDefaultSurface  rad_surface;
+
+   // Instances for default data:
+   jeod::AerodynamicDrag_aero_model_default_data    aero_drag_default_data;
+
+   //Constructor
+   VehicleSimObject( jeod::DynManager     & dyn_mngr_,
+                     jeod::METAtmosphere  & atmos_,
+                     jeod::WindVelocity   & wind_,
+                     const jeod::TimeDyn  & dyn_time_)
+      : VehicleAtmSimObject( dyn_mngr_, atmos_, wind_),
+        dyn_time( dyn_time_)
+   {
+      //
+      //Default data jobs
+      //
+      ("default_data") aero_drag_default_data.initialize ( &aero_drag );
+
+      //
+      // Initialization jobs
+      //
+      P_DYN  ("initialization") euler.initialize( dyn_body, dyn_manager );
+      P_DYN  ("initialization") lvlh.initialize( dyn_body, dyn_manager );
+      P_DYN  ("initialization") lvlh_euler.initialize( lvlh.lvlh_frame,
+                                                       dyn_body,
+                                                       dyn_manager );
+      P_DYN  ("initialization") orb_elem.initialize( dyn_body,
+                                                     dyn_manager );
+      ("initialization") euler.update( );
+      ("initialization") pfix.update( );
+      ("initialization") lvlh.update( );
+      ("initialization") lvlh_euler.update( );
+      ("initialization") orb_elem.update( );
+      ("initialization") rad_pressure.initialize( dyn_manager,
+                                                  &rad_surface);
+      //
+      // Environment class jobs
+      //
+      (DYNAMICS, "environment") euler.update( );
+      (DYNAMICS, "environment") pfix.update( );
+      (DYNAMICS, "environment") lvlh.update( );
+      (DYNAMICS, "environment") lvlh_euler.update( );
+      (DYNAMICS, "environment") orb_elem.update( );
+      (DYNAMICS, "environment") rad_pressure.update(
+          dyn_body.structure,
+          dyn_body.mass.composite_properties.position,
+          dyn_time.scale_factor,
+          dyn_time.seconds );
+      //
+      // Derivative class jobs
+      //
+      P_BODY ("derivative") aero_drag.aero_drag(
+         dyn_body.composite_body.state.trans.velocity,
+         &atmos_state,
+         dyn_body.structure.state.rot.T_parent_this,
+         dyn_body.mass.composite_properties.mass,
+         dyn_body.mass.composite_properties.position );
+   }
+
+  private:
+   VehicleSimObject (const VehicleSimObject&);
+   VehicleSimObject & operator = (const VehicleSimObject&);
+   // Do not allow the default constructor.
+   VehicleSimObject();
+};
+
+// Instantiate the active JEOD DynBody.
+VehicleSimObject active_vehicle( dynamics.dyn_manager,
+                                 earth.atmos,
+                                 earth.wind_velocity,
+                                 jeod_time.time_manager.dyn_time );
+
+vcollect active_vehicle.dyn_body.collect.collect_no_xmit_forc jeod::CollectForce::create {
+   active_vehicle.aero_drag.aero_force,
+   active_vehicle.rad_pressure.force
+};
+
+// Instantiate the passive JEOD DynBody.
+VehicleSimObject passive_vehicle( dynamics.dyn_manager,
+                                  earth.atmos,
+                                  earth.wind_velocity,
+                                  jeod_time.time_manager.dyn_time );
+
+vcollect passive_vehicle.dyn_body.collect.collect_no_xmit_forc jeod::CollectForce::create {
+   passive_vehicle.aero_drag.aero_force,
+   passive_vehicle.rad_pressure.force
+};
+
+
+//==========================================================================
+// Trick HLA and SpaceFOM include files used in SimObject definitions or
+// for input file instantiations.
+//==========================================================================
+
+// This is needed for CTE timeline instantiation in the input file.
+##include "TrickHLA/CTETimelineBase.hh"
+
+
+//==========================================================================
+// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+//==========================================================================
+#include "SpaceFOM/SpaceFOM.sm"
+
+// Main TrickHLA SimObject.
+SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
+                        THLA_INTERACTION_CYCLE_TIME,
+                        P_HLA_EARLY,
+                        P_HLA_INIT,
+                        P_HLA_LATE );
+
+// SimObject used capture simulation specific initialization.
+JEODHLAInitSimObject THLA_INIT( jeod_time.time_manager,
+                                jeod_time.time_manager_init,
+                                jeod_time.time_tai,
+                                jeod_time.time_tt,
+                                THLA.manager,
+                                THLA.federate,
+                                THLA.execution_control,
+                                P_SF_INIT_EPOCH_RRF,
+                                10,
+                                P_HLA_INIT );
+
+
+//==========================================================================
+// SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
+// initialization SimObject.
+//==========================================================================
+#include "JEOD/JEODHLAInit.sm"
+
+
+//==========================================================================
+// SIM_OBJECT: JEODRefFrameTreeSimObject - An JEOD reference frame tree
+// simulation object definition.
+//==========================================================================
+//#define DEFAULT_DATA_CONFIG // Configure the tree in default data.
+#include "JEOD/JEODRefFrameTree.sm"
+
+
+//==========================================================================
+// SIM_OBJECT: JEODPhysicalEntiySimObject - An example PhysicalEntity
+// simulation object definition. This can be used for SpaceFOM
+// PhysicalEntity object discovery and data exchange.
+//==========================================================================
+#include "JEOD/JEODPhysicalEntity.sm"
+
+
+//==========================================================================
+// SIM_OBJECT: JEODPhysicalInterfaceSimObject - An example PhysicalInterface
+// simulation object definition. This can be used for SpaceFOM
+// PhysicalInterface object discovery and data exchange.
+//==========================================================================
+#include "JEOD/JEODPhysicalInterface.sm"
+
+
+// Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
+JEODPhysicalEntiySimObject active_physical_entity( active_vehicle.dyn_body, P_HLA_INIT );
+
+// Instantiate the SpaceFOM PhysicalInterface object associated with the JEOD DynBody.
+JEODPhysicalInterfaceSimObject active_physical_interface( active_vehicle.dyn_body, 99 );
+
+// Instantiate the SpaceFOM PhysicalEntity object associated with the JEOD DynBody.
+JEODPhysicalEntiySimObject passive_physical_entity( passive_vehicle.dyn_body, P_HLA_INIT );
+
+// Instantiate the SpaceFOM PhysicalInterface object associated with the JEOD DynBody.
+JEODPhysicalInterfaceSimObject passive_physical_interface( passive_vehicle.dyn_body, 99 );
+
+// Setup the integration loop.
+IntegLoop sim_integ_loop  (DYNAMICS) earth, moon, mars, active_vehicle, passive_vehicle, dynamics;
+
+
+//==========================================================================
+// Create the THLA connections for the SpaceFOM Reference Frame Tree.
+//==========================================================================
+void create_connections() {
+
+   // Make the connections for the Sun, Earth, Moon, Mars reference frame tree.
+   ref_frame_tree.ssbary_frame_ptr = &solar_system_barycenter.frame_packing;
+   ref_frame_tree.sun_frame_ptr = &sun_inertial.frame_packing;
+   ref_frame_tree.embary_frame_ptr = &earth_moon_barycenter.frame_packing;
+   ref_frame_tree.earth_frame_ptr = &earth_centered_inertial.frame_packing;
+   ref_frame_tree.moon_frame_ptr = &moon_centered_inertial.frame_packing;
+   ref_frame_tree.mars_frame_ptr = &mars_centered_inertial.frame_packing;
+   ref_frame_tree.earth_pfix_frame_ptr = &earth_centered_fixed.frame_packing;
+   ref_frame_tree.moon_pfix_frame_ptr = &moon_centered_fixed.frame_packing;
+   ref_frame_tree.mars_pfix_frame_ptr = &mars_centered_fixed.frame_packing;
+
+#ifdef DEFAULT_DATA_CONFIG
+   //
+   // This code will only be executed when we want to configure the THLA
+   // objects using default data instead of in the input file.
+   //
+   // Allocate the HLA objects for the Reference Frame tree.
+   THLA.manager.obj_count = 13;
+   THLA.manager.objects = (TrickHLA::Object*)trick_MM->declare_var( "TrickHLA::Object",
+                                                                    THLA.manager.obj_count );
+   // Assign the HLA objects to the associated frame.
+   solar_system_barycenter.frame_packing.set_object( &(THLA.manager.objects[0]) );
+   sun_inertial.frame_packing.set_object( &(THLA.manager.objects[1]) );
+   earth_moon_barycenter.frame_packing.set_object( &(THLA.manager.objects[2]) );
+   earth_centered_inertial.frame_packing.set_object( &(THLA.manager.objects[3]) );
+   moon_centered_inertial.frame_packing.set_object( &(THLA.manager.objects[4]) );
+   mars_centered_inertial.frame_packing.set_object( &(THLA.manager.objects[5]) );
+   earth_centered_fixed.frame_packing.set_object( &(THLA.manager.objects[6]) );
+   moon_centered_fixed.frame_packing.set_object( &(THLA.manager.objects[7]) );
+   mars_centered_fixed.frame_packing.set_object( &(THLA.manager.objects[8]) );
+
+   // Assign the HLA object(s) to the associates vehicle(s).
+   // FIXME: This is NOT the correct location to call default data.
+   // We need to pass through the input processor to allow the user to
+   // establish the publish/subscribe relationships.
+   active_physical_entity.entity_packing.base_config( &(THLA.manager.objects[9]),
+                                                       "active_physical_entity",
+                                                       "entity_packing",
+                                                       "Lander",
+                                                       "MoonCentricInertial",
+                                                       true );
+   active_physical_interface.interface_packing.base_config( &(THLA.manager.objects[10]),
+                                                             "active_physical_interface",
+                                                             "interface_packing",
+                                                             "Lander.docking_port",
+                                                             "Lander",
+                                                             true );
+   passive_physical_entity.entity_packing.base_config( &(THLA.manager.objects[11]),
+                                                        "active_physical_entity",
+                                                        "entity_packing",
+                                                        "Station",
+                                                        "MoonCentricInertial",
+                                                        false );
+   passive_physical_interface.interface_packing.base_config( &(THLA.manager.objects[12]),
+                                                              "passive_physical_interface",
+                                                              "interface_packing",
+                                                              "Station.docking_port",
+                                                              "Station",
+                                                              true );
+
+#endif
+
+}
+

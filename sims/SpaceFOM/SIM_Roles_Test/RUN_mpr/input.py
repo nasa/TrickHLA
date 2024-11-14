@@ -16,8 +16,10 @@
 ##############################################################################
 import sys
 sys.path.append('../../../')
+
 # Load the SpaceFOM specific federate configuration object.
 from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+
 # Load the SpaceFOM specific reference frame configuration object.
 from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
@@ -27,11 +29,14 @@ known_federate = None
 def print_usage_message( ):
 
    print(' ')
-   print('TrickHLA SpaceFOM Master/Pacing/Root-Reference-Frame Simulation Command Line Configuration Options:')
-   print('  -h -help         : Print this help message.')
-   print('  -stop [time]     : Time to stop simulation, default is 10.0 seconds.')
-   print('  -nostop          : Set no stop time on simulation.')
-   print('  -verbose [on|off]: on: Show verbose messages (Default), off: disable messages.')
+   print('TrickHLA SpaceFOM Roles Test Simulation Command Line Configuration Options:')
+   print('  -h --help             : Print this help message.')
+   print('  -f --fed_name [name]  : Name of the Federate, default is PhysicalEntity.')
+   print('  -fe --fex_name [name] : Name of the Federation Execution, default is SpaceFOM_Roles_Test.')
+   print('  --nostop              : Set no stop time on simulation.')
+   print('  -r --root_frame [name]: Name of the DynamicalEntity, default is Voyager.')
+   print('  -s --stop [time]      : Time to stop simulation, default is 10.0 seconds.')
+   print('  --verbose [on|off]    : on: Show verbose messages (Default), off: disable messages.')
    print(' ')
 
    trick.exec_terminate_with_return( -1,
@@ -48,6 +53,9 @@ def parse_command_line( ) :
    global print_usage
    global run_duration
    global verbose
+   global federate_name
+   global federation_name
+   global root_frame_name
    
    # Get the Trick command line arguments.
    argc = trick.command_line_args_get_argc()
@@ -58,21 +66,45 @@ def parse_command_line( ) :
    index = 2
    while (index < argc) :
       
-      if (str(argv[index]) == '-stop') :
+      if ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')) :
+         print_usage = True
+      
+      elif ((str(argv[index]) == '-f') | (str(argv[index]) == '--fed_name')) :
+         index = index + 1
+         if (index < argc) :
+            federate_name = str(argv[index])
+         else :
+            print('ERROR: Missing --fed_name [name] argument.')
+            print_usage = True
+      
+      elif ((str(argv[index]) == '-fe') | (str(argv[index]) == '--fex_name')) :
+         index = index + 1
+         if (index < argc) :
+            federation_name = str(argv[index])
+         else :
+            print('ERROR: Missing --fex_name [name] argument.')
+            print_usage = True
+      
+      elif ((str(argv[index]) == '-r') | (str(argv[index]) == '--root_frame')) :
+         index = index + 1
+         if (index < argc) :
+            root_frame_name = str(argv[index])
+         else :
+            print('ERROR: Missing --root_frame [name] argument.')
+            print_usage = True
+            
+      elif (str(argv[index]) == '--nostop') :
+         run_duration = None
+      
+      elif ((str(argv[index]) == '-s') | (str(argv[index]) == '--stop')) :
          index = index + 1
          if (index < argc) :
             run_duration = float(str(argv[index]))
          else :
             print('ERROR: Missing -stop [time] argument.')
             print_usage = True
-            
-      elif (str(argv[index]) == '-nostop') :
-         run_duration = None
-         
-      elif ((str(argv[index]) == '-h') | (str(argv[index]) == '-help')) :
-         print_usage = True
       
-      elif (str(argv[index]) == '-verbose') :
+      elif (str(argv[index]) == '--verbose') :
          index = index + 1
          if (index < argc) :
             if (str(argv[index]) == 'on') :
@@ -80,27 +112,16 @@ def parse_command_line( ) :
             elif (str(argv[index]) == 'off') :
                verbose = False
             else :
-               print('ERROR: Unknown -verbose argument: ' + str(argv[index]))
+               print('ERROR: Unknown --verbose argument: ' + str(argv[index]))
                print_usage = True
          else :
-            print('ERROR: Missing -verbose [on|off] argument.')
+            print('ERROR: Missing --verbose [on|off] argument.')
             print_usage = True
-
-      elif (str(argv[index]) == '--federation'):
-            index += 1
-            if index < argc:
-                federation_name = str(argv[index])
-            else:
-                print('ERROR: Missing --federation [name] argument.')
-                print_usage = True
-
-      elif (str(argv[index]) == '--knownfederate'):
-            index += 1
-            if index < argc:
-                known_federate = str(argv[index])
-            else:
-                print('ERROR: Missing --knownfederate [name] argument.')
-                print_usage = True  
+         
+      elif ((str(argv[index]) == '-d')) :
+         # Pass this on to Trick.
+         break
+            
       else :
          print('ERROR: Unknown command line argument ' + str(argv[index]))
          print_usage = True
@@ -114,8 +135,18 @@ print_usage = False
 # Set the default run duration.
 run_duration = 60.0
 
-# Default is to show verbose messages.
-verbose = True
+# Default is to NOT show verbose messages.
+verbose = False
+
+# Set the default Federate name.
+federate_name = 'MPR'
+
+# Set the default Federation Execution name.
+federation_name = 'SpaceFOM_Roles_Test'
+
+# Set the default Root Reference Frame name.
+root_frame_name = 'RootFrame'
+
 
 parse_command_line()
 
@@ -128,31 +159,31 @@ if (print_usage == True) :
 #instruments.echo_jobs.echo_jobs_on()
 trick.exec_set_trap_sigfpe(True)
 #trick.checkpoint_pre_init(1)
-trick.checkpoint_post_init(1)
+#trick.checkpoint_post_init(1)
 #trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
+#trick.checkpoint_end(1)
 
 # Setup for Trick real time execution. This is the "Pacing" function.
 exec(open( "Modified_data/trick/realtime.py" ).read())
 
 trick.exec_set_enable_freeze(True)
 trick.exec_set_freeze_command(True)
-trick.sim_control_panel_set_enabled(True)
 trick.exec_set_stack_trace(False)
+
+trick.sim_control_panel_set_enabled(True)
+trick.var_server_set_port(7000)
 
 
 # =========================================================================
 # Set up the HLA interfaces.
 # =========================================================================
 # Instantiate the Python SpaceFOM configuration object.
-federation = 'SpaceFOM_Roles_Test'
-if federation_name:
-   federation = federation_name 
 federate = SpaceFOMFederateConfig( THLA.federate,
                                    THLA.manager,
                                    THLA.execution_control,
                                    THLA.ExCO,
-                                   federation,
-                                   'MPR',
+                                   federation_name,
+                                   federate_name,
                                    True )
 
 # Set the name of the ExCO S_define instance.
@@ -178,22 +209,14 @@ federate.set_RRFP_role( True )   # This is the Root Reference Frame Publisher.
 #--------------------------------------------------------------------------
 # This is the RRFP federate.
 # It doesn't really need to know about any other federates.
-federate.add_known_fededrate( True, str(federate.federate.name) )
-
-known_fed_name = 'Other'
-if known_federate:
-   known_fed_name = known_federate
-federate.add_known_fededrate( True, known_fed_name )
+federate.add_known_federate( True, str(federate.federate.name) )
+federate.add_known_federate( True, 'Other' )
 
 #--------------------------------------------------------------------------
 # Configure the CRC.
 #--------------------------------------------------------------------------
 # Pitch specific local settings designator:
-#THLA.federate.local_settings = 'crcHost = js-er7-rti.jsc.nasa.gov\n crcPort = 8989'
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
-#THLA.federate.local_settings = 'crcHost = 10.8.0.161\n crcPort = 8989'
-# Make specific local settings designator, which is anything from the rid.mtl file:
-#THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
 
 #--------------------------------------------------------------------------
 # Set up federate time related parameters.
@@ -214,8 +237,8 @@ federate.set_lookahead_time( 0.250 )
 # federation execution.
 federate.set_least_common_time_step( 0.250 )
 
-# Set the amount of seconds used to 'pad' mode transitions.
-federate.set_time_padding( 2.0 )
+# Set the amount of seconds used to 'pad' when mode transitions occur.
+federate.set_time_padding( 1.0 )
 
 # Setup Time Management parameters.
 federate.set_time_regulating( True )
@@ -233,11 +256,8 @@ federate.set_time_constrained( True )
 #---------------------------------------------------------------------------
 # Set up for Root Reference Frame data.
 #---------------------------------------------------------------------------
-root_frame_name = 'RootFrame'
-parent_frame_name = ''
-
 ref_frame_tree.root_frame_data.name = root_frame_name
-ref_frame_tree.root_frame_data.parent_name = parent_frame_name
+ref_frame_tree.root_frame_data.parent_name = ''
                                         
 ref_frame_tree.root_frame_data.state.pos[0] = 0.0
 ref_frame_tree.root_frame_data.state.pos[1] = 0.0
@@ -245,33 +265,33 @@ ref_frame_tree.root_frame_data.state.pos[2] = 0.0
 ref_frame_tree.root_frame_data.state.vel[0] = 0.0
 ref_frame_tree.root_frame_data.state.vel[1] = 0.0
 ref_frame_tree.root_frame_data.state.vel[2] = 0.0
-ref_frame_tree.root_frame_data.state.quat_scalar  = 1.0
-ref_frame_tree.root_frame_data.state.quat_vector[0] = 0.0
-ref_frame_tree.root_frame_data.state.quat_vector[1] = 0.0
-ref_frame_tree.root_frame_data.state.quat_vector[2] = 0.0
+ref_frame_tree.root_frame_data.state.att.scalar  = 1.0
+ref_frame_tree.root_frame_data.state.att.vector[0] = 0.0
+ref_frame_tree.root_frame_data.state.att.vector[1] = 0.0
+ref_frame_tree.root_frame_data.state.att.vector[2] = 0.0
 ref_frame_tree.root_frame_data.state.ang_vel[0] = 0.0
 ref_frame_tree.root_frame_data.state.ang_vel[1] = 0.0
 ref_frame_tree.root_frame_data.state.ang_vel[2] = 0.0
 ref_frame_tree.root_frame_data.state.time = 0.0
 
 
-ref_frame_tree.frame_A_data.name = 'FrameA'
-ref_frame_tree.frame_A_data.parent_name = root_frame_name
+ref_frame_tree.vehicle_frame_data.name = 'FrameA'
+ref_frame_tree.vehicle_frame_data.parent_name = root_frame_name
                                         
-ref_frame_tree.frame_A_data.state.pos[0] = 10.0
-ref_frame_tree.frame_A_data.state.pos[1] = 10.0
-ref_frame_tree.frame_A_data.state.pos[2] = 10.0
-ref_frame_tree.frame_A_data.state.vel[0] = 0.0
-ref_frame_tree.frame_A_data.state.vel[1] = 0.0
-ref_frame_tree.frame_A_data.state.vel[2] = 0.0
-ref_frame_tree.frame_A_data.state.quat_scalar  = 1.0
-ref_frame_tree.frame_A_data.state.quat_vector[0] = 0.0
-ref_frame_tree.frame_A_data.state.quat_vector[1] = 0.0
-ref_frame_tree.frame_A_data.state.quat_vector[2] = 0.0
-ref_frame_tree.frame_A_data.state.ang_vel[0] = 0.0
-ref_frame_tree.frame_A_data.state.ang_vel[1] = 0.0
-ref_frame_tree.frame_A_data.state.ang_vel[2] = 0.0
-ref_frame_tree.frame_A_data.state.time = 0.0
+ref_frame_tree.vehicle_frame_data.state.pos[0] = 10.0
+ref_frame_tree.vehicle_frame_data.state.pos[1] = 10.0
+ref_frame_tree.vehicle_frame_data.state.pos[2] = 10.0
+ref_frame_tree.vehicle_frame_data.state.vel[0] = 0.0
+ref_frame_tree.vehicle_frame_data.state.vel[1] = 0.1
+ref_frame_tree.vehicle_frame_data.state.vel[2] = 0.0
+ref_frame_tree.vehicle_frame_data.state.att.scalar  = 1.0
+ref_frame_tree.vehicle_frame_data.state.att.vector[0] = 0.0
+ref_frame_tree.vehicle_frame_data.state.att.vector[1] = 0.0
+ref_frame_tree.vehicle_frame_data.state.att.vector[2] = 0.0
+ref_frame_tree.vehicle_frame_data.state.ang_vel[0] = 0.0
+ref_frame_tree.vehicle_frame_data.state.ang_vel[1] = 0.1
+ref_frame_tree.vehicle_frame_data.state.ang_vel[2] = 0.0
+ref_frame_tree.vehicle_frame_data.state.time = 0.0
 
 
 #---------------------------------------------------------------------------
@@ -280,9 +300,10 @@ ref_frame_tree.frame_A_data.state.time = 0.0
 # If it is NOT the RRFP, it will subscribe to the frame.
 #---------------------------------------------------------------------------
 root_frame = SpaceFOMRefFrameObject( federate.is_RRFP,
-                                     'RootFrame',
+                                     root_frame_name,
                                      root_ref_frame.frame_packing,
-                                     'root_ref_frame.frame_packing' )
+                                     'root_ref_frame.frame_packing',
+                                     frame_conditional = root_ref_frame.conditional )
 
 # Set the debug flag for the root reference frame.
 root_ref_frame.frame_packing.debug = verbose
@@ -290,21 +311,37 @@ root_ref_frame.frame_packing.debug = verbose
 # Set the root frame for the federate.
 federate.set_root_frame( root_frame )
 
+# Set the lag compensation parameters.
+# NOTE: The ROOT REFERENCE FRAME never needs to be compensated!
+
 #---------------------------------------------------------------------------
-# Set up the Root Reference Frame object for discovery.
-# If it is the RRFP, it will publish the frame.
-# If it is NOT the RRFP, it will subscribe to the frame.
+# Set up an alternate vehicle reference frame object for discovery.
 #---------------------------------------------------------------------------
 frame_A = SpaceFOMRefFrameObject( True,
                                   'FrameA',
                                   ref_frame_A.frame_packing,
-                                  'ref_frame_A.frame_packing' )
+                                  'ref_frame_A.frame_packing',
+                                  parent_S_define_instance = root_ref_frame.frame_packing,
+                                  parent_name              = root_frame_name,
+                                  frame_conditional        = ref_frame_A.conditional,
+                                  frame_lag_comp           = ref_frame_A.lag_compensation,
+                                  frame_ownership          = ref_frame_A.ownership_handler,
+                                  frame_deleted            = ref_frame_A.deleted_callback )
 
 # Set the debug flag for the root reference frame.
 ref_frame_A.frame_packing.debug = verbose
 
 # Add this reference frame to the list of managed object.
 federate.add_fed_object( frame_A )
+
+# Set the lag compensation parameters.
+# The reality is that the ROOT REFERENCE FRAME never needs to be compensated!
+ref_frame_A.lag_compensation.debug = False
+ref_frame_A.lag_compensation.set_integ_tolerance( 1.0e-6 )
+ref_frame_A.lag_compensation.set_integ_dt( 0.025 )
+
+#frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
+frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 #---------------------------------------------------------------------------
 # Add the HLA SimObjects associated with this federate.

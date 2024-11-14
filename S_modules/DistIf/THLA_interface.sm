@@ -1,0 +1,25 @@
+/* @copyright Copyright 2024 United States Government as represented by the Administrator of the
+              National Aeronautics and Space Administration.  All Rights Reserved. */
+
+//=============================================================================
+// Define the HLA job cycle times.
+//=============================================================================
+#define THLA_DATA_CYCLE_TIME        0.1 // (10Hz) HLA data communication cycle time
+#define THLA_INTERACTION_CYCLE_TIME 0.1 // (10Hz) HLA Interaction cycle time.
+
+//==========================================================================
+// Define the HLA phase initialization priorities.
+//==========================================================================
+#define P_HLA_EARLY         1     // HLA early job phase.
+#define P_HLA_INIT          60    // HLA initialization phase.
+#define P_HLA_LATE          65534 // HLA late job phase.
+
+//=============================================================================
+// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+//=============================================================================
+#include "THLA.sm"
+THLASimObject THLA( THLA_DATA_CYCLE_TIME,
+                    THLA_INTERACTION_CYCLE_TIME,
+                    P_HLA_EARLY,
+                    P_HLA_INIT,
+                    P_HLA_LATE );

@@ -20,10 +20,10 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/ExecutionConfiguration.cpp}
-@trick_link_dependency{../source/TrickHLA/ExecutionControl.cpp}
-@trick_link_dependency{../source/TrickHLA/ExecutionControlBase.cpp}
-@trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/ExecutionControl.cpp}
+@trick_link_dependency{../../source/TrickHLA/ExecutionConfiguration.cpp}
+@trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -39,14 +39,19 @@ NASA, Johnson Space Center\n
 #include <cstdint>
 #include <string>
 
-// Trick include files.
-
-// HLA include files.
-
 // TrickHLA include files.
 #include "TrickHLA/ExecutionConfiguration.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Types.hh"
+
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+// HLA Encoder helper includes.
+#include RTI1516_HEADER
+#pragma GCC diagnostic pop
 
 namespace TrickHLA
 {
@@ -86,7 +91,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Execution Control initialization routine. */
    virtual void initialize();
    /*! @brief Join federation execution process. */
-   virtual void join_federation_process();
+   virtual void join_federation_process(); // cppcheck-suppress [uselessOverride]
    /*! @brief Process run before the multi-phase initialization begins. */
    virtual void pre_multi_phase_init_processes();
    /*! @brief Process run after the multi-phase initialization ends. */
@@ -108,18 +113,17 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual void add_initialization_sync_points();
    /*! Add initialization synchronization points to regulate startup. */
    virtual void add_multiphase_init_sync_points();
-   /*! @brief The RTI has announced the existence of a synchronization point.
-    *  @param rti_ambassador    Reference to the HLA RTI Ambassador instance.
-    *  @param label             Sync-point label.
-    *  @param user_supplied_tag Use supplied tag.*/
-   virtual void announce_sync_point(
-      RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-      std::wstring const               &label,
-      RTI1516_USERDATA const           &user_supplied_tag );
    /*! Clear any remaining multiphase initialization synchronization points
     *  that have not been achieved and wait for the federation to be
     *  synchronized on it. */
    virtual void clear_multiphase_init_sync_points();
+   /*! @brief The RTI has announced the existence of a synchronization point.
+    *  @param label             Sync-point label.
+    *  @param user_supplied_tag Use supplied tag.*/
+   virtual void sync_point_announced(
+      std::wstring const     &label,
+      RTI1516_USERDATA const &user_supplied_tag );
+
    /*! Publish the ExecutionControl objects and interactions. */
    virtual void publish();
    /*! Unpublish the ExecutionControl objects and interactions. */
@@ -200,8 +204,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
     *  @param lcts Least Common Time Step time in seconds. */
    virtual void set_least_common_time_step( double const lcts );
 
-   /*! @brief Refresh the least common time step especially if the HLA base time units changed.
-    *  @param lcts Least Common Time Step time in seconds. */
+   /*! @brief Refresh the least common time step especially if the HLA base time units changed. */
    virtual void refresh_least_common_time_step();
 
    /*! @brief Set the time-padding used to offset the go to run time.

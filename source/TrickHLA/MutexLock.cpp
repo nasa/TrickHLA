@@ -21,7 +21,6 @@ NASA, Johnson Space Center\n
 @revs_begin
 @rev_entry{Dan Dexter, NASA/ER6, TrickHLA, July 2020, --, Initial implementation.}
 @revs_end
-
 */
 
 // System include files.
@@ -33,15 +32,13 @@ NASA, Johnson Space Center\n
 using namespace TrickHLA;
 
 /*!
- * @details Default constructor for the TrickHLA MutexLock class with mutex attribute PTHREAD_MUTEX_RECURSIVE.
+ * @details Default constructor for the TrickHLA MutexLock class with mutex
+ * attribute PTHREAD_MUTEX_RECURSIVE.
  * @job_class{initialization}
  */
 MutexLock::MutexLock()
 {
-   pthread_mutexattr_t attr;
-   pthread_mutexattr_init( &attr );
-   pthread_mutexattr_settype( &attr, PTHREAD_MUTEX_RECURSIVE );
-   pthread_mutex_init( &mutex, &attr );
+   initialize();
 }
 
 /*!
@@ -50,8 +47,19 @@ MutexLock::MutexLock()
  */
 MutexLock::~MutexLock()
 {
-   (void)unlock();
-   pthread_mutex_destroy( &mutex );
+   destroy();
+}
+
+/*!
+ * @brief Initialize the mutex.
+ * @return Integer value of 0 for success, otherwise non-zero for an error.
+ */
+int const MutexLock::initialize()
+{
+   pthread_mutexattr_t attr;
+   pthread_mutexattr_init( &attr );
+   pthread_mutexattr_settype( &attr, PTHREAD_MUTEX_RECURSIVE );
+   return ( pthread_mutex_init( &mutex, &attr ) );
 }
 
 /*!
@@ -60,7 +68,7 @@ MutexLock::~MutexLock()
  */
 int const MutexLock::lock()
 {
-   return pthread_mutex_lock( &mutex );
+   return ( pthread_mutex_lock( &mutex ) );
 }
 
 /*!
@@ -69,5 +77,17 @@ int const MutexLock::lock()
  */
 int const MutexLock::unlock()
 {
-   return pthread_mutex_unlock( &mutex );
+   return ( pthread_mutex_unlock( &mutex ) );
+}
+
+/*!
+ * @brief Destroy the mutex lock.
+ * @return Integer value of 0 for success, otherwise non-zero for an error.
+ */
+int const MutexLock::destroy()
+{
+   while ( unlock() == 0 ) {
+      // Recursive mutex so keep releasing the lock.
+   }
+   return ( pthread_mutex_destroy( &mutex ) );
 }

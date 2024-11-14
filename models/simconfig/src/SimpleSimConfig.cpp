@@ -1,6 +1,6 @@
 /*!
+@ingroup SimConfig
 @file models/simconfig/src/SimpleSimConfig.cpp
-@ingroup TrickHLAModel
 @brief This class contains a basic simulation configuration.
 
 @copyright Copyright 2020 United States Government as represented by the
@@ -19,11 +19,10 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLAModel}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/DebugHandler.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64BaseTime.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64Interval.cpp}
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../../source/TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Int64BaseTime.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{simconfig/src/SimpleSimConfig.cpp}
 
 @revs_title
@@ -41,14 +40,14 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h" // for send_hs
 
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Int64BaseTime.hh"
-#include "TrickHLA/Int64Interval.hh"
+#include "TrickHLA/KnownFederate.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
 
@@ -77,32 +76,37 @@ SimpleSimConfig::SimpleSimConfig()
  */
 SimpleSimConfig::~SimpleSimConfig()
 {
-   if ( required_federates != static_cast< char * >( NULL ) ) {
-      if ( TMM_is_alloced( required_federates ) ) {
-         TMM_delete_var_a( required_federates );
+   if ( required_federates != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( required_federates ) ) ) {
+         send_hs( stderr, "TrickHLAModel::SimpleSimConfig::~SimpleSimConfig():%d WARNING failed to delete Trick Memory for 'required_federates'%c",
+                  __LINE__, THLA_NEWLINE );
       }
-      required_federates = static_cast< char * >( NULL );
+      required_federates = NULL;
    }
 
-   if ( owner != static_cast< char * >( NULL ) ) {
-      if ( TMM_is_alloced( owner ) ) {
-         TMM_delete_var_a( owner );
+   if ( owner != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( owner ) ) ) {
+         send_hs( stderr, "TrickHLAModel::SimpleSimConfig::~SimpleSimConfig():%d WARNING failed to delete Trick Memory for 'owner'%c",
+                  __LINE__, THLA_NEWLINE );
       }
-      owner = static_cast< char * >( NULL );
+      owner = NULL;
    }
 }
 
 /*!
  * @job_class{initialization}
  */
-void SimpleSimConfig::initialize(
+void SimpleSimConfig::configure(
    int const                known_feds_count,
    TrickHLA::KnownFederate *known_feds )
 {
    // Release the memory used by the required_federates c-string.
-   if ( required_federates != static_cast< char * >( NULL ) ) {
-      TMM_delete_var_a( required_federates );
-      required_federates = static_cast< char * >( NULL );
+   if ( required_federates != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( required_federates ) ) ) {
+         send_hs( stderr, "TrickHLAModel::SimpleSimConfig::initialize():%d WARNING failed to delete Trick Memory for 'required_federates'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      required_federates = NULL;
    }
 
    ostringstream fed_list;
@@ -115,7 +119,7 @@ void SimpleSimConfig::initialize(
             fed_list << ",";
          }
          fed_list << known_feds[i].name;
-         req_fed_cnt++;
+         ++req_fed_cnt;
       }
    }
 
@@ -123,9 +127,26 @@ void SimpleSimConfig::initialize(
    this->num_federates = req_fed_cnt;
 
    // Make sure we use correct function so that it is Trick managed memory.
-   this->required_federates = TMM_strdup( (char *)fed_list.str().c_str() );
+   this->required_federates = trick_MM->mm_strdup( fed_list.str().c_str() );
+
+   return;
 }
 
+/*!
+ * @job_class{initialization}
+ */
+void SimpleSimConfig::initialize()
+{
+
+   // Mark this as initialized.
+   TrickHLA::Packing::initialize();
+
+   return;
+}
+
+/*!
+ * @job_class{scheduled}
+ */
 void SimpleSimConfig::pack()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {

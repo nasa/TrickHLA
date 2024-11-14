@@ -19,7 +19,8 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Manager.cpp}
+@trick_link_dependency{../../source/TrickHLA/Federate.cpp}
+@trick_link_dependency{../../source/TrickHLA/Manager.cpp}
 
 @revs_title
 @revs_begin
@@ -42,8 +43,8 @@ NASA, Johnson Space Center\n
 #include <vector>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
-#include "trick/memorymanager_c_intf.h"
 
 // TrickHLA Model include files.
 #include "TrickHLA/CompileConfig.hh"
@@ -125,6 +126,18 @@ class StringUtilities
       output.assign( input.begin(), input.end() );
    }
 
+   /*! @brief C++ string to C (char *) string conversion routine with the
+    * string being placed into Trick memory space.
+    *  @details Make sure to use ip_free() to free the memory otherwise you
+    *  could end up with a memory leak.
+    *  @return C string.
+    *  @param input The input string. */
+   static char *ip_strdup_string(
+      std::string const &input )
+   {
+      return trick_MM->mm_strdup( const_cast< char * >( input.c_str() ) );
+   }
+
    /*! @brief C++ wide string to C (char *) string conversion routine with the
     * string being placed into Trick memory space.
     *  @details Make sure to use ip_free() to free the memory otherwise you
@@ -136,7 +149,7 @@ class StringUtilities
    {
       std::string s;
       s.assign( input.begin(), input.end() );
-      return TMM_strdup( (char *)s.c_str() );
+      return trick_MM->mm_strdup( const_cast< char * >( s.c_str() ) );
    }
 
    /*! @brief HLA RTI User Data to printable C++ string conversion routine.
@@ -146,7 +159,7 @@ class StringUtilities
       std::string            &output,
       RTI1516_USERDATA const &data )
    {
-      output.assign( (char const *)data.data(), data.size() );
+      output.assign( static_cast< char const * >( data.data() ), data.size() );
       for ( size_t i = 0; i < output.size(); ++i ) {
          if ( !isprint( output[i] ) ) {
             output.replace( i, 1, 1, ' ' );
@@ -161,7 +174,7 @@ class StringUtilities
       std::string            &output,
       RTI1516_USERDATA const &data )
    {
-      output.assign( (char const *)data.data(), data.size() );
+      output.assign( static_cast< char const * >( data.data() ), data.size() );
    }
 
    /*! @brief Convert a federate handle to a C string representation.

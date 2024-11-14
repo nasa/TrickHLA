@@ -10,15 +10,16 @@
 # @rev_entry{ Edwin Z. Crues, NASA ER7, TrickHLA, April 2019, --, Initial creation based off of TrickHLA scripts.}
 # @rev_entry{ Dan Dexter, NASA ER6, TrickHLA, June 2020, --, Updated to process TrickHLA models code.}
 # @revs_end
-
-import sys
-import os
+#
 import argparse
+import os
 import shutil
 import subprocess
+import sys
+import textwrap
 
-from trickhla_message import *
 from trickhla_environment import *
+from trickhla_message import *
 
 
 # Main routine.
@@ -26,7 +27,10 @@ def main():
 
    # Setup command line argument parsing.
    parser = argparse.ArgumentParser( prog = 'format_code', \
-                                     description = 'Format the TrickHLA source code.' )
+                                     formatter_class = argparse.RawDescriptionHelpFormatter, \
+                                     description = 'Format the TrickHLA source code.', \
+                                     epilog = textwrap.dedent( '''\nExamples:\n  format_code -i -v\n  format_code -t -v\n''' ) )
+
    parser.add_argument( '-c', '--clean', help = 'Clean up all the TrickHLA code formatting artifacts.', \
                          action = "store_true" )
    parser.add_argument( '-f', '--file', help = 'Process a single file in place.' )
@@ -79,6 +83,12 @@ def main():
    trickhla_src_paths = []
    trickhla_src_paths.append( os.path.join( trickhla_home, 'include' ) )
    trickhla_src_paths.append( os.path.join( trickhla_home, 'source' ) )
+   if os.path.isdir( os.path.join( trickhla_home, 'models/EntityDynamics' ) ):
+      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/EntityDynamics' ) )
+   if os.path.isdir( os.path.join( trickhla_home, 'models/FDI' ) ):
+      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/FDI' ) )
+   if os.path.isdir( os.path.join( trickhla_home, 'models/SAIntegrator' ) ):
+      trickhla_src_paths.append( os.path.join( trickhla_home, 'models/SAIntegrator' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/simconfig' ) ):
       trickhla_src_paths.append( os.path.join( trickhla_home, 'models/simconfig' ) )
    if os.path.isdir( os.path.join( trickhla_home, 'models/sine' ) ):
@@ -144,14 +154,14 @@ def main():
          dir_list = os.listdir( '.' )
          for dir_entry in dir_list:
             # Only interested in directories. There really should not be any files.
-            if os.path.isfile( dir_entry ): continue
-            # Either clean up or format the model directory.
-            if args.clean:
-               cleanup_directory( dir_entry, args.test, args.verbose )
-            else:
-               if format_directory( dir_entry, clang_format_cmd, trickhla_scripts,
-                                    args.in_place, args.test, args.verbose ):
-                  TrickHLAMessage.failure( 'Could not format directory: ' + dir_entry )
+            if os.path.isdir( dir_entry ):
+               # Either clean up or format the directory.
+               if args.clean:
+                  cleanup_directory( dir_entry, args.test, args.verbose )
+               else:
+                  if format_directory( dir_entry, clang_format_cmd, trickhla_scripts,
+                                       args.in_place, args.test, args.verbose ):
+                     TrickHLAMessage.failure( 'Could not format directory: ' + dir_entry )
          # End: for dir_entry in dir_list :
    # End: args.file :
 
@@ -213,6 +223,8 @@ def find_clang_format( llvm_bin, verbose = True ):
                command_path = '/usr/bin/clang-format'
             elif os.path.isfile( '/usr/local/bin/clang-format' ):
                command_path = '/usr/local/bin/clang-format'
+            elif os.path.isfile( '/usr/local/opt/llvm/bin/clang-format' ):
+               command_path = '/usr/local/opt/llvm/bin/clang-format'
             elif os.path.isfile( '/opt/homebrew/bin/clang-format' ):
                command_path = '/opt/homebrew/bin/clang-format'
 

@@ -33,6 +33,16 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ReflectedAttributesQueue.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
+#include "TrickHLA/StandardsSupport.hh"
+
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+// HLA include files.
+#include RTI1516_HEADER
+#pragma GCC diagnostic pop
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
@@ -60,7 +70,7 @@ ReflectedAttributesQueue::~ReflectedAttributesQueue()
    }
 
    // Make sure we destroy the queue_mutex.
-   (void)queue_mutex.unlock();
+   queue_mutex.destroy();
 }
 
 bool ReflectedAttributesQueue::empty()
@@ -69,8 +79,7 @@ bool ReflectedAttributesQueue::empty()
    // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &queue_mutex );
 
-   bool queue_is_empty = attribute_map_queue.empty();
-   return queue_is_empty;
+   return attribute_map_queue.empty();
 }
 
 void ReflectedAttributesQueue::push(

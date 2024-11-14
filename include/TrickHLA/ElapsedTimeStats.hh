@@ -19,6 +19,9 @@ NASA, Johnson Space Center\n
 
 @python_module{TrickHLA}
 
+@tldh
+@trick_link_dependency{../../source/TrickHLA/ElapsedTimeStats.cpp}
+
 @revs_title
 @revs_begin
 @rev_entry{Dan Dexter, NASA/ER6, TrickHLA, Sept 2020, --, Initial implementation.}
@@ -32,10 +35,6 @@ NASA, Johnson Space Center\n
 // System includes
 #include <cstdint>
 #include <string>
-
-// Trick includes
-
-// TrickHLA includes
 
 namespace TrickHLA
 {

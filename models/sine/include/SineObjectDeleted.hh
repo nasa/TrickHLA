@@ -1,6 +1,6 @@
 /*!
+@ingroup Sine
 @file models/sine/include/SineObjectDeleted.hh
-@ingroup TrickHLAModel
 @brief Callback class the user writes to do something once the object has been
 deleted from the RTI.
 
@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLAModel}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{sine/src/SineObjectDeleted.cpp}
 
 @revs_title
@@ -34,13 +34,8 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_MODLE_SINE_OBJECT_DELETED_HH
 #define TRICKHLA_MODLE_SINE_OBJECT_DELETED_HH
 
-// Forward declarations.
-namespace TrickHLA
-{
-class Object;
-}
-
 // Trick include files.
+#include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectDeleted.hh"
 
 namespace TrickHLAModel
@@ -72,9 +67,8 @@ class SineObjectDeleted : public TrickHLA::ObjectDeleted
    //-----------------------------------------------------------------
 
    /*! @brief Callback routine implementation to report that this object has
-    *  been deleted from the RTI.
-    *  @param obj Object which was deleted. */
-   void deleted( TrickHLA::Object *obj );
+    *  been deleted from the RTI. */
+   void deleted();
 
   private:
    // Do not allow the copy constructor or assignment operator.

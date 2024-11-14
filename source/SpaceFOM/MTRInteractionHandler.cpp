@@ -22,8 +22,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/Int64BaseTime.cpp}
 @trick_link_dependency{../TrickHLA/InteractionHandler.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
-@trick_link_dependency{MTRInteractionHandler.cpp}
 @trick_link_dependency{ExecutionControl.cpp}
+@trick_link_dependency{MTRInteractionHandler.cpp}
 @trick_link_dependency{Types.cpp}
 
 @revs_title
@@ -61,6 +61,15 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/MTRInteractionHandler.hh"
 #include "SpaceFOM/Types.hh"
 
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+// HLA include files.
+#include RTI1516_HEADER
+#pragma GCC diagnostic pop
+
 using namespace std;
 using namespace SpaceFOM;
 using namespace TrickHLA;
@@ -69,7 +78,7 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 MTRInteractionHandler::MTRInteractionHandler(
-   Federate *fed )
+   Federate const *fed )
    : name( NULL ),
      mtr_mode( MTR_UNINITIALIZED ),
      mtr_mode_int( 0 ),
@@ -88,9 +97,12 @@ MTRInteractionHandler::MTRInteractionHandler(
  */
 MTRInteractionHandler::~MTRInteractionHandler() // RETURN: -- None.
 {
-   if ( this->name != (char *)NULL ) {
-      trick_MM->delete_var( (void *)this->name );
-      this->name = (char *)NULL;
+   if ( this->name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
+         send_hs( stderr, "SpaceFOM::MTRInteractionHandler::~MTRInteractionHandler():%d WARNING failed to delete Trick Memory for 'this->name'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      this->name = NULL;
    }
    return;
 }
@@ -103,11 +115,14 @@ void MTRInteractionHandler::set_name(
 {
    if ( this->name != NULL ) {
       if ( trick_MM->is_alloced( this->name ) ) {
-         trick_MM->delete_var( (void *)this->name );
+         if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
+            send_hs( stderr, "SpaceFOM::MTRInteractionHandler::set_name():%d WARNING failed to delete Trick Memory for 'this->name'%c",
+                     __LINE__, THLA_NEWLINE );
+         }
       }
       this->name = NULL;
    }
-   this->name = trick_MM->mm_strdup( (char *)new_name );
+   this->name = trick_MM->mm_strdup( new_name );
 }
 
 /*!
@@ -133,11 +148,11 @@ void MTRInteractionHandler::send_interaction(
    mtr_mode_int = mtr_enum_to_int16( mode_request );
 
    // Create a User Supplied Tag based off the name in this example.
-   RTI1516_USERDATA user_supplied_tag;
+   RTI1516_USERDATA rti_user_supplied_tag;
    if ( name != NULL ) {
-      user_supplied_tag = RTI1516_USERDATA( name, strlen( name ) );
+      rti_user_supplied_tag = RTI1516_USERDATA( name, strlen( name ) );
    } else {
-      user_supplied_tag = RTI1516_USERDATA( 0, 0 );
+      rti_user_supplied_tag = RTI1516_USERDATA( 0, 0 );
    }
 
    // Get the current time line values.
@@ -150,19 +165,19 @@ void MTRInteractionHandler::send_interaction(
 
    // Notify the parent interaction handler to send the interaction using
    // Receive Order (RO).
-   bool was_sent = this->InteractionHandler::send_interaction( user_supplied_tag );
+   bool was_sent = this->InteractionHandler::send_interaction( rti_user_supplied_tag );
 
    if ( was_sent ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
 
-         string user_supplied_tag_string;
-         StringUtilities::to_string( user_supplied_tag_string, user_supplied_tag );
+         string rti_user_supplied_tag_string;
+         StringUtilities::to_string( rti_user_supplied_tag_string, rti_user_supplied_tag );
 
          cout << "++++SENDING++++ MTRInteractionHandler::send_interaction("
               << "Receive Order):" << __LINE__ << endl
               << "  name: '" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl
-              << "  user-supplied-tag: '" << user_supplied_tag_string << "'" << endl
-              << "  user-supplied-tag-size: " << user_supplied_tag.size() << endl
+              << "  user-supplied-tag: '" << rti_user_supplied_tag_string << "'" << endl
+              << "  user-supplied-tag-size: " << rti_user_supplied_tag.size() << endl
               << "  mode request: " << mtr_enum_to_string( mtr_mode ) << endl
               << "  Scenario time: " << scenario_time << endl
               << "  Simulation time: " << sim_time << endl;
@@ -176,7 +191,7 @@ void MTRInteractionHandler::send_interaction(
       }
 
       // Update the send count, which is just used for the message in this example.
-      send_cnt++;
+      ++send_cnt;
    } else {
       // Use the inherited debug-handler to allow debug comments to be turned
       // on and off from a setting in the input.py file. Use a higher debug level.
@@ -219,7 +234,7 @@ void MTRInteractionHandler::receive_interaction(
 
    // Get the ExecutionControl object and cast it to an SpaceFOM::ExecutionControl.
    SpaceFOM::ExecutionControl *exco = dynamic_cast< ExecutionControl * >( interaction->get_federate()->get_execution_control() );
-   if ( exco == static_cast< ExecutionControl * >( NULL ) ) {
+   if ( exco == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::receive_interaction():" << __LINE__
              << "  ERROR: Unexpected NULL SpaceFOM::ExecutionControl!" << THLA_ENDL;
@@ -273,5 +288,5 @@ void MTRInteractionHandler::receive_interaction(
            << "  receive_cnt:" << ( receive_cnt + 1 ) << endl;
    }
 
-   receive_cnt++;
+   ++receive_cnt;
 }

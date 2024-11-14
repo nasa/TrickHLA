@@ -46,7 +46,9 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
+#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
@@ -63,6 +65,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 
@@ -111,15 +114,16 @@ Interaction::~Interaction()
    remove();
 
    if ( user_supplied_tag != NULL ) {
-      if ( TMM_is_alloced( (char *)user_supplied_tag ) ) {
-         TMM_delete_var_a( user_supplied_tag );
+      if ( trick_MM->delete_var( static_cast< void * >( user_supplied_tag ) ) ) {
+         send_hs( stderr, "Interaction::~Interaction():%d WARNING failed to delete Trick Memory for 'user_supplied_tag'%c",
+                  __LINE__, THLA_NEWLINE );
       }
       user_supplied_tag      = NULL;
       user_supplied_tag_size = 0;
    }
 
    // Make sure we destroy the mutex.
-   (void)mutex.unlock();
+   mutex.destroy();
 }
 
 /*!
@@ -194,6 +198,42 @@ void Interaction::initialize(
       param_count = 0;
    }
 
+   // Verify parameter FOM names and also check for duplicate parameter FOM names.
+   for ( unsigned int i = 0; i < param_count; ++i ) {
+      // Validate the FOM-name to make sure we don't have a problem with the
+      // list of names as well as get a difficult to debug runtime error for
+      // the string constructor if we had a null FOM-name.
+      if ( ( parameters[i].get_FOM_name() == NULL ) || ( *( parameters[i].get_FOM_name() ) == '\0' ) ) {
+         ostringstream errmsg;
+         errmsg << "Interaction::initialize():" << __LINE__
+                << " ERROR: Interaction '" << FOM_name << "' has a missing Parameter"
+                << " FOM Name at array index " << i << ". Please check your input"
+                << " or modified-data files to make sure the interaction parameter"
+                << " FOM name is correctly specified." << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      string fom_name_str( parameters[i].get_FOM_name() );
+
+      // Since Interaction updates are sent as a ParameterHandleValueMap there can be
+      // no duplicate Parameters because the map only allows unique ParameterHandles.
+      for ( unsigned int k = i + 1; k < param_count; ++k ) {
+         if ( ( parameters[k].get_FOM_name() != NULL ) && ( *( parameters[k].get_FOM_name() ) != '\0' ) ) {
+
+            if ( fom_name_str == string( parameters[k].get_FOM_name() ) ) {
+               ostringstream errmsg;
+               errmsg << "Interaction::initialize():" << __LINE__
+                      << " ERROR: Interaction '" << FOM_name << "' has Parameters"
+                      << " at array indexes " << i << " and " << k
+                      << " that have the same FOM Name '" << fom_name_str
+                      << "'. Please check your input or modified-data files to"
+                      << " make sure the interaction parameters do not use"
+                      << " duplicate FOM names." << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+      }
+   }
+
    // We must have an interaction handler specified, otherwise we can not
    // process the interaction.
    if ( handler == NULL ) {
@@ -214,15 +254,15 @@ void Interaction::initialize(
 }
 
 void Interaction::set_user_supplied_tag(
-   unsigned char *tag,
-   size_t         tag_size )
+   unsigned char const *tag,
+   size_t               tag_size )
 {
    if ( tag_size > user_supplied_tag_capacity ) {
       user_supplied_tag_capacity = tag_size;
       if ( user_supplied_tag == NULL ) {
-         user_supplied_tag = (unsigned char *)TMM_declare_var_1d( "char", (int)user_supplied_tag_capacity );
+         user_supplied_tag = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", user_supplied_tag_capacity ) );
       } else {
-         user_supplied_tag = (unsigned char *)TMM_resize_array_1d_a( user_supplied_tag, (int)user_supplied_tag_capacity );
+         user_supplied_tag = static_cast< unsigned char * >( TMM_resize_array_1d_a( user_supplied_tag, user_supplied_tag_capacity ) );
       }
    }
    user_supplied_tag_size = tag_size;
@@ -240,7 +280,7 @@ void Interaction::set_user_supplied_tag(
 void Interaction::remove() // RETURN: -- None.
 {
    // Only remove the Interaction if the manager has not been shutdown.
-   if ( is_shutdown_called() ) {
+   if ( !is_shutdown_called() ) {
 
       // Get the RTI-Ambassador and check for NULL.
       RTIambassador *rti_amb = get_RTI_ambassador();
@@ -883,9 +923,9 @@ bool Interaction::send(
       if ( federate->should_publish_data() ) {
          // This call returns an event retraction handle but we
          // don't support event retraction so no need to store it.
-         (void)rti_amb->sendInteraction( this->class_handle,
-                                         param_values_map,
-                                         the_user_supplied_tag );
+         rti_amb->sendInteraction( this->class_handle,
+                                   param_values_map,
+                                   the_user_supplied_tag );
          successfuly_sent = true;
       }
    } catch ( RTI1516_EXCEPTION const &e ) {
@@ -975,10 +1015,10 @@ bool Interaction::send(
             // This call returns an event retraction handle but we
             // don't support event retraction so no need to store it.
             // Send in Timestamp Order.
-            (void)rti_amb->sendInteraction( this->class_handle,
-                                            param_values_map,
-                                            the_user_supplied_tag,
-                                            time.get() );
+            rti_amb->sendInteraction( this->class_handle,
+                                      param_values_map,
+                                      the_user_supplied_tag,
+                                      time.get() );
             successfuly_sent = true;
 
          } else {
@@ -992,9 +1032,9 @@ Interaction '%s' is time-regulating:%s, preferred-order:%s.%c",
             }
 
             // Send in Receive Order (i.e. with no timestamp).
-            (void)rti_amb->sendInteraction( this->class_handle,
-                                            param_values_map,
-                                            the_user_supplied_tag );
+            rti_amb->sendInteraction( this->class_handle,
+                                      param_values_map,
+                                      the_user_supplied_tag );
             successfuly_sent = true;
          }
       }
@@ -1011,7 +1051,7 @@ Interaction '%s' is time-regulating:%s, preferred-order:%s.%c",
              << "  time=" << time.get_time_in_seconds() << " ("
              << time.get_base_time() << " " << Int64BaseTime::get_units()
              << " error message:'" << rti_err_msg << "'" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    } catch ( RTI1516_EXCEPTION const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1020,7 +1060,7 @@ Interaction '%s' is time-regulating:%s, preferred-order:%s.%c",
              << ( send_with_timestamp ? "Timestamp Order" : "Receive Order" )
              << ", Interaction '" << get_FOM_name() << "' with exception '"
              << rti_err_msg << "'" << THLA_ENDL;
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    }
 
    // Macro to restore the saved FPU Control Word register value.
@@ -1086,13 +1126,13 @@ void Interaction::process_interaction()
    }
 }
 
-void Interaction::extract_data(
+bool Interaction::extract_data(
    InteractionItem *interaction_item )
 {
    // Must be set to subscribe to the interaction and the interaction item
    // is not null, otherwise just return.
    if ( !is_subscribe() || ( interaction_item == NULL ) ) {
-      return;
+      return false;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
@@ -1101,6 +1141,12 @@ void Interaction::extract_data(
       send_hs( stdout, "Interaction::extract_data():%d ID:%s, FOM_name:'%s'%c",
                __LINE__, handle_str.c_str(), get_FOM_name(), THLA_NEWLINE );
    }
+
+   // For thread safety, lock here to avoid corrupting the parameters.
+
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &mutex );
 
    if ( interaction_item->is_timestamp_order() ) {
       // Update the timestamp.
@@ -1113,12 +1159,6 @@ void Interaction::extract_data(
       received_as_TSO = false;
    }
 
-   // For thread safety, lock here to avoid corrupting the parameters.
-
-   // When auto_unlock_mutex goes out of scope it automatically unlocks the
-   // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &mutex );
-
    // Extract the user supplied tag.
    if ( interaction_item->user_supplied_tag_size > 0 ) {
       set_user_supplied_tag( interaction_item->user_supplied_tag, interaction_item->user_supplied_tag_size );
@@ -1126,6 +1166,8 @@ void Interaction::extract_data(
    } else {
       set_user_supplied_tag( (unsigned char *)NULL, 0 );
    }
+
+   bool any_param_received = false;
 
    // Process all the parameter-items in the queue.
    while ( !interaction_item->parameter_queue.empty() ) {
@@ -1141,10 +1183,9 @@ void Interaction::extract_data(
                      THLA_NEWLINE );
          }
          // Extract the parameter data for the given parameter-item.
-         parameters[param_item->index].extract_data( param_item->size, param_item->data );
-
-         // Mark the interaction as changed.
-         mark_changed();
+         if ( parameters[param_item->index].extract_data( param_item->size, param_item->data ) ) {
+            any_param_received = true;
+         }
       }
 
       // Now that we extracted the data from the parameter-item remove it
@@ -1152,7 +1193,11 @@ void Interaction::extract_data(
       interaction_item->parameter_queue.pop();
    }
 
-   // Unlock the mutex as auto_unlock_mutex goes out of scope.
+   if ( any_param_received ) {
+      // Mark the interaction as changed.
+      mark_changed();
+   }
+   return any_param_received;
 }
 
 void Interaction::mark_unchanged()
@@ -1201,8 +1246,7 @@ Federate *Interaction::get_federate()
 
 RTIambassador *Interaction::get_RTI_ambassador()
 {
-   return ( ( this->manager != NULL ) ? this->manager->get_RTI_ambassador()
-                                      : static_cast< RTI1516_NAMESPACE::RTIambassador * >( NULL ) );
+   return ( ( this->manager != NULL ) ? this->manager->get_RTI_ambassador() : NULL );
 }
 
 bool Interaction::is_shutdown_called() const

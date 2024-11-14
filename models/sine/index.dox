@@ -1,0 +1,7 @@
+/**
+ * @defgroup Sine Sine
+ * A simple sine wave simulation
+ * @details This is simple sine wave simulation used to demonstrate various features
+ * in HLA and TrickHLA.
+ * @ingroup TrickHLAModels
+ */

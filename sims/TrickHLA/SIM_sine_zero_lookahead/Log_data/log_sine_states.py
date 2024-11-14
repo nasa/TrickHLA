@@ -59,19 +59,6 @@ def log_sine_states( sim_object_name, log_cycle ) :
    dr_group.add_variable(var)
    var = sim_object_name + ".sim_data.dvdt"
    dr_group.add_variable(var)
-   
-   var = sim_object_name + ".lag_comp_data.value"
-   dr_group.add_variable(var)
-   var = sim_object_name + ".lag_comp_data.time"
-   dr_group.add_variable(var)
-   var = sim_object_name + ".lag_comp_data.phase"
-   dr_group.add_variable(var)
-   var = sim_object_name + ".lag_comp_data.amp"
-   dr_group.add_variable(var)
-   var = sim_object_name + ".lag_comp_data.freq"
-   dr_group.add_variable(var)
-   var = sim_object_name + ".lag_comp_data.dvdt"
-   dr_group.add_variable(var)
 
 
    #########################################################

@@ -19,19 +19,21 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Attribute.cpp}
-@trick_link_dependency{../source/TrickHLA/ElapsedTimeStats.cpp}
-@trick_link_dependency{../source/TrickHLA/Federate.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64Interval.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
-@trick_link_dependency{../source/TrickHLA/LagCompensation.cpp}
-@trick_link_dependency{../source/TrickHLA/Manager.cpp}
-@trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../source/TrickHLA/OwnershipHandler.cpp}
-@trick_link_dependency{../source/TrickHLA/Packing.cpp}
-@trick_link_dependency{../source/TrickHLA/ReflectedAttributesQueue.cpp}
-@trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
+@trick_link_dependency{../../source/TrickHLA/Conditional.cpp}
+@trick_link_dependency{../../source/TrickHLA/ElapsedTimeStats.cpp}
+@trick_link_dependency{../../source/TrickHLA/Federate.cpp}
+@trick_link_dependency{../../source/TrickHLA/Int64Interval.cpp}
+@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../../source/TrickHLA/LagCompensation.cpp}
+@trick_link_dependency{../../source/TrickHLA/Manager.cpp}
+@trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
+@trick_link_dependency{../../source/TrickHLA/MutexProtection.cpp}
+@trick_link_dependency{../../source/TrickHLA/OwnershipHandler.cpp}
+@trick_link_dependency{../../source/TrickHLA/Packing.cpp}
+@trick_link_dependency{../../source/TrickHLA/ReflectedAttributesQueue.cpp}
+@trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -60,6 +62,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/MutexLock.hh"
+#include "TrickHLA/MutexProtection.hh"
 #include "TrickHLA/ReflectedAttributesQueue.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
@@ -95,6 +98,7 @@ namespace TrickHLA
 // helps to limit issues with recursive includes.
 class Manager;
 class Federate;
+class Conditional;
 class Packing;
 class OwnershipHandler;
 class ObjectDeleted;
@@ -133,6 +137,8 @@ class Object
 
    bool blocking_cyclic_read; ///< @trick_units{--} True to block in receive_cyclic_data() for data to be received.
 
+   char *thread_ids; ///< @trick_units{--} Comma separated list of Trick child thread IDs associated to this object.
+
    int        attr_count; ///< @trick_units{--} Number of object attributes.
    Attribute *attributes; ///< @trick_units{--} Array of object attributes.
 
@@ -143,9 +149,9 @@ class Object
 
    OwnershipHandler *ownership; ///< @trick_units{--} Manages attribute ownership.
 
-   ObjectDeleted *deleted;                         ///< @trick_units{--} Object Deleted callback object.
-   bool           process_object_deleted_from_RTI; ///< @trick_units{--} Flag that is true when to process the object has been deleted from the RTI.
-   bool           object_deleted_from_RTI;         ///< @trick_units{--} Flag that is true when this object has been deleted from the RTI.
+   ObjectDeleted *deleted; ///< @trick_units{--} Object Deleted callback object.
+
+   Conditional *conditional; ///< @trick_units{--} Handler for a conditional attribute
 
   public:
    //
@@ -263,15 +269,14 @@ class Object
     *  @param theAttributes The specified attributes. */
    void provide_attribute_update( RTI1516_NAMESPACE::AttributeHandleSet const &theAttributes );
 
-#if defined( THLA_QUEUE_REFLECTED_ATTRIBUTES )
    /*! @brief Enqueue the reflected attributes.
     *  @param theAttributes Attributes data. */
    void enqueue_data( RTI1516_NAMESPACE::AttributeHandleValueMap const &theAttributes );
-#endif
 
    /*! @brief This function extracts the new attribute values.
-    *  @param theAttributes Attributes data. */
-   void extract_data( RTI1516_NAMESPACE::AttributeHandleValueMap &theAttributes );
+    *  @param theAttributes Attributes data.
+    *  @return True if successfully extracted data, false otherwise. */
+   bool extract_data( RTI1516_NAMESPACE::AttributeHandleValueMap &theAttributes );
 
    /*! @brief Remove this object instance from the RTI/Federation. */
    void remove();
@@ -313,7 +318,7 @@ class Object
    void setup_ownership_transfer_checkpointed_data();
 
    /*! @brief If an ownership_transfer object has been created by the user,
-    * trigger it's retore() method is re-establish the pull / push
+    * trigger it's restore() method is re-establish the pull / push
     * AttributeOwnershipMaps. */
    void restore_ownership_transfer_checkpointed_data();
 
@@ -552,15 +557,17 @@ class Object
     *  @return True if object data has changed. */
    bool is_changed()
    {
-#if defined( THLA_QUEUE_REFLECTED_ATTRIBUTES )
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &receive_mutex );
+
       if ( !changed ) {
          if ( !thla_reflected_attributes_queue.empty() ) {
             // The 'changed' flag is set when the data is extracted.
-            extract_data( (RTI1516_NAMESPACE::AttributeHandleValueMap &)thla_reflected_attributes_queue.front() );
+            extract_data( const_cast< RTI1516_NAMESPACE::AttributeHandleValueMap & >( thla_reflected_attributes_queue.front() ) );
             thla_reflected_attributes_queue.pop();
          }
       }
-#endif
       return changed;
    }
 
@@ -651,7 +658,7 @@ class Object
 
    /*! @brief Get the attribute FOM names.
     *  @return A vector of strings containing the attribute FOM names. */
-   VectorOfStrings get_attribute_FOM_names() const
+   VectorOfStrings const get_attribute_FOM_names() const // cppcheck-suppress [returnByReference]
    {
       return attribute_FOM_names;
    }
@@ -744,9 +751,24 @@ class Object
     * @param include_requested True to also included requeted attributes */
    void create_attribute_set( DataUpdateEnum const required_config, bool const include_requested );
 
+   /*! @brief Initialize the thread ID array based on the users 'thread_ids' input.*/
+   void initialize_thread_ID_array();
+
+   /*! @brief Determine if this object is associated to the specified thread ID.
+    * @return True associated to this thread ID.
+    * @param thread_id Trick thread ID. */
+   bool is_thread_associated( unsigned int const thread_id );
+
+   unsigned int thread_ids_array_count; ///< @trick_units{--} Size of the thread IDs array.
+   bool        *thread_ids_array;       ///< @trick_units{--} Array index is the thread ID and the value is true if the thread is associated to this object.
+
+   bool process_object_deleted_from_RTI; ///< @trick_units{--} Flag that is true when to process the object has been deleted from the RTI.
+   bool object_deleted_from_RTI;         ///< @trick_units{--} Flag that is true when this object has been deleted from the RTI.
+
    MutexLock push_mutex;      ///< @trick_io{**} Mutex to lock thread over push attribute ownership sections.
    MutexLock ownership_mutex; ///< @trick_io{**} Mutex to lock thread over attribute ownership code sections.
    MutexLock send_mutex;      ///< @trick_io{**} Mutex to lock thread over send data sections.
+   MutexLock receive_mutex;   ///< @trick_io{**} Mutex to lock thread over receive data sections.
 
   protected:
    /*! @brief Gets the RTI Ambassador.

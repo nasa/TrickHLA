@@ -1,6 +1,6 @@
 /*!
+@ingroup Sine
 @file models/sine/src/SineObjectDeleted.cpp
-@ingroup TrickHLAModel
 @brief Callback class the user writes to do something once the object has been
 deleted from the RTI.
 
@@ -16,7 +16,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{sine/src/SineObjectDeleted.cpp}
 
 @revs_title
@@ -61,11 +61,10 @@ SineObjectDeleted::~SineObjectDeleted()
    return;
 }
 
-void SineObjectDeleted::deleted(
-   TrickHLA::Object *obj )
+void SineObjectDeleted::deleted()
 {
    std::ostringstream msg;
    msg << "SineObjectDeleted::deleted():" << __LINE__
-       << " Object '" << obj->get_name() << "' deleted from the federation.";
-   send_hs( stdout, (char *)msg.str().c_str() );
+       << " Object '" << this->object->get_name() << "' deleted from the federation.";
+   send_hs( stdout, msg.str().c_str() );
 }

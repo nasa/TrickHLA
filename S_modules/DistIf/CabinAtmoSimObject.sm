@@ -1,0 +1,138 @@
+/* @copyright Copyright 2024 United States Government as represented by the Administrator of the
+              National Aeronautics and Space Administration.  All Rights Reserved. */
+
+##include "models/DistIf/include/CabinAtmo.hh"
+##include "models/DistIf/include/CabinAtmoConserveChecks.hh"
+##include "models/DistIf/include/FluidDistributedIfLagBuffer.hh"
+
+class CabinAtmoSimObject: public Trick::SimObject
+{
+    public:
+        CabinAtmoConfigData         modelConfigA;  /**< (1) The cabin atmosphere model config data for instance A. */
+        CabinAtmoConfigData         modelConfigB;  /**< (1) The cabin atmosphere model config data for instance B. */
+        CabinAtmo                   modelA;        /**< (1) The cabin atmosphere model, instance A. */
+        CabinAtmo                   modelB;        /**< (1) The cabin atmosphere model, instance B. */
+        FluidDistributedIfLagBuffer lagBufferVest; /**< (1) Vestibule interface data lag buffer. */
+        FluidDistributedIfLagBuffer lagBufferImv;  /**< (1) IMV interface data lag buffer. */
+        bool                        exchangeData;  /**< (1) Enable data exchange between instance A and B. */
+        CabinAtmoConserveChecks     conservation;  /**< (1) Conservation checks data. */
+        // Construct the sim object instance and define Trick jobs.
+        CabinAtmoSimObject(const std::string& name)
+            :
+            modelConfigA(),
+            modelConfigB(),
+            modelA(name + ".modelA", &modelConfigA),
+            modelB(name + ".modelB", &modelConfigB),
+            lagBufferVest(),
+            lagBufferImv(),
+            exchangeData(true),
+            conservation(modelA.mConserveParams, modelB.mConserveParams)
+        {
+            ("initialization")      modelA.initialize();
+            ("initialization")      modelB.initialize();
+            ("initialization")      lagBufferVest.initialize(CabinAtmoMixture::NFOMBULK, CabinAtmoMixture::NFOMTC);
+            ("initialization")      lagBufferImv.initialize(CabinAtmoMixture::NFOMBULK, CabinAtmoMixture::NFOMTC);
+            (MODEL_DT, "scheduled") readFromBuffers();
+            (MODEL_DT, "scheduled") lagBufferVest.step();
+            (MODEL_DT, "scheduled") lagBufferImv.step();
+            (MODEL_DT, "scheduled") modelA.step(MODEL_DT);
+            (MODEL_DT, "scheduled") modelB.step(MODEL_DT);
+            (MODEL_DT, "scheduled") writeToBuffers();
+            (MODEL_DT, "scheduled") conservation.update();
+        }
+
+        // Destruct the sim object instance.
+        virtual ~CabinAtmoSimObject() {;}
+
+        // Write interface outputs from the models to the lag buffers.
+        void writeToBuffers() {
+            if (not exchangeData) return;
+            const unsigned int nBulk = modelA.mVestibule.mIf.mOutData.getNumFluid();
+            const unsigned int nTc   = modelA.mVestibule.mIf.mOutData.getNumTc();
+            
+            lagBufferVest.mHead1->mDemandMode       = modelA.mVestibule.mIf.mOutData.mDemandMode;
+            lagBufferVest.mHead1->mFrameCount       = modelA.mVestibule.mIf.mOutData.mFrameCount;
+            lagBufferVest.mHead1->mFrameLoopback    = modelA.mVestibule.mIf.mOutData.mFrameLoopback;
+            lagBufferVest.mHead1->mCapacitance      = modelA.mVestibule.mIf.mOutData.mCapacitance;
+            lagBufferVest.mHead1->mSource           = modelA.mVestibule.mIf.mOutData.mSource;
+            lagBufferVest.mHead1->mEnergy           = modelA.mVestibule.mIf.mOutData.mEnergy;
+            modelA.mVestibule.mIf.mOutData.getMoleFractions(lagBufferVest.mHead1->mMoleFractions, nBulk);
+            modelA.mVestibule.mIf.mOutData.getTcMoleFractions(lagBufferVest.mHead1->mTcMoleFractions, nTc);
+
+            lagBufferVest.mHead2->mDemandMode       = modelB.mVestibule.mIf.mOutData.mDemandMode;
+            lagBufferVest.mHead2->mFrameCount       = modelB.mVestibule.mIf.mOutData.mFrameCount;
+            lagBufferVest.mHead2->mFrameLoopback    = modelB.mVestibule.mIf.mOutData.mFrameLoopback;
+            lagBufferVest.mHead2->mCapacitance      = modelB.mVestibule.mIf.mOutData.mCapacitance;
+            lagBufferVest.mHead2->mSource           = modelB.mVestibule.mIf.mOutData.mSource;
+            lagBufferVest.mHead2->mEnergy           = modelB.mVestibule.mIf.mOutData.mEnergy;
+            modelB.mVestibule.mIf.mOutData.getMoleFractions(lagBufferVest.mHead2->mMoleFractions, nBulk);
+            modelB.mVestibule.mIf.mOutData.getTcMoleFractions(lagBufferVest.mHead2->mTcMoleFractions, nTc);
+
+            lagBufferImv.mHead1->mDemandMode       = modelA.mImvDuct.mIf.mOutData.mDemandMode;
+            lagBufferImv.mHead1->mFrameCount       = modelA.mImvDuct.mIf.mOutData.mFrameCount;
+            lagBufferImv.mHead1->mFrameLoopback    = modelA.mImvDuct.mIf.mOutData.mFrameLoopback;
+            lagBufferImv.mHead1->mCapacitance      = modelA.mImvDuct.mIf.mOutData.mCapacitance;
+            lagBufferImv.mHead1->mSource           = modelA.mImvDuct.mIf.mOutData.mSource;
+            lagBufferImv.mHead1->mEnergy           = modelA.mImvDuct.mIf.mOutData.mEnergy;
+            modelA.mImvDuct.mIf.mOutData.getMoleFractions(lagBufferImv.mHead1->mMoleFractions, nBulk);
+            modelA.mImvDuct.mIf.mOutData.getTcMoleFractions(lagBufferImv.mHead1->mTcMoleFractions, nTc);
+
+            lagBufferImv.mHead2->mDemandMode       = modelB.mImvDuct.mIf.mOutData.mDemandMode;
+            lagBufferImv.mHead2->mFrameCount       = modelB.mImvDuct.mIf.mOutData.mFrameCount;
+            lagBufferImv.mHead2->mFrameLoopback    = modelB.mImvDuct.mIf.mOutData.mFrameLoopback;
+            lagBufferImv.mHead2->mCapacitance      = modelB.mImvDuct.mIf.mOutData.mCapacitance;
+            lagBufferImv.mHead2->mSource           = modelB.mImvDuct.mIf.mOutData.mSource;
+            lagBufferImv.mHead2->mEnergy           = modelB.mImvDuct.mIf.mOutData.mEnergy;
+            modelB.mImvDuct.mIf.mOutData.getMoleFractions(lagBufferImv.mHead2->mMoleFractions, nBulk);
+            modelB.mImvDuct.mIf.mOutData.getTcMoleFractions(lagBufferImv.mHead2->mTcMoleFractions, nTc);
+        }
+        
+        // Read interface inputs to the models from the lag buffers.
+        void readFromBuffers() {
+            if (not exchangeData) return;
+            const unsigned int nBulk = modelA.mVestibule.mIf.mOutData.getNumFluid();
+            const unsigned int nTc   = modelA.mVestibule.mIf.mOutData.getNumTc();
+            
+            modelA.mVestibule.mIf.mInData.mDemandMode       = lagBufferVest.mTail2->mDemandMode; 
+            modelA.mVestibule.mIf.mInData.mFrameCount       = lagBufferVest.mTail2->mFrameCount; 
+            modelA.mVestibule.mIf.mInData.mFrameLoopback    = lagBufferVest.mTail2->mFrameLoopback; 
+            modelA.mVestibule.mIf.mInData.mCapacitance      = lagBufferVest.mTail2->mCapacitance; 
+            modelA.mVestibule.mIf.mInData.mSource           = lagBufferVest.mTail2->mSource; 
+            modelA.mVestibule.mIf.mInData.mEnergy           = lagBufferVest.mTail2->mEnergy; 
+            modelA.mVestibule.mIf.mInData.setMoleFractions(lagBufferVest.mTail2->mMoleFractions, nBulk); 
+            modelA.mVestibule.mIf.mInData.setTcMoleFractions(lagBufferVest.mTail2->mTcMoleFractions, nTc); 
+
+            modelB.mVestibule.mIf.mInData.mDemandMode       = lagBufferVest.mTail1->mDemandMode; 
+            modelB.mVestibule.mIf.mInData.mFrameCount       = lagBufferVest.mTail1->mFrameCount; 
+            modelB.mVestibule.mIf.mInData.mFrameLoopback    = lagBufferVest.mTail1->mFrameLoopback; 
+            modelB.mVestibule.mIf.mInData.mCapacitance      = lagBufferVest.mTail1->mCapacitance; 
+            modelB.mVestibule.mIf.mInData.mSource           = lagBufferVest.mTail1->mSource; 
+            modelB.mVestibule.mIf.mInData.mEnergy           = lagBufferVest.mTail1->mEnergy; 
+            modelB.mVestibule.mIf.mInData.setMoleFractions(lagBufferVest.mTail1->mMoleFractions, nBulk); 
+            modelB.mVestibule.mIf.mInData.setTcMoleFractions(lagBufferVest.mTail1->mTcMoleFractions, nTc); 
+
+            modelA.mImvDuct.mIf.mInData.mDemandMode       = lagBufferImv.mTail2->mDemandMode; 
+            modelA.mImvDuct.mIf.mInData.mFrameCount       = lagBufferImv.mTail2->mFrameCount; 
+            modelA.mImvDuct.mIf.mInData.mFrameLoopback    = lagBufferImv.mTail2->mFrameLoopback; 
+            modelA.mImvDuct.mIf.mInData.mCapacitance      = lagBufferImv.mTail2->mCapacitance; 
+            modelA.mImvDuct.mIf.mInData.mSource           = lagBufferImv.mTail2->mSource; 
+            modelA.mImvDuct.mIf.mInData.mEnergy           = lagBufferImv.mTail2->mEnergy; 
+            modelA.mImvDuct.mIf.mInData.setMoleFractions(lagBufferImv.mTail2->mMoleFractions, nBulk); 
+            modelA.mImvDuct.mIf.mInData.setTcMoleFractions(lagBufferImv.mTail2->mTcMoleFractions, nTc); 
+
+            modelB.mImvDuct.mIf.mInData.mDemandMode       = lagBufferImv.mTail1->mDemandMode; 
+            modelB.mImvDuct.mIf.mInData.mFrameCount       = lagBufferImv.mTail1->mFrameCount; 
+            modelB.mImvDuct.mIf.mInData.mFrameLoopback    = lagBufferImv.mTail1->mFrameLoopback; 
+            modelB.mImvDuct.mIf.mInData.mCapacitance      = lagBufferImv.mTail1->mCapacitance; 
+            modelB.mImvDuct.mIf.mInData.mSource           = lagBufferImv.mTail1->mSource; 
+            modelB.mImvDuct.mIf.mInData.mEnergy           = lagBufferImv.mTail1->mEnergy; 
+            modelB.mImvDuct.mIf.mInData.setMoleFractions(lagBufferImv.mTail1->mMoleFractions, nBulk); 
+            modelB.mImvDuct.mIf.mInData.setTcMoleFractions(lagBufferImv.mTail1->mTcMoleFractions, nTc); 
+        }
+        
+    private:
+        // Copy constructor unavailable since declared private and not implemented.
+        CabinAtmoSimObject(const CabinAtmoSimObject&);
+        // Assignment operator unavailable since declared private and not implemented.
+        CabinAtmoSimObject operator = (const CabinAtmoSimObject&);
+};

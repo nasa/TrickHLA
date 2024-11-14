@@ -23,11 +23,12 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/Interaction.cpp}
+@trick_link_dependency{../../source/TrickHLA/SyncPointManagerBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../source/IMSim/ExecutionControl.cpp}
+@trick_link_dependency{../../source/IMSim/ExecutionConfiguration.cpp}
 @trick_link_dependency{../../source/IMSim/FreezeInteractionHandler.cpp}
-@trick_link_dependency{../../source/IMSim/PausePointList.cpp}
-@trick_link_dependency{../../source/IMSim/Typs.cpp}
+@trick_link_dependency{../../source/IMSim/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -48,14 +49,24 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/Types.hh"
 
-// IMSim include files.Interaction.hh"
+// IMSim include files.
 #include "IMSim/ExecutionConfiguration.hh"
 #include "IMSim/FreezeInteractionHandler.hh"
-#include "IMSim/PausePointList.hh"
 #include "IMSim/Types.hh"
+
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+// HLA Encoder helper includes.
+#include RTI1516_HEADER
+#pragma GCC diagnostic pop
 
 namespace IMSim
 {
+
+typedef FreezeInteractionHandler *FreezeInteractionHandlerPtr; // Needed so that Trick will ICG FreezeInteractionHandler.
 
 class ExecutionControl : public TrickHLA::ExecutionControlBase
 {
@@ -70,8 +81,8 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    friend void init_attrIMSim__ExecutionControl();
 
   public:
-   /*! @brief Default constructor for the IMSim ExecutionControl class. */
-   ExecutionControl();
+   /*! @brief Initialization constructor for the IMSim ExecutionControl class. */
+   explicit ExecutionControl( ExecutionConfiguration &imsim_config );
    /*! @brief Destructor for the IMSim ExecutionControl class. */
    virtual ~ExecutionControl();
 
@@ -86,15 +97,14 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
 
    // Execution Control initialization routine.
    // This is called by the TrickHLA::Federate::initialize routine.
-   /*! @brief Execution Control initialization routine.
-    *  @param federate The associated TrickHLA::Federate. */
+   /*! @brief Execution Control initialization routine. */
    virtual void initialize();
    /*! @brief Join federation execution process. */
-   virtual void join_federation_process();
+   virtual void join_federation_process(); // cppcheck-suppress [uselessOverride]
    /*! @brief Process run before the multi-phase initialization begins. */
    virtual void pre_multi_phase_init_processes();
    /*! @brief Process run after the multi-phase initialization ends. */
-   virtual void post_multi_phase_init_process();
+   virtual void post_multi_phase_init_processes();
    /*! @brief Execution control specific shutdown process. */
    virtual void shutdown();
 
@@ -118,25 +128,17 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual void setup_object_RTI_handles();
    /*! Setup the ExecutionControl interaction HLA RTI handles. */
    virtual void setup_interaction_RTI_handles();
+
    /*! Add initialization synchronization points to regulate startup. */
-   virtual void add_multiphase_init_sync_points();
+   virtual void add_initialization_sync_points();
+
    /*! @brief The RTI has announced the existence of a synchronization point.
-    *  @param rti_ambassador    Reference to the HLA RTI Ambassador instance.
     *  @param label             Sync-point label.
     *  @param user_supplied_tag Use supplied tag.*/
-   virtual void announce_sync_point(
-      RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-      std::wstring const               &label,
-      RTI1516_USERDATA const           &user_supplied_tag );
-   /*! @brief Achieve all the user defined mulit-phase initialization
-    *  synchronization points if they are not already achieved and are not
-    *  one of the predefined ExecutionControl synchronization points.
-    *  @param rti_ambassador Reference to the HLA RTI Ambassador instance. */
-   void achieve_all_multiphase_init_sync_points( RTI1516_NAMESPACE::RTIambassador &rti_ambassador );
-   /*! @brief Wait for all the user defined mulit-phase initialization
-    *  synchronization points if they are not already achieved and are not
-    *  one of the predefined ExecutionControl synchronization points. */
-   void wait_for_all_multiphase_init_sync_points();
+   virtual void sync_point_announced(
+      std::wstring const     &label,
+      RTI1516_USERDATA const &user_supplied_tag );
+
    /*! Publish the ExecutionControl objects and interactions. */
    virtual void publish();
    /*! Unpublish the ExecutionControl objects and interactions. */
@@ -145,12 +147,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual void subscribe();
    /*! Unsubscribe the ExecutionControl objects and interactions. */
    virtual void unsubscribe();
-
-   // IMSim extensions to Exection Control.
-   /*! @brief Mark the given synchronization point as synchronized in the federation.
-    *  @return True if synchronization point label is valid.
-    *  @param label The synchronization point label. */
-   virtual bool mark_synchronized( std::wstring const &label );
 
    //
    // ExecutionControl runtime routines.
@@ -167,12 +163,15 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
       RTI1516_USERDATA const                           &theUserSuppliedTag,
       RTI1516_NAMESPACE::LogicalTime const             &theTime,
       bool const                                        received_as_TSO );
+
    /*! @brief Send a mode transition request to the Master federate.
     *  @param requested_mode Requested mode. */
    virtual void send_mode_transition_interaction( TrickHLA::ModeTransitionEnum requested_mode );
+
    /*! @brief Sets the next ExecutionControl run mode.
     *  @param exec_control Next ExecutionControl run mode. */
    virtual void set_next_execution_control_mode( TrickHLA::ExecutionControlEnum exec_control );
+
    /*! @brief Process changes from any received Execution Control Objects (ExCOs).
     *  @return True if mode change occurred. */
    virtual bool process_execution_control_updates();
@@ -181,25 +180,29 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Check to see if a new MTR is valid.
     *  @return True if new MTR is valid. */
    virtual bool check_mode_transition_request();
+
    /*! @brief Process a new mode interaction.
     *  @return True if new mode interaction is successfully processed. */
    virtual bool process_mode_interaction();
+
    /*! @brief Process a new Mode Transition Request (MTR).
     *  @return True if new MTR is successfully processed. */
    virtual bool process_mode_transition_request();
-   /*! @brief Clear the Mode Transition Request flag, the requested execution
-    * mode, and the current execution mode. */
-   virtual void clear_mode_values();
+
    /*! @brief The run mode transition routine.
     *  @return Currently always returns True. */
    virtual bool run_mode_transition();
+
    /*! @brief Announce the pending freeze mode transition with an 'mtr_freeze' sync-point. */
    virtual void freeze_mode_announce();
+
    /*! @brief The freeze mode transition routine.
     *  @return Currently always returns False. */
    virtual bool freeze_mode_transition();
+
    /*! @brief Announce to the federation execution that a shutdown is occurring. */
    virtual void shutdown_mode_announce();
+
    /*! @brief The shutdown mode transition routine. */
    virtual void shutdown_mode_transition();
 
@@ -209,17 +212,14 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Check if a Trick freeze was commanded; if we announced freeze,
     *  tell other federates to freeze. */
    virtual void enter_freeze();
+
    /*! @brief Check for exit from freeze.
     *  @return True if should exit from freeze. */
-   virtual virtual bool check_freeze_exit();
+   virtual bool check_freeze_exit();
+
    /*! @brief Routine to handle going from freeze to run; if we announced the
     * freeze, tell other federates to run. */
    virtual void exit_freeze();
-   /*! @brief Routine to handle ExecutionControl specific action needed to un-freeze. */
-   virtual void un_freeze()
-   {
-      return;
-   }
 
    //
    // FIXME: These pause functions should be worked into the general freeze
@@ -233,10 +233,12 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    void check_pause_at_init( double const check_pause_delta );
 
    virtual bool set_pending_mtr( MTREnum mtr_value );
+
    /*! @brief Determine if the Mode Transition Request (MTR) is valid given the current mode.
     *  @return True if valid, false otherwise.
     *  @param mtr_value Mode transition request. */
    virtual bool is_mtr_valid( MTREnum mtr_value );
+
    /*! @brief Translate MTR into a pending execution mode transition.
     *  @param mtr_value MTR value for next execution mode. */
    virtual void set_mode_request_from_mtr( MTREnum mtr_value );
@@ -257,31 +259,20 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Adds a freeze interaction time into freeze scenario time collection.
     *  @param t Scenario time to freeze the simulation in seconds. */
    virtual void add_freeze_scenario_time( double t );
+
    /*! @brief Trigger a FREEZE interaction from the FreezeInteractionHandler
     * and updated the supplied time with the time computed by the
     * FreezeInteractionHandler.
     *  @param freeze_scenario_time Scenario freeze time. */
    virtual void trigger_freeze_interaction( double &freeze_scenario_time );
+
    /*! @brief Checks for a freeze interaction time from the freeze sim time collection.
     *  @return True if freeze time found; False otherwise. */
    virtual bool check_freeze_time();
+
    /*! @brief Checks for scenario freeze times.
     *  @return True is time to go to freeze; False otherwise. */
    virtual bool check_scenario_freeze_time();
-
-   /*! @brief Add pause time.
-    *  @param time Pause time.
-    *  @param label Pause label (Synchronization point). */
-   virtual void add_pause( TrickHLA::Int64Time *time, std::wstring const &label );
-
-   /*! @brief Clear a pause time by label.
-    *  @param label Pause label (Synchronization point). */
-   virtual void clear_pause( std::wstring const &label );
-
-   // Freeze time management functions.
-   /*! @brief Set the time-padding used to offset the go to run time.
-    *  @param t Time in seconds to pad for time based mode transitions. */
-   virtual void set_time_padding( double t );
 
    //
    // Save and Restore
@@ -291,38 +282,47 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    {
       return ( true );
    }
+
    /*! @brief Checks if Save has been initiated by this ExecutionControl method.
     * @return True if Save is initiated and synchronized with the federation,
     * False if Save not supported. */
    virtual bool is_save_initiated();
+
    /*! @brief Federates that did not announce the save, perform a save.
     * @return True if Save can proceed, False if not. */
-   virtual bool perform_save()
-   {
-      return ( false );
-   }
-   /*! @brief Converts HLA sync points into something Trick can save in a checkpoint. */
-   void convert_loggable_sync_pts();
-   /*! @brief Converts checkpointed sync points into HLA sync points. */
-   void reinstate_logged_sync_pts();
+   virtual bool perform_save();
 
   protected:
    static std::string const type; ///< @trick_units{--} ExecutionControl type string.
 
    MTREnum pending_mtr; ///< @trick_units{--} Pending Mode Transition Requested.
 
-   int                             freeze_inter_count;         ///< @trick_io{**} Number of TrickHLA Freeze Interactions.
-   TrickHLA::Interaction          *freeze_interaction;         ///< @trick_io{**} Interaction to FREEZE the sim at a specified time.MTRInteractionHandler   mtr_interaction_handler; ///< @trick_units{--} SRFOM MTR interaction handler.
-   IMSim::FreezeInteractionHandler freeze_interaction_handler; ///< @trick_units{--} Freeze interaction handler.
+   int                    freeze_inter_count; ///< @trick_io{**} Number of TrickHLA Freeze Interactions.
+   TrickHLA::Interaction *freeze_interaction; ///< @trick_io{**} Interaction to FREEZE the sim at a specified time.
 
    FreezeTimeSet freeze_scenario_times; ///< @trick_io{**} collection of scenario times when we must enter FREEZE mode
-
-   TrickHLA::Int64Time checktime;      ///< @trick_units{--} For DIS: Checking time to pause
-   PausePointList      pause_sync_pts; ///< @trick_units{--} Synchronization points used for pausing the sim.
 
    /*! @brief Return the relevant IMSim::ExecutionConfiguration object.
     *  @return Pointer to the relevant IMSim::ExecutionConfiguration object. */
    ExecutionConfiguration *get_execution_configuration();
+
+   double scenario_time_epoch; /**<  @trick_units{s}
+      Federation execution scenario time epoch. This is the beginning epoch
+      expressed in Terrestrial Time (TT) that corresponds to HLA logical time 0.
+      All joining federates shall use this time to coordinate the offset between
+      their local simulation scenario times, their local simulation execution
+      times and the HLA logical time. */
+
+   short current_execution_mode; /**< @trick_units{--}
+      Defines the current running state of the federation execution in terms
+      of a finite set of states expressed in the RunMode enumeration.*/
+
+   short next_execution_mode; /**< @trick_units{--}
+      Defines the next running state of the federation execution in terms of
+      a finite set of states expressed in the RunMode enumeration. This is
+      used in conjunction with the cte_mode_time, sim_mode_time and
+      associated sync point mechanisms to coordinate federation execution
+      mode transitions.*/
 
   private:
    // Do not allow the copy constructor.

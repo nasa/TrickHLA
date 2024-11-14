@@ -18,7 +18,6 @@ import os
 import subprocess
 import shutil
 import argparse
-import distutils.spawn
 
 from trickhla_message import *
 from trickhla_environment import *
@@ -177,7 +176,7 @@ def main():
       TrickHLAMessage.status( 'Generating documentation for TrickHLA: ' + trickhla_version )
 
    # Check that we can find the Doxygen command.
-   doxygen_cmnd = distutils.spawn.find_executable( 'doxygen' )
+   doxygen_cmnd = shutil.which( 'doxygen' )
    if doxygen_cmnd:
       # Check to see if Doxygen command is executable.
       if os.access( doxygen_cmnd, os.X_OK ):
@@ -204,7 +203,7 @@ def main():
       # Set Doxygen configuration parameters.
       output_dir = 'docs/combined'
       erro_log_file = 'docs/doxygen/combinedErr.txt'
-      file_patterns = '*.cpp *.hh *.c *.h *.d *.sm S_define *.md *.markdown *.py'
+      file_patterns = '*.cpp *.hh *.c *.h *.d *.sm S_define *.dox *.md *.markdown *.py'
       exclude = '*/verif */build'
       latex_dir = output_dir + '/latex'
 
@@ -240,7 +239,7 @@ def main():
       # Set Doxygen configuration parameters.
       output_dir = 'docs/models'
       erro_log_file = 'docs/doxygen/modelsErr.txt'
-      file_patterns = '*.cpp *.hh *.c *.h *.d *.md *.markdown'
+      file_patterns = '*.cpp *.hh *.c *.h *.d *.dox *.md *.markdown'
       exclude = '*/verif */build */scripts */sims'
       latex_dir = output_dir + '/latex'
 
@@ -276,7 +275,7 @@ def main():
       # Set Doxygen configuration parameters.
       output_dir = 'docs/scripts'
       erro_log_file = 'docs/doxygen/scriptsErr.txt'
-      file_patterns = '*.py'
+      file_patterns = '*.py *.dox *.md *.markdown'
       exclude = '*/verif */build */include */source'
       latex_dir = output_dir + '/latex'
 
@@ -312,7 +311,7 @@ def main():
       # Set Doxygen configuration parameters.
       output_dir = 'docs/sims'
       erro_log_file = 'docs/doxygen/simsErr.txt'
-      file_patterns = '*.sm S_define *.md *.markdown *.py'
+      file_patterns = '*.sm S_define *.dox *.md *.markdown *.py'
       exclude = '*/verif */build */scripts */include */source'
       latex_dir = output_dir + '/latex'
 

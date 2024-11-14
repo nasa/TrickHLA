@@ -4,11 +4,9 @@
 @brief Definition of the TrickHLA SpaceFOM physical entity type.
 
 This is the base implementation for the Space Reference FOM (SpaceFOM) interface
-to the Reference Frame object. This needs to be available to the SpaceFOM
-initialization process for the root reference frame discovery step in the
-initialization process.
+to the PhysicalEntity object.
 
-@copyright Copyright 2019 United States Government as represented by the
+@copyright Copyright 2023 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17, U.S. Code.
 All Other Rights Reserved.
@@ -24,15 +22,18 @@ NASA, Johnson Space Center\n
 @python_module{SpaceFOM}
 
 @tldh
+@trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
+@trick_link_dependency{../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../../source/TrickHLA/OpaqueBuffer.cpp}
 @trick_link_dependency{../../source/TrickHLA/Packing.cpp}
 @trick_link_dependency{../../source/SpaceFOM/PhysicalEntityBase.cpp}
-@trick_link_dependency{../../source/SpaceFOM/SpaceTimeCoordinateEncoder.cpp}
 @trick_link_dependency{../../source/SpaceFOM/QuaternionEncoder.cpp}
+@trick_link_dependency{../../source/SpaceFOM/SpaceTimeCoordinateEncoder.cpp}
 
 @revs_title
 @revs_begin
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, November 2023, --, Refactored.}
 @revs_end
 
 */
@@ -41,20 +42,18 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_PHYSICAL_ENTITY_BASE_HH
 
 // System include files.
+#include <iostream>
 
 // TrickHLA include files.
+#include "TrickHLA/Attribute.hh"
+#include "TrickHLA/Object.hh"
 #include "TrickHLA/OpaqueBuffer.hh"
 #include "TrickHLA/Packing.hh"
 
 // SpaceFOM include files.
+#include "SpaceFOM/PhysicalEntityData.hh"
 #include "SpaceFOM/QuaternionEncoder.hh"
 #include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
-
-namespace TrickHLA
-{
-class Packing;
-class OpaqueBuffer;
-} // namespace TrickHLA
 
 namespace SpaceFOM
 {
@@ -71,66 +70,153 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrSpaceFOM__PhysicalEntityBase();
 
+   // Make the Conditional class a friend.
+   friend class PhysicalEntityConditionalBase;
+
+   // Make the Lag Compensation class a friend.
+   friend class PhysicalEntityLagCompBase;
+
   public:
    // Public constructors and destructors.
    PhysicalEntityBase();          // Default constructor.
    virtual ~PhysicalEntityBase(); // Destructor.
 
-   // Initialization routines.
-   void initialize();
+   // Default data.
+   /*! @brief Sets up the attributes for a PhysicalEntity using default values.
+    *  @param sim_obj_name Name of SimObject containing this PhysicalEntity.
+    *  @param entity_obj_name Name of the PhysicalEntity object in the SimObject.
+    *  @param entity_name Name of the PhysicalEntity instance.
+    *  @param parent_ref_frame_name Name of the parent ReferenceFrame for this PhysicalEntity instance.
+    *  @param publishes Does this federate publish this PhysicalEntity.
+    *  @param mngr_object TrickHLA::Object associated with this PhysicalEntity.
+    *  */
+   virtual void base_config( char const       *sim_obj_name,
+                             char const       *entity_obj_name,
+                             char const       *entity_name,
+                             char const       *parent_ref_frame_name,
+                             bool              publishes,
+                             TrickHLA::Object *mngr_object = NULL );
+
+   /*! @brief Function to begin the configuration/initialization of the
+    *  PhysicalEntity.
+    *  This function needs to be called prior to TrickHLA initialization if
+    *  the PhysicalEntity object is not being configured with an
+    *  initialization constructor. */
+   void configure(); // cppcheck-suppress [duplInheritedMember]
+
+   /*! @brief Entity instance initialization routine. */
+   virtual void initialize();
+
+   /*! @brief Initialization callback as part of the TrickHLA::Packing functions.
+    *  @param obj Object associated with this packing class. */
+   virtual void initialize_callback( TrickHLA::Object *obj );
 
    // Access functions.
-   virtual void        set_name( char const *name );
+   /*! @brief Set the name of the PhysicalEntity object instance.
+    *  @param new_name Name of the PhysicalEntity object instance. */
+   virtual void set_name( char const *new_name );
+
+   /*! @brief Get the name of the PhysicalEntity object instance.
+    *  @return Name of the PhysicalEntity object instance. */
    virtual char const *get_name()
    {
-      return name;
+      return pe_packing_data.name;
    }
 
-   virtual void        set_type( char const *type );
+   /*! @brief Set the type string of the PhysicalEntity.
+    *  @param new_type Type string associated with the PhysicalEntity. */
+   virtual void set_type( char const *new_type );
+
+   /*! @brief Get the type string associated with the PhysicalEntity.
+    *  @return Type string associated with the PhysicalEntity. */
    virtual char const *get_type()
    {
-      return type;
+      return pe_packing_data.type;
    }
 
-   virtual void        set_status( char const *status );
+   /*! @brief Set the status string of the PhysicalEntity.
+    *  @param new_status Status string associated with the PhysicalEntity. */
+   virtual void set_status( char const *new_status );
+
+   /*! @brief Get the status string associated with the PhysicalEntity.
+    *  @return Status string associated with the PhysicalEntity. */
    virtual char const *get_status()
    {
-      return status;
+      return pe_packing_data.status;
    }
 
-   virtual void        set_parent_ref_frame( char const *parent_ref_frame );
-   virtual char const *get_parent_ref_frame()
+   /*! @brief Set the name of the parent reference frame for the PhysicalEntity.
+    *  @param new_frame The name of the parent reference frame associated
+    *  with the PhysicalEntity. */
+   virtual void set_parent_frame( char const *new_frame );
+
+   /*! @brief Get the name of the parent reference frame associated with the PhysicalEntity.
+    *  @return Name of the parent reference frame associated with the PhysicalEntity. */
+   virtual char const *get_parent_frame()
    {
-      return parent_ref_frame;
+      return pe_packing_data.parent_frame;
    }
 
-   double const get_time()
+   /*! @brief Get the current scenario time associated with the PhysicalEntity.
+    *  @return Current time associated with the PhysicalEntity. */
+   virtual double const get_time()
    {
-      return state.time;
+      return pe_packing_data.state.time;
    }
 
+   // From the TrickHLA::Packing class.
+   /*! @brief Called to pack the data before the data is sent to the RTI. */
    virtual void pack();
+
+   // From the TrickHLA::Packing class.
+   /*! @brief Called to unpack the data after data is received from the RTI. */
    virtual void unpack();
 
+   /*! @brief Packs the packing data object from the working data object(s),
+    *  @details Called from the pack() function to pack the data from the working
+    *  data objects(s) into the pe_packing_data object.  */
+   virtual void pack_from_working_data() = 0;
+
+   /*! @brief Unpacks the packing data object into the working data object(s),
+    *  @details Called from the unpack() function to unpack the data in the
+    *  pe_packing_data object into the working data object(s). */
+   virtual void unpack_into_working_data() = 0;
+
+  public:
+   bool debug; ///< @trick_units{--} Debug output flag.
+
   protected:
-   char  *name;             ///< @trick_units{--} Name of this entity(required).
-   char  *type;             ///< @trick_units{--} True underlying type for this entity(optional).
-   char  *status;           ///< @trick_units{--} Status string for this entity (optional).
-   char  *parent_ref_frame; ///< @trick_units{--} Name of this entity's parent frame(required).
-   double accel[3];         ///< @trick_units{m/s2} Vehicle inertial acceleration (optional).
-   double rot_accel[3];     ///< @trick_units{rad/s2} Angular body accels, body referenced (optional).
-   double cm[3];            ///< @trick_units{m} Center of mass location in vehicle structural frame (required).
+   // Setup Object Attribute references. These are set in initialize_callback
+   // routine and used for efficiency and ownership transfer in unpack routines.
+   TrickHLA::Attribute *name_attr;         ///< @trick_io{**} Name Attribute.
+   TrickHLA::Attribute *type_attr;         ///< @trick_io{**} Type type Attribute.
+   TrickHLA::Attribute *status_attr;       ///< @trick_io{**} Status Attribute.
+   TrickHLA::Attribute *parent_frame_attr; ///< @trick_io{**} Parent reference frame Attribute.
+   TrickHLA::Attribute *state_attr;        ///< @trick_io{**} State Attribute.
+   TrickHLA::Attribute *accel_attr;        ///< @trick_io{**} Acceleration Attribute.
+   TrickHLA::Attribute *ang_accel_attr;    ///< @trick_io{**} Angular acceleration Attribute.
+   TrickHLA::Attribute *cm_attr;           ///< @trick_io{**} Center of mass Attribute.
+   TrickHLA::Attribute *body_frame_attr;   ///< @trick_io{**} Body frame orientation Attribute.
 
-   SpaceTimeCoordinateData &state;           ///< @trick_units{--} SpaceTimeCoordinate from encoder (required).
-   QuaternionData          &body_wrt_struct; ///< @trick_units{--} Attitude quaternion for body frame w.r.t. structural frame.(optional)
+   // Assign to these parameters when setting up the data associations for the
+   // SpaceFOM TrickHLAObject data for the PhysicalEntity.
+   PhysicalEntityData pe_packing_data; ///< @trick_units{--} Physical entity packing data.
 
-   // Instantiate the Space/Time Coordinate encoder
+   // Instantiate the aggregate data encoders
    SpaceTimeCoordinateEncoder stc_encoder;  ///< @trick_units{--} Entity state encoder.
    QuaternionEncoder          quat_encoder; ///< @trick_units{--} Attitude quaternion encoder.
 
+   /*! @brief Print out the packing data debug information.
+    *  @param stream Output stream. */
+   virtual void debug_print( std::ostream &stream = std::cout );
+
   private:
    // This object is not copyable
+   /*! @brief Copy constructor for PhysicalEntityBase class.
+    *  @details This constructor is private to prevent inadvertent copies. */
    PhysicalEntityBase( PhysicalEntityBase const &rhs );
+   /*! @brief Assignment operator for PhysicalEntityBase class.
+    *  @details This assignment operator is private to prevent inadvertent copies. */
    PhysicalEntityBase &operator=( PhysicalEntityBase const &rhs );
 };
 

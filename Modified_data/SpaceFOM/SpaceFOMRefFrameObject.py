@@ -26,10 +26,15 @@ class SpaceFOMRefFrameObject(TrickHLAObjectConfig):
                  frame_instance_name,
                  frame_S_define_instance,
                  frame_S_define_instance_name,
-                 frame_lag_comp = None,
-                 frame_ownership = None,
-                 frame_thla_manager_object = None ):
-
+                 parent_S_define_instance  = None,
+                 parent_name               = None,
+                 frame_conditional         = None,
+                 frame_lag_comp            = None,
+                 frame_lag_comp_type       = trick.TrickHLA.LAG_COMPENSATION_NONE,
+                 frame_ownership           = None,
+                 frame_deleted             = None,
+                 frame_thla_manager_object = None,
+                 frame_thread_IDs          = None ):
 
       # The Reference Frame FOM name is fixed for the SpaceFOM.
       frame_FOM_name = 'ReferenceFrame'
@@ -53,10 +58,27 @@ class SpaceFOMRefFrameObject(TrickHLAObjectConfig):
                                      frame_instance_name,
                                      frame_FOM_name,
                                      frame_lag_comp,
+                                     frame_lag_comp_type,
                                      frame_ownership,
+                                     frame_deleted,
+                                     frame_conditional,
                                      frame_S_define_instance,
-                                     frame_thla_manager_object )
+                                     frame_thla_manager_object,
+                                     frame_thread_IDs )
 
+      # Set the frame instance name.
+      frame_S_define_instance.set_name( frame_instance_name )
+
+      # Set the frame parent instance name.
+      if ( parent_name ) :
+         frame_S_define_instance.set_parent_name( parent_name )
+      else:
+         frame_S_define_instance.set_parent_name( '' )
+
+      # Set the frame parent instance name.
+      if ( parent_S_define_instance != None ) :
+         frame_S_define_instance.set_parent_frame( parent_S_define_instance )
+      
       # Build the object attribute list.
       self.add_attributes()
 
@@ -77,7 +99,7 @@ class SpaceFOMRefFrameObject(TrickHLAObjectConfig):
       frame_instance_name = self.trick_frame_sim_obj_name
 
       ## Set up the map to the reference frame's name.
-      trick_data_name = str(frame_instance_name) + '.name'
+      trick_data_name = str(frame_instance_name) + '.packing_data.name'
       attribute = TrickHLAAttributeConfig( 'name',
                                            trick_data_name,
                                            self.hla_create,
@@ -88,7 +110,7 @@ class SpaceFOMRefFrameObject(TrickHLAObjectConfig):
       self.add_attribute( attribute )
 
       ## Set up the map to the name of the reference frame's parent frame.
-      trick_data_name = str(frame_instance_name) + '.parent_name'
+      trick_data_name = str(frame_instance_name) + '.packing_data.parent_name'
       attribute = TrickHLAAttributeConfig( 'parent_name',
                                            trick_data_name,
                                            self.hla_create,
@@ -106,7 +128,7 @@ class SpaceFOMRefFrameObject(TrickHLAObjectConfig):
                                            not self.hla_create,
                                            self.hla_create,
                                            trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           trick.TrickHLA.ENCODING_OPAQUE_DATA )
+                                           trick.TrickHLA.ENCODING_NONE )
       self.add_attribute( attribute )
 
       return

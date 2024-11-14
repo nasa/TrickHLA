@@ -23,6 +23,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Int64BaseTime.cpp}
 @trick_link_dependency{Manager.cpp}
 @trick_link_dependency{SleepTimeout.cpp}
+@trick_link_dependency{SyncPointManagerBase.cpp}
 @trick_link_dependency{Types.cpp}
 
 @revs_title
@@ -44,6 +45,7 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/Executive.hh"
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.hh"
 #include "trick/message_proto.h"
 #include "trick/trick_byteswap.h"
@@ -58,6 +60,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/SleepTimeout.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
+#include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -76,6 +79,7 @@ using namespace TrickHLA;
 // Declare default time lines.
 namespace TrickHLA
 {
+
 SimTimeline      def_sim_timeline;
 ScenarioTimeline def_scenario_timeline( def_sim_timeline );
 } // namespace TrickHLA
@@ -84,18 +88,17 @@ ScenarioTimeline def_scenario_timeline( def_sim_timeline );
  * @job_class{initialization}
  */
 ExecutionControlBase::ExecutionControlBase()
-   : scenario_timeline( &def_scenario_timeline ),
+   : SyncPointManagerBase(),
+     scenario_timeline( &def_scenario_timeline ),
      sim_timeline( &def_sim_timeline ),
      cte_timeline( NULL ),
      use_preset_master( false ),
      master( false ),
      multiphase_init_sync_points( NULL ),
-     time_padding( 5.0 ),
+     time_padding( 2.0 ),
      least_common_time_step_seconds( -1.0 ),
      least_common_time_step( -1 ),
      execution_configuration( NULL ),
-     multiphase_init_sync_pnt_list(),
-     init_complete_sp_exists( false ),
      mode_transition_requested( false ),
      requested_execution_control_mode( EXECUTION_CONTROL_UNINITIALIZED ),
      current_execution_control_mode( EXECUTION_CONTROL_UNINITIALIZED ),
@@ -103,12 +106,11 @@ ExecutionControlBase::ExecutionControlBase()
      next_mode_cte_time( -std::numeric_limits< double >::max() ),
      simulation_freeze_time( 0.0 ),
      scenario_freeze_time( 0.0 ),
+     announce_freeze( false ),
+     freeze_the_federation( false ),
      late_joiner( false ),
      late_joiner_determined( false ),
-     federate( NULL ),
-     manager( NULL ),
-     logged_sync_pts_count( 0 ),
-     loggable_sync_pts( NULL )
+     manager( NULL )
 {
    return;
 }
@@ -118,18 +120,17 @@ ExecutionControlBase::ExecutionControlBase()
  */
 ExecutionControlBase::ExecutionControlBase(
    ExecutionConfigurationBase &exec_config )
-   : scenario_timeline( &def_scenario_timeline ),
+   : SyncPointManagerBase(),
+     scenario_timeline( &def_scenario_timeline ),
      sim_timeline( &def_sim_timeline ),
      cte_timeline( NULL ),
      use_preset_master( false ),
      master( false ),
      multiphase_init_sync_points( NULL ),
-     time_padding( 5.0 ),
+     time_padding( 2.0 ),
      least_common_time_step_seconds( -1.0 ),
      least_common_time_step( -1 ),
      execution_configuration( &exec_config ),
-     multiphase_init_sync_pnt_list(),
-     init_complete_sp_exists( false ),
      mode_transition_requested( false ),
      requested_execution_control_mode( EXECUTION_CONTROL_UNINITIALIZED ),
      current_execution_control_mode( EXECUTION_CONTROL_UNINITIALIZED ),
@@ -137,12 +138,11 @@ ExecutionControlBase::ExecutionControlBase(
      next_mode_cte_time( -std::numeric_limits< double >::max() ),
      simulation_freeze_time( 0.0 ),
      scenario_freeze_time( 0.0 ),
+     announce_freeze( false ),
+     freeze_the_federation( false ),
      late_joiner( false ),
      late_joiner_determined( false ),
-     federate( NULL ),
-     manager( NULL ),
-     logged_sync_pts_count( 0 ),
-     loggable_sync_pts( NULL )
+     manager( NULL )
 {
    return;
 }
@@ -155,25 +155,12 @@ ExecutionControlBase::~ExecutionControlBase()
    this->clear_mode_values();
 
    // Free the memory used for the multiphase initialization synchronization points.
-   if ( multiphase_init_sync_points != static_cast< char * >( NULL ) ) {
-      if ( TMM_is_alloced( multiphase_init_sync_points ) ) {
-         TMM_delete_var_a( multiphase_init_sync_points );
+   if ( multiphase_init_sync_points != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( multiphase_init_sync_points ) ) ) {
+         send_hs( stderr, "ExecutionControlBase::~ExecutionControlBase():%d WARNING failed to delete Trick Memory for 'multiphase_init_sync_points'%c",
+                  __LINE__, THLA_NEWLINE );
       }
-      multiphase_init_sync_points = static_cast< char * >( NULL );
-   }
-
-   // Free the memory used by the array of running Federates for the Federation.
-   if ( loggable_sync_pts != static_cast< LoggableTimedSyncPnt * >( NULL ) ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "~TrickHLA::ExecutionControlBase() logged_sync_pts_count=%d %c",
-                  logged_sync_pts_count, THLA_NEWLINE );
-      }
-      for ( size_t i = 0; i < logged_sync_pts_count; ++i ) {
-         loggable_sync_pts[i].clear();
-      }
-      TMM_delete_var_a( loggable_sync_pts );
-      loggable_sync_pts     = static_cast< LoggableTimedSyncPnt     *>( NULL );
-      logged_sync_pts_count = 0;
+      multiphase_init_sync_points = NULL;
    }
 }
 
@@ -186,15 +173,16 @@ ExecutionControlBase::~ExecutionControlBase()
  * @job_class{default_data}
  */
 void ExecutionControlBase::setup(
-   TrickHLA::Federate                   &federate,
-   TrickHLA::Manager                    &manager,
+   TrickHLA::Federate                   &fed,
+   TrickHLA::Manager                    &mgr,
    TrickHLA::ExecutionConfigurationBase &exec_config )
 {
-   // Set the TrickHLA::Federate instance reference.
-   this->federate = &federate;
+   // Set the TrickHLA::Federate instance reference that exists in the
+   // SyncPointManagerBase subclass we extended.
+   SyncPointManagerBase::setup( &fed );
 
    // Set the TrickHLA::Manager instance reference.
-   this->manager = &manager;
+   this->manager = &mgr;
 
    // Set the TrickHLA::ExecutionConfigurationBase instance reference.
    this->execution_configuration = &exec_config;
@@ -214,17 +202,18 @@ void ExecutionControlBase::setup(
  * @job_class{default_data}
  */
 void ExecutionControlBase::setup(
-   TrickHLA::Federate &federate,
-   TrickHLA::Manager  &manager )
+   TrickHLA::Federate &fed,
+   TrickHLA::Manager  &mgr )
 {
-   // Set the TrickHLA::Federate instance reference.
-   this->federate = &federate;
+   // Set the TrickHLA::Federate instance reference that exists in the
+   // SyncPointManagerBase subclass we extended.
+   SyncPointManagerBase::setup( &fed );
 
    // Set the TrickHLA::Manager instance reference.
-   this->manager = &manager;
+   this->manager = &mgr;
 
    // Check to see if the ExecutionConfigurationBase instance is set.
-   if ( execution_configuration != NULL ) {
+   if ( this->execution_configuration != NULL ) {
 
       // Setup the TrickHLA::ExecutionConfigurationBase instance.
       this->execution_configuration->setup( *this );
@@ -240,18 +229,18 @@ void ExecutionControlBase::setup(
 void ExecutionControlBase::initialize()
 {
    // Set Trick's realtime clock to the CTE clock if used.
-   if ( this->does_cte_timeline_exist() ) {
+   if ( does_cte_timeline_exist() ) {
       this->cte_timeline->clock_init();
    }
 
    // Reset the master flag if it is not preset by the user.
-   if ( !this->is_master_preset() ) {
-      this->set_master( false );
+   if ( !is_master_preset() ) {
+      set_master( false );
    }
 
    if ( !does_scenario_timeline_exist() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "TrickHLA::ExecutionControlBase::initialize():%d WARNING: \
+         send_hs( stdout, "ExecutionControlBase::initialize():%d WARNING: \
 ExecutionControl 'scenario_timeline' not specified in the input.py file. Using the \
 Trick simulation time as the default scenario-timeline.%c",
                   __LINE__, THLA_NEWLINE );
@@ -259,9 +248,9 @@ Trick simulation time as the default scenario-timeline.%c",
 
       // Use the simulation timeline as the default scenario timeline.
       scenario_timeline = &def_scenario_timeline;
-      if ( scenario_timeline == static_cast< ScenarioTimeline * >( NULL ) ) { // cppcheck-suppress [knownConditionTrueFalse]
+      if ( scenario_timeline == NULL ) { // cppcheck-suppress [knownConditionTrueFalse]
          ostringstream errmsg;
-         errmsg << "TrickHLA::ExecutionControlBase::initialize():" << __LINE__
+         errmsg << "ExecutionControlBase::initialize():" << __LINE__
                 << " FAILED to allocate enough memory for ScenarioTimeline class!"
                 << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
@@ -270,7 +259,7 @@ Trick simulation time as the default scenario-timeline.%c",
 
    // Initialize then Configure the ExecutionConfiguration object if present.
    if ( execution_configuration != NULL ) {
-      execution_configuration->initialize( this->manager );
+      execution_configuration->Object::initialize( this->manager );
       execution_configuration->configure();
    }
 }
@@ -301,7 +290,7 @@ void ExecutionControlBase::join_federation_process()
    // a running federation execution that is shutting down. This is an
    // unlikely but possible race condition.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "TrickHLA::ExecutionControl::join_federation_process():%d Checking for shutdown %c",
+      send_hs( stdout, "ExecutionControl::join_federation_process():%d Checking for shutdown %c",
                __LINE__, THLA_NEWLINE );
    }
    fed->check_for_shutdown_with_termination();
@@ -334,8 +323,10 @@ bool ExecutionControlBase::object_instance_name_reservation_succeeded(
          execution_configuration->set_name_registered();
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "TrickHLA::ExecutionControlBase::object_instance_name_reservation_succeeded():%d Name:'%ls'%c",
-                     __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
+            string name_str;
+            StringUtilities::to_string( name_str, obj_instance_name );
+            send_hs( stdout, "ExecutionControlBase::object_instance_name_reservation_succeeded():%d Name:'%s'%c",
+                     __LINE__, name_str.c_str(), THLA_NEWLINE );
          }
 
          return true;
@@ -369,7 +360,7 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
          this->set_master( false );
       } else { // If this is the designated preset Master federate, then this is an ERROR.
          ostringstream errmsg;
-         errmsg << "TrickHLA::ExecutionControlBase::object_instance_name_reservation_failed:" << __LINE__
+         errmsg << "ExecutionControlBase::object_instance_name_reservation_failed:" << __LINE__
                 << " FAILED to reserve the ExecutionConfiguration object instance name: '"
                 << execution_configuration->get_name()
                 << "'! This conflicts with this being the designated Master federate!" << THLA_ENDL;
@@ -381,8 +372,10 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
       execution_configuration->set_name_registered();
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "TrickHLA::ExecutionControlBase::object_instance_name_reservation_failed():%d Name:'%ls'%c",
-                  __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
+         string name_str;
+         StringUtilities::to_string( name_str, obj_instance_name );
+         send_hs( stdout, "ExecutionControlBase::object_instance_name_reservation_failed():%d Name:'%s'%c",
+                  __LINE__, name_str.c_str(), THLA_NEWLINE );
       }
 
       // We found a match to return 'true'.
@@ -398,7 +391,7 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
 void ExecutionControlBase::register_objects_with_RTI()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "TrickHLA::ExecutionControlBase::register_objects_with_RTI():%d%c",
+      send_hs( stdout, "ExecutionControlBase::register_objects_with_RTI():%d%c",
                __LINE__, THLA_NEWLINE );
    }
 
@@ -432,15 +425,22 @@ void ExecutionControlBase::add_multiphase_init_sync_points()
    // Parse the comma separated list of sync-point labels.
    vector< string > user_sync_pt_labels;
    if ( this->multiphase_init_sync_points != NULL ) {
-      StringUtilities::tokenize( this->multiphase_init_sync_points,
-                                 user_sync_pt_labels, "," );
+      StringUtilities::tokenize( this->multiphase_init_sync_points, user_sync_pt_labels, "," );
    }
 
    // Add the user specified multiphase initialization sync-points to the list.
    for ( unsigned int i = 0; i < user_sync_pt_labels.size(); ++i ) {
       wstring ws_label;
       StringUtilities::to_wstring( ws_label, user_sync_pt_labels.at( i ) );
-      multiphase_init_sync_pnt_list.add_sync_point( ws_label );
+      if ( contains_sync_point( ws_label ) ) {
+         ostringstream errmsg;
+         errmsg << "ExecutionControlBase::add_multiphase_init_sync_points:" << __LINE__
+                << " ERROR: User specified multiphase init sync-point label '"
+                << user_sync_pt_labels.at( i ) << "' already added!" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      } else {
+         add_sync_point( ws_label, TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST );
+      }
    }
 }
 
@@ -449,12 +449,11 @@ void ExecutionControlBase::add_multiphase_init_sync_points()
  */
 void ExecutionControlBase::clear_multiphase_init_sync_points()
 {
-
    // Late joining federates do not get to participate in the multiphase
    // initialization process so just return.
    if ( this->manager->is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():%d Late \
+         send_hs( stdout, "ExecutionControlBase::clear_multiphase_init_sync_points():%d Late \
 joining federate so this call will be ignored.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -462,57 +461,16 @@ joining federate so this call will be ignored.%c",
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():%d %c",
+      send_hs( stdout, "ExecutionControlBase::clear_multiphase_init_sync_points():%d %c",
                __LINE__, THLA_NEWLINE );
    }
 
-   try {
+   // Achieve all the multiphase initialization synchronization points except.
+   achieve_all_multiphase_init_sync_points();
 
-      // Achieve all the multiphase initialization synchronization points except.
-      this->achieve_all_multiphase_init_sync_points( *federate->get_RTI_ambassador() );
-
-      // Now wait for all the multiphase initialization sync-points to be
-      // synchronized in the federation.
-      this->wait_for_all_multiphase_init_sync_points();
-
-   } catch ( RTI1516_NAMESPACE::SynchronizationPointLabelNotAnnounced const &e ) {
-      ostringstream errmsg;
-      errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
-             << " Exception: SynchronizationPointLabelNotAnnounced" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
-      ostringstream errmsg;
-      errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
-             << " Exception: FederateNotExecutionMember" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
-      ostringstream errmsg;
-      errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
-             << " Exception: SaveInProgress" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
-      ostringstream errmsg;
-      errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
-             << " Exception: RestoreInProgress" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
-      ostringstream errmsg;
-      errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
-             << " Exception: NotConnected" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
-      ostringstream errmsg;
-      errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
-             << " Exception: RTIinternalError" << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   } catch ( RTI1516_EXCEPTION const &e ) {
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      ostringstream errmsg;
-      errmsg << "TrickHLA::ExecutionControlBase::clear_multiphase_init_sync_points():" << __LINE__
-             << " Exception: RTI1516_EXCEPTION " << rti_err_msg << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
+   // Now wait for all the multiphase initialization sync-points to be
+   // synchronized in the federation.
+   wait_for_all_multiphase_init_sync_points();
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       this->print_sync_points();
@@ -522,12 +480,11 @@ joining federate so this call will be ignored.%c",
 /*!
  * @job_class{initialization}
  */
-void ExecutionControlBase::achieve_all_multiphase_init_sync_points(
-   RTI1516_NAMESPACE::RTIambassador &rti_ambassador )
+void ExecutionControlBase::achieve_all_multiphase_init_sync_points()
 {
    // Iterate through this ExecutionControl's user defined multiphase
    // initialization synchronization point list and achieve them.
-   multiphase_init_sync_pnt_list.achieve_all_sync_points( rti_ambassador );
+   achieve_all_sync_points( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST );
 }
 
 /*!
@@ -535,9 +492,9 @@ void ExecutionControlBase::achieve_all_multiphase_init_sync_points(
  */
 void ExecutionControlBase::wait_for_all_multiphase_init_sync_points()
 {
-   // Wait for all the user defined multiphase initialization sychronization
+   // Wait for all the user defined multiphase initialization synchronization
    // points to be achieved.
-   multiphase_init_sync_pnt_list.wait_for_list_synchronization( federate );
+   wait_for_all_sync_points_synchronized( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST );
 }
 
 /*!
@@ -547,7 +504,7 @@ void ExecutionControlBase::send_execution_configuration()
 {
    if ( execution_configuration == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "TrickHLA::ExecutionControlBase::send_execution_configuration():%d This call \
+         send_hs( stdout, "ExecutionControlBase::send_execution_configuration():%d This call \
 will be ignored because the Simulation Initialization Scheme does not support it.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -560,7 +517,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "TrickHLA::ExecutionControlBase::send_ssend_execution_configurationim_config():%d%c", __LINE__, THLA_NEWLINE );
+      send_hs( stdout, "ExecutionControlBase::send_ssend_execution_configurationim_config():%d%c", __LINE__, THLA_NEWLINE );
    }
 
    // Make sure we have at least one piece of ExecutionConfiguration data we can send.
@@ -571,7 +528,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
 
    } else {
       ostringstream errmsg;
-      errmsg << "TrickHLA::ExecutionControlBase::send_execution_configuration():" << __LINE__
+      errmsg << "ExecutionControlBase::send_execution_configuration():" << __LINE__
              << " ERROR: ExecutionConfiguration"
              << " is not configured to send at least one object attribute. Make"
              << " sure at least one ExecutionConfiguration attribute has 'publish = true'"
@@ -588,7 +545,7 @@ void ExecutionControlBase::receive_execution_configuration()
 {
    if ( execution_configuration == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "TrickHLA::ExecutionControlBase::receive_execution_configuration():%d This call \
+         send_hs( stdout, "ExecutionControlBase::receive_execution_configuration():%d This call \
 will be ignored because the Simulation Initialization Scheme does not support it.%c",
                   __LINE__, THLA_NEWLINE );
       }
@@ -601,7 +558,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "TrickHLA::ExecutionControlBase::receive_execution_configuration():%d Waiting...%c",
+      send_hs( stdout, "ExecutionControlBase::receive_execution_configuration():%d Waiting...%c",
                __LINE__, THLA_NEWLINE );
    }
 
@@ -618,7 +575,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
          // Check for shutdown.
          federate->check_for_shutdown_with_termination();
 
-         (void)sleep_timer.sleep();
+         sleep_timer.sleep();
 
          if ( !execution_configuration->is_changed() ) {
 
@@ -629,7 +586,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "TrickHLA::ExecutionControlBase::receive_execution_configuration():" << __LINE__
+                  errmsg << "ExecutionControlBase::receive_execution_configuration():" << __LINE__
                          << " ERROR: Unexpectedly the Federate is no longer an execution member."
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
@@ -642,14 +599,14 @@ will be ignored because the Simulation Initialization Scheme does not support it
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               send_hs( stdout, "TrickHLA::ExecutionControlBase::receive_execution_configuration():%d Waiting...%c",
+               send_hs( stdout, "ExecutionControlBase::receive_execution_configuration():%d Waiting...%c",
                         __LINE__, THLA_NEWLINE );
             }
          }
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "TrickHLA::ExecutionControlBase::receive_execution_configuration():%d Received data.%c",
+         send_hs( stdout, "ExecutionControlBase::receive_execution_configuration():%d Received data.%c",
                   __LINE__, THLA_NEWLINE );
       }
 
@@ -658,7 +615,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
 
    } else {
       ostringstream errmsg;
-      errmsg << "TrickHLA::ExecutionControlBase::receive_execution_configuration():" << __LINE__
+      errmsg << "ExecutionControlBase::receive_execution_configuration():" << __LINE__
              << " ERROR: ExecutionConfiguration"
              << " is not configured to receive at least one object attribute."
              << " Make sure at least one ExecutionConfiguration attribute has"
@@ -729,7 +686,7 @@ Object *ExecutionControlBase::get_trickhla_object(
    }
 
    // Default return if we don't have an ExecutionConfiguration match.
-   return ( static_cast< Object * >( NULL ) );
+   return ( NULL );
 }
 
 /*!
@@ -750,7 +707,7 @@ Object *ExecutionControlBase::get_trickhla_object(
    }
 
    // Default return if we don't have an ExecutionConfiguration match.
-   return ( static_cast< Object * >( NULL ) );
+   return ( NULL );
 }
 
 /*!
@@ -778,7 +735,7 @@ Object *ExecutionControlBase::get_unregistered_object(
    }
 
    // Default return if we don't have an ExecutionConfiguration match.
-   return ( static_cast< Object * >( NULL ) );
+   return ( NULL );
 }
 
 /*!
@@ -801,7 +758,7 @@ Object *ExecutionControlBase::get_unregistered_remote_object(
    }
 
    // Default return if we don't have an ExecutionConfiguration match.
-   return ( static_cast< Object * >( NULL ) );
+   return ( NULL );
 }
 
 bool ExecutionControlBase::mark_object_as_deleted_from_federation(
@@ -813,14 +770,13 @@ bool ExecutionControlBase::mark_object_as_deleted_from_federation(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_id );
-         send_hs( stdout, "TrickHLA::ExecutionControlBase::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s %c",
+         send_hs( stdout, "ExecutionControlBase::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s %c",
                   __LINE__, execution_configuration->get_name(), id_str.c_str(),
                   ( instance_id.isValid() ? "Yes" : "No" ), THLA_NEWLINE );
       }
       execution_configuration->remove_object_instance();
       return true;
    }
-
    return false;
 }
 
@@ -845,11 +801,11 @@ double ExecutionControlBase::get_sim_time()
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream errmsg;
-      errmsg << "TrickHLA::ExecutionControlBase::get_sim_time():" << __LINE__
+      errmsg << "ExecutionControlBase::get_sim_time():" << __LINE__
              << " WARNING: Unexpected NULL 'THLA.federate.get_sim_time'!"
              << " Please make sure you specify a sim-timeline in your input"
              << " file. Returning Trick simulation time instead!" << THLA_ENDL;
-      send_hs( stdout, (char *)errmsg.str().c_str() );
+      send_hs( stdout, errmsg.str().c_str() );
    }
    return exec_get_sim_time();
 }
@@ -862,11 +818,11 @@ double ExecutionControlBase::get_scenario_time()
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream errmsg;
-      errmsg << "TrickHLA::ExecutionControlBase::get_scenario_time():" << __LINE__
+      errmsg << "ExecutionControlBase::get_scenario_time():" << __LINE__
              << " WARNING: Unexpected NULL 'THLA.federate.scenario_timeline'!"
              << " Please make sure you specify a scenario-timeline in your input"
              << " file. Returning Trick simulation time instead!" << THLA_ENDL;
-      send_hs( stdout, (char *)errmsg.str().c_str() );
+      send_hs( stdout, errmsg.str().c_str() );
    }
 
    return this->get_sim_time();
@@ -915,9 +871,9 @@ void ExecutionControlBase::enter_freeze()
 {
    // The default is to do nothing.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "TrickHLA::ExecutionControlBase::enter_freeze():%d Freeze Announced:%s, Freeze Pending:%s%c",
-               __LINE__, ( federate->get_freeze_announced() ? "Yes" : "No" ),
-               ( federate->get_freeze_pending() ? "Yes" : "No" ), THLA_NEWLINE );
+      send_hs( stdout, "ExecutionControlBase::enter_freeze():%d Freeze Announced:%s, Freeze Pending:%s%c",
+               __LINE__, ( is_freeze_announced() ? "Yes" : "No" ),
+               ( is_freeze_pending() ? "Yes" : "No" ), THLA_NEWLINE );
    }
 }
 
@@ -942,7 +898,7 @@ void ExecutionControlBase::check_pause_at_init( double const check_pause_delta )
    this->check_pause( check_pause_delta );
 
    // Mark that freeze has been announced in the Federate.
-   federate->set_freeze_announced( this->is_master() );
+   set_freeze_announced( this->is_master() );
 }
 
 void ExecutionControlBase::set_master( bool master_flag )

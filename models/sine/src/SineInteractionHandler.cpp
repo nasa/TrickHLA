@@ -1,6 +1,6 @@
 /*!
+@ingroup Sine
 @file models/sine/src/SineInteractionHandler.cpp
-@ingroup TrickHLAModel
 @brief This class handles the HLA interactions for the sine wave simulation.
 
 @copyright Copyright 2020 United States Government as represented by the
@@ -19,9 +19,10 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLAModel}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/DebugHandler.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64BaseTime.cpp}
-@trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../../source/TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Int64BaseTime.cpp}
+@trick_link_dependency{../../../source/TrickHLA/InteractionHandler.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{sine/src/SineInteractionHandler.cpp}
 
 @revs_title
@@ -39,8 +40,8 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h" // for send_hs
 
 // Model include files.
@@ -49,6 +50,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Int64BaseTime.hh"
+#include "TrickHLA/InteractionHandler.hh"
 #include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
@@ -64,7 +66,8 @@ using namespace TrickHLAModel;
  * @job_class{initialization}
  */
 SineInteractionHandler::SineInteractionHandler()
-   : name( NULL ),
+   : TrickHLA::InteractionHandler(),
+     name( NULL ),
      message( NULL ),
      time( 0.0 ),
      year( 2007 ),
@@ -92,10 +95,13 @@ void SineInteractionHandler::send_sine_interaction(
    msg << "Interaction from:\"" << ( ( name != NULL ) ? name : "Unknown" ) << "\" "
        << "Send-count:" << ( send_cnt + 1 );
 
-   if ( ( message != NULL ) && TMM_is_alloced( message ) ) {
-      TMM_delete_var_a( message );
+   if ( message != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( message ) ) ) {
+         send_hs( stderr, "TrickHLAModel::SineInteractionHandler::send_sine_interaction():%d WARNING failed to delete Trick Memory for 'message'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
    }
-   message = TMM_strdup( (char *)msg.str().c_str() );
+   message = trick_MM->mm_strdup( msg.str().c_str() );
 
    // Create a User Supplied Tag based off the name in this example.
    RTI1516_USERDATA user_supplied_tag;
@@ -156,7 +162,7 @@ void SineInteractionHandler::send_sine_interaction(
       }
 
       // Update the send count, which is just used for the message in this example.
-      send_cnt++;
+      ++send_cnt;
    } else {
       // Use the inherited debug-handler to allow debug comments to be turned
       // on and off from a setting in the input file. Use a higher debug level.
@@ -172,7 +178,7 @@ void SineInteractionHandler::send_sine_interaction(
 void SineInteractionHandler::receive_interaction(
    RTI1516_USERDATA const &the_user_supplied_tag )
 {
-   receive_cnt++;
+   ++receive_cnt;
 
    // Convert the HLA User Supplied Tag back into a string we can use.
    string user_tag_string;

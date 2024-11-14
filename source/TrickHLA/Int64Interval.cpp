@@ -16,7 +16,6 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{Int64BaseTime.cpp}
-@trick_link_dependency{Int64Time.cpp}
 @trick_link_dependency{Int64Interval.cpp}
 @trick_link_dependency{Types.cpp}
 
@@ -42,6 +41,15 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Int64BaseTime.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Types.hh"
+
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+// HLA include files.
+#include RTI1516_HEADER
+#pragma GCC diagnostic pop
 
 using namespace std;
 using namespace TrickHLA;

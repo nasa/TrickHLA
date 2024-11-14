@@ -12,24 +12,25 @@
 # @rev_entry{ Dan Dexter, NASA ER6, TrickHLA, June 2021, --, Using a build output directory unique to the check being done for better build artifact caching.}
 # @revs_end
 #
-import sys
-import time
+import argparse
 import os
 import subprocess
-import argparse
-import textwrap
 import shutil
+import sys
+import textwrap
+import time
 
-from trickhla_message import *
 from trickhla_environment import *
+from trickhla_message import *
 
 
 # Main routine.
 def main():
 
-   # Set defaults for TrickHLA and TRICK_HOME.
+   # Set defaults for TrickHLA, TRICK_HOME and JEOD_HOME
    trickhla_home = '.'
    trick_home = None
+   jeod_home = None
 
    # Initialize the lists that go into the cppcheck command argument list.
    system_includes = []
@@ -56,7 +57,7 @@ def main():
                                      epilog = textwrap.dedent( '''\n
 Options -s, -e, -u, -x: Default error suppression file: ''' + ccpcheck_suppresion_file + '''\n
 Option -a: Auto-generated error suppression file: ''' + cppcheck_output_dir + '/' + ccpcheck_suppresion_autogen_file + '''\n
-Examples:\n  check_code -s -o -v --cstyle_casts\n  check_code -i -o -v\n  check_code -e -o -v\n  check_code -c -vv''' ) )
+Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustive\n  check_code -e -o -v --exhaustive\n  check_code -c -vv''' ) )
 
    parser.add_argument( '-a', '--autogen', \
                         help = 'Auto-generate a suppression file for all issues. Use this as a starting point for a project specific suppression file.', \
@@ -64,12 +65,21 @@ Examples:\n  check_code -s -o -v --cstyle_casts\n  check_code -i -o -v\n  check_
    parser.add_argument( '-b', '--bin', \
                         help = 'Path to cppcheck binaries directory.', \
                         dest = 'bin_path' )
+   parser.add_argument( '--clang', \
+                        help = 'Use clang parser instead of the cppcheck built in parser (experimental).', \
+                        action = 'store_true', dest = 'use_clang_parser' )
    parser.add_argument( '-c', '--clean', \
                         help = 'Clean all generated files.', \
                         action = 'store_true', dest = 'clean_gen_files' )
+   parser.add_argument( '--cstyle_casts', \
+                        help = 'Suppress C-style casts.', \
+                        action = 'store_true', dest = 'suppress_cstylecasts' )
    parser.add_argument( '-e', '--errors', \
                         help = 'Check source code for errors only.', \
                         action = 'store_true', dest = 'check_errors_only' )
+   parser.add_argument( '--exhaustive', \
+                        help = 'Exhaustive checking, and it will take a while to complete.', \
+                        action = 'store_true', dest = 'exhaustive' )
    parser.add_argument( '-i', '--includes', help = 'Check the #include\'s.', \
                         action = 'store_true', dest = 'check_includes' )
    parser.add_argument( '-n', '--inconclusive', help = 'Allow cppcheck to report even though the analysis is inconclusive. Caution, there are false positives with this option.', \
@@ -84,9 +94,15 @@ Examples:\n  check_code -s -o -v --cstyle_casts\n  check_code -i -o -v\n  check_
    parser.add_argument( '-t', '--test', \
                         help = 'Do not run cppcheck just show what would be done.', \
                         action = 'store_true', dest = 'test_only' )
+   parser.add_argument( '--rti', \
+                        help = 'Provide a path to the RTI installation directory.', \
+                        dest = 'rti_home' )
    parser.add_argument( '--trick', \
                         help = 'Provide a path to the Trick installation directory.', \
                         dest = 'trick_home' )
+   parser.add_argument( '--jeod', \
+                        help = 'Provide a path to the JEOD installation directory.', \
+                        dest = 'jeod_home' )
    parser.add_argument( '-u', '--unused', \
                         help = 'Check source code for unused functions.',
                         action = 'store_true', dest = 'check_for_unused' )
@@ -99,9 +115,6 @@ Examples:\n  check_code -s -o -v --cstyle_casts\n  check_code -i -o -v\n  check_
    parser.add_argument( '-x', '--xml_output', \
                         help = 'Same as -s but the output is XML.', \
                         action = 'store_true', dest = 'generate_xml' )
-   parser.add_argument( '--cstyle_casts', \
-                        help = 'Suppress C-style casts.', \
-                        action = 'store_true', dest = 'suppress_cstylecasts' )
 
    # Parse the command line arguments.
    args = parser.parse_args()
@@ -210,16 +223,30 @@ Examples:\n  check_code -s -o -v --cstyle_casts\n  check_code -i -o -v\n  check_
       TrickHLAMessage.failure( 'No cppcheck command found!' )
 
    # Determine the path to Trick HOME and the Trick version ID.
-   trick_home, trick_ver, trick_ver_year = find_trick( verbose = args.very_verbose )
+   trick_home, trick_ver, trick_ver_year = find_trick( args.trick_home, args.very_verbose )
    if args.very_verbose:
       TrickHLAMessage.status( 'Path to Trick: ' + trick_home )
       TrickHLAMessage.status( 'Trick Version: ' + trick_ver )
       TrickHLAMessage.status( 'Trick Version Year: ' + trick_ver_year )
 
    # Determine the path to HLA RTI home directory.
-   rti_home = find_hla_rti( verbose = args.very_verbose )
+   rti_home = find_hla_rti( args.rti_home, args.very_verbose )
    if args.very_verbose:
       TrickHLAMessage.status( 'Path to HLA RTI: ' + rti_home )
+
+   # Determine the path to the HLA RTI include directory.
+   rti_include = rti_home + '/api/cpp/HLA_1516-2010'
+   if os.path.isdir( rti_include ) is False:
+      rti_include = rti_home + '/include'
+      if os.path.isdir( rti_include ) is False:
+         TrickHLAMessage.failure( 'Could not find the HLA RTI include directory: ' + rti_include )
+   if args.very_verbose:
+      TrickHLAMessage.status( 'Path to HLA RTI include directory: ' + rti_include )
+
+   # Determine the path to JEOD home directory.
+   jeod_home = find_jeod( args.jeod_home, args.very_verbose )
+   if args.very_verbose and jeod_home:
+      TrickHLAMessage.status( 'Path to JEOD: ' + jeod_home )
 
    # Define preprocessor symbols we use for TrickHLA and set the TRICK_VER based on the
    # version of the Trick simulation environment we found in our Path.
@@ -229,7 +256,16 @@ Examples:\n  check_code -s -o -v --cstyle_casts\n  check_code -i -o -v\n  check_
    trickhla_include_dirs.extend( ['-I', './include'] )
    trickhla_include_dirs.extend( ['-I', trick_home + '/include'] )
    trickhla_include_dirs.extend( ['-I', trick_home + '/include/trick/compat'] )
-   trickhla_include_dirs.extend( ['-I', rti_home + '/include'] )
+   trickhla_include_dirs.extend( ['-I', trick_home + '/trick_source'] )
+   trickhla_include_dirs.extend( ['-I', rti_include] )
+   if jeod_home:
+      trickhla_include_dirs.extend( ['-I', jeod_home + '/models'] )
+   if os.path.isdir( './models/EntityDynamics/include' ):
+      trickhla_include_dirs.extend( ['-I', './models/EntityDynamics/include'] )
+   if os.path.isdir( './models/FDI/include' ):
+      trickhla_include_dirs.extend( ['-I', './models/FDI/include'] )
+   if os.path.isdir( './models/SAIntegrator/include' ):
+      trickhla_include_dirs.extend( ['-I', './models/SAIntegrator/include'] )
    if os.path.isdir( './models/simconfig/include' ):
       trickhla_include_dirs.extend( ['-I', './models/simconfig/include'] )
    if os.path.isdir( './models/sine/include' ):
@@ -249,6 +285,12 @@ Examples:\n  check_code -s -o -v --cstyle_casts\n  check_code -i -o -v\n  check_
 
    # Form relative paths to all the source directories used by TrickHLA.
    trickhla_source_dirs.extend ( ['./source'] )
+   if os.path.isdir( './models/EntityDynamics/src' ):
+      trickhla_source_dirs.extend( ['./models/EntityDynamics/src'] )
+   if os.path.isdir( './models/FDI/src' ):
+      trickhla_source_dirs.extend( ['./models/FDI/src'] )
+   if os.path.isdir( './models/SAIntegrator/src' ):
+      trickhla_source_dirs.extend( ['./models/SAIntegrator/src'] )
    if os.path.isdir( './models/simconfig/src' ):
       trickhla_source_dirs.extend ( ['./models/simconfig/src'] )
    if os.path.isdir( './models/sine/src' ):
@@ -336,24 +378,44 @@ Examples:\n  check_code -s -o -v --cstyle_casts\n  check_code -i -o -v\n  check_
       trickhla_ignore.append( '--suppress=unmatchedSuppression' )
       # Ignore/suppress the Trick header file warnings.
       trickhla_ignore.append( '--suppress=missingInclude:' + trick_home + '/include/trick/rand_generator.h' )
+      trickhla_ignore.append( '--suppress=preprocessorErrorDirective:' + trick_home + '/trick_source/er7_utils/interface/include/er7_class.hh' )
    else:
       # Ignore/suppress the HLA Evolved standard header file warnings.
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_home + '/include/RTI/Exception.h' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_home + '/include/RTI/Typedefs.h' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_home + '/include/RTI/encoding/EncodingExceptions.h' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_home + '/include/RTI/time/HLAinteger64Interval.h' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_home + '/include/RTI/time/HLAinteger64Time.h' )
-      trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_home + '/include/RTI/encoding/DataElement.h' )
-      trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_home + '/include/RTI/encoding/HLAfixedRecord.h' )
-      trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_home + '/include/RTI/time/HLAinteger64Time.h' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_include + '/RTI/Exception.h' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_include + '/RTI/Typedefs.h' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_include + '/RTI/encoding/EncodingExceptions.h' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_include + '/RTI/time/HLAinteger64Interval.h' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_include + '/RTI/time/HLAinteger64Time.h' )
+      trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_include + '/RTI/encoding/DataElement.h' )
+      trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_include + '/RTI/encoding/HLAfixedRecord.h' )
+      trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_include + '/RTI/time/HLAinteger64Time.h' )
       # Ignore/suppress the Trick header file warnings.
+      trickhla_ignore.append( '--suppress=constParameterReference:' + trick_home + '/trick_source/er7_utils/integration/core/include/first_order_ode_integrator.hh' )
       trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/DataRecordGroup.hh' )
       trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/InstrumentBase.hh' )
       trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/SysThread.hh' )
       trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/ThreadBase.hh' )
       trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/Threads.hh' )
       trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/ThreadTrigger.hh' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/trick_source/er7_utils/integration/core/include/integrator_result.hh' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/trick_source/er7_utils/integration/core/include/integrator_result_merger_container.hh' )
+      trickhla_ignore.append( '--suppress=preprocessorErrorDirective:' + trick_home + '/trick_source/er7_utils/interface/include/er7_class.hh' )
       trickhla_ignore.append( '--suppress=uninitMemberVar:' + trick_home + '/include/trick/SimObject.hh' )
+      trickhla_ignore.append( '--suppress=uselessOverride:' + trick_home + '/trick_source/er7_utils/integration/core/include/integrator_result_merger.hh' )
+      # Ignore/suppress the JEOD header file warnings.
+      if jeod_home:
+         trickhla_ignore.append( '--suppress=cstyleCast:' + jeod_home + '/models/utils/math/include/numerical_inline.hh' )
+         trickhla_ignore.append( '--suppress=constParameterPointer:' + jeod_home + '/models/utils/memory/include/jeod_alloc_construct_destruct.hh' )
+         trickhla_ignore.append( '--suppress=constParameterPointer:' + jeod_home + '/models/utils/integration/include/restartable_state_integrator.hh' )
+         trickhla_ignore.append( '--suppress=duplInheritedMember:' + jeod_home + '/models/utils/container/include/jeod_vector.hh' )
+         trickhla_ignore.append( '--suppress=duplInheritedMember:' + jeod_home + '/models/utils/container/include/pointer_container.hh' )
+         trickhla_ignore.append( '--suppress=duplInheritedMember:' + jeod_home + '/models/utils/memory/include/memory_table.hh' )
+         trickhla_ignore.append( '--suppress=noExplicitConstructor:' + jeod_home + '/models/utils/container/include/container.hh' )
+         trickhla_ignore.append( '--suppress=noExplicitConstructor:' + jeod_home + '/models/utils/memory/include/memory_type.hh' )
+         trickhla_ignore.append( '--suppress=noExplicitConstructor:' + jeod_home + '/models/utils/named_item/include/named_item.hh' )
+         trickhla_ignore.append( '--suppress=returnByReference:' + jeod_home + '/models/utils/named_item/include/named_item.hh' )
+         trickhla_ignore.append( '--suppress=syntaxError:' + jeod_home + '/models/dynamics/mass/include/mass_point_init.hh' )
+         trickhla_ignore.append( '--suppress=uselessOverride:' + jeod_home + '/models/utils/sim_interface/include/jeod_integrator_interface.hh' )
 
    if args.suppress_cstylecasts:
       # Suppress C-style casts.
@@ -392,11 +454,24 @@ Examples:\n  check_code -s -o -v --cstyle_casts\n  check_code -i -o -v\n  check_
       # must be carefully investigated before you know if it is good or bad.
       cppcheck_args.append( '--inconclusive' )
 
-   # Use the c++03 standard
+   # Use the experimental clang parser instead of the built in cppcheck parser.
+   if args.use_clang_parser:
+      cppcheck_args.append( '--clang' )
+
+   # Use the c++03 standard.
    cppcheck_args.append( '--std=c++03' )
 
    # Configure cppcheck to use an output directory to cache build results.
    cppcheck_args.append( '--cppcheck-build-dir=' + cppcheck_build_dir )
+   
+   # Configure the checkers-report located in the build directory.
+   cppcheck_args.append( '--checkers-report=' + cppcheck_build_dir + '/checkers-report.txt' )
+
+   # --exhaustive Check level
+   if args.exhaustive:
+      cppcheck_args.append( '--check-level=exhaustive' )
+   else:
+      cppcheck_args.append( '--check-level=normal' )
 
    # If the -s, -e or -x options are specified use the parallel processing -j option.
    if args.check_all or args.check_errors_only or args.generate_xml:
@@ -619,9 +694,6 @@ def find_cppcheck( cppcheck_bin, verbose = True ):
 #
 def find_trick( trick_path = None, verbose = True ):
 
-   # Initialize the Trick home directory path.
-   trick_home = None
-
    # Check to see if the path to the Trick home directory is already set.
    if trick_path:
 
@@ -673,6 +745,7 @@ def find_trick( trick_path = None, verbose = True ):
       if os.path.isdir( trick_home ) is False:
          TrickHLAMessage.failure( 'Could not find the Trick home directory: '
                                   + trick_home )
+         trick_home = None
       else:
          if verbose:
             TrickHLAMessage.status( 'Using TRICK_HOME: ' + trick_home )
@@ -718,9 +791,6 @@ def find_trick( trick_path = None, verbose = True ):
 #
 def find_hla_rti( rti_path = None, verbose = True ):
 
-   # Initialize the RTI home directory path.
-   rti_home = None
-
    # Check to see if the path to the HLA RTI home directory is already set.
    if rti_path:
 
@@ -732,17 +802,6 @@ def find_hla_rti( rti_path = None, verbose = True ):
 
       # Check to see if the $RTI_HOME environment variable is defined and set.
       rti_home = os.environ.get( 'RTI_HOME' )
-      if rti_home:
-
-         # Check to see if RTI_HOME exists.
-         if os.path.isdir( rti_home ):
-
-            if verbose:
-               # Let the use know that we have CPPCHECK_HOME and where it is.
-               TrickHLAMessage.status( 'RTI_HOME: ' + rti_home )
-
-         else:
-            TrickHLAMessage.failure( 'RTI_HOME not found: ' + rti_home )
 
    # We're finished hunting. Now let's check for the HLA RTI home directory.
    if rti_home is None:
@@ -750,12 +809,50 @@ def find_hla_rti( rti_path = None, verbose = True ):
    else:
       if os.path.isdir( rti_home ) is False:
          TrickHLAMessage.failure( 'Could not find the HLA RTI home directory: ' + rti_home )
+         rti_home = None
       else:
          if verbose:
             TrickHLAMessage.status( 'Using RTI_HOME: ' + rti_home )
 
    # Return what we found.
    return rti_home
+
+
+# Function to find the JEOD home directory.
+#
+# This function searches common locations for the installed JEOD.
+#
+# @return jeod_home  The location of to the JEOD home directory.
+# @param  jeod_path  The path to the JEOD home directory.
+# @param  verbose    Flag to set if verbose outputs are on.
+#
+def find_jeod( jeod_path = None, verbose = True ):
+
+   # Check to see if the path to the JEOD home directory is already set.
+   if jeod_path:
+
+      # Use the value passed in.
+      jeod_home = jeod_path
+
+   # The path to the JEOD home directory was not passed in so lets check other options.
+   else:
+
+      # Check to see if the $JEOD_HOME environment variable is defined and set.
+      jeod_home = os.environ.get( 'JEOD_HOME' )
+
+   # We're finished hunting. Now let's check for the JEOD home directory.
+   if jeod_home is None:
+      TrickHLAMessage.status( 'Could not find the JEOD home directory!' )
+   else:
+      if os.path.isdir( jeod_home ) is False:
+         TrickHLAMessage.status( 'Could not find the JEOD home directory: ' + jeod_home )
+         jeod_home = None
+      else:
+         if verbose:
+            TrickHLAMessage.status( 'Using JEOD_HOME: ' + jeod_home )
+
+   # Return what we found.
+   return jeod_home
 
 
 # Function to get the number of CPUs on the system

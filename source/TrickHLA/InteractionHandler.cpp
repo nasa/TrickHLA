@@ -49,6 +49,15 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/InteractionHandler.hh"
 
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+// HLA include files.
+#include RTI1516_HEADER
+#pragma GCC diagnostic pop
+
 using namespace std;
 using namespace TrickHLA;
 
@@ -80,26 +89,30 @@ void InteractionHandler::initialize_callback(
 
 bool InteractionHandler::send_interaction()
 {
-   return ( ( interaction != NULL ) ? interaction->send( RTI1516_USERDATA( 0, 0 ) ) : false );
+   return ( ( interaction != NULL ) ? interaction->send( RTI1516_USERDATA( 0, 0 ) )
+                                    : false );
 }
 
 bool InteractionHandler::send_interaction(
    RTI1516_USERDATA const &the_user_supplied_tag )
 {
-   return ( ( interaction != NULL ) ? interaction->send( the_user_supplied_tag ) : false );
+   return ( ( interaction != NULL ) ? interaction->send( the_user_supplied_tag )
+                                    : false );
 }
 
 bool InteractionHandler::send_interaction(
    double send_HLA_time )
 {
-   return ( ( interaction != NULL ) ? interaction->send( send_HLA_time, RTI1516_USERDATA( 0, 0 ) ) : false );
+   return ( ( interaction != NULL ) ? interaction->send( send_HLA_time, RTI1516_USERDATA( 0, 0 ) )
+                                    : false );
 }
 
 bool InteractionHandler::send_interaction(
    double                  send_HLA_time,
    RTI1516_USERDATA const &the_user_supplied_tag )
 {
-   return ( ( interaction != NULL ) ? interaction->send( send_HLA_time, the_user_supplied_tag ) : false );
+   return ( ( interaction != NULL ) ? interaction->send( send_HLA_time, the_user_supplied_tag )
+                                    : false );
 }
 
 void InteractionHandler::receive_interaction(

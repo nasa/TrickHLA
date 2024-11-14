@@ -32,6 +32,9 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/message_proto.h"
 
+// TrickHLA include files.
+#include "TrickHLA/StandardsSupport.hh"
+
 // Model include files.
 #include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
 
@@ -41,21 +44,24 @@ NASA, Johnson Space Center\n
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 // HLA Encoder helper includes.
+#include RTI1516_HEADER
 #include "RTI/VariableLengthData.h"
 #pragma GCC diagnostic pop
 
-using namespace rti1516e;
+using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace SpaceFOM;
 
 /**
  * @job_class{initialization}
  */
-SpaceTimeCoordinateEncoder::SpaceTimeCoordinateEncoder()
-   : position_encoder( HLAfloat64LE(), 3 ),
+SpaceTimeCoordinateEncoder::SpaceTimeCoordinateEncoder(
+   SpaceTimeCoordinateData &stc_data )
+   : data( stc_data ),
+     position_encoder( HLAfloat64LE(), 3 ),
      velocity_encoder( HLAfloat64LE(), 3 ),
      trans_state_encoder(),
-     quat_scalar_encoder( &data.quat_scalar ),
+     quat_scalar_encoder( &data.att.scalar ),
      quat_vector_encoder( HLAfloat64LE(), 3 ),
      quat_encoder(),
      ang_vel_encoder( HLAfloat64LE(), 3 ),
@@ -97,7 +103,7 @@ SpaceTimeCoordinateEncoder::SpaceTimeCoordinateEncoder()
    // in the constructor initialization list above.
    // Quaternion vector:
    for ( int i = 0; i < 3; ++i ) {
-      quat_vector[i].setDataPointer( &data.quat_vector[i] );
+      quat_vector[i].setDataPointer( &data.att.vector[i] );
       quat_vector_encoder.setElementPointer( i, &quat_vector[i] );
    }
    // Add the scalar and vector encoders to the quaternion encoder.
@@ -134,7 +140,6 @@ SpaceTimeCoordinateEncoder::SpaceTimeCoordinateEncoder()
  */
 void SpaceTimeCoordinateEncoder::encode()
 {
-
    // Encode the data into the reference frame buffer.
    VariableLengthData encoded_data = encoder.encode();
 
@@ -148,7 +153,7 @@ void SpaceTimeCoordinateEncoder::encode()
              << " Warning: Encoded data size does not match buffer!"
              << "    Encoded size: " << encoded_data.size()
              << " but Expected size: " << get_capacity();
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    }
 
    return;
@@ -159,7 +164,6 @@ void SpaceTimeCoordinateEncoder::encode()
  */
 void SpaceTimeCoordinateEncoder::decode()
 {
-
    // The Encoder helps operate on VariableLengthData so create one using the
    // buffered HLA data we received through the TrickHLA callback.
    VariableLengthData encoded_data = VariableLengthData( buffer, capacity );

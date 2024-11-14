@@ -1,0 +1,20 @@
+/* @copyright Copyright 2024 United States Government as represented by the Administrator of the
+              National Aeronautics and Space Administration.  All Rights Reserved. */
+
+#define MODEL_DT 0.1
+
+// Default system classes
+#include "sim_objects/default_trick_sys.sm"
+
+%header{
+ using namespace DistIf;
+%}
+
+// Model sim object.
+#include "CabinAtmoSimObject.sm"
+CabinAtmoSimObject cabinAtmo("cabinAtmo");
+
+// HLA is optional, see S_overrides.mk
+#ifdef HLA
+  #include "THLA_interface.sm"
+#endif

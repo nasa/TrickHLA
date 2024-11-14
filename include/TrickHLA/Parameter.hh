@@ -20,9 +20,9 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Parameter.cpp}
-@trick_link_dependency{../source/TrickHLA/Types.cpp}
-@trick_link_dependency{../source/TrickHLA/Utilities.cpp}
+@trick_link_dependency{../../source/TrickHLA/Parameter.cpp}
+@trick_link_dependency{../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/Utilities.cpp}
 
 @revs_title
 @revs_begin
@@ -39,8 +39,9 @@ NASA, Johnson Space Center\n
 // System include files.
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/attributes.h"
-#include "trick/memorymanager_c_intf.h"
+#include "trick/message_proto.h" // for send_hs
 
 // TrickHLA include files.
 #include "TrickHLA/StandardsSupport.hh"
@@ -120,17 +121,17 @@ class Parameter
       return FOM_name;
    }
 
-   /*! @brief Set the FOM name for the paramter.
-    *  @param in_name The FOM name for the paramter. */
+   /*! @brief Set the FOM name for the parameter.
+    *  @param in_name The FOM name for the parameter. */
    void set_FOM_name( char const *in_name )
    {
-      if ( FOM_name != NULL ) {
-         if ( TMM_is_alloced( FOM_name ) ) {
-            TMM_delete_var_a( FOM_name );
+      if ( this->FOM_name != NULL ) {
+         if ( trick_MM->delete_var( static_cast< void * >( this->FOM_name ) ) ) {
+            send_hs( stderr, "Parameter::set_FOM_name():%d WARNING failed to delete Trick Memory for 'this->FOM_name'%c",
+                     __LINE__, THLA_NEWLINE );
          }
-         FOM_name = NULL;
       }
-      FOM_name = TMM_strdup( (char *)in_name );
+      this->FOM_name = trick_MM->mm_strdup( in_name );
    }
 
    /*! @brief Get the Trick variable name associated with this parameter.
@@ -190,8 +191,9 @@ class Parameter
 
    /*! @brief Extract the data out of the HLA Parameter Value.
     *  @param param_size Parameter data size.
-    *  @param param_data Parameter data. */
-   void extract_data( size_t const         param_size,
+    *  @param param_data Parameter data.
+    *  @return True if successfully extracted data, false otherwise. */
+   bool extract_data( size_t const         param_size,
                       unsigned char const *param_data );
 
    /*! @brief Check if a parameter value has changed.

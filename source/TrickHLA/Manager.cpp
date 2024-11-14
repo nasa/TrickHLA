@@ -47,11 +47,13 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <cstdint>
 #include <float.h>
+#include <map>
 #include <string>
 
 // Trick include files.
 #include "trick/Executive.hh"
 #include "trick/MemoryManager.hh"
+#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
@@ -73,6 +75,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
 #include "TrickHLA/SleepTimeout.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 
@@ -127,6 +130,7 @@ Manager::Manager()
      mgr_initialized( false ),
      obj_discovery_mutex(),
      object_map(),
+     obj_name_index_map(),
      federate_has_been_restored( false ),
      federate( NULL ),
      execution_control( NULL )
@@ -141,10 +145,11 @@ Manager::Manager()
 Manager::~Manager()
 {
    object_map.clear();
+   obj_name_index_map.clear();
    clear_interactions();
 
-   // Make sure we unlock the mutex.
-   (void)obj_discovery_mutex.unlock();
+   // Make sure we destroy the mutex.
+   obj_discovery_mutex.destroy();
 }
 
 /*!
@@ -186,7 +191,7 @@ void Manager::initialize()
       send_hs( stdout, "Manager::initialize():%d%c", __LINE__, THLA_NEWLINE );
    }
 
-   // Check to make sure we have a reference to the TrickHLA::Manager.
+   // Check to make sure we have a reference to the TrickHLA::Federate.
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "Manager::initialize():" << __LINE__
@@ -201,66 +206,6 @@ void Manager::initialize()
              << " ERROR: Unexpected NULL 'execution_control' pointer!"
              << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Check for the error condition of a valid object count but a null
-   // objects array.
-   if ( ( obj_count > 0 ) && ( objects == NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL 'objects' array for a non zero"
-             << " obj_count:" << obj_count << ". Please check your input or"
-             << " modified-data files to make sure the 'Manager::objects'"
-             << " array is correctly configured." << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // If we have a non-NULL objects array but the object-count is invalid
-   // then let the user know.
-   if ( ( obj_count <= 0 ) && ( objects != NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::initialize():" << __LINE__
-             << " ERROR: Unexpected " << ( ( obj_count == 0 ) ? "zero" : "negative" )
-             << " obj_count:" << obj_count << " for a non-NULL 'objects' array."
-             << " Please check your input or modified-data files to make sure"
-             << " the 'Manager::objects' array is correctly configured."
-             << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Reset the TrickHLA Object count if negative.
-   if ( obj_count < 0 ) {
-      obj_count = 0;
-   }
-
-   // Check for the error condition of a valid interaction count but a null
-   // interactions array.
-   if ( ( inter_count > 0 ) && ( interactions == NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL 'interactions' array for a non zero"
-             << " inter_count:" << inter_count << ". Please check your input or"
-             << " modified-data files to make sure the 'Manager::interactions'"
-             << " array is correctly configured." << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // If we have a non-NULL interactions array but the interactions-count is
-   // invalid then let the user know.
-   if ( ( inter_count <= 0 ) && ( interactions != NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::initialize():" << __LINE__
-             << " ERROR: Unexpected " << ( ( inter_count == 0 ) ? "zero" : "negative" )
-             << " inter_count:" << inter_count << " for a non-NULL 'interactions'"
-             << " array. Please check your input or modified-data files to make"
-             << " sure the 'Manager::interactions' array is correctly configured."
-             << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Reset the TrickHLA Interaction count if negative.
-   if ( inter_count < 0 ) {
-      inter_count = 0;
    }
 
    // The manager is now initialized.
@@ -285,6 +230,7 @@ void Manager::restart_initialization()
       errmsg << "Manager::restart_initialization():" << __LINE__
              << " ERROR: Unexpected NULL 'federate' pointer!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -297,65 +243,8 @@ void Manager::restart_initialization()
    // To allow manager initialization to complete we need to reset the init flag.
    this->mgr_initialized = false;
 
-   // Check for the error condition of a valid object count but a null
-   // objects array.
-   if ( ( obj_count > 0 ) && ( objects == NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::restart_initialization():" << __LINE__
-             << " ERROR: Unexpected NULL 'objects' array for a non zero"
-             << " obj_count:" << obj_count << ". Please check your input or"
-             << " modified-data files to make sure the 'Manager::objects'"
-             << " array is correctly configured." << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // If we have a non-NULL objects array but the object-count is invalid
-   // then let the user know.
-   if ( ( obj_count <= 0 ) && ( objects != NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::restart_initialization():" << __LINE__
-             << " ERROR: Unexpected " << ( ( obj_count == 0 ) ? "zero" : "negative" )
-             << " obj_count:" << obj_count << " for a non-NULL 'objects' array."
-             << " Please check your input or modified-data files to make sure"
-             << " the 'Manager::objects' array is correctly configured."
-             << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Reset the TrickHLA Object count if negative.
-   if ( obj_count < 0 ) {
-      obj_count = 0;
-   }
-
-   // Check for the error condition of a valid interaction count but a null
-   // interactions array.
-   if ( ( inter_count > 0 ) && ( interactions == NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::restart_initialization():" << __LINE__
-             << " ERROR: Unexpected NULL 'interactions' array for a non zero"
-             << " inter_count:" << inter_count << ". Please check your input or"
-             << " modified-data files to make sure the 'Manager::interactions'"
-             << " array is correctly configured." << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // If we have a non-NULL interactions array but the interactions-count is
-   // invalid then let the user know.
-   if ( ( inter_count <= 0 ) && ( interactions != NULL ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::restart_initialization():" << __LINE__
-             << " ERROR: Unexpected " << ( ( inter_count == 0 ) ? "zero" : "negative" )
-             << " inter_count:" << inter_count << " for a non-NULL 'interactions'"
-             << " array. Please check your input or modified-data files to make"
-             << " sure the 'Manager::interactions' array is correctly configured."
-             << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   // Reset the TrickHLA Interaction count if negative.
-   if ( inter_count < 0 ) {
-      inter_count = 0;
-   }
+   // Verify the user specified object and interaction arrays and counts.
+   verify_object_and_interaction_arrays();
 
    // Setup the Execution Control and Execution Configuration objects now that
    // we know if we are the "Master" federate or not.
@@ -364,6 +253,7 @@ void Manager::restart_initialization()
       errmsg << "Manager::restart_initialization():" << __LINE__
              << " ERROR: Unexpected NULL 'execution_control' pointer!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // The set_master() function set's additional parameter so call it again to
@@ -394,7 +284,7 @@ void Manager::restart_initialization()
       federate->set_all_federate_MOM_instance_handles_by_name();
 
       // Make sure all required federates have joined the federation.
-      (void)federate->wait_for_required_federates_to_join();
+      federate->wait_for_required_federates_to_join();
    }
 
    // Restore ownership_transfer data for all objects.
@@ -407,6 +297,97 @@ void Manager::restart_initialization()
 
    // The manager is now initialized.
    this->mgr_initialized = true;
+}
+
+/*! @brief Verify the user specified object and interaction arrays and counts. */
+void Manager::verify_object_and_interaction_arrays()
+{
+   // Check for the error condition of a valid object count but a null
+   // objects array.
+   if ( ( obj_count > 0 ) && ( objects == NULL ) ) {
+      ostringstream errmsg;
+      errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+             << " ERROR: Unexpected NULL 'objects' array for a non zero"
+             << " obj_count:" << obj_count << ". Please check your input or"
+             << " modified-data files to make sure the 'Manager::objects'"
+             << " array is correctly configured." << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // If we have a non-NULL objects array but the object-count is invalid
+   // then let the user know.
+   if ( ( obj_count <= 0 ) && ( objects != NULL ) ) {
+      ostringstream errmsg;
+      errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+             << " ERROR: Unexpected " << ( ( obj_count == 0 ) ? "zero" : "negative" )
+             << " obj_count:" << obj_count << " for a non-NULL 'objects' array."
+             << " Please check your input or modified-data files to make sure"
+             << " the 'Manager::objects' array is correctly configured."
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Reset the TrickHLA Object count if negative.
+   if ( obj_count < 0 ) {
+      obj_count = 0;
+   }
+
+   // Object instance names must be unique and can not be a duplicate.
+   for ( int n = 0; n < obj_count; ++n ) {
+
+      if ( ( objects[n].name != NULL ) && ( *objects[n].name != '\0' ) ) {
+         string obj_name1 = objects[n].name;
+
+         for ( int k = n + 1; k < obj_count; ++k ) {
+            if ( ( objects[k].name != NULL ) && ( *objects[k].name != '\0' ) ) {
+               string obj_name2 = objects[k].name;
+
+               if ( obj_name1 == obj_name2 ) {
+                  ostringstream errmsg;
+                  errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+                         << " ERROR: Object instance '" << obj_name1
+                         << "' at array index " << n << " has the same name as"
+                         << " object instance '" << obj_name2
+                         << "' at array index " << k << ". Please check your"
+                         << " input or modified-data files to make sure the"
+                         << " object instance names are unique with no duplicates."
+                         << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
+               }
+            }
+         }
+      }
+   }
+
+   // Check for the error condition of a valid interaction count but a null
+   // interactions array.
+   if ( ( inter_count > 0 ) && ( interactions == NULL ) ) {
+      ostringstream errmsg;
+      errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+             << " ERROR: Unexpected NULL 'interactions' array for a non zero"
+             << " inter_count:" << inter_count << ". Please check your input or"
+             << " modified-data files to make sure the 'Manager::interactions'"
+             << " array is correctly configured." << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // If we have a non-NULL interactions array but the interactions-count is
+   // invalid then let the user know.
+   if ( ( inter_count <= 0 ) && ( interactions != NULL ) ) {
+      ostringstream errmsg;
+      errmsg << "Manager::verify_object_and_interaction_arrays():" << __LINE__
+             << " ERROR: Unexpected " << ( ( inter_count == 0 ) ? "zero" : "negative" )
+             << " inter_count:" << inter_count << " for a non-NULL 'interactions'"
+             << " array. Please check your input or modified-data files to make"
+             << " sure the 'Manager::interactions' array is correctly configured."
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // Reset the TrickHLA Interaction count if negative.
+   if ( inter_count < 0 ) {
+      inter_count = 0;
+   }
 }
 
 /*!
@@ -449,7 +430,7 @@ federate so this call will be ignored.%c",
                    << " Initialization Scheme (Type:'"
                    << this->execution_control->get_type()
                    << "') does not support it." << THLA_ENDL;
-               send_hs( stdout, (char *)msg.str().c_str() );
+               send_hs( stdout, msg.str().c_str() );
             }
          }
       } else {
@@ -522,7 +503,7 @@ federate so the data will not be sent for '%s'.%c",
                    << " Initialization Scheme (Type:'"
                    << this->execution_control->get_type()
                    << "') does not support it." << THLA_ENDL;
-               send_hs( stdout, (char *)msg.str().c_str() );
+               send_hs( stdout, msg.str().c_str() );
             }
          }
       } else {
@@ -577,7 +558,7 @@ federate so this call will be ignored.%c",
                // Check for shutdown.
                federate->check_for_shutdown_with_termination();
 
-               (void)sleep_timer.sleep();
+               sleep_timer.sleep();
 
                if ( !objects[n].is_changed() ) {
 
@@ -696,7 +677,7 @@ void Manager::receive_init_data(
                // Check for shutdown.
                federate->check_for_shutdown_with_termination();
 
-               (void)sleep_timer.sleep();
+               sleep_timer.sleep();
 
                if ( !obj->is_changed() ) {
 
@@ -759,7 +740,7 @@ void Manager::receive_init_data(
  */
 void Manager::clear_init_sync_points()
 {
-   // Clear the multiphase initalization synchronization points associated
+   // Clear the multiphase initialization synchronization points associated
    // with ExecutionControl initialization.
    this->execution_control->clear_multiphase_init_sync_points();
 }
@@ -778,7 +759,7 @@ void Manager::wait_for_init_sync_point(
                 << " Initialization Scheme (Type:'"
                 << this->execution_control->get_type()
                 << "') does not support it." << THLA_ENDL;
-         send_hs( stdout, (char *)errmsg.str().c_str() );
+         send_hs( stdout, errmsg.str().c_str() );
       }
       return;
    }
@@ -805,13 +786,11 @@ joining federate so this call will be ignored.%c",
    StringUtilities::to_wstring( ws_syc_point_label, sync_point_label );
 
    // Determine if the sync-point label is valid.
-   if ( this->execution_control->contains( ws_syc_point_label ) ) {
+   if ( execution_control->contains_sync_point( ws_syc_point_label ) ) {
 
       // Achieve the specified sync-point and wait for the federation
       // to be synchronized on it.
-      this->execution_control->achieve_and_wait_for_synchronization( *( this->get_RTI_ambassador() ),
-                                                                     this->federate,
-                                                                     ws_syc_point_label );
+      execution_control->achieve_sync_point_and_wait_for_synchronization( ws_syc_point_label );
 
    } else {
       ostringstream errmsg;
@@ -833,8 +812,10 @@ void Manager::request_data_update(
    wstring const &instance_name )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::request_data_update():%d Object:'%ls'%c",
-               __LINE__, instance_name.c_str(), THLA_NEWLINE );
+      string name_str;
+      StringUtilities::to_string( name_str, instance_name );
+      send_hs( stdout, "Manager::request_data_update():%d Object:'%s'%c",
+               __LINE__, name_str.c_str(), THLA_NEWLINE );
    }
 
    bool found = false;
@@ -916,15 +897,18 @@ void Manager::object_instance_name_reservation_failed(
       return;
    }
 
+   string name_str;
+   StringUtilities::to_string( name_str, obj_instance_name );
+
    // Anything beyond this point is fatal.
    send_hs( stderr, "Manager::object_instance_name_reservation_failed():%d \
-Name:'%ls' Please check your input or modified data files to make sure the \
+Name:'%s' Please check your input or modified data files to make sure the \
 object instance name is unique, no duplicates, within the Federation. For \
 example, try using fed_name.object_FOM_name for the object instance name. \
 Also, an object should be owned by only one Federate so one common mistake is \
 to have the 'create_HLA_instance' flag for the same object being set to true \
 for more than one Federate.%c",
-            __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
+            __LINE__, name_str.c_str(), THLA_NEWLINE );
 
    wstring obj_name;
    for ( unsigned int n = 0; n < obj_count; ++n ) {
@@ -970,8 +954,8 @@ void Manager::add_object_to_map(
    // Add the registered ExecutionConfiguration object instance to the map
    // only if it is not already in it.
    if ( ( object->is_instance_handle_valid() )
-        && ( this->object_map.find( object->get_instance_handle() ) == this->object_map.end() ) ) {
-      this->object_map[object->get_instance_handle()] = object;
+        && ( object_map.find( object->get_instance_handle() ) == object_map.end() ) ) {
+      object_map[object->get_instance_handle()] = object;
    }
 }
 
@@ -983,6 +967,12 @@ void Manager::setup_all_ref_attributes()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Manager::setup_all_ref_attributes():%d%c",
                __LINE__, THLA_NEWLINE );
+   }
+
+   // Create the map of object instance names to object array indexes.
+   obj_name_index_map.clear();
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
+      obj_name_index_map[objects[n].get_name_string()] = n;
    }
 
    // Make sure the object-map is empty/clear before we continue.
@@ -1065,7 +1055,7 @@ void Manager::setup_object_ref_attributes(
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       }
    }
 }
@@ -1119,7 +1109,7 @@ void Manager::setup_interaction_ref_attributes()
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         send_hs( stdout, (char *)msg.str().c_str() );
+         send_hs( stdout, msg.str().c_str() );
       }
    }
 
@@ -1250,8 +1240,7 @@ void Manager::setup_object_RTI_handles(
 
             if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                string id_str;
-               StringUtilities::to_string( id_str,
-                                           attrs[i].get_attribute_handle() );
+               StringUtilities::to_string( id_str, attrs[i].get_attribute_handle() );
                msg << "\t  Result for Attribute '"
                    << data_objects[n].get_FOM_name() << "'->'"
                    << attrs[i].get_FOM_name() << "'"
@@ -1264,7 +1253,7 @@ void Manager::setup_object_RTI_handles(
          data_objects[n].build_attribute_map();
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            send_hs( stdout, (char *)msg.str().c_str() );
+            send_hs( stdout, msg.str().c_str() );
          }
       }
    } catch ( NameNotFound const &e ) {
@@ -1416,8 +1405,7 @@ void Manager::setup_interaction_RTI_handles(
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             string handle_str;
-            StringUtilities::to_string( handle_str,
-                                        in_interactions[n].get_class_handle() );
+            StringUtilities::to_string( handle_str, in_interactions[n].get_class_handle() );
             msg << "  Result for Interaction"
                 << " FOM-Name:'" << inter_FOM_name << "'"
                 << " Interaction-ID:" << handle_str << endl;
@@ -1448,8 +1436,7 @@ void Manager::setup_interaction_RTI_handles(
 
             if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                string handle_str;
-               StringUtilities::to_string( handle_str,
-                                           params[i].get_parameter_handle() );
+               StringUtilities::to_string( handle_str, params[i].get_parameter_handle() );
                msg << "\t  Result for Parameter '"
                    << inter_FOM_name << "'->'" << param_FOM_name << "'"
                    << " Parameter-ID:" << handle_str << endl;
@@ -1457,7 +1444,7 @@ void Manager::setup_interaction_RTI_handles(
          }
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-            send_hs( stdout, (char *)msg.str().c_str() );
+            send_hs( stdout, msg.str().c_str() );
          }
       }
    } catch ( NameNotFound const &e ) {
@@ -1989,7 +1976,7 @@ void Manager::wait_for_registration_of_required_objects()
          summary << THLA_ENDL;
 
          // Display the summary.
-         send_hs( stdout, (char *)summary.str().c_str() );
+         send_hs( stdout, summary.str().c_str() );
 
          // Reset the flags for printing a summary.
          print_summary               = false;
@@ -2001,10 +1988,10 @@ void Manager::wait_for_registration_of_required_objects()
 
       // Wait a little while to allow the objects to be registered.
       if ( any_unregistered_required_obj ) {
-         (void)sleep_timer.sleep();
+         sleep_timer.sleep();
 
          // Check again to see if we have any unregistered objects.
-         any_unregistered_required_obj = ( current_required_obj_cnt < total_required_obj_cnt );
+         any_unregistered_required_obj = ( current_required_obj_cnt < total_required_obj_cnt ); // cppcheck-suppress [knownConditionTrueFalse]
 
          if ( any_unregistered_required_obj ) { // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
 
@@ -2138,7 +2125,7 @@ void Manager::set_object_instance_handles_by_name(
       for ( unsigned int n = 0; n < data_obj_count; ++n ) {
 
          // Create the wide-string version of the instance name.
-         char *instance_name = (char *)data_objects[n].get_name();
+         char const *instance_name = data_objects[n].get_name();
          StringUtilities::to_wstring( ws_instance_name, instance_name );
 
          try {
@@ -2173,7 +2160,8 @@ void Manager::set_object_instance_handles_by_name(
                ostringstream errmsg;
                errmsg << "Manager::set_object_instance_handles_by_name():" << __LINE__
                       << " ERROR: Object Instance Not Known for '"
-                      << ( instance_name != NULL ? instance_name : "" ) << "'" << THLA_ENDL;
+                      << ( instance_name != NULL ? instance_name : "" ) << "'"
+                      << THLA_ENDL;
                DebugHandler::terminate_with_message( errmsg.str() );
             } else {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -2231,7 +2219,7 @@ void Manager::set_object_instance_handles_by_name(
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       summary << THLA_ENDL;
-      send_hs( stdout, (char *)summary.str().c_str() );
+      send_hs( stdout, summary.str().c_str() );
    }
 }
 
@@ -2306,60 +2294,47 @@ void Manager::send_cyclic_and_requested_data()
                __LINE__, THLA_NEWLINE );
    }
 
+   // Current time values.
    int64_t const sim_time_in_base_time = Int64BaseTime::to_base_time( exec_get_sim_time() );
    int64_t const granted_base_time     = get_granted_base_time();
-   bool const    zero_lookahead        = federate->is_zero_lookahead_time();
-
-   // Initial time values.
-   int64_t   dt      = zero_lookahead ? 0LL : federate->get_lookahead_in_base_time();
-   int64_t   prev_dt = dt;
-   Int64Time granted_plus_lookahead( granted_base_time + dt );
-   Int64Time update_time( granted_plus_lookahead );
+   int64_t const lookahead_base_time   = federate->is_zero_lookahead_time()
+                                            ? 0LL
+                                            : federate->get_lookahead_in_base_time();
 
    // Determine the main thread cycle time for this job if it is not yet known.
    if ( this->job_cycle_base_time <= 0LL ) {
       determine_job_cycle_time();
    }
 
-   // Only update the time if time management is enabled.
-   if ( federate->is_time_management_enabled() ) {
+   // The update_time should be the current granted time plus the data cycle
+   // delta time for this job if HLA Time Management is enabled otherwise it
+   // is the simulation time plus the cycle delta time for this job. Also, the
+   // dt value would then be the job cycle delta time for this job for this
+   // function. 11/28/2006 DDexter
+   //
+   // When Tsim+dt == Tgrant+Lookahead
+   // Tgrant          Tgrant + Lookahead
+   // +---------------+---------------
+   // Tsim            Tsim + dt
+   //
+   // When Tsim+dt > Tgrant+Lookahead
+   // Tgrant          Tmin = Tgrant + Lookahead
+   // +---------------+--------+------
+   // Tsim                     Tsim + dt
+   //
+   // Even when using HLA Time Management the simulation time (Tsim) will
+   // not match the Granted time (Tgrant) for some circumstances, which is
+   // the case for a late joining federate. The data cycle time (dt) is how
+   // often we send and receive data, which may or may not match the lookahead.
+   // This is why we prefer to use an updated time of Tupdate = Tgrant + dt.
+   int64_t   dt      = this->job_cycle_base_time;
+   int64_t   prev_dt = dt;
+   Int64Time update_time( granted_base_time + dt );
 
-      // Check for a zero lookahead time, which means the cycle_time (i.e. dt)
-      // should be zero as well.
-      dt = zero_lookahead ? 0LL : this->job_cycle_base_time;
-
-      // Reuse the update_time if the data cycle time (dt) is the same.
-      if ( dt != prev_dt ) {
-         prev_dt = dt;
-
-         // The update_time should be the current granted time plus the data cycle
-         // delta time for this job if HLA Time Management is enabled otherwise it
-         // is the simulation time plus the cycle delta time for this job. Also, the
-         // dt value would then be the job cycle delta time for this job for this
-         // function. 11/28/2006 DDexter
-         //
-         // When Tsim+dt == Tgrant+Lookahead
-         // Tgrant          Tgrant + Lookahead
-         // +---------------+---------------
-         // Tsim            Tsim + dt
-         //
-         // When Tsim+dt > Tgrant+Lookahead
-         // Tgrant          Tmin = Tgrant + Lookahead
-         // +---------------+--------+------
-         // Tsim                     Tsim + dt
-         //
-         // Even when using HLA Time Management the simulation time (Tsim) will
-         // not match the Granted time (Tgrant) for some circumstances, which is
-         // the case for a late joining federate. The data cycle time (dt) is how
-         // often we send and receive data, which may or may not match the lookahead.
-         // This is why we prefer to use an updated time of Tupdate = Tgrant + dt.
-         update_time.set( granted_base_time + dt );
-
-         // Make sure the update time is not less than the granted time + lookahead.
-         if ( update_time < granted_plus_lookahead ) {
-            update_time.set( granted_plus_lookahead );
-         }
-      }
+   // Make sure the update time is not less than the granted time + lookahead,
+   // which happens if the delta-time step is less than the lookahead time.
+   if ( dt < lookahead_base_time ) {
+      update_time.set( granted_base_time + lookahead_base_time );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -2374,31 +2349,24 @@ void Manager::send_cyclic_and_requested_data()
    for ( unsigned int obj_index = 0; obj_index < this->obj_count; ++obj_index ) {
 
       // Only send data if we are on the data cycle time boundary for this object.
-      if ( this->federate->on_data_cycle_boundary_for_obj( obj_index, sim_time_in_base_time ) ) {
+      if ( federate->on_data_cycle_boundary_for_obj( obj_index, sim_time_in_base_time ) ) {
 
-         // Only update the time if time management is enabled.
-         if ( federate->is_time_management_enabled() ) {
+         // Get the cyclic data time for the object.
+         dt = federate->get_data_cycle_base_time_for_obj( obj_index, this->job_cycle_base_time );
 
-            // Check for a zero lookahead time, which means the cycle_time
-            // (i.e. dt) should be zero as well.
-            dt = zero_lookahead ? 0LL
-                                : this->federate->get_data_cycle_base_time_for_obj(
-                                   obj_index, this->job_cycle_base_time );
+         // Reuse the update_time if the data cycle time (dt) is the same.
+         if ( dt != prev_dt ) {
+            prev_dt = dt;
+            update_time.set( granted_base_time + dt );
 
-            // Reuse the update_time if the data cycle time (dt) is the same.
-            if ( dt != prev_dt ) {
-               prev_dt = dt;
-
-               update_time.set( granted_base_time + dt );
-
-               // Make sure the update time is not less than the granted time + lookahead.
-               if ( update_time < granted_plus_lookahead ) {
-                  update_time.set( granted_plus_lookahead );
-               }
+            // Make sure the update time is not less than the granted time + lookahead,
+            // which happens if the delta-time step is less than the lookahead time.
+            if ( dt < lookahead_base_time ) {
+               update_time.set( granted_base_time + lookahead_base_time );
             }
          }
 
-         // Send the data for the object.
+         // Send the data for the object using the cycle time for this object.
          objects[obj_index].send_cyclic_and_requested_data( update_time );
       }
    }
@@ -2430,7 +2398,7 @@ void Manager::receive_cyclic_data()
    for ( unsigned int n = 0; n < obj_count; ++n ) {
 
       // Only receive data if we are on the data cycle time boundary for this object.
-      if ( this->federate->on_data_cycle_boundary_for_obj( n, sim_time_in_base_time ) ) {
+      if ( federate->on_data_cycle_boundary_for_obj( n, sim_time_in_base_time ) ) {
          objects[n].receive_cyclic_data();
       }
    }
@@ -2574,7 +2542,7 @@ Object *Manager::get_trickhla_object(
 {
    // We use a map with the key being the ObjectIntanceHandle for fast lookups.
    ObjectInstanceMap::const_iterator iter = object_map.find( instance_id );
-   return ( ( iter != object_map.end() ) ? iter->second : static_cast< Object * >( NULL ) );
+   return ( ( iter != object_map.end() ) ? iter->second : NULL );
 }
 
 /*!
@@ -2584,10 +2552,10 @@ Object *Manager::get_trickhla_object(
    string const &obj_instance_name )
 {
    // Search the data objects first.
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
-      if ( objects[n].get_name_string() == obj_instance_name ) {
-         return ( &objects[n] );
-      }
+   TrickHLAObjInstanceNameIndexMap::const_iterator iter;
+   iter = obj_name_index_map.find( obj_instance_name );
+   if ( iter != obj_name_index_map.end() ) {
+      return ( &objects[iter->second] );
    }
 
    // Check for a match with the ExecutionConfiguration object associated with
@@ -2601,19 +2569,10 @@ Object *Manager::get_trickhla_object(
 Object *Manager::get_trickhla_object(
    wstring const &obj_instance_name )
 {
-   wstring ws_obj_name;
+   string obj_instance_name_str;
+   StringUtilities::to_string( obj_instance_name_str, obj_instance_name );
 
-   // Search the data objects first.
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
-      StringUtilities::to_wstring( ws_obj_name, objects[n].get_name() );
-      if ( ws_obj_name == obj_instance_name ) {
-         return ( &objects[n] );
-      }
-   }
-
-   // Check for a match with the ExecutionConfiguration object associated with
-   // ExecutionControl. Returns NULL if match not found.
-   return ( this->execution_control->get_trickhla_object( obj_instance_name ) );
+   return ( get_trickhla_object( obj_instance_name_str ) );
 }
 
 /*!
@@ -2668,7 +2627,7 @@ bool Manager::discover_object_instance(
       federate->add_federate_instance_id( theObject );
       return_value = true;
 
-      // save into my federate's discovered federate storage area
+      // Save into my federate's discovered federate storage area
       federate->add_MOM_HLAfederate_instance_id( theObject, theObjectInstanceName );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -2861,7 +2820,7 @@ void Manager::release_ownership()
  */
 Int64Interval Manager::get_lookahead() const
 {
-   return this->federate->get_lookahead();
+   return federate->get_lookahead();
 }
 
 /*!
@@ -2870,7 +2829,7 @@ Int64Interval Manager::get_lookahead() const
  */
 Int64Time Manager::get_granted_time() const
 {
-   return this->federate->get_granted_time();
+   return federate->get_granted_time();
 }
 
 /*!
@@ -2878,7 +2837,7 @@ Int64Time Manager::get_granted_time() const
  */
 int64_t const Manager::get_granted_base_time() const
 {
-   return this->federate->get_granted_base_time();
+   return federate->get_granted_base_time();
 }
 
 bool Manager::is_RTI_ready(
@@ -2982,10 +2941,13 @@ void Manager::setup_checkpoint_interactions()
                   __LINE__, interactions_queue.size(), THLA_NEWLINE );
       }
 
+      // Get the count to use for the check.
       check_interactions_count = interactions_queue.size();
-      check_interactions       = reinterpret_cast< InteractionItem       *>(
+
+      // Allocate the interaction items base don the count.
+      check_interactions = reinterpret_cast< InteractionItem * >(
          alloc_type( check_interactions_count, "TrickHLA::InteractionItem" ) );
-      if ( check_interactions == static_cast< InteractionItem * >( NULL ) ) {
+      if ( check_interactions == NULL ) {
          ostringstream errmsg;
          errmsg << "Manager::setup_checkpoint_interactions():" << __LINE__
                 << " ERROR: Failed to allocate enough memory for check_interactions"
@@ -3015,7 +2977,8 @@ Checkpointing into check_interactions[%d] from interaction index %d.%c",
             check_interactions[i].user_supplied_tag = NULL;
          } else {
             check_interactions[i].user_supplied_tag =
-               (unsigned char *)trick_MM->declare_var( "unsigned char", (int)item->user_supplied_tag_size );
+               static_cast< unsigned char * >( trick_MM->declare_var( "unsigned char", item->user_supplied_tag_size ) );
+
             memcpy( check_interactions[i].user_supplied_tag, item->user_supplied_tag, item->user_supplied_tag_size );
          }
          check_interactions[i].order_is_TSO = item->order_is_TSO;
@@ -3037,7 +3000,10 @@ void Manager::clear_interactions()
       for ( unsigned int i = 0; i < check_interactions_count; ++i ) {
          check_interactions[i].clear_parm_items();
       }
-      trick_MM->delete_var( check_interactions );
+      if ( trick_MM->delete_var( static_cast< void * >( check_interactions ) ) ) {
+         send_hs( stderr, "Manager::clear_interactions():%d WARNING failed to delete Trick Memory for 'check_interactions'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
       check_interactions       = NULL;
       check_interactions_count = 0;
    }
@@ -3073,7 +3039,7 @@ void Manager::dump_interactions()
              << check_interactions[i].time.get_base_time()
              << endl;
       }
-      send_hs( stdout, (char *)msg.str().c_str() );
+      send_hs( stdout, msg.str().c_str() );
    }
 }
 
@@ -3104,7 +3070,8 @@ restoring check_interactions[%d] into interaction index %d, parm_count=%d%c",
          if ( check_interactions[i].user_supplied_tag_size == 0 ) {
             item->user_supplied_tag = NULL;
          } else {
-            item->user_supplied_tag = (unsigned char *)trick_MM->mm_strdup( (char *)check_interactions[i].user_supplied_tag );
+            item->user_supplied_tag = reinterpret_cast< unsigned char * >(
+               trick_MM->mm_strdup( reinterpret_cast< char const * >( check_interactions[i].user_supplied_tag ) ) );
          }
          item->order_is_TSO = check_interactions[i].order_is_TSO;
          item->time         = check_interactions[i].time;
@@ -3147,10 +3114,10 @@ void Manager::wait_for_discovery_of_objects()
       bool create_HLA_instance_object_found = false;
       for ( unsigned int n = 0; n < obj_count; ++n ) {
          if ( objects[n].is_required() ) {
-            required_count++;
+            ++required_count;
          }
          if ( objects[n].is_instance_handle_valid() ) {
-            discovery_count++;
+            ++discovery_count;
             if ( objects[n].is_create_HLA_instance() ) {
                create_HLA_instance_object_found = true;
             }
@@ -3186,7 +3153,7 @@ void Manager::wait_for_discovery_of_objects()
 
             // Sleep for a little while to allow the RTI to trigger the object
             // discovery callbacks.
-            (void)sleep_timer.sleep();
+            sleep_timer.sleep();
 
             // To be more efficient, we get the time once and share it.
             wallclock_time = sleep_timer.time();
@@ -3226,8 +3193,8 @@ void Manager::wait_for_discovery_of_objects()
 
          } while ( ( !create_HLA_instance_object_found && // still missing some objects other than
                      ( discovery_count < ( required_count - 1 ) ) )
-                   ||                                          // the one for the rejoining federate, or
-                   ( create_HLA_instance_object_found &&       // missing some other object(s) but
+                   ||                                    // the one for the rejoining federate, or
+                   ( create_HLA_instance_object_found && // missing some other object(s) but
                      ( discovery_count < required_count ) ) ); // found the rejoining federate
       }
    } else {
@@ -3265,11 +3232,10 @@ bool Manager::is_this_a_rejoining_federate()
 
 RTIambassador *Manager::get_RTI_ambassador()
 {
-   return ( ( federate != NULL ) ? federate->get_RTI_ambassador()
-                                 : static_cast< RTI1516_NAMESPACE::RTIambassador * >( NULL ) );
+   return ( ( federate != NULL ) ? federate->get_RTI_ambassador() : NULL );
 }
 
 bool Manager::is_shutdown_called() const
 {
-   return ( ( this->federate != NULL ) ? this->federate->is_shutdown_called() : false );
+   return ( ( this->federate != NULL ) ? federate->is_shutdown_called() : false );
 }

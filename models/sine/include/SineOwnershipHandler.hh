@@ -1,6 +1,6 @@
 /*!
+@ingroup Sine
 @file models/sine/include/SineOwnershipHandler.hh
-@ingroup TrickHLAModel
 @brief Ownership transfer for the HLA object attributes.
 
 @copyright Copyright 2020 United States Government as represented by the
@@ -19,8 +19,8 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLAModel}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../source/TrickHLA/OwnershipHandler.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../../source/TrickHLA/OwnershipHandler.cpp}
 @trick_link_dependency{sine/src/SineOwnershipHandler.cpp}
 
 @revs_title
@@ -34,13 +34,8 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_MODEL_SINE_OWNERSHIP_HANDLER_HH
 #define TRICKHLA_MODEL_SINE_OWNERSHIP_HANDLER_HH
 
-// Forward declarations.
-namespace TrickHLA
-{
-class Object;
-}
-
 // TrickHLA include files.
+#include "TrickHLA/Object.hh"
 #include "TrickHLA/OwnershipHandler.hh"
 
 namespace TrickHLAModel

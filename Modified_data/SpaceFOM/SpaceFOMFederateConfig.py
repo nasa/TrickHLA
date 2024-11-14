@@ -26,6 +26,12 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
    #ExCO = None
    #config_S_define_name = None
    
+   # SpaceFOM FOM modules path.  The default is a path relative to the
+   # simulation directory in the FOMs/SpaceFOM directory.  In most cases, the
+   # FOMs/SpaceFOM directory is a link wherever the SpaceFOM FOM modules
+   # actually reside.
+   SpaceFOMs_path = 'FOMs/SpaceFOM/'
+   
    # SpaceFOM role designations.
    is_master = False
    is_pacing = False
@@ -42,7 +48,12 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
                  thla_config,
                  thla_federation_name,
                  thla_federate_name,
-                 thla_enabled ):
+                 thla_enabled,
+                 FOMs_path = None ):
+      
+      # Copy a FOM path if provided.
+      if FOMs_path :
+         self.SpaceFOMs_path = FOMs_path
 
       # Call the base class constructor.
       TrickHLAFederateConfig.__init__( self,
@@ -55,11 +66,11 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
                                        thla_enabled )
 
       # Add in required Space FOM modules.
-      self.add_FOM_module( 'FOMs/SpaceFOM/SISO_SpaceFOM_switches.xml' )
-      self.add_FOM_module( 'FOMs/SpaceFOM/SISO_SpaceFOM_datatypes.xml' )
-      self.add_FOM_module( 'FOMs/SpaceFOM/SISO_SpaceFOM_management.xml' )
-      self.add_FOM_module( 'FOMs/SpaceFOM/SISO_SpaceFOM_environment.xml' )
-      self.add_FOM_module( 'FOMs/SpaceFOM/SISO_SpaceFOM_entity.xml' )
+      self.add_FOM_module( self.SpaceFOMs_path + 'SISO_SpaceFOM_switches.xml' )
+      self.add_FOM_module( self.SpaceFOMs_path + 'SISO_SpaceFOM_datatypes.xml' )
+      self.add_FOM_module( self.SpaceFOMs_path + 'SISO_SpaceFOM_management.xml' )
+      self.add_FOM_module( self.SpaceFOMs_path + 'SISO_SpaceFOM_environment.xml' )
+      self.add_FOM_module( self.SpaceFOMs_path + 'SISO_SpaceFOM_entity.xml' )
       
       # Add any multi-phase initialization synchronization points.
       # These will be federation execution specific. These sync points
@@ -68,8 +79,19 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
       # self.add_multiphase_init_sync_point( 'sync_point_name' )
 
       return
-   
-   
+
+
+   def set_designated_late_joiner( self, designated_late_joiner ):
+
+      # You can only set the designated late joiner state before initialize method is called.
+      if self.initialized :
+         print( 'SpaceFOMFederateConfig.set_designated_late_joiner(): Warning, already initialized, function ignored!' )
+      else:
+         self.control.designated_late_joiner = designated_late_joiner
+
+      return
+
+
    def set_master_role( self, master_state = True ):
       
       # You can only change master state before initialize method is called.
@@ -165,6 +187,47 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
       # Add the root frame to the list of federate objects to manage.
       self.add_fed_object( root_frame )
 
+      return
+
+
+   def set_FOMs_path( self, FOMs_path ):
+      
+      # You can only set SpaceFOM FOM module path before initialize method is called.
+      if self.initialized :
+         print('SpaceFOMFederateConfig.set_FOMs_path(): Warning, already initialized! Ignoring!')
+         return
+      
+      for item in self.fom_modules:
+         if item.find('SISO_SpaceFOM_switches.xml') != -1:
+            indx = self.fom_modules.index( item )
+            self.fom_modules.pop(indx)
+      for item in self.fom_modules:
+         if item.find('SISO_SpaceFOM_datatypes.xml') != -1:
+            indx = self.fom_modules.index( item )
+            self.fom_modules.pop(indx)
+      for item in self.fom_modules:
+         if item.find('SISO_SpaceFOM_management.xml') != -1:
+            indx = self.fom_modules.index( item )
+            self.fom_modules.pop(indx)
+      for item in self.fom_modules:
+         if item.find('SISO_SpaceFOM_environment.xml') != -1:
+            indx = self.fom_modules.index( item )
+            self.fom_modules.pop(indx)
+      for item in self.fom_modules:
+         if item.find('SISO_SpaceFOM_entity.xml') != -1:
+            indx = self.fom_modules.index( item )
+            self.fom_modules.pop(indx)
+      
+      # Change the SpaceFOM FOM module path prefix.
+      self.SpaceFOMs_path = FOMs_path
+
+      # Add the module back in with the specified FOM module path prefix.
+      self.add_FOM_module( self.SpaceFOMs_path + 'SISO_SpaceFOM_switches.xml' )
+      self.add_FOM_module( self.SpaceFOMs_path + 'SISO_SpaceFOM_datatypes.xml' )
+      self.add_FOM_module( self.SpaceFOMs_path + 'SISO_SpaceFOM_management.xml' )
+      self.add_FOM_module( self.SpaceFOMs_path + 'SISO_SpaceFOM_environment.xml' )
+      self.add_FOM_module( self.SpaceFOMs_path + 'SISO_SpaceFOM_entity.xml' )
+      
       return
 
 

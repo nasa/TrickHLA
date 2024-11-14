@@ -19,9 +19,9 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Int64BaseTime.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64Interval.cpp}
+@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../../source/TrickHLA/Int64BaseTime.cpp}
+@trick_link_dependency{../../source/TrickHLA/Int64Interval.cpp}
 
 @revs_title
 @revs_begin
@@ -506,7 +506,10 @@ class Int64Time
       return ( this->hla_time );
    }
 
-   // decodes the HLA encoded time into encapsulated class
+   /*! @brief Encode the time as an HLAinteger64BE.
+    *  @return Encoded time as an HLAinteger64BE. */
+   RTI1516_USERDATA encode() const;
+
    /*! @brief Saves the incoming HLA encoded LogicalTime into the encapsulated class.
     *  @param user_supplied_tag Time encoded in user supplied tag. */
    void decode( RTI1516_USERDATA const &user_supplied_tag );
@@ -523,9 +526,9 @@ class Int64Time
     *  @return Time in seconds as a floating point double. */
    double get_time_in_seconds() const;
 
-   /*! @brief Returns a wide string representing the time.
-    *  @return Wide string representing the time. */
-   std::wstring to_wstring() const;
+   /*! @brief Returns a string representing the time.
+    *  @return String representing the time. */
+   std::string to_string() const;
 
    //
    // Mutator methods

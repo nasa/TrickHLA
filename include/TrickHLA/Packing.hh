@@ -22,9 +22,9 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Attribute.cpp}
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../source/TrickHLA/Packing.cpp}
+@trick_link_dependency{../../source/TrickHLA/Packing.cpp}
+@trick_link_dependency{../../source/TrickHLA/Attribute.cpp}
+@trick_link_dependency{../../source/TrickHLA/Object.cpp}
 
 @revs_title
 @revs_begin
@@ -71,6 +71,36 @@ class Packing
    /*! @brief Destructor for the TrickHLA Packing class. */
    virtual ~Packing();
 
+   //-----------------------------------------------------------------
+   // These are virtual functions and must be defined by a full class.
+   //-----------------------------------------------------------------
+
+   /*! @brief Pack the data before being sent. */
+   virtual void pack() = 0;
+
+   /*! @brief Unpack the received data. */
+   virtual void unpack() = 0;
+
+   //-----------------------------------------------------------------
+   // Helper functions.
+   //-----------------------------------------------------------------
+
+   // Initialize the packing object.
+   /*! @brief Finish the initialization of the TrickHLA Packing object. */
+   virtual void initialize() { initialized = true; }
+
+   /*! @brief Initialize the callback object to the supplied Object pointer.
+    *  @param obj Associated object for this class. */
+   virtual void initialize_callback( Object *obj );
+
+   /*! @brief Set the TrickHLA managed object associated with this Packing object.
+    *  @param mngr_obj Pointer to the associated TrickHLA managed Object. */
+   virtual void set_object( TrickHLA::Object *mngr_obj );
+
+   /*! @brief Get the TrickHLA managed Object associated with this Packing object.
+    *  @return Pointer to the associated TrickHLA managed Object. */
+   virtual TrickHLA::Object *get_object() { return object; }
+
    /*! @brief Get the Attribute by FOM name.
     *  @return Attribute for the given name.
     *  @param attr_FOM_name Attribute FOM name. */
@@ -89,22 +119,16 @@ class Packing
     *  @return Returns the current CTE time. */
    double get_cte_time();
 
-   /*! @brief Initialize the callback object to the supplied Object pointer.
-    *  @param obj Associated object for this class. */
-   virtual void initialize_callback( Object *obj );
-
-   //-----------------------------------------------------------------
-   // These are virtual functions and must be defined by a full class.
-   //-----------------------------------------------------------------
-
-   /*! @brief Pack the data before being sent. */
-   virtual void pack() = 0;
-
-   /*! @brief Unpack the received data. The default */
-   virtual void unpack() = 0;
-
   protected:
-   Object *object; ///< @trick_io{**} Object associated with this packing class.
+   bool    initialized; ///< @trick_units{--} Initialization status flag.
+   Object *object;      ///< @trick_io{**} Object associated with this class.
+
+   /*! @brief Uses Trick memory allocation routines to allocate a new string
+    *  that is input file compliant. */
+   char *allocate_input_string( char const *c_string );
+   /*! @brief Uses Trick memory allocation routines to allocate a new string
+    *  that is input file compliant. */
+   char *allocate_input_string( std::string const &cpp_string );
 
   private:
    // Do not allow the copy constructor or assignment operator.

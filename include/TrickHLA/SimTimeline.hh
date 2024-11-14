@@ -19,8 +19,8 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/SimTimeline.cpp}
-@trick_link_dependency{../source/TrickHLA/Timeline.cpp}
+@trick_link_dependency{../../source/TrickHLA/SimTimeline.cpp}
+@trick_link_dependency{../../source/TrickHLA/Timeline.cpp}
 
 @revs_title
 @revs_begin
@@ -67,11 +67,11 @@ class SimTimeline : public Timeline
    //-----------------------------------------------------------------
    /*! @brief Get the current time for this timeline in seconds.
     *  @return Returns the current timeline time in seconds. */
-   virtual double get_time();
+   virtual double const get_time();
 
    /*! Get the minimum time resolution which is the smallest nonzero
     *  time for the given timeline.
-    *  @return Returns the minmum time resolution in seconds. */
+    *  @return Returns the minimum time resolution in seconds. */
    virtual double const get_min_resolution();
 
    //

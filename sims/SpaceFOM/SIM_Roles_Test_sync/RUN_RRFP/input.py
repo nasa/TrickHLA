@@ -16,8 +16,10 @@
 ##############################################################################
 import sys
 sys.path.append('../../../')
+
 # Load the SpaceFOM specific federate configuration object.
 from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+
 # Load the SpaceFOM specific reference frame configuration object.
 from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
@@ -28,16 +30,16 @@ def print_usage_message( ) :
 
    print(' ')
    print('TrickHLA SpaceFOM Root-Reference-Frame Simulation Command Line Configuration Options:')
-   print('  -h -help              : Print this help message.')
-   print('  -realtime [on|off]    : on: Turns on realtime clock, off: disables it (Default).')
-   print('  -hla-time-mgt [on|off]: on: Turns on HLA Time Management (Default), off: disables it.')
-   print('  -regulating [on|off]  : on: Turns on HLA Time Regulating (Default), off: disables it.')
-   print('  -constrained [on|off] : on: Turns on HLA Time Constrained (Default), off: disables it.')
-   print('  -stop [time]          : Time to stop simulation, default is 10.0 seconds.')
-   print('  -nostop               : Set no stop time on simulation.')
-   print('  -verbose [on|off]     : on: Show verbose messages, off: disable messages (Default).')
+   print('  -h --help              : Print this help message.')
+   print('  --realtime [on|off]    : on: Turns on realtime clock, off: disables it (Default).')
+   print('  --hla-time-mgt [on|off]: on: Turns on HLA Time Management (Default), off: disables it.')
+   print('  --regulating [on|off]  : on: Turns on HLA Time Regulating (Default), off: disables it.')
+   print('  --constrained [on|off] : on: Turns on HLA Time Constrained (Default), off: disables it.')
+   print('  --stop [time]          : Time to stop simulation, default is 10.0 seconds.')
+   print('  --nostop               : Set no stop time on simulation.')
+   print('  --verbose [on|off]     : on: Show verbose messages, off: disable messages (Default).')
    print(' ')
-   
+
    trick.exec_terminate_with_return( -1,
                                      sys._getframe(0).f_code.co_filename,
                                      sys._getframe(0).f_lineno,
@@ -64,7 +66,7 @@ def parse_command_line( ) :
    index = 2
    while (index < argc) :
       
-      if (str(argv[index]) == '-realtime') :
+      if (str(argv[index]) == '--realtime') :
          index = index + 1
          if (index < argc) :
             if (str(argv[index]) == 'on') :
@@ -72,13 +74,13 @@ def parse_command_line( ) :
             elif (str(argv[index]) == 'off') :
                realtime_clock = False
             else :
-               print('ERROR: Unknown -realtime argument: ' + str(argv[index]))
+               print('ERROR: Unknown --realtime argument: ' + str(argv[index]))
                print_usage = True
          else :
-            print('ERROR: Missing -realtime [on|off] argument.')
+            print('ERROR: Missing --realtime [on|off] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '-hla-time-mgt') :
+      elif (str(argv[index]) == '--hla-time-mgt') :
          index = index + 1
          if (index < argc) :
             if (str(argv[index]) == 'on') :
@@ -86,13 +88,13 @@ def parse_command_line( ) :
             elif (str(argv[index]) == 'off') :
                hla_time_mgt = False
             else :
-               print('ERROR: Unknown -hla-time-mgt argument: ' + str(argv[index]))
+               print('ERROR: Unknown --hla-time-mgt argument: ' + str(argv[index]))
                print_usage = True
          else :
-            print('ERROR: Missing -hla-time-mgt [on|off] argument.')
+            print('ERROR: Missing --hla-time-mgt [on|off] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '-regulating') :
+      elif (str(argv[index]) == '--regulating') :
          index = index + 1
          if (index < argc) :
             if (str(argv[index]) == 'on') :
@@ -100,13 +102,13 @@ def parse_command_line( ) :
             elif (str(argv[index]) == 'off') :
                time_regulating = False
             else :
-               print('ERROR: Unknown -regulating argument: ' + str(argv[index]))
+               print('ERROR: Unknown --regulating argument: ' + str(argv[index]))
                print_usage = True
          else :
-            print('ERROR: Missing -regulating [on|off] argument.')
+            print('ERROR: Missing --regulating [on|off] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '-constrained') :
+      elif (str(argv[index]) == '--constrained') :
          index = index + 1
          if (index < argc) :
             if (str(argv[index]) == 'on') :
@@ -114,27 +116,27 @@ def parse_command_line( ) :
             elif (str(argv[index]) == 'off') :
                time_constrained = False
             else :
-               print('ERROR: Unknown -constrained argument: ' + str(argv[index]))
+               print('ERROR: Unknown --constrained argument: ' + str(argv[index]))
                print_usage = True
          else :
-            print('ERROR: Missing -constrained [on|off] argument.')
+            print('ERROR: Missing --constrained [on|off] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '-stop') :
+      elif (str(argv[index]) == '--stop') :
          index = index + 1
          if (index < argc) :
             run_duration = float(str(argv[index]))
          else :
-            print('ERROR: Missing -stop [time] argument.')
+            print('ERROR: Missing --stop [time] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '-nostop') :
+      elif (str(argv[index]) == '--nostop') :
          run_duration = None
          
-      elif ((str(argv[index]) == '-h') | (str(argv[index]) == '-help')) :
+      elif ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')) :
          print_usage = True
          
-      elif (str(argv[index]) == '-verbose') :
+      elif (str(argv[index]) == '--verbose') :
          index = index + 1
          if (index < argc) :
             if (str(argv[index]) == 'on') :
@@ -142,11 +144,15 @@ def parse_command_line( ) :
             elif (str(argv[index]) == 'off') :
                verbose = False
             else :
-               print('ERROR: Unknown -verbose argument: ' + str(argv[index]))
+               print('ERROR: Unknown --verbose argument: ' + str(argv[index]))
                print_usage = True
          else :
-            print('ERROR: Missing -verbose [on|off] argument.')
+            print('ERROR: Missing --verbose [on|off] argument.')
             print_usage = True
+         
+      elif ((str(argv[index]) == '-d')) :
+         # Pass this on to Trick.
+         break
             
       else :
          print('ERROR: Unknown command line argument ' + str(argv[index]))
@@ -177,6 +183,21 @@ run_duration = 10.0
 # Default no verbose messages.
 verbose = False
 
+# Set the default Federate name.
+federate_name = 'RRFP'
+
+# Set the default Federation Execution name.
+federation_name = 'SpaceFOM_Roles_Test'
+
+# Set the default Master Federate name.
+master_name = 'Master'
+
+# Set the default Paceing Federate name.
+pacing_name = 'Pacing'
+
+# Set the default Root Reference Frame name.
+root_frame_name = 'RootFrame'
+
 
 parse_command_line()
 
@@ -200,7 +221,9 @@ if (realtime_clock == True) :
    exec(open( "Modified_data/trick/realtime.py" ).read())
 else :
    print('Realtime Clock Disabled.')
-
+   # For this non-Pacing/non-realtime federate, set the Trick software frame
+   # to the lookahead time by default.
+   trick.exec_set_software_frame( 0.250 )
 
 trick.exec_set_enable_freeze(False)
 trick.exec_set_freeze_command(False)
@@ -216,8 +239,8 @@ federate = SpaceFOMFederateConfig( THLA.federate,
                                    THLA.manager,
                                    THLA.execution_control,
                                    THLA.ExCO,
-                                   'SpaceFOM_Roles_Test',
-                                   'RRFP',
+                                   federation_name,
+                                   federate_name,
                                    True )
 
 # Set the name of the ExCO S_define instance.
@@ -243,17 +266,16 @@ federate.set_RRFP_role( True )    # This is the Root Reference Frame Publisher.
 #--------------------------------------------------------------------------
 # This is the RRFP federate.
 # It doesn't really need to know about any other federates.
-#federate.add_known_fededrate( True, str(federate.federate.name) )
-#federate.add_known_fededrate( True, 'Master' )
-#federate.add_known_fededrate( True, 'Pacing' )
+#federate.add_known_federate( True, str(federate.federate.name) )
+#federate.add_known_federate( True, 'Master' )
+#federate.add_known_federate( True, 'Pacing' )
 
 #--------------------------------------------------------------------------
 # Configure the CRC.
 #--------------------------------------------------------------------------
 # Pitch specific local settings designator:
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
-#THLA.federate.local_settings = 'crcHost = 10.8.0.161\n crcPort = 8989'
-# Mak specific local settings designator, which is anything from the rid.mtl file:
+# MAK specific local settings designator, which is anything from the rid.mtl file:
 #THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
 
 #--------------------------------------------------------------------------
@@ -268,6 +290,8 @@ federate.scale_trick_tics_to_base_time_units()
 # Must specify a federate HLA lookahead value in seconds.
 federate.set_lookahead_time( 0.250 )
 
+# For SpaceFOM, we also need to specify the Trick software frame time.
+trick.exec_set_software_frame( 0.250 )
 
 # Setup Time Management parameters.
 if (hla_time_mgt == False) :
@@ -305,11 +329,8 @@ else :
 #---------------------------------------------------------------------------
 # Set up for Root Reference Frame data.
 #---------------------------------------------------------------------------
-root_frame_name = 'RootFrame'
-parent_frame_name = ''
-
 ref_frame_tree.root_frame_data.name = root_frame_name
-ref_frame_tree.root_frame_data.parent_name = parent_frame_name
+ref_frame_tree.root_frame_data.parent_name = ''
                                         
 ref_frame_tree.root_frame_data.state.pos[0] = 0.0
 ref_frame_tree.root_frame_data.state.pos[1] = 0.0
@@ -317,33 +338,33 @@ ref_frame_tree.root_frame_data.state.pos[2] = 0.0
 ref_frame_tree.root_frame_data.state.vel[0] = 0.0
 ref_frame_tree.root_frame_data.state.vel[1] = 0.0
 ref_frame_tree.root_frame_data.state.vel[2] = 0.0
-ref_frame_tree.root_frame_data.state.quat_scalar  = 1.0
-ref_frame_tree.root_frame_data.state.quat_vector[0] = 0.0
-ref_frame_tree.root_frame_data.state.quat_vector[1] = 0.0
-ref_frame_tree.root_frame_data.state.quat_vector[2] = 0.0
+ref_frame_tree.root_frame_data.state.att.scalar  = 1.0
+ref_frame_tree.root_frame_data.state.att.vector[0] = 0.0
+ref_frame_tree.root_frame_data.state.att.vector[1] = 0.0
+ref_frame_tree.root_frame_data.state.att.vector[2] = 0.0
 ref_frame_tree.root_frame_data.state.ang_vel[0] = 0.0
 ref_frame_tree.root_frame_data.state.ang_vel[1] = 0.0
 ref_frame_tree.root_frame_data.state.ang_vel[2] = 0.0
 ref_frame_tree.root_frame_data.state.time = 0.0
 
 
-ref_frame_tree.frame_A_data.name = 'FrameA'
-ref_frame_tree.frame_A_data.parent_name = root_frame_name
+ref_frame_tree.vehicle_frame_data.name = 'FrameA'
+ref_frame_tree.vehicle_frame_data.parent_name = root_frame_name
                                         
-ref_frame_tree.frame_A_data.state.pos[0] = 10.0
-ref_frame_tree.frame_A_data.state.pos[1] = 10.0
-ref_frame_tree.frame_A_data.state.pos[2] = 10.0
-ref_frame_tree.frame_A_data.state.vel[0] = 0.0
-ref_frame_tree.frame_A_data.state.vel[1] = 0.0
-ref_frame_tree.frame_A_data.state.vel[2] = 0.0
-ref_frame_tree.frame_A_data.state.quat_scalar  = 1.0
-ref_frame_tree.frame_A_data.state.quat_vector[0] = 0.0
-ref_frame_tree.frame_A_data.state.quat_vector[1] = 0.0
-ref_frame_tree.frame_A_data.state.quat_vector[2] = 0.0
-ref_frame_tree.frame_A_data.state.ang_vel[0] = 0.0
-ref_frame_tree.frame_A_data.state.ang_vel[1] = 0.0
-ref_frame_tree.frame_A_data.state.ang_vel[2] = 0.0
-ref_frame_tree.frame_A_data.state.time = 0.0
+ref_frame_tree.vehicle_frame_data.state.pos[0] = 10.0
+ref_frame_tree.vehicle_frame_data.state.pos[1] = 10.0
+ref_frame_tree.vehicle_frame_data.state.pos[2] = 10.0
+ref_frame_tree.vehicle_frame_data.state.vel[0] = 0.0
+ref_frame_tree.vehicle_frame_data.state.vel[1] = 0.1
+ref_frame_tree.vehicle_frame_data.state.vel[2] = 0.0
+ref_frame_tree.vehicle_frame_data.state.att.scalar  = 1.0
+ref_frame_tree.vehicle_frame_data.state.att.vector[0] = 0.0
+ref_frame_tree.vehicle_frame_data.state.att.vector[1] = 0.0
+ref_frame_tree.vehicle_frame_data.state.att.vector[2] = 0.0
+ref_frame_tree.vehicle_frame_data.state.ang_vel[0] = 0.0
+ref_frame_tree.vehicle_frame_data.state.ang_vel[1] = 0.1
+ref_frame_tree.vehicle_frame_data.state.ang_vel[2] = 0.0
+ref_frame_tree.vehicle_frame_data.state.time = 0.0
 
 
 #---------------------------------------------------------------------------
@@ -363,20 +384,32 @@ root_ref_frame.frame_packing.debug = verbose
 federate.set_root_frame( root_frame )
 
 #---------------------------------------------------------------------------
-# Set up the Root Reference Frame object for discovery.
-# If it is the RRFP, it will publish the frame.
-# If it is NOT the RRFP, it will subscribe to the frame.
+# Set up an alternate vehicle reference frame object for discovery.
 #---------------------------------------------------------------------------
 frame_A = SpaceFOMRefFrameObject( True,
                                   'FrameA',
                                   ref_frame_A.frame_packing,
-                                  'ref_frame_A.frame_packing' )
+                                  'ref_frame_A.frame_packing',
+                                  parent_S_define_instance = root_ref_frame.frame_packing,
+                                  parent_name              = root_frame_name,
+                                  frame_conditional        = ref_frame_A.conditional,
+                                  frame_lag_comp           = ref_frame_A.lag_compensation,
+                                  frame_ownership          = ref_frame_A.ownership_handler,
+                                  frame_deleted            = ref_frame_A.deleted_callback )
 
 # Set the debug flag for the root reference frame.
 ref_frame_A.frame_packing.debug = verbose
 
 # Add this reference frame to the list of managed object.
 federate.add_fed_object( frame_A )
+
+# Set the lag compensation parameters.
+ref_frame_A.lag_compensation.debug = False
+ref_frame_A.lag_compensation.set_integ_tolerance( 1.0e-6 )
+ref_frame_A.lag_compensation.set_integ_dt( 0.025 )
+
+#frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
+frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 #---------------------------------------------------------------------------
 # Add the HLA SimObjects associated with this federate.

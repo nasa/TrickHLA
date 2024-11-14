@@ -34,12 +34,23 @@ NASA, Johnson Space Center\n
 #include <sstream>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
+#include "trick/message_proto.h"
 
 // TrickHLA include files.
 #include "TrickHLA/Item.hh"
 #include "TrickHLA/ParameterItem.hh"
+
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+// HLA include files.
+#include RTI1516_HEADER
+#pragma GCC diagnostic pop
 
 using namespace std;
 using namespace TrickHLA;
@@ -71,7 +82,7 @@ ParameterItem::ParameterItem(
       if ( size == 0 ) {
          data = NULL;
       } else {
-         data = (unsigned char *)TMM_declare_var_1d( "unsigned char", (int)size );
+         data = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", size ) );
          memcpy( data, param_value->data(), size );
       }
    }
@@ -88,7 +99,9 @@ ParameterItem::~ParameterItem()
 void ParameterItem::clear()
 {
    if ( data != NULL ) {
-      TMM_delete_var_a( data );
+      if ( trick_MM->delete_var( static_cast< void * >( data ) ) ) {
+         send_hs( stderr, "ParameterItem::clear():%d WARNING failed to delete Trick Memory for 'data'\n", __LINE__ );
+      }
       data  = NULL;
       size  = 0;
       index = -1;

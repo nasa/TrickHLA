@@ -1,6 +1,6 @@
 /*!
+@ingroup Sine
 @file models/sine/include/SineData.hh
-@ingroup TrickHLAModel
 @brief This is a container class for general test data used in the general HLA
 test routines.
 
@@ -34,8 +34,9 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_MODEL_SINE_DATA_HH
 
 // Trick includes.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
-#include "trick/memorymanager_c_intf.h"
+#include "trick/message_proto.h" // for send_hs
 
 namespace TrickHLAModel
 {
@@ -188,16 +189,8 @@ class SineData
    }
 
    /*! @brief Set the name of the sine wave object.
-    *  @param n The name of the sine wave object. */
-   void set_name( char const *n )
-   {
-      if ( n != this->name ) {
-         if ( ( this->name != NULL ) && TMM_is_alloced( this->name ) ) {
-            TMM_delete_var_a( this->name );
-         }
-         this->name = ( n != NULL ) ? TMM_strdup( (char *)n ) : static_cast< char * >( NULL );
-      }
-   }
+    *  @param new_name The name of the sine wave object. */
+   void set_name( char const *new_name );
 
    //
    // Public utility functions.

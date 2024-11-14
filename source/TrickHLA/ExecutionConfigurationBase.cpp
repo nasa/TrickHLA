@@ -91,7 +91,7 @@ ExecutionConfigurationBase::ExecutionConfigurationBase()
      execution_control( NULL )
 {
    // Set the name to an empty string.
-   this->name = trick_MM->mm_strdup( (char *)"" );
+   this->name = trick_MM->mm_strdup( "" );
 
    // This is both a TrickHLA::Object and Packing.
    // So, it can safely reference itself.
@@ -107,10 +107,10 @@ ExecutionConfigurationBase::ExecutionConfigurationBase(
      execution_control( NULL )
 {
    // Set the name to an empty string.
-   name = trick_MM->mm_strdup( (char *)"" );
+   this->name = trick_MM->mm_strdup( "" );
 
    // Set the full path S_define name.
-   S_define_name = trick_MM->mm_strdup( (char *)s_define_name );
+   this->S_define_name = trick_MM->mm_strdup( s_define_name );
 
    // This is both a TrickHLA::Object and Packing.
    // So, it can safely reference itself.
@@ -122,11 +122,12 @@ ExecutionConfigurationBase::ExecutionConfigurationBase(
  */
 ExecutionConfigurationBase::~ExecutionConfigurationBase()
 {
-   if ( S_define_name != static_cast< char * >( NULL ) ) {
-      if ( trick_MM->is_alloced( (void *)S_define_name ) ) {
-         trick_MM->delete_var( (void *)S_define_name );
+   if ( this->S_define_name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( const_cast< char * >( this->S_define_name ) ) ) ) {
+         send_hs( stderr, "ExecutionConfigurationBase::~ExecutionConfigurationBase():%d WARNING failed to delete Trick Memory for 'this->S_define_name'%c",
+                  __LINE__, THLA_NEWLINE );
       }
-      S_define_name = static_cast< char * >( NULL );
+      this->S_define_name = NULL;
    }
 }
 
@@ -154,15 +155,16 @@ void ExecutionConfigurationBase::setup(
 void ExecutionConfigurationBase::set_S_define_name(
    char const *new_name )
 {
-   if ( S_define_name != static_cast< char * >( NULL ) ) {
-      if ( trick_MM->is_alloced( (void *)S_define_name ) ) {
-         trick_MM->delete_var( (void *)S_define_name );
+   if ( this->S_define_name != NULL ) {
+      if ( trick_MM->delete_var( static_cast< void * >( const_cast< char * >( this->S_define_name ) ) ) ) {
+         send_hs( stderr, "ExecutionConfigurationBase::set_S_define_name():%d WARNING failed to delete Trick Memory for 'this->S_define_name'%c",
+                  __LINE__, THLA_NEWLINE );
       }
-      S_define_name = static_cast< char * >( NULL );
+      this->S_define_name = NULL;
    }
 
    // Set the full path S_define name.
-   S_define_name = trick_MM->mm_strdup( (char *)new_name );
+   this->S_define_name = trick_MM->mm_strdup( new_name );
 }
 
 void ExecutionConfigurationBase::reset_preferred_order()
@@ -240,7 +242,7 @@ void ExecutionConfigurationBase::set_master(
 void ExecutionConfigurationBase::wait_for_registration()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      send_hs( stdout, "TrickHLA::ExecutionConfigurationBase::wait_for_registration():%d%c",
+      send_hs( stdout, "ExecutionConfigurationBase::wait_for_registration():%d%c",
                __LINE__, THLA_NEWLINE );
    }
 
@@ -302,18 +304,18 @@ void ExecutionConfigurationBase::wait_for_registration()
                  << ( this->is_instance_handle_valid() ? "REGISTERED" : "Not Registered" )
                  << THLA_ENDL;
          // Display the summary.
-         send_hs( stdout, (char *)summary.str().c_str() );
+         send_hs( stdout, summary.str().c_str() );
       }
 
       // Determine if we have any unregistered objects.
-      any_unregistered_obj = ( obj_reg_cnt < total_obj_cnt );
+      any_unregistered_obj = ( obj_reg_cnt < total_obj_cnt ); // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
 
       // Wait a little while to allow the objects to be registered.
-      if ( any_unregistered_obj ) {
-         (void)sleep_timer.sleep();
+      if ( any_unregistered_obj ) { // cppcheck-suppress [knownConditionTrueFalse]
+         sleep_timer.sleep();
 
          // Check again to determine if we have any unregistered objects.
-         any_unregistered_obj = ( obj_reg_cnt < total_obj_cnt );
+         any_unregistered_obj = ( obj_reg_cnt < total_obj_cnt ); // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
 
          if ( any_unregistered_obj ) { // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
 
@@ -371,7 +373,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
          // Check for shutdown.
          federate->check_for_shutdown_with_termination();
 
-         (void)sleep_timer.sleep();
+         sleep_timer.sleep();
 
          if ( !this->is_changed() ) {
 

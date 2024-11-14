@@ -31,6 +31,9 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/message_proto.h"
 
+// TrickHLA include files.
+#include "TrickHLA/StandardsSupport.hh"
+
 // Model include files.
 #include "SpaceFOM/QuaternionEncoder.hh"
 
@@ -39,19 +42,22 @@ NASA, Johnson Space Center\n
 // This should work for both GCC and Clang.
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
-// HLA Encoder helper includes.
+// HLA include files.
+#include RTI1516_HEADER
 #include "RTI/VariableLengthData.h"
 #pragma GCC diagnostic pop
 
-using namespace rti1516e;
+using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace SpaceFOM;
 
 /**
  * @job_class{initialization}
  */
-QuaternionEncoder::QuaternionEncoder() // RETURN: -- None.
-   : scalar_encoder( &data.scalar ),
+QuaternionEncoder::QuaternionEncoder(
+   QuaternionData &quat_data )
+   : data( quat_data ),
+     scalar_encoder( &data.scalar ),
      vector_encoder( HLAfloat64LE(), 3 ),
      encoder()
 {
@@ -99,7 +105,7 @@ void QuaternionEncoder::encode() // Return: -- Nothing.
              << " Warning: Encoded data size does not match buffer!"
              << "    Encoded size: " << encoded_data.size()
              << " but Expected size: " << get_capacity();
-      send_hs( stderr, (char *)errmsg.str().c_str() );
+      send_hs( stderr, errmsg.str().c_str() );
    }
 
    return;

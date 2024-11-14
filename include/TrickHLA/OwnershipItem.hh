@@ -20,7 +20,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Item.cpp}
+@trick_link_dependency{../../source/TrickHLA/Item.cpp}
 
 @revs_title
 @revs_begin
@@ -35,8 +35,9 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_OWNERSHIP_ITEM_HH
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
-#include "trick/memorymanager_c_intf.h"
+#include "trick/message_proto.h" // for send_hs
 
 // TrickHLA include files.
 #include "TrickHLA/CompileConfig.hh"
@@ -89,11 +90,12 @@ class OwnershipItem : public Item
    /*! @brief Clear the Trick allocated memory for the FOM name. */
    void clear()
    {
-      if ( FOM_name != NULL ) {
-         if ( TMM_is_alloced( FOM_name ) ) {
-            TMM_delete_var_a( FOM_name );
+      if ( this->FOM_name != NULL ) {
+         if ( trick_MM->delete_var( static_cast< void * >( this->FOM_name ) ) ) {
+            send_hs( stderr, "OwnershipItem::clear():%d WARNING failed to delete Trick Memory for 'this->FOM_name'%c",
+                     __LINE__, THLA_NEWLINE );
          }
-         FOM_name = NULL;
+         this->FOM_name = NULL;
       }
    }
 

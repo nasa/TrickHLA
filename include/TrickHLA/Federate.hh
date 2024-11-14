@@ -20,16 +20,16 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/DebugHandler.cpp}
-@trick_link_dependency{../source/TrickHLA/ExecutionControlBase.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
-@trick_link_dependency{../source/TrickHLA/FedAmb.cpp}
-@trick_link_dependency{../source/TrickHLA/Federate.cpp}
-@trick_link_dependency{../source/TrickHLA/Manager.cpp}
-@trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
-@trick_link_dependency{../source/TrickHLA/MutexProtection.cpp}
-@trick_link_dependency{../source/TrickHLA/TrickThreadCoordinator.cpp}
-@trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
+@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../../source/TrickHLA/FedAmb.cpp}
+@trick_link_dependency{../../source/TrickHLA/Federate.cpp}
+@trick_link_dependency{../../source/TrickHLA/Manager.cpp}
+@trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
+@trick_link_dependency{../../source/TrickHLA/MutexProtection.cpp}
+@trick_link_dependency{../../source/TrickHLA/TrickThreadCoordinator.cpp}
+@trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -69,9 +69,6 @@ NASA, Johnson Space Center\n
 // HLA include files.
 #include RTI1516_HEADER
 #pragma GCC diagnostic pop
-
-// FIXME: What do we do for Trick 10 to get the command-line arguments for the
-// Federate::restart_federate() job? DDexter 11/7/11
 
 namespace TrickHLA
 {
@@ -212,21 +209,6 @@ class Federate
    //
    // Federation synchronization and synchronization point functions.
    //
-   /*! @brief Register a generic synchronization point; i.e. not a multiphase init sync-point.
-    *  @param label Sync-point label.
-    *  @param time  Optional Sync-point time in seconds. */
-   void register_generic_sync_point( std::wstring const &label, double time = -1.0 );
-
-   /*! @brief Achieve the specified sync-point and wait for the federation to
-    *  be synchronized on it.
-    *  @param label Sync-point label. */
-   void achieve_and_wait_for_synchronization( std::wstring const &label );
-
-   /*! @brief Achieve the specified sync-point and do NOT wait for the
-    *  federation to be synchronized on it.
-    *  @param label Sync-point label. */
-   void achieve_synchronization_point( std::wstring const &label );
-
    /*! @brief The RTI has announced the existence of a synchronization point.
     *  @param label             Sync-point label.
     *  @param user_supplied_tag Use supplied tag.*/
@@ -240,9 +222,10 @@ class Federate
    /*! @brief Callback from TrickHLA::FedAmb through for
     *  when registration of a synchronization point fails.
     *  and is one of the sync-points created.
-    *  @param label      Sync-point label.
-    *  @param not_unique True if not unique label. */
-   void sync_point_registration_failed( std::wstring const &label, bool not_unique );
+    *  @param label  Sync-point label.
+    *  @param reason Reason for failure. */
+   void sync_point_registration_failed( std::wstring const                                  &label,
+                                        RTI1516_NAMESPACE::SynchronizationPointFailureReason reason );
 
    /*! @brief Marks a synchronization point as synchronized with the federation.
     *  @param label Sync-point label. */
@@ -442,10 +425,25 @@ class Federate
       return ( restore_process == Restore_Request_Succeeded );
    }
 
+   /*! @brief Get the announce save flag.
+    *  @return The state of the announce save flag. */
+   bool get_announce_save()
+   {
+      return ( announce_save );
+   }
+
    /*! @brief Set the announce save flag. */
    void set_announce_save()
    {
       announce_save = true;
+   }
+
+   /*! @brief Set the announce save flag.
+    *  @param flag State to set flag. */
+   void set_announce_save( bool flag )
+   {
+      announce_save = flag;
+      return;
    }
 
    /*! @brief Set the save completed state. */
@@ -454,6 +452,13 @@ class Federate
       save_completed = true;
       start_to_save  = false;
       publish_data   = true;
+   }
+
+   /*! @brief Get save completed flag state.
+    *  @return True if flag set, false otherwise. */
+   bool get_save_completed()
+   {
+      return ( save_completed );
    }
 
    /*! @brief Set the restore begun state. */
@@ -546,6 +551,21 @@ class Federate
    /*! @brief Save the supplied checkpoint file name.
     * @param name Checkpoint file name. */
    void set_checkpoint_file_name( std::string const &name );
+
+   /*! @brief Set the initiate save flag.
+    *  @param state The initiate save flag state. */
+   void set_initiate_save_flag( bool state )
+   {
+      initiate_save_flag = state;
+      return;
+   }
+
+   /*! @brief Get the state of the save initiated flag.
+    *  @return True if save has been initiated, false otherwise. */
+   bool get_initiate_save_flag()
+   {
+      return ( initiate_save_flag );
+   }
 
    /*! @brief Sets the Save filename and flag. */
    void initiate_save_announce();
@@ -662,8 +682,13 @@ class Federate
 
    /*! @brief Associate a Trick child thread with TrickHLA. */
    void associate_to_trick_child_thread( unsigned int const thread_id,
-                                         double const       data_cycle,
-                                         std::string const &obj_isntance_names );
+                                         double const       data_cycle );
+
+   /*! @brief Disable the comma separated list of Trick child thread IDs associated to TrickHLA. */
+   void disable_trick_child_thread_associations( char const *thread_ids );
+
+   /*! @brief Verify the thread IDs associated to the objects. */
+   void verify_trick_child_thread_associations();
 
    /*! @brief Announce to all the child threads the main thread has data available. */
    void announce_data_available();
@@ -699,34 +724,6 @@ class Federate
       this->got_startup_sync_point = flag;
    }
 
-   //=======================================================================
-   // FIXME: Might consider moving these to ExecutionControl.
-   /*! @brief Set that federation execution freeze has been announced.
-    *  @param flag True for federate freeze announce; False otherwise. */
-   void set_freeze_announced( bool const flag )
-   {
-      this->announce_freeze = flag;
-   }
-
-   /*! @brief Get that federation execution freeze announced flag state.
-    *  @return True for federate freeze announced; False otherwise. */
-   bool get_freeze_announced()
-   {
-      return this->announce_freeze;
-   }
-
-   /*! @brief Get that federation execution freeze pending flag state.
-    *  @return True for federate freeze is pending; False otherwise. */
-   bool get_freeze_pending()
-   {
-      return this->freeze_the_federation;
-   }
-
-   /*! @brief Perform federation execution freeze process. */
-   void unfreeze()
-   {
-      return this->un_freeze();
-   }
    //=======================================================================
 
    //
@@ -1013,8 +1010,7 @@ class Federate
     *  @param time Requested time in HLA logical time. */
    void set_requested_time( RTI1516_NAMESPACE::LogicalTime const &time );
 
-   /*! @brief Sets the HLA base time units.
-    *  @param base_time_units HLA base time units. */
+   /*! @brief Sets the HLA base time units. */
    HLABaseTimeEnum get_HLA_base_time_units() const;
 
    /*! @brief Sets the HLA base time units.
@@ -1039,6 +1035,14 @@ class Federate
    void set_start_to_save( bool const save_flag )
    {
       this->start_to_save = save_flag;
+   }
+
+   /*! @brief Get the state of the start-to-save flag.
+    *  @return True is save is started, false otherwise.
+    */
+   bool get_start_to_save()
+   {
+      return ( this->start_to_save );
    }
 
    /*! @brief Set start to restore flag.
@@ -1116,6 +1120,9 @@ class Federate
     * freeze, tell other federates to run. */
    void exit_freeze();
 
+   /*! @brief Unfreeze the simulation. */
+   void un_freeze();
+
   private:
    // Federation state variables.
    //
@@ -1172,11 +1179,10 @@ class Federate
    KnownFederate *running_feds;                          ///< @trick_units{--} Checkpoint-able Array of running Federation Federates
    int            running_feds_count_at_time_of_restore; ///< @trick_io{**} Number of running Federates at the time of the restore (default: 0)
 
-   std::string checkpoint_file_name;  ///< @trick_io{*i} @trick_units{--} label to attach to sync point
-   Flag        checkpoint_rt_itimer;  ///< @trick_io{**} loaded checkpoint RT ITIMER
-   bool        announce_freeze;       ///< @trick_io{**} DANNY2.7 flag to indicate that this federate is announcing go to freeze mode
-   bool        freeze_the_federation; ///< @trick_io{**} DANNY2.7 flag to indicate the federation is going into freeze now
-   bool        execution_has_begun;   ///< @trick_units{--} flag to indicate if the federate has begun simulation execution.
+   std::string checkpoint_file_name; ///< @trick_io{*i} @trick_units{--} label to attach to sync point
+   Flag        checkpoint_rt_itimer; ///< @trick_io{**} loaded checkpoint RT ITIMER
+
+   bool execution_has_begun; ///< @trick_units{--} flag to indicate if the federate has begun simulation execution.
    //-- END: checkpoint / restore data --
 
    // Federation time management data.
@@ -1185,7 +1191,7 @@ class Federate
    MutexLock    time_adv_state_mutex; ///< @trick_units{--} HLA Time advance state mutex lock.
    Int64Time    granted_time;         ///< @trick_units{--} HLA time given by RTI
    Int64Time    requested_time;       ///< @trick_units{--} requested/desired HLA time
-   double       HLA_time;             ///< @trick_units{s}  Current HLA time to allow for plotting.
+   double       HLA_time;             ///< @trick_io{*io} @trick_units{s}  Current HLA time to allow for plotting.
    bool         start_to_save;        ///< @trick_io{**} Save flag
    bool         start_to_restore;     ///< @trick_io{**} Restore flag
    bool         restart_flag;         ///< @trick_io{**} Restart flag
@@ -1200,18 +1206,19 @@ class Federate
    RTI1516_NAMESPACE::ObjectClassHandle MOM_HLAfederation_class_handle;      ///< @trick_io{**} MOM Federation class handle.
    RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederatesInFederation_handle; ///< @trick_io{**} MOM attribute handle to Federate-count.
    RTI1516_NAMESPACE::AttributeHandle   MOM_HLAautoProvide_handle;           ///< @trick_io{**} MOM AutoProvide attribute handle.
-   TrickHLAObjInstanceNameMap           mom_HLAfederation_instance_name_map; ///< @trick_io{**} Map of the MOM HLAfederation instances.
+   TrickHLAObjInstanceNameMap           MOM_HLAfederation_instance_name_map; ///< @trick_io{**} Map of the MOM HLAfederation instances.
    int                                  auto_provide_setting;                ///< @trick_units{--} MOM Federation wide HLAautoProvide setting.
    int                                  orig_auto_provide_setting;           ///< @trick_units{--} Original MOM Federation wide HLAautoProvide setting when we joined the federation.
 
-   RTI1516_NAMESPACE::ObjectClassHandle MOM_HLAfederate_class_handle;  ///< @trick_io{**} MOM Federate class handle.
-   RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederateType_handle;    ///< @trick_io{**} MOM attribute handle to Federate type (a.k.a name in IEEE 1516-2000).
-   RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederateName_handle;    ///< @trick_io{**} MOM attribute handle to Federate name.
-   RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederate_handle;        ///< @trick_io{**} MOM attribute handle to Federate-Handle.
-   TrickHLAObjInstanceNameMap           mom_HLAfederate_inst_name_map; ///< @trick_io{**} Map of the MOM HLAfederate instances name map.
+   RTI1516_NAMESPACE::ObjectClassHandle MOM_HLAfederate_class_handle; ///< @trick_io{**} MOM Federate class handle.
+   RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederateType_handle;   ///< @trick_io{**} MOM attribute handle to Federate type (a.k.a name in IEEE 1516-2000).
+   RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederateName_handle;   ///< @trick_io{**} MOM attribute handle to Federate name.
+   RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederate_handle;       ///< @trick_io{**} MOM attribute handle to Federate-Handle.
+
+   TrickHLAObjInstanceNameMap MOM_HLAfederate_instance_name_map; ///< @trick_io{**} Map of the MOM HLAfederate instances name map.
 
    MutexLock                            joined_federate_mutex;    ///< @trick_io{**} Mutex to lock thread over critical code sections.
-   TrickHLAObjInstanceNameMap           joined_federate_name_map; ///< @trick_io{**} Map of the federate instances.
+   TrickHLAObjInstanceNameMap           joined_federate_name_map; ///< @trick_io{**} Map of the federate instances and corresponding names.
    RTI1516_NAMESPACE::FederateHandleSet joined_federate_handles;  ///< @trick_io{**} FederateHandles of joined federates.
    VectorOfWstrings                     joined_federate_names;    ///< @trick_io{**} Names of the joined federates.
 
@@ -1305,12 +1312,6 @@ class Federate
 
    /*! @brief Make time-advance request available and wait for time advance grant with zero lookahead. */
    void wait_for_zero_lookahead_TARA_TAG();
-
-   //
-   // Federation freeze management functions.
-   //
-   /*! @brief Unfreeze simulation. */
-   void un_freeze();
 
   private:
    // Do not allow the copy constructor or assignment operator.

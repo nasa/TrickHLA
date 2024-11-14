@@ -1,6 +1,6 @@
 /*!
+@ingroup Sine
 @file models/sine/include/SinePacking.hh
-@ingroup TrickHLAModel
 @brief This class provides data packing.
 
 @copyright Copyright 2020 United States Government as represented by the
@@ -19,9 +19,9 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLAModel}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Attribute.cpp}
-@trick_link_dependency{../source/TrickHLA/Object.cpp}
-@trick_link_dependency{../source/TrickHLA/Packing.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Attribute.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Object.cpp}
+@trick_link_dependency{../../../source/TrickHLA/Packing.cpp}
 @trick_link_dependency{sine/src/SineData.cpp}
 @trick_link_dependency{sine/src/SinePacking.cpp}
 
@@ -36,14 +36,9 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_MODEL_SINE_PACKING_HH
 #define TRICKHLA_MODEL_SINE_PACKING_HH
 
-// Forward declarations.
-namespace TrickHLA
-{
-class Object;
-}
-
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/Object.hh"
 #include "TrickHLA/Packing.hh"
 
 // Model include files.
@@ -52,7 +47,7 @@ class Object;
 namespace TrickHLAModel
 {
 
-class SinePacking : public TrickHLA::Packing
+class SinePacking : public SineData, public TrickHLA::Packing
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -69,9 +64,7 @@ class SinePacking : public TrickHLA::Packing
 
    double phase_deg; ///< @trick_units{degree} Phase offset in degrees.
 
-   int pack_count; ///< @trick_units{count} The number of times the pack routine has been called.
-
-   bool initialized; ///< @trick_units{--} Flag to indicate this class has been initialized.
+   unsigned int pack_count; ///< @trick_units{count} The number of times the pack routine has been called.
 
    int buff_size; ///< @trick_units{--} Size of the byte buffer.
 
@@ -95,9 +88,12 @@ class SinePacking : public TrickHLA::Packing
    /*! @brief Destructor for the TrickHLAModel SinePacking class. */
    virtual ~SinePacking();
 
-   /*! @brief Initialize the packing object.
+   /*! @brief Configure the packing object.
     *  @param sim_data The sine wave data object for packing and unpacking. */
-   void initialize( SineData *sim_data );
+   void configure( SineData *sim_data );
+
+   /*! @brief Initialize the packing object. */
+   virtual void initialize();
 
    /*! @brief Initialization callback as part of the TrickHLA::Packing functions.
     *  @param obj Object associated with this packing class. */

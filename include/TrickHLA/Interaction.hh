@@ -19,16 +19,16 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../source/TrickHLA/Federate.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64Interval.cpp}
-@trick_link_dependency{../source/TrickHLA/Int64Time.cpp}
-@trick_link_dependency{../source/TrickHLA/Interaction.cpp}
-@trick_link_dependency{../source/TrickHLA/InteractionItem.cpp}
-@trick_link_dependency{../source/TrickHLA/InteractionHandler.cpp}
-@trick_link_dependency{../source/TrickHLA/Manager.cpp}
-@trick_link_dependency{../source/TrickHLA/MutexLock.cpp}
-@trick_link_dependency{../source/TrickHLA/Parameter.cpp}
-@trick_link_dependency{../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/Federate.cpp}
+@trick_link_dependency{../../source/TrickHLA/Int64Interval.cpp}
+@trick_link_dependency{../../source/TrickHLA/Int64Time.cpp}
+@trick_link_dependency{../../source/TrickHLA/Interaction.cpp}
+@trick_link_dependency{../../source/TrickHLA/InteractionItem.cpp}
+@trick_link_dependency{../../source/TrickHLA/InteractionHandler.cpp}
+@trick_link_dependency{../../source/TrickHLA/Manager.cpp}
+@trick_link_dependency{../../source/TrickHLA/MutexLock.cpp}
+@trick_link_dependency{../../source/TrickHLA/Parameter.cpp}
+@trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
 @revs_title
 @revs_begin
@@ -45,7 +45,8 @@ NASA, Johnson Space Center\n
 // System include files.
 
 // Trick include files.
-#include "trick/memorymanager_c_intf.h"
+#include "trick/MemoryManager.hh"
+#include "trick/message_proto.h" // for send_hs
 
 // TrickHLA include files
 #include "TrickHLA/Int64Interval.hh"
@@ -175,8 +176,9 @@ class Interaction
    void process_interaction();
 
    /*! @brief Extracts the parameters for the received Interaction.
-    *  @param interaction_item Interaction item. */
-   void extract_data( InteractionItem *interaction_item );
+    *  @param interaction_item Interaction item.
+    *  @return True if successfull extracted data, false otherwise. */
+   bool extract_data( InteractionItem *interaction_item );
 
    // Instance methods
    /*! @brief Get the FOM name for this interaction.
@@ -291,21 +293,21 @@ class Interaction
 
    /*! @brief Set the FOM name for this interaction.
     *  @param in_name The FOM name for this interaction. */
-   void set_FOM_name( char *in_name )
+   void set_FOM_name( char const *in_name )
    {
-      if ( FOM_name != NULL ) {
-         if ( TMM_is_alloced( FOM_name ) ) {
-            TMM_delete_var_a( FOM_name );
+      if ( this->FOM_name != NULL ) {
+         if ( trick_MM->delete_var( static_cast< void * >( this->FOM_name ) ) ) {
+            send_hs( stderr, "Interaction::set_FOM_name():%d WARNING failed to delete Trick Memory for 'this->FOM_name'\n", __LINE__ );
          }
-         FOM_name = NULL;
+         this->FOM_name = NULL;
       }
-      FOM_name = TMM_strdup( (char *)in_name );
+      this->FOM_name = trick_MM->mm_strdup( in_name );
    }
 
    /*! @brief Set the received user supplied tag.
-    *  @param tag      The user supplied tag.
+    *  @param tag The user supplied tag.
     *  @param tag_size Size of the user supplied tag. */
-   void set_user_supplied_tag( unsigned char *tag, size_t tag_size );
+   void set_user_supplied_tag( unsigned char const *tag, size_t tag_size );
 
    /*! @brief Mark this interaction as published. */
    void set_publish()

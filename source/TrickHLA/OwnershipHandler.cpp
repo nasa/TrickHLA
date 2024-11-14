@@ -42,9 +42,11 @@ NASA, Johnson Space Center\n
 #include <cstdlib>
 #include <iostream>
 #include <limits>
+#include <map>
 #include <string>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h" // for send_hs
@@ -123,7 +125,7 @@ void OwnershipHandler::setup_checkpoint_requests()
                   __LINE__, pull_items_cnt, THLA_NEWLINE );
       }
       pull_items = reinterpret_cast< OwnershipItem * >( alloc_type( (int)pull_items_cnt, "TrickHLA::OwnershipItem" ) );
-      if ( pull_items == static_cast< OwnershipItem * >( NULL ) ) {
+      if ( pull_items == NULL ) {
          ostringstream errmsg;
          errmsg << "OwnershipHandler::setup_checkpoint_requests():" << __LINE__
                 << " CERROR: ould not allocate memory for pull_items (array of OwnershipItem type)!"
@@ -138,8 +140,8 @@ void OwnershipHandler::setup_checkpoint_requests()
          THLAAttributeMap *tMap      = owner_map_iter->second;
          for ( attrib_iter = tMap->begin(); attrib_iter != tMap->end(); ++attrib_iter ) {
             pull_items[count].time     = curr_time;
-            pull_items[count].FOM_name = TMM_strdup( (char *)attrib_iter->first.c_str() );
-            count++;
+            pull_items[count].FOM_name = trick_MM->mm_strdup( attrib_iter->first.c_str() );
+            ++count;
          }
       }
    }
@@ -160,7 +162,7 @@ void OwnershipHandler::setup_checkpoint_requests()
                   __LINE__, push_items_cnt, THLA_NEWLINE );
       }
       push_items = reinterpret_cast< OwnershipItem * >( alloc_type( (int)push_items_cnt, "TrickHLA::OwnershipItem" ) );
-      if ( push_items == static_cast< OwnershipItem * >( NULL ) ) {
+      if ( push_items == NULL ) {
          ostringstream errmsg;
          errmsg << "OwnershipHandler::setup_checkpoint_requests():" << __LINE__
                 << "ERROR:  Could not allocate memory for push_items (array of OwnershipItem type)!"
@@ -175,8 +177,8 @@ void OwnershipHandler::setup_checkpoint_requests()
          THLAAttributeMap *tMap      = owner_map_iter->second;
          for ( attrib_iter = tMap->begin(); attrib_iter != tMap->end(); ++attrib_iter ) {
             push_items[count].time     = curr_time;
-            push_items[count].FOM_name = TMM_strdup( (char *)attrib_iter->first.c_str() );
-            count++;
+            push_items[count].FOM_name = trick_MM->mm_strdup( attrib_iter->first.c_str() );
+            ++count;
          }
       }
    }
@@ -189,7 +191,10 @@ void OwnershipHandler::clear_checkpoint()
       for ( size_t i = 0; i < pull_items_cnt; ++i ) {
          pull_items[i].clear();
       }
-      TMM_delete_var_a( pull_items );
+      if ( trick_MM->delete_var( static_cast< void * >( pull_items ) ) ) {
+         send_hs( stderr, "OwnershipHandler::clear_checkpoint():%d WARNING failed to delete Trick Memory for 'pull_items'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
       pull_items     = NULL;
       pull_items_cnt = 0;
    }
@@ -199,7 +204,10 @@ void OwnershipHandler::clear_checkpoint()
       for ( size_t i = 0; i < push_items_cnt; ++i ) {
          push_items[i].clear();
       }
-      TMM_delete_var_a( push_items );
+      if ( trick_MM->delete_var( static_cast< void * >( push_items ) ) ) {
+         send_hs( stderr, "OwnershipHandler::clear_checkpoint():%d WARNING failed to delete Trick Memory for 'push_items'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
       push_items     = NULL;
       push_items_cnt = 0;
    }
@@ -295,7 +303,7 @@ int OwnershipHandler::get_attribute_count() const
    return ( ( this->object != NULL ) ? object->get_attribute_count() : 0 );
 }
 
-VectorOfStrings OwnershipHandler::get_attribute_FOM_names() const
+VectorOfStrings const OwnershipHandler::get_attribute_FOM_names() const
 {
    return ( ( this->object != NULL ) ? object->get_attribute_FOM_names() : VectorOfStrings() );
 }
