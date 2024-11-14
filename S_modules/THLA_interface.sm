@@ -14,7 +14,7 @@
 //==========================================================================
 // SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
 //==========================================================================
-#include "SpaceFOM.sm"
+#include "SpaceFOM/SpaceFOM.sm"
 
 %header{
  using namespace TrickHLA;
