@@ -47,11 +47,13 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <cstdint>
 #include <float.h>
+#include <map>
 #include <string>
 
 // Trick include files.
 #include "trick/Executive.hh"
 #include "trick/MemoryManager.hh"
+#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 
 // TrickHLA include files.
@@ -73,6 +75,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
 #include "TrickHLA/SleepTimeout.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 
@@ -227,6 +230,7 @@ void Manager::restart_initialization()
       errmsg << "Manager::restart_initialization():" << __LINE__
              << " ERROR: Unexpected NULL 'federate' pointer!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -249,6 +253,7 @@ void Manager::restart_initialization()
       errmsg << "Manager::restart_initialization():" << __LINE__
              << " ERROR: Unexpected NULL 'execution_control' pointer!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
+      return;
    }
 
    // The set_master() function set's additional parameter so call it again to
@@ -735,7 +740,7 @@ void Manager::receive_init_data(
  */
 void Manager::clear_init_sync_points()
 {
-   // Clear the multiphase initalization synchronization points associated
+   // Clear the multiphase initialization synchronization points associated
    // with ExecutionControl initialization.
    this->execution_control->clear_multiphase_init_sync_points();
 }
@@ -781,13 +786,11 @@ joining federate so this call will be ignored.%c",
    StringUtilities::to_wstring( ws_syc_point_label, sync_point_label );
 
    // Determine if the sync-point label is valid.
-   if ( this->execution_control->contains( ws_syc_point_label ) ) {
+   if ( execution_control->contains_sync_point( ws_syc_point_label ) ) {
 
       // Achieve the specified sync-point and wait for the federation
       // to be synchronized on it.
-      this->execution_control->achieve_and_wait_for_synchronization( *( this->get_RTI_ambassador() ),
-                                                                     this->federate,
-                                                                     ws_syc_point_label );
+      execution_control->achieve_sync_point_and_wait_for_synchronization( ws_syc_point_label );
 
    } else {
       ostringstream errmsg;
@@ -809,8 +812,10 @@ void Manager::request_data_update(
    wstring const &instance_name )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::request_data_update():%d Object:'%ls'%c",
-               __LINE__, instance_name.c_str(), THLA_NEWLINE );
+      string name_str;
+      StringUtilities::to_string( name_str, instance_name );
+      send_hs( stdout, "Manager::request_data_update():%d Object:'%s'%c",
+               __LINE__, name_str.c_str(), THLA_NEWLINE );
    }
 
    bool found = false;
@@ -892,15 +897,18 @@ void Manager::object_instance_name_reservation_failed(
       return;
    }
 
+   string name_str;
+   StringUtilities::to_string( name_str, obj_instance_name );
+
    // Anything beyond this point is fatal.
    send_hs( stderr, "Manager::object_instance_name_reservation_failed():%d \
-Name:'%ls' Please check your input or modified data files to make sure the \
+Name:'%s' Please check your input or modified data files to make sure the \
 object instance name is unique, no duplicates, within the Federation. For \
 example, try using fed_name.object_FOM_name for the object instance name. \
 Also, an object should be owned by only one Federate so one common mistake is \
 to have the 'create_HLA_instance' flag for the same object being set to true \
 for more than one Federate.%c",
-            __LINE__, obj_instance_name.c_str(), THLA_NEWLINE );
+            __LINE__, name_str.c_str(), THLA_NEWLINE );
 
    wstring obj_name;
    for ( unsigned int n = 0; n < obj_count; ++n ) {
@@ -1232,8 +1240,7 @@ void Manager::setup_object_RTI_handles(
 
             if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                string id_str;
-               StringUtilities::to_string( id_str,
-                                           attrs[i].get_attribute_handle() );
+               StringUtilities::to_string( id_str, attrs[i].get_attribute_handle() );
                msg << "\t  Result for Attribute '"
                    << data_objects[n].get_FOM_name() << "'->'"
                    << attrs[i].get_FOM_name() << "'"
@@ -1398,8 +1405,7 @@ void Manager::setup_interaction_RTI_handles(
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
             string handle_str;
-            StringUtilities::to_string( handle_str,
-                                        in_interactions[n].get_class_handle() );
+            StringUtilities::to_string( handle_str, in_interactions[n].get_class_handle() );
             msg << "  Result for Interaction"
                 << " FOM-Name:'" << inter_FOM_name << "'"
                 << " Interaction-ID:" << handle_str << endl;
@@ -1430,8 +1436,7 @@ void Manager::setup_interaction_RTI_handles(
 
             if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_MANAGER ) ) {
                string handle_str;
-               StringUtilities::to_string( handle_str,
-                                           params[i].get_parameter_handle() );
+               StringUtilities::to_string( handle_str, params[i].get_parameter_handle() );
                msg << "\t  Result for Parameter '"
                    << inter_FOM_name << "'->'" << param_FOM_name << "'"
                    << " Parameter-ID:" << handle_str << endl;
@@ -2996,7 +3001,7 @@ void Manager::clear_interactions()
          check_interactions[i].clear_parm_items();
       }
       if ( trick_MM->delete_var( static_cast< void * >( check_interactions ) ) ) {
-         send_hs( stderr, "Manager::clear_interactions():%d ERROR deleting Trick Memory for 'check_interactions'%c",
+         send_hs( stderr, "Manager::clear_interactions():%d WARNING failed to delete Trick Memory for 'check_interactions'%c",
                   __LINE__, THLA_NEWLINE );
       }
       check_interactions       = NULL;
@@ -3188,8 +3193,8 @@ void Manager::wait_for_discovery_of_objects()
 
          } while ( ( !create_HLA_instance_object_found && // still missing some objects other than
                      ( discovery_count < ( required_count - 1 ) ) )
-                   ||                                          // the one for the rejoining federate, or
-                   ( create_HLA_instance_object_found &&       // missing some other object(s) but
+                   ||                                    // the one for the rejoining federate, or
+                   ( create_HLA_instance_object_found && // missing some other object(s) but
                      ( discovery_count < required_count ) ) ); // found the rejoining federate
       }
    } else {

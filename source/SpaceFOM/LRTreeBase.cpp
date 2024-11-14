@@ -43,6 +43,7 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <iostream>
+#include <map>
 #include <sstream>
 #include <string>
 
@@ -339,7 +340,7 @@ bool LRTreeBase::has_node( LRTreeNodeBase const *node )
 
    // Find the node in the vector.
    for ( node_iter = nodes.begin(); node_iter < nodes.end(); ++node_iter ) {
-      if ( *node_iter == node ) {
+      if ( *node_iter == node ) { // cppcheck-suppress [useStlAlgorithm]
          return ( true );
       }
    }

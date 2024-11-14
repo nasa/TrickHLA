@@ -125,9 +125,9 @@ class Manager
    int          inter_count;  ///< @trick_units{--} Number of TrickHLA Interactions.
    Interaction *interactions; ///< @trick_units{--} Array of TrickHLA Interactions.
 
-   bool  restore_federation;          ///< @trick_io{*i} @trick_units{--} flag indicating whether to trigger the restore
-   char *restore_file_name;           ///< @trick_io{*i} @trick_units{--} file name, which will be the label name
-   bool  initiated_a_federation_save; ///< @trick_io{**} did this manager initiate the federation save?
+   bool  restore_federation;          ///< @trick_io{*i} @trick_units{--} Flag indicating whether to trigger the restore
+   char *restore_file_name;           ///< @trick_io{*i} @trick_units{--} File name, which will be the label name
+   bool  initiated_a_federation_save; ///< @trick_io{**} Did this manager initiate the federation save?
 
   public:
    //

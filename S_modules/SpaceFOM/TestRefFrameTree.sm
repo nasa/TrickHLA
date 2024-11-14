@@ -56,7 +56,7 @@ class SpaceFOMTestRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObje
      root_frame_ptr( NULL ),
      vehicle_frame_ptr( NULL )
    {
-
+      return;
    }
 
   private:

@@ -80,7 +80,7 @@ int CTETimelineBase::clock_init()
 /*!
  * @details Get the global time base on the CTE.
  */
-double CTETimelineBase::get_time()
+double const CTETimelineBase::get_time()
 {
    struct timespec ts;
    clock_gettime( CLOCK_REALTIME, &ts );
@@ -132,7 +132,7 @@ void CTETimelineBase::set_clock_ID( clockid_t const id )
    }
 }
 
-clockid_t CTETimelineBase::get_clock_ID()
+clockid_t const CTETimelineBase::get_clock_ID()
 {
    return clk_id;
 }

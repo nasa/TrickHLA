@@ -12,16 +12,16 @@
 # @rev_entry{ Dan Dexter, NASA ER6, TrickHLA, June 2021, --, Using a build output directory unique to the check being done for better build artifact caching.}
 # @revs_end
 #
-import sys
-import time
+import argparse
 import os
 import subprocess
-import argparse
-import textwrap
 import shutil
+import sys
+import textwrap
+import time
 
-from trickhla_message import *
 from trickhla_environment import *
+from trickhla_message import *
 
 
 # Main routine.
@@ -65,6 +65,9 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
    parser.add_argument( '-b', '--bin', \
                         help = 'Path to cppcheck binaries directory.', \
                         dest = 'bin_path' )
+   parser.add_argument( '--clang', \
+                        help = 'Use clang parser instead of the cppcheck built in parser (experimental).', \
+                        action = 'store_true', dest = 'use_clang_parser' )
    parser.add_argument( '-c', '--clean', \
                         help = 'Clean all generated files.', \
                         action = 'store_true', dest = 'clean_gen_files' )
@@ -231,6 +234,15 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
    if args.very_verbose:
       TrickHLAMessage.status( 'Path to HLA RTI: ' + rti_home )
 
+   # Determine the path to the HLA RTI include directory.
+   rti_include = rti_home + '/api/cpp/HLA_1516-2010'
+   if os.path.isdir( rti_include ) is False:
+      rti_include = rti_home + '/include'
+      if os.path.isdir( rti_include ) is False:
+         TrickHLAMessage.failure( 'Could not find the HLA RTI include directory: ' + rti_include )
+   if args.very_verbose:
+      TrickHLAMessage.status( 'Path to HLA RTI include directory: ' + rti_include )
+
    # Determine the path to JEOD home directory.
    jeod_home = find_jeod( args.jeod_home, args.very_verbose )
    if args.very_verbose and jeod_home:
@@ -245,11 +257,13 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
    trickhla_include_dirs.extend( ['-I', trick_home + '/include'] )
    trickhla_include_dirs.extend( ['-I', trick_home + '/include/trick/compat'] )
    trickhla_include_dirs.extend( ['-I', trick_home + '/trick_source'] )
-   trickhla_include_dirs.extend( ['-I', rti_home + '/include'] )
+   trickhla_include_dirs.extend( ['-I', rti_include] )
    if jeod_home:
       trickhla_include_dirs.extend( ['-I', jeod_home + '/models'] )
    if os.path.isdir( './models/EntityDynamics/include' ):
       trickhla_include_dirs.extend( ['-I', './models/EntityDynamics/include'] )
+   if os.path.isdir( './models/FDI/include' ):
+      trickhla_include_dirs.extend( ['-I', './models/FDI/include'] )
    if os.path.isdir( './models/SAIntegrator/include' ):
       trickhla_include_dirs.extend( ['-I', './models/SAIntegrator/include'] )
    if os.path.isdir( './models/simconfig/include' ):
@@ -273,6 +287,8 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
    trickhla_source_dirs.extend ( ['./source'] )
    if os.path.isdir( './models/EntityDynamics/src' ):
       trickhla_source_dirs.extend( ['./models/EntityDynamics/src'] )
+   if os.path.isdir( './models/FDI/src' ):
+      trickhla_source_dirs.extend( ['./models/FDI/src'] )
    if os.path.isdir( './models/SAIntegrator/src' ):
       trickhla_source_dirs.extend( ['./models/SAIntegrator/src'] )
    if os.path.isdir( './models/simconfig/src' ):
@@ -365,14 +381,14 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
       trickhla_ignore.append( '--suppress=preprocessorErrorDirective:' + trick_home + '/trick_source/er7_utils/interface/include/er7_class.hh' )
    else:
       # Ignore/suppress the HLA Evolved standard header file warnings.
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_home + '/include/RTI/Exception.h' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_home + '/include/RTI/Typedefs.h' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_home + '/include/RTI/encoding/EncodingExceptions.h' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_home + '/include/RTI/time/HLAinteger64Interval.h' )
-      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_home + '/include/RTI/time/HLAinteger64Time.h' )
-      trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_home + '/include/RTI/encoding/DataElement.h' )
-      trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_home + '/include/RTI/encoding/HLAfixedRecord.h' )
-      trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_home + '/include/RTI/time/HLAinteger64Time.h' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_include + '/RTI/Exception.h' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_include + '/RTI/Typedefs.h' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_include + '/RTI/encoding/EncodingExceptions.h' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_include + '/RTI/time/HLAinteger64Interval.h' )
+      trickhla_ignore.append( '--suppress=noExplicitConstructor:' + rti_include + '/RTI/time/HLAinteger64Time.h' )
+      trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_include + '/RTI/encoding/DataElement.h' )
+      trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_include + '/RTI/encoding/HLAfixedRecord.h' )
+      trickhla_ignore.append( '--suppress=unhandledExceptionSpecification:' + rti_include + '/RTI/time/HLAinteger64Time.h' )
       # Ignore/suppress the Trick header file warnings.
       trickhla_ignore.append( '--suppress=constParameterReference:' + trick_home + '/trick_source/er7_utils/integration/core/include/first_order_ode_integrator.hh' )
       trickhla_ignore.append( '--suppress=noExplicitConstructor:' + trick_home + '/include/trick/DataRecordGroup.hh' )
@@ -391,11 +407,14 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
          trickhla_ignore.append( '--suppress=cstyleCast:' + jeod_home + '/models/utils/math/include/numerical_inline.hh' )
          trickhla_ignore.append( '--suppress=constParameterPointer:' + jeod_home + '/models/utils/memory/include/jeod_alloc_construct_destruct.hh' )
          trickhla_ignore.append( '--suppress=constParameterPointer:' + jeod_home + '/models/utils/integration/include/restartable_state_integrator.hh' )
+         trickhla_ignore.append( '--suppress=duplInheritedMember:' + jeod_home + '/models/utils/container/include/jeod_vector.hh' )
          trickhla_ignore.append( '--suppress=duplInheritedMember:' + jeod_home + '/models/utils/container/include/pointer_container.hh' )
          trickhla_ignore.append( '--suppress=duplInheritedMember:' + jeod_home + '/models/utils/memory/include/memory_table.hh' )
          trickhla_ignore.append( '--suppress=noExplicitConstructor:' + jeod_home + '/models/utils/container/include/container.hh' )
          trickhla_ignore.append( '--suppress=noExplicitConstructor:' + jeod_home + '/models/utils/memory/include/memory_type.hh' )
          trickhla_ignore.append( '--suppress=noExplicitConstructor:' + jeod_home + '/models/utils/named_item/include/named_item.hh' )
+         trickhla_ignore.append( '--suppress=returnByReference:' + jeod_home + '/models/utils/named_item/include/named_item.hh' )
+         trickhla_ignore.append( '--suppress=syntaxError:' + jeod_home + '/models/dynamics/mass/include/mass_point_init.hh' )
          trickhla_ignore.append( '--suppress=uselessOverride:' + jeod_home + '/models/utils/sim_interface/include/jeod_integrator_interface.hh' )
 
    if args.suppress_cstylecasts:
@@ -435,7 +454,11 @@ Examples:\n  check_code -s -o -v --exhaustive\n  check_code -i -o -v --exhaustiv
       # must be carefully investigated before you know if it is good or bad.
       cppcheck_args.append( '--inconclusive' )
 
-   # Use the c++03 standard
+   # Use the experimental clang parser instead of the built in cppcheck parser.
+   if args.use_clang_parser:
+      cppcheck_args.append( '--clang' )
+
+   # Use the c++03 standard.
    cppcheck_args.append( '--std=c++03' )
 
    # Configure cppcheck to use an output directory to cache build results.

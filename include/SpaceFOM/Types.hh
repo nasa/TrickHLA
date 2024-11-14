@@ -1,6 +1,6 @@
 /*!
+@ingroup SpaceFOM
 @file SpaceFOM/Types.hh
-@addtogroup SpaceFOM
 @brief Definition of the TrickHLA SpaceFOM enumeration types and utilities.
 
 @copyright Copyright 2019 United States Government as represented by the
@@ -41,6 +41,20 @@ NASA, Johnson Space Center\n
 
 namespace SpaceFOM
 {
+
+// SISO Space Reference FOM sync-point list name.
+static std::string const SPACEFOM_SYNC_POINT_LIST = "SpaceFOM";
+
+// SISO Space Reference FOM initialization HLA synchronization-points.
+static std::wstring const INIT_STARTED_SYNC_POINT          = L"initialization_started";
+static std::wstring const INIT_COMPLETED_SYNC_POINT        = L"initialization_completed";
+static std::wstring const OBJECTS_DISCOVERED_SYNC_POINT    = L"objects_discovered";
+static std::wstring const ROOT_FRAME_DISCOVERED_SYNC_POINT = L"root_frame_discovered";
+
+// SISO SpaceFOM Mode Transition Request (MTR) synchronization-points.
+static std::wstring const MTR_RUN_SYNC_POINT      = L"mtr_run";
+static std::wstring const MTR_FREEZE_SYNC_POINT   = L"mtr_freeze";
+static std::wstring const MTR_SHUTDOWN_SYNC_POINT = L"mtr_shutdown";
 
 /*!
 @enum ExecutionModeEnum

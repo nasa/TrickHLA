@@ -48,6 +48,7 @@ NASA, Johnson Space Center\n
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
+#include <map>
 #include <pthread.h>
 #include <sstream>
 #include <string>
@@ -56,6 +57,7 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
+#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 #include "trick/release.h"
 
@@ -78,6 +80,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/OwnershipHandler.hh"
 #include "TrickHLA/Packing.hh"
 #include "TrickHLA/SleepTimeout.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 
@@ -176,7 +179,7 @@ Object::~Object()
 
       if ( name != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
-            send_hs( stderr, "Object::~Object():%d ERROR deleting Trick Memory for 'name'%c",
+            send_hs( stderr, "Object::~Object():%d WARNING failed to delete Trick Memory for 'name'%c",
                      __LINE__, THLA_NEWLINE );
          }
          name = NULL;
@@ -184,7 +187,7 @@ Object::~Object()
 
       if ( this->thread_ids_array != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->thread_ids_array ) ) ) {
-            send_hs( stderr, "Object::~Object():%d ERROR deleting Trick Memory for 'this->thread_ids_array'%c",
+            send_hs( stderr, "Object::~Object():%d WARNING failed to delete Trick Memory for 'this->thread_ids_array'%c",
                      __LINE__, THLA_NEWLINE );
          }
          this->thread_ids_array       = NULL;
@@ -439,6 +442,22 @@ void Object::initialize(
              << " the Lag-Compensation type 'lag_comp_type' is set to"
              << " LAG_COMPENSATION_NONE to disable Lag-Compensation when using"
              << " blocking I/O configured object attributes." << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // If any attribute is configured for zero-lookahead then the federate must
+   // also be configured for a lookahead time of zero.
+   if ( any_zero_lookahead_attr && !get_federate()->is_zero_lookahead_time() ) {
+      ostringstream errmsg;
+      errmsg << "Object::initialize():" << __LINE__
+             << " ERROR: For object '" << name << "', detected Attributes"
+             << " with a 'config' setting of CONFIG_ZERO_LOOKAHEAD but the"
+             << " federate has been configured with a non-zero lookahead time of "
+             << get_lookahead().get_time_in_seconds() << " seconds ("
+             << get_lookahead().get_base_time() << " "
+             << Int64BaseTime::get_units() << "). The lookahead time must be"
+             << " set to zero to support zero-lookahead data exchanges, which"
+             << " is what this object is configured for." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -2403,14 +2422,15 @@ Object '%s', Receive Order (RO) Attribute update.%c",
       StringUtilities::to_string( id_str, instance_handle );
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      send_hs( stderr, "Object::send_zero_lookahead_and_requested_data():%d invalid logical time \
-exception for '%s' with error message '%s'.%c",
+      send_hs( stderr, "Object::send_zero_lookahead_and_requested_data():%d Exception: \
+Invalid logical time exception for '%s' with error message '%s'.%c",
                __LINE__, get_name(), rti_err_msg.c_str(), THLA_NEWLINE );
 
       ostringstream errmsg;
       errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
              << " Exception: InvalidLogicalTime" << endl
              << "  instance_id=" << id_str << endl
+             << "  send-with-timestamp=" << ( send_with_timestamp ? "True" : "False" ) << endl
              << "  granted=" << get_granted_time().get_time_in_seconds() << " ("
              << get_granted_time().get_base_time() << " " << Int64BaseTime::get_units()
              << ")" << endl
@@ -3969,17 +3989,16 @@ void Object::grant_pull_request()
       }
    } else {
 
+      // List of attributes to divest.
+      AttributeHandleSet *divested_attrs = new AttributeHandleSet();
+
       try {
-         // Divest ownership only if we have attributes we need to do this for.
-         auto_ptr< AttributeHandleSet > divested_attrs( new AttributeHandleSet );
-         AttributeHandleSet::iterator   divested_iter;
-
          // IEEE 1516.1-2000 section 7.12
-         rti_amb->attributeOwnershipDivestitureIfWanted(
-            this->instance_handle,
-            attrs_to_divest,
-            *divested_attrs );
+         rti_amb->attributeOwnershipDivestitureIfWanted( this->instance_handle,
+                                                         attrs_to_divest,
+                                                         *divested_attrs );
 
+         // Divest ownership only if we have attributes we need to do this for.
          if ( divested_attrs->empty() ) {
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                send_hs( stdout, "Object::grant_pull_request():%d \
@@ -3989,6 +4008,7 @@ No attributes Divested since no federate wanted them for object '%s'.%c",
          } else {
             // Process the list of attributes that were divisted by the RTI
             // and set the state of the ownership.
+            AttributeHandleSet::iterator divested_iter;
             for ( divested_iter = divested_attrs->begin();
                   divested_iter != divested_attrs->end(); ++divested_iter ) {
 
@@ -4015,6 +4035,10 @@ No attributes Divested since no federate wanted them for object '%s'.%c",
 pull request for Trick-HLA-Object '%s'%c",
                   __LINE__, get_name(), THLA_NEWLINE );
       }
+
+      // Make sure we delete the attribute divest list.
+      divested_attrs->clear();
+      delete divested_attrs;
 
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -4474,7 +4498,7 @@ void Object::set_name(
    // Delete the existing memory used by the name.
    if ( this->name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
-         send_hs( stderr, "Object::set_name():%d ERROR deleting Trick Memory for 'name'%c",
+         send_hs( stderr, "Object::set_name():%d WARNING failed to delete Trick Memory for 'name'%c",
                   __LINE__, THLA_NEWLINE );
       }
    }
@@ -4999,7 +5023,7 @@ void Object::initialize_thread_ID_array()
    if ( this->thread_ids == NULL ) {
       if ( this->thread_ids_array != NULL ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->thread_ids_array ) ) ) {
-            send_hs( stderr, "Object::initialize_thread_ID_array():%d ERROR deleting Trick Memory for 'this->thread_ids_array'%c",
+            send_hs( stderr, "Object::initialize_thread_ID_array():%d WARNING failed to delete Trick Memory for 'this->thread_ids_array'%c",
                      __LINE__, THLA_NEWLINE );
          }
          this->thread_ids_array       = NULL;

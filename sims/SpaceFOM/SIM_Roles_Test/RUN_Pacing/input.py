@@ -217,17 +217,16 @@ federate.set_RRFP_role( False )   # This is NOT the Root Reference Frame Publish
 #--------------------------------------------------------------------------
 # This is the Pacing federate.
 # It doesn't really need to know about any other federates.
-#federate.add_known_fededrate( True, str(federate.federate.name) )
-#federate.add_known_fededrate( True, master_name )
-#federate.add_known_fededrate( True, rrfp_name )
+#federate.add_known_federate( True, str(federate.federate.name) )
+#federate.add_known_federate( True, master_name )
+#federate.add_known_federate( True, rrfp_name )
 
 #--------------------------------------------------------------------------
 # Configure the CRC.
 #--------------------------------------------------------------------------
 # Pitch specific local settings designator:
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
-#THLA.federate.local_settings = 'crcHost = 10.8.0.161\n crcPort = 8989'
-# Mak specific local settings designator, which is anything from the rid.mtl file:
+# MAK specific local settings designator, which is anything from the rid.mtl file:
 #THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
 
 #--------------------------------------------------------------------------

@@ -72,7 +72,6 @@ string TrickHLA::execution_control_enum_to_string(
          return "UNKNOWN TrickHLA Execution Mode";
          break;
    }
-
    return "UNKNOWN TrickHLA Execution Mode";
 }
 
@@ -120,7 +119,6 @@ ExecutionControlEnum TrickHLA::execution_control_int16_to_enum(
          return EXECUTION_CONTROL_UNINITIALIZED;
          break;
    }
-
    return EXECUTION_CONTROL_UNINITIALIZED;
 }
 
@@ -161,7 +159,6 @@ string TrickHLA::mode_transition_enum_to_string(
          return "UNKNOWN TrickHLA Mode Transition";
          break;
    }
-
    return "UNKNOWN TrickHLA Mode Transition";
 }
 
@@ -216,15 +213,14 @@ ModeTransitionEnum TrickHLA::mode_transition_int16_to_enum(
 string TrickHLA::sync_point_state_enum_to_string(
    SyncPtStateEnum const state )
 {
-
    switch ( state ) {
 
       case SYNC_PT_STATE_ERROR:
          return "SYNC_PT_STATE_ERROR";
          break;
 
-      case SYNC_PT_STATE_EXISTS:
-         return "SYNC_PT_STATE_EXISTS";
+      case SYNC_PT_STATE_KNOWN:
+         return "SYNC_PT_STATE_KNOWN";
          break;
 
       case SYNC_PT_STATE_REGISTERED:
@@ -247,7 +243,6 @@ string TrickHLA::sync_point_state_enum_to_string(
          return "SYNC_PT_STATE_UNKNOWN";
          break;
    }
-
    return "SYNC_PT_STATE_UNKNOWN";
 }
 
@@ -268,7 +263,7 @@ SyncPtStateEnum TrickHLA::sync_point_state_int16_to_enum(
          break;
 
       case 1:
-         return SYNC_PT_STATE_EXISTS;
+         return SYNC_PT_STATE_KNOWN;
          break;
 
       case 2:
@@ -291,6 +286,5 @@ SyncPtStateEnum TrickHLA::sync_point_state_int16_to_enum(
          return SYNC_PT_STATE_UNKNOWN;
          break;
    }
-
    return SYNC_PT_STATE_UNKNOWN;
 }

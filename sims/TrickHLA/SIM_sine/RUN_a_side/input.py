@@ -3,6 +3,7 @@
 #---------------------------------------------
 #instruments.echo_jobs.echo_jobs_on()
 trick.exec_set_trap_sigfpe(True)
+trick.TMM_reduced_checkpoint(False)
 #trick.checkpoint_pre_init(1)
 trick.checkpoint_post_init(1)
 #trick.add_read(0.0 , '''trick.checkpoint('checkpoint')''')
@@ -67,7 +68,7 @@ THLA.federate.debug_level = trick.DEBUG_LEVEL_6_TRACE
 # Configure the CRC.
 # Pitch specific local settings designator:
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
-# Mak specific local settings designator, which is anything from the rid.mtl file:
+# MAK specific local settings designator, which is anything from the rid.mtl file:
 #THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
 THLA.federate.lookahead_time = 0.250
 
@@ -137,7 +138,7 @@ THLA.manager.objects   = trick.sim_services.alloc_type( THLA.manager.obj_count, 
 # Configure the object this federate will create an HLA instance and
 # publish data for.
 THLA.manager.objects[0].FOM_name            = 'Test'
-THLA.manager.objects[0].name                = 'A-side-Federate.Test'
+THLA.manager.objects[0].name                = 'A-side-Federate.Sine'
 THLA.manager.objects[0].create_HLA_instance = True
 THLA.manager.objects[0].packing             = A.packing
 THLA.manager.objects[0].lag_comp            = A.lag_compensation
@@ -208,7 +209,7 @@ THLA.manager.objects[0].attributes[7].rti_encoding    = trick.ENCODING_UNICODE_S
 # Configure the object this federate subscribes to but will not create an
 # HLA instance for.
 THLA.manager.objects[1].FOM_name            = 'Test'
-THLA.manager.objects[1].name                = 'P-side-Federate.Test'
+THLA.manager.objects[1].name                = 'P-side-Federate.Sine'
 THLA.manager.objects[1].create_HLA_instance = False
 THLA.manager.objects[1].packing             = P.packing
 THLA.manager.objects[1].lag_comp            = P.lag_compensation

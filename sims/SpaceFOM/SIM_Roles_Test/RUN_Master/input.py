@@ -147,7 +147,7 @@ federate_name = 'Master'
 # Set the default Federation Execution name.
 federation_name = 'SpaceFOM_Roles_Test'
 
-# Set the default Paceing Federate name.
+# Set the default Pacing Federate name.
 pacing_name = 'Pacing'
 
 # Set the default Root Reference Frame name.
@@ -211,16 +211,16 @@ federate.set_RRFP_role( False )   # This is NOT the Root Reference Frame Publish
 #--------------------------------------------------------------------------
 # Add in known required federates.
 #--------------------------------------------------------------------------
-federate.add_known_fededrate( True, str(federate.federate.name) )
-federate.add_known_fededrate( True, pacing_name )
-federate.add_known_fededrate( True, rrfp_name )
+federate.add_known_federate( True, str(federate.federate.name) )
+federate.add_known_federate( True, pacing_name )
+federate.add_known_federate( True, rrfp_name )
 
 #--------------------------------------------------------------------------
 # Configure the CRC.
 #--------------------------------------------------------------------------
 # Pitch specific local settings designator:
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
-#THLA.federate.local_settings = 'crcHost = js-er7-rti-dev.jsc.nasa.gov\n crcPort = 8989'
+
 
 #--------------------------------------------------------------------------
 # Set up federate related time related parameters.
@@ -247,6 +247,9 @@ trick.exec_set_software_frame( 0.250 )
 
 # Set the amount of seconds used to 'pad' mode transitions.
 federate.set_time_padding( 1.0 )
+
+# For SpaceFOM, we also need to specify the Trick software frame time.
+trick.exec_set_software_frame( 0.250 )
 
 # Setup Time Management parameters.
 federate.set_time_regulating( True )

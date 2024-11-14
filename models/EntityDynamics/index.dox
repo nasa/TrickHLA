@@ -1,0 +1,7 @@
+/**
+ * @defgroup EntityDynamics EntityDynamics
+ * A class to perform a simple propagation of a SpaceFOM PhysicalEntity or DynamicalEntity for testing
+ * @details This class shows how to propagate the state of a SpaceFOM PhysicalEntity or DynamicalEntity.
+ * It can be used to dynamics state propagation or latency compensation.
+ * @ingroup TrickHLAModels
+ */

@@ -89,7 +89,7 @@ DynamicalEntityLagComp::~DynamicalEntityLagComp() // RETURN: -- None.
    // Free up any allocated intergrator.
    if ( this->integrator != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->integrator ) ) ) {
-         send_hs( stderr, "SpaceFOM::DynamicalEntityBase::~DynamicalEntityBase():%d ERROR deleting Trick Memory for 'this->integrator'%c",
+         send_hs( stderr, "SpaceFOM::DynamicalEntityBase::~DynamicalEntityBase():%d WARNING failed to delete Trick Memory for 'this->integrator'%c",
                   __LINE__, THLA_NEWLINE );
       }
       this->integrator = NULL;

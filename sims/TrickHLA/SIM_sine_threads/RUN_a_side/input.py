@@ -16,11 +16,11 @@ trick.exec_set_freeze_command(True)
 trick.sim_control_panel_set_enabled(True)
 trick.exec_set_stack_trace(False)
 
-trick.exec_set_thread_process_type( 1 , trick.PROCESS_TYPE_AMF_CHILD )
-trick.exec_set_thread_amf_cycle_time( 1 , 0.250 )
+trick.exec_set_thread_process_type( 1, trick.PROCESS_TYPE_AMF_CHILD )
+trick.exec_set_thread_amf_cycle_time( 1, 0.250 )
 
-trick.exec_set_thread_process_type( 2 , trick.PROCESS_TYPE_AMF_CHILD )
-trick.exec_set_thread_amf_cycle_time( 2 , 0.250 )
+trick.exec_set_thread_process_type( 2, trick.PROCESS_TYPE_AMF_CHILD )
+trick.exec_set_thread_amf_cycle_time( 2, 0.250 )
 
 
 run_duration = 15.0
@@ -74,7 +74,7 @@ THLA.federate.debug_level = trick.DEBUG_LEVEL_5_TRACE
 # Configure the CRC.
 # Pitch specific local settings designator:
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
-# Mak specific local settings designator, which is anything from the rid.mtl file:
+# MAK specific local settings designator, which is anything from the rid.mtl file:
 #THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
 
 THLA.federate.lookahead_time = 0.250
@@ -158,7 +158,7 @@ THLA.manager.objects   = trick.sim_services.alloc_type( THLA.manager.obj_count, 
 # Configure the object this federate will create an HLA instance and
 # publish data for.
 THLA.manager.objects[0].FOM_name            = 'Test'
-THLA.manager.objects[0].name                = 'A-side-Federate.Test'
+THLA.manager.objects[0].name                = 'A-side-Federate.Sine'
 THLA.manager.objects[0].create_HLA_instance = True
 THLA.manager.objects[0].thread_ids          = "1"
 THLA.manager.objects[0].packing             = A.packing
@@ -229,7 +229,7 @@ THLA.manager.objects[0].attributes[7].rti_encoding    = trick.ENCODING_UNICODE_S
 # Configure the object this federate subscribes to but will not create an
 # HLA instance for.
 THLA.manager.objects[1].FOM_name            = 'Test'
-THLA.manager.objects[1].name                = 'P-side-Federate.Test'
+THLA.manager.objects[1].name                = 'P-side-Federate.Sine'
 THLA.manager.objects[1].create_HLA_instance = False
 THLA.manager.objects[1].thread_ids          = "2"
 THLA.manager.objects[1].packing             = P.packing

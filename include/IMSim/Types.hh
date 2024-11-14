@@ -1,6 +1,6 @@
 /*!
+@ingroup IMSim
 @file IMSim/Types.hh
-@addtogroup IMSim
 @brief Definition of the TrickHLA IMSim enumeration types and utilities.
 
 @copyright Copyright 2019 United States Government as represented by the
@@ -41,6 +41,20 @@ NASA, Johnson Space Center\n
 
 namespace IMSim
 {
+
+// The IMSim sync-point list.
+static std::string const IMSIM_SYNC_POINT_LIST = "IMSim";
+
+// The IMSim initialization scheme HLA synchronization-points (version 2).
+static std::wstring const SIM_CONFIG_SYNC_POINT    = L"sim_config_v2";
+static std::wstring const INITIALIZE_SYNC_POINT    = L"initialize_v2";
+static std::wstring const INIT_COMPLETE_SYNC_POINT = L"initialization_complete_v2";
+static std::wstring const STARTUP_SYNC_POINT       = L"startup_v2";
+static std::wstring const FEDSAVE_SYNC_POINT       = L"FEDSAVE_v2";
+static std::wstring const FEDRUN_SYNC_POINT        = L"FEDRUN_v2";
+
+// Set of freeze times.
+typedef std::set< double > FreezeTimeSet;
 
 /*!
 @enum ExecutionModeEnum
@@ -87,47 +101,27 @@ typedef enum {
 
 } MTREnum;
 
-/*!
-@enum PausePointStateEnum
-@brief Define the TrickHLA synchronization point state enumeration values.
-
-The PausePointStateEnum enumeration defines the possible pause point
-(synchronization point) synchronization states for a TrickHLA based federate.
-*/
-typedef enum {
-
-   PAUSE_POINT_STATE_FIRST_VALUE  = 0,      ///< Set to the First value in the enumeration.
-   PAUSE_POINT_STATE_ERROR        = 0,      ///< Pause point state error.
-   PAUSE_POINT_STATE_PENDING      = 1,      ///< Pause point state pending.
-   PAUSE_POINT_STATE_ACKNOWLEDGED = 2,      ///< Pause point state acknowledged.
-   PAUSE_POINT_STATE_RUN          = 3,      ///< Pause point state run.
-   PAUSE_POINT_STATE_FREEZE       = 4,      ///< Pause point state freeze.
-   PAUSE_POINT_STATE_EXIT         = 5,      ///< Pause point state exit.
-   PAUSE_POINT_STATE_RESTART      = 6,      ///< Pause point state restart.
-   PAUSE_POINT_STATE_RECONFIG     = 7,      ///< Pause point state reconfiguration.
-   PAUSE_POINT_STATE_UNKNOWN      = INT_MAX ///< Unknown state.
-
-} PausePointStateEnum;
-
-typedef std::set< double > FreezeTimeSet;
-
 // Helper methods for these enumerations.
 /*! @brief Convert an ExecutionModeEnum value into a printable string.
  *  @return IMSim execution mode as a printable string.
  *  @param mode Execution configuration run mode enumeration value. */
 std::string execution_mode_enum_to_string( ExecutionModeEnum mode );
+
 /*! @brief Convert an ExecutionModeEnum value into a 16 bit integer.
  *  @return IMSim execution mode as a 16 bit integer representation.
  *  @param mode Execution configuration run mode enumeration value. */
 int16_t execution_mode_enum_to_int16( ExecutionModeEnum mode );
+
 /*! @brief Convert a 16 bit integer to an ExecutionModeEnum value.
  *  @return IMSim execution mode as enumeration value.
  *  @param int_mode Execution configuration run mode as integer. */
 ExecutionModeEnum execution_mode_int16_to_enum( int16_t int_mode );
+
 /*! @brief Convert an IMSim::ExecutionModeEnum value to a TrickHLA::ExecutionModeEnum value.
  *  @return IMSim::ExecutionModeEnum as an equivalent TrickHLA::ExecutionModeEnum value.
  *  @param mode IMSim::ExecutionModeEnum value to convert. */
 TrickHLA::ExecutionControlEnum to_execution_control_enum( ExecutionModeEnum mode );
+
 /*! @brief Convert a TrickHLA::ExecutionModeEnum value to an IMSim::ExecutionModeEnum value.
  *  @return TrickHLA::ExecutionModeEnum as an equivalent IMSim::ExecutionModeEnum value.
  *  @param mode TrickHLA::ExecutionModeEnum value to convert. */
@@ -138,31 +132,16 @@ ExecutionModeEnum from_execution_contorl_enum( TrickHLA::ExecutionControlEnum mo
  *  @return IMSim mode transition request (MTR) as a printable string.
  *  @param mtr_enum MTR enumeration value to convert. */
 std::string mtr_enum_to_string( MTREnum mtr_enum );
+
 /*! @brief Convert a Mode Transition Request (MTR) enum value into a 16 bit integer.
  *  @return IMSim Mode Transition Request (MTR) as a 16 bit integer.
  *  @param mtr_enum MTR enumeration values. */
 int16_t mtr_enum_to_int16( MTREnum mtr_enum );
+
 /*! @brief Convert a 16 bit integer into a Mode Transition Request (MTR) enum value.
  *  @return IMSim mode transition request (MTR) as enumeration value.
  *  @param mtr_int MTR mode. */
 MTREnum mtr_int16_to_enum( int16_t mtr_int );
-
-// IMSim::PausePntStateEnum methods
-/*! @brief Convert a Pause Synchronization Point State enum value into a
- *  printable string.
- *  @return TrickHLA sync point state as a printable string.
- *  @param state Sync point state enumeration value to convert. */
-std::string pause_pnt_state_enum_to_string( PausePointStateEnum state );
-/*! @brief Convert a Pause Synchronization Point State enum value into a
- *  16 bit integer.
- *  @return TrickHLA sync point state as a 16 bit integer.
- *  @param state Sync point state enumeration value to convert. */
-int16_t pause_pnt_state_enum_to_int16( PausePointStateEnum state );
-/*! @brief Convert an integer value to a Pause Synchronization Point State
- *  enumeration value.
- *  @return TrickHLA Synchronization Point State enum value.
- *  @param int_state Sync point state value as a 16 bit integer. */
-PausePointStateEnum pause_pnt_state_int16_to_enum( int16_t int_state );
 
 } // namespace IMSim
 

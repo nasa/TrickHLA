@@ -166,12 +166,24 @@ trick.exec_set_trap_sigfpe( True )
 # Setup for Trick real time execution. This is the "Pacing" function.
 exec( open( "Modified_data/trick/realtime.py" ).read() )
 
-trick.exec_set_enable_freeze( False ) #TEMP True )
-trick.exec_set_freeze_command( False ) #TEMP True )
+trick.exec_set_enable_freeze( True )
+trick.exec_set_freeze_command( True )
 trick.exec_set_stack_trace( False )
 
-trick.sim_control_panel_set_enabled( False ) #TEMP True )
-#trick.var_server_set_port( 7000 )
+trick.var_server_set_port( 7000 )
+#trick.var_server_set_source_address( "127.0.0.1" )
+trick.sim_control_panel_set_enabled( True )
+
+#simControlPanel = trick.SimControlPanel()
+#simControlPanel.set_host( "localhost" )
+#trick.add_external_application( simControlPanel )
+
+#---------------------------------------------
+# Set up data to record.
+#---------------------------------------------
+exec(open( "Log_data/log_sine_states.py" ).read())
+log_sine_states( 'A', 0.250 )
+log_sine_states( 'P', 0.250 )
 
 
 # =========================================================================
@@ -207,9 +219,8 @@ federate.set_RRFP_role( True )   # This is the Root Reference Frame Publisher.
 #--------------------------------------------------------------------------
 # Add in known required federates.
 #--------------------------------------------------------------------------
-federate.add_known_fededrate( True, str(federate.federate.name) )
-federate.add_known_fededrate( True, 'P-side-Federate' )
-federate.add_known_fededrate( False, 'Other' )
+federate.add_known_federate( True, str(federate.federate.name) )
+federate.add_known_federate( True, 'P-side-Federate' )
 
 #--------------------------------------------------------------------------
 # Configure the FOM modules.
@@ -231,8 +242,11 @@ THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 #--------------------------------------------------------------------------
 # Set up federate time related parameters.
 #--------------------------------------------------------------------------
-# Compute TT for 04 Jan 2019 12:00 PM. = 18487.75(days) + 37.0(s) + 32.184(s)
-federate.set_scenario_timeline_epoch( float((18487.75*24.0*60.0*60.0) + 37.0 + 32.184) )
+# Set the simulation timeline to be used for time computations.
+THLA.execution_control.sim_timeline = THLA_INIT.sim_timeline
+
+# Set the scenario timeline to be used for configuring federation freeze times.
+THLA.execution_control.scenario_timeline = THLA_INIT.scenario_timeline
 
 # Specify the HLA base time units (default: trick.HLA_BASE_TIME_MICROSECONDS).
 federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_MICROSECONDS )
@@ -248,19 +262,14 @@ federate.set_lookahead_time( 0.250 )
 federate.set_least_common_time_step( 0.250 )
 
 # Set the amount of seconds used to 'pad' mode transitions.
-federate.set_time_padding( 2.0 )
+federate.set_time_padding( 1.0 )
+
+# This federate also has the Pacing role. Set the Trick software frame time.
+trick.exec_set_software_frame( 0.250 )
 
 # Setup Time Management parameters.
 federate.set_time_regulating( True )
 federate.set_time_constrained( True )
-
-
-#--------------------------------------------------------------------------
-# Set up CTE time line.
-#--------------------------------------------------------------------------
-# By setting this we are specifying the use of Common Timing Equipment (CTE)
-# for controlling the Mode Transitions for all federates using CTE.
-#THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::CTETimelineBase' )
 
 
 #---------------------------------------------

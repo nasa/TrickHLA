@@ -1,6 +1,6 @@
 /*!
+@ingroup Sine
 @file models/sine/src/SineConditional.cpp
-@ingroup TrickHLAModel
 @brief Implements the Conditional API to conditionally send attributes.
 
 @copyright Copyright 2023 United States Government as represented by the

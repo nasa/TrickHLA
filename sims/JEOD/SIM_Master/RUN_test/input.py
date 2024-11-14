@@ -26,10 +26,10 @@ def print_usage_message( ):
 
    print(' ')
    print('TrickHLA SpaceFOM JEOD Master Simulation Command Line Configuration Options:')
-   print('  -h -help         : Print this help message.')
-   print('  -stop [time]     : Time to stop simulation, default is 10.0 seconds.')
-   print('  -nostop          : Set no stop time on simulation.')
-   print('  -verbose [on|off]: on: Show verbose messages (Default), off: disable messages.')
+   print('  -h --help         : Print this help message.')
+   print('  --stop [time]     : Time to stop simulation, default is 10.0 seconds.')
+   print('  --nostop          : Set no stop time on simulation.')
+   print('  --verbose [on|off]: on: Show verbose messages (Default), off: disable messages.')
    print(' ')
 
    trick.exec_terminate_with_return( -1,
@@ -54,21 +54,21 @@ def parse_command_line( ) :
    index = 2
    while (index < argc) :
       
-      if (str(argv[index]) == '-stop') :
+      if (str(argv[index]) == '--stop') :
          index = index + 1
          if (index < argc) :
             run_duration = float(str(argv[index]))
          else :
-            print('ERROR: Missing -stop [time] argument.')
+            print('ERROR: Missing --stop [time] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '-nostop') :
+      elif (str(argv[index]) == '--nostop') :
          run_duration = None
          
-      elif ((str(argv[index]) == '-h') | (str(argv[index]) == '-help')) :
+      elif ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')) :
          print_usage = True
       
-      elif (str(argv[index]) == '-verbose') :
+      elif (str(argv[index]) == '--verbose') :
          index = index + 1
          if (index < argc) :
             if (str(argv[index]) == 'on') :
@@ -76,10 +76,10 @@ def parse_command_line( ) :
             elif (str(argv[index]) == 'off') :
                verbose = False
             else :
-               print('ERROR: Unknown -verbose argument: ' + str(argv[index]))
+               print('ERROR: Unknown --verbose argument: ' + str(argv[index]))
                print_usage = True
          else :
-            print('ERROR: Missing -verbose [on|off] argument.')
+            print('ERROR: Missing --verbose [on|off] argument.')
             print_usage = True
       
       elif (str(argv[index]) == '-d') :
@@ -192,8 +192,8 @@ federate.set_RRFP_role( False )  # This is NOT the Root Reference Frame Publishe
 #--------------------------------------------------------------------------
 # Add in known required federates.
 #--------------------------------------------------------------------------
-federate.add_known_fededrate( True, str(federate.federate.name) )
-federate.add_known_fededrate( True, 'JEODRefFrames' )
+federate.add_known_federate( True, str(federate.federate.name) )
+federate.add_known_federate( True, 'JEODRefFrames' )
 
 #--------------------------------------------------------------------------
 # Configure the CRC.
@@ -201,7 +201,7 @@ federate.add_known_fededrate( True, 'JEODRefFrames' )
 # Pitch specific local settings designator:
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 #THLA.federate.local_settings = 'crcHost = 10.8.0.161\n crcPort = 8989'
-# Mak specific local settings designator, which is anything from the rid.mtl file:
+# MAK specific local settings designator, which is anything from the rid.mtl file:
 #THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
 
 #--------------------------------------------------------------------------

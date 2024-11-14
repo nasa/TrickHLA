@@ -56,9 +56,19 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Conditional.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Int64BaseTime.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Utilities.hh"
+
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+// HLA include files.
+#include RTI1516_HEADER
+#pragma GCC diagnostic pop
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
@@ -108,7 +118,7 @@ Attribute::~Attribute()
 {
    if ( buffer != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( buffer ) ) ) {
-         send_hs( stderr, "Attribute::~Attribute():%d ERROR deleting Trick Memory for 'buffer'%c",
+         send_hs( stderr, "Attribute::~Attribute():%d WARNING failed to delete Trick Memory for 'buffer'%c",
                   __LINE__, THLA_NEWLINE );
       }
       buffer          = NULL;
@@ -268,7 +278,7 @@ void Attribute::initialize(
                    << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                    << trick_name << "' must use either the ENCODING_BIG_ENDIAN, "
-                   << "ENCODING_LITTLE_ENDIAN, ENCODING_BOOLEAN, ENCODING_NO_ENCODING, or "
+                   << "ENCODING_LITTLE_ENDIAN, ENCODING_BOOLEAN, ENCODING_NONE, or "
                    << "ENCODING_UNKNOWN value for the 'rti_encoding' when the "
                    << "attribute represents a 'bool' type. Please check your input "
                    << "or modified-data files to make sure the value for the 'rti_"
@@ -291,7 +301,7 @@ void Attribute::initialize(
                    << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                    << trick_name << "' must use either the ENCODING_BIG_ENDIAN,"
-                   << " ENCODING_LITTLE_ENDIAN, ENCODING_NO_ENCODING, ENCODING_UNICODE_STRING,"
+                   << " ENCODING_LITTLE_ENDIAN, ENCODING_NONE, ENCODING_UNICODE_STRING,"
                    << " ENCODING_OPAQUE_DATA, or ENCODING_UNKNOWN value for the"
                    << " 'rti_encoding' when the attribute represents a 'char' or"
                    << " 'unsigned char' type. Please check  your input or"
@@ -354,7 +364,7 @@ void Attribute::initialize(
                    << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                    << trick_name << "' must use either the ENCODING_LOGICAL_TIME, "
-                   << "ENCODING_BIG_ENDIAN, ENCODING_LITTLE_ENDIAN, ENCODING_NO_ENCODING, or "
+                   << "ENCODING_BIG_ENDIAN, ENCODING_LITTLE_ENDIAN, ENCODING_NONE, or "
                    << "ENCODING_UNKNOWN value for the 'rti_encoding' when the "
                    << "attribute represents a primitive type. Please check your "
                    << "input or modified-data files to make sure the value for the "
@@ -377,7 +387,7 @@ void Attribute::initialize(
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
                    << trick_name << "' must use either the ENCODING_C_STRING, "
                    << "ENCODING_UNICODE_STRING, ENCODING_ASCII_STRING, ENCODING_OPAQUE_DATA, "
-                   << "ENCODING_NO_ENCODING, or ENCODING_UNKNOWN value for the "
+                   << "ENCODING_NONE, or ENCODING_UNKNOWN value for the "
                    << "'rti_encoding' when the attribute represents a String type "
                    << "(i.e. char *). Please check your input or modified-data "
                    << "files to make sure the value for the 'rti_encoding' is "
@@ -385,13 +395,13 @@ void Attribute::initialize(
             DebugHandler::terminate_with_message( errmsg.str() );
          }
 
-         // Only support an array of characters (i.e. char *) for ENCODING_NO_ENCODING.
+         // Only support an array of characters (i.e. char *) for ENCODING_NONE.
          if ( ( rti_encoding == ENCODING_NONE ) && ( ref2->attr->num_index != 0 ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::initialize():" << __LINE__
                    << " ERROR: FOM Object Attribute '"
                    << obj_FOM_name << "'->'" << FOM_name << "' with Trick name '"
-                   << trick_name << "' and 'rti_encoding' of ENCODING_NO_ENCODING must"
+                   << trick_name << "' and 'rti_encoding' of ENCODING_NONE must"
                    << " represent a one-dimensional array of characters (i.e."
                    << " 'char *'). Please check your input or modified-data"
                    << " files to make sure the value for the 'rti_encoding' is"
@@ -690,7 +700,7 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
       }
       case ENCODING_NONE: {
          // The byte counts must match between the received attribute and
-         // the Trick simulation variable for ENCODING_NO_ENCODING since this
+         // the Trick simulation variable for ENCODING_NONE since this
          // RTI encoding only supports a fixed length array of characters.
          if ( attr_size != expected_byte_count ) {
             ostringstream errmsg;
@@ -699,7 +709,7 @@ bool Attribute::extract_data(             // RETURN: -- True if data successfull
                    << trick_name << "', the received FOM data size (" << attr_size
                    << " bytes) != Expected Trick simulation variable memory size ("
                    << expected_byte_count << " bytes) for the rti_encoding of"
-                   << " ENCODING_NO_ENCODING. The ENCODING_NO_ENCODING only supports a fixed"
+                   << " ENCODING_NONE. The ENCODING_NONE only supports a fixed"
                    << " length array of characters. Make sure your simulation"
                    << " variable is the same size and type as what is defined in the"
                    << " FOM. If you are using Lag Compensation one possible cause of"
@@ -1582,7 +1592,7 @@ void Attribute::decode_logical_time() // RETURN: -- None.
          break;
       }
       case TRICK_SHORT: {
-         short  *s_dest = static_cast< short  *>( ref2->address );
+         short  *s_dest = static_cast< short * >( ref2->address );
          int64_t value  = logical_time / Int64BaseTime::get_base_time_multiplier();
          s_dest[0]      = ( value > SHRT_MAX ) ? SHRT_MAX : (short)value;
          break;
@@ -1594,7 +1604,7 @@ void Attribute::decode_logical_time() // RETURN: -- None.
          break;
       }
       case TRICK_INTEGER: {
-         int    *i_dest = static_cast< int    *>( ref2->address );
+         int    *i_dest = static_cast< int * >( ref2->address );
          int64_t value  = logical_time / Int64BaseTime::get_base_time_multiplier();
          i_dest[0]      = ( value > INT_MAX ) ? INT_MAX : value;
          break;
@@ -1606,7 +1616,7 @@ void Attribute::decode_logical_time() // RETURN: -- None.
          break;
       }
       case TRICK_LONG: {
-         long   *l_dest = static_cast< long   *>( ref2->address );
+         long   *l_dest = static_cast< long * >( ref2->address );
          int64_t value  = logical_time / Int64BaseTime::get_base_time_multiplier();
          l_dest[0]      = ( value > LONG_MAX ) ? LONG_MAX : (long)value;
          break;
@@ -1802,7 +1812,7 @@ size %d, will use the data buffer size instead.%c",
                ref2->address = static_cast< char * >( TMM_resize_array_1d_a(
                   static_cast< char * >( ref2->address ),
                   ( ( decoded_length > 0 ) ? decoded_length : 1 ) ) );
-               output        = static_cast< unsigned char        *>( ref2->address );
+               output        = static_cast< unsigned char * >( ref2->address );
             }
          } else {
             // Allocate memory for the output array.
@@ -1810,7 +1820,7 @@ size %d, will use the data buffer size instead.%c",
             // workaround the memory manager problem use a size of 1 in
             // the allocation.
             ref2->address = static_cast< char * >( TMM_declare_var_1d( "char", ( ( decoded_length > 0 ) ? decoded_length : 1 ) ) );
-            output        = static_cast< unsigned char        *>( ref2->address );
+            output        = static_cast< unsigned char * >( ref2->address );
          }
       }
 
@@ -2244,7 +2254,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
             for ( size_t i = 0; i < num_items; ++i ) {
 
                // Determine the length of the "char *" for the given array index.
-               s                 = *( static_cast< char                 **>( ref2->address ) + i );
+               s                 = *( static_cast< char ** >( ref2->address ) + i );
                int    trick_size = ( s != NULL ) ? get_size( s ) : 0;
                size_t length     = ( trick_size >= 0 ) ? trick_size : 0;
 
@@ -2323,7 +2333,7 @@ void Attribute::encode_string_to_buffer() // RETURN: -- None.
          if ( byte_count != size ) {
             ostringstream errmsg;
             errmsg << "Attribute::encode_string_to_buffer():" << __LINE__
-                   << " ERROR: For ENCODING_NO_ENCODING, Attribute '" << FOM_name
+                   << " ERROR: For ENCODING_NONE, Attribute '" << FOM_name
                    << "' with Trick name '" << trick_name << "', actual data size"
                    << " (" << byte_count << ") != expected Trick simulation variable"
                    << " size (" << size << ")!" << THLA_ENDL;
@@ -3178,7 +3188,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
          if ( output == NULL ) {
             ostringstream errmsg;
             errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
-                   << " ERROR: For ENCODING_NO_ENCODING, Attribute '" << FOM_name
+                   << " ERROR: For ENCODING_NONE, Attribute '" << FOM_name
                    << "' with Trick name '" << trick_name << "' is NULL!" << THLA_ENDL;
             DebugHandler::terminate_with_message( errmsg.str() );
          }
@@ -3188,7 +3198,7 @@ length %d > data buffer size %d, will use the data buffer size instead.%c",
          if ( size != get_size( output ) ) {
             ostringstream errmsg;
             errmsg << "Attribute::decode_string_from_buffer():" << __LINE__
-                   << " ERROR: For ENCODING_NO_ENCODING, Attribute '" << FOM_name
+                   << " ERROR: For ENCODING_NONE, Attribute '" << FOM_name
                    << "' with Trick name '" << trick_name << "', received data"
                    << " size (" << size << ") != Trick simulation variable size ("
                    << get_size( output ) << ")!" << THLA_ENDL;
@@ -3335,8 +3345,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_SHORT: {
-            short const *s_src  = static_cast< short const  *>( src );
-            short       *s_dest = static_cast< short       *>( dest );
+            short const *s_src  = static_cast< short const * >( src );
+            short       *s_dest = static_cast< short * >( dest );
             if ( length == 1 ) {
                s_dest[0] = Utilities::byteswap_short( s_src[0] );
             } else {
@@ -3347,8 +3357,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_UNSIGNED_SHORT: {
-            unsigned short const *us_src  = static_cast< unsigned short const  *>( src );
-            unsigned short       *us_dest = static_cast< unsigned short       *>( dest );
+            unsigned short const *us_src  = static_cast< unsigned short const * >( src );
+            unsigned short       *us_dest = static_cast< unsigned short * >( dest );
             if ( length == 1 ) {
                us_dest[0] = Utilities::byteswap_unsigned_short( us_src[0] );
             } else {
@@ -3359,8 +3369,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_INTEGER: {
-            int const *i_src  = static_cast< int const  *>( src );
-            int       *i_dest = static_cast< int       *>( dest );
+            int const *i_src  = static_cast< int const * >( src );
+            int       *i_dest = static_cast< int * >( dest );
             if ( length == 1 ) {
                i_dest[0] = Utilities::byteswap_int( i_src[0] );
             } else {
@@ -3371,8 +3381,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_UNSIGNED_INTEGER: {
-            unsigned int const *ui_src  = static_cast< unsigned int const  *>( src );
-            unsigned int       *ui_dest = static_cast< unsigned int       *>( dest );
+            unsigned int const *ui_src  = static_cast< unsigned int const * >( src );
+            unsigned int       *ui_dest = static_cast< unsigned int * >( dest );
             if ( length == 1 ) {
                ui_dest[0] = Utilities::byteswap_unsigned_int( ui_src[0] );
             } else {
@@ -3383,8 +3393,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_LONG: {
-            long const *l_src  = static_cast< long const  *>( src );
-            long       *l_dest = static_cast< long       *>( dest );
+            long const *l_src  = static_cast< long const * >( src );
+            long       *l_dest = static_cast< long * >( dest );
             if ( length == 1 ) {
                l_dest[0] = Utilities::byteswap_long( l_src[0] );
             } else {
@@ -3395,8 +3405,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_UNSIGNED_LONG: {
-            unsigned long const *ul_src  = static_cast< unsigned long const  *>( src );
-            unsigned long       *ul_dest = static_cast< unsigned long       *>( dest );
+            unsigned long const *ul_src  = static_cast< unsigned long const * >( src );
+            unsigned long       *ul_dest = static_cast< unsigned long * >( dest );
             if ( length == 1 ) {
                ul_dest[0] = Utilities::byteswap_unsigned_long( ul_src[0] );
             } else {
@@ -3407,8 +3417,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_LONG_LONG: {
-            long long const *ll_src  = static_cast< long long const  *>( src );
-            long long       *ll_dest = static_cast< long long       *>( dest );
+            long long const *ll_src  = static_cast< long long const * >( src );
+            long long       *ll_dest = static_cast< long long * >( dest );
             if ( length == 1 ) {
                ll_dest[0] = Utilities::byteswap_long_long( ll_src[0] );
             } else {
@@ -3419,8 +3429,8 @@ void Attribute::byteswap_buffer_copy( // RETURN: -- None.
             break;
          }
          case TRICK_UNSIGNED_LONG_LONG: {
-            unsigned long long const *ull_src  = static_cast< unsigned long long const  *>( src );
-            unsigned long long       *ull_dest = static_cast< unsigned long long       *>( dest );
+            unsigned long long const *ull_src  = static_cast< unsigned long long const * >( src );
+            unsigned long long       *ull_dest = static_cast< unsigned long long * >( dest );
             if ( length == 1 ) {
                ull_dest[0] = Utilities::byteswap_unsigned_long_long( ull_src[0] );
             } else {
@@ -3492,7 +3502,7 @@ bool Attribute::is_supported_attribute_type() const // RETURN: -- True if suppor
                   || ( rti_encoding == ENCODING_NONE ) );
       }
       case TRICK_STRING: {
-         // Only support an 1-D array of characters (char *) for ENCODING_NO_ENCODING.
+         // Only support an 1-D array of characters (char *) for ENCODING_NONE.
          if ( ( rti_encoding == ENCODING_NONE ) && ( ref2->attr->num_index != 0 ) ) {
             return false;
          }

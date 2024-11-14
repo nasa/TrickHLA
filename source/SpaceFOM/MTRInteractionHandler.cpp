@@ -61,6 +61,15 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/MTRInteractionHandler.hh"
 #include "SpaceFOM/Types.hh"
 
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+// HLA include files.
+#include RTI1516_HEADER
+#pragma GCC diagnostic pop
+
 using namespace std;
 using namespace SpaceFOM;
 using namespace TrickHLA;
@@ -90,7 +99,7 @@ MTRInteractionHandler::~MTRInteractionHandler() // RETURN: -- None.
 {
    if ( this->name != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-         send_hs( stderr, "SpaceFOM::MTRInteractionHandler::~MTRInteractionHandler():%d ERROR deleting Trick Memory for 'this->name'%c",
+         send_hs( stderr, "SpaceFOM::MTRInteractionHandler::~MTRInteractionHandler():%d WARNING failed to delete Trick Memory for 'this->name'%c",
                   __LINE__, THLA_NEWLINE );
       }
       this->name = NULL;
@@ -107,7 +116,7 @@ void MTRInteractionHandler::set_name(
    if ( this->name != NULL ) {
       if ( trick_MM->is_alloced( this->name ) ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-            send_hs( stderr, "SpaceFOM::MTRInteractionHandler::set_name():%d ERROR deleting Trick Memory for 'this->name'%c",
+            send_hs( stderr, "SpaceFOM::MTRInteractionHandler::set_name():%d WARNING failed to delete Trick Memory for 'this->name'%c",
                      __LINE__, THLA_NEWLINE );
          }
       }
@@ -139,11 +148,11 @@ void MTRInteractionHandler::send_interaction(
    mtr_mode_int = mtr_enum_to_int16( mode_request );
 
    // Create a User Supplied Tag based off the name in this example.
-   RTI1516_USERDATA user_supplied_tag;
+   RTI1516_USERDATA rti_user_supplied_tag;
    if ( name != NULL ) {
-      user_supplied_tag = RTI1516_USERDATA( name, strlen( name ) );
+      rti_user_supplied_tag = RTI1516_USERDATA( name, strlen( name ) );
    } else {
-      user_supplied_tag = RTI1516_USERDATA( 0, 0 );
+      rti_user_supplied_tag = RTI1516_USERDATA( 0, 0 );
    }
 
    // Get the current time line values.
@@ -156,19 +165,19 @@ void MTRInteractionHandler::send_interaction(
 
    // Notify the parent interaction handler to send the interaction using
    // Receive Order (RO).
-   bool was_sent = this->InteractionHandler::send_interaction( user_supplied_tag );
+   bool was_sent = this->InteractionHandler::send_interaction( rti_user_supplied_tag );
 
    if ( was_sent ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
 
-         string user_supplied_tag_string;
-         StringUtilities::to_string( user_supplied_tag_string, user_supplied_tag );
+         string rti_user_supplied_tag_string;
+         StringUtilities::to_string( rti_user_supplied_tag_string, rti_user_supplied_tag );
 
          cout << "++++SENDING++++ MTRInteractionHandler::send_interaction("
               << "Receive Order):" << __LINE__ << endl
               << "  name: '" << ( ( name != NULL ) ? name : "NULL" ) << "'" << endl
-              << "  user-supplied-tag: '" << user_supplied_tag_string << "'" << endl
-              << "  user-supplied-tag-size: " << user_supplied_tag.size() << endl
+              << "  user-supplied-tag: '" << rti_user_supplied_tag_string << "'" << endl
+              << "  user-supplied-tag-size: " << rti_user_supplied_tag.size() << endl
               << "  mode request: " << mtr_enum_to_string( mtr_mode ) << endl
               << "  Scenario time: " << scenario_time << endl
               << "  Simulation time: " << sim_time << endl;

@@ -1,6 +1,6 @@
 /*!
+@ingroup Sine
 @file models/sine/src/SineInteractionHandler.cpp
-@ingroup TrickHLAModel
 @brief This class handles the HLA interactions for the sine wave simulation.
 
 @copyright Copyright 2020 United States Government as represented by the
@@ -97,7 +97,7 @@ void SineInteractionHandler::send_sine_interaction(
 
    if ( message != NULL ) {
       if ( trick_MM->delete_var( static_cast< void * >( message ) ) ) {
-         send_hs( stderr, "TrickHLAModel::SineInteractionHandler::send_sine_interaction():%d ERROR deleting Trick Memory for 'message'%c",
+         send_hs( stderr, "TrickHLAModel::SineInteractionHandler::send_sine_interaction():%d WARNING failed to delete Trick Memory for 'message'%c",
                   __LINE__, THLA_NEWLINE );
       }
    }

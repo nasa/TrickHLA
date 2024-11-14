@@ -48,6 +48,7 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <iostream>
+#include <map>
 #include <sstream>
 #include <string>
 
@@ -63,7 +64,17 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/MutexLock.hh"
 #include "TrickHLA/MutexProtection.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/Types.hh"
+
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+// HLA include files.
+#include RTI1516_HEADER
+#pragma GCC diagnostic pop
 
 using namespace std;
 using namespace RTI1516_NAMESPACE;
@@ -185,8 +196,10 @@ void FedAmb::synchronizationPointRegistrationSucceeded(
    wstring const &label ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::synchronizationPointRegistrationSucceeded():%d Label:'%ls'%c",
-               __LINE__, label.c_str(), THLA_NEWLINE );
+      string label_str;
+      StringUtilities::to_string( label_str, label );
+      send_hs( stdout, "FedAmb::synchronizationPointRegistrationSucceeded():%d Label:'%s'%c",
+               __LINE__, label_str.c_str(), THLA_NEWLINE );
    }
 
    federate->sync_point_registration_succeeded( label );
@@ -197,13 +210,12 @@ void FedAmb::synchronizationPointRegistrationFailed(
    RTI1516_NAMESPACE::SynchronizationPointFailureReason reason ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::synchronizationPointRegistrationFailed():%d Label:'%ls'%c",
-               __LINE__, label.c_str(), THLA_NEWLINE );
+      string label_str;
+      StringUtilities::to_string( label_str, label );
+      send_hs( stdout, "FedAmb::synchronizationPointRegistrationFailed():%d Label:'%s'%c",
+               __LINE__, label_str.c_str(), THLA_NEWLINE );
    }
-
-   bool not_unique = ( reason == RTI1516_NAMESPACE::SYNCHRONIZATION_POINT_LABEL_NOT_UNIQUE );
-
-   federate->sync_point_registration_failed( label, not_unique );
+   federate->sync_point_registration_failed( label, reason );
 }
 
 void FedAmb::announceSynchronizationPoint(
@@ -211,8 +223,10 @@ void FedAmb::announceSynchronizationPoint(
    RTI1516_NAMESPACE::VariableLengthData const &theUserSuppliedTag ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::announceSynchronizationPoint():%d Label:'%ls'%c",
-               __LINE__, label.c_str(), THLA_NEWLINE );
+      string label_str;
+      StringUtilities::to_string( label_str, label );
+      send_hs( stdout, "FedAmb::announceSynchronizationPoint():%d Label:'%s'%c",
+               __LINE__, label_str.c_str(), THLA_NEWLINE );
    }
    federate->announce_sync_point( label, theUserSuppliedTag );
 }
@@ -222,8 +236,10 @@ void FedAmb::federationSynchronized(
    RTI1516_NAMESPACE::FederateHandleSet const &failedToSyncSet ) throw( RTI1516_NAMESPACE::FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      send_hs( stdout, "FedAmb::federationSynchronized():%d Label:'%ls'%c",
-               __LINE__, label.c_str(), THLA_NEWLINE );
+      string label_str;
+      StringUtilities::to_string( label_str, label );
+      send_hs( stdout, "FedAmb::federationSynchronized():%d Label:'%s'%c",
+               __LINE__, label_str.c_str(), THLA_NEWLINE );
    }
 
    federate->federation_synchronized( label );
@@ -236,9 +252,11 @@ void FedAmb::federationSynchronized(
          strIds += id;
          strIds += " ";
       }
+      string label_str;
+      StringUtilities::to_string( label_str, label );
       send_hs( stderr, "FedAmb::federationSynchronized():%d ERROR: These \
-federate handles failed to synchronize on sync-point '%ls': %s%c",
-               __LINE__, label.c_str(), strIds.c_str(), THLA_NEWLINE );
+federate handles failed to synchronize on sync-point '%s': %s%c",
+               __LINE__, label_str.c_str(), strIds.c_str(), THLA_NEWLINE );
    }
 }
 

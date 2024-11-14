@@ -35,6 +35,13 @@
 ##include "sine/include/SineInteractionHandler.hh"
 ##include "sine/include/SineObjectDeleted.hh"
 
+
+//==========================================================================
+// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+//==========================================================================
+#include "THLA.sm"
+
+
 //=============================================================================
 // SIM_OBJECT: AnalyticSineSimObj
 // Sim-object for an analytic solution of a sine wave.
@@ -42,22 +49,23 @@
 class AnalyticSineSimObj : public Trick::SimObject {
 
  public:
-   TrickHLAModel::SineData truth_data;
-   TrickHLAModel::SineData sim_data;
+   TrickHLAModel::SineData               truth_data;
+   TrickHLAModel::SineData               sim_data;
 
    TrickHLAModel::SineOwnershipHandler   ownership_handler;
 
    TrickHLAModel::SinePacking            packing;
 
    TrickHLAModel::SineLagCompensation    lag_compensation;
-   
+
    TrickHLAModel::SineConditional        conditional;
 
    TrickHLAModel::SineObjectDeleted      obj_deleted;
-   
+
    TrickHLAModel::SineInteractionHandler interaction_handler;
 
-   AnalyticSineSimObj() {
+   AnalyticSineSimObj()
+   {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
       //
@@ -95,20 +103,21 @@ class AnalyticSineSimObj : public Trick::SimObject {
 class PropagatedSineSimObj : public Trick::SimObject {
 
  public:
-   TrickHLAModel::SineData truth_data;
-   TrickHLAModel::SineData sim_data;
+   TrickHLAModel::SineData               truth_data;
+   TrickHLAModel::SineData               sim_data;
 
    TrickHLAModel::SinePacking            packing;
 
    TrickHLAModel::SineLagCompensation    lag_compensation;
-   
+
    TrickHLAModel::SineConditional        conditional;
 
    TrickHLAModel::SineObjectDeleted      obj_deleted;
-   
+
    TrickHLAModel::SineInteractionHandler interaction_handler;
 
-   PropagatedSineSimObj() {
+   PropagatedSineSimObj()
+   {
       // Note: Make sure to initialize the data before it gets sent in
       // the THLA_INIT simulation object.
       //
@@ -152,17 +161,6 @@ class PropagatedSineSimObj : public Trick::SimObject {
 
 
 //=============================================================================
-// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
-//=============================================================================
-#include "THLA.sm"
-THLASimObject THLA( THLA_DATA_CYCLE_TIME,
-                    THLA_INTERACTION_CYCLE_TIME,
-                    P_HLA_EARLY,
-                    P_HLA_INIT,
-                    P_HLA_LATE );
-
-
-//=============================================================================
 // SIM_OBJECT: THLA_INIT  (TrickHLA multi-phase initialization sim-object)
 //=============================================================================
 class THLAInitSimObj : public Trick::SimObject {
@@ -173,22 +171,22 @@ class THLAInitSimObj : public Trick::SimObject {
    TrickHLA::ScenarioTimeline scenario_timeline;
 
    THLAInitSimObj( TrickHLA::Manager  & thla_mngr,
-                   TrickHLA::Federate & thla_fed ) 
+                   TrickHLA::Federate & thla_fed )
       : scenario_timeline( sim_timeline, 0.0, 0.0 ),
         thla_manager( thla_mngr ),
         thla_federate( thla_fed )
    {
       //------------------------------------------------------------------------
-      // NOTE: Initialization phase numbers must be greater than P60 
+      // NOTE: Initialization phase numbers must be greater than P60
       // (i.e. P_HLA_INIT) so that the initialization jobs run after the
       // P60 THLA.manager->initialize() job.
       //------------------------------------------------------------------------
-
+/*
       // Data will only be sent if this federate owns it.
-      P100 ("initialization") thla_manager.send_init_data( "A-side-Federate.Test" );
+      P100 ("initialization") thla_manager.send_init_data( "A-side-Federate.Sine" );
 
       // Data will only be received if it is remotely owned by another federate.
-      P100 ("initialization") thla_manager.receive_init_data( "A-side-Federate.Test" );
+      P100 ("initialization") thla_manager.receive_init_data( "A-side-Federate.Sine" );
 
       // Do some processing here if needed...
 
@@ -197,19 +195,19 @@ class THLAInitSimObj : public Trick::SimObject {
 
 
       // Data will only be sent if this federate owns it.
-      P200 ("initialization") thla_manager.send_init_data( "P-side-Federate.Test" );
+      P200 ("initialization") thla_manager.send_init_data( "P-side-Federate.Sine" );
 
       // Data will only be received if it is remotely owned by another federate.
-      P200 ("initialization") thla_manager.receive_init_data( "P-side-Federate.Test" );
+      P200 ("initialization") thla_manager.receive_init_data( "P-side-Federate.Sine" );
 
       // Do some processing here if needed...
 
       // Wait for all federates to reach this sync-point.
       P200 ("initialization") thla_manager.wait_for_init_sync_point( "Phase2" );
-
+*/
 
       // Alternative method: Send and receive all the initialization data.
-/*
+
       // Send all the initialization data.
       P100 ("initialization") thla_manager.send_init_data();
 
@@ -220,7 +218,6 @@ class THLAInitSimObj : public Trick::SimObject {
 
       // Clear remaining initialization sync-points.
       P100 ("initialization") thla_manager.clear_init_sync_points();
-*/
    }
 
  private:
@@ -236,10 +233,22 @@ class THLAInitSimObj : public Trick::SimObject {
 };
 
 
+//==========================================================================
+// SimObject instantiations.
+//==========================================================================
+// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+THLASimObject THLA( THLA_DATA_CYCLE_TIME,
+                    THLA_INTERACTION_CYCLE_TIME,
+                    P_HLA_EARLY,
+                    P_HLA_INIT,
+                    P_HLA_LATE );
+
+// Simulation specific multiphase initialization SimObject instance.
+THLAInitSimObj THLA_INIT( THLA.manager, THLA.federate );
+
 // Instantiations
 AnalyticSineSimObj   A;
 PropagatedSineSimObj P;
-THLAInitSimObj       THLA_INIT( THLA.manager, THLA.federate );
 
 
 // Define the simulation objects that have routines involved in integration.

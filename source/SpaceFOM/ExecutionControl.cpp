@@ -49,7 +49,9 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/Executive.hh"
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.hh"
+#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 
 // HLA include files.
@@ -65,6 +67,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Manager.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/SleepTimeout.hh"
+#include "TrickHLA/StandardsSupport.hh"
 #include "TrickHLA/StringUtilities.hh"
 #include "TrickHLA/Types.hh"
 
@@ -74,23 +77,21 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/RefFrameBase.hh"
 #include "SpaceFOM/Types.hh"
 
+// C++11 deprecated dynamic exception specifications for a function so we need
+// to silence the warnings coming from the IEEE 1516 declared functions.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated"
+// HLA include files.
+#include RTI1516_HEADER
+#pragma GCC diagnostic pop
+
 // SpaceFOM file level declarations.
 namespace SpaceFOM
 {
 
 // ExecutionControl type string.
 std::string const ExecutionControl::type = "SpaceFOM";
-
-// SISO Space Reference FOM initialization HLA synchronization-points.
-static std::wstring const INIT_STARTED_SYNC_POINT          = L"initialization_started";
-static std::wstring const INIT_COMPLETED_SYNC_POINT        = L"initialization_completed";
-static std::wstring const OBJECTS_DISCOVERED_SYNC_POINT    = L"objects_discovered";
-static std::wstring const ROOT_FRAME_DISCOVERED_SYNC_POINT = L"root_frame_discovered";
-
-// SISO SpaceFOM Mode Transition Request (MTR) synchronization-points.
-static std::wstring const MTR_RUN_SYNC_POINT      = L"mtr_run";
-static std::wstring const MTR_FREEZE_SYNC_POINT   = L"mtr_freeze";
-static std::wstring const MTR_SHUTDOWN_SYNC_POINT = L"mtr_shutdown";
 
 } // namespace SpaceFOM
 
@@ -116,7 +117,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 ExecutionControl::ExecutionControl()
-   : mandatory_late_joiner( false ),
+   : designated_late_joiner( false ),
      pacing( false ),
      root_frame_pub( false ),
      root_ref_frame( NULL ),
@@ -133,7 +134,7 @@ ExecutionControl::ExecutionControl()
 ExecutionControl::ExecutionControl(
    ExecutionConfiguration &exec_config )
    : TrickHLA::ExecutionControlBase( exec_config ),
-     mandatory_late_joiner( false ),
+     designated_late_joiner( false ),
      pacing( false ),
      root_frame_pub( false ),
      root_ref_frame( NULL ),
@@ -180,18 +181,136 @@ void ExecutionControl::initialize()
       federate->time_constrained = true;
    }
 
-   // The software frame is set from the ExecutionControl Least Common Time Step.
-   // For the Master federate the Trick simulation software frame must
-   // match the Least Common Time Step (LCTS).
-   if ( is_master() ) {
-      double software_frame_time = Int64BaseTime::to_seconds( least_common_time_step );
-      exec_set_software_frame( software_frame_time );
+   // For SpaceFOM, we must freeze on the Trick software frame boundary because
+   // of the relationship between the Least Common Time Step (LCTS) and the
+   // Trick software frame where the following must be true:
+   // (LCTS >= software_frame) && (LCTS % software_frame == 0)
+   exec_set_freeze_on_frame_boundary( true );
+
+   // Make sure the Trick software frame is valid for all federates.
+   double software_frame_sec = exec_get_software_frame();
+   if ( software_frame_sec <= 0.0 ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
+             << " ERROR: Unexpected invalid Trick software frame time ("
+             << setprecision( 18 ) << software_frame_sec << " seconds)! The"
+             << " Trick software frame time must be greater than zero. You can"
+             << " set the LTrick software frame in the input.py file by using"
+             << " this directive with an appropriate time:" << THLA_ENDL
+             << "   trick.exec_set_software_frame( t )" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   // The Trick software frame is set from the ExecutionControl Least Common
+   // Time Step (LCTS). For the Master federate the Trick simulation software
+   // frame must be equal to or less than the LCTS and the LCTS must be an
+   // integer multiple of the Trick software frame.
+   if ( this->is_master() ) {
+
+      // The following relationships between the Trick real-time software-frame,
+      // Least Common Time Step (LCTS), and lookahead times must hold True:
+      // ( software_frame > 0 ) && ( LCTS > 0 ) && ( lookahead >= 0 )
+      // ( LCTS >= software_frame) && ( LCTS % software_frame == 0 )
+      // ( LCTS >= lookahead ) && ( LCTS % lookahead == 0 )
+
+      // Do a bounds check on the Least Common Time Step.
+      if ( least_common_time_step <= 0 ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
+                << " ERROR: ExCO least_common_time_step (" << least_common_time_step
+                << " " << Int64BaseTime::get_units() << ") must be greater than zero!"
+                << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      int64_t fed_lookahead = ( get_federate() != NULL ) ? get_federate()->get_lookahead().get_base_time() : 0;
+      if ( least_common_time_step < fed_lookahead ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
+                << " ERROR: ExCO least_common_time_step ("
+                << least_common_time_step << " " << Int64BaseTime::get_units()
+                << ") is not greater than or equal to this federates lookahead time ("
+                << fed_lookahead << " " << Int64BaseTime::get_units()
+                << ")!" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      // Our federates lookahead time must be an integer multiple of the
+      // least common time step time and only if the lookahead is not zero.
+      if ( ( fed_lookahead != 0 ) && ( ( least_common_time_step % fed_lookahead ) != 0 ) ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
+                << " ERROR: ExCO least_common_time_step ("
+                << least_common_time_step << " " << Int64BaseTime::get_units()
+                << ") is not an integer multiple of the federate lookahead time ("
+                << fed_lookahead << " " << Int64BaseTime::get_units()
+                << ")!" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+
+      // Since only at this point the Master federate has a known LCTS so do
+      // the additional LCTS and software frame checks here.
+      int64_t software_frame_base_time = Int64BaseTime::to_base_time( software_frame_sec );
+      if ( least_common_time_step < software_frame_base_time ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
+                << " ERROR: ExCO Least Common Time Step (LCTS) ("
+                << least_common_time_step << " " << Int64BaseTime::get_units()
+                << ") cannot be less than the Trick software frame ("
+                << software_frame_base_time << " " << Int64BaseTime::get_units()
+                << ")! The valid relationship between the LCTS and Trick software"
+                << " frame is the LCTS must be greater or equal to the Trick"
+                << " software frame and the LCTS must be an integer multiple of"
+                << " the Trick software frame (i.e. LCTS % software_frame == 0)!"
+                << " You can set the LCTS and Trick software frame in the input.py"
+                << " file by using these directives with appropriate times:" << THLA_ENDL
+                << "   federate.set_least_common_time_step( t )" << THLA_ENDL
+                << "   trick.exec_set_software_frame( t )" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      if ( ( least_common_time_step % software_frame_base_time ) != 0 ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
+                << " ERROR: ExCO Least Common Time Step (LCTS) ("
+                << least_common_time_step << " " << Int64BaseTime::get_units()
+                << ") is not an integer multiple of the Trick software frame ("
+                << software_frame_base_time << " " << Int64BaseTime::get_units()
+                << ")! The valid relationship between the LCTS and Trick software"
+                << " frame is the LCTS must be greater or equal to the Trick"
+                << " software frame and the LCTS must be an integer multiple of"
+                << " the Trick software frame (i.e. LCTS % software_frame == 0)!"
+                << " You can set the LCTS and Trick software frame in the input.py"
+                << " file by using these directives with appropriate times:" << THLA_ENDL
+                << "   federate.set_least_common_time_step( t )" << THLA_ENDL
+                << "   trick.exec_set_software_frame( t )" << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+
+      // Verify the time padding is valid.
+      if ( get_time_padding() < 0.0 ) {
+         ostringstream errmsg;
+         errmsg << "TrickHLA::ExecutionControl::initialize():" << __LINE__
+                << " ERROR: Time padding value ("
+                << setprecision( 18 ) << get_time_padding()
+                << " seconds) must be greater than or equal to zero!"
+                << THLA_NEWLINE;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+      int64_t padding_base_time = Int64BaseTime::to_base_time( get_time_padding() );
+      if ( ( padding_base_time % least_common_time_step ) != 0 ) {
+         ostringstream errmsg;
+         errmsg << "TrickHLA::ExecutionControl::initialize():" << __LINE__
+                << " ERROR: Time padding value ("
+                << setprecision( 18 ) << get_time_padding()
+                << " seconds) must be an integer multiple of the Least Common Time Step ("
+                << this->least_common_time_step << " " << Int64BaseTime::get_units()
+                << ")!" << THLA_NEWLINE;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
    }
 
    // Add the Mode Transition Request synchronization points.
-   add_sync_point( SpaceFOM::MTR_RUN_SYNC_POINT );
-   add_sync_point( SpaceFOM::MTR_FREEZE_SYNC_POINT );
-   add_sync_point( SpaceFOM::MTR_SHUTDOWN_SYNC_POINT );
+   add_sync_point( SpaceFOM::MTR_RUN_SYNC_POINT, SpaceFOM::SPACEFOM_SYNC_POINT_LIST );
+   add_sync_point( SpaceFOM::MTR_FREEZE_SYNC_POINT, SpaceFOM::SPACEFOM_SYNC_POINT_LIST );
+   add_sync_point( SpaceFOM::MTR_SHUTDOWN_SYNC_POINT, SpaceFOM::SPACEFOM_SYNC_POINT_LIST );
 
    // Make sure we initialize the base class.
    TrickHLA::ExecutionControlBase::initialize();
@@ -207,15 +326,15 @@ void ExecutionControl::initialize()
       this->use_preset_master = true;
    }
 
-   // A mandatory late joiner federate cannot be the preset Master.
-   if ( is_mandatory_late_joiner() && is_master() ) {
+   // A designated late joiner federate cannot be the preset Master.
+   if ( is_designated_late_joiner() && is_master() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
-             << " ERROR: This federate is configured as both a mandatory late"
+             << " ERROR: This federate is configured as both a designated late"
              << " joiner and as the preset Master, which is not allowed. Check"
              << " your input.py file or Modified data files to make sure this"
              << " federate is not configured as both the preset master and a"
-             << " mandatory late joiner." << THLA_ENDL;
+             << " designated late joiner." << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -223,8 +342,8 @@ void ExecutionControl::initialize()
       if ( is_master() ) {
          send_hs( stdout, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM THE PRESET MASTER%c",
                   __LINE__, THLA_NEWLINE );
-      } else if ( is_mandatory_late_joiner() ) {
-         send_hs( stdout, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM A MANDATORY LATE JOINER AND NOT THE PRESET MASTER%c",
+      } else if ( is_designated_late_joiner() ) {
+         send_hs( stdout, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM A DESIGNATED LATE JOINER AND NOT THE PRESET MASTER%c",
                   __LINE__, THLA_NEWLINE );
       } else {
          send_hs( stdout, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM NOT THE PRESET MASTER%c",
@@ -399,101 +518,81 @@ void ExecutionControl::setup_interaction_RTI_handles()
 void ExecutionControl::add_initialization_sync_points()
 {
    // Add the initialization synchronization points used for startup regulation.
-   add_sync_point( SpaceFOM::OBJECTS_DISCOVERED_SYNC_POINT );
-   add_sync_point( SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT );
-   add_sync_point( SpaceFOM::INIT_COMPLETED_SYNC_POINT );
-   add_sync_point( SpaceFOM::INIT_STARTED_SYNC_POINT );
+   add_sync_point( SpaceFOM::OBJECTS_DISCOVERED_SYNC_POINT, SpaceFOM::SPACEFOM_SYNC_POINT_LIST );
+   add_sync_point( SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT, SpaceFOM::SPACEFOM_SYNC_POINT_LIST );
+   add_sync_point( SpaceFOM::INIT_COMPLETED_SYNC_POINT, SpaceFOM::SPACEFOM_SYNC_POINT_LIST );
+   add_sync_point( SpaceFOM::INIT_STARTED_SYNC_POINT, SpaceFOM::SPACEFOM_SYNC_POINT_LIST );
 
    // Add the multiphase initialization synchronization points.
    add_multiphase_init_sync_points();
 }
 
-void ExecutionControl::announce_sync_point(
-   RTI1516_NAMESPACE::RTIambassador &rti_ambassador,
-   wstring const                    &label,
-   RTI1516_USERDATA const           &user_supplied_tag )
+void ExecutionControl::sync_point_announced(
+   wstring const          &label,
+   RTI1516_USERDATA const &user_supplied_tag )
 {
-   if ( is_mandatory_late_joiner()
-        && ( ( get_current_execution_control_mode() == EXECUTION_CONTROL_INITIALIZING )
-             || ( get_current_execution_control_mode() == EXECUTION_CONTROL_UNINITIALIZED ) ) ) {
-      // Achieve sync-points for a mandatory late joiner during initialization.
+   // Unrecognized sync-point label if not seen before or if it is in the
+   // Unknown list (i.e. seen before but still unrecognized).
+   if ( !contains_sync_point( label ) || contains_sync_point( label, TrickHLA::UNKNOWN_SYNC_POINT_LIST ) ) {
 
-      // Check for the 'initialization_complete' synchronization point.
-      if ( label.compare( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) == 0 ) {
-
-         // Mark initialization sync-point as existing/announced.
-         if ( mark_announced( label ) ) {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-               send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM mandatory late jointer, announced sync-point:'%ls'%c",
-                        __LINE__, label.c_str(), THLA_NEWLINE );
-            }
-         }
-
-         // NOTE: We do recognize that the 'initialization_completed'
-         // synchronization point is announced but should never achieve it!
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM initialization process completed!%c",
-                     __LINE__, THLA_NEWLINE );
-         }
-         // Mark the initialization process as completed.
-         this->init_complete_sp_exists = true;
-
-      } else if ( label.compare( SpaceFOM::MTR_SHUTDOWN_SYNC_POINT ) == 0 ) {
-
-         // Mark MTR shutdown sync-point as announced but don't achieve it
-         // because we need to shutdown.
-         if ( mark_announced( label ) ) {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-               send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM mandatory late jointer, announced sync-point:'%ls'%c",
-                        __LINE__, label.c_str(), THLA_NEWLINE );
-            }
-         }
-
-      } else {
-
-         // Achieve all other sync-points.
-         if ( achieve_sync_point( rti_ambassador, label ) ) {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-               send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM mandatory late jointer, achieved sync-point:'%ls'%c",
-                        __LINE__, label.c_str(), THLA_NEWLINE );
-            }
-         }
-      }
-   } else if ( contains( label ) ) {
-      // Known synchronization point.
-
-      // Mark initialization sync-point as existing/announced.
-      if ( mark_announced( label ) ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM synchronization point announced:'%ls'%c",
-                     __LINE__, label.c_str(), THLA_NEWLINE );
-         }
-      }
-
-      // Check for the 'initialization_complete' synchronization point.
-      if ( label.compare( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) == 0 ) {
-
-         // NOTE: We do recognize that the 'initialization_completed'
-         // synchronization point is announced but should never achieve it!
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d SpaceFOM initialization process completed!%c",
-                     __LINE__, THLA_NEWLINE );
-         }
-         // Mark the initialization process as completed.
-         this->init_complete_sp_exists = true;
-      }
-
-   } else {
-      // By default, achieve unrecognized synchronization points.
-
+      // Unrecognized sync-point. Achieve all unrecognized sync-points.
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "SpaceFOM::ExecutionControl::announce_sync_point():%d Unrecognized synchronization point:'%ls', which will be achieved.%c",
-                  __LINE__, label.c_str(), THLA_NEWLINE );
+         string label_str;
+         StringUtilities::to_string( label_str, label );
+         send_hs( stdout, "=========================== SpaceFOM::ExecutionControl::sync_point_announced():%d Unrecognized sync-point:'%s', which will be achieved.%c",
+                  __LINE__, label_str.c_str(), THLA_NEWLINE );
       }
 
-      // Unknown synchronization point so achieve it but don't wait for the
+      // Achieve all Unrecognized sync-points but don't wait for the
       // federation to be synchronized on it.
-      achieve_sync_point( rti_ambassador, label );
+      if ( !achieve_sync_point( label, user_supplied_tag ) ) {
+         string label_str;
+         StringUtilities::to_string( label_str, label );
+         send_hs( stderr, "SpaceFOM::ExecutionControl::sync_point_announced():%d Failed to achieve unrecognized sync-point:'%s'.%c",
+                  __LINE__, label_str.c_str(), THLA_NEWLINE );
+      }
+   } else {
+      // Known sync-point that is already in one of the sync-point lists.
+
+      // Mark known sync-point as announced.
+      if ( mark_sync_point_announced( label, user_supplied_tag ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+            string label_str;
+            StringUtilities::to_string( label_str, label );
+            send_hs( stdout, "SpaceFOM::ExecutionControl::sync_point_announced():%d Marked sync-point announced:'%s'%c",
+                     __LINE__, label_str.c_str(), THLA_NEWLINE );
+         }
+      } else {
+         string label_str;
+         StringUtilities::to_string( label_str, label );
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionControl::sync_point_announced():" << __LINE__
+                << " ERROR: Failed to mark sync-point '" << label_str
+                << "' as announced." << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+
+      // For a designated late joiner, achieve sync-points during initialization.
+      if ( is_designated_late_joiner()
+           && ( ( get_current_execution_control_mode() == EXECUTION_CONTROL_INITIALIZING )
+                || ( get_current_execution_control_mode() == EXECUTION_CONTROL_UNINITIALIZED ) ) ) {
+
+         // Achieve all sync-points during initialization except for
+         // init-completed and mtr-shutdown.
+         if ( ( label.compare( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) != 0 )
+              && ( label.compare( SpaceFOM::MTR_SHUTDOWN_SYNC_POINT ) != 0 ) ) {
+
+            // Achieve all other sync-points.
+            if ( achieve_sync_point( label, user_supplied_tag ) ) {
+               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+                  string label_str;
+                  StringUtilities::to_string( label_str, label );
+                  send_hs( stdout, "SpaceFOM::ExecutionControl::sync_point_announced():%d SpaceFOM designated late joiner, achieved sync-point:'%s'%c",
+                           __LINE__, label_str.c_str(), THLA_NEWLINE );
+               }
+            }
+         }
+      }
    }
 }
 
@@ -646,21 +745,17 @@ void ExecutionControl::role_determination_process()
 
       // Register the initialization synchronization points used to control
       // the SpaceFOM startup process. Section 7.2 Figure 7-4.
-      register_sync_point( *( federate->get_RTI_ambassador() ),
-                           federate->get_joined_federate_handles(),
-                           SpaceFOM::INIT_STARTED_SYNC_POINT );
-      register_sync_point( *( federate->get_RTI_ambassador() ),
-                           federate->get_joined_federate_handles(),
-                           SpaceFOM::OBJECTS_DISCOVERED_SYNC_POINT );
-      register_sync_point( *( federate->get_RTI_ambassador() ),
-                           federate->get_joined_federate_handles(),
-                           SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT );
+      register_sync_point( SpaceFOM::INIT_STARTED_SYNC_POINT,
+                           federate->get_joined_federate_handles() );
+      register_sync_point( SpaceFOM::OBJECTS_DISCOVERED_SYNC_POINT,
+                           federate->get_joined_federate_handles() );
+      register_sync_point( SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT,
+                           federate->get_joined_federate_handles() );
 
       // Register all the user defined multiphase initialization
       // synchronization points just for the joined federates.
-      multiphase_init_sync_pnt_list.register_all_sync_points( *( federate->get_RTI_ambassador() ),
-                                                              federate->get_joined_federate_handles() );
-
+      register_all_sync_points( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST,
+                                federate->get_joined_federate_handles() );
    } else {
 
       //
@@ -688,15 +783,15 @@ void ExecutionControl::role_determination_process()
 
          // We are not a late joiner if we received the announce for the
          // 'initialization started' sync-point. (Nominal Initialization)
-         SyncPnt *sp = get_sync_point( SpaceFOM::INIT_STARTED_SYNC_POINT );
-         if ( ( sp != NULL ) && sp->is_announced() ) {
+
+         if ( is_sync_point_announced( SpaceFOM::INIT_STARTED_SYNC_POINT ) ) {
             this->late_joiner            = false;
             this->late_joiner_determined = true;
          }
 
-         // Determine if the Initialization Complete sync-point exists, which
-         // means at this point we are a late joining federate.
-         if ( ( !late_joiner_determined ) && does_init_complete_sync_point_exist() ) {
+         // Determine if the Initialization Complete sync-point is announded,
+         // which means at this point we are a late joining federate.
+         if ( ( !late_joiner_determined ) && is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ) {
             this->late_joiner            = true;
             this->late_joiner_determined = true;
          }
@@ -748,38 +843,37 @@ void ExecutionControl::role_determination_process()
          if ( print_summary ) {
             print_summary = false;
 
+            string init_completed_label;
+            StringUtilities::to_string( init_completed_label, SpaceFOM::INIT_COMPLETED_SYNC_POINT );
             ostringstream message;
             message << "SpaceFOM::ExecutionControl::role_determination_process():"
-                    << __LINE__;
-
-            if ( sp != NULL ) {
-               string sp_status;
-               StringUtilities::to_string( sp_status, sp->to_wstring() );
-               message << " Init-Started sync-point status: " << sp_status;
-            } else {
-               message << " Init-Started sync-point status: NULL";
-            }
-            message << ", Init-Complete sync-point exists: "
-                    << ( does_init_complete_sync_point_exist() ? "Yes" : "No" );
-
-            message << ", Still waiting..." << THLA_ENDL;
+                    << __LINE__ << " Sync-point status: "
+                    << to_string( SpaceFOM::INIT_STARTED_SYNC_POINT )
+                    << ", '" << init_completed_label << "' sync-point announced: "
+                    << ( is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ? "Yes" : "No" )
+                    << ", Still waiting..." << THLA_ENDL;
             send_hs( stdout, message.str().c_str() );
          }
       }
 
-      // Print out diagnostic message if appropriate.
+      // Display a status message for the role of this federate.
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          if ( this->late_joiner ) {
-            if ( is_mandatory_late_joiner() ) {
-               send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is a Mandatory Late Joining Federate.%c",
+            if ( is_designated_late_joiner() ) {
+               send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is a Designated Late Joining Federate.%c",
                         __LINE__, THLA_NEWLINE );
             } else {
                send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is a Late Joining Federate.%c",
                         __LINE__, THLA_NEWLINE );
             }
          } else {
-            send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is an Early Joining Federate.%c",
-                     __LINE__, THLA_NEWLINE );
+            if ( is_designated_late_joiner() ) {
+               send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is an Early Joining Federate configured to be a Designated Late Joining Federate.%c",
+                        __LINE__, THLA_NEWLINE );
+            } else {
+               send_hs( stdout, "SpaceFOM::ExecutionControl::role_determination_process():%d This is an Early Joining Federate.%c",
+                        __LINE__, THLA_NEWLINE );
+            }
          }
       }
 
@@ -802,9 +896,10 @@ void ExecutionControl::early_joiner_hla_init_process()
    // and "startup" sync-points to be registered (i.e. announced).
    // Note: Do NOT register the INIT_COMPLETED_SYNC_POINT synchronization
    // point yet. That marks the successful completion of initialization.
-   wait_for_sync_point_announcement( federate, SpaceFOM::INIT_STARTED_SYNC_POINT );
-   wait_for_sync_point_announcement( federate, SpaceFOM::OBJECTS_DISCOVERED_SYNC_POINT );
-   wait_for_sync_point_announcement( federate, SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT );
+
+   wait_for_sync_point_announced( SpaceFOM::INIT_STARTED_SYNC_POINT );
+   wait_for_sync_point_announced( SpaceFOM::OBJECTS_DISCOVERED_SYNC_POINT );
+   wait_for_sync_point_announced( SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT );
 
    // Setup all the RTI handles for the objects, attributes and interaction
    // parameters.
@@ -853,34 +948,32 @@ void ExecutionControl::early_joiner_hla_init_process()
    // Initialization data could be sent before a federate has even
    // discovered an object instance resulting in the federate not receiving
    // the expected data.
-   achieve_and_wait_for_synchronization( *( federate->get_RTI_ambassador() ),
-                                         federate,
-                                         SpaceFOM::OBJECTS_DISCOVERED_SYNC_POINT );
+   achieve_sync_point_and_wait_for_synchronization( SpaceFOM::OBJECTS_DISCOVERED_SYNC_POINT );
 }
 
 /*!
-@details This routine implements the SpaceFOM Mandatory Late Joiner
+@details This routine implements the SpaceFOM Designated Late Joiner
 initialization process that achieves any unknown announced sync-points and
 waits for the initialization_complete sync-point to be announced.
 
 @job_class{initialization}
 */
-void ExecutionControl::mandatory_late_joiner_init_process()
+void ExecutionControl::designated_late_joiner_init_process()
 {
-   // Master Federate can not be a mandatory late joiner or if are not
-   // configured by the user to be a mandatory late joiner just return.
-   if ( is_master() || !is_mandatory_late_joiner() ) {
+   // Master Federate can not be a designated late joiner or if are not
+   // configured by the user to be a designated late joiner just return.
+   if ( is_master() || !is_designated_late_joiner() ) {
       return;
    }
 
-   // Override settings because this is a mandatory late joiner.
+   // Override settings because this is a designated late joiner.
    this->late_joiner            = true;
    this->late_joiner_determined = true;
 
    // Print out diagnostic message if appropriate.
-   if ( !does_init_complete_sync_point_exist() ) {
+   if ( !is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         send_hs( stdout, "SpaceFOM::ExecutionControl::mandatory_late_joiner_init_process():%d Waiting...%c",
+         send_hs( stdout, "SpaceFOM::ExecutionControl::designated_late_joiner_init_process():%d Waiting...%c",
                   __LINE__, THLA_NEWLINE );
       }
    }
@@ -891,7 +984,7 @@ void ExecutionControl::mandatory_late_joiner_init_process()
    SleepTimeout sleep_timer;
 
    // Block until we see the intitialization_complete sync-point announced.
-   while ( !does_init_complete_sync_point_exist() ) {
+   while ( !is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ) {
 
       // Check for shutdown.
       federate->check_for_shutdown_with_termination();
@@ -901,7 +994,7 @@ void ExecutionControl::mandatory_late_joiner_init_process()
 
       // Periodically check if we are still an execution member and
       // display sync-point status if needed as well.
-      if ( !does_init_complete_sync_point_exist() ) { // cppcheck-suppress [knownConditionTrueFalse]
+      if ( !is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ) {
 
          // To be more efficient, we get the time once and share it.
          wallclock_time = sleep_timer.time();
@@ -916,7 +1009,7 @@ void ExecutionControl::mandatory_late_joiner_init_process()
             // Check that we maintain federation membership.
             if ( !federate->is_execution_member() ) {
                ostringstream errmsg;
-               errmsg << "SpaceFOM::ExecutionControl::mandatory_late_joiner_init_process():" << __LINE__
+               errmsg << "SpaceFOM::ExecutionControl::designated_late_joiner_init_process():" << __LINE__
                       << " ERROR: Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
@@ -936,11 +1029,13 @@ void ExecutionControl::mandatory_late_joiner_init_process()
       if ( print_summary ) {
          print_summary = false;
 
+         string sp_label;
+         StringUtilities::to_string( sp_label, SpaceFOM::INIT_COMPLETED_SYNC_POINT );
          ostringstream message;
-         message << "SpaceFOM::ExecutionControl::mandatory_late_joiner_init_process():"
+         message << "SpaceFOM::ExecutionControl::designated_late_joiner_init_process():"
                  << __LINE__
-                 << " Init-Complete sync-point exists:"
-                 << ( does_init_complete_sync_point_exist() ? "Yes" : "No, Still waiting..." )
+                 << " Sync-point '" << sp_label << "' announced:"
+                 << ( is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ? "Yes" : "No, Still waiting..." )
                  << THLA_ENDL;
          send_hs( stdout, message.str().c_str() );
       }
@@ -948,7 +1043,7 @@ void ExecutionControl::mandatory_late_joiner_init_process()
 
    // Print out diagnostic message if appropriate.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      send_hs( stdout, "SpaceFOM::ExecutionControl::mandatory_late_joiner_init_process():%d This is a Mandatory Late Joining Federate.%c",
+      send_hs( stdout, "SpaceFOM::ExecutionControl::designated_late_joiner_init_process():%d This is a Designated Late Joining Federate.%c",
                __LINE__, THLA_NEWLINE );
    }
 }
@@ -1141,7 +1236,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
       }
 
       // The Master federate padding time must be an integer multiple of the LCTS.
-      int64_t MPT = Int64BaseTime::to_base_time( this->time_padding );
+      int64_t MPT = Int64BaseTime::to_base_time( get_time_padding() );
       if ( ( LCTS <= 0 ) || ( MPT % LCTS ) != 0 ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
@@ -1212,11 +1307,11 @@ void ExecutionControl::pre_multi_phase_init_processes()
       // Perform Late Joiner HLA initialization process.
       late_joiner_hla_init_process();
 
-   } else if ( !is_master() && is_mandatory_late_joiner() ) {
-      // Early Joiner but this federate is a mandatory late jointer.
+   } else if ( !is_master() && is_designated_late_joiner() ) {
+      // Early Joiner but this federate is a designated late joiner.
 
       // Wait for initialization_complete sync-point and achieve unknown sync-points.
-      mandatory_late_joiner_init_process();
+      designated_late_joiner_init_process();
 
       // Perform Late Joiner HLA initialization process.
       late_joiner_hla_init_process();
@@ -1340,9 +1435,7 @@ void ExecutionControl::post_multi_phase_init_processes()
 
       // Achieve the "initialization_started" sync-point and wait for the
       // federation to be synchronized on it.
-      achieve_and_wait_for_synchronization( *( federate->get_RTI_ambassador() ),
-                                            federate,
-                                            SpaceFOM::INIT_STARTED_SYNC_POINT );
+      achieve_sync_point_and_wait_for_synchronization( SpaceFOM::INIT_STARTED_SYNC_POINT );
 
       // Check to see if this is the Master federate.
       if ( is_master() ) {
@@ -1351,8 +1444,7 @@ void ExecutionControl::post_multi_phase_init_processes()
          federate->restore_orig_MOM_auto_provide_setting();
 
          // Let the late joining federates know that we have completed initialization.
-         register_sync_point( *( federate->get_RTI_ambassador() ),
-                              SpaceFOM::INIT_COMPLETED_SYNC_POINT );
+         register_sync_point( SpaceFOM::INIT_COMPLETED_SYNC_POINT );
 
          // Check for an initialization mode transition request.
          if ( check_mode_transition_request() ) {
@@ -1592,7 +1684,7 @@ void ExecutionControl::set_next_execution_control_mode(
          ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time ); // immediate
          ExCO->set_next_mode_cte_time( get_cte_time() );
          if ( ExCO->get_next_mode_cte_time() > -std::numeric_limits< double >::max() ) {
-            ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + this->time_padding ); // Some time in the future.
+            ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + get_time_padding() ); // Some time in the future.
          }
          break;
 
@@ -1603,11 +1695,11 @@ void ExecutionControl::set_next_execution_control_mode(
          ExCO->set_next_execution_mode( EXECUTION_MODE_FREEZE );
 
          // Set the next mode times.
-         this->next_mode_scenario_time = get_scenario_time() + this->time_padding; // Some time in the future.
+         this->next_mode_scenario_time = this->get_scenario_time() + get_time_padding(); // Some time in the future.
          ExCO->set_next_mode_scenario_time( this->next_mode_scenario_time );
          ExCO->set_next_mode_cte_time( get_cte_time() );
          if ( ExCO->get_next_mode_cte_time() > -std::numeric_limits< double >::max() ) {
-            ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + this->time_padding ); // Some time in the future.
+            ExCO->set_next_mode_cte_time( ExCO->get_next_mode_cte_time() + get_time_padding() ); // Some time in the future.
          }
 
          // Set the ExecutionControl freeze times.
@@ -1772,7 +1864,7 @@ bool ExecutionControl::process_mode_transition_request()
          // Tell Trick to shutdown sometime in the future.
          // The SpaceFOM ExecutionControl shutdown transition will be made from
          // the TrickHLA::Federate::shutdown() job.
-         the_exec->stop( the_exec->get_sim_time() + this->time_padding );
+         the_exec->stop( the_exec->get_sim_time() + get_time_padding() );
          return true;
          break;
 
@@ -2150,9 +2242,7 @@ void ExecutionControl::wait_for_root_frame_discovered_synchronization()
                __LINE__, THLA_NEWLINE );
    }
 
-   achieve_and_wait_for_synchronization( *( federate->get_RTI_ambassador() ),
-                                         federate,
-                                         SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT );
+   achieve_sync_point_and_wait_for_synchronization( SpaceFOM::ROOT_FRAME_DISCOVERED_SYNC_POINT );
 }
 
 void ExecutionControl::send_mode_transition_interaction(
@@ -2172,19 +2262,13 @@ void ExecutionControl::send_MTR_interaction(
 
 bool ExecutionControl::run_mode_transition()
 {
-   RTIambassador          *RTI_amb  = federate->get_RTI_ambassador();
-   ExecutionConfiguration *ExCO     = get_execution_configuration();
-   SyncPnt                *sync_pnt = NULL;
-
    // Register the 'mtr_run' sync-point.
    if ( is_master() ) {
-      sync_pnt = register_sync_point( *RTI_amb, SpaceFOM::MTR_RUN_SYNC_POINT );
-   } else {
-      sync_pnt = get_sync_point( SpaceFOM::MTR_RUN_SYNC_POINT );
+      register_sync_point( SpaceFOM::MTR_RUN_SYNC_POINT );
    }
 
    // Make sure that we have a valid sync-point.
-   if ( sync_pnt == NULL ) {
+   if ( !contains_sync_point( SpaceFOM::MTR_RUN_SYNC_POINT ) ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::run_mode_transition():" << __LINE__
              << " ERROR: The 'mtr_run' sync-point was not found!" << THLA_ENDL;
@@ -2192,15 +2276,13 @@ bool ExecutionControl::run_mode_transition()
    } else {
 
       // Wait for 'mtr_run' sync-point announce.
-      wait_for_sync_point_announcement( federate, sync_pnt );
+      wait_for_sync_point_announced( SpaceFOM::MTR_RUN_SYNC_POINT );
 
-      // Achieve the 'mtr-run' sync-point.
-      achieve_sync_point( *RTI_amb, sync_pnt );
-
-      // Wait for 'mtr_run' sync-point synchronization.
-      wait_for_synchronization( federate, sync_pnt );
+      // Achieve the 'mtr-run' sync-point and wait for synchronization.
+      achieve_sync_point_and_wait_for_synchronization( SpaceFOM::MTR_RUN_SYNC_POINT );
 
       // Set the current execution mode to running.
+      ExecutionConfiguration *ExCO   = get_execution_configuration();
       current_execution_control_mode = EXECUTION_CONTROL_RUNNING;
       ExCO->set_current_execution_mode( EXECUTION_MODE_RUNNING );
 
@@ -2261,36 +2343,28 @@ void ExecutionControl::freeze_mode_announce()
 {
    // Register the 'mtr_freeze' sync-point.
    if ( is_master() ) {
-      register_sync_point( *( federate->get_RTI_ambassador() ), SpaceFOM::MTR_FREEZE_SYNC_POINT );
+      register_sync_point( SpaceFOM::MTR_FREEZE_SYNC_POINT );
    }
 }
 
 bool ExecutionControl::freeze_mode_transition()
 {
-   // Get the 'mtr_freeze' sync-point.
-   TrickHLA::SyncPnt *sync_pnt = get_sync_point( SpaceFOM::MTR_FREEZE_SYNC_POINT );
-
    // Make sure that we have a valid sync-point.
-   if ( sync_pnt == NULL ) {
+   if ( !contains_sync_point( SpaceFOM::MTR_FREEZE_SYNC_POINT ) ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::freeze_mode_transition():" << __LINE__
              << " ERROR: The 'mtr_freeze' sync-point was not found!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    } else {
 
-      RTIambassador          *RTI_amb = federate->get_RTI_ambassador();
-      ExecutionConfiguration *ExCO    = get_execution_configuration();
-
       // Wait for 'mtr_freeze' sync-point announce.
-      wait_for_sync_point_announcement( federate, sync_pnt );
+      wait_for_sync_point_announced( SpaceFOM::MTR_FREEZE_SYNC_POINT );
 
-      // Achieve the 'mtr_freeze' sync-point.
-      achieve_sync_point( *RTI_amb, sync_pnt );
-
-      // Wait for 'mtr_freeze' sync-point synchronization.
-      wait_for_synchronization( federate, sync_pnt );
+      // Achieve the 'mtr_freeze' sync-point and wait for synchronization.
+      achieve_sync_point_and_wait_for_synchronization( SpaceFOM::MTR_FREEZE_SYNC_POINT );
 
       // Set the current execution mode to freeze.
+      ExecutionConfiguration *ExCO         = get_execution_configuration();
       this->current_execution_control_mode = EXECUTION_CONTROL_FREEZE;
       ExCO->set_current_execution_mode( EXECUTION_MODE_FREEZE );
    }
@@ -2341,11 +2415,11 @@ void ExecutionControl::shutdown_mode_transition()
                __LINE__, THLA_NEWLINE );
    }
    // Register the 'mtr_shutdown' sync-point.
-   register_sync_point( *( federate->get_RTI_ambassador() ), SpaceFOM::MTR_SHUTDOWN_SYNC_POINT );
+   register_sync_point( SpaceFOM::MTR_SHUTDOWN_SYNC_POINT );
 
    // Wait for the 'mtr_shutdown' announcement to make sure it goes through
    // before we shutdown.
-   wait_for_sync_point_announcement( federate, SpaceFOM::MTR_SHUTDOWN_SYNC_POINT );
+   wait_for_sync_point_announced( SpaceFOM::MTR_SHUTDOWN_SYNC_POINT );
 }
 
 /*!
@@ -2417,7 +2491,7 @@ bool ExecutionControl::check_for_shutdown_with_termination()
 void ExecutionControl::freeze_init()
 {
    // Mark the freeze as announced.
-   federate->set_freeze_announced( true );
+   set_freeze_announced( true );
 
    // Transition to freeze. However, we need to check for special case
    // where this is a late joining federate in initialization. For that
@@ -2463,8 +2537,8 @@ void ExecutionControl::enter_freeze()
           << "   Trick-exec-command:" << exec_cmd_str
           << THLA_NEWLINE
           << "   Sim-freeze-time:" << get_simulation_freeze_time()
-          << "   Freeze-announced:" << ( federate->get_freeze_announced() ? "Yes" : "No" )
-          << "   Freeze-pending:" << ( federate->get_freeze_pending() ? "Yes" : "No" )
+          << "   Freeze-announced:" << ( is_freeze_announced() ? "Yes" : "No" )
+          << "   Freeze-pending:" << ( is_freeze_pending() ? "Yes" : "No" )
           << THLA_NEWLINE;
       send_hs( stdout, msg.str().c_str() );
    }
@@ -2506,7 +2580,7 @@ void ExecutionControl::enter_freeze()
          // NOTE: This will prevent the SimControl panel freeze button
          // from working.
          // Uncomment the following line if you really want this behavior.
-         // unfreeze();
+         // federate->un_freeze();
 
          return;
       }
@@ -2525,7 +2599,7 @@ void ExecutionControl::enter_freeze()
       freeze_mode_announce();
 
       // Tell Trick to go into freeze at the appointed time.
-      federate->unfreeze();
+      federate->un_freeze();
       the_exec->freeze( get_simulation_freeze_time() );
 
       // NOTE: The actual freeze transition will be done in the
@@ -2534,15 +2608,15 @@ void ExecutionControl::enter_freeze()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       send_hs( stdout, "SpaceFOM::ExecutionControl::enter_freeze():%d Freeze Announced:%s, Freeze Pending:%s%c",
-               __LINE__, ( federate->get_freeze_announced() ? "Yes" : "No" ),
-               ( federate->get_freeze_pending() ? "Yes" : "No" ), THLA_NEWLINE );
+               __LINE__, ( is_freeze_announced() ? "Yes" : "No" ),
+               ( is_freeze_pending() ? "Yes" : "No" ), THLA_NEWLINE );
    }
 }
 
 bool ExecutionControl::check_freeze_exit()
 {
    // If freeze has not been announced, then return false.
-   if ( !federate->get_freeze_announced() ) {
+   if ( !is_freeze_announced() ) {
       return ( false );
    }
 
@@ -2918,27 +2992,25 @@ void ExecutionControl::refresh_least_common_time_step()
 
 void ExecutionControl::set_time_padding( double t )
 {
-   int64_t base_time = Int64BaseTime::to_base_time( t );
-
-   // Need to check that time padding is valid.
-   if ( ( base_time % this->least_common_time_step ) != 0 ) {
+   if ( t < 0.0 ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
-             << " ERROR: Time padding value (" << t
-             << " seconds) must be an integer multiple of the Least Common Time Step ("
-             << this->least_common_time_step << " " << Int64BaseTime::get_units()
-             << ")!" << THLA_NEWLINE;
+      errmsg << "TrickHLA::ExecutionControl::set_time_padding():" << __LINE__
+             << " ERROR: Time padding value (" << setprecision( 18 ) << t
+             << " seconds) must be greater than or equal to zero!"
+             << THLA_NEWLINE;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
+
+   int64_t padding_base_time = Int64BaseTime::to_base_time( t );
 
    // The Master federate padding time must be an integer multiple of 3 or
    // more times the Least Common Time Step (LCTS). This will give commands
    // time to propagate through the system and still have time for mode
    // transitions.
-   if ( base_time < ( 3 * this->least_common_time_step ) ) {
+   if ( padding_base_time < ( 3 * this->least_common_time_step ) ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
-             << " ERROR: Mode transition padding time (" << base_time
+             << " ERROR: Mode transition padding time (" << padding_base_time
              << " " << Int64BaseTime::get_units()
              << ") is not a multiple of 3 or more of the ExCO"
              << " Least Common Time Step (" << this->least_common_time_step
@@ -2947,5 +3019,16 @@ void ExecutionControl::set_time_padding( double t )
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
-   this->time_padding = Int64BaseTime::to_seconds( base_time );
+   // Need to check that time padding is valid.
+   if ( ( padding_base_time % this->least_common_time_step ) != 0 ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
+             << " ERROR: Time padding value (" << setprecision( 18 ) << t
+             << " seconds) must be an integer multiple of the Least Common Time Step ("
+             << this->least_common_time_step << " " << Int64BaseTime::get_units()
+             << ")!" << THLA_NEWLINE;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
+   this->time_padding = Int64BaseTime::to_seconds( padding_base_time );
 }
