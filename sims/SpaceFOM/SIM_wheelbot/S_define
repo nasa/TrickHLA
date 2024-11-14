@@ -20,8 +20,6 @@ LIBRARY DEPENDENCIES:
 //==========================================================================
 #include "sim_objects/default_trick_sys.sm"
 
-
-
 ##include "Vehicle/include/vehicleOne.hh"
 ##include "trick/integrator_c_intf.h"
 
@@ -34,21 +32,22 @@ LIBRARY DEPENDENCIES:
 
 class VehicleSimObject : public Trick::SimObject {
 
-    public:
-    TrickHLAModel::VehicleOne vehicle;
+  public:
+   TrickHLAModel::VehicleOne vehicle;
 
 
-    VehicleSimObject() {
+   VehicleSimObject() {
 
-        ("default_data")     vehicle.default_data() ;
-        ("initialization")   vehicle.state_init() ;
-        (0.10, "scheduled")  vehicle.control();
-        (1.2, "scheduled")  vehicle.add_waypoint_from_stcs();
-        ("derivative")       vehicle.state_deriv() ;
-        ("integration") trick_ret = vehicle.state_integ() ;
-      
-    }
-    private:
+      ("default_data")    vehicle.default_data();
+      ("initialization")  vehicle.state_init();
+      (0.10, "scheduled") vehicle.control();
+      (1.2, "scheduled")  vehicle.add_waypoint_from_stcs();
+      ("derivative")      vehicle.state_deriv() ;
+      ("integration") trick_ret = vehicle.state_integ() ;
+
+   }
+
+  private:
    // Do not allow the implicit copy constructor or assignment operator.
    VehicleSimObject( VehicleSimObject const & rhs );
    VehicleSimObject & operator=( VehicleSimObject const & rhs );
@@ -61,14 +60,15 @@ class VehicleSimObject : public Trick::SimObject {
 // * Note there are also lines to include in the S_overrides.mk file.
 //=============================================================================
 #ifdef HLA
-  #include "THLA_interface.sm"
-  // SimObject used for root reference frame discovery.
+#include "Wheelbot/THLA_interface.sm"
+
+// SimObject used for root reference frame discovery.
 SpaceFOMRefFrameTreeSimObject ref_frame_tree;
 SpaceFOMRefFrameSimObject root_ref_frame( ref_frame_tree.root_frame_data );
 SpaceFOMRefFrameSimObject ref_frame_A( ref_frame_tree.frame_A_data );
 #endif
 
-VehicleSimObject veh ;
+VehicleSimObject veh;
 
 IntegLoop veh_integloop (0.10) veh;
 
