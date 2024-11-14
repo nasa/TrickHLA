@@ -10,9 +10,9 @@
 //==========================================================================
 // Define the HLA phase initialization priorities.
 //==========================================================================
-#define P_HLA_EARLY         1     // HLA early job phase.
-#define P_HLA_INIT          60    // HLA initialization phase.
-#define P_HLA_LATE          65534 // HLA late job phase.
+#define P_HLA_EARLY  1     // HLA early job phase.
+#define P_HLA_INIT   60    // HLA initialization phase.
+#define P_HLA_LATE   65534 // HLA late job phase.
 
 //=============================================================================
 // SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
