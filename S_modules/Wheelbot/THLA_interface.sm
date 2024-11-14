@@ -21,9 +21,11 @@
  using namespace SpaceFOM;
 %}
 
-SpaceFOMSimObject THLA(THLA_DATA_CYCLE_TIME,
+SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
                         THLA_INTERACTION_CYCLE_TIME,
-                        P_HLA_EARLY, P_HLA_INIT, P_HLA_LATE);
+                        P_HLA_EARLY,
+                        P_HLA_INIT,
+                        P_HLA_LATE );
 
 
 //==========================================================================
@@ -35,7 +37,7 @@ class THLAInitSimObject : public Trick::SimObject {
  public:
 
    THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
-                      TrickHLA::Federate & thla_fed   ) 
+                      TrickHLA::Federate & thla_fed ) 
       : thla_manager( thla_mngr ),
         thla_federate( thla_fed )
    {
@@ -86,17 +88,14 @@ class SpaceFOMRefFrameTreeSimObject : public Trick::SimObject {
    RefFrameData root_frame_data;
    RefFrameData frame_A_data;
 
-   SpaceFOMRefFrameTreeSimObject( )
+   SpaceFOMRefFrameTreeSimObject()
    {
    }
 
   private:
-
    // This object is not copyable
    SpaceFOMRefFrameTreeSimObject( SpaceFOMRefFrameTreeSimObject const & );
    SpaceFOMRefFrameTreeSimObject & operator=( SpaceFOMRefFrameTreeSimObject const & );
-
-
 };
 
 
