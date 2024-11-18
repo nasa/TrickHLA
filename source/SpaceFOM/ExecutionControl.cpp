@@ -211,7 +211,7 @@ void ExecutionControl::initialize()
       // Least Common Time Step (LCTS), and lookahead times must hold True:
       // ( software_frame > 0 ) && ( LCTS > 0 ) && ( lookahead >= 0 )
       // ( LCTS >= software_frame) && ( LCTS % software_frame == 0 )
-      // ( LCTS >= lookahead ) && ( LCTS % lookahead == 0 )
+      // ( LCTS >= lookahead ) && ( ( lookahead > 0 ) && ( LCTS % lookahead == 0 ) )
 
       // Do a bounds check on the Least Common Time Step.
       if ( least_common_time_step <= 0 ) {
