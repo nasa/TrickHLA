@@ -209,7 +209,7 @@ void ExecutionControl::initialize()
 
       // The following relationships between the Trick real-time software-frame,
       // Least Common Time Step (LCTS), and lookahead times must hold True and
-      // we advance HLA logical time with a (dt == lookahead) time step:
+      // we advance HLA logical time with a dt time step:
       // ( lookahead > 0 ) && ( dt >= lookahead ) &&
       // ( software_frame > 0 ) && ( LCTS > 0 ) &&
       // ( LCTS >= dt ) && ( LCTS % dt == 0 ) &&
