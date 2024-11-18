@@ -210,15 +210,23 @@ void ExecutionControl::initialize()
       // The following relationships between the Trick real-time software-frame,
       // Least Common Time Step (LCTS), and lookahead times must hold True and
       // we advance HLA logical time with a (dt == lookahead) time step:
-      // ( software_frame > 0 ) && ( LCTS > 0 ) && ( lookahead > 0 )
+      // ( lookahead > 0 ) && ( dt >= lookahead ) &&
+      // ( software_frame > 0 ) && ( LCTS > 0 ) &&
+      // ( LCTS >= dt ) && ( LCTS % dt == 0 ) &&
       // ( LCTS >= software_frame ) && ( LCTS % software_frame == 0 )
-      // ( LCTS >= lookahead ) && ( LCTS % lookahead == 0 )
+      //
+      // For when dt equals lookhead:
+      // ( lookahead > 0 ) && ( dt == lookahead ) &&
+      // ( software_frame > 0 ) && ( LCTS > 0 ) &&
+      // ( LCTS >= lookahead ) && ( LCTS % lookahead == 0 ) &&
+      // ( LCTS >= software_frame ) && ( LCTS % software_frame == 0 )
       //
       // Otherwise, when using zero lookahead (i.e. lookahead == 0) we advance
       // the HLA logical time with a dt time step:
-      // ( software_frame > 0 ) && ( LCTS > 0 ) && ( dt > 0 )
+      // ( lookahead == 0 ) && ( dt > 0 ) &&
+      // ( software_frame > 0 ) && ( LCTS > 0 ) &&
+      // ( LCTS >= dt ) && ( LCTS % dt == 0 ) &&
       // ( LCTS >= software_frame ) && ( LCTS % software_frame == 0 )
-      // ( LCTS >= dt ) && ( LCTS % dt == 0 )
 
       // Do a bounds check on the Least Common Time Step.
       if ( least_common_time_step <= 0 ) {
