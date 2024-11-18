@@ -215,7 +215,7 @@ void ExecutionControl::initialize()
       // ( LCTS >= dt ) && ( LCTS % dt == 0 ) &&
       // ( LCTS >= software_frame ) && ( LCTS % software_frame == 0 )
       //
-      // For when dt equals lookhead:
+      // For when dt equals lookhead we can simplify:
       // ( lookahead > 0 ) && ( dt == lookahead ) &&
       // ( software_frame > 0 ) && ( LCTS > 0 ) &&
       // ( LCTS >= lookahead ) && ( LCTS % lookahead == 0 ) &&
