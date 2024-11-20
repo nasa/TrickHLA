@@ -152,9 +152,8 @@ class Manager
    /*! @brief Perform initialization after a checkpoint restart. */
    void restart_initialization();
 
-   /*! @brief Initialize the HLA delta time step which is the data cycle time.
-    *  @param HLA_cycle_time The HLA delta time step for advancing/cycling HLA time. */
-   void initialize_HLA_cycle_time( double const HLA_cycle_time );
+   /*! @brief Initialize the HLA delta time step which is the data cycle time. */
+   void initialize_HLA_cycle_time();
 
    /*! @brief Verify the user specified object and interaction arrays and counts. */
    void verify_object_and_interaction_arrays();

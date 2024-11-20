@@ -655,6 +655,20 @@ void Federate::restart_initialization()
  */
 void Federate::pre_multiphase_initialization()
 {
+   // The P_INIT ("initialization") federate.initialize_HLA_cycle_time( data_cycle_time );
+   // job should be called right before this one, but verify the HLA cycle time
+   // again to catch the case where a user did not pick up the changes to the
+   // THLABase.sm file.
+   if ( !execution_control->verify_HLA_cycle_time( get_HLA_cycle_time_in_base_time(),
+                                                   get_lookahead_in_base_time() ) ) {
+      ostringstream errmsg;
+      errmsg << "Federate::pre_multiphase_initialization():" << __LINE__
+             << " ERROR: Invalid HLA cycle time ("
+             << setprecision( 18 ) << Int64BaseTime::to_seconds( get_HLA_cycle_time_in_base_time() )
+             << " seconds)!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    // Perform the Execution Control specific pre-multi-phase initialization.
    execution_control->pre_multi_phase_init_processes();
 
@@ -4432,13 +4446,14 @@ void Federate::initialize_HLA_cycle_time(
                                                    get_lookahead_in_base_time() ) ) {
       ostringstream errmsg;
       errmsg << "Federate::initialize_HLA_cycle_time():" << __LINE__
-             << " ERROR: Invalid HLA delta time step cycle time!"
-             << THLA_ENDL;
+             << " ERROR: Invalid HLA cycle time ("
+             << setprecision( 18 ) << delta_time_step
+             << " seconds)!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
    // Initialize the manager with the verified HLA cycle time.
-   manager->initialize_HLA_cycle_time( delta_time_step );
+   manager->initialize_HLA_cycle_time();
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Federate::initialize_HLA_cycle_time():%d cycle-time:%f seconds %c",
