@@ -123,7 +123,6 @@ Manager::Manager()
      interactions_queue(),
      check_interactions_count( 0 ),
      check_interactions( NULL ),
-     job_cycle_base_time( 0LL ),
      rejoining_federate( false ),
      restore_determined( false ),
      restore_federate( false ),
@@ -297,6 +296,17 @@ void Manager::restart_initialization()
 
    // The manager is now initialized.
    this->mgr_initialized = true;
+}
+
+void Manager::initialize_HLA_cycle_time(
+   double const HLA_cycle_time )
+{
+   // Set the core job cycle time now that we know what it is so that the
+   // attribute cyclic ratios can now be calculated for any multi-rate
+   // attributes.
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
+      objects[n].set_core_job_cycle_time( HLA_cycle_time );
+   }
 }
 
 /*! @brief Verify the user specified object and interaction arrays and counts. */
@@ -2242,51 +2252,6 @@ void Manager::provide_attribute_update(
 /*!
  * @job_class{scheduled}
  */
-void Manager::determine_job_cycle_time()
-{
-   if ( this->job_cycle_base_time > 0LL ) {
-      return;
-   }
-
-   // Get the lookahead time.
-   int64_t const lookahead_time_base_time = federate->get_lookahead_in_base_time();
-
-   // Get the cycle time.
-   double const cycle_time   = exec_get_job_cycle( NULL );
-   this->job_cycle_base_time = Int64BaseTime::to_base_time( cycle_time );
-
-   // Verify the job cycle time against the HLA lookahead time.
-   if ( ( this->job_cycle_base_time <= 0LL ) || ( this->job_cycle_base_time < lookahead_time_base_time ) ) {
-      ostringstream errmsg;
-      errmsg << "Manager::determine_job_cycle_time():" << __LINE__
-             << " ERROR: The cycle time for this job is less than the HLA"
-             << " lookahead time! The HLA Lookahead time ("
-             << Int64BaseTime::to_seconds( lookahead_time_base_time )
-             << " seconds) must be less than or equal to the job cycle time ("
-             << cycle_time << " seconds). Make sure the 'lookahead_time' in"
-             << " your input or modified-data file is less than or equal to the"
-             << " 'THLA_DATA_CYCLE_TIME' time specified in the S_define file for"
-             << " the send_cyclic_and_requested_data() and"
-             << " receive_cyclic_data() jobs." << THLA_ENDL;
-      DebugHandler::terminate_with_message( errmsg.str() );
-   }
-
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Manager::determine_job_cycle_time():%d cycle-time:%f seconds%c",
-               __LINE__, cycle_time, THLA_NEWLINE );
-   }
-
-   // Set the core job cycle time now that we know what it is so that the
-   // attribute cyclic ratios can now be calculated for any multi-rate
-   // attributes.
-   for ( unsigned int n = 0; n < this->obj_count; ++n ) {
-      objects[n].set_core_job_cycle_time( cycle_time );
-   }
-}
-
-/*!
- * @job_class{scheduled}
- */
 void Manager::send_cyclic_and_requested_data()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -2300,11 +2265,6 @@ void Manager::send_cyclic_and_requested_data()
    int64_t const lookahead_base_time   = federate->is_zero_lookahead_time()
                                             ? 0LL
                                             : federate->get_lookahead_in_base_time();
-
-   // Determine the main thread cycle time for this job if it is not yet known.
-   if ( this->job_cycle_base_time <= 0LL ) {
-      determine_job_cycle_time();
-   }
 
    // The update_time should be the current granted time plus the data cycle
    // delta time for this job if HLA Time Management is enabled otherwise it
@@ -2327,7 +2287,7 @@ void Manager::send_cyclic_and_requested_data()
    // the case for a late joining federate. The data cycle time (dt) is how
    // often we send and receive data, which may or may not match the lookahead.
    // This is why we prefer to use an updated time of Tupdate = Tgrant + dt.
-   int64_t   dt      = this->job_cycle_base_time;
+   int64_t   dt      = federate->get_HLA_cycle_time_in_base_time();
    int64_t   prev_dt = dt;
    Int64Time update_time( granted_base_time + dt );
 
@@ -2352,7 +2312,7 @@ void Manager::send_cyclic_and_requested_data()
       if ( federate->on_data_cycle_boundary_for_obj( obj_index, sim_time_in_base_time ) ) {
 
          // Get the cyclic data time for the object.
-         dt = federate->get_data_cycle_base_time_for_obj( obj_index, this->job_cycle_base_time );
+         dt = federate->get_data_cycle_base_time_for_obj( obj_index, federate->get_HLA_cycle_time_in_base_time() );
 
          // Reuse the update_time if the data cycle time (dt) is the same.
          if ( dt != prev_dt ) {
