@@ -152,6 +152,10 @@ class Manager
    /*! @brief Perform initialization after a checkpoint restart. */
    void restart_initialization();
 
+   /*! @brief Initialize the HLA delta time step which is the data cycle time.
+    *  @param HLA_cycle_time The HLA delta time step for advancing/cycling HLA time. */
+   void initialize_HLA_cycle_time( double const HLA_cycle_time );
+
    /*! @brief Verify the user specified object and interaction arrays and counts. */
    void verify_object_and_interaction_arrays();
 
@@ -469,8 +473,6 @@ class Manager
    int              check_interactions_count; ///< @trick_units{--} Number of checkpointed interactions
    InteractionItem *check_interactions;       ///< @trick_units{--} checkpoint-able version of interactions_queue
 
-   int64_t job_cycle_base_time; // us Cycle base time for the send_cyclic_and_requested_data and recieve_cyclic_data jobs
-
    bool rejoining_federate; ///< @trick_units{--} Internal flag to indicate if the federate is rejoining the federation.
    bool restore_determined; ///< @trick_io{**} Internal flag to indicate that the restore status has been determined.
    bool restore_federate;   ///< @trick_io{**} Internal flag to indicate if the federate is to be restored
@@ -567,9 +569,6 @@ class Manager
     *  @param theObjectClass RTI Object class type. */
    Object *get_unregistered_remote_object(
       RTI1516_NAMESPACE::ObjectClassHandle const &theObjectClass );
-
-   /*! @brief Determines the job cycle time. */
-   void determine_job_cycle_time();
 
    // Ownership
    /*! @brief Pull ownership from the other federates if the pull ownership

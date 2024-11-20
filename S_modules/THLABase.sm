@@ -102,6 +102,10 @@ class THLABaseSimObject : public Trick::SimObject {
       // Setup the HLA infrastructure.
       P_INIT ("initialization") federate.initialize();
 
+      // Initialze the HLA delta time step, which is the HLA time advancement
+      // and data cycle time.
+      P_INIT ("initialization") federate.initialize_HLA_cycle_time( data_cycle_time );
+
       // This begins the process of standing up the federate in the federation
       // execution. This preforms all the startup steps prior to any
       // multi-phase inializtation process defined by the user. The multi-

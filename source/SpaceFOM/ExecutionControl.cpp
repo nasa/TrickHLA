@@ -3005,6 +3005,101 @@ void ExecutionControl::refresh_least_common_time_step()
    set_least_common_time_step( this->least_common_time_step_seconds );
 }
 
+bool ExecutionControl::verify_HLA_cycle_time(
+   int64_t const HLA_cycle_base_time,
+   int64_t const lookahead_base_time )
+{
+   // The following relationships between the Trick real-time software-frame,
+   // Least Common Time Step (LCTS), and lookahead times must hold True and
+   // we advance HLA logical time with a dt time step (i.e. TAR job cycle time):
+   // ( lookahead > 0 ) && ( dt >= lookahead ) &&
+   // ( software_frame > 0 ) && ( LCTS > 0 ) &&
+   // ( LCTS >= dt ) && ( LCTS % dt == 0 ) &&
+   // ( LCTS >= software_frame ) && ( LCTS % software_frame == 0 )
+   //
+   // Otherwise, when using zero lookahead (i.e. lookahead == 0) we advance
+   // the HLA logical time with a dt time step:
+   // ( lookahead == 0 ) && ( dt > 0 ) &&
+   // ( software_frame > 0 ) && ( LCTS > 0 ) &&
+   // ( LCTS >= dt ) && ( LCTS % dt == 0 ) &&
+   // ( LCTS >= software_frame ) && ( LCTS % software_frame == 0 )
+
+   // Verify the job cycle time against the HLA lookahead time.
+   if ( HLA_cycle_base_time <= 0LL ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionControl::verify_HLA_cycle_time():" << __LINE__
+             << " ERROR: The HLA Time Advance Grant (TAR) cycle time ("
+             << setprecision( 18 ) << Int64BaseTime::to_seconds( HLA_cycle_base_time )
+             << " seconds) cannot be less than or equal to zero!"
+             << " Make sure the 'THLA_DATA_CYCLE_TIME' time specified in the"
+             << " S_define file for the time_advance_request() and"
+             << " send_cyclic_and_requested_data() jobs is correct."
+             << THLA_ENDL;
+      send_hs( stdout, errmsg.str().c_str() );
+      return false;
+   }
+   if ( HLA_cycle_base_time < lookahead_base_time ) {
+      ostringstream errmsg;
+      errmsg << "SpaceFOM::ExecutionControl::verify_HLA_cycle_time():" << __LINE__
+             << " ERROR: The cycle time for the time_advance_request() and"
+             << " send_cyclic_and_requested_data() jobs is less than the HLA"
+             << " lookahead time! The HLA Lookahead time ("
+             << setprecision( 18 ) << Int64BaseTime::to_seconds( lookahead_base_time )
+             << " seconds) must be less than or equal to the Time Advance Request"
+             << " (TAR) job cycle time ("
+             << setprecision( 18 ) << Int64BaseTime::to_seconds( HLA_cycle_base_time )
+             << " seconds). Make sure the 'lookahead_time' set in your input.py"
+             << " or modified-data file is less than or equal to the"
+             << " 'THLA_DATA_CYCLE_TIME' time specified in the S_define file for"
+             << " the time_advance_request() and send_cyclic_and_requested_data() jobs."
+             << THLA_ENDL;
+      send_hs( stdout, errmsg.str().c_str() );
+      return false;
+   }
+
+   // Verify the LCTS and TAR cycle time.
+   // Warning: Only the Master Federate has the LCTS time set.
+   if ( is_master() ) {
+
+      // Valid: ( LCTS >= dt ) && ( LCTS % dt == 0 )
+      if ( HLA_cycle_base_time > this->least_common_time_step ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionControl::verify_HLA_cycle_time():" << __LINE__
+                << " ERROR: The cycle time for the time_advance_request() job is"
+                << " greater than the Least Common Time Step (LCTS)! The LCTS ("
+                << setprecision( 18 ) << Int64BaseTime::to_seconds( this->least_common_time_step )
+                << " seconds) must be greater than or equal to the Time Advance"
+                << " Request (TAR) job cycle time ("
+                << setprecision( 18 ) << Int64BaseTime::to_seconds( HLA_cycle_base_time )
+                << " seconds). Make sure the LCTS time set in your input.py or"
+                << " modified-data file is greater than or equal to the"
+                << " 'THLA_DATA_CYCLE_TIME' time specified in the S_define file for"
+                << " the time_advance_request() and send_cyclic_and_requested_data() jobs."
+                << THLA_ENDL;
+         send_hs( stdout, errmsg.str().c_str() );
+         return false;
+      }
+      if ( this->least_common_time_step % HLA_cycle_base_time != 0 ) {
+         ostringstream errmsg;
+         errmsg << "SpaceFOM::ExecutionControl::verify_HLA_cycle_time():" << __LINE__
+                << " ERROR: The Least Common Time Step (LCTS) ("
+                << setprecision( 18 ) << Int64BaseTime::to_seconds( this->least_common_time_step )
+                << " seconds) is not an integer multiple of the cycle time for"
+                << " the time_advance_request() and send_cyclic_and_requested_data() jobs ("
+                << setprecision( 18 ) << Int64BaseTime::to_seconds( HLA_cycle_base_time )
+                << " seconds). Make sure the LCTS time set in your input.py or"
+                << " modified-data file is an integer multiple of the"
+                << " 'THLA_DATA_CYCLE_TIME' time specified in the S_define file for"
+                << " the time_advance_request() and send_cyclic_and_requested_data() jobs."
+                << THLA_ENDL;
+         send_hs( stdout, errmsg.str().c_str() );
+         return false;
+      }
+   }
+
+   return true;
+}
+
 void ExecutionControl::set_time_padding( double t )
 {
    if ( t < 0.0 ) {
