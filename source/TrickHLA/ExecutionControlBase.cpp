@@ -945,7 +945,6 @@ void ExecutionControlBase::remove_execution_configuration()
 void ExecutionControlBase::set_least_common_time_step(
    double const lcts )
 {
-   // TODO: Need more checking here.
    // WARNING: Only the Master federate should ever set this.
    if ( this->is_master() ) {
       this->least_common_time_step_seconds = lcts;
@@ -958,6 +957,48 @@ void ExecutionControlBase::refresh_least_common_time_step()
    // Refresh the LCTS by setting the value again, which will calculate a new
    // LCTS using the HLA base time units.
    set_least_common_time_step( this->least_common_time_step_seconds );
+}
+
+bool ExecutionControlBase::verify_HLA_cycle_time(
+   int64_t const HLA_cycle_base_time,
+   int64_t const lookahead_base_time )
+{
+   bool valid = true;
+
+   // Verify the job cycle time against the HLA lookahead time.
+   if ( HLA_cycle_base_time <= 0LL ) {
+      valid = false;
+      ostringstream errmsg;
+      errmsg << "ExecutionControlBase::verify_HLA_cycle_time():" << __LINE__
+             << " ERROR: The HLA Time Advance Grant (TAR) cycle time ("
+             << setprecision( 18 ) << Int64BaseTime::to_seconds( HLA_cycle_base_time )
+             << " seconds) cannot be less than or equal to zero!"
+             << " Make sure the 'THLA_DATA_CYCLE_TIME' time specified in the"
+             << " S_define file for the time_advance_request() and"
+             << " and send_cyclic_and_requested_data() jobs is correct."
+             << THLA_ENDL;
+      send_hs( stdout, errmsg.str().c_str() );
+   }
+   if ( HLA_cycle_base_time < lookahead_base_time ) {
+      valid = false;
+      ostringstream errmsg;
+      errmsg << "ExecutionControlBase::verify_HLA_cycle_time():" << __LINE__
+             << " ERROR: The cycle time for the time_advance_request() and"
+             << " and send_cyclic_and_requested_data() jobs is less than the"
+             << " HLA lookahead time! The HLA Lookahead time ("
+             << setprecision( 18 ) << Int64BaseTime::to_seconds( lookahead_base_time )
+             << " seconds) must be less than or equal to the Time Advance Request"
+             << " (TAR) job cycle time ("
+             << setprecision( 18 ) << Int64BaseTime::to_seconds( HLA_cycle_base_time )
+             << " seconds). Make sure the 'lookahead_time' set in your input.py"
+             << " or modified-data file is less than or equal to the"
+             << " 'THLA_DATA_CYCLE_TIME' time specified in the S_define file for"
+             << " the time_advance_request() and send_cyclic_and_requested_data() jobs."
+             << THLA_ENDL;
+      send_hs( stdout, errmsg.str().c_str() );
+   }
+
+   return valid;
 }
 
 void ExecutionControlBase::set_time_padding( double const t )
