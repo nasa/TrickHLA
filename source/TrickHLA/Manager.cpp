@@ -3188,8 +3188,8 @@ void Manager::wait_for_discovery_of_objects()
 
          } while ( ( !create_HLA_instance_object_found && // still missing some objects other than
                      ( discovery_count < ( required_count - 1 ) ) )
-                   ||                                    // the one for the rejoining federate, or
-                   ( create_HLA_instance_object_found && // missing some other object(s) but
+                   ||                                          // the one for the rejoining federate, or
+                   ( create_HLA_instance_object_found &&       // missing some other object(s) but
                      ( discovery_count < required_count ) ) ); // found the rejoining federate
       }
    } else {
