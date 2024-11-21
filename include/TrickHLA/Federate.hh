@@ -189,6 +189,17 @@ class Federate
    /*! @brief Composite initialization routine for an object instance of a Federate class. */
    void initialize();
 
+   /*! @brief Initialize the HLA delta time step which is the data cycle time.
+    *  @param delta_time_step The HLA delta time step for advancing/cycling HLA time. */
+   void initialize_HLA_cycle_time( double const delta_time_step );
+
+   /*! @brief Get the HLA time advance cycle time.
+    *  @return HLA time advance cycle time in base time units. */
+   int64_t const get_HLA_cycle_time_in_base_time()
+   {
+      return this->HLA_cycle_time_in_base_time;
+   }
+
    /*! @brief Begin the pre-multiphase initialization process of standing up
     * the federate in the federation execution. */
    void pre_multiphase_initialization();
@@ -1140,7 +1151,7 @@ class Federate
 
    Int64Interval lookahead; ///< @trick_units{--} Lookahead time for data.
 
-   int64_t TAR_job_cycle_base_time; ///< @trick_io{**}  Cycle time for the time_advance_request job in base time units.
+   int64_t HLA_cycle_time_in_base_time; ///< @trick_io{**} HLA time advance cycle delta time step in base time units.
 
    bool shutdown_called; ///< @trick_units{--} Flag to indicate shutdown has been called.
 
@@ -1309,9 +1320,6 @@ class Federate
     *  @return True if a name of joined federate, otherwise false.
     *  @param federate_name Federate name to test. */
    bool is_joined_federate( std::wstring const &federate_name );
-
-   /*! @brief Determine the job cycle-time of the time_advance_request() job. */
-   void determine_TAR_job_cycle_time();
 
    /*! @brief Make the HLA time-advance request using the current requested_time value. */
    void perform_time_advance_request();

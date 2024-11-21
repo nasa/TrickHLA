@@ -623,6 +623,13 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
       return this->least_common_time_step;
    }
 
+   /*! @brief Verify the Time Advance Grant (TAR) cycle time.
+    *  @param HLA_cycle_base_time HLA TAR cycle time in the base time units.
+    *  @param lookahead_base_time HLA lookahead time in base time units.
+    *  @return True of the TAR cycle time is valid and False otherwise */
+   virtual bool verify_HLA_cycle_time( int64_t const HLA_cycle_base_time,
+                                       int64_t const lookahead_base_time );
+
    /*! @brief Set the time-padding used to offset the go to run time.
     *  @param t Time in seconds to pad for time based mode transitions. */
    virtual void set_time_padding( double const t );

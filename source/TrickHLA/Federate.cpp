@@ -140,7 +140,7 @@ Federate::Federate()
      federation_joined( false ),
      all_federates_joined( false ),
      lookahead( 0.0 ),
-     TAR_job_cycle_base_time( 0LL ),
+     HLA_cycle_time_in_base_time( 0LL ),
      shutdown_called( false ),
      HLA_save_directory( "" ),
      initiate_save_flag( false ),
@@ -655,6 +655,20 @@ void Federate::restart_initialization()
  */
 void Federate::pre_multiphase_initialization()
 {
+   // The P_INIT ("initialization") federate.initialize_HLA_cycle_time( data_cycle_time );
+   // job should be called right before this one, but verify the HLA cycle time
+   // again to catch the case where a user did not pick up the changes to the
+   // THLABase.sm file.
+   if ( !execution_control->verify_HLA_cycle_time( get_HLA_cycle_time_in_base_time(),
+                                                   get_lookahead_in_base_time() ) ) {
+      ostringstream errmsg;
+      errmsg << "Federate::pre_multiphase_initialization():" << __LINE__
+             << " ERROR: Invalid HLA cycle time ("
+             << setprecision( 18 ) << Int64BaseTime::to_seconds( get_HLA_cycle_time_in_base_time() )
+             << " seconds)!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+   }
+
    // Perform the Execution Control specific pre-multi-phase initialization.
    execution_control->pre_multi_phase_init_processes();
 
@@ -4421,41 +4435,29 @@ void Federate::setup_time_regulation()
 }
 
 /*!
- * @job_class{scheduled}
+ * @job_class{initialization}
  */
-void Federate::determine_TAR_job_cycle_time()
+void Federate::initialize_HLA_cycle_time(
+   double const delta_time_step )
 {
-   if ( this->TAR_job_cycle_base_time > 0LL ) {
-      return;
-   }
+   this->HLA_cycle_time_in_base_time = Int64BaseTime::to_base_time( delta_time_step );
 
-   // Get the lookahead in the base time units.
-   int64_t const lookahead_base_time = get_lookahead_in_base_time();
-
-   // Get the cycle time.
-   double const cycle_time       = exec_get_job_cycle( NULL );
-   this->TAR_job_cycle_base_time = Int64BaseTime::to_base_time( cycle_time );
-
-   // Verify the job cycle time against the HLA lookahead time.
-   if ( ( this->TAR_job_cycle_base_time <= 0LL )
-        || ( this->TAR_job_cycle_base_time < lookahead_base_time ) ) {
+   if ( !execution_control->verify_HLA_cycle_time( this->HLA_cycle_time_in_base_time,
+                                                   get_lookahead_in_base_time() ) ) {
       ostringstream errmsg;
-      errmsg << "Federate::determine_TAR_job_cycle_time():" << __LINE__
-             << " ERROR: The cycle time for this job is less than the HLA"
-             << " lookahead time! The HLA Lookahead time ("
-             << setprecision( 18 ) << Int64BaseTime::to_seconds( lookahead_base_time )
-             << " seconds) must be less than or equal to the job cycle time ("
-             << setprecision( 18 ) << cycle_time
-             << " seconds). Make sure the 'lookahead_time' in"
-             << " your input.py or modified-data file is less than or equal to"
-             << " the 'THLA_DATA_CYCLE_TIME' time specified in the S_define file"
-             << " for the time_advance_request() job." << THLA_ENDL;
+      errmsg << "Federate::initialize_HLA_cycle_time():" << __LINE__
+             << " ERROR: Invalid HLA cycle time ("
+             << setprecision( 18 ) << delta_time_step
+             << " seconds)!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
+   // Initialize the manager with the verified HLA cycle time.
+   manager->initialize_HLA_cycle_time();
+
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-      send_hs( stdout, "Federate::determine_TAR_job_cycle_time():%d cycle-time:%f seconds %c",
-               __LINE__, cycle_time, THLA_NEWLINE );
+      send_hs( stdout, "Federate::initialize_HLA_cycle_time():%d cycle-time:%f seconds %c",
+               __LINE__, delta_time_step, THLA_NEWLINE );
    }
 }
 
@@ -4479,11 +4481,6 @@ void Federate::time_advance_request()
       return;
    }
 
-   // Determine the TAR job cycle time if the value is not set.
-   if ( this->TAR_job_cycle_base_time <= 0LL ) {
-      determine_TAR_job_cycle_time();
-   }
-
    // -- start of checkpoint additions --
    this->save_completed = false; // reset ONLY at the bottom of the frame...
    // -- end of checkpoint additions --
@@ -4496,7 +4493,7 @@ void Federate::time_advance_request()
       // Build the requested HLA logical time for the next time step.
       if ( is_zero_lookahead_time() ) {
          // Use the TAR job cycle time for the time-step.
-         this->requested_time += this->TAR_job_cycle_base_time;
+         this->requested_time += this->HLA_cycle_time_in_base_time;
       } else {
          // Use the lookahead time for the time-step.
          // Requested time = granted time + lookahead

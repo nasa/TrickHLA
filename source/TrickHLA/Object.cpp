@@ -2962,55 +2962,50 @@ void Object::receive_zero_lookahead_data()
       return;
    }
 
-   // Process the data now that it has been received (i.e. changed).
+   // Process only one data item now that it has been received (i.e. changed).
    if ( is_changed() ) {
 
-      do {
 #if THLA_OBJ_DEBUG_RECEIVE
-         send_hs( stdout, "Object::receive_zero_lookahead_data():%d for '%s' at HLA-logical-time=%G%c",
-                  __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds(),
-                  THLA_NEWLINE );
+      send_hs( stdout, "Object::receive_zero_lookahead_data():%d for '%s' at HLA-logical-time=%G%c",
+               __LINE__, get_name(), manager->get_federate()->get_granted_time().get_time_in_seconds(),
+               THLA_NEWLINE );
 #endif
 
-         // Unpack the buffer and copy the values to the object attributes.
-         unpack_zero_lookahead_attribute_buffers();
+      // Unpack the buffer and copy the values to the object attributes.
+      unpack_zero_lookahead_attribute_buffers();
 
-         // Unpack the data for the object if we have a packing object.
-         if ( packing != NULL ) {
-            packing->unpack();
+      // Unpack the data for the object if we have a packing object.
+      if ( packing != NULL ) {
+         packing->unpack();
+      }
+
+      // Lag-compensation is not supported for zero-lookahead, but if
+      // specified we call the bypass function.
+      if ( lag_comp != NULL ) {
+         switch ( lag_comp_type ) {
+            case LAG_COMPENSATION_NONE:
+               lag_comp->bypass_receive_lag_compensation();
+               break;
+            case LAG_COMPENSATION_SEND_SIDE:
+            case LAG_COMPENSATION_RECEIVE_SIDE:
+            default:
+               ostringstream errmsg;
+               errmsg << "Object::receive_zero_lookahead_data():" << __LINE__
+                      << " ERROR: For object '" << name << "', detected a"
+                      << " Lag-Compensation 'lag_comp' callback has also been"
+                      << " specified with a 'lag_comp_type' setting that is not"
+                      << " LAG_COMPENSATION_NONE! Please check your input or"
+                      << " modified-data files to make sure the Lag-Compensation"
+                      << " type 'lag_comp_type' is set to LAG_COMPENSATION_NONE"
+                      << " to disable Lag-Compensation when sending zero-lookahead"
+                      << " configured object attributes." << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+               break;
          }
+      }
 
-         // Lag-compensation is not supported for zero-lookahead, but if
-         // specified we call the bypass function.
-         if ( lag_comp != NULL ) {
-            switch ( lag_comp_type ) {
-               case LAG_COMPENSATION_NONE:
-                  lag_comp->bypass_receive_lag_compensation();
-                  break;
-               case LAG_COMPENSATION_SEND_SIDE:
-               case LAG_COMPENSATION_RECEIVE_SIDE:
-               default:
-                  ostringstream errmsg;
-                  errmsg << "Object::receive_zero_lookahead_data():" << __LINE__
-                         << " ERROR: For object '" << name << "', detected a"
-                         << " Lag-Compensation 'lag_comp' callback has also been"
-                         << " specified with a 'lag_comp_type' setting that is not"
-                         << " LAG_COMPENSATION_NONE! Please check your input or"
-                         << " modified-data files to make sure the Lag-Compensation"
-                         << " type 'lag_comp_type' is set to LAG_COMPENSATION_NONE"
-                         << " to disable Lag-Compensation when receiving zero-lookahead"
-                         << " configured object attributes." << THLA_ENDL;
-                  DebugHandler::terminate_with_message( errmsg.str() );
-                  break;
-            }
-         }
-
-         // Mark this data as unchanged now that we have processed it from the buffer.
-         mark_unchanged();
-
-         // Check for more object attribute data in the buffer/queue for this
-         // object instance, which will show up as still being changed.
-      } while ( is_changed() );
+      // Mark this data as unchanged now that we have processed it from the buffer.
+      mark_unchanged();
    }
 #if THLA_OBJ_DEBUG_VALID_OBJECT_RECEIVE
    else if ( is_instance_handle_valid() && ( exec_get_sim_time() > 0.0 ) ) {
