@@ -140,6 +140,7 @@ Federate::Federate()
      federation_joined( false ),
      all_federates_joined( false ),
      lookahead( 0.0 ),
+     HLA_cycle_time( 0.0 ),
      HLA_cycle_time_in_base_time( 0LL ),
      shutdown_called( false ),
      HLA_save_directory( "" ),
@@ -410,6 +411,10 @@ void Federate::setup(
  * the FPU control word fix. */
 void Federate::initialize_debug()
 {
+   // Check and fix the FPU Control Word as a job that runs just after
+   // the Input Processor runs.
+   fix_FPU_control_word();
+
    // Verify the debug level is correct just in case the user specifies it in
    // the input.py file as an integer instead of using the ENUM values...
    if ( ( this->debug_level < DEBUG_LEVEL_NO_TRACE ) || ( this->debug_level > DEBUG_LEVEL_FULL_TRACE ) ) {
@@ -432,16 +437,12 @@ the documented ENUM values.%c",
    // Set the debug level and code section in the global DebugHandler.
    DebugHandler::set( this->debug_level, this->code_section );
 
-   // Refresh the HLA time constants since the base time units may have changed
-   // from a setting in the input file.
-   refresh_HLA_time_constants();
-
    // Print the current TrickHLA version string.
    print_version();
 
-   // Check and fix the FPU Control Word as a job that runs just after
-   // the Input Processor runs.
-   fix_FPU_control_word();
+   // Refresh the HLA time constants since the base time units may have changed
+   // from a setting in the input file.
+   refresh_HLA_time_constants();
 }
 
 /*!
@@ -3236,6 +3237,9 @@ void Federate::refresh_HLA_time_constants()
 
    // Refresh the LCTS given a possible new HLA base time units.
    execution_control->refresh_least_common_time_step();
+
+   // Refresh the HLA cycle time in base time.
+   this->HLA_cycle_time_in_base_time = Int64BaseTime::to_base_time( this->HLA_cycle_time );
 }
 
 void Federate::scale_trick_tics_to_base_time_units()
@@ -4440,14 +4444,15 @@ void Federate::setup_time_regulation()
 void Federate::initialize_HLA_cycle_time(
    double const delta_time_step )
 {
-   this->HLA_cycle_time_in_base_time = Int64BaseTime::to_base_time( delta_time_step );
+   this->HLA_cycle_time              = delta_time_step;
+   this->HLA_cycle_time_in_base_time = Int64BaseTime::to_base_time( this->HLA_cycle_time );
 
    if ( !execution_control->verify_HLA_cycle_time( this->HLA_cycle_time_in_base_time,
                                                    get_lookahead_in_base_time() ) ) {
       ostringstream errmsg;
       errmsg << "Federate::initialize_HLA_cycle_time():" << __LINE__
              << " ERROR: Invalid HLA cycle time ("
-             << setprecision( 18 ) << delta_time_step
+             << setprecision( 18 ) << this->HLA_cycle_time
              << " seconds)!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -4457,7 +4462,7 @@ void Federate::initialize_HLA_cycle_time(
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MANAGER ) ) {
       send_hs( stdout, "Federate::initialize_HLA_cycle_time():%d cycle-time:%f seconds %c",
-               __LINE__, delta_time_step, THLA_NEWLINE );
+               __LINE__, this->HLA_cycle_time, THLA_NEWLINE );
    }
 }
 
