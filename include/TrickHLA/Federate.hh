@@ -194,7 +194,14 @@ class Federate
    void initialize_HLA_cycle_time( double const delta_time_step );
 
    /*! @brief Get the HLA time advance cycle time.
-    *  @return HLA time advance cycle time in base time units. */
+    *  @return HLA cycle time in seconds. */
+   double const get_HLA_cycle_time()
+   {
+      return this->HLA_cycle_time;
+   }
+
+   /*! @brief Get the HLA time advance cycle time.
+    *  @return HLA cycle time in base time units. */
    int64_t const get_HLA_cycle_time_in_base_time()
    {
       return this->HLA_cycle_time_in_base_time;
@@ -1145,6 +1152,7 @@ class Federate
 
    Int64Interval lookahead; ///< @trick_units{--} Lookahead time for data.
 
+   double  HLA_cycle_time;              ///< @trick_units{--} HLA cycle time in seconds.
    int64_t HLA_cycle_time_in_base_time; ///< @trick_io{**} HLA time advance cycle delta time step in base time units.
 
    bool shutdown_called; ///< @trick_units{--} Flag to indicate shutdown has been called.
