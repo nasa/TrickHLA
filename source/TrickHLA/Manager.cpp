@@ -301,14 +301,12 @@ void Manager::restart_initialization()
 
 void Manager::initialize_HLA_cycle_time()
 {
-   double const HLA_cycle_time = Int64BaseTime::to_seconds( federate->get_HLA_cycle_time_in_base_time() );
-
    if ( !execution_control->verify_HLA_cycle_time( federate->get_HLA_cycle_time_in_base_time(),
                                                    federate->get_lookahead_in_base_time() ) ) {
       ostringstream errmsg;
       errmsg << "Manager::initialize_HLA_cycle_time():" << __LINE__
              << " ERROR: Invalid HLA cycle time ("
-             << setprecision( 18 ) << HLA_cycle_time
+             << setprecision( 18 ) << federate->get_HLA_cycle_time()
              << " seconds)!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
@@ -317,7 +315,7 @@ void Manager::initialize_HLA_cycle_time()
    // attribute cyclic ratios can now be calculated for any multi-rate
    // attributes.
    for ( unsigned int n = 0; n < obj_count; ++n ) {
-      objects[n].set_core_job_cycle_time( HLA_cycle_time );
+      objects[n].set_core_job_cycle_time( federate->get_HLA_cycle_time() );
    }
 }
 
