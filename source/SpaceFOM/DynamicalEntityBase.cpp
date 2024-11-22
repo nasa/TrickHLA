@@ -122,7 +122,7 @@ void DynamicalEntityBase::base_config(
    } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::DynamicalEntityBase::default_data():" << __LINE__
-             << " WARNING: Unexpected NULL federation instance DymamicalEntity name!" << THLA_ENDL;
+             << " WARNING: Unexpected NULL federation instance DynamicalEntity name!" << THLA_ENDL;
       DebugHandler::terminate_with_message( errmsg.str() );
    }
 
@@ -130,11 +130,11 @@ void DynamicalEntityBase::base_config(
    // Set up the execution configuration HLA object mappings.
    //---------------------------------------------------------
    // Set the FOM name of the ExCO object.
-   object->FOM_name            = allocate_input_string( "DymamicalEntity" );
+   object->FOM_name            = allocate_input_string( "DynamicalEntity" );
    object->name                = allocate_input_string( entity_name );
    object->create_HLA_instance = publishes;
    object->packing             = this;
-   // Allocate the attributes for the DymamicalEntity HLA object.
+   // Allocate the attributes for the DynamicalEntity HLA object.
    object->attr_count = 15;
    object->attributes = static_cast< TrickHLA::Attribute * >( trick_MM->declare_var( "TrickHLA::Attribute", object->attr_count ) );
 
