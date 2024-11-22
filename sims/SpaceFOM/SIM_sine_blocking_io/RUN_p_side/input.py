@@ -11,8 +11,7 @@
 #     (Uses the SpaceFOMRefFrameObject Python class.))
 #
 # PROGRAMMERS:
-#    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.))
-#     ((Dan Dexter) (NASA/ER6) (Mar 2024) (--) (SpaceFOM sine example.)))
+#    (((Dan Dexter) (NASA/ER6) (Nov 2024) (--) (SpaceFOM sine blocking I/O example.)))
 ##############################################################################
 import sys
 sys.path.append('../../../')
@@ -131,7 +130,7 @@ verbose = False
 federate_name = 'P-side-Federate'
 
 # Set the default Federation Execution name.
-federation_name = 'SpaceFOM_sine_zero_lookahead'
+federation_name = 'SpaceFOM_sine_blocking_io'
 
 
 parse_command_line()
@@ -159,8 +158,8 @@ trick.exec_set_stack_trace( False )
 # Set up data to record.
 #---------------------------------------------
 exec(open( "Log_data/log_sine_states.py" ).read())
-log_sine_states( 'AZ', 0.250 )
-log_sine_states( 'PZ', 0.250 )
+log_sine_states( 'AB', 0.250 )
+log_sine_states( 'PB', 0.250 )
 log_sine_states( 'AC', 0.250 )
 log_sine_states( 'PC', 0.250 )
 
@@ -233,8 +232,8 @@ federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_MICROSECONDS )
 # Scale the Trick Time Tic value based on the HLA base time units.
 federate.scale_trick_tics_to_base_time_units()
 
-# Zero-lookhead requires a federate HLA lookahead value of zero.
-federate.set_lookahead_time( 0.0 )
+# Federate HLA lookahead time.
+federate.set_lookahead_time( 0.250 )
 
 # For this non-Pacing/non-realtime federate, set the Trick software frame
 # to the lookahead time by default.
@@ -251,10 +250,10 @@ federate.set_time_constrained( True )
 exec(open( "Modified_data/sine_init.py" ).read())
 
 # Example of a 1-dimensional dynamic array.
-AZ.packing.buff_size = 10
-AZ.packing.buff = trick.sim_services.alloc_type( AZ.packing.buff_size, 'unsigned char' )
-PZ.packing.buff_size = 10
-PZ.packing.buff = trick.sim_services.alloc_type( PZ.packing.buff_size, 'unsigned char' )
+AB.packing.buff_size = 10
+AB.packing.buff = trick.sim_services.alloc_type( AB.packing.buff_size, 'unsigned char' )
+PB.packing.buff_size = 10
+PB.packing.buff = trick.sim_services.alloc_type( PB.packing.buff_size, 'unsigned char' )
 AC.packing.buff_size = 10
 AC.packing.buff = trick.sim_services.alloc_type( AC.packing.buff_size, 'unsigned char' )
 PC.packing.buff_size = 10
@@ -262,8 +261,8 @@ PC.packing.buff = trick.sim_services.alloc_type( PC.packing.buff_size, 'unsigned
 
 # We are taking advantage of the input file to specify a unique name for the
 # sim-data name field for the P-side federate.
-AZ.sim_data.name = 'AZ.sim_data.name.P-side.zero'
-PZ.sim_data.name = 'PZ.sim_data.name.P-side.zero'
+AB.sim_data.name = 'AB.sim_data.name.P-side.blocking_io'
+PB.sim_data.name = 'PB.sim_data.name.P-side.blocking_io'
 AC.sim_data.name = 'AC.sim_data.name.P-side.cyclic'
 PC.sim_data.name = 'PC.sim_data.name.P-side.cyclic'
 
@@ -272,23 +271,23 @@ PC.sim_data.name = 'PC.sim_data.name.P-side.cyclic'
 # Set up for Sine data.
 #---------------------------------------------------------------------------
 
-sine_AZ = SineObject( sine_create_object      = False,
-                      sine_obj_instance_name  = 'A-side-Federate.Sine.zero',
-                      sine_trick_sim_obj_name = 'AZ',
-                      sine_packing            = AZ.packing,
-                      sine_attr_config        = trick.CONFIG_ZERO_LOOKAHEAD )
+sine_AB = SineObject( sine_create_object      = False,
+                      sine_obj_instance_name  = 'A-side-Federate.Sine.blocking_io',
+                      sine_trick_sim_obj_name = 'AB',
+                      sine_packing            = AB.packing,
+                      sine_attr_config        = trick.CONFIG_BLOCKING_IO )
 
 # Add this sine object to the list of managed objects.
-federate.add_fed_object( sine_AZ )
+federate.add_fed_object( sine_AB )
 
-sine_PZ = SineObject( sine_create_object      = True,
-                      sine_obj_instance_name  = 'P-side-Federate.Sine.zero',
-                      sine_trick_sim_obj_name = 'PZ',
-                      sine_packing            = PZ.packing,
-                      sine_attr_config        = trick.CONFIG_ZERO_LOOKAHEAD )
+sine_PB = SineObject( sine_create_object      = True,
+                      sine_obj_instance_name  = 'P-side-Federate.Sine.blocking_io',
+                      sine_trick_sim_obj_name = 'PB',
+                      sine_packing            = PB.packing,
+                      sine_attr_config        = trick.CONFIG_BLOCKING_IO )
 
 # Add this sine object to the list of managed objects.
-federate.add_fed_object( sine_PZ )
+federate.add_fed_object( sine_PB )
 
 sine_AC = SineObject( sine_create_object      = False,
                       sine_obj_instance_name  = 'A-side-Federate.Sine.cyclic',
@@ -364,8 +363,8 @@ federate.add_sim_object( THLA )
 federate.add_sim_object( THLA_INIT )
 federate.add_sim_object( root_ref_frame )
 federate.add_sim_object( ref_frame_A )
-federate.add_sim_object( AZ )
-federate.add_sim_object( PZ )
+federate.add_sim_object( AB )
+federate.add_sim_object( PB )
 federate.add_sim_object( AC )
 federate.add_sim_object( PC )
 
