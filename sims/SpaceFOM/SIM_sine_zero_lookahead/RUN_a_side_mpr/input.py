@@ -142,7 +142,7 @@ verbose = False
 federate_name = 'A-side-Federate'
 
 # Set the default Federation Execution name.
-federation_name = 'SpaceFOM_sine'
+federation_name = 'SpaceFOM_sine_zero_lookahead'
 
 # Set the default Root Reference Frame name.
 root_frame_name = 'RootFrame'

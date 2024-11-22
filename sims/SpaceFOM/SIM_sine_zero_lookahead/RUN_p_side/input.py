@@ -131,7 +131,7 @@ verbose = False
 federate_name = 'P-side-Federate'
 
 # Set the default Federation Execution name.
-federation_name = 'SpaceFOM_sine'
+federation_name = 'SpaceFOM_sine_zero_lookahead'
 
 
 parse_command_line()

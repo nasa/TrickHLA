@@ -1,5 +1,5 @@
 //==========================================================================
-// SpaceFOM: Sine wave simulation to test the TrickHLA blocking IO
+// SpaceFOM: Sine wave simulation to test the TrickHLA blocking I/O
 // data exchange APIs.
 //==========================================================================
 // Description:
@@ -31,11 +31,11 @@
 //==========================================================================
 // Define the HLA phase initialization priorities.
 //==========================================================================
-#define P_HLA_EARLY         1     // HLA early job phase.
-#define P_SF_INIT_EPOCH_RRF 55    // SpaceFOM ExCO epoch and root reference frame phase.
-#define P_HLA_INIT          60    // HLA initialization phase.
-#define P_SF_INIT_PRE_MPI   65    // SpaceFOM Pre-Multi Phase initialization phase.
-#define P_SF_INIT_POST_MPI  500   // SpaceFOM Post-Multi Phase initialization phase.
+#define P_HLA_EARLY             1 // HLA early job phase.
+#define P_SF_INIT_EPOCH_RRF    55 // SpaceFOM ExCO epoch and root reference frame phase.
+#define P_HLA_INIT             60 // HLA initialization phase.
+#define P_SF_INIT_PRE_MPI      65 // SpaceFOM Pre-Multi Phase initialization phase.
+#define P_SF_INIT_POST_MPI    500 // SpaceFOM Post-Multi Phase initialization phase.
 #define P_HLA_LATE          65534 // HLA late job phase.
 
 
@@ -68,7 +68,7 @@
 
 
 //==========================================================================
-// SIM_OBJECT: THLAFed - Support for blocking IO data exchanges.
+// SIM_OBJECT: THLAFed - Support for blocking I/O data exchanges.
 //==========================================================================
 #include "THLAFed.sm"
 
@@ -82,7 +82,7 @@
 
 //=============================================================================
 // SIM_OBJECT: BlockingIOAnalyticSineSimObj
-// Sim-object for an analytic solution of a sine wave with blocking IO
+// Sim-object for an analytic solution of a sine wave with blocking I/O
 // data exchanges.
 //=============================================================================
 class BlockingIOAnalyticSineSimObj : public THLAFedSimObject {
@@ -130,7 +130,7 @@ class BlockingIOAnalyticSineSimObj : public THLAFedSimObject {
 
 //=============================================================================
 // SIM_OBJECT: BlockingIOPropagatedSineSimObj
-// Sim-object for a propagated solution of a sine wave with blocking IO
+// Sim-object for a propagated solution of a sine wave with blocking I/O
 // data exchanges.
 //=============================================================================
 class BlockingIOPropagatedSineSimObj : public THLAFedSimObject {
@@ -363,7 +363,7 @@ SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
 // Simulation specific multiphase initialization SimObject instance.
 THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
 
-// Instantiations used for blocking IO exchanges.
+// Instantiations used for blocking I/O exchanges.
 BlockingIOAnalyticSineSimObj   AB( THLA.federate );
 BlockingIOPropagatedSineSimObj PB( THLA.federate );
 
@@ -385,5 +385,3 @@ void create_connections() {
    sim_integ_loopB.getIntegrator( Runge_Kutta_4, 6 );
    sim_integ_loopC.getIntegrator( Runge_Kutta_4, 6 );
 }
-
-

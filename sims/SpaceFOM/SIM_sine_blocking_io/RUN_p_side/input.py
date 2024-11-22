@@ -11,8 +11,7 @@
 #     (Uses the SpaceFOMRefFrameObject Python class.))
 #
 # PROGRAMMERS:
-#    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.))
-#     ((Dan Dexter) (NASA/ER6) (Mar 2024) (--) (SpaceFOM sine example.)))
+#    (((Dan Dexter) (NASA/ER6) (Nov 2024) (--) (SpaceFOM sine blocking I/O example.)))
 ##############################################################################
 import sys
 sys.path.append('../../../')
