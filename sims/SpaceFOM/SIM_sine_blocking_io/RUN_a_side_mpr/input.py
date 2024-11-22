@@ -1,7 +1,8 @@
 ##############################################################################
 # PURPOSE:
-#    (This is a Python input file for configuring the Propagated federate
-#     for the sine wave example that uses the Space Reference FOM.)
+#    (This is a Python input file for configuring the Analytic federate for
+#     the sine wave example that uses the Space Reference FOM configured to be
+#     the Master, Pacing, and Root Reference Frame Publisher (RRFP) roles.)
 #
 # REFERENCE:
 #    (Trick 19 documentation.)
@@ -11,8 +12,7 @@
 #     (Uses the SpaceFOMRefFrameObject Python class.))
 #
 # PROGRAMMERS:
-#    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.))
-#     ((Dan Dexter) (NASA/ER6) (Mar 2024) (--) (SpaceFOM sine example.)))
+#    (((Dan Dexter) (NASA/ER6) (Nov 2024) (--) (SpaceFOM sine blocking I/O example.)))
 ##############################################################################
 import sys
 sys.path.append('../../../')
@@ -30,11 +30,12 @@ from Modified_data.sine.SineObject import *
 def print_usage_message( ):
 
    print(' ')
-   print('TrickHLA SpaceFOM Roles Test Simulation Command Line Configuration Options:')
+   print('TrickHLA Sine Wave SpaceFOM Simulation Command Line Configuration Options:')
    print('  -h --help             : Print this help message.')
-   print('  -f --fed_name [name]  : Name of the Federate, default is P-side-Federate.')
+   print('  -f --fed_name [name]  : Name of the Federate, default is A-side-Federate.')
    print('  -fe --fex_name [name] : Name of the Federation Execution, default is SpaceFOM_sine.')
    print('  --nostop              : Set no stop time on simulation.')
+   print('  -r --root_frame [name]: Name of the root reference frame, default is RootFrame.')
    print('  -s --stop [time]      : Time to stop simulation, default is 10.0 seconds.')
    print('  --verbose [on|off]    : on: Show verbose messages (Default), off: disable messages.')
    print(' ')
@@ -53,6 +54,7 @@ def parse_command_line( ) :
    global verbose
    global federate_name
    global federation_name
+   global root_frame_name
    
    # Get the Trick command line arguments.
    argc = trick.command_line_args_get_argc()
@@ -62,10 +64,10 @@ def parse_command_line( ) :
    # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
    index = 2
    while (index < argc) :
-
+      
       if ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')) :
          print_usage = True
-
+      
       elif ((str(argv[index]) == '-f') | (str(argv[index]) == '--fed_name')) :
          index = index + 1
          if (index < argc) :
@@ -73,7 +75,7 @@ def parse_command_line( ) :
          else :
             print('ERROR: Missing --fed_name [name] argument.')
             print_usage = True
-
+      
       elif ((str(argv[index]) == '-fe') | (str(argv[index]) == '--fex_name')) :
          index = index + 1
          if (index < argc) :
@@ -81,10 +83,18 @@ def parse_command_line( ) :
          else :
             print('ERROR: Missing --fex_name [name] argument.')
             print_usage = True
-
-      elif (str(argv[index]) == '-nostop') :
+      
+      elif ((str(argv[index]) == '-r') | (str(argv[index]) == '--root_frame')) :
+         index = index + 1
+         if (index < argc) :
+            root_frame_name = str(argv[index])
+         else :
+            print('ERROR: Missing --root_frame [name] argument.')
+            print_usage = True
+            
+      elif (str(argv[index]) == '--nostop') :
          run_duration = None
-
+      
       elif ((str(argv[index]) == '-s') | (str(argv[index]) == '--stop')) :
          index = index + 1
          if (index < argc) :
@@ -92,7 +102,7 @@ def parse_command_line( ) :
          else :
             print('ERROR: Missing -stop [time] argument.')
             print_usage = True
-
+      
       elif (str(argv[index]) == '--verbose') :
          index = index + 1
          if (index < argc) :
@@ -110,7 +120,7 @@ def parse_command_line( ) :
       elif ((str(argv[index]) == '-d')) :
          # Pass this on to Trick.
          break
-         
+            
       else :
          print('ERROR: Unknown command line argument ' + str(argv[index]))
          print_usage = True
@@ -128,17 +138,19 @@ run_duration = 10.0
 verbose = False
 
 # Set the default Federate name.
-federate_name = 'P-side-Federate'
+federate_name = 'A-side-Federate'
 
 # Set the default Federation Execution name.
-federation_name = 'SpaceFOM_sine_zero_lookahead'
+federation_name = 'SpaceFOM_sine_blocking_io'
+
+# Set the default Root Reference Frame name.
+root_frame_name = 'RootFrame'
 
 
 parse_command_line()
 
-if (print_usage == True) :
+if ( print_usage == True ) :
    print_usage_message()
-
 
 #---------------------------------------------
 # Set up Trick executive parameters.
@@ -150,17 +162,27 @@ trick.exec_set_trap_sigfpe( True )
 #trick.add_read( 0.0 , '''trick.checkpoint('chkpnt_point')''' )
 #trick.checkpoint_end( 1 )
 
-trick.exec_set_enable_freeze( False )
-trick.exec_set_freeze_command( False )
-trick.sim_control_panel_set_enabled( False )
+# Setup for Trick real time execution. This is the "Pacing" function.
+exec( open( "Modified_data/trick/realtime.py" ).read() )
+
+trick.exec_set_enable_freeze( True )
+trick.exec_set_freeze_command( True )
 trick.exec_set_stack_trace( False )
+
+trick.var_server_set_port( 7000 )
+#trick.var_server_set_source_address( "127.0.0.1" )
+trick.sim_control_panel_set_enabled( True )
+
+#simControlPanel = trick.SimControlPanel()
+#simControlPanel.set_host( "localhost" )
+#trick.add_external_application( simControlPanel )
 
 #---------------------------------------------
 # Set up data to record.
 #---------------------------------------------
 exec(open( "Log_data/log_sine_states.py" ).read())
-log_sine_states( 'AZ', 0.250 )
-log_sine_states( 'PZ', 0.250 )
+log_sine_states( 'AB', 0.250 )
+log_sine_states( 'PB', 0.250 )
 log_sine_states( 'AC', 0.250 )
 log_sine_states( 'PC', 0.250 )
 
@@ -191,15 +213,15 @@ else :
 #--------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.
 #--------------------------------------------------------------------------
-federate.set_master_role( False ) # This is NOT the Master federate.
-federate.set_pacing_role( False ) # This is NOT the Pacing federate.
-federate.set_RRFP_role( False )   # This is NOT the Root Reference Frame Publisher.
+federate.set_master_role( True ) # This is the Master federate.
+federate.set_pacing_role( True ) # This is the Pacing federate.
+federate.set_RRFP_role( True )   # This is the Root Reference Frame Publisher.
 
 #--------------------------------------------------------------------------
 # Add in known required federates.
 #--------------------------------------------------------------------------
-federate.add_known_federate( True, 'A-side-Federate' )
 federate.add_known_federate( True, str(federate.federate.name) )
+federate.add_known_federate( True, 'P-side-Federate' )
 
 #--------------------------------------------------------------------------
 # Configure the FOM modules.
@@ -219,7 +241,7 @@ federate.add_multiphase_init_sync_point( 'Propagated_init_phase' )
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 
 #--------------------------------------------------------------------------
-# Set up federate related time related parameters.
+# Set up federate time related parameters.
 #--------------------------------------------------------------------------
 # Set the simulation timeline to be used for time computations.
 THLA.execution_control.sim_timeline = THLA_INIT.sim_timeline
@@ -233,11 +255,17 @@ federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_MICROSECONDS )
 # Scale the Trick Time Tic value based on the HLA base time units.
 federate.scale_trick_tics_to_base_time_units()
 
-# Zero-lookhead requires a federate HLA lookahead value of zero.
-federate.set_lookahead_time( 0.0 )
+# Federate HLA lookahead time.
+federate.set_lookahead_time( 0.250 )
 
-# For this non-Pacing/non-realtime federate, set the Trick software frame
-# to the lookahead time by default.
+# Must specify the Least Common Time Step for all federates in the
+# federation execution.
+federate.set_least_common_time_step( 0.250 )
+
+# Set the amount of seconds used to 'pad' mode transitions.
+federate.set_time_padding( 1.0 )
+
+# This federate also has the Pacing role. Set the Trick software frame time.
 trick.exec_set_software_frame( 0.250 )
 
 # Setup Time Management parameters.
@@ -251,54 +279,54 @@ federate.set_time_constrained( True )
 exec(open( "Modified_data/sine_init.py" ).read())
 
 # Example of a 1-dimensional dynamic array.
-AZ.packing.buff_size = 10
-AZ.packing.buff = trick.sim_services.alloc_type( AZ.packing.buff_size, 'unsigned char' )
-PZ.packing.buff_size = 10
-PZ.packing.buff = trick.sim_services.alloc_type( PZ.packing.buff_size, 'unsigned char' )
+AB.packing.buff_size = 10
+AB.packing.buff = trick.sim_services.alloc_type( AB.packing.buff_size, 'unsigned char' )
+PB.packing.buff_size = 10
+PB.packing.buff = trick.sim_services.alloc_type( PB.packing.buff_size, 'unsigned char' )
 AC.packing.buff_size = 10
 AC.packing.buff = trick.sim_services.alloc_type( AC.packing.buff_size, 'unsigned char' )
 PC.packing.buff_size = 10
 PC.packing.buff = trick.sim_services.alloc_type( PC.packing.buff_size, 'unsigned char' )
 
 # We are taking advantage of the input file to specify a unique name for the
-# sim-data name field for the P-side federate.
-AZ.sim_data.name = 'AZ.sim_data.name.P-side.zero'
-PZ.sim_data.name = 'PZ.sim_data.name.P-side.zero'
-AC.sim_data.name = 'AC.sim_data.name.P-side.cyclic'
-PC.sim_data.name = 'PC.sim_data.name.P-side.cyclic'
+# sim-data name field for the A-side federate.
+AB.sim_data.name = 'AB.sim_data.name.A-side.blocking_io'
+PB.sim_data.name = 'PB.sim_data.name.A-side.blocking_io'
+AC.sim_data.name = 'AC.sim_data.name.A-side.cyclic'
+PC.sim_data.name = 'PC.sim_data.name.A-side.cyclic'
 
 
 #---------------------------------------------------------------------------
 # Set up for Sine data.
 #---------------------------------------------------------------------------
 
-sine_AZ = SineObject( sine_create_object      = False,
-                      sine_obj_instance_name  = 'A-side-Federate.Sine.zero',
-                      sine_trick_sim_obj_name = 'AZ',
-                      sine_packing            = AZ.packing,
-                      sine_attr_config        = trick.CONFIG_ZERO_LOOKAHEAD )
+sine_AB = SineObject( sine_create_object      = True,
+                      sine_obj_instance_name  = 'A-side-Federate.Sine.blocking_io',
+                      sine_trick_sim_obj_name = 'AB',
+                      sine_packing            = AB.packing,
+                      sine_attr_config        = trick.CONFIG_BLOCKING_IO )
 
 # Add this sine object to the list of managed objects.
-federate.add_fed_object( sine_AZ )
+federate.add_fed_object( sine_AB )
 
-sine_PZ = SineObject( sine_create_object      = True,
-                      sine_obj_instance_name  = 'P-side-Federate.Sine.zero',
-                      sine_trick_sim_obj_name = 'PZ',
-                      sine_packing            = PZ.packing,
-                      sine_attr_config        = trick.CONFIG_ZERO_LOOKAHEAD )
+sine_PB = SineObject( sine_create_object      = False,
+                      sine_obj_instance_name  = 'P-side-Federate.Sine.blocking_io',
+                      sine_trick_sim_obj_name = 'PB',
+                      sine_packing            = PB.packing,
+                      sine_attr_config        = trick.CONFIG_BLOCKING_IO )
 
-# Add this sine object to the list of managed objects.
-federate.add_fed_object( sine_PZ )
+# Add this cyclic sine object to the list of managed objects.
+federate.add_fed_object( sine_PB )
 
-sine_AC = SineObject( sine_create_object      = False,
+sine_AC = SineObject( sine_create_object      = True,
                       sine_obj_instance_name  = 'A-side-Federate.Sine.cyclic',
                       sine_trick_sim_obj_name = 'AC',
                       sine_packing            = AC.packing )
 
-# Add this sine object to the list of managed objects.
+# Add this cyclic sine object to the list of managed objects.
 federate.add_fed_object( sine_AC )
 
-sine_PC = SineObject( sine_create_object      = True,
+sine_PC = SineObject( sine_create_object      = False,
                       sine_obj_instance_name  = 'P-side-Federate.Sine.cyclic',
                       sine_trick_sim_obj_name = 'PC',
                       sine_packing            = PC.packing )
@@ -307,12 +335,53 @@ sine_PC = SineObject( sine_create_object      = True,
 federate.add_fed_object( sine_PC )
 
 #---------------------------------------------------------------------------
+# Set up for Root Reference Frame data.
+#---------------------------------------------------------------------------
+ref_frame_tree.root_frame_data.name = root_frame_name
+ref_frame_tree.root_frame_data.parent_name = ''
+                                        
+ref_frame_tree.root_frame_data.state.pos[0] = 0.0
+ref_frame_tree.root_frame_data.state.pos[1] = 0.0
+ref_frame_tree.root_frame_data.state.pos[2] = 0.0
+ref_frame_tree.root_frame_data.state.vel[0] = 0.0
+ref_frame_tree.root_frame_data.state.vel[1] = 0.0
+ref_frame_tree.root_frame_data.state.vel[2] = 0.0
+ref_frame_tree.root_frame_data.state.att.scalar  = 1.0
+ref_frame_tree.root_frame_data.state.att.vector[0] = 0.0
+ref_frame_tree.root_frame_data.state.att.vector[1] = 0.0
+ref_frame_tree.root_frame_data.state.att.vector[2] = 0.0
+ref_frame_tree.root_frame_data.state.ang_vel[0] = 0.0
+ref_frame_tree.root_frame_data.state.ang_vel[1] = 0.0
+ref_frame_tree.root_frame_data.state.ang_vel[2] = 0.0
+ref_frame_tree.root_frame_data.state.time = 0.0
+
+
+ref_frame_tree.vehicle_frame_data.name = 'FrameA'
+ref_frame_tree.vehicle_frame_data.parent_name = root_frame_name
+                                        
+ref_frame_tree.vehicle_frame_data.state.pos[0] = 10.0
+ref_frame_tree.vehicle_frame_data.state.pos[1] = 10.0
+ref_frame_tree.vehicle_frame_data.state.pos[2] = 10.0
+ref_frame_tree.vehicle_frame_data.state.vel[0] = 0.0
+ref_frame_tree.vehicle_frame_data.state.vel[1] = 0.1
+ref_frame_tree.vehicle_frame_data.state.vel[2] = 0.0
+ref_frame_tree.vehicle_frame_data.state.att.scalar  = 1.0
+ref_frame_tree.vehicle_frame_data.state.att.vector[0] = 0.0
+ref_frame_tree.vehicle_frame_data.state.att.vector[1] = 0.0
+ref_frame_tree.vehicle_frame_data.state.att.vector[2] = 0.0
+ref_frame_tree.vehicle_frame_data.state.ang_vel[0] = 0.0
+ref_frame_tree.vehicle_frame_data.state.ang_vel[1] = 0.1
+ref_frame_tree.vehicle_frame_data.state.ang_vel[2] = 0.0
+ref_frame_tree.vehicle_frame_data.state.time = 0.0
+
+
+#---------------------------------------------------------------------------
 # Set up the Root Reference Frame object for discovery.
 # If it is the RRFP, it will publish the frame.
 # If it is NOT the RRFP, it will subscribe to the frame.
 #---------------------------------------------------------------------------
 root_frame = SpaceFOMRefFrameObject( federate.is_RRFP,
-                                     'RootFrame',
+                                     root_frame_name,
                                      root_ref_frame.frame_packing,
                                      'root_ref_frame.frame_packing',
                                      frame_conditional = root_ref_frame.conditional )
@@ -329,12 +398,12 @@ federate.set_root_frame( root_frame )
 #---------------------------------------------------------------------------
 # Set up an alternate vehicle reference frame object for discovery.
 #---------------------------------------------------------------------------
-frame_A = SpaceFOMRefFrameObject( False,
+frame_A = SpaceFOMRefFrameObject( True,
                                   'FrameA',
                                   ref_frame_A.frame_packing,
                                   'ref_frame_A.frame_packing',
                                   parent_S_define_instance = root_ref_frame.frame_packing,
-                                  parent_name              = 'RootFrame',
+                                  parent_name              = root_frame_name,
                                   frame_conditional        = ref_frame_A.conditional,
                                   frame_lag_comp           = ref_frame_A.lag_compensation,
                                   frame_ownership          = ref_frame_A.ownership_handler,
@@ -364,8 +433,8 @@ federate.add_sim_object( THLA )
 federate.add_sim_object( THLA_INIT )
 federate.add_sim_object( root_ref_frame )
 federate.add_sim_object( ref_frame_A )
-federate.add_sim_object( AZ )
-federate.add_sim_object( PZ )
+federate.add_sim_object( AB )
+federate.add_sim_object( PB )
 federate.add_sim_object( AC )
 federate.add_sim_object( PC )
 
@@ -382,11 +451,3 @@ federate.initialize()
 #---------------------------------------------------------------------------
 if run_duration:
    trick.sim_services.exec_set_terminate_time( run_duration )
-
-
-#---------------------------------------------------------------------------
-# Send a timed MTR request to the Master federate.
-#---------------------------------------------------------------------------
-# Send an interaction.
-#trick.add_read(3.0 , """THLA.manager.send_MTR_interation( trick.SpaceFOM.MTR_GOTO_SHUTDOWN )""")
-#trick.add_read(3.0 , """THLA.manager.send_MTR_interation( trick.SpaceFOM.MTR_GOTO_FREEZE )""")
