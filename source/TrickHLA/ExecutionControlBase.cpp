@@ -51,6 +51,7 @@ NASA, Johnson Space Center\n
 #include "trick/trick_byteswap.h"
 
 // TrickHLA include files.
+#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
@@ -914,8 +915,10 @@ void ExecutionControlBase::set_master( bool master_flag )
    }
 }
 
-void ExecutionControlBase::setup_checkpoint()
+void ExecutionControlBase::encode_checkpoint()
 {
+   SyncPointManagerBase::encode_checkpoint();
+
    // Setup checkpoint for ExecutionConfiguration if we have one.
    if ( execution_configuration != NULL ) {
       // Any object with a valid instance handle must be marked as required
@@ -924,7 +927,27 @@ void ExecutionControlBase::setup_checkpoint()
       if ( execution_configuration->is_instance_handle_valid() ) {
          execution_configuration->mark_required();
       }
-      execution_configuration->setup_ownership_transfer_checkpointed_data();
+      execution_configuration->encode_checkpoint();
+   }
+}
+
+void ExecutionControlBase::decode_checkpoint()
+{
+   SyncPointManagerBase::decode_checkpoint();
+
+   // Decode checkpoint for ExecutionConfiguration if we have one.
+   if ( execution_configuration != NULL ) {
+      execution_configuration->decode_checkpoint();
+   }
+}
+
+void ExecutionControlBase::free_checkpoint()
+{
+   SyncPointManagerBase::free_checkpoint();
+
+   // Clear/release the memory used for the checkpoint data structures.
+   if ( execution_configuration != NULL ) {
+      execution_configuration->free_checkpoint();
    }
 }
 

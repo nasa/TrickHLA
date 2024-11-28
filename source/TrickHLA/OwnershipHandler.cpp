@@ -53,6 +53,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
@@ -89,7 +90,7 @@ OwnershipHandler::OwnershipHandler()
  */
 OwnershipHandler::~OwnershipHandler()
 {
-   free_checkpoint();
+   return;
 }
 
 void OwnershipHandler::encode_checkpoint()
