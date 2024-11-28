@@ -89,10 +89,10 @@ OwnershipHandler::OwnershipHandler()
  */
 OwnershipHandler::~OwnershipHandler()
 {
-   clear_checkpoint();
+   free_checkpoint();
 }
 
-void OwnershipHandler::setup_checkpoint_requests()
+void OwnershipHandler::encode_checkpoint()
 {
    // Lock the ownership mutex since we are processing the ownership list.
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -101,7 +101,7 @@ void OwnershipHandler::setup_checkpoint_requests()
 
    // To keep from leaking memory make sure we clear all checkpointing
    // structures before we create new ones.
-   clear_checkpoint();
+   free_checkpoint();
 
    AttributeOwnershipMap::const_iterator owner_map_iter;
    THLAAttributeMap::const_iterator      attrib_iter;
@@ -121,13 +121,13 @@ void OwnershipHandler::setup_checkpoint_requests()
    // if there are any pull_request entries, encode them to get checkpointed.
    if ( pull_items_cnt > 0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
-         send_hs( stdout, "OwnershipHandler::setup_checkpoint_requests():%d Checkpointing %d pull_request elements.%c",
+         send_hs( stdout, "OwnershipHandler::encode_checkpoint():%d Checkpointing %d pull_request elements.%c",
                   __LINE__, pull_items_cnt, THLA_NEWLINE );
       }
       pull_items = reinterpret_cast< OwnershipItem * >( alloc_type( (int)pull_items_cnt, "TrickHLA::OwnershipItem" ) );
       if ( pull_items == NULL ) {
          ostringstream errmsg;
-         errmsg << "OwnershipHandler::setup_checkpoint_requests():" << __LINE__
+         errmsg << "OwnershipHandler::encode_checkpoint():" << __LINE__
                 << " CERROR: ould not allocate memory for pull_items (array of OwnershipItem type)!"
                 << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
@@ -158,13 +158,13 @@ void OwnershipHandler::setup_checkpoint_requests()
    // if there are any push_request entries, encode them to get checkpointed.
    if ( push_items_cnt > 0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
-         send_hs( stdout, "OwnershipHandler::setup_checkpoint_requests():%d Checkpointing %d push_request elements.%c",
+         send_hs( stdout, "OwnershipHandler::encode_checkpoint():%d Checkpointing %d push_request elements.%c",
                   __LINE__, push_items_cnt, THLA_NEWLINE );
       }
       push_items = reinterpret_cast< OwnershipItem * >( alloc_type( (int)push_items_cnt, "TrickHLA::OwnershipItem" ) );
       if ( push_items == NULL ) {
          ostringstream errmsg;
-         errmsg << "OwnershipHandler::setup_checkpoint_requests():" << __LINE__
+         errmsg << "OwnershipHandler::encode_checkpoint():" << __LINE__
                 << "ERROR:  Could not allocate memory for push_items (array of OwnershipItem type)!"
                 << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
@@ -184,36 +184,7 @@ void OwnershipHandler::setup_checkpoint_requests()
    }
 }
 
-void OwnershipHandler::clear_checkpoint()
-{
-   // If there are any pull_request entries, delete them
-   if ( pull_items_cnt > 0 ) {
-      for ( size_t i = 0; i < pull_items_cnt; ++i ) {
-         pull_items[i].clear();
-      }
-      if ( trick_MM->delete_var( static_cast< void * >( pull_items ) ) ) {
-         send_hs( stderr, "OwnershipHandler::clear_checkpoint():%d WARNING failed to delete Trick Memory for 'pull_items'%c",
-                  __LINE__, THLA_NEWLINE );
-      }
-      pull_items     = NULL;
-      pull_items_cnt = 0;
-   }
-
-   // if there are any push_request entries, delete them
-   if ( push_items_cnt > 0 ) {
-      for ( size_t i = 0; i < push_items_cnt; ++i ) {
-         push_items[i].clear();
-      }
-      if ( trick_MM->delete_var( static_cast< void * >( push_items ) ) ) {
-         send_hs( stderr, "OwnershipHandler::clear_checkpoint():%d WARNING failed to delete Trick Memory for 'push_items'%c",
-                  __LINE__, THLA_NEWLINE );
-      }
-      push_items     = NULL;
-      push_items_cnt = 0;
-   }
-}
-
-void OwnershipHandler::restore_requests()
+void OwnershipHandler::decode_checkpoint()
 {
    THLAAttributeMap                     *attr_map;
    AttributeOwnershipMap::const_iterator ownership_iter;
@@ -246,7 +217,7 @@ void OwnershipHandler::restore_requests()
          attr_map->insert( make_pair( pull_items[count].FOM_name, attribute ) );
 
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
-            send_hs( stdout, "OwnershipHandler::restore_requests():%d Restoring ownership pull item attribute \"%s\"%c",
+            send_hs( stdout, "OwnershipHandler::decode_checkpoint():%d Restoring ownership pull item attribute \"%s\"%c",
                      __LINE__, pull_items[count].FOM_name, THLA_NEWLINE );
          }
       }
@@ -275,10 +246,39 @@ void OwnershipHandler::restore_requests()
          attr_map->insert( make_pair( push_items[count].FOM_name, attribute ) );
 
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
-            send_hs( stdout, "OwnershipHandler::restore_requests():%d Restoring ownership push item attribute \"%s\"%c",
+            send_hs( stdout, "OwnershipHandler::decode_checkpoint():%d Restoring ownership push item attribute \"%s\"%c",
                      __LINE__, push_items[count].FOM_name, THLA_NEWLINE );
          }
       }
+   }
+}
+
+void OwnershipHandler::free_checkpoint()
+{
+   // If there are any pull_request entries, delete them
+   if ( pull_items_cnt > 0 ) {
+      for ( size_t i = 0; i < pull_items_cnt; ++i ) {
+         pull_items[i].clear();
+      }
+      if ( trick_MM->delete_var( static_cast< void * >( pull_items ) ) ) {
+         send_hs( stderr, "OwnershipHandler::free_checkpoint():%d WARNING failed to delete Trick Memory for 'pull_items'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      pull_items     = NULL;
+      pull_items_cnt = 0;
+   }
+
+   // if there are any push_request entries, delete them
+   if ( push_items_cnt > 0 ) {
+      for ( size_t i = 0; i < push_items_cnt; ++i ) {
+         push_items[i].clear();
+      }
+      if ( trick_MM->delete_var( static_cast< void * >( push_items ) ) ) {
+         send_hs( stderr, "OwnershipHandler::free_checkpoint():%d WARNING failed to delete Trick Memory for 'push_items'%c",
+                  __LINE__, THLA_NEWLINE );
+      }
+      push_items     = NULL;
+      push_items_cnt = 0;
    }
 }
 

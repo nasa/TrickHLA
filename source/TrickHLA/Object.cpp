@@ -3601,7 +3601,7 @@ void Object::release_ownership()
             send_hs( stdout, "Object::release_ownership():%d Telling ownership handler to clear checkpoint.%c",
                      __LINE__, THLA_NEWLINE );
          }
-         ownership->clear_checkpoint();
+         ownership->free_checkpoint();
       }
 
       if ( !this->divest_requested ) {
@@ -4451,7 +4451,7 @@ void Object::setup_ownership_transfer_checkpointed_data()
          send_hs( stdout, "Object::setup_ownership_transfer_checkpointed_data():%d Object: %s.%c",
                   __LINE__, get_name(), THLA_NEWLINE );
       }
-      ownership->setup_checkpoint_requests();
+      ownership->encode_checkpoint();
    }
 }
 
@@ -4462,7 +4462,7 @@ void Object::restore_ownership_transfer_checkpointed_data()
          send_hs( stdout, "Object::restore_ownership_transfer_checkpointed_data():%d Object: %s.%c",
                   __LINE__, get_name(), THLA_NEWLINE );
       }
-      ownership->restore_requests();
+      ownership->decode_checkpoint();
    }
 }
 
