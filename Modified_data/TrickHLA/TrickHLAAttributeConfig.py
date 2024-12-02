@@ -19,20 +19,20 @@ class TrickHLAAttributeConfig( object ):
    FOM_name      = None
    trick_name    = None
    publish       = True
-   subscribe     = False
+   subscribe     = True
    locally_owned = True
    config        = trick.TrickHLA.CONFIG_CYCLIC
    rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING
    
 
    def __init__( self,
-      FOM_name,
-      trick_name,
-      publish       = True,
-      subscribe     = True,
-      locally_owned = True,
-      config        = trick.TrickHLA.CONFIG_CYCLIC,
-      rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING ):
+                 FOM_name,
+                 trick_name,
+                 publish       = True,
+                 subscribe     = True,
+                 locally_owned = True,
+                 config        = trick.TrickHLA.CONFIG_CYCLIC,
+                 rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING ):
 
       self.FOM_name      = FOM_name
       self.trick_name    = trick_name

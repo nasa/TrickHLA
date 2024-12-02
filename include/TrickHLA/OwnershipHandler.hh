@@ -43,6 +43,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA include files.
+#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/Int64Interval.hh"
 #include "TrickHLA/Int64Time.hh"
 #include "TrickHLA/Types.hh"
@@ -59,13 +60,12 @@ class OwnershipItem;
 
 // FIXME: We need to rename this. Unfortunately, AttributeMap is already
 // being used by Attribute.hh.
-
 typedef std::map< std::string, Attribute * > THLAAttributeMap; // ** Map of TrickHLA-Attributes.
 
 // The Key is the time for the requested ownership transfer.
 typedef std::map< double, THLAAttributeMap *, std::less< double > > AttributeOwnershipMap; // ** Map of attribute-maps.
 
-class OwnershipHandler
+class OwnershipHandler : public CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -94,14 +94,14 @@ class OwnershipHandler
    // AttributeOwnershipMaps into / from linear arrays.
    /*! @brief Encodes the push and pull attribute ownership maps into
     * checkpoint-able queues.*/
-   void setup_checkpoint_requests();
-
-   /*! @brief Clears out the push / pull checkpoint-able queues. */
-   void clear_checkpoint();
+   virtual void encode_checkpoint();
 
    /*! @brief Decodes the push / pull checkpoint-able queues back into
     * attribute ownership maps. */
-   void restore_requests();
+   virtual void decode_checkpoint();
+
+   /*! @brief Clears out the push / pull checkpoint-able queues. */
+   virtual void free_checkpoint();
 
    /*! @brief Initializes the callback to the interaction.
     *  @param obj Associated object for this class. */

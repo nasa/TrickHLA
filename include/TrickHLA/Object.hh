@@ -57,6 +57,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/BasicClock.hh"
+#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/ElapsedTimeStats.hh"
 #include "TrickHLA/Int64Interval.hh"
@@ -104,7 +105,7 @@ class OwnershipHandler;
 class ObjectDeleted;
 class LagCompensation;
 
-class Object
+class Object : public CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -321,12 +322,15 @@ class Object
    void negotiated_attribute_ownership_divestiture( RTI1516_NAMESPACE::AttributeHandleSet *attr_hdl_set );
 
    /*! @brief Setup the checkpoint data structures. */
-   void setup_ownership_transfer_checkpointed_data();
+   virtual void encode_checkpoint();
 
    /*! @brief If an ownership_transfer object has been created by the user,
     * trigger it's restore() method is re-establish the pull / push
     * AttributeOwnershipMaps. */
-   void restore_ownership_transfer_checkpointed_data();
+   virtual void decode_checkpoint();
+
+   /*! @brief Clears out the push / pull checkpoint-able queues. */
+   virtual void free_checkpoint();
 
    // Instance methods
 

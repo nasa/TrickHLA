@@ -43,11 +43,11 @@ class TrickHLAInteractionConfig( object ):
 
       # Set the Trick HLA object reference here so that the set() function calls
       # will work as expected. Normally, this is postponed until initialization.
-      if thla_manager_interaction != None :
+      if thla_manager_interaction != None:
          self.hla_manager_interaction = thla_manager_interaction
 
       # Set the interaction FOM name if specified.
-      if thla_FOM_name != None :
+      if thla_FOM_name != None:
          self.set_FOM_name( thla_FOM_name )
 
       # Specify if this interaction is published or subscribed.
@@ -55,7 +55,7 @@ class TrickHLAInteractionConfig( object ):
       self.hla_subscribe = thla_subscribe
 
       # Set interaction handler if specified and not None.
-      if thla_handler_instance != None :
+      if thla_handler_instance != None:
          self.set_handler_instance( thla_handler_instance )
 
       # Still need to set the object attributes but this is left to the
@@ -67,9 +67,9 @@ class TrickHLAInteractionConfig( object ):
    def initialize( self, thla_manager_interaction = None ):
 
       # Assign the associated TrickHLA object if specified.
-      if thla_manager_interaction != None :
+      if thla_manager_interaction != None:
          self.hla_manager_interaction = thla_manager_interaction
-      elif self.hla_manager_interaction == None :
+      elif self.hla_manager_interaction == None:
          trick.exec_terminate_with_return( -1,
                                            sys._getframe(0).f_code.co_filename,
                                            sys._getframe(0).f_lineno,
@@ -97,7 +97,7 @@ class TrickHLAInteractionConfig( object ):
    def set_FOM_name( self, name ):
 
       self.hla_FOM_name = str(name)
-      if self.hla_manager_interaction != None :
+      if self.hla_manager_interaction != None:
          self.hla_manager_interaction.FOM_name = str(name)
 
       return
@@ -111,7 +111,7 @@ class TrickHLAInteractionConfig( object ):
    def set_publish( self, publish ):
  
       self.hla_publish = publish
-      if self.hla_manager_interaction != None :
+      if self.hla_manager_interaction != None:
          self.hla_manager_interaction.publish = self.hla_publish
 
       return
@@ -125,7 +125,7 @@ class TrickHLAInteractionConfig( object ):
    def set_subscribe( self, subscribe ):
  
       self.hla_subscribe = subscribe
-      if self.hla_manager_interaction != None :
+      if self.hla_manager_interaction != None:
          self.hla_manager_interaction.subscribe = self.hla_subscribe
 
       return
@@ -139,7 +139,7 @@ class TrickHLAInteractionConfig( object ):
    def set_handler_instance( self, inter_hndlr ):
  
       self.hla_handler_instance = inter_hndlr
-      if self.hla_manager_interaction != None :
+      if self.hla_manager_interaction != None:
          self.hla_manager_interaction.handler = inter_hndlr
 
       return

@@ -63,6 +63,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/Conditional.hh"
 #include "TrickHLA/DebugHandler.hh"
@@ -3601,7 +3602,7 @@ void Object::release_ownership()
             send_hs( stdout, "Object::release_ownership():%d Telling ownership handler to clear checkpoint.%c",
                      __LINE__, THLA_NEWLINE );
          }
-         ownership->clear_checkpoint();
+         ownership->free_checkpoint();
       }
 
       if ( !this->divest_requested ) {
@@ -4444,25 +4445,36 @@ for Attributes of object '%s'.%c",
    }
 }
 
-void Object::setup_ownership_transfer_checkpointed_data()
+void Object::encode_checkpoint()
 {
    if ( ownership != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         send_hs( stdout, "Object::setup_ownership_transfer_checkpointed_data():%d Object: %s.%c",
+         send_hs( stdout, "Object::encode_checkpoint():%d Object: %s.%c",
                   __LINE__, get_name(), THLA_NEWLINE );
       }
-      ownership->setup_checkpoint_requests();
+      ownership->encode_checkpoint();
    }
 }
 
-void Object::restore_ownership_transfer_checkpointed_data()
+void Object::decode_checkpoint()
 {
    if ( ownership != NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         send_hs( stdout, "Object::restore_ownership_transfer_checkpointed_data():%d Object: %s.%c",
+         send_hs( stdout, "Object::decode_checkpoint():%d Object: %s.%c",
                   __LINE__, get_name(), THLA_NEWLINE );
       }
-      ownership->restore_requests();
+      ownership->decode_checkpoint();
+   }
+}
+
+void Object::free_checkpoint()
+{
+   if ( ownership != NULL ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+         send_hs( stdout, "Object::free_checkpoint():%d Object: %s.%c",
+                  __LINE__, get_name(), THLA_NEWLINE );
+      }
+      ownership->free_checkpoint();
    }
 }
 

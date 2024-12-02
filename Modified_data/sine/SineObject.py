@@ -18,7 +18,7 @@ import trick
 from ..TrickHLA.TrickHLAObjectConfig import *
 from ..TrickHLA.TrickHLAAttributeConfig import *
 
-class SineObject(TrickHLAObjectConfig):
+class SineObject( TrickHLAObjectConfig ):
 
    # The Sine HLA class FOM name.
    sine_FOM_name = 'Sine'
@@ -30,15 +30,17 @@ class SineObject(TrickHLAObjectConfig):
                  sine_create_object,
                  sine_obj_instance_name,
                  sine_trick_sim_obj_name,
-                 sine_packing,
-                 sine_conditional        = None,
-                 sine_lag_comp           = None,
-                 sine_lag_comp_type      = trick.TrickHLA.LAG_COMPENSATION_NONE,
-                 sine_ownership          = None,
-                 sine_deleted            = None,
-                 sine_attr_config        = None,
-                 sine_thread_IDs         = None,
-                 sine_thla_object        = None ):
+                 sine_packing             = None,
+                 sine_conditional         = None,
+                 sine_lag_comp            = None,
+                 sine_lag_comp_type       = trick.TrickHLA.LAG_COMPENSATION_NONE,
+                 sine_ownership           = None,
+                 sine_deleted             = None,
+                 sine_thla_object         = None,
+                 sine_thread_IDs          = None,
+                 sine_attribute_publish   = None,
+                 sine_attribute_subscribe = None,
+                 sine_attribute_config    = None ):
 
       # Save the Trick sim-object name to use for trick_data_name generation.
       self.trick_sim_obj_name = str( sine_trick_sim_obj_name )
@@ -56,7 +58,9 @@ class SineObject(TrickHLAObjectConfig):
                                      thla_packing_instance     = sine_packing,
                                      thla_object               = sine_thla_object,
                                      thla_thread_IDs           = sine_thread_IDs,
-                                     thla_attribute_config     = sine_attr_config )
+                                     thla_attribute_publish    = sine_attribute_publish,
+                                     thla_attribute_subscribe  = sine_attribute_subscribe,
+                                     thla_attribute_config     = sine_attribute_config )
 
       # Build the object attribute list.
       self.add_attributes()
@@ -78,7 +82,7 @@ class SineObject(TrickHLAObjectConfig):
       sine_trick_sim_obj_name = self.trick_sim_obj_name
 
       # Set a default TrickHLA Attribute config if one is not set.
-      if ( self.hla_attribute_config == None ) :
+      if ( self.hla_attribute_config == None ):
          self.hla_attribute_config = trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC
 
 
@@ -86,8 +90,8 @@ class SineObject(TrickHLAObjectConfig):
       trick_data_name = str( sine_trick_sim_obj_name ) + '.packing.name'
       attribute = TrickHLAAttributeConfig( FOM_name      = 'Name',
                                            trick_name    = trick_data_name,
-                                           publish       = self.hla_create,
-                                           subscribe     = not self.hla_create,
+                                           publish       = self.hla_attribute_publish,
+                                           subscribe     = self.hla_attribute_subscribe,
                                            locally_owned = self.hla_create,
                                            config        = self.hla_attribute_config,
                                            rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING )
@@ -97,8 +101,8 @@ class SineObject(TrickHLAObjectConfig):
       trick_data_name = str( sine_trick_sim_obj_name ) + '.packing.time'
       attribute = TrickHLAAttributeConfig( FOM_name      = 'Time',
                                            trick_name    = trick_data_name,
-                                           publish       = self.hla_create,
-                                           subscribe     = not self.hla_create,
+                                           publish       = self.hla_attribute_publish,
+                                           subscribe     = self.hla_attribute_subscribe,
                                            locally_owned = self.hla_create,
                                            config        = self.hla_attribute_config,
                                            rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
@@ -108,8 +112,8 @@ class SineObject(TrickHLAObjectConfig):
       trick_data_name = str( sine_trick_sim_obj_name ) + '.packing.value'
       attribute = TrickHLAAttributeConfig( FOM_name      = 'Value',
                                            trick_name    = trick_data_name,
-                                           publish       = self.hla_create,
-                                           subscribe     = not self.hla_create,
+                                           publish       = self.hla_attribute_publish,
+                                           subscribe     = self.hla_attribute_subscribe,
                                            locally_owned = self.hla_create,
                                            config        = self.hla_attribute_config,
                                            rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
@@ -119,8 +123,8 @@ class SineObject(TrickHLAObjectConfig):
       trick_data_name = str( sine_trick_sim_obj_name ) + '.packing.dvdt'
       attribute = TrickHLAAttributeConfig( FOM_name      = 'dvdt',
                                            trick_name    = trick_data_name,
-                                           publish       = self.hla_create,
-                                           subscribe     = not self.hla_create,
+                                           publish       = self.hla_attribute_publish,
+                                           subscribe     = self.hla_attribute_subscribe,
                                            locally_owned = self.hla_create,
                                            config        = self.hla_attribute_config,
                                            rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
@@ -130,8 +134,8 @@ class SineObject(TrickHLAObjectConfig):
       trick_data_name = str( sine_trick_sim_obj_name ) + '.packing.phase_deg'
       attribute = TrickHLAAttributeConfig( FOM_name      = 'Phase',
                                            trick_name    = trick_data_name,
-                                           publish       = self.hla_create,
-                                           subscribe     = not self.hla_create,
+                                           publish       = self.hla_attribute_publish,
+                                           subscribe     = self.hla_attribute_subscribe,
                                            locally_owned = self.hla_create,
                                            config        = self.hla_attribute_config,
                                            rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
@@ -141,8 +145,8 @@ class SineObject(TrickHLAObjectConfig):
       trick_data_name = str( sine_trick_sim_obj_name ) + '.packing.freq'
       attribute = TrickHLAAttributeConfig( FOM_name      = 'Frequency',
                                            trick_name    = trick_data_name,
-                                           publish       = self.hla_create,
-                                           subscribe     = not self.hla_create,
+                                           publish       = self.hla_attribute_publish,
+                                           subscribe     = self.hla_attribute_subscribe,
                                            locally_owned = self.hla_create,
                                            config        = self.hla_attribute_config,
                                            rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
@@ -152,8 +156,8 @@ class SineObject(TrickHLAObjectConfig):
       trick_data_name = str( sine_trick_sim_obj_name ) + '.packing.amp'
       attribute = TrickHLAAttributeConfig( FOM_name      = 'Amplitude',
                                            trick_name    = trick_data_name,
-                                           publish       = self.hla_create,
-                                           subscribe     = not self.hla_create,
+                                           publish       = self.hla_attribute_publish,
+                                           subscribe     = self.hla_attribute_subscribe,
                                            locally_owned = self.hla_create,
                                            config        = self.hla_attribute_config,
                                            rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
@@ -163,8 +167,8 @@ class SineObject(TrickHLAObjectConfig):
       trick_data_name = str( sine_trick_sim_obj_name ) + '.packing.tol'
       attribute = TrickHLAAttributeConfig( FOM_name      = 'Tolerance',
                                            trick_name    = trick_data_name,
-                                           publish       = self.hla_create,
-                                           subscribe     = not self.hla_create,
+                                           publish       = self.hla_attribute_publish,
+                                           subscribe     = self.hla_attribute_subscribe,
                                            locally_owned = self.hla_create,
                                            config        = self.hla_attribute_config,
                                            rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
