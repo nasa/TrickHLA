@@ -24,12 +24,12 @@ from Modified_data.TrickHLA.TrickHLAObjectConfig import *
 from Modified_data.TrickHLA.TrickHLAAttributeConfig import *
 
 # NOTE this object shouldn't be instantiated directly; use the derived types below.
-class FluidDistIfObjectConfig(TrickHLAObjectConfig):
+class FluidDistIfObjectConfig( TrickHLAObjectConfig ):
 
    direction = None
    
    # Implemented in derived classes below
-   def initDirection(self, isBusA):
+   def initDirection( self, isBusA ):
       pass
       
    def __init__( self,
@@ -37,23 +37,23 @@ class FluidDistIfObjectConfig(TrickHLAObjectConfig):
                  bus_name,                          # trick variable name of the FluidDistributed2WayBus object
                  isBusA,                            # True if this is the 'A' FluidDistributed2WayBus of the pair
                  FOM_type = 'FluidDistIfData_6_4',  # FOM objectClass type
-                 threadId = None):                  # Trick child thread
+                 threadId = None ):                 # Trick child thread
 
-      self.initDirection(isBusA)
+      self.initDirection( isBusA )
 
       # Call the base class constructor and tell it the FOM object class.
       TrickHLAObjectConfig.__init__( self,
-                                   ( '.mOutData' == self.direction), #thla_create (this locally owns)
-                                     thla_federate_name,             #thla_instance_name
-                                     FOM_type,                       #thla_FOM_name
-                                     None,                           #thla_lag_comp_instance
-                                     None,                           #thla_lag_comp_type
-                                     None,                           #thla_ownership_instance
-                                     None,                           #thla_deleted_instance
-                                     None,                           #thla_conditional_instance
-                                     None,                           #thla_packing_instance
-                                     None,                           #thla_manager_object
-                                     threadId )                      #thla_thread_IDs
+                                     thla_create               = ( '.mOutData' == self.direction), # this locally owns
+                                     thla_instance_name        = thla_federate_name,
+                                     thla_FOM_name             = FOM_type,
+                                     thla_lag_comp_instance    = None,
+                                     thla_lag_comp_type        = None,
+                                     thla_ownership_instance   = None,
+                                     thla_deleted_instance     = None,
+                                     thla_conditional_instance = None,
+                                     thla_packing_instance     = None,
+                                     thla_object               = None,
+                                     thla_thread_IDs           = threadId )
       
       # Build the object attribute list.
       self.add_attributes(bus_name)
@@ -71,13 +71,13 @@ class FluidDistIfObjectConfig(TrickHLAObjectConfig):
                        ('TraceCompoundsMixture', '.mTcMoleFractions', trick.TrickHLA.ENCODING_LITTLE_ENDIAN)]
 
       for attr in Attribute_Map:
-          attribute = TrickHLAAttributeConfig( attr[0],
-                                               bus_name + self.direction + attr[1],
-                                               True,
-                                               True,
-                                               self.hla_create,
-                                               trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                               attr[2] )
+          attribute = TrickHLAAttributeConfig( FOM_name      = attr[0],
+                                               trick_name    = bus_name + self.direction + attr[1],
+                                               publish       = True,
+                                               subscribe     = True,
+                                               locally_owned = self.hla_create,
+                                               config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
+                                               rti_encoding  = attr[2] )
           self.add_attribute( attribute )
 
 #################################
@@ -85,8 +85,8 @@ class FluidDistIfObjectConfig(TrickHLAObjectConfig):
 #################################
 class FluidDistIfAToBObjectConfig(FluidDistIfObjectConfig):
    # If the FluidDistributed2WayBus object is the 'A' of the pair, then map the FOM to its mOutData, else its mInData.
-   def initDirection(self, isBusA):
-      if (isBusA):
+   def initDirection( self, isBusA ):
+      if ( isBusA ):
           self.direction = '.mOutData'
       else:
           self.direction = '.mInData'
@@ -96,8 +96,8 @@ class FluidDistIfAToBObjectConfig(FluidDistIfObjectConfig):
 #################################
 class FluidDistIfBToAObjectConfig(FluidDistIfObjectConfig):
    # If the FluidDistributed2WayBus object is the 'A' of the pair, then map the FOM to its mInData, else its mOutData.
-   def initDirection(self, isBusA):
-      if (isBusA):
+   def initDirection( self, isBusA ):
+      if ( isBusA ):
           self.direction = '.mInData'
       else:
           self.direction = '.mOutData'

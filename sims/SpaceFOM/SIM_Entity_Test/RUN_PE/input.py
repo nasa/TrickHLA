@@ -52,7 +52,7 @@ def print_usage_message( ):
    return
 
 
-def parse_command_line( ) :
+def parse_command_line( ):
    
    global print_usage
    global run_duration
@@ -71,89 +71,89 @@ def parse_command_line( ) :
    # Process the command line arguments.
    # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
    index = 2
-   while (index < argc) :
+   while (index < argc):
       
-      if (str(argv[index]) == '--stop') :
+      if (str(argv[index]) == '--stop'):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             run_duration = float(str(argv[index]))
-         else :
+         else:
             print('ERROR: Missing -stop [time] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '--nostop') :
+      elif (str(argv[index]) == '--nostop'):
          run_duration = None
          
-      elif ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')) :
+      elif ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')):
          print_usage = True
       
-      elif ((str(argv[index]) == '-de')) :
+      elif ((str(argv[index]) == '-de')):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             dyn_entity_name = str(argv[index])
-         else :
+         else:
             print('ERROR: Missing -de [name] argument.')
             print_usage = True
       
-      elif ((str(argv[index]) == '--dyn_fed')) :
+      elif ((str(argv[index]) == '--dyn_fed')):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             dyn_federate_name = str(argv[index])
-         else :
+         else:
             print('ERROR: Missing --dyn_fed [name] argument.')
             print_usage = True
       
-      elif ((str(argv[index]) == '-f') | (str(argv[index]) == '--fed_name')) :
+      elif ((str(argv[index]) == '-f') | (str(argv[index]) == '--fed_name')):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             federate_name = str(argv[index])
-         else :
+         else:
             print('ERROR: Missing --fed_name [name] argument.')
             print_usage = True
       
-      elif ((str(argv[index]) == '-fe') | (str(argv[index]) == '--fex_name')) :
+      elif ((str(argv[index]) == '-fe') | (str(argv[index]) == '--fex_name')):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             federation_name = str(argv[index])
-         else :
+         else:
             print('ERROR: Missing --fex_name [name] argument.')
             print_usage = True
       
-      elif ((str(argv[index]) == '-pe')) :
+      elif ((str(argv[index]) == '-pe')):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             phy_entity_name = str(argv[index])
-         else :
+         else:
             print('ERROR: Missing -pe [name] argument.')
             print_usage = True
       
-      elif ((str(argv[index]) == '-pi')) :
+      elif ((str(argv[index]) == '-pi')):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             phy_interface_name = str(argv[index])
-         else :
+         else:
             print('ERROR: Missing -pi [name] argument.')
             print_usage = True
       
-      elif (str(argv[index]) == '--verbose') :
+      elif (str(argv[index]) == '--verbose'):
          index = index + 1
-         if (index < argc) :
-            if (str(argv[index]) == 'on') :
+         if (index < argc):
+            if (str(argv[index]) == 'on'):
                verbose = True
-            elif (str(argv[index]) == 'off') :
+            elif (str(argv[index]) == 'off'):
                verbose = False
-            else :
+            else:
                print('ERROR: Unknown --verbose argument: ' + str(argv[index]))
                print_usage = True
-         else :
+         else:
             print('ERROR: Missing --verbose [on|off] argument.')
             print_usage = True
          
-      elif ((str(argv[index]) == '-d')) :
+      elif ((str(argv[index]) == '-d')):
          # Pass this on to Trick.
          break
          
-      else :
+      else:
          print('ERROR: Unknown command line argument ' + str(argv[index]))
          print_usage = True
          
@@ -190,7 +190,7 @@ phy_interface_name = phy_entity_name + '.dockingport'
 
 parse_command_line()
 
-if (print_usage == True) :
+if (print_usage == True):
    print_usage_message()
 
 
@@ -315,12 +315,12 @@ federate = SpaceFOMFederateConfig( THLA.federate,
 #federate.set_ExCO_S_define_name( 'THLA_INIT.ExCO' )
 
 # Set the debug output level.
-if (verbose == True) : 
+if (verbose == True): 
    #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_6_TRACE )
    federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_ALL_MODULES )
    #federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_OBJECT + trick.TrickHLA.DEBUG_SOURCE_ATTRIBUTE )
-else :
+else:
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
 
 #--------------------------------------------------------------------------
@@ -376,11 +376,12 @@ federate.set_time_constrained( True )
 # If it is the RRFP, it will publish the frame.
 # If it is NOT the RRFP, it will subscribe to the frame.
 #---------------------------------------------------------------------------
-root_frame = SpaceFOMRefFrameObject( federate.is_RRFP,
-                                     'RootFrame',
-                                     root_ref_frame.frame_packing,
-                                     'root_ref_frame.frame_packing',
-                                     frame_conditional = root_ref_frame.conditional )
+root_frame = SpaceFOMRefFrameObject(
+   create_frame_object          = federate.is_RRFP,
+   frame_instance_name          = 'RootFrame',
+   frame_S_define_instance      = root_ref_frame.frame_packing,
+   frame_S_define_instance_name = 'root_ref_frame.frame_packing',
+   frame_conditional            = root_ref_frame.conditional )
 
 # Set the debug flag for the root reference frame.
 root_ref_frame.frame_packing.debug = verbose
@@ -395,16 +396,17 @@ federate.set_root_frame( root_frame )
 #---------------------------------------------------------------------------
 # Set up an alternate vehicle reference frame object for discovery.
 #---------------------------------------------------------------------------
-frame_A = SpaceFOMRefFrameObject( False,
-                                  'FrameA',
-                                  ref_frame_A.frame_packing,
-                                  'ref_frame_A.frame_packing',
-                                  parent_S_define_instance = root_ref_frame.frame_packing,
-                                  parent_name              = 'RootFrame',
-                                  frame_conditional        = ref_frame_A.conditional,
-                                  frame_lag_comp           = ref_frame_A.lag_compensation,
-                                  frame_ownership          = ref_frame_A.ownership_handler,
-                                  frame_deleted            = ref_frame_A.deleted_callback )
+frame_A = SpaceFOMRefFrameObject(
+   create_frame_object          = False,
+   frame_instance_name          = 'FrameA',
+   frame_S_define_instance      = ref_frame_A.frame_packing,
+   frame_S_define_instance_name = 'ref_frame_A.frame_packing',
+   parent_S_define_instance     = root_ref_frame.frame_packing,
+   parent_name                  = 'RootFrame',
+   frame_conditional            = ref_frame_A.conditional,
+   frame_lag_comp               = ref_frame_A.lag_compensation,
+   frame_ownership              = ref_frame_A.ownership_handler,
+   frame_deleted                = ref_frame_A.deleted_callback )
 
 # Set the debug flag for this reference frame.
 ref_frame_A.frame_packing.debug = verbose
@@ -429,14 +431,15 @@ ref_frame_tree.frame_tree.debug = True
 #---------------------------------------------------------------------------
 # Set up the PhysicalEntity object for discovery.
 #---------------------------------------------------------------------------
-phy_entity = SpaceFOMPhysicalEntityObject( True,
-                                           phy_entity_name,
-                                           physical_entity.entity_packing,
-                                           'physical_entity.entity_packing',
-                                           entity_conditional = physical_entity.conditional,
-                                           entity_lag_comp    = physical_entity.lag_compensation,
-                                           entity_ownership   = physical_entity.ownership_handler,
-                                           entity_deleted     = physical_entity.deleted_callback )
+phy_entity = SpaceFOMPhysicalEntityObject(
+   create_entity_object          = True,
+   entity_instance_name          = phy_entity_name,
+   entity_S_define_instance      = physical_entity.entity_packing,
+   entity_S_define_instance_name = 'physical_entity.entity_packing',
+   entity_conditional            = physical_entity.conditional,
+   entity_lag_comp               = physical_entity.lag_compensation,
+   entity_ownership              = physical_entity.ownership_handler,
+   entity_deleted                = physical_entity.deleted_callback )
 
 # Set the debug flag for the Entity.
 physical_entity.entity_packing.debug = verbose
@@ -456,13 +459,14 @@ phy_entity.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 #---------------------------------------------------------------------------
 # Set up the PhysicalInterface object for discovery.
 #---------------------------------------------------------------------------
-phy_interface = SpaceFOMPhysicalInterfaceObject( True,
-                                                 phy_interface_name,
-                                                 physical_interface.interface_packing,
-                                                 'physical_interface.interface_packing',
-                                                 interface_conditional = physical_interface.conditional,
-                                                 interface_ownership   = physical_interface.ownership_handler,
-                                                 interface_deleted     = physical_interface.deleted_callback )
+phy_interface = SpaceFOMPhysicalInterfaceObject(
+   create_interface_object          = True,
+   interface_instance_name          = phy_interface_name,
+   interface_S_define_instance      = physical_interface.interface_packing,
+   interface_S_define_instance_name = 'physical_interface.interface_packing',
+   interface_conditional            = physical_interface.conditional,
+   interface_ownership              = physical_interface.ownership_handler,
+   interface_deleted                = physical_interface.deleted_callback )
 
 # Set the debug flag for the Entity.
 physical_interface.interface_packing.debug = verbose
@@ -479,14 +483,15 @@ physical_interface.interface_data.attitude.set_from_Euler_deg( trick.Pitch_Yaw_R
 #---------------------------------------------------------------------------
 # Set up the DynamicalEntity object for discovery.
 #---------------------------------------------------------------------------
-dyn_entity = SpaceFOMDynamicalEntityObject( False,
-                                            dyn_entity_name,
-                                            dynamical_entity.entity_packing,
-                                            'dynamical_entity.entity_packing',
-                                            entity_conditional = dynamical_entity.conditional,
-                                            entity_lag_comp    = dynamical_entity.lag_compensation,
-                                            entity_ownership   = dynamical_entity.ownership_handler,
-                                            entity_deleted     = dynamical_entity.deleted_callback )
+dyn_entity = SpaceFOMDynamicalEntityObject(
+   create_entity_object          = False,
+   entity_instance_name          = dyn_entity_name,
+   entity_S_define_instance      = dynamical_entity.entity_packing,
+   entity_S_define_instance_name = 'dynamical_entity.entity_packing',
+   entity_conditional            = dynamical_entity.conditional,
+   entity_lag_comp               = dynamical_entity.lag_compensation,
+   entity_ownership              = dynamical_entity.ownership_handler,
+   entity_deleted                = dynamical_entity.deleted_callback )
 
 # Set the debug flag for the Entity.
 dynamical_entity.entity_packing.debug = verbose
