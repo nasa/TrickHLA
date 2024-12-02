@@ -33,13 +33,13 @@ def print_usage_message( ):
 
    print(' ')
    print('TrickHLA Sine Wave SpaceFOM Simulation Command Line Configuration Options:')
-   print('  -h --help             : Print this help message.')
-   print('  -f --fed_name [name]  : Name of the Federate, default is A-side-Federate.')
-   print('  -fe --fex_name [name] : Name of the Federation Execution, default is SpaceFOM_sine.')
-   print('  --nostop              : Set no stop time on simulation.')
-   print('  -r --root_frame [name]: Name of the root reference frame, default is RootFrame.')
-   print('  -s --stop [time]      : Time to stop simulation, default is 10.0 seconds.')
-   print('  --verbose [on|off]    : on: Show verbose messages (Default), off: disable messages.')
+   print('  -h --help              : Print this help message.')
+   print('  -f --fed_name [name]   : Name of the Federate, default is A-side-Federate.')
+   print('  -fe --fex_name [name]  : Name of the Federation Execution, default is SpaceFOM_sine.')
+   print('  --nostop               : Set no stop time on simulation.')
+   print('  -r --root_frame [name] : Name of the root reference frame, default is RootFrame.')
+   print('  -s --stop [time]       : Time to stop simulation, default is 10.0 seconds.')
+   print('  --verbose [on|off]     : on: Show verbose messages (Default), off: disable messages.')
    print(' ')
 
    trick.exec_terminate_with_return( -1,

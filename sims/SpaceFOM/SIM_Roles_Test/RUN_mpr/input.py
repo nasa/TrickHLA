@@ -30,13 +30,13 @@ def print_usage_message( ):
 
    print(' ')
    print('TrickHLA SpaceFOM Roles Test Simulation Command Line Configuration Options:')
-   print('  -h --help             : Print this help message.')
-   print('  -f --fed_name [name]  : Name of the Federate, default is PhysicalEntity.')
-   print('  -fe --fex_name [name] : Name of the Federation Execution, default is SpaceFOM_Roles_Test.')
-   print('  --nostop              : Set no stop time on simulation.')
-   print('  -r --root_frame [name]: Name of the DynamicalEntity, default is Voyager.')
-   print('  -s --stop [time]      : Time to stop simulation, default is 10.0 seconds.')
-   print('  --verbose [on|off]    : on: Show verbose messages (Default), off: disable messages.')
+   print('  -h --help              : Print this help message.')
+   print('  -f --fed_name [name]   : Name of the Federate, default is PhysicalEntity.')
+   print('  -fe --fex_name [name]  : Name of the Federation Execution, default is SpaceFOM_Roles_Test.')
+   print('  --nostop               : Set no stop time on simulation.')
+   print('  -r --root_frame [name] : Name of the DynamicalEntity, default is Voyager.')
+   print('  -s --stop [time]       : Time to stop simulation, default is 10.0 seconds.')
+   print('  --verbose [on|off]     : on: Show verbose messages (Default), off: disable messages.')
    print(' ')
 
    trick.exec_terminate_with_return( -1,
