@@ -2630,7 +2630,7 @@ void Federate::perform_checkpoint()
 
 /*!
  *  \par<b>Assumptions and Limitations:</b>
- *  - Currently only used with DIS and IMSIM initialization schemes.
+ *  - Currently only used with IMSim initialization scheme.
  *  @job_class{checkpoint}
  */
 void Federate::setup_checkpoint()
@@ -2791,7 +2791,7 @@ void Federate::setup_checkpoint()
    write_running_feds_file( str_save_label );
 
    // Tell the manager to setup the checkpoint data structures.
-   manager->setup_checkpoint();
+   manager->encode_checkpoint();
 
    // Save any synchronization points.
    convert_sync_pts();
@@ -3072,14 +3072,14 @@ void Federate::post_restore()
       }
 
       // Restore interactions and sync points
-      manager->restore_interactions();
+      manager->decode_checkpoint_interactions();
       reinstate_logged_sync_pts();
 
       // Restore ownership transfer data for all objects
       Object *objects   = manager->get_objects();
       int     obj_count = manager->get_object_count();
       for ( unsigned int i = 0; i < obj_count; ++i ) {
-         objects[i].restore_ownership_transfer_checkpointed_data();
+         objects[i].decode_checkpoint();
       }
 
       // Macro to save the FPU Control Word register value.

@@ -32,13 +32,13 @@ def print_usage_message( ):
 
    print(' ')
    print('TrickHLA Sine Wave SpaceFOM Simulation Command Line Configuration Options:')
-   print('  -h --help             : Print this help message.')
-   print('  -f --fed_name [name]  : Name of the Federate, default is A-side-Federate.')
-   print('  -fe --fex_name [name] : Name of the Federation Execution, default is SpaceFOM_sine.')
-   print('  --nostop              : Set no stop time on simulation.')
-   print('  -r --root_frame [name]: Name of the root reference frame, default is RootFrame.')
-   print('  -s --stop [time]      : Time to stop simulation, default is 10.0 seconds.')
-   print('  --verbose [on|off]    : on: Show verbose messages (Default), off: disable messages.')
+   print('  -h --help              : Print this help message.')
+   print('  -f --fed_name [name]   : Name of the Federate, default is A-side-Federate.')
+   print('  -fe --fex_name [name]  : Name of the Federation Execution, default is SpaceFOM_sine.')
+   print('  --nostop               : Set no stop time on simulation.')
+   print('  -r --root_frame [name] : Name of the root reference frame, default is RootFrame.')
+   print('  -s --stop [time]       : Time to stop simulation, default is 10.0 seconds.')
+   print('  --verbose [on|off]     : on: Show verbose messages (Default), off: disable messages.')
    print(' ')
 
    trick.exec_terminate_with_return( -1,
@@ -48,7 +48,7 @@ def print_usage_message( ):
    return
 
 
-def parse_command_line( ) :
+def parse_command_line( ):
    
    global print_usage
    global run_duration
@@ -64,65 +64,65 @@ def parse_command_line( ) :
    # Process the command line arguments.
    # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
    index = 2
-   while (index < argc) :
+   while (index < argc):
       
-      if ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')) :
+      if ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')):
          print_usage = True
       
-      elif ((str(argv[index]) == '-f') | (str(argv[index]) == '--fed_name')) :
+      elif ((str(argv[index]) == '-f') | (str(argv[index]) == '--fed_name')):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             federate_name = str(argv[index])
-         else :
+         else:
             print('ERROR: Missing --fed_name [name] argument.')
             print_usage = True
       
-      elif ((str(argv[index]) == '-fe') | (str(argv[index]) == '--fex_name')) :
+      elif ((str(argv[index]) == '-fe') | (str(argv[index]) == '--fex_name')):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             federation_name = str(argv[index])
-         else :
+         else:
             print('ERROR: Missing --fex_name [name] argument.')
             print_usage = True
       
-      elif ((str(argv[index]) == '-r') | (str(argv[index]) == '--root_frame')) :
+      elif ((str(argv[index]) == '-r') | (str(argv[index]) == '--root_frame')):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             root_frame_name = str(argv[index])
-         else :
+         else:
             print('ERROR: Missing --root_frame [name] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '--nostop') :
+      elif (str(argv[index]) == '--nostop'):
          run_duration = None
       
-      elif ((str(argv[index]) == '-s') | (str(argv[index]) == '--stop')) :
+      elif ((str(argv[index]) == '-s') | (str(argv[index]) == '--stop')):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             run_duration = float(str(argv[index]))
-         else :
+         else:
             print('ERROR: Missing -stop [time] argument.')
             print_usage = True
       
-      elif (str(argv[index]) == '--verbose') :
+      elif (str(argv[index]) == '--verbose'):
          index = index + 1
-         if (index < argc) :
-            if (str(argv[index]) == 'on') :
+         if (index < argc):
+            if (str(argv[index]) == 'on'):
                verbose = True
-            elif (str(argv[index]) == 'off') :
+            elif (str(argv[index]) == 'off'):
                verbose = False
-            else :
+            else:
                print('ERROR: Unknown --verbose argument: ' + str(argv[index]))
                print_usage = True
-         else :
+         else:
             print('ERROR: Missing --verbose [on|off] argument.')
             print_usage = True
          
-      elif ((str(argv[index]) == '-d')) :
+      elif ((str(argv[index]) == '-d')):
          # Pass this on to Trick.
          break
             
-      else :
+      else:
          print('ERROR: Unknown command line argument ' + str(argv[index]))
          print_usage = True
          
@@ -150,7 +150,7 @@ root_frame_name = 'RootFrame'
 
 parse_command_line()
 
-if ( print_usage == True ) :
+if ( print_usage == True ):
    print_usage_message()
 
 #---------------------------------------------
@@ -192,13 +192,13 @@ log_sine_states( 'PC', 0.250 )
 # Set up the HLA interfaces.
 # =========================================================================
 # Instantiate the Python SpaceFOM configuration object.
-federate = SpaceFOMFederateConfig( THLA.federate,
-                                   THLA.manager,
-                                   THLA.execution_control,
-                                   THLA.ExCO,
-                                   federation_name,
-                                   federate_name,
-                                   True )
+federate = SpaceFOMFederateConfig( thla_federate        = THLA.federate,
+                                   thla_manager         = THLA.manager,
+                                   thla_control         = THLA.execution_control,
+                                   thla_config          = THLA.ExCO,
+                                   thla_federation_name = federation_name,
+                                   thla_federate_name   = federate_name,
+                                   thla_enabled         = True )
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job
@@ -206,9 +206,9 @@ federate = SpaceFOMFederateConfig( THLA.federate,
 #federate.set_ExCO_S_define_name( 'THLA_INIT.ExCO' )
 
 # Set the debug output level.
-if ( verbose == True ) : 
+if ( verbose == True ): 
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
-else :
+else:
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
 
 #--------------------------------------------------------------------------
@@ -305,7 +305,7 @@ sine_AZ = SineObject( sine_create_object      = True,
                       sine_obj_instance_name  = 'A-side-Federate.Sine.zero',
                       sine_trick_sim_obj_name = 'AZ',
                       sine_packing            = AZ.packing,
-                      sine_attr_config        = trick.CONFIG_ZERO_LOOKAHEAD )
+                      sine_attribute_config   = trick.CONFIG_ZERO_LOOKAHEAD )
 
 # Add this sine object to the list of managed objects.
 federate.add_fed_object( sine_AZ )
@@ -314,7 +314,7 @@ sine_PZ = SineObject( sine_create_object      = False,
                       sine_obj_instance_name  = 'P-side-Federate.Sine.zero',
                       sine_trick_sim_obj_name = 'PZ',
                       sine_packing            = PZ.packing,
-                      sine_attr_config        = trick.CONFIG_ZERO_LOOKAHEAD )
+                      sine_attribute_config   = trick.CONFIG_ZERO_LOOKAHEAD )
 
 # Add this cyclic sine object to the list of managed objects.
 federate.add_fed_object( sine_PZ )
@@ -381,11 +381,12 @@ ref_frame_tree.vehicle_frame_data.state.time = 0.0
 # If it is the RRFP, it will publish the frame.
 # If it is NOT the RRFP, it will subscribe to the frame.
 #---------------------------------------------------------------------------
-root_frame = SpaceFOMRefFrameObject( federate.is_RRFP,
-                                     root_frame_name,
-                                     root_ref_frame.frame_packing,
-                                     'root_ref_frame.frame_packing',
-                                     frame_conditional = root_ref_frame.conditional )
+root_frame = SpaceFOMRefFrameObject(
+   create_frame_object          = federate.is_RRFP,
+   frame_instance_name          = root_frame_name,
+   frame_S_define_instance      = root_ref_frame.frame_packing,
+   frame_S_define_instance_name = 'root_ref_frame.frame_packing',
+   frame_conditional            = root_ref_frame.conditional )
 
 # Set the debug flag for the root reference frame.
 root_ref_frame.frame_packing.debug = verbose
@@ -399,16 +400,17 @@ federate.set_root_frame( root_frame )
 #---------------------------------------------------------------------------
 # Set up an alternate vehicle reference frame object for discovery.
 #---------------------------------------------------------------------------
-frame_A = SpaceFOMRefFrameObject( True,
-                                  'FrameA',
-                                  ref_frame_A.frame_packing,
-                                  'ref_frame_A.frame_packing',
-                                  parent_S_define_instance = root_ref_frame.frame_packing,
-                                  parent_name              = root_frame_name,
-                                  frame_conditional        = ref_frame_A.conditional,
-                                  frame_lag_comp           = ref_frame_A.lag_compensation,
-                                  frame_ownership          = ref_frame_A.ownership_handler,
-                                  frame_deleted            = ref_frame_A.deleted_callback )
+frame_A = SpaceFOMRefFrameObject(
+   create_frame_object          = True,
+   frame_instance_name          = 'FrameA',
+   frame_S_define_instance      = ref_frame_A.frame_packing,
+   frame_S_define_instance_name = 'ref_frame_A.frame_packing',
+   parent_S_define_instance     = root_ref_frame.frame_packing,
+   parent_name                  = root_frame_name,
+   frame_conditional            = ref_frame_A.conditional,
+   frame_lag_comp               = ref_frame_A.lag_compensation,
+   frame_ownership              = ref_frame_A.ownership_handler,
+   frame_deleted                = ref_frame_A.deleted_callback )
 
 # Set the debug flag for the root reference frame.
 ref_frame_A.frame_packing.debug = verbose

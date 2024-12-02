@@ -45,7 +45,7 @@ def print_usage_message( ):
    return
 
 
-def parse_command_line( ) :
+def parse_command_line( ):
    
    global print_usage
    global run_duration
@@ -62,73 +62,73 @@ def parse_command_line( ) :
    # Process the command line arguments.
    # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
    index = 2
-   while (index < argc) :
+   while (index < argc):
       
-      if ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')) :
+      if ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')):
          print_usage = True
       
-      elif ((str(argv[index]) == '-f') | (str(argv[index]) == '--fed_name')) :
+      elif ((str(argv[index]) == '-f') | (str(argv[index]) == '--fed_name')):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             federate_name = str(argv[index])
-         else :
+         else:
             print('ERROR: Missing --fed_name [name] argument.')
             print_usage = True
       
-      elif ((str(argv[index]) == '-fe') | (str(argv[index]) == '--fex_name')) :
+      elif ((str(argv[index]) == '-fe') | (str(argv[index]) == '--fex_name')):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             federation_name = str(argv[index])
-         else :
+         else:
             print('ERROR: Missing --fex_name [name] argument.')
             print_usage = True
       
-      elif ((str(argv[index]) == '-m') | (str(argv[index]) == '--master')) :
+      elif ((str(argv[index]) == '-m') | (str(argv[index]) == '--master')):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             master_name = str(argv[index])
-         else :
+         else:
             print('ERROR: Missing --master [name] argument.')
             print_usage = True
       
-      elif ((str(argv[index]) == '-r') | (str(argv[index]) == '--rrfp')) :
+      elif ((str(argv[index]) == '-r') | (str(argv[index]) == '--rrfp')):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             rrfp_name = str(argv[index])
-         else :
+         else:
             print('ERROR: Missing --rrfp [name] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '-nostop') :
+      elif (str(argv[index]) == '-nostop'):
          run_duration = None
       
-      elif ((str(argv[index]) == '-s') | (str(argv[index]) == '--stop')) :
+      elif ((str(argv[index]) == '-s') | (str(argv[index]) == '--stop')):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             run_duration = float(str(argv[index]))
-         else :
+         else:
             print('ERROR: Missing -stop [time] argument.')
             print_usage = True
       
-      elif (str(argv[index]) == '--verbose') :
+      elif (str(argv[index]) == '--verbose'):
          index = index + 1
-         if (index < argc) :
-            if (str(argv[index]) == 'on') :
+         if (index < argc):
+            if (str(argv[index]) == 'on'):
                verbose = True
-            elif (str(argv[index]) == 'off') :
+            elif (str(argv[index]) == 'off'):
                verbose = False
-            else :
+            else:
                print('ERROR: Unknown --verbose argument: ' + str(argv[index]))
                print_usage = True
-         else :
+         else:
             print('ERROR: Missing --verbose [on|off] argument.')
             print_usage = True
          
-      elif ((str(argv[index]) == '-d')) :
+      elif ((str(argv[index]) == '-d')):
          # Pass this on to Trick.
          break
             
-      else :
+      else:
          print('ERROR: Unknown command line argument ' + str(argv[index]))
          print_usage = True
          
@@ -159,7 +159,7 @@ rrfp_name = 'RRFP'
 
 parse_command_line()
 
-if (print_usage == True) :
+if (print_usage == True):
    print_usage_message()
 
 
@@ -186,13 +186,13 @@ trick.exec_set_stack_trace(False)
 # Set up the HLA interfaces.
 # =========================================================================
 # Instantiate the Python SpaceFOM configuration object.
-federate = SpaceFOMFederateConfig( THLA.federate,
-                                   THLA.manager,
-                                   THLA.execution_control,
-                                   THLA.ExCO,
-                                   federation_name,
-                                   federate_name,
-                                   True )
+federate = SpaceFOMFederateConfig( thla_federate        = THLA.federate,
+                                   thla_manager         = THLA.manager,
+                                   thla_control         = THLA.execution_control,
+                                   thla_config          = THLA.ExCO,
+                                   thla_federation_name = federation_name,
+                                   thla_federate_name   = federate_name,
+                                   thla_enabled         = True )
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job
@@ -200,9 +200,9 @@ federate = SpaceFOMFederateConfig( THLA.federate,
 #federate.set_ExCO_S_define_name( 'THLA_INIT.ExCO' )
 
 # Set the debug output level.
-if (verbose == True) : 
+if (verbose == True): 
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
-else :
+else:
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
 
 #--------------------------------------------------------------------------

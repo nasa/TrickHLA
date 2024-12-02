@@ -37,15 +37,15 @@ def print_usage_message( ):
 
    print(' ')
    print('TrickHLA SpaceFOM JEOD Master Simulation Command Line Configuration Options:')
-   print('  -a --active [name]   : Name of the active vehicle, default is Lander.')
-   print('  -h --help            : Print this help message.')
-   print('  -f --fed_name [name] : Name of the Federate, default is EntityTest.')
-   print('  -fe --fex_name [name]: Name of the Federation Execution, default is SpaceFOM_JEOD_Test.')
-   print('  -m --master [name]   : Name of the Master federate, default is Master.')
-   print('  --nostop             : Set no stop time on simulation.')
-   print('  -p --passive[name]   : Name of the passive vehicle, default is Station.')
-   print('  -s --stop [time]     : Time to stop simulation, default is 10.0 seconds.')
-   print('  --verbose [on|off]   : on: Show verbose messages (Default), off: disable messages.')
+   print('  -a --active [name]    : Name of the active vehicle, default is Lander.')
+   print('  -h --help             : Print this help message.')
+   print('  -f --fed_name [name]  : Name of the Federate, default is EntityTest.')
+   print('  -fe --fex_name [name] : Name of the Federation Execution, default is SpaceFOM_JEOD_Test.')
+   print('  -m --master [name]    : Name of the Master federate, default is Master.')
+   print('  --nostop              : Set no stop time on simulation.')
+   print('  -p --passive[name]    : Name of the passive vehicle, default is Station.')
+   print('  -s --stop [time]      : Time to stop simulation, default is 10.0 seconds.')
+   print('  --verbose [on|off]    : on: Show verbose messages (Default), off: disable messages.')
    print(' ')
 
    trick.exec_terminate_with_return( -1,
@@ -55,7 +55,7 @@ def print_usage_message( ):
    return
 
 
-def parse_command_line( ) :
+def parse_command_line( ):
    
    global print_usage
    global run_duration
@@ -75,81 +75,81 @@ def parse_command_line( ) :
    # Process the command line arguments.
    # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
    index = 2
-   while (index < argc) :
+   while (index < argc):
          
-      if ((str(argv[index]) == '-a') | (str(argv[index]) == '--active')) :
+      if ((str(argv[index]) == '-a') | (str(argv[index]) == '--active')):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             active_entity_name = str(argv[index])
-         else :
+         else:
             print('ERROR: Missing --active [name] argument.')
             print_usage = True
             
-      elif ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')) :
+      elif ((str(argv[index]) == '-h') | (str(argv[index]) == '--help')):
          print_usage = True
       
-      elif ((str(argv[index]) == '-f') | (str(argv[index]) == '--fed_name')) :
+      elif ((str(argv[index]) == '-f') | (str(argv[index]) == '--fed_name')):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             federate_name = str(argv[index])
-         else :
+         else:
             print('ERROR: Missing --fed_name [name] argument.')
             print_usage = True
       
-      elif ((str(argv[index]) == '-fe') | (str(argv[index]) == '--fex_name')) :
+      elif ((str(argv[index]) == '-fe') | (str(argv[index]) == '--fex_name')):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             federation_name = str(argv[index])
-         else :
+         else:
             print('ERROR: Missing --fex_name [name] argument.')
             print_usage = True
       
-      elif ((str(argv[index]) == '-m') | (str(argv[index]) == '--master')) :
+      elif ((str(argv[index]) == '-m') | (str(argv[index]) == '--master')):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             master_name = str(argv[index])
-         else :
+         else:
             print('ERROR: Missing --master [name] argument.')
             print_usage = True
       
-      elif ((str(argv[index]) == '-p') | (str(argv[index]) == '--passive')) :
+      elif ((str(argv[index]) == '-p') | (str(argv[index]) == '--passive')):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             passive_entity_name = str(argv[index])
-         else :
+         else:
             print('ERROR: Missing --passive [name] argument.')
             print_usage = True
       
-      elif ((str(argv[index]) == '-s') | (str(argv[index]) == '--stop')) :
+      elif ((str(argv[index]) == '-s') | (str(argv[index]) == '--stop')):
          index = index + 1
-         if (index < argc) :
+         if (index < argc):
             run_duration = float(str(argv[index]))
-         else :
+         else:
             print('ERROR: Missing -stop [time] argument.')
             print_usage = True
             
-      elif (str(argv[index]) == '--nostop') :
+      elif (str(argv[index]) == '--nostop'):
          run_duration = None
       
-      elif (str(argv[index]) == '--verbose') :
+      elif (str(argv[index]) == '--verbose'):
          index = index + 1
-         if (index < argc) :
-            if (str(argv[index]) == 'on') :
+         if (index < argc):
+            if (str(argv[index]) == 'on'):
                verbose = True
-            elif (str(argv[index]) == 'off') :
+            elif (str(argv[index]) == 'off'):
                verbose = False
-            else :
+            else:
                print('ERROR: Unknown --verbose argument: ' + str(argv[index]))
                print_usage = True
-         else :
+         else:
             print('ERROR: Missing --verbose [on|off] argument.')
             print_usage = True
       
-      elif (str(argv[index]) == '-d') :
+      elif (str(argv[index]) == '-d'):
          # Catch the Trick debug command line option an do NOT terminate.
          print('DEBUG: Specified input file debug uption to Trick.')
          
-      else :
+      else:
          print('ERROR: Unknown command line argument ' + str(argv[index]))
          print_usage = True
          
@@ -188,7 +188,7 @@ passive_interface_name = passive_entity_name + '.docking_port'
 
 parse_command_line()
 
-if (print_usage == True) :
+if (print_usage == True):
    print_usage_message()
 
 
@@ -450,13 +450,13 @@ dynamics.dyn_manager.add_body_action(passive_vehicle.lvlh_init)
 # Set up the HLA interfaces.
 # =========================================================================
 # Instantiate the Python SpaceFOM configuration object.
-federate = SpaceFOMFederateConfig( THLA.federate,
-                                   THLA.manager,
-                                   THLA.execution_control,
-                                   THLA.ExCO,
-                                   federation_name,
-                                   federate_name,
-                                   True )
+federate = SpaceFOMFederateConfig( thla_federate        = THLA.federate,
+                                   thla_manager         = THLA.manager,
+                                   thla_control         = THLA.execution_control,
+                                   thla_config          = THLA.ExCO,
+                                   thla_federation_name = federation_name,
+                                   thla_federate_name   = federate_name,
+                                   thla_enabled         = True )
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job
@@ -465,12 +465,12 @@ federate = SpaceFOMFederateConfig( THLA.federate,
 
 
 # Set the debug output level.
-if (verbose == True) : 
+if (verbose == True):
    #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_6_TRACE )
    federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_ALL_MODULES )
    #federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_OBJECT + trick.TrickHLA.DEBUG_SOURCE_ATTRIBUTE )
-else :
+else:
    #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_1_TRACE )
 
@@ -525,10 +525,11 @@ THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHL
 #---------------------------------------------------------------------------
 # Set up the Reference Frame objects.
 #---------------------------------------------------------------------------
-frame_tree = JEODRefFrameTreeObject( federate,
-                                     ref_frame_tree,
-                                     False,
-                                     trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
+frame_tree = JEODRefFrameTreeObject(
+   federate_instance    = federate,
+   tree_instance        = ref_frame_tree,
+   create_frame_objects = False,
+   lag_comp_type        = trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 
 # Set the debug flag for the reference frames.
 solar_system_barycenter.frame_packing.debug = verbose
@@ -545,10 +546,11 @@ mars_centered_fixed.frame_packing.debug     = verbose
 #---------------------------------------------------------------------------
 # Set up the lander PhysicalEntity object.
 #---------------------------------------------------------------------------
-lander = SpaceFOMPhysicalEntityObject( True,
-                                       active_entity_name,
-                                       active_physical_entity.entity_packing,
-                                       'active_physical_entity.entity_packing' )
+lander = SpaceFOMPhysicalEntityObject(
+   create_entity_object          = True,
+   entity_instance_name          = active_entity_name,
+   entity_S_define_instance      = active_physical_entity.entity_packing,
+   entity_S_define_instance_name = 'active_physical_entity.entity_packing' )
 
 # Set the debug flag for the active vehicle.
 active_physical_entity.entity_packing.debug = verbose
@@ -565,10 +567,11 @@ active_physical_entity.entity_packing.set_parent_frame( 'MoonCentricInertial' )
 #---------------------------------------------------------------------------
 # Set up the lander PhysicalInterface object.
 #---------------------------------------------------------------------------
-lander_dockport = SpaceFOMPhysicalInterfaceObject( True,
-                                                   active_interface_name,
-                                                   active_physical_interface.interface_packing,
-                                                   'active_physical_interface.interface_packing' )
+lander_dockport = SpaceFOMPhysicalInterfaceObject(
+   create_interface_object          = True,
+   interface_instance_name          = active_interface_name,
+   interface_S_define_instance      = active_physical_interface.interface_packing,
+   interface_S_define_instance_name = 'active_physical_interface.interface_packing' )
 
 # Set the JEOD vehicle point ID associated with this interface.
 active_physical_interface.interface_packing.set_vehicle_point_id('Active docking port')
@@ -586,10 +589,11 @@ active_physical_interface.interface_packing.set_parent( active_entity_name )
 #---------------------------------------------------------------------------
 # Set up the station PhysicalEntity object.
 #---------------------------------------------------------------------------
-station = SpaceFOMPhysicalEntityObject( True,
-                                        passive_entity_name,
-                                        passive_physical_entity.entity_packing,
-                                        'passive_physical_entity.entity_packing' )
+station = SpaceFOMPhysicalEntityObject(
+   create_entity_object          = True,
+   entity_instance_name          = passive_entity_name,
+   entity_S_define_instance      = passive_physical_entity.entity_packing,
+   entity_S_define_instance_name = 'passive_physical_entity.entity_packing' )
 
 # Set the debug flag for the passive vehicle.
 passive_physical_entity.entity_packing.debug = verbose
@@ -606,10 +610,11 @@ passive_physical_entity.entity_packing.set_parent_frame( 'MoonCentricInertial' )
 #---------------------------------------------------------------------------
 # Set up the station PhysicalInterface object.
 #---------------------------------------------------------------------------
-station_dockport = SpaceFOMPhysicalInterfaceObject( True,
-                                                    passive_interface_name,
-                                                    passive_physical_interface.interface_packing,
-                                                    'passive_physical_interface.interface_packing' )
+station_dockport = SpaceFOMPhysicalInterfaceObject(
+   create_interface_object          = True,
+   interface_instance_name          = passive_interface_name,
+   interface_S_define_instance      = passive_physical_interface.interface_packing,
+   interface_S_define_instance_name = 'passive_physical_interface.interface_packing' )
 
 # Set the JEOD vehicle point ID associated with this interface.
 passive_physical_interface.interface_packing.set_vehicle_point_id('Passive docking port')

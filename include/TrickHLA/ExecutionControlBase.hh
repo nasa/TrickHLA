@@ -48,6 +48,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 #include "TrickHLA/CTETimelineBase.hh"
+#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/ScenarioTimeline.hh"
 #include "TrickHLA/SimTimeline.hh"
 #include "TrickHLA/StandardsSupport.hh"
@@ -563,8 +564,15 @@ class ExecutionControlBase : public TrickHLA::SyncPointManagerBase
     *  @param freeze_scenario_time Scenario time to freeze.
     *  @param file_name            Checkpoint file name. */
    virtual void start_federation_save_at_scenario_time( double freeze_scenario_time, char const *file_name ) = 0;
-   /*! @brief Setup the checkpoint data structures. */
-   virtual void setup_checkpoint();
+
+   /*! @brief Convert the variables to a form Trick can checkpoint. */
+   virtual void encode_checkpoint();
+
+   /*! @brief Restore the state of this class from the Trick checkpoint. */
+   virtual void decode_checkpoint();
+
+   /*! @brief Clear/release the memory used for the checkpoint data structures. */
+   virtual void free_checkpoint();
 
    //
    // Execution Control association methods.
