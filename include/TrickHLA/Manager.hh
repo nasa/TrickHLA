@@ -48,6 +48,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA include files.
+#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/ItemQueue.hh"
 #include "TrickHLA/MutexLock.hh"
@@ -101,7 +102,7 @@ typedef enum {
    TRICKHLA_MANAGER_BUILTIN_MTR_INTERACTION    = 2  ///< MTR Interaction internal to TrickHLA
 } ManagerTypeOfInteractionEnum;
 
-class Manager
+class Manager : public CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -322,8 +323,14 @@ class Manager
     *  @param file_name            Checkpoint file name. */
    void start_federation_save_at_scenario_time( double freeze_scenario_time, char const *file_name );
 
-   /*! @brief Setup the checkpoint data structures. */
-   void setup_checkpoint();
+   /*! @brief Encode/setup the checkpoint data structures. */
+   virtual void encode_checkpoint();
+
+   /*! @brief Restore the state of this class from the Trick checkpoint. */
+   virtual void decode_checkpoint();
+
+   /*! @brief Clear/release the memory used for the checkpoint data structures. */
+   virtual void free_checkpoint();
 
    /*! @brief Publishes Object & Interaction classes and their member data. */
    void publish();
@@ -597,17 +604,17 @@ class Manager
    // Checkpoint / clear / restore any interactions
    //
    /*! @brief Decodes interactions queue into an InteractionItem linear array. */
-   void setup_checkpoint_interactions();
+   void encode_checkpoint_interactions();
 
-   /*! @brief Clears InteractionItem linear array. */
-   void clear_interactions();
+   /*! @brief Decodes checkpoint InteractionItem linear arrays back into the
+    * main interaction queue. */
+   void decode_checkpoint_interactions();
+
+   /*! @brief Free/clear InteractionItem checkpoint linear array. */
+   void free_checkpoint_interactions();
 
    /*! @brief Echoes the contents of checkpoint InteractionItem linear array. */
-   void dump_interactions();
-
-   /*! @brief Encodes checkpoint InteractionItem linear arrays back into the
-    * main interaction queue. */
-   void restore_interactions();
+   void print_checkpoint_interactions();
 
   private:
    // Do not allow the copy constructor or assignment operator.

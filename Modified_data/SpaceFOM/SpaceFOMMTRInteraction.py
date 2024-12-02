@@ -20,7 +20,7 @@ import sys
 from ..TrickHLA.TrickHLAInteractionConfig import *
 from ..TrickHLA.TrickHLAParameterConfig import *
 
-class SpaceFOMMTRInteraction(TrickHLAInteractionConfig):
+class SpaceFOMMTRInteraction( TrickHLAInteractionConfig ):
 
    trick_sim_obj_name = None
 
@@ -37,22 +37,22 @@ class SpaceFOMMTRInteraction(TrickHLAInteractionConfig):
       self.trick_sim_obj_name = str( S_define_instance_name )
 
       # Call the base class constructor.
-      if ( is_master ) :
+      if ( is_master ):
          TrickHLAInteractionConfig.__init__( self,
-                                             'ModeTransitionRequest',
-                                             False,
-                                             True,
-                                             S_define_instance,
-                                             S_define_instance_name,
-                                             manger_interaction )
+                                             thla_FOM_name              = 'ModeTransitionRequest',
+                                             thla_publish               = False,
+                                             thla_subscribe             = True,
+                                             thla_handler_instance      = S_define_instance,
+                                             thla_handlet_instance_name = S_define_instance_name,
+                                             thla_manager_interaction   = manger_interaction )
       else:
          TrickHLAInteractionConfig.__init__( self,
-                                             'ModeTransitionRequest',
-                                             True,
-                                             False,
-                                             S_define_instance,
-                                             S_define_instance_name,
-                                             manger_interaction )
+                                             thla_FOM_name              = 'ModeTransitionRequest',
+                                             thla_publish               = True,
+                                             thla_subscribe             = False,
+                                             thla_handler_instance      = S_define_instance,
+                                             thla_handlet_instance_name = S_define_instance_name,
+                                             thla_manager_interaction   = manger_interaction )
 
       # Build the interaction parameters list.
       self.add_parameters()
@@ -71,9 +71,9 @@ class SpaceFOMMTRInteraction(TrickHLAInteractionConfig):
    def add_parameters( self ):
 
       # Set up the map to the MTR interaction execution mode.
-      parameter = TrickHLAParameterConfig( 'execution_mode',
-                                           str(self.trick_sim_obj_name) + '.mtr_mode_int',
-                                           trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
+      parameter = TrickHLAParameterConfig( FOM_name     = 'execution_mode',
+                                           trick_name   = str(self.trick_sim_obj_name) + '.mtr_mode_int',
+                                           rti_encoding = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_parameter( parameter )
 
       return
