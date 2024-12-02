@@ -13,10 +13,10 @@ def print_usage_message( ):
 
    print(' ')
    print('Simulation Command Line Configuration Options:')
-   print('  -h --help             : Print this help message.')
-   print('  -r --crcHost [name]   : Name of RTI CRC Host, currently:', crc_host )
-   print('  -p --crcPort [number] : Port number for the RTI CRC, currently:', crc_port )
-   print('  -s --settings [string]: RTI CRC local settings:', local_settings )
+   print('  -h --help              : Print this help message.')
+   print('  -r --crcHost [name]    : Name of RTI CRC Host, currently:', crc_host )
+   print('  -p --crcPort [number]  : Port number for the RTI CRC, currently:', crc_port )
+   print('  -s --settings [string] : RTI CRC local settings:', local_settings )
    print(' ')
 
    trick.exec_terminate_with_return( -1,
