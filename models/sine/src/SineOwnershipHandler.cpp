@@ -79,7 +79,7 @@ void SineOwnershipHandler::initialize_callback(
    // Get the vector of attribute FOM names.
    VectorOfStrings attr_FOM_names = get_attribute_FOM_names();
 
-   int const TEST_CASE = 3;
+   int const TEST_CASE = 4;
 
    switch ( TEST_CASE ) {
       case 0:
@@ -129,8 +129,16 @@ void SineOwnershipHandler::initialize_callback(
       case 3:
          // Example showing a simple push and pull of ownership.
 
-         push_ownership( 5.0 );
-         pull_ownership( 10.0 );
+         push_ownership( 1.0 );
+         pull_ownership( 5.0 );
+         break;
+
+      case 4:
+         // Example showing a simple push and pull of ownership
+         // for a single attribute.
+
+         push_ownership( "Name", 1.0 );
+         pull_ownership( "Name", 5.0 );
          break;
 
       default:
