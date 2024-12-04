@@ -235,14 +235,14 @@ class THLAInitAnalyticSimObject : public Trick::SimObject {
       P_MPI_1 ("initialization") thla_manager.wait_for_init_sync_point( "Ownership_transfer_init_phase" );
 
 
-      // Data will only be sent if this federate owns it.
+      // Send the Analytic sine data.
       P_MPI_1 ("initialization") thla_manager.send_init_data( "A-side-Federate.Sine" );
 
       // Wait for all federates to reach this sync-point.
       P_MPI_1 ("initialization") thla_manager.wait_for_init_sync_point( "Analytic_init_phase" );
 
 
-      // Data will only be received if it is remotely owned by another federate.
+      // Receive the Propagated sine data.
       P_MPI_END ("initialization") thla_manager.receive_init_data( "P-side-Federate.Sine" );
 
       // Wait for all federates to reach this sync-point.
@@ -296,14 +296,14 @@ class THLAInitPropagatedSimObject : public Trick::SimObject {
       P_MPI_1 ("initialization") thla_manager.wait_for_init_sync_point( "Ownership_transfer_init_phase" );
 
 
-      // Data will only be received if it is remotely owned by another federate.
+      // Receive the Analytic sine data.
       P_MPI_1 ("initialization") thla_manager.receive_init_data( "A-side-Federate.Sine" );
 
       // Wait for all federates to reach this sync-point.
       P_MPI_1 ("initialization") thla_manager.wait_for_init_sync_point( "Analytic_init_phase" );
 
 
-      // Data will only be sent if this federate owns it.
+      // Send the Propagated sine data.
       P_MPI_END ("initialization") thla_manager.send_init_data( "P-side-Federate.Sine" );
 
       // Wait for all federates to reach this sync-point.
