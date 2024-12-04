@@ -1020,11 +1020,11 @@ void FedAmb::requestAttributeOwnershipAssumption(
 
    if ( trickhla_obj != NULL ) {
 
-      AttributeHandleSet::const_iterator iter;
-
       bool any_attribute_not_recognized = false;
       bool any_attribute_already_owned  = false;
       bool any_attribute_not_published  = false;
+
+      AttributeHandleSet::const_iterator iter;
 
       // To make the state of the attribute push_requested flag thread safe lock
       // the mutex now. This allows us to handle multiple simultaneous requests
@@ -1144,10 +1144,11 @@ object instance (ID:%s), push request rejected.%c",
       throw FederateInternalError( L"FedAmb::requestDivestitureConfirmation() Unknown object instance." );
    }
 
+   bool any_devist_requested         = false;
+   bool any_attribute_not_recognized = false;
+   bool any_attribute_not_owned      = false;
+
    AttributeHandleSet::const_iterator iter;
-   bool                               any_devist_requested         = false;
-   bool                               any_attribute_not_recognized = false;
-   bool                               any_attribute_not_owned      = false;
 
    // Mark which attributes we need mark for divestiture of ownership.
    for ( iter = releasedAttributes.begin(); iter != releasedAttributes.end(); ++iter ) {
@@ -1233,11 +1234,13 @@ void FedAmb::attributeOwnershipAcquisitionNotification(
    Object *trickhla_obj = ( manager != NULL ) ? manager->get_trickhla_object( theObject ) : NULL;
 
    if ( trickhla_obj != NULL ) {
+
+      bool any_attribute_acquired       = false;
+      bool any_attribute_not_recognized = false;
+      bool any_attribute_already_owned  = false;
+      bool any_attribute_not_published  = false;
+
       AttributeHandleSet::const_iterator iter;
-      bool                               any_attribute_acquired       = false;
-      bool                               any_attribute_not_recognized = false;
-      bool                               any_attribute_already_owned  = false;
-      bool                               any_attribute_not_published  = false;
 
       // Mark which attributes we now locally own.
       for ( iter = securedAttributes.begin(); iter != securedAttributes.end(); ++iter ) {
@@ -1304,7 +1307,7 @@ Attribute Not Published ERROR: Object '%s' with attribute '%s'->'%s'!%c",
       // If we are doing blocking I/O we need to let the object know that it
       // now owns at least one attribute.
       if ( any_attribute_acquired ) {
-         trickhla_obj->notify_attribute_ownership_changed();
+         trickhla_obj->set_attribute_ownership_acquired();
       }
 
       // Now throw an exceptions for any detected error conditions.
@@ -1355,10 +1358,11 @@ void FedAmb::requestAttributeOwnershipRelease(
 
    if ( trickhla_obj != NULL ) {
 
+      bool any_pull_requested           = false;
+      bool any_attribute_not_recognized = false;
+      bool any_attribute_not_owned      = false;
+
       AttributeHandleSet::const_iterator iter;
-      bool                               any_pull_requested           = false;
-      bool                               any_attribute_not_recognized = false;
-      bool                               any_attribute_not_owned      = false;
 
       // Mark which attributes we now locally own.
       for ( iter = candidateAttributes.begin(); iter != candidateAttributes.end(); ++iter ) {

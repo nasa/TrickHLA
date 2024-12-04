@@ -919,7 +919,7 @@ bool Interaction::send(
       // RECEIVE_ORDER with no timestamp.
 
       // Do not send any interactions if federate save / restore has begun (see
-      // IEEE-1516.1-2000 sections 4.12, 4.20)
+      // IEEE-1516.1-2010 sections 4.12, 4.20)
       if ( federate->should_publish_data() ) {
          // This call returns an event retraction handle but we
          // don't support event retraction so no need to store it.
@@ -999,12 +999,12 @@ bool Interaction::send(
    bool successfuly_sent = false;
    try {
       // Do not send any interactions if federate save or restore has begun (see
-      // IEEE-1516.1-2000 sections 4.12, 4.20)
+      // IEEE-1516.1-2010 sections 4.12, 4.20)
       if ( federate->should_publish_data() ) {
 
          // The message will only be sent as TSO if our Federate is in the HLA Time
          // Regulating state and the interaction prefers timestamp order.
-         // See IEEE-1516.1-2000, Sections 6.6 and 8.1.1.
+         // See IEEE-1516.1-2010, Sections 6.6 and 8.1.1.
          if ( send_with_timestamp ) {
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {

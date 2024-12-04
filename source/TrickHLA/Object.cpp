@@ -150,6 +150,7 @@ Object::Object()
      any_attribute_timestamp_order( false ),
      pull_requested( false ),
      divest_requested( false ),
+     ownership_acquired( false ),
      attribute_FOM_names(),
      manager( NULL ),
      rti_ambassador( NULL ),
@@ -1227,8 +1228,7 @@ Waiting on reservation of Object Instance Name '%s'.%c",
                __LINE__, get_name(), THLA_NEWLINE );
    }
 
-   Federate *federate = get_federate();
-
+   Federate    *federate = get_federate();
    int64_t      wallclock_time;
    SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
@@ -1433,8 +1433,7 @@ void Object::wait_for_object_registration()
                __LINE__, FOM_name, get_name(), THLA_NEWLINE );
    }
 
-   Federate *federate = get_federate();
-
+   Federate    *federate = get_federate();
    int64_t      wallclock_time;
    SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
@@ -1821,7 +1820,7 @@ void Object::send_requested_data(
    // The message will only be sent as TSO if our Federate is in the HLA Time
    // Regulating state and we have at least one attribute with a preferred
    // timestamp order. Assumes the FOM specified order is TSO.
-   // See IEEE-1516.1-2000, Sections 6.6 and 8.1.1.
+   // See IEEE-1516.1-2010, Sections 6.6 and 8.1.1.
    bool const send_with_timestamp = federate->in_time_regulating_state()
                                     && ( this->any_attribute_timestamp_order
                                          || this->any_attribute_FOM_specified_order );
@@ -1833,7 +1832,7 @@ void Object::send_requested_data(
       // retraction so no need to store it.
 
       // Do not send any data if federate save or restore has begun (see
-      // IEEE-1516.1-2000 sections 4.12, 4.20)
+      // IEEE-1516.1-2010 sections 4.12, 4.20)
       if ( federate->should_publish_data() ) {
 
          RTIambassador *rti_amb = get_RTI_ambassador();
@@ -2084,14 +2083,14 @@ void Object::send_cyclic_and_requested_data(
       // The message will only be sent as TSO if our Federate is in the HLA Time
       // Regulating state and we have at least one attribute with a preferred
       // timestamp order. Assumes the FOM specified order is TSO.
-      // See IEEE-1516.1-2000, Sections 6.6 and 8.1.1.
+      // See IEEE-1516.1-2010, Sections 6.6 and 8.1.1.
       bool const send_with_timestamp = federate->in_time_regulating_state()
                                        && ( this->any_attribute_timestamp_order
                                             || this->any_attribute_FOM_specified_order );
 
       try {
          // Do not send any data if federate save or restore has begun (see
-         // IEEE-1516.1-2000 sections 4.12, 4.20)
+         // IEEE-1516.1-2010 sections 4.12, 4.20)
          if ( federate->should_publish_data() ) {
 
             RTIambassador *rti_amb = get_RTI_ambassador();
@@ -2362,14 +2361,14 @@ void Object::send_zero_lookahead_and_requested_data(
       // The message will only be sent as TSO if our Federate is in the HLA Time
       // Regulating state and we have at least one attribute with a preferred
       // timestamp order. Assumes the FOM specified order is TSO.
-      // See IEEE-1516.1-2000, Sections 6.6 and 8.1.1.
+      // See IEEE-1516.1-2010, Sections 6.6 and 8.1.1.
       bool const send_with_timestamp = federate->in_time_regulating_state()
                                        && ( this->any_attribute_timestamp_order
                                             || this->any_attribute_FOM_specified_order );
 
       try {
          // Do not send any data if federate save or restore has begun (see
-         // IEEE-1516.1-2000 sections 4.12, 4.20)
+         // IEEE-1516.1-2010 sections 4.12, 4.20)
          if ( federate->should_publish_data() ) {
 
             RTIambassador *rti_amb = get_RTI_ambassador();
@@ -2639,7 +2638,7 @@ void Object::send_blocking_io_data()
 
       try {
          // Do not send any data if federate save or restore has begun (see
-         // IEEE-1516.1-2000 sections 4.12, 4.20)
+         // IEEE-1516.1-2010 sections 4.12, 4.20)
          if ( federate->should_publish_data() ) {
 
             RTIambassador *rti_amb = get_RTI_ambassador();
@@ -3142,7 +3141,7 @@ void Object::send_init_data()
 
    try {
       // Do not send any data if federate save / restore has begun (see
-      // IEEE-1516.1-2000 sections 4.12, 4.20)
+      // IEEE-1516.1-2010 sections 4.12, 4.20)
       if ( federate->should_publish_data() ) {
 
          if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
@@ -3595,8 +3594,8 @@ void Object::release_ownership()
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &ownership_mutex );
 
-      // If there is an ownership_handler, tell it to convert the push / pull maps
-      // into checkpoint-able data structures.
+      // If there is an ownership_handler, tell it to convert the push / pull
+      // maps into checkpoint-able data structures.
       if ( ownership != NULL ) {
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
             send_hs( stdout, "Object::release_ownership():%d Telling ownership handler to clear checkpoint.%c",
@@ -3640,7 +3639,7 @@ void Object::release_ownership()
    }
 
    try {
-      // IEEE 1516.1-2000 section 7.6
+      // IEEE 1516.1-2010 section 7.6
       rti_amb->confirmDivestiture( this->instance_handle,
                                    attrs,
                                    RTI1516_USERDATA( 0, 0 ) );
@@ -3773,9 +3772,8 @@ void Object::pull_ownership()
       return;
    }
 
-   double current_time = 0.0;
-
-   Federate *federate = get_federate();
+   double    current_time = 0.0;
+   Federate *federate     = get_federate();
 
    // Use the HLA Federated Logical Time if time management is enabled.
    if ( federate->is_time_management_enabled() ) {
@@ -3902,7 +3900,7 @@ for Attributes of object '%s'.%c",
       }
 
       try {
-         // IEEE 1516.1-2000 section 7.8
+         // IEEE 1516.1-2010 section 7.8
          rti_amb->attributeOwnershipAcquisition(
             this->instance_handle,
             attr_hdl_set,
@@ -3920,6 +3918,264 @@ object '%s' because of error: '%s'%c",
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
    }
+}
+
+/*!
+ * @brief Pull ownership of the named object instance at initialization.
+ * @param attribute_list Comma separated list of attributes FOM names.
+ * */
+void Object::pull_ownership_at_init(
+   char const *attribute_list )
+{
+   // Make sure we have an Instance ID for the object.
+   if ( !is_instance_handle_valid() ) {
+      send_hs( stderr, "Object::pull_ownership_at_init():%d Object-Instance-Handle not set for '%s'.%c",
+               __LINE__, get_name(), THLA_NEWLINE );
+      return;
+   }
+
+   // Determine the list of attribute names to pull ownership.
+   VectorOfStrings attr_name_vector;
+   if ( attribute_list == NULL ) {
+      // Add all the attributes.
+      for ( int i = 0; i < attr_count; ++i ) {
+         attr_name_vector.push_back( attributes[i].get_FOM_name() );
+      }
+   } else {
+      // Parse the user supplied list of attribute FOM names to pull ownership.
+      StringUtilities::tokenize( attribute_list, attr_name_vector, "," );
+   }
+
+   if ( attr_name_vector.empty() ) {
+      ostringstream errmsg;
+      errmsg << "Object::pull_ownership_at_init():" << __LINE__
+             << " ERROR: No attributes found to push ownership for object '"
+             << get_name_string() << "'!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   // The Set of attribute handle to pull ownership of.
+   AttributeHandleSet attr_hdl_set;
+
+   // Lock the ownership mutex since we are processing the ownership pull list and
+   // use braces to create scope for the mutex-protection to auto unlock the mutex.
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &ownership_mutex );
+
+      for ( int i = 0; i < attr_name_vector.size(); ++i ) {
+         Attribute const *attr = get_attribute( attr_name_vector[i] );
+
+         if ( attr == NULL ) {
+            ostringstream errmsg;
+            errmsg << "Object::pull_ownership_at_init():" << __LINE__
+                   << " ERROR: For object '" << get_name_string()
+                   << "', no TrickHLA-Attribute found for attribute FOM name '"
+                   << attr_name_vector[i] << "'!" << THLA_ENDL;
+            DebugHandler::terminate_with_message( errmsg.str() );
+            return;
+         }
+
+         // Determine if attribute ownership can be pulled.
+         if ( !attr->is_locally_owned() ) {
+
+            // We are will try and push ownership of this attribute.
+            attr_hdl_set.insert( attr->get_attribute_handle() );
+
+            if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+               send_hs( stdout, "Object::pull_ownership_at_init():%d\n   Attribute '%s'->'%s' of object '%s'.%c",
+                        __LINE__, get_FOM_name(),
+                        attr->get_FOM_name(), get_name(), THLA_NEWLINE );
+            }
+         } else {
+            if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+               send_hs( stdout, "Object::pull_ownership_at_init():%d Can not \
+push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.%c",
+                        __LINE__, get_FOM_name(), attr->get_FOM_name(), get_name(),
+                        THLA_NEWLINE );
+            }
+         }
+      }
+      // Unlock the ownership mutex when auto_unlock_mutex goes out of scope.
+   }
+
+   // Determine if we have any attributes to pull ownership of.
+   if ( attr_hdl_set.empty() ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+         send_hs( stdout, "Object::pull_ownership_at_init():%d No locally owned attributes to push ownership for object '%s'.%c",
+                  __LINE__, get_name(), THLA_NEWLINE );
+      }
+   } else {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+         send_hs( stdout, "Object::pull_ownership_at_init():%d Pushing ownership for Attributes of object '%s'.%c",
+                  __LINE__, get_name(), THLA_NEWLINE );
+      }
+
+      // Macro to save the FPU Control Word register value.
+      TRICKHLA_SAVE_FPU_CONTROL_WORD;
+
+      RTIambassador *rti_amb = get_RTI_ambassador();
+
+      // We need an RTI ambassador to be able to continue.
+      if ( rti_amb == NULL ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+            send_hs( stdout, "Object::pull_ownership_at_init():%d Unexpected Null RTIambassador!%c",
+                     __LINE__, THLA_NEWLINE );
+         }
+         return;
+      }
+
+      try {
+         // IEEE 1516.1-2010 section 7.8
+         rti_amb->attributeOwnershipAcquisition(
+            this->instance_handle,
+            attr_hdl_set,
+            RTI1516_USERDATA( get_name(), strlen( get_name() ) + 1 ) );
+
+      } catch ( RTI1516_EXCEPTION const &e ) {
+         string rti_err_msg;
+         StringUtilities::to_string( rti_err_msg, e.what() );
+         send_hs( stderr, "Object::pull_ownership_at_init():%d Unable to pull attributes of \
+object '%s' because of error: '%s'%c",
+                  __LINE__, get_name(), rti_err_msg.c_str(),
+                  THLA_NEWLINE );
+      }
+      // Macro to restore the saved FPU Control Word register value.
+      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+      Federate    *federate = get_federate();
+      int64_t      wallclock_time;
+      SleepTimeout print_timer( federate->wait_status_time );
+      SleepTimeout sleep_timer;
+      bool         acquired;
+
+      {
+         // When auto_unlock_mutex goes out of scope it automatically unlocks
+         // the mutex even if there is an exception.
+         MutexProtection auto_unlock_mutex( &ownership_mutex );
+         acquired = this->ownership_acquired;
+      }
+
+      // The spin lock waits for Ownership Acquisition.
+      while ( !acquired ) {
+
+         // Check for shutdown.
+         federate->check_for_shutdown_with_termination();
+
+         sleep_timer.sleep();
+
+         {
+            MutexProtection auto_unlock_mutex( &ownership_mutex );
+            acquired = this->ownership_acquired;
+         }
+
+         if ( !acquired ) {
+
+            // To be more efficient, we get the time once and share it.
+            wallclock_time = sleep_timer.time();
+
+            if ( sleep_timer.timeout( wallclock_time ) ) {
+               sleep_timer.reset();
+               if ( !federate->is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "Object::pull_ownership_at_init():" << __LINE__
+                         << " ERROR: Unexpectedly the Federate is no longer an execution"
+                         << " member. This means we are either not connected to the"
+                         << " RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation at"
+                         << " the Central RTI Component (CRC) level!"
+                         << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
+               }
+            }
+
+            if ( print_timer.timeout( wallclock_time ) ) {
+               print_timer.reset();
+               send_hs( stdout, "Object::pull_ownership_at_init()%d \"%s\": Waiting for Ownership Acquisition Notification callback...%c",
+                        __LINE__, federate->get_federation_name(), THLA_NEWLINE );
+            }
+         }
+      }
+
+      {
+         // When auto_unlock_mutex goes out of scope it automatically unlocks
+         // the mutex even if there is an exception.
+         MutexProtection auto_unlock_mutex( &ownership_mutex );
+         this->ownership_acquired = false;
+      }
+   }
+}
+
+/*!
+ * @brief Wait to handle the remote request to Pull ownership object
+ *  attributes to this federate. */
+void Object::handle_pulled_ownership_at_init()
+{
+   // Make sure we have an Instance ID for the object.
+   if ( !is_instance_handle_valid() ) {
+      send_hs( stderr, "Object::handle_pulled_ownership_at_init():%d Object-Instance-Handle not set for '%s'.%c",
+               __LINE__, get_name(), THLA_NEWLINE );
+      return;
+   }
+
+   Federate    *federate = get_federate();
+   int64_t      wallclock_time;
+   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout sleep_timer;
+   bool         requested;
+
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks
+      // the mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &ownership_mutex );
+      requested = this->pull_requested;
+   }
+
+   // The spin lock waits for Ownership Acquisition.
+   while ( !requested ) {
+
+      // Check for shutdown.
+      federate->check_for_shutdown_with_termination();
+
+      sleep_timer.sleep();
+
+      {
+         MutexProtection auto_unlock_mutex( &ownership_mutex );
+         requested = this->pull_requested;
+      }
+
+      if ( !requested ) {
+
+         // To be more efficient, we get the time once and share it.
+         wallclock_time = sleep_timer.time();
+
+         if ( sleep_timer.timeout( wallclock_time ) ) {
+            sleep_timer.reset();
+            if ( !federate->is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "Object::handle_pulled_ownership_at_init():" << __LINE__
+                      << " ERROR: Unexpectedly the Federate is no longer an execution"
+                      << " member. This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!"
+                      << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+
+         if ( print_timer.timeout( wallclock_time ) ) {
+            print_timer.reset();
+            send_hs( stdout, "Object::handle_pulled_ownership_at_init()%d \"%s\": Waiting for Pull Requested notification...%c",
+                     __LINE__, federate->get_federation_name(), THLA_NEWLINE );
+         }
+      }
+   }
+
+   grant_pull_request();
 }
 
 /*!
@@ -3976,7 +4232,7 @@ void Object::grant_pull_request()
       AttributeHandleSet *divested_attrs = new AttributeHandleSet();
 
       try {
-         // IEEE 1516.1-2000 section 7.12
+         // IEEE 1516.1-2010 section 7.12
          rti_amb->attributeOwnershipDivestitureIfWanted( this->instance_handle,
                                                          attrs_to_divest,
                                                          *divested_attrs );
@@ -4118,7 +4374,7 @@ void Object::grant_push_request()
       if ( !attrs.empty() ) {
          try {
 
-            // IEEE 1516.1-2000 section 7.8
+            // IEEE 1516.1-2010 section 7.8
             rti_amb->attributeOwnershipAcquisition(
                this->instance_handle,
                attrs,
@@ -4204,7 +4460,7 @@ void Object::negotiated_attribute_ownership_divestiture(
    // We need an RTI ambassador to be able to continue.
    if ( rti_amb != NULL ) {
       try {
-         // IEEE 1516.1-2000 section 7.3
+         // IEEE 1516.1-2010 section 7.3
          rti_amb->negotiatedAttributeOwnershipDivestiture(
             this->instance_handle,
             *attr_hdl_set,
@@ -4292,7 +4548,7 @@ void Object::push_ownership()
 
    Federate *federate = get_federate();
 
-   // Use the HLA Federated Logical Time if time management is enabled.
+   // Use the HLA Logical Time if time management is enabled.
    if ( federate->is_time_management_enabled() ) {
 
       try {
@@ -4442,6 +4698,273 @@ for Attributes of object '%s'.%c",
                 << THLA_ENDL;
          DebugHandler::terminate_with_message( errmsg.str() );
       }
+   }
+}
+
+/*!
+ * @brief Push ownership of the named object instance at initialization.
+ * @param obj_instance_name Object instance name to push ownership
+ * of for all attributes.
+ * @param attribute_list Comma separated list of attribute FOM names.
+ */
+void Object::push_ownership_at_init(
+   char const *attribute_list )
+{
+   // Make sure we have an Instance ID for the object.
+   if ( !is_instance_handle_valid() ) {
+      send_hs( stderr, "Object::push_ownership_at_init():%d Object-Instance-Handle not set for '%s'.%c",
+               __LINE__, get_name(), THLA_NEWLINE );
+      return;
+   }
+
+   // Determine the list of attribute names to push ownership.
+   VectorOfStrings attr_name_vector;
+   if ( attribute_list == NULL ) {
+      // Add all the attributes.
+      for ( int i = 0; i < attr_count; ++i ) {
+         attr_name_vector.push_back( attributes[i].get_FOM_name() );
+      }
+   } else {
+      // Parse the user supplied list of attribute FOM names to push ownership.
+      StringUtilities::tokenize( attribute_list, attr_name_vector, "," );
+   }
+
+   if ( attr_name_vector.empty() ) {
+      ostringstream errmsg;
+      errmsg << "Object::push_ownership_at_init():" << __LINE__
+             << " ERROR: No attributes found to push ownership for object '"
+             << get_name_string() << "'!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   // The Set of attribute handle to push ownership of.
+   // NOTE: The ownership divest thread will delete this object when it is
+   // done using it.
+   AttributeHandleSet *attr_hdl_set = new AttributeHandleSet();
+
+   // Lock the ownership mutex since we are processing the ownership push list and
+   // use braces to create scope for the mutex-protection to auto unlock the mutex.
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &ownership_mutex );
+
+      for ( int i = 0; i < attr_name_vector.size(); ++i ) {
+         Attribute const *attr = get_attribute( attr_name_vector[i] );
+
+         if ( attr == NULL ) {
+            ostringstream errmsg;
+            errmsg << "Object::push_ownership_at_init():" << __LINE__
+                   << " ERROR: For object '" << get_name_string()
+                   << "', no TrickHLA-Attribute found for attribute FOM name '"
+                   << attr_name_vector[i] << "'!" << THLA_ENDL;
+            DebugHandler::terminate_with_message( errmsg.str() );
+            return;
+         }
+
+         // Determine if attribute ownership can be pushed.
+         if ( attr->is_locally_owned() ) {
+
+            // We are will try and push ownership of this attribute.
+            attr_hdl_set->insert( attr->get_attribute_handle() );
+
+            if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+               send_hs( stdout, "Object::push_ownership_at_init():%d\n   Attribute '%s'->'%s' of object '%s'.%c",
+                        __LINE__, get_FOM_name(),
+                        attr->get_FOM_name(), get_name(), THLA_NEWLINE );
+            }
+         } else {
+            if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+               send_hs( stdout, "Object::push_ownership_at_init():%d Can not \
+push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.%c",
+                        __LINE__, get_FOM_name(), attr->get_FOM_name(), get_name(),
+                        THLA_NEWLINE );
+            }
+         }
+      }
+      // Unlock the ownership mutex when auto_unlock_mutex goes out of scope.
+   }
+
+   // Determine if we have any attributes to push ownership of.
+   if ( attr_hdl_set->empty() ) {
+      // Make sure we delete the attribute handle set so that we don't have
+      // a memory leak.
+      delete attr_hdl_set;
+
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+         send_hs( stdout, "Object::push_ownership_at_init():%d No locally owned attributes to push ownership for object '%s'.%c",
+                  __LINE__, get_name(), THLA_NEWLINE );
+      }
+   } else {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+         send_hs( stdout, "Object::push_ownership_at_init():%d Pushing ownership for Attributes of object '%s'.%c",
+                  __LINE__, get_name(), THLA_NEWLINE );
+      }
+
+      // Create and populate the structure the thread will use for processing
+      // the ownership divestiture. NOTE: The divest ownership thread will
+      // delete the args when it is done with it.
+      DivestThreadArgs *divest_thread_args = new DivestThreadArgs();
+      divest_thread_args->trick_hla_obj    = this;
+
+      // The attr_hdl_set will be deleted by the ownership divestiture thread
+      // function when it is done. This avoids a memory leak.
+      divest_thread_args->handle_set = attr_hdl_set;
+
+      pthread_t divest;
+
+      int ret = pthread_create( &divest,
+                                NULL,
+                                ownership_divestiture_pthread_function,
+                                divest_thread_args );
+      if ( ret ) {
+         ostringstream errmsg;
+         errmsg << "Object::push_ownership_at_init():" << __LINE__
+                << " ERROR: Failed to create ownership divestiture pthread!"
+                << THLA_ENDL;
+         DebugHandler::terminate_with_message( errmsg.str() );
+      }
+
+      Federate *federate = get_federate();
+
+      int64_t      wallclock_time;
+      SleepTimeout print_timer( federate->wait_status_time );
+      SleepTimeout sleep_timer;
+
+      bool divest_req_flag;
+      {
+         // When auto_unlock_mutex goes out of scope it automatically unlocks the
+         // mutex even if there is an exception.
+         MutexProtection auto_unlock_mutex( &ownership_mutex );
+         divest_req_flag = this->divest_requested;
+      }
+
+      // The spin lock waits for divest requested flag to be set ending
+      // attribute ownership.
+      while ( !divest_req_flag ) {
+
+         // Check for shutdown.
+         federate->check_for_shutdown_with_termination();
+
+         sleep_timer.sleep();
+
+         {
+            MutexProtection auto_unlock_mutex( &ownership_mutex );
+            divest_req_flag = this->divest_requested;
+         }
+
+         if ( !divest_req_flag ) {
+
+            // To be more efficient, we get the time once and share it.
+            wallclock_time = sleep_timer.time();
+
+            if ( sleep_timer.timeout( wallclock_time ) ) {
+               sleep_timer.reset();
+               if ( !federate->is_execution_member() ) {
+                  ostringstream errmsg;
+                  errmsg << "Object::push_ownership_at_init():" << __LINE__
+                         << " ERROR: Unexpectedly the Federate is no longer an execution"
+                         << " member. This means we are either not connected to the"
+                         << " RTI or we are no longer joined to the federation"
+                         << " execution because someone forced our resignation at"
+                         << " the Central RTI Component (CRC) level!"
+                         << THLA_ENDL;
+                  DebugHandler::terminate_with_message( errmsg.str() );
+               }
+            }
+
+            if ( print_timer.timeout( wallclock_time ) ) {
+               print_timer.reset();
+               send_hs( stdout, "Object::push_ownership_at_init()%d \"%s\": Waiting for Divestiture Confirmation callback...%c",
+                        __LINE__, federate->get_federation_name(), THLA_NEWLINE );
+            }
+         }
+      }
+
+      // Release attribute ownership once we have received the divest callback.
+      release_ownership();
+   }
+}
+
+/*!
+ * @brief Wait to handle the remote request to Push ownership object
+ *  attributes to this federate.
+ *  */
+void Object::handle_pushed_ownership_at_init()
+{
+   // Make sure we have an Instance ID for the object.
+   if ( !is_instance_handle_valid() ) {
+      send_hs( stderr, "Object::handle_pushed_ownership_at_init():%d Object-Instance-Handle not set for '%s'.%c",
+               __LINE__, get_name(), THLA_NEWLINE );
+      return;
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+      send_hs( stdout, "Object::handle_pushed_ownership_at_init():%d Object: '%s'.%c",
+               __LINE__, get_name(), THLA_NEWLINE );
+   }
+
+   Federate *federate = get_federate();
+
+   int64_t      wallclock_time;
+   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout sleep_timer;
+   bool         acquired;
+
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &ownership_mutex );
+      acquired = this->ownership_acquired;
+   }
+
+   // The spin lock waits for Ownership Acquisition.
+   while ( !acquired ) {
+
+      // Check for shutdown.
+      federate->check_for_shutdown_with_termination();
+
+      sleep_timer.sleep();
+
+      {
+         MutexProtection auto_unlock_mutex( &ownership_mutex );
+         acquired = this->ownership_acquired;
+      }
+
+      if ( !acquired ) {
+
+         // To be more efficient, we get the time once and share it.
+         wallclock_time = sleep_timer.time();
+
+         if ( sleep_timer.timeout( wallclock_time ) ) {
+            sleep_timer.reset();
+            if ( !federate->is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "Object::handle_pushed_ownership_at_init():" << __LINE__
+                      << " ERROR: Unexpectedly the Federate is no longer an execution"
+                      << " member. This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!"
+                      << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+
+         if ( print_timer.timeout( wallclock_time ) ) {
+            print_timer.reset();
+            send_hs( stdout, "Object::handle_pushed_ownership_at_init()%d \"%s\": Waiting for Ownership Acquisition Notification callback...%c",
+                     __LINE__, federate->get_federation_name(), THLA_NEWLINE );
+         }
+      }
+   }
+
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks the
+      // mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &ownership_mutex );
+      this->ownership_acquired = false;
    }
 }
 
@@ -4768,9 +5291,12 @@ void Object::set_to_unblocking_cyclic_reads()
    this->first_blocking_cyclic_read = true;
 }
 
-void Object::notify_attribute_ownership_changed()
+void Object::set_attribute_ownership_acquired()
 {
-   return;
+   // When auto_unlock_mutex goes out of scope it automatically unlocks the
+   // mutex even if there is an exception.
+   MutexProtection auto_unlock_mutex( &ownership_mutex );
+   this->ownership_acquired = true;
 }
 
 void Object::mark_changed()
@@ -4826,7 +5352,7 @@ void Object::pull_ownership_upon_rejoin()
    for ( unsigned int i = 0; i < attr_count; ++i ) {
 
       try {
-         // IEEE 1516.1-2000 section 7.18
+         // IEEE 1516.1-2010 section 7.18
          if ( attributes[i].is_publish()
               && attributes[i].is_locally_owned()
               && !rti_amb->isAttributeOwnedByFederate( this->instance_handle, attributes[i].get_attribute_handle() ) ) {
@@ -4896,7 +5422,7 @@ for Attributes of object '%s'.%c",
       }
 
       try {
-         // IEEE 1516.1-2000 section 7.8
+         // IEEE 1516.1-2010 section 7.8
          rti_amb->attributeOwnershipAcquisition(
             this->instance_handle,
             attr_hdl_set,
@@ -4922,12 +5448,12 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
       unsigned int ownership_counter = 0;
       while ( ownership_counter < attr_hdl_set.size() ) {
 
-         // reset ownership count for this loop through all the attributes
+         // Reset ownership count for this loop through all the attributes
          ownership_counter = 0;
 
          for ( i = 0; i < attr_count; ++i ) {
             try {
-               // IEEE 1516.1-2000 section 7.18
+               // IEEE 1516.1-2010 section 7.18
                if ( attributes[i].is_publish()
                     && attributes[i].is_locally_owned()
                     && rti_amb->isAttributeOwnedByFederate( this->instance_handle, attributes[i].get_attribute_handle() ) ) {
