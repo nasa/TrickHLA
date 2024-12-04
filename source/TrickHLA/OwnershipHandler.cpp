@@ -405,7 +405,7 @@ void OwnershipHandler::pull_ownership(
    char const *attribute_FOM_name,
    double      time )
 {
-   // Find the attribute for the givn attribute FOM name.
+   // Find the attribute for the given attribute FOM name.
    Attribute *attribute = get_attribute( attribute_FOM_name );
 
    // Just return if the attribute was not found.
