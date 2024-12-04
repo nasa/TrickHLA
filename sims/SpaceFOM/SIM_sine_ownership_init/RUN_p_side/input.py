@@ -188,11 +188,6 @@ if ( verbose == True ):
 else:
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
 
-#TEMP
-#federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_FED_AMB +
-#                           trick.TrickHLA.DEBUG_SOURCE_OBJECT + 
-#                           trick.TrickHLA.DEBUG_SOURCE_ATTRIBUTE ) #TEMP
-
 #--------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.
 #--------------------------------------------------------------------------
