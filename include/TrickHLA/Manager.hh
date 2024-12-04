@@ -593,6 +593,12 @@ class Manager : public CheckpointConversionBase
    void pull_ownership_at_init( char const *obj_instance_name,
                                 char const *attribute_list );
 
+   /*! @brief Wait to handle the remote request to Pull ownership object
+    *  attributes to this federate.
+    *  @param obj_instance_name Object instance name to handle the remote
+    *  pulled ownership attributes from. */
+   void handle_pulled_ownership_at_init( char const *obj_instance_name );
+
    /*! @brief Pull ownership from the other federates when this federate has
     * rejoined the Federation. */
    void pull_ownership_upon_rejoin();

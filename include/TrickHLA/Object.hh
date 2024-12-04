@@ -303,6 +303,10 @@ class Object : public CheckpointConversionBase
     *  @param attribute_list Comma separated list of attributes FOM names. */
    void pull_ownership_at_init( char const *attribute_list );
 
+   /*! @brief Wait to handle the remote request to Pull ownership object
+    *  attributes to this federate. */
+   void handle_pulled_ownership_at_init();
+
    /*! @brief This function pulls ownership for all published attributes when
     * the federate rejoins an already running federation. */
    void pull_ownership_upon_rejoin();

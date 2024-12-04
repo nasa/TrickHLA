@@ -2800,6 +2800,37 @@ void Manager::pull_ownership_at_init(
 }
 
 /*!
+ * @brief Wait to handle the remote request to Pull ownership object
+ *  attributes to this federate.
+ * @param obj_instance_name Object instance name to handle the remote
+ *  pulled ownership attributes from.
+ *  */
+void Manager::handle_pulled_ownership_at_init(
+   char const *obj_instance_name )
+{
+   if ( obj_instance_name == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Manager::handle_pulled_ownership_at_init():" << __LINE__
+             << " ERROR: Unexpected NULL obj_instance_name specified!"
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   Object *obj = get_trickhla_object( obj_instance_name );
+   if ( obj == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Manager::handle_pulled_ownership_at_init():" << __LINE__
+             << " ERROR: Failed to find object with instance name: '"
+             << obj_instance_name << "'!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   obj->handle_pulled_ownership_at_init();
+}
+
+/*!
  * @job_class{scheduled}
  */
 void Manager::pull_ownership_upon_rejoin()

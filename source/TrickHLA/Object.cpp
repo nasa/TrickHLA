@@ -1228,8 +1228,7 @@ Waiting on reservation of Object Instance Name '%s'.%c",
                __LINE__, get_name(), THLA_NEWLINE );
    }
 
-   Federate *federate = get_federate();
-
+   Federate    *federate = get_federate();
    int64_t      wallclock_time;
    SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
@@ -1434,8 +1433,7 @@ void Object::wait_for_object_registration()
                __LINE__, FOM_name, get_name(), THLA_NEWLINE );
    }
 
-   Federate *federate = get_federate();
-
+   Federate    *federate = get_federate();
    int64_t      wallclock_time;
    SleepTimeout print_timer( federate->wait_status_time );
    SleepTimeout sleep_timer;
@@ -3774,9 +3772,8 @@ void Object::pull_ownership()
       return;
    }
 
-   double current_time = 0.0;
-
-   Federate *federate = get_federate();
+   double    current_time = 0.0;
+   Federate *federate     = get_federate();
 
    // Use the HLA Federated Logical Time if time management is enabled.
    if ( federate->is_time_management_enabled() ) {
@@ -4049,8 +4046,7 @@ object '%s' because of error: '%s'%c",
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      Federate *federate = get_federate();
-
+      Federate    *federate = get_federate();
       int64_t      wallclock_time;
       SleepTimeout print_timer( federate->wait_status_time );
       SleepTimeout sleep_timer;
@@ -4111,6 +4107,75 @@ object '%s' because of error: '%s'%c",
          this->ownership_acquired = false;
       }
    }
+}
+
+/*!
+ * @brief Wait to handle the remote request to Pull ownership object
+ *  attributes to this federate. */
+void Object::handle_pulled_ownership_at_init()
+{
+   // Make sure we have an Instance ID for the object.
+   if ( !is_instance_handle_valid() ) {
+      send_hs( stderr, "Object::handle_pulled_ownership_at_init():%d Object-Instance-Handle not set for '%s'.%c",
+               __LINE__, get_name(), THLA_NEWLINE );
+      return;
+   }
+
+   Federate    *federate = get_federate();
+   int64_t      wallclock_time;
+   SleepTimeout print_timer( federate->wait_status_time );
+   SleepTimeout sleep_timer;
+   bool         requested;
+
+   {
+      // When auto_unlock_mutex goes out of scope it automatically unlocks
+      // the mutex even if there is an exception.
+      MutexProtection auto_unlock_mutex( &ownership_mutex );
+      requested = this->pull_requested;
+   }
+
+   // The spin lock waits for Ownership Acquisition.
+   while ( !requested ) {
+
+      // Check for shutdown.
+      federate->check_for_shutdown_with_termination();
+
+      sleep_timer.sleep();
+
+      {
+         MutexProtection auto_unlock_mutex( &ownership_mutex );
+         requested = this->pull_requested;
+      }
+
+      if ( !requested ) {
+
+         // To be more efficient, we get the time once and share it.
+         wallclock_time = sleep_timer.time();
+
+         if ( sleep_timer.timeout( wallclock_time ) ) {
+            sleep_timer.reset();
+            if ( !federate->is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "Object::handle_pulled_ownership_at_init():" << __LINE__
+                      << " ERROR: Unexpectedly the Federate is no longer an execution"
+                      << " member. This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!"
+                      << THLA_ENDL;
+               DebugHandler::terminate_with_message( errmsg.str() );
+            }
+         }
+
+         if ( print_timer.timeout( wallclock_time ) ) {
+            print_timer.reset();
+            send_hs( stdout, "Object::handle_pulled_ownership_at_init()%d \"%s\": Waiting for Pull Requested notification...%c",
+                     __LINE__, federate->get_federation_name(), THLA_NEWLINE );
+         }
+      }
+   }
+
+   grant_pull_request();
 }
 
 /*!
