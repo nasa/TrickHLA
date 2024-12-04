@@ -37,6 +37,10 @@
 #define P_SF_INIT_POST_MPI  500   // SpaceFOM Post-Multi Phase initialization phase.
 #define P_HLA_LATE          65534 // HLA late job phase.
 
+//==========================================================================
+// Define the Ownership Transfer example using either Push or Pull.
+//==========================================================================
+#define PULL_OWNERSHIP  1  // Set to 1 for pull, 0 for push.
 
 //==========================================================================
 // Trick HLA and SpaceFOM include files used in SimObject definitions or
@@ -222,9 +226,11 @@ class THLAInitAnalyticSimObject : public Trick::SimObject {
       //--------------------------------------------------------------------
 
       // Ownership transfer at initialization.
-//      P_MPI_1 ("initialization") thla_manager.push_ownership_at_init( "A-side-Federate.Sine", "Name" );
+#if PULL_OWNERSHIP
       P_MPI_1 ("initialization") thla_manager.handle_pulled_ownership_at_init( "A-side-Federate.Sine" );
-
+#else
+      P_MPI_1 ("initialization") thla_manager.push_ownership_at_init( "A-side-Federate.Sine", "Name" );
+#endif
       // Wait for all federates to reach this sync-point.
       P_MPI_1 ("initialization") thla_manager.wait_for_init_sync_point( "Ownership_transfer_init_phase" );
 
@@ -281,9 +287,11 @@ class THLAInitPropagatedSimObject : public Trick::SimObject {
       //--------------------------------------------------------------------
 
       // Ownership transfer at initialization.
-//      P_MPI_1 ("initialization") thla_manager.handle_pushed_ownership_at_init( "A-side-Federate.Sine" );
+#if PULL_OWNERSHIP
       P_MPI_1 ("initialization") thla_manager.pull_ownership_at_init( "A-side-Federate.Sine", "Name" );
-
+#else
+      P_MPI_1 ("initialization") thla_manager.handle_pushed_ownership_at_init( "A-side-Federate.Sine" );
+#endif
       // Wait for all federates to reach this sync-point.
       P_MPI_1 ("initialization") thla_manager.wait_for_init_sync_point( "Ownership_transfer_init_phase" );
 
