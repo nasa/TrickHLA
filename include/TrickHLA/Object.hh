@@ -646,6 +646,7 @@ class Object : public CheckpointConversionBase
     *  @param request The desired divesiture request state. */
    void set_divest_requested( bool request )
    {
+      MutexProtection auto_unlock_mutex( &ownership_mutex );
       this->divest_requested = request;
    }
 
@@ -653,6 +654,7 @@ class Object : public CheckpointConversionBase
     *  @param request The desired pull request state. */
    void set_pull_requested( bool request )
    {
+      MutexProtection auto_unlock_mutex( &ownership_mutex );
       this->pull_requested = request;
    }
 
