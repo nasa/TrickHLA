@@ -408,7 +408,7 @@ initiating restore request for '%s' with the RTI.%c",
                       << "checkpoint => I AM THE MASTER <= RTI rejected the "
                       << "restore request!!!! Make sure that you are restoring "
                       << "the federates from an identical federation save set."
-                      << "\n      See IEEE 1516.1-2000, Section 4.18 for "
+                      << "\n      See IEEE 1516.1-2010, Section 4.18 for "
                       << "further info for the reasons why the RTI would reject"
                       << " the federation restore request..." << THLA_ENDL;
                DebugHandler::terminate_with_message( errmsg.str() );

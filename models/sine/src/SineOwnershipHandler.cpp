@@ -137,7 +137,10 @@ void SineOwnershipHandler::initialize_callback(
          // Example showing a simple push and pull of ownership
          // for a single attribute.
 
-         push_ownership( "Name", 1.0 );
+         // This example assumes the S_define is configured to do ownership
+         // transfer of the Name attribute at initialization using a job like this:
+         // P_MPI_1 ("initialization") thla_manager.push_ownership_at_init( "A-side-Federate.Sine", "Name" );
+
          pull_ownership( "Name", 5.0 );
          break;
 

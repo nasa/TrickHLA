@@ -181,7 +181,7 @@ federate = SpaceFOMFederateConfig( thla_federate        = THLA.federate,
 #federate.set_ExCO_S_define_name( 'THLA_INIT.ExCO' )
 
 # Set the debug output level.
-if ( verbose == True ): 
+if ( verbose == True ):
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
 else:
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )

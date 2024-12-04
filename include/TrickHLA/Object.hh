@@ -299,6 +299,10 @@ class Object : public CheckpointConversionBase
    /*! @brief This function pulls ownership for this object. */
    void pull_ownership();
 
+   /*! @brief Pull ownership of the named object instance at initialization.
+    *  @param attribute_list Comma separated list of attributes FOM names. */
+   void pull_ownership_at_init( char const *attribute_list );
+
    /*! @brief This function pulls ownership for all published attributes when
     * the federate rejoins an already running federation. */
    void pull_ownership_upon_rejoin();
@@ -308,6 +312,14 @@ class Object : public CheckpointConversionBase
 
    /*! @brief This function pushes ownership for this object. */
    void push_ownership();
+
+   /*! @brief Push ownership of the named object instance at initialization.
+    *  @param attribute_list Comma separated list of attributes FOM names. */
+   void push_ownership_at_init( char const *attribute_list );
+
+   /*! @brief Wait to handle the remote request to Push ownership object
+    *  attributes to this federate. */
+   void handle_pushed_ownership_at_init();
 
    /*! @brief This function grants a previously "recorded" push request for
     * this object. */
@@ -609,7 +621,7 @@ class Object : public CheckpointConversionBase
 
    /*! @brief Notify any waiting threads of a change in attribute ownership,
     * which could affect blocking reads. */
-   void notify_attribute_ownership_changed();
+   void set_attribute_ownership_acquired();
 
    /*! @brief Set the Lag Compensation type for object attribute updates.
     *  @param lag_type Desired lag compensation type. */
@@ -830,8 +842,9 @@ class Object : public CheckpointConversionBase
    RTI1516_NAMESPACE::ObjectClassHandle    class_handle;    ///< @trick_io{**} HLA Object Class handle.
    RTI1516_NAMESPACE::ObjectInstanceHandle instance_handle; ///< @trick_io{**} HLA Object Instance handle.
 
-   bool pull_requested;   ///< @trick_units{--} Has someone asked to own us?
-   bool divest_requested; ///< @trick_units{--} Are we releasing ownership?
+   bool pull_requested;     ///< @trick_units{--} Has someone asked to own us?
+   bool divest_requested;   ///< @trick_units{--} Are we releasing ownership?
+   bool ownership_acquired; ///< @trick_units{--} True when attribute ownership changed.
 
    VectorOfStrings attribute_FOM_names; ///< @trick_io{**} String array containing the Attribute FOM names.
 
