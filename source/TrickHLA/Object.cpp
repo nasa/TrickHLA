@@ -3587,6 +3587,8 @@ void Object::release_ownership()
             __LINE__, get_name(), THLA_NEWLINE );
 #endif
 
+   AttributeHandleSet attrs;
+
    // Now do one last check of the divist_requested flag with thread safety and
    // use braces to create scope for the mutex-protection to auto unlock the mutex.
    {
@@ -3594,8 +3596,6 @@ void Object::release_ownership()
       // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &ownership_mutex );
 
-      // If there is an ownership_handler, tell it to convert the push / pull
-      // maps into checkpoint-able data structures.
       if ( ownership != NULL ) {
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
             send_hs( stdout, "Object::release_ownership():%d Telling ownership handler to clear checkpoint.%c",
@@ -3614,28 +3614,25 @@ void Object::release_ownership()
          // divest request so just return.
          return;
       }
+
+      // Create the list of attributes we can divest ownership of.
+      for ( unsigned int i = 0; i < attr_count; ++i ) {
+         // Only release ownership of the attributes we locally own.
+         if ( attributes[i].is_divest_requested() && attributes[i].is_locally_owned() ) {
+            attrs.insert( attributes[i].get_attribute_handle() );
+         }
+
+         // Clear the flag now that the attribute has been handled.
+         attributes[i].set_divest_requested( false );
+      }
+
       // Clear the flag now that we are servicing the divest request.
       this->divest_requested = false;
-
-      // Unlock the ownership mutex as auto_unlock_mutex goes out of scope.
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
       send_hs( stdout, "Object::release_ownership():%d Attributes of Object '%s'.%c",
                __LINE__, get_name(), THLA_NEWLINE );
-   }
-
-   AttributeHandleSet attrs;
-
-   // Create the list of attributes we can divest ownership of.
-   for ( unsigned int i = 0; i < attr_count; ++i ) {
-      // Only release ownership of the attributes we locally own.
-      if ( attributes[i].is_divest_requested() && attributes[i].is_locally_owned() ) {
-         attrs.insert( attributes[i].get_attribute_handle() );
-      }
-
-      // Clear the flag now that the attribute has been handled.
-      attributes[i].set_divest_requested( false );
    }
 
    try {
@@ -3645,6 +3642,8 @@ void Object::release_ownership()
                                    RTI1516_USERDATA( 0, 0 ) );
 
       AttributeHandleSet::iterator divest_iter;
+
+      MutexProtection auto_unlock_mutex( &ownership_mutex );
 
       // For the attributes we just divested, mark them as being remotely owned.
       for ( divest_iter = attrs.begin(); divest_iter != attrs.end(); ++divest_iter ) {
@@ -3736,9 +3735,6 @@ RTIAmbassador::confirmDivestiture() generated Exception: '%s'%c",
    // Macro to restore the saved FPU Control Word register value.
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-   // Clear the flag now that the attributes have been serviced.
-   //   this->divest_requested = false;
 }
 
 /*!
@@ -3880,8 +3876,6 @@ owned or is not configured to be published.%c",
             ++pull_ownership_iter;
          }
       }
-
-      // Unlock the ownership mutex when auto_unlock_mutex goes out of scope.
    }
 
    // Make the request only if we have attributes to pull ownership of.
@@ -3911,8 +3905,7 @@ for Attributes of object '%s'.%c",
          StringUtilities::to_string( rti_err_msg, e.what() );
          send_hs( stderr, "Object::pull_ownership():%d Unable to pull attributes of \
 object '%s' because of error: '%s'%c",
-                  __LINE__, get_name(), rti_err_msg.c_str(),
-                  THLA_NEWLINE );
+                  __LINE__, get_name(), rti_err_msg.c_str(), THLA_NEWLINE );
       }
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -3958,8 +3951,9 @@ void Object::pull_ownership_at_init(
    // The Set of attribute handle to pull ownership of.
    AttributeHandleSet attr_hdl_set;
 
-   // Lock the ownership mutex since we are processing the ownership pull list and
-   // use braces to create scope for the mutex-protection to auto unlock the mutex.
+   // Lock the ownership mutex since we are processing the ownership pull
+   // list and use braces to create scope for the mutex-protection to auto
+   // unlock the mutex.
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
@@ -3998,7 +3992,6 @@ push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.%c
             }
          }
       }
-      // Unlock the ownership mutex when auto_unlock_mutex goes out of scope.
    }
 
    // Determine if we have any attributes to pull ownership of.
@@ -4208,17 +4201,21 @@ void Object::grant_pull_request()
 
    AttributeHandleSet attrs_to_divest;
 
-   // Determine which attributes to grant the pull request for.
-   for ( unsigned int i = 0; i < attr_count; ++i ) {
-      // Another federate is trying to pull ownership so grant the pull
-      // request for only the attributes that have a pull request enabled
-      // and that we locally own.
-      if ( attributes[i].is_pull_requested() && attributes[i].is_locally_owned() ) {
-         attrs_to_divest.insert( attributes[i].get_attribute_handle() );
-      }
+   {
+      MutexProtection auto_unlock_mutex( &ownership_mutex );
 
-      // Clear the pull requested flag for the attribute.
-      attributes[i].set_pull_requested( false );
+      // Determine which attributes to grant the pull request for.
+      for ( unsigned int i = 0; i < attr_count; ++i ) {
+         // Another federate is trying to pull ownership so grant the pull
+         // request for only the attributes that have a pull request enabled
+         // and that we locally own.
+         if ( attributes[i].is_pull_requested() && attributes[i].is_locally_owned() ) {
+            attrs_to_divest.insert( attributes[i].get_attribute_handle() );
+         }
+
+         // Clear the pull requested flag for the attribute.
+         attributes[i].set_pull_requested( false );
+      }
    }
 
    if ( attrs_to_divest.empty() ) {
@@ -4245,6 +4242,8 @@ No attributes Divested since no federate wanted them for object '%s'.%c",
                         __LINE__, get_name(), THLA_NEWLINE );
             }
          } else {
+            MutexProtection auto_unlock_mutex( &ownership_mutex );
+
             // Process the list of attributes that were divisted by the RTI
             // and set the state of the ownership.
             AttributeHandleSet::iterator divested_iter;
@@ -4284,8 +4283,12 @@ pull request for Trick-HLA-Object '%s'%c",
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
    }
 
-   // Clear the flag now that the pull request has been serviced.
-   this->pull_requested = false;
+   {
+      MutexProtection auto_unlock_mutex( &ownership_mutex );
+
+      // Clear the flag now that the pull request has been serviced.
+      this->pull_requested = false;
+   }
 }
 
 /*!
@@ -4654,7 +4657,6 @@ owned or is not configured to be published.%c",
             ++push_ownership_iter;
          }
       }
-      // Unlock the ownership mutex when auto_unlock_mutex goes out of scope.
    }
 
    // Determine if we have any attributes to push ownership of.
@@ -4783,7 +4785,6 @@ push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.%c
             }
          }
       }
-      // Unlock the ownership mutex when auto_unlock_mutex goes out of scope.
    }
 
    // Determine if we have any attributes to push ownership of.
@@ -4913,13 +4914,11 @@ void Object::handle_pushed_ownership_at_init()
    bool         acquired;
 
    {
-      // When auto_unlock_mutex goes out of scope it automatically unlocks the
-      // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &ownership_mutex );
       acquired = this->ownership_acquired;
    }
 
-   // The spin lock waits for Ownership Acquisition.
+   // Wait for Ownership Acquisition flag to be set.
    while ( !acquired ) {
 
       // Check for shutdown.
@@ -4961,8 +4960,6 @@ void Object::handle_pushed_ownership_at_init()
    }
 
    {
-      // When auto_unlock_mutex goes out of scope it automatically unlocks the
-      // mutex even if there is an exception.
       MutexProtection auto_unlock_mutex( &ownership_mutex );
       this->ownership_acquired = false;
    }
@@ -5293,16 +5290,12 @@ void Object::set_to_unblocking_cyclic_reads()
 
 void Object::set_attribute_ownership_acquired()
 {
-   // When auto_unlock_mutex goes out of scope it automatically unlocks the
-   // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &ownership_mutex );
    this->ownership_acquired = true;
 }
 
 void Object::mark_changed()
 {
-   // When auto_unlock_mutex goes out of scope it automatically unlocks the
-   // mutex even if there is an exception.
    MutexProtection auto_unlock_mutex( &receive_mutex );
    this->changed = true;
 }
@@ -5527,8 +5520,6 @@ for Attributes of object '%s', waiting...%c",
    // Macro to restore the saved FPU Control Word register value.
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-   // Unlock the ownership mutex when auto_unlock_mutex goes out of scope.
 }
 
 bool Object::is_shutdown_called() const
