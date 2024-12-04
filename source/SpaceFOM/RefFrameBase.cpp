@@ -213,12 +213,11 @@ void RefFrameBase::base_config(
  */
 void RefFrameBase::configure()
 {
-
    // Must have federation instance name.
    if ( this->packing_data.name == NULL ) {
       if ( debug ) {
          ostringstream errmsg;
-         errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
+         errmsg << "SpaceFOM::RefFrameBase::configure():" << __LINE__
                 << " WARNING: Unexpected NULL federation instance frame name!"
                 << "  Setting frame name to empty string." << THLA_ENDL;
          send_hs( stderr, errmsg.str().c_str() );
@@ -230,7 +229,7 @@ void RefFrameBase::configure()
    if ( this->packing_data.parent_name == NULL ) {
       if ( debug ) {
          ostringstream errmsg;
-         errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
+         errmsg << "SpaceFOM::RefFrameBase::configure():" << __LINE__
                 << " WARNING: Unexpected NULL federation instance parent frame name!"
                 << "  Setting parent frame name to empty string." << THLA_ENDL;
          send_hs( stderr, errmsg.str().c_str() );
@@ -246,7 +245,6 @@ void RefFrameBase::configure()
  */
 void RefFrameBase::initialize()
 {
-
    // Must have federation instance name.
    if ( this->packing_data.name == NULL ) {
       ostringstream errmsg;

@@ -2756,6 +2756,93 @@ void Manager::pull_ownership()
 }
 
 /*!
+ * @brief Pull ownership of the named object instance at initialization.
+ * @param obj_instance_name Object instance name to pull ownership
+ *  of for all attributes.
+ *  */
+void Manager::pull_ownership_at_init(
+   char const *obj_instance_name )
+
+{
+   pull_ownership_at_init( obj_instance_name, NULL );
+}
+
+/*!
+ * @brief Pull ownership of the named object instance at initialization.
+ * @param obj_instance_name Object instance name to pull ownership
+ * of for all attributes
+ * @param attribute_list Comma separated list of attributes.
+ */
+void Manager::pull_ownership_at_init(
+   char const *obj_instance_name,
+   char const *attribute_list )
+{
+   if ( obj_instance_name == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Manager::pull_ownership_at_init():" << __LINE__
+             << " ERROR: Unexpected NULL obj_instance_name specified!"
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   Object *obj = get_trickhla_object( obj_instance_name );
+   if ( obj == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Manager::pull_ownership_at_init():" << __LINE__
+             << " ERROR: Failed to find object with instance name: '"
+             << obj_instance_name << "'!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   obj->pull_ownership_at_init( attribute_list );
+}
+
+/*!
+ * @brief Wait to handle the remote request to Pull ownership object
+ *  attributes to this federate.
+ * @param obj_instance_name Object instance name to handle the remote
+ *  pulled ownership attributes from.
+ *  */
+void Manager::handle_pulled_ownership_at_init(
+   char const *obj_instance_name )
+{
+   if ( obj_instance_name == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Manager::handle_pulled_ownership_at_init():" << __LINE__
+             << " ERROR: Unexpected NULL obj_instance_name specified!"
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   Object *obj = get_trickhla_object( obj_instance_name );
+   if ( obj == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Manager::handle_pulled_ownership_at_init():" << __LINE__
+             << " ERROR: Failed to find object with instance name: '"
+             << obj_instance_name << "'!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   obj->handle_pulled_ownership_at_init();
+}
+
+/*!
+ * @job_class{scheduled}
+ */
+void Manager::pull_ownership_upon_rejoin()
+{
+   for ( unsigned int n = 0; n < obj_count; ++n ) {
+      if ( objects[n].is_create_HLA_instance() ) {
+         objects[n].pull_ownership_upon_rejoin();
+      }
+   }
+}
+
+/*!
  * @job_class{scheduled}
  */
 void Manager::push_ownership()
@@ -2763,6 +2850,80 @@ void Manager::push_ownership()
    for ( unsigned int n = 0; n < obj_count; ++n ) {
       objects[n].push_ownership();
    }
+}
+
+/*!
+ * @brief Push ownership of all the locally owned object attributes.
+ * @param obj_instance_name Object instance name to push ownership
+ * of for all attributes.
+ */
+void Manager::push_ownership_at_init(
+   char const *obj_instance_name )
+{
+   push_ownership_at_init( obj_instance_name, NULL );
+}
+
+/*!
+ * @brief Push ownership of the named object instance at initialization.
+ * @param obj_instance_name Object instance name to push ownership
+ * of for all attributes.
+ * @param attribute_list Comma separated list of attribute FOM names.
+ */
+void Manager::push_ownership_at_init(
+   char const *obj_instance_name,
+   char const *attribute_list )
+{
+   if ( obj_instance_name == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Manager::push_ownership_at_init():" << __LINE__
+             << " ERROR: Unexpected NULL obj_instance_name specified!"
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   Object *obj = get_trickhla_object( obj_instance_name );
+   if ( obj == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Manager::push_ownership_at_init():" << __LINE__
+             << " ERROR: Failed to find object with instance name: '"
+             << obj_instance_name << "'!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   obj->push_ownership_at_init( attribute_list );
+}
+
+/*!
+ * @brief Wait to handle the remote request to Push ownership object
+ * attributes to this federate.
+ * @param obj_instance_name Object instance name to handle the remote
+ * pushed ownership attributes from.
+ */
+void Manager::handle_pushed_ownership_at_init(
+   char const *obj_instance_name )
+{
+   if ( obj_instance_name == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Manager::handle_pushed_ownership_at_init():" << __LINE__
+             << " ERROR: Unexpected NULL obj_instance_name specified!"
+             << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   Object *obj = get_trickhla_object( obj_instance_name );
+   if ( obj == NULL ) {
+      ostringstream errmsg;
+      errmsg << "Manager::handle_pushed_ownership_at_init():" << __LINE__
+             << " ERROR: Failed to find object with instance name: '"
+             << obj_instance_name << "'!" << THLA_ENDL;
+      DebugHandler::terminate_with_message( errmsg.str() );
+      return;
+   }
+
+   obj->handle_pushed_ownership_at_init();
 }
 
 /*!
@@ -3077,18 +3238,6 @@ void Manager::print_checkpoint_interactions()
              << endl;
       }
       send_hs( stdout, msg.str().c_str() );
-   }
-}
-
-/*!
- * @job_class{scheduled}
- */
-void Manager::pull_ownership_upon_rejoin()
-{
-   for ( unsigned int n = 0; n < obj_count; ++n ) {
-      if ( objects[n].is_create_HLA_instance() ) {
-         objects[n].pull_ownership_upon_rejoin();
-      }
    }
 }
 

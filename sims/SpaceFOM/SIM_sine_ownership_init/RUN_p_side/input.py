@@ -133,6 +133,8 @@ federate_name = 'P-side-Federate'
 # Set the default Federation Execution name.
 federation_name = 'SpaceFOM_sine'
 
+# True for the A-side Analytic Federate, False for P-side Propagated Federate.
+analytic_federate = False
 
 parse_command_line()
 
@@ -186,6 +188,11 @@ if ( verbose == True ):
 else:
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
 
+#TEMP
+#federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_FED_AMB +
+#                           trick.TrickHLA.DEBUG_SOURCE_OBJECT + 
+#                           trick.TrickHLA.DEBUG_SOURCE_ATTRIBUTE ) #TEMP
+
 #--------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.
 #--------------------------------------------------------------------------
@@ -207,6 +214,7 @@ federate.add_FOM_module( 'FOMs/sine/Sine_FOM.xml' )
 #--------------------------------------------------------------------------
 # Configure the multiphase initialization sync-points.
 #--------------------------------------------------------------------------
+federate.add_multiphase_init_sync_point( 'Ownership_transfer_init_phase' )
 federate.add_multiphase_init_sync_point( 'Analytic_init_phase' )
 federate.add_multiphase_init_sync_point( 'Propagated_init_phase' )
 
@@ -219,12 +227,19 @@ THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 #--------------------------------------------------------------------------
 # Set up federate related time related parameters.
 #--------------------------------------------------------------------------
-# Set the simulation timeline to be used for time computations.
-THLA.execution_control.sim_timeline = THLA_INIT.sim_timeline
-
-# Set the scenario timeline to be used for configuring federation freeze times.
-THLA.execution_control.scenario_timeline = THLA_INIT.scenario_timeline
-
+if ( analytic_federate == True ):
+   # Set the simulation timeline to be used for time computations.
+   THLA.execution_control.sim_timeline = THLA_INIT_A.sim_timeline
+   
+   # Set the scenario timeline to be used for configuring federation freeze times.
+   THLA.execution_control.scenario_timeline = THLA_INIT_A.scenario_timeline
+else:
+   # Set the simulation timeline to be used for time computations.
+   THLA.execution_control.sim_timeline = THLA_INIT_P.sim_timeline
+   
+   # Set the scenario timeline to be used for configuring federation freeze times.
+   THLA.execution_control.scenario_timeline = THLA_INIT_P.scenario_timeline
+   
 # Specify the HLA base time units (default: trick.HLA_BASE_TIME_MICROSECONDS).
 federate.set_HLA_base_time_units( trick.HLA_BASE_TIME_MICROSECONDS )
 
@@ -358,12 +373,17 @@ frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE )
 # This doesn't really apply to these example simulations which are only HLA.
 #---------------------------------------------------------------------------
 federate.add_sim_object( THLA )
-federate.add_sim_object( THLA_INIT )
 federate.add_sim_object( root_ref_frame )
 federate.add_sim_object( ref_frame_A )
 federate.add_sim_object( A )
 federate.add_sim_object( P )
 
+if ( analytic_federate == True ):
+   federate.add_sim_object( THLA_INIT_A )
+   THLA_INIT_P.disable_all_jobs()
+else:
+   federate.add_sim_object( THLA_INIT_P )
+   THLA_INIT_A.disable_all_jobs()
 
 #---------------------------------------------------------------------------
 # Make sure that the Python federate configuration object is initialized.
