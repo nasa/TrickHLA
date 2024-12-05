@@ -19,7 +19,7 @@ Now **cd** into models/Wheelbot/Graphics/ and type **make**. This builds the dis
 In the SIM_wheelbot directory:
 
 ```
-% S_main_*.exe RUN_test/input.py -HLA-off
+% ./S_main_*.exe RUN_test/input.py -HLA-off
 ```
 ### Running the Simulation (with HLA)
 
@@ -32,7 +32,7 @@ Uncomment the line which says #define HLA.
 In the SIM_wheelbot directory, first type **make spotless** and then **trick-CP** again. Then:
 
 ```
-% S_main_*.exe RUN_test/input.py
+% ./S_main_*.exe RUN_test/input.py
 ```
 
 
@@ -53,16 +53,16 @@ When running SIM_Roles_Test RUN_mpr, the user must specify the name of the feder
 In the SIM_Roles_Test directory:
 
 ```
-% S_main_*.exe RUN_mpr/input.py --federation Wheelbot_Test --knownfederate Wheelbot-1
+% ./S_main_*.exe RUN_mpr/input.py --federation Wheelbot_Test --knownfederate Wheelbot-1
 ```
 
 In the SIM_wheelbot directory:
 
 ```
-% S_main_*.exe RUN_wb1/input.py
+% ./S_main_*.exe RUN_wb1/input.py
 ```
 ```
-% S_main_*.exe RUN_wb2/input.py
+% ./S_main_*.exe RUN_wb2/input.py
 ```
 
 ### If running with student version of pRTI
@@ -71,10 +71,10 @@ The student version of PitchRTI only allows two federates to be run at once. RUN
 In the SIM_wheelbot directory:
 
 ```
-% S_main_*.exe RUN_OnlyWB/input.py
+% ./S_main_*.exe RUN_OnlyWB/input.py
 ```
 ```
-% S_main_*.exe RUN_wb2/input.py
+% ./S_main_*.exe RUN_wb2/input.py
 ```
 
 ### Inputs
