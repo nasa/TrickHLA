@@ -185,8 +185,8 @@ federate.add_known_federate( False, 'Wheelbot-2' )
 federate.set_lookahead_time( 0.200 )
 
 # Setup Time Management parameters.
-#federate.set_time_regulating( True )
-#federate.set_time_constrained( True )
+#federate.set_time_regulating( False )
+#federate.set_time_constrained( False )
 
 
 #==========================================================================
