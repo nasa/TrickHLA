@@ -165,8 +165,8 @@ TEST( ArenaTest, getGridSquareCoordinates_three )
    GridSquare *agridSquare = arena.get_grid_square( 9, 6 );
    Point       coordinate;
    arena.get_grid_square_coordinates( agridSquare, coordinate );
-   EXPECT_EQ( coordinate.x, 9 );
-   EXPECT_EQ( coordinate.y, 6 );
+   EXPECT_EQ( coordinate.getX(), 9 );
+   EXPECT_EQ( coordinate.getY(), 6 );
 }
 
 TEST( ArenaTest, movementCostEstimate_one )
@@ -331,7 +331,7 @@ TEST( ArenaTest, getNeighbors_four )
 
    Point point;
    arena.get_grid_square_coordinates( *neighbors_iterator, point );
-   std::cout << point.x << " " << point.y << std::endl;
+   std::cout << point.getX() << " " << point.getY() << std::endl;
 
    EXPECT_EQ( n0_1_found_flag, true );
 
@@ -342,7 +342,7 @@ TEST( ArenaTest, getNeighbors_four )
       n0_2_found_flag = true;                                               // change the found flag to true
 
    arena.get_grid_square_coordinates( *neighbors_iterator, point );
-   std::cout << point.x << " " << point.y << std::endl;
+   std::cout << point.getX() << " " << point.getY() << std::endl;
 
    EXPECT_EQ( n0_2_found_flag, true );
 
@@ -353,7 +353,7 @@ TEST( ArenaTest, getNeighbors_four )
       n1_0_found_flag = true;                                               // change the found flag to true
 
    arena.get_grid_square_coordinates( *neighborsIterator, point );
-   std::cout << point.x << " " << point.y << std::endl;
+   std::cout << point.getX() << " " << point.getY() << std::endl;
 
    EXPECT_EQ( n1_0_found_flag, true );
 
@@ -364,7 +364,7 @@ TEST( ArenaTest, getNeighbors_four )
       n1_2_found_flag = true;                                               // change the found flag to true
 
    arena.get_grid_square_coordinates( *neighbors_iterator, point );
-   std::cout << point.x << " " << point.y << std::endl;
+   std::cout << point.getX() << " " << point.getY() << std::endl;
 
    EXPECT_EQ( n1_2_found_flag, true );
 
@@ -375,7 +375,7 @@ TEST( ArenaTest, getNeighbors_four )
       n2_1_found_flag = true;                                               // change the found flag to true
 
    arena.get_grid_square_coordinates( *neighborsIterator, point );
-   std::cout << point.x << " " << point.y << std::endl;
+   std::cout << point.getX() << " " << point.getY() << std::endl;
 
    EXPECT_EQ( n2_1_found_flag, true );
 }

@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <gtest/gtest.h>
+
 #define private public
 
 #include "../include/DifferentialDriveController.hh"
@@ -41,16 +42,14 @@ class DifferentialDriveControllerTest : public ::testing::Test
 
 TEST_F( DifferentialDriveControllerTest, constructor )
 {
-
    EXPECT_NEAR( 0.045, drive_controller->wheel_radius, FLOAT_TOLERANCE );
    EXPECT_NEAR( 0.183, drive_controller->distance_between_wheels, FLOAT_TOLERANCE );
-   EXPECT_NEAR( 8.880, drive_controller->wheel_rotation_rate_limit, FLOAT_TOLERANCE );
+   EXPECT_NEAR( 8.880, drive_controller->wheel_speed_limit, FLOAT_TOLERANCE );
    EXPECT_NEAR( 0.200, drive_controller->slow_down_distance, FLOAT_TOLERANCE );
 }
 
 TEST_F( DifferentialDriveControllerTest, setDistanceBetweenWheels )
 {
-
    int result;
 
    result = drive_controller->set_distance_between_wheels( 0.1 );
@@ -68,7 +67,6 @@ TEST_F( DifferentialDriveControllerTest, setDistanceBetweenWheels )
 
 TEST_F( DifferentialDriveControllerTest, setWheelRadius )
 {
-
    int result;
    result = drive_controller->set_wheel_radius( 0.059 );
    EXPECT_EQ( 0, result );
@@ -85,24 +83,22 @@ TEST_F( DifferentialDriveControllerTest, setWheelRadius )
 
 TEST_F( DifferentialDriveControllerTest, setWheelRotationRateLimit )
 {
-
    int result;
-   result = drive_controller->set_wheel_rotation_rate_limit( 7.123 );
+   result = drive_controller->set_wheel_speed_limit( 7.123 );
    EXPECT_EQ( 0, result );
-   EXPECT_NEAR( 7.123, drive_Controller->wheel_rotation_rate_limit, FLOAT_TOLERANCE );
+   EXPECT_NEAR( 7.123, drive_Controller->wheel_speed_limit, FLOAT_TOLERANCE );
 
-   result = drive_controller->set_wheel_rotation_rate_limit( 5.234 );
+   result = drive_controller->set_wheel_speed_limit( 5.234 );
    EXPECT_EQ( 0, result );
-   EXPECT_NEAR( 5.234, drive_controller->wheel_rotation_rate_limit, FLOAT_TOLERANCE );
+   EXPECT_NEAR( 5.234, drive_controller->wheel_speed_limit, FLOAT_TOLERANCE );
 
-   result = drive_controller->set_wheel_rotation_rate_limit( -4.987 );
+   result = drive_controller->set_wheel_speed_limit( -4.987 );
    EXPECT_EQ( 1, result );
-   EXPECT_NEAR( 5.234, drive_controller->wheel_rotation_rate_limit, FLOAT_TOLERANCE );
+   EXPECT_NEAR( 5.234, drive_controller->wheel_speed_limit, FLOAT_TOLERANCE );
 }
 
 TEST_F( DifferentialDriveControllerTest, PositiveRangeErrorOnly )
 {
-
    // If there is no heading error, and the distance error is non-zero,
    // then the speeds should be the same, and equal to the wheelRotationRateLimit.
 
@@ -121,7 +117,6 @@ TEST_F( DifferentialDriveControllerTest, PositiveRangeErrorOnly )
 
 TEST_F( DifferentialDriveControllerTest, positiveHeadingError )
 {
-
    // If the heading error is positive, then we should turn to the right,
    // meaning that the left wheel should move faster than the right wheel.
 
@@ -166,7 +161,6 @@ TEST_F( DifferentialDriveControllerTest, positiveHeadingError )
 
 TEST_F( DifferentialDriveControllerTest, negativeHeadingError )
 {
-
    // If the heading error is negative, then we should turn to the left,
    // meaning that the right wheel should move faster than the left wheel.
 

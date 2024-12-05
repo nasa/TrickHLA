@@ -48,8 +48,8 @@ TEST( NavigatorTest, convertMapToPlatform_one )
    Point     platform_point;
    platformPoint = navigator.convert_map_to_platform( map_point );
 
-   EXPECT_EQ( platform_point.x, 1 );
-   EXPECT_EQ( platform_point.y, 5 );
+   EXPECT_EQ( platform_point.getX(), 1 );
+   EXPECT_EQ( platform_point.getY(), 5 );
 }
 
 TEST( NavigatorTest, convertMapToPlatform_two )
@@ -61,8 +61,8 @@ TEST( NavigatorTest, convertMapToPlatform_two )
    Point     map_point( 3, -5 );
    Point     platform_point = navigator.convert_map_to_platform( map_point );
 
-   EXPECT_EQ( platform_point.x, 11 );
-   EXPECT_EQ( platform_point.y, 4 );
+   EXPECT_EQ( platform_point.getX(), 11 );
+   EXPECT_EQ( platform_point.getY(), 4 );
 }
 
 TEST( NavigatorTest, convertPlatformToBody_one )
@@ -76,8 +76,8 @@ TEST( NavigatorTest, convertPlatformToBody_one )
    Point     body_point = navigator.convert_platform_to_body( platform_point );
 
    double expected_result = sqrt( 2.0 ) / 2.0;
-   EXPECT_NEAR( body_point.x, expected_result, FP_TOLERANCE );
-   EXPECT_NEAR( body_point.y, expected_result, FP_TOLERANCE );
+   EXPECT_NEAR( body_point.getX(), expected_result, FP_TOLERANCE );
+   EXPECT_NEAR( body_point.getY(), expected_result, FP_TOLERANCE );
 }
 
 TEST( NavigatorTest, convertPlatformToBody_two )
@@ -91,8 +91,8 @@ TEST( NavigatorTest, convertPlatformToBody_two )
    Point     body_point = navigator.convert_platform_to_body( platform_point );
 
    double expected_result = sqrt( 2.0 ) / 2.0;
-   EXPECT_NEAR( body_point.x, expected_result, FP_TOLERANCE );
-   EXPECT_NEAR( body_point.y, expected_result, FP_TOLERANCE );
+   EXPECT_NEAR( body_point.getX(), expected_result, FP_TOLERANCE );
+   EXPECT_NEAR( body_point.getY(), expected_result, FP_TOLERANCE );
 }
 
 TEST( NavigatorTest, convertBodyToPlatform_one )
@@ -106,8 +106,8 @@ TEST( NavigatorTest, convertBodyToPlatform_one )
    Point  body_point( H, H );
    Point  platform_point = navigator.convert_body_to_platform( body_point );
 
-   EXPECT_NEAR( platform_point.x, 1.0, 00001 );
-   EXPECT_NEAR( platform_point.y, 0.0, 00001 );
+   EXPECT_NEAR( platform_point.getX(), 1.0, 00001 );
+   EXPECT_NEAR( platform_point.getY(), 0.0, 00001 );
 }
 
 TEST( NavigatorTest, convertPlatformToMap_one )
@@ -119,8 +119,8 @@ TEST( NavigatorTest, convertPlatformToMap_one )
    Point     map_point;
    mapPoint = navigator.convert_platform_to_map( platform_point );
 
-   EXPECT_EQ( map_point.x, 3 );
-   EXPECT_EQ( map_point.y, -5 );
+   EXPECT_EQ( map_point.getX(), 3 );
+   EXPECT_EQ( map_point.getY(), -5 );
 }
 
 TEST( NavigatorTest, bearingTo_one )

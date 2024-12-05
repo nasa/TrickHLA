@@ -19,8 +19,7 @@ class DifferentialDriveController
                                 MotorSpeedController &right_motor_controller,
                                 MotorSpeedController &left_motor_controller );
 
-   int  update( double distance_err,
-                double heading_err );
+   int  update( double distance_err, double heading_err );
    void stop();
 
   private:

@@ -6,19 +6,22 @@
 
 DCMotorSpeedController::DCMotorSpeedController(
    DCMotor      &dc_motor,
-   double        Gain,
+   double        motor_gain,
    const double &actual_speed,
    const double &supply_voltage )
    : motor_voltage( 0.0 ),
      motor( dc_motor ),
-     gain( Gain ),
+     gain( motor_gain ),
      actual_speed( actual_speed ),
-     supply_voltage( supply_voltage ) {};
-
-void DCMotorSpeedController::set_commanded_speed( double commanded_speed )
+     supply_voltage( supply_voltage )
 {
-   MotorSpeedController::set_commanded_speed( commanded_speed );
-   motor_voltage = supply_voltage * gain * ( commanded_speed - actual_speed );
+   this->commanded_speed = 0.0;
+}
+
+void DCMotorSpeedController::set_commanded_speed( double cmd_speed )
+{
+   MotorSpeedController::set_commanded_speed( cmd_speed );
+   motor_voltage = supply_voltage * gain * ( cmd_speed - actual_speed );
    motor_voltage = std ::min( supply_voltage, motor_voltage );
    motor_voltage = std ::max( -supply_voltage, motor_voltage );
    motor.update( motor_voltage );

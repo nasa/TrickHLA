@@ -31,6 +31,7 @@ class VehicleController
    // Homing Functions
    // Commands wheelbot to navigate to home
    void go_home();
+
    // Returns the value of the variable endofWaypoints
    bool get_status();
 
@@ -47,6 +48,7 @@ class VehicleController
    // Homing variables
    // Records if end of simulation
    bool end_of_waypoints;
+
    // Records if told to go home
    bool home_commanded;
 

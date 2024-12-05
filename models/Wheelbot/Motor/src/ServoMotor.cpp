@@ -1,13 +1,16 @@
 #include "../include/ServoMotor.hh"
 
 ServoMotor::ServoMotor( char side )
+   : _side( side ),
+     _pulse_width( 0 ),
+     actual_speed( 0.0 )
 {
-   _side = side;
+   return;
 }
 
 double ServoMotor::get_actual_speed( int pulse_width )
 {
-   _pulse_width = pulse_width;
+   this->_pulse_width = pulse_width;
 
    if ( _side == 'L' ) {
       actual_speed = -1.8147280722744906e+001 * pow( _pulse_width, 0 )

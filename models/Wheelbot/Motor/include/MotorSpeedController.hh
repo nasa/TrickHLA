@@ -14,7 +14,11 @@ class MotorSpeedController
    {
       this->commanded_speed = commanded_speed;
    }
-   double get_commanded_speed() { return commanded_speed; }
+
+   double get_commanded_speed()
+   {
+      return this->commanded_speed;
+   }
 
   protected:
    double commanded_speed;

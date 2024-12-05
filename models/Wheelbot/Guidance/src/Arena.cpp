@@ -6,10 +6,12 @@
 #include "../include/GridSquare.hh"
 #include "../include/Point.hh"
 
-Arena::Arena( unsigned int width, unsigned int height )
-   : height( height ), width( width )
+Arena::Arena(
+   unsigned int width,
+   unsigned int height )
+   : height( height ),
+     width( width )
 {
-
    unsigned int area = height * width;
    grid              = new GridSquare[area];
    for ( int i = 0; i < area; i++ ) {
@@ -18,12 +20,15 @@ Arena::Arena( unsigned int width, unsigned int height )
    }
 }
 
-Arena::Arena( unsigned int width, unsigned int height, unsigned char bits[] )
-   : height( height ), width( width )
+Arena::Arena(
+   unsigned int        width,
+   unsigned int        height,
+   unsigned char const bits[] )
+   : height( height ),
+     width( width )
 {
-
    unsigned int area = height * width;
-   grid              = new GridSquare[area];
+   grid              = new GridSquare[area]; // cppcheck-suppress [noCopyConstructor,noOperatorEq]
 
    unsigned int cx = 0;
    for ( int row = 0; row < height; row++ ) {
@@ -41,17 +46,19 @@ Arena::Arena( unsigned int width, unsigned int height, unsigned char bits[] )
          bx++;
       }
       cx++;
-      octet = bits[cx];
    }
 }
 
 Arena::~Arena()
 {
-   delete grid;
+   if ( grid != NULL ) {
+      delete grid; // cppcheck-suppress [mismatchAllocDealloc]
+      grid = NULL;
+   }
 }
 
 // straightDistance
-int Arena::distance_between( GridSquare *orig, GridSquare *dest, int &distance )
+int Arena::distance_between( GridSquare const *orig, GridSquare const *dest, int &distance )
 {
    Point orig_pt;
    Point dest_pt;
@@ -64,7 +71,7 @@ int Arena::distance_between( GridSquare *orig, GridSquare *dest, int &distance )
 }
 
 // manhattenDistance
-int Arena::movement_cost_estimate( GridSquare *orig, GridSquare *dest, int &cost_estimate )
+int Arena::movement_cost_estimate( GridSquare const *orig, GridSquare const *dest, int &cost_estimate )
 {
    Point orig_pt;
    Point dest_pt;
@@ -109,9 +116,8 @@ int Arena::calc_offset( unsigned int x, unsigned int y, size_t &offset )
    return 1;
 }
 
-int Arena::calc_offset( GridSquare *gridSquare, size_t &offset )
+int Arena::calc_offset( GridSquare const *grid_square, size_t &offset )
 {
-
    if ( grid_square >= grid ) {
       size_t toffset = ( grid_square - grid );
       if ( toffset < ( width * height ) ) {
@@ -131,12 +137,12 @@ GridSquare *Arena::get_grid_square( unsigned int x, unsigned int y )
    return ( (GridSquare *)0 );
 }
 
-int Arena::get_grid_square_coordinates( GridSquare *grid_square_pointer, Point &coords )
+int Arena::get_grid_square_coordinates( GridSquare const *grid_square_pointer, Point &coords )
 {
    size_t offset;
-   if ( calcOffset( grid_square_pointer, offset ) == 0 ) {
-      coords.x = offset % width;
-      coords.y = offset / width;
+   if ( calc_offset( grid_square_pointer, offset ) == 0 ) {
+      coords.setX( offset % width );
+      coords.setY( offset / width );
       return 0;
    } else {
       std::cerr << "Arena::getGridSquareCoordinates: problem." << std::endl;
@@ -144,9 +150,8 @@ int Arena::get_grid_square_coordinates( GridSquare *grid_square_pointer, Point &
    }
 }
 
-std::vector< GridSquare * > Arena::get_neighbors( GridSquare *grid_square_pointer )
+std::vector< GridSquare * > Arena::get_neighbors( GridSquare const *grid_square_pointer )
 {
-
    std::vector< GridSquare * > neighbors;
    GridSquare                 *neighbor;
    Point                       loc;

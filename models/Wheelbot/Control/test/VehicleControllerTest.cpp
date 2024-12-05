@@ -29,7 +29,6 @@ class VehicleControllerTest : public ::testing::Test
 
    VehicleControllerTest()
    {
-
       Point waypoint( 1.0, 3.0 );
       waypoint_queue.push_back( waypoint );
 
@@ -55,10 +54,9 @@ class VehicleControllerTest : public ::testing::Test
 
 TEST_F( VehicleControllerTest, one )
 {
-
    Point current_destination;
    int   result = vehicle_controller->get_current_destination( current_destination );
    EXPECT_EQ( result, 0 );
-   EXPECT_EQ( current_destination.x, 1 );
-   EXPECT_EQ( current_destination.y, 3 );
+   EXPECT_EQ( current_destination.getX(), 1 );
+   EXPECT_EQ( current_destination.getY(), 3 );
 }

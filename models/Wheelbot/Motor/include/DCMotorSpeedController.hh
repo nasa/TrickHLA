@@ -12,7 +12,7 @@ class DCMotorSpeedController : public MotorSpeedController
 
   public:
    DCMotorSpeedController( DCMotor      &dc_motor,
-                           double        gain,
+                           double        motor_gain,
                            const double &actual_speed,
                            const double &supply_voltage );
 

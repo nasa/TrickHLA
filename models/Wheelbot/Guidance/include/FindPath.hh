@@ -5,6 +5,6 @@
 #include "GridSquare.hh"
 #include "Point.hh"
 
-std::vector< Point > FindPath( GridSquare *origin, GridSquare *goal, Arena *arena );
+std::vector< Point > FindPath( GridSquare *origin, GridSquare const *goal, Arena *arena );
 
 #endif

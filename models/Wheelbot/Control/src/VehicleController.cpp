@@ -44,7 +44,7 @@ int VehicleController::get_current_destination( Point &current_destination )
 // Commands wheelbot to navigate to home
 void VehicleController::go_home()
 {
-   waypoint_queue->empty();
+   waypoint_queue->clear();
    waypoint_queue->push_back( Point( 0.0, 0.0 ) );
    destination    = waypoint_queue->end();
    home_commanded = true;
@@ -54,7 +54,7 @@ void VehicleController::go_home()
 void VehicleController::print_destination()
 {
    if ( destination != waypoint_queue->end() ) {
-      Point &dest = *destination; // Get a reference to the destination Point
+      Point const &dest = *destination; // Get a reference to the destination Point
       std::cout << "Destination = (" << dest.getX() << "," << dest.getY() << ")." << std::endl;
    } else {
       std::cout << "No Destination." << std::endl;
@@ -73,7 +73,7 @@ void VehicleController::update()
    if ( destination == waypoint_queue->end() && end_of_waypoints == false ) {
       if ( home_commanded == true ) {
          // go home
-         if ( navigator.distance_to( *destination ) > arrival_distance ) {
+         if ( navigator.distance_to( *destination ) > arrival_distance ) { // cppcheck-suppress [derefInvalidIteratorRedundantCheck]
             double heading_err = navigator.bearing_to( *destination );
             drive_controller.update( navigator.distance_to( *destination ), heading_err );
          } else {
@@ -93,7 +93,7 @@ void VehicleController::update()
       } else {
          if ( end_of_waypoints != true ) {
             std::cout << "Arrived at Destination." << std::endl;
-            destination++;
+            ++destination;
             if ( destination == waypoint_queue->end() ) {
                std::cout << "Vehicle reached the last waypoint. End of simulation." << std::endl;
                end_of_waypoints = true;

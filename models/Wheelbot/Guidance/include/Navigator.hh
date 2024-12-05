@@ -17,17 +17,19 @@ class Navigator
   public:
    Navigator( double initial_heading, Point initial_location ) : heading( initial_heading ), location( initial_location )
    {
+      return;
    }
+
    void set_heading( double heading );
    void set_location( double north, double west );
 
-   double distance_to( Point &map_point );
-   double bearing_to( Point &map_point );
+   double distance_to( Point const &map_point );
+   double bearing_to( Point const &map_point );
 
-   Point convert_map_to_platform( Point &map_point );
-   Point convert_platform_to_map( Point &platform_point );
-   Point convert_platform_to_body( Point &platform_point );
-   Point convert_body_to_platform( Point &body_point );
+   Point convert_map_to_platform( Point const &map_point );
+   Point convert_platform_to_map( Point const &platform_point );
+   Point convert_platform_to_body( Point const &platform_point );
+   Point convert_body_to_platform( Point const &body_point );
 
   private:
    double heading;

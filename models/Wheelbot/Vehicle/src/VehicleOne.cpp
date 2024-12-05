@@ -304,7 +304,7 @@ void VehicleOne::print_waypoints()
 {
    std::cout << "Waypoints:" << std::endl;
    for ( std::vector< Point >::iterator it = waypoint_queue.begin(); it != waypoint_queue.end(); ++it ) {
-      Point &waypoint = *it;
+      Point const &waypoint = *it;
       std::cout << "(" << waypoint.getX() << ", " << waypoint.getY() << ")" << std::endl;
    }
 }

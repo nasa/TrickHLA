@@ -7,9 +7,8 @@
 #include "../include/GridSquare.hh"
 #include "../include/Point.hh"
 
-std::vector< Point > FindPath( GridSquare *origin, GridSquare *goal, Arena *arena )
+std::vector< Point > FindPath( GridSquare *origin, GridSquare const *goal, Arena *arena )
 {
-
    std::vector< GridSquare * > open_set;
    std::vector< GridSquare * > closed_set;
    std::vector< Point >        failure;
