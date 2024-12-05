@@ -153,12 +153,12 @@ federate = SpaceFOMFederateConfig( thla_federate        = THLA.federate,
 # to configure the ExCO. This is only needed for input file configuration.
 #federate.set_ExCO_S_define_name( 'THLA_INIT.ExCO' )
 
-
 # Set the debug output level.
 if (verbose == True) : 
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_9_TRACE )
 else :
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
+
 
 #--------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.
@@ -167,12 +167,26 @@ federate.set_master_role( False )  # This is NOT the Master federate.
 federate.set_pacing_role( False ) # This is NOT the Pacing federate.
 federate.set_RRFP_role( False )   # This is NOT the Root Reference Frame Publisher.
 
+
 #--------------------------------------------------------------------------
 # Add in known required federates.
 #--------------------------------------------------------------------------
 federate.add_known_federate( True, str(federate.federate.name) )
 federate.add_known_federate( True, 'MPR' )
 federate.add_known_federate( True, 'Wheelbot-1' )
+
+
+#--------------------------------------------------------------------------
+# Set up federate related time related parameters.
+#--------------------------------------------------------------------------
+
+# Must specify a federate HLA lookahead value in seconds.
+federate.set_lookahead_time( 0.200 )
+
+# Setup Time Management parameters.
+#federate.set_time_regulating( True )
+#federate.set_time_constrained( True )
+
 
 #==========================================================================
 # Configure the CRC.
@@ -183,7 +197,6 @@ THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 #THLA.federate.local_settings = 'crcHost = 10.8.0.161\n crcPort = 8989'
 # Make specific local settings designator, which is anything from the rid.mtl file:
 #THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
-THLA.federate.lookahead_time = 0.25 # this is THLA_DATA_CYCLE_TIME
 
 
 #==========================================
@@ -216,6 +229,7 @@ obj.add_attribute(att0)
 
 federate.add_fed_object(obj)
 
+
 #==========================================
 # Add the waypoints to the SIM. For the subscriber, no
 # waypoints are necessary, just set veh.vehicle.subscriber to true.
@@ -245,6 +259,7 @@ else :
     print('EVDisplay needs to be built. Please \"cd\" into models/Wheelbot/Graphics and type \"make\".')
     print('==================================================================================')
 
+
 #==========================================
 # Start the display VarServer Client
 #==========================================
@@ -261,6 +276,7 @@ else :
     print('==================================================================================')
     print('HomeDisplay needs to be built. Please \"cd\" into models/Wheelbot/GUIControl1 and type \"make\".')
     print('==================================================================================')
+
 
 #---------------------------------------------------------------------------
 # Add the HLA SimObjects associated with this federate.

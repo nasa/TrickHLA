@@ -157,6 +157,7 @@ if (verbose == True) :
 else :
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
 
+
 #--------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.
 #--------------------------------------------------------------------------
@@ -164,12 +165,14 @@ federate.set_master_role( True )  # This is the Master federate.
 federate.set_pacing_role( True ) # This is the Pacing federate.
 federate.set_RRFP_role( True )   # This is the Root Reference Frame Publisher.
 
+
 #--------------------------------------------------------------------------
 # Add in known required federates.
 #--------------------------------------------------------------------------
 federate.add_known_federate( True, str(federate.federate.name) )
 federate.add_known_federate( False, 'MPR' )
 federate.add_known_federate( False, 'Wheelbot-2' )
+
 
 #==========================================================================
 # Configure the CRC.
@@ -180,7 +183,6 @@ THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
 #THLA.federate.local_settings = 'crcHost = 10.8.0.161\n crcPort = 8989'
 # Make specific local settings designator, which is anything from the rid.mtl file:
 #THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
-THLA.federate.lookahead_time = 0.25 # this is THLA_DATA_CYCLE_TIME
 
 
 #==========================================
@@ -204,6 +206,7 @@ obj.add_attribute(att0)
 
 federate.add_fed_object(obj)
 
+
 #--------------------------------------------------------------------------
 # Set up federate related time related parameters.
 #--------------------------------------------------------------------------
@@ -211,18 +214,19 @@ federate.add_fed_object(obj)
 federate.set_scenario_timeline_epoch( float((18487.75*24.0*60.0*60.0) + 37.0 + 32.184) )
 
 # Must specify a federate HLA lookahead value in seconds.
-federate.set_lookahead_time( 0.250 )
+federate.set_lookahead_time( 0.200 )
 
 # Must specify the Least Common Time Step for all federates in the
 # federation execution.
-federate.set_least_common_time_step( 0.250 )
+federate.set_least_common_time_step( 0.200 )
 
 # Set the amount of seconds used to 'pad' mode transitions.
-federate.set_time_padding( 2.0 )
+federate.set_time_padding( 1.0 )
 
 # Setup Time Management parameters.
 federate.set_time_regulating( True )
 federate.set_time_constrained( True )
+
 
 #--------------------------------------------------------------------------
 # Set up CTE time line.
@@ -231,6 +235,7 @@ federate.set_time_constrained( True )
 # for controlling the Mode Transitions for all federates using CTE.
 # Don't really need CTE for RRFP.
 THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::CTETimelineBase' )
+
 
 #---------------------------------------------------------------------------
 # Set up for Root Reference Frame data.
@@ -247,10 +252,10 @@ ref_frame_tree.root_frame_data.state.pos[2] = 0.0
 ref_frame_tree.root_frame_data.state.vel[0] = 0.0
 ref_frame_tree.root_frame_data.state.vel[1] = 0.0
 ref_frame_tree.root_frame_data.state.vel[2] = 0.0
-ref_frame_tree.root_frame_data.state.quat_scalar  = 1.0
-ref_frame_tree.root_frame_data.state.quat_vector[0] = 0.0
-ref_frame_tree.root_frame_data.state.quat_vector[1] = 0.0
-ref_frame_tree.root_frame_data.state.quat_vector[2] = 0.0
+ref_frame_tree.root_frame_data.state.att.scalar  = 1.0
+ref_frame_tree.root_frame_data.state.att.vector[0] = 0.0
+ref_frame_tree.root_frame_data.state.att.vector[1] = 0.0
+ref_frame_tree.root_frame_data.state.att.vector[2] = 0.0
 ref_frame_tree.root_frame_data.state.ang_vel[0] = 0.0
 ref_frame_tree.root_frame_data.state.ang_vel[1] = 0.0
 ref_frame_tree.root_frame_data.state.ang_vel[2] = 0.0
@@ -266,10 +271,10 @@ ref_frame_tree.frame_A_data.state.pos[2] = 10.0
 ref_frame_tree.frame_A_data.state.vel[0] = 0.0
 ref_frame_tree.frame_A_data.state.vel[1] = 0.0
 ref_frame_tree.frame_A_data.state.vel[2] = 0.0
-ref_frame_tree.frame_A_data.state.quat_scalar  = 1.0
-ref_frame_tree.frame_A_data.state.quat_vector[0] = 0.0
-ref_frame_tree.frame_A_data.state.quat_vector[1] = 0.0
-ref_frame_tree.frame_A_data.state.quat_vector[2] = 0.0
+ref_frame_tree.frame_A_data.state.att.scalar  = 1.0
+ref_frame_tree.frame_A_data.state.att.vector[0] = 0.0
+ref_frame_tree.frame_A_data.state.att.vector[1] = 0.0
+ref_frame_tree.frame_A_data.state.att.vector[2] = 0.0
 ref_frame_tree.frame_A_data.state.ang_vel[0] = 0.0
 ref_frame_tree.frame_A_data.state.ang_vel[1] = 0.0
 ref_frame_tree.frame_A_data.state.ang_vel[2] = 0.0
@@ -292,6 +297,7 @@ root_ref_frame.frame_packing.debug = verbose
 
 # Set the root frame for the federate.
 federate.set_root_frame( root_frame )
+
 
 #---------------------------------------------------------------------------
 # Set up the Root Reference Frame object for discovery.
@@ -350,6 +356,7 @@ else :
     print('EVDisplay needs to be built. Please \"cd\" into models/Wheelbot/Graphics and type \"make\".')
     print('==================================================================================') """
 
+
 #==========================================
 # Start the display VarServer Client
 #==========================================
@@ -366,6 +373,7 @@ else :
     print('==================================================================================')
     print('HomeDisplay needs to be built. Please \"cd\" into models/Wheelbot/GUIControl1 and type \"make\".')
     print('==================================================================================')
+
 
 #---------------------------------------------------------------------------
 # Add the HLA SimObjects associated with this federate.
