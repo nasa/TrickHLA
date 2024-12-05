@@ -162,7 +162,7 @@ else :
 #--------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.
 #--------------------------------------------------------------------------
-federate.set_master_role( False )  # This is NOT the Master federate.
+federate.set_master_role( False ) # This is NOT the Master federate.
 federate.set_pacing_role( False ) # This is NOT the Pacing federate.
 federate.set_RRFP_role( False )   # This is NOT the Root Reference Frame Publisher.
 
@@ -191,11 +191,7 @@ federate.set_lookahead_time( 0.200 )
 # Configure the CRC.
 #==========================================================================
 # Pitch specific local settings designator:
-#THLA.federate.local_settings = 'crcHost = js-er7-rti.jsc.nasa.gov\n crcPort = 8989'
 THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
-#THLA.federate.local_settings = 'crcHost = 10.8.0.161\n crcPort = 8989'
-# Make specific local settings designator, which is anything from the rid.mtl file:
-#THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
 
 
 #==========================================

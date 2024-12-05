@@ -170,9 +170,9 @@ if hla:
    #--------------------------------------------------------------------------
    # Configure this federate SpaceFOM roles for this federate.
    #--------------------------------------------------------------------------
-   federate.set_master_role( True )  # This is NOT the Master federate.
-   federate.set_pacing_role( True ) # This is NOT the Pacing federate.
-   federate.set_RRFP_role( True )   # This is NOT the Root Reference Frame Publisher.
+   federate.set_master_role( True ) # This is the Master federate.
+   federate.set_pacing_role( True ) # This is the Pacing federate.
+   federate.set_RRFP_role( True )   # This is the Root Reference Frame Publisher.
 
 
    #--------------------------------------------------------------------------
@@ -181,33 +181,6 @@ if hla:
    federate.add_known_federate( True, str(federate.federate.name) )
    federate.add_known_federate( False, 'MPR' )
    federate.add_known_federate( False, 'Wheelbot-2' )
-
-
-   #==========================================================================
-   # Configure the CRC.
-   #==========================================================================
-   # Pitch specific local settings designator:
-   #THLA.federate.local_settings = 'crcHost = js-er7-rti.jsc.nasa.gov\n crcPort = 8989'
-   THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
-   # Make specific local settings designator, which is anything from the rid.mtl file:
-   #THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
-
-   # Publish TrickHLA Object 'Wheelbot_hla_entity' with attribute 'state.'
-   obj = TrickHLAObjectConfig( thla_create        = True,
-                               thla_instance_name = 'Wheelbot_hla_entity',
-                               thla_FOM_name      = 'PhysicalEntity' )
-
-   att0 = TrickHLAAttributeConfig( FOM_name      = 'state',
-                                   trick_name    = 'veh.vehicle.position',
-                                   publish       = True,
-                                   subscribe     = False,
-                                   locally_owned = True,
-                                   config        = trick.CONFIG_CYCLIC,
-                                   rti_encoding  = trick.ENCODING_LITTLE_ENDIAN)
-
-   obj.add_attribute(att0)
-
-   federate.add_fed_object(obj)
 
 
    #--------------------------------------------------------------------------
@@ -238,6 +211,34 @@ if hla:
    # for controlling the Mode Transitions for all federates using CTE.
    # Don't really need CTE for RRFP.
    THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::CTETimelineBase' )
+
+
+   #==========================================================================
+   # Configure the CRC.
+   #==========================================================================
+   # Pitch specific local settings designator:
+   THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
+ 
+   
+   #--------------------------------------------------------------------------
+   # Configure the Object and Attribute.
+   #--------------------------------------------------------------------------
+   # Publish TrickHLA Object 'Wheelbot_hla_entity' with attribute 'state.'
+   obj = TrickHLAObjectConfig( thla_create        = True,
+                               thla_instance_name = 'Wheelbot_hla_entity',
+                               thla_FOM_name      = 'PhysicalEntity' )
+
+   att0 = TrickHLAAttributeConfig( FOM_name      = 'state',
+                                   trick_name    = 'veh.vehicle.position',
+                                   publish       = True,
+                                   subscribe     = False,
+                                   locally_owned = True,
+                                   config        = trick.CONFIG_CYCLIC,
+                                   rti_encoding  = trick.ENCODING_LITTLE_ENDIAN)
+
+   obj.add_attribute(att0)
+
+   federate.add_fed_object(obj)
 
 
    #---------------------------------------------------------------------------

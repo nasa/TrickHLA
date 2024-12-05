@@ -161,7 +161,7 @@ else :
 #--------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.
 #--------------------------------------------------------------------------
-federate.set_master_role( True )  # This is the Master federate.
+federate.set_master_role( True ) # This is the Master federate.
 federate.set_pacing_role( True ) # This is the Pacing federate.
 federate.set_RRFP_role( True )   # This is the Root Reference Frame Publisher.
 
@@ -172,39 +172,6 @@ federate.set_RRFP_role( True )   # This is the Root Reference Frame Publisher.
 federate.add_known_federate( True, str(federate.federate.name) )
 federate.add_known_federate( False, 'MPR' )
 federate.add_known_federate( False, 'Wheelbot-2' )
-
-
-#==========================================================================
-# Configure the CRC.
-#==========================================================================
-# Pitch specific local settings designator:
-#THLA.federate.local_settings = 'crcHost = js-er7-rti.jsc.nasa.gov\n crcPort = 8989'
-THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
-#THLA.federate.local_settings = 'crcHost = 10.8.0.161\n crcPort = 8989'
-# Make specific local settings designator, which is anything from the rid.mtl file:
-#THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
-
-
-#==========================================
-# Configure the Vehicle - "Wheelbot 1".
-#==========================================
-
-#==========================================================================
-#Wheelbot Object Config
-#==========================================================================
-
-#Set initial position of publishing wheelbot.
-veh.vehicle.position[0] = 0.0
-veh.vehicle.position[1] = 0.0
-
-# Publish TrickHLA Object 'Wheelbot_hla_entity' with attribute 'state.'
-obj = TrickHLAObjectConfig(True,'Wheelbot_hla_entity','PhysicalEntity',None,None,None,None,False)
-
-att0 = TrickHLAAttributeConfig('state','veh.vehicle.position',True,False,True,trick.CONFIG_CYCLIC,trick.ENCODING_LITTLE_ENDIAN)
-
-obj.add_attribute(att0)
-
-federate.add_fed_object(obj)
 
 
 #--------------------------------------------------------------------------
@@ -235,6 +202,35 @@ federate.set_time_constrained( True )
 # for controlling the Mode Transitions for all federates using CTE.
 # Don't really need CTE for RRFP.
 THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::CTETimelineBase' )
+
+
+#==========================================================================
+# Configure the CRC.
+#==========================================================================
+# Pitch specific local settings designator:
+THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
+
+
+#==========================================
+# Configure the Vehicle - "Wheelbot 1".
+#==========================================
+
+#==========================================================================
+#Wheelbot Object Config
+#==========================================================================
+
+#Set initial position of publishing wheelbot.
+veh.vehicle.position[0] = 0.0
+veh.vehicle.position[1] = 0.0
+
+# Publish TrickHLA Object 'Wheelbot_hla_entity' with attribute 'state.'
+obj = TrickHLAObjectConfig(True,'Wheelbot_hla_entity','PhysicalEntity',None,None,None,None,False)
+
+att0 = TrickHLAAttributeConfig('state','veh.vehicle.position',True,False,True,trick.CONFIG_CYCLIC,trick.ENCODING_LITTLE_ENDIAN)
+
+obj.add_attribute(att0)
+
+federate.add_fed_object(obj)
 
 
 #---------------------------------------------------------------------------
