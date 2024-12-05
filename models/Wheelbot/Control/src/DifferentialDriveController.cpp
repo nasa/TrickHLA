@@ -1,9 +1,13 @@
-#include "Control/include/differentialDriveController.hh"
 #include <iostream>
 #include <math.h>
+
 #ifndef PI
 #   define PI 3.14159265
 #endif
+
+#include "../../Motor/include/MotorSpeedController.hh"
+
+#include "../include/DifferentialDriveController.hh"
 
 DifferentialDriveController::
    DifferentialDriveController( double                distance_between_wheels_,
@@ -12,24 +16,24 @@ DifferentialDriveController::
                                 double                heading_rate_limit_,
                                 double                slow_down_distance_,
                                 MotorSpeedController &right_motor_controller_,
-                                MotorSpeedController &left_motor_controller_ ) : distance_between_wheels( distance_between_wheels_ ),
-                                                                                 wheel_radius( wheel_radius_ ),
-                                                                                 wheel_speed_limit( wheel_speed_limit_ ),
-                                                                                 heading_rate_limit( heading_rate_limit_ ),
-                                                                                 slow_down_distance( slow_down_distance_ ),
-                                                                                 right_motor_controller( right_motor_controller_ ),
-                                                                                 left_motor_controller( left_motor_controller_ ),
+                                MotorSpeedController &left_motor_controller_ )
+   : distance_between_wheels( distance_between_wheels_ ),
+     wheel_radius( wheel_radius_ ),
+     wheel_speed_limit( wheel_speed_limit_ ),
+     heading_rate_limit( heading_rate_limit_ ),
+     slow_down_distance( slow_down_distance_ ),
+     right_motor_controller( right_motor_controller_ ),
+     left_motor_controller( left_motor_controller_ ),
+     right_motor_speed_command( 0.0 ),
+     left_motor_speed_command( 0.0 ),
+     desired_heading_rate( 0.0 ),
+     desired_range_rate( 0.0 ),
 
-                                                                                 right_motor_speed_command( 0.0 ),
-                                                                                 left_motor_speed_command( 0.0 ),
-                                                                                 desired_heading_rate( 0.0 ),
-
-                                                                                 // PID Controller Initialization
-                                                                                 heading_ctrl( 1.0, 0.08, 0.5, heading_rate_limit,
-                                                                                               -heading_rate_limit, 0.1, 0.1 ),
-                                                                                 wheel_speed_ctrl( 1.0, 0.082, 0.5, wheel_speed_limit,
-                                                                                                   -wheel_speed_limit, 0.1, 0.1 )
+     // PID Controller Initialization
+     heading_ctrl( 1.0, 0.08, 0.5, heading_rate_limit, -heading_rate_limit, 0.1, 0.1 ),
+     wheel_speed_ctrl( 1.0, 0.082, 0.5, wheel_speed_limit, -wheel_speed_limit, 0.1, 0.1 )
 {
+   return;
 }
 
 void DifferentialDriveController::stop()

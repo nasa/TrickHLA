@@ -9,9 +9,9 @@ INCLUDE_DIRS += -I$(PROJECT_DIR)
 OBJDIR = obj
 LIBDIR = lib
 LIBNAME = libControl.a
-LIBOBJS = $(OBJDIR)/differentialDriveController.o \
+LIBOBJS = $(OBJDIR)/DifferentialDriveController.o \
           $(OBJDIR)/DCMotorSpeedController.o \
-	  $(OBJDIR)/vehicleController.o
+          $(OBJDIR)/VehicleController.o
 
 all: ${LIBDIR}/${LIBNAME}
 

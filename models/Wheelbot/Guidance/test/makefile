@@ -19,9 +19,9 @@ GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
 all : $(TESTS)
 
 test: $(TESTS)
-	./ArenaTest              --gtest_output=xml:XMLtestReports/ArenaTestResults.xml
-	./FindPathTest           --gtest_output=xml:XMLtestReports/FindPathTestResults.xml
-	./NavigatorTest		 --gtest_output=xml:XMLtestReports/NavigatorTestResults.xml
+	./ArenaTest --gtest_output=xml:XMLtestReports/ArenaTestResults.xml
+	./FindPathTest --gtest_output=xml:XMLtestReports/FindPathTestResults.xml
+	./NavigatorTest --gtest_output=xml:XMLtestReports/NavigatorTestResults.xml
 
 clean :
 	rm -f $(TESTS) gtest.a gtest_main.a

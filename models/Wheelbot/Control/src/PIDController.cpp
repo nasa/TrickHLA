@@ -1,4 +1,4 @@
-#include "Control/include/PIDController.hh"
+#include "../include/PIDController.hh"
 
 PIDController::PIDController( double kp, double ki, double kd, double omax, double omin, double dt, double tc )
 {

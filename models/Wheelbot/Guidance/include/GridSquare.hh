@@ -10,4 +10,5 @@ class GridSquare
    int         g_score;
    int         f_score;
 };
+
 #endif

@@ -22,14 +22,15 @@ LIBRARY DEPENDENCIES:
 
 ##include "trick/integrator_c_intf.h"
 
-##include "Vehicle/include/vehicleOne.hh"
-
 ##include "TrickHLA/Manager.hh"
 ##include "TrickHLA/KnownFederate.hh"
 ##include "TrickHLA/SimTimeline.hh"
 ##include "TrickHLA/ScenarioTimeline.hh"
 
 ##include "simconfig/include/SimpleSimConfig.hh"
+
+##include "Vehicle/include/VehicleOne.hh"
+
 
 class VehicleSimObject : public Trick::SimObject {
 

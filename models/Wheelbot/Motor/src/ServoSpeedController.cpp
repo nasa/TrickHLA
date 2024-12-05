@@ -1,6 +1,15 @@
-#include "Motor/include/ServoSpeedController.hh"
+#include "../include/ServoSpeedController.hh"
+#include "../include/ServoMotor.hh"
 
-ServoSpeedController::ServoSpeedController( ServoMotor &Servo_Motor, char side ) : servo( Servo_Motor ), _side( side ) {};
+ServoSpeedController::ServoSpeedController(
+   ServoMotor &servo_motor,
+   char        side )
+   : servo( servo_motor ),
+     _side( side ),
+     commanded_speed( 0.0 ),
+     _pulse_width( 0.0 )
+{
+}
 
 void ServoSpeedController::set_commanded_speed( double commandedSpeed )
 {

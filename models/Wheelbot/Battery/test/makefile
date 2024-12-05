@@ -20,7 +20,7 @@ all : $(TESTS)
 
 test: $(TESTS)
 
-	./DCBatteryTest              --gtest_output=xml:XMLtestReports/DCBatteryTestResults.xml
+	./DCBatteryTest --gtest_output=xml:XMLtestReports/DCBatteryTestResults.xml
 
 clean :
 	rm -f $(TESTS) gtest.a gtest_main.a

@@ -4,8 +4,8 @@ PURPOSE:              (Electrical Model)
 #ifndef ELECTRICAL_CIRCUIT_H
 #define ELECTRICAL_CIRCUIT_H
 
-class DCBattery;
-class DCMotor;
+#include "../../Battery/include/DCBattery.hh"
+#include "../../Motor/include/DCMotor.hh"
 
 class ElectricalCircuit
 {

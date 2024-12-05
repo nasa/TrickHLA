@@ -1,8 +1,9 @@
+#include <algorithm>
 #include <gtest/gtest.h>
 #define private public
-#include "Control/include/testMotorController.hh"
-#include "Control/include/differentialDriveController.hh"
-#include <algorithm>
+
+#include "../../Control/include/TestMotorController.hh"
+#include "../../Control/include/DifferentialDriveController.hh"
 
 #ifndef PI
 #define PI 3.1415926535
@@ -12,31 +13,32 @@
 /*
     Test Fixture.
 */
-class differentialDriveControllerTest : public ::testing::Test {
+class DifferentialDriveControllerTest : public ::testing::Test {
     protected:
 
     TestMotorController* rightMotorController;
     TestMotorController* leftMotorController;
     DifferentialDriveController* driveController;
 
-    differentialDriveControllerTest() {
-    rightMotorController =
-        new TestMotorController();
-    leftMotorController =
-        new TestMotorController();
-    driveController =
-        new DifferentialDriveController(0.183, 0.045, 8.880, 0.200,
-                *rightMotorController, *leftMotorController);
+    DifferentialDriveControllerTest() {
+    rightMotorController = new TestMotorController();
+    leftMotorController = new TestMotorController();
+    driveController = new DifferentialDriveController( 0.183,
+                                                       0.045,
+                                                       8.880,
+                                                       0.200,
+                                                       *rightMotorController,
+                                                       *leftMotorController);
     }
 
-    ~differentialDriveControllerTest() {
+    ~DifferentialDriveControllerTest() {
         delete driveController;
         delete rightMotorController;
         delete leftMotorController;
     }
 };
 
-TEST_F( differentialDriveControllerTest , constructor) {
+TEST_F( DifferentialDriveControllerTest , constructor) {
 
     EXPECT_NEAR(0.045, driveController->wheelRadius, FLOAT_TOLERANCE);
     EXPECT_NEAR(0.183, driveController->distanceBetweenWheels, FLOAT_TOLERANCE);
@@ -44,7 +46,7 @@ TEST_F( differentialDriveControllerTest , constructor) {
     EXPECT_NEAR(0.200, driveController->slowDownDistance, FLOAT_TOLERANCE);
 }
 
-TEST_F( differentialDriveControllerTest , setDistanceBetweenWheels ) {
+TEST_F( DifferentialDriveControllerTest , setDistanceBetweenWheels ) {
 
     int result;
 
@@ -61,7 +63,7 @@ TEST_F( differentialDriveControllerTest , setDistanceBetweenWheels ) {
     EXPECT_NEAR(0.2, driveController->distanceBetweenWheels, FLOAT_TOLERANCE);
 }
 
-TEST_F( differentialDriveControllerTest , setWheelRadius ) {
+TEST_F( DifferentialDriveControllerTest , setWheelRadius ) {
 
     int result;
     result = driveController->setWheelRadius(0.059);
@@ -77,7 +79,7 @@ TEST_F( differentialDriveControllerTest , setWheelRadius ) {
     EXPECT_NEAR(0.083, driveController->wheelRadius, FLOAT_TOLERANCE);
 }
 
-TEST_F( differentialDriveControllerTest , setWheelRotationRateLimit ) {
+TEST_F( DifferentialDriveControllerTest , setWheelRotationRateLimit ) {
 
     int result;
     result = driveController->setWheelRotationRateLimit(7.123);
@@ -93,7 +95,7 @@ TEST_F( differentialDriveControllerTest , setWheelRotationRateLimit ) {
     EXPECT_NEAR(5.234, driveController->wheelRotationRateLimit, FLOAT_TOLERANCE);
 }
 
-TEST_F( differentialDriveControllerTest , PositiveRangeErrorOnly) {
+TEST_F( DifferentialDriveControllerTest , PositiveRangeErrorOnly) {
 
     // If there is no heading error, and the distance error is non-zero,
     // then the speeds should be the same, and equal to the wheelRotationRateLimit.
@@ -111,7 +113,7 @@ TEST_F( differentialDriveControllerTest , PositiveRangeErrorOnly) {
     EXPECT_NEAR(rightMotorSpeedCommand, 8.880, FLOAT_TOLERANCE);
 }
 
-TEST_F( differentialDriveControllerTest , positiveHeadingError ) {
+TEST_F( DifferentialDriveControllerTest , positiveHeadingError ) {
 
     // If the heading error is positive, then we should turn to the right,
     // meaning that the left wheel should move faster than the right wheel.
@@ -155,7 +157,7 @@ TEST_F( differentialDriveControllerTest , positiveHeadingError ) {
     EXPECT_GT(leftMotorSpeedCommand, rightMotorSpeedCommand);
 }
 
-TEST_F( differentialDriveControllerTest, negativeHeadingError ) {
+TEST_F( DifferentialDriveControllerTest, negativeHeadingError ) {
 
     // If the heading error is negative, then we should turn to the left,
     // meaning that the right wheel should move faster than the left wheel.
@@ -168,5 +170,3 @@ TEST_F( differentialDriveControllerTest, negativeHeadingError ) {
     driveController->getCommandedMotorSpeeds(leftMotorSpeedCommand, rightMotorSpeedCommand);
     EXPECT_GT(rightMotorSpeedCommand, leftMotorSpeedCommand);
 }
-
-

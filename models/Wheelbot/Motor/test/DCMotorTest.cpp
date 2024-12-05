@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #define private public
-#include "DCMotor.hh"
+
+#include "../include/DCMotor.hh"
 
 TEST( MotorModelTest, one )
 {

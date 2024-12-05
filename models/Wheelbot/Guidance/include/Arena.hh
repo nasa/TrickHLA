@@ -1,9 +1,11 @@
 #ifndef ARENA_H
 #define ARENA_H
-#include "gridSquare.hh"
-#include "point.hh"
+
 #include <iostream>
 #include <vector>
+
+#include "GridSquare.hh"
+#include "Point.hh"
 
 class Arena
 {

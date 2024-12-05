@@ -1,11 +1,11 @@
-#include "Motor/include/ServoMotor.hh"
+#include "../include/ServoMotor.hh"
 
 ServoMotor::ServoMotor( char side )
 {
    _side = side;
 }
 
-double ServoMotor::getActualSpeed( int pulse_width )
+double ServoMotor::get_actual_speed( int pulse_width )
 {
    _pulse_width = pulse_width;
 

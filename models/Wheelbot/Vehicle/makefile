@@ -7,8 +7,8 @@ INCLUDE_DIRS = -Iinclude -I../Guidance/include
 OBJDIR = obj
 LIBDIR = lib
 LIBNAME = libControl.a
-LIBOBJS = $(OBJDIR)/differentialDriveController.o \
-	  $(OBJDIR)/vehicleController.o
+LIBOBJS = $(OBJDIR)/DifferentialDriveController.o \
+	  $(OBJDIR)/VehicleController.o
 
 all: ${LIBDIR}/${LIBNAME}
 

@@ -10,7 +10,7 @@ PROGRAMMERS:
 #ifndef NAVIGATOR_HH
 #define NAVIGATOR_HH
 
-#include "point.hh"
+#include "Point.hh"
 
 class Navigator
 {

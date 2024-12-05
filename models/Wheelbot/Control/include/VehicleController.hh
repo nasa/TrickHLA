@@ -4,10 +4,11 @@
 #ifndef VEHICLE_CONTROLLER_HH
 #define VEHICLE_CONTROLLER_HH
 
-#include "Control/include/differentialDriveController.hh"
-#include "Guidance/include/navigator.hh"
-#include "Guidance/include/point.hh"
 #include <vector>
+
+#include "../../Guidance/include/Navigator.hh"
+#include "../../Guidance/include/Point.hh"
+#include "DifferentialDriveController.hh"
 
 #ifndef PI
 #   define PI 3.141592653589793

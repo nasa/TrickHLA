@@ -4,8 +4,8 @@
 #ifndef DIFFERENTIAL_DRIVE_CONTROLER_HH
 #define DIFFERENTIAL_DRIVE_CONTROLER_HH
 
-#include "Control/include/PIDController.hh"
-#include "Motor/include/motorSpeedController.hh"
+#include "../../Motor/include/MotorSpeedController.hh"
+#include "PIDController.hh"
 
 class DifferentialDriveController
 {

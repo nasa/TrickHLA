@@ -2,20 +2,30 @@
 PURPOSE: ( Simulate a two wheeled robotic vehicle.)
 LIBRARY DEPENDENCY:
     ((vehicleOne.o)
-     (Control/src/vehicleController.o)
-     (Control/src/differentialDriveController.o)
+     (Control/src/VehicleController.o)
+     (Control/src/DifferentialDriveController.o)
      (Motor/src/DCMotorSpeedController.o)
      (Motor/src/DCMotor.o))
 PROGRAMMERS:
     (((John M. Penn) (L3 Communications) (June 2015) (Trick Refresher Project)))
     (((Andrew W. Young) (NASA/ER7) (July 2023) (--) (TrickHLA familiarization project.)))
 *******************************************************************************/
-#include "Vehicle/include/vehicleOne.hh"
-#include "Guidance/include/navigator.hh"
-#include "trick/MemoryManager.hh"
 #include <chrono>
 #include <iostream>
 #include <math.h>
+
+#include "trick/MemoryManager.hh"
+#include "trick/integrator_c_intf.h"
+
+#include "../../Control/include/DifferentialDriveController.hh"
+#include "../../Control/include/VehicleController.hh"
+#include "../../Guidance/include/Navigator.hh"
+#include "../../Guidance/include/Point.hh"
+#include "../../Motor/include/DCMotor.hh"
+#include "../../Motor/include/DCMotorSpeedController.hh"
+
+#include "../include/VehicleOne.hh"
+
 using namespace TrickHLAModel;
 
 extern Trick::MemoryManager *trick_MM;
@@ -245,8 +255,6 @@ int VehicleOne::state_deriv()
 
    return 0;
 }
-
-#include "trick/integrator_c_intf.h"
 
 int VehicleOne::state_integ()
 {

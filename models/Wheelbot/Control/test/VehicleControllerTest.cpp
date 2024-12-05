@@ -1,8 +1,13 @@
+#include <algorithm>
 #include <gtest/gtest.h>
 #define private public
-#include "Control/include/TestMotorController.hh"
-#include "Control/include/VehicleController.hh"
-#include <algorithm>
+
+#include "../../Guidance/include/Navigator.hh"
+#include "../../Guidance/include/Point.hh"
+
+#include "../include/DifferentialDriveController.hh"
+#include "../include/TestMotorController.hh"
+#include "../include/VehicleController.hh"
 
 #ifndef PI
 #   define PI 3.1415926535

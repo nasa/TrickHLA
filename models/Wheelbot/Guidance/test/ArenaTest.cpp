@@ -1,7 +1,11 @@
-#include <gtest/gtest.h>
-#define private public
-#include "Arena.hh"
 #include <algorithm>
+#include <gtest/gtest.h>
+
+#define private public
+
+#include "../include/Arena.hh"
+#include "../include/GridSquare.hh"
+#include "../include/Point.hh"
 
 TEST( ArenaTest, one )
 {

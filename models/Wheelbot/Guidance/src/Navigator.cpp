@@ -1,6 +1,8 @@
-#include "navigator.hh"
 #include <iostream>
 #include <math.h> // for: sqrt(), atan2(), cos(), and sin()
+
+#include "../include/Navigator.hh"
+#include "../include/Point.hh"
 
 void Navigator::set_heading( double h )
 {

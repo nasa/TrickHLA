@@ -1,6 +1,7 @@
 #ifndef TEST_MOTOR_CONTROLLER_HH
 #define TEST_MOTOR_CONTROLLER_HH
-#include "Motor/include/motorSpeedController.hh"
+
+#include "../../Motor/include/MotorSpeedController.hh"
 
 class TestMotorController : public MotorSpeedController
 {

@@ -1,6 +1,7 @@
-#include "../include/PWM.hh"
 #include <cmath>
 #include <iostream>
+
+#include "../include/PWM.hh"
 
 PWM::PWM( double high_voltage_,
           double low_voltage_,

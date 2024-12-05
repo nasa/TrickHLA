@@ -6,6 +6,7 @@ LIBRARY DEPENDENCY:
     ((Motor.o))
 *******************************************************************************/
 #include "PWM.hh"
+
 class Motor
 {
   public:

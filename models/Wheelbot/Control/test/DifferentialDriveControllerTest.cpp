@@ -1,8 +1,9 @@
+#include <algorithm>
 #include <gtest/gtest.h>
 #define private public
-#include "Control/include/DifferentialDriveController.hh"
-#include "Control/include/TestMotorController.hh"
-#include <algorithm>
+
+#include "../include/DifferentialDriveController.hh"
+#include "../include/TestMotorController.hh"
 
 #ifndef PI
 #   define PI 3.1415926535
@@ -38,7 +39,7 @@ class DifferentialDriveControllerTest : public ::testing::Test
    }
 };
 
-TEST_F( differentialDriveControllerTest, constructor )
+TEST_F( DifferentialDriveControllerTest, constructor )
 {
 
    EXPECT_NEAR( 0.045, drive_controller->wheel_radius, FLOAT_TOLERANCE );
@@ -47,7 +48,7 @@ TEST_F( differentialDriveControllerTest, constructor )
    EXPECT_NEAR( 0.200, drive_controller->slow_down_distance, FLOAT_TOLERANCE );
 }
 
-TEST_F( differentialDriveControllerTest, setDistanceBetweenWheels )
+TEST_F( DifferentialDriveControllerTest, setDistanceBetweenWheels )
 {
 
    int result;
@@ -65,7 +66,7 @@ TEST_F( differentialDriveControllerTest, setDistanceBetweenWheels )
    EXPECT_NEAR( 0.2, drive_controller->distance_between_wheels, FLOAT_TOLERANCE );
 }
 
-TEST_F( differentialDriveControllerTest, setWheelRadius )
+TEST_F( DifferentialDriveControllerTest, setWheelRadius )
 {
 
    int result;
@@ -82,7 +83,7 @@ TEST_F( differentialDriveControllerTest, setWheelRadius )
    EXPECT_NEAR( 0.083, drive_controller->wheel_radius, FLOAT_TOLERANCE );
 }
 
-TEST_F( differentialDriveControllerTest, setWheelRotationRateLimit )
+TEST_F( DifferentialDriveControllerTest, setWheelRotationRateLimit )
 {
 
    int result;
@@ -99,7 +100,7 @@ TEST_F( differentialDriveControllerTest, setWheelRotationRateLimit )
    EXPECT_NEAR( 5.234, drive_controller->wheel_rotation_rate_limit, FLOAT_TOLERANCE );
 }
 
-TEST_F( differentialDriveControllerTest, PositiveRangeErrorOnly )
+TEST_F( DifferentialDriveControllerTest, PositiveRangeErrorOnly )
 {
 
    // If there is no heading error, and the distance error is non-zero,
@@ -118,7 +119,7 @@ TEST_F( differentialDriveControllerTest, PositiveRangeErrorOnly )
    EXPECT_NEAR( right_motor_speed_command, 8.880, FLOAT_TOLERANCE );
 }
 
-TEST_F( differentialDriveControllerTest, positiveHeadingError )
+TEST_F( DifferentialDriveControllerTest, positiveHeadingError )
 {
 
    // If the heading error is positive, then we should turn to the right,
@@ -163,7 +164,7 @@ TEST_F( differentialDriveControllerTest, positiveHeadingError )
    EXPECT_GT( left_motor_speed_command, right_motor_speed_command );
 }
 
-TEST_F( differentialDriveControllerTest, negativeHeadingError )
+TEST_F( DifferentialDriveControllerTest, negativeHeadingError )
 {
 
    // If the heading error is negative, then we should turn to the left,

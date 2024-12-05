@@ -1,7 +1,10 @@
-#include "arena.hh"
 #include <iostream>
 #include <math.h>   // sqrt()
 #include <stdlib.h> // abs()
+
+#include "../include/Arena.hh"
+#include "../include/GridSquare.hh"
+#include "../include/Point.hh"
 
 Arena::Arena( unsigned int width, unsigned int height )
    : height( height ), width( width )

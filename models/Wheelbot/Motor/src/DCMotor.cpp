@@ -1,6 +1,8 @@
-#include "../include/DCMotor.hh"
 #include <cmath>
 #include <iostream>
+
+#include "../include/DCMotor.hh"
+#include "../include/PWM.hh"
 
 DCMotor::DCMotor( const double initial_internal_resistance,
                   const double initial_motor_torque_constant )

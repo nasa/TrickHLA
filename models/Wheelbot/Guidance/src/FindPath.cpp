@@ -1,7 +1,11 @@
-#include "findpath.hh"
 #include <algorithm> // std::find
 #include <stdlib.h>
 #include <vector> // std::vector
+
+#include "../include/Arena.hh"
+#include "../include/FindPath.hh"
+#include "../include/GridSquare.hh"
+#include "../include/Point.hh"
 
 std::vector< Point > FindPath( GridSquare *origin, GridSquare *goal, Arena *arena )
 {

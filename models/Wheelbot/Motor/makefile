@@ -28,7 +28,6 @@ ${LIBDIR}:
 clean:
 	${RM} *~
 	${RM} ${OBJDIR}
-	
 
 spotless: clean
 	${RM} ${LIBDIR}/${LIBNAME}

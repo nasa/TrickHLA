@@ -3,6 +3,7 @@
  */
 #ifndef POINT_HH
 #define POINT_HH
+
 class Point
 {
   private:

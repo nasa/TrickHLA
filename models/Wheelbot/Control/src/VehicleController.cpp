@@ -1,7 +1,10 @@
 // This file contains functions for controlling the movement of the vehicles.
-
-#include "Control/include/vehicleController.hh"
 #include <iostream>
+
+#include "../../Guidance/include/Navigator.hh"
+#include "../../Guidance/include/Point.hh"
+#include "../include/DifferentialDriveController.hh"
+#include "../include/VehicleController.hh"
 
 VehicleController::VehicleController( std::vector< Point >        *waypoints,
                                       Navigator                   &the_navigator,

@@ -1,6 +1,8 @@
-
-#include "Motor/include/DCMotorSpeedController.hh"
 #include <iostream>
+
+#include "../include/DCMotor.hh"
+#include "../include/DCMotorSpeedController.hh"
+#include "../include/MotorSpeedController.hh"
 
 DCMotorSpeedController::DCMotorSpeedController(
    DCMotor      &dc_motor,

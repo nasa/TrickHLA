@@ -1,14 +1,15 @@
 #include <gtest/gtest.h>
-#define private public
-#include "Navigator.hh"
 #include <math.h>
+#define private public
+
+#include "../include/Navigator.hh"
+#include "../include/Point.hh"
 
 #define PI 3.14159265358979
 #define FP_TOLERANCE 0.000000001
 
 TEST( NavigatorTest, distanceTo_one )
 {
-
    Point     location( 0.0, 0.0 );
    double    heading = 0.0;
    Navigator navigator( heading, location );
@@ -19,7 +20,6 @@ TEST( NavigatorTest, distanceTo_one )
 
 TEST( NavigatorTest, distanceTo_two )
 {
-
    Point     location( 2.0, 2.0 );
    double    heading = 0.0;
    Navigator navigator( heading, location );

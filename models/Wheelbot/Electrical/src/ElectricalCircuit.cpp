@@ -1,7 +1,9 @@
-#include "ElectricalCircuit.hh"
+#include <iostream>
+
 #include "../../Battery/include/DCBattery.hh"
 #include "../../Motor/include/DCMotor.hh"
-#include <iostream>
+
+#include "ElectricalCircuit.hh"
 
 ElectricalCircuit::ElectricalCircuit()
    : motors_current( 0 ), motor1( 0 ), motor2( 0 ), battery( 0 )

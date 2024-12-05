@@ -1,8 +1,8 @@
 #ifndef SERVO_SPEED_CONTROLLER_HH
 #define SERVO_SPEED_CONTROLLER_HH
 
+#include "MotorSpeedController.hh"
 #include "ServoMotor.hh"
-#include "motorSpeedController.hh"
 
 class ServoSpeedController : public MotorSpeedController
 {
@@ -14,7 +14,7 @@ class ServoSpeedController : public MotorSpeedController
    ServoSpeedController();
    ServoMotor &servo;
    char        _side;
-   double      commanded_Speed;
+   double      commanded_speed;
    double      _pulse_width;
 }
 

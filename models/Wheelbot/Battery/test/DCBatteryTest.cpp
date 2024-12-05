@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
+
 #define private public
+
 #include "DCBattery.hh"
 
 TEST( BatteryTest, one )

@@ -7,9 +7,9 @@ INCLUDE_DIRS = -Iinclude
 OBJDIR = obj
 LIBDIR = lib
 LIBNAME = libGuidance.a
-LIBOBJS = $(OBJDIR)/arena.o \
-	  $(OBJDIR)/navigator.o \
-	  $(OBJDIR)/findpath.o
+LIBOBJS = $(OBJDIR)/Arena.o \
+	  $(OBJDIR)/Navigator.o \
+	  $(OBJDIR)/Findpath.o
 
 all: ${LIBDIR}/${LIBNAME}
 

@@ -5,7 +5,7 @@
 #define DC_MOTOR_SPEED_CONTROLLER_HH
 
 #include "DCMotor.hh"
-#include "motorSpeedController.hh"
+#include "MotorSpeedController.hh"
 
 class DCMotorSpeedController : public MotorSpeedController
 {

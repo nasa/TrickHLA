@@ -18,7 +18,7 @@ all : $(TESTS)
 
 test: $(TESTS)
 
-	./ElectricalCircuitTest              --gtest_output=xml:XMLtestReports/ElectricalCircuitTestResults.xml
+	./ElectricalCircuitTest --gtest_output=xml:XMLtestReports/ElectricalCircuitTestResults.xml
     
 clean :
 	rm -f $(TESTS) gtest.a gtest_main.a

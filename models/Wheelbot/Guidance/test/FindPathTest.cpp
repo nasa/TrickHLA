@@ -1,8 +1,11 @@
-#include "FindPath.hh"
-#include "Arena.hh"
 #include <algorithm>
 #include <gtest/gtest.h>
 #include <vector>
+
+#include "../include/Arena.hh"
+#include "../include/FindPath.hh"
+#include "../include/GridSquare.hh"
+#include "../include/Point.hh"
 
 TEST( FindPathTest, FindPath_one )
 {

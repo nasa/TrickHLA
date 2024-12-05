@@ -3,11 +3,15 @@
 /*************************************************************************
 PURPOSE: ()
 **************************************************************************/
-#include "Control/include/differentialDriveController.hh"
-#include "Control/include/vehicleController.hh"
-#include "Guidance/include/point.hh"
-#include "Motor/include/DCMotorSpeedController.hh"
 #include <chrono>
+
+#include "../../Control/include/DifferentialDriveController.hh"
+#include "../../Control/include/VehicleController.hh"
+#include "../../Guidance/include/Navigator.hh"
+#include "../../Guidance/include/Point.hh"
+#include "../../Motor/include/DCMotor.hh"
+#include "../../Motor/include/DCMotorSpeedController.hh"
+
 namespace TrickHLAModel
 {
 class VehicleOne

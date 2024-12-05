@@ -19,8 +19,8 @@ all : $(TESTS)
 
 test: $(TESTS)
 
-	./DCMotorTest              --gtest_output=xml:XMLtestReports/DCMotorTestResults.xml
-	./PWMTest              --gtest_output=xml:XMLtestReports/PWMTestResults.xml
+	./DCMotorTest --gtest_output=xml:XMLtestReports/DCMotorTestResults.xml
+	./PWMTest --gtest_output=xml:XMLtestReports/PWMTestResults.xml
 	
 clean :
 	rm -f $(TESTS) gtest.a gtest_main.a
