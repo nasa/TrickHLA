@@ -1,4 +1,4 @@
-#!/usr/bin/tcsh
+#!/bin/sh
 
 # Starts the HLA federation with RUN_FED_1 and RUN_FED_2
 ./S_main*.exe RUN_FED_1/input.py &
