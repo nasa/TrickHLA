@@ -26,7 +26,7 @@ class PWM
    double get_average_voltage() const;
 
   private:
-   PWM(){};
+   PWM() {};
    double duty_cycle;
 };
 

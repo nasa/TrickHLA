@@ -11,7 +11,7 @@ DCMotorSpeedController::DCMotorSpeedController(
      motor( dc_motor ),
      gain( Gain ),
      actual_speed( actual_speed ),
-     supply_voltage( supply_voltage ){};
+     supply_voltage( supply_voltage ) {};
 
 void DCMotorSpeedController::set_commanded_speed( double commanded_speed )
 {
