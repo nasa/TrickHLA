@@ -19,10 +19,13 @@
 ##############################################################################
 import sys
 sys.path.append('../../../')
+
 # Load the SpaceFOM specific federate configuration object.
 from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+
 # Load the SpaceFOM specific reference frame configuration object.
 from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
+
 # Load TrickHLAObjectConfig and TrickHLAAttributeConfig
 from Modified_data.TrickHLA.TrickHLAObjectConfig import *
 from Modified_data.TrickHLA.TrickHLAAttributeConfig import *
@@ -144,23 +147,22 @@ if hla:
    trick.exec_set_stack_trace(True)
 
    # Instantiate the Python SpaceFOM configuration object.
-   federate = SpaceFOMFederateConfig( THLA.federate,
-                                    THLA.manager,
-                                    THLA.execution_control,
-                                    THLA.ExCO,
-                                    'Wheelbot_Test',
-                                    'Wheelbot-1',
-                                    True )
+   federate = SpaceFOMFederateConfig( thla_federate        = THLA.federate,
+                                      thla_manager         = THLA.manager,
+                                      thla_control         = THLA.execution_control,
+                                      thla_config          = THLA.ExCO,
+                                      thla_federation_name = 'Wheelbot_Test',
+                                      thla_federate_name   = 'Wheelbot-2',
+                                      thla_enabled         = True )
 
    # Set the name of the ExCO S_define instance.
    # We do not need to do this since we're using the ExCO default_data job
    # to configure the ExCO. This is only needed for input file configuration.
    #federate.set_ExCO_S_define_name( 'THLA_INIT.ExCO' )
 
-
    # Set the debug output level.
    if (verbose == True) : 
-      federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_11_TRACE )
+      federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_9_TRACE )
    else :
       federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
 
@@ -174,9 +176,9 @@ if hla:
    #--------------------------------------------------------------------------
    # Add in known required federates.
    #--------------------------------------------------------------------------
-   federate.add_known_fededrate( True, str(federate.federate.name) )
-   federate.add_known_fededrate( False, 'MPR' )
-   federate.add_known_fededrate( False, 'Wheelbot-2' )
+   federate.add_known_federate( True, str(federate.federate.name) )
+   federate.add_known_federate( False, 'MPR' )
+   federate.add_known_federate( False, 'Wheelbot-2' )
 
    #==========================================================================
    # Configure the CRC.
@@ -189,9 +191,17 @@ if hla:
    THLA.federate.lookahead_time = 0.25 # this is THLA_DATA_CYCLE_TIME
 
    # Publish TrickHLA Object 'Wheelbot_hla_entity' with attribute 'state.'
-   obj = TrickHLAObjectConfig(True,'Wheelbot_hla_entity','PhysicalEntity',None,None,None,None,False)
+   obj = TrickHLAObjectConfig( thla_create        = True,
+                               thla_instance_name = 'Wheelbot_hla_entity',
+                               thla_FOM_name      = 'PhysicalEntity' )
 
-   att0 = TrickHLAAttributeConfig('state','veh.vehicle.position',True,False,True,trick.CONFIG_CYCLIC,trick.ENCODING_LITTLE_ENDIAN)
+   att0 = TrickHLAAttributeConfig( FOM_name      = 'state',
+                                   trick_name    = 'veh.vehicle.position',
+                                   publish       = True,
+                                   subscribe     = False,
+                                   locally_owned = True,
+                                   config        = trick.CONFIG_CYCLIC,
+                                   rti_encoding  = trick.ENCODING_LITTLE_ENDIAN)
 
    obj.add_attribute(att0)
 
@@ -207,7 +217,7 @@ if hla:
 
    # Must specify the Least Common Time Step for all federates in the
    # federation execution.
-   federate.set_least_common_time_step( 250000 )
+   federate.set_least_common_time_step( 0.250 )
 
    # Set the amount of seconds used to 'pad' mode transitions.
    federate.set_time_padding( 2.0 )
@@ -273,10 +283,11 @@ if hla:
    # If it is the RRFP, it will publish the frame.
    # If it is NOT the RRFP, it will subscribe to the frame.
    #---------------------------------------------------------------------------
-   root_frame = SpaceFOMRefFrameObject( federate.is_RRFP,
-                                       'RootFrame',
-                                       root_ref_frame.frame_packing,
-                                       'root_ref_frame.frame_packing' )
+   root_frame = SpaceFOMRefFrameObject(
+      create_frame_object          = federate.is_RRFP,
+      frame_instance_name          = 'RootFrame',
+      frame_S_define_instance      = root_ref_frame.frame_packing,
+      frame_S_define_instance_name = 'root_ref_frame.frame_packing' )
 
    # Set the debug flag for the root reference frame.
    root_ref_frame.frame_packing.debug = verbose
@@ -289,10 +300,11 @@ if hla:
    # If it is the RRFP, it will publish the frame.
    # If it is NOT the RRFP, it will subscribe to the frame.
    #---------------------------------------------------------------------------
-   frame_A = SpaceFOMRefFrameObject( True,
-                                    'FrameA',
-                                    ref_frame_A.frame_packing,
-                                    'ref_frame_A.frame_packing' )
+   frame_A = SpaceFOMRefFrameObject(
+      create_frame_object          = True,
+      frame_instance_name          = 'FrameA',
+      frame_S_define_instance      = ref_frame_A.frame_packing,
+      frame_S_define_instance_name = 'ref_frame_A.frame_packing' )
 
    # Set the debug flag for the root reference frame.
    ref_frame_A.frame_packing.debug = verbose
@@ -331,8 +343,6 @@ else:
 #Set initial position of publishing wheelbot.
 veh.vehicle.position[0] = 0.0
 veh.vehicle.position[1] = 0.0
-
-
 
 
 #==========================================

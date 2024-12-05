@@ -21,10 +21,13 @@
 ##############################################################################
 import sys
 sys.path.append('../../../')
+
 # Load the SpaceFOM specific federate configuration object.
 from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+
 # Load the SpaceFOM specific reference frame configuration object.
 from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
+
 # Load TrickHLAObjectConfig and TrickHLAAttributeConfig
 from Modified_data.TrickHLA.TrickHLAObjectConfig import *
 from Modified_data.TrickHLA.TrickHLAAttributeConfig import *
@@ -137,13 +140,13 @@ trick.exec_set_stack_trace(True)
 # Set up the HLA interfaces.
 # =========================================================================
 # Instantiate the Python SpaceFOM configuration object.
-federate = SpaceFOMFederateConfig( THLA.federate,
-                                   THLA.manager,
-                                   THLA.execution_control,
-                                   THLA.ExCO,
-                                   'Wheelbot_Test',
-                                   'Wheelbot-1',
-                                   True )
+federate = SpaceFOMFederateConfig( thla_federate        = THLA.federate,
+                                   thla_manager         = THLA.manager,
+                                   thla_control         = THLA.execution_control,
+                                   thla_config          = THLA.ExCO,
+                                   thla_federation_name = 'Wheelbot_Test',
+                                   thla_federate_name   = 'Wheelbot-1',
+                                   thla_enabled         = True )
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job
@@ -153,7 +156,7 @@ federate = SpaceFOMFederateConfig( THLA.federate,
 
 # Set the debug output level.
 if (verbose == True) : 
-   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_11_TRACE )
+   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_9_TRACE )
 else :
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
 
@@ -167,9 +170,9 @@ federate.set_RRFP_role( False )   # This is NOT the Root Reference Frame Publish
 #--------------------------------------------------------------------------
 # Add in known required federates.
 #--------------------------------------------------------------------------
-federate.add_known_fededrate( True, str(federate.federate.name) )
-federate.add_known_fededrate( True, 'MPR' )
-federate.add_known_fededrate( False, 'Wheelbot-2' )
+federate.add_known_federate( True, str(federate.federate.name) )
+federate.add_known_federate( True, 'MPR' )
+federate.add_known_federate( False, 'Wheelbot-2' )
 
 #==========================================================================
 # Configure the CRC.
@@ -191,9 +194,17 @@ veh.vehicle.position[0] = 0.0
 veh.vehicle.position[1] = 0.0
 
 # Publish TrickHLA Object 'Wheelbot_hla_entity' with attribute 'state.'
-obj = TrickHLAObjectConfig(True,'Wheelbot_hla_entity','PhysicalEntity',None,None,None,None,False)
+obj = TrickHLAObjectConfig( thla_create        = True,
+                            thla_instance_name = 'Wheelbot_hla_entity',
+                            thla_FOM_name      = 'PhysicalEntity' )
 
-att0 = TrickHLAAttributeConfig('state','veh.vehicle.position',True,False,True,trick.CONFIG_CYCLIC,trick.ENCODING_LITTLE_ENDIAN)
+att0 = TrickHLAAttributeConfig( FOM_name      = 'state',
+                                trick_name    = 'veh.vehicle.position',
+                                publish       = True,
+                                subscribe     = False,
+                                locally_owned = True,
+                                config        = trick.CONFIG_CYCLIC,
+                                rti_encoding  = trick.ENCODING_LITTLE_ENDIAN)
 
 obj.add_attribute(att0)
 

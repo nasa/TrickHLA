@@ -19,10 +19,13 @@
 ##############################################################################
 import sys
 sys.path.append('../../../')
+
 # Load the SpaceFOM specific federate configuration object.
 from Modified_data.SpaceFOM.SpaceFOMFederateConfig import *
+
 # Load the SpaceFOM specific reference frame configuration object.
 from Modified_data.SpaceFOM.SpaceFOMRefFrameObject import *
+
 # Load TrickHLAObjectConfig and TrickHLAAttributeConfig
 from Modified_data.TrickHLA.TrickHLAObjectConfig import *
 from Modified_data.TrickHLA.TrickHLAAttributeConfig import *
@@ -135,23 +138,22 @@ trick.exec_set_stack_trace(True)
 # Set up the HLA interfaces.
 # =========================================================================
 # Instantiate the Python SpaceFOM configuration object.
-federate = SpaceFOMFederateConfig( THLA.federate,
-                                   THLA.manager,
-                                   THLA.execution_control,
-                                   THLA.ExCO,
-                                   'Wheelbot_Test',
-                                   'Wheelbot-1',
-                                   True )
+federate = SpaceFOMFederateConfig( thla_federate        = THLA.federate,
+                                   thla_manager         = THLA.manager,
+                                   thla_control         = THLA.execution_control,
+                                   thla_config          = THLA.ExCO,
+                                   thla_federation_name = 'Wheelbot_Test',
+                                   thla_federate_name   = 'Wheelbot-1',
+                                   thla_enabled         = True )
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job
 # to configure the ExCO. This is only needed for input file configuration.
 #federate.set_ExCO_S_define_name( 'THLA_INIT.ExCO' )
 
-
 # Set the debug output level.
 if (verbose == True) : 
-   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_11_TRACE )
+   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_9_TRACE )
 else :
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
 
@@ -165,9 +167,9 @@ federate.set_RRFP_role( True )   # This is the Root Reference Frame Publisher.
 #--------------------------------------------------------------------------
 # Add in known required federates.
 #--------------------------------------------------------------------------
-federate.add_known_fededrate( True, str(federate.federate.name) )
-federate.add_known_fededrate( False, 'MPR' )
-federate.add_known_fededrate( False, 'Wheelbot-2' )
+federate.add_known_federate( True, str(federate.federate.name) )
+federate.add_known_federate( False, 'MPR' )
+federate.add_known_federate( False, 'Wheelbot-2' )
 
 #==========================================================================
 # Configure the CRC.
@@ -213,7 +215,7 @@ federate.set_lookahead_time( 0.250 )
 
 # Must specify the Least Common Time Step for all federates in the
 # federation execution.
-federate.set_least_common_time_step( 250000 )
+federate.set_least_common_time_step( 0.250 )
 
 # Set the amount of seconds used to 'pad' mode transitions.
 federate.set_time_padding( 2.0 )
@@ -279,10 +281,11 @@ ref_frame_tree.frame_A_data.state.time = 0.0
 # If it is the RRFP, it will publish the frame.
 # If it is NOT the RRFP, it will subscribe to the frame.
 #---------------------------------------------------------------------------
-root_frame = SpaceFOMRefFrameObject( federate.is_RRFP,
-                                     'RootFrame',
-                                     root_ref_frame.frame_packing,
-                                     'root_ref_frame.frame_packing' )
+root_frame = SpaceFOMRefFrameObject(
+   create_frame_object          = federate.is_RRFP,
+   frame_instance_name          = 'RootFrame',
+   frame_S_define_instance      = root_ref_frame.frame_packing,
+   frame_S_define_instance_name = 'root_ref_frame.frame_packing' )
 
 # Set the debug flag for the root reference frame.
 root_ref_frame.frame_packing.debug = verbose
@@ -295,17 +298,17 @@ federate.set_root_frame( root_frame )
 # If it is the RRFP, it will publish the frame.
 # If it is NOT the RRFP, it will subscribe to the frame.
 #---------------------------------------------------------------------------
-frame_A = SpaceFOMRefFrameObject( True,
-                                  'FrameA',
-                                  ref_frame_A.frame_packing,
-                                  'ref_frame_A.frame_packing' )
+frame_A = SpaceFOMRefFrameObject(
+   create_frame_object          = True,
+   frame_instance_name          = 'FrameA',
+   frame_S_define_instance      = ref_frame_A.frame_packing,
+   frame_S_define_instance_name = 'ref_frame_A.frame_packing' )
 
 # Set the debug flag for the root reference frame.
 ref_frame_A.frame_packing.debug = verbose
 
 # Add this reference frame to the list of managed object.
 federate.add_fed_object( frame_A )
-
 
 
 #==========================================
