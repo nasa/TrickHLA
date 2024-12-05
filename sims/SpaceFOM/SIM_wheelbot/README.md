@@ -80,14 +80,14 @@ In the SIM_wheelbot directory:
 ### Inputs
 Variable                                       | Type           | Units | Default Value
 -----------------------------------------------|----------------|-------|--------------
-veh.vehicle.distance_between_wheels              | double         | m     | 0.183
-veh.vehicle.wheel_radius                        | double         | m     | 0.045
-veh.vehicle.wheel_speed_limit                    | double         | rad/s | 8.880
-veh.vehicle.heading_rate_limit                   | double         | rad/s | 𝛑/4
-veh.vehicle.wheel_drag_constant                  | double         | --    | 1.875
-veh.vehicle.corning_stiffness                   | double         | --    | 10.0
-veh.vehicle.slow_down_distance                   | double         | --    | 0.5
-veh.vehicle.arrival_distance                    | double         | --    | 0.1
+veh.vehicle.distance_between_wheels            | double         | m     | 0.183
+veh.vehicle.wheel_radius                       | double         | m     | 0.045
+veh.vehicle.wheel_speed_limit                  | double         | rad/s | 8.880
+veh.vehicle.heading_rate_limit                 | double         | rad/s | 𝛑/4
+veh.vehicle.wheel_drag_constant                | double         | --    | 1.875
+veh.vehicle.corning_stiffness                  | double         | --    | 10.0
+veh.vehicle.slow_down_distance                 | double         | --    | 0.5
+veh.vehicle.arrival_distance                   | double         | --    | 0.1
 
 ![Picture of Vehicle](images/Figure2.png)
 
@@ -106,16 +106,16 @@ Variable                                       | Type           | Units
 veh.vehicle.position                           | double[2]      | m
 veh.vehicle.velocity                           | double[2]      | m
 veh.vehicle.heading                            | double         | rad
-veh.vehicle.heading_rate                        | double         | rad
+veh.vehicle.heading_rate                       | double         | rad
 
 
 ### Outputs
 Variable                                      | Type           | Units
 ----------------------------------------------|----------------|--------
 veh.vehicle.acceleration                      | double[2]      | m
-veh.vehicle.heading_accel                      | double         | rad
-veh.vehicle.drive_force                        | double[2]      | N
-veh.vehicle.lateral_tire_force                  | double[2]      | N
-veh.vehicle.rolling_resist_force                | double[2]      | N
-veh.vehicle.force_total                        | double[2]      | N
-veh.vehicle.vehicle_Z_torque                    | double         | N*m
+veh.vehicle.heading_accel                     | double         | rad
+veh.vehicle.drive_force                       | double[2]      | N
+veh.vehicle.lateral_tire_force                | double[2]      | N
+veh.vehicle.rolling_resist_force              | double[2]      | N
+veh.vehicle.force_total                       | double[2]      | N
+veh.vehicle.vehicle_Z_torque                  | double         | N*m
