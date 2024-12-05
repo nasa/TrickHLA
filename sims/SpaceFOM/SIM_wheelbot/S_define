@@ -20,8 +20,9 @@ LIBRARY DEPENDENCIES:
 //==========================================================================
 #include "sim_objects/default_trick_sys.sm"
 
-##include "Vehicle/include/vehicleOne.hh"
 ##include "trick/integrator_c_intf.h"
+
+##include "Vehicle/include/vehicleOne.hh"
 
 ##include "TrickHLA/Manager.hh"
 ##include "TrickHLA/KnownFederate.hh"
