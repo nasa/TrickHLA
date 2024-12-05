@@ -1,3 +1,8 @@
+/********************************* TRICK HEADER *******************************
+LIBRARY DEPENDENCY:
+    ((Motor/src/ServoSpeedController.o)
+     (Motor/src/ServoMotor.o))
+*******************************************************************************/
 #include "../include/ServoSpeedController.hh"
 #include "../include/ServoMotor.hh"
 

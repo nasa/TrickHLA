@@ -1,3 +1,7 @@
+/********************************* TRICK HEADER *******************************
+LIBRARY DEPENDENCY:
+    ((Battery/src/DCBattery.o))
+*******************************************************************************/
 #include <iostream>
 
 #include "../include/DCBattery.hh"

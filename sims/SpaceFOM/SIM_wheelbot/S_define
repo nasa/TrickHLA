@@ -2,8 +2,8 @@
 PURPOSE:
     ( Simulate a two-wheeled robot which travels to predetermined waypoints. )
 LIBRARY DEPENDENCIES:
-    ((Vehicle/src/vehicleOne.cpp)
-     (Control/src/PIDController.cpp))
+    ((Vehicle/src/VehicleOne.o)
+     (Control/src/PIDController.o))
 *************************************************************/
 //==========================================================================
 // Description:

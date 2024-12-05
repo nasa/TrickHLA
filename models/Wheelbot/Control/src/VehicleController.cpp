@@ -1,3 +1,10 @@
+/********************************* TRICK HEADER *******************************
+LIBRARY DEPENDENCY:
+    ((Control/src/VehicleController.o)
+     (Control/src/DifferentialDriveController.o)
+     (Guidance/src/Navigator.o))
+*******************************************************************************/
+
 // This file contains functions for controlling the movement of the vehicles.
 #include <iostream>
 

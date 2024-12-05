@@ -1,3 +1,7 @@
+/********************************* TRICK HEADER *******************************
+LIBRARY DEPENDENCY:
+    ((Control/src/PIDController.o))
+*******************************************************************************/
 #include "../include/PIDController.hh"
 
 PIDController::PIDController(

@@ -1,3 +1,9 @@
+/********************************* TRICK HEADER *******************************
+LIBRARY DEPENDENCY:
+    ((Control/src/DifferentialDriveController.o)
+     (Control/src/PIDController.o)
+     (Motor/src/MotorSpeedController.o))
+*******************************************************************************/
 #include <iostream>
 #include <math.h>
 

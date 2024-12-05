@@ -1,11 +1,12 @@
 /********************************* TRICK HEADER *******************************
 PURPOSE: ( Simulate a two wheeled robotic vehicle.)
 LIBRARY DEPENDENCY:
-    ((vehicleOne.o)
-     (Control/src/VehicleController.o)
+    ((Vehicle/src/VehicleOne.o)
      (Control/src/DifferentialDriveController.o)
-     (Motor/src/DCMotorSpeedController.o)
-     (Motor/src/DCMotor.o))
+     (Control/src/VehicleController.o)
+     (Guidance/src/Navigator.o)
+     (Motor/src/DCMotor.o)
+     (Motor/src/DCMotorSpeedController.o))
 PROGRAMMERS:
     (((John M. Penn) (L3 Communications) (June 2015) (Trick Refresher Project)))
     (((Andrew W. Young) (NASA/ER7) (July 2023) (--) (TrickHLA familiarization project.)))
@@ -299,8 +300,9 @@ int VehicleOne::state_integ()
 void VehicleOne::print_waypoints()
 {
    std::cout << "Waypoints:" << std::endl;
-   for ( std::vector< Point >::iterator it = waypoint_queue.begin(); it != waypoint_queue.end(); ++it ) {
-      Point const &waypoint = *it;
+   std::vector< Point >::iterator iter;
+   for ( iter = waypoint_queue.begin(); iter != waypoint_queue.end(); ++iter ) {
+      Point const &waypoint = *iter;
       std::cout << "(" << waypoint.getX() << ", " << waypoint.getY() << ")" << std::endl;
    }
 }

@@ -1,9 +1,15 @@
+/********************************* TRICK HEADER *******************************
+LIBRARY DEPENDENCY:
+    ((Electrical/src/ElectricalCircuit.o)
+     (Battery/src/DCBattery.o)
+     (Motor/src/DCMotor.o))
+*******************************************************************************/
 #include <iostream>
 
 #include "../../Battery/include/DCBattery.hh"
 #include "../../Motor/include/DCMotor.hh"
 
-#include "ElectricalCircuit.hh"
+#include "../include/ElectricalCircuit.hh"
 
 ElectricalCircuit::ElectricalCircuit()
    : motors_current( 0 ),

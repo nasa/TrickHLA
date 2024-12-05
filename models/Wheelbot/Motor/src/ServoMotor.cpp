@@ -1,3 +1,7 @@
+/********************************* TRICK HEADER *******************************
+LIBRARY DEPENDENCY:
+    ((Motor/src/ServoMotor.o))
+*******************************************************************************/
 #include "../include/ServoMotor.hh"
 
 ServoMotor::ServoMotor( char side )

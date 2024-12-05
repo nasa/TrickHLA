@@ -14,6 +14,7 @@ PURPOSE: ()
 
 namespace TrickHLAModel
 {
+
 class VehicleOne
 {
   public:
@@ -82,6 +83,7 @@ class VehicleOne
    void add_waypoint_from_stcs();
    void print_stcs();
 };
+
 } // namespace TrickHLAModel
 
 #endif
