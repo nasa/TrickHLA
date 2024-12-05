@@ -12,16 +12,19 @@ DCMotor::DCMotor( const double initial_internal_resistance,
      internal_resistance( initial_internal_resistance ),
      motor_torque_constant( initial_motor_torque_constant )
 {
+   return;
 }
 
-void DCMotor ::update( const double motor_voltage )
+void DCMotor ::update(
+   const double motor_voltage )
 {
    motor_current = motor_voltage / internal_resistance;
    motor_torque  = motor_current * motor_torque_constant;
    current_load  = std ::abs( motor_current );
 }
 
-void DCMotor::update( const PWM &pulse_width )
+void DCMotor::update(
+   const PWM &pulse_width )
 {
    update( pulse_width.get_average_voltage() );
 }

@@ -6,10 +6,11 @@
 #include "../include/DifferentialDriveController.hh"
 #include "../include/VehicleController.hh"
 
-VehicleController::VehicleController( std::vector< Point >        *waypoints,
-                                      Navigator                   &the_navigator,
-                                      DifferentialDriveController &the_drive_controller,
-                                      double                       arrival_distance_ )
+VehicleController::VehicleController(
+   std::vector< Point >        *waypoints,
+   Navigator                   &the_navigator,
+   DifferentialDriveController &the_drive_controller,
+   double                       arrival_distance_ )
    : waypoint_queue( waypoints ),
      navigator( the_navigator ),
      drive_controller( the_drive_controller ),
@@ -26,13 +27,15 @@ VehicleController::VehicleController( std::vector< Point >        *waypoints,
    destination = waypoint_queue->begin();
 }
 
-void VehicleController::set_waypoint_queue( std::vector< Point > *waypoints )
+void VehicleController::set_waypoint_queue(
+   std::vector< Point > *waypoints )
 {
    waypoint_queue = waypoints;
    destination    = waypoint_queue->begin();
 }
 
-int VehicleController::get_current_destination( Point &current_destination )
+int VehicleController::get_current_destination(
+   Point &current_destination )
 {
    if ( destination != waypoint_queue->end() ) {
       current_destination = *destination;

@@ -43,9 +43,8 @@ void DifferentialDriveController::stop()
 }
 
 int DifferentialDriveController::update( double distance_err, // m
-                                         double heading_err )
-{ // rad (-PI..+PI)
-
+                                         double heading_err ) // rad (-PI..+PI)
+{
    right_motor_speed_command = 0.0;
    left_motor_speed_command  = 0.0;
 

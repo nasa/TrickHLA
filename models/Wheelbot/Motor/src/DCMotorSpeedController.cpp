@@ -18,7 +18,8 @@ DCMotorSpeedController::DCMotorSpeedController(
    this->commanded_speed = 0.0;
 }
 
-void DCMotorSpeedController::set_commanded_speed( double cmd_speed )
+void DCMotorSpeedController::set_commanded_speed(
+   double cmd_speed )
 {
    MotorSpeedController::set_commanded_speed( cmd_speed );
    motor_voltage = supply_voltage * gain * ( cmd_speed - actual_speed );

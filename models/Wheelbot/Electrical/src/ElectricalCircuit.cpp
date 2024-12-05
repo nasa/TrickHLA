@@ -6,11 +6,18 @@
 #include "ElectricalCircuit.hh"
 
 ElectricalCircuit::ElectricalCircuit()
-   : motors_current( 0 ), motor1( 0 ), motor2( 0 ), battery( 0 )
+   : motors_current( 0 ),
+     motor1( 0 ),
+     motor2( 0 ),
+     battery( 0 )
 {
+   return;
 }
 
-void ElectricalCircuit ::init( DCMotor *motorOne, DCMotor *motorTwo, DCBattery *battery1 )
+void ElectricalCircuit ::init(
+   DCMotor   *motorOne,
+   DCMotor   *motorTwo,
+   DCBattery *battery1 )
 {
    motor1  = motorOne;
    motor2  = motorTwo;

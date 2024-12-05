@@ -1,6 +1,13 @@
 #include "../include/PIDController.hh"
 
-PIDController::PIDController( double kp, double ki, double kd, double omax, double omin, double dt, double tc )
+PIDController::PIDController(
+   double kp,
+   double ki,
+   double kd,
+   double omax,
+   double omin,
+   double dt,
+   double tc )
 {
    Kprop               = kp;
    Kinteg              = ki;
@@ -16,9 +23,10 @@ PIDController::PIDController( double kp, double ki, double kd, double omax, doub
    integration_enabled = true;
 }
 
-double PIDController::get_output( double setpoint_value, double measured_value )
+double PIDController::get_output(
+   double setpoint_value,
+   double measured_value )
 {
-
    double error_unfiltered = setpoint_value - measured_value;
 
    // Low Pass Filter

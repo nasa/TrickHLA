@@ -4,18 +4,21 @@
 #include "../include/Navigator.hh"
 #include "../include/Point.hh"
 
-void Navigator::set_heading( double h )
+void Navigator::set_heading(
+   double h )
 {
-   heading = h;
+   this->heading = h;
 }
 
-void Navigator::set_location( double x, double y )
+void Navigator::set_location(
+   double x, double y )
 {
    location.setX( x );
    location.setY( y );
 }
 
-double Navigator::distance_to( Point const &map_point )
+double Navigator::distance_to(
+   Point const &map_point )
 {
    double deltaX   = location.getX() - map_point.getX();
    double deltaY   = location.getY() - map_point.getY();
@@ -23,7 +26,8 @@ double Navigator::distance_to( Point const &map_point )
    return ( distance );
 }
 
-double Navigator::bearing_to( Point const &map_point )
+double Navigator::bearing_to(
+   Point const &map_point )
 {
    Point  platform_point = convert_map_to_platform( map_point );
    Point  body_point     = convert_platform_to_body( platform_point );
@@ -31,7 +35,8 @@ double Navigator::bearing_to( Point const &map_point )
    return head2;
 }
 
-Point Navigator::convert_map_to_platform( Point const &map_point )
+Point Navigator::convert_map_to_platform(
+   Point const &map_point )
 {
    Point platform_point;
    platform_point.setX( map_point.getX() - location.getX() );
@@ -39,7 +44,8 @@ Point Navigator::convert_map_to_platform( Point const &map_point )
    return ( platform_point );
 }
 
-Point Navigator::convert_platform_to_map( Point const &platform_point )
+Point Navigator::convert_platform_to_map(
+   Point const &platform_point )
 {
    Point map_point;
    map_point.setX( platform_point.getX() + location.getX() );
@@ -47,7 +53,8 @@ Point Navigator::convert_platform_to_map( Point const &platform_point )
    return ( map_point );
 }
 
-Point Navigator::convert_platform_to_body( Point const &platform_point )
+Point Navigator::convert_platform_to_body(
+   Point const &platform_point )
 {
    Point body_point;
    body_point.setX( cos( heading ) * platform_point.getX() + sin( heading ) * platform_point.getY() );
@@ -55,7 +62,8 @@ Point Navigator::convert_platform_to_body( Point const &platform_point )
    return ( body_point );
 }
 
-Point Navigator::convert_body_to_platform( Point const &body_point )
+Point Navigator::convert_body_to_platform(
+   Point const &body_point )
 {
    Point platform_point;
    platform_point.setX( cos( heading ) * body_point.getX() - sin( heading ) * body_point.getY() );

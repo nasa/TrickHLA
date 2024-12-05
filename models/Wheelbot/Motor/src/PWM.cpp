@@ -6,10 +6,9 @@
 PWM::PWM( double high_voltage_,
           double low_voltage_,
           double duty_cycle_ )
+   : high_voltage( high_voltage_ ),
+     low_voltage( low_voltage_ )
 {
-
-   high_voltage = high_voltage_;
-   low_voltage  = low_voltage_;
    set_duty_cycle( duty_cycle_ );
 }
 
@@ -29,6 +28,5 @@ double PWM ::get_duty_cycle() const
 
 double PWM::get_average_voltage() const
 {
-
    return ( ( high_voltage * duty_cycle + low_voltage * ( 1 - duty_cycle ) ) / 2 );
 }

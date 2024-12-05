@@ -32,7 +32,6 @@ extern Trick::MemoryManager *trick_MM;
 
 int VehicleOne::default_data()
 {
-
    distance_between_wheels  = 0.183;
    wheel_radius             = 0.045;
    vehicle_mass             = 2.0;
@@ -109,31 +108,29 @@ int VehicleOne::default_data()
 
 int VehicleOne::state_init()
 {
-
-   Point init_location( position[0],
-                        position[1] );
+   Point init_location( position[0], position[1] );
 
    right_DC_motor = new DCMotor( DC_motor_internal_resistance, DC_motor_torque_constant );
    left_DC_motor  = new DCMotor( DC_motor_internal_resistance, DC_motor_torque_constant );
 
    // Note that right and left motor speeds are passed by reference.
-   right_motor_controller = new DCMotorSpeedController( *right_DC_motor, .3, right_motor_speed, battery_voltage );
-   left_motor_controller  = new DCMotorSpeedController( *left_DC_motor, .3, left_motor_speed, battery_voltage );
+   right_motor_controller = new DCMotorSpeedController( *right_DC_motor, 0.3, right_motor_speed, battery_voltage );
+   left_motor_controller  = new DCMotorSpeedController( *left_DC_motor, 0.3, left_motor_speed, battery_voltage );
 
-   drive_controller =
-      new DifferentialDriveController( distance_between_wheels,
-                                       wheel_radius,
-                                       wheel_speed_limit,
-                                       heading_rate_limit,
-                                       slow_down_distance,
-                                       *right_motor_controller,
-                                       *left_motor_controller );
+   drive_controller = new DifferentialDriveController( distance_between_wheels,
+                                                       wheel_radius,
+                                                       wheel_speed_limit,
+                                                       heading_rate_limit,
+                                                       slow_down_distance,
+                                                       *right_motor_controller,
+                                                       *left_motor_controller );
 
-   navigator =
-      new Navigator( heading, init_location );
+   navigator = new Navigator( heading, init_location );
 
-   vehicle_controller =
-      new VehicleController( &waypoint_queue, *navigator, *drive_controller, arrival_distance );
+   vehicle_controller = new VehicleController( &waypoint_queue,
+                                               *navigator,
+                                               *drive_controller,
+                                               arrival_distance );
 
    // Register pointers with Trick Memory Manager
    trick_MM->declare_extern_var( navigator, "Navigator" );
@@ -148,7 +145,9 @@ int VehicleOne::state_init()
 }
 
 // Add waypoints to the waypoint queue
-void VehicleOne::add_waypoint( double x, double y )
+void VehicleOne::add_waypoint(
+   double x,
+   double y )
 {
    Point waypoint( x, y );
    waypoint_queue.push_back( waypoint );
@@ -158,7 +157,6 @@ void VehicleOne::add_waypoint( double x, double y )
 // location.
 void VehicleOne::control()
 {
-
    // Perfect Sensors for now.
    navigator->set_heading( heading );
    navigator->set_location( position[0], position[1] );
@@ -166,8 +164,8 @@ void VehicleOne::control()
    // Store heading in position array so it is published to the RTI.
    position[3] = heading;
 
-   // Check to see if the variable server client input for homeCommanded has been activated
-   // if so, go home and declare end of simulation
+   // Check to see if the variable server client input for homeCommanded
+   // has been activated. If so, go home and declare end of simulation.
    if ( home_commanded && !end_of_homing ) {
       vehicle_controller->go_home();
       end_of_homing = true;
@@ -181,7 +179,6 @@ void VehicleOne::control()
 
 int VehicleOne::state_deriv()
 {
-
    double speed = sqrt( velocity[0] * velocity[0] + velocity[1] * velocity[1] );
 
    // Direction that the vehicle is moving.
@@ -260,40 +257,39 @@ int VehicleOne::state_integ()
 {
    int integration_step;
 
-   load_state(
-      &heading,
-      &heading_rate,
-      &position[0],
-      &position[1],
-      &velocity[0],
-      &velocity[1],
-      (double *)0 );
+   load_state( &heading,
+               &heading_rate,
+               &position[0],
+               &position[1],
+               &velocity[0],
+               &velocity[1],
+               (double *)0 );
 
-   load_deriv(
-      &heading_rate,
-      &heading_accel,
-      &velocity[0],
-      &velocity[1],
-      &acceleration[0],
-      &acceleration[1],
-      (double *)0 );
+   load_deriv( &heading_rate,
+               &heading_accel,
+               &velocity[0],
+               &velocity[1],
+               &acceleration[0],
+               &acceleration[1],
+               (double *)0 );
 
    integration_step = integrate();
 
-   unload_state(
-      &heading,
-      &heading_rate,
-      &position[0],
-      &position[1],
-      &velocity[0],
-      &velocity[1],
-      (double *)0 );
+   unload_state( &heading,
+                 &heading_rate,
+                 &position[0],
+                 &position[1],
+                 &velocity[0],
+                 &velocity[1],
+                 (double *)0 );
 
    if ( !integration_step ) {
-      if ( heading < -M_PI )
+      if ( heading < -M_PI ) {
          heading += 2 * M_PI;
-      if ( heading > M_PI )
+      }
+      if ( heading > M_PI ) {
          heading += -2 * M_PI;
+      }
    }
 
    return ( integration_step );
@@ -313,7 +309,7 @@ void VehicleOne::print_waypoints()
 void VehicleOne::print_stcs()
 {
    std::cout << "STCS Array:" << std::endl;
-   for ( int i = 0; i < 7; i++ ) {
+   for ( int i = 0; i < 7; ++i ) {
       std::cout << "STCS[" << i << "]: " << stcs[i] << std::endl;
    }
 }

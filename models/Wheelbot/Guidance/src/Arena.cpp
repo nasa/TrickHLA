@@ -14,7 +14,7 @@ Arena::Arena(
 {
    unsigned int area = height * width;
    grid              = new GridSquare[area];
-   for ( int i = 0; i < area; i++ ) {
+   for ( int i = 0; i < area; ++i ) {
       grid[i].is_blocked = false;
       grid[i].mark       = ' ';
    }
@@ -31,21 +31,21 @@ Arena::Arena(
    grid              = new GridSquare[area]; // cppcheck-suppress [noCopyConstructor,noOperatorEq]
 
    unsigned int cx = 0;
-   for ( int row = 0; row < height; row++ ) {
+   for ( int row = 0; row < height; ++row ) {
       unsigned char octet = bits[cx];
       unsigned int  bx    = 0;
       while ( bx < width ) {
          unsigned int ii = row * width + bx;
          if ( ( bx != 0 ) && ( ( bx % 8 ) == 0 ) ) {
-            cx++;
+            ++cx;
             octet = bits[cx];
          }
          grid[ii].is_blocked = ( 0x01 & octet );
          octet               = octet >> 1;
          grid[ii].mark       = ' ';
-         bx++;
+         ++bx;
       }
-      cx++;
+      ++cx;
    }
 }
 
@@ -58,12 +58,15 @@ Arena::~Arena()
 }
 
 // straightDistance
-int Arena::distance_between( GridSquare const *orig, GridSquare const *dest, int &distance )
+int Arena::distance_between(
+   GridSquare const *orig,
+   GridSquare const *dest,
+   int              &distance )
 {
    Point orig_pt;
    Point dest_pt;
    if ( ( ( get_grid_square_coordinates( orig, orig_pt ) ) == 0 ) && ( ( get_grid_square_coordinates( dest, dest_pt ) ) == 0 ) ) {
-      distance = 10 * sqrt( ( dest_pt.x - orig_pt.x ) * ( dest_pt.x - orig_pt.x ) + ( dest_pt.y - orig_pt.y ) * ( dest_pt.y - orig_pt.y ) );
+      distance = 10 * sqrt( ( dest_pt.getX() - orig_pt.getX() ) * ( dest_pt.getX() - orig_pt.getX() ) + ( dest_pt.getY() - orig_pt.getY() ) * ( dest_pt.getY() - orig_pt.getY() ) );
       return 0;
    }
    std::cerr << "Arena::distanceBetween: bad pointer parameter(s)." << std::endl;
@@ -71,19 +74,24 @@ int Arena::distance_between( GridSquare const *orig, GridSquare const *dest, int
 }
 
 // manhattenDistance
-int Arena::movement_cost_estimate( GridSquare const *orig, GridSquare const *dest, int &cost_estimate )
+int Arena::movement_cost_estimate(
+   GridSquare const *orig,
+   GridSquare const *dest,
+   int              &cost_estimate )
 {
    Point orig_pt;
    Point dest_pt;
    if ( ( ( get_grid_square_coordinates( orig, origPt ) ) == 0 ) && ( ( get_grid_square_coordinates( dest, destPt ) ) == 0 ) ) {
-      cost_estimate = 10 * ( abs( dest_pt.x - orig_pt.x ) + abs( dest_pt.y - orig_pt.y ) );
+      cost_estimate = 10 * ( abs( dest_pt.getX() - orig_pt.getX() ) + abs( dest_pt.getY() - orig_pt.getY() ) );
       return 0;
    }
    std::cerr << "Arena::movementCostEstimate: bad pointer parameter(s)." << std::endl;
    return 1;
 }
 
-void Arena::block( unsigned int x, unsigned int y )
+void Arena::block(
+   unsigned int x,
+   unsigned int y )
 {
    GridSquare *grid_square;
    if ( ( grid_square = get_grid_square( x, y ) ) != (GridSquare *)0 ) {
@@ -91,7 +99,9 @@ void Arena::block( unsigned int x, unsigned int y )
    }
 }
 
-void Arena::unblock( unsigned int x, unsigned int y )
+void Arena::unblock(
+   unsigned int x,
+   unsigned int y )
 {
    GridSquare *grid_square;
    if ( ( grid_square = get_grid_square( x, y ) ) != (GridSquare *)0 ) {
@@ -99,7 +109,10 @@ void Arena::unblock( unsigned int x, unsigned int y )
    }
 }
 
-void Arena::mark( unsigned int x, unsigned int y, char c )
+void Arena::mark(
+   unsigned int x,
+   unsigned int y,
+   char         c )
 {
    GridSquare *grid_square;
    if ( ( grid_square = get_grid_square( x, y ) ) != (GridSquare *)0 ) {
@@ -107,7 +120,10 @@ void Arena::mark( unsigned int x, unsigned int y, char c )
    }
 }
 
-int Arena::calc_offset( unsigned int x, unsigned int y, size_t &offset )
+int Arena::calc_offset(
+   unsigned int x,
+   unsigned int y,
+   size_t      &offset )
 {
    if ( ( x < width ) && ( y < height ) ) {
       offset = x + width * y;
@@ -116,7 +132,9 @@ int Arena::calc_offset( unsigned int x, unsigned int y, size_t &offset )
    return 1;
 }
 
-int Arena::calc_offset( GridSquare const *grid_square, size_t &offset )
+int Arena::calc_offset(
+   GridSquare const *grid_square,
+   size_t           &offset )
 {
    if ( grid_square >= grid ) {
       size_t toffset = ( grid_square - grid );
@@ -128,7 +146,9 @@ int Arena::calc_offset( GridSquare const *grid_square, size_t &offset )
    return 1;
 }
 
-GridSquare *Arena::get_grid_square( unsigned int x, unsigned int y )
+GridSquare *Arena::get_grid_square(
+   unsigned int x,
+   unsigned int y )
 {
    size_t offset;
    if ( calc_offset( x, y, offset ) == 0 ) {
@@ -137,7 +157,9 @@ GridSquare *Arena::get_grid_square( unsigned int x, unsigned int y )
    return ( (GridSquare *)0 );
 }
 
-int Arena::get_grid_square_coordinates( GridSquare const *grid_square_pointer, Point &coords )
+int Arena::get_grid_square_coordinates(
+   GridSquare const *grid_square_pointer,
+   Point            &coords )
 {
    size_t offset;
    if ( calc_offset( grid_square_pointer, offset ) == 0 ) {
@@ -150,7 +172,8 @@ int Arena::get_grid_square_coordinates( GridSquare const *grid_square_pointer, P
    }
 }
 
-std::vector< GridSquare * > Arena::get_neighbors( GridSquare const *grid_square_pointer )
+std::vector< GridSquare * > Arena::get_neighbors(
+   GridSquare const *grid_square_pointer )
 {
    std::vector< GridSquare * > neighbors;
    GridSquare                 *neighbor;
@@ -159,38 +182,46 @@ std::vector< GridSquare * > Arena::get_neighbors( GridSquare const *grid_square_
    if ( get_grid_square_coordinates( grid_square_pointer, loc ) == 0 ) {
 
 #ifdef DIAGONAL_NEIGHBORS
-      if ( ( neighbor = get_grid_square( loc.x + 1, loc.y + 1 ) ) != (GridSquare *)0 ) {
-         if ( !neighbor->is_blocked )
+      if ( ( neighbor = get_grid_square( loc.getX() + 1, loc.getY() + 1 ) ) != (GridSquare *)0 ) {
+         if ( !neighbor->is_blocked ) {
             neighbors.push_back( neighbor );
+         }
       }
-      if ( ( neighbor = get_grid_square( loc.x + 1, loc.y - 1 ) ) != (GridSquare *)0 ) {
-         if ( !neighbor->is_blocked )
+      if ( ( neighbor = get_grid_square( loc.getX() + 1, loc.getY() - 1 ) ) != (GridSquare *)0 ) {
+         if ( !neighbor->is_blocked ) {
             neighbors.push_back( neighbor );
+         }
       }
-      if ( ( neighbor = get_grid_square( loc.x - 1, loc.y - 1 ) ) != (GridSquare *)0 ) {
-         if ( !neighbor->is_blocked )
+      if ( ( neighbor = get_grid_square( loc.getX() - 1, loc.getY() - 1 ) ) != (GridSquare *)0 ) {
+         if ( !neighbor->is_blocked ) {
             neighbors.push_back( neighbor );
+         }
       }
-      if ( ( neighbor = get_grid_square( loc.x - 1, loc.y + 1 ) ) != (GridSquare *)0 ) {
-         if ( !neighbor->is_blocked )
+      if ( ( neighbor = get_grid_square( loc.getX() - 1, loc.getY() + 1 ) ) != (GridSquare *)0 ) {
+         if ( !neighbor->is_blocked ) {
             neighbors.push_back( neighbor );
+         }
       }
 #endif
-      if ( ( neighbor = get_grid_square( loc.x, loc.y + 1 ) ) != (GridSquare *)0 ) {
-         if ( !neighbor->is_blocked )
+      if ( ( neighbor = get_grid_square( loc.getX(), loc.getY() + 1 ) ) != (GridSquare *)0 ) {
+         if ( !neighbor->is_blocked ) {
             neighbors.push_back( neighbor );
+         }
       }
-      if ( ( neighbor = get_grid_square( loc.x, loc.y - 1 ) ) != (GridSquare *)0 ) {
-         if ( !neighbor->is_blocked )
+      if ( ( neighbor = get_grid_square( loc.getX(), loc.getY() - 1 ) ) != (GridSquare *)0 ) {
+         if ( !neighbor->is_blocked ) {
             neighbors.push_back( neighbor );
+         }
       }
-      if ( ( neighbor = get_grid_square( loc.x - 1, loc.y ) ) != (GridSquare *)0 ) {
-         if ( !neighbor->is_blocked )
+      if ( ( neighbor = get_grid_square( loc.getX() - 1, loc.getY() ) ) != (GridSquare *)0 ) {
+         if ( !neighbor->is_blocked ) {
             neighbors.push_back( neighbor );
+         }
       }
-      if ( ( neighbor = get_grid_square( loc.x + 1, loc.y ) ) != (GridSquare *)0 ) {
-         if ( !neighbor->is_blocked )
+      if ( ( neighbor = get_grid_square( loc.getX() + 1, loc.getY() ) ) != (GridSquare *)0 ) {
+         if ( !neighbor->is_blocked ) {
             neighbors.push_back( neighbor );
+         }
       }
 
    } else {
@@ -199,13 +230,15 @@ std::vector< GridSquare * > Arena::get_neighbors( GridSquare const *grid_square_
    return neighbors;
 }
 
-std::ostream &operator<<( std::ostream &s, const Arena &arena )
+std::ostream &operator<<(
+   std::ostream &s,
+   Arena const  &arena )
 {
    s << "Arena height=" << arena.height << " width=" << arena.width << std::endl;
 
-   for ( int y = 0; y < arena.height; y++ ) {
+   for ( int y = 0; y < arena.height; ++y ) {
       s << "|";
-      for ( int x = 0; x < arena.width; x++ ) {
+      for ( int x = 0; x < arena.width; ++x ) {
          if ( arena.grid[x + arena.width * y].is_blocked ) {
             s << "\x1b[41m" << arena.grid[x + arena.width * y].mark << "\x1b[47m";
          } else {

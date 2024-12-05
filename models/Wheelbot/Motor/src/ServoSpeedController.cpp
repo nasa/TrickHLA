@@ -9,6 +9,7 @@ ServoSpeedController::ServoSpeedController(
      commanded_speed( 0.0 ),
      _pulse_width( 0.0 )
 {
+   return;
 }
 
 void ServoSpeedController::set_commanded_speed( double commandedSpeed )
@@ -50,10 +51,10 @@ void ServoSpeedController::set_commanded_speed( double commandedSpeed )
       _pulse_width = 0;
    }
 
-   if ( _side == 'L' )
+   if ( _side == 'L' ) {
       std::cout << "Left Servo angle is: " << _pulse_width << std::endl;
-   else if ( _side == 'R' )
+   } else if ( _side == 'R' ) {
       std::cout << "Right Servo angle is: " << _pulse_width << std::endl;
-
+   }
    // return _pulse_width;
 }

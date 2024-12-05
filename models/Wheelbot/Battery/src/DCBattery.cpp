@@ -3,8 +3,12 @@
 #include "../include/DCBattery.hh"
 
 DCBattery::DCBattery( double initial_ideal_voltage, double initial_internal_resistance )
-   : actual_voltage( 0 ), current( 0 ), ideal_voltage( initial_ideal_voltage ), internal_resistance( initial_internal_resistance )
+   : actual_voltage( 0 ),
+     current( 0 ),
+     ideal_voltage( initial_ideal_voltage ),
+     internal_resistance( initial_internal_resistance )
 {
+   return;
 }
 
 void DCBattery ::update()
