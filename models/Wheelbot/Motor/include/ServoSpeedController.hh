@@ -1,4 +1,6 @@
 /********************************* TRICK HEADER *******************************
+PURPOSE: (ServoSpeedController class)
+
 LIBRARY DEPENDENCY:
     ((Motor/src/ServoSpeedController.cpp)
      (Motor/src/ServoMotor.cpp))

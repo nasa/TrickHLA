@@ -1,5 +1,6 @@
 /********************************* TRICK HEADER *******************************
-PURPOSE: ( Simulate a two wheeled robotic vehicle.)
+PURPOSE: (Simulate a two wheeled robotic vehicle.)
+
 PROGRAMMERS:
     (((John M. Penn) (L3 Communications) (June 2015) (Trick Refresher Project)))
     (((Andrew W. Young) (NASA/ER7) (July 2023) (--) (TrickHLA familiarization project.)))

@@ -1,4 +1,6 @@
 /********************************* TRICK HEADER *******************************
+PURPOSE: (Motor class)
+
 LIBRARY DEPENDENCY:
     ((Motor/src/Motor.cpp)
      (Motor/src/PWM.cpp))

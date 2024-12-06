@@ -1,5 +1,5 @@
 /********************************* TRICK HEADER *******************************
-PURPOSE: (VehicleController class)
+PURPOSE: (TestMotorController class)
 
 LIBRARY DEPENDENCY:
     ((Control/src/TestMotorController.cpp)

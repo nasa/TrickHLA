@@ -1,4 +1,6 @@
 /********************************* TRICK HEADER *******************************
+PURPOSE: (FindPath class)
+
 LIBRARY DEPENDENCY:
     ((Guidance/src/FindPath.cpp)
      (Guidance/src/Arena.cpp))

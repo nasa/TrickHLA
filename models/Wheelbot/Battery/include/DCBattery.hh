@@ -1,5 +1,5 @@
 /********************************* TRICK HEADER *******************************
-PURPOSE: (DCBattery)
+PURPOSE: (DCBattery class)
 
 LIBRARY DEPENDENCY:
     ((Battery/src/DCBattery.cpp))

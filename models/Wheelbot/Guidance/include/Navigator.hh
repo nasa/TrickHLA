@@ -1,5 +1,5 @@
 /********************************* TRICK HEADER *******************************
-PURPOSE: ()
+PURPOSE: (Navigator class)
 
 LIBRARY DEPENDENCY:
     ((Guidance/src/Navigator.cpp))

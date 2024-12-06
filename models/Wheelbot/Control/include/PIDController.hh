@@ -1,5 +1,5 @@
 /********************************* TRICK HEADER *******************************
-PURPOSE:    ( PID Class H File )
+PURPOSE: (PID class)
 
 LIBRARY DEPENDENCY:
     ((Control/src/PIDController.cpp))
