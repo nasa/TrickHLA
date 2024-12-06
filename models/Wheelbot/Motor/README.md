@@ -33,12 +33,12 @@ input voltage for the associated DCMotor instance.
                             const double& supply_voltage);
 ```
 ```
-| Access | Member Name   | Type          | Units | Value  |
-|--------|---------------|---------------|-------|--------|
-| private| gain          | double        | --    | Parameter - Feedback gain |
-| private| actualSpeed   | const double& | m/s   | Parameter - Reference to the actual motor speed. |
-| private| supplyVoltage | const double& | volts | Reference to the power supply voltage. |
-| private| motor         |               | --    | Parameter - Reference to the [DCMotor](#class-DCMotor) instance to be controlled. |
+| Access | Member Name    | Type          | Units | Value  |
+|--------|----------------|---------------|-------|--------|
+| private| gain           | double        | --    | Parameter - Feedback gain |
+| private| actual_speed   | const double& | m/s   | Parameter - Reference to the actual motor speed. |
+| private| supply_voltage | const double& | volts | Reference to the power supply voltage. |
+| private| motor          |               | --    | Parameter - Reference to the [DCMotor](#class-DCMotor) instance to be controlled. |
 ```
 
 ### Member Functions
@@ -47,9 +47,9 @@ input voltage for the associated DCMotor instance.
     void setCommandedSpeed( double commandedSpeed );
 ```
 ```
-| Access | Member Name   | Type  | Units  | Value  |
-|--------|---------------|-------|--------|--------|
-| private| motorVoltage  |double | volts  | [Eq#1] |
+| Access | Member Name    | Type  | Units  | Value  |
+|--------|----------------|-------|--------|--------|
+| private| motor_voltage  |double | volts  | [Eq#1] |
 ```
 
 * [Eq#1] **motorVoltage** = supplyVoltage * gain * ( commandedSpeed - actualSpeed ) [ limited to +/- supplyVoltage ]
@@ -85,10 +85,10 @@ DCMotor (const double initialInternalResistance,
          const double initialMotorTorqueConstant);
 ```
 ```
-| Access | Member Name          | Type   | Units  | Value  |
-|--------|----------------------|--------|--------|--------|
-| private| internalResistance   | double | ohms   | Input  |
-| private| motorTorqueConstant  | double | Nm/amp | Input  |
+| Access | Member Name           | Type   | Units  | Value  |
+|--------|-----------------------|--------|--------|--------|
+| private| internal_resistance   | double | ohms   | Input  |
+| private| motor_torque_constant | double | Nm/amp | Input  |
 ```
 
 ### Member Functions
@@ -102,9 +102,9 @@ This method is to be called periodically to update the motor state.
 ```
 | Access | Member Name   | Type   | Units  | Value  |
 |--------|---------------|--------|--------|--------|
-| private| motorCurrent  | double | amp    | [Eq#1] |
-| private| motorTorque   | double | Nm     | [Eq#2] |
-| private| currentLoad   | double | amp    | [Eq#3] |
+| private| motor_current | double | amp    | [Eq#1] |
+| private| motor_torque  | double | Nm     | [Eq#2] |
+| private| current_load  | double | amp    | [Eq#3] |
 ```
 
 * [Eq#1] **motorCurrent** = motorVoltage / internalResistance
@@ -141,37 +141,37 @@ Return the current-load that was calculated by the last call to update(). An exa
 This class represents a PWM signal. Pulse Width Modulation (PWM) is a method of controlling electrical power (current x voltage) by repeatedly switching the supply voltage on and off, or between a high and low (typically 0) voltage. The proportion of time that the voltage is "high" is called the duty-cycle. The average output voltage is:
 
 <a id=EQ1-AverageVoltage></a>
-[Eq#1] **average_voltage** = ((highVoltage * dutyCycle + lowVoltage * (1 - dutyCycle)) / 2)
+[Eq#1] **average_voltage** = ((high_voltage * duty_cycle + low_voltage * (1 - duty_cycle)) / 2)
 
 
 ### Constructor
 
 ```
-    PWM( double HighVoltage,
-         double LowVoltage,
-         double DutyCycle);
+    PWM( double high_voltage,
+         double low_voltage,
+         double duty_cycle);
 ```
 ```
 | Access  | Member Name      | Type   | Units  | Value  |
 |---------|------------------|--------|--------|--------|
-| public  | HighVoltage      | double | volts  |        |
-| public  | LowVoltage       | double | volts  |        |
-| private | dutyCycle        | double | volts  |        |
+| public  | high_voltage     | double | volts  |        |
+| public  | low_voltage      | double | volts  |        |
+| private | duty_cycle       | double | volts  |        |
 ```
 
 ### Member Functions
 
 ```
-void setDutyCycle( double DutyCycle);
+void set_duty_cycle( double duty_cycle);
 ```
-Set the duty cycle to be used by getAverageVoltage().
+Set the duty cycle to be used by get_average_voltage().
 
 ```
-double getDutyCycle() const;
+double get_duty_cycle() const;
 ```
 Get current the duty cycle.
 
 ```
-double getAverageVoltage() const;
+double get_average_voltage() const;
 ```
 Calculate and return the average_voltage by [Eq#1](#EQ1-AverageVoltage).
