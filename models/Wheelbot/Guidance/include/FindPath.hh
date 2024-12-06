@@ -1,3 +1,8 @@
+/********************************* TRICK HEADER *******************************
+LIBRARY DEPENDENCY:
+    ((Guidance/src/FindPath.cpp)
+     (Guidance/src/Arena.cpp))
+*******************************************************************************/
 #ifndef FINDPATH_HH
 #define FINDPATH_HH
 

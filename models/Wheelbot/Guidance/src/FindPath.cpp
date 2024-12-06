@@ -1,7 +1,3 @@
-/********************************* TRICK HEADER *******************************
-LIBRARY DEPENDENCY:
-    ((Guidance/src/FindPath.cpp))
-*******************************************************************************/
 #include <algorithm> // std::find
 #include <stdlib.h>
 #include <vector> // std::vector

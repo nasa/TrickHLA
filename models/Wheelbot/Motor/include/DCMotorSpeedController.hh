@@ -1,6 +1,10 @@
-/*
- * PURPOSE: (DCMotorSpeedController class)
- */
+/********************************* TRICK HEADER *******************************
+PURPOSE: (DCMotorSpeedController class)
+
+LIBRARY DEPENDENCY:
+    ((Motor/src/DCMotorSpeedController.cpp)
+     (Motor/src/DCMotor.cpp))
+*******************************************************************************/
 #ifndef DC_MOTOR_SPEED_CONTROLLER_HH
 #define DC_MOTOR_SPEED_CONTROLLER_HH
 

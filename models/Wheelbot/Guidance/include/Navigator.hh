@@ -1,8 +1,9 @@
 /********************************* TRICK HEADER *******************************
 PURPOSE: ()
+
 LIBRARY DEPENDENCY:
-    ((Guidance/src/Navigator.cpp)
-         )
+    ((Guidance/src/Navigator.cpp))
+
 PROGRAMMERS:
     (((John M. Penn) (L3 Communications) (March 2015) (Trick Refresher Project)))
 *******************************************************************************/
@@ -18,7 +19,8 @@ namespace TrickHLAModel
 class Navigator
 {
   public:
-   Navigator( double initial_heading, Point initial_location ) : heading( initial_heading ), location( initial_location )
+   Navigator( double initial_heading, Point initial_location )
+      : heading( initial_heading ), location( initial_location )
    {
       return;
    }

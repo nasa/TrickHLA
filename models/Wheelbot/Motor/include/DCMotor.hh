@@ -1,10 +1,11 @@
+/********************************* TRICK HEADER *******************************
+LIBRARY DEPENDENCY:
+    ((Motor/src/DCMotor.cpp)
+     (Motor/src/PWM.cpp))
+*******************************************************************************/
 #ifndef DCMotor_H
 #define DCMotor_H
-/********************************* TRICK HEADER *******************************
-PURPOSE: ()
-LIBRARY DEPENDENCY:
-    ((DCMotor.o))
-*******************************************************************************/
+
 #include "PWM.hh"
 
 namespace TrickHLAModel

@@ -1,8 +1,3 @@
-/********************************* TRICK HEADER *******************************
-LIBRARY DEPENDENCY:
-    ((Motor/src/DCMotorSpeedController.cpp)
-     (Motor/src/DCMotor.cpp))
-*******************************************************************************/
 #include <iostream>
 
 #include "../include/DCMotor.hh"

@@ -1,3 +1,7 @@
+/********************************* TRICK HEADER *******************************
+LIBRARY DEPENDENCY:
+    ((Motor/src/ServoMotor.cpp))
+*******************************************************************************/
 #ifndef SERVO_MOTOR_HH
 #define SERVO_MOTOR_HH
 

@@ -1,6 +1,11 @@
-/**************************************************************
-PURPOSE:              (Electrical Model)
-***************************************************************/
+/********************************* TRICK HEADER *******************************
+PURPOSE: (Electrical Model)
+
+LIBRARY DEPENDENCY:
+    ((Electrical/src/ElectricalCircuit.cpp)
+     (Battery/src/DCBattery.cpp)
+     (Motor/src/DCMotor.cpp))
+*******************************************************************************/
 #ifndef ELECTRICAL_CIRCUIT_H
 #define ELECTRICAL_CIRCUIT_H
 

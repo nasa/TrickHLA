@@ -1,7 +1,3 @@
-/********************************* TRICK HEADER *******************************
-LIBRARY DEPENDENCY:
-    ((Guidance/src/Arena.cpp))
-*******************************************************************************/
 #include <iostream>
 #include <math.h>   // sqrt()
 #include <stdlib.h> // abs()

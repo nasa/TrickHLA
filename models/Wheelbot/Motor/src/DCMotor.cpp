@@ -1,8 +1,3 @@
-/********************************* TRICK HEADER *******************************
-LIBRARY DEPENDENCY:
-    ((Motor/src/DCMotor.cpp)
-     (Motor/src/PWM.cpp))
-*******************************************************************************/
 #include <cmath>
 #include <iostream>
 

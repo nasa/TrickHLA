@@ -1,8 +1,19 @@
+/********************************* TRICK HEADER *******************************
+PURPOSE: ( Simulate a two wheeled robotic vehicle.)
+LIBRARY DEPENDENCY:
+    ((Vehicle/src/VehicleOne.cpp)
+     (Control/src/DifferentialDriveController.cpp)
+     (Control/src/VehicleController.cpp)
+     (Guidance/src/Navigator.cpp)
+     (Motor/src/DCMotor.cpp)
+     (Motor/src/DCMotorSpeedController.cpp))
+PROGRAMMERS:
+    (((John M. Penn) (L3 Communications) (June 2015) (Trick Refresher Project)))
+    (((Andrew W. Young) (NASA/ER7) (July 2023) (--) (TrickHLA familiarization project.)))
+*******************************************************************************/
 #ifndef TEST_VEHICLE_HH
 #define TEST_VEHICLE_HH
-/*************************************************************************
-PURPOSE: ()
-**************************************************************************/
+
 #include <chrono>
 
 #include "../../Control/include/DifferentialDriveController.hh"

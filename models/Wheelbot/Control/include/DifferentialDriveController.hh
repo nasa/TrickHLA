@@ -1,6 +1,11 @@
-/*
- * PURPOSE: (DifferentialDriveController class)
- */
+/********************************* TRICK HEADER *******************************
+PURPOSE: (DifferentialDriveController class)
+
+LIBRARY DEPENDENCY:
+    ((Control/src/DifferentialDriveController.cpp)
+     (Control/src/PIDController.cpp)
+     (Motor/src/MotorSpeedController.cpp))
+*******************************************************************************/
 #ifndef DIFFERENTIAL_DRIVE_CONTROLER_HH
 #define DIFFERENTIAL_DRIVE_CONTROLER_HH
 

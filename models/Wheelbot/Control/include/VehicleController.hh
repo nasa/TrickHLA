@@ -1,6 +1,11 @@
-/*
- * PURPOSE: (VehicleController class)
- */
+/********************************* TRICK HEADER *******************************
+PURPOSE: (VehicleController class)
+
+LIBRARY DEPENDENCY:
+    ((Control/src/VehicleController.cpp)
+     (Control/src/DifferentialDriveController.cpp)
+     (Guidance/src/Navigator.cpp))
+*******************************************************************************/
 #ifndef VEHICLE_CONTROLLER_HH
 #define VEHICLE_CONTROLLER_HH
 

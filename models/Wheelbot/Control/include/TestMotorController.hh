@@ -1,3 +1,10 @@
+/********************************* TRICK HEADER *******************************
+PURPOSE: (VehicleController class)
+
+LIBRARY DEPENDENCY:
+    ((Control/src/TestMotorController.cpp)
+     (Motor/src/MotorSpeedController.cpp))
+*******************************************************************************/
 #ifndef TEST_MOTOR_CONTROLLER_HH
 #define TEST_MOTOR_CONTROLLER_HH
 

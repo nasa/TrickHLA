@@ -1,7 +1,3 @@
-/********************************* TRICK HEADER *******************************
-LIBRARY DEPENDENCY:
-    ((Guidance/src/Navigator.cpp))
-*******************************************************************************/
 #include <iostream>
 #include <math.h> // for: sqrt(), atan2(), cos(), and sin()
 

@@ -1,9 +1,3 @@
-/********************************* TRICK HEADER *******************************
-LIBRARY DEPENDENCY:
-    ((Electrical/src/ElectricalCircuit.cpp)
-     (Battery/src/DCBattery.cpp)
-     (Motor/src/DCMotor.cpp))
-*******************************************************************************/
 #include <iostream>
 
 #include "../../Battery/include/DCBattery.hh"
