@@ -51,8 +51,8 @@ class Arena
    GridSquare *grid;
 
   private:
-   int         calc_offset( unsigned int x, unsigned int y, size_t &offset );
-   int         calc_offset( GridSquare const *grid_square, size_t &offset );
+   int calc_offset( unsigned int x, unsigned int y, size_t &offset );
+   int calc_offset( GridSquare const *grid_square, size_t &offset );
 };
 
 } // namespace TrickHLAModel
