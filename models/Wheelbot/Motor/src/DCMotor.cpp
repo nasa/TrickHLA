@@ -1,13 +1,15 @@
 /********************************* TRICK HEADER *******************************
 LIBRARY DEPENDENCY:
-    ((Motor/src/DCMotor.o)
-     (Motor/src/PWM.o))
+    ((Motor/src/DCMotor.cpp)
+     (Motor/src/PWM.cpp))
 *******************************************************************************/
 #include <cmath>
 #include <iostream>
 
 #include "../include/DCMotor.hh"
 #include "../include/PWM.hh"
+
+using namespace TrickHLAModel;
 
 DCMotor::DCMotor( const double initial_internal_resistance,
                   const double initial_motor_torque_constant )

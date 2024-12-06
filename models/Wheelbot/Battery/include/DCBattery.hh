@@ -4,6 +4,9 @@
 #ifndef DCBattery_H
 #define DCBattery_H
 
+namespace TrickHLAModel
+{
+
 class DCBattery
 {
   public:
@@ -18,4 +21,6 @@ class DCBattery
    double actual_voltage;
    double current;
 };
+
+} // namespace TrickHLAModel
 #endif

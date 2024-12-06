@@ -2,8 +2,13 @@
 PURPOSE:
     ( Simulate a two-wheeled robot which travels to predetermined waypoints. )
 LIBRARY DEPENDENCIES:
-    ((Vehicle/src/VehicleOne.o)
-     (Control/src/PIDController.o))
+    ((Vehicle/src/VehicleOne.cpp)
+     (Control/src/DifferentialDriveController.cpp)
+     (Control/src/PIDController.cpp)
+     (Control/src/VehicleController.cpp)
+     (Guidance/src/Navigator.cpp)
+     (Motor/src/DCMotor.cpp)
+     (Motor/src/DCMotorSpeedController.cpp))
 *************************************************************/
 //==========================================================================
 // Description:
@@ -31,12 +36,15 @@ LIBRARY DEPENDENCIES:
 
 ##include "Vehicle/include/VehicleOne.hh"
 
+%header{
+ using namespace TrickHLA;
+ using namespace SpaceFOM;
+%}
 
 class VehicleSimObject : public Trick::SimObject {
 
   public:
    TrickHLAModel::VehicleOne vehicle;
-
 
    VehicleSimObject() {
 
@@ -68,7 +76,7 @@ class VehicleSimObject : public Trick::SimObject {
 SpaceFOMRefFrameTreeSimObject ref_frame_tree;
 SpaceFOMRefFrameSimObject root_ref_frame( ref_frame_tree.root_frame_data );
 SpaceFOMRefFrameSimObject ref_frame_A( ref_frame_tree.frame_A_data );
-#endif
+#endif //HLA
 
 VehicleSimObject veh;
 

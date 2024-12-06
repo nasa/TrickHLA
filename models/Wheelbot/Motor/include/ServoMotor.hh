@@ -1,6 +1,9 @@
 #ifndef SERVO_MOTOR_HH
 #define SERVO_MOTOR_HH
 
+namespace TrickHLAModel
+{
+
 class ServoMotor
 {
   public:
@@ -16,4 +19,5 @@ class ServoMotor
    double actual_speed;
 };
 
+} // namespace TrickHLAModel
 #endif

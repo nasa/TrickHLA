@@ -1,8 +1,10 @@
 /********************************* TRICK HEADER *******************************
 LIBRARY DEPENDENCY:
-    ((Control/src/PIDController.o))
+    ((Control/src/PIDController.cpp))
 *******************************************************************************/
 #include "../include/PIDController.hh"
+
+using namespace TrickHLAModel;
 
 PIDController::PIDController(
    double kp,

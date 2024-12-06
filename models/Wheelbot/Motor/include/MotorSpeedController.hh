@@ -4,6 +4,9 @@
 #ifndef MOTOR_SPEED_CONTROLLER_HH
 #define MOTOR_SPEED_CONTROLLER_HH
 
+namespace TrickHLAModel
+{
+
 class MotorSpeedController
 {
 
@@ -24,4 +27,5 @@ class MotorSpeedController
    double commanded_speed;
 };
 
+} // namespace TrickHLAModel
 #endif

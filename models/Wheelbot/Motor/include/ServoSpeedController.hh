@@ -4,6 +4,9 @@
 #include "MotorSpeedController.hh"
 #include "ServoMotor.hh"
 
+namespace TrickHLAModel
+{
+
 class ServoSpeedController : public MotorSpeedController
 {
   public:
@@ -19,4 +22,5 @@ class ServoSpeedController : public MotorSpeedController
    double      _pulse_width;
 };
 
+} // namespace TrickHLAModel
 #endif

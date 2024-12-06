@@ -5,6 +5,9 @@ PURPOSE:    ( PID Class H File )
 #ifndef PIDController_HH
 #define PIDController_HH
 
+namespace TrickHLAModel
+{
+
 class PIDController
 {
   public:
@@ -25,4 +28,5 @@ class PIDController
    double get_output( double setpoint_value, double measured_value );
 };
 
+} // namespace TrickHLAModel
 #endif

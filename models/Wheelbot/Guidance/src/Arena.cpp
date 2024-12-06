@@ -1,6 +1,6 @@
 /********************************* TRICK HEADER *******************************
 LIBRARY DEPENDENCY:
-    ((Guidance/src/Arena.o))
+    ((Guidance/src/Arena.cpp))
 *******************************************************************************/
 #include <iostream>
 #include <math.h>   // sqrt()
@@ -9,6 +9,8 @@ LIBRARY DEPENDENCY:
 #include "../include/Arena.hh"
 #include "../include/GridSquare.hh"
 #include "../include/Point.hh"
+
+using namespace TrickHLAModel;
 
 Arena::Arena(
    unsigned int width,

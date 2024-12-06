@@ -1,3 +1,7 @@
+/********************************* TRICK HEADER *******************************
+LIBRARY DEPENDENCY:
+    ((Guidance/src/FindPath.cpp))
+*******************************************************************************/
 #include <algorithm> // std::find
 #include <stdlib.h>
 #include <vector> // std::vector
@@ -6,6 +10,8 @@
 #include "../include/FindPath.hh"
 #include "../include/GridSquare.hh"
 #include "../include/Point.hh"
+
+using namespace TrickHLAModel;
 
 std::vector< Point > FindPath(
    GridSquare       *origin,

@@ -12,6 +12,9 @@ PROGRAMMERS:
 
 #include "Point.hh"
 
+namespace TrickHLAModel
+{
+
 class Navigator
 {
   public:
@@ -35,4 +38,6 @@ class Navigator
    double heading;
    Point  location;
 };
+
+} // namespace TrickHLAModel
 #endif

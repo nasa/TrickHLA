@@ -7,6 +7,9 @@ LIBRARY DEPENDENCY:
 *******************************************************************************/
 #include "PWM.hh"
 
+namespace TrickHLAModel
+{
+
 class DCMotor
 {
   public:
@@ -24,4 +27,5 @@ class DCMotor
    double motor_torque_constant;
 };
 
+} // namespace TrickHLAModel
 #endif

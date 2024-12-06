@@ -7,6 +7,9 @@
 #include "../../Motor/include/MotorSpeedController.hh"
 #include "PIDController.hh"
 
+namespace TrickHLAModel
+{
+
 class DifferentialDriveController
 {
 
@@ -44,4 +47,6 @@ class DifferentialDriveController
    PIDController heading_ctrl;
    PIDController wheel_speed_ctrl;
 };
+
+} // namespace TrickHLAModel
 #endif

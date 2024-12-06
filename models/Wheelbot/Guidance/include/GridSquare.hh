@@ -1,6 +1,9 @@
 #ifndef GRIDSQUARE_HH
 #define GRIDSQUARE_HH
 
+namespace TrickHLAModel
+{
+
 class GridSquare
 {
   public:
@@ -11,4 +14,5 @@ class GridSquare
    int         f_score;
 };
 
+} // namespace TrickHLAModel
 #endif

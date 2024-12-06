@@ -7,6 +7,9 @@ LIBRARY DEPENDENCY:
 *******************************************************************************/
 #include "PWM.hh"
 
+namespace TrickHLAModel
+{
+
 class Motor
 {
   public:
@@ -17,4 +20,6 @@ class Motor
 
    virtual double get_actual_speed();
 };
+
+} // namespace TrickHLAModel
 #endif

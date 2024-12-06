@@ -1,12 +1,12 @@
 /********************************* TRICK HEADER *******************************
 PURPOSE: ( Simulate a two wheeled robotic vehicle.)
 LIBRARY DEPENDENCY:
-    ((Vehicle/src/VehicleOne.o)
-     (Control/src/DifferentialDriveController.o)
-     (Control/src/VehicleController.o)
-     (Guidance/src/Navigator.o)
-     (Motor/src/DCMotor.o)
-     (Motor/src/DCMotorSpeedController.o))
+    ((Vehicle/src/VehicleOne.cpp)
+     (Control/src/DifferentialDriveController.cpp)
+     (Control/src/VehicleController.cpp)
+     (Guidance/src/Navigator.cpp)
+     (Motor/src/DCMotor.cpp)
+     (Motor/src/DCMotorSpeedController.cpp))
 PROGRAMMERS:
     (((John M. Penn) (L3 Communications) (June 2015) (Trick Refresher Project)))
     (((Andrew W. Young) (NASA/ER7) (July 2023) (--) (TrickHLA familiarization project.)))
@@ -27,9 +27,9 @@ PROGRAMMERS:
 
 #include "../include/VehicleOne.hh"
 
-using namespace TrickHLAModel;
-
 extern Trick::MemoryManager *trick_MM;
+
+using namespace TrickHLAModel;
 
 int VehicleOne::default_data()
 {

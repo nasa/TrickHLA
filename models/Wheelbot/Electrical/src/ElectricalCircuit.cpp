@@ -1,8 +1,8 @@
 /********************************* TRICK HEADER *******************************
 LIBRARY DEPENDENCY:
-    ((Electrical/src/ElectricalCircuit.o)
-     (Battery/src/DCBattery.o)
-     (Motor/src/DCMotor.o))
+    ((Electrical/src/ElectricalCircuit.cpp)
+     (Battery/src/DCBattery.cpp)
+     (Motor/src/DCMotor.cpp))
 *******************************************************************************/
 #include <iostream>
 
@@ -10,6 +10,8 @@ LIBRARY DEPENDENCY:
 #include "../../Motor/include/DCMotor.hh"
 
 #include "../include/ElectricalCircuit.hh"
+
+using namespace TrickHLAModel;
 
 ElectricalCircuit::ElectricalCircuit()
    : motors_current( 0 ),

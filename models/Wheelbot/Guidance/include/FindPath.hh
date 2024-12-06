@@ -5,6 +5,10 @@
 #include "GridSquare.hh"
 #include "Point.hh"
 
+namespace TrickHLAModel
+{
+
 std::vector< Point > FindPath( GridSquare *origin, GridSquare const *goal, Arena *arena );
 
+}
 #endif

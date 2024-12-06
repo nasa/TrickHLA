@@ -3,6 +3,9 @@
 
 #include "../../Motor/include/MotorSpeedController.hh"
 
+namespace TrickHLAModel
+{
+
 class TestMotorController : public MotorSpeedController
 {
    // This class is for testing.
@@ -15,4 +18,6 @@ class TestMotorController : public MotorSpeedController
       this->commanded_speed = speed_command;
    }
 };
+
+} // namespace TrickHLAModel
 #endif

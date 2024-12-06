@@ -1,8 +1,10 @@
 /********************************* TRICK HEADER *******************************
 LIBRARY DEPENDENCY:
-    ((Motor/src/ServoMotor.o))
+    ((Motor/src/ServoMotor.cpp))
 *******************************************************************************/
 #include "../include/ServoMotor.hh"
+
+using namespace TrickHLAModel;
 
 ServoMotor::ServoMotor( char side )
    : _side( side ),

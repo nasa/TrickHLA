@@ -1,10 +1,12 @@
 /********************************* TRICK HEADER *******************************
 LIBRARY DEPENDENCY:
-    ((Battery/src/DCBattery.o))
+    ((Battery/src/DCBattery.cpp))
 *******************************************************************************/
 #include <iostream>
 
 #include "../include/DCBattery.hh"
+
+using namespace TrickHLAModel;
 
 DCBattery::DCBattery( double initial_ideal_voltage, double initial_internal_resistance )
    : actual_voltage( 0 ),

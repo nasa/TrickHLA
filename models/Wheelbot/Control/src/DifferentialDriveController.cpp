@@ -1,8 +1,8 @@
 /********************************* TRICK HEADER *******************************
 LIBRARY DEPENDENCY:
-    ((Control/src/DifferentialDriveController.o)
-     (Control/src/PIDController.o)
-     (Motor/src/MotorSpeedController.o))
+    ((Control/src/DifferentialDriveController.cpp)
+     (Control/src/PIDController.cpp)
+     (Motor/src/MotorSpeedController.cpp))
 *******************************************************************************/
 #include <iostream>
 #include <math.h>
@@ -15,14 +15,16 @@ LIBRARY DEPENDENCY:
 
 #include "../include/DifferentialDriveController.hh"
 
-DifferentialDriveController::
-   DifferentialDriveController( double                distance_between_wheels_,
-                                double                wheel_radius_,
-                                double                wheel_speed_limit_,
-                                double                heading_rate_limit_,
-                                double                slow_down_distance_,
-                                MotorSpeedController &right_motor_controller_,
-                                MotorSpeedController &left_motor_controller_ )
+using namespace TrickHLAModel;
+
+DifferentialDriveController::DifferentialDriveController(
+   double                distance_between_wheels_,
+   double                wheel_radius_,
+   double                wheel_speed_limit_,
+   double                heading_rate_limit_,
+   double                slow_down_distance_,
+   MotorSpeedController &right_motor_controller_,
+   MotorSpeedController &left_motor_controller_ )
    : distance_between_wheels( distance_between_wheels_ ),
      wheel_radius( wheel_radius_ ),
      wheel_speed_limit( wheel_speed_limit_ ),

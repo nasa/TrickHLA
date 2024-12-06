@@ -1,10 +1,12 @@
 /********************************* TRICK HEADER *******************************
 LIBRARY DEPENDENCY:
-    ((Motor/src/ServoSpeedController.o)
-     (Motor/src/ServoMotor.o))
+    ((Motor/src/ServoSpeedController.cpp)
+     (Motor/src/ServoMotor.cpp))
 *******************************************************************************/
 #include "../include/ServoSpeedController.hh"
 #include "../include/ServoMotor.hh"
+
+using namespace TrickHLAModel;
 
 ServoSpeedController::ServoSpeedController(
    ServoMotor &servo_motor,

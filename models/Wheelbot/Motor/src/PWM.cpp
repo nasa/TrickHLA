@@ -1,11 +1,13 @@
 /********************************* TRICK HEADER *******************************
 LIBRARY DEPENDENCY:
-    ((Motor/src/PWM.o))
+    ((Motor/src/PWM.cpp))
 *******************************************************************************/
 #include <cmath>
 #include <iostream>
 
 #include "../include/PWM.hh"
+
+using namespace TrickHLAModel;
 
 PWM::PWM( double high_voltage_,
           double low_voltage_,

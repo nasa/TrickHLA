@@ -7,6 +7,9 @@
 #include "DCMotor.hh"
 #include "MotorSpeedController.hh"
 
+namespace TrickHLAModel
+{
+
 class DCMotorSpeedController : public MotorSpeedController
 {
 
@@ -32,4 +35,5 @@ class DCMotorSpeedController : public MotorSpeedController
    DCMotorSpeedController();
 };
 
+} // namespace TrickHLAModel
 #endif

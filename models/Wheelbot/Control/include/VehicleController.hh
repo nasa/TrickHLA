@@ -14,6 +14,9 @@
 #   define PI 3.141592653589793
 #endif
 
+namespace TrickHLAModel
+{
+
 class VehicleController
 {
   public:
@@ -54,4 +57,6 @@ class VehicleController
 
    double arrival_distance;
 };
+
+} // namespace TrickHLAModel
 #endif

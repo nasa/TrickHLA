@@ -4,6 +4,9 @@
 #ifndef POINT_HH
 #define POINT_HH
 
+namespace TrickHLAModel
+{
+
 class Point
 {
   private:
@@ -42,4 +45,6 @@ class Point
       coordinates[1] = Y; // Set y coordinate
    }
 };
+
+} // namespace TrickHLAModel
 #endif

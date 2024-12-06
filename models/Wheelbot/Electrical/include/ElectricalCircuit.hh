@@ -7,6 +7,9 @@ PURPOSE:              (Electrical Model)
 #include "../../Battery/include/DCBattery.hh"
 #include "../../Motor/include/DCMotor.hh"
 
+namespace TrickHLAModel
+{
+
 class ElectricalCircuit
 {
   public:
@@ -21,4 +24,5 @@ class ElectricalCircuit
    double motors_current;
 };
 
+} // namespace TrickHLAModel
 #endif

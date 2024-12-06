@@ -8,6 +8,9 @@ LIBRARY DEPENDENCY:
 
 #include <stdexcept>
 
+namespace TrickHLAModel
+{
+
 class PWM
 {
 
@@ -30,4 +33,5 @@ class PWM
    double duty_cycle;
 };
 
+} // namespace TrickHLAModel
 #endif

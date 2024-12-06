@@ -1,8 +1,8 @@
 /********************************* TRICK HEADER *******************************
 LIBRARY DEPENDENCY:
-    ((Control/src/VehicleController.o)
-     (Control/src/DifferentialDriveController.o)
-     (Guidance/src/Navigator.o))
+    ((Control/src/VehicleController.cpp)
+     (Control/src/DifferentialDriveController.cpp)
+     (Guidance/src/Navigator.cpp))
 *******************************************************************************/
 
 // This file contains functions for controlling the movement of the vehicles.
@@ -12,6 +12,8 @@ LIBRARY DEPENDENCY:
 #include "../../Guidance/include/Point.hh"
 #include "../include/DifferentialDriveController.hh"
 #include "../include/VehicleController.hh"
+
+using namespace TrickHLAModel;
 
 VehicleController::VehicleController(
    std::vector< Point >        *waypoints,

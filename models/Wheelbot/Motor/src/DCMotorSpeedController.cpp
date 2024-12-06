@@ -1,13 +1,15 @@
 /********************************* TRICK HEADER *******************************
 LIBRARY DEPENDENCY:
-    ((Motor/src/DCMotorSpeedController.o)
-     (Motor/src/DCMotor.o))
+    ((Motor/src/DCMotorSpeedController.cpp)
+     (Motor/src/DCMotor.cpp))
 *******************************************************************************/
 #include <iostream>
 
 #include "../include/DCMotor.hh"
 #include "../include/DCMotorSpeedController.hh"
 #include "../include/MotorSpeedController.hh"
+
+using namespace TrickHLAModel;
 
 DCMotorSpeedController::DCMotorSpeedController(
    DCMotor      &dc_motor,
