@@ -1,11 +1,9 @@
 RM = rm -rf
 CPP = g++
 
-PROJECT_DIR = ..
 CXXFLAGS += -g
 
-INCLUDE_DIRS += -I$(PROJECT_DIR)
-
+INCLUDE_DIRS += -I./include -I../Guidance/include -I../Motor/include
 OBJDIR = obj
 LIBDIR = lib
 LIBNAME = libControl.a

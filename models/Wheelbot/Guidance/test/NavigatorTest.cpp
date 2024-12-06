@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <math.h>
+
 #define private public
 
 #include "../include/Navigator.hh"
@@ -32,7 +33,7 @@ TEST( NavigatorTest, distanceTo_two )
 
 TEST( NavigatorTest, distanceTo_three )
 {
-   // Tests if distance is found correctly from a negative location to a positive mapPoint
+   // Tests if distance is found correctly from a negative location to a positive map_point
    Point     location( -4, -5 );
    Navigator navigator( PI / 6, location );
    Point     map_point( 6, 9 );
@@ -43,12 +44,12 @@ TEST( NavigatorTest, distanceTo_three )
 
 TEST( NavigatorTest, convertMapToPlatform_one )
 {
-   // Tests if the mapPoint gets converted to platform correctly
+   // Tests if the map_point gets converted to platform correctly
    Point     location( 5, 4 );
    Navigator navigator( PI / 6, location );
    Point     map_point( 6, 9 );
    Point     platform_point;
-   platformPoint = navigator.convert_map_to_platform( map_point );
+   platform_point = navigator.convert_map_to_platform( map_point );
 
    EXPECT_EQ( platform_point.getX(), 1 );
    EXPECT_EQ( platform_point.getY(), 5 );
@@ -56,7 +57,7 @@ TEST( NavigatorTest, convertMapToPlatform_one )
 
 TEST( NavigatorTest, convertMapToPlatform_two )
 {
-   // Tests if the mapPoint gets converted to platform correctly
+   // Tests if the map_point gets converted to platform correctly
    // under slightly more strenuous conditions than the previous test
    Point     location( -8, -9 );
    Navigator navigator( 5 * PI / 6, location );
@@ -114,12 +115,12 @@ TEST( NavigatorTest, convertBodyToPlatform_one )
 
 TEST( NavigatorTest, convertPlatformToMap_one )
 {
-   // Tests if Platform points get converted to mapPoints correctly
+   // Tests if Platform points get converted to map_points correctly
    Point     location( -8, -9 );
    Navigator navigator( PI / 6, location );
    Point     platform_point( 11, 4 );
    Point     map_point;
-   mapPoint = navigator.convert_platform_to_map( platform_point );
+   map_point = navigator.convert_platform_to_map( platform_point );
 
    EXPECT_EQ( map_point.getX(), 3 );
    EXPECT_EQ( map_point.getY(), -5 );

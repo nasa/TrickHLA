@@ -4,10 +4,11 @@ RM = rm -rf
 CC = cc
 CPP = c++
 
-DECL_DIR = ..
-GTEST_DIR = ${HOME}/gtest-1.7.0
+PROJECT_DIR = ..
 
-CFLAGS += -g -Wall -Wextra -I$(GTEST_DIR)/include -I$(DECL_DIR)/include
+GTEST_DIR ?= ${HOME}/gtest-1.7.0
+
+CFLAGS += -g -Wall -Wextra -I$(GTEST_DIR)/include -I$(PROJECT_DIR)/include
 
 LIBS = ../lib/libGuidance.a -lpthread
 

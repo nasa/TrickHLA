@@ -3,7 +3,7 @@ CPP = g++
 
 #CXXFLAGS += -DDIAGONAL_NEIGHBORS
 
-INCLUDE_DIRS = -Iinclude
+INCLUDE_DIRS = -I./include
 OBJDIR = obj
 LIBDIR = lib
 LIBNAME = libElectrical.a

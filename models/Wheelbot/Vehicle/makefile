@@ -3,12 +3,15 @@ CPP = g++
 
 CXXFLAGS += -g
 
-INCLUDE_DIRS = -Iinclude -I../Guidance/include
+INCLUDE_DIRS += -I./include \
+                -I../Control/include \
+                -I../Guidance/include \
+                -I../Motor/include \
+                -I$(TRICK_HOME)/include
 OBJDIR = obj
 LIBDIR = lib
-LIBNAME = libControl.a
-LIBOBJS = $(OBJDIR)/DifferentialDriveController.o \
-	  $(OBJDIR)/VehicleController.o
+LIBNAME = libVehicleOne.a
+LIBOBJS = $(OBJDIR)/VehicleOne.o 
 
 all: ${LIBDIR}/${LIBNAME}
 

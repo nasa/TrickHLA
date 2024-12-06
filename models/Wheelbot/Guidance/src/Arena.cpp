@@ -83,7 +83,7 @@ int Arena::movement_cost_estimate(
 {
    Point orig_pt;
    Point dest_pt;
-   if ( ( ( get_grid_square_coordinates( orig, origPt ) ) == 0 ) && ( ( get_grid_square_coordinates( dest, destPt ) ) == 0 ) ) {
+   if ( ( ( get_grid_square_coordinates( orig, orig_pt ) ) == 0 ) && ( ( get_grid_square_coordinates( dest, dest_pt ) ) == 0 ) ) {
       cost_estimate = 10 * ( abs( dest_pt.getX() - orig_pt.getX() ) + abs( dest_pt.getY() - orig_pt.getY() ) );
       return 0;
    }
@@ -92,8 +92,8 @@ int Arena::movement_cost_estimate(
 }
 
 void Arena::block(
-   unsigned int x,
-   unsigned int y )
+   unsigned int const x,
+   unsigned int const y )
 {
    GridSquare *grid_square;
    if ( ( grid_square = get_grid_square( x, y ) ) != (GridSquare *)0 ) {
@@ -102,8 +102,8 @@ void Arena::block(
 }
 
 void Arena::unblock(
-   unsigned int x,
-   unsigned int y )
+   unsigned int const x,
+   unsigned int const y )
 {
    GridSquare *grid_square;
    if ( ( grid_square = get_grid_square( x, y ) ) != (GridSquare *)0 ) {

@@ -2,6 +2,8 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+#define private public
+
 #include "../include/Arena.hh"
 #include "../include/FindPath.hh"
 #include "../include/GridSquare.hh"

@@ -354,7 +354,7 @@ TEST( ArenaTest, getNeighbors_four )
    if ( neighbors_iterator != neighbors.end() )                             // if the value is found
       n1_0_found_flag = true;                                               // change the found flag to true
 
-   arena.get_grid_square_coordinates( *neighborsIterator, point );
+   arena.get_grid_square_coordinates( *neighbors_iterator, point );
    std::cout << point.getX() << " " << point.getY() << std::endl;
 
    EXPECT_EQ( n1_0_found_flag, true );
@@ -376,7 +376,7 @@ TEST( ArenaTest, getNeighbors_four )
    if ( neighbors_iterator != neighbors.end() )                             // if the value is found
       n2_1_found_flag = true;                                               // change the found flag to true
 
-   arena.get_grid_square_coordinates( *neighborsIterator, point );
+   arena.get_grid_square_coordinates( *neighbors_iterator, point );
    std::cout << point.getX() << " " << point.getY() << std::endl;
 
    EXPECT_EQ( n2_1_found_flag, true );

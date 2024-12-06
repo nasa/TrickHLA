@@ -3,13 +3,13 @@ CPP = g++
 
 CXXFLAGS += -DDIAGONAL_NEIGHBORS
 
-INCLUDE_DIRS = -Iinclude
+INCLUDE_DIRS = -I./include
 OBJDIR = obj
 LIBDIR = lib
 LIBNAME = libGuidance.a
 LIBOBJS = $(OBJDIR)/Arena.o \
-	  $(OBJDIR)/Navigator.o \
-	  $(OBJDIR)/Findpath.o
+          $(OBJDIR)/Navigator.o \
+          $(OBJDIR)/Findpath.o
 
 all: ${LIBDIR}/${LIBNAME}
 

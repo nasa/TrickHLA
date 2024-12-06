@@ -2,12 +2,13 @@ RM = rm -rf
 CC = cc
 CPP = c++
 
-DECL_DIR = ..
-GTEST_DIR = ${HOME}/gtest-1.7.0
+PROJECT_DIR = ..
 
-CFLAGS += -g -Wall -Wextra -I$(GTEST_DIR)/include -I$(DECL_DIR)/include
+GTEST_DIR ?= ${HOME}/gtest-1.7.0
 
-LIBS = ../lib/libElectrical.a     -lpthread
+CFLAGS += -g -Wall -Wextra -I$(GTEST_DIR)/include -I$(PROJECT_DIR)/include
+
+LIBS = ../lib/libElectrical.a -lpthread
 
 TESTS = ElectricalCircuitTest
 
@@ -17,7 +18,6 @@ GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
 all : $(TESTS)
 
 test: $(TESTS)
-
 	./ElectricalCircuitTest --gtest_output=xml:XMLtestReports/ElectricalCircuitTestResults.xml
     
 clean :

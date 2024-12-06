@@ -4,12 +4,11 @@ CPP = c++
 
 PROJECT_DIR = ../..
 
-GTEST_DIR = ${HOME}/gtest-1.7.0
+GTEST_DIR ?= ${HOME}/gtest-1.7.0
 
 CFLAGS += -g -Wall -Wextra
 
-INCLUDE_DIRS += -I$(PROJECT_DIR)\
-	        -I$(GTEST_DIR)/include
+INCLUDE_DIRS += -I$(PROJECT_DIR) -I$(GTEST_DIR)/include
 
 LIBS = $(PROJECT_DIR)/Control/lib/libControl.a \
        $(PROJECT_DIR)/Guidance/lib/libGuidance.a \

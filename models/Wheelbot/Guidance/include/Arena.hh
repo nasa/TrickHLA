@@ -23,9 +23,9 @@ class Arena
    Arena( unsigned int width, unsigned int height, unsigned char const bits[] );
    ~Arena();
 
-   void block( unsigned int x, unsigned int y );
+   void block( unsigned int const x, unsigned int const y );
 
-   void unblock( unsigned int x, unsigned int y );
+   void unblock( unsigned int const x, unsigned int const y );
 
    void mark( unsigned int x, unsigned int y, char c );
 
@@ -39,16 +39,18 @@ class Arena
 
    int distance_between( GridSquare const *orig, GridSquare const *dest, int &distance );
 
-   int get_height() { return height; }
+   int const get_height() { return height; }
 
-   int get_width() { return width; }
+   int const get_width() { return width; }
 
    friend std::ostream &operator<<( std::ostream &s, const Arena &arena );
 
-  private:
+  public:
    int         height;
    int         width;
    GridSquare *grid;
+
+  private:
    int         calc_offset( unsigned int x, unsigned int y, size_t &offset );
    int         calc_offset( GridSquare const *grid_square, size_t &offset );
 };
