@@ -43,6 +43,7 @@ def print_usage_message( ):
    print(' ')
    print('TrickHLA SpaceFOM Master Simulation Command Line Configuration Options:')
    print('  -h -help         : Print this help message.')
+   print('  -HLA-off         : Turn HLA interface off.')
    print('  -stop [time]     : Time to stop simulation, default is 10.0 seconds.')
    print('  -nostop          : Set no stop time on simulation.')
    print('  -verbose [on|off]: on: Show verbose messages (Default), off: disable messages.')
@@ -343,6 +344,8 @@ if hla:
    if run_duration:
       trick.sim_services.exec_set_terminate_time( run_duration )
 else:
+   THLA.disable_all_jobs()
+   THLA_INIT.disable_all_jobs()
    trick.stop(80)
 
 

@@ -56,7 +56,6 @@ int VehicleController::get_current_destination(
 // Commands wheelbot to navigate to home
 void VehicleController::go_home()
 {
-   waypoint_queue->clear();
    waypoint_queue->push_back( Point( 0.0, 0.0 ) );
    destination    = waypoint_queue->end();
    home_commanded = true;
