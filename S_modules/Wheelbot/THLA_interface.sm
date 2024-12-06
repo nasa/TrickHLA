@@ -1,7 +1,7 @@
 //==========================================================================
 // Define the Trick HLA job cycle times.
 //==========================================================================
-#define THLA_DATA_CYCLE_TIME        0.200 // HLA data communication cycle time.
+#define THLA_DATA_CYCLE_TIME        0.250 // HLA data communication cycle time.
 #define THLA_INTERACTION_CYCLE_TIME 0.050 // HLA Interaction cycle time.
 
 //==========================================================================

@@ -181,11 +181,11 @@ federate.add_known_federate( False, 'Wheelbot-2' )
 federate.set_scenario_timeline_epoch( float((18487.75*24.0*60.0*60.0) + 37.0 + 32.184) )
 
 # Must specify a federate HLA lookahead value in seconds.
-federate.set_lookahead_time( 0.200 )
+federate.set_lookahead_time( 0.250 )
 
 # Must specify the Least Common Time Step for all federates in the
 # federation execution.
-federate.set_least_common_time_step( 0.200 )
+federate.set_least_common_time_step( 0.250 )
 
 # Set the amount of seconds used to 'pad' mode transitions.
 federate.set_time_padding( 1.0 )

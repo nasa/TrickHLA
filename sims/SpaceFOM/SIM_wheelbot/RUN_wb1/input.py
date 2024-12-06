@@ -180,7 +180,7 @@ federate.add_known_federate( False, 'Wheelbot-2' )
 #--------------------------------------------------------------------------
 
 # Must specify a federate HLA lookahead value in seconds.
-federate.set_lookahead_time( 0.200 )
+federate.set_lookahead_time( 0.250 )
 
 # Setup Time Management parameters.
 #federate.set_time_regulating( False )
