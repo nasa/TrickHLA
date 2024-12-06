@@ -21,19 +21,8 @@ LIBRARY DEPENDENCIES:
 
 ##include "trick/integrator_c_intf.h"
 
-##include "TrickHLA/Manager.hh"
-##include "TrickHLA/KnownFederate.hh"
-##include "TrickHLA/SimTimeline.hh"
-##include "TrickHLA/ScenarioTimeline.hh"
-
-##include "simconfig/include/SimpleSimConfig.hh"
-
 ##include "Vehicle/include/VehicleOne.hh"
 
-%header{
- using namespace TrickHLA;
- using namespace SpaceFOM;
-%}
 
 class VehicleSimObject : public Trick::SimObject {
 
@@ -70,7 +59,7 @@ class VehicleSimObject : public Trick::SimObject {
 SpaceFOMRefFrameTreeSimObject ref_frame_tree;
 SpaceFOMRefFrameSimObject root_ref_frame( ref_frame_tree.root_frame_data );
 SpaceFOMRefFrameSimObject ref_frame_A( ref_frame_tree.frame_A_data );
-#endif //HLA
+#endif // HLA
 
 VehicleSimObject veh;
 
