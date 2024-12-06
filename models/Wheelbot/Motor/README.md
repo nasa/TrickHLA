@@ -32,21 +32,25 @@ input voltage for the associated DCMotor instance.
                             const double& actual_speed,
                             const double& supply_voltage);
 ```
+```
 | Access | Member Name   | Type          | Units | Value  |
 |--------|---------------|---------------|-------|--------|
 | private| gain          | double        | --    | Parameter - Feedback gain |
 | private| actualSpeed   | const double& | m/s   | Parameter - Reference to the actual motor speed. |
 | private| supplyVoltage | const double& | volts | Reference to the power supply voltage. |
 | private| motor         |               | --    | Parameter - Reference to the [DCMotor](#class-DCMotor) instance to be controlled. |
+```
 
 ### Member Functions
 
 ```
     void setCommandedSpeed( double commandedSpeed );
 ```
+```
 | Access | Member Name   | Type  | Units  | Value  |
 |--------|---------------|-------|--------|--------|
 | private| motorVoltage  |double | volts  | [Eq#1] |
+```
 
 * [Eq#1] **motorVoltage** = supplyVoltage * gain * ( commandedSpeed - actualSpeed ) [ limited to +/- supplyVoltage ]
 
@@ -80,12 +84,12 @@ The model consists of a constant internal resistance that converts an input volt
 DCMotor (const double initialInternalResistance,
          const double initialMotorTorqueConstant);
 ```
-
+```
 | Access | Member Name          | Type   | Units  | Value  |
 |--------|----------------------|--------|--------|--------|
 | private| internalResistance   | double | ohms   | Input  |
 | private| motorTorqueConstant  | double | Nm/amp | Input  |
-
+```
 
 ### Member Functions
 
@@ -95,11 +99,13 @@ void update (const double motorVoltage);
 
 This method is to be called periodically to update the motor state.
 
+```
 | Access | Member Name   | Type   | Units  | Value  |
 |--------|---------------|--------|--------|--------|
 | private| motorCurrent  | double | amp    | [Eq#1] |
 | private| motorTorque   | double | Nm     | [Eq#2] |
 | private| currentLoad   | double | amp    | [Eq#3] |
+```
 
 * [Eq#1] **motorCurrent** = motorVoltage / internalResistance
 
@@ -145,13 +151,13 @@ This class represents a PWM signal. Pulse Width Modulation (PWM) is a method of 
          double LowVoltage,
          double DutyCycle);
 ```
-
-
+```
 | Access  | Member Name      | Type   | Units  | Value  |
 |---------|------------------|--------|--------|--------|
 | public  | HighVoltage      | double | volts  |        |
 | public  | LowVoltage       | double | volts  |        |
 | private | dutyCycle        | double | volts  |        |
+```
 
 ### Member Functions
 

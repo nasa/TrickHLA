@@ -15,10 +15,13 @@
 This class simply represents a 2D point.
 
 ### Description
+
+```
 | Access  | Member Name      | Type   | Units  | Value  |
 |---------|------------------|--------|--------|--------|
 | public  | x                | double | --     |        |
 | public  | y                | double | --     |        |
+```
 
 ### Constructors
 ```
@@ -40,11 +43,12 @@ This class simply represents a 2D point.
 
 The Navigator class represents simple navigation state. It is simply a position, and heading on a map. A position on the map is represented by a [Point](#class-Point).
 
+```
 | Access  | Member Name      | Type                | Units  | Value  |
 |---------|------------------|---------------------|--------|--------|
 | public  | heading          |double               |   --   |        |
 | public  | location         |[Point](#class-Point)|   --   |        |
-
+```
 
 #### Coordinate Systems
 
@@ -143,6 +147,7 @@ bearing=\frac{\arcsin(point_{body_x})}{\texttt{distanceTo}(point_{map})}
 ### Description
 A GridSquare is a component of an [Arena](#class-Arena). It represents the attributes of a specific location within the Arena.
 
+```
 | Access  | Member Name      | Type        | Units  | Value  |
 |---------|------------------|-------------|--------|--------|
 | public  | isBlocked        | bool        | --     |        |
@@ -150,6 +155,7 @@ A GridSquare is a component of an [Arena](#class-Arena). It represents the attri
 | public  | parent           | GridSquare* | --     |        |
 | public  | g_score          | int         | --     |        |
 | public  | f_score          | int         | --     |        |
+```
 
 * **isBlocked** means that the grid square cannot be entered, as if because of an obstacle, or a wall.
 * **mark** is simply a single printable character that indicates the status of a gridsquare when printing out the arena.
@@ -172,12 +178,14 @@ The remaining three attributes represent a path across the Arena as determined b
 An Arena is an 2D array of [GridSquares](#class-GridSquare). It represents a physical environment, with obstacles, in which a vehicle can navigate. 
 
 ### Description
+
+```
 | Access  | Member Name | Type        | Units  | Value  |
 |---------|-------------|-------------|--------|--------|
 | public  | height      | int         |   --   |        |
 | public  | width       | int         |   --   |        |
 | public  | grid        | GridSquare* |   --   |        |
-
+```
 
 ### Constructor
 
