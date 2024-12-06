@@ -13,9 +13,11 @@ namespace TrickHLAModel
 class DCMotor
 {
   public:
-   DCMotor( const double initial_internal_resistance, const double initial_motor_torque_constant );
-   void   update( const double motor_voltage );
-   void   update( const PWM &pulse_width );
+   DCMotor( double const initial_internal_resistance,
+            double const initial_motor_torque_constant );
+
+   void   update( double const motor_voltage );
+   void   update( PWM const &pulse_width );
    double get_torque();
    double get_current_load();
 

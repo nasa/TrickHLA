@@ -11,8 +11,8 @@ LIBRARY DEPENDENCY:
 
 using namespace TrickHLAModel;
 
-DCMotor::DCMotor( const double initial_internal_resistance,
-                  const double initial_motor_torque_constant )
+DCMotor::DCMotor( double const initial_internal_resistance,
+                  double const initial_motor_torque_constant )
    : motor_torque( 0.0 ),
      motor_current( 0.0 ),
      current_load( 0.0 ),
@@ -23,7 +23,7 @@ DCMotor::DCMotor( const double initial_internal_resistance,
 }
 
 void DCMotor ::update(
-   const double motor_voltage )
+   double const motor_voltage )
 {
    motor_current = motor_voltage / internal_resistance;
    motor_torque  = motor_current * motor_torque_constant;
@@ -31,7 +31,7 @@ void DCMotor ::update(
 }
 
 void DCMotor::update(
-   const PWM &pulse_width )
+   PWM const &pulse_width )
 {
    update( pulse_width.get_average_voltage() );
 }

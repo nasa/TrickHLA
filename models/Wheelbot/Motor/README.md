@@ -81,8 +81,8 @@ The model consists of a constant internal resistance that converts an input volt
 ### Constructor
 
 ```
-DCMotor (const double initialInternalResistance,
-         const double initialMotorTorqueConstant);
+DCMotor( double const initial_internal_resistance,
+         double const initial_motor_torque_constant );
 ```
 ```
 | Access | Member Name           | Type   | Units  | Value  |
