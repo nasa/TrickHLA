@@ -41,10 +41,12 @@ After running a single wheelbot using HLA (RUN_test), we can now move on to buil
 ### Running the Wheelbot-Test Federation
 The SIM_Roles_Test RUN_mpr serves as the Master, Pacing, and Root Reference Frame Publisher (MPR) for the federation. Wheelbot-1 (RUN_wb1) publishes its location to the RTI as it navigates to its waypoints. Wheelbot-2 (RUN_wb2) creates its waypoints by subscribing to this location data, and follows Wheelbot-1 around. The graphics need to be rebuilt with the following lines uncommented:
 
+```
 Feature vehicle2 = new Feature(0, 0, Math.toRadians(0), vehicleImageFile);
 featureList.add(vehicle2); 
 
 vehicle2.setState(N2,W2,H2);
+```
 
 Now **cd** into models/Wheelbot/Graphics/ and type **make**. This will draw both wheelbots in the display.
 
@@ -60,8 +62,7 @@ In the SIM_wheelbot directory:
 
 ```
 % ./S_main_*.exe RUN_wb1/input.py
-```
-```
+
 % ./S_main_*.exe RUN_wb2/input.py
 ```
 
@@ -72,8 +73,7 @@ In the SIM_wheelbot directory:
 
 ```
 % ./S_main_*.exe RUN_OnlyWB/input.py
-```
-```
+
 % ./S_main_*.exe RUN_wb2/input.py
 ```
 
