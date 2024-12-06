@@ -35,6 +35,7 @@ def print_usage_message( ):
    print('  -fe --fex_name [name]  : Name of the Federation Execution, default is SpaceFOM_Roles_Test.')
    print('  --nostop               : Set no stop time on simulation.')
    print('  -r --root_frame [name] : Name of the DynamicalEntity, default is Voyager.')
+   print('  -rf --req_fed [name]   : Name of the Required Federate to add to the list, default is Other.')
    print('  -s --stop [time]       : Time to stop simulation, default is 10.0 seconds.')
    print('  --verbose [on|off]     : on: Show verbose messages (Default), off: disable messages.')
    print(' ')
@@ -56,6 +57,7 @@ def parse_command_line( ):
    global federate_name
    global federation_name
    global root_frame_name
+   global req_federate
    
    # Get the Trick command line arguments.
    argc = trick.command_line_args_get_argc()
@@ -92,7 +94,15 @@ def parse_command_line( ):
          else:
             print('ERROR: Missing --root_frame [name] argument.')
             print_usage = True
-            
+
+      elif ((str(argv[index]) == '-rf') | (str(argv[index]) == '--req_fed')):
+         index = index + 1
+         if (index < argc):
+            req_federate = str(argv[index])
+         else:
+            print('ERROR: Missing --req_fed [name] argument.')
+            print_usage = True
+
       elif (str(argv[index]) == '--nostop'):
          run_duration = None
       
@@ -147,6 +157,8 @@ federation_name = 'SpaceFOM_Roles_Test'
 # Set the default Root Reference Frame name.
 root_frame_name = 'RootFrame'
 
+# Set the default additional required federate name.
+req_federate = None
 
 parse_command_line()
 
@@ -210,7 +222,12 @@ federate.set_RRFP_role( True )   # This is the Root Reference Frame Publisher.
 # This is the RRFP federate.
 # It doesn't really need to know about any other federates.
 federate.add_known_federate( True, str(federate.federate.name) )
-federate.add_known_federate( True, 'Other' )
+
+if ( req_federate == None ):
+   # Default Other federate that is required.
+   ederate.add_known_federate( True, 'Other' )
+else:
+   federate.add_known_federate( True, str(req_federate) )
 
 #--------------------------------------------------------------------------
 # Configure the CRC.
