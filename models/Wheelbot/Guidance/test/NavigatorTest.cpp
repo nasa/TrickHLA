@@ -8,6 +8,8 @@
 #define PI 3.14159265358979
 #define FP_TOLERANCE 0.000000001
 
+using namespace TrickHLAModel;
+
 TEST( NavigatorTest, distanceTo_one )
 {
    Point     location( 0.0, 0.0 );

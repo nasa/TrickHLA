@@ -4,6 +4,8 @@
 
 #include "DCBattery.hh"
 
+using namespace TrickHLAModel;
+
 TEST( BatteryTest, one )
 {
    // Attempt to create an Battery

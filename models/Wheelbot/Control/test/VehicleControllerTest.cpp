@@ -14,6 +14,8 @@
 #endif
 #define FLOAT_TOLERANCE 0.000001
 
+using namespace TrickHLAModel;
+
 /*
 Test Fixture.
 */

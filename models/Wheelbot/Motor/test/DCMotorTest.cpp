@@ -3,6 +3,8 @@
 
 #include "../include/DCMotor.hh"
 
+using namespace TrickHLAModel;
+
 TEST( MotorModelTest, one )
 {
    // Attempt to create a Motor

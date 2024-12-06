@@ -7,6 +7,8 @@
 #include "../include/GridSquare.hh"
 #include "../include/Point.hh"
 
+using namespace TrickHLAModel;
+
 TEST( ArenaTest, one )
 {
    // Attempt to create an arena

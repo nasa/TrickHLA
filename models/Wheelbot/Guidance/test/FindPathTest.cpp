@@ -7,6 +7,8 @@
 #include "../include/GridSquare.hh"
 #include "../include/Point.hh"
 
+using namespace TrickHLAModel;
+
 TEST( FindPathTest, FindPath_one )
 {
    // Tests the failure case of the FindPath function
