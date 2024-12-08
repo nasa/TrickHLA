@@ -578,23 +578,25 @@ class Manager : public CheckpointConversionBase
 
    // Ownership
    /*! @brief Pull ownership from the other federates if the pull ownership
-    * flag has been enabled. */
+    *  flag has been enabled. */
    void pull_ownership();
 
-   /*! @brief Pull ownership of the named object instance at initialization.
+   /*! @brief Blocking function call to pull ownership of the named object
+    *  instance at initialization.
     *  @param obj_instance_name Object instance name to pull ownership
     *  of for all attributes. */
    void pull_ownership_at_init( char const *obj_instance_name );
 
-   /*! @brief Pull ownership of the named object instance at initialization.
+   /*! @brief Blocking function call to pull ownership of the named object
+    *  instance at initialization.
     *  @param obj_instance_name Object instance name to pull ownership
     *  of for all attributes.
     *  @param attribute_list Comma separated list of attributes. */
    void pull_ownership_at_init( char const *obj_instance_name,
                                 char const *attribute_list );
 
-   /*! @brief Wait to handle the remote request to Pull ownership object
-    *  attributes to this federate.
+   /*! @brief Blocking function call to wait to handle the remote request to
+    *  Pull ownership object attributes to this federate.
     *  @param obj_instance_name Object instance name to handle the remote
     *  pulled ownership attributes from. */
    void handle_pulled_ownership_at_init( char const *obj_instance_name );
@@ -607,20 +609,22 @@ class Manager : public CheckpointConversionBase
     * has been enabled. */
    void push_ownership();
 
-   /*! @brief Push ownership of all the locally owned object attributes.
+   /*! @brief Blocking function call to push ownership of all the locally
+    *  owned object attributes.
     *  @param obj_instance_name Object instance name to push ownership
     *  of for all attributes. */
    void push_ownership_at_init( char const *obj_instance_name );
 
-   /*! @brief Push ownership of the named object instance at initialization.
+   /*! @brief Blocking function call to push ownership of the named object
+    *  instance at initialization.
     *  @param obj_instance_name Object instance name to push ownership
     *  of for all attributes.
     *  @param attribute_list Comma separated list of attribute FOM names. */
    void push_ownership_at_init( char const *obj_instance_name,
                                 char const *attribute_list );
 
-   /*! @brief Wait to handle the remote request to Push ownership object
-    *  attributes to this federate.
+   /*! @brief Blocking function call to wait to handle the remote request to
+    *  Push ownership object attributes to this federate.
     *  @param obj_instance_name Object instance name to handle the remote
     *  pushed ownership attributes from. */
    void handle_pushed_ownership_at_init( char const *obj_instance_name );

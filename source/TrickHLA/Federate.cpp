@@ -4873,7 +4873,10 @@ bool const Federate::on_data_cycle_boundary_for_obj(
    return this->thread_coordinator.on_receive_data_cycle_boundary_for_obj( obj_index, sim_time_in_base_time );
 }
 
-/*! @brief Send zero lookahead or requested data for the specified object instance. */
+/*!
+ * @brief Send zero lookahead or requested data for the specified object instance.
+ * @param obj_instance_name Object instance name to send data for.
+ */
 void Federate::send_zero_lookahead_and_requested_data(
    string const &obj_instance_name )
 {
@@ -4901,7 +4904,11 @@ void Federate::send_zero_lookahead_and_requested_data(
    obj->send_zero_lookahead_and_requested_data( this->granted_time );
 }
 
-/*! @brief Wait to receive the zero lookahead data for the specified object instance. */
+/*!
+ *  @brief Blocking function call to wait to receive the zero lookahead data
+ *  for the specified object instance.
+ *  @param obj_instance_name Object instance name to wait for data.
+ */
 void Federate::wait_to_receive_zero_lookahead_data(
    string const &obj_instance_name )
 {
@@ -4980,7 +4987,9 @@ void Federate::wait_to_receive_zero_lookahead_data(
    obj->receive_zero_lookahead_data();
 }
 
-/*! @brief Send blocking I/O or requested data for the specified object instance. */
+/*!
+ * @brief Send blocking I/O or requested data for the specified object instance.
+ * @param obj_instance_name Object instance name to send data for. */
 void Federate::send_blocking_io_data(
    string const &obj_instance_name )
 {
@@ -5008,7 +5017,11 @@ void Federate::send_blocking_io_data(
    obj->send_blocking_io_data();
 }
 
-/*! @brief Wait to receive the blocking I/O data for the specified object instance. */
+/*!
+ * @brief Blocking function call to wait to receive the blocking I/O data
+ * for the specified object instance.
+ * @param obj_instance_name Object instance name to wait for data.
+ */
 void Federate::wait_to_receive_blocking_io_data(
    string const &obj_instance_name )
 {
