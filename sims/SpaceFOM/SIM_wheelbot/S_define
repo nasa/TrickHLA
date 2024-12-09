@@ -1,0 +1,77 @@
+/************************TRICK HEADER*************************
+PURPOSE:
+    ( Simulate a two-wheeled robot which travels to predetermined waypoints. )
+LIBRARY DEPENDENCIES:
+    ((Vehicle/src/VehicleOne.cpp))
+*************************************************************/
+//==========================================================================
+// Description:
+// This is a simulation definition file (S_define) that provides an example
+// of an SpaceFOM compliant wheelbot federate.
+//==========================================================================
+
+//==========================================================================
+// Define the Trick executive and services simulation object instances:
+// Use the "standard" Trick executive simulation object. This simulation
+// object provides the traditional Trick executive capabilities but can be
+// tailored to provide facility or project unique executive behavior. See
+// the Trick documentation for more on usage and available options.
+//==========================================================================
+#include "sim_objects/default_trick_sys.sm"
+
+##include "trick/integrator_c_intf.h"
+
+##include "Vehicle/include/VehicleOne.hh"
+
+
+class VehicleSimObject : public Trick::SimObject {
+
+  public:
+   TrickHLAModel::VehicleOne vehicle;
+
+   VehicleSimObject() {
+
+      ("default_data")    vehicle.default_data();
+      ("initialization")  vehicle.state_init();
+      (0.10, "scheduled") vehicle.control();
+      (1.2, "scheduled")  vehicle.add_waypoint_from_stcs();
+      ("derivative")      vehicle.state_deriv() ;
+      ("integration") trick_ret = vehicle.state_integ() ;
+
+   }
+
+  private:
+   // Do not allow the implicit copy constructor or assignment operator.
+   VehicleSimObject( VehicleSimObject const & rhs );
+   VehicleSimObject & operator=( VehicleSimObject const & rhs );
+};
+
+//=============================================================================
+#define HLA
+// Uncomment the above line to build the sim with HLA.
+// * Note dependencies and other considerations detailed in the included file.
+// * Note there are also lines to include in the S_overrides.mk file.
+//=============================================================================
+#ifdef HLA
+#include "Wheelbot/THLA_interface.sm"
+
+// SimObject used for root reference frame discovery.
+SpaceFOMRefFrameTreeSimObject ref_frame_tree;
+SpaceFOMRefFrameSimObject root_ref_frame( ref_frame_tree.root_frame_data );
+SpaceFOMRefFrameSimObject ref_frame_A( ref_frame_tree.frame_A_data );
+#endif // HLA
+
+VehicleSimObject veh;
+
+IntegLoop veh_integloop (0.10) veh;
+
+// All code listed in the create_connections routine is copied into S_source.cpp
+// and is executed directly after sim-object instantiations. This routine may be
+// used to connect data structures between SimObjects.
+
+void create_connections() {
+
+   // Assign a default integrator, which can be overridden in the input file.
+   veh_integloop.getIntegrator( Runge_Kutta_4, 6 );
+
+}
